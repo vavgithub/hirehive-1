@@ -4,38 +4,37 @@ const jobSchema = new mongoose.Schema({
     title : {
         type : String,
         required : true,
-        unique : true,
         trim : true,
         lowercase : true,
-    },
-    description : {
-        type : String,
-        required : [true , "Description is required"],
-        unique : true,
-        lowercase : true,
-        trim : true,
     },
     location : {
         type : String,
-        required : [true , "Location is required"],
+        required : [true , "loc is required"],
         lowercase : true,
         trim : true,
     },
-    salary : {
-        type : Number,
-        required : [true , "Salary is required"],
-    },
-    company : {
+    category : {
         type : String,
-        required : [true , "Company is required"],
+        required : [true , "cat is required"],
         lowercase : true,
         trim : true,
     },
-    email : {
+    description : {
         type : String,
-        required : [true , "Email is required"],
-        unique : true,
+        required : [true , "des is required"],
+    },
+    overview : {
+        type : String,
+        required : [true , "overview is required"],
         lowercase : true,
         trim : true,
     },
+    requirements : {
+            type : String,
+            required : [true , "req is required"],
+            lowercase : true,
+            trim : true,
+        }
 } , {timestamps:true});
+
+export const jobs = mongoose.model("jobs" , jobSchema);
