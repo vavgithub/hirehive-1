@@ -20,6 +20,7 @@ app.use(express.urlencoded({limit: "30mb", extended: true}));
 app.use(express.static("public"));
 app.use(cookieParser());
 
+app.use("/api" , jobRoutes);
 connectDB().then(()=>{
     app.listen( process.env.PORT, ()=>{
         console.log(`Server is running on port ${process.env.PORT}`)
@@ -37,4 +38,3 @@ app.get("/", (req, res)=>{
 })
 
 // Use job routes
-app.use("/api" , jobRoutes);
