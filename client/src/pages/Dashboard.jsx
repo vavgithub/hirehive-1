@@ -1,14 +1,15 @@
 import React from 'react';
-import useNavigate  from 'react-router-dom';
+import { Link } from 'react-router-dom';
+//import useNavigate  from 'react-router-dom';
 
 const Dashboard = () => {
-    const navigate = useNavigate();
+    //const navigate = useNavigate();
 
     const handleLogout = () => {
         // Clear user data from local storage
         localStorage.removeItem('user');
         // Navigate to login page
-        navigate('/login');
+        //navigate('/login');
     };
 
     // Retrieve user data from local storage
@@ -22,8 +23,14 @@ const Dashboard = () => {
                         <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
                             Welcome to Dashboard
                         </h1>
-                        <p className="text-lg text-gray-900 dark:text-white">User Email: {userData?.email}</p>
+                        {/* <p className="text-lg text-gray-900 dark:text-white">User Email: {userData?.email}</p> */}
+                        <div>
+                            
+                        <Link to="/">
+                        
                         <button onClick={handleLogout} className="w-full text-white bg-black focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">Logout</button>
+                        </Link>
+                        </div>
                     </div>
                 </div>
             </div>
