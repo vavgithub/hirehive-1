@@ -6,7 +6,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 
 import jobRoutes from './routes/jobs.js';
-
+import userRoutes from './routes/user.js';
 const app = express();
 
 app.use(cors({
@@ -21,6 +21,8 @@ app.use(express.static("public"));
 app.use(cookieParser());
 
 app.use("/api" , jobRoutes);
+app.use('/api/users', userRoutes);
+
 connectDB().then(()=>{
     app.listen( process.env.PORT, ()=>{
         console.log(`Server is running on port ${process.env.PORT}`)
@@ -37,4 +39,4 @@ app.get("/", (req, res)=>{
     res.send("Welcome to Job Portal API")
 })
 
-// Use job routes
+
