@@ -21,7 +21,7 @@ app.use(express.urlencoded({limit: "30mb", extended: true}));
 app.use(express.static("public"));
 app.use(cookieParser());
 
-app.use(morgan('combined'))
+app.use(morgan('dev'))
 
 app.use("/api" , jobRoutes);
 app.use('/api/users', userRoutes);

@@ -78,8 +78,31 @@ const searchJobs = async (req, res) => {
     }
 }
 
+const filterJobs = async(req, res) => {
+    const {jobType , experienceLevel , jobFunction} = req.body.filters;
+    try {
+        const query = {};
+        if (jobType && jobType.length > 0) {
+            query.jobType = { $in: jobType.map(type => type.toLowerCase()) };
+          }
+      
+          if (experienceLevel && experienceLevel.length > 0) {
+            query.experienceLevel = { $in: experienceLevel.map(level => level.toLowerCase()) };
+          }
+      
+          if (jobFunction && jobFunction.length > 0) {
+            query.jobFunction = { $in: jobFunction.map(func => func.toLowerCase()) };
+          }
+        const filteredJobs = await jobs.find(query);
+        res.status(200).json(filteredJobs);
+    } catch (error) {
+        console.log("Error Filtergin Jobs" , error);
+        res.status(500).json({ message: error.message });
+    }
+} 
+
 
 
 
 // Export the controller function
-export { createJob , getJobs , getTotalJobCount , searchJobs };
+export { createJob , getJobs , getTotalJobCount , searchJobs , filterJobs };

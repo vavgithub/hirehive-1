@@ -3,160 +3,7 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 //import useNavigate  from 'react-router-dom';
 
-const FilterSidebar = () => {
 
-    const [datePosted, setDatePosted] = useState('Anytime');
-    const [jobType, setJobType] = useState({ fullTime: false, internship: false });
-    const [experienceLevel, setExperienceLevel] = useState({ entry: false, intermediate: false, senior: false });
-    const [jobFunction, setJobFunction] = useState({ design: false, engineering: false, sales: false, marketing: false });
-
-    const handleCheckboxChange = (event, category, value) => {
-        switch (category) {
-            case 'jobType':
-                setJobType({ ...jobType, [value]: event.target.checked });
-                break;
-            case 'experienceLevel':
-                setExperienceLevel({ ...experienceLevel, [value]: event.target.checked });
-                break;
-            case 'jobFunction':
-                setJobFunction({ ...jobFunction, [value]: event.target.checked });
-                break;
-            default:
-                break;
-        }
-    };
-    
-    return (
-        <div className="bg-gray-100 p-4 rounded-md">
-            <div className="mb-4">
-                <h3 className="text-gray-800 font-semibold mb-2 text-left">Date Posted</h3>
-                <select
-                    className="w-full bg-white border border-gray-300 rounded-md py-2 px-3 text-gray-700"
-                    value={datePosted}
-                    onChange={(e) => setDatePosted(e.target.value)}
-                >
-                    <option value="Anytime">Anytime</option>
-                    <option value="Last 24 hours">Last 24 hours</option>
-                    <option value="Last 7 days">Last 7 days</option>
-                    <option value="Last 30 days">Last 30 days</option>
-                </select>
-            </div>
-
-            <div className="mb-4 text-left">
-                <h3 className="text-gray-800 font-semibold mb-2">Job Type</h3>
-                <div>
-                    <label className="inline-flex items-center">
-                        <input
-                            type="checkbox"
-                            checked={jobType.fullTime}
-                            onChange={(e) => handleCheckboxChange(e, 'jobType', 'fullTime')}
-                            className="form-checkbox text-indigo-600"
-                        />
-                        <span className="ml-2 text-gray-700">Full-time</span>
-                    </label>
-                </div>
-                <div>
-                    <label className="inline-flex items-center">
-                        <input
-                            type="checkbox"
-                            checked={jobType.internship}
-                            onChange={(e) => handleCheckboxChange(e, 'jobType', 'internship')}
-                            className="form-checkbox text-indigo-600"
-                        />
-                        <span className="ml-2 text-gray-700">Internship</span>
-                    </label>
-                </div>
-            </div>
-
-            <div className="mb-4 text-left">
-                <h3 className="text-gray-800 font-semibold mb-2">Exprience Level</h3>
-                <div>
-                    <label className="inline-flex items-center">
-                        <input
-                            type="checkbox"
-                            checked={experienceLevel.entry}
-                            onChange={(e) => handleCheckboxChange(e, 'experienceLevel', 'entry')}
-                            className="form-checkbox text-indigo-600"
-                        />
-                        <span className="ml-2 text-gray-700">Entry Level</span>
-                    </label>
-                </div>
-                <div>
-                    <label className="inline-flex items-center">
-                        <input
-                            type="checkbox"
-                            checked={experienceLevel.intermediate}
-                            onChange={(e) => handleCheckboxChange(e, 'experienceLevel', 'intermediate')}
-                            className="form-checkbox text-indigo-600"
-                        />
-                        <span className="ml-2 text-gray-700">Intermediate</span>
-                    </label>
-                </div>
-                <div>
-                    <label className="inline-flex items-center">
-                        <input
-                            type="checkbox"
-                            checked={experienceLevel.senior}
-                            onChange={(e) => handleCheckboxChange(e, 'experienceLevel', 'senior')}
-                            className="form-checkbox text-indigo-600"
-                        />
-                        <span className="ml-2 text-gray-700">Senior Level</span>
-                    </label>
-                </div>
-            </div>
-
-            <div className="mb-4 text-left">
-                <h3 className="text-gray-800 font-semibold mb-2">Job Function</h3>
-                <div>
-                    <label className="inline-flex items-center">
-                        <input
-                            type="checkbox"
-                            checked={jobFunction.design}
-                            onChange={(e) => handleCheckboxChange(e, 'jobFunction', 'design')}
-                            className="form-checkbox text-indigo-600"
-                        />
-                        <span className="ml-2 text-gray-700">Design</span>
-                    </label>
-                </div>
-                <div>
-                    <label className="inline-flex items-center">
-                        <input
-                            type="checkbox"
-                            checked={jobFunction.engineering}
-                            onChange={(e) => handleCheckboxChange(e, 'jobFunction', 'engineering')}
-                            className="form-checkbox text-indigo-600"
-                        />
-                        <span className="ml-2 text-gray-700">Engineering</span>
-                    </label>
-                </div>
-                <div>
-                    <label className="inline-flex items-center">
-                        <input
-                            type="checkbox"
-                            checked={jobFunction.sales}
-                            onChange={(e) => handleCheckboxChange(e, 'jobFunction', 'sales')}
-                            className="form-checkbox text-indigo-600"
-                        />
-                        <span className="ml-2 text-gray-700">Sales</span>
-                    </label>
-                </div>
-                <div>
-                    <label className="inline-flex items-center">
-                        <input
-                            type="checkbox"
-                            checked={jobFunction.marketing}
-                            onChange={(e) => handleCheckboxChange(e, 'jobFunction', 'marketing')}
-                            className="form-checkbox text-indigo-600"
-                        />
-                        <span className="ml-2 text-gray-700">Marketing</span>
-                    </label>
-                </div>
-            </div>
-
-            <button className="bg-indigo-600 text-white px-4 py-2 rounded-md">Apply Filters</button>
-        </div>
-    );
-};
 
 const Dashboard = () => {
     //const navigate = useNavigate();
@@ -167,19 +14,26 @@ const Dashboard = () => {
     const handleSearch = (event) => {
         setSearchQuery(event.target.value);
     };
+    const [filters, setFilters] = useState({
+        jobType: [],
+        experienceLevel: [],
+        jobFunction: []
+    });
 
-    // const jobData = {
-    //     jobsPosted: 56,
-    //     applicationsReceived: 45,
-    //     activeJob: {
-    //         title: 'Senior UI/UX designer',
-    //         type: 'UI/UX',
-    //         level: 'Senior-level',
-    //         experience: 'Experienced',
-    //         description: "We're seeking an experienced Senior UI/UX Designer to lead our design team in crafting seamless user experiences across our digital platforms. As a key player, you'll define design standards, mentor junior designers, and collaborate closely with stakeholders to translate business objectives into innovative design solutions.",
-    //         applicationsCount: 156,
-    //     },
-    // };
+    const handleCheckboxChange = (filterType, value) => {
+        const updatedFilters = { ...filters };
+        const index = updatedFilters[filterType].indexOf(value);
+
+        if (index !== -1) {
+            updatedFilters[filterType].splice(index, 1); // Remove filter
+        } else {
+            updatedFilters[filterType].push(value); // Add filter
+        }
+
+        setFilters(updatedFilters);
+    };
+
+
     const fetchJobs = async () => {
         try {
             const response = await axios.get('http://localhost:8008/api/jobs');
@@ -203,6 +57,21 @@ const Dashboard = () => {
             console.log(error)
         }
     };
+
+    const fetchFilterJobs = async () => {
+        try {
+            const response = await axios.post('http://localhost:8008/api/filterJobs', { filters });
+            console.log( "yeh kya hai buhaiji" ,  response.data)
+            console.log(filters)
+            setJobs(response.data);
+        } catch (error) {
+            console.error('Error fetching filtered jobs:', error);
+        }
+    };
+
+    useEffect(() => {
+        fetchFilterJobs();
+    }, [filters]); // Trigger fetchJobs whenever filters change  
 
     useEffect(() => {
         fetchJobs();
@@ -248,8 +117,49 @@ const Dashboard = () => {
 
             <div className='flex'>
                 <div className=' w-64'>
-                    <FilterSidebar />
-
+                    <h2>Filters</h2>
+                    <div>
+                        <h3>Job Type</h3>
+                        <label>
+                            <input
+                                type="checkbox"
+                                value="fulltime"
+                                checked={filters.jobType.includes('fulltime')}
+                                onChange={() => handleCheckboxChange('jobType', 'fulltime')}
+                            />
+                            Full-time
+                        </label>
+                        <label>
+                            <input
+                                type="checkbox"
+                                value="internship"
+                                checked={filters.jobType.includes('internship')}
+                                onChange={() => handleCheckboxChange('jobType', 'internship')}
+                            />
+                            Internship
+                        </label>
+                    </div>
+                    <div>
+                        <h3>Expereience Level</h3>
+                        <label>
+                            <input
+                                type="checkbox"
+                                value="entry"
+                                checked={filters.experienceLevel.includes('entry')}
+                                onChange={() => handleCheckboxChange('experienceLevel', 'entry')}
+                            />
+                            Entry
+                        </label>
+                        <label>
+                            <input
+                                type="checkbox"
+                                value="senior"
+                                checked={filters.experienceLevel.includes('senior')}
+                                onChange={() => handleCheckboxChange('experienceLevel', 'senior')}
+                            />
+                            Senior
+                        </label>
+                    </div>
                 </div>
                 <div className='w-full ml-4'>
                     {
