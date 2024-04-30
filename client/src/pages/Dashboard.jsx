@@ -1,9 +1,12 @@
-import React, { useEffect, useState ,useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 //import useNavigate  from 'react-router-dom';
 
 const FilterSidebar = () => {
+
+
+
     const [datePosted, setDatePosted] = useState('Anytime');
     const [jobType, setJobType] = useState({ fullTime: false, internship: false });
     const [experienceLevel, setExperienceLevel] = useState({ entry: false, intermediate: false, senior: false });
@@ -24,6 +27,8 @@ const FilterSidebar = () => {
                 break;
         }
     };
+
+
 
     return (
         <div className="bg-gray-100 p-4 rounded-md">
@@ -160,48 +165,72 @@ const FilterSidebar = () => {
 const Dashboard = () => {
     //const navigate = useNavigate();
     const [jobs, setJobs] = useState([]);
+    const [filterJobs, setFilterJobs] = useState([]);
     const [jobCount, setJobCount] = useState(0);
+    const [searchQuery, setSearchQuery] = useState('');
+    const handleSearch = (event) => {
+        setSearchQuery(event.target.value);
+    };
 
-    const jobData = {
-        jobsPosted: 56,
-        applicationsReceived: 45,
-        activeJob: {
-            title: 'Senior UI/UX designer',
-            type: 'UI/UX',
-            level: 'Senior-level',
-            experience: 'Experienced',
-            description: "We're seeking an experienced Senior UI/UX Designer to lead our design team in crafting seamless user experiences across our digital platforms. As a key player, you'll define design standards, mentor junior designers, and collaborate closely with stakeholders to translate business objectives into innovative design solutions.",
-            applicationsCount: 156,
-        },
+    // const jobData = {
+    //     jobsPosted: 56,
+    //     applicationsReceived: 45,
+    //     activeJob: {
+    //         title: 'Senior UI/UX designer',
+    //         type: 'UI/UX',
+    //         level: 'Senior-level',
+    //         experience: 'Experienced',
+    //         description: "We're seeking an experienced Senior UI/UX Designer to lead our design team in crafting seamless user experiences across our digital platforms. As a key player, you'll define design standards, mentor junior designers, and collaborate closely with stakeholders to translate business objectives into innovative design solutions.",
+    //         applicationsCount: 156,
+    //     },
+    // };
+    const fetchJobs = async () => {
+        try {
+            const response = await axios.get('http://localhost:8008/api/jobs');
+            setJobs(response.data);
+            console.log(response)
+            // setJobs(response.data); // Assuming response.data is an array of job objects
+        } catch (error) {
+            console.error('Error fetching jobs:', error);
+        }
+    };
+
+    const fetchJobCount = async () => {
+        try {
+            const response = await axios.get('http://localhost:8008/api/jobsCount');
+            const data = response.data.totalCount;
+            console.log(data)
+            setJobCount(data);
+            console.log(jobCount)
+
+        } catch (error) {
+            console.log(error)
+        }
     };
 
     useEffect(() => {
-        const fetchJobs = async () => {
+        fetchJobs();
+        fetchJobCount();
+    }, []); // Run once on component mount
+
+    useEffect(() => {
+        const searchJobs = async () => {
             try {
-                const response = await axios.get('http://localhost:8008/api/jobs');
+                const response = await axios.get(`http://localhost:8008/api/searchJobs?title=${encodeURIComponent(searchQuery)}`);
                 setJobs(response.data);
-                console.log(response)
-                // setJobs(response.data); // Assuming response.data is an array of job objects
             } catch (error) {
                 console.error('Error fetching jobs:', error);
             }
         };
+        // Trigger fetchJobs when searchQuery changes
+        if (searchQuery !== '') {
+            searchJobs();
+        } else {
+            // If searchQuery is empty, fetch all jobs again
+            fetchJobs();
+        }
+    }, [searchQuery]);
 
-        const fetchJobCount = async () => {
-            try {
-                const response = await axios.get('http://localhost:8008/api/jobsCount');
-                const data = response.data.totalCount;
-                console.log(data)
-                setJobCount(data);
-                console.log(jobCount)
-
-            } catch (error) {
-                console.log(error)
-            }
-        };
-        fetchJobs();
-        fetchJobCount();
-    }, []); // Run once on component mount
     return (
         <div className="p-4">
             <div className="flex justify-between mb-4">
@@ -210,12 +239,14 @@ const Dashboard = () => {
             </div>
             <div className="flex justify-between mb-4">
                 <div className="text-gray-600">Jobs Posted:{jobCount}</div>
-                <div className="text-gray-600">Application received: {jobData.applicationsReceived.toString()}</div>
+                <div className="text-gray-600">Application received:</div>
             </div>
             <div className="mb-4">
                 <input
                     className="border border-gray-300 px-4 py-2 w-full rounded"
                     placeholder="Job title or keyword"
+                    value={searchQuery}
+                    onChange={handleSearch}
                 />
             </div>
             {/* <div className="bg-white shadow rounded p-4 mb-4">
@@ -242,6 +273,37 @@ const Dashboard = () => {
 
                 </div>
                 <div className='w-full ml-4'>
+                    {
+                        searchQuery.length != 0 && filterJobs && jobs.map((job) => {
+                            <div key={job._id} className="bg-white shadow rounded p-4 mb-4 w-[100%]">
+                                <div className="flex justify-between items-center mb-2">
+                                    <h2 className="text-lg font-bold">{job.title}</h2>
+                                    <div className="text-sm text-gray-500">posted 1 day ago</div>
+                                </div>
+                                <div className="flex mb-2">
+                                    {
+                                        job.category.map((category) => (
+                                            <span key={category} className="bg-gray-200 text-gray-600 px-2 py-1 mr-2 rounded">{category}</span>
+                                        ))
+                                    }
+                                    {/* <span className="bg-gray-200 text-gray-600 px-2 py-1 mr-2 rounded">{job.category}</span> */}
+                                    {/* <span className="bg-gray-200 text-gray-600 px-2 py-1 mr-2 rounded">{job.location}</span> */}
+                                    {/* <span className="bg-gray-200 text-gray-600 px-2 py-1 rounded">{job.experience}</span> */}
+                                </div>
+                                <div className='flex'>
+
+                                    <p className="text-gray-700 mb-4">{job.description}</p>
+                                </div>
+                                <div className="flex justify-between items-center">
+                                    <div className="text-gray-600">
+                                        <span className="font-bold">{job.applicationsCount}</span> applied
+                                    </div>
+                                    <Link to={`/job/${job._id}`} className="bg-black text-white px-4 py-2 rounded">Know More</Link>
+                                </div>
+                            </div>
+                        })
+                    }
+
 
                     {
                         jobs.map((job) => (
@@ -262,7 +324,7 @@ const Dashboard = () => {
                                 </div>
                                 <div className='flex'>
 
-                                <p className="text-gray-700 mb-4">{job.description}</p>
+                                    <p className="text-gray-700 mb-4">{job.description}</p>
                                 </div>
                                 <div className="flex justify-between items-center">
                                     <div className="text-gray-600">
