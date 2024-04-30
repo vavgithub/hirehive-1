@@ -5,8 +5,6 @@ import { Link } from 'react-router-dom';
 
 const FilterSidebar = () => {
 
-
-
     const [datePosted, setDatePosted] = useState('Anytime');
     const [jobType, setJobType] = useState({ fullTime: false, internship: false });
     const [experienceLevel, setExperienceLevel] = useState({ entry: false, intermediate: false, senior: false });
@@ -27,9 +25,7 @@ const FilterSidebar = () => {
                 break;
         }
     };
-
-
-
+    
     return (
         <div className="bg-gray-100 p-4 rounded-md">
             <div className="mb-4">
@@ -249,24 +245,7 @@ const Dashboard = () => {
                     onChange={handleSearch}
                 />
             </div>
-            {/* <div className="bg-white shadow rounded p-4 mb-4">
-                <div className="flex justify-between items-center mb-2">
-                    <h2 className="text-lg font-bold">{jobData.activeJob.title}</h2>
-                    <div className="text-sm text-gray-500">posted 1 day ago</div>
-                </div>
-                <div className="flex mb-2">
-                    <span className="bg-gray-200 text-gray-600 px-2 py-1 mr-2 rounded">{jobData.activeJob.type}</span>
-                    <span className="bg-gray-200 text-gray-600 px-2 py-1 mr-2 rounded">{jobData.activeJob.level}</span>
-                    <span className="bg-gray-200 text-gray-600 px-2 py-1 rounded">{jobData.activeJob.experience}</span>
-                </div>
-                <p className="text-gray-700 mb-4">{jobData.activeJob.description}</p>
-                <div className="flex justify-between items-center">
-                    <div className="text-gray-600">
-                        <span className="font-bold">{jobData.activeJob.applicationsCount}</span> applied
-                    </div>
-                    <button className="bg-black text-white px-4 py-2 rounded">Know More</button>
-                </div>
-            </div> */}
+
             <div className='flex'>
                 <div className=' w-64'>
                     <FilterSidebar />
@@ -286,9 +265,6 @@ const Dashboard = () => {
                                             <span key={category} className="bg-gray-200 text-gray-600 px-2 py-1 mr-2 rounded">{category}</span>
                                         ))
                                     }
-                                    {/* <span className="bg-gray-200 text-gray-600 px-2 py-1 mr-2 rounded">{job.category}</span> */}
-                                    {/* <span className="bg-gray-200 text-gray-600 px-2 py-1 mr-2 rounded">{job.location}</span> */}
-                                    {/* <span className="bg-gray-200 text-gray-600 px-2 py-1 rounded">{job.experience}</span> */}
                                 </div>
                                 <div className='flex'>
 
@@ -318,9 +294,7 @@ const Dashboard = () => {
                                             <span key={category} className="bg-gray-200 text-gray-600 px-2 py-1 mr-2 rounded">{category}</span>
                                         ))
                                     }
-                                    {/* <span className="bg-gray-200 text-gray-600 px-2 py-1 mr-2 rounded">{job.category}</span> */}
-                                    {/* <span className="bg-gray-200 text-gray-600 px-2 py-1 mr-2 rounded">{job.location}</span> */}
-                                    {/* <span className="bg-gray-200 text-gray-600 px-2 py-1 rounded">{job.experience}</span> */}
+
                                 </div>
                                 <div className='flex'>
 

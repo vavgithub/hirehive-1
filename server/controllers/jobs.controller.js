@@ -18,7 +18,7 @@ const getJobs = async (req, res) => {
 const createJob = async (req, res) => {
     try {
         // Destructure job details from request body
-        const { title , location , category , description , overview  , requirements } = req.body;
+        const { title , location , category , description , overview  , requirements , jobType , experienceLevel , jobFunction} = req.body;
 
         // Create a new job instance using the Job model
         const newJob = new jobs({
@@ -27,7 +27,10 @@ const createJob = async (req, res) => {
             category,
             description,
             overview,
-            requirements,             
+            requirements,
+            jobFunction,
+            jobType,
+            experienceLevel             
         });
 
         // Save the job to the database
