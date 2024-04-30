@@ -48,18 +48,35 @@ const createJob = async (req, res) => {
 
 const getTotalJobCount = async (req, res) => {
     try {
+
         // Count the total number of jobs in the database
         const totalCount = await jobs.countDocuments();
-
         // Respond with the total count
-        res.status(200).json({ totalJobs: totalCount });
+        res.status(200).json({ totalCount });
+
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 };
 
+const searchJobs = async (req, res) => {
+    const searchTerm = req.query.title;
+    if (!searchTerm) {
+        return res.status(400).json({ error: 'Search term (title) is required' });
+      }
+    try {
+        // Fetch all jobs from the database
+        const jobArray = await jobs.find({ title: { $regex: searchTerm, $options: 'i' } });
+        // Respond with the list of jobs
+        res.status(200).json(jobArray);
+    } catch (error) {
+        // Handle error if fetching jobs fails
+        res.status(500).json({ message: error.message });
+    }
+}
+
 
 
 
 // Export the controller function
-export { createJob , getJobs ,getTotalJobCount  };
+export { createJob , getJobs , getTotalJobCount , searchJobs };

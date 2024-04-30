@@ -14,7 +14,7 @@ const jobSchema = new mongoose.Schema({
         trim : true,
     },
     category : {
-        type : String,
+        type : Array,
         required : [true , "cat is required"],
         lowercase : true,
         trim : true,
