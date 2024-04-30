@@ -2,6 +2,15 @@ import React from 'react'
 import Formfields from '../components/Formfields';
 
 const Register = () => {
+    const [data , setData] = useState({ email: '', password: '' });
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prevData) => ({
+            ...prevData,
+            [name]: value
+        }));
+    };
     // const handleSubmit = () => {
     //     e.preventDefault();
     //     console.log("Form submitted");
@@ -24,7 +33,7 @@ const Register = () => {
                         </div>
 
                         <form className="space-y-4 md:space-y-6" action="#">
-                            <Formfields name="email" type="email" label="Your Email" placeholder="name@company.com" />
+                            <Formfields name="email" type="email" label="Your Email" placeholder="name@company.com" handleInputChange={handleInputChange}/>
                             <Formfields name="password" type="password" label="Password" placeholder="••••••••" />
                             <Formfields name="confirm-password" type="password" label="Confirm password" placeholder="••••••••" />
 

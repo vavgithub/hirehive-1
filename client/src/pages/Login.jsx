@@ -5,15 +5,17 @@ import { Link } from 'react-router-dom';
 
 const Login = () => {
     // const navigate = useNavigate();
-    const [formData, setFormData] = useState({ email: '', password: '' });
+    const [data , setData] = useState({ email: '', password: '' });
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setFormData((prevData) => ({
+        setData((prevData) => ({
             ...prevData,
             [name]: value
         }));
     };
+
+    // console.log(email, password);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -37,8 +39,8 @@ const Login = () => {
                             </h1>
                         </div>
                         <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
-                            <Formfields name="email" type="email" label="Your Email" placeholder="name@company.com" value={formData.email} onChange={handleInputChange} />
-                            <Formfields name="password" type="password" label="Password" placeholder="••••••••" value={formData.password} onChange={handleInputChange} />
+                            <Formfields name="email" type="email" label="Your Email" placeholder="name@company.com" value={data.email} onChange={handleInputChange} />
+                            <Formfields name="password" type="password" label="Password" placeholder="••••••••" value={data.password} onChange={handleInputChange} />
                             {/* <div className='flex flex-row-reverse'>
                                 <span>Forgot Password?</span>
                             </div> */}

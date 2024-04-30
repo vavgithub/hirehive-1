@@ -14,15 +14,13 @@ import Dashboard from './pages/Dashboard.jsx';
 
 const router = createBrowserRouter(createRoutesFromElements(
   <>
-  <Route path="dashboard" element={<Dashboard />} />
-  <Route path="/" element={<Login />} />
+    <Route path="dashboard" element={<Dashboard />} />
+    <Route path="/" element={<Login />} />
   </>
-  
+
 
 ));
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <RouterProvider router={router} />
-  </React.StrictMode>,
+  <RouterProvider router={router} />
 )
