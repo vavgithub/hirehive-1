@@ -1,12 +1,15 @@
 import axios from 'axios';
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+// import { Link, Navigate } from 'react-router-dom';
+// import useHistory from 'react-router-dom';
 
 const CreateJobs = () => {
 
     const [formData, setFormData] = useState({
         title: '',
         location: '',
-        jobFunction: '',
+        jobType: '',
         category: '',
         experienceLevel: '',
         description: '',
@@ -16,17 +19,22 @@ const CreateJobs = () => {
     const handleInputChange = (event) => {
         const { id, value } = event.target;
         setFormData({ ...formData, [id]: value });
+        console.log(formData)
     };
+
+    const navigate = useNavigate();
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-
         try {
             const response = await axios.post('http://localhost:8008/api/createJobs', formData);
             console.log('Job created successfully:', response.data);
+            navigate('/'); // Navigate to homepage
+            // const history = useHistory();
+            // history.push('/'); // Navigate to homepage
             // Optionally, you can redirect the user or show a success message
         } catch (error) {
-            console.error('Error creating job:', error);
+            console.error('this if frotned error  creating job:', error);
             // Handle error: show error message or log to console
         }
     };
@@ -69,13 +77,13 @@ const CreateJobs = () => {
 
             <div className="mb-4 flex justify-between">
                 <div className="w-1/3 mr-2">
-                    <label htmlFor="jobFunction" className="block font-bold mb-2">
+                    <label htmlFor="jobType" className="block font-bold mb-2">
                         Job Type*
                     </label>
                     <select
-                        id="jobFunction"
+                        id="jobType"
                         className="w-full px-3 py-2 border border-gray-300 rounded"
-                        value={formData.jobFunction}
+                        value={formData.jobType}
                         onChange={handleInputChange}
                         required
                     >

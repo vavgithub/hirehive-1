@@ -101,8 +101,8 @@ const Filters = ({ filters, statistics, handleCheckboxChange }) => {
                             <input
                                 type="checkbox"
                                 value="design"
-                                checked={filters.jobFunction.includes('design')}
-                                onChange={() => handleCheckboxChange('jobFunction', 'design')}
+                                checked={filters.category.includes('design')}
+                                onChange={() => handleCheckboxChange('category', 'design')}
                             />
                             <span className="ml-2 text-gray-700">Design</span>
                         </label>
@@ -117,8 +117,8 @@ const Filters = ({ filters, statistics, handleCheckboxChange }) => {
                             <input
                                 type="checkbox"
                                 value="engineering"
-                                checked={filters.jobFunction.includes('engineering')}
-                                onChange={() => handleCheckboxChange('jobFunction', 'engineering')}
+                                checked={filters.category.includes('engineering')}
+                                onChange={() => handleCheckboxChange('category', 'engineering')}
                             />
                             <span className="ml-2 text-gray-700">Engineering</span>
                         </label>
@@ -131,8 +131,8 @@ const Filters = ({ filters, statistics, handleCheckboxChange }) => {
                             <input
                                 type="checkbox"
                                 value="sales"
-                                checked={filters.jobFunction.includes('sales')}
-                                onChange={() => handleCheckboxChange('jobFunction', 'sales')}
+                                checked={filters.category.includes('sales')}
+                                onChange={() => handleCheckboxChange('category', 'sales')}
                             />
                             <span className="ml-2 text-gray-700">Sales</span>
                         </label>
@@ -145,8 +145,8 @@ const Filters = ({ filters, statistics, handleCheckboxChange }) => {
                             <input
                                 type="checkbox"
                                 value="marketing"
-                                checked={filters.jobFunction.includes('marketing')}
-                                onChange={() => handleCheckboxChange('jobFunction', 'marketing')}
+                                checked={filters.category.includes('marketing')}
+                                onChange={() => handleCheckboxChange('category', 'marketing')}
                             />
                             <span className="ml-2 text-gray-700">Marketing</span>
                         </label>

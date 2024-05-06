@@ -4,7 +4,7 @@ import { Link, Outlet } from 'react-router-dom';
 const Navbar = () => {
     return (
         <div>
-            <nav className="flex gap-6 px-24 items-center bg-slate-500 text-white py-4 px-6 w-full h-[96px]">
+            <nav className="flex gap-6 px-24 items-center bg-slate-500 text-white py-4 w-full h-[96px]">
                 <div className="text-xl font-bold">
                     <Link to="/">HireHive</Link>
                 </div>

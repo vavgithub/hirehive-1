@@ -17,13 +17,13 @@ const Dashboard = () => {
         setSearchQuery(event.target.value);
     };
 
-    
+
 
 
     const [filters, setFilters] = useState({
         jobType: [],
         experienceLevel: [],
-        jobFunction: []
+        category: []
     });
 
     const [showDropdown, setShowDropdown] = useState(false);
@@ -118,6 +118,8 @@ const Dashboard = () => {
         }
     }, [searchQuery]);
 
+    const reveredJobArray = jobs.reverse();
+
     return (
         <div className="mx-24 pt-4">
             <div className="flex justify-between mb-4">
@@ -125,10 +127,27 @@ const Dashboard = () => {
                 <Link to="/create-job" className="bg-black text-white px-4 py-2 rounded">Create job listing</Link>
                 {/* <button className="bg-black text-white px-4 py-2 rounded">Create job listing</button> */}
             </div>
-            <div className="flex justify-between mb-4">
-                <div className="text-gray-600">Jobs Posted:{jobCount}</div>
-                <div className="text-gray-600">Application received:</div>
+            <div className='flex gap-3'>
+
+                <div className="flex justify-between mb-4">
+                    <div className='bg-gray-100 flex flex-col p-2 rounded-md'>
+
+                        <div className="text-gray-600" >Jobs Posted:</div>
+                        <h1 className='text-2xl'>{jobCount}</h1>
+                    </div>
+                </div>
+                <div className="flex justify-between mb-4">
+                    <div className='bg-gray-100 flex flex-col p-2 rounded-md'>
+
+                        <div className="text-gray-600" >Application Received:</div>
+                        <h1 className='text-2xl'>0</h1>
+                    </div>
+                </div>
             </div>
+
+
+
+
             <div className="mb-4">
                 <input
                     className="border border-gray-300 px-4 py-2 w-full rounded"
@@ -149,11 +168,11 @@ const Dashboard = () => {
                                     <div className="text-sm text-gray-500">posted 1 day ago</div>
                                 </div>
                                 <div className="flex mb-2">
-                                    {
+                                    {/* {
                                         job.category.map((category) => (
                                             <span key={category} className="bg-gray-200 text-gray-600 px-2 py-1 mr-2 rounded">{category}</span>
                                         ))
-                                    }
+                                    } */}
                                 </div>
                                 <div className='flex'>
 
@@ -171,27 +190,19 @@ const Dashboard = () => {
 
 
                     {
-                        jobs.map((job) => (
+                        reveredJobArray.map((job) => (
                             <div key={job._id} className="bg-white shadow rounded p-4 mb-4 w-[100%]">
                                 <div className="flex justify-between items-center mb-2">
                                     <h2 className="text-lg font-bold">{job.title}</h2>
-                                    {/* <div className="text-sm text-gray-500">posted 1 day ago</div> */}
-                                    <button className="text-gray-500 focus:outline-none" onClick={toggleDropdown}>
-                                        &#8230; {/* Three dots */}
-                                    </button>
-                                    {showDropdown && (
-                                        <div className="absolute right-4 top-8 bg-white shadow rounded py-2">
-                                            <button className="block px-4 py-2 text-gray-800 hover:bg-gray-200">Edit</button>
-                                            <button className="block px-4 py-2 text-gray-800 hover:bg-gray-200">Delete</button>
-                                        </div>
-                                    )}
+                                    <div className="text-sm text-gray-500">posted 1 day ago</div>
+
                                 </div>
                                 <div className="flex mb-2">
-                                    {
+                                    {/* {
                                         job.category.map((category) => (
                                             <span key={category} className="bg-gray-200 text-gray-600 px-2 py-1 mr-2 rounded">{category}</span>
                                         ))
-                                    }
+                                    } */}
 
                                 </div>
                                 <div className='flex'>
