@@ -40,7 +40,7 @@ const CreateJobs = () => {
     };
     
     return (
-        <div className="max-w-2xl mx-auto py-10">
+        <div className="max-w-2xl mx-24 py-10">
         <h2 className="text-3xl font-bold mb-6">Create a New Job Listing</h2>
         <form onSubmit={handleSubmit}>
             <div className="mb-4 flex justify-between">
