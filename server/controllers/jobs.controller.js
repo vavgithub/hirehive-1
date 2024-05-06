@@ -110,13 +110,18 @@ const jobsStats = async (req ,res)=>{
             totalJobs: { $sum: 1 },
             totalInternships: { $sum: { $cond: [{ $eq: ['$jobType', 'internship'] }, 1, 0] } },
             totalFullTimeJobs: { $sum: { $cond: [{ $eq: ['$jobType', 'fulltime'] }, 1, 0] } },
+            totalEntryLevelJobs: { $sum: { $cond: [{ $eq: ['$experienceLevel', 'entry'] }, 1, 0] } },
+            totalMidLevelJobs: { $sum: { $cond: [{ $eq: ['$experienceLevel', 'intermidiate'] }, 1, 0] } },
+            totalSeniorLevelJobs: { $sum: { $cond: [{ $eq: ['$experienceLevel', 'senior'] }, 1, 0] } },
             totalDesignJobs: { $sum: { $cond: [{ $eq: ['$jobFunction', 'design'] }, 1, 0] } },
             totalSalesJobs: { $sum: { $cond: [{ $eq: ['$jobFunction', 'sales'] }, 1, 0] } },
+            totalMarketingJobs: { $sum: { $cond: [{ $eq: ['$jobFunction', 'marketing'] }, 1, 0] } },
+            totalEngineeringJobs: { $sum: { $cond: [{ $eq: ['$jobFunction', 'engineering'] }, 1, 0] } },
             // Add more conditions for other job functions/categories
           },
         },
       ]);
-  
+      
       if (stats.length > 0) {
         res.json(stats[0]); // Return the first (and only) result
       } else {
@@ -127,6 +132,8 @@ const jobsStats = async (req ,res)=>{
       res.status(500).json({ message: 'Internal server error' });
     }
   };
-
-// Export the controller function
-export { createJob , getJobs , getTotalJobCount , searchJobs , filterJobs , jobsStats};
+  
+  // Export the controller function
+  export { createJob , getJobs , getTotalJobCount , searchJobs , filterJobs , jobsStats};
+  
+  // totalSeniorLevelJobs: { $sum: { $cond: [{ $eq: ['$experienceLevel', 'senior'] }, 1, 0] },
