@@ -1,5 +1,5 @@
 import express from 'express';
-import {createJob, filterJobs, getJobs, getTotalJobCount , searchJobs } from '../controllers/jobs.controller.js';
+import {createJob, filterJobs, getJobs, getTotalJobCount , jobsStats, searchJobs } from '../controllers/jobs.controller.js';
 
 const router = express.Router();
 
@@ -7,6 +7,7 @@ const router = express.Router();
 router.post('/createJobs', createJob);
 router.post('/filterJobs', filterJobs);
 router.get('/jobs', getJobs);
+router.get('/jobsStats', jobsStats);    
 router.get('/jobsCount', getTotalJobCount);
 router.get('/searchJobs', searchJobs);
 

@@ -99,10 +99,34 @@ const filterJobs = async(req, res) => {
         console.log("Error Filtergin Jobs" , error);
         res.status(500).json({ message: error.message });
     }
-} 
+}
 
-
-
+const jobsStats = async (req ,res)=>{
+    try {
+      const stats = await jobs.aggregate([
+        {
+          $group: {
+            _id: null,
+            totalJobs: { $sum: 1 },
+            totalInternships: { $sum: { $cond: [{ $eq: ['$jobType', 'internship'] }, 1, 0] } },
+            totalFullTimeJobs: { $sum: { $cond: [{ $eq: ['$jobType', 'fulltime'] }, 1, 0] } },
+            totalDesignJobs: { $sum: { $cond: [{ $eq: ['$jobFunction', 'design'] }, 1, 0] } },
+            totalSalesJobs: { $sum: { $cond: [{ $eq: ['$jobFunction', 'sales'] }, 1, 0] } },
+            // Add more conditions for other job functions/categories
+          },
+        },
+      ]);
+  
+      if (stats.length > 0) {
+        res.json(stats[0]); // Return the first (and only) result
+      } else {
+        res.json({}); // No stats found
+      }
+    } catch (error) {
+      console.error('Error fetching job statistics:', error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  };
 
 // Export the controller function
-export { createJob , getJobs , getTotalJobCount , searchJobs , filterJobs };
+export { createJob , getJobs , getTotalJobCount , searchJobs , filterJobs , jobsStats};
