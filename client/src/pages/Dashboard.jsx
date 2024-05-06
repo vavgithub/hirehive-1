@@ -146,15 +146,20 @@ const Dashboard = () => {
             </div>
 
 
-
-
-            <div className="mb-4">
-                <input
-                    className="border border-gray-300 px-4 py-2 w-full rounded"
-                    placeholder="Job title or keyword"
-                    value={searchQuery}
-                    onChange={handleSearch}
-                />
+            <div className='flex justify-between'>
+                <div className='flex gap-2'>
+                    <span>Active Jobs</span>
+                    <span>Archived Jobs</span>
+                    <span>Drafts</span>
+                </div>
+                <div className="mb-4 w-[360px]">
+                    <input
+                        className="border border-gray-300 px-4 py-2 w-full rounded"
+                        placeholder="Job title or keyword"
+                        value={searchQuery}
+                        onChange={handleSearch}
+                    />
+                </div>
             </div>
 
             <div className='flex'>
