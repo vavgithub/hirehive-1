@@ -6,8 +6,8 @@ import morgan from "morgan";
 import cors from "cors";    
 import cookieParser from "cookie-parser";
 
-import jobRoutes from './routes/jobs.js';
-import userRoutes from './routes/user.js';
+import jobRoutes from './routes/jobs.router.js';
+import userRoutes from './routes/user.router.js';
 const app = express();
 
 app.use(cors({

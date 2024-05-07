@@ -18,8 +18,12 @@ export const router = createBrowserRouter([
       element:<Navbar/>,
       children:[
         {
-          path: "/",
+          path: "/jobs",
           element: <Dashboard/>,
+        },
+        {
+          path:"/candidates",
+          element:<h1>Candidates</h1>
         },
         {
             path: "/create-job",

@@ -38,7 +38,11 @@ const jobSchema = new mongoose.Schema(
       required: [true, "req is required"],
       lowercase: true,
       trim: true,
-    },     
+    },
+    status: {
+      type: String,
+      enum: ['active', 'draft' , 'archived'], // Define possible values for status
+  }     
   },
   { timestamps: true }
 );

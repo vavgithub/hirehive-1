@@ -26,6 +26,7 @@ const createJob = async (req, res) => {
       experienceLevel,
       description,
       requirements,
+      status,
     } = req.body;
 
     // Create a new job instance using the Job model
@@ -37,6 +38,7 @@ const createJob = async (req, res) => {
       experienceLevel,
       description,
       requirements,
+      status,
     });
 
     // Save the job to the database
@@ -47,11 +49,9 @@ const createJob = async (req, res) => {
   } catch (error) {
     if (error instanceof MongooseError && error.code === 11000) {
       // Handle duplicate key error (E11000)
-      res
-        .status(400)
-        .json({
-          message: `Job with title '${req.body.title}' already exists.`,
-        });
+      res.status(400).json({
+        message: `Job with title '${req.body.title}' already exists.`,
+      });
     } else {
       // Handle other errors
       res.status(500).json({ message: error.message });
@@ -115,13 +115,25 @@ const filterJobs = async (req, res) => {
   }
 };
 
-const jobsStats = async (req, res) => {
+const activeJobsFilterCount = async (req, res) => {
   try {
     const stats = await jobs.aggregate([
+      {
+        $match: { status: "active" }, // Filter only active jobs
+      },
       {
         $group: {
           _id: null,
           totalJobs: { $sum: 1 },
+          totalActiveJobs: {
+            $sum: { $cond: [{ $eq: ["$status", "active"] }, 1, 0] },
+          },
+          totalDraftJobs: {
+            $sum: { $cond: [{ $eq: ["$status", "draft"] }, 1, 0] },
+          },
+          totalArchivedJobs: {
+            $sum: { $cond: [{ $eq: ["$status", "archived"] }, 1, 0] },
+          },
           totalInternships: {
             $sum: { $cond: [{ $eq: ["$jobType", "internship"] }, 1, 0] },
           },
@@ -167,6 +179,104 @@ const jobsStats = async (req, res) => {
   }
 };
 
+const jobsStats = async (req, res) => {
+  try {
+    const stats = await jobs.aggregate([
+      // {
+      //   $match: { status: "active" } // Filter only active jobs
+      // },
+      {
+        $group: {
+          _id: null,
+          totalJobs: { $sum: 1 },
+          totalActiveJobs: {
+            $sum: { $cond: [{ $eq: ["$status", "active"] }, 1, 0] },
+          },
+          totalDraftJobs: {
+            $sum: { $cond: [{ $eq: ["$status", "draft"] }, 1, 0] },
+          },
+          totalArchivedJobs: {
+            $sum: { $cond: [{ $eq: ["$status", "archived"] }, 1, 0] },
+          },
+          totalInternships: {
+            $sum: { $cond: [{ $eq: ["$jobType", "internship"] }, 1, 0] },
+          },
+          totalFullTimeJobs: {
+            $sum: { $cond: [{ $eq: ["$jobType", "fulltime"] }, 1, 0] },
+          },
+          totalEntryLevelJobs: {
+            $sum: { $cond: [{ $eq: ["$experienceLevel", "entry"] }, 1, 0] },
+          },
+          totalMidLevelJobs: {
+            $sum: {
+              $cond: [{ $eq: ["$experienceLevel", "intermidiate"] }, 1, 0],
+            },
+          },
+          totalSeniorLevelJobs: {
+            $sum: { $cond: [{ $eq: ["$experienceLevel", "senior"] }, 1, 0] },
+          },
+          totalDesignJobs: {
+            $sum: { $cond: [{ $eq: ["$category", "design"] }, 1, 0] },
+          },
+          totalSalesJobs: {
+            $sum: { $cond: [{ $eq: ["$category", "sales"] }, 1, 0] },
+          },
+          totalMarketingJobs: {
+            $sum: { $cond: [{ $eq: ["$category", "marketing"] }, 1, 0] },
+          },
+          totalEngineeringJobs: {
+            $sum: { $cond: [{ $eq: ["$category", "engineering"] }, 1, 0] },
+          },
+          // Add more conditions for other job functions/categories
+        },
+      },
+    ]);
+
+    if (stats.length > 0) {
+      res.json(stats[0]); // Return the first (and only) result
+    } else {
+      res.json({}); // No stats found
+    }
+  } catch (error) {
+    console.error("Error fetching job statistics:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+const deleteJob = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const result = await jobs.findByIdAndDelete(id);
+    if (!result) {
+        return res.status(404).send({ message: 'User not found' });
+    }
+    res.send({ message: 'User deleted successfully' });
+  } catch (error) {
+      console.error('Error deleting job:', error);
+      res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+const updateJob = async (req, res) => {
+  const { id } = req.params;
+  const jobUpdates = req.body;
+  try {
+      const updatedJob = await jobs.findByIdAndUpdate(id, jobUpdates, {
+          new: true, // Return the modified document rather than the original
+          runValidators: true // Ensures updates meet your schema requirements
+      });
+
+      if (!updatedJob) {
+          return res.status(404).send({ message: 'Job not found' });
+      }
+
+      res.send(updatedJob);
+  } catch (error) {
+      res.status(400).send({ message: 'Error updating job', error: error.message });
+  }
+};
+
 // Export the controller function
 export {
   createJob,
@@ -175,6 +285,9 @@ export {
   searchJobs,
   filterJobs,
   jobsStats,
+  activeJobsFilterCount,
+  deleteJob,
+  updateJob
 };
 
 // totalSeniorLevelJobs: { $sum: { $cond: [{ $eq: ['$experienceLevel', 'senior'] }, 1, 0] },

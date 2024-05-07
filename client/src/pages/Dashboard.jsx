@@ -4,8 +4,6 @@ import { Link } from 'react-router-dom';
 import Filters from '../components/Filters';
 //import useNavigate  from 'react-router-dom';
 
-
-
 const Dashboard = () => {
     //const navigate = useNavigate();
     const [jobs, setJobs] = useState([]);
@@ -13,12 +11,18 @@ const Dashboard = () => {
     const [jobCount, setJobCount] = useState(0);
     const [searchQuery, setSearchQuery] = useState('');
     const [statistics, setStatistics] = useState({});
+
+
+    const [activeJobsCountFilter, setActiveJobsCountFilter] = useState(0);
+
+    const [activeTab, setActiveTab] = useState('active'); // State to track active tab
+    const [archivedJobs, setArchivedJobs] = useState([]);
+    const [activeJobs, setActiveJobs] = useState([]);
+    const [draftJobs, setDraftJobs] = useState([]);
+
     const handleSearch = (event) => {
         setSearchQuery(event.target.value);
     };
-
-
-
 
     const [filters, setFilters] = useState({
         jobType: [],
@@ -90,6 +94,16 @@ const Dashboard = () => {
         console.log("hers the data" + statistics)
     };
 
+    const fetchActiveJobsStats = async () => {
+        try {
+            const response = await axios.get('http://localhost:8008/api/activeJobsFilterCount');
+            setActiveJobsCountFilter(response.data);
+        } catch (error) {
+            console.error('Error fetching job statistics:', error);
+        }
+        console.log("hers the data" + statistics)
+    };
+
     useEffect(() => {
         fetchFilterJobs();
     }, [filters]); // Trigger fetchJobs whenever filters change  
@@ -98,6 +112,7 @@ const Dashboard = () => {
         fetchJobs();
         fetchJobCount();
         fetchStatistics();
+        fetchActiveJobsStats();
     }, []); // Run once on component mount
 
     useEffect(() => {
@@ -118,6 +133,20 @@ const Dashboard = () => {
         }
     }, [searchQuery]);
 
+    useEffect(() => {
+        // Filter jobs based on status
+        const activeJobsFiltered = jobs.filter(job => job.status === 'active');
+        const draftJobsFiltered = jobs.filter(job => job.status === 'draft');
+        const archivedJobsFiltered = jobs.filter(job => job.status === 'archived');
+        setActiveJobs(activeJobsFiltered);
+        setDraftJobs(draftJobsFiltered);
+        setArchivedJobs(archivedJobsFiltered);
+    }, [jobs]); // Trigger filtering when jobs data changes
+
+    const handleTabClick = (tab) => {
+        setActiveTab(tab);
+    };
+
     const reveredJobArray = jobs.reverse();
 
     return (
@@ -132,7 +161,7 @@ const Dashboard = () => {
                 <div className="flex justify-between mb-4">
                     <div className='bg-gray-100 flex flex-col p-2 rounded-md'>
 
-                        <div className="text-gray-600" >Jobs Posted:</div>
+                        <div className="text-gray-600" >Total Jobs:</div>
                         <h1 className='text-2xl'>{jobCount}</h1>
                     </div>
                 </div>
@@ -148,9 +177,9 @@ const Dashboard = () => {
 
             <div className='flex justify-between'>
                 <div className='flex gap-2'>
-                    <span>Active Jobs</span>
-                    <span>Archived Jobs</span>
-                    <span>Drafts</span>
+                <span className={activeTab === 'active' ? 'underline cursor-pointer' : 'cursor-pointer'} onClick={() => handleTabClick('active')}>Active Jobs ({statistics?.totalActiveJobs})</span>
+                    <span className={activeTab === 'draft' ? 'underline cursor-pointer' : 'cursor-pointer'} onClick={() => handleTabClick('draft')}>Draft Jobs ({statistics?.totalDraftJobs})</span>
+                    <span className={activeTab === 'archived' ? 'underline cursor-pointer' : 'cursor-pointer'} onClick={() => handleTabClick('archived')}>Archived Jobs ({statistics?.totalArchivedJobs})</span>
                 </div>
                 <div className="mb-4 w-[360px]">
                     <input
@@ -163,8 +192,9 @@ const Dashboard = () => {
             </div>
 
             <div className='flex'>
-                <Filters filters={filters} statistics={statistics} handleCheckboxChange={handleCheckboxChange} />
+                <Filters filters={filters} statistics={activeJobsCountFilter} handleCheckboxChange={handleCheckboxChange} />
                 <div className='w-full ml-4'>
+                    
                     {
                         searchQuery.length != 0 && filterJobs && jobs.map((job) => {
                             <div key={job._id} className="bg-white shadow rounded p-4 mb-4 w-[100%]">
@@ -194,26 +224,13 @@ const Dashboard = () => {
                     }
 
 
-                    {
-                        reveredJobArray.map((job) => (
+
+                    {/* Display jobs based on active tab */}
+                    {activeTab === 'active' &&
+                        activeJobs.map((job) => (
                             <div key={job._id} className="bg-white shadow rounded p-4 mb-4 w-[100%]">
-                                <div className="flex justify-between items-center mb-2">
-                                    <h2 className="text-lg font-bold">{job.title}</h2>
-                                    <div className="text-sm text-gray-500">posted 1 day ago</div>
-
-                                </div>
-                                <div className="flex mb-2">
-                                    {/* {
-                                        job.category.map((category) => (
-                                            <span key={category} className="bg-gray-200 text-gray-600 px-2 py-1 mr-2 rounded">{category}</span>
-                                        ))
-                                    } */}
-
-                                </div>
-                                <div className='flex'>
-
-                                    <p className="text-gray-700 mb-4">{job.description}</p>
-                                </div>
+                                <h2 className="text-lg font-bold">{job.title}</h2>
+                                <p className="text-gray-700 mb-4">{job.description}</p>
                                 <div className="flex justify-between items-center">
                                     <div className="text-gray-600">
                                         <span className="font-bold">{job.applicationsCount}</span> applied
@@ -221,8 +238,34 @@ const Dashboard = () => {
                                     <Link to={`/job/${job._id}`} className="bg-black text-white px-4 py-2 rounded">Know More</Link>
                                 </div>
                             </div>
-                        ))
-                    }
+                        ))}
+                    {activeTab === 'draft' &&
+                        draftJobs.map((job) => (
+                            <div key={job._id} className="bg-white shadow rounded p-4 mb-4 w-[100%]">
+                                <h2 className="text-lg font-bold">{job.title}</h2>
+                                <p className="text-gray-700 mb-4">{job.description}</p>
+                                <div className="flex justify-between items-center">
+                                    <div className="text-gray-600">
+                                        <span className="font-bold">{job.applicationsCount}</span> applied
+                                    </div>
+                                    <Link to={`/job/${job._id}`} className="bg-black text-white px-4 py-2 rounded">Know More</Link>
+                                </div>
+                            </div>
+                        ))}
+                    {activeTab === 'archived' &&
+                        archivedJobs.map((job) => (
+                            <div key={job._id} className="bg-white shadow rounded p-4 mb-4 w-[100%]">
+                                <h2 className="text-lg font-bold">{job.title}</h2>
+                                <p className="text-gray-700 mb-4">{job.description}</p>
+                                <div className="flex justify-between items-center">
+                                    <div className="text-gray-600">
+                                        <span className="font-bold">{job.applicationsCount}</span> applied
+                                    </div>
+                                    <Link to={`/job/${job._id}`} className="bg-black text-white px-4 py-2 rounded">Know More</Link>
+                                </div>
+                            </div>
+                        ))}
+
                 </div>
 
             </div>

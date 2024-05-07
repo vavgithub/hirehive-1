@@ -1,7 +1,7 @@
 import React from 'react';
 
 const Filters = ({ filters, statistics, handleCheckboxChange }) => {
-    console.log('Statistics:', statistics); // Check statistics object in console
+    console.log('this is new statics', statistics); // Check statistics object in console
     return (
         <div className=' w-64'>
         <div className="bg-gray-100 p-4 rounded-md">
