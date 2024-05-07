@@ -23,7 +23,7 @@ const Filters = ({ filters, statistics, handleCheckboxChange , activeTab }) => {
                              <span className={`ml-2 ${textColor}`}>Full-time</span>
                             {/* <span className="ml-2 text-gray-700">Full-time</span> */}
                         </label>
-                        <p>{statistics?.totalFullTimeJobs || 0}</p>
+                        <p className={`ml-2 ${textColor}`}>{statistics?.totalFullTimeJobs || 0}</p>
                     </div>
                 </div>
                 <div>
@@ -37,9 +37,9 @@ const Filters = ({ filters, statistics, handleCheckboxChange , activeTab }) => {
                                 onChange={() => handleCheckboxChange('jobType', 'internship')}
                                 disabled={isDisabled}
                             />
-                            <span className="ml-2 text-gray-700">Internship</span>
+                            <span className={`ml-2 ${textColor}`}>Internship</span>
                         </label>
-                        <p> {statistics.totalInternships || 0}</p>
+                        <p className={`ml-2 ${textColor}`}> {statistics.totalInternships || 0}</p>
                     </div>
                 </div>
             </div>
@@ -58,9 +58,9 @@ const Filters = ({ filters, statistics, handleCheckboxChange , activeTab }) => {
                                 onChange={() => handleCheckboxChange('experienceLevel', 'entry')}
                                 disabled={isDisabled}
                             />
-                            <span className="ml-2 text-gray-700">Entry Level</span>
+                            <span className={`ml-2 ${textColor}`}>Entry Level</span>
                         </label>
-                        <p> {statistics.totalEntryLevelJobs || 0}</p>
+                        <p className={`ml-2 ${textColor}`}> {statistics.totalEntryLevelJobs || 0}</p>
                     </div>
                 </div>
                 <div>
@@ -73,9 +73,9 @@ const Filters = ({ filters, statistics, handleCheckboxChange , activeTab }) => {
                                 onChange={() => handleCheckboxChange('experienceLevel', 'intermidiate')}
                                 disabled={isDisabled}
                             />
-                            <span className="ml-2 text-gray-700">Intermediate</span>
+                            <span className={`ml-2 ${textColor}`}>Intermediate</span>
                         </label>
-                        <p> {statistics.totalMidLevelJobs || 0}</p>
+                        <p className={`ml-2 ${textColor}`}> {statistics.totalMidLevelJobs || 0}</p>
                     </div>
                 </div>
                 <div>
@@ -88,10 +88,10 @@ const Filters = ({ filters, statistics, handleCheckboxChange , activeTab }) => {
                                 onChange={() => handleCheckboxChange('experienceLevel', 'senior')}
                                 disabled={isDisabled}
                             />
-                            <span className="ml-2 text-gray-700">Senior Level</span>
+                            <span className={`ml-2 ${textColor}`}>Senior Level</span>
 
                         </label>
-                        <p> {statistics.totalSeniorLevelJobs || 0}</p>
+                        <p className={`ml-2 ${textColor}`}> {statistics.totalSeniorLevelJobs || 0}</p>
                     </div>
 
                 </div>
@@ -113,9 +113,9 @@ const Filters = ({ filters, statistics, handleCheckboxChange , activeTab }) => {
                                 onChange={() => handleCheckboxChange('category', 'design')}
                                 disabled={isDisabled}
                             />
-                            <span className="ml-2 text-gray-700">Design</span>
+                            <span className={`ml-2 ${textColor}`}>Design</span>
                         </label>
-                        <p>{statistics.totalDesignJobs || 0}</p>
+                        <p className={`ml-2 ${textColor}`}>{statistics.totalDesignJobs || 0}</p>
                     </div>
 
                 </div>
@@ -130,9 +130,9 @@ const Filters = ({ filters, statistics, handleCheckboxChange , activeTab }) => {
                                 onChange={() => handleCheckboxChange('category', 'engineering')}
                                 disabled={isDisabled}
                             />
-                            <span className="ml-2 text-gray-700">Engineering</span>
+                            <span className={`ml-2 ${textColor}`}>Engineering</span>
                         </label>
-                        <p>{statistics.totalEngineeringJobs || 0}</p>
+                        <p className={`ml-2 ${textColor}`}>{statistics.totalEngineeringJobs || 0}</p>
                     </div>
                 </div>
                 <div>
@@ -145,9 +145,9 @@ const Filters = ({ filters, statistics, handleCheckboxChange , activeTab }) => {
                                 onChange={() => handleCheckboxChange('category', 'sales')}
                                 disabled={isDisabled}
                             />
-                            <span className="ml-2 text-gray-700">Sales</span>
+                            <span className={`ml-2 ${textColor}`}>Sales</span>
                         </label>
-                        <p>{statistics.totalSalesJobs || 0}</p>
+                        <p className={`ml-2 ${textColor}`}>{statistics.totalSalesJobs || 0}</p>
                     </div>
                 </div>
                 <div>
@@ -160,9 +160,9 @@ const Filters = ({ filters, statistics, handleCheckboxChange , activeTab }) => {
                                 onChange={() => handleCheckboxChange('category', 'marketing')}
                                 disabled={isDisabled}
                             />
-                            <span className="ml-2 text-gray-700">Marketing</span>
+                            <span className={`ml-2 ${textColor}`}>Marketing</span>
                         </label>
-                        <p>{statistics.totalMarketingJobs || 0}</p>
+                        <p className={`ml-2 ${textColor}`}>{statistics.totalMarketingJobs || 0}</p>
                     </div>
                 </div>
             </div>
