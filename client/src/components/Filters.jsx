@@ -1,7 +1,9 @@
 import React from 'react';
 
-const Filters = ({ filters, statistics, handleCheckboxChange }) => {
+const Filters = ({ filters, statistics, handleCheckboxChange , activeTab }) => {
     console.log('this is new statics', statistics); // Check statistics object in console
+    const isDisabled = activeTab === 'draft' || activeTab === 'archived'; // Determine if inputs should be disabled
+    const textColor = isDisabled ? 'text-gray-400' : 'text-gray-700'; // Conditional text color
     return (
         <div className=' w-64'>
         <div className="bg-gray-100 p-4 rounded-md">
@@ -16,8 +18,10 @@ const Filters = ({ filters, statistics, handleCheckboxChange }) => {
                                 value="fulltime"
                                 checked={filters.jobType.includes('fulltime')}
                                 onChange={() => handleCheckboxChange('jobType', 'fulltime')}
+                                disabled={isDisabled}
                             />
-                            <span className="ml-2 text-gray-700">Full-time</span>
+                             <span className={`ml-2 ${textColor}`}>Full-time</span>
+                            {/* <span className="ml-2 text-gray-700">Full-time</span> */}
                         </label>
                         <p>{statistics?.totalFullTimeJobs || 0}</p>
                     </div>
@@ -31,6 +35,7 @@ const Filters = ({ filters, statistics, handleCheckboxChange }) => {
                                 value="internship"
                                 checked={filters.jobType.includes('internship')}
                                 onChange={() => handleCheckboxChange('jobType', 'internship')}
+                                disabled={isDisabled}
                             />
                             <span className="ml-2 text-gray-700">Internship</span>
                         </label>
@@ -51,6 +56,7 @@ const Filters = ({ filters, statistics, handleCheckboxChange }) => {
                                 value="entry"
                                 checked={filters.experienceLevel.includes('entry')}
                                 onChange={() => handleCheckboxChange('experienceLevel', 'entry')}
+                                disabled={isDisabled}
                             />
                             <span className="ml-2 text-gray-700">Entry Level</span>
                         </label>
@@ -65,6 +71,7 @@ const Filters = ({ filters, statistics, handleCheckboxChange }) => {
                                 value="intermidiate"
                                 checked={filters.experienceLevel.includes('intermidiate')}
                                 onChange={() => handleCheckboxChange('experienceLevel', 'intermidiate')}
+                                disabled={isDisabled}
                             />
                             <span className="ml-2 text-gray-700">Intermediate</span>
                         </label>
@@ -79,6 +86,7 @@ const Filters = ({ filters, statistics, handleCheckboxChange }) => {
                                 value="senior"
                                 checked={filters.experienceLevel.includes('senior')}
                                 onChange={() => handleCheckboxChange('experienceLevel', 'senior')}
+                                disabled={isDisabled}
                             />
                             <span className="ml-2 text-gray-700">Senior Level</span>
 
@@ -103,6 +111,7 @@ const Filters = ({ filters, statistics, handleCheckboxChange }) => {
                                 value="design"
                                 checked={filters.category.includes('design')}
                                 onChange={() => handleCheckboxChange('category', 'design')}
+                                disabled={isDisabled}
                             />
                             <span className="ml-2 text-gray-700">Design</span>
                         </label>
@@ -119,6 +128,7 @@ const Filters = ({ filters, statistics, handleCheckboxChange }) => {
                                 value="engineering"
                                 checked={filters.category.includes('engineering')}
                                 onChange={() => handleCheckboxChange('category', 'engineering')}
+                                disabled={isDisabled}
                             />
                             <span className="ml-2 text-gray-700">Engineering</span>
                         </label>
@@ -133,6 +143,7 @@ const Filters = ({ filters, statistics, handleCheckboxChange }) => {
                                 value="sales"
                                 checked={filters.category.includes('sales')}
                                 onChange={() => handleCheckboxChange('category', 'sales')}
+                                disabled={isDisabled}
                             />
                             <span className="ml-2 text-gray-700">Sales</span>
                         </label>
@@ -147,6 +158,7 @@ const Filters = ({ filters, statistics, handleCheckboxChange }) => {
                                 value="marketing"
                                 checked={filters.category.includes('marketing')}
                                 onChange={() => handleCheckboxChange('category', 'marketing')}
+                                disabled={isDisabled}
                             />
                             <span className="ml-2 text-gray-700">Marketing</span>
                         </label>

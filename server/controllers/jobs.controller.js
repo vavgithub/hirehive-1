@@ -277,6 +277,29 @@ const updateJob = async (req, res) => {
   }
 };
 
+const archiveJob = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+      const job = await jobs.findById(id);
+
+      if (!job) {
+          return res.status(404).send({ message: 'Job not found' });
+      }
+
+      if (job.status === 'active') {
+          job.status = 'archived';
+          await job.save();
+          res.send({ message: 'Job status updated to archived' });
+      } else {
+          res.status(400).send({ message: 'Job is not in an active state' });
+      }
+  } catch (error) {
+      res.status(500).send({ message: 'Error updating job status', error: error.message });
+  }
+};
+
+
 // Export the controller function
 export {
   createJob,
@@ -287,7 +310,8 @@ export {
   jobsStats,
   activeJobsFilterCount,
   deleteJob,
-  updateJob
+  updateJob,
+  archiveJob,
 };
 
 // totalSeniorLevelJobs: { $sum: { $cond: [{ $eq: ['$experienceLevel', 'senior'] }, 1, 0] },

@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import Filters from '../components/Filters';
+// import { fetchActiveJobsStats } from '../utils';
 //import useNavigate  from 'react-router-dom';
 
 const Dashboard = () => {
@@ -177,7 +178,7 @@ const Dashboard = () => {
 
             <div className='flex justify-between'>
                 <div className='flex gap-2'>
-                <span className={activeTab === 'active' ? 'underline cursor-pointer' : 'cursor-pointer'} onClick={() => handleTabClick('active')}>Active Jobs ({statistics?.totalActiveJobs})</span>
+                    <span className={activeTab === 'active' ? 'underline cursor-pointer' : 'cursor-pointer'} onClick={() => handleTabClick('active')}>Active Jobs ({statistics?.totalActiveJobs})</span>
                     <span className={activeTab === 'draft' ? 'underline cursor-pointer' : 'cursor-pointer'} onClick={() => handleTabClick('draft')}>Draft Jobs ({statistics?.totalDraftJobs})</span>
                     <span className={activeTab === 'archived' ? 'underline cursor-pointer' : 'cursor-pointer'} onClick={() => handleTabClick('archived')}>Archived Jobs ({statistics?.totalArchivedJobs})</span>
                 </div>
@@ -192,9 +193,9 @@ const Dashboard = () => {
             </div>
 
             <div className='flex'>
-                <Filters filters={filters} statistics={activeJobsCountFilter} handleCheckboxChange={handleCheckboxChange} />
+                <Filters filters={filters} statistics={activeJobsCountFilter} handleCheckboxChange={handleCheckboxChange} activeTab={activeTab} />
                 <div className='w-full ml-4'>
-                    
+
                     {
                         searchQuery.length != 0 && filterJobs && jobs.map((job) => {
                             <div key={job._id} className="bg-white shadow rounded p-4 mb-4 w-[100%]">
