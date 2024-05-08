@@ -32,7 +32,7 @@ const CreateJobs = () => {
             const formDataWithStatus = { ...formData, status };
             const response = await axios.post('http://localhost:8008/api/createJobs', formDataWithStatus);
             console.log('Job created successfully:', response.data);
-            navigate('/'); // Navigate to homepage
+            navigate('/jobs'); // Navigate to homepage
             // const history = useHistory();
             // history.push('/'); // Navigate to homepage
             // Optionally, you can redirect the user or show a success message
@@ -50,14 +50,19 @@ const CreateJobs = () => {
         try {
             const response = await axios.post('http://localhost:8008/api/createJobs', data);
             console.log('Job created successfully:', response.data);
-            navigate('/');
+            navigate('/jobs');
         } catch (error) {
             console.error('Error creating job:', error);
         }
     };
 
+    const back = () => {
+        navigate('/jobs');
+    }
+
     return (
         <div className="max-w-2xl mx-24 py-10">
+            <div onClick={back}>Back</div>
             <h2 className="text-3xl font-bold mb-6">Create a New Job Listing</h2>
             <form onSubmit={handleSubmit}>
                 <div className="mb-4 flex justify-between">

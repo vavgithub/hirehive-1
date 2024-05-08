@@ -14,15 +14,18 @@ const jobSchema = new mongoose.Schema(
     },
     jobType:{
       type:String,
-      enum:["fulltime" , "internship"],
+      enum:['',"fulltime" , "internship"],
+      default:"fulltime",
     },
     category:{
       type:String,
-      enum:["design" , "engineering" , "sales" , "marketing"],
+      enum:['',"design" , "engineering" , "sales" , "marketing"],
+      default:"design",
     },
     experienceLevel:{
       type:String,
-      enum:["entry" , "intermidiate" , "senior"],
+      enum:['',"entry" , "intermidiate" , "senior"],
+      default:"entry",
     },
     description: {
       type: String,
@@ -34,8 +37,9 @@ const jobSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ['active', 'draft' , 'archived'], // Define possible values for status
-  }     
+      enum: [ '', 'active', 'draft' , 'archived'], // Define possible values for status
+      default: 'draft', // Set default value for status
+    }     
   },
   { timestamps: true }
 );
