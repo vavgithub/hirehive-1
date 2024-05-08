@@ -21,6 +21,8 @@ const Dashboard = () => {
     const [activeJobs, setActiveJobs] = useState([]);
     const [draftJobs, setDraftJobs] = useState([]);
 
+    const [open, setOpen] = useState(false);
+
     const handleSearch = (event) => {
         setSearchQuery(event.target.value);
     };
@@ -32,6 +34,74 @@ const Dashboard = () => {
     });
 
     const [showDropdown, setShowDropdown] = useState(false);
+
+    const [modalAction, setModalAction] = useState('');
+
+    const handleAction = (action, jobId) => {
+        setOpen(true);
+        setSelectedJobId(jobId);
+        setModalAction(action); // Set the type of action to manage modal content
+    };
+
+    const confirmAction = () => {
+        if (modalAction === 'delete') {
+            axios.delete(`http://localhost:8008/api/deleteJob/${selectedJobId}`)
+                .then(() => {
+                    console.log("Job deleted successfully");
+                    setOpen(false);
+                    window.location.reload();
+                })
+                .catch(error => {
+                    console.error("Failed to delete the job", error);
+                });
+        }
+        if (modalAction === 'archive') {
+            axios.put(`http://localhost:8008/api/archiveJob/${selectedJobId}`)
+                .then(response => {
+                    console.log("Job archived successfully:", response.data.message);
+                    // Update the state to reflect the change without reloading:
+                    const updatedJobs = activeJobs.map(job => {
+                        if (job._id === selectedJobId) {
+                            return { ...job, status: 'archived' };
+                        }
+                        return job;
+                    });
+                    setActiveJobs(updatedJobs);
+                    setOpen(false);
+                    window.location.reload();
+                    // Alternatively, you could reload the page if state management gets too complex:
+                    // window.location.reload();
+                })
+                .catch(error => {
+                    console.error("Failed to archive the job", error.response ? error.response.data.message : "No additional error information");
+                    // Handle error in UI
+                });
+        }
+        if (modalAction === 'unarchive') {
+            axios.put(`http://localhost:8008/api/unarchiveJob/${selectedJobId}`)
+                .then(response => {
+                    console.log("Job archived successfully:", response.data.message);
+                    // Update the state to reflect the change without reloading:
+                    const updatedJobs = archivedJobs.map(job => {
+                        if (job._id === selectedJobId) {
+                            return { ...job, status: 'active' };
+                        }
+                        return job;
+                    });
+                    setArchivedJobs(updatedJobs);
+                    setOpen(false);
+                    window.location.reload();
+                    // Alternatively, you could reload the page if state management gets too complex:
+                    // window.location.reload();
+                })
+                .catch(error => {
+                    console.error("Failed to archive the job", error.response ? error.response.data.message : "No additional error information");
+                    // Handle error in UI
+                });
+        }
+        // Add further actions like edit or archive if needed
+    };
+
 
     const toggleDropdown = () => {
         setShowDropdown(!showDropdown);
@@ -49,7 +119,6 @@ const Dashboard = () => {
 
         setFilters(updatedFilters);
     };
-
 
     const fetchJobs = async () => {
         try {
@@ -103,6 +172,32 @@ const Dashboard = () => {
             console.error('Error fetching job statistics:', error);
         }
         console.log("hers the data" + statistics)
+    };
+
+    const [selectedJobId, setSelectedJobId] = useState(null);
+    const handleDelete = (jobId) => {
+        setOpen(true);
+        setSelectedJobId(jobId); // Store job ID to be accessible for the delete confirmation
+    };
+    const handleArchive = (jobId) => {
+        setOpen(true);
+        setSelectedJobId(jobId); // Store job ID to be accessible for the delete confirmation
+    };
+
+    const confirmDelete = () => {
+        axios.delete(`http://localhost:8008/api/deleteJob/${selectedJobId}`)
+            .then(response => {
+                const updatedJobs = activeJobs.filter(job => job._id !== selectedJobId);
+                setActiveJobs(updatedJobs);
+                console.log("Job deleted successfully");
+                setOpen(false);
+                window.location.reload(); // Reload the page to reflect changes
+                // Here you can also refresh the job list or handle the UI update
+            })
+            .catch(error => {
+                console.error("Failed to delete the job", error);
+                // Handle error appropriately in the UI
+            });
     };
 
     useEffect(() => {
@@ -230,7 +325,19 @@ const Dashboard = () => {
                     {activeTab === 'active' &&
                         activeJobs.map((job) => (
                             <div key={job._id} className="bg-white shadow rounded p-4 mb-4 w-[100%]">
-                                <h2 className="text-lg font-bold">{job.title}</h2>
+                                <div className='flex justify-between'>
+                                    <h2 className="text-lg font-bold">{job.title}</h2>
+                                    <div>
+                                        {/* <div onClick={() => handleDelete(job._id)}>Delete</div>
+                                        <div onClick={() => handleArchive(job._id)}>Edit</div>
+                                        <div onClick={() => setOpen(true)}>Archived</div>
+                                         */}
+                                        <button onClick={() => handleAction('delete', job._id)}>Delete</button>
+                                        <button onClick={() => handleAction('edit', job._id)}>Edit</button>
+                                        <button onClick={() => handleAction('archive', job._id)}>Archive</button>
+
+                                    </div>
+                                </div>
                                 <p className="text-gray-700 mb-4">{job.description}</p>
                                 <div className="flex justify-between items-center">
                                     <div className="text-gray-600">
@@ -256,7 +363,20 @@ const Dashboard = () => {
                     {activeTab === 'archived' &&
                         archivedJobs.map((job) => (
                             <div key={job._id} className="bg-white shadow rounded p-4 mb-4 w-[100%]">
-                                <h2 className="text-lg font-bold">{job.title}</h2>
+                                <div className='flex justify-between'>
+                                    <h2 className="text-lg font-bold">{job.title}</h2>
+                                    <div>
+                                        {/* <div onClick={() => handleDelete(job._id)}>Delete</div>
+                                        <div onClick={() => handleArchive(job._id)}>Edit</div>
+                                        <div onClick={() => setOpen(true)}>Archived</div>
+                                         */}
+                                        {/* <button onClick={() => handleAction('delete', job._id)}>Delete</button> */}
+                                        {/* <button onClick={() => handleAction('edit', job._id)}>Edit</button> */}
+                                        <button onClick={() => handleAction('unarchive', job._id)}>Unarchive</button>
+
+                                    </div>
+                                </div>
+                                {/* <h2 className="text-lg font-bold">{job.title}</h2> */}
                                 <p className="text-gray-700 mb-4">{job.description}</p>
                                 <div className="flex justify-between items-center">
                                     <div className="text-gray-600">
@@ -270,6 +390,7 @@ const Dashboard = () => {
                 </div>
 
             </div>
+            <Modal open={open} onClose={() => setOpen(false)} action={modalAction} confirmAction={confirmAction} />
 
         </div>
 
@@ -278,3 +399,45 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
+
+const Modal = ({ open, onClose, action, confirmAction }) => {
+    return (
+        <div onClick={onClose} className={`fixed inset-0 flex justify-center items-center ${open ? "visible bg-black/20" : "invisible"}`}>
+            <div onClick={(e) => e.stopPropagation()} className={`bg-white rounded-xl shadow p-6 ${open ? "scale-100 opacity-100" : "scale-125 opacity-0"}`}>
+                <button onClick={onClose} className="absolute top-2 right-2 p-1 rounded-lg text-gray-400 bg-white hover:bg-gray-50 hover:text-gray-600">x</button>
+                {/* <div className="text-center w-56">
+                    <h3 className="text-lg font-black text-gray-800">{action === 'delete' ? 'Confirm Delete' : action === 'edit' ? 'Confirm Edit' : 'Confirm Archive'}</h3>
+                    <p className="text-sm text-gray-500">
+                        {action === 'delete' ? 'Are you sure you want to delete this item?' : action === 'edit' ? 'Are you sure you want to edit this item?' : 'Are you sure you want to archive this item?'}
+                    </p>
+                    <div className="flex gap-4">
+                        <button className="btn btn-danger w-full" onClick={confirmAction}>Confirm</button>
+                        <button className="btn btn-light w-full" onClick={onClose}>Cancel</button>
+                    </div>
+                </div> */}
+                <div className="text-center w-56">
+                    <h3 className="text-lg font-black text-gray-800">
+                        {action === 'delete' ? 'Confirm Delete' :
+                            action === 'edit' ? 'Confirm Edit' :
+                                action === 'unarchive' ? 'Confirm Unarchive' : 'Confirm Archive'}
+                    </h3>
+                    <p className="text-sm text-gray-500">
+                        {action === 'delete' ? 'Are you sure you want to delete this item?' :
+                            action === 'edit' ? 'Are you sure you want to edit this item?' :
+                                action === 'unarchive' ? 'Are you sure you want to unarchive this item?' :
+                                    'Are you sure you want to archive this item?'}
+                    </p>
+                    <div className="flex gap-4">
+                        <button className="btn btn-danger w-full" onClick={confirmAction}>
+                            Confirm
+                        </button>
+                        <button className="btn btn-light w-full" onClick={onClose}>
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    )
+};

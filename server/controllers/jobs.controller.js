@@ -299,6 +299,31 @@ const archiveJob = async (req, res) => {
   }
 };
 
+//here unarvhicee means for we are acting thi job from archive to active again
+const unarchiveJob = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+      const job = await jobs.findById(id);
+
+      if (!job) {
+          return res.status(404).send({ message: 'Job not found' });
+      }
+
+      if (job.status === 'archived') {
+          job.status = 'active';
+          await job.save();
+          res.send({ message: 'Job status updated to active' });
+      } else {
+          res.status(400).send({ message: 'Job is not in an archieved state' });
+      }
+  } catch (error) {
+      res.status(500).send({ message: 'Error updating job status', error: error.message });
+  }
+};
+
+
+
 
 // Export the controller function
 export {
@@ -312,6 +337,7 @@ export {
   deleteJob,
   updateJob,
   archiveJob,
+  unarchiveJob,
 };
 
 // totalSeniorLevelJobs: { $sum: { $cond: [{ $eq: ['$experienceLevel', 'senior'] }, 1, 0] },

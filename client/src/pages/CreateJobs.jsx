@@ -28,8 +28,8 @@ const CreateJobs = () => {
         event.preventDefault();
         try {
             // Set status based on button clicked
-            const status = event.nativeEvent.submitter.name === 'createJob' ? 'active' : 'draft';
-            const formDataWithStatus = { ...formData, status };
+            // const status = event.nativeEvent.submitter.name === 'createJob' ? 'active' : 'draft';
+            const formDataWithStatus = { ...formData, status: 'active' };
             const response = await axios.post('http://localhost:8008/api/createJobs', formDataWithStatus);
             console.log('Job created successfully:', response.data);
             navigate('/jobs'); // Navigate to homepage
