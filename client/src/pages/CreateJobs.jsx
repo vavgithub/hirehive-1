@@ -42,6 +42,20 @@ const CreateJobs = () => {
         }
     };
 
+    const handleSaveForLater = async () => {
+        await postJobData({ ...formData, status: 'draft' });
+    };
+
+    const postJobData = async (data) => {
+        try {
+            const response = await axios.post('http://localhost:8008/api/createJobs', data);
+            console.log('Job created successfully:', response.data);
+            navigate('/');
+        } catch (error) {
+            console.error('Error creating job:', error);
+        }
+    };
+
     return (
         <div className="max-w-2xl mx-24 py-10">
             <h2 className="text-3xl font-bold mb-6">Create a New Job Listing</h2>
@@ -168,7 +182,7 @@ const CreateJobs = () => {
                     <button type="submit" name="createJob" className="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded mr-2">
                         Create Job Listing
                     </button>
-                    <button type="submit" name="saveForLater" className="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded">
+                    <button type="button" onClick={handleSaveForLater} name="saveForLater" className="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded">
                         Save for Later
                     </button>
                 </div>
