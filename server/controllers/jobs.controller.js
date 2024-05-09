@@ -54,7 +54,7 @@ const createJob = async (req, res) => {
       });
     } else {
       // Handle other errors
-      res.status(500).json({ message: error.message });
+      res.status(500).json({ msg:"this is coming from backned" , message: error.message });
     }
   }
 };
@@ -322,6 +322,43 @@ const unarchiveJob = async (req, res) => {
   }
 };
 
+const editJob = async (req, res) => {
+  const { id } = req.params;
+  const updates = req.body;
+
+  try {
+      const job = await jobs.findById(id);
+
+      if (!job) {
+          return res.status(404).send({ message: 'Job not found' });
+      }
+
+      // Update each field with new data
+      Object.keys(updates).forEach((key) => {
+          job[key] = updates[key];
+      });
+
+      await job.save();
+      res.send({ message: 'Job updated successfully', job });
+  } catch (error) {
+      res.status(500).send({ message: 'Error updating job', error: error.message });
+  }
+};
+
+const getJobById = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+      const job = await jobs.findById(id);
+      if (!job) {
+          return res.status(404).send({ message: 'Job not found' });
+      }
+      res.send(job);
+  } catch (error) {
+      res.status(500).send({ message: 'Error retrieving job', error: error.message });
+  }
+};
+
 
 
 
@@ -338,6 +375,8 @@ export {
   updateJob,
   archiveJob,
   unarchiveJob,
+  editJob,
+  getJobById
 };
 
 // totalSeniorLevelJobs: { $sum: { $cond: [{ $eq: ['$experienceLevel', 'senior'] }, 1, 0] },

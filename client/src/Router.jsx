@@ -11,6 +11,7 @@ import Navbar from "./components/Navbar";
 import CreateJobs from "./pages/CreateJobs";
 import Authlayout from "./auth/Authlayout";
 import Register from "./pages/Register";
+import EditJobs from "./pages/EditJobs";
   
 export const router = createBrowserRouter([
     {
@@ -28,6 +29,10 @@ export const router = createBrowserRouter([
         {
             path: "/create-job",
             element: <CreateJobs/>,
+        },
+        {
+          path:"/edit-job/:id",
+          element:<EditJobs/>
         }
       ]
     },    

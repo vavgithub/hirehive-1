@@ -24,7 +24,7 @@ const jobSchema = new mongoose.Schema(
     },
     experienceLevel:{
       type:String,
-      enum:['',"entry" , "intermidiate" , "senior"],
+      enum:['',"entry" , "intermediate" , "senior"],
       default:"entry",
     },
     description: {
