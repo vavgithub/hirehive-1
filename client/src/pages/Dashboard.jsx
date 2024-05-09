@@ -48,6 +48,30 @@ const EditIcon = () => {
     )
 }
 
+const ArrowIcon = () => {
+    return (
+
+        <svg width="25" height="20" viewBox="0 0 25 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g filter="url(#filter0_d_819_1504)">
+                <path d="M5.78949 7C5.2372 7 4.78949 7.44772 4.78949 8C4.78949 8.55228 5.2372 9 5.78949 9V7ZM19.7895 8L20.4966 8.70711C20.8871 8.31658 20.8871 7.68342 20.4966 7.29289L19.7895 8ZM13.4966 0.292893C13.1061 -0.0976311 12.4729 -0.0976311 12.0824 0.292893C11.6919 0.683417 11.6919 1.31658 12.0824 1.70711L13.4966 0.292893ZM12.0824 14.2929C11.6919 14.6834 11.6919 15.3166 12.0824 15.7071C12.4729 16.0976 13.1061 16.0976 13.4966 15.7071L12.0824 14.2929ZM5.78949 9H19.7895V7H5.78949V9ZM12.0824 1.70711L19.0824 8.70711L20.4966 7.29289L13.4966 0.292893L12.0824 1.70711ZM19.0824 7.29289L12.0824 14.2929L13.4966 15.7071L20.4966 8.70711L19.0824 7.29289Z" fill="white" />
+            </g>
+            <defs>
+                <filter id="filter0_d_819_1504" x="0.78949" y="0" width="24" height="24" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                    <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                    <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha" />
+                    <feOffset dy="4" />
+                    <feGaussianBlur stdDeviation="2" />
+                    <feComposite in2="hardAlpha" operator="out" />
+                    <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0" />
+                    <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_819_1504" />
+                    <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_819_1504" result="shape" />
+                </filter>
+            </defs>
+        </svg>
+
+    )
+}
+
 const Dashboard = () => {
     const [jobs, setJobs] = useState([]);
     const [filterJobs, setFilterJobs] = useState([]);
@@ -222,30 +246,7 @@ const Dashboard = () => {
     };
 
     const [selectedJobId, setSelectedJobId] = useState(null);
-    // const handleDelete = (jobId) => {
-    //     setOpen(true);
-    //     setSelectedJobId(jobId); // Store job ID to be accessible for the delete confirmation
-    // };
-    // const handleArchive = (jobId) => {
-    //     setOpen(true);
-    //     setSelectedJobId(jobId); // Store job ID to be accessible for the delete confirmation
-    // };
 
-    // const confirmDelete = () => {
-    //     axios.delete(`http://localhost:8008/api/deleteJob/${selectedJobId}`)
-    //         .then(response => {
-    //             const updatedJobs = activeJobs.filter(job => job._id !== selectedJobId);
-    //             setActiveJobs(updatedJobs);
-    //             console.log("Job deleted successfully");
-    //             setOpen(false);
-    //             window.location.reload(); // Reload the page to reflect changes
-    //             // Here you can also refresh the job list or handle the UI update
-    //         })
-    //         .catch(error => {
-    //             console.error("Failed to delete the job", error);
-    //             // Handle error appropriately in the UI
-    //         });
-    // };
 
     useEffect(() => {
         fetchFilterJobs();
@@ -346,11 +347,7 @@ const Dashboard = () => {
                                     <div className="text-sm text-gray-500">posted 1 day ago</div>
                                 </div>
                                 <div className="flex mb-2">
-                                    {/* {
-                                        job.category.map((category) => (
-                                            <span key={category} className="bg-gray-200 text-gray-600 px-2 py-1 mr-2 rounded">{category}</span>
-                                        ))
-                                    } */}
+
                                 </div>
                                 <div className='flex'>
 
@@ -371,7 +368,7 @@ const Dashboard = () => {
                     {/* Display jobs based on active tab */}
                     {activeTab === 'active' &&
                         activeJobs.map((job) => (
-                            <div key={job._id} className="bg-white shadow rounded p-4 mb-4 w-full group relative overflow-hidden h-auto">
+                            <div key={job._id} className="bg-white shadow rounded p-2 mb-4 w-full group relative overflow-hidden h-auto">
                                 <div className='flex justify-between items-center'>
                                     <h2 className="text-lg font-bold">{job.title}</h2>
                                     <div className="absolute  right-0 top-0 bottom-0 flex flex-col  pr-4 translate-x-full group-hover:translate-x-0 transition-transform duration-200 ease-in-out">
@@ -391,12 +388,12 @@ const Dashboard = () => {
                                         </div>
                                     </div>
                                 </div>
-                                <p className="text-gray-700 mb-4 w-[90%]">{job.description}</p>
-                                <div className="flex justify-between items-center pt-4">
+                                <p className="text-gray-700 mb-4 w-[90%] h-[60px]">{job.description}</p>
+                                <div className="flex justify-between items-center pt-2 border-t-2">
                                     <div className="text-gray-600">
                                         <span className="font-bold">{job.applicationsCount}</span> applied
                                     </div>
-                                    <Link to={`/job/${job._id}`} className="bg-black text-white px-4 py-2 rounded">Know More</Link>
+                                    <Link to={`/view-job/${job._id}`} className="bg-black text-white px-4 py-2 rounded-[70px] flex items-center gap-1 z-10">Know More <ArrowIcon /> </Link>
                                 </div>
                             </div>
                         ))
@@ -416,14 +413,10 @@ const Dashboard = () => {
                                             <EditIcon />
 
                                         </div>
-                                        {/* <div className='flex items-center justify-between '>
 
-                                            <button onClick={() => handleAction('archive', job._id)} className="text-black rounded m-1">Archive</button>
-                                            <ArchiveIcon />
-                                        </div> */}
                                     </div>
                                 </div>
-                                <p className="text-gray-700 mb-4 w-[90%]" style={{width:"90%"}}>{job.description}</p>
+                                <p className="text-gray-700 mb-4 w-[90%]" style={{ width: "90%" }}>{job.description}</p>
                                 <div className="flex justify-between items-center pt-4">
                                     <div className="text-gray-600">
                                         <span className="font-bold">{job.applicationsCount}</span> applied
@@ -434,30 +427,7 @@ const Dashboard = () => {
                         ))}
                     {activeTab === 'archived' &&
                         archivedJobs.map((job) => (
-                            // <div key={job._id} className="bg-white shadow rounded p-4 mb-4 w-[100%]">
-                            //     <div className='flex justify-between'>
-                            //         <h2 className="text-lg font-bold">{job.title}</h2>
-                            //         <div>
-                            //             {/* <div onClick={() => handleDelete(job._id)}>Delete</div>
-                            //             <div onClick={() => handleArchive(job._id)}>Edit</div>
-                            //             <div onClick={() => setOpen(true)}>Archived</div>
-                            //              */}
-                            //             {/* <button onClick={() => handleAction('delete', job._id)}>Delete</button> */}
-                            //             {/* <button onClick={() => handleAction('edit', job._id)}>Edit</button> */}
-                            //             <button onClick={() => handleAction('unarchive', job._id)}>Unarchive</button>
-                            //             <button onClick={() => handleAction('delete', job._id)}>Delete</button>
 
-                            //         </div>
-                            //     </div>
-                            //     {/* <h2 className="text-lg font-bold">{job.title}</h2> */}
-                            //     <p className="text-gray-700 mb-4">{job.description}</p>
-                            //     <div className="flex justify-between items-center">
-                            //         <div className="text-gray-600">
-                            //             <span className="font-bold">{job.applicationsCount}</span> applied
-                            //         </div>
-                            //         <Link to={`/job/${job._id}`} className="bg-black text-white px-4 py-2 rounded">Know More</Link>
-                            //     </div>
-                            // </div>
                             <div key={job._id} className="bg-white shadow rounded p-4 mb-4 w-full group relative overflow-hidden h-auto">
                                 <div className='flex justify-between items-center'>
                                     <h2 className="text-lg font-bold">{job.title}</h2>
@@ -473,22 +443,18 @@ const Dashboard = () => {
                                             <DeleteIcon />
                                         </div>
 
-                                        {/* <div className='flex items-center justify-between '>
 
-                                            <button onClick={() => handleAction('archive', job._id)} className="text-black rounded m-1">Archive</button>
-                                            <ArchiveIcon />
-                                        </div> */}
                                     </div>
                                 </div>
-                               
-                                    <p className="text-gray-700 mb-4 w-[90%]">{job.description}</p>
-                             
+
+                                <p className="text-gray-700 mb-4 w-[90%]">{job.description}</p>
+
 
                                 <div className="flex justify-between items-center pt-4">
                                     <div className="text-gray-600">
                                         <span className="font-bold">{job.applicationsCount}</span> applied
                                     </div>
-                                    <Link to={`/job/${job._id}`} className="bg-black text-white px-4 py-2 rounded">Know More</Link>
+                                    <Link to={`/view-jobs/${job._id}`} className="bg-black text-white px-4 py-2 rounded">Know More</Link>
                                 </div>
                             </div>
                         ))}
@@ -512,16 +478,7 @@ const Modal = ({ open, onClose, action, confirmAction }) => {
         <div onClick={onClose} className={`fixed inset-0 flex justify-center items-center ${open ? "visible bg-black/20" : "invisible"}`}>
             <div onClick={(e) => e.stopPropagation()} className={`bg-white rounded-xl shadow p-6 ${open ? "scale-100 opacity-100" : "scale-125 opacity-0"}`}>
                 <button onClick={onClose} className="absolute top-2 right-2 p-1 rounded-lg text-gray-400 bg-white hover:bg-gray-50 hover:text-gray-600">x</button>
-                {/* <div className="text-center w-56">
-                    <h3 className="text-lg font-black text-gray-800">{action === 'delete' ? 'Confirm Delete' : action === 'edit' ? 'Confirm Edit' : 'Confirm Archive'}</h3>
-                    <p className="text-sm text-gray-500">
-                        {action === 'delete' ? 'Are you sure you want to delete this item?' : action === 'edit' ? 'Are you sure you want to edit this item?' : 'Are you sure you want to archive this item?'}
-                    </p>
-                    <div className="flex gap-4">
-                        <button className="btn btn-danger w-full" onClick={confirmAction}>Confirm</button>
-                        <button className="btn btn-light w-full" onClick={onClose}>Cancel</button>
-                    </div>
-                </div> */}
+
                 <div className="text-center w-56">
                     <h3 className="text-lg font-black text-gray-800">
                         {action === 'delete' ? 'Confirm Delete' :

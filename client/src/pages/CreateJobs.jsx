@@ -13,7 +13,8 @@ const CreateJobs = () => {
         category: '',
         experienceLevel: '',
         description: '',
-        requirements: ''
+        requirements: '',
+        skills: [],
     });
 
     const handleInputChange = (event) => {
@@ -21,6 +22,7 @@ const CreateJobs = () => {
         setFormData({ ...formData, [id]: value });
         console.log(formData)
     };
+
 
     const navigate = useNavigate();
 
@@ -59,6 +61,9 @@ const CreateJobs = () => {
     const back = () => {
         navigate('/jobs');
     }
+    const setSkills = (skills) => {
+        setFormData({ ...formData, skills });
+    };
 
     return (
         <div className="max-w-2xl mx-24 py-10">
@@ -153,6 +158,13 @@ const CreateJobs = () => {
                     </div>
                 </div>
 
+                <div className='mb-4'>
+                    <label htmlFor="skills" className="block font-bold mb-2">
+                        Skills*
+                    </label>
+                    <SkillsInput skills={formData.skills} setSkills={setSkills} />
+                </div>
+
                 <div className="mb-4">
                     <label htmlFor="description" className="block font-bold mb-2">
                         Job Description*
@@ -197,3 +209,53 @@ const CreateJobs = () => {
 };
 
 export default CreateJobs;
+
+const SkillsInput = ({ skills, setSkills }) => {
+    const [skill, setSkill] = useState('');
+    const [error, setError] = useState('');
+
+    const handleKeyDown = (event) => {
+        if (['Enter', ','].includes(event.key)) {
+            event.preventDefault();
+            const trimmedSkill = skill.trim();
+            if (trimmedSkill && !skills.includes(trimmedSkill)) {
+                setSkills([...skills, trimmedSkill]);
+                setSkill('');
+                setError('');
+            } else {
+                setError('Same value not allowed');
+            }
+        }
+    };
+
+    const handleInputChange = (event) => {
+        setSkill(event.target.value);
+    };
+
+    const removeSkill = (index) => {
+        const newSkills = skills.filter((_, idx) => idx !== index);
+        setSkills(newSkills);
+    };
+
+    return (
+        <div>
+            <div className="flex flex-wrap gap-2 p-2 border border-gray-300 rounded">
+                {skills.map((skill, index) => (
+                    <div key={index} className="flex items-center gap-1 bg-blue-100 rounded px-2">
+                        {skill}
+                        <button onClick={() => removeSkill(index)} className="text-blue-500 hover:text-blue-700">✖</button>
+                    </div>
+                ))}
+                <input
+                    type="text"
+                    value={skill}
+                    onChange={handleInputChange}
+                    onKeyDown={handleKeyDown}
+                    placeholder="Add skills"
+                    className="outline-none"
+                />
+            </div>
+            {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+        </div>
+    );
+};

@@ -27,6 +27,7 @@ const createJob = async (req, res) => {
       description,
       requirements,
       status,
+      skills,
     } = req.body;
 
     // Create a new job instance using the Job model
@@ -39,6 +40,7 @@ const createJob = async (req, res) => {
       description,
       requirements,
       status,
+      skills,
     });
 
     // Save the job to the database

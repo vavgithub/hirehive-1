@@ -31,6 +31,11 @@ const EditJobs = () => {
         setFormData({ ...formData, [id]: value });
     };
 
+    const setSkills = (skills) => {
+        setFormData({ ...formData, skills });
+    };
+
+
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
@@ -42,10 +47,21 @@ const EditJobs = () => {
         }
     };
 
+    const handleSubmitForActive = async (event) => {
+        event.preventDefault();
+        try {
+            const response = await axios.put(`http://localhost:8008/api/editJob/${mainId}`, { ...formData, status: 'active' });
+            console.log('Job updated successfully:', response.data);
+            navigate('/jobs');
+        } catch (error) {
+            console.error('Error updating job:', error);
+        }
+    }
+
     return (
         <div className="max-w-2xl mx-24 py-10">
             <h2 className="text-3xl font-bold mb-6">Edit Job Listing</h2>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmitForActive}>
                 <div className="mb-4 flex justify-between">
                     <div className='w-1/2 mr-2'>
                         <label htmlFor="title" className="block font-bold mb-2">
@@ -133,6 +149,12 @@ const EditJobs = () => {
                         </select>
                     </div>
                 </div>
+                <div className='mb-4'>
+                    <label htmlFor="skills" className="block font-bold mb-2">
+                        Skills*
+                    </label>
+                    <SkillsInput skills={formData.skills} setSkills={setSkills} />
+                </div>
 
                 <div className="mb-4">
                     <label htmlFor="description" className="block font-bold mb-2">
@@ -166,8 +188,16 @@ const EditJobs = () => {
 
                 <div className="flex justify-end">
                     <button type="button" onClick={handleSubmit} name="createJob" className="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded mr-2">
-                        Update Job
+                        Save
                     </button>
+                    {
+                        formData.status === 'draft' && (
+                            <button type="submit" name="publish" className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mr-2">
+                                Make It Active
+                            </button>
+                        )
+                    }    
+
                     {/* <button type="button" onClick={handleSaveForLater} name="saveForLater" className="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded">
                         Save for Later
                     </button> */}
@@ -178,3 +208,53 @@ const EditJobs = () => {
 };
 
 export default EditJobs;
+
+const SkillsInput = ({ skills, setSkills }) => {
+    const [skill, setSkill] = useState('');
+    const [error, setError] = useState('');
+
+    const handleKeyDown = (event) => {
+        if (['Enter', ','].includes(event.key)) {
+            event.preventDefault();
+            const trimmedSkill = skill.trim();
+            if (trimmedSkill && !skills.includes(trimmedSkill)) {
+                setSkills([...skills, trimmedSkill]);
+                setSkill('');
+                setError('');
+            } else {
+                setError('Same value not allowed');
+            }
+        }
+    };
+
+    const handleInputChange = (event) => {
+        setSkill(event.target.value);
+    };
+
+    const removeSkill = (index) => {
+        const newSkills = skills.filter((_, idx) => idx !== index);
+        setSkills(newSkills);
+    };
+
+    return (
+        <div>
+            <div className="flex flex-wrap gap-2 p-2 border border-gray-300 rounded">
+                {skills.map((skill, index) => (
+                    <div key={index} className="flex items-center gap-1 bg-blue-100 rounded px-2">
+                        {skill}
+                        <button onClick={() => removeSkill(index)} className="text-blue-500 hover:text-blue-700">✖</button>
+                    </div>
+                ))}
+                <input
+                    type="text"
+                    value={skill}
+                    onChange={handleInputChange}
+                    onKeyDown={handleKeyDown}
+                    placeholder="Add skills"
+                    className="outline-none"
+                />
+            </div>
+            {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+        </div>
+    );
+};

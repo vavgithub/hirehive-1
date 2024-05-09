@@ -12,6 +12,8 @@ import CreateJobs from "./pages/CreateJobs";
 import Authlayout from "./auth/Authlayout";
 import Register from "./pages/Register";
 import EditJobs from "./pages/EditJobs";
+import ViewJobs from "./pages/ViewJobs";
+import ViewCandidate from "./pages/ViewCandidate";
   
 export const router = createBrowserRouter([
     {
@@ -33,6 +35,14 @@ export const router = createBrowserRouter([
         {
           path:"/edit-job/:id",
           element:<EditJobs/>
+        },
+        {
+          path: "/view-job/:id",
+          element: <ViewJobs/>,
+        },
+        {
+          path:"/view-candidate",
+          element:<ViewCandidate/>
         }
       ]
     },    

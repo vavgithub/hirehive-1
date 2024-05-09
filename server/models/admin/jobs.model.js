@@ -27,6 +27,9 @@ const jobSchema = new mongoose.Schema(
       enum:['',"entry" , "intermediate" , "senior"],
       default:"entry",
     },
+    skills: {
+      type: [String]
+    },
     description: {
       type: String,
     },
