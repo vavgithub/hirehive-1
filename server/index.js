@@ -24,7 +24,8 @@ app.use(cookieParser());
 app.use(morgan('dev'))
 
 app.use("/api" , jobRoutes);
-app.use('/api/users', userRoutes);
+// app.use('/api/users', userRoutes);
+app.use("/api/v1/users", userRoutes)
 
 connectDB().then(()=>{
     app.listen( process.env.PORT, ()=>{

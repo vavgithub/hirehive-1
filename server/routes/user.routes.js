@@ -1,16 +1,3 @@
-// import express from 'express';
-// import { registerUser, loginUser } from '../controllers/user.controller.js';
-
-// const router = express.Router();
-
-// // Route to register a new user
-// router.post('/register', registerUser);
-
-// // Route to login a user
-// router.post('/login', loginUser);
-
-// export default router;
-
 import { Router } from "express";
 import { 
     loginUser, 
@@ -19,6 +6,10 @@ import {
     refreshAccessToken, 
     changeCurrentPassword, 
     getCurrentUser, 
+    updateUserAvatar, 
+    updateUserCoverImage, 
+    getUserChannelProfile, 
+    getWatchHistory, 
     updateAccountDetails
 } from "../controllers/user.controller.js";
 // import {upload} from "../middlewares/multer.middleware.js"
