@@ -13,7 +13,7 @@ import Authlayout from "./auth/Authlayout";
 import Register from "./pages/Register";
 import EditJobs from "./pages/EditJobs";
 import ViewJobs from "./pages/ViewJobs";
-import ViewCandidate from "./pages/ViewCandidate";
+import ViewCandidateProfile from "./pages/ViewCandidateProfile";
   
 export const router = createBrowserRouter([
     {
@@ -42,8 +42,8 @@ export const router = createBrowserRouter([
         },
         {
           path:"/view-candidate",
-          element:<ViewCandidate/>
-        }
+          element:<ViewCandidateProfile/>
+        },
       ]
     },    
     {
