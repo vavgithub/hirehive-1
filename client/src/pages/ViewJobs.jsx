@@ -42,7 +42,7 @@ const ViewJobs = () => {
         { name: 'Madelyn Aminoff', position: 'Senior UI/UX designer', experience: 4, rating: 4.0 },
         { name: 'Chance Workman', position: 'Senior UI/UX designer', experience: 4, rating: 4.0 },
         { name: 'Adison Curtis', position: 'Senior UI/UX designer', experience: 4, rating: 4.0 },
-      ];
+    ];
 
 
 
@@ -79,7 +79,7 @@ const ViewJobs = () => {
 
 
                 <div className="flex flex-col ">
-                  
+
                     <div className='flex justify-between mt-[60px]'>
                         <h1 className="text-2xl font-bold">{formData.title}</h1>
                         {/* <Link to={`edit-job/${mainId}`} className="bg-black text-white px-4 py-2 rounded">Edit job listing</Link> */}
@@ -123,23 +123,29 @@ const ViewJobs = () => {
                         </div>
                         <div className="mb-4">
                             <h2 className="text-lg font-bold mb-2">Responsibility</h2>
-                            <ul className="list-disc pl-4">
+                            <div className="mb-4">
+                                <p className="text-gray-600">{formData.requirements}</p>
+                            </div>
+                            {/* <ul className="list-disc pl-4">
                                 {jobData.responsibilities.map((responsibility, index) => (
                                     <li key={index} className="mb-2">
                                         {responsibility}
                                     </li>
                                 ))}
-                            </ul>
+                            </ul> */}
                         </div>
                         <div>
                             <h2 className="text-lg font-bold mb-2">Qualification</h2>
-                            <ul className="list-disc pl-4">
+                            <div className="mb-4">
+                                <p className="text-gray-600">{formData.qualifications}</p>
+                            </div>
+                            {/* <ul className="list-disc pl-4">
                                 {jobData.qualifications.map((qualification, index) => (
                                     <li key={index} className="mb-2">
                                         {qualification}
                                     </li>
                                 ))}
-                            </ul>
+                            </ul> */}
                         </div>
                     </div>
                 )

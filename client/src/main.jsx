@@ -12,9 +12,11 @@ import {
 
 const queryClient = new QueryClient()
 
+import { AuthProvider } from './context/AuthProvider.jsx'
+
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <QueryClientProvider client={queryClient}>
+  <AuthProvider>
     <RouterProvider router={router} />
-  </QueryClientProvider>
-)
+  </AuthProvider>)
+
