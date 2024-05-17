@@ -38,6 +38,11 @@ const jobSchema = new mongoose.Schema(
       lowercase: true,
       trim: true,
     },
+    qualifications: {
+      type: String,
+      lowercase: true,
+      trim: true,
+    },
     status: {
       type: String,
       enum: [ '', 'active', 'draft' , 'archived'], // Define possible values for status

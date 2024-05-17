@@ -68,9 +68,9 @@ const Filters = ({ filters, statistics, handleCheckboxChange , activeTab }) => {
                         <label className="inline-flex items-center">
                             <input
                                 type="checkbox"
-                                value="intermidiate"
-                                checked={filters.experienceLevel.includes('intermidiate')}
-                                onChange={() => handleCheckboxChange('experienceLevel', 'intermidiate')}
+                                value="intermediate"
+                                checked={filters.experienceLevel.includes('intermediate')}
+                                onChange={() => handleCheckboxChange('experienceLevel', 'intermediate')}
                                 disabled={isDisabled}
                             />
                             <span className={`ml-2 ${textColor}`}>Intermediate</span>

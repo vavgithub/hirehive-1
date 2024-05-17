@@ -33,6 +33,11 @@ const ViewCandidateProfile = () => {
     const toggleDetails = () => {
         setShowDetails(!showDetails);
     };
+
+    const handleRatingChange = (rating) => {
+        // Handle the rating change here
+        console.log('New rating:', rating);
+    };
     return (
         <div className='bg-white'>
             <div className="px-24 pt-8">
@@ -50,19 +55,18 @@ const ViewCandidateProfile = () => {
                     </div>
                 </div>
 
-                <div className="flex flex-col items-center ">
-                    <div className="flex items-center  mb-4">
-                        <div className='flex  justify-between bg-red-600'>
+                <div className="flex flex-col items-center w-full pt-6 ">
+                    <div className="flex items-center w-full mb-4">
+                        <div className='flex justify-between w-full'>
                             <div>
-
-
-                                <h2 className="text-lg font-bold mr-4">Stage</h2>
+                                <h3 className="font-poppins text-h3 font-h3 leading-h3 text-dark-gray mb-6 mt-6">Stage</h3>
+                                {/* <h2 className="text-lg font-bold mr-4">Stage</h2> */}
                             </div>
                             <div>
 
                                 {!showDetails && (
                                     <button
-                                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                                        className=" text-dark-gray underline font-bold py-2 px-4 rounded"
                                         onClick={toggleDetails}
                                     >
                                         View detailed
@@ -70,7 +74,7 @@ const ViewCandidateProfile = () => {
                                 )}
                                 {showDetails && (
                                     <button
-                                        className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                                        className="outline px-4 py-2 text-dark-gray font-bold  rounded"
                                         onClick={toggleDetails}
                                     >
                                         Edit Stage
@@ -79,52 +83,36 @@ const ViewCandidateProfile = () => {
                             </div>
                         </div>
                     </div>
-                    <div className="flex">
-                        <div className="flex flex-col items-center mr-4">
-                            <span className="font-bold">Screening</span>
-                            {showDetails && (
-                                <ul className="list-disc pl-4">
-                                    <li>Lorem ipsum dolor sit amet consectetur. Gravida aenean vel rhoncus sed nisl. Leo morbi</li>
-                                    <li>vulputate sit sed ac diam tempor vivamus.</li>
-                                    <li>Id quam massa ut adipiscing. Mi viverra eget blandit eu</li>
-                                    <li>senectus. Sodales tortor vulputate sit dapibus neque facilisis.</li>
-                                </ul>
-                            )}
-                        </div>
-                        <div className="flex flex-col items-center mr-4">
-                            <span className="font-bold">Challenge</span>
-                            {showDetails && (
-                                <ul className="list-disc pl-4">
-                                    <li>Lorem ipsum dolor sit amet consectetur. Pharetra cursus aliquam feugiat eu. Aliquet</li>
-                                    <li>felis elementum ullamcorper donec ut. In euismod</li>
-                                    <li>suspendisse cras elementum et. Facilisis diam volutpat nec</li>
-                                    <li>pellentesque eu ac cras quis felis. Pretium tempor vitae</li>
-                                    <li>tortor tempor aliquet. Ac quis at imperdiet tempus. Facilisi</li>
-                                    <li>pretium imperdiet libero ultricies nunc risus.</li>
-                                    <li>Libero convallis lobortis egestas tristique ultricies nec</li>
-                                    <li>netus. Consectetur convallis sed ultricies mauris consequat</li>
-                                    <li>vitae magna elit montes. Sed.</li>
-                                </ul>
-                            )}
-                        </div>
-                        <div className="flex flex-col items-center mr-4">
-                            <span className="font-bold">Interview 1</span>
-                            {showDetails && (
-                                <ul className="list-disc pl-4">
-                                    <li>Lorem ipsum dolor sit amet consectetur. Pharetra cursus</li>
-                                    <li>aliquam feugiat eu. Aliquet felis elementum ullamcorper</li>
-                                    <li>donec ut. In euismod suspendisse cras elementum</li>
-                                    <li>et.</li>
-                                    <li>Libero convallis lobortis egestas tristique ultricies nec</li>
-                                    <li>netus. Consectetur convallis sed ultricies mauris consequat</li>
-                                    <li>vitae magna elit montes. Sed.</li>
-                                </ul>
-                            )}
-                        </div>
-                        <div className="flex flex-col items-center">
-                            <span className="font-bold">Interview 2</span>
+
+                    <div className="flex w-full">
+                        <div className="flex w-full">
+                            <div className="px-4 py-2 border border-r w-64 border-gray-300 rounded-tl-[55px] rounded-bl-[55px] ">
+                                <span className="text-gray-500 flex justify-center ">Screening</span>
+                            </div>
+                            <div className="px-4 py-2 border border-l-0 w-64 border-gray-300 ">
+                                <span className="text-gray-500 flex justify-center">Challenge</span>
+                            </div>
+                            <div className="px-4 py-2 border border-l-0 w-64 border-gray-300 ">
+                                <span className="text-gray-500 flex justify-center">Interview 1</span>
+                            </div>
+                            <div className="px-4 py-2  border border-l-0 w-64 rounded-tr-[55px] rounded-br-[55px]">
+                                <span className="text-gray-500 flex justify-center">Interview 2</span>
+                            </div>
                         </div>
                     </div>
+                    {showDetails && (
+                        <div className="flex w-full">
+                            <div className='w-64 h-64 border-r pt-2 ' >
+                                <RatingComponent
+                                    initialRating={3}
+                                    onRatingChange={handleRatingChange}
+                                />
+                            </div>
+                            <div className='w-64 h-64 border-r '></div>
+                            <div className='w-64 h-64 border-r'></div>
+                            <div className='w-64 h-64 border-r'></div>
+                        </div>)}
+
                 </div>
 
                 <div>
@@ -221,7 +209,76 @@ const ViewCandidateProfile = () => {
     )
 }
 
-export default ViewCandidateProfile 
+export default ViewCandidateProfile
+
+const RatingComponent = ({ initialRating, onRatingChange }) => {
+    const [rating, setRating] = useState(initialRating || null);
+    const [showRating, setShowRating] = useState(false);
+
+    const handleRatingClick = (value) => {
+        setRating(value);
+        onRatingChange(value);
+    };
+
+    const handleContinueClick = () => {
+        setShowRating(true);
+    };
+
+    const handleEditClick = () => {
+        setShowRating(false);
+    };
+
+    return (
+        <div>
+            {!showRating ? (
+                <div>
+                    <div className="flex">
+                        {[1, 2, 3, 4, 5].map((value) => (
+                            <div
+                                key={value}
+                                className={`w-8 h-8 rounded-full flex items-center justify-center mx-1 cursor-pointer ${rating === value ? 'bg-blue-500 text-white' : 'bg-gray-200'
+                                    }`}
+                                onClick={() => handleRatingClick(value)}
+                            >
+                                {value}
+                            </div>
+                        ))}
+                    </div>
+                    <button
+                        className="bg-black text-white px-4 py-2 my-2 rounded"
+                        onClick={handleContinueClick}
+                        disabled={!rating}
+                    >
+                        Continue
+                    </button>
+                </div>
+            ) : (
+                <div className="flex justify-between items-center mx-4 p-1 bg-gray-100">
+                    <div>
+                        <span className="mr-2 text-gray-500">Portfolio Rating:</span>
+                        <span className="font-bold">{rating}</span>
+                    </div>
+                    <button className="ml-2 text-blue-500" onClick={handleEditClick}>
+                        <svg
+                            className="w-6 h-6"
+                            fill="none"
+                            stroke="gray"
+                            viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg"
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+                            />
+                        </svg>
+                    </button>
+                </div>
+            )}
+        </div>
+    );
+};
 
 const data = [
     { label: "Current Job Title", value: "UX Designer" },
@@ -231,7 +288,7 @@ const data = [
     { label: "Experience in Years", value: "4" }
 ];
 
-function UserProfile({data}) {
+function UserProfile({ data }) {
     return (
         <div>
             {data.map((item, index) => (

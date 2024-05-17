@@ -4,7 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 
 const EditJobs = () => {
     const [formData, setFormData] = useState(null);
-    const { id:mainId } = useParams();
+    const { id: mainId } = useParams();
     const navigate = useNavigate();
     console.log(mainId);
 
@@ -186,6 +186,21 @@ const EditJobs = () => {
                     ></textarea>
                 </div>
 
+                <div className="mb-8">
+                    <label htmlFor="qualifications" className="block font-bold mb-2">
+                        Job Qualification*
+                    </label>
+                    <textarea
+                        id="qualifications"
+                        placeholder="Write job qualifactiona"
+                        className="w-full px-3 py-2 border border-gray-300 rounded"
+                        value={formData.qualifications}
+                        onChange={handleInputChange}
+                        required
+                        rows="4"
+                    ></textarea>
+                </div>
+
                 <div className="flex justify-end">
                     <button type="button" onClick={handleSubmit} name="createJob" className="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded mr-2">
                         Save
@@ -196,7 +211,7 @@ const EditJobs = () => {
                                 Make It Active
                             </button>
                         )
-                    }    
+                    }
 
                     {/* <button type="button" onClick={handleSaveForLater} name="saveForLater" className="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded">
                         Save for Later

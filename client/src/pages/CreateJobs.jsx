@@ -14,6 +14,7 @@ const CreateJobs = () => {
         experienceLevel: '',
         description: '',
         requirements: '',
+        qualifications: '',
         skills: [],
     });
 
@@ -189,6 +190,21 @@ const CreateJobs = () => {
                         placeholder="Write job requirements"
                         className="w-full px-3 py-2 border border-gray-300 rounded"
                         value={formData.requirements}
+                        onChange={handleInputChange}
+                        required
+                        rows="4"
+                    ></textarea>
+                </div>
+
+                <div className="mb-8">
+                    <label htmlFor="qualifications" className="block font-bold mb-2">
+                        Job Qualification*
+                    </label>
+                    <textarea
+                        id="qualifications"
+                        placeholder="Write job qualifactiona"
+                        className="w-full px-3 py-2 border border-gray-300 rounded"
+                        value={formData.qualifications}
                         onChange={handleInputChange}
                         required
                         rows="4"

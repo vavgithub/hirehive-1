@@ -26,6 +26,7 @@ const createJob = async (req, res) => {
       experienceLevel,
       description,
       requirements,
+      qualifications,
       status,
       skills,
     } = req.body;
@@ -39,6 +40,7 @@ const createJob = async (req, res) => {
       experienceLevel,
       description,
       requirements,
+      qualifications,
       status,
       skills,
     });
@@ -147,7 +149,7 @@ const activeJobsFilterCount = async (req, res) => {
           },
           totalMidLevelJobs: {
             $sum: {
-              $cond: [{ $eq: ["$experienceLevel", "intermidiate"] }, 1, 0],
+              $cond: [{ $eq: ["$experienceLevel", "intermediate"] }, 1, 0],
             },
           },
           totalSeniorLevelJobs: {
