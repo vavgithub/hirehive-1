@@ -16,6 +16,8 @@ import ViewJobs from "./pages/ViewJobs";
 import ViewCandidateProfile from "./pages/ViewCandidateProfile";
 import Candidates from "./pages/Candidates";
 import ErrorPage from "./pages/ErrorPage";
+import Applyjob from "./pages/Candidate/CandidateViewJob";
+import CandidateViewJob from "./pages/Candidate/CandidateViewJob";
 
 export const router = createBrowserRouter([
   {
@@ -61,6 +63,14 @@ export const router = createBrowserRouter([
         element: <Register />,
       }
     ],
+  },
+  {
+    path: "candidates",
+    children:[{
+      path: "view-job/:id",
+      element: <CandidateViewJob />
+    }
+  ],
   },
   {
     path: "*",
