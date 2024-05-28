@@ -183,6 +183,70 @@ const activeJobsFilterCount = async (req, res) => {
   }
 };
 
+const draftJobsFilterCount = async (req, res) => {
+  try {
+    const stats = await jobs.aggregate([
+      {
+        $match: { status: "draft" }, // Filter only draft jobs
+      },
+      {
+        $group: {
+          _id: null,
+          totalJobs: { $sum: 1 },
+          totalActiveJobs: {
+            $sum: { $cond: [{ $eq: ["$status", "active"] }, 1, 0] },
+          },
+          totalDraftJobs: {
+            $sum: { $cond: [{ $eq: ["$status", "draft"] }, 1, 0] },
+          },
+          totalArchivedJobs: {
+            $sum: { $cond: [{ $eq: ["$status", "archived"] }, 1, 0] },
+          },
+          totalInternships: {
+            $sum: { $cond: [{ $eq: ["$jobType", "internship"] }, 1, 0] },
+          },
+          totalFullTimeJobs: {
+            $sum: { $cond: [{ $eq: ["$jobType", "fulltime"] }, 1, 0] },
+          },
+          totalEntryLevelJobs: {
+            $sum: { $cond: [{ $eq: ["$experienceLevel", "entry"] }, 1, 0] },
+          },
+          totalMidLevelJobs: {
+            $sum: {
+              $cond: [{ $eq: ["$experienceLevel", "intermediate"] }, 1, 0],
+            },
+          },
+          totalSeniorLevelJobs: {
+            $sum: { $cond: [{ $eq: ["$experienceLevel", "senior"] }, 1, 0] },
+          },
+          totalDesignJobs: {
+            $sum: { $cond: [{ $eq: ["$category", "design"] }, 1, 0] },
+          },
+          totalSalesJobs: {
+            $sum: { $cond: [{ $eq: ["$category", "sales"] }, 1, 0] },
+          },
+          totalMarketingJobs: {
+            $sum: { $cond: [{ $eq: ["$category", "marketing"] }, 1, 0] },
+          },
+          totalEngineeringJobs: {
+            $sum: { $cond: [{ $eq: ["$category", "engineering"] }, 1, 0] },
+          },
+          // Add more conditions for other job functions/categories
+        },
+      },
+    ]);
+
+    if (stats.length > 0) {
+      res.json(stats[0]); // Return the first (and only) result
+    } else {
+      res.json({}); // No stats found
+    }
+  } catch (error) {
+    console.error("Error fetching job statistics:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 const jobsStats = async (req, res) => {
   try {
     const stats = await jobs.aggregate([
@@ -380,7 +444,8 @@ export {
   archiveJob,
   unarchiveJob,
   editJob,
-  getJobById
+  getJobById,
+  draftJobsFilterCount,
 };
 
 // totalSeniorLevelJobs: { $sum: { $cond: [{ $eq: ['$experienceLevel', 'senior'] }, 1, 0] },

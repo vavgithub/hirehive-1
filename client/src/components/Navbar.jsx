@@ -20,13 +20,13 @@ const Navbar = () => {
             <nav className="flex gap-6 px-24 items-center justify-between bg-slate-500 text-white py-4 w-full h-[96px]">
                 <div className='flex w-1/2 gap-4 items-center'>
                     <div className="text-xl font-bold">
-                        <Link to="/">HireHive</Link>
+                        <Link to="">HireHive</Link>
                     </div>
                     <div>
-                        <Link to="/jobs" className="hover:text-gray-300">Jobs</Link>
+                        <Link to="jobs" className="hover:text-gray-300">Jobs</Link>
                     </div>
                     <div>
-                        <Link to="/candidates" className="hover:text-gray-300">Candidates</Link>
+                        <Link to="candidates" className="hover:text-gray-300">Candidates</Link>
                     </div>
                 </div>
                 <div>

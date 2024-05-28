@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState, useContext } from 'react';
-import AuthContext from '../context/AuthProvider';
+import AuthContext from '../../context/AuthProvider';
 import { useNavigate } from 'react-router-dom';
 
-import axios from '../api/axios';
-import useAuth from '../hooks/useAuth';
+import axios from '../../api/axios';
+import useAuth from '../../hooks/useAuth';
 const LOGIN_URL = 'api/v1/users/login';
 
 const Login = () => {
@@ -46,7 +46,7 @@ const Login = () => {
         document.cookie = `accessToken=${result.data.accessToken}; path=/; secure`;
 
         
-        navigate('/');
+        navigate('/admin');
         setEmail('');
         setPassword('');
         }

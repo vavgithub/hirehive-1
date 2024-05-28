@@ -27,6 +27,7 @@ const CandidateViewJob = () => {
 
     const handleApplyClick = () => {
         console.log("Clicked on apply");
+        navigate(`/apply-job/${mainId}`);
     };
 
     console.log(formData);

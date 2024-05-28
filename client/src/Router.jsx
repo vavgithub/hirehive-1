@@ -5,47 +5,48 @@ import {
   Link,
 } from "react-router-dom";
 
-import Login from "./pages/Login";
-import Dashboard from "./pages/Dashboard";
+import Login from "./pages/Admin/Login";
+import Dashboard from "./pages/Admin/Dashboard";
 import Navbar from "./components/Navbar";
-import CreateJobs from "./pages/CreateJobs";
+import CreateJobs from "./pages/Admin/CreateJobs";
 import Authlayout from "./auth/Authlayout";
-import Register from "./pages/Register";
-import EditJobs from "./pages/EditJobs";
-import ViewJobs from "./pages/ViewJobs";
-import ViewCandidateProfile from "./pages/ViewCandidateProfile";
-import Candidates from "./pages/Candidates";
-import ErrorPage from "./pages/ErrorPage";
+import Register from "./pages/Admin/Register";
+import EditJobs from "./pages/Admin/EditJobs";
+import ViewJobs from "./pages/Admin/ViewJobs";
+import ViewCandidateProfile from "./pages/Admin/ViewCandidateProfile";
+import Candidates from "./pages/Admin/Candidates";
+import ErrorPage from "./pages/Admin/ErrorPage";
 import Applyjob from "./pages/Candidate/CandidateViewJob";
 import CandidateViewJob from "./pages/Candidate/CandidateViewJob";
+import ApplyJob from "./pages/Candidate/ApplyJob";
 
 export const router = createBrowserRouter([
   {
-    path: "/",
+    path: "/admin",
     element: <Navbar />,
     children: [
       {
-        path: "/jobs",
+        path: "jobs",
         element: <Dashboard />,
       },
       {
-        path: "/candidates",
+        path: "candidates",
         element: <Candidates />
       },
       {
-        path: "/create-job",
+        path: "create-job",
         element: <CreateJobs />,
       },
       {
-        path: "/edit-job/:id",
+        path: "edit-job/:id",
         element: <EditJobs />
       },
       {
-        path: "/view-job/:id",
+        path: "view-job/:id",
         element: <ViewJobs />,
       },
       {
-        path: "/view-candidate",
+        path: "view-candidate",
         element: <ViewCandidateProfile />
       }
     ]
@@ -65,10 +66,14 @@ export const router = createBrowserRouter([
     ],
   },
   {
-    path: "candidates",
+    path: "/",
     children:[{
       path: "view-job/:id",
       element: <CandidateViewJob />
+    },
+    {
+      path: "apply-job/:id",
+      element: <ApplyJob />
     }
   ],
   },

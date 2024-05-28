@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import Formfields from '../components/Formfields';
+import Formfields from '../../components/Formfields';
 
 const Register = () => {
     const [data , setData] = useState({ email: '', password: '' });

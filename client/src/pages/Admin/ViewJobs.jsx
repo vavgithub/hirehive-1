@@ -70,7 +70,7 @@ const ViewJobs = () => {
     };
 
     const handleEditClick = () => {
-        navigate(`/edit-job/${mainId}`);
+        navigate(`/admin/edit-job/${mainId}`);
     }
 
     return (

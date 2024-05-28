@@ -1,67 +1,76 @@
 import axios from 'axios';
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+// import { Link, Navigate } from 'react-router-dom';
+// import useHistory from 'react-router-dom';
 
-const EditJobs = () => {
-    const [formData, setFormData] = useState(null);
-    const { id: mainId } = useParams();
-    const navigate = useNavigate();
-    console.log(mainId);
+const CreateJobs = () => {
 
-    useEffect(() => {
-        const fetchJob = async () => {
-            try {
-                const response = await axios.get(`http://localhost:8008/api/getJobById/${mainId}`);
-                console.log(response.data)
-                setFormData(response.data);
-            } catch (error) {
-                console.error('Error fetching job:', error);
-            }
-        };
-        fetchJob();
-    }, [mainId]);
-
-    if (!formData) {
-        return <div>Loading...</div>;  // Show a loading message or spinner until the data is loaded
-    }
-    console.log(formData);
+    const [formData, setFormData] = useState({
+        title: '',
+        location: '',
+        jobType: '',
+        category: '',
+        experienceLevel: '',
+        description: '',
+        requirements: '',
+        qualifications: '',
+        skills: [],
+    });
 
     const handleInputChange = (event) => {
         const { id, value } = event.target;
         setFormData({ ...formData, [id]: value });
+        console.log(formData)
     };
 
-    const setSkills = (skills) => {
-        setFormData({ ...formData, skills });
-    };
 
+    const navigate = useNavigate();
 
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
-            const response = await axios.put(`http://localhost:8008/api/editJob/${mainId}`, formData);
-            console.log('Job updated successfully:', response.data);
-            navigate('/jobs');
+            // Set status based on button clicked
+            // const status = event.nativeEvent.submitter.name === 'createJob' ? 'active' : 'draft';
+            const formDataWithStatus = { ...formData, status: 'active' };
+            const response = await axios.post('http://localhost:8008/api/createJobs', formDataWithStatus);
+            console.log('Job created successfully:', response.data);
+            navigate('/admin/jobs'); // Navigate to homepage
+            // const history = useHistory();
+            // history.push('/'); // Navigate to homepage
+            // Optionally, you can redirect the user or show a success message
         } catch (error) {
-            console.error('Error updating job:', error);
+            console.error('this if frotned error  creating job:', error);
+            // Handle error: show error message or log to console
         }
     };
 
-    const handleSubmitForActive = async (event) => {
-        event.preventDefault();
+    const handleSaveForLater = async () => {
+        await postJobData({ ...formData, status: 'draft' });
+    };
+
+    const postJobData = async (data) => {
         try {
-            const response = await axios.put(`http://localhost:8008/api/editJob/${mainId}`, { ...formData, status: 'active' });
-            console.log('Job updated successfully:', response.data);
-            navigate('/jobs');
+            const response = await axios.post('http://localhost:8008/api/createJobs', data);
+            console.log('Job created successfully:', response.data);
+            navigate('/admin/jobs');
         } catch (error) {
-            console.error('Error updating job:', error);
+            console.error('Error creating job:', error);
         }
+    };
+
+    const back = () => {
+        navigate('/admin/jobs');
     }
+    const setSkills = (skills) => {
+        setFormData({ ...formData, skills });
+    };
 
     return (
         <div className="max-w-2xl mx-24 py-10">
-            <h2 className="text-3xl font-bold mb-6">Edit Job Listing</h2>
-            <form onSubmit={handleSubmitForActive}>
+            <div onClick={back}>Back</div>
+            <h2 className="text-3xl font-bold mb-6">Create a New Job Listing</h2>
+            <form onSubmit={handleSubmit}>
                 <div className="mb-4 flex justify-between">
                     <div className='w-1/2 mr-2'>
                         <label htmlFor="title" className="block font-bold mb-2">
@@ -149,6 +158,7 @@ const EditJobs = () => {
                         </select>
                     </div>
                 </div>
+
                 <div className='mb-4'>
                     <label htmlFor="skills" className="block font-bold mb-2">
                         Skills*
@@ -202,27 +212,19 @@ const EditJobs = () => {
                 </div>
 
                 <div className="flex justify-end">
-                    <button type="button" onClick={handleSubmit} name="createJob" className="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded mr-2">
-                        Save
+                    <button type="submit" name="createJob" className="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded mr-2">
+                        Create Job Listing
                     </button>
-                    {
-                        formData.status === 'draft' && (
-                            <button type="submit" name="publish" className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mr-2">
-                                Make It Active
-                            </button>
-                        )
-                    }
-
-                    {/* <button type="button" onClick={handleSaveForLater} name="saveForLater" className="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded">
+                    <button type="button" onClick={handleSaveForLater} name="saveForLater" className="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded">
                         Save for Later
-                    </button> */}
+                    </button>
                 </div>
             </form>
         </div>
     );
 };
 
-export default EditJobs;
+export default CreateJobs;
 
 const SkillsInput = ({ skills, setSkills }) => {
     const [skill, setSkill] = useState('');
