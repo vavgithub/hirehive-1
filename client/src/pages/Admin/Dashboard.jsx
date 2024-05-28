@@ -7,6 +7,11 @@ import ArchiveIcon from '../../svg/ArchivedIcon';
 import EditIcon from '../../svg/EditIcon';
 import DeleteIcon from '../../svg/DeleteIcon';
 import ThreeDotsIcon from '../../svg/ThreeDotsIcon';
+import AppliedIcon from '../../svg/AppliedIcon';
+import ClickIcon from '../../svg/ClickIcon';
+import ProcessedIcon from '../../svg/ProcessedIcon';
+import ClockIcon from '../../svg/ClockIcon';
+import { getTimeAgo } from '../../utility/getTimeAgo';
 // import ThreeDots from '../../svg/ThreeDots';
 
 const Dashboard = () => {
@@ -303,7 +308,10 @@ const Dashboard = () => {
 
 export default Dashboard;
 
+
+
 const JobCard = ({ job, status, handleAction }) => {
+    const formattedCreatedAt = getTimeAgo(job.createdAt);
     return (
         <div className="p-4 bg-white shadow rounded mb-4">
             <div className="flex justify-between items-center">
@@ -332,14 +340,32 @@ const JobCard = ({ job, status, handleAction }) => {
             <p className='line-clamp-1'>
                 {job.description}
             </p>
-            <div className="mt-4 flex justify-between items-center text-gray-500">
-                <div className="flex items-center">
-                    <span className="mr-2">{job.applied} applied</span>
-                    <span className="mr-2">{job.clicks} clicks</span>
-                    <span>{job.processed} processed</span>
+
+            <div className="flex items-center justify-between">
+                <div className='flex'>
+                    <AppliedIcon />
+                    <span className="ml-2">{job.applied}  applied</span>
                 </div>
-                <span>{job.posted} ago</span>
+
+                <div className='flex'>
+                    <ClickIcon />
+                    <span className="ml-2">{job.clicks} clicks</span>
+                </div>
+
+                <div className='flex'>
+                    <ProcessedIcon />
+                    <span className="ml-2">processed</span>
+                </div>
+
+                <div className='flex'>
+                    <ClockIcon />
+                    {formattedCreatedAt}
+                    
+                </div>
+
+
             </div>
+
         </div>
     );
 };
@@ -382,7 +408,7 @@ const ThreeDots = ({ job, handleAction }) => {
                         </ul>
                     )
                     }
-                     {job.status == 'draft' && (
+                    {job.status == 'draft' && (
                         <ul className="py-1">
                             <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={() => handleAction('edit', job._id)}><button className="text-black rounded m-1"><EditIcon /></button>Edit</li>
                             <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={() => handleAction('archive', job._id)}><button className="text-black rounded m-1"><ArchiveIcon /></button>Move To Draft</li>
