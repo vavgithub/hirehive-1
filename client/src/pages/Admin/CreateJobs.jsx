@@ -1,13 +1,15 @@
 import axios from 'axios';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Breadcrumb from '../../components/Breadcrumb';
+import EditIcon from '../../svg/EditIcon';
 // import { Link, Navigate } from 'react-router-dom';
 // import useHistory from 'react-router-dom';
 
 const CreateJobs = () => {
 
     const [formData, setFormData] = useState({
-        title: '',
+        jobtitle: '',
         location: '',
         jobType: '',
         category: '',
@@ -65,8 +67,17 @@ const CreateJobs = () => {
     const setSkills = (skills) => {
         setFormData({ ...formData, skills });
     };
+    const paths = [
+        { name: 'Jobs', href: '/admin/jobs',},
+        { name: 'Create a New job listing', href: '/admin/create-job' },
+    ];
+    const allSkills = ['React', 'React Native', 'Redux', 'JavaScript', 'TypeScript', 'Node.js', 'Express', 'MongoDB'];
 
     return (
+        <div className="ml-52 pt-4">
+             <Breadcrumb paths={paths} />
+
+        
         <div className="max-w-2xl mx-24 py-10">
             <div onClick={back}>Back</div>
             <h2 className="text-3xl font-bold mb-6">Create a New Job Listing</h2>
@@ -163,7 +174,7 @@ const CreateJobs = () => {
                     <label htmlFor="skills" className="block font-bold mb-2">
                         Skills*
                     </label>
-                    <SkillsInput skills={formData.skills} setSkills={setSkills} />
+                    <SkillsInput skills={formData.skills} setSkills={setSkills} allSkills={allSkills}/>
                 </div>
 
                 <div className="mb-4">
@@ -220,15 +231,117 @@ const CreateJobs = () => {
                     </button>
                 </div>
             </form>
+            <div className="container mx-auto p-4">
+            <form className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Job Title*</label>
+                        <input
+                            type="text"
+                            placeholder="Enter job title"
+                            className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                            value={formData.title}
+                            onChange={handleInputChange}
+                            required
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Workplace Type*</label>
+                        <input
+                            type="text"
+                            placeholder="Enter your location"
+                            className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                            value={formData.title}
+                            onChange={handleInputChange}
+                            required
+                       />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Employee Location*</label>
+                        <select
+                            className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                        >
+                            <option value="">-Select-</option>
+                            {/* Add options here */}
+                        </select>
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Employment Type*</label>
+                        <select
+                            className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                        >
+                            <option value="">-Select-</option>
+                            {/* Add options here */}
+                        </select>
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Job Profile*</label>
+                        <select
+                            className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                        >
+                            <option value="">-Select-</option>
+                            {/* Add options here */}
+                        </select>
+                    </div>
+                    <div className="flex space-x-2">
+                        <div className="w-1/2">
+                            <label className="block text-sm font-medium text-gray-700">Experience*</label>
+                            <div className="flex space-x-2">
+                                <select
+                                    className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                >
+                                    <option value="">From</option>
+                                    {/* Add options here */}
+                                </select>
+                                <select
+                                    className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                >
+                                    <option value="">To</option>
+                                    {/* Add options here */}
+                                </select>
+                            </div>
+                        </div>
+                        <div className="w-1/2">
+                            <label className="block text-sm font-medium text-gray-700">Budget*</label>
+                            <div className="flex space-x-2">
+                                <select
+                                    className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                >
+                                    <option value="">From</option>
+
+                                    {/* Add options here */}
+                                </select>
+                                <select
+                                    className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                >
+                                    <option value="">To</option>
+                                    {/* Add options here */}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button
+                    type="submit"
+                    className="mt-4 w-full bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                >
+                    Submit
+                </button>
+            </form>
+        </div>
+        </div>
         </div>
     );
 };
 
 export default CreateJobs;
 
-const SkillsInput = ({ skills, setSkills }) => {
+
+
+const SkillsInput = ({ skills, setSkills, allSkills }) => {
     const [skill, setSkill] = useState('');
     const [error, setError] = useState('');
+    const [suggestions, setSuggestions] = useState([]);
 
     const handleKeyDown = (event) => {
         if (['Enter', ','].includes(event.key)) {
@@ -238,6 +351,7 @@ const SkillsInput = ({ skills, setSkills }) => {
                 setSkills([...skills, trimmedSkill]);
                 setSkill('');
                 setError('');
+                setSuggestions([]);
             } else {
                 setError('Same value not allowed');
             }
@@ -245,7 +359,27 @@ const SkillsInput = ({ skills, setSkills }) => {
     };
 
     const handleInputChange = (event) => {
-        setSkill(event.target.value);
+        const inputValue = event.target.value;
+        setSkill(inputValue);
+        if (inputValue) {
+            const filteredSuggestions = allSkills.filter((s) =>
+                s.toLowerCase().includes(inputValue.toLowerCase())
+            );
+            setSuggestions(filteredSuggestions);
+        } else {
+            setSuggestions([]);
+        }
+    };
+
+    const handleSuggestionClick = (suggestion) => {
+        if (!skills.includes(suggestion)) {
+            setSkills([...skills, suggestion]);
+            setSkill('');
+            setError('');
+            setSuggestions([]);
+        } else {
+            setError('Same value not allowed');
+        }
     };
 
     const removeSkill = (index) => {
@@ -271,7 +405,22 @@ const SkillsInput = ({ skills, setSkills }) => {
                     className="outline-none"
                 />
             </div>
+            {suggestions.length > 0 && (
+                <div className="border border-gray-300 rounded mt-2">
+                    {suggestions.map((suggestion, index) => (
+                        <div
+                            key={index}
+                            onClick={() => handleSuggestionClick(suggestion)}
+                            className="cursor-pointer p-2 hover:bg-gray-200"
+                        >
+                            {suggestion}
+                        </div>
+                    ))}
+                </div>
+            )}
             {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
         </div>
     );
 };
+
+

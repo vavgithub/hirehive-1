@@ -17,8 +17,8 @@ const Navbar = () => {
     const { auth } = useAuth();
     return (
         <div>
-            <nav className="flex gap-6 px-24 items-center justify-between bg-slate-500 text-white py-4 w-full h-[96px]">
-                <div className='flex w-1/2 gap-4 items-center'>
+            <div className="fixed flex h-screen w-48 flex-col gap-6 bg-slate-500 text-white justify-between py-4 px-4">
+                <div className='items-center'>
                     <div className="text-xl font-bold">
                         <Link to="">HireHive</Link>
                     </div>
@@ -32,7 +32,7 @@ const Navbar = () => {
                 <div>
                     <button onClick={handleLogout} className="bg-black text-white font-bold py-2 px-4 rounded">LOGOUT</button>
                 </div>
-            </nav>
+            </div>
             <Outlet />
         </div>
     );

@@ -9,7 +9,7 @@ const Authlayout = () => {
   }
   const { auth } = useAuth();
   return (
-    <div>
+    <div>  
       <Outlet />
     </div>
   )
