@@ -11,30 +11,30 @@ const JobCard = ({ job, status, handleAction , handleViewJob }) => {
     return (
         <div className="p-4 bg-white shadow rounded mb-4" onClick={handleViewJob}>
             <div className="flex justify-between items-center">
-                <h2 className="text-xl font-bold">{job.title}</h2>
+                <h2 className="text-xl font-bold">{job.jobTitle}</h2>
                 <div className='flex items-center'>
-                    <span className={`text-sm font-semibold ${job.category === 'UI/UX' ? 'bg-blue-200 text-blue-800' : 'bg-green-200 text-green-800'} px-2 py-1 rounded`}>{job.category}</span>
+                    <span className={`text-sm font-semibold ${job.category === 'UI/UX' ? 'bg-blue-200 text-blue-800' : 'bg-green-200 text-green-800'} px-2 py-1 rounded`}>{job.jobProfile}</span>
                     <ThreeDots job={job} handleAction={handleAction} />
                 </div>
             </div>
             <div className="flex items-center">
                 <div className="mr-8">
                     <p className="text-gray-600 text-sm">Employment Type</p>
-                    <p className="font-bold">{"Full-time"}</p>
+                    <p className="font-bold">{job.employmentType}</p>
                 </div>
                 <div className='bg-red-600 mr-2 ml-2 h-[32px] w-[2px]'></div>
                 <div className="mr-8">
                     <p className="text-gray-600 text-sm">Budget</p>
-                    <p className="font-bold">{"$50,000"}</p>
+                    <p className="font-bold">{job.budgetFrom} - {job.budgetTo} LPA </p>
                 </div>
                 <div className='bg-red-600 mr-2 ml-2 h-[32px] w-[2px]'></div>
                 <div>
                     <p className="text-gray-600 text-sm">Experience</p>
-                    <p className="font-bold">{"3 years"}</p>
+                    <p className="font-bold">{job.fromExperience} - {job.toExperience} Year</p>
                 </div>
             </div>
             <p className='line-clamp-1'>
-                {job.description}
+                {job.jobDescription}
             </p>
 
             <div className="flex items-center justify-between">

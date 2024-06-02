@@ -2,52 +2,69 @@ import mongoose from "mongoose";
 
 const jobSchema = new mongoose.Schema(
   {
-    title: {
+    jobTitle: {
       type: String,
       trim: true,
       lowercase: true,
     },
-    location: {
+    workplaceType: {
       type: String,
       lowercase: true,
       trim: true,
     },
-    jobType:{
-      type:String,
-      enum:['',"fulltime" , "internship"],
-      default:"fulltime",
+    employeeLocation: {
+      type: String,
+      lowercase: true,
+      trim: true,
     },
-    category:{
-      type:String,
-      enum:['',"design" , "engineering" , "sales" , "marketing"],
-      default:"design",
+    employmentType: {
+      type: String,
+      enum: ["", "fulltime", "contract", "internship"],
+      default: "fulltime",
     },
-    experienceLevel:{
-      type:String,
-      enum:['',"entry" , "intermediate" , "senior"],
-      default:"entry",
+    jobProfile: {
+      type: String,
+      enum: [
+        "",
+        "frontenddeveloper",
+        "uiux",
+        "motiongraphic",
+        "videoeditor",
+        "digitalmarketingexecutive",
+        "projectmanager",
+        "artdirector",
+        "3d"
+      ],
+      default: "frontendDeveloper",
     },
+    fromExperience: {
+      type: Number,
+      
+      min: 1,
+    },
+    toExperience: {
+      type: Number,
+     
+      min: 2, // Assuming this will always be greater than fromExperience
+    },
+    budgetFrom: {
+      type: Number,
+  
+    },
+    budgetTo: {
+      type: Number,
+
+    },    
     skills: {
-      type: [String]
+      type: [String],
     },
-    description: {
+    jobDescription: {
       type: String,
-    },
-    requirements: {
-      type: String,
-      lowercase: true,
-      trim: true,
-    },
-    qualifications: {
-      type: String,
-      lowercase: true,
-      trim: true,
     },
     status: {
       type: String,
-      enum: [ '', 'active', 'draft' , 'archived'], // Define possible values for status
-      default: 'draft', // Set default value for status
-    }     
+      enum: ["", "open", "draft", "closed"], // Define possible values for status
+    },
   },
   { timestamps: true }
 );

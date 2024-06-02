@@ -15,7 +15,7 @@ const Breadcrumb = ({ paths }) => {
                                 </Link>
 
                                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M6 12L10 8L6 4" stroke="#C3C6D5" stroke-width="1.42222" stroke-linecap="round" stroke-linejoin="round" />
+                                    <path d="M6 12L10 8L6 4" stroke="#C3C6D5" strokeWidth="1.42222" strokeLinecap="round" strokeLinejoin="round" />
                                 </svg>
 
                             </>

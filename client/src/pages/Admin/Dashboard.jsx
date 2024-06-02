@@ -16,9 +16,9 @@ const Dashboard = () => {
     const [statistics, setStatistics] = useState({});
 
     const [activeJobsCountFilter, setActiveJobsCountFilter] = useState(0);
-    const [activeTab, setActiveTab] = useState('active');
-    const [archivedJobs, setArchivedJobs] = useState([]);
-    const [activeJobs, setActiveJobs] = useState([]);
+    const [activeTab, setActiveTab] = useState('open');
+    const [closedJobs, setClosedJobs] = useState([]);
+    const [openJobs, setOpenJobs] = useState([]);
     const [draftJobs, setDraftJobs] = useState([]);
 
     const [open, setOpen] = useState(false);
@@ -32,9 +32,9 @@ const Dashboard = () => {
     };
 
     const [filters, setFilters] = useState({
-        jobType: [],
+        employmentType: [],
         experienceLevel: [],
-        category: []
+        jobProfile: []
     });
 
     const handleAction = (action, jobId) => {
@@ -58,14 +58,14 @@ const Dashboard = () => {
         if (modalAction === 'archive') {
             axios.put(`http://localhost:8008/api/archiveJob/${selectedJobId}`)
                 .then(response => {
-                    console.log("Job archived successfully:", response.data.message);
-                    const updatedJobs = activeJobs.map(job => {
+                    console.log("Job closed successfully:", response.data.message);
+                    const updatedJobs = openJobs.map(job => {
                         if (job._id === selectedJobId) {
-                            return { ...job, status: 'archived' };
+                            return { ...job, status: 'closed' };
                         }
                         return job;
                     });
-                    setActiveJobs(updatedJobs);
+                    setOpenJobs(updatedJobs);
                     setOpen(false);
                     window.location.reload();
                 })
@@ -77,13 +77,13 @@ const Dashboard = () => {
             axios.put(`http://localhost:8008/api/unarchiveJob/${selectedJobId}`)
                 .then(response => {
                     console.log("Job unarchived successfully:", response.data.message);
-                    const updatedJobs = archivedJobs.map(job => {
+                    const updatedJobs = closedJobs.map(job => {
                         if (job._id === selectedJobId) {
-                            return { ...job, status: 'active' };
+                            return { ...job, status: 'open' };
                         }
                         return job;
                     });
-                    setArchivedJobs(updatedJobs);
+                    setClosedJobs(updatedJobs);
                     setOpen(false);
                     window.location.reload();
                 })
@@ -95,18 +95,22 @@ const Dashboard = () => {
             navigate(`/admin/edit-job/${selectedJobId}`);
         }
     };
-
     const handleCheckboxChange = (filterType, value) => {
-        const updatedFilters = { ...filters };
-        const index = updatedFilters[filterType].indexOf(value);
-
-        if (index !== -1) {
-            updatedFilters[filterType].splice(index, 1);
-        } else {
-            updatedFilters[filterType].push(value);
-        }
-
-        setFilters(updatedFilters);
+        setFilters((prevFilters) => {
+            const updatedFilters = { ...prevFilters };
+            if (!updatedFilters[filterType]) {
+                updatedFilters[filterType] = [];
+            }
+            const index = updatedFilters[filterType].indexOf(value);
+    
+            if (index !== -1) {
+                updatedFilters[filterType].splice(index, 1);
+            } else {
+                updatedFilters[filterType].push(value);
+            }
+    
+            return updatedFilters;
+        });
     };
 
     const fetchJobs = async () => {
@@ -156,11 +160,12 @@ const Dashboard = () => {
     };
 
     const [draftJobsCountFilter, setDraftJobsCountFilter] = useState(0);
-
+    const [closedJobsCountFilter, setclosedJobsCountFilter] = useState(0);
+    
     const fetchDraftsJobsStats = async () => {
         try {
-            const response = await axios.get('http://localhost:8008/api/draftJobsFilterCount');
-            setDraftJobsCountFilter(response.data);
+            const response = await axios.get('http://localhost:8008/api/closedJobsFilterCount');
+            setclosedJobsCountFilter(response.data);
         } catch (error) {
             console.error('Error fetching job statistics:', error);
         }
@@ -181,7 +186,7 @@ const Dashboard = () => {
     useEffect(() => {
         const searchJobs = async () => {
             try {
-                const response = await axios.get(`http://localhost:8008/api/searchJobs?title=${encodeURIComponent(searchQuery)}`);
+                const response = await axios.get(`http://localhost:8008/api/searchJobs?jobTitle=${encodeURIComponent(searchQuery)}`);
                 const filteredJobs = response.data.filter(job => job.status === activeTab);
                 setJobs(filteredJobs);
             } catch (error) {
@@ -196,12 +201,12 @@ const Dashboard = () => {
     }, [searchQuery, activeTab]);
 
     useEffect(() => {
-        const activeJobsFiltered = jobs.filter(job => job.status === 'active');
+        const activeJobsFiltered = jobs.filter(job => job.status === 'open');
         const draftJobsFiltered = jobs.filter(job => job.status === 'draft');
-        const archivedJobsFiltered = jobs.filter(job => job.status === 'archived');
-        setActiveJobs(activeJobsFiltered);
+        const archivedJobsFiltered = jobs.filter(job => job.status === 'closed');
+        setOpenJobs(activeJobsFiltered);
         setDraftJobs(draftJobsFiltered);
-        setArchivedJobs(archivedJobsFiltered);
+        setClosedJobs(archivedJobsFiltered);
     }, [jobs]);
 
     const handleTabClick = (tab) => {
@@ -213,16 +218,16 @@ const Dashboard = () => {
         return <Navigate to="/auth/login" replace />
     }
 
-    const filtersConfig = activeTab === 'active' ? activeJobsCountFilter : draftJobsCountFilter;
+    const filtersConfig = activeTab === 'open' ? activeJobsCountFilter : closedJobsCountFilter;
 
     const handleViewJob = (jobId) => {
         console.log("am i clicking", jobId)
         navigate(`/admin/view-job/${jobId}`);
     }
     const tabs = [
-        { name: 'active', label: 'Open', count: statistics?.totalActiveJobs },
+        { name: 'open', label: 'Open', count: statistics?.totalActiveJobs },
+        { name: 'closed', label: 'Closed', count: statistics?.totalClosedJobs },
         { name: 'draft', label: 'Draft', count: statistics?.totalDraftJobs },
-        { name: 'archived', label: 'Archived', count: statistics?.totalArchivedJobs },
     ];
 
     return (
@@ -260,15 +265,10 @@ const Dashboard = () => {
                 </div>
                 <div className='w-full ml-4'>
                     <div className='flex justify-center mb-4'>
-                        {/* <div className='flex gap-6 p-2 bg-gray-300 w-max rounded-md items-center'>
-                            <span className={activeTab === 'active' ? 'bg-white cursor-pointer p-1 rounded-md w-32 flex justify-center' : 'cursor-pointer w-32 flex justify-center'} onClick={() => handleTabClick('active')}>Open ({statistics?.totalActiveJobs})</span>
-                            <span className={activeTab === 'draft' ? 'bg-white cursor-pointer p-1 rounded-md w-32 flex justify-center' : 'cursor-pointer w-32 flex justify-center'} onClick={() => handleTabClick('draft')}>Closed ({statistics?.totalDraftJobs})</span>
-                            <span className={activeTab === 'archived' ? 'bg-white cursor-pointer p-1 rounded-md w-32 flex justify-center' : 'cursor-pointer w-32 flex justify-center'} onClick={() => handleTabClick('archived')}>Draft ({statistics?.totalArchivedJobs})</span>
-                        </div> */}
                          <Tabs tabs={tabs} activeTab={activeTab} handleTabClick={handleTabClick} />
                     </div>
-                    {searchQuery.length === 0 && activeTab === 'active' &&
-                        activeJobs.map((job) => (
+                    {searchQuery.length === 0 && activeTab === 'open' &&
+                        openJobs.map((job) => (
                             <JobCard key={job._id} job={job} status={activeTab} handleAction={handleAction} onClick={()=>handleViewJob(job._id)} />
                         ))
                     }
@@ -277,8 +277,8 @@ const Dashboard = () => {
                             <JobCard key={job._id} job={job} status={activeTab} handleAction={handleAction} onClick={()=>handleViewJob(job._id)} />
                         ))
                     }
-                    {searchQuery.length === 0 && activeTab === 'archived' &&
-                        archivedJobs.map((job) => (
+                    {searchQuery.length === 0 && activeTab === 'closed' &&
+                        closedJobs.map((job) => (
                             <JobCard key={job._id} job={job} status={activeTab} handleAction={handleAction} onClick={()=>handleViewJob(job._id)}/>
                         ))
                     }

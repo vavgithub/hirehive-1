@@ -33,7 +33,16 @@ const ThreeDots = ({ job, handleAction }) => {
                 {isOpen && (
                     <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 shadow-lg rounded-md z-10">
     
-                        {job.status == 'active' && (
+                        {job.status == 'open' && (
+                            <ul className="py-1">
+                                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={() => handleAction('edit', job._id)}><button className="text-black rounded m-1"><EditIcon /></button>Edit</li>
+                                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={() => handleAction('archive', job._id)}><button className="text-black rounded m-1"><ArchiveIcon /></button>Move To Draft</li>
+                                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={() => handleAction('unarchive', job._id)}><button className="text-black rounded m-1"><ArchiveIcon /></button>Close job</li>
+                                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={() => handleAction('delete', job._id)}><button className="text-black rounded m-1"><DeleteIcon /></button>Delete</li>
+                            </ul>
+                        )
+                        }
+                        {job.status == 'closed' && (
                             <ul className="py-1">
                                 <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={() => handleAction('edit', job._id)}><button className="text-black rounded m-1"><EditIcon /></button>Edit</li>
                                 <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={() => handleAction('archive', job._id)}><button className="text-black rounded m-1"><ArchiveIcon /></button>Move To Draft</li>

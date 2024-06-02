@@ -19,30 +19,34 @@ const createJob = async (req, res) => {
   try {
     // Destructure job details from request body
     const {
-      title,
-      location,
-      jobType,
-      category,
-      experienceLevel,
-      description,
-      requirements,
-      qualifications,
-      status,
-      skills,
+        jobTitle,
+        workplaceType,
+        employeeLocation,
+        employmentType,
+        jobProfile,
+        fromExperience,
+        toExperience,
+        budgetFrom,
+        budgetTo,
+        jobDescription,
+        skills,
+        status,
     } = req.body;
 
     // Create a new job instance using the Job model
     const newJob = new jobs({
-      title,
-      location,
-      jobType,
-      category,
-      experienceLevel,
-      description,
-      requirements,
-      qualifications,
-      status,
+      jobTitle,
+      workplaceType,
+      employeeLocation,
+      employmentType,
+      jobProfile,
+      fromExperience,
+      toExperience,
+      budgetFrom,
+      budgetTo,
+      jobDescription,
       skills,
+      status,
     });
 
     // Save the job to the database
@@ -75,14 +79,14 @@ const getTotalJobCount = async (req, res) => {
 };
 
 const searchJobs = async (req, res) => {
-  const searchTerm = req.query.title;
+  const searchTerm = req.query.jobTitle;
   if (!searchTerm) {
     return res.status(400).json({ error: "Search term (title) is required" });
   }
   try {
     // Fetch all jobs from the database
     const jobArray = await jobs.find({
-      title: { $regex: searchTerm, $options: "i" },
+      jobTitle: { $regex: searchTerm, $options: "i" },
     });
     // Respond with the list of jobs
     res.status(200).json(jobArray);
@@ -93,23 +97,22 @@ const searchJobs = async (req, res) => {
 };
 
 const filterJobs = async (req, res) => {
-  const { jobType, experienceLevel, category } = req.body.filters;
+  const { employmentType, jobProfile } = req.body.filters;
   try {
     const query = {};
-    if (jobType && jobType.length > 0) {
-      query.jobType = { $in: jobType.map((type) => type.toLowerCase()) };
+    if (employmentType && employmentType.length > 0) {
+      query.employmentType = { $in: employmentType.map((type) => type.toLowerCase()) };
+      console.log(query.employmentType);
     }
-
-    if (experienceLevel && experienceLevel.length > 0) {
-      query.experienceLevel = {
-        $in: experienceLevel.map((level) => level.toLowerCase()),
-      };
-    }
-
-    if (category && category.length > 0) {
-      query.category = {
-        $in: category.map((func) => func.toLowerCase()),
-      };
+    // if (experienceLevel && experienceLevel.length > 0) {
+    //   query.experienceLevel = {
+    //     $in: experienceLevel.map((level) => level.toLowerCase()),
+    //   };
+    // }
+    if (jobProfile && jobProfile.length > 0) {
+      query.jobProfile = {
+        $in: jobProfile.map((type) => type.toLowerCase())};
+        console.log(query.jobProfile);
     }
     const filteredJobs = await jobs.find(query);
     res.status(200).json(filteredJobs);
@@ -123,50 +126,122 @@ const activeJobsFilterCount = async (req, res) => {
   try {
     const stats = await jobs.aggregate([
       {
-        $match: { status: "active" }, // Filter only active jobs
+        $match: { status: "open" }, // Filter only open jobs
       },
       {
         $group: {
           _id: null,
           totalJobs: { $sum: 1 },
           totalActiveJobs: {
-            $sum: { $cond: [{ $eq: ["$status", "active"] }, 1, 0] },
+            $sum: { $cond: [{ $eq: ["$status", "open"] }, 1, 0] },
           },
           totalDraftJobs: {
             $sum: { $cond: [{ $eq: ["$status", "draft"] }, 1, 0] },
           },
-          totalArchivedJobs: {
-            $sum: { $cond: [{ $eq: ["$status", "archived"] }, 1, 0] },
+          totalClosedJobs: {
+            $sum: { $cond: [{ $eq: ["$status", "closed"] }, 1, 0] },
           },
           totalInternships: {
-            $sum: { $cond: [{ $eq: ["$jobType", "internship"] }, 1, 0] },
+            $sum: { $cond: [{ $eq: ["$employmentType", "internship"] }, 1, 0] },
           },
           totalFullTimeJobs: {
-            $sum: { $cond: [{ $eq: ["$jobType", "fulltime"] }, 1, 0] },
+            $sum: { $cond: [{ $eq: ["$employmentType", "fulltime"] }, 1, 0] },
           },
-          totalEntryLevelJobs: {
-            $sum: { $cond: [{ $eq: ["$experienceLevel", "entry"] }, 1, 0] },
+          totalContractJobs: {
+            $sum: { $cond: [{ $eq: ["$employmentType", "contract"] }, 1, 0] },
           },
-          totalMidLevelJobs: {
-            $sum: {
-              $cond: [{ $eq: ["$experienceLevel", "intermediate"] }, 1, 0],
-            },
+          totalUiUxJobs: {
+            $sum: { $cond: [{ $eq: ["$jobProfile", "uiux"] }, 1, 0] }
+        },
+        totalMotionGraphicsJobs: {
+            $sum: { $cond: [{ $eq: ["$jobProfile", "motiongraphic"] }, 1, 0] }
+        },
+        total3DJobs: {
+            $sum: { $cond: [{ $eq: ["$jobProfile", "3d"] }, 1, 0] }
+        },
+        totalVideoEditorJobs: {
+            $sum: { $cond: [{ $eq: ["$jobProfile", "videoeditor"] }, 1, 0] }
+        },
+        totalDigitalMarketingExecutiveJobs: {
+            $sum: { $cond: [{ $eq: ["$jobProfile", "digitalmarketingexecutive"] }, 1, 0] }
+        },
+        totalProjectManagerJobs: {
+            $sum: { $cond: [{ $eq: ["$jobProfile", "projectmanager"] }, 1, 0] }
+        },
+        totalArtDirectorJobs: {
+            $sum: { $cond: [{ $eq: ["$jobProfile", "artdirector"] }, 1, 0] }
+        },
+        totalFrontendDeveloperJobs: {
+            $sum: { $cond: [{ $eq: ["$jobProfile", "frontenddeveloper"] }, 1, 0] }
+        }
+          // Add more conditions for other job functions/categories
+        },
+      },
+    ]);
+
+    if (stats.length > 0) {
+      res.json(stats[0]); // Return the first (and only) result
+    } else {
+      res.json({}); // No stats found
+    }
+  } catch (error) {
+    console.error("Error fetching job statistics:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+const closedJobsFilterCount = async (req, res) => {
+  try {
+    const stats = await jobs.aggregate([
+      {
+        $match: { status: "closed" }, // Filter only open jobs
+      },
+      {
+        $group: {
+          _id: null,
+          totalJobs: { $sum: 1 },
+          totalActiveJobs: {
+            $sum: { $cond: [{ $eq: ["$status", "open"] }, 1, 0] },
           },
-          totalSeniorLevelJobs: {
-            $sum: { $cond: [{ $eq: ["$experienceLevel", "senior"] }, 1, 0] },
+          totalDraftJobs: {
+            $sum: { $cond: [{ $eq: ["$status", "draft"] }, 1, 0] },
           },
-          totalDesignJobs: {
-            $sum: { $cond: [{ $eq: ["$category", "design"] }, 1, 0] },
+          totalClosedJobs: {
+            $sum: { $cond: [{ $eq: ["$status", "closed"] }, 1, 0] },
           },
-          totalSalesJobs: {
-            $sum: { $cond: [{ $eq: ["$category", "sales"] }, 1, 0] },
+          totalInternships: {
+            $sum: { $cond: [{ $eq: ["$employmentType", "internship"] }, 1, 0] },
           },
-          totalMarketingJobs: {
-            $sum: { $cond: [{ $eq: ["$category", "marketing"] }, 1, 0] },
+          totalFullTimeJobs: {
+            $sum: { $cond: [{ $eq: ["$employmentType", "fulltime"] }, 1, 0] },
           },
-          totalEngineeringJobs: {
-            $sum: { $cond: [{ $eq: ["$category", "engineering"] }, 1, 0] },
+          totalContractJobs: {
+            $sum: { $cond: [{ $eq: ["$employmentType", "contract"] }, 1, 0] },
           },
+          totalUiUxJobs: {
+            $sum: { $cond: [{ $eq: ["$jobProfile", "uiux"] }, 1, 0] }
+        },
+        totalMotionGraphicsJobs: {
+            $sum: { $cond: [{ $eq: ["$jobProfile", "motiongraphic"] }, 1, 0] }
+        },
+        total3DJobs: {
+            $sum: { $cond: [{ $eq: ["$jobProfile", "3d"] }, 1, 0] }
+        },
+        totalVideoEditorJobs: {
+            $sum: { $cond: [{ $eq: ["$jobProfile", "videoeditor"] }, 1, 0] }
+        },
+        totalDigitalMarketingExecutiveJobs: {
+            $sum: { $cond: [{ $eq: ["$jobProfile", "digitalmarketingexecutive"] }, 1, 0] }
+        },
+        totalProjectManagerJobs: {
+            $sum: { $cond: [{ $eq: ["$jobProfile", "projectmanager"] }, 1, 0] }
+        },
+        totalArtDirectorJobs: {
+            $sum: { $cond: [{ $eq: ["$jobProfile", "artdirector"] }, 1, 0] }
+        },
+        totalFrontendDeveloperJobs: {
+            $sum: { $cond: [{ $eq: ["$jobProfile", "frontenddeveloper"] }, 1, 0] }
+        }
           // Add more conditions for other job functions/categories
         },
       },
@@ -194,19 +269,19 @@ const draftJobsFilterCount = async (req, res) => {
           _id: null,
           totalJobs: { $sum: 1 },
           totalActiveJobs: {
-            $sum: { $cond: [{ $eq: ["$status", "active"] }, 1, 0] },
+            $sum: { $cond: [{ $eq: ["$status", "open"] }, 1, 0] },
           },
           totalDraftJobs: {
             $sum: { $cond: [{ $eq: ["$status", "draft"] }, 1, 0] },
           },
-          totalArchivedJobs: {
-            $sum: { $cond: [{ $eq: ["$status", "archived"] }, 1, 0] },
+          totalClosedJobs: {
+            $sum: { $cond: [{ $eq: ["$status", "closed"] }, 1, 0] },
           },
           totalInternships: {
-            $sum: { $cond: [{ $eq: ["$jobType", "internship"] }, 1, 0] },
+            $sum: { $cond: [{ $eq: ["$employmentType", "internship"] }, 1, 0] },
           },
           totalFullTimeJobs: {
-            $sum: { $cond: [{ $eq: ["$jobType", "fulltime"] }, 1, 0] },
+            $sum: { $cond: [{ $eq: ["$employmentType", "fulltime"] }, 1, 0] },
           },
           totalEntryLevelJobs: {
             $sum: { $cond: [{ $eq: ["$experienceLevel", "entry"] }, 1, 0] },
@@ -219,18 +294,30 @@ const draftJobsFilterCount = async (req, res) => {
           totalSeniorLevelJobs: {
             $sum: { $cond: [{ $eq: ["$experienceLevel", "senior"] }, 1, 0] },
           },
-          totalDesignJobs: {
-            $sum: { $cond: [{ $eq: ["$category", "design"] }, 1, 0] },
-          },
-          totalSalesJobs: {
-            $sum: { $cond: [{ $eq: ["$category", "sales"] }, 1, 0] },
-          },
-          totalMarketingJobs: {
-            $sum: { $cond: [{ $eq: ["$category", "marketing"] }, 1, 0] },
-          },
-          totalEngineeringJobs: {
-            $sum: { $cond: [{ $eq: ["$category", "engineering"] }, 1, 0] },
-          },
+          totalUiUxJobs: {
+            $sum: { $cond: [{ $eq: ["$jobProfile", "uiux"] }, 1, 0] }
+        },
+        totalMotionGraphicsJobs: {
+            $sum: { $cond: [{ $eq: ["$jobProfile", "motiongraphic"] }, 1, 0] }
+        },
+        total3DJobs: {
+            $sum: { $cond: [{ $eq: ["$jobProfile", "3d"] }, 1, 0] }
+        },
+        totalVideoEditorJobs: {
+            $sum: { $cond: [{ $eq: ["$jobProfile", "videoeditor"] }, 1, 0] }
+        },
+        totalDigitalMarketingExecutiveJobs: {
+            $sum: { $cond: [{ $eq: ["$jobProfile", "digitalmarketingexecutive"] }, 1, 0] }
+        },
+        totalProjectManagerJobs: {
+            $sum: { $cond: [{ $eq: ["$jobProfile", "projectmanager"] }, 1, 0] }
+        },
+        totalArtDirectorJobs: {
+            $sum: { $cond: [{ $eq: ["$jobProfile", "artdirector"] }, 1, 0] }
+        },
+        totalFrontendDeveloperJobs: {
+            $sum: { $cond: [{ $eq: ["$jobProfile", "frontenddeveloper"] }, 1, 0] }
+        }
           // Add more conditions for other job functions/categories
         },
       },
@@ -251,26 +338,26 @@ const jobsStats = async (req, res) => {
   try {
     const stats = await jobs.aggregate([
       // {
-      //   $match: { status: "active" } // Filter only active jobs
+      //   $match: { status: "open" } // Filter only open jobs
       // },
       {
         $group: {
           _id: null,
           totalJobs: { $sum: 1 },
           totalActiveJobs: {
-            $sum: { $cond: [{ $eq: ["$status", "active"] }, 1, 0] },
+            $sum: { $cond: [{ $eq: ["$status", "open"] }, 1, 0] },
           },
           totalDraftJobs: {
             $sum: { $cond: [{ $eq: ["$status", "draft"] }, 1, 0] },
           },
-          totalArchivedJobs: {
-            $sum: { $cond: [{ $eq: ["$status", "archived"] }, 1, 0] },
+          totalClosedJobs: {
+            $sum: { $cond: [{ $eq: ["$status", "closed"] }, 1, 0] },
           },
           totalInternships: {
-            $sum: { $cond: [{ $eq: ["$jobType", "internship"] }, 1, 0] },
+            $sum: { $cond: [{ $eq: ["$employmentType", "internship"] }, 1, 0] },
           },
           totalFullTimeJobs: {
-            $sum: { $cond: [{ $eq: ["$jobType", "fulltime"] }, 1, 0] },
+            $sum: { $cond: [{ $eq: ["$employmentType", "fulltime"] }, 1, 0] },
           },
           totalEntryLevelJobs: {
             $sum: { $cond: [{ $eq: ["$experienceLevel", "entry"] }, 1, 0] },
@@ -284,16 +371,16 @@ const jobsStats = async (req, res) => {
             $sum: { $cond: [{ $eq: ["$experienceLevel", "senior"] }, 1, 0] },
           },
           totalDesignJobs: {
-            $sum: { $cond: [{ $eq: ["$category", "design"] }, 1, 0] },
+            $sum: { $cond: [{ $eq: ["$jobProfile", "design"] }, 1, 0] },
           },
           totalSalesJobs: {
-            $sum: { $cond: [{ $eq: ["$category", "sales"] }, 1, 0] },
+            $sum: { $cond: [{ $eq: ["$jobProfile", "sales"] }, 1, 0] },
           },
           totalMarketingJobs: {
-            $sum: { $cond: [{ $eq: ["$category", "marketing"] }, 1, 0] },
+            $sum: { $cond: [{ $eq: ["$jobProfile", "marketing"] }, 1, 0] },
           },
           totalEngineeringJobs: {
-            $sum: { $cond: [{ $eq: ["$category", "engineering"] }, 1, 0] },
+            $sum: { $cond: [{ $eq: ["$jobProfile", "engineering"] }, 1, 0] },
           },
           // Add more conditions for other job functions/categories
         },
@@ -355,19 +442,19 @@ const archiveJob = async (req, res) => {
           return res.status(404).send({ message: 'Job not found' });
       }
 
-      if (job.status === 'active') {
-          job.status = 'archived';
+      if (job.status === 'open') {
+          job.status = 'closed';
           await job.save();
-          res.send({ message: 'Job status updated to archived' });
+          res.send({ message: 'Job status updated to closed' });
       } else {
-          res.status(400).send({ message: 'Job is not in an active state' });
+          res.status(400).send({ message: 'Job is not in an open state' });
       }
   } catch (error) {
       res.status(500).send({ message: 'Error updating job status', error: error.message });
   }
 };
 
-//here unarvhicee means for we are acting thi job from archive to active again
+//here unarvhicee means for we are acting thi job from archive to open again
 const unarchiveJob = async (req, res) => {
   const { id } = req.params;
 
@@ -378,10 +465,10 @@ const unarchiveJob = async (req, res) => {
           return res.status(404).send({ message: 'Job not found' });
       }
 
-      if (job.status === 'archived') {
-          job.status = 'active';
+      if (job.status === 'closed') {
+          job.status = 'open';
           await job.save();
-          res.send({ message: 'Job status updated to active' });
+          res.send({ message: 'Job status updated to open' });
       } else {
           res.status(400).send({ message: 'Job is not in an archieved state' });
       }
@@ -446,6 +533,7 @@ export {
   editJob,
   getJobById,
   draftJobsFilterCount,
+  closedJobsFilterCount,
 };
 
 // totalSeniorLevelJobs: { $sum: { $cond: [{ $eq: ['$experienceLevel', 'senior'] }, 1, 0] },

@@ -21,29 +21,24 @@ const CheckboxGroup = ({ title, options, filters, handleCheckboxChange, isDisabl
     </div>
 );
 
-const Filters = ({ filters, statistics, handleCheckboxChange, activeTab }) => {
-    const isDisabled = activeTab === 'archived';
+const Filters = ({ filters = {}, statistics, handleCheckboxChange, activeTab }) => {
+    const isDisabled = activeTab === 'draft';
 
     const jobTypeOptions = [
         { value: 'fulltime', label: 'Full-time', statKey: 'totalFullTimeJobs' },
-        { value: 'internship', label: 'Internship', statKey: 'totalInternships' }
-    ];
-
-    const experienceLevelOptions = [
-        { value: 'entry', label: 'Entry Level', statKey: 'totalEntryLevelJobs' },
-        { value: 'intermediate', label: 'Intermediate', statKey: 'totalMidLevelJobs' },
-        { value: 'senior', label: 'Senior Level', statKey: 'totalSeniorLevelJobs' }
+        { value: 'internship', label: 'Internship', statKey: 'totalInternships' },
+        { value: 'contract', label: 'Contract', statKey: 'totalContractJobs'}
     ];
 
     const jobProfileOptions = [
-        { value: 'design', label: 'UI UX', statKey: 'totalDesignJobs' },
-        { value: 'engineering', label: 'Motion Graphics', statKey: 'totalEngineeringJobs' },
-        { value: 'sales', label: '3D', statKey: 'totalSalesJobs' },
-        { value: 'marketing', label: 'Video Editor', statKey: 'totalMarketingJobs' },
-        { value: 'marketing', label: 'Digital Marketing Executive', statKey: 'totalMarketingJobs' },
-        { value: 'marketing', label: 'Project Manager', statKey: 'totalMarketingJobs' },
-        { value: 'marketing', label: 'Art Director', statKey: 'totalMarketingJobs' },
-        { value: 'marketing', label: 'Frontend Developer', statKey: 'totalMarketingJobs' }
+        { value: 'uiux', label: 'UI UX', statKey: 'totalUiUxJobs' },
+        { value: 'motiongraphic', label: 'Motion Graphics', statKey: 'totalMotionGraphicsJobs' },
+        { value: '3d', label: '3d', statKey: 'total3DJobs' },
+        { value: 'videoeditor', label: 'Video Editor', statKey: 'totalVideoEditorJobs' },
+        { value: 'digitalmarketingexecutive', label: 'Digital Marketing Executive', statKey: 'totalDigitalMarketingExecutiveJobs' },
+        { value: 'projectmanager', label: 'Project Manager', statKey: 'totalProjectManagerJobs' },
+        { value: 'artdirector', label: 'Art Director', statKey: 'totalArtDirectorJobs' },
+        { value: 'frontenddeveloper', label: 'Frontend Developer', statKey: 'totalFrontendDeveloperJobs'}
     ];
 
     const draftOptions = [
@@ -65,26 +60,19 @@ const Filters = ({ filters, statistics, handleCheckboxChange, activeTab }) => {
                     />
                 )}
                 <CheckboxGroup
-                    title="Job Type"
+                    title="Employment Type"
                     options={jobTypeOptions}
-                    filters={filters.jobType}
-                    handleCheckboxChange={(value) => handleCheckboxChange('jobType', value)}
+                    filters={filters.employmentType || []}
+                    handleCheckboxChange={(value) => handleCheckboxChange('employmentType', value)}
                     isDisabled={isDisabled}
                     statistics={statistics}
                 />
-                <CheckboxGroup
-                    title="Experience Level"
-                    options={experienceLevelOptions}
-                    filters={filters.experienceLevel}
-                    handleCheckboxChange={(value) => handleCheckboxChange('experienceLevel', value)}
-                    isDisabled={isDisabled}
-                    statistics={statistics}
-                />
+          
                 <CheckboxGroup
                     title="Job Profile"
                     options={jobProfileOptions}
-                    filters={filters.category}
-                    handleCheckboxChange={(value) => handleCheckboxChange('category', value)}
+                    filters={filters.jobProfile || []}
+                    handleCheckboxChange={(value) => handleCheckboxChange('jobProfile', value)}
                     isDisabled={isDisabled}
                     statistics={statistics}
                 />
