@@ -49,7 +49,7 @@ const Filters = ({ filters = {}, statistics, handleCheckboxChange, activeTab }) 
     return (
         <div className='w-64'>
             <div className="bg-gray-100 p-4 rounded-md">
-                {activeTab === 'draft' && (
+                {activeTab === 'closed' && (
                     <CheckboxGroup
                         title="Job Status"
                         options={draftOptions}

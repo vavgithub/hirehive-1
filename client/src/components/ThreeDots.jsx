@@ -8,7 +8,8 @@ const ThreeDots = ({ job, handleAction }) => {
         const [isOpen, setIsOpen] = useState(false);
         const menuRef = useRef(null);
     
-        const toggleMenu = () => {
+        const toggleMenu = (e) => {
+            e.stopPropagation();
             setIsOpen(!isOpen);
         };
     
@@ -27,7 +28,7 @@ const ThreeDots = ({ job, handleAction }) => {
     
         return (
             <div className="relative" ref={menuRef}>
-                <button onClick={toggleMenu} className="focus:outline-none">
+                <button onClick={(e)=>toggleMenu(e)} className="focus:outline-none">
                     <ThreeDotsIcon /> {/* This is the three dots icon */}
                 </button>
                 {isOpen && (
@@ -35,22 +36,23 @@ const ThreeDots = ({ job, handleAction }) => {
     
                         {job.status == 'open' && (
                             <ul className="py-1">
-                                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={() => handleAction('edit', job._id)}><button className="text-black rounded m-1"><EditIcon /></button>Edit</li>
-                                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={() => handleAction('archive', job._id)}><button className="text-black rounded m-1"><ArchiveIcon /></button>Move To Draft</li>
-                                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={() => handleAction('unarchive', job._id)}><button className="text-black rounded m-1"><ArchiveIcon /></button>Close job</li>
-                                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={() => handleAction('delete', job._id)}><button className="text-black rounded m-1"><DeleteIcon /></button>Delete</li>
+                                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={(e) => {handleAction('edit', job._id);e.stopPropagation()}}><button className="text-black rounded m-1"><EditIcon /></button>Edit</li>
+                                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={(e) => {handleAction('archive', job._id);e.stopPropagation()}}><button className="text-black rounded m-1"><ArchiveIcon /></button>Move To Draft</li>
+                                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={(e) => {handleAction('unarchive', job._id);e.stopPropagation()}}><button className="text-black rounded m-1"><ArchiveIcon /></button>Close job</li>
+                                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={(e) => {handleAction('delete', job._id);e.stopPropagation()}}><button className="text-black rounded m-1"><DeleteIcon /></button>Delete</li>
                             </ul>
                         )
                         }
                         {job.status == 'closed' && (
                             <ul className="py-1">
-                                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={() => handleAction('edit', job._id)}><button className="text-black rounded m-1"><EditIcon /></button>Edit</li>
-                                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={() => handleAction('archive', job._id)}><button className="text-black rounded m-1"><ArchiveIcon /></button>Move To Draft</li>
-                                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={() => handleAction('unarchive', job._id)}><button className="text-black rounded m-1"><ArchiveIcon /></button>Close job</li>
-                                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={() => handleAction('delete', job._id)}><button className="text-black rounded m-1"><DeleteIcon /></button>Delete</li>
+                                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={(e) => {handleAction('edit', job._id);e.stopPropagation()}}><button className="text-black rounded m-1"><EditIcon /></button>Edit</li>
+                                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={(e) => {handleAction('archive', job._id);e.stopPropagation()}}><button className="text-black rounded m-1"><ArchiveIcon /></button>Move To Draft</li>
+                                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={(e) => {handleAction('unarchive', job._id);e.stopPropagation()}}><button className="text-black rounded m-1"><ArchiveIcon /></button>Close job</li>
+                                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={(e) => {handleAction('delete', job._id);e.stopPropagation()}}><button className="text-black rounded m-1"><DeleteIcon /></button>Delete</li>
                             </ul>
                         )
                         }
+                        
                         {job.status == 'draft' && (
                             <ul className="py-1">
                                 <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={() => handleAction('edit', job._id)}><button className="text-black rounded m-1"><EditIcon /></button>Edit</li>

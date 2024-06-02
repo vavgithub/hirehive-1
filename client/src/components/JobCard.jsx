@@ -6,10 +6,10 @@ import ClockIcon from '../svg/ClockIcon';
 import { getTimeAgo } from '../utility/getTimeAgo';
 import ClickIcon from '../svg/ClickIcon';
 
-const JobCard = ({ job, status, handleAction , handleViewJob }) => {
+const JobCard = ({ job, status, handleAction , onClick }) => {
     const formattedCreatedAt = getTimeAgo(job.createdAt);
     return (
-        <div className="p-4 bg-white shadow rounded mb-4" onClick={handleViewJob}>
+        <div className="p-4 bg-white shadow rounded mb-4" onClick={() => onClick(job._id)}>
             <div className="flex justify-between items-center">
                 <h2 className="text-xl font-bold">{job.jobTitle}</h2>
                 <div className='flex items-center'>
