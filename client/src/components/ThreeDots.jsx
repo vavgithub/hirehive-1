@@ -37,8 +37,8 @@ const ThreeDots = ({ job, handleAction }) => {
                         {job.status == 'open' && (
                             <ul className="py-1">
                                 <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={(e) => {handleAction('edit', job._id);e.stopPropagation()}}><button className="text-black rounded m-1"><EditIcon /></button>Edit</li>
-                                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={(e) => {handleAction('archive', job._id);e.stopPropagation()}}><button className="text-black rounded m-1"><ArchiveIcon /></button>Move To Draft</li>
-                                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={(e) => {handleAction('unarchive', job._id);e.stopPropagation()}}><button className="text-black rounded m-1"><ArchiveIcon /></button>Close job</li>
+                                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={(e) => {handleAction('draft', job._id);e.stopPropagation()}}><button className="text-black rounded m-1"><ArchiveIcon /></button>Move To Draft</li>
+                                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={(e) => {handleAction('closed', job._id);e.stopPropagation()}}><button className="text-black rounded m-1"><ArchiveIcon /></button>Close job</li>
                                 <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={(e) => {handleAction('delete', job._id);e.stopPropagation()}}><button className="text-black rounded m-1"><DeleteIcon /></button>Delete</li>
                             </ul>
                         )

@@ -9,13 +9,15 @@ const Modal = ({ open, onClose, action, confirmAction }) => {
                     <h3 className="text-lg font-black text-gray-800">
                         {action === 'delete' ? 'Confirm Delete' :
                             action === 'edit' ? 'Confirm Edit' :
-                                action === 'unarchive' ? 'Confirm Unarchive' : 'Confirm Archive'}
+                                action === 'draft' ? 'Confirm draft' : 
+                                    action === 'closed' ? 'Confirm close' : 'Confirm archive'
+                                    }
                     </h3>
                     <p className="text-sm text-gray-500">
                         {action === 'delete' ? 'Are you sure you want to delete this item?' :
                             action === 'edit' ? 'Are you sure you want to edit this item?' :
-                                action === 'unarchive' ? 'Are you sure you want to unarchive this item?' :
-                                    'Are you sure you want to archive this item?'}
+                                action === 'draft' ? 'Are you sure you want to draft this item?' :
+                                    action === 'closed' ? 'Are you sure you want to close this item?' : 'Are you sure you want to archive this item?'}
                     </p>
                     <div className="flex gap-4">
                         <button className="btn btn-danger w-full" onClick={confirmAction}>

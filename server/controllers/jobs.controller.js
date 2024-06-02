@@ -465,8 +465,8 @@ const unarchiveJob = async (req, res) => {
           return res.status(404).send({ message: 'Job not found' });
       }
 
-      if (job.status === 'closed') {
-          job.status = 'open';
+      if (job.status === 'open') {
+          job.status = 'closed';
           await job.save();
           res.send({ message: 'Job status updated to open' });
       } else {

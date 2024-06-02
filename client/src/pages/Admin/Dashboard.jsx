@@ -55,13 +55,13 @@ const Dashboard = () => {
                     console.error("Failed to delete the job", error);
                 });
         }
-        if (modalAction === 'archive') {
+        if (modalAction === 'draft') {
             axios.put(`http://localhost:8008/api/archiveJob/${selectedJobId}`)
                 .then(response => {
                     console.log("Job closed successfully:", response.data.message);
                     const updatedJobs = openJobs.map(job => {
                         if (job._id === selectedJobId) {
-                            return { ...job, status: 'closed' };
+                            return { ...job, status: 'draft' };
                         }
                         return job;
                     });
@@ -73,13 +73,13 @@ const Dashboard = () => {
                     console.error("Failed to archive the job", error.response ? error.response.data.message : "No additional error information");
                 });
         }
-        if (modalAction === 'unarchive') {
+        if (modalAction === 'closed') {
             axios.put(`http://localhost:8008/api/unarchiveJob/${selectedJobId}`)
                 .then(response => {
                     console.log("Job unarchived successfully:", response.data.message);
                     const updatedJobs = closedJobs.map(job => {
                         if (job._id === selectedJobId) {
-                            return { ...job, status: 'open' };
+                            return { ...job, status: 'closed' };
                         }
                         return job;
                     });

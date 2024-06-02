@@ -74,116 +74,119 @@ const ViewJobs = () => {
     }
 
     return (
-        <div className='bg-white'>
-            <div className="px-24 pt-4 h-[216px] bg-gray-200 flex flex-col justify-between">
+        <div className="ml-52 pt-4">
+
+            <div className='bg-white'>
+                <div className="px-24 pt-4 h-[216px] bg-gray-200 flex flex-col justify-between">
 
 
-                <div className="flex flex-col ">
+                    <div className="flex flex-col ">
 
-                    <div className='flex justify-between mt-[60px]'>
-                        <h1 className="text-2xl font-bold">{formData.title}</h1>
-                        {/* <Link to={`edit-job/${mainId}`} className="bg-black text-white px-4 py-2 rounded">Edit job listing</Link> */}
-                        <button onClick={handleEditClick} className="bg-black text-white px-4 py-2 rounded">Edit Job Listing</button>
+                        <div className='flex justify-between mt-[60px]'>
+                            <h1 className="text-2xl font-bold">{formData.title}</h1>
+                            {/* <Link to={`edit-job/${mainId}`} className="bg-black text-white px-4 py-2 rounded">Edit job listing</Link> */}
+                            <button onClick={handleEditClick} className="bg-black text-white px-4 py-2 rounded">Edit Job Listing</button>
+                        </div>
+                        <div className='flex gap-2'>
+                            <span className='bg-gray-300 rounded capitalize'>{formData.category}</span>
+                            <span className='bg-gray-300 rounded capitalize'>{formData.experienceLevel}</span>
+                            <span className='bg-gray-300 rounded capitalize'>{formData.jobType}</span>
+                        </div>
                     </div>
-                    <div className='flex gap-2'>
-                        <span className='bg-gray-300 rounded capitalize'>{formData.category}</span>
-                        <span className='bg-gray-300 rounded capitalize'>{formData.experienceLevel}</span>
-                        <span className='bg-gray-300 rounded capitalize'>{formData.jobType}</span>
+                    <div className='flex mt-[48px] gap-[76px]'>
+                        <span className={activeTab === 'jobDescription' ? 'underline cursor-pointer' : 'cursor-pointer'} onClick={() => handleTabClick('jobDescription')}>Job Description</span>
+                        <span className={activeTab === 'candidate' ? 'underline cursor-pointer' : 'cursor-pointer'} onClick={() => handleTabClick('candidate')}>Candidates</span>
+                        <span className={activeTab === 'aboutCompany' ? 'underline cursor-pointer' : 'cursor-pointer'} onClick={() => handleTabClick('aboutCompany')}>About Company</span>
+
+
                     </div>
                 </div>
-                <div className='flex mt-[48px] gap-[76px]'>
-                    <span className={activeTab === 'jobDescription' ? 'underline cursor-pointer' : 'cursor-pointer'} onClick={() => handleTabClick('jobDescription')}>Job Description</span>
-                    <span className={activeTab === 'candidate' ? 'underline cursor-pointer' : 'cursor-pointer'} onClick={() => handleTabClick('candidate')}>Candidates</span>
-                    <span className={activeTab === 'aboutCompany' ? 'underline cursor-pointer' : 'cursor-pointer'} onClick={() => handleTabClick('aboutCompany')}>About Company</span>
+                {
+                    activeTab === 'jobDescription' && (
 
-
-                </div>
-            </div>
-            {
-                activeTab === 'jobDescription' && (
-
-                    <div className=" bg-white  px-24 pt-4 p-6 ">
-                        <h2 className="text-lg font-bold mb-2">Overview</h2>
-                        <div className="mb-4">
-                            <p className="text-gray-600">{formData.description}</p>
-                        </div>
-
-                        <div className="mb-4">
-                            <h2 className="text-lg font-bold mb-2">Skills</h2>
-                            <div className="flex flex-wrap">
-                                {formData.skills.map((skill, index) => (
-                                    <span
-                                        key={index}
-                                        className="bg-gray-200 text-gray-800 px-2 py-1 rounded-md mr-2 mb-2"
-                                    >
-                                        {skill}
-                                    </span>
-                                ))}
-                            </div>
-                        </div>
-                        <div className="mb-4">
-                            <h2 className="text-lg font-bold mb-2">Responsibility</h2>
+                        <div className=" bg-white  px-24 pt-4 p-6 ">
+                            <h2 className="text-lg font-bold mb-2">Overview</h2>
                             <div className="mb-4">
-                                <p className="text-gray-600">{formData.requirements}</p>
+                                <p className="text-gray-600">{formData.description}</p>
                             </div>
-                            {/* <ul className="list-disc pl-4">
+
+                            <div className="mb-4">
+                                <h2 className="text-lg font-bold mb-2">Skills</h2>
+                                <div className="flex flex-wrap">
+                                    {formData.skills.map((skill, index) => (
+                                        <span
+                                            key={index}
+                                            className="bg-gray-200 text-gray-800 px-2 py-1 rounded-md mr-2 mb-2"
+                                        >
+                                            {skill}
+                                        </span>
+                                    ))}
+                                </div>
+                            </div>
+                            <div className="mb-4">
+                                <h2 className="text-lg font-bold mb-2">Responsibility</h2>
+                                <div className="mb-4">
+                                    <p className="text-gray-600">{formData.requirements}</p>
+                                </div>
+                                {/* <ul className="list-disc pl-4">
                                 {jobData.responsibilities.map((responsibility, index) => (
                                     <li key={index} className="mb-2">
-                                        {responsibility}
+                                    {responsibility}
                                     </li>
                                 ))}
                             </ul> */}
-                        </div>
-                        <div>
-                            <h2 className="text-lg font-bold mb-2">Qualification</h2>
-                            <div className="mb-4">
-                                <p className="text-gray-600">{formData.qualifications}</p>
                             </div>
-                            {/* <ul className="list-disc pl-4">
+                            <div>
+                                <h2 className="text-lg font-bold mb-2">Qualification</h2>
+                                <div className="mb-4">
+                                    <p className="text-gray-600">{formData.qualifications}</p>
+                                </div>
+                                {/* <ul className="list-disc pl-4">
                                 {jobData.qualifications.map((qualification, index) => (
                                     <li key={index} className="mb-2">
                                         {qualification}
-                                    </li>
+                                        </li>
                                 ))}
                             </ul> */}
+                            </div>
                         </div>
-                    </div>
-                )
-            }
+                    )
+                }
 
-            {
-                activeTab === "candidate" && (
-                    <div className="px-24 pt-4 bg-white p-4 rounded-md w-[70%] ">
-                        <table className="border-collapse w-full">
-                            <thead>
-                                <tr>
-                                    <th className="py-2 text-left">Name</th>
-                                    <th className="py-2 text-left">Current Position</th>
-                                    <th className="py-2 text-left">Experience</th>
-                                    <th className="py-2 text-left">Rating</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {candidates.map((candidate, index) => (
-                                    <tr key={index} className="border-b">
-                                        <td className="py-2 ">{candidate.name}</td>
-                                        <td className="py-2 ">{candidate.position}</td>
-                                        <td className="py-2 ">{candidate.experience}</td>
-                                        <td className="py-2 ">{candidate.rating}</td>
+                {
+                    activeTab === "candidate" && (
+                        <div className="px-24 pt-4 bg-white p-4 rounded-md w-[70%] ">
+                            <table className="border-collapse w-full">
+                                <thead>
+                                    <tr>
+                                        <th className="py-2 text-left">Name</th>
+                                        <th className="py-2 text-left">Current Position</th>
+                                        <th className="py-2 text-left">Experience</th>
+                                        <th className="py-2 text-left">Rating</th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                )
-            }
+                                </thead>
+                                <tbody>
+                                    {candidates.map((candidate, index) => (
+                                        <tr key={index} className="border-b">
+                                            <td className="py-2 ">{candidate.name}</td>
+                                            <td className="py-2 ">{candidate.position}</td>
+                                            <td className="py-2 ">{candidate.experience}</td>
+                                            <td className="py-2 ">{candidate.rating}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    )
+                }
+
+
+
+            </div>
 
 
 
         </div>
-
-
-
     )
 
 };
