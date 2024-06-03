@@ -308,7 +308,7 @@ const SkillsInput = ({ skills, setSkills, allSkills }) => {
 
     return (
         <div>
-            <div className="flex flex-wrap gap-2 p-2 border border-gray-300 rounded">
+            <div className="flex flex-wrap gap-2 p-2 border border-gray-500 rounded">
                 {skills.map((skill, index) => (
                     <div key={index} className="flex items-center gap-1 bg-blue-100 rounded px-2">
                         {skill}
