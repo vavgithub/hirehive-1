@@ -257,9 +257,10 @@ const EditJobs = () => {
 
 export default EditJobs;
 
-const SkillsInput = ({ skills, setSkills }) => {
+const SkillsInput = ({ skills, setSkills, allSkills }) => {
     const [skill, setSkill] = useState('');
     const [error, setError] = useState('');
+    const [suggestions, setSuggestions] = useState([]);
 
     const handleKeyDown = (event) => {
         if (['Enter', ','].includes(event.key)) {
@@ -269,6 +270,7 @@ const SkillsInput = ({ skills, setSkills }) => {
                 setSkills([...skills, trimmedSkill]);
                 setSkill('');
                 setError('');
+                setSuggestions([]);
             } else {
                 setError('Same value not allowed');
             }
@@ -276,7 +278,27 @@ const SkillsInput = ({ skills, setSkills }) => {
     };
 
     const handleInputChange = (event) => {
-        setSkill(event.target.value);
+        const inputValue = event.target.value;
+        setSkill(inputValue);
+        if (inputValue) {
+            const filteredSuggestions = allSkills.filter((s) =>
+                s.toLowerCase().includes(inputValue.toLowerCase())
+            );
+            setSuggestions(filteredSuggestions);
+        } else {
+            setSuggestions([]);
+        }
+    };
+
+    const handleSuggestionClick = (suggestion) => {
+        if (!skills.includes(suggestion)) {
+            setSkills([...skills, suggestion]);
+            setSkill('');
+            setError('');
+            setSuggestions([]);
+        } else {
+            setError('Same value not allowed');
+        }
     };
 
     const removeSkill = (index) => {
@@ -302,6 +324,19 @@ const SkillsInput = ({ skills, setSkills }) => {
                     className="outline-none"
                 />
             </div>
+            {suggestions.length > 0 && (
+                <div className="border border-gray-300 rounded mt-2">
+                    {suggestions.map((suggestion, index) => (
+                        <div
+                            key={index}
+                            onClick={() => handleSuggestionClick(suggestion)}
+                            className="cursor-pointer p-2 hover:bg-gray-200"
+                        >
+                            {suggestion}
+                        </div>
+                    ))}
+                </div>
+            )}
             {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
         </div>
     );
