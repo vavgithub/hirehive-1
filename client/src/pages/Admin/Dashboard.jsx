@@ -224,6 +224,7 @@ const Dashboard = () => {
         console.log("am i clicking", jobId)
         navigate(`/admin/view-job/${jobId}`);
     }
+    
     const tabs = [
         { name: 'open', label: 'Open', count: statistics?.totalActiveJobs },
         { name: 'closed', label: 'Closed', count: statistics?.totalClosedJobs },

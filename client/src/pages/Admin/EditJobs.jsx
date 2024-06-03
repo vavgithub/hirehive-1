@@ -51,7 +51,7 @@ const EditJobs = () => {
         try {
             const response = await axios.put(`http://localhost:8008/api/editJob/${mainId}`, formData);
             console.log('Job updated successfully:', response.data);
-            navigate('/admin/jobs');
+            navigate(-1);
         } catch (error) {
             console.error('Error updating job:', error);
         }
