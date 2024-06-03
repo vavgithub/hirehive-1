@@ -4,6 +4,14 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import Breadcrumb from '../../components/Breadcrumb';
 import Tabs from '../../components/Tabs';
 import ThreeDots from '../../components/ThreeDots';
+import Modal from '../../components/Modal';
+import { formatDescription } from '../../utility/formatDescription';
+import EmploymentTypeIcon from '../../svg/EmploymentTypeIcon';
+import DesignIcon from '../../svg/DesignIcon';
+import ExperienceLevelIcon from '../../svg/ExperienceLevelIcon';
+import PostedIcon from '../../svg/PostedIcon';
+import { postedDate } from '../../utility/postedDate';
+import StatsGrid from '../../components/StatsGrid';
 
 const ViewJobs = () => {
     const [formData, setFormData] = useState(null);
@@ -19,6 +27,63 @@ const ViewJobs = () => {
         { name: 'jobDetails', label: 'Job Detail' },
         { name: 'candidate', label: 'Candidate' }
     ];
+
+    const [open, setOpen] = useState(false);
+    const [selectedJobId, setSelectedJobId] = useState(null);
+    const [modalAction, setModalAction] = useState('');
+
+    const confirmAction = () => {
+        if (modalAction === 'delete') {
+            axios.delete(`http://localhost:8008/api/deleteJob/${selectedJobId}`)
+                .then(() => {
+                    console.log("Job deleted successfully");
+                    setOpen(false);
+                    navigate(-1)
+                })
+                .catch(error => {
+                    console.error("Failed to delete the job", error);
+                });
+        }
+        if (modalAction === 'draft') {
+            axios.put(`http://localhost:8008/api/archiveJob/${selectedJobId}`)
+                .then(response => {
+                    console.log("Job closed successfully:", response.data.message);
+                    const updatedJobs = openJobs.map(job => {
+                        if (job._id === selectedJobId) {
+                            return { ...job, status: 'draft' };
+                        }
+                        return job;
+                    });
+                    setOpenJobs(updatedJobs);
+                    setOpen(false);
+                    window.location.reload();
+                })
+                .catch(error => {
+                    console.error("Failed to archive the job", error.response ? error.response.data.message : "No additional error information");
+                });
+        }
+        if (modalAction === 'closed') {
+            axios.put(`http://localhost:8008/api/unarchiveJob/${selectedJobId}`)
+                .then(response => {
+                    console.log("Job unarchived successfully:", response.data.message);
+                    const updatedJobs = closedJobs.map(job => {
+                        if (job._id === selectedJobId) {
+                            return { ...job, status: 'closed' };
+                        }
+                        return job;
+                    });
+                    setClosedJobs(updatedJobs);
+                    setOpen(false);
+                    window.location.reload();
+                })
+                .catch(error => {
+                    console.error("Failed to unarchive the job", error.response ? error.response.data.message : "No additional error information");
+                });
+        }
+        if (modalAction === 'edit') {
+            navigate(`/admin/edit-job/${selectedJobId}`);
+        }
+    };
 
 
     useEffect(() => {
@@ -57,17 +122,51 @@ const ViewJobs = () => {
         setModalAction(action);
     };
 
+    const statsData = [
+        { title: 'Views', value: '200' },
+        { title: 'Applications Received', value: '156' },
+        { title: 'Qualified applications', value: '80' },
+        { title: 'Engagement Rate', value: '78%' },
+        // Add more stats as needed
+    ];
+
+
+
 
     return (
         <div className="ml-52 pt-4">
             <div onClick={back}>Back</div>
-            <Breadcrumb paths={paths} />
-            <h1 className='text-2xl font-bold'>{formData.jobTitle}</h1>
+            <div className='flex justify-between'>
+                <div>
+                    <Breadcrumb paths={paths} />
+                    <h1 className='text-2xl font-bold'>{formData.jobTitle}</h1>
+                </div>
+                <div className='flex gap-4'>
+                    <button onClick={handleEditClick} className=" text-black outline px-2 outline-black rounded">Edit Job Posting</button>
+                    <div className='outline rounded w-[32px] h-[32px] px-2 py-2 flex items-center justify-center'  >  <ThreeDots job={formData} handleAction={handleAction} /> </div>
+
+                </div>
+            </div>
+
             <Tabs tabs={tabs} activeTab={activeTab} handleTabClick={handleTabClick} />
 
-            <button onClick={handleEditClick} className=" text-black outline outline-black px-4 py-2 rounded">Edit Job Posting</button>
-            <div className='border rounded w-min '  >  <ThreeDots job={formData} handleAction={handleAction} /> </div>
-
+            <StatsGrid stats={statsData} />
+            <div className='flex '>
+                <div className='w-[70%]'>
+                    <h2 className="text-xl font-bold mt-4 mb-2">Job Description</h2>
+                    <div dangerouslySetInnerHTML={{ __html: formatDescription(formData.jobDescription) }}></div>
+                    <h2 className="text-xl font-bold mt-4 mb-2">Skills</h2>
+                    {
+                        formData.skills && formData?.skills?.map((skill, index) => {
+                            return <span key={index} className="bg-[#C3C6D5] mr-4 text-black px-2 py-1 rounded-[50px]">{skill}</span>
+                        })
+                    }
+                </div>
+                <div>
+                    <SideCard formData={formData} />
+                </div>
+            </div>
+            <Modal open={open} onClose={() => setOpen(false)} action={modalAction} confirmAction={confirmAction} />
 
         </div>
     )
@@ -75,3 +174,46 @@ const ViewJobs = () => {
 };
 
 export default ViewJobs;
+
+
+const SideCard = ({ formData }) => {
+    const formattedDate = postedDate(formData.createdAt);
+    return (
+
+        <div className="flex flex-col gap-2 border p-4 rounded w-max" >
+            <div className="flex items-center">
+                <EmploymentTypeIcon />
+                <div className="ml-2">
+                    <p className=" font-bold capitalize">{formData.employmentType}</p>
+                    <p className="text-sm">Employment Type</p>
+                </div>
+            </div>
+            <div className="flex items-center">
+                <DesignIcon />
+                <div className="ml-2">
+                    <p className=" font-bold capitalize ">{formData.jobProfile}</p>
+                    <p className="text-sm">Job Profile</p>
+                </div>
+            </div>
+
+            <div className="flex items-center">
+                <ExperienceLevelIcon />
+                <div className="ml-2">
+                    <p className=" font-bold capitalize ">{formData.fromExperience} - {formData.toExperience} Year</p>
+                    <p className="text-sm">Experience Level</p>
+                </div>
+            </div>
+
+            <div className="flex items-center">
+                <PostedIcon />
+                <div className="ml-2">
+                    <p className=" font-bold capitalize ">{formattedDate}</p>
+                    <p className="text-sm">Date Posted </p>
+                </div>
+            </div>
+
+
+        </div>
+
+    )
+}
