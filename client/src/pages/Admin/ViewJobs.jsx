@@ -45,18 +45,18 @@ const ViewJobs = () => {
                 });
         }
         if (modalAction === 'draft') {
-            axios.put(`http://localhost:8008/api/archiveJob/${selectedJobId}`)
+            axios.put(`http://localhost:8008/api/draftJob/${selectedJobId}`)
                 .then(response => {
                     console.log("Job closed successfully:", response.data.message);
-                    const updatedJobs = openJobs.map(job => {
-                        if (job._id === selectedJobId) {
-                            return { ...job, status: 'draft' };
-                        }
-                        return job;
-                    });
-                    setOpenJobs(updatedJobs);
+                    // const updatedJobs = openJobs.map(job => {
+                    //     if (job._id === selectedJobId) {
+                    //         return { ...job, status: 'draft' };
+                    //     }
+                    //     return job;
+                    // });
+                    // setOpenJobs(updatedJobs);
                     setOpen(false);
-                    window.location.reload();
+                    navigate(-1)
                 })
                 .catch(error => {
                     console.error("Failed to archive the job", error.response ? error.response.data.message : "No additional error information");
@@ -66,15 +66,15 @@ const ViewJobs = () => {
             axios.put(`http://localhost:8008/api/unarchiveJob/${selectedJobId}`)
                 .then(response => {
                     console.log("Job unarchived successfully:", response.data.message);
-                    const updatedJobs = closedJobs.map(job => {
-                        if (job._id === selectedJobId) {
-                            return { ...job, status: 'closed' };
-                        }
-                        return job;
-                    });
-                    setClosedJobs(updatedJobs);
+                    // const updatedJobs = closedJobs.map(job => {
+                    //     if (job._id === selectedJobId) {
+                    //         return { ...job, status: 'closed' };
+                    //     }
+                    //     return job;
+                    // });
+                    // setClosedJobs(updatedJobs);
                     setOpen(false);
-                    window.location.reload();
+                    navigate(-1)
                 })
                 .catch(error => {
                     console.error("Failed to unarchive the job", error.response ? error.response.data.message : "No additional error information");
@@ -122,7 +122,7 @@ const ViewJobs = () => {
         setModalAction(action);
     };
 
-    const statsData = [
+    const jobsDetailStats = [
         { title: 'Views', value: '200' },
         { title: 'Applications Received', value: '156' },
         { title: 'Qualified applications', value: '80' },
@@ -130,7 +130,18 @@ const ViewJobs = () => {
         // Add more stats as needed
     ];
 
+    const candidateStats = [
+        { title: 'Total', value: '200' },
+        { title: 'Portfolio', value: '0' },
+        { title: 'Screening', value: '0' },
+        { title: 'Design Task', value: '0' },
+        { title: 'Round 1', value: '0' },
+        { title: 'Round 2', value: '0' },
+        { title: 'Offer Sent', value: '0' },
+        // Add more stats as needed
+    ];
 
+    const currentPage = 'viewJob';
 
 
     return (
@@ -141,31 +152,51 @@ const ViewJobs = () => {
                     <Breadcrumb paths={paths} />
                     <h1 className='text-2xl font-bold'>{formData.jobTitle}</h1>
                 </div>
-                <div className='flex gap-4'>
-                    <button onClick={handleEditClick} className=" text-black outline px-2 outline-black rounded">Edit Job Posting</button>
-                    <div className='outline rounded w-[32px] h-[32px] px-2 py-2 flex items-center justify-center'  >  <ThreeDots job={formData} handleAction={handleAction} /> </div>
+                {activeTab === 'jobDetails' && (
+                    <div className='flex gap-4'>
+                        <button onClick={handleEditClick} className=" text-black outline px-2 outline-black rounded">Edit Job Posting</button>
+                        <div className='outline rounded w-[32px] h-[32px] px-2 py-2 flex items-center justify-center'  >  <ThreeDots job={formData} handleAction={handleAction} page={currentPage} /> </div>
 
-                </div>
+                    </div>
+                )
+                }
             </div>
 
             <Tabs tabs={tabs} activeTab={activeTab} handleTabClick={handleTabClick} />
 
-            <StatsGrid stats={statsData} />
-            <div className='flex '>
-                <div className='w-[70%]'>
-                    <h2 className="text-xl font-bold mt-4 mb-2">Job Description</h2>
-                    <div dangerouslySetInnerHTML={{ __html: formatDescription(formData.jobDescription) }}></div>
-                    <h2 className="text-xl font-bold mt-4 mb-2">Skills</h2>
-                    {
-                        formData.skills && formData?.skills?.map((skill, index) => {
-                            return <span key={index} className="bg-[#C3C6D5] mr-4 text-black px-2 py-1 rounded-[50px]">{skill}</span>
-                        })
-                    }
-                </div>
-                <div>
-                    <SideCard formData={formData} />
-                </div>
-            </div>
+            {
+                activeTab === 'jobDetails' && (
+                    <div>
+                        <StatsGrid stats={jobsDetailStats} />
+                        <div className='flex '>
+                            <div className='w-[70%]'>
+                                <h2 className="text-xl font-bold mt-4 mb-2">Job Description</h2>
+                                <div dangerouslySetInnerHTML={{ __html: formatDescription(formData.jobDescription) }}></div>
+                                <h2 className="text-xl font-bold mt-4 mb-2">Skills</h2>
+                                {
+                                    formData.skills && formData?.skills?.map((skill, index) => {
+                                        return <span key={index} className="bg-[#C3C6D5] mr-4 text-black px-2 py-1 rounded-[50px]">{skill}</span>
+                                    })
+                                }
+                            </div>
+                            <div>
+                                <SideCard formData={formData} />
+                            </div>
+                        </div>
+                    </div>
+
+                )
+            }
+
+            {
+                activeTab === 'candidate' && (
+                    <div>
+                        <StatsGrid stats={candidateStats} />
+                    </div>
+
+                )
+            }
+
             <Modal open={open} onClose={() => setOpen(false)} action={modalAction} confirmAction={confirmAction} />
 
         </div>

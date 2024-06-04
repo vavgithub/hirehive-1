@@ -6,7 +6,7 @@ import ClockIcon from '../svg/ClockIcon';
 import { getTimeAgo } from '../utility/getTimeAgo';
 import ClickIcon from '../svg/ClickIcon';
 
-const JobCard = ({ job, status, handleAction , onClick }) => {
+const JobCard = ({ job, status, handleAction , page , onClick }) => {
     const formattedCreatedAt = getTimeAgo(job.createdAt);
     return (
         <div className="p-4 bg-white shadow rounded mb-4" onClick={() => onClick(job._id)}>
@@ -14,7 +14,7 @@ const JobCard = ({ job, status, handleAction , onClick }) => {
                 <h2 className="text-xl font-bold">{job.jobTitle}</h2>
                 <div className='flex items-center'>
                     <span className={`text-sm font-semibold ${job.category === 'UI/UX' ? 'bg-blue-200 text-blue-800' : 'bg-green-200 text-green-800'} px-2 py-1 rounded`}>{job.jobProfile}</span>
-                    <ThreeDots job={job} handleAction={handleAction} />
+                    <ThreeDots job={job} handleAction={handleAction} page={page} />
                 </div>
             </div>
             <div className="flex items-center">

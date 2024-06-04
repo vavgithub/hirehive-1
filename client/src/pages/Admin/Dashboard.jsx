@@ -56,9 +56,9 @@ const Dashboard = () => {
                 });
         }
         if (modalAction === 'draft') {
-            axios.put(`http://localhost:8008/api/archiveJob/${selectedJobId}`)
+            axios.put(`http://localhost:8008/api/draftJob/${selectedJobId}`)
                 .then(response => {
-                    console.log("Job closed successfully:", response.data.message);
+                    console.log("Job Moved TO Draft successfully:", response.data.message);
                     const updatedJobs = openJobs.map(job => {
                         if (job._id === selectedJobId) {
                             return { ...job, status: 'draft' };
@@ -231,6 +231,8 @@ const Dashboard = () => {
         { name: 'draft', label: 'Draft', count: statistics?.totalDraftJobs },
     ];
 
+    const currentPage = 'dashboard'
+
     return (
         <div className="ml-52 pt-4">
             <div className="flex justify-between mb-4">
@@ -270,7 +272,7 @@ const Dashboard = () => {
                     </div>
                     {searchQuery.length === 0 && activeTab === 'open' &&
                         openJobs.map((job) => (
-                            <JobCard key={job._id} job={job} status={activeTab} handleAction={handleAction} onClick={()=>handleViewJob(job._id)} />
+                            <JobCard key={job._id} job={job} page={currentPage} status={activeTab} handleAction={handleAction} onClick={()=>handleViewJob(job._id)} />
                         ))
                     }
                     {searchQuery.length === 0 && activeTab === 'draft' &&

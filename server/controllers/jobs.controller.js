@@ -454,6 +454,26 @@ const archiveJob = async (req, res) => {
   }
 };
 
+
+const draftJob = async (req, res) => {
+  const { id } = req.params;
+  try{
+    const job = await jobs.findById(id);
+    if(!job){
+      return res.status(404).send({ message: 'Job not found' });
+    }
+    if(job.status === 'open' || 'closed'){
+      job.status = 'draft';
+      await job.save();
+      res.send({ message: 'Job status updated to draft' });
+    }else{
+      res.status(400).send({ message: 'Job is not in an open state' });
+    }
+  }catch (error) {
+    res.status(500).send({ message: 'Error updating job status', error: error.message });
+}
+}
+
 //here unarvhicee means for we are acting thi job from archive to open again
 const unarchiveJob = async (req, res) => {
   const { id } = req.params;
@@ -534,6 +554,7 @@ export {
   getJobById,
   draftJobsFilterCount,
   closedJobsFilterCount,
+  draftJob,
 };
 
 // totalSeniorLevelJobs: { $sum: { $cond: [{ $eq: ['$experienceLevel', 'senior'] }, 1, 0] },
