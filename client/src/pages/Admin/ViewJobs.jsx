@@ -124,24 +124,7 @@ const ViewJobs = () => {
         setModalAction(action);
     };
 
-    const jobsDetailStats = [
-        { title: 'Views', value: '200' },
-        { title: 'Applications Received', value: '156' },
-        { title: 'Qualified applications', value: '80' },
-        { title: 'Engagement Rate', value: '78%' },
-        // Add more stats as needed
-    ];
-
-    const candidateStats = [
-        { title: 'Total', value: '200' },
-        { title: 'Portfolio', value: '0' },
-        { title: 'Screening', value: '0' },
-        { title: 'Design Task', value: '0' },
-        { title: 'Round 1', value: '0' },
-        { title: 'Round 2', value: '0' },
-        { title: 'Offer Sent', value: '0' },
-        // Add more stats as needed
-    ];
+   
 
     const currentPage = 'viewJob';
 
@@ -176,6 +159,26 @@ const ViewJobs = () => {
         { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36 },
         { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
       ];
+
+      
+    const candidateStats = [
+        { title: 'Total', value: `${rowsData.length}` },
+        { title: 'Portfolio', value: '0' },
+        { title: 'Screening', value: '0' },
+        { title: 'Design Task', value: '0' },
+        { title: 'Round 1', value: '0' },
+        { title: 'Round 2', value: '0' },
+        { title: 'Offer Sent', value: '0' },
+        // Add more stats as needed
+    ];
+
+      const jobsDetailStats = [
+        { title: 'Views', value: `${rowsData.length}` },
+        { title: 'Applications Received', value: '156' },
+        { title: 'Qualified applications', value: '80' },
+        { title: 'Engagement Rate', value: '78%' },
+        // Add more stats as needed
+    ];
 
   
 
