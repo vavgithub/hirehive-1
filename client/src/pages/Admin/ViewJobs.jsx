@@ -14,6 +14,7 @@ import { postedDate } from '../../utility/postedDate';
 import StatsGrid from '../../components/StatsGrid';
 import { DataGrid } from '@mui/x-data-grid';
 import DataTable from '../../components/DataTable';
+import InputPopUpModal from '../../components/InputPopUpModal';
 
 const ViewJobs = () => {
     const [formData, setFormData] = useState(null);
@@ -30,6 +31,45 @@ const ViewJobs = () => {
         { name: 'candidate', label: 'Candidate' }
     ];
 
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedValue1, setSelectedValue1] = useState('');
+    const [selectedValue2, setSelectedValue2] = useState('');
+
+    const handleConfirm = () => {
+        // Handle confirm action
+        console.log('Confirmed with selections:', selectedValue1, selectedValue2);
+        setIsModalOpen(false);
+    };
+
+    const fields = [
+        {
+            type: 'select',
+            label: 'Start Range',
+            value: selectedValue1,
+            onChange: (e) => setSelectedValue1(e.target.value),
+            options: [
+                { value: '1', label: '1 Lpa' },
+                { value: '2', label: '2 Lpa' },
+                { value: '3', label: '3 Lpa' },
+                { value: '4', label: '4 Lpa' },
+                { value: '5', label: '5 Lpa' },
+            ],
+        }, 
+        {
+            type: 'select',
+            label: 'End Range',
+            value: selectedValue2,
+            onChange: (e) => setSelectedValue2(e.target.value),
+            options: [
+                { value: '1', label: '1 Lpa' },
+                { value: '2', label: '2 Lpa' },
+                { value: '3', label: '3 Lpa' },
+                { value: '4', label: '4 Lpa' },
+                { value: '5', label: '5 Lpa' },
+            ],
+        },
+
+    ];
     const [open, setOpen] = useState(false);
     const [selectedJobId, setSelectedJobId] = useState(null);
     const [modalAction, setModalAction] = useState('');
@@ -124,7 +164,7 @@ const ViewJobs = () => {
         setModalAction(action);
     };
 
-   
+
 
     const currentPage = 'viewJob';
 
@@ -133,22 +173,22 @@ const ViewJobs = () => {
         { field: 'firstName', headerName: 'First name', width: 130 },
         { field: 'lastName', headerName: 'Last name', width: 130 },
         {
-          field: 'age',
-          headerName: 'Age',
-          type: 'number',
-          width: 90,
+            field: 'age',
+            headerName: 'Age',
+            type: 'number',
+            width: 90,
         },
         {
-          field: 'fullName',
-          headerName: 'Full name',
-          description: 'This column has a value getter and is not sortable.',
-          sortable: false,
-          width: 160,
-          valueGetter: (value, row) => `${row.firstName || ''} ${row.lastName || ''}`,
+            field: 'fullName',
+            headerName: 'Full name',
+            description: 'This column has a value getter and is not sortable.',
+            sortable: false,
+            width: 160,
+            valueGetter: (value, row) => `${row.firstName || ''} ${row.lastName || ''}`,
         },
-      ];
-      
-      const rowsData = [
+    ];
+
+    const rowsData = [
         { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35 },
         { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 42 },
         { id: 3, lastName: 'Lannister', firstName: 'Jaime', age: 45 },
@@ -158,9 +198,9 @@ const ViewJobs = () => {
         { id: 7, lastName: 'Clifford', firstName: 'Ferrara', age: 44 },
         { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36 },
         { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
-      ];
+    ];
 
-      
+
     const candidateStats = [
         { title: 'Total', value: `${rowsData.length}` },
         { title: 'Portfolio', value: '0' },
@@ -172,7 +212,7 @@ const ViewJobs = () => {
         // Add more stats as needed
     ];
 
-      const jobsDetailStats = [
+    const jobsDetailStats = [
         { title: 'Views', value: `${rowsData.length}` },
         { title: 'Applications Received', value: '156' },
         { title: 'Qualified applications', value: '80' },
@@ -180,7 +220,8 @@ const ViewJobs = () => {
         // Add more stats as needed
     ];
 
-  
+
+
 
 
     return (
@@ -232,12 +273,24 @@ const ViewJobs = () => {
                     <div>
                         <StatsGrid stats={candidateStats} />
                         <div style={{ height: 400, width: '100%' }}>
-                           <DataTable rows={rowsData} columns={columnsData} />
+                            <DataTable rows={rowsData} columns={columnsData} />
                         </div>
                     </div>
 
                 )
             }
+
+            <button onClick={() => setIsModalOpen(true)}>Open Input Modal</button>
+            <InputPopUpModal
+                open={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                confirmAction={handleConfirm}
+                fields={fields}
+                heading="Screen with Budget"
+                para="Candidates will no longer be able to apply. Are you sure you want to close this job?"
+                confirmButtonText="Apply Budget"
+                cancelButtonText="Cancel"
+            />
 
             <Modal open={open} onClose={() => setOpen(false)} action={modalAction} confirmAction={confirmAction} />
 

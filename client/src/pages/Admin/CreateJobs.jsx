@@ -156,7 +156,7 @@ const CreateJobs = () => {
                             >
                                 <option value="">-Select-</option>
                                 <option value="frontenddeveloper">Frontend Developer</option>
-                                <option value="uiux">UI UX</option>
+                                <option value="">UI UX</option>
                                 <option value="motiongraphic">Motion Graphic</option>
                                 <option value="3d">3D</option>
                                 <option value="videoeditor">Video Editor</option>
