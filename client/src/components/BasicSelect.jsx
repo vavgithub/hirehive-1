@@ -27,8 +27,8 @@ export default function BasicSelect() {
           <MenuItem value={"Screening"}>Screening</MenuItem>
           <MenuItem value={"Design Task"}>Design Task</MenuItem>
           <MenuItem value={"Round 1"}>Round 1</MenuItem>
-        <MenuItem value={"Round 2"}>Round 2</MenuItem>
-        <MenuItem value={"Hired"}>Hired</MenuItem>
+          <MenuItem value={"Round 2"}>Round 2</MenuItem>
+          <MenuItem value={"Hired"}>Hired</MenuItem>
 
         </Select>
       </FormControl>
