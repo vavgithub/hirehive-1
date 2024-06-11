@@ -46,7 +46,7 @@ export const router = createBrowserRouter([
         element: <ViewJobs />,
       },
       {
-        path: "view-candidate",
+        path: "view-candidate/:id",
         element: <ViewCandidateProfile />
       }
     ]

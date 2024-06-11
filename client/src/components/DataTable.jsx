@@ -200,7 +200,7 @@ const DataTable = ({ rowsData }) => {
   };
 
   const handleRowClick = (params) => {
-    navigate(`/candidate/${params.id}`);
+    navigate(`/admin/view-candidate/${params.row._id}`);
   };
 
   const columns = [
@@ -284,7 +284,7 @@ const DataTable = ({ rowsData }) => {
         }}
         pageSizeOptions={[5, 10]}
         checkboxSelection
-        onRowClick={handleRowClick}
+        onRowClick={(params) => handleRowClick(params)}
       />
     </div>
   );

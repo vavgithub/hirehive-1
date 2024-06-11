@@ -5,7 +5,6 @@ const jobSchema = new mongoose.Schema(
     jobTitle: {
       type: String,
       trim: true,
-      lowercase: true,
     },
     workplaceType: {
       type: String,
