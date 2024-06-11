@@ -154,6 +154,9 @@
 
 
 // DataTable.js
+// DataTable.js
+
+// DataTable.js
 
 import { useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
@@ -178,25 +181,25 @@ const getStageOptions = (status) => {
   }
 };
 
-const DataTable = ({ rowsData }) => {
+const DataTable = ({ rowsData, onUpdateCandidate }) => {
   const [rows, setRows] = useState(rowsData);
   const navigate = useNavigate();
 
-  const updateStatus = (id, newStatus) => {
+  const handleStatusChange = async (id, newStatus) => {
     const newStage = getStageOptions(newStatus)[0];
-    setRows((prevRows) =>
-      prevRows.map((row) =>
-        row.id === id ? { ...row, status: newStatus, stage: newStage } : row
-      )
+    const updatedRows = rows.map((row) =>
+      row._id === id ? { ...row, status: newStatus, stage: newStage } : row
     );
+    setRows(updatedRows);
+    await onUpdateCandidate(id, { status: newStatus, stage: newStage });
   };
 
-  const updateStage = (id, newStage) => {
-    setRows((prevRows) =>
-      prevRows.map((row) =>
-        row.id === id ? { ...row, stage: newStage } : row
-      )
+  const handleStageChange = async (id, newStage) => {
+    const updatedRows = rows.map((row) =>
+      row._id === id ? { ...row, stage: newStage } : row
     );
+    setRows(updatedRows);
+    await onUpdateCandidate(id, { stage: newStage });
   };
 
   const handleRowClick = (params) => {
@@ -232,7 +235,7 @@ const DataTable = ({ rowsData }) => {
         <BasicSelect
           label="Status"
           value={params.value}
-          onChange={(e) => updateStatus(params.id, e.target.value)}
+          onChange={(e) => handleStatusChange(params.row._id, e.target.value)}
           list={["Portfolio", "Screening", "Design Task", "Round 1", "Round 2", "Hired"]}
         />
       ),
@@ -247,7 +250,7 @@ const DataTable = ({ rowsData }) => {
           <BasicSelect
             label="Stage"
             value={params.value}
-            onChange={(e) => updateStage(params.id, e.target.value)}
+            onChange={(e) => handleStageChange(params.row._id, e.target.value)}
             list={list}
           />
         );

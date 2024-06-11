@@ -112,7 +112,7 @@ const ViewJobs = () => {
         }
     };
 
-    const fetchJob = async () => {
+    const fetchJobData = async () => {
         try {
             const response = await axios.get(`http://localhost:8008/api/getJobById/${mainId}`);
             setFormData(response.data);
@@ -121,7 +121,7 @@ const ViewJobs = () => {
         }
     };
 
-    const fetchCandidates = async () => {
+    const fetchCandidatesData = async () => {
         try {
             const response = await axios.get(`http://localhost:8008/api/v1/candidates/${mainId}/candidates`);
             console.log(candidatesData)
@@ -131,12 +131,22 @@ const ViewJobs = () => {
         }
     };
 
-    useEffect(() => {
-        
+    const updateCandidate = async (id, updates) => {
+        try {
+            const response = await axios.patch(`http://localhost:8008/api/v1/candidates/update/${id}`, updates);
+            const updatedCandidate = response.data;
+            setCandidatesData(prevCandidates =>
+                prevCandidates.map(candidate => candidate._id === id ? updatedCandidate : candidate)
+            );
+        } catch (error) {
+            console.error('Error updating candidate:', error);
+        }
+    };
 
-        fetchJob();
-        fetchCandidates();
-    }, [location.pathname]);
+    useEffect(() => {
+        fetchJobData();
+        fetchCandidatesData();
+    }, [mainId, location]);
 
     if (!formData) {
         return <div>Loading...</div>;
@@ -173,7 +183,7 @@ const ViewJobs = () => {
 
     const jobsDetailStats = [
         { title: 'Views', value: "0" },
-        { title: 'Applications Received', value: candidatesData.length.toString() },
+        { title: 'Applications Received', value: '156' },
         { title: 'Qualified applications', value: '80' },
         { title: 'Engagement Rate', value: '78%' },
     ];
@@ -225,7 +235,7 @@ const ViewJobs = () => {
                     </div>
                     <div className='flex'>
                         <div style={{ height: 400, width: '100%' }}>
-                            <DataTable rowsData={candidatesData} />
+                            <DataTable rowsData={candidatesData} onUpdateCandidate={updateCandidate} />
                         </div>
                     </div>
                 </div>
@@ -247,6 +257,4 @@ const ViewJobs = () => {
     );
 };
 
-
 export default ViewJobs;
-
