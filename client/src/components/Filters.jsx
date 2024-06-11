@@ -26,8 +26,8 @@ const Filters = ({ filters = {}, statistics, handleCheckboxChange, activeTab }) 
 
     const jobTypeOptions = [
         { value: 'Full Time', label: 'Full-time', statKey: 'totalFullTimeJobs' },
-        { value: 'internship', label: 'Internship', statKey: 'totalInternships' },
-        { value: 'contract', label: 'Contract', statKey: 'totalContractJobs'}
+        { value: 'Internship', label: 'Internship', statKey: 'totalInternships' },
+        { value: 'Contract', label: 'Contract', statKey: 'totalContractJobs'}
     ];
 
     const jobProfileOptions = [

@@ -142,13 +142,13 @@ const activeJobsFilterCount = async (req, res) => {
             $sum: { $cond: [{ $eq: ["$status", "closed"] }, 1, 0] },
           },
           totalInternships: {
-            $sum: { $cond: [{ $eq: ["$employmentType", "internship"] }, 1, 0] },
+            $sum: { $cond: [{ $eq: ["$employmentType", "Internship"] }, 1, 0] },
           },
           totalFullTimeJobs: {
             $sum: { $cond: [{ $eq: ["$employmentType", "Full Time"] }, 1, 0] },
           },
           totalContractJobs: {
-            $sum: { $cond: [{ $eq: ["$employmentType", "contract"] }, 1, 0] },
+            $sum: { $cond: [{ $eq: ["$employmentType", "Contract"] }, 1, 0] },
           },
           totalUiUxJobs: {
             $sum: { $cond: [{ $eq: ["$jobProfile", "uiux"] }, 1, 0] }
@@ -210,13 +210,13 @@ const closedJobsFilterCount = async (req, res) => {
             $sum: { $cond: [{ $eq: ["$status", "closed"] }, 1, 0] },
           },
           totalInternships: {
-            $sum: { $cond: [{ $eq: ["$employmentType", "internship"] }, 1, 0] },
+            $sum: { $cond: [{ $eq: ["$employmentType", "Internship"] }, 1, 0] },
           },
           totalFullTimeJobs: {
             $sum: { $cond: [{ $eq: ["$employmentType", "Full Time"] }, 1, 0] },
           },
           totalContractJobs: {
-            $sum: { $cond: [{ $eq: ["$employmentType", "contract"] }, 1, 0] },
+            $sum: { $cond: [{ $eq: ["$employmentType", "Contract"] }, 1, 0] },
           },
           totalUiUxJobs: {
             $sum: { $cond: [{ $eq: ["$jobProfile", "uiux"] }, 1, 0] }
@@ -278,7 +278,7 @@ const draftJobsFilterCount = async (req, res) => {
             $sum: { $cond: [{ $eq: ["$status", "closed"] }, 1, 0] },
           },
           totalInternships: {
-            $sum: { $cond: [{ $eq: ["$employmentType", "internship"] }, 1, 0] },
+            $sum: { $cond: [{ $eq: ["$employmentType", "Internship"] }, 1, 0] },
           },
           totalFullTimeJobs: {
             $sum: { $cond: [{ $eq: ["$employmentType", "Full Time"] }, 1, 0] },
@@ -354,7 +354,7 @@ const jobsStats = async (req, res) => {
             $sum: { $cond: [{ $eq: ["$status", "closed"] }, 1, 0] },
           },
           totalInternships: {
-            $sum: { $cond: [{ $eq: ["$employmentType", "internship"] }, 1, 0] },
+            $sum: { $cond: [{ $eq: ["$employmentType", "Internship"] }, 1, 0] },
           },
           totalFullTimeJobs: {
             $sum: { $cond: [{ $eq: ["$employmentType", "Full Time"] }, 1, 0] },

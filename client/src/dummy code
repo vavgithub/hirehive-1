@@ -36,7 +36,7 @@ this is the code for duumy jobs feeed
        const FilterSidebar = () => {
 
         const [datePosted, setDatePosted] = useState('Anytime');
-        const [jobType, setJobType] = useState({ Full Time: false, internship: false });
+        const [jobType, setJobType] = useState({ Full Time: false, Internship: false });
         const [experienceLevel, setExperienceLevel] = useState({ entry: false, intermediate: false, senior: false });
         const [jobFunction, setJobFunction] = useState({ design: false, engineering: false, sales: false, marketing: false });
     
@@ -89,8 +89,8 @@ this is the code for duumy jobs feeed
                         <label className="inline-flex items-center">
                             <input
                                 type="checkbox"
-                                checked={jobType.internship}
-                                onChange={(e) => handleCheckboxChange(e, 'jobType', 'internship')}
+                                checked={jobType.Internship}
+                                onChange={(e) => handleCheckboxChange(e, 'jobType', 'Internship')}
                                 className="form-checkbox text-indigo-600"
                             />
                             <span className="ml-2 text-gray-700">Internship</span>
@@ -236,7 +236,7 @@ this is the code for duumy jobs feeed
             <select id="jobType" className="w-full px-3 py-2 border border-gray-300 rounded">
                 <option value="">-Select-</option>
                 <option value="Full Time">Full-time</option>
-                <option value="internship">Internship</option>
+                <option value="Internship">Internship</option>
                 {/* Add job type options here */}
             </select>
         </div>
