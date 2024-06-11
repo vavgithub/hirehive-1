@@ -29,4 +29,16 @@ const getCandidateById = async (req, res) => {
   }
 };
 
-export { getCandidate, createCandidate , getCandidateById};
+const updateStatusAndStage = async (req, res) => {
+  try {
+    const candidateId = req.params.id;
+    const updates = req.body;
+    const updatedCandidate = await candidates.findByIdAndUpdate(candidateId, updates, { new: true });
+    res.send(updatedCandidate);
+  } catch (error) {
+    res.status(400).send(error);
+  }
+}
+
+
+export { getCandidate, createCandidate , getCandidateById , updateStatusAndStage};
