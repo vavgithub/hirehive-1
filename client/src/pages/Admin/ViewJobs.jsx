@@ -21,7 +21,7 @@ const ViewJobs = () => {
     const { id: mainId } = useParams();
     const navigate = useNavigate();
 
-    const [activeTab, setActiveTab] = useState('jobDetails'); // State to track active tab
+    const [activeTab, setActiveTab] = useState('candidate'); // State to track active tab
     const handleTabClick = (tab) => {
         setActiveTab(tab);
     };
@@ -70,6 +70,7 @@ const ViewJobs = () => {
         },
 
     ];
+
     const [open, setOpen] = useState(false);
     const [selectedJobId, setSelectedJobId] = useState(null);
     const [modalAction, setModalAction] = useState('');
@@ -238,10 +239,12 @@ const ViewJobs = () => {
 
             {
                 activeTab === 'candidate' && (
-                    <div>
+                    <div >
                         <StatsGrid stats={candidateStats} />
+                        <div className='flex'>
                         <div style={{ height: 400, width: '100%' }}>
-                            <DataTable/>
+                            <DataTable/>    
+                        </div>
                         </div>
                     </div>
 
@@ -308,7 +311,6 @@ const SideCard = ({ formData }) => {
                     <p className="text-sm">Date Posted </p>
                 </div>
             </div>
-
 
         </div>
 
