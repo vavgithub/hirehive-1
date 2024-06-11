@@ -101,7 +101,7 @@ const filterJobs = async (req, res) => {
   try {
     const query = {};
     if (employmentType && employmentType.length > 0) {
-      query.employmentType = { $in: employmentType.map((type) => type.toLowerCase()) };
+      query.employmentType = { $in: employmentType };
       console.log(query.employmentType);
     }
     // if (experienceLevel && experienceLevel.length > 0) {
@@ -145,7 +145,7 @@ const activeJobsFilterCount = async (req, res) => {
             $sum: { $cond: [{ $eq: ["$employmentType", "internship"] }, 1, 0] },
           },
           totalFullTimeJobs: {
-            $sum: { $cond: [{ $eq: ["$employmentType", "fulltime"] }, 1, 0] },
+            $sum: { $cond: [{ $eq: ["$employmentType", "Full Time"] }, 1, 0] },
           },
           totalContractJobs: {
             $sum: { $cond: [{ $eq: ["$employmentType", "contract"] }, 1, 0] },
@@ -213,7 +213,7 @@ const closedJobsFilterCount = async (req, res) => {
             $sum: { $cond: [{ $eq: ["$employmentType", "internship"] }, 1, 0] },
           },
           totalFullTimeJobs: {
-            $sum: { $cond: [{ $eq: ["$employmentType", "fulltime"] }, 1, 0] },
+            $sum: { $cond: [{ $eq: ["$employmentType", "Full Time"] }, 1, 0] },
           },
           totalContractJobs: {
             $sum: { $cond: [{ $eq: ["$employmentType", "contract"] }, 1, 0] },
@@ -281,7 +281,7 @@ const draftJobsFilterCount = async (req, res) => {
             $sum: { $cond: [{ $eq: ["$employmentType", "internship"] }, 1, 0] },
           },
           totalFullTimeJobs: {
-            $sum: { $cond: [{ $eq: ["$employmentType", "fulltime"] }, 1, 0] },
+            $sum: { $cond: [{ $eq: ["$employmentType", "Full Time"] }, 1, 0] },
           },
           totalEntryLevelJobs: {
             $sum: { $cond: [{ $eq: ["$experienceLevel", "entry"] }, 1, 0] },
@@ -357,7 +357,7 @@ const jobsStats = async (req, res) => {
             $sum: { $cond: [{ $eq: ["$employmentType", "internship"] }, 1, 0] },
           },
           totalFullTimeJobs: {
-            $sum: { $cond: [{ $eq: ["$employmentType", "fulltime"] }, 1, 0] },
+            $sum: { $cond: [{ $eq: ["$employmentType", "Full Time"] }, 1, 0] },
           },
           totalEntryLevelJobs: {
             $sum: { $cond: [{ $eq: ["$experienceLevel", "entry"] }, 1, 0] },

@@ -139,7 +139,7 @@ const CreateJobs = () => {
                                 required
                             >
                                 <option value="">-Select-</option>
-                                <option value="fulltime">Full Time</option>
+                                <option value="Full Time">Full Time</option>
                                 <option value="internship">Internship</option>
                                 <option value="contract">Contract</option>
                                 {/* Add options here */}

@@ -25,7 +25,7 @@ const Filters = ({ filters = {}, statistics, handleCheckboxChange, activeTab }) 
     const isDisabled = activeTab === 'draft';
 
     const jobTypeOptions = [
-        { value: 'fulltime', label: 'Full-time', statKey: 'totalFullTimeJobs' },
+        { value: 'Full Time', label: 'Full-time', statKey: 'totalFullTimeJobs' },
         { value: 'internship', label: 'Internship', statKey: 'totalInternships' },
         { value: 'contract', label: 'Contract', statKey: 'totalContractJobs'}
     ];
