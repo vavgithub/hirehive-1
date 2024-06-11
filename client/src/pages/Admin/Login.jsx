@@ -1,55 +1,73 @@
-import React, { useState } from 'react';
-// import  useNavigate  from 'react-router-dom';
-import Formfields from '../components/Formfields';
-import { Link, useNavigate } from 'react-router-dom';
-import { useMutation } from '@tanstack/react-query';
-import { login } from '../../http/api';
+import React, { useEffect, useRef, useState, useContext } from 'react';
+import AuthContext from '../../context/AuthProvider';
+import { useNavigate } from 'react-router-dom';
+
+import axios from '../../api/axios';
+import useAuth from '../../hooks/useAuth';
+const LOGIN_URL = 'api/v1/users/login';
 
 const Login = () => {
-    // const navigate = useNavigate();
-    // const [data, setData] = useState({ email: '', password: '' });
+    const { auth ,setAuth } = useAuth();
+    const userRef = useRef();
+    const errRef = useRef();
+
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [errMsg, setErrMsg] = useState('');
 
     const navigate = useNavigate();
 
-    const mutation = useMutation({
-        mutationFn: login,
-        onSuccess: (data) => {
-            console.log("this is on success", data);
-            navigate('/');
-        },
-        onError: (error) => {
-            console.error(error);
-        }
-    });
-
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Handle form submission logic here
-        console.log('Email:', email);
-        console.log('Password:', password);
-        let data = { email, password };
-        mutation.mutate(data);
+
+        try {
+            const response = await axios.post(LOGIN_URL,
+                {
+                    email,
+                    password,
+                },
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+
+             // Directly use response.data without parsing it again
+        const result = response.data;
+        console.log(result);
+
+        setAuth({ email: result.data.user.email, password: result.data.user.password });
+        console.log('Auth:', { email: result.data.user.email, accessToken: result.data.accessToken});
+
+        // Store the access token in localStorage
+        localStorage.setItem('accessToken', result.data.accessToken);
+
+        // Store the access token in a cookie
+        document.cookie = `accessToken=${result.data.accessToken}; path=/; secure`;
+
+        
+        navigate('/admin');
+        setEmail('');
+        setPassword('');
+        }
+        catch (error) {
+            console.log(error);
+             if (error.response.status == 401) {
+                 errRef.current.innerText = 'Invalid email or password';
+             } else if (error.response.status == 404) {
+                 errRef.current.innerText = 'Email not found';
+             } else if (error.response.status == 400) {
+                 errRef.current.innerText = 'Email is required';
+             }
+             errRef.current.focus();
+        }
     };
 
-    // const handleInputChange = (e) => {
-    //     const { name, value } = e.target;
-    //     setData((prevData) => ({
-    //         ...prevData,
-    //         [name]: value
-    //     }));
-    // };
+    useEffect(() => {
+        userRef.current.focus();
+    }, []);
 
-    // console.log(email, password);
 
-    // const handleSubmit = (e) => {
-    //     e.preventDefault();
-    //     // Save user data to local storage
-    //     localStorage.setItem('user', JSON.stringify(formData));
-    //     // Redirect to dashboard
-    //     navigate('/dashboard');
-    // };
 
     return (
         <section className="bg-gray-50 dark:bg-gray-900">
@@ -72,6 +90,8 @@ const Login = () => {
                                 </label>
                                 <input
                                     type="email"
+                                    ref={userRef}
+                                    autoComplete='off'
                                     id="email"
                                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                                     placeholder="name@company.com"
@@ -92,32 +112,13 @@ const Login = () => {
                                     onChange={(e) => setPassword(e.target.value)}
                                 />
                             </div>
+                            <p ref={errRef} className='text-red-600' >{errMsg}</p>
 
-                            {
-                                mutation.isError && (
-                                    <div className="text-red-500">
-                                        {mutation.error.message}
-                                    </div>
-                                )
-                            }
 
 
                             <button type="submit" className="w-full text-white bg-black focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">Login</button>
 
-                            {/* <input name= type="email" />
-                            <Formfields name="email" type="email" label="Your Email" placeholder="name@company.com" value={data.email} onChange={handleInputChange} />
-                            <Formfields name="password" type="password" label="Password" placeholder="••••••••" value={data.password} onChange={handleInputChange} /> */}
-                            {/* <div className='flex flex-row-reverse'>
-                                <span>Forgot Password?</span>
-                            </div> */}
-                            {/* <div>
 
-<Link to={"/"}>
-</Link>
-</div> */}
-                            {/* <p className="text-sm font-light text-gray-500 dark:text-gray-400">
-                                New User? <a href="#" className="font-medium text-black hover:underline dark:text-primary-500">Sign Up</a>
-                            </p> */}
                         </form>
                     </div>
                 </div>

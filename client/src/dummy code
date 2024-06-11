@@ -36,7 +36,7 @@ this is the code for duumy jobs feeed
        const FilterSidebar = () => {
 
         const [datePosted, setDatePosted] = useState('Anytime');
-        const [jobType, setJobType] = useState({ fullTime: false, internship: false });
+        const [jobType, setJobType] = useState({ Full Time: false, Internship: false });
         const [experienceLevel, setExperienceLevel] = useState({ entry: false, intermediate: false, senior: false });
         const [jobFunction, setJobFunction] = useState({ design: false, engineering: false, sales: false, marketing: false });
     
@@ -78,8 +78,8 @@ this is the code for duumy jobs feeed
                         <label className="inline-flex items-center">
                             <input
                                 type="checkbox"
-                                checked={jobType.fullTime}
-                                onChange={(e) => handleCheckboxChange(e, 'jobType', 'fullTime')}
+                                checked={jobType.Full Time}
+                                onChange={(e) => handleCheckboxChange(e, 'jobType', 'Full Time')}
                                 className="form-checkbox text-indigo-600"
                             />
                             <span className="ml-2 text-gray-700">Full-time</span>
@@ -89,8 +89,8 @@ this is the code for duumy jobs feeed
                         <label className="inline-flex items-center">
                             <input
                                 type="checkbox"
-                                checked={jobType.internship}
-                                onChange={(e) => handleCheckboxChange(e, 'jobType', 'internship')}
+                                checked={jobType.Internship}
+                                onChange={(e) => handleCheckboxChange(e, 'jobType', 'Internship')}
                                 className="form-checkbox text-indigo-600"
                             />
                             <span className="ml-2 text-gray-700">Internship</span>
@@ -235,8 +235,8 @@ this is the code for duumy jobs feeed
             </label>
             <select id="jobType" className="w-full px-3 py-2 border border-gray-300 rounded">
                 <option value="">-Select-</option>
-                <option value="fulltime">Full-time</option>
-                <option value="internship">Internship</option>
+                <option value="Full Time">Full-time</option>
+                <option value="Internship">Internship</option>
                 {/* Add job type options here */}
             </select>
         </div>
@@ -302,3 +302,172 @@ this is the code for duumy jobs feeed
         </button>
     </div>
 </div>
+
+
+
+{/* Job Fucntionining */}
+{/* 
+            <div className="mb-4 text-left">
+                <h3 className="text-gray-800 font-semibold mb-2">Job Function</h3>
+
+                <div>
+
+                    <div className='flex justify-between'>
+                        <label className="inline-flex items-center">
+                            <input
+                                type="checkbox"
+                                value="design"
+                                checked={filters.category.includes('design')}
+                                onChange={() => handleCheckboxChange('category', 'design')}
+                                disabled={isDisabled}
+                            />
+                            <span className={`ml-2 ${textColor}`}>Design</span>
+                        </label>
+                        <p className={`ml-2 ${textColor}`}>{statistics.totalDesignJobs || 0}</p>
+                    </div>
+
+                </div>
+                <div>
+                    <div className='flex justify-between'>
+
+                        <label className="inline-flex items-center">
+                            <input
+                                type="checkbox"
+                                value="engineering"
+                                checked={filters.category.includes('engineering')}
+                                onChange={() => handleCheckboxChange('category', 'engineering')}
+                                disabled={isDisabled}
+                            />
+                            <span className={`ml-2 ${textColor}`}>Engineering</span>
+                        </label>
+                        <p className={`ml-2 ${textColor}`}>{statistics.totalEngineeringJobs || 0}</p>
+                    </div>
+                </div>
+                <div>
+                    <div className='flex justify-between'>
+                        <label className="inline-flex items-center">
+                            <input
+                                type="checkbox"
+                                value="sales"
+                                checked={filters.category.includes('sales')}
+                                onChange={() => handleCheckboxChange('category', 'sales')}
+                                disabled={isDisabled}
+                            />
+                            <span className={`ml-2 ${textColor}`}>Sales</span>
+                        </label>
+                        <p className={`ml-2 ${textColor}`}>{statistics.totalSalesJobs || 0}</p>
+                    </div>
+                </div>
+                <div>
+                    <div className='flex justify-between'>
+                        <label className="inline-flex items-center">
+                            <input
+                                type="checkbox"
+                                value="marketing"
+                                checked={filters.category.includes('marketing')}
+                                onChange={() => handleCheckboxChange('category', 'marketing')}
+                                disabled={isDisabled}
+                            />
+                            <span className={`ml-2 ${textColor}`}>Marketing</span>
+                        </label>
+                        <p className={`ml-2 ${textColor}`}>{statistics.totalMarketingJobs || 0}</p>
+                    </div>
+                </div>
+            </div> */}
+
+
+
+
+
+            {activeTab === 'active' &&
+            activeJobs.map((job) => (
+                <div key={job._id} className="bg-white shadow rounded p-2 mb-4 w-full group relative overflow-hidden h-auto">
+                    <div className='flex justify-between items-center'>
+                        <h2 className="text-lg font-bold">{job.title}</h2>
+                        <div className='flex gap-2 absolute right-0 top-0 bottom-0 translate-x-full group-hover:translate-x-0 p-2' >
+                            <div className='h-6 w-6 overflow-hidden items-center flex justify-center'>
+                                <button onClick={() => handleAction('delete', job._id)} className="text-black rounded m-1"><DeleteIcon /></button>
+                            </div>
+                            <div className='h-6 w-6 overflow-hidden items-center flex justify-center'>
+                                <button onClick={() => handleAction('edit', job._id)} className="text-black rounded m-1"><EditIcon /></button>
+                            </div>
+                            <div className='h-6 w-6 overflow-hidden items-center flex justify-center'>
+                                <button onClick={() => handleAction('archive', job._id)} className="text-black rounded m-1"><ArchiveIcon /></button>
+                            </div>
+                        </div>
+                    </div>
+                    <p className="text-gray-700 mb-4 w-[90%] h-[60px]">{job.description}</p>
+                    <div className="flex justify-between items-center pt-2 border-t-2">
+                        <div className="text-gray-600">
+                            <span className="font-bold">{job.applicationsCount}</span> applied
+                        </div>
+                        {/* <button onClick={handleKnowMore(jobs._id)} className="bg-black text-white px-4 py-2 rounded">Know More</button> */}
+                        <Link to={`/admin/view-job/${job._id}`} className="bg-black text-white px-4 py-2 rounded-[70px] flex items-center gap-1 z-10">Know More <ArrowIcon /> </Link>
+                    </div>
+                </div>
+            ))
+        }
+        {activeTab === 'draft' &&
+            draftJobs.map((job) => (
+                <div key={job._id} className="bg-white shadow rounded p-4 mb-4 w-full group relative overflow-hidden h-auto">
+                    <div className='flex justify-between items-center'>
+                        <h2 className="text-lg font-bold">{job.title}</h2>
+                        <div className='flex gap-2 absolute right-0 top-0 bottom-0 translate-x-full group-hover:translate-x-0 p-2' >
+                            <div className='h-6 w-6 overflow-hidden items-center flex justify-center'>
+                                <button onClick={() => handleAction('delete', job._id)} className="text-black rounded m-1"><DeleteIcon /></button>
+                            </div>
+                            <div className='h-6 w-6 overflow-hidden items-center flex justify-center'>
+                                <button onClick={() => handleAction('edit', job._id)} className="text-black rounded m-1"><EditIcon /></button>
+                            </div>
+                        </div>
+                    </div>
+                    <p className="text-gray-700 mb-4 w-[90%]" style={{ width: "90%" }}>{job.description}</p>
+                    <div className="flex justify-between items-center pt-4">
+                        <div className="text-gray-600">
+                            <span className="font-bold">{job.applicationsCount}</span> applied
+                        </div>
+                        <Link to={`/job/${job._id}`} className="bg-black text-white px-4 py-2 rounded">Know More</Link>
+                    </div>
+                </div>
+            ))}
+        {activeTab === 'archived' &&
+            archivedJobs.map((job) => (
+
+                <div key={job._id} className="bg-white shadow rounded p-4 mb-4 w-full group relative overflow-hidden h-auto">
+                    <div className='flex justify-between items-center'>
+                        <h2 className="text-lg font-bold">{job.title}</h2>
+                        <div className='flex gap-2 absolute right-0 top-0 bottom-0 translate-x-full group-hover:translate-x-0 p-2' >
+                            <div className='h-6 w-6 overflow-hidden items-center flex justify-center'>
+                                <button onClick={() => handleAction('delete', job._id)} className="text-black rounded m-1"><DeleteIcon /></button>
+                            </div>
+                            <div className='h-6 w-6 overflow-hidden items-center flex justify-center'>
+                                <button onClick={() => handleAction('edit', job._id)} className="text-black rounded m-1"><EditIcon /></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p className="text-gray-700 mb-4 w-[90%]">{job.description}</p>
+
+
+                    <div className="flex justify-between items-center pt-4">
+                        <div className="text-gray-600">
+                            <span className="font-bold">{job.applicationsCount}</span> applied
+                        </div>
+                        <Link to={`/view-jobs/${job._id}`} className="bg-black text-white px-4 py-2 rounded">Know More</Link>
+                    </div>
+                </div>
+            ))}
+
+
+
+            const rows = [
+                { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35 , status: 'Hired'},
+                { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 42 },
+                { id: 3, lastName: 'Lannister', firstName: 'Jaime', age: 45 },
+                { id: 4, lastName: 'Stark', firstName: 'Arya', age: 16 },
+                { id: 5, lastName: 'Targaryen', firstName: 'Daenerys', age: null },
+                { id: 6, lastName: 'Melisandre', firstName: null, age: 150 },
+                { id: 7, lastName: 'Clifford', firstName: 'Ferrara', age: 44 },
+                { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36 },
+                { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
+              ];
