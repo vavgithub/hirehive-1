@@ -54,7 +54,7 @@ const ViewJobs = () => {
                 { value: '4', label: '4 Lpa' },
                 { value: '5', label: '5 Lpa' },
             ],
-        }, 
+        },
         {
             type: 'select',
             label: 'End Range',
@@ -241,17 +241,21 @@ const ViewJobs = () => {
                 activeTab === 'candidate' && (
                     <div >
                         <StatsGrid stats={candidateStats} />
-                        <div className='flex'>
-                        <div style={{ height: 400, width: '100%' }}>
-                            <DataTable/>    
+                        <div className='flex flex-row-reverse p-4'>
+                        <button className="bg-black text-white px-4 py-2 rounded" onClick={() => setIsModalOpen(true)}>Budget With Screen</button>
+                        
                         </div>
+
+                        <div className='flex'>
+                            <div style={{ height: 400, width: '100%' }}>
+                                <DataTable />
+                            </div>
                         </div>
                     </div>
 
                 )
             }
 
-            <button onClick={() => setIsModalOpen(true)}>Open Input Modal</button>
             <InputPopUpModal
                 open={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
