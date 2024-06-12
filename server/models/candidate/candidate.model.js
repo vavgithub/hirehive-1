@@ -9,6 +9,10 @@ const candidateSchema = new mongoose.Schema(
       ref: "jobs",
       required: true,
     },
+    jobApplied: {
+      type: String,
+      required: true,
+    },
     lastName: {
       type: String,
       required: true,
@@ -52,6 +56,23 @@ const candidateSchema = new mongoose.Schema(
     },
     resume: {
       type: String,
+      required: true,
+    },
+    location: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    website: {
+      type: String,
+      required: true,
+    },
+    portfolio: {
+      type: String,
+      required: true,
+    },
+    budget: {
+      type: Number,
       required: true,
     },
   },

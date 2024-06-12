@@ -158,11 +158,14 @@
 
 // DataTable.js
 
+// DataTable.js
+
 import { useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import BasicSelect from './BasicSelect';
 import { useNavigate } from 'react-router-dom';
 import AppliedIcon from '../svg/AppliedIcon';
+import Modal from './Modal';
 
 const getStageOptions = (status) => {
   switch (status) {
@@ -181,8 +184,18 @@ const getStageOptions = (status) => {
   }
 };
 
+const nextStatusMap = {
+  "Portfolio": "Screening",
+  "Screening": "Design Task",
+  "Design Task": "Round 1",
+  "Round 1": "Round 2",
+  "Round 2": "Hired",
+};
+
 const DataTable = ({ rowsData, onUpdateCandidate }) => {
   const [rows, setRows] = useState(rowsData);
+  const [openRejectModal, setOpenRejectModal] = useState(false);
+  const [selectedCandidate, setSelectedCandidate] = useState(null);
   const navigate = useNavigate();
 
   const handleStatusChange = async (id, newStatus) => {
@@ -204,6 +217,27 @@ const DataTable = ({ rowsData, onUpdateCandidate }) => {
 
   const handleRowClick = (params) => {
     navigate(`/admin/view-candidate/${params.row._id}`);
+  };
+
+  const handleRejectClick = (e , candidate) => {
+    e.stopPropagation();
+    setSelectedCandidate(candidate);
+    setOpenRejectModal(true);
+  };
+
+  const handleNextRoundClick = async (e ,id, currentStatus) => {
+    e.stopPropagation();
+    const nextStatus = nextStatusMap[currentStatus];
+    if (nextStatus) {
+      await handleStatusChange(id, nextStatus);
+    }
+  };
+
+  const confirmReject = async () => {
+    if (selectedCandidate) {
+      await handleStatusChange(selectedCandidate._id, 'Rejected');
+      setOpenRejectModal(false);
+    }
   };
 
   const columns = [
@@ -256,6 +290,17 @@ const DataTable = ({ rowsData, onUpdateCandidate }) => {
         );
       },
     },
+    {
+      field: 'actions',
+      headerName: 'Actions',
+      width: 200,
+      renderCell: (params) => (
+        <div className='flex gap-2'>
+          <button className='text-red-600' onClick={(e) => handleRejectClick(e ,params.row)}>Reject</button>
+          <button className='text-blue-500' onClick={(e) => handleNextRoundClick(e,params.row._id, params.row.status)}>Next Round</button>
+        </div>
+      ),
+    },
   ];
 
   return (
@@ -288,6 +333,13 @@ const DataTable = ({ rowsData, onUpdateCandidate }) => {
         pageSizeOptions={[5, 10]}
         checkboxSelection
         onRowClick={(params) => handleRowClick(params)}
+      />
+
+      <Modal
+        open={openRejectModal}
+        onClose={() => setOpenRejectModal(false)}
+        action="reject"
+        confirmAction={confirmReject}
       />
     </div>
   );
