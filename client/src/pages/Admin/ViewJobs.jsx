@@ -173,12 +173,12 @@ const ViewJobs = () => {
 
     const candidateStats = [
         { title: 'Total', value: candidatesData.length.toString() },
-        { title: 'Portfolio', value: candidatesData.filter(c => c.status === 'Portfolio').length.toString() },
-        { title: 'Screening', value: candidatesData.filter(c => c.status === 'Screening').length.toString() },
-        { title: 'Design Task', value: candidatesData.filter(c => c.status === 'Design Task').length.toString() },
-        { title: 'Round 1', value: candidatesData.filter(c => c.status === 'Round 1').length.toString() },
-        { title: 'Round 2', value: candidatesData.filter(c => c.status === 'Round 2').length.toString() },
-        { title: 'Offer Sent', value: candidatesData.filter(c => c.status === 'Hired').length.toString() },
+        { title: 'Portfolio', value: candidatesData.filter(c => c.stage === 'Portfolio').length.toString() },
+        { title: 'Screening', value: candidatesData.filter(c => c.stage === 'Screening').length.toString() },
+        { title: 'Design Task', value: candidatesData.filter(c => c.stage === 'Design Task').length.toString() },
+        { title: 'Round 1', value: candidatesData.filter(c => c.stage === 'Round 1').length.toString() },
+        { title: 'Round 2', value: candidatesData.filter(c => c.stage === 'Round 2').length.toString() },
+        { title: 'Offer Sent', value: candidatesData.filter(c => c.stage === 'Hired').length.toString() },
     ];
 
     const jobsDetailStats = [
