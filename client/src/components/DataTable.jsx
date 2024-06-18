@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import AppliedIcon from '../svg/AppliedIcon';
 import Modal from './Modal';
 import InputPopUpModal from './InputPopUpModal';
+import FilterForDataTable from './FilterForDataTable';
 
 const getStageOptions = (stage) => {
   switch (stage) {
@@ -237,7 +238,7 @@ const DataTable = ({ rowsData, onUpdateCandidate }) => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
-          <Filter onApplyFilters={setFilters} />
+          <FilterForDataTable onApplyFilters={setFilters} />
         </div>
         <div>
           <button className="bg-black text-white px-4 py-2 rounded" onClick={() => setIsModalOpen(true)}>Budget With Screen</button>
@@ -300,192 +301,5 @@ const DataTable = ({ rowsData, onUpdateCandidate }) => {
 
 export default DataTable;
 
-const ExperienceFilter = ({ onApply }) => {
-  const [minExperience, setMinExperience] = useState('');
-  const [maxExperience, setMaxExperience] = useState('');
 
-  const handleApply = () => {
-    onApply(minExperience, maxExperience);
-  };
 
-  return (
-    <div className="absolute left-44 p-2 bg-slate-800 rounded">
-      <div className="flex space-x-4 mb-4">
-        <div>
-          <label className="text-white">Min Experience</label>
-          <input
-            type="number"
-            value={minExperience}
-            onChange={(e) => setMinExperience(e.target.value)}
-            className="w-16 p-2 text-center text-white bg-slate-600 rounded"
-          />
-          <span className="text-white"> yr</span>
-        </div>
-        <div>
-          <label className="text-white">Max Experience</label>
-          <input
-            type="number"
-            value={maxExperience}
-            onChange={(e) => setMaxExperience(e.target.value)}
-            className="w-16 p-2 text-center text-white bg-slate-600 rounded"
-          />
-          <span className="text-white"> yr</span>
-        </div>
-      </div>
-      <button
-        onClick={handleApply}
-        className="w-full p-2 text-white bg-blue-500 rounded"
-      >
-        Apply
-      </button>
-    </div>
-  );
-};
-
-const Filter = ({ onApplyFilters }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const menuRef = useRef(null);
-  const [selectedFilters, setSelectedFilters] = useState({
-    stage: [],
-    status: [],
-    experience: '',
-    rating: [],
-    assignee: [],
-  });
-
-  const [showDropdown, setShowDropdown] = useState({
-    stage: false,
-    status: false,
-    experience: false,
-    budget: false,
-    rating: false,
-    assignee: false,
-  });
-
-  const stageStatusMap = {
-    Portfolio: ['Not Assigned', 'Under Review', 'Completed', 'Rejected'],
-    Screening:['Call Pending', 'Call Scheduled', 'Under Review', 'Completed', 'No Show', 'Rejected'],
-    'Design Task' :['Sent', 'Not Assigned', 'Under Review', 'Completed', 'Rejected', 'Not Submitted'],
-    'Round 1' :  ['Call Pending', 'Call Scheduled', 'Not Assigned', 'Completed', 'No Show', 'Rejected'],
-    'Round 2' : ['Call Pending', 'Call Scheduled', 'Not Assigned', 'Completed', 'No Show', 'Rejected'],
-  };
-
-  const handleSelect = (category, value) => {
-    setSelectedFilters((prev) => ({
-      ...prev,
-      [category]: prev[category].includes(value)
-        ? prev[category].filter((item) => item !== value)
-        : [...prev[category], value],
-    }));
-  };
-
-  const handleStageSelect = (value) => {
-    setSelectedFilters((prev) => ({
-      ...prev,
-      stage: prev.stage.includes(value)
-        ? prev.stage.filter((item) => item !== value)
-        : [...prev.stage, value],
-      status: [],
-    }));
-  };
-
-  const handleExperienceApply = (min, max) => {
-    setSelectedFilters((prev) => ({
-      ...prev,
-      experience: `${min}-${max} yrs`
-    }));
-    setShowDropdown((prev) => ({
-      ...prev,
-      experience: false
-    }));
-  };
-
-  const handleDropdown = (category) => {
-    setShowDropdown({
-      stage: false,
-      status: false,
-      experience: false,
-      budget: false,
-      rating: false,
-      assignee: false,
-      [category]: !showDropdown[category],
-    });
-  };
-
-  const toggleMenu = (e) => {
-    e.stopPropagation();
-    setIsOpen(!isOpen);
-    setShowDropdown({
-      stage: false,
-      status: false,
-      experience: false,
-      budget: false,
-      rating: false,
-      assignee: false,
-    });
-  };
-
-  const handleClickOutside = (event) => {
-    if (menuRef.current && !menuRef.current.contains(event.target)) {
-      setIsOpen(false);
-    }
-  };
-
-  useEffect(() => {
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
-
-  const categories = {
-    stage: ['Portfolio', 'Screening', 'Design Task', 'Round 1', 'Round 2', 'Hired'],
-    status: selectedFilters.stage.length === 1 ? stageStatusMap[selectedFilters.stage[0]] : ['Rejected'],
-    experience: [],
-    rating: ['Good Fit', 'Not a Good Fit', 'May Be'],
-    assignee: ['John Doe', 'Jane Smith'],
-  };
-
-  useEffect(() => {
-    onApplyFilters(selectedFilters);
-  }, [selectedFilters]);
-
-  return (
-    <div className='relative' ref={menuRef}>
-      <button className="bg-black text-white px-4 py-2 rounded" onClick={(e) => toggleMenu(e)}>Filters</button>
-      {
-        isOpen && (
-          <div className='absolute z-10 mt-2 w-max bg-slate-800 p-4 rounded'>
-            {Object.keys(categories).map((category) => (
-              <div key={category} className="mb-4">
-                <div className="flex justify-between items-center cursor-pointer" onClick={() => handleDropdown(category)}>
-                  <span className="text-white">{category.charAt(0).toUpperCase() + category.slice(1)}: {selectedFilters[category] || 'All'}</span>
-                  <span className="text-white">{showDropdown[category] ? '>' : '>'}</span>
-                </div>
-                {showDropdown[category] && (
-                  category === 'experience' ? (
-                    <ExperienceFilter onApply={handleExperienceApply} />
-                  ) : (
-                    <div className="p-2 rounded absolute left-44 bg-slate-800 w-max">
-                      {categories[category].map((item) => (
-                        <label key={item} className="flex items-center text-white mb-2">
-                          <input
-                            type="checkbox"
-                            checked={selectedFilters[category].includes(item)}
-                            onChange={() => category === 'stage' ? handleStageSelect(item) : handleSelect(category, item)}
-                            className="mr-2"
-                          />
-                          {item}
-                        </label>
-                      ))}
-                    </div>
-                  )
-                )}
-              </div>
-            ))}
-          </div>
-        )
-      }
-    </div>
-  );
-};
