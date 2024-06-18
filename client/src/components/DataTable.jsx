@@ -635,7 +635,7 @@ const ExperienceFilter = ({ onApply }) => {
 };
 
 const Filter = ({ onApplyFilters }) => {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef(null);
   const [selectedFilters, setSelectedFilters] = useState({
     stage: [],
