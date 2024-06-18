@@ -183,7 +183,7 @@ const ViewJobs = () => {
 
     const jobsDetailStats = [
         { title: 'Views', value: "0" },
-        { title: 'Applications Received', value: '156' },
+        { title: 'Applications Received', value: candidatesData.length.toString() },
         { title: 'Qualified applications', value: '80' },
         { title: 'Engagement Rate', value: '78%' },
     ];
