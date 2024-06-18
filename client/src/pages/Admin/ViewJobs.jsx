@@ -230,9 +230,6 @@ const ViewJobs = () => {
             {activeTab === 'candidate' && (
                 <div>
                     <StatsGrid stats={candidateStats} />
-                    <div className='flex flex-row-reverse p-4'>
-                        <button className="bg-black text-white px-4 py-2 rounded" onClick={() => setIsModalOpen(true)}>Budget With Screen</button>
-                    </div>
                     <div className='flex'>
                         <div style={{ height: 400, width: '100%' }}>
                             <DataTable rowsData={candidatesData} onUpdateCandidate={updateCandidate} />
