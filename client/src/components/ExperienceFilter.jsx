@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 const ExperienceFilter = ({ onApply }) => {
     const [minExperience, setMinExperience] = useState('');
