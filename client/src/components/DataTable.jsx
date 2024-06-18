@@ -1,171 +1,10 @@
-// import { useState } from 'react';
-// import { DataGrid } from '@mui/x-data-grid';
-// import BasicSelect from './BasicSelect';
-// import { Navigate, useNavigate } from 'react-router-dom';
-// import AppliedIcon from '../svg/AppliedIcon';
-
-// const getStageOptions = (status) => {
-//   switch (status) {
-//     case 'Portfolio':
-//       return ['Not Assigned', 'Under Review', 'Completed', 'Rejected'];
-//     case 'Screening':
-//       return ['Call Pending', 'Call Scheduled', 'Under Review', 'Completed', 'No Show', 'Rejected'];
-//     case 'Design Task':
-//       return ['Sent', 'Not Assigned', 'Under Review', 'Completed', 'Rejected', 'Not Submitted'];
-//     case 'Round 1':
-//       return ['Call Pending', 'Call Scheduled', 'Not Assigned', 'Completed', 'No Show', 'Rejected'];
-//     case 'Round 2':
-//       return ['Call Pending', 'Call Scheduled', 'Not Assigned', 'Completed', 'No Show', 'Rejected'];
-//     default:
-//       return ['N/A'];
-//   }
-// };
-
-// const initialRows = [
-//   { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35, status: 'Hired', stage: 'N/A', experience: 4, latestScore: 4.5, email: 'jon@example.com', phone: '1234567890' },
-//   { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 42, status: 'Portfolio', stage: 'Not Assigned', experience: 4, latestScore: 4.5, email: 'cersei@example.com', phone: '1234567890' },
-//   { id: 3, lastName: 'Lannister', firstName: 'Jaime', age: 45, status: 'Screening', stage: 'Call Pending', experience: 4, latestScore: 4.5, email: 'jaime@example.com', phone: '1234567890' },
-//   { id: 4, lastName: 'Stark', firstName: 'Arya', age: 16, status: 'Design Task', stage: 'Sent', experience: 4, latestScore: 4.5, email: 'arya@example.com', phone: '1234567890' },
-//   { id: 5, lastName: 'Targaryen', firstName: 'Daenerys', age: null, status: 'Portfolio', stage: 'Not Assigned', experience: 4, latestScore: 4.5, email: 'daenerys@example.com', phone: '1234567890' },
-//   { id: 6, lastName: 'Melisandre', firstName: null, age: 150, status: 'Screening', stage: 'Call Pending', experience: 4, latestScore: 4.5, email: 'melisandre@example.com', phone: '1234567890' },
-//   { id: 7, lastName: 'Clifford', firstName: 'Ferrara', age: 44, status: 'Design Task', stage: 'Sent', experience: 4, latestScore: 4.5, email: 'ferrara@example.com', phone: '1234567890' },
-//   { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36, status: 'Hired', stage: 'N/A', experience: 4, latestScore: 4.5, email: 'rossini@example.com', phone: '1234567890' },
-//   { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65, status: 'Portfolio', stage: 'Not Assigned', experience: 4, latestScore: 4.5, email: 'harvey@example.com', phone: '1234567890' },
-// ];
-
-// const DataTable = ({ rowsData, columnsData }) => {
-//   const [rows, setRows] = useState(rowsData);
-
-//   const updateStatus = (id, newStatus) => {
-//     const newStage = getStageOptions(newStatus)[0];
-//     setRows((prevRows) =>
-//       prevRows.map((row) =>
-//         row.id === id ? { ...row, status: newStatus, stage: newStage } : row
-//       )
-//     );
-//   };
-
-//   const updateStage = (id, newStage) => {
-//     setRows((prevRows) =>
-//       prevRows.map((row) =>
-//         row.id === id ? { ...row, stage: newStage } : row
-//       )
-//     );
-//   };
-
-//   const navigate = useNavigate();
-
-//   const handleRowClick = (params) => {
-//     navigate(`/candidate/${params.id}`);
-//   }
-
-//   const columns = [
-//     {
-//       field: 'fullName',
-//       headerName: 'Full Name',
-//       width: 200,
-//       sortable: false,
-//       valueGetter: (value, row) => `${row.firstName || ''} ${row.lastName || ''}`,
-//       renderCell: (params) => (
-//         <div style={{ display: 'flex', alignItems: 'center' }}>
-//           <span>{params.value}</span>
-//           <div style={{ visibility: 'hidden', marginLeft: 8, backgroundColor: "red" }} className="info-icon">
-//             <AppliedIcon />
-//           </div>
-
-//         </div>
-//       ),
-//     },
-//     { field: 'experience', headerName: 'Experience', width: 130 },
-//     { field: 'age', headerName: 'Age', width: 90 },
-//     { field: 'email', headerName: 'Email', width: 200},
-//     { field: 'phone', headerName: 'Phone', width: 200},
-//     { field: 'latestScore', headerName: 'Latest Score', width: 130 },
-//     { field: 'firstName', headerName: 'First name', width: 130 },
-//     { field: 'lastName', headerName: 'Last name', width: 130 },
-//     {
-//       field: 'status',
-//       headerName: 'Status',
-//       width: 120,
-//       renderCell: (params) => (
-//         <BasicSelect
-//           label="Status"
-//           value={params.value}
-//           onChange={(e) => updateStatus(params.id, e.target.value)}
-//           list={["Portfolio", "Screening", "Design Task", "Round 1", "Round 2", "Hired"]}
-//         />
-//       ),
-//     },
-//     {
-//       field: 'stage',
-//       headerName: 'Stage',
-//       width: 200,
-//       renderCell: (params) => {
-//         const list = getStageOptions(params.row.status);
-//         return (
-//           <BasicSelect
-//             label="Stage"
-//             value={params.value}
-//             onChange={(e) => updateStage(params.id, e.target.value)}
-//             list={list}
-//           />
-//         );
-//       },
-//     },
-
-
-//   ];
-
-//   return (
-//     <div style={{ height: 400, width: '100%' }}>
-//       <style>
-//         {`
-//           .MuiDataGrid-row:hover .MuiDataGrid-checkboxInput {
-//             visibility: visible;
-//           }
-//           .MuiDataGrid-checkboxInput {
-//             visibility: hidden;
-//           }
-//           .MuiDataGrid-checkboxInput input:checked + .MuiSvgIcon-root {
-//             visibility: visible;
-//           }
-//           .MuiDataGrid-row:hover > div {
-//             visibility: visible;
-//           }
-//         `}
-//       </style>
-//       <DataGrid
-//         rows={rows}
-//         columns={columns || columnsData}
-//         initialState={{
-//           pagination: {
-//             paginationModel: { page: 0, pageSize: 5 },
-//           },
-//         }}
-//         pageSizeOptions={[5, 10]}
-//         checkboxSelection
-//         onRowClick={handleRowClick}
-//       />
-//     </div>
-//   );
-// };
-
-// export default DataTable;
-
-
-// DataTable.js
-// DataTable.js
-
-// DataTable.js
-
-// DataTable.js
-
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import BasicSelect from './BasicSelect';
 import { useNavigate } from 'react-router-dom';
 import AppliedIcon from '../svg/AppliedIcon';
 import Modal from './Modal';
+import InputPopUpModal from './InputPopUpModal';
 
 const getStageOptions = (status) => {
   switch (status) {
@@ -184,6 +23,14 @@ const getStageOptions = (status) => {
   }
 };
 
+const stageStatusMap = {
+  Portfolio: ['Not Assigned', 'Under Review', 'Completed', 'Rejected'],
+  Screening:['Call Pending', 'Call Scheduled', 'Under Review', 'Completed', 'No Show', 'Rejected'],
+  DesignTask :['Sent', 'Not Assigned', 'Under Review', 'Completed', 'Rejected', 'Not Submitted'],
+  Round1 :  ['Call Pending', 'Call Scheduled', 'Not Assigned', 'Completed', 'No Show', 'Rejected'],
+  Round2 : ['Call Pending', 'Call Scheduled', 'Not Assigned', 'Completed', 'No Show', 'Rejected'],
+};
+
 const nextStatusMap = {
   "Portfolio": "Screening",
   "Screening": "Design Task",
@@ -194,9 +41,52 @@ const nextStatusMap = {
 
 const DataTable = ({ rowsData, onUpdateCandidate }) => {
   const [rows, setRows] = useState(rowsData);
+  const [filteredRows, setFilteredRows] = useState(rowsData);
+  const [searchQuery, setSearchQuery] = useState('');
   const [openRejectModal, setOpenRejectModal] = useState(false);
   const [selectedCandidate, setSelectedCandidate] = useState(null);
   const navigate = useNavigate();
+
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedValue1, setSelectedValue1] = useState('');
+  const [selectedValue2, setSelectedValue2] = useState('');
+
+  const handleConfirm = () => {
+    console.log('Confirmed with selections:', selectedValue1, selectedValue2);
+    setIsModalOpen(false);
+  };
+
+
+  const fields = [
+    {
+      type: 'select',
+      label: 'Start Range',
+      value: selectedValue1,
+      onChange: (e) => setSelectedValue1(e.target.value),
+      options: [
+        { value: '1', label: '1 Lpa' },
+        { value: '2', label: '2 Lpa' },
+        { value: '3', label: '3 Lpa' },
+        { value: '4', label: '4 Lpa' },
+        { value: '5', label: '5 Lpa' },
+      ],
+    },
+    {
+      type: 'select',
+      label: 'End Range',
+      value: selectedValue2,
+      onChange: (e) => setSelectedValue2(e.target.value),
+      options: [
+        { value: '1', label: '1 Lpa' },
+        { value: '2', label: '2 Lpa' },
+        { value: '3', label: '3 Lpa' },
+        { value: '4', label: '4 Lpa' },
+        { value: '5', label: '5 Lpa' },
+      ],
+    },
+  ];
+
 
   const handleStatusChange = async (id, newStatus) => {
     const newStage = getStageOptions(newStatus)[0];
@@ -219,13 +109,13 @@ const DataTable = ({ rowsData, onUpdateCandidate }) => {
     navigate(`/admin/view-candidate/${params.row._id}`);
   };
 
-  const handleRejectClick = (e , candidate) => {
+  const handleRejectClick = (e, candidate) => {
     e.stopPropagation();
     setSelectedCandidate(candidate);
     setOpenRejectModal(true);
   };
 
-  const handleNextRoundClick = async (e ,id, currentStatus) => {
+  const handleNextRoundClick = async (e, id, currentStatus) => {
     e.stopPropagation();
     const nextStatus = nextStatusMap[currentStatus];
     if (nextStatus) {
@@ -233,12 +123,27 @@ const DataTable = ({ rowsData, onUpdateCandidate }) => {
     }
   };
 
+  const [openList, setOpenList] = useState(false);
+
+  const handleOpenList = () => {
+    setOpenList(!openList);
+  }
+
+
   const confirmReject = async () => {
     if (selectedCandidate) {
       await handleStatusChange(selectedCandidate._id, 'Rejected');
       setOpenRejectModal(false);
     }
   };
+
+  useEffect(() => {
+    const lowercasedQuery = searchQuery.toLowerCase();
+    const newFilteredRows = rows.filter(row =>
+      `${row.firstName} ${row.lastName}`.toLowerCase().includes(lowercasedQuery)
+    );
+    setFilteredRows(newFilteredRows);
+  }, [searchQuery, rows]);
 
   const columns = [
     {
@@ -296,53 +201,280 @@ const DataTable = ({ rowsData, onUpdateCandidate }) => {
       width: 200,
       renderCell: (params) => (
         <div className='flex gap-2'>
-          <button className='text-red-600' onClick={(e) => handleRejectClick(e ,params.row)}>Reject</button>
-          <button className='text-blue-500' onClick={(e) => handleNextRoundClick(e,params.row._id, params.row.status)}>Next Round</button>
+          <button className='text-red-600' onClick={(e) => handleRejectClick(e, params.row)}>Reject</button>
+          <button className='text-blue-500' onClick={(e) => handleNextRoundClick(e, params.row._id, params.row.status)}>Next Round</button>
         </div>
       ),
     },
   ];
 
   return (
-    <div style={{ height: 400, width: '100%' }}>
-      <style>
-        {`
+    <div>
+      <div className='flex justify-between m-4'>
+
+        <div className='flex gap-4'>
+
+
+          <input
+            className="border border-gray-300 px-4 py-2 w-40 rounded mb-4 "
+            placeholder="Search By Name"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          
+      
+        <Filter/>
+          </div>
+        <div>
+          <button className="bg-black text-white px-4 py-2 rounded" onClick={() => setIsModalOpen(true)}>Budget With Screen</button>
+        </div>
+      </div>
+
+
+      <div style={{ height: 400, width: '100%' }}>
+        <style>
+          {`
           .MuiDataGrid-row:hover .MuiDataGrid-checkboxInput {
             visibility: visible;
-          }
-          .MuiDataGrid-checkboxInput {
-            visibility: hidden;
-          }
-          .MuiDataGrid-checkboxInput input:checked + .MuiSvgIcon-root {
-            visibility: visible;
-          }
-          .MuiDataGrid-row:hover > div {
-            visibility: visible;
-          }
-        `}
-      </style>
-      <DataGrid
-        rows={rows}
-        columns={columns}
-        getRowId={(row) => row._id} // Use the MongoDB _id as the id
-        initialState={{
-          pagination: {
-            paginationModel: { page: 0, pageSize: 5 },
-          },
-        }}
-        pageSizeOptions={[5, 10]}
-        checkboxSelection
-        onRowClick={(params) => handleRowClick(params)}
-      />
+            }
+            .MuiDataGrid-checkboxInput {
+              visibility: hidden;
+              }
+              .MuiDataGrid-checkboxInput input:checked + .MuiSvgIcon-root {
+                visibility: visible;
+                }
+                .MuiDataGrid-row:hover > div {
+                  visibility: visible;
+                  }
+                  `}
+        </style>
 
-      <Modal
-        open={openRejectModal}
-        onClose={() => setOpenRejectModal(false)}
-        action="reject"
-        confirmAction={confirmReject}
-      />
+        <DataGrid
+
+          rows={filteredRows}
+          columns={columns}
+          getRowId={(row) => row._id} // Use the MongoDB _id as the id
+          initialState={{
+            pagination: {
+              paginationModel: { page: 0, pageSize: 5 },
+            },
+          }}
+          pageSizeOptions={[5, 10]}
+          checkboxSelection
+          onRowClick={(params) => handleRowClick(params)}
+
+        />
+
+        <InputPopUpModal
+          open={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          confirmAction={handleConfirm}
+          fields={fields}
+          heading="Screen with Budget"
+          para="Candidates will no longer be able to apply. Are you sure you want to close this job?"
+          confirmButtonText="Apply Budget"
+          cancelButtonText="Cancel"
+        />
+
+        <Modal
+          open={openRejectModal}
+          onClose={() => setOpenRejectModal(false)}
+          action="reject"
+          confirmAction={confirmReject}
+        />
+      </div>
     </div>
   );
 };
 
 export default DataTable;
+
+export const ExperienceFilter = ({ onApply }) => {
+  const [minExperience, setMinExperience] = useState('');
+  const [maxExperience, setMaxExperience] = useState('');
+
+  const handleApply = () => {
+    onApply(minExperience, maxExperience);
+  };
+
+  return (
+    <div className="absolute left-44 p-2 bg-slate-800 rounded ">
+      <div className="flex space-x-4 mb-4">
+        <div>
+          <label className="text-white">Min Experience</label>
+          <input
+            type="number"
+            value={minExperience}
+            onChange={(e) => setMinExperience(e.target.value)}
+            className="w-16 p-2 text-center text-white bg-slate-600 rounded"
+          />
+          <span className="text-white"> yr</span>
+        </div>
+        <div>
+          <label className="text-white">Max Experience</label>
+          <input
+            type="number"
+            value={maxExperience}
+            onChange={(e) => setMaxExperience(e.target.value)}
+            className="w-16 p-2 text-center text-white bg-slate-600 rounded"
+          />
+          <span className="text-white"> yr</span>
+        </div>
+      </div>
+      <button
+        onClick={handleApply}
+        className="w-full p-2 text-white bg-blue-500 rounded"
+      >
+        Apply
+      </button>
+    </div>
+  );
+};
+
+const Filter = () => {
+
+  const [isOpen, setIsOpen] = useState(true);
+  const menuRef = useRef(null);
+
+  const [selectedFilters, setSelectedFilters] = useState({
+    stage: [],
+    status: [],
+    experience: '',
+    budget: [],
+    rating: [],
+    assignee: [],
+  });
+
+  const [showDropdown, setShowDropdown] = useState({
+    stage: false,
+    status: false,
+    experience: false,
+    budget: false,
+    rating: false,
+    assignee: false,
+  });
+
+
+  const stageStatusMap = {
+    Portfolio: ['Not Assigned', 'Under Review', 'Completed', 'Rejected'],
+    Screening:['Call Pending', 'Call Scheduled', 'Under Review', 'Completed', 'No Show', 'Rejected'],
+    'Design Task' :['Sent', 'Not Assigned', 'Under Review', 'Completed', 'Rejected', 'Not Submitted'],
+    'Round 1' :  ['Call Pending', 'Call Scheduled', 'Not Assigned', 'Completed', 'No Show', 'Rejected'],
+    'Round 2' : ['Call Pending', 'Call Scheduled', 'Not Assigned', 'Completed', 'No Show', 'Rejected'],
+  };
+
+  const handleSelect = (category, value) => {
+    setSelectedFilters((prev) => ({
+      ...prev,
+      [category]: prev[category].includes(value)
+        ? prev[category].filter((item) => item !== value)
+        : [...prev[category], value],
+    }));
+  };
+
+  const handleStageSelect = (value) => {
+    setSelectedFilters((prev) => ({
+      ...prev,
+      stage: prev.stage.includes(value)
+        ? prev.stage.filter((item) => item !== value)
+        : [...prev.stage, value],
+      status: [],
+    }));
+  };
+
+  const handleExperienceApply = (min, max) => {
+    setSelectedFilters((prev) => ({
+      ...prev,
+      experience: `${min}-${max} yrs`
+    }));
+    setShowDropdown((prev) => ({
+      ...prev,
+      experience: false
+    }));
+  };
+
+  const handleDropdown = (category) => {
+    setShowDropdown({
+      stage: false,
+      status: false,
+      experience: false,
+      budget: false,
+      rating: false,
+      assignee: false,
+      [category]: !showDropdown[category],
+    });
+  };
+
+  const toggleMenu = (e) => {
+    e.stopPropagation();
+    setIsOpen(!isOpen);
+    setShowDropdown({
+      stage: false,
+      status: false,
+      experience: false,
+      budget: false,
+      rating: false,
+      assignee: false,
+    });
+  };
+
+  const handleClickOutside = (event) => {
+    if (menuRef.current && !menuRef.current.contains(event.target)) {
+      setIsOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  const categories = {
+    stage: ['Portfolio', 'Screening', 'Design Task', 'Round 1', 'Round 2', 'Hired'],
+    status: selectedFilters.stage.length === 1 ? stageStatusMap[selectedFilters.stage[0]] : ['Rejected'],
+    experience: [],
+    rating: ['Good Fit', 'Not a Good Fit', 'May Be'],
+    assignee: ['John Doe', 'Jane Smith'],
+  };
+
+  return (
+    <div className='relative' ref={menuRef}>
+      <button className="bg-black text-white px-4 py-2 rounded" onClick={(e) => toggleMenu(e)}>Filters</button>
+      {
+        isOpen && (
+          <div className='absolute z-10 mt-2 w-max bg-slate-800 p-4 rounded'>
+            {Object.keys(categories).map((category) => (
+              <div key={category} className="mb-4 ">
+                <div className="flex justify-between items-center cursor-pointer " onClick={() => handleDropdown(category)}>
+                  <span className="text-white">{category.charAt(0).toUpperCase() + category.slice(1)}: {selectedFilters[category] || 'All'}</span>
+                  <span className="text-white">{showDropdown[category] ? '>' : '>'}</span>
+                </div>
+                {showDropdown[category] && (
+                  category === 'experience' ? (
+                    <ExperienceFilter onApply={handleExperienceApply} />
+                  ) : (
+                    <div className="p-2 rounded absolute left-44 bg-slate-800 w-max">
+                      {categories[category].map((item) => (
+                        <label key={item} className="flex items-center text-white mb-2">
+                          <input
+                            type="checkbox"
+                            checked={selectedFilters[category].includes(item)}
+                            onChange={() => category === 'stage' ? handleStageSelect(item) : handleSelect(category, item)}
+                            className="mr-2"
+                          />
+                          {item}
+                        </label>
+                      ))}
+                    </div>
+                  )
+                )}
+              </div>
+            ))}
+          </div>
+        )
+      }
+    </div>
+  );
+};

@@ -9,8 +9,9 @@ import BudgetIcon from '../../svg/BudgetIcon';
 import PhoneIcon from '../../svg/PhoneIcon';
 import EmailIcon from '../../svg/EmailIcon';
 import Tabs from '../../components/Tabs';
-const ViewCandidateProfile = () => {
 
+
+const ViewCandidateProfile = () => {
     const [data, setData] = useState([]);
 
     const [activeTab, setActiveTab] = useState('application');
@@ -42,10 +43,6 @@ const ViewCandidateProfile = () => {
         fetchData();
     }, [mainId]);
 
-
-
-
-
     const paths = [
         { name: 'Jobs', href: '/admin/jobs' },
         { name: `${data.jobApplied}`, href: `/admin/view-job/${data.jobId}` },
@@ -57,7 +54,6 @@ const ViewCandidateProfile = () => {
             <Breadcrumb paths={paths} />
             <div className='flex justify-between'>
                 <div >
-
                     <h1 className='text-2xl font-bold'> {data.firstName}  {data.lastName}</h1>
                     <p>
                         {data.jobApplied} . {data.location}
@@ -79,30 +75,23 @@ const ViewCandidateProfile = () => {
                     <div className='flex gap-1 my-4'>
                         <EmailIcon /> <p>{data.email}</p>
                     </div>
+                    
                     <p>{data.budget}</p>
-
-
                     <p>{data.location}</p>
                     <p>{data.experience}</p>
                     <p>{data.skills}</p>
-
                 </div>
                 <div className='flex flex-col gap-2 px-2'>
                     <button className="bg-black text-white px-4  py-2 rounded">Move Next Round</button>
                     <button className=" text-black outline px-4 py-2 outline-black rounded">
                         Reject
                     </button>
-
-
                 </div>
-
             </div>
-            <div className='flex justify-center' > 
+            <div className='flex justify-center' >
                 <Tabs tabs={tabs} activeTab={activeTab} handleTabClick={handleTabClick} />
-
             </div>
-        </div>
-    )
+        </div>)
 }
 
 export default ViewCandidateProfile

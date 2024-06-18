@@ -12,8 +12,6 @@ router.get('/activeJobsFilterCount',activeJobsFilterCount)
 router.get('/draftJobsFilterCount',draftJobsFilterCount)
 router.get('/closedJobsFilterCount', closedJobsFilterCount);
 
-
-
 router.get('/jobsCount', getTotalJobCount);
 router.get('/searchJobs', searchJobs);
 router.get('/getJobById/:id', getJobById);
