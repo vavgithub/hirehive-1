@@ -27,6 +27,10 @@ const candidateSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    assignee:{
+      type:String,
+      default: "N/A",
+    },
     stage: {
       type: String,
       enum: ["Portfolio", "Screening", "Design Task", "Round 1", "Round 2", "Hired"],

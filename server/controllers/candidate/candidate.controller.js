@@ -40,5 +40,19 @@ const updateStatusAndStage = async (req, res) => {
   }
 }
 
+const updateAssignee = async (req , res)=>{
+  const { candidateIds, assignee } = req.body;
+  try {
+    await candidates.updateMany(
+      { _id: { $in: candidateIds } },
+      { $set: { assignee: assignee } }
+    );
 
-export { getCandidate, createCandidate , getCandidateById , updateStatusAndStage};
+    res.status(200).send({ message: 'Assignee updated successfully' });
+  } catch (error) {
+    res.status(500).send({ message: 'Failed to update assignee', error });
+  }
+}
+
+
+export { getCandidate, createCandidate , getCandidateById , updateStatusAndStage , updateAssignee};
