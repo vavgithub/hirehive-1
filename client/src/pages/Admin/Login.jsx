@@ -7,7 +7,7 @@ import useAuth from '../../hooks/useAuth';
 const LOGIN_URL = 'api/v1/users/login';
 
 const Login = () => {
-    const { auth ,setAuth } = useAuth();
+    const {setAuth} = useAuth();
     const userRef = useRef();
     const errRef = useRef();
 
@@ -36,7 +36,7 @@ const Login = () => {
         const result = response.data;
         console.log(result);
 
-        setAuth({ email: result.data.user.email, password: result.data.user.password });
+        setAuth({ email: result.data.user.email, password: result.data.user.password , accessToken:result.data.accessToken });
         console.log('Auth:', { email: result.data.user.email, accessToken: result.data.accessToken});
 
         // Store the access token in localStorage
@@ -44,6 +44,7 @@ const Login = () => {
 
         // Store the access token in a cookie
         document.cookie = `accessToken=${result.data.accessToken}; path=/; secure`;
+        document.cookie = `refreshToken=${result.data.refreshToken}; path=/; secure`;
 
         
         navigate('/admin');

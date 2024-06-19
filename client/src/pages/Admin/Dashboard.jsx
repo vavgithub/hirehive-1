@@ -7,6 +7,7 @@ import Modal from '../../components/Modal';
 import JobCard from '../../components/JobCard';
 import Slider from '../../components/Slider';
 import Tabs from '../../components/Tabs';
+import useRefreshToken from '../../hooks/useRefreshToken';
 
 
 const Dashboard = () => {
@@ -24,6 +25,8 @@ const Dashboard = () => {
     const [open, setOpen] = useState(false);
     const [selectedJobId, setSelectedJobId] = useState(null);
     const [modalAction, setModalAction] = useState('');
+
+    const useRefresh = useRefreshToken();
 
     const navigate = useNavigate();
 
@@ -239,6 +242,7 @@ const Dashboard = () => {
                 <h1 className="text-2xl font-bold">Jobs</h1>
                 <Link to="/admin/create-job" className="bg-black text-white px-4 py-2 rounded">Create job listing</Link>
             </div>
+            <button onClick={()=>useRefresh()}>Click Me</button>
             <div className='flex gap-3'>
                 <div className="flex justify-between mb-4">
                     <div className='bg-gray-100 flex flex-col p-2 rounded-md'>
