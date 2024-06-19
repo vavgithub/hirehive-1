@@ -42,6 +42,7 @@ const updateStatusAndStage = async (req, res) => {
 
 const updateAssignee = async (req , res)=>{
   const { candidateIds, assignee } = req.body;
+
   try {
     await candidates.updateMany(
       { _id: { $in: candidateIds } },

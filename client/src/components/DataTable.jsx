@@ -7,6 +7,7 @@ import Modal from './Modal';
 import InputPopUpModal from './InputPopUpModal';
 import FilterForDataTable from './FilterForDataTable';
 import axios from 'axios';
+import InputPopUpModalAutoSelect from './InputPopUpModalAutoSelect';
 
 const getStageOptions = (stage) => {
   switch (stage) {
@@ -66,53 +67,30 @@ const DataTable = ({ rowsData, onUpdateCandidate }) => {
   };
 
 
-  const[isModalOpenPortfolio, setIsModalOpenPortfolio] = useState(false);
-  const[selectedAssignee , setselectedAssignee]=useState('');
-
-  // const handleConfirmAssignee = () => {
-  //   console.log('Confirmed with selections:', selectedAssignee);
-  //   setIsModalOpenPortfolio(false);
-  // };
+  const [isModalOpenPortfolio, setIsModalOpenPortfolio] = useState(false);
+  // const [selectedAssignee, setselectedAssignee] = useState('');
+  const [selectedAssignees, setSelectedAssignees] = useState([]);
 
 
-  // const handleConfirmAssignee = async () => {
-  //   console.log('Confirmed with selections:', selectedAssignee);
-
-  //   try {
-  //     const response = await fetch('http://localhost:8008/api/v1/candidates/update-assignee', {
-  //       method: 'PATCH',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //       },
-  //       body: JSON.stringify({
-  //         candidateIds: rows.map((row) => row._id),
-  //         assignee: selectedAssignee,
-  //       }),
-  //     });
-
-  //     if (response.ok) {
-  //       const updatedRows = rows.map((row) => ({ ...row, assignee: selectedAssignee }));
-  //       setRows(updatedRows);
-  //       setFilteredRows(updatedRows);
-  //       setIsModalOpenPortfolio(false);
-  //     } else {
-  //       console.error('Failed to update assignee');
-  //     }
-  //   } catch (error) {
-  //     console.error('Error updating assignee:', error);
-  //   }
-  // };
   const handleConfirmAssignee = async () => {
-    console.log('Confirmed with selections:', selectedAssignee);
+    console.log('Confirmed with selections:', selectedAssignees);
+
+    const numCandidates = rows.length;
+    const numAssignees = selectedAssignees.length;
+
+    // Create an array to hold the updated rows with distributed assignees
+    let updatedRows = rows.map((row, index) => {
+      const assignee = selectedAssignees[index % numAssignees];
+      return { ...row, assignee: assignee };
+    });
 
     try {
+      // Send the updated rows to the server
       const response = await axios.patch('http://localhost:8008/api/v1/candidates/update-assignee', {
-        candidateIds: rows.map((row) => row._id),
-        assignee: selectedAssignee,
+        candidates: updatedRows.map(row => ({ id: row._id, assignee: row.assignee }))
       });
 
       if (response.status === 200) {
-        const updatedRows = rows.map((row) => ({ ...row, assignee: selectedAssignee }));
         setRows(updatedRows);
         setFilteredRows(updatedRows);
         setIsModalOpenPortfolio(false);
@@ -153,19 +131,7 @@ const DataTable = ({ rowsData, onUpdateCandidate }) => {
     },
   ];
 
-  const fieldsAssignee = [
-    {
-      type: 'select',
-      label: 'Start Assignee',
-      value: selectedAssignee,
-      onChange: (e) => setselectedAssignee(e.target.value),
-      options: [
-        { value: 'John', label: 'John' },
-        { value: 'Vevaar', label: 'Vevaar' },
-        { value: 'Komael', label: 'Komael' },
-      ],
-    }
-  ];
+  const allAssignees = ['John', 'Vevaar', 'Komael'];
 
   const handleStageChange = async (id, newStage) => {
     const newStatus = getStageOptions(newStage)[0];
@@ -255,15 +221,15 @@ const DataTable = ({ rowsData, onUpdateCandidate }) => {
       ),
     },
     {
-      field:'assignee' , headerName:"Assignee" , width:130
+      field: 'assignee', headerName: "Assignee", width: 130
     },
-    ,{field:'budget' ,headerName: 'Budget', width: 130 },
+    , { field: 'budget', headerName: 'Budget', width: 130 },
     { field: 'experience', headerName: 'Experience', width: 130 },
     { field: 'age', headerName: 'Age', width: 90 },
     { field: 'email', headerName: 'Email', width: 200 },
     { field: 'phone', headerName: 'Phone', width: 200 },
     { field: 'latestScore', headerName: 'Latest Score', width: 130 },
-    
+
     {
       field: 'stage',
       headerName: 'Stage',
@@ -370,14 +336,27 @@ const DataTable = ({ rowsData, onUpdateCandidate }) => {
           cancelButtonText="Cancel"
         />
 
-      {/* this is input for auto assign */}
-        <InputPopUpModal
+        {/* this is input for auto assign */}
+        {/* <InputPopUpModal
           open={isModalOpenPortfolio}
           onClose={() => setIsModalOpenPortfolio(false)}
           confirmAction={handleConfirmAssignee}
           fields={fieldsAssignee}
           heading="Auto Assign Portfolio"
           para="Select The Reviewers To Assign Porfolios"
+          confirmButtonText="Auto Assign Portfolio"
+          cancelButtonText="Cancel"
+        /> */}
+
+          <InputPopUpModalAutoSelect
+          open={isModalOpenPortfolio}
+          onClose={() => setIsModalOpenPortfolio(false)}
+          confirmAction={handleConfirmAssignee}
+          assignees={selectedAssignees}
+          setAssignees={setSelectedAssignees}
+          allAssignees={allAssignees}
+          heading="Auto Assign Portfolio"
+          para="Select The Reviewers To Assign Portfolios"
           confirmButtonText="Auto Assign Portfolio"
           cancelButtonText="Cancel"
         />
