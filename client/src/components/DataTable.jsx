@@ -42,7 +42,7 @@ const nextStageMap = {
   "Round 2": "Hired",
 };
 
-const DataTable = ({ rowsData, onUpdateCandidate }) => {
+const DataTable = ({ rowsData, onUpdateCandidate ,onUpdateAssignee }) => {
   const [rows, setRows] = useState(rowsData);
   const [filteredRows, setFilteredRows] = useState(rowsData);
   const [searchQuery, setSearchQuery] = useState('');
@@ -84,22 +84,12 @@ const DataTable = ({ rowsData, onUpdateCandidate }) => {
       return { ...row, assignee: assignee };
     });
 
-    try {
-      // Send the updated rows to the server
-      const response = await axios.patch('http://localhost:8008/api/v1/candidates/update-assignee', {
-        candidates: updatedRows.map(row => ({ id: row._id, assignee: row.assignee }))
-      });
+    // Update each candidate using the onUpdateAssignee prop
+    await onUpdateAssignee(updatedRows);
 
-      if (response.status === 200) {
-        setRows(updatedRows);
-        setFilteredRows(updatedRows);
-        setIsModalOpenPortfolio(false);
-      } else {
-        console.error('Failed to update assignee');
-      }
-    } catch (error) {
-      console.error('Error updating assignee:', error);
-    }
+    setRows(updatedRows);
+    setFilteredRows(updatedRows);
+    setIsModalOpenPortfolio(false);
   };
 
   const fields = [
@@ -131,7 +121,7 @@ const DataTable = ({ rowsData, onUpdateCandidate }) => {
     },
   ];
 
-  const allAssignees = ['John', 'Vevaar', 'Komael'];
+  const allAssignees = ['John', 'Vevaar', 'Komael','esa' , 'aaa' , 'asef'];
 
   const handleStageChange = async (id, newStage) => {
     const newStatus = getStageOptions(newStage)[0];
@@ -348,7 +338,7 @@ const DataTable = ({ rowsData, onUpdateCandidate }) => {
           cancelButtonText="Cancel"
         /> */}
 
-          <InputPopUpModalAutoSelect
+        <InputPopUpModalAutoSelect
           open={isModalOpenPortfolio}
           onClose={() => setIsModalOpenPortfolio(false)}
           confirmAction={handleConfirmAssignee}

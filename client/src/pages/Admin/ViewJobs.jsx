@@ -143,6 +143,31 @@ const ViewJobs = () => {
         }
     };
 
+    const updateAssignee = async (candidates) => {
+        try {
+          const response = await axios.patch('http://localhost:8008/api/v1/candidates/update-assignee', {
+            candidates: candidates.map(candidate => ({ id: candidate._id, assignee: candidate.assignee }))
+          });
+      
+          if (response.status === 200) {
+            // Update the local state with the updated assignees
+            setCandidatesData(prevCandidates =>
+              prevCandidates.map(candidate =>
+                candidates.find(updated => updated._id === candidate._id) || candidate
+              )
+            );
+            console.log('Assignees updated successfully on the server.');
+          } else {
+            console.error('Failed to update assignee, response status:', response.status);
+          }
+        } catch (error) {
+          console.error('Error updating assignee:', error);
+          if (error.response) {
+            console.error('Server responded with:', error.response.data);
+          }
+        }
+      };
+
     useEffect(() => {
         fetchJobData();
         fetchCandidatesData();
@@ -232,7 +257,7 @@ const ViewJobs = () => {
                     <StatsGrid stats={candidateStats} />
                     <div className='flex'>
                         <div style={{ height: 400, width: '100%' }}>
-                            <DataTable rowsData={candidatesData} onUpdateCandidate={updateCandidate} />
+                            <DataTable rowsData={candidatesData} onUpdateCandidate={updateCandidate} onUpdateAssignee={updateAssignee} />
                         </div>
                     </div>
                 </div>
