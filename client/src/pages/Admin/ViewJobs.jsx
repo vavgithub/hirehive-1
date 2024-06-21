@@ -168,6 +168,12 @@ const ViewJobs = () => {
         }
       };
 
+      useEffect(() => {
+        if (mainId) {
+          localStorage.setItem('currentJobId', mainId);
+        }
+      }, [mainId]); 
+
     useEffect(() => {
         fetchJobData();
         fetchCandidatesData();

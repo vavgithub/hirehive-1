@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import BasicSelect from './BasicSelect';
 import { useNavigate } from 'react-router-dom';
@@ -8,6 +8,7 @@ import InputPopUpModal from './InputPopUpModal';
 import FilterForDataTable from './FilterForDataTable';
 import axios from 'axios';
 import InputPopUpModalAutoSelect from './InputPopUpModalAutoSelect';
+import BudgetWithScreen from '../svg/BudgetWithScreen';
 
 const getStageOptions = (stage) => {
   switch (stage) {
@@ -42,7 +43,7 @@ const nextStageMap = {
   "Round 2": "Hired",
 };
 
-const DataTable = ({ rowsData, onUpdateCandidate ,onUpdateAssignee }) => {
+const DataTable = ({ rowsData, onUpdateCandidate, onUpdateAssignee }) => {
   const [rows, setRows] = useState(rowsData);
   const [filteredRows, setFilteredRows] = useState(rowsData);
   const [searchQuery, setSearchQuery] = useState('');
@@ -58,19 +59,30 @@ const DataTable = ({ rowsData, onUpdateCandidate ,onUpdateAssignee }) => {
   });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedValue1, setSelectedValue1] = useState('');
-  const [selectedValue2, setSelectedValue2] = useState('');
+  const jobID = localStorage.getItem('currentJobId');
+  const savedBudgetFilter = JSON.parse(localStorage.getItem(`budgetFilter_${jobID}`));
+
+  const [selectedValue1, setSelectedValue1] = useState(savedBudgetFilter ? savedBudgetFilter.min : '');
+  const [selectedValue2, setSelectedValue2] = useState(savedBudgetFilter ? savedBudgetFilter.max : '');
 
   const handleConfirm = () => {
     console.log('Confirmed with selections:', selectedValue1, selectedValue2);
+
+    if (selectedValue1 && selectedValue2) {
+      const min = selectedValue1;
+      const max = selectedValue2;
+      const newFilteredRows = rows.filter(row => row.budget >= min && row.budget <= max);
+      setFilteredRows(newFilteredRows);
+
+      // Save to localStorage
+      const jobID = localStorage.getItem('currentJobId');
+      localStorage.setItem(`budgetFilter_${jobID}`, JSON.stringify({ min, max }));
+    }
     setIsModalOpen(false);
   };
 
-
   const [isModalOpenPortfolio, setIsModalOpenPortfolio] = useState(false);
-  // const [selectedAssignee, setselectedAssignee] = useState('');
   const [selectedAssignees, setSelectedAssignees] = useState([]);
-
 
   const handleConfirmAssignee = async () => {
     console.log('Confirmed with selections:', selectedAssignees);
@@ -78,13 +90,11 @@ const DataTable = ({ rowsData, onUpdateCandidate ,onUpdateAssignee }) => {
     const numCandidates = rows.length;
     const numAssignees = selectedAssignees.length;
 
-    // Create an array to hold the updated rows with distributed assignees
     let updatedRows = rows.map((row, index) => {
       const assignee = selectedAssignees[index % numAssignees];
       return { ...row, assignee: assignee };
     });
 
-    // Update each candidate using the onUpdateAssignee prop
     await onUpdateAssignee(updatedRows);
 
     setRows(updatedRows);
@@ -99,6 +109,7 @@ const DataTable = ({ rowsData, onUpdateCandidate ,onUpdateAssignee }) => {
       value: selectedValue1,
       onChange: (e) => setSelectedValue1(e.target.value),
       options: [
+        { value: "", label: "Select Start Range" },
         { value: '1', label: '1 Lpa' },
         { value: '2', label: '2 Lpa' },
         { value: '3', label: '3 Lpa' },
@@ -112,16 +123,20 @@ const DataTable = ({ rowsData, onUpdateCandidate ,onUpdateAssignee }) => {
       value: selectedValue2,
       onChange: (e) => setSelectedValue2(e.target.value),
       options: [
+        { value: "", label: "Select Start Range" },
         { value: '1', label: '1 Lpa' },
         { value: '2', label: '2 Lpa' },
         { value: '3', label: '3 Lpa' },
         { value: '4', label: '4 Lpa' },
         { value: '5', label: '5 Lpa' },
+        { value: '6', label: '6 Lpa' },
+        { value: '7', label: '7 Lpa' },
+        { value: '8', label: '8 lpa' }
       ],
     },
   ];
 
-  const allAssignees = ['John', 'Vevaar', 'Komael','esa' , 'aaa' , 'asef'];
+  const allAssignees = ['John', 'Vevaar', 'Komael', 'esa', 'aaa', 'asef'];
 
   const handleStageChange = async (id, newStage) => {
     const newStatus = getStageOptions(newStage)[0];
@@ -194,7 +209,16 @@ const DataTable = ({ rowsData, onUpdateCandidate ,onUpdateAssignee }) => {
     setFilteredRows(newFilteredRows);
   }, [filters, rows]);
 
+  useEffect(() => {
+    if (savedBudgetFilter) {
+      const { min, max } = savedBudgetFilter;
+      const newFilteredRows = rows.filter(row => row.budget >= min && row.budget <= max);
+      setFilteredRows(newFilteredRows);
+    }
+  }, [rows, savedBudgetFilter]);
+
   const columns = [
+    
     {
       field: 'fullName',
       headerName: 'Full Name',
@@ -210,6 +234,7 @@ const DataTable = ({ rowsData, onUpdateCandidate ,onUpdateAssignee }) => {
         </div>
       ),
     },
+
     {
       field: 'assignee', headerName: "Assignee", width: 130
     },
@@ -233,6 +258,7 @@ const DataTable = ({ rowsData, onUpdateCandidate ,onUpdateAssignee }) => {
         />
       ),
     },
+
     {
       field: 'status',
       headerName: 'Status',
@@ -274,11 +300,17 @@ const DataTable = ({ rowsData, onUpdateCandidate ,onUpdateAssignee }) => {
           />
           <FilterForDataTable onApplyFilters={setFilters} />
         </div>
-        <div>
-          <button className="bg-black text-white px-4 py-2 rounded" onClick={() => setIsModalOpen(true)}>Budget With Screen</button>
-        </div>
+        
         <div>
           <button className="bg-black text-white px-4 py-2 rounded" onClick={() => setIsModalOpenPortfolio(true)}>Auto Assign Portfolio</button>
+        </div>
+
+        <div>
+          {
+            savedBudgetFilter ? <button onClick={() => setIsModalOpen(true)}> <BudgetWithScreen /> </button> : <button className="bg-black text-white px-4 py-2 rounded" onClick={() => setIsModalOpen(true)}>
+              Budget With Screen
+            </button>
+          }
         </div>
       </div>
 
@@ -314,7 +346,6 @@ const DataTable = ({ rowsData, onUpdateCandidate ,onUpdateAssignee }) => {
           onRowClick={(params) => handleRowClick(params)}
         />
 
-        {/* this is input for budget screen */}
         <InputPopUpModal
           open={isModalOpen}
           onClose={() => setIsModalOpen(false)}
@@ -325,18 +356,6 @@ const DataTable = ({ rowsData, onUpdateCandidate ,onUpdateAssignee }) => {
           confirmButtonText="Apply Budget"
           cancelButtonText="Cancel"
         />
-
-        {/* this is input for auto assign */}
-        {/* <InputPopUpModal
-          open={isModalOpenPortfolio}
-          onClose={() => setIsModalOpenPortfolio(false)}
-          confirmAction={handleConfirmAssignee}
-          fields={fieldsAssignee}
-          heading="Auto Assign Portfolio"
-          para="Select The Reviewers To Assign Porfolios"
-          confirmButtonText="Auto Assign Portfolio"
-          cancelButtonText="Cancel"
-        /> */}
 
         <InputPopUpModalAutoSelect
           open={isModalOpenPortfolio}
@@ -363,6 +382,3 @@ const DataTable = ({ rowsData, onUpdateCandidate ,onUpdateAssignee }) => {
 };
 
 export default DataTable;
-
-
-
