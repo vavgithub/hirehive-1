@@ -6,8 +6,8 @@ import morgan from "morgan";
 import cors from "cors";    
 import cookieParser from "cookie-parser";
 
+import authRoutes from './routes/auth.routes.js'
 import jobRoutes from './routes/jobs.router.js';
-import userRoutes from './routes/user.router.js';
 import candidateRoutes from './routes/candidate/candidate.router.js';
 import { addCandidates } from "./utility/addCandidates.js";
 const app = express();
@@ -34,7 +34,8 @@ app.use(morgan('dev'))
 
 app.use("/api" , jobRoutes);
 // app.use('/api/users', userRoutes);
-app.use("/api/v1/users", userRoutes)
+app.use("/api/v1/auth",authRoutes)
+// app.use("/api/v1/users", userRoutes)
 app.use("/api/v1/candidates",candidateRoutes )
 
 connectDB().then(()=>{
