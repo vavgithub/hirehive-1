@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import BasicSelect from './BasicSelect';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import AppliedIcon from '../svg/AppliedIcon';
 import Modal from './Modal';
 import InputPopUpModal from './InputPopUpModal';
@@ -9,6 +9,7 @@ import FilterForDataTable from './FilterForDataTable';
 import axios from 'axios';
 import InputPopUpModalAutoSelect from './InputPopUpModalAutoSelect';
 import BudgetWithScreen from '../svg/BudgetWithScreen';
+import { FaUser, FaGlobe } from 'react-icons/fa';
 
 const getStageOptions = (stage) => {
   switch (stage) {
@@ -270,14 +271,25 @@ const DataTable = ({ rowsData, onUpdateCandidate, onUpdateAssignee }) => {
     {
       field: 'fullName',
       headerName: 'Full Name',
-      width: 200,
+      width: 300,
       sortable: false,
       valueGetter: (value, row) => `${row.firstName || ''} ${row.lastName || ''}`,
       renderCell: (params) => (
-        <div style={{ display: 'flex', alignItems: 'center' }}>
+        <div className="name-cell">
           <span>{params.value}</span>
-          <div style={{ visibility: 'hidden', marginLeft: 8 }} className="info-icon">
-            <AppliedIcon />
+          <div className="hover-icons">
+            <Link to={`/portfolio/${params.row._id}`} target="_blank" className="icon-link">
+              <FaUser className="icon" />
+            </Link>
+            <Link to={`/website/${params.row._id}`} target="_blank" className="icon-link">
+              <FaGlobe className="icon" />
+            </Link>
+            <Link to={`/portfolio/${params.row._id}`} target="_blank" className="icon-link">
+              <FaUser className="icon" />
+            </Link>
+            <Link to={`/website/${params.row._id}`} target="_blank" className="icon-link">
+              <FaGlobe className="icon" />
+            </Link>
           </div>
         </div>
       ),
@@ -385,6 +397,29 @@ const DataTable = ({ rowsData, onUpdateCandidate, onUpdateAssignee }) => {
           .MuiDataGrid-columnHeaders .MuiDataGrid-checkboxInput {
             visibility: visible !important;
           }
+          .name-cell {
+            display: flex;
+            align-items: center;
+            width: 100%;
+          }
+          .hover-icons {
+            display: none;
+            margin-left: auto;
+          }
+          .name-cell:hover .hover-icons {
+            display: flex;
+          }
+          .icon-link {
+            margin-left: 8px;
+            color: #666;
+            transition: color 0.3s;
+          }
+          .icon-link:hover {
+            color: #000;
+          }
+          .icon {
+            font-size: 1.2rem;
+          }  
           `}
         </style>
 
