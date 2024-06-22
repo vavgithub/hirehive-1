@@ -13,10 +13,15 @@ import {
 const queryClient = new QueryClient()
 
 import { AuthProvider } from './context/AuthProvider.jsx'
+import { Provider } from 'react-redux'
+import { store } from './api/store.js'
 
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <AuthProvider>
-    <RouterProvider router={router} />
-  </AuthProvider>)
+  <Provider store={store}>
+
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>)
+  </Provider>
 

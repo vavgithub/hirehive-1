@@ -8,7 +8,7 @@ const useRefreshToken = () => {
     const refresh = async () => {
         try {
             console.log("am i cliked or not")
-            const response = await axios.get('/api/v1/users/refresh-token');
+            const response = await axios.get('api/v1/auth/refresh');
             const result = response.data;
             console.log(result)
             console.log("check this please " + JSON.stringify(result));
