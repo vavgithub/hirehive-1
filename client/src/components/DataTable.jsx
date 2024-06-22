@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import BasicSelect from './BasicSelect';
 import { useNavigate } from 'react-router-dom';
@@ -46,6 +46,7 @@ const nextStageMap = {
 const DataTable = ({ rowsData, onUpdateCandidate, onUpdateAssignee }) => {
   const [rows, setRows] = useState(rowsData);
   const [filteredRows, setFilteredRows] = useState(rowsData);
+  const [budgetFilteredRows, setBudgetFilteredRows] = useState(rowsData);
   const [searchQuery, setSearchQuery] = useState('');
   const [openRejectModal, setOpenRejectModal] = useState(false);
   const [selectedCandidate, setSelectedCandidate] = useState(null);
@@ -65,17 +66,24 @@ const DataTable = ({ rowsData, onUpdateCandidate, onUpdateAssignee }) => {
   const [selectedValue1, setSelectedValue1] = useState(savedBudgetFilter ? savedBudgetFilter.min : '');
   const [selectedValue2, setSelectedValue2] = useState(savedBudgetFilter ? savedBudgetFilter.max : '');
 
+
+  const applyBudgetFilter = useCallback((min, max) => {
+    const newBudgetFilteredRows = rows.filter(row => row.budget >= min && row.budget <= max);
+    setBudgetFilteredRows(newBudgetFilteredRows);
+    return newBudgetFilteredRows;
+  }, [rows]);
+
+
   const handleConfirm = () => {
     console.log('Confirmed with selections:', selectedValue1, selectedValue2);
 
     if (selectedValue1 && selectedValue2) {
-      const min = selectedValue1;
-      const max = selectedValue2;
-      const newFilteredRows = rows.filter(row => row.budget >= min && row.budget <= max);
-      setFilteredRows(newFilteredRows);
+      const min = parseInt(selectedValue1);
+      const max = parseInt(selectedValue2);
+      const newBudgetFilteredRows = applyBudgetFilter(min, max);
+      setFilteredRows(newBudgetFilteredRows);
 
       // Save to localStorage
-      const jobID = localStorage.getItem('currentJobId');
       localStorage.setItem(`budgetFilter_${jobID}`, JSON.stringify({ min, max }));
     }
     setIsModalOpen(false);
@@ -87,18 +95,22 @@ const DataTable = ({ rowsData, onUpdateCandidate, onUpdateAssignee }) => {
   const handleConfirmAssignee = async () => {
     console.log('Confirmed with selections:', selectedAssignees);
 
-    const numCandidates = rows.length;
+    const numCandidates = budgetFilteredRows.length;
     const numAssignees = selectedAssignees.length;
 
-    let updatedRows = rows.map((row, index) => {
+    let updatedRows = budgetFilteredRows.map((row, index) => {
       const assignee = selectedAssignees[index % numAssignees];
       return { ...row, assignee: assignee };
     });
 
     await onUpdateAssignee(updatedRows);
 
-    setRows(updatedRows);
-    setFilteredRows(updatedRows);
+    setRows(prevRows => prevRows.map(row => {
+      const updatedRow = updatedRows.find(r => r._id === row._id);
+      return updatedRow || row;
+    }));
+    setBudgetFilteredRows(updatedRows);
+    applyFiltersAndSearch(updatedRows);
     setIsModalOpenPortfolio(false);
   };
 
@@ -180,16 +192,47 @@ const DataTable = ({ rowsData, onUpdateCandidate, onUpdateAssignee }) => {
     }
   };
 
-  useEffect(() => {
-    const lowercasedQuery = searchQuery.toLowerCase();
-    const newFilteredRows = rows.filter(row =>
-      `${row.firstName} ${row.lastName}`.toLowerCase().includes(lowercasedQuery)
-    );
-    setFilteredRows(newFilteredRows);
-  }, [searchQuery, rows]);
+  // useEffect(() => {
+  //   const lowercasedQuery = searchQuery.toLowerCase();
+  //   const newFilteredRows = budgetFilteredRows.filter(row =>
+  //     `${row.firstName} ${row.lastName}`.toLowerCase().includes(lowercasedQuery)
+  //   );
+  //   setFilteredRows(newFilteredRows);
+  // }, [searchQuery, budgetFilteredRows]);
 
-  useEffect(() => {
-    let newFilteredRows = [...rows];
+  // useEffect(() => {
+  //   let newFilteredRows = [...budgetFilteredRows];
+  //   if (filters.stage.length > 0) {
+  //     newFilteredRows = newFilteredRows.filter(row => filters.stage.includes(row.stage));
+  //   }
+  //   if (filters.status.length > 0) {
+  //     newFilteredRows = newFilteredRows.filter(row => filters.status.includes(row.status));
+  //   }
+  //   if (filters.experience) {
+  //     const [min, max] = filters.experience.split('-').map(v => parseInt(v.trim()));
+  //     newFilteredRows = newFilteredRows.filter(row => row.experience >= min && row.experience <= max);
+  //   }
+  //   if (filters.rating.length > 0) {
+  //     newFilteredRows = newFilteredRows.filter(row => filters.rating.includes(row.rating));
+  //   }
+  //   if (filters.assignee.length > 0) {
+  //     newFilteredRows = newFilteredRows.filter(row => filters.assignee.includes(row.assignee));
+  //   }
+  //   setFilteredRows(newFilteredRows);
+  // }, [filters, budgetFilteredRows]);
+
+  const applyFiltersAndSearch = useCallback((rowsToFilter) => {
+    let newFilteredRows = [...rowsToFilter];
+
+    // Apply search
+    if (searchQuery) {
+      const lowercasedQuery = searchQuery.toLowerCase();
+      newFilteredRows = newFilteredRows.filter(row =>
+        `${row.firstName} ${row.lastName}`.toLowerCase().includes(lowercasedQuery)
+      );
+    }
+
+    // Apply filters
     if (filters.stage.length > 0) {
       newFilteredRows = newFilteredRows.filter(row => filters.stage.includes(row.stage));
     }
@@ -206,19 +249,24 @@ const DataTable = ({ rowsData, onUpdateCandidate, onUpdateAssignee }) => {
     if (filters.assignee.length > 0) {
       newFilteredRows = newFilteredRows.filter(row => filters.assignee.includes(row.assignee));
     }
+
     setFilteredRows(newFilteredRows);
-  }, [filters, rows]);
+  }, [searchQuery, filters]);
+
+  useEffect(() => {
+    applyFiltersAndSearch(budgetFilteredRows);
+  }, [applyFiltersAndSearch, budgetFilteredRows]);
 
   useEffect(() => {
     if (savedBudgetFilter) {
       const { min, max } = savedBudgetFilter;
-      const newFilteredRows = rows.filter(row => row.budget >= min && row.budget <= max);
-      setFilteredRows(newFilteredRows);
+      const newBudgetFilteredRows = applyBudgetFilter(min, max);
+      applyFiltersAndSearch(newBudgetFilteredRows);
     }
-  }, [rows, savedBudgetFilter]);
+  }, [savedBudgetFilter, applyBudgetFilter, applyFiltersAndSearch]);
 
   const columns = [
-    
+
     {
       field: 'fullName',
       headerName: 'Full Name',
@@ -291,16 +339,22 @@ const DataTable = ({ rowsData, onUpdateCandidate, onUpdateAssignee }) => {
   return (
     <div>
       <div className='flex justify-between m-4'>
-        <div className='flex gap-4'>
+      <div className='flex gap-4'>
           <input
             className="border border-gray-300 px-4 py-2 w-40 rounded mb-4"
             placeholder="Search By Name"
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              applyFiltersAndSearch(budgetFilteredRows);
+            }}
           />
-          <FilterForDataTable onApplyFilters={setFilters} />
+          <FilterForDataTable onApplyFilters={(newFilters) => {
+            setFilters(newFilters);
+            applyFiltersAndSearch(budgetFilteredRows);
+          }} />
         </div>
-        
+
         <div>
           <button className="bg-black text-white px-4 py-2 rounded" onClick={() => setIsModalOpenPortfolio(true)}>Auto Assign Portfolio</button>
         </div>
