@@ -370,18 +370,20 @@ const DataTable = ({ rowsData, onUpdateCandidate, onUpdateAssignee }) => {
 
       <div style={{ height: 400, width: '100%' }}>
         <style>
-          {`
-          .MuiDataGrid-row:hover .MuiDataGrid-checkboxInput {
-            visibility: visible;
+        {`
+          .MuiDataGrid-root .MuiDataGrid-columnHeader:focus,
+          .MuiDataGrid-root .MuiDataGrid-cell:focus {
+            outline: none !important;
           }
-          .MuiDataGrid-checkboxInput {
+          .MuiDataGrid-row .MuiDataGrid-checkboxInput {
             visibility: hidden;
           }
-          .MuiDataGrid-checkboxInput input:checked + .MuiSvgIcon-root {
+          .MuiDataGrid-row:hover .MuiDataGrid-checkboxInput,
+          .MuiDataGrid-row .MuiDataGrid-checkboxInput.Mui-checked {
             visibility: visible;
           }
-          .MuiDataGrid-row:hover > div {
-            visibility: visible;
+          .MuiDataGrid-columnHeaders .MuiDataGrid-checkboxInput {
+            visibility: visible !important;
           }
           `}
         </style>
