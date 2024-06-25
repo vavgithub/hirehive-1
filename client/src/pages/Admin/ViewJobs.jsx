@@ -148,7 +148,7 @@ const ViewJobs = () => {
           const response = await axios.patch('http://localhost:8008/api/v1/candidates/update-assignee', {
             candidates: candidates.map(candidate => ({ id: candidate._id, assignee: candidate.assignee }))
           });
-      
+    
           if (response.status === 200) {
             // Update the local state with the updated assignees
             setCandidatesData(prevCandidates =>
@@ -158,15 +158,17 @@ const ViewJobs = () => {
             );
             console.log('Assignees updated successfully on the server.');
           } else {
-            console.error('Failed to update assignee, response status:', response.status);
+            throw new Error(`Failed to update assignee, response status: ${response.status}`);
           }
         } catch (error) {
           console.error('Error updating assignee:', error);
           if (error.response) {
             console.error('Server responded with:', error.response.data);
           }
+          throw error; // Re-throw the error so it can be caught in the DataTable component
         }
       };
+    
 
       useEffect(() => {
         if (mainId) {

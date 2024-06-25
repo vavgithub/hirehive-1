@@ -40,20 +40,35 @@ const updateStatusAndStage = async (req, res) => {
   }
 }
 
-const updateAssignee = async (req , res)=>{
-  const { candidateIds, assignee } = req.body;
-
+const updateAssignee = async (req , res)=> {
   try {
-    await candidates.updateMany(
-      { _id: { $in: candidateIds } },
-      { $set: { assignee: assignee } }
-    );
+    const { candidatesData } = req.body;
 
-    res.status(200).send({ message: 'Assignee updated successfully' });
+    if (!candidatesData || !Array.isArray(candidatesData) || candidatesData.length === 0) {
+      return res.status(400).json({ message: 'Invalid input. Expected an array of candidates.' });
+    }
+
+    const updateOperations = candidatesData.map(candidate => ({
+      updateOne: {
+        filter: { _id: candidate.id },
+        update: { $set: { assignee: candidate.assignee } }
+      }
+    }));
+
+    const result = await candidates.bulkWrite(updateOperations);
+
+    if (result.modifiedCount > 0) {
+      res.status(200).json({
+        message: 'Assignees updated successfully',
+        modifiedCount: result.modifiedCount
+      });
+    } else {
+      res.status(404).json({ message: 'No candidates were updated' });
+    }
   } catch (error) {
-    res.status(500).send({ message: 'Failed to update assignee', error });
+    console.error('Error updating assignees:', error);
+    res.status(500).json({ message: 'Internal server error', error: error.message });
   }
-}
-
+};
 
 export { getCandidate, createCandidate , getCandidateById , updateStatusAndStage , updateAssignee};

@@ -28,7 +28,7 @@ const candidateSchema = new mongoose.Schema(
       required: true,
     },
     assignee:{
-      type:Array,
+      type:String,
       default: "N/A",
     },
     stage: {

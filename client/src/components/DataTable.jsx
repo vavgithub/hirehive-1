@@ -6,10 +6,10 @@ import AppliedIcon from '../svg/AppliedIcon';
 import Modal from './Modal';
 import InputPopUpModal from './InputPopUpModal';
 import FilterForDataTable from './FilterForDataTable';
-import axios from 'axios';
 import InputPopUpModalAutoSelect from './InputPopUpModalAutoSelect';
 import BudgetWithScreen from '../svg/BudgetWithScreen';
 import { FaUser, FaGlobe } from 'react-icons/fa';
+import { exportToExcel } from '../utility/exportToExcel';
 
 const getStageOptions = (stage) => {
   switch (stage) {
@@ -104,16 +104,22 @@ const DataTable = ({ rowsData, onUpdateCandidate, onUpdateAssignee }) => {
       return { ...row, assignee: assignee };
     });
 
-    await onUpdateAssignee(updatedRows);
+    try {
+      await onUpdateAssignee(updatedRows);
 
-    setRows(prevRows => prevRows.map(row => {
-      const updatedRow = updatedRows.find(r => r._id === row._id);
-      return updatedRow || row;
-    }));
-    setBudgetFilteredRows(updatedRows);
-    applyFiltersAndSearch(updatedRows);
-    setIsModalOpenPortfolio(false);
+      setRows(prevRows => prevRows.map(row => {
+        const updatedRow = updatedRows.find(r => r._id === row._id);
+        return updatedRow || row;
+      }));
+      setBudgetFilteredRows(updatedRows);
+      applyFiltersAndSearch(updatedRows);
+      setIsModalOpenPortfolio(false);
+    } catch (error) {
+      console.error('Error updating assignees:', error);
+      // Handle error (e.g., show an error message to the user)
+    }
   };
+
 
   const fields = [
     {
@@ -193,34 +199,9 @@ const DataTable = ({ rowsData, onUpdateCandidate, onUpdateAssignee }) => {
     }
   };
 
-  // useEffect(() => {
-  //   const lowercasedQuery = searchQuery.toLowerCase();
-  //   const newFilteredRows = budgetFilteredRows.filter(row =>
-  //     `${row.firstName} ${row.lastName}`.toLowerCase().includes(lowercasedQuery)
-  //   );
-  //   setFilteredRows(newFilteredRows);
-  // }, [searchQuery, budgetFilteredRows]);
-
-  // useEffect(() => {
-  //   let newFilteredRows = [...budgetFilteredRows];
-  //   if (filters.stage.length > 0) {
-  //     newFilteredRows = newFilteredRows.filter(row => filters.stage.includes(row.stage));
-  //   }
-  //   if (filters.status.length > 0) {
-  //     newFilteredRows = newFilteredRows.filter(row => filters.status.includes(row.status));
-  //   }
-  //   if (filters.experience) {
-  //     const [min, max] = filters.experience.split('-').map(v => parseInt(v.trim()));
-  //     newFilteredRows = newFilteredRows.filter(row => row.experience >= min && row.experience <= max);
-  //   }
-  //   if (filters.rating.length > 0) {
-  //     newFilteredRows = newFilteredRows.filter(row => filters.rating.includes(row.rating));
-  //   }
-  //   if (filters.assignee.length > 0) {
-  //     newFilteredRows = newFilteredRows.filter(row => filters.assignee.includes(row.assignee));
-  //   }
-  //   setFilteredRows(newFilteredRows);
-  // }, [filters, budgetFilteredRows]);
+  const handleExport = () => {
+    exportToExcel(budgetFilteredRows, 'my_data');
+  };
 
   const applyFiltersAndSearch = useCallback((rowsToFilter) => {
     let newFilteredRows = [...rowsToFilter];
@@ -351,7 +332,7 @@ const DataTable = ({ rowsData, onUpdateCandidate, onUpdateAssignee }) => {
   return (
     <div>
       <div className='flex justify-between m-4'>
-      <div className='flex gap-4'>
+        <div className='flex gap-4 h-12'>
           <input
             className="border border-gray-300 px-4 py-2 w-40 rounded mb-4"
             placeholder="Search By Name"
@@ -365,6 +346,7 @@ const DataTable = ({ rowsData, onUpdateCandidate, onUpdateAssignee }) => {
             setFilters(newFilters);
             applyFiltersAndSearch(budgetFilteredRows);
           }} />
+          <button className="bg-black text-white px-4 py-2 rounded" onClick={() => handleExport()}>Export</button>
         </div>
 
         <div>
@@ -382,7 +364,7 @@ const DataTable = ({ rowsData, onUpdateCandidate, onUpdateAssignee }) => {
 
       <div style={{ height: 400, width: '100%' }}>
         <style>
-        {`
+          {`
           .MuiDataGrid-root .MuiDataGrid-columnHeader:focus,
           .MuiDataGrid-root .MuiDataGrid-cell:focus {
             outline: none !important;
