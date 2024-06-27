@@ -40,7 +40,7 @@ const updateStatusAndStage = async (req, res) => {
   }
 }
 
-const updateAssignee = async (req , res)=> {
+const updateAssignee = async (req, res) => {
   try {
     const { candidatesData } = req.body;
 

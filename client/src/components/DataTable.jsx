@@ -105,7 +105,12 @@ const DataTable = ({ rowsData, onUpdateCandidate, onUpdateAssignee }) => {
     });
 
     try {
-      await onUpdateAssignee(updatedRows);
+      const candidatesData = updatedRows.map(row => ({
+        id: row._id,
+        assignee: row.assignee
+      }));
+
+      await onUpdateAssignee(candidatesData);
 
       setRows(prevRows => prevRows.map(row => {
         const updatedRow = updatedRows.find(r => r._id === row._id);

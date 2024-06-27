@@ -143,18 +143,19 @@ const ViewJobs = () => {
         }
     };
 
-    const updateAssignee = async (candidates) => {
+    const updateAssignee = async (candidatesData) => {
         try {
           const response = await axios.patch('http://localhost:8008/api/v1/candidates/update-assignee', {
-            candidates: candidates.map(candidate => ({ id: candidate._id, assignee: candidate.assignee }))
+            candidatesData
           });
     
           if (response.status === 200) {
             // Update the local state with the updated assignees
             setCandidatesData(prevCandidates =>
-              prevCandidates.map(candidate =>
-                candidates.find(updated => updated._id === candidate._id) || candidate
-              )
+              prevCandidates.map(candidate => {
+                const updated = candidatesData.find(c => c.id === candidate._id);
+                return updated ? { ...candidate, assignee: updated.assignee } : candidate;
+              })
             );
             console.log('Assignees updated successfully on the server.');
           } else {
@@ -165,7 +166,7 @@ const ViewJobs = () => {
           if (error.response) {
             console.error('Server responded with:', error.response.data);
           }
-          throw error; // Re-throw the error so it can be caught in the DataTable component
+          throw error;
         }
       };
     
