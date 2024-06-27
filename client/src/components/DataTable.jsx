@@ -354,8 +354,16 @@ const DataTable = ({ rowsData, onUpdateCandidate, onUpdateAssignee }) => {
           <button className="bg-black text-white px-4 py-2 rounded" onClick={() => handleExport()}>Export</button>
         </div>
 
+
+
         <div>
-          <button className="bg-black text-white px-4 py-2 rounded" onClick={() => setIsModalOpenPortfolio(true)}>Auto Assign Portfolio</button>
+
+          {
+            savedBudgetFilter ? <button className="bg-black text-white px-4 py-2 rounded" onClick={() => setIsModalOpenPortfolio(true)}>Auto Assign Portfolio</button> : "" 
+          }
+
+
+          
         </div>
 
         <div>
