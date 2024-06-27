@@ -44,6 +44,12 @@ const nextStageMap = {
   "Round 2": "Hired",
 };
 
+
+
+
+const allAssignees = ['John', 'Vevaar', 'Komael', 'esa', 'aaa', 'asef'];
+
+
 const DataTable = ({ rowsData, onUpdateCandidate, onUpdateAssignee }) => {
   const [rows, setRows] = useState(rowsData);
   const [filteredRows, setFilteredRows] = useState(rowsData);
@@ -60,19 +66,18 @@ const DataTable = ({ rowsData, onUpdateCandidate, onUpdateAssignee }) => {
     assignee: [],
   });
 
+
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const jobID = localStorage.getItem('currentJobId');
-  const savedBudgetFilter = JSON.parse(localStorage.getItem(`budgetFilter_${jobID}`));
+  const [savedBudgetFilter, setSavedBudgetFilter] = useState(
+    JSON.parse(localStorage.getItem(`budgetFilter_${jobID}`))
+  );
+  // const savedBudgetFilter = JSON.parse(localStorage.getItem(`budgetFilter_${jobID}`));
 
   const [selectedValue1, setSelectedValue1] = useState(savedBudgetFilter ? savedBudgetFilter.min : '');
   const [selectedValue2, setSelectedValue2] = useState(savedBudgetFilter ? savedBudgetFilter.max : '');
 
-
-  const applyBudgetFilter = useCallback((min, max) => {
-    const newBudgetFilteredRows = rows.filter(row => row.budget >= min && row.budget <= max);
-    setBudgetFilteredRows(newBudgetFilteredRows);
-    return newBudgetFilteredRows;
-  }, [rows]);
 
 
   const handleConfirm = () => {
@@ -125,7 +130,6 @@ const DataTable = ({ rowsData, onUpdateCandidate, onUpdateAssignee }) => {
     }
   };
 
-
   const fields = [
     {
       type: 'select',
@@ -160,7 +164,6 @@ const DataTable = ({ rowsData, onUpdateCandidate, onUpdateAssignee }) => {
     },
   ];
 
-  const allAssignees = ['John', 'Vevaar', 'Komael', 'esa', 'aaa', 'asef'];
 
   const handleStageChange = async (id, newStage) => {
     const newStatus = getStageOptions(newStage)[0];
@@ -208,6 +211,12 @@ const DataTable = ({ rowsData, onUpdateCandidate, onUpdateAssignee }) => {
     exportToExcel(budgetFilteredRows, 'my_data');
   };
 
+  
+  const applyBudgetFilter = useCallback((min, max) => {
+    return rows.filter(row => row.budget >= min && row.budget <= max);
+  }, [rows]);
+
+
   const applyFiltersAndSearch = useCallback((rowsToFilter) => {
     let newFilteredRows = [...rowsToFilter];
 
@@ -248,10 +257,11 @@ const DataTable = ({ rowsData, onUpdateCandidate, onUpdateAssignee }) => {
     if (savedBudgetFilter) {
       const { min, max } = savedBudgetFilter;
       const newBudgetFilteredRows = applyBudgetFilter(min, max);
-      applyFiltersAndSearch(newBudgetFilteredRows);
+      setBudgetFilteredRows(newBudgetFilteredRows);
+    } else {
+      setBudgetFilteredRows(rows);
     }
-  }, [savedBudgetFilter, applyBudgetFilter, applyFiltersAndSearch]);
-
+  }, [savedBudgetFilter, applyBudgetFilter, rows]);
   const columns = [
 
     {
