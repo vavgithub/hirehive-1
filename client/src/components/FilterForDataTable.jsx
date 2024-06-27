@@ -101,8 +101,8 @@ const FilterForDataTable = ({ onApplyFilters }) => {
       stage: ['Portfolio', 'Screening', 'Design Task', 'Round 1', 'Round 2', 'Hired'],
       status: selectedFilters.stage.length === 1 ? stageStatusMap[selectedFilters.stage[0]] : ['Rejected'],
       experience: [],
-      rating: ['Good Fit', 'Not a Good Fit', 'May Be'],
-      assignee: ['John Doe', 'Jane Smith'],
+      rating: ['Good Fit', 'Not A Good Fit', 'May Be'],
+      assignee: ['John'],
     };
   
     useEffect(() => {

@@ -8,8 +8,9 @@ import InputPopUpModal from './InputPopUpModal';
 import FilterForDataTable from './FilterForDataTable';
 import InputPopUpModalAutoSelect from './InputPopUpModalAutoSelect';
 import BudgetWithScreen from '../svg/BudgetWithScreen';
-import { FaUser, FaGlobe } from 'react-icons/fa';
+import { FaUser, FaGlobe, FaStar } from 'react-icons/fa';
 import { exportToExcel } from '../utility/exportToExcel';
+import { Menu, MenuItem } from '@mui/material';
 
 const getStageOptions = (stage) => {
   switch (stage) {
@@ -47,10 +48,10 @@ const nextStageMap = {
 
 
 
-const allAssignees = ['John', 'Vevaar', 'Komael', 'esa', 'aaa', 'asef'];
+const allAssignees = ['John', 'Vevaar', 'Komael', 'Eshan', 'Sushmita', 'Jordyn'];
 
 
-const DataTable = ({ rowsData, onUpdateCandidate, onUpdateAssignee }) => {
+const DataTable = ({ rowsData, onUpdateCandidate, onUpdateAssignee , onUpdateRating  }) => {
   const [rows, setRows] = useState(rowsData);
   const [filteredRows, setFilteredRows] = useState(rowsData);
   const [budgetFilteredRows, setBudgetFilteredRows] = useState(rowsData);
@@ -65,6 +66,65 @@ const DataTable = ({ rowsData, onUpdateCandidate, onUpdateAssignee }) => {
     rating: [],
     assignee: [],
   });
+
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [selectedCandidateId, setSelectedCandidateId] = useState(null);
+
+
+  useEffect(() => {
+    setRows(rowsData);
+    setFilteredRows(rowsData);
+    setBudgetFilteredRows(rowsData);
+  }, [rowsData]);
+
+  const handleRatingClick = (event, id) => {
+    event.stopPropagation();
+    setAnchorEl(event.currentTarget);
+    setSelectedCandidateId(id);
+  };
+
+  const handleRatingClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleRatingSelect = async (rating) => {
+    if (selectedCandidateId) {
+      try {
+        const updatedCandidate = await onUpdateRating(selectedCandidateId, rating);
+        // Update the local state
+        setRows(prevRows => 
+          prevRows.map(row => 
+            row._id === selectedCandidateId ? { ...row, rating: updatedCandidate.rating } : row
+          )
+        );
+        setFilteredRows(prevRows => 
+          prevRows.map(row => 
+            row._id === selectedCandidateId ? { ...row, rating: updatedCandidate.rating } : row
+          )
+        );
+        setBudgetFilteredRows(prevRows => 
+          prevRows.map(row => 
+            row._id === selectedCandidateId ? { ...row, rating: updatedCandidate.rating } : row
+          )
+        );
+      } catch (error) {
+        console.error('Error updating rating:', error);
+      }
+      handleRatingClose();
+    }
+  };
+  const getRatingColor = (rating) => {
+    switch (rating) {
+      case 'Good Fit':
+        return 'green';
+      case 'May Be':
+        return 'orange';
+      case 'Not A Good Fit':
+        return 'red';
+      default:
+        return 'gray';
+    }
+  };
 
 
 
@@ -211,7 +271,7 @@ const DataTable = ({ rowsData, onUpdateCandidate, onUpdateAssignee }) => {
     exportToExcel(budgetFilteredRows, 'my_data');
   };
 
-  
+
   const applyBudgetFilter = useCallback((min, max) => {
     return rows.filter(row => row.budget >= min && row.budget <= max);
   }, [rows]);
@@ -339,6 +399,11 @@ const DataTable = ({ rowsData, onUpdateCandidate, onUpdateAssignee }) => {
         <div className='flex gap-2'>
           <button className='text-red-600' onClick={(e) => handleRejectClick(e, params.row)}>Reject</button>
           <button className='text-blue-500' onClick={(e) => handleNextRoundClick(e, params.row._id, params.row.stage)}>Next Round</button>
+          <FaStar
+            className='cursor-pointer'
+            style={{ color: getRatingColor(params.row.rating) }}
+            onClick={(e) => handleRatingClick(e, params.row._id)}
+          />
         </div>
       ),
     },
@@ -369,11 +434,11 @@ const DataTable = ({ rowsData, onUpdateCandidate, onUpdateAssignee }) => {
         <div>
 
           {
-            savedBudgetFilter ? <button className="bg-black text-white px-4 py-2 rounded" onClick={() => setIsModalOpenPortfolio(true)}>Auto Assign Portfolio</button> : "" 
+            savedBudgetFilter ? <button className="bg-black text-white px-4 py-2 rounded" onClick={() => setIsModalOpenPortfolio(true)}>Auto Assign Portfolio</button> : ""
           }
 
 
-          
+
         </div>
 
         <div>
@@ -441,6 +506,22 @@ const DataTable = ({ rowsData, onUpdateCandidate, onUpdateAssignee }) => {
           checkboxSelection
           onRowClick={(params) => handleRowClick(params)}
         />
+
+        <Menu
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={handleRatingClose}
+        >
+          <MenuItem onClick={() => handleRatingSelect('Good Fit')}>
+            <FaStar style={{ color: 'green', marginRight: '8px' }} /> Good Fit
+          </MenuItem>
+          <MenuItem onClick={() => handleRatingSelect('May Be')}>
+            <FaStar style={{ color: 'orange', marginRight: '8px' }} /> May Be
+          </MenuItem>
+          <MenuItem onClick={() => handleRatingSelect('Not A Good Fit')}>
+            <FaStar style={{ color: 'red', marginRight: '8px' }} /> Not A Good Fit
+          </MenuItem>
+        </Menu>
 
         <InputPopUpModal
           open={isModalOpen}

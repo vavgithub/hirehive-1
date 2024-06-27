@@ -169,6 +169,20 @@ const ViewJobs = () => {
           throw error;
         }
       };
+
+      const updateRating = async (id, rating) => {
+        try {
+          const response = await axios.patch(`http://localhost:8008/api/v1/candidates/update-rating/${id}`, { rating });
+          const updatedCandidate = response.data;
+          setCandidatesData(prevCandidates =>
+            prevCandidates.map(candidate => candidate._id === id ? updatedCandidate : candidate)
+          );
+          return updatedCandidate; // Return the updated candidate
+        } catch (error) {
+          console.error('Error updating candidate rating:', error);
+          throw error; // Throw the error so it can be caught in the DataTable component
+        }
+      };
     
 
       useEffect(() => {
@@ -266,7 +280,7 @@ const ViewJobs = () => {
                     <StatsGrid stats={candidateStats} />
                     <div className='flex'>
                         <div style={{ height: 400, width: '100%' }}>
-                            <DataTable rowsData={candidatesData} onUpdateCandidate={updateCandidate} onUpdateAssignee={updateAssignee} />
+                            <DataTable rowsData={candidatesData} onUpdateCandidate={updateCandidate} onUpdateAssignee={updateAssignee} onUpdateRating={updateRating}/>
                         </div>
                     </div>
                 </div>

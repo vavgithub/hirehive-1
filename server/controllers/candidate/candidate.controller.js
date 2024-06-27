@@ -71,4 +71,26 @@ const updateAssignee = async (req, res) => {
   }
 };
 
-export { getCandidate, createCandidate , getCandidateById , updateStatusAndStage , updateAssignee};
+const updateRating = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { rating } = req.body;
+
+    const candidate = await candidates.findByIdAndUpdate(
+      id,
+      { rating },
+      { new: true }
+    );
+
+    if (!candidate) {
+      return res.status(404).json({ message: 'Candidate not found' });
+    }
+
+    res.status(200).json(candidate);
+  } catch (error) {
+    console.error('Error updating candidate rating:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+export { getCandidate, createCandidate , getCandidateById , updateStatusAndStage , updateAssignee , updateRating};

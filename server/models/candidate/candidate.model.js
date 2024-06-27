@@ -79,6 +79,10 @@ const candidateSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    rating:{
+      type:String,
+      enum:["" , "Good Fit" , "May Be", "Not A Good Fit"]
+    }
   },
   { timestamps: true }
 );
