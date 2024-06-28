@@ -4,6 +4,11 @@ import { useNavigate } from 'react-router-dom';
 
 import axios from '../../api/axios';
 import useAuth from '../../hooks/useAuth';
+
+import { useLoginMutation, useRefreshMutation } from '../../api/authApiSlice';
+import { useDispatch } from 'react-redux';
+import { setCredentials } from '../../api/authSlice';
+
 const LOGIN_URL = 'api/v1/users/login';
 
 const Login = () => {
@@ -16,53 +21,77 @@ const Login = () => {
     const [errMsg, setErrMsg] = useState('');
 
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+
+    const [login, { isLoading }] = useLoginMutation()
+
+    // const handleSubmit = async (e) => {
+    //     e.preventDefault();
+
+    //     try {
+    //         const response = await axios.post(LOGIN_URL,
+    //             {
+    //                 email,
+    //                 password,
+    //             },
+    //             {
+    //                 headers: {
+    //                     'Content-Type': 'application/json',
+    //                 },
+    //             });
+
+    //          // Directly use response.data without parsing it again
+    //     const result = response.data;
+    //     console.log(result);
+
+    //     setAuth({ email: result.data.user.email, password: result.data.user.password , accessToken:result.data.accessToken });
+    //     console.log('Auth:', { email: result.data.user.email, accessToken: result.data.accessToken});
+
+    //     // Store the access token in localStorage
+    //     localStorage.setItem('accessToken', result.data.accessToken);
+
+    //     // Store the access token in a cookie
+    //     document.cookie = `accessToken=${result.data.accessToken}; path=/; secure`;
+    //     document.cookie = `refreshToken=${result.data.refreshToken}; path=/; secure`;
+
+        
+    //     navigate('/admin');
+    //     setEmail('');
+    //     setPassword('');
+    //     }
+    //     catch (error) {
+    //         console.log(error);
+    //          if (error.response.status == 401) {
+    //              errRef.current.innerText = 'Invalid email or password';
+    //          } else if (error.response.status == 404) {
+    //              errRef.current.innerText = 'Email not found';
+    //          } else if (error.response.status == 400) {
+    //              errRef.current.innerText = 'Email is required';
+    //          }
+    //          errRef.current.focus();
+    //     }
+    // };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         try {
-            const response = await axios.post(LOGIN_URL,
-                {
-                    email,
-                    password,
-                },
-                {
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                });
-
-             // Directly use response.data without parsing it again
-        const result = response.data;
-        console.log(result);
-
-        setAuth({ email: result.data.user.email, password: result.data.user.password , accessToken:result.data.accessToken });
-        console.log('Auth:', { email: result.data.user.email, accessToken: result.data.accessToken});
-
-        // Store the access token in localStorage
-        localStorage.setItem('accessToken', result.data.accessToken);
-
-        // Store the access token in a cookie
-        document.cookie = `accessToken=${result.data.accessToken}; path=/; secure`;
-        document.cookie = `refreshToken=${result.data.refreshToken}; path=/; secure`;
-
-        
-        navigate('/admin');
-        setEmail('');
-        setPassword('');
+            const { accessToken } = await login({ email , password }).unwrap();
+            dispatch(setCredentials({ accessToken }));
+            console.log(accessToken);
+            navigate('/admin');
+        } catch (err) {
+            if (!err.status) {
+                setErrMsg('No Server Response');
+            } else if (err.status === 400) {
+                setErrMsg('Missing Email or Password');
+            } else if (err.status === 401) {
+                setErrMsg('Unauthorized');
+            } else {
+                setErrMsg(err.data?.message);
+            }
+            errRef.current.focus();
         }
-        catch (error) {
-            console.log(error);
-             if (error.response.status == 401) {
-                 errRef.current.innerText = 'Invalid email or password';
-             } else if (error.response.status == 404) {
-                 errRef.current.innerText = 'Email not found';
-             } else if (error.response.status == 400) {
-                 errRef.current.innerText = 'Email is required';
-             }
-             errRef.current.focus();
-        }
-    };
+    }
 
     useEffect(() => {
         userRef.current.focus();
