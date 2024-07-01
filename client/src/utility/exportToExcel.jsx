@@ -9,5 +9,3 @@ export const exportToExcel = (data, fileName) => {
     const blob = new Blob([wbout], { type: 'application/octet-stream' });
     saveAs(blob, `${fileName}.xlsx`);
 };
-
-0

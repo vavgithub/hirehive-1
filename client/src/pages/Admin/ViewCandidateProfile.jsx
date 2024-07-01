@@ -9,6 +9,7 @@ import BudgetIcon from '../../svg/BudgetIcon';
 import PhoneIcon from '../../svg/PhoneIcon';
 import EmailIcon from '../../svg/EmailIcon';
 import Tabs from '../../components/Tabs';
+import MultiRoundStages from '../../components/MultiRoundStages';
 
 
 const ViewCandidateProfile = () => {
@@ -49,6 +50,11 @@ const ViewCandidateProfile = () => {
         { name: `${data.firstName} ${data.lastName}`, href: '' },
     ];
 
+    const handleAutoAssign = () => {
+        // Implement the auto-assign logic here
+        console.log('Auto assigning portfolio...');
+    };
+
     return (
         <div className="ml-52 pt-4">
             <Breadcrumb paths={paths} />
@@ -75,7 +81,7 @@ const ViewCandidateProfile = () => {
                     <div className='flex gap-1 my-4'>
                         <EmailIcon /> <p>{data.email}</p>
                     </div>
-                    
+
                     <p>{data.budget}</p>
                     <p>{data.location}</p>
                     <p>{data.experience}</p>
@@ -91,7 +97,25 @@ const ViewCandidateProfile = () => {
             <div className='flex justify-center' >
                 <Tabs tabs={tabs} activeTab={activeTab} handleTabClick={handleTabClick} />
             </div>
-        </div>)
+
+            {activeTab === 'application' && (
+                <div>
+                    {/* Application tab content */}
+                    <MultiRoundStages
+                        currentStage={data.stage}
+                        candidateData={data}
+                        onAutoAssign={handleAutoAssign}
+                    />
+                </div>
+            )}
+            {activeTab === 'candidateDetails' && (
+                <div>
+                    {/* Candidate Details tab content */}
+                </div>
+            )}
+        </div>
+
+    )
 }
 
 export default ViewCandidateProfile
