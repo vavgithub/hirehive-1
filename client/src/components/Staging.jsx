@@ -6,14 +6,16 @@ import Round1Stage from './MultiRounds/Round1Stage';
 import Round2Stage from './MultiRounds/Round2Stage';
 
 const stages = ['Portfolio', 'Screening', 'Design Task', 'Round 1', 'Round 2'];
+const allAssignees = ['John', 'Vevaar', 'Komael', 'Eshan', 'Sushmita', 'Jordyn'];
 
 const Staging = ({ currentStage, candidateData }) => {
-
   const [activeStage, setActiveStage] = useState(currentStage);
+  const [assignee, setAssignee] = useState(candidateData.assignee || '');
 
   useEffect(() => {
-    setActiveStage(currentStage)
-  }, [currentStage])
+    setActiveStage(currentStage);
+    setAssignee(candidateData.assignee || '');
+  }, [currentStage, candidateData]);
 
   const isStageAccessible = (stage) => {
     return stages.indexOf(stage) <= stages.indexOf(currentStage);
@@ -25,19 +27,52 @@ const Staging = ({ currentStage, candidateData }) => {
     }
   };
 
+  const handleAssigneeChange = async(event) => {
+    const newAssignee = event.target.value;
+    setAssignee(newAssignee);
+    
+    try {
+      const response = await fetch(`http://localhost:8008/api/v1/candidates/${candidateData._id}/assignee`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ assignee: newAssignee }),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to update assignee');
+      }
+  
+      // Optionally, you can update the local state with the response data
+      const updatedCandidate = await response.json();
+      // Update your local state with updatedCandidate if needed
+    } catch (error) {
+      console.error('Error updating assignee:', error);
+      // Handle the error (e.g., show an error message to the user)
+    }
+  };
+
 
   const renderStageComponent = (stage) => {
+    const commonProps = {
+      candidateData: candidateData,
+      assignee: assignee,
+      onAssigneeChange: handleAssigneeChange,
+      allAssignees: allAssignees,
+    };
+
     switch (stage) {
       case 'Portfolio':
-        return <PortfolioStage candidateData={candidateData}/>;
+        return <PortfolioStage {...commonProps} />;
       case 'Screening':
-        return <ScreeningStage />;
+        return <ScreeningStage {...commonProps} />;
       case 'Design Task':
-        return <DesignTaskStage />
+        return <DesignTaskStage {...commonProps} />;
       case 'Round 1':
-        return <Round1Stage />
+        return <Round1Stage {...commonProps} />;
       case 'Round 2':
-        return <Round2Stage />
+        return <Round2Stage {...commonProps} />;
       default:
         return null;
     }

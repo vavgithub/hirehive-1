@@ -1,29 +1,50 @@
 import React from 'react'
+import BasicSelect from '../BasicSelect';
+import ProgressIndicator from '../ProgressIndicator';
 
-const PortfolioStage = ({ candidateData }) => {
+const PortfolioStage = ({ candidateData, assignee, onAssigneeChange, allAssignees }) => {
     return (
-            <div>
-                <div className='flex justify-between bg-red-500'>
-                    <div>
+        <div>
+            <div className='flex justify-between'>
+                <div>
+                    <h1>Portfolio</h1>
+                </div>
+                <div className='flex' >
 
-                        <h1>Portfolio</h1>
+                    <div>
+                        <ProgressIndicator stage="Portfolio" status={candidateData.status} />
                     </div>
                     <div>
-                        <div>
-                            {candidateData.stage}
-                        </div>
-                        <div>
-                            {candidateData.status}
-                        </div>
-                        <div>
-                            {candidateData.assignee}
-                        </div>
-                        
+                        {candidateData.status}
+                    </div>
+                    <div>
+                        Current Assignee: {assignee || 'Not Assigned'}
                     </div>
                 </div>
-                <div></div>
-                <div></div>
             </div>
+            <div>
+                {candidateData.status == "Not Assigned" &&
+                    <p>This candidate's portfolio has not yet been assigned to a reviewer.</p>
+                }
+
+                {candidateData.status == "Under Review" &&
+                    <p>The portfolio is now being reviewed by the assigned reviewer..</p>
+                }
+
+
+            </div>
+            <div>
+                <div>
+                    <BasicSelect
+                        label="Assignee"
+                        value={assignee}
+                        onChange={onAssigneeChange}
+                        list={allAssignees}
+                      
+                    />
+                </div>
+            </div>
+        </div>
     )
 }
 

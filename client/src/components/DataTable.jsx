@@ -20,26 +20,26 @@ import { Menu, MenuItem } from '@mui/material';
 const getStageOptions = (stage) => {
   switch (stage) {
     case 'Portfolio':
-      return ['Not Assigned', 'Under Review', 'Completed', 'Rejected'];
+      return ['Not Assigned', 'Under Review', 'Reviewed' ,  'Cleared', 'Rejected'];
     case 'Screening':
-      return ['Call Pending', 'Call Scheduled', 'Under Review', 'Completed', 'No Show', 'Rejected'];
+      return ['Call Pending', 'Call Scheduled', 'Under Review','Reviewed' , 'Cleared', 'No Show', 'Rejected'];
     case 'Design Task':
-      return ['Sent', 'Not Assigned', 'Under Review', 'Completed', 'Rejected', 'Not Submitted'];
+      return ['Sent', 'Not Assigned', 'Under Review', 'Reviewed' , 'Cleared', 'Rejected', 'Not Submitted'];
     case 'Round 1':
-      return ['Call Pending', 'Call Scheduled', 'Not Assigned', 'Completed', 'No Show', 'Rejected'];
+      return ['Call Pending', 'Call Scheduled', 'Not Assigned','Reviewed','Cleared','No Show', 'Rejected'];
     case 'Round 2':
-      return ['Call Pending', 'Call Scheduled', 'Not Assigned', 'Completed', 'No Show', 'Rejected'];
+      return ['Call Pending', 'Call Scheduled', 'Not Assigned','Reviewed','Cleared','No Show', 'Rejected'];
     default:
       return ['N/A'];
   }
 };
 
 const stageStatusMap = {
-  Portfolio: ['Not Assigned', 'Under Review', 'Completed', 'Rejected'],
-  Screening: ['Call Pending', 'Call Scheduled', 'Under Review', 'Completed', 'No Show', 'Rejected'],
-  DesignTask: ['Sent', 'Not Assigned', 'Under Review', 'Completed', 'Rejected', 'Not Submitted'],
-  Round1: ['Call Pending', 'Call Scheduled', 'Not Assigned', 'Completed', 'No Show', 'Rejected'],
-  Round2: ['Call Pending', 'Call Scheduled', 'Not Assigned', 'Completed', 'No Show', 'Rejected'],
+  Portfolio: ['Not Assigned', 'Under Review', 'Reviewed' ,  'Cleared', 'Rejected'],
+  Screening: ['Call Pending', 'Call Scheduled', 'Under Review','Reviewed' , 'Cleared', 'No Show', 'Rejected'],
+  DesignTask: ['Sent', 'Not Assigned', 'Under Review', 'Reviewed' , 'Cleared', 'Rejected', 'Not Submitted'],
+  Round1: ['Call Pending', 'Call Scheduled', 'Not Assigned','Reviewed','Cleared','No Show', 'Rejected'],
+  Round2: ['Call Pending', 'Call Scheduled', 'Not Assigned','Reviewed','Cleared','No Show', 'Rejected'],
 };
 
 const nextStageMap = {
@@ -359,12 +359,12 @@ const DataTable = ({ rowsData, onUpdateCandidate, onUpdateAssignee , onUpdateRat
     {
       field: 'assignee', headerName: "Assignee", width: 130
     },
-    , { field: 'budget', headerName: 'Budget', width: 130 },
-    { field: 'experience', headerName: 'Experience', width: 130 },
-    { field: 'age', headerName: 'Age', width: 90 },
-    { field: 'email', headerName: 'Email', width: 200 },
-    { field: 'phone', headerName: 'Phone', width: 200 },
-    { field: 'latestScore', headerName: 'Latest Score', width: 130 },
+    // { field: 'budget', headerName: 'Budget', width: 130 },
+    // { field: 'experience', headerName: 'Experience', width: 130 },
+    // { field: 'age', headerName: 'Age', width: 90 },
+    // { field: 'email', headerName: 'Email', width: 200 },
+    // { field: 'phone', headerName: 'Phone', width: 200 },
+    // { field: 'latestScore', headerName: 'Latest Score', width: 130 },
 
     {
       field: 'stage',

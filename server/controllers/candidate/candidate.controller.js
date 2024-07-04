@@ -33,41 +33,53 @@ const updateStatusAndStage = async (req, res) => {
   try {
     const candidateId = req.params.id;
     const updates = req.body;
-    const updatedCandidate = await candidates.findByIdAndUpdate(candidateId, updates, { new: true });
+    const updatedCandidate = await candidates.findByIdAndUpdate(
+      candidateId,
+      updates,
+      { new: true }
+    );
     res.send(updatedCandidate);
   } catch (error) {
     res.status(400).send(error);
   }
-}
+};
 
 const updateAssignee = async (req, res) => {
   try {
     const { candidatesData } = req.body;
 
-    if (!candidatesData || !Array.isArray(candidatesData) || candidatesData.length === 0) {
-      return res.status(400).json({ message: 'Invalid input. Expected an array of candidates.' });
+    if (
+      !candidatesData ||
+      !Array.isArray(candidatesData) ||
+      candidatesData.length === 0
+    ) {
+      return res
+        .status(400)
+        .json({ message: "Invalid input. Expected an array of candidates." });
     }
 
-    const updateOperations = candidatesData.map(candidate => ({
+    const updateOperations = candidatesData.map((candidate) => ({
       updateOne: {
         filter: { _id: candidate.id },
-        update: { $set: { assignee: candidate.assignee } }
-      }
+        update: { $set: { assignee: candidate.assignee } },
+      },
     }));
 
     const result = await candidates.bulkWrite(updateOperations);
 
     if (result.modifiedCount > 0) {
       res.status(200).json({
-        message: 'Assignees updated successfully',
-        modifiedCount: result.modifiedCount
+        message: "Assignees updated successfully",
+        modifiedCount: result.modifiedCount,
       });
     } else {
-      res.status(404).json({ message: 'No candidates were updated' });
+      res.status(404).json({ message: "No candidates were updated" });
     }
   } catch (error) {
-    console.error('Error updating assignees:', error);
-    res.status(500).json({ message: 'Internal server error', error: error.message });
+    console.error("Error updating assignees:", error);
+    res
+      .status(500)
+      .json({ message: "Internal server error", error: error.message });
   }
 };
 
@@ -83,14 +95,53 @@ const updateRating = async (req, res) => {
     );
 
     if (!candidate) {
-      return res.status(404).json({ message: 'Candidate not found' });
+      return res.status(404).json({ message: "Candidate not found" });
     }
 
     res.status(200).json(candidate);
   } catch (error) {
-    console.error('Error updating candidate rating:', error);
-    res.status(500).json({ message: 'Server error' });
+    console.error("Error updating candidate rating:", error);
+    res.status(500).json({ message: "Server error" });
   }
 };
 
-export { getCandidate, createCandidate , getCandidateById , updateStatusAndStage , updateAssignee , updateRating};
+const updateCandidateStatusById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { assignee } = req.body;
+
+    // Validate input
+    if (!id || !assignee) {
+        return res.status(400).json({ message: "Candidate ID and assignee are required" });
+    }
+
+    // Find the candidate and update the assignee
+    const updatedCandidate = await candidates.findByIdAndUpdate(
+        id,
+        { assignee: assignee },
+        { new: true, runValidators: true }
+    );
+
+    if (!updatedCandidate) {
+        return res.status(404).json({ message: "Candidate not found" });
+    }
+
+    res.status(200).json({
+        message: "Assignee updated successfully",
+        candidate: updatedCandidate
+    });
+} catch (error) {
+    console.error("Error updating assignee:", error);
+    res.status(500).json({ message: "Internal server error", error: error.message });
+}
+};
+
+export {
+  updateCandidateStatusById,
+  getCandidate,
+  createCandidate,
+  getCandidateById,
+  updateStatusAndStage,
+  updateAssignee,
+  updateRating,
+};
