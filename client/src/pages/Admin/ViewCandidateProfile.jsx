@@ -10,6 +10,7 @@ import PhoneIcon from '../../svg/PhoneIcon';
 import EmailIcon from '../../svg/EmailIcon';
 import Tabs from '../../components/Tabs';
 import MultiRoundStages from '../../components/MultiRoundStages';
+import Staging from '../../components/Staging';
 
 
 const ViewCandidateProfile = () => {
@@ -54,6 +55,8 @@ const ViewCandidateProfile = () => {
         // Implement the auto-assign logic here
         console.log('Auto assigning portfolio...');
     };
+
+    const [currentStage, setCurrentStage] = useState('Portfolio');
 
     return (
         <div className="ml-52 pt-4">
@@ -101,11 +104,16 @@ const ViewCandidateProfile = () => {
             {activeTab === 'application' && (
                 <div>
                     {/* Application tab content */}
-                    <MultiRoundStages
+                    {/* <MultiRoundStages
                         currentStage={data.stage}
                         candidateData={data}
                         onAutoAssign={handleAutoAssign}
-                    />
+                        initialStage={data.stage}
+                    /> */}
+                    <Staging
+                    currentStage={data.stage}
+                    candidateData={data}/>
+
                 </div>
             )}
             {activeTab === 'candidateDetails' && (
