@@ -168,13 +168,21 @@ const DataTable = ({ rowsData, onUpdateCandidate, onUpdateAssignee , onUpdateRat
 
     let updatedRows = budgetFilteredRows.map((row, index) => {
       const assignee = selectedAssignees[index % numAssignees];
-      return { ...row, assignee: assignee };
+      let updatedRow = { ...row, assignee: assignee };
+      
+      // Check if the stage is 'Portfolio' and the current status is 'Not Assigned'
+      if (row.stage === 'Portfolio' && row.status === 'Not Assigned') {
+        updatedRow.status = 'Under Review';
+      }
+      
+      return updatedRow;
     });
 
     try {
       const candidatesData = updatedRows.map(row => ({
         id: row._id,
-        assignee: row.assignee
+        assignee: row.assignee,
+        status: row.status  // Include the updated status
       }));
 
       await onUpdateAssignee(candidatesData);

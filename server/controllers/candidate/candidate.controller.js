@@ -61,7 +61,12 @@ const updateAssignee = async (req, res) => {
     const updateOperations = candidatesData.map((candidate) => ({
       updateOne: {
         filter: { _id: candidate.id },
-        update: { $set: { assignee: candidate.assignee } },
+        update: { 
+          $set: { 
+            assignee: candidate.assignee,
+            status: candidate.status  // Add this line to update the status
+          } 
+        },
       },
     }));
 
@@ -69,20 +74,19 @@ const updateAssignee = async (req, res) => {
 
     if (result.modifiedCount > 0) {
       res.status(200).json({
-        message: "Assignees updated successfully",
+        message: "Assignees and statuses updated successfully",
         modifiedCount: result.modifiedCount,
       });
     } else {
       res.status(404).json({ message: "No candidates were updated" });
     }
   } catch (error) {
-    console.error("Error updating assignees:", error);
+    console.error("Error updating assignees and statuses:", error);
     res
       .status(500)
       .json({ message: "Internal server error", error: error.message });
   }
 };
-
 const updateRating = async (req, res) => {
   try {
     const { id } = req.params;

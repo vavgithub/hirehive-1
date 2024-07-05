@@ -143,32 +143,59 @@ const ViewJobs = () => {
         }
     };
 
-    const updateAssignee = async (candidatesData) => {
+    // const updateAssignee = async (candidatesData) => {
+    //     try {
+    //       const response = await axios.patch('http://localhost:8008/api/v1/candidates/update-assignee', {
+    //         candidatesData
+    //       });
+    
+    //       if (response.status === 200) {
+    //         // Update the local state with the updated assignees
+    //         setCandidatesData(prevCandidates =>
+    //           prevCandidates.map(candidate => {
+    //             const updated = candidatesData.find(c => c.id === candidate._id);
+    //             return updated ? { ...candidate, assignee: updated.assignee } : candidate;
+    //           })
+    //         );
+    //         console.log('Assignees updated successfully on the server.');
+    //       } else {
+    //         throw new Error(`Failed to update assignee, response status: ${response.status}`);
+    //       }
+    //     } catch (error) {
+    //       console.error('Error updating assignee:', error);
+    //       if (error.response) {
+    //         console.error('Server responded with:', error.response.data);
+    //       }
+    //       throw error;
+    //     }
+    //   };
+
+      const updateAssignee = async (candidatesData) => {
         try {
           const response = await axios.patch('http://localhost:8008/api/v1/candidates/update-assignee', {
             candidatesData
           });
-    
+      
           if (response.status === 200) {
-            // Update the local state with the updated assignees
             setCandidatesData(prevCandidates =>
               prevCandidates.map(candidate => {
                 const updated = candidatesData.find(c => c.id === candidate._id);
-                return updated ? { ...candidate, assignee: updated.assignee } : candidate;
+                return updated ? { ...candidate, assignee: updated.assignee, status: updated.status } : candidate;
               })
             );
-            console.log('Assignees updated successfully on the server.');
+            console.log('Assignees and statuses updated successfully on the server.');
           } else {
-            throw new Error(`Failed to update assignee, response status: ${response.status}`);
+            throw new Error(`Failed to update assignee and status, response status: ${response.status}`);
           }
         } catch (error) {
-          console.error('Error updating assignee:', error);
+          console.error('Error updating assignee and status:', error);
           if (error.response) {
             console.error('Server responded with:', error.response.data);
           }
           throw error;
         }
       };
+
 
       const updateRating = async (id, rating) => {
         try {

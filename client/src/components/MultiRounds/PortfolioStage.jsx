@@ -1,8 +1,9 @@
-import React from 'react'
+import React, { useState } from 'react'
 import BasicSelect from '../BasicSelect';
 import ProgressIndicator from '../ProgressIndicator';
 
 const PortfolioStage = ({ candidateData, assignee, onAssigneeChange, allAssignees }) => {
+    const [isModalOpenPortfolio, setIsModalOpenPortfolio] = useState(false);
     return (
         <div className='p-4' >
             <div className='flex justify-between'>
@@ -42,6 +43,12 @@ const PortfolioStage = ({ candidateData, assignee, onAssigneeChange, allAssignee
                             onChange={onAssigneeChange}
                             list={allAssignees}
                         />
+                        
+                    }
+                    {
+                        candidateData.assignee === "Not Assigned" &&
+                        <button className="bg-black text-white px-4 py-2 rounded" onClick={() => setIsModalOpenPortfolio(!isModalOpenPortfolio)}>Assign Portfolio</button>
+                        
                     }
                 </div>
             </div>
