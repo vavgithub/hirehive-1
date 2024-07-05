@@ -14,9 +14,6 @@ import { Menu, MenuItem } from '@mui/material';
 
 
 
-
-
-
 const getStageOptions = (stage) => {
   switch (stage) {
     case 'Portfolio':
@@ -365,7 +362,6 @@ const DataTable = ({ rowsData, onUpdateCandidate, onUpdateAssignee , onUpdateRat
     // { field: 'email', headerName: 'Email', width: 200 },
     // { field: 'phone', headerName: 'Phone', width: 200 },
     // { field: 'latestScore', headerName: 'Latest Score', width: 130 },
-
     {
       field: 'stage',
       headerName: 'Stage',
@@ -547,8 +543,8 @@ const DataTable = ({ rowsData, onUpdateCandidate, onUpdateAssignee , onUpdateRat
           setAssignees={setSelectedAssignees}
           allAssignees={allAssignees}
           heading="Auto Assign Portfolio"
-          para="Select The Reviewers To Assign Portfolios"
-          confirmButtonText="Auto Assign Portfolio"
+          para="Select Reviewers"
+          confirmButtonText="Apply"
           cancelButtonText="Cancel"
         />
 

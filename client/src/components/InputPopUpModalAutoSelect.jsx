@@ -1,23 +1,8 @@
 import React, { useState } from 'react';
+
 const AssigneesInput = ({ assignees, setAssignees, allAssignees }) => {
     const [assignee, setAssignee] = useState('');
-    const [error, setError] = useState('');
     const [suggestions, setSuggestions] = useState([]);
-
-    const handleKeyDown = (event) => {
-        if (['Enter', ','].includes(event.key)) {
-            event.preventDefault();
-            const trimmedAssignee = assignee.trim();
-            if (trimmedAssignee && !assignees.includes(trimmedAssignee)) {
-                setAssignees([...assignees, trimmedAssignee]);
-                setAssignee('');
-                setError('');
-                setSuggestions([]);
-            } else {
-                setError('Same value not allowed');
-            }
-        }
-    };
 
     const handleInputChange = (event) => {
         const inputValue = event.target.value;
@@ -28,18 +13,21 @@ const AssigneesInput = ({ assignees, setAssignees, allAssignees }) => {
             );
             setSuggestions(filteredSuggestions);
         } else {
-            setSuggestions([]);
+            setSuggestions(allAssignees);
         }
     };
 
-    const handleSuggestionClick = (suggestion) => {
-        if (!assignees.includes(suggestion)) {
-            setAssignees([...assignees, suggestion]);
-            setAssignee('');
-            setError('');
-            setSuggestions([]);
+    const handleInputFocus = () => {
+        if (!assignee) {
+            setSuggestions(allAssignees);
+        }
+    };
+
+    const handleCheckboxChange = (suggestion) => {
+        if (assignees.includes(suggestion)) {
+            setAssignees(assignees.filter((a) => a !== suggestion));
         } else {
-            setError('Same value not allowed');
+            setAssignees([...assignees, suggestion]);
         }
     };
 
@@ -61,8 +49,8 @@ const AssigneesInput = ({ assignees, setAssignees, allAssignees }) => {
                     type="text"
                     value={assignee}
                     onChange={handleInputChange}
-                    onKeyDown={handleKeyDown}
-                    placeholder="Add assignees"
+                    onFocus={handleInputFocus}
+                    placeholder="-Select-"
                     className="outline-none"
                 />
             </div>
@@ -71,19 +59,22 @@ const AssigneesInput = ({ assignees, setAssignees, allAssignees }) => {
                     {suggestions.map((suggestion, index) => (
                         <div
                             key={index}
-                            onClick={() => handleSuggestionClick(suggestion)}
-                            className="cursor-pointer p-2 hover:bg-gray-200"
+                            className="flex items-center cursor-pointer p-2 hover:bg-gray-200"
                         >
-                            {suggestion}
+                            <input
+                                type="checkbox"
+                                checked={assignees.includes(suggestion)}
+                                onChange={() => handleCheckboxChange(suggestion)}
+                                className="mr-2"
+                            />
+                            <span>{suggestion}</span>
                         </div>
                     ))}
                 </div>
             )}
-            {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
         </div>
     );
 };
-
 
 const InputPopUpModalAutoSelect = ({ open, onClose, confirmAction, assignees, setAssignees, allAssignees, heading, para, confirmButtonText = "Confirm", cancelButtonText = "Cancel" }) => {
     return (
@@ -105,7 +96,11 @@ const InputPopUpModalAutoSelect = ({ open, onClose, confirmAction, assignees, se
                     </div>
 
                     <div className="flex gap-4 mt-4">
-                        <button className="btn btn-danger w-full" onClick={confirmAction}>
+                        <button
+                            className="btn btn-danger w-full"
+                            onClick={confirmAction}
+                            disabled={assignees.length === 0}
+                        >
                             {confirmButtonText}
                         </button>
                         <button className="btn btn-light w-full" onClick={onClose}>
