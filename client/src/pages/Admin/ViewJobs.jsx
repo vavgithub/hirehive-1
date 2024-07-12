@@ -12,6 +12,7 @@ import InputPopUpModal from '../../components/InputPopUpModal';
 import ThreeDots from '../../components/ThreeDots';
 import { formatDescription } from '../../utility/formatDescription';
 import SideCard from '../../components/SideCard';
+import Table from '../../components/Table';
 
 
 const ViewJobs = () => {
@@ -170,7 +171,7 @@ const ViewJobs = () => {
     //     }
     //   };
 
-      const updateAssignee = async (candidatesData) => {
+    const updateAssignee = async (candidatesData) => {
         try {
           const response = await axios.patch('http://localhost:8008/api/v1/candidates/update-assignee', {
             candidatesData
@@ -307,7 +308,8 @@ const ViewJobs = () => {
                     <StatsGrid stats={candidateStats} />
                     <div className='flex'>
                         <div style={{ height: 400, width: '100%' }}>
-                            <DataTable rowsData={candidatesData} onUpdateCandidate={updateCandidate} onUpdateAssignee={updateAssignee} onUpdateRating={updateRating}/>
+                            <Table rowsData={candidatesData} onUpdateCandidate={updateCandidate}/>
+                            {/* <DataTable rowsData={candidatesData} onUpdateCandidate={updateCandidate} onUpdateAssignee={updateAssignee} onUpdateRating={updateRating}/> */}
                         </div>
                     </div>
                 </div>

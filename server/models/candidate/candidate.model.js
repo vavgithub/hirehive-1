@@ -27,9 +27,27 @@ const candidateSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    assignee:{
-      type:String,
-      default: "N/A",
+    assignees: {
+      "Portfolio": {
+        type: String,
+        default: "N/A",
+      },
+      "Screening": {
+        type: String,
+        default: "N/A",
+      },
+      "Design Task": {
+        type: String,
+        default: "N/A",
+      },
+      "Round 1": {
+        type: String,
+        default: "N/A",
+      },
+      "Round 2": {
+        type: String,
+        default: "N/A",
+      },
     },
     stage: {
       type: String,
@@ -79,9 +97,9 @@ const candidateSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    rating:{
-      type:String,
-      enum:["" , "Good Fit" , "May Be", "Not A Good Fit"]
+    rating: {
+      type: String,
+      enum: ["", "Good Fit", "May Be", "Not A Good Fit"]
     }
   },
   { timestamps: true }
