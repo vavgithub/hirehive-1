@@ -49,6 +49,24 @@ const candidateSchema = new mongoose.Schema(
         default: "N/A",
       },
     },
+    latestScore:{
+      "Portfolio":{
+        type:Number,
+        default:0
+      },
+      "Screening": {
+        type: Number,
+        default: "N/A",
+      },
+      "Design Task": {
+        type: Number,
+        default: "N/A",
+      },
+      "Round 1": {
+        type: Number,
+        default: "N/A",
+      },
+    },
     stage: {
       type: String,
       enum: ["Portfolio", "Screening", "Design Task", "Round 1", "Round 2", "Hired"],

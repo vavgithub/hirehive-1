@@ -22,7 +22,7 @@ const ViewJobs = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const [activeTab, setActiveTab] = useState('jobDetails');
+    const [activeTab, setActiveTab] = useState('candidate');
     const handleTabClick = (tab) => {
         setActiveTab(tab);
     };

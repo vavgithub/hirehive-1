@@ -208,11 +208,11 @@ const DataTable = ({ rowsData, onUpdateCandidate, onUpdateAssignee , onUpdateRat
       onChange: (e) => setSelectedValue1(e.target.value),
       options: [
         { value: "", label: "Select Start Range" },
-        { value: '1', label: '1 Lpa' },
-        { value: '2', label: '2 Lpa' },
-        { value: '3', label: '3 Lpa' },
-        { value: '4', label: '4 Lpa' },
-        { value: '5', label: '5 Lpa' },
+        { value: '10000', label: '1 Lpa' },
+        { value: '20000', label: '2 Lpa' },
+        { value: '30000', label: '3 Lpa' },
+        { value: '40000', label: '4 Lpa' },
+        { value: '50000', label: '5 Lpa' },
       ],
     },
     {
@@ -222,14 +222,14 @@ const DataTable = ({ rowsData, onUpdateCandidate, onUpdateAssignee , onUpdateRat
       onChange: (e) => setSelectedValue2(e.target.value),
       options: [
         { value: "", label: "Select Start Range" },
-        { value: '1', label: '1 Lpa' },
-        { value: '2', label: '2 Lpa' },
-        { value: '3', label: '3 Lpa' },
-        { value: '4', label: '4 Lpa' },
-        { value: '5', label: '5 Lpa' },
-        { value: '6', label: '6 Lpa' },
-        { value: '7', label: '7 Lpa' },
-        { value: '8', label: '8 lpa' }
+        { value: '10000', label: '1 Lpa' },
+        { value: '20000', label: '2 Lpa' },
+        { value: '30000', label: '3 Lpa' },
+        { value: '40000', label: '4 Lpa' },
+        { value: '50000', label: '5 Lpa' },
+        { value: '60000', label: '6 Lpa' },
+        { value: '70000', label: '7 Lpa' },
+        { value: '80000', label: '8 lpa' }
       ],
     },
   ];
