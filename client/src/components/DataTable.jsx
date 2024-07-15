@@ -531,7 +531,7 @@ const DataTable = ({ rowsData, onUpdateCandidate, onUpdateAssignee , onUpdateRat
             <FaStar style={{ color: 'red', marginRight: '8px' }} /> Not A Good Fit
           </MenuItem>
         </Menu>
-
+{/* this is for budget */}
         <InputPopUpModal
           open={isModalOpen}
           onClose={() => setIsModalOpen(false)}
@@ -542,7 +542,7 @@ const DataTable = ({ rowsData, onUpdateCandidate, onUpdateAssignee , onUpdateRat
           confirmButtonText="Apply Budget"
           cancelButtonText="Cancel"
         />
-
+{/* this is for auto assignees ui */}
         <InputPopUpModalAutoSelect
           open={isModalOpenPortfolio}
           onClose={() => setIsModalOpenPortfolio(false)}
@@ -555,7 +555,7 @@ const DataTable = ({ rowsData, onUpdateCandidate, onUpdateAssignee , onUpdateRat
           confirmButtonText="Apply"
           cancelButtonText="Cancel"
         />
-
+{/* this is for rject modal */}
         <Modal
           open={openRejectModal}
           onClose={() => setOpenRejectModal(false)}

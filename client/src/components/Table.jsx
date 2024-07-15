@@ -4,6 +4,7 @@ import { FaGlobe, FaStar, FaUser } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 import BasicSelect from './BasicSelect';
 import Modal from './Modal';
+import InputPopUpModalAutoSelect from './InputPopUpModalAutoSelect';
 
 
 const getStageOptions = (stage) => {
@@ -39,11 +40,18 @@ const nextStageMap = {
     "Round 2": "Hired",
 };
 
+const allAssignees = ['John', 'Vevaar', 'Komael', 'Eshan', 'Sushmita', 'Jordyn'];
+
 const Table = ({ rowsData, onUpdateCandidate }) => {
     const [rows, setRows] = useState(rowsData);
     const [openRejectModal, setOpenRejectModal] = useState(false);
     const [selectedCandidate, setSelectedCandidate] = useState(null);
     const navigate = useNavigate();
+
+    const [openAssigneeModal, setOpenAssigneeModal] = useState(false);
+    const [selectedAssignees, setSelectedAssignees] = useState([]);
+
+    
 
     useEffect(() => {
         setRows(rowsData);
@@ -51,6 +59,35 @@ const Table = ({ rowsData, onUpdateCandidate }) => {
 
     const handleRowClick = (params) => {
         navigate(`/admin/view-candidate/${params.row._id}`);
+    };
+
+    const handleMultipleAssigneeChange = async () => {
+        const updatedRows = rows.map((row) => {
+            if (row.stage === 'Portfolio' && row.status === 'Not Assigned') {
+                const randomAssignee = selectedAssignees[Math.floor(Math.random() * selectedAssignees.length)];
+                return {
+                    ...row,
+                    assignees: { ...row.assignees, Portfolio: randomAssignee },
+                    status: 'Under Review'
+                };
+            }
+            return row;
+        });
+
+        setRows(updatedRows);
+        setOpenAssigneeModal(false);
+
+        // Update all changed candidates
+        const changedCandidates = updatedRows.filter(
+            (row, index) => row.assignees.Portfolio !== rows[index].assignees.Portfolio
+        );
+
+        for (const candidate of changedCandidates) {
+            await onUpdateCandidate(candidate._id, {
+                'assignees.Portfolio': candidate.assignees.Portfolio,
+                status: 'Under Review'
+            });
+        }
     };
 
     const handleStageChange = async (id, newStage) => {
@@ -66,23 +103,23 @@ const Table = ({ rowsData, onUpdateCandidate }) => {
         const updatedRows = rows.map((row) => {
             if (row._id === id) {
                 let updatedRow = { ...row, status: newStatus };
-                
+
                 // If it's the Portfolio stage and status is changed to "Under Review", update the assignee
                 if (stage === 'Portfolio' && newStatus === 'Under Review' && row.assignees.Portfolio === 'N/A') {
                     updatedRow.assignees = { ...row.assignees, Portfolio: 'Auto-assigned' };
                 }
-                
+
                 return updatedRow;
             }
             return row;
         });
         setRows(updatedRows);
-        
+
         const updates = { status: newStatus };
         if (stage === 'Portfolio' && newStatus === 'Under Review') {
             updates['assignees.Portfolio'] = 'Auto-assigned';
         }
-        
+
         await onUpdateCandidate(id, updates);
     };
     const handleNextRoundClick = async (e, id, currentStage) => {
@@ -112,20 +149,20 @@ const Table = ({ rowsData, onUpdateCandidate }) => {
             if (row._id === id) {
                 const assignees = { ...row.assignees, [stage]: newAssignee };
                 let status = row.status;
-                
+
                 // If it's the Portfolio stage and an assignee is set, change status to "Under Review"
                 if (stage === 'Portfolio' && newAssignee !== 'N/A') {
                     status = 'Under Review';
                 }
-                
+
                 return { ...row, assignees, status };
             }
             return row;
         });
         setRows(updatedRows);
-        
+
         // Update both assignee and status
-        await onUpdateCandidate(id, { 
+        await onUpdateCandidate(id, {
             [`assignees.${stage}`]: newAssignee,
             status: stage === 'Portfolio' && newAssignee !== 'N/A' ? 'Under Review' : undefined
         });
@@ -169,7 +206,7 @@ const Table = ({ rowsData, onUpdateCandidate }) => {
             field: 'status',
             headerName: 'Status',
             width: 200,
-            height:50,
+            height: 50,
             renderCell: (params) => {
                 const list = getStageOptions(params.row.stage);
                 return (
@@ -186,7 +223,7 @@ const Table = ({ rowsData, onUpdateCandidate }) => {
             field: 'assignees',
             headerName: 'Assignee',
             width: 130,
-            valueGetter: (params , row) => `${row?.assignees?.[row?.stage]}`
+            valueGetter: (params, row) => `${row?.assignees?.[row?.stage]}`
         },
         {
             field: 'actions',
@@ -209,6 +246,12 @@ const Table = ({ rowsData, onUpdateCandidate }) => {
 
     return (
         <div style={{ height: 400, width: '100%' }}>
+             <button 
+            onClick={() => setOpenAssigneeModal(true)} 
+            className="mb-4 px-4 py-2 bg-black text-white rounded "
+        >
+            Assign Multiple Candidates
+        </button>
             <style>
                 {`
           .MuiDataGrid-root .MuiDataGrid-columnHeader:focus,
@@ -269,6 +312,18 @@ const Table = ({ rowsData, onUpdateCandidate }) => {
                 action="reject"
                 confirmAction={confirmReject}
             />
+             <InputPopUpModalAutoSelect
+            open={openAssigneeModal}
+            onClose={() => setOpenAssigneeModal(false)}
+            confirmAction={handleMultipleAssigneeChange}
+            assignees={selectedAssignees}
+            setAssignees={setSelectedAssignees}
+            allAssignees={allAssignees}
+            heading="Assign Multiple Candidates"
+            para="Select assignees for candidates in Portfolio stage with 'Not Assigned' status."
+            confirmButtonText="Assign"
+            cancelButtonText="Cancel"
+        />
         </div>
     );
 };
