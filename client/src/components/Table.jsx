@@ -62,12 +62,28 @@ const Table = ({ rowsData, onUpdateCandidate }) => {
         await onUpdateCandidate(id, { stage: newStage, status: newStatus });
     };
 
-    const handleStatusChange = async (id, newStatus) => {
-        const updatedRows = rows.map((row) =>
-            row._id === id ? { ...row, status: newStatus } : row
-        );
+    const handleStatusChange = async (id, newStatus, stage) => {
+        const updatedRows = rows.map((row) => {
+            if (row._id === id) {
+                let updatedRow = { ...row, status: newStatus };
+                
+                // If it's the Portfolio stage and status is changed to "Under Review", update the assignee
+                if (stage === 'Portfolio' && newStatus === 'Under Review' && row.assignees.Portfolio === 'N/A') {
+                    updatedRow.assignees = { ...row.assignees, Portfolio: 'Auto-assigned' };
+                }
+                
+                return updatedRow;
+            }
+            return row;
+        });
         setRows(updatedRows);
-        await onUpdateCandidate(id, { status: newStatus });
+        
+        const updates = { status: newStatus };
+        if (stage === 'Portfolio' && newStatus === 'Under Review') {
+            updates['assignees.Portfolio'] = 'Auto-assigned';
+        }
+        
+        await onUpdateCandidate(id, updates);
     };
     const handleNextRoundClick = async (e, id, currentStage) => {
         e.stopPropagation();
@@ -95,12 +111,24 @@ const Table = ({ rowsData, onUpdateCandidate }) => {
         const updatedRows = rows.map((row) => {
             if (row._id === id) {
                 const assignees = { ...row.assignees, [stage]: newAssignee };
-                return { ...row, assignees };
+                let status = row.status;
+                
+                // If it's the Portfolio stage and an assignee is set, change status to "Under Review"
+                if (stage === 'Portfolio' && newAssignee !== 'N/A') {
+                    status = 'Under Review';
+                }
+                
+                return { ...row, assignees, status };
             }
             return row;
         });
         setRows(updatedRows);
-        await onUpdateCandidate(id, { [`assignees.${stage.toLowerCase()}`]: newAssignee });
+        
+        // Update both assignee and status
+        await onUpdateCandidate(id, { 
+            [`assignees.${stage}`]: newAssignee,
+            status: stage === 'Portfolio' && newAssignee !== 'N/A' ? 'Under Review' : undefined
+        });
     };
 
     const columns = [
@@ -141,13 +169,14 @@ const Table = ({ rowsData, onUpdateCandidate }) => {
             field: 'status',
             headerName: 'Status',
             width: 200,
+            height:50,
             renderCell: (params) => {
                 const list = getStageOptions(params.row.stage);
                 return (
                     <BasicSelect
                         label="Status"
                         value={params.value}
-                        onChange={(e) => handleStatusChange(params.row._id, e.target.value)}
+                        onChange={(e) => handleStatusChange(params.row._id, e.target.value, params.row.stage)}
                         list={list}
                     />
                 );

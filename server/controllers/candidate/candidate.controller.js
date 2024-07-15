@@ -31,17 +31,19 @@ const getCandidateById = async (req, res) => {
 
 const updateStatusAndStage = async (req, res) => {
   try {
-    const candidateId = req.params.id;
+    const { id } = req.params;
     const updates = req.body;
-    const updatedCandidate = await candidates.findByIdAndUpdate(
-      candidateId,
-      updates,
-      { new: true }
-    );
-    res.send(updatedCandidate);
-  } catch (error) {
-    res.status(400).send(error);
-  }
+
+    const updatedCandidate = await candidates.findByIdAndUpdate(id, updates, { new: true });
+    
+    if (!updatedCandidate) {
+        return res.status(404).json({ message: 'Candidate not found' });
+    }
+
+    res.json(updatedCandidate);
+} catch (error) {
+    res.status(400).json({ message: 'Error updating candidate', error: error.message });
+}
 };
 
 const updateAssignee = async (req, res) => {

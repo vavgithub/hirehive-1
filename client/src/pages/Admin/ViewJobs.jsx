@@ -137,7 +137,9 @@ const ViewJobs = () => {
             const response = await axios.patch(`http://localhost:8008/api/v1/candidates/update/${id}`, updates);
             const updatedCandidate = response.data;
             setCandidatesData(prevCandidates =>
-                prevCandidates.map(candidate => candidate._id === id ? updatedCandidate : candidate)
+                prevCandidates.map(candidate => 
+                    candidate._id === id ? { ...candidate, ...updatedCandidate } : candidate
+                )
             );
         } catch (error) {
             console.error('Error updating candidate:', error);
