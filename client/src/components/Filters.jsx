@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import ExperienceFilter from './ExperienceFilter';
 
 const CheckboxGroup = ({ title, options, filters, handleCheckboxChange, isDisabled, statistics }) => (
     <div className="mb-4 text-left">
@@ -21,13 +22,13 @@ const CheckboxGroup = ({ title, options, filters, handleCheckboxChange, isDisabl
     </div>
 );
 
-const Filters = ({ filters = {}, statistics, handleCheckboxChange, activeTab }) => {
+const Filters = ({ filters = {} , statistics , handleCheckboxChange , activeTab , handleExperienceFilter }) => {
     const isDisabled = activeTab === 'draft';
 
     const jobTypeOptions = [
         { value: 'Full Time', label: 'Full-time', statKey: 'totalFullTimeJobs' },
         { value: 'Internship', label: 'Internship', statKey: 'totalInternships' },
-        { value: 'Contract', label: 'Contract', statKey: 'totalContractJobs'}
+        { value: 'Contract', label: 'Contract', statKey: 'totalContractJobs' }
     ];
 
     const jobProfileOptions = [
@@ -38,13 +39,17 @@ const Filters = ({ filters = {}, statistics, handleCheckboxChange, activeTab }) 
         { value: 'digitalmarketingexecutive', label: 'Digital Marketing Executive', statKey: 'totalDigitalMarketingExecutiveJobs' },
         { value: 'projectmanager', label: 'Project Manager', statKey: 'totalProjectManagerJobs' },
         { value: 'artdirector', label: 'Art Director', statKey: 'totalArtDirectorJobs' },
-        { value: 'frontenddeveloper', label: 'Frontend Developer', statKey: 'totalFrontendDeveloperJobs'}
+        { value: 'frontenddeveloper', label: 'Frontend Developer', statKey: 'totalFrontendDeveloperJobs' }
     ];
 
     const draftOptions = [
         { value: 'hired', label: 'Hired', statKey: 'totalHired' },
         { value: 'notHired', label: 'Not Hired', statKey: 'totalNotHired' }
     ];
+
+    const handleExperienceApply = (experience) => {
+        handleExperienceFilter(experience);
+      };
 
     return (
         <div className='w-64'>
@@ -67,7 +72,7 @@ const Filters = ({ filters = {}, statistics, handleCheckboxChange, activeTab }) 
                     isDisabled={isDisabled}
                     statistics={statistics}
                 />
-          
+
                 <CheckboxGroup
                     title="Job Profile"
                     options={jobProfileOptions}
@@ -76,6 +81,12 @@ const Filters = ({ filters = {}, statistics, handleCheckboxChange, activeTab }) 
                     isDisabled={isDisabled}
                     statistics={statistics}
                 />
+
+                <div className="mb-4">
+
+                        <ExperienceFilter onApply={handleExperienceApply} />
+        
+                </div>
 
             </div>
         </div>

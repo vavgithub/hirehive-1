@@ -97,27 +97,28 @@ const searchJobs = async (req, res) => {
 };
 
 const filterJobs = async (req, res) => {
-  const { employmentType, jobProfile } = req.body.filters;
+  const { employmentType, jobProfile, experience } = req.body.filters;
   try {
     const query = {};
     if (employmentType && employmentType.length > 0) {
       query.employmentType = { $in: employmentType };
-      console.log(query.employmentType);
     }
-    // if (experienceLevel && experienceLevel.length > 0) {
-    //   query.experienceLevel = {
-    //     $in: experienceLevel.map((level) => level.toLowerCase()),
-    //   };
-    // }
     if (jobProfile && jobProfile.length > 0) {
-      query.jobProfile = {
-        $in: jobProfile.map((type) => type.toLowerCase())};
-        console.log(query.jobProfile);
+      query.jobProfile = { $in: jobProfile.map((type) => type.toLowerCase()) };
+    }
+    if (experience && (experience.min !== '' || experience.max !== '')) {
+      query.fromExperience = {};
+      if (experience.min !== '') {
+        query.fromExperience.$gte = Number(experience.min);
+      }
+      if (experience.max !== '') {
+        query.toExperience = { $lte: Number(experience.max) };
+      }
     }
     const filteredJobs = await jobs.find(query);
     res.status(200).json(filteredJobs);
   } catch (error) {
-    console.log("Error Filtergin Jobs", error);
+    console.log("Error Filtering Jobs", error);
     res.status(500).json({ message: error.message });
   }
 };

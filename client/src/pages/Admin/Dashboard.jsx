@@ -25,6 +25,8 @@ const Dashboard = () => {
     const [selectedJobId, setSelectedJobId] = useState(null);
     const [modalAction, setModalAction] = useState('');
 
+    const [experienceFilter, setExperienceFilter] = useState({ min: '', max: '' });
+
     const navigate = useNavigate();
 
     const handleSearch = (event) => {
@@ -134,7 +136,12 @@ const Dashboard = () => {
 
     const fetchFilterJobs = async () => {
         try {
-            const response = await axios.post('http://localhost:8008/api/filterJobs', { filters });
+            const response = await axios.post('http://localhost:8008/api/filterJobs', { 
+                filters: {
+                    ...filters,
+                    experience: experienceFilter
+                  } 
+            });
             setJobs(response.data);
         } catch (error) {
             console.error('Error fetching filtered jobs:', error);
@@ -159,6 +166,10 @@ const Dashboard = () => {
         }
     };
 
+    const handleExperienceFilter = (experience) => {
+        setExperienceFilter(experience);
+      };
+
     const [draftJobsCountFilter, setDraftJobsCountFilter] = useState(0);
     const [closedJobsCountFilter, setclosedJobsCountFilter] = useState(0);
     
@@ -173,7 +184,7 @@ const Dashboard = () => {
 
     useEffect(() => {
         fetchFilterJobs();
-    }, [filters]);
+    }, [filters , experienceFilter]);
 
     useEffect(() => {
         fetchJobs();
@@ -264,7 +275,7 @@ const Dashboard = () => {
                         />
                     </div>
                     {/* <Slider  min={0} max={20} /> */}
-                    <Filters filters={filters} statistics={filtersConfig} handleCheckboxChange={handleCheckboxChange} activeTab={activeTab} />
+                    <Filters filters={filters} statistics={filtersConfig} handleCheckboxChange={handleCheckboxChange} activeTab={activeTab} handleExperienceFilter={handleExperienceFilter} />
                 </div>
                 <div className='w-full ml-4'>
                     <div className='flex justify-center mb-4'>
