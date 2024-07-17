@@ -17,6 +17,6 @@ import { AuthProvider } from './context/AuthProvider.jsx'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <AuthProvider>
-    <RouterProvider router={router} />
+    <App/>  
   </AuthProvider>)
 
