@@ -43,6 +43,7 @@ export default {
           100: 'var(--color-background-100)',
           90: 'var(--color-background-90)',
           40: 'var(--color-background-40)',
+          30: `var(--color-background-30)`,
         },
         font: {
           primary: 'var(--color-font-primary)',
@@ -54,23 +55,23 @@ export default {
         'dark-gray': '#888CAA',
         'paragraph-black': '#000',
       },
-    
+
       fontFamily: {
-        'poppins': ['Poppins', 'sans-serif'],
-        "bg": ["Bricolage Grotesque", "sans-serif"],
+        'bricolage': ['"Bricolage Grotesque"', 'sans-serif'],
+        'outfit': ['Outfit', 'sans-serif'],
       },
       fontSize: {
-        'h3': '18px',
+        'h3': '20px',
         'large-p': '14px',
         "h1": "36px",
       },
       fontWeight: {
-        'h3': '600',
+        'h3':'600',
         'large-p': '400',
         "h1": "700",
       },
       lineHeight: {
-        'h3': '1.2',
+        'h3':'150%',
         'large-p': '20.3px',
         'h1': "54px",
       },

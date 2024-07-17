@@ -9,15 +9,15 @@ import ClickIcon from '../svg/ClickIcon';
 const JobCard = ({ job, status, handleAction , page , onClick }) => {
     const formattedCreatedAt = getTimeAgo(job.createdAt);
     return (
-        <div className="p-4 bg-white shadow rounded mb-4" onClick={() => onClick(job._id)}>
-            <div className="flex justify-between items-center">
-                <h2 className="text-xl font-bold">{job.jobTitle}</h2>
+        <div className="bg-background-90 shadow rounded mb-4" onClick={() => onClick(job._id)}>
+            <div className="flex justify-between items-center p-4">
+                <h2 className="font-bricolage text-header text-white font-bold">{job.jobTitle}</h2>
                 <div className='flex items-center'>
                     <span className={`text-sm font-semibold ${job.category === 'UI/UX' ? 'bg-blue-200 text-blue-800' : 'bg-green-200 text-green-800'} px-2 py-1 rounded`}>{job.jobProfile}</span>
                     <ThreeDots job={job} handleAction={handleAction} page={page} />
                 </div>
             </div>
-            <div className="flex items-center">
+            <div className="flex items-center px-4">
                 <div className="mr-8">
                     <p className="text-gray-600 text-sm">Employment Type</p>
                     <p className="font-bold">{job.employmentType}</p>
@@ -33,11 +33,11 @@ const JobCard = ({ job, status, handleAction , page , onClick }) => {
                     <p className="font-bold">{job.fromExperience} - {job.toExperience} Year</p>
                 </div>
             </div>
-            <p className='line-clamp-1'>
+            <p className='line-clamp-1 px-4'>
                 {job.jobDescription}
             </p>
 
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between bg-background-40 px-4">
 
                 <div className='flex'>
                     <AppliedIcon />

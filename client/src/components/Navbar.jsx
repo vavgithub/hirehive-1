@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link, Navigate, Outlet, useNavigate } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
-import BackgroundTopColor from '../svg/BackgroundTopColor';
 
 const Navbar = () => {
     const navigate = useNavigate();
@@ -17,10 +16,8 @@ const Navbar = () => {
     }
     const { auth } = useAuth();
     return (
-        <div className='flex flex-col bg-slate-400  '  >
-            <div className='bg-custom-complex-gradient  h-44'>
-                helloo
-            </div>
+        <div className='flex flex-col bg-background-30 '  >
+
             <div className="fixed flex h-screen w-48 flex-col gap-6 bg-background-100 text-white justify-between py-4 px-4">
                 <div className='items-center'>
                     <div className="text-xl font-bold">
@@ -37,9 +34,12 @@ const Navbar = () => {
                     <button onClick={handleLogout} className="bg-black text-white font-bold py-2 px-4 rounded">LOGOUT</button>
                 </div>
             </div>
-            <div className='relative z-10 top-[-150px]'>
-                <Outlet />
-            </div>
+
+
+
+            <Outlet />
+
+
         </div>
     );
 };
