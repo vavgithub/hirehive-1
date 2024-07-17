@@ -4,13 +4,39 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer components {
+  .typography-h1 {
+    @apply font-bricolage text-h1 font-bold;
+  }
+  .typography-h3 {
+    @apply font-bricolage text-h3 font-semibold;
+  }
+  .typography-body {
+    @apply font-outfit text-body font-light;
+  }
+  .typography-small-p {
+    @apply font-outfit text-small-p font-normal;
+  }
+
+  .typography-large-p {
+    @apply font-outfit text-large-p font-normal;
+  }
+  .btn-blue {
+    @apply bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded;
+  }
+}
+
+
+  .btn-blue {
+    @apply bg-blue-500 hover:bg-blue-700 text-red-700 font-bold py-2 px-4 rounded;
+  }
+
 
 @layer utilities {
   .bg-custom-complex-gradient {
     background-image: linear-gradient(to left, #045FFD 0%, #0942A3 5%, #0C3273 11%, #0D306E 19%, #111721 39%, #11161E 42%, #121314 47%, #121314 100%);
   }
 }
-
 
 @layer base {
   :root {
@@ -37,7 +63,8 @@
     --color-background-30:rgba(27, 28, 29, 1);
 
     --color-font-accent-100:rgba(24, 233, 208, 1);
-  }
+    --color-font-gray-90:rgba(128, 131, 137, 1);
+    }
 
   
 }

@@ -23,15 +23,6 @@ export default {
         },
         primary: {
           50: 'var(--color-primary-50)',
-          100: 'var(--color-primary-100)',
-          200: 'var(--color-primary-200)',
-          300: 'var(--color-primary-300)',
-          400: 'var(--color-primary-400)',
-          500: 'var(--color-primary-500)',
-          600: 'var(--color-primary-600)',
-          700: 'var(--color-primary-700)',
-          800: 'var(--color-primary-800)',
-          900: 'var(--color-primary-900)',
         },
         secondary: {
           500: 'var(--color-secondary-500)',
@@ -49,11 +40,8 @@ export default {
           primary: 'var(--color-font-primary)',
           secondary: 'var(--color-font-secondary)',
           accent : 'var(--color-font-accent-100)',
+          gray: 'var(--color-font-gray-90)',
         },
-        
-        neutral: colors.gray,
-        'dark-gray': '#888CAA',
-        'paragraph-black': '#000',
       },
 
       fontFamily: {
@@ -61,19 +49,17 @@ export default {
         'outfit': ['Outfit', 'sans-serif'],
       },
       fontSize: {
-        'h3': '20px',
-        'large-p': '14px',
-        "h1": "36px",
+        'h1': ['36px', { lineHeight: '54px' }],
+        'h3': ['20px', { lineHeight: '150%' }],
+        'body': ['16px', { lineHeight: '150%' }],
+        'small-p':['12px',{lineHeight: '150%'}],
+        'large-p': ['14px', { lineHeight: '20.3px' }],
       },
       fontWeight: {
-        'h3':'600',
+        'h1': '700',
+        'h3': '600',
+        'body': '300',
         'large-p': '400',
-        "h1": "700",
-      },
-      lineHeight: {
-        'h3':'150%',
-        'large-p': '20.3px',
-        'h1': "54px",
       },
     },
   },
