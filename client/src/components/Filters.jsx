@@ -22,7 +22,7 @@ const CheckboxGroup = ({ title, options, filters, handleCheckboxChange, isDisabl
     </div>
 );
 
-const Filters = ({ filters = {} , statistics , handleCheckboxChange , activeTab , handleExperienceFilter }) => {
+const Filters = ({ filters = {}, statistics, handleCheckboxChange, activeTab, handleExperienceFilter, clearAllFilters }) => {
     const isDisabled = activeTab === 'draft';
 
     const jobTypeOptions = [
@@ -49,11 +49,24 @@ const Filters = ({ filters = {} , statistics , handleCheckboxChange , activeTab 
 
     const handleExperienceApply = (experience) => {
         handleExperienceFilter(experience);
-      };
+    };
+
+    const handleClearAll = () => {
+        clearAllFilters();
+    };
 
     return (
         <div className='w-64'>
-            <div className="bg-gray-100 p-4 rounded-md">
+
+            <div className="bg-background-90 p-4 rounded-md">
+                <div className='flex flex-row-reverse'>
+                    <button
+                        onClick={handleClearAll}
+                        className="text-blue-600 hover:text-blue-800 font-semibold"
+                    >
+                        Clear All
+                    </button>
+                </div>
                 {activeTab === 'closed' && (
                     <CheckboxGroup
                         title="Job Status"
@@ -84,8 +97,8 @@ const Filters = ({ filters = {} , statistics , handleCheckboxChange , activeTab 
 
                 <div className="mb-4">
 
-                        <ExperienceFilter onApply={handleExperienceApply} />
-        
+                    <ExperienceFilter onApply={handleExperienceApply} />
+
                 </div>
 
             </div>

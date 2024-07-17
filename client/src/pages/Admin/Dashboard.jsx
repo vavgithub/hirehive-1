@@ -5,7 +5,6 @@ import Filters from '../../components/Filters';
 import { useNavigate } from 'react-router-dom';
 import Modal from '../../components/Modal';
 import JobCard from '../../components/JobCard';
-import Slider from '../../components/Slider';
 import Tabs from '../../components/Tabs';
 
 
@@ -43,6 +42,15 @@ const Dashboard = () => {
         setOpen(true);
         setSelectedJobId(jobId);
         setModalAction(action);
+    };
+
+    const clearAllFilters = () => {
+        setFilters({
+            employmentType: [],
+            experienceLevel: [],
+            jobProfile: []
+        });
+        setExperienceFilter({ min: '', max: '' });
     };
 
     const confirmAction = () => {
@@ -246,8 +254,10 @@ const Dashboard = () => {
 
     return (
         <div className="ml-52 pt-4">
+            <div className='bg-background-100'>
+
             <div className="flex justify-between mb-4">
-                <h1 className="text-2xl font-bold">Jobs</h1>
+                <h1 className="text-2xl font-bold text-white">Jobs</h1>
                 <Link to="/admin/create-job" className="bg-black text-white px-4 py-2 rounded">Create job listing</Link>
             </div>
             <div className='flex gap-3'>
@@ -268,14 +278,14 @@ const Dashboard = () => {
                 <div>
                     <div className='w-64'>
                         <input
-                            className="border border-gray-300 px-4 py-2 w-full rounded mb-4"
+                            className="border border-gray-300 bg-background-40 px-4 py-2 w-full rounded mb-4"
                             placeholder="Job title or keyword"
                             value={searchQuery}
                             onChange={handleSearch}
-                        />
+                            />
                     </div>
                     {/* <Slider  min={0} max={20} /> */}
-                    <Filters filters={filters} statistics={filtersConfig} handleCheckboxChange={handleCheckboxChange} activeTab={activeTab} handleExperienceFilter={handleExperienceFilter} />
+                    <Filters filters={filters} statistics={filtersConfig} handleCheckboxChange={handleCheckboxChange} activeTab={activeTab} handleExperienceFilter={handleExperienceFilter}  clearAllFilters={clearAllFilters}/>
                 </div>
                 <div className='w-full ml-4'>
                     <div className='flex justify-center mb-4'>
@@ -304,6 +314,7 @@ const Dashboard = () => {
                 </div>
             </div>
             <Modal open={open} onClose={() => setOpen(false)} action={modalAction} confirmAction={confirmAction} />
+                    </div>
         </div>
     );
 };
