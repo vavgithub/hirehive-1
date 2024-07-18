@@ -24,10 +24,19 @@ const Navbar = () => {
                         <Link to="">HireHive</Link>
                     </div>
                     <div>
+                        <Link to="" className="hover:text-gray-300">Dashboard</Link>
+                    </div>
+                    <div>
                         <Link to="jobs" className="hover:text-gray-300">Jobs</Link>
                     </div>
                     <div>
                         <Link to="candidates" className="hover:text-gray-300">Candidates</Link>
+                    </div>
+                    <div>
+                        <Link to="candidates" className="hover:text-gray-300">Reviews</Link>
+                    </div>
+                    <div>
+                        <Link to="candidates" className="hover:text-gray-300">Reports</Link>
                     </div>
                 </div>
                 <div>

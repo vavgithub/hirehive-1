@@ -6,10 +6,13 @@ import Filters from '../../components/Filters';
 import Modal from '../../components/Modal';
 import JobCard from '../../components/JobCard';
 import Tabs from '../../components/Tabs';
+import StatsGrid from '../../components/StatsGrid';
+
 
 const api = axios.create({
   baseURL: 'http://localhost:8008/api',
 });
+
 
 const fetchJobs = () => api.get('/jobs').then(res => res.data);
 const fetchJobCount = () => api.get('/jobsCount').then(res => res.data.totalCount);
@@ -159,6 +162,13 @@ const Dashboard = () => {
         { name: 'draft', label: 'Draft', count: statistics?.totalDraftJobs },
     ];
 
+    const JobsStats = [
+        {title:'Jobs Posted' , value : 455},
+        {title:'Application Received' , value : 4455},
+        {title:'Hired' , value : 46}
+        
+    ]
+
     const displayJobs = searchQuery.length > 0 ? searchResults : 
         (Object.values(filters).some(filter => Array.isArray(filter) ? filter.length > 0 : Object.values(filter).some(val => val !== '')) ? filteredJobs : jobs);
 
@@ -167,25 +177,21 @@ const Dashboard = () => {
 
     return (
         <div className="ml-52 pt-4">
+            <div className="flex flex-row justify-between mb-4">
+                    <h1 className="text-2xl font-bold text-white">Jobs</h1>
+                    {/* <Link to="/admin/create-job" className="bg-black text-white px-4 py-2 rounded">Create job listing</Link> */}
+                
+                    <div className='flex justify-center mb-4'>
+                            <Tabs tabs={tabs} activeTab={activeTab} handleTabClick={handleTabClick} />
+                        </div>
+                
+                </div>
+               
             <div className='bg-background-100'>
 
-                <div className="flex justify-between mb-4">
-                    <h1 className="text-2xl font-bold text-white">Jobs</h1>
-                    <Link to="/admin/create-job" className="bg-black text-white px-4 py-2 rounded">Create job listing</Link>
-                </div>
+                
                 <div className='flex gap-3'>
-                    <div className="flex justify-between mb-4">
-                        <div className='bg-gray-100 flex flex-col p-2 rounded-md'>
-                            <div className="text-gray-600" >Total Jobs:</div>
-                            <h1 className='text-2xl'>{jobCount}</h1>
-                        </div>
-                    </div>
-                    <div className="flex justify-between mb-4">
-                        <div className='bg-gray-100 flex flex-col p-2 rounded-md'>
-                            <div className="text-gray-600" >Application Received:</div>
-                            <h1 className='text-2xl'>0</h1>
-                        </div>
-                    </div>
+                    <StatsGrid stats={JobsStats} />
                 </div>
                 <div className='flex'>
                     <div>
@@ -201,9 +207,7 @@ const Dashboard = () => {
                         <Filters filters={filters} statistics={filtersConfig} handleCheckboxChange={handleCheckboxChange} activeTab={activeTab} handleExperienceFilter={handleExperienceFilter} clearAllFilters={clearAllFilters} />
                     </div>
                     <div className='w-full ml-4'>
-                        <div className='flex justify-center mb-4'>
-                            <Tabs tabs={tabs} activeTab={activeTab} handleTabClick={handleTabClick} />
-                        </div>
+                       
                         {displayJobs
                             .filter(job => job.status === activeTab)
                             .map((job) => (

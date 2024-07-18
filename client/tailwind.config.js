@@ -50,6 +50,7 @@ export default {
       },
       fontSize: {
         'h1': ['36px', { lineHeight: '54px' }],
+        'h2': ['24px', { lineHeight: '36px' }],
         'h3': ['20px', { lineHeight: '150%' }],
         'body': ['16px', { lineHeight: '150%' }],
         'small-p':['12px',{lineHeight: '150%'}],
@@ -57,6 +58,7 @@ export default {
       },
       fontWeight: {
         'h1': '700',
+        'h2': '600',
         'h3': '600',
         'body': '300',
         'large-p': '400',
