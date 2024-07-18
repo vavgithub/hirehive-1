@@ -3,6 +3,8 @@ import ExperienceFilter from './ExperienceFilter';
 import { FullTimeIcon, FullTimeIconActive } from '../svg/Checkboxes/FullTimeIcons';
 import { ContractIcon, ContractIconActive } from '../svg/Checkboxes/ContractIcons';
 import { InternIcon, InternIconActive } from '../svg/Checkboxes/InternIcons';
+import { HiredIcon, HiredIconActive } from '../svg/Checkboxes/HiredIcons';
+import { NotHired, NotHiredActive } from '../svg/Checkboxes/NotHired';
 
 
 const CustomCheckbox = ({ label, icon: Icon, isChecked, onChange, count }) => (
@@ -23,8 +25,18 @@ const CustomCheckbox = ({ label, icon: Icon, isChecked, onChange, count }) => (
     </div>
 );
 
-const CheckboxGroup = ({ title, options, filters, handleCheckboxChange, isDisabled, statistics, isEmploymentType }) => {
-    if (isEmploymentType) {
+const ButtonCheckbox = ({ label, isChecked, onChange }) => (
+    <button
+        className={`px-4 py-2 rounded-lg typography-large-p ${isChecked ? 'bg-gray-800 text-font-accent' : 'bg-gray-900 text-gray-400'
+            } hover:bg-gray-800 transition-colors duration-200`}
+        onClick={onChange}
+    >
+        {label}
+    </button>
+);
+
+const CheckboxGroup = ({ title, options, filters, handleCheckboxChange, isDisabled, statistics, useCustomIconCheckbox }) => {
+    if (useCustomIconCheckbox) {
         return (
             <div className="mb-4">
                 <h3 className="text-gray-200 font-semibold mb-2">{title}</h3>
@@ -46,24 +58,18 @@ const CheckboxGroup = ({ title, options, filters, handleCheckboxChange, isDisabl
 
     // Original checkbox group for other filter types
     return (
-        <div className="mb-4 text-left">
-            <h3 className="text-gray-200 font-semibold mb-2">{title}</h3>
-            {options.map(({ value, label, statKey }) => (
-                <div key={value} className="flex justify-between">
-                    <label className="inline-flex items-center">
-                        <input
-                            type="checkbox"
-                            value={value}
-                            checked={filters.includes(value)}
-                            onChange={() => handleCheckboxChange(value)}
-                            disabled={isDisabled}
-                            className="form-checkbox text-teal-500"
-                        />
-                        <span className={`ml-2 ${isDisabled ? 'text-gray-500' : 'text-gray-300'}`}>{label}</span>
-                    </label>
-                    <p className={`ml-2 ${isDisabled ? 'text-gray-500' : 'text-gray-300'}`}>{statistics[statKey] || 0}</p>
-                </div>
-            ))}
+        <div className="mb-4">
+            <h3 className="typoraphy-large-p text-gray-200 font-semibold mb-2">{title}</h3>
+            <div className="flex flex-wrap gap-2">
+                {options.map(({ value, label }) => (
+                    <ButtonCheckbox
+                        key={value}
+                        label={label}
+                        isChecked={filters.includes(value)}
+                        onChange={() => handleCheckboxChange(value)}
+                    />
+                ))}
+            </div>
         </div>
     );
 };
@@ -105,8 +111,8 @@ const Filters = ({ filters = {}, statistics, handleCheckboxChange, activeTab, ha
     const jobProfileOptions = [
         { value: 'uiux', label: 'UI UX', statKey: 'totalUiUxJobs' },
         { value: 'motiongraphic', label: 'Motion Graphics', statKey: 'totalMotionGraphicsJobs' },
-        { value: '3d', label: '3d', statKey: 'total3DJobs' },
         { value: 'videoeditor', label: 'Video Editor', statKey: 'totalVideoEditorJobs' },
+        { value: '3d', label: '3d', statKey: 'total3DJobs' },
         { value: 'digitalmarketingexecutive', label: 'Digital Marketing Executive', statKey: 'totalDigitalMarketingExecutiveJobs' },
         { value: 'projectmanager', label: 'Project Manager', statKey: 'totalProjectManagerJobs' },
         { value: 'artdirector', label: 'Art Director', statKey: 'totalArtDirectorJobs' },
@@ -114,8 +120,18 @@ const Filters = ({ filters = {}, statistics, handleCheckboxChange, activeTab, ha
     ];
 
     const draftOptions = [
-        { value: 'hired', label: 'Hired', statKey: 'totalHired' },
-        { value: 'notHired', label: 'Not Hired', statKey: 'totalNotHired' }
+        {
+            value: 'hired', label: 'Hired', statKey: 'totalHired', icon: {
+                active: HiredIconActive,
+                inactive: HiredIcon
+            }
+        },
+        {
+            value: 'notHired', label: 'Not Hired', statKey: 'totalNotHired', icon: {
+                active: NotHiredActive,
+                inactive: NotHired
+            }
+        }
     ];
 
     const handleExperienceApply = (experience) => {
@@ -146,6 +162,7 @@ const Filters = ({ filters = {}, statistics, handleCheckboxChange, activeTab, ha
                         handleCheckboxChange={(value) => handleCheckboxChange('draftStatus', value)}
                         isDisabled={isDisabled}
                         statistics={statistics}
+                        useCustomIconCheckbox={true}
                     />
                 )}
                 <CheckboxGroup
@@ -155,7 +172,7 @@ const Filters = ({ filters = {}, statistics, handleCheckboxChange, activeTab, ha
                     handleCheckboxChange={(value) => handleCheckboxChange('employmentType', value)}
                     isDisabled={isDisabled}
                     statistics={statistics}
-                    isEmploymentType={true}
+                    useCustomIconCheckbox={true}
                 />
 
                 <CheckboxGroup
