@@ -4,11 +4,11 @@ import useAuth from '../hooks/useAuth';
 
 const Navbar = () => {
     const navigate = useNavigate();
-    const token = localStorage.getItem('accessToken');
-    console.log("from dashabord her is the token", token)
-    if (token == null) {
-        return <Navigate to="/auth/login" replace />
-    }
+    // const token = localStorage.getItem('accessToken');
+    // console.log("from dashabord her is the token", token)
+    // if (token == null) {
+    //     return <Navigate to="/auth/login" replace />
+    // }
 
     const handleLogout = () => {
         localStorage.removeItem('accessToken');

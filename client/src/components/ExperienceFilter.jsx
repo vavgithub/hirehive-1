@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Button } from './ui/Button';
 
 const ExperienceFilter = ({ onApply }) => {
   const [minExperience, setMinExperience] = useState('');
@@ -32,13 +33,16 @@ const ExperienceFilter = ({ onApply }) => {
           <span className=""> yr</span>
         </div>
       </div>
-      <button
+      {/* <button
         onClick={handleApply}
         className="w-full p-2 text-white bg-blue-500 rounded"
         
       >
         Apply
-      </button>
+      </button> */}
+      <Button variant="secondary" onClick={handleApply} size="default">
+        Apply
+      </Button>
     </div>
   );
 };

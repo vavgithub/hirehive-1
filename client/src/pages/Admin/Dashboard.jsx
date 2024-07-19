@@ -7,6 +7,9 @@ import Modal from '../../components/Modal';
 import JobCard from '../../components/JobCard';
 import Tabs from '../../components/Tabs';
 import StatsGrid from '../../components/StatsGrid';
+import one from '../../svg/StatsCard/Jobs Page/one';
+import two from '../../svg/StatsCard/Jobs Page/two';
+import three from '../../svg/StatsCard/Jobs Page/three';
 
 
 const api = axios.create({
@@ -149,10 +152,10 @@ const Dashboard = () => {
         navigate(`/admin/view-job/${jobId}`);
     };
 
-    const token = localStorage.getItem('accessToken');
-    if (token == null) {
-        return <Navigate to="/auth/login" replace />;
-    }
+    // const token = localStorage.getItem('accessToken');
+    // if (token == null) {
+    //     return <Navigate to="/auth/login" replace />;
+    // }
 
     const filtersConfig = activeTab === 'open' ? activeJobsCountFilter : closedJobsCountFilter;
 
@@ -163,9 +166,9 @@ const Dashboard = () => {
     ];
 
     const JobsStats = [
-        {title:'Jobs Posted' , value : 455},
-        {title:'Application Received' , value : 4455},
-        {title:'Hired' , value : 46}
+        {title:'Jobs Posted' , value : 455 , icon: one},
+        {title:'Application Received' , value : 4455 ,  icon: two},
+        {title:'Hired' , value : 46  ,icon: three}
         
     ]
 
