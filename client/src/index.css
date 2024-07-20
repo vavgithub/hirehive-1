@@ -7,6 +7,9 @@
 body {
   @apply text-white;
 }
+input {
+  @apply bg-background-40; /* Replace bg-gray-200 with your desired background color class */
+}
 
 @layer components {
   .typography-h1 {
@@ -64,9 +67,10 @@ body {
     --color-background-100:rgba(22, 23, 24, 1);
     --color-background-80:rgba(27, 28, 29, 1);
     --color-background-90:rgba(18, 19, 20, 1);
+    --color-background-60:rgba(35, 36, 37, 1);
     --color-background-40:rgba(12, 13, 13, 1);
-
     --color-background-30:rgba(27, 28, 29, 1);
+
 
     --color-font-accent-100:rgba(24, 233, 208, 1);
     --color-font-gray-90:rgba(128, 131, 137, 1);

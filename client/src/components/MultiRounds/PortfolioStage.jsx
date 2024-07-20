@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 import BasicSelect from '../BasicSelect';
 import ProgressIndicator from '../ProgressIndicator';
 import { Button } from '../ui/Button';
+import InputPopUpModalAutoSelect from '../InputPopUpModalAutoSelect';
+import FileSaver from 'file-saver';
 
 const getStageOptions = (stage) => {
     switch (stage) {
@@ -28,8 +30,19 @@ const PortfolioStage = ({ candidateData, assignee, onAssigneeChange, allAssignee
 
     console.log(candidateData)
 
+    //this is the modal for auto assign portfolio
+    const [openAssigneeModal, setOpenAssigneeModal] = useState(false);
+    const [selectedAssignees, setSelectedAssignees] = useState([]);
     const list = getStageOptions(candidateData.stage);
     const [isModalOpenPortfolio, setIsModalOpenPortfolio] = useState(false);
+
+    const handleMultipleAssigneeChange = async () => {
+        return (
+            console.log("Hello Saaab")
+        )
+    };
+
+
     return (
         <div className='w-full bg-background-100' >
             <div  >
@@ -56,7 +69,7 @@ const PortfolioStage = ({ candidateData, assignee, onAssigneeChange, allAssignee
                 </div>
                 {candidateData.status == "Not Assigned" &&
 
-                        <p  className='bg-background-80 inline' > This candidate's portfolio has not yet been assigned to a reviewer.</p>
+                    <p className='bg-background-80 inline' > This candidate's portfolio has not yet been assigned to a reviewer.</p>
                 }
 
                 {candidateData.status == "Under Review" &&
@@ -94,17 +107,40 @@ const PortfolioStage = ({ candidateData, assignee, onAssigneeChange, allAssignee
 
                 <div className='flex gap-4 '>
                     {
-                        candidateData.status == "Not Assigned" ? <p>Not</p>:<p>Yess</p>
+                        candidateData.status == "Not Assigned" ? <Button variant="secondary"
+                            onClick={() => setOpenAssigneeModal(true)}
+                            className="mb-4 px-4 py-2 bg-black text-white rounded "
+                        >
+                            Assign Multiple Candidates
+                        </Button> : (
+                            <div className='flex gap-6'>
+                                <div className='w-[236px]'>
+                                    <Button variant="cancel" >Reject</Button>
+                                </div>
+                                <div className='w-[236px]'>
+                                    <Button variant="secondary">Move To Next Round</Button>
+                                </div>
+                            </div>
+                        )
                     }
-                    <div className='w-[236px]'>
-                        <Button variant="cancel" >Reject</Button>
-                    </div>
-                    <div className='w-[236px]'>
-                        <Button variant="secondary">Move To Next Round</Button>
-                    </div>
+
                 </div>
 
             </div>
+
+            <InputPopUpModalAutoSelect
+                open={openAssigneeModal}
+                onClose={() => setOpenAssigneeModal(false)}
+                confirmAction={handleMultipleAssigneeChange}
+                assignees={selectedAssignees}
+                setAssignees={setSelectedAssignees}
+                singleSelect={true}
+                allAssignees={allAssignees}
+                heading="Assign Multiple Candidates"
+                para="Select assignees for candidates in Portfolio stage with 'Not Assigned' status."
+                confirmButtonText="Assign"
+                cancelButtonText="Cancel"
+            />
         </div>
     )
 }

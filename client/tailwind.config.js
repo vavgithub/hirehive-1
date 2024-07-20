@@ -28,6 +28,7 @@ export default {
           100: "var(--color-background-100)",
           80: "var(--color-background-80)",
           90: "var(--color-background-90)",
+          60: "var(--color-background-60)",
           40: "var(--color-background-40)",
           30: `var(--color-background-30)`,
         },

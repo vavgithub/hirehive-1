@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const AssigneesInput = ({ assignees, setAssignees, allAssignees }) => {
+const AssigneesInput = ({ assignees, setAssignees, allAssignees, singleSelect = false }) => {
     const [assignee, setAssignee] = useState('');
     const [suggestions, setSuggestions] = useState([]);
 
@@ -24,10 +24,14 @@ const AssigneesInput = ({ assignees, setAssignees, allAssignees }) => {
     };
 
     const handleCheckboxChange = (suggestion) => {
-        if (assignees.includes(suggestion)) {
-            setAssignees(assignees.filter((a) => a !== suggestion));
+        if (singleSelect) {
+            setAssignees([suggestion]);
         } else {
-            setAssignees([...assignees, suggestion]);
+            if (assignees.includes(suggestion)) {
+                setAssignees(assignees.filter((a) => a !== suggestion));
+            } else {
+                setAssignees([...assignees, suggestion]);
+            }
         }
     };
 
@@ -50,7 +54,7 @@ const AssigneesInput = ({ assignees, setAssignees, allAssignees }) => {
                     value={assignee}
                     onChange={handleInputChange}
                     onFocus={handleInputFocus}
-                    placeholder="-Select-"
+                    placeholder={singleSelect ? "-Select One-" : "-Select-"}
                     className="outline-none"
                 />
             </div>
@@ -62,7 +66,7 @@ const AssigneesInput = ({ assignees, setAssignees, allAssignees }) => {
                             className="flex items-center cursor-pointer p-2 hover:bg-gray-200"
                         >
                             <input
-                                type="checkbox"
+                                type={singleSelect ? "radio" : "checkbox"}
                                 checked={assignees.includes(suggestion)}
                                 onChange={() => handleCheckboxChange(suggestion)}
                                 className="mr-2"
@@ -76,23 +80,22 @@ const AssigneesInput = ({ assignees, setAssignees, allAssignees }) => {
     );
 };
 
-const InputPopUpModalAutoSelect = ({ open, onClose, confirmAction, assignees, setAssignees, allAssignees, heading, para, confirmButtonText = "Confirm", cancelButtonText = "Cancel" }) => {
+const InputPopUpModalAutoSelect = ({ open, onClose, confirmAction, assignees, setAssignees, allAssignees, heading, para, confirmButtonText = "Confirm", cancelButtonText = "Cancel", singleSelect = false }) => {
     return (
-        <div onClick={onClose} className={`fixed inset-0 flex justify-center items-center ${open ? "visible bg-black/20" : "invisible"}`}>
-            <div onClick={(e) => e.stopPropagation()} className={`bg-white rounded-xl shadow p-6 ${open ? "scale-100 opacity-100" : "scale-125 opacity-0"}`}>
+        <div onClick={onClose} className={`fixed inset-0 flex justify-center items-center  ${open ? "visible bg-black/20" : "invisible"}`}>
+            <div onClick={(e) => e.stopPropagation()} className={`bg-background-60 min-w-max rounded-xl shadow p-6 ${open ? "scale-100 opacity-100" : "scale-125 opacity-0"}`}>
                 <button onClick={onClose} className="absolute top-2 right-2 p-1 rounded-lg text-gray-400 bg-white hover:bg-gray-50 hover:text-gray-600">x</button>
                 <div className="w-56">
-                    <h3 className="text-lg font-black text-gray-800">
+                    <h3 className="typography-h1  text-white">
                         {heading}
                     </h3>
                     <p className='text-sm text-gray-600'>
                         {para}
                     </p>
 
-                    {/* Render AssigneesInput component */}
                     <div className="mt-4">
                         <label className="block text-sm font-medium text-gray-700">Assignees</label>
-                        <AssigneesInput assignees={assignees} setAssignees={setAssignees} allAssignees={allAssignees} />
+                        <AssigneesInput assignees={assignees} setAssignees={setAssignees} allAssignees={allAssignees} singleSelect={singleSelect} />
                     </div>
 
                     <div className="flex gap-4 mt-4">

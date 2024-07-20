@@ -61,6 +61,7 @@ const Table = ({ rowsData, onUpdateCandidate }) => {
     const [openAssigneeModal, setOpenAssigneeModal] = useState(false);
     const [selectedAssignees, setSelectedAssignees] = useState([]);
 
+    //this is for the reject modal
     const [openRejectModal, setOpenRejectModal] = useState(false);
 
 
@@ -238,6 +239,7 @@ const Table = ({ rowsData, onUpdateCandidate }) => {
         setOpenRejectModal(true);
     };
 
+    //this is to confirm the rejection
     const confirmReject = async () => {
         if (selectedCandidate) {
             await handleStatusChange(selectedCandidate._id, 'Rejected');
@@ -530,6 +532,7 @@ const Table = ({ rowsData, onUpdateCandidate }) => {
                 confirmAction={handleMultipleAssigneeChange}
                 assignees={selectedAssignees}
                 setAssignees={setSelectedAssignees}
+                singleSelect={false}
                 allAssignees={allAssignees}
                 heading="Assign Multiple Candidates"
                 para="Select assignees for candidates in Portfolio stage with 'Not Assigned' status."

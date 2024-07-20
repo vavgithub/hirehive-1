@@ -199,7 +199,7 @@ const Dashboard = () => {
                     <div>
                         <div className='w-64'>
                             <input
-                                className="bg-background-40 px-4 py-2 w-full rounded mb-4"
+                                className="px-4 py-2 w-full rounded mb-4"
                                 placeholder="Job title or keyword"
                                 value={searchQuery}
                                 onChange={handleSearch}
