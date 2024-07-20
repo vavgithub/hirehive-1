@@ -7,23 +7,11 @@ export default {
     extend: {
       backgroundImage: {
         "card-pattern": "url('/src/svg/StatsCard/pattern.svg')",
+        "main-bg":"url('/src/svg/Background/main-bg.svg')",
         "custom-gradient":
           "linear-gradient(180deg, var(--tw-gradient-stops))",
       },
-      colors: {
-        
-        colors: {
-          gradient: {
-            0: "#045FFD",
-            5: "#0942A3",
-            11: "#0C3273",
-            19: "#0D306E",
-            39: "#111721",
-            42: "#11161E",
-            47: "#121314",
-            100: "#121314",
-          },
-        },
+      colors: {        
         primary: {
           100: "var(--color-primary-100)",
           200: "var(--color-primary-200)",
@@ -38,6 +26,7 @@ export default {
         },
         background: {
           100: "var(--color-background-100)",
+          80: "var(--color-background-80)",
           90: "var(--color-background-90)",
           40: "var(--color-background-40)",
           30: `var(--color-background-30)`,

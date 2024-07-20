@@ -59,14 +59,26 @@ const ViewCandidateProfile = () => {
     const [currentStage, setCurrentStage] = useState('Portfolio');
 
     return (
-        <div className="ml-52 pt-4">
-            <Breadcrumb paths={paths} />
+        <div className="mx-4 pt-4">
+            {/* <Breadcrumb paths={paths} /> */}
             <div className='flex justify-between'>
-                <div >
-                    <h1 className='text-2xl font-bold'> {data.firstName}  {data.lastName}</h1>
-                    <p>
-                        {data.jobApplied} . {data.location}
-                    </p>
+                <div className='bg-background-90' >
+                    <h1 className='typography-h1 text-white'> {data.firstName}  {data.lastName}</h1>
+                    <div className='flex'>
+                        <span className='typography-small-p text-white'>{data.jobApplied}</span>
+                        <span className='typography-small-p text-white'>{data.location}</span>
+                    </div>
+
+                    <div className='flex'>
+                        <div className='flex'>
+                        <PhoneIcon />
+                        <span className='typography-large-p text-white'>{data.phone}</span>
+                        </div>
+                        <div className='flex'>
+                        <EmailIcon />
+                        <span className='typography-large-p text-white'>{data.email}</span>
+                        </div>
+                    </div>
                     <div className='flex gap-2'>
                         <ResumeIcon />
                         <PortfolioIcon />
@@ -90,13 +102,20 @@ const ViewCandidateProfile = () => {
                     <p>{data.experience}</p>
                     <p>{data.skills}</p>
                 </div>
-                <div className='flex flex-col gap-2 px-2'>
+                {/* <div className='flex flex-col gap-2 px-2'>
                     <button className="bg-black text-white px-4  py-2 rounded">Move Next Round</button>
                     <button className=" text-black outline px-4 py-2 outline-black rounded">
                         Reject
                     </button>
+                </div> */}
+                
+                
+                <div className='bg-background-90'>
+                    hello
+
                 </div>
-            </div>
+                
+                            </div>
             <div className='flex justify-center' >
                 <Tabs tabs={tabs} activeTab={activeTab} handleTabClick={handleTabClick} />
             </div>

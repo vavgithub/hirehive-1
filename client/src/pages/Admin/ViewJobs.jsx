@@ -13,6 +13,7 @@ import ThreeDots from '../../components/ThreeDots';
 import { formatDescription } from '../../utility/formatDescription';
 import SideCard from '../../components/SideCard';
 import Table from '../../components/Table';
+import one from '../../svg/StatsCard/Jobs Page/one';
 
 
 const ViewJobs = () => {
@@ -250,24 +251,24 @@ const ViewJobs = () => {
     };
 
     const candidateStats = [
-        { title: 'Total', value: candidatesData.length.toString() },
-        { title: 'Portfolio', value: candidatesData.filter(c => c.stage === 'Portfolio').length.toString() },
-        { title: 'Screening', value: candidatesData.filter(c => c.stage === 'Screening').length.toString() },
-        { title: 'Design Task', value: candidatesData.filter(c => c.stage === 'Design Task').length.toString() },
-        { title: 'Round 1', value: candidatesData.filter(c => c.stage === 'Round 1').length.toString() },
-        { title: 'Round 2', value: candidatesData.filter(c => c.stage === 'Round 2').length.toString() },
-        { title: 'Offer Sent', value: candidatesData.filter(c => c.stage === 'Hired').length.toString() },
+        { title: 'Total', value: candidatesData.length.toString() , icon: one},
+        { title: 'Portfolio', value: candidatesData.filter(c => c.stage === 'Portfolio').length.toString() , icon: one},
+        { title: 'Screening', value: candidatesData.filter(c => c.stage === 'Screening').length.toString() , icon: one},
+        { title: 'Design Task', value: candidatesData.filter(c => c.stage === 'Design Task').length.toString() , icon: one},
+        { title: 'Round 1', value: candidatesData.filter(c => c.stage === 'Round 1').length.toString() , icon: one},
+        { title: 'Round 2', value: candidatesData.filter(c => c.stage === 'Round 2').length.toString() , icon: one},
+        { title: 'Offer Sent', value: candidatesData.filter(c => c.stage === 'Hired').length.toString() , icon: one},
     ];
 
     const jobsDetailStats = [
-        { title: 'Views', value: "0" },
-        { title: 'Applications Received', value: candidatesData.length.toString() },
-        { title: 'Qualified applications', value: '80' },
-        { title: 'Engagement Rate', value: '78%' },
+        { title: 'Views', value: "0", icon: one },
+        { title: 'Applications Received', value: candidatesData.length.toString(), icon: one },
+        { title: 'Qualified applications', value: '80', icon: one },
+        { title: 'Engagement Rate', value: '78%', icon: one },
     ];
 
     return (
-        <div className="ml-52 pt-4">
+        <div className="pt-4">
             <div onClick={back}>Back</div>
             <div className='flex justify-between'>
                 <div>

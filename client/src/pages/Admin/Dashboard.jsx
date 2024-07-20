@@ -166,7 +166,7 @@ const Dashboard = () => {
     ];
 
     const JobsStats = [
-        {title:'Jobs Posted' , value : 455 , icon: one},
+        {title:'Jobs Posted' , value : 555 , icon: one},
         {title:'Application Received' , value : 4455 ,  icon: two},
         {title:'Hired' , value : 46  ,icon: three}
         
@@ -179,9 +179,9 @@ const Dashboard = () => {
 
 
     return (
-        <div className="ml-52 pt-4">
+        <div className="mx-4 pt-4">
             <div className="flex flex-row justify-between mb-4">
-                    <h1 className="text-2xl font-bold text-white">Jobs</h1>
+                    <h1 className="font-bold text-white ">Jobs</h1>
                     {/* <Link to="/admin/create-job" className="bg-black text-white px-4 py-2 rounded">Create job listing</Link> */}
                 
                     <div className='flex justify-center mb-4'>
@@ -191,16 +191,15 @@ const Dashboard = () => {
                 </div>
                
             <div className='bg-background-100'>
-
                 
                 <div className='flex gap-3'>
                     <StatsGrid stats={JobsStats} />
                 </div>
-                <div className='flex'>
+                <div className='flex mx-4'>
                     <div>
                         <div className='w-64'>
                             <input
-                                className="border border-gray-300 bg-background-40 px-4 py-2 w-full rounded mb-4"
+                                className="bg-background-40 px-4 py-2 w-full rounded mb-4"
                                 placeholder="Job title or keyword"
                                 value={searchQuery}
                                 onChange={handleSearch}

@@ -1,42 +1,38 @@
 import React from 'react';
-import { Link, Navigate, Outlet, useNavigate } from 'react-router-dom';
+import { NavLink, Navigate, Outlet, useNavigate } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
 
 const Navbar = () => {
     const navigate = useNavigate();
-    // const token = localStorage.getItem('accessToken');
-    // console.log("from dashabord her is the token", token)
-    // if (token == null) {
-    //     return <Navigate to="/auth/login" replace />
-    // }
+    const { auth } = useAuth();
 
     const handleLogout = () => {
         localStorage.removeItem('accessToken');
         navigate('/auth/login');
     }
-    const { auth } = useAuth();
-    return (
-        <div className='flex flex-col bg-background-30 '  >
 
-            <div className="fixed flex h-screen w-48 flex-col gap-6 bg-background-100 text-white justify-between py-4 px-4">
-                <div className='items-center'>
-                    <div className="text-xl font-bold">
-                        <Link to="">HireHive</Link>
+    return (
+        <div className=' flex bg-main-bg bg-cover h-fulk'>
+
+            <div className="flex h-screen w-48 flex-col gap-6 bg-background-100 text-white justify-between py-4 px-4">
+                <div className='flex flex-col gap-5'>
+                    {/* <div className="text-xl font-bold">
+                        <NavLink to="/admin" end className={({ isActive }) => isActive ? "bg-blue-500" : ""}>HireHive</NavLink>
+                    </div> */}
+                    <div>
+                        <NavLink to="/admin/dashboard" className={({ isActive }) => isActive ? "w-full text-font-accent" : "w-full hover:text-gray-300"}>Dashboard</NavLink>
                     </div>
                     <div>
-                        <Link to="" className="hover:text-gray-300">Dashboard</Link>
+                        <NavLink to="/admin/jobs" className={ ({ isActive }) => isActive ? "w-full text-font-accent" : "w-full hover:text-gray-300"} >Jobs</NavLink>
                     </div>
                     <div>
-                        <Link to="jobs" className="hover:text-gray-300">Jobs</Link>
+                        <NavLink to="/admin/candidates" className={({ isActive }) => isActive ? "text-font-accent" : "hover:text-gray-300"}>Candidates</NavLink>
                     </div>
                     <div>
-                        <Link to="candidates" className="hover:text-gray-300">Candidates</Link>
+                        <NavLink to="/admin/reviews" className={({ isActive }) => isActive ? "text-font-accent" : "hover:text-gray-300"}>Reviews</NavLink>
                     </div>
                     <div>
-                        <Link to="candidates" className="hover:text-gray-300">Reviews</Link>
-                    </div>
-                    <div>
-                        <Link to="candidates" className="hover:text-gray-300">Reports</Link>
+                        <NavLink to="/admin/reports" className={({ isActive }) => isActive ? "text-font-accent" : "hover:text-gray-300"}>Reports</NavLink>
                     </div>
                 </div>
                 <div>
@@ -44,10 +40,10 @@ const Navbar = () => {
                 </div>
             </div>
 
-
-
+            <div className='w-full'>
             <Outlet />
 
+            </div>
 
         </div>
     );

@@ -80,17 +80,16 @@ const Staging = ({ currentStage, candidateData }) => {
 
   return (
     <div>
-      <h1>Stage</h1>
       <div className='flex justify-between'>
         {
           stages.map((stage, index) => {
             const isAccessible = isStageAccessible(stage);
             return (
               <div key={index} className={`p-2 cursor-pointer ${activeStage === stage
-                ? 'bg-blue-500 text-white'
+                ? 'text-font-accent'
                 : isAccessible
-                  ? 'bg-slate-500 text-black'
-                  : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  ? ' text-white'
+                  : 'text-font-gray cursor-not-allowed'
                 }`} onClick={() => handleStageClick(stage)} >{stage}</div>
 
             )
