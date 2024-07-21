@@ -4,6 +4,7 @@ import ProgressIndicator from '../ProgressIndicator';
 import { Button } from '../ui/Button';
 import InputPopUpModalAutoSelect from '../InputPopUpModalAutoSelect';
 import FileSaver from 'file-saver';
+import axios from 'axios';
 
 const getStageOptions = (stage) => {
     switch (stage) {
@@ -22,11 +23,47 @@ const getStageOptions = (stage) => {
     }
 };
 
+const useHandleReject = (candidateData, onStatusUpdate) => {
+
+    const [isRejecting, setIsRejecting] = useState(false);
+  
+    const handleReject = async () => {
+      setIsRejecting(true);
+      try {
+        const currentStage = candidateData.stage;
+        const updatedStatus = {
+          ...candidateData.stageStatus,
+          [currentStage]: 'Rejected'
+        };
+  
+        // Make API call to update the candidate's status
+        const response = await axios.patch(`http://localhost:8008/api/v1/candidates/update/${candidateData._id}`, {
+          stageStatus: updatedStatus
+        });
+  
+        if (response.status === 200) {
+          // Call the onStatusUpdate function to update the local state
+          onStatusUpdate(currentStage, 'Rejected');
+          console.log(`Candidate rejected in ${currentStage} stage`);
+        } else {
+          throw new Error('Failed to update candidate status');
+        }
+      } catch (error) {
+        console.error('Error rejecting candidate:', error);
+        // Handle error (e.g., show error message to user)
+      } finally {
+        setIsRejecting(false);
+      }
+    };
+  
+    return { handleReject, isRejecting };
+  };
 
 
 
 
-const PortfolioStage = ({ candidateData, assignee, onAssigneeChange, allAssignees }) => {
+const PortfolioStage = ({ candidateData, assignee, onAssigneeChange, allAssignees , onStatusUpdate ,onReject}) => {
+    const { handleReject, isRejecting } = useHandleReject(candidateData, onStatusUpdate);
 
     console.log(candidateData)
 
@@ -50,7 +87,7 @@ const PortfolioStage = ({ candidateData, assignee, onAssigneeChange, allAssignee
                     <h1 className='typography-h3 text-white'>Portfolio</h1>
                     <div className='flex text-white'>
 
-                        {candidateData.status}
+                        {candidateData.stageStatus.Portfolio}
                         {candidateData.assignees.Portfolio}
                         {candidateData.portfolio}
                     </div>
@@ -64,16 +101,13 @@ const PortfolioStage = ({ candidateData, assignee, onAssigneeChange, allAssignee
                 </div> */}
             </div>
             <div className='m-8'>
-                <div>
-                    hello
-                </div>
-                {candidateData.status == "Not Assigned" &&
+                {candidateData.stageStatus.Portfolio == "Not Assigned" &&
 
                     <p className='bg-background-80 inline' > This candidate's portfolio has not yet been assigned to a reviewer.</p>
                 }
 
-                {candidateData.status == "Under Review" &&
-                    <p>The portfolio is now being reviewed by the assigned reviewer..</p>
+                {candidateData.stageStatus.Portfolio == "Under Review" &&
+                    <p className='bg-background-80 inline'>The portfolio is now being reviewed by the assigned reviewer..</p>
                 }
             </div>
             <div className='flex' >
@@ -115,7 +149,7 @@ const PortfolioStage = ({ candidateData, assignee, onAssigneeChange, allAssignee
                         </Button> : (
                             <div className='flex gap-6'>
                                 <div className='w-[236px]'>
-                                    <Button variant="cancel" >Reject</Button>
+                                    <Button variant="cancel"onClick={onReject}  >Reject</Button>
                                 </div>
                                 <div className='w-[236px]'>
                                     <Button variant="secondary">Move To Next Round</Button>

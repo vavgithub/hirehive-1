@@ -30,6 +30,7 @@ const allAssignees = ['John', 'Vevaar', 'Komael', 'Eshan', 'Sushmita', 'Jordyn']
 
 
 
+
 const Table = ({ rowsData, onUpdateCandidate }) => {
     const [rows, setRows] = useState(rowsData);
     const [budgetFilteredRows, setBudgetFilteredRows] = useState(rowsData);

@@ -12,9 +12,9 @@ const Navbar = () => {
     }
 
     return (
-        <div className=' flex bg-main-bg bg-cover h-full'>
+        <div className='flex bg-main-bg bg-cover h-full'>
 
-            <div className="flex h-screen w-48 flex-col gap-6 bg-background-100 text-white justify-between py-4 px-4">
+            <div className="fixed flex h-screen w-48 flex-col gap-6 bg-background-100 text-white justify-between py-4 px-4">
                 <div className='flex flex-col gap-5'>
                     {/* <div className="text-xl font-bold">
                         <NavLink to="/admin" end className={({ isActive }) => isActive ? "bg-blue-500" : ""}>HireHive</NavLink>
@@ -23,7 +23,7 @@ const Navbar = () => {
                         <NavLink to="/admin/dashboard" className={({ isActive }) => isActive ? "w-full text-font-accent" : "w-full hover:text-gray-300"}>Dashboard</NavLink>
                     </div>
                     <div>
-                        <NavLink to="/admin/jobs" className={ ({ isActive }) => isActive ? "w-full text-font-accent" : "w-full hover:text-gray-300"} >Jobs</NavLink>
+                        <NavLink to="/admin/jobs" className={({ isActive }) => isActive ? "w-full text-font-accent" : "w-full hover:text-gray-300"} >Jobs</NavLink>
                     </div>
                     <div>
                         <NavLink to="/admin/candidates" className={({ isActive }) => isActive ? "text-font-accent" : "hover:text-gray-300"}>Candidates</NavLink>
@@ -40,8 +40,8 @@ const Navbar = () => {
                 </div>
             </div>
 
-            <div className='w-full'>
-            <Outlet />
+            <div className='ml-[200px] w-full h-full'>
+                <Outlet />
 
             </div>
 

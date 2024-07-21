@@ -179,7 +179,7 @@ const Dashboard = () => {
 
 
     return (
-        <div className="mx-4 pt-4">
+        <div className="mx-4 pt-4 h-screen">
             <div className="flex flex-row justify-between mb-4">
                     <h1 className="font-bold text-white ">Jobs</h1>
                     {/* <Link to="/admin/create-job" className="bg-black text-white px-4 py-2 rounded">Create job listing</Link> */}

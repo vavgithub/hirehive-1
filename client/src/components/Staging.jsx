@@ -5,18 +5,21 @@ import DesignTaskStage from './MultiRounds/DesignTaskStage';
 import Round1Stage from './MultiRounds/Round1Stage';
 import Round2Stage from './MultiRounds/Round2Stage';
 import ProgressIndicator from './ProgressIndicator';
+import axios from 'axios';
 
 const stages = ['Portfolio', 'Screening', 'Design Task', 'Round 1', 'Round 2'];
 const allAssignees = ['John', 'Vevaar', 'Komael', 'Eshan', 'Sushmita', 'Jordyn'];
 
-const Staging = ({ currentStage, candidateData }) => {
+const Staging = ({ currentStage, candidateData: initialCandidateData }) => {
   const [activeStage, setActiveStage] = useState(currentStage);
-  const [assignee, setAssignee] = useState(candidateData.assignee || '');
+  const [candidateData, setCandidateData] = useState(initialCandidateData);
+  const [assignee, setAssignee] = useState(initialCandidateData.assignee || '');
 
   useEffect(() => {
     setActiveStage(currentStage);
-    setAssignee(candidateData.assignee || '');
-  }, [currentStage, candidateData]);
+    setCandidateData(initialCandidateData);
+    setAssignee(initialCandidateData.assignee || '');
+  }, [currentStage, initialCandidateData]);
 
   const isStageAccessible = (stage) => {
     return stages.indexOf(stage) <= stages.indexOf(currentStage);
@@ -54,6 +57,32 @@ const Staging = ({ currentStage, candidateData }) => {
     }
   };
 
+  const handleReject = async (stage) => {
+    try {
+      const updatedStageStatus = {
+        ...candidateData.stageStatus,
+        [stage.replace(/\s+/g, '')]: 'Rejected'
+      };
+
+      const response = await axios.patch(`http://localhost:8008/api/v1/candidates/update/${candidateData._id}`, {
+        stageStatus: updatedStageStatus
+      });
+
+      if (response.status === 200) {
+        setCandidateData(prevData => ({
+          ...prevData,
+          stageStatus: updatedStageStatus
+        }));
+        console.log(`Candidate rejected in ${stage} stage`);
+      } else {
+        throw new Error('Failed to update candidate status');
+      }
+    } catch (error) {
+      console.error('Error rejecting candidate:', error);
+      // Handle error (e.g., show error message to user)
+    }
+  };
+
 
   const renderStageComponent = (stage) => {
     const commonProps = {
@@ -61,6 +90,7 @@ const Staging = ({ currentStage, candidateData }) => {
       assignee: assignee,
       onAssigneeChange: handleAssigneeChange,
       allAssignees: allAssignees,
+      onReject: () => handleReject(stage),
     };
 
     switch (stage) {
@@ -78,27 +108,42 @@ const Staging = ({ currentStage, candidateData }) => {
         return null;
     }
   };
+  const getStageStatus = (stage) => {
+    if (!candidateData || !candidateData.stageStatus) {
+      console.warn(`candidateData or stageStatus is undefined for stage: ${stage}`);
+      return 'Not Started';
+    }
+    const stageKey = stage.replace(/\s+/g, '');  // Remove spaces for object key
+    return candidateData.stageStatus[stageKey] || 'Not Started';
+  };
+
+  if (!candidateData) {
+    return <div>Loading...</div>; // Or some other loading indicator
+  }
 
   return (
     <div>
-      <div className='flex justify-between'>
-        {
-          stages.map((stage, index) => {
-            const isAccessible = isStageAccessible(stage);
-            return (
-              <div key={index} className={`p-2 cursor-pointer ${activeStage === stage
-                ? 'text-font-accent'
-                : isAccessible
-                  ? ' text-white'
-                  : 'text-font-gray cursor-not-allowed'
-                }`} onClick={() => handleStageClick(stage)} >{stage}
-                <ProgressIndicator stage="Portfolio" status={candidateData.status} />
-                </div>
-                
-
-            )
-          })
-        }
+      <div className='flex justify-around '>
+        {stages.map((stage, index) => {
+          const isAccessible = isStageAccessible(stage);
+          const stageStatus = getStageStatus(stage);
+          return (
+            <div 
+              key={index} 
+              className={`p-2 cursor-pointer flex items-center justify-center gap-14 ${
+                activeStage === stage
+                  ? 'text-font-accent'
+                  : isAccessible
+                    ? ' text-white'
+                    : 'text-font-gray cursor-not-allowed'
+              }`} 
+              onClick={() => handleStageClick(stage)}
+            >
+              {stage}
+              <ProgressIndicator stage={stage} status={stageStatus} />
+            </div>
+          )
+        })}
       </div>
       {renderStageComponent(activeStage)}
     </div>

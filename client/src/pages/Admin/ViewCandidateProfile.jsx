@@ -59,7 +59,7 @@ const ViewCandidateProfile = () => {
     const [currentStage, setCurrentStage] = useState('Portfolio');
 
     return (
-        <div className="mx-4 pt-4">
+        <div className="mx-4 pt-4 h-screen">
             {/* <Breadcrumb paths={paths} /> */}
             <div className='flex justify-between'>
                 <div className='bg-background-90' >

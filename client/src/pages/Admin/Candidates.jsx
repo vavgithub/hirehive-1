@@ -195,7 +195,7 @@ const Candidates = () => {
     };
 
     return (
-        <div className='ml-52 pt-4'>
+        <div className='ml-52 pt-4 h-screen'>
             <p className='font-bg text-h1 font-h1'>All Candidates</p>
             <InfoCard data={infoData} />
             <div className="p-5 flex">
