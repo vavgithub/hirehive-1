@@ -6,6 +6,9 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 
 export default function BasicSelect({ label, value, onChange, list }) {
+  // Provide a default empty array if list is undefined
+  const items = list || [];
+
   return (
     <Box sx={{ minWidth: 120 }}>
       <FormControl fullWidth>
@@ -15,7 +18,7 @@ export default function BasicSelect({ label, value, onChange, list }) {
           label={label}
           onChange={onChange}
         >
-          {list.map((item, index) => (
+          {items.map((item, index) => (
             <MenuItem key={index} value={item}>{item}</MenuItem>
           ))}
         </Select>

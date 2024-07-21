@@ -268,7 +268,7 @@ const ViewJobs = () => {
     ];
 
     return (
-        <div className="pt-4">
+        <div className="pt-4 w-full">
             <div onClick={back}>Back</div>
             <div className='flex justify-between'>
                 <div>

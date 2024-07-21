@@ -85,17 +85,17 @@ const candidateSchema = new mongoose.Schema(
         enum: ['Call Pending', 'Call Scheduled', 'Under Review', 'Reviewed', 'Cleared', 'No Show', 'Rejected'],
         default: 'Call Pending'
       },
-      DesignTask: {
+      "Design Task": {
         type: String,
         enum: ['Sent', 'Not Assigned', 'Under Review', 'Reviewed', 'Cleared', 'Rejected', 'Not Submitted'],
         default: 'Not Assigned'
       },
-      Round1: {
+      "Round 1": {
         type: String,
         enum: ['Call Pending', 'Call Scheduled', 'Not Assigned', 'Reviewed', 'Cleared', 'No Show', 'Rejected'],
         default: 'Call Pending'
       },
-      Round2: {
+      "Round 2": {
         type: String,
         enum: ['Call Pending', 'Call Scheduled', 'Not Assigned', 'Reviewed', 'Cleared', 'No Show', 'Rejected'],
         default: 'Call Pending'

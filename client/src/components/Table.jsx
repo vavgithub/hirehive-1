@@ -11,11 +11,11 @@ import InputPopUpModal from './InputPopUpModal';
 import { exportToExcel } from '../utility/exportToExcel';
 
 const stageStatusMap = {
-    Portfolio: ['Not Assigned', 'Under Review', 'Reviewed', 'Cleared', 'Rejected'],
-    Screening: ['Call Pending', 'Call Scheduled', 'Under Review', 'Reviewed', 'Cleared', 'No Show', 'Rejected'],
-    DesignTask: ['Sent', 'Not Assigned', 'Under Review', 'Reviewed', 'Cleared', 'Rejected', 'Not Submitted'],
-    Round1: ['Call Pending', 'Call Scheduled', 'Not Assigned', 'Reviewed', 'Cleared', 'No Show', 'Rejected'],
-    Round2: ['Call Pending', 'Call Scheduled', 'Not Assigned', 'Reviewed', 'Cleared', 'No Show', 'Rejected'],
+    "Portfolio": ['Not Assigned', 'Under Review', 'Reviewed', 'Cleared', 'Rejected'],
+    "Screening": ['Call Pending', 'Call Scheduled', 'Under Review', 'Reviewed', 'Cleared', 'No Show', 'Rejected'],
+    "Design Task": ['Sent', 'Not Assigned', 'Under Review', 'Reviewed', 'Cleared', 'Rejected', 'Not Submitted'],
+    "Round 1": ['Call Pending', 'Call Scheduled', 'Not Assigned', 'Reviewed', 'Cleared', 'No Show', 'Rejected'],
+    "Round 2": ['Call Pending', 'Call Scheduled', 'Not Assigned', 'Reviewed', 'Cleared', 'No Show', 'Rejected'],
 };
 
 const nextStageMap = {
@@ -343,7 +343,7 @@ const Table = ({ rowsData, onUpdateCandidate }) => {
                         label="Status"
                         value={currentStatus}
                         onChange={(e) => handleStatusChange(params.row._id, e.target.value, currentStage)}
-                        list={stageStatusMap[currentStage]}
+                        list={stageStatusMap[currentStage] || []}
                     />
                 );
             },
