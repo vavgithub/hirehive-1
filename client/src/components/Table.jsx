@@ -115,78 +115,50 @@ const Table = ({ rowsData, onUpdateCandidate }) => {
 
     const handleStageChange = async (id, newStage) => {
         try {
-            // Check if the new stage exists in the stageStatusMap
-            if (!stageStatusMap[newStage]) {
-                throw new Error(`Invalid stage: ${newStage}`);
-            }
-    
-            // Get the initial status for the new stage
-            const initialStatus = stageStatusMap[newStage][0];
-    
-            // Prepare the updates object
+            const candidate = rows.find(row => row._id === id);
+            if (!candidate) throw new Error('Candidate not found');
+
+            // Get the current status for the new stage, or use the default if not set
+            const currentStatus = candidate.stageStatus[newStage] || stageStatusMap[newStage][0];
+
             const updates = {
                 stage: newStage,
-                [`stageStatus.${newStage}`]: initialStatus
+                [`stageStatus.${newStage}`]: currentStatus
             };
-    
+
             // Call the updateCandidate function
             await onUpdateCandidate(id, updates);
-    
-            // If the update is successful, update the local state
-            setRows(prevRows => prevRows.map(row => 
-                row._id === id 
-                    ? { 
-                        ...row, 
-                        stage: newStage, 
-                        stageStatus: { ...row.stageStatus, [newStage]: initialStatus } 
-                    } 
+
+            // Update local state
+            setRows(prevRows => prevRows.map(row =>
+                row._id === id
+                    ? { ...row, stage: newStage, stageStatus: { ...row.stageStatus, [newStage]: currentStatus } }
                     : row
             ));
-    
+
             console.log(`Stage updated successfully for candidate ${id}`);
         } catch (error) {
             console.error("Error updating candidate stage:", error);
-            // Optionally, show an error message to the user
         }
     };
 
     const handleStatusChange = async (id, newStatus, stage) => {
         try {
-            const updatedRows = rows.map((row) => {
-                if (row._id === id) {
-                    let updatedRow = { 
-                        ...row, 
-                        stageStatus: { ...row.stageStatus, [stage]: newStatus }
-                    };
-    
-                    // If it's the Portfolio stage and the new status is 'Under Review', 
-                    // also update the assignee if it's currently 'N/A'
-                    if (stage === 'Portfolio' && newStatus === 'Under Review' && row.assignees.Portfolio === 'N/A') {
-                        updatedRow.assignees = { ...row.assignees, Portfolio: 'Auto-assigned' };
-                    }
-    
-                    return updatedRow;
-                }
-                return row;
-            });
-    
-            // Prepare the updates object
-            const updates = { 
-                [`stageStatus.${stage}`]: newStatus
-            };
-            if (stage === 'Portfolio' && newStatus === 'Under Review') {
-                updates['assignees.Portfolio'] = 'Auto-assigned';
-            }
-    
+            const updates = { [`stageStatus.${stage}`]: newStatus };
+
             // Call the updateCandidate function
             await onUpdateCandidate(id, updates);
-    
-            // If the update is successful, update the local state
-            setRows(updatedRows);
-    
+
+            // Update local state
+            setRows(prevRows => prevRows.map(row =>
+                row._id === id
+                    ? { ...row, stageStatus: { ...row.stageStatus, [stage]: newStatus } }
+                    : row
+            ));
+
+            console.log(`Status updated successfully for candidate ${id}`);
         } catch (error) {
-            console.error("Error updating candidate:", error);
-            // Optionally, show an error message to the user
+            console.error("Error updating candidate status:", error);
         }
     };
 
@@ -351,29 +323,27 @@ const Table = ({ rowsData, onUpdateCandidate }) => {
             headerName: 'Stage',
             width: 120,
             renderCell: (params) => (
-              <BasicSelect
-                label="Stage"
-                value={params.value}
-                onChange={(e) => handleStageChange(params.row._id, e.target.value)}
-                list={Object.keys(stageStatusMap)}  // This ensures the list matches stageStatusMap
-              />
+                <BasicSelect
+                    label="Stage"
+                    value={params.row.stage}
+                    onChange={(e) => handleStageChange(params.row._id, e.target.value)}
+                    list={Object.keys(stageStatusMap)}
+                />
             ),
-          },
+        },
         {
             field: 'stageStatus',
             headerName: 'Status',
             width: 200,
-            height: 50,
             renderCell: (params) => {
-                const stage = params.row.stage;
-                const currentStatus = params.row.stageStatus[stage];
-                const list = stageStatusMap[stage] || ['N/A'];
+                const currentStage = params.row.stage;
+                const currentStatus = params.row.stageStatus[currentStage] || stageStatusMap[currentStage][0];
                 return (
                     <BasicSelect
                         label="Status"
                         value={currentStatus}
-                        onChange={(e) => handleStatusChange(params.row._id, e.target.value, stage)}
-                        list={list}
+                        onChange={(e) => handleStatusChange(params.row._id, e.target.value, currentStage)}
+                        list={stageStatusMap[currentStage]}
                     />
                 );
             },
