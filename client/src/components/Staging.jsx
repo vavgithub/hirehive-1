@@ -4,6 +4,7 @@ import ScreeningStage from './MultiRounds/ScreeningStage';
 import DesignTaskStage from './MultiRounds/DesignTaskStage';
 import Round1Stage from './MultiRounds/Round1Stage';
 import Round2Stage from './MultiRounds/Round2Stage';
+import ProgressIndicator from './ProgressIndicator';
 
 const stages = ['Portfolio', 'Screening', 'Design Task', 'Round 1', 'Round 2'];
 const allAssignees = ['John', 'Vevaar', 'Komael', 'Eshan', 'Sushmita', 'Jordyn'];
@@ -90,7 +91,10 @@ const Staging = ({ currentStage, candidateData }) => {
                 : isAccessible
                   ? ' text-white'
                   : 'text-font-gray cursor-not-allowed'
-                }`} onClick={() => handleStageClick(stage)} >{stage}</div>
+                }`} onClick={() => handleStageClick(stage)} >{stage}
+                <ProgressIndicator stage="Portfolio" status={candidateData.status} />
+                </div>
+                
 
             )
           })

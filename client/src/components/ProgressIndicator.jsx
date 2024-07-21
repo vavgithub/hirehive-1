@@ -26,14 +26,14 @@ const ProgressIndicator = ({ stage, status }) => {
   const percentage = getCompletionPercentage(stage, status);
 
   return (
-    <div className="w-full h-8 bg-gray-200 rounded-full">
+    <div className="w-full h-1 bg-background-90 rounded-full">
       <div
-        className=" h-full bg-blue-500 rounded-full"
+        className=" h-full bg-primary-100 rounded-full"
         style={{ width: `${percentage}%` }}
       >
-        {percentage}% complete
+        {percentage}
       </div>
-      {/* <div className=" w-full h-full flex items-center justify-center text-sm font-semibold text-gray-700">
+      {/* <div className=" w-full h-full  flex items-center justify-center text-sm font-semibold text-gray-700">
         {percentage}% complete
       </div> */}
     </div>

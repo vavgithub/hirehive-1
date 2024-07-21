@@ -12,7 +12,7 @@ const Navbar = () => {
     }
 
     return (
-        <div className=' flex bg-main-bg bg-cover h-fulk'>
+        <div className=' flex bg-main-bg bg-cover h-full'>
 
             <div className="flex h-screen w-48 flex-col gap-6 bg-background-100 text-white justify-between py-4 px-4">
                 <div className='flex flex-col gap-5'>

@@ -1,5 +1,3 @@
-// models/candidate.js
-
 import mongoose from "mongoose";
 
 const candidateSchema = new mongoose.Schema(
@@ -49,22 +47,22 @@ const candidateSchema = new mongoose.Schema(
         default: "N/A",
       },
     },
-    latestScore:{
-      "Portfolio":{
-        type:Number,
-        default:0
+    latestScore: {
+      "Portfolio": {
+        type: Number,
+        default: 0
       },
       "Screening": {
         type: Number,
-        default: "N/A",
+        default: 0,
       },
       "Design Task": {
         type: Number,
-        default: "N/A",
+        default: 0,
       },
       "Round 1": {
         type: Number,
-        default: "N/A",
+        default: 0,
       },
     },
     stage: {
@@ -76,11 +74,34 @@ const candidateSchema = new mongoose.Schema(
       type: String,
       default: "N/A",
     },
-    experience: {
-      type: Number,
-      required: true,
+    stageStatus: {
+      Portfolio: {
+        type: String,
+        enum: ['Not Assigned', 'Under Review', 'Reviewed', 'Cleared', 'Rejected'],
+        default: 'Not Assigned'
+      },
+      Screening: {
+        type: String,
+        enum: ['Call Pending', 'Call Scheduled', 'Under Review', 'Reviewed', 'Cleared', 'No Show', 'Rejected'],
+        default: 'Call Pending'
+      },
+      DesignTask: {
+        type: String,
+        enum: ['Sent', 'Not Assigned', 'Under Review', 'Reviewed', 'Cleared', 'Rejected', 'Not Submitted'],
+        default: 'Not Assigned'
+      },
+      Round1: {
+        type: String,
+        enum: ['Call Pending', 'Call Scheduled', 'Not Assigned', 'Reviewed', 'Cleared', 'No Show', 'Rejected'],
+        default: 'Call Pending'
+      },
+      Round2: {
+        type: String,
+        enum: ['Call Pending', 'Call Scheduled', 'Not Assigned', 'Reviewed', 'Cleared', 'No Show', 'Rejected'],
+        default: 'Call Pending'
+      },
     },
-    latestScore: {
+    experience: {
       type: Number,
       required: true,
     },
