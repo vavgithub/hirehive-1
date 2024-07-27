@@ -13,7 +13,7 @@ import { exportToExcel } from '../utility/exportToExcel';
 const stageStatusMap = {
     "Portfolio": ['Not Assigned', 'Under Review', 'Reviewed', 'Cleared', 'Rejected'],
     "Screening": ['Call Pending', 'Call Scheduled', 'Under Review', 'Reviewed', 'Cleared', 'No Show', 'Rejected'],
-    "Design Task": ['Sent', 'Not Assigned', 'Under Review', 'Reviewed', 'Cleared', 'Rejected', 'Not Submitted'],
+    "Design Task": ['Not Assigned','Sent',  'Under Review', 'Reviewed', 'Cleared', 'Rejected', 'Not Submitted'],
     "Round 1": ['Call Pending', 'Call Scheduled', 'Not Assigned', 'Reviewed', 'Cleared', 'No Show', 'Rejected'],
     "Round 2": ['Call Pending', 'Call Scheduled', 'Not Assigned', 'Reviewed', 'Cleared', 'No Show', 'Rejected'],
 };

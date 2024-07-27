@@ -20,7 +20,7 @@ const ProgressIndicator = ({ stage, status }) => {
     if (index === -1) return 0;
 
     // Special cases
-    if (status === 'Rejected' || status === 'No Show' || status === 'Not Submitted') return 100;
+    if (status === 'Rejected' ) return 101;
     if (status === 'Completed' || status === 'Cleared') return 100;
 
     return Math.round((index / (statuses.length - 1)) * 100);
@@ -31,7 +31,7 @@ const ProgressIndicator = ({ stage, status }) => {
   return (
     <div className="w-[100px] h-1 bg-background-90 rounded-full">
       <div
-        className=" h-full bg-primary-100 rounded-full"
+         className={`h-full rounded-full ${percentage === 100 ? 'bg-teal-400' : 'bg-primary-100'} ${percentage === 101 ? 'bg-red-600' : 'bg-primary-100'}`}
         style={{ width: `${percentage}%` }}
       >
         {/* {percentage} */}

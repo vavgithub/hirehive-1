@@ -5,6 +5,7 @@ import { Button } from '../ui/Button';
 import InputPopUpModalAutoSelect from '../InputPopUpModalAutoSelect';
 import FileSaver from 'file-saver';
 import axios from 'axios';
+import Label from '../ui/Label';
 
 const getStageOptions = (stage) => {
     switch (stage) {
@@ -26,43 +27,43 @@ const getStageOptions = (stage) => {
 const useHandleReject = (candidateData, onStatusUpdate) => {
 
     const [isRejecting, setIsRejecting] = useState(false);
-  
+
     const handleReject = async () => {
-      setIsRejecting(true);
-      try {
-        const currentStage = candidateData.stage;
-        const updatedStatus = {
-          ...candidateData.stageStatus,
-          [currentStage]: 'Rejected'
-        };
-  
-        // Make API call to update the candidate's status
-        const response = await axios.patch(`http://localhost:8008/api/v1/candidates/update/${candidateData._id}`, {
-          stageStatus: updatedStatus
-        });
-  
-        if (response.status === 200) {
-          // Call the onStatusUpdate function to update the local state
-          onStatusUpdate(currentStage, 'Rejected');
-          console.log(`Candidate rejected in ${currentStage} stage`);
-        } else {
-          throw new Error('Failed to update candidate status');
+        setIsRejecting(true);
+        try {
+            const currentStage = candidateData.stage;
+            const updatedStatus = {
+                ...candidateData.stageStatus,
+                [currentStage]: 'Rejected'
+            };
+
+            // Make API call to update the candidate's status
+            const response = await axios.patch(`http://localhost:8008/api/v1/candidates/update/${candidateData._id}`, {
+                stageStatus: updatedStatus
+            });
+
+            if (response.status === 200) {
+                // Call the onStatusUpdate function to update the local state
+                onStatusUpdate(currentStage, 'Rejected');
+                console.log(`Candidate rejected in ${currentStage} stage`);
+            } else {
+                throw new Error('Failed to update candidate status');
+            }
+        } catch (error) {
+            console.error('Error rejecting candidate:', error);
+            // Handle error (e.g., show error message to user)
+        } finally {
+            setIsRejecting(false);
         }
-      } catch (error) {
-        console.error('Error rejecting candidate:', error);
-        // Handle error (e.g., show error message to user)
-      } finally {
-        setIsRejecting(false);
-      }
     };
-  
+
     return { handleReject, isRejecting };
-  };
+};
 
 
 
 
-const PortfolioStage = ({ candidateData, assignee, onAssigneeChange, allAssignees , onStatusUpdate ,onReject}) => {
+const PortfolioStage = ({ candidateData, assignee, onAssigneeChange, allAssignees, onStatusUpdate, onReject, onNext }) => {
     const { handleReject, isRejecting } = useHandleReject(candidateData, onStatusUpdate);
 
     console.log(candidateData)
@@ -82,6 +83,8 @@ const PortfolioStage = ({ candidateData, assignee, onAssigneeChange, allAssignee
 
     return (
         <div className='w-full bg-background-100' >
+
+            {/* first layer */}
             <div  >
                 <div className='flex justify-between bg-background-90'>
                     <h1 className='typography-h3 text-white'>Portfolio</h1>
@@ -100,7 +103,11 @@ const PortfolioStage = ({ candidateData, assignee, onAssigneeChange, allAssignee
     
                 </div> */}
             </div>
+
+
+            {/* middle layer */}
             <div className='m-8'>
+                
                 {candidateData.stageStatus.Portfolio == "Not Assigned" &&
 
                     <p className='bg-background-80 inline' > This candidate's portfolio has not yet been assigned to a reviewer.</p>
@@ -109,7 +116,13 @@ const PortfolioStage = ({ candidateData, assignee, onAssigneeChange, allAssignee
                 {candidateData.stageStatus.Portfolio == "Under Review" &&
                     <p className='bg-background-80 inline'>The portfolio is now being reviewed by the assigned reviewer..</p>
                 }
+
+                {candidateData.stageStatus.Portfolio == "Cleared" &&
+                    <Label text="Lorem ipsum dolor sit amet consectetur. Eget congue magna interdum ac gravida elementum suspendisse. Urna amet magna massa mattis blandit vitae eu ante." />
+                }
+
             </div>
+
             <div className='flex' >
                 <div className='w-8 ml-[85%]'>
 
@@ -130,7 +143,10 @@ const PortfolioStage = ({ candidateData, assignee, onAssigneeChange, allAssignee
                     }
                 </div>
             </div>
+
+            {/* third layer */}
             <div className='flex justify-between bg-background-90'>
+
                 <div>
                     <p className='text-white'>Received On</p>
                     <p className='typography-h3 text-white'>
@@ -149,15 +165,14 @@ const PortfolioStage = ({ candidateData, assignee, onAssigneeChange, allAssignee
                         </Button> : (
                             <div className='flex gap-6'>
                                 <div className='w-[236px]'>
-                                    <Button variant="cancel"onClick={onReject}  >Reject</Button>
+                                    <Button variant="cancel" onClick={onReject}  >Reject</Button>
                                 </div>
                                 <div className='w-[236px]'>
-                                    <Button variant="secondary">Move To Next Round</Button>
+                                    <Button variant="secondary" onClick={onNext}>Move To Next Round</Button>
                                 </div>
                             </div>
                         )
                     }
-
                 </div>
 
             </div>

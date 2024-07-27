@@ -4,6 +4,10 @@
 @tailwind components;
 @tailwind utilities;
 
+html{
+  @apply bg-background-80;
+}
+
 body {
   @apply text-white;
 }

@@ -6,9 +6,18 @@ import Round1Stage from './MultiRounds/Round1Stage';
 import Round2Stage from './MultiRounds/Round2Stage';
 import ProgressIndicator from './ProgressIndicator';
 import axios from 'axios';
+import GreenTickIcon from '../svg/Staging/GreenTickIcon';
 
 const stages = ['Portfolio', 'Screening', 'Design Task', 'Round 1', 'Round 2'];
 const allAssignees = ['John', 'Vevaar', 'Komael', 'Eshan', 'Sushmita', 'Jordyn'];
+
+const stageStatusOptions = {
+  Portfolio: ['Not Assigned', 'Under Review', 'Reviewed', 'Cleared', 'Rejected'],
+  Screening: ['Call Pending', 'Call Scheduled', 'Under Review', 'Reviewed', 'Cleared', 'No Show', 'Rejected'],
+  'Design Task': ['Not Assigned', 'Sent', 'Under Review', 'Reviewed', 'Cleared', 'Rejected', 'Not Submitted'],
+  'Round 1': ['Call Pending', 'Call Scheduled', 'Not Assigned', 'Reviewed', 'Cleared', 'No Show', 'Rejected'],
+  'Round 2': ['Call Pending', 'Call Scheduled', 'Not Assigned', 'Reviewed', 'Cleared', 'No Show', 'Rejected'],
+};
 
 const Staging = ({ currentStage, candidateData: initialCandidateData }) => {
   const [activeStage, setActiveStage] = useState(currentStage);
@@ -31,10 +40,10 @@ const Staging = ({ currentStage, candidateData: initialCandidateData }) => {
     }
   };
 
-  const handleAssigneeChange = async(event) => {
+  const handleAssigneeChange = async (event) => {
     const newAssignee = event.target.value;
     setAssignee(newAssignee);
-    
+
     try {
       const response = await fetch(`http://localhost:8008/api/v1/candidates/${candidateData._id}/assignee`, {
         method: 'PATCH',
@@ -43,11 +52,11 @@ const Staging = ({ currentStage, candidateData: initialCandidateData }) => {
         },
         body: JSON.stringify({ assignee: newAssignee }),
       });
-  
+
       if (!response.ok) {
         throw new Error('Failed to update assignee');
       }
-  
+
       // Optionally, you can update the local state with the response data
       const updatedCandidate = await response.json();
       // Update your local state with updatedCandidate if needed
@@ -83,6 +92,44 @@ const Staging = ({ currentStage, candidateData: initialCandidateData }) => {
     }
   };
 
+  const handleNext = async (currentStage) => {
+    try {
+      const currentIndex = stages.indexOf(currentStage);
+      if (currentIndex === stages.length - 1) {
+        throw new Error('Already at the last stage');
+      }
+
+      const nextStage = stages[currentIndex + 1];
+      const nextStageInitialStatus = stageStatusOptions[nextStage][0]; // Get the first status option for the next stage
+
+      const updatedStageStatus = {
+        ...candidateData.stageStatus,
+        [currentStage.replace(/\s+/g, '')]: 'Cleared',
+        [nextStage.replace(/\s+/g, '')]: nextStageInitialStatus
+      };
+
+      const response = await axios.patch(`http://localhost:8008/api/v1/candidates/update/${candidateData._id}`, {
+        stage: nextStage,
+        stageStatus: updatedStageStatus
+      });
+
+      if (response.status === 200) {
+        setCandidateData(prevData => ({
+          ...prevData,
+          stage: nextStage,
+          stageStatus: updatedStageStatus
+        }));
+        setActiveStage(nextStage);
+        console.log(`Candidate moved from ${currentStage} to ${nextStage}`);
+      } else {
+        throw new Error('Failed to update candidate stage');
+      }
+    } catch (error) {
+      console.error('Error moving candidate to next stage:', error);
+      // Handle error (e.g., show error message to user)
+    }
+  };
+
 
   const renderStageComponent = (stage) => {
     const commonProps = {
@@ -91,6 +138,7 @@ const Staging = ({ currentStage, candidateData: initialCandidateData }) => {
       onAssigneeChange: handleAssigneeChange,
       allAssignees: allAssignees,
       onReject: () => handleReject(stage),
+      onNext: () => handleNext(stage),
     };
 
     switch (stage) {
@@ -117,7 +165,7 @@ const Staging = ({ currentStage, candidateData: initialCandidateData }) => {
     return candidateData.stageStatus[stageKey] || 'Not Started';
   };
 
-  if (!candidateData) {
+  if (!candidateData || !candidateData.stageStatus) {
     return <div>Loading...</div>; // Or some other loading indicator
   }
 
@@ -127,19 +175,33 @@ const Staging = ({ currentStage, candidateData: initialCandidateData }) => {
         {stages.map((stage, index) => {
           const isAccessible = isStageAccessible(stage);
           const stageStatus = getStageStatus(stage);
+          const stageKey = stage.replace(/\s+/g, '');
+          const isCleared = candidateData.stageStatus[stageKey] === 'Cleared';
           return (
-            <div 
-              key={index} 
-              className={`p-2 cursor-pointer flex items-center justify-center gap-14 ${
-                activeStage === stage
-                  ? 'text-font-accent'
-                  : isAccessible
-                    ? ' text-white'
-                    : 'text-font-gray cursor-not-allowed'
-              }`} 
+            <div
+              key={index}
+              className={`p-2 cursor-pointer flex items-center justify-center gap-14 ${activeStage === stage
+                ? 'text-font-accent'
+                : isAccessible
+                  ? ' text-white'
+                  : 'text-font-gray cursor-not-allowed'
+                }`}
               onClick={() => handleStageClick(stage)}
             >
-              {stage}
+              <div className='flex flex-col items-center'>
+
+                {isCleared ? (
+                  <GreenTickIcon />
+                ) : (
+                  <div className="typography-small-p flex items-center justify-center w-6 h-6 border-2 border-gray-300 rounded-full">
+                    {index + 1}
+                  </div>
+                )}
+                <div>
+                  {stage}
+
+                </div>
+              </div>
               <ProgressIndicator stage={stage} status={stageStatus} />
             </div>
           )
