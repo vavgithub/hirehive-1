@@ -80,69 +80,57 @@ const PortfolioStage = ({ candidateData, assignee, onAssigneeChange, allAssignee
         )
     };
 
+  if (!candidateData || !candidateData.stageStatus || !candidateData.stageStatus.Portfolio) {
+    return <div>Loading...</div>; // Or some other loading indicator
+  }
+
 
     return (
         <div className='w-full bg-background-100' >
-
-            {/* first layer */}
-            <div  >
-                <div className='flex justify-between bg-background-90'>
-                    <h1 className='typography-h3 text-white'>Portfolio</h1>
-                    <div className='flex text-white'>
-
-                        {candidateData.stageStatus.Portfolio}
-                        {candidateData.assignees.Portfolio}
-                        {candidateData.portfolio}
-                    </div>
-                </div>
-                {/* <div className='flex gap-4' >
-
-                    <div>
-                        <ProgressIndicator stage="Portfolio" status={candidateData.status} />
-                    </div>
-    
-                </div> */}
-            </div>
+      <div>
+        <div className='flex justify-between bg-background-90'>
+          <h1 className='typography-h3 text-white'>Portfolio</h1>
+          <div className='flex text-white'>
+            {candidateData.stageStatus.Portfolio.status}
+            {candidateData.stageStatus.Portfolio.assignee}
+            {candidateData.portfolio}
+          </div>
+        </div>
+      </div>
 
 
             {/* middle layer */}
-            <div className='m-8'>
-                
-                {candidateData.stageStatus.Portfolio == "Not Assigned" &&
+           
+      <div className='m-8'>
+        {candidateData.stageStatus.Portfolio.status === "Not Assigned" &&
+          <p className='bg-background-80 inline'>This candidate's portfolio has not yet been assigned to a reviewer.</p>
+        }
 
-                    <p className='bg-background-80 inline' > This candidate's portfolio has not yet been assigned to a reviewer.</p>
-                }
+        {candidateData.stageStatus.Portfolio.status === "Under Review" &&
+          <p className='bg-background-80 inline'>The portfolio is now being reviewed by the assigned reviewer.</p>
+        }
 
-                {candidateData.stageStatus.Portfolio == "Under Review" &&
-                    <p className='bg-background-80 inline'>The portfolio is now being reviewed by the assigned reviewer..</p>
-                }
+        {candidateData.stageStatus.Portfolio.status === "Cleared" &&
+          <Label text="Lorem ipsum dolor sit amet consectetur. Eget congue magna interdum ac gravida elementum suspendisse. Urna amet magna massa mattis blandit vitae eu ante." />
+        }
+      </div>
 
-                {candidateData.stageStatus.Portfolio == "Cleared" &&
-                    <Label text="Lorem ipsum dolor sit amet consectetur. Eget congue magna interdum ac gravida elementum suspendisse. Urna amet magna massa mattis blandit vitae eu ante." />
-                }
+      <div className='flex'>
+        <div className='w-8 ml-[85%]'>
+          {candidateData.stageStatus.Portfolio.assignee === "N/A" &&
+            <BasicSelect
+              label="Assignee"
+              value={assignee}
+              onChange={onAssigneeChange}
+              list={allAssignees}
+            />
+          }
+          {candidateData.stageStatus.Portfolio.assignee === "N/A" &&
+            <button className="bg-black text-white px-4 py-2 rounded" onClick={() => setIsModalOpenPortfolio(!isModalOpenPortfolio)}>Assign Portfolio</button>
+          }
+        </div>
+      </div>
 
-            </div>
-
-            <div className='flex' >
-                <div className='w-8 ml-[85%]'>
-
-                    {
-                        candidateData.assignee === "Not Assigned" &&
-                        <BasicSelect
-                            label="Assignee"
-                            value={assignee}
-                            onChange={onAssigneeChange}
-                            list={allAssignees}
-                        />
-
-                    }
-                    {
-                        candidateData.assignee === "Not Assigned" &&
-                        <button className="bg-black text-white px-4 py-2 rounded" onClick={() => setIsModalOpenPortfolio(!isModalOpenPortfolio)}>Assign Portfolio</button>
-
-                    }
-                </div>
-            </div>
 
             {/* third layer */}
             <div className='flex justify-between bg-background-90'>

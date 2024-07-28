@@ -8,11 +8,15 @@ import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import { StaticDatePicker } from '@mui/x-date-pickers/StaticDatePicker';
 
-export default function Datepicker({onChange}) {
+export default function Datepicker({ onChange, value }) {
     return (
         <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DemoItem label="Date">
-              <DesktopDatePicker defaultValue={dayjs('2022-04-17')} sx={{color:"white"}}  onChange={(newValue) => onChange(newValue)} />
+              <DesktopDatePicker   
+              value={value ? dayjs(value) : null}
+               defaultValue={dayjs('2022-04-17')} 
+               sx={{color:"white"}}  
+               onChange={(newValue) => onChange(newValue)} />
             </DemoItem>
            
         </LocalizationProvider>

@@ -7,6 +7,7 @@ import Round2Stage from './MultiRounds/Round2Stage';
 import ProgressIndicator from './ProgressIndicator';
 import axios from 'axios';
 import GreenTickIcon from '../svg/Staging/GreenTickIcon';
+import RejectTickIcon from '../svg/Staging/RejectTickIcon';
 
 const stages = ['Portfolio', 'Screening', 'Design Task', 'Round 1', 'Round 2'];
 const allAssignees = ['John', 'Vevaar', 'Komael', 'Eshan', 'Sushmita', 'Jordyn'];
@@ -40,6 +41,11 @@ const Staging = ({ currentStage, candidateData: initialCandidateData }) => {
     }
   };
 
+
+  if (!candidateData || !candidateData.stageStatus) {
+    return <div>Loading...</div>; // Or some other loading indicator
+  }
+
   const handleAssigneeChange = async (event) => {
     const newAssignee = event.target.value;
     setAssignee(newAssignee);
@@ -70,7 +76,7 @@ const Staging = ({ currentStage, candidateData: initialCandidateData }) => {
     try {
       const updatedStageStatus = {
         ...candidateData.stageStatus,
-        [stage.replace(/\s+/g, '')]: 'Rejected'
+        [stage.replace(/\s+/g, '')]: { ...candidateData.stageStatus[stage.replace(/\s+/g, '')], status: 'Rejected' }
       };
 
       const response = await axios.patch(`http://localhost:8008/api/v1/candidates/update/${candidateData._id}`, {
@@ -88,7 +94,6 @@ const Staging = ({ currentStage, candidateData: initialCandidateData }) => {
       }
     } catch (error) {
       console.error('Error rejecting candidate:', error);
-      // Handle error (e.g., show error message to user)
     }
   };
 
@@ -100,12 +105,12 @@ const Staging = ({ currentStage, candidateData: initialCandidateData }) => {
       }
 
       const nextStage = stages[currentIndex + 1];
-      const nextStageInitialStatus = stageStatusOptions[nextStage][0]; // Get the first status option for the next stage
+      const nextStageInitialStatus = stageStatusOptions[nextStage][0];
 
       const updatedStageStatus = {
         ...candidateData.stageStatus,
-        [currentStage.replace(/\s+/g, '')]: 'Cleared',
-        [nextStage.replace(/\s+/g, '')]: nextStageInitialStatus
+        [currentStage.replace(/\s+/g, '')]: { ...candidateData.stageStatus[currentStage.replace(/\s+/g, '')], status: 'Cleared' },
+        [nextStage.replace(/\s+/g, '')]: { ...candidateData.stageStatus[nextStage.replace(/\s+/g, '')], status: nextStageInitialStatus }
       };
 
       const response = await axios.patch(`http://localhost:8008/api/v1/candidates/update/${candidateData._id}`, {
@@ -126,7 +131,6 @@ const Staging = ({ currentStage, candidateData: initialCandidateData }) => {
       }
     } catch (error) {
       console.error('Error moving candidate to next stage:', error);
-      // Handle error (e.g., show error message to user)
     }
   };
 
@@ -161,37 +165,42 @@ const Staging = ({ currentStage, candidateData: initialCandidateData }) => {
       console.warn(`candidateData or stageStatus is undefined for stage: ${stage}`);
       return 'Not Started';
     }
-    const stageKey = stage.replace(/\s+/g, '');  // Remove spaces for object key
-    return candidateData.stageStatus[stageKey] || 'Not Started';
+    const stageKey = stage.replace(/\s+/g, '');
+    return candidateData.stageStatus[stageKey]?.status || 'Not Started';
   };
 
-  if (!candidateData || !candidateData.stageStatus) {
-    return <div>Loading...</div>; // Or some other loading indicator
-  }
+  // if (!candidateData || !candidateData.stageStatus.[stage].status) {
+  //   return <div>Loading...</div>; // Or some other loading indicator
+  // }
 
   return (
     <div>
       <div className='flex justify-around '>
         {stages.map((stage, index) => {
           const isAccessible = isStageAccessible(stage);
-          const stageStatus = getStageStatus(stage);
           const stageKey = stage.replace(/\s+/g, '');
-          const isCleared = candidateData.stageStatus[stageKey] === 'Cleared';
+          const stageData = candidateData.stageStatus[stageKey];
+          const stageStatus = stageData ? stageData.status : 'Not Started';
+          const isCleared = stageStatus === 'Cleared';
+          const isRejected = stageStatus === 'Rejected';
+          
           return (
             <div
               key={index}
-              className={`p-2 cursor-pointer flex items-center justify-center gap-14 ${activeStage === stage
-                ? 'text-font-accent'
-                : isAccessible
-                  ? ' text-white'
-                  : 'text-font-gray cursor-not-allowed'
-                }`}
+              className={`p-2 cursor-pointer flex items-center justify-center gap-14 ${
+                activeStage === stage
+                  ? 'text-font-accent'
+                  : isAccessible
+                    ? ' text-white'
+                    : 'text-font-gray cursor-not-allowed'
+              }`}
               onClick={() => handleStageClick(stage)}
             >
               <div className='flex flex-col items-center'>
-
                 {isCleared ? (
                   <GreenTickIcon />
+                ) : isRejected ? (
+                  <RejectTickIcon />
                 ) : (
                   <div className="typography-small-p flex items-center justify-center w-6 h-6 border-2 border-gray-300 rounded-full">
                     {index + 1}
@@ -199,7 +208,6 @@ const Staging = ({ currentStage, candidateData: initialCandidateData }) => {
                 )}
                 <div>
                   {stage}
-
                 </div>
               </div>
               <ProgressIndicator stage={stage} status={stageStatus} />

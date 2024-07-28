@@ -47,24 +47,6 @@ const candidateSchema = new mongoose.Schema(
         default: "N/A",
       },
     },
-    latestScore: {
-      "Portfolio": {
-        type: Number,
-        default: 0
-      },
-      "Screening": {
-        type: Number,
-        default: 0,
-      },
-      "Design Task": {
-        type: Number,
-        default: 0,
-      },
-      "Round 1": {
-        type: Number,
-        default: 0,
-      },
-    },
     stage: {
       type: String,
       enum: ["Portfolio", "Screening", "Design Task", "Round 1", "Round 2", "Hired"],
@@ -76,30 +58,86 @@ const candidateSchema = new mongoose.Schema(
     },
     stageStatus: {
       Portfolio: {
-        type: String,
-        enum: ['Not Assigned', 'Under Review', 'Reviewed', 'Cleared', 'Rejected'],
-        default: 'Not Assigned'
+        status: {
+          type: String,
+          enum: ['Not Assigned', 'Under Review', 'Reviewed', 'Cleared', 'Rejected'],
+          default: 'Not Assigned'
+        },
+        assignee: {
+          type: String,
+          default: 'N/A'
+        },
+        score: {
+          type: Number,
+          default: 0
+        }
       },
       Screening: {
-        type: String,
-        enum: ['Call Pending', 'Call Scheduled', 'Under Review', 'Reviewed', 'Cleared', 'No Show', 'Rejected'],
-        default: 'Call Pending'
+        status: {
+          type: String,
+          enum: ['Call Pending', 'Call Scheduled', 'Under Review', 'Reviewed', 'Cleared', 'No Show', 'Rejected'],
+          default: 'Call Pending'
+        },
+        assignee: {
+          type: String,
+          default: 'N/A'
+        },
+        scheduledDate: Date,
+        scheduledTime: String,
+        score: {
+          type: Number,
+          default: 0
+        }
       },
       "Design Task": {
-        type: String,
-        enum: ['Sent', 'Not Assigned', 'Under Review', 'Reviewed', 'Cleared', 'Rejected', 'Not Submitted'],
-        default: 'Not Assigned'
+        status: {
+          type: String,
+          enum: ['Sent', 'Not Assigned', 'Under Review', 'Reviewed', 'Cleared', 'Rejected', 'Not Submitted'],
+          default: 'Not Assigned'
+        },
+        assignee: {
+          type: String,
+          default: 'N/A'
+        },
+        score: {
+          type: Number,
+          default: 0
+        }
       },
       "Round 1": {
-        type: String,
-        enum: ['Call Pending', 'Call Scheduled', 'Not Assigned', 'Reviewed', 'Cleared', 'No Show', 'Rejected'],
-        default: 'Call Pending'
+        status: {
+          type: String,
+          enum: ['Call Pending', 'Call Scheduled', 'Not Assigned', 'Reviewed', 'Cleared', 'No Show', 'Rejected'],
+          default: 'Call Pending'
+        },
+        assignee: {
+          type: String,
+          default: 'N/A'
+        },
+        scheduledDate: Date,
+        scheduledTime: String,
+        score: {
+          type: Number,
+          default: 0
+        }
       },
       "Round 2": {
-        type: String,
-        enum: ['Call Pending', 'Call Scheduled', 'Not Assigned', 'Reviewed', 'Cleared', 'No Show', 'Rejected'],
-        default: 'Call Pending'
-      },
+        status: {
+          type: String,
+          enum: ['Call Pending', 'Call Scheduled', 'Not Assigned', 'Reviewed', 'Cleared', 'No Show', 'Rejected'],
+          default: 'Call Pending'
+        },
+        assignee: {
+          type: String,
+          default: 'N/A'
+        },
+        scheduledDate: Date,
+        scheduledTime: String,
+        score: {
+          type: Number,
+          default: 0
+        }
+      }
     },
     experience: {
       type: Number,

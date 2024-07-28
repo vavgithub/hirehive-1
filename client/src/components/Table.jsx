@@ -88,12 +88,18 @@ const Table = ({ rowsData, onUpdateCandidate }) => {
 
     const handleMultipleAssigneeChange = async () => {
         const updatedRows = rows.map((row) => {
-            if (row.stage === 'Portfolio' && row.stageStatus.Portfolio === 'Not Assigned') {
+            if (row.stage === 'Portfolio' && row.stageStatus.Portfolio.status === 'Not Assigned') {
                 const randomAssignee = selectedAssignees[Math.floor(Math.random() * selectedAssignees.length)];
                 return {
                     ...row,
-                    assignees: { ...row.assignees, Portfolio: randomAssignee },
-                    stageStatus: { ...row.stageStatus, Portfolio: 'Under Review' }
+                    stageStatus: { 
+                        ...row.stageStatus, 
+                        Portfolio: { 
+                            ...row.stageStatus.Portfolio, 
+                            status: 'Under Review',
+                            assignee: randomAssignee
+                        } 
+                    }
                 };
             }
             return row;
@@ -103,13 +109,13 @@ const Table = ({ rowsData, onUpdateCandidate }) => {
         setOpenAssigneeModal(false);
 
         const changedCandidates = updatedRows.filter(
-            (row, index) => row.assignees.Portfolio !== rows[index].assignees.Portfolio
+            (row, index) => row.stageStatus.Portfolio.assignee !== rows[index].stageStatus.Portfolio.assignee
         );
 
         for (const candidate of changedCandidates) {
             await onUpdateCandidate(candidate._id, {
-                'assignees.Portfolio': candidate.assignees.Portfolio,
-                'stageStatus.Portfolio': 'Under Review'
+                'stageStatus.Portfolio.assignee': candidate.stageStatus.Portfolio.assignee,
+                'stageStatus.Portfolio.status': 'Under Review'
             });
         }
     };
@@ -119,21 +125,25 @@ const Table = ({ rowsData, onUpdateCandidate }) => {
             const candidate = rows.find(row => row._id === id);
             if (!candidate) throw new Error('Candidate not found');
 
-            // Get the current status for the new stage, or use the default if not set
-            const currentStatus = candidate.stageStatus[newStage] || stageStatusMap[newStage][0];
+            const currentStatus = candidate.stageStatus[newStage]?.status || stageStatusMap[newStage][0];
 
             const updates = {
                 stage: newStage,
-                [`stageStatus.${newStage}`]: currentStatus
+                [`stageStatus.${newStage}.status`]: currentStatus
             };
 
-            // Call the updateCandidate function
             await onUpdateCandidate(id, updates);
 
-            // Update local state
             setRows(prevRows => prevRows.map(row =>
                 row._id === id
-                    ? { ...row, stage: newStage, stageStatus: { ...row.stageStatus, [newStage]: currentStatus } }
+                    ? { 
+                        ...row, 
+                        stage: newStage, 
+                        stageStatus: { 
+                            ...row.stageStatus, 
+                            [newStage]: { ...row.stageStatus[newStage], status: currentStatus } 
+                        } 
+                    }
                     : row
             ));
 
@@ -145,15 +155,19 @@ const Table = ({ rowsData, onUpdateCandidate }) => {
 
     const handleStatusChange = async (id, newStatus, stage) => {
         try {
-            const updates = { [`stageStatus.${stage}`]: newStatus };
+            const updates = { [`stageStatus.${stage}.status`]: newStatus };
 
-            // Call the updateCandidate function
             await onUpdateCandidate(id, updates);
 
-            // Update local state
             setRows(prevRows => prevRows.map(row =>
                 row._id === id
-                    ? { ...row, stageStatus: { ...row.stageStatus, [stage]: newStatus } }
+                    ? { 
+                        ...row, 
+                        stageStatus: { 
+                            ...row.stageStatus, 
+                            [stage]: { ...row.stageStatus[stage], status: newStatus } 
+                        } 
+                    }
                     : row
             ));
 
@@ -221,22 +235,22 @@ const Table = ({ rowsData, onUpdateCandidate }) => {
     const handleAssigneeChange = async (id, stage, newAssignee) => {
         const updatedRows = rows.map((row) => {
             if (row._id === id) {
-                const assignees = { ...row.assignees, [stage]: newAssignee };
                 let stageStatus = { ...row.stageStatus };
+                stageStatus[stage] = { 
+                    ...stageStatus[stage], 
+                    assignee: newAssignee,
+                    status: stage === 'Portfolio' && newAssignee !== 'N/A' ? 'Under Review' : stageStatus[stage].status
+                };
 
-                if (stage === 'Portfolio' && newAssignee !== 'N/A') {
-                    stageStatus.Portfolio = 'Under Review';
-                }
-
-                return { ...row, assignees, stageStatus };
+                return { ...row, stageStatus };
             }
             return row;
         });
         setRows(updatedRows);
 
         const updates = {
-            [`assignees.${stage}`]: newAssignee,
-            [`stageStatus.${stage}`]: stage === 'Portfolio' && newAssignee !== 'N/A' ? 'Under Review' : undefined
+            [`stageStatus.${stage}.assignee`]: newAssignee,
+            [`stageStatus.${stage}.status`]: stage === 'Portfolio' && newAssignee !== 'N/A' ? 'Under Review' : undefined
         };
 
         await onUpdateCandidate(id, updates);
@@ -338,7 +352,7 @@ const Table = ({ rowsData, onUpdateCandidate }) => {
             width: 200,
             renderCell: (params) => {
                 const currentStage = params.row.stage;
-                const currentStatus = params.row.stageStatus[currentStage] || stageStatusMap[currentStage][0];
+                const currentStatus = params.row.stageStatus[currentStage]?.status || stageStatusMap[currentStage][0];
                 return (
                     <BasicSelect
                         label="Status"
@@ -350,11 +364,34 @@ const Table = ({ rowsData, onUpdateCandidate }) => {
             },
         },
         {
-            field: 'assignees',
+            field: 'assignee',
             headerName: 'Assignee',
             width: 130,
-            valueGetter: (params, row) => `${row?.assignees?.[row?.stage]}`
+            renderCell: (params) => {
+                const currentStage = params.row.stage;
+                const currentAssignee = params.row.stageStatus[currentStage]?.assignee || 'N/A';
+                return (
+                    <BasicSelect
+                        label="Assignee"
+                        value={currentAssignee}
+                        onChange={(e) => handleAssigneeChange(params.row._id, currentStage, e.target.value)}
+                        list={['N/A', ...allAssignees]}
+                    />
+                );
+            },
         },
+        // {
+            // field: 'assignees',
+            // headerName: 'Assignee',
+            // width: 130,
+            // valueGetter: (params) => params.row.assignees[params.row.stage] || 'N/A'
+        // },
+        // {
+        //     field: 'assignees',
+        //     headerName: 'Assignee',
+        //     width: 130,
+        //     valueGetter: (params, row) => `${row?.assignees?.[row?.stage]}`
+        // },
         {
             field: 'actions',
             headerName: 'Actions',

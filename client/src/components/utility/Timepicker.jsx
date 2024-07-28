@@ -8,10 +8,10 @@ import { MobileTimePicker } from '@mui/x-date-pickers/MobileTimePicker';
 import { DesktopTimePicker } from '@mui/x-date-pickers/DesktopTimePicker';
 import { StaticTimePicker } from '@mui/x-date-pickers/StaticTimePicker';
 
-export default function Timepicker({onChange}) {
-    return (
-      <LocalizationProvider dateAdapter={AdapterDayjs}>
-        {/* <DemoContainer
+export default function Timepicker({ onChange, value }) {
+  return (
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      {/* <DemoContainer
           components={[
             'TimePicker',
             'MobileTimePicker',
@@ -19,11 +19,14 @@ export default function Timepicker({onChange}) {
             'StaticTimePicker',
           ]}
         > */}
-          <DemoItem label="Time">
-            <DesktopTimePicker defaultValue={dayjs('2022-04-17T15:30')}  onChange={(newValue) => onChange(newValue)} />
-          </DemoItem>
-         
-        {/* </DemoContainer> */}
-      </LocalizationProvider>
-    );
-  }
+      <DemoItem label="Time">
+        <DesktopTimePicker 
+        value={value ? dayjs(`2022-04-17T${value}`) : null}
+        defaultValue={dayjs('2022-04-17T15:30')} 
+        onChange={(newValue) => onChange(newValue)} />
+      </DemoItem>
+
+      {/* </DemoContainer> */}
+    </LocalizationProvider>
+  );
+}

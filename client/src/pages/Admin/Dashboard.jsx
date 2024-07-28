@@ -149,7 +149,7 @@ const Dashboard = () => {
     };
 
     const handleViewJob = (jobId) => {
-        navigate(`/admin/view-job/${jobId}`);
+        navigate(`/admin/jobs/view-job/${jobId}`);
     };
 
     // const token = localStorage.getItem('accessToken');

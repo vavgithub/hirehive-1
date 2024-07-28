@@ -46,7 +46,7 @@ export const router = createBrowserRouter([
         element: <EditJobs />
       },
       {
-        path: "view-job/:id",
+        path: "jobs/view-job/:id",
         element: <ViewJobs />,
       },
       {
