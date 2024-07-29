@@ -8,6 +8,7 @@ import WarningIcon from '../../svg/Staging/WarningIcon';
 import DatePicker from '../utility/Datepicker';
 import TimePicker from '../utility/Timepicker';
 import axios from 'axios';
+import AssigneeSelector from '../utility/AssigneeSelector';
 
 const getStageOptions = (stage) => {
     switch (stage) {
@@ -46,6 +47,11 @@ const ScreeningStage = ({ candidateData: initialCandidateData, onStatusUpdate })
     const handleTimeChange = (time) => {
         setSelectedTime(time);
     };
+
+    const handleAssigneeSelect = (assignee) => {
+        console.log('Selected assignee:', assignee);
+        // Do something with the selected assignee
+      };
 
     const isUpdateDisabled = !selectedDate || !selectedTime;
 
@@ -100,40 +106,47 @@ const ScreeningStage = ({ candidateData: initialCandidateData, onStatusUpdate })
                         <div className='flex gap-4'>
                             <DatePicker onChange={handleDateChange} value={selectedDate} />
                             <TimePicker onChange={handleTimeChange} value={selectedTime} />
+                            <div className='w-52'>
+
+                            <AssigneeSelector mode="input" onSelect={handleAssigneeSelect} />
+                            </div>
+                          
                         </div>
                     </>
                 );
-            case 'Call Scheduled':
-                return (
-                    <Label
+                case 'Call Scheduled':
+                    return (
+                        <Label
                         text={`Call scheduled for ${new Date(scheduledDate).toLocaleDateString()} at ${scheduledTime}`}
-                    />
-                );
-            case 'Under Review':
-                return <Label text="Candidate is under review" />;
-            case 'Reviewed':
-                return <Label text="Candidate has been reviewed" />;
-            case 'Cleared':
-                return <Label text="Candidate has cleared this stage" />;
-            case 'No Show':
+                        />
+                    );
+                    case 'Under Review':
+                        return <Label text="Candidate is under review" />;
+                        case 'Reviewed':
+                            return <Label text="Candidate has been reviewed" />;
+                            case 'Cleared':
+                                return <Label text="Candidate has cleared this stage" />;
+                                case 'No Show':
                 return <Label icon={<WarningIcon />} text="Candidate did not show up for the call" />;
             case 'Rejected':
                 return <Label text="Candidate has been rejected at this stage" />;
-            default:
+                default:
                 return null;
-        }
-    };
-
-    return (
-        <div className='w-full bg-background-100'>
+            }
+        };
+        
+        return (
+            <div className='w-full bg-background-100'>
 
             {/* first layer */}
             <div  >
                 <div className='flex justify-between bg-background-90'>
                     <h1 className='typography-h3 text-white'>Portfolio</h1>
-                    <div className='flex text-white'>
+                    <div className='flex text-white '>
 
                         {candidateData.stageStatus.Screening.status}
+            <AssigneeSelector mode="icon" onSelect={handleAssigneeSelect} />
+                        
                         {candidateData.assignees.Screening}
                         {candidateData.budget}LPA
                     </div>
