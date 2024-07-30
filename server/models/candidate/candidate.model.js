@@ -82,6 +82,10 @@ const candidateSchema = new mongoose.Schema(
           type: String,
           default: 'N/A'
         },
+        meetingLink:{
+          type:String,
+          default:'N/A'
+        },
         scheduledDate: Date,
         scheduledTime: String,
         score: {

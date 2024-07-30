@@ -22,7 +22,7 @@ const Button = React.forwardRef(({
   };
   
   const sizes = {
-    default: "w-full h-10 py-2 px-4",
+    default: "h-10 py-2 px-4",
     sm: "h-9 px-3 rounded-md",
     lg: "h-11 px-8 rounded-md",
   };

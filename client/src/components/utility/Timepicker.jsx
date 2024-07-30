@@ -19,12 +19,11 @@ export default function Timepicker({ onChange, value }) {
             'StaticTimePicker',
           ]}
         > */}
-      <DemoItem label="Time">
+   
         <DesktopTimePicker 
         value={value ? dayjs(`2022-04-17T${value}`) : null}
         defaultValue={dayjs('2022-04-17T15:30')} 
         onChange={(newValue) => onChange(newValue)} />
-      </DemoItem>
 
       {/* </DemoContainer> */}
     </LocalizationProvider>

@@ -15,6 +15,10 @@ input {
   @apply bg-background-40; /* Replace bg-gray-200 with your desired background color class */
 }
 
+h2{
+  @apply font-bricolage text-h2 font-h2;
+}
+
 @layer components {
   .typography-h1 {
     @apply font-bricolage text-h1 font-bold;
@@ -71,6 +75,7 @@ input {
     --color-background-100:rgba(22, 23, 24, 1);
     --color-background-80:rgba(27, 28, 29, 1);
     --color-background-90:rgba(18, 19, 20, 1);
+    --color-background-70:rgba(32, 33, 34, 1);    
     --color-background-60:rgba(35, 36, 37, 1);
     --color-background-40:rgba(12, 13, 13, 1);
     --color-background-30:rgba(27, 28, 29, 1);
