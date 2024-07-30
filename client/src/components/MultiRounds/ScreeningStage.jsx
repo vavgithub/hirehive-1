@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import InputPopUpModalAutoSelect from '../InputPopUpModalAutoSelect'
 import { Button } from '../ui/Button'
 import BasicSelect from '../BasicSelect';
@@ -70,53 +70,65 @@ const ScreeningStage = ({ candidateData: initialCandidateData, onStatusUpdate })
         setSelectedTime(null);
         setMeetLink(null);
       };  
-
-      useEffect(() => {
-        const checkCallTime = () => {
-            if (candidateData.stageStatus.Screening.status === 'Call Scheduled') {
-                const currentCall = candidateData.stageStatus.Screening.currentCall;
-                
-                if (!currentCall.scheduledDate || !currentCall.scheduledTime) {
-                    console.error('Invalid scheduledDate or scheduledTime');
-                    return;
-                }
-
-                try {
-                    // Parse the scheduled date and time
-                    const scheduledDate = new Date(currentCall.scheduledDate);
-                    const scheduledTime = new Date(currentCall.scheduledTime);
-
-                    // Create a new Date object using UTC values
-                    const callDateTime = new Date(Date.UTC(
-                        scheduledDate.getUTCFullYear(),
-                        scheduledDate.getUTCMonth(),
-                        scheduledDate.getUTCDate(),
-                        scheduledTime.getUTCHours(),
-                        scheduledTime.getUTCMinutes(),
-                        0  // seconds
-                    ));
-
-                    const now = new Date();
-
-                    // Compare the combined date-time with current time
-                    const hasCallPassed = now > callDateTime;
-                    setIsCallPassed(hasCallPassed);
-
-                    console.log('Current time:', now.toISOString());
-                    console.log('Scheduled call time:', callDateTime.toISOString());
-                    console.log('Has call passed:', hasCallPassed);
-                } catch (error) {
-                    console.error('Error parsing date or time:', error);
-                    setIsCallPassed(false); // Default to not passed if there's an error
-                }
+      const checkCallTime = useCallback(() => {
+        if (candidateData.stageStatus.Screening.status === 'Call Scheduled') {
+            const currentCall = candidateData.stageStatus.Screening.currentCall;
+            
+            if (!currentCall.scheduledDate || !currentCall.scheduledTime) {
+                console.error('Invalid scheduledDate or scheduledTime');
+                return false;
             }
-        };
 
-        checkCallTime();
-        const timer = setInterval(checkCallTime, 60000); // Check every minute
+            try {
+                const scheduledDate = new Date(currentCall.scheduledDate);
+                const scheduledTime = new Date(currentCall.scheduledTime);
+
+                const callDateTime = new Date(Date.UTC(
+                    scheduledDate.getUTCFullYear(),
+                    scheduledDate.getUTCMonth(),
+                    scheduledDate.getUTCDate(),
+                    scheduledTime.getUTCHours(),
+                    scheduledTime.getUTCMinutes(),
+                    0
+                ));
+
+                const now = new Date();
+                const hasCallPassed = now > callDateTime;
+
+                console.log('Current time:', now.toISOString());
+                console.log('Scheduled call time:', callDateTime.toISOString());
+                console.log('Has call passed:', hasCallPassed);
+
+                setIsCallPassed(hasCallPassed);
+                return hasCallPassed;
+            } catch (error) {
+                console.error('Error parsing date or time:', error);
+                setIsCallPassed(false);
+                return false;
+            }
+        }
+        return false;
+    }, [candidateData]);
+
+    useEffect(() => {
+        if (isCallPassed) {
+            return; // Don't set up the interval if the call has already passed
+        }
+
+        const initialCheck = checkCallTime();
+        if (initialCheck) {
+            return; // Don't set up the interval if the initial check shows the call has passed
+        }
+
+        const timer = setInterval(() => {
+            const hasCallPassed = checkCallTime();
+            if (hasCallPassed) {
+                clearInterval(timer);
+            }
+        }, 1000); // Check every minute
 
         return () => clearInterval(timer);
-    }, [candidateData]);
+    }, [checkCallTime, isCallPassed]);
 
 
     const handleNext = ()=>{
