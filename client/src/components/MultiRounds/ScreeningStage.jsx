@@ -47,6 +47,7 @@ const formatTime = (dateString) => {
 
 const ScreeningStage = ({ candidateData: initialCandidateData, onStatusUpdate }) => {
     const [candidateData, setCandidateData] = useState(initialCandidateData);
+    const [isCallPassed, setIsCallPassed] = useState(false);
 
     const [selectedAssignee, setSelectedAssignee] = useState(
         candidateData.stageStatus.Screening.assignee
@@ -69,6 +70,59 @@ const ScreeningStage = ({ candidateData: initialCandidateData, onStatusUpdate })
         setSelectedTime(null);
         setMeetLink(null);
       };  
+
+      useEffect(() => {
+        const checkCallTime = () => {
+            if (candidateData.stageStatus.Screening.status === 'Call Scheduled') {
+                const currentCall = candidateData.stageStatus.Screening.currentCall;
+                
+                if (!currentCall.scheduledDate || !currentCall.scheduledTime) {
+                    console.error('Invalid scheduledDate or scheduledTime');
+                    return;
+                }
+
+                try {
+                    // Parse the scheduled date and time
+                    const scheduledDate = new Date(currentCall.scheduledDate);
+                    const scheduledTime = new Date(currentCall.scheduledTime);
+
+                    // Create a new Date object using UTC values
+                    const callDateTime = new Date(Date.UTC(
+                        scheduledDate.getUTCFullYear(),
+                        scheduledDate.getUTCMonth(),
+                        scheduledDate.getUTCDate(),
+                        scheduledTime.getUTCHours(),
+                        scheduledTime.getUTCMinutes(),
+                        0  // seconds
+                    ));
+
+                    const now = new Date();
+
+                    // Compare the combined date-time with current time
+                    const hasCallPassed = now > callDateTime;
+                    setIsCallPassed(hasCallPassed);
+
+                    console.log('Current time:', now.toISOString());
+                    console.log('Scheduled call time:', callDateTime.toISOString());
+                    console.log('Has call passed:', hasCallPassed);
+                } catch (error) {
+                    console.error('Error parsing date or time:', error);
+                    setIsCallPassed(false); // Default to not passed if there's an error
+                }
+            }
+        };
+
+        checkCallTime();
+        const timer = setInterval(checkCallTime, 60000); // Check every minute
+
+        return () => clearInterval(timer);
+    }, [candidateData]);
+
+
+    const handleNext = ()=>{
+        console.log("heheehe");
+    }
+
 
     // useEffect(() => {
     //     if (candidateData.stageStatus.Screening.status === 'Call Scheduled') {
@@ -379,11 +433,17 @@ const ScreeningStage = ({ candidateData: initialCandidateData, onStatusUpdate })
 
                 <div>
                 {candidateData.stageStatus.Screening.status === "Call Scheduled" && !isRescheduling && (
-            <div className='flex gap-2'>
-              <Button variant="cancel">No Show</Button>
-              <Button variant="primary" onClick={handleReschedule}>Reschedule Call</Button>
-            </div>
-          )}
+                        <div className='flex gap-2'>
+                            {isCallPassed ? (
+                                <Button variant="primary" onClick={handleNext}>Next</Button>
+                            ) : (
+                                <>
+                                    <Button variant="cancel">No Show</Button>
+                                    <Button variant="primary" onClick={handleReschedule}>Reschedule Call</Button>
+                                </>
+                            )}
+                        </div>
+                    )}
           {isRescheduling && (
             <div className='flex gap-2'>
               <Button
