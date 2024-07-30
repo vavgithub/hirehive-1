@@ -12,6 +12,15 @@ export default {
           "linear-gradient(180deg, var(--tw-gradient-stops))",
       },
       colors: {        
+        red: {
+          100: "rgba(255, 56, 92, 0.2)", // Custom value for red-200
+        },
+        yellow:{
+          100: "rgba(237, 189, 20, 0.2)",
+        },
+        green:{
+          100:"rgba(20, 225, 89, 0.2)"
+        },        
         primary: {
           100: "var(--color-primary-100)",
           200: "var(--color-primary-200)",
@@ -23,6 +32,9 @@ export default {
         },
         accent: {
           100: "var(--color-font-accent-100)",
+          red: "var(--color-red-100)",
+          yellow: "var(--color-yellow-100)",
+          green: "var(--color-green-100)",
         },
         background: {
           100: "var(--color-background-100)",
@@ -32,12 +44,16 @@ export default {
           60: "var(--color-background-60)",
           40: "var(--color-background-40)",
           30: `var(--color-background-30)`,
+          yellow: "var(--color-yellow-100)",
+          green: "var(--color-green-100)",
         },
         font: {
           primary: "var(--color-primary-100)",
           secondary: "var(--color-font-secondary)",
           accent: "var(--color-font-accent-100)",
           gray: "var(--color-font-gray-90)",
+          red:"var(--color-red-100)",
+          yellow:"var(--color-yellow-100)"
         },
       },
 

@@ -82,12 +82,17 @@ const candidateSchema = new mongoose.Schema(
           type: String,
           default: 'N/A'
         },
-        meetingLink:{
-          type:String,
-          default:'N/A'
+        currentCall: {
+          scheduledDate: Date,
+          scheduledTime: String,
+          meetingLink: String
         },
-        scheduledDate: Date,
-        scheduledTime: String,
+        callHistory: [{
+          scheduledDate: Date,
+          scheduledTime: String,
+          meetingLink: String,
+          status: String // 'Scheduled', 'Completed', 'Rescheduled', 'No Show'
+        }],
         score: {
           type: Number,
           default: 0

@@ -14,6 +14,7 @@ import CalenderIcon from '../../svg/Staging/CalenderIcon';
 import LinkIcon from '../../svg/Staging/LinkIcon';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import ClipboardIcon from '../../svg/Staging/ClipboardIcon';
+import StatusBadge from '../ui/StatusBadge';
 
 const getStageOptions = (stage) => {
     switch (stage) {
@@ -55,6 +56,19 @@ const ScreeningStage = ({ candidateData: initialCandidateData, onStatusUpdate })
     const [selectedDate, setSelectedDate] = useState(null);
     const [selectedTime, setSelectedTime] = useState(null);
     const [meetLink, setMeetLink] = useState(null);
+
+    const [isRescheduling, setIsRescheduling] = useState(false);
+
+    const handleReschedule = () => {
+        setIsRescheduling(true);
+      };
+
+      const handleCancelReschedule = () => {
+        setIsRescheduling(false);
+        setSelectedDate(null);
+        setSelectedTime(null);
+        setMeetLink(null);
+      };  
 
     // useEffect(() => {
     //     if (candidateData.stageStatus.Screening.status === 'Call Scheduled') {
@@ -121,14 +135,16 @@ const ScreeningStage = ({ candidateData: initialCandidateData, onStatusUpdate })
                     Screening: {
                         ...candidateData.stageStatus.Screening,
                         status: 'Call Scheduled',
-                        scheduledDate: selectedDate,
-                        scheduledTime: selectedTime,
-                        meetingLink: meetLink,
-                        assignee: selectedAssignee ? selectedAssignee.name : null
+                        assignee: selectedAssignee ? selectedAssignee.name : null,
+                        currentCall: {
+                            scheduledDate: selectedDate,
+                            scheduledTime: selectedTime,
+                            meetingLink: meetLink
+                        },
                     }
                 }
             });
-
+    
             if (response.status === 200) {
                 setCandidateData(prevData => ({
                     ...prevData,
@@ -137,9 +153,12 @@ const ScreeningStage = ({ candidateData: initialCandidateData, onStatusUpdate })
                         Screening: {
                             ...prevData.stageStatus.Screening,
                             status: 'Call Scheduled',
-                            scheduledDate: selectedDate,
-                            scheduledTime: selectedTime,
-                            assignee: selectedAssignee ? selectedAssignee.name : null
+                            assignee: selectedAssignee ? selectedAssignee.name : null,
+                            currentCall: {
+                                scheduledDate: selectedDate,
+                                scheduledTime: selectedTime,
+                                meetingLink: meetLink
+                            },
                         }
                     }
                 }));
@@ -151,8 +170,43 @@ const ScreeningStage = ({ candidateData: initialCandidateData, onStatusUpdate })
         }
     };
 
+    const handleUpdateReschedule = async () => {
+        try {
+          const response = await axios.patch(`http://localhost:8008/api/v1/candidates/update/${candidateData._id}`, {
+            stageStatus: {
+              ...candidateData.stageStatus,
+              Screening: {
+                ...candidateData.stageStatus.Screening,
+                currentCall: {
+                  scheduledDate: selectedDate,
+                  scheduledTime: selectedTime,
+                  meetingLink: meetLink
+                },
+                callHistory: [
+                  ...candidateData.stageStatus.Screening.callHistory,
+                  {
+                    ...candidateData.stageStatus.Screening.currentCall,
+                    status: 'Rescheduled'
+                  }
+                ]
+              }
+            }
+          });
+    
+          if (response.status === 200) {
+            setCandidateData(response.data);
+            setIsRescheduling(false);
+            alert('Call rescheduled successfully!');
+          }
+        } catch (error) {
+          console.error('Error rescheduling call:', error);
+          alert('Failed to reschedule the call. Please try again.');
+        }
+      };
+
     const renderStatusLabel = () => {
-        const { status, scheduledDate, scheduledTime, meetingLink } = candidateData.stageStatus.Screening;
+        // const { status, scheduledDate, scheduledTime, meetingLink } = candidateData.stageStatus.Screening;
+        const { status, currentCall, callHistory } = candidateData.stageStatus.Screening;
 
         switch (status) {
             case 'Call Pending':
@@ -195,19 +249,17 @@ const ScreeningStage = ({ candidateData: initialCandidateData, onStatusUpdate })
             case 'Call Scheduled':
                 return (
                     <>
-                        {/* <Label
-                            text={`Call scheduled for ${new Date(scheduledDate).toLocaleDateString()} at ${scheduledTime} with ${candidateData.stageStatus.Screening.assignee} link is ${candidateData.stageStatus.Screening.meetingLink} `}
-                        /> */}
-
-                        {/* <Label text="The screening call has been scheduled. You can reschedule or cancel the call if needed." /> */}
-                        <p className='typography-large-p text-font-gray pb-8' > The screening call has been scheduled. You can reschedule or cancel the call if needed.</p>
-                        <div className='bg-background-80 grid grid-cols-3 rounded-xl p-4'>
-                            <div className='flex flex-col'>
+                      <p className='typography-large-p text-font-gray pb-8'>
+                        The screening call has been scheduled. You can reschedule or cancel the call if needed.
+                      </p>
+                      <div className='bg-background-80 grid grid-cols-3 rounded-xl p-4'>
+                        {/* ... existing scheduled call details ... */}
+                        <div className='flex flex-col'>
                                 <span className='typography-small-p text-font-gray'>Date</span>
                                 <div className='flex items-center gap-2'>
                                     <CalenderIcon />
                                     <h2>
-                                        {new Date(scheduledDate).toLocaleDateString()}
+                                        {new Date(currentCall.scheduledDate).toLocaleDateString()}
                                     </h2>
                                 </div>
                             </div>
@@ -217,7 +269,7 @@ const ScreeningStage = ({ candidateData: initialCandidateData, onStatusUpdate })
                                 <div className='flex items-center gap-2'>
                                     <ClockIcon />
                                     <h2>
-                                        {formatTime(scheduledTime)}
+                                        {formatTime(currentCall.scheduledTime)}
                                     </h2>
                                 </div>
                             </div>
@@ -227,17 +279,48 @@ const ScreeningStage = ({ candidateData: initialCandidateData, onStatusUpdate })
                                 <div className='flex items-center gap-2'>
                                     <LinkIcon />
                                     <h2 className='mr-2 text-font-primary'>screening_meeting_link</h2>
-                                    <CopyToClipboard text={meetingLink}>
+                                    <CopyToClipboard text={currentCall.meetingLink}>
                                         <button className='flex items-center bg-background-70 px-[10px] py-[10px] rounded-xl'>
                                             <ClipboardIcon />
                                         </button>
                                     </CopyToClipboard>
                                 </div>
                             </div>
-
+                      </div>
+                      {isRescheduling && (
+                        <div className='mt-4 grid grid-cols-3 gap-6'>
+                          <div className='flex flex-col'>
+                            <span>New Date</span>
+                            <DatePicker onChange={handleDateChange} value={selectedDate} />
+                          </div>
+                          <div className='flex flex-col'>
+                            <span>New Time</span>
+                            <TimePicker onChange={handleTimeChange} value={selectedTime} />
+                          </div>
+                          <div className='flex flex-col'>
+                            <span>New Meeting Link</span>
+                            <input
+                              type="text"
+                              placeholder='Enter Meeting Link'
+                              className='outline-none'
+                              value={meetLink}
+                              onChange={(e) => handleMeetChange(e)}
+                            />
+                          </div>
                         </div>
+                      )}
+                      {callHistory.length > 0 && (
+                        <div className='mt-4'>
+                          <h3>Previous Schedules:</h3>
+                          {callHistory.map((call, index) => (
+                            <div key={index}>
+                              <p>{new Date(call.scheduledDate).toLocaleDateString()} at {formatTime(call.scheduledTime)} - {call.status}</p>
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </>
-                );
+                  );
             case 'Under Review':
                 return <Label text="Candidate is under review" />;
             case 'Reviewed':
@@ -261,8 +344,9 @@ const ScreeningStage = ({ candidateData: initialCandidateData, onStatusUpdate })
                 <div className='flex justify-between bg-background-90'>
                     <h1 className='typography-h3 text-white'>Screening</h1>
                     <div className='flex text-white '>
+                    <StatusBadge status={candidateData.stageStatus.Screening.status} />
 
-                        {candidateData.stageStatus.Screening.status}
+                        
                         <AssigneeSelector
                             mode="icon"
                             value={selectedAssignee}
@@ -294,27 +378,33 @@ const ScreeningStage = ({ candidateData: initialCandidateData, onStatusUpdate })
                 </div>
 
                 <div>
-                    {candidateData.stageStatus.Screening.status === "Call Scheduled" &&
-
-                        <div className='flex gap-2'>
-                            <Button variant="secondary">
-                                No Show
-                            </Button>
-
-                            <Button variant="primary">
-                                Reschedule Call
-                            </Button>
-                        </div>
-                    }
-
-                    {candidateData.stageStatus.Screening.status === "Call Pending" &&
-                        <Button
-                            variant="primary"
-                            disabled={isUpdateDisabled}
-                            onClick={handleUpdate}
-                        >
-                            Update
-                        </Button>}
+                {candidateData.stageStatus.Screening.status === "Call Scheduled" && !isRescheduling && (
+            <div className='flex gap-2'>
+              <Button variant="cancel">No Show</Button>
+              <Button variant="primary" onClick={handleReschedule}>Reschedule Call</Button>
+            </div>
+          )}
+          {isRescheduling && (
+            <div className='flex gap-2'>
+              <Button
+                variant="primary"
+                disabled={!selectedDate || !selectedTime || !meetLink}
+                onClick={handleUpdateReschedule}
+              >
+                Update
+              </Button>
+              <Button variant="secondary" onClick={handleCancelReschedule}>Cancel</Button>
+            </div>
+          )}
+          {candidateData.stageStatus.Screening.status === "Call Pending" && (
+            <Button
+              variant="primary"
+              disabled={isUpdateDisabled}
+              onClick={handleUpdate}
+            >
+              Update
+            </Button>
+          )}
 
 
 
