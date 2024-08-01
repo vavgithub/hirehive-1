@@ -24,7 +24,7 @@ const StatusBadge = ({ status }) => {
   const colorClasses = getStatusColor(status);
 
   return (
-    <div className={`flex items-center rounded-xl justify-between px-4 py-2   ${colorClasses}`}>
+    <div className={`flex items-center rounded-xl justify-between px-4 py-2 h-8  ${colorClasses}`}>
       <span className="typography-body">{status}</span>
     </div>
   );

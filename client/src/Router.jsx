@@ -19,6 +19,7 @@ import ErrorPage from "./pages/Admin/ErrorPage";
 import Applyjob from "./pages/Candidate/CandidateViewJob";
 import CandidateViewJob from "./pages/Candidate/CandidateViewJob";
 import ApplyJob from "./pages/Candidate/ApplyJob";
+import RejectCandidatePopUp from "./components/utility/RejectCandidatePopUp";
 
 export const router = createBrowserRouter([
   {
@@ -84,5 +85,10 @@ export const router = createBrowserRouter([
   {
     path: "*",
     element: <ErrorPage />
+  },
+  {
+    path:"/test",
+    element:<RejectCandidatePopUp/>
   }
+
 ]);

@@ -15,6 +15,10 @@ import LinkIcon from '../../svg/Staging/LinkIcon';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import ClipboardIcon from '../../svg/Staging/ClipboardIcon';
 import StatusBadge from '../ui/StatusBadge';
+import BudgetIcon from '../../svg/Staging/BudgetIcon';
+import BulletMarks from '../ui/BulletMarks';
+import Scorer from '../ui/Scorer';
+import InputPopUpModal from '../InputPopUpModal';
 
 const getStageOptions = (stage) => {
     switch (stage) {
@@ -33,6 +37,8 @@ const getStageOptions = (stage) => {
     }
 };
 
+
+
 const formatTime = (dateString) => {
     const date = new Date(dateString);
     let hours = date.getHours();
@@ -45,7 +51,7 @@ const formatTime = (dateString) => {
 };
 
 
-const ScreeningStage = ({ candidateData: initialCandidateData, onStatusUpdate }) => {
+const ScreeningStage = ({ candidateData: initialCandidateData, onStatusUpdate, onReject, onNext }) => {
     const [candidateData, setCandidateData] = useState(initialCandidateData);
     const [isCallPassed, setIsCallPassed] = useState(false);
 
@@ -60,20 +66,43 @@ const ScreeningStage = ({ candidateData: initialCandidateData, onStatusUpdate })
 
     const [isRescheduling, setIsRescheduling] = useState(false);
 
+    const [budgetScore, setBudgetScore] = useState(null);
+    const [totalScore, setTotalScore] = useState(0);
+
+    const [rejectValue, setRejectValue] = useState("");
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
     const handleReschedule = () => {
         setIsRescheduling(true);
-      };
+    };
 
-      const handleCancelReschedule = () => {
+    const handleCancelReschedule = () => {
         setIsRescheduling(false);
         setSelectedDate(null);
         setSelectedTime(null);
         setMeetLink(null);
-      };  
-      const checkCallTime = useCallback(() => {
+    };
+
+    const fields = [
+        {
+            type: 'select',
+            label: 'Please provide the reason for rejecting this candidate',
+            value: rejectValue,
+            onChange: (e) => setRejectValue(e.target.value),
+            options: [
+                { value: "", label: "Select Start Range" },
+                { value: 'Candidates scores did not meet the criteria', label: 'Candidates scores did not meet the criteria' },
+                { value: 'Candidate did not appear for the screening', label: 'Candidate did not appear for the screening' },
+                { value: 'Candidate did not appear for round one', label: 'Candidate did not appear for round one' },
+                { value: 'Candidate did not appear for round two', label: 'Candidate did not appear for round two'},
+                { value: 'Candidate did not submit the design task', label: 'Candidate did not submit the design task' },
+            ],
+        }
+    ]
+    const checkCallTime = useCallback(() => {
         if (candidateData.stageStatus.Screening.status === 'Call Scheduled') {
             const currentCall = candidateData.stageStatus.Screening.currentCall;
-            
+
             if (!currentCall.scheduledDate || !currentCall.scheduledTime) {
                 console.error('Invalid scheduledDate or scheduledTime');
                 return false;
@@ -83,7 +112,8 @@ const ScreeningStage = ({ candidateData: initialCandidateData, onStatusUpdate })
                 const scheduledDate = new Date(currentCall.scheduledDate);
                 const scheduledTime = new Date(currentCall.scheduledTime);
 
-                const callDateTime = new Date(Date.UTC(
+                // Combine the date and time parts, assuming both are in UTC
+                const callDateTimeUTC = new Date(Date.UTC(
                     scheduledDate.getUTCFullYear(),
                     scheduledDate.getUTCMonth(),
                     scheduledDate.getUTCDate(),
@@ -92,11 +122,14 @@ const ScreeningStage = ({ candidateData: initialCandidateData, onStatusUpdate })
                     0
                 ));
 
+                // Convert to local time
+                const callDateTimeLocal = new Date(callDateTimeUTC.toLocaleString('en-US', { timeZone: 'UTC' }));
+
                 const now = new Date();
-                const hasCallPassed = now > callDateTime;
+                const hasCallPassed = now > callDateTimeLocal;
 
                 console.log('Current time:', now.toISOString());
-                console.log('Scheduled call time:', callDateTime.toISOString());
+                console.log('Scheduled call time:', callDateTimeLocal.toISOString());
                 console.log('Has call passed:', hasCallPassed);
 
                 setIsCallPassed(hasCallPassed);
@@ -109,6 +142,7 @@ const ScreeningStage = ({ candidateData: initialCandidateData, onStatusUpdate })
         }
         return false;
     }, [candidateData]);
+
 
     useEffect(() => {
         if (isCallPassed) {
@@ -130,10 +164,48 @@ const ScreeningStage = ({ candidateData: initialCandidateData, onStatusUpdate })
         return () => clearInterval(timer);
     }, [checkCallTime, isCallPassed]);
 
+    useEffect(() => {
+        const scoreValues = Object.values(candidateData.stageStatus.Screening.score.totalScore).filter(value => value !== null);
+        const sum = scoreValues.reduce((acc, value) => acc + value, 0);
+        if (budgetScore !== null) {
+            setTotalScore(sum + budgetScore);
+        } else {
+            setTotalScore(sum);
+        }
+    }, [candidateData, budgetScore]);
 
-    const handleNext = ()=>{
-        console.log("heheehe");
-    }
+    const handleNext = async () => {
+        try {
+            const response = await axios.patch(`http://localhost:8008/api/v1/candidates/update/${candidateData._id}`, {
+                stageStatus: {
+                    ...candidateData.stageStatus,
+                    Screening: {
+                        ...candidateData.stageStatus.Screening,
+                        status: 'Under Review',
+                    }
+                }
+            });
+
+            if (response.status === 200) {
+                setCandidateData(prevData => ({
+                    ...prevData,
+                    stageStatus: {
+                        ...prevData.stageStatus,
+                        Screening: {
+                            ...prevData.stageStatus.Screening,
+                            status: 'Under Review',
+                        }
+                    }
+                }));
+                console.log("Status changed to Under Review");
+                // Optionally, you can call onStatusUpdate here if you need to inform the parent component
+                // onStatusUpdate('Screening', 'Under Review');
+            }
+        } catch (error) {
+            console.error('Error updating candidate status:', error);
+            alert('Failed to update candidate status. Please try again.');
+        }
+    };
 
 
     // useEffect(() => {
@@ -144,11 +216,14 @@ const ScreeningStage = ({ candidateData: initialCandidateData, onStatusUpdate })
     // }, [candidateData]);
 
     const handleDateChange = (date) => {
-        setSelectedDate(date);
+        const localDate = new Date(date);
+        setSelectedDate(localDate);
     };
 
     const handleTimeChange = (time) => {
-        setSelectedTime(time);
+        // Convert the time to local timezone
+        const localTime = new Date(time);
+        setSelectedTime(localTime);
     };
 
     const handleMeetChange = (e) => {
@@ -203,14 +278,14 @@ const ScreeningStage = ({ candidateData: initialCandidateData, onStatusUpdate })
                         status: 'Call Scheduled',
                         assignee: selectedAssignee ? selectedAssignee.name : null,
                         currentCall: {
-                            scheduledDate: selectedDate,
-                            scheduledTime: selectedTime,
+                            scheduledDate: selectedDate.toISOString(),
+                            scheduledTime: selectedTime.toISOString(),
                             meetingLink: meetLink
                         },
                     }
                 }
             });
-    
+
             if (response.status === 200) {
                 setCandidateData(prevData => ({
                     ...prevData,
@@ -236,43 +311,101 @@ const ScreeningStage = ({ candidateData: initialCandidateData, onStatusUpdate })
         }
     };
 
+    const handleConfirmForReject = async () =>{
+        return "heyyyyyyyyyy";
+    }
+
+
     const handleUpdateReschedule = async () => {
         try {
-          const response = await axios.patch(`http://localhost:8008/api/v1/candidates/update/${candidateData._id}`, {
-            stageStatus: {
-              ...candidateData.stageStatus,
-              Screening: {
-                ...candidateData.stageStatus.Screening,
-                currentCall: {
-                  scheduledDate: selectedDate,
-                  scheduledTime: selectedTime,
-                  meetingLink: meetLink
-                },
-                callHistory: [
-                  ...candidateData.stageStatus.Screening.callHistory,
-                  {
-                    ...candidateData.stageStatus.Screening.currentCall,
-                    status: 'Rescheduled'
-                  }
-                ]
-              }
+            const response = await axios.patch(`http://localhost:8008/api/v1/candidates/update/${candidateData._id}`, {
+                stageStatus: {
+                    ...candidateData.stageStatus,
+                    Screening: {
+                        ...candidateData.stageStatus.Screening,
+                        currentCall: {
+                            scheduledDate: selectedDate,
+                            scheduledTime: selectedTime,
+                            meetingLink: meetLink
+                        },
+                        callHistory: [
+                            ...candidateData.stageStatus.Screening.callHistory,
+                            {
+                                ...candidateData.stageStatus.Screening.currentCall,
+                                status: 'Rescheduled'
+                            }
+                        ]
+                    }
+                }
+            });
+
+            if (response.status === 200) {
+                setCandidateData(response.data);
+                setIsRescheduling(false);
+                alert('Call rescheduled successfully!');
             }
-          });
-    
-          if (response.status === 200) {
-            setCandidateData(response.data);
-            setIsRescheduling(false);
-            alert('Call rescheduled successfully!');
-          }
         } catch (error) {
-          console.error('Error rescheduling call:', error);
-          alert('Failed to reschedule the call. Please try again.');
+            console.error('Error rescheduling call:', error);
+            alert('Failed to reschedule the call. Please try again.');
         }
-      };
+    };
+
+    const handleBudgetScoreUpdate = async () => {
+        try {
+            const response = await axios.patch(`http://localhost:8008/api/v1/candidates/update/${candidateData._id}`, {
+                stageStatus: {
+                    ...candidateData.stageStatus,
+                    Screening: {
+                        ...candidateData.stageStatus.Screening,
+                        status: 'Reviewed',
+                        score: {
+                            ...candidateData.stageStatus.Screening.score,
+                            totalScore: {
+                                ...candidateData.stageStatus.Screening.score.totalScore,
+                                Budget: budgetScore
+                            }
+                        }
+                    }
+                }
+            });
+
+            if (response.status === 200) {
+                setCandidateData(prevData => ({
+                    ...prevData,
+                    stageStatus: {
+                        ...prevData.stageStatus,
+                        Screening: {
+                            ...prevData.stageStatus.Screening,
+                            score: {
+                                ...prevData.stageStatus.Screening.score,
+                                totalScore: {
+                                    ...prevData.stageStatus.Screening.score.totalScore,
+                                    Budget: budgetScore
+                                }
+                            }
+                        }
+                    }
+                }));
+                setBudgetScore(budgetScore);
+            }
+        } catch (error) {
+            console.error('Error updating budget score:', error);
+            alert('Failed to update budget score. Please try again.');
+        }
+    };
+
 
     const renderStatusLabel = () => {
         // const { status, scheduledDate, scheduledTime, meetingLink } = candidateData.stageStatus.Screening;
-        const { status, currentCall, callHistory } = candidateData.stageStatus.Screening;
+        const { status, currentCall, callHistory, score } = candidateData.stageStatus.Screening;
+        const hasScore = Object.values(score.totalScore).some(value => value !== null);
+        const categories = [
+            { label: 'Attitude', value: score.totalScore.Attitude },
+            { label: 'UX', value: score.totalScore.UX },
+            { label: 'Tech', value: score.totalScore.Tech },
+            { label: 'Communication', value: score.totalScore.Communication },
+            { label: 'UI', value: score.totalScore.UI },
+        ];
 
         switch (status) {
             case 'Call Pending':
@@ -308,24 +441,23 @@ const ScreeningStage = ({ candidateData: initialCandidateData, onStatusUpdate })
                                 <span>Meeting Link</span>
                                 <input type="text" placeholder='Enter Meeting Link' className='outline-none' value={meetLink} onChange={(e) => handleMeetChange(e)} />
                             </div>
-
                         </div>
                     </>
                 );
             case 'Call Scheduled':
                 return (
                     <>
-                      <p className='typography-large-p text-font-gray pb-8'>
-                        The screening call has been scheduled. You can reschedule or cancel the call if needed.
-                      </p>
-                      <div className='bg-background-80 grid grid-cols-3 rounded-xl p-4'>
-                        {/* ... existing scheduled call details ... */}
-                        <div className='flex flex-col'>
+                        <p className='typography-large-p text-font-gray pb-8'>
+                            The screening call has been scheduled. You can reschedule or cancel the call if needed.
+                        </p>
+                        <div className='bg-background-80 grid grid-cols-3 rounded-xl p-4'>
+                            {/* ... existing scheduled call details ... */}
+                            <div className='flex flex-col'>
                                 <span className='typography-small-p text-font-gray'>Date</span>
                                 <div className='flex items-center gap-2'>
                                     <CalenderIcon />
                                     <h2>
-                                        {new Date(currentCall.scheduledDate).toLocaleDateString()}
+                                        {new Date(currentCall.scheduledDate).toLocaleDateString('en-US', { timeZone: 'UTC' })}
                                     </h2>
                                 </div>
                             </div>
@@ -352,47 +484,183 @@ const ScreeningStage = ({ candidateData: initialCandidateData, onStatusUpdate })
                                     </CopyToClipboard>
                                 </div>
                             </div>
-                      </div>
-                      {isRescheduling && (
-                        <div className='mt-4 grid grid-cols-3 gap-6'>
-                          <div className='flex flex-col'>
-                            <span>New Date</span>
-                            <DatePicker onChange={handleDateChange} value={selectedDate} />
-                          </div>
-                          <div className='flex flex-col'>
-                            <span>New Time</span>
-                            <TimePicker onChange={handleTimeChange} value={selectedTime} />
-                          </div>
-                          <div className='flex flex-col'>
-                            <span>New Meeting Link</span>
-                            <input
-                              type="text"
-                              placeholder='Enter Meeting Link'
-                              className='outline-none'
-                              value={meetLink}
-                              onChange={(e) => handleMeetChange(e)}
-                            />
-                          </div>
                         </div>
-                      )}
-                      {callHistory.length > 0 && (
-                        <div className='mt-4'>
-                          <h3>Previous Schedules:</h3>
-                          {callHistory.map((call, index) => (
-                            <div key={index}>
-                              <p>{new Date(call.scheduledDate).toLocaleDateString()} at {formatTime(call.scheduledTime)} - {call.status}</p>
+                        {isRescheduling && (
+                            <div className='mt-4 grid grid-cols-3 gap-6'>
+                                <div className='flex flex-col'>
+                                    <span>New Date</span>
+                                    <DatePicker onChange={handleDateChange} value={selectedDate} />
+                                </div>
+                                <div className='flex flex-col'>
+                                    <span>New Time</span>
+                                    <TimePicker onChange={handleTimeChange} value={selectedTime} />
+                                </div>
+                                <div className='flex flex-col'>
+                                    <span>New Meeting Link</span>
+                                    <input
+                                        type="text"
+                                        placeholder='Enter Meeting Link'
+                                        className='outline-none'
+                                        value={meetLink}
+                                        onChange={(e) => handleMeetChange(e)}
+                                    />
+                                </div>
                             </div>
-                          ))}
-                        </div>
-                      )}
+                        )}
+                        {callHistory.length > 0 && (
+                            <div className='mt-4'>
+                                <h3>Previous Schedules:</h3>
+                                {callHistory.map((call, index) => (
+                                    <div key={index}>
+                                        <p>{new Date(call.scheduledDate).toLocaleDateString()} at {formatTime(call.scheduledTime)} - {call.status}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </>
-                  );
+                );
             case 'Under Review':
-                return <Label text="Candidate is under review" />;
+
+                return (
+                    <>
+                        {/* <Label text="Screening call is currently under review by the design reviewer" /> */}
+
+
+                        <div className='flex  '>
+
+                            {hasScore ? (
+                                <div className='w-full '>
+                                    <p className='typography-small-p text-font-gray'>Remarks</p>
+                                    <p className='typography-body pb-8'>{score.remark}</p>
+                                    <div className='flex justify-between gap-4'>
+                                        <div className='w-full'>
+                                            <p className='typography-small-p text-font-gray'>Score</p>
+
+
+
+                                            <div className='grid grid-cols-3 grid-rows-2 rounded-xl gap-x-14 gap-y-4 p-4 bg-background-80 w-full'>
+                                                {categories.map((category, index) => (
+                                                    <div key={index} className='flex items-center justify-between'>
+                                                        <span className='typography-small-p text-font-gray'>{category.label}</span>
+                                                        <BulletMarks marks={category.value} />
+                                                    </div>
+                                                ))}
+                                                {score.totalScore.Budget !== null && (
+                                                    <div className='flex items-center w-48 justify-between'>
+                                                        <span className='typography-small-p text-font-gray'>Budget</span>
+                                                        <BulletMarks marks={score.totalScore.Budget} />
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        <div>
+
+                                            <div>
+
+
+
+                                                <p className='typography-small-p text-font-gray'>Score Budget</p>
+                                                <Scorer onScoreChange={setBudgetScore} />
+                                            </div>
+
+                                            <div className='flex flex-row-reverse'>
+                                                <p className='text-font-gray typography-small-p'>Total Score: {totalScore}</p>
+
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            ) : (
+                                <div>
+                                    <p className='typography-small-p text-font-gray'>Screening call is currently under review by the design reviewer</p>
+                                </div>
+                            )}
+
+
+
+                        </div>
+                    </>
+                )
+
             case 'Reviewed':
-                return <Label text="Candidate has been reviewed" />;
+                return (
+                    <>
+                        <div className='w-full '>
+                            <p className='typography-small-p text-font-gray'>Remarks</p>
+                            <p className='typography-body pb-8'>{score.remark}</p>
+                            <div className='flex justify-between gap-4'>
+                                <div className='w-full'>
+                                    <p className='typography-small-p text-font-gray'>Score</p>
+                                    <div className='grid grid-cols-3 grid-rows-2 rounded-xl gap-x-14 gap-y-4 p-4 bg-background-80 w-full'>
+                                        {categories.map((category, index) => (
+                                            <div key={index} className='flex items-center justify-between'>
+                                                <span className='typography-small-p text-font-gray'>{category.label}</span>
+                                                <BulletMarks marks={category.value} />
+                                            </div>
+                                        ))}
+                                        {score.totalScore.Budget !== null && (
+                                            <div className='flex items-center justify-between'>
+                                                <span className='typography-small-p text-font-gray'>Budget</span>
+                                                <BulletMarks marks={score.totalScore.Budget} />
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                                <div>
+                                    <div>
+                                        <p className='typography-small-p text-font-gray block'>Total Score:</p>
+                                        <div className='flex '>
+                                            <p className='display-d2 font-bold'>{totalScore}</p>
+                                            <p className='typography-small-p text-font-gray pt-6 ml-2 w-[70px] '>Out Of 30</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </>
+
+                );
             case 'Cleared':
-                return <Label text="Candidate has cleared this stage" />;
+                return (
+                    <>
+                    <div className='w-full '>
+                        <p className='typography-small-p text-font-gray'>Remarks</p>
+                        <p className='typography-body pb-8'>{score.remark}</p>
+                        <div className='flex justify-between gap-4'>
+                            <div className='w-full'>
+                                <p className='typography-small-p text-font-gray'>Score</p>
+                                <div className='grid grid-cols-3 grid-rows-2 rounded-xl gap-x-14 gap-y-4 p-4 bg-background-80 w-full'>
+                                    {categories.map((category, index) => (
+                                        <div key={index} className='flex items-center justify-between'>
+                                            <span className='typography-small-p text-font-gray'>{category.label}</span>
+                                            <BulletMarks marks={category.value} />
+                                        </div>
+                                    ))}
+                                    {score.totalScore.Budget !== null && (
+                                        <div className='flex items-center justify-between'>
+                                            <span className='typography-small-p text-font-gray'>Budget</span>
+                                            <BulletMarks marks={score.totalScore.Budget} />
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                            <div>
+                                <div>
+                                    <p className='typography-small-p text-font-gray block'>Total Score:</p>
+                                    <div className='flex '>
+                                        <p className='display-d2 font-bold'>{totalScore}</p>
+                                        <p className='typography-small-p text-font-gray pt-6 ml-2 w-[70px] '>Out Of 30</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </>
+                );
             case 'No Show':
                 return <Label icon={<WarningIcon />} text="Candidate did not show up for the call" />;
             case 'Rejected':
@@ -403,24 +671,29 @@ const ScreeningStage = ({ candidateData: initialCandidateData, onStatusUpdate })
     };
 
     return (
-        <div className='w-full bg-background-100'>
+        <div className='w-full bg-background-100 rounded-xl'>
 
             {/* first layer */}
-            <div className='m-6' >
-                <div className='flex justify-between bg-background-90'>
+            <div >
+                <div className='flex items-center justify-between rounded-xl  bg-background-90 p-4'>
                     <h1 className='typography-h3 text-white'>Screening</h1>
-                    <div className='flex text-white '>
-                    <StatusBadge status={candidateData.stageStatus.Screening.status} />
+                    <div className='flex items-center gap-4'>
+                        <StatusBadge status={candidateData.stageStatus.Screening.status} />
 
-                        
+
                         <AssigneeSelector
                             mode="icon"
                             value={selectedAssignee}
                             onChange={handleAssigneeSelect}
                             onSelect={handleAssigneeSelect}
                         />
-                        ${candidateData.stageStatus.Screening.assignee}
-                        {candidateData.budget}LPA
+
+                        <div className='w-8 h-8 rounded-full bg-background-80 flex items-center justify-center'>
+                            <BudgetIcon />
+                        </div>
+                        <p className='typography-body'>{candidateData.budget}LPA</p>
+
+
                     </div>
                 </div>
             </div>
@@ -433,7 +706,7 @@ const ScreeningStage = ({ candidateData: initialCandidateData, onStatusUpdate })
 
 
             {/* this is the third laye the footer */}
-            <div className='flex justify-between bg-background-90 p-6'>
+            <div className='flex justify-between rounded-xl bg-background-90 p-6'>
 
                 <div>
                     <p className='text-white'>Received On</p>
@@ -444,7 +717,7 @@ const ScreeningStage = ({ candidateData: initialCandidateData, onStatusUpdate })
                 </div>
 
                 <div>
-                {candidateData.stageStatus.Screening.status === "Call Scheduled" && !isRescheduling && (
+                    {candidateData.stageStatus.Screening.status === "Call Scheduled" && !isRescheduling && (
                         <div className='flex gap-2'>
                             {isCallPassed ? (
                                 <Button variant="primary" onClick={handleNext}>Next</Button>
@@ -456,32 +729,65 @@ const ScreeningStage = ({ candidateData: initialCandidateData, onStatusUpdate })
                             )}
                         </div>
                     )}
-          {isRescheduling && (
-            <div className='flex gap-2'>
-              <Button
-                variant="primary"
-                disabled={!selectedDate || !selectedTime || !meetLink}
-                onClick={handleUpdateReschedule}
-              >
-                Update
-              </Button>
-              <Button variant="secondary" onClick={handleCancelReschedule}>Cancel</Button>
-            </div>
-          )}
-          {candidateData.stageStatus.Screening.status === "Call Pending" && (
-            <Button
-              variant="primary"
-              disabled={isUpdateDisabled}
-              onClick={handleUpdate}
-            >
-              Update
-            </Button>
-          )}
+                    {isRescheduling && (
+                        <div className='flex gap-2'>
+                            <Button
+                                variant="primary"
+                                disabled={!selectedDate || !selectedTime || !meetLink}
+                                onClick={handleUpdateReschedule}
+                            >
+                                Update
+                            </Button>
+                            <Button variant="secondary" onClick={handleCancelReschedule}>Cancel</Button>
+                        </div>
+                    )}
+                    {candidateData.stageStatus.Screening.status === "Call Pending" && (
+                        <Button
+                            variant="primary"
+                            disabled={isUpdateDisabled}
+                            onClick={handleUpdate}
+                        >
+                            Update
+                        </Button>
+                    )}
+                    {candidateData.stageStatus.Screening.status === "Under Review" && (
+                        <Button
+                            variant="icon"
+                            disabled={budgetScore === null}
+                            onClick={handleBudgetScoreUpdate}
+                        >
+                            Update
+                        </Button>
+                    )}
+
+                    {
+                        candidateData.stageStatus.Screening.status === "Reviewed" && (
+                            <div className='flex gap-6'>
+                                <div className='w-[236px]'>
+                                    <Button variant="cancel"  onClick={() => setIsModalOpen(true)}  >Reject</Button>
+                                    {/* <Button variant="cancel"  onClick={onReject}  >Reject</Button> */}
+                                </div>
+                                <div className='w-[236px]'>
+                                    <Button variant="primary" onClick={onNext}>Move To Next Round</Button>
+                                </div>
+                            </div>
+                        )
+                    }
 
 
 
                 </div>
             </div>
+            <InputPopUpModal
+                open={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                confirmAction={onReject}
+                fields={fields}
+                heading="Reject"
+                para="Are you sure you want to reject ${}?"
+                confirmButtonText="Reject"
+                cancelButtonText="Cancel"
+            />
         </div>
     )
 }

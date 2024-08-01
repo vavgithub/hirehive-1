@@ -19,7 +19,11 @@ export default {
           100: "rgba(237, 189, 20, 0.2)",
         },
         green:{
-          100:"rgba(20, 225, 89, 0.2)"
+          100:"rgba(20, 225, 89, 0.2)",
+        },
+        blue:{
+          100:"var(--color-primary-100)",
+          200:"var(--color-primary-200)",
         },        
         primary: {
           100: "var(--color-primary-100)",
@@ -66,6 +70,7 @@ export default {
         h2: ["24px", { lineHeight: "36px" }],
         h3: ["20px", { lineHeight: "150%" }],
         body: ["16px", { lineHeight: "150%" }],
+        "display-d2": ["42px", { lineHeight: "110%" }],
         "small-p": ["12px", { lineHeight: "150%" }],
         "large-p": ["14px", { lineHeight: "20.3px" }],
       },

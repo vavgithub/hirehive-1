@@ -32,6 +32,9 @@ h2{
   .typography-body {
     @apply font-outfit text-body font-light;
   }
+  .display-d2{
+    @apply font-bricolage text-display-d2 font-semibold;
+  }
   .typography-small-p {
     @apply font-outfit text-small-p font-normal;
   }

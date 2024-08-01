@@ -70,7 +70,7 @@ const candidateSchema = new mongoose.Schema(
         score: {
           type: Number,
           default: 0
-        }
+        },
       },
       Screening: {
         status: {
@@ -92,10 +92,50 @@ const candidateSchema = new mongoose.Schema(
           scheduledTime: String,
           meetingLink: String,
           status: String // 'Scheduled', 'Completed', 'Rescheduled', 'No Show'
-        }],
+        }],     
         score: {
-          type: Number,
-          default: 0
+          remark:{
+            type:String,
+            default:"N/A"
+          },
+          totalScore:{
+            Attitude:{
+              type:Number,
+              default:null,
+              min:0,
+              max:5
+            },
+            Communication:{
+              type:Number,
+              default:null,
+              min:0,
+              max:5
+            },
+            UX:{
+              type:Number,
+              default:null,
+              min:0,
+              max:5
+            },
+            UI:{
+              type:Number,
+              default:null,
+              min:0,
+              max:5
+            },
+            Tech:{
+              type:Number,
+              default:null,
+              min:0,
+              max:5
+            },
+            Budget:{
+              type:Number,
+              default:null,
+              min:0,
+              max:5
+            }          
+          },
         }
       },
       "Design Task": {
