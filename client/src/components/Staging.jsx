@@ -72,11 +72,15 @@ const Staging = ({ currentStage, candidateData: initialCandidateData }) => {
     }
   };
 
-  const handleReject = async (stage) => {
+  const handleReject = async (stage, reason) => {
     try {
       const updatedStageStatus = {
         ...candidateData.stageStatus,
-        [stage.replace(/\s+/g, '')]: { ...candidateData.stageStatus[stage.replace(/\s+/g, '')], status: 'Rejected' }
+        [stage.replace(/\s+/g, '')]: { 
+          ...candidateData.stageStatus[stage.replace(/\s+/g, '')], 
+          status: 'Rejected',
+          rejectionReason: reason
+        }
       };
 
       const response = await axios.patch(`http://localhost:8008/api/v1/candidates/update/${candidateData._id}`, {
@@ -96,6 +100,7 @@ const Staging = ({ currentStage, candidateData: initialCandidateData }) => {
       console.error('Error rejecting candidate:', error);
     }
   };
+
 
   const handleNext = async (currentStage) => {
     try {
@@ -141,7 +146,7 @@ const Staging = ({ currentStage, candidateData: initialCandidateData }) => {
       assignee: assignee,
       onAssigneeChange: handleAssigneeChange,
       allAssignees: allAssignees,
-      onReject: () => handleReject(stage),
+      onReject: (reason) => handleReject(stage, reason),
       onNext: () => handleNext(stage),
     };
 

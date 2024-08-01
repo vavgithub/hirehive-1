@@ -13,7 +13,8 @@ export default {
       },
       colors: {        
         red: {
-          100: "rgba(255, 56, 92, 0.2)", // Custom value for red-200
+          100:"rgba(255, 56, 92, 1)",
+          200: "rgba(255, 56, 92, 0.2)", // Custom value for red-200
         },
         yellow:{
           100: "rgba(237, 189, 20, 0.2)",

@@ -5,8 +5,9 @@ const getStatusColor = (status) => {
   switch (status.toLowerCase()) {
     case 'not assigned':
     case 'rejected':
+      return 'bg-red-200 text-red-100';
     case 'call pending':
-      return 'bg-red-100 text-red-200';
+      return 'bg-red-200 text-red-100';
     case 'under review':
         return 'bg-yellow-100 text-yellow-200';
     case 'call scheduled':

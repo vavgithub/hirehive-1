@@ -63,6 +63,10 @@ const candidateSchema = new mongoose.Schema(
           enum: ['Not Assigned', 'Under Review', 'Reviewed', 'Cleared', 'Rejected'],
           default: 'Not Assigned'
         },
+        rejectionReason:{
+          type: String,
+          default:"N/A"
+        },
         assignee: {
           type: String,
           default: 'N/A'
@@ -77,6 +81,10 @@ const candidateSchema = new mongoose.Schema(
           type: String,
           enum: ['Call Pending', 'Call Scheduled', 'Under Review', 'Reviewed', 'Cleared', 'No Show', 'Rejected'],
           default: 'Call Pending'
+        },
+        rejectionReason:{
+          type: String,
+          default:"N/A"
         },
         assignee: {
           type: String,
@@ -144,6 +152,10 @@ const candidateSchema = new mongoose.Schema(
           enum: ['Sent', 'Not Assigned', 'Under Review', 'Reviewed', 'Cleared', 'Rejected', 'Not Submitted'],
           default: 'Not Assigned'
         },
+        rejectionReason:{
+          type: String,
+          default:"N/A"
+        },
         assignee: {
           type: String,
           default: 'N/A'
@@ -158,6 +170,10 @@ const candidateSchema = new mongoose.Schema(
           type: String,
           enum: ['Call Pending', 'Call Scheduled', 'Not Assigned', 'Reviewed', 'Cleared', 'No Show', 'Rejected'],
           default: 'Call Pending'
+        },
+        rejectionReason:{
+          type: String,
+          default:"N/A"
         },
         assignee: {
           type: String,
@@ -175,6 +191,10 @@ const candidateSchema = new mongoose.Schema(
           type: String,
           enum: ['Call Pending', 'Call Scheduled', 'Not Assigned', 'Reviewed', 'Cleared', 'No Show', 'Rejected'],
           default: 'Call Pending'
+        },
+        rejectionReason:{
+          type: String,
+          default:"N/A"
         },
         assignee: {
           type: String,

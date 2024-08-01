@@ -83,6 +83,15 @@ const ScreeningStage = ({ candidateData: initialCandidateData, onStatusUpdate, o
         setMeetLink(null);
     };
 
+    const handleConfirmReject = () => {
+        onReject(rejectValue);
+        setIsModalOpen(false);
+      };
+
+      useEffect(() => {
+        setCandidateData(initialCandidateData);
+      }, [initialCandidateData]);
+
     const fields = [
         {
             type: 'select',
@@ -397,7 +406,7 @@ const ScreeningStage = ({ candidateData: initialCandidateData, onStatusUpdate, o
 
     const renderStatusLabel = () => {
         // const { status, scheduledDate, scheduledTime, meetingLink } = candidateData.stageStatus.Screening;
-        const { status, currentCall, callHistory, score } = candidateData.stageStatus.Screening;
+        const { status, currentCall, callHistory, score , rejectionReason } = candidateData.stageStatus.Screening;
         const hasScore = Object.values(score.totalScore).some(value => value !== null);
         const categories = [
             { label: 'Attitude', value: score.totalScore.Attitude },
@@ -664,7 +673,28 @@ const ScreeningStage = ({ candidateData: initialCandidateData, onStatusUpdate, o
             case 'No Show':
                 return <Label icon={<WarningIcon />} text="Candidate did not show up for the call" />;
             case 'Rejected':
-                return <Label text="Candidate has been rejected at this stage" />;
+                return (
+                    <>
+                    <div className='w-full '>
+                        <div className='flex justify-between gap-4'>
+                            <div className='w-full'>
+                                <p className='typography-small-p text-font-gray'>Reason for rejection</p>
+                                <p className='typography-body'>{rejectionReason}</p>
+                            </div>
+                            <div>
+                                <div>
+                                    <p className='typography-small-p text-font-gray block'>Total Score:</p>
+                                    <div className='flex '>
+                                        <p className='display-d2 font-bold'>{totalScore}</p>
+                                        <p className='typography-small-p text-font-gray pt-6 ml-2 w-[70px] '>Out Of 30</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    </>
+                );
             default:
                 return null;
         }
@@ -773,18 +803,15 @@ const ScreeningStage = ({ candidateData: initialCandidateData, onStatusUpdate, o
                             </div>
                         )
                     }
-
-
-
                 </div>
             </div>
             <InputPopUpModal
                 open={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
-                confirmAction={onReject}
+                confirmAction={handleConfirmReject}
                 fields={fields}
                 heading="Reject"
-                para="Are you sure you want to reject ${}?"
+                para={`Are you sure you want to reject ${candidateData.firstName}?`}
                 confirmButtonText="Reject"
                 cancelButtonText="Cancel"
             />
