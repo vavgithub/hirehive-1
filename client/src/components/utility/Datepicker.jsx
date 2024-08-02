@@ -13,8 +13,7 @@ export default function Datepicker({ onChange, value }) {
         <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DesktopDatePicker   
               value={value ? dayjs(value) : null}
-               defaultValue={dayjs('2024-07-30')} 
-               sx={{color:"white"}}  
+              defaultValue={dayjs()}  //
                onChange={(newValue) => onChange(newValue)} />
            
         </LocalizationProvider>

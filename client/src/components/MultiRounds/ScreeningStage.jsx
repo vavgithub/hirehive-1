@@ -109,42 +109,56 @@ const ScreeningStage = ({ candidateData: initialCandidateData, onStatusUpdate, o
     ]
 
     const [isCallPassed, setIsCallPassed] = useState(false);
-    const checkCallTime = useCallback(() => {
-        if (candidateData.stageStatus.Screening.status === 'Call Scheduled') {
-            const currentCall = candidateData.stageStatus.Screening.currentCall;
-            
-            if (!currentCall.scheduledTime) {
-                console.error('Invalid scheduledTime');
-                return false;
-            }
-            
-            try {
-                // scheduledTime is already in UTC format
-                const callDateTimeUTC = new Date(currentCall.scheduledTime);
-    
-                // Convert to local time
-                const callDateTimeLocal = new Date(callDateTimeUTC.getTime() + (5.5 * 60 * 60 * 1000));
-    
 
-                // Get current time in UTC
-                const nowUTC = new Date();
-                const nowLocal = new Date(nowUTC.getTime() + (5.5 * 60 * 60 * 1000));
-                const hasCallPassed = nowLocal > callDateTimeLocal;
-    
-                console.log('Current time in IST:', nowLocal.toISOString());
-                console.log('Scheduled call time:', callDateTimeLocal.toISOString());
-                console.log('Has call passed:', hasCallPassed);
-    
-                setIsCallPassed(hasCallPassed);
-                return hasCallPassed;
-            } catch (error) {
-                console.error('Error parsing date or time:', error);
-                setIsCallPassed(false);
+
+   const checkCallTime = useCallback(() => {
+    if (candidateData.stageStatus.Screening.status === 'Call Scheduled') {
+        const currentCall = candidateData.stageStatus.Screening.currentCall;
+        
+        if (!currentCall.scheduledDate || !currentCall.scheduledTime) {
+            console.error('Invalid scheduledDate or scheduledTime');
+            return false;
+        }
+        
+        try {
+            // Extract the date portion from scheduledDate
+            const scheduledDate = currentCall.scheduledDate.split('T')[0];
+
+            // Extract the time portion from scheduledTime, ensuring it's in the correct format
+            const scheduledTime = currentCall.scheduledTime.split('T')[1];
+
+            // Combine date and time into a single UTC datetime string
+            const combinedDateTimeString = `${scheduledDate}T${scheduledTime}`;
+            const combinedDateTimeUTC = new Date(combinedDateTimeString);
+
+            // Check if the combinedDateTimeUTC is a valid date
+            if (isNaN(combinedDateTimeUTC)) {
+                console.error('Invalid combined datetime');
                 return false;
             }
+
+            // Convert to local time (IST)
+            const callDateTimeLocal = new Date(combinedDateTimeUTC.getTime() + (5.5 * 60 * 60 * 1000));
+
+            // Get current time in UTC and convert to local time (IST)
+            const nowUTC = new Date();
+            const nowLocal = new Date(nowUTC.getTime() + (5.5 * 60 * 60 * 1000));
+            const hasCallPassed = nowLocal > callDateTimeLocal;
+
+            console.log('Current time in IST:', nowLocal.toISOString());
+            console.log('Scheduled call time in IST:', callDateTimeLocal.toISOString());
+            console.log('Has call passed:', hasCallPassed);
+
+            setIsCallPassed(hasCallPassed);
+            return hasCallPassed;
+        } catch (error) {
+            console.error('Error parsing date or time:', error);
+            setIsCallPassed(false);
+            return false;
         }
-        return false;
-    }, [candidateData]);
+    }
+    return false;
+}, [candidateData]);
 
 
     useEffect(() => {
