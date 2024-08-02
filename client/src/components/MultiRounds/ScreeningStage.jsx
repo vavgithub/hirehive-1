@@ -393,6 +393,7 @@ const ScreeningStage = ({ candidateData: initialCandidateData, onStatusUpdate, o
                         ...prevData.stageStatus,
                         Screening: {
                             ...prevData.stageStatus.Screening,
+                            status: 'Reviewed',
                             score: {
                                 ...prevData.stageStatus.Screening.score,
                                 totalScore: {
@@ -771,8 +772,7 @@ const ScreeningStage = ({ candidateData: initialCandidateData, onStatusUpdate, o
                             variant="icon"
                             disabled={budgetScore === null}
                             onClick={handleBudgetScoreUpdate}
-                        >
-                            Update
+                        >                            
                         </Button>
                     </>
                 );
