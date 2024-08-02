@@ -53,45 +53,44 @@ const formatTime = (dateString) => {
 
 const ScreeningStage = ({ candidateData: initialCandidateData, onStatusUpdate, onReject, onNext }) => {
     const [candidateData, setCandidateData] = useState(initialCandidateData);
-    const [isCallPassed, setIsCallPassed] = useState(false);
-
+    
     const [selectedAssignee, setSelectedAssignee] = useState(
         candidateData.stageStatus.Screening.assignee
-            ? { name: candidateData.stageStatus.Screening.assignee }
+        ? { name: candidateData.stageStatus.Screening.assignee }
             : null
-    );
-    const [selectedDate, setSelectedDate] = useState(null);
-    const [selectedTime, setSelectedTime] = useState(null);
-    const [meetLink, setMeetLink] = useState(null);
-
-    const [isRescheduling, setIsRescheduling] = useState(false);
-
-    const [budgetScore, setBudgetScore] = useState(null);
-    const [totalScore, setTotalScore] = useState(0);
-
-    const [rejectValue, setRejectValue] = useState("");
+        );
+        const [selectedDate, setSelectedDate] = useState(null);
+        const [selectedTime, setSelectedTime] = useState(null);
+        const [meetLink, setMeetLink] = useState(null);
+        
+        const [isRescheduling, setIsRescheduling] = useState(false);
+        
+        const [budgetScore, setBudgetScore] = useState(null);
+        const [totalScore, setTotalScore] = useState(0);
+        
+        const [rejectValue, setRejectValue] = useState("");
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const handleReschedule = () => {
         setIsRescheduling(true);
     };
-
+    
     const handleCancelReschedule = () => {
         setIsRescheduling(false);
         setSelectedDate(null);
         setSelectedTime(null);
         setMeetLink(null);
     };
-
+    
     const handleConfirmReject = () => {
         onReject(rejectValue);
         setIsModalOpen(false);
-      };
-
-      useEffect(() => {
+    };
+    
+    useEffect(() => {
         setCandidateData(initialCandidateData);
-      }, [initialCandidateData]);
-
+    }, [initialCandidateData]);
+    
     const fields = [
         {
             type: 'select',
@@ -108,39 +107,34 @@ const ScreeningStage = ({ candidateData: initialCandidateData, onStatusUpdate, o
             ],
         }
     ]
+
+    const [isCallPassed, setIsCallPassed] = useState(false);
     const checkCallTime = useCallback(() => {
         if (candidateData.stageStatus.Screening.status === 'Call Scheduled') {
             const currentCall = candidateData.stageStatus.Screening.currentCall;
-
-            if (!currentCall.scheduledDate || !currentCall.scheduledTime) {
-                console.error('Invalid scheduledDate or scheduledTime');
+            
+            if (!currentCall.scheduledTime) {
+                console.error('Invalid scheduledTime');
                 return false;
             }
-
+            
             try {
-                const scheduledDate = new Date(currentCall.scheduledDate);
-                const scheduledTime = new Date(currentCall.scheduledTime);
-
-                // Combine the date and time parts, assuming both are in UTC
-                const callDateTimeUTC = new Date(Date.UTC(
-                    scheduledDate.getUTCFullYear(),
-                    scheduledDate.getUTCMonth(),
-                    scheduledDate.getUTCDate(),
-                    scheduledTime.getUTCHours(),
-                    scheduledTime.getUTCMinutes(),
-                    0
-                ));
-
+                // scheduledTime is already in UTC format
+                const callDateTimeUTC = new Date(currentCall.scheduledTime);
+    
                 // Convert to local time
-                const callDateTimeLocal = new Date(callDateTimeUTC.toLocaleString('en-US', { timeZone: 'UTC' }));
+                const callDateTimeLocal = new Date(callDateTimeUTC.getTime() + (5.5 * 60 * 60 * 1000));
+    
 
-                const now = new Date();
-                const hasCallPassed = now > callDateTimeLocal;
-
-                console.log('Current time:', now.toISOString());
+                // Get current time in UTC
+                const nowUTC = new Date();
+                const nowLocal = new Date(nowUTC.getTime() + (5.5 * 60 * 60 * 1000));
+                const hasCallPassed = nowLocal > callDateTimeLocal;
+    
+                console.log('Current time in IST:', nowLocal.toISOString());
                 console.log('Scheduled call time:', callDateTimeLocal.toISOString());
                 console.log('Has call passed:', hasCallPassed);
-
+    
                 setIsCallPassed(hasCallPassed);
                 return hasCallPassed;
             } catch (error) {
