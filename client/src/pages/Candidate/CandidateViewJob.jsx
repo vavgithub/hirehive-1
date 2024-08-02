@@ -36,7 +36,6 @@ const CandidateViewJob = () => {
 
             <div className="px-24 pt-4 h-[216px] bg-gray-200 flex flex-col justify-between">
                 <div className="flex flex-col ">
-
                     <div className='flex justify-between mt-[60px]'>
                         <h1 className="text-2xl font-bold">{formData.title}</h1>
                         <button onClick={handleApplyClick} className="bg-black text-white px-4 py-2 rounded">Apply Job</button>
@@ -50,14 +49,12 @@ const CandidateViewJob = () => {
             </div>
 
             <div className='px-24 grid grid-cols-2 ' >
-
-
                 <div className=" bg-white p-4 border border-gray-500 m-4 ">
                     <h2 className="text-lg font-bold mb-2">Overview</h2>
                     <div className="mb-4">
                         <p className="text-gray-600">{formData.description}</p>
                     </div>
-
+                    
                     <div className="mb-4">
                         <h2 className="text-lg font-bold mb-2">Skills</h2>
                         <div className="flex flex-wrap">

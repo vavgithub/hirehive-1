@@ -61,11 +61,16 @@ const ViewCandidateProfile = () => {
     return (
         <div className="mx-4 pt-4 h-screen">
             {/* <Breadcrumb paths={paths} /> */}
-            <div className='flex justify-between'>
-                <div className='bg-background-90' >
+            <div className='flex gap-3'>
+                <div className='bg-background-90 w-full p-4 rounded-xl' >
                     <h1 className='typography-h1 text-white'> {data.firstName}  {data.lastName}</h1>
-                    <div className='flex'>
+                    <div className='flex items-center gap-2'>
                         <span className='typography-small-p text-white'>{data.jobApplied}</span>
+                        {
+                            <svg xmlns="http://www.w3.org/2000/svg" width="4" height="4" viewBox="0 0 4 4" fill="none">
+                            <circle cx="2" cy="2" r="2" fill="#808389"/>
+                          </svg>
+                        }
                         <span className='typography-small-p text-white'>{data.location}</span>
                     </div>
 
@@ -81,15 +86,15 @@ const ViewCandidateProfile = () => {
                     </div>
                     <div className='flex gap-2'>
                         <ResumeIcon />
-                        <PortfolioIcon />
-                        <WebsiteIcon />
+                        {/* <PortfolioIcon /> */}
+                        {/* <WebsiteIcon /> */}
                         <AssignmentIcon />
-                        {
+                        {/* {
                             data.budget < 100000 && <BudgetIcon />
-                        }
+                        } */}
                     </div>
 
-                    <div className='flex gap-1 my-4'>
+                    {/* <div className='flex gap-1 my-4'>
                         <PhoneIcon /> <p>{data.phone}</p>
                     </div>
 
@@ -97,7 +102,7 @@ const ViewCandidateProfile = () => {
                         <EmailIcon /> <p>{data.email}</p>
                     </div>
 
-                    <p>{data.budget}</p>
+                    <p>{data.budget}</p> */}
                     <p>{data.location}</p>
                     <p>{data.experience}</p>
                     <p>{data.skills}</p>
@@ -110,13 +115,13 @@ const ViewCandidateProfile = () => {
                 </div> */}
                 
                 
-                <div className='bg-background-90'>
-                    hello
-
+                <div className=' flex justify-center bg-stars bg-cover typography-h3 w-[430px]'>
+                    <div className='bg-red-100'></div>
+                    VAV Score
                 </div>
                 
-                            </div>
-            <div className='flex justify-center' >
+        </div>
+            <div className='flex  mt-4 mb-4' >
                 <Tabs tabs={tabs} activeTab={activeTab} handleTabClick={handleTabClick} />
             </div>
 

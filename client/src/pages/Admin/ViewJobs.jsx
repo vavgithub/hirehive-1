@@ -308,7 +308,10 @@ const ViewJobs = () => {
 
             {activeTab === 'candidate' && (
                 <div>
+                    <div className='overflow-x-hidden'>
                     <StatsGrid stats={candidateStats} />
+
+                    </div>
                     <div className='flex'>
                         <div style={{ height: 400, width: '100%' }}>
                             <Table rowsData={candidatesData} onUpdateCandidate={updateCandidate}/>

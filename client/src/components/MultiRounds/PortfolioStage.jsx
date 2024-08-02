@@ -80,90 +80,242 @@ const PortfolioStage = ({ candidateData, assignee, onAssigneeChange, allAssignee
         )
     };
 
-  if (!candidateData || !candidateData.stageStatus || !candidateData.stageStatus.Portfolio) {
-    return <div>Loading...</div>; // Or some other loading indicator
-  }
+    if (!candidateData || !candidateData.stageStatus || !candidateData.stageStatus.Portfolio) {
+        return <div>Loading...</div>; // Or some other loading indicator
+    }
+
+    const renderStatusLabel = () => {
+    // const { status,score } = candidateData.stageStatus.Screening;
+        const { status , score} = candidateData.stageStatus.Portfolio;
+        // const hasScore = Object.values(score.totalScore).some(value => value !== null);
+        const categories = [
+            { label: 'Attitude', value: score.totalScore.Attitude },
+            { label: 'UX', value: score.totalScore.UX },
+            { label: 'Tech', value: score.totalScore.Tech },
+            { label: 'Communication', value: score.totalScore.Communication },
+            { label: 'UI', value: score.totalScore.UI },
+        ];
+
+        switch (status) {
+       
+
+            case 'Reviewed':
+                return (
+                    <>
+                        <div className='w-full '>
+                            <p className='typography-small-p text-font-gray'>Remarks</p>
+                            <p className='typography-body pb-8'>{score.remark}</p>
+                            <div className='flex justify-between gap-4'>
+                                <div className='w-full'>
+                                    <p className='typography-small-p text-font-gray'>Score</p>
+                                    <div className='grid grid-cols-3 grid-rows-2 rounded-xl gap-x-14 gap-y-4 p-4 bg-background-80 w-full'>
+
+                                    </div>
+                                </div>
+                                <div>
+                                    <div>
+                                        <p className='typography-small-p text-font-gray block'>Total Score:</p>
+                                        <div className='flex '>
+                                            <p className='display-d2 font-bold'>{totalScore}</p>
+                                            <p className='typography-small-p text-font-gray pt-6 ml-2 w-[70px] '>Out Of 30</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </>
+
+                );
+            case 'Cleared':
+                return (
+                    <>
+                        <div className='w-full '>
+                            <p className='typography-small-p text-font-gray'>Remarks</p>
+                            <p className='typography-body pb-8'>{score.remark}</p>
+                            <div className='flex justify-between gap-4'>
+                                <div className='w-full'>
+                                    <p className='typography-small-p text-font-gray'>Score</p>
+
+                                </div>
+                                <div>
+                                    <div>
+                                        <p className='typography-small-p text-font-gray block'>Total Score:</p>
+                                        <div className='flex '>
+                                            <p className='display-d2 font-bold'>{""}</p>
+                                            <p className='typography-small-p text-font-gray pt-6 ml-2 w-[70px] '>Out Of 30</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </>
+                );
+            case 'No Show':
+                return <Label icon={<WarningIcon />} text="Candidate did not show up for the call" />;
+            case 'Rejected':
+                return (
+                    <>
+                        <div className='w-full '>
+                            <div className='flex justify-between gap-4'>
+                                <div className='w-full'>
+                                    <p className='typography-small-p text-font-gray'>Reason for rejection</p>
+                                    <p className='typography-body'>{rejectionReason}</p>
+                                </div>
+                                <div>
+                                    <div>
+                                        <p className='typography-small-p text-font-gray block'>Total Score:</p>
+                                        <div className='flex '>
+                                            <p className='display-d2 font-bold'>{totalScore}</p>
+                                            <p className='typography-small-p text-font-gray pt-6 ml-2 w-[70px] '>Out Of 30</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </>
+                );
+            default:
+                return null;
+        }
+    };
+
+
+    const renderFooter = () => {
+        const { status } = candidateData.stageStatus.Screening;
+
+        const commonFooterContent = (
+            <div>
+                <p className='text-white'>Received On</p>
+                <p className='typography-h3 text-white'>{candidateData.createdAt}</p>
+            </div>
+        );
+
+        switch (status) {
+            case 'Call Scheduled':
+                return (
+                    <>
+                        {commonFooterContent}
+                        <div>
+                            {isRescheduling ? (
+                                <div className='flex gap-2'>
+                                    <Button
+                                        variant="primary"
+                                        disabled={!selectedDate || !selectedTime || !meetLink}
+                                        onClick={handleUpdateReschedule}
+                                    >
+                                        Update
+                                    </Button>
+                                    <Button variant="secondary" onClick={handleCancelReschedule}>Cancel</Button>
+                                </div>
+                            ) : (
+                                <div className='flex gap-2'>
+                                    {isCallPassed ? (
+                                        <Button variant="primary" onClick={handleNext}>Next</Button>
+                                    ) : (
+                                        <>
+                                            <Button variant="cancel">No Show</Button>
+                                            <Button variant="primary" onClick={handleReschedule}>Reschedule Call</Button>
+                                        </>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                    </>
+                );
+            case 'Call Pending':
+                return (
+                    <>
+                        {commonFooterContent}
+                        <Button
+                            variant="primary"
+                            disabled={!selectedDate || !selectedTime || !selectedAssignee || !meetLink}
+                            onClick={handleUpdate}
+                        >
+                            Update
+                        </Button>
+                    </>
+                );
+            case 'Under Review':
+                return (
+                    <>
+                        {commonFooterContent}
+                        <Button
+                            variant="icon"
+                            disabled={budgetScore === null}
+                            onClick={handleBudgetScoreUpdate}
+                        >
+                            Update
+                        </Button>
+                    </>
+                );
+            case 'Reviewed':
+                return (
+                    <>
+                        {commonFooterContent}
+                        <div className='flex gap-6'>
+                            <div className='w-[236px]'>
+                                <Button variant="cancel" onClick={() => setIsModalOpen(true)}>Reject</Button>
+                            </div>
+                            <div className='w-[236px]'>
+                                <Button variant="primary" onClick={onNext}>Move To Next Round</Button>
+                            </div>
+                        </div>
+                    </>
+                );
+            default:
+                return commonFooterContent;
+        }
+    };
 
 
     return (
         <div className='w-full bg-background-100' >
-      <div>
-        <div className='flex justify-between bg-background-90'>
-          <h1 className='typography-h3 text-white'>Portfolio</h1>
-          <div className='flex text-white'>
-            {candidateData.stageStatus.Portfolio.status}
-            {candidateData.stageStatus.Portfolio.assignee}
-            {candidateData.portfolio}
-          </div>
-        </div>
-      </div>
+            <div>
+                <div className='flex justify-between bg-background-90'>
+                    <h1 className='typography-h3 text-white'>Portfolio</h1>
+                    <div className='flex text-white'>
+                        {candidateData.stageStatus.Portfolio.status}
+                        {candidateData.stageStatus.Portfolio.assignee}
+                        {candidateData.portfolio}
+                    </div>
+                </div>
+            </div>
 
 
             {/* middle layer */}
-           
-      <div className='m-8'>
-        {candidateData.stageStatus.Portfolio.status === "Not Assigned" &&
-          <p className='bg-background-80 inline'>This candidate's portfolio has not yet been assigned to a reviewer.</p>
-        }
 
-        {candidateData.stageStatus.Portfolio.status === "Under Review" &&
-          <p className='bg-background-80 inline'>The portfolio is now being reviewed by the assigned reviewer.</p>
-        }
+            <div className='m-8'>
 
-        {candidateData.stageStatus.Portfolio.status === "Cleared" &&
-          <Label text="Lorem ipsum dolor sit amet consectetur. Eget congue magna interdum ac gravida elementum suspendisse. Urna amet magna massa mattis blandit vitae eu ante." />
-        }
-      </div>
+            <div className='m-4'>
+                    {renderStatusLabel()}
+                </div>
 
-      <div className='flex'>
-        <div className='w-8 ml-[85%]'>
-          {candidateData.stageStatus.Portfolio.assignee === "N/A" &&
-            <BasicSelect
-              label="Assignee"
-              value={assignee}
-              onChange={onAssigneeChange}
-              list={allAssignees}
-            />
-          }
-          {candidateData.stageStatus.Portfolio.assignee === "N/A" &&
-            <button className="bg-black text-white px-4 py-2 rounded" onClick={() => setIsModalOpenPortfolio(!isModalOpenPortfolio)}>Assign Portfolio</button>
-          }
-        </div>
-      </div>
+            </div>
+
+            
 
 
             {/* third layer */}
             <div className='flex justify-between bg-background-90'>
 
-                <div>
+                {/* <div>
                     <p className='text-white'>Received On</p>
                     <p className='typography-h3 text-white'>
                         {candidateData.createdAt}
                     </p>
 
-                </div>
+                </div> */}
 
-                <div className='flex gap-4 '>
-                    {
-                        candidateData.status == "Not Assigned" ? <Button variant="secondary"
-                            onClick={() => setOpenAssigneeModal(true)}
-                            className="mb-4 px-4 py-2 bg-black text-white rounded "
-                        >
-                            Assign Multiple Candidates
-                        </Button> : (
-                            <div className='flex gap-6'>
-                                <div className='w-[236px]'>
-                                    <Button variant="cancel" onClick={onReject}  >Reject</Button>
-                                </div>
-                                <div className='w-[236px]'>
-                                    <Button variant="secondary" onClick={onNext}>Move To Next Round</Button>
-                                </div>
-                            </div>
-                        )
-                    }
-                </div>
+              
 
+                <div className='flex justify-between rounded-xl bg-background-90 p-6'>
+                    {renderFooter()}
+                </div>
             </div>
+
 
             <InputPopUpModalAutoSelect
                 open={openAssigneeModal}

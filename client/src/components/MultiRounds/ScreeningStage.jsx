@@ -225,14 +225,14 @@ const ScreeningStage = ({ candidateData: initialCandidateData, onStatusUpdate, o
     // }, [candidateData]);
 
     const handleDateChange = (date) => {
-        const localDate = new Date(date);
-        setSelectedDate(localDate);
+        // const localDate = new Date(date);
+        setSelectedDate(date);
     };
 
     const handleTimeChange = (time) => {
         // Convert the time to local timezone
-        const localTime = new Date(time);
-        setSelectedTime(localTime);
+        // const localTime = new Date(time);
+        setSelectedTime(time);
     };
 
     const handleMeetChange = (e) => {
@@ -700,6 +700,93 @@ const ScreeningStage = ({ candidateData: initialCandidateData, onStatusUpdate, o
         }
     };
 
+    const renderFooter = () => {
+        const { status } = candidateData.stageStatus.Screening;
+
+        const commonFooterContent = (
+            <div>
+                <p className='text-white'>Received On</p>
+                <p className='typography-h3 text-white'>{candidateData.createdAt}</p>
+            </div>
+        );
+
+        switch (status) {
+            case 'Call Scheduled':
+                return (
+                    <>
+                        {commonFooterContent}
+                        <div>
+                            {isRescheduling ? (
+                                <div className='flex gap-2'>
+                                    <Button
+                                        variant="primary"
+                                        disabled={!selectedDate || !selectedTime || !meetLink}
+                                        onClick={handleUpdateReschedule}
+                                    >
+                                        Update
+                                    </Button>
+                                    <Button variant="secondary" onClick={handleCancelReschedule}>Cancel</Button>
+                                </div>
+                            ) : (
+                                <div className='flex gap-2'>
+                                    {isCallPassed ? (
+                                        <Button variant="primary" onClick={handleNext}>Next</Button>
+                                    ) : (
+                                        <>
+                                            <Button variant="cancel">No Show</Button>
+                                            <Button variant="primary" onClick={handleReschedule}>Reschedule Call</Button>
+                                        </>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                    </>
+                );
+            case 'Call Pending':
+                return (
+                    <>
+                        {commonFooterContent}
+                        <Button
+                            variant="primary"
+                            disabled={!selectedDate || !selectedTime || !selectedAssignee || !meetLink}
+                            onClick={handleUpdate}
+                        >
+                            Update
+                        </Button>
+                    </>
+                );
+            case 'Under Review':
+                return (
+                    <>
+                        {commonFooterContent}
+                        <Button
+                            variant="icon"
+                            disabled={budgetScore === null}
+                            onClick={handleBudgetScoreUpdate}
+                        >
+                            Update
+                        </Button>
+                    </>
+                );
+            case 'Reviewed':
+                return (
+                    <>
+                        {commonFooterContent}
+                        <div className='flex gap-6'>
+                            <div className='w-[236px]'>
+                                <Button variant="cancel" onClick={() => setIsModalOpen(true)}>Reject</Button>
+                            </div>
+                            <div className='w-[236px]'>
+                                <Button variant="primary" onClick={onNext}>Move To Next Round</Button>
+                            </div>
+                        </div>
+                    </>
+                );
+            default:
+                return commonFooterContent;
+        }
+    };
+
     return (
         <div className='w-full bg-background-100 rounded-xl'>
 
@@ -737,8 +824,9 @@ const ScreeningStage = ({ candidateData: initialCandidateData, onStatusUpdate, o
 
             {/* this is the third laye the footer */}
             <div className='flex justify-between rounded-xl bg-background-90 p-6'>
+            {renderFooter()}
 
-                <div>
+                {/* <div>
                     <p className='text-white'>Received On</p>
                     <p className='typography-h3 text-white'>
                         {candidateData.createdAt}
@@ -796,14 +884,12 @@ const ScreeningStage = ({ candidateData: initialCandidateData, onStatusUpdate, o
                                 <div className='w-[236px]'>
                                     <Button variant="cancel"  onClick={() => setIsModalOpen(true)}  >Reject</Button>
                                     {/* <Button variant="cancel"  onClick={onReject}  >Reject</Button> */}
-                                </div>
+                                {/* </div>
                                 <div className='w-[236px]'>
                                     <Button variant="primary" onClick={onNext}>Move To Next Round</Button>
                                 </div>
                             </div>
-                        )
-                    }
-                </div>
+                      */}
             </div>
             <InputPopUpModal
                 open={isModalOpen}

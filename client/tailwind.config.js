@@ -7,7 +7,8 @@ export default {
     extend: {
       backgroundImage: {
         "card-pattern": "url('/src/svg/StatsCard/pattern.svg')",
-        "main-bg":"url('/src/svg/Background/main-bg.svg')",
+        "main-bg":"url('/src/svg/Background/rate.png')",
+        "stars":"url('/src/svg/Background/Stars.png')",
         "custom-gradient":
           "linear-gradient(180deg, var(--tw-gradient-stops))",
       },
