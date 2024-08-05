@@ -27,7 +27,7 @@ const Button = React.forwardRef(({
     secondary: "bg-blue-300 w-full text-blue-100 typography-body hover:bg-blue-200",
     tertiary: "text-blue-600 typography-body hover:bg-blue-100",
     cancel: "bg-red-500 w-full text-white typography-body hover:bg-red-600",
-    icon: "bg-transparent p-0"
+    icon: "bg-blue-100 p-0"
   };
 
   const sizes = {

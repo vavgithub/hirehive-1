@@ -254,9 +254,9 @@ const ViewJobs = () => {
         { title: 'Total', value: candidatesData.length.toString() , icon: one},
         { title: 'Portfolio', value: candidatesData.filter(c => c.stage === 'Portfolio').length.toString() , icon: one},
         { title: 'Screening', value: candidatesData.filter(c => c.stage === 'Screening').length.toString() , icon: one},
-        { title: 'Design Task', value: candidatesData.filter(c => c.stage === 'Design Task').length.toString() , icon: one},
+        // { title: 'Design Task', value: candidatesData.filter(c => c.stage === 'Design Task').length.toString() , icon: one},
         { title: 'Round 1', value: candidatesData.filter(c => c.stage === 'Round 1').length.toString() , icon: one},
-        { title: 'Round 2', value: candidatesData.filter(c => c.stage === 'Round 2').length.toString() , icon: one},
+        // { title: 'Round 2', value: candidatesData.filter(c => c.stage === 'Round 2').length.toString() , icon: one},
         // { title: 'Offer Sent', value: candidatesData.filter(c => c.stage === 'Hired').length.toString() , icon: one},
     ];
 

@@ -11,6 +11,7 @@ import AssigneeSelector from '../utility/AssigneeSelector';
 import BudgetIcon from '../../svg/Staging/BudgetIcon';
 import PortfolioIcon from '../../svg/PortfolioIcon';
 import WarningIcon from '../../svg/Staging/WarningIcon';
+import InputPopUpModal from '../InputPopUpModal';
 
 const getStageOptions = (stage) => {
     switch (stage) {
@@ -68,7 +69,7 @@ const useHandleReject = (candidateData, onStatusUpdate) => {
 
 
 
-const PortfolioStage = ({ candidateData:initialCandidateData, assignee, onAssigneeChange, allAssignees, onStatusUpdate, onReject, onNext }) => {
+const PortfolioStage = ({ candidateData: initialCandidateData, assignee, onAssigneeChange, allAssignees, onStatusUpdate, onReject, onNext }) => {
     const [candidateData, setCandidateData] = useState(initialCandidateData);
     const { handleReject, isRejecting } = useHandleReject(candidateData, onStatusUpdate);
 
@@ -86,28 +87,98 @@ const PortfolioStage = ({ candidateData:initialCandidateData, assignee, onAssign
     const list = getStageOptions(candidateData.stage);
     const [isModalOpenPortfolio, setIsModalOpenPortfolio] = useState(false);
 
-    const handleMultipleAssigneeChange = async () => {
-        return (
-            console.log("Hello Saaab")
-        )
+
+
+    const [rejectValue, setRejectValue] = useState("");
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const handleConfirmReject = () => {
+        onReject(rejectValue);
+        setIsModalOpen(false);
     };
 
+
+    // const handleMultipleAssigneeChange = async () => {
+    //     try {
+    //         const response = await axios.patch(`http://localhost:8008/api/v1/candidates/update/${candidateData._id}`, {
+    //             stageStatus: {
+    //                 ...candidateData.stageStatus,
+    //                 Portfolio: {
+    //                     ...candidateData.stageStatus.Portfolio,
+    //                     assignee: selectedAssignees ? selectedAssignees : null
+    //                 }
+    //             }
+    //         });
+
+    //         if (response.status === 200) {
+    //             setCandidateData(prevData => ({
+    //                 ...prevData,
+    //                 stageStatus: {
+    //                     ...prevData.stageStatus,
+    //                     Portfolio: {
+    //                         ...prevData.stageStatus.Portfolio,
+    //                         assignee: selectedAssignees ? selectedAssignees : null
+    //                     }
+    //                 }
+    //             }));
+    //             setSelectedAssignee(newAssignee);
+    //             console.log('Assignee updated successfully');
+    //         }
+    //     } catch (error) {
+    //         console.error('Error updating assignee:', error);
+    //         alert('Failed to update assignee. Please try again.');
+    //     }
+    // };
+
     const handleAssigneeSelect = (assignee) => {
-        handleAssigneeUpdate(assignee);
+        handleAssigneeUpdate([assignee]);
     };
+
+    const handleMultipleAssigneeChange = () => {
+        if (selectedAssignees.length > 0) {
+            handleAssigneeUpdate(selectedAssignees);
+            setOpenAssigneeModal(false);
+        } else {
+            alert('Please select at least one assignee.');
+        }
+    };
+
+    const fields = [
+        {
+            type: 'select',
+            label: 'Please provide the reason for rejecting this candidate',
+            value: rejectValue,
+            onChange: (e) => setRejectValue(e.target.value),
+            options: [
+                { value: "", label: "Select Start Range" },
+                { value: 'Candidates scores did not meet the criteria', label: 'Candidates scores did not meet the criteria' },
+                { value: 'Candidate did not appear for the screening', label: 'Candidate did not appear for the screening' },
+                { value: 'Candidate did not appear for round one', label: 'Candidate did not appear for round one' },
+                { value: 'Candidate did not appear for round two', label: 'Candidate did not appear for round two'},
+                { value: 'Candidate did not submit the design task', label: 'Candidate did not submit the design task' },
+            ],
+        }
+    ]
+
+    useEffect(() => {
+        console.log('Selected assignees:', selectedAssignees);
+    }, [selectedAssignees]);
 
     useEffect(() => {
         setCandidateData(initialCandidateData);
     }, [initialCandidateData]);
 
-    const handleAssigneeUpdate = async (newAssignee) => {
+    const handleAssigneeUpdate = async (newAssignees) => {
         try {
+            const assigneeNames = newAssignees.map(assignee => assignee.name || assignee);
+
             const response = await axios.patch(`http://localhost:8008/api/v1/candidates/update/${candidateData._id}`, {
                 stageStatus: {
                     ...candidateData.stageStatus,
                     Portfolio: {
-                        ...candidateData.stageStatus.Screening,
-                        assignee: newAssignee ? newAssignee.name : null
+                        ...candidateData.stageStatus.Portfolio,
+                        assignee: assigneeNames.length === 1 ? assigneeNames[0] : assigneeNames,
+                        status:"Under Review"
                     }
                 }
             });
@@ -118,20 +189,27 @@ const PortfolioStage = ({ candidateData:initialCandidateData, assignee, onAssign
                     stageStatus: {
                         ...prevData.stageStatus,
                         Portfolio: {
-                            ...prevData.stageStatus.Screening,
-                            assignee: newAssignee ? newAssignee.name : null
+                            ...prevData.stageStatus.Portfolio,
+                            assignee: assigneeNames.length === 1 ? assigneeNames[0] : assigneeNames,
+                            status:"Under Review"
                         }
                     }
                 }));
-                setSelectedAssignee(newAssignee);
-                console.log('Assignee updated successfully');
+
+                // Update selectedAssignee only if newAssignees is not empty
+                if (newAssignees.length > 0) {
+                    setSelectedAssignee(newAssignees[0]);
+                } else {
+                    setSelectedAssignee(null);
+                }
+
+                console.log('Assignee(s) updated successfully');
             }
         } catch (error) {
-            console.error('Error updating assignee:', error);
-            alert('Failed to update assignee. Please try again.');
+            console.error('Error updating assignee(s):', error);
+            alert('Failed to update assignee(s). Please try again.');
         }
     };
-
 
     if (!candidateData || !candidateData.stageStatus || !candidateData.stageStatus.Portfolio) {
         return <div>Loading...</div>; // Or some other loading indicator
@@ -141,16 +219,24 @@ const PortfolioStage = ({ candidateData:initialCandidateData, assignee, onAssign
 
     const renderStatusLabel = () => {
         // const { status,score } = candidateData.stageStatus.Screening;
-        const { status, score } = candidateData.stageStatus.Portfolio;
+        const { status, score  , rejectionReason , totalScore } = candidateData.stageStatus.Portfolio;
         // const hasScore = Object.values(score.totalScore).some(value => value !== null);
 
 
         switch (status) {
 
+
             case 'Not Assigned':
                 return (
                     <>
-                    <Label   icon={<WarningIcon />} text="Candidate’s portfolio has not yet been assigned to a reviewer."></Label>
+                        <Label icon={<WarningIcon />} text="Candidate’s portfolio has not yet been assigned to a reviewer."></Label>
+                    </>
+                )
+
+            case "Under Review":
+                return (
+                    <>
+                    <Label text="Portfolio is currently under review by the design reviewer"></Label>
                     </>
                 )
 
@@ -159,25 +245,22 @@ const PortfolioStage = ({ candidateData:initialCandidateData, assignee, onAssign
                 return (
                     <>
                         <div className='w-full '>
-                            <p className='typography-small-p text-font-gray'>Remarks</p>
-                            <p className='typography-body pb-8'>{score.remark}</p>
+                           
                             <div className='flex justify-between gap-4'>
                                 <div className='w-full'>
-                                    <p className='typography-small-p text-font-gray'>Score</p>
-                                    <div className='grid grid-cols-3 grid-rows-2 rounded-xl gap-x-14 gap-y-4 p-4 bg-background-80 w-full'>
-
-                                    </div>
+                                <p className='typography-small-p text-font-gray'>Remarks</p>
+                                <p className='typography-body pb-8'>{score.remark}</p>
                                 </div>
+
                                 <div>
                                     <div>
                                         <p className='typography-small-p text-font-gray block'>Total Score:</p>
                                         <div className='flex '>
-                                            <p className='display-d2 font-bold'>{totalScore}</p>
-                                            <p className='typography-small-p text-font-gray pt-6 ml-2 w-[70px] '>Out Of 30</p>
+                                            <p className='display-d2 font-bold'>{score.totalScore}</p>
+                                            <p className='typography-small-p text-font-gray pt-6 ml-2 w-[70px] '>Out Of 5</p>
                                         </div>
                                     </div>
                                 </div>
-
                             </div>
                         </div>
                     </>
@@ -189,8 +272,8 @@ const PortfolioStage = ({ candidateData:initialCandidateData, assignee, onAssign
                         <div className=' flex justify-between w-full '>
                             <div>
 
-                            <p className='typography-small-p text-font-gray'>Remarks</p>
-                            <p className='typography-body pb-8'>{score.remark}</p>
+                                <p className='typography-small-p text-font-gray'>Remarks</p>
+                                <p className='typography-body pb-8'>{score.remark}</p>
                             </div>
                             <div className='flex justify-between gap-4'>
                                 <div>
@@ -244,16 +327,21 @@ const PortfolioStage = ({ candidateData:initialCandidateData, assignee, onAssign
         const commonFooterContent = (
             <div>
                 <p className='text-white'>Received On</p>
-                <p className='typography-h3 text-white'>{candidateData.createdAt}</p>
+                <p className='typography-h3 text-white'> {new Date(candidateData.createdAt).toLocaleDateString('en-US', { timeZone: 'UTC' })}
+                </p>
+                {/* {candidateData.createdAt} */}
             </div>
         );
 
         switch (status) {
             case "Not Assigned":
-                return(
+                return (
                     <>
-                     {commonFooterContent}
-                     <button className=" text-white px-4 py-2 rounded" onClick={() => setOpenAssigneeModal(!openAssigneeModal)}>Assign Portfolio</button>
+                        {commonFooterContent}
+                        <div className='w-[160px]'>
+
+                        <Button variant="primary" onClick={() => setOpenAssigneeModal(!openAssigneeModal)}>Assign Portfolio</Button>
+                        </div>
                     </>
                 )
             case 'Call Scheduled':
@@ -277,26 +365,14 @@ const PortfolioStage = ({ candidateData:initialCandidateData, assignee, onAssign
                 return (
                     <>
                         {commonFooterContent}
-                        {/* <Button
-                            variant="primary"
-                            disabled={!selectedDate || !selectedTime || !selectedAssignee || !meetLink}
-                            onClick={handleUpdate}
-                        >
-                            Update
-                        </Button> */}
+
                     </>
                 );
             case 'Under Review':
                 return (
                     <>
                         {commonFooterContent}
-                        {/* <Button
-                            variant="icon"
-                            disabled={budgetScore === null}
-                            onClick={handleBudgetScoreUpdate}
-                        >
-                            Update
-                        </Button> */}
+
                     </>
                 );
             case 'Reviewed':
@@ -329,12 +405,11 @@ const PortfolioStage = ({ candidateData:initialCandidateData, assignee, onAssign
                     <div className='flex items-center gap-4'>
                         <StatusBadge status={candidateData.stageStatus.Portfolio.status} />
 
-
                         <AssigneeSelector
                             mode="icon"
                             value={selectedAssignee}
-                            onChange={handleAssigneeSelect}
-                            onSelect={handleAssigneeSelect}
+                            onChange={(newAssignee) => handleAssigneeUpdate([newAssignee])}
+                            onSelect={(newAssignee) => handleAssigneeUpdate([newAssignee])}
                         />
 
                         <div className='h-8 w-1 rounded bg-background-70'></div>
@@ -355,13 +430,13 @@ const PortfolioStage = ({ candidateData:initialCandidateData, assignee, onAssign
 
             {/* middle layer */}
 
-            <div className='m-8'>
 
-                <div className='m-4'>
-                    {renderStatusLabel()}
-                </div>
 
+            <div className='m-4'>
+                {renderStatusLabel()}
             </div>
+
+
 
 
 
@@ -383,6 +458,17 @@ const PortfolioStage = ({ candidateData:initialCandidateData, assignee, onAssign
                     {renderFooter()}
                 </div>
             </div>
+
+            <InputPopUpModal
+                open={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                confirmAction={handleConfirmReject}
+                fields={fields}
+                heading="Reject"
+                para={`Are you sure you want to reject ${candidateData.firstName}?`}
+                confirmButtonText="Reject"
+                cancelButtonText="Cancel"
+            />
 
 
             <InputPopUpModalAutoSelect

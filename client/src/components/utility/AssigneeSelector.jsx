@@ -7,7 +7,8 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect }) => {
     const dropdownRef = useRef(null);
 
     const assignees = [
-        { id: 1, name: 'Sarah James' },
+        { id: 1, name: 'Jordyn' },
+  
         { id: 2, name: 'Emily Parker' },
         { id: 3, name: 'James Dean' },
         { id: 4, name: 'William Taylor' },
@@ -44,15 +45,15 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect }) => {
                     className="rounded-full flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2"
                 >
                     {shouldShowIcon ? (
-                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect width="32" height="32" rx="16" fill="#1B1C1D" />
-                        <path d="M18.6641 22V20.6667C18.6641 19.9594 18.3831 19.2811 17.883 18.7811C17.3829 18.281 16.7046 18 15.9974 18H11.3307C10.6235 18 9.94521 18.281 9.44511 18.7811C8.94501 19.2811 8.66406 19.9594 8.66406 20.6667V22M21.3307 13.3333V17.3333M23.3307 15.3333H19.3307M16.3307 12.6667C16.3307 14.1394 15.1368 15.3333 13.6641 15.3333C12.1913 15.3333 10.9974 14.1394 10.9974 12.6667C10.9974 11.1939 12.1913 10 13.6641 10C15.1368 10 16.3307 11.1939 16.3307 12.6667Z" stroke="white" strokeWidth="0.825" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                ) : (
-                    <div className="w-8 h-8 rounded-full bg-accent-100 text-background-60 flex items-center justify-center">
-                        {value.name[0].toUpperCase()}
-                    </div>
-                )}
+                        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="32" height="32" rx="16" fill="#1B1C1D" />
+                            <path d="M18.6641 22V20.6667C18.6641 19.9594 18.3831 19.2811 17.883 18.7811C17.3829 18.281 16.7046 18 15.9974 18H11.3307C10.6235 18 9.94521 18.281 9.44511 18.7811C8.94501 19.2811 8.66406 19.9594 8.66406 20.6667V22M21.3307 13.3333V17.3333M23.3307 15.3333H19.3307M16.3307 12.6667C16.3307 14.1394 15.1368 15.3333 13.6641 15.3333C12.1913 15.3333 10.9974 14.1394 10.9974 12.6667C10.9974 11.1939 12.1913 10 13.6641 10C15.1368 10 16.3307 11.1939 16.3307 12.6667Z" stroke="white" strokeWidth="0.825" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                    ) : (
+                        <div className="w-8 h-8 rounded-full bg-accent-100 text-background-60 flex items-center justify-center">
+                            {value && value.name ? value.name[0].toUpperCase() : '?'}
+                        </div>
+                    )}
                 </button>
             );
         } else {
@@ -62,7 +63,7 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect }) => {
                         type="text"
                         className="w-full px-6 py-2 rounded-md shadow-sm focus:outline-none"
                         placeholder="-Select-"
-                        value={value ? value.name : ''}
+                        value={value && value.name ? value.name : ''}
                         readOnly
                     />
                     <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">

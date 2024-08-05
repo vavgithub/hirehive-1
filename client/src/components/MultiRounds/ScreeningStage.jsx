@@ -739,7 +739,8 @@ const ScreeningStage = ({ candidateData: initialCandidateData, onStatusUpdate, o
                             ) : (
                                 <div className='flex gap-2'>
                                     {isCallPassed ? (
-                                        <Button variant="primary" onClick={handleNext}>Next</Button>
+                                        <Button variant="icon" onClick={handleNext}></Button>
+                                        // <Button variant="primary" >Next</Button>
                                     ) : (
                                         <>
                                             <Button variant="cancel">No Show</Button>
