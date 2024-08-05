@@ -14,6 +14,15 @@ body {
 input {
   @apply bg-background-40; /* Replace bg-gray-200 with your desired background color class */
 }
+input[type="checkbox"],
+input[type="radio"] {
+  @apply bg-background-40 rounded;
+}
+
+input[type="checkbox"]:checked,
+input[type="radio"]:checked {
+  @apply bg-teal-400 border-transparent;
+}
 
 h2{
   @apply font-bricolage text-h2 font-h2;

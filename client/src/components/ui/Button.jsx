@@ -24,7 +24,7 @@ const Button = React.forwardRef(({
 
   const variants = {
     primary: "bg-blue-100 w-full text-white typography-body hover:bg-blue-200",
-    secondary: "bg-blue-500 w-full text-white text-blue-600 typography-body hover:bg-blue-200",
+    secondary: "bg-blue-300 w-full text-blue-100 typography-body hover:bg-blue-200",
     tertiary: "text-blue-600 typography-body hover:bg-blue-100",
     cancel: "bg-red-500 w-full text-white typography-body hover:bg-red-600",
     icon: "bg-transparent p-0"

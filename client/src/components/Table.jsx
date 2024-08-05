@@ -13,7 +13,7 @@ import { exportToExcel } from '../utility/exportToExcel';
 const stageStatusMap = {
     "Portfolio": ['Not Assigned', 'Under Review', 'Reviewed', 'Cleared', 'Rejected'],
     "Screening": ['Call Pending', 'Call Scheduled', 'Under Review', 'Reviewed', 'Cleared', 'No Show', 'Rejected'],
-    "Design Task": ['Not Assigned','Sent',  'Under Review', 'Reviewed', 'Cleared', 'Rejected', 'Not Submitted'],
+    "Design Task": ['Not Assigned', 'Sent', 'Under Review', 'Reviewed', 'Cleared', 'Rejected', 'Not Submitted'],
     "Round 1": ['Call Pending', 'Call Scheduled', 'Not Assigned', 'Reviewed', 'Cleared', 'No Show', 'Rejected'],
     "Round 2": ['Call Pending', 'Call Scheduled', 'Not Assigned', 'Reviewed', 'Cleared', 'No Show', 'Rejected'],
 };
@@ -92,13 +92,13 @@ const Table = ({ rowsData, onUpdateCandidate }) => {
                 const randomAssignee = selectedAssignees[Math.floor(Math.random() * selectedAssignees.length)];
                 return {
                     ...row,
-                    stageStatus: { 
-                        ...row.stageStatus, 
-                        Portfolio: { 
-                            ...row.stageStatus.Portfolio, 
+                    stageStatus: {
+                        ...row.stageStatus,
+                        Portfolio: {
+                            ...row.stageStatus.Portfolio,
                             status: 'Under Review',
                             assignee: randomAssignee
-                        } 
+                        }
                     }
                 };
             }
@@ -136,13 +136,13 @@ const Table = ({ rowsData, onUpdateCandidate }) => {
 
             setRows(prevRows => prevRows.map(row =>
                 row._id === id
-                    ? { 
-                        ...row, 
-                        stage: newStage, 
-                        stageStatus: { 
-                            ...row.stageStatus, 
-                            [newStage]: { ...row.stageStatus[newStage], status: currentStatus } 
-                        } 
+                    ? {
+                        ...row,
+                        stage: newStage,
+                        stageStatus: {
+                            ...row.stageStatus,
+                            [newStage]: { ...row.stageStatus[newStage], status: currentStatus }
+                        }
                     }
                     : row
             ));
@@ -161,12 +161,12 @@ const Table = ({ rowsData, onUpdateCandidate }) => {
 
             setRows(prevRows => prevRows.map(row =>
                 row._id === id
-                    ? { 
-                        ...row, 
-                        stageStatus: { 
-                            ...row.stageStatus, 
-                            [stage]: { ...row.stageStatus[stage], status: newStatus } 
-                        } 
+                    ? {
+                        ...row,
+                        stageStatus: {
+                            ...row.stageStatus,
+                            [stage]: { ...row.stageStatus[stage], status: newStatus }
+                        }
                     }
                     : row
             ));
@@ -236,8 +236,8 @@ const Table = ({ rowsData, onUpdateCandidate }) => {
         const updatedRows = rows.map((row) => {
             if (row._id === id) {
                 let stageStatus = { ...row.stageStatus };
-                stageStatus[stage] = { 
-                    ...stageStatus[stage], 
+                stageStatus[stage] = {
+                    ...stageStatus[stage],
                     assignee: newAssignee,
                     status: stage === 'Portfolio' && newAssignee !== 'N/A' ? 'Under Review' : stageStatus[stage].status
                 };
@@ -290,7 +290,7 @@ const Table = ({ rowsData, onUpdateCandidate }) => {
             newFilteredRows = newFilteredRows.filter(row => filters.rating.includes(row.rating));
         }
         if (filters.assignee.length > 0) {
-            newFilteredRows = newFilteredRows.filter(row => 
+            newFilteredRows = newFilteredRows.filter(row =>
                 Object.values(row.assignees).some(assignee => filters.assignee.includes(assignee))
             );
         }
@@ -371,20 +371,19 @@ const Table = ({ rowsData, onUpdateCandidate }) => {
                 const currentStage = params.row.stage;
                 const currentAssignee = params.row.stageStatus[currentStage]?.assignee || 'N/A';
                 return (
-                    <BasicSelect
-                        label="Assignee"
-                        value={currentAssignee}
-                        onChange={(e) => handleAssigneeChange(params.row._id, currentStage, e.target.value)}
-                        list={['N/A', ...allAssignees]}
-                    />
+                    <p>
+
+                        {currentAssignee}
+                    </p>
+
                 );
             },
         },
         // {
-            // field: 'assignees',
-            // headerName: 'Assignee',
-            // width: 130,
-            // valueGetter: (params) => params.row.assignees[params.row.stage] || 'N/A'
+        // field: 'assignees',
+        // headerName: 'Assignee',
+        // width: 130,
+        // valueGetter: (params) => params.row.assignees[params.row.stage] || 'N/A'
         // },
         // {
         //     field: 'assignees',
@@ -406,11 +405,11 @@ const Table = ({ rowsData, onUpdateCandidate }) => {
     ];
 
     return (
-        <div style={{ height: 400, width: '100%' }}>
+        <div>
             <div className='flex justify-between m-4'>
                 <div className='flex gap-4 h-12'>
                     <input
-                        className="border border-gray-300 px-4 py-2 w-40 rounded mb-4"
+                        className="px-4 py-2 w-40 rounded "
                         placeholder="Search By Name"
                         value={searchQuery}
                         onChange={(e) => {
@@ -497,6 +496,59 @@ const Table = ({ rowsData, onUpdateCandidate }) => {
                         paginationModel: { page: 0, pageSize: 5 },
                     },
                 }}
+                getRowClassName={(params) =>
+                    params.indexRelativeToCurrentPage % 2 === 0 ? 'red-row' : 'blue-row'
+                }
+                sx={{
+                    '& .MuiDataGrid-cell': {
+                        color: 'white',
+                        borderBottom: 'none', // Remove the bottom border of the cells
+                        borderTop: 'none'
+                    },
+                    '& .MuiDataGrid-columnHeaders': {
+                        borderTop: 'none',
+                        borderBottom: 'none', // Remove the bottom border of the column headers
+                    },
+                    '& .MuiDataGrid-row': {
+                        borderBottom: 'none', // Remove the bottom border of the rows
+                        borderTop: 'none'
+                    },
+                    '& .MuiDataGrid-columnSeparator': {
+                        display: 'none', // Remove the column separators
+                    },
+                    '& .MuiDataGrid-footerContainer': {
+                        borderTop: 'none', // Remove the top border of the footer
+                    },
+                    '& .MuiDataGrid-footerContainer': {
+                        borderTop: 'none', // Remove the top border of the footer
+                        color: 'white', // Set footer text color to white
+                    },
+                    '& .MuiTablePagination-root': {
+                        color: 'white', // Set pagination text color to white
+                    },
+                    '& .MuiTablePagination-toolbar': {
+                        color: 'white', // Set pagination toolbar text color to white
+                    },
+                    '& .MuiTablePagination-selectIcon': {
+                        color: 'white', // Set pagination select icon color to white
+                    },
+                    '& .MuiSvgIcon-root': {
+                        color: 'white', // Ensure all SVG icons are white
+                    },
+                    '& .red-row': {
+                        backgroundColor: 'rgba(18, 19, 20, 1)',
+                        '&:hover': {
+                            backgroundColor: 'rgba(32, 33, 34, 1',
+                        },
+                    },
+                    '& .blue-row': {
+                        backgroundColor: 'rgba(12, 13, 13, 1)',
+                        '&:hover': {
+                            backgroundColor: 'rgba(32, 33, 34, 1',
+                        },
+                    },
+                    backgroundColor: 'black', // Set the background color to black
+                }}
                 pageSizeOptions={[5, 10]}
                 checkboxSelection
                 onRowClick={(params) => handleRowClick(params)}
@@ -527,8 +579,8 @@ const Table = ({ rowsData, onUpdateCandidate }) => {
                 setAssignees={setSelectedAssignees}
                 singleSelect={false}
                 allAssignees={allAssignees}
-                heading="Assign Multiple Candidates"
-                para="Select assignees for candidates in Portfolio stage with 'Not Assigned' status."
+                heading="Auto assign portfolios"
+                para="Select the reviewers to assign portfolios to"
                 confirmButtonText="Assign"
                 cancelButtonText="Cancel"
             />

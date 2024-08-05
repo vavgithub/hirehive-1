@@ -257,7 +257,7 @@ const ViewJobs = () => {
         { title: 'Design Task', value: candidatesData.filter(c => c.stage === 'Design Task').length.toString() , icon: one},
         { title: 'Round 1', value: candidatesData.filter(c => c.stage === 'Round 1').length.toString() , icon: one},
         { title: 'Round 2', value: candidatesData.filter(c => c.stage === 'Round 2').length.toString() , icon: one},
-        { title: 'Offer Sent', value: candidatesData.filter(c => c.stage === 'Hired').length.toString() , icon: one},
+        // { title: 'Offer Sent', value: candidatesData.filter(c => c.stage === 'Hired').length.toString() , icon: one},
     ];
 
     const jobsDetailStats = [
@@ -308,12 +308,11 @@ const ViewJobs = () => {
 
             {activeTab === 'candidate' && (
                 <div>
-                    <div className='overflow-x-hidden'>
+                    <div>
                     <StatsGrid stats={candidateStats} />
-
                     </div>
                     <div className='flex'>
-                        <div style={{ height: 400, width: '100%' }}>
+                        <div>
                             <Table rowsData={candidatesData} onUpdateCandidate={updateCandidate}/>
                             {/* <DataTable rowsData={candidatesData} onUpdateCandidate={updateCandidate} onUpdateAssignee={updateAssignee} onUpdateRating={updateRating}/> */}
                         </div>

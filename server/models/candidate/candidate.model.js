@@ -72,8 +72,14 @@ const candidateSchema = new mongoose.Schema(
           default: 'N/A'
         },
         score: {
-          type: Number,
-          default: 0
+          totalScore:{
+            type:Number,
+            default: 0,
+          },
+          remark:{
+            type:String,
+            default:"N/A"
+          },
         },
       },
       Screening: {

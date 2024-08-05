@@ -22,7 +22,7 @@ export default function Timepicker({ onChange, value }) {
    
         <DesktopTimePicker 
         value={value ? dayjs(`${value}`) : null}
-        defaultValue={dayjs('15:30')} 
+        defaultValue={dayjs('2022-04-17T15:30')} 
         onChange={(newValue) => onChange(newValue)} />
 
       {/* </DemoContainer> */}

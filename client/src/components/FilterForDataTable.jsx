@@ -110,8 +110,8 @@ const FilterForDataTable = ({ onApplyFilters }) => {
     }, [selectedFilters]);
   
     return (
-      <div className='relative' ref={menuRef}>
-        <button className="bg-black text-white px-4 py-2 rounded" onClick={(e) => toggleMenu(e)}>Filters</button>
+      <div className='relative ' ref={menuRef}>
+        <button className="bg-black text-white px-4 py-3  rounded" onClick={(e) => toggleMenu(e)}>Filters</button>
         {
           isOpen && (
             <div className='absolute z-10 mt-2 w-max bg-slate-800 p-4 rounded'>
