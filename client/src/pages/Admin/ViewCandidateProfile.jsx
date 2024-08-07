@@ -11,6 +11,7 @@ import EmailIcon from '../../svg/EmailIcon';
 import Tabs from '../../components/Tabs';
 import MultiRoundStages from '../../components/MultiRoundStages';
 import Staging from '../../components/Staging';
+import Header from '../../components/utility/Header';
 
 
 const ViewCandidateProfile = () => {
@@ -61,6 +62,7 @@ const ViewCandidateProfile = () => {
     return (
         <div className="mx-4 pt-4 h-screen">
             {/* <Breadcrumb paths={paths} /> */}
+            <Header HeaderText="Candidate Profile" withKebab="true" id={mainId}/>
             <div className='flex gap-3'>
                 <div className='bg-background-90 w-full p-4 rounded-xl' >
                     <h1 className='typography-h1 text-white'> {data.firstName}  {data.lastName}</h1>

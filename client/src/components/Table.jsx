@@ -83,7 +83,7 @@ const Table = ({ rowsData, onUpdateCandidate }) => {
     };
 
     const handleRowClick = (params) => {
-        navigate(`/admin/view-candidate/${params.row._id}`);
+        navigate(`/admin/jobs/view-candidate/${params.row._id}`);
     };
 
     const handleMultipleAssigneeChange = async () => {

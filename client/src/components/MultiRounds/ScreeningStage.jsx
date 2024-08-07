@@ -715,7 +715,7 @@ const ScreeningStage = ({ candidateData: initialCandidateData, onStatusUpdate, o
         const commonFooterContent = (
             <div>
                 <p className='text-white'>Received On</p>
-                <p className='typography-h3 text-white'>{candidateData.createdAt}</p>
+                <p className='typography-h3 text-white'> {new Date(candidateData.createdAt).toLocaleDateString('en-US', { timeZone: 'UTC' })}</p>
             </div>
         );
 
@@ -756,13 +756,15 @@ const ScreeningStage = ({ candidateData: initialCandidateData, onStatusUpdate, o
                 return (
                     <>
                         {commonFooterContent}
+                        <div className='w-[160px]'>
                         <Button
                             variant="primary"
                             disabled={!selectedDate || !selectedTime || !selectedAssignee || !meetLink}
                             onClick={handleUpdate}
-                        >
+                            >
                             Update
                         </Button>
+                            </div>
                     </>
                 );
             case 'Under Review':
@@ -835,70 +837,7 @@ const ScreeningStage = ({ candidateData: initialCandidateData, onStatusUpdate, o
             <div className='flex justify-between rounded-xl bg-background-90 p-6'>
             {renderFooter()}
 
-                {/* <div>
-                    <p className='text-white'>Received On</p>
-                    <p className='typography-h3 text-white'>
-                        {candidateData.createdAt}
-                    </p>
-
-                </div>
-
-                <div>
-                    {candidateData.stageStatus.Screening.status === "Call Scheduled" && !isRescheduling && (
-                        <div className='flex gap-2'>
-                            {isCallPassed ? (
-                                <Button variant="primary" onClick={handleNext}>Next</Button>
-                            ) : (
-                                <>
-                                    <Button variant="cancel">No Show</Button>
-                                    <Button variant="primary" onClick={handleReschedule}>Reschedule Call</Button>
-                                </>
-                            )}
-                        </div>
-                    )}
-                    {isRescheduling && (
-                        <div className='flex gap-2'>
-                            <Button
-                                variant="primary"
-                                disabled={!selectedDate || !selectedTime || !meetLink}
-                                onClick={handleUpdateReschedule}
-                            >
-                                Update
-                            </Button>
-                            <Button variant="secondary" onClick={handleCancelReschedule}>Cancel</Button>
-                        </div>
-                    )}
-                    {candidateData.stageStatus.Screening.status === "Call Pending" && (
-                        <Button
-                            variant="primary"
-                            disabled={isUpdateDisabled}
-                            onClick={handleUpdate}
-                        >
-                            Update
-                        </Button>
-                    )}
-                    {candidateData.stageStatus.Screening.status === "Under Review" && (
-                        <Button
-                            variant="icon"
-                            disabled={budgetScore === null}
-                            onClick={handleBudgetScoreUpdate}
-                        >
-                            Update
-                        </Button>
-                    )}
-
-                    {
-                        candidateData.stageStatus.Screening.status === "Reviewed" && (
-                            <div className='flex gap-6'>
-                                <div className='w-[236px]'>
-                                    <Button variant="cancel"  onClick={() => setIsModalOpen(true)}  >Reject</Button>
-                                    {/* <Button variant="cancel"  onClick={onReject}  >Reject</Button> */}
-                                {/* </div>
-                                <div className='w-[236px]'>
-                                    <Button variant="primary" onClick={onNext}>Move To Next Round</Button>
-                                </div>
-                            </div>
-                      */}
+                
             </div>
             <InputPopUpModal
                 open={isModalOpen}

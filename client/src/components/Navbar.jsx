@@ -36,7 +36,7 @@ const Navbar = () => {
                 </div>
             </div>
 
-            <div className='ml-[200px] w-full h-full'>
+            <div className='ml-[200px] w-full h-full p-3'>
                 <Outlet />
             </div>
         </div>

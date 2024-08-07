@@ -20,6 +20,7 @@ import Applyjob from "./pages/Candidate/CandidateViewJob";
 import CandidateViewJob from "./pages/Candidate/CandidateViewJob";
 import ApplyJob from "./pages/Candidate/ApplyJob";
 import RejectCandidatePopUp from "./components/utility/RejectCandidatePopUp";
+import EditCandidateProfile from "./pages/Admin/EditCandidateProfile";
 
 export const router = createBrowserRouter([
   {
@@ -51,8 +52,12 @@ export const router = createBrowserRouter([
         element: <ViewJobs />,
       },
       {
-        path: "view-candidate/:id",
+        path: "jobs/view-candidate/:id",
         element: <ViewCandidateProfile />
+      },
+      {
+        path: "jobs/edit-candidate/:id",
+        element: <EditCandidateProfile />
       }
     ]
   },

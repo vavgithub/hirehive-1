@@ -1,14 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import BasicSelect from '../BasicSelect';
-import ProgressIndicator from '../ProgressIndicator';
 import { Button } from '../ui/Button';
 import InputPopUpModalAutoSelect from '../InputPopUpModalAutoSelect';
-import FileSaver from 'file-saver';
 import axios from 'axios';
 import Label from '../ui/Label';
 import StatusBadge from '../ui/StatusBadge';
 import AssigneeSelector from '../utility/AssigneeSelector';
-import BudgetIcon from '../../svg/Staging/BudgetIcon';
 import PortfolioIcon from '../../svg/PortfolioIcon';
 import WarningIcon from '../../svg/Staging/WarningIcon';
 import InputPopUpModal from '../InputPopUpModal';
@@ -30,48 +26,12 @@ const getStageOptions = (stage) => {
     }
 };
 
-const useHandleReject = (candidateData, onStatusUpdate) => {
-
-    const [isRejecting, setIsRejecting] = useState(false);
-
-    const handleReject = async () => {
-        setIsRejecting(true);
-        try {
-            const currentStage = candidateData.stage;
-            const updatedStatus = {
-                ...candidateData.stageStatus,
-                [currentStage]: 'Rejected'
-            };
-
-            // Make API call to update the candidate's status
-            const response = await axios.patch(`http://localhost:8008/api/v1/candidates/update/${candidateData._id}`, {
-                stageStatus: updatedStatus
-            });
-
-            if (response.status === 200) {
-                // Call the onStatusUpdate function to update the local state
-                onStatusUpdate(currentStage, 'Rejected');
-                console.log(`Candidate rejected in ${currentStage} stage`);
-            } else {
-                throw new Error('Failed to update candidate status');
-            }
-        } catch (error) {
-            console.error('Error rejecting candidate:', error);
-            // Handle error (e.g., show error message to user)
-        } finally {
-            setIsRejecting(false);
-        }
-    };
-
-    return { handleReject, isRejecting };
-};
 
 
 
 
 const PortfolioStage = ({ candidateData: initialCandidateData, assignee, onAssigneeChange, allAssignees, onStatusUpdate, onReject, onNext }) => {
     const [candidateData, setCandidateData] = useState(initialCandidateData);
-    const { handleReject, isRejecting } = useHandleReject(candidateData, onStatusUpdate);
 
     const [selectedAssignee, setSelectedAssignee] = useState(
         candidateData.stageStatus.Portfolio.assignee
@@ -97,38 +57,6 @@ const PortfolioStage = ({ candidateData: initialCandidateData, assignee, onAssig
         setIsModalOpen(false);
     };
 
-
-    // const handleMultipleAssigneeChange = async () => {
-    //     try {
-    //         const response = await axios.patch(`http://localhost:8008/api/v1/candidates/update/${candidateData._id}`, {
-    //             stageStatus: {
-    //                 ...candidateData.stageStatus,
-    //                 Portfolio: {
-    //                     ...candidateData.stageStatus.Portfolio,
-    //                     assignee: selectedAssignees ? selectedAssignees : null
-    //                 }
-    //             }
-    //         });
-
-    //         if (response.status === 200) {
-    //             setCandidateData(prevData => ({
-    //                 ...prevData,
-    //                 stageStatus: {
-    //                     ...prevData.stageStatus,
-    //                     Portfolio: {
-    //                         ...prevData.stageStatus.Portfolio,
-    //                         assignee: selectedAssignees ? selectedAssignees : null
-    //                     }
-    //                 }
-    //             }));
-    //             setSelectedAssignee(newAssignee);
-    //             console.log('Assignee updated successfully');
-    //         }
-    //     } catch (error) {
-    //         console.error('Error updating assignee:', error);
-    //         alert('Failed to update assignee. Please try again.');
-    //     }
-    // };
 
     const handleAssigneeSelect = (assignee) => {
         handleAssigneeUpdate([assignee]);
@@ -429,31 +357,13 @@ const PortfolioStage = ({ candidateData: initialCandidateData, assignee, onAssig
 
 
             {/* middle layer */}
-
-
-
             <div className='m-4'>
                 {renderStatusLabel()}
             </div>
-
-
-
-
-
+            
 
             {/* third layer */}
             <div className='flex justify-between bg-background-90'>
-
-                {/* <div>
-                    <p className='text-white'>Received On</p>
-                    <p className='typography-h3 text-white'>
-                        {candidateData.createdAt}
-                    </p>
-
-                </div> */}
-
-
-
                 <div className='flex justify-between rounded-xl bg-background-90 w-full p-6'>
                     {renderFooter()}
                 </div>

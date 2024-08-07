@@ -185,12 +185,27 @@ const candidateSchema = new mongoose.Schema(
           type: String,
           default: 'N/A'
         },
-        scheduledDate: Date,
-        scheduledTime: String,
+        currentCall: {
+          scheduledDate: Date,
+          scheduledTime: String,
+          meetingLink: String
+        },
+        callHistory: [{
+          scheduledDate: Date,
+          scheduledTime: String,
+          meetingLink: String,
+          status: String // 'Scheduled', 'Completed', 'Rescheduled', 'No Show'
+        }],     
         score: {
-          type: Number,
-          default: 0
-        }
+          totalScore:{
+            type:Number,
+            default: 0,
+          },
+          remark:{
+            type:String,
+            default:"N/A"
+          },
+        },
       },
       "Round 2": {
         status: {
@@ -206,14 +221,44 @@ const candidateSchema = new mongoose.Schema(
           type: String,
           default: 'N/A'
         },
-        scheduledDate: Date,
-        scheduledTime: String,
+        currentCall: {
+          scheduledDate: Date,
+          scheduledTime: String,
+          meetingLink: String
+        },
+        callHistory: [{
+          scheduledDate: Date,
+          scheduledTime: String,
+          meetingLink: String,
+          status: String // 'Scheduled', 'Completed', 'Rescheduled', 'No Show'
+        }],     
         score: {
-          type: Number,
-          default: 0
-        }
+          totalScore:{
+            type:Number,
+            default: 0,
+          },
+          remark:{
+            type:String,
+            default:"N/A"
+          },
+        },
       }
     },
+    noticePeriod : {
+      type: Number,
+      default:0
+    },
+
+    currentCTC : {
+      type: Number,
+      default:0
+    },
+
+    expectedCTC : {
+      type: Number,
+      default:0
+    },
+    
     experience: {
       type: Number,
       required: true,
