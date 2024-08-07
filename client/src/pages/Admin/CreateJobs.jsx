@@ -2,7 +2,7 @@ import axios from 'axios';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Breadcrumb from '../../components/Breadcrumb';
-import EditIcon from '../../svg/EditIcon';
+// import EditIcon from '../../svg/EditIcon';
 // import { Link, Navigate } from 'react-router-dom';
 // import useHistory from 'react-router-dom';
 

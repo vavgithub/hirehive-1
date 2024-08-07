@@ -1,21 +1,59 @@
 import * as React from 'react';
 import dayjs from 'dayjs';
-import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
-import { StaticDatePicker } from '@mui/x-date-pickers/StaticDatePicker';
+import TextField from '@mui/material/TextField';
+
+const theme = createTheme({
+  components: {
+    MuiTextField: {
+      styleOverrides: {
+        root: {
+          '& .MuiInputBase-root': {
+            backgroundColor: 'black',
+            color: 'white',
+          },
+          '& .MuiOutlinedInput-notchedOutline': {
+            borderColor: 'teal',
+          },
+          '& .MuiSvgIcon-root': {
+            color: 'white',
+          },
+        },
+      },
+    },
+    MuiPickersDay: {
+      styleOverrides: {
+        root: {
+          color: 'white',
+          '&.Mui-selected': {
+            backgroundColor: 'teal',
+          },
+        },
+      },
+    },
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          backgroundColor: 'black',
+          color: 'white',
+        },
+      },
+    },
+  },
+});
 
 export default function Datepicker({ onChange, value }) {
-    return (
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DesktopDatePicker   
-              value={value ? dayjs(value) : null}
-              defaultValue={dayjs()}  //
-               onChange={(newValue) => onChange(newValue)} />
-           
-        </LocalizationProvider>
-      );
-    }
+  return (
+    <ThemeProvider theme={theme}>
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <DesktopDatePicker
+          value={value ? dayjs(value) : null}
+          defaultValue={dayjs()}  //
+          onChange={(newValue) => onChange(newValue)} />
+      </LocalizationProvider>
+    </ThemeProvider>
+  );
+}

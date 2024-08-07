@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react'
 import ThreeDotsIcon from '../../svg/ThreeDotsIcon'
 import { useNavigate } from 'react-router-dom'
-import EditIcon from '../../svg/EditIcon'
-import DeleteIcon from '../../svg/DeleteIcon'
+import EditIcon from '../../svg/KebabList/EditIcon'
+import DeleteIcon from '../../svg/KebabList/DeleteIcon'
 
 
 const BackButton = () => {

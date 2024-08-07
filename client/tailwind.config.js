@@ -6,7 +6,7 @@ export default {
   theme: {
     extend: {
       backgroundImage: {
-        "card-pattern": "url('/src/svg/StatsCard/pattern.svg')",
+        "card-pattern": "url('/src/svg/StatsCard/stats-bg.png')",
         "main-bg":"url('/src/svg/Background/rate.png')",
         "stars":"url('/src/svg/Background/Stars.png')",
         "custom-gradient":

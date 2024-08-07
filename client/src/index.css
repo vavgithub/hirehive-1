@@ -12,7 +12,7 @@ body {
   @apply text-white;
 }
 input {
-  @apply bg-background-40  typography-body;  /* Replace bg-gray-200 with your desired background color class */
+  @apply bg-background-40 h-[44px] p-2 rounded-xl placeholder:text-font-gray placeholder:font-body focus:ring-1 ring-font-accent typography-body;  /* Replace bg-gray-200 with your desired background color class */
 }
 input[type="checkbox"],
 input[type="radio"] {
