@@ -116,7 +116,7 @@ const ViewJobs = () => {
 
     const fetchJobData = async () => {
         try {
-            const response = await axios.get(`http://localhost:8008/api/getJobById/${mainId}`);
+            const response = await axios.get(`http://localhost:8008/api/v1/getJobById/${mainId}`);
             setFormData(response.data);
         } catch (error) {
             console.error('Error fetching job:', error);

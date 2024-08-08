@@ -24,7 +24,7 @@ app.use(cookieParser());
 
 app.use(morgan('dev'))
 
-app.use("/api" , jobRoutes);
+app.use("/api/v1" , jobRoutes);
 // app.use('/api/users', userRoutes);
 app.use("/api/v1/users", userRoutes)
 app.use("/api/v1/candidates",candidateRoutes )

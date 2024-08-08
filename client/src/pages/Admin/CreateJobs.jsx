@@ -34,7 +34,7 @@ const CreateJobs = () => {
         event.preventDefault();
         try {
             const formDataWithStatus = { ...formData, status: 'open' };
-            const response = await axios.post('http://localhost:8008/api/createJobs', formDataWithStatus);
+            const response = await axios.post('http://localhost:8008/api/v1/createJobs', formDataWithStatus);
             console.log('Job created successfully:', response.data);
             navigate('/admin/jobs');
         } catch (error) {

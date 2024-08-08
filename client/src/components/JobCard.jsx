@@ -18,7 +18,7 @@ const JobCard = ({ job, status, handleAction, page, onClick }) => {
                 {/* <Typography variant='h3' className='text-white'></Typography> */}
                 <h3 className='typography-h3 text-white'>{job.jobTitle}</h3>
                 <div className='flex items-center'>
-                    <span className={`text-sm font-semibold ${job.category === 'UI/UX' ? 'bg-blue-200 text-blue-800' : 'bg-green-200 text-green-800'} px-2 py-1 rounded`}>{job.jobProfile}</span>
+                    <span className={`bg-background-70 typography-body px-2 py-1 rounded`}>{job.jobProfile}</span>
                     <ThreeDots job={job} handleAction={handleAction} page={page} />
                 </div>
             </div>

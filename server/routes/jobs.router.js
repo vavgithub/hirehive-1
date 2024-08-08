@@ -1,5 +1,5 @@
 import express from 'express';
-import {activeJobsFilterCount, archiveJob, closedJobsFilterCount, createJob, deleteJob, draftJob, draftJobsFilterCount, editJob, filterJobs, getJobById, getJobs, getTotalJobCount , jobsStats, searchJobs, unarchiveJob, updateJob } from '../controllers/jobs.controller.js';
+import {activeJobsFilterCount, archiveJob, closedJobsFilterCount, closeJob, createJob, deleteJob, draftJob, draftJobsFilterCount, editJob, filterJobs, getJobById, getJobs, getTotalJobCount , jobsStats, searchJobs, unarchiveJob, updateJob } from '../controllers/jobs.controller.js';
 
 const router = express.Router();
 
@@ -19,6 +19,7 @@ router.get('/getJobById/:id', getJobById);
 router.delete('/deleteJob/:id', deleteJob);
 router.put('/updateJob/:id', updateJob);
 router.put('/archiveJob/:id/', archiveJob);
+router.put('/closeJob/:id/', closeJob);
 router.put('/unarchiveJob/:id/', unarchiveJob);
 
 router.put('/draftJob/:id',draftJob);

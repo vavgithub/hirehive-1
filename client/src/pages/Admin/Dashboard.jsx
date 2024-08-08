@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
 import Filters from '../../components/Filters';
 import Modal from '../../components/Modal';
 import JobCard from '../../components/JobCard';
@@ -11,20 +10,18 @@ import one from '../../svg/StatsCard/Jobs Page/one';
 import two from '../../svg/StatsCard/Jobs Page/two';
 import three from '../../svg/StatsCard/Jobs Page/three';
 import { Button } from '../../components/ui/Button';
+import axios from "../../api/axios"
 
 
-const api = axios.create({
-    baseURL: 'http://localhost:8008/api',
-});
+const fetchJobs = () => axios.get('/jobs').then(res => res.data);
+const fetchJobCount = () => axios.get('/jobsCount').then(res => res.data.totalCount);
+const fetchStatistics = () => axios.get('/jobsStats').then(res => res.data);
+const fetchActiveJobsStats = () => axios.get('/activeJobsFilterCount').then(res => res.data);
+const fetchClosedJobsStats = () => axios.get('/closedJobsFilterCount').then(res => res.data);
+const searchJobs = (query) => axios.get(`/searchJobs?jobTitle=${encodeURIComponent(query)}`).then(res => res.data);
+const filterJobs = (filters) => axios.post('/filterJobs', { filters }).then(res => res.data);
 
 
-const fetchJobs = () => api.get('/jobs').then(res => res.data);
-const fetchJobCount = () => api.get('/jobsCount').then(res => res.data.totalCount);
-const fetchStatistics = () => api.get('/jobsStats').then(res => res.data);
-const fetchActiveJobsStats = () => api.get('/activeJobsFilterCount').then(res => res.data);
-const fetchClosedJobsStats = () => api.get('/closedJobsFilterCount').then(res => res.data);
-const searchJobs = (query) => api.get(`/searchJobs?jobTitle=${encodeURIComponent(query)}`).then(res => res.data);
-const filterJobs = (filters) => api.post('/filterJobs', { filters }).then(res => res.data);
 
 // Define action types
 const ACTION_TYPES = {
@@ -58,10 +55,11 @@ const Dashboard = () => {
     const { data: activeJobsCountFilter = {} } = useQuery({ queryKey: ['activeJobsStats'], queryFn: fetchActiveJobsStats });
     const { data: closedJobsCountFilter = {} } = useQuery({ queryKey: ['closedJobsStats'], queryFn: fetchClosedJobsStats });
 
-    const handleAction = (action, job) => {
+    const handleAction = (action, jobId) => {
+        const job = jobs.find(j => j._id === jobId);
         setModalOpen(true);
         setSelectedJob(job);
-        setModalAction(ACTION_TYPES[action.toUpperCase()]);
+        setModalAction(action);
     };
 
     const { data: filteredJobs = [] } = useQuery({
@@ -79,7 +77,7 @@ const Dashboard = () => {
     });
 
     const deleteMutation = useMutation({
-        mutationFn: (jobId) => api.delete(`/deleteJob/${jobId}`),
+        mutationFn: (jobId) => axios.delete(`/deleteJob/${jobId}`),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['jobs'] });
             setModalOpen(false);
@@ -87,7 +85,7 @@ const Dashboard = () => {
     });
 
     const draftMutation = useMutation({
-        mutationFn: (jobId) => api.put(`/draftJob/${jobId}`),
+        mutationFn: (jobId) => axios.put(`/draftJob/${jobId}`),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['jobs'] });
             setModalOpen(false);
@@ -95,12 +93,20 @@ const Dashboard = () => {
     });
 
     const unarchiveMutation = useMutation({
-        mutationFn: (jobId) => api.put(`/unarchiveJob/${jobId}`),
+        mutationFn: (jobId) => axios.put(`/unarchiveJob/${jobId}`),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['jobs'] });
             setModalOpen(false);
         },
     });
+
+    const closeMutation = useMutation({
+        mutationFn: (jobId) => axios.put(`/closeJob/${jobId}`),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['jobs'] });
+            setModalOpen(false);
+        },
+    })
 
     const handleSearch = (event) => {
         setSearchQuery(event.target.value);
@@ -126,7 +132,7 @@ const Dashboard = () => {
                 draftMutation.mutate(job._id);
                 break;
             case ACTION_TYPES.CLOSE:
-                unarchiveMutation.mutate(job._id);
+                closeMutation.mutate(job._id);
                 break;
             case ACTION_TYPES.EDIT:
                 navigate(`/admin/edit-job/${job._id}`);
@@ -262,7 +268,7 @@ const Dashboard = () => {
                                     job={job}
                                     page={currentPage}
                                     status={activeTab}
-                                    handleAction={(action) => handleAction(action, job)}
+                                    handleAction={handleAction}
                                     onClick={() => handleViewJob(job._id)}
                                 />
                             ))
@@ -271,13 +277,13 @@ const Dashboard = () => {
                 </div>
                 {/* <Modal open={open} onClose={() => setOpen(false)} action={modalAction} confirmAction={confirmAction} /> */}
                 <Modal
-                    open={modalOpen}
-                    onClose={() => setModalOpen(false)}
-                    actionType={modalAction}
-                    onConfirm={confirmAction}
-                    item={selectedJob}
-                    customMessage={selectedJob ? getModalMessage(modalAction, selectedJob) : ''}
-                />
+                open={modalOpen}
+                onClose={() => setModalOpen(false)}
+                actionType={modalAction}
+                onConfirm={confirmAction}
+                item={selectedJob}
+                customMessage={selectedJob ? getModalMessage(modalAction, selectedJob) : ''}
+            />
             </div>
         </div>
     );
