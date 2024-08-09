@@ -15,6 +15,7 @@ const Button = React.forwardRef(({
   asChild = false,
   disabled = false,
   icon: IconComponent,
+  iconPosition = "right",
   children,
   ...props
 }, ref) => {
@@ -35,6 +36,32 @@ const Button = React.forwardRef(({
     icon: "h-10 w-10"
   };
 
+  const renderIcon = () => {
+    if (IconComponent) {
+      return <IconComponent />;
+    } else if (variant === "icon") {
+      return <DefaultIcon />;
+    }
+    return null;
+  };
+
+  const renderContent = () => {
+    if (variant === "icon") {
+      return renderIcon();
+    }
+
+    const iconElement = renderIcon();
+    const textElement = <span>{children}</span>;
+
+    return (
+      <>
+        {iconPosition === "left" && iconElement}
+        {textElement}
+        {iconPosition === "right" && iconElement}
+      </>
+    );
+  };
+
   return (
     <Comp
       className={classNames(
@@ -48,7 +75,7 @@ const Button = React.forwardRef(({
       disabled={disabled}
       {...props}
     >
-      {variant === "icon" ? (IconComponent ? <IconComponent /> : <DefaultIcon />) : children}
+      {renderContent()}
     </Comp>
   );
 });

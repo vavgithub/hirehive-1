@@ -457,23 +457,25 @@ const archiveJob = async (req, res) => {
 
 const closeJob = async (req, res) => {
   const { id } = req.params;
+  const { reason } = req.body;
 
   try {
-      const job = await jobs.findById(id);
+    const job = await jobs.findById(id);
 
-      if (!job) {
-          return res.status(404).send({ message: 'Job not found' });
-      }
+    if (!job) {
+      return res.status(404).send({ message: 'Job not found' });
+    }
 
-      if (job.status === 'open') {
-          job.status = 'closed';
-          await job.save();
-          res.send({ message: 'Job status updated to closed' });
-      } else {
-          res.status(400).send({ message: 'Job is not in an open state' });
-      }
+    if (job.status === 'open') {
+      job.status = 'closed';
+      job.closingReason = reason;
+      await job.save();
+      res.send({ message: 'Job closed successfully', closingReason: job.closingReason });
+    } else {
+      res.status(400).send({ message: 'Job is not in an open state' });
+    }
   } catch (error) {
-      res.status(500).send({ message: 'Error updating job status', error: error.message });
+    res.status(500).send({ message: 'Error closing job', error: error.message });
   }
 };
 

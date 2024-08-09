@@ -49,7 +49,7 @@ const EditJobs = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
-            const response = await axios.put(`http://localhost:8008/api/editJob/${mainId}`, formData);
+            const response = await axios.put(`http://localhost:8008/api/v1/editJob/${mainId}`, formData);
             console.log('Job updated successfully:', response.data);
             navigate(-1);
         } catch (error) {
@@ -60,7 +60,7 @@ const EditJobs = () => {
     const handleSubmitForActive = async (event) => {
         event.preventDefault();
         try {
-            const response = await axios.put(`http://localhost:8008/api/editJob/${mainId}`, { ...formData, status: 'active' });
+            const response = await axios.put(`http://localhost:8008/api/v1/editJob/${mainId}`, { ...formData, status: 'active' });
             console.log('Job updated successfully:', response.data);
             navigate('/admin/jobs');
         } catch (error) {

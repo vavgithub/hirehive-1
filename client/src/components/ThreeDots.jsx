@@ -5,6 +5,7 @@ import EditIcon from '../svg/KebabList/EditIcon';
 import ArchiveIcon from '../svg/KebabList/ArchivedIcon';
 import DeleteIcon from '../svg/KebabList/DeleteIcon';
 import CloseIcon from '../svg/KebabList/CloseIcon';
+import ReOpenIcon from '../svg/KebabList/ReOpenIcon';
 
 const MenuItems = {
   open: [
@@ -14,6 +15,7 @@ const MenuItems = {
     { action: ACTION_TYPES.DELETE, icon: DeleteIcon, label: 'Delete', className: 'text-red-100' },
   ],
   closed: [
+    { action: ACTION_TYPES.REOPEN, icon: ReOpenIcon, label: 'Re-open' },
     { action: ACTION_TYPES.EDIT, icon: EditIcon, label: 'Edit' },
     { action: ACTION_TYPES.DRAFT, icon: ArchiveIcon, label: 'Move To Draft' },
     { action: ACTION_TYPES.DELETE, icon: DeleteIcon, label: 'Delete' },

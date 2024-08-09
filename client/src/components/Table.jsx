@@ -9,6 +9,8 @@ import FilterForDataTable from './FilterForDataTable';
 import BudgetWithScreen from '../svg/BudgetWithScreen';
 import InputPopUpModal from './InputPopUpModal';
 import { exportToExcel } from '../utility/exportToExcel';
+import { Button } from './ui/Button';
+import Create from '../svg/Buttons/Create';
 
 const stageStatusMap = {
     "Portfolio": ['Not Assigned', 'Under Review', 'Reviewed', 'Cleared', 'Rejected'],
@@ -424,25 +426,26 @@ const Table = ({ rowsData, onUpdateCandidate }) => {
                     <button className="bg-black text-white px-4 py-2 rounded" onClick={() => handleExport()}>Export</button>
                 </div>
 
-                <div>
-                    {savedBudgetFilter && (
-                        <button
-                            onClick={() => setOpenAssigneeModal(true)}
-                            className="mb-4 px-4 py-2 bg-black text-white rounded"
-                        >
-                            Assign Multiple Candidates
-                        </button>
-                    )}
-                </div>
+                <div className='flex gap-4'> 
 
-                <div>
-                    {savedBudgetFilter ? (
-                        <button onClick={() => setIsModalOpen(true)}><BudgetWithScreen /></button>
-                    ) : (
-                        <button className="bg-black text-white px-4 py-2 rounded" onClick={() => setIsModalOpen(true)}>
-                            Budget With Screen
-                        </button>
-                    )}
+                    <div>
+                        {savedBudgetFilter && (
+                            <Button variant="primary" icon={Create} iconPosition="left" onClick={() => setOpenAssigneeModal(true)}>
+                                Auto-assign portfolios
+                            </Button>
+                        )}
+                    </div>
+
+                    <div>
+                        {savedBudgetFilter ? (
+                            <Button variant="icon" onClick={() => setIsModalOpen(true)}></Button>
+                        ) : (
+                            <Button variant="primary" icon={Create} iconPosition="left" onClick={() => setIsModalOpen(true)} >
+                                Budget With Screen
+                            </Button>
+                        )}
+                    </div>
+
                 </div>
             </div>
 

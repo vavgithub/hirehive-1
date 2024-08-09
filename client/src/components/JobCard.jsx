@@ -36,9 +36,19 @@ const JobCard = ({ job, status, handleAction, page, onClick }) => {
                     <p className="typography-body text-white">{job.fromExperience} - {job.toExperience} Year</p>
                 </div>
             </div>
-            <p className='typography-body line-clamp-1 px-4 my-4 text-font-gray '>
+            <p className='typography-body truncate px-4 my-4 text-font-gray '>
                 {job.jobDescription}
             </p>
+
+            {
+                job.status == "closed" && (
+                    <div>
+                        <p className='typography-body'>Clouser Reason</p>
+                        <p className='typography-body'>{job.closingReason} || "N/A" </p>
+                    </div>
+
+                )
+            }
 
             <div className="flex items-center justify-between bg-background-40 p-4">
 

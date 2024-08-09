@@ -11,6 +11,7 @@ import two from '../../svg/StatsCard/Jobs Page/two';
 import three from '../../svg/StatsCard/Jobs Page/three';
 import { Button } from '../../components/ui/Button';
 import axios from "../../api/axios"
+import Create from '../../svg/Buttons/Create';
 
 
 const fetchJobs = () => axios.get('/jobs').then(res => res.data);
@@ -39,6 +40,7 @@ const Dashboard = () => {
     const [modalOpen, setModalOpen] = useState(false);
     const [modalAction, setModalAction] = useState('');
     const [selectedJob, setSelectedJob] = useState(null);
+    const [closeReason, setCloseReason] = useState('');
     const [filters, setFilters] = useState({
         employmentType: [],
         experienceLevel: [],
@@ -101,7 +103,8 @@ const Dashboard = () => {
     });
 
     const closeMutation = useMutation({
-        mutationFn: (jobId) => axios.put(`/closeJob/${jobId}`),
+        mutationFn: ({ jobId, reason }) => 
+            axios.put(`/closeJob/${jobId}`, { reason }),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['jobs'] });
             setModalOpen(false);
@@ -132,7 +135,7 @@ const Dashboard = () => {
                 draftMutation.mutate(job._id);
                 break;
             case ACTION_TYPES.CLOSE:
-                closeMutation.mutate(job._id);
+                closeMutation.mutate({ jobId: job._id, closeReason });
                 break;
             case ACTION_TYPES.EDIT:
                 navigate(`/admin/edit-job/${job._id}`);
@@ -141,6 +144,10 @@ const Dashboard = () => {
             default:
                 console.log('Unknown action:', modalAction);
         }
+    };
+
+    const handleCloseReasonChange = (reason) => {
+        setCloseReason(reason);
     };
 
     const getModalMessage = (action, job) => {
@@ -255,7 +262,7 @@ const Dashboard = () => {
                         <div className='flex justify-end pb-4'>
 
                             <div className="w-[216px]">
-                                <Button variant="primary" onClick={() => { navigate("/admin/create-job") }}>Create A Job Listing</Button>
+                                <Button variant="primary" icon={Create} iconPosition="left" onClick={() => { navigate("/admin/create-job") }}>Create A Job Listing</Button>
                             </div>
 
 
@@ -278,11 +285,16 @@ const Dashboard = () => {
                 {/* <Modal open={open} onClose={() => setOpen(false)} action={modalAction} confirmAction={confirmAction} /> */}
                 <Modal
                 open={modalOpen}
-                onClose={() => setModalOpen(false)}
+                onClose={() => {
+                    setModalOpen(false);
+                    setCloseReason(''); // Reset close reason when modal is closed
+                }}
                 actionType={modalAction}
-                onConfirm={confirmAction}
+                onConfirm={(job) => confirmAction(job, closeReason)}
                 item={selectedJob}
                 customMessage={selectedJob ? getModalMessage(modalAction, selectedJob) : ''}
+                closeReason={closeReason}
+                onCloseReasonChange={handleCloseReasonChange}
             />
             </div>
         </div>

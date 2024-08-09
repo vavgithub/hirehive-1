@@ -14,6 +14,7 @@ import { formatDescription } from '../../utility/formatDescription';
 import SideCard from '../../components/SideCard';
 import Table from '../../components/Table';
 import one from '../../svg/StatsCard/Jobs Page/one';
+import Header from '../../components/utility/Header';
 
 
 const ViewJobs = () => {
@@ -269,8 +270,7 @@ const ViewJobs = () => {
 
     return (
         <div className="pt-4 w-full">
-            <div onClick={back}>Back</div>
-            <div className='flex justify-between'>
+            {/* <div className='flex justify-between'>
                 <div>
                     <Breadcrumb paths={paths} />
                     <h1 className='text-2xl font-bold'>{formData.jobTitle}</h1>
@@ -283,9 +283,14 @@ const ViewJobs = () => {
                         </div>
                     </div>
                 )}
-            </div>
+            </div> */}
+
+            <Header HeaderText={formData.jobTitle} withKebab="true"></Header>
+            <div className='absolute right-24 top-8'>
 
             <Tabs tabs={tabs} activeTab={activeTab} handleTabClick={handleTabClick} />
+            </div>
+
 
             {activeTab === 'jobDetails' && (
                 <div>

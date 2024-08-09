@@ -5,4 +5,5 @@ export const ACTION_TYPES = {
     CLOSE: 'CLOSE',
     REJECT: 'REJECT',
     ARCHIVE: 'ARCHIVE',
+    REOPEN:'REOPEN'
   };

@@ -64,6 +64,11 @@ const jobSchema = new mongoose.Schema(
       type: String,
       enum: ["", "open", "draft", "closed"], // Define possible values for status
     },
+    closingReason: {
+      type: String,
+      enum: ["", "Hired", "Lack of suitable candidates", "Budget Constraints", "Changes in business needs", "Don’t want more entries"],
+      default:"",
+    },
   },
   { timestamps: true }
 );
