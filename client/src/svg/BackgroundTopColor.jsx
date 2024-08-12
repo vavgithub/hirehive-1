@@ -2,7 +2,7 @@ const BackgroundTopColor = () => {
     return (
 
         <svg width="100vw" height="272" viewBox="0 0 1088 272" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <g clip-path="url(#clip0_1345_17708)" filter="url(#filter0_d_1345_17708)">
+            <g clipPath="url(#clip0_1345_17708)" filter="url(#filter0_d_1345_17708)">
                 <rect width="1080" height="264" transform="translate(4)" fill="url(#paint0_linear_1345_17708)" />
                 <g filter="url(#filter1_f_1345_17708)">
                     <circle cx="82" cy="237" r="441" fill="url(#paint1_linear_1345_17708)" />

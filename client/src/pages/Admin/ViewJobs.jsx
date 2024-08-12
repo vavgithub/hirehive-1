@@ -269,7 +269,7 @@ const ViewJobs = () => {
     ];
 
     return (
-        <div className="pt-4 w-full">
+        <div className="mx-4 pt-4 h-screen">
             {/* <div className='flex justify-between'>
                 <div>
                     <Breadcrumb paths={paths} />
@@ -286,7 +286,7 @@ const ViewJobs = () => {
             </div> */}
 
             <Header HeaderText={formData.jobTitle} withKebab="true"></Header>
-            <div className='absolute right-24 top-8'>
+            <div className='absolute right-24 top-5'>
 
             <Tabs tabs={tabs} activeTab={activeTab} handleTabClick={handleTabClick} />
             </div>

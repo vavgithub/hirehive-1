@@ -25,35 +25,34 @@ const jobSchema = new mongoose.Schema(
       type: String,
       enum: [
         "",
-        "frontenddeveloper",
-        "uiux",
-        "motiongraphic",
-        "videoeditor",
-        "digitalmarketingexecutive",
-        "projectmanager",
-        "artdirector",
-        "3d"
+        "Frontend Developer",
+        "UI UX",
+        "Motion Graphic",
+        "Video Editor",
+        "Digital Marketing Executive",
+        "Project Manager",
+        "Art Director",
+        "Art Director",
+        "3D",
       ],
-      default: "frontendDeveloper",
+      default: "Frontend Developer",
     },
-    fromExperience: {
+    experienceFrom: {
       type: Number,
-      
       min: 1,
     },
-    toExperience: {
+    experienceTo: {
       type: Number,
-     
       min: 2, // Assuming this will always be greater than fromExperience
     },
     budgetFrom: {
       type: Number,
-  
+      min: 0,
     },
     budgetTo: {
       type: Number,
-
-    },    
+      min: 0,
+    },
     skills: {
       type: [String],
     },
@@ -66,8 +65,15 @@ const jobSchema = new mongoose.Schema(
     },
     closingReason: {
       type: String,
-      enum: ["", "Hired", "Lack of suitable candidates", "Budget Constraints", "Changes in business needs", "Don’t want more entries"],
-      default:"",
+      enum: [
+        "",
+        "Hired",
+        "Lack of suitable candidates",
+        "Budget Constraints",
+        "Changes in business needs",
+        "Don’t want more entries",
+      ],
+      default: "",
     },
   },
   { timestamps: true }

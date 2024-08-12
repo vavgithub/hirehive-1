@@ -1,10 +1,7 @@
 import axios from 'axios';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Breadcrumb from '../../components/Breadcrumb';
-// import EditIcon from '../../svg/EditIcon';
-// import { Link, Navigate } from 'react-router-dom';
-// import useHistory from 'react-router-dom';
+import Header from '../../components/utility/Header';
 
 const CreateJobs = () => {
     const [formData, setFormData] = useState({
@@ -13,14 +10,89 @@ const CreateJobs = () => {
         employeeLocation: '',
         employmentType: '',
         jobProfile: '',
-        fromExperience: '',
-        toExperience: '',
-        budgetFrom: '',
-        budgetTo: '',
+        experienceFrom: 0,
+        experienceTo: 0,
+        budgetFrom: 0,
+        budgetTo: 0,
         jobDescription: '',
-        status:'',
         skills: [],
+        status: '',
     });
+
+    const handleExperienceChange = (field, value) => {
+        setFormData(prevData => ({
+            ...prevData,
+            [field]: Math.max(0, value) // Ensure the value is not negative
+        }));
+    };
+
+    const incrementExperience = (field) => {
+        setFormData(prevData => ({
+            ...prevData,
+            [field]: prevData[field] + 1
+        }));
+    };
+
+    const decrementExperience = (field) => {
+        setFormData(prevData => ({
+            ...prevData,
+            [field]: Math.max(0, prevData[field] - 1) // Ensure the value is not negative
+        }));
+    };
+
+    const [dropdownStates, setDropdownStates] = useState({
+        employeeLocation: { isOpen: false, selectedOption: '' },
+        employmentType: { isOpen: false, selectedOption: '' },
+        jobProfile: { isOpen: false, selectedOption: '' },
+        workplaceType: { isOpen: false, selectedOption: '' },
+    });
+
+    const dropdownOptions = {
+        employeeLocation: [
+            { value: '', label: '-Select-' },
+            { value: 'india', label: 'India' },
+            { value: 'usa', label: 'USA' },
+            { value: 'dubai', label: 'Dubai' },
+        ],
+        employmentType: [
+            { value: '', label: '-Select-' },
+            { value: 'Full Time', label: 'Full Time' },
+            { value: 'Internship', label: 'Internship' },
+            { value: 'Contract', label: 'Contract' },
+        ],
+        jobProfile: [
+            { value: '', label: '-Select-' },
+            { value: 'Frontend Developer', label: 'Frontend Developer' },
+            { value: 'UI UX', label: 'UI UX' },
+            { value: 'Motion Graphic', label: 'Motion Graphic' },
+            { value: 'Art Director', label: '3D' },
+            { value: 'Video Editor', label: 'Video Editor' },
+            { value: 'Digital Marketing Executive', label: 'Digital Marketing Executive' },
+            { value: 'Project Manager', label: 'Project Manager' },
+            { value: 'Art Director', label: 'Art Director' },
+        ],
+        workplaceType: [
+            { value: '', label: '-Select-' },
+            { value: 'On-Site', label: "On-Site" },
+            { value: 'Remote', label: "Remote" },
+            { value: 'Hybrid', label: "Hybrid" }
+        ]
+    };
+
+    const toggleDropdown = (field) => {
+        setDropdownStates(prevState => ({
+            ...prevState,
+            [field]: { ...prevState[field], isOpen: !prevState[field].isOpen }
+        }));
+    };
+
+    const handleOptionClick = (field, option) => {
+        setDropdownStates(prevState => ({
+            ...prevState,
+            [field]: { isOpen: false, selectedOption: option.value }
+        }));
+        setFormData(prevData => ({ ...prevData, [field]: option.value }));
+    };
 
     const handleInputChange = (event) => {
         const { id, value } = event.target;
@@ -48,7 +120,7 @@ const CreateJobs = () => {
 
     const postJobData = async (data) => {
         try {
-            const response = await axios.post('http://localhost:8008/api/createJobs', data);
+            const response = await axios.post('http://localhost:8008/api/v1createJobs', data);
             console.log('Job created successfully:', response.data);
             navigate('/admin/jobs');
         } catch (error) {
@@ -56,174 +128,226 @@ const CreateJobs = () => {
         }
     };
 
-    const back = () => {
-        navigate('/admin/jobs');
-    };
-
     const setSkills = (skills) => {
         setFormData({ ...formData, skills });
     };
 
-    const generateToOptions = (fromValue, max, unit) => {
-        let options = [];
-        for (let i = fromValue + 1; i <= max; i++) {
-            options.push(
-                <option key={i} value={i}>{i} {unit}</option>
-            );
-        }
-        return options;
-    };
-
-    const paths = [
-        { name: 'Jobs', href: '/admin/jobs' },
-        { name: 'Create a New job listing', href: '/admin/create-job' },
-    ];
-
     const allSkills = ['React', 'React Native', 'Redux', 'JavaScript', 'TypeScript', 'Node.js', 'Express', 'MongoDB'];
 
     return (
-        <div className="ml-52 pt-4">
-            <Breadcrumb paths={paths} />
-            <div className="max-w-2xl mx-24 py-10">
-                <div onClick={back}>Back</div>
-                <h2 className="text-3xl font-bold mb-6">Create a New Job Listing</h2>
+        <div className="bg-background-80 h-screen">
+            {/* <Breadcrumb paths={paths} /> */}
+            <div className='p-4'>
+                <Header HeaderText="Create a New Job Listing"></Header>
                 <form onSubmit={handleSubmit}>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700">Job Title*</label>
+                        <div className='space-y-1'>
+                            <label className="typography-body">Job Title*</label>
                             <input
                                 id="jobTitle"
                                 type="text"
                                 placeholder="Enter job title"
-                                className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                className='w-full'
                                 value={formData.jobTitle}
                                 onChange={handleInputChange}
                                 required
                             />
                         </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700">Workplace Type*</label>
-                            <input
-                                id="workplaceType"
-                                type="text"
-                                placeholder="Enter your location"
-                                className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                value={formData.workplaceType}
-                                onChange={handleInputChange}
-                                required
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700">Employee Location*</label>
-                            <select
-                                id="employeeLocation"
-                                className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                value={formData.employeeLocation}
-                                onChange={handleInputChange}
-                                required
-                            >
-                                <option value="">-Select-</option>
-                                <option value="india">India</option>
-                                <option value="usa">USA</option>
-                                <option value="dubai">Dubai</option>
-                                {/* Add options here */}
-                            </select>
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700">Employment Type*</label>
-                            <select
-                                id="employmentType"
-                                className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                value={formData.employmentType}
-                                onChange={handleInputChange}
-                                required
-                            >
-                                <option value="">-Select-</option>
-                                <option value="Full Time">Full Time</option>
-                                <option value="Internship">Internship</option>
-                                <option value="Contract">Contract</option>
-                                {/* Add options here */}
-                            </select>
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700">Job Profile*</label>
-                            <select
-                                id="jobProfile"
-                                className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                value={formData.jobProfile}
-                                onChange={handleInputChange}
-                                required
-                            >
-                                <option value="">-Select-</option>
-                                <option value="frontenddeveloper">Frontend Developer</option>
-                                <option value="">UI UX</option>
-                                <option value="motiongraphic">Motion Graphic</option>
-                                <option value="3d">3D</option>
-                                <option value="videoeditor">Video Editor</option>
-                                <option value="digitalmarketingexecutive">Digital Marketing Executive</option>
-                                <option value="projectmanager">Project Manager</option>
-                                <option value="artdirector">Art Director</option>    
-                                {/* Add options here */}
-                            </select>
-                        </div>
-                        <div className="flex space-x-2">
-                            <div className="w-1/2">
-                                <label className="block text-sm font-medium text-gray-700">Experience*</label>
-                                <div className="flex space-x-2">
-                                    <select
-                                        id='fromExperience'
-                                        className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                        value={formData.fromExperience}
-                                        onChange={handleInputChange}
-                                        required
-                                    >
-                                        <option value="">From</option>
-                                        <option value="1">1</option>
-                                        <option value="2">2</option>
-                                        <option value="3">3</option>
-                                        <option value="4">4</option>
-                                    </select>
-                                    <select
-                                        id='toExperience'
-                                        className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                        value={formData.toExperience}
-                                        onChange={handleInputChange}
-                                        required
-                                    >
-                                        <option value="">To</option>
-                                        {formData.fromExperience && generateToOptions(parseInt(formData.fromExperience, 10), 4, "")}
-                                    </select>
+                        <div className='space-y-1'>
+                            {['workplaceType'].map((field) => (
+                                <div key={field}>
+                                    <label className="typography-body">{field.charAt(0).toUpperCase() + field.slice(1).replace(/([A-Z])/g, ' $1')}*</label>
+                                    <div className="relative">
+                                        <button
+                                            type="button"
+                                            onClick={() => toggleDropdown(field)}
+                                            className="mt-1 h-[44px] bg-background-40 block w-full outline-none rounded-md shadow-sm focus:ring-teal-300 focus:border-teal-300 text-left px-4"
+                                        >
+                                            {dropdownOptions[field].find(opt => opt.value === dropdownStates[field].selectedOption)?.label || '-Select-'}
+                                        </button>
+                                        {dropdownStates[field].isOpen && (
+                                            <ul className="absolute mt-1 bg-background-40 rounded-md shadow-lg w-full space-y-2 z-10">
+                                                {dropdownOptions[field].map((option) => (
+                                                    <li
+                                                        key={option.value}
+                                                        onClick={() => handleOptionClick(field, option)}
+                                                        className="cursor-pointer px-4 py-2 hover:bg-background-60"
+                                                    >
+                                                        {option.label}
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        )}
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="w-1/2">
-                                <label className="block text-sm font-medium text-gray-700">Budget*</label>
-                                <div className="flex space-x-2">
-                                    <select
-                                        id='budgetFrom'
-                                        className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                        value={formData.budgetFrom}
-                                        onChange={handleInputChange}
-                                        required
-                                    >
-                                        <option value="">From</option>
-                                        <option value="1">1 Lpa</option>
-                                        <option value="2">2 Lpa</option>
-                                        <option value="3">3 Lpa</option>
-                                        <option value="4">4 Lpa</option>
-                                    </select>
-                                    <select
-                                        id='budgetTo'
-                                        className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                        value={formData.budgetTo}
-                                        onChange={handleInputChange}
-                                        required
-                                    >
-                                        <option value="">To</option>
-                                        {formData.budgetFrom && generateToOptions(parseInt(formData.budgetFrom, 10), 4, "Lpa")}
-                                    </select>
+                            ))}
+                        </div>
+
+                        <div className="space-y-1">
+                            {['employeeLocation'].map((field) => (
+                                <div key={field}>
+                                    <label className="typography-body">{field.charAt(0).toUpperCase() + field.slice(1).replace(/([A-Z])/g, ' $1')}*</label>
+                                    <div className="relative">
+                                        <button
+                                            type="button"
+                                            onClick={() => toggleDropdown(field)}
+                                            className="mt-1 h-[44px] bg-background-40 block w-full outline-none rounded-md shadow-sm focus:ring-teal-300 focus:border-teal-300 text-left px-4"
+                                        >
+                                            {dropdownOptions[field].find(opt => opt.value === dropdownStates[field].selectedOption)?.label || '-Select-'}
+                                        </button>
+                                        {dropdownStates[field].isOpen && (
+                                            <ul className="absolute mt-1 bg-background-40 rounded-md shadow-lg w-full space-y-2 z-10">
+                                                {dropdownOptions[field].map((option) => (
+                                                    <li
+                                                        key={option.value}
+                                                        onClick={() => handleOptionClick(field, option)}
+                                                        className="cursor-pointer px-4 py-2 hover:bg-background-60"
+                                                    >
+                                                        {option.label}
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        )}
+                                    </div>
                                 </div>
+                            ))}
+                        </div>
+
+                        <div className="space-y-1">
+                            {['employmentType'].map((field) => (
+                                <div key={field}>
+                                    <label className="typography-body">{field.charAt(0).toUpperCase() + field.slice(1).replace(/([A-Z])/g, ' $1')}*</label>
+                                    <div className="relative">
+                                        <button
+                                            type="button"
+                                            onClick={() => toggleDropdown(field)}
+                                            className="mt-1 h-[44px] bg-background-40 block w-full outline-none rounded-md shadow-sm focus:ring-teal-300 focus:border-teal-300 text-left px-4"
+                                        >
+                                            {dropdownOptions[field].find(opt => opt.value === dropdownStates[field].selectedOption)?.label || '-Select-'}
+                                        </button>
+                                        {dropdownStates[field].isOpen && (
+                                            <ul className="absolute mt-1 bg-background-40 rounded-md shadow-lg w-full space-y-2 z-10">
+                                                {dropdownOptions[field].map((option) => (
+                                                    <li
+                                                        key={option.value}
+                                                        onClick={() => handleOptionClick(field, option)}
+                                                        className="cursor-pointer px-4 py-2 hover:bg-background-60"
+                                                    >
+                                                        {option.label}
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        )}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Job Profile in the second column */}
+                        <div>
+                            {['jobProfile'].map((field) => (
+                                <div key={field}>
+                                    <label className="typography-body">{field.charAt(0).toUpperCase() + field.slice(1).replace(/([A-Z])/g, ' $1')}*</label>
+                                    <div className="relative">
+                                        <button
+                                            type="button"
+                                            onClick={() => toggleDropdown(field)}
+                                            className="mt-1 h-[44px] bg-background-40 block w-full outline-none rounded-md shadow-sm focus:ring-teal-300 focus:border-teal-300 text-left px-4"
+                                        >
+                                            {dropdownOptions[field].find(opt => opt.value === dropdownStates[field].selectedOption)?.label || '-Select-'}
+                                        </button>
+                                        {dropdownStates[field].isOpen && (
+                                            <ul className="absolute mt-1 bg-background-40 rounded-md shadow-lg w-full space-y-2 z-10">
+                                                {dropdownOptions[field].map((option) => (
+                                                    <li
+                                                        key={option.value}
+                                                        onClick={() => handleOptionClick(field, option)}
+                                                        className="cursor-pointer px-4 py-2 hover:bg-background-60"
+                                                    >
+                                                        {option.label}
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        )}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>                      
+
+                        <div>
+
+                        </div>
+                        <div >
+                            <label className="typography-body">Experience*</label>
+                            <div className='flex gap-2'>
+
+                                {['From', 'To'].map((label) => (
+                                    <div key={label} className='w-1/2'>
+                                        <span className='typography-small-p text-font-gray'>{label}</span>
+                                        <div className='items-center flex bg-background-40 rounded-xl'>
+                                            <input
+                                                type="number"
+                                                placeholder='-Select-'
+                                                className='outline-none no-spinner w-full'
+                                                min="0"
+                                                value={formData[`experience${label}`]}
+                                                onChange={(e) => handleExperienceChange(`experience${label}`, parseInt(e.target.value))}
+                                            />
+                                            <div className='flex gap-2 items-center'>
+                                                <p className='typography-body text-font-gray'> Yrs</p>
+                                                <button type="button" onClick={() => decrementExperience(`experience${label}`)}>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="25" viewBox="0 0 24 25" fill="none">
+                                                        <path d="M5 12.5H19" stroke="#808389" strokeLinecap="round" strokeLinejoin="round" />
+                                                    </svg>
+                                                </button>
+                                                <button type="button" onClick={() => incrementExperience(`experience${label}`)}>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="25" viewBox="0 0 24 25" fill="none">
+                                                        <path d="M12 5.5V19.5M5 12.5H19" stroke="#808389" strokeLinecap="round" strokeLinejoin="round" />
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
                         </div>
+
+                        <div >
+                            <label className="typography-body">Budget*</label>
+                            <div className='flex gap-2'>
+
+                                {['From', 'To'].map((label) => (
+                                    <div key={label} className='w-1/2'>
+                                        <span className='typography-small-p text-font-gray'>{label}</span>
+                                        <div className='items-center flex bg-background-40 rounded-xl'>
+                                            <input
+                                                type="number"
+                                                placeholder='-Select-'
+                                                className='outline-none no-spinner w-full'
+                                                min="0"
+                                                value={formData[`budget${label}`]}
+                                                onChange={(e) => handleExperienceChange(`budget${label}`, parseInt(e.target.value))}
+                                            />
+                                            <div className='flex gap-2 items-center'>
+                                                <p className='typography-body text-font-gray'> Yrs</p>
+                                                <button type="button" onClick={() => decrementExperience(`budget${label}`)}>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="25" viewBox="0 0 24 25" fill="none">
+                                                        <path d="M5 12.5H19" stroke="#808389" strokeLinecap="round" strokeLinejoin="round" />
+                                                    </svg>
+                                                </button>
+                                                <button type="button" onClick={() => incrementExperience(`budget${label}`)}>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="25" viewBox="0 0 24 25" fill="none">
+                                                        <path d="M12 5.5V19.5M5 12.5H19" stroke="#808389" strokeLinecap="round" strokeLinejoin="round" />
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+
                         <div className="w-full mb-4">
                             <label htmlFor="skills" className="block font-bold mb-2">
                                 Skills*
@@ -237,22 +361,23 @@ const CreateJobs = () => {
                             <textarea
                                 id="jobDescription"
                                 placeholder="Write a job description"
-                                className="w-full px-3 py-2 border border-gray-300 rounded"
+                                className="w-full px-3 py-2 bg-background-40 rounded outline-none focus:outline-teal-300"
                                 value={formData.jobDescription}
                                 onChange={handleInputChange}
                                 required
                                 rows="10"
                             ></textarea>
                         </div>
-                    </div>
-                    <div className="flex justify-end mt-4">
-                        <button type="submit" name="createJob" className="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded mr-2">
-                            Create Job Listing
-                        </button>
-                        <button type="button" onClick={handleSaveForLater} name="saveForLater" className="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded">
-                            Save for Later
-                        </button>
-                    </div>
+
+                        <div className="flex justify-end mt-4">
+                            <button type="submit" name="createJob" className="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded mr-2">
+                                Create Job Listing
+                            </button>
+                            <button type="button" onClick={handleSaveForLater} name="saveForLater" className="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded">
+                                Save for Later
+                            </button>
+                        </div>
+                    </div >
                 </form>
             </div>
         </div>
@@ -313,9 +438,9 @@ const SkillsInput = ({ skills, setSkills, allSkills }) => {
 
     return (
         <div>
-            <div className="flex flex-wrap gap-2 p-2 border border-gray-300 rounded">
+            <div className="flex flex-wrap gap-2  rounded">
                 {skills.map((skill, index) => (
-                    <div key={index} className="flex items-center gap-1 bg-blue-100 rounded px-2">
+                    <div key={index} className="p-2 flex items-center gap-1 typography-body bg-background-70 rounded px-2">
                         {skill}
                         <button onClick={() => removeSkill(index)} className="text-blue-500 hover:text-blue-700">✖</button>
                     </div>
@@ -326,7 +451,7 @@ const SkillsInput = ({ skills, setSkills, allSkills }) => {
                     onChange={handleInputChange}
                     onKeyDown={handleKeyDown}
                     placeholder="Add skills"
-                    className="outline-none"
+                    className="outline-none w-full"
                 />
             </div>
             {suggestions.length > 0 && (

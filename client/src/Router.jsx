@@ -21,6 +21,7 @@ import CandidateViewJob from "./pages/Candidate/CandidateViewJob";
 import ApplyJob from "./pages/Candidate/ApplyJob";
 import RejectCandidatePopUp from "./components/utility/RejectCandidatePopUp";
 import EditCandidateProfile from "./pages/Admin/EditCandidateProfile";
+import Que from "./pages/Admin/Que";
 
 export const router = createBrowserRouter([
   {
@@ -42,6 +43,10 @@ export const router = createBrowserRouter([
       {
         path: "create-job",
         element: <CreateJobs />,
+      },
+      {
+        path: "create-job/que",
+        element: <Que />,
       },
       {
         path: "edit-job/:id",

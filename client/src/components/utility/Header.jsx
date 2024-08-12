@@ -3,6 +3,7 @@ import ThreeDotsIcon from '../../svg/ThreeDotsIcon'
 import { useNavigate } from 'react-router-dom'
 import EditIcon from '../../svg/KebabList/EditIcon'
 import DeleteIcon from '../../svg/KebabList/DeleteIcon'
+import ThreeDots from '../ThreeDots'
 
 
 const BackButton = () => {
@@ -62,7 +63,8 @@ const Header = ({ HeaderText , id , withKebab }) => {
                 }
             
             </div>
-            {
+            
+            {/* {
                 isOpen && (
                     <div className="relative w-48 top-12 bg-background-70 shadow-lg rounded-md z-10">
                     <ul className='p-2 '>
@@ -75,7 +77,7 @@ const Header = ({ HeaderText , id , withKebab }) => {
                     </ul>
                     </div>
                 )
-            }
+            } */}
         </div>
     )
 }

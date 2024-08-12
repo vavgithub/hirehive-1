@@ -15,7 +15,7 @@ const Button = React.forwardRef(({
   asChild = false,
   disabled = false,
   icon: IconComponent,
-  iconPosition = "right",
+  iconPosition = "left",
   children,
   ...props
 }, ref) => {
