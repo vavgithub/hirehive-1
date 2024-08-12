@@ -120,7 +120,7 @@ const CreateJobs = () => {
 
     const postJobData = async (data) => {
         try {
-            const response = await axios.post('http://localhost:8008/api/v1createJobs', data);
+            const response = await axios.post('http://localhost:8008/api/v1/createJobs', data);
             console.log('Job created successfully:', response.data);
             navigate('/admin/jobs');
         } catch (error) {
