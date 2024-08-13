@@ -240,7 +240,7 @@ const Dashboard = () => {
 
             </div>
 
-            <div className='bg-background-100'>
+            <div className='bg-background-100 rounded-xl'>
 
                 <div className='flex gap-3'>
                     <StatsGrid stats={JobsStats} />

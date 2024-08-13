@@ -61,6 +61,10 @@ const JobForm = ({
               handleOptionClick={handleOptionClick}
             />
           ))}
+          
+          <div>
+
+          </div>
           <ExperienceField
             formData={formData}
             handleExperienceChange={handleExperienceChange}

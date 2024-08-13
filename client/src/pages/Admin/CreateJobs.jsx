@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useCreateJobForm } from '../../hooks/useCreateJobForm';
 import JobForm from '../../components/Form/JobForm';
 import axios from '../../api/axios';
+import Header from '../../components/utility/Header';
 
 const CreateJobs = () => {
   const navigate = useNavigate();
@@ -28,7 +29,7 @@ const CreateJobs = () => {
   return (
     <div className="bg-background-80 h-screen">
       <div className='p-4'>
-        <h1>Create a New Job Listing</h1>
+      <Header HeaderText="Create a New Job Listing"></Header>
         <JobForm
           formData={formData}
           handleInputChange={handleInputChange}

@@ -5,6 +5,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import JobForm from '../../components/Form/JobForm';
 import axios from '../../api/axios';
 import { useCreateJobForm } from '../../hooks/useCreateJobForm';
+import Header from '../../components/utility/Header';
 
 const EditJobs = () => {
   const { id } = useParams();
@@ -50,7 +51,7 @@ const EditJobs = () => {
   return (
     <div className="bg-background-80 h-screen">
       <div className='p-4'>
-        <h1>Edit Job Listing</h1>
+        <Header HeaderText="Edit Job Listing"></Header>
         <JobForm
           formData={formData}
           handleInputChange={handleInputChange}

@@ -521,9 +521,6 @@ const Table = ({ rowsData, onUpdateCandidate }) => {
                     },
                     '& .MuiDataGrid-footerContainer': {
                         borderTop: 'none', // Remove the top border of the footer
-                    },
-                    '& .MuiDataGrid-footerContainer': {
-                        borderTop: 'none', // Remove the top border of the footer
                         color: 'white', // Set footer text color to white
                     },
                     '& .MuiTablePagination-root': {
