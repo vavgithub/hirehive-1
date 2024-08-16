@@ -453,8 +453,17 @@ const Table = ({ rowsData, onUpdateCandidate }) => {
                 {`
                 .MuiDataGrid-root .MuiDataGrid-columnHeader:focus,
                 .MuiDataGrid-root .MuiDataGrid-cell:focus {
-                    outline: none !important;
+                    outline: none !important;                      
+                    border: none !important
+                
                 }
+                .MuiDataGrid-root {
+                    outline: none !important;                      
+                    border: none !important;                
+                }
+                .MuiDataGrid-columnHeaderRow {
+                    color:red,
+                }    
                 .MuiDataGrid-row .MuiDataGrid-checkboxInput {
                     visibility: hidden;
                 }
@@ -485,6 +494,7 @@ const Table = ({ rowsData, onUpdateCandidate }) => {
                 .icon-link:hover {
                     color: #000;
                 }
+             
                 .icon {
                     font-size: 1.2rem;
                 }  
@@ -503,10 +513,16 @@ const Table = ({ rowsData, onUpdateCandidate }) => {
                     params.indexRelativeToCurrentPage % 2 === 0 ? 'red-row' : 'blue-row'
                 }
                 sx={{
+                    '& .MuiDataGrid-root':{
+                        border:'0px'
+                    },
                     '& .MuiDataGrid-cell': {
                         color: 'white',
                         borderBottom: 'none', // Remove the bottom border of the cells
                         borderTop: 'none'
+                    },
+                    '& .MuiDataGrid-columnHeaderRow':{
+                        backgroundColor:'red'
                     },
                     '& .MuiDataGrid-columnHeaders': {
                         borderTop: 'none',

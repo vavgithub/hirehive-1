@@ -16,7 +16,7 @@ const JobCard = ({ job, status, handleAction, page, onClick }) => {
             <div className="flex justify-between items-center p-4">
 
                 {/* <Typography variant='h3' className='text-white'></Typography> */}
-                <h3 className='typography-h3 text-white'>{job.jobTitle}</h3>
+                <h3 className='typography-h3 '>{job.jobTitle}</h3>
                 <div className='flex items-center'>
                     <span className={`bg-background-70 typography-body px-2 py-1 rounded`}>{job.jobProfile}</span>
                     <ThreeDots job={job} handleAction={handleAction} page={page} />
@@ -25,7 +25,7 @@ const JobCard = ({ job, status, handleAction, page, onClick }) => {
             <div className="flex items-center px-4">
                 <div className="mr-8 flex">
                     <ClockIcon/>
-                    <p className="typography-body text-white">{job.employmentType}</p>
+                    <p className="typography-body text-blue-100">{job.employmentType}</p>
                 </div>
                 <div className="mr-8 flex justify-center items-center">
                     <DollarIcon/>
@@ -53,7 +53,7 @@ const JobCard = ({ job, status, handleAction, page, onClick }) => {
             <div className="flex items-center justify-between bg-background-40 p-4">
 
                 <div className='flex flex-col'>
-                    <span className='typography-small-p text-font-gray'>Candidates</span>
+                <span className='typography-small-p text-font-gray'>Candidates</span>
                     <span className="ml-2 typography-body text-white">{job.applied}125 </span>
                 </div>
 

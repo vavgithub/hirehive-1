@@ -32,7 +32,7 @@ const Navbar = () => {
                     </div>
                 </div>
                 <div>
-                    <button onClick={handleLogout} className="bg-black text-white font-bold py-2 px-4 rounded">LOGOUT</button>
+                    {/* <button onClick={handleLogout} className="bg-black text-white font-bold py-2 px-4 rounded">LOGOUT</button> */}
                 </div>
             </div>
 

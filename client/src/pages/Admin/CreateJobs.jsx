@@ -14,7 +14,7 @@ const CreateJobs = () => {
   const createJobMutation = useMutation({
     mutationFn: (jobData) => axios.post('/createJobs', jobData),
     onSuccess: () => {
-      navigate('/admin/jobs');
+      navigate('/admin/create-job/que');
     },
     onError: (error) => {
       console.error('Error creating job:', error);

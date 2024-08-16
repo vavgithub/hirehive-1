@@ -9,6 +9,7 @@ export default {
         "card-pattern": "url('/src/svg/StatsCard/stats-bg.png')",
         "main-bg":"url('/src/svg/Background/rate.png')",
         "stars":"url('/src/svg/Background/Stars.png')",
+        "que-bg":"url('/src/svg/Background/Que.svg')",        
         "custom-gradient":
           "linear-gradient(180deg, var(--tw-gradient-stops))",
       },
@@ -27,6 +28,7 @@ export default {
           100:"var(--color-primary-100)",
           200:"var(--color-primary-200)",
           300:"var(--color-primary-300)",
+          400:"var(--color-primary-400)",
         },        
         primary: {
           100: "var(--color-primary-100)",

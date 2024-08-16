@@ -8,7 +8,7 @@ export const InputField = React.memo(({ id, label, value, onChange, required }) 
       id={id}
       type="text"
       placeholder={`Enter ${label.toLowerCase()}`}
-      className='w-full p-2 border border-gray-300 rounded'
+      className='w-full p-2  rounded'
       value={value}
       onChange={onChange}
       required={required}
@@ -19,11 +19,11 @@ export const InputField = React.memo(({ id, label, value, onChange, required }) 
 export const CustomDropdown = React.memo(({ field, label, options, value, onChange, isOpen, toggleDropdown, handleOptionClick }) => (
   <div className="space-y-1">
     <label className="typography-body">{label}*</label>
-    <div className="relative">
+    <div className="relative focus:outline focus:outline-teal-400">
       <button
         type="button"
         onClick={() => toggleDropdown(field)}
-        className="mt-1 h-[44px] bg-background-40 block w-full outline-none rounded-md shadow-sm focus:ring-teal-300 focus:border-teal-300 text-left px-4"
+        className="mt-1 h-[44px] bg-background-40 block text-font-gray w-full outline-none rounded-md shadow-sm focus:ring-teal-300 focus:border-teal-300 text-left px-4"
       >
         {options.find(opt => opt.value === value)?.label || '-Select-'}
       </button>

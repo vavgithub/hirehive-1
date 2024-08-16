@@ -7,9 +7,9 @@ export const useCreateJobForm = (initialData = {
     employmentType: '',
     jobProfile: '',
     experienceFrom: 0,
-    experienceTo: 0,
+    experienceTo: 1,
     budgetFrom: 0,
-    budgetTo: 0,
+    budgetTo: 1,
     jobDescription: '',
     skills: [],
 }) => {

@@ -216,9 +216,9 @@ const Dashboard = () => {
     ];
 
     const JobsStats = [
-        { title: 'Jobs Posted', value: 555, icon: one },
-        { title: 'Application Received', value: 4455, icon: two },
-        { title: 'Hired', value: 46, icon: three }
+        { title: 'Jobs Posted', value: jobCount, icon: one },
+        { title: 'Application Received', value: 1, icon: two },
+        { title: 'Hired', value: 0, icon: three }
 
     ]
 
