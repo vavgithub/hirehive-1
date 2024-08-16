@@ -1,5 +1,5 @@
 import axios from "axios";
 
 export default axios.create({
-    baseURL: "https://hirehive-a7cx.onrender.com/api/v1",
+    baseURL: "http://localhost:8008/api/v1",
 });
