@@ -15,7 +15,7 @@ const corsOptions = {
       const allowedOrigins = [
         'http://localhost:5173', // Vite's default development server
         'http://localhost:4173', // Vite's default preview server
-        'https://hirehive-steel.vercel.app/' // Replace with your actual production domain
+        'https://hirehive-steel.vercel.app' // Replace with your actual production domain
       ];
       if (!origin || allowedOrigins.indexOf(origin) !== -1) {
         callback(null, true);
