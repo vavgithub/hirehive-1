@@ -38,8 +38,7 @@ connectDB().then(()=>{
 });
 
 app.get("/", (req, res)=>{
-
-    res.send("Welcome to Job Portal API")
+    res.send("Welcome to HireHive Job Portal API")
 })
 
 
