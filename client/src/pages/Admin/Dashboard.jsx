@@ -12,6 +12,7 @@ import three from '../../svg/StatsCard/Jobs Page/three';
 import { Button } from '../../components/ui/Button';
 import axios from "../../api/axios"
 import Create from '../../svg/Buttons/Create';
+import { ACTION_TYPES } from '../../utility/ActionTypes';
 
 
 const fetchJobs = () => axios.get('/jobs').then(res => res.data);
@@ -25,14 +26,14 @@ const filterJobs = (filters) => axios.post('/filterJobs', { filters }).then(res 
 
 
 // Define action types
-const ACTION_TYPES = {
-    DELETE: 'DELETE',
-    EDIT: 'EDIT',
-    DRAFT: 'DRAFT',
-    CLOSE: 'CLOSE',
-    REJECT: 'REJECT',
-    ARCHIVE: 'ARCHIVE',
-};
+// const ACTION_TYPES = {
+//     DELETE: 'DELETE',
+//     EDIT: 'EDIT',
+//     DRAFT: 'DRAFT',
+//     CLOSE: 'CLOSE',
+//     REJECT: 'REJECT',
+//     ARCHIVE: 'ARCHIVE',
+// };
 
 const Dashboard = () => {
     const [searchQuery, setSearchQuery] = useState('');
@@ -82,6 +83,7 @@ const Dashboard = () => {
         mutationFn: (jobId) => axios.delete(`/deleteJob/${jobId}`),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['jobs'] });
+            queryClient.invalidateQueries({ queryKey: ['jobCount'] });
             setModalOpen(false);
         },
     });
@@ -201,11 +203,6 @@ const Dashboard = () => {
     const handleViewJob = (jobId) => {
         navigate(`/admin/jobs/view-job/${jobId}`);
     };
-
-    // const token = localStorage.getItem('accessToken');
-    // if (token == null) {
-    //     return <Navigate to="/auth/login" replace />;
-    // }
 
     const filtersConfig = activeTab === 'open' ? activeJobsCountFilter : closedJobsCountFilter;
 
