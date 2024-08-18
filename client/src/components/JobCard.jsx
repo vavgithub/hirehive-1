@@ -70,8 +70,6 @@ const JobCard = ({ job, status, handleAction, page, onClick }) => {
                 <div className='flex flex-col'>
                 <span className='typography-small-p text-font-gray'>Posted</span>
                 <span className="ml-2 typography-body text-white">{formattedCreatedAt} </span>
-                    
-
                 </div>
 
             </div>

@@ -24,7 +24,7 @@ const Kebab = () => {
     )
 }
 
-const Header = ({ HeaderText , id , withKebab }) => {
+const Header = ({ HeaderText , id , withKebab , job , handleAction}) => {
     const [isOpen , setIsOpen] = useState(false);
     const menuRef = useRef(null);
 
@@ -59,7 +59,7 @@ const Header = ({ HeaderText , id , withKebab }) => {
             </div>
             <div onClick={(e)=>toggleMenu(e)} className="absolute right-3" >
                 {
-                    withKebab == "true" && <Kebab /> 
+                    withKebab == "true" && <ThreeDots job={job} handleAction={handleAction} /> 
                 }
             
             </div>

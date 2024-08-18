@@ -2,29 +2,34 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import axios from 'axios';
-import DataTable from '../../components/DataTable';
-import Breadcrumb from '../../components/Breadcrumb';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import axios from '../../api/axios';
 import Tabs from '../../components/Tabs';
 import StatsGrid from '../../components/StatsGrid';
 import Modal from '../../components/Modal';
 import InputPopUpModal from '../../components/InputPopUpModal';
-import ThreeDots from '../../components/ThreeDots';
 import { formatDescription } from '../../utility/formatDescription';
 import SideCard from '../../components/SideCard';
 import Table from '../../components/Table';
 import one from '../../svg/StatsCard/Jobs Page/one';
 import Header from '../../components/utility/Header';
+import { ACTION_TYPES } from '../../utility/ActionTypes';
 
 
 const ViewJobs = () => {
-    const [formData, setFormData] = useState(null);
-    const [candidatesData, setCandidatesData] = useState([]);
     const { id: mainId } = useParams();
     const navigate = useNavigate();
     const location = useLocation();
 
+
+    const [closeReason, setCloseReason] = useState('');
+
     const [activeTab, setActiveTab] = useState('candidate');
+
+    const [modalOpen, setModalOpen] = useState(false);
+    const [modalAction, setModalAction] = useState('');
+    const [selectedJob, setSelectedJob] = useState(null);
+
     const handleTabClick = (tab) => {
         setActiveTab(tab);
     };
@@ -41,6 +46,10 @@ const ViewJobs = () => {
     const handleConfirm = () => {
         console.log('Confirmed with selections:', selectedValue1, selectedValue2);
         setIsModalOpen(false);
+    };
+
+    const handleCloseReasonChange = (reason) => {
+        setCloseReason(reason);
     };
 
     const fields = [
@@ -72,191 +81,110 @@ const ViewJobs = () => {
         },
     ];
 
-    const [open, setOpen] = useState(false);
-    const [selectedJobId, setSelectedJobId] = useState(null);
-    const [modalAction, setModalAction] = useState('');
 
-    const confirmAction = () => {
-        if (modalAction === 'delete') {
-            axios.delete(`http://localhost:8008/api/deleteJob/${selectedJobId}`)
-                .then(() => {
-                    console.log("Job deleted successfully");
-                    setOpen(false);
-                    navigate(-1);
-                })
-                .catch(error => {
-                    console.error("Failed to delete the job", error);
-                });
-        }
-        if (modalAction === 'draft') {
-            axios.put(`http://localhost:8008/api/draftJob/${selectedJobId}`)
-                .then(response => {
-                    console.log("Job closed successfully:", response.data.message);
-                    setOpen(false);
-                    navigate(-1);
-                })
-                .catch(error => {
-                    console.error("Failed to archive the job", error.response ? error.response.data.message : "No additional error information");
-                });
-        }
-        if (modalAction === 'closed') {
-            axios.put(`http://localhost:8008/api/unarchiveJob/${selectedJobId}`)
-                .then(response => {
-                    console.log("Job unarchived successfully:", response.data.message);
-                    setOpen(false);
-                    navigate(-1);
-                })
-                .catch(error => {
-                    console.error("Failed to unarchive the job", error.response ? error.response.data.message : "No additional error information");
-                });
-        }
-        if (modalAction === 'edit') {
-            navigate(`/admin/edit-job/${selectedJobId}`);
+    const confirmAction = (job) => {
+        switch (modalAction) {
+            case ACTION_TYPES.DELETE:
+                deleteMutation.mutate(job._id);
+                break;
+            case ACTION_TYPES.DRAFT:
+                draftMutation.mutate(job._id);
+                break;
+            case ACTION_TYPES.CLOSE:
+                closeMutation.mutate({ jobId: job._id, closeReason });
+                break;
+            case ACTION_TYPES.EDIT:
+                navigate(`/admin/edit-job/${mainId}`);
+                setModalOpen(false);
+                break;
+            default:
+                console.log('Unknown action:', modalAction);
         }
     };
 
-    const fetchJobData = async () => {
-        try {
-            const response = await axios.get(`http://localhost:8008/api/v1/getJobById/${mainId}`);
-            setFormData(response.data);
-        } catch (error) {
-            console.error('Error fetching job:', error);
-        }
-    };
 
-    const fetchCandidatesData = async () => {
-        try {
-            const response = await axios.get(`http://localhost:8008/api/v1/candidates/${mainId}/candidates`);
-            console.log(candidatesData)
-            setCandidatesData(response.data);
-        } catch (error) {
-            console.error('Error fetching candidates:', error);
-        }
-    };
+    // Fetch job data
+    const { data: formData, isLoading: isJobLoading } = useQuery({
+        queryKey: ['job', mainId],
+        queryFn: () => axios.get(`http://localhost:8008/api/v1/getJobById/${mainId}`).then(res => res.data),
+    });
 
-    const updateCandidate = async (id, updates) => {
-        try {
-            const response = await axios.patch(`http://localhost:8008/api/v1/candidates/update/${id}`, updates);
-            const updatedCandidate = response.data;
-            setCandidatesData(prevCandidates =>
-                prevCandidates.map(candidate => 
-                    candidate._id === id ? { ...candidate, ...updatedCandidate } : candidate
+    // Fetch candidates data
+    const { data: candidatesData, isLoading: isCandidatesLoading } = useQuery({
+        queryKey: ['candidates', mainId],
+        queryFn: () => axios.get(`http://localhost:8008/api/v1/candidates/${mainId}/candidates`).then(res => res.data),
+    });
+
+    // Mutations
+    const deleteMutation = useMutation({
+        mutationFn: (jobId) => axios.delete(`/deleteJob/${jobId}`),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['jobs'] });
+            setModalOpen(false);
+        },
+    });
+
+    const draftMutation = useMutation({
+        mutationFn: (jobId) => axios.put(`/draftJob/${jobId}`),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['jobs'] });
+            setModalOpen(false);
+        },
+    });
+
+    const closeMutation = useMutation({
+        mutationFn: ({ jobId, reason }) => axios.put(`/closeJob/${jobId}`, { reason }),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['jobs'] });
+            setModalOpen(false);
+        },
+    });
+
+    const updateCandidateMutation = useMutation({
+        mutationFn: ({ id, updates }) => axios.patch(`http://localhost:8008/api/v1/candidates/update/${id}`, updates),
+        onSuccess: (data, variables) => {
+            queryClient.setQueryData(['candidates', mainId], (oldData) =>
+                oldData.map(candidate =>
+                    candidate._id === variables.id ? { ...candidate, ...data } : candidate
                 )
             );
-        } catch (error) {
-            console.error('Error updating candidate:', error);
-        }
+        },
+    });
+
+    const updateCandidate = (id, updates) => {
+        updateCandidateMutation.mutate({ id, updates });
     };
 
-    // const updateAssignee = async (candidatesData) => {
-    //     try {
-    //       const response = await axios.patch('http://localhost:8008/api/v1/candidates/update-assignee', {
-    //         candidatesData
-    //       });
-    
-    //       if (response.status === 200) {
-    //         // Update the local state with the updated assignees
-    //         setCandidatesData(prevCandidates =>
-    //           prevCandidates.map(candidate => {
-    //             const updated = candidatesData.find(c => c.id === candidate._id);
-    //             return updated ? { ...candidate, assignee: updated.assignee } : candidate;
-    //           })
-    //         );
-    //         console.log('Assignees updated successfully on the server.');
-    //       } else {
-    //         throw new Error(`Failed to update assignee, response status: ${response.status}`);
-    //       }
-    //     } catch (error) {
-    //       console.error('Error updating assignee:', error);
-    //       if (error.response) {
-    //         console.error('Server responded with:', error.response.data);
-    //       }
-    //       throw error;
-    //     }
-    //   };
 
-    const updateAssignee = async (candidatesData) => {
-        try {
-          const response = await axios.patch('http://localhost:8008/api/v1/candidates/update-assignee', {
-            candidatesData
-          });
-      
-          if (response.status === 200) {
-            setCandidatesData(prevCandidates =>
-              prevCandidates.map(candidate => {
-                const updated = candidatesData.find(c => c.id === candidate._id);
-                return updated ? { ...candidate, assignee: updated.assignee, status: updated.status } : candidate;
-              })
-            );
-            console.log('Assignees and statuses updated successfully on the server.');
-          } else {
-            throw new Error(`Failed to update assignee and status, response status: ${response.status}`);
-          }
-        } catch (error) {
-          console.error('Error updating assignee and status:', error);
-          if (error.response) {
-            console.error('Server responded with:', error.response.data);
-          }
-          throw error;
-        }
-      };
-
-
-      const updateRating = async (id, rating) => {
-        try {
-          const response = await axios.patch(`http://localhost:8008/api/v1/candidates/update-rating/${id}`, { rating });
-          const updatedCandidate = response.data;
-          setCandidatesData(prevCandidates =>
-            prevCandidates.map(candidate => candidate._id === id ? updatedCandidate : candidate)
-          );
-          return updatedCandidate; // Return the updated candidate
-        } catch (error) {
-          console.error('Error updating candidate rating:', error);
-          throw error; // Throw the error so it can be caught in the DataTable component
-        }
-      };
-    
-
-      useEffect(() => {
-        if (mainId) {
-          localStorage.setItem('currentJobId', mainId);
-        }
-      }, [mainId]); 
 
     useEffect(() => {
-        fetchJobData();
-        fetchCandidatesData();
-    }, [mainId, location]);
+        if (mainId) {
+            localStorage.setItem('currentJobId', mainId);
+        }
+    }, [mainId]);
 
-    if (!formData) {
+    // useEffect(() => {
+    //     fetchJobData();
+    //     fetchCandidatesData();
+    // }, [mainId, location]);
+
+    // if (!formData) {
+    //     return <div>Loading...</div>;
+    // }
+
+    if (isJobLoading || isCandidatesLoading) {
         return <div>Loading...</div>;
     }
 
-    const handleEditClick = () => {
-        navigate(`/admin/edit-job/${mainId}`);
-    };
 
-    const paths = [
-        { name: 'Jobs', href: '/admin/jobs' },
-        { name: `${formData.jobTitle}`, href: '/admin/create-job' },
-    ];
 
-    const back = () => {
-        navigate('/admin/jobs');
-    };
-
-    const handleAction = (action, jobId) => {
-        setOpen(true);
-        setSelectedJobId(jobId);
-        setModalAction(action);
-    };
 
     const candidateStats = [
-        { title: 'Total', value: candidatesData.length.toString() , icon: one},
-        { title: 'Portfolio', value: candidatesData.filter(c => c.stage === 'Portfolio').length.toString() , icon: one},
-        { title: 'Screening', value: candidatesData.filter(c => c.stage === 'Screening').length.toString() , icon: one},
+        { title: 'Total', value: candidatesData.length.toString(), icon: one },
+        { title: 'Portfolio', value: candidatesData.filter(c => c.stage === 'Portfolio').length.toString(), icon: one },
+        { title: 'Screening', value: candidatesData.filter(c => c.stage === 'Screening').length.toString(), icon: one },
         // { title: 'Design Task', value: candidatesData.filter(c => c.stage === 'Design Task').length.toString() , icon: one},
-        { title: 'Round 1', value: candidatesData.filter(c => c.stage === 'Round 1').length.toString() , icon: one},
+        { title: 'Round 1', value: candidatesData.filter(c => c.stage === 'Round 1').length.toString(), icon: one },
         // { title: 'Round 2', value: candidatesData.filter(c => c.stage === 'Round 2').length.toString() , icon: one},
         // { title: 'Offer Sent', value: candidatesData.filter(c => c.stage === 'Hired').length.toString() , icon: one},
     ];
@@ -268,27 +196,38 @@ const ViewJobs = () => {
         { title: 'Engagement Rate', value: '78%', icon: one },
     ];
 
+    const handleAction = (action, jobId) => {
+        setModalOpen(true);
+        setSelectedJob(jobId);
+        setModalAction(action);
+    };
+
+    const getModalMessage = (action, job) => {
+        switch (action) {
+            case ACTION_TYPES.DELETE:
+                return `Are you sure you want to delete the "${formData.jobTitle}" job post?`;
+            case ACTION_TYPES.EDIT:
+                return `Are you sure you want to edit the "${formData.jobTitle}" job post?`;
+            case ACTION_TYPES.DRAFT:
+                return `Are you sure you want to move "${formData.jobTitle}" to drafts?`;
+            case ACTION_TYPES.CLOSE:
+                return `Are you sure you want to close the "${formData.jobTitle}" job post?`;
+            case ACTION_TYPES.REJECT:
+                return `Are you sure you want to reject the candidate for "${formData.jobTitle}"?`;
+            case ACTION_TYPES.ARCHIVE:
+                return `Are you sure you want to archive the "${formData.jobTitle}" job post?`;
+            default:
+                return `Are you sure you want to perform this action on "${formData.jobTitle}"?`;
+        }
+    };
+
+
     return (
         <div className="mx-4 pt-4 h-screen">
-            {/* <div className='flex justify-between'>
-                <div>
-                    <Breadcrumb paths={paths} />
-                    <h1 className='text-2xl font-bold'>{formData.jobTitle}</h1>
-                </div>
-                {activeTab === 'jobDetails' && (
-                    <div className='flex gap-4'>
-                        <button onClick={handleEditClick} className=" text-black outline px-2 outline-black rounded">Edit Job Posting</button>
-                        <div className='outline rounded w-[32px] h-[32px] px-2 py-2 flex items-center justify-center'>
-                            <ThreeDots job={formData} handleAction={handleAction} page="viewJob" />
-                        </div>
-                    </div>
-                )}
-            </div> */}
-
-            <Header HeaderText={formData.jobTitle} withKebab="true"></Header>
+           
+            <Header HeaderText={formData.jobTitle} withKebab="true" job={formData} handleAction={handleAction}></Header>
             <div className='absolute right-24 top-5'>
-
-            <Tabs tabs={tabs} activeTab={activeTab} handleTabClick={handleTabClick} />
+                <Tabs tabs={tabs} activeTab={activeTab} handleTabClick={handleTabClick} />
             </div>
 
 
@@ -314,11 +253,11 @@ const ViewJobs = () => {
             {activeTab === 'candidate' && (
                 <div>
                     <div>
-                    <StatsGrid stats={candidateStats} />
+                        <StatsGrid stats={candidateStats} />
                     </div>
                     <div className='flex'>
                         <div>
-                            <Table rowsData={candidatesData} onUpdateCandidate={updateCandidate}/>
+                            <Table rowsData={candidatesData} onUpdateCandidate={updateCandidate} />
                             {/* <DataTable rowsData={candidatesData} onUpdateCandidate={updateCandidate} onUpdateAssignee={updateAssignee} onUpdateRating={updateRating}/> */}
                         </div>
                     </div>
@@ -336,7 +275,19 @@ const ViewJobs = () => {
                 cancelButtonText="Cancel"
             />
 
-            <Modal open={open} onClose={() => setOpen(false)} action={modalAction} confirmAction={confirmAction} />
+            <Modal
+                open={modalOpen}
+                onClose={() => {
+                    setModalOpen(false);
+                    setCloseReason(''); // Reset close reason when modal is closed
+                }}
+                actionType={modalAction}
+                onConfirm={(job) => confirmAction(job, closeReason)}
+                item={selectedJob}
+                customMessage={selectedJob ? getModalMessage(modalAction, selectedJob) : ''}
+                closeReason={closeReason}
+                onCloseReasonChange={handleCloseReasonChange}
+            />
         </div>
     );
 };
