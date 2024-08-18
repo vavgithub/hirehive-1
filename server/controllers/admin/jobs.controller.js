@@ -1,6 +1,6 @@
 // import Job from ''; // Import your Mongoose model
 import { MongooseError } from "mongoose";
-import { jobs } from "../models/admin/jobs.model.js";
+import { jobs } from "../../models/admin/jobs.model.js";
 // Controller function to create a new job
 
 const getJobs = async (req, res) => {
