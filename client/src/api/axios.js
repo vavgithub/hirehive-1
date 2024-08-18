@@ -1,7 +1,18 @@
 import axios from "axios";
 
-const baseURL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8008/api/v1";
+const getBaseUrl = () => {
+  switch (import.meta.env.MODE) {
+    case 'development':
+      return import.meta.env.VITE_API_BASE_URL_DEVELOPMENT;
+    case 'staging':
+      return import.meta.env.VITE_API_BASE_URL_STAGING;
+    case 'production':
+      return import.meta.env.VITE_API_BASE_URL_PRODUCTION;
+    default:
+      return import.meta.env.VITE_API_BASE_URL_DEVELOPMENT;
+  }
+};
 
 export default axios.create({
-    baseURL,
+  baseURL: getBaseUrl(),
 });
