@@ -1,15 +1,17 @@
-import { Link, useRouteError } from "react-router-dom";
+import { Link, Navigate, useNavigate, useRouteError } from "react-router-dom";
+import { Button } from "../../components/ui/Button";
 
 export default function ErrorPage() {
   const error = useRouteError();
-  console.error(error);
+  const navigate = useNavigate();
+  // console.error(error);
 
   return (
     <>
       <div className="flex items-center justify-center h-screen">
-        <div className="bg-white">
+        <div className="bg-background-30 p-4 rounded-xl">
           <div className="flex flex-col items-center">
-            <h1 className="font-bold text-3xl text-blue-600 lg:text-6xl">
+            <h1 className="font-bold typography-h1 text-blue-600 lg:text-6xl">
               404
             </h1>
 
@@ -22,15 +24,13 @@ export default function ErrorPage() {
               The page you’re looking for doesn’t exist.
             </p>
 
-            <Link
-              to="/admin"
-              className="px-5 py-2 rounded-md text-blue-100 bg-blue-600 hover:bg-blue-700"
-            >
-              Go home
-            </Link>
+            <Button variant="primary" onClick={()=>navigate("admin/jobs")}>
+              Let's Go Home Vevaar
+            </Button>
+
           </div>
-        </div>
-      </div>
+        </div >
+      </div >
     </>
   );
 }
