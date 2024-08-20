@@ -90,7 +90,7 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect }) => {
             {renderTrigger()}
 
             {isOpen && (
-                <div className={`absolute right-0 z-10 mt-1 ${mode === 'icon' ? 'w-64' : 'w-full'} bg-background-40 shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm`}>
+                <div className={`absolute scrollbar-hide right-0 z-10 mt-1 ${mode === 'icon' ? 'w-64' : 'w-full'} bg-background-40 shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm`}>
                     <div className="sticky top-0 z-10 flex items-center bg-background-40">
                         <SearchIcon />
                         <input
@@ -101,7 +101,7 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect }) => {
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
                     </div>
-                    <ul className="py-1">
+                    <ul className="py-1 ">
                         {filteredAssignees.map((assignee) => (
                             <li
                                 key={assignee.id}

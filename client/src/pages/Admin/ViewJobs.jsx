@@ -241,6 +241,7 @@ const ViewJobs = () => {
         <div className="mx-4 pt-4 h-screen">
            
             <Header HeaderText={formData.jobTitle} withKebab="true" job={formData} handleAction={handleAction}></Header>
+            
             <div className='absolute right-24 top-5'>
                 <Tabs tabs={tabs} activeTab={activeTab} handleTabClick={handleTabClick} />
             </div>

@@ -8,22 +8,33 @@ import CloseIcon from '../svg/KebabList/CloseIcon';
 import ReOpenIcon from '../svg/KebabList/ReOpenIcon';
 
 const MenuItems = {
-  open: [
-    { action: ACTION_TYPES.EDIT, icon: EditIcon, label: 'Edit' },
-    { action: ACTION_TYPES.DRAFT, icon: ArchiveIcon, label: 'Move To Draft' },
-    { action: ACTION_TYPES.CLOSE, icon: CloseIcon, label: 'Close job' },
-    { action: ACTION_TYPES.DELETE, icon: DeleteIcon, label: 'Delete', className: 'text-red-100' },
+  job: {
+    open: [
+      { action: ACTION_TYPES.EDIT, icon: EditIcon, label: 'Edit' },
+      { action: ACTION_TYPES.DRAFT, icon: ArchiveIcon, label: 'Move To Draft' },
+      { action: ACTION_TYPES.CLOSE, icon: CloseIcon, label: 'Close job' },
+      { action: ACTION_TYPES.DELETE, icon: DeleteIcon, label: 'Delete', className: 'text-red-100' },
+    ],
+    closed: [
+      { action: ACTION_TYPES.REOPEN, icon: ReOpenIcon, label: 'Re-open' },
+      { action: ACTION_TYPES.EDIT, icon: EditIcon, label: 'Edit' },
+      { action: ACTION_TYPES.DRAFT, icon: ArchiveIcon, label: 'Move To Draft' },
+      { action: ACTION_TYPES.DELETE, icon: DeleteIcon, label: 'Delete' },
+    ],
+    draft: [
+      { action: ACTION_TYPES.EDIT, icon: EditIcon, label: 'Edit' },
+      { action: ACTION_TYPES.DELETE, icon: DeleteIcon, label: 'Delete' },
+    ],
+  },
+  page1: [
+    { action: 'ACTION_1', icon: EditIcon, label: 'Action 1' },
+    { action: 'ACTION_2', icon: ArchiveIcon, label: 'Action 2' },
   ],
-  closed: [
-    { action: ACTION_TYPES.REOPEN, icon: ReOpenIcon, label: 'Re-open' },
-    { action: ACTION_TYPES.EDIT, icon: EditIcon, label: 'Edit' },
-    { action: ACTION_TYPES.DRAFT, icon: ArchiveIcon, label: 'Move To Draft' },
-    { action: ACTION_TYPES.DELETE, icon: DeleteIcon, label: 'Delete' },
+  page2: [
+    { action: 'ACTION_3', icon: DeleteIcon, label: 'Action 3' },
+    { action: 'ACTION_4', icon: CloseIcon, label: 'Action 4' },
   ],
-  draft: [
-    { action: ACTION_TYPES.EDIT, icon: EditIcon, label: 'Edit' },
-    { action: ACTION_TYPES.DELETE, icon: DeleteIcon, label: 'Delete' },
-  ],
+  // Add more page-specific menu items as needed
 };
 
 const ThreeDots = ({ job, handleAction, page }) => {
@@ -48,7 +59,14 @@ const ThreeDots = ({ job, handleAction, page }) => {
     };
   }, []);
 
-  const menuItems = MenuItems[job.status] || [];
+  const getMenuItems = () => {
+    if (job && job.status) {
+      return MenuItems.job[job.status] || [];
+    }
+    return MenuItems[page] || [];
+  };
+
+  const menuItems = getMenuItems();
 
   return (
     <div className="relative" ref={menuRef}>
@@ -63,7 +81,7 @@ const ThreeDots = ({ job, handleAction, page }) => {
                 key={action}
                 className={`px-4 py-2 flex items-center gap-1 typography-body ${className || ''}`}
                 onClick={(e) => {
-                  handleAction(action, job._id);
+                  handleAction(action, job ? job._id : null);
                   e.stopPropagation();
                 }}
               >
