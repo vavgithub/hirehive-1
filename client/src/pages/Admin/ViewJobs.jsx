@@ -178,11 +178,10 @@ const ViewJobs = () => {
         },
     });
 
+
     const handleUpdateCandidate = (id, updates) => {
         updateCandidateMutation.mutate({ id, updates });
     };
-
-
 
     useEffect(() => {
         if (mainId) {
@@ -194,8 +193,6 @@ const ViewJobs = () => {
     if (isJobLoading || isCandidatesLoading) {
         return <div>Loading...</div>;
     }
-
-
 
     const candidateStats = [
         { title: 'Total', value: jobStats?.data?.totalCount || 0, icon: one },

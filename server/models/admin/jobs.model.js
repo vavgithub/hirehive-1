@@ -8,12 +8,10 @@ const jobSchema = new mongoose.Schema(
     },
     workplaceType: {
       type: String,
-      lowercase: true,
       trim: true,
     },
     employeeLocation: {
       type: String,
-      lowercase: true,
       trim: true,
     },
     employmentType: {
