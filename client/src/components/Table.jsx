@@ -35,12 +35,12 @@ const allAssignees = ['John', 'Vevaar', 'Komael', 'Eshan', 'Sushmita', 'Jordyn']
 
 const Table = ({ rowsData, onUpdateCandidate }) => {
     const [rows, setRows] = useState(rowsData);
-    const [budgetFilteredRows, setBudgetFilteredRows] = useState(rowsData);
+    const [filteredRows, setFilteredRows] = useState(rowsData);
     const [searchQuery, setSearchQuery] = useState('');
+    const [budgetFilteredRows, setBudgetFilteredRows] = useState(rowsData);
     const [selectedCandidate, setSelectedCandidate] = useState(null);
     const navigate = useNavigate();
 
-    const [filteredRows, setFilteredRows] = useState(rowsData);
     const [searchTerm, setSearchTerm] = useState('');
 
     const [openAssigneeModal, setOpenAssigneeModal] = useState(false);
@@ -124,7 +124,7 @@ const Table = ({ rowsData, onUpdateCandidate }) => {
 
     const handleStageChange = async (id, newStage) => {
         try {
-            const candidate = rows.find(row => row._id === id);
+            const candidate = rowsData.find(row => row._id === id);
             if (!candidate) throw new Error('Candidate not found');
 
             const currentStatus = candidate.stageStatus[newStage]?.status || stageStatusMap[newStage][0];
@@ -135,21 +135,6 @@ const Table = ({ rowsData, onUpdateCandidate }) => {
             };
 
             await onUpdateCandidate(id, updates);
-
-            setRows(prevRows => prevRows.map(row =>
-                row._id === id
-                    ? {
-                        ...row,
-                        stage: newStage,
-                        stageStatus: {
-                            ...row.stageStatus,
-                            [newStage]: { ...row.stageStatus[newStage], status: currentStatus }
-                        }
-                    }
-                    : row
-            ));
-
-            console.log(`Stage updated successfully for candidate ${id}`);
         } catch (error) {
             console.error("Error updating candidate stage:", error);
         }
@@ -158,27 +143,11 @@ const Table = ({ rowsData, onUpdateCandidate }) => {
     const handleStatusChange = async (id, newStatus, stage) => {
         try {
             const updates = { [`stageStatus.${stage}.status`]: newStatus };
-
             await onUpdateCandidate(id, updates);
-
-            setRows(prevRows => prevRows.map(row =>
-                row._id === id
-                    ? {
-                        ...row,
-                        stageStatus: {
-                            ...row.stageStatus,
-                            [stage]: { ...row.stageStatus[stage], status: newStatus }
-                        }
-                    }
-                    : row
-            ));
-
-            console.log(`Status updated successfully for candidate ${id}`);
         } catch (error) {
             console.error("Error updating candidate status:", error);
         }
     };
-
     const handleNextRoundClick = async (e, id, currentStage) => {
         e.stopPropagation();
         const nextStage = nextStageMap[currentStage];
@@ -438,7 +407,7 @@ const Table = ({ rowsData, onUpdateCandidate }) => {
 
                     <div>
                         {savedBudgetFilter ? (
-                            <Button variant="icon" onClick={() => setIsModalOpen(true)}></Button>
+                            <Button  variant="icon" onClick={() => setIsModalOpen(true)}></Button>
                         ) : (
                             <Button variant="primary" icon={Create} iconPosition="left" onClick={() => setIsModalOpen(true)} >
                                 Budget With Screen
@@ -461,8 +430,10 @@ const Table = ({ rowsData, onUpdateCandidate }) => {
                     outline: none !important;                      
                     border: none !important;                
                 }
+                
                 .MuiDataGrid-columnHeaderRow {
-                    color:red,
+                    color:"red",
+                    font-style:"outfit"
                 }    
                 .MuiDataGrid-row .MuiDataGrid-checkboxInput {
                     visibility: hidden;

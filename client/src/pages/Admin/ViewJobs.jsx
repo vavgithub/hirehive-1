@@ -116,6 +116,14 @@ const ViewJobs = () => {
         queryFn: () => axios.get(`http://localhost:8008/api/v1/candidates/${mainId}/candidates`).then(res => res.data),
     });
 
+    //Fetch Stats data for Speicif Job
+    const { data: jobStats, isLoading: isStatsLoading } = useQuery({
+        queryKey: ['jobStats', mainId],
+        queryFn: () => axios.get(`http://localhost:8008/api/v1/candidates/${mainId}/stats`).then(res => res.data),
+    });
+
+    console.log("yelelelele", jobStats?.data?.stageStats);
+
     // Mutations
     const deleteMutation = useMutation({
         mutationFn: (jobId) => axios.delete(`/deleteJob/${jobId}`),
@@ -143,16 +151,34 @@ const ViewJobs = () => {
 
     const updateCandidateMutation = useMutation({
         mutationFn: ({ id, updates }) => axios.patch(`/candidates/update/${id}`, updates),
-        onSuccess: (data, variables) => {
-            queryClient.setQueryData(['candidates', mainId], (oldData) =>
-                oldData.map(candidate =>
-                    candidate._id === variables.id ? { ...candidate, ...data } : candidate
+        onMutate: async ({ id, updates }) => {
+            // Cancel any outgoing refetches
+            await queryClient.cancelQueries(['candidates', mainId]);
+
+            // Snapshot the previous value
+            const previousCandidates = queryClient.getQueryData(['candidates', mainId]);
+
+            // Optimistically update to the new value
+            queryClient.setQueryData(['candidates', mainId], old => 
+                old.map(candidate => 
+                    candidate._id === id ? { ...candidate, ...updates } : candidate
                 )
             );
+
+            // Return a context object with the snapshotted value
+            return { previousCandidates };
+        },
+        onError: (err, newCandidates, context) => {
+            // If the mutation fails, use the context returned from onMutate to roll back
+            queryClient.setQueryData(['candidates', mainId], context.previousCandidates);
+        },
+        onSettled: () => {
+            // Always refetch after error or success
+            queryClient.invalidateQueries(['candidates', mainId]);
         },
     });
 
-    const updateCandidate = (id, updates) => {
+    const handleUpdateCandidate = (id, updates) => {
         updateCandidateMutation.mutate({ id, updates });
     };
 
@@ -164,14 +190,6 @@ const ViewJobs = () => {
         }
     }, [mainId]);
 
-    // useEffect(() => {
-    //     fetchJobData();
-    //     fetchCandidatesData();
-    // }, [mainId, location]);
-
-    // if (!formData) {
-    //     return <div>Loading...</div>;
-    // }
 
     if (isJobLoading || isCandidatesLoading) {
         return <div>Loading...</div>;
@@ -179,20 +197,19 @@ const ViewJobs = () => {
 
 
 
-
     const candidateStats = [
-        { title: 'Total', value: candidatesData.length.toString(), icon: one },
-        { title: 'Portfolio', value: candidatesData.filter(c => c.stage === 'Portfolio').length.toString(), icon: one },
-        { title: 'Screening', value: candidatesData.filter(c => c.stage === 'Screening').length.toString(), icon: one },
-        // { title: 'Design Task', value: candidatesData.filter(c => c.stage === 'Design Task').length.toString() , icon: one},
-        { title: 'Round 1', value: candidatesData.filter(c => c.stage === 'Round 1').length.toString(), icon: one },
-        // { title: 'Round 2', value: candidatesData.filter(c => c.stage === 'Round 2').length.toString() , icon: one},
-        // { title: 'Offer Sent', value: candidatesData.filter(c => c.stage === 'Hired').length.toString() , icon: one},
+        { title: 'Total', value: jobStats?.data?.totalCount || 0, icon: one },
+        { title: 'Portfolio', value: jobStats?.data?.stageStats?.Portfolio || 0, icon: one },
+        { title: 'Screening', value: jobStats?.data?.stageStats?.Screening || 0, icon: one },
+        { title: 'Design Task', value: jobStats?.data?.stageStats['Design Task'] || 0, icon: one },
+        { title: 'Round 1', value: jobStats?.data?.stageStats['Round 1'] || 0, icon: one },
+        { title: 'Round 2', value: jobStats?.data?.stageStats['Round 2'] || 0, icon: one },
+        { title: 'Offer Sent', value: jobStats?.data?.stageStats?.Hired || 0, icon: one },
     ];
 
     const jobsDetailStats = [
         { title: 'Views', value: "0", icon: one },
-        { title: 'Applications Received', value: candidatesData.length.toString(), icon: one },
+        { title: 'Applications Received', value: 1, icon: one },
         { title: 'Qualified applications', value: '80', icon: one },
         { title: 'Engagement Rate', value: '78%', icon: one },
     ];
@@ -258,7 +275,7 @@ const ViewJobs = () => {
                     </div>
                     <div className='flex'>
                         <div>
-                            <Table rowsData={candidatesData} onUpdateCandidate={updateCandidate} />
+                            <Table rowsData={candidatesData}  onUpdateCandidate={handleUpdateCandidate}  />
                             {/* <DataTable rowsData={candidatesData} onUpdateCandidate={updateCandidate} onUpdateAssignee={updateAssignee} onUpdateRating={updateRating}/> */}
                         </div>
                     </div>

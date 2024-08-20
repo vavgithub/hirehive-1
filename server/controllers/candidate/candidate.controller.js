@@ -1,31 +1,103 @@
+import mongoose from "mongoose";
 import { candidates } from "../../models/candidate/candidate.model.js";
 import { ApiError } from "../../utils/ApiError.js";
 import { ApiResponse } from "../../utils/ApiResponse.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
 
-const stats = asyncHandler(async (req, res, next) => {
+const stats =  asyncHandler(async (req, res, next) => {
   try {
-    const totalCount = await candidates.countDocuments(); // Get the total count of candidates
+      // Perform the aggregation to get total count and stage counts in one go
+      const [totalCount, stageStats] = await Promise.all([
+          candidates.countDocuments(), // Get the total count of candidates
+          candidates.aggregate([
+              {
+                  $group: {
+                      _id: "$stage",           // Group by the "stage" field
+                      count: { $sum: 1 }       // Count the number of documents in each group
+                  }
+              },
+              {
+                  $sort: { _id: 1 }          // Sort the results by stage (optional)
+              }
+          ])
+      ]);
 
-    // Send the response using ApiResponse
-    res
-      .status(200)
-      .json(
-        new ApiResponse(
-          200,
-          { totalCount },
-          "Total candidate count fetched successfully"
-        )
-      );
+       // Format the stageStats to make it more readable (optional)
+       const formattedStats = stageStats.reduce((acc, curr) => {
+        acc[curr._id] = curr.count;
+        return acc;
+    }, {});
+
+    // Construct the final response object
+    const stats = {
+        totalCount,
+        stageStats: formattedStats
+    };
+
+      res.status(200).json(new ApiResponse(200, stats, "Stats fetched successfully"));
   } catch (error) {
-    // Handle any errors that occur
-    next(
-      new ApiError(500, "Failed to fetch total candidate count", [
-        error.message,
-      ])
-    );
+      next(new ApiError(500, "Failed to fetch stats", [error.message]));
   }
 });
+
+const jobSpecificStats = asyncHandler(async (req, res, next) => {
+  const { jobId } = req.params;
+
+  if (!jobId) {
+      return next(new ApiError(400, "Job ID is required"));
+  }
+
+  if (!mongoose.Types.ObjectId.isValid(jobId)) {
+      return next(new ApiError(400, "Invalid Job ID format"));
+  }
+
+  try {
+      // Perform the aggregation to get total count and stage counts for the specific job
+      const [totalCount, stageStats] = await Promise.all([
+          candidates.countDocuments({ jobId: new mongoose.Types.ObjectId(jobId) }),
+          candidates.aggregate([
+              {
+                  $match: { jobId: new mongoose.Types.ObjectId(jobId) }
+              },
+              {
+                  $group: {
+                      _id: "$stage",
+                      count: { $sum: 1 }
+                  }
+              },
+              {
+                  $sort: { _id: 1 }
+              }
+          ])
+      ]);
+
+      // Format the stageStats to make it more readable
+      const formattedStats = stageStats.reduce((acc, curr) => {
+          acc[curr._id] = curr.count;
+          return acc;
+      }, {});
+
+      // Ensure all stages are represented in the stats, even if they have zero candidates
+      const allStages = ["Portfolio", "Screening", "Design Task", "Round 1", "Round 2", "Hired"];
+      allStages.forEach(stage => {
+          if (!(stage in formattedStats)) {
+              formattedStats[stage] = 0;
+          }
+      });
+
+      // Construct the final response object
+      const stats = {
+          totalCount,
+          stageStats: formattedStats
+      };
+
+      res.status(200).json(new ApiResponse(200, stats, "Job-specific stats fetched successfully"));
+  } catch (error) {
+      console.error("Error in jobSpecificStats:", error);
+      next(new ApiError(500, "Failed to fetch job-specific stats", [error.message]));
+  }
+});
+
 
 const allCandidate = asyncHandler(async (req, res, next) => {
   try {
@@ -206,4 +278,5 @@ export {
   updateRating,
   allCandidate,
   stats,
+  jobSpecificStats
 };
