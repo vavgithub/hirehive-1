@@ -109,14 +109,14 @@ const Filters = ({ filters = {}, statistics, handleCheckboxChange, activeTab, ha
     ];
 
     const jobProfileOptions = [
-        { value: 'uiux', label: 'UI UX', statKey: 'totalUiUxJobs' },
-        { value: 'motiongraphic', label: 'Motion Graphics', statKey: 'totalMotionGraphicsJobs' },
-        { value: 'videoeditor', label: 'Video Editor', statKey: 'totalVideoEditorJobs' },
+        { value: 'UI UX', label: 'UI UX', statKey: 'totalUiUxJobs' },
+        { value: 'Motion Graphics', label: 'Motion Graphics', statKey: 'totalMotionGraphicsJobs' },
+        { value: 'Video Editor', label: 'Video Editor', statKey: 'totalVideoEditorJobs' },
         { value: '3d', label: '3d', statKey: 'total3DJobs' },
-        { value: 'digitalmarketingexecutive', label: 'Digital Marketing Executive', statKey: 'totalDigitalMarketingExecutiveJobs' },
-        { value: 'projectmanager', label: 'Project Manager', statKey: 'totalProjectManagerJobs' },
-        { value: 'artdirector', label: 'Art Director', statKey: 'totalArtDirectorJobs' },
-        { value: 'frontenddeveloper', label: 'Frontend Developer', statKey: 'totalFrontendDeveloperJobs' }
+        { value: 'Digital Marketing Executive', label: 'Digital Marketing Executive', statKey: 'totalDigitalMarketingExecutiveJobs' },
+        { value: 'Project Manager', label: 'Project Manager', statKey: 'totalProjectManagerJobs' },
+        { value: 'Art Director', label: 'Art Director', statKey: 'totalArtDirectorJobs' },
+        { value: 'Frontend Developer', label: 'Frontend Developer', statKey: 'totalFrontendDeveloperJobs' }
     ];
 
     const draftOptions = [

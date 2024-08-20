@@ -2,7 +2,7 @@ const StatCard = ({ title, value , icon:Icon }) => (
     <div className="flex justify-between items-center bg-card-pattern w-[240px] rounded-md shadow " >
         <div className="ml-[15px] w-max">
         <p className="typography-small-p text-font-gray w-max">{title}</p>
-        <p className="typography-h2 text-white" >{value}</p>
+        <p className="typography-h2" >{value}</p>
         </div>
         <div>
             <Icon/>
@@ -11,7 +11,7 @@ const StatCard = ({ title, value , icon:Icon }) => (
 );
 
 const StatsGrid = ({ stats }) => (
-    <div className="m-4 flex gap-4">
+    <div className="m-4 flex gap-4 w-[80%] overflow-x-auto scrollbar-hide">
         {stats.map((stat, index) => (
             <StatCard key={index} title={stat.title} value={stat.value} icon={stat.icon} />
         ))}

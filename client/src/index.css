@@ -8,6 +8,16 @@ html{
   @apply bg-background-80;
 }
 
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;  /* Internet Explorer 10+ */
+    scrollbar-width: none;  /* Firefox */
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;  /* Safari and Chrome */
+  }
+}
+
 .no-spinner {
   @apply appearance-none outline-none border-none;
   /* Hide the spinner for Chrome, Safari, Edge, Opera */

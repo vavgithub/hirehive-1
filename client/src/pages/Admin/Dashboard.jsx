@@ -22,6 +22,7 @@ const fetchActiveJobsStats = () => axios.get('/activeJobsFilterCount').then(res 
 const fetchClosedJobsStats = () => axios.get('/closedJobsFilterCount').then(res => res.data);
 const searchJobs = (query) => axios.get(`/searchJobs?jobTitle=${encodeURIComponent(query)}`).then(res => res.data);
 const filterJobs = (filters) => axios.post('/filterJobs', { filters }).then(res => res.data);
+const fetchApplicationCount = () => axios.get('/candidates/stats').then(res => res.data.data.totalCount);
 
 
 
@@ -54,6 +55,8 @@ const Dashboard = () => {
 
     const { data: jobs = [] } = useQuery({ queryKey: ['jobs'], queryFn: fetchJobs });
     const { data: jobCount = 0 } = useQuery({ queryKey: ['jobCount'], queryFn: fetchJobCount });
+    const { data: applicationCount = 0 } = useQuery({ queryKey: ['applicationCount'], queryFn: fetchApplicationCount });
+    
     const { data: statistics = {} } = useQuery({ queryKey: ['statistics'], queryFn: fetchStatistics });
     const { data: activeJobsCountFilter = {} } = useQuery({ queryKey: ['activeJobsStats'], queryFn: fetchActiveJobsStats });
     const { data: closedJobsCountFilter = {} } = useQuery({ queryKey: ['closedJobsStats'], queryFn: fetchClosedJobsStats });
@@ -214,7 +217,7 @@ const Dashboard = () => {
 
     const JobsStats = [
         { title: 'Jobs Posted', value: jobCount, icon: one },
-        { title: 'Application Received', value: 1, icon: two },
+        { title: 'Application Received', value: applicationCount, icon: two },
         { title: 'Hired', value: 0, icon: three }
 
     ]

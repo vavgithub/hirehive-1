@@ -20,6 +20,7 @@ const ViewJobs = () => {
     const { id: mainId } = useParams();
     const navigate = useNavigate();
     const location = useLocation();
+    const queryClient = useQueryClient();
 
 
     const [closeReason, setCloseReason] = useState('');
@@ -141,7 +142,7 @@ const ViewJobs = () => {
     });
 
     const updateCandidateMutation = useMutation({
-        mutationFn: ({ id, updates }) => axios.patch(`http://localhost:8008/api/v1/candidates/update/${id}`, updates),
+        mutationFn: ({ id, updates }) => axios.patch(`/candidates/update/${id}`, updates),
         onSuccess: (data, variables) => {
             queryClient.setQueryData(['candidates', mainId], (oldData) =>
                 oldData.map(candidate =>

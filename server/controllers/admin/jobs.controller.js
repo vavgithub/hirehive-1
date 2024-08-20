@@ -104,7 +104,7 @@ const filterJobs = async (req, res) => {
       query.employmentType = { $in: employmentType };
     }
     if (jobProfile && jobProfile.length > 0) {
-      query.jobProfile = { $in: jobProfile.map((type) => type.toLowerCase()) };
+      query.jobProfile = { $in:jobProfile  };
     }
     if (experience && (experience.min !== '' || experience.max !== '')) {
       query.fromExperience = {};

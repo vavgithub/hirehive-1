@@ -24,8 +24,8 @@ const Kebab = () => {
     )
 }
 
-const Header = ({ HeaderText , id , withKebab , job , handleAction}) => {
-    const [isOpen , setIsOpen] = useState(false);
+const Header = ({ HeaderText, id, withKebab, withBack, job, handleAction }) => {
+    const [isOpen, setIsOpen] = useState(false);
     const menuRef = useRef(null);
 
     const toggleMenu = (e) => {
@@ -48,22 +48,26 @@ const Header = ({ HeaderText , id , withKebab , job , handleAction}) => {
 
     const navigate = useNavigate()
     return (
-        <div className='flex items-center justify-between 'ref={menuRef}>
+        <div className='flex items-center justify-between ' ref={menuRef}>
             <div className='flex items-center gap-4'>
-                <div onClick={() => (navigate(-1))}>
-                    <BackButton />
-                </div>
+                {
+                    withBack == "true" && (
+                        <div onClick={() => (navigate(-1))}>
+                            <BackButton />
+                        </div>
+                    )
+                }
                 <h1 className='typography-h1'>
                     {HeaderText}
                 </h1>
             </div>
-            <div onClick={(e)=>toggleMenu(e)} className="absolute right-3" >
+            <div onClick={(e) => toggleMenu(e)} className="absolute right-3" >
                 {
-                    withKebab == "true" && <ThreeDots job={job} handleAction={handleAction} /> 
+                    withKebab == "true" && <ThreeDots job={job} handleAction={handleAction} />
                 }
-            
+
             </div>
-            
+
             {/* {
                 isOpen && (
                     <div className="relative w-48 top-12 bg-background-70 shadow-lg rounded-md z-10">

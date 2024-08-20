@@ -1,4 +1,50 @@
 import { candidates } from "../../models/candidate/candidate.model.js";
+import { ApiError } from "../../utils/ApiError.js";
+import { ApiResponse } from "../../utils/ApiResponse.js";
+import { asyncHandler } from "../../utils/asyncHandler.js";
+
+const stats = asyncHandler(async (req, res, next) => {
+  try {
+    const totalCount = await candidates.countDocuments(); // Get the total count of candidates
+
+    // Send the response using ApiResponse
+    res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          { totalCount },
+          "Total candidate count fetched successfully"
+        )
+      );
+  } catch (error) {
+    // Handle any errors that occur
+    next(
+      new ApiError(500, "Failed to fetch total candidate count", [
+        error.message,
+      ])
+    );
+  }
+});
+
+const allCandidate = asyncHandler(async (req, res, next) => {
+  try {
+    const candidateData = await candidates.find();
+
+    if (!candidateData || candidateData.length === 0) {
+      throw new ApiError(404, "No Candidates Found");
+    }
+
+    // If successful, send an ApiResponse
+    res
+      .status(200)
+      .json(
+        new ApiResponse(200, candidateData, "Candidates fetched successfully")
+      );
+  } catch (error) {
+    throw new ApiError(401, error?.message || "Failed to fetch candidates");
+  }
+});
 
 const getCandidate = async (req, res) => {
   try {
@@ -34,16 +80,20 @@ const updateStatusAndStage = async (req, res) => {
     const { id } = req.params;
     const updates = req.body;
 
-    const updatedCandidate = await candidates.findByIdAndUpdate(id, updates, { new: true });
-    
+    const updatedCandidate = await candidates.findByIdAndUpdate(id, updates, {
+      new: true,
+    });
+
     if (!updatedCandidate) {
-        return res.status(404).json({ message: 'Candidate not found' });
+      return res.status(404).json({ message: "Candidate not found" });
     }
 
     res.json(updatedCandidate);
-} catch (error) {
-    res.status(400).json({ message: 'Error updating candidate', error: error.message });
-}
+  } catch (error) {
+    res
+      .status(400)
+      .json({ message: "Error updating candidate", error: error.message });
+  }
 };
 
 const updateAssignee = async (req, res) => {
@@ -63,11 +113,11 @@ const updateAssignee = async (req, res) => {
     const updateOperations = candidatesData.map((candidate) => ({
       updateOne: {
         filter: { _id: candidate.id },
-        update: { 
-          $set: { 
+        update: {
+          $set: {
             assignee: candidate.assignee,
-            status: candidate.status  // Add this line to update the status
-          } 
+            status: candidate.status, // Add this line to update the status
+          },
         },
       },
     }));
@@ -118,28 +168,32 @@ const updateCandidateStatusById = async (req, res) => {
 
     // Validate input
     if (!id || !assignee) {
-        return res.status(400).json({ message: "Candidate ID and assignee are required" });
+      return res
+        .status(400)
+        .json({ message: "Candidate ID and assignee are required" });
     }
 
     // Find the candidate and update the assignee
     const updatedCandidate = await candidates.findByIdAndUpdate(
-        id,
-        { assignee: assignee },
-        { new: true, runValidators: true }
+      id,
+      { assignee: assignee },
+      { new: true, runValidators: true }
     );
 
     if (!updatedCandidate) {
-        return res.status(404).json({ message: "Candidate not found" });
+      return res.status(404).json({ message: "Candidate not found" });
     }
 
     res.status(200).json({
-        message: "Assignee updated successfully",
-        candidate: updatedCandidate
+      message: "Assignee updated successfully",
+      candidate: updatedCandidate,
     });
-} catch (error) {
+  } catch (error) {
     console.error("Error updating assignee:", error);
-    res.status(500).json({ message: "Internal server error", error: error.message });
-}
+    res
+      .status(500)
+      .json({ message: "Internal server error", error: error.message });
+  }
 };
 
 export {
@@ -150,4 +204,6 @@ export {
   updateStatusAndStage,
   updateAssignee,
   updateRating,
+  allCandidate,
+  stats,
 };
