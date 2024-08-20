@@ -1,11 +1,7 @@
 import React from 'react'
 import ThreeDots from './ThreeDots';
-import AppliedIcon from '../svg/AppliedIcon';
-import ProcessedIcon from '../svg/ProcessedIcon';
 import ClockIcon from '../svg/ClockIcon';
 import { getTimeAgo } from '../utility/getTimeAgo';
-import ClickIcon from '../svg/ClickIcon';
-import Typography from './ui/Typography';
 import ExperienceIcon from '../svg/ExperienceIcon';
 import DollarIcon from '../svg/DollarIcon';
 
@@ -33,7 +29,7 @@ const JobCard = ({ job, status, handleAction, page, onClick }) => {
                 </div>
                 <div className='mr-8 flex justify-center items-center'>
                     <ExperienceIcon/>
-                    <p className="typography-body text-white">{job.fromExperience} - {job.toExperience} Year</p>
+                    <p className="typography-body text-white">{job.experienceFrom} - {job.experienceTo} Year</p>
                 </div>
             </div>
             <p className='typography-body truncate px-4 my-4 text-font-gray '>
