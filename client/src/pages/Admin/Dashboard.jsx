@@ -24,18 +24,6 @@ const searchJobs = (query) => axios.get(`/searchJobs?jobTitle=${encodeURICompone
 const filterJobs = (filters) => axios.post('/filterJobs', { filters }).then(res => res.data);
 const fetchApplicationCount = () => axios.get('/candidates/stats').then(res => res.data.data.totalCount);
 
-
-
-// Define action types
-// const ACTION_TYPES = {
-//     DELETE: 'DELETE',
-//     EDIT: 'EDIT',
-//     DRAFT: 'DRAFT',
-//     CLOSE: 'CLOSE',
-//     REJECT: 'REJECT',
-//     ARCHIVE: 'ARCHIVE',
-// };
-
 const Dashboard = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [activeTab, setActiveTab] = useState('open');

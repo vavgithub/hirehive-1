@@ -268,10 +268,10 @@ const ViewJobs = () => {
 
             {activeTab === 'candidate' && (
                 <div>
-                    <div>
+                    <div className="w-full max-w-6xl">
                         <StatsGrid stats={candidateStats} />
                     </div>
-                    <div className='flex'>
+                    <div>
                         <div>
                             <Table rowsData={candidatesData}  onUpdateCandidate={handleUpdateCandidate}  />
                             {/* <DataTable rowsData={candidatesData} onUpdateCandidate={updateCandidate} onUpdateAssignee={updateAssignee} onUpdateRating={updateRating}/> */}

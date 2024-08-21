@@ -54,8 +54,11 @@ const fetchCandidatesAndStats = async () => {
     return (
       <div className="mx-4 pt-4 h-screen">
         <Header HeaderText="Candidates" />
-        <div className='bg-background-100 rounded-xl'>
+        <div className='bg-background-100 rounded-xl p-2'>
+          <div className="w-full max-w-6xl">
           <StatsGrid stats={candidateStats} />
+
+          </div>
           <Table rowsData={data.candidates?.data || []} />
         </div>
       </div>
