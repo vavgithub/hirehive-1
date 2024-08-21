@@ -107,19 +107,19 @@ const ViewJobs = () => {
     // Fetch job data
     const { data: formData, isLoading: isJobLoading } = useQuery({
         queryKey: ['job', mainId],
-        queryFn: () => axios.get(`http://localhost:8008/api/v1/getJobById/${mainId}`).then(res => res.data),
+        queryFn: () => axios.get(`/getJobById/${mainId}`).then(res => res.data),
     });
 
     // Fetch candidates data
     const { data: candidatesData, isLoading: isCandidatesLoading } = useQuery({
         queryKey: ['candidates', mainId],
-        queryFn: () => axios.get(`http://localhost:8008/api/v1/candidates/${mainId}/candidates`).then(res => res.data),
+        queryFn: () => axios.get(`/candidates/${mainId}/candidates`).then(res => res.data),
     });
 
     //Fetch Stats data for Speicif Job
     const { data: jobStats, isLoading: isStatsLoading } = useQuery({
         queryKey: ['jobStats', mainId],
-        queryFn: () => axios.get(`http://localhost:8008/api/v1/candidates/${mainId}/stats`).then(res => res.data),
+        queryFn: () => axios.get(`/candidates/${mainId}/stats`).then(res => res.data),
     });
 
     console.log("yelelelele", jobStats?.data?.stageStats);
