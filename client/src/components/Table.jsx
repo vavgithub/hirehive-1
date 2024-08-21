@@ -11,6 +11,7 @@ import InputPopUpModal from './InputPopUpModal';
 import { exportToExcel } from '../utility/exportToExcel';
 import { Button } from './ui/Button';
 import Create from '../svg/Buttons/Create';
+import Export from '../svg/Buttons/Export';
 
 const stageStatusMap = {
     "Portfolio": ['Not Assigned', 'Under Review', 'Reviewed', 'Cleared', 'Rejected'],
@@ -378,7 +379,7 @@ const Table = ({ rowsData, onUpdateCandidate }) => {
     return (
         <div>
             <div className='flex justify-between m-4'>
-                <div className='flex gap-4 h-12'>
+                <div className='flex gap-4 items-center'>
                     <input
                         className="px-4 py-2 w-40 rounded "
                         placeholder="Search By Name"
@@ -392,10 +393,13 @@ const Table = ({ rowsData, onUpdateCandidate }) => {
                         setFilters(newFilters);
                         applyFiltersAndSearch(budgetFilteredRows);
                     }} />
-                    <button className="bg-black text-white px-4 py-2 rounded" onClick={() => handleExport()}>Export</button>
+                    <div className='flex cursor-pointer typography-body gap-2 text-font-gray' onClick={() => handleExport()}>
+                        <Export /> Export
+                    </div>
+                    {/* <button className="bg-black text-white px-4 py-2 rounded" onClick={() => handleExport()}>Export</button> */}
                 </div>
 
-                <div className='flex gap-4'> 
+                <div className='flex gap-4'>
 
                     <div>
                         {savedBudgetFilter && (
@@ -407,7 +411,7 @@ const Table = ({ rowsData, onUpdateCandidate }) => {
 
                     <div>
                         {savedBudgetFilter ? (
-                            <Button  variant="icon" onClick={() => setIsModalOpen(true)}></Button>
+                            <Button variant="icon" onClick={() => setIsModalOpen(true)}></Button>
                         ) : (
                             <Button variant="primary" icon={Create} iconPosition="left" onClick={() => setIsModalOpen(true)} >
                                 Budget With Screen
@@ -484,16 +488,16 @@ const Table = ({ rowsData, onUpdateCandidate }) => {
                     params.indexRelativeToCurrentPage % 2 === 0 ? 'red-row' : 'blue-row'
                 }
                 sx={{
-                    '& .MuiDataGrid-root':{
-                        border:'0px'
+                    '& .MuiDataGrid-root': {
+                        border: '0px'
                     },
                     '& .MuiDataGrid-cell': {
                         color: 'white',
                         borderBottom: 'none', // Remove the bottom border of the cells
                         borderTop: 'none'
                     },
-                    '& .MuiDataGrid-columnHeaderRow':{
-                        backgroundColor:'red'
+                    '& .MuiDataGrid-columnHeaderRow': {
+                        backgroundColor: 'red'
                     },
                     '& .MuiDataGrid-columnHeaders': {
                         borderTop: 'none',
