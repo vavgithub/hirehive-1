@@ -72,6 +72,11 @@ const jobSchema = new mongoose.Schema(
         "Don’t want more entries",
       ],
       default: "",
+      createdBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
+      },
     },
   },
   { timestamps: true }

@@ -1,71 +1,65 @@
 // import Job from ''; // Import your Mongoose model
 import { MongooseError } from "mongoose";
 import { jobs } from "../../models/admin/jobs.model.js";
+import { ApiError } from "../../utils/ApiError.js";
+import { ApiResponse } from "../../utils/ApiResponse.js";
+import { asyncHandler } from "../../utils/asyncHandler.js";
 // Controller function to create a new job
 
-const getJobs = async (req, res) => {
-  try {
-    // Fetch all jobs from the database
-    const jobArray = await jobs.find();
-    // Respond with the list of jobs
-    res.status(200).json(jobArray);
-  } catch (error) {
-    // Handle error if fetching jobs fails
-    res.status(500).json({ message: error.message });
+const getJobs = asyncHandler(async (req, res) => {
+  const jobArray = await jobs.find();
+  console.log("Jobs found:", jobArray.length); // Debugging line
+  res.status(200).json(jobArray);
+});
+
+const createJob = asyncHandler(async (req, res) => {
+  if (!req.user) {
+    throw new ApiError(401, "Authentication required");
   }
-};
 
-const createJob = async (req, res) => {
-  try {
-    // Destructure job details from request body
-    const {
-        jobTitle,
-        workplaceType,
-        employeeLocation,
-        employmentType,
-        jobProfile,
-        experienceFrom,
-        experienceTo,
-        budgetFrom,
-        budgetTo,
-        jobDescription,
-        skills,
-        status,
-    } = req.body;
+  console.log("Creating job for user:", req.user._id); // Debugging line
 
-    // Create a new job instance using the Job model
-    const newJob = new jobs({
-      jobTitle,
-      workplaceType,
-      employeeLocation,
-      employmentType,
-      jobProfile,
-      experienceFrom,
-      experienceTo,
-      budgetFrom,
-      budgetTo,
-      jobDescription,
-      skills,
-      status,
-    });
+  const {
+    jobTitle,
+    workplaceType,
+    employeeLocation,
+    employmentType,
+    jobProfile,
+    experienceFrom,
+    experienceTo,
+    budgetFrom,
+    budgetTo,
+    jobDescription,
+    skills,
+    status,
+  } = req.body;
 
-    // Save the job to the database
-    const savedJob = await newJob.save();
-
-    // Respond with the saved job object
-    res.status(201).json(savedJob);
-  } catch (error) {
-    if (error instanceof MongooseError && error.code === 11000) {
-      // Handle duplicate key error (E11000)
-      res.status(400).json({
-        message: `Job with title '${req.body.title}' already exists.`,
-      });
-    } else {
-      // Handle other errors
-      res.status(500).json({ msg:"this is coming from backned" , message: error.message });
-    }
+  if (!jobTitle) {
+    throw new ApiError(400, "Job title is required");
   }
-};
+
+  const newJob = new jobs({
+    jobTitle,
+    workplaceType,
+    employeeLocation,
+    employmentType,
+    jobProfile,
+    experienceFrom,
+    experienceTo,
+    budgetFrom,
+    budgetTo,
+    jobDescription,
+    skills,
+    status,
+    createdBy: req.user._id,
+  });
+
+  const savedJob = await newJob.save();
+
+  console.log("Job created:", savedJob._id); // Debugging line
+
+  res.status(201).json(new ApiResponse(201, savedJob, "Job created successfully"));
+});
 
 const getTotalJobCount = async (req, res) => {
   try {

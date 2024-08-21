@@ -8,6 +8,8 @@ import cookieParser from "cookie-parser";
 
 import jobRoutes from './routes/admin/jobs.router.js';
 import candidateRoutes from './routes/candidate/candidate.router.js';
+import authRoutes from "./routes/admin/auth.router.js"
+
 const app = express();
 
 const corsOptions = {
@@ -38,9 +40,9 @@ app.use(express.static("public"));
 app.use(cookieParser());
 
 app.use(morgan('dev'))
-
 app.use("/api/v1" , jobRoutes);
-app.use("/api/v1/candidates",candidateRoutes )
+app.use("/api/v1/auth", authRoutes)
+app.use("/api/v1/candidates", candidateRoutes )
 
 connectDB().then(()=>{
     app.listen( process.env.PORT, ()=>{
