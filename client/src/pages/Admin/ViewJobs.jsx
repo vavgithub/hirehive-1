@@ -86,13 +86,13 @@ const ViewJobs = () => {
     const confirmAction = (job) => {
         switch (modalAction) {
             case ACTION_TYPES.DELETE:
-                deleteMutation.mutate(job._id);
+                deleteMutation.mutate(mainId);
                 break;
             case ACTION_TYPES.DRAFT:
-                draftMutation.mutate(job._id);
+                draftMutation.mutate(mainId);
                 break;
             case ACTION_TYPES.CLOSE:
-                closeMutation.mutate({ jobId: job._id, closeReason });
+                closeMutation.mutate({ jobId: mainId, closeReason });
                 break;
             case ACTION_TYPES.EDIT:
                 navigate(`/admin/edit-job/${mainId}`);
@@ -126,26 +126,29 @@ const ViewJobs = () => {
 
     // Mutations
     const deleteMutation = useMutation({
-        mutationFn: (jobId) => axios.delete(`/deleteJob/${jobId}`),
+        mutationFn: (mainId) => axios.delete(`/deleteJob/${mainId}`),
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['jobs'] });
+            queryClient.invalidateQueries({ queryKey: ['job'] });
             setModalOpen(false);
+            navigate(-1);
         },
     });
-
+    
     const draftMutation = useMutation({
         mutationFn: (jobId) => axios.put(`/draftJob/${jobId}`),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['jobs'] });
             setModalOpen(false);
+            navigate(-1);
         },
     });
-
+    
     const closeMutation = useMutation({
         mutationFn: ({ jobId, reason }) => axios.put(`/closeJob/${jobId}`, { reason }),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['jobs'] });
             setModalOpen(false);
+            navigate(-1);
         },
     });
 
@@ -240,7 +243,7 @@ const ViewJobs = () => {
     return (
         <div className="mx-4 pt-4 h-screen">
            
-            <Header HeaderText={formData.jobTitle} withKebab="true" job={formData} handleAction={handleAction}></Header>
+            <Header HeaderText={formData.jobTitle} withKebab="true" withBack="true" job={formData} handleAction={handleAction}></Header>
             
             <div className='absolute right-24 top-5'>
                 <Tabs tabs={tabs} activeTab={activeTab} handleTabClick={handleTabClick} />

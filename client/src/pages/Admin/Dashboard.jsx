@@ -198,9 +198,9 @@ const Dashboard = () => {
     const filtersConfig = activeTab === 'open' ? activeJobsCountFilter : closedJobsCountFilter;
 
     const tabs = [
-        { name: 'open', label: 'Open', count: statistics?.totalActiveJobs },
-        { name: 'closed', label: 'Closed', count: statistics?.totalClosedJobs },
-        { name: 'draft', label: 'Draft', count: statistics?.totalDraftJobs },
+        { name: 'open', label: 'Open' },
+        { name: 'closed', label: 'Closed' },
+        { name: 'draft', label: 'Draft' },
     ];
 
     const JobsStats = [
