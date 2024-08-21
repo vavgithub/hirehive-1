@@ -34,7 +34,7 @@ const allAssignees = ['John', 'Vevaar', 'Komael', 'Eshan', 'Sushmita', 'Jordyn']
 
 
 
-const Table = ({ rowsData, onUpdateCandidate }) => {
+const Table = ({ rowsData, onUpdateCandidate , extraCTA }) => {
     const [rows, setRows] = useState(rowsData);
     const [filteredRows, setFilteredRows] = useState(rowsData);
     const [searchQuery, setSearchQuery] = useState('');
@@ -408,7 +408,7 @@ const Table = ({ rowsData, onUpdateCandidate }) => {
                     {/* <button className="bg-black text-white px-4 py-2 rounded" onClick={() => handleExport()}>Export</button> */}
                 </div>
 
-                <div className='flex gap-4'>
+                { extraCTA == "true" && (<div className='flex gap-4'>
                     <div>
                         {isBudgetFilterApplied && (
                             <Button variant="primary" icon={Create} iconPosition="left" onClick={() => setOpenAssigneeModal(true)}>
@@ -426,7 +426,7 @@ const Table = ({ rowsData, onUpdateCandidate }) => {
                             </Button>
                         )}
                     </div>
-                </div>
+                </div>)}
             </div>
 
             <style>

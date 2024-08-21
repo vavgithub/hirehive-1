@@ -59,7 +59,7 @@ const fetchCandidatesAndStats = async () => {
           <StatsGrid stats={candidateStats} />
 
           </div>
-          <Table rowsData={data.candidates?.data || []} />
+          <Table rowsData={data.candidates?.data || []} extraCTA='false' />
         </div>
       </div>
     );

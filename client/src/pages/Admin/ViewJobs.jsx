@@ -273,7 +273,7 @@ const ViewJobs = () => {
                     </div>
                     <div>
                         <div>
-                            <Table rowsData={candidatesData}  onUpdateCandidate={handleUpdateCandidate}  />
+                            <Table rowsData={candidatesData}  extraCTA='true' onUpdateCandidate={handleUpdateCandidate}  />
                             {/* <DataTable rowsData={candidatesData} onUpdateCandidate={updateCandidate} onUpdateAssignee={updateAssignee} onUpdateRating={updateRating}/> */}
                         </div>
                     </div>
