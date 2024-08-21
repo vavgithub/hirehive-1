@@ -63,6 +63,10 @@ const Table = ({ rowsData, onUpdateCandidate }) => {
         JSON.parse(localStorage.getItem(`budgetFilter_${jobID}`))
     );
 
+    const [isBudgetFilterApplied, setIsBudgetFilterApplied] = useState(
+        !!JSON.parse(localStorage.getItem(`budgetFilter_${jobID}`))
+    );
+
     const [selectedValue1, setSelectedValue1] = useState(savedBudgetFilter ? savedBudgetFilter.min : '');
     const [selectedValue2, setSelectedValue2] = useState(savedBudgetFilter ? savedBudgetFilter.max : '');
 
@@ -77,9 +81,12 @@ const Table = ({ rowsData, onUpdateCandidate }) => {
             const newBudgetFilteredRows = applyBudgetFilter(min, max);
             setFilteredRows(newBudgetFilteredRows);
             localStorage.setItem(`budgetFilter_${jobID}`, JSON.stringify({ min, max }));
+            setIsBudgetFilterApplied(true); // Add this line
         }
         setIsModalOpen(false);
     };
+
+   
 
     const handleSearchChange = (event) => {
         setSearchTerm(event.target.value);
@@ -276,13 +283,15 @@ const Table = ({ rowsData, onUpdateCandidate }) => {
 
     useEffect(() => {
         if (savedBudgetFilter) {
-            const { min, max } = savedBudgetFilter;
-            const newBudgetFilteredRows = applyBudgetFilter(min, max);
-            setBudgetFilteredRows(newBudgetFilteredRows);
+          const { min, max } = savedBudgetFilter;
+          const newBudgetFilteredRows = applyBudgetFilter(min, max);
+          setBudgetFilteredRows(newBudgetFilteredRows);
+          setIsBudgetFilterApplied(true); // Add this line
         } else {
-            setBudgetFilteredRows(rows);
+          setBudgetFilteredRows(rows);
+          setIsBudgetFilterApplied(false); // Add this line
         }
-    }, [savedBudgetFilter, applyBudgetFilter, rows]);
+      }, [savedBudgetFilter, applyBudgetFilter, rows]);
 
     const columns = [
         {
@@ -400,9 +409,8 @@ const Table = ({ rowsData, onUpdateCandidate }) => {
                 </div>
 
                 <div className='flex gap-4'>
-
                     <div>
-                        {savedBudgetFilter && (
+                        {isBudgetFilterApplied && (
                             <Button variant="primary" icon={Create} iconPosition="left" onClick={() => setOpenAssigneeModal(true)}>
                                 Auto-assign portfolios
                             </Button>
@@ -410,7 +418,7 @@ const Table = ({ rowsData, onUpdateCandidate }) => {
                     </div>
 
                     <div>
-                        {savedBudgetFilter ? (
+                        {isBudgetFilterApplied ? (
                             <Button variant="icon" onClick={() => setIsModalOpen(true)}></Button>
                         ) : (
                             <Button variant="primary" icon={Create} iconPosition="left" onClick={() => setIsModalOpen(true)} >
@@ -418,7 +426,6 @@ const Table = ({ rowsData, onUpdateCandidate }) => {
                             </Button>
                         )}
                     </div>
-
                 </div>
             </div>
 
