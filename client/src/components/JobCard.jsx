@@ -19,22 +19,24 @@ const JobCard = ({ job, status, handleAction, page, onClick }) => {
                 </div>
             </div>
             <div className="flex items-center px-4">
-                <div className="mr-8 flex">
+                <div className="mr-8 flex gap-2">
                     <ClockIcon/>
-                    <p className="typography-body text-blue-100">{job.employmentType}</p>
+                    <p className="typography-body ">{job.employmentType}</p>
                 </div>
-                <div className="mr-8 flex justify-center items-center">
+                <div className="mr-8 flex gap-2 justify-center items-center">
                     <DollarIcon/>
-                    <p className="typography-body text-white">{job.budgetFrom} - {job.budgetTo} LPA </p>
+                    <p className="typography-body ">{job.budgetFrom} - {job.budgetTo} LPA </p>
                 </div>
-                <div className='mr-8 flex justify-center items-center'>
+                <div className='mr-8 flex gap-2 justify-center items-center'>
                     <ExperienceIcon/>
-                    <p className="typography-body text-white">{job.experienceFrom} - {job.experienceTo} Year</p>
+                    <p className="typography-body">{job.experienceFrom} - {job.experienceTo} Year</p>
                 </div>
             </div>
-            <p className='typography-body truncate px-4 my-4 text-font-gray '>
-                {job.jobDescription}
-            </p>
+            <div className='w-[750px] max-w-full p-4'>
+                <p className='typography-body inline-block  truncate text-ellipsis text-font-gray max-w-full'>
+                    {job.jobDescription}
+                </p>
+            </div>
 
             {
                 job.status == "closed" && (
@@ -50,22 +52,22 @@ const JobCard = ({ job, status, handleAction, page, onClick }) => {
 
                 <div className='flex flex-col'>
                 <span className='typography-small-p text-font-gray'>Candidates</span>
-                    <span className="ml-2 typography-body text-white">{job.applied}125 </span>
+                    <span className="ml-2 typography-body">{job.applied}125 </span>
                 </div>
 
                 <div className='flex flex-col'>
                 <span className='typography-small-p text-font-gray'>Engagement</span>
-                <span className="ml-2 typography-body text-white">{job.applied}125 </span>
+                <span className="ml-2 typography-body">{job.applied}125 </span>
                 </div>
 
                 <div className='flex flex-col'>
                 <span className='typography-small-p text-font-gray'>Applications</span>
-                <span className="ml-2 typography-body text-white">{job.applied}125 </span>
+                <span className="ml-2 typography-body">{job.applied}125 </span>
                 </div>
 
                 <div className='flex flex-col'>
                 <span className='typography-small-p text-font-gray'>Posted</span>
-                <span className="ml-2 typography-body text-white">{formattedCreatedAt} </span>
+                <span className="ml-2 typography-body">{formattedCreatedAt} </span>
                 </div>
 
             </div>
