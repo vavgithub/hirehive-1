@@ -82,10 +82,19 @@ const Dashboard = () => {
     const draftMutation = useMutation({
         mutationFn: (jobId) => axios.put(`/draftJob/${jobId}`),
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['jobs'] });
+            queryClient.invalidateQueries({ queryKey: ['job'] });
             setModalOpen(false);
         },
     });
+
+    const reOpenMutation = useMutation({
+        mutationFn:(jobId)=>axios.put(`/reOpen/${jobId}`),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['job'] });
+            setModalOpen(false);
+            setActiveTab("open");            
+        },
+    })
 
     const unarchiveMutation = useMutation({
         mutationFn: (jobId) => axios.put(`/unarchiveJob/${jobId}`),
@@ -130,6 +139,9 @@ const Dashboard = () => {
             case ACTION_TYPES.CLOSE:
                 closeMutation.mutate({ jobId: job._id, closeReason });
                 break;
+            case ACTION_TYPES.REOPEN:
+                reOpenMutation.mutate(job._id)
+                break;
             case ACTION_TYPES.EDIT:
                 navigate(`/admin/edit-job/${job._id}`);
                 setModalOpen(false);
@@ -157,6 +169,8 @@ const Dashboard = () => {
                 return `Are you sure you want to reject the candidate for "${job.jobTitle}"?`;
             case ACTION_TYPES.ARCHIVE:
                 return `Are you sure you want to archive the "${job.jobTitle}" job post?`;
+            case ACTION_TYPES.REOPEN:
+                return `Are you sure you want to reOpen the "${job.jobTitle}" job post?`;
             default:
                 return `Are you sure you want to perform this action on "${job.jobTitle}"?`;
         }

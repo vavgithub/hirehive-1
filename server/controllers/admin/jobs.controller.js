@@ -522,6 +522,28 @@ const unarchiveJob = async (req, res) => {
   }
 };
 
+const reOpenJob = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+      const job = await jobs.findById(id);
+
+      if (!job) {
+          return res.status(404).send({ message: 'Job not found' });
+      }
+
+      if (job.status === 'closed') {
+          job.status = 'open';
+          await job.save();
+          res.send({ message: 'Job status updated to open' });
+      } else {
+          res.status(400).send({ message: 'Job is not in an archieved state' });
+      }
+  } catch (error) {
+      res.status(500).send({ message: 'Error updating job status', error: error.message });
+  }
+};
+
 const editJob = async (req, res) => {
   const { id } = req.params;
   const updates = req.body;
@@ -581,6 +603,7 @@ export {
   closedJobsFilterCount,
   draftJob,
   closeJob,
+  reOpenJob
 };
 
 // totalSeniorLevelJobs: { $sum: { $cond: [{ $eq: ['$experienceLevel', 'senior'] }, 1, 0] },

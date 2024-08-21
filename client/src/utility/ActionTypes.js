@@ -3,6 +3,7 @@ export const ACTION_TYPES = {
     EDIT: 'EDIT',
     DRAFT: 'DRAFT',
     CLOSE: 'CLOSE',
+    REOPEN:'REOPEN',
     REJECT: 'REJECT',
     ARCHIVE: 'ARCHIVE',
     REOPEN:'REOPEN'
