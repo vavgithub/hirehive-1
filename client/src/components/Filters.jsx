@@ -110,9 +110,9 @@ const Filters = ({ filters = {}, statistics, handleCheckboxChange, activeTab, ha
 
     const jobProfileOptions = [
         { value: 'UI UX', label: 'UI UX', statKey: 'totalUiUxJobs' },
-        { value: 'Motion Graphics', label: 'Motion Graphics', statKey: 'totalMotionGraphicsJobs' },
+        { value: 'Motion Graphic', label: 'Motion Graphic', statKey: 'totalMotionGraphicsJobs' },
         { value: 'Video Editor', label: 'Video Editor', statKey: 'totalVideoEditorJobs' },
-        { value: '3d', label: '3d', statKey: 'total3DJobs' },
+        { value: '3D', label: '3D', statKey: 'total3DJobs' },
         { value: 'Digital Marketing Executive', label: 'Digital Marketing Executive', statKey: 'totalDigitalMarketingExecutiveJobs' },
         { value: 'Project Manager', label: 'Project Manager', statKey: 'totalProjectManagerJobs' },
         { value: 'Art Director', label: 'Art Director', statKey: 'totalArtDirectorJobs' },
