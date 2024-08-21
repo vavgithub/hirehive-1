@@ -1,129 +1,70 @@
-import React, { useEffect, useRef, useState, useContext } from 'react';
-import AuthContext from '../../context/AuthProvider';
-import { useNavigate } from 'react-router-dom';
+import React from 'react';
+import sundarKanya from "../../svg/Background/sundar-kanya.png"
+import StatsGrid from '../../components/StatsGrid';
+import one from '../../svg/StatsCard/Jobs Page/one';
+import two from '../../svg/StatsCard/Jobs Page/two';
+import { Button } from '../../components/ui/Button';
+import { InputField } from '../../components/Form/FormFields';
 
-import axios from '../../api/axios';
-import useAuth from '../../hooks/useAuth';
-const LOGIN_URL = 'api/v1/users/login';
+const statsOne = [
+    { title: 'Jobs Posted', value: 100, icon: one },
+]
 
+const statsTwo = [
+    { title: 'Application Received', value: 10, icon: two },
+]
 const Login = () => {
-    const { auth ,setAuth } = useAuth();
-    const userRef = useRef();
-    const errRef = useRef();
-
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [errMsg, setErrMsg] = useState('');
-
-    const navigate = useNavigate();
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-
-        try {
-            const response = await axios.post(LOGIN_URL,
-                {
-                    email,
-                    password,
-                },
-                {
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                });
-
-             // Directly use response.data without parsing it again
-        const result = response.data;
-        console.log(result);
-
-        setAuth({ email: result.data.user.email, password: result.data.user.password });
-        console.log('Auth:', { email: result.data.user.email, accessToken: result.data.accessToken});
-
-        // Store the access token in localStorage
-        localStorage.setItem('accessToken', result.data.accessToken);
-
-        // Store the access token in a cookie
-        document.cookie = `accessToken=${result.data.accessToken}; path=/; secure`;
-
-        
-        navigate('/admin');
-        setEmail('');
-        setPassword('');
-        }
-        catch (error) {
-            console.log(error);
-             if (error.response.status == 401) {
-                 errRef.current.innerText = 'Invalid email or password';
-             } else if (error.response.status == 404) {
-                 errRef.current.innerText = 'Email not found';
-             } else if (error.response.status == 400) {
-                 errRef.current.innerText = 'Email is required';
-             }
-             errRef.current.focus();
-        }
-    };
-
-    useEffect(() => {
-        userRef.current.focus();
-    }, []);
-
-
-
     return (
-        <section className="bg-gray-50 dark:bg-gray-900">
-            <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-                <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
-                    <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
-                        <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
-                            HireHive
-                        </h1>
-                        <div className='flex'>
-                            <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
-                                Login
-                            </h1>
-                        </div>
-                        <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
-
-                            <div className="mb-4">
-                                <label htmlFor="email" className="block text-gray-700 font-bold mb-2">
-                                    Your Email
-                                </label>
-                                <input
-                                    type="email"
-                                    ref={userRef}
-                                    autoComplete='off'
-                                    id="email"
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    placeholder="name@company.com"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                />
-                            </div>
-                            <div className="mb-6">
-                                <label htmlFor="password" className="block text-gray-700 font-bold mb-2">
-                                    Password
-                                </label>
-                                <input
-                                    type="password"
-                                    id="password"
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    placeholder="********"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                />
-                            </div>
-                            <p ref={errRef} className='text-red-600' >{errMsg}</p>
-
-
-
-                            <button type="submit" className="w-full text-white bg-black focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">Login</button>
-
-
-                        </form>
-                    </div>
+        <div className="flex h-screen">
+            {/* Left section with background image */}
+            <div className="hidden lg:flex lg:w-2/3 bg-login-screen backdrop-blur-lg bg-cover p-12 flex-col justify-between relative">
+                <div className='p-[45px]'>
+                    <h1 className="typography-h1 mt-8">HireHive</h1>
+                    <p className="display-d2 max-w-xl">Discover, hire, and explore top talent with HireHive</p>
+                    <p className='typography-body max-w-96'>Our advanced tools simplify job posting, application review, and career opportunities, ensuring you find the best candidates or land your next role effortlessly.</p>
+                    <p className="mb-8"></p>
                 </div>
+                <div className="absolute bottom-12 left-12 flex space-x-4">
+                    <StatsGrid stats={statsOne} />
+                    <StatsGrid stats={statsTwo} />
+                </div>
+
+                <img src={sundarKanya} alt="Sundar Kanya" className="absolute bottom-0 right-0 w-1/2" />
             </div>
-        </section>
+
+            {/* Right section with login form */}
+            <div className="w-full lg:w-1/2 bg-background-30 p-28  flex flex-col justify-center">
+                <h2 className="typography-h1 mb-2">Welcome Back</h2>
+                <p className="typography-body mb-8">Login to your account below</p>
+
+                <button className="bg-blue-600 text-white py-2 px-4 rounded-lg mb-4 flex items-center justify-center">
+                    Continue with Google
+                </button>
+
+                <div className="flex items-center mb-4">
+                    <hr className="flex-grow border-gray-600" />
+                    <span className="px-3 text-gray-400">OR</span>
+                    <hr className="flex-grow border-gray-600" />
+                </div>
+
+                <form>
+                    <div className="mb-4">
+                        <label htmlFor="email" className="block mb-2">Email</label>
+                        <input type="email" id="email" placeholder="Enter your email" className="w-full p-2 rounded-lg bg-gray-800 text-white focus:outline-teal-400" />
+                    </div>
+                    <div className="mb-4">
+                        <label htmlFor="password" className="block mb-2">Password</label>
+                        <input type="password" id="password" placeholder="Enter your password" className="w-full focus:outline-teal-400 p-2 rounded-lg bg-gray-800 text-white" />
+                    </div>
+                    <a href="#" className="text-blue-400 mb-4 block">Forgot Password?</a>
+                    <Button type="submit" varinat="primary">Login</Button>
+                </form>
+
+                <p className="text-center">
+                    Don't have an account? <a href="#" className="text-blue-400">Sign up</a>
+                </p>
+            </div>
+        </div>
     );
 };
 

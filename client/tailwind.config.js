@@ -9,7 +9,9 @@ export default {
         "card-pattern": "url('/src/svg/StatsCard/stats-bg.png')",
         "main-bg":"url('/src/svg/Background/rate.png')",
         "stars":"url('/src/svg/Background/Stars.png')",
-        "que-bg":"url('/src/svg/Background/Que.svg')",        
+        "que-bg":"url('/src/svg/Background/Que.svg')",      
+        "login-screen":"url('/src/svg/Background/loginScreenBg.svg')",  
+        "sundar-kanya":"url('/src/svg/Background/sundar-kanya.png')",  
         "custom-gradient":
           "linear-gradient(180deg, var(--tw-gradient-stops))",
       },

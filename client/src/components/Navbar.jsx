@@ -14,7 +14,7 @@ const Navbar = () => {
     return (
         <div className='flex bg-main-bg bg-cover bg-top h-full'>
             <div className="fixed flex h-screen z-[50000] w-48 flex-col gap-6 bg-background-100 text-font-gray typography-large-p justify-between py-4 px-4">
-                <div className='flex flex-col gap-5'>
+                <div className='flex flex-col gap-5 typography-body'>
                     <div>
                         <NavLink to="/admin/dashboard" end className={({ isActive }) => isActive ? "w-full text-font-accent" : "w-full hover:text-gray-300"}>Dashboard</NavLink>
                     </div>

@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
- "scripts": {
+  "scripts": {
     "dev": "vite",
     "build": "vite build",
     "build:staging": "vite build --mode staging",
@@ -24,6 +24,7 @@
     "date-fns": "^3.6.0",
     "dayjs": "^1.11.12",
     "file-saver": "^2.0.5",
+    "lucide-react": "^0.428.0",
     "react": "^18.2.0",
     "react-copy-to-clipboard": "^5.1.0",
     "react-dom": "^18.2.0",
