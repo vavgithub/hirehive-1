@@ -19,7 +19,7 @@ const MenuItems = {
       { action: ACTION_TYPES.REOPEN, icon: ReOpenIcon, label: 'Re-open' },
       { action: ACTION_TYPES.EDIT, icon: EditIcon, label: 'Edit' },
       { action: ACTION_TYPES.DRAFT, icon: ArchiveIcon, label: 'Move To Draft' },
-      { action: ACTION_TYPES.DELETE, icon: DeleteIcon, label: 'Delete' },
+      { action: ACTION_TYPES.DELETE, icon: DeleteIcon, label: 'Delete', className: 'text-red-100' },
     ],
     draft: [
       { action: ACTION_TYPES.EDIT, icon: EditIcon, label: 'Edit' },
@@ -27,8 +27,8 @@ const MenuItems = {
     ],
   },
   page1: [
-    { action: 'ACTION_1', icon: EditIcon, label: 'Action 1' },
-    { action: 'ACTION_2', icon: ArchiveIcon, label: 'Action 2' },
+    { action: ACTION_TYPES.EDIT, icon: EditIcon, label: 'Edit' },
+    { action: ACTION_TYPES.DELETE, icon: DeleteIcon, label: 'Delete', className: 'text-red-100' },
   ],
   page2: [
     { action: 'ACTION_3', icon: DeleteIcon, label: 'Action 3' },

@@ -14,53 +14,84 @@ import Staging from '../../components/Staging';
 import Header from '../../components/utility/Header';
 import axios from '../../api/axios';
 import { useQuery } from '@tanstack/react-query';
+import { ACTION_TYPES } from '../../utility/ActionTypes';
+import CandidateTabDetail from '../../components/ui/CandidateTabDetail';
 
 // This function would typically be defined in your page component
-const usePageActions = () => {
-    const navigate = useNavigate();
 
-    const handleAction = (action) => {
-        switch (action) {
-            case 'ACTION_1':
-                console.log('Performing Action 1');
-                // Example: Open a modal
-                // openModal('action1Modal');
-                break;
-            case 'ACTION_2':
-                console.log('Performing Action 2');
-                // Example: Navigate to a different page
-                navigate('/some-other-page');
-                break;
-            case 'ACTION_3':
-                console.log('Performing Action 3');
-                // Example: Trigger a state update
-                // setState({ someKey: newValue });
-                break;
-            case 'ACTION_4':
-                console.log('Performing Action 4');
-                // Example: Show a confirmation dialog
-                if (window.confirm('Are you sure you want to perform Action 4?')) {
-                    // Perform the action if confirmed
-                    console.log('Action 4 confirmed');
-                }
-                break;
-            default:
-                console.log('Unknown action:', action);
-        }
-    };
-
-    return handleAction;
-};
 
 const fetchCandidateData = async (id) => {
     const { data } = await axios.get(`/candidates/${id}`);
     return data;
 };
 
+const exampleData = {
+    professionalDetails: [
+      { label: "Experience", value: "8 Years" },
+      { label: "Notice Period", value: "1 Month" },
+      { label: "Current CTC", value: "4 LPA" },
+      { label: "Expected CTC", value: "8 LPA" },
+    ],
+    previousExperiences: [
+      {
+        company: "ABC Company",
+        position: "UI Designer",
+        startDate: "21 Jan 2022",
+        endDate: "05 July 2024",
+      },
+      {
+        company: "DEF Company",
+        position: "Junior UI Designer",
+        startDate: "16 Feb 2019",
+        endDate: "27 Sept 2021",
+      },
+    ],
+    skillSet: ["Figma", "Sketch", "Adobe Suites", "Zeplin"],
+  };
+
 const ViewCandidateProfile = () => {
+
+    const usePageActions = () => {
+        const navigate = useNavigate();
+    
+        const handleAction = (action) => {
+            switch (action) {
+                case ACTION_TYPES.EDIT:
+                    console.log('Performing Action 1');
+                    navigate(`/admin/jobs/edit-candidate/${mainId}`);
+                    setModalOpen(false);
+                    break;
+                    // Example: Open a modal
+                    // openModal('action1Modal');
+                case 'ACTION_2':
+                    console.log('Performing Action 2');
+                    // Example: Navigate to a different page
+                    navigate('/some-other-page');
+                    break;
+                case 'ACTION_3':
+                    console.log('Performing Action 3');
+                    // Example: Trigger a state update
+                    // setState({ someKey: newValue });
+                    break;
+                case 'ACTION_4':
+                    console.log('Performing Action 4');
+                    // Example: Show a confirmation dialog
+                    if (window.confirm('Are you sure you want to perform Action 4?')) {
+                        // Perform the action if confirmed
+                        console.log('Action 4 confirmed');
+                    }
+                    break;
+                default:
+                    console.log('Unknown action:', action);
+            }
+        };
+    
+        return handleAction;
+    };
+
     const handleAction = usePageActions();
 
-    const [activeTab, setActiveTab] = useState('application');
+    const [activeTab, setActiveTab] = useState('candidateDetails');
     const handleTabClick = (tab) => {
         setActiveTab(tab);
     };
@@ -98,6 +129,7 @@ const ViewCandidateProfile = () => {
         // Implement the auto-assign logic here
         console.log('Auto assigning portfolio...');
     };
+    
 
 
     return (
@@ -111,45 +143,35 @@ const ViewCandidateProfile = () => {
             />
             <div className='flex gap-3'>
                 <div className='bg-background-90 w-full p-4 rounded-xl' >
-                    <h1 className='typography-h1 text-white'> {data.firstName}  {data.lastName}</h1>
+                    <h1 className='typography-h1 '> {data.firstName}  {data.lastName}</h1>
                     <div className='flex items-center gap-2'>
-                        <span className='typography-small-p text-white'>{data.jobApplied}</span>
+                        <span className='typography-small-p '>{data.jobApplied}</span>
                         {
                             <svg xmlns="http://www.w3.org/2000/svg" width="4" height="4" viewBox="0 0 4 4" fill="none">
                                 <circle cx="2" cy="2" r="2" fill="#808389" />
                             </svg>
                         }
-                        <span className='typography-small-p text-white'>{data.location}</span>
+                        <span className='typography-small-p '>{data.location}</span>
                     </div>
 
                     <div className='flex'>
                         <div className='flex'>
                             <PhoneIcon />
-                            <span className='typography-large-p text-white'>{data.phone}</span>
+                            <span className='typography-large-p '>{data.phone}</span>
                         </div>
                         <div className='flex'>
                             <EmailIcon />
-                            <span className='typography-large-p text-white'>{data.email}</span>
+                            <span className='typography-large-p '>{data.email}</span>
                         </div>
                     </div>
                     <div className='flex gap-2'>
                         <ResumeIcon />
-                        {/* <PortfolioIcon /> */}
-                        {/* <WebsiteIcon /> */}
                         <AssignmentIcon />
-                        {/* {
-                            data.budget < 100000 && <BudgetIcon />
-                        } */}
                     </div>
-
-
                     <p>{data.location}</p>
                     <p>{data.experience}</p>
                     <p>{data.skills}</p>
                 </div>
-
-
-
                 <div className=' flex justify-center bg-stars bg-cover typography-h3 w-[430px]'>
                     <div className='bg-red-100'></div>
                     VAV Score
@@ -172,6 +194,7 @@ const ViewCandidateProfile = () => {
             {activeTab === 'candidateDetails' && (
                 <div>
                     {/* Candidate Details tab content */}
+                    <CandidateTabDetail data={exampleData}/> 
                 </div>
             )}
         </div>

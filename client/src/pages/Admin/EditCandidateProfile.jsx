@@ -26,7 +26,7 @@ const EditCandidateProfile = () => {
     mutationFn: (updatedData) => axios.patch(`candidates/update/${mainId}`, updatedData),
     onSuccess: () => {
       queryClient.invalidateQueries(['candidate', mainId]);
-      alert("data updated bro")
+      alert("data updated")
     },
     onError: (error) => {
       console.error('Error updating candidate:', error);
@@ -80,7 +80,7 @@ const EditCandidateProfile = () => {
     <div className="bg-background-80 h-screen">
       <div className='p-4'>
 
-        <Header HeaderText={`${data.firstName} ${data.lastName}`} withKebab='false' />
+        <Header HeaderText={`${data.firstName} ${data.lastName}`} withKebab='false' withBack="true" />
         <div className='grid grid-cols-3 gap-3'>
           <div className='bg-background-30 w-96 h-96 rounded-xl flex flex-col items-center p-4'>
             <div className='w-40 h-40 border border-white rounded'>

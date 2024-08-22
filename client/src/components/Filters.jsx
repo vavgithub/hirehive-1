@@ -165,6 +165,7 @@ const Filters = ({ filters = {}, statistics, handleCheckboxChange, activeTab, ha
                         useCustomIconCheckbox={true}
                     />
                 )}
+
                 <CheckboxGroup
                     title="Employment Type"
                     options={jobTypeOptions}
@@ -185,9 +186,7 @@ const Filters = ({ filters = {}, statistics, handleCheckboxChange, activeTab, ha
                 />
 
                 <div className="mb-4">
-
                     <ExperienceFilter onApply={handleExperienceApply} />
-
                 </div>
 
             </div>
