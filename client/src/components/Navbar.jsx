@@ -1,15 +1,9 @@
 import React from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
-import useAuth from '../hooks/useAuth';
 
 const Navbar = () => {
     const navigate = useNavigate();
-    const { auth } = useAuth();
-
-    const handleLogout = () => {
-        localStorage.removeItem('accessToken');
-        navigate('/auth/login');
-    }
+    
 
     return (
         <div className='flex bg-main-bg bg-cover bg-top h-full'>

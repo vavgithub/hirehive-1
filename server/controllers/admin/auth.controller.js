@@ -1,44 +1,93 @@
-import jwt from 'jsonwebtoken';
-import {User} from '../../models/admin/user.model.js';
-import { ApiError } from '../../utils/ApiError.js';
-import { ApiResponse } from '../../utils/ApiResponse.js';
 import { asyncHandler } from '../../utils/asyncHandler.js';
+import {User} from '../../models/admin/user.model.js';
+import generateToken from '../../utils/generateToken.js';
 
-const JWT_SECRET = 'your_jwt_secret';  // Store this in environment variables in production
+const cookieOptions = {
+    sameSite: 'strict',
+    maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+};
 
-export const register = asyncHandler(async (req, res) => {
-  const { name, email, password, confirmPassword, role } = req.body;
+// Register User
+export const registerUser = asyncHandler(async (req, res) => {
+    const { name, email, password, role } = req.body;
 
-  if (password !== confirmPassword) {
-    throw new ApiError(400, 'Passwords do not match');
-  }
+    const userExists = await User.findOne({ email });
 
-  const existingUser = await User.findOne({ email });
-  if (existingUser) {
-    throw new ApiError(409, 'User already exists');
-  }
+    if (userExists) {
+        res.status(400);
+        throw new Error('User already exists');
+    }
 
-  const user = await User.create({
-    name,
-    email,
-    password,
-    role,
-  });
+    const user = await User.create({
+        name,
+        email,
+        password,
+        role,
+    });
 
-  const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: '1d' });
+    if (user) {
+        const token = generateToken(user._id);
 
-  res.status(201).json(new ApiResponse(201, { user, token }, 'User registered successfully'));
+        res.cookie('jwt', token, cookieOptions);
+
+        res.status(201).json({
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+        });
+    } else {
+        res.status(400);
+        throw new Error('Invalid user data');
+    }
 });
 
-export const login = asyncHandler(async (req, res) => {
-  const { email, password } = req.body;
+// Authenticate User
+export const authUser = asyncHandler(async (req, res) => {
+    const { email, password } = req.body;
 
-  const user = await User.findOne({ email });
-  if (!user || !(await user.comparePassword(password))) {
-    throw new ApiError(401, 'Invalid email or password');
-  }
+    const user = await User.findOne({ email });
 
-  const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: '1d' });
+    if (user && (await user.matchPassword(password))) {
+        const token = generateToken(user._id);
 
-  res.json(new ApiResponse(200, { user, token }, 'Login successful'));
+        res.cookie('jwt', token, cookieOptions);
+
+        res.json({
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+        });
+    } else {
+        res.status(401);
+        throw new Error('Invalid email or password');
+    }
+});
+
+// Logout User
+export const logoutUser = asyncHandler(async (req, res) => {
+    res.cookie('jwt', '', {
+        httpOnly: true,
+        expires: new Date(0),
+    });
+
+    res.status(200).json({ message: 'Logged out successfully' });
+});
+
+// Get User Profile
+export const getUserProfile = asyncHandler(async (req, res) => {
+    const user = await User.findById(req.user._id);
+
+    if (user) {
+        res.json({
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+        });
+    } else {
+        res.status(404);
+        throw new Error('User not found');
+    }
 });

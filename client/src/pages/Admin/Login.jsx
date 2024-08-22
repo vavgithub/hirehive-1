@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import sundarKanya from "../../svg/Background/sundar-kanya.png"
 import StatsGrid from '../../components/StatsGrid';
 import one from '../../svg/StatsCard/Jobs Page/one';
 import two from '../../svg/StatsCard/Jobs Page/two';
 import { Button } from '../../components/ui/Button';
 import { InputField } from '../../components/Form/FormFields';
+import { useNavigate } from 'react-router-dom';
+import { useMutation } from '@tanstack/react-query';
+import { login } from '../../api/authApi';
 
 const statsOne = [
     { title: 'Jobs Posted', value: 100, icon: one },
@@ -14,6 +17,30 @@ const statsTwo = [
     { title: 'Application Received', value: 10, icon: two },
 ]
 const Login = () => {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const navigate = useNavigate();
+
+    const mutation = useMutation({
+        mutationFn: login,
+        onSuccess: (data) => {
+            if (data.role === 'Hiring Manager') {
+                navigate('/admin/jobs');
+            } else {
+                navigate('/design-reviewer/dashboard');
+            }
+        },
+        onError: (error) => {
+            alert(error.response?.data?.message || 'Login failed');
+        },
+    });
+
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        mutation.mutate({ email, password });
+    };
+
     return (
         <div className="flex h-screen">
             {/* Left section with background image */}
@@ -47,14 +74,14 @@ const Login = () => {
                     <hr className="flex-grow border-gray-600" />
                 </div>
 
-                <form>
+                <form onSubmit={handleSubmit}>
                     <div className="mb-4">
                         <label htmlFor="email" className="block mb-2">Email</label>
-                        <input type="email" id="email" placeholder="Enter your email" className="w-full p-2 rounded-lg bg-gray-800 text-white focus:outline-teal-400" />
+                        <input type="email" id="email" placeholder="Enter your email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full p-2 rounded-lg bg-gray-800 text-white focus:outline-teal-400" />
                     </div>
                     <div className="mb-4">
                         <label htmlFor="password" className="block mb-2">Password</label>
-                        <input type="password" id="password" placeholder="Enter your password" className="w-full focus:outline-teal-400 p-2 rounded-lg bg-gray-800 text-white" />
+                        <input type="password" id="password" value={password}   onChange={(e) => setPassword(e.target.value)} placeholder="Enter your password" className="w-full focus:outline-teal-400 p-2 rounded-lg bg-gray-800 text-white" />
                     </div>
                     <a href="#" className="text-blue-400 mb-4 block">Forgot Password?</a>
                     <Button type="submit" varinat="primary">Login</Button>

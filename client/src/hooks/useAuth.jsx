@@ -1,8 +1,12 @@
-import { useContext } from "react";
-import AuthContext from '../context/AuthProvider';
+import { getProfile } from '../api/authApi';
+import { useQuery } from '@tanstack/react-query';
 
 const useAuth = () => {
-    return useContext(AuthContext);
-}
+    return useQuery({
+        queryKey: ['profile'],
+        queryFn: getProfile,
+        enabled: !!document.cookie.split('; ').find(row => row.startsWith('jwt=')),
+    });
+};
 
 export default useAuth;

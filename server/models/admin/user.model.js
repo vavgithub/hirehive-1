@@ -22,7 +22,7 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ['hiring_manager', 'design_reviewer'],
+    enum: ['Hiring Manager', 'Design Reviewer'],
     required: true,
   },
 }, { timestamps: true });
@@ -34,8 +34,9 @@ userSchema.pre('save', async function (next) {
   next();
 });
 
-userSchema.methods.comparePassword = async function (candidatePassword) {
-  return bcrypt.compare(candidatePassword, this.password);
+// Method to compare plaintext password with hashed password
+userSchema.methods.matchPassword = async function (enteredPassword) {
+  return await bcrypt.compare(enteredPassword, this.password);
 };
 
 export const User = mongoose.model('User', userSchema);
