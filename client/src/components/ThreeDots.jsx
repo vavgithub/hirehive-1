@@ -70,7 +70,7 @@ const ThreeDots = ({ job, handleAction, page }) => {
 
   return (
     <div className="relative" ref={menuRef}>
-      <button onClick={toggleMenu} className="focus:outline-none">
+      <button onClick={toggleMenu} className="focus:outline-none flex items-center">
         <ThreeDotsIcon />
       </button>
       {isOpen && (

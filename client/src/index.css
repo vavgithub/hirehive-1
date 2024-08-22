@@ -5,7 +5,7 @@
 @tailwind utilities;
 
 html{
-  @apply bg-background-80;
+  @apply bg-background-80 ;
 }
 
 @layer utilities {

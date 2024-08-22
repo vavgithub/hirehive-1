@@ -4,13 +4,22 @@ const Tabs = ({ tabs, activeTab, handleTabClick }) => {
     return (
         <div className='flex gap-6 p-2 bg-background-100 w-max rounded-md items-center'>
             {tabs.map((tab) => (
-                <span
+                <div
                     key={tab.name}
-                    className={activeTab === tab.name ? ' cursor-pointer text-accent-100 p-1 rounded-md flex justify-center w-64' : 'cursor-pointer flex justify-center w-64'}
+                    className="relative cursor-pointer flex flex-col items-center w-36"
                     onClick={() => handleTabClick(tab.name)}
                 >
-                    {tab.label} {tab.count !== undefined && `(${tab.count})`}
-                </span>
+                    <span
+                        className={`p-1 rounded-md flex justify-center items-center ${
+                            activeTab === tab.name ? 'text-accent-100' : ''
+                        }`}
+                    >
+                        {tab.label} {tab.count !== undefined && `(${tab.count})`}
+                    </span>
+                    {activeTab === tab.name && (
+                        <div className="absolute bottom-[-8px] h-[6px] w-8 bg-accent-100 rounded-tr-xl rounded-tl-xl" />
+                    )}
+                </div>
             ))}
         </div>
     );
