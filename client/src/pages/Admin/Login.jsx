@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import sundarKanya from "../../svg/Background/sundar-kanya.png"
 import StatsGrid from '../../components/StatsGrid';
 import one from '../../svg/StatsCard/Jobs Page/one';
@@ -8,6 +8,7 @@ import { InputField } from '../../components/Form/FormFields';
 import { useNavigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import { login } from '../../api/authApi';
+import useAuth from '../../hooks/useAuth';
 
 const statsOne = [
     { title: 'Jobs Posted', value: 100, icon: one },
@@ -17,29 +18,42 @@ const statsTwo = [
     { title: 'Application Received', value: 10, icon: two },
 ]
 const Login = () => {
+
+    
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
 
-    const mutation = useMutation({
-        mutationFn: login,
-        onSuccess: (data) => {
-            if (data.role === 'Hiring Manager') {
-                navigate('/admin/jobs');
-            } else {
+    const { data: authData, isLoading: authLoading, refetch: refetchAuth } = useAuth();
+
+    useEffect(() => {
+        if (authData) {
+            if (authData.role === 'Hiring Manager') {
+                navigate('/admin/dashboard');
+            } else if (authData.role === 'Design Reviewer') {
                 navigate('/design-reviewer/dashboard');
             }
+        }
+    }, [authData, navigate]);
+
+    const mutation = useMutation({
+        mutationFn: login,
+        onSuccess: async (data) => {
+            await refetchAuth(); // Refetch auth data after successful login
         },
         onError: (error) => {
             alert(error.response?.data?.message || 'Login failed');
         },
     });
 
-
     const handleSubmit = (e) => {
         e.preventDefault();
         mutation.mutate({ email, password });
     };
+
+    if (authLoading) {
+        return <p>Loading...</p>;
+    }
 
     return (
         <div className="flex h-screen">

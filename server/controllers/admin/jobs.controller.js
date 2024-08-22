@@ -1,70 +1,77 @@
 // import Job from ''; // Import your Mongoose model
 import { MongooseError } from "mongoose";
 import { jobs } from "../../models/admin/jobs.model.js";
-import { ApiError } from "../../utils/ApiError.js";
-import { ApiResponse } from "../../utils/ApiResponse.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
 // Controller function to create a new job
 
-const getJobs = asyncHandler(async (req, res) => {
-  const jobArray = await jobs.find();
-  console.log("Jobs found:", jobArray.length); // Debugging line
-  res.status(200).json(jobArray);
-});
-
-const createJob = asyncHandler(async (req, res) => {
-  if (!req.user) {
-    throw new ApiError(401, "Authentication required");
+const getJobs = async (req, res) => {
+  try {
+    // Fetch all jobs from the database
+    const jobArray = await jobs.find({ createdBy: req.user._id });
+    // Respond with the list of jobs
+    res.status(200).json(jobArray);
+  } catch (error) {
+    // Handle error if fetching jobs fails
+    res.status(500).json({ message: error.message });
   }
+};
 
-  console.log("Creating job for user:", req.user._id); // Debugging line
+const createJob = async (req, res) => {
+  try {
+    // Destructure job details from request body
+    const {
+      jobTitle,
+      workplaceType,
+      employeeLocation,
+      employmentType,
+      jobProfile,
+      experienceFrom,
+      experienceTo,
+      budgetFrom,
+      budgetTo,
+      jobDescription,
+      skills,
+      status,
+    } = req.body;
+  
+    const newJob = new jobs({
+      jobTitle,
+      workplaceType,
+      employeeLocation,
+      employmentType,
+      jobProfile,
+      experienceFrom,
+      experienceTo,
+      budgetFrom,
+      budgetTo,
+      jobDescription,
+      skills,
+      status,
+      createdBy: req.user._id,
+    });
 
-  const {
-    jobTitle,
-    workplaceType,
-    employeeLocation,
-    employmentType,
-    jobProfile,
-    experienceFrom,
-    experienceTo,
-    budgetFrom,
-    budgetTo,
-    jobDescription,
-    skills,
-    status,
-  } = req.body;
+    // Save the job to the database
+    const savedJob = await newJob.save();
 
-  if (!jobTitle) {
-    throw new ApiError(400, "Job title is required");
+    // Respond with the saved job object
+    res.status(201).json(savedJob);
+  } catch (error) {
+    if (error instanceof MongooseError && error.code === 11000) {
+      // Handle duplicate key error (E11000)
+      res.status(400).json({
+        message: `Job with title '${req.body.title}' already exists.`,
+      });
+    } else {
+      // Handle other errors
+      res.status(500).json({ msg:"this is coming from backned" , message: error.message });
+    }
   }
-
-  const newJob = new jobs({
-    jobTitle,
-    workplaceType,
-    employeeLocation,
-    employmentType,
-    jobProfile,
-    experienceFrom,
-    experienceTo,
-    budgetFrom,
-    budgetTo,
-    jobDescription,
-    skills,
-    status,
-    createdBy: req.user._id,
-  });
-
-  const savedJob = await newJob.save();
-
-  console.log("Job created:", savedJob._id); // Debugging line
-
-  res.status(201).json(new ApiResponse(201, savedJob, "Job created successfully"));
-});
+};
 
 const getTotalJobCount = async (req, res) => {
   try {
     // Count the total number of jobs in the database
-    const totalCount = await jobs.countDocuments();
+    const totalCount = await jobs.countDocuments({ createdBy: req.user._id });
     // Respond with the total count
     res.status(200).json({ totalCount });
   } catch (error) {
@@ -81,6 +88,7 @@ const searchJobs = async (req, res) => {
     // Fetch all jobs from the database
     const jobArray = await jobs.find({
       jobTitle: { $regex: searchTerm, $options: "i" },
+      createdBy: req.user._id
     });
     // Respond with the list of jobs
     res.status(200).json(jobArray);
@@ -90,32 +98,27 @@ const searchJobs = async (req, res) => {
   }
 };
 
-const filterJobs = async (req, res) => {
+const filterJobs = asyncHandler(async (req, res) => {
   const { employmentType, jobProfile, experience } = req.body.filters;
-  try {
-    const query = {};
-    if (employmentType && employmentType.length > 0) {
-      query.employmentType = { $in: employmentType };
-    }
-    if (jobProfile && jobProfile.length > 0) {
-      query.jobProfile = { $in:jobProfile  };
-    }
-    if (experience && (experience.min !== '' || experience.max !== '')) {
-      query.fromExperience = {};
-      if (experience.min !== '') {
-        query.fromExperience.$gte = Number(experience.min);
-      }
-      if (experience.max !== '') {
-        query.toExperience = { $lte: Number(experience.max) };
-      }
-    }
-    const filteredJobs = await jobs.find(query);
-    res.status(200).json(filteredJobs);
-  } catch (error) {
-    console.log("Error Filtering Jobs", error);
-    res.status(500).json({ message: error.message });
+  const query = { createdBy: req.user._id };
+  if (employmentType && employmentType.length > 0) {
+    query.employmentType = { $in: employmentType };
   }
-};
+  if (jobProfile && jobProfile.length > 0) {
+    query.jobProfile = { $in: jobProfile };
+  }
+  if (experience && (experience.min !== '' || experience.max !== '')) {
+    query.fromExperience = {};
+    if (experience.min !== '') {
+      query.fromExperience.$gte = Number(experience.min);
+    }
+    if (experience.max !== '') {
+      query.toExperience = { $lte: Number(experience.max) };
+    }
+  }
+  const filteredJobs = await jobs.find(query);
+  res.status(200).json(filteredJobs);
+});
 
 const activeJobsFilterCount = async (req, res) => {
   try {
@@ -516,6 +519,28 @@ const unarchiveJob = async (req, res) => {
   }
 };
 
+const reOpenJob = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+      const job = await jobs.findById(id);
+
+      if (!job) {
+          return res.status(404).send({ message: 'Job not found' });
+      }
+
+      if (job.status === 'closed') {
+          job.status = 'open';
+          await job.save();
+          res.send({ message: 'Job status updated to open' });
+      } else {
+          res.status(400).send({ message: 'Job is not in an archieved state' });
+      }
+  } catch (error) {
+      res.status(500).send({ message: 'Error updating job status', error: error.message });
+  }
+};
+
 const editJob = async (req, res) => {
   const { id } = req.params;
   const updates = req.body;
@@ -575,6 +600,7 @@ export {
   closedJobsFilterCount,
   draftJob,
   closeJob,
+  reOpenJob
 };
 
 // totalSeniorLevelJobs: { $sum: { $cond: [{ $eq: ['$experienceLevel', 'senior'] }, 1, 0] },

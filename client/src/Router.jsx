@@ -87,11 +87,7 @@ export const router = createBrowserRouter([
 
   {
     path: "/design-reviewer",
-    element: (
-      <ProtectedRoute allowedRoles={['Design Reviewer']}>
-        <Navbar />
-      </ProtectedRoute>
-    ),
+    element: <ProtectedRoute allowedRoles={['Design Reviewer']}><Navbar /></ProtectedRoute>,
     children: [
       {
         path: "dashboard",

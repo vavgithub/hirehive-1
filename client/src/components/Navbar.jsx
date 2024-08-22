@@ -1,9 +1,24 @@
 import React from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
+import { logout } from '../api/authApi';
+import useAuth from '../hooks/useAuth';
 
 const Navbar = () => {
     const navigate = useNavigate();
-    
+
+    const { data, refetch } = useAuth();
+
+
+    const handleLogout = async () => {
+        try {
+            await logout();
+            refetch(); // Refetch auth state
+            navigate('/auth/login');
+        } catch (error) {
+            console.error('Logout failed:', error);
+        }
+    };
+
 
     return (
         <div className='flex bg-main-bg bg-cover bg-top h-full'>
@@ -26,7 +41,12 @@ const Navbar = () => {
                     </div>
                 </div>
                 <div>
-                    {/* <button onClick={handleLogout} className="bg-black text-white font-bold py-2 px-4 rounded">LOGOUT</button> */}
+                    {data && (
+                        <>
+                            <span>Welcome, {data.name}</span>
+                            <button onClick={handleLogout}>Logout</button>
+                        </>
+                    )}
                 </div>
             </div>
 

@@ -3,8 +3,10 @@ import {User} from '../../models/admin/user.model.js';
 import generateToken from '../../utils/generateToken.js';
 
 const cookieOptions = {
-    sameSite: 'strict',
-    maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+  httpOnly: true, 
+  secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
+  sameSite: 'strict', // Prevent CSRF attacks
+  maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
 };
 
 // Register User
