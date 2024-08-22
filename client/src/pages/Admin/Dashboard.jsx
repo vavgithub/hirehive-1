@@ -13,6 +13,7 @@ import { Button } from '../../components/ui/Button';
 import axios from "../../api/axios"
 import Create from '../../svg/Buttons/Create';
 import { ACTION_TYPES } from '../../utility/ActionTypes';
+import { DashboardIcon, DashboardIconActive } from '../../svg/Navbar/DashboardIcon';
 
 
 const fetchJobs = () => axios.get('/jobs').then(res => res.data);
@@ -44,7 +45,7 @@ const Dashboard = () => {
     const { data: jobs = [] } = useQuery({ queryKey: ['jobs'], queryFn: fetchJobs });
     const { data: jobCount = 0 } = useQuery({ queryKey: ['jobCount'], queryFn: fetchJobCount });
     const { data: applicationCount = 0 } = useQuery({ queryKey: ['applicationCount'], queryFn: fetchApplicationCount });
-    
+
     const { data: statistics = {} } = useQuery({ queryKey: ['statistics'], queryFn: fetchStatistics });
     const { data: activeJobsCountFilter = {} } = useQuery({ queryKey: ['activeJobsStats'], queryFn: fetchActiveJobsStats });
     const { data: closedJobsCountFilter = {} } = useQuery({ queryKey: ['closedJobsStats'], queryFn: fetchClosedJobsStats });
@@ -88,11 +89,11 @@ const Dashboard = () => {
     });
 
     const reOpenMutation = useMutation({
-        mutationFn:(jobId)=>axios.put(`/reOpen/${jobId}`),
+        mutationFn: (jobId) => axios.put(`/reOpen/${jobId}`),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['job'] });
             setModalOpen(false);
-            setActiveTab("open");            
+            setActiveTab("open");
         },
     })
 
@@ -105,7 +106,7 @@ const Dashboard = () => {
     });
 
     const closeMutation = useMutation({
-        mutationFn: ({ jobId, reason }) => 
+        mutationFn: ({ jobId, reason }) =>
             axios.put(`/closeJob/${jobId}`, { reason }),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['jobs'] });
@@ -212,9 +213,20 @@ const Dashboard = () => {
     const filtersConfig = activeTab === 'open' ? activeJobsCountFilter : closedJobsCountFilter;
 
     const tabs = [
-        { name: 'open', label: 'Open' },
-        { name: 'closed', label: 'Closed' },
-        { name: 'draft', label: 'Draft' },
+        {
+            name: 'open',
+            label: 'Open',
+            icon: <DashboardIcon />,
+            activeIcon: <DashboardIconActive />,
+        },
+        {
+            name: 'closed', label: 'Closed', icon: <DashboardIcon />,
+            activeIcon: <DashboardIconActive />,
+        },
+        {
+            name: 'draft', label: 'Draft', icon: <DashboardIcon />,
+            activeIcon: <DashboardIconActive />,
+        },
     ];
 
     const JobsStats = [
@@ -286,18 +298,18 @@ const Dashboard = () => {
                 </div>
                 {/* <Modal open={open} onClose={() => setOpen(false)} action={modalAction} confirmAction={confirmAction} /> */}
                 <Modal
-                open={modalOpen}
-                onClose={() => {
-                    setModalOpen(false);
-                    setCloseReason(''); // Reset close reason when modal is closed
-                }}
-                actionType={modalAction}
-                onConfirm={(job) => confirmAction(job, closeReason)}
-                item={selectedJob}
-                customMessage={selectedJob ? getModalMessage(modalAction, selectedJob) : ''}
-                closeReason={closeReason}
-                onCloseReasonChange={handleCloseReasonChange}
-            />
+                    open={modalOpen}
+                    onClose={() => {
+                        setModalOpen(false);
+                        setCloseReason(''); // Reset close reason when modal is closed
+                    }}
+                    actionType={modalAction}
+                    onConfirm={(job) => confirmAction(job, closeReason)}
+                    item={selectedJob}
+                    customMessage={selectedJob ? getModalMessage(modalAction, selectedJob) : ''}
+                    closeReason={closeReason}
+                    onCloseReasonChange={handleCloseReasonChange}
+                />
             </div>
         </div>
     );
