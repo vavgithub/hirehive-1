@@ -35,83 +35,56 @@ export const router = createBrowserRouter([
   },
   {
     path: "/admin",
-    element: <Navbar />,
+    element: <ProtectedRoute allowedRoles={['Hiring Manager']}><Navbar /></ProtectedRoute>,
     children: [
       {
         path: "dashboard",
-        element: (
-          <ProtectedRoute allowedRoles={['Hiring Manager']}>
-            <Dashboard />
-          </ProtectedRoute>
-        ),
+        element: <Dashboard />
       },
       {
         path: "jobs",
-        element: (
-          <ProtectedRoute allowedRoles={['Hiring Manager']}>
-            <Dashboard />
-          </ProtectedRoute>
-        ),
+        element:
+          <Dashboard />
       },
       {
         path: "candidates",
-        element: (
-          <ProtectedRoute allowedRoles={['Hiring Manager']}>
-            <Candidates />
-          </ProtectedRoute>
-        ),
+        element:
+          <Candidates />
       },
       {
         path: "create-job",
-        element: (
-          <ProtectedRoute allowedRoles={['Hiring Manager']}>
-            <CreateJobs />
-          </ProtectedRoute>
-        ),
+        element:
+
+          <CreateJobs />
       },
       {
         path: "create-job/que",
-        element: (
-          <ProtectedRoute allowedRoles={['Hiring Manager']}>
-            <Que />
-          </ProtectedRoute>
-        ),
+        element:
+          <Que />
       },
       {
         path: "edit-job/:id",
-        element: (
-          <ProtectedRoute allowedRoles={['Hiring Manager']}>
-            <EditJobs />
-          </ProtectedRoute>
-        ),
+        element:
+          <EditJobs />
       },
       {
         path: "jobs/view-job/:id",
-        element: (
-          <ProtectedRoute allowedRoles={['Hiring Manager']}>
-            <ViewJobs />
-          </ProtectedRoute>
-        ),
+        element:
+          <ViewJobs />
       },
       {
         path: "jobs/view-candidate/:id",
-        element: (
-          <ProtectedRoute allowedRoles={['Hiring Manager']}>
-            <ViewCandidateProfile />
-          </ProtectedRoute>
-        ),
+        element:
+          <ViewCandidateProfile />
       },
       {
         path: "jobs/edit-candidate/:id",
-        element: (
-          <ProtectedRoute allowedRoles={['Hiring Manager']}>
-            <EditCandidateProfile />
-          </ProtectedRoute>
-        ),
+        element:
+          <EditCandidateProfile />
       }
     ]
   },
-  
+
   {
     path: "/design-reviewer",
     element: (
