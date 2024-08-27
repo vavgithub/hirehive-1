@@ -14,6 +14,9 @@ import axios from "../../api/axios"
 import Create from '../../svg/Buttons/Create';
 import { ACTION_TYPES } from '../../utility/ActionTypes';
 import { DashboardIcon, DashboardIconActive } from '../../svg/Navbar/DashboardIcon';
+import { OpenIcon, OpenIconActive } from '../../svg/Tabs/OpenIcon';
+import { ClosedIcon, ClosedIconActive } from '../../svg/Tabs/ClosedIcon';
+import { DraftsIcon, DraftsIconActive } from '../../svg/Tabs/DraftsIcon';
 
 
 const fetchJobs = () => axios.get('/jobs').then(res => res.data);
@@ -216,16 +219,16 @@ const Dashboard = () => {
         {
             name: 'open',
             label: 'Open',
-            icon: <DashboardIcon />,
-            activeIcon: <DashboardIconActive />,
+            icon: <OpenIcon />,
+            activeIcon: <OpenIconActive />,
         },
         {
-            name: 'closed', label: 'Closed', icon: <DashboardIcon />,
-            activeIcon: <DashboardIconActive />,
+            name: 'closed', label: 'Closed', icon: <ClosedIcon />,
+            activeIcon: <ClosedIconActive />,
         },
         {
-            name: 'draft', label: 'Draft', icon: <DashboardIcon />,
-            activeIcon: <DashboardIconActive />,
+            name: 'draft', label: 'Draft', icon: <DraftsIcon />,
+            activeIcon: <DraftsIconActive />,
         },
     ];
 

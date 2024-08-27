@@ -2,11 +2,11 @@ import React from 'react';
 
 const Tabs = ({ tabs, activeTab, handleTabClick }) => {
     return (
-        <div className='flex gap-6  bg-background-100 w-max rounded-md items-center'>
+        <div className='flex gap-6  bg-background-100 w-max  rounded-md items-center'>
             {tabs.map((tab) => (
                 <div
                     key={tab.name}
-                    className="relative cursor-pointer flex flex-col items-center w-36"
+                    className="relative cursor-pointer flex flex-col items-center w-36 p-2 "
                     onClick={() => handleTabClick(tab.name)}
                 >
                     <span
@@ -15,7 +15,7 @@ const Tabs = ({ tabs, activeTab, handleTabClick }) => {
                         }`}
                     >
                          {activeTab === tab.name ? tab.activeIcon : tab.icon}
-                         <span>{tab.label} {tab.count !== undefined && `(${tab.count})`}</span>
+                         <span className='ml-2 flex-shrink-0'>{tab.label}</span>
                     </span>
                     {activeTab === tab.name && (
                         <div className="absolute bottom-[0px] h-[6px] w-8 bg-accent-100 rounded-tr-xl rounded-tl-xl" />

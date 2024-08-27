@@ -3,6 +3,10 @@ import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { logout } from '../api/authApi';
 import useAuth from '../hooks/useAuth';
 import { DashboardIcon, DashboardIconActive } from '../svg/Navbar/DashboardIcon';
+import { JobsIcon, JobsIconActive } from '../svg/Navbar/JobsIcon';
+import { CandidatesIcon, CandidatesIconActive } from '../svg/Navbar/CandidatesIcon';
+import { ReviewsIcon, ReviewsIconActive } from '../svg/Navbar/ReviewsIcon';
+import { ReportsIcon, ReportsIconActive } from '../svg/Navbar/ReportsIcon';
 
 const Navbar = () => {
     const navigate = useNavigate();
@@ -51,11 +55,11 @@ const Navbar = () => {
         <div className='flex bg-main-bg bg-cover bg-top h-full'>
             <div className="fixed flex h-screen z-[50000] w-48 flex-col gap-6 bg-background-100 text-font-gray typography-large-p justify-between py-4 ">
                 <div className='flex flex-col gap-5 typography-body'>
-                    <NavItem to="/admin/dashboard"  icon={DashboardIcon}  activeIcon={DashboardIconActive}>Dashboard</NavItem>
-                    <NavItem to="/admin/jobs" icon={DashboardIcon}  activeIcon={DashboardIconActive}>Jobs</NavItem>
-                    <NavItem to="/admin/candidates" icon={DashboardIcon}  activeIcon={DashboardIconActive}>Candidates</NavItem>
-                    <NavItem to="/admin/reviews" icon={DashboardIcon}  activeIcon={DashboardIconActive}>Reviews</NavItem>
-                    <NavItem to="/admin/reports" icon={DashboardIcon}  activeIcon={DashboardIconActive}>Reports</NavItem>
+                <NavItem to="/admin/dashboard"  icon={DashboardIcon}  activeIcon={DashboardIconActive}>Dashboard</NavItem>
+                    <NavItem to="/admin/jobs" icon={JobsIcon}  activeIcon={JobsIconActive}>Jobs</NavItem>
+                    <NavItem to="/admin/candidates" icon={CandidatesIcon}  activeIcon={CandidatesIconActive}>Candidates</NavItem>
+                    <NavItem to="/admin/reviews" icon={ReviewsIcon}  activeIcon={ReviewsIconActive}>Reviews</NavItem>
+                    <NavItem to="/admin/reports" icon={ReportsIcon}  activeIcon={ReportsIconActive}>Reports</NavItem>
                 </div>
                 <div>
                     {data && (
