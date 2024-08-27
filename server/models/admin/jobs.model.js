@@ -30,7 +30,6 @@ const jobSchema = new mongoose.Schema(
         "Digital Marketing Executive",
         "Project Manager",
         "Art Director",
-        "Art Director",
         "3D",
       ],
       default: "Frontend Developer",
@@ -41,7 +40,7 @@ const jobSchema = new mongoose.Schema(
     },
     experienceTo: {
       type: Number,
-      min: 2, // Assuming this will always be greater than fromExperience
+      min: 2,
     },
     budgetFrom: {
       type: Number,
@@ -59,7 +58,7 @@ const jobSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["", "open", "draft", "closed"], // Define possible values for status
+      enum: ["", "open", "draft", "closed"],
     },
     closingReason: {
       type: String,
@@ -69,9 +68,14 @@ const jobSchema = new mongoose.Schema(
         "Lack of suitable candidates",
         "Budget Constraints",
         "Changes in business needs",
-        "Don’t want more entries",
+        "Don't want more entries",
       ],
       default: "",
+    },
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
     },
   },
   { timestamps: true }

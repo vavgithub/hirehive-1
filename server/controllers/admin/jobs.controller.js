@@ -1,12 +1,13 @@
 // import Job from ''; // Import your Mongoose model
 import { MongooseError } from "mongoose";
 import { jobs } from "../../models/admin/jobs.model.js";
+import { asyncHandler } from "../../utils/asyncHandler.js";
 // Controller function to create a new job
 
 const getJobs = async (req, res) => {
   try {
     // Fetch all jobs from the database
-    const jobArray = await jobs.find();
+    const jobArray = await jobs.find({ createdBy: req.user._id });
     // Respond with the list of jobs
     res.status(200).json(jobArray);
   } catch (error) {
@@ -19,21 +20,20 @@ const createJob = async (req, res) => {
   try {
     // Destructure job details from request body
     const {
-        jobTitle,
-        workplaceType,
-        employeeLocation,
-        employmentType,
-        jobProfile,
-        experienceFrom,
-        experienceTo,
-        budgetFrom,
-        budgetTo,
-        jobDescription,
-        skills,
-        status,
+      jobTitle,
+      workplaceType,
+      employeeLocation,
+      employmentType,
+      jobProfile,
+      experienceFrom,
+      experienceTo,
+      budgetFrom,
+      budgetTo,
+      jobDescription,
+      skills,
+      status,
     } = req.body;
-
-    // Create a new job instance using the Job model
+  
     const newJob = new jobs({
       jobTitle,
       workplaceType,
@@ -47,6 +47,7 @@ const createJob = async (req, res) => {
       jobDescription,
       skills,
       status,
+      createdBy: req.user._id,
     });
 
     // Save the job to the database
@@ -70,7 +71,7 @@ const createJob = async (req, res) => {
 const getTotalJobCount = async (req, res) => {
   try {
     // Count the total number of jobs in the database
-    const totalCount = await jobs.countDocuments();
+    const totalCount = await jobs.countDocuments({ createdBy: req.user._id });
     // Respond with the total count
     res.status(200).json({ totalCount });
   } catch (error) {
@@ -87,6 +88,7 @@ const searchJobs = async (req, res) => {
     // Fetch all jobs from the database
     const jobArray = await jobs.find({
       jobTitle: { $regex: searchTerm, $options: "i" },
+      createdBy: req.user._id
     });
     // Respond with the list of jobs
     res.status(200).json(jobArray);
@@ -96,32 +98,27 @@ const searchJobs = async (req, res) => {
   }
 };
 
-const filterJobs = async (req, res) => {
+const filterJobs = asyncHandler(async (req, res) => {
   const { employmentType, jobProfile, experience } = req.body.filters;
-  try {
-    const query = {};
-    if (employmentType && employmentType.length > 0) {
-      query.employmentType = { $in: employmentType };
-    }
-    if (jobProfile && jobProfile.length > 0) {
-      query.jobProfile = { $in:jobProfile  };
-    }
-    if (experience && (experience.min !== '' || experience.max !== '')) {
-      query.fromExperience = {};
-      if (experience.min !== '') {
-        query.fromExperience.$gte = Number(experience.min);
-      }
-      if (experience.max !== '') {
-        query.toExperience = { $lte: Number(experience.max) };
-      }
-    }
-    const filteredJobs = await jobs.find(query);
-    res.status(200).json(filteredJobs);
-  } catch (error) {
-    console.log("Error Filtering Jobs", error);
-    res.status(500).json({ message: error.message });
+  const query = { createdBy: req.user._id };
+  if (employmentType && employmentType.length > 0) {
+    query.employmentType = { $in: employmentType };
   }
-};
+  if (jobProfile && jobProfile.length > 0) {
+    query.jobProfile = { $in: jobProfile };
+  }
+  if (experience && (experience.min !== '' || experience.max !== '')) {
+    query.fromExperience = {};
+    if (experience.min !== '') {
+      query.fromExperience.$gte = Number(experience.min);
+    }
+    if (experience.max !== '') {
+      query.toExperience = { $lte: Number(experience.max) };
+    }
+  }
+  const filteredJobs = await jobs.find(query);
+  res.status(200).json(filteredJobs);
+});
 
 const activeJobsFilterCount = async (req, res) => {
   try {

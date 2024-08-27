@@ -15,4 +15,5 @@ const getBaseUrl = () => {
 
 export default axios.create({
   baseURL: getBaseUrl(),
+  withCredentials: true
 });

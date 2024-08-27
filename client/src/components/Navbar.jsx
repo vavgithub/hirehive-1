@@ -1,16 +1,25 @@
 import React from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
+import { logout } from '../api/authApi';
 import useAuth from '../hooks/useAuth';
 import { DashboardIcon, DashboardIconActive } from '../svg/Navbar/DashboardIcon';
 
 const Navbar = () => {
     const navigate = useNavigate();
-    const { auth } = useAuth();
 
-    const handleLogout = () => {
-        localStorage.removeItem('accessToken');
-        navigate('/auth/login');
-    }
+    const { data, refetch } = useAuth();
+
+
+    const handleLogout = async () => {
+        try {
+            await logout();
+            refetch(); // Refetch auth state
+            navigate('/auth/login');
+        } catch (error) {
+            console.error('Logout failed:', error);
+        }
+    };
+
 
     const NavItem = ({ to,icon: Icon, activeIcon: ActiveIcon, children }) => (
         <div className="relative flex flex-row items-center justify-between hover:bg-background-60">
@@ -49,7 +58,12 @@ const Navbar = () => {
                     <NavItem to="/admin/reports" icon={DashboardIcon}  activeIcon={DashboardIconActive}>Reports</NavItem>
                 </div>
                 <div>
-                    {/* <button onClick={handleLogout} className="bg-black text-white font-bold py-2 px-4 rounded">LOGOUT</button> */}
+                    {data && (
+                        <>
+                            <span>Welcome, {data.name}</span>
+                            <button onClick={handleLogout}>Logout</button>
+                        </>
+                    )}
                 </div>
             </div>
 
