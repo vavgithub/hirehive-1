@@ -37,8 +37,8 @@ const corsOptions = {
 // Apply CORS middleware
 app.use(cors(corsOptions));
 
-  // set headers for you to be able to set cookies on the browser
-  app.use((_, res, next) => {
+// set headers for you to be able to set cookies on the browser
+app.use((_, res, next) => {
     res.header("Access-Control-Allow-Origin", "https://hirehive-steel.vercel.app");
     res.header("Access-Control-Allow-Headers", "*");
     res.header("Access-Control-Allow-Credentials", "true");
