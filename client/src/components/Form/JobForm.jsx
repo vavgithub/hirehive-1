@@ -5,6 +5,7 @@ import SkillsInput from '../utility/SkillsInput';
 import { dropdownOptions } from '../Form/dropdownOptions';
 import { Button } from '../ui/Button';
 import Next from '../../svg/Buttons/Next';
+import Que from '../../pages/Admin/Que';
 
 const JobForm = ({
   formData,
@@ -63,7 +64,6 @@ const JobForm = ({
             handleOptionClick={handleOptionClick}
           />
         ))}
-
         <div>
 
         </div>
@@ -79,10 +79,7 @@ const JobForm = ({
           incrementExperience={incrementExperience}
           decrementExperience={decrementExperience}
         />
-        <div className="w-full mb-4">
-          <label htmlFor="skills" className="block font-bold mb-2">Skills*</label>
-          <SkillsInput skills={formData.skills || []} setSkills={setSkills} />
-        </div>
+
         <div className='w-full'>
           <label htmlFor="jobDescription" className="block font-bold mb-2">Job Description*</label>
           <textarea
@@ -95,7 +92,17 @@ const JobForm = ({
             rows="10"
           />
         </div>
+
+        <div className="w-full mb-4">
+          <label htmlFor="skills" className="block font-bold mb-2">Skills*</label>
+          <SkillsInput skills={formData.skills || []} setSkills={setSkills} />
+        </div>
       </div>
+
+        <div className='flex'>
+          <Que/>
+        </div>
+
       <div className="flex justify-end mt-4">
         <div className='w-[240px]'>
 

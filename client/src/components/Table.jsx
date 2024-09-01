@@ -12,6 +12,7 @@ import { exportToExcel } from '../utility/exportToExcel';
 import { Button } from './ui/Button';
 import Create from '../svg/Buttons/Create';
 import Export from '../svg/Buttons/Export';
+import useAuth from '../hooks/useAuth';
 
 const stageStatusMap = {
     "Portfolio": ['Not Assigned', 'Under Review', 'Reviewed', 'Cleared', 'Rejected'],
@@ -41,6 +42,7 @@ const Table = ({ rowsData, onUpdateCandidate , extraCTA }) => {
     const [budgetFilteredRows, setBudgetFilteredRows] = useState(rowsData);
     const [selectedCandidate, setSelectedCandidate] = useState(null);
     const navigate = useNavigate();
+    const { data: userData } = useAuth(); // Get user data including role
 
     const [searchTerm, setSearchTerm] = useState('');
 
@@ -92,9 +94,17 @@ const Table = ({ rowsData, onUpdateCandidate , extraCTA }) => {
         setSearchTerm(event.target.value);
     };
 
-    const handleRowClick = (params) => {
-        navigate(`/admin/jobs/view-candidate/${params.row._id}`);
-    };
+    const handleRowClick = useCallback((params) => {
+        if (userData.role === 'Hiring Manager') {
+            navigate(`/admin/jobs/view-candidate/${params.row._id}`);
+        } else if (userData.role === 'Design Reviewer') {
+            navigate(`/design-reviewer/view-candidate/${params.row._id}`);
+        } else {
+            // Handle other roles or show an error
+            console.error('Unauthorized access or unknown role');
+        }
+    }, [navigate, userData.role]);
+
 
     const handleMultipleAssigneeChange = async () => {
         const updatedRows = rows.map((row) => {

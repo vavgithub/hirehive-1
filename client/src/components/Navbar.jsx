@@ -10,26 +10,23 @@ import { ReportsIcon, ReportsIconActive } from '../svg/Navbar/ReportsIcon';
 
 const Navbar = () => {
     const navigate = useNavigate();
-
     const { data, refetch } = useAuth();
-
 
     const handleLogout = async () => {
         try {
             await logout();
-            refetch(); // Refetch auth state
+            refetch();
             navigate('/auth/login');
         } catch (error) {
             console.error('Logout failed:', error);
         }
     };
 
-
-    const NavItem = ({ to,icon: Icon, activeIcon: ActiveIcon, children }) => (
+    const NavItem = ({ to, icon: Icon, activeIcon: ActiveIcon, children }) => (
         <div className="relative flex flex-row items-center justify-between hover:bg-background-60">
             <NavLink 
                 to={to} 
-                end={to === "/admin/dashboard"}
+                end={to === "/admin/dashboard" || to === "/design-reviewer/dashboard"}
                 className={({ isActive, isPending }) => 
                     `w-full flex items-center gap-2 pl-2 ${isActive || isPending ? "text-font-accent" : ""}`
                 }
@@ -43,23 +40,42 @@ const Navbar = () => {
             </NavLink>
             <NavLink 
                 to={to} 
-                end={to === "/admin/dashboard"}
+                end={to === "/admin/dashboard" || to === "/design-reviewer/dashboard"}
                 className={({ isActive, isPending }) => 
-                    `absolute right-0 w-2 h-8  rounded-tl-xl rounded-bl-xl  ${isActive || isPending ? "bg-teal-400" : "bg-transparent"}`
+                    `absolute right-0 w-2 h-8 rounded-tl-xl rounded-bl-xl ${isActive || isPending ? "bg-teal-400" : "bg-transparent"}`
                 }
             />
         </div>
     );
 
+    const renderMenuItems = () => {
+        if (data?.role === 'Hiring Manager') {
+            return (
+                <>
+                    <NavItem to="/admin/dashboard" icon={DashboardIcon} activeIcon={DashboardIconActive}>Dashboard</NavItem>
+                    <NavItem to="/admin/jobs" icon={JobsIcon} activeIcon={JobsIconActive}>Jobs</NavItem>
+                    <NavItem to="/admin/candidates" icon={CandidatesIcon} activeIcon={CandidatesIconActive}>Candidates</NavItem>
+                    <NavItem to="/admin/reviews" icon={ReviewsIcon} activeIcon={ReviewsIconActive}>Reviews</NavItem>
+                    <NavItem to="/admin/reports" icon={ReportsIcon} activeIcon={ReportsIconActive}>Reports</NavItem>
+                </>
+            );
+        } else if (data?.role === 'Design Reviewer') {
+            return (
+                <>
+                    <NavItem to="/design-reviewer/dashboard" icon={DashboardIcon} activeIcon={DashboardIconActive}>Dashboard</NavItem>
+                    <NavItem to="/design-reviewer/candidates" icon={CandidatesIcon} activeIcon={CandidatesIconActive}>Candidates</NavItem>
+                    <NavItem to="/design-reviewer/reviews" icon={ReviewsIcon} activeIcon={ReviewsIconActive}>Reviews</NavItem>
+                </>
+            );
+        }
+        return null;
+    };
+
     return (
         <div className='flex bg-main-bg bg-cover bg-top h-full'>
             <div className="fixed flex h-screen z-[50000] w-48 flex-col gap-6 bg-background-100 text-font-gray typography-large-p justify-between py-4 ">
                 <div className='flex flex-col gap-5 typography-body'>
-                <NavItem to="/admin/dashboard"  icon={DashboardIcon}  activeIcon={DashboardIconActive}>Dashboard</NavItem>
-                    <NavItem to="/admin/jobs" icon={JobsIcon}  activeIcon={JobsIconActive}>Jobs</NavItem>
-                    <NavItem to="/admin/candidates" icon={CandidatesIcon}  activeIcon={CandidatesIconActive}>Candidates</NavItem>
-                    <NavItem to="/admin/reviews" icon={ReviewsIcon}  activeIcon={ReviewsIconActive}>Reviews</NavItem>
-                    <NavItem to="/admin/reports" icon={ReportsIcon}  activeIcon={ReportsIconActive}>Reports</NavItem>
+                    {renderMenuItems()}
                 </div>
                 <div>
                     {data && (

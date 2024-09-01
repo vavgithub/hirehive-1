@@ -49,7 +49,7 @@ const Que = () => {
     return (
         <div className="bg-background-80 h-screen">
             <div className='p-4 flex flex-col justify-between h-full'>
-                <Header HeaderText="Additional Questions"></Header>
+                <span className='typography-body'>Additional Questions </span>
                 <div className='bg-background-30 rounded-xl h-full flex flex-col items-center justify-start ml-auto mr-auto pl-16 pr-16 overflow-y-auto'>
                     {questions.length === 0 ? (
                         <>

@@ -17,6 +17,7 @@ import EditCandidateProfile from './pages/Admin/EditCandidateProfile';
 import Que from './pages/Admin/Que';
 import DesignReviewerDashboard from './pages/DesignReviewer/DesignReviewerDashboard.jsx';
 import ProtectedRoute from './routes/ProtectedRoute.jsx';
+import Reviews from './pages/DesignReviewer/Reviews.jsx';
 
 export const router = createBrowserRouter([
   {
@@ -93,6 +94,22 @@ export const router = createBrowserRouter([
         path: "dashboard",
         element: <DesignReviewerDashboard />,
       },
+      {
+        path: "candidates",
+        element:
+          <Candidates />
+      },
+      {
+        path: "reviews",
+        element:
+          <Reviews />
+      },
+      {
+        path: "view-candidate/:id",
+        element:
+          <ViewCandidateProfile />
+      },
+
       // Add more Design Reviewer routes here
     ]
   },

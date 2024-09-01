@@ -25,15 +25,6 @@ const corsOptions = {
   optionsSuccessStatus: 200,
 };
 
-app.use((req, res, next) => {
-  if (req.header('x-forwarded-proto') !== 'https') {
-    res.redirect(`https://${req.header('host')}${req.url}`);   
-
-  } else {
-    next();   
-
-  }
-});
 
 app.use(cors(corsOptions));
 
@@ -58,7 +49,6 @@ if (process.env.NODE_ENV === "production") {
 }
 
 
-app.use(morgan("dev"));
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1", jobRoutes);
 app.use("/api/v1/candidates", candidateRoutes);

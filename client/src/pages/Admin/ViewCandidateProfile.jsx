@@ -16,6 +16,7 @@ import axios from '../../api/axios';
 import { useQuery } from '@tanstack/react-query';
 import { ACTION_TYPES } from '../../utility/ActionTypes';
 import CandidateTabDetail from '../../components/ui/CandidateTabDetail';
+import useAuth from '../../hooks/useAuth';
 
 // This function would typically be defined in your page component
 
@@ -27,33 +28,34 @@ const fetchCandidateData = async (id) => {
 
 const exampleData = {
     professionalDetails: [
-      { label: "Experience", value: "8 Years" },
-      { label: "Notice Period", value: "1 Month" },
-      { label: "Current CTC", value: "4 LPA" },
-      { label: "Expected CTC", value: "8 LPA" },
+        { label: "Experience", value: "8 Years" },
+        { label: "Notice Period", value: "1 Month" },
+        { label: "Current CTC", value: "4 LPA" },
+        { label: "Expected CTC", value: "8 LPA" },
     ],
     previousExperiences: [
-      {
-        company: "ABC Company",
-        position: "UI Designer",
-        startDate: "21 Jan 2022",
-        endDate: "05 July 2024",
-      },
-      {
-        company: "DEF Company",
-        position: "Junior UI Designer",
-        startDate: "16 Feb 2019",
-        endDate: "27 Sept 2021",
-      },
+        {
+            company: "ABC Company",
+            position: "UI Designer",
+            startDate: "21 Jan 2022",
+            endDate: "05 July 2024",
+        },
+        {
+            company: "DEF Company",
+            position: "Junior UI Designer",
+            startDate: "16 Feb 2019",
+            endDate: "27 Sept 2021",
+        },
     ],
     skillSet: ["Figma", "Sketch", "Adobe Suites", "Zeplin"],
-  };
+};
 
 const ViewCandidateProfile = () => {
+    const { data: userData } = useAuth(); // Get user data including role
 
     const usePageActions = () => {
         const navigate = useNavigate();
-    
+
         const handleAction = (action) => {
             switch (action) {
                 case ACTION_TYPES.EDIT:
@@ -61,8 +63,8 @@ const ViewCandidateProfile = () => {
                     navigate(`/admin/jobs/edit-candidate/${mainId}`);
                     setModalOpen(false);
                     break;
-                    // Example: Open a modal
-                    // openModal('action1Modal');
+                // Example: Open a modal
+                // openModal('action1Modal');
                 case 'ACTION_2':
                     console.log('Performing Action 2');
                     // Example: Navigate to a different page
@@ -85,13 +87,13 @@ const ViewCandidateProfile = () => {
                     console.log('Unknown action:', action);
             }
         };
-    
+
         return handleAction;
     };
 
     const handleAction = usePageActions();
 
-    const [activeTab, setActiveTab] = useState('candidateDetails');
+    const [activeTab, setActiveTab] = useState('application');
     const handleTabClick = (tab) => {
         setActiveTab(tab);
     };
@@ -109,7 +111,7 @@ const ViewCandidateProfile = () => {
         queryFn: () => fetchCandidateData(mainId),
     });
 
-    
+
     if (isLoading) {
         return <div>Loading...</div>;
     }
@@ -129,7 +131,7 @@ const ViewCandidateProfile = () => {
         // Implement the auto-assign logic here
         console.log('Auto assigning portfolio...');
     };
-    
+
 
 
     return (
@@ -178,9 +180,13 @@ const ViewCandidateProfile = () => {
                 </div>
 
             </div>
-            <div className='flex  mt-4 mb-4' >
-                <Tabs tabs={tabs} activeTab={activeTab} handleTabClick={handleTabClick} />
-            </div>
+            {
+                userData.role == "Hiring Manager" && (
+                    <div className='flex  mt-4 mb-4' >
+                        <Tabs tabs={tabs} activeTab={activeTab} handleTabClick={handleTabClick} />
+                    </div>
+                )
+            }
 
             {activeTab === 'application' && (
                 <div>
@@ -194,7 +200,7 @@ const ViewCandidateProfile = () => {
             {activeTab === 'candidateDetails' && (
                 <div>
                     {/* Candidate Details tab content */}
-                    <CandidateTabDetail data={exampleData}/> 
+                    <CandidateTabDetail data={exampleData} />
                 </div>
             )}
         </div>
