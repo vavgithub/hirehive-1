@@ -5,7 +5,7 @@ import generateToken from '../../utils/generateToken.js';
 const cookieOptions = {
   httpOnly: true,
   secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
-  sameSite:"none", 
+  sameSite: process.env.NODE_ENV === 'production' ? "none" : "strict", 
   maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
 };
 
@@ -60,7 +60,6 @@ export const authUser = asyncHandler(async (req, res) => {
             name: user.name,
             email: user.email,
             role: user.role,
-            token
         });
     } else {
         res.status(401);

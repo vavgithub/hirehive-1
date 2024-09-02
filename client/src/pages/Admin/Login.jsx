@@ -18,8 +18,7 @@ const statsTwo = [
     { title: 'Application Received', value: 10, icon: two },
 ]
 const Login = () => {
-
-    
+    const [error, setError] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
@@ -42,7 +41,7 @@ const Login = () => {
             await refetchAuth(); // Refetch auth data after successful login
         },
         onError: (error) => {
-            alert(error.response?.data?.message || 'Login failed');
+            setError('Invalid credentials'); // Set error message
         },
     });
 
@@ -77,7 +76,7 @@ const Login = () => {
             <div className="w-full lg:w-1/2 bg-background-30 p-28  flex flex-col justify-center">
                 <h2 className="typography-h1 mb-2">Welcome Back</h2>
                 <p className="typography-body mb-8">Login to your account below</p>
-
+{/* 
                 <button className="bg-blue-600 text-white py-2 px-4 rounded-lg mb-4 flex items-center justify-center">
                     Continue with Google
                 </button>
@@ -86,24 +85,29 @@ const Login = () => {
                     <hr className="flex-grow border-gray-600" />
                     <span className="px-3 text-gray-400">OR</span>
                     <hr className="flex-grow border-gray-600" />
-                </div>
+                </div> */}
 
                 <form onSubmit={handleSubmit}>
                     <div className="mb-4">
                         <label htmlFor="email" className="block mb-2">Email</label>
-                        <input type="email" id="email" placeholder="Enter your email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full p-2 rounded-lg bg-gray-800 text-white focus:outline-teal-400" />
+                        <input type="email" id="email" placeholder="Enter your email" value={email} onChange={(e) => setEmail(e.target.value)}
+                            className={`w-full focus:outline-teal-400 p-2 rounded-lg bg-gray-800 text-white ${error ? 'outline-red-500' : ''}`}
+                        />
                     </div>
                     <div className="mb-4">
                         <label htmlFor="password" className="block mb-2">Password</label>
-                        <input type="password" id="password" value={password}   onChange={(e) => setPassword(e.target.value)} placeholder="Enter your password" className="w-full focus:outline-teal-400 p-2 rounded-lg bg-gray-800 text-white" />
+                        <input type="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter your password"
+                            className={`w-full focus:outline-teal-400 p-2 rounded-lg bg-gray-800 text-white ${error ? 'outline-red-500' : ''}`}
+                        />
                     </div>
+                    {error && <p className="text-red-500 mb-4">{error}</p>}
                     <a href="#" className="text-blue-400 mb-4 block">Forgot Password?</a>
                     <Button type="submit" varinat="primary">Login</Button>
                 </form>
 
-                <p className="text-center">
+                {/* <p className="text-center">
                     Don't have an account? <a href="#" className="text-blue-400">Sign up</a>
-                </p>
+                </p> */}
             </div>
         </div>
     );
