@@ -11,7 +11,7 @@ const CandidateViewJob = () => {
     useEffect(() => {
         const fetchJob = async () => {
             try {
-                const response = await axios.get(`http://localhost:8008/api/getJobById/${mainId}`);
+                const response = await axios.get(`http://localhost:8008/api/v1/getJobById/${mainId}`);
                 console.log(response.data)
                 setFormData(response.data);
             } catch (error) {
@@ -22,7 +22,7 @@ const CandidateViewJob = () => {
     }, [mainId]);
 
     if (!formData) {
-        return <div>Loading...</div>;  // Show a loading message or spinner until the data is loaded
+        return <div>Loading..sdsd.</div>;  // Show a loading message or spinner until the data is loaded
     }
 
     const handleApplyClick = () => {

@@ -1,5 +1,43 @@
 import mongoose from "mongoose";
 
+const stageStatusSchema = {
+  status: {
+    type: String,
+    enum: ['Not Assigned', 'Under Review', 'Reviewed', 'Cleared', 'Rejected', 'Call Pending', 'Call Scheduled', 'No Show', 'Sent', 'Not Submitted'],
+    default: 'Not Assigned'
+  },
+  rejectionReason: {
+    type: String,
+    default: "N/A"
+  },
+  assignedTo: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    default: null
+  },
+  score: {
+    totalScore: {
+      type: Number,
+      default: 0,
+    },
+    remark: {
+      type: String,
+      default: "N/A"
+    },
+  },
+  currentCall: {
+    scheduledDate: Date,
+    scheduledTime: String,
+    meetingLink: String
+  },
+  callHistory: [{
+    scheduledDate: Date,
+    scheduledTime: String,
+    meetingLink: String,
+    status: String // 'Scheduled', 'Completed', 'Rescheduled', 'No Show'
+  }],
+};
+
 const candidateSchema = new mongoose.Schema(
   {
     jobId: {
@@ -25,28 +63,6 @@ const candidateSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    assignees: {
-      "Portfolio": {
-        type: String,
-        default: "N/A",
-      },
-      "Screening": {
-        type: String,
-        default: "N/A",
-      },
-      "Design Task": {
-        type: String,
-        default: "N/A",
-      },
-      "Round 1": {
-        type: String,
-        default: "N/A",
-      },
-      "Round 2": {
-        type: String,
-        default: "N/A",
-      },
-    },
     stage: {
       type: String,
       enum: ["Portfolio", "Screening", "Design Task", "Round 1", "Round 2", "Hired"],
@@ -57,208 +73,37 @@ const candidateSchema = new mongoose.Schema(
       default: "N/A",
     },
     stageStatus: {
-      Portfolio: {
-        status: {
-          type: String,
-          enum: ['Not Assigned', 'Under Review', 'Reviewed', 'Cleared', 'Rejected'],
-          default: 'Not Assigned'
-        },
-        rejectionReason:{
-          type: String,
-          default:"N/A"
-        },
-        assignee: {
-          type: String,
-          default: 'N/A'
-        },
-        score: {
-          totalScore:{
-            type:Number,
-            default: 0,
-          },
-          remark:{
-            type:String,
-            default:"N/A"
-          },
-        },
-      },
+      Portfolio: stageStatusSchema,
       Screening: {
-        status: {
-          type: String,
-          enum: ['Call Pending', 'Call Scheduled', 'Under Review', 'Reviewed', 'Cleared', 'No Show', 'Rejected'],
-          default: 'Call Pending'
-        },
-        rejectionReason:{
-          type: String,
-          default:"N/A"
-        },
-        assignee: {
-          type: String,
-          default: 'N/A'
-        },
-        currentCall: {
-          scheduledDate: Date,
-          scheduledTime: String,
-          meetingLink: String
-        },
-        callHistory: [{
-          scheduledDate: Date,
-          scheduledTime: String,
-          meetingLink: String,
-          status: String // 'Scheduled', 'Completed', 'Rescheduled', 'No Show'
-        }],     
+        ...stageStatusSchema,
         score: {
-          remark:{
-            type:String,
-            default:"N/A"
-          },
-          totalScore:{
-            Attitude:{
-              type:Number,
-              default:null,
-              min:0,
-              max:5
-            },
-            Communication:{
-              type:Number,
-              default:null,
-              min:0,
-              max:5
-            },
-            UX:{
-              type:Number,
-              default:null,
-              min:0,
-              max:5
-            },
-            UI:{
-              type:Number,
-              default:null,
-              min:0,
-              max:5
-            },
-            Tech:{
-              type:Number,
-              default:null,
-              min:0,
-              max:5
-            },
-            Budget:{
-              type:Number,
-              default:null,
-              min:0,
-              max:5
-            }          
-          },
+          ...stageStatusSchema.score,
+          totalScore: {
+            Attitude: { type: Number, default: null, min: 0, max: 5 },
+            Communication: { type: Number, default: null, min: 0, max: 5 },
+            UX: { type: Number, default: null, min: 0, max: 5 },
+            UI: { type: Number, default: null, min: 0, max: 5 },
+            Tech: { type: Number, default: null, min: 0, max: 5 },
+            Budget: { type: Number, default: null, min: 0, max: 5 }
+          }
         }
       },
-      "Design Task": {
-        status: {
-          type: String,
-          enum: ['Sent', 'Not Assigned', 'Under Review', 'Reviewed', 'Cleared', 'Rejected', 'Not Submitted'],
-          default: 'Not Assigned'
-        },
-        rejectionReason:{
-          type: String,
-          default:"N/A"
-        },
-        assignee: {
-          type: String,
-          default: 'N/A'
-        },
-        score: {
-          type: Number,
-          default: 0
-        }
-      },
-      "Round 1": {
-        status: {
-          type: String,
-          enum: ['Call Pending', 'Call Scheduled', 'Not Assigned', 'Reviewed', 'Cleared', 'No Show', 'Rejected'],
-          default: 'Call Pending'
-        },
-        rejectionReason:{
-          type: String,
-          default:"N/A"
-        },
-        assignee: {
-          type: String,
-          default: 'N/A'
-        },
-        currentCall: {
-          scheduledDate: Date,
-          scheduledTime: String,
-          meetingLink: String
-        },
-        callHistory: [{
-          scheduledDate: Date,
-          scheduledTime: String,
-          meetingLink: String,
-          status: String // 'Scheduled', 'Completed', 'Rescheduled', 'No Show'
-        }],     
-        score: {
-          totalScore:{
-            type:Number,
-            default: 0,
-          },
-          remark:{
-            type:String,
-            default:"N/A"
-          },
-        },
-      },
-      "Round 2": {
-        status: {
-          type: String,
-          enum: ['Call Pending', 'Call Scheduled', 'Not Assigned', 'Reviewed', 'Cleared', 'No Show', 'Rejected'],
-          default: 'Call Pending'
-        },
-        rejectionReason:{
-          type: String,
-          default:"N/A"
-        },
-        assignee: {
-          type: String,
-          default: 'N/A'
-        },
-        currentCall: {
-          scheduledDate: Date,
-          scheduledTime: String,
-          meetingLink: String
-        },
-        callHistory: [{
-          scheduledDate: Date,
-          scheduledTime: String,
-          meetingLink: String,
-          status: String // 'Scheduled', 'Completed', 'Rescheduled', 'No Show'
-        }],     
-        score: {
-          totalScore:{
-            type:Number,
-            default: 0,
-          },
-          remark:{
-            type:String,
-            default:"N/A"
-          },
-        },
-      }
+      "Design Task": stageStatusSchema,
+      "Round 1": stageStatusSchema,
+      "Round 2": stageStatusSchema
     },
-    noticePeriod : {
+    noticePeriod: {
       type: Number,
-      default:0
+      default: 0
     },
-
-    currentCTC : {
+    currentCTC: {
       type: Number,
-      default:0
+      default: 0
     },
-
-    expectedCTC : {
+    expectedCTC: {
       type: Number,
-      default:0
+      default: 0
     },
-    
     experience: {
       type: Number,
       required: true,
@@ -297,7 +142,7 @@ const candidateSchema = new mongoose.Schema(
     rating: {
       type: String,
       enum: ["", "Good Fit", "May Be", "Not A Good Fit"]
-    }
+    },
   },
   { timestamps: true }
 );

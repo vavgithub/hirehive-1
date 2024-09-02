@@ -30,7 +30,7 @@ const nextStageMap = {
     "Round 2": "Hired",
 };
 
-const allAssignees = ['John', 'Vevaar', 'Komael', 'Eshan', 'Sushmita', 'Jordyn'];
+const allAssignees = ['one', 'Vevaar', 'Komael', 'Eshan', 'Sushmita', 'Jordyn'];
 
 
 
@@ -360,7 +360,7 @@ const Table = ({ rowsData, onUpdateCandidate , extraCTA }) => {
             width: 130,
             renderCell: (params) => {
                 const currentStage = params.row.stage;
-                const currentAssignee = params.row.stageStatus[currentStage]?.assignee || 'N/A';
+                const currentAssignee = params.row.stageStatus[currentStage]?.assignedTo || 'N/A';
                 return (
                     <p>
 

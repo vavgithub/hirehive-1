@@ -3,6 +3,7 @@ import { candidates } from "../../models/candidate/candidate.model.js";
 import { ApiError } from "../../utils/ApiError.js";
 import { ApiResponse } from "../../utils/ApiResponse.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
+import { User } from "../../models/admin/user.model.js";
 
 const stats =  asyncHandler(async (req, res, next) => {
   try {
@@ -268,6 +269,111 @@ const updateCandidateStatusById = async (req, res) => {
   }
 };
 
+// const assignCandidate = async (req, res) => {
+//   try {
+//     const { candidateId, assigneeId } = req.body;
+
+//     // Validate input
+//     if (!candidateId || !assigneeId) {
+//       return res.status(400).json({ success: false, message: 'Candidate ID and Assignee ID are required' });
+//     }
+
+//     // Find the candidate
+//     const candidate = await candidates.findById(candidateId);
+//     if (!candidate) {
+//       return res.status(404).json({ success: false, message: 'Candidate not found' });
+//     }
+
+//     // Find the assignee (hiring manager or design reviewer)
+//     const assignee = await User.findById(assigneeId);
+//     if (!assignee) {
+//       return res.status(404).json({ success: false, message: 'Assignee not found' });
+//     }
+
+//     // Check if the assignee is a hiring manager or design reviewer
+//     if (assignee.role !== 'Hiring Manager' && assignee.role !== 'Design Reviewer') {
+//       return res.status(400).json({ success: false, message: 'Invalid assignee role' });
+//     }
+
+//     // Update the candidate
+//     candidate.assignedTo = assigneeId;
+//     await candidate.save();
+
+//     // Update the assignee's assigned candidates list
+//     if (!assignee.assignedCandidates.includes(candidateId)) {
+//       assignee.assignedCandidates.push(candidateId);
+//       await assignee.save();
+//     }
+
+//     res.status(200).json({
+//       success: true,
+//       message: 'Candidate assigned successfully',
+//       data: { candidate, assignee: { id: assignee._id, name: assignee.name, role: assignee.role } }
+//     });
+
+//   } catch (error) {
+//     console.error('Error in assignCandidate:', error);
+//     res.status(500).json({ success: false, message: 'Internal server error', error: error.message });
+//   }
+// };
+
+const assignCandidate = async (req, res) => {
+  try {
+    const { candidateId, assigneeId, stage } = req.body;
+
+    const candidate = await candidates.findById(candidateId);
+    if (!candidate) {
+      return res.status(404).json({ success: false, message: 'Candidate not found' });
+    }
+
+    candidate.stageStatus[stage].assignedTo = assigneeId;
+    candidate.stageStatus[stage].status = 'Under Review';
+    await candidate.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Candidate assigned successfully',
+      data: candidate
+    });
+
+  } catch (error) {
+    console.error('Error in assignCandidate:', error);
+    res.status(500).json({ success: false, message: 'Internal server error', error: error.message });
+  }
+};
+
+const fetchAssignedCandidate = async (req, res) => {
+  try {
+    const { reviewerId } = req.params;
+
+    // Validate reviewerId
+    if (!reviewerId) {
+      return res.status(400).json({ success: false, message: 'Reviewer ID is required' });
+    }
+
+    // Check if the reviewer exists and is a Design Reviewer
+    const reviewer = await User.findOne({ _id: reviewerId, role: 'Design Reviewer' });
+    if (!reviewer) {
+      return res.status(404).json({ success: false, message: 'Design Reviewer not found' });
+    }
+
+    // Fetch assigned candidates
+    const assignedCandidates = await candidates.find({ 'stageStatus.Portfolio.assignedTo': reviewerId })
+      .select('firstName lastName email stage stageStatus.Portfolio.status portfolio')
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      data: assignedCandidates,
+      message: 'Assigned candidates fetched successfully'
+    });
+
+  } catch (error) {
+    console.error('Error in fetchAssignedCandidates:', error);
+    res.status(500).json({ success: false, message: 'Internal server error', error: error.message });
+  }
+};
+
 export {
   updateCandidateStatusById,
   getCandidate,
@@ -278,5 +384,7 @@ export {
   updateRating,
   allCandidate,
   stats,
+  fetchAssignedCandidate,
+  assignCandidate,
   jobSpecificStats
 };

@@ -25,7 +25,16 @@ const userSchema = new mongoose.Schema({
     enum: ['Hiring Manager', 'Design Reviewer'],
     required: true,
   },
+  isAvailable: {
+    type: Boolean,
+    default: true,
+  },
+  assignedCandidates: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'candidates'
+  }]
 }, { timestamps: true });
+
 
 userSchema.pre('save', async function (next) {
   if (this.isModified('password')) {

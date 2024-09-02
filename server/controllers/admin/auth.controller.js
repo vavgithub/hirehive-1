@@ -93,3 +93,25 @@ export const getUserProfile = asyncHandler(async (req, res) => {
         throw new Error('User not found');
     }
 });
+
+export const getAvailableDesignReviewers = async (req, res) => {
+    try {
+      const availableReviewers = await User.find({ 
+        role: 'Design Reviewer', 
+        isAvailable: true 
+      }).select('name email'); // Only select necessary fields
+  
+      res.status(200).json({ 
+        success: true, 
+        data: availableReviewers 
+      });
+    } catch (error) {
+      res.status(500).json({ 
+        success: false, 
+        message: 'Error fetching available design reviewers', 
+        error: error.message 
+      });
+    }
+  };
+
+ 

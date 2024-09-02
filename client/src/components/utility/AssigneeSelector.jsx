@@ -1,18 +1,35 @@
 import React, { useState, useRef, useEffect } from 'react';
 import SearchIcon from '../../svg/SearchIcon';
+import { fetchAvailableDesignReviewers } from '../../api/authApi';
 
 const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect }) => {
+    const [reviewers, setReviewers] = useState([]);
     const [isOpen, setIsOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const dropdownRef = useRef(null);
+    const [selectedReviewer, setSelectedReviewer] = useState(value);
 
-    const assignees = [
-        { id: 1, name: 'Jordyn' },
-  
-        { id: 2, name: 'Emily Parker' },
-        { id: 3, name: 'James Dean' },
-        { id: 4, name: 'William Taylor' },
-    ];
+    useEffect(() => {
+        const loadReviewers = async () => {
+          try {
+            const availableReviewers = await fetchAvailableDesignReviewers();
+            setReviewers(availableReviewers);
+            
+            // If there's a value (assigned reviewer) and it's not in the reviewers list,
+            // add it to ensure it's displayed correctly
+            if (value && value._id && !availableReviewers.find(r => r._id === value._id)) {
+              setReviewers(prev => [...prev, value]);
+            }
+          } catch (error) {
+            console.error('Error fetching available design reviewers:', error);
+          }
+        };
+        loadReviewers();
+    }, [value]);
+
+    useEffect(() => {
+        setSelectedReviewer(value);
+    }, [value]);
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -24,20 +41,21 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect }) => {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
-    const filteredAssignees = assignees.filter(assignee =>
-        assignee.name.toLowerCase().includes(searchTerm.toLowerCase())
+    const filteredReviewers = reviewers.filter(reviewer =>
+        reviewer.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    const handleSelect = (assignee) => {
-        onChange(assignee);
+    const handleSelect = (reviewer) => {
+        setSelectedReviewer(reviewer);
+        onChange(reviewer);
         setIsOpen(false);
-        onSelect(assignee);
+        onSelect(reviewer);
     };
 
     const toggleDropdown = () => setIsOpen(!isOpen);
 
     const renderTrigger = () => {
-        const shouldShowIcon = !value || value === 'N/A';
+        const shouldShowIcon = !selectedReviewer || selectedReviewer === 'N/A';
         if (mode === 'icon') {
             return (
                 <button
@@ -51,7 +69,7 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect }) => {
                         </svg>
                     ) : (
                         <div className="w-8 h-8 rounded-full bg-accent-100 text-background-60 flex items-center justify-center">
-                            {value && value.name ? value.name[0].toUpperCase() : '?'}
+                            {selectedReviewer.name ? selectedReviewer.name[0].toUpperCase() : '?'}
                         </div>
                     )}
                 </button>
@@ -63,7 +81,7 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect }) => {
                         type="text"
                         className="w-full px-6 py-2 rounded-md shadow-sm focus:outline-none"
                         placeholder="-Select-"
-                        value={value && value.name ? value.name : ''}
+                        value={selectedReviewer && selectedReviewer.name ? selectedReviewer.name : ''}
                         readOnly
                     />
                     <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
@@ -102,21 +120,21 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect }) => {
                         />
                     </div>
                     <ul className="py-1 ">
-                        {filteredAssignees.map((assignee) => (
+                        {filteredReviewers.map((reviewer) => (
                             <li
-                                key={assignee.id}
+                                key={reviewer._id}
                                 className={`m-2 text-white rounded select-none relative py-2 pl-3 pr-9 bg-background-60 hover:text-accent-100 cursor-pointer ${
-                                    value && value.id === assignee.id
+                                    value && value._id === reviewer._id
                                         ? 'bg-background-90 text-accent-100'
                                         : 'text-gray-900'
                                 }`}
-                                onClick={() => handleSelect(assignee)}
+                                onClick={() => handleSelect(reviewer)}
                             >
                                 <div className="flex items-center">
                                     <div className="w-5 h-5 rounded-full bg-accent-100 text-background-60 flex items-center justify-center mr-3">
-                                        {assignee.name[0].toUpperCase()}
+                                        {reviewer.name[0].toUpperCase()}
                                     </div>
-                                    <span className="font-normal typography-large-p block truncate">{assignee.name}</span>
+                                    <span className="font-normal typography-large-p block truncate">{reviewer.name}</span>
                                 </div>
                             </li>
                         ))}

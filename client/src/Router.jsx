@@ -18,8 +18,14 @@ import Que from './pages/Admin/Que';
 import DesignReviewerDashboard from './pages/DesignReviewer/DesignReviewerDashboard.jsx';
 import ProtectedRoute from './routes/ProtectedRoute.jsx';
 import Reviews from './pages/DesignReviewer/Reviews.jsx';
+import CandidateViewJob from './pages/Candidate/CandidateViewJob.jsx';
+import HomePage from './pages/Candidate/HomePage.jsx';
 
 export const router = createBrowserRouter([
+   {
+    path: "/",
+    element: <HomePage />,
+  },
   {
     path: "/auth",
     element: <Authlayout />,

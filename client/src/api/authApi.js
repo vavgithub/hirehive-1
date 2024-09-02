@@ -20,3 +20,8 @@ export const getProfile = async () => {
     const response = await axios.get(`${API_URL}/profile`, { withCredentials: true });
     return response.data;
 };
+
+export const fetchAvailableDesignReviewers = async () => {
+    const response = await axios.get(`${API_URL}/design-reviewers`, { withCredentials: true });
+    return response.data.data;
+  };

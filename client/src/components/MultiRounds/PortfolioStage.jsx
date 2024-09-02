@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { Button } from '../ui/Button';
 import InputPopUpModalAutoSelect from '../InputPopUpModalAutoSelect';
-import axios from 'axios';
 import Label from '../ui/Label';
 import StatusBadge from '../ui/StatusBadge';
 import AssigneeSelector from '../utility/AssigneeSelector';
 import PortfolioIcon from '../../svg/PortfolioIcon';
 import WarningIcon from '../../svg/Staging/WarningIcon';
 import InputPopUpModal from '../InputPopUpModal';
+import axios from '../../api/axios';
 
 const getStageOptions = (stage) => {
     switch (stage) {
@@ -34,8 +34,8 @@ const PortfolioStage = ({ candidateData: initialCandidateData, assignee, onAssig
     const [candidateData, setCandidateData] = useState(initialCandidateData);
 
     const [selectedAssignee, setSelectedAssignee] = useState(
-        candidateData.stageStatus.Portfolio.assignee
-            ? { name: candidateData.stageStatus.Portfolio.assignee }
+        candidateData.stageStatus.Portfolio.assignedTo
+            ? allAssignees.find(assignee => assignee._id === candidateData.stageStatus.Portfolio.assignedTo)
             : null
     );
 
@@ -98,44 +98,41 @@ const PortfolioStage = ({ candidateData: initialCandidateData, assignee, onAssig
 
     const handleAssigneeUpdate = async (newAssignees) => {
         try {
-            const assigneeNames = newAssignees.map(assignee => assignee.name || assignee);
-
-            const response = await axios.patch(`http://localhost:8008/api/v1/candidates/update/${candidateData._id}`, {
-                stageStatus: {
-                    ...candidateData.stageStatus,
-                    Portfolio: {
-                        ...candidateData.stageStatus.Portfolio,
-                        assignee: assigneeNames.length === 1 ? assigneeNames[0] : assigneeNames,
-                        status:"Under Review"
-                    }
-                }
+            if (newAssignees.length === 0) {
+                alert('Please select at least one assignee.');
+                return;
+            }
+    
+            const assigneeId = newAssignees[0]._id; // Assuming the assignee object has an _id field
+    
+            const response = await axios.post('/candidates/assign', {
+                candidateId: candidateData._id,
+                assigneeId: assigneeId,
+                stage: 'Portfolio' // Specify the stage
             });
-
-            if (response.status === 200) {
+    
+            if (response.data.success) {
+                const updatedCandidate = response.data.data;
                 setCandidateData(prevData => ({
                     ...prevData,
                     stageStatus: {
                         ...prevData.stageStatus,
                         Portfolio: {
                             ...prevData.stageStatus.Portfolio,
-                            assignee: assigneeNames.length === 1 ? assigneeNames[0] : assigneeNames,
-                            status:"Under Review"
+                            assignedTo: assigneeId,
+                            status: "Under Review"
                         }
                     }
                 }));
-
-                // Update selectedAssignee only if newAssignees is not empty
-                if (newAssignees.length > 0) {
-                    setSelectedAssignee(newAssignees[0]);
-                } else {
-                    setSelectedAssignee(null);
-                }
-
-                console.log('Assignee(s) updated successfully');
+    
+                setSelectedAssignee(newAssignees[0]);
+                console.log('Assignee updated successfully');
+            } else {
+                throw new Error(response.data.message || 'Failed to update assignee');
             }
         } catch (error) {
-            console.error('Error updating assignee(s):', error);
-            alert('Failed to update assignee(s). Please try again.');
+            console.error('Error updating assignee:', error);
+            alert('Failed to update assignee. Please try again.');
         }
     };
 
@@ -335,7 +332,7 @@ const PortfolioStage = ({ candidateData: initialCandidateData, assignee, onAssig
 
                         <AssigneeSelector
                             mode="icon"
-                            value={selectedAssignee}
+                            value={candidateData.stageStatus.Portfolio.assignedTo}
                             onChange={(newAssignee) => handleAssigneeUpdate([newAssignee])}
                             onSelect={(newAssignee) => handleAssigneeUpdate([newAssignee])}
                         />
