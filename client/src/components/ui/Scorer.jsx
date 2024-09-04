@@ -9,13 +9,13 @@ const Scorer = ({ onScoreChange }) => {
     };
 
     return (
-        <div className="flex flex-col items-center">
+        <div className="flex ">
             <div className="flex space-x-2">
                 {[1, 2, 3, 4, 5].map((value) => (
                     <div
                         key={value}
                         className={`w-11 h-11 rounded-xl flex items-center justify-center typography-body 
-                          ${score >= value ? 'bg-background-green' : 'bg-background-70 hover:bg-background-green'}`}
+                          ${score == value ? 'bg-background-green' : 'bg-background-70 hover:bg-background-green'}`}
                         onClick={() => handleScoreClick(value)}
                     >
                         {value}

@@ -7,7 +7,8 @@ import ArrowIcon from '../../svg/ArrowIcon';
 import WarningIcon from '../../svg/Staging/WarningIcon';
 import DatePicker from '../utility/Datepicker';
 import TimePicker from '../utility/Timepicker';
-import axios from 'axios';
+
+import axios from '../../api/axios';
 import AssigneeSelector from '../utility/AssigneeSelector';
 import ClockIcon from '../../svg/Staging/ClockIcon';
 import CalenderIcon from '../../svg/Staging/CalenderIcon';
@@ -53,44 +54,44 @@ const formatTime = (dateString) => {
 
 const ScreeningStage = ({ candidateData: initialCandidateData, onStatusUpdate, onReject, onNext }) => {
     const [candidateData, setCandidateData] = useState(initialCandidateData);
-    
+
     const [selectedAssignee, setSelectedAssignee] = useState(
         candidateData.stageStatus.Screening.assignee
-        ? { name: candidateData.stageStatus.Screening.assignee }
+            ? { name: candidateData.stageStatus.Screening.assignee }
             : null
-        );
-        const [selectedDate, setSelectedDate] = useState(null);
-        const [selectedTime, setSelectedTime] = useState(null);
-        const [meetLink, setMeetLink] = useState(null);
-        
-        const [isRescheduling, setIsRescheduling] = useState(false);
-        
-        const [budgetScore, setBudgetScore] = useState(null);
-        const [totalScore, setTotalScore] = useState(0);
-        
-        const [rejectValue, setRejectValue] = useState("");
+    );
+    const [selectedDate, setSelectedDate] = useState(null);
+    const [selectedTime, setSelectedTime] = useState(null);
+    const [meetLink, setMeetLink] = useState(null);
+
+    const [isRescheduling, setIsRescheduling] = useState(false);
+
+    const [budgetScore, setBudgetScore] = useState(null);
+    const [totalScore, setTotalScore] = useState(0);
+
+    const [rejectValue, setRejectValue] = useState("");
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const handleReschedule = () => {
         setIsRescheduling(true);
     };
-    
+
     const handleCancelReschedule = () => {
         setIsRescheduling(false);
         setSelectedDate(null);
         setSelectedTime(null);
         setMeetLink(null);
     };
-    
+
     const handleConfirmReject = () => {
         onReject(rejectValue);
         setIsModalOpen(false);
     };
-    
+
     useEffect(() => {
         setCandidateData(initialCandidateData);
     }, [initialCandidateData]);
-    
+
     const fields = [
         {
             type: 'select',
@@ -102,7 +103,7 @@ const ScreeningStage = ({ candidateData: initialCandidateData, onStatusUpdate, o
                 { value: 'Candidates scores did not meet the criteria', label: 'Candidates scores did not meet the criteria' },
                 { value: 'Candidate did not appear for the screening', label: 'Candidate did not appear for the screening' },
                 { value: 'Candidate did not appear for round one', label: 'Candidate did not appear for round one' },
-                { value: 'Candidate did not appear for round two', label: 'Candidate did not appear for round two'},
+                { value: 'Candidate did not appear for round two', label: 'Candidate did not appear for round two' },
                 { value: 'Candidate did not submit the design task', label: 'Candidate did not submit the design task' },
             ],
         }
@@ -111,54 +112,54 @@ const ScreeningStage = ({ candidateData: initialCandidateData, onStatusUpdate, o
     const [isCallPassed, setIsCallPassed] = useState(false);
 
 
-   const checkCallTime = useCallback(() => {
-    if (candidateData.stageStatus.Screening.status === 'Call Scheduled') {
-        const currentCall = candidateData.stageStatus.Screening.currentCall;
-        
-        if (!currentCall.scheduledDate || !currentCall.scheduledTime) {
-            console.error('Invalid scheduledDate or scheduledTime');
-            return false;
-        }
-        
-        try {
-            // Extract the date portion from scheduledDate
-            const scheduledDate = currentCall.scheduledDate.split('T')[0];
+    const checkCallTime = useCallback(() => {
+        if (candidateData.stageStatus.Screening.status === 'Call Scheduled') {
+            const currentCall = candidateData.stageStatus.Screening.currentCall;
 
-            // Extract the time portion from scheduledTime, ensuring it's in the correct format
-            const scheduledTime = currentCall.scheduledTime.split('T')[1];
-
-            // Combine date and time into a single UTC datetime string
-            const combinedDateTimeString = `${scheduledDate}T${scheduledTime}`;
-            const combinedDateTimeUTC = new Date(combinedDateTimeString);
-
-            // Check if the combinedDateTimeUTC is a valid date
-            if (isNaN(combinedDateTimeUTC)) {
-                console.error('Invalid combined datetime');
+            if (!currentCall.scheduledDate || !currentCall.scheduledTime) {
+                console.error('Invalid scheduledDate or scheduledTime');
                 return false;
             }
 
-            // Convert to local time (IST)
-            const callDateTimeLocal = new Date(combinedDateTimeUTC.getTime() + (5.5 * 60 * 60 * 1000));
+            try {
+                // Extract the date portion from scheduledDate
+                const scheduledDate = currentCall.scheduledDate.split('T')[0];
 
-            // Get current time in UTC and convert to local time (IST)
-            const nowUTC = new Date();
-            const nowLocal = new Date(nowUTC.getTime() + (5.5 * 60 * 60 * 1000));
-            const hasCallPassed = nowLocal > callDateTimeLocal;
+                // Extract the time portion from scheduledTime, ensuring it's in the correct format
+                const scheduledTime = currentCall.scheduledTime.split('T')[1];
 
-            console.log('Current time in IST:', nowLocal.toISOString());
-            console.log('Scheduled call time in IST:', callDateTimeLocal.toISOString());
-            console.log('Has call passed:', hasCallPassed);
+                // Combine date and time into a single UTC datetime string
+                const combinedDateTimeString = `${scheduledDate}T${scheduledTime}`;
+                const combinedDateTimeUTC = new Date(combinedDateTimeString);
 
-            setIsCallPassed(hasCallPassed);
-            return hasCallPassed;
-        } catch (error) {
-            console.error('Error parsing date or time:', error);
-            setIsCallPassed(false);
-            return false;
+                // Check if the combinedDateTimeUTC is a valid date
+                if (isNaN(combinedDateTimeUTC)) {
+                    console.error('Invalid combined datetime');
+                    return false;
+                }
+
+                // Convert to local time (IST)
+                const callDateTimeLocal = new Date(combinedDateTimeUTC.getTime() + (5.5 * 60 * 60 * 1000));
+
+                // Get current time in UTC and convert to local time (IST)
+                const nowUTC = new Date();
+                const nowLocal = new Date(nowUTC.getTime() + (5.5 * 60 * 60 * 1000));
+                const hasCallPassed = nowLocal > callDateTimeLocal;
+
+                console.log('Current time in IST:', nowLocal.toISOString());
+                console.log('Scheduled call time in IST:', callDateTimeLocal.toISOString());
+                console.log('Has call passed:', hasCallPassed);
+
+                setIsCallPassed(hasCallPassed);
+                return hasCallPassed;
+            } catch (error) {
+                console.error('Error parsing date or time:', error);
+                setIsCallPassed(false);
+                return false;
+            }
         }
-    }
-    return false;
-}, [candidateData]);
+        return false;
+    }, [candidateData]);
 
 
     useEffect(() => {
@@ -253,31 +254,71 @@ const ScreeningStage = ({ candidateData: initialCandidateData, onStatusUpdate, o
 
     const isUpdateDisabled = !selectedDate || !selectedTime || !selectedAssignee || !meetLink;
 
-    const handleAssigneeUpdate = async (newAssignee) => {
+    // const handleAssigneeUpdate = async (newAssignee) => {
+    //     try {
+    //         const response = await axios.patch(`http://localhost:8008/api/v1/candidates/update/${candidateData._id}`, {
+    //             stageStatus: {
+    //                 ...candidateData.stageStatus,
+    //                 Screening: {
+    //                     ...candidateData.stageStatus.Screening,
+    //                     assignee: newAssignee ? newAssignee.name : null
+    //                 }
+    //             }
+    //         });
+
+    //         if (response.status === 200) {
+    //             setCandidateData(prevData => ({
+    //                 ...prevData,
+    //                 stageStatus: {
+    //                     ...prevData.stageStatus,
+    //                     Screening: {
+    //                         ...prevData.stageStatus.Screening,
+    //                         assignee: newAssignee ? newAssignee.name : null
+    //                     }
+    //                 }
+    //             }));
+    //             setSelectedAssignee(newAssignee);
+    //             console.log('Assignee updated successfully');
+    //         }
+    //     } catch (error) {
+    //         console.error('Error updating assignee:', error);
+    //         alert('Failed to update assignee. Please try again.');
+    //     }
+    // };
+
+    const handleAssigneeUpdate = async (newAssignees) => {
         try {
-            const response = await axios.patch(`http://localhost:8008/api/v1/candidates/update/${candidateData._id}`, {
-                stageStatus: {
-                    ...candidateData.stageStatus,
-                    Screening: {
-                        ...candidateData.stageStatus.Screening,
-                        assignee: newAssignee ? newAssignee.name : null
-                    }
-                }
+            if (newAssignees.length === 0) {
+                alert('Please select at least one assignee.');
+                return;
+            }
+
+            const assigneeId = newAssignees[0]._id; // Assuming the assignee object has an _id field
+
+            const response = await axios.post('/candidates/assign', {
+                candidateId: candidateData._id,
+                assigneeId: assigneeId,
+                stage: 'Screening' // Specify the stage
             });
 
-            if (response.status === 200) {
+            if (response.data.success) {
+                const updatedCandidate = response.data.data;
                 setCandidateData(prevData => ({
                     ...prevData,
                     stageStatus: {
                         ...prevData.stageStatus,
                         Screening: {
                             ...prevData.stageStatus.Screening,
-                            assignee: newAssignee ? newAssignee.name : null
+                            assignedTo: assigneeId,
+                            status: "Under Review"
                         }
                     }
                 }));
-                setSelectedAssignee(newAssignee);
+
+                setSelectedAssignee(newAssignees[0]);
                 console.log('Assignee updated successfully');
+            } else {
+                throw new Error(response.data.message || 'Failed to update assignee');
             }
         } catch (error) {
             console.error('Error updating assignee:', error);
@@ -328,7 +369,7 @@ const ScreeningStage = ({ candidateData: initialCandidateData, onStatusUpdate, o
         }
     };
 
-    const handleConfirmForReject = async () =>{
+    const handleConfirmForReject = async () => {
         return "heyyyyyyyyyy";
     }
 
@@ -413,9 +454,11 @@ const ScreeningStage = ({ candidateData: initialCandidateData, onStatusUpdate, o
     };
 
 
+
+
     const renderStatusLabel = () => {
         // const { status, scheduledDate, scheduledTime, meetingLink } = candidateData.stageStatus.Screening;
-        const { status, currentCall, callHistory, score , rejectionReason } = candidateData.stageStatus.Screening;
+        const { status, currentCall, callHistory, score, rejectionReason } = candidateData.stageStatus.Screening;
         const hasScore = Object.values(score.totalScore).some(value => value !== null);
         const categories = [
             { label: 'Attitude', value: score.totalScore.Attitude },
@@ -447,11 +490,12 @@ const ScreeningStage = ({ candidateData: initialCandidateData, onStatusUpdate, o
                             </div>
                             <div className=' flex flex-col'>
                                 <span>Reviewer</span>
+
                                 <AssigneeSelector
-                                    mode="input"
-                                    value={selectedAssignee}
-                                    onChange={handleAssigneeSelect}
-                                    onSelect={handleAssigneeSelect}
+                                    mode="icon"
+                                    value={candidateData.stageStatus.Screening.assignedTo}
+                                    onChange={(newAssignee) => handleAssigneeUpdate([newAssignee])}
+                                    onSelect={(newAssignee) => handleAssigneeUpdate([newAssignee])}
                                 />
                             </div>
 
@@ -644,64 +688,64 @@ const ScreeningStage = ({ candidateData: initialCandidateData, onStatusUpdate, o
             case 'Cleared':
                 return (
                     <>
-                    <div className='w-full '>
-                        <p className='typography-small-p text-font-gray'>Remarks</p>
-                        <p className='typography-body pb-8'>{score.remark}</p>
-                        <div className='flex justify-between gap-4'>
-                            <div className='w-full'>
-                                <p className='typography-small-p text-font-gray'>Score</p>
-                                <div className='grid grid-cols-3 grid-rows-2 rounded-xl gap-x-14 gap-y-4 p-4 bg-background-80 w-full'>
-                                    {categories.map((category, index) => (
-                                        <div key={index} className='flex items-center justify-between'>
-                                            <span className='typography-small-p text-font-gray'>{category.label}</span>
-                                            <BulletMarks marks={category.value} />
-                                        </div>
-                                    ))}
-                                    {score.totalScore.Budget !== null && (
-                                        <div className='flex items-center justify-between'>
-                                            <span className='typography-small-p text-font-gray'>Budget</span>
-                                            <BulletMarks marks={score.totalScore.Budget} />
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                            <div>
-                                <div>
-                                    <p className='typography-small-p text-font-gray block'>Total Score:</p>
-                                    <div className='flex '>
-                                        <p className='display-d2 font-bold'>{totalScore}</p>
-                                        <p className='typography-small-p text-font-gray pt-6 ml-2 w-[70px] '>Out Of 30</p>
+                        <div className='w-full '>
+                            <p className='typography-small-p text-font-gray'>Remarks</p>
+                            <p className='typography-body pb-8'>{score.remark}</p>
+                            <div className='flex justify-between gap-4'>
+                                <div className='w-full'>
+                                    <p className='typography-small-p text-font-gray'>Score</p>
+                                    <div className='grid grid-cols-3 grid-rows-2 rounded-xl gap-x-14 gap-y-4 p-4 bg-background-80 w-full'>
+                                        {categories.map((category, index) => (
+                                            <div key={index} className='flex items-center justify-between'>
+                                                <span className='typography-small-p text-font-gray'>{category.label}</span>
+                                                <BulletMarks marks={category.value} />
+                                            </div>
+                                        ))}
+                                        {score.totalScore.Budget !== null && (
+                                            <div className='flex items-center justify-between'>
+                                                <span className='typography-small-p text-font-gray'>Budget</span>
+                                                <BulletMarks marks={score.totalScore.Budget} />
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
-                            </div>
+                                <div>
+                                    <div>
+                                        <p className='typography-small-p text-font-gray block'>Total Score:</p>
+                                        <div className='flex '>
+                                            <p className='display-d2 font-bold'>{totalScore}</p>
+                                            <p className='typography-small-p text-font-gray pt-6 ml-2 w-[70px] '>Out Of 30</p>
+                                        </div>
+                                    </div>
+                                </div>
 
+                            </div>
                         </div>
-                    </div>
-                </>
+                    </>
                 );
             case 'No Show':
                 return <Label icon={<WarningIcon />} text="Candidate did not show up for the call" />;
             case 'Rejected':
                 return (
                     <>
-                    <div className='w-full '>
-                        <div className='flex justify-between gap-4'>
-                            <div className='w-full'>
-                                <p className='typography-small-p text-font-gray'>Reason for rejection</p>
-                                <p className='typography-body'>{rejectionReason}</p>
-                            </div>
-                            <div>
+                        <div className='w-full '>
+                            <div className='flex justify-between gap-4'>
+                                <div className='w-full'>
+                                    <p className='typography-small-p text-font-gray'>Reason for rejection</p>
+                                    <p className='typography-body'>{rejectionReason}</p>
+                                </div>
                                 <div>
-                                    <p className='typography-small-p text-font-gray block'>Total Score:</p>
-                                    <div className='flex '>
-                                        <p className='display-d2 font-bold'>{totalScore}</p>
-                                        <p className='typography-small-p text-font-gray pt-6 ml-2 w-[70px] '>Out Of 30</p>
+                                    <div>
+                                        <p className='typography-small-p text-font-gray block'>Total Score:</p>
+                                        <div className='flex '>
+                                            <p className='display-d2 font-bold'>{totalScore}</p>
+                                            <p className='typography-small-p text-font-gray pt-6 ml-2 w-[70px] '>Out Of 30</p>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
 
+                            </div>
                         </div>
-                    </div>
                     </>
                 );
             default:
@@ -757,14 +801,14 @@ const ScreeningStage = ({ candidateData: initialCandidateData, onStatusUpdate, o
                     <>
                         {commonFooterContent}
                         <div className='w-[160px]'>
-                        <Button
-                            variant="primary"
-                            disabled={!selectedDate || !selectedTime || !selectedAssignee || !meetLink}
-                            onClick={handleUpdate}
+                            <Button
+                                variant="primary"
+                                disabled={!selectedDate || !selectedTime || !selectedAssignee || !meetLink}
+                                onClick={handleUpdate}
                             >
-                            Update
-                        </Button>
-                            </div>
+                                Update
+                            </Button>
+                        </div>
                     </>
                 );
             case 'Under Review':
@@ -775,7 +819,7 @@ const ScreeningStage = ({ candidateData: initialCandidateData, onStatusUpdate, o
                             variant="icon"
                             disabled={budgetScore === null}
                             onClick={handleBudgetScoreUpdate}
-                        >                            
+                        >
                         </Button>
                     </>
                 );
@@ -835,9 +879,9 @@ const ScreeningStage = ({ candidateData: initialCandidateData, onStatusUpdate, o
 
             {/* this is the third laye the footer */}
             <div className='flex justify-between rounded-xl bg-background-90 p-6'>
-            {renderFooter()}
+                {renderFooter()}
 
-                
+
             </div>
             <InputPopUpModal
                 open={isModalOpen}

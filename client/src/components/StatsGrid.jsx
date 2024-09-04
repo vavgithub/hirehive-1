@@ -11,7 +11,7 @@ const StatCard = ({ title, value , icon:Icon }) => (
 );
 
 const StatsGrid = ({ stats }) => (
-    <div className="m-4 flex  gap-4 overflow-x-auto scrollbar-hide">
+    <div className="flex  gap-4 overflow-x-auto scrollbar-hide">
         {stats.map((stat, index) => (
             <StatCard key={index} title={stat.title} value={stat.value} icon={stat.icon} />
         ))}
