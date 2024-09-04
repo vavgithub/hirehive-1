@@ -8,7 +8,7 @@ export default {
       backgroundImage: {
         "card-pattern": "url('/src/svg/StatsCard/stats-bg.png')",
         "main-bg":"url('/src/svg/Background/rate.png')",
-        "stars":"url('/src/svg/Background/Stars.png')",
+        "stars":"url('/src/svg/Background/Stars.svg')",
         "que-bg":"url('/src/svg/Background/Que.svg')",      
         "login-screen":"url('/src/svg/Background/loginScreenBg.svg')",  
         "sundar-kanya":"url('/src/svg/Background/sundar-kanya.png')",  

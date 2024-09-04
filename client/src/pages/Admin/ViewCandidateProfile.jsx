@@ -17,6 +17,11 @@ import { useQuery } from '@tanstack/react-query';
 import { ACTION_TYPES } from '../../utility/ActionTypes';
 import CandidateTabDetail from '../../components/ui/CandidateTabDetail';
 import useAuth from '../../hooks/useAuth';
+import Stars from "../../svg/Background/Stars.svg"
+import { ApplicationIcon, ApplicationIconActive } from '../../svg/Tabs/ApplicationIcon';
+import { CandidateDetailsIcon, CandidateDetailsIconActive } from '../../svg/Tabs/CandidateDetailsIcon';
+import WebsiteMainIcon from '../../svg/WebsiteMainIcon';
+import FileMainIcon from '../../svg/FileMainIcon';
 
 // This function would typically be defined in your page component
 
@@ -98,10 +103,15 @@ const ViewCandidateProfile = () => {
         setActiveTab(tab);
     };
 
-
     const tabs = [
-        { name: 'application', label: 'Application' },
-        { name: 'candidateDetails', label: 'Candidate Details' }
+        {
+            name: 'application', label: 'Application', icon: <ApplicationIcon />,
+            activeIcon: <ApplicationIconActive />,
+        },
+        {
+            name: 'candidateDetails', label: 'CandidateDetails', icon: <CandidateDetailsIcon/>,
+            activeIcon: <CandidateDetailsIconActive />,
+        },
     ];
     const { id: mainId } = useParams();
     console.log(mainId);
@@ -110,7 +120,6 @@ const ViewCandidateProfile = () => {
         queryKey: ['candidate', mainId],
         queryFn: () => fetchCandidateData(mainId),
     });
-
 
     if (isLoading) {
         return <div>Loading...</div>;
@@ -144,39 +153,47 @@ const ViewCandidateProfile = () => {
                 handleAction={handleAction}
             />
             <div className='flex gap-3'>
-                <div className='bg-background-90 w-full p-4 rounded-xl' >
-                    <h1 className='typography-h1 '> {data.firstName}  {data.lastName}</h1>
-                    <div className='flex items-center gap-2'>
-                        <span className='typography-small-p '>{data.jobApplied}</span>
-                        {
-                            <svg xmlns="http://www.w3.org/2000/svg" width="4" height="4" viewBox="0 0 4 4" fill="none">
-                                <circle cx="2" cy="2" r="2" fill="#808389" />
-                            </svg>
-                        }
-                        <span className='typography-small-p '>{data.location}</span>
+                <div className='bg-background-90 w-full p-4 rounded-xl flex' >
+                    <div className='to-background-100'>
+                        <img src="" alt="" />
                     </div>
+                    <div>
+                        <h1 className='typography-h2'> {data.firstName}  {data.lastName}</h1>
+                        <div className='flex items-center gap-2 mb-3 mt-2'>
+                            <span className='typography-small-p text-gray-500'>{data.jobApplied}</span>
+                            {
+                                <svg xmlns="http://www.w3.org/2000/svg" width="4" height="4" viewBox="0 0 4 4" fill="none">
+                                    <circle cx="2" cy="2" r="2" fill="#808389" />
+                                </svg>
+                            }
+                            <span className='typography-small-p text-gray-500'>{data.location}</span>
+                        </div>
 
-                    <div className='flex'>
-                        <div className='flex'>
-                            <PhoneIcon />
-                            <span className='typography-large-p '>{data.phone}</span>
+                        <div className='flex mb-3 gap-5'>
+                            <div className='flex items-center gap-2'>
+                                <PhoneIcon />
+                                <span className='typography-large-p '>{data.phone}</span>
+                            </div>
+                            <div className='flex items-center gap-2'>
+                                <EmailIcon />
+                                <span className='typography-large-p '>{data.email}</span>
+                            </div>
                         </div>
-                        <div className='flex'>
-                            <EmailIcon />
-                            <span className='typography-large-p '>{data.email}</span>
+                        <div className='flex gap-2 items-center'>
+                            <ResumeIcon />
+                            <FileMainIcon />
+                            <WebsiteMainIcon />
+                            <AssignmentIcon />
                         </div>
+                        <p>{data.location}</p>
+                        <p>{data.experience}</p>
+                        <p>{data.skills}</p>
                     </div>
-                    <div className='flex gap-2'>
-                        <ResumeIcon />
-                        <AssignmentIcon />
-                    </div>
-                    <p>{data.location}</p>
-                    <p>{data.experience}</p>
-                    <p>{data.skills}</p>
                 </div>
-                <div className=' flex justify-center bg-stars bg-cover typography-h3 w-[430px]'>
-                    <div className='bg-red-100'></div>
+                <div className='flex flex-col items-center justify-between bg-background-90 typography-h3 w-[430px] p-5 rounded-xl'>
+                    <div className='bg-red-100 absolute'></div>
                     VAV Score
+                    <img src={Stars} alt="" />
                 </div>
 
             </div>

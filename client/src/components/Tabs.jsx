@@ -6,7 +6,7 @@ const Tabs = ({ tabs, activeTab, handleTabClick }) => {
             {tabs.map((tab) => (
                 <div
                     key={tab.name}
-                    className="relative cursor-pointer flex flex-col items-center w-36 p-2 "
+                    className="relative cursor-pointer flex flex-col items-center w-full p-2 "
                     onClick={() => handleTabClick(tab.name)}
                 >
                     <span

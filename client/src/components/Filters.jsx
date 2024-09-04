@@ -145,7 +145,7 @@ const Filters = ({ filters = {}, statistics, handleCheckboxChange, activeTab, ha
     return (
         <div className='w-[304px]'>
 
-            <div className="bg-background-90 p-4 rounded-md">
+            <div className="bg-background-90 p-4 rounded-xl">
                 <div className='flex flex-row-reverse'>
                     <button
                         onClick={handleClearAll}

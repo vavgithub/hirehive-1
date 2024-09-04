@@ -129,39 +129,43 @@ const FilterForDataTable = ({ onApplyFilters }) => {
         <div  className='cursor-pointer gap-2 text-font-gray flex typography-body' onClick={(e) => toggleMenu(e)}>
          <Filter/> Filter
         </div>
-        {isOpen && (
-          <div className='absolute z-10 mt-2 w-[156px] max-w-64 bg-background-70 p-4 rounded'>
-            {Object.keys(categories).map((category) => (
-              <div key={category} className="mb-4">
-                <div className="flex justify-between items-center cursor-pointer" onClick={() => handleDropdown(category)}>
-                  <span>{category.charAt(0).toUpperCase() + category.slice(1)}: {selectedFilters[category] || 'All'}</span>
-                  <span>{showDropdown[category] ? '>' : '>'}</span>
+        {/* <button className="bg-black text-white px-4 py-3  rounded">Filters</button> */}
+        {
+          isOpen && (
+            <div className='absolute z-10 mt-2 w-[156px] max-w-64 bg-background-40 px-6 py-4 rounded-xl flex flex-col gap-4 shadow-[2px_4px_30px_rgba(0,0,0,0.3)]'>
+              {Object.keys(categories).map((category) => (
+                <div key={category} className="">
+                  <div className="flex justify-between items-center cursor-pointer" onClick={() => handleDropdown(category)}>
+                    <span>{category.charAt(0).toUpperCase() + category.slice(1)}: {selectedFilters[category] || 'All'}</span>
+                    <span>{showDropdown[category] ? '>' : '>'}</span>
+                  </div>
+                  {showDropdown[category] && (
+                    category === 'experience' ? (
+                      <ExperienceFilter onApply={handleExperienceApply} />
+                    ) : (
+                      <div className="px-6 py-4 rounded-xl absolute left-44 bg-background-40 w-max flex flex-col gap-4 shadow-[2px_4px_30px_rgba(0,0,0,0.3)]">
+                        {categories[category].map((item) => (
+                          <label key={item} className="flex items-center text-white">
+                            <input
+                              type="checkbox"
+                              checked={selectedFilters[category].includes(item)}
+                              onChange={() => category === 'stage' ? handleStageSelect(item) : handleSelect(category, item)}
+                              className="mr-2"
+                            />
+                            {item}
+                          </label>
+                        ))}
+                      </div>
+                    )
+                  )}
                 </div>
-                {showDropdown[category] && (
-                  category === 'experience' ? (
-                    <ExperienceFilter onApply={handleExperienceApply} />
-                  ) : (
-                    <div className="p-2 rounded absolute left-44 bg-background-70 w-max">
-                      {categories[category].map((item) => (
-                        <label key={item} className="flex items-center text-white mb-2">
-                          <input
-                            type="checkbox"
-                            checked={selectedFilters[category].includes(item)}
-                            onChange={() => category === 'stage' ? handleStageSelect(item) : handleSelect(category, item)}
-                            className="mr-2"
-                          />
-                          {item}
-                        </label>
-                      ))}
-                    </div>
-                  )
-                )}
-              </div>
-            ))}
-          </div>
-        )}
+              ))}
+            </div>
+          )
+        }
       </div>
     );
   };
   
-export default FilterForDataTable;
+
+export default FilterForDataTable

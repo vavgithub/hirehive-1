@@ -180,7 +180,7 @@ const Staging = ({ currentStage, candidateData: initialCandidateData }) => {
 
   return (
     <div>
-      <div className='flex justify-around '>
+      <div className='flex justify-around my-5 '>
         {stages.map((stage, index) => {
           const isAccessible = isStageAccessible(stage);
           const stageKey = stage.replace(/\s+/g, '');
@@ -201,13 +201,13 @@ const Staging = ({ currentStage, candidateData: initialCandidateData }) => {
               }`}
               onClick={() => handleStageClick(stage)}
             >
-              <div className='flex flex-col items-center'>
+              <div className='flex flex-col items-center gap-2 grey-500'>
                 {isCleared ? (
                   <GreenTickIcon />
                 ) : isRejected ? (
                   <RejectTickIcon />
                 ) : (
-                  <div className="typography-small-p flex items-center justify-center w-6 h-6 border-2 border-gray-300 rounded-full">
+                  <div className="typography-small-p flex items-center justify-center w-6 h-6 border-2 border-gray-500 rounded-full">
                     {index + 1}
                   </div>
                 )}

@@ -1,9 +1,9 @@
 import React from 'react';
 
 const Card = ({ title, children, gridLayout = false , extraClass }) => (
-    <div className={`bg-background-30 p-4 rounded-lg mb-4 ${extraClass}`} >
-      <h2 className="typography-h3">{title}</h2>
-      <div className={gridLayout ? "grid grid-cols-2 gap-4" : ""}>{children}</div>
+    <div className={`bg-background-30 p-4 rounded-xl mb-4 ${extraClass}`} >
+      <h2 className="typography-h3 mb-5">{title}</h2>
+      <div className={gridLayout ? "grid grid-cols-2 gap-3" : ""}>{children}</div>
     </div>
   );
 
@@ -47,7 +47,7 @@ const CandidateTabDetail = ({ data }) => {
       <Card title="Skill Set">
         <div className="flex flex-wrap gap-2">
           {data.skillSet.map((skill, index) => (
-            <span key={index} className="bg-background-70 rounded-xl typography-body px-2 py-1">
+            <span key={index} className="bg-background-70 rounded-xl typography-body py-1 px-3">
               {skill}
             </span>
           ))}
