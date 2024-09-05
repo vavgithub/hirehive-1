@@ -3,7 +3,7 @@ import { Button } from './ui/Button';
 import CutButton from '../svg/MiniFormButtons/CutButton';
 import DeleteButton from '../svg/MiniFormButtons/DeleteButton';
 
-const MultipleChoiceQuestion = ({ question, onUpdate, onDelete, onCopy, initialEditMode = false, onValidityChange }) => {
+const MultipleChoiceQuestion = ({ question, onUpdate, onDelete, onCopy, initialEditMode = false, onValidityChange , questionNumber}) => {
   const [isEditing, setIsEditing] = useState(initialEditMode);
   const [localQuestion, setLocalQuestion] = useState(question.text);
   const [localOptions, setLocalOptions] = useState(question.options);
@@ -62,7 +62,10 @@ const MultipleChoiceQuestion = ({ question, onUpdate, onDelete, onCopy, initialE
         className="bg-background-30 w-full rounded-xl mb-4 p-4 cursor-pointer hover:bg-background-40 transition-colors"
         onClick={handleEnterEditMode}
       >
-        <h3 className="font-bold mb-2">{question.text}</h3>
+        <h3 className="font-bold mb-2">
+          <span className="mr-2">Q{questionNumber}.</span>
+          {question.text}
+        </h3>
         {question.options.map((option, index) => (
           <div key={index} className="mb-2 flex items-center">
             <input type="radio" id={`option-${question.id}-${index}`} name={`question-${question.id}`} disabled />
@@ -78,13 +81,16 @@ const MultipleChoiceQuestion = ({ question, onUpdate, onDelete, onCopy, initialE
 
   return (
     <div className="bg-background-30 p-4 w-full rounded-xl mb-4">
-      <input
-        type="text"
-        value={localQuestion}
-        onChange={(e) => setLocalQuestion(e.target.value)}
-        placeholder="Question"
-        className="w-full mb-2 p-2 bg-background-40 rounded-xl"
-      />
+     <div className="flex items-center mb-2">
+        <span className="mr-2 font-bold">Q{questionNumber}.</span>
+        <input
+          type="text"
+          value={localQuestion}
+          onChange={(e) => setLocalQuestion(e.target.value)}
+          placeholder="Question"
+          className="flex-grow p-2 bg-background-40 rounded-xl"
+        />
+      </div>
       {localOptions.map((option, index) => (
         <div key={index} className="flex w-96 mb-2 items-center gap-2">
           <div className='w-4 h-4 border rounded-full'></div>
@@ -106,7 +112,7 @@ const MultipleChoiceQuestion = ({ question, onUpdate, onDelete, onCopy, initialE
           + Add Option
         </div>
       </div>
-      <div className="flex mt-2 items-center space-x-2">
+      <div className="flex justify-end mt-2 p-4 items-center bg-background-40 rounded-xl space-x-2">
         <div onClick={(e) => { e.stopPropagation(); onDelete(); }} className='bg-red-200 w-11 h-11 rounded-xl flex items-center justify-center cursor-pointer'>
           <DeleteButton />
         </div>

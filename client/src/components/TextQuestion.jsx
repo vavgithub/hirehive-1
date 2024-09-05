@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from './ui/Button';
 import DeleteButton from '../svg/MiniFormButtons/DeleteButton';
 
-const TextQuestion = ({ question, onUpdate, onDelete, onCopy, initialEditMode = false, onValidityChange }) => {
+const TextQuestion = ({ question, onUpdate, onDelete, onCopy, initialEditMode = false, onValidityChange ,  questionNumber }) => {
   const [isEditing, setIsEditing] = useState(initialEditMode);
   const [localQuestion, setLocalQuestion] = useState(question.text);
   const [localRequired, setLocalRequired] = useState(question.required);
@@ -47,7 +47,10 @@ const TextQuestion = ({ question, onUpdate, onDelete, onCopy, initialEditMode = 
         className="bg-background-30 w-full rounded-xl mb-4 p-4 cursor-pointer hover:bg-background-40 transition-colors"
         onClick={handleEnterEditMode}
       >
-        <h3 className="font-bold mb-2">{question.text}</h3>
+        <h3 className="font-bold mb-2">
+          <span className="mr-2">Q{questionNumber}.</span>
+          {question.text}
+        </h3>
         <p className="text-sm text-gray-600 mb-2">Answer type: {question.answerType || 'text'}</p>
         <div className="mt-2">
           {question.required && <span className="text-red-500 mr-2">*Required</span>}
@@ -56,15 +59,19 @@ const TextQuestion = ({ question, onUpdate, onDelete, onCopy, initialEditMode = 
     );
   }
 
+
   return (
     <div className="bg-background-30 p-4 w-full rounded-xl mb-4">
-      <input
-        type="text"
-        value={localQuestion}
-        onChange={(e) => setLocalQuestion(e.target.value)}
-        placeholder="Question"
-        className="w-full mb-2 p-2 bg-background-40 rounded-xl"
-      />
+       <div className="flex items-center mb-2">
+        <span className="mr-2 font-bold">Q{questionNumber}.</span>
+        <input
+          type="text"
+          value={localQuestion}
+          onChange={(e) => setLocalQuestion(e.target.value)}
+          placeholder="Question"
+          className="flex-grow p-2 bg-background-40 rounded-xl"
+        />
+      </div>
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700 mb-1">Answer Format</label>
         <select
@@ -76,7 +83,7 @@ const TextQuestion = ({ question, onUpdate, onDelete, onCopy, initialEditMode = 
           <option value="number">Number</option>
         </select>
       </div>
-      <div className="flex mt-2 items-center space-x-2">
+      <div className="flex mt-2 items-center bg-background-40 justify-end p-4 rounded-xl space-x-2">
         <div onClick={(e) => { e.stopPropagation(); onDelete(); }} className='bg-red-200 w-11 h-11 rounded-xl flex items-center justify-center cursor-pointer'>
           <DeleteButton />
         </div>

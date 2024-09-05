@@ -21,7 +21,8 @@ const Que = () => {
             type,
             text: '',
             options: type === 'multiple' ? [''] : [],
-            required: false
+            required: false,
+            answerType: type === 'text' ? 'text' : undefined,
         }
         setQuestions([...questions, newQuestion])
         setOpen(false)
@@ -76,6 +77,7 @@ const Que = () => {
                                     onCopy={() => copyQuestion(question)}
                                     initialEditMode={index === questions.length - 1}
                                     onValidityChange={index === questions.length - 1 ? handleQuestionValidityChange : undefined}
+                                    questionNumber={index + 1}
                                   />
                                 : <TextQuestion 
                                     key={question.id} 
@@ -85,6 +87,7 @@ const Que = () => {
                                     onCopy={() => copyQuestion(question)}
                                     initialEditMode={index === questions.length - 1}
                                     onValidityChange={index === questions.length - 1 ? handleQuestionValidityChange : undefined}
+                                    questionNumber={index + 1}
                                   />
                         ))
                     )}
