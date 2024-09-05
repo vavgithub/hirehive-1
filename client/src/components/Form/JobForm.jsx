@@ -43,7 +43,7 @@ const JobForm = ({
 
   return (
     <form onSubmit={handleSubmit}>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-6">
         <InputField
           id="jobTitle"
           label="Job Title"

@@ -257,12 +257,13 @@ const Dashboard = () => {
 
             </div>
 
-            <div className='bg-background-100 rounded-xl'>
+            <div className='bg-background-100 rounded-xl p-4'>
 
                 <div className='flex gap-3'>
                     <StatsGrid stats={JobsStats} />
                 </div>
-                <div className='flex mx-4'>
+
+                <div className='flex mt-4'>
                     <div>
                         <div>
                             <input

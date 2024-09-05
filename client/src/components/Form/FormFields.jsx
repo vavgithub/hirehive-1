@@ -2,13 +2,13 @@
 import React from "react";
 
 export const InputField = React.memo(({ id, label, value, onChange, required }) => (
-  <div className='space-y-1'>
+  <div className='space-y-1 flex flex-col gap-1'>
     <label className="typography-body">{label}*</label>
     <input
       id={id}
       type="text"
       placeholder={`Enter ${label.toLowerCase()}`}
-      className='w-full p-2  rounded'
+      className='w-full p-2  rounded-xl pl-4 mt-4'
       value={value}
       onChange={onChange}
       required={required}
@@ -17,13 +17,13 @@ export const InputField = React.memo(({ id, label, value, onChange, required }) 
 ));
 
 export const CustomDropdown = React.memo(({ field, label, options, value, onChange, isOpen, toggleDropdown, handleOptionClick }) => (
-  <div className="space-y-1">
+  <div className="space-y-1 flex flex-col gap-1">
     <label className="typography-body">{label}*</label>
     <div className="relative focus:outline focus:outline-teal-400">
       <button
         type="button"
         onClick={() => toggleDropdown(field)}
-        className="mt-1 h-[44px] bg-background-40 block text-font-gray w-full outline-none rounded-md shadow-sm focus:ring-teal-300 focus:border-teal-300 text-left px-4"
+        className="mt-1 h-[44px] bg-background-40 block text-font-gray w-full outline-none rounded-xl shadow-sm focus:ring-teal-300 focus:border-teal-300 text-left px-4"
       >
         {options.find(opt => opt.value === value)?.label || '-Select-'}
       </button>
@@ -89,12 +89,12 @@ export const NumberInputField = React.memo(({ label, value, onChange, onIncremen
       <input
         type="number"
         placeholder='-Select-'
-        className='outline-none no-spinner w-full p-2'
+        className='outline-none no-spinner w-full p-2 pl-4'
         min="0"
         value={value}
         onChange={(e) => onChange(e.target.value)}
       />
-      <div className='flex gap-2 items-center'>
+      <div className='flex gap-2 items-center pr-4'>
         <p className='typography-body text-font-gray'> {unit}</p>
         <button type="button" onClick={onDecrement}>-</button>
         <button type="button" onClick={onIncrement}>+</button>

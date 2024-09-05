@@ -2,8 +2,8 @@ import React, { useEffect } from 'react'
 import { Button } from '../ui/Button';
 
 const FormSection = ({ title, fields, data, onChange }) => (
-  <div className="bg-background-30 p-4 rounded-xl mb-4">
-    <h2 className="text-xl font-semibold mb-4">{title}</h2>
+  <div className="bg-background-30 p-6 rounded-xl mb-4">
+    <h2 className="typography-h2">{title}</h2>
     <div className="grid grid-cols-2 gap-4">
       {fields.map((field) => (
         <React.Fragment key={field.name}>
@@ -65,7 +65,7 @@ const DynamicForm = ({
           onChange={handleChange}
         />
       ))}
-      <div className="flex justify-end space-x-4 mt-6">
+      <div className="flex justify-end space-x-4 mt-7">
         <div className='w-[152px]'>
           <Button
             type="button"
