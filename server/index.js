@@ -17,7 +17,7 @@ import authRoutes from "./routes/admin/auth.router.js";
 const app = express();
 const corsOptions = {
   origin: process.env.NODE_ENV === "production"
-      ? "https://hirehive-steel.vercel.app"
+      ? "https://www.antiquerustleatherbags.com"
       : "http://localhost:5173",
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
