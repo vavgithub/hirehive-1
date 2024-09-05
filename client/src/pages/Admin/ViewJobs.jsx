@@ -251,15 +251,15 @@ const ViewJobs = () => {
 
 
             {activeTab === 'jobDetails' && (
-                <div>
+                <div className='bg-background-30 p-6 rounded-xl mt-5'>
                     <StatsGrid stats={jobsDetailStats} />
-                    <div className='flex '>
+                    <div className='flex justify-between'>
                         <div className='w-[70%]'>
-                            <h2 className="text-xl font-bold mt-4 mb-2">Job Description</h2>
+                            <h2 className="typography-h4 mt-4 mb-2">Job Description</h2>
                             <div className='text-font-gray' dangerouslySetInnerHTML={{ __html: formatDescription(formData.jobDescription) }}></div>
-                            <h2 className="text-xl font-bold mt-4 mb-2">Skills</h2>
+                            <h2 className="typography-h4 mt-4 mb-5">Skills</h2>
                             {formData.skills && formData.skills.map((skill, index) => (
-                                <span key={index} className="bg-[#C3C6D5] mr-4 text-black px-2 py-1 rounded-[50px]">{skill}</span>
+                                <span key={index} className="bg-background-70 mr-2 px-6 py-2 rounded-[50px]">{skill}</span>
                             ))}
                         </div>
                         <div>

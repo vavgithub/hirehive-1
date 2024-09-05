@@ -1,43 +1,43 @@
 import React from 'react'
 import { postedDate } from '../utility/postedDate';
-import EmploymentTypeIcon from '../svg/EmploymentTypeIcon';
-import DesignIcon from '../svg/DesignIcon';
-import ExperienceLevelIcon from '../svg/ExperienceLevelIcon';
-import PostedIcon from '../svg/PostedIcon';
+import EmploymentTypeIcon from '../svg/Sidecards/EmploymentTypeIcon';
+import DesignIcon from '../svg/Sidecards/DesignIcon';
+import ExperienceLevelIcon from '../svg/Sidecards/ExperienceLevelIcon';
+import PostedIcon from '../svg/Sidecards/PostedIcon';
 
 const SideCard = ({ formData }) => {
     const formattedDate = postedDate(formData.createdAt);
     return (
 
-        <div className="flex flex-col gap-2 border p-4 rounded w-max" >
+        <div className="flex flex-col gap-6 rounded-xl p-6 w-max bg-background-90 mt-4" >
             <div className="flex items-center">
                 <EmploymentTypeIcon />
                 <div className="ml-2">
-                    <p className=" font-bold capitalize">{formData.employmentType}</p>
-                    <p className="text-sm">Employment Type</p>
+                    <p className="large-p">{formData.employmentType}</p>
+                    <p className="text-sm text-font-gray">Employment Type</p>
                 </div>
             </div>
             <div className="flex items-center">
                 <DesignIcon />
                 <div className="ml-2">
-                    <p className=" font-bold capitalize ">{formData.jobProfile}</p>
-                    <p className="text-sm">Job Profile</p>
+                    <p className="large-p">{formData.jobProfile}</p>
+                    <p className="text-sm text-font-gray">Job Profile</p>
                 </div>
             </div>
 
             <div className="flex items-center">
                 <ExperienceLevelIcon />
                 <div className="ml-2">
-                    <p className=" font-bold capitalize ">{formData.fromExperience} - {formData.toExperience} Year</p>
-                    <p className="text-sm">Experience Level</p>
+                    <p className="large-p">{formData.experienceFrom} - {formData.experienceTo} Year</p>
+                    <p className="text-sm text-font-gray">Experience Level</p>
                 </div>
             </div>
 
             <div className="flex items-center">
                 <PostedIcon />
                 <div className="ml-2">
-                    <p className=" font-bold capitalize ">{formattedDate}</p>
-                    <p className="text-sm">Date Posted </p>
+                    <p className="large-p ">{formattedDate}</p>
+                    <p className="text-sm text-font-gray">Date Posted </p>
                 </div>
             </div>
 
