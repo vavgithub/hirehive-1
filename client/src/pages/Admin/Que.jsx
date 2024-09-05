@@ -9,6 +9,7 @@ import MultipleChoiceQuestion from '../../components/MultipleChoiceQuestion'
 const Que = () => {
     const [open, setOpen] = useState(false)
     const [questions, setQuestions] = useState([])
+    const [isLastQuestionValid, setIsLastQuestionValid] = useState(true)
 
     const toggleDropdown = () => {
         setOpen(!open)
@@ -19,47 +20,53 @@ const Que = () => {
             id: Date.now(),
             type,
             text: '',
-            options: type === 'multiple' ? ['Option 1', 'Option 2'] : [],
-            required: false,
-            isEditing: true
+            options: type === 'multiple' ? [''] : [],
+            required: false
         }
-        setQuestions(questions.map(q => ({ ...q, isEditing: false })).concat(newQuestion))
+        setQuestions([...questions, newQuestion])
         setOpen(false)
+        setIsLastQuestionValid(false)
     }
 
     const updateQuestion = (updatedQuestion) => {
         setQuestions(questions.map(q => 
-            q.id === updatedQuestion.id ? { ...updatedQuestion, isEditing: false } : { ...q, isEditing: false }
+            q.id === updatedQuestion.id ? updatedQuestion : q
         ))
     }
 
     const deleteQuestion = (id) => {
         setQuestions(questions.filter(q => q.id !== id))
+        if (questions.length > 0) {
+            setIsLastQuestionValid(true)
+        }
     }
 
     const copyQuestion = (questionToCopy) => {
         const copiedQuestion = {
             ...questionToCopy,
-            id: Date.now(),
-            isEditing: false
+            id: Date.now()
         }
         setQuestions([...questions, copiedQuestion])
+        setIsLastQuestionValid(true)
+    }
+
+    const handleQuestionValidityChange = (isValid) => {
+        setIsLastQuestionValid(isValid)
     }
 
     return (
-        <div className="bg-background-80 h-screen">
-            <div className='p-4 flex flex-col justify-between h-full'>
+        <div className="bg-background-80  ">
+            <div className='p-4 flex flex-col justify-between h-full '>
                 <span className='typography-body'>Additional Questions </span>
-                <div className='bg-background-30 rounded-xl h-full flex flex-col items-center justify-start ml-auto mr-auto pl-16 pr-16 overflow-y-auto'>
+                <div className='bg-background-30 rounded-xl h-full flex flex-col items-center justify-start border border-dashed border-gray-500'>
                     {questions.length === 0 ? (
                         <>
-                            <img src={GOD} alt="" />
                             <p className='typography-body text-font-gray p-8'>
                                 Add additional questions to your job post to help evaluate your candidates more thoroughly
                             </p>
                         </>
                     ) : (
-                        questions.map(question => (
+                        questions.map((question, index) => (
                             question.type === 'multiple' 
                                 ? <MultipleChoiceQuestion 
                                     key={question.id} 
@@ -67,7 +74,8 @@ const Que = () => {
                                     onUpdate={updateQuestion}
                                     onDelete={() => deleteQuestion(question.id)}
                                     onCopy={() => copyQuestion(question)}
-                                    isEditing={question.isEditing}
+                                    initialEditMode={index === questions.length - 1}
+                                    onValidityChange={index === questions.length - 1 ? handleQuestionValidityChange : undefined}
                                   />
                                 : <TextQuestion 
                                     key={question.id} 
@@ -75,15 +83,20 @@ const Que = () => {
                                     onUpdate={updateQuestion}
                                     onDelete={() => deleteQuestion(question.id)}
                                     onCopy={() => copyQuestion(question)}
-                                    isEditing={question.isEditing}
+                                    initialEditMode={index === questions.length - 1}
+                                    onValidityChange={index === questions.length - 1 ? handleQuestionValidityChange : undefined}
                                   />
                         ))
                     )}
 
                     <div className='w-[240px] relative mb-4'>
-                        <Button variant="secondary" onClick={toggleDropdown}>
-                            Add
-                        </Button>
+                        <div 
+                            className={`text-font-primary cursor-pointer typography-large ${!isLastQuestionValid && questions.length > 0 ? 'opacity-50 cursor-not-allowed' : ''}`} 
+                            onClick={isLastQuestionValid ? toggleDropdown : undefined}
+                        >
+                            + Add question
+                        </div>
+    
                         {open && (
                             <div className='bg-background-70 mt-2 rounded-xl absolute w-full'>
                                 <ul className='p-2 typography-body'>
@@ -92,13 +105,6 @@ const Que = () => {
                                 </ul>
                             </div>
                         )}
-                    </div>
-                </div>
-                <div className='w-full flex flex-row-reverse'>
-                    <div className='w-[240px] mr-60 pt-4'>
-                        <Button variant="primary" icon={Skip}>
-                            Skip
-                        </Button>
                     </div>
                 </div>
             </div>

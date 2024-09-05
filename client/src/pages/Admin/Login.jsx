@@ -84,7 +84,7 @@ const Login = () => {
                     </div>
                     {error && <p className="text-red-500 mb-4">{error}</p>}
                     {/* <a href="#" className="text-blue-500 mb-6 mt-2 block text-right">Forgot Password?</a> */}
-                    <Button type="submit" varinat="primary">Login</Button>
+                    <Button type="submit" variant="primary" className="mt-6">Login</Button>
                 </form>
                 {/* <p className="text-center mt-6">
                     Don't have an account? <a href="#" className="text-blue-500">Sign up</a>

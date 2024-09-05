@@ -186,8 +186,6 @@ const ViewCandidateProfile = () => {
                             <AssignmentIcon />
                         </div>
                         <p>{data.location}</p>
-                        <p>{data.experience}</p>
-                        <p>{data.skills}</p>
                     </div>
                 </div>
                 <div className='flex flex-col items-center justify-between bg-background-90 typography-h3 w-[430px] p-5 rounded-xl'>

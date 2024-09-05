@@ -99,9 +99,9 @@ const JobForm = ({
         </div>
       </div>
 
-        <div className='flex'>
+        
           <Que/>
-        </div>
+        
 
       <div className="flex justify-end mt-4">
         <div className='w-[240px]'>
