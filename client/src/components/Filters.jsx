@@ -48,7 +48,6 @@ const CheckboxGroup = ({ title, options, filters, handleCheckboxChange, isDisabl
                             icon={filters.includes(value) ? icon.active : icon.inactive}
                             isChecked={filters.includes(value)}
                             onChange={() => handleCheckboxChange(value)}
-                            count={statistics[statKey] || 0}
                         />
                     ))}
                 </div>
@@ -82,7 +81,6 @@ const Filters = ({ filters = {}, statistics, handleCheckboxChange, activeTab, ha
         {
             value: 'Full Time',
             label: 'Full-time',
-            statKey: 'totalFullTimeJobs',
             icon: {
                 active: FullTimeIconActive,
                 inactive: FullTimeIcon
@@ -91,7 +89,6 @@ const Filters = ({ filters = {}, statistics, handleCheckboxChange, activeTab, ha
         {
             value: 'Contract',
             label: 'Contract',
-            statKey: 'totalContractJobs',
             icon: {
                 active: ContractIconActive,
                 inactive: ContractIcon
@@ -100,7 +97,6 @@ const Filters = ({ filters = {}, statistics, handleCheckboxChange, activeTab, ha
         {
             value: 'Internship',
             label: 'Intern',
-            statKey: 'totalInternships',
             icon: {
                 active: InternIconActive,
                 inactive: InternIcon
@@ -109,25 +105,25 @@ const Filters = ({ filters = {}, statistics, handleCheckboxChange, activeTab, ha
     ];
 
     const jobProfileOptions = [
-        { value: 'UI UX', label: 'UI UX', statKey: 'totalUiUxJobs' },
-        { value: 'Motion Graphic', label: 'Motion Graphic', statKey: 'totalMotionGraphicsJobs' },
-        { value: 'Video Editor', label: 'Video Editor', statKey: 'totalVideoEditorJobs' },
-        { value: '3D', label: '3D', statKey: 'total3DJobs' },
-        { value: 'Digital Marketing Executive', label: 'Digital Marketing Executive', statKey: 'totalDigitalMarketingExecutiveJobs' },
-        { value: 'Project Manager', label: 'Project Manager', statKey: 'totalProjectManagerJobs' },
-        { value: 'Art Director', label: 'Art Director', statKey: 'totalArtDirectorJobs' },
-        { value: 'Frontend Developer', label: 'Frontend Developer', statKey: 'totalFrontendDeveloperJobs' }
+        { value: 'UI UX', label: 'UI UX' },
+        { value: 'Motion Graphic', label: 'Motion Graphic' },
+        { value: 'Video Editor', label: 'Video Editor' },
+        { value: '3D', label: '3D' },
+        { value: 'Digital Marketing Executive', label: 'Digital Marketing Executive' },
+        { value: 'Project Manager', label: 'Project Manager' },
+        { value: 'Art Director', label: 'Art Director' },
+        { value: 'Frontend Developer', label: 'Frontend Developer' }
     ];
 
     const draftOptions = [
         {
-            value: 'hired', label: 'Hired', statKey: 'totalHired', icon: {
+            value: 'hired', label: 'Hired', icon: {
                 active: HiredIconActive,
                 inactive: HiredIcon
             }
         },
         {
-            value: 'notHired', label: 'Not Hired', statKey: 'totalNotHired', icon: {
+            value: 'notHired', label: 'Not Hired', icon: {
                 active: NotHiredActive,
                 inactive: NotHired
             }
@@ -161,7 +157,6 @@ const Filters = ({ filters = {}, statistics, handleCheckboxChange, activeTab, ha
                         filters={filters.draftStatus || []}
                         handleCheckboxChange={(value) => handleCheckboxChange('draftStatus', value)}
                         isDisabled={isDisabled}
-                        statistics={statistics}
                         useCustomIconCheckbox={true}
                     />
                 )}
@@ -172,7 +167,6 @@ const Filters = ({ filters = {}, statistics, handleCheckboxChange, activeTab, ha
                     filters={filters.employmentType || []}
                     handleCheckboxChange={(value) => handleCheckboxChange('employmentType', value)}
                     isDisabled={isDisabled}
-                    statistics={statistics}
                     useCustomIconCheckbox={true}
                 />
 
@@ -182,7 +176,6 @@ const Filters = ({ filters = {}, statistics, handleCheckboxChange, activeTab, ha
                     filters={filters.jobProfile || []}
                     handleCheckboxChange={(value) => handleCheckboxChange('jobProfile', value)}
                     isDisabled={isDisabled}
-                    statistics={statistics}
                 />
 
                 <div className="mb-4">

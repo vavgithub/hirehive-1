@@ -4,6 +4,7 @@ import { ApiError } from "../../utils/ApiError.js";
 import { ApiResponse } from "../../utils/ApiResponse.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
 import { User } from "../../models/admin/user.model.js";
+import { jobs } from "../../models/admin/jobs.model.js";
 
 const stats =  asyncHandler(async (req, res, next) => {
   try {
@@ -374,7 +375,18 @@ const fetchAssignedCandidate = async (req, res) => {
   }
 };
 
+
+const fetchActiveJobs = async (req, res) => {
+  try {
+    const openJobs = await jobs.find({status:"open"});
+    res.status(200).json(openJobs);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching open jobs", error: error.message });
+  }
+};
+
 export {
+  fetchActiveJobs,
   updateCandidateStatusById,
   getCandidate,
   createCandidate,

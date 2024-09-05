@@ -5,6 +5,9 @@ export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
+      width: {
+        'fill-available': '-webkit-fill-available',
+      },
       backgroundImage: {
         "card-pattern": "url('/src/svg/StatsCard/stats-bg.png')",
         "main-bg":"url('/src/svg/Background/rate.png')",
