@@ -7,7 +7,7 @@ import { asyncHandler } from "../../utils/asyncHandler.js";
 const getJobs = async (req, res) => {
   try {
     // Fetch all jobs from the database
-    const jobArray = await jobs.find({ createdBy: req.user._id });
+    const jobArray = await jobs.find({ createdBy: req.user._id }).sort({createdAt: -1});
     // Respond with the list of jobs
     res.status(200).json(jobArray);
   } catch (error) {

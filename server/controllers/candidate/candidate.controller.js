@@ -5,6 +5,7 @@ import { ApiResponse } from "../../utils/ApiResponse.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
 import { User } from "../../models/admin/user.model.js";
 import { jobs } from "../../models/admin/jobs.model.js";
+import { archiveJob } from "../admin/jobs.controller.js";
 
 const stats =  asyncHandler(async (req, res, next) => {
   try {
@@ -378,8 +379,20 @@ const fetchAssignedCandidate = async (req, res) => {
 
 const fetchActiveJobs = async (req, res) => {
   try {
-    const openJobs = await jobs.find({status:"open"});
-    res.status(200).json(openJobs);
+    const activeJobs = await jobs.aggregate([
+      {
+        $match: { status: "open" }
+      },
+      {
+        $sort: { createdAt: -1 } // Sort by creation date, newest first
+      }
+    ]);
+
+    if (activeJobs.length === 0) {
+      return res.status(404).json({ message: "No active jobs found" });
+    }
+
+    res.status(200).json(activeJobs);
   } catch (error) {
     res.status(500).json({ message: "Error fetching open jobs", error: error.message });
   }
