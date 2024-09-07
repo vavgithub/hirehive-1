@@ -1,5 +1,27 @@
 import mongoose from "mongoose";
 
+const questionSchema = new mongoose.Schema({
+  type: {
+    type: String,
+    enum: ['multiple', 'text'],
+    required: true
+  },
+  text: {
+    type: String,
+    required: true
+  },
+  options: [String],
+  required: {
+    type: Boolean,
+    default: false
+  },
+  answerType: {
+    type: String,
+    enum: ['text', 'number'],
+    default: 'text'
+  }
+});
+
 const jobSchema = new mongoose.Schema(
   {
     jobTitle: {
@@ -77,6 +99,7 @@ const jobSchema = new mongoose.Schema(
       ref: 'User',
       required: true,
     },
+    questions: [questionSchema]
   },
   { timestamps: true }
 );

@@ -1,5 +1,4 @@
-// src/pages/CreateJobs.js
-import React from 'react';
+import React, { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { useCreateJobForm } from '../../hooks/useCreateJobForm';
@@ -10,6 +9,7 @@ import Header from '../../components/utility/Header';
 const CreateJobs = () => {
   const navigate = useNavigate();
   const { formData, handleInputChange, handleExperienceChange, incrementExperience, decrementExperience, setSkills } = useCreateJobForm();
+  const [questions, setQuestions] = useState([]);
 
   const createJobMutation = useMutation({
     mutationFn: (jobData) => axios.post('/createJobs', jobData),
@@ -23,13 +23,17 @@ const CreateJobs = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    createJobMutation.mutate({ ...formData, status: 'open' });
+    createJobMutation.mutate({ ...formData, status: 'open', questions });
+  };
+
+  const handleQuestionsChange = (updatedQuestions) => {
+    setQuestions(updatedQuestions);
   };
 
   return (
     <div className="bg-background-80 h-screen">
       <div className='p-4'>
-      <Header HeaderText="Create a New Job Listing" withBack="true"></Header>
+        <Header HeaderText="Create a New Job Listing" withBack="true"></Header>
         <JobForm
           formData={formData}
           handleInputChange={handleInputChange}
@@ -39,8 +43,8 @@ const CreateJobs = () => {
           setSkills={setSkills}
           handleSubmit={handleSubmit}
           isEditing={false}
+          onQuestionsChange={handleQuestionsChange}
         />
-        
       </div>
     </div>
   );

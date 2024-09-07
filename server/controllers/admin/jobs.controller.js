@@ -18,7 +18,6 @@ const getJobs = async (req, res) => {
 
 const createJob = async (req, res) => {
   try {
-    // Destructure job details from request body
     const {
       jobTitle,
       workplaceType,
@@ -29,11 +28,12 @@ const createJob = async (req, res) => {
       experienceTo,
       budgetFrom,
       budgetTo,
-      jobDescription,
       skills,
+      jobDescription,
       status,
+      questions
     } = req.body;
-  
+
     const newJob = new jobs({
       jobTitle,
       workplaceType,
@@ -44,13 +44,13 @@ const createJob = async (req, res) => {
       experienceTo,
       budgetFrom,
       budgetTo,
-      jobDescription,
       skills,
+      jobDescription,
       status,
       createdBy: req.user._id,
+      questions
     });
 
-    // Save the job to the database
     const savedJob = await newJob.save();
 
     // Respond with the saved job object

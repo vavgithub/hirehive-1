@@ -1,11 +1,16 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import MultipleChoiceQuestion from './MultipleChoiceQuestion'
 import TextQuestion from './TextQuestion'
 
-const Que = () => {
+const Que = ({ onQuestionsChange, initialQuestions = [] }) => {
     const [open, setOpen] = useState(false)
-    const [questions, setQuestions] = useState([])
+    const [questions, setQuestions] = useState(initialQuestions)
     const [isLastQuestionValid, setIsLastQuestionValid] = useState(true)
+
+    useEffect(() => {
+        onQuestionsChange(questions);
+    }, [questions, onQuestionsChange]);
+    
 
     const toggleDropdown = () => {
         setOpen(!open)
@@ -25,9 +30,10 @@ const Que = () => {
     }
 
     const updateQuestion = (updatedQuestion) => {
-        setQuestions(questions.map(q => 
+        const updatedQuestions = questions.map(q => 
             q.id === updatedQuestion.id ? updatedQuestion : q
-        ))
+        );
+        setQuestions(updatedQuestions);
     }
 
     const deleteQuestion = (id) => {

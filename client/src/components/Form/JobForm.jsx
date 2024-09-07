@@ -15,7 +15,9 @@ const JobForm = ({
   decrementExperience,
   setSkills,
   handleSubmit,
-  isEditing
+  isEditing,
+  onQuestionsChange,
+  initialQuestions
 }) => {
   const [dropdownStates, setDropdownStates] = useState({
     workplaceType: false,
@@ -100,7 +102,12 @@ const JobForm = ({
       </div>
 
         
-          <Que/>
+      <Que 
+        onQuestionsChange={onQuestionsChange}
+        initialQuestions={initialQuestions}
+      />
+
+
         
 
       <div className="flex justify-end mt-4">

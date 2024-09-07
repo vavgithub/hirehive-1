@@ -20,6 +20,8 @@ import HomePage from './pages/Candidate/HomePage.jsx';
 import Text from './pages/Text.jsx';
 import ViewJob from './pages/Candidate/ViewJob.jsx';
 import ApplyJob from './pages/Candidate/ApplyJob.jsx';
+import MiniForm from './pages/Candidate/MiniForm.jsx';
+import Assessment from './pages/Candidate/Assessment.jsx';
 
 export const router = createBrowserRouter([
    {
@@ -33,6 +35,14 @@ export const router = createBrowserRouter([
   {
     path:"/apply-job/:id",
     element:<ApplyJob/>
+  },
+  {
+    path:"/mini-form/:id",
+    element:<MiniForm/>
+  },
+  {
+    path:"/assessment/:id",
+    element:<Assessment/>
   },
   {
     path: "/auth",
