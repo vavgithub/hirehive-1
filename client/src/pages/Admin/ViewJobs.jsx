@@ -133,7 +133,7 @@ const ViewJobs = () => {
             navigate(-1);
         },
     });
-    
+
     const draftMutation = useMutation({
         mutationFn: (jobId) => axios.put(`/draftJob/${jobId}`),
         onSuccess: () => {
@@ -142,7 +142,7 @@ const ViewJobs = () => {
             navigate(-1);
         },
     });
-    
+
     const closeMutation = useMutation({
         mutationFn: ({ jobId, reason }) => axios.put(`/closeJob/${jobId}`, { reason }),
         onSuccess: () => {
@@ -162,8 +162,8 @@ const ViewJobs = () => {
             const previousCandidates = queryClient.getQueryData(['candidates', mainId]);
 
             // Optimistically update to the new value
-            queryClient.setQueryData(['candidates', mainId], old => 
-                old.map(candidate => 
+            queryClient.setQueryData(['candidates', mainId], old =>
+                old.map(candidate =>
                     candidate._id === id ? { ...candidate, ...updates } : candidate
                 )
             );
@@ -242,9 +242,9 @@ const ViewJobs = () => {
 
     return (
         <div className="mx-4 pt-4 h-screen">
-           
+
             <Header HeaderText={formData.jobTitle} withKebab="true" withBack="true" job={formData} handleAction={handleAction}></Header>
-            
+
             <div className='absolute right-24 top-5'>
                 <Tabs tabs={tabs} activeTab={activeTab} handleTabClick={handleTabClick} />
             </div>
@@ -254,13 +254,16 @@ const ViewJobs = () => {
                 <div className='bg-background-30 p-6 rounded-xl mt-5'>
                     <StatsGrid stats={jobsDetailStats} />
                     <div className='flex justify-between'>
-                        <div className='w-[70%]'>
+                        <div className='w-2/3'>
                             <h2 className="typography-h4 mt-4 mb-2">Job Description</h2>
                             <div className='text-font-gray' dangerouslySetInnerHTML={{ __html: formatDescription(formData.jobDescription) }}></div>
                             <h2 className="typography-h4 mt-4 mb-5">Skills</h2>
-                            {formData.skills && formData.skills.map((skill, index) => (
-                                <span key={index} className="bg-background-70 mr-2 px-6 py-2 rounded-[50px]">{skill}</span>
-                            ))}
+                            <div className='w-2/3 flex'>
+
+                                {formData.skills && formData.skills.map((skill, index) => (
+                                    <span key={index} className="bg-background-70 mr-2 px-6 py-2 rounded-[50px]">{skill}</span>
+                                ))}
+                            </div>
                         </div>
                         <div>
                             <SideCard formData={formData} />
@@ -276,7 +279,7 @@ const ViewJobs = () => {
                     </div>
                     <div>
                         <div>
-                            <Table rowsData={candidatesData}  extraCTA='true' onUpdateCandidate={handleUpdateCandidate}  />
+                            <Table rowsData={candidatesData} extraCTA='true' onUpdateCandidate={handleUpdateCandidate} />
                             {/* <DataTable rowsData={candidatesData} onUpdateCandidate={updateCandidate} onUpdateAssignee={updateAssignee} onUpdateRating={updateRating}/> */}
                         </div>
                     </div>

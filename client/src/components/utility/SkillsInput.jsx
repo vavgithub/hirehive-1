@@ -55,7 +55,7 @@ const SkillsInput = ({ skills, setSkills, allSkills }) => {
                 {skills.map((skill, index) => (
                     <div key={index} className="p-2 flex items-center gap-1 typography-body bg-background-70 rounded px-2">
                         {skill}
-                        <button onClick={() => removeSkill(index)} className="text-blue-500 hover:text-blue-700">✖</button>
+                        <button type="button" onClick={() => removeSkill(index)} className="text-blue-500 hover:text-blue-700">✖</button>
                     </div>
                 ))}
                 <input

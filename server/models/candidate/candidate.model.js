@@ -59,6 +59,43 @@ const candidateSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    email: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    phone: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    website: {
+      type: String,
+      required: true,
+    },
+    portfolio: {
+      type: String,
+      required: true,
+    },
+    noticePeriod: {
+      type: Number,
+      default: 0
+    },
+    currentCTC: {
+      type: Number,
+      default: 0
+    },
+    expectedCTC: {
+      type: Number,
+      default: 0
+    },
+    experience: {
+      type: Number,
+      required: true,
+    },
+    skills: {
+      type: [String],
+    },
     age: {
       type: Number,
       required: true,
@@ -71,7 +108,7 @@ const candidateSchema = new mongoose.Schema(
     status: {
       type: String,
       default: "N/A",
-    },
+    },    
     stageStatus: {
       Portfolio: stageStatusSchema,
       Screening: {
@@ -91,50 +128,12 @@ const candidateSchema = new mongoose.Schema(
       "Design Task": stageStatusSchema,
       "Round 1": stageStatusSchema,
       "Round 2": stageStatusSchema
-    },
-    noticePeriod: {
-      type: Number,
-      default: 0
-    },
-    currentCTC: {
-      type: Number,
-      default: 0
-    },
-    expectedCTC: {
-      type: Number,
-      default: 0
-    },
-    experience: {
-      type: Number,
-      required: true,
-    },
-    email: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    phone: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    resume: {
-      type: String,
-      required: true,
-    },
+    },   
     location: {
       type: String,
       required: true,
       trim: true,
-    },
-    website: {
-      type: String,
-      required: true,
-    },
-    portfolio: {
-      type: String,
-      required: true,
-    },
+    },    
     budget: {
       type: Number,
       required: true,

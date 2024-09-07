@@ -3,6 +3,7 @@ import Filters from '../../components/Filters'
 import JobCard from '../../components/JobCard';
 import { useQuery } from '@tanstack/react-query';
 import axios from '../../api/axios';
+import { useNavigate } from 'react-router-dom';
 
 
 
@@ -64,6 +65,8 @@ const HomePage = () => {
         }));
     };
 
+    const navigate = useNavigate();
+
     const clearAllFilters = () => {
         setFilters({
             employmentType: [],
@@ -78,7 +81,7 @@ const HomePage = () => {
     };
 
     const handleViewJob = (jobId) => {
-        console.log("Heheh")
+        navigate(`/${jobId}`)
     };
 
     const handleSearch = (event) => {

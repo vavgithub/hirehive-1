@@ -12,19 +12,28 @@ import ViewJobs from './pages/Admin/ViewJobs';
 import ViewCandidateProfile from './pages/Admin/ViewCandidateProfile';
 import Candidates from './pages/Admin/Candidates';
 import ErrorPage from './pages/Admin/ErrorPage';
-import RejectCandidatePopUp from './components/utility/RejectCandidatePopUp';
 import EditCandidateProfile from './pages/Admin/EditCandidateProfile';
 import Que from './pages/Admin/Que';
 import DesignReviewerDashboard from './pages/DesignReviewer/DesignReviewerDashboard.jsx';
 import ProtectedRoute from './routes/ProtectedRoute.jsx';
 import Reviews from './pages/DesignReviewer/Reviews.jsx';
-import CandidateViewJob from './pages/Candidate/CandidateViewJob.jsx';
 import HomePage from './pages/Candidate/HomePage.jsx';
+import Text from './pages/Text.jsx';
+import ViewJob from './pages/Candidate/ViewJob.jsx';
+import ApplyJob from './pages/Candidate/ApplyJob.jsx';
 
 export const router = createBrowserRouter([
    {
     path: "/",
     element: <HomePage />,
+  },
+  {
+    path:"/:id",
+    element:<ViewJob/>
+  },
+  {
+    path:"/apply-job/:id",
+    element:<ApplyJob/>
   },
   {
     path: "/auth",
@@ -125,6 +134,6 @@ export const router = createBrowserRouter([
   },
   {
     path: "/test",
-    element: <RejectCandidatePopUp />
+    element: <Text />
   }
 ]);

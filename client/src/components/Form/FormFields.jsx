@@ -3,12 +3,12 @@ import React from "react";
 
 export const InputField = React.memo(({ id, label, value, onChange, required }) => (
   <div className='space-y-1 flex flex-col gap-1'>
-    <label className="typography-body">{label}*</label>
+    <label className="typography-body">{label}{required && <span className="text-red-100">*</span>}</label>
     <input
       id={id}
       type="text"
       placeholder={`Enter ${label.toLowerCase()}`}
-      className='w-full p-2  rounded-xl pl-4 mt-4'
+      className='w-full ring-teal-300 focus:outline-teal-500 outline-1  p-2 rounded-xl pl-4 mt-4'
       value={value}
       onChange={onChange}
       required={required}
