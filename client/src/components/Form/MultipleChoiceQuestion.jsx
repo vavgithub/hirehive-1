@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Button } from './ui/Button';
-import CutButton from '../svg/MiniFormButtons/CutButton';
-import DeleteButton from '../svg/MiniFormButtons/DeleteButton';
+import CutButton from '../../svg/MiniFormButtons/CutButton';
+import DeleteButton from '../../svg/MiniFormButtons/DeleteButton';
 
 const MultipleChoiceQuestion = ({ question, onUpdate, onDelete, onCopy, initialEditMode = false, onValidityChange , questionNumber}) => {
   const [isEditing, setIsEditing] = useState(initialEditMode);

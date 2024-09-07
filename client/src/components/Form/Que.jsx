@@ -1,10 +1,6 @@
 import React, { useState } from 'react'
-import Header from '../../components/utility/Header'
-import { Button } from '../../components/ui/Button'
-import Skip from '../../svg/Buttons/Skip'
-import GOD from "../../svg/Background/Que.svg"
-import TextQuestion from '../../components/TextQuestion'
-import MultipleChoiceQuestion from '../../components/MultipleChoiceQuestion'
+import MultipleChoiceQuestion from './MultipleChoiceQuestion'
+import TextQuestion from './TextQuestion'
 
 const Que = () => {
     const [open, setOpen] = useState(false)
@@ -14,7 +10,6 @@ const Que = () => {
     const toggleDropdown = () => {
         setOpen(!open)
     }
-
     const addQuestion = (type) => {
         const newQuestion = {
             id: Date.now(),

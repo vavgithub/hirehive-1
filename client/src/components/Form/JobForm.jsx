@@ -5,7 +5,7 @@ import SkillsInput from '../utility/SkillsInput';
 import { dropdownOptions } from '../Form/dropdownOptions';
 import { Button } from '../ui/Button';
 import Next from '../../svg/Buttons/Next';
-import Que from '../../pages/Admin/Que';
+import Que from './Que';
 
 const JobForm = ({
   formData,

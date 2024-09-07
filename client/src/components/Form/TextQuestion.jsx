@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button } from './ui/Button';
-import DeleteButton from '../svg/MiniFormButtons/DeleteButton';
+import DeleteButton from '../../svg/MiniFormButtons/DeleteButton';
 
 const TextQuestion = ({ question, onUpdate, onDelete, onCopy, initialEditMode = false, onValidityChange ,  questionNumber }) => {
   const [isEditing, setIsEditing] = useState(initialEditMode);

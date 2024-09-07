@@ -13,7 +13,6 @@ import ViewCandidateProfile from './pages/Admin/ViewCandidateProfile';
 import Candidates from './pages/Admin/Candidates';
 import ErrorPage from './pages/Admin/ErrorPage';
 import EditCandidateProfile from './pages/Admin/EditCandidateProfile';
-import Que from './pages/Admin/Que';
 import DesignReviewerDashboard from './pages/DesignReviewer/DesignReviewerDashboard.jsx';
 import ProtectedRoute from './routes/ProtectedRoute.jsx';
 import Reviews from './pages/DesignReviewer/Reviews.jsx';
@@ -72,11 +71,6 @@ export const router = createBrowserRouter([
         element:
 
           <CreateJobs />
-      },
-      {
-        path: "create-job/que",
-        element:
-          <Que />
       },
       {
         path: "edit-job/:id",
