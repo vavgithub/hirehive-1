@@ -8,8 +8,8 @@ import { useNavigate } from 'react-router-dom';
 
 
 const fetchOpenJobs = () => axios.get('/candidates/activeJobs').then(res => res.data);
-const searchJobs = (query) => axios.get(`/searchJobs?jobTitle=${encodeURIComponent(query)}`).then(res => res.data);
-const filterJobs = (filters) => axios.post('/filterJobs', { filters }).then(res => res.data);
+const searchJobs = (query) => axios.get(`/candidates/searchJobs?jobTitle=${encodeURIComponent(query)}`).then(res => res.data);
+const filterJobs = (filters) => axios.post('/candidates/filterJobs', { filters }).then(res => res.data);
 
 
 const HomePage = () => {

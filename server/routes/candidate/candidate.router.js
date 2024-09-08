@@ -1,10 +1,12 @@
 import express from 'express';
-import { allCandidate, assignCandidate, createCandidate, fetchActiveJobs, fetchAssignedCandidate, getCandidate, getCandidateById, jobSpecificStats, stats, updateAssignee, updateCandidateStatusById, updateRating, updateStatusAndStage } from '../../controllers/candidate/candidate.controller.js';
+import { allCandidate, assignCandidate, createCandidate, fetchActiveJobs, fetchAssignedCandidate, filterJobs, getCandidate, getCandidateById, jobSpecificStats, searchJobs, stats, updateAssignee, updateCandidateStatusById, updateRating, updateStatusAndStage } from '../../controllers/candidate/candidate.controller.js';
 import { protect } from '../../middlewares/authMiddleware.js';
 const router = express.Router();
 
 
 router.get("/activeJobs" , fetchActiveJobs);
+router.get('/searchJobs', searchJobs);
+router.post('/filterJobs', filterJobs);
 router.get('/:jobId/candidates',getCandidate);
 router.get('/allCandidates',allCandidate)
 router.get("/stats",stats)

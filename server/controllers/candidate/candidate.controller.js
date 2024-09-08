@@ -398,6 +398,46 @@ const fetchActiveJobs = async (req, res) => {
   }
 };
 
+const searchJobs = async (req, res) => {
+  const searchTerm = req.query.jobTitle;
+  if (!searchTerm) {
+    return res.status(400).json({ error: "Search term (title) is required" });
+  }
+  try {
+    // Fetch all jobs from the database
+    const jobArray = await jobs.find({
+      jobTitle: { $regex: searchTerm, $options: "i" },
+    });
+    // Respond with the list of jobs
+    res.status(200).json(jobArray);
+  } catch (error) {
+    // Handle error if fetching jobs fails
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const filterJobs = asyncHandler(async (req, res) => {
+  const { employmentType, jobProfile, experience } = req.body.filters;
+  const query = {};
+  if (employmentType && employmentType.length > 0) {
+    query.employmentType = { $in: employmentType };
+  }
+  if (jobProfile && jobProfile.length > 0) {
+    query.jobProfile = { $in: jobProfile };
+  }
+  if (experience && (experience.min !== '' || experience.max !== '')) {
+    query.fromExperience = {};
+    if (experience.min !== '') {
+      query.fromExperience.$gte = Number(experience.min);
+    }
+    if (experience.max !== '') {
+      query.toExperience = { $lte: Number(experience.max) };
+    }
+  }
+  const filteredJobs = await jobs.find(query);
+  res.status(200).json(filteredJobs);
+});
+
 export {
   fetchActiveJobs,
   updateCandidateStatusById,
@@ -411,5 +451,7 @@ export {
   stats,
   fetchAssignedCandidate,
   assignCandidate,
-  jobSpecificStats
+  jobSpecificStats,
+  filterJobs,
+  searchJobs,
 };
