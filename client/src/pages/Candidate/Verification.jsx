@@ -94,7 +94,7 @@ const Verification = () => {
 
                 {step === 'otp' ? (
                     <>
-                        <p className="text-center text-gray-300">
+                        <p className="text-center">
                             To ensure security, please enter the OTP (One-Time Password)
                             to verify your account. A code has been sent to
                         </p>
@@ -107,7 +107,7 @@ const Verification = () => {
                                     ref={el => inputRefs.current[index] = el}
                                     type="text"
                                     maxLength="1"
-                                    className={`w-12 h-12 text-center text-xl font-semibold text-white bg-gray-700 border-2 rounded-md focus:outline-none focus:border-blue-500 ${isError ? 'border-red-500' : 'border-gray-600'
+                                    className={`w-12 h-12 text-center border-2 rounded-md focus:outline-none focus:border-blue-500 ${isError ? 'border-red-500' : 'border-gray-600'
                                         }`}
                                     value={data}
                                     onChange={e => handleChange(e.target, index)}
@@ -125,8 +125,8 @@ const Verification = () => {
                             onClick={handleOtpSubmit}
                             disabled={!isOtpComplete}
                             className={`w-full px-4 py-2 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-opacity-50 ${isOtpComplete
-                                    ? 'bg-blue-600 hover:bg-blue-700 focus:ring-blue-500'
-                                    : 'bg-gray-500 cursor-not-allowed'
+                                ? 'bg-blue-600 hover:bg-blue-700 focus:ring-blue-500'
+                                : 'bg-gray-500 cursor-not-allowed'
                                 }`}
                         >
                             {isError ? 'Retry' : 'Next'}
@@ -156,8 +156,8 @@ const Verification = () => {
                             onClick={handlePasswordSubmit}
                             disabled={!isPasswordComplete}
                             className={`w-full px-4 py-2 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-opacity-50 ${isPasswordComplete
-                                    ? 'bg-blue-600 hover:bg-blue-700 focus:ring-blue-500'
-                                    : 'bg-gray-500 cursor-not-allowed'
+                                ? 'bg-blue-600 hover:bg-blue-700 focus:ring-blue-500'
+                                : 'bg-gray-500 cursor-not-allowed'
                                 }`}
                         >
                             Set Password

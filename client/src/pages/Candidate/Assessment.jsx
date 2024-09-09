@@ -208,7 +208,7 @@ const Assessment = ({ questions: propQuestions, mode = 'multiple-choice' }) => {
           </div>
           <div>{`${currentQuestion + 1}/${questions.length} Questions`}</div>
         </div>
-        <QuestionDisplay
+        <QuestionDisplay             
           question={questions[currentQuestion]}
           onAnswer={handleAnswer}
           onPrevious={handlePrevious}
