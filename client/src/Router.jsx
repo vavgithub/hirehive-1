@@ -22,6 +22,7 @@ import ViewJob from './pages/Candidate/ViewJob.jsx';
 import ApplyJob from './pages/Candidate/ApplyJob.jsx';
 import MiniForm from './pages/Candidate/MiniForm.jsx';
 import Assessment from './pages/Candidate/Assessment.jsx';
+import Verification from './pages/Candidate/Verification.jsx';
 
 export const router = createBrowserRouter([
    {
@@ -43,6 +44,10 @@ export const router = createBrowserRouter([
   {
     path:"/assessment/:id",
     element:<Assessment/>
+  },
+  {
+    path:"/verification",
+    element:<Verification/>
   },
   {
     path: "/auth",

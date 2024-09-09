@@ -11,6 +11,7 @@ export default {
       backgroundImage: {
         "card-pattern": "url('/src/svg/StatsCard/stats-bg.png')",
         "main-bg":"url('/src/svg/Background/rate.png')",
+        "verification":"url('/src/svg/Background/verification.svg')",
         "stars":"url('/src/svg/Background/Stars.svg')",
         "que-bg":"url('/src/svg/Background/Que.svg')",      
         "login-screen":"url('/src/svg/Background/loginScreenBg.svg')",  

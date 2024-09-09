@@ -36,7 +36,7 @@ body {
   @apply text-white;
 }
 input {
-  @apply bg-background-40 h-[44px] p-2 rounded-xl placeholder:text-font-gray placeholder:font-body  ring-teal-300 focus:ring-teal-400 outline-none typography-body;  /* Replace bg-gray-200 with your desired background color class */
+  @apply bg-background-40 h-[44px] p-2 rounded-xl placeholder:text-font-gray placeholder:font-body  focus:ring-teal-400 focus:outline-teal-500 outline-none typography-body w-full;  /* Replace bg-gray-200 with your desired background color class */
 }
 input[type="checkbox"],
 input[type="radio"] {
