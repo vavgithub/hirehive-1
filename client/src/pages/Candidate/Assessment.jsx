@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Webcam from 'react-webcam';
 import { ChevronLeft, ChevronRight, Clock, ChevronUp, ChevronDown, Camera, Mic } from 'lucide-react';
+import { Button } from '../../components/ui/Button';
 
 const staticQuestions = [
   {
@@ -15,113 +16,179 @@ const staticQuestions = [
   },
   {
     id: 2,
-    text: "What is User Interface (UI) design?",
+    text: "Whaasdasdat is User Interface (UI) design?",
     options: [
-      "The process of integrating social media elements into websites and apps.",
-      "The engineering and coding part of building a website or application.",
-      "The practice of optimizing websites and apps for search engines.",
-      "The crafting of visual elements like colors, typography, layout to create an intuitive UI."
+      "The asdasdprocess of integrating social media elements into websites and apps.",
+      "Thasdasdasde engineering and coding part of building a website or application.",
+      "The psadadasdractice oasdasdasdf optimizing websites and apps for search engines.",
+      "The adasdasdcrafting of visual elements like colors, typography, layout to create an intuitive UI."
     ]
   },
   {
     id: 3,
-    text: "What is User Interface (UI) design?",
+    text: "asdasd asd asWhat is User Interface (UI) design?",
     options: [
-      "The process of integrating social media elements into websites and apps.",
-      "The engineering and coding part of building a website or application.",
-      "The practice of optimizing websites and apps for search engines.",
-      "The crafting of visual elements like colors, typography, layout to create an intuitive UI."
+      "The process of in asd as a tegrating social media elements into websites and apps.",
+      "Theasdasdasd engineering an asd ad coding part of building a website or application.",
+      "The practice of optimizing websit asd a ad ad es and apps for search engines.",
+      "The crafting of visual elements like colors, t asd asypography, layout to create an intuitive UI."
     ]
   },
   {
     id: 4,
-    text: "What is User Interface (UI) design?",
+    text: "dasdasd a a das a d aWhat is User Interface (UI) design?",
     options: [
-      "The process of integrating social media elements into websites and apps.",
-      "The engineering and coding part of building a website or application.",
-      "The practice of optimizing websites and apps for search engines.",
-      "The crafting of visual elements like colors, typography, layout to create an intuitive UI."
+      "sd saas aThe process of integrating social media elements into websites and apps.",
+      "Ts adas he engineering and coding part of building a website or application.",
+      "Tsda da she practice of optimizing websites and apps for search engines.",
+      "T asasd asdsdhe crafting of visual elements like colors, typography, layout to create an intuitive UI."
     ]
   },
   {
     id: 5,
     text: "What is User Interface (UI) design?",
     options: [
-      "The process of integrating social media elements into websites and apps.",
-      "The engineering and coding part of building a website or application.",
-      "The practice of optimizing websites and apps for search engines.",
-      "The crafting of visual elements like colors, typography, layout to create an intuitive UI."
+      "The s ad asprocess of integrating social media elements into websites and apps.",
+      "The sda  engineering and coding part of building a website or application.",
+      "The  sad asadpractice of optimizing websites and apps for search engines.",
+      "The c asd as rafting of visual elements like colors, typography, layout to create an intuitive UI."
     ]
   },
   // ... more questions ...
 ];
 
-const QuestionSidebar = ({ questions, currentQuestion, onQuestionSelect }) => (
-  <div className="w-1/4 bg-gray-900 p-4 overflow-y-auto">
-    <div className="mb-6">
-      <h2 className="text-xl font-bold mb-2">Time remaining</h2>
-      <div className="text-3xl font-mono">
-        <span id="minutes">29</span>:<span id="seconds">30</span>
-      </div>
-    </div>
-    <h2 className="text-xl font-bold mb-4">Questions</h2>
-    {questions.map((q, index) => (
+const ProgressBar = ({ current, total }) => {
+  const progress = (current / total) * 100;
+  return (
+    <div className="w-full bg-background-90 h-2 rounded-full overflow-hidden">
       <div
-        key={index}
-        className={`py-2 px-4 mb-2 cursor-pointer rounded ${
-          currentQuestion === index
-            ? 'bg-blue-600 text-white'
-            : 'hover:bg-gray-800'
-        }`}
-        onClick={() => onQuestionSelect(index)}
-      >
-        {q.text}
-        {currentQuestion === index && (
-          <div className="w-2 h-6 bg-green-400 float-right mt-1"></div>
-        )}
+        className="bg-blue-100 h-full transition-all duration-300 ease-in-out"
+        style={{ width: `${progress}%` }}
+      ></div>
+    </div>
+  );
+};
+
+const formatTime = (time) => {
+  const minutes = Math.floor(time / 60);
+  const seconds = time % 60;
+  return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+};
+
+const QuestionSidebar = ({ questions, currentQuestion, onQuestionSelect }) => {
+  const [timeRemaining, setTimeRemaining] = useState(30 * 60); // 30 minutes in seconds
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeRemaining((prevTime) => (prevTime > 0 ? prevTime - 1 : 0));
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  const formatTime = (time) => {
+    const minutes = Math.floor(time / 60);
+    const seconds = time % 60;
+    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  };
+
+  return (
+    <div className="w-[200px] bg-background-30  overflow-y-auto flex-shrink-0">
+      <div className="mb-6 p-4 rounded-xl">
+        <div className="flex flex-col p-2 rounded-xl items-center bg-background-80">
+          <p className='typography-body text-font-gray'>Time remaining</p>
+          <span className="bg-background-70 typography-h3 p-2 rounded-xl">{formatTime(timeRemaining)}</span>
+        </div>
       </div>
-    ))}
-  </div>
-);
+      <h2 className="typography-h3 text-font-gray">Questions</h2>
+      {questions.map((q, index) => (
+        <div
+          key={index}
+          className={` typography-body py-2 pl-2 my-2  cursor-pointer rounded flex items-center justify-between ${currentQuestion === index
+            ? 'text-font-accent'
+            : 'hover:bg-gray-800'
+            }`}
+          onClick={() => onQuestionSelect(index)}
+        >
+          <span className="truncate flex-grow mr-2" title={q.text}>
+            {q.text}
+          </span>
+          {currentQuestion === index && (
+            <div className="w-2 h-6 ml-2 rounded-tl-xl rounded-bl-xl bg-teal-500 flex-shrink-0"></div>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+};
 
 const QuestionDisplay = ({ question, onAnswer, onPrevious, onNext, isFirst, isLast }) => (
   <div className="flex-grow p-8">
     <div className="mb-8">
-      <h2 className="text-2xl font-bold mb-4">{`Q${question.id} ${question.text}`}</h2>
-      {question.options.map((option, index) => (
-        <div key={index} className="mb-4">
-          <label className="flex items-center space-x-3">
-            <input
-              type="radio"
-              name={`question-${question.id}`}
-              value={option}
-              onChange={() => onAnswer(question.id, option)}
-              className="form-radio h-5 w-5 text-blue-600"
-            />
-            <span>{option}</span>
-          </label>
-        </div>
-      ))}
+      <h1 className="typography-h1 mb-4">{`Q${question.id} ${question.text}`}</h1>
+      <div className='grid grid-cols-2 gap-x-4 items-center'>
+        {question.options.map((option, index) => (
+          <div key={index} className="mb-4 bg-background-80 p-4 rounded-xl">
+            <label className="flex items-center space-x-3">
+              <input
+                type="radio"
+                name={`question-${question.id}`}
+                value={option}
+                onChange={() => onAnswer(question.id, option)}
+                className="form-radio h-5 w-5 text-red-600"
+              />
+              <span className='typography-body'>{option}</span>
+            </label>
+          </div>
+        ))}
+      </div>
     </div>
     <div className="flex justify-between">
-      <button
+      {/* <button
         onClick={onPrevious}
         disabled={isFirst}
-        className={`px-4 py-2 rounded ${
-          isFirst ? 'bg-gray-500 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600'
-        }`}
+        className={`px-4 py-2 rounded ${isFirst ? 'bg-gray-500 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600'
+          }`}
       >
         <ChevronLeft className="inline mr-2" /> Previous
-      </button>
-      <button
+      </button> */}
+
+      <div
+        className="w-[152px]"
+      >
+
+        <Button
+          variant="secondary"
+          onClick={onPrevious}
+          disabled={isFirst}
+        >
+          Previous
+        </Button>
+      </div>
+
+
+
+      <div
+        className="w-[152px]"
+      >
+
+        <Button
+          variant="primary"
+          onClick={onNext}
+          disabled={isLast}
+
+        >
+          Next
+        </Button>
+      </div>
+      {/* <button
         onClick={onNext}
         disabled={isLast}
-        className={`px-4 py-2 rounded ${
-          isLast ? 'bg-gray-500 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600'
-        }`}
+        className={`px-4 py-2 rounded ${isLast ? 'bg-gray-500 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600'
+          }`}
       >
         Next <ChevronRight className="inline ml-2" />
-      </button>
+      </button> */}
     </div>
   </div>
 );
@@ -157,7 +224,7 @@ const WebcamView = ({ isMinimized, toggleMinimize }) => (
 const Assessment = ({ questions: propQuestions, mode = 'multiple-choice' }) => {
   // Use propQuestions if provided, otherwise use staticQuestions
   const questions = propQuestions && propQuestions.length > 0 ? propQuestions : staticQuestions;
-  
+
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState({});
   const [isWebcamMinimized, setIsWebcamMinimized] = useState(false);
@@ -194,21 +261,18 @@ const Assessment = ({ questions: propQuestions, mode = 'multiple-choice' }) => {
   };
 
   return (
-    <div className="flex h-screen bg-gray-800 text-white">
+    <div className="flex h-screen bg-background-90">
       <QuestionSidebar
         questions={questions}
         currentQuestion={currentQuestion}
         onQuestionSelect={setCurrentQuestion}
       />
       <div className="flex-grow flex flex-col">
-        <div className="bg-gray-700 p-4 flex justify-between items-center">
-          <div className="flex items-center">
-            <Clock className="mr-2" />
-            <span className="font-mono text-xl">{formatTime(timeRemaining)}</span>
-          </div>
-          <div>{`${currentQuestion + 1}/${questions.length} Questions`}</div>
+        <div className="bg-background-90 p-4 flex gap-8 justify-between items-center">
+          <ProgressBar current={currentQuestion + 1} total={questions.length} />
+          <div className='typograhpy-body text-font-gray'>{`${currentQuestion + 1}/${questions.length} Questions`}</div>
         </div>
-        <QuestionDisplay             
+        <QuestionDisplay
           question={questions[currentQuestion]}
           onAnswer={handleAnswer}
           onPrevious={handlePrevious}
