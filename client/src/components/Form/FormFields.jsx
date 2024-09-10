@@ -98,12 +98,12 @@ export const NumberInputField = React.memo(({ label, value, onChange, onIncremen
         <p className='typography-body text-font-gray'> {unit}</p>
         <button type="button" onClick={onDecrement}>
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="25" viewBox="0 0 24 25" fill="none">
-            <path d="M5 12.5H19" stroke="#808389" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M5 12.5H19" stroke="#808389" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </button>
         <button type="button" onClick={onIncrement}>
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="25" viewBox="0 0 24 25" fill="none">
-            <path d="M12 5.5V19.5M5 12.5H19" stroke="#808389" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M12 5.5V19.5M5 12.5H19" stroke="#808389" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </button>
       </div>

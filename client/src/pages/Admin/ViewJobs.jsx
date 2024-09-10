@@ -27,7 +27,7 @@ const ViewJobs = () => {
 
     const [closeReason, setCloseReason] = useState('');
 
-    const [activeTab, setActiveTab] = useState('candidate');
+    const [activeTab, setActiveTab] = useState('jobDetails');
 
     const [modalOpen, setModalOpen] = useState(false);
     const [modalAction, setModalAction] = useState('');
@@ -38,9 +38,9 @@ const ViewJobs = () => {
     };
 
     const tabs = [
-        { name: 'jobDetails', label: 'Job Detail', icon: <CandidateDetailsIcon/>,
+        { name: 'jobDetails', label: 'Job Details', icon: <CandidateDetailsIcon/>,
             activeIcon: <CandidateDetailsIconActive />, },
-        { name: 'candidate', label: 'Candidate',icon: <ApplicationIcon />,
+        { name: 'candidate', label: 'Candidates',icon: <ApplicationIcon />,
             activeIcon: <ApplicationIconActive />, }
     ];
 
@@ -270,6 +270,10 @@ const ViewJobs = () => {
                         <div>
                             <SideCard formData={formData} />
                         </div>
+                    </div>
+
+                    <div className='bg-background-90'>
+
                     </div>
                 </div>
             )}

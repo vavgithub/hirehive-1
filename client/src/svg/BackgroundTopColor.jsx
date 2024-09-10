@@ -10,7 +10,7 @@ const BackgroundTopColor = () => {
                 <g filter="url(#filter2_f_1345_17708)">
                     <ellipse cx="441" cy="382.521" rx="441" ry="382.521" transform="matrix(-0.552537 -0.833488 -0.833488 0.552537 1522.99 598.492)" fill="url(#paint2_linear_1345_17708)" />
                 </g>
-                <rect x="-15" y="-49" width="1126" height="335" fill="black" fill-opacity="0.3" />
+                <rect x="-15" y="-49" width="1126" height="335" fill="black" fillOpacity="0.3" />
                 <rect x="-15" y="-49" width="1126" height="335" fill="url(#paint3_linear_1345_17708)" />
             </g>
             <defs>

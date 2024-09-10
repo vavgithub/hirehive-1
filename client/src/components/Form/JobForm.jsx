@@ -6,6 +6,7 @@ import { dropdownOptions } from '../Form/dropdownOptions';
 import { Button } from '../ui/Button';
 import Next from '../../svg/Buttons/Next';
 import Que from './Que';
+import SaveForLater from '../../svg/Buttons/SaveForLater';
 
 const JobForm = ({
   formData,
@@ -101,21 +102,31 @@ const JobForm = ({
         </div>
       </div>
 
-        
-      <Que 
+
+      <Que
         onQuestionsChange={onQuestionsChange}
         initialQuestions={initialQuestions}
       />
 
 
-        
+
 
       <div className="flex justify-end mt-4">
-        <div className='w-[240px]'>
+        <div className='flex gap-4'>
+          <div className='w-[240px]'>
 
-          <Button variant="primary" type="submit" icon={Next}>
-            {isEditing ? 'Save' : 'Next'}
-          </Button>
+            <Button variant="secondary" type="submit" icon={SaveForLater}>
+              {isEditing ? 'Save' : 'Save For Later'}
+            </Button>
+          </div>
+
+
+          <div className='w-[240px]'>
+
+            <Button variant="primary" type="submit" icon={Next}>
+              {isEditing ? 'Save' : 'Next'}
+            </Button>
+          </div>
         </div>
 
         {/* <button
