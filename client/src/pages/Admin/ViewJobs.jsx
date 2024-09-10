@@ -275,7 +275,7 @@ const ViewJobs = () => {
             )}
 
             {activeTab === 'candidate' && (
-                <div>
+                <div className='mt-5'>
                     <div className="w-full max-w-6xl">
                         <StatsGrid stats={candidateStats} />
                     </div>
