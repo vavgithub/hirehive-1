@@ -10,24 +10,23 @@ const fetchJobDetails = async (id) => {
     return response.data;
 };
 
-const submitApplication = async ({ jobId, answers }) => {
-  const response = await axios.post(`/submitApplication/${jobId}`, { answers });
+const submitApplication = async (jobId,data) => {
+  const response = await axios.post(`/candidates/apply/${jobId}`, data);
   return response.data;
 };
 
 const MiniForm = () => {
-  const { id:mainId } = useParams();
-  console.log(mainId);
+  const { id: jobId } = useParams();
   const navigate = useNavigate();
   const [answers, setAnswers] = useState({});
 
-  const { data: jobDetails, isLoading, error } = useQuery({
-    queryKey: ['jobDetails', mainId],
-    queryFn: () => fetchJobDetails(mainId),
+  const { data: jobDetails, isLoading } = useQuery({
+    queryKey: ['jobDetails', jobId],
+    queryFn: () => fetchJobDetails(jobId),
   });
 
   const mutation = useMutation({
-    mutationFn: submitApplication,
+    mutationFn: submitApplication(jobId),
     onSuccess: () => {
       navigate('/application-submitted');
     },
@@ -43,11 +42,11 @@ const MiniForm = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    mutation.mutate({ jobId, answers });
+    const applicationData = JSON.parse(localStorage.getItem('applicationData'));
+    mutation.mutate({ ...applicationData, answers });
   };
 
   if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error.message}</div>;
 
   const { jobTitle, questions = [] } = jobDetails || {};
 
@@ -57,7 +56,7 @@ const MiniForm = () => {
       <h2 className="text-xl mb-4">Additional Questions</h2>
       <form onSubmit={handleSubmit}>
         {questions.map((question, index) => (
-          <div key={question.id} className="mb-4">
+          <div key={question._id} className="mb-4">
             <label className="block mb-2">
               {index + 1}. {question.text}
               {question.required && <span className="text-red-500 ml-1">*</span>}
@@ -67,21 +66,21 @@ const MiniForm = () => {
                 <div key={optionIndex} className="mb-2">
                   <input
                     type="radio"
-                    id={`question-${question.id}-option-${optionIndex}`}
-                    name={`question-${question.id}`}
+                    id={`question-${question._id}-option-${optionIndex}`}
+                    name={`question-${question._id}`}
                     value={option}
-                    onChange={(e) => handleInputChange(question.id, e.target.value)}
+                    onChange={(e) => handleInputChange(question._id, e.target.value)}
                     required={question.required}
                     className="mr-2"
                   />
-                  <label htmlFor={`question-${question.id}-option-${optionIndex}`}>{option}</label>
+                  <label htmlFor={`question-${question._id}-option-${optionIndex}`}>{option}</label>
                 </div>
               ))
             ) : (
               <input
                 type={question.answerType === 'number' ? 'number' : 'text'}
-                value={answers[question.id] || ''}
-                onChange={(e) => handleInputChange(question.id, e.target.value)}
+                value={answers[question._id] || ''}
+                onChange={(e) => handleInputChange(question._id, e.target.value)}
                 required={question.required}
                 className="w-full no-spinner p-2 bg-background-40 rounded outline-none focus:outline-teal-300"
                 placeholder="Enter your answer"
@@ -91,14 +90,13 @@ const MiniForm = () => {
         ))}
         <div className="mt-4">
           <Button type="submit" variant="primary" disabled={mutation.isPending}>
-            {mutation.isPending ? 'Submitting...' : 'Next'}
+            {mutation.isPending ? 'Submitting...' : 'Submit Application'}
           </Button>
         </div>
       </form>
     </div>
   );
 };
-
 
 
 export default MiniForm

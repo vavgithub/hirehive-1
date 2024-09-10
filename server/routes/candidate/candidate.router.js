@@ -1,9 +1,9 @@
 import express from 'express';
-import { allCandidate, assignCandidate, createCandidate, fetchActiveJobs, fetchAssignedCandidate, filterJobs, getCandidate, getCandidateById, jobSpecificStats, searchJobs, stats, updateAssignee, updateCandidateStatusById, updateRating, updateStatusAndStage } from '../../controllers/candidate/candidate.controller.js';
+import { allCandidate, assignCandidate, createCandidate, fetchActiveJobs, fetchAssignedCandidate, filterJobs, getCandidate, getCandidateById, jobSpecificStats, searchJobs, stats, submitApplication, updateAssignee, updateCandidateStatusById, updateRating, updateStatusAndStage } from '../../controllers/candidate/candidate.controller.js';
 import { protect } from '../../middlewares/authMiddleware.js';
 const router = express.Router();
 
-
+router.post('/apply/:jobId', submitApplication);
 router.get("/activeJobs" , fetchActiveJobs);
 router.get('/searchJobs', searchJobs);
 router.post('/filterJobs', filterJobs);

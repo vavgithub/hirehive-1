@@ -3,21 +3,51 @@ import { useForm, Controller } from "react-hook-form"
 import { InputField } from '../../components/Form/FormFields'
 import SkillsInput from '../../components/utility/SkillsInput'
 import { Button } from '../../components/ui/Button'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
+import { useMutation, useQuery } from '@tanstack/react-query'
+
+const fetchJobDetails = async (id) => {
+  const response = await axios.get(`/getJobById/${id}`);
+  return response.data;
+};
+
+const submitApplication = async (data) => {
+  const response = await axios.post(`/candidates/apply/${data._id}`, data);
+  return response.data;
+};
 
 const ApplyJob = () => {
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm()
+  const { id: jobId } = useParams();
+  const navigate = useNavigate();
+  const [applicationData, setApplicationData] = useState(null);
+
+  const { control, handleSubmit, formState: { errors } } = useForm();
 
   const [skills, setSkills] = useState([]);  // State to hold skills
   const allSkills = ["JavaScript", "React", "Node.js", "Python", "Java"];  // Example list of all skills
 
-  const onSubmit = (data) => console.log(data)
+  const { data: jobDetails, isLoading: jobLoading } = useQuery({
+    queryKey: ['jobDetails', jobId],
+    queryFn: () => fetchJobDetails(jobId),
+  });
 
-  const navigate = useNavigate();
+  const mutation = useMutation({
+    mutationFn: submitApplication,
+    onSuccess: () => {
+      navigate(`/mini-form/${jobId}`);
+    },
+    onError: (error) => {
+      console.error('Error submitting application:', error);
+      // Handle error (e.g., show error message to user)
+    },
+  });
+
+  const onSubmit = (data) => {
+    setApplicationData({ ...data, jobId });
+    navigate(`/mini-form/${jobId}`);
+  };
+
+  if (jobLoading) return <div>Loading...</div>;
 
   return (
 

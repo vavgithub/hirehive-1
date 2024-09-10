@@ -1,5 +1,16 @@
 import mongoose from "mongoose";
 
+const answerSchema = new mongoose.Schema({
+  questionId: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true
+  },
+  answer: {
+    type: mongoose.Schema.Types.Mixed,
+    required: true
+  }
+});
+
 const stageStatusSchema = {
   status: {
     type: String,
@@ -142,6 +153,7 @@ const candidateSchema = new mongoose.Schema(
       type: String,
       enum: ["", "Good Fit", "May Be", "Not A Good Fit"]
     },
+    questionResponses: [answerSchema],
   },
   { timestamps: true }
 );

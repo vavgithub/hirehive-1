@@ -438,7 +438,97 @@ const filterJobs = asyncHandler(async (req, res) => {
   res.status(200).json(filteredJobs);
 });
 
+const submitApplication = async (req, res) => {
+  try {
+    const { jobId } = req.params;
+    const {
+      firstName,
+      lastName,
+      email,
+      phone,
+      portfolio,
+      website,
+      experience,
+      noticePeriod,
+      currentCTC,
+      expectedCTC,
+      skills,
+      answers // New field for question responses
+    } = req.body;
+
+    // Validate required fields (including jobId from params)
+    if (!jobId || !firstName || !lastName || !email || !phone || !portfolio || !website || !experience) {
+      return res.status(400).json({ message: 'All required fields must be provided' });
+    }
+
+    // Validate email and phone
+    // if (!validateEmail(email)) {
+    //   return res.status(400).json({ message: 'Invalid email format' });
+    // }
+
+    // if (!validatePhone(phone)) {
+    //   return res.status(400).json({ message: 'Invalid phone number format' });
+    // }
+
+    // Check if the job exists and get its questions
+    const job = await jobs.findById(jobId);
+    if (!job) {
+      return res.status(404).json({ message: 'Job not found' });
+    }
+
+    // Validate answers against job questions
+    const questionResponses = job.questions.map(question => {
+      const answer = answers[question._id];
+      if (question.required && !answer) {
+        throw new Error(`Answer for question "${question.text}" is required`);
+      }
+      return {
+        questionId: question._id,
+        answer: answer || null
+      };
+    });
+
+    // Create new candidate
+    const newCandidate = new candidates({
+      jobId,
+      jobApplied: job.title,
+      firstName,
+      lastName,
+      email,
+      phone,
+      website,
+      portfolio,
+      noticePeriod: parseInt(noticePeriod) || 0,
+      currentCTC: parseFloat(currentCTC) || 0,
+      expectedCTC: parseFloat(expectedCTC) || 0,
+      experience: parseInt(experience),
+      skills: skills || [],
+      age: 0, // You might want to add this to the form or remove it from the model
+      location: '', // You might want to add this to the form or remove it from the model
+      budget: 0, // You might want to add this to the form or remove it from the model
+      stage: 'Portfolio',
+      status: 'N/A',
+      stageStatus: {
+        Portfolio: {
+          status: 'Not Assigned'
+        }
+      },
+      questionResponses // Add the question responses
+    });
+
+    await newCandidate.save();
+
+    res.status(201).json({
+      message: 'Application submitted successfully',
+      candidateId: newCandidate._id
+    });
+  } catch (error) {
+    console.error('Error in submitApplication:', error);
+    res.status(500).json({ message: error.message || 'Internal server error' });
+  }
+};
 export {
+  submitApplication,
   fetchActiveJobs,
   updateCandidateStatusById,
   getCandidate,
