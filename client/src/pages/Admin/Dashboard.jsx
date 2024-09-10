@@ -17,6 +17,7 @@ import { DashboardIcon, DashboardIconActive } from '../../svg/Navbar/DashboardIc
 import { OpenIcon, OpenIconActive } from '../../svg/Tabs/OpenIcon';
 import { ClosedIcon, ClosedIconActive } from '../../svg/Tabs/ClosedIcon';
 import { DraftsIcon, DraftsIconActive } from '../../svg/Tabs/DraftsIcon';
+import { showErrorToast, showSuccessToast } from '../../components/ui/Toast';
 
 
 const fetchJobs = () => axios.get('/jobs').then(res => res.data);
@@ -159,6 +160,9 @@ const Dashboard = () => {
         setCloseReason(reason);
     };
 
+    // showSuccessToast('Job Posted', `"vevaar" created successfully`);
+    // showErrorToast('Job Posted', `"vevaar" created successfully`);
+    
     const getModalMessage = (action, job) => {
         switch (action) {
             case ACTION_TYPES.DELETE:

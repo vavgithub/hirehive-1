@@ -27,14 +27,17 @@ const jobSchema = new mongoose.Schema(
     jobTitle: {
       type: String,
       trim: true,
+      required:true,
     },
     workplaceType: {
       type: String,
       trim: true,
+      required:true,
     },
     employeeLocation: {
       type: String,
       trim: true,
+      required:true,
     },
     employmentType: {
       type: String,
@@ -58,11 +61,11 @@ const jobSchema = new mongoose.Schema(
     },
     experienceFrom: {
       type: Number,
-      min: 1,
+      min: 0,
     },
     experienceTo: {
       type: Number,
-      min: 2,
+      min: 1,
     },
     budgetFrom: {
       type: Number,
@@ -70,13 +73,14 @@ const jobSchema = new mongoose.Schema(
     },
     budgetTo: {
       type: Number,
-      min: 0,
+      min: 1,
     },
     skills: {
       type: [String],
     },
     jobDescription: {
       type: String,
+      required:true,
     },
     status: {
       type: String,

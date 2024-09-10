@@ -5,6 +5,7 @@ import { useCreateJobForm } from '../../hooks/useCreateJobForm';
 import JobForm from '../../components/Form/JobForm';
 import axios from '../../api/axios';
 import Header from '../../components/utility/Header';
+import { showErrorToast, showSuccessToast } from '../../components/ui/Toast';
 
 const CreateJobs = () => {
   const navigate = useNavigate();
@@ -13,11 +14,16 @@ const CreateJobs = () => {
 
   const createJobMutation = useMutation({
     mutationFn: (jobData) => axios.post('/createJobs', jobData),
-    onSuccess: () => {
-      navigate('/admin/create-job/que');
+    onSuccess: (data) => {
+      showSuccessToast('Job Posted', `"${data.data.jobTitle}" created successfully`);
+      // Navigate after a short delay to ensure the toast is visible
+      setTimeout(() => {
+        navigate('/admin/jobs');
+      }, 1000);
     },
     onError: (error) => {
       console.error('Error creating job:', error);
+      showErrorToast('Error', error.response?.data?.message || 'Failed to create job. Please try again.');
     }
   });
 
@@ -28,6 +34,10 @@ const CreateJobs = () => {
 
   const handleQuestionsChange = (updatedQuestions) => {
     setQuestions(updatedQuestions);
+  };
+
+  const handleCloseToast = () => {
+    setShowToast(false);
   };
 
   return (
