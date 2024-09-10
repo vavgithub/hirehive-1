@@ -43,8 +43,8 @@ const ViewJob = () => {
 
     console.log(formData);
     return (
-        <div className='h-screen bg-main-bg bg-cover'>
-            <div className='p-4 mx-4 bg-background-30'>
+        <div className='h-screen bg-main-bg bg-cover pt-28 mb-6'>
+            <div className='mx-16 bg-background-30 rounded-xl p-6'>
                 <div className='flex justify-between'>
                     <h1 className='typography-h1 '>{formData.jobTitle}</h1>
                     <div className='w-44'>
@@ -56,10 +56,11 @@ const ViewJob = () => {
 
                         <div className='text-font-gray' dangerouslySetInnerHTML={{ __html: formatDescription(formData.jobDescription) }}></div>
                         <div>
-                            <h4 className='typography-h4'>Skills</h4>
+                            <h4 className='typography-h4 mt-6 mb-3'>Skills</h4>
+                            <div className='grid grid-cols-6 gap-3'>
                             {formData.skills && formData.skills.map((skill, index) => (
-                                <span key={index} className="bg-background-70 mr-2 px-6 py-2 rounded-full">{skill}</span>
-                            ))}
+                            <span key={index} className="flex justify-center bg-background-70 m px-6 py-2 rounded-full">{skill}</span>))}
+                            </div>
                         </div>
                     </div>
                     <div>

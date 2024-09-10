@@ -397,10 +397,10 @@ const Table = ({ rowsData, onUpdateCandidate , extraCTA }) => {
 
     return (
         <div>
-            <div className='flex justify-between m-4'>
+            <div className='flex justify-between my-4'>
                 <div className='flex gap-4 items-center'>
                     <input
-                        className="px-4 py-2 w-40 rounded "
+                        
                         placeholder="Search By Name"
                         value={searchQuery}
                         onChange={(e) => {

@@ -94,10 +94,5 @@ export default {
       },
     },
   },
-  variants: {
-    extend: {
-      backgroundColor: ['checked'],
-      borderColor: ['checked'],
-    }},
   plugins: [],
 };

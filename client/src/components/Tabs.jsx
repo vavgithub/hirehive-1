@@ -2,7 +2,7 @@ import React from 'react';
 
 const Tabs = ({ tabs, activeTab, handleTabClick }) => {
     return (
-        <div className='flex gap-6  bg-background-100 w-max  rounded-md items-center'>
+        <div className='flex gap-6  bg-background-100 w-max  rounded-xl items-center'>
             {tabs.map((tab) => (
                 <div
                     key={tab.name}
@@ -10,7 +10,7 @@ const Tabs = ({ tabs, activeTab, handleTabClick }) => {
                     onClick={() => handleTabClick(tab.name)}
                 >
                     <span
-                        className={`p-1 typography-body rounded-md flex justify-center items-center ${
+                        className={`p-1 typography-body rounded-xl flex justify-center items-center ${
                             activeTab === tab.name ? 'text-accent-100' : ''
                         }`}
                     >

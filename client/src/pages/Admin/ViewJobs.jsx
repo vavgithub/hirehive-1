@@ -14,6 +14,8 @@ import Table from '../../components/Table';
 import one from '../../svg/StatsCard/Jobs Page/one';
 import Header from '../../components/utility/Header';
 import { ACTION_TYPES } from '../../utility/ActionTypes';
+import { ApplicationIcon, ApplicationIconActive } from '../../svg/Tabs/ApplicationIcon';
+import { CandidateDetailsIcon, CandidateDetailsIconActive } from '../../svg/Tabs/CandidateDetailsIcon';
 
 
 const ViewJobs = () => {
@@ -36,8 +38,10 @@ const ViewJobs = () => {
     };
 
     const tabs = [
-        { name: 'jobDetails', label: 'Job Detail' },
-        { name: 'candidate', label: 'Candidate' }
+        { name: 'jobDetails', label: 'Job Detail', icon: <CandidateDetailsIcon/>,
+            activeIcon: <CandidateDetailsIconActive />, },
+        { name: 'candidate', label: 'Candidate',icon: <ApplicationIcon />,
+            activeIcon: <ApplicationIconActive />, }
     ];
 
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -258,11 +262,9 @@ const ViewJobs = () => {
                             <h2 className="typography-h4 mt-4 mb-2">Job Description</h2>
                             <div className='text-font-gray' dangerouslySetInnerHTML={{ __html: formatDescription(formData.jobDescription) }}></div>
                             <h2 className="typography-h4 mt-4 mb-5">Skills</h2>
-                            <div className='w-2/3 flex'>
-
+                            <div className='grid grid-cols-6 gap-3'>
                                 {formData.skills && formData.skills.map((skill, index) => (
-                                    <span key={index} className="bg-background-70 mr-2 px-6 py-2 rounded-[50px]">{skill}</span>
-                                ))}
+                                    <span key={index} className="flex justify-center bg-background-70 m px-6 py-2 rounded-full">{skill}</span>))}
                             </div>
                         </div>
                         <div>
