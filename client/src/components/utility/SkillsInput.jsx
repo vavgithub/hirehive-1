@@ -1,9 +1,16 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-const SkillsInput = ({ skills, setSkills, allSkills }) => {
+const SkillsInput = ({ skills, setSkills, allSkills = [] }) => {
     const [skill, setSkill] = useState('');
     const [error, setError] = useState('');
     const [suggestions, setSuggestions] = useState([]);
+
+    useEffect(() => {
+        // Ensure skills is always an array
+        if (!Array.isArray(skills)) {
+            setSkills([]);
+        }
+    }, [skills, setSkills]);
 
     const handleKeyDown = (event) => {
         if (['Enter', ','].includes(event.key)) {
@@ -23,7 +30,7 @@ const SkillsInput = ({ skills, setSkills, allSkills }) => {
     const handleInputChange = (event) => {
         const inputValue = event.target.value;
         setSkill(inputValue);
-        if (inputValue) {
+        if (inputValue && Array.isArray(allSkills)) {
             const filteredSuggestions = allSkills.filter((s) =>
                 s.toLowerCase().includes(inputValue.toLowerCase())
             );
@@ -51,8 +58,8 @@ const SkillsInput = ({ skills, setSkills, allSkills }) => {
 
     return (
         <div>
-            <div className="flex flex-wrap gap-2  rounded">
-                {skills.map((skill, index) => (
+            <div className="flex flex-wrap gap-2 rounded">
+                {Array.isArray(skills) && skills.map((skill, index) => (
                     <div key={index} className="p-2 flex items-center gap-1 typography-body bg-background-70 rounded px-2">
                         {skill}
                         <button type="button" onClick={() => removeSkill(index)} className="text-blue-500 hover:text-blue-700">✖</button>
@@ -85,4 +92,4 @@ const SkillsInput = ({ skills, setSkills, allSkills }) => {
     );
 };
 
-export default SkillsInput
+export default SkillsInput;

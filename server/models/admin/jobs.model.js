@@ -62,18 +62,22 @@ const jobSchema = new mongoose.Schema(
     experienceFrom: {
       type: Number,
       min: 0,
+      required:true,
     },
     experienceTo: {
       type: Number,
       min: 1,
+      required:true,
     },
     budgetFrom: {
       type: Number,
       min: 0,
+      required:true,
     },
     budgetTo: {
       type: Number,
       min: 1,
+      required:true,
     },
     skills: {
       type: [String],

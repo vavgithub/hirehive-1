@@ -1,151 +1,207 @@
-// src/components/ui/JobForm.js
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import { useForm, Controller } from 'react-hook-form';
 import { InputField, CustomDropdown, ExperienceField, BudgetField } from './FormFields';
 import SkillsInput from '../utility/SkillsInput';
-import { dropdownOptions } from '../Form/dropdownOptions';
+import { dropdownOptions, dummySkills } from '../Form/dropdownOptions';
 import { Button } from '../ui/Button';
 import Next from '../../svg/Buttons/Next';
-import Que from './Que';
 import SaveForLater from '../../svg/Buttons/SaveForLater';
+import Que from './Que';
 
-const JobForm = ({
-  formData,
-  handleInputChange,
-  handleExperienceChange,
-  incrementExperience,
-  decrementExperience,
-  setSkills,
-  handleSubmit,
-  isEditing,
-  onQuestionsChange,
-  initialQuestions
-}) => {
-  const [dropdownStates, setDropdownStates] = useState({
-    workplaceType: false,
-    employeeLocation: false,
-    employmentType: false,
-    jobProfile: false,
+const JobForm = ({ initialData, onSubmit, isEditing, initialQuestions }) => {
+  const { control, handleSubmit, watch, setValue, formState: { errors, isValid } } = useForm({
+    defaultValues: {
+      jobTitle: '',
+      workplaceType: '',
+      employeeLocation: '',
+      employmentType: '',
+      jobProfile: '',
+      experienceFrom: 0,
+      experienceTo: 1,
+      budgetFrom: 0,
+      budgetTo: 1,
+      jobDescription: '',
+      skills: [],
+      ...initialData
+    },
+    mode: 'onChange'
   });
 
-  useEffect(() => {
-    console.log('JobForm received formData:', formData);
-  }, [formData]);
+  const watchedFields = watch();
 
-  const toggleDropdown = (field) => {
-    setDropdownStates(prev => ({ ...prev, [field]: !prev[field] }));
+  const areAllFieldsFilled = isValid &&
+    watchedFields.jobTitle &&
+    watchedFields.workplaceType &&
+    watchedFields.employeeLocation &&
+    watchedFields.employmentType &&
+    watchedFields.jobProfile &&
+    watchedFields.jobDescription &&
+    watchedFields.skills.length > 0 &&
+    watchedFields.experienceFrom !== undefined &&
+    watchedFields.experienceTo !== undefined &&
+    watchedFields.budgetFrom !== undefined &&
+    watchedFields.budgetTo !== undefined;
+
+  console.log('Form validity:', { isValid, areAllFieldsFilled, watchedFields, errors });
+
+  const handleFormSubmit = (data) => {
+    onSubmit(data);
   };
-
-  const handleOptionClick = (field, option) => {
-    handleInputChange({ target: { id: field, value: option.value } });
-    toggleDropdown(field);
-  };
-
-  if (!formData) {
-    return <div>Loading form data...</div>;
-  }
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit(handleFormSubmit)}>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-6">
-        <InputField
-          id="jobTitle"
-          label="Job Title"
-          value={formData.jobTitle || ''}
-          onChange={handleInputChange}
-          required
+        <Controller
+          name="jobTitle"
+          control={control}
+          rules={{ required: true }}
+          render={({ field }) => (
+            <InputField
+              id="jobTitle"
+              label="Job Title"
+              required
+              {...field}
+            />
+          )}
         />
+
         {Object.keys(dropdownOptions).map((field) => (
-          <CustomDropdown
+          <Controller
             key={field}
-            field={field}
-            label={field.charAt(0).toUpperCase() + field.slice(1).replace(/([A-Z])/g, ' $1')}
-            options={dropdownOptions[field]}
-            value={formData[field] || ''}
-            onChange={handleInputChange}
-            isOpen={dropdownStates[field]}
-            toggleDropdown={() => toggleDropdown(field)}
-            handleOptionClick={handleOptionClick}
+            name={field}
+            control={control}
+            rules={{ required: true }}
+            render={({ field: { onChange, value } }) => (
+              <CustomDropdown
+                field={field}
+                label={field.charAt(0).toUpperCase() + field.slice(1).replace(/([A-Z])/g, ' $1')}
+                options={dropdownOptions[field]}
+                value={value}
+                onChange={onChange}
+              />
+            )}
           />
         ))}
-        <div>
 
-        </div>
-        <ExperienceField
-          formData={formData}
-          handleExperienceChange={handleExperienceChange}
-          incrementExperience={incrementExperience}
-          decrementExperience={decrementExperience}
+        <Controller
+          name="experienceFrom"
+          control={control}
+          rules={{ required: true }}
+          render={({ field: { value, onChange } }) => (
+            <ExperienceField
+              value={{
+                from: value,
+                to: watchedFields.experienceTo
+              }}
+              onChange={(newValue) => {
+                onChange(newValue.from);
+                setValue('experienceTo', newValue.to);
+              }}
+            />
+          )}
         />
-        <BudgetField
-          formData={formData}
-          handleExperienceChange={handleExperienceChange}
-          incrementExperience={incrementExperience}
-          decrementExperience={decrementExperience}
+
+        <Controller
+          name="budgetFrom"
+          control={control}
+          rules={{ required: true }}
+          render={({ field: { value, onChange } }) => (
+            <BudgetField
+              value={{
+                from: value,
+                to: watchedFields.budgetTo
+              }}
+              onChange={(newValue) => {
+                onChange(newValue.from);
+                setValue('budgetTo', newValue.to);
+              }}
+            />
+          )}
         />
 
-        <div className='w-full'>
-          <label htmlFor="jobDescription" className="block font-bold mb-2">Job Description*</label>
-          <textarea
-            id="jobDescription"
-            placeholder="Write a job description"
-            className="w-full px-3 py-2 bg-background-40 rounded outline-none focus:outline-teal-300"
-            value={formData.jobDescription || ''}
-            onChange={handleInputChange}
-            required
-            rows="10"
-          />
-        </div>
+        <Controller
+          name="jobDescription"
+          control={control}
+          rules={{ required: true }}
+          render={({ field }) => (
+            <div className='w-full'>
+              <label htmlFor="jobDescription" className="block font-bold mb-2">Job Description*</label>
+              <textarea
+                {...field}
+                id="jobDescription"
+                placeholder="Write a job description"
+                className="w-full px-3 py-2 bg-background-40 rounded outline-none focus:outline-teal-300"
+                required
+                rows="10"
+              />
+            </div>
+          )}
+        />
 
-        <div className="w-full mb-4">
-          <label htmlFor="skills" className="block font-bold mb-2">Skills*</label>
-          <SkillsInput skills={formData.skills || []} setSkills={setSkills} />
-        </div>
+        <Controller
+          name="skills"
+          control={control}
+          rules={{ required: true, validate: (value) => value.length > 0 }}
+          render={({ field: { onChange, value } }) => (
+            <div className="w-full mb-4">
+              <label htmlFor="skills" className="block font-bold mb-2">Skills*</label>
+              <SkillsInput
+                skills={value}
+                setSkills={onChange}
+                allSkills={dummySkills}
+              />
+            </div>
+          )}
+        />
       </div>
 
-
-      <Que
-        onQuestionsChange={onQuestionsChange}
-        initialQuestions={initialQuestions}
+      <Controller
+        name="questions"
+        control={control}
+        defaultValue={initialQuestions || []}
+        render={({ field: { onChange, value } }) => (
+          <Que
+            onQuestionsChange={onChange}
+            initialQuestions={value}
+          />
+        )}
       />
-
-
-
 
       <div className="flex justify-end mt-4">
         <div className='flex gap-4'>
           <div className='w-[240px]'>
-
-            <Button variant="secondary" type="submit" icon={SaveForLater}>
-              {isEditing ? 'Save' : 'Save For Later'}
+            <Button
+              variant="secondary"
+              type="button"
+              icon={SaveForLater}
+              onClick={handleSubmit((data) => handleFormSubmit({ ...data, status: 'draft' }))}
+            >
+              Save For Later
             </Button>
           </div>
-
-
           <div className='w-[240px]'>
-
-            <Button variant="primary" type="submit" icon={Next}>
+            <Button
+              variant="primary"
+              type="submit"
+              icon={Next}
+              disabled={!areAllFieldsFilled}
+            >
               {isEditing ? 'Save' : 'Next'}
             </Button>
           </div>
         </div>
 
-        {/* <button
-          type="submit"
-          className="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded mr-2"
-        >
-          {isEditing ? 'Update Job Listing' : 'Create Job Listing'}
-        </button> */}
-        {isEditing && formData.status === 'draft' && (
+        {isEditing && watchedFields.status === 'draft' && (
           <button
             type="button"
-            onClick={() => handleSubmit({ ...formData, status: 'active' })}
+            onClick={handleSubmit((data) => handleFormSubmit({ ...data, status: 'active' }))}
             className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
           >
             Make It Active
           </button>
         )}
       </div>
-    </form >
+    </form>
   );
 };
 

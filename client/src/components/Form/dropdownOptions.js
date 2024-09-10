@@ -29,3 +29,36 @@ export const dropdownOptions = {
       { value: 'Hybrid', label: "Hybrid" }
     ]
   };
+
+  export const dummySkills = [
+    "JavaScript",
+    "React",
+    "Node.js",
+    "Python",
+    "Java",
+    "C++",
+    "HTML",
+    "CSS",
+    "TypeScript",
+    "Ruby",
+    "PHP",
+    "Swift",
+    "Kotlin",
+    "Go",
+    "Rust",
+    "SQL",
+    "MongoDB",
+    "GraphQL",
+    "Docker",
+    "Kubernetes",
+    "AWS",
+    "Azure",
+    "Google Cloud",
+    "Machine Learning",
+    "Artificial Intelligence",
+    "Data Science",
+    "Blockchain",
+    "IoT",
+    "Cyber Security",
+    "DevOps"
+  ];
