@@ -400,7 +400,7 @@ const Table = ({ rowsData, onUpdateCandidate , extraCTA }) => {
             <div className='flex justify-between my-4'>
                 <div className='flex gap-4 items-center'>
                     <input
-                        
+                        type='text'
                         placeholder="Search By Name"
                         value={searchQuery}
                         onChange={(e) => {

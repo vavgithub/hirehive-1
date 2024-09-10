@@ -267,7 +267,7 @@ const Dashboard = () => {
                     <div>
                         <div>
                             <input
-                                className="px-4 py-2 w-full rounded mb-4"
+                                type='text'
                                 placeholder="Job title or keyword"
                                 value={searchQuery}
                                 onChange={handleSearch}

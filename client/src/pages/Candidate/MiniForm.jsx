@@ -63,7 +63,7 @@ const MiniForm = () => {
             </label>
             {question.type === 'multiple' ? (
               question.options.map((option, optionIndex) => (
-                <div key={optionIndex} className="mb-2">
+                <div key={optionIndex} className="mb-2 flex justify-start">
                   <input
                     type="radio"
                     id={`question-${question._id}-option-${optionIndex}`}
