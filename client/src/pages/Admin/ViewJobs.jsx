@@ -38,10 +38,14 @@ const ViewJobs = () => {
     };
 
     const tabs = [
-        { name: 'jobDetails', label: 'Job Details', icon: <CandidateDetailsIcon/>,
-            activeIcon: <CandidateDetailsIconActive />, },
-        { name: 'candidate', label: 'Candidates',icon: <ApplicationIcon />,
-            activeIcon: <ApplicationIconActive />, }
+        {
+            name: 'jobDetails', label: 'Job Details', icon: <CandidateDetailsIcon />,
+            activeIcon: <CandidateDetailsIconActive />,
+        },
+        {
+            name: 'candidate', label: 'Candidates', icon: <ApplicationIcon />,
+            activeIcon: <ApplicationIconActive />,
+        }
     ];
 
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -201,6 +205,8 @@ const ViewJobs = () => {
         return <div>Loading...</div>;
     }
 
+    const { questions = [] } = formData || {};
+
     const candidateStats = [
         { title: 'Total', value: jobStats?.data?.totalCount || 0, icon: one },
         { title: 'Portfolio', value: jobStats?.data?.stageStats?.Portfolio || 0, icon: one },
@@ -272,8 +278,33 @@ const ViewJobs = () => {
                         </div>
                     </div>
 
-                    <div className='bg-background-90'>
-
+                    <div className='bg-background-90 p-6 rounded-xl'>
+                        <h3 className='typography-h3 mb-8'>Additional Questions</h3>
+                        {questions.map((question, index) => (
+                            <div key={question._id} className="mb-4">
+                                <label className="typography-body">
+                                    {index + 1}. {question.text}
+                                    {question.required && <span className="text-red-500 ml-1">*</span>}
+                                </label>
+                                {(
+                                    question.options.map((option, optionIndex) => (
+                                        <div key={optionIndex} className="mb-2 typography-body flex justify-start items-center gap-2">
+                                            {/* <input
+                                                type="radio"
+                                                id={`question-${question._id}-option-${optionIndex}`}
+                                                name={`question-${question._id}`}
+                                                value={option}
+                                                onChange={(e) => handleInputChange(question._id, e.target.value)}
+                                                required={question.required}
+                                                className="mr-2"
+                                            /> */}
+                                            <div className='w-4 h-4 rounded-full border border-gray-600'></div>
+                                            <label htmlFor={`question-${question._id}-option-${optionIndex}`}>{option}</label>
+                                        </div>
+                                    ))
+                                )}
+                            </div>
+                        ))}
                     </div>
                 </div>
             )}

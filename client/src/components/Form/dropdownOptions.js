@@ -16,7 +16,7 @@ export const dropdownOptions = {
         { value: 'Frontend Developer', label: 'Frontend Developer' },
         { value: 'UI UX', label: 'UI UX' },
         { value: 'Motion Graphic', label: 'Motion Graphic' },
-        { value: 'Art Director', label: '3D' },
+        { value: '3D', label: '3D' },
         { value: 'Video Editor', label: 'Video Editor' },
         { value: 'Digital Marketing Executive', label: 'Digital Marketing Executive' },
         { value: 'Project Manager', label: 'Project Manager' },
