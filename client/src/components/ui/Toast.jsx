@@ -40,12 +40,12 @@ const CloseButton = ({ closeToast }) => (
 export const StyledToastContainer = () => (
   <ToastContainer
     position="top-right"
-    // autoClose={3000}
-    autoClose={false} // Set to false to prevent auto-closing
+    autoClose={3000}
+    // autoClose={false} // Set to false to prevent auto-closing
     hideProgressBar
     newestOnTop={false}
-    // closeOnClick
-    closeOnClick={false} // Prevent closing on click for debugging
+    closeOnClick
+    // closeOnClick={false} // Prevent closing on click for debugging
     rtl={false}
     pauseOnFocusLoss
     draggable
