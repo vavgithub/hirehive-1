@@ -17,6 +17,7 @@ import { DashboardIcon, DashboardIconActive } from '../../svg/Navbar/DashboardIc
 import { OpenIcon, OpenIconActive } from '../../svg/Tabs/OpenIcon';
 import { ClosedIcon, ClosedIconActive } from '../../svg/Tabs/ClosedIcon';
 import { DraftsIcon, DraftsIconActive } from '../../svg/Tabs/DraftsIcon';
+import NoJobs from "../../svg/Background/NoJobs.svg"
 import { showErrorToast, showSuccessToast } from '../../components/ui/Toast';
 
 
@@ -163,7 +164,7 @@ const Dashboard = () => {
 
     // showSuccessToast('Job Posted', `"vevaar" created successfully`);
     // showErrorToast('Job Posted', `"vevaar" created successfully`);
-    
+
     const getModalMessage = (action, job) => {
         switch (action) {
             case ACTION_TYPES.DELETE:
@@ -270,7 +271,7 @@ const Dashboard = () => {
 
                 <div className='flex mt-4'>
                     <div>
-                        <div>
+                        <div className='mb-4'>
                             <input
                                 type='text'
                                 placeholder="Job title or keyword"
@@ -278,18 +279,39 @@ const Dashboard = () => {
                                 onChange={handleSearch}
                             />
                         </div>
-                        {/* <Slider  min={0} max={20} /> */}
                         <Filters filters={filters} statistics={filtersConfig} handleCheckboxChange={handleCheckboxChange} activeTab={activeTab} handleExperienceFilter={handleExperienceFilter} clearAllFilters={clearAllFilters} />
                     </div>
                     <div className='w-full ml-4'>
-                        <div className='flex justify-end pb-4'>
+                        <div className='flex justify-end '>
 
-                            <div className="w-[216px]">
-                                <Button variant="primary" icon={Create} iconPosition="left" onClick={() => { navigate("/admin/create-job") }}>Create A Job Listing</Button>
-                            </div>
+                            {
+                                displayJobs.length != 0 && (
+                                    <div className="w-[216px] mb-4">
+                                        <Button variant="primary" icon={Create} iconPosition="left" onClick={() => { navigate("/admin/create-job") }}>Create A Job Listing</Button>
+                                    </div>
+                                )
+                            }
+
+
 
 
                         </div>
+                        {
+                            displayJobs.length === 0 && (
+                                <div className='bg-background-80 flex flex-col p-40 justify-center items-center rounded-xl'>
+
+                                    <img src={NoJobs}></img>
+                                    <span className='typography-body m-6'>Create a job post to attract top talent and build your dream team</span>
+
+                                    <div className="w-[216px]">
+                                        <Button variant="primary" icon={Create} iconPosition="left" onClick={() => { navigate("/admin/create-job") }}>Create A Job Listing</Button>
+                                    </div>
+
+
+                                </div>
+
+                            )
+                        }
                         {displayJobs
                             .filter(job => job.status === activeTab)
                             .map((job) => (

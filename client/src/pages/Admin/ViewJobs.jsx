@@ -16,6 +16,10 @@ import Header from '../../components/utility/Header';
 import { ACTION_TYPES } from '../../utility/ActionTypes';
 import { ApplicationIcon, ApplicationIconActive } from '../../svg/Tabs/ApplicationIcon';
 import { CandidateDetailsIcon, CandidateDetailsIconActive } from '../../svg/Tabs/CandidateDetailsIcon';
+import PortfolioIcon from '../../svg/StatsCard/Candidate Page/PortfolioIcon';
+import ScreeningIcon from '../../svg/StatsCard/Candidate Page/ScreeningIcon';
+import HiredIcon from '../../svg/StatsCard/Candidate Page/HiredIcon';
+import three from '../../svg/StatsCard/Jobs Page/three';
 
 
 const ViewJobs = () => {
@@ -208,13 +212,13 @@ const ViewJobs = () => {
     const { questions = [] } = formData || {};
 
     const candidateStats = [
-        { title: 'Total', value: jobStats?.data?.totalCount || 0, icon: one },
+        { title: 'Total', value: jobStats?.data?.totalCount || 0, icon: PortfolioIcon },
         { title: 'Portfolio', value: jobStats?.data?.stageStats?.Portfolio || 0, icon: one },
-        { title: 'Screening', value: jobStats?.data?.stageStats?.Screening || 0, icon: one },
+        { title: 'Screening', value: jobStats?.data?.stageStats?.Screening || 0, icon: ScreeningIcon },
         { title: 'Design Task', value: jobStats?.data?.stageStats['Design Task'] || 0, icon: one },
         { title: 'Round 1', value: jobStats?.data?.stageStats['Round 1'] || 0, icon: one },
         { title: 'Round 2', value: jobStats?.data?.stageStats['Round 2'] || 0, icon: one },
-        { title: 'Offer Sent', value: jobStats?.data?.stageStats?.Hired || 0, icon: one },
+        { title: 'Offer Sent', value: jobStats?.data?.stageStats?.Hired || 0, icon: three   },
     ];
 
     const jobsDetailStats = [
