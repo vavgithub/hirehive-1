@@ -81,6 +81,7 @@ const Dashboard = () => {
             queryClient.invalidateQueries({ queryKey: ['jobs'] });
             queryClient.invalidateQueries({ queryKey: ['jobCount'] });
             setModalOpen(false);
+            showErrorToast('Job Deleted', "Job Deleted Successfully");
         },
     });
 

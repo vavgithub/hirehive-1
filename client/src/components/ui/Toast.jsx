@@ -1,8 +1,6 @@
 import React from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { X, AlertCircle, CheckCircle } from 'lucide-react';
-import DeleteIcon from '../../svg/KebabList/DeleteIcon';
 import Success from '../../svg/Toast/Success';
 import Delete from '../../svg/Toast/Delete';
 

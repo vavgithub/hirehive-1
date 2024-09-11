@@ -16,7 +16,7 @@ const CreateJobs = () => {
       // Navigate after a short delay to ensure the toast is visible
       setTimeout(() => {
         navigate('/admin/jobs');
-      }, 1000);
+      }, 500);
     },
     onError: (error) => {
       console.error('Error creating job:', error);
