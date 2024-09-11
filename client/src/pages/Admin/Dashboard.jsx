@@ -160,8 +160,8 @@ const Dashboard = () => {
         setCloseReason(reason);
     };
 
-    // showSuccessToast('Job Posted', `"vevaar" created successfully`);
-    // showErrorToast('Job Posted', `"vevaar" created successfully`);
+    showSuccessToast('Job Posted', `"vevaar" created successfully`);
+    showErrorToast('Job Posted', `"vevaar" created successfully`);
     
     const getModalMessage = (action, job) => {
         switch (action) {
