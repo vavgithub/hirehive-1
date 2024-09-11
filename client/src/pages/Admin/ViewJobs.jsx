@@ -16,10 +16,17 @@ import Header from '../../components/utility/Header';
 import { ACTION_TYPES } from '../../utility/ActionTypes';
 import { ApplicationIcon, ApplicationIconActive } from '../../svg/Tabs/ApplicationIcon';
 import { CandidateDetailsIcon, CandidateDetailsIconActive } from '../../svg/Tabs/CandidateDetailsIcon';
-import PortfolioIcon from '../../svg/StatsCard/Candidate Page/PortfolioIcon';
-import ScreeningIcon from '../../svg/StatsCard/Candidate Page/ScreeningIcon';
-import HiredIcon from '../../svg/StatsCard/Candidate Page/HiredIcon';
-import three from '../../svg/StatsCard/Jobs Page/three';
+import Total from '../../svg/StatsCard/View Candidate/Total';
+import Portfolio from '../../svg/StatsCard/View Candidate/Portfolio';
+import Screening from '../../svg/StatsCard/View Candidate/Screening';
+import DesignTask from '../../svg/StatsCard/View Candidate/DesignTask';
+import Round1 from '../../svg/StatsCard/View Candidate/Round1';
+import Round2 from '../../svg/StatsCard/View Candidate/Round2';
+import OfferSent from '../../svg/StatsCard/View Candidate/OfferSent';
+import EngRate from '../../svg/StatsCard/View Details/EngRate';
+import QuaApp from '../../svg/StatsCard/View Details/Portfolio';
+import AppRec from '../../svg/StatsCard/View Details/AppRec';
+import Views from '../../svg/StatsCard/View Details/Views';
 
 
 const ViewJobs = () => {
@@ -212,20 +219,20 @@ const ViewJobs = () => {
     const { questions = [] } = formData || {};
 
     const candidateStats = [
-        { title: 'Total', value: jobStats?.data?.totalCount || 0, icon: PortfolioIcon },
-        { title: 'Portfolio', value: jobStats?.data?.stageStats?.Portfolio || 0, icon: one },
-        { title: 'Screening', value: jobStats?.data?.stageStats?.Screening || 0, icon: ScreeningIcon },
-        { title: 'Design Task', value: jobStats?.data?.stageStats['Design Task'] || 0, icon: one },
-        { title: 'Round 1', value: jobStats?.data?.stageStats['Round 1'] || 0, icon: one },
-        { title: 'Round 2', value: jobStats?.data?.stageStats['Round 2'] || 0, icon: one },
-        { title: 'Offer Sent', value: jobStats?.data?.stageStats?.Hired || 0, icon: three   },
+        { title: 'Total', value: jobStats?.data?.totalCount || 0, icon: Total },
+        { title: 'Portfolio', value: jobStats?.data?.stageStats?.Portfolio || 0, icon: Portfolio },
+        { title: 'Screening', value: jobStats?.data?.stageStats?.Screening || 0, icon: Screening },
+        { title: 'Design Task', value: jobStats?.data?.stageStats['Design Task'] || 0, icon: DesignTask },
+        { title: 'Round 1', value: jobStats?.data?.stageStats['Round 1'] || 0, icon: Round1 },
+        { title: 'Round 2', value: jobStats?.data?.stageStats['Round 2'] || 0, icon: Round2 },
+        { title: 'Offer Sent', value: jobStats?.data?.stageStats?.Hired || 0, icon: OfferSent   },
     ];
 
     const jobsDetailStats = [
-        { title: 'Views', value: "0", icon: one },
-        { title: 'Applications Received', value: 1, icon: one },
-        { title: 'Qualified applications', value: '80', icon: one },
-        { title: 'Engagement Rate', value: '78%', icon: one },
+        { title: 'Views', value: "0", icon: Views },
+        { title: 'Applications Received', value: 1, icon: AppRec },
+        { title: 'Qualified applications', value: '80', icon: QuaApp },
+        { title: 'Engagement Rate', value: '78%', icon: EngRate },
     ];
 
     const handleAction = (action, jobId) => {
