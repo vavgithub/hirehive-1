@@ -14,7 +14,7 @@ export const InputField = React.forwardRef(({ id, label, required, ...props }, r
   </div>
 ));
 
-export const CustomDropdown = React.forwardRef(({ field, label, options, value, onChange }, ref) => {
+export const CustomDropdown = React.forwardRef(({ field, label, options, value, onChange, required }, ref) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleDropdown = () => setIsOpen(!isOpen);
@@ -26,7 +26,7 @@ export const CustomDropdown = React.forwardRef(({ field, label, options, value, 
 
   return (
     <div className="space-y-1 flex flex-col gap-1">
-      <label className="typography-body">{label}*</label>
+      <label className="typography-body">{label}{required && <span className="text-red-100">*</span>}</label>
       <div className="relative focus:outline focus:outline-teal-400">
         <button
           type="button"
@@ -54,9 +54,9 @@ export const CustomDropdown = React.forwardRef(({ field, label, options, value, 
   );
 });
 
-export const ExperienceField = React.forwardRef(({ value, onChange }, ref) => (
+export const ExperienceField = React.forwardRef(({ value, onChange ,required }, ref) => (
   <div>
-    <label className="typography-body">Experience*</label>
+    <label className="typography-body">Experience{required && <span className="text-red-100">*</span>}</label>
     <div className='flex gap-2'>
       {['from', 'to'].map((label) => (
         <NumberInputField
@@ -66,15 +66,16 @@ export const ExperienceField = React.forwardRef(({ value, onChange }, ref) => (
           onChange={(newValue) => onChange({ ...value, [label]: newValue })}
           unit="Yrs"
           ref={ref}
+          required
         />
       ))}
     </div>
   </div>
 ));
 
-export const BudgetField = React.forwardRef(({ value, onChange }, ref) => (
+export const BudgetField = React.forwardRef(({ value, onChange , required }, ref) => (
   <div>
-    <label className="typography-body">Budget*</label>
+    <label className="typography-body">Budget{required && <span className="text-red-100">*</span>}</label>
     <div className='flex gap-2'>
       {['from', 'to'].map((label) => (
         <NumberInputField
@@ -84,13 +85,14 @@ export const BudgetField = React.forwardRef(({ value, onChange }, ref) => (
           onChange={(newValue) => onChange({ ...value, [label]: newValue })}
           unit="Lpa"
           ref={ref}
+          required
         />
       ))}
     </div>
   </div>
 ));
 
-export const NumberInputField = React.forwardRef(({ label, value, onChange, unit }, ref) => {
+export const NumberInputField = React.forwardRef(({ label , value, onChange, unit }, ref) => {
   const handleIncrement = () => onChange(parseInt(value, 10) + 1);
   const handleDecrement = () => onChange(Math.max(0, parseInt(value, 10) - 1));
 

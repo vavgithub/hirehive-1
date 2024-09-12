@@ -3,57 +3,27 @@ import { useForm, Controller } from "react-hook-form"
 import { InputField } from '../../components/Form/FormFields'
 import SkillsInput from '../../components/utility/SkillsInput'
 import { Button } from '../../components/ui/Button'
-import { useNavigate, useParams } from 'react-router-dom'
-import { useMutation, useQuery } from '@tanstack/react-query'
-
-const fetchJobDetails = async (id) => {
-  const response = await axios.get(`/getJobById/${id}`);
-  return response.data;
-};
-
-const submitApplication = async (data) => {
-  const response = await axios.post(`/candidates/apply/${data._id}`, data);
-  return response.data;
-};
+import { useNavigate } from 'react-router-dom'
 
 const ApplyJob = () => {
-  const { id: jobId } = useParams();
-  const navigate = useNavigate();
-  const [applicationData, setApplicationData] = useState(null);
-
-  const { control, handleSubmit, formState: { errors } } = useForm();
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm()
 
   const [skills, setSkills] = useState([]);  // State to hold skills
   const allSkills = ["JavaScript", "React", "Node.js", "Python", "Java"];  // Example list of all skills
 
-  const { data: jobDetails, isLoading: jobLoading } = useQuery({
-    queryKey: ['jobDetails', jobId],
-    queryFn: () => fetchJobDetails(jobId),
-  });
+  const onSubmit = (data) => console.log(data)
 
-  const mutation = useMutation({
-    mutationFn: submitApplication,
-    onSuccess: () => {
-      navigate(`/mini-form/${jobId}`);
-    },
-    onError: (error) => {
-      console.error('Error submitting application:', error);
-      // Handle error (e.g., show error message to user)
-    },
-  });
-
-  const onSubmit = (data) => {
-    setApplicationData({ ...data, jobId });
-    navigate(`/mini-form/${jobId}`);
-  };
-
-  if (jobLoading) return <div>Loading...</div>;
+  const navigate = useNavigate();
 
   return (
 
     <form onSubmit={handleSubmit(onSubmit)}>
-      <h3 className='typography-h3'>Personal Details</h3>
-      <div className='grid grid-cols-2 gap-4'>
+      <h3 className='typography-h3 mx-16 mt-8 mb-4'>Personal Details</h3>
+      <div className='grid grid-cols-2 gap-4 px-16'>
 
         <Controller
           name="First Name"
@@ -109,9 +79,9 @@ const ApplyJob = () => {
         />
       </div>
 
-      <h3 className='typography-h3'>Resume & Portfolio </h3>
+      <h3 className='typography-h3 mx-16 mt-8 mb-4'>Resume & Portfolio </h3>
 
-      <div className='grid grid-cols-2 gap-4'>
+      <div className='grid grid-cols-2 gap-4 mx-16'>
 
 
         <Controller
@@ -144,8 +114,8 @@ const ApplyJob = () => {
         />
       </div>
 
-      <h3 className='typography-h3'>Professional Details </h3>
-      <div className='grid grid-cols-2 gap-4'>
+      <h3 className='typography-h3 mx-16 mt-8 mb-4'>Professional Details </h3>
+      <div className='grid grid-cols-2 gap-4 mx-16'>
 
         <Controller
           name="Experience (In Years)"
@@ -227,7 +197,7 @@ const ApplyJob = () => {
 
       {errors.exampleRequired && <span>This field is required</span>}
 
-      <div className='flex mt-6 justify-end gap-4'>
+      <div className='flex mt-6 justify-end gap-4 mr-16 mb-6'>
 
         <div className='w-[269px]'>
           <Button type="button" onClick={()=>(navigate(-1))} variant="secondary">

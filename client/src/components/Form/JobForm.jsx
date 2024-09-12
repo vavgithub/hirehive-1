@@ -77,11 +77,17 @@ const JobForm = ({ initialData, onSubmit, isEditing, initialQuestions }) => {
                 label={field.charAt(0).toUpperCase() + field.slice(1).replace(/([A-Z])/g, ' $1')}
                 options={dropdownOptions[field]}
                 value={value}
+                required
                 onChange={onChange}
               />
             )}
           />
         ))}
+
+        {/* this is dummy div for adding gap , please dont remonve this */}
+        <div>
+
+        </div>
 
         <Controller
           name="experienceFrom"
@@ -97,6 +103,7 @@ const JobForm = ({ initialData, onSubmit, isEditing, initialQuestions }) => {
                 onChange(newValue.from);
                 setValue('experienceTo', newValue.to);
               }}
+              required
             />
           )}
         />
@@ -115,6 +122,7 @@ const JobForm = ({ initialData, onSubmit, isEditing, initialQuestions }) => {
                 onChange(newValue.from);
                 setValue('budgetTo', newValue.to);
               }}
+              required
             />
           )}
         />
@@ -125,12 +133,12 @@ const JobForm = ({ initialData, onSubmit, isEditing, initialQuestions }) => {
           rules={{ required: true }}
           render={({ field }) => (
             <div className='w-full'>
-              <label htmlFor="jobDescription" className="block font-bold mb-2">Job Description*</label>
+              <label htmlFor="jobDescription" className="typography-body block mb-2">Job Description{<span className="text-red-100">*</span>}</label>
               <textarea
                 {...field}
                 id="jobDescription"
                 placeholder="Write a job description"
-                className="w-full px-3 py-2 bg-background-40 rounded outline-none focus:outline-teal-300"
+                className="w-full rounded-xl px-3 py-2 bg-background-40  outline-none focus:outline-teal-300"
                 required
                 rows="10"
               />
@@ -144,7 +152,7 @@ const JobForm = ({ initialData, onSubmit, isEditing, initialQuestions }) => {
           rules={{ required: true, validate: (value) => value.length > 0 }}
           render={({ field: { onChange, value } }) => (
             <div className="w-full mb-4">
-              <label htmlFor="skills" className="block font-bold mb-2">Skills*</label>
+              <label htmlFor="skills" className="typograhpy-body mb-2">Skills{<span className="text-red-100">*</span>}</label>
               <SkillsInput
                 skills={value}
                 setSkills={onChange}

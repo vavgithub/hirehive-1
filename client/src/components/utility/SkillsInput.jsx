@@ -71,7 +71,7 @@ const SkillsInput = ({ skills, setSkills, allSkills = [] }) => {
                     onChange={handleInputChange}
                     onKeyDown={handleKeyDown}
                     placeholder="Add skills"
-                    className="outline-none w-full"
+                    className="mt-2"
                 />
             </div>
             {suggestions.length > 0 && (
