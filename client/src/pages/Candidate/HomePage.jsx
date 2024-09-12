@@ -100,7 +100,8 @@ const HomePage = () => {
                 <h1 className='display-d2 max-w-96 text-center'>Unlock Your Career Potential</h1>
                 <div className='w-4/5 mt-9'>
                     <input
-                        className="px-4 py-2 w-full rounded mb-4"
+                        type='text'
+                        className="mb-4"
                         placeholder="Job title or keyword"
                         value={searchQuery}
                         onChange={handleSearch}

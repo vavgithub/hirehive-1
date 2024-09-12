@@ -284,7 +284,7 @@ const Dashboard = () => {
                     <div className='w-full ml-4'>
                         <div className='flex justify-end '>
                                 {
-                                displayJobs.length != 0 && (
+                                activeTab == "open" && displayJobs.length != 0 && (
                                     <div className="w-[216px] mb-4">
                                         <Button variant="primary" icon={Create} iconPosition="left" onClick={() => { navigate("/admin/create-job") }}>Create A Job Listing</Button>
                                     </div>
