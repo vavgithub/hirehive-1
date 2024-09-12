@@ -13,33 +13,32 @@ const ExperienceFilter = ({ onApply }) => {
     <div className="p-2 rounded">
       <div className="flex space-x-4 mb-4">
         <div>
-          <label className="">Min Experience</label>
-          <input
-            type="number"
-            value={minExperience}
-            onChange={(e) => setMinExperience(e.target.value)}
-            className="w-16 p-2 text-center rounded"
-          />
-          <span className=""> yr</span>
+          <label className="typography-small-p text-font-gray">Min Experience</label>
+          <div className='flex items-center bg-background-40 rounded-tr-xl rounded-br-xl'>
+
+            <input
+
+              value={minExperience}
+              onChange={(e) => setMinExperience(e.target.value)}
+              className="w-16 p-2 bg-background-40 text-center no-spinner rounded"
+            />
+            <span className="text-font-gray pr-2">Years</span>
+          </div>
         </div>
         <div>
-          <label className="">Max Experience</label>
-          <input
-            type="number"
-            value={maxExperience}
-            onChange={(e) => setMaxExperience(e.target.value)}
-            className="w-16 p-2 text-center rounded"
-          />
-          <span className=""> yr</span>
+          <label className="typography-small-p text-font-gray">Max Experience</label>
+          <div className='flex items-center bg-background-40 rounded-tr-xl rounded-br-xl'>
+
+            <input
+
+              value={maxExperience}
+              onChange={(e) => setMaxExperience(e.target.value)}
+              className="w-16 p-2 bg-background-40 text-center no-spinner rounded"
+            />
+            <span className="text-font-gray pr-2">Years</span>
+          </div>
         </div>
       </div>
-      {/* <button
-        onClick={handleApply}
-        className="w-full p-2 text-white bg-blue-500 rounded"
-        
-      >
-        Apply
-      </button> */}
       <Button variant="secondary" onClick={handleApply} size="default">
         Apply
       </Button>
