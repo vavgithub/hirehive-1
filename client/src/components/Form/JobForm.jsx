@@ -182,14 +182,16 @@ const JobForm = ({ initialData, onSubmit, isEditing, initialQuestions }) => {
       <div className="flex justify-end mt-4">
         <div className='flex gap-4'>
           <div className='w-[240px]'>
-            <Button
-              variant="secondary"
-              type="button"
-              icon={SaveForLater}
-              onClick={handleSaveForLater}
-            >
-              Save For Later
-            </Button>
+            {!isEditing && (
+              <Button
+                variant="secondary"
+                type="button"
+                icon={SaveForLater}
+                onClick={handleSaveForLater}
+              >
+                Save For Later
+              </Button>
+            )}
           </div>
           <div className='w-[240px]'>
             <Button
