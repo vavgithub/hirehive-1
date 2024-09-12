@@ -12,20 +12,22 @@ const CreateJobs = () => {
   const createJobMutation = useMutation({
     mutationFn: (jobData) => axios.post('/createJobs', jobData),
     onSuccess: (data) => {
-      showSuccessToast('Job Posted', `"${data.data.jobTitle}" created successfully`);
+      const action = data.data.status === 'draft' ? 'saved as draft' : 'created';
+      showSuccessToast('Job Action', `"${data.data.jobTitle}" ${action} successfully`);
       // Navigate after a short delay to ensure the toast is visible
       setTimeout(() => {
         navigate('/admin/jobs');
       }, 500);
     },
     onError: (error) => {
-      console.error('Error creating job:', error);
-      showErrorToast('Error', error.response?.data?.message || 'Failed to create job. Please try again.');
+      console.error('Error with job action:', error);
+      showErrorToast('Error', error.response?.data?.message || 'Failed to perform job action. Please try again.');
     }
   });
 
-  const handleSubmit = (data) => {
-    createJobMutation.mutate({ ...data, status: 'open' });
+  const handleSubmit = (data, isDraft = false) => {
+    const status = isDraft ? 'draft' : 'open';
+    createJobMutation.mutate({ ...data, status });
   };
 
   return (

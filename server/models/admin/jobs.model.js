@@ -32,12 +32,10 @@ const jobSchema = new mongoose.Schema(
     workplaceType: {
       type: String,
       trim: true,
-      required:true,
     },
     employeeLocation: {
       type: String,
       trim: true,
-      required:true,
     },
     employmentType: {
       type: String,
@@ -62,29 +60,24 @@ const jobSchema = new mongoose.Schema(
     experienceFrom: {
       type: Number,
       min: 0,
-      required:true,
     },
     experienceTo: {
       type: Number,
       min: 1,
-      required:true,
     },
     budgetFrom: {
       type: Number,
       min: 0,
-      required:true,
     },
     budgetTo: {
       type: Number,
       min: 1,
-      required:true,
     },
     skills: {
       type: [String],
     },
     jobDescription: {
       type: String,
-      required:true,
     },
     status: {
       type: String,

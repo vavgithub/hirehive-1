@@ -9,7 +9,7 @@ import SaveForLater from '../../svg/Buttons/SaveForLater';
 import Que from './Que';
 
 const JobForm = ({ initialData, onSubmit, isEditing, initialQuestions }) => {
-  const { control, handleSubmit, watch, setValue, formState: { errors, isValid } } = useForm({
+  const { control, handleSubmit, watch, setValue, getValues, formState: { errors, isValid } } = useForm({
     defaultValues: {
       jobTitle: '',
       workplaceType: '',
@@ -26,7 +26,6 @@ const JobForm = ({ initialData, onSubmit, isEditing, initialQuestions }) => {
     },
     mode: 'onChange'
   });
-
   const watchedFields = watch();
 
   const areAllFieldsFilled = isValid &&
@@ -45,7 +44,12 @@ const JobForm = ({ initialData, onSubmit, isEditing, initialQuestions }) => {
   console.log('Form validity:', { isValid, areAllFieldsFilled, watchedFields, errors });
 
   const handleFormSubmit = (data) => {
-    onSubmit(data);
+    onSubmit(data, false);
+  };
+
+  const handleSaveForLater = () => {
+    const currentValues = getValues();
+    onSubmit(currentValues, true);
   };
 
   return (
@@ -182,7 +186,7 @@ const JobForm = ({ initialData, onSubmit, isEditing, initialQuestions }) => {
               variant="secondary"
               type="button"
               icon={SaveForLater}
-              onClick={handleSubmit((data) => handleFormSubmit({ ...data, status: 'draft' }))}
+              onClick={handleSaveForLater}
             >
               Save For Later
             </Button>
@@ -202,7 +206,7 @@ const JobForm = ({ initialData, onSubmit, isEditing, initialQuestions }) => {
         {isEditing && watchedFields.status === 'draft' && (
           <button
             type="button"
-            onClick={handleSubmit((data) => handleFormSubmit({ ...data, status: 'active' }))}
+            onClick={handleSubmit((data) => onSubmit(data, false))}
             className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
           >
             Make It Active
