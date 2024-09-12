@@ -55,9 +55,9 @@ const Login = () => {
                     <p className='typography-body max-w-96'>Our advanced tools simplify job posting, application review, and career opportunities, ensuring you find the best candidates or land your next role effortlessly.</p>
                     <p className="mb-8"></p>
                 </div>
-                <div className="absolute bottom-12 right-12 flex space-x-4">
-                    <StatsGrid stats={statsOne} />
-                    <StatsGrid stats={statsTwo} />
+                <div className="bottom-12 right-12 flex space-x-4 z-10">
+                    <div className='absolute bottom-14 right-80'><StatsGrid stats={statsOne} /></div>
+                    <div className='absolute bottom-20 right-14'><StatsGrid stats={statsTwo} /></div>
                 </div>
                 <img src={sundarKanya} alt="Sundar Kanya" className="absolute bottom-0 right-0 h-[70%]" />
             </div>
