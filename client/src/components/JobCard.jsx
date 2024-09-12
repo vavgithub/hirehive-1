@@ -44,8 +44,8 @@ const JobCard = ({ job, status, handleAction, page, onClick, withKebab }) => {
 
             {
                 job.status == "closed" && (
-                    <div>
-                        <p className='typography-body'>Clouser Reason</p>
+                    <div className='flex'>
+                        <p className='typography-body text-font-gray'>Closure Reason:</p>
                         <p className='typography-body'>{job.closingReason} || "N/A" </p>
                     </div>
 
