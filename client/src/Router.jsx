@@ -23,11 +23,31 @@ import ApplyJob from './pages/Candidate/ApplyJob.jsx';
 import MiniForm from './pages/Candidate/MiniForm.jsx';
 import Verification from './pages/Candidate/Verification.jsx';
 import PreAssessment from './pages/Candidate/PreAssessment.jsx';
+import ProtectedRouteCandidate from './routes/ProtectedRouteCandidate.jsx';
+import CandidateLogin from './pages/Candidate/CandidateLogin.jsx';
+import CandidateDashboard from './pages/Candidate/CandidateDashboard.jsx';
 
 export const router = createBrowserRouter([
    {
     path: "/",
     element: <HomePage />,
+  },
+  {
+    path: '/candidate',
+    children: [
+      {
+        path: 'login',
+        element: <CandidateLogin />,
+      },
+      {
+        path: 'dashboard',
+        element: (
+          <ProtectedRouteCandidate>
+            <CandidateDashboard />
+          </ProtectedRouteCandidate>
+        ),
+      },
+    ],
   },
   {
     path:"/:id",
@@ -38,16 +58,8 @@ export const router = createBrowserRouter([
     element:<ApplyJob/>
   },
   {
-    path:"/mini-form/:id",
-    element:<MiniForm/>
-  },
-  {
     path:"/assessment/:id",
     element:<PreAssessment/>
-  },
-  {
-    path:"/verification",
-    element:<Verification/>
   },
   {
     path: "/auth",

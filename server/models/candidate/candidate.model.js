@@ -60,6 +60,28 @@ const candidateSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    email: {
+      type: String,
+      required: true,
+      trim: true,
+      unique: true, // Ensure uniqueness
+    },
+    phone: {
+      type: String,
+      required: true,
+      trim: true,
+      unique: true, // Ensure uniqueness
+    },
+    password: {
+      type: String,
+      required: false,
+    },
+    isVerified: {
+      type: Boolean,
+      default: false,
+    },
+    otp: String,
+    otpExpires: Date,
     lastName: {
       type: String,
       required: true,
@@ -75,18 +97,11 @@ const candidateSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-    phone: {
-      type: String,
-      required: true,
-      trim: true,
-    },
     website: {
       type: String,
-      required: true,
     },
     portfolio: {
       type: String,
-      required: true,
     },
     noticePeriod: {
       type: Number,
@@ -100,17 +115,10 @@ const candidateSchema = new mongoose.Schema(
       type: Number,
       default: 0
     },
-    experience: {
-      type: Number,
-      required: true,
-    },
     skills: {
       type: [String],
     },
-    age: {
-      type: Number,
-      required: true,
-    },
+
     stage: {
       type: String,
       enum: ["Portfolio", "Screening", "Design Task", "Round 1", "Round 2", "Hired"],
@@ -142,13 +150,7 @@ const candidateSchema = new mongoose.Schema(
     },   
     location: {
       type: String,
-      required: true,
-      trim: true,
     },    
-    budget: {
-      type: Number,
-      required: true,
-    },
     rating: {
       type: String,
       enum: ["", "Good Fit", "May Be", "Not A Good Fit"]

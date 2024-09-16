@@ -1,6 +1,8 @@
 import jwt from 'jsonwebtoken';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { User } from '../models/admin/user.model.js';
+import { candidates as Candidate } from '../models/candidate/candidate.model.js';
+const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret_key';
 
 const protect = asyncHandler(async (req, res, next) => {
     let token;
@@ -36,4 +38,31 @@ const roleProtect = (role) => {
     };
 };
 
-export { protect, roleProtect };
+const protectCandidate = async (req, res, next) => {
+  try {
+    const token = req.cookies.token;
+
+    if (!token) {
+      return res.status(401).json({ message: 'Not authorized, token missing' });
+    }
+
+    // Verify token
+    const decoded = jwt.verify(token, JWT_SECRET);
+
+    // Find candidate by ID
+    const candidate = await Candidate.findById(decoded.id);
+
+    if (!candidate) {
+      return res.status(404).json({ message: 'Candidate not found' });
+    }
+
+    req.candidate = candidate;
+    next();
+  } catch (error) {
+    console.error('Error in protectCandidate middleware:', error);
+    res.status(401).json({ message: 'Not authorized, token failed' });
+  }
+};
+
+
+export { protect, roleProtect , protectCandidate};
