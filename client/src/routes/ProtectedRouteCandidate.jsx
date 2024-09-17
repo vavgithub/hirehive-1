@@ -3,30 +3,17 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from '../api/axios';
+import useAuthCandidate from '../hooks/useAuthCandidate';
 
 const ProtectedRouteCandidate = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(null);
-  const navigate = useNavigate();
+  const { isAuthenticated, isLoading } = useAuthCandidate();
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        await axios.get('/auth/candidate/dashboard'); // Try accessing a protected route
-        setIsAuthenticated(true);
-      } catch (error) {
-        setIsAuthenticated(false);
-        navigate('/candidate/login');
-      }
-    };
-
-    checkAuth();
-  }, [navigate]);
-
-  if (isAuthenticated === null) {
+  if (isLoading) {
     return <div>Loading...</div>;
   }
 
-  return isAuthenticated ? children : null;
+  return isAuthenticated ? children : <Navigate to="/login" />;
 };
+
 
 export default ProtectedRouteCandidate;

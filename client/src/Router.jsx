@@ -1,5 +1,6 @@
 import {
   createBrowserRouter,
+  Navigate,
 } from 'react-router-dom';
 import Login from './pages/Admin/Login';
 import Dashboard from './pages/Admin/Dashboard';
@@ -26,6 +27,7 @@ import PreAssessment from './pages/Candidate/PreAssessment.jsx';
 import ProtectedRouteCandidate from './routes/ProtectedRouteCandidate.jsx';
 import CandidateLogin from './pages/Candidate/CandidateLogin.jsx';
 import CandidateDashboard from './pages/Candidate/CandidateDashboard.jsx';
+import CandidateLayout from './auth/CandidateLayout.jsx';
 
 export const router = createBrowserRouter([
    {
@@ -33,19 +35,52 @@ export const router = createBrowserRouter([
     element: <HomePage />,
   },
   {
+    path: '/login',
+    element: <CandidateLogin />,
+  },
+  // {
+  //   path: '/candidate',
+  //   children: [
+  //     {
+  //       path: 'login',
+  //       element: <CandidateLogin />,
+  //     },
+  //     {
+  //       path: 'dashboard',
+  //       element: (
+  //         <ProtectedRouteCandidate>
+  //           <CandidateDashboard />
+  //         </ProtectedRouteCandidate>
+  //       ),
+  //     },
+  //   ],
+  // },
+
+
+  //Protected Candidate Routes
+  {
     path: '/candidate',
+    element: (
+      <ProtectedRouteCandidate>
+        <CandidateLayout />
+      </ProtectedRouteCandidate>
+    ),
     children: [
       {
-        path: 'login',
-        element: <CandidateLogin />,
+        path: 'dashboard',
+        element: <CandidateDashboard />,
       },
       {
-        path: 'dashboard',
-        element: (
-          <ProtectedRouteCandidate>
-            <CandidateDashboard />
-          </ProtectedRouteCandidate>
-        ),
+        path: 'my-jobs',
+        element: <CandidateDashboard />, // Create this component
+      },
+      {
+        path: 'all-jobs',
+        element: <HomePage />, // Protected HomePage with sidebar
+      },
+      {
+        path: '',
+        element: <Navigate to="dashboard" />, // Redirect to dashboard by default
       },
     ],
   },
