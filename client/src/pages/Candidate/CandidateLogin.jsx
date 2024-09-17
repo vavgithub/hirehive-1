@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import axios from '../../api/axios';
 import { useNavigate } from 'react-router-dom';
+import { Button } from '../../components/ui/Button';
 
 const CandidateLogin = () => {
   const [email, setEmail] = useState('');
@@ -23,7 +24,7 @@ const CandidateLogin = () => {
 
   return (
     <div className="login-container">
-      <h2>Candidate Login</h2>
+      <h2>Candidate Login</h2>                           
       {error && <p className="error-message">{error}</p>}
       <form onSubmit={handleLogin}>
         <label>Email:</label>
@@ -40,7 +41,8 @@ const CandidateLogin = () => {
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-        <button type="submit">Login</button>
+        
+        <Button className="my-4" variant="primary" type="submit">Login</Button>
       </form>
     </div>
   );

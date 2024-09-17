@@ -28,6 +28,8 @@ import ProtectedRouteCandidate from './routes/ProtectedRouteCandidate.jsx';
 import CandidateLogin from './pages/Candidate/CandidateLogin.jsx';
 import CandidateDashboard from './pages/Candidate/CandidateDashboard.jsx';
 import CandidateLayout from './auth/CandidateLayout.jsx';
+import MyJobs from './pages/Candidate/MyJobs.jsx';
+import AllJobs from './pages/Candidate/AllJobs.jsx';
 
 export const router = createBrowserRouter([
    {
@@ -38,24 +40,6 @@ export const router = createBrowserRouter([
     path: '/login',
     element: <CandidateLogin />,
   },
-  // {
-  //   path: '/candidate',
-  //   children: [
-  //     {
-  //       path: 'login',
-  //       element: <CandidateLogin />,
-  //     },
-  //     {
-  //       path: 'dashboard',
-  //       element: (
-  //         <ProtectedRouteCandidate>
-  //           <CandidateDashboard />
-  //         </ProtectedRouteCandidate>
-  //       ),
-  //     },
-  //   ],
-  // },
-
 
   //Protected Candidate Routes
   {
@@ -72,11 +56,11 @@ export const router = createBrowserRouter([
       },
       {
         path: 'my-jobs',
-        element: <CandidateDashboard />, // Create this component
+        element: <MyJobs/>, // Create this component
       },
       {
         path: 'all-jobs',
-        element: <HomePage />, // Protected HomePage with sidebar
+        element: <AllJobs />, // Protected HomePage with sidebar
       },
       {
         path: '',

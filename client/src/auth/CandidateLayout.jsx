@@ -1,6 +1,6 @@
 import React from 'react';
 import { Outlet, useNavigate, NavLink } from 'react-router-dom';
-import { logout } from '../api/authApi';
+import { candidateLogout, logout } from '../api/authApi';
 import axios from '../api/axios';
 import { useQuery } from '@tanstack/react-query';
 
@@ -18,9 +18,9 @@ const CandidateLayout = () => {
 
   const handleLogout = async () => {
     try {
-      await logout();
+      await candidateLogout();
       refetch();
-      navigate('/candidate/login');
+      navigate('/login');
     } catch (error) {
       console.error('Logout failed:', error);
     }
@@ -29,8 +29,8 @@ const CandidateLayout = () => {
   // Define sidebar menu items
   const menuItems = [
     { name: 'Dashboard', path: '/candidate/dashboard' },
-    { name: 'My Jobs', path: '/candidate/my-jobs' },
     { name: 'All Jobs', path: '/candidate/all-jobs' },
+    { name: 'My Jobs', path: '/candidate/my-jobs' },
   ];
 
   return (
