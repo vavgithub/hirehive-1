@@ -27,12 +27,12 @@ const CandidateDashboard = () => {
 
   return (
     <div className="candidate-dashboard">
-      <h2>Welcome, {candidateData.firstName}</h2>
-      <h3>Your Applied Jobs:</h3>
-      <ul>
-        <li>{candidateData.jobApplied}</li>
+      {/* <h2>Welcome, {candidateData.firstName}</h2> */}
+      {/* <h3>Your Applied Jobs:</h3> */}
+      {/* <ul> */}
+        {/* <li>{candidateData.jobApplied}</li> */}
         {/* If candidate can apply to multiple jobs, adjust accordingly */}
-      </ul>
+      {/* </ul> */}
       {/* Display more candidate data as needed */}
     </div>
   );

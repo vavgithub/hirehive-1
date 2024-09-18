@@ -217,6 +217,48 @@ export const loginCandidate = async (req, res) => {
     res.status(200).json({ message: 'Logged out successfully' });
   };
 
+  // auth.controller.js
+
+export const applyToJob = async (req, res) => {
+  try {
+    const candidateId = req.candidate._id;
+    const {
+      jobId,
+      jobApplied,
+      questionResponses,
+      // Add other fields as necessary
+    } = req.body;
+
+    // Check if the candidate has already applied to this job
+    const candidate = await Candidate.findById(candidateId);
+
+    const hasApplied = candidate.jobApplications.some(
+      (application) => application.jobId.toString() === jobId
+    );
+
+    if (hasApplied) {
+      return res.status(400).json({ message: 'You have already applied to this job.' });
+    }
+
+    // Add the new job application
+    const newJobApplication = {
+      jobId,
+      jobApplied,
+      questionResponses,
+      // Add other fields as necessary
+    };
+
+    candidate.jobApplications.push(newJobApplication);
+    await candidate.save();
+
+    res.status(200).json({ message: 'Successfully applied to the job.' });
+  } catch (error) {
+    console.error('Error applying to job:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+
   export const getCandidateDashboard = async (req, res) => {
     try {
       const candidateId = req.candidate._id;
@@ -234,5 +276,26 @@ export const loginCandidate = async (req, res) => {
       res.status(500).json({ message: 'Server error' });
     }
   };
+
+  // auth.controller.js
+
+export const getCandidateAppliedJobs = async (req, res) => {
+  try {
+    const candidate = await Candidate.findById(req.candidate._id).populate({
+      path: 'jobApplications.jobId',
+      model: 'jobs',
+    });
+
+    if (!candidate) {
+      return res.status(404).json({ message: 'Candidate not found' });
+    }
+
+    res.status(200).json({ jobApplications: candidate.jobApplications });
+  } catch (error) {
+    console.error('Error fetching applied jobs:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
   
   

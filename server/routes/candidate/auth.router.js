@@ -1,7 +1,7 @@
 // auth.routes.js
 
 import express from 'express';
-import { createPassword, getCandidateDashboard, loginCandidate, logoutCandidate, registerCandidate, verifyOtp } from '../../controllers/candidate/auth.controller.js';
+import { applyToJob, createPassword, getCandidateAppliedJobs, getCandidateDashboard, loginCandidate, logoutCandidate, registerCandidate, verifyOtp } from '../../controllers/candidate/auth.controller.js';
 import { protectCandidate } from '../../middlewares/authMiddleware.js';
 
 const router = express.Router();
@@ -21,6 +21,12 @@ router.post('/logout', logoutCandidate);
 
 // Protected route for candidate dashboard
 router.get('/dashboard', protectCandidate, getCandidateDashboard);
+router.post('/apply-job', protectCandidate, applyToJob);
+
+// auth.routes.js
+
+router.get('/applied-jobs', protectCandidate, getCandidateAppliedJobs);
+
 
 
 export default router;

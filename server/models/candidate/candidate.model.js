@@ -49,6 +49,26 @@ const stageStatusSchema = {
   }],
 };
 
+
+const jobApplicationSchema = new mongoose.Schema({
+  jobId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "jobs",
+    required: true,
+  },
+  jobApplied: {
+    type: String,
+    required: true,
+  },
+  questionResponses: [answerSchema],
+  applicationDate: {
+    type: Date,
+    default: Date.now,
+  },
+  // Add any other fields relevant to a job application
+});
+
+
 const candidateSchema = new mongoose.Schema(
   {
     jobId: {
@@ -147,7 +167,8 @@ const candidateSchema = new mongoose.Schema(
       "Design Task": stageStatusSchema,
       "Round 1": stageStatusSchema,
       "Round 2": stageStatusSchema
-    },   
+    },
+    jobApplications: [jobApplicationSchema], // New field to store multiple job applications   
     location: {
       type: String,
     },    
