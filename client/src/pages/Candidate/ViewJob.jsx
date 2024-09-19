@@ -54,10 +54,18 @@ const ViewJob = () => {
         });
     }
 
-    const handleApplyClick = () => {
-        console.log("Clicked on apply");
-        navigate(`/apply-job/${mainId}`);
-    };
+    const handleApplyClick = async () => {
+        try {
+          // Increment the apply click count
+          await axios.post(`/candidates/${mainId}/increment-apply-click`);
+    
+          // Redirect to the ApplyJob page
+          navigate(`/apply-job/${mainId}`);
+        } catch (error) {
+          console.error('Error incrementing apply click count:', error);
+          // Handle error as needed
+        }
+      };
 
     return (
         <div className='h-screen bg-main-bg bg-cover pt-28 mb-6'>

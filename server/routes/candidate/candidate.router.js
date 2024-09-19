@@ -1,7 +1,10 @@
 import express from 'express';
 import { allCandidate, assignCandidate, createCandidate, fetchActiveJobs, fetchAssignedCandidate, filterJobs, getCandidate, getCandidateById, jobSpecificStats, searchJobs, stats, submitApplication, updateAssignee, updateCandidateStatusById, updateRating, updateStatusAndStage } from '../../controllers/candidate/candidate.controller.js';
 import { protect } from '../../middlewares/authMiddleware.js';
+import { incrementApplyClickCount } from '../../controllers/admin/jobs.controller.js';
 const router = express.Router();
+
+router.post('/:jobId/increment-apply-click', incrementApplyClickCount);
 
 router.post('/apply/:jobId', submitApplication);
 router.get("/activeJobs" , fetchActiveJobs);

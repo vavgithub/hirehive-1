@@ -61,7 +61,7 @@ const JobCard = ({ job, status, handleAction, page, onClick, withKebab }) => {
 
                 <div className='flex flex-col'>
                     <span className='typography-small-p text-font-gray'>Engagement</span>
-                    <span className="ml-2 typography-body">{job.applied}125 </span>
+                    <span className="ml-2 typography-body">{job.applyClickCount}Click </span>
                 </div>
 
                 <div className='flex flex-col'>

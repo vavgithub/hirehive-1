@@ -95,6 +95,10 @@ const jobSchema = new mongoose.Schema(
       ],
       default: "",
     },
+    applyClickCount: {
+      type: Number,
+      default: 0,
+    },
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',

@@ -79,6 +79,28 @@ const getTotalJobCount = async (req, res) => {
   }
 };
 
+export const incrementApplyClickCount = async (req, res) => {
+  try {
+    const { jobId } = req.params;
+
+    // Use atomic increment to avoid race conditions
+    const updatedJob = await jobs.findByIdAndUpdate(
+      jobId,
+      { $inc: { applyClickCount: 1 } },
+      { new: true }
+    );
+
+    if (!updatedJob) {
+      return res.status(404).json({ message: 'Job not found' });
+    }
+
+    res.status(200).json({ applyClickCount: updatedJob.applyClickCount });
+  } catch (error) {
+    console.error('Error incrementing apply click count:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
 const searchJobs = async (req, res) => {
   const searchTerm = req.query.jobTitle;
   if (!searchTerm) {
