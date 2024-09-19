@@ -136,6 +136,7 @@ const HomePage = () => {
                             key={job._id}
                             job={job}
                             status={open}
+                            isCandidate={true}
                             withKebab={false}
                             handleAction={handleAction}
                             onClick={() => handleViewJob(job._id)}

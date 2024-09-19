@@ -313,6 +313,7 @@ const Dashboard = () => {
                                 <JobCard
                                     key={job._id}
                                     job={job}
+                                    isAdmin={true}
                                     withKebab={true}
                                     page={currentPage}
                                     status={activeTab}

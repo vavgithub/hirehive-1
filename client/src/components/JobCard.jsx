@@ -5,7 +5,7 @@ import { getTimeAgo } from '../utility/getTimeAgo';
 import ExperienceIcon from '../svg/ExperienceIcon';
 import DollarIcon from '../svg/DollarIcon';
 
-const JobCard = ({ job, status, handleAction, page, onClick, withKebab }) => {
+const JobCard = ({ job, status, handleAction, page, onClick, withKebab, isAdmin , isCandidate }) => {
     const formattedCreatedAt = getTimeAgo(job.createdAt);
     return (
         <div className="bg-background-90 shadow rounded-xl mb-4" onClick={() => onClick(job._id)}>
@@ -54,25 +54,52 @@ const JobCard = ({ job, status, handleAction, page, onClick, withKebab }) => {
 
             <div className="flex items-center justify-between bg-background-40 p-4 rounded-b-xl">
 
-                <div className='flex flex-col'>
-                    <span className='typography-small-p text-font-gray'>Candidates</span>
-                    <span className="ml-2 typography-body">{job.applied}125 </span>
-                </div>
+                {
+                    isAdmin && (
+                        <div className='flex justify-between items-center w-full'>
+                            <div className='flex flex-col'>
+                                <span className='typography-small-p text-font-gray'>Candidates</span>
+                                <span className="ml-2 typography-body">{job.applied}125 </span>
+                            </div>
 
-                <div className='flex flex-col'>
-                    <span className='typography-small-p text-font-gray'>Engagement</span>
-                    <span className="ml-2 typography-body">{job.applyClickCount}Click </span>
-                </div>
+                            <div className='flex flex-col'>
+                                <span className='typography-small-p text-font-gray'>Engagement</span>
+                                <span className="ml-2 typography-body">{job.applyClickCount}Click </span>
+                            </div>
 
-                <div className='flex flex-col'>
-                    <span className='typography-small-p text-font-gray'>Applications</span>
-                    <span className="ml-2 typography-body">{job.applied}125 </span>
-                </div>
+                            <div className='flex flex-col'>
+                                <span className='typography-small-p text-font-gray'>Applications</span>
+                                <span className="ml-2 typography-body">{job.applied}125 </span>
+                            </div>
 
-                <div className='flex flex-col'>
-                    <span className='typography-small-p text-font-gray'>Posted</span>
-                    <span className="ml-2 typography-body">{formattedCreatedAt} </span>
-                </div>
+                            <div className='flex flex-col'>
+                                <span className='typography-small-p text-font-gray'>Posted</span>
+                                <span className="ml-2 typography-body">{formattedCreatedAt} </span>
+                            </div>
+
+                        </div>
+
+
+                    )
+                }
+
+                {isCandidate && (
+                    <div className='flex gap-28'>
+                        <div className='flex flex-col'>
+                            <span className='typography-small-p text-font-gray'>Posted</span>
+                            <span className="ml-2 typography-body">{formattedCreatedAt} </span>
+                        </div>
+
+                        <div className='flex flex-col'>
+                            <span className='typography-small-p text-font-gray'>Workplace Type</span>
+                            <span className="ml-2 typography-body">{job.workplaceType}</span>
+                        </div>
+
+                    </div>
+                )}
+
+
+
 
             </div>
 
