@@ -19,7 +19,7 @@ const ApplyJob = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [skills, setSkills] = useState([]);
   const allSkills = ['JavaScript', 'React', 'Node.js', 'Python', 'Java'];
-  const [answers, setAnswers] = useState({});
+  // const [answers, setAnswers] = useState({});
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [passwordError, setPasswordError] = useState('');
@@ -28,7 +28,7 @@ const ApplyJob = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
   const { id: jobId } = useParams();
-  const { isAuthenticated, candidateData  , fetchCandidateData } = useAuthCandidate();
+  const { isAuthenticated, candidateData, fetchCandidateData } = useAuthCandidate();
 
   const {
     control,
@@ -70,6 +70,14 @@ const ApplyJob = () => {
   const onSubmit = (data) => {
     setIsSubmitting(true);
 
+    // Extract questionResponses from form data
+    const questionResponses = Object.keys(data)
+      .filter((key) => key.startsWith('question-'))
+      .map((key) => ({
+        questionId: key.replace('question-', ''),
+        answer: data[key],
+      }));
+
     if (isAuthenticated) {
       // Authenticated candidate applies to job
       const applicationData = {
@@ -86,10 +94,7 @@ const ApplyJob = () => {
         expectedCTC: data.expectedCTC,
         experience: data.experience,
         skills: skills,
-        questionResponses: Object.keys(answers).map((questionId) => ({
-          questionId,
-          answer: answers[questionId],
-        })),
+        questionResponses,
       };
 
       axios
@@ -104,40 +109,37 @@ const ApplyJob = () => {
         });
     } else {
       // Unauthenticated candidate registration and application
-     // Unauthenticated candidate registration and application
-    const registrationData = {
-      jobId: jobId, // Get from useParams()
-      firstName: data.firstName,
-      lastName: data.lastName,
-      email: data.email,
-      phone: data.phoneNumber,
-      website: data.website,
-      portfolio: data.portfolio,
-      noticePeriod: data.noticePeriod,
-      currentCTC: data.currentCTC,
-      expectedCTC: data.expectedCTC,
-      experience: data.experience,
-      skills: skills,
-      questionResponses: Object.keys(answers).map((questionId) => ({
-        questionId,
-        answer: answers[questionId],
-      })),
-    };
+      // Unauthenticated candidate registration and application
+      const registrationData = {
+        jobId: jobId, // Get from useParams()
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        phone: data.phoneNumber,
+        website: data.website,
+        portfolio: data.portfolio,
+        noticePeriod: data.noticePeriod,
+        currentCTC: data.currentCTC,
+        expectedCTC: data.expectedCTC,
+        experience: data.experience,
+        skills: skills,
+        questionResponses,
+      };
 
-    axios
-      .post('/auth/candidate/register', registrationData)
-      .then((response) => {
-        setEmail(data.email);
-        setPhone(data.phoneNumber);
-        setCurrentStep(2); // Move to password creation step
-        setIsSubmitting(false);
-      })
-      .catch((error) => {
-        setIsSubmitting(false);
-        alert(error.response.data.message);
-      });
-  }
-};
+      axios
+        .post('/auth/candidate/register', registrationData)
+        .then((response) => {
+          setEmail(data.email);
+          setPhone(data.phoneNumber);
+          setCurrentStep(2); // Move to password creation step
+          setIsSubmitting(false);
+        })
+        .catch((error) => {
+          setIsSubmitting(false);
+          alert(error.response.data.message);
+        });
+    }
+  };
   // Handler for password creation
   const handlePasswordSubmit = (e) => {
     e.preventDefault();
@@ -172,22 +174,22 @@ const ApplyJob = () => {
   const handleOtpSubmit = (e) => {
     e.preventDefault();
     const enteredOtp = otp.join('');
-  
+
     if (enteredOtp.length !== 6) {
       setOtpError('Please enter the 6-digit OTP sent to your email.');
       return;
     }
-  
+
     setIsSubmitting(true);
-  
+
     axios
       .post('/auth/candidate/verify-otp', { email, otp: enteredOtp })
       .then(async (response) => {
         setIsSubmitting(false);
-  
+
         // Update authentication state
         await fetchCandidateData();
-  
+
         navigate('/candidate/my-jobs'); // Navigate to My Jobs page
       })
       .catch((error) => {
@@ -406,6 +408,8 @@ const ApplyJob = () => {
           {/* Additional Questions */}
           <div className="bg-background-80 pt-4 mx-16">
             <h2 className="text-xl mb-4">Additional Questions</h2>
+            // ApplyJob.jsx
+
             {questions.map((question, index) => (
               <Controller
                 key={question._id}
@@ -423,21 +427,16 @@ const ApplyJob = () => {
                     </label>
                     {question.type === 'multiple' ? (
                       question.options.map((option, optionIndex) => (
-                        <div
-                          key={optionIndex}
-                          className="mb-2 flex items-center"
-                        >
+                        <div key={optionIndex} className="mb-2 flex items-center">
                           <input
                             type="radio"
                             id={`question-${question._id}-option-${optionIndex}`}
                             value={option}
-                            {...field}
                             checked={field.value === option}
+                            onChange={() => field.onChange(option)}
                             className="mr-2"
                           />
-                          <label
-                            htmlFor={`question-${question._id}-option-${optionIndex}`}
-                          >
+                          <label htmlFor={`question-${question._id}-option-${optionIndex}`}>
                             {option}
                           </label>
                         </div>
@@ -459,6 +458,7 @@ const ApplyJob = () => {
                 )}
               />
             ))}
+
           </div>
 
           {/* Buttons */}

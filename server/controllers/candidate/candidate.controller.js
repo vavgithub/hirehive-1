@@ -121,12 +121,38 @@ const allCandidate = asyncHandler(async (req, res, next) => {
   }
 });
 
+// const getCandidate = async (req, res) => {
+//   try {
+//     const jobId = req.params.jobId;
+//     const jobCandidates = await candidates.find({ jobId });
+//     res.send(jobCandidates);
+//   } catch (error) {
+//     res.status(500).send(error);
+//   }
+// };
+
 const getCandidate = async (req, res) => {
   try {
     const jobId = req.params.jobId;
-    const jobCandidates = await candidates.find({ jobId });
-    res.send(jobCandidates);
+
+    // Find all candidates who have applied to the specific job
+    const jobCandidates = await candidates.find(
+      { 'jobApplications.jobId': jobId },
+      {
+        // Optionally, include only the matching job application in the result
+        jobApplications: { $elemMatch: { jobId } },
+        // Include other candidate fields as needed
+        firstName: 1,
+        lastName: 1,
+        email: 1,
+        phone: 1,
+        // Include other fields you need
+      }
+    );
+
+    res.status(200).json(jobCandidates);
   } catch (error) {
+    console.error('Error fetching candidates for job:', error);
     res.status(500).send(error);
   }
 };

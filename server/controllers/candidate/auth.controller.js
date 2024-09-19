@@ -253,36 +253,46 @@ export const loginCandidate = async (req, res) => {
 
   // auth.controller.js
 
+// auth.controller.js
+
 export const applyToJob = async (req, res) => {
   try {
     const candidateId = req.candidate._id;
     const {
       jobId,
-      jobApplied,
       questionResponses,
-      // Add other fields as necessary
+      // Other fields if necessary
     } = req.body;
 
-    // Check if the candidate has already applied to this job
+    // Fetch the job details using jobId to get jobTitle (jobApplied)
+    const job = await jobs.findById(jobId);
+    if (!job) {
+      return res.status(404).json({ message: 'Job not found' });
+    }
+    const jobApplied = job.jobTitle;
+
+    // Find the candidate
     const candidate = await Candidate.findById(candidateId);
 
+    // Check if the candidate has already applied to this job
     const hasApplied = candidate.jobApplications.some(
       (application) => application.jobId.toString() === jobId
     );
 
     if (hasApplied) {
-      return res.status(400).json({ message: 'You have already applied to this job.' });
+      return res
+        .status(400)
+        .json({ message: 'You have already applied to this job.' });
     }
 
     // Add the new job application
-    const newJobApplication = {
+    candidate.jobApplications.push({
       jobId,
       jobApplied,
       questionResponses,
-      // Add other fields as necessary
-    };
+      applicationDate: new Date(),
+    });
 
-    candidate.jobApplications.push(newJobApplication);
     await candidate.save();
 
     res.status(200).json({ message: 'Successfully applied to the job.' });
@@ -291,6 +301,7 @@ export const applyToJob = async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 };
+
 
 export const getCandidateDashboard = async (req, res) => {
   try {
