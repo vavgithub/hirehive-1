@@ -87,7 +87,7 @@ const ViewJob = () => {
                 <div className='flex justify-between'>
                     <div className='w-3/4'>
                         <div
-                            className='text-font-gray'
+                            className='text-font-gray font-outfit'
                             dangerouslySetInnerHTML={{ __html: formatDescription(formData.jobDescription) }}
                         ></div>
                         <div>
