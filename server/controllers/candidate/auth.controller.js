@@ -5,6 +5,7 @@ import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
 import nodemailer from 'nodemailer';
+import { jobs } from '../../models/admin/jobs.model.js';
 
 // Secret key for JWT (store this in environment variables)
 const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret_key';
@@ -36,17 +37,35 @@ const generateOtp = () => {
 };
 
 // Controller function to register a candidate
+
+// auth.controller.js
+
 export const registerCandidate = async (req, res) => {
   try {
     const {
       jobId,
-      jobApplied,
+      // jobApplied will be fetched from the job document using jobId
       firstName,
       lastName,
       email,
       phone,
+      website,
+      portfolio,
+      noticePeriod,
+      currentCTC,
+      expectedCTC,
+      experience,
+      skills,
+      questionResponses,
       // Other fields as needed
     } = req.body;
+
+    // Fetch the job details using jobId to get jobTitle (jobApplied)
+    const job = await jobs.findById(jobId);
+    if (!job) {
+      return res.status(404).json({ message: 'Job not found' });
+    }
+    const jobApplied = job.jobTitle;
 
     // Check if email or phone number already exists
     const existingCandidate = await Candidate.findOne({
@@ -61,17 +80,31 @@ export const registerCandidate = async (req, res) => {
     const otp = generateOtp();
     const hashedOtp = crypto.createHash('sha256').update(otp).digest('hex');
 
-    // Create new candidate
+    // Create new candidate with job application data
     const newCandidate = new Candidate({
-      jobId,
-      jobApplied,
       firstName,
       lastName,
       email,
       phone,
+      website,
+      portfolio,
+      noticePeriod,
+      currentCTC,
+      expectedCTC,
+      experience,
+      skills,
       otp: hashedOtp,
       otpExpires: Date.now() + 10 * 60 * 1000, // OTP valid for 10 minutes
-      // Other fields
+      // Add other fields as necessary
+      jobApplications: [
+        {
+          jobId,
+          jobApplied,
+          questionResponses,
+          applicationDate: new Date(),
+          // Add other fields as necessary
+        },
+      ],
     });
 
     await newCandidate.save();
@@ -85,6 +118,7 @@ export const registerCandidate = async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 };
+
 
 // Controller function to create password
 export const createPassword = async (req, res) => {
@@ -258,24 +292,23 @@ export const applyToJob = async (req, res) => {
   }
 };
 
+export const getCandidateDashboard = async (req, res) => {
+  try {
+    const candidate = await Candidate.findById(req.candidate._id).populate({
+      path: 'jobApplications.jobId',
+      model: 'jobs', // Ensure this matches your Job model name
+    });
 
-  export const getCandidateDashboard = async (req, res) => {
-    try {
-      const candidateId = req.candidate._id;
-  
-      // Fetch candidate data, including applied jobs
-      const candidate = await Candidate.findById(candidateId).populate('jobId');
-  
-      if (!candidate) {
-        return res.status(404).json({ message: 'Candidate not found' });
-      }
-  
-      res.status(200).json({ candidate });
-    } catch (error) {
-      console.error('Error fetching candidate dashboard:', error);
-      res.status(500).json({ message: 'Server error' });
+    if (!candidate) {
+      return res.status(404).json({ message: 'Candidate not found' });
     }
-  };
+
+    res.status(200).json({ candidate });
+  } catch (error) {
+    console.error('Error fetching candidate dashboard:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
 
   // auth.controller.js
 

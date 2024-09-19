@@ -28,7 +28,7 @@ const ApplyJob = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
   const { id: jobId } = useParams();
-  const { isAuthenticated, candidateData } = useAuthCandidate();
+  const { isAuthenticated, candidateData  , fetchCandidateData } = useAuthCandidate();
 
   const {
     control,
@@ -104,41 +104,40 @@ const ApplyJob = () => {
         });
     } else {
       // Unauthenticated candidate registration and application
-      const applicationData = {
-        jobId: jobId,
-        jobApplied: jobDetails.jobTitle,
-        lastName: data.lastName,
-        firstName: data.firstName,
-        email: data.email,
-        phone: data.phoneNumber,
-        website: data.website,
-        portfolio: data.portfolio,
-        noticePeriod: data.noticePeriod,
-        currentCTC: data.currentCTC,
-        expectedCTC: data.expectedCTC,
-        experience: data.experience,
-        skills: skills,
-        questionResponses: Object.keys(answers).map((questionId) => ({
-          questionId,
-          answer: answers[questionId],
-        })),
-      };
+     // Unauthenticated candidate registration and application
+    const registrationData = {
+      jobId: jobId, // Get from useParams()
+      firstName: data.firstName,
+      lastName: data.lastName,
+      email: data.email,
+      phone: data.phoneNumber,
+      website: data.website,
+      portfolio: data.portfolio,
+      noticePeriod: data.noticePeriod,
+      currentCTC: data.currentCTC,
+      expectedCTC: data.expectedCTC,
+      experience: data.experience,
+      skills: skills,
+      questionResponses: Object.keys(answers).map((questionId) => ({
+        questionId,
+        answer: answers[questionId],
+      })),
+    };
 
-      axios
-        .post('/auth/candidate/register', applicationData)
-        .then((response) => {
-          setEmail(data.email);
-          setPhone(data.phoneNumber);
-          setCurrentStep(2); // Move to password creation step
-          setIsSubmitting(false);
-        })
-        .catch((error) => {
-          setIsSubmitting(false);
-          alert(error.response.data.message);
-        });
-    }
-  };
-
+    axios
+      .post('/auth/candidate/register', registrationData)
+      .then((response) => {
+        setEmail(data.email);
+        setPhone(data.phoneNumber);
+        setCurrentStep(2); // Move to password creation step
+        setIsSubmitting(false);
+      })
+      .catch((error) => {
+        setIsSubmitting(false);
+        alert(error.response.data.message);
+      });
+  }
+};
   // Handler for password creation
   const handlePasswordSubmit = (e) => {
     e.preventDefault();
@@ -173,19 +172,23 @@ const ApplyJob = () => {
   const handleOtpSubmit = (e) => {
     e.preventDefault();
     const enteredOtp = otp.join('');
-
+  
     if (enteredOtp.length !== 6) {
       setOtpError('Please enter the 6-digit OTP sent to your email.');
       return;
     }
-
+  
     setIsSubmitting(true);
-
+  
     axios
       .post('/auth/candidate/verify-otp', { email, otp: enteredOtp })
-      .then((response) => {
+      .then(async (response) => {
         setIsSubmitting(false);
-        navigate('/candidate/dashboard'); // Navigate to success page
+  
+        // Update authentication state
+        await fetchCandidateData();
+  
+        navigate('/candidate/my-jobs'); // Navigate to My Jobs page
       })
       .catch((error) => {
         setIsSubmitting(false);

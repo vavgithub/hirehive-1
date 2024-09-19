@@ -71,15 +71,6 @@ const jobApplicationSchema = new mongoose.Schema({
 
 const candidateSchema = new mongoose.Schema(
   {
-    jobId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "jobs",
-      required: true,
-    },
-    jobApplied: {
-      type: String,
-      required: true,
-    },
     email: {
       type: String,
       required: true,
@@ -108,11 +99,6 @@ const candidateSchema = new mongoose.Schema(
       trim: true,
     },
     firstName: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    email: {
       type: String,
       required: true,
       trim: true,

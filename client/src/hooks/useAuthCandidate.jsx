@@ -6,23 +6,26 @@ import axios from '../api/axios';
 const useAuthCandidate = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [candidateData, setCandidateData] = useState(null);
+
+  const fetchCandidateData = async () => {
+    try {
+      const response = await axios.get('/auth/candidate/dashboard');
+      setCandidateData(response.data.candidate);
+      setIsAuthenticated(true);
+    } catch (error) {
+      setIsAuthenticated(false);
+      setCandidateData(null);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        await axios.get('/auth/candidate/dashboard');
-        setIsAuthenticated(true);
-      } catch (error) {
-        setIsAuthenticated(false);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    checkAuth();
+    fetchCandidateData();
   }, []);
 
-  return { isAuthenticated, isLoading };
+  return { isAuthenticated, isLoading, candidateData, fetchCandidateData };
 };
 
 export default useAuthCandidate;
