@@ -9,12 +9,12 @@ import { NotHired, NotHiredActive } from '../svg/Checkboxes/NotHired';
 
 const CustomCheckbox = ({ label, icon: Icon, isChecked, onChange, count }) => (
     <div
-        className={`flex flex-col justify-center p-3 rounded-lg cursor-pointer ${isChecked ? 'bg-gray-800' : 'bg-gray-900'
+        className={`flex flex-col justify-center p-3 rounded-xl cursor-pointer ${isChecked ? 'bg-gray-800' : 'bg-background-40'
             }`}
         onClick={onChange}
     >
         <Icon />
-        <span className={` mt-2 typography-large-p ${isChecked ? 'text-font-accent' : 'text-gray-400'}`}>
+        <span className={` mt-2 typography-large-p ${isChecked ? 'text-font-accent' : 'text-font-gray'}`}>
             {label}
         </span>
         {/* {count !== undefined && (
@@ -27,7 +27,7 @@ const CustomCheckbox = ({ label, icon: Icon, isChecked, onChange, count }) => (
 
 const ButtonCheckbox = ({ label, isChecked, onChange }) => (
     <button
-        className={`px-4 py-2 rounded-lg typography-large-p ${isChecked ? 'bg-gray-800 text-font-accent' : 'bg-gray-900 text-gray-400'
+        className={`px-4 py-2 rounded-xl typography-large-p ${isChecked ? 'bg-gray-800 text-font-accent' : 'bg-background-40 text-font-gray'
             } hover:bg-gray-800 transition-colors duration-200`}
         onClick={onChange}
     >
@@ -89,17 +89,18 @@ const Filters = ({ filters = {}, statistics, handleCheckboxChange, activeTab, ha
         {
             value: 'Contract',
             label: 'Contract',
+
             icon: {
-                active: ContractIconActive,
-                inactive: ContractIcon
+                active: InternIconActive,
+                inactive: InternIcon
             }
         },
         {
             value: 'Internship',
             label: 'Intern',
             icon: {
-                active: InternIconActive,
-                inactive: InternIcon
+                active: ContractIconActive,
+                inactive: ContractIcon
             }
         }
     ];
@@ -141,11 +142,11 @@ const Filters = ({ filters = {}, statistics, handleCheckboxChange, activeTab, ha
     return (
         <div className='w-[304px]'>
 
-            <div className="bg-background-90 p-4 rounded-xl">
-                <div className='flex flex-row-reverse'>
+            <div className="bg-background-90 p-4 rounded-xl relative">
+                <div className='flex flex-row-reverse absolute top-5 right-5'>
                     <button
                         onClick={handleClearAll}
-                        className="text-blue-600 hover:text-blue-800 font-semibold"
+                        className="text-font-gray typography-small-p hover:text-blue-800 font-semibold"
                     >
                         Clear All
                     </button>
