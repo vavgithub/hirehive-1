@@ -1,5 +1,3 @@
-// useAuthCandidate.js
-
 import { useEffect, useState } from 'react';
 import axios from '../api/axios';
 
@@ -11,7 +9,7 @@ const useAuthCandidate = () => {
   const fetchCandidateData = async () => {
     try {
       const response = await axios.get('/auth/candidate/dashboard');
-      setCandidateData(response.data.candidate);
+      setCandidateData(response.data.candidate); // The candidate object now includes jobApplications
       setIsAuthenticated(true);
     } catch (error) {
       setIsAuthenticated(false);

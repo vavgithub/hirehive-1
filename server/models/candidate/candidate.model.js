@@ -1,55 +1,55 @@
 import mongoose from "mongoose";
 
+// Schema for question responses in job applications
 const answerSchema = new mongoose.Schema({
   questionId: {
     type: mongoose.Schema.Types.ObjectId,
-    required: true
+    required: true,
   },
   answer: {
     type: mongoose.Schema.Types.Mixed,
-    required: true
-  }
-});
+    required: true,
+  },
+}, { _id: false }); // Prevents creation of _id for subdocuments
 
-const stageStatusSchema = {
+// Schema for stage status within a job application
+const stageStatusSchema = new mongoose.Schema({
   status: {
     type: String,
-    enum: ['Not Assigned', 'Under Review', 'Reviewed', 'Cleared', 'Rejected', 'Call Pending', 'Call Scheduled', 'No Show', 'Sent', 'Not Submitted'],
-    default: 'Not Assigned'
+    enum: [
+      'Not Assigned', 'Under Review', 'Reviewed', 'Cleared', 'Rejected',
+      'Call Pending', 'Call Scheduled', 'No Show', 'Sent', 'Not Submitted'
+    ],
+    default: 'Not Assigned',
   },
   rejectionReason: {
     type: String,
-    default: "N/A"
+    default: "N/A",
   },
   assignedTo: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    default: null
+    default: null,
   },
   score: {
-    totalScore: {
-      type: Number,
-      default: 0,
-    },
-    remark: {
-      type: String,
-      default: "N/A"
-    },
+    // Flexible field to store scores; can be an object with dynamic keys
+    type: mongoose.Schema.Types.Mixed,
+    default: {},
   },
   currentCall: {
     scheduledDate: Date,
     scheduledTime: String,
-    meetingLink: String
+    meetingLink: String,
   },
   callHistory: [{
     scheduledDate: Date,
     scheduledTime: String,
     meetingLink: String,
-    status: String // 'Scheduled', 'Completed', 'Rescheduled', 'No Show'
+    status: String, // e.g., 'Scheduled', 'Completed', 'Rescheduled', 'No Show', 'Cancelled'
   }],
-};
+}, { _id: false });
 
-
+// Schema for individual job applications within a candidate
 const jobApplicationSchema = new mongoose.Schema({
   jobId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -65,10 +65,19 @@ const jobApplicationSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  // Add any other fields relevant to a job application
-});
+  currentStage: {
+    type: String,
+    default: '', // Will be set when the candidate applies
+  },
+  stageStatuses: {
+    type: Map,
+    of: stageStatusSchema,
+    default: {},
+  },
+  // Removed currentCall and callHistory from jobApplicationSchema
+}, { _id: false });
 
-
+// Main candidate schema
 const candidateSchema = new mongoose.Schema(
   {
     email: {
@@ -103,66 +112,32 @@ const candidateSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-    website: {
-      type: String,
-    },
-    portfolio: {
-      type: String,
-    },
+    website: String,
+    portfolio: String,
     noticePeriod: {
       type: Number,
-      default: 0
+      default: 0,
     },
     currentCTC: {
       type: Number,
-      default: 0
+      default: 0,
     },
     expectedCTC: {
       type: Number,
-      default: 0
+      default: 0,
     },
-    skills: {
-      type: [String],
+    experience: {
+      type: Number,
+      default: 0,
     },
-
-    stage: {
-      type: String,
-      enum: ["Portfolio", "Screening", "Design Task", "Round 1", "Round 2", "Hired"],
-      default: "Portfolio",
-    },
-    status: {
-      type: String,
-      default: "N/A",
-    },    
-    stageStatus: {
-      Portfolio: stageStatusSchema,
-      Screening: {
-        ...stageStatusSchema,
-        score: {
-          ...stageStatusSchema.score,
-          totalScore: {
-            Attitude: { type: Number, default: null, min: 0, max: 5 },
-            Communication: { type: Number, default: null, min: 0, max: 5 },
-            UX: { type: Number, default: null, min: 0, max: 5 },
-            UI: { type: Number, default: null, min: 0, max: 5 },
-            Tech: { type: Number, default: null, min: 0, max: 5 },
-            Budget: { type: Number, default: null, min: 0, max: 5 }
-          }
-        }
-      },
-      "Design Task": stageStatusSchema,
-      "Round 1": stageStatusSchema,
-      "Round 2": stageStatusSchema
-    },
-    jobApplications: [jobApplicationSchema], // New field to store multiple job applications   
-    location: {
-      type: String,
-    },    
+    skills: [String],
+    jobApplications: [jobApplicationSchema], // Contains multiple job applications
+    location: String,
     rating: {
       type: String,
-      enum: ["", "Good Fit", "May Be", "Not A Good Fit"]
+      enum: ["", "Good Fit", "May Be", "Not A Good Fit"],
     },
-    questionResponses: [answerSchema],
+    // Removed 'stage', 'status', and 'stageStatus' from the root level
   },
   { timestamps: true }
 );

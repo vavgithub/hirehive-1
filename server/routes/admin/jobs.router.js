@@ -1,9 +1,11 @@
 import express from 'express';
-import {activeJobsFilterCount, archiveJob, closedJobsFilterCount, closeJob, createJob, deleteJob, draftJob, draftJobsFilterCount, editJob, filterJobs, getJobById, getJobs, getTotalJobCount , jobsStats, reOpenJob, searchJobs, unarchiveJob, updateJob } from '../../controllers/admin/jobs.controller.js';
+import {activeJobsFilterCount, archiveJob, closedJobsFilterCount, closeJob, createJob, deleteJob, draftJob, draftJobsFilterCount, editJob, filterJobs, getCandidatesForJob, getJobById, getJobs, getTotalJobCount , jobsStats, reOpenJob, searchJobs, unarchiveJob, updateJob } from '../../controllers/admin/jobs.controller.js';
 import { protect } from '../../middlewares/authMiddleware.js';
 
 const router = express.Router();
 
+
+router.get('/candidates/:jobId', getCandidatesForJob);
 router.get('/jobsStats',protect, jobsStats);
 router.get('/activeJobsFilterCount',protect, activeJobsFilterCount);
 router.get('/draftJobsFilterCount',protect, draftJobsFilterCount);

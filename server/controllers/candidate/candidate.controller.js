@@ -102,6 +102,23 @@ const jobSpecificStats = asyncHandler(async (req, res, next) => {
 });
 
 
+const fetchActiveJobs = async (req, res) => {
+  try {
+    // Find jobs where status is "open" and sort by creation date in descending order
+    const activeJobs = await jobs
+      .find({ status: "open" })
+      .sort({ createdAt: -1 });
+
+    if (activeJobs.length === 0) {
+      return res.status(404).json({ message: "No active jobs found" });
+    }
+
+    res.status(200).json(activeJobs);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching open jobs", error: error.message });
+  }
+};
+
 const allCandidate = asyncHandler(async (req, res, next) => {
   try {
     const candidateData = await candidates.find();
@@ -403,26 +420,6 @@ const fetchAssignedCandidate = async (req, res) => {
 };
 
 
-const fetchActiveJobs = async (req, res) => {
-  try {
-    const activeJobs = await jobs.aggregate([
-      {
-        $match: { status: "open" }
-      },
-      {
-        $sort: { createdAt: -1 } // Sort by creation date, newest first
-      }
-    ]);
-
-    if (activeJobs.length === 0) {
-      return res.status(404).json({ message: "No active jobs found" });
-    }
-
-    res.status(200).json(activeJobs);
-  } catch (error) {
-    res.status(500).json({ message: "Error fetching open jobs", error: error.message });
-  }
-};
 
 const searchJobs = async (req, res) => {
   const searchTerm = req.query.jobTitle;
@@ -554,8 +551,8 @@ const submitApplication = async (req, res) => {
   }
 };
 export {
-  submitApplication,
   fetchActiveJobs,
+  submitApplication,
   updateCandidateStatusById,
   getCandidate,
   createCandidate,

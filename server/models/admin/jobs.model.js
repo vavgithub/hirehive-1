@@ -1,33 +1,35 @@
 import mongoose from "mongoose";
 
+// Schema for additional questions in a job
 const questionSchema = new mongoose.Schema({
   type: {
     type: String,
     enum: ['multiple', 'text'],
-    required: true
+    required: true,
   },
   text: {
     type: String,
-    required: true
+    required: true,
   },
   options: [String],
   required: {
     type: Boolean,
-    default: false
+    default: false,
   },
   answerType: {
     type: String,
     enum: ['text', 'number'],
-    default: 'text'
-  }
+    default: 'text',
+  },
 });
 
+// Main job schema
 const jobSchema = new mongoose.Schema(
   {
     jobTitle: {
       type: String,
       trim: true,
-      required:true,
+      required: true,
     },
     workplaceType: {
       type: String,
@@ -54,6 +56,7 @@ const jobSchema = new mongoose.Schema(
         "Project Manager",
         "Art Director",
         "3D",
+        // Add more job profiles as needed
       ],
       default: "Frontend Developer",
     },
@@ -73,12 +76,8 @@ const jobSchema = new mongoose.Schema(
       type: Number,
       min: 1,
     },
-    skills: {
-      type: [String],
-    },
-    jobDescription: {
-      type: String,
-    },
+    skills: [String],
+    jobDescription: String,
     status: {
       type: String,
       enum: ["", "open", "draft", "closed"],
@@ -104,7 +103,8 @@ const jobSchema = new mongoose.Schema(
       ref: 'User',
       required: true,
     },
-    questions: [questionSchema]
+    questions: [questionSchema],
+    // No 'stages' field here; stages are defined externally
   },
   { timestamps: true }
 );

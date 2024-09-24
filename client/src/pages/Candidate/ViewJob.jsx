@@ -13,59 +13,49 @@ const getJobById = async (id) => {
 };
 
 const ViewJob = () => {
-    const { id: mainId } = useParams(); // Extract the job ID from the URL params
+    const { id: mainId } = useParams();
     const navigate = useNavigate();
-
-    // Get authentication state and candidate data
     const { isAuthenticated, isLoading: isAuthLoading, candidateData } = useAuthCandidate();
 
-    // Using React Query to fetch the job data by ID
     const {
         data: formData,
         error,
         isLoading,
         isError
     } = useQuery({
-        queryKey: ['viewJob', mainId], // Unique query key with job ID
-        queryFn: () => getJobById(mainId), // Function to fetch job by ID
-        enabled: !!mainId, // Only run the query if the ID exists
+        queryKey: ['viewJob', mainId],
+        queryFn: () => getJobById(mainId),
+        enabled: !!mainId,
     });
 
-    // Show loading indicator while fetching data
     if (isLoading || isAuthLoading) {
         return <div>Loading...</div>;
     }
 
-    // Handle error case
     if (isError) {
         return <div>Error fetching job: {error.message}</div>;
     }
 
     // Determine if the candidate has already applied to this job
-    let hasApplied = false;
-    if (isAuthenticated && candidateData && candidateData.jobApplications) {
-        hasApplied = candidateData.jobApplications.some((application) => {
-            if (application.jobId) {
-                // Ensure both IDs are strings for comparison
-                const applicationJobId = typeof application.jobId === 'object' ? application.jobId._id : application.jobId;
-                return applicationJobId === mainId;
-            }
-            return false;
-        });
-    }
+    const hasApplied = isAuthenticated && candidateData && candidateData.jobApplications
+        ? candidateData.jobApplications.some(application => application.jobId.toString() === mainId)
+        : false;
+
+    console.log('hasApplied:', hasApplied);
 
     const handleApplyClick = async () => {
         try {
-          // Increment the apply click count
-          await axios.post(`/candidates/${mainId}/increment-apply-click`);
-    
-          // Redirect to the ApplyJob page
-          navigate(`/apply-job/${mainId}`);
+            await axios.post(`/candidates/${mainId}/increment-apply-click`);
+            navigate(`/apply-job/${mainId}`);
         } catch (error) {
-          console.error('Error incrementing apply click count:', error);
-          // Handle error as needed
+            console.error('Error incrementing apply click count:', error);
         }
-      };
+    };
+
+    console.log('candidateData:', candidateData);
+    console.log('mainId:', mainId);
+    console.log('jobApplications:', candidateData?.jobApplications);
+    console.log('hasApplied:', hasApplied);
 
     return (
         <div className='h-screen bg-main-bg bg-cover pt-28 mb-6'>
@@ -109,5 +99,4 @@ const ViewJob = () => {
         </div>
     );
 };
-
 export default ViewJob;

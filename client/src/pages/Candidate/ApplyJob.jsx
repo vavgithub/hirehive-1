@@ -36,6 +36,7 @@ const ApplyJob = () => {
     formState: { errors, isValid },
     getValues,
     setValue,
+    reset, // Add this to easily reset form values
   } = useForm({
     mode: 'onChange',
   });
@@ -43,20 +44,21 @@ const ApplyJob = () => {
   useEffect(() => {
     if (isAuthenticated && candidateData) {
       // Pre-fill form fields with candidate data
-      setValue('firstName', candidateData.firstName);
-      setValue('lastName', candidateData.lastName);
-      setValue('email', candidateData.email);
-      setValue('phoneNumber', candidateData.phone);
-      setValue('website', candidateData.website);
-      setValue('portfolio', candidateData.portfolio);
-      setValue('experience', candidateData.experience);
-      setValue('noticePeriod', candidateData.noticePeriod);
-      setValue('currentCTC', candidateData.currentCTC);
-      setValue('expectedCTC', candidateData.expectedCTC);
+      reset({
+        firstName: candidateData.firstName,
+        lastName: candidateData.lastName,
+        email: candidateData.email,
+        phoneNumber: candidateData.phone,
+        website: candidateData.website || '',
+        portfolio: candidateData.portfolio || '',
+        experience: candidateData.experience || '',
+        noticePeriod: candidateData.noticePeriod || '',
+        currentCTC: candidateData.currentCTC || '',
+        expectedCTC: candidateData.expectedCTC || '',
+      });
       setSkills(candidateData.skills || []);
-      // Keep currentStep as 1 to display the form
     }
-  }, [isAuthenticated, candidateData, setValue]);
+  }, [isAuthenticated, candidateData, reset]);
 
   const { data: jobDetails, isLoading } = useQuery({
     queryKey: ['jobDetails', jobId],
@@ -108,7 +110,6 @@ const ApplyJob = () => {
           alert(error.response?.data?.message || 'An error occurred');
         });
     } else {
-      // Unauthenticated candidate registration and application
       // Unauthenticated candidate registration and application
       const registrationData = {
         jobId: jobId, // Get from useParams()
@@ -209,6 +210,9 @@ const ApplyJob = () => {
       document.getElementById(`otp-input-${index + 1}`).focus();
     }
   };
+
+
+  console.log("check karr" , candidateData);
 
   // Handler for additional questions input change
   const handleInputChange = (questionId, value) => {
@@ -408,8 +412,7 @@ const ApplyJob = () => {
           {/* Additional Questions */}
           <div className="bg-background-80 pt-4 mx-16">
             <h2 className="text-xl mb-4">Additional Questions</h2>
-            // ApplyJob.jsx
-
+    
             {questions.map((question, index) => (
               <Controller
                 key={question._id}

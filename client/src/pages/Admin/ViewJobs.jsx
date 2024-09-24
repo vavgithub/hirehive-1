@@ -32,13 +32,12 @@ import Views from '../../svg/StatsCard/View Details/Views';
 const ViewJobs = () => {
     const { id: mainId } = useParams();
     const navigate = useNavigate();
-    const location = useLocation();
     const queryClient = useQueryClient();
 
 
     const [closeReason, setCloseReason] = useState('');
 
-    const [activeTab, setActiveTab] = useState('jobDetails');
+    const [activeTab, setActiveTab] = useState('candidate');
 
     const [modalOpen, setModalOpen] = useState(false);
     const [modalAction, setModalAction] = useState('');
@@ -129,11 +128,12 @@ const ViewJobs = () => {
         queryFn: () => axios.get(`/getJobById/${mainId}`).then(res => res.data),
     });
 
-    // Fetch candidates data
     const { data: candidatesData, isLoading: isCandidatesLoading } = useQuery({
         queryKey: ['candidates', mainId],
-        queryFn: () => axios.get(`/candidates/${mainId}/candidates`).then(res => res.data),
-    });
+        queryFn: () => axios.get(`candidates/${mainId}`).then(res => res.data),
+      });
+
+      console.log(candidatesData?.candidates)
 
     //Fetch Stats data for Speicif Job
     const { data: jobStats, isLoading: isStatsLoading } = useQuery({
@@ -321,13 +321,14 @@ const ViewJobs = () => {
             )}
 
             {activeTab === 'candidate' && (
-                <div className='mt-5'>
-                    <div className="w-full max-w-6xl">
+                <div className='bg-background-30 p-6 rounded-xl mt-5'>
+                    <div className="w-full max-w-6xl mb-4">
                         <StatsGrid stats={candidateStats} />
                     </div>
                     <div>
                         <div>
-                            <Table rowsData={candidatesData} extraCTA='true' onUpdateCandidate={handleUpdateCandidate} />
+                            <Table rowsData={candidatesData?.candidates}></Table>
+                            {/* <Table rowsData={candidatesData} extraCTA='true' onUpdateCandidate={handleUpdateCandidate} /> */}
                             {/* <DataTable rowsData={candidatesData} onUpdateCandidate={updateCandidate} onUpdateAssignee={updateAssignee} onUpdateRating={updateRating}/> */}
                         </div>
                     </div>

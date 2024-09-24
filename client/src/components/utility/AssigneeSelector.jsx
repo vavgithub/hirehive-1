@@ -1,4 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
+import ReactDOM from 'react-dom';
 import SearchIcon from '../../svg/SearchIcon';
 import { fetchAvailableDesignReviewers } from '../../api/authApi';
 
@@ -6,17 +7,16 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect }) => {
     const [reviewers, setReviewers] = useState([]);
     const [isOpen, setIsOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
+    const triggerRef = useRef(null);
     const dropdownRef = useRef(null);
     const [selectedReviewer, setSelectedReviewer] = useState(value);
+    const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
 
     useEffect(() => {
         const loadReviewers = async () => {
           try {
             const availableReviewers = await fetchAvailableDesignReviewers();
             setReviewers(availableReviewers);
-            
-            // If there's a value (assigned reviewer) and it's not in the reviewers list,
-            // add it to ensure it's displayed correctly
             if (value && value._id && !availableReviewers.find(r => r._id === value._id)) {
               setReviewers(prev => [...prev, value]);
             }
@@ -33,7 +33,8 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect }) => {
 
     useEffect(() => {
         const handleClickOutside = (event) => {
-            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+            if (triggerRef.current && !triggerRef.current.contains(event.target) &&
+                dropdownRef.current && !dropdownRef.current.contains(event.target)) {
                 setIsOpen(false);
             }
         };
@@ -41,24 +42,59 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect }) => {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
+    useEffect(() => {
+        if (isOpen && triggerRef.current) {
+            const rect = triggerRef.current.getBoundingClientRect();
+            setDropdownPosition({
+                top: rect.bottom + window.scrollY,
+                left: rect.left + window.scrollX,
+            });
+        }
+    }, [isOpen]);
+
     const filteredReviewers = reviewers.filter(reviewer =>
         reviewer.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    const handleSelect = (reviewer) => {
+    const closeDropdown = useCallback(() => {
+        setIsOpen(false);
+        setSearchTerm('');
+    }, []);
+
+
+   const handleSelect = useCallback((reviewer) => {
         setSelectedReviewer(reviewer);
         onChange(reviewer);
-        setIsOpen(false);
         onSelect(reviewer);
-    };
+        closeDropdown();
+    }, [onChange, onSelect, closeDropdown]);
 
-    const toggleDropdown = () => setIsOpen(!isOpen);
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (triggerRef.current && !triggerRef.current.contains(event.target) &&
+                dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                closeDropdown();
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, [closeDropdown]);
+
+
+
+    const toggleDropdown = useCallback(() => {
+        setIsOpen(prev => !prev);
+        if (!isOpen) {
+            setSearchTerm('');
+        }
+    }, [isOpen]);
 
     const renderTrigger = () => {
         const shouldShowIcon = !selectedReviewer || selectedReviewer === 'N/A';
         if (mode === 'icon') {
             return (
                 <button
+                    ref={triggerRef}
                     onClick={toggleDropdown}
                     className="rounded-full flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2"
                 >
@@ -74,74 +110,87 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect }) => {
                     )}
                 </button>
             );
-        } else {
-            return (
-                <div onClick={toggleDropdown} className="relative w-full">
+        } return (
+            <div onClick={toggleDropdown} className="relative w-full">
+                <input
+                    type="text"
+                    className="w-full px-6 py-2 rounded-md shadow-sm focus:outline-none"
+                    placeholder="-Select-"
+                    value={selectedReviewer && selectedReviewer.name ? selectedReviewer.name : ''}
+                    readOnly
+                />
+                <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                    <svg width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <g id="Icons">
+                            <path id="Icon" d="M4 8.5L12 16.5L20 8.5" stroke="#585B5F" strokeLinecap="round" strokeLinejoin="round" />
+                        </g>
+                    </svg>
+                </span>
+                <span className="absolute inset-y-0 left-0 flex items-center pr-2 pointer-events-none">
+                    <svg width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <g id="Icons">
+                            <path id="Icon" d="M20 21.5V19.5C20 18.4391 19.5786 17.4217 18.8284 16.6716C18.0783 15.9214 17.0609 15.5 16 15.5H8C6.93913 15.5 5.92172 15.9214 5.17157 16.6716C4.42143 17.4217 4 18.4391 4 19.5V21.5M16 7.5C16 9.70914 14.2091 11.5 12 11.5C9.79086 11.5 8 9.70914 8 7.5C8 5.29086 9.79086 3.5 12 3.5C14.2091 3.5 16 5.29086 16 7.5Z" stroke="#808389" strokeLinecap="round" strokeLinejoin="round" />
+                        </g>
+                    </svg>
+                </span>
+            </div>
+        );
+    };
+
+    const renderDropdown = () => {
+        if (!isOpen) return null;
+
+        return ReactDOM.createPortal(
+            <div 
+                ref={dropdownRef}
+                style={{
+                    position: 'absolute',
+                    top: `${dropdownPosition.top}px`,
+                    left: `${dropdownPosition.left}px`,
+                    zIndex: 9999,
+                }}
+                className={`w-64 bg-background-40 shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm`}
+            >
+                <div className="sticky top-0 z-10 flex items-center bg-background-40">
+                    <SearchIcon />
                     <input
                         type="text"
-                        className="w-full px-6 py-2 rounded-md shadow-sm focus:outline-none"
-                        placeholder="-Select-"
-                        value={selectedReviewer && selectedReviewer.name ? selectedReviewer.name : ''}
-                        readOnly
+                        className="block w-full px-4 py-2 text-sm bg-background-40 focus:outline-none"
+                        placeholder="Search"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
                     />
-                    <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                        <svg width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <g id="Icons">
-                                <path id="Icon" d="M4 8.5L12 16.5L20 8.5" stroke="#585B5F" strokeLinecap="round" strokeLinejoin="round" />
-                            </g>
-                        </svg>
-                    </span>
-                    <span className="absolute inset-y-0 left-0 flex items-center pr-2 pointer-events-none">
-                        <svg width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <g id="Icons">
-                                <path id="Icon" d="M20 21.5V19.5C20 18.4391 19.5786 17.4217 18.8284 16.6716C18.0783 15.9214 17.0609 15.5 16 15.5H8C6.93913 15.5 5.92172 15.9214 5.17157 16.6716C4.42143 17.4217 4 18.4391 4 19.5V21.5M16 7.5C16 9.70914 14.2091 11.5 12 11.5C9.79086 11.5 8 9.70914 8 7.5C8 5.29086 9.79086 3.5 12 3.5C14.2091 3.5 16 5.29086 16 7.5Z" stroke="#808389" strokeLinecap="round" strokeLinejoin="round" />
-                            </g>
-                        </svg>
-                    </span>
                 </div>
-            );
-        }
+                <ul className="py-1">
+                    {filteredReviewers.map((reviewer) => (
+                        <li
+                            key={reviewer._id}
+                            className={`m-2 text-white rounded select-none relative py-2 pl-3 pr-9 bg-background-60 hover:text-accent-100 cursor-pointer ${
+                                value && value._id === reviewer._id
+                                    ? 'bg-background-90 text-accent-100'
+                                    : 'text-gray-900'
+                            }`}
+                            onClick={() => handleSelect(reviewer)}
+                        >
+                            <div className="flex items-center">
+                                <div className="w-5 h-5 rounded-full bg-accent-100 text-background-60 flex items-center justify-center mr-3">
+                                    {reviewer.name[0].toUpperCase()}
+                                </div>
+                                <span className="font-normal typography-large-p block truncate">{reviewer.name}</span>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            </div>,
+            document.body
+        );
     };
 
     return (
-        <div className={`relative ${mode === 'icon' ? 'inline-block' : 'w-full'}`} ref={dropdownRef}>
+        <>
             {renderTrigger()}
-
-            {isOpen && (
-                <div className={`absolute scrollbar-hide right-0 z-10 mt-1 ${mode === 'icon' ? 'w-64' : 'w-full'} bg-background-40 shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm`}>
-                    <div className="sticky top-0 z-10 flex items-center bg-background-40">
-                        <SearchIcon />
-                        <input
-                            type="text"
-                            className="block w-full px-4 py-2 text-sm bg-background-40 focus:outline-none"
-                            placeholder="Search"
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                        />
-                    </div>
-                    <ul className="py-1 ">
-                        {filteredReviewers.map((reviewer) => (
-                            <li
-                                key={reviewer._id}
-                                className={`m-2 text-white rounded select-none relative py-2 pl-3 pr-9 bg-background-60 hover:text-accent-100 cursor-pointer ${
-                                    value && value._id === reviewer._id
-                                        ? 'bg-background-90 text-accent-100'
-                                        : 'text-gray-900'
-                                }`}
-                                onClick={() => handleSelect(reviewer)}
-                            >
-                                <div className="flex items-center">
-                                    <div className="w-5 h-5 rounded-full bg-accent-100 text-background-60 flex items-center justify-center mr-3">
-                                        {reviewer.name[0].toUpperCase()}
-                                    </div>
-                                    <span className="font-normal typography-large-p block truncate">{reviewer.name}</span>
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            )}
-        </div>
+            {renderDropdown()}
+        </>
     );
 };
 
