@@ -33,7 +33,7 @@ const roleProtect = (role) => {
             next();
         } else {
             res.status(403);
-            throw new Error('Not authorized');
+            throw new Error('Not authorized for the desired role');
         }
     };
 };

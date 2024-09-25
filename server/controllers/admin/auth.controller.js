@@ -9,6 +9,8 @@ const cookieOptions = {
   maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
 };
 
+
+
 // Register User
 export const registerUser = asyncHandler(async (req, res) => {
     const { name, email, password, role } = req.body;
@@ -96,19 +98,18 @@ export const getUserProfile = asyncHandler(async (req, res) => {
 
 export const getAvailableDesignReviewers = async (req, res) => {
     try {
-      const availableReviewers = await User.find({ 
-        role: 'Design Reviewer', 
-        isAvailable: true 
-      }).select('name email'); // Only select necessary fields
+      const allReviewers = await User.find({ 
+        role: 'Design Reviewer'
+      }).select('_id name email isAvailable'); // Include _id and isAvailable
   
       res.status(200).json({ 
         success: true, 
-        data: availableReviewers 
+        data: allReviewers 
       });
     } catch (error) {
       res.status(500).json({ 
         success: false, 
-        message: 'Error fetching available design reviewers', 
+        message: 'Error fetching design reviewers', 
         error: error.message 
       });
     }

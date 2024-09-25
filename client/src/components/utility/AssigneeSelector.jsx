@@ -11,25 +11,41 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect }) => {
     const dropdownRef = useRef(null);
     const [selectedReviewer, setSelectedReviewer] = useState(value);
     const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         const loadReviewers = async () => {
           try {
-            const availableReviewers = await fetchAvailableDesignReviewers();
-            setReviewers(availableReviewers);
-            if (value && value._id && !availableReviewers.find(r => r._id === value._id)) {
-              setReviewers(prev => [...prev, value]);
-            }
+            setIsLoading(true);
+            setError(null);
+            const data = await fetchAvailableDesignReviewers();
+            console.log('Fetched reviewers in component:', data);
+            setReviewers(data);
           } catch (error) {
-            console.error('Error fetching available design reviewers:', error);
+            console.error('Error fetching design reviewers in component:', error);
+            setError(error.message);
+            setReviewers([]);
+          } finally {
+            setIsLoading(false);
           }
         };
         loadReviewers();
-    }, [value]);
+    }, []);
 
     useEffect(() => {
-        setSelectedReviewer(value);
-    }, [value]);
+        console.log('Current reviewers state:', reviewers);
+        console.log('Current value prop:', value);
+        if (value && reviewers.length > 0) {
+            const reviewer = reviewers.find(r => r._id === value || r._id === value._id);
+            console.log('Found reviewer:', reviewer);
+            setSelectedReviewer(reviewer || null);
+        } else {
+            setSelectedReviewer(null);
+        }
+    }, [value, reviewers]);
+
+
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -52,9 +68,15 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect }) => {
         }
     }, [isOpen]);
 
-    const filteredReviewers = reviewers.filter(reviewer =>
-        reviewer.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+
+
+    const filteredReviewers = useCallback(() => {
+        console.log('Filtering reviewers. Current state:', reviewers);
+        if (!reviewers.length) return [];
+        return reviewers.filter(reviewer =>
+            reviewer.name.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+    }, [reviewers, searchTerm]);
 
     const closeDropdown = useCallback(() => {
         setIsOpen(false);
@@ -91,6 +113,7 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect }) => {
 
     const renderTrigger = () => {
         const shouldShowIcon = !selectedReviewer || selectedReviewer === 'N/A';
+        console.log('Rendering trigger, selectedReviewer:', selectedReviewer); // Debug log
         if (mode === 'icon') {
             return (
                 <button
@@ -136,9 +159,10 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect }) => {
             </div>
         );
     };
-
     const renderDropdown = () => {
         if (!isOpen) return null;
+
+        console.log('Rendering dropdown. IsLoading:', isLoading, 'Error:', error, 'Reviewers:', reviewers);
 
         return ReactDOM.createPortal(
             <div 
@@ -162,24 +186,32 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect }) => {
                     />
                 </div>
                 <ul className="py-1">
-                    {filteredReviewers.map((reviewer) => (
-                        <li
-                            key={reviewer._id}
-                            className={`m-2 text-white rounded select-none relative py-2 pl-3 pr-9 bg-background-60 hover:text-accent-100 cursor-pointer ${
-                                value && value._id === reviewer._id
-                                    ? 'bg-background-90 text-accent-100'
-                                    : 'text-gray-900'
-                            }`}
-                            onClick={() => handleSelect(reviewer)}
-                        >
-                            <div className="flex items-center">
-                                <div className="w-5 h-5 rounded-full bg-accent-100 text-background-60 flex items-center justify-center mr-3">
-                                    {reviewer.name[0].toUpperCase()}
+                    {isLoading ? (
+                        <li className="px-4 py-2 text-white">Loading...</li>
+                    ) : error ? (
+                        <li className="px-4 py-2 text-red-500">Error: {error}</li>
+                    ) : filteredReviewers().length > 0 ? (
+                        filteredReviewers().map((reviewer) => (
+                            <li
+                                key={reviewer._id}
+                                className={`m-2 text-white rounded select-none relative py-2 pl-3 pr-9 bg-background-60 hover:text-accent-100 cursor-pointer ${
+                                    value && value._id === reviewer._id
+                                        ? 'bg-background-90 text-accent-100'
+                                        : 'text-gray-900'
+                                }`}
+                                onClick={() => handleSelect(reviewer)}
+                            >
+                                <div className="flex items-center">
+                                    <div className="w-5 h-5 rounded-full bg-accent-100 text-background-60 flex items-center justify-center mr-3">
+                                        {reviewer.name[0].toUpperCase()}
+                                    </div>
+                                    <span className="font-normal typography-large-p block truncate">{reviewer.name}</span>
                                 </div>
-                                <span className="font-normal typography-large-p block truncate">{reviewer.name}</span>
-                            </div>
-                        </li>
-                    ))}
+                            </li>
+                        ))
+                    ) : (
+                        <li className="px-4 py-2 text-white">No reviewers found</li>
+                    )}
                 </ul>
             </div>,
             document.body
@@ -193,5 +225,4 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect }) => {
         </>
     );
 };
-
 export default AssigneeSelector;

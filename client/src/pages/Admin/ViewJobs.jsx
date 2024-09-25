@@ -131,9 +131,9 @@ const ViewJobs = () => {
     const { data: candidatesData, isLoading: isCandidatesLoading } = useQuery({
         queryKey: ['candidates', mainId],
         queryFn: () => axios.get(`candidates/${mainId}`).then(res => res.data),
-      });
+    });
 
-      console.log(candidatesData?.candidates)
+    console.log(candidatesData?.candidates)
 
     //Fetch Stats data for Speicif Job
     const { data: jobStats, isLoading: isStatsLoading } = useQuery({
@@ -225,7 +225,7 @@ const ViewJobs = () => {
         { title: 'Design Task', value: jobStats?.data?.stageStats['Design Task'] || 0, icon: DesignTask },
         { title: 'Round 1', value: jobStats?.data?.stageStats['Round 1'] || 0, icon: Round1 },
         { title: 'Round 2', value: jobStats?.data?.stageStats['Round 2'] || 0, icon: Round2 },
-        { title: 'Offer Sent', value: jobStats?.data?.stageStats?.Hired || 0, icon: OfferSent   },
+        { title: 'Offer Sent', value: jobStats?.data?.stageStats?.Hired || 0, icon: OfferSent },
     ];
 
     const jobsDetailStats = [
@@ -327,7 +327,11 @@ const ViewJobs = () => {
                     </div>
                     <div>
                         <div>
-                            <Table rowsData={candidatesData?.candidates}></Table>
+                            <Table
+                                rowsData={candidatesData?.candidates}
+                                jobId={mainId} // Pass jobId to Table component
+                            >
+                            </Table>
                             {/* <Table rowsData={candidatesData} extraCTA='true' onUpdateCandidate={handleUpdateCandidate} /> */}
                             {/* <DataTable rowsData={candidatesData} onUpdateCandidate={updateCandidate} onUpdateAssignee={updateAssignee} onUpdateRating={updateRating}/> */}
                         </div>

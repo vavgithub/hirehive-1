@@ -15,6 +15,8 @@ import candidateRoutes from "./routes/candidate/candidate.router.js";
 import authRoutes from "./routes/admin/auth.router.js";
 import candidateAuthRoutes from "./routes/candidate/auth.router.js"
 
+import drRoutes from "./routes/admin/dr.router.js"
+
 const app = express();
 const corsOptions = {
   origin: process.env.NODE_ENV === "production"
@@ -54,6 +56,7 @@ app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1", jobRoutes);
 app.use('/api/v1/auth/candidate', candidateAuthRoutes);
 app.use("/api/v1/candidates", candidateRoutes);
+app.use("/api/v1/dr", drRoutes)
 
 const PORT = process.env.PORT || 5000;
 

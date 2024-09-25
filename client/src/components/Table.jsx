@@ -1,12 +1,43 @@
 import React, { useState } from 'react'
 import { DataGrid } from '@mui/x-data-grid';
-import { FaGlobe, FaStar, FaUser } from 'react-icons/fa';
+import { FaGlobe, FaUser } from 'react-icons/fa';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { Link } from 'react-router-dom';
 import AssigneeSelector from './utility/AssigneeSelector';
+import axios from '../api/axios';
 
-const Table = ({ rowsData }) => {
+
+const updateAssignee = async ({ candidateId, jobId, stage, assigneeId }) => {
+  const response = await axios.put('dr/update-assignee', {
+    candidateId,
+    jobId,
+    stage,
+    assigneeId
+  });
+  return response.data;
+};
+const Table = ({ rowsData, jobId }) => {
   const [rows, setRows] = useState(rowsData)
+
+  const queryClient = useQueryClient();
+
+  const updateAssigneeMutation = useMutation({
+    mutationFn: updateAssignee,
+    onSuccess: () => {
+      queryClient.invalidateQueries(['candidates', jobId]);
+    },
+  });
+
+  const handleAssigneeChange = (candidateId, stage, newAssignee) => {
+    updateAssigneeMutation.mutate({
+      candidateId,
+      jobId, // Use the jobId passed as prop
+      stage,
+      assigneeId: newAssignee._id
+    });
+  };
+
 
   const columns = [
     {
@@ -34,10 +65,6 @@ const Table = ({ rowsData }) => {
       headerName: "Experience",
     },
     {
-      field: 'experience',
-      headerName: "Experience",
-    },
-    {
       field: 'currentStage',
       headerName: 'Stage',
     },
@@ -49,8 +76,12 @@ const Table = ({ rowsData }) => {
         <AssigneeSelector
           mode="icon"
           value={params.row.stageStatuses[params.row.currentStage]?.assignedTo}
-          onChange={(newAssignee) => handleAssigneeChange(params.row._id, params.row.jobId, params.row.currentStage, newAssignee)}
-          onSelect={() => {}}
+          onChange={(newAssignee) => handleAssigneeChange(
+            params.row._id,
+            params.row.currentStage,
+            newAssignee
+          )}
+          onSelect={() => { }}
         />
       ),
     },
