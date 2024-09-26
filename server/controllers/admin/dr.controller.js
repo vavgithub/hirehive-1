@@ -1,10 +1,65 @@
+//dr.controller.js
+
 import mongoose from "mongoose";
 import { jobs } from "../../models/admin/jobs.model.js";
 import { candidates } from "../../models/candidate/candidate.model.js";
 import { updateStatusOnAssigneeChange } from "../../utils/statusManagement.js";
 import { jobStagesStatuses } from "../../config/jobStagesStatuses.js";
 
-export const updateAssignee = async (req, res) => {
+// export const updateAssignee = async (req, res) => {
+//   try {
+//     const { candidateId, jobId, stage, assigneeId } = req.body;
+
+//     // Find the candidate
+//     const candidate = await candidates.findById(candidateId);
+//     if (!candidate) {
+//       return res.status(404).json({ message: 'Candidate not found' });
+//     }
+
+//     // Find the specific job application
+//     const jobApplication = candidate.jobApplications.find(
+//       (app) => app.jobId.toString() === jobId
+//     );
+//     if (!jobApplication) {
+//       return res.status(404).json({ message: 'Job application not found' });
+//     }
+
+//     // Initialize or update the stage status
+//     if (!jobApplication.stageStatuses[stage]) {
+//       jobApplication.stageStatuses[stage] = {
+//         status: 'Not Assigned',
+//         assignedTo: null,
+//         rejectionReason: "N/A",
+//         score: {},
+//         currentCall: null,
+//         callHistory: []
+//       };
+//     }
+
+//     // Update the assignee and status
+//     jobApplication.stageStatuses[stage].assignedTo = assigneeId;
+//     jobApplication.stageStatuses[stage].status = assigneeId ? 'Under Review' : 'Not Assigned';
+
+//     // Update the current stage if an assignee is added
+//     if (assigneeId) {
+//       jobApplication.currentStage = stage;
+//     }
+
+//     // Save the changes
+//     await candidate.save();
+
+//     res.status(200).json({ 
+//       message: 'Assignee updated successfully',
+//       updatedStageStatus: jobApplication.stageStatuses[stage],
+//       currentStage: jobApplication.currentStage
+//     });
+//   } catch (error) {
+//     console.error('Error updating assignee:', error);
+//     res.status(500).json({ message: 'Server error' });
+//   }
+// };
+
+export const updateCandidateAssignee = async (req, res) => {
   try {
     const { candidateId, jobId, stage, assigneeId } = req.body;
 
@@ -22,24 +77,31 @@ export const updateAssignee = async (req, res) => {
       return res.status(404).json({ message: 'Job application not found' });
     }
 
-    // Initialize or update the stage status
-    if (!jobApplication.stageStatuses[stage]) {
-      jobApplication.stageStatuses[stage] = {
+    // Initialize the stage status if it doesn't exist
+    if (!jobApplication.stageStatuses.has(stage)) {
+      jobApplication.stageStatuses.set(stage, {
         status: 'Not Assigned',
         assignedTo: null,
-        rejectionReason: "N/A",
+        rejectionReason: 'N/A',
         score: {},
         currentCall: null,
         callHistory: []
-      };
+      });
     }
 
-    // Update the assignee and status
-    jobApplication.stageStatuses[stage].assignedTo = assigneeId;
-    jobApplication.stageStatuses[stage].status = assigneeId ? 'Under Review' : 'Not Assigned';
+    const stageStatus = jobApplication.stageStatuses.get(stage);
 
-    // Update the current stage if an assignee is added
-    if (assigneeId) {
+    // Update the assignee
+    stageStatus.assignedTo = assigneeId;
+
+    // Update the status based on the stage
+    if (stage === 'Portfolio') {
+      stageStatus.status = assigneeId ? 'Under Review' : 'Not Assigned';
+    }
+    // Add more stage-specific logic here as needed
+
+    // If this is the first stage and an assignee is added, update the current stage
+    if (stage === 'Portfolio' && assigneeId && !jobApplication.currentStage) {
       jobApplication.currentStage = stage;
     }
 
@@ -48,7 +110,7 @@ export const updateAssignee = async (req, res) => {
 
     res.status(200).json({ 
       message: 'Assignee updated successfully',
-      updatedStageStatus: jobApplication.stageStatuses[stage],
+      updatedStageStatus: stageStatus,
       currentStage: jobApplication.currentStage
     });
   } catch (error) {
