@@ -9,7 +9,7 @@ import { NotHired, NotHiredActive } from '../svg/Checkboxes/NotHired';
 
 const CustomCheckbox = ({ label, icon: Icon, isChecked, onChange, count }) => (
     <div
-        className={`flex flex-col justify-center p-3 rounded-xl cursor-pointer ${isChecked ? 'bg-gray-800' : 'bg-background-40'
+        className={`flex flex-col justify-center p-3 rounded-xl cursor-pointer hover:bg-background-60 ${isChecked ? 'bg-gray-800' : 'bg-background-40'
             }`}
         onClick={onChange}
     >
@@ -28,7 +28,7 @@ const CustomCheckbox = ({ label, icon: Icon, isChecked, onChange, count }) => (
 const ButtonCheckbox = ({ label, isChecked, onChange }) => (
     <button
         className={`px-4 py-2 rounded-xl typography-large-p ${isChecked ? 'bg-gray-800 text-font-accent' : 'bg-background-40 text-font-gray'
-            } hover:bg-gray-800 transition-colors duration-200`}
+            } hover:bg-background-60 transition-colors duration-200`}
         onClick={onChange}
     >
         {label}

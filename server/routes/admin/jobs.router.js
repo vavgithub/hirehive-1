@@ -34,5 +34,7 @@ router.put('/draftJob/:id',draftJob);
 router.put('/editJob/:id', editJob);
 router.get('/getJobById/:id' , getJobById);
 
+export default router;
+
 
 

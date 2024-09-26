@@ -11,6 +11,8 @@ import { FaTachometerAlt } from 'react-icons/fa'; // Dashboard icon
 import { FaBriefcase } from 'react-icons/fa';     // All Jobs icon
 import { FaListAlt } from 'react-icons/fa';       // My Jobs icon
 import { DashboardIcon, DashboardIconActive } from '../svg/Navbar/DashboardIcon';
+import { JobsIcon, JobsIconActive } from '../svg/Navbar/JobsIcon';
+import { MyJobsIcon, MyJobsIconActive } from '../svg/Navbar/MyJobsIcon';
 import { Button } from '../components/ui/Button';
 
 const CandidateLayout = () => {
@@ -46,14 +48,14 @@ const CandidateLayout = () => {
     {
       name: 'All Jobs',
       path: '/candidate/all-jobs',
-      icon: DashboardIcon,
-      activeIcon: DashboardIconActive, // Using the same icon for active state
+      icon: JobsIcon,
+      activeIcon: JobsIconActive, // Using the same icon for active state
     },
     {
       name: 'My Jobs',
       path: '/candidate/my-jobs',
-      icon: DashboardIcon,
-      activeIcon: DashboardIconActive, // Using the same icon for active state
+      icon: MyJobsIcon,
+      activeIcon: MyJobsIconActive, // Using the same icon for active state
     },
   ];
 
@@ -84,7 +86,7 @@ const CandidateLayout = () => {
         to={to}
         end={to === '/candidate/dashboard'}
         className={({ isActive, isPending }) =>
-          `absolute right-0 w-2 h-6 rounded-tl-xl rounded-bl-xl ${
+          `absolute right-0 w-1 h-6 rounded-tl-xl rounded-bl-xl ${
             isActive || isPending ? 'bg-teal-400' : 'bg-transparent'
           }`
         }

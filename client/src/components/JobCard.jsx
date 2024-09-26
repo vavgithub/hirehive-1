@@ -1,9 +1,9 @@
 import React from 'react'
 import ThreeDots from './ThreeDots';
-import ClockIcon from '../svg/ClockIcon';
 import { getTimeAgo } from '../utility/getTimeAgo';
-import ExperienceIcon from '../svg/ExperienceIcon';
-import DollarIcon from '../svg/DollarIcon';
+import PriceIcon from '../svg/JobCard/PriceIcon';
+import JobTypeIcon from '../svg/JobCard/JobTypeIcon';
+import GraphIcon from '../svg/JobCard/GraphIcon';
 
 const JobCard = ({ job, status, handleAction, page, onClick, withKebab, isAdmin , isCandidate }) => {
     const formattedCreatedAt = getTimeAgo(job.createdAt);
@@ -14,7 +14,7 @@ const JobCard = ({ job, status, handleAction, page, onClick, withKebab, isAdmin 
                 {/* <Typography variant='h3' className='text-white'></Typography> */}
                 <h3 className='typography-h3 '>{job.jobTitle}</h3>
                 <div className='flex items-center'>
-                    <span className={`bg-background-70 typography-body px-2 py-1 rounded`}>{job.jobProfile}</span>
+                    <span className={`bg-background-70 typography-body px-4 py-2 rounded-xl`}>{job.jobProfile}</span>
                     {
                         withKebab && (
                             <ThreeDots job={job} handleAction={handleAction} page={page} />
@@ -23,16 +23,16 @@ const JobCard = ({ job, status, handleAction, page, onClick, withKebab, isAdmin 
                 </div>
             </div>
             <div className="flex items-center px-4">
-                <div className="mr-8 flex gap-2">
-                    <ClockIcon />
+                <div className="mr-8 flex gap-2 items-center">
+                    <JobTypeIcon />
                     <p className="typography-body ">{job.employmentType}</p>
                 </div>
                 <div className="mr-8 flex gap-2 justify-center items-center">
-                    <DollarIcon />
+                    <PriceIcon />
                     <p className="typography-body ">{job.budgetFrom} - {job.budgetTo} LPA </p>
                 </div>
                 <div className='mr-8 flex gap-2 justify-center items-center'>
-                    <ExperienceIcon />
+                    <GraphIcon />
                     <p className="typography-body">{job.experienceFrom} - {job.experienceTo} Year</p>
                 </div>
             </div>
@@ -59,22 +59,22 @@ const JobCard = ({ job, status, handleAction, page, onClick, withKebab, isAdmin 
                         <div className='flex justify-between items-center w-full'>
                             <div className='flex flex-col'>
                                 <span className='typography-small-p text-font-gray'>Candidates</span>
-                                <span className="ml-2 typography-body">{job.applied}125 </span>
+                                <span className="typography-body">{job.applied}125 Applied </span>
                             </div>
 
                             <div className='flex flex-col'>
                                 <span className='typography-small-p text-font-gray'>Engagement</span>
-                                <span className="ml-2 typography-body">{job.applyClickCount}Click </span>
+                                <span className="typography-body">{job.applyClickCount} Click </span>
                             </div>
 
                             <div className='flex flex-col'>
                                 <span className='typography-small-p text-font-gray'>Applications</span>
-                                <span className="ml-2 typography-body">{job.applied}125 </span>
+                                <span className="typography-body">{job.applied}10 Processed </span>
                             </div>
 
                             <div className='flex flex-col'>
                                 <span className='typography-small-p text-font-gray'>Posted</span>
-                                <span className="ml-2 typography-body">{formattedCreatedAt} </span>
+                                <span className="typography-body">{formattedCreatedAt} </span>
                             </div>
 
                         </div>
