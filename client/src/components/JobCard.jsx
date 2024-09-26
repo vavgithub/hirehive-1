@@ -1,3 +1,5 @@
+// JobCard.jsx
+
 import React from 'react';
 import ThreeDots from './ThreeDots';
 import { getTimeAgo } from '../utility/getTimeAgo';
@@ -13,7 +15,7 @@ const JobDetailItem = ({ icon: Icon, text }) => (
 );
 
 const JobFooterItem = ({ label, value }) => (
-  <div className="flex flex-col">
+  <div className="flex flex-col mr-8">
     <span className="typography-small-p text-font-gray">{label}</span>
     <span className="typography-body">{value}</span>
   </div>
@@ -27,8 +29,27 @@ const JobCard = ({
   withKebab,
   isAdmin,
   isCandidate,
+  isAuthenticatedCandidate,
+  application, // Receive the application prop
 }) => {
   const formattedCreatedAt = getTimeAgo(job.createdAt);
+
+  // Initialize variables for application data
+  let applicationDate = null;
+  let currentStage = null;
+  let currentStageStatus = null;
+
+  if (isAuthenticatedCandidate && application) {
+    applicationDate = application.applicationDate;
+    currentStage = application.currentStage;
+    currentStageStatus =
+      application.stageStatuses &&
+      application.currentStage &&
+      application.stageStatuses[application.currentStage] &&
+      application.stageStatuses[application.currentStage].status
+        ? application.stageStatuses[application.currentStage].status
+        : 'N/A';
+  }
 
   const handleCardClick = () => {
     if (onClick) onClick(job._id);
@@ -41,15 +62,42 @@ const JobCard = ({
     { label: 'Posted', value: formattedCreatedAt },
   ];
 
-  const candidateFooterItems = [
-    { label: 'Posted', value: formattedCreatedAt },
-    { label: 'Workplace Type', value: job.workplaceType },
-  ];
+  let candidateFooterItems = [];
+
+  if (isAuthenticatedCandidate) {
+    candidateFooterItems = [
+      {
+        label: 'Applied on',
+        value: applicationDate
+          ? formattedCreatedAt
+          : 'N/A',
+      },
+      {
+        label: 'Current Stage',
+        value: currentStage || 'N/A',
+      },
+      {
+        label: 'Stage Status',
+        value: currentStageStatus || 'N/A',
+      },
+    ];
+  } else if (isCandidate) {
+    candidateFooterItems = [
+      {
+        label: 'Posted',
+        value: formattedCreatedAt,
+      },
+      {
+        label: 'Workplace Type',
+        value: job.workplaceType,
+      },
+    ];
+  }
 
   return (
     <div
-      className="bg-background-90 shadow cursor-pointer rounded-xl mb-4"
-      onClick={handleCardClick}
+      className="bg-background-90 shadow rounded-xl mb-4"
+      onClick={onClick ? handleCardClick : undefined}
     >
       <div className="flex justify-between items-center p-4">
         <h3 className="typography-h3">{job.jobTitle}</h3>
@@ -75,8 +123,8 @@ const JobCard = ({
         />
       </div>
 
-      <div className="w-[750px] max-w-full p-4">
-        <p className="typography-body inline-block truncate text-ellipsis text-font-gray max-w-full">
+      <div className="w-full p-4">
+        <p className="typography-body inline-block truncate text-ellipsis text-font-gray">
           {job.jobDescription || 'No description available'}
         </p>
       </div>
@@ -90,30 +138,21 @@ const JobCard = ({
         </div>
       )}
 
-      <div className="flex items-center justify-between bg-background-40 p-4 rounded-b-xl">
-        {isAdmin && (
-          <div className="flex justify-between items-center w-full">
-            {adminFooterItems.map((item, index) => (
-              <JobFooterItem
-                key={index}
-                label={item.label}
-                value={item.value}
-              />
-            ))}
+      {(isAdmin || isCandidate) && (
+        <div className="flex items-center bg-background-40 p-4 rounded-b-xl">
+          <div className="flex">
+            {(isAdmin ? adminFooterItems : candidateFooterItems).map(
+              (item, index) => (
+                <JobFooterItem
+                  key={index}
+                  label={item.label}
+                  value={item.value}
+                />
+              )
+            )}
           </div>
-        )}
-        {isCandidate && (
-          <div className="flex gap-28">
-            {candidateFooterItems.map((item, index) => (
-              <JobFooterItem
-                key={index}
-                label={item.label}
-                value={item.value}
-              />
-            ))}
-          </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };
