@@ -1,14 +1,20 @@
 import React, { useEffect, useState } from 'react'
 import { DataGrid } from '@mui/x-data-grid';
 import { FaGlobe, FaUser } from 'react-icons/fa';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { Link } from 'react-router-dom';
 import AssigneeSelector from './utility/AssigneeSelector';
 import axios from '../api/axios';
+import { Button } from './ui/Button';
+import AutoAssignModal from './utility/AutoAssignModal';
+
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import StatusBadge from './ui/StatusBadge';
+import StageBadge from './ui/StageBadge';
 
 
 const updateAssignee = async ({ candidateId, jobId, stage, assigneeId }) => {
+
   const response = await axios.put('dr/update-assignee', {
     candidateId,
     jobId,
@@ -18,8 +24,40 @@ const updateAssignee = async ({ candidateId, jobId, stage, assigneeId }) => {
   return response.data;
 };
 const Table = ({ rowsData, jobId }) => {
-  
+  const [isAutoAssignModalOpen, setIsAutoAssignModalOpen] = useState(false);
+
   const queryClient = useQueryClient();
+
+  // Query to fetch candidates
+  // const { data: rowsData, isLoading, isError, error } = useQuery({
+  //   queryKey: ['candidates', jobId],
+  //   queryFn: () => axios.get(`/candidates/${jobId}`).then(res => res.data.candidates),
+  // });
+
+  const autoAssignMutation = useMutation({
+    mutationFn: ({ jobId, reviewerIds }) =>
+      axios.post('dr/auto-assign-portfolios', { jobId, reviewerIds }),
+    onSuccess: (data) => {
+      // Invalidate and refetch
+      queryClient.invalidateQueries(['candidates', jobId]);
+      console.log('Auto-assign result:', data);
+      refetch();
+      // You might want to show a success message to the user here
+    },
+    onError: (error) => {
+      console.error('Auto-assign error:', error);
+      // You might want to show an error message to the user here
+    }
+  });
+
+  const handleAutoAssign = (selectedReviewers) => {
+    autoAssignMutation.mutate({
+      jobId,
+      reviewerIds: selectedReviewers.map(r => r._id)
+    });
+    setIsAutoAssignModalOpen(false);
+  };
+
 
   const updateAssigneeMutation = useMutation({
     mutationFn: updateAssignee,
@@ -82,17 +120,29 @@ const Table = ({ rowsData, jobId }) => {
     {
       field: 'currentStage',
       headerName: 'Stage',
+      width: 150,
+      renderCell: (params) => (
+        <div className='h-full flex items-center'>
+
+          <StageBadge stage={params.value} />
+        </div>
+      )
     },
     {
       field: 'status',
       headerName: 'Status',
       width: 150,
-      valueGetter: (params , row) => {
-        const currentStage = row.currentStage;
-        return  row?.stageStatuses[currentStage]?.status
-      }
+      renderCell: (params) => {
+        const currentStage = params.row.currentStage;
+        const status = params.row.stageStatuses[currentStage]?.status || 'Unknown';
+        return (
+          <div className='h-full flex items-center'>
+            <StatusBadge status={status} />
+          </div>
+        );
+      },
     },
-  
+
     {
       field: 'assignee',
       headerName: 'Assignee',
@@ -182,6 +232,21 @@ const Table = ({ rowsData, jobId }) => {
           }
     `}
       </style>
+
+      <div className='flex justify-end py-4'>
+        <div className='w-[276px] '>
+          <Button
+            variant="primary"
+            onClick={() => setIsAutoAssignModalOpen(true)}
+            disabled={autoAssignMutation.isLoading}
+          >
+            {autoAssignMutation.isLoading ? 'Auto-Assigning...' : 'Auto-Assign Portfolio'}
+          </Button>
+        </div>
+      </div>
+
+
+
       <DataGrid
         rows={rowsData}
         columns={columns}
@@ -267,6 +332,12 @@ const Table = ({ rowsData, jobId }) => {
         pageSizeOptions={[5, 10]}
         checkboxSelection
         onRowClick={(params) => handleRowClick(params)}
+      />
+
+      <AutoAssignModal
+        open={isAutoAssignModalOpen}
+        onClose={() => setIsAutoAssignModalOpen(false)}
+        onAssign={handleAutoAssign}
       />
     </div>
 
