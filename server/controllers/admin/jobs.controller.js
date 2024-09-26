@@ -2,7 +2,7 @@
 import { MongooseError } from "mongoose";
 import { jobs } from "../../models/admin/jobs.model.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
-import { jobStages } from "../../config/jobStages.js";
+import { jobStagesStatuses } from "../../config/jobStagesStatuses.js";
 import { candidates } from "../../models/candidate/candidate.model.js";
 // Controller function to create a new job
 
@@ -618,7 +618,7 @@ export const getCandidatesForJob = async (req, res) => {
     }
 
     // Get the stages for this job profile
-    const stages = jobStages[job.jobProfile] || [];
+    const stages = jobStagesStatuses[job.jobProfile] || [];
 
     // Fetch candidates who have applied for this job
     const candidatesData = await candidates.find({
@@ -650,6 +650,7 @@ export const getCandidatesForJob = async (req, res) => {
         lastName: candidate.lastName,
         email: candidate.email,
         phone: candidate.phone,
+        expectedCTC : candidate.expectedCTC,
         experience:candidate.experience,
         currentStage: jobApplication.currentStage,
         applicationDate: jobApplication.applicationDate,

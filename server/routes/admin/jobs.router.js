@@ -36,4 +36,3 @@ router.get('/getJobById/:id' , getJobById);
 
 
 
-export default router;

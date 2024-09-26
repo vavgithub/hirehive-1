@@ -133,7 +133,7 @@ const ViewJobs = () => {
         queryFn: () => axios.get(`candidates/${mainId}`).then(res => res.data),
     });
 
-    console.log(candidatesData?.candidates)
+    console.log( "NOISSEEE" , candidatesData?.candidates)
 
     //Fetch Stats data for Speicif Job
     const { data: jobStats, isLoading: isStatsLoading } = useQuery({

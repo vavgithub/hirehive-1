@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { DataGrid } from '@mui/x-data-grid';
 import { FaGlobe, FaUser } from 'react-icons/fa';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -18,8 +18,7 @@ const updateAssignee = async ({ candidateId, jobId, stage, assigneeId }) => {
   return response.data;
 };
 const Table = ({ rowsData, jobId }) => {
-  const [rows, setRows] = useState(rowsData)
-
+  
   const queryClient = useQueryClient();
 
   const updateAssigneeMutation = useMutation({
@@ -37,6 +36,18 @@ const Table = ({ rowsData, jobId }) => {
       assigneeId: newAssignee._id
     });
   };
+
+  useEffect(() => {
+    if (rowsData) {
+      console.log('Candidates Data:', rowsData);
+      // Check the structure of the first candidate (if available)
+      if (rowsData.length > 0) {
+        console.log('First Candidate:', rowsData[0]);
+        console.log('First Candidate stageStatuses:', rowsData[0].stageStatuses);
+        console.log('First Candidate currentStage:', rowsData[0].currentStage);
+      }
+    }
+  }, [rowsData]);
 
 
   const columns = [
@@ -65,24 +76,40 @@ const Table = ({ rowsData, jobId }) => {
       headerName: "Experience",
     },
     {
+      field: 'expectedCTC',
+      headerName: "Expected CTC",
+    },
+    {
       field: 'currentStage',
       headerName: 'Stage',
     },
+    {
+      field: 'status',
+      headerName: 'Status',
+      width: 150,
+      valueGetter: (params , row) => {
+        const currentStage = row.currentStage;
+        return  row?.stageStatuses[currentStage]?.status
+      }
+    },
+  
     {
       field: 'assignee',
       headerName: 'Assignee',
       width: 100,
       renderCell: (params) => (
-        <AssigneeSelector
-          mode="icon"
-          value={params.row.stageStatuses[params.row.currentStage]?.assignedTo}
-          onChange={(newAssignee) => handleAssigneeChange(
-            params.row._id,
-            params.row.currentStage,
-            newAssignee
-          )}
-          onSelect={() => { }}
-        />
+        <div className='flex items-center justify-center h-full'>
+          <AssigneeSelector
+            mode="icon"
+            value={params.row.stageStatuses[params.row.currentStage]?.assignedTo}
+            onChange={(newAssignee) => handleAssigneeChange(
+              params.row._id,
+              params.row.currentStage,
+              newAssignee
+            )}
+            onSelect={() => { }}
+          />
+        </div>
       ),
     },
   ];
@@ -156,7 +183,7 @@ const Table = ({ rowsData, jobId }) => {
     `}
       </style>
       <DataGrid
-        rows={rows}
+        rows={rowsData}
         columns={columns}
         getRowId={(row) => row._id}
         initialState={{

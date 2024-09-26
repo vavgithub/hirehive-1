@@ -1,47 +1,67 @@
 import mongoose from "mongoose";
 import { jobs } from "../../models/admin/jobs.model.js";
 import { candidates } from "../../models/candidate/candidate.model.js";
-import { jobStages } from "../../config/jobStages.js";
+import { updateStatusOnAssigneeChange } from "../../utils/statusManagement.js";
+import { jobStagesStatuses } from "../../config/jobStagesStatuses.js";
 
 export const updateAssignee = async (req, res) => {
-    try {
-      const { candidateId, jobId, stage, assigneeId } = req.body;
-  
-      const candidate = await candidates.findById(candidateId);
-  
-      if (!candidate) {
-        return res.status(404).json({ message: 'Candidate not found' });
-      }
-  
-      const jobApplication = candidate.jobApplications.find(
-        (app) => app.jobId.toString() === jobId
-      );
-  
-      if (!jobApplication) {
-        return res.status(404).json({ message: 'Job application not found' });
-      }
-  
-      if (!jobApplication.stageStatuses.has(stage)) {
-        return res.status(404).json({ message: 'Stage not found' });
-      }
-  
-      jobApplication.stageStatuses.get(stage).assignedTo = assigneeId;
-  
-      await candidate.save();
-  
-      res.status(200).json({ message: 'Assignee updated successfully' });
-    } catch (error) {
-      console.error('Error updating assignee:', error);
-      res.status(500).json({ message: 'Server error' });
-    }
-  };
+  try {
+    const { candidateId, jobId, stage, assigneeId } = req.body;
 
+    // Find the candidate
+    const candidate = await candidates.findById(candidateId);
+    if (!candidate) {
+      return res.status(404).json({ message: 'Candidate not found' });
+    }
+
+    // Find the specific job application
+    const jobApplication = candidate.jobApplications.find(
+      (app) => app.jobId.toString() === jobId
+    );
+    if (!jobApplication) {
+      return res.status(404).json({ message: 'Job application not found' });
+    }
+
+    // Initialize or update the stage status
+    if (!jobApplication.stageStatuses[stage]) {
+      jobApplication.stageStatuses[stage] = {
+        status: 'Not Assigned',
+        assignedTo: null,
+        rejectionReason: "N/A",
+        score: {},
+        currentCall: null,
+        callHistory: []
+      };
+    }
+
+    // Update the assignee and status
+    jobApplication.stageStatuses[stage].assignedTo = assigneeId;
+    jobApplication.stageStatuses[stage].status = assigneeId ? 'Under Review' : 'Not Assigned';
+
+    // Update the current stage if an assignee is added
+    if (assigneeId) {
+      jobApplication.currentStage = stage;
+    }
+
+    // Save the changes
+    await candidate.save();
+
+    res.status(200).json({ 
+      message: 'Assignee updated successfully',
+      updatedStageStatus: jobApplication.stageStatuses[stage],
+      currentStage: jobApplication.currentStage
+    });
+  } catch (error) {
+    console.error('Error updating assignee:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
   export const getAssignedCandidates = async (req, res) => {
     try {
       const designReviewerId = new mongoose.Types.ObjectId(req.user._id);
   
       // Create a dynamic $or condition for all possible stages across all job profiles
-      const stageConditions = Object.values(jobStages).flatMap(stages => 
+      const stageConditions = Object.values(jobStagesStatuses).flatMap(stages => 
         stages.map(stage => ({
           [`jobApplications.stageStatuses.${stage.name}.assignedTo`]: designReviewerId
         }))
@@ -81,7 +101,7 @@ export const updateAssignee = async (req, res) => {
             }
   
             const jobProfile = job ? job.jobProfile : application.jobProfile || 'Unknown Profile';
-            const stages = jobStages[jobProfile] || [];
+            const stages = jobStagesStatuses[jobProfile] || [];
             
             // If stages are empty, log this unusual situation
             if (stages.length === 0) {

@@ -6,7 +6,7 @@ import crypto from "crypto";
 import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
 import { jobs } from "../../models/admin/jobs.model.js";
-import { jobStages } from "../../config/jobStages.js";
+import { jobStagesStatuses } from "../../config/jobStagesStatuses.js";
 
 // Secret key for JWT (store this in environment variables)
 const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret_key";
@@ -41,7 +41,7 @@ const generateOtp = () => {
 const getJobStages = (jobProfile) => {
   // Implement this function to return the stages for a given job profile
   // You can use the jobStages configuration you shared earlier
-  return jobStages[jobProfile] || [];
+  return jobStagesStatuses[jobProfile] || [];
 };
 
 // Controller function to register a candidate
@@ -92,6 +92,19 @@ export const registerCandidate = async (req, res) => {
     const otp = generateOtp();
     const hashedOtp = crypto.createHash("sha256").update(otp).digest("hex");
 
+    const initialStageStatuses = {};
+    jobStages.forEach((stage, index) => {
+      const initialStatus = index === 0 ? stage.statuses[0] : stage.statuses.find(status => status.toLowerCase().includes('not assigned')) || stage.statuses[0];
+      initialStageStatuses[stage.name] = {
+        status: initialStatus,
+        rejectionReason: "N/A",
+        assignedTo: null,
+        score: {},
+        currentCall: null,
+        callHistory: [],
+      };
+    });
+
     // Create new candidate with job application data
     const newCandidate = new Candidate({
       firstName,
@@ -107,34 +120,17 @@ export const registerCandidate = async (req, res) => {
       skills,
       otp: hashedOtp,
       otpExpires: Date.now() + 10 * 60 * 1000, // OTP valid for 10 minutes
-      // Add other fields as necessary
       jobApplications: [
         {
           jobId,
           jobApplied,
           questionResponses,
           applicationDate: new Date(),
-          currentStage: jobStages[0]?.name || "", // Set to the first stage
-          stageStatuses: new Map(
-            jobStages.map((stage) => [
-              stage.name,
-              {
-                status:
-                  stage.name === jobStages[0]?.name
-                    ? "Under Review"
-                    : "Not Assigned",
-                rejectionReason: "N/A",
-                assignedTo: null,
-                score: {},
-                currentCall: null,
-                callHistory: [],
-              },
-            ])
-          ),
+          currentStage: jobStages[0]?.name || "",
+          stageStatuses: initialStageStatuses,
         },
       ],
     });
-
     await newCandidate.save();
 
     // Send OTP to candidate's email
@@ -296,20 +292,20 @@ export const applyToJob = async (req, res) => {
     const {
       jobId,
       questionResponses,
-      // Other fields if necessary
     } = req.body;
 
-    // Fetch the job details using jobId to get jobTitle (jobApplied)
     const job = await jobs.findById(jobId);
     if (!job) {
       return res.status(404).json({ message: "Job not found" });
     }
     const jobApplied = job.jobTitle;
+    const jobProfile = job.jobProfile;
 
-    // Find the candidate
     const candidate = await Candidate.findById(candidateId);
+    if (!candidate) {
+      return res.status(404).json({ message: "Candidate not found" });
+    }
 
-    // Check if the candidate has already applied to this job
     const hasApplied = candidate.jobApplications.some(
       (application) => application.jobId.toString() === jobId
     );
@@ -320,7 +316,23 @@ export const applyToJob = async (req, res) => {
         .json({ message: "You have already applied to this job." });
     }
 
-    const jobStages = getJobStages(job.jobProfile);
+    const jobStages = getJobStages(jobProfile);
+
+    // Prepare stage statuses dynamically
+    const initialStageStatuses = {};
+    jobStages.forEach((stage, index) => {
+      const initialStatus = index === 0 
+        ? stage.statuses[0] 
+        : stage.statuses.find(status => status.toLowerCase().includes('not assigned')) || stage.statuses[0];
+      initialStageStatuses[stage.name] = {
+        status: initialStatus,
+        rejectionReason: "N/A",
+        assignedTo: null,
+        score: {},
+        currentCall: null,
+        callHistory: [],
+      };
+    });
 
     // Add the new job application
     candidate.jobApplications.push({
@@ -329,22 +341,7 @@ export const applyToJob = async (req, res) => {
       questionResponses,
       applicationDate: new Date(),
       currentStage: jobStages[0]?.name || "",
-      stageStatuses: new Map(
-        jobStages.map((stage) => [
-          stage.name,
-          {
-            status:
-              stage.name === jobStages[0]?.name
-                ? "Under Review"
-                : "Not Assigned",
-            rejectionReason: "N/A",
-            assignedTo: null,
-            score: {},
-            currentCall: null,
-            callHistory: [],
-          },
-        ])
-      ),
+      stageStatuses: initialStageStatuses,
     });
 
     await candidate.save();
