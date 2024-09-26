@@ -126,6 +126,7 @@ const AllJobs = () => {
                 <div className='flex flex-col w-fill-available'>
                     {displayJobs.map((job) => (
                         <JobCard
+                            isCandidate={true}
                             key={job._id}
                             job={job}
                             status={open}

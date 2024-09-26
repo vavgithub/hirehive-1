@@ -74,7 +74,7 @@ const ThreeDots = ({ job, handleAction, page }) => {
         <ThreeDotsIcon />
       </button>
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-48 bg-background-70 shadow-lg rounded-md z-10">
+        <div className="absolute right-0 mt-2 w-48 bg-background-70 shadow-lg cursor-pointer rounded-md z-10">
           <ul className="py-1">
             {menuItems.map(({ action, icon: Icon, label, className }) => (
               <li
