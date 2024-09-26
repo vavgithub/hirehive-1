@@ -233,7 +233,7 @@ const ApplyJob = () => {
           {/* Personal Details */}
           <h3 className="typography-h3 mx-16 mt-8 mb-4">Personal Details</h3>
           {!isAuthenticated && (
-            <div className="grid grid-cols-2 gap-4 px-16">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 px-4 md:px-16">
               <Controller
                 name="firstName"
                 control={control}
@@ -307,7 +307,7 @@ const ApplyJob = () => {
 
           {/* Resume & Portfolio */}
           <h3 className="typography-h3 mx-16 mt-8 mb-4">Resume & Portfolio</h3>
-          <div className="grid grid-cols-2 gap-4 mx-16">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mx-4 md:mx-16">
             <Controller
               name="portfolio"
               control={control}
@@ -340,7 +340,7 @@ const ApplyJob = () => {
 
           {/* Professional Details */}
           <h3 className="typography-h3 mx-16 mt-8 mb-4">Professional Details</h3>
-          <div className="grid grid-cols-2 gap-4 mx-16">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mx-4 md:mx-16">
             <Controller
               name="experience"
               control={control}
@@ -399,7 +399,10 @@ const ApplyJob = () => {
             />
 
             {/* Skills Input */}
-            <div className="col-span-2">
+            
+          </div>
+
+          <div className="p-4">
               <span>Enter Skills</span>
               <SkillsInput
                 skills={skills}
@@ -407,7 +410,6 @@ const ApplyJob = () => {
                 allSkills={allSkills}
               />
             </div>
-          </div>
 
           {/* Additional Questions */}
           <div className="bg-background-80 pt-4 mx-16">
