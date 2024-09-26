@@ -111,7 +111,7 @@ const AllJobs = () => {
     return (
         <div className='m-4'>
             <h1 className='typography-h1'>All Jobs</h1>
-            <div className='flex gap-4 mt-4'>
+            <div className='flex gap-4 mt-4 bg-background-30 p-4 rounded-xl'>
                 <div>
                 <input
                         type='text'
