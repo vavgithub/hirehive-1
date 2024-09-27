@@ -62,23 +62,33 @@ const CandidateLayout = () => {
 
   // NavItem component for consistent styling
   const NavItem = ({ to, icon: Icon, activeIcon: ActiveIcon, children, onClick }) => (
-    <NavLink
-      to={to}
-      end={to === '/candidate/dashboard'}
-      className={({ isActive, isPending }) =>
-        `flex items-center gap-2 p-2 ${
-          isActive || isPending ? 'text-font-accent bg-background-60' : 'hover:bg-background-60'
-        }`
-      }
-      onClick={onClick}
-    >
-      {({ isActive, isPending }) => (
-        <>
-          {isActive || isPending ? <ActiveIcon className="text-xl" /> : <Icon className="text-xl" />}
-          <span>{children}</span>
-        </>
-      )}
-    </NavLink>
+    <div className="relative flex flex-row items-center justify-between hover:bg-background-60">
+
+      <NavLink
+        to={to}
+        end={to === '/candidate/dashboard'}
+        className={({ isActive, isPending }) =>
+          `w-full flex items-center gap-2 pl-2 ${isActive || isPending ? "text-font-accent" : ""}`
+        }
+
+        onClick={onClick}
+      >
+        {({ isActive, isPending }) => (
+          <>
+            {isActive || isPending ? <ActiveIcon className="text-xl" /> : <Icon className="text-xl" />}
+            <span>{children}</span>
+          </>
+        )}
+      </NavLink>
+      <NavLink
+        to={to}
+        end={to === '/candidate/dashboard'}
+        className={({ isActive, isPending }) =>
+          `absolute right-0 w-1 h-6 rounded-tl-xl rounded-bl-xl ${isActive || isPending ? 'bg-teal-400' : 'bg-transparent'
+          }`
+        }
+      />
+    </div>
   );
 
   return (
@@ -99,7 +109,7 @@ const CandidateLayout = () => {
         md:w-48 w-64 h-screen
         bg-background-100 text-font-gray
         flex flex-col justify-between py-4
-      `}>
+      `} style={{ "position": "fixed" }}>
         <div className="flex flex-col gap-5 typography-body">
           {menuItems.map((item) => (
             <NavItem
@@ -124,13 +134,13 @@ const CandidateLayout = () => {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 p-4 md:p-6">
+      <div className="md:ml-[192px] flex-1 p-4 md:p-6">
         <Outlet />
       </div>
 
       {/* Overlay for mobile */}
       {isMenuOpen && (
-        <div 
+        <div
           className="md:hidden fixed inset-0 bg-black bg-opacity-50 z-30"
           onClick={() => setIsMenuOpen(false)}
         ></div>
