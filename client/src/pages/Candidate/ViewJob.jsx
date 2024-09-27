@@ -5,6 +5,7 @@ import { Button } from '../../components/ui/Button';
 import { formatDescription } from '../../utility/formatDescription';
 import SideCard from '../../components/SideCard';
 import useAuthCandidate from '../../hooks/useAuthCandidate'; // Import the authentication hook
+import Header from '../../components/utility/Header';
 
 // Function to fetch the job data by ID
 const getJobById = async (id) => {
@@ -41,8 +42,6 @@ const ViewJob = () => {
         ? candidateData.jobApplications.some(application => application.jobId.toString() === mainId)
         : false;
 
-    console.log('hasApplied:', hasApplied);
-
     const handleApplyClick = async () => {
         try {
             await axios.post(`/candidates/${mainId}/increment-apply-click`);
@@ -52,17 +51,16 @@ const ViewJob = () => {
         }
     };
 
-    console.log('candidateData:', candidateData);
-    console.log('mainId:', mainId);
-    console.log('jobApplications:', candidateData?.jobApplications);
-    console.log('hasApplied:', hasApplied);
-
     return (
-        <div className='h-screen bg-main-bg bg-cover pt-28 mb-6'>
-            <div className='mx-16 bg-background-30 rounded-xl p-6'>
-                <div className='flex justify-between'>
-                    <h1 className='typography-h1 '>{formData.jobTitle}</h1>
-                    <div className='w-44'>
+        <div className="h-screen bg-main-bg bg-cover md:pt-28 pt-6 mb-6">
+            <div className="md:mx-16 bg-background-30 rounded-xl p-6">
+                {/* Flex container for both desktop and mobile */}
+                <div className="flex flex-col lg:flex-row justify-between">
+                    {/* Job Title */}
+                    <Header HeaderText={formData.jobTitle} withBack="true"/>
+                    {/* <h1 className="typography-h1"></h1> */}
+                    {/* Button only visible on large screens */}
+                    <div className="hidden lg:block w-44">
                         {hasApplied ? (
                             <Button variant="secondary" disabled>
                                 Already Applied
@@ -74,29 +72,50 @@ const ViewJob = () => {
                         )}
                     </div>
                 </div>
-                <div className='flex justify-between'>
-                    <div className='w-3/4'>
+
+                {/* Job Description and Skills */}
+                <div className="flex flex-col lg:flex-row justify-between mt-4">
+                    {/* Left section: Job description and skills */}
+                    <div className="lg:w-3/4">
                         <div
-                            className='text-font-gray font-outfit'
+                            className="text-font-gray font-outfit"
                             dangerouslySetInnerHTML={{ __html: formatDescription(formData.jobDescription) }}
                         ></div>
+
+                        {/* Skills section */}
                         <div>
-                            <h4 className='typography-h4 mt-6 mb-3'>Skills</h4>
-                            <div className='grid grid-cols-6 gap-3'>
+                            <h4 className="typography-h4 mt-6 mb-3">Skills</h4>
+                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
                                 {formData.skills && formData.skills.map((skill, index) => (
-                                    <span key={index} className="flex justify-center bg-background-70 m px-6 py-2 rounded-full">
+                                    <span key={index} className="flex justify-center bg-background-70 px-6 py-2 rounded-full">
                                         {skill}
                                     </span>
                                 ))}
                             </div>
                         </div>
                     </div>
-                    <div>
+
+                    {/* Right section: SideCard */}
+                    <div className="lg:w-1/4 mt-6 lg:mt-0">
                         <SideCard formData={formData} />
                     </div>
+                </div>
+
+                {/* Apply Button on mobile version (appears at the bottom of the page) */}
+                <div className="lg:hidden mt-8">
+                {hasApplied ? (
+                            <Button variant="secondary" disabled>
+                                Already Applied
+                            </Button>
+                        ) : (
+                            <Button onClick={handleApplyClick} variant="primary">
+                                Apply Job
+                            </Button>
+                        )}
                 </div>
             </div>
         </div>
     );
 };
+
 export default ViewJob;
