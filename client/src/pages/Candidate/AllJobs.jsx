@@ -135,7 +135,7 @@ const AllJobs = () => {
             <div className={`${isFilterVisible ? 'block' : 'hidden'} md:block`}>
                 <input
                     type='text'
-                    className="w-full md:w-auto mb-4 p-2 rounded border border-gray-300"
+                    className="w-full md:w-auto mb-4 p-2 "
                     placeholder="Job title or keyword"
                     value={searchQuery}
                     onChange={handleSearch}

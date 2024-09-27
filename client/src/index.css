@@ -38,19 +38,19 @@ body {
   @apply text-white;
 }
 input[type="text"] {
-  @apply bg-background-40 h-[44px] p-2 rounded-xl placeholder:text-font-gray placeholder:font-body  focus:ring-teal-400 focus:outline-teal-500 outline-none typography-body w-full;  /* Replace bg-gray-200 with your desired background color class */
+  @apply bg-background-40 h-[44px] px-4 rounded-xl placeholder:text-font-gray placeholder:font-body  focus:ring-teal-400 focus:outline-teal-500 outline-none typography-body w-full;  /* Replace bg-gray-200 with your desired background color class */
 }
 
 input[type="email"] {
-  @apply bg-background-40 h-[44px] p-2 rounded-xl placeholder:text-font-gray placeholder:font-body  focus:ring-teal-400 focus:outline-teal-500 outline-none typography-body w-full;  /* Replace bg-gray-200 with your desired background color class */
+  @apply bg-background-40 h-[44px] px-4 rounded-xl placeholder:text-font-gray placeholder:font-body  focus:ring-teal-400 focus:outline-teal-500 outline-none typography-body w-full;  /* Replace bg-gray-200 with your desired background color class */
 }
 
 input[type="password"] {
-  @apply bg-background-40 h-[44px] p-2 rounded-xl placeholder:text-font-gray placeholder:font-body  focus:ring-teal-400 focus:outline-teal-500 outline-none typography-body w-full;  /* Replace bg-gray-200 with your desired background color class */
+  @apply bg-background-40 h-[44px] px-4 rounded-xl placeholder:text-font-gray placeholder:font-body  focus:ring-teal-400 focus:outline-teal-500 outline-none typography-body w-full;  /* Replace bg-gray-200 with your desired background color class */
 }
 
 input[type='number'] {
-  @apply bg-background-40 h-[44px] p-2 rounded-xl placeholder:text-font-gray placeholder:font-body  focus:ring-teal-400 focus:outline-teal-500 outline-none typography-body w-full;  /* Replace bg-gray-200 with your desired background color class */
+  @apply bg-background-40 h-[44px] px-4 rounded-xl placeholder:text-font-gray placeholder:font-body  focus:ring-teal-400 focus:outline-teal-500 outline-none typography-body w-full;  /* Replace bg-gray-200 with your desired background color class */
 }
 
 h2{

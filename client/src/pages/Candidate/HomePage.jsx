@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import axios from '../../api/axios';
 import { useNavigate } from 'react-router-dom';
 import { FaGlobe, FaUser } from 'react-icons/fa';
+import { Button } from '../../components/ui/Button';
 
 const fetchOpenJobs = () => axios.get('/candidates/jobs/open').then(res => res.data);
 const searchJobs = (query) => axios.get(`/candidates/searchJobs?jobTitle=${encodeURIComponent(query)}`).then(res => res.data);
@@ -106,13 +107,20 @@ const HomePage = () => {
 
     return (
         <div className='px-4 md:px-[10%]'>
-            <h1 className='typography-h1'>Jobs</h1>
+            <div className='flex justify-between pt-4'>
+
+                <h1 className='typography-h1'>Jobs</h1>
+                <div className='md:w-[220px]'>
+
+                    <Button variant="secondary" onClick={()=>navigate("/login")}>Login</Button>
+                </div>
+            </div>
             <div className='py-8 md:py-14 bg-main-bg bg-cover flex flex-col items-center rounded-xl justify-center'>
                 <h1 className='display-d2 max-w-96 text-center'>Unlock Your Career Potential</h1>
                 <div className='w-full md:w-4/5 mt-6 md:mt-9'>
                     <input
                         type='text'
-                        className="w-full mb-4 p-2 rounded border border-gray-300"
+                        className="w-full mb-4 p-2 "
                         placeholder="Job title or keyword"
                         value={searchQuery}
                         onChange={handleSearch}
@@ -121,7 +129,7 @@ const HomePage = () => {
             </div>
 
             {/* Mobile filter toggle button */}
-            <button 
+            <button
                 className="md:hidden my-4 flex items-center gap-2 bg-background-60 p-2 rounded-lg"
                 onClick={toggleFilters}
             >
@@ -132,11 +140,11 @@ const HomePage = () => {
             <div className='flex flex-col md:flex-row gap-4 mt-4'>
                 {/* Filters */}
                 <div className={`${isFilterVisible ? 'block' : 'hidden'} md:block`}>
-                    <Filters 
-                        filters={filters} 
-                        handleCheckboxChange={handleCheckboxChange} 
-                        handleExperienceFilter={handleExperienceFilter} 
-                        clearAllFilters={clearAllFilters} 
+                    <Filters
+                        filters={filters}
+                        handleCheckboxChange={handleCheckboxChange}
+                        handleExperienceFilter={handleExperienceFilter}
+                        clearAllFilters={clearAllFilters}
                     />
                 </div>
 
