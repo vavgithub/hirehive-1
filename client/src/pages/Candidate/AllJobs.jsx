@@ -5,6 +5,8 @@ import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import axios from '../../api/axios';
 import { FaGlobe, FaUser } from 'react-icons/fa';
+import Export from '../../svg/Buttons/Export';
+import Filter from '../../svg/Buttons/Filter';
 
 const fetchOpenJobs = () => axios.get('/candidates/jobs/open').then(res => res.data);
 const searchJobs = (query) => axios.get(`/candidates/searchJobs?jobTitle=${encodeURIComponent(query)}`).then(res => res.data);
@@ -118,52 +120,61 @@ const AllJobs = () => {
 
 
     return (
-         <div className='m-4'>
-        <h1 className='typography-h1'>All Jobs</h1>
-        
-        {/* Mobile filter toggle button */}
-        <button 
-            className="md:hidden mb-4 flex items-center gap-2 bg-background-60 p-2 rounded-lg"
-            onClick={toggleFilters}
-        >
-            <FaUser size={20} />
-            {isFilterVisible ? 'Hide Filters' : 'Show Filters'}
-        </button>
+        <div className='m-2 pt-8'>
+            <div className='flex items-center justify-between'>
 
-        <div className='flex flex-col md:flex-row gap-4 mt-4 bg-background-30 p-4 rounded-xl'>
-            {/* Search and Filters */}
-            <div className={`${isFilterVisible ? 'block' : 'hidden'} md:block`}>
-                <input
-                    type='text'
-                    className="w-full md:w-auto mb-4 p-2 "
-                    placeholder="Job title or keyword"
-                    value={searchQuery}
-                    onChange={handleSearch}
-                />
-                <Filters 
-                    filters={filters} 
-                    handleCheckboxChange={handleCheckboxChange} 
-                    handleExperienceFilter={handleExperienceFilter} 
-                    clearAllFilters={clearAllFilters} 
-                />
+                <h1 className='typography-h1'>All Jobs</h1>
+                <div className='md:hidden  flex items-center gap-2 bg-background-100 p-2 rounded-xl ' onClick={toggleFilters}>
+                    <Filter />
+                </div>
+
             </div>
 
-            {/* Job listings */}
-            <div className='flex flex-col w-full md:w-fill-available'>
-                {displayJobs.map((job) => (
-                    <JobCard
-                        isCandidate={true}
-                        key={job._id}
-                        job={job}
-                        status={open}
-                        withKebab={false}
-                        handleAction={handleAction}
-                        onClick={() => handleViewJob(job._id)}
+            {/* Mobile filter toggle button */}
+
+            {/* <button
+                className="md:hidden mb-4 flex items-center gap-2 bg-background-60 p-2 rounded-lg"
+                onClick={toggleFilters}
+                {isFilterVisible ? 'Hide Filters' : 'Show Filters'}
+            >
+                <FaUser size={20} />
+
+            </button> */}
+
+            <div className='flex flex-col md:flex-row gap-4 mt-4 bg-background-30 p-4 rounded-xl'>
+                {/* Search and Filters */}
+                <div className={`${isFilterVisible ? 'block' : 'hidden'} md:block`}>
+                    <input
+                        type='text'
+                        className="w-full md:w-auto mb-4 p-2 "
+                        placeholder="Job title or keyword"
+                        value={searchQuery}
+                        onChange={handleSearch}
                     />
-                ))}
+                    <Filters
+                        filters={filters}
+                        handleCheckboxChange={handleCheckboxChange}
+                        handleExperienceFilter={handleExperienceFilter}
+                        clearAllFilters={clearAllFilters}
+                    />
+                </div>
+
+                {/* Job listings */}
+                <div className='flex flex-col w-full md:w-fill-available'>
+                    {displayJobs.map((job) => (
+                        <JobCard
+                            isCandidate={true}
+                            key={job._id}
+                            job={job}
+                            status={open}
+                            withKebab={false}
+                            handleAction={handleAction}
+                            onClick={() => handleViewJob(job._id)}
+                        />
+                    ))}
+                </div>
             </div>
         </div>
-    </div>
     )
 }
 

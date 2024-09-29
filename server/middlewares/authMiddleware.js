@@ -1,8 +1,14 @@
+import dotenv from "dotenv";
+dotenv.config({
+  path: process.env.NODE_ENV === "production" ? ".env.production" : ".env",
+});
+
 import jwt from 'jsonwebtoken';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { User } from '../models/admin/user.model.js';
 import { candidates as Candidate } from '../models/candidate/candidate.model.js';
-const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret_key';
+
+console.log("this is middlewares",process.env.JWT_SECRET)
 
 const protect = asyncHandler(async (req, res, next) => {
     let token;
@@ -47,7 +53,7 @@ const protectCandidate = async (req, res, next) => {
     }
 
     // Verify token
-    const decoded = jwt.verify(token, JWT_SECRET);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     // Find candidate by ID
     const candidate = await Candidate.findById(decoded.id);

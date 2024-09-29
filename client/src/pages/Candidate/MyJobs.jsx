@@ -23,7 +23,7 @@ const MyJobs = () => {
     return <div>Error fetching applied jobs. Please try again later.</div>;
   }
   return (
-    <div className="m-4">
+    <div className='m-2 pt-8'>
       <h1 className="typography-h1">My Jobs</h1>
       <div className="p-4 bg-background-30 rounded-xl">
         {appliedJobs.length === 0 ? (

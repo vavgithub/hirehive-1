@@ -6,6 +6,7 @@ import axios from '../../api/axios';
 import { useNavigate } from 'react-router-dom';
 import { FaGlobe, FaUser } from 'react-icons/fa';
 import { Button } from '../../components/ui/Button';
+import Filter from '../../svg/Buttons/Filter';
 
 const fetchOpenJobs = () => axios.get('/candidates/jobs/open').then(res => res.data);
 const searchJobs = (query) => axios.get(`/candidates/searchJobs?jobTitle=${encodeURIComponent(query)}`).then(res => res.data);
@@ -112,30 +113,33 @@ const HomePage = () => {
                 <h1 className='typography-h1'>Jobs</h1>
                 <div className='md:w-[220px]'>
 
-                    <Button variant="secondary" onClick={()=>navigate("/login")}>Login</Button>
+                    <Button variant="secondary" onClick={() => navigate("/login")}>Login</Button>
                 </div>
             </div>
             <div className='py-8 md:py-14 bg-main-bg bg-cover flex flex-col items-center rounded-xl justify-center'>
                 <h1 className='display-d2 max-w-96 text-center'>Unlock Your Career Potential</h1>
-                <div className='w-full md:w-4/5 mt-6 md:mt-9'>
+                <div className='flex justify-evenly gap-2 w-full md:w-4/5 mt-6 md:mt-9'>
                     <input
                         type='text'
-                        className="w-full mb-4 p-2 "
+                        className="w-full p-2 "
                         placeholder="Job title or keyword"
                         value={searchQuery}
                         onChange={handleSearch}
                     />
+                    <div className='md:hidden flex items-center  bg-background-40 p-2 rounded-xl ' onClick={toggleFilters}>
+                        <Filter />
+                    </div>
                 </div>
             </div>
 
             {/* Mobile filter toggle button */}
-            <button
+            {/* <button
                 className="md:hidden my-4 flex items-center gap-2 bg-background-60 p-2 rounded-lg"
                 onClick={toggleFilters}
             >
                 <FaUser size={20} />
                 {isFilterVisible ? 'Hide Filters' : 'Show Filters'}
-            </button>
+            </button> */}
 
             <div className='flex flex-col md:flex-row gap-4 mt-4'>
                 {/* Filters */}

@@ -99,7 +99,7 @@ const JobCard = ({
       className="bg-background-90 shadow rounded-xl mb-4"
       onClick={onClick ? handleCardClick : undefined}
     >
-      <div className="flex justify-between items-center p-4">
+      <div className="flex flex-col items-start justify-between p-4 md:flex-row gap-3">
         <h3 className="typography-h3">{job.jobTitle}</h3>
         <div className="flex items-center">
           <span className="bg-background-70 typography-body px-4 py-2 rounded-xl">
@@ -111,7 +111,7 @@ const JobCard = ({
         </div>
       </div>
 
-      <div className="flex items-center px-4">
+      <div className="flex flex-col px-4 md:flex-row items-start gap-3">
         <JobDetailItem icon={JobTypeIcon} text={job.employmentType} />
         <JobDetailItem
           icon={PriceIcon}

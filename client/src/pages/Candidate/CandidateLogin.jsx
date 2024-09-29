@@ -27,7 +27,7 @@ const CandidateLogin = () => {
     try {
       await axios.post('/auth/candidate/login', { email, password });
       // Redirect to candidate dashboard
-      navigate('/candidate/dashboard');
+      navigate('/candidate/all-jobs');
     } catch (error) {
       setError(error.response?.data?.message || 'An error occurred');
     }

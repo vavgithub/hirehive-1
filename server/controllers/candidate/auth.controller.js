@@ -1,4 +1,8 @@
 // auth.controller.js
+import dotenv from "dotenv";
+dotenv.config({
+  path: process.env.NODE_ENV === "production" ? ".env.production" : ".env",
+});
 
 import { candidates as Candidate } from "../../models/candidate/candidate.model.js";
 import bcrypt from "bcryptjs";
@@ -9,21 +13,24 @@ import { jobs } from "../../models/admin/jobs.model.js";
 import { jobStagesStatuses } from "../../config/jobStagesStatuses.js";
 
 // Secret key for JWT (store this in environment variables)
-const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret_key";
+const JWT_SECRET = process.env.JWT_SECRET;
+
+console.log("this is email auth",process.env.OTP_EMAIL);
+console.log("this is email auth",process.env.OTP_EMAIL_CRED);
 
 // Configure nodemailer transporter (you'll need to use your own SMTP settings)
 const transporter = nodemailer.createTransport({
   service: "gmail", // or your email service
   auth: {
-    user: "vevaaratvav@gmail.com",
-    pass: "uhpz qdwt kpqk splh",
+    user: process.env.OTP_EMAIL,
+    pass: process.env.OTP_EMAIL_CRED,
   },
 });
 
 // Helper function to send OTP email
 const sendOtpEmail = async (email, otp) => {
   const mailOptions = {
-    from: "vevaaratvav@gmail.com",
+    from: process.env.OTP_EMAIL,
     to: email,
     subject: "OTP Verification",
     text: `Your OTP code is ${otp}`,

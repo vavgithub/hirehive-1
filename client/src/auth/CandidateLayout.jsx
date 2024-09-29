@@ -28,7 +28,7 @@ const CandidateLayout = () => {
     try {
       await candidateLogout();
       refetch();
-      navigate('/login');
+      navigate('/');
     } catch (error) {
       console.error('Logout failed:', error);
     }
@@ -94,12 +94,19 @@ const CandidateLayout = () => {
   return (
     <div className="flex flex-col md:flex-row bg-main-bg bg-cover bg-top min-h-screen">
       {/* Mobile Menu Button */}
-      <button
-        className="md:hidden fixed top-4 right-4 z-50 p-2 bg-background-100 rounded-full shadow-lg"
-        onClick={toggleMenu}
-      >
-        <Menu size={24} />
-      </button>
+      <div className="md:hidden fixed top-4 right-4 z-50 p-2 rounded-full shadow-lg"
+        onClick={toggleMenu}>
+
+        <svg width="27" height="18" viewBox="0 0 27 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <g id="Group 1116601339">
+            <rect id="Rectangle 34624206" width="27" height="2" rx="1" transform="matrix(-1 0 0 1 27 0)" fill="white" />
+            <rect id="Rectangle 34624207" width="18" height="2" rx="1" transform="matrix(-1 0 0 1 27 8)" fill="white" />
+            <rect id="Rectangle 34624208" width="27" height="2" rx="1" transform="matrix(-1 0 0 1 27 16)" fill="white" />
+          </g>
+        </svg>
+
+      </div>
+
 
       {/* Sidebar for desktop / Floating menu for mobile */}
       <div className={`
