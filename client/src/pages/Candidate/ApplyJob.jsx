@@ -212,7 +212,7 @@ const ApplyJob = () => {
   };
 
 
-  console.log("check karr" , candidateData);
+  console.log("check karr", candidateData);
 
   // Handler for additional questions input change
   const handleInputChange = (questionId, value) => {
@@ -225,15 +225,15 @@ const ApplyJob = () => {
   return (
     <>
       {currentStep === 1 && (
-        <h1 className="text-2xl font-bold mb-4">Application for {jobTitle}</h1>
+        <h1 className="typography-h1 m-4 md:mx-16">Application for {jobTitle}</h1>
       )}
 
       {currentStep === 1 && (
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form className='md:mx-16 mx-4' onSubmit={handleSubmit(onSubmit)}>
           {/* Personal Details */}
-          <h3 className="typography-h3 mx-16 mt-8 mb-4">Personal Details</h3>
           {!isAuthenticated && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 px-4 md:px-16">
+              <h3 className="typography-h3 mt-8 mb-4">Personal Details</h3>
               <Controller
                 name="firstName"
                 control={control}
@@ -306,8 +306,8 @@ const ApplyJob = () => {
           )}
 
           {/* Resume & Portfolio */}
-          <h3 className="typography-h3 mx-16 mt-8 mb-4">Resume & Portfolio</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mx-4 md:mx-16">
+          <h3 className="typography-h3 mt-8 mb-4">Resume & Portfolio</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Controller
               name="portfolio"
               control={control}
@@ -339,8 +339,8 @@ const ApplyJob = () => {
           </div>
 
           {/* Professional Details */}
-          <h3 className="typography-h3 mx-16 mt-8 mb-4">Professional Details</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mx-4 md:mx-16">
+          <h3 className="typography-h3 mt-8 mb-4">Professional Details</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ">
             <Controller
               name="experience"
               control={control}
@@ -399,22 +399,24 @@ const ApplyJob = () => {
             />
 
             {/* Skills Input */}
-            
+
           </div>
 
-          <div className="p-4">
-              <span>Enter Skills</span>
+          <div className="grid md:grid-cols-2 grid-cols-1 pt-4">
+            <div>
+              <h3 className='typography-body py-4'>Enter Skills</h3>
               <SkillsInput
                 skills={skills}
                 setSkills={setSkills}
                 allSkills={allSkills}
               />
             </div>
+          </div>
 
           {/* Additional Questions */}
-          <div className="bg-background-80 pt-4 mx-16">
-            <h2 className="text-xl mb-4">Additional Questions</h2>
-    
+          <div className="pt-4 mx-2 ">
+            <h2 className="typography-h2 mb-4">Additional Questions</h2>
+
             {questions.map((question, index) => (
               <Controller
                 key={question._id}
@@ -467,8 +469,8 @@ const ApplyJob = () => {
           </div>
 
           {/* Buttons */}
-          <div className="flex mt-6 justify-end gap-4 mr-16 mb-6">
-            <div className="w-[269px]">
+          <div className="flex mt-6 justify-end gap-4 md:mr-16 mb-6">
+            <div className="md:w-[269px] w-full">
               <Button
                 type="button"
                 onClick={() => navigate(-1)}
@@ -477,7 +479,7 @@ const ApplyJob = () => {
                 Cancel
               </Button>
             </div>
-            <div className="w-[269px]">
+            <div className="md:w-[269px] w-full">
               <Button
                 type="submit"
                 variant="primary"
