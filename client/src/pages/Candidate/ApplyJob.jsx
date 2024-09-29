@@ -232,8 +232,10 @@ const ApplyJob = () => {
         <form className='md:mx-16 mx-4' onSubmit={handleSubmit(onSubmit)}>
           {/* Personal Details */}
           {!isAuthenticated && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 px-4 md:px-16">
+            <>
+
               <h3 className="typography-h3 mt-8 mb-4">Personal Details</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ">
               <Controller
                 name="firstName"
                 control={control}
@@ -303,6 +305,7 @@ const ApplyJob = () => {
                 )}
               />
             </div>
+            </>
           )}
 
           {/* Resume & Portfolio */}
@@ -311,12 +314,12 @@ const ApplyJob = () => {
             <Controller
               name="portfolio"
               control={control}
-              rules={{ required: false }}
+              rules={{ required: true }}
               render={({ field }) => (
                 <InputField
                   id="portfolio"
                   label="Portfolio"
-                  required={false}
+                  required={true}
                   error={errors.portfolio}
                   {...field}
                 />
@@ -325,12 +328,12 @@ const ApplyJob = () => {
             <Controller
               name="website"
               control={control}
-              rules={{ required: false }}
+              rules={{ required: true }}
               render={({ field }) => (
                 <InputField
                   id="website"
                   label="Website"
-                  required={false}
+                  required={true}
                   error={errors.website}
                   {...field}
                 />

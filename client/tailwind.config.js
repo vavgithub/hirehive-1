@@ -60,6 +60,7 @@ export default {
         green:{
           100:"rgba(18, 211, 130, 1)",
           90:"rgba(20, 225, 89, 0.2)",
+          80:"rgba(24, 233, 208, 0.3)",
         },        
         yellow:{
           100:"rgba(237, 189, 20, 1)",
@@ -103,8 +104,7 @@ export default {
           60: "var(--color-background-60)",
           40: "var(--color-background-40)",
           30: `var(--color-background-30)`,
-          yellow: "var(--color-yellow-100)",
-          green: "var(--color-green-100)",
+          green:"rgba(24, 233, 208, 0.3)",
         },
         font: {
           primary: "var(--color-primary-100)",
