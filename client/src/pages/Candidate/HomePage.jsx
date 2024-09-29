@@ -126,9 +126,12 @@ const HomePage = () => {
                         value={searchQuery}
                         onChange={handleSearch}
                     />
-                    <div className='md:hidden flex items-center  bg-background-40 p-2 rounded-xl ' onClick={toggleFilters}>
-                        <Filter />
-                    </div>
+                  <div
+                    className={`md:hidden ${isFilterVisible ? "bg-background-100" : "bg-background-40"} transition-colors duration-200 flex items-center gap-2 p-2 rounded-xl`}
+                    onClick={toggleFilters}
+                >
+                    <Filter />
+                </div>
                 </div>
             </div>
 

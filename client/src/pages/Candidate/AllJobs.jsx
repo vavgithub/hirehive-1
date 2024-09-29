@@ -122,12 +122,13 @@ const AllJobs = () => {
     return (
         <div className='m-2 pt-8'>
             <div className='flex items-center justify-between'>
-
                 <h1 className='typography-h1'>All Jobs</h1>
-                <div className='md:hidden  flex items-center gap-2 bg-background-100 p-2 rounded-xl ' onClick={toggleFilters}>
+                <div
+                    className={`md:hidden ${isFilterVisible ? "bg-background-100" : "bg-background-40"} transition-colors duration-200 flex items-center gap-2 p-2 rounded-xl`}
+                    onClick={toggleFilters}
+                >
                     <Filter />
                 </div>
-
             </div>
 
             {/* Mobile filter toggle button */}
