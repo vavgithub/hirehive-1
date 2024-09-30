@@ -17,7 +17,7 @@ const Header = ({ HeaderText, withKebab, withBack, job, handleAction, page }) =>
         <div className='flex items-center justify-between'>
             <div className='flex items-center gap-4'>
                 {withBack === "true" && (
-                    <div onClick={() => navigate(-1)}>
+                    <div className='cursor-pointer' onClick={() => navigate(-1)}>
                         <BackButton />
                     </div>
                 )}
