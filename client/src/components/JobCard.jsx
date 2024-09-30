@@ -96,7 +96,7 @@ const JobCard = ({
 
   return (
     <div
-      className="bg-background-90 shadow rounded-xl mb-4"
+      className="bg-background-90 shadow cursor-pointer rounded-xl mb-4"
       onClick={onClick ? handleCardClick : undefined}
     >
       <div className="flex flex-col items-start justify-between p-4 md:flex-row gap-3">

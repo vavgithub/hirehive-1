@@ -9,7 +9,7 @@ import { Button } from '../../components/ui/Button';
 import Filter from '../../svg/Buttons/Filter';
 
 const fetchOpenJobs = () => axios.get('/candidates/jobs/open').then(res => res.data);
-const searchJobs = (query) => axios.get(`/candidates/searchJobs?jobTitle=${encodeURIComponent(query)}`).then(res => res.data);
+const searchJobs = (query) => axios.get(`/candidates/jobs/searchJobs?jobTitle=${encodeURIComponent(query)}`).then(res => res.data);
 const filterJobs = (filters) => axios.post('/candidates/filterJobs', { filters }).then(res => res.data);
 
 const HomePage = () => {

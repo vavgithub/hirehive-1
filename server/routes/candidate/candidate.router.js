@@ -26,7 +26,7 @@ const router = express.Router();
 
 // Routes that do not contain dynamic parameters
 router.get('/jobs/open', fetchActiveJobs);
-router.get('/searchJobs', searchJobs);
+router.get('/jobs/searchJobs', searchJobs);
 router.get('/allCandidates', allCandidate);
 router.get('/stats', stats);
 router.post('/createCandidate', createCandidate);
