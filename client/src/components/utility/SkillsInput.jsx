@@ -80,12 +80,12 @@ const SkillsInput = ({ skills, setSkills, allSkills = [] }) => {
                 />
             </div>
             {suggestions.length > 0 && (
-                <div className="border border-gray-300 rounded mt-2">
+                <div className="rounded-xl bg-background-70 mt-2 p-2">
                     {suggestions.map((suggestion, index) => (
                         <div
                             key={index}
                             onClick={() => handleSuggestionClick(suggestion)}
-                            className="cursor-pointer p-2 hover:bg-gray-200"
+                            className="cursor-pointer p-2 hover:bg-background-60"
                         >
                             {suggestion}
                         </div>

@@ -9,6 +9,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import axios from '../../api/axios';
 import useAuthCandidate from '../../hooks/useAuthCandidate';
+import { dummySkills } from '../../components/Form/dropdownOptions';
 
 const fetchJobDetails = async (id) => {
   const response = await axios.get(`/getJobById/${id}`);
@@ -18,7 +19,6 @@ const fetchJobDetails = async (id) => {
 const ApplyJob = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [skills, setSkills] = useState([]);
-  const allSkills = ['JavaScript', 'React', 'Node.js', 'Python', 'Java'];
   // const [answers, setAnswers] = useState({});
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -413,7 +413,7 @@ const ApplyJob = () => {
               <SkillsInput
                 skills={skills}
                 setSkills={setSkills}
-                allSkills={allSkills}
+                allSkills={dummySkills}
               />
             </div>
           </div>
