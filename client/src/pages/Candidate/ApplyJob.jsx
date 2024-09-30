@@ -10,6 +10,7 @@ import { useQuery } from '@tanstack/react-query';
 import axios from '../../api/axios';
 import useAuthCandidate from '../../hooks/useAuthCandidate';
 import { dummySkills } from '../../components/Form/dropdownOptions';
+import { showErrorToast, showSuccessToast } from '../../components/ui/Toast';
 
 const fetchJobDetails = async (id) => {
   const response = await axios.get(`/getJobById/${id}`);
@@ -132,12 +133,13 @@ const ApplyJob = () => {
         .then((response) => {
           setEmail(data.email);
           setPhone(data.phoneNumber);
+          showSuccessToast('Create Password', "Please Create Your Password");
           setCurrentStep(2); // Move to password creation step
           setIsSubmitting(false);
         })
         .catch((error) => {
           setIsSubmitting(false);
-          alert(error.response.data.message);
+          showErrorToast('Error', error.response?.data?.message || 'Failed to perform job action. Please try again.');
         });
     }
   };
@@ -164,6 +166,7 @@ const ApplyJob = () => {
       .then((response) => {
         setCurrentStep(3); // Move to OTP verification step
         setIsSubmitting(false);
+        showSuccessToast('Password Create Successfuly', "Congratulations!Please proceed to verify your OTP to continue.");
       })
       .catch((error) => {
         setIsSubmitting(false);
@@ -575,15 +578,15 @@ const ApplyJob = () => {
       {currentStep === 3 && (
         <div className="flex items-center justify-center min-h-screen bg-cover bg-verification">
           <div className="w-full max-w-md space-y-8 bg-background-90 rounded-lg shadow-xl  bg-opacity-15">
-            <form onSubmit={handleOtpSubmit} className="mx-16">
+            <form onSubmit={handleOtpSubmit} className="mx-16 text-center">
               <h1 className="typography-h1 mt-8 mb-4">OTP Verification</h1>
               <p className="text-font-gray text-center typography-large-p">
                 To ensure security, please enter the OTP (One-Time Password) to
                 verify your account. A code has been sent to
               </p>
-              <h3>
-                <strong>{email}</strong>
-              </h3>
+              <h2 className='typograhpy-h2 text-font-gray'>
+                {email}
+              </h2>
               <div className="flex justify-center space-x-2 mt-4">
                 {otp.map((data, index) => (
                   <input
