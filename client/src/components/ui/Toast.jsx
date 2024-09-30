@@ -54,8 +54,8 @@ export const StyledToastContainer = () => (
     icon={false} // This removes the default icons
     toastClassName={(context) =>
       context?.type === 'success'
-        ? 'rounded-xl bg-gradient-to-r bg-black from-[rgba(20,225,89,0.20)] to-[rgba(20,225,89,0.00)] p-4 border-green-500'
-        : 'rounded-xl bg-gradient-to-r bg-black from-[rgba(255,56,92,0.20)] to-[rgba(255,56,92,0.00)] p-4 border-red-500'
+        ? 'rounded-xl bg-gradient-to-r bg-black-100 from-[rgba(20,225,89,0.20)] to-[rgba(20,225,89,0.00)] p-4 border-green-500'
+        : 'rounded-xl bg-gradient-to-r bg-black-100 from-[rgba(255,56,92,0.20)] to-[rgba(255,56,92,0.00)] p-4 border-red-500'
     }
   />
 );

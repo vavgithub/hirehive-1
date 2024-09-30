@@ -305,6 +305,9 @@ const Table = ({ rowsData, jobId }) => {
           '& .MuiTablePagination-toolbar': {
             color: 'white',
           },
+          '& .MuiDataGrid-filler':{
+            backgroundColor:'black',
+          },
           '& .MuiTablePagination-selectIcon': {
             color: 'white',
           },
