@@ -1,6 +1,6 @@
 // ApplyJob.jsx
 
-import React, { useEffect, useState } from 'react';
+import React, { Children, useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { InputField } from '../../components/Form/FormFields';
 import SkillsInput from '../../components/utility/SkillsInput';
@@ -67,6 +67,8 @@ const ApplyJob = () => {
   if (isLoading) return <div>Loading...</div>;
 
   const { jobTitle, questions = [] } = jobDetails || {};
+
+  console.log("what is this bro ?" ,questions)
 
   // Handler for registration form submission
   const onSubmit = (data) => {
@@ -235,76 +237,76 @@ const ApplyJob = () => {
             <>
 
               <h3 className="typography-h3 mt-8 mb-4">Personal Details</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ">
-              <Controller
-                name="firstName"
-                control={control}
-                rules={{ required: true }}
-                render={({ field }) => (
-                  <InputField
-                    id="firstName"
-                    label="First Name"
-                    required={true}
-                    error={errors.firstName}
-                    {...field}
-                  />
-                )}
-              />
-              <Controller
-                name="lastName"
-                control={control}
-                rules={{ required: true }}
-                render={({ field }) => (
-                  <InputField
-                    id="lastName"
-                    label="Last Name"
-                    required={true}
-                    error={errors.lastName}
-                    {...field}
-                  />
-                )}
-              />
-              <Controller
-                name="email"
-                control={control}
-                rules={{
-                  required: true,
-                  pattern: {
-                    value: /^\S+@\S+$/i,
-                    message: 'Invalid email address',
-                  },
-                }}
-                render={({ field }) => (
-                  <InputField
-                    id="email"
-                    label="Email"
-                    required={true}
-                    error={errors.email}
-                    {...field}
-                  />
-                )}
-              />
-              <Controller
-                name="phoneNumber"
-                control={control}
-                rules={{
-                  required: true,
-                  pattern: {
-                    value: /^[0-9]{10}$/,
-                    message: 'Invalid phone number',
-                  },
-                }}
-                render={({ field }) => (
-                  <InputField
-                    id="phoneNumber"
-                    label="Phone Number"
-                    required={true}
-                    error={errors.phoneNumber}
-                    {...field}
-                  />
-                )}
-              />
-            </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ">
+                <Controller
+                  name="firstName"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                    <InputField
+                      id="firstName"
+                      label="First Name"
+                      required={true}
+                      error={errors.firstName}
+                      {...field}
+                    />
+                  )}
+                />
+                <Controller
+                  name="lastName"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                    <InputField
+                      id="lastName"
+                      label="Last Name"
+                      required={true}
+                      error={errors.lastName}
+                      {...field}
+                    />
+                  )}
+                />
+                <Controller
+                  name="email"
+                  control={control}
+                  rules={{
+                    required: true,
+                    pattern: {
+                      value: /^\S+@\S+$/i,
+                      message: 'Invalid email address',
+                    },
+                  }}
+                  render={({ field }) => (
+                    <InputField
+                      id="email"
+                      label="Email"
+                      required={true}
+                      error={errors.email}
+                      {...field}
+                    />
+                  )}
+                />
+                <Controller
+                  name="phoneNumber"
+                  control={control}
+                  rules={{
+                    required: true,
+                    pattern: {
+                      value: /^[0-9]{10}$/,
+                      message: 'Invalid phone number',
+                    },
+                  }}
+                  render={({ field }) => (
+                    <InputField
+                      id="phoneNumber"
+                      label="Phone Number"
+                      required={true}
+                      error={errors.phoneNumber}
+                      {...field}
+                    />
+                  )}
+                />
+              </div>
             </>
           )}
 
@@ -418,57 +420,58 @@ const ApplyJob = () => {
 
           {/* Additional Questions */}
           <div className="pt-4 mx-2 ">
-            <h2 className="typography-h2 mb-4">Additional Questions</h2>
+            {questions.length != 0 && (
+              <>
+                <h2 className="typography-h2 mb-4">Additional Questions</h2>
 
-            {questions.map((question, index) => (
-              <Controller
-                key={question._id}
-                name={`question-${question._id}`}
-                control={control}
-                defaultValue=""
-                rules={{ required: question.required }}
-                render={({ field }) => (
-                  <div className="mb-4">
-                    <label className="block mb-2">
-                      {index + 1}. {question.text}
-                      {question.required && (
-                        <span className="text-red-500 ml-1">*</span>
-                      )}
-                    </label>
-                    {question.type === 'multiple' ? (
-                      question.options.map((option, optionIndex) => (
-                        <div key={optionIndex} className="mb-2 flex items-center">
+                {questions.map((question, index) => (
+                  <Controller
+                    key={question._id}
+                    name={`question-${question._id}`}
+                    control={control}
+                    defaultValue=""
+                    rules={{ required: question.required }}
+                    render={({ field }) => (
+                      <div className="mb-4">
+                        <label className="block mb-2">
+                          {index + 1}. {question.text}
+                          {question.required && (
+                            <span className="text-red-500 ml-1">*</span>
+                          )}
+                        </label>
+                        {question.type === 'multiple' ? (
+                          question.options.map((option, optionIndex) => (
+                            <div key={optionIndex} className="mb-2 flex items-center">
+                              <input
+                                type="radio"
+                                id={`question-${question._id}-option-${optionIndex}`}
+                                value={option}
+                                checked={field.value === option}
+                                onChange={() => field.onChange(option)}
+                                className="mr-2"
+                              />
+                              <label htmlFor={`question-${question._id}-option-${optionIndex}`}>
+                                {option}
+                              </label>
+                            </div>
+                          ))
+                        ) : (
                           <input
-                            type="radio"
-                            id={`question-${question._id}-option-${optionIndex}`}
-                            value={option}
-                            checked={field.value === option}
-                            onChange={() => field.onChange(option)}
-                            className="mr-2"
+                            type={question.answerType === 'number' ? 'number' : 'text'}
+                            {...field}
+                            className="w-full p-2 bg-background-40 rounded outline-none focus:outline-teal-300"
+                            placeholder="Enter your answer"
                           />
-                          <label htmlFor={`question-${question._id}-option-${optionIndex}`}>
-                            {option}
-                          </label>
-                        </div>
-                      ))
-                    ) : (
-                      <input
-                        type={
-                          question.answerType === 'number' ? 'number' : 'text'
-                        }
-                        {...field}
-                        className="w-full p-2 bg-background-40 rounded outline-none focus:outline-teal-300"
-                        placeholder="Enter your answer"
-                      />
+                        )}
+                        {errors[`question-${question._id}`] && (
+                          <span className="text-red-500">This field is required</span>
+                        )}
+                      </div>
                     )}
-                    {errors[`question-${question._id}`] && (
-                      <span className="text-red-500">This field is required</span>
-                    )}
-                  </div>
-                )}
-              />
-            ))}
-
+                  />
+                ))}
+              </>
+            )}
           </div>
 
           {/* Buttons */}

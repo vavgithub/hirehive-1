@@ -113,7 +113,7 @@ const HomePage = () => {
                 <h1 className='typography-h1'>Jobs</h1>
                 <div className='md:w-[220px]'>
 
-                    <Button variant="secondary" onClick={() => navigate("/login")}>Login</Button>
+                    <Button variant="primary" onClick={() => navigate("/login")}>Login</Button>
                 </div>
             </div>
             <div className='py-8 md:py-14 bg-main-bg bg-cover flex flex-col items-center rounded-xl justify-center'>

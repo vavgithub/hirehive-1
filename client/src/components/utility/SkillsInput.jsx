@@ -60,9 +60,14 @@ const SkillsInput = ({ skills, setSkills, allSkills = [] }) => {
         <div>
             <div className="flex flex-wrap gap-2 rounded">
                 {Array.isArray(skills) && skills.map((skill, index) => (
-                    <div key={index} className="p-2 flex items-center gap-1 typography-body bg-background-70 rounded px-2">
+                    <div key={index} className="p-2 flex items-center gap-1 typography-body bg-background-70 rounded-xl px-2">
                         {skill}
-                        <button type="button" onClick={() => removeSkill(index)} className="text-blue-500 hover:text-blue-700">✖</button>
+                        <button type="button" onClick={() => removeSkill(index)}>
+                            <svg width="10" height="9" viewBox="0 0 10 9" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9 0.5L1 8.5M1 0.5L9 8.5" stroke="white" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+
+                        </button>
                     </div>
                 ))}
                 <input

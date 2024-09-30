@@ -96,64 +96,66 @@ const JobCard = ({
 
   return (
     <div
-      className="bg-background-90 shadow cursor-pointer rounded-xl mb-4"
-      onClick={onClick ? handleCardClick : undefined}
-    >
-      <div className="flex flex-col items-start justify-between p-4 md:flex-row gap-3">
-        <h3 className="typography-h3">{job.jobTitle}</h3>
-        <div className="flex items-center">
-          <span className="bg-background-70 typography-body px-4 py-2 rounded-xl">
-            {job.jobProfile}
-          </span>
-          {withKebab && (
-            <ThreeDots job={job} handleAction={handleAction} page={page} />
+    className="bg-background-90 hover:bg-background-60 transition-colors duration-200 shadow cursor-pointer rounded-xl mb-4 group"
+    onClick={onClick ? handleCardClick : undefined}
+  >
+    <div className="flex flex-col items-start justify-between p-4 md:flex-row gap-3">
+      <h3 className="typography-h3 group-hover:text-font-accent">{job.jobTitle}</h3>
+      <div className="flex items-center">
+        <span className="bg-background-70 typography-body px-4 py-2 rounded-xl">
+          {job.jobProfile}
+        </span>
+        {withKebab && (
+          <ThreeDots job={job} handleAction={handleAction} page={page} />
+        )}
+      </div>
+    </div>
+  
+    <div className="flex flex-col px-4 md:flex-row items-start gap-3">
+      <JobDetailItem icon={JobTypeIcon} text={job.employmentType} />
+      <JobDetailItem
+        icon={PriceIcon}
+        text={`${job.budgetFrom} - ${job.budgetTo} LPA`}
+      />
+      <JobDetailItem
+        icon={GraphIcon}
+        text={`${job.experienceFrom} - ${job.experienceTo} Year`}
+      />
+    </div>
+  
+    <div className="p-4">
+      <p className="typography-body w-[60%] inline-block truncate text-ellipsis text-font-gray">
+        {job.jobDescription || 'No description available'}
+      </p>
+    </div>
+  
+    {job.status === 'closed' && (
+      <div className="flex p-4">
+        <p className="typography-body text-font-gray mr-2">
+          Closure Reason:
+        </p>
+        <p className="typography-body">{job.closingReason || 'N/A'}</p>
+      </div>
+    )}
+  
+    {(isAdmin || isCandidate) && (
+      <div className="flex items-center bg-background-40 p-4 rounded-b-xl">
+        <div className="flex">
+          {(isAdmin ? adminFooterItems : candidateFooterItems).map(
+            (item, index) => (
+              <JobFooterItem
+                key={index}
+                label={item.label}
+                value={item.value}
+              />
+            )
           )}
         </div>
       </div>
-
-      <div className="flex flex-col px-4 md:flex-row items-start gap-3">
-        <JobDetailItem icon={JobTypeIcon} text={job.employmentType} />
-        <JobDetailItem
-          icon={PriceIcon}
-          text={`${job.budgetFrom} - ${job.budgetTo} LPA`}
-        />
-        <JobDetailItem
-          icon={GraphIcon}
-          text={`${job.experienceFrom} - ${job.experienceTo} Year`}
-        />
-      </div>
-
-      <div className="p-4 ">
-        <p className="typography-body w-[60%]  inline-block truncate text-ellipsis text-font-gray">
-          {job.jobDescription || 'No description available'}
-        </p>
-      </div>
-
-      {job.status === 'closed' && (
-        <div className="flex p-4">
-          <p className="typography-body text-font-gray mr-2">
-            Closure Reason:
-          </p>
-          <p className="typography-body">{job.closingReason || 'N/A'}</p>
-        </div>
-      )}
-
-      {(isAdmin || isCandidate) && (
-        <div className="flex items-center bg-background-40 p-4 rounded-b-xl">
-          <div className="flex">
-            {(isAdmin ? adminFooterItems : candidateFooterItems).map(
-              (item, index) => (
-                <JobFooterItem
-                  key={index}
-                  label={item.label}
-                  value={item.value}
-                />
-              )
-            )}
-          </div>
-        </div>
-      )}
-    </div>
+    )}
+  </div>
+  
+  
   );
 };
 
