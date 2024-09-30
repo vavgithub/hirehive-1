@@ -7,6 +7,7 @@ import axios from '../../api/axios';
 import { FaGlobe, FaUser } from 'react-icons/fa';
 import Export from '../../svg/Buttons/Export';
 import Filter from '../../svg/Buttons/Filter';
+import AssessmentBanner from '../../components/ui/AssessmentBanner';
 
 const fetchOpenJobs = () => axios.get('/candidates/jobs/open').then(res => res.data);
 const searchJobs = (query) => axios.get(`/candidates/searchJobs?jobTitle=${encodeURIComponent(query)}`).then(res => res.data);
@@ -121,6 +122,7 @@ const AllJobs = () => {
 
     return (
         <div className='m-2 pt-8'>
+                <AssessmentBanner/>
             <div className='flex items-center justify-between'>
                 <h1 className='typography-h1'>All Jobs</h1>
                 <div

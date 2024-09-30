@@ -65,6 +65,11 @@ const jobApplicationSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  rating: {
+    type: String,
+    enum: ["N/A", "Good Fit", "May Be", "Not A Good Fit"],
+    default:"N/A"
+  },
   currentStage: {
     type: String,
     default: '', // Will be set when the candidate applies
@@ -100,6 +105,10 @@ const candidateSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    hasGivenAssessment:{
+      type:Boolean,
+      default:false,
+    },
     otp: String,
     otpExpires: Date,
     lastName: {
@@ -112,8 +121,17 @@ const candidateSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-    website: String,
-    portfolio: String,
+    website:{
+      type:String,
+      required:true,
+    },
+    resume:{
+      type:String,
+    },
+    portfolio: {
+      type:String,
+      required:true,
+    },
     noticePeriod: {
       type: Number,
       default: 0,
@@ -133,10 +151,7 @@ const candidateSchema = new mongoose.Schema(
     skills: [String],
     jobApplications: [jobApplicationSchema], // Contains multiple job applications
     location: String,
-    rating: {
-      type: String,
-      enum: ["", "Good Fit", "May Be", "Not A Good Fit"],
-    },
+    
     // Removed 'stage', 'status', and 'stageStatus' from the root level
   },
   { timestamps: true }

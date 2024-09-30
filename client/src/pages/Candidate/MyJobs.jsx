@@ -2,6 +2,7 @@ import React from 'react';
 import axios from '../../api/axios';
 import { useQuery } from '@tanstack/react-query';
 import JobCard from '../../components/JobCard';
+import AssessmentBanner from '../../components/ui/AssessmentBanner';
 
 const fetchAppliedJobs = async () => {
   const response = await axios.get('/auth/candidate/applied-jobs');
@@ -24,6 +25,7 @@ const MyJobs = () => {
   }
   return (
     <div className='m-2 pt-8'>
+      <AssessmentBanner/>
       <h1 className="typography-h1">My Jobs</h1>
       <div className="p-4 bg-background-30 rounded-xl">
         {appliedJobs.length === 0 ? (
