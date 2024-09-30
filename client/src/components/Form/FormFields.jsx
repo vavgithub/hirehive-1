@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 
-export const InputField = React.forwardRef(({ id, label, required, ...props }, ref) => (
+export const InputField = React.forwardRef(({ id, type , label, required,extraClass, ...props }, ref) => (
   <div className='space-y-1 flex flex-col gap-1'>
     <label htmlFor={id} className="typography-body">{label}{required && <span className="text-red-100">*</span>}</label>
     <input
       id={id}
-      type="text"
+      type={type}
       placeholder={`Enter ${label.toLowerCase()}`}
-      className='w-full ring-teal-300 focus:outline-teal-500 outline-1 p-2 rounded-xl pl-4 mt-4'
+      className={extraClass}
       ref={ref}
       {...props}
     />

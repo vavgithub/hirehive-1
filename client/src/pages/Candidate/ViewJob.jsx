@@ -74,9 +74,9 @@ const ViewJob = () => {
                 </div>
 
                 {/* Job Description and Skills */}
-                <div className="flex flex-col lg:flex-row justify-between mt-4">
+                <div className="flex flex-col md:flex md:flex-row md:justify-between mt-4">
                     {/* Left section: Job description and skills */}
-                    <div className="lg:w-3/4">
+                    <div className="md::w-3/4">
                         <div
                             className="text-font-gray font-outfit"
                             dangerouslySetInnerHTML={{ __html: formatDescription(formData.jobDescription) }}
@@ -96,7 +96,7 @@ const ViewJob = () => {
                     </div>
 
                     {/* Right section: SideCard */}
-                    <div className="lg:w-1/4 mt-6 lg:mt-0">
+                    <div className="mt-6 lg:mt-0">
                         <SideCard formData={formData} />
                     </div>
                 </div>

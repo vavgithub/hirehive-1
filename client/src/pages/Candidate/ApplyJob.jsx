@@ -68,8 +68,6 @@ const ApplyJob = () => {
 
   const { jobTitle, questions = [] } = jobDetails || {};
 
-  console.log("what is this bro ?" ,questions)
-
   // Handler for registration form submission
   const onSubmit = (data) => {
     setIsSubmitting(true);
@@ -244,6 +242,7 @@ const ApplyJob = () => {
                   rules={{ required: true }}
                   render={({ field }) => (
                     <InputField
+                      type="text"
                       id="firstName"
                       label="First Name"
                       required={true}
@@ -259,6 +258,7 @@ const ApplyJob = () => {
                   render={({ field }) => (
                     <InputField
                       id="lastName"
+                      type="text"
                       label="Last Name"
                       required={true}
                       error={errors.lastName}
@@ -279,6 +279,7 @@ const ApplyJob = () => {
                   render={({ field }) => (
                     <InputField
                       id="email"
+                      type="email"
                       label="Email"
                       required={true}
                       error={errors.email}
@@ -298,6 +299,7 @@ const ApplyJob = () => {
                   }}
                   render={({ field }) => (
                     <InputField
+                      type="number"
                       id="phoneNumber"
                       label="Phone Number"
                       required={true}
@@ -319,8 +321,10 @@ const ApplyJob = () => {
               rules={{ required: true }}
               render={({ field }) => (
                 <InputField
+                  type="text"
                   id="portfolio"
                   label="Portfolio"
+
                   required={true}
                   error={errors.portfolio}
                   {...field}
@@ -333,6 +337,7 @@ const ApplyJob = () => {
               rules={{ required: true }}
               render={({ field }) => (
                 <InputField
+                  type="text"
                   id="website"
                   label="Website"
                   required={true}
@@ -352,6 +357,8 @@ const ApplyJob = () => {
               rules={{ required: true }}
               render={({ field }) => (
                 <InputField
+                  type="number"
+                  extraClass="no-spinner"
                   id="experience"
                   label="Experience (In Years)"
                   required={true}
@@ -367,6 +374,8 @@ const ApplyJob = () => {
               render={({ field }) => (
                 <InputField
                   id="noticePeriod"
+                  type="number"
+                  extraClass="no-spinner"
                   label="Notice Period (In days)"
                   required={true}
                   error={errors.noticePeriod}
@@ -380,7 +389,9 @@ const ApplyJob = () => {
               rules={{ required: true }}
               render={({ field }) => (
                 <InputField
+                  type="number"
                   id="currentCTC"
+                  extraClass="no-spinner"
                   label="Current CTC (In LPA)"
                   required={true}
                   error={errors.currentCTC}
@@ -394,7 +405,9 @@ const ApplyJob = () => {
               rules={{ required: true }}
               render={({ field }) => (
                 <InputField
+                  type="number"
                   id="expectedCTC"
+                  extraClass="no-spinner"
                   label="Expected CTC (In LPA)"
                   required={true}
                   error={errors.expectedCTC}
