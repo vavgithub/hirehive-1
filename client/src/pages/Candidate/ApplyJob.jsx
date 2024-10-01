@@ -20,6 +20,7 @@ const fetchJobDetails = async (id) => {
 const ApplyJob = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [skills, setSkills] = useState([]);
+
   // const [answers, setAnswers] = useState({});
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -30,6 +31,13 @@ const ApplyJob = () => {
   const navigate = useNavigate();
   const { id: jobId } = useParams();
   const { isAuthenticated, candidateData, fetchCandidateData } = useAuthCandidate();
+
+  const [resumeFile, setResumeFile] = useState(null);
+  const [uploadProgress, setUploadProgress] = useState(0);
+
+  const handleFileChange = (event) => {
+    setResumeFile(event.target.files[0]);
+  };
 
   const {
     control,
@@ -69,8 +77,29 @@ const ApplyJob = () => {
 
   const { jobTitle, questions = [] } = jobDetails || {};
 
+  const uploadResume = async () => {
+    if (!resumeFile) return null;
+
+    const formData = new FormData();
+    formData.append('resume', resumeFile);
+
+    try {
+      const response = await axios.post('/auth/candidate/upload-resume', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+        onUploadProgress: (progressEvent) => {
+          const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+          setUploadProgress(percentCompleted);
+        },
+      });
+      return response.data.resumeUrl;
+    } catch (error) {
+      console.error('Error uploading resume:', error);
+      throw error;
+    }
+  };
+
   // Handler for registration form submission
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     setIsSubmitting(true);
 
     // Extract questionResponses from form data
@@ -80,6 +109,8 @@ const ApplyJob = () => {
         questionId: key.replace('question-', ''),
         answer: data[key],
       }));
+
+    const resumeUrl = await uploadResume();
 
     if (isAuthenticated) {
       // Authenticated candidate applies to job
@@ -98,6 +129,7 @@ const ApplyJob = () => {
         experience: data.experience,
         skills: skills,
         questionResponses,
+        resumeUrl:data.resumeUrl,
       };
 
       axios
@@ -126,6 +158,7 @@ const ApplyJob = () => {
         experience: data.experience,
         skills: skills,
         questionResponses,
+        resumeUrl
       };
 
       axios
@@ -303,6 +336,7 @@ const ApplyJob = () => {
                   render={({ field }) => (
                     <InputField
                       type="number"
+                      extraClass="no-spinner"
                       id="phoneNumber"
                       label="Phone Number"
                       required={true}
@@ -349,6 +383,22 @@ const ApplyJob = () => {
                 />
               )}
             />
+            <div>
+              <label htmlFor="resume" className="block mb-2">Resume</label>
+              <input
+                type="file"
+                id="resume"
+                accept=".pdf,.doc,.docx"
+                onChange={handleFileChange}
+                className="w-full p-2 bg-background-40 rounded outline-none focus:outline-teal-300"
+              />
+              {uploadProgress > 0 && uploadProgress < 100 && (
+                <div className="mt-2">
+                  <progress value={uploadProgress} max="100" className="w-full" />
+                  <span>{uploadProgress}% uploaded</span>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Professional Details */}

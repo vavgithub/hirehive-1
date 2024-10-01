@@ -79,6 +79,7 @@ const jobApplicationSchema = new mongoose.Schema({
     of: stageStatusSchema,
     default: {},
   },
+  resumeUrl: String,
   // Removed currentCall and callHistory from jobApplicationSchema
 }, { _id: false });
 
@@ -125,9 +126,7 @@ const candidateSchema = new mongoose.Schema(
       type:String,
       required:true,
     },
-    resume:{
-      type:String,
-    },
+    resumeUrl: String,
     portfolio: {
       type:String,
       required:true,

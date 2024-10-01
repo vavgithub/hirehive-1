@@ -12,11 +12,53 @@ import nodemailer from "nodemailer";
 import { jobs } from "../../models/admin/jobs.model.js";
 import { jobStagesStatuses } from "../../config/jobStagesStatuses.js";
 
+import { v2 as cloudinary } from 'cloudinary';
+import { promises as fs } from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
 // Secret key for JWT (store this in environment variables)
 const JWT_SECRET = process.env.JWT_SECRET;
 
-console.log("this is email auth",process.env.OTP_EMAIL);
-console.log("this is email auth",process.env.OTP_EMAIL_CRED);
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+const uploadToCloudinary = async (filePath) => {
+  try {
+    const result = await cloudinary.uploader.upload(filePath, {
+      resource_type: 'auto',
+      folder: 'resumes',
+    });
+    return result.secure_url;
+  } catch (error) {
+    console.error('Error uploading to Cloudinary:', error);
+    throw error;
+  }
+};
+
+export const uploadResume = async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ message: 'No file uploaded' });
+  }
+
+  const tempFilePath = path.join(__dirname, '..', '..' ,'uploads', req.file.filename);
+
+  try {
+    const cloudinaryUrl = await uploadToCloudinary(tempFilePath);
+    await fs.unlink(tempFilePath);
+    res.status(200).json({ resumeUrl: cloudinaryUrl });
+  } catch (error) {
+    console.error('Error in resume upload:', error);
+    res.status(500).json({ message: 'Error uploading resume' });
+  }
+};
+
 
 // Configure nodemailer transporter (you'll need to use your own SMTP settings)
 const transporter = nodemailer.createTransport({
@@ -72,6 +114,7 @@ export const registerCandidate = async (req, res) => {
       experience,
       skills,
       questionResponses,
+      resumeUrl,
       // Other fields as needed
     } = req.body;
 
@@ -127,14 +170,17 @@ export const registerCandidate = async (req, res) => {
       skills,
       otp: hashedOtp,
       otpExpires: Date.now() + 10 * 60 * 1000, // OTP valid for 10 minutes
+      resumeUrl,
+      resumeUrl,
       jobApplications: [
-        {
+        {          
           jobId,
           jobApplied,
           questionResponses,
           applicationDate: new Date(),
           currentStage: jobStages[0]?.name || "",
           stageStatuses: initialStageStatuses,
+          resumeUrl,
         },
       ],
     });
@@ -343,6 +389,7 @@ export const applyToJob = async (req, res) => {
 
     // Add the new job application
     candidate.jobApplications.push({
+      resumeUrl: req.body.resumeUrl,
       jobId,
       jobApplied,
       questionResponses,
