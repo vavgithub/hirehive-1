@@ -15,7 +15,7 @@ const JobDetailItem = ({ icon: Icon, text }) => (
 );
 
 const JobFooterItem = ({ label, value }) => (
-  <div className="flex flex-col mr-8">
+  <div className="flex flex-col md:mr-8">
     <span className="typography-small-p text-font-gray">{label}</span>
     <span className="typography-body">{value}</span>
   </div>
@@ -140,7 +140,7 @@ const JobCard = ({
   
     {(isAdmin || isCandidate) && (
       <div className="flex items-center bg-background-40 p-4 rounded-b-xl">
-        <div className="flex">
+        <div className="flex justify-between w-full md:justify-start">
           {(isAdmin ? adminFooterItems : candidateFooterItems).map(
             (item, index) => (
               <JobFooterItem

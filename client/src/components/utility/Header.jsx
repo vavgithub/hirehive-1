@@ -21,7 +21,7 @@ const Header = ({ HeaderText, withKebab, withBack, job, handleAction, page }) =>
                         <BackButton />
                     </div>
                 )}
-                <h1 className='typography-h1'>
+                <h1 className='typography-h2 md:typography-h1'>
                     {HeaderText}
                 </h1>
             </div>
