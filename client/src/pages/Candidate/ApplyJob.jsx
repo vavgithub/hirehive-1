@@ -79,9 +79,9 @@ const ApplyJob = () => {
     mode: 'onChange',
     defaultValues: {
       resumeFile: null,
+      skills: [], // Add this line
     },
   });
-
 
   useEffect(() => {
     if (isAuthenticated && candidateData) {
@@ -98,8 +98,8 @@ const ApplyJob = () => {
         currentCTC: candidateData.currentCTC || '',
         expectedCTC: candidateData.expectedCTC || '',
         resumeFile: resumeFile,
+        skills: candidateData.skills || [], // Add this line
       });
-      setSkills(candidateData.skills || []);
     }
   }, [isAuthenticated, candidateData, reset]);
 
@@ -164,7 +164,7 @@ const ApplyJob = () => {
         currentCTC: data.currentCTC,
         expectedCTC: data.expectedCTC,
         experience: data.experience,
-        skills: skills,
+        skills: data.skills, // Use data.skills instead of skills
         questionResponses,
         resumeUrl: data.resumeUrl,
       };
@@ -193,7 +193,7 @@ const ApplyJob = () => {
         currentCTC: data.currentCTC,
         expectedCTC: data.expectedCTC,
         experience: data.experience,
-        skills: skills,
+        skills: data.skills, // Use data.skills instead of skills
         questionResponses,
         resumeUrl
       };
@@ -555,14 +555,29 @@ const ApplyJob = () => {
           </div>
 
           <div className="grid md:grid-cols-2 grid-cols-1 pt-4">
-            <div>
-              <h3 className='typography-body py-4'>Enter Skills</h3>
-              <SkillsInput
-                skills={skills}
-                setSkills={setSkills}
-                allSkills={dummySkills}
-              />
-            </div>
+            <Controller
+              name="skills"
+              control={control}
+              rules={{
+                required: 'Skills are required',
+                validate: (value) =>
+                  Array.isArray(value) && value.length > 0 ? true : 'Please add at least one skill',
+              }}
+              render={({ field, fieldState: { error } }) => (
+                <div className="w-full mb-4">
+                  <label htmlFor="skills" className="typograhpy-body mb-2">
+                    Skills<span className="text-red-100">*</span>
+                  </label>
+                  <SkillsInput
+                    value={field.value || []}
+                    onChange={field.onChange}
+                    allSkills={dummySkills}
+                  />
+                  {error && <p className="text-red-500 text-sm mt-2">{error.message}</p>}
+                </div>
+              )}
+            />
+
           </div>
 
           {/* Additional Questions */}

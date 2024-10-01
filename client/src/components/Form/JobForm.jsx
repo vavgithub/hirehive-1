@@ -26,6 +26,7 @@ const JobForm = ({ initialData, onSubmit, isEditing, initialQuestions }) => {
     },
     mode: 'onChange'
   });
+
   const watchedFields = watch();
 
   const areAllFieldsFilled = isValid &&
@@ -35,6 +36,7 @@ const JobForm = ({ initialData, onSubmit, isEditing, initialQuestions }) => {
     watchedFields.employmentType &&
     watchedFields.jobProfile &&
     watchedFields.jobDescription &&
+    watchedFields.skills &&
     watchedFields.skills.length > 0 &&
     watchedFields.experienceFrom !== undefined &&
     watchedFields.experienceTo !== undefined &&
@@ -52,6 +54,7 @@ const JobForm = ({ initialData, onSubmit, isEditing, initialQuestions }) => {
     onSubmit(currentValues, true);
   };
 
+
   return (
     <form onSubmit={handleSubmit(handleFormSubmit)}>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-6">
@@ -61,6 +64,7 @@ const JobForm = ({ initialData, onSubmit, isEditing, initialQuestions }) => {
           rules={{ required: true }}
           render={({ field }) => (
             <InputField
+              type="text"
               id="jobTitle"
               label="Job Title"
               required
@@ -153,15 +157,22 @@ const JobForm = ({ initialData, onSubmit, isEditing, initialQuestions }) => {
         <Controller
           name="skills"
           control={control}
-          rules={{ required: true, validate: (value) => value.length > 0 }}
-          render={({ field: { onChange, value } }) => (
+          rules={{
+            required: 'Skills are required',
+            validate: (value) =>
+              Array.isArray(value) && value.length > 0 ? true : 'Please add at least one skill',
+          }}
+          render={({ field, fieldState: { error } }) => (
             <div className="w-full mb-4">
-              <label htmlFor="skills" className="typograhpy-body mb-2">Skills{<span className="text-red-100">*</span>}</label>
+              <label htmlFor="skills" className="typography-body mb-2">
+                Skills<span className="text-red-100">*</span>
+              </label>
               <SkillsInput
-                skills={value}
-                setSkills={onChange}
+                value={field.value || []}
+                onChange={field.onChange}
                 allSkills={dummySkills}
               />
+              {error && <p className="text-red-500 text-sm mt-2">{error.message}</p>}
             </div>
           )}
         />
