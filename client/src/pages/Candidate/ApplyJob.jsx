@@ -1,6 +1,7 @@
 // ApplyJob.jsx
 
-import React, { Children, useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
+import { useDropzone } from 'react-dropzone';
 import { useForm, Controller } from 'react-hook-form';
 import { InputField } from '../../components/Form/FormFields';
 import SkillsInput from '../../components/utility/SkillsInput';
@@ -34,21 +35,53 @@ const ApplyJob = () => {
 
   const [resumeFile, setResumeFile] = useState(null);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const hiddenFileInput = useRef(null);
+
 
   const handleFileChange = (event) => {
-    setResumeFile(event.target.files[0]);
+    const file = event.target.files[0];
+    if (file) {
+      setResumeFile(file);
+      setValue('resumeFile', file, { shouldValidate: true });
+    }
   };
 
   const {
+    getRootProps,
+    getInputProps,
+    isDragActive,
+  } = useDropzone({
+    accept: {
+      'application/pdf': ['.pdf'],
+      'application/msword': ['.doc'],
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx'],
+    },
+    maxFiles: 1,
+    onDrop: (acceptedFiles) => {
+      if (acceptedFiles && acceptedFiles.length > 0) {
+        setResumeFile(acceptedFiles[0]);
+        setValue('resumeFile', acceptedFiles[0], { shouldValidate: true });
+      }
+    },
+
+  });
+
+
+  const {
+    register,
     control,
     handleSubmit,
     formState: { errors, isValid },
     getValues,
     setValue,
-    reset, // Add this to easily reset form values
+    reset,
   } = useForm({
     mode: 'onChange',
+    defaultValues: {
+      resumeFile: null,
+    },
   });
+
 
   useEffect(() => {
     if (isAuthenticated && candidateData) {
@@ -64,6 +97,7 @@ const ApplyJob = () => {
         noticePeriod: candidateData.noticePeriod || '',
         currentCTC: candidateData.currentCTC || '',
         expectedCTC: candidateData.expectedCTC || '',
+        resumeFile: resumeFile,
       });
       setSkills(candidateData.skills || []);
     }
@@ -87,7 +121,9 @@ const ApplyJob = () => {
       const response = await axios.post('/auth/candidate/upload-resume', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
         onUploadProgress: (progressEvent) => {
-          const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+          const percentCompleted = Math.round(
+            (progressEvent.loaded * 100) / progressEvent.total
+          );
           setUploadProgress(percentCompleted);
         },
       });
@@ -97,6 +133,7 @@ const ApplyJob = () => {
       throw error;
     }
   };
+
 
   // Handler for registration form submission
   const onSubmit = async (data) => {
@@ -129,7 +166,7 @@ const ApplyJob = () => {
         experience: data.experience,
         skills: skills,
         questionResponses,
-        resumeUrl:data.resumeUrl,
+        resumeUrl: data.resumeUrl,
       };
 
       axios
@@ -336,7 +373,6 @@ const ApplyJob = () => {
                   render={({ field }) => (
                     <InputField
                       type="number"
-                      extraClass="no-spinner"
                       id="phoneNumber"
                       label="Phone Number"
                       required={true}
@@ -352,6 +388,8 @@ const ApplyJob = () => {
           {/* Resume & Portfolio */}
           <h3 className="typography-h3 mt-8 mb-4">Resume & Portfolio</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+
             <Controller
               name="portfolio"
               control={control}
@@ -368,6 +406,9 @@ const ApplyJob = () => {
                 />
               )}
             />
+
+
+
             <Controller
               name="website"
               control={control}
@@ -383,22 +424,62 @@ const ApplyJob = () => {
                 />
               )}
             />
-            <div>
-              <label htmlFor="resume" className="block mb-2">Resume</label>
-              <input
-                type="file"
-                id="resume"
-                accept=".pdf,.doc,.docx"
-                onChange={handleFileChange}
-                className="w-full p-2 bg-background-40 rounded outline-none focus:outline-teal-300"
-              />
+
+            <div className='md:col-span-2'>
+              <label className="typography-body">Resume<span className="text-red-100">*</span></label>
+              <div
+                {...getRootProps({
+                  className: `bg-background-40 rounded-xl p-5 text-center cursor-pointer ${isDragActive ? 'border-teal-500 bg-teal-50' : 'border-gray-300'
+                    }`,
+                })}
+              >
+                <input {...getInputProps()} />
+                {resumeFile ? (
+                  <div className="flex bg-background-70 items-center justify-between p-4 rounded-xl">
+                    <span>{resumeFile.name}</span>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setResumeFile(null);
+                        setValue('resumeFile', null, { shouldValidate: true });
+                      }}
+                      className="ml-2"
+                    >
+                      <svg width="10" height="9" viewBox="0 0 10 9" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M9 0.5L1 8.5M1 0.5L9 8.5" stroke="white" stroke-linecap="round" stroke-linejoin="round" />
+                      </svg>
+                    </button>
+                  </div>
+                ) : (
+                  <div className='flex items-center flex-col'>
+                    <div className='hidden md:flex'>
+                      <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M24.999 16.9999V22.3333C24.999 23.0405 24.7181 23.7188 24.218 24.2189C23.7179 24.719 23.0396 24.9999 22.3324 24.9999H3.66569C2.95845 24.9999 2.28017 24.719 1.78007 24.2189C1.27997 23.7188 0.999023 23.0405 0.999023 22.3333V16.9999M19.6657 7.66661L12.999 0.999939M12.999 0.999939L6.33236 7.66661M12.999 0.999939V16.9999" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                      </svg>
+
+                    </div>
+                    <p className="mb-2 hidden typography-body text-font-gray md:flex">Drag and drop your resume here</p>
+                    <p className='text-font-gray typography-small-p hidden md:flex'>OR</p>
+                    <div className='md:w-[276px]'>
+
+                      <Button variant="secondary" type="button">Upload Resume</Button>
+                    </div>
+                  </div>
+                )}
+              </div>
               {uploadProgress > 0 && uploadProgress < 100 && (
                 <div className="mt-2">
                   <progress value={uploadProgress} max="100" className="w-full" />
                   <span>{uploadProgress}% uploaded</span>
                 </div>
               )}
+              {/* Hidden input field to include resumeFile in form validation */}
+              <input type="hidden" {...register('resumeFile', { required: 'Resume is required' })} />
+              {errors.resumeFile && (
+                <span className="text-red-500">{errors.resumeFile.message}</span>
+              )}
             </div>
+
           </div>
 
           {/* Professional Details */}
@@ -614,7 +695,7 @@ const ApplyJob = () => {
                 <Button
                   type="submit"
                   variant="primary"
-                  disabled={isSubmitting}
+                  disabled={!isValid || isSubmitting}
                 >
                   {isSubmitting ? 'Submitting...' : 'Next'}
                 </Button>
