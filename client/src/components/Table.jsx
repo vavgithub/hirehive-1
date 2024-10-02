@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { DataGrid } from '@mui/x-data-grid';
 import { FaGlobe, FaUser } from 'react-icons/fa';
+import { Menu, MenuItem } from '@mui/material';
 
 import { Link } from 'react-router-dom';
 import AssigneeSelector from './utility/AssigneeSelector';
@@ -13,7 +14,7 @@ import StatusBadge from './ui/StatusBadge';
 import StageBadge from './ui/StageBadge';
 import { Move, MoveActive } from '../svg/Buttons/Move';
 import { Reject, RejectActive } from '../svg/Buttons/Reject';
-import Rating from '../svg/Buttons/Rating';
+import { GoodFit, MayBe, NotAGoodFit, Rating } from '../svg/Buttons/Rating';
 import Budget from '../svg/Buttons/Budget';
 import Modal from './Modal';
 import { BudgetField } from './Form/FormFields';
@@ -43,10 +44,14 @@ const Table = ({ rowsData, jobId }) => {
   const [filteredRowsData, setFilteredRowsData] = useState(rowsData);
 
 
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [selectedRow, setSelectedRow] = useState(null);
+
   // ... (previous state declarations)
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
   const [isMoveModalOpen, setIsMoveModalOpen] = useState(false);
   const [selectedCandidate, setSelectedCandidate] = useState(null);
+  const [openRatingDropdown, setOpenRatingDropdown] = useState(null);
 
 
 
@@ -178,7 +183,7 @@ const Table = ({ rowsData, jobId }) => {
     }
   };
 
- //this are the handles for Moving to next stage
+  //this are the handles for Moving to next stage
   const canMove = (candidate) => {
     return candidate.stageStatuses[candidate.currentStage]?.status === "Reviewed";
   };
@@ -205,6 +210,53 @@ const Table = ({ rowsData, jobId }) => {
     } catch (error) {
       console.error('Error moving candidate:', error);
       // Handle error (e.g., show error message to user)
+    }
+  };
+  const handleRatingClick = (event, row) => {
+    console.log('Rating clicked for row:', row);
+    event.stopPropagation();
+    setAnchorEl(event.currentTarget);
+    setSelectedRow(row);
+  };
+
+  const handleRatingClose = () => {
+    console.log('Closing rating menu');
+    setAnchorEl(null);
+    setSelectedRow(null);
+  };
+
+  const handleRatingSelect = async (rating) => {
+    console.log('Rating selected:', rating);
+    if (!selectedRow) return;
+
+    try {
+      await axios.post('/hr/update-candidate-rating', {
+        candidateId: selectedRow.id,
+        jobId,
+        rating
+      });
+      console.log('Rating updated successfully');
+      // Update local state or refetch data
+      // For example:
+      // refetchCandidates();
+      handleRatingClose();
+      // Show success message
+    } catch (error) {
+      console.error('Error updating candidate rating:', error);
+      // Handle error (e.g., show error message to user)
+    }
+  };
+
+  const getRatingIcon = (rating) => {
+    switch (rating) {
+      case 'Good Fit':
+        return <GoodFit />;
+      case 'Not A Good Fit':
+        return <NotAGoodFit />;
+      case 'May Be':
+        return <MayBe />;
+      default:
+        return <Rating />;
     }
   };
 
@@ -290,7 +342,7 @@ const Table = ({ rowsData, jobId }) => {
       width: 150,
       renderCell: (params) => (
         <div className='flex h-full items-center gap-2'>
-           <button
+          <button
             onClick={() => handleMoveClick(params.row)}
             disabled={!canMove(params.row)}
           >
@@ -302,7 +354,9 @@ const Table = ({ rowsData, jobId }) => {
           >
             {canReject(params.row) ? <RejectActive /> : <Reject />}
           </button>
-          <Rating />
+          <button onClick={(e) => handleRatingClick(e, params.row)}>
+            {getRatingIcon(params.row.rating)}
+          </button>
         </div>
       )
     }
@@ -499,6 +553,21 @@ const Table = ({ rowsData, jobId }) => {
         onClose={() => setIsAutoAssignModalOpen(false)}
         onAssign={handleAutoAssign}
       />
+
+<Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleRatingClose}
+      >
+        {['Good Fit', 'Not A Good Fit', 'May Be'].map((rating) => (
+          <MenuItem key={rating} onClick={() => handleRatingSelect(rating)}>
+            <div className="flex items-center gap-2">
+              {getRatingIcon(rating)}
+              <span>{rating}</span>
+            </div>
+          </MenuItem>
+        ))}
+      </Menu>
 
 
       <Modal

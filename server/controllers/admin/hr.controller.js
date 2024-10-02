@@ -161,3 +161,37 @@ export const rejectCandidate = async (req, res) => {
       res.status(500).json({ message: 'Error moving candidate', error: error.message });
     }
   };
+
+
+  export const updateCandidateRating = async (req, res) => {
+    try {
+      const { candidateId, jobId, rating } = req.body;
+  
+      const candidate = await candidates.findById(candidateId);
+  
+      if (!candidate) {
+        return res.status(404).json({ message: 'Candidate not found' });
+      }
+  
+      const jobApplication = candidate.jobApplications.find(app => app.jobId.toString() === jobId);
+  
+      if (!jobApplication) {
+        return res.status(404).json({ message: 'Job application not found for this candidate' });
+      }
+  
+      jobApplication.rating = rating;
+  
+      // Mark the jobApplications field as modified
+      candidate.markModified('jobApplications');
+  
+      await candidate.save();
+  
+      res.status(200).json({ 
+        message: 'Candidate rating updated successfully',
+        rating: rating
+      });
+    } catch (error) {
+      console.error('Error updating candidate rating:', error);
+      res.status(500).json({ message: 'Error updating candidate rating', error: error.message });
+    }
+  };
