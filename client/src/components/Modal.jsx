@@ -10,6 +10,7 @@ const ACTION_TYPES = {
   REJECT: 'REJECT',
   ARCHIVE: 'ARCHIVE',
   BUDGET: 'BUDGET',
+  MOVE: 'MOVE',
 };
 
 const ACTION_PROPERTIES = {
@@ -44,6 +45,11 @@ const ACTION_PROPERTIES = {
     title: 'Confirm Archive',
     confirmLabel: 'Archive',
     confirmVariant: 'secondary',
+  },
+  [ACTION_TYPES.MOVE]: {
+    title: 'Move to Next Stage',
+    confirmLabel: 'Move',
+    confirmVariant: 'primary',
   },
 };
 

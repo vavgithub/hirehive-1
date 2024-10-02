@@ -11,7 +11,7 @@ import AutoAssignModal from './utility/AutoAssignModal';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import StatusBadge from './ui/StatusBadge';
 import StageBadge from './ui/StageBadge';
-import { MoveActive } from '../svg/Buttons/Move';
+import { Move, MoveActive } from '../svg/Buttons/Move';
 import { Reject, RejectActive } from '../svg/Buttons/Reject';
 import Rating from '../svg/Buttons/Rating';
 import Budget from '../svg/Buttons/Budget';
@@ -45,6 +45,7 @@ const Table = ({ rowsData, jobId }) => {
 
   // ... (previous state declarations)
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
+  const [isMoveModalOpen, setIsMoveModalOpen] = useState(false);
   const [selectedCandidate, setSelectedCandidate] = useState(null);
 
 
@@ -177,6 +178,36 @@ const Table = ({ rowsData, jobId }) => {
     }
   };
 
+ //this are the handles for Moving to next stage
+  const canMove = (candidate) => {
+    return candidate.stageStatuses[candidate.currentStage]?.status === "Reviewed";
+  };
+
+  const handleMoveClick = (candidate) => {
+    if (canMove(candidate)) {
+      setSelectedCandidate(candidate);
+      setIsMoveModalOpen(true);
+    }
+  };
+
+  const handleMoveConfirm = async () => {
+    try {
+      await axios.post('/hr/move-candidate', {
+        candidateId: selectedCandidate._id,
+        jobId,
+        currentStage: selectedCandidate.currentStage
+      });
+      // Update local state or refetch data
+      // refetchCandidates();
+      setIsMoveModalOpen(false);
+      setSelectedCandidate(null);
+      // Show success message
+    } catch (error) {
+      console.error('Error moving candidate:', error);
+      // Handle error (e.g., show error message to user)
+    }
+  };
+
 
 
   const columns = [
@@ -259,7 +290,12 @@ const Table = ({ rowsData, jobId }) => {
       width: 150,
       renderCell: (params) => (
         <div className='flex h-full items-center gap-2'>
-          <MoveActive />
+           <button
+            onClick={() => handleMoveClick(params.row)}
+            disabled={!canMove(params.row)}
+          >
+            {canMove(params.row) ? <MoveActive /> : <Move />}
+          </button>
           <button
             onClick={() => handleRejectClick(params.row)}
             disabled={!canReject(params.row)}
@@ -490,6 +526,15 @@ const Table = ({ rowsData, jobId }) => {
         candidateName={`${selectedCandidate?.firstName} ${selectedCandidate?.lastName}`}
         jobTitle={"jobTitle"}
         companyName={"companyName"}
+      />
+
+      <Modal
+        open={isMoveModalOpen}
+        onClose={() => setIsMoveModalOpen(false)}
+        actionType={ACTION_TYPES.MOVE}
+        onConfirm={handleMoveConfirm}
+        candidateName={`${selectedCandidate?.firstName} ${selectedCandidate?.lastName}`}
+        currentStage={selectedCandidate?.currentStage}
       />
     </div>
 

@@ -1,10 +1,10 @@
 export const ACTION_TYPES = {
-    DELETE: 'DELETE',
-    EDIT: 'EDIT',
-    DRAFT: 'DRAFT',
-    CLOSE: 'CLOSE',
-    REOPEN:'REOPEN',
-    REJECT: 'REJECT',
-    ARCHIVE: 'ARCHIVE',
-    REOPEN:'REOPEN'
-  };
+  DELETE: 'DELETE',
+  EDIT: 'EDIT',
+  DRAFT: 'DRAFT',
+  CLOSE: 'CLOSE',
+  REJECT: 'REJECT',
+  ARCHIVE: 'ARCHIVE',
+  BUDGET: 'BUDGET',
+  MOVE: 'MOVE',
+};
