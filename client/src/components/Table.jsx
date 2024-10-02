@@ -11,6 +11,12 @@ import AutoAssignModal from './utility/AutoAssignModal';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import StatusBadge from './ui/StatusBadge';
 import StageBadge from './ui/StageBadge';
+import { MoveActive } from '../svg/Buttons/Move';
+import { Reject } from '../svg/Buttons/Reject';
+import Rating from '../svg/Buttons/Rating';
+import Budget from '../svg/Buttons/Budget';
+import Modal from './Modal';
+import { BudgetField } from './Form/FormFields';
 
 
 const updateAssignee = async ({ candidateId, jobId, stage, assigneeId }) => {
@@ -25,6 +31,15 @@ const updateAssignee = async ({ candidateId, jobId, stage, assigneeId }) => {
 };
 const Table = ({ rowsData, jobId }) => {
   const [isAutoAssignModalOpen, setIsAutoAssignModalOpen] = useState(false);
+
+  const [isBudgetModalOpen, setIsBudgetModalOpen] = useState(false);
+  const [budgetFilter, setBudgetFilter] = useState(() => {
+    const savedFilter = localStorage.getItem(`budgetFilter_${jobId}`);
+    return savedFilter ? JSON.parse(savedFilter) : { from: '', to: '' };
+  });
+  const [tempBudgetFilter, setTempBudgetFilter] = useState(budgetFilter);
+  const [filteredRowsData, setFilteredRowsData] = useState(rowsData);
+
 
   const queryClient = useQueryClient();
 
@@ -86,6 +101,41 @@ const Table = ({ rowsData, jobId }) => {
       }
     }
   }, [rowsData]);
+
+
+  //Below Code is for the functionality of Screen With Budget Filter
+  useEffect(() => {
+    applyBudgetFilter();
+  }, [rowsData, budgetFilter]);
+
+  const applyBudgetFilter = () => {
+    if (budgetFilter.from !== '' && budgetFilter.to !== '') {
+      const filtered = rowsData.filter(row => {
+        const expectedCTC = parseFloat(row.expectedCTC);
+        return expectedCTC >= parseFloat(budgetFilter.from) && expectedCTC <= parseFloat(budgetFilter.to);
+      });
+      setFilteredRowsData(filtered);
+    } else {
+      setFilteredRowsData(rowsData);
+    }
+  };
+
+  const handleBudgetChange = (newBudget) => {
+    setTempBudgetFilter(newBudget);
+  };
+
+  const handleApplyBudgetFilter = () => {
+    setBudgetFilter(tempBudgetFilter);
+    localStorage.setItem(`budgetFilter_${jobId}`, JSON.stringify(tempBudgetFilter));
+    setIsBudgetModalOpen(false);
+  };
+
+  const clearBudgetFilter = () => {
+    const clearedFilter = { from: '', to: '' };
+    setBudgetFilter(clearedFilter);
+    setTempBudgetFilter(clearedFilter);
+    localStorage.removeItem(`budgetFilter_${jobId}`);
+  };
 
 
   const columns = [
@@ -162,6 +212,17 @@ const Table = ({ rowsData, jobId }) => {
         </div>
       ),
     },
+    {
+      field: 'actions',
+      headerName: 'Actions',
+      renderCell: (params) => (
+        <div className='flex h-full items-center gap-2 '>
+          <MoveActive />
+          <Reject />
+          <Rating />
+        </div>
+      )
+    }
   ];
 
 
@@ -233,7 +294,7 @@ const Table = ({ rowsData, jobId }) => {
     `}
       </style>
 
-      <div className='flex justify-end py-4'>
+      <div className='flex justify-end py-4 gap-2'>
         <div className='w-[276px] '>
           <Button
             variant="primary"
@@ -243,12 +304,23 @@ const Table = ({ rowsData, jobId }) => {
             {autoAssignMutation.isLoading ? 'Auto-Assigning...' : 'Auto-Assign Portfolio'}
           </Button>
         </div>
+        <div className='w-[276px]'>
+          <Button
+            variant={budgetFilter.from && budgetFilter.to ? "icon" : "primary"}
+            icon={Budget}
+            onClick={() => {
+              setTempBudgetFilter(budgetFilter);
+              setIsBudgetModalOpen(true);
+            }}
+          >
+            {budgetFilter.from && budgetFilter.to ? '' : 'Screen With Budget'}
+          </Button>
+
+        </div>
       </div>
 
-
-
       <DataGrid
-        rows={rowsData}
+        rows={filteredRowsData}
         columns={columns}
         getRowId={(row) => row._id}
         initialState={{
@@ -305,8 +377,8 @@ const Table = ({ rowsData, jobId }) => {
           '& .MuiTablePagination-toolbar': {
             color: 'white',
           },
-          '& .MuiDataGrid-filler':{
-            backgroundColor:'black',
+          '& .MuiDataGrid-filler': {
+            backgroundColor: 'black',
           },
           '& .MuiTablePagination-selectIcon': {
             color: 'white',
@@ -342,6 +414,24 @@ const Table = ({ rowsData, jobId }) => {
         onClose={() => setIsAutoAssignModalOpen(false)}
         onAssign={handleAutoAssign}
       />
+
+
+      <Modal
+        open={isBudgetModalOpen}
+        onClose={() => setIsBudgetModalOpen(false)}
+        actionType="BUDGET"
+        customTitle="Screen with budget"
+        customMessage="Enter the minimum and maximum budget. Only candidates within this budget range will be displayed."
+        customConfirmLabel="Apply"
+        onConfirm={handleApplyBudgetFilter}
+      >
+        <BudgetField
+          value={tempBudgetFilter}
+          onChange={handleBudgetChange}
+          required
+        />
+      </Modal>
+
     </div>
 
   )
