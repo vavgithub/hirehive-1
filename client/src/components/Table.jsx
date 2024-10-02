@@ -12,11 +12,13 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import StatusBadge from './ui/StatusBadge';
 import StageBadge from './ui/StageBadge';
 import { MoveActive } from '../svg/Buttons/Move';
-import { Reject } from '../svg/Buttons/Reject';
+import { Reject, RejectActive } from '../svg/Buttons/Reject';
 import Rating from '../svg/Buttons/Rating';
 import Budget from '../svg/Buttons/Budget';
 import Modal from './Modal';
 import { BudgetField } from './Form/FormFields';
+import AutoAssign from '../svg/Buttons/AutoAssign';
+import { ACTION_TYPES } from '../utility/ActionTypes';
 
 
 const updateAssignee = async ({ candidateId, jobId, stage, assigneeId }) => {
@@ -39,6 +41,12 @@ const Table = ({ rowsData, jobId }) => {
   });
   const [tempBudgetFilter, setTempBudgetFilter] = useState(budgetFilter);
   const [filteredRowsData, setFilteredRowsData] = useState(rowsData);
+
+
+  // ... (previous state declarations)
+  const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
+  const [selectedCandidate, setSelectedCandidate] = useState(null);
+
 
 
   const queryClient = useQueryClient();
@@ -138,11 +146,44 @@ const Table = ({ rowsData, jobId }) => {
   };
 
 
+  //this are the handlers for rejecting candidates
+  const canReject = (candidate) => {
+    return Object.values(candidate.stageStatuses).some(stage => stage.status === "Reviewed");
+  };
+
+  const handleRejectClick = (candidate) => {
+    if (canReject(candidate)) {
+      setSelectedCandidate(candidate);
+      setIsRejectModalOpen(true);
+    }
+  };
+  const handleRejectConfirm = async (candidate, rejectionReason) => {
+    try {
+      await axios.post('/hr/reject-candidate', {
+        candidateId: candidate._id,
+        jobId,
+        rejectionReason
+      });
+      // Update local state or refetch data
+      // For example:
+      // refetchCandidates();
+      setIsRejectModalOpen(false);
+      setSelectedCandidate(null);
+      // You might want to show a success message here
+      console.log('Candidate rejected with reason:', rejectionReason);
+    } catch (error) {
+      console.error('Error rejecting candidate:', error);
+      // Handle error (e.g., show error message to user)
+    }
+  };
+
+
+
   const columns = [
     {
       field: 'fullName',
       headerName: 'Full Name',
-      width: 500,
+      width: 250,
       sortable: false,
       valueGetter: (value, row) => `${row.firstName || ''} ${row.lastName || ''}`,
       renderCell: (params) => (
@@ -215,10 +256,16 @@ const Table = ({ rowsData, jobId }) => {
     {
       field: 'actions',
       headerName: 'Actions',
+      width: 150,
       renderCell: (params) => (
-        <div className='flex h-full items-center gap-2 '>
+        <div className='flex h-full items-center gap-2'>
           <MoveActive />
-          <Reject />
+          <button
+            onClick={() => handleRejectClick(params.row)}
+            disabled={!canReject(params.row)}
+          >
+            {canReject(params.row) ? <RejectActive /> : <Reject />}
+          </button>
           <Rating />
         </div>
       )
@@ -295,8 +342,9 @@ const Table = ({ rowsData, jobId }) => {
       </style>
 
       <div className='flex justify-end py-4 gap-2'>
-        <div className='w-[276px] '>
+        <div className='w-[216px] '>
           <Button
+            icon={AutoAssign}
             variant="primary"
             onClick={() => setIsAutoAssignModalOpen(true)}
             disabled={autoAssignMutation.isLoading}
@@ -304,7 +352,8 @@ const Table = ({ rowsData, jobId }) => {
             {autoAssignMutation.isLoading ? 'Auto-Assigning...' : 'Auto-Assign Portfolio'}
           </Button>
         </div>
-        <div className='w-[276px]'>
+        <div className={`${budgetFilter.from && budgetFilter.to ? "auto" : "w-[216px]"}`}>
+
           <Button
             variant={budgetFilter.from && budgetFilter.to ? "icon" : "primary"}
             icon={Budget}
@@ -432,6 +481,16 @@ const Table = ({ rowsData, jobId }) => {
         />
       </Modal>
 
+      <Modal
+        open={isRejectModalOpen}
+        onClose={() => setIsRejectModalOpen(false)}
+        actionType={ACTION_TYPES.REJECT}
+        onConfirm={handleRejectConfirm}
+        item={selectedCandidate}
+        candidateName={`${selectedCandidate?.firstName} ${selectedCandidate?.lastName}`}
+        jobTitle={"jobTitle"}
+        companyName={"companyName"}
+      />
     </div>
 
   )

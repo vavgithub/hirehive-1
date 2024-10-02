@@ -15,7 +15,9 @@ import candidateRoutes from "./routes/candidate/candidate.router.js";
 import authRoutes from "./routes/admin/auth.router.js";
 import candidateAuthRoutes from "./routes/candidate/auth.router.js"
 
+
 import drRoutes from "./routes/admin/dr.router.js"
+import hrRoutes from "./routes/admin/hr.router.js"
 
 const app = express();
 const corsOptions = {
@@ -54,6 +56,7 @@ if (process.env.NODE_ENV === "production") {
 
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1", jobRoutes);
+app.use("/api/v1/hr",hrRoutes)
 app.use('/api/v1/auth/candidate', candidateAuthRoutes);
 app.use("/api/v1/candidates", candidateRoutes);
 app.use("/api/v1/dr", drRoutes)
