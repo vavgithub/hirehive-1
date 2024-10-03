@@ -214,6 +214,7 @@ const Table = ({ rowsData, jobId }) => {
   };
   const handleRatingClick = (event, row) => {
     console.log('Rating clicked for row:', row);
+    // console.log(params?.row?.rating);
     event.stopPropagation();
     setAnchorEl(event.currentTarget);
     setSelectedRow(row);
@@ -229,9 +230,11 @@ const Table = ({ rowsData, jobId }) => {
     console.log('Rating selected:', rating);
     if (!selectedRow) return;
 
+    console.log(selectedRow);
+
     try {
       await axios.post('/hr/update-candidate-rating', {
-        candidateId: selectedRow.id,
+        candidateId: selectedRow?._id,
         jobId,
         rating
       });
@@ -248,6 +251,7 @@ const Table = ({ rowsData, jobId }) => {
   };
 
   const getRatingIcon = (rating) => {
+    console.log('Getting icon for rating:', rating);
     switch (rating) {
       case 'Good Fit':
         return <GoodFit />;
@@ -354,8 +358,8 @@ const Table = ({ rowsData, jobId }) => {
           >
             {canReject(params.row) ? <RejectActive /> : <Reject />}
           </button>
-          <button onClick={(e) => handleRatingClick(e, params.row)}>
-            {getRatingIcon(params.row.rating)}
+          <button onClick={(e) => handleRatingClick(e, params?.row)}>
+            {getRatingIcon(params?.row?.rating)}
           </button>
         </div>
       )
@@ -546,21 +550,30 @@ const Table = ({ rowsData, jobId }) => {
         pageSizeOptions={[5, 10]}
         checkboxSelection
         onRowClick={(params) => handleRowClick(params)}
-      />
+        />
 
       <AutoAssignModal
         open={isAutoAssignModalOpen}
         onClose={() => setIsAutoAssignModalOpen(false)}
         onAssign={handleAutoAssign}
-      />
+        />
 
-<Menu
+      <Menu
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
         onClose={handleRatingClose}
-      >
+        sx={{
+          "& .MuiList-root":{
+            backgroundColor: 'rgba(12, 13, 13, 1)',
+            color:"white",
+            font:"Outfit"
+          }
+        }}
+        >
         {['Good Fit', 'Not A Good Fit', 'May Be'].map((rating) => (
-          <MenuItem key={rating} onClick={() => handleRatingSelect(rating)}>
+          <MenuItem key={rating} onClick={() => handleRatingSelect(rating)}
+        
+          >
             <div className="flex items-center gap-2">
               {getRatingIcon(rating)}
               <span>{rating}</span>

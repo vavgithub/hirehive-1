@@ -128,6 +128,7 @@ const ViewJobs = () => {
         queryFn: () => axios.get(`/getJobById/${mainId}`).then(res => res.data),
     });
 
+    //fetch all candidate data for the respective job we have
     const { data: candidatesData, isLoading: isCandidatesLoading } = useQuery({
         queryKey: ['candidates', mainId],
         queryFn: () => axios.get(`candidates/${mainId}`).then(res => res.data),

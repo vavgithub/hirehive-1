@@ -643,6 +643,7 @@ export const getCandidatesForJob = async (req, res) => {
         };
         stageStatuses[stage.name] = stageStatus;
       });
+      // console.log("this is backend", candidate);
 
       return {
         _id: candidate._id,
@@ -652,6 +653,7 @@ export const getCandidatesForJob = async (req, res) => {
         phone: candidate.phone,
         expectedCTC : candidate.expectedCTC,
         experience:candidate.experience,
+        rating:jobApplication.rating,
         currentStage: jobApplication.currentStage,
         applicationDate: jobApplication.applicationDate,
         stageStatuses: stageStatuses,
