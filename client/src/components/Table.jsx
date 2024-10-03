@@ -22,46 +22,59 @@ import AutoAssign from '../svg/Buttons/AutoAssign';
 import { ACTION_TYPES } from '../utility/ActionTypes';
 
 
-const updateAssignee = async ({ candidateId, jobId, stage, assigneeId }) => {
+// const updateAssignee = async ({ candidateId, jobId, stage, assigneeId }) => {
 
-  const response = await axios.put('dr/update-assignee', {
-    candidateId,
-    jobId,
-    stage,
-    assigneeId
-  });
-  return response.data;
-};
-const Table = ({ rowsData, jobId }) => {
+//   const response = await axios.put('dr/update-assignee', {
+//     candidateId,
+//     jobId,
+//     stage,
+//     assigneeId
+//   });
+//   return response.data;
+// };
+const Table = ({ jobId }) => {
+  const queryClient = useQueryClient();
   const [isAutoAssignModalOpen, setIsAutoAssignModalOpen] = useState(false);
-
   const [isBudgetModalOpen, setIsBudgetModalOpen] = useState(false);
   const [budgetFilter, setBudgetFilter] = useState(() => {
     const savedFilter = localStorage.getItem(`budgetFilter_${jobId}`);
     return savedFilter ? JSON.parse(savedFilter) : { from: '', to: '' };
   });
   const [tempBudgetFilter, setTempBudgetFilter] = useState(budgetFilter);
-  const [filteredRowsData, setFilteredRowsData] = useState(rowsData);
-
-
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedRow, setSelectedRow] = useState(null);
-
-  // ... (previous state declarations)
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
   const [isMoveModalOpen, setIsMoveModalOpen] = useState(false);
   const [selectedCandidate, setSelectedCandidate] = useState(null);
-  const [openRatingDropdown, setOpenRatingDropdown] = useState(null);
 
 
-
-  const queryClient = useQueryClient();
 
   // Query to fetch candidates
   // const { data: rowsData, isLoading, isError, error } = useQuery({
   //   queryKey: ['candidates', jobId],
   //   queryFn: () => axios.get(`/candidates/${jobId}`).then(res => res.data.candidates),
   // });
+
+  // Fetch candidates
+  // Fetch candidates
+  const { data: apiResponse, isLoading, isError } = useQuery({
+    queryKey: ['candidates', jobId],
+    queryFn: () => axios.get(`/candidates/${jobId}`).then(res => res.data),
+  });
+
+  // Extract candidates from the API response
+  const rowsData = apiResponse?.candidates || [];
+
+
+  // Apply budget filter
+  const filteredRowsData = React.useMemo(() => {
+    if (!rowsData) return [];
+    if (budgetFilter.from === '' || budgetFilter.to === '') return rowsData;
+    return rowsData?.filter(row => {
+      const expectedCTC = parseFloat(row.expectedCTC);
+      return expectedCTC >= parseFloat(budgetFilter.from) && expectedCTC <= parseFloat(budgetFilter.to);
+    });
+  }, [rowsData, budgetFilter]);
 
   const autoAssignMutation = useMutation({
     mutationFn: ({ jobId, reviewerIds }) =>
@@ -79,6 +92,48 @@ const Table = ({ rowsData, jobId }) => {
     }
   });
 
+  // Update assignee mutation
+  const updateAssigneeMutation = useMutation({
+    mutationFn: ({ candidateId, jobId, stage, assigneeId }) =>
+      axios.put('dr/update-assignee', { candidateId, jobId, stage, assigneeId }),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['candidates', jobId]);
+    },
+  });
+
+  // Reject candidate mutation
+  const rejectCandidateMutation = useMutation({
+    mutationFn: ({ candidateId, jobId, rejectionReason }) =>
+      axios.post('/hr/reject-candidate', { candidateId, jobId, rejectionReason }),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['candidates', jobId]);
+      setIsRejectModalOpen(false);
+      setSelectedCandidate(null);
+    },
+  });
+
+  // Move candidate mutation
+  const moveCandidateMutation = useMutation({
+    mutationFn: ({ candidateId, jobId, currentStage }) =>
+      axios.post('/hr/move-candidate', { candidateId, jobId, currentStage }),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['candidates', jobId]);
+      setIsMoveModalOpen(false);
+      setSelectedCandidate(null);
+    },
+  });
+
+  // Update candidate rating mutation
+  const updateCandidateRatingMutation = useMutation({
+    mutationFn: ({ candidateId, jobId, rating }) =>
+      axios.post('/hr/update-candidate-rating', { candidateId, jobId, rating }),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['candidates', jobId]);
+      handleRatingClose();
+    },
+  });
+
+
   const handleAutoAssign = (selectedReviewers) => {
     autoAssignMutation.mutate({
       jobId,
@@ -87,51 +142,38 @@ const Table = ({ rowsData, jobId }) => {
     setIsAutoAssignModalOpen(false);
   };
 
-
-  const updateAssigneeMutation = useMutation({
-    mutationFn: updateAssignee,
-    onSuccess: () => {
-      queryClient.invalidateQueries(['candidates', jobId]);
-    },
-  });
-
   const handleAssigneeChange = (candidateId, stage, newAssignee) => {
     updateAssigneeMutation.mutate({
       candidateId,
-      jobId, // Use the jobId passed as prop
+      jobId,
       stage,
       assigneeId: newAssignee._id
     });
   };
 
-  useEffect(() => {
-    if (rowsData) {
-      console.log('Candidates Data:', rowsData);
-      // Check the structure of the first candidate (if available)
-      if (rowsData.length > 0) {
-        console.log('First Candidate:', rowsData[0]);
-        console.log('First Candidate stageStatuses:', rowsData[0].stageStatuses);
-        console.log('First Candidate currentStage:', rowsData[0].currentStage);
-      }
-    }
-  }, [rowsData]);
+  const handleRejectConfirm = (candidate, rejectionReason) => {
+    rejectCandidateMutation.mutate({
+      candidateId: candidate._id,
+      jobId,
+      rejectionReason
+    });
+  };
 
+  const handleMoveConfirm = () => {
+    moveCandidateMutation.mutate({
+      candidateId: selectedCandidate._id,
+      jobId,
+      currentStage: selectedCandidate.currentStage
+    });
+  };
 
-  //Below Code is for the functionality of Screen With Budget Filter
-  useEffect(() => {
-    applyBudgetFilter();
-  }, [rowsData, budgetFilter]);
-
-  const applyBudgetFilter = () => {
-    if (budgetFilter.from !== '' && budgetFilter.to !== '') {
-      const filtered = rowsData.filter(row => {
-        const expectedCTC = parseFloat(row.expectedCTC);
-        return expectedCTC >= parseFloat(budgetFilter.from) && expectedCTC <= parseFloat(budgetFilter.to);
-      });
-      setFilteredRowsData(filtered);
-    } else {
-      setFilteredRowsData(rowsData);
-    }
+  const handleRatingSelect = (rating) => {
+    if (!selectedRow) return;
+    updateCandidateRatingMutation.mutate({
+      candidateId: selectedRow._id,
+      jobId,
+      rating
+    });
   };
 
   const handleBudgetChange = (newBudget) => {
@@ -163,25 +205,7 @@ const Table = ({ rowsData, jobId }) => {
       setIsRejectModalOpen(true);
     }
   };
-  const handleRejectConfirm = async (candidate, rejectionReason) => {
-    try {
-      await axios.post('/hr/reject-candidate', {
-        candidateId: candidate._id,
-        jobId,
-        rejectionReason
-      });
-      // Update local state or refetch data
-      // For example:
-      // refetchCandidates();
-      setIsRejectModalOpen(false);
-      setSelectedCandidate(null);
-      // You might want to show a success message here
-      console.log('Candidate rejected with reason:', rejectionReason);
-    } catch (error) {
-      console.error('Error rejecting candidate:', error);
-      // Handle error (e.g., show error message to user)
-    }
-  };
+
 
   //this are the handles for Moving to next stage
   const canMove = (candidate) => {
@@ -195,23 +219,6 @@ const Table = ({ rowsData, jobId }) => {
     }
   };
 
-  const handleMoveConfirm = async () => {
-    try {
-      await axios.post('/hr/move-candidate', {
-        candidateId: selectedCandidate._id,
-        jobId,
-        currentStage: selectedCandidate.currentStage
-      });
-      // Update local state or refetch data
-      // refetchCandidates();
-      setIsMoveModalOpen(false);
-      setSelectedCandidate(null);
-      // Show success message
-    } catch (error) {
-      console.error('Error moving candidate:', error);
-      // Handle error (e.g., show error message to user)
-    }
-  };
   const handleRatingClick = (event, row) => {
     console.log('Rating clicked for row:', row);
     // console.log(params?.row?.rating);
@@ -224,30 +231,6 @@ const Table = ({ rowsData, jobId }) => {
     console.log('Closing rating menu');
     setAnchorEl(null);
     setSelectedRow(null);
-  };
-
-  const handleRatingSelect = async (rating) => {
-    console.log('Rating selected:', rating);
-    if (!selectedRow) return;
-
-    console.log(selectedRow);
-
-    try {
-      await axios.post('/hr/update-candidate-rating', {
-        candidateId: selectedRow?._id,
-        jobId,
-        rating
-      });
-      console.log('Rating updated successfully');
-      // Update local state or refetch data
-      // For example:
-      // refetchCandidates();
-      handleRatingClose();
-      // Show success message
-    } catch (error) {
-      console.error('Error updating candidate rating:', error);
-      // Handle error (e.g., show error message to user)
-    }
   };
 
   const getRatingIcon = (rating) => {
@@ -263,8 +246,6 @@ const Table = ({ rowsData, jobId }) => {
         return <Rating />;
     }
   };
-
-
 
   const columns = [
     {
@@ -550,29 +531,29 @@ const Table = ({ rowsData, jobId }) => {
         pageSizeOptions={[5, 10]}
         checkboxSelection
         onRowClick={(params) => handleRowClick(params)}
-        />
+      />
 
       <AutoAssignModal
         open={isAutoAssignModalOpen}
         onClose={() => setIsAutoAssignModalOpen(false)}
         onAssign={handleAutoAssign}
-        />
+      />
 
       <Menu
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
         onClose={handleRatingClose}
         sx={{
-          "& .MuiList-root":{
+          "& .MuiList-root": {
             backgroundColor: 'rgba(12, 13, 13, 1)',
-            color:"white",
-            font:"Outfit"
+            color: "white",
+            font: "Outfit"
           }
         }}
-        >
+      >
         {['Good Fit', 'Not A Good Fit', 'May Be'].map((rating) => (
           <MenuItem key={rating} onClick={() => handleRatingSelect(rating)}
-        
+
           >
             <div className="flex items-center gap-2">
               {getRatingIcon(rating)}
