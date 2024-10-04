@@ -30,11 +30,13 @@ cloudinary.config({
 });
 
 const uploadToCloudinary = async (filePath) => {
+   // Extract the file extension
+   const fileExtension = path.extname(filePath);
   try {
     const result = await cloudinary.uploader.upload(filePath, {
       resource_type: 'raw',
       folder: 'resumes',
-      public_id: `resume_${Date.now()}`,
+      public_id: `resume_${Date.now()}${fileExtension}`, // Include the file extension
       use_filename: true,
       unique_filename: false,
       overwrite: true,
