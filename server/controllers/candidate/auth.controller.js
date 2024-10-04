@@ -30,9 +30,10 @@ cloudinary.config({
 });
 
 const uploadToCloudinary = async (filePath) => {
-   // Extract the file extension
-   const fileExtension = path.extname(filePath);
   try {
+    // Extract the file extension
+    const fileExtension = path.extname(filePath);
+
     const result = await cloudinary.uploader.upload(filePath, {
       resource_type: 'raw',
       folder: 'resumes',
@@ -43,7 +44,6 @@ const uploadToCloudinary = async (filePath) => {
       access_mode: 'public'
     });
 
-    // Return the secure_url without modifications
     return result.secure_url;
   } catch (error) {
     console.error('Error uploading to Cloudinary:', error);
@@ -56,7 +56,7 @@ export const uploadResume = async (req, res) => {
     return res.status(400).json({ message: 'No file uploaded' });
   }
 
-  const tempFilePath = path.join(__dirname, '..', '..' ,'uploads', req.file.filename);
+  const tempFilePath = path.join(__dirname, '..', '..', 'uploads', req.file.filename);
 
   try {
     const cloudinaryUrl = await uploadToCloudinary(tempFilePath);
