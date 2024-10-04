@@ -54,6 +54,7 @@ const Table = ({ jobId }) => {
  const [selectedDocumentUrl, setSelectedDocumentUrl] = useState('');
 
  const handleDocumentClick = (documentUrl) => {
+    console.log(documentUrl);
    setSelectedDocumentUrl(documentUrl);
    setIsDocumentViewerOpen(true);
  };
@@ -74,6 +75,8 @@ const Table = ({ jobId }) => {
 
   // Extract candidates from the API response
   const rowsData = apiResponse?.candidates || [];
+
+  console.log(rowsData);
 
 
   // Apply budget filter
@@ -268,10 +271,10 @@ const Table = ({ jobId }) => {
         <div className="name-cell flex items-center gap-2">
           <span>{params.value}</span>
           <div className="hover-icons flex">
-            <Link to={`/portfolio/${params.row._id}`} target="_blank" className="icon-link">
+            <Link to={params?.row?.portfolio} target="_blank" className="icon-link">
               <FaUser className="icon" />
             </Link>
-            <Link to={`/website/${params.row._id}`} target="_blank" className="icon-link">
+            <Link to={params?.row?.portfolio} target="_blank" className="icon-link">
               <FaGlobe className="icon" />
             </Link>
             <button onClick={() => handleDocumentClick(params.row.resumeUrl)} className="icon-link">

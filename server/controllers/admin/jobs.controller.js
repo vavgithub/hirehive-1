@@ -654,6 +654,8 @@ export const getCandidatesForJob = async (req, res) => {
         expectedCTC : candidate.expectedCTC,
         experience:candidate.experience,
         resumeUrl:candidate.resumeUrl,
+        website:candidate.website,
+        portfolio:candidate.portfolio,
         rating:jobApplication.rating,
         currentStage: jobApplication.currentStage,
         applicationDate: jobApplication.applicationDate,
