@@ -32,9 +32,16 @@ cloudinary.config({
 const uploadToCloudinary = async (filePath) => {
   try {
     const result = await cloudinary.uploader.upload(filePath, {
-      resource_type: 'auto',
+      resource_type: 'raw',
       folder: 'resumes',
+      public_id: `resume_${Date.now()}`,
+      use_filename: true,
+      unique_filename: false,
+      overwrite: true,
+      access_mode: 'public'
     });
+
+    // Return the secure_url without modifications
     return result.secure_url;
   } catch (error) {
     console.error('Error uploading to Cloudinary:', error);
@@ -80,6 +87,9 @@ const sendOtpEmail = async (email, otp) => {
 
   await transporter.sendMail(mailOptions);
 };
+
+
+
 
 // Generate OTP
 const generateOtp = () => {
@@ -171,7 +181,7 @@ export const registerCandidate = async (req, res) => {
       otp: hashedOtp,
       otpExpires: Date.now() + 10 * 60 * 1000, // OTP valid for 10 minutes
       resumeUrl,
-      resumeUrl,
+
       jobApplications: [
         {          
           jobId,

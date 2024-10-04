@@ -653,6 +653,7 @@ export const getCandidatesForJob = async (req, res) => {
         phone: candidate.phone,
         expectedCTC : candidate.expectedCTC,
         experience:candidate.experience,
+        resumeUrl:candidate.resumeUrl,
         rating:jobApplication.rating,
         currentStage: jobApplication.currentStage,
         applicationDate: jobApplication.applicationDate,

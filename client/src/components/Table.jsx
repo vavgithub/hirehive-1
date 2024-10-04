@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { DataGrid } from '@mui/x-data-grid';
-import { FaGlobe, FaUser } from 'react-icons/fa';
+import { FaFile, FaFileAlt, FaGlobe, FaUser } from 'react-icons/fa';
 import { Menu, MenuItem } from '@mui/material';
 
 import { Link } from 'react-router-dom';
@@ -20,6 +20,7 @@ import Modal from './Modal';
 import { BudgetField } from './Form/FormFields';
 import AutoAssign from '../svg/Buttons/AutoAssign';
 import { ACTION_TYPES } from '../utility/ActionTypes';
+import ResumeViewer from './utility/ResumeViewer';
 
 
 // const updateAssignee = async ({ candidateId, jobId, stage, assigneeId }) => {
@@ -47,6 +48,15 @@ const Table = ({ jobId }) => {
   const [isMoveModalOpen, setIsMoveModalOpen] = useState(false);
   const [selectedCandidate, setSelectedCandidate] = useState(null);
 
+   // ... other state declarations
+ // ... other state declarations
+ const [isDocumentViewerOpen, setIsDocumentViewerOpen] = useState(false);
+ const [selectedDocumentUrl, setSelectedDocumentUrl] = useState('');
+
+ const handleDocumentClick = (documentUrl) => {
+   setSelectedDocumentUrl(documentUrl);
+   setIsDocumentViewerOpen(true);
+ };
 
 
   // Query to fetch candidates
@@ -264,6 +274,9 @@ const Table = ({ jobId }) => {
             <Link to={`/website/${params.row._id}`} target="_blank" className="icon-link">
               <FaGlobe className="icon" />
             </Link>
+            <button onClick={() => handleDocumentClick(params.row.resumeUrl)} className="icon-link">
+              <FaFile className="icon" />
+            </button>
           </div>
         </div>
       ),
@@ -532,6 +545,13 @@ const Table = ({ jobId }) => {
         checkboxSelection
         onRowClick={(params) => handleRowClick(params)}
       />
+
+{isDocumentViewerOpen && (
+        <ResumeViewer
+          documentUrl={selectedDocumentUrl}
+          onClose={() => setIsDocumentViewerOpen(false)}
+        />
+      )}
 
       <AutoAssignModal
         open={isAutoAssignModalOpen}
