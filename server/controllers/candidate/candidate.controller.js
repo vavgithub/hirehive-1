@@ -441,7 +441,8 @@ const searchJobs = async (req, res) => {
 
 const filterJobs = asyncHandler(async (req, res) => {
   const { employmentType, jobProfile, experience } = req.body.filters;
-  const query = {};
+  const query = { status: 'open' }; // Add the status filter here
+
   if (employmentType && employmentType.length > 0) {
     query.employmentType = { $in: employmentType };
   }
@@ -457,9 +458,11 @@ const filterJobs = asyncHandler(async (req, res) => {
       query.toExperience = { $lte: Number(experience.max) };
     }
   }
-  const filteredJobs = await jobs.find(query);
+
+  const filteredJobs = await jobs.find(query); // Fetch jobs with the new query including status: 'open'
   res.status(200).json(filteredJobs);
 });
+
 
 const submitApplication = async (req, res) => {
   try {

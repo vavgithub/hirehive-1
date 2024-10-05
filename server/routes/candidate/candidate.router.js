@@ -1,18 +1,15 @@
 import express from 'express';
 import { 
-  allCandidate, 
-  
+  allCandidate,  
   createCandidate, 
-  fetchActiveJobs, 
-   
+  fetchActiveJobs,    
   filterJobs, 
   getCandidate, 
   getCandidateById, 
   jobSpecificStats, 
   searchJobs, 
   stats, 
-  submitApplication, 
-   
+  submitApplication,    
   updateStatusAndStage 
 } from '../../controllers/candidate/candidate.controller.js';
 import { protect } from '../../middlewares/authMiddleware.js';
@@ -43,7 +40,7 @@ router.get('/:id', getCandidateById);
 // not for the current use will removed it shortly
 // router.post('/assign', protect, assignCandidate);
 // router.get('/assigned/:reviewerId', protect, fetchAssignedCandidate);
-router.patch('/update/:id', updateStatusAndStage);
+// router.patch('/update/:id', updateStatusAndStage);
 // router.patch('/update-assignee', updateAssignee);
 // router.patch('/update-rating/:id', updateRating);
 // router.patch('/:id/assignee', updateCandidateStatusById);

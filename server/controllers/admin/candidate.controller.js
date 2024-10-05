@@ -96,5 +96,14 @@ export  const updateStatusAndStage = async (req, res) => {
         .json({ message: "Error updating candidate", error: error.message });
     }
   };
+
+ export const getCandidateById = async (req, res) => {
+    try {
+      const candidate = await candidates.findById(req.params.id).select("-password");
+      res.send(candidate);
+    } catch (error) {
+      res.status(500).send(error);
+    }
+  };
    
   
