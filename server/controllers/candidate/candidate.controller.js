@@ -362,30 +362,30 @@ const updateCandidateStatusById = async (req, res) => {
 //   }
 // };
 
-const assignCandidate = async (req, res) => {
-  try {
-    const { candidateId, assigneeId, stage } = req.body;
+// const assignCandidate = async (req, res) => {
+//   try {
+//     const { candidateId, assigneeId, stage } = req.body;
 
-    const candidate = await candidates.findById(candidateId);
-    if (!candidate) {
-      return res.status(404).json({ success: false, message: 'Candidate not found' });
-    }
+//     const candidate = await candidates.findById(candidateId);
+//     if (!candidate) {
+//       return res.status(404).json({ success: false, message: 'Candidate not found' });
+//     }
 
-    candidate.stageStatus[stage].assignedTo = assigneeId;
-    candidate.stageStatus[stage].status = 'Under Review';
-    await candidate.save();
+//     candidate.stageStatus[stage].assignedTo = assigneeId;
+//     candidate.stageStatus[stage].status = 'Under Review';
+//     await candidate.save();
 
-    res.status(200).json({
-      success: true,
-      message: 'Candidate assigned successfully',
-      data: candidate
-    });
+//     res.status(200).json({
+//       success: true,
+//       message: 'Candidate assigned successfully',
+//       data: candidate
+//     });
 
-  } catch (error) {
-    console.error('Error in assignCandidate:', error);
-    res.status(500).json({ success: false, message: 'Internal server error', error: error.message });
-  }
-};
+//   } catch (error) {
+//     console.error('Error in assignCandidate:', error);
+//     res.status(500).json({ success: false, message: 'Internal server error', error: error.message });
+//   }
+// };
 
 const fetchAssignedCandidate = async (req, res) => {
   try {

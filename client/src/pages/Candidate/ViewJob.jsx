@@ -9,7 +9,7 @@ import Header from '../../components/utility/Header';
 
 // Function to fetch the job data by ID
 const getJobById = async (id) => {
-    const response = await axios.get(`/getJobById/${id}`);
+    const response = await axios.get(`jobs/getJobById/${id}`);
     return response.data;
 };
 

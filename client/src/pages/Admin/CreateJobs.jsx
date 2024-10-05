@@ -10,7 +10,7 @@ const CreateJobs = () => {
   const navigate = useNavigate();
 
   const createJobMutation = useMutation({
-    mutationFn: (jobData) => axios.post('/createJobs', jobData),
+    mutationFn: (jobData) => axios.post('/jobs/createJobs', jobData),
     onSuccess: (data) => {
       const action = data.data.status === 'draft' ? 'saved as draft' : 'created';
       showSuccessToast('Job Action', `"${data.data.jobTitle}" ${action} successfully`);

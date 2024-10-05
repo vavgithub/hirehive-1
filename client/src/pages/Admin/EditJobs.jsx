@@ -12,13 +12,14 @@ const EditJobs = () => {
 
   const { isLoading, error, data } = useQuery({
     queryKey: ['job', id],
-    queryFn: () => axios.get(`/getJobById/${id}`),
+    queryFn: () => axios.get(`/jobs/getJobById/${id}`),
   });
 
   const updateJobMutation = useMutation({
-    mutationFn: (updatedJob) => axios.put(`/editJob/${id}`, updatedJob),
+    mutationFn: (updatedJob) => axios.put(`/jobs/editJob/${id}`, updatedJob),
     onSuccess: (data) => {
-      showSuccessToast('Job Updated', `"${data.data.jobTitle}" updated successfully`);
+      console.log(data);
+      showSuccessToast('Job Updated', `"${data.data.job.jobTitle}" updated successfully`);
       setTimeout(() => {
         navigate('/admin/jobs');
       }, 1000);

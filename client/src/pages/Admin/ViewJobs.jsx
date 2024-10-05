@@ -125,28 +125,30 @@ const ViewJobs = () => {
     // Fetch job data
     const { data: formData, isLoading: isJobLoading } = useQuery({
         queryKey: ['job', mainId],
-        queryFn: () => axios.get(`/getJobById/${mainId}`).then(res => res.data),
+        queryFn: () => axios.get(`/jobs/getJobById/${mainId}`).then(res => res.data),
     });
 
     //fetch all candidate data for the respective job we have
     const { data: candidatesData, isLoading: isCandidatesLoading } = useQuery({
         queryKey: ['candidates', mainId],
-        queryFn: () => axios.get(`candidates/${mainId}`).then(res => res.data),
+        queryFn: () => axios.get(`/admin/candidate/${mainId}`).then(res => res.data),
     });
 
     console.log( "NOISSEEE" , candidatesData?.candidates)
 
+    const [jobStats , setJobStats] = useState([]);
+
     //Fetch Stats data for Speicif Job
-    const { data: jobStats, isLoading: isStatsLoading } = useQuery({
-        queryKey: ['jobStats', mainId],
-        queryFn: () => axios.get(`/candidates/${mainId}/stats`).then(res => res.data),
-    });
+    // const { data: jobStats, isLoading: isStatsLoading } = useQuery({
+    //     queryKey: ['jobStats', mainId],
+    //     queryFn: () => axios.get(`/jobs/candidates/${mainId}/stats`).then(res => res.data),
+    // });
 
     console.log("yelelelele", jobStats?.data?.stageStats);
 
     // Mutations
     const deleteMutation = useMutation({
-        mutationFn: (mainId) => axios.delete(`/deleteJob/${mainId}`),
+        mutationFn: (mainId) => axios.delete(`/jobs/deleteJob/${mainId}`),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['job'] });
             setModalOpen(false);
@@ -155,7 +157,7 @@ const ViewJobs = () => {
     });
 
     const draftMutation = useMutation({
-        mutationFn: (jobId) => axios.put(`/draftJob/${jobId}`),
+        mutationFn: (jobId) => axios.put(`/jobs/draftJob/${jobId}`),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['jobs'] });
             setModalOpen(false);
@@ -164,7 +166,7 @@ const ViewJobs = () => {
     });
 
     const closeMutation = useMutation({
-        mutationFn: ({ jobId, reason }) => axios.put(`/closeJob/${jobId}`, { reason }),
+        mutationFn: ({ jobId, reason }) => axios.put(`/jobs/closeJob/${jobId}`, { reason }),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['jobs'] });
             setModalOpen(false);
@@ -173,7 +175,7 @@ const ViewJobs = () => {
     });
 
     const updateCandidateMutation = useMutation({
-        mutationFn: ({ id, updates }) => axios.patch(`/candidates/update/${id}`, updates),
+        mutationFn: ({ id, updates }) => axios.patch(`/jobs/candidates/update/${id}`, updates),
         onMutate: async ({ id, updates }) => {
             // Cancel any outgoing refetches
             await queryClient.cancelQueries(['candidates', mainId]);

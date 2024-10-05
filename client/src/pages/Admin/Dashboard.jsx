@@ -21,14 +21,14 @@ import NoJobs from "../../svg/Background/NoJobs.svg"
 import { showErrorToast, showSuccessToast } from '../../components/ui/Toast';
 
 
-const fetchJobs = () => axios.get('/jobs').then(res => res.data);
-const fetchJobCount = () => axios.get('/jobsCount').then(res => res.data.totalCount);
-const fetchStatistics = () => axios.get('/jobsStats').then(res => res.data);
-const fetchActiveJobsStats = () => axios.get('/activeJobsFilterCount').then(res => res.data);
-const fetchClosedJobsStats = () => axios.get('/closedJobsFilterCount').then(res => res.data);
-const searchJobs = (query) => axios.get(`/searchJobs?jobTitle=${encodeURIComponent(query)}`).then(res => res.data);
-const filterJobs = (filters) => axios.post('/filterJobs', { filters }).then(res => res.data);
-const fetchApplicationCount = () => axios.get('/candidates/stats').then(res => res.data.data.totalCount);
+const fetchJobs = () => axios.get('/jobs/jobs').then(res => res.data);
+const fetchJobCount = () => axios.get('/jobs/jobsCount').then(res => res.data.totalCount);
+const fetchStatistics = () => axios.get('/jobs/jobsStats').then(res => res.data);
+const fetchActiveJobsStats = () => axios.get('/jobs/activeJobsFilterCount').then(res => res.data);
+const fetchClosedJobsStats = () => axios.get('/jobs/closedJobsFilterCount').then(res => res.data);
+const searchJobs = (query) => axios.get(`/jobs/searchJobs?jobTitle=${encodeURIComponent(query)}`).then(res => res.data);
+const filterJobs = (filters) => axios.post('/jobs/filterJobs', { filters }).then(res => res.data);
+const fetchApplicationCount = () => axios.get('/jobs/candidates/stats').then(res => res.data.data.totalCount);
 
 const Dashboard = () => {
     const [searchQuery, setSearchQuery] = useState('');
@@ -77,7 +77,7 @@ const Dashboard = () => {
     });
 
     const deleteMutation = useMutation({
-        mutationFn: (jobId) => axios.delete(`/deleteJob/${jobId}`),
+        mutationFn: (jobId) => axios.delete(`/jobs/deleteJob/${jobId}`),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['jobs'] });
             queryClient.invalidateQueries({ queryKey: ['jobCount'] });
@@ -87,24 +87,24 @@ const Dashboard = () => {
     });
 
     const draftMutation = useMutation({
-        mutationFn: (jobId) => axios.put(`/draftJob/${jobId}`),
+        mutationFn: (jobId) => axios.put(`/jobs/draftJob/${jobId}`),
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['job'] });
+            queryClient.invalidateQueries({ queryKey: ['jobs'] });
             setModalOpen(false);
         },
     });
 
     const reOpenMutation = useMutation({
-        mutationFn: (jobId) => axios.put(`/reOpen/${jobId}`),
+        mutationFn: (jobId) => axios.put(`/jobs/reOpen/${jobId}`),
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['job'] });
+            queryClient.invalidateQueries({ queryKey: ['jobs'] });
             setModalOpen(false);
             setActiveTab("open");
         },
     })
 
     const unarchiveMutation = useMutation({
-        mutationFn: (jobId) => axios.put(`/unarchiveJob/${jobId}`),
+        mutationFn: (jobId) => axios.put(`/jobs/unarchiveJob/${jobId}`),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['jobs'] });
             setModalOpen(false);
@@ -113,7 +113,7 @@ const Dashboard = () => {
 
     const closeMutation = useMutation({
         mutationFn: ({ jobId, reason }) =>
-            axios.put(`/closeJob/${jobId}`, { reason }),
+            axios.put(`/jobs/closeJob/${jobId}`, { reason }),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['jobs'] });
             setModalOpen(false);

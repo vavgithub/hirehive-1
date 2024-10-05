@@ -27,24 +27,27 @@ const router = express.Router();
 // Routes that do not contain dynamic parameters
 router.get('/jobs/open', fetchActiveJobs);
 router.get('/jobs/searchJobs', searchJobs);
+router.post('/filterJobs', filterJobs);
 router.get('/allCandidates', allCandidate);
 router.get('/stats', stats);
 router.post('/createCandidate', createCandidate);
-router.post('/assign', protect, assignCandidate);
 router.post('/apply/:jobId', submitApplication);
 router.post('/:jobId/increment-apply-click', incrementApplyClickCount);
-router.post('/filterJobs', filterJobs);
-router.patch('/update-assignee', updateAssignee);
 
 // === Parameterized Routes ===
 
 // Routes that contain dynamic parameters
-router.get('/assigned/:reviewerId', protect, fetchAssignedCandidate);
 router.get('/:jobId/candidates', getCandidate);
 router.get('/:jobId/stats', jobSpecificStats);
 router.get('/:id', getCandidateById);
+
+
+// not for the current use will removed it shortly
+// router.post('/assign', protect, assignCandidate);
+// router.get('/assigned/:reviewerId', protect, fetchAssignedCandidate);
 router.patch('/update/:id', updateStatusAndStage);
-router.patch('/update-rating/:id', updateRating);
-router.patch('/:id/assignee', updateCandidateStatusById);
+// router.patch('/update-assignee', updateAssignee);
+// router.patch('/update-rating/:id', updateRating);
+// router.patch('/:id/assignee', updateCandidateStatusById);
 
 export default router;

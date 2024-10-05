@@ -4,6 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import axios from '../../api/axios';
 import { QueryClient, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import DynamicForm from '../../components/utility/DynamicForm';
+import { showSuccessToast } from '../../components/ui/Toast';
 
 
 const fetchCandidate = async ({ queryKey }) => {
@@ -23,10 +24,11 @@ const EditCandidateProfile = () => {
   });
 
   const updateCandidateMutation = useMutation({
-    mutationFn: (updatedData) => axios.patch(`candidates/update/${mainId}`, updatedData),
+    mutationFn: (updatedData) => axios.patch(`/admin/candidate/update/${mainId}`, updatedData),
     onSuccess: () => {
       queryClient.invalidateQueries(['candidate', mainId]);
-      alert("data updated")
+      showSuccessToast(`Data Updated Successfully`)
+      navigate(-1)
     },
     onError: (error) => {
       console.error('Error updating candidate:', error);

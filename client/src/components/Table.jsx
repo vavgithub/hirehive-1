@@ -3,7 +3,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import { FaFile, FaFileAlt, FaGlobe, FaUser } from 'react-icons/fa';
 import { Menu, MenuItem } from '@mui/material';
 
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import AssigneeSelector from './utility/AssigneeSelector';
 import axios from '../api/axios';
 import { Button } from './ui/Button';
@@ -23,16 +23,6 @@ import { ACTION_TYPES } from '../utility/ActionTypes';
 import ResumeViewer from './utility/ResumeViewer';
 
 
-// const updateAssignee = async ({ candidateId, jobId, stage, assigneeId }) => {
-
-//   const response = await axios.put('dr/update-assignee', {
-//     candidateId,
-//     jobId,
-//     stage,
-//     assigneeId
-//   });
-//   return response.data;
-// };
 const Table = ({ jobId }) => {
   const queryClient = useQueryClient();
   const [isAutoAssignModalOpen, setIsAutoAssignModalOpen] = useState(false);
@@ -59,18 +49,9 @@ const Table = ({ jobId }) => {
    setIsDocumentViewerOpen(true);
  };
 
-
-  // Query to fetch candidates
-  // const { data: rowsData, isLoading, isError, error } = useQuery({
-  //   queryKey: ['candidates', jobId],
-  //   queryFn: () => axios.get(`/candidates/${jobId}`).then(res => res.data.candidates),
-  // });
-
-  // Fetch candidates
-  // Fetch candidates
   const { data: apiResponse, isLoading, isError } = useQuery({
     queryKey: ['candidates', jobId],
-    queryFn: () => axios.get(`/candidates/${jobId}`).then(res => res.data),
+    queryFn: () => axios.get(`/admin/candidate/${jobId}`).then(res => res.data),
   });
 
   // Extract candidates from the API response
@@ -332,7 +313,7 @@ const Table = ({ jobId }) => {
               params.row.currentStage,
               newAssignee
             )}
-            onSelect={() => { }}
+            onSelect={() => {}}
           />
         </div>
       ),
@@ -362,6 +343,13 @@ const Table = ({ jobId }) => {
       )
     }
   ];
+
+  const navigate = useNavigate();
+
+  const handleRowClick = (params)=>{
+    console.log(params)
+    navigate(`/admin/jobs/view-candidate/${params.id}/${jobId}`)
+  }
 
 
   return (

@@ -76,6 +76,9 @@ h2{
   .typography-small-p {
     @apply font-outfit text-small-p font-normal;
   }
+  .marks {
+    @apply font-outfit text-marks font-semibold
+  }
 
   .typography-large-p {
     @apply font-outfit text-large-p font-normal;

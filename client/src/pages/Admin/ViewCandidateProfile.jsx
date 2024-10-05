@@ -109,7 +109,7 @@ const ViewCandidateProfile = () => {
             activeIcon: <ApplicationIconActive />,
         },
         {
-            name: 'candidateDetails', label: 'CandidateDetails', icon: <CandidateDetailsIcon/>,
+            name: 'candidateDetails', label: 'CandidateDetails', icon: <CandidateDetailsIcon />,
             activeIcon: <CandidateDetailsIconActive />,
         },
     ];
@@ -188,10 +188,19 @@ const ViewCandidateProfile = () => {
                         <p>{data.location}</p>
                     </div>
                 </div>
-                <div className='flex flex-col items-center justify-between bg-background-90 typography-h3 w-[430px] p-5 rounded-xl'>
-                    <div className='bg-red-100 absolute'></div>
-                    VAV Score
-                    <img src={Stars} alt="" />
+                <div className='flex bg-stars flex-col items-center bg-background-90 w-[430px] bg-cover p-5 rounded-xl'>
+                    <h3 className='typography-h3'>
+
+                        VAV SCORE
+                    </h3>
+                    <span className='marks text-font-primary'>
+                        00
+                    </span>
+                    <p className='typography-large'>
+                        Out of 100
+                    </p>
+
+                    {/* <img src={Stars} alt="" /> */}
                 </div>
 
             </div>
