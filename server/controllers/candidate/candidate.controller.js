@@ -563,7 +563,6 @@ export {
   allCandidate,
   stats,
   fetchAssignedCandidate,
-  assignCandidate,
   jobSpecificStats,
   filterJobs,
   searchJobs,

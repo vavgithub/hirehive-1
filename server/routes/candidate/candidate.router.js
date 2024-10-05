@@ -1,10 +1,10 @@
 import express from 'express';
 import { 
   allCandidate, 
-  assignCandidate, 
+  
   createCandidate, 
   fetchActiveJobs, 
-  fetchAssignedCandidate, 
+   
   filterJobs, 
   getCandidate, 
   getCandidateById, 
@@ -12,9 +12,7 @@ import {
   searchJobs, 
   stats, 
   submitApplication, 
-  updateAssignee, 
-  updateCandidateStatusById, 
-  updateRating, 
+   
   updateStatusAndStage 
 } from '../../controllers/candidate/candidate.controller.js';
 import { protect } from '../../middlewares/authMiddleware.js';
