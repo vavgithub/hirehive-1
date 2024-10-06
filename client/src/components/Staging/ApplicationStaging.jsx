@@ -8,9 +8,38 @@ import {
   LinearProgress, 
   Select, 
   MenuItem, 
-  Box 
+  Box,
+  Tabs,
+  Tab,
+  Grid
 } from '@mui/material';
 import { Warning as WarningIcon } from '@mui/icons-material';
+
+const StageProgressBar = ({ stageStatus, nextStageStatus }) => {
+  const getProgressValue = (status) => {
+    switch (status) {
+      case 'Cleared':
+        return 100;
+      case 'Reviewed':
+        return 75;
+      case 'Under Review':
+        return 50;
+      case 'Not Assigned':
+      case 'Pending':
+        return 0;
+      default:
+        return 0;
+    }
+  };
+
+  const progress = getProgressValue(stageStatus.status);
+
+  return (
+    <Box sx={{ width: '100%', mt: 1 }}>
+      <LinearProgress variant="determinate" value={progress} />
+    </Box>
+  );
+};
 
 const StageCard = ({ stage, currentStage, stageStatus, onAssign, onViewPortfolio, onStatusChange, allStages, applicationDate }) => {
   const isActive = stage === currentStage;
@@ -21,7 +50,7 @@ const StageCard = ({ stage, currentStage, stageStatus, onAssign, onViewPortfolio
       variant="outlined" 
       sx={{ 
         mb: 2, 
-        opacity: isActive ? 1 : 0.5, 
+        opacity: isActive || isCompleted ? 1 : 0.5, 
         border: isActive ? '2px solid primary.main' : '1px solid grey.300'
       }}
     >
@@ -29,40 +58,44 @@ const StageCard = ({ stage, currentStage, stageStatus, onAssign, onViewPortfolio
         <Typography variant="h6" component="div">
           {stage}
         </Typography>
-        {isActive && (
-          <>
-            <Box sx={{ display: 'flex', alignItems: 'center', my: 1 }}>
-              <WarningIcon color="warning" sx={{ mr: 1 }} />
-              <Typography variant="body2">
-                Candidate's {stage.toLowerCase()} has not yet been assigned to a reviewer.
-              </Typography>
-            </Box>
-            <Typography variant="body2" color="text.secondary">
-              Received on {new Date(applicationDate).toLocaleDateString()}
-            </Typography>
-          </>
-        )}
+        <Box sx={{ display: 'flex', alignItems: 'center', my: 1 }}>
+          {isActive ? (
+            <WarningIcon color="warning" sx={{ mr: 1 }} />
+          ) : isCompleted ? (
+            <Typography variant="body2" color="success.main">Cleared</Typography>
+          ) : null}
+          <Typography variant="body2">
+            {isActive 
+              ? "Candidate's " + stage.toLowerCase() + " is under review."
+              : isCompleted
+              ? "This stage has been completed."
+              : "This stage is not yet active."}
+          </Typography>
+        </Box>
+        <Typography variant="body2" color="text.secondary">
+          Received on {new Date(applicationDate).toLocaleDateString()}
+        </Typography>
       </CardContent>
       <CardActions sx={{ justifyContent: 'space-between' }}>
         <Box>
+          {(isActive || isCompleted) && (
+            <Button 
+              variant="outlined" 
+              size="small" 
+              onClick={() => onViewPortfolio(stage)}
+              sx={{ mr: 1 }}
+            >
+              View {stage}
+            </Button>
+          )}
           {isActive && (
-            <>
-              <Button 
-                variant="outlined" 
-                size="small" 
-                onClick={() => onViewPortfolio(stage)}
-                sx={{ mr: 1 }}
-              >
-                View {stage}
-              </Button>
-              <Button 
-                variant="contained" 
-                size="small" 
-                onClick={() => onAssign(stage)}
-              >
-                Assign {stage}
-              </Button>
-            </>
+            <Button 
+              variant="contained" 
+              size="small" 
+              onClick={() => onAssign(stage)}
+            >
+              Assign {stage}
+            </Button>
           )}
         </Box>
         {isActive && (
@@ -95,18 +128,16 @@ const StageCard = ({ stage, currentStage, stageStatus, onAssign, onViewPortfolio
 
 const ApplicationStaging = ({ candidateData }) => {
   const [currentStage, setCurrentStage] = useState('');
-  const [progress, setProgress] = useState(0);
+  const [selectedStage, setSelectedStage] = useState('');
 
   const stages = Object.keys(candidateData.jobApplication.stageStatuses);
 
   useEffect(() => {
     // Set current stage
-    setCurrentStage(candidateData.jobApplication.currentStage || stages[0] || '');
-
-    // Calculate progress
-    const currentStageIndex = stages.indexOf(currentStage);
-    setProgress((currentStageIndex / (stages.length - 1)) * 100);
-  }, [candidateData, stages, currentStage]);
+    const newCurrentStage = candidateData.jobApplication.currentStage || stages[0] || '';
+    setCurrentStage(newCurrentStage);
+    setSelectedStage(newCurrentStage);
+  }, [candidateData, stages]);
 
   const handleAssign = (stage) => {
     // Implement assign logic
@@ -126,39 +157,64 @@ const ApplicationStaging = ({ candidateData }) => {
       const nextStageIndex = stages.indexOf(stage) + 1;
       if (nextStageIndex < stages.length) {
         setCurrentStage(stages[nextStageIndex]);
+        setSelectedStage(stages[nextStageIndex]);
       }
     }
   };
 
+  const handleTabChange = (event, newValue) => {
+    setSelectedStage(newValue);
+  };
+
   return (
     <Box>
-      <LinearProgress variant="determinate" value={progress} sx={{ mb: 2 }} />
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+      <Grid container alignItems="center" spacing={1}>
         {stages.map((stage, index) => (
-          <Typography 
-            key={stage} 
-            variant="body2" 
-            sx={{ 
-              color: index <= stages.indexOf(currentStage) ? 'primary.main' : 'text.disabled'
-            }}
-          >
-            {stage}
-          </Typography>
+          <React.Fragment key={stage}>
+            <Grid item>
+              <Tab 
+                label={stage} 
+                value={stage}
+                disabled={index > stages.indexOf(currentStage)}
+                onClick={() => handleTabChange(null, stage)}
+                sx={{
+                  opacity: selectedStage === stage ? 1 : 0.7,
+                  fontWeight: selectedStage === stage ? 'bold' : 'normal',
+                }}
+              />
+            </Grid>
+            {index < stages.length - 1 && (
+              <Grid item xs>
+                <StageProgressBar
+                  stageStatus={candidateData.jobApplication.stageStatuses[stage]}
+                  nextStageStatus={candidateData.jobApplication.stageStatuses[stages[index + 1]]}
+                />
+              </Grid>
+            )}
+          </React.Fragment>
         ))}
+      </Grid>
+      <Box mt={4}>
+        {stages.map(stage => {
+          const stageStatus = candidateData.jobApplication.stageStatuses[stage];
+          const isCompleted = stages.indexOf(stage) < stages.indexOf(currentStage);
+          const shouldDisplay = stage === selectedStage || stage === currentStage;
+
+          return shouldDisplay ? (
+            <StageCard
+              key={stage}
+              stage={stage}
+              currentStage={currentStage}
+              stageStatus={stageStatus}
+              onAssign={handleAssign}
+              onViewPortfolio={handleViewPortfolio}
+              onStatusChange={handleStatusChange}
+              allStages={stages}
+              applicationDate={candidateData.jobApplication.applicationDate}
+            />
+          ) : null;
+        })}
       </Box>
-      {stages.map(stage => (
-        <StageCard
-          key={stage}
-          stage={stage}
-          currentStage={currentStage}
-          stageStatus={candidateData.jobApplication.stageStatuses[stage]}
-          onAssign={handleAssign}
-          onViewPortfolio={handleViewPortfolio}
-          onStatusChange={handleStatusChange}
-          allStages={stages}
-          applicationDate={candidateData.jobApplication.applicationDate}
-        />
-      ))}
     </Box>
   );
 };
