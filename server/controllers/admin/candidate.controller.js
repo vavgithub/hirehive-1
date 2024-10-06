@@ -97,13 +97,57 @@ export  const updateStatusAndStage = async (req, res) => {
     }
   };
 
- export const getCandidateById = async (req, res) => {
+  export const getCandidateById = async (req, res) => {
     try {
-      const candidate = await candidates.findById(req.params.id).select("-password");
-      res.send(candidate);
+      const { candidateId, jobId } = req.params;
+  
+      // Find the candidate
+      const candidate = await candidates.findById(candidateId).select("-password");
+  
+      if (!candidate) {
+        return res.status(404).send({ message: "Candidate not found" });
+      }
+  
+      // Find the specific job application
+      const jobApplication = candidate.jobApplications.find(
+        app => app.jobId.toString() === jobId
+      );
+  
+      if (!jobApplication) {
+        return res.status(404).send({ message: "Job application not found for this candidate" });
+      }
+  
+      // Construct the response object with relevant information
+      const response = {
+        _id: candidate._id,
+        firstName: candidate.firstName,
+        lastName: candidate.lastName,
+        email: candidate.email,
+        phone: candidate.phone,
+        website: candidate.website,
+        portfolio: candidate.portfolio,
+        resumeUrl: jobApplication.resumeUrl || candidate.resumeUrl,
+        noticePeriod: candidate.noticePeriod,
+        currentCTC: candidate.currentCTC,
+        expectedCTC: candidate.expectedCTC,
+        experience: candidate.experience,
+        skills: candidate.skills,
+        location: candidate.location,
+        jobApplication: {
+          jobId: jobApplication.jobId,
+          jobApplied: jobApplication.jobApplied,
+          applicationDate: jobApplication.applicationDate,
+          rating: jobApplication.rating,
+          currentStage: jobApplication.currentStage,
+          stageStatuses: jobApplication.stageStatuses,
+          questionResponses: jobApplication.questionResponses
+        }
+      };
+  
+      res.send(response);
     } catch (error) {
-      res.status(500).send(error);
+      console.error("Error in getCandidateById:", error);
+      res.status(500).send({ message: "Internal server error", error: error.message });
     }
   };
-   
   

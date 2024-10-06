@@ -14,7 +14,7 @@ import { dummySkills } from '../../components/Form/dropdownOptions';
 import { showErrorToast, showSuccessToast } from '../../components/ui/Toast';
 
 const fetchJobDetails = async (id) => {
-  const response = await axios.get(`/getJobById/${id}`);
+  const response = await axios.get(`/jobs/getJobById/${id}`);
   return response.data;
 };
 

@@ -19,9 +19,9 @@ import { ApplicationIcon, ApplicationIconActive } from '../../svg/Tabs/Applicati
 import { CandidateDetailsIcon, CandidateDetailsIconActive } from '../../svg/Tabs/CandidateDetailsIcon';
 
 
-// Fetch candidate data using Axios
-const fetchCandidateData = async (candidateId) => {
-    const { data } = await axios.get(`admin/candidate/data/${candidateId}`);
+const fetchCandidateData = async (candidateId, jobId) => {
+    const { data } = await axios.get(`admin/candidate/${candidateId}/job/${jobId}`);
+    console.log(data);
     return data;
 };
 
@@ -53,10 +53,9 @@ const ViewCandidateProfile = () => {
 
     // Always fetch the candidate data using `useQuery` unconditionally
     const { data, isLoading, isError, error } = useQuery({
-        queryKey: ['candidate', candidateId],
-        queryFn: () => fetchCandidateData(candidateId),
+        queryKey: ['candidate', candidateId, jobId],
+        queryFn: () => fetchCandidateData(candidateId, jobId),
     });
-
     // Don't conditionally return before hooks are called
     const [activeTab, setActiveTab] = useState('application');
 
@@ -166,12 +165,11 @@ const ViewCandidateProfile = () => {
             </div>
 
             {/* Conditional rendering of tabs for "Hiring Manager" */}
-            {userData?.role === 'Hiring Manager' && (
+            
                 <div className="flex mt-4 mb-4">
                     <Tabs tabs={tabs} activeTab={activeTab} handleTabClick={handleTabClick} />
                 </div>
-            )}
-
+            
             {/* Content of the selected tab */}
             {activeTab === 'application' && (
                 <Staging currentStage={data.stage} candidateData={data} />
