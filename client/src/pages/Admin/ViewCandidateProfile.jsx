@@ -18,6 +18,7 @@ import FileMainIcon from '../../svg/FileMainIcon';
 import { ApplicationIcon, ApplicationIconActive } from '../../svg/Tabs/ApplicationIcon';
 import { CandidateDetailsIcon, CandidateDetailsIconActive } from '../../svg/Tabs/CandidateDetailsIcon';
 import { useAuthContext } from '../../context/AuthProvider';
+import ApplicationStaging from '../../components/Staging/ApplicationStaging';
 
 
 const fetchCandidateData = async (candidateId, jobId) => {
@@ -175,6 +176,7 @@ const ViewCandidateProfile = () => {
             {activeTab === 'application' && (
                 <div>
                     Hello here is the place of Staging comp
+                    <ApplicationStaging candidateData={data} />
                     </div>
                 // <Staging currentStage={data.stage} candidateData={data} />
             )}
