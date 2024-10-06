@@ -2,21 +2,21 @@
 import React from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
+import { useAuthContext } from '../context/AuthProvider';
 
 const ProtectedRoute = ({ allowedRoles, children }) => {
-  const { data, isLoading, isError } = useAuth();
+  const { user, isLoading, error } = useAuthContext();
 
-  console.log('ProtectedRoute:', { data, isLoading, isError, allowedRoles });
 
   if (isLoading) {
     return <p>Loading...</p>;
   }
 
-  if (isError || !data) {
+  if (error || !user) {
     return <Navigate to="/auth/login" replace />;
   }
 
-  if (!allowedRoles.includes(data.role)) {
+  if (!allowedRoles.includes(user.role)) {
     return <Navigate to="/unauthorized" replace />;
   }
 

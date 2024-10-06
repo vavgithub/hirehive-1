@@ -17,6 +17,7 @@ import WebsiteMainIcon from '../../svg/WebsiteMainIcon';
 import FileMainIcon from '../../svg/FileMainIcon';
 import { ApplicationIcon, ApplicationIconActive } from '../../svg/Tabs/ApplicationIcon';
 import { CandidateDetailsIcon, CandidateDetailsIconActive } from '../../svg/Tabs/CandidateDetailsIcon';
+import { useAuthContext } from '../../context/AuthProvider';
 
 
 const fetchCandidateData = async (candidateId, jobId) => {
@@ -49,7 +50,7 @@ const ViewCandidateProfile = () => {
     const navigate = useNavigate();
 
     // Get user data including role unconditionally
-    const { data: userData } = useAuth();
+    const { user } = useAuthContext();
 
     // Always fetch the candidate data using `useQuery` unconditionally
     const { data, isLoading, isError, error } = useQuery({
@@ -172,7 +173,10 @@ const ViewCandidateProfile = () => {
             
             {/* Content of the selected tab */}
             {activeTab === 'application' && (
-                <Staging currentStage={data.stage} candidateData={data} />
+                <div>
+                    Hello here is the place of Staging comp
+                    </div>
+                // <Staging currentStage={data.stage} candidateData={data} />
             )}
             {activeTab === 'candidateDetails' && (
                 <CandidateTabDetail data={transformedData} />
