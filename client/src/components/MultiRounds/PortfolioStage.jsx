@@ -8,6 +8,7 @@ import PortfolioIcon from '../../svg/PortfolioIcon';
 import WarningIcon from '../../svg/Staging/WarningIcon';
 import InputPopUpModal from '../InputPopUpModal';
 import axios from '../../api/axios';
+import FileMainIcon from '../../svg/FileMainIcon';
 
 const getStageOptions = (stage) => {
     switch (stage) {
@@ -82,7 +83,7 @@ const PortfolioStage = ({ candidateData: initialCandidateData, assignee, onAssig
                 { value: 'Candidates scores did not meet the criteria', label: 'Candidates scores did not meet the criteria' },
                 { value: 'Candidate did not appear for the screening', label: 'Candidate did not appear for the screening' },
                 { value: 'Candidate did not appear for round one', label: 'Candidate did not appear for round one' },
-                { value: 'Candidate did not appear for round two', label: 'Candidate did not appear for round two'},
+                { value: 'Candidate did not appear for round two', label: 'Candidate did not appear for round two' },
                 { value: 'Candidate did not submit the design task', label: 'Candidate did not submit the design task' },
             ],
         }
@@ -102,15 +103,15 @@ const PortfolioStage = ({ candidateData: initialCandidateData, assignee, onAssig
                 alert('Please select at least one assignee.');
                 return;
             }
-    
+
             const assigneeId = newAssignees[0]._id; // Assuming the assignee object has an _id field
-    
+
             const response = await axios.post('/candidates/assign', {
                 candidateId: candidateData._id,
                 assigneeId: assigneeId,
                 stage: 'Portfolio' // Specify the stage
             });
-    
+
             if (response.data.success) {
                 const updatedCandidate = response.data.data;
                 setCandidateData(prevData => ({
@@ -124,7 +125,7 @@ const PortfolioStage = ({ candidateData: initialCandidateData, assignee, onAssig
                         }
                     }
                 }));
-    
+
                 setSelectedAssignee(newAssignees[0]);
                 console.log('Assignee updated successfully');
             } else {
@@ -144,7 +145,7 @@ const PortfolioStage = ({ candidateData: initialCandidateData, assignee, onAssig
 
     const renderStatusLabel = () => {
         // const { status,score } = candidateData.stageStatus.Screening;
-        const { status, score  , rejectionReason , totalScore } = candidateData.stageStatus.Portfolio;
+        const { status, score, rejectionReason, totalScore } = candidateData.stageStatus.Portfolio;
         // const hasScore = Object.values(score.totalScore).some(value => value !== null);
 
 
@@ -161,7 +162,7 @@ const PortfolioStage = ({ candidateData: initialCandidateData, assignee, onAssig
             case "Under Review":
                 return (
                     <>
-                    <Label text="Portfolio is currently under review by the design reviewer"></Label>
+                        <Label text="Portfolio is currently under review by the design reviewer"></Label>
                     </>
                 )
 
@@ -170,11 +171,11 @@ const PortfolioStage = ({ candidateData: initialCandidateData, assignee, onAssig
                 return (
                     <>
                         <div className='w-full '>
-                           
+
                             <div className='flex justify-between gap-4'>
                                 <div className='w-full'>
-                                <p className='typography-small-p text-font-gray'>Remarks</p>
-                                <p className='typography-body pb-8'>{score.remark}</p>
+                                    <p className='typography-small-p text-font-gray'>Remarks</p>
+                                    <p className='typography-body pb-8'>{score.remark}</p>
                                 </div>
 
                                 <div>
@@ -265,7 +266,7 @@ const PortfolioStage = ({ candidateData: initialCandidateData, assignee, onAssig
                         {commonFooterContent}
                         <div className='w-[160px]'>
 
-                        <Button variant="primary" onClick={() => setOpenAssigneeModal(!openAssigneeModal)}>Assign Portfolio</Button>
+                            <Button variant="primary" onClick={() => setOpenAssigneeModal(!openAssigneeModal)}>Assign Portfolio</Button>
                         </div>
                     </>
                 )
@@ -340,7 +341,7 @@ const PortfolioStage = ({ candidateData: initialCandidateData, assignee, onAssig
                         <div className='h-8 w-1 rounded bg-background-70'></div>
 
                         <div className='w-8 h-8 rounded-full bg-background-80 flex items-center justify-center'>
-                            <PortfolioIcon />
+                            <FileMainIcon />
                         </div>
                         <a className='typography-body text-font-primary underline flex gap-2' href={candidateData.portfolio}>View Portfolio
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -357,7 +358,7 @@ const PortfolioStage = ({ candidateData: initialCandidateData, assignee, onAssig
             <div className='m-4'>
                 {renderStatusLabel()}
             </div>
-            
+
 
             {/* third layer */}
             <div className='flex justify-between bg-background-90'>

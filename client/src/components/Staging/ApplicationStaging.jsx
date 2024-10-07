@@ -6,14 +6,13 @@ import {
   CardActions, 
   Typography, 
   LinearProgress, 
-  Select, 
-  MenuItem, 
   Box,
-  Tabs,
+  Grid,
   Tab,
-  Grid
 } from '@mui/material';
 import { Warning as WarningIcon } from '@mui/icons-material';
+import StatusBadge from '../ui/StatusBadge';
+import PortfolioStage from './PortfolioStage';
 
 const StageProgressBar = ({ stageStatus, nextStageStatus }) => {
   const getProgressValue = (status) => {
@@ -41,86 +40,101 @@ const StageProgressBar = ({ stageStatus, nextStageStatus }) => {
   );
 };
 
-const StageCard = ({ stage, currentStage, stageStatus, onAssign, onViewPortfolio, onStatusChange, allStages, applicationDate }) => {
+const StageCard = ({ stage, currentStage, stageStatus, onAssign, onViewPortfolio, allStages, applicationDate }) => {
   const isActive = stage === currentStage;
   const isCompleted = allStages.indexOf(stage) < allStages.indexOf(currentStage);
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'Cleared':
+        return 'success';
+      case 'Under Review':
+        return 'warning';
+      case 'Rejected':
+        return 'error';
+      default:
+        return 'default';
+    }
+  };
+
+  const renderStageActions = () => {
+    switch (stageStatus.status) {
+      case 'Cleared':
+        return (
+          <Button 
+            variant="outlined" 
+            size="small" 
+            onClick={() => onViewPortfolio(stage)}
+          >
+            View {stage} Details
+          </Button>
+        );
+      case 'Pending':
+        return (
+          <Button 
+            variant="contained" 
+            size="small" 
+            onClick={() => onAssign(stage)}
+          >
+            Assign Reviewer
+          </Button>
+        );
+      case 'Under Review':
+        return (
+          <Button 
+            variant="contained" 
+            size="small" 
+            onClick={() => console.log(`Check ${stage} progress`)}
+          >
+            Check Progress
+          </Button>
+        );
+      // Add more cases for different statuses as needed
+      default:
+        return null;
+    }
+  };
 
   return (
     <Card 
       variant="outlined" 
       sx={{ 
         mb: 2, 
-        opacity: isActive || isCompleted ? 1 : 0.5, 
-        border: isActive ? '2px solid primary.main' : '1px solid grey.300'
+        opacity: 1, // Always fully visible now
+        border: isActive ? '2px solid primary.main' : '1px solid grey.300',
+        backgroundColor:"rgba(22, 23, 24, 1)",
+        borderRadius:"12px",
+        color:"white",
+        fontFamily: 'Outfit, sans-serif',
       }}
     >
       <CardContent>
-        <Typography variant="h6" component="div">
-          {stage}
-        </Typography>
+        <Box display="flex" justifyContent="space-between" alignItems="center">
+          <Typography variant="h6" component="div">
+            {stage}
+          </Typography>
+          <div>
+            <StatusBadge status={stageStatus.status}/>
+          </div>
+
+        </Box>
         <Box sx={{ display: 'flex', alignItems: 'center', my: 1 }}>
-          {isActive ? (
-            <WarningIcon color="warning" sx={{ mr: 1 }} />
-          ) : isCompleted ? (
-            <Typography variant="body2" color="success.main">Cleared</Typography>
-          ) : null}
+          {isActive && <WarningIcon color="warning" sx={{ mr: 1 }} />}
           <Typography variant="body2">
             {isActive 
-              ? "Candidate's " + stage.toLowerCase() + " is under review."
+              ? `Candidate's ${stage.toLowerCase()} is ${stageStatus.status.toLowerCase()}.`
               : isCompleted
-              ? "This stage has been completed."
+              ? `This stage has been completed with status: ${stageStatus.status}`
               : "This stage is not yet active."}
           </Typography>
         </Box>
         <Typography variant="body2" color="text.secondary">
-          Received on {new Date(applicationDate).toLocaleDateString()}
+          {isCompleted ? `Completed on ${new Date(stageStatus.completedDate).toLocaleDateString()}` : 
+            `Received on ${new Date(applicationDate).toLocaleDateString()}`}
         </Typography>
       </CardContent>
-      <CardActions sx={{ justifyContent: 'space-between' }}>
-        <Box>
-          {(isActive || isCompleted) && (
-            <Button 
-              variant="outlined" 
-              size="small" 
-              onClick={() => onViewPortfolio(stage)}
-              sx={{ mr: 1 }}
-            >
-              View {stage}
-            </Button>
-          )}
-          {isActive && (
-            <Button 
-              variant="contained" 
-              size="small" 
-              onClick={() => onAssign(stage)}
-            >
-              Assign {stage}
-            </Button>
-          )}
-        </Box>
-        {isActive && (
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Typography variant="body2" sx={{ mr: 1 }}>
-              Status:
-            </Typography>
-            <Select
-              value={stageStatus.status}
-              onChange={(e) => onStatusChange(stage, e.target.value)}
-              size="small"
-            >
-              <MenuItem value="Not Assigned">Not Assigned</MenuItem>
-              <MenuItem value="Under Review">Under Review</MenuItem>
-              <MenuItem value="Reviewed">Reviewed</MenuItem>
-              <MenuItem value="Cleared">Cleared</MenuItem>
-              <MenuItem value="Rejected">Rejected</MenuItem>
-              <MenuItem value="Pending">Pending</MenuItem>
-              <MenuItem value="Call Scheduled">Call Scheduled</MenuItem>
-              <MenuItem value="No Show">No Show</MenuItem>
-              <MenuItem value="Sent">Sent</MenuItem>
-              <MenuItem value="Not Submitted">Not Submitted</MenuItem>
-            </Select>
-          </Box>
-        )}
+      <CardActions>
+        {renderStageActions()}
       </CardActions>
     </Card>
   );
@@ -149,21 +163,12 @@ const ApplicationStaging = ({ candidateData }) => {
     console.log(`Viewing ${stage}`);
   };
 
-  const handleStatusChange = (stage, newStatus) => {
-    // This function should update the status in your backend
-    console.log(`Updating status for ${stage} to ${newStatus}`);
-    
-    if (newStatus === 'Cleared') {
-      const nextStageIndex = stages.indexOf(stage) + 1;
-      if (nextStageIndex < stages.length) {
-        setCurrentStage(stages[nextStageIndex]);
-        setSelectedStage(stages[nextStageIndex]);
-      }
-    }
-  };
-
   const handleTabChange = (event, newValue) => {
     setSelectedStage(newValue);
+  };
+  const isStageAccessible = (stageIndex) => {
+    const currentStageIndex = stages.indexOf(currentStage);
+    return stageIndex <= currentStageIndex;
   };
 
   return (
@@ -175,11 +180,12 @@ const ApplicationStaging = ({ candidateData }) => {
               <Tab 
                 label={stage} 
                 value={stage}
-                disabled={index > stages.indexOf(currentStage)}
+                disabled={!isStageAccessible(index)}
                 onClick={() => handleTabChange(null, stage)}
                 sx={{
                   opacity: selectedStage === stage ? 1 : 0.7,
                   fontWeight: selectedStage === stage ? 'bold' : 'normal',
+                  cursor: isStageAccessible(index) ? 'pointer' : 'not-allowed',
                 }}
               />
             </Grid>
@@ -195,25 +201,15 @@ const ApplicationStaging = ({ candidateData }) => {
         ))}
       </Grid>
       <Box mt={4}>
-        {stages.map(stage => {
-          const stageStatus = candidateData.jobApplication.stageStatuses[stage];
-          const isCompleted = stages.indexOf(stage) < stages.indexOf(currentStage);
-          const shouldDisplay = stage === selectedStage || stage === currentStage;
-
-          return shouldDisplay ? (
-            <StageCard
-              key={stage}
-              stage={stage}
-              currentStage={currentStage}
-              stageStatus={stageStatus}
-              onAssign={handleAssign}
-              onViewPortfolio={handleViewPortfolio}
-              onStatusChange={handleStatusChange}
-              allStages={stages}
-              applicationDate={candidateData.jobApplication.applicationDate}
-            />
-          ) : null;
-        })}
+      {selectedStage === 'Portfolio' && (
+          <PortfolioStage
+            stageData={candidateData.jobApplication.stageStatuses.Portfolio}
+            onAssign={() => handleAssign('Portfolio')}
+            onViewPortfolio={() => handleViewPortfolio('Portfolio')}
+            onReject={() => handleReject('Portfolio')}
+            onMoveToNextRound={() => handleMoveToNextRound('Portfolio')}
+          />
+        )}
       </Box>
     </Box>
   );
