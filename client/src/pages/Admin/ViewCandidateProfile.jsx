@@ -167,17 +167,16 @@ const ViewCandidateProfile = () => {
             </div>
 
             {/* Conditional rendering of tabs for "Hiring Manager" */}
-            
-                <div className="flex mt-4 mb-4">
-                    <Tabs tabs={tabs} activeTab={activeTab} handleTabClick={handleTabClick} />
-                </div>
-            
+
+            <div className="flex mt-4 mb-4">
+                <Tabs tabs={tabs} activeTab={activeTab} handleTabClick={handleTabClick} />
+            </div>
+
             {/* Content of the selected tab */}
             {activeTab === 'application' && (
                 <div>
-                    Hello here is the place of Staging comp
                     <ApplicationStaging candidateData={data} />
-                    </div>
+                </div>
                 // <Staging currentStage={data.stage} candidateData={data} />
             )}
             {activeTab === 'candidateDetails' && (
