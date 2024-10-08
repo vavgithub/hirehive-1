@@ -38,16 +38,16 @@ const Table = ({ jobId }) => {
   const [isMoveModalOpen, setIsMoveModalOpen] = useState(false);
   const [selectedCandidate, setSelectedCandidate] = useState(null);
 
-   // ... other state declarations
- // ... other state declarations
- const [isDocumentViewerOpen, setIsDocumentViewerOpen] = useState(false);
- const [selectedDocumentUrl, setSelectedDocumentUrl] = useState('');
+  // ... other state declarations
+  // ... other state declarations
+  const [isDocumentViewerOpen, setIsDocumentViewerOpen] = useState(false);
+  const [selectedDocumentUrl, setSelectedDocumentUrl] = useState('');
 
- const handleDocumentClick = (documentUrl) => {
+  const handleDocumentClick = (documentUrl) => {
     console.log(documentUrl);
-   setSelectedDocumentUrl(documentUrl);
-   setIsDocumentViewerOpen(true);
- };
+    setSelectedDocumentUrl(documentUrl);
+    setIsDocumentViewerOpen(true);
+  };
 
   const { data: apiResponse, isLoading, isError } = useQuery({
     queryKey: ['candidates', jobId],
@@ -304,7 +304,9 @@ const Table = ({ jobId }) => {
       headerName: 'Assignee',
       width: 100,
       renderCell: (params) => (
-        <div className='flex items-center justify-center h-full'>
+        <div className='flex items-center justify-center h-full'
+          onClick={(event) => event.stopPropagation()}
+        >
           <AssigneeSelector
             mode="icon"
             value={params.row.stageStatuses[params.row.currentStage]?.assignedTo}
@@ -313,7 +315,7 @@ const Table = ({ jobId }) => {
               params.row.currentStage,
               newAssignee
             )}
-            onSelect={() => {}}
+            onSelect={() => { }}
           />
         </div>
       ),
@@ -346,7 +348,7 @@ const Table = ({ jobId }) => {
 
   const navigate = useNavigate();
 
-  const handleRowClick = (params)=>{
+  const handleRowClick = (params) => {
     console.log(params)
     navigate(`/admin/jobs/view-candidate/${params.id}/${jobId}`)
   }
@@ -537,7 +539,7 @@ const Table = ({ jobId }) => {
         onRowClick={(params) => handleRowClick(params)}
       />
 
-{isDocumentViewerOpen && (
+      {isDocumentViewerOpen && (
         <ResumeViewer
           documentUrl={selectedDocumentUrl}
           onClose={() => setIsDocumentViewerOpen(false)}

@@ -118,6 +118,7 @@ export const updateCandidateAssignee = async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 };
+
   export const getAssignedCandidates = async (req, res) => {
     try {
       const designReviewerId = new mongoose.Types.ObjectId(req.user._id);
