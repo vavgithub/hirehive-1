@@ -1,6 +1,6 @@
 
 <svg width="1032" height="115" viewBox="0 0 1032 115" fill="none" xmlns="http://www.w3.org/2000/svg">
-<g clip-path="url(#clip0_3068_75795)">
+<g clipPath="url(#clip0_3068_75795)">
 <path d="M0 12C0 5.37258 5.37258 0 12 0H1020C1026.63 0 1032 5.37258 1032 12V103C1032 109.627 1026.63 115 1020 115H12C5.37259 115 0 109.627 0 103V12Z" fill="#121316"/>
 <ellipse opacity="0.3" cx="404.624" cy="350.716" rx="404.624" ry="350.716" transform="matrix(0.87581 0.482655 0.482655 -0.87581 -437.148 -60.1328)" fill="url(#paint0_linear_3068_75795)"/>
 <ellipse opacity="0.2" cx="404.624" cy="350.716" rx="404.624" ry="350.716" transform="matrix(-0.98424 -0.176835 -0.176835 0.98424 1362.77 26.3594)" fill="url(#paint1_linear_3068_75795)"/>

@@ -13,7 +13,7 @@ const ArrowIcon = ({ isOpen }) => (
     fill="none"
     style={{ transform: isOpen ? 'rotate(90deg)' : 'rotate(0deg)', transition: 'transform 0.3s ease' }}
   >
-    <path d="M8 20L16 12L8 4" stroke="#808389" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M8 20L16 12L8 4" stroke="#808389" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
 

@@ -14,8 +14,8 @@ const AssessmentBanner = () => {
                 <div className='hidden w-16 h-16 rounded-full md:rounded-full bg-primary-100 items-center md:flex justify-center '>
 
                     <svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <g id="Icons" clip-path="url(#clip0_1744_417898)">
-                            <path id="Icon" d="M23.5 6L14 15.5L9 10.5L1.5 18M23.5 6H17.5M23.5 6V12" stroke="white" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
+                        <g id="Icons" clipPath="url(#clip0_1744_417898)">
+                            <path id="Icon" d="M23.5 6L14 15.5L9 10.5L1.5 18M23.5 6H17.5M23.5 6V12" stroke="white" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
                         </g>
                         <defs>
                             <clipPath id="clip0_1744_417898">
