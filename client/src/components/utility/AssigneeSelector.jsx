@@ -12,7 +12,8 @@ import {
   Box,
 } from '@mui/material';
 import { fetchAvailableDesignReviewers } from '../../api/authApi';
-import SearchIcon from '@mui/icons-material/Search';
+import SearchIcon from '../../svg/SearchIcon';
+// import SearchIcon from '@mui/icons-material/Search';
 
 const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect }) => {
   const [reviewers, setReviewers] = useState([]);
@@ -109,7 +110,8 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect }) => {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <SearchIcon />
+                    {/* <SearchIcon /> */}
+                    <SearchIcon/>
                   </InputAdornment>
                 ),
               }}
