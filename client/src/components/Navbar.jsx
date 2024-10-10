@@ -10,12 +10,15 @@ import { ReviewsIcon, ReviewsIconActive } from '../svg/Navbar/ReviewsIcon';
 import { ReportsIcon, ReportsIconActive } from '../svg/Navbar/ReportsIcon';
 import Profile from '../svg/Buttons/Profile';
 import Logout from '../svg/Buttons/Logout';
+import { useAuthContext } from '../context/AuthProvider';
 
 const Navbar = () => {
     const navigate = useNavigate();
     const location = useLocation();  // Get current route
-    const { data, refetch } = useAuth();
+    const { user } = useAuthContext(); // Get user data from the context
     const [anchorEl, setAnchorEl] = useState(null); // State to control dropdown menu
+    const {refetch } = useAuth();
+
 
     const handleLogout = async () => {
         try {
@@ -72,8 +75,9 @@ const Navbar = () => {
                     onClick={handleMenuClick}
                     className={`flex gap-2  ${location.pathname === "/admin/profile" ? "text-font-accent" : ""}`}
                 >
-                    <Avatar alt={data?.name} src="/path-to-profile-image.jpg" />
-                    <span className='typography-body text-white'>{data?.name}</span>
+                    <Avatar alt={user?.name} sx={{width:"32px" , height:"32px"}}
+                     src="/path-to-profile-image.jpg" />
+                    <span className='typography-body text-white'>{user?.name}</span>
                 </IconButton>
                 {/* This would show the active indication on the side just like the other NavItems */}
                 <div className={`absolute right-0 w-1 h-6 rounded-tl-xl rounded-bl-xl ${location.pathname === "/admin/profile" ? "bg-teal-400" : "bg-transparent"}`} />
@@ -127,7 +131,7 @@ const Navbar = () => {
     );
 
     const renderMenuItems = () => {
-        if (data?.role === 'Hiring Manager') {
+        if (user?.role === 'Hiring Manager') {
             return (
                 <>
                     <NavItem to="/admin/dashboard" icon={DashboardIcon} activeIcon={DashboardIconActive}>Dashboard</NavItem>
@@ -137,7 +141,7 @@ const Navbar = () => {
                     <NavItem to="/admin/reports" icon={ReportsIcon} activeIcon={ReportsIconActive}>Reports</NavItem>
                 </>
             );
-        } else if (data?.role === 'Design Reviewer') {
+        } else if (user?.role === 'Design Reviewer') {
             return (
                 <>
                     <NavItem to="/design-reviewer/dashboard" icon={DashboardIcon} activeIcon={DashboardIconActive}>Dashboard</NavItem>
@@ -156,7 +160,7 @@ const Navbar = () => {
                     {renderMenuItems()}
                 </div>
                 <div>
-                    {data && renderProfileMenu()}
+                    {user && renderProfileMenu()}
                 </div>
             </div>
 
