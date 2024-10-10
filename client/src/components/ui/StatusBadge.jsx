@@ -2,7 +2,7 @@ import React from 'react';
 
 
 const getStatusColor = (status) => {
-  switch (status.toLowerCase()) {
+  switch (status?.toLowerCase()) {
     case 'not assigned':
       return 'bg-red-80 text-red-90';
     case 'rejected':

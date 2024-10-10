@@ -5,13 +5,11 @@ import AssignmentIcon from '../../svg/AssignmentIcon';
 import PhoneIcon from '../../svg/PhoneIcon';
 import EmailIcon from '../../svg/EmailIcon';
 import Tabs from '../../components/Tabs';
-import Staging from '../../components/Staging';
 import Header from '../../components/utility/Header';
 import axios from '../../api/axios';
 import { useQuery } from '@tanstack/react-query';
 import { ACTION_TYPES } from '../../utility/ActionTypes';
 import CandidateTabDetail from '../../components/ui/CandidateTabDetail';
-import useAuth from '../../hooks/useAuth';
 
 import WebsiteMainIcon from '../../svg/WebsiteMainIcon';
 import FileMainIcon from '../../svg/FileMainIcon';
@@ -19,11 +17,16 @@ import { ApplicationIcon, ApplicationIconActive } from '../../svg/Tabs/Applicati
 import { CandidateDetailsIcon, CandidateDetailsIconActive } from '../../svg/Tabs/CandidateDetailsIcon';
 import { useAuthContext } from '../../context/AuthProvider';
 import ApplicationStaging from '../../components/Staging/ApplicationStaging';
+import { useDispatch, useSelector } from 'react-redux';
+import { setCandidateData, setError, setLoading } from '../../redux/candidateSlice';
+import { setCurrentStage, setStageStatuses } from '../../redux/applicationStageSlice';
+
 
 
 const fetchCandidateData = async (candidateId, jobId) => {
+    console.log('Fetching candidate data for:', { candidateId, jobId });
     const { data } = await axios.get(`admin/candidate/${candidateId}/job/${jobId}`);
-    console.log(data);
+    console.log('API Response:', data);
     return data;
 };
 
@@ -46,20 +49,49 @@ const transformCandidateData = (data) => {
     };
 };
 
+
 const ViewCandidateProfile = () => {
-    const { candidateId, jobId } = useParams(); // Get candidateId and jobId from route params
-    const navigate = useNavigate();
+    const [activeTab, setActiveTab] = useState('application');
+    console.log('ViewCandidateProfile component rendered');
+    const { candidateId, jobId } = useParams();
+    console.log('Params:', { candidateId, jobId });
+    const dispatch = useDispatch();
 
-    // Get user data including role unconditionally
-    const { user } = useAuthContext();
+ 
 
-    // Always fetch the candidate data using `useQuery` unconditionally
-    const { data, isLoading, isError, error } = useQuery({
+    const { data, isLoading, isError, error: queryError } = useQuery({
         queryKey: ['candidate', candidateId, jobId],
         queryFn: () => fetchCandidateData(candidateId, jobId),
+
+        cacheTime: 0,
+        staleTime: 0,
+        onError: (error) => {
+            console.error('Query Error:', error);
+            dispatch(setError(error.message));
+        },
     });
-    // Don't conditionally return before hooks are called
-    const [activeTab, setActiveTab] = useState('application');
+
+        // Use useEffect to dispatch actions when data changes
+        useEffect(() => {
+            if (data) {
+                console.log('Data fetched or updated:', data);
+                dispatch(setCandidateData(data));
+                if (data.jobApplication) {
+                    dispatch(setCurrentStage(data.jobApplication.currentStage));
+                    dispatch(setStageStatuses(data.jobApplication.stageStatuses));
+                } else {
+                    console.error('jobApplication data is missing');
+                }
+            }
+        }, [data, dispatch]);
+
+    useEffect(() => {
+        console.log('useEffect triggered, isLoading:', isLoading);
+        dispatch(setLoading(isLoading));
+    }, [isLoading, dispatch]);
+
+    const reduxState = useSelector((state) => state);
+    console.log('Current Redux State:', reduxState);
 
     // Tab click handler
     const handleTabClick = (tab) => {
@@ -103,12 +135,24 @@ const ViewCandidateProfile = () => {
                 console.log('Unknown action:', action);
         }
     };
+    if (isLoading) {
+        console.log('Rendering loading state');
+        return <div>Loading...</div>;
+    }
 
-    // Ensure hooks are not conditionally called within JSX
-    if (isLoading) return <div>Loading...</div>;
-    if (isError) return <div>Error: {error.message}</div>;
+    if (isError) {
+        console.error('Rendering error state:', queryError);
+        return <div>Error: {queryError.message}</div>;
+    }
 
-    // Transform the fetched data for usage in the component
+    if (!data) {
+        console.log('No data available, rendering null');
+        return null;
+    }
+
+    console.log('Rendering main component content');
+
+
     const transformedData = transformCandidateData(data);
 
     return (
@@ -175,11 +219,9 @@ const ViewCandidateProfile = () => {
             {/* Content of the selected tab */}
             {activeTab === 'application' && (
                 <div>
-                    <ApplicationStaging 
-                    candidateData={data}
-                    onDataUpdate={() => {
-                        queryClient.invalidateQueries(['candidate', candidateId, jobId]);
-                    }}
+                    <ApplicationStaging
+                        candidateId={candidateId}
+                        jobId={jobId}
                     />
                 </div>
                 // <Staging currentStage={data.stage} candidateData={data} />

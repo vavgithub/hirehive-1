@@ -13,9 +13,10 @@ import StatusBadge from '../ui/StatusBadge';
 import Label from '../ui/Label';
 import WarningIcon from '../../svg/Staging/WarningIcon';
 import AssigneeSelector from '../utility/AssigneeSelector';
+import { useDispatch } from 'react-redux';
 
-const Portfolio = ({ stageData, candidateId, jobId, onViewPortfolio, onReject, onMoveToNextRound, onDataUpdate }) => {
-    const { status, assignedTo, score, remarks, rejectionReason } = stageData;
+const Portfolio = ({ stageData, candidateId, jobId, onUpdateStatus, onUpdateAssignee }) => {
+    const dispatch = useDispatch();
     const queryClient = useQueryClient();
 
     const updateAssigneeMutation = useMutation({
@@ -26,27 +27,57 @@ const Portfolio = ({ stageData, candidateId, jobId, onViewPortfolio, onReject, o
             assigneeId: newAssignee._id
         }),
         onSuccess: (data) => {
-            queryClient.setQueryData(['candidate', candidateId, jobId], (oldData) => ({
-                ...oldData,
-                jobApplication: {
-                    ...oldData.jobApplication,
-                    currentStage: data.currentStage,
-                    stageStatuses: {
-                        ...oldData.jobApplication.stageStatuses,
-                        Portfolio: data.updatedStageStatus
-                    }
-                }
-            }));
-            onDataUpdate(); // Call this to invalidate the query in the parent component
+            onUpdateAssignee('Portfolio', data.updatedStageStatus.assignedTo);
+            onUpdateStatus('Portfolio', data.updatedStageStatus.status, data.updatedStageStatus);
+            queryClient.invalidateQueries(['candidate', candidateId, jobId]);
         },
     });
 
+    const rejectCandidateMutation = useMutation({
+        mutationFn: (rejectionReason) => axios.post('/hr/reject-candidate', {
+            candidateId,
+            jobId,
+            stage: 'Portfolio',
+            rejectionReason
+        }),
+        onSuccess: (data) => {
+            onUpdateStatus('Portfolio', 'Rejected', data);
+            queryClient.invalidateQueries(['candidate', candidateId, jobId]);
+        },
+    });
+
+    const moveToNextRoundMutation = useMutation({
+        mutationFn: () => axios.post('/hr/move-candidate', {
+            candidateId,
+            jobId,
+            currentStage: 'Portfolio'
+        }),
+        onSuccess: (data) => {
+            onUpdateStatus('Portfolio', 'Cleared', data);
+            // Assuming the API returns the next stage
+            dispatch(setCurrentStage(data.nextStage));
+            queryClient.invalidateQueries(['candidate', candidateId, jobId]);
+        },
+    });
+
+    const onViewPortfolio = () => {
+        console.log("handle")
+    }
     const handleAssigneeChange = (newAssignee) => {
         updateAssigneeMutation.mutate(newAssignee);
     };
 
+    const handleReject = (rejectionReason) => {
+        rejectCandidateMutation.mutate(rejectionReason);
+    };
+
+    const handleMoveToNextRound = () => {
+        moveToNextRoundMutation.mutate();
+    };
+
+
     const renderContent = () => {
-        switch (status) {
+        switch (stageData?.status) {
             case 'Not Assigned':
                 return (
                     <Box display="flex" alignItems="center" my={1}>
@@ -55,11 +86,16 @@ const Portfolio = ({ stageData, candidateId, jobId, onViewPortfolio, onReject, o
                 );
             case 'Under Review':
                 return (
-                    <Typography variant="body2">
-                        Portfolio is currently under review by the design reviewer
-                    </Typography>
+                    <Label icon={WarningIcon} text="Portfolio is currently under review by the design reviewer." />
+
                 );
             case 'Reviewed':
+                return (
+                    <>
+                        <button onClick={() => handleReject('Some reason')}>Reject</button>
+                        <button onClick={handleMoveToNextRound}>Move to Next Round</button>
+                    </>
+                )
             case 'Cleared':
                 return (
                     <>
@@ -126,8 +162,8 @@ const Portfolio = ({ stageData, candidateId, jobId, onViewPortfolio, onReject, o
                         <div className='flex gap-4 items-center'>
                             <div className='w-8 h-8 rounded-full bg-background-80 flex items-center justify-center'>
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M20 7H4C2.89543 7 2 7.89543 2 9V19C2 20.1046 2.89543 21 4 21H20C21.1046 21 22 20.1046 22 19V9C22 7.89543 21.1046 7 20 7Z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                                    <path d="M16 21V5C16 4.46957 15.7893 3.96086 15.4142 3.58579C15.0391 3.21071 14.5304 3 14 3H10C9.46957 3 8.96086 3.21071 8.58579 3.58579C8.21071 3.96086 8 4.46957 8 5V21" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                                    <path d="M20 7H4C2.89543 7 2 7.89543 2 9V19C2 20.1046 2.89543 21 4 21H20C21.1046 21 22 20.1046 22 19V9C22 7.89543 21.1046 7 20 7Z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                    <path d="M16 21V5C16 4.46957 15.7893 3.96086 15.4142 3.58579C15.0391 3.21071 14.5304 3 14 3H10C9.46957 3 8.96086 3.21071 8.58579 3.58579C8.21071 3.96086 8 4.46957 8 5V21" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                                 </svg>
                             </div>
                             <a className='typography-body text-font-primary underline flex gap-2' href="#" onClick={onViewPortfolio}>
@@ -139,10 +175,10 @@ const Portfolio = ({ stageData, candidateId, jobId, onViewPortfolio, onReject, o
                         </div>
                     </div>
                     <Box display="flex" alignItems="center">
-                        <StatusBadge status={status} />
+                        <StatusBadge status={stageData?.status} />
                         <AssigneeSelector
                             mode="icon"
-                            value={assignedTo}
+                            value={stageData?.assignedTo}
                             onChange={handleAssigneeChange}
                             onSelect={handleAssigneeChange}
                         />
