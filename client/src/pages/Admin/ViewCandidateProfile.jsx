@@ -175,7 +175,12 @@ const ViewCandidateProfile = () => {
             {/* Content of the selected tab */}
             {activeTab === 'application' && (
                 <div>
-                    <ApplicationStaging candidateData={data} />
+                    <ApplicationStaging 
+                    candidateData={data}
+                    onDataUpdate={() => {
+                        queryClient.invalidateQueries(['candidate', candidateId, jobId]);
+                    }}
+                    />
                 </div>
                 // <Staging currentStage={data.stage} candidateData={data} />
             )}

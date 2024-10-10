@@ -129,7 +129,7 @@ const StageCard = ({ stage, currentStage, stageStatus, onAssign, onViewPortfolio
     );
 };
 
-const ApplicationStaging = ({ candidateData }) => {
+const ApplicationStaging = ({ candidateData, onDataUpdate }) => {
     const [currentStage, setCurrentStage] = useState('');
     const [selectedStage, setSelectedStage] = useState('');
 
@@ -196,8 +196,9 @@ const ApplicationStaging = ({ candidateData }) => {
                         candidateId={candidateData._id}
                         jobId={candidateData.jobApplication.jobId}
                         onViewPortfolio={() => handleViewPortfolio('Portfolio')}
-                        onReject={() => handleReject('Portfolio')}
-                        onMoveToNextRound={() => handleMoveToNextRound('Portfolio')}
+                        onReject={() => console.log('Reject')}
+                        onMoveToNextRound={() => console.log('Move to next round')}
+                        onDataUpdate={onDataUpdate}
                     />
                 )}
             </Box>

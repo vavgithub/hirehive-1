@@ -6,28 +6,27 @@ import {
     Typography,
     Box,
     Button,
-    Avatar,
 } from '@mui/material';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
-import axios from 'axios';
+import axios from '../../api/axios';
 import StatusBadge from '../ui/StatusBadge';
 import Label from '../ui/Label';
 import WarningIcon from '../../svg/Staging/WarningIcon';
 import AssigneeSelector from '../utility/AssigneeSelector';
 
-const Portfolio = ({ stageData, candidateId, jobId, onViewPortfolio, onReject, onMoveToNextRound }) => {
+const Portfolio = ({ stageData, candidateId, jobId, onViewPortfolio, onReject, onMoveToNextRound, onDataUpdate }) => {
     const { status, assignedTo, score, remarks, rejectionReason } = stageData;
     const queryClient = useQueryClient();
 
     const updateAssigneeMutation = useMutation({
-        mutationFn: (newAssignee) => axios.post('dr/update-assignee', {
+        mutationFn: (newAssignee) => axios.put('dr/update-assignee', {
             candidateId,
             jobId,
             stage: 'Portfolio',
             assigneeId: newAssignee._id
         }),
         onSuccess: (data) => {
-            queryClient.setQueryData(['candidate', candidateId], (oldData) => ({
+            queryClient.setQueryData(['candidate', candidateId, jobId], (oldData) => ({
                 ...oldData,
                 jobApplication: {
                     ...oldData.jobApplication,
@@ -38,6 +37,7 @@ const Portfolio = ({ stageData, candidateId, jobId, onViewPortfolio, onReject, o
                     }
                 }
             }));
+            onDataUpdate(); // Call this to invalidate the query in the parent component
         },
     });
 

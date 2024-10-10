@@ -1,5 +1,6 @@
-import React from 'react';
-import { NavLink, Outlet, useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
+import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom'; // Added useLocation
+import { Menu, MenuItem, IconButton, Avatar } from '@mui/material';
 import { logout } from '../api/authApi';
 import useAuth from '../hooks/useAuth';
 import { DashboardIcon, DashboardIconActive } from '../svg/Navbar/DashboardIcon';
@@ -7,10 +8,14 @@ import { JobsIcon, JobsIconActive } from '../svg/Navbar/JobsIcon';
 import { CandidatesIcon, CandidatesIconActive } from '../svg/Navbar/CandidatesIcon';
 import { ReviewsIcon, ReviewsIconActive } from '../svg/Navbar/ReviewsIcon';
 import { ReportsIcon, ReportsIconActive } from '../svg/Navbar/ReportsIcon';
+import Profile from '../svg/Buttons/Profile';
+import Logout from '../svg/Buttons/Logout';
 
 const Navbar = () => {
     const navigate = useNavigate();
+    const location = useLocation();  // Get current route
     const { data, refetch } = useAuth();
+    const [anchorEl, setAnchorEl] = useState(null); // State to control dropdown menu
 
     const handleLogout = async () => {
         try {
@@ -22,30 +27,103 @@ const Navbar = () => {
         }
     };
 
+    // Function to handle dropdown menu opening
+    const handleMenuClick = (event) => {
+        setAnchorEl(event.currentTarget); // Set the element that opens the menu
+    };
+
+    // Function to handle dropdown menu closing
+    const handleMenuClose = () => {
+        setAnchorEl(null); // Close the menu
+    };
+
     const NavItem = ({ to, icon: Icon, activeIcon: ActiveIcon, children }) => (
         <div className="relative flex flex-row items-center justify-between hover:bg-background-60">
-            <NavLink 
-                to={to} 
+            <NavLink
+                to={to}
                 end={to === "/admin/dashboard" || to === "/design-reviewer/dashboard"}
-                className={({ isActive, isPending }) => 
+                className={({ isActive, isPending }) =>
                     `w-full flex items-center gap-2 pl-2 ${isActive || isPending ? "text-font-accent" : ""}`
                 }
             >
-                 {({ isActive, isPending }) => (
+                {({ isActive, isPending }) => (
                     <div className='flex items-center'>
                         {isActive || isPending ? <ActiveIcon /> : <Icon />}
                         <span>{children}</span>
                     </div>
                 )}
             </NavLink>
-            <NavLink 
-                to={to} 
+            <NavLink
+                to={to}
                 end={to === "/admin/dashboard" || to === "/design-reviewer/dashboard"}
-                className={({ isActive, isPending }) => 
+                className={({ isActive, isPending }) =>
                     `absolute right-0 w-1 h-6 rounded-tl-xl rounded-bl-xl ${isActive || isPending ? "bg-teal-400" : "bg-transparent"}`
                 }
             />
         </div>
+    );
+
+    // Adding Profile and Logout dropdown logic
+    const renderProfileMenu = () => (
+        <>
+            {/* The IconButton will get active class if the current path is /admin/profile */}
+            <div className={`flex items-center px-2 justify-start hover:bg-background-60`}>
+                <IconButton
+                    onClick={handleMenuClick}
+                    className={`flex gap-2  ${location.pathname === "/admin/profile" ? "text-font-accent" : ""}`}
+                >
+                    <Avatar alt={data?.name} src="/path-to-profile-image.jpg" />
+                    <span className='typography-body text-white'>{data?.name}</span>
+                </IconButton>
+                {/* This would show the active indication on the side just like the other NavItems */}
+                <div className={`absolute right-0 w-1 h-6 rounded-tl-xl rounded-bl-xl ${location.pathname === "/admin/profile" ? "bg-teal-400" : "bg-transparent"}`} />
+            </div>
+
+            {/* Menu for Profile and Logout */}
+            <Menu
+                anchorEl={anchorEl} // Element that the menu is anchored to
+                open={Boolean(anchorEl)} // Menu is open when anchorEl is set
+                onClose={handleMenuClose} // Close the menu when clicking outside or selecting an item
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'center',
+                }}
+                transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'center',
+                }}
+                sx={{
+                    "& .MuiList-root": {
+                        backgroundColor: 'rgba(12, 13, 13, 1)',
+                        borderColor: 'rgba(12, 13, 13, 1)',
+                        color: "white",
+                        font: "Outfit"
+                    }
+                }}
+            >
+                <MenuItem onClick={handleMenuClose}>
+                    <NavLink
+                        to="/admin/profile"
+                        className={({ isActive }) =>
+                            `w-full flex items-center ${isActive ? "text-font-accent" : ""}`}
+                    >
+                        <Profile />
+                        <span className='typography-large ml-2'>
+                            Profile
+                        </span>
+                    </NavLink>
+                </MenuItem>
+
+                {/* Logout Option */}
+                <MenuItem onClick={handleLogout}>
+                    <Logout />
+                    <span className='typography-large ml-2'>
+                        Logout
+                    </span>
+
+                </MenuItem>
+            </Menu>
+        </>
     );
 
     const renderMenuItems = () => {
@@ -73,17 +151,12 @@ const Navbar = () => {
 
     return (
         <div className='flex bg-main-bg bg-cover bg-top h-full overflow-x-hidden'>
-            <div className="fixed flex h-screen z-[50000] w-48 flex-col gap-6 bg-background-100 text-font-gray typography-large-p justify-between py-4 ">
+            <div className="fixed flex h-screen w-48 flex-col gap-6 bg-background-100 text-font-gray typography-large-p justify-between py-4 ">
                 <div className='flex flex-col gap-5 typography-body'>
                     {renderMenuItems()}
                 </div>
                 <div>
-                    {data && (
-                        <>
-                            <span>Welcome, {data.name}</span>
-                            <button onClick={handleLogout}>Logout</button>
-                        </>
-                    )}
+                    {data && renderProfileMenu()}
                 </div>
             </div>
 

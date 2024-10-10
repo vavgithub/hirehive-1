@@ -30,6 +30,7 @@ import CandidateDashboard from './pages/Candidate/CandidateDashboard.jsx';
 import CandidateLayout from './auth/CandidateLayout.jsx';
 import MyJobs from './pages/Candidate/MyJobs.jsx';
 import AllJobs from './pages/Candidate/AllJobs.jsx';
+import Profile from './pages/Admin/Profile.jsx';
 
 export const router = createBrowserRouter([
    {
@@ -101,6 +102,10 @@ export const router = createBrowserRouter([
       {
         path: "dashboard",
         element: <Dashboard />
+      },
+      {
+        path:"profile",
+        element:<Profile/>
       },
       {
         path: "jobs",
