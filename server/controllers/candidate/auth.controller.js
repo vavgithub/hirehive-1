@@ -495,9 +495,15 @@ export const getCandidateAppliedJobs = async (req, res) => {
       return res.status(404).json({ message: "Candidate not found" });
     }
 
-    res.status(200).json({ jobApplications: candidate.jobApplications });
+    // Sort the jobApplications by 'applicationDate' in descending order
+    const sortedJobApplications = candidate.jobApplications.sort((a, b) => {
+      return new Date(b.applicationDate) - new Date(a.applicationDate);
+    });
+
+    res.status(200).json({ jobApplications: sortedJobApplications });
   } catch (error) {
     console.error("Error fetching applied jobs:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
+
