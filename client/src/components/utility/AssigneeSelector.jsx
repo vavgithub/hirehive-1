@@ -95,6 +95,13 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect }) => {
           PaperProps={{
             style: { maxHeight: 300, width: '250px' },
           }}
+          sx={{
+            "& .MuiList-root": {
+              backgroundColor: 'rgba(12, 13, 13, 1)',
+              color: "white",
+              font: "Outfit"
+            }
+          }}
           MenuListProps={{
             style: { paddingTop: 0, paddingBottom: 0 },
           }}
