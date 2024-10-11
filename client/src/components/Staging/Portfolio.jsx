@@ -92,6 +92,7 @@ const Portfolio = ({ stageData, candidateId, jobId, onUpdateStatus, onUpdateAssi
             case 'Reviewed':
                 return (
                     <>
+                    
                         <button onClick={() => handleReject('Some reason')}>Reject</button>
                         <button onClick={handleMoveToNextRound}>Move to Next Round</button>
                     </>
@@ -100,11 +101,11 @@ const Portfolio = ({ stageData, candidateId, jobId, onUpdateStatus, onUpdateAssi
                 return (
                     <>
                         <Typography variant="body2" mb={2}>
-                            {remarks}
+                            {stageData.feedback}
                         </Typography>
                         <Box display="flex" justifyContent="space-between" alignItems="center">
                             <Typography variant="body2">Score</Typography>
-                            <Typography variant="h4">{score} <small>out of 5</small></Typography>
+                            <Typography variant="h4"> <small>out of 5</small></Typography>
                         </Box>
                     </>
                 );

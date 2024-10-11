@@ -195,3 +195,62 @@ export const rejectCandidate = async (req, res) => {
       res.status(500).json({ message: 'Error updating candidate rating', error: error.message });
     }
   };
+
+
+  export const getCandidateScores = async (req, res) => {
+    const { candidateId, jobId } = req.params;
+  
+    try {
+      // Find the candidate by ID
+      const candidate = await candidates.findById(candidateId).lean();
+  
+      if (!candidate) {
+        return res.status(404).json({ message: 'Candidate not found' });
+      }
+  
+      // Find the specific job application by jobId
+      const jobApplication = candidate.jobApplications.find(
+        (app) => app.jobId.toString() === jobId
+      );
+  
+      if (!jobApplication) {
+        return res
+          .status(404)
+          .json({ message: 'Job application not found for this candidate' });
+      }
+  
+      // Extract the stage statuses and their scores
+      const stageStatuses = jobApplication.stageStatuses || {};
+      const scores = {};
+      let totalScore = 0; // Initialize total score
+  
+      // Use Object.entries() to iterate over a plain object
+      for (const [stageName, stageStatus] of Object.entries(stageStatuses)) {
+        // Handle the mixed type of 'score' appropriately
+        const stageScore = stageStatus.score !== undefined ? stageStatus.score : {};
+  
+        scores[stageName] = stageScore; // Assign to scores object
+  
+        // Compute total score
+        if (typeof stageScore === 'number') {
+          totalScore += stageScore;
+        } else if (typeof stageScore === 'object' && stageScore !== null) {
+          // Sum up the numeric values in the object
+          const sum = Object.values(stageScore).reduce((acc, val) => {
+            if (typeof val === 'number') {
+              return acc + val;
+            }
+            return acc;
+          }, 0);
+          totalScore += sum;
+        }
+      }
+  
+      // Return the scores per stage and the total score
+      return res.status(200).json({ candidateId, jobId, scores, totalScore });
+    } catch (error) {
+      console.error('Error fetching candidate scores:', error);
+      return res.status(500).json({ message: 'Internal server error' });
+    }
+  };
+

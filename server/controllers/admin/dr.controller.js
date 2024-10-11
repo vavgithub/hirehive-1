@@ -277,3 +277,59 @@ export const updateCandidateAssignee = async (req, res) => {
       res.status(500).json({ message: 'Server error during auto-assignment' });
     }
   };
+
+ export  const submitScoreReview = async (req, res) => {
+   try {
+     const { candidateId, jobId, stage, ratings, feedback } = req.body;
+ 
+     // Validate required fields
+     if (!candidateId || !jobId || !stage) {
+       return res.status(400).json({ message: 'candidateId, jobId, and stage are required' });
+     }
+ 
+     // Find the candidate by ID
+     const candidate = await candidates.findById(candidateId);
+     if (!candidate) {
+       return res.status(404).json({ message: 'Candidate not found' });
+     }
+ 
+     // Find the specific job application
+     const jobApplication = candidate.jobApplications.find(
+       (app) => app.jobId.toString() === jobId
+     );
+     if (!jobApplication) {
+       return res.status(404).json({ message: 'Job application not found for this candidate' });
+     }
+ 
+     // Check if the stage exists in stageStatuses
+     if (!jobApplication.stageStatuses.has(stage)) {
+       return res.status(400).json({ message: `Stage '${stage}' not found in candidate's job application` });
+     }
+ 
+     // Update the stage status
+     const stageStatus = jobApplication.stageStatuses.get(stage);
+ 
+     // Update score and feedback
+     stageStatus.score = ratings; // Can be a number or an object with multiple ratings
+     stageStatus.feedback = feedback;
+ 
+     // Update the status from 'Under Review' to 'Reviewed'
+     if (stageStatus.status === 'Under Review') {
+       stageStatus.status = 'Reviewed';
+     } else {
+       // Optionally handle cases where status is not 'Under Review'
+       return res.status(400).json({ message: `Cannot review a stage with status '${stageStatus.status}'` });
+     }
+ 
+     // Save the updated candidate document
+     await candidate.save();
+ 
+     // Respond with success
+     return res.status(200).json({ message: 'Review submitted successfully' });
+   } catch (error) {
+     console.error('Error in submitScoreReview:', error);
+     return res.status(500).json({ message: 'Internal server error', error: error.message });
+   }
+ };
+
+ 

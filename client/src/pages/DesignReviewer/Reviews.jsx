@@ -10,9 +10,6 @@ import Total from '../../svg/StatsCard/View Candidate/Total';
 import Portfolio from '../../svg/StatsCard/View Candidate/Portfolio';
 import Screening from '../../svg/StatsCard/View Candidate/Screening';
 import DesignTask from '../../svg/StatsCard/View Candidate/DesignTask';
-import Round1 from '../../svg/StatsCard/View Candidate/Round1';
-import Round2 from '../../svg/StatsCard/View Candidate/Round2';
-import OfferSent from '../../svg/StatsCard/View Candidate/OfferSent';
 
 
 const statsOne = [
@@ -31,7 +28,12 @@ const PortfolioReview = ({ candidate, onSubmit }) => {
   const [feedback, setFeedback] = useState('');
 
   const handleSubmit = () => {
-    onSubmit(candidate._id, { rating, feedback });
+    onSubmit(candidate._id, {
+      jobId: candidate.currentApplication.jobId,
+      stage: candidate.currentApplication.currentStage,
+      ratings: rating,
+      feedback,
+    });
   };
 
   return (
@@ -59,9 +61,13 @@ const ScreeningReview = ({ candidate, onSubmit }) => {
   const handleRatingChange = (category, value) => {
     setRatings(prev => ({ ...prev, [category]: value }));
   };
-
   const handleSubmit = () => {
-    onSubmit(candidate._id, { ratings, feedback });
+    onSubmit(candidate._id, {
+      jobId: candidate.currentApplication.jobId,
+      stage: candidate.currentApplication.currentStage,
+      ratings,
+      feedback,
+    });
   };
 
   return (
@@ -69,7 +75,8 @@ const ScreeningReview = ({ candidate, onSubmit }) => {
       {Object.entries(ratings).map(([category, value]) => (
         <div key={category} className='flex gap-4 items-center'>
           <span className='w-32'>{category}</span>
-          <Scorer value={value} onChange={(v) => handleRatingChange(category, v)} />
+          <Scorer value={ratings[category]} onChange={(v) => handleRatingChange(category, v)} />
+
         </div>
       ))}
       <div className='flex gap-4'>
@@ -97,16 +104,19 @@ const RoundReview = ({ roundNumber, candidate, onSubmit }) => {
 
   const handleSubmit = () => {
     onSubmit(candidate._id, {
+      jobId: candidate.currentApplication.jobId,
       stage: `Round ${roundNumber}`,
-      rating,
-      feedback
+      ratings: rating,
+      feedback,
     });
   };
+  
 
   return (
     <div className='bg-background-100 flex gap-4 justify-between items-center p-4'>
       <span className='flex-shrink-0'>{`Round ${roundNumber} ratings`}</span>
       <Scorer value={rating} onChange={setRating} />
+
       <input
         type="text"
         className='w-full bg-background-80 text-white p-2 rounded'
@@ -129,7 +139,10 @@ const fetchCandidates = async () => {
 };
 
 const submitReview = async ({ candidateId, reviewData }) => {
-  const response = await axios.post(`dr/submit-review/${candidateId}`, reviewData);
+  const response = await axios.post('dr/submit-score-review', {
+    candidateId,
+    ...reviewData,
+  });
   return response.data;
 };
 

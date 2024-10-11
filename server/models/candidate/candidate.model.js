@@ -36,6 +36,10 @@ const stageStatusSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.Mixed,
     default: {},
   },
+  feedback: {
+    type: String,
+    default: 'N/A',
+  },
   currentCall: {
     scheduledDate: Date,
     scheduledTime: String,

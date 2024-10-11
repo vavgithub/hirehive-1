@@ -30,6 +30,11 @@ const fetchCandidateData = async (candidateId, jobId) => {
     return data;
 };
 
+const fetchTotalScore = async (candidateId , jobId)=>{
+    const {data} = await axios.get(`hr/candidate/${candidateId}/job/${jobId}/scores`);
+    return data;
+}
+
 // Transform the fetched data to match the expected structure
 const transformCandidateData = (data) => {
     return {
@@ -62,7 +67,17 @@ const ViewCandidateProfile = () => {
     const { data, isLoading, isError, error: queryError } = useQuery({
         queryKey: ['candidate', candidateId, jobId],
         queryFn: () => fetchCandidateData(candidateId, jobId),
+        cacheTime: 0,
+        staleTime: 0,
+        onError: (error) => {
+            console.error('Query Error:', error);
+            dispatch(setError(error.message));
+        },
+    });
 
+    const { data:score ,error } = useQuery({
+        queryKey: ['candidateScore', candidateId, jobId],
+        queryFn: () => fetchTotalScore(candidateId, jobId),
         cacheTime: 0,
         staleTime: 0,
         onError: (error) => {
@@ -121,13 +136,13 @@ const ViewCandidateProfile = () => {
                 break;
             case 'ACTION_2':
                 navigate('/some-other-page');
-                break;
+                break;    
             case 'ACTION_3':
                 // Example: Update state or trigger some function
                 console.log('Performing Action 3');
                 break;
             case 'ACTION_4':
-                if (window.confirm('Are you sure you want to perform Action 4?')) {
+                if (window.confirm('Are you sure you want to perform Action 4?')) { 
                     console.log('Action 4 confirmed');
                 }
                 break;
@@ -205,7 +220,7 @@ const ViewCandidateProfile = () => {
                 {/* VAV Score Section */}
                 <div className="flex bg-stars flex-col items-center bg-background-90 w-[430px] bg-cover p-5 rounded-xl">
                     <h3 className="typography-h3">VAV SCORE</h3>
-                    <span className="marks text-font-primary">00</span>
+                    <span className="marks text-font-primary">{score?.totalScore}</span>
                     <p className="typography-large">Out of 100</p>
                 </div>
             </div>
