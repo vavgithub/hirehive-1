@@ -1,15 +1,11 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import axios from '../../api/axios';
 import Modal from '../Modal';
 import { ACTION_TYPES } from '../../utility/ActionTypes';
 import { setCurrentStage, updateStageStatus } from '../../redux/applicationStageSlice';
 import { Button } from '../ui/Button';
-// import axios from '../../api/axios';
-// import Modal from '../Modal';
-// import { ACTION_TYPES } from '../../utility/ActionTypes';
-// import { setCurrentStage } from '../../redux/applicationStageSlice';
 
 const StageActions = ({ stage, candidateId, jobId }) => {
     const dispatch = useDispatch();
@@ -17,13 +13,23 @@ const StageActions = ({ stage, candidateId, jobId }) => {
     const [isRejectModalOpen, setIsRejectModalOpen] = React.useState(false);
     const [isMoveModalOpen, setIsMoveModalOpen] = React.useState(false);
 
+    const candidateData = useSelector(state => state.candidate.candidateData);
+
     const rejectCandidateMutation = useMutation({
-        mutationFn: (rejectionReason) => axios.post('/hr/reject-candidate', {
-            candidateId,
-            jobId,
-            stage,
-            rejectionReason
-        }),
+        mutationFn: ({ candidateId, jobId, rejectionReason }) => 
+            axios.post('/hr/reject-candidate', { candidateId, jobId, rejectionReason }),
+        onSuccess: (data) => {
+            dispatch(updateStageStatus({
+                stage,
+                status: 'Rejected',
+                data: {
+                    ...data,
+                    rejectionReason: data.rejectionReason
+                }
+            }));
+            queryClient.invalidateQueries(['candidate', candidateId, jobId]);
+            setIsRejectModalOpen(false);
+        },
     });
 
     const moveToNextRoundMutation = useMutation({
@@ -32,34 +38,21 @@ const StageActions = ({ stage, candidateId, jobId }) => {
             jobId,
             currentStage: stage
         }),
-    });
-    useEffect(() => {
-        if (rejectCandidateMutation.isSuccess) {
-            dispatch(updateStageStatus({
-                stage,
-                status: 'Rejected',
-                data: rejectCandidateMutation.data
-            }));
-            queryClient.invalidateQueries(['candidate', candidateId, jobId]);
-            setIsRejectModalOpen(false);
-        }
-    }, [rejectCandidateMutation.isSuccess, rejectCandidateMutation.data, dispatch, stage, candidateId, jobId]);
-
-    useEffect(() => {
-        if (moveToNextRoundMutation.isSuccess) {
+        onSuccess: (data) => {
             dispatch(updateStageStatus({
                 stage,
                 status: 'Cleared',
-                data: moveToNextRoundMutation.data
+                data: data
             }));
-            dispatch(setCurrentStage(moveToNextRoundMutation.data.nextStage));
+            dispatch(setCurrentStage(data.nextStage));
             queryClient.invalidateQueries(['candidate', candidateId, jobId]);
             setIsMoveModalOpen(false);
-        }
-    }, [moveToNextRoundMutation.isSuccess, moveToNextRoundMutation.data, dispatch, stage, candidateId, jobId]);
+        },
+    });
 
-    const handleReject = (rejectionReason) => {
-        rejectCandidateMutation.mutate(rejectionReason);
+    const handleReject = (item, rejectionReason) => {
+        console.log('Rejection reason in StageActions:', rejectionReason);
+        rejectCandidateMutation.mutate({ candidateId, jobId, rejectionReason });
     };
 
     const handleMoveToNextRound = () => {
@@ -68,9 +61,7 @@ const StageActions = ({ stage, candidateId, jobId }) => {
 
     return (
         <div className='flex justify-end gap-4'>
-
             <div className='w-[176px]'>
-
                 <Button
                     variant="cancel"
                     onClick={() => setIsRejectModalOpen(true)}
@@ -88,15 +79,15 @@ const StageActions = ({ stage, candidateId, jobId }) => {
                 </Button>
             </div>
 
-
             <Modal
                 open={isRejectModalOpen}
                 onClose={() => setIsRejectModalOpen(false)}
                 actionType={ACTION_TYPES.REJECT}
                 onConfirm={handleReject}
-                candidateName={`Candidate Name`} // You'll need to pass this from the parent
-                jobTitle={`Job Title`} // You'll need to pass this from the parent
-                companyName={`Company Name`} // You'll need to pass this from the parent
+                item={{ candidateId, jobId }}
+                candidateName={`${candidateData?.firstName} ${candidateData?.lastName}`}
+                jobTitle={candidateData?.jobApplication?.jobApplied}
+                companyName="Your Company Name"
             />
 
             <Modal
@@ -104,7 +95,7 @@ const StageActions = ({ stage, candidateId, jobId }) => {
                 onClose={() => setIsMoveModalOpen(false)}
                 actionType={ACTION_TYPES.MOVE}
                 onConfirm={handleMoveToNextRound}
-                candidateName={`Candidate Name`} // You'll need to pass this from the parent
+                candidateName={`${candidateData?.firstName} ${candidateData?.lastName}`}
                 currentStage={stage}
             />
         </div>
