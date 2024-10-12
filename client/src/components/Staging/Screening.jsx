@@ -24,34 +24,17 @@ import ClipboardIcon from '../../svg/Staging/ClipboardIcon';
 import { formatTime } from '../../utility/formatTime';
 import CopyToClipboard from 'react-copy-to-clipboard';
 
-const PendingCardContent = ({ candidateId, jobId }) => {
-    const [date, setDate] = useState(null);
-    const [time, setTime] = useState(null);
-    const [assignee, setAssignee] = useState(null);
-    const [meetingLink, setMeetingLink] = useState('');
-    const dispatch = useDispatch();
-    const queryClient = useQueryClient();
+const ScheduleForm = ({ candidateId, jobId, onSubmit, isRescheduling, initialData, onCancel }) => {
+    const [date, setDate] = useState(isRescheduling ? null : (initialData ? new Date(initialData.scheduledDate) : null));
+    const [time, setTime] = useState(isRescheduling ? null : (initialData ? initialData.scheduledTime : null));
+    const [assignee, setAssignee] = useState(isRescheduling ? null : (initialData ? initialData.assignedTo : null));
+    const [meetingLink, setMeetingLink] = useState(isRescheduling ? '' : (initialData ? initialData.meetingLink : ''));
 
     const isFormValid = date && time && assignee && meetingLink;
 
-    const scheduleMutation = useMutation({
-        mutationFn: (scheduleData) =>
-            axios.post('hr/schedule-screening', scheduleData),
-        onSuccess: (data) => {
-            dispatch(updateStageStatus({
-                stage: 'Screening',
-                status: 'Call Scheduled',
-                data: data
-            }));
-            queryClient.invalidateQueries(['candidate', candidateId, jobId]);
-        }
-    });
-
     const handleSubmit = () => {
         if (isFormValid) {
-            scheduleMutation.mutate({
-                candidateId,
-                jobId,
+            onSubmit({
                 date: date.toISOString(),
                 time: time.format('HH:mm'),
                 assigneeId: assignee._id,
@@ -61,9 +44,8 @@ const PendingCardContent = ({ candidateId, jobId }) => {
     };
 
     return (
-        <div className="flex flex-col">
-            <div className='flex'>
-
+        <div className="flex flex-col gap-4">
+            <div className='flex gap-4'>
                 <Datepicker onChange={setDate} value={date} />
                 <Timepicker onChange={setTime} value={time} />
                 <AssigneeSelector
@@ -81,28 +63,81 @@ const PendingCardContent = ({ candidateId, jobId }) => {
                 value={meetingLink}
                 onChange={(e) => setMeetingLink(e.target.value)}
             />
-            <div className='w-[170px]'>
-                <Button
-                    variant="primary"
-                    disabled={!isFormValid}
-                    onClick={handleSubmit}
-                >
-                    Schedule Call
-                </Button>
+            <div className='flex gap-4'>
+                {isRescheduling ? (
+                    <>
+                        <div className='w-[170px]'>
+                            <Button
+                                variant="secondary"
+                                onClick={onCancel}
+                            >
+                                Cancel
+                            </Button>
+                        </div>
+                        <div className='w-[170px]'>
+                            <Button
+                                variant="primary"
+                                disabled={!isFormValid}
+                                onClick={handleSubmit}
+                            >
+                                Save Changes
+                            </Button>
+                        </div>
+                    </>
+                ) : (
+                    <div className='w-[170px]'>
+                        <Button
+                            variant="primary"
+                            disabled={!isFormValid}
+                            onClick={handleSubmit}
+                        >
+                            Schedule Call
+                        </Button>
+                    </div>
+                )}
             </div>
         </div>
     );
 };
 
-
-
 const Screening = ({ candidateId, jobId }) => {
     const dispatch = useDispatch();
+    const [isRescheduling, setIsRescheduling] = useState(false);
     const queryClient = useQueryClient();
     const stageData = useSelector(state => state.applicationStage.stageStatuses.Screening);
-    const candidateData = useSelector(state => state.candidate.candidateData);
 
-    console.log("Current Screening stage data:", stageData);
+    const scheduleMutation = useMutation({
+        mutationFn: (scheduleData) => axios.post('hr/schedule-screening', scheduleData),
+        onSuccess: (data) => {
+            dispatch(updateStageStatus({
+                stage: 'Screening',
+                status: 'Call Scheduled',
+                data: data.updatedStageStatus
+            }));
+            queryClient.invalidateQueries(['candidate', candidateId, jobId]);
+        }
+    });
+
+    const rescheduleMutation = useMutation({
+        mutationFn: (rescheduleData) => axios.post('hr/reschedule-screening', rescheduleData),
+        onSuccess: (data) => {
+            dispatch(updateStageStatus({
+                stage: 'Screening',
+                status: 'Call Scheduled',
+                data: data.updatedStageStatus
+            }));
+            queryClient.invalidateQueries(['candidate', candidateId, jobId]);
+            setIsRescheduling(false);
+        }
+    });
+
+    const handleSchedule = (scheduleData) => {
+        scheduleMutation.mutate({ candidateId, jobId, ...scheduleData });
+    };
+
+    const handleReschedule = (rescheduleData) => {
+        rescheduleMutation.mutate({ candidateId, jobId, ...rescheduleData });
+    };
 
     const updateAssigneeMutation = useMutation({
         mutationFn: (newAssignee) => axios.put('dr/update-assignee', {
@@ -140,89 +175,90 @@ const Screening = ({ candidateId, jobId }) => {
         updateAssigneeMutation.mutate(newAssignee);
     };
 
+    const renderCallDetails = (call) => (
+        <div className='bg-background-80 grid grid-cols-3 rounded-xl p-4'>
+            <div className='flex flex-col'>
+                <span className='typography-small-p text-font-gray'>Date</span>
+                <div className='flex items-center gap-2'>
+                    <CalenderIcon />
+                    <h2>
+                        {new Date(call.scheduledDate).toLocaleDateString('en-US', { timeZone: 'UTC' })}
+                    </h2>
+                </div>
+            </div>
+            <div className='flex flex-col'>
+                <span className='typography-small-p text-font-gray'>Time</span>
+                <div className='flex items-center gap-2'>
+                    <ClockIcon />
+                    <h2>
+                        {formatTime(call.scheduledTime)}
+                    </h2>
+                </div>
+            </div>
+            <div className='flex flex-col '>
+                <span className='typography-small-p text-font-gray'>Meeting Link</span>
+                <div className='flex items-center gap-2'>
+                    <LinkIcon />
+                    <h2 className='mr-2 text-font-primary'>screening_meeting_link</h2>
+                    <CopyToClipboard text={call.meetingLink}>
+                        <button className='flex items-center bg-background-70 px-[10px] py-[10px] rounded-xl'>
+                            <ClipboardIcon />
+                        </button>
+                    </CopyToClipboard>
+                </div>
+            </div>
+        </div>
+    );
+
     const renderContent = () => {
         switch (stageData?.status) {
             case 'Pending':
                 return (
-                    <div className="flex flex-col gap-4" >
+                    <div className="flex flex-col gap-4">
                         <Label icon={WarningIcon} text="Call not scheduled. Please contact the candidate to schedule the screening call and update the details below" />
-                        <PendingCardContent candidateId={candidateId} jobId={jobId} />
+                        <ScheduleForm 
+                            candidateId={candidateId} 
+                            jobId={jobId} 
+                            onSubmit={handleSchedule}
+                        />
                     </div>
                 );
             case 'Call Scheduled':
                 return (
                     <div className='flex flex-col gap-4'>
-                    <Label icon={WarningIcon} text={"The screening call has been scheduled. You can reschedule or cancel the call if needed."} />
-                    
-                    <div className='bg-background-80 grid grid-cols-3 rounded-xl p-4'>
-                            {/* ... existing scheduled call details ... */}
-                            <div className='flex flex-col'>
-                                <span className='typography-small-p text-font-gray'>Date</span>
-                                <div className='flex items-center gap-2'>
-                                    <CalenderIcon />
-                                    <h2>
-                                        {new Date(stageData?.currentCall?.scheduledDate).toLocaleDateString('en-US', { timeZone: 'UTC' })}
-                                    </h2>
-                                </div>
+                        <Label icon={WarningIcon} text={"The screening call has been scheduled. You can reschedule if needed."} />
+                        {renderCallDetails(stageData.currentCall)}
+                        {!isRescheduling && (
+                            <div className='w-[170px]'>
+                                <Button
+                                    variant="secondary"
+                                    onClick={() => setIsRescheduling(true)}
+                                >
+                                    Reschedule Call
+                                </Button>
                             </div>
-
-                            <div className='flex flex-col'>
-                                <span className='typography-small-p text-font-gray'>Time</span>
-                                <div className='flex items-center gap-2'>
-                                    <ClockIcon />
-                                    <h2>
-                                        {formatTime(stageData?.currentCall?.scheduledTime)}
-                                    </h2>
-                                </div>
-                            </div>
-
-                            <div className='flex flex-col '>
-                                <span className='typography-small-p text-font-gray'>Meeting Link</span>
-                                <div className='flex items-center gap-2'>
-                                    <LinkIcon />
-                                    <h2 className='mr-2 text-font-primary'>screening_meeting_link</h2>
-                                    <CopyToClipboard text={stageData?.currentCall.meetingLink}>
-                                        <button className='flex items-center bg-background-70 px-[10px] py-[10px] rounded-xl'>
-                                            <ClipboardIcon />
-                                        </button>
-                                    </CopyToClipboard>
-                                </div>
-                            </div>
-                        </div>
-                        {/* {isRescheduling && (
-                            <div className='mt-4 grid grid-cols-3 gap-6'>
-                                <div className='flex flex-col'>
-                                    <span>New Date</span>
-                                    <DatePicker onChange={handleDateChange} value={selectedDate} />
-                                </div>
-                                <div className='flex flex-col'>
-                                    <span>New Time</span>
-                                    <TimePicker onChange={handleTimeChange} value={selectedTime} />
-                                </div>
-                                <div className='flex flex-col'>
-                                    <span>New Meeting Link</span>
-                                    <input
-                                        type="text"
-                                        placeholder='Enter Meeting Link'
-                                        className='outline-none'
-                                        value={meetLink}
-                                        onChange={(e) => handleMeetChange(e)}
-                                    />
-                                </div>
-                            </div>
-                        )} */}
-                        {/* {callHistory.length > 0 && (
+                        )}
+                        {isRescheduling && (
+                            <ScheduleForm 
+                                candidateId={candidateId} 
+                                jobId={jobId} 
+                                onSubmit={handleReschedule}
+                                isRescheduling={true}
+                                initialData={stageData.currentCall}
+                                onCancel={() => setIsRescheduling(false)}
+                            />
+                        )}
+                        {stageData.callHistory && stageData.callHistory.length > 0 && (
                             <div className='mt-4'>
-                                <h3>Previous Schedules:</h3>
-                                {callHistory.map((call, index) => (
-                                    <div key={index}>
-                                        <p>{new Date(call.scheduledDate).toLocaleDateString()} at {formatTime(call.scheduledTime)} - {call.status}</p>
+                                <h3 className='typography-h3'>Previous Calls</h3>
+                                {stageData.callHistory.map((call, index) => (
+                                    <div key={index} className='mt-2'>
+                                        {renderCallDetails(call)}
+                                        <p className='typography-small-p text-font-gray mt-1'>Status: {call.status}</p>
                                     </div>
                                 ))}
                             </div>
-                        )} */}
-                    
-                    
+                        )}
                     </div>
                 );
             case 'Under Review':

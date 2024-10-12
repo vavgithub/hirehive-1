@@ -295,3 +295,61 @@ export const rejectCandidate = async (req, res) => {
         res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
+
+export const rescheduleScreening = async (req, res) => {
+  try {
+      const { candidateId, jobId, date, time, assigneeId, meetingLink } = req.body;
+
+      const candidate = await candidates.findById(candidateId);
+      if (!candidate) {
+          return res.status(404).json({ message: 'Candidate not found' });
+      }
+
+      const jobApplication = candidate.jobApplications.find(
+          app => app.jobId.toString() === jobId
+      );
+      if (!jobApplication) {
+          return res.status(404).json({ message: 'Job application not found' });
+      }
+
+      // Initialize Screening stage status if it doesn't exist
+      if (!jobApplication.stageStatuses.Screening) {
+          jobApplication.stageStatuses.Screening = {
+              status: 'Call Scheduled',
+              assignedTo: assigneeId,
+              currentCall: null,
+              callHistory: []
+          };
+      }
+
+      // Move current call to call history if it exists
+      if (jobApplication.stageStatuses.Screening.currentCall) {
+          if (!jobApplication.stageStatuses.Screening.callHistory) {
+              jobApplication.stageStatuses.Screening.callHistory = [];
+          }
+          jobApplication.stageStatuses.Screening.callHistory.push({
+              ...jobApplication.stageStatuses.Screening.currentCall,
+              status: 'Rescheduled'
+          });
+      }
+
+      // Update current call
+      jobApplication.stageStatuses.Screening.currentCall = {
+          scheduledDate: date,
+          scheduledTime: time,
+          meetingLink: meetingLink
+      };
+      jobApplication.stageStatuses.Screening.assignedTo = assigneeId;
+      jobApplication.stageStatuses.Screening.status = 'Call Scheduled';
+
+      await candidate.save();
+
+      res.status(200).json({
+          message: 'Screening call rescheduled successfully',
+          updatedStageStatus: jobApplication.stageStatuses.Screening
+      });
+  } catch (error) {
+      console.error('Error rescheduling screening:', error);
+      res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
