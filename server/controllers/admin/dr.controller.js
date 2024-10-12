@@ -332,4 +332,42 @@ export const updateCandidateAssignee = async (req, res) => {
    }
  };
 
+
+ export const scheduleScreening = async (req, res) => {
+  try {
+      const { candidateId, jobId, date, time, assigneeId, meetingLink } = req.body;
+
+      const candidate = await candidates.findById(candidateId);
+      if (!candidate) {
+          return res.status(404).json({ message: 'Candidate not found' });
+      }
+
+      const jobApplication = candidate.jobApplications.find(
+          app => app.jobId.toString() === jobId
+      );
+      if (!jobApplication) {
+          return res.status(404).json({ message: 'Job application not found' });
+      }
+
+      jobApplication.stageStatuses.Screening = {
+          status: 'Call Scheduled',
+          assignedTo: assigneeId,
+          currentCall: {
+              scheduledDate: date,
+              scheduledTime: time,
+              meetingLink: meetingLink
+          }
+      };
+
+      await candidate.save();
+
+      res.status(200).json({
+          message: 'Screening call scheduled successfully',
+          updatedStageStatus: jobApplication.stageStatuses.Screening
+      });
+  } catch (error) {
+      console.error('Error scheduling screening:', error);
+      res.status(500).json({ message: 'Server error' });
+  }
+};
  

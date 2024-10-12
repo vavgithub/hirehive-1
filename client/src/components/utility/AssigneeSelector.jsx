@@ -10,6 +10,7 @@ import {
   ListItemText,
   InputAdornment,
   Box,
+  Autocomplete,
 } from '@mui/material';
 import { fetchAvailableDesignReviewers } from '../../api/authApi';
 import SearchIcon from '../../svg/SearchIcon';
