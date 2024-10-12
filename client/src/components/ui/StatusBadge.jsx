@@ -2,7 +2,9 @@ import React from 'react';
 
 
 const getStatusColor = (status) => {
-  switch (status?.toLowerCase()) {
+  const normalizedStatus = typeof status === 'string' ? status.toLowerCase() : '';
+
+  switch (normalizedStatus) {
     case 'not assigned':
       return 'bg-red-80 text-red-90';
     case 'rejected':
@@ -25,9 +27,12 @@ const getStatusColor = (status) => {
 const StatusBadge = ({ status }) => {
   const colorClasses = getStatusColor(status);
 
+  // If status is not a string, display a fallback message
+  const displayStatus = typeof status === 'string' ? status : 'Unknown Status';
+
   return (
-    <div className={`flex items-center rounded-xl justify-between px-4 py-2 h-8  ${colorClasses}`}>
-      <span className="typography-body">{status}</span>
+    <div className={`flex items-center rounded-xl justify-between px-4 py-2 h-8 ${colorClasses}`}>
+      <span className="typography-body">{displayStatus}</span>
     </div>
   );
 };

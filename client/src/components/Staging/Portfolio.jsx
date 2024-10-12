@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
     Card,
     CardContent,
@@ -13,12 +13,15 @@ import StatusBadge from '../ui/StatusBadge';
 import Label from '../ui/Label';
 import WarningIcon from '../../svg/Staging/WarningIcon';
 import AssigneeSelector from '../utility/AssigneeSelector';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import StageActions from './StageAction';
+import { setCurrentStage, updateStageStatus } from '../../redux/applicationStageSlice';
 
-const Portfolio = ({ stageData, candidateId, jobId, onUpdateStatus, onUpdateAssignee }) => {
+const Portfolio = ({ candidateId, jobId }) => {
     const dispatch = useDispatch();
     const queryClient = useQueryClient();
-
+    const stageData = useSelector(state => state.applicationStage.stageStatuses.Portfolio)
+    console.log("please check this whaats going wrong", stageData)
     const updateAssigneeMutation = useMutation({
         mutationFn: (newAssignee) => axios.put('dr/update-assignee', {
             candidateId,
@@ -26,38 +29,30 @@ const Portfolio = ({ stageData, candidateId, jobId, onUpdateStatus, onUpdateAssi
             stage: 'Portfolio',
             assigneeId: newAssignee._id
         }),
-        onSuccess: (data) => {
-            onUpdateAssignee('Portfolio', data.updatedStageStatus.assignedTo);
-            onUpdateStatus('Portfolio', data.updatedStageStatus.status, data.updatedStageStatus);
-            queryClient.invalidateQueries(['candidate', candidateId, jobId]);
-        },
-    });
+        onSuccess: (response) => {
+            console.log("Assignee update API response:", response);
 
-    const rejectCandidateMutation = useMutation({
-        mutationFn: (rejectionReason) => axios.post('/hr/reject-candidate', {
-            candidateId,
-            jobId,
-            stage: 'Portfolio',
-            rejectionReason
-        }),
-        onSuccess: (data) => {
-            onUpdateStatus('Portfolio', 'Rejected', data);
-            queryClient.invalidateQueries(['candidate', candidateId, jobId]);
-        },
-    });
+            const { updatedStageStatus, currentStage } = response.data;
 
-    const moveToNextRoundMutation = useMutation({
-        mutationFn: () => axios.post('/hr/move-candidate', {
-            candidateId,
-            jobId,
-            currentStage: 'Portfolio'
-        }),
-        onSuccess: (data) => {
-            onUpdateStatus('Portfolio', 'Cleared', data);
-            // Assuming the API returns the next stage
-            dispatch(setCurrentStage(data.nextStage));
+            dispatch(updateStageStatus({
+                stage: 'Portfolio',
+                status: updatedStageStatus.status,
+                data: {
+                    ...stageData,
+                    ...updatedStageStatus,
+                }
+            }));
+
+            if (currentStage) {
+                dispatch(setCurrentStage(currentStage));
+            }
+
             queryClient.invalidateQueries(['candidate', candidateId, jobId]);
         },
+        onError: (error) => {
+            console.error("Assignee update error:", error);
+            // Optionally, you can dispatch an action to show an error message to the user
+        }
     });
 
     const onViewPortfolio = () => {
@@ -66,15 +61,6 @@ const Portfolio = ({ stageData, candidateId, jobId, onUpdateStatus, onUpdateAssi
     const handleAssigneeChange = (newAssignee) => {
         updateAssigneeMutation.mutate(newAssignee);
     };
-
-    const handleReject = (rejectionReason) => {
-        rejectCandidateMutation.mutate(rejectionReason);
-    };
-
-    const handleMoveToNextRound = () => {
-        moveToNextRoundMutation.mutate();
-    };
-
 
     const renderContent = () => {
         switch (stageData?.status) {
@@ -92,36 +78,79 @@ const Portfolio = ({ stageData, candidateId, jobId, onUpdateStatus, onUpdateAssi
             case 'Reviewed':
                 return (
                     <>
-                    
-                        <button onClick={() => handleReject('Some reason')}>Reject</button>
-                        <button onClick={handleMoveToNextRound}>Move to Next Round</button>
+                        <div className='w-full '>
+
+                            <div className='flex justify-between gap-4'>
+                                <div className='w-full'>
+                                    <p className='typography-small-p text-font-gray'>Remarks</p>
+                                    <p className='typography-body pb-8'>{stageData?.feedback}</p>
+                                </div>
+
+                                <div className='bg-stars bg-cover rounded-xl w-[160px] my-4' >
+                                    <div className='p-4 flex flex-col items-center'>
+                                        <p className='typography-small-p text-font-gray '>Total Score:</p>
+                                        <div className='flex flex-col items-center text-font-accent'>
+                                            <p className='display-d2 font-bold'>{stageData?.score}</p>
+                                            <p className='typography-small-p text-font-gray'>Out Of 5</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <StageActions
+                            stage="Portfolio"
+                            candidateId={candidateId}
+                            jobId={jobId}
+                        />
                     </>
-                )
+                );
             case 'Cleared':
                 return (
-                    <>
-                        <Typography variant="body2" mb={2}>
-                            {stageData.feedback}
-                        </Typography>
-                        <Box display="flex" justifyContent="space-between" alignItems="center">
-                            <Typography variant="body2">Score</Typography>
-                            <Typography variant="h4"> <small>out of 5</small></Typography>
-                        </Box>
+                    <> <div className='w-full '>
+
+                    <div className='flex justify-between gap-4'>
+                        <div className='w-full'>
+                            <p className='typography-small-p text-font-gray'>Remarks</p>
+                            <p className='typography-body pb-8'>{stageData?.feedback}</p>
+                        </div>
+
+                        <div className='bg-stars bg-cover rounded-xl w-[160px] my-4' >
+                            <div className='p-4 flex flex-col items-center'>
+                                <p className='typography-small-p text-font-gray '>Total Score:</p>
+                                <div className='flex flex-col items-center text-font-accent'>
+                                    <p className='display-d2 font-bold'>{stageData?.score}</p>
+                                    <p className='typography-small-p text-font-gray'>Out Of 5</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                     </>
                 );
             case 'Rejected':
                 return (
                     <>
-                        <Typography variant="body2" mb={2}>
-                            Reason for rejection
-                        </Typography>
-                        <Typography variant="body1">
-                            {rejectionReason}
-                        </Typography>
-                        <Box display="flex" justifyContent="space-between" alignItems="center" mt={2}>
-                            <Typography variant="body2">Score</Typography>
-                            <Typography variant="h4">{score} <small>out of 5</small></Typography>
-                        </Box>
+                        <div className='w-full '>
+
+                            <div className='flex justify-between gap-4'>
+                                <div className='w-full'>
+                                    <p className='typography-small-p text-font-gray'>Remarks</p>
+                                    <p className='typography-body pb-8'>{stageData?.rejectionReason}</p>
+                                </div>
+
+                                <div className='bg-stars bg-cover rounded-xl w-[160px] my-4' >
+                                    <div className='p-4 flex flex-col items-center'>
+                                        <p className='typography-small-p text-font-gray '>Total Score:</p>
+                                        <div className='flex flex-col items-center text-font-accent'>
+                                            <p className='display-d2 font-bold'>{stageData?.score}</p>
+                                            <p className='typography-small-p text-font-gray'>Out Of 5</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     </>
                 );
             default:
@@ -187,9 +216,6 @@ const Portfolio = ({ stageData, candidateId, jobId, onUpdateStatus, onUpdateAssi
                 </Box>
                 {renderContent()}
             </CardContent>
-            <CardActions sx={{ justifyContent: 'space-between' }}>
-                {renderActions()}
-            </CardActions>
         </Card>
     );
 };

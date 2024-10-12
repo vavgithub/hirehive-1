@@ -325,7 +325,9 @@ const Table = ({ jobId }) => {
       headerName: 'Actions',
       width: 150,
       renderCell: (params) => (
-        <div className='flex h-full items-center gap-2'>
+        <div className='flex h-full items-center gap-2'
+          onClick={(event) => event.stopPropagation()}
+        >
           <button
             onClick={() => handleMoveClick(params.row)}
             disabled={!canMove(params.row)}

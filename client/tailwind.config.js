@@ -14,6 +14,7 @@ export default {
         "assessment":"url('/src/svg/Background/AssessmentBanner.svg')",
         "verification":"url('/src/svg/Background/verification.svg')",
         "stars":"url('/src/svg/Background/Stars.svg')",
+        "score":"url('/src/svg/Background/Score.svg')",
         "que-bg":"url('/src/svg/Background/Que.svg')",      
         "login-screen":"url('/src/svg/Background/loginScreenBg.svg')",  
         "sundar-kanya":"url('/src/svg/Background/sundar-kanya.png')",  

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate , useParams } from 'react-router-dom';
 import ResumeIcon from '../../svg/ResumeIcon';
 import AssignmentIcon from '../../svg/AssignmentIcon';
 import PhoneIcon from '../../svg/PhoneIcon';
@@ -61,6 +61,7 @@ const ViewCandidateProfile = () => {
     const { candidateId, jobId } = useParams();
     console.log('Params:', { candidateId, jobId });
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
  
 
