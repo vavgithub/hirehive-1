@@ -19,7 +19,7 @@ const getStageOptions = (stage) => {
     case 'Portfolio':
       return ['Not Assigned', 'Under Review', 'Reviewed' ,  'Cleared', 'Rejected'];
     case 'Screening':
-      return ['Call Pending', 'Call Scheduled', 'Under Review','Reviewed' , 'Cleared', 'No Show', 'Rejected'];
+      return ['Pending', 'Call Scheduled', 'Under Review','Reviewed' , 'Cleared', 'No Show', 'Rejected'];
     case 'Design Task':
       return ['Sent', 'Not Assigned', 'Under Review', 'Reviewed' , 'Cleared', 'Rejected', 'Not Submitted'];
     case 'Round 1':

@@ -9,8 +9,8 @@ const getStatusColor = (status) => {
       return 'bg-red-80 text-red-90';
     case 'rejected':
       return 'bg-red-200 text-red-100';
-    case 'call pending':
-      return 'bg-red-200 text-red-100';
+    case 'pending':
+      return 'bg-red-80 text-red-90';
     case 'under review':
         return 'bg-yellow-90 text-yellow-100';
     case 'call scheduled':
