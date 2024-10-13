@@ -18,9 +18,9 @@ const theme = createTheme({
             backgroundColor: 'black',
             color: 'white',
           },
-          '& .MuiOutlinedInput-notchedOutline': {
-            borderColor: 'teal',
-          },
+          // '& .MuiOutlinedInput-notchedOutline': {
+          //   borderColor: 'teal',
+          // },
           '& .MuiSvgIcon-root': {
             color: 'white',
           },

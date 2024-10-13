@@ -23,7 +23,7 @@ import { ACTION_TYPES } from '../utility/ActionTypes';
 import ResumeViewer from './utility/ResumeViewer';
 
 
-const Table = ({ jobId }) => {
+const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
   const queryClient = useQueryClient();
   const [isAutoAssignModalOpen, setIsAutoAssignModalOpen] = useState(false);
   const [isBudgetModalOpen, setIsBudgetModalOpen] = useState(false);
@@ -52,12 +52,16 @@ const Table = ({ jobId }) => {
   const { data: apiResponse, isLoading, isError } = useQuery({
     queryKey: ['candidates', jobId],
     queryFn: () => axios.get(`/admin/candidate/${jobId}`).then(res => res.data),
+    enabled: !readOnly, // Only fetch data if not in readOnly mode
   });
 
   // Extract candidates from the API response
-  const rowsData = apiResponse?.candidates || [];
+  // const rowsData = apiResponse?.candidates || [];
 
-  console.log(rowsData);
+
+  // Use readOnlyData if in readOnly mode, otherwise use data from API
+  const rowsData = readOnly ? readOnlyData : (apiResponse?.candidates || []);
+  // console.log(rowsData);
 
 
   // Apply budget filter
@@ -241,26 +245,42 @@ const Table = ({ jobId }) => {
     }
   };
 
-  const columns = [
+  const ensureAbsoluteUrl = (url) => {
+    if (url && !url.startsWith('http://') && !url.startsWith('https://')) {
+      return `https://${url}`;
+    }
+    return url;
+  };
+
+
+  const commonColumns = [
     {
       field: 'fullName',
       headerName: 'Full Name',
       width: 250,
       sortable: false,
-      valueGetter: (value, row) => `${row.firstName || ''} ${row.lastName || ''}`,
+      valueGetter: (params, row) => `${row?.firstName || ''} ${row?.lastName || ''}`,
       renderCell: (params) => (
         <div className="name-cell flex items-center gap-2">
           <span>{params.value}</span>
-          <div className="hover-icons flex">
-            <Link to={params?.row?.portfolio} target="_blank" className="icon-link">
-              <FaUser className="icon" />
-            </Link>
-            <Link to={params?.row?.portfolio} target="_blank" className="icon-link">
-              <FaGlobe className="icon" />
-            </Link>
-            <button onClick={() => handleDocumentClick(params.row.resumeUrl)} className="icon-link">
-              <FaFile className="icon" />
-            </button>
+          <div className="hover-icons flex"
+            onClick={(event) => event.stopPropagation()}
+          >
+            {params.row.portfolio && (
+              <a href={ensureAbsoluteUrl(params.row.portfolio)} target="_blank" rel="noopener noreferrer" className="icon-link">
+                <FaUser className="icon" />
+              </a>
+            )}
+            {params.row.website && params.row.website !== params.row.portfolio && (
+              <a href={ensureAbsoluteUrl(params.row.website)} target="_blank" rel="noopener noreferrer" className="icon-link">
+                <FaGlobe className="icon" />
+              </a>
+            )}
+            {params.row.resumeUrl && (
+              <button onClick={() => handleDocumentClick(params.row.resumeUrl)} className="icon-link">
+                <FaFile className="icon" />
+              </button>
+            )}
           </div>
         </div>
       ),
@@ -268,10 +288,12 @@ const Table = ({ jobId }) => {
     {
       field: 'experience',
       headerName: "Experience",
+      width: 120,
     },
     {
       field: 'expectedCTC',
       headerName: "Expected CTC",
+      width: 150,
     },
     {
       field: 'currentStage',
@@ -279,11 +301,43 @@ const Table = ({ jobId }) => {
       width: 150,
       renderCell: (params) => (
         <div className='h-full flex items-center'>
-
           <StageBadge stage={params.value} />
         </div>
       )
     },
+  ];
+
+  const readOnlyColumns = [
+    ...commonColumns,
+    {
+      field: 'status',
+      headerName: 'Status',
+      width: 150,
+      renderCell: (params) => (
+        <div className='h-full flex items-center'>
+          <StatusBadge status={params.row.status} />
+        </div>
+      ),
+    },
+    {
+      field: 'jobTitle',
+      headerName: 'Applied For',
+      width: 200,
+    },
+    {
+      field: 'email',
+      headerName: 'Email',
+      width: 200,
+    },
+    {
+      field: 'phone',
+      headerName: 'Phone',
+      width: 150,
+    },
+  ];
+
+  const defaultColumns = [
+    ...commonColumns,
     {
       field: 'status',
       headerName: 'Status',
@@ -298,7 +352,6 @@ const Table = ({ jobId }) => {
         );
       },
     },
-
     {
       field: 'assignee',
       headerName: 'Assignee',
@@ -340,20 +393,26 @@ const Table = ({ jobId }) => {
           >
             {canReject(params.row) ? <RejectActive /> : <Reject />}
           </button>
-          <button onClick={(e) => handleRatingClick(e, params?.row)}>
-            {getRatingIcon(params?.row?.rating)}
+          <button onClick={(e) => handleRatingClick(e, params.row)}>
+            {getRatingIcon(params.row.rating)}
           </button>
         </div>
       )
     }
   ];
 
+  const columns = readOnly ? readOnlyColumns : defaultColumns;
+
   const navigate = useNavigate();
 
+  //  const handleRowClick = (params) => {
+  //     navigate(`/admin/jobs/view-candidate/${params.id}/${readOnly ? params.row.jobId : jobId}`)
+  //   }
+
   const handleRowClick = (params) => {
-    console.log(params)
-    navigate(`/admin/jobs/view-candidate/${params.id}/${jobId}`)
+    navigate(`/admin/jobs/view-candidate/${params?.row?._id}/${readOnly ? params.row.jobId : jobId}`)
   }
+
 
 
   return (
@@ -425,36 +484,39 @@ const Table = ({ jobId }) => {
       </style>
 
       <div className='flex justify-end py-4 gap-2'>
-        <div className='w-[216px] '>
-          <Button
-            icon={AutoAssign}
-            variant="primary"
-            onClick={() => setIsAutoAssignModalOpen(true)}
-            disabled={autoAssignMutation.isLoading}
-          >
-            {autoAssignMutation.isLoading ? 'Auto-Assigning...' : 'Auto-Assign Portfolio'}
-          </Button>
-        </div>
-        <div className={`${budgetFilter.from && budgetFilter.to ? "auto" : "w-[216px]"}`}>
+        {!readOnly && (<div className='flex gap-4'>
 
-          <Button
-            variant={budgetFilter.from && budgetFilter.to ? "icon" : "primary"}
-            icon={Budget}
-            onClick={() => {
-              setTempBudgetFilter(budgetFilter);
-              setIsBudgetModalOpen(true);
-            }}
-          >
-            {budgetFilter.from && budgetFilter.to ? '' : 'Screen With Budget'}
-          </Button>
+          <div className='w-[216px] '>
+            <Button
+              icon={AutoAssign}
+              variant="primary"
+              onClick={() => setIsAutoAssignModalOpen(true)}
+              disabled={autoAssignMutation.isLoading}
+            >
+              {autoAssignMutation.isLoading ? 'Auto-Assigning...' : 'Auto-Assign Portfolio'}
+            </Button>
+          </div>
+          <div className={`${budgetFilter.from && budgetFilter.to ? "auto" : "w-[216px]"}`}>
 
-        </div>
+            <Button
+              variant={budgetFilter.from && budgetFilter.to ? "icon" : "primary"}
+              icon={Budget}
+              onClick={() => {
+                setTempBudgetFilter(budgetFilter);
+                setIsBudgetModalOpen(true);
+              }}
+            >
+              {budgetFilter.from && budgetFilter.to ? '' : 'Screen With Budget'}
+            </Button>
+
+          </div>
+        </div>)}
       </div>
 
       <DataGrid
         rows={filteredRowsData}
         columns={columns}
-        getRowId={(row) => row._id}
+        getRowId={(row) => `${row._id}_${row.jobId}`} // Create a unique ID for each row
         initialState={{
           pagination: {
             paginationModel: { page: 0, pageSize: 5 },
