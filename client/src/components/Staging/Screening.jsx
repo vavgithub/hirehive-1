@@ -23,6 +23,7 @@ import LinkIcon from '../../svg/Staging/LinkIcon';
 import ClipboardIcon from '../../svg/Staging/ClipboardIcon';
 import { formatTime } from '../../utility/formatTime';
 import CopyToClipboard from 'react-copy-to-clipboard';
+import BulletMarks from '../ui/BulletMarks';
 
 const ScheduleForm = ({ candidateId, jobId, onSubmit, isRescheduling, initialData, onCancel }) => {
     const [date, setDate] = useState(isRescheduling ? null : (initialData ? new Date(initialData.scheduledDate) : null));
@@ -227,6 +228,14 @@ const Screening = ({ candidateId, jobId }) => {
         </div>
     );
 
+    const categories = [
+        { label: 'Attitude', value: stageData.score.Attitude },
+        { label: 'UX', value: stageData.score.UX },
+        { label: 'Tech', value: stageData.score.Tech },
+        { label: 'Communication', value: stageData.score.Communication },
+        { label: 'UI', value: stageData.score.UI },
+    ];
+
     const renderContent = () => {
         switch (stageData?.status) {
             case 'Pending':
@@ -292,17 +301,12 @@ const Screening = ({ candidateId, jobId }) => {
                                     <p className='typography-small-p text-font-gray'>Feedback</p>
                                     <p className='typography-body pb-8'>{stageData?.feedback}</p>
                                 </div>
-                                {stageData?.score && (
-                                    <div className='bg-stars bg-cover rounded-xl w-[160px] my-4'>
-                                        <div className='p-4 flex flex-col items-center'>
-                                            <p className='typography-small-p text-font-gray'>Score:</p>
-                                            <div className='flex flex-col items-center text-font-accent'>
-                                                <p className='display-d2 font-bold'>{stageData?.score}</p>
-                                                <p className='typography-small-p text-font-gray'>Out Of 5</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                )}
+                                {categories.map((category, index) => (
+                                                    <div key={index} className='flex items-center justify-between'>
+                                                        <span className='typography-small-p text-font-gray'>{category.label}</span>
+                                                        <BulletMarks marks={category.value} />
+                                                    </div>
+                                                ))}
                             </div>
                         </div>
                         <StageActions
@@ -317,6 +321,12 @@ const Screening = ({ candidateId, jobId }) => {
                     <div className='w-full'>
                         <p className='typography-small-p text-font-gray'>Feedback</p>
                         <p className='typography-body pb-8'>{stageData?.feedback}</p>
+                        {categories.map((category, index) => (
+                                                    <div key={index} className='flex items-center justify-between'>
+                                                        <span className='typography-small-p text-font-gray'>{category.label}</span>
+                                                        <BulletMarks marks={category.value} />
+                                                    </div>
+                                                ))}
                     </div>
                 );
             case 'No Show':

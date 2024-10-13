@@ -19,6 +19,7 @@ import adminCandidateRoutes from "./routes/admin/candidate.router.js"
 
 import drRoutes from "./routes/admin/dr.router.js"
 import hrRoutes from "./routes/admin/hr.router.js"
+import startScheduledJobs from "./utils/scheduledJobs.js";
 
 const app = express();
 const corsOptions = {
@@ -72,6 +73,12 @@ connectDB()
         `Server running in ${process.env.NODE_ENV} mode on port ${PORT}`
       )
     );
+
+    
+    // Start the scheduled jobs
+    startScheduledJobs();
+
+
     app.on("error", (error) => {
       console.log("Error in starting server", error);
     });
