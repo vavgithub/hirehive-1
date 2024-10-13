@@ -136,8 +136,25 @@ const Screening = ({ candidateId, jobId }) => {
     };
 
     const handleReschedule = (rescheduleData) => {
-        rescheduleMutation.mutate({ candidateId, jobId, ...rescheduleData });
-    };
+        rescheduleMutation.mutate(
+          { candidateId, jobId, ...rescheduleData },
+          {
+            onSuccess: (data) => {
+              dispatch(updateStageStatus({
+                stage: 'Screening',
+                status: 'Call Scheduled',
+                data: data.updatedStageStatus
+              }));
+              queryClient.invalidateQueries(['candidate', candidateId, jobId]);
+              setIsRescheduling(false);
+            },
+            onError: (error) => {
+              console.error("Error rescheduling call:", error);
+              // Handle error (e.g., show error message to user)
+            }
+          }
+        );
+      };
 
     const updateAssigneeMutation = useMutation({
         mutationFn: (newAssignee) => axios.put('dr/update-assignee', {
@@ -227,6 +244,7 @@ const Screening = ({ candidateId, jobId }) => {
                 return (
                     <div className='flex flex-col gap-4'>
                         <Label icon={WarningIcon} text={"The screening call has been scheduled. You can reschedule if needed."} />
+                        <h3 className='typography-h3'>Current Call</h3>
                         {renderCallDetails(stageData.currentCall)}
                         {!isRescheduling && (
                             <div className='w-[170px]'>

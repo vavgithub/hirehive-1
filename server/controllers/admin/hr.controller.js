@@ -298,58 +298,89 @@ export const rejectCandidate = async (req, res) => {
 
 export const rescheduleScreening = async (req, res) => {
   try {
-      const { candidateId, jobId, date, time, assigneeId, meetingLink } = req.body;
+    const { candidateId, jobId, date, time, assigneeId, meetingLink } = req.body;
+    console.log('Rescheduling request received:', { candidateId, jobId, date, time, assigneeId, meetingLink });
 
-      const candidate = await candidates.findById(candidateId);
-      if (!candidate) {
-          return res.status(404).json({ message: 'Candidate not found' });
-      }
+    const candidate = await candidates.findById(candidateId);
+    if (!candidate) {
+      console.log('Candidate not found:', candidateId);
+      return res.status(404).json({ message: 'Candidate not found' });
+    }
 
-      const jobApplication = candidate.jobApplications.find(
-          app => app.jobId.toString() === jobId
-      );
-      if (!jobApplication) {
-          return res.status(404).json({ message: 'Job application not found' });
-      }
+    const jobApplication = candidate.jobApplications.find(
+      app => app.jobId.toString() === jobId
+    );
+    if (!jobApplication) {
+      console.log('Job application not found:', jobId);
+      return res.status(404).json({ message: 'Job application not found' });
+    }
 
-      // Initialize Screening stage status if it doesn't exist
-      if (!jobApplication.stageStatuses.Screening) {
-          jobApplication.stageStatuses.Screening = {
-              status: 'Call Scheduled',
-              assignedTo: assigneeId,
-              currentCall: null,
-              callHistory: []
-          };
-      }
+    console.log('Current job application:', JSON.stringify(jobApplication, null, 2));
 
-      // Move current call to call history if it exists
-      if (jobApplication.stageStatuses.Screening.currentCall) {
-          if (!jobApplication.stageStatuses.Screening.callHistory) {
-              jobApplication.stageStatuses.Screening.callHistory = [];
-          }
-          jobApplication.stageStatuses.Screening.callHistory.push({
-              ...jobApplication.stageStatuses.Screening.currentCall,
-              status: 'Rescheduled'
-          });
-      }
+    // Get the Screening stage status
+    let screeningStatus = jobApplication.stageStatuses.get('Screening');
 
-      // Update current call
-      jobApplication.stageStatuses.Screening.currentCall = {
-          scheduledDate: date,
-          scheduledTime: time,
-          meetingLink: meetingLink
+    // If Screening status doesn't exist, initialize it
+    if (!screeningStatus) {
+      console.log('Initializing Screening stage status');
+      screeningStatus = {
+        status: 'Call Scheduled',
+        assignedTo: assigneeId,
+        currentCall: null,
+        callHistory: []
       };
-      jobApplication.stageStatuses.Screening.assignedTo = assigneeId;
-      jobApplication.stageStatuses.Screening.status = 'Call Scheduled';
+    }
 
-      await candidate.save();
+    console.log('Current Screening stage status:', JSON.stringify(screeningStatus, null, 2));
 
-      res.status(200).json({
-          message: 'Screening call rescheduled successfully',
-          updatedStageStatus: jobApplication.stageStatuses.Screening
+    // Move current call to call history if it exists
+    if (screeningStatus.currentCall) {
+      console.log('Moving current call to history:', screeningStatus.currentCall);
+      if (!screeningStatus.callHistory) {
+        screeningStatus.callHistory = [];
+      }
+      screeningStatus.callHistory.unshift({
+        ...screeningStatus.currentCall,
+        status: 'Rescheduled'
       });
+    } else {
+      console.log('No current call to move to history');
+    }
+
+    // Update current call with new details
+    console.log('Updating current call with new details');
+    screeningStatus.currentCall = {
+      scheduledDate: date,
+      scheduledTime: time,
+      meetingLink: meetingLink
+    };
+    screeningStatus.assignedTo = assigneeId;
+    screeningStatus.status = 'Call Scheduled';
+
+    // Update the Screening status in the stageStatuses Map
+    jobApplication.stageStatuses.set('Screening', screeningStatus);
+
+    console.log('Updated Screening stage status:', JSON.stringify(screeningStatus, null, 2));
+
+    // Mark the jobApplications array as modified
+    candidate.markModified('jobApplications');
+
+    await candidate.save();
+    console.log('Candidate saved successfully');
+
+    const updatedCandidate = await candidates.findById(candidateId);
+    const updatedJobApplication = updatedCandidate.jobApplications.find(
+      app => app.jobId.toString() === jobId
+    );
+    const updatedScreeningStatus = updatedJobApplication.stageStatuses.get('Screening');
+    console.log('Fetched updated Screening stage status:', JSON.stringify(updatedScreeningStatus, null, 2));
+
+    res.status(200).json({
+      message: 'Screening call rescheduled successfully',
+      updatedStageStatus: updatedScreeningStatus
+    });
   } catch (error) {
-      console.error('Error rescheduling screening:', error);
-      res.status(500).json({ message: 'Server error', error: error.message });
+    console.error('Error rescheduling screening:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
   }
 };

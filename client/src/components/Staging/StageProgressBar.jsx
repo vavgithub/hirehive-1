@@ -16,6 +16,8 @@ const StageProgressBar = ({ stage, status, isActive }) => {
             case 'Not Assigned':
             case 'Pending':
                 return 0;
+            case 'Call Scheduled':
+                return 20;
             default:
                 return 0;
         }
