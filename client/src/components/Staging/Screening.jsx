@@ -46,7 +46,7 @@ const ScheduleForm = ({ candidateId, jobId, onSubmit, isRescheduling, initialDat
 
     return (
         <div className="flex flex-col gap-4">
-            <div className='flex gap-4'>
+            <div className='grid grid-cols-3 gap-4'>
                 <Datepicker onChange={setDate} value={date} />
                 <Timepicker onChange={setTime} value={time} />
                 <AssigneeSelector
