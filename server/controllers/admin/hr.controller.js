@@ -51,14 +51,14 @@ export const rejectCandidate = async (req, res) => {
       const emailContent = `
         Dear ${candidate.firstName} ${candidate.lastName},
   
-        Thank you for applying for the ${job.title} position at ${job.company}. 
+        Thank you for applying for the ${job.jobTitle} position at VAV. 
         After careful review, we have decided to move forward with other candidates.
   
         We appreciate your interest in our company and wish you all the best in your job search.
   
         Best regards,
         HR Manager
-        ${job.company}
+        VAV
       `;
   
       await sendEmail(candidate.email, 'Application Status Update', emailContent);

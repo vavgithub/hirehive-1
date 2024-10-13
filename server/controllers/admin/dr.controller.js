@@ -119,83 +119,122 @@ export const updateCandidateAssignee = async (req, res) => {
   }
 };
 
-  export const getAssignedCandidates = async (req, res) => {
-    try {
-      const designReviewerId = new mongoose.Types.ObjectId(req.user._id);
-  
-      // Create a dynamic $or condition for all possible stages across all job profiles
-      const stageConditions = Object.values(jobStagesStatuses).flatMap(stages => 
-        stages.map(stage => ({
-          [`jobApplications.stageStatuses.${stage.name}.assignedTo`]: designReviewerId
-        }))
-      );
-  
-      const assignedCandidates = await candidates.aggregate([
-        { $unwind: '$jobApplications' },
-        {
-          $match: {
-            $or: stageConditions
-          }
+export const getAssignedCandidates = async (req, res) => {
+  try {
+    const designReviewerId = new mongoose.Types.ObjectId(req.user._id);
+
+    const assignedCandidates = await candidates.aggregate([
+      // Unwind jobApplications to process each one individually
+      { $unwind: '$jobApplications' },
+      // Convert stageStatuses map to an array
+      {
+        $addFields: {
+          'jobApplications.stageStatusesArray': { $objectToArray: '$jobApplications.stageStatuses' },
         },
-        {
-          $group: {
-            _id: '$_id',
-            firstName: { $first: '$firstName' },
-            lastName: { $first: '$lastName' },
-            email: { $first: '$email' },
-            phone: { $first: '$phone' },
-            jobApplications: { $push: '$jobApplications' }
-          }
-        }
-      ]);
-  
-      const candidatesWithJobDetails = await Promise.all(assignedCandidates.map(async (candidate) => {
+      },
+      // Filter stageStatusesArray for stages assigned to the reviewer and 'Under Review'
+      {
+        $addFields: {
+          'jobApplications.filteredStageStatusesArray': {
+            $filter: {
+              input: '$jobApplications.stageStatusesArray',
+              as: 'stageStatus',
+              cond: {
+                $and: [
+                  { $eq: ['$$stageStatus.v.assignedTo', designReviewerId] },
+                  { $eq: ['$$stageStatus.v.status', 'Under Review'] },
+                ],
+              },
+            },
+          },
+        },
+      },
+      // Match only job applications that have relevant stages
+      {
+        $match: {
+          'jobApplications.filteredStageStatusesArray': { $ne: [] },
+        },
+      },
+      // Add currentStage field from the filtered stages
+      {
+        $addFields: {
+          'jobApplications.currentStage': {
+            $arrayElemAt: ['$jobApplications.filteredStageStatusesArray.k', 0],
+          },
+        },
+      },
+      // Reconstruct the stageStatuses map from the filtered array
+      {
+        $addFields: {
+          'jobApplications.stageStatuses': {
+            $arrayToObject: '$jobApplications.filteredStageStatusesArray',
+          },
+        },
+      },
+      // Remove temporary fields
+      {
+        $project: {
+          'jobApplications.stageStatusesArray': 0,
+          'jobApplications.filteredStageStatusesArray': 0,
+        },
+      },
+      // Group back by candidate
+      {
+        $group: {
+          _id: '$_id',
+          firstName: { $first: '$firstName' },
+          lastName: { $first: '$lastName' },
+          email: { $first: '$email' },
+          phone: { $first: '$phone' },
+          jobApplications: { $push: '$jobApplications' },
+        },
+      },
+    ]);
+
+    // Fetch job details as before
+    const candidatesWithJobDetails = await Promise.all(
+      assignedCandidates.map(async (candidate) => {
         const candidateWithJobs = {
           ...candidate,
-          jobApplications: await Promise.all(candidate.jobApplications.map(async (application) => {
-            let job;
-            try {
-              job = await jobs.findById(application.jobId);
-              if (!job) {
-                console.log(`Job not found for ID: ${application.jobId}`);
+          jobApplications: await Promise.all(
+            candidate.jobApplications.map(async (application) => {
+              let job;
+              try {
+                job = await jobs.findById(application.jobId);
+                if (!job) {
+                  console.log(`Job not found for ID: ${application.jobId}`);
+                }
+              } catch (error) {
+                console.error(`Error fetching job with ID ${application.jobId}:`, error);
               }
-            } catch (error) {
-              console.error(`Error fetching job with ID ${application.jobId}:`, error);
-            }
-  
-            const jobProfile = job ? job.jobProfile : application.jobProfile || 'Unknown Profile';
-            const stages = jobStagesStatuses[jobProfile] || [];
-            
-            // If stages are empty, log this unusual situation
-            if (stages.length === 0) {
-              console.log(`No stages found for job profile: ${jobProfile}`);
-            }
-  
-            // Filter stageStatuses to include only the stages for this job profile
-            const filteredStageStatuses = {};
-            Object.keys(application.stageStatuses).forEach(stageName => {
-              if (stages.some(stage => stage.name === stageName)) {
-                filteredStageStatuses[stageName] = application.stageStatuses[stageName];
+
+              const jobProfile = job ? job.jobProfile : application.jobProfile || 'Unknown Profile';
+              const stages = jobStagesStatuses[jobProfile] || [];
+
+              if (stages.length === 0) {
+                console.log(`No stages found for job profile: ${jobProfile}`);
               }
-            });
-  
-            return {
-              ...application,
-              jobTitle: job ? job.jobTitle : application.jobApplied || 'Unknown Job',
-              jobProfile,
-              stageStatuses: filteredStageStatuses
-            };
-          }))
+
+              return {
+                ...application,
+                jobTitle: job ? job.jobTitle : application.jobApplied || 'Unknown Job',
+                jobProfile,
+                // The stageStatuses are already filtered
+              };
+            })
+          ),
         };
         return candidateWithJobs;
-      }));
-  
-      res.status(200).json(candidatesWithJobDetails);
-    } catch (error) {
-      console.error('Error fetching assigned candidates:', error);
-      res.status(500).json({ message: 'Server error' });
-    }
-  };
+      })
+    );
+
+    res.status(200).json(candidatesWithJobDetails);
+  } catch (error) {
+    console.error('Error fetching assigned candidates:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
 
   export const autoAssignPortfolios = async (req, res) => {
     const session = await mongoose.startSession();

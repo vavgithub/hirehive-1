@@ -138,24 +138,24 @@ const Screening = ({ candidateId, jobId }) => {
 
     const handleReschedule = (rescheduleData) => {
         rescheduleMutation.mutate(
-          { candidateId, jobId, ...rescheduleData },
-          {
-            onSuccess: (data) => {
-              dispatch(updateStageStatus({
-                stage: 'Screening',
-                status: 'Call Scheduled',
-                data: data.updatedStageStatus
-              }));
-              queryClient.invalidateQueries(['candidate', candidateId, jobId]);
-              setIsRescheduling(false);
-            },
-            onError: (error) => {
-              console.error("Error rescheduling call:", error);
-              // Handle error (e.g., show error message to user)
+            { candidateId, jobId, ...rescheduleData },
+            {
+                onSuccess: (data) => {
+                    dispatch(updateStageStatus({
+                        stage: 'Screening',
+                        status: 'Call Scheduled',
+                        data: data.updatedStageStatus
+                    }));
+                    queryClient.invalidateQueries(['candidate', candidateId, jobId]);
+                    setIsRescheduling(false);
+                },
+                onError: (error) => {
+                    console.error("Error rescheduling call:", error);
+                    // Handle error (e.g., show error message to user)
+                }
             }
-          }
         );
-      };
+    };
 
     const updateAssigneeMutation = useMutation({
         mutationFn: (newAssignee) => axios.put('dr/update-assignee', {
@@ -200,7 +200,7 @@ const Screening = ({ candidateId, jobId }) => {
                 <div className='flex items-center gap-2'>
                     <CalenderIcon />
                     <h2>
-                        {new Date(call.scheduledDate).toLocaleDateString('en-US', { timeZone: 'UTC' })}
+                        {new Date(call?.scheduledDate).toLocaleDateString('en-US', { timeZone: 'UTC' })}
                     </h2>
                 </div>
             </div>
@@ -209,7 +209,7 @@ const Screening = ({ candidateId, jobId }) => {
                 <div className='flex items-center gap-2'>
                     <ClockIcon />
                     <h2>
-                        {formatTime(call.scheduledTime)}
+                        {formatTime(call?.scheduledTime)}
                     </h2>
                 </div>
             </div>
@@ -218,7 +218,7 @@ const Screening = ({ candidateId, jobId }) => {
                 <div className='flex items-center gap-2'>
                     <LinkIcon />
                     <h2 className='mr-2 text-font-primary'>screening_meeting_link</h2>
-                    <CopyToClipboard text={call.meetingLink}>
+                    <CopyToClipboard text={call?.meetingLink}>
                         <button className='flex items-center bg-background-70 px-[10px] py-[10px] rounded-xl'>
                             <ClipboardIcon />
                         </button>
@@ -229,11 +229,11 @@ const Screening = ({ candidateId, jobId }) => {
     );
 
     const categories = [
-        { label: 'Attitude', value: stageData.score.Attitude },
-        { label: 'UX', value: stageData.score.UX },
-        { label: 'Tech', value: stageData.score.Tech },
-        { label: 'Communication', value: stageData.score.Communication },
-        { label: 'UI', value: stageData.score.UI },
+        { label: 'Attitude', value: stageData?.score?.Attitude },
+        { label: 'UX', value: stageData?.score?.UX },
+        { label: 'Tech', value: stageData?.score?.Tech },
+        { label: 'Communication', value: stageData?.score?.Communication },
+        { label: 'UI', value: stageData?.score?.UI },
     ];
 
     const renderContent = () => {
@@ -242,9 +242,9 @@ const Screening = ({ candidateId, jobId }) => {
                 return (
                     <div className="flex flex-col gap-4">
                         <Label icon={WarningIcon} text="Call not scheduled. Please contact the candidate to schedule the screening call and update the details below" />
-                        <ScheduleForm 
-                            candidateId={candidateId} 
-                            jobId={jobId} 
+                        <ScheduleForm
+                            candidateId={candidateId}
+                            jobId={jobId}
                             onSubmit={handleSchedule}
                         />
                     </div>
@@ -254,7 +254,7 @@ const Screening = ({ candidateId, jobId }) => {
                     <div className='flex flex-col gap-4'>
                         <Label icon={WarningIcon} text={"The screening call has been scheduled. You can reschedule if needed."} />
                         <h3 className='typography-h3'>Current Call</h3>
-                        {renderCallDetails(stageData.currentCall)}
+                        {renderCallDetails(stageData?.currentCall)}
                         {!isRescheduling && (
                             <div className='w-[170px]'>
                                 <Button
@@ -266,9 +266,9 @@ const Screening = ({ candidateId, jobId }) => {
                             </div>
                         )}
                         {isRescheduling && (
-                            <ScheduleForm 
-                                candidateId={candidateId} 
-                                jobId={jobId} 
+                            <ScheduleForm
+                                candidateId={candidateId}
+                                jobId={jobId}
                                 onSubmit={handleReschedule}
                                 isRescheduling={true}
                                 initialData={stageData.currentCall}
@@ -302,11 +302,11 @@ const Screening = ({ candidateId, jobId }) => {
                                     <p className='typography-body pb-8'>{stageData?.feedback}</p>
                                 </div>
                                 {categories.map((category, index) => (
-                                                    <div key={index} className='flex items-center justify-between'>
-                                                        <span className='typography-small-p text-font-gray'>{category.label}</span>
-                                                        <BulletMarks marks={category.value} />
-                                                    </div>
-                                                ))}
+                                    <div key={index} className='flex items-center justify-between'>
+                                        <span className='typography-small-p text-font-gray'>{category.label}</span>
+                                        <BulletMarks marks={category.value} />
+                                    </div>
+                                ))}
                             </div>
                         </div>
                         <StageActions
@@ -322,11 +322,11 @@ const Screening = ({ candidateId, jobId }) => {
                         <p className='typography-small-p text-font-gray'>Feedback</p>
                         <p className='typography-body pb-8'>{stageData?.feedback}</p>
                         {categories.map((category, index) => (
-                                                    <div key={index} className='flex items-center justify-between'>
-                                                        <span className='typography-small-p text-font-gray'>{category.label}</span>
-                                                        <BulletMarks marks={category.value} />
-                                                    </div>
-                                                ))}
+                            <div key={index} className='flex items-center justify-between'>
+                                <span className='typography-small-p text-font-gray'>{category.label}</span>
+                                <BulletMarks marks={category.value} />
+                            </div>
+                        ))}
                     </div>
                 );
             case 'No Show':

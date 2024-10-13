@@ -10,6 +10,8 @@ import Total from '../../svg/StatsCard/View Candidate/Total';
 import Portfolio from '../../svg/StatsCard/View Candidate/Portfolio';
 import Screening from '../../svg/StatsCard/View Candidate/Screening';
 import DesignTask from '../../svg/StatsCard/View Candidate/DesignTask';
+import { showErrorToast, showSuccessToast } from '../../components/ui/Toast';
+import { Avatar } from '@mui/material';
 
 
 const statsOne = [
@@ -37,7 +39,7 @@ const PortfolioReview = ({ candidate, onSubmit }) => {
   };
 
   return (
-    <div className='bg-background-90 flex gap-4 justify-between items-center p-4'>
+    <div className='bg-background-90 flex gap-4 justify-between rounded-b-xl  items-center p-4'>
       <span className='flex-shrink-0'>Portfolio ratings</span>
       <Scorer value={rating} onChange={setRating} />
       <input
@@ -110,7 +112,7 @@ const RoundReview = ({ roundNumber, candidate, onSubmit }) => {
       feedback,
     });
   };
-  
+
 
   return (
     <div className='bg-background-100 flex gap-4 justify-between items-center p-4'>
@@ -162,6 +164,13 @@ const Reviews = () => {
     onSuccess: () => {
       // Invalidate and refetch
       queryClient.invalidateQueries({ queryKey: ['assignedCandidates'] });
+      // Show success toast
+      showSuccessToast('Review Submitted', 'Your review has been successfully submitted.');
+
+    },
+    onError: (error) => {
+      // Show error toast
+      showErrorToast('Submission Failed', error.response?.data?.message || 'An error occurred while submitting your review.');
     },
   });
 
@@ -212,7 +221,7 @@ const Reviews = () => {
       <Header HeaderText="Reviews" />
       <div className='bg-background-30 m-6 p-6 rounded-xl'>
         <StatsGrid stats={statsOne} />
-        {Object.entries(groupedCandidates).map(([jobTitle, stages]) => (
+        {Object.entries(groupedCandidates).map(([jobTitle, stages, jobProfile]) => (
           <div key={jobTitle} className="mb-8">
             <h1 className="typography-h1 mb-4">{jobTitle}</h1>
             {stageOrder.map(stage => {
@@ -221,10 +230,23 @@ const Reviews = () => {
                   <div key={stage} className="mb-6 ">
                     <h2 className="typography-h2 mb-3">{stage}</h2>
                     {stages[stage].map(candidate => (
-                      <div key={`${candidate._id}-${candidate.currentApplication.jobId}`} className="mb-4 bg-background-70">
-                        <span className="typography-body mb-2 ml-4  ">
-                          {candidate.firstName} {candidate.lastName}
-                        </span>
+                      <div key={`${candidate._id}-${candidate.currentApplication.jobId}`} className="mb-4 flex flex-col bg-background-70 rounded-xl ">
+                        <div className='flex items-center p-4 justify-between '>
+                          <div className='flex items-center'>
+
+
+                            <Avatar alt={candidate?.firstName} sx={{ width: "32px", height: "32px" }} src="/path-to-profile-image.jpg" />
+                            <span className="typography-body ml-4  ">
+                              {candidate.firstName} {candidate.lastName}
+                            </span>
+                          </div>
+
+                          <div className="bg-background-80 p-2 px-4 typography-body  rounded-xl">
+                            {candidate.currentApplication.jobProfile}
+                          </div>
+
+
+                        </div>
                         {renderReviewComponent(candidate)}
                       </div>
                     ))}

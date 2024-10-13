@@ -11,7 +11,7 @@ const Scorer = ({ value, onChange }) => {
         {[1, 2, 3, 4, 5].map((scoreValue) => (
           <div
             key={scoreValue}
-            className={`w-11 h-11 rounded-xl flex items-center justify-center typography-body 
+            className={`w-11 h-11 rounded-xl cursor-pointer flex items-center justify-center typography-body 
               ${value == scoreValue ? 'bg-background-green text-font-accent' : 'bg-background-70 hover:bg-background-green'}`}
             onClick={() => handleScoreClick(scoreValue)}
           >
