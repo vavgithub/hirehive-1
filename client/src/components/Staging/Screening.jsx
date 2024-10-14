@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Card,
     CardContent,
@@ -24,6 +24,7 @@ import ClipboardIcon from '../../svg/Staging/ClipboardIcon';
 import { formatTime } from '../../utility/formatTime';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import BulletMarks from '../ui/BulletMarks';
+import Scorer from '../ui/Scorer';
 
 const ScheduleForm = ({ candidateId, jobId, onSubmit, isRescheduling, initialData, onCancel }) => {
     const [date, setDate] = useState(isRescheduling ? null : (initialData ? new Date(initialData.scheduledDate) : null));
@@ -102,10 +103,101 @@ const ScheduleForm = ({ candidateId, jobId, onSubmit, isRescheduling, initialDat
 };
 
 const Screening = ({ candidateId, jobId }) => {
+
+
     const dispatch = useDispatch();
     const [isRescheduling, setIsRescheduling] = useState(false);
     const queryClient = useQueryClient();
     const stageData = useSelector(state => state.applicationStage.stageStatuses.Screening);
+
+    const [budgetScore, setBudgetScore] = useState(0);
+    const [isBudgetScoreSubmitted, setIsBudgetScoreSubmitted] = useState(false);
+    const [totalScore, setTotalScore] = useState(0);
+
+    // useEffect(() => {
+    //     if (stageData?.score?.Budget) {
+    //         setBudgetScore(stageData.score.Budget);
+    //         setIsBudgetScoreSubmitted(true);
+    //     }
+    // }, [stageData]);
+
+
+    useEffect(() => {
+        if (stageData?.score) {
+            const scores = Object.values(stageData.score);
+            const sum = scores.reduce((acc, curr) => acc + (typeof curr === 'number' ? curr : 0), 0);
+            setTotalScore(sum);
+            setIsBudgetScoreSubmitted(!!stageData.score.Budget);
+            setBudgetScore(stageData.score.Budget || 0);
+        }
+    }, [stageData]);
+
+    const submitBudgetScoreMutation = useMutation({
+        mutationFn: (score) => axios.post('hr/submit-budget-score', { candidateId, jobId, stage: 'Screening', score }),
+        onSuccess: (data) => {
+            console.log('Budget score submitted successfully:', data);
+            dispatch(updateStageStatus({
+                stage: 'Screening',
+                status: 'Reviewed',
+                data: {
+                    ...stageData,
+                    score: data.updatedScore,
+                }
+            }));
+            queryClient.invalidateQueries(['candidate', candidateId, jobId]);
+            setIsBudgetScoreSubmitted(true);
+
+            // Recalculate total score
+            const scores = Object.values(data.updatedScore);
+            const sum = scores.reduce((acc, curr) => acc + (typeof curr === 'number' ? curr : 0), 0);
+            setTotalScore(sum);
+        },
+        onError: (error) => {
+            console.error('Error submitting budget score:', error);
+            // You can add user-facing error handling here, e.g., showing an error message
+        }
+    });
+
+
+    const handleBudgetScoreSubmit = () => {
+        if (budgetScore > 0) {
+            console.log('Submitting budget score:', budgetScore);
+            submitBudgetScoreMutation.mutate(budgetScore);
+        }
+    };
+
+
+    const renderBudgetScoreSection = () => {
+        if (!isBudgetScoreSubmitted) {
+            return (
+                <div>
+                    <p className='typography-small-p text-font-gray mb-4'>Score Budget</p>
+                    <div className='flex gap-4'>
+                        <Scorer value={budgetScore} onChange={setBudgetScore} />
+                        <Button
+                            variant="icon"
+                            onClick={handleBudgetScoreSubmit}
+                            disabled={budgetScore === 0}
+                        >
+                            Submit
+                        </Button>
+                    </div>
+                </div>
+            );
+        } else {
+            return (
+                <div className='bg-stars bg-cover rounded-xl w-[160px] my-4'>
+                    <div className='p-4 flex flex-col items-center'>
+                        <p className='typography-small-p text-font-gray'>Total Score:</p>
+                        <div className='flex flex-col items-center text-font-accent'>
+                            <p className='display-d2 font-bold'>{totalScore}</p>
+                            <p className='typography-small-p text-font-gray'>Out Of 30</p>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+    };
 
     const scheduleMutation = useMutation({
         mutationFn: (scheduleData) => axios.post('hr/schedule-screening', scheduleData),
@@ -234,7 +326,10 @@ const Screening = ({ candidateId, jobId }) => {
         { label: 'Tech', value: stageData?.score?.Tech },
         { label: 'Communication', value: stageData?.score?.Communication },
         { label: 'UI', value: stageData?.score?.UI },
+        { label: 'Budget', value: stageData?.score?.Budget },
     ];
+
+
 
     const renderContent = () => {
         switch (stageData?.status) {
@@ -296,23 +391,79 @@ const Screening = ({ candidateId, jobId }) => {
                 return (
                     <>
                         <div className='w-full'>
-                            <div className='flex justify-between gap-4'>
+                            <div className='flex flex-col justify-between gap-4'>
                                 <div className='w-full'>
                                     <p className='typography-small-p text-font-gray'>Feedback</p>
-                                    <p className='typography-body pb-8'>{stageData?.feedback}</p>
+                                    <p className='typography-body pb-2'>{stageData?.feedback}</p>
                                 </div>
-                                {categories.map((category, index) => (
-                                    <div key={index} className='flex items-center justify-between'>
-                                        <span className='typography-small-p text-font-gray'>{category.label}</span>
-                                        <BulletMarks marks={category.value} />
+                                <div className='flex gap-4 pb-4'>
+
+                                    <div className='w-full'>
+
+
+                                        <p className='typography-small-p text-font-gray mb-4'>Score</p>
+                                        <div className='p-2 rounded-xl bg-background-60'>
+
+
+                                            {categories.map((category, index) => (
+                                                <div key={index} className='flex  items-center  justify-between'>
+                                                    <span className='typography-small-p text-font-gray'>{category.label}</span>
+                                                    <BulletMarks marks={category.value} />
+                                                </div>
+                                            ))}
+                                        </div>
                                     </div>
-                                ))}
+
+                                    <div >
+
+
+
+                                        <p className='typography-small-p text-font-gray mb-4'>Score Budget</p>
+
+
+                                        {isBudgetScoreSubmitted ? (
+
+                                            <div className='bg-stars bg-cover rounded-xl w-[160px] my-4'>
+                                                <div className='p-4 flex flex-col items-center'>
+                                                    <p className='typography-small-p text-font-gray'>Total Score:</p>
+                                                    <div className='flex flex-col items-center text-font-accent'>
+                                                        <p className='display-d2 font-bold'>{totalScore}</p>
+                                                        <p className='typography-small-p text-font-gray'>Out Of 30</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        ) :
+                                            (
+                                                <div className='flex gap-4'>
+                                                    <Scorer value={budgetScore} onChange={setBudgetScore} />
+                                                    <Button
+                                                        variant="icon"
+                                                        onClick={handleBudgetScoreSubmit}
+                                                        disabled={budgetScore === 0 || isBudgetScoreSubmitted}
+                                                    >
+                                                        Submit
+                                                    </Button>
+                                                </div>
+
+                                            )
+
+                                        }
+
+
+
+
+
+
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <StageActions
                             stage="Screening"
                             candidateId={candidateId}
                             jobId={jobId}
+                            isBudgetScoreSubmitted={isBudgetScoreSubmitted}
                         />
                     </>
                 );

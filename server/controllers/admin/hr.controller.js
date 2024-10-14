@@ -384,3 +384,62 @@ export const rescheduleScreening = async (req, res) => {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
+
+
+// budgetScoreController.js
+
+export const submitBudgetScore = async (req, res) => {
+  try {
+      const { candidateId, jobId, stage, score } = req.body;
+      console.log('Received request:', { candidateId, jobId, stage, score });
+
+      const candidate = await candidates.findById(candidateId);
+      if (!candidate) {
+          console.log('Candidate not found:', candidateId);
+          return res.status(404).json({ message: 'Candidate not found' });
+      }
+
+      const jobApplication = candidate.jobApplications.find(
+          app => app.jobId.toString() === jobId
+      );
+      if (!jobApplication) {
+          console.log('Job application not found:', jobId);
+          return res.status(404).json({ message: 'Job application not found' });
+      }
+
+      console.log('Job application found:', jobApplication);
+
+      // Get the current stage status
+      const stageStatus = jobApplication.stageStatuses.get(stage);
+      if (!stageStatus) {
+          console.log('Stage status not found:', stage);
+          return res.status(404).json({ message: 'Stage status not found' });
+      }
+
+      console.log('Current stage status:', stageStatus);
+
+      // Initialize score object if it doesn't exist
+      if (!stageStatus.score) {
+          stageStatus.score = {};
+      }
+
+      // Add or update the Budget score
+      stageStatus.score.Budget = score;
+
+      console.log('Updated stage status:', stageStatus);
+
+      // Mark the nested fields as modified
+      candidate.markModified(`jobApplications`);
+
+      await candidate.save();
+      console.log('Candidate saved successfully');
+
+      res.status(200).json({
+          message: 'Budget score submitted successfully',
+          updatedScore: stageStatus.score
+      });
+  } catch (error) {
+      console.error('Error submitting budget score:', error);
+      res.status(500).json({ message: 'Server error', error: error.toString(), stack: error.stack });
+  }
+};

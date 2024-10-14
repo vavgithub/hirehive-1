@@ -7,7 +7,7 @@ import { ACTION_TYPES } from '../../utility/ActionTypes';
 import { setCurrentStage, updateStageStatus } from '../../redux/applicationStageSlice';
 import { Button } from '../ui/Button';
 
-const StageActions = ({ stage, candidateId, jobId }) => {
+const StageActions = ({ stage, candidateId, jobId, isBudgetScoreSubmitted }) => {
     const dispatch = useDispatch();
     const queryClient = useQueryClient();
     const [isRejectModalOpen, setIsRejectModalOpen] = React.useState(false);
@@ -61,10 +61,11 @@ const StageActions = ({ stage, candidateId, jobId }) => {
 
     return (
         <div className='flex justify-end gap-4'>
-            <div className='w-[176px]'>
+           <div className='w-[176px]'>
                 <Button
                     variant="cancel"
                     onClick={() => setIsRejectModalOpen(true)}
+                    disabled={!isBudgetScoreSubmitted}
                 >
                     Reject
                 </Button>
@@ -74,6 +75,7 @@ const StageActions = ({ stage, candidateId, jobId }) => {
                 <Button
                     variant="primary"
                     onClick={() => setIsMoveModalOpen(true)}
+                    disabled={!isBudgetScoreSubmitted}
                 >
                     Move to Next Round
                 </Button>
