@@ -44,6 +44,29 @@ const DesignTask = ({ candidateId, jobId }) => {
                 return renderSentStatus();
             case 'Not Assigned':
                 return renderNotAssignedStatus();
+            case 'Reviewed':
+                return renderReviewedStatus();
+            case 'Cleared':
+            case 'Rejected':
+                        return (
+                            <div className='w-full'>
+                                <div className='flex justify-between gap-4'>
+                                    <div className='w-full'>
+                                        <p className='typography-small-p text-font-gray'>Remarks</p>
+                                        <p className='typography-body pb-8'>{stageData?.status === 'Rejected' ? stageData?.rejectionReason : stageData?.feedback}</p>
+                                    </div>
+                                    <div className='bg-stars bg-cover rounded-xl w-[160px] my-4'>
+                                        <div className='p-4 flex flex-col items-center'>
+                                            <p className='typography-small-p text-font-gray'>Total Score:</p>
+                                            <div className='flex flex-col items-center text-font-accent'>
+                                                <p className='display-d2 font-bold'>{stageData?.score}</p>
+                                                <p className='typography-small-p text-font-gray'>Out Of 5</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        );  
             // Add other cases as needed
             default:
                 return null;
@@ -83,7 +106,7 @@ const DesignTask = ({ candidateId, jobId }) => {
         mutationFn: (newAssignee) => axios.put('dr/update-assignee', {
             candidateId,
             jobId,
-            stage: 'Screening',
+            stage: 'Design Task',
             assigneeId: newAssignee._id
         }),
         onSuccess: (response) => {
@@ -184,6 +207,81 @@ const DesignTask = ({ candidateId, jobId }) => {
             </div>
         </div>
     );
+
+    const renderReviewedStatus =()=>(
+
+        <>
+        <div className='w-full'>
+            <div className='flex justify-between gap-4'>
+                <div className='w-full'>
+                    <p className='typography-small-p text-font-gray'>Remarks</p>
+                    <p className='typography-body pb-8'>{stageData?.feedback}</p>
+                </div>
+                <div className='bg-stars bg-cover rounded-xl w-[160px] my-4'>
+                    <div className='p-4 flex flex-col items-center'>
+                        <p className='typography-small-p text-font-gray'>Total Score:</p>
+                        <div className='flex flex-col items-center text-font-accent'>
+                            <p className='display-d2 font-bold'>{stageData?.score}</p>
+                            <p className='typography-small-p text-font-gray'>Out Of 5</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <StageActions
+            stage="Design Task"
+            candidateId={candidateId}
+            jobId={jobId}
+            isBudgetScoreSubmitted={true}
+        />
+    </>
+    );
+
+    const renderClearedStatus =()=>(
+        <>
+        <div className='w-full'>
+            <div className='flex justify-between gap-4'>
+                <div className='w-full'>
+                    <p className='typography-small-p text-font-gray'>Remarks</p>
+                    <p className='typography-body pb-8'>{stageData?.feedback}</p>
+                </div>
+                <div className='bg-stars bg-cover rounded-xl w-[160px] my-4'>
+                    <div className='p-4 flex flex-col items-center'>
+                        <p className='typography-small-p text-font-gray'>Total Score:</p>
+                        <div className='flex flex-col items-center text-font-accent'>
+                            <p className='display-d2 font-bold'>{stageData?.score}</p>
+                            <p className='typography-small-p text-font-gray'>Out Of 5</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </>
+    );
+
+    const renderRejectedStatus =()=>(
+        <>
+        <div className='w-full'>
+            <div className='flex justify-between gap-4'>
+                <div className='w-full'>
+                    <p className='typography-small-p text-font-gray'>Remarks</p>
+                    <p className='typography-body pb-8'>{stageData?.rejectionReason}</p>
+                </div>
+                <div className='bg-stars bg-cover rounded-xl w-[160px] my-4'>
+                    <div className='p-4 flex flex-col items-center'>
+                        <p className='typography-small-p text-font-gray'>Total Score:</p>
+                        <div className='flex flex-col items-center text-font-accent'>
+                            <p className='display-d2 font-bold'>{stageData?.score}</p>
+                            <p className='typography-small-p text-font-gray'>Out Of 5</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </>
+    );
+
+
 
     return (
         <Card

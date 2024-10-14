@@ -131,6 +131,36 @@ const RoundReview = ({ roundNumber, candidate, onSubmit }) => {
   );
 };
 
+const DesignTaskReview = ({ candidate, onSubmit }) => {
+  const [rating, setRating] = useState(0);
+  const [feedback, setFeedback] = useState('');
+
+  const handleSubmit = () => {
+    onSubmit(candidate._id, {
+      jobId: candidate.currentApplication.jobId,
+      stage: 'Design Task',
+      ratings: rating,
+      feedback,
+    });
+  };
+
+  return (
+    <div className='bg-background-100 flex gap-4 justify-between items-center p-4'>
+      <span className='flex-shrink-0'>Design Task Ratings</span>
+      <Scorer value={rating} onChange={setRating} />
+
+      <input
+        type="text"
+        className='w-full bg-background-80 text-white p-2 rounded'
+        placeholder='Enter Your Feedback'
+        value={feedback}
+        onChange={(e) => setFeedback(e.target.value)}
+      />
+      <Button variant="icon" onClick={handleSubmit}>Submit</Button>
+    </div>
+  );
+};
+
 const Round1Review = (props) => <RoundReview roundNumber={1} {...props} />;
 const Round2Review = (props) => <RoundReview roundNumber={2} {...props} />;
 
@@ -198,6 +228,8 @@ const Reviews = () => {
         return <PortfolioReview candidate={candidate} onSubmit={handleReviewSubmit} />;
       case 'Screening':
         return <ScreeningReview candidate={candidate} onSubmit={handleReviewSubmit} />;
+      case 'Design Task':
+          return <DesignTaskReview candidate={candidate} onSubmit={handleReviewSubmit} />;
       case 'Round 1':
         return <Round1Review candidate={candidate} onSubmit={handleReviewSubmit} />;
       case 'Round 2':
@@ -214,7 +246,7 @@ const Reviews = () => {
   const groupedCandidates = groupCandidatesByJobAndStage(candidates);
 
   // Define the order of stages
-  const stageOrder = ['Portfolio', 'Screening', 'Round 1', 'Round 2'];
+  const stageOrder = ['Portfolio', 'Design Task', 'Screening', 'Round 1', 'Round 2'];
 
   return (
     <div>

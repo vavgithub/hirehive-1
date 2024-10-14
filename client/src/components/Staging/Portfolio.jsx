@@ -94,6 +94,7 @@ const Portfolio = ({ candidateId, jobId }) => {
                             stage="Portfolio"
                             candidateId={candidateId}
                             jobId={jobId}
+                            isBudgetScoreSubmitted={true}
                         />
                     </>
                 );

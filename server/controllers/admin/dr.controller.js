@@ -95,13 +95,13 @@ export const updateCandidateAssignee = async (req, res) => {
     stageStatus.assignedTo = assigneeId;
 
     // Update the status based on the stage
-    if (stage === 'Portfolio') {
+    if (['Portfolio', 'Design Task'].includes(stage)) {
       stageStatus.status = assigneeId ? 'Under Review' : 'Not Assigned';
     }
     // Add more stage-specific logic here as needed
 
     // If this is the first stage and an assignee is added, update the current stage
-    if (stage === 'Portfolio' && assigneeId && !jobApplication.currentStage) {
+    if (['Portfolio', 'Design Task'].includes(stage) && assigneeId && !jobApplication.currentStage) {
       jobApplication.currentStage = stage;
     }
 
@@ -118,6 +118,7 @@ export const updateCandidateAssignee = async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 };
+
 
 export const getAssignedCandidates = async (req, res) => {
   try {
