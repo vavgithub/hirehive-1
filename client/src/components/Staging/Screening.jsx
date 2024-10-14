@@ -468,29 +468,42 @@ const Screening = ({ candidateId, jobId }) => {
                     </>
                 );
             case 'Cleared':
+            case 'Rejected':
                 return (
                     <div className='w-full'>
-                        <p className='typography-small-p text-font-gray'>Feedback</p>
-                        <p className='typography-body pb-8'>{stageData?.feedback}</p>
-                        {categories.map((category, index) => (
-                            <div key={index} className='flex items-center justify-between'>
-                                <span className='typography-small-p text-font-gray'>{category.label}</span>
-                                <BulletMarks marks={category.value} />
+                        <p className='typography-small-p text-font-gray'>{stageData?.status === 'Rejected' ? "Rejection Reason" : "Feedback"}</p>
+                        <p className='typography-body pb-8'>{stageData?.status === 'Rejected' ? stageData?.rejectionReason : stageData?.feedback}</p>
+
+                        <div className='flex gap-4'>
+
+                            <div className='w-full p-2 rounded-xl bg-background-60'>
+
+                                {categories.map((category, index) => (
+                                    <div key={index} className='flex items-center justify-between'>
+                                        <span className='typography-small-p text-font-gray'>{category.label}</span>
+                                        <BulletMarks marks={category.value} />
+                                    </div>
+                                ))}
                             </div>
-                        ))}
+
+                            <div className='bg-stars bg-cover rounded-xl w-[160px]'>
+                                <div className='p-4 flex flex-col items-center'>
+                                    <p className='typography-small-p text-font-gray'>Total Score:</p>
+                                    <div className='flex flex-col items-center text-font-accent'>
+                                        <p className='display-d2 font-bold'>{totalScore}</p>
+                                        <p className='typography-small-p text-font-gray'>Out Of 30</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
                     </div>
                 );
             case 'No Show':
                 return (
                     <Label icon={WarningIcon} text="Candidate did not show up for the scheduled screening call." />
                 );
-            case 'Rejected':
-                return (
-                    <div className='w-full'>
-                        <p className='typography-small-p text-font-gray'>Reason for Rejection</p>
-                        <p className='typography-body pb-8'>{stageData?.rejectionReason}</p>
-                    </div>
-                );
+
             default:
                 return null;
         }
