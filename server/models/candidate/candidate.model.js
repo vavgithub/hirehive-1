@@ -51,6 +51,10 @@ const stageStatusSchema = new mongoose.Schema({
     meetingLink: String,
     status: String, // e.g., 'Scheduled', 'Completed', 'Rescheduled', 'No Show', 'Cancelled'
   }],
+  taskDescription: {  // New field for Design Task
+    type: String,
+    default: '',
+  },
 }, { _id: false });
 
 // Schema for individual job applications within a candidate

@@ -12,8 +12,8 @@ export const jobStagesStatuses = {
     },
     { 
       name: 'Design Task', 
-      requiresCall: false,
-      statuses: ['Not Assigned', 'Sent', 'Under Review', 'Reviewed', 'Cleared', 'Rejected', 'Not Submitted']
+      requiresCall: true,
+      statuses: ['Pending','Not Assigned', 'Sent', 'Under Review', 'Reviewed', 'Cleared', 'Rejected', 'Not Submitted']
     },
     { 
       name: 'Round 1', 

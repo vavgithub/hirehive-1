@@ -443,3 +443,64 @@ export const submitBudgetScore = async (req, res) => {
       res.status(500).json({ message: 'Server error', error: error.toString(), stack: error.stack });
   }
 };
+
+
+export const sendDesignTask = async (req, res) => {
+  try {
+      const { candidateId, jobId, taskDescription, dueDate, dueTime, candidateEmail } = req.body;
+
+      const candidate = await candidates.findById(candidateId);
+      if (!candidate) {
+          return res.status(404).json({ message: 'Candidate not found' });
+      }
+
+      const jobApplication = candidate.jobApplications.find(
+          app => app.jobId.toString() === jobId
+      );
+      if (!jobApplication) {
+          return res.status(404).json({ message: 'Job application not found' });
+      }
+
+      // Update the Design Task stage status
+      jobApplication.stageStatuses.set('Design Task', {
+          status: 'Sent',
+          currentCall: {
+              scheduledDate: new Date(dueDate),
+              scheduledTime: dueTime,
+              meetingLink: '' // You can leave this empty or use it for a submission link if needed
+          },
+          taskDescription: taskDescription
+      });
+
+      // Send email to candidate
+      const emailSubject = 'Design Task Assignment';
+      const emailContent = `
+          Dear ${candidate.firstName} ${candidate.lastName},
+
+          You have been assigned a design task for your job application. Please find the details below:
+
+          Task Description:
+          ${taskDescription}
+
+          Due Date: ${new Date(dueDate).toLocaleDateString()}
+          Due Time: ${dueTime}
+
+          Please submit your completed task before the due date and time.
+
+          Best regards,
+          [Your Company Name]
+      `;
+
+      await sendEmail(candidateEmail, emailSubject, emailContent);
+
+      await candidate.save();
+
+      res.status(200).json({
+          message: 'Design task sent successfully',
+          updatedStageStatus: jobApplication.stageStatuses.get('Design Task')
+      });
+  } catch (error) {
+      console.error('Error sending design task:', error);
+      res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
