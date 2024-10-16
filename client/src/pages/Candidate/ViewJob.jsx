@@ -76,7 +76,7 @@ const ViewJob = () => {
                 {/* Job Description and Skills */}
                 <div className="flex flex-col md:flex md:flex-row md:justify-between mt-4">
                     {/* Left section: Job description and skills */}
-                    <div className="md::w-3/4">
+                    <div className="md:w-3/4">
                         <div
                             className="text-font-gray font-outfit"
                             dangerouslySetInnerHTML={{ __html: formatDescription(formData.jobDescription) }}
