@@ -119,7 +119,7 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect }) => {
                 startAdornment: (
                   <InputAdornment position="start">
                     {/* <SearchIcon /> */}
-                    <SearchIcon/>
+                    <SearchIcon />
                   </InputAdornment>
                 ),
               }}
@@ -164,6 +164,12 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect }) => {
           {...params}
           label="Select Assignee"
           variant="outlined"
+          sx={{
+            "& .MuiInputBase-input": {
+              color: "white",
+              font: "Outfit"
+            }
+          }}
           InputProps={{
             ...params.InputProps,
             endAdornment: (
@@ -184,7 +190,15 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect }) => {
         />
       )}
       renderOption={(props, option) => (
-        <MenuItem {...props} key={option._id}>
+        <MenuItem {...props}
+          key={option._id}
+          sx={{
+            "& .MuiList-root": {
+              backgroundColor: 'rgba(12, 13, 13, 1) !important',
+              color: "white",
+              font: "Outfit"
+            }
+          }}>
           <ListItemAvatar>
             <Avatar sx={{ width: 32, height: 32 }}>
               {option.name[0].toUpperCase()}
