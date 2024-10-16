@@ -100,7 +100,7 @@ const ScreeningReview = ({ candidate, onSubmit }) => {
   );
 };
 
-const RoundReview = ({ roundNumber, candidate, onSubmit }) => {
+export const RoundReview = ({ roundNumber, candidate, onSubmit }) => {
   const [rating, setRating] = useState(0);
   const [feedback, setFeedback] = useState('');
 
@@ -170,7 +170,7 @@ const fetchCandidates = async () => {
   return response.data;
 };
 
-const submitReview = async ({ candidateId, reviewData }) => {
+ const submitReview = async ({ candidateId, reviewData }) => {
   const response = await axios.post('dr/submit-score-review', {
     candidateId,
     ...reviewData,
@@ -246,7 +246,7 @@ const Reviews = () => {
   const groupedCandidates = groupCandidatesByJobAndStage(candidates);
 
   // Define the order of stages
-  const stageOrder = ['Portfolio', 'Design Task', 'Screening', 'Round 1', 'Round 2'];
+  const stageOrder = ['Portfolio', 'Design Task', 'Screening', 'Round 1'];
 
   return (
     <div>

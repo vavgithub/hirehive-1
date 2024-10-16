@@ -21,6 +21,8 @@ import ClockIcon from '../../svg/Staging/ClockIcon';
 import { formatTime } from '../../utility/formatTime';
 import CalenderIcon from '../../svg/Staging/CalenderIcon';
 import { Button } from '../ui/Button';
+import { RoundReview } from '../../pages/DesignReviewer/Reviews';
+import Scorer from '../ui/Scorer';
 
 const RoundTwo = ({ candidateId, jobId }) => {
     const dispatch = useDispatch();
@@ -28,6 +30,10 @@ const RoundTwo = ({ candidateId, jobId }) => {
     const stageData = useSelector(state => state.applicationStage.stageStatuses['Round 2']);
     const [isRescheduling, setIsRescheduling] = useState(false);
     const candidateData = useSelector(state => state.candidate.candidateData);
+
+
+    const [score, setScore] = useState(0);
+    const [feedback, setFeedback] = useState('');
 
     console.log("Current stage data:", stageData);
 
@@ -124,6 +130,28 @@ const RoundTwo = ({ candidateId, jobId }) => {
         });
     };
 
+    const scoreRoundTwoMutation = useMutation({
+        mutationFn: (scoreData) => axios.post('hr/score-round-two', scoreData),
+        onSuccess: (data) => {
+            dispatch(updateStageStatus({
+                stage: 'Round 2',
+                status: 'Reviewed',
+                data: data.updatedStageStatus
+            }));
+            queryClient.invalidateQueries(['candidate', candidateId, jobId]);
+        },
+        onError: (error) => {
+            console.error("Error scoring Round 2:", error);
+            // Handle error (e.g., show error message to user)
+        }
+    });
+
+    const handleScoreSubmit = () => {
+        scoreRoundTwoMutation.mutate({ candidateId, jobId, score, feedback });
+    };
+
+
+
     const renderCallDetails = (call) => (
         <div className='bg-background-80 grid grid-cols-3 rounded-xl p-4'>
             <div className='flex flex-col'>
@@ -214,11 +242,39 @@ const RoundTwo = ({ candidateId, jobId }) => {
                 );
             case 'Under Review':
                 return (
-                    <Label icon={WarningIcon} text="Screening is currently under review." />
-                );
-            case 'Under Review':
-                return (
-                    <Label icon={WarningIcon} text="Portfolio is currently under review by the design reviewer." />
+                    <div className="flex flex-col  gap-4">
+                        <Label icon={WarningIcon} text="Please review the candidate's performance and provide a score and feedback." />
+
+                        <div className='flex gap-4'>
+
+
+                            <div className="flex flex-col  gap-4">
+                                <span>Score:</span>
+                                <Scorer value={score} onChange={setScore} />
+                            </div>
+                            <div className="flex flex-col w-full  gap-4">
+                                <span>Feedback:</span>
+
+                                <textarea
+                                    className="w-full bg-background-80 text-white p-2 rounded"
+                                    placeholder="Enter your feedback"
+                                    value={feedback}
+                                    onChange={(e) => setFeedback(e.target.value)}
+                                    rows={4}
+                                />
+                            </div>
+
+                        </div>
+                        <div className='flex justify-end'>
+
+                            <div className='w-[256px]'>
+
+                                <Button onClick={handleScoreSubmit} disabled={score === 0 || feedback === ''}>
+                                    Submit Score
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
                 );
             case 'Reviewed':
                 return (

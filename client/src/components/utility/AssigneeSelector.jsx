@@ -154,60 +154,80 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect }) => {
   // For 'default' mode
   return (
     <Autocomplete
-      options={reviewers}
-      getOptionLabel={(option) => option.name || ''}
-      loading={isLoading}
-      value={selectedReviewer}
-      onChange={(event, newValue) => handleSelect(newValue)}
-      renderInput={(params) => (
-        <TextField
-          {...params}
-          label="Select Assignee"
-          variant="outlined"
-          sx={{
-            "& .MuiInputBase-input": {
-              color: "white",
-              font: "Outfit"
-            }
-          }}
-          InputProps={{
-            ...params.InputProps,
-            endAdornment: (
-              <>
-                {isLoading ? <CircularProgress color="inherit" size={20} /> : null}
-                {params.InputProps.endAdornment}
-              </>
-            ),
-            startAdornment: (
-              <>
-                <Avatar sx={{ width: 24, height: 24, marginRight: 1 }}>
-                  {selectedReviewer ? selectedReviewer.name[0].toUpperCase() : 'A'}
-                </Avatar>
-                {params.InputProps.startAdornment}
-              </>
-            ),
-          }}
-        />
-      )}
-      renderOption={(props, option) => (
-        <MenuItem {...props}
-          key={option._id}
-          sx={{
-            "& .MuiList-root": {
-              backgroundColor: 'rgba(12, 13, 13, 1) !important',
-              color: "white",
-              font: "Outfit"
-            }
-          }}>
-          <ListItemAvatar>
-            <Avatar sx={{ width: 32, height: 32 }}>
-              {option.name[0].toUpperCase()}
+  options={reviewers}
+  getOptionLabel={(option) => option.name || ''}
+  loading={isLoading}
+  value={selectedReviewer}
+  onChange={(event, newValue) => handleSelect(newValue)}
+  ListboxProps={{
+    sx: {
+      backgroundColor: 'black', // Set the background color of the list
+    },
+  }}
+  renderInput={(params) => (
+    <TextField
+      {...params}
+      variant="outlined" // Keep the variant as 'outlined' if you prefer
+      InputLabelProps={{
+        shrink: false, // Prevent the label from shrinking
+        style: { display: 'none' }, // Hide the label visually
+      }}
+      sx={{
+        "& .MuiInputBase-input": {
+          color: "white",
+          fontFamily: "Outfit",
+        },
+        "& .MuiOutlinedInput-root": {
+          "& fieldset": {
+            border: "none", // Remove the border
+          },
+        },
+      }}
+      InputProps={{
+        ...params.InputProps,
+        endAdornment: (
+          <>
+            {isLoading ? <CircularProgress color="inherit" size={20} /> : null}
+            {params.InputProps.endAdornment}
+          </>
+        ),
+        startAdornment: (
+          <>
+            <Avatar sx={{ width: 24, height: 24, marginRight: 1 }}>
+              {selectedReviewer ? selectedReviewer.name[0].toUpperCase() : 'A'}
             </Avatar>
-          </ListItemAvatar>
-          <ListItemText primary={option.name} />
-        </MenuItem>
-      )}
+            {params.InputProps.startAdornment}
+          </>
+        ),
+      }}
     />
+  )}
+  renderOption={(props, option) => (
+    <MenuItem
+      {...props}
+      key={option._id}
+      sx={{
+        backgroundColor: 'black', // Set the background color of each option
+        color: 'white',           // Set the text color of each option
+        fontFamily: 'Outfit',
+        '&:hover': {
+          backgroundColor: 'gray', // Optional: Change background on hover
+        },
+        '&.Mui-selected': {
+          backgroundColor: 'darkgray', // Optional: Change background when selected
+        },
+      }}
+    >
+      <ListItemAvatar>
+        <Avatar sx={{ width: 32, height: 32 }}>
+          {option.name[0].toUpperCase()}
+        </Avatar>
+      </ListItemAvatar>
+      <ListItemText primary={option.name} />
+    </MenuItem>
+  )}
+/>
+
   );
 };
 

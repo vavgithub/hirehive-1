@@ -28,7 +28,7 @@ const MenuItems = {
   },
   page1: [
     { action: ACTION_TYPES.EDIT, icon: EditIcon, label: 'Edit' },
-    { action: ACTION_TYPES.DELETE, icon: DeleteIcon, label: 'Delete', className: 'text-red-100' },
+    // { action: ACTION_TYPES.DELETE, icon: DeleteIcon, label: 'Delete', className: 'text-red-100' },
   ],
   page2: [
     { action: 'ACTION_3', icon: DeleteIcon, label: 'Action 3' },

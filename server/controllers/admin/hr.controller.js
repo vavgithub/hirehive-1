@@ -647,3 +647,44 @@ export const sendDesignTask = async (req, res) => {
       res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
+
+export const scoreRoundTwo = async (req, res) => {
+  try {
+      const { candidateId, jobId, score, feedback } = req.body;
+
+      const candidate = await candidates.findById(candidateId);
+      if (!candidate) {
+          return res.status(404).json({ message: 'Candidate not found' });
+      }
+
+      const jobApplication = candidate.jobApplications.find(
+          app => app.jobId.toString() === jobId
+      );
+      if (!jobApplication) {
+          return res.status(404).json({ message: 'Job application not found' });
+      }
+
+      // Update the Round 2 stage status
+      const roundTwoStatus = jobApplication.stageStatuses.get('Round 2');
+      if (!roundTwoStatus || roundTwoStatus.status !== 'Under Review') {
+          return res.status(400).json({ message: 'Round 2 is not under review' });
+      }
+
+      roundTwoStatus.status = 'Reviewed';
+      roundTwoStatus.score = score;
+      roundTwoStatus.feedback = feedback;
+
+      jobApplication.stageStatuses.set('Round 2', roundTwoStatus);
+
+      // Save the changes
+      await candidate.save();
+
+      res.status(200).json({
+          message: 'Round 2 scored successfully',
+          updatedStageStatus: roundTwoStatus
+      });
+  } catch (error) {
+      console.error('Error scoring Round 2:', error);
+      res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
