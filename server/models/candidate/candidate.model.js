@@ -18,7 +18,7 @@ const stageStatusSchema = new mongoose.Schema({
     type: String,
     enum: [
       'Not Assigned', 'Under Review', 'Reviewed', 'Cleared', 'Rejected',
-      'Pending', 'Call Scheduled' ,'Rescheduled', 'No Show', 'Sent', 'Not Submitted'
+      'Pending', 'Call Scheduled' ,'Rescheduled', 'No Show', 'Accepted', 'Sent', 'Not Submitted'
     ],
     default: 'Not Assigned',
   },

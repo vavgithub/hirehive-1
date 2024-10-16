@@ -8,12 +8,14 @@ import RoundOne from './RoundOne';
 import RoundTwo from './RoundTwo';
 import GreenTickIcon from '../../svg/Staging/GreenTickIcon';
 import RejectTickIcon from '../../svg/Staging/RejectTickIcon';
+import Hired from './Hired';
 const stageComponents = {
     Portfolio,
     Screening,
     'Design Task': DesignTask,
     'Round 1': RoundOne,
     'Round 2': RoundTwo,
+    Hired
 };
 const ApplicationStaging = ({ candidateId, jobId }) => {
     const { currentStage, stageStatuses } = useSelector((state) => state.applicationStage);
