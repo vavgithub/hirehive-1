@@ -14,6 +14,7 @@ const theme = createTheme({
           '& .MuiInputBase-root': {
             backgroundColor: 'black',
             color: 'white',
+            borderRadius:"12px"
           },
           // '& .MuiOutlinedInput-notchedOutline': {
           //   borderColor: 'teal',

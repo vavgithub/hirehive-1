@@ -296,6 +296,149 @@ export const rejectCandidate = async (req, res) => {
     }
 };
 
+export const scheduleCall = async (req, res) => {
+  try {
+      const { candidateId, jobId, stage, date, time, assigneeId, meetingLink } = req.body;
+
+      const candidate = await candidates.findById(candidateId);
+      if (!candidate) {
+          return res.status(404).json({ message: 'Candidate not found' });
+      }
+
+      const jobApplication = candidate.jobApplications.find(
+          app => app.jobId.toString() === jobId
+      );
+      if (!jobApplication) {
+          return res.status(404).json({ message: 'Job application not found' });
+      }
+
+      // Validate if the stage is valid
+      const validStages = ['Screening', 'Round 1', 'Round 2'];
+      if (!validStages.includes(stage)) {
+          return res.status(400).json({ message: 'Invalid stage' });
+      }
+
+      // Update the stage status
+      jobApplication.stageStatuses.set(stage, {
+          status: 'Call Scheduled',
+          assignedTo: assigneeId,
+          currentCall: {
+              scheduledDate: date,
+              scheduledTime: time,
+              meetingLink: meetingLink
+          }
+      });
+
+      // Save the changes
+      await candidate.save();
+
+      console.log('Candidate after save:', candidate.toObject());
+
+      res.status(200).json({
+          message: `${stage} call scheduled successfully`,
+          updatedStageStatus: jobApplication.stageStatuses.get(stage)
+      });
+  } catch (error) {
+      console.error('Error scheduling interview:', error);
+      res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+export const rescheduleCall = async (req, res) => {
+  try {
+    const { candidateId, jobId, stage, date, time, assigneeId, meetingLink } = req.body;
+    console.log('Rescheduling request received:', { candidateId, jobId, stage, date, time, assigneeId, meetingLink });
+
+    const candidate = await candidates.findById(candidateId);
+    if (!candidate) {
+      console.log('Candidate not found:', candidateId);
+      return res.status(404).json({ message: 'Candidate not found' });
+    }
+
+    const jobApplication = candidate.jobApplications.find(
+      app => app.jobId.toString() === jobId
+    );
+    if (!jobApplication) {
+      console.log('Job application not found:', jobId);
+      return res.status(404).json({ message: 'Job application not found' });
+    }
+
+    console.log('Current job application:', JSON.stringify(jobApplication, null, 2));
+
+    // Validate the stage
+    const validStages = ['Screening', 'Round 1', 'Round 2'];
+    if (!validStages.includes(stage)) {
+      return res.status(400).json({ message: 'Invalid stage' });
+    }
+
+    // Get the stage status
+    let stageStatus = jobApplication.stageStatuses.get(stage);
+
+    // If stage status doesn't exist, initialize it
+    if (!stageStatus) {
+      console.log(`Initializing ${stage} stage status`);
+      stageStatus = {
+        status: 'Call Scheduled',
+        assignedTo: assigneeId,
+        currentCall: null,
+        callHistory: []
+      };
+    }
+
+    console.log(`Current ${stage} stage status:`, JSON.stringify(stageStatus, null, 2));
+
+    // Move current call to call history if it exists
+    if (stageStatus.currentCall) {
+      console.log('Moving current call to history:', stageStatus.currentCall);
+      if (!stageStatus.callHistory) {
+        stageStatus.callHistory = [];
+      }
+      stageStatus.callHistory.unshift({
+        ...stageStatus.currentCall,
+        status: 'Rescheduled'
+      });
+    } else {
+      console.log('No current call to move to history');
+    }
+
+    // Update current call with new details
+    console.log('Updating current call with new details');
+    stageStatus.currentCall = {
+      scheduledDate: date,
+      scheduledTime: time,
+      meetingLink: meetingLink
+    };
+    stageStatus.assignedTo = assigneeId;
+    stageStatus.status = 'Call Scheduled';
+
+    // Update the stage status in the stageStatuses Map
+    jobApplication.stageStatuses.set(stage, stageStatus);
+
+    console.log(`Updated ${stage} stage status:`, JSON.stringify(stageStatus, null, 2));
+
+    // Mark the jobApplications array as modified
+    candidate.markModified('jobApplications');
+
+    await candidate.save();
+    console.log('Candidate saved successfully');
+
+    const updatedCandidate = await candidates.findById(candidateId);
+    const updatedJobApplication = updatedCandidate.jobApplications.find(
+      app => app.jobId.toString() === jobId
+    );
+    const updatedStageStatus = updatedJobApplication.stageStatuses.get(stage);
+    console.log(`Fetched updated ${stage} stage status:`, JSON.stringify(updatedStageStatus, null, 2));
+
+    res.status(200).json({
+      message: `${stage} call rescheduled successfully`,
+      updatedStageStatus: updatedStageStatus
+    });
+  } catch (error) {
+    console.error('Error rescheduling interview:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
 export const rescheduleScreening = async (req, res) => {
   try {
     const { candidateId, jobId, date, time, assigneeId, meetingLink } = req.body;

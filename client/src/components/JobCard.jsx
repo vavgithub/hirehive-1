@@ -124,7 +124,7 @@ const JobCard = ({
     </div>
   
     <div className="p-4">
-      <p className="typography-body w-[60%] inline-block truncate text-ellipsis text-font-gray">
+      <p className="typography-body w-[54vw] inline-block truncate text-ellipsis text-font-gray">
         {job.jobDescription || 'No description available'}
       </p>
     </div>

@@ -26,7 +26,7 @@ import CopyToClipboard from 'react-copy-to-clipboard';
 import BulletMarks from '../ui/BulletMarks';
 import Scorer from '../ui/Scorer';
 
-const ScheduleForm = ({ candidateId, jobId, onSubmit, isRescheduling, initialData, onCancel }) => {
+export const ScheduleForm = ({ candidateId, jobId, onSubmit, isRescheduling, initialData, onCancel }) => {
     const [date, setDate] = useState(isRescheduling ? null : (initialData ? new Date(initialData.scheduledDate) : null));
     const [time, setTime] = useState(isRescheduling ? null : (initialData ? initialData.scheduledTime : null));
     const [assignee, setAssignee] = useState(isRescheduling ? null : (initialData ? initialData.assignedTo : null));
@@ -200,7 +200,10 @@ const Screening = ({ candidateId, jobId }) => {
     };
 
     const scheduleMutation = useMutation({
-        mutationFn: (scheduleData) => axios.post('hr/schedule-screening', scheduleData),
+        mutationFn: (scheduleData) => axios.post('hr/schedule-call', {
+            ...scheduleData,
+            stage: 'Screening'
+        }),
         onSuccess: (data) => {
             dispatch(updateStageStatus({
                 stage: 'Screening',
@@ -208,11 +211,18 @@ const Screening = ({ candidateId, jobId }) => {
                 data: data.updatedStageStatus
             }));
             queryClient.invalidateQueries(['candidate', candidateId, jobId]);
+        },
+        onError: (error) => {
+            console.error("Error scheduling interview:", error);
+            // Handle error (e.g., show error message to user)
         }
     });
-
+    
     const rescheduleMutation = useMutation({
-        mutationFn: (rescheduleData) => axios.post('hr/reschedule-screening', rescheduleData),
+        mutationFn: (rescheduleData) => axios.post('hr/reschedule-call', {
+            ...rescheduleData,
+            stage: 'Screening'
+        }),
         onSuccess: (data) => {
             dispatch(updateStageStatus({
                 stage: 'Screening',
@@ -221,34 +231,20 @@ const Screening = ({ candidateId, jobId }) => {
             }));
             queryClient.invalidateQueries(['candidate', candidateId, jobId]);
             setIsRescheduling(false);
+        },
+        onError: (error) => {
+            console.error("Error rescheduling interview:", error);
+            // Handle error (e.g., show error message to user)
         }
     });
-
+    
     const handleSchedule = (scheduleData) => {
         scheduleMutation.mutate({ candidateId, jobId, ...scheduleData });
     };
-
+    
     const handleReschedule = (rescheduleData) => {
-        rescheduleMutation.mutate(
-            { candidateId, jobId, ...rescheduleData },
-            {
-                onSuccess: (data) => {
-                    dispatch(updateStageStatus({
-                        stage: 'Screening',
-                        status: 'Call Scheduled',
-                        data: data.updatedStageStatus
-                    }));
-                    queryClient.invalidateQueries(['candidate', candidateId, jobId]);
-                    setIsRescheduling(false);
-                },
-                onError: (error) => {
-                    console.error("Error rescheduling call:", error);
-                    // Handle error (e.g., show error message to user)
-                }
-            }
-        );
+        rescheduleMutation.mutate({ candidateId, jobId, ...rescheduleData });
     };
-
     const updateAssigneeMutation = useMutation({
         mutationFn: (newAssignee) => axios.put('dr/update-assignee', {
             candidateId,
@@ -415,14 +411,8 @@ const Screening = ({ candidateId, jobId }) => {
                                     </div>
 
                                     <div >
-
-
-
                                         <p className='typography-small-p text-font-gray mb-4'>Score Budget</p>
-
-
                                         {isBudgetScoreSubmitted ? (
-
                                             <div className='bg-stars bg-cover rounded-xl w-[160px] my-4'>
                                                 <div className='p-4 flex flex-col items-center'>
                                                     <p className='typography-small-p text-font-gray'>Total Score:</p>
@@ -445,16 +435,8 @@ const Screening = ({ candidateId, jobId }) => {
                                                         Submit
                                                     </Button>
                                                 </div>
-
                                             )
-
                                         }
-
-
-
-
-
-
                                     </div>
                                 </div>
                             </div>
