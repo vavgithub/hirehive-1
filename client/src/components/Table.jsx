@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { DataGrid } from '@mui/x-data-grid';
-import { FaFile, FaFileAlt, FaGlobe, FaUser } from 'react-icons/fa';
+import { FaEdit, FaFile, FaFileAlt, FaGlobe, FaUser } from 'react-icons/fa';
 import { Menu, MenuItem } from '@mui/material';
 
 import { Link, useNavigate } from 'react-router-dom';
@@ -24,6 +24,8 @@ import ResumeViewer from './utility/ResumeViewer';
 import FilterForDataTable from './FilterForDataTable';
 import { exportToExcel } from '../utility/exportToExcel';
 import Export from '../svg/Buttons/Export';
+import EditIcon from '../svg/KebabList/EditIcon';
+import DeleteIcon from '../svg/KebabList/DeleteIcon';
 
 
 const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
@@ -49,6 +51,8 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
   // ..this are the table filters 
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState({});
+
+  const [budgetMenuAnchorEl, setBudgetMenuAnchorEl] = useState(null);
 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
@@ -469,6 +473,30 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
     exportToExcel(filteredAndSearchedRowsData, 'my_data');
   };
 
+  const handleBudgetButtonClick = (event) => {
+    if (budgetFilter.from && budgetFilter.to) {
+      setBudgetMenuAnchorEl(event.currentTarget);
+    } else {
+      setTempBudgetFilter(budgetFilter);
+      setIsBudgetModalOpen(true);
+    }
+  };
+
+  const handleBudgetMenuClose = () => {
+    setBudgetMenuAnchorEl(null);
+  };
+
+  const handleBudgetEdit = () => {
+    handleBudgetMenuClose();
+    setTempBudgetFilter(budgetFilter);
+    setIsBudgetModalOpen(true);
+  };
+
+  const handleBudgetClear = () => {
+    clearBudgetFilter();
+    handleBudgetMenuClose();
+  };
+
 
 
   return (
@@ -559,14 +587,14 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
 
         {!readOnly && (<div className='flex gap-4'>
 
-          <div className='w-[216px] '>
+          <div className={`${budgetFilter.from && budgetFilter.to ? "w-[216px]" : "hidden"}`}>
             <Button
               icon={AutoAssign}
               variant="primary"
               onClick={() => setIsAutoAssignModalOpen(true)}
               disabled={autoAssignMutation.isLoading}
             >
-              {autoAssignMutation.isLoading ? 'Auto-Assigning...' : 'Auto-Assign Portfolio'}
+              {(autoAssignMutation.isLoading ? 'Auto-Assigning...' : 'Auto-Assign Portfolio')}
             </Button>
           </div>
           <div className={`${budgetFilter.from && budgetFilter.to ? "auto" : "w-[216px]"}`}>
@@ -574,10 +602,11 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
             <Button
               variant={budgetFilter.from && budgetFilter.to ? "icon" : "primary"}
               icon={Budget}
-              onClick={() => {
-                setTempBudgetFilter(budgetFilter);
-                setIsBudgetModalOpen(true);
-              }}
+              // onClick={() => {
+              //   setTempBudgetFilter(budgetFilter);
+              //   setIsBudgetModalOpen(true);
+              // }}
+              onClick={handleBudgetButtonClick}
             >
               {budgetFilter.from && budgetFilter.to ? '' : 'Screen With Budget'}
             </Button>
@@ -711,6 +740,43 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
             </div>
           </MenuItem>
         ))}
+      </Menu>
+
+
+
+      <Menu
+        anchorEl={budgetMenuAnchorEl}
+        open={Boolean(budgetMenuAnchorEl)}
+        onClose={handleBudgetMenuClose}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'left',
+        }}
+        sx={{
+          "& .MuiList-root": {
+            backgroundColor: 'rgba(12, 13, 13, 1)',
+            color: "white",
+            font: "Outfit"
+          },
+          "& .MuiPaper-root": {
+            marginTop: '8px',
+            marginLeft: '-60px', // Adjust this value to move the menu more to the left
+          }
+        }}
+      >
+        <div className='flex items-center justify-evenly px-4 typograhy-body '>
+          <EditIcon />
+          <MenuItem onClick={handleBudgetEdit}>Edit</MenuItem>
+
+        </div>
+        <div className='flex items-center justify-evenly px-4 typograhy-body '>
+           <DeleteIcon /> 
+          <MenuItem onClick={handleBudgetClear}>Clear</MenuItem>
+        </div>
       </Menu>
 
 
