@@ -242,13 +242,13 @@ export const autoAssignPortfolios = async (req, res) => {
   session.startTransaction();
 
   try {
-    const { jobId, reviewerIds } = req.body;
+    const { jobId, reviewerIds, budgetMin, budgetMax } = req.body;
 
-    if (!jobId || !reviewerIds || reviewerIds.length === 0) {
-      return res.status(400).json({ message: 'Invalid input. Job ID and at least one reviewer ID are required.' });
+    if (!jobId || !reviewerIds || reviewerIds.length === 0 || budgetMin === undefined || budgetMax === undefined) {
+      return res.status(400).json({ message: 'Invalid input. Job ID, reviewer IDs, and budget range are required.' });
     }
 
-    // Find all candidates for the given job in Portfolio stage with Not Assigned status
+    // Find all candidates for the given job in Portfolio stage with Not Assigned status and within budget range
     const eligibleCandidates = await candidates.find({
       'jobApplications': {
         $elemMatch: {
@@ -256,13 +256,14 @@ export const autoAssignPortfolios = async (req, res) => {
           currentStage: 'Portfolio',
           'stageStatuses.Portfolio.status': 'Not Assigned'
         }
-      }
+      },
+      expectedCTC: { $gte: budgetMin, $lte: budgetMax }
     }).session(session);
 
     if (eligibleCandidates.length === 0) {
       await session.abortTransaction();
       session.endSession();
-      return res.status(404).json({ message: 'No eligible candidates found for assignment.' });
+      return res.status(404).json({ message: 'No eligible candidates found for assignment within the specified budget range.' });
     }
 
     // Calculate how many candidates each reviewer should get

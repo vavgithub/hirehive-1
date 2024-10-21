@@ -196,10 +196,24 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
   //   setIsAutoAssignModalOpen(false);
   // };
 
-  const handleAutoAssign = async (assignmentResult) => {
-    console.log('Auto-assign result:', assignmentResult);
-      // Refetch the data immediately after auto-assignment
-      await refetch();
+  const handleAutoAssign = async (selectedReviewers) => {
+    try {
+      const response = await axios.post('/dr/auto-assign-portfolios', {
+        jobId,
+        reviewerIds: selectedReviewers.map(reviewer => reviewer._id),
+        budgetMin: parseFloat(budgetFilter.from) || 0,
+        budgetMax: parseFloat(budgetFilter.to) || Infinity
+      });
+      
+      if (response.status === 200) {
+        console.log('Auto-assign result:', response.data);
+        await refetch();
+      } else {
+        console.error('Failed to assign portfolios');
+      }
+    } catch (error) {
+      console.error('Error in auto-assigning portfolios:', error);
+    }
     setIsAutoAssignModalOpen(false);
   };
 
@@ -724,6 +738,7 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
         onClose={() => setIsAutoAssignModalOpen(false)}
         onAssign={handleAutoAssign}
         jobId={jobId}
+        budgetFilter={budgetFilter}
       />
 
       <Menu
