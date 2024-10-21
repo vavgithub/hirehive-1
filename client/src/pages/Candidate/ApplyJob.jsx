@@ -399,7 +399,6 @@ const ApplyJob = () => {
                   type="text"
                   id="portfolio"
                   label="Portfolio"
-
                   required={true}
                   error={errors.portfolio}
                   {...field}
@@ -462,7 +461,7 @@ const ApplyJob = () => {
                     <p className='text-font-gray typography-small-p hidden md:flex'>OR</p>
                     <div className='md:w-[276px]'>
 
-                      <Button variant="secondary" type="button">Upload Resume</Button>
+                      <Button variant="secondary" type="button">Browse files</Button>
                     </div>
                   </div>
                 )}

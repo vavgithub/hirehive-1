@@ -7,6 +7,7 @@ import { Button } from '../ui/Button';
 import Next from '../../svg/Buttons/Next';
 import SaveForLater from '../../svg/Buttons/SaveForLater';
 import Que from './Que';
+import Create from '../../svg/Buttons/Create';
 
 const JobForm = ({ initialData, onSubmit, isEditing, initialQuestions }) => {
   const { control, handleSubmit, watch, setValue, getValues, formState: { errors, isValid } } = useForm({
@@ -208,11 +209,14 @@ const JobForm = ({ initialData, onSubmit, isEditing, initialQuestions }) => {
             <Button
               variant="primary"
               type="submit"
-              icon={Next}
+              icon={Create}
+              iconPosition="left"
               disabled={!areAllFieldsFilled}
             >
-              {isEditing ? 'Save' : 'Next'}
+              {isEditing ? 'Save' : 'Create A Job Listing'}
+
             </Button>
+
           </div>
         </div>
 

@@ -287,7 +287,7 @@ const ViewJobs = () => {
                                     <span key={index} className="flex justify-center bg-background-70 m px-6 py-2 rounded-full">{skill}</span>))}
                             </div>
                         </div>
-                        <div>
+                        <div className='pb-4'>
                             <SideCard formData={formData} />
                         </div>
                     </div>

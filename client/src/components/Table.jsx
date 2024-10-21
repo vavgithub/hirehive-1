@@ -26,6 +26,7 @@ import { exportToExcel } from '../utility/exportToExcel';
 import Export from '../svg/Buttons/Export';
 import EditIcon from '../svg/KebabList/EditIcon';
 import DeleteIcon from '../svg/KebabList/DeleteIcon';
+import { showErrorToast, showSuccessToast } from './ui/Toast';
 
 
 const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
@@ -208,11 +209,13 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
       if (response.status === 200) {
         console.log('Auto-assign result:', response.data);
         await refetch();
+        showSuccessToast("Auto Assign Portfolio Done")
       } else {
         console.error('Failed to assign portfolios');
       }
     } catch (error) {
       console.error('Error in auto-assigning portfolios:', error);
+      showErrorToast(`${error.message}`)
     }
     setIsAutoAssignModalOpen(false);
   };
@@ -257,8 +260,10 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
 
   const handleApplyBudgetFilter = () => {
     setBudgetFilter(tempBudgetFilter);
+    console.log("check krr toh brooww" , tempBudgetFilter)
     localStorage.setItem(`budgetFilter_${jobId}`, JSON.stringify(tempBudgetFilter));
     setIsBudgetModalOpen(false);
+    showSuccessToast("Screened with budget" , `Candidates successfully screened within the budget ${tempBudgetFilter.from}LPA - ${tempBudgetFilter.to}LPA`)
   };
 
   const clearBudgetFilter = () => {
@@ -266,6 +271,7 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
     setBudgetFilter(clearedFilter);
     setTempBudgetFilter(clearedFilter);
     localStorage.removeItem(`budgetFilter_${jobId}`);
+    showErrorToast("Budget Has Been Cleared")
   };
 
 
@@ -322,6 +328,8 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
     }
   };
 
+
+  //this is for opening the portfolios in different tab
   const ensureAbsoluteUrl = (url) => {
     if (url && !url.startsWith('http://') && !url.startsWith('https://')) {
       return `https://${url}`;
