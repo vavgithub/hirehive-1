@@ -70,7 +70,7 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
     setIsDocumentViewerOpen(true);
   };
 
-  const { data: apiResponse, isLoading, isError } = useQuery({
+  const { data: apiResponse, isLoading, isError , refetch  } = useQuery({
     queryKey: ['candidates', jobId],
     queryFn: () => axios.get(`/admin/candidate/${jobId}`).then(res => res.data),
     enabled: !readOnly, // Only fetch data if not in readOnly mode
@@ -188,11 +188,18 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
   });
 
 
-  const handleAutoAssign = (selectedReviewers) => {
-    autoAssignMutation.mutate({
-      jobId,
-      reviewerIds: selectedReviewers.map(r => r._id)
-    });
+  // const handleAutoAssign = (selectedReviewers) => {
+  //   autoAssignMutation.mutate({
+  //     jobId,
+  //     reviewerIds: selectedReviewers.map(r => r._id)
+  //   });
+  //   setIsAutoAssignModalOpen(false);
+  // };
+
+  const handleAutoAssign = async (assignmentResult) => {
+    console.log('Auto-assign result:', assignmentResult);
+      // Refetch the data immediately after auto-assignment
+      await refetch();
     setIsAutoAssignModalOpen(false);
   };
 
@@ -716,6 +723,7 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
         open={isAutoAssignModalOpen}
         onClose={() => setIsAutoAssignModalOpen(false)}
         onAssign={handleAutoAssign}
+        jobId={jobId}
       />
 
       <Menu

@@ -237,86 +237,97 @@ export const getAssignedCandidates = async (req, res) => {
 };
 
 
-  export const autoAssignPortfolios = async (req, res) => {
-    const session = await mongoose.startSession();
-    session.startTransaction();
-  
-    try {
-      const { jobId, reviewerIds } = req.body;
-  
-      if (!jobId || !reviewerIds || reviewerIds.length === 0) {
-        return res.status(400).json({ message: 'Invalid input. Job ID and at least one reviewer ID are required.' });
-      }
-  
-      // Find all candidates for the given job in Portfolio stage with Not Assigned status
-      const eligibleCandidates = await candidates.find({
-        'jobApplications': {
-          $elemMatch: {
-            jobId: new mongoose.Types.ObjectId(jobId),
-            currentStage: 'Portfolio',
-            'stageStatuses.Portfolio.status': 'Not Assigned'
-          }
-        }
-      }).session(session);
-  
-      if (eligibleCandidates.length === 0) {
-        await session.abortTransaction();
-        session.endSession();
-        return res.status(404).json({ message: 'No eligible candidates found for assignment.' });
-      }
-  
-      // Calculate how many candidates each reviewer should get
-      const candidatesPerReviewer = Math.floor(eligibleCandidates.length / reviewerIds.length);
-      let remainingCandidates = eligibleCandidates.length % reviewerIds.length;
-  
-      let assignmentCount = 0;
-      const assignments = {};
-  
-      // Distribute candidates among reviewers
-      for (let i = 0; i < eligibleCandidates.length; i++) {
-        const candidate = eligibleCandidates[i];
-        const reviewerIndex = Math.floor(i / (candidatesPerReviewer + (remainingCandidates > 0 ? 1 : 0)));
-        const reviewerId = reviewerIds[reviewerIndex];
-  
-        // Update candidate
-        const jobApplication = candidate.jobApplications.find(app => app.jobId.toString() === jobId);
-        if (jobApplication) {
-          jobApplication.stageStatuses.Portfolio = {
-            ...jobApplication.stageStatuses.Portfolio,
-            status: 'Under Review',
-            assignedTo: new mongoose.Types.ObjectId(reviewerId)
-          };
-          await candidate.save({ session });
-          assignmentCount++;
-  
-          // Track assignments for response
-          if (!assignments[reviewerId]) {
-            assignments[reviewerId] = 0;
-          }
-          assignments[reviewerId]++;
-        }
-  
-        if (i === (candidatesPerReviewer + (remainingCandidates > 0 ? 1 : 0)) * (reviewerIndex + 1) - 1) {
-          remainingCandidates--;
+export const autoAssignPortfolios = async (req, res) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    const { jobId, reviewerIds } = req.body;
+
+    if (!jobId || !reviewerIds || reviewerIds.length === 0) {
+      return res.status(400).json({ message: 'Invalid input. Job ID and at least one reviewer ID are required.' });
+    }
+
+    // Find all candidates for the given job in Portfolio stage with Not Assigned status
+    const eligibleCandidates = await candidates.find({
+      'jobApplications': {
+        $elemMatch: {
+          jobId: new mongoose.Types.ObjectId(jobId),
+          currentStage: 'Portfolio',
+          'stageStatuses.Portfolio.status': 'Not Assigned'
         }
       }
-  
-      await session.commitTransaction();
-      session.endSession();
-  
-      res.status(200).json({
-        message: 'Auto-assignment completed successfully',
-        totalAssigned: assignmentCount,
-        assignments: assignments
-      });
-  
-    } catch (error) {
+    }).session(session);
+
+    if (eligibleCandidates.length === 0) {
       await session.abortTransaction();
       session.endSession();
-      console.error('Error in autoAssignPortfolios:', error);
-      res.status(500).json({ message: 'Server error during auto-assignment' });
+      return res.status(404).json({ message: 'No eligible candidates found for assignment.' });
     }
-  };
+
+    // Calculate how many candidates each reviewer should get
+    const candidatesPerReviewer = Math.floor(eligibleCandidates.length / reviewerIds.length);
+    let remainingCandidates = eligibleCandidates.length % reviewerIds.length;
+
+    let assignmentCount = 0;
+    const assignments = {};
+
+    // Distribute candidates among reviewers
+    for (let i = 0; i < eligibleCandidates.length; i++) {
+      const candidate = eligibleCandidates[i];
+      const reviewerIndex = Math.floor(i / (candidatesPerReviewer + (remainingCandidates > 0 ? 1 : 0)));
+      const reviewerId = reviewerIds[reviewerIndex];
+
+      // Update candidate
+      const updatedCandidate = await candidates.findOneAndUpdate(
+        {
+          _id: candidate._id,
+          'jobApplications': {
+            $elemMatch: {
+              jobId: new mongoose.Types.ObjectId(jobId),
+              currentStage: 'Portfolio',
+              'stageStatuses.Portfolio.status': 'Not Assigned'
+            }
+          }
+        },
+        {
+          $set: {
+            'jobApplications.$.stageStatuses.Portfolio.status': 'Under Review',
+            'jobApplications.$.stageStatuses.Portfolio.assignedTo': new mongoose.Types.ObjectId(reviewerId)
+          }
+        },
+        { new: true, session }
+      );
+
+      if (updatedCandidate) {
+        assignmentCount++;
+        if (!assignments[reviewerId]) {
+          assignments[reviewerId] = 0;
+        }
+        assignments[reviewerId]++;
+      }
+
+      if (i === (candidatesPerReviewer + (remainingCandidates > 0 ? 1 : 0)) * (reviewerIndex + 1) - 1) {
+        remainingCandidates--;
+      }
+    }
+
+    await session.commitTransaction();
+    session.endSession();
+
+    res.status(200).json({
+      message: 'Auto-assignment completed successfully',
+      totalAssigned: assignmentCount,
+      assignments: assignments
+    });
+
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    console.error('Error in autoAssignPortfolios:', error);
+    res.status(500).json({ message: 'Server error during auto-assignment' });
+  }
+};
 
  export  const submitScoreReview = async (req, res) => {
    try {

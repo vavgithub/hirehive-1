@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.put('/update-assignee', updateCandidateAssignee);
 
-router.post('/auto-assign-portfolios',autoAssignPortfolios)
+router.post('/auto-assign-portfolios', autoAssignPortfolios)
 
 router.get('/assigned-candidates', protect , roleProtect("Design Reviewer") , getAssignedCandidates);
 

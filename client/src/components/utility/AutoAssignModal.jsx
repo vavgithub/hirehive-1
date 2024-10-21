@@ -1,11 +1,10 @@
 import React, { useState, useEffect ,useRef } from 'react';
 import { fetchAvailableDesignReviewers } from '../../api/authApi';
 import Modal from '../Modal';
-// import Modal from './Modal';
-// import { Button } from './ui/Button';
-// import { fetchAvailableDesignReviewers } from '../api/authApi';
+import axios from '../../api/axios';
 
-const AutoAssignModal = ({ open, onClose, onAssign }) => {
+
+const AutoAssignModal = ({ open, onClose, onAssign, jobId }) => {
     const [reviewers, setReviewers] = useState([]);
     const [selectedReviewers, setSelectedReviewers] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -64,10 +63,28 @@ const AutoAssignModal = ({ open, onClose, onAssign }) => {
       }
     };
   
-    const handleAssign = () => {
-      onAssign(selectedReviewers);
-      onClose();
+    // const handleAssign = () => {
+    //   onAssign(selectedReviewers);
+    //   onClose();
+    // };
+    const handleAssign = async () => {
+      try {
+        const response = await axios.post('/dr/auto-assign-portfolios', {
+          jobId,
+          reviewerIds: selectedReviewers.map(reviewer => reviewer._id)
+        });
+        
+        if (response.status === 200) {
+          onAssign(response.data);
+        } else {
+          setError('Failed to assign portfolios. Please try again.');
+        }
+      } catch (error) {
+        console.error('Error in auto-assigning portfolios:', error);
+        setError('An error occurred while assigning portfolios.');
+      }
     };
+  
   
     const customContent = (
       <div className="relative" ref={dropdownRef}>
