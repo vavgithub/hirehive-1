@@ -64,6 +64,10 @@ export const router = createBrowserRouter([
         element: <AllJobs />, // Protected HomePage with sidebar
       },
       {
+        path:'viewJob/:candidateId/:jobId',
+        element:<ViewCandidateProfile/>
+      },
+      {
         path: '',
         element: <Navigate to="dashboard" />, // Redirect to dashboard by default
       },

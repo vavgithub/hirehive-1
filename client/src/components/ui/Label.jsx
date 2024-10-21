@@ -1,9 +1,9 @@
 import React from 'react'
 
-const Label = ({text , icon}) => {
+const Label = ({text , icon: Icon }) => {
   return (
     <div className='rounded-xl flex gap-4 p-4 bg-background-80 typography-large-p'>
-         {icon && icon}
+          {Icon && <Icon />} 
         {text}
     </div>
   )

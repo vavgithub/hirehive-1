@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate , useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import ResumeIcon from '../../svg/ResumeIcon';
 import AssignmentIcon from '../../svg/AssignmentIcon';
 import PhoneIcon from '../../svg/PhoneIcon';
@@ -30,8 +30,8 @@ const fetchCandidateData = async (candidateId, jobId) => {
     return data;
 };
 
-const fetchTotalScore = async (candidateId , jobId)=>{
-    const {data} = await axios.get(`hr/candidate/${candidateId}/job/${jobId}/scores`);
+const fetchTotalScore = async (candidateId, jobId) => {
+    const { data } = await axios.get(`hr/candidate/${candidateId}/job/${jobId}/scores`);
     return data;
 }
 
@@ -56,6 +56,12 @@ const transformCandidateData = (data) => {
 
 
 const ViewCandidateProfile = () => {
+    const { user } = useAuthContext();
+    const role = user?.role || 'Candidate'; // Default to Candidate if role is not specified
+
+    console.log('User role:', role);
+
+
     const [activeTab, setActiveTab] = useState('application');
     console.log('ViewCandidateProfile component rendered');
     const { candidateId, jobId } = useParams();
@@ -63,7 +69,7 @@ const ViewCandidateProfile = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
- 
+
 
     const { data, isLoading, isError, error: queryError } = useQuery({
         queryKey: ['candidate', candidateId, jobId],
@@ -76,7 +82,7 @@ const ViewCandidateProfile = () => {
         },
     });
 
-    const { data:score ,error } = useQuery({
+    const { data: score, error } = useQuery({
         queryKey: ['candidateScore', candidateId, jobId],
         queryFn: () => fetchTotalScore(candidateId, jobId),
         cacheTime: 0,
@@ -87,19 +93,19 @@ const ViewCandidateProfile = () => {
         },
     });
 
-        // Use useEffect to dispatch actions when data changes
-        useEffect(() => {
-            if (data) {
-                console.log('Data fetched or updated:', data);
-                dispatch(setCandidateData(data));
-                if (data.jobApplication) {
-                    dispatch(setCurrentStage(data.jobApplication.currentStage));
-                    dispatch(setStageStatuses(data.jobApplication.stageStatuses));
-                } else {
-                    console.error('jobApplication data is missing');
-                }
+    // Use useEffect to dispatch actions when data changes
+    useEffect(() => {
+        if (data) {
+            console.log('Data fetched or updated:', data);
+            dispatch(setCandidateData(data));
+            if (data.jobApplication) {
+                dispatch(setCurrentStage(data.jobApplication.currentStage));
+                dispatch(setStageStatuses(data.jobApplication.stageStatuses));
+            } else {
+                console.error('jobApplication data is missing');
             }
-        }, [data, dispatch]);
+        }
+    }, [data, dispatch]);
 
     useEffect(() => {
         console.log('useEffect triggered, isLoading:', isLoading);
@@ -137,13 +143,13 @@ const ViewCandidateProfile = () => {
                 break;
             case 'ACTION_2':
                 navigate('/some-other-page');
-                break;    
+                break;
             case 'ACTION_3':
                 // Example: Update state or trigger some function
                 console.log('Performing Action 3');
                 break;
             case 'ACTION_4':
-                if (window.confirm('Are you sure you want to perform Action 4?')) { 
+                if (window.confirm('Are you sure you want to perform Action 4?')) {
                     console.log('Action 4 confirmed');
                 }
                 break;
@@ -176,55 +182,64 @@ const ViewCandidateProfile = () => {
             {/* Page header */}
             <Header
                 HeaderText="Candidate Profile"
-                withKebab="true"
+                withKebab={role === "Hiring Manager" ? "true" : "false"}
                 withBack="true"
                 page="page1"
                 handleAction={handleAction}
             />
             {/* Candidate Profile Card */}
-            <div className="flex gap-3">
-                <div className="bg-background-90 w-full p-4 rounded-xl flex">
-                    <div className="to-background-100">
-                        <img src="" alt="" />
-                    </div>
-                    <div>
-                        <h1 className="typography-h2">
-                            {data.firstName} {data.lastName}
-                        </h1>
-                        <div className="flex items-center gap-2 mb-3 mt-2">
-                            <span className="typography-small-p text-gray-500">{data.jobApplied}</span>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="4" height="4" viewBox="0 0 4 4" fill="none">
-                                <circle cx="2" cy="2" r="2" fill="#808389" />
-                            </svg>
-                            <span className="typography-small-p text-gray-500">{data.location}</span>
-                        </div>
-                        <div className="flex mb-3 gap-5">
-                            <div className="flex items-center gap-2">
-                                <PhoneIcon />
-                                <span className="typography-large-p">{data.phone}</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <EmailIcon />
-                                <span className="typography-large-p">{data.email}</span>
-                            </div>
-                        </div>
-                        <div className="flex gap-2 items-center">
-                            <ResumeIcon />
-                            <FileMainIcon />
-                            <WebsiteMainIcon />
-                            <AssignmentIcon />
-                        </div>
-                        <p>{data.location}</p>
-                    </div>
-                </div>
 
-                {/* VAV Score Section */}
-                <div className="flex bg-stars flex-col items-center bg-background-90 w-[430px] bg-cover p-5 rounded-xl">
-                    <h3 className="typography-h3">VAV SCORE</h3>
-                    <span className="marks text-font-primary">{score?.totalScore}</span>
-                    <p className="typography-large">Out of 100</p>
-                </div>
-            </div>
+            {
+                role === "Hiring Manager" && (
+
+
+
+
+                    <div className="flex gap-3">
+                        <div className="bg-background-90 w-full p-4 rounded-xl flex">
+                            <div className="to-background-100">
+                                <img src="" alt="" />
+                            </div>
+                            <div>
+                                <h1 className="typography-h2">
+                                    {data.firstName} {data.lastName}
+                                </h1>
+                                <div className="flex items-center gap-2 mb-3 mt-2">
+                                    <span className="typography-small-p text-gray-500">{data.jobApplied}</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="4" height="4" viewBox="0 0 4 4" fill="none">
+                                        <circle cx="2" cy="2" r="2" fill="#808389" />
+                                    </svg>
+                                    <span className="typography-small-p text-gray-500">{data.location}</span>
+                                </div>
+                                <div className="flex mb-3 gap-5">
+                                    <div className="flex items-center gap-2">
+                                        <PhoneIcon />
+                                        <span className="typography-large-p">{data.phone}</span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <EmailIcon />
+                                        <span className="typography-large-p">{data.email}</span>
+                                    </div>
+                                </div>
+                                <div className="flex gap-2 items-center">
+                                    <ResumeIcon />
+                                    <FileMainIcon />
+                                    <WebsiteMainIcon />
+                                    <AssignmentIcon />
+                                </div>
+                                <p>{data.location}</p>
+                            </div>
+                        </div>
+
+                        {/* VAV Score Section */}
+                        <div className="flex bg-stars flex-col items-center bg-background-90 w-[430px] bg-cover p-5 rounded-xl">
+                            <h3 className="typography-h3">VAV SCORE</h3>
+                            <span className="marks text-font-primary">{score?.totalScore}</span>
+                            <p className="typography-large">Out of 100</p>
+                        </div>
+                    </div>
+                )
+            }
 
             {/* Conditional rendering of tabs for "Hiring Manager" */}
 

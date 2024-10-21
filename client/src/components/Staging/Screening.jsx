@@ -25,6 +25,7 @@ import { formatTime } from '../../utility/formatTime';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import BulletMarks from '../ui/BulletMarks';
 import Scorer from '../ui/Scorer';
+import { useAuthContext } from '../../context/AuthProvider';
 
 export const ScheduleForm = ({ candidateId, jobId, onSubmit, isRescheduling, initialData, onCancel }) => {
     const [date, setDate] = useState(isRescheduling ? null : (initialData ? new Date(initialData.scheduledDate) : null));
@@ -109,6 +110,10 @@ const Screening = ({ candidateId, jobId }) => {
     const [isRescheduling, setIsRescheduling] = useState(false);
     const queryClient = useQueryClient();
     const stageData = useSelector(state => state.applicationStage.stageStatuses.Screening);
+
+    const { user } = useAuthContext();
+    const role = user?.role || 'Candidate';
+
 
     const [budgetScore, setBudgetScore] = useState(0);
     const [isBudgetScoreSubmitted, setIsBudgetScoreSubmitted] = useState(false);
@@ -217,7 +222,7 @@ const Screening = ({ candidateId, jobId }) => {
             // Handle error (e.g., show error message to user)
         }
     });
-    
+
     const rescheduleMutation = useMutation({
         mutationFn: (rescheduleData) => axios.post('hr/reschedule-call', {
             ...rescheduleData,
@@ -237,11 +242,11 @@ const Screening = ({ candidateId, jobId }) => {
             // Handle error (e.g., show error message to user)
         }
     });
-    
+
     const handleSchedule = (scheduleData) => {
         scheduleMutation.mutate({ candidateId, jobId, ...scheduleData });
     };
-    
+
     const handleReschedule = (rescheduleData) => {
         rescheduleMutation.mutate({ candidateId, jobId, ...rescheduleData });
     };
@@ -316,18 +321,7 @@ const Screening = ({ candidateId, jobId }) => {
         </div>
     );
 
-    const categories = [
-        { label: 'Attitude', value: stageData?.score?.Attitude },
-        { label: 'UX', value: stageData?.score?.UX },
-        { label: 'Tech', value: stageData?.score?.Tech },
-        { label: 'Communication', value: stageData?.score?.Communication },
-        { label: 'UI', value: stageData?.score?.UI },
-        { label: 'Budget', value: stageData?.score?.Budget },
-    ];
-
-
-
-    const renderContent = () => {
+    const renderHiringManagerContent = () => {
         switch (stageData?.status) {
             case 'Pending':
                 return (
@@ -366,128 +360,200 @@ const Screening = ({ candidateId, jobId }) => {
                                 onCancel={() => setIsRescheduling(false)}
                             />
                         )}
-                        {stageData.callHistory && stageData.callHistory.length > 0 && (
-                            <div className='mt-4'>
-                                <h3 className='typography-h3'>Previous Calls</h3>
-                                {stageData.callHistory.map((call, index) => (
-                                    <div key={index} className='mt-2'>
-                                        {renderCallDetails(call)}
-                                        <p className='typography-small-p text-font-gray mt-1'>Status: {call.status}</p>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
+                        {renderCallHistory()}
+                    </div>
+                );
+            case 'Under Review':
+                return <Label icon={WarningIcon} text="Screening is currently under review." />;
+            case 'Reviewed':
+                return renderReviewedContent();
+            case 'Cleared':
+            case 'Rejected':
+                return renderClearedRejectedContent();
+            case 'No Show':
+                return <Label icon={WarningIcon} text="Candidate did not show up for the scheduled screening call." />;
+            default:
+                return null;
+        }
+    };
+
+    const renderDesignReviewerContent = () => {
+        switch (stageData?.status) {
+            case 'Call Scheduled':
+                return (
+                    <div className='flex flex-col gap-4'>
+                        <Label icon={WarningIcon} text="The screening call has been scheduled." />
+                        <h3 className='typography-h3'>Call Details</h3>
+                        {renderCallDetails(stageData?.currentCall)}
                     </div>
                 );
             case 'Under Review':
                 return (
-                    <Label icon={WarningIcon} text="Screening is currently under review." />
-                );
-            case 'Reviewed':
-                return (
-                    <>
-                        <div className='w-full'>
-                            <div className='flex flex-col justify-between gap-4'>
-                                <div className='w-full'>
-                                    <p className='typography-small-p text-font-gray'>Feedback</p>
-                                    <p className='typography-body pb-2'>{stageData?.feedback}</p>
-                                </div>
-                                <div className='flex gap-4 pb-4'>
-
-                                    <div className='w-full'>
-
-
-                                        <p className='typography-small-p text-font-gray mb-4'>Score</p>
-                                        <div className='p-2 rounded-xl bg-background-60'>
-
-
-                                            {categories.map((category, index) => (
-                                                <div key={index} className='flex  items-center  justify-between'>
-                                                    <span className='typography-small-p text-font-gray'>{category.label}</span>
-                                                    <BulletMarks marks={category.value} />
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </div>
-
-                                    <div >
-                                        <p className='typography-small-p text-font-gray mb-4'>Score Budget</p>
-                                        {isBudgetScoreSubmitted ? (
-                                            <div className='bg-stars bg-cover rounded-xl w-[160px] my-4'>
-                                                <div className='p-4 flex flex-col items-center'>
-                                                    <p className='typography-small-p text-font-gray'>Total Score:</p>
-                                                    <div className='flex flex-col items-center text-font-accent'>
-                                                        <p className='display-d2 font-bold'>{totalScore}</p>
-                                                        <p className='typography-small-p text-font-gray'>Out Of 30</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                        ) :
-                                            (
-                                                <div className='flex gap-4'>
-                                                    <Scorer value={budgetScore} onChange={setBudgetScore} />
-                                                    <Button
-                                                        variant="icon"
-                                                        onClick={handleBudgetScoreSubmit}
-                                                        disabled={budgetScore === 0 || isBudgetScoreSubmitted}
-                                                    >
-                                                        Submit
-                                                    </Button>
-                                                </div>
-                                            )
-                                        }
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <StageActions
-                            stage="Screening"
-                            candidateId={candidateId}
-                            jobId={jobId}
-                            isBudgetScoreSubmitted={isBudgetScoreSubmitted}
-                        />
-                    </>
-                );
-            case 'Cleared':
-            case 'Rejected':
-                return (
-                    <div className='w-full'>
-                        <p className='typography-small-p text-font-gray'>{stageData?.status === 'Rejected' ? "Rejection Reason" : "Feedback"}</p>
-                        <p className='typography-body pb-8'>{stageData?.status === 'Rejected' ? stageData?.rejectionReason : stageData?.feedback}</p>
-
-                        <div className='flex gap-4'>
-
-                            <div className='w-full p-2 rounded-xl bg-background-60'>
-
-                                {categories.map((category, index) => (
-                                    <div key={index} className='flex items-center justify-between'>
-                                        <span className='typography-small-p text-font-gray'>{category.label}</span>
-                                        <BulletMarks marks={category.value} />
-                                    </div>
-                                ))}
-                            </div>
-
-                            <div className='bg-stars bg-cover rounded-xl w-[160px]'>
-                                <div className='p-4 flex flex-col items-center'>
-                                    <p className='typography-small-p text-font-gray'>Total Score:</p>
-                                    <div className='flex flex-col items-center text-font-accent'>
-                                        <p className='display-d2 font-bold'>{totalScore}</p>
-                                        <p className='typography-small-p text-font-gray'>Out Of 30</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
+                    <div className='flex flex-col gap-4'>
+                        <Label icon={WarningIcon} text="Please review the candidate's performance and provide scores." />
+                        {/* Add review form here */}
                     </div>
                 );
-            case 'No Show':
-                return (
-                    <Label icon={WarningIcon} text="Candidate did not show up for the scheduled screening call." />
-                );
+            case 'Reviewed':
+            case 'Cleared':
+            case 'Rejected':
+                return renderReviewedContent(true);
+            default:
+                return <Label icon={WarningIcon} text="Waiting for the screening call to be scheduled." />;
+        }
+    };
 
+    const renderCandidateContent = () => {
+        switch (stageData?.status) {
+            case 'Pending':
+                return <Label icon={WarningIcon} text="Your screening call has not been scheduled yet. Please wait for further instructions." />;
+            case 'Call Scheduled':
+                return (
+                    <div className='flex flex-col gap-4'>
+                        <Label icon={WarningIcon} text="Your screening call has been scheduled. Please attend at the specified time." />
+                        <h3 className='typography-h3'>Call Details</h3>
+                        {renderCallDetails(stageData?.currentCall)}
+                    </div>
+                );
+            case 'Under Review':
+            case 'Reviewed':
+                return <Label icon={WarningIcon} text="Your performance is currently being reviewed. We will notify you once the review is complete" />;
+            case 'Cleared':
+                return <Label icon={WarningIcon} text="You are now ready to move on to the next round. Our team will contact you soon with further details" />;
+            case 'Rejected':
+                return <Label icon={WarningIcon} text="Unfortunately, you did not clear the round. Thank you for your interest. We encourage you to reapply in the future" />;                
+                // return renderReviewedContent(true);
+            case 'No Show':
+                return <Label icon={WarningIcon} text="You missed the scheduled screening call. Please contact the hiring team for further instructions." />;
             default:
                 return null;
+        }
+    };
+
+    const renderReviewedContent = (isReadOnly = false) => (
+        <>
+            <div className='w-full'>
+                <div className='flex flex-col justify-between gap-4'>
+                    <div className='w-full'>
+                        <p className='typography-small-p text-font-gray'>Feedback</p>
+                        <p className='typography-body pb-2'>{stageData?.feedback}</p>
+                    </div>
+                    <div className='flex gap-4 pb-4'>
+                        <div className='w-full'>
+                            <p className='typography-small-p text-font-gray mb-4'>Score</p>
+                            <div className='p-2 rounded-xl bg-background-60'>
+                                {renderScoreCategories()}
+                            </div>
+                        </div>
+                        {!isReadOnly && renderBudgetScoreSection()}
+                    </div>
+                </div>
+            </div>
+            {!isReadOnly && (
+                <StageActions
+                    stage="Screening"
+                    candidateId={candidateId}
+                    jobId={jobId}
+                    isBudgetScoreSubmitted={isBudgetScoreSubmitted}
+                />
+            )}
+        </>
+    );
+
+    const renderClearedRejectedContent = () => (
+        <div className='w-full'>
+            <p className='typography-small-p text-font-gray'>{stageData?.status === 'Rejected' ? "Rejection Reason" : "Feedback"}</p>
+            <p className='typography-body pb-8'>{stageData?.status === 'Rejected' ? stageData?.rejectionReason : stageData?.feedback}</p>
+            <div className='flex gap-4'>
+                <div className='w-full p-2 rounded-xl bg-background-60'>
+                    {renderScoreCategories()}
+                </div>
+                <div className='bg-stars bg-cover rounded-xl w-[160px]'>
+                    <div className='p-4 flex flex-col items-center'>
+                        <p className='typography-small-p text-font-gray'>Total Score:</p>
+                        <div className='flex flex-col items-center text-font-accent'>
+                            <p className='display-d2 font-bold'>{totalScore}</p>
+                            <p className='typography-small-p text-font-gray'>Out Of 30</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+
+    const renderScoreCategories = () => {
+        const categories = [
+            { label: 'Attitude', value: stageData?.score?.Attitude },
+            { label: 'UX', value: stageData?.score?.UX },
+            { label: 'Tech', value: stageData?.score?.Tech },
+            { label: 'Communication', value: stageData?.score?.Communication },
+            { label: 'UI', value: stageData?.score?.UI },
+            { label: 'Budget', value: stageData?.score?.Budget },
+        ];
+
+        return categories.map((category, index) => (
+            <div key={index} className='flex items-center justify-between'>
+                <span className='typography-small-p text-font-gray'>{category.label}</span>
+                <BulletMarks marks={category.value} />
+            </div>
+        ));
+    };
+
+    // const renderBudgetScoreSection = () => (
+    //     <div>
+    //         <p className='typography-small-p text-font-gray mb-4'>Score Budget</p>
+    //         {isBudgetScoreSubmitted ? (
+    //             <div className='bg-stars bg-cover rounded-xl w-[160px] my-4'>
+    //                 <div className='p-4 flex flex-col items-center'>
+    //                     <p className='typography-small-p text-font-gray'>Total Score:</p>
+    //                     <div className='flex flex-col items-center text-font-accent'>
+    //                         <p className='display-d2 font-bold'>{totalScore}</p>
+    //                         <p className='typography-small-p text-font-gray'>Out Of 30</p>
+    //                     </div>
+    //                 </div>
+    //             </div>
+    //         ) : (
+    //             <div className='flex gap-4'>
+    //                 <Scorer value={budgetScore} onChange={setBudgetScore} />
+    //                 <Button
+    //                     variant="icon"
+    //                     onClick={handleBudgetScoreSubmit}
+    //                     disabled={budgetScore === 0 || isBudgetScoreSubmitted}
+    //                 >
+    //                     Submit
+    //                 </Button>
+    //             </div>
+    //         )}
+    //     </div>
+    // );
+
+    const renderCallHistory = () => {
+        if (stageData.callHistory && stageData.callHistory.length > 0) {
+            return (
+                <div className='mt-4'>
+                    <h3 className='typography-h3'>Previous Calls</h3>
+                    {stageData.callHistory.map((call, index) => (
+                        <div key={index} className='mt-2'>
+                            {renderCallDetails(call)}
+                            <p className='typography-small-p text-font-gray mt-1'>Status: {call.status}</p>
+                        </div>
+                    ))}
+                </div>
+            );
+        }
+        return null;
+    };
+
+    const renderContent = () => {
+        switch (role) {
+            case 'Hiring Manager':
+                return renderHiringManagerContent();
+            case 'Design Reviewer':
+                return renderDesignReviewerContent();
+            case 'Candidate':
+                return renderCandidateContent();
+            default:
+                return <Label icon={WarningIcon} text="Unknown user role" />;
         }
     };
 
@@ -508,12 +574,18 @@ const Screening = ({ candidateId, jobId }) => {
                     </div>
                     <Box display="flex" alignItems="center">
                         <StatusBadge status={stageData?.status} />
-                        <AssigneeSelector
-                            mode="icon"
-                            value={stageData?.assignedTo}
-                            onChange={handleAssigneeChange}
-                            onSelect={handleAssigneeChange}
-                        />
+                        {
+                            role == "Hiring Manager" && (
+
+                                <AssigneeSelector
+                                    mode="icon"
+                                    value={stageData?.assignedTo}
+                                    onChange={handleAssigneeChange}
+                                    onSelect={handleAssigneeChange}
+                                />
+
+                            )
+                        }
                     </Box>
                 </Box>
                 {renderContent()}

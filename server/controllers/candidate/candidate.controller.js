@@ -7,6 +7,48 @@ import { User } from "../../models/admin/user.model.js";
 import { jobs } from "../../models/admin/jobs.model.js";
 import { archiveJob } from "../admin/jobs.controller.js";
 
+export const submitDesignTask = async (req, res) => {
+  try {
+      const { candidateId, jobId, taskLink, comment } = req.body;
+
+      const candidate = await candidates.findById(candidateId);
+      if (!candidate) {
+          return res.status(404).json({ message: 'Candidate not found' });
+      }
+
+      const jobApplication = candidate.jobApplications.find(
+          app => app.jobId.toString() === jobId
+      );
+      if (!jobApplication) {
+          return res.status(404).json({ message: 'Job application not found' });
+      }
+
+      // Update the Design Task stage status
+      const designTaskStatus = jobApplication.stageStatuses.get('Design Task');
+      if (!designTaskStatus || designTaskStatus.status !== 'Sent') {
+          return res.status(400).json({ message: 'Design Task is not in the correct state for submission' });
+      }
+
+      designTaskStatus.status = 'Not Assigned';
+      designTaskStatus.submittedTaskLink = taskLink;
+      designTaskStatus.submittedComment = comment;
+      designTaskStatus.submissionDate = new Date();
+
+      jobApplication.stageStatuses.set('Design Task', designTaskStatus);
+
+      // Save the changes
+      await candidate.save();
+
+      res.status(200).json({
+          message: 'Design Task submitted successfully',
+          updatedStageStatus: designTaskStatus
+      });
+  } catch (error) {
+      console.error('Error submitting Design Task:', error);
+      res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
 const stats =  asyncHandler(async (req, res, next) => {
   try {
       // Perform the aggregation to get total count and stage counts in one go

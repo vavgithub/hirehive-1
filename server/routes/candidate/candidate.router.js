@@ -10,6 +10,7 @@ import {
   searchJobs, 
   stats, 
   submitApplication,    
+  submitDesignTask,    
   updateStatusAndStage 
 } from '../../controllers/candidate/candidate.controller.js';
 import { protect } from '../../middlewares/authMiddleware.js';
@@ -35,6 +36,8 @@ router.post('/:jobId/increment-apply-click', incrementApplyClickCount);
 router.get('/:jobId/candidates', getCandidate);
 router.get('/:jobId/stats', jobSpecificStats);
 router.get('/:id', getCandidateById);
+
+router.post('/submit-design-task', submitDesignTask);
 
 
 // not for the current use will removed it shortly

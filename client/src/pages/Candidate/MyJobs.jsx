@@ -3,6 +3,8 @@ import axios from '../../api/axios';
 import { useQuery } from '@tanstack/react-query';
 import JobCard from '../../components/JobCard';
 import AssessmentBanner from '../../components/ui/AssessmentBanner';
+import { useNavigate } from 'react-router-dom';
+import useAuthCandidate from '../../hooks/useAuthCandidate';
 
 const fetchAppliedJobs = async () => {
   const response = await axios.get('/auth/candidate/applied-jobs');
@@ -15,6 +17,11 @@ const MyJobs = () => {
     queryFn: fetchAppliedJobs,
   });
 
+  const { candidateData } = useAuthCandidate();
+  const candidateId = candidateData ? candidateData._id : null;
+
+  const navigate = useNavigate();
+
   if (isLoading) {
     return <div>Loading your applied jobs...</div>;
   }
@@ -23,9 +30,14 @@ const MyJobs = () => {
     console.error('Error fetching applied jobs:', error);
     return <div>Error fetching applied jobs. Please try again later.</div>;
   }
+
+  const handleClick = (jobId) => {
+    navigate(`/candidate/viewJob/${candidateId}/${jobId}`);
+  };
+
   return (
     <div className='m-2 pt-8'>
-      <AssessmentBanner/>
+      <AssessmentBanner />
       <h1 className="typography-h1">My Jobs</h1>
       <div className="p-4 bg-background-30 rounded-xl">
         {appliedJobs.length === 0 ? (
@@ -37,8 +49,9 @@ const MyJobs = () => {
                 <JobCard
                   job={application.jobId}
                   isCandidate={true}
+                  onClick={() => handleClick(application.jobId._id)}
                   isAuthenticatedCandidate={true}
-                  application={application} // Pass application data here
+                  application={application}
                 />
               </li>
             ))}

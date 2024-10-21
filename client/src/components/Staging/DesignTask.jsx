@@ -24,8 +24,13 @@ import ClockIcon from '../../svg/Staging/ClockIcon';
 import LinkIcon from '../../svg/Staging/LinkIcon';
 import ClipboardIcon from '../../svg/Staging/ClipboardIcon';
 import { formatTime } from '../../utility/formatTime';
+import { useAuthContext } from '../../context/AuthProvider';
 
 const DesignTask = ({ candidateId, jobId }) => {
+
+    const { user } = useAuthContext();
+    const role = user?.role || 'Candidate'; // Default to Candidate if role is not specified
+
 
     const dispatch = useDispatch();
     const queryClient = useQueryClient();
@@ -36,7 +41,11 @@ const DesignTask = ({ candidateId, jobId }) => {
     const [dueDate, setDueDate] = useState(null);
     const [dueTime, setDueTime] = useState(null);
 
-    const renderContent = () => {
+    const [taskLink, setTaskLink] = useState('');
+    const [comment, setComment] = useState('');
+
+    
+    const renderHiringManagerContent = () => {
         switch (stageData?.status) {
             case 'Pending':
                 return renderPendingStatus();
@@ -48,30 +57,157 @@ const DesignTask = ({ candidateId, jobId }) => {
                 return renderReviewedStatus();
             case 'Cleared':
             case 'Rejected':
-                        return (
-                            <div className='w-full'>
-                                <div className='flex justify-between gap-4'>
-                                    <div className='w-full'>
-                                        <p className='typography-small-p text-font-gray'>Remarks</p>
-                                        <p className='typography-body pb-8'>{stageData?.status === 'Rejected' ? stageData?.rejectionReason : stageData?.feedback}</p>
-                                    </div>
-                                    <div className='bg-stars bg-cover rounded-xl w-[160px] my-4'>
-                                        <div className='p-4 flex flex-col items-center'>
-                                            <p className='typography-small-p text-font-gray'>Total Score:</p>
-                                            <div className='flex flex-col items-center text-font-accent'>
-                                                <p className='display-d2 font-bold'>{stageData?.score}</p>
-                                                <p className='typography-small-p text-font-gray'>Out Of 5</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        );  
-            // Add other cases as needed
+                return renderClearedRejectedStatus();
             default:
                 return null;
         }
     };
+
+    const renderClearedRejectedStatus = () => (
+        <div className='w-full'>
+            <div className='flex justify-between gap-4'>
+                <div className='w-full'>
+                    <p className='typography-small-p text-font-gray'>Remarks</p>
+                    <p className='typography-body pb-8'>{stageData?.status === 'Rejected' ? stageData?.rejectionReason : stageData?.feedback}</p>
+                </div>
+                <div className='bg-stars bg-cover rounded-xl w-[160px] my-4'>
+                    <div className='p-4 flex flex-col items-center'>
+                        <p className='typography-small-p text-font-gray'>Total Score:</p>
+                        <div className='flex flex-col items-center text-font-accent'>
+                            <p className='display-d2 font-bold'>{stageData?.score}</p>
+                            <p className='typography-small-p text-font-gray'>Out Of 5</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+
+    const submitTaskMutation = useMutation({
+        mutationFn: (taskData) => axios.post('candidates/submit-design-task', taskData),
+        onSuccess: (data) => {
+            dispatch(updateStageStatus({
+                stage: 'Design Task',
+                status: 'Under Review',
+                data: data.updatedStageStatus
+            }));
+            queryClient.invalidateQueries(['candidate', candidateId, jobId]);
+        },
+        onError: (error) => {
+            console.error('Error submitting design task:', error);
+            // Handle error (e.g., show error message to user)
+        }
+    });
+
+    const handleSubmitTask = () => {
+        if (taskLink) {
+            submitTaskMutation.mutate({
+                candidateId,
+                jobId,
+                taskLink,
+                comment
+            });
+        }
+    };
+
+    const renderDesignReviewerContent = () => {
+        switch (stageData?.status) {
+            case 'Sent':
+                return (
+                    <div className="flex flex-col gap-4">
+                        <Label icon={WarningIcon} text="The design task has been sent to the candidate. Please wait for the submission." />
+                        {/* {renderTaskDetails()} */}
+                    </div>
+                );
+            case 'Under Review':
+                return (
+                    <div className="flex flex-col gap-4">
+                        <Label icon={WarningIcon} text="Please review the candidate's submission and provide feedback." />
+                        {/* Add review form or component here */}
+                    </div>
+                );
+            case 'Reviewed':
+            case 'Cleared':
+            case 'Rejected':
+                return renderReviewedStatus();
+            default:
+                return <Label icon={WarningIcon} text="Waiting for the task to be sent to the candidate." />;
+        }
+    };
+
+    const renderCandidateContent = () => {
+        switch (stageData?.status) {
+            case 'Sent':
+                return (
+                    <div className="flex flex-col gap-4">
+                        <Label icon={WarningIcon} text="You have been assigned a design task. Please complete it and submit the link before the due date." />
+                        {renderTaskDetails()}
+                        <InputField
+                            id="taskLink"
+                            type="text"
+                            label="Task Link"
+                            required
+                            value={taskLink}
+                            onChange={(e) => setTaskLink(e.target.value)}
+                        />
+                        <InputField
+                            id="comment"
+                            type="text"
+                            label="Comment (Optional)"
+                            value={comment}
+                            onChange={(e) => setComment(e.target.value)}
+                        />
+                        <div className='w-[170px]'>
+                            <Button
+                                variant="primary"
+                                disabled={!taskLink}
+                                onClick={handleSubmitTask}
+                            >
+                                Submit Task
+                            </Button>
+                        </div>
+                    </div>
+                );
+
+            case 'Not Assigned':
+
+                return (
+                    <>
+                    <Label icon={WarningIcon} text="Your performance is currently being reviewed. We will notify you once the review is complete." />;    
+                    <div>
+                        <h1>Figma Link</h1>
+                    </div>
+                    </>
+
+                )
+                
+                    case 'Pending':
+                    return <Label icon={WarningIcon} text="Your submission is Pending. Please wait for feedback." />;    
+            case 'Under Review':
+                return <Label icon={WarningIcon} text="Your submission is under review. Please wait for feedback." />;
+            case 'Reviewed':
+                return renderReviewedStatus();
+            case 'Cleared':
+            case 'Rejected':
+                return renderClearedRejectedStatus();
+            default:
+                return <Label icon={WarningIcon} text="Waiting for the design task to be assigned." />;
+        }
+    };
+
+    const renderContent = () => {
+        switch (role) {
+            case 'Hiring Manager':
+                return renderHiringManagerContent();
+            case 'Design Reviewer':
+                return renderDesignReviewerContent();
+            case 'Candidate':
+                return renderCandidateContent();
+            default:
+                return <Label icon={WarningIcon} text="Unknown user role" />;
+        }
+    };
+
 
     const sendTaskMutation = useMutation({
         mutationFn: (taskData) => axios.post('hr/send-design-task', taskData),
@@ -145,6 +281,13 @@ const DesignTask = ({ candidateId, jobId }) => {
             onChange={handleAssigneeChange}
             onSelect={handleAssigneeChange}
         />
+
+    )
+
+    const renderTaskDetails = ()=> (
+        <div>
+            This is the table bro
+        </div>
 
     )
 
