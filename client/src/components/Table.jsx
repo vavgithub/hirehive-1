@@ -21,6 +21,9 @@ import { BudgetField } from './Form/FormFields';
 import AutoAssign from '../svg/Buttons/AutoAssign';
 import { ACTION_TYPES } from '../utility/ActionTypes';
 import ResumeViewer from './utility/ResumeViewer';
+import FilterForDataTable from './FilterForDataTable';
+import { exportToExcel } from '../utility/exportToExcel';
+import Export from '../svg/Buttons/Export';
 
 
 const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
@@ -42,6 +45,20 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
   // ... other state declarations
   const [isDocumentViewerOpen, setIsDocumentViewerOpen] = useState(false);
   const [selectedDocumentUrl, setSelectedDocumentUrl] = useState('');
+
+  // ..this are the table filters 
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filters, setFilters] = useState({});
+
+  const handleSearch = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const handleApplyFilters = (newFilters) => {
+    setFilters(newFilters);
+  };
+
+
 
   const handleDocumentClick = (documentUrl) => {
     console.log(documentUrl);
@@ -73,6 +90,41 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
       return expectedCTC >= parseFloat(budgetFilter.from) && expectedCTC <= parseFloat(budgetFilter.to);
     });
   }, [rowsData, budgetFilter]);
+
+  const filteredAndSearchedRowsData = React.useMemo(() => {
+    let result = filteredRowsData;
+
+    // Apply search
+    if (searchTerm) {
+      result = result.filter(row =>
+        `${row.firstName} ${row.lastName}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        row.email.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    // Apply filters
+    if (filters.stage && filters.stage.length > 0) {
+      result = result.filter(row => filters.stage.includes(row.currentStage));
+    }
+    if (filters.status && filters.status.length > 0) {
+      result = result.filter(row => filters.status.includes(row.stageStatuses[row.currentStage]?.status));
+    }
+    if (filters.experience) {
+      const [min, max] = filters.experience.split('-').map(num => parseInt(num));
+      result = result.filter(row => {
+        const exp = parseInt(row.experience);
+        return exp >= min && exp <= max;
+      });
+    }
+    if (filters.rating && filters.rating.length > 0) {
+      result = result.filter(row => filters.rating.includes(row.rating));
+    }
+    if (filters.assignee && filters.assignee.length > 0) {
+      result = result.filter(row => filters.assignee.includes(row.stageStatuses[row.currentStage]?.assignedTo?.name));
+    }
+
+    return result;
+  }, [filteredRowsData, searchTerm, filters]);
 
   const autoAssignMutation = useMutation({
     mutationFn: ({ jobId, reviewerIds }) =>
@@ -413,6 +465,10 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
     navigate(`/admin/jobs/view-candidate/${params?.row?._id}/${readOnly ? params.row.jobId : jobId}`)
   }
 
+  const handleExport = () => {
+    exportToExcel(filteredAndSearchedRowsData, 'my_data');
+  };
+
 
 
   return (
@@ -483,7 +539,24 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
     `}
       </style>
 
-      <div className='flex justify-end py-4 gap-2'>
+      <div className='flex justify-between py-4 gap-2'>
+
+        {/* {here is the place to add the search bar ,  filter , export button } */}
+
+        <div className='flex gap-4 items-center'>
+          <input
+            type="text"
+            placeholder="Search by name or email"
+            value={searchTerm}
+            onChange={handleSearch}
+          />
+          <FilterForDataTable onApplyFilters={handleApplyFilters} />
+          <div className='flex items-center cursor-pointer gap-2 text-font-gray  typography-body' onClick={() => handleExport()}>
+            <Export />
+            Export
+          </div>
+        </div>
+
         {!readOnly && (<div className='flex gap-4'>
 
           <div className='w-[216px] '>
@@ -514,7 +587,7 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
       </div>
 
       <DataGrid
-        rows={filteredRowsData}
+        rows={filteredAndSearchedRowsData}
         columns={columns}
         getRowId={(row) => `${row._id}_${row.jobId}`} // Create a unique ID for each row
         initialState={{
