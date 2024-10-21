@@ -31,7 +31,7 @@ const CreateJobs = () => {
   };
 
   return (
-    <div className="bg-background-80 h-screen">
+    <div className="bg-background-80">
       <div className='p-4'>
         <Header HeaderText="Create a New Job Listing" withBack="true" />
         <JobForm

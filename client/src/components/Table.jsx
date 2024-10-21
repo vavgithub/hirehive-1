@@ -593,6 +593,37 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
           .MuiDataGrid-root .MuiDataGrid-row:hover {
             z-index: 2;
           }
+          .MuiDataGrid-main.css-3eek4p-MuiDataGrid-main {
+          max-width:83vw;
+          }
+          .MuiDataGrid-scrollbar.MuiDataGrid-scrollbar--horizontal.css-1rtad1::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+          }
+
+          /* Track */
+          .MuiDataGrid-scrollbar.MuiDataGrid-scrollbar--horizontal.css-1rtad1::-webkit-scrollbar-track {
+            border-radius: 5px;
+            background: #1D1D1D; 
+          }
+          
+          /* Handle */
+          .MuiDataGrid-scrollbar.MuiDataGrid-scrollbar--horizontal.css-1rtad1::-webkit-scrollbar-thumb {
+            background: #c1c1c1; 
+            border-radius: 100px;
+          }
+
+          /* Handle on hover */
+          .MuiDataGrid-scrollbar.MuiDataGrid-scrollbar--horizontal.css-1rtad1::-webkit-scrollbar-thumb:hover {
+            background: #fff; 
+          }
+          .css-1oudwrl::after {
+            display: none;
+          }
+          .css-tgsonj {
+          border-top:none;
+          }
+
     `}
       </style>
 
