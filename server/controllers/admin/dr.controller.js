@@ -188,6 +188,7 @@ export const getAssignedCandidates = async (req, res) => {
           email: { $first: '$email' },
           phone: { $first: '$phone' },
           jobApplications: { $push: '$jobApplications' },
+          portfolio: { $first: '$portfolio' }, // Adding portfolio here
         },
       },
     ]);
@@ -235,6 +236,70 @@ export const getAssignedCandidates = async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 };
+
+export const getUnderReviewStats = async (req, res) => {
+  try {
+    const reviewerId = req.user._id; // Get the logged-in reviewer's ID from the protect middleware
+
+    const stats = await candidates.aggregate([
+      // Unwind the jobApplications array to work with each application individually
+      { $unwind: '$jobApplications' },
+      // Convert the stageStatuses map into an array for easier filtering
+      { 
+        $addFields: { 
+          'jobApplications.stageStatusesArray': { $objectToArray: '$jobApplications.stageStatuses' }
+        }
+      },
+      // Filter the array to only include stages that are 'Under Review' and assigned to the current reviewer
+      { 
+        $addFields: {
+          'jobApplications.filteredStageStatusesArray': {
+            $filter: {
+              input: '$jobApplications.stageStatusesArray',
+              as: 'stageStatus',
+              cond: {
+                $and: [
+                  { $eq: ['$$stageStatus.v.status', 'Under Review'] },
+                  { $eq: ['$$stageStatus.v.assignedTo', reviewerId] } // Filter by assigned reviewer
+                ]
+              }
+            }
+          }
+        }
+      },
+      // Match only job applications that have relevant stages for this reviewer
+      { $match: { 'jobApplications.filteredStageStatusesArray': { $ne: [] } } },
+      // Group by stage to count the number of candidates in each stage
+      {
+        $group: {
+          _id: '$jobApplications.currentStage',
+          count: { $sum: 1 }
+        }
+      },
+      // Format the result for easier front-end usage
+      {
+        $project: {
+          stage: '$_id',
+          count: 1,
+          _id: 0
+        }
+      }
+    ]);
+
+    // Calculate the total count by summing the counts of all stages
+    const totalCount = stats.reduce((acc, stat) => acc + stat.count, 0);
+
+    // Add the total stat to the response
+    stats.push({ stage: 'Total', count: totalCount });
+
+    res.status(200).json({ stats });
+  } catch (error) {
+    console.error('Error fetching under-review stats:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+
 
 
 export const autoAssignPortfolios = async (req, res) => {

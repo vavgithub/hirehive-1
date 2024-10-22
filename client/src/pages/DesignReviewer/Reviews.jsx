@@ -12,6 +12,11 @@ import Screening from '../../svg/StatsCard/View Candidate/Screening';
 import DesignTask from '../../svg/StatsCard/View Candidate/DesignTask';
 import { showErrorToast, showSuccessToast } from '../../components/ui/Toast';
 import { Avatar } from '@mui/material';
+import { FaFile, FaGlobe } from 'react-icons/fa';
+import FileMainIcon from '../../svg/FileMainIcon';
+import OfferSent from '../../svg/StatsCard/View Candidate/OfferSent';
+import Round1 from '../../svg/StatsCard/View Candidate/Round1';
+import Round2 from '../../svg/StatsCard/View Candidate/Round2';
 
 
 const statsOne = [
@@ -19,13 +24,15 @@ const statsOne = [
   { title: 'Portfolio', value: 0, icon: Portfolio },
   { title: 'Screening', value: 0, icon: Screening },
   { title: 'Design Task', value: 0, icon: DesignTask },
-  // { title: 'Round 1', value: 0, icon: Round1 },
-  // { title: 'Round 2', value: 0, icon: Round2 },
-  // { title: 'Offer Sent', value: 0, icon: OfferSent },
+  { title: 'Round 1', value: 0, icon: Round1 },
+  { title: 'Round 2', value: 0, icon: Round2 },
+  { title: 'Offer Sent', value: 0, icon: OfferSent },
 ]
 
 
 const PortfolioReview = ({ candidate, onSubmit }) => {
+  console.log("please check this bro", candidate)
+
   const [rating, setRating] = useState(0);
   const [feedback, setFeedback] = useState('');
 
@@ -170,7 +177,14 @@ const fetchCandidates = async () => {
   return response.data;
 };
 
- const submitReview = async ({ candidateId, reviewData }) => {
+// API function to fetch stats
+const fetchUnderReviewStats = async () => {
+  const response = await axios.get('dr/under-review-stats');
+  return response.data.stats;
+};
+
+
+const submitReview = async ({ candidateId, reviewData }) => {
   const response = await axios.post('dr/submit-score-review', {
     candidateId,
     ...reviewData,
@@ -188,21 +202,25 @@ const Reviews = () => {
     queryFn: fetchCandidates,
   });
 
-  // Submit review mutation
+  // Fetch stats
+  const { data: statsData, isLoading: isStatsLoading, isError: isStatsError, error: statsError } = useQuery({
+    queryKey: ['underReviewStats'],
+    queryFn: fetchUnderReviewStats,
+  });
+
+
   const submitReviewMutation = useMutation({
     mutationFn: submitReview,
     onSuccess: () => {
-      // Invalidate and refetch
       queryClient.invalidateQueries({ queryKey: ['assignedCandidates'] });
-      // Show success toast
+      queryClient.invalidateQueries({ queryKey: ['underReviewStats'] }); // Invalidate stats on success
       showSuccessToast('Review Submitted', 'Your review has been successfully submitted.');
-
     },
     onError: (error) => {
-      // Show error toast
       showErrorToast('Submission Failed', error.response?.data?.message || 'An error occurred while submitting your review.');
     },
   });
+
 
   const groupCandidatesByJobAndStage = (candidates) => {
     return candidates.reduce((jobAcc, candidate) => {
@@ -229,7 +247,7 @@ const Reviews = () => {
       case 'Screening':
         return <ScreeningReview candidate={candidate} onSubmit={handleReviewSubmit} />;
       case 'Design Task':
-          return <DesignTaskReview candidate={candidate} onSubmit={handleReviewSubmit} />;
+        return <DesignTaskReview candidate={candidate} onSubmit={handleReviewSubmit} />;
       case 'Round 1':
         return <Round1Review candidate={candidate} onSubmit={handleReviewSubmit} />;
       case 'Round 2':
@@ -245,32 +263,53 @@ const Reviews = () => {
 
   const groupedCandidates = groupCandidatesByJobAndStage(candidates);
 
+  // Prepare statsOne object with real data
+  const updatedStatsOne = statsOne.map((stat) => {
+    const foundStat = statsData.find(s => s.stage === stat.title);
+    return { ...stat, value: foundStat ? foundStat.count : 0 };
+  });
+
   // Define the order of stages
   const stageOrder = ['Portfolio', 'Design Task', 'Screening', 'Round 1'];
 
+  //this is for opening the portfolios in different tab
+  const ensureAbsoluteUrl = (url) => {
+    if (url && !url.startsWith('http://') && !url.startsWith('https://')) {
+      return `https://${url}`;
+    }
+    return url;
+  };
+
   return (
-    <div>
+    <div className='p-4'>
       <Header HeaderText="Reviews" />
-      <div className='bg-background-30 m-6 p-6 rounded-xl'>
-        <StatsGrid stats={statsOne} />
+      <div className='bg-background-30  p-4 rounded-xl'>
+      <div className="w-full max-w-6xl">
+
+          <StatsGrid stats={updatedStatsOne} />
+        </div>
         {Object.entries(groupedCandidates).map(([jobTitle, stages, jobProfile]) => (
           <div key={jobTitle} className="mb-8">
-            <h1 className="typography-h1 mb-4">{jobTitle}</h1>
+            <h1 className="typography-h1 my-4">{jobTitle}</h1>
             {stageOrder.map(stage => {
               if (stages[stage] && stages[stage].length > 0) {
                 return (
                   <div key={stage} className="mb-6 ">
                     <h2 className="typography-h2 mb-3">{stage}</h2>
                     {stages[stage].map(candidate => (
-                      <div key={`${candidate._id}-${candidate.currentApplication.jobId}`} className="mb-4 flex flex-col bg-background-70 rounded-xl ">
+                      <div key={`${candidate._id}-${candidate.currentApplication.jobId}`} className="mb-4 flex flex-col bg-background-60 rounded-xl ">
                         <div className='flex items-center p-4 justify-between '>
-                          <div className='flex items-center'>
+                          <div className='flex items-center gap-4'>
 
 
                             <Avatar alt={candidate?.firstName} sx={{ width: "32px", height: "32px" }} src="/path-to-profile-image.jpg" />
-                            <span className="typography-body ml-4  ">
+                            <span className="typography-body ">
                               {candidate.firstName} {candidate.lastName}
+
                             </span>
+                            <a href={ensureAbsoluteUrl(candidate.portfolio)} target="_blank" rel="noopener noreferrer">
+                              <FileMainIcon />
+                            </a>
                           </div>
 
                           <div className="bg-background-80 p-2 px-4 typography-body  rounded-xl">
