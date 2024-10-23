@@ -18,6 +18,7 @@ import OfferSent from '../../svg/StatsCard/View Candidate/OfferSent';
 import Round1 from '../../svg/StatsCard/View Candidate/Round1';
 import Round2 from '../../svg/StatsCard/View Candidate/Round2';
 import Loader from '../../components/ui/Loader';
+import { useNavigate } from 'react-router-dom';
 
 
 const statsOne = [
@@ -196,6 +197,7 @@ const submitReview = async ({ candidateId, reviewData }) => {
 
 const Reviews = () => {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   // Fetch candidates
   const { data: candidates, isLoading, isError, error } = useQuery({
@@ -288,6 +290,11 @@ const Reviews = () => {
     }
     return url;
   };
+  
+  const handleNavigate = ( candidate) =>{
+    console.log(candidate)
+    navigate(`/design-reviewer/candidates/view-candidate/${candidate._id}/${candidate.currentApplication.jobId}`)
+  }
 
   return (
     <div className='p-4'>
@@ -307,7 +314,7 @@ const Reviews = () => {
                     <h2 className="typography-h2 mb-3">{stage}</h2>
                     {stages[stage].map(candidate => (
                       <div key={`${candidate._id}-${candidate.currentApplication.jobId}`} className="mb-4 flex flex-col bg-background-60 rounded-xl ">
-                        <div className='flex items-center p-4 justify-between '>
+                        <div className='flex items-center p-4  justify-between cursor-pointer ' onClick={()=> handleNavigate(candidate)}>
                           <div className='flex items-center gap-4'>
 
 

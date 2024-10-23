@@ -57,7 +57,7 @@ const ApplicationStaging = ({ candidateId, jobId }) => {
             return <RejectTickIcon />;
         } else {
             return (
-                <div className={`w-6 h-6 flex items-center justify-center rounded-full border border-white ${stage === currentStage ? 'bg-teal-400' : ''}`}>
+                <div className={`w-6 h-6 flex items-center justify-center rounded-full border border-white ${stage === currentStage ? 'border-teal-400 text-font-accent' : ''}`}>
                     {index + 1}
                 </div>
             );

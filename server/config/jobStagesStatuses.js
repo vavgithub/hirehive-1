@@ -27,7 +27,7 @@ export const jobStagesStatuses = {
     },
     { 
       name: 'Hired', 
-      requiresCall: false,
+      requiresCall: true,
       statuses: ['Under Review', 'Offer Sent', 'Accepted', 'Rejected']
     }
   ],
