@@ -17,6 +17,7 @@ import FileMainIcon from '../../svg/FileMainIcon';
 import OfferSent from '../../svg/StatsCard/View Candidate/OfferSent';
 import Round1 from '../../svg/StatsCard/View Candidate/Round1';
 import Round2 from '../../svg/StatsCard/View Candidate/Round2';
+import Loader from '../../components/ui/Loader';
 
 
 const statsOne = [
@@ -257,7 +258,15 @@ const Reviews = () => {
     }
   };
 
-  if (isLoading) return <div>Loading...</div>;
+  // Show loader if data is loading
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <Loader />
+      </div>
+    );
+  }
+
   if (isError) return <div>Error: {error.message}</div>;
 
 
@@ -284,7 +293,7 @@ const Reviews = () => {
     <div className='p-4'>
       <Header HeaderText="Reviews" />
       <div className='bg-background-30  p-4 rounded-xl'>
-      <div className="w-full max-w-6xl">
+        <div className="w-full max-w-6xl">
 
           <StatsGrid stats={updatedStatsOne} />
         </div>

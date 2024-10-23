@@ -27,6 +27,7 @@ import Export from '../svg/Buttons/Export';
 import EditIcon from '../svg/KebabList/EditIcon';
 import DeleteIcon from '../svg/KebabList/DeleteIcon';
 import { showErrorToast, showSuccessToast } from './ui/Toast';
+import { useAuthContext } from '../context/AuthProvider';
 
 
 const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
@@ -54,6 +55,10 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
   const [filters, setFilters] = useState({});
 
   const [budgetMenuAnchorEl, setBudgetMenuAnchorEl] = useState(null);
+
+  //this is for setting up the context
+  const { user } = useAuthContext();
+  const role = user?.role 
 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
@@ -495,7 +500,10 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
   //   }
 
   const handleRowClick = (params) => {
-    navigate(`/admin/jobs/view-candidate/${params?.row?._id}/${readOnly ? params.row.jobId : jobId}`)
+    if(role === "Hiring Manager"){
+      navigate(`/admin/jobs/view-candidate/${params?.row?._id}/${readOnly ? params.row.jobId : jobId}`)
+    }
+    navigate(`view-candidate/${params?.row?._id}/${readOnly ? params.row.jobId : jobId}`)
   }
 
   const handleExport = () => {

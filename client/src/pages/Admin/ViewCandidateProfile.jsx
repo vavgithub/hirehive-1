@@ -20,7 +20,7 @@ import ApplicationStaging from '../../components/Staging/ApplicationStaging';
 import { useDispatch, useSelector } from 'react-redux';
 import { setCandidateData, setError, setLoading } from '../../redux/candidateSlice';
 import { setCurrentStage, setStageStatuses } from '../../redux/applicationStageSlice';
-import { Loader } from 'lucide-react';
+import Loader from '../../components/ui/Loader';
 
 
 
