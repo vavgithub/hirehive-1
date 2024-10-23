@@ -75,7 +75,6 @@ export const rejectCandidate = async (req, res) => {
     try {
         const { candidateId, jobId, currentStage } = req.body;
 
-        console.log(`Moving candidate ${candidateId} for job ${jobId} from stage ${currentStage}`);
 
         // Find the candidate and job
         const candidate = await candidates.findById(candidateId);
@@ -92,7 +91,6 @@ export const rejectCandidate = async (req, res) => {
             return res.status(404).json({ message: 'Job application not found for this candidate' });
         }
 
-        console.log('Current job application state:', JSON.stringify(jobApplication, null, 2));
 
         // Validate the current stage
         if (jobApplication.currentStage !== currentStage) {
@@ -115,24 +113,20 @@ export const rejectCandidate = async (req, res) => {
         if (isLastStage) {
             // This is the last stage, update status to Accepted
             jobApplication.stageStatuses.get(currentStage).status = 'Accepted';
-            console.log(`Candidate accepted in the last stage: ${currentStage}`);
 
             // You might want to add an additional field to indicate the candidate is hired
             jobApplication.hired = true;
             jobApplication.hireDate = new Date();
 
-            console.log('Updated last stage:', JSON.stringify(jobApplication.stageStatuses.get(currentStage), null, 2));
         } else {
             // Existing logic for moving to the next stage
             const nextStageConfig = stages[currentStageIndex + 1];
             const nextStage = nextStageConfig.name;
 
-            console.log(`Moving from ${currentStage} to ${nextStage}`);
 
             // Update the current (previous) stage status to 'Cleared'
             jobApplication.stageStatuses.get(currentStage).status = 'Cleared';
 
-            console.log('Updated current stage:', JSON.stringify(jobApplication.stageStatuses.get(currentStage), null, 2));
 
             // Initialize or update the next stage
             jobApplication.stageStatuses.set(nextStage, {
@@ -144,13 +138,11 @@ export const rejectCandidate = async (req, res) => {
                 callHistory: []
             });
 
-            console.log('New next stage:', JSON.stringify(jobApplication.stageStatuses.get(nextStage), null, 2));
 
             // Update the current stage
             jobApplication.currentStage = nextStage;
         }
 
-        console.log('Updated job application state:', JSON.stringify(jobApplication, null, 2));
 
         // Mark the jobApplications field as modified
         candidate.markModified('jobApplications');
@@ -158,7 +150,6 @@ export const rejectCandidate = async (req, res) => {
         // Save the updated candidate document
         await candidate.save();
 
-        console.log('Candidate saved successfully');
 
         res.status(200).json({ 
             message: isLastStage ? 'Candidate accepted in the final stage' : 'Candidate moved to next stage successfully',
@@ -294,7 +285,6 @@ export const rejectCandidate = async (req, res) => {
         // Save the changes
         await candidate.save();
 
-        console.log('Candidate after save:', candidate.toObject());
 
         res.status(200).json({
             message: 'Screening call scheduled successfully',
@@ -342,7 +332,6 @@ export const scheduleCall = async (req, res) => {
       // Save the changes
       await candidate.save();
 
-      console.log('Candidate after save:', candidate.toObject());
 
       res.status(200).json({
           message: `${stage} call scheduled successfully`,
@@ -357,11 +346,9 @@ export const scheduleCall = async (req, res) => {
 export const rescheduleCall = async (req, res) => {
   try {
     const { candidateId, jobId, stage, date, time, assigneeId, meetingLink } = req.body;
-    console.log('Rescheduling request received:', { candidateId, jobId, stage, date, time, assigneeId, meetingLink });
 
     const candidate = await candidates.findById(candidateId);
     if (!candidate) {
-      console.log('Candidate not found:', candidateId);
       return res.status(404).json({ message: 'Candidate not found' });
     }
 
@@ -369,11 +356,9 @@ export const rescheduleCall = async (req, res) => {
       app => app.jobId.toString() === jobId
     );
     if (!jobApplication) {
-      console.log('Job application not found:', jobId);
       return res.status(404).json({ message: 'Job application not found' });
     }
 
-    console.log('Current job application:', JSON.stringify(jobApplication, null, 2));
 
     // Validate the stage
     const validStages = ['Screening', 'Round 1', 'Round 2'];
@@ -386,7 +371,6 @@ export const rescheduleCall = async (req, res) => {
 
     // If stage status doesn't exist, initialize it
     if (!stageStatus) {
-      console.log(`Initializing ${stage} stage status`);
       stageStatus = {
         status: 'Call Scheduled',
         assignedTo: assigneeId,
@@ -395,11 +379,9 @@ export const rescheduleCall = async (req, res) => {
       };
     }
 
-    console.log(`Current ${stage} stage status:`, JSON.stringify(stageStatus, null, 2));
 
     // Move current call to call history if it exists
     if (stageStatus.currentCall) {
-      console.log('Moving current call to history:', stageStatus.currentCall);
       if (!stageStatus.callHistory) {
         stageStatus.callHistory = [];
       }
@@ -412,7 +394,6 @@ export const rescheduleCall = async (req, res) => {
     }
 
     // Update current call with new details
-    console.log('Updating current call with new details');
     stageStatus.currentCall = {
       scheduledDate: date,
       scheduledTime: time,
@@ -424,20 +405,17 @@ export const rescheduleCall = async (req, res) => {
     // Update the stage status in the stageStatuses Map
     jobApplication.stageStatuses.set(stage, stageStatus);
 
-    console.log(`Updated ${stage} stage status:`, JSON.stringify(stageStatus, null, 2));
 
     // Mark the jobApplications array as modified
     candidate.markModified('jobApplications');
 
     await candidate.save();
-    console.log('Candidate saved successfully');
 
     const updatedCandidate = await candidates.findById(candidateId);
     const updatedJobApplication = updatedCandidate.jobApplications.find(
       app => app.jobId.toString() === jobId
     );
     const updatedStageStatus = updatedJobApplication.stageStatuses.get(stage);
-    console.log(`Fetched updated ${stage} stage status:`, JSON.stringify(updatedStageStatus, null, 2));
 
     res.status(200).json({
       message: `${stage} call rescheduled successfully`,
@@ -452,11 +430,9 @@ export const rescheduleCall = async (req, res) => {
 export const rescheduleScreening = async (req, res) => {
   try {
     const { candidateId, jobId, date, time, assigneeId, meetingLink } = req.body;
-    console.log('Rescheduling request received:', { candidateId, jobId, date, time, assigneeId, meetingLink });
 
     const candidate = await candidates.findById(candidateId);
     if (!candidate) {
-      console.log('Candidate not found:', candidateId);
       return res.status(404).json({ message: 'Candidate not found' });
     }
 
@@ -464,18 +440,15 @@ export const rescheduleScreening = async (req, res) => {
       app => app.jobId.toString() === jobId
     );
     if (!jobApplication) {
-      console.log('Job application not found:', jobId);
       return res.status(404).json({ message: 'Job application not found' });
     }
 
-    console.log('Current job application:', JSON.stringify(jobApplication, null, 2));
 
     // Get the Screening stage status
     let screeningStatus = jobApplication.stageStatuses.get('Screening');
 
     // If Screening status doesn't exist, initialize it
     if (!screeningStatus) {
-      console.log('Initializing Screening stage status');
       screeningStatus = {
         status: 'Call Scheduled',
         assignedTo: assigneeId,
@@ -484,11 +457,9 @@ export const rescheduleScreening = async (req, res) => {
       };
     }
 
-    console.log('Current Screening stage status:', JSON.stringify(screeningStatus, null, 2));
 
     // Move current call to call history if it exists
     if (screeningStatus.currentCall) {
-      console.log('Moving current call to history:', screeningStatus.currentCall);
       if (!screeningStatus.callHistory) {
         screeningStatus.callHistory = [];
       }
@@ -501,7 +472,6 @@ export const rescheduleScreening = async (req, res) => {
     }
 
     // Update current call with new details
-    console.log('Updating current call with new details');
     screeningStatus.currentCall = {
       scheduledDate: date,
       scheduledTime: time,
@@ -513,20 +483,17 @@ export const rescheduleScreening = async (req, res) => {
     // Update the Screening status in the stageStatuses Map
     jobApplication.stageStatuses.set('Screening', screeningStatus);
 
-    console.log('Updated Screening stage status:', JSON.stringify(screeningStatus, null, 2));
 
     // Mark the jobApplications array as modified
     candidate.markModified('jobApplications');
 
     await candidate.save();
-    console.log('Candidate saved successfully');
 
     const updatedCandidate = await candidates.findById(candidateId);
     const updatedJobApplication = updatedCandidate.jobApplications.find(
       app => app.jobId.toString() === jobId
     );
     const updatedScreeningStatus = updatedJobApplication.stageStatuses.get('Screening');
-    console.log('Fetched updated Screening stage status:', JSON.stringify(updatedScreeningStatus, null, 2));
 
     res.status(200).json({
       message: 'Screening call rescheduled successfully',
@@ -544,11 +511,9 @@ export const rescheduleScreening = async (req, res) => {
 export const submitBudgetScore = async (req, res) => {
   try {
       const { candidateId, jobId, stage, score } = req.body;
-      console.log('Received request:', { candidateId, jobId, stage, score });
 
       const candidate = await candidates.findById(candidateId);
       if (!candidate) {
-          console.log('Candidate not found:', candidateId);
           return res.status(404).json({ message: 'Candidate not found' });
       }
 
@@ -556,20 +521,16 @@ export const submitBudgetScore = async (req, res) => {
           app => app.jobId.toString() === jobId
       );
       if (!jobApplication) {
-          console.log('Job application not found:', jobId);
           return res.status(404).json({ message: 'Job application not found' });
       }
 
-      console.log('Job application found:', jobApplication);
 
       // Get the current stage status
       const stageStatus = jobApplication.stageStatuses.get(stage);
       if (!stageStatus) {
-          console.log('Stage status not found:', stage);
           return res.status(404).json({ message: 'Stage status not found' });
       }
 
-      console.log('Current stage status:', stageStatus);
 
       // Initialize score object if it doesn't exist
       if (!stageStatus.score) {
@@ -579,13 +540,11 @@ export const submitBudgetScore = async (req, res) => {
       // Add or update the Budget score
       stageStatus.score.Budget = score;
 
-      console.log('Updated stage status:', stageStatus);
 
       // Mark the nested fields as modified
       candidate.markModified(`jobApplications`);
 
       await candidate.save();
-      console.log('Candidate saved successfully');
 
       res.status(200).json({
           message: 'Budget score submitted successfully',

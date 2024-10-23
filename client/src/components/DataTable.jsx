@@ -143,7 +143,6 @@ const DataTable = ({ rowsData, onUpdateCandidate, onUpdateAssignee , onUpdateRat
 
 
   const handleConfirm = () => {
-    console.log('Confirmed with selections:', selectedValue1, selectedValue2);
 
     if (selectedValue1 && selectedValue2) {
       const min = parseInt(selectedValue1);
@@ -161,7 +160,6 @@ const DataTable = ({ rowsData, onUpdateCandidate, onUpdateAssignee , onUpdateRat
   const [selectedAssignees, setSelectedAssignees] = useState([]);
 
   const handleConfirmAssignee = async () => {
-    console.log('Confirmed with selections:', selectedAssignees);
 
     const numCandidates = budgetFilteredRows.length;
     const numAssignees = selectedAssignees.length;

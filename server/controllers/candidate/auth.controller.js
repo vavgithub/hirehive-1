@@ -31,12 +31,10 @@ cloudinary.config({
 
 const uploadToCloudinary = async (filePath, originalFilename) => {
   try {
-    console.log('Uploading to Cloudinary:', { filePath, originalFilename });
     
     const fileExtension = path.extname(originalFilename);
     const publicId = `resume_${Date.now()}${fileExtension}`;
     
-    console.log('Generated public ID:', publicId);
 
     const result = await cloudinary.uploader.upload(filePath, {
       resource_type: 'raw',
@@ -48,7 +46,6 @@ const uploadToCloudinary = async (filePath, originalFilename) => {
       access_mode: 'public'
     });
 
-    console.log('Cloudinary upload result:', result);
 
     return result.secure_url;
   } catch (error) {
@@ -62,19 +59,15 @@ export const uploadResume = async (req, res) => {
     return res.status(400).json({ message: 'No file uploaded' });
   }
 
-  console.log('File received:', req.file);
 
   const tempFilePath = path.join(__dirname, '..', '..', 'uploads', req.file.filename);
   const originalFilename = req.file.originalname;
 
-  console.log('Temporary file path:', tempFilePath);
-  console.log('Original filename:', originalFilename);
 
   try {
     const cloudinaryUrl = await uploadToCloudinary(tempFilePath, originalFilename);
     await fs.unlink(tempFilePath);
     
-    console.log('File uploaded successfully. Cloudinary URL:', cloudinaryUrl);
     
     res.status(200).json({ resumeUrl: cloudinaryUrl });
   } catch (error) {

@@ -11,8 +11,6 @@ const stageStatuses = {
 
 const ProgressIndicator = ({ stage, status }) => {
   const getCompletionPercentage = (stage, status) => {
-    console.log(stage);
-    console.log(status);
     const statuses = stageStatuses[stage];
     if (!statuses) return 0;
 

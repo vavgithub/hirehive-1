@@ -25,9 +25,7 @@ import Loader from '../../components/ui/Loader';
 
 
 const fetchCandidateData = async (candidateId, jobId) => {
-    console.log('Fetching candidate data for:', { candidateId, jobId });
     const { data } = await axios.get(`admin/candidate/${candidateId}/job/${jobId}`);
-    console.log('API Response:', data);
     return data;
 };
 
@@ -60,13 +58,10 @@ const ViewCandidateProfile = () => {
     const { user } = useAuthContext();
     const role = user?.role || 'Candidate'; // Default to Candidate if role is not specified
 
-    console.log('User role:', role);
 
 
     const [activeTab, setActiveTab] = useState('application');
-    console.log('ViewCandidateProfile component rendered');
     const { candidateId, jobId } = useParams();
-    console.log('Params:', { candidateId, jobId });
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -97,7 +92,6 @@ const ViewCandidateProfile = () => {
     // Use useEffect to dispatch actions when data changes
     useEffect(() => {
         if (data) {
-            console.log('Data fetched or updated:', data);
             dispatch(setCandidateData(data));
             if (data.jobApplication) {
                 dispatch(setCurrentStage(data.jobApplication.currentStage));
@@ -109,12 +103,10 @@ const ViewCandidateProfile = () => {
     }, [data, dispatch]);
 
     useEffect(() => {
-        console.log('useEffect triggered, isLoading:', isLoading);
         dispatch(setLoading(isLoading));
     }, [isLoading, dispatch]);
 
     const reduxState = useSelector((state) => state);
-    console.log('Current Redux State:', reduxState);
 
     // Tab click handler
     const handleTabClick = (tab) => {
@@ -147,7 +139,6 @@ const ViewCandidateProfile = () => {
                 break;
             case 'ACTION_3':
                 // Example: Update state or trigger some function
-                console.log('Performing Action 3');
                 break;
             case 'ACTION_4':
                 if (window.confirm('Are you sure you want to perform Action 4?')) {
@@ -182,7 +173,6 @@ const ViewCandidateProfile = () => {
         return null;
     }
 
-    console.log('Rendering main component content');
 
 
     const transformedData = transformCandidateData(data);

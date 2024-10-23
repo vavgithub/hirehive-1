@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, Box } from '@mui/material';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
 import axios from '../../api/axios';
@@ -14,6 +14,42 @@ import Scorer from '../../components/ui/Scorer';
 import { useAuthContext } from '../../context/AuthProvider';
 import RightTick from '../../svg/Staging/RightTick';
 
+
+  
+
+const PortfolioReview = ({ candidate, onSubmit }) => {
+    console.log("please check this bro niside funtions", candidate)
+  
+    const [rating, setRating] = useState(0);
+    const [feedback, setFeedback] = useState('');
+  
+    const handleSubmit = () => {
+        console.log("please checkk karerere")
+      onSubmit(candidate._id, {
+        jobId: candidate.jobApplication.jobId,
+        stage: candidate.jobApplication.currentStage,
+        ratings: rating,
+        feedback,
+      });
+    };
+  
+    return (
+      <div className='bg-background-90 flex gap-4 justify-between rounded-b-xl  items-center p-4'>
+        <span className='flex-shrink-0'>Portfolio ratings</span>
+        <Scorer value={rating} onChange={setRating} />
+        <input
+          type="text"
+          className='w-full bg-background-80 text-white p-2 rounded'
+          placeholder='Enter Your Feedback'
+          value={feedback}
+          onChange={(e) => setFeedback(e.target.value)}
+        />
+        <Button variant="icon" onClick={handleSubmit}>Submit</Button>
+      </div>
+    );
+  };
+
+
 const Portfolio = ({ candidateId, jobId }) => {
     const { user } = useAuthContext();
     const role = user?.role || 'Candidate'; // Default to Candidate if role is not specified
@@ -23,7 +59,34 @@ const Portfolio = ({ candidateId, jobId }) => {
     const stageData = useSelector(state => state.applicationStage.stageStatuses.Portfolio);
     const candidateData = useSelector(state => state.candidate.candidateData);
 
-    console.log("Current stage data:", stageData);
+
+
+    console.log("Current candiate data :", candidateData);
+
+    const submitReview = async ({ candidateId, reviewData }) => {
+        const response = await axios.post('dr/submit-score-review', {
+          candidateId,
+          ...reviewData,
+        });
+        return response.data;
+      };
+
+    const handleReviewSubmit = (candidateId, reviewData) => {
+        submitReviewMutation.mutate({ candidateId, reviewData });
+      };
+
+    const submitReviewMutation = useMutation({
+        mutationFn: submitReview,
+        onSuccess: () => {
+
+            queryClient.invalidateQueries(['candidate', candidateId, jobId]);
+          showSuccessToast('Review Submitted', 'Your review has been successfully submitted.');
+        },
+        onError: (error) => {
+          showErrorToast('Submission Failed', error.response?.data?.message || 'An error occurred while submitting your review.');
+        },
+      });
+
 
     const updateAssigneeMutation = useMutation({
         mutationFn: (newAssignee) => axios.put('dr/update-assignee', {
@@ -89,6 +152,7 @@ const Portfolio = ({ candidateId, jobId }) => {
         }
     };
 
+   
     const renderDesignReviewerContent = () => {
         switch (stageData?.status) {
             case 'Not Assigned':
@@ -97,13 +161,10 @@ const Portfolio = ({ candidateId, jobId }) => {
                 );
             case 'Under Review':
                 return (
-                    <div className="flex flex-col gap-4">
-                        <Label icon={WarningIcon} text="Please review the candidate's portfolio and provide feedback." />
-                        <a href={candidateData.portfolio} target="_blank" rel="noopener noreferrer">
-                            <Button variant="secondary">View Portfolio</Button>
-                        </a>
-                        {/* Add portfolio review form here */}
-                    </div>
+                    <>
+                        <Label text="Please review the portfolio and update the details below." />
+                        <PortfolioReview candidate={candidateData} onSubmit={handleReviewSubmit}/>
+                    </>
                 );
             case 'Reviewed':
             case 'Cleared':
@@ -154,7 +215,7 @@ const Portfolio = ({ candidateId, jobId }) => {
                     </div>
                 </div>
             </div>
-            {!isCandidate && (
+            { role == "Hiring Manager" && (
                 <StageActions
                     stage="Portfolio"
                     candidateId={candidateId}

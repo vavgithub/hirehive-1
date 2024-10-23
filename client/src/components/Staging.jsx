@@ -92,7 +92,6 @@ const Staging = ({ currentStage, candidateData: initialCandidateData }) => {
           ...prevData,
           stageStatus: updatedStageStatus
         }));
-        console.log(`Candidate rejected in ${stage} stage`);
       } else {
         throw new Error('Failed to update candidate status');
       }
@@ -130,7 +129,6 @@ const Staging = ({ currentStage, candidateData: initialCandidateData }) => {
           stageStatus: updatedStageStatus
         }));
         setActiveStage(nextStage);
-        console.log(`Candidate moved from ${currentStage} to ${nextStage}`);
       } else {
         throw new Error('Failed to update candidate stage');
       }

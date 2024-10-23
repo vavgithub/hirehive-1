@@ -31,6 +31,9 @@ import { useAuthContext } from '../context/AuthProvider';
 
 
 const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
+  //this is for setting up the context
+  const { user } = useAuthContext();
+  const role = user?.role
   const queryClient = useQueryClient();
   const [isAutoAssignModalOpen, setIsAutoAssignModalOpen] = useState(false);
   const [isBudgetModalOpen, setIsBudgetModalOpen] = useState(false);
@@ -56,9 +59,7 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
 
   const [budgetMenuAnchorEl, setBudgetMenuAnchorEl] = useState(null);
 
-  //this is for setting up the context
-  const { user } = useAuthContext();
-  const role = user?.role 
+
 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
@@ -71,12 +72,11 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
 
 
   const handleDocumentClick = (documentUrl) => {
-    console.log(documentUrl);
     setSelectedDocumentUrl(documentUrl);
     setIsDocumentViewerOpen(true);
   };
 
-  const { data: apiResponse, isLoading, isError , refetch  } = useQuery({
+  const { data: apiResponse, isLoading, isError, refetch } = useQuery({
     queryKey: ['candidates', jobId],
     queryFn: () => axios.get(`/admin/candidate/${jobId}`).then(res => res.data),
     enabled: !readOnly, // Only fetch data if not in readOnly mode
@@ -142,7 +142,6 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
     onSuccess: (data) => {
       // Invalidate and refetch
       queryClient.invalidateQueries(['candidates', jobId]);
-      console.log('Auto-assign result:', data);
       refetch();
       // You might want to show a success message to the user here
     },
@@ -210,9 +209,8 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
         budgetMin: parseFloat(budgetFilter.from) || 0,
         budgetMax: parseFloat(budgetFilter.to) || Infinity
       });
-      
+
       if (response.status === 200) {
-        console.log('Auto-assign result:', response.data);
         await refetch();
         showSuccessToast("Auto Assign Portfolio Done")
       } else {
@@ -265,10 +263,9 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
 
   const handleApplyBudgetFilter = () => {
     setBudgetFilter(tempBudgetFilter);
-    console.log("check krr toh brooww" , tempBudgetFilter)
     localStorage.setItem(`budgetFilter_${jobId}`, JSON.stringify(tempBudgetFilter));
     setIsBudgetModalOpen(false);
-    showSuccessToast("Screened with budget" , `Candidates successfully screened within the budget ${tempBudgetFilter.from}LPA - ${tempBudgetFilter.to}LPA`)
+    showSuccessToast("Screened with budget", `Candidates successfully screened within the budget ${tempBudgetFilter.from}LPA - ${tempBudgetFilter.to}LPA`)
   };
 
   const clearBudgetFilter = () => {
@@ -306,7 +303,6 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
   };
 
   const handleRatingClick = (event, row) => {
-    console.log('Rating clicked for row:', row);
     // console.log(params?.row?.rating);
     event.stopPropagation();
     setAnchorEl(event.currentTarget);
@@ -314,13 +310,11 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
   };
 
   const handleRatingClose = () => {
-    console.log('Closing rating menu');
     setAnchorEl(null);
     setSelectedRow(null);
   };
 
   const getRatingIcon = (rating) => {
-    console.log('Getting icon for rating:', rating);
     switch (rating) {
       case 'Good Fit':
         return <GoodFit />;
@@ -500,10 +494,12 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
   //   }
 
   const handleRowClick = (params) => {
-    if(role === "Hiring Manager"){
+    if (role == "Hiring Manager") {
       navigate(`/admin/jobs/view-candidate/${params?.row?._id}/${readOnly ? params.row.jobId : jobId}`)
+    } else {
+      navigate(`view-candidate/${params?.row?._id}/${readOnly ? params.row.jobId : jobId}`)
+
     }
-    navigate(`view-candidate/${params?.row?._id}/${readOnly ? params.row.jobId : jobId}`)
   }
 
   const handleExport = () => {
@@ -844,7 +840,7 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
 
         </div>
         <div className='flex items-center justify-evenly px-4 typograhy-body '>
-           <DeleteIcon /> 
+          <DeleteIcon />
           <MenuItem onClick={handleBudgetClear}>Clear</MenuItem>
         </div>
       </Menu>
