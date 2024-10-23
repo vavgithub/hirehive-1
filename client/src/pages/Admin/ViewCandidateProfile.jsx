@@ -20,6 +20,7 @@ import ApplicationStaging from '../../components/Staging/ApplicationStaging';
 import { useDispatch, useSelector } from 'react-redux';
 import { setCandidateData, setError, setLoading } from '../../redux/candidateSlice';
 import { setCurrentStage, setStageStatuses } from '../../redux/applicationStageSlice';
+import { Loader } from 'lucide-react';
 
 
 
@@ -157,10 +158,19 @@ const ViewCandidateProfile = () => {
                 console.log('Unknown action:', action);
         }
     };
-    if (isLoading) {
-        console.log('Rendering loading state');
-        return <div>Loading...</div>;
-    }
+
+      // Show loader if data is loading
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <Loader />
+      </div>
+    );
+  }
+    // if (isLoading) {
+    //     console.log('Rendering loading state');
+    //     return <div>Loading...</div>;
+    // }
 
     if (isError) {
         console.error('Rendering error state:', queryError);

@@ -19,6 +19,7 @@ import { ClosedIcon, ClosedIconActive } from '../../svg/Tabs/ClosedIcon';
 import { DraftsIcon, DraftsIconActive } from '../../svg/Tabs/DraftsIcon';
 import NoJobs from "../../svg/Background/NoJobs.svg"
 import { showErrorToast, showSuccessToast } from '../../components/ui/Toast';
+import Loader from '../../components/ui/Loader';
 
 
 const fetchJobs = () => axios.get('/jobs/jobs').then(res => res.data);

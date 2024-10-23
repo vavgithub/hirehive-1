@@ -12,6 +12,7 @@ import Round1 from '../../svg/StatsCard/View Candidate/Round1';
 import Round2 from '../../svg/StatsCard/View Candidate/Round2';
 import OfferSent from '../../svg/StatsCard/View Candidate/OfferSent';
 import Total from '../../svg/StatsCard/View Candidate/Total';
+import Loader from '../../components/ui/Loader';
 
 const statsOne = [
   { title: 'Total', value: 0, icon: Total },
@@ -19,7 +20,7 @@ const statsOne = [
   { title: 'Screening', value: 0, icon: Screening },
   { title: 'Design Task', value: 0, icon: DesignTask },
   { title: 'Round 1', value: 0, icon: Round1 },
-   { title: 'Round 2', value: 0, icon: Round2 },
+  { title: 'Round 2', value: 0, icon: Round2 },
   { title: 'Offer Sent', value: 0, icon: OfferSent },
 ]
 const Candidates = () => {
@@ -38,7 +39,16 @@ const Candidates = () => {
     { title: 'Offer Sent', value: data?.stats?.['Offer Sent'] || 0, icon: OfferSent },
   ];
 
-  if (isLoading) return <div>Loading...</div>;
+  // Show loader if data is loading
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <Loader />
+      </div>
+    );
+  }
+
+  // if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error fetching candidates</div>;
 
   return (

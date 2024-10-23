@@ -27,13 +27,13 @@ import EngRate from '../../svg/StatsCard/View Details/EngRate';
 import QuaApp from '../../svg/StatsCard/View Details/Portfolio';
 import AppRec from '../../svg/StatsCard/View Details/AppRec';
 import Views from '../../svg/StatsCard/View Details/Views';
+import Loader from '../../components/ui/Loader';
 
 
 const ViewJobs = () => {
     const { id: mainId } = useParams();
     const navigate = useNavigate();
     const queryClient = useQueryClient();
-
 
     const [closeReason, setCloseReason] = useState('');
 
@@ -58,47 +58,12 @@ const ViewJobs = () => {
         }
     ];
 
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [selectedValue1, setSelectedValue1] = useState('');
-    const [selectedValue2, setSelectedValue2] = useState('');
-
-    const handleConfirm = () => {
-        console.log('Confirmed with selections:', selectedValue1, selectedValue2);
-        setIsModalOpen(false);
-    };
 
     const handleCloseReasonChange = (reason) => {
         setCloseReason(reason);
     };
 
-    const fields = [
-        {
-            type: 'select',
-            label: 'Start Range',
-            value: selectedValue1,
-            onChange: (e) => setSelectedValue1(e.target.value),
-            options: [
-                { value: '1', label: '1 Lpa' },
-                { value: '2', label: '2 Lpa' },
-                { value: '3', label: '3 Lpa' },
-                { value: '4', label: '4 Lpa' },
-                { value: '5', label: '5 Lpa' },
-            ],
-        },
-        {
-            type: 'select',
-            label: 'End Range',
-            value: selectedValue2,
-            onChange: (e) => setSelectedValue2(e.target.value),
-            options: [
-                { value: '1', label: '1 Lpa' },
-                { value: '2', label: '2 Lpa' },
-                { value: '3', label: '3 Lpa' },
-                { value: '4', label: '4 Lpa' },
-                { value: '5', label: '5 Lpa' },
-            ],
-        },
-    ];
+
 
 
     const confirmAction = (job) => {
@@ -134,17 +99,11 @@ const ViewJobs = () => {
         queryFn: () => axios.get(`/admin/candidate/${mainId}`).then(res => res.data),
     });
 
-    console.log( "NOISSEEE" , candidatesData?.candidates)
 
     const [jobStats , setJobStats] = useState([]);
 
-    //Fetch Stats data for Speicif Job
-    // const { data: jobStats, isLoading: isStatsLoading } = useQuery({
-    //     queryKey: ['jobStats', mainId],
-    //     queryFn: () => axios.get(`/jobs/candidates/${mainId}/stats`).then(res => res.data),
-    // });
+    
 
-    console.log("yelelelele", jobStats?.data?.stageStats);
 
     // Mutations
     const deleteMutation = useMutation({
@@ -174,49 +133,14 @@ const ViewJobs = () => {
         },
     });
 
-    const updateCandidateMutation = useMutation({
-        mutationFn: ({ id, updates }) => axios.patch(`/jobs/candidates/update/${id}`, updates),
-        onMutate: async ({ id, updates }) => {
-            // Cancel any outgoing refetches
-            await queryClient.cancelQueries(['candidates', mainId]);
 
-            // Snapshot the previous value
-            const previousCandidates = queryClient.getQueryData(['candidates', mainId]);
-
-            // Optimistically update to the new value
-            queryClient.setQueryData(['candidates', mainId], old =>
-                old.map(candidate =>
-                    candidate._id === id ? { ...candidate, ...updates } : candidate
-                )
-            );
-
-            // Return a context object with the snapshotted value
-            return { previousCandidates };
-        },
-        onError: (err, newCandidates, context) => {
-            // If the mutation fails, use the context returned from onMutate to roll back
-            queryClient.setQueryData(['candidates', mainId], context.previousCandidates);
-        },
-        onSettled: () => {
-            // Always refetch after error or success
-            queryClient.invalidateQueries(['candidates', mainId]);
-        },
-    });
-
-
-    const handleUpdateCandidate = (id, updates) => {
-        updateCandidateMutation.mutate({ id, updates });
-    };
-
-    useEffect(() => {
-        if (mainId) {
-            localStorage.setItem('currentJobId', mainId);
-        }
-    }, [mainId]);
-
-
+    // Show loader if data is loading
     if (isJobLoading || isCandidatesLoading) {
-        return <div>Loading...</div>;
+        return (
+            <div className="flex justify-center items-center min-h-screen">
+                <Loader />
+            </div>
+        );
     }
 
     const { questions = [] } = formData || {};
@@ -303,15 +227,6 @@ const ViewJobs = () => {
                                 {(
                                     question.options.map((option, optionIndex) => (
                                         <div key={optionIndex} className="mb-2 typography-body flex justify-start items-center gap-2">
-                                            {/* <input
-                                                type="radio"
-                                                id={`question-${question._id}-option-${optionIndex}`}
-                                                name={`question-${question._id}`}
-                                                value={option}
-                                                onChange={(e) => handleInputChange(question._id, e.target.value)}
-                                                required={question.required}
-                                                className="mr-2"
-                                            /> */}
                                             <div className='w-4 h-4 rounded-full border border-gray-600'></div>
                                             <label htmlFor={`question-${question._id}-option-${optionIndex}`}>{option}</label>
                                         </div>
@@ -330,28 +245,14 @@ const ViewJobs = () => {
                     </div>
                     <div>
                         <div>
-                            <Table
-                                rowsData={candidatesData?.candidates}
+                            <Table                             
                                 jobId={mainId} // Pass jobId to Table component
                             >
                             </Table>
-                            {/* <Table rowsData={candidatesData} extraCTA='true' onUpdateCandidate={handleUpdateCandidate} /> */}
-                            {/* <DataTable rowsData={candidatesData} onUpdateCandidate={updateCandidate} onUpdateAssignee={updateAssignee} onUpdateRating={updateRating}/> */}
                         </div>
                     </div>
                 </div>
             )}
-
-            <InputPopUpModal
-                open={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
-                confirmAction={handleConfirm}
-                fields={fields}
-                heading="Screen with Budget"
-                para="Candidates will no longer be able to apply. Are you sure you want to close this job?"
-                confirmButtonText="Apply Budget"
-                cancelButtonText="Cancel"
-            />
 
             <Modal
                 open={modalOpen}
