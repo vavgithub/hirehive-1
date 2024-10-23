@@ -58,14 +58,10 @@ const ViewCandidateProfile = () => {
     const { user } = useAuthContext();
     const role = user?.role || 'Candidate'; // Default to Candidate if role is not specified
 
-
-
     const [activeTab, setActiveTab] = useState('application');
     const { candidateId, jobId } = useParams();
     const dispatch = useDispatch();
     const navigate = useNavigate();
-
-
 
     const { data, isLoading, isError, error: queryError } = useQuery({
         queryKey: ['candidate', candidateId, jobId],
@@ -150,14 +146,14 @@ const ViewCandidateProfile = () => {
         }
     };
 
-      // Show loader if data is loading
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <Loader />
-      </div>
-    );
-  }
+    // Show loader if data is loading
+    if (isLoading) {
+        return (
+            <div className="flex justify-center items-center min-h-screen">
+                <Loader />
+            </div>
+        );
+    }
     // if (isLoading) {
     //     console.log('Rendering loading state');
     //     return <div>Loading...</div>;
@@ -190,56 +186,52 @@ const ViewCandidateProfile = () => {
             {/* Candidate Profile Card */}
 
             {
-                role === "Hiring Manager" && (
+  (role === "Hiring Manager" || role === "Design Reviewer") && (
+    <div className="flex gap-3">
+      <div className="bg-background-90 w-full p-4 rounded-xl flex">
+        <div className="to-background-100">
+          <img src="" alt="" />
+        </div>
+        <div>
+          <h1 className="typography-h2">
+            {data.firstName} {data.lastName}
+          </h1>
+          <div className="flex items-center gap-2 mb-3 mt-2">
+            <span className="typography-small-p text-gray-500">{data.jobApplied}</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="4" height="4" viewBox="0 0 4 4" fill="none">
+              <circle cx="2" cy="2" r="2" fill="#808389" />
+            </svg>
+            <span className="typography-small-p text-gray-500">{data.location}</span>
+          </div>
+          <div className="flex mb-3 gap-5">
+            <div className="flex items-center gap-2">
+              <PhoneIcon />
+              <span className="typography-large-p">{data.phone}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <EmailIcon />
+              <span className="typography-large-p">{data.email}</span>
+            </div>
+          </div>
+          <div className="flex gap-2 items-center">
+            <ResumeIcon />
+            <FileMainIcon />
+            <WebsiteMainIcon />
+            <AssignmentIcon />
+          </div>
+          <p>{data.location}</p>
+        </div>
+      </div>
 
-
-
-
-                    <div className="flex gap-3">
-                        <div className="bg-background-90 w-full p-4 rounded-xl flex">
-                            <div className="to-background-100">
-                                <img src="" alt="" />
-                            </div>
-                            <div>
-                                <h1 className="typography-h2">
-                                    {data.firstName} {data.lastName}
-                                </h1>
-                                <div className="flex items-center gap-2 mb-3 mt-2">
-                                    <span className="typography-small-p text-gray-500">{data.jobApplied}</span>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="4" height="4" viewBox="0 0 4 4" fill="none">
-                                        <circle cx="2" cy="2" r="2" fill="#808389" />
-                                    </svg>
-                                    <span className="typography-small-p text-gray-500">{data.location}</span>
-                                </div>
-                                <div className="flex mb-3 gap-5">
-                                    <div className="flex items-center gap-2">
-                                        <PhoneIcon />
-                                        <span className="typography-large-p">{data.phone}</span>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        <EmailIcon />
-                                        <span className="typography-large-p">{data.email}</span>
-                                    </div>
-                                </div>
-                                <div className="flex gap-2 items-center">
-                                    <ResumeIcon />
-                                    <FileMainIcon />
-                                    <WebsiteMainIcon />
-                                    <AssignmentIcon />
-                                </div>
-                                <p>{data.location}</p>
-                            </div>
-                        </div>
-
-                        {/* VAV Score Section */}
-                        <div className="flex bg-stars flex-col items-center bg-background-90 w-[430px] bg-cover p-5 rounded-xl">
-                            <h3 className="typography-h3">VAV SCORE</h3>
-                            <span className="marks text-font-primary">{score?.totalScore}</span>
-                            <p className="typography-large">Out of 100</p>
-                        </div>
-                    </div>
-                )
-            }
+      {/* VAV Score Section */}
+      <div className="flex bg-stars flex-col items-center bg-background-90 w-[430px] bg-cover p-5 rounded-xl">
+        <h3 className="typography-h3">VAV SCORE</h3>
+        <span className="marks text-font-primary">{score?.totalScore}</span>
+        <p className="typography-large">Out of 100</p>
+      </div>
+    </div>
+  )
+}
 
             {/* Conditional rendering of tabs for "Hiring Manager" */}
 

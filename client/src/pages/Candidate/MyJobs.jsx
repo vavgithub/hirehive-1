@@ -5,6 +5,7 @@ import JobCard from '../../components/JobCard';
 import AssessmentBanner from '../../components/ui/AssessmentBanner';
 import { useNavigate } from 'react-router-dom';
 import useAuthCandidate from '../../hooks/useAuthCandidate';
+import Loader from '../../components/ui/Loader';
 
 const fetchAppliedJobs = async () => {
   const response = await axios.get('/auth/candidate/applied-jobs');
@@ -23,7 +24,11 @@ const MyJobs = () => {
   const navigate = useNavigate();
 
   if (isLoading) {
-    return <div>Loading your applied jobs...</div>;
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+          <Loader />
+      </div>
+  );
   }
 
   if (isError) {

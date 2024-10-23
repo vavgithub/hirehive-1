@@ -27,6 +27,53 @@ import BulletMarks from '../ui/BulletMarks';
 import Scorer from '../ui/Scorer';
 import { useAuthContext } from '../../context/AuthProvider';
 
+
+const ScreeningReview = ({ candidate, onSubmit }) => {
+    const [ratings, setRatings] = useState({
+      Attitude: 0, Communication: 0, UX: 0, UI: 0, Tech: 0
+    });
+    const [feedback, setFeedback] = useState('');
+  
+    const handleRatingChange = (category, value) => {
+      setRatings(prev => ({ ...prev, [category]: value }));
+    };
+    const handleSubmit = () => {
+      onSubmit(candidate._id, {
+        jobId: candidate.jobApplication.jobId,
+        stage: candidate.jobApplication.currentStage,
+        ratings,
+        feedback,
+      });
+    };
+  
+    return (
+      <div className='bg-background-90 grid grid-cols-2 gap-4 p-4'>
+        {Object.entries(ratings).map(([category, value]) => (
+          <div key={category} className='flex gap-4 items-center'>
+            <span className='w-32'>{category}</span>
+            <Scorer value={ratings[category]} onChange={(v) => handleRatingChange(category, v)} />
+  
+          </div>
+        ))}
+        <div className='flex gap-4'>
+  
+          <input
+            type="text"
+            className='w-full bg-background-80 text-white p-2 rounded'
+            placeholder='Enter Your Feedback'
+            value={feedback}
+            onChange={(e) => setFeedback(e.target.value)}
+          />
+          <div>
+            <Button variant="icon" onClick={handleSubmit}>Submit</Button>
+  
+          </div>
+        </div>
+  
+      </div>
+    );
+  };
+
 export const ScheduleForm = ({ candidateId, jobId, onSubmit, isRescheduling, initialData, onCancel }) => {
     const [date, setDate] = useState(isRescheduling ? null : (initialData ? new Date(initialData.scheduledDate) : null));
     const [time, setTime] = useState(isRescheduling ? null : (initialData ? initialData.scheduledTime : null));
@@ -110,6 +157,7 @@ const Screening = ({ candidateId, jobId }) => {
     const [isRescheduling, setIsRescheduling] = useState(false);
     const queryClient = useQueryClient();
     const stageData = useSelector(state => state.applicationStage.stageStatuses.Screening);
+    const candidateData = useSelector(state => state.candidate.candidateData);
 
     const { user } = useAuthContext();
     const role = user?.role || 'Candidate';
@@ -119,14 +167,7 @@ const Screening = ({ candidateId, jobId }) => {
     const [isBudgetScoreSubmitted, setIsBudgetScoreSubmitted] = useState(false);
     const [totalScore, setTotalScore] = useState(0);
 
-    // useEffect(() => {
-    //     if (stageData?.score?.Budget) {
-    //         setBudgetScore(stageData.score.Budget);
-    //         setIsBudgetScoreSubmitted(true);
-    //     }
-    // }, [stageData]);
-
-
+    //this is for updating the states for total count
     useEffect(() => {
         if (stageData?.score) {
             const scores = Object.values(stageData.score);
@@ -162,6 +203,31 @@ const Screening = ({ candidateId, jobId }) => {
             // You can add user-facing error handling here, e.g., showing an error message
         }
     });
+
+    const submitReview = async ({ candidateId, reviewData }) => {
+        const response = await axios.post('dr/submit-score-review', {
+          candidateId,
+          ...reviewData,
+        });
+        return response.data;
+      };
+
+    const handleReviewSubmit = (candidateId, reviewData) => {
+        submitReviewMutation.mutate({ candidateId, reviewData });
+      };
+
+    const submitReviewMutation = useMutation({
+        mutationFn: submitReview,
+        onSuccess: () => {
+
+            queryClient.invalidateQueries(['candidate', candidateId, jobId]);
+          showSuccessToast('Review Submitted', 'Your review has been successfully submitted.');
+        },
+        onError: (error) => {
+          showErrorToast('Submission Failed', error.response?.data?.message || 'An error occurred while submitting your review.');
+        },
+      });
+
 
 
     const handleBudgetScoreSubmit = () => {
@@ -379,6 +445,12 @@ const Screening = ({ candidateId, jobId }) => {
 
     const renderDesignReviewerContent = () => {
         switch (stageData?.status) {
+            case 'Pending':
+                return (
+                    <div>
+                        <Label text={"The screening call has not yet been scheduled. Please check back later for updates."}/>
+                    </div>
+                )
             case 'Call Scheduled':
                 return (
                     <div className='flex flex-col gap-4'>
@@ -391,7 +463,7 @@ const Screening = ({ candidateId, jobId }) => {
                 return (
                     <div className='flex flex-col gap-4'>
                         <Label icon={WarningIcon} text="Please review the candidate's performance and provide scores." />
-                        {/* Add review form here */}
+                        <ScreeningReview candidate={candidateData} onSubmit={handleReviewSubmit} />;
                     </div>
                 );
             case 'Reviewed':

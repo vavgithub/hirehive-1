@@ -6,6 +6,7 @@ import { formatDescription } from '../../utility/formatDescription';
 import SideCard from '../../components/SideCard';
 import useAuthCandidate from '../../hooks/useAuthCandidate'; // Import the authentication hook
 import Header from '../../components/utility/Header';
+import Loader from '../../components/ui/Loader';
 
 // Function to fetch the job data by ID
 const getJobById = async (id) => {
@@ -30,7 +31,11 @@ const ViewJob = () => {
     });
 
     if (isLoading || isAuthLoading) {
-        return <div>Loading...</div>;
+        return (
+            <div className="flex justify-center items-center min-h-screen">
+                <Loader />
+            </div>
+        );
     }
 
     if (isError) {

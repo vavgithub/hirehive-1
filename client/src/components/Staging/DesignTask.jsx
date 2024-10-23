@@ -25,6 +25,47 @@ import LinkIcon from '../../svg/Staging/LinkIcon';
 import ClipboardIcon from '../../svg/Staging/ClipboardIcon';
 import { formatTime } from '../../utility/formatTime';
 import { useAuthContext } from '../../context/AuthProvider';
+import Loader from '../ui/Loader';
+import Scorer from '../ui/Scorer';
+
+const submitReview = async ({ candidateId, reviewData }) => {
+    const response = await axios.post('dr/submit-score-review', {
+        candidateId,
+        ...reviewData,
+    });
+    return response.data;
+};
+
+
+const DesignTaskReview = ({ candidate, onSubmit }) => {
+    const [rating, setRating] = useState(0);
+    const [feedback, setFeedback] = useState('');
+
+    const handleSubmit = () => {
+        onSubmit(candidate._id, {
+            jobId: candidate.jobApplication.jobId,
+            stage: 'Design Task',
+            ratings: rating,
+            feedback,
+        });
+    };
+
+    return (
+        <div className='bg-background-100 flex gap-4 justify-between items-center p-4'>
+            <span className='flex-shrink-0'>Design Task Ratings</span>
+            <Scorer value={rating} onChange={setRating} />
+
+            <input
+                type="text"
+                className='w-full bg-background-80 text-white p-2 rounded'
+                placeholder='Enter Your Feedback'
+                value={feedback}
+                onChange={(e) => setFeedback(e.target.value)}
+            />
+            <Button variant="icon" onClick={handleSubmit}>Submit</Button>
+        </div>
+    );
+};
 
 const DesignTask = ({ candidateId, jobId }) => {
 
@@ -35,6 +76,7 @@ const DesignTask = ({ candidateId, jobId }) => {
     const dispatch = useDispatch();
     const queryClient = useQueryClient();
     const stageData = useSelector(state => state.applicationStage.stageStatuses['Design Task']);
+    const candidateData = useSelector(state => state.candidate.candidateData);
     const candidateEmail = useSelector(state => state.candidate.candidateData.email);
 
     const [taskDescription, setTaskDescription] = useState('');
@@ -44,8 +86,36 @@ const DesignTask = ({ candidateId, jobId }) => {
     const [taskLink, setTaskLink] = useState('');
     const [comment, setComment] = useState('');
 
-    
+    const [isLoading, setIsLoading] = useState(false); // Loading state
+
+
+    const handleReviewSubmit = (candidateId, reviewData) => {
+        submitReviewMutation.mutate({ candidateId, reviewData });
+    };
+
+    const submitReviewMutation = useMutation({
+        mutationFn: submitReview,
+        onSuccess: () => {
+
+            queryClient.invalidateQueries(['candidate', candidateId, jobId]);
+            showSuccessToast('Review Submitted', 'Your review has been successfully submitted.');
+        },
+        onError: (error) => {
+            showErrorToast('Submission Failed', error.response?.data?.message || 'An error occurred while submitting your review.');
+        },
+    });
+
+
     const renderHiringManagerContent = () => {
+        if (isLoading) {
+            return (
+                <div className='flex justify-center'>
+                    <Loader />
+                </div>
+
+            )
+
+        }
         switch (stageData?.status) {
             case 'Pending':
                 return renderPendingStatus();
@@ -112,21 +182,26 @@ const DesignTask = ({ candidateId, jobId }) => {
 
     const renderDesignReviewerContent = () => {
         switch (stageData?.status) {
+            case 'Pending':
+                return (
+                    <Label text={"The design task has not yet been sent. Please check back later for updates."} />
+                )
             case 'Sent':
                 return (
                     <div className="flex flex-col gap-4">
-                        <Label icon={WarningIcon} text="The design task has been sent to the candidate. Please wait for the submission." />
+                        <Label text="The design task has been sent to the candidate. Please wait for the submission." />
                         {/* {renderTaskDetails()} */}
                     </div>
                 );
             case 'Under Review':
                 return (
-                    <div className="flex flex-col gap-4">
+                    <div className="flex flex-col">
                         <Label icon={WarningIcon} text="Please review the candidate's submission and provide feedback." />
-                        {/* Add review form or component here */}
+                        <DesignTaskReview candidate={candidateData} onSubmit={handleReviewSubmit} />
                     </div>
                 );
             case 'Reviewed':
+                return renderReviewedStatus();
             case 'Cleared':
             case 'Rejected':
                 return renderReviewedStatus();
@@ -141,7 +216,7 @@ const DesignTask = ({ candidateId, jobId }) => {
                 return (
                     <div className="flex flex-col gap-4">
                         <Label icon={WarningIcon} text="You have been assigned a design task. Please complete it and submit the link before the due date." />
-                        {renderTaskDetails()}
+
                         <InputField
                             id="taskLink"
                             type="text"
@@ -173,16 +248,16 @@ const DesignTask = ({ candidateId, jobId }) => {
 
                 return (
                     <>
-                    <Label icon={WarningIcon} text="Your performance is currently being reviewed. We will notify you once the review is complete." />;    
-                    <div>
-                        <h1>Figma Link</h1>
-                    </div>
+                        <Label icon={WarningIcon} text="Your performance is currently being reviewed. We will notify you once the review is complete." />;
+                        <div>
+                            <h1>Figma Link</h1>
+                        </div>
                     </>
 
                 )
-                
-                    case 'Pending':
-                    return <Label icon={WarningIcon} text="Your submission is Pending. Please wait for feedback." />;    
+
+            case 'Pending':
+                return <Label icon={WarningIcon} text="Your submission is Pending. Please wait for feedback." />;
             case 'Under Review':
                 return <Label icon={WarningIcon} text="Your submission is under review. Please wait for feedback." />;
             case 'Reviewed':
@@ -208,9 +283,11 @@ const DesignTask = ({ candidateId, jobId }) => {
         }
     };
 
-
     const sendTaskMutation = useMutation({
         mutationFn: (taskData) => axios.post('hr/send-design-task', taskData),
+        onMutate: () => {
+            setIsLoading(true); // Set loading to true when mutation starts
+        },
         onSuccess: (data) => {
             dispatch(updateStageStatus({
                 stage: 'Design Task',
@@ -218,10 +295,11 @@ const DesignTask = ({ candidateId, jobId }) => {
                 data: data.updatedStageStatus
             }));
             queryClient.invalidateQueries(['candidate', candidateId, jobId]);
+            setIsLoading(false); // Stop loading when task is successfully sent
         },
         onError: (error) => {
             console.error('Error sending design task:', error);
-            // Handle error (e.g., show error message to user)
+            setIsLoading(false); // Stop loading in case of an error
         }
     });
 
@@ -284,7 +362,7 @@ const DesignTask = ({ candidateId, jobId }) => {
 
     )
 
-    const renderTaskDetails = ()=> (
+    const renderTaskDetails = () => (
         <div>
             This is the table bro
         </div>
@@ -351,77 +429,105 @@ const DesignTask = ({ candidateId, jobId }) => {
         </div>
     );
 
-    const renderReviewedStatus =()=>(
+    console.log(stageData)
+
+    const renderReviewedStatus = () => (
 
         <>
-        <div className='w-full'>
-            <div className='flex justify-between gap-4'>
-                <div className='w-full'>
-                    <p className='typography-small-p text-font-gray'>Remarks</p>
-                    <p className='typography-body pb-8'>{stageData?.feedback}</p>
+            <div className='w-full flex flex-col gap-4'>
+                <div className='w-full grid grid-cols-2'>
+                    <div className='flex flex-col gap-2'>
+                        <p className='typography-small-p text-font-gray'>
+                            Figma Link
+                        </p>
+                        <p className='typography-body flex gap-2 text-font-primary'>
+                            <LinkIcon />
+                            {stageData.submittedTaskLink}
+                        </p>
+                    </div>
+                    <div>
+                        <p className='typography-small-p text-font-gray'>
+                            Comment
+                        </p>
+                        <p className='typography-body'>
+                            {stageData.submittedComment}
+                        </p>
+                    </div>
                 </div>
-                <div className='bg-stars bg-cover rounded-xl w-[160px] my-4'>
-                    <div className='p-4 flex flex-col items-center'>
-                        <p className='typography-small-p text-font-gray'>Total Score:</p>
-                        <div className='flex flex-col items-center text-font-accent'>
-                            <p className='display-d2 font-bold'>{stageData?.score}</p>
-                            <p className='typography-small-p text-font-gray'>Out Of 5</p>
+
+                <div className='flex justify-between gap-4'>
+                    <div className='w-full'>
+                        <p className='typography-small-p text-font-gray'>Remarks</p>
+                        <p className='typography-body pb-8'>{stageData?.feedback}</p>
+                    </div>
+                    <div className='bg-stars bg-cover rounded-xl w-[160px] my-4'>
+                        <div className='p-4 flex flex-col items-center'>
+                            <p className='typography-small-p text-font-gray'>Total Score:</p>
+                            <div className='flex flex-col items-center text-font-accent'>
+                                <p className='display-d2 font-bold'>{stageData?.score}</p>
+                                <p className='typography-small-p text-font-gray'>Out Of 5</p>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <StageActions
-            stage="Design Task"
-            candidateId={candidateId}
-            jobId={jobId}
-            isBudgetScoreSubmitted={true}
-        />
-    </>
+            {
+                role == "Hiring Manager" && (
+
+                    <StageActions
+                        stage="Design Task"
+                        candidateId={candidateId}
+                        jobId={jobId}
+                        isBudgetScoreSubmitted={true}
+                    />
+                )
+            }
+
+        </>
     );
 
-    const renderClearedStatus =()=>(
+    const renderClearedStatus = () => (
         <>
-        <div className='w-full'>
-            <div className='flex justify-between gap-4'>
-                <div className='w-full'>
-                    <p className='typography-small-p text-font-gray'>Remarks</p>
-                    <p className='typography-body pb-8'>{stageData?.feedback}</p>
-                </div>
-                <div className='bg-stars bg-cover rounded-xl w-[160px] my-4'>
-                    <div className='p-4 flex flex-col items-center'>
-                        <p className='typography-small-p text-font-gray'>Total Score:</p>
-                        <div className='flex flex-col items-center text-font-accent'>
-                            <p className='display-d2 font-bold'>{stageData?.score}</p>
-                            <p className='typography-small-p text-font-gray'>Out Of 5</p>
+            <div className='w-full '>
+                <div className='flex justify-between gap-4'>
+                    <div className='w-full'>
+                        <p className='typography-small-p text-font-gray'>Remarks</p>
+                        <p className='typography-body pb-8'>{stageData?.feedback}</p>
+                    </div>
+                    <div className='bg-stars bg-cover rounded-xl w-[160px] my-4'>
+                        <div className='p-4 flex flex-col items-center'>
+                            <p className='typography-small-p text-font-gray'>Total Score:</p>
+                            <div className='flex flex-col items-center text-font-accent'>
+                                <p className='display-d2 font-bold'>{stageData?.score}</p>
+                                <p className='typography-small-p text-font-gray'>Out Of 5</p>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </>
+        </>
     );
 
-    const renderRejectedStatus =()=>(
+    const renderRejectedStatus = () => (
         <>
-        <div className='w-full'>
-            <div className='flex justify-between gap-4'>
-                <div className='w-full'>
-                    <p className='typography-small-p text-font-gray'>Remarks</p>
-                    <p className='typography-body pb-8'>{stageData?.rejectionReason}</p>
-                </div>
-                <div className='bg-stars bg-cover rounded-xl w-[160px] my-4'>
-                    <div className='p-4 flex flex-col items-center'>
-                        <p className='typography-small-p text-font-gray'>Total Score:</p>
-                        <div className='flex flex-col items-center text-font-accent'>
-                            <p className='display-d2 font-bold'>{stageData?.score}</p>
-                            <p className='typography-small-p text-font-gray'>Out Of 5</p>
+            <div className='w-full'>
+                <div className='flex justify-between gap-4'>
+                    <div className='w-full'>
+                        <p className='typography-small-p text-font-gray'>Remarks</p>
+                        <p className='typography-body pb-8'>{stageData?.rejectionReason}</p>
+                    </div>
+                    <div className='bg-stars bg-cover rounded-xl w-[160px] my-4'>
+                        <div className='p-4 flex flex-col items-center'>
+                            <p className='typography-small-p text-font-gray'>Total Score:</p>
+                            <div className='flex flex-col items-center text-font-accent'>
+                                <p className='display-d2 font-bold'>{stageData?.score}</p>
+                                <p className='typography-small-p text-font-gray'>Out Of 5</p>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </>
+        </>
     );
 
 
