@@ -75,6 +75,7 @@ const CheckboxGroup = ({ title, options, filters, handleCheckboxChange, isDisabl
 
 const Filters = ({ filters = {}, handleCheckboxChange, activeTab, handleExperienceFilter, clearAllFilters }) => {
     const isDisabled = activeTab === 'draft';
+    const [shouldResetExperience, setShouldResetExperience] = useState(false);
 
 
     const jobTypeOptions = [
@@ -132,11 +133,13 @@ const Filters = ({ filters = {}, handleCheckboxChange, activeTab, handleExperien
     ];
 
     const handleExperienceApply = (experience) => {
+        setShouldResetExperience(false); // Reset the flag after each apply
         handleExperienceFilter(experience);
     };
 
     const handleClearAll = () => {
         clearAllFilters();
+        setShouldResetExperience(true); // Trigger experience filter reset
     };
 
     return (
@@ -180,7 +183,10 @@ const Filters = ({ filters = {}, handleCheckboxChange, activeTab, handleExperien
                 />
 
                 <div className="mb-4">
-                    <ExperienceFilter onApply={handleExperienceApply} />
+                    <ExperienceFilter
+                        onApply={handleExperienceApply}
+                        shouldReset={shouldResetExperience}
+                    />
                 </div>
 
             </div>

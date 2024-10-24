@@ -1,9 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from './ui/Button';
 
-const ExperienceFilter = ({ onApply }) => {
+const ExperienceFilter = ({ onApply, shouldReset }) => {
   const [minExperience, setMinExperience] = useState('');
   const [maxExperience, setMaxExperience] = useState('');
+
+  // Reset the values when shouldReset changes
+  useEffect(() => {
+    if (shouldReset) {
+      setMinExperience('');
+      setMaxExperience('');
+      // Notify parent component about the reset
+      onApply({ min: '', max: '' });
+    }
+  }, [shouldReset, onApply]);
 
   const handleMinExperienceChange = (e) => {
     const value = e.target.value;
@@ -27,7 +37,6 @@ const ExperienceFilter = ({ onApply }) => {
 
     // Validate that max is greater than or equal to min if both are provided
     if (min !== '' && max !== '' && max < min) {
-      // You can add a toast notification here if you want
       console.error('Maximum experience should be greater than minimum experience');
       return;
     }
@@ -69,7 +78,6 @@ const ExperienceFilter = ({ onApply }) => {
         variant="secondary" 
         onClick={handleApply} 
         size="default"
-        // Disable button if max is less than min
         disabled={minExperience !== '' && maxExperience !== '' && Number(maxExperience) < Number(minExperience)}
       >
         Apply
