@@ -5,6 +5,7 @@ import { ContractIcon, ContractIconActive } from '../svg/Checkboxes/ContractIcon
 import { InternIcon, InternIconActive } from '../svg/Checkboxes/InternIcons';
 import { HiredIcon, HiredIconActive } from '../svg/Checkboxes/HiredIcons';
 import { NotHired, NotHiredActive } from '../svg/Checkboxes/NotHired';
+import BudgetFilter from './BudgetFilter';
 
 
 const CustomCheckbox = ({ label, icon: Icon, isChecked, onChange, count }) => (
@@ -73,9 +74,10 @@ const CheckboxGroup = ({ title, options, filters, handleCheckboxChange, isDisabl
     );
 };
 
-const Filters = ({ filters = {}, handleCheckboxChange, activeTab, handleExperienceFilter, clearAllFilters }) => {
+const Filters = ({ filters = {}, handleCheckboxChange, activeTab, handleExperienceFilter, handleBudgetFilter, clearAllFilters }) => {
     const isDisabled = activeTab === 'draft';
     const [shouldResetExperience, setShouldResetExperience] = useState(false);
+    const [shouldResetBudget, setShouldResetBudget] = useState(false);
 
 
     const jobTypeOptions = [
@@ -131,16 +133,22 @@ const Filters = ({ filters = {}, handleCheckboxChange, activeTab, handleExperien
             }
         }
     ];
-
     const handleExperienceApply = (experience) => {
-        setShouldResetExperience(false); // Reset the flag after each apply
+        setShouldResetExperience(false);
         handleExperienceFilter(experience);
+    };
+
+    const handleBudgetApply = (budget) => {
+        setShouldResetBudget(false);
+        handleBudgetFilter(budget);
     };
 
     const handleClearAll = () => {
         clearAllFilters();
-        setShouldResetExperience(true); // Trigger experience filter reset
+        setShouldResetExperience(true);
+        setShouldResetBudget(true);
     };
+
 
     return (
         <div className='w-[304px]'>
@@ -183,9 +191,18 @@ const Filters = ({ filters = {}, handleCheckboxChange, activeTab, handleExperien
                 />
 
                 <div className="mb-4">
+                <h3 className="typoraphy-large-p text-gray-200 font-semibold mb-2">Experience Filter</h3>
                     <ExperienceFilter
                         onApply={handleExperienceApply}
                         shouldReset={shouldResetExperience}
+                    />
+                </div>
+
+                <div className="mb-4">
+                    <h3 className="typography-large-p text-gray-200 font-semibold mb-2">Budget Filter</h3>
+                    <BudgetFilter 
+                        onApply={handleBudgetApply}
+                        shouldReset={shouldResetBudget}
                     />
                 </div>
 

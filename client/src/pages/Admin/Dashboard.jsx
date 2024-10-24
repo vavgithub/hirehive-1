@@ -38,7 +38,8 @@ const Dashboard = () => {
         employmentType: [],
         experienceLevel: [],
         jobProfile: [],
-        experience: { min: '', max: '' }
+        experience: { min: '', max: '' },
+        budget: { min: '', max: '' }  // Add this
     });
 
     const navigate = useNavigate();
@@ -130,13 +131,23 @@ const Dashboard = () => {
     };
 
 
+    const handleBudgetFilter = (budget) => {
+        setFilters(prevFilters => ({
+            ...prevFilters,
+            budget
+        }));
+    };
 
+
+
+    // Update clearAllFilters
     const clearAllFilters = () => {
         setFilters({
             employmentType: [],
             experienceLevel: [],
             jobProfile: [],
-            experience: { min: '', max: '' }
+            experience: { min: '', max: '' },
+            budget: { min: '', max: '' }
         });
     };
 
@@ -299,7 +310,13 @@ const Dashboard = () => {
                                 onChange={handleSearch}
                             />
                         </div>
-                        <Filters filters={filters} handleCheckboxChange={handleCheckboxChange} activeTab={activeTab} handleExperienceFilter={handleExperienceFilter} clearAllFilters={clearAllFilters} />
+                        <Filters
+                            filters={filters}
+                            handleCheckboxChange={handleCheckboxChange}
+                            activeTab={activeTab}
+                            handleBudgetFilter={handleBudgetFilter}  // Add this
+                            handleExperienceFilter={handleExperienceFilter}
+                            clearAllFilters={clearAllFilters} />
                     </div>
                     <div className='w-full ml-4'>
                         <div className='flex justify-end '>

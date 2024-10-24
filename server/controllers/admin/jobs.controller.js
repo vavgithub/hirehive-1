@@ -379,7 +379,7 @@ const searchJobs = async (req, res) => {
 
 const filterJobs = asyncHandler(async (req, res) => {
   try {
-    const { employmentType, jobProfile, experience } = req.body.filters;
+    const { employmentType, jobProfile, experience, budget } = req.body.filters;
     const query = { createdBy: req.user._id };
 
     // Add employment type filter
@@ -399,6 +399,16 @@ const filterJobs = asyncHandler(async (req, res) => {
       }
       if (experience.max !== '') {
         query.experienceTo = { $lte: Number(experience.max) };
+      }
+    }
+
+    // Add budget range filter
+    if (budget && (budget.min !== '' || budget.max !== '')) {
+      if (budget.min !== '') {
+        query.budgetFrom = { $gte: Number(budget.min) };
+      }
+      if (budget.max !== '') {
+        query.budgetTo = { $lte: Number(budget.max) };
       }
     }
 
