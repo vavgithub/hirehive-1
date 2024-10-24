@@ -66,7 +66,8 @@ const Dashboard = () => {
         setModalAction(action);
     };
 
-    const { data: filteredJobs = [] } = useQuery({
+    // Update the filteredJobs query to get the loading state
+    const { data: filteredJobs = [], isLoading: isFilteredJobsLoading } = useQuery({
         queryKey: ['filteredJobs', filters],
         queryFn: () => filterJobs(filters),
         enabled: Object.values(filters).some(filter =>
@@ -74,12 +75,12 @@ const Dashboard = () => {
         ),
     });
 
-    const { data: searchResults = [] } = useQuery({
+    // Update the search query to get the loading state
+    const { data: searchResults = [], isLoading: isSearchLoading } = useQuery({
         queryKey: ['searchJobs', searchQuery],
         queryFn: () => searchJobs(searchQuery),
         enabled: searchQuery !== '',
     });
-
     const deleteMutation = useMutation({
         mutationFn: (jobId) => axios.delete(`/jobs/deleteJob/${jobId}`),
         onSuccess: () => {
@@ -256,6 +257,14 @@ const Dashboard = () => {
             icon: three
         }
     ];
+
+    // Combined loading state
+    const isLoadingResults = (searchQuery.length > 0 && isSearchLoading) ||
+        (Object.values(filters).some(filter =>
+            Array.isArray(filter) ? filter.length > 0 : Object.values(filter).some(val => val !== '')
+        ) && isFilteredJobsLoading);
+
+    // Get the jobs to display based on search or filters
     const displayJobs = searchQuery.length > 0 ? searchResults :
         (Object.values(filters).some(filter => Array.isArray(filter) ? filter.length > 0 : Object.values(filter).some(val => val !== '')) ? filteredJobs : jobs);
 
@@ -302,37 +311,43 @@ const Dashboard = () => {
                                 )
                             }
                         </div>
-                        {
-                            displayJobs.length === 0 && (
-                                <div className='bg-background-80 flex flex-col p-40 justify-center items-center rounded-xl'>
-
-                                    <img src={NoJobs}></img>
-                                    <span className='typography-body m-6'>Create a job post to attract top talent and build your dream team</span>
-
-                                    <div className="w-[216px]">
-                                        <Button variant="primary" icon={Create} iconPosition="left" onClick={() => { navigate("/admin/create-job") }}>Create A Job Listing</Button>
-                                    </div>
-
-
+                        {isLoadingResults ? (
+                            <div className="flex justify-center items-center min-h-[400px]">
+                                <Loader />
+                            </div>
+                        ) : displayJobs.length === 0 ? (
+                            <div className='bg-background-80 flex flex-col p-40 justify-center items-center rounded-xl'>
+                                <img src={NoJobs} alt="No jobs found" />
+                                <span className='typography-body m-6'>
+                                    Create a job post to attract top talent and build your dream team
+                                </span>
+                                <div className="w-[216px]">
+                                    <Button
+                                        variant="primary"
+                                        icon={Create}
+                                        iconPosition="left"
+                                        onClick={() => { navigate("/admin/create-job") }}
+                                    >
+                                        Create A Job Listing
+                                    </Button>
                                 </div>
-
-                            )
-                        }
-                        {displayJobs
-                            .filter(job => job.status === activeTab)
-                            .map((job) => (
-                                <JobCard
-                                    key={job._id}
-                                    job={job}
-                                    isAdmin={true}
-                                    withKebab={true}
-                                    page={currentPage}
-                                    status={activeTab}
-                                    handleAction={handleAction}
-                                    onClick={() => handleViewJob(job._id)}
-                                />
-                            ))
-                        }
+                            </div>
+                        ) : (
+                            displayJobs
+                                .filter(job => job.status === activeTab)
+                                .map((job) => (
+                                    <JobCard
+                                        key={job._id}
+                                        job={job}
+                                        isAdmin={true}
+                                        withKebab={true}
+                                        page={currentPage}
+                                        status={activeTab}
+                                        handleAction={handleAction}
+                                        onClick={() => handleViewJob(job._id)}
+                                    />
+                                ))
+                        )}
                     </div>
                 </div>
                 {/* <Modal open={open} onClose={() => setOpen(false)} action={modalAction} confirmAction={confirmAction} /> */}
