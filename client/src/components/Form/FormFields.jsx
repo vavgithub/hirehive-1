@@ -98,8 +98,8 @@ export const NumberInputField = React.forwardRef(({ label , value, onChange, uni
 
   return (
     <div className='w-1/2'>
-      <span className='typography-small-p text-font-gray'>{label}</span>
-      <div className='items-center flex bg-background-40 rounded-xl'>
+      <span className='typography-small-p  text-font-gray'>{label}</span>
+      <div className='items-center gap-2 flex bg-background-40 rounded-xl'>
         <input
           type="number"
           placeholder='-Select-'

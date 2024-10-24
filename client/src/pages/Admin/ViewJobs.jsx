@@ -204,7 +204,7 @@ const ViewJobs = () => {
 
 
             {activeTab === 'jobDetails' && (
-                <div className='bg-background-30 p-6 rounded-xl mt-5'>
+                <div className='bg-background-30 p-4 rounded-xl mt-5'>
                     <StatsGrid stats={jobsDetailStats} />
                     <div className='flex justify-between'>
                         <div className='w-2/3'>
@@ -221,7 +221,7 @@ const ViewJobs = () => {
                         </div>
                     </div>
 
-                    <div className='bg-background-90 p-6 rounded-xl'>
+                    <div className='bg-background-90 p-4 rounded-xl'>
                         <h3 className='typography-h3 mb-8'>Additional Questions</h3>
                         {questions.map((question, index) => (
                             <div key={question._id} className="mb-4">
@@ -244,7 +244,7 @@ const ViewJobs = () => {
             )}
 
             {activeTab === 'candidate' && (
-                <div className='bg-background-30 p-6 rounded-xl mt-5'>
+                <div className='bg-background-30 p-4 rounded-xl mt-5'>
                     <div className="w-full max-w-6xl mb-4">
                         <StatsGrid stats={candidateStats} />
                     </div>

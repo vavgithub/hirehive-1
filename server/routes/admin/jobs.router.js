@@ -5,19 +5,12 @@ import { protect } from '../../middlewares/authMiddleware.js';
 
 const router = express.Router();
 
-
-// router.get('/candidates/:jobId', getAllCandidatesForJob);
-// router.get('/candidate/',getCandidatesForJob)
-// router.get('/activeJobsFilterCount',protect, activeJobsFilterCount);
-// router.get('/draftJobsFilterCount',protect, draftJobsFilterCount);
-// router.get('/closedJobsFilterCount',protect, closedJobsFilterCount);
-// router.get('/jobsStats',protect, jobsStats);
-
 router.get('/jobsCount',protect, getTotalJobCount);
 router.get('/searchJobs',protect, searchJobs);
 router.get('/jobs',protect, getJobs);
 router.get('/stats/overall', StatisticsController.getOverallStats);
 router.get('/stats/job/:jobId', StatisticsController.getJobStats);
+
 
 router.post('/createJobs',protect, createJob);
 router.post('/filterJobs', protect,filterJobs);

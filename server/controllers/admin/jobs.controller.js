@@ -82,7 +82,7 @@ export const StatisticsController = {
     try {
         const { jobId } = req.params;
 
-        // Get all candidates who applied for this job
+        // Get all candidates who applied for this job with their stage statuses
         const candidatesStats = await candidates.aggregate([
             // Unwind job applications to get individual applications
             { $unwind: "$jobApplications" },
@@ -92,42 +92,57 @@ export const StatisticsController = {
                     "jobApplications.jobId": new mongoose.Types.ObjectId(jobId)
                 }
             },
-            // Group by current stage and count
+            // Group and collect all necessary information
             {
                 $group: {
                     _id: null,
                     totalCount: { $sum: 1 },
                     stages: {
                         $push: "$jobApplications.currentStage"
+                    },
+                    // Collect stage statuses for qualification checking
+                    stageStatuses: {
+                        $push: "$jobApplications.stageStatuses"
                     }
                 }
             }
         ]);
 
-        // Get the job details for view count
         const job = await jobs.findById(jobId);
-        
-        // If we have candidates data, process it
-        const stats = candidatesStats[0] || { totalCount: 0, stages: [] };
-        
+        const stats = candidatesStats[0] || { totalCount: 0, stages: [], stageStatuses: [] };
+
         // Count candidates in each stage
         const stageStats = stats.stages.reduce((acc, stage) => {
-            if (stage) { // Only count if stage exists
+            if (stage) {
                 acc[stage] = (acc[stage] || 0) + 1;
             }
             return acc;
         }, {});
 
-        // Ensure all possible stages have a value, even if 0
-        const allStages = [
-            'Portfolio',
-            'Screening',
-            'Design Task',
-            'Round 1',
-            'Round 2',
-            'Hired'
-        ];
+        // Calculate qualified applications based on stage status
+        const qualifiedApplications = stats.stageStatuses.reduce((count, statusMap) => {
+            // Convert Map to Object if necessary
+            const statuses = statusMap instanceof Map ? Object.fromEntries(statusMap) : statusMap;
+            
+            // Check if candidate is qualified based on their progress
+            const isQualified = (
+                // Portfolio cleared
+                (statuses?.Portfolio?.status === 'Cleared') ||
+                // Or Screening cleared
+                (statuses?.Screening?.status === 'Cleared') ||
+                // Or Design Task cleared
+                (statuses?.['Design Task']?.status === 'Cleared') ||
+                // Or in final stages (Round 1, Round 2, or Hired with positive status)
+                (statuses?.['Round 1']?.status === 'Cleared') ||
+                (statuses?.['Round 2']?.status === 'Cleared') ||
+                (statuses?.Hired?.status === 'Accepted')
+            );
 
+            return count + (isQualified ? 1 : 0);
+        }, 0);
+
+        // Ensure all stages have values
+        const allStages = ['Portfolio', 'Screening', 'Design Task', 'Round 1', 'Round 2', 'Hired'];
         const normalizedStageStats = allStages.reduce((acc, stage) => {
             acc[stage] = stageStats[stage] || 0;
             return acc;
@@ -139,12 +154,7 @@ export const StatisticsController = {
             jobDetails: {
                 views: job?.applyClickCount || 0,
                 applicationsReceived: stats.totalCount,
-                qualifiedApplications: Object.entries(stageStats).reduce((sum, [stage, count]) => {
-                    if (stage !== 'Portfolio' && stage !== 'Screening') {
-                        return sum + count;
-                    }
-                    return sum;
-                }, 0),
+                qualifiedApplications,
                 engagementRate: job?.applyClickCount ? 
                     Math.round((stats.totalCount / job.applyClickCount) * 100) : 0
             }
@@ -166,15 +176,100 @@ export const StatisticsController = {
 }
 };
 
+
 const getJobs = async (req, res) => {
   try {
-    // Fetch all jobs from the database
-    const jobArray = await jobs.find({ createdBy: req.user._id }).sort({createdAt: -1});
-    // Respond with the list of jobs
-    res.status(200).json(jobArray);
+      const jobsWithStats = await jobs.aggregate([
+          // Match jobs created by the current user
+          {
+              $match: {
+                  createdBy: new mongoose.Types.ObjectId(req.user._id)
+              }
+          },
+          // Sort by creation date (newest first)
+          {
+              $sort: {
+                  createdAt: -1
+              }
+          },
+          // Lookup application statistics from candidates collection
+          {
+              $lookup: {
+                  from: 'candidates',
+                  let: { jobId: '$_id' },
+                  pipeline: [
+                      { $unwind: '$jobApplications' },
+                      {
+                          $match: {
+                              $expr: {
+                                  $eq: ['$jobApplications.jobId', '$$jobId']
+                              }
+                          }
+                      },
+                      {
+                          $group: {
+                              _id: '$jobApplications.jobId',
+                              totalApplications: { $sum: 1 },
+                              processedApplications: {
+                                  $sum: {
+                                      $cond: [
+                                          {
+                                              $or: [
+                                                  { $eq: ['$jobApplications.stageStatuses.Portfolio.status', 'Cleared'] },
+                                                  { $eq: ['$jobApplications.stageStatuses.Screening.status', 'Cleared'] },
+                                                  { $eq: ['$jobApplications.stageStatuses.Design Task.status', 'Cleared'] },
+                                                  { $eq: ['$jobApplications.stageStatuses.Round 1.status', 'Cleared'] },
+                                                  { $eq: ['$jobApplications.stageStatuses.Round 2.status', 'Cleared'] },
+                                                  { $eq: ['$jobApplications.stageStatuses.Hired.status', 'Accepted'] }
+                                              ]
+                                          },
+                                          1,
+                                          0
+                                      ]
+                                  }
+                              }
+                          }
+                      }
+                  ],
+                  as: 'applicationStats'
+              }
+          },
+          // Add applied and processed fields
+          {
+              $addFields: {
+                  applied: {
+                      $cond: {
+                          if: { $gt: [{ $size: '$applicationStats' }, 0] },
+                          then: { $arrayElemAt: ['$applicationStats.totalApplications', 0] },
+                          else: 0
+                      }
+                  },
+                  processed: {
+                      $cond: {
+                          if: { $gt: [{ $size: '$applicationStats' }, 0] },
+                          then: { $arrayElemAt: ['$applicationStats.processedApplications', 0] },
+                          else: 0
+                      }
+                  }
+              }
+          },
+          // Remove the applicationStats array from final output
+          {
+              $project: {
+                  applicationStats: 0
+              }
+          }
+      ]);
+
+      res.status(200).json(jobsWithStats);
+
   } catch (error) {
-    // Handle error if fetching jobs fails
-    res.status(500).json({ message: error.message });
+      console.error('Error in getJobs:', error);
+      res.status(500).json({ 
+          success: false,
+          message: 'Error fetching jobs',
+          error: error.message 
+      });
   }
 };
 

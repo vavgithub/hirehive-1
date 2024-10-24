@@ -23,7 +23,6 @@ import Loader from '../../components/ui/Loader';
 
 
 const fetchJobs = () => axios.get('/jobs/jobs').then(res => res.data);
-const fetchJobCount = () => axios.get('/jobs/jobsCount').then(res => res.data.totalCount);
 const fetchOverallStats = () => axios.get('/jobs/stats/overall').then(res => res.data.data);
 const searchJobs = (query) => axios.get(`/jobs/searchJobs?jobTitle=${encodeURIComponent(query)}`).then(res => res.data);
 const filterJobs = (filters) => axios.post('/jobs/filterJobs', { filters }).then(res => res.data);
@@ -45,15 +44,20 @@ const Dashboard = () => {
     const navigate = useNavigate();
     const queryClient = useQueryClient();
 
-        // Fetch jobs and overall stats
-        const { data: jobs = [] } = useQuery({ queryKey: ['jobs'], queryFn: fetchJobs });
-        const { data: overallStats = { totalJobs: 0, totalCandidates: 0, totalHired: 0 }, isLoading: isStatsLoading } = useQuery({ 
-            queryKey: ['overallStats'], 
-            queryFn: fetchOverallStats 
-        });
-    
+    // Fetch jobs and overall stats
+    // Use the updated jobs query
+    const { data: jobs = [], isLoading: isJobsLoading } = useQuery({
+        queryKey: ['jobs'],
+        queryFn: fetchJobs
+    });
 
-    
+    const { data: overallStats = { totalJobs: 0, totalCandidates: 0, totalHired: 0 }, isLoading: isStatsLoading } = useQuery({
+        queryKey: ['overallStats'],
+        queryFn: fetchOverallStats
+    });
+
+
+
 
     const handleAction = (action, jobId) => {
         const job = jobs.find(j => j._id === jobId);
@@ -236,20 +240,20 @@ const Dashboard = () => {
     ];
 
     const JobsStats = [
-        { 
-            title: 'Jobs Posted', 
-            value: overallStats.totalJobs, 
-            icon: one 
+        {
+            title: 'Jobs Posted',
+            value: overallStats.totalJobs,
+            icon: one
         },
-        { 
+        {
             title: 'Applications Received',  // This label is now more accurate
             value: overallStats.totalApplications, // This now shows total applications
-            icon: two 
+            icon: two
         },
-        { 
-            title: 'Hired', 
-            value: overallStats.totalHired, 
-            icon: three 
+        {
+            title: 'Hired',
+            value: overallStats.totalHired,
+            icon: three
         }
     ];
     const displayJobs = searchQuery.length > 0 ? searchResults :
@@ -264,7 +268,7 @@ const Dashboard = () => {
                 <h1 className='typography-h1'>Jobs</h1>
                 {/* <Link to="/admin/create-job" className="bg-black text-white px-4 py-2 rounded">Create job listing</Link> */}
 
-                <div className='flex justify-center mb-4'>
+                <div className='flex justify-center mb-3'>
                     <Tabs tabs={tabs} activeTab={activeTab} handleTabClick={handleTabClick} />
                 </div>
 
@@ -286,11 +290,11 @@ const Dashboard = () => {
                                 onChange={handleSearch}
                             />
                         </div>
-                        <Filters filters={filters}  handleCheckboxChange={handleCheckboxChange} activeTab={activeTab} handleExperienceFilter={handleExperienceFilter} clearAllFilters={clearAllFilters} />
+                        <Filters filters={filters} handleCheckboxChange={handleCheckboxChange} activeTab={activeTab} handleExperienceFilter={handleExperienceFilter} clearAllFilters={clearAllFilters} />
                     </div>
                     <div className='w-full ml-4'>
                         <div className='flex justify-end '>
-                                {
+                            {
                                 activeTab == "open" && displayJobs.length != 0 && (
                                     <div className="w-[216px] mb-4">
                                         <Button variant="primary" icon={Create} iconPosition="left" onClick={() => { navigate("/admin/create-job") }}>Create A Job Listing</Button>
