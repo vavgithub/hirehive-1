@@ -378,25 +378,41 @@ const searchJobs = async (req, res) => {
 };
 
 const filterJobs = asyncHandler(async (req, res) => {
-  const { employmentType, jobProfile, experience } = req.body.filters;
-  const query = { createdBy: req.user._id };
-  if (employmentType && employmentType.length > 0) {
-    query.employmentType = { $in: employmentType };
-  }
-  if (jobProfile && jobProfile.length > 0) {
-    query.jobProfile = { $in: jobProfile };
-  }
-  if (experience && (experience.min !== '' || experience.max !== '')) {
-    query.fromExperience = {};
-    if (experience.min !== '') {
-      query.fromExperience.$gte = Number(experience.min);
+  try {
+    const { employmentType, jobProfile, experience } = req.body.filters;
+    const query = { createdBy: req.user._id };
+
+    // Add employment type filter
+    if (employmentType && employmentType.length > 0) {
+      query.employmentType = { $in: employmentType };
     }
-    if (experience.max !== '') {
-      query.toExperience = { $lte: Number(experience.max) };
+
+    // Add job profile filter
+    if (jobProfile && jobProfile.length > 0) {
+      query.jobProfile = { $in: jobProfile };
     }
+
+    // Add experience range filter
+    if (experience && (experience.min !== '' || experience.max !== '')) {
+      if (experience.min !== '') {
+        query.experienceFrom = { $gte: Number(experience.min) };
+      }
+      if (experience.max !== '') {
+        query.experienceTo = { $lte: Number(experience.max) };
+      }
+    }
+
+    const filteredJobs = await jobs.find(query);
+    
+    res.status(200).json(filteredJobs);
+  } catch (error) {
+    console.error('Error in filterJobs:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Error filtering jobs',
+      error: error.message 
+    });
   }
-  const filteredJobs = await jobs.find(query);
-  res.status(200).json(filteredJobs);
 });
 
 

@@ -73,7 +73,7 @@ const CheckboxGroup = ({ title, options, filters, handleCheckboxChange, isDisabl
     );
 };
 
-const Filters = ({ filters = {}, statistics, handleCheckboxChange, activeTab, handleExperienceFilter, clearAllFilters }) => {
+const Filters = ({ filters = {}, handleCheckboxChange, activeTab, handleExperienceFilter, clearAllFilters }) => {
     const isDisabled = activeTab === 'draft';
 
 
