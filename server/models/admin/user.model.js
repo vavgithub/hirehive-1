@@ -25,6 +25,10 @@ const userSchema = new mongoose.Schema({
     enum: ['Hiring Manager', 'Design Reviewer'],
     required: true,
   },
+  profilePicture: {
+    type: String,
+    default: null
+  },
   isAvailable: {
     type: Boolean,
     default: true,

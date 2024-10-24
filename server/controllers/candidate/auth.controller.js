@@ -72,7 +72,7 @@ export const uploadResume = async (req, res) => {
     res.status(200).json({ resumeUrl: cloudinaryUrl });
   } catch (error) {
     console.error('Error in resume upload:', error);
-    res.status(500).json({ message: 'Error uploading resume' });
+    res.status(500).json({ message: 'Error uploading resume' });  
   }
 };
 

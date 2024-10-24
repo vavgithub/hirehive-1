@@ -20,8 +20,12 @@ import adminCandidateRoutes from "./routes/admin/candidate.router.js"
 import drRoutes from "./routes/admin/dr.router.js"
 import hrRoutes from "./routes/admin/hr.router.js"
 import startScheduledJobs from "./utils/scheduledJobs.js";
+import { initializeUploadDir } from "./config/paths.js";
 
 const app = express();
+// Initialize upload directory when server starts
+await initializeUploadDir();
+
 const corsOptions = {
   origin: process.env.NODE_ENV === "production"
       ? "https://www.antiquerustleatherbags.com"

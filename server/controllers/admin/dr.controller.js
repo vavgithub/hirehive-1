@@ -3,7 +3,6 @@
 import mongoose from "mongoose";
 import { jobs } from "../../models/admin/jobs.model.js";
 import { candidates } from "../../models/candidate/candidate.model.js";
-import { updateStatusOnAssigneeChange } from "../../utils/statusManagement.js";
 import { jobStagesStatuses } from "../../config/jobStagesStatuses.js";
 
 // export const updateAssignee = async (req, res) => {

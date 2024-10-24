@@ -1,6 +1,8 @@
 import { asyncHandler } from '../../utils/asyncHandler.js';
 import {User} from '../../models/admin/user.model.js';
 import generateToken from '../../utils/generateToken.js';
+import { getUploadPath, uploadToCloudinary } from '../../utils/cloudinary.js';
+import path from 'path';
 
 const cookieOptions = {
   httpOnly: true,
@@ -9,7 +11,41 @@ const cookieOptions = {
   maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
 };
 
-
+export const uploadProfilePicture = async (req, res) => {
+    if (!req.file) {
+      return res.status(400).json({ message: 'No file uploaded' });
+    }
+  
+    try {
+      const userId = req.user._id;
+      
+      // Pass just the filename instead of full path
+      const profilePictureUrl = await uploadToCloudinary(
+        req.file.filename,
+        'profile-pictures'
+      );
+  
+      // Update user profile with the new picture URL
+      const updatedUser = await User.findByIdAndUpdate(
+        userId, 
+        { profilePicture: profilePictureUrl },
+        { new: true }
+      );
+  
+      res.status(200).json({ 
+        message: 'Profile picture updated successfully',
+        profilePictureUrl,
+        user: updatedUser 
+      });
+      
+    } catch (error) {
+      console.error('Error uploading profile picture:', error);
+      res.status(500).json({ 
+        message: 'Error uploading profile picture',
+        error: error.message 
+      });
+    }
+  };
 
 // Register User
 export const registerUser = asyncHandler(async (req, res) => {
@@ -89,6 +125,7 @@ export const getUserProfile = asyncHandler(async (req, res) => {
             name: user.name,
             email: user.email,
             role: user.role,
+            profilePicture:user.profilePicture,
         });
     } else {
         res.status(404);

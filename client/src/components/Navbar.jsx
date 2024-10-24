@@ -16,8 +16,11 @@ const Navbar = () => {
     const navigate = useNavigate();
     const location = useLocation();  // Get current route
     const { user } = useAuthContext(); // Get user data from the context
+    
+    console.log(user);
+
     const [anchorEl, setAnchorEl] = useState(null); // State to control dropdown menu
-    const {refetch } = useAuth();
+    const { refetch } = useAuth();
 
 
     const handleLogout = async () => {
@@ -75,8 +78,8 @@ const Navbar = () => {
                     onClick={handleMenuClick}
                     className={`flex gap-2  ${location.pathname === "/admin/profile" ? "text-font-accent" : ""}`}
                 >
-                    <Avatar alt={user?.name} sx={{width:"32px" , height:"32px"}}
-                     src="/path-to-profile-image.jpg" />
+                    <Avatar alt={user?.name} sx={{ width: "32px", height: "32px" }}
+                        src={user?.profilePicture} />
                     <span className='typography-body text-white'>{user?.name}</span>
                 </IconButton>
                 {/* This would show the active indication on the side just like the other NavItems */}

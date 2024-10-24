@@ -21,6 +21,15 @@ export const getProfile = async () => {
     return response.data;
 };
 
+export const uploadProfilePicture = async (formData) => {
+  const response = await axios.post(`${API_URL}/profile-picture`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  return response.data;
+};
+
 export const fetchAvailableDesignReviewers = async () => {
     try {
       const response = await axios.get(`${API_URL}/design-reviewers`, { withCredentials: true });
