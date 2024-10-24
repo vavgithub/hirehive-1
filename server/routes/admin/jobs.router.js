@@ -1,6 +1,6 @@
 import express from 'express';
 import { archiveJob , closeJob, createJob, deleteJob, draftJob, editJob, filterJobs, 
-     getJobById, getJobs, getTotalJobCount , reOpenJob, searchJobs, unarchiveJob, updateJob } from '../../controllers/admin/jobs.controller.js';
+     getJobById, getJobs, getTotalJobCount , reOpenJob, searchJobs, StatisticsController, unarchiveJob, updateJob } from '../../controllers/admin/jobs.controller.js';
 import { protect } from '../../middlewares/authMiddleware.js';
 
 const router = express.Router();
@@ -13,10 +13,10 @@ const router = express.Router();
 // router.get('/closedJobsFilterCount',protect, closedJobsFilterCount);
 // router.get('/jobsStats',protect, jobsStats);
 
-
 router.get('/jobsCount',protect, getTotalJobCount);
 router.get('/searchJobs',protect, searchJobs);
 router.get('/jobs',protect, getJobs);
+router.get('/stats/overall', StatisticsController.getOverallStats);
 
 router.post('/createJobs',protect, createJob);
 router.post('/filterJobs', protect,filterJobs);

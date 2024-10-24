@@ -78,7 +78,7 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect }) => {
       <>
         <IconButton onClick={handleClick} size="small">
           {selectedReviewer ? (
-            <Avatar sx={{ width: 32, height: 32 }}>
+            <Avatar src={selectedReviewer.profilePicture} sx={{ width: 32, height: 32 }}>
               {selectedReviewer.name[0].toUpperCase()}
             </Avatar>
           ) : (
@@ -136,7 +136,7 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect }) => {
                 onClick={() => handleSelect(reviewer)}
               >
                 <ListItemAvatar>
-                  <Avatar sx={{ width: 32, height: 32 }}>
+                  <Avatar src={reviewer.profilePicture} sx={{ width: 32, height: 32 }}>
                     {reviewer.name[0].toUpperCase()}
                   </Avatar>
                 </ListItemAvatar>

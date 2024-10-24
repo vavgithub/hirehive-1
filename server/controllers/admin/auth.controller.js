@@ -137,7 +137,7 @@ export const getAvailableDesignReviewers = async (req, res) => {
     try {
       const allReviewers = await User.find({ 
         role: 'Design Reviewer'
-      }).select('_id name email isAvailable'); // Include _id and isAvailable
+      }).select('_id name email isAvailable profilePicture'); // Include _id and isAvailable
   
       res.status(200).json({ 
         success: true, 

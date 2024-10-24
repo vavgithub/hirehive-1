@@ -24,12 +24,9 @@ import Loader from '../../components/ui/Loader';
 
 const fetchJobs = () => axios.get('/jobs/jobs').then(res => res.data);
 const fetchJobCount = () => axios.get('/jobs/jobsCount').then(res => res.data.totalCount);
-const fetchStatistics = () => axios.get('/jobs/jobsStats').then(res => res.data);
-const fetchActiveJobsStats = () => axios.get('/jobs/activeJobsFilterCount').then(res => res.data);
-const fetchClosedJobsStats = () => axios.get('/jobs/closedJobsFilterCount').then(res => res.data);
+const fetchOverallStats = () => axios.get('/jobs/stats/overall').then(res => res.data.data);
 const searchJobs = (query) => axios.get(`/jobs/searchJobs?jobTitle=${encodeURIComponent(query)}`).then(res => res.data);
 const filterJobs = (filters) => axios.post('/jobs/filterJobs', { filters }).then(res => res.data);
-const fetchApplicationCount = () => axios.get('/jobs/candidates/stats').then(res => res.data.data.totalCount);
 
 const Dashboard = () => {
     const [searchQuery, setSearchQuery] = useState('');
@@ -48,13 +45,15 @@ const Dashboard = () => {
     const navigate = useNavigate();
     const queryClient = useQueryClient();
 
-    const { data: jobs = [] } = useQuery({ queryKey: ['jobs'], queryFn: fetchJobs });
-    const { data: jobCount = 0 } = useQuery({ queryKey: ['jobCount'], queryFn: fetchJobCount });
-    const { data: applicationCount = 0 } = useQuery({ queryKey: ['applicationCount'], queryFn: fetchApplicationCount });
+        // Fetch jobs and overall stats
+        const { data: jobs = [] } = useQuery({ queryKey: ['jobs'], queryFn: fetchJobs });
+        const { data: overallStats = { totalJobs: 0, totalCandidates: 0, totalHired: 0 }, isLoading: isStatsLoading } = useQuery({ 
+            queryKey: ['overallStats'], 
+            queryFn: fetchOverallStats 
+        });
+    
 
-    const { data: statistics = {} } = useQuery({ queryKey: ['statistics'], queryFn: fetchStatistics });
-    const { data: activeJobsCountFilter = {} } = useQuery({ queryKey: ['activeJobsStats'], queryFn: fetchActiveJobsStats });
-    const { data: closedJobsCountFilter = {} } = useQuery({ queryKey: ['closedJobsStats'], queryFn: fetchClosedJobsStats });
+    
 
     const handleAction = (action, jobId) => {
         const job = jobs.find(j => j._id === jobId);
@@ -163,8 +162,6 @@ const Dashboard = () => {
         setCloseReason(reason);
     };
 
-    // showSuccessToast('Job Posted', `"vevaar" created successfully`);
-    // showErrorToast('Job Posted', `"vevaar" created successfully`);
 
     const getModalMessage = (action, job) => {
         switch (action) {
@@ -220,7 +217,6 @@ const Dashboard = () => {
         navigate(`/admin/jobs/view-job/${jobId}`);
     };
 
-    const filtersConfig = activeTab === 'open' ? activeJobsCountFilter : closedJobsCountFilter;
 
     const tabs = [
         {
@@ -240,12 +236,22 @@ const Dashboard = () => {
     ];
 
     const JobsStats = [
-        { title: 'Jobs Posted', value: jobCount, icon: one },
-        { title: 'Application Received', value: applicationCount, icon: two },
-        { title: 'Hired', value: 0, icon: three }
-
-    ]
-
+        { 
+            title: 'Jobs Posted', 
+            value: overallStats.totalJobs, 
+            icon: one 
+        },
+        { 
+            title: 'Applications Received',  // This label is now more accurate
+            value: overallStats.totalApplications, // This now shows total applications
+            icon: two 
+        },
+        { 
+            title: 'Hired', 
+            value: overallStats.totalHired, 
+            icon: three 
+        }
+    ];
     const displayJobs = searchQuery.length > 0 ? searchResults :
         (Object.values(filters).some(filter => Array.isArray(filter) ? filter.length > 0 : Object.values(filter).some(val => val !== '')) ? filteredJobs : jobs);
 
@@ -280,7 +286,7 @@ const Dashboard = () => {
                                 onChange={handleSearch}
                             />
                         </div>
-                        <Filters filters={filters} statistics={filtersConfig} handleCheckboxChange={handleCheckboxChange} activeTab={activeTab} handleExperienceFilter={handleExperienceFilter} clearAllFilters={clearAllFilters} />
+                        <Filters filters={filters}  handleCheckboxChange={handleCheckboxChange} activeTab={activeTab} handleExperienceFilter={handleExperienceFilter} clearAllFilters={clearAllFilters} />
                     </div>
                     <div className='w-full ml-4'>
                         <div className='flex justify-end '>

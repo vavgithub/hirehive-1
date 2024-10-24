@@ -6,6 +6,78 @@ import { jobStagesStatuses } from "../../config/jobStagesStatuses.js";
 import { candidates } from "../../models/candidate/candidate.model.js";
 // Controller function to create a new job
 
+export const StatisticsController = {
+  /**
+   * Get overall statistics including total jobs, total applications, and hired candidates
+   * @param {Object} req - Express request object
+   * @param {Object} res - Express response object
+   */
+  async getOverallStats(req, res) {
+      try {
+          // Get total number of jobs
+          const totalJobs = await jobs.countDocuments();
+
+          // Get total number of applications
+          // Using aggregation to count total applications across all candidates
+          const totalApplicationsResult = await candidates.aggregate([
+              // First unwind the jobApplications array to create a document for each application
+              { $unwind: "$jobApplications" },
+              // Count the total number of applications
+              {
+                  $count: "totalApplications"
+              }
+          ]);
+
+          // Extract the total applications count or default to 0 if no applications
+          const totalApplications = totalApplicationsResult[0]?.totalApplications || 0;
+
+          // Get total number of hired candidates
+          const hiredCandidatesCount = await candidates.aggregate([
+              // Unwind the jobApplications array
+              { $unwind: "$jobApplications" },
+              // Match documents where currentStage is 'Hired' and the corresponding status is 'Accepted'
+              {
+                  $match: {
+                      "jobApplications.currentStage": "Hired",
+                      "jobApplications.stageStatuses.Hired.status": "Accepted"
+                  }
+              },
+              // Group by candidate to avoid counting the same candidate multiple times
+              {
+                  $group: {
+                      _id: "$_id",
+                      count: { $sum: 1 }
+                  }
+              },
+              // Get the final count
+              {
+                  $count: "totalHired"
+              }
+          ]);
+
+          // Extract the count or default to 0 if no hired candidates
+          const totalHired = hiredCandidatesCount[0]?.totalHired || 0;
+
+          // Return the statistics
+          return res.status(200).json({
+              success: true,
+              data: {
+                  totalJobs,
+                  totalApplications,  // Changed from totalCandidates to totalApplications
+                  totalHired
+              }
+          });
+      } catch (error) {
+          console.error('Error in getOverallStats:', error);
+          return res.status(500).json({
+              success: false,
+              message: 'Error fetching statistics',
+              error: error.message
+          });
+      }
+  }
+};
+
 const getJobs = async (req, res) => {
   try {
     // Fetch all jobs from the database
