@@ -16,11 +16,21 @@ const Navbar = () => {
     const navigate = useNavigate();
     const location = useLocation();  // Get current route
     const { user } = useAuthContext(); // Get user data from the context
-    
+
     console.log(user);
 
     const [anchorEl, setAnchorEl] = useState(null); // State to control dropdown menu
     const { refetch } = useAuth();
+
+    // Get profile path based on user role
+    const getProfilePath = () => {
+        if (user?.role === 'Hiring Manager') {
+            return '/admin/profile';
+        } else if (user?.role === 'Design Reviewer') {
+            return '/design-reviewer/profile';
+        }
+        return '/admin/profile'; // Default fallback
+    };
 
 
     const handleLogout = async () => {
@@ -70,68 +80,67 @@ const Navbar = () => {
     );
 
     // Adding Profile and Logout dropdown logic
-    const renderProfileMenu = () => (
-        <>
-            {/* The IconButton will get active class if the current path is /admin/profile */}
-            <div className={`flex items-center px-2 justify-start hover:bg-background-60`}>
-                <IconButton
-                    onClick={handleMenuClick}
-                    className={`flex gap-2  ${location.pathname === "/admin/profile" ? "text-font-accent" : ""}`}
-                >
-                    <Avatar alt={user?.name} sx={{ width: "32px", height: "32px" }}
-                        src={user?.profilePicture} />
-                    <span className='typography-body text-white'>{user?.name}</span>
-                </IconButton>
-                {/* This would show the active indication on the side just like the other NavItems */}
-                <div className={`absolute right-0 w-1 h-6 rounded-tl-xl rounded-bl-xl ${location.pathname === "/admin/profile" ? "bg-teal-400" : "bg-transparent"}`} />
-            </div>
+    const renderProfileMenu = () => {
+        const profilePath = getProfilePath();
 
-            {/* Menu for Profile and Logout */}
-            <Menu
-                anchorEl={anchorEl} // Element that the menu is anchored to
-                open={Boolean(anchorEl)} // Menu is open when anchorEl is set
-                onClose={handleMenuClose} // Close the menu when clicking outside or selecting an item
-                anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'center',
-                }}
-                transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'center',
-                }}
-                sx={{
-                    "& .MuiList-root": {
-                        backgroundColor: 'rgba(12, 13, 13, 1)',
-                        borderColor: 'rgba(12, 13, 13, 1)',
-                        color: "white",
-                        font: "Outfit"
-                    }
-                }}
-            >
-                <MenuItem onClick={handleMenuClose}>
-                    <NavLink
-                        to="/admin/profile"
-                        className={({ isActive }) =>
-                            `w-full flex items-center ${isActive ? "text-font-accent" : ""}`}
+        return (
+            <>
+                <div className={`flex items-center px-2 justify-start hover:bg-background-60`}>
+                    <IconButton
+                        onClick={handleMenuClick}
+                        className={`flex gap-2  ${location.pathname === profilePath ? "text-font-accent" : ""}`}
                     >
-                        <Profile />
+                        <Avatar alt={user?.name} sx={{ width: "32px", height: "32px" }}
+                            src={user?.profilePicture} />
+                        <span className='typography-body text-white'>{user?.name}</span>
+                    </IconButton>
+                    <div className={`absolute right-0 w-1 h-6 rounded-tl-xl rounded-bl-xl ${location.pathname === profilePath ? "bg-teal-400" : "bg-transparent"}`} />
+                </div>
+
+                <Menu
+                    anchorEl={anchorEl}
+                    open={Boolean(anchorEl)}
+                    onClose={handleMenuClose}
+                    anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'center',
+                    }}
+                    transformOrigin={{
+                        vertical: 'top',
+                        horizontal: 'center',
+                    }}
+                    sx={{
+                        "& .MuiList-root": {
+                            backgroundColor: 'rgba(12, 13, 13, 1)',
+                            borderColor: 'rgba(12, 13, 13, 1)',
+                            color: "white",
+                            font: "Outfit"
+                        }
+                    }}
+                >
+                    <MenuItem onClick={handleMenuClose}>
+                        <NavLink
+                            to={profilePath}
+                            className={({ isActive }) =>
+                                `w-full flex items-center ${isActive ? "text-font-accent" : ""}`}
+                        >
+                            <Profile />
+                            <span className='typography-large ml-2'>
+                                Profile
+                            </span>
+                        </NavLink>
+                    </MenuItem>
+
+                    <MenuItem onClick={handleLogout}>
+                        <Logout />
                         <span className='typography-large ml-2'>
-                            Profile
+                            Logout
                         </span>
-                    </NavLink>
-                </MenuItem>
-
-                {/* Logout Option */}
-                <MenuItem onClick={handleLogout}>
-                    <Logout />
-                    <span className='typography-large ml-2'>
-                        Logout
-                    </span>
-
-                </MenuItem>
-            </Menu>
-        </>
-    );
+                    </MenuItem>
+                </Menu>
+            </>
+        );
+    };
 
     const renderMenuItems = () => {
         if (user?.role === 'Hiring Manager') {

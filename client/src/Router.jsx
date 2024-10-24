@@ -156,12 +156,16 @@ export const router = createBrowserRouter([
     children: [
       {
         path: "dashboard",
-        element: <DesignReviewerDashboard />,
+        element:<Candidates />
+        // element: <DesignReviewerDashboard />,
+      },
+      {
+        path:"profile",
+        element:<Profile/>
       },
       {
         path: "candidates",
-        element:
-          <Candidates />
+        element:<Candidates />
       },
       {
         path: "reviews",
