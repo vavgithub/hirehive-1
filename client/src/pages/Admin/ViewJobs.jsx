@@ -37,7 +37,7 @@ const ViewJobs = () => {
 
     const [closeReason, setCloseReason] = useState('');
 
-    const [activeTab, setActiveTab] = useState('candidate');
+    const [activeTab, setActiveTab] = useState('jobDetails');
 
     const [modalOpen, setModalOpen] = useState(false);
     const [modalAction, setModalAction] = useState('');
@@ -99,10 +99,13 @@ const ViewJobs = () => {
         queryFn: () => axios.get(`/admin/candidate/${mainId}`).then(res => res.data),
     });
 
-
-    const [jobStats , setJobStats] = useState([]);
-
-    
+    // Add new query for job statistics
+    const { data: jobStats = { data: { totalCount: 0, stageStats: {}, jobDetails: {} } }, 
+            isLoading: isStatsLoading 
+    } = useQuery({
+        queryKey: ['jobStats', mainId],
+        queryFn: () => axios.get(`jobs/stats/job/${mainId}`).then(res => res.data),
+    });   
 
 
     // Mutations
@@ -135,16 +138,18 @@ const ViewJobs = () => {
 
 
     // Show loader if data is loading
-    if (isJobLoading || isCandidatesLoading) {
-        return (
-            <div className="flex justify-center items-center min-h-screen">
-                <Loader />
-            </div>
-        );
-    }
-
+ // Show loader if any data is loading
+ if (isJobLoading || isCandidatesLoading || isStatsLoading) {
+    return (
+        <div className="flex justify-center items-center min-h-screen">
+            <Loader />
+        </div>
+    );
+}
     const { questions = [] } = formData || {};
 
+
+    // Update the stats arrays to use the fetched data
     const candidateStats = [
         { title: 'Total', value: jobStats?.data?.totalCount || 0, icon: Total },
         { title: 'Portfolio', value: jobStats?.data?.stageStats?.Portfolio || 0, icon: Portfolio },
@@ -154,13 +159,13 @@ const ViewJobs = () => {
         { title: 'Round 2', value: jobStats?.data?.stageStats['Round 2'] || 0, icon: Round2 },
         { title: 'Offer Sent', value: jobStats?.data?.stageStats?.Hired || 0, icon: OfferSent },
     ];
-
     const jobsDetailStats = [
-        { title: 'Views', value: "0", icon: Views },
-        { title: 'Applications Received', value: 1, icon: AppRec },
-        { title: 'Qualified applications', value: '80', icon: QuaApp },
-        { title: 'Engagement Rate', value: '78%', icon: EngRate },
+        { title: 'Clicks', value: jobStats?.data?.jobDetails?.views || 0, icon: Views },
+        { title: 'Applications Received', value: jobStats?.data?.jobDetails?.applicationsReceived || 0, icon: AppRec },
+        { title: 'Qualified applications', value: jobStats?.data?.jobDetails?.qualifiedApplications || 0, icon: QuaApp },
+        { title: 'Engagement Rate', value: `${jobStats?.data?.jobDetails?.engagementRate || 0}%`, icon: EngRate },
     ];
+
 
     const handleAction = (action, jobId) => {
         setModalOpen(true);

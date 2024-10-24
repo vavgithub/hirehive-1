@@ -2,6 +2,7 @@
 import { MongooseError } from "mongoose";
 import { jobs } from "../../models/admin/jobs.model.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
+import mongoose from "mongoose";
 import { jobStagesStatuses } from "../../config/jobStagesStatuses.js";
 import { candidates } from "../../models/candidate/candidate.model.js";
 // Controller function to create a new job
@@ -75,7 +76,94 @@ export const StatisticsController = {
               error: error.message
           });
       }
-  }
+  } , 
+  
+  async getJobStats(req, res) {
+    try {
+        const { jobId } = req.params;
+
+        // Get all candidates who applied for this job
+        const candidatesStats = await candidates.aggregate([
+            // Unwind job applications to get individual applications
+            { $unwind: "$jobApplications" },
+            // Match applications for the specific job
+            {
+                $match: {
+                    "jobApplications.jobId": new mongoose.Types.ObjectId(jobId)
+                }
+            },
+            // Group by current stage and count
+            {
+                $group: {
+                    _id: null,
+                    totalCount: { $sum: 1 },
+                    stages: {
+                        $push: "$jobApplications.currentStage"
+                    }
+                }
+            }
+        ]);
+
+        // Get the job details for view count
+        const job = await jobs.findById(jobId);
+        
+        // If we have candidates data, process it
+        const stats = candidatesStats[0] || { totalCount: 0, stages: [] };
+        
+        // Count candidates in each stage
+        const stageStats = stats.stages.reduce((acc, stage) => {
+            if (stage) { // Only count if stage exists
+                acc[stage] = (acc[stage] || 0) + 1;
+            }
+            return acc;
+        }, {});
+
+        // Ensure all possible stages have a value, even if 0
+        const allStages = [
+            'Portfolio',
+            'Screening',
+            'Design Task',
+            'Round 1',
+            'Round 2',
+            'Hired'
+        ];
+
+        const normalizedStageStats = allStages.reduce((acc, stage) => {
+            acc[stage] = stageStats[stage] || 0;
+            return acc;
+        }, {});
+
+        const response = {
+            totalCount: stats.totalCount,
+            stageStats: normalizedStageStats,
+            jobDetails: {
+                views: job?.applyClickCount || 0,
+                applicationsReceived: stats.totalCount,
+                qualifiedApplications: Object.entries(stageStats).reduce((sum, [stage, count]) => {
+                    if (stage !== 'Portfolio' && stage !== 'Screening') {
+                        return sum + count;
+                    }
+                    return sum;
+                }, 0),
+                engagementRate: job?.applyClickCount ? 
+                    Math.round((stats.totalCount / job.applyClickCount) * 100) : 0
+            }
+        };
+
+        return res.status(200).json({
+            success: true,
+            data: response
+        });
+
+    } catch (error) {
+        console.error('Error in getJobStats:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Error fetching job statistics',
+            error: error.message
+        });
+    }
+}
 };
 
 const getJobs = async (req, res) => {

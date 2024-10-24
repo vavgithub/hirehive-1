@@ -17,6 +17,7 @@ router.get('/jobsCount',protect, getTotalJobCount);
 router.get('/searchJobs',protect, searchJobs);
 router.get('/jobs',protect, getJobs);
 router.get('/stats/overall', StatisticsController.getOverallStats);
+router.get('/stats/job/:jobId', StatisticsController.getJobStats);
 
 router.post('/createJobs',protect, createJob);
 router.post('/filterJobs', protect,filterJobs);
