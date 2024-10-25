@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import ExperienceFilter from './ExperienceFilter';
-import Filter from '../svg/Buttons/Filter';
-import { fetchAvailableDesignReviewers } from '../api/authApi';
+import Filter from '../../svg/Buttons/Filter';
+import { fetchAvailableDesignReviewers } from '../../api/authApi';
 
 
 const ArrowIcon = ({ isOpen }) => (

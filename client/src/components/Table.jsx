@@ -21,7 +21,7 @@ import { BudgetField } from './Form/FormFields';
 import AutoAssign from '../svg/Buttons/AutoAssign';
 import { ACTION_TYPES } from '../utility/ActionTypes';
 import ResumeViewer from './utility/ResumeViewer';
-import FilterForDataTable from './FilterForDataTable';
+import FilterForDataTable from './Filters/FilterForDataTable';
 import { exportToExcel } from '../utility/exportToExcel';
 import Export from '../svg/Buttons/Export';
 import EditIcon from '../svg/KebabList/EditIcon';

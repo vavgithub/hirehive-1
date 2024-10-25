@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import Filters from '../../components/Filters'
+import Filters from '../../components/Filters/Filters'
 import JobCard from '../../components/JobCard';
 import { useQuery } from '@tanstack/react-query';
 import axios from '../../api/axios';

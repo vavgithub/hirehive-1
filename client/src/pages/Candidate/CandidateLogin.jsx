@@ -4,7 +4,7 @@ import axios from '../../api/axios';
 import { useNavigate } from 'react-router-dom';
 import sundarKanya from "../../svg/Background/sundar-kanya.png"
 import { Button } from '../../components/ui/Button';
-import StatsGrid from '../../components/StatsGrid';
+import StatsGrid from '../../components/ui/StatsGrid';
 import one from '../../svg/StatsCard/Jobs Page/one';
 import two from '../../svg/StatsCard/Jobs Page/two';
 

@@ -4,7 +4,7 @@ import ResumeIcon from '../../svg/ResumeIcon';
 import AssignmentIcon from '../../svg/AssignmentIcon';
 import PhoneIcon from '../../svg/PhoneIcon';
 import EmailIcon from '../../svg/EmailIcon';
-import Tabs from '../../components/Tabs';
+import Tabs from '../../components/ui/Tabs';
 import Header from '../../components/utility/Header';
 import axios from '../../api/axios';
 import { useQuery } from '@tanstack/react-query';

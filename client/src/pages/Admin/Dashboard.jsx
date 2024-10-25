@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import Filters from '../../components/Filters';
+import Filters from '../../components/Filters/Filters';
 import Modal from '../../components/Modal';
 import JobCard from '../../components/JobCard';
-import Tabs from '../../components/Tabs';
-import StatsGrid from '../../components/StatsGrid';
+import Tabs from '../../components/ui/Tabs';
+import StatsGrid from '../../components/ui/StatsGrid';
 import one from '../../svg/StatsCard/Jobs Page/one';
 import two from '../../svg/StatsCard/Jobs Page/two';
 import three from '../../svg/StatsCard/Jobs Page/three';

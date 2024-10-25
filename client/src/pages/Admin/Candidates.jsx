@@ -1,6 +1,6 @@
 import React from 'react'
 import Header from '../../components/utility/Header'
-import StatsGrid from '../../components/StatsGrid'
+import StatsGrid from '../../components/ui/StatsGrid'
 import one from '../../svg/StatsCard/Jobs Page/one';
 import Table from '../../components/Table';
 import axios from "../../api/axios"

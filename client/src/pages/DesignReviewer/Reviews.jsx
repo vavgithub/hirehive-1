@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import axios from '../../api/axios';
 import Header from '../../components/utility/Header';
-import StatsGrid from '../../components/StatsGrid';
+import StatsGrid from '../../components/ui/StatsGrid';
 import one from '../../svg/StatsCard/Jobs Page/one';
 import Scorer from '../../components/ui/Scorer';
 import { Button } from '../../components/ui/Button';

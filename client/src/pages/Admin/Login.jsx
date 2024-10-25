@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import sundarKanya from "../../svg/Background/sundar-kanya.png"
-import StatsGrid from '../../components/StatsGrid';
+import StatsGrid from '../../components/ui/StatsGrid';
 import one from '../../svg/StatsCard/Jobs Page/one';
 import two from '../../svg/StatsCard/Jobs Page/two';
 import { Button } from '../../components/ui/Button';

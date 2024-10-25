@@ -3,7 +3,7 @@ import axios from '../../api/axios';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '../../components/ui/Button';
 import { formatDescription } from '../../utility/formatDescription';
-import SideCard from '../../components/SideCard';
+import SideCard from '../../components/ui/SideCard';
 import useAuthCandidate from '../../hooks/useAuthCandidate'; // Import the authentication hook
 import Header from '../../components/utility/Header';
 import Loader from '../../components/ui/Loader';

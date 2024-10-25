@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import JobCard from '../../components/JobCard';
-import Filters from '../../components/Filters';
+import Filters from '../../components/Filters/Filters';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import axios from '../../api/axios';
