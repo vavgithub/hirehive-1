@@ -134,83 +134,91 @@ const ApplyJob = () => {
     }
   };
 
-
-  // Handler for registration form submission
   const onSubmit = async (data) => {
     setIsSubmitting(true);
-
-    // Extract questionResponses from form data
-    const questionResponses = Object.keys(data)
-      .filter((key) => key.startsWith('question-'))
-      .map((key) => ({
-        questionId: key.replace('question-', ''),
-        answer: data[key],
-      }));
-
-    const resumeUrl = await uploadResume();
-
-    if (isAuthenticated) {
-      // Authenticated candidate applies to job
-      const applicationData = {
-        jobId: jobId,
-        jobApplied: jobDetails.jobTitle,
-        lastName: data.lastName,
-        firstName: data.firstName,
-        email: data.email,
-        phone: data.phoneNumber,
-        website: data.website,
-        portfolio: data.portfolio,
-        noticePeriod: data.noticePeriod,
-        currentCTC: data.currentCTC,
-        expectedCTC: data.expectedCTC,
-        experience: data.experience,
-        skills: data.skills, // Use data.skills instead of skills
-        questionResponses,
-        resumeUrl: data.resumeUrl,
-      };
-
-      axios
-        .post('/auth/candidate/apply-job', applicationData)
-        .then(() => {
-          setIsSubmitting(false);
-          navigate('/candidate/my-jobs'); // Redirect to My Jobs page
-        })
-        .catch((error) => {
-          setIsSubmitting(false);
-          alert(error.response?.data?.message || 'An error occurred');
+  
+    try {
+      // Extract questionResponses from form data
+      const questionResponses = Object.keys(data)
+        .filter((key) => key.startsWith('question-'))
+        .map((key) => ({
+          questionId: key.replace('question-', ''),
+          answer: data[key],
+        }));
+  
+      // Upload resume if provided
+      let resumeUrl = null;
+      if (resumeFile) {
+        const formData = new FormData();
+        formData.append('resume', resumeFile);
+  
+        const uploadResponse = await axios.post('/auth/candidate/upload-resume', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+          onUploadProgress: (progressEvent) => {
+            const percentCompleted = Math.round(
+              (progressEvent.loaded * 100) / progressEvent.total
+            );
+            setUploadProgress(percentCompleted);
+          },
         });
-    } else {
-      // Unauthenticated candidate registration and application
-      const registrationData = {
-        jobId: jobId, // Get from useParams()
-        firstName: data.firstName,
-        lastName: data.lastName,
-        email: data.email,
-        phone: data.phoneNumber,
-        website: data.website,
-        portfolio: data.portfolio,
-        noticePeriod: data.noticePeriod,
-        currentCTC: data.currentCTC,
-        expectedCTC: data.expectedCTC,
-        experience: data.experience,
-        skills: data.skills, // Use data.skills instead of skills
-        questionResponses,
-        resumeUrl
-      };
-
-      axios
-        .post('/auth/candidate/register', registrationData)
-        .then((response) => {
-          setEmail(data.email);
-          setPhone(data.phoneNumber);
-          showSuccessToast('Create Password', "Please Create Your Password");
-          setCurrentStep(2); // Move to password creation step
-          setIsSubmitting(false);
-        })
-        .catch((error) => {
-          setIsSubmitting(false);
-          showErrorToast('Error', error.response?.data?.message || 'Failed to perform job action. Please try again.');
-        });
+        resumeUrl = uploadResponse.data.resumeUrl;
+      }
+  
+      if (isAuthenticated) {
+        // For authenticated users, only send professional details
+        const applicationData = {
+          jobId,
+          website: data.website,
+          portfolio: data.portfolio,
+          noticePeriod: data.noticePeriod,
+          currentCTC: data.currentCTC,
+          expectedCTC: data.expectedCTC,
+          experience: data.experience,
+          skills: data.skills,
+          questionResponses,
+          resumeUrl
+        };
+  
+        await axios.post('/auth/candidate/apply-job', applicationData);
+        
+        // Refresh candidate data to get updated profile
+        await fetchCandidateData();
+        
+        setIsSubmitting(false);
+        showSuccessToast('Success', 'Successfully applied to the job');
+        navigate('/candidate/my-jobs');
+      } else {
+        // For new users, send all required information
+        const registrationData = {
+          jobId,
+          firstName: data.firstName,
+          lastName: data.lastName,
+          email: data.email,
+          phone: data.phoneNumber,
+          website: data.website,
+          portfolio: data.portfolio,
+          noticePeriod: data.noticePeriod,
+          currentCTC: data.currentCTC,
+          expectedCTC: data.expectedCTC,
+          experience: data.experience,
+          skills: data.skills,
+          questionResponses,
+          resumeUrl
+        };
+  
+        await axios.post('/auth/candidate/register', registrationData);
+        setEmail(data.email);
+        setPhone(data.phoneNumber);
+        showSuccessToast('Create Password', "Please Create Your Password");
+        setCurrentStep(2);
+        setIsSubmitting(false);
+      }
+    } catch (error) {
+      setIsSubmitting(false);
+      showErrorToast(
+        'Error', 
+        error.response?.data?.message || 'Failed to perform job action. Please try again.'
+      );
     }
   };
   // Handler for password creation

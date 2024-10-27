@@ -88,6 +88,38 @@ const stageStatusSchema = new mongoose.Schema(
   { _id: false }
 );
 
+// Schema for professional information at the time of application
+const professionalInfoSchema = new mongoose.Schema(
+  {
+    website: {
+      type: String,
+      required: true,
+    },
+    portfolio: {
+      type: String,
+      required: true,
+    },
+    noticePeriod: {
+      type: Number,
+      default: 0,
+    },
+    currentCTC: {
+      type: Number,
+      default: 0,
+    },
+    expectedCTC: {
+      type: Number,
+      default: 0,
+    },
+    experience: {
+      type: Number,
+      default: 0,
+    },
+    skills: [String],
+  },
+  { _id: false }
+);
+
 // Schema for individual job applications within a candidate
 const jobApplicationSchema = new mongoose.Schema(
   {
@@ -120,7 +152,8 @@ const jobApplicationSchema = new mongoose.Schema(
       default: {},
     },
     resumeUrl: String,
-    // Removed currentCall and callHistory from jobApplicationSchema
+    // Add professional info field to store information at time of application
+    professionalInfo: professionalInfoSchema,
   },
   { _id: false }
 );

@@ -7,6 +7,7 @@ import SideCard from '../../components/ui/SideCard';
 import useAuthCandidate from '../../hooks/useAuthCandidate'; // Import the authentication hook
 import Header from '../../components/utility/Header';
 import Loader from '../../components/ui/Loader';
+import ArrowIcon from '../../svg/ArrowIcon';
 
 // Function to fetch the job data by ID
 const getJobById = async (id) => {
@@ -113,7 +114,7 @@ const ViewJob = () => {
                                 Already Applied
                             </Button>
                         ) : (
-                            <Button onClick={handleApplyClick} variant="primary">
+                            <Button onClick={handleApplyClick} iconPosition="right" icon={ArrowIcon} >
                                 Apply Job
                             </Button>
                         )}
