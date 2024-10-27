@@ -194,60 +194,84 @@ export  const updateStatusAndStage = async (req, res) => {
     }
   };
 
-  export const getCandidateById = async (req, res) => {
-    try {
-      const { candidateId, jobId } = req.params;
-  
-      // Find the candidate
-      const candidate = await candidates.findById(candidateId).select("-password");
-  
-      if (!candidate) {
-        return res.status(404).send({ message: "Candidate not found" });
-      }
-  
-      // Find the specific job application
-      const jobApplication = candidate.jobApplications.find(
-        app => app.jobId.toString() === jobId
-      );
-  
-      if (!jobApplication) {
-        return res.status(404).send({ message: "Job application not found for this candidate" });
-      }
-  
-      // Construct the response object with relevant information
-      const response = {
-        _id: candidate._id,
-        firstName: candidate.firstName,
-        lastName: candidate.lastName,
-        email: candidate.email,
-        phone: candidate.phone,
-        website: candidate.website,
-        portfolio: candidate.portfolio,
-        resumeUrl: jobApplication.resumeUrl || candidate.resumeUrl,
-        noticePeriod: candidate.noticePeriod,
-        currentCTC: candidate.currentCTC,
-        expectedCTC: candidate.expectedCTC,
-        experience: candidate.experience,
-        skills: candidate.skills,
-        location: candidate.location,
-        jobApplication: {
-          jobId: jobApplication.jobId,
-          jobApplied: jobApplication.jobApplied,
-          applicationDate: jobApplication.applicationDate,
-          rating: jobApplication.rating,
-          currentStage: jobApplication.currentStage,
-          stageStatuses: jobApplication.stageStatuses,
-          questionResponses: jobApplication.questionResponses
-        }
-      };
-  
-      res.send(response);
-    } catch (error) {
-      console.error("Error in getCandidateById:", error);
-      res.status(500).send({ message: "Internal server error", error: error.message });
-    }
-  };
+// controllers/candidate.controller.js
 
+export const getCandidateById = async (req, res) => {
+  try {
+    const { candidateId, jobId } = req.params;
+
+    // Find the candidate
+    const candidate = await candidates.findById(candidateId).select("-password");
+
+    if (!candidate) {
+      return res.status(404).send({ message: "Candidate not found" });
+    }
+
+    // Find the specific job application
+    const jobApplication = candidate.jobApplications.find(
+      app => app.jobId.toString() === jobId
+    );
+
+    if (!jobApplication) {
+      return res.status(404).send({ message: "Job application not found for this candidate" });
+    }
+
+    // Get professional info from job application or fall back to candidate's global info
+    const professionalInfo = jobApplication.professionalInfo || {
+      website: candidate.website,
+      portfolio: candidate.portfolio,
+      noticePeriod: candidate.noticePeriod,
+      currentCTC: candidate.currentCTC,
+      expectedCTC: candidate.expectedCTC,
+      experience: candidate.experience,
+      skills: candidate.skills
+    };
+
+    // Construct the response object with relevant information
+    const response = {
+      // Personal info (constant)
+      _id: candidate._id,
+      firstName: candidate.firstName,
+      lastName: candidate.lastName,
+      email: candidate.email,
+      phone: candidate.phone,
+      
+      // Professional info (job-specific or fallback)
+      website: professionalInfo.website,
+      portfolio: professionalInfo.portfolio,
+      noticePeriod: professionalInfo.noticePeriod,
+      currentCTC: professionalInfo.currentCTC,
+      expectedCTC: professionalInfo.expectedCTC,
+      experience: professionalInfo.experience,
+      skills: professionalInfo.skills,
+      
+      // Additional info
+      location: candidate.location,
+      resumeUrl: jobApplication.resumeUrl || candidate.resumeUrl,
+
+      // Job application specific info
+      jobApplication: {
+        jobId: jobApplication.jobId,
+        jobApplied: jobApplication.jobApplied,
+        applicationDate: jobApplication.applicationDate,
+        rating: jobApplication.rating,
+        currentStage: jobApplication.currentStage,
+        stageStatuses: jobApplication.stageStatuses,
+        questionResponses: jobApplication.questionResponses,
+        // Include professionalInfo in jobApplication as well if needed
+        professionalInfo: jobApplication.professionalInfo
+      }
+    };
+
+    res.send(response);
+  } catch (error) {
+    console.error("Error in getCandidateById:", error);
+    res.status(500).send({ 
+      message: "Internal server error", 
+      error: error.message 
+    });
+  }
+};
 
   // export const getAllCandidatesWithStats = async (req, res) => {
   //   try {

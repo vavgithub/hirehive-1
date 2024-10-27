@@ -21,6 +21,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setCandidateData, setError, setLoading } from '../../redux/candidateSlice';
 import { setCurrentStage, setStageStatuses } from '../../redux/applicationStageSlice';
 import Loader from '../../components/ui/Loader';
+import { ensureAbsoluteUrl } from '../../utility/ensureAbsoluteUrl';
 
 
 
@@ -57,7 +58,8 @@ const transformCandidateData = (data) => {
 const ViewCandidateProfile = () => {
     const { user } = useAuthContext();
     const role = user?.role || 'Candidate'; // Default to Candidate if role is not specified
-
+    const candidateData = useSelector(state => state.candidate.candidateData);
+    console.log("bad boii vevvvaar" , candidateData);
     const [activeTab, setActiveTab] = useState('application');
     const { candidateId, jobId } = useParams();
     const dispatch = useDispatch();
@@ -186,52 +188,66 @@ const ViewCandidateProfile = () => {
             {/* Candidate Profile Card */}
 
             {
-  (role === "Hiring Manager" || role === "Design Reviewer") && (
-    <div className="flex gap-3">
-      <div className="bg-background-90 w-full p-4 rounded-xl flex">
-        <div className="to-background-100">
-          <img src="" alt="" />
-        </div>
-        <div>
-          <h1 className="typography-h2">
-            {data.firstName} {data.lastName}
-          </h1>
-          <div className="flex items-center gap-2 mb-3 mt-2">
-            <span className="typography-small-p text-gray-500">{data.jobApplied}</span>
-            <svg xmlns="http://www.w3.org/2000/svg" width="4" height="4" viewBox="0 0 4 4" fill="none">
-              <circle cx="2" cy="2" r="2" fill="#808389" />
-            </svg>
-            <span className="typography-small-p text-gray-500">{data.location}</span>
-          </div>
-          <div className="flex mb-3 gap-5">
-            <div className="flex items-center gap-2">
-              <PhoneIcon />
-              <span className="typography-large-p">{data.phone}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <EmailIcon />
-              <span className="typography-large-p">{data.email}</span>
-            </div>
-          </div>
-          <div className="flex gap-2 items-center">
-            <ResumeIcon />
-            <FileMainIcon />
-            <WebsiteMainIcon />
-            <AssignmentIcon />
-          </div>
-          <p>{data.location}</p>
-        </div>
-      </div>
+                (role === "Hiring Manager" || role === "Design Reviewer") && (
+                    <div className="flex gap-3">
+                        <div className="bg-background-90 w-full p-4 rounded-xl flex">
+                            <div className="to-background-100">
+                                <img src="" alt="" />
+                            </div>
+                            <div>
+                                <h1 className="typography-h2">
+                                    {data.firstName} {data.lastName}
+                                </h1>
+                                <div className="flex items-center gap-2 mb-3 mt-2">
+                                    <span className="typography-small-p text-gray-500">{data.jobApplied}</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="4" height="4" viewBox="0 0 4 4" fill="none">
+                                        <circle cx="2" cy="2" r="2" fill="#808389" />
+                                    </svg>
+                                    <span className="typography-small-p text-gray-500">{data.location}</span>
+                                </div>
+                                <div className="flex mb-3 gap-5">
+                                    <div className="flex items-center gap-2">
+                                        <PhoneIcon />
+                                        <span className="typography-large-p">{data.phone}</span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <EmailIcon />
+                                        <span className="typography-large-p">{data.email}</span>
+                                    </div>
+                                </div>
+                                <div className="flex gap-2 items-center">
+                                    <a href={ensureAbsoluteUrl(data.portfolio)} target="_blank" rel="noopener noreferrer" className="icon-link">
+                                        <FileMainIcon />
 
-      {/* VAV Score Section */}
-      <div className="flex bg-stars flex-col items-center bg-background-90 w-[430px] bg-cover p-5 rounded-xl">
-        <h3 className="typography-h3">VAV SCORE</h3>
-        <span className="marks text-font-primary">{score?.totalScore}</span>
-        <p className="typography-large">Out of 100</p>
-      </div>
-    </div>
-  )
-}
+                                    </a>
+
+
+
+                                    <a href={ensureAbsoluteUrl(data.website)} target="_blank" rel="noopener noreferrer" className="icon-link">
+
+                                        <WebsiteMainIcon />
+                                    </a>
+
+                                    <ResumeIcon />
+
+                                    {
+                                        data.hasGivenAssessment && <AssignmentIcon />
+                                    }
+
+                                </div>
+                                <p>{data.location}</p>
+                            </div>
+                        </div>
+
+                        {/* VAV Score Section */}
+                        <div className="flex bg-stars flex-col items-center bg-background-90 w-[430px] bg-cover p-5 rounded-xl">
+                            <h3 className="typography-h3">VAV SCORE</h3>
+                            <span className="marks text-font-primary">{score?.totalScore}</span>
+                            <p className="typography-large">Out of 100</p>
+                        </div>
+                    </div>
+                )
+            }
 
             {/* Conditional rendering of tabs for "Hiring Manager" */}
 
