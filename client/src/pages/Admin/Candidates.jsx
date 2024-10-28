@@ -55,7 +55,9 @@ const Candidates = () => {
     <div className="mx-4 pt-4 h-screen">
       <Header HeaderText="Candidates" />
       <div className='bg-background-100 rounded-xl p-4'>
-        <div className="w-full max-w-6xl">
+        <div className="w-full max-w-7xl relative">
+         
+          <div className="absolute right-0 z-10 h-full w-28 bg-gradient-to-tr from-background via-background-green to-transparent pointer-events-none" />
           <StatsGrid stats={statsOne} />
         </div>
         <Table readOnly={true} readOnlyData={data?.candidates || []} />

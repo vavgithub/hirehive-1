@@ -71,6 +71,11 @@ html{
   box-sizing: border-box;
 }
 
+/* Add this to your global CSS file */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
 @keyframes down {
   0%, 100% {
     transform: none;
