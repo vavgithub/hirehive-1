@@ -6,6 +6,7 @@ import AssessmentBanner from '../../components/ui/AssessmentBanner';
 import { useNavigate } from 'react-router-dom';
 import useAuthCandidate from '../../hooks/useAuthCandidate';
 import Loader from '../../components/ui/Loader';
+import { useMediaQuery } from 'react-responsive';
 
 const fetchAppliedJobs = async () => {
   const response = await axios.get('/auth/candidate/applied-jobs');
@@ -23,12 +24,15 @@ const MyJobs = () => {
 
   const navigate = useNavigate();
 
+  // Detect if the device is mobile
+  const isMobile = useMediaQuery({ maxWidth: 768 });
+
   if (isLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-          <Loader />
+        <Loader />
       </div>
-  );
+    );
   }
 
   if (isError) {
@@ -37,7 +41,9 @@ const MyJobs = () => {
   }
 
   const handleClick = (jobId) => {
-    navigate(`/candidate/viewJob/${candidateId}/${jobId}`);
+    if (!isMobile) {
+      navigate(`/candidate/viewJob/${candidateId}/${jobId}`);
+    }
   };
 
   return (
