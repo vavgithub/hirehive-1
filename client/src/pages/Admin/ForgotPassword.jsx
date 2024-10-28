@@ -4,6 +4,7 @@ import { useMutation } from '@tanstack/react-query';
 import { showErrorToast, showSuccessToast } from '../../components/ui/Toast';
 import axios from '../../api/axios';
 import { InputField } from '../../components/Form/FormFields';
+import OTPInput from '../../components/ui/OTPInput';
 
 const ForgotPassword = ({ onBack }) => {
   const [step, setStep] = useState('email');
@@ -45,10 +46,10 @@ const ForgotPassword = ({ onBack }) => {
   // Reset password mutation
   const resetPasswordMutation = useMutation({
     mutationFn: async () => {
-      const response = await axios.post('/auth/reset-password', { 
-        email, 
-        otp, 
-        password 
+      const response = await axios.post('/auth/reset-password', {
+        email,
+        otp,
+        password
       });
       return response.data;
     },
@@ -112,6 +113,10 @@ const ForgotPassword = ({ onBack }) => {
     resetPasswordMutation.mutate();
   };
 
+  const handleOtpChange = (value) => {
+    setOtp(value);
+  };
+
   return (
     <div className="w-full max-w-md mx-auto p-6">
       <Button
@@ -144,26 +149,28 @@ const ForgotPassword = ({ onBack }) => {
           </Button>
         </form>
       )}
-
       {step === 'otp' && (
         <form onSubmit={handleOtpSubmit}>
-          <InputField
-            id="otp"
-            type="text"
-            label="OTP"
-            required
-            value={otp}
-            onChange={(e) => setOtp(e.target.value)}
-
-          />
-          <Button
-            type="submit"
-            variant="primary"
-            className="w-full mt-4"
-            disabled={verifyOtpMutation.isPending}
-          >
-            {verifyOtpMutation.isPending ? 'Verifying...' : 'Verify OTP'}
-          </Button>
+          <div className="space-y-4">
+            <div className="text-center">
+              <label className="block mb-4 typography-body">
+                Enter the verification code sent to your email
+              </label>
+              <OTPInput
+                length={6}
+                value={otp}
+                onChange={handleOtpChange}
+              />
+            </div>
+            <Button
+              type="submit"
+              variant="primary"
+              className="w-full mt-6"
+              disabled={verifyOtpMutation.isPending || otp.length !== 6}
+            >
+              {verifyOtpMutation.isPending ? 'Verifying...' : 'Verify OTP'}
+            </Button>
+          </div>
         </form>
       )}
 
@@ -177,7 +184,7 @@ const ForgotPassword = ({ onBack }) => {
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              
+
             />
             <InputField
               id="confirm-password"
@@ -186,7 +193,7 @@ const ForgotPassword = ({ onBack }) => {
               required
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              
+
             />
           </div>
           <Button
