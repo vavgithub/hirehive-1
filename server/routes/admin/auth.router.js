@@ -1,5 +1,5 @@
 import express from 'express';
-import { registerUser, authUser, logoutUser, getUserProfile, getAvailableDesignReviewers, uploadProfilePicture } from '../../controllers/admin/auth.controller.js';
+import { registerUser, authUser, logoutUser, getUserProfile, getAvailableDesignReviewers, uploadProfilePicture, resetPassword, verifyOTP, forgotPassword } from '../../controllers/admin/auth.controller.js';
 import { protect } from '../../middlewares/authMiddleware.js';
 import multer from 'multer';
 import { promises as fs } from 'fs';
@@ -63,6 +63,10 @@ router.post('/login', authUser);
 router.post('/logout', logoutUser);
 router.get('/profile', protect, getUserProfile);
 router.get('/design-reviewers', getAvailableDesignReviewers);
+
+router.post('/forgot-password', forgotPassword);
+router.post('/verify-otp', verifyOTP);
+router.post('/reset-password', resetPassword);
 
 router.post(
     '/profile-picture',
