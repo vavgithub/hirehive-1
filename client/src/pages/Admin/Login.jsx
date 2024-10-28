@@ -11,6 +11,7 @@ import useAuth from '../../hooks/useAuth';
 import ForgotPassword from './ForgotPassword';
 import { showErrorToast } from '../../components/ui/Toast';
 import { InputField } from '../../components/Form/FormFields';
+import Loader from '../../components/ui/Loader';
 
 const statsOne = [
     { title: 'Jobs Posted', value: 100, icon: one },
@@ -54,7 +55,11 @@ const Login = () => {
     };
 
     if (authLoading) {
-        return <p>Loading...</p>;
+        return (
+            <div className="flex justify-center items-center min-h-screen">
+                <Loader />
+            </div>
+        );
     }
 
     return (
