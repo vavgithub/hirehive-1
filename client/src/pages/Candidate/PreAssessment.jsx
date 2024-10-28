@@ -74,11 +74,13 @@ const PreAssessment = () => {
 
                 {/* Right Column */}
                 <div className="w-1/2">
-                    <div className="bg-background-80 rounded-lg p-4">
+                    <div className="bg-background-80 flex flex-col items-center rounded-lg p-4">
                         <h3 className="typography-h3 mb-4">Check your webcam</h3>
-                        <div className="relative aspect-video bg-black rounded-lg overflow-hidden mb-4">
+                        <div className="relative aspect-video bg-black rounded-lg flex overflow-hidden mb-4">
                             {isCameraEnabled ? (
-                                <Webcam audio={false} />
+                                <div className='flex justify-center items-center' >
+                                    <Webcam audio={false} />
+                                </div>
                             ) : (
                                 <div className="absolute inset-0 flex items-center justify-center">
                                     <Camera size={48} className="text-gray-600" />
