@@ -36,7 +36,7 @@ const Candidates = () => {
     { title: 'Design Task', value: data?.stats?.['Design Task'] || 0, icon: DesignTask },
     { title: 'Round 1', value: data?.stats?.['Round 1'] || 0, icon: Round1 },
     { title: 'Round 2', value: data?.stats?.['Round 2'] || 0, icon: Round2 },
-    { title: 'Offer Sent', value: data?.stats?.['Offer Sent'] || 0, icon: OfferSent },
+    { title: 'Hired', value: data?.stats?.Hired || 0, icon: OfferSent },
   ];
 
   // Show loader if data is loading

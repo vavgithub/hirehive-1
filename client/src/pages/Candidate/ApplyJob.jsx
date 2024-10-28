@@ -12,6 +12,7 @@ import axios from '../../api/axios';
 import useAuthCandidate from '../../hooks/useAuthCandidate';
 import { dummySkills } from '../../components/Form/dropdownOptions';
 import { showErrorToast, showSuccessToast } from '../../components/ui/Toast';
+import Loader from '../../components/ui/Loader';
 
 const fetchJobDetails = async (id) => {
   const response = await axios.get(`/jobs/getJobById/${id}`);
@@ -31,7 +32,7 @@ const ApplyJob = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
   const { id: jobId } = useParams();
-  const { isAuthenticated, candidateData, fetchCandidateData } = useAuthCandidate();
+  const { isAuthenticated, candidateData, refetch  } = useAuthCandidate();
 
   const [resumeFile, setResumeFile] = useState(null);
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -107,7 +108,14 @@ const ApplyJob = () => {
     queryKey: ['jobDetails', jobId],
     queryFn: () => fetchJobDetails(jobId),
   });
-  if (isLoading) return <div>Loading...</div>;
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <Loader />
+      </div>
+    );
+  }
 
   const { jobTitle, questions = [] } = jobDetails || {};
 
@@ -136,7 +144,7 @@ const ApplyJob = () => {
 
   const onSubmit = async (data) => {
     setIsSubmitting(true);
-  
+
     try {
       // Extract questionResponses from form data
       const questionResponses = Object.keys(data)
@@ -145,13 +153,13 @@ const ApplyJob = () => {
           questionId: key.replace('question-', ''),
           answer: data[key],
         }));
-  
+
       // Upload resume if provided
       let resumeUrl = null;
       if (resumeFile) {
         const formData = new FormData();
         formData.append('resume', resumeFile);
-  
+
         const uploadResponse = await axios.post('/auth/candidate/upload-resume', formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
           onUploadProgress: (progressEvent) => {
@@ -163,7 +171,7 @@ const ApplyJob = () => {
         });
         resumeUrl = uploadResponse.data.resumeUrl;
       }
-  
+
       if (isAuthenticated) {
         // For authenticated users, only send professional details
         const applicationData = {
@@ -178,12 +186,12 @@ const ApplyJob = () => {
           questionResponses,
           resumeUrl
         };
-  
+
         await axios.post('/auth/candidate/apply-job', applicationData);
-        
-        // Refresh candidate data to get updated profile
-        await fetchCandidateData();
-        
+
+         // Update this line to use refetch
+         await refetch();
+
         setIsSubmitting(false);
         showSuccessToast('Success', 'Successfully applied to the job');
         navigate('/candidate/my-jobs');
@@ -205,7 +213,7 @@ const ApplyJob = () => {
           questionResponses,
           resumeUrl
         };
-  
+
         await axios.post('/auth/candidate/register', registrationData);
         setEmail(data.email);
         setPhone(data.phoneNumber);
@@ -216,13 +224,38 @@ const ApplyJob = () => {
     } catch (error) {
       setIsSubmitting(false);
       showErrorToast(
-        'Error', 
+        'Error',
         error.response?.data?.message || 'Failed to perform job action. Please try again.'
       );
     }
   };
-  // Handler for password creation
-  const handlePasswordSubmit = (e) => {
+  // Modified handleOtpSubmit function
+  const handleOtpSubmit = (e) => {
+    e.preventDefault();
+    const enteredOtp = otp.join('');
+
+    if (enteredOtp.length !== 6) {
+      setOtpError('Please enter the 6-digit OTP sent to your email.');
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    axios
+      .post('/auth/candidate/verify-otp', { email, otp: enteredOtp })
+      .then((response) => {
+        setIsSubmitting(false);
+        showSuccessToast('OTP Verified', 'Please create your password to continue.');
+        setCurrentStep(3); // Move to password creation step
+      })
+      .catch((error) => {
+        setIsSubmitting(false);
+        setOtpError(error.response.data.message);
+      });
+  };
+
+  // Modified handlePasswordSubmit function
+  const handlePasswordSubmit = async (e) => {
     e.preventDefault();
     const password = getValues('password');
     const confirmPassword = getValues('confirmPassword');
@@ -239,45 +272,22 @@ const ApplyJob = () => {
 
     setIsSubmitting(true);
 
-    axios
-      .post('/auth/candidate/create-password', { email, password })
-      .then((response) => {
-        setCurrentStep(3); // Move to OTP verification step
-        setIsSubmitting(false);
-        showSuccessToast('Password Create Successfuly', "Congratulations!Please proceed to verify your OTP to continue.");
-      })
-      .catch((error) => {
-        setIsSubmitting(false);
-        alert(error.response.data.message);
-      });
-  };
+    try {
+      await axios.post('/auth/candidate/create-password', { email, password });
+      setIsSubmitting(false);
+      showSuccessToast('Success', 'Account created successfully!');
+      
+      // Update authentication state
+      // Update this line to use refetch
+      await refetch();
 
-  // Handler for OTP verification
-  const handleOtpSubmit = (e) => {
-    e.preventDefault();
-    const enteredOtp = otp.join('');
-
-    if (enteredOtp.length !== 6) {
-      setOtpError('Please enter the 6-digit OTP sent to your email.');
-      return;
+      
+      // Navigate to My Jobs page after successful password creation
+      navigate('/candidate/my-jobs');
+    } catch (error) {
+      setIsSubmitting(false);
+      setPasswordError(error.response?.data?.message || 'An error occurred. Please try again.');
     }
-
-    setIsSubmitting(true);
-
-    axios
-      .post('/auth/candidate/verify-otp', { email, otp: enteredOtp })
-      .then(async (response) => {
-        setIsSubmitting(false);
-
-        // Update authentication state
-        await fetchCandidateData();
-
-        navigate('/candidate/my-jobs'); // Navigate to My Jobs page
-      })
-      .catch((error) => {
-        setIsSubmitting(false);
-        setOtpError(error.response.data.message);
-      });
   };
 
   // Handler for OTP input change
@@ -419,13 +429,13 @@ const ApplyJob = () => {
             <Controller
               name="website"
               control={control}
-              rules={{ required: true }}
+              rules={{ required: false }}
               render={({ field }) => (
                 <InputField
                   type="text"
                   id="website"
                   label="Website"
-                  required={true}
+                  required={false}
                   error={errors.website}
                   {...field}
                 />
@@ -667,8 +677,51 @@ const ApplyJob = () => {
         </form>
       )}
 
-      {/* Password Creation Step */}
+      
+      {/* OTP Verification Step */}
       {currentStep === 2 && (
+        <div className="flex items-center justify-center min-h-screen bg-cover bg-verification">
+          <div className="w-full max-w-md space-y-8 bg-background-90 rounded-lg shadow-xl  bg-opacity-15">
+            <form onSubmit={handleOtpSubmit} className="mx-16 text-center">
+              <h1 className="typography-h1 mt-8 mb-4">OTP Verification</h1>
+              <p className="text-font-gray text-center typography-large-p">
+                To ensure security, please enter the OTP (One-Time Password) to
+                verify your account. A code has been sent to
+              </p>
+              <h2 className='typograhpy-h2 text-font-gray'>
+                {email}
+              </h2>
+              <div className="flex justify-center space-x-2 mt-4">
+                {otp.map((data, index) => (
+                  <input
+                    key={index}
+                    id={`otp-input-${index}`}
+                    type="number"
+                    maxLength="1"
+                    className="no-spinner"
+                    value={data}
+                    onChange={(e) => handleOtpChange(e.target, index)}
+                  />
+                ))}
+              </div>
+              {otpError && <span className="text-red-500">{otpError}</span>}
+
+              <div className="flex mt-6 w-full gap-4 mr-16 mb-6">
+                <Button
+                  type="submit"
+                  variant="primary"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? 'Submitting...' : 'Verify'}
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Password Creation Step */}
+      {currentStep === 3 && (
         <div className="flex items-center justify-center min-h-screen bg-cover bg-verification">
           <div className="w-full max-w-md space-y-8 bg-background-90 rounded-lg shadow-xl bg-opacity-15">
             <form onSubmit={handlePasswordSubmit} className="mx-16">
@@ -727,47 +780,6 @@ const ApplyJob = () => {
         </div>
       )}
 
-      {/* OTP Verification Step */}
-      {currentStep === 3 && (
-        <div className="flex items-center justify-center min-h-screen bg-cover bg-verification">
-          <div className="w-full max-w-md space-y-8 bg-background-90 rounded-lg shadow-xl  bg-opacity-15">
-            <form onSubmit={handleOtpSubmit} className="mx-16 text-center">
-              <h1 className="typography-h1 mt-8 mb-4">OTP Verification</h1>
-              <p className="text-font-gray text-center typography-large-p">
-                To ensure security, please enter the OTP (One-Time Password) to
-                verify your account. A code has been sent to
-              </p>
-              <h2 className='typograhpy-h2 text-font-gray'>
-                {email}
-              </h2>
-              <div className="flex justify-center space-x-2 mt-4">
-                {otp.map((data, index) => (
-                  <input
-                    key={index}
-                    id={`otp-input-${index}`}
-                    type="number"
-                    maxLength="1"
-                    className="no-spinner"
-                    value={data}
-                    onChange={(e) => handleOtpChange(e.target, index)}
-                  />
-                ))}
-              </div>
-              {otpError && <span className="text-red-500">{otpError}</span>}
-
-              <div className="flex mt-6 w-full gap-4 mr-16 mb-6">
-                <Button
-                  type="submit"
-                  variant="primary"
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting ? 'Submitting...' : 'Verify'}
-                </Button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
     </>
   );
 };

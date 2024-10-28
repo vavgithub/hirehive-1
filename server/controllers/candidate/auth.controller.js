@@ -643,6 +643,7 @@ export const getCandidateDashboard = async (req, res) => {
         expectedCTC: candidate.expectedCTC,
         experience: candidate.experience,
         skills: candidate.skills,
+        hasGivenAssessment:candidate.hasGivenAssessment,
         jobApplications: formattedApplications, // Include jobApplications in the candidate object
         // Include other relevant candidate fields
       },

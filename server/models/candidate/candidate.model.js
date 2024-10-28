@@ -93,7 +93,6 @@ const professionalInfoSchema = new mongoose.Schema(
   {
     website: {
       type: String,
-      required: true,
     },
     portfolio: {
       type: String,
@@ -199,7 +198,6 @@ const candidateSchema = new mongoose.Schema(
     },
     website: {
       type: String,
-      required: true,
     },
     resumeUrl: String,
     portfolio: {

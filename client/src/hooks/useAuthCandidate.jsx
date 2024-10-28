@@ -1,29 +1,27 @@
-import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import axios from '../api/axios';
 
+const fetchCandidateData = async () => {
+  try {
+    const response = await axios.get('/auth/candidate/dashboard');
+    return response.data.candidate; // The candidate object now includes jobApplications
+  } catch (error) {
+    throw error;
+  }
+};
+
 const useAuthCandidate = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [candidateData, setCandidateData] = useState(null);
+  const { data: candidateData, error, isLoading, refetch } = useQuery({
+    queryKey: ['authCandidate'],
+    queryFn: fetchCandidateData,
+    retry: false,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    cacheTime: 10 * 60 * 1000, // 10 minutes
+  });
 
-  const fetchCandidateData = async () => {
-    try {
-      const response = await axios.get('/auth/candidate/dashboard');
-      setCandidateData(response.data.candidate); // The candidate object now includes jobApplications
-      setIsAuthenticated(true);
-    } catch (error) {
-      setIsAuthenticated(false);
-      setCandidateData(null);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const isAuthenticated = candidateData !== undefined && !error;
 
-  useEffect(() => {
-    fetchCandidateData();
-  }, []);
-
-  return { isAuthenticated, isLoading, candidateData, fetchCandidateData };
+  return { isAuthenticated, isLoading, candidateData, refetch };
 };
 
 export default useAuthCandidate;
