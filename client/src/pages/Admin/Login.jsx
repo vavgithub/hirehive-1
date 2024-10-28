@@ -10,6 +10,7 @@ import { login } from '../../api/authApi';
 import useAuth from '../../hooks/useAuth';
 import ForgotPassword from './ForgotPassword';
 import { showErrorToast } from '../../components/ui/Toast';
+import { InputField } from '../../components/Form/FormFields';
 
 const statsOne = [
     { title: 'Jobs Posted', value: 100, icon: one },
@@ -17,6 +18,8 @@ const statsOne = [
 const statsTwo = [
     { title: 'Application Received', value: 10, icon: two },
 ]
+
+
 
 const Login = () => {
     const [showForgotPassword, setShowForgotPassword] = useState(false);
@@ -83,29 +86,27 @@ const Login = () => {
                         </p>
 
                         <form onSubmit={handleSubmit}>
-                            <div className="mb-4">
-                                <label htmlFor="email" className="block mb-2">Email</label>
-                                <input
+                            <div className="space-y-4">
+                                <InputField
+                                    id="login-email"
                                     type="email"
-                                    id="email"
-                                    placeholder="Enter your email"
+                                    label="Email"
+                                    required
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    className="w-full p-2 rounded-lg bg-black text-white focus:outline-teal-400"
+
                                 />
-                            </div>
-                            <div>
-                                <label htmlFor="password" className="block mb-2">Password</label>
-                                <input
+                                <InputField
+                                    id="login-password"
                                     type="password"
-                                    id="password"
+                                    label="Password"
+                                    required
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    placeholder="Enter your password"
-                                    className="w-full focus:outline-teal-400 p-2 rounded-lg bg-black text-white"
+
                                 />
                             </div>
-                            
+
                             <div className='flex justify-end'>
                                 <span
                                     onClick={() => setShowForgotPassword(true)}
