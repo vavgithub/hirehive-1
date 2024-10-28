@@ -1,8 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react';
 import ExperienceFilter from './ExperienceFilter';
 import Filter from '../../svg/Buttons/Filter';
 import { fetchAvailableDesignReviewers } from '../../api/authApi';
-
 
 const ArrowIcon = ({ isOpen }) => (
   <svg
@@ -39,6 +38,35 @@ const FilterForDataTable = ({ onApplyFilters }) => {
 
   const [designReviewers, setDesignReviewers] = useState([]);
 
+  // Updated formatSelectedValues to return an object with value and className
+  const formatSelectedValues = (category, values) => {
+    if (!values || values.length === 0) {
+      return {
+        value: 'All',
+        className: 'text-white typography-body' // lighter gray for 'All'
+      };
+    }
+
+    if (category === 'experience' && values) {
+      return {
+        value: values,
+        className: 'text-blue-400 typography-body' // blue color for experience values
+      };
+    }
+
+    if (values.length === 1) {
+      return {
+        value: values[0],
+        className: 'text-white typography-body' // white for single selected value
+      };
+    }
+
+    return {
+      value: `${values[0]} +${values.length - 1} more`,
+      className: 'text-font-gray typography-body' // white for multiple selected values
+    };
+  };
+
   useEffect(() => {
     const loadDesignReviewers = async () => {
       try {
@@ -67,8 +95,6 @@ const FilterForDataTable = ({ onApplyFilters }) => {
         : [...prev[category], value],
     }));
   };
-
-
 
   const handleStageSelect = (value) => {
     setSelectedFilters((prev) => ({
@@ -141,47 +167,50 @@ const FilterForDataTable = ({ onApplyFilters }) => {
   }, [selectedFilters]);
 
   return (
-    <div className='relative ' ref={menuRef}>
-      <div className='cursor-pointer gap-2 text-font-gray flex typography-body' onClick={(e) => toggleMenu(e)}>
+    <div className="relative" ref={menuRef}>
+      <div className="cursor-pointer gap-2 text-font-gray flex typography-body" onClick={(e) => toggleMenu(e)}>
         <Filter /> Filter
       </div>
-      {/* <button className="bg-black text-white px-4 py-3  rounded">Filters</button> */}
-      {
-        isOpen && (
-          <div className='absolute z-10 mt-2 w-[156px] max-w-64 bg-background-40 px-6 py-4 rounded-xl flex flex-col gap-4 shadow-[2px_4px_30px_rgba(0,0,0,0.3)]'>
-            {Object.keys(categories).map((category) => (
-              <div key={category} className="">
-                <div className="flex justify-between items-center cursor-pointer" onClick={() => handleDropdown(category)}>
-                  <span>{category.charAt(0).toUpperCase() + category.slice(1)}: {selectedFilters[category] || 'All'}</span>
-                  <ArrowIcon isOpen={showDropdown[category]} />
+      {isOpen && (
+        <div className="absolute z-10 mt-2 w-[256px] max-w-64 bg-background-40 px-6 py-4 rounded-xl flex flex-col gap-4 shadow-[2px_4px_30px_rgba(0,0,0,0.3)]">
+          {Object.keys(categories).map((category) => (
+            <div key={category} className="">
+              <div className="flex justify-between items-center cursor-pointer" onClick={() => handleDropdown(category)}>
+                <div className="flex gap-2">
+                  <span className="capitalize text-gray-400">
+                    {category}:
+                  </span>
+                  <span className={formatSelectedValues(category, selectedFilters[category]).className}>
+                    {formatSelectedValues(category, selectedFilters[category]).value}
+                  </span>
                 </div>
-                {showDropdown[category] && (
-                  category === 'experience' ? (
-                    <ExperienceFilter onApply={handleExperienceApply} />
-                  ) : (
-                    <div className="px-6 py-4 rounded-xl absolute left-44 bg-background-40 w-max flex flex-col gap-4 shadow-[2px_4px_30px_rgba(0,0,0,0.3)]">
-                      {categories[category].map((item) => (
-                        <label key={item} className="flex items-center text-white">
-                          <input
-                            type="checkbox"
-                            checked={selectedFilters[category].includes(item)}
-                            onChange={() => category === 'stage' ? handleStageSelect(item) : handleSelect(category, item)}
-                            className="mr-2"
-                          />
-                          {item}
-                        </label>
-                      ))}
-                    </div>
-                  )
-                )}
+                <ArrowIcon isOpen={showDropdown[category]} />
               </div>
-            ))}
-          </div>
-        )
-      }
+              {showDropdown[category] && (
+                category === 'experience' ? (
+                  <ExperienceFilter onApply={handleExperienceApply} />
+                ) : (
+                  <div className="px-6 py-4 rounded-xl absolute typography-body left-64 bg-background-40 w-max flex flex-col gap-4 shadow-[2px_4px_30px_rgba(0,0,0,0.3)]">
+                    {categories[category].map((item) => (
+                      <label key={item} className="flex items-center text-white">
+                        <input
+                          type="checkbox"
+                          checked={selectedFilters[category].includes(item)}
+                          onChange={() => category === 'stage' ? handleStageSelect(item) : handleSelect(category, item)}
+                          className="mr-2"
+                        />
+                        {item}
+                      </label>
+                    ))}
+                  </div>
+                )
+              )}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
 
-
-export default FilterForDataTable
+export default FilterForDataTable;
