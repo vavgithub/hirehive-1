@@ -27,6 +27,10 @@ import { formatTime } from '../../utility/formatTime';
 import { useAuthContext } from '../../context/AuthProvider';
 import Loader from '../ui/Loader';
 import Scorer from '../ui/Scorer';
+import { formatDescription } from '../../utility/formatDescription';
+import { ensureAbsoluteUrl } from '../../utility/ensureAbsoluteUrl';
+import GreenTickIcon from '../../svg/Staging/GreenTickIcon';
+import RightTick from '../../svg/Staging/RightTick';
 
 const submitReview = async ({ candidateId, reviewData }) => {
     const response = await axios.post('dr/submit-score-review', {
@@ -78,6 +82,10 @@ const DesignTask = ({ candidateId, jobId }) => {
     const stageData = useSelector(state => state.applicationStage.stageStatuses['Design Task']);
     const candidateData = useSelector(state => state.candidate.candidateData);
     const candidateEmail = useSelector(state => state.candidate.candidateData.email);
+
+
+    // Add this line outside renderContent
+    const isDisabled = stageData?.status === 'Sent' || stageData?.status === 'Pending' || stageData?.status === 'Rejected' || stageData?.status === 'Cleared' || stageData?.status === 'Reviewed';
 
     const [taskDescription, setTaskDescription] = useState('');
     const [dueDate, setDueDate] = useState(null);
@@ -150,6 +158,10 @@ const DesignTask = ({ candidateId, jobId }) => {
                     </div>
                 </div>
             </div>
+
+            {
+                role === ""
+            }
         </div>
     );
 
@@ -247,12 +259,24 @@ const DesignTask = ({ candidateId, jobId }) => {
             case 'Not Assigned':
 
                 return (
-                    <>
-                        <Label icon={WarningIcon} text="Your performance is currently being reviewed. We will notify you once the review is complete." />;
-                        <div>
-                            <h1>Figma Link</h1>
+                    <div className='flex flex-col gap-4'>
+                        <Label icon={WarningIcon} text="Your performance is currently being reviewed. We will notify you once the review is complete." />
+                        <div className='grid grid-cols-2 bg-background-80 p-4 rounded-xl'>
+                            <div>
+                                <p className='typography-small-p text-font-gray'> Task</p>
+                                <a href={ensureAbsoluteUrl(stageData?.submittedTask)} target="_blank" rel="noopener noreferrer" className='typography-body text-font-primary  cursor-pointer flex gap-2' >Design Task_{candidateData.firstName}
+                                    <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M8.99825 12C9.4277 12.5741 9.9756 13.0491 10.6048 13.3929C11.234 13.7367 11.9298 13.9411 12.6449 13.9923C13.36 14.0435 14.0778 13.9403 14.7496 13.6897C15.4214 13.4392 16.0314 13.047 16.5382 12.54L19.5382 9.53997C20.449 8.59695 20.953 7.33394 20.9416 6.02296C20.9302 4.71198 20.4044 3.45791 19.4773 2.53087C18.5503 1.60383 17.2962 1.07799 15.9853 1.0666C14.6743 1.0552 13.4113 1.55918 12.4682 2.46997L10.7482 4.17997M12.9982 9.99996C12.5688 9.42584 12.0209 8.95078 11.3917 8.60703C10.7625 8.26327 10.0667 8.05885 9.3516 8.00763C8.63645 7.95641 7.91866 8.0596 7.2469 8.31018C6.57514 8.56077 5.96513 8.9529 5.45825 9.45996L2.45825 12.46C1.54746 13.403 1.04348 14.666 1.05488 15.977C1.06627 17.288 1.59211 18.542 2.51915 19.4691C3.44619 20.3961 4.70026 20.9219 6.01124 20.9333C7.32222 20.9447 8.58524 20.4408 9.52825 19.53L11.2382 17.82" stroke="#045FFD" stroke-linecap="round" stroke-linejoin="round" />
+                                    </svg>
+
+                                </a>
+                            </div>
+                            <div>
+                                <p className='typography-small-p text-font-gray'> Comment</p>
+                                <p>{stageData?.submittedComment}</p>
+                            </div>
                         </div>
-                    </>
+                    </div>
 
                 )
 
@@ -263,6 +287,7 @@ const DesignTask = ({ candidateId, jobId }) => {
             case 'Reviewed':
                 return renderReviewedStatus();
             case 'Cleared':
+                return renderClearedStatus();
             case 'Rejected':
                 return renderClearedRejectedStatus();
             default:
@@ -353,12 +378,40 @@ const DesignTask = ({ candidateId, jobId }) => {
     };
 
     const renderNotAssignedStatus = () => (
-        <AssigneeSelector
-            mode="default"
-            value={stageData?.assignedTo}
-            onChange={handleAssigneeChange}
-            onSelect={handleAssigneeChange}
-        />
+        <div className='flex flex-col gap-4'>
+            <Label icon={WarningIcon} text="Candidate’s design task has not yet been assigned to a reviewer." />
+
+
+            <div className='grid grid-cols-2 bg-background-80 p-4 rounded-xl'>
+                <div>
+                    <p className='typography-small-p text-font-gray'> Task</p>
+                    <a href={ensureAbsoluteUrl(stageData?.submittedTask)} target="_blank" rel="noopener noreferrer" className='typography-body text-font-primary  flex gap-2' >Design Task_{candidateData.firstName}
+                        <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M8.99825 12C9.4277 12.5741 9.9756 13.0491 10.6048 13.3929C11.234 13.7367 11.9298 13.9411 12.6449 13.9923C13.36 14.0435 14.0778 13.9403 14.7496 13.6897C15.4214 13.4392 16.0314 13.047 16.5382 12.54L19.5382 9.53997C20.449 8.59695 20.953 7.33394 20.9416 6.02296C20.9302 4.71198 20.4044 3.45791 19.4773 2.53087C18.5503 1.60383 17.2962 1.07799 15.9853 1.0666C14.6743 1.0552 13.4113 1.55918 12.4682 2.46997L10.7482 4.17997M12.9982 9.99996C12.5688 9.42584 12.0209 8.95078 11.3917 8.60703C10.7625 8.26327 10.0667 8.05885 9.3516 8.00763C8.63645 7.95641 7.91866 8.0596 7.2469 8.31018C6.57514 8.56077 5.96513 8.9529 5.45825 9.45996L2.45825 12.46C1.54746 13.403 1.04348 14.666 1.05488 15.977C1.06627 17.288 1.59211 18.542 2.51915 19.4691C3.44619 20.3961 4.70026 20.9219 6.01124 20.9333C7.32222 20.9447 8.58524 20.4408 9.52825 19.53L11.2382 17.82" stroke="#045FFD" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+
+                    </a>
+                </div>
+                <div>
+                    <p className='typography-small-p text-font-gray'> Comment</p>
+                    <p>{stageData?.submittedComment}</p>
+                </div>
+            </div>
+
+
+            <div className='flex flex-col gap-2 w-1/2' >
+
+                <label className="typography-body ">Select Reviewer </label>
+
+                <AssigneeSelector
+                    mode="default"
+                    value={stageData?.assignedTo}
+                    onChange={handleAssigneeChange}
+                    onSelect={handleAssigneeChange}
+                />
+            </div>
+
+        </div>
 
     )
 
@@ -373,26 +426,54 @@ const DesignTask = ({ candidateId, jobId }) => {
     const renderPendingStatus = () => (
         <div className="flex flex-col gap-4">
             <Label icon={WarningIcon} text="Design task not sent. Please provide task details and set a due date/time." />
-            <InputField
+            <div >
+
+                <label className="typography-body ">Design task details </label>
+                <span className="text-red-100">*</span>
+            </div>
+            <textarea
                 id="taskDescription"
+                placeholder='Task Description'
                 type="text"
                 label="Task Description"
                 required
+                className="w-full rounded-xl px-3 py-2 bg-background-40  outline-none focus:outline-teal-300"
+                rows="10"
                 value={taskDescription}
                 onChange={(e) => setTaskDescription(e.target.value)}
             />
-            <div className='grid grid-cols-2 gap-4'>
-                <Datepicker onChange={setDueDate} value={dueDate} />
-                <Timepicker onChange={setDueTime} value={dueTime} />
+            <div className='flex justify-normal gap-4'>
+                <div className='w-full'>
+                    <div className='pb-4' >
+
+                        <label className="typography-body ">Due Date</label>
+                        <span className="text-red-100">*</span>
+                    </div>
+
+
+                    <Datepicker onChange={setDueDate} value={dueDate} />
+                </div>
+                <div className='w-full'>
+                    <div className='pb-4'>
+
+                        <label className="typography-body ">Due Time</label>
+                        <span className="text-red-100">*</span>
+                    </div>
+
+                    <Timepicker onChange={setDueTime} value={dueTime} />
+                </div>
             </div>
-            <div className='w-[170px]'>
-                <Button
-                    variant="primary"
-                    disabled={!taskDescription || !dueDate || !dueTime}
-                    onClick={handleSendTask}
-                >
-                    Send Email
-                </Button>
+            <div className='w-full flex justify-end'>
+
+                <div className='w-[170px]'>
+                    <Button
+                        variant="primary"
+                        disabled={!taskDescription || !dueDate || !dueTime}
+                        onClick={handleSendTask}
+                    >
+                        Send Email
+                    </Button>
+                </div>
             </div>
         </div>
     );
@@ -423,7 +504,8 @@ const DesignTask = ({ candidateId, jobId }) => {
                 </div>
                 <div>
                     <span className='typography-small-p text-font-gray'>Task Description</span>
-                    <p className='typography-body mt-2'>{stageData?.taskDescription}</p>
+
+                    <div dangerouslySetInnerHTML={{ __html: stageData?.taskDescription ? formatDescription(stageData?.taskDescription) : '' }}></div>
                 </div>
             </div>
         </div>
@@ -435,40 +517,23 @@ const DesignTask = ({ candidateId, jobId }) => {
 
         <>
             <div className='w-full flex flex-col gap-4'>
-                <div className='w-full grid grid-cols-2'>
-                    <div className='flex flex-col gap-2'>
-                        <p className='typography-small-p text-font-gray'>
-                            Figma Link
-                        </p>
-                        <p className='typography-body flex gap-2 text-font-primary'>
-                            <LinkIcon />
-                            {stageData.submittedTaskLink}
-                        </p>
-                    </div>
-                    <div>
-                        <p className='typography-small-p text-font-gray'>
-                            Comment
-                        </p>
-                        <p className='typography-body'>
-                            {stageData.submittedComment}
-                        </p>
-                    </div>
-                </div>
-
                 <div className='flex justify-between gap-4'>
                     <div className='w-full'>
                         <p className='typography-small-p text-font-gray'>Remarks</p>
                         <p className='typography-body pb-8'>{stageData?.feedback}</p>
                     </div>
-                    <div className='bg-stars bg-cover rounded-xl w-[160px] my-4'>
-                        <div className='p-4 flex flex-col items-center'>
-                            <p className='typography-small-p text-font-gray'>Total Score:</p>
-                            <div className='flex flex-col items-center text-font-accent'>
-                                <p className='display-d2 font-bold'>{stageData?.score}</p>
-                                <p className='typography-small-p text-font-gray'>Out Of 5</p>
+                    {/* this below div */}
+                    {role === 'Hiring Manager' && (
+                        <div className='bg-stars bg-cover rounded-xl w-[160px] my-4'>
+                            <div className='p-4 flex flex-col items-center'>
+                                <p className='typography-small-p text-font-gray'>Total Score:</p>
+                                <div className='flex flex-col items-center text-font-accent'>
+                                    <p className='display-d2 font-bold'>{stageData?.score}</p>
+                                    <p className='typography-small-p text-font-gray'>Out Of 5</p>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    )}
                 </div>
             </div>
             {
@@ -489,21 +554,23 @@ const DesignTask = ({ candidateId, jobId }) => {
     const renderClearedStatus = () => (
         <>
             <div className='w-full '>
-                <div className='flex justify-between gap-4'>
-                    <div className='w-full'>
-                        <p className='typography-small-p text-font-gray'>Remarks</p>
-                        <p className='typography-body pb-8'>{stageData?.feedback}</p>
-                    </div>
-                    <div className='bg-stars bg-cover rounded-xl w-[160px] my-4'>
-                        <div className='p-4 flex flex-col items-center'>
-                            <p className='typography-small-p text-font-gray'>Total Score:</p>
-                            <div className='flex flex-col items-center text-font-accent'>
-                                <p className='display-d2 font-bold'>{stageData?.score}</p>
-                                <p className='typography-small-p text-font-gray'>Out Of 5</p>
+                {role === 'Hiring Manager' && (
+                    <div className='flex justify-between gap-4'>
+                        <div className='w-full'>
+                            <p className='typography-small-p text-font-gray'>Remarks</p>
+                            <p className='typography-body pb-8'>{stageData?.feedback}</p>
+                        </div>
+                        <div className='bg-stars bg-cover rounded-xl w-[160px] my-4'>
+                            <div className='p-4 flex flex-col items-center'>
+                                <p className='typography-small-p text-font-gray'>Total Score:</p>
+                                <div className='flex flex-col items-center text-font-accent'>
+                                    <p className='display-d2 font-bold'>{stageData?.score}</p>
+                                    <p className='typography-small-p text-font-gray'>Out Of 5</p>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>
+                    </div>)}
+                    <Label icon={RightTick} text={"You are now ready to move on to the next round. Our team will contact you soon with further details"}/>
             </div>
         </>
     );
@@ -548,6 +615,15 @@ const DesignTask = ({ candidateId, jobId }) => {
                     </div>
                     <Box display="flex" alignItems="center">
                         <StatusBadge status={stageData?.status} />
+                        {role === 'Hiring Manager' && (
+                            <AssigneeSelector
+                                mode="icon"
+                                value={stageData?.assignedTo}
+                                onChange={handleAssigneeChange}
+                                onSelect={handleAssigneeChange}
+                                disabled={isDisabled} // Disable only if status is 'Rejected' or 'Cleared'
+                            />
+                        )}
                     </Box>
                 </Box>
                 {renderContent()}

@@ -27,6 +27,7 @@ import BulletMarks from '../ui/BulletMarks';
 import Scorer from '../ui/Scorer';
 import { useAuthContext } from '../../context/AuthProvider';
 import BudgetIcon from '../../svg/Staging/BudgetIcon';
+import RightTick from '../../svg/Staging/RightTick';
 
 
 const ScreeningReview = ({ candidate, onSubmit }) => {
@@ -530,7 +531,7 @@ const Screening = ({ candidateId, jobId }) => {
             case 'Reviewed':
                 return <Label icon={WarningIcon} text="Your performance is currently being reviewed. We will notify you once the review is complete" />;
             case 'Cleared':
-                return <Label icon={WarningIcon} text="You are now ready to move on to the next round. Our team will contact you soon with further details" />;
+                return <Label icon={RightTick} text="You are now ready to move on to the next round. Our team will contact you soon with further details" />;
             case 'Rejected':
                 return <Label icon={WarningIcon} text="Unfortunately, you did not clear the round. Thank you for your interest. We encourage you to reapply in the future" />;
             // return renderReviewedContent(true);
