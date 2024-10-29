@@ -12,7 +12,7 @@ const ACTION_TYPES = {
   ARCHIVE: 'ARCHIVE',
   BUDGET: 'BUDGET',
   MOVE: 'MOVE',
-  ASSESSMENT: 'ASSESSMENT', // New action type
+  ASSESSMENT: 'ASSESSMENT',
 };
 
 const ACTION_PROPERTIES = {
@@ -67,7 +67,7 @@ const CLOSE_REASONS = [
   { value: 'Lack of suitable candidates', label: 'Lack of suitable candidates' },
   { value: 'Budget Constraints', label: 'Budget Constraints' },
   { value: 'Changes in business needs', label: 'Changes in business needs' },
-  { value: 'Don’t want more entries', label: 'Don’t want more entries' },
+  { value: 'Dont want more entries', label: 'Dont want more entries' },
 ];
 
 const REJECTION_REASONS = [
@@ -77,7 +77,6 @@ const REJECTION_REASONS = [
   "Candidate did not appear for round two",
   "Candidate did not submit the design task"
 ];
-
 
 const RedWarning = () => {
   return (
@@ -102,7 +101,9 @@ const Modal = ({
   children,
   candidateName,
   jobTitle,
-  companyName
+  companyName,
+  closeReason,
+  onCloseReasonChange
 }) => {
   const [rejectionReason, setRejectionReason] = useState('');
   const [showEmailPreview, setShowEmailPreview] = useState(false);
@@ -117,27 +118,33 @@ const Modal = ({
   const buttonVariant = confirmVariant || action.confirmVariant || 'primary';
 
   const handleReasonSelect = (reason) => {
-    setRejectionReason(reason);
     if (actionType === ACTION_TYPES.REJECT) {
+      setRejectionReason(reason);
       setShowEmailPreview(true);
+    } else if (actionType === ACTION_TYPES.CLOSE) {
+      onCloseReasonChange(reason);
     }
   };
-
   const handleConfirm = () => {
     if (actionType === ACTION_TYPES.ASSESSMENT) {
-      navigate('/assessment/asdasdasdasdas'); // Navigate to assessment page
+        navigate('/assessment/asdasdasdasdas');
     } else if (actionType === ACTION_TYPES.REJECT) {
-      if (!rejectionReason) {
-        alert('Please select a reason for rejecting the candidate.');
-        return;
-      }
-      onConfirm(item, rejectionReason);
+        if (!rejectionReason) {
+            alert('Please select a reason for rejecting the candidate.');
+            return;
+        }
+        onConfirm(item, rejectionReason);
+    } else if (actionType === ACTION_TYPES.CLOSE) {
+        if (!closeReason) {
+            alert('Please select a reason for closing the job.');
+            return;
+        }
+        onConfirm(item); // The closeReason is already available in the parent component
     } else {
-      onConfirm?.(item);
+        onConfirm?.(item);
     }
     onClose();
-  };
-
+};
 
   if (!open) return null;
 
@@ -212,6 +219,33 @@ const Modal = ({
       );
     }
 
+    if (actionType === ACTION_TYPES.CLOSE && action.requiresReason) {
+      return (
+        <>
+          <h1 className="typography-h1">{title}</h1>
+          <p className="text-font-gray typography-body">{message}</p>
+          <div className="mt-4">
+            <label htmlFor="closeReason" className="block typography-body">
+              Please select a reason for closing this job
+            </label>
+            <select
+              id="closeReason"
+              value={closeReason}
+              onChange={(e) => handleReasonSelect(e.target.value)}
+              className="mt-1 block w-full pl-3 pr-10 py-2 text-base bg-background-100 border-gray-300 focus:outline-none focus:ring-teal-400 focus:border-indigo-500 sm:text-sm rounded-md"
+            >
+              <option value="">Select reason</option>
+              {CLOSE_REASONS.map((reason) => (
+                <option key={reason.value} value={reason.value}>
+                  {reason.label}
+                </option>
+              ))}
+            </select>
+          </div>
+        </>
+      );
+    }
+
     return (
       <>
         <h1 className="typography-h1">{title}</h1>
@@ -242,7 +276,10 @@ const Modal = ({
               <Button
                 variant={buttonVariant}
                 onClick={handleConfirm}
-                disabled={actionType === ACTION_TYPES.REJECT && !rejectionReason}
+                disabled={
+                  (actionType === ACTION_TYPES.REJECT && !rejectionReason) ||
+                  (actionType === ACTION_TYPES.CLOSE && !closeReason)
+                }
               >
                 {confirmLabel}
               </Button>

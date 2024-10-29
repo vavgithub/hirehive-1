@@ -119,12 +119,13 @@ const Dashboard = () => {
 
     const closeMutation = useMutation({
         mutationFn: ({ jobId, reason }) =>
-            axios.put(`/jobs/closeJob/${jobId}`, { reason }),
+            axios.put(`/jobs/closeJob/${jobId}`, { reason }), // Add reason to request body
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['jobs'] });
             setModalOpen(false);
+            setCloseReason(''); // Reset the close reason
         },
-    })
+    });
 
     const handleSearch = (event) => {
         setSearchQuery(event.target.value);
@@ -160,7 +161,10 @@ const Dashboard = () => {
                 draftMutation.mutate(job._id);
                 break;
             case ACTION_TYPES.CLOSE:
-                closeMutation.mutate({ jobId: job._id, closeReason });
+                closeMutation.mutate({ 
+                    jobId: job._id, 
+                    reason: closeReason  // Pass the closeReason
+                });
                 break;
             case ACTION_TYPES.REOPEN:
                 reOpenMutation.mutate(job._id)
@@ -375,7 +379,7 @@ const Dashboard = () => {
                         setCloseReason(''); // Reset close reason when modal is closed
                     }}
                     actionType={modalAction}
-                    onConfirm={(job) => confirmAction(job, closeReason)}
+                    onConfirm={(job) => confirmAction(job)}
                     item={selectedJob}
                     customMessage={selectedJob ? getModalMessage(modalAction, selectedJob) : ''}
                     closeReason={closeReason}
