@@ -23,14 +23,18 @@ import CalenderIcon from '../../svg/Staging/CalenderIcon';
 import { Button } from '../ui/Button';
 import { RoundReview } from '../../pages/DesignReviewer/Reviews';
 import Scorer from '../ui/Scorer';
+import { useAuthContext } from '../../context/AuthProvider';
 
 const RoundTwo = ({ candidateId, jobId }) => {
+    const { user } = useAuthContext();
+    const role = user?.role || 'Candidate'; // Default to Candidate if role is not specified
     const dispatch = useDispatch();
     const queryClient = useQueryClient();
     const stageData = useSelector(state => state.applicationStage.stageStatuses['Round 2']);
     const [isRescheduling, setIsRescheduling] = useState(false);
     const candidateData = useSelector(state => state.candidate.candidateData);
 
+    const isDisabled = stageData?.status === 'Rejected' || stageData?.status === 'Cleared' || stageData?.status === 'Reviewed';
 
     const [score, setScore] = useState(0);
     const [feedback, setFeedback] = useState('');
@@ -193,115 +197,177 @@ const RoundTwo = ({ candidateId, jobId }) => {
             case 'Pending':
                 return (
                     <div className="flex flex-col gap-4">
-                        <Label icon={WarningIcon} text="Call not scheduled. Please contact the candidate to schedule the screening call and update the details below" />
-                        <ScheduleForm
-                            candidateId={candidateId}
-                            jobId={jobId}
-                            onSubmit={handleSchedule}
-                        />
+                        {role === "Hiring Manager" && (
+
+                            <div className='flex flex-col gap-2'>
+
+
+                                <Label icon={WarningIcon} text="Call not scheduled. Please contact the candidate to schedule the screening call and update the details below" />
+                                <ScheduleForm
+                                    candidateId={candidateId}
+                                    jobId={jobId}
+                                    onSubmit={handleSchedule}
+                                />
+                            </div>
+                        )}
+
+                        {role === "Candidate" && (
+
+                            <Label icon={WarningIcon} text={"Call not scheduled. Please contact the candidate to schedule the Round 2 call and update the details below"} />
+
+                        )}
                     </div>
                 );
             case 'Call Scheduled':
                 return (
                     <div className='flex flex-col gap-4'>
-                        <Label icon={WarningIcon} text={"The screening call has been scheduled. You can reschedule if needed."} />
-                        <h3 className='typography-h3'>Current Call</h3>
-                        {renderCallDetails(stageData?.currentCall)}
-                        {!isRescheduling && (
-                            <div className='w-[170px]'>
-                                <Button
-                                    variant="secondary"
-                                    onClick={() => setIsRescheduling(true)}
-                                >
-                                    Reschedule Call
-                                </Button>
-                            </div>
-                        )}
-                        {isRescheduling && (
-                            <ScheduleForm
-                                candidateId={candidateId}
-                                jobId={jobId}
-                                onSubmit={handleReschedule}
-                                isRescheduling={true}
-                                initialData={stageData.currentCall}
-                                onCancel={() => setIsRescheduling(false)}
-                            />
-                        )}
-                        {stageData.callHistory && stageData.callHistory.length > 0 && (
-                            <div className='mt-4'>
-                                <h3 className='typography-h3'>Previous Calls</h3>
-                                {stageData.callHistory.map((call, index) => (
-                                    <div key={index} className='mt-2'>
-                                        {renderCallDetails(call)}
-                                        <p className='typography-small-p text-font-gray mt-1'>Status: {call.status}</p>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
+
+                        {
+                            role === "Hiring Manager" && (
+                                <>
+
+
+                                    <Label icon={WarningIcon} text={"The screening call has been scheduled. You can reschedule if needed."} />
+                                    <h3 className='typography-h3'>Current Call</h3>
+                                    {renderCallDetails(stageData?.currentCall)}
+                                    {!isRescheduling && (
+                                        <div className='w-[170px]'>
+                                            <Button
+                                                variant="secondary"
+                                                onClick={() => setIsRescheduling(true)}
+                                            >
+                                                Reschedule Call
+                                            </Button>
+                                        </div>
+                                    )}
+                                    {isRescheduling && (
+                                        <ScheduleForm
+                                            candidateId={candidateId}
+                                            jobId={jobId}
+                                            onSubmit={handleReschedule}
+                                            isRescheduling={true}
+                                            initialData={stageData.currentCall}
+                                            onCancel={() => setIsRescheduling(false)}
+                                        />
+                                    )}
+                                    {stageData.callHistory && stageData.callHistory.length > 0 && (
+                                        <div className='mt-4'>
+                                            <h3 className='typography-h3'>Previous Calls</h3>
+                                            {stageData.callHistory.map((call, index) => (
+                                                <div key={index} className='mt-2'>
+                                                    {renderCallDetails(call)}
+                                                    <p className='typography-small-p text-font-gray mt-1'>Status: {call.status}</p>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </>
+                            )
+                        }
+
+                        {
+                            role === "Candidate" && (
+                                <>
+                                    <Label icon={WarningIcon} text={"The call has been scheduled. Please be prepared to discuss with the founder."} />
+                                    {renderCallDetails(stageData?.currentCall)}
+                                </>
+                            )
+                        }
                     </div>
                 );
             case 'Under Review':
                 return (
                     <div className="flex flex-col  gap-4">
-                        <Label icon={WarningIcon} text="Please review the candidate's performance and provide a score and feedback." />
-
-                        <div className='flex gap-4'>
 
 
-                            <div className="flex flex-col  gap-4">
-                                <span>Score:</span>
-                                <Scorer value={score} onChange={setScore} />
-                            </div>
-                            <div className="flex flex-col w-full  gap-4">
-                                <span>Feedback:</span>
+                        {role === "Hiring Manager" && (
+                            <>
+                                <Label icon={WarningIcon} text="Please review the candidate's performance and provide a score and feedback." />
 
-                                <textarea
-                                    className="w-full bg-background-80 text-white p-2 rounded"
-                                    placeholder="Enter your feedback"
-                                    value={feedback}
-                                    onChange={(e) => setFeedback(e.target.value)}
-                                    rows={4}
-                                />
-                            </div>
+                                <div className='flex gap-4'>
 
-                        </div>
-                        <div className='flex justify-end'>
 
-                            <div className='w-[256px]'>
 
-                                <Button onClick={handleScoreSubmit} disabled={score === 0 || feedback === ''}>
-                                    Submit Score
-                                </Button>
-                            </div>
-                        </div>
+                                    <div className="flex flex-col w-full  gap-4">
+                                        <span>Feedback:</span>
+
+                                        <textarea
+                                            className="w-full rounded-xl px-3 py-2 bg-background-40  outline-none focus:outline-teal-300"
+                                            placeholder="Enter your feedback"
+                                            value={feedback}
+                                            onChange={(e) => setFeedback(e.target.value)}
+                                            rows={4}
+                                        />
+                                    </div>
+                                    <div className="flex flex-col  gap-4">
+                                        <span>Score:</span>
+                                        <Scorer value={score} onChange={setScore} />
+                                    </div>
+
+                                </div>
+                                <div className='flex justify-end'>
+
+                                    <div className='w-[256px]'>
+
+                                        <Button onClick={handleScoreSubmit} disabled={score === 0 || feedback === ''}>
+                                            Submit Score
+                                        </Button>
+                                    </div>
+                                </div>
+                            </>)}
+
+                        {
+                            role === "Candidate" && (
+                                <>
+                                    <Label icon={WarningIcon} text={"Your performance is currently being reviewed. We will notify you once the review is complete."} />
+                                </>
+                            )
+                        }
                     </div>
                 );
             case 'Reviewed':
                 return (
                     <>
-                        <div className='w-full'>
-                            <div className='flex justify-between gap-4'>
+
+                        {
+                            role === "Hiring Manager" && (
+
                                 <div className='w-full'>
-                                    <p className='typography-small-p text-font-gray'>Remarks</p>
-                                    <p className='typography-body pb-8'>{stageData?.feedback}</p>
-                                </div>
-                                <div className='bg-stars bg-cover rounded-xl w-[160px] my-4'>
-                                    <div className='p-4 flex flex-col items-center'>
-                                        <p className='typography-small-p text-font-gray'>Total Score:</p>
-                                        <div className='flex flex-col items-center text-font-accent'>
-                                            <p className='display-d2 font-bold'>{stageData?.score}</p>
-                                            <p className='typography-small-p text-font-gray'>Out Of 5</p>
+                                    <div className='flex justify-between gap-4'>
+                                        <div className='w-full'>
+                                            <p className='typography-small-p text-font-gray'>Remarks</p>
+                                            <p className='typography-body pb-8'>{stageData?.feedback}</p>
+                                        </div>
+                                        <div className='bg-stars bg-cover rounded-xl w-[160px] my-4'>
+                                            <div className='p-4 flex flex-col items-center'>
+                                                <p className='typography-small-p text-font-gray'>Total Score:</p>
+                                                <div className='flex flex-col items-center text-font-accent'>
+                                                    <p className='display-d2 font-bold'>{stageData?.score}</p>
+                                                    <p className='typography-small-p text-font-gray'>Out Of 5</p>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
+                                    <StageActions
+                                        stage="Round 2"
+                                        candidateId={candidateId}
+                                        jobId={jobId}
+                                        isBudgetScoreSubmitted={true}
+                                    />
                                 </div>
-                            </div>
-                        </div>
-                        <StageActions
-                            stage="Round 2"
-                            candidateId={candidateId}
-                            jobId={jobId}
-                            isBudgetScoreSubmitted={true}
-                        />
+
+
+                            )
+                        }
+
+                        {
+                            role === "Candidate" && (
+                                <>
+                                    <Label icon={WarningIcon} text={"Your performance is currently being reviewed. We will notify you once the review is complete."} />
+                                </>
+                            )
+                        }
+
                     </>
                 );
             case 'Cleared':
@@ -347,12 +413,15 @@ const RoundTwo = ({ candidateId, jobId }) => {
                     </div>
                     <Box display="flex" alignItems="center">
                         <StatusBadge status={stageData?.status} />
-                        <AssigneeSelector
-                            mode="icon"
-                            value={stageData?.assignedTo}
-                            onChange={handleAssigneeChange}
-                            onSelect={handleAssigneeChange}
-                        />
+                        {role === 'Hiring Manager' && (
+                            <AssigneeSelector
+                                mode="icon"
+                                value={stageData?.assignedTo}
+                                onChange={handleAssigneeChange}
+                                onSelect={handleAssigneeChange}
+                                disabled={isDisabled} // Disable only if status is 'Rejected' or 'Cleared'
+                            />
+                        )}
                     </Box>
                 </Box>
                 {renderContent()}

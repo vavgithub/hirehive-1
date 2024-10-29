@@ -28,33 +28,33 @@ import RightTick from '../../svg/Staging/RightTick';
 const RoundReview = ({ candidate, onSubmit }) => {
     const [rating, setRating] = useState(0);
     const [feedback, setFeedback] = useState('');
-  
+
     const handleSubmit = () => {
-      onSubmit(candidate._id, {
-        jobId: candidate.jobApplication.jobId,
-        stage: `Round 1`,
-        ratings: rating,
-        feedback,
-      });
+        onSubmit(candidate._id, {
+            jobId: candidate.jobApplication.jobId,
+            stage: `Round 1`,
+            ratings: rating,
+            feedback,
+        });
     };
-  
-  
+
+
     return (
-      <div className='bg-background-100 flex gap-4 justify-between items-center p-4'>
-        <span className='flex-shrink-0'>{`Round 1 ratings`}</span>
-        <Scorer value={rating} onChange={setRating} />
-  
-        <input
-          type="text"
-          className='w-full bg-background-80 text-white p-2 rounded'
-          placeholder='Enter Your Feedback'
-          value={feedback}
-          onChange={(e) => setFeedback(e.target.value)}
-        />
-        <Button variant="icon" onClick={handleSubmit}>Submit</Button>
-      </div>
+        <div className='bg-background-100 flex gap-4 justify-between items-center p-4'>
+            <span className='flex-shrink-0'>{`Round 1 ratings`}</span>
+            <Scorer value={rating} onChange={setRating} />
+
+            <input
+                type="text"
+                className='w-full bg-background-80 text-white p-2 rounded'
+                placeholder='Enter Your Feedback'
+                value={feedback}
+                onChange={(e) => setFeedback(e.target.value)}
+            />
+            <Button variant="icon" onClick={handleSubmit}>Submit</Button>
+        </div>
     );
-  };
+};
 
 const RoundOne = ({ candidateId, jobId }) => {
     const { user } = useAuthContext();
@@ -65,32 +65,35 @@ const RoundOne = ({ candidateId, jobId }) => {
     const [isRescheduling, setIsRescheduling] = useState(false);
     const candidateData = useSelector(state => state.candidate.candidateData);
 
+
+    const isDisabled = stageData?.status === 'Rejected' || stageData?.status === 'Cleared' || stageData?.status === 'Reviewed';
+
     console.log("Current stage data:", stageData);
 
-    
+
     const submitReview = async ({ candidateId, reviewData }) => {
         const response = await axios.post('dr/submit-score-review', {
-          candidateId,
-          ...reviewData,
+            candidateId,
+            ...reviewData,
         });
         return response.data;
-      };
+    };
 
     const handleReviewSubmit = (candidateId, reviewData) => {
         submitReviewMutation.mutate({ candidateId, reviewData });
-      };
+    };
 
     const submitReviewMutation = useMutation({
         mutationFn: submitReview,
         onSuccess: () => {
 
             queryClient.invalidateQueries(['candidate', candidateId, jobId]);
-          showSuccessToast('Review Submitted', 'Your review has been successfully submitted.');
+            showSuccessToast('Review Submitted', 'Your review has been successfully submitted.');
         },
         onError: (error) => {
-          showErrorToast('Submission Failed', error.response?.data?.message || 'An error occurred while submitting your review.');
+            showErrorToast('Submission Failed', error.response?.data?.message || 'An error occurred while submitting your review.');
         },
-      });
+    });
 
     const updateAssigneeMutation = useMutation({
         mutationFn: (newAssignee) => axios.put('dr/update-assignee', {
@@ -287,11 +290,11 @@ const RoundOne = ({ candidateId, jobId }) => {
                     </div>
                 );
             case 'Under Review':
-                return(
+                return (
                     <div>
 
-                    <Label text="Please review the candidate’s performance and update the details below."/>
-                    <RoundReview roundNumber={1} candidate={candidateData} onSubmit={handleReviewSubmit}/>
+                        <Label text="Please review the candidate’s performance and update the details below." />
+                        <RoundReview roundNumber={1} candidate={candidateData} onSubmit={handleReviewSubmit} />
                     </div>
                 )
             case 'Reviewed':
@@ -426,12 +429,15 @@ const RoundOne = ({ candidateId, jobId }) => {
                     </div>
                     <Box display="flex" alignItems="center">
                         <StatusBadge status={stageData?.status} />
-                        <AssigneeSelector
-                            mode="icon"
-                            value={stageData?.assignedTo}
-                            onChange={handleAssigneeChange}
-                            onSelect={handleAssigneeChange}
-                        />
+                        {role === 'Hiring Manager' && (
+                            <AssigneeSelector
+                                mode="icon"
+                                value={stageData?.assignedTo}
+                                onChange={handleAssigneeChange}
+                                onSelect={handleAssigneeChange}
+                                disabled={isDisabled} // Disable only if status is 'Rejected' or 'Cleared'
+                            />
+                        )}
                     </Box>
                 </Box>
                 {renderContent()}
