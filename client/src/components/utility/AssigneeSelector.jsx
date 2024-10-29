@@ -16,7 +16,7 @@ import { fetchAvailableDesignReviewers } from '../../api/authApi';
 import SearchIcon from '../../svg/SearchIcon';
 // import SearchIcon from '@mui/icons-material/Search';
 
-const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect }) => {
+const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled = false }) => {
   const [reviewers, setReviewers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedReviewer, setSelectedReviewer] = useState(null);
@@ -52,21 +52,24 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect }) => {
 
   // Handle selection change
   const handleSelect = (reviewer) => {
-    setSelectedReviewer(reviewer);
-    if (onChange) onChange(reviewer);
-    if (onSelect) onSelect(reviewer);
-    handleClose();
+    if (!disabled) {
+      setSelectedReviewer(reviewer);
+      if (onChange) onChange(reviewer);
+      if (onSelect) onSelect(reviewer);
+      handleClose();
+    }
   };
 
   // Menu open and close handlers
   const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-    setSearchTerm('');
+    if (!disabled) {
+      setAnchorEl(event.currentTarget);
+      setSearchTerm('');
+    }
   };
   const handleClose = () => {
     setAnchorEl(null);
   };
-
   // Filtered reviewers based on search term
   const filteredReviewers = reviewers.filter(reviewer =>
     reviewer.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -76,7 +79,7 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect }) => {
   if (mode === 'icon') {
     return (
       <>
-        <IconButton onClick={handleClick} size="small">
+        <IconButton onClick={handleClick} size="small" disabled={disabled}>
           {selectedReviewer ? (
             <Avatar src={selectedReviewer.profilePicture} sx={{ width: 32, height: 32 }}>
               {selectedReviewer.name[0].toUpperCase()}
@@ -154,79 +157,86 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect }) => {
   // For 'default' mode
   return (
     <Autocomplete
-  options={reviewers}
-  getOptionLabel={(option) => option.name || ''}
-  loading={isLoading}
-  value={selectedReviewer}
-  onChange={(event, newValue) => handleSelect(newValue)}
-  ListboxProps={{
-    sx: {
-      backgroundColor: 'black', // Set the background color of the list
-    },
-  }}
-  renderInput={(params) => (
-    <TextField
-      {...params}
-      variant="outlined" // Keep the variant as 'outlined' if you prefer
-      InputLabelProps={{
-        shrink: false, // Prevent the label from shrinking
-        style: { display: 'none' }, // Hide the label visually
-      }}
-      sx={{
-        "& .MuiInputBase-input": {
-          color: "white",
-          fontFamily: "Outfit",
-        },
-        "& .MuiOutlinedInput-root": {
-          "& fieldset": {
-            border: "none", // Remove the border
-          },
+      options={reviewers}
+      getOptionLabel={(option) => option.name || ''}
+      loading={isLoading}
+      value={selectedReviewer}
+      onChange={(event, newValue) => handleSelect(newValue)}
+      ListboxProps={{
+        sx: {
+          backgroundColor: 'black', // Set the background color of the list
         },
       }}
-      InputProps={{
-        ...params.InputProps,
-        endAdornment: (
-          <>
-            {isLoading ? <CircularProgress color="inherit" size={20} /> : null}
-            {params.InputProps.endAdornment}
-          </>
-        ),
-        startAdornment: (
-          <>
-            <Avatar sx={{ width: 24, height: 24, marginRight: 1 }}>
-              {selectedReviewer ? selectedReviewer.name[0].toUpperCase() : 'A'}
+      renderInput={(params) => (
+        <TextField
+          {...params}
+          placeholder='Select Reviewer'
+          variant="outlined" // Keep the variant as 'outlined' if you prefer
+          InputLabelProps={{
+            shrink: false, // Prevent the label from shrinking
+            style: { display: 'none' }, // Hide the label visually
+          }}
+          sx={{
+            "& .MuiInputBase-input": {
+              color: "white",
+              fontFamily: "Outfit",
+            },
+            "& .MuiOutlinedInput-root": {
+              "& fieldset": {
+                border: "none", // Remove the border
+              },
+            },
+          }}
+          InputProps={{
+            ...params.InputProps,
+            endAdornment: (
+              <>
+                {isLoading ? <CircularProgress color="inherit" size={20} /> : null}
+                {params.InputProps.endAdornment}
+              </>
+            ),
+            startAdornment: (
+              <>
+                <Avatar src={selectedReviewer?.profilePicture} sx={{ width: 24, height: 24, marginRight: 1 }}>
+                  {selectedReviewer ? selectedReviewer.name[0].toUpperCase() : (
+                    // Render your own icon here
+                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                      <rect width="32" height="32" rx="16" fill="#1B1C1D" />
+                      <path d="M18.6641 22V20.6667C18.6641 19.9594 18.3831 19.2811 17.883 18.7811C17.3829 18.281 16.7046 18 15.9974 18H11.3307C10.6235 18 9.94521 18.281 9.44511 18.7811C8.94501 19.2811 8.66406 19.9594 8.66406 20.6667V22M21.3307 13.3333V17.3333M23.3307 15.3333H19.3307M16.3307 12.6667C16.3307 14.1394 15.1368 15.3333 13.6641 15.3333C12.1913 15.3333 10.9974 14.1394 10.9974 12.6667C10.9974 11.1939 12.1913 10 13.6641 10C15.1368 10 16.3307 11.1939 16.3307 12.6667Z" stroke="white" strokeWidth="0.825" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  )}
+                </Avatar>
+                {params.InputProps.startAdornment}
+              </>
+            ),
+          }}
+        />
+      )}
+      renderOption={(props, option) => (
+        <MenuItem
+          {...props}
+          key={option._id}
+          sx={{
+            backgroundColor: 'black', // Set the background color of each option
+            color: 'white',           // Set the text color of each option
+            fontFamily: 'Outfit',
+            '&:hover': {
+              backgroundColor: 'gray', // Optional: Change background on hover
+            },
+            '&.Mui-selected': {
+              backgroundColor: 'darkgray', // Optional: Change background when selected
+            },
+          }}
+        >
+          <ListItemAvatar>
+            <Avatar src={option?.profilePicture} sx={{ width: 32, height: 32 }}>
+              {option.name[0].toUpperCase()}
             </Avatar>
-            {params.InputProps.startAdornment}
-          </>
-        ),
-      }}
+          </ListItemAvatar>
+          <ListItemText primary={option.name} />
+        </MenuItem>
+      )}
     />
-  )}
-  renderOption={(props, option) => (
-    <MenuItem
-      {...props}
-      key={option._id}
-      sx={{
-        backgroundColor: 'black', // Set the background color of each option
-        color: 'white',           // Set the text color of each option
-        fontFamily: 'Outfit',
-        '&:hover': {
-          backgroundColor: 'gray', // Optional: Change background on hover
-        },
-        '&.Mui-selected': {
-          backgroundColor: 'darkgray', // Optional: Change background when selected
-        },
-      }}
-    >
-      <ListItemAvatar>
-        <Avatar sx={{ width: 32, height: 32 }}>
-          {option.name[0].toUpperCase()}
-        </Avatar>
-      </ListItemAvatar>
-      <ListItemText primary={option.name} />
-    </MenuItem>
-  )}
-/>
 
   );
 };

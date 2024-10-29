@@ -81,7 +81,7 @@ const ApplicationStaging = ({ candidateId, jobId }) => {
                             <div className="stage-icon">
                                 {getStageIcon(stage, index)}
                             </div>
-                            <div className="stage-name mb-2 typography-body">{stage}</div>
+                            <div className={`stage-name mb-2 typography-body ${stage === currentStage ? "text-font-accent" : "text-white"}`} >{stage}</div>
                         </div>
                         {index < stages.length - 1 && (
                             <div className="progress-bar flex-grow mx-2 flex justify-center">
