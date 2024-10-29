@@ -35,25 +35,21 @@ const fetchTotalScore = async (candidateId, jobId) => {
     return data;
 }
 
-// Transform the fetched data to match the expected structure
+// Update the transformCandidateData function
 const transformCandidateData = (data) => {
+    const professionalInfo = data.jobApplication.professionalInfo;
+    
     return {
         professionalDetails: [
-            { label: 'Experience', value: data.experience || 'Not provided' },
-            { label: 'Notice Period', value: data.noticePeriod || '1 Month' },
-            { label: 'Current CTC', value: data.currentCtc || '4 LPA' },
-            { label: 'Expected CTC', value: data.expectedCtc || '8 LPA' },
+            { label: 'Experience', value: `${professionalInfo.experience} Years` },
+            { label: 'Notice Period', value: `${professionalInfo.noticePeriod} Days` },
+            { label: 'Current CTC', value: `${professionalInfo.currentCTC} LPA` },
+            { label: 'Expected CTC', value: `${professionalInfo.expectedCTC} LPA` },
         ],
-        previousExperiences: data.previousExperiences?.map((experience) => ({
-            company: experience.company,
-            position: experience.position,
-            startDate: experience.startDate,
-            endDate: experience.endDate,
-        })) || [],
-        skillSet: data.skillSet || ['Figma', 'Sketch', 'Adobe Suites', 'Zeplin'],
+        // Remove previousExperiences since it's not in the API yet
+        skillSet: professionalInfo.skills || [],
     };
 };
-
 
 const ViewCandidateProfile = () => {
     const { user } = useAuthContext();
@@ -120,7 +116,7 @@ const ViewCandidateProfile = () => {
         },
         {
             name: 'candidateDetails',
-            label: 'CandidateDetails',
+            label: 'Candidate Details', // Add the space here
             icon: <CandidateDetailsIcon />,
             activeIcon: <CandidateDetailsIconActive />,
         },
