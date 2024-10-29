@@ -142,7 +142,7 @@ export const ScheduleForm = ({ candidateId, jobId, onSubmit, isRescheduling, ini
             />
             <div className='flex gap-4'>
                 {isRescheduling ? (
-                    <>
+                    <div className='flex gap-4 w-full justify-end'>
                         <div className='w-[170px]'>
                             <Button
                                 variant="secondary"
@@ -160,7 +160,7 @@ export const ScheduleForm = ({ candidateId, jobId, onSubmit, isRescheduling, ini
                                 Save Changes
                             </Button>
                         </div>
-                    </>
+                    </div>
                 ) : (
                     <div className='flex w-full justify-end'>
 
@@ -189,7 +189,10 @@ const Screening = ({ candidateId, jobId }) => {
     const queryClient = useQueryClient();
     const stageData = useSelector(state => state.applicationStage.stageStatuses.Screening);
     const candidateData = useSelector(state => state.candidate.candidateData);
-    console.log(candidateData);
+
+    // Add this line outside renderContent
+    const isDisabled = stageData?.status === 'Rejected' || stageData?.status === 'Cleared' || stageData?.status === 'Reviewed';
+
 
     const { user } = useAuthContext();
     const role = user?.role || 'Candidate';
@@ -289,7 +292,7 @@ const Screening = ({ candidateId, jobId }) => {
             );
         } else {
             return (
-                <div className='bg-stars bg-cover rounded-xl w-[160px] my-4'>
+                <div className='bg-stars bg-cover rounded-xl w-[160px] '>
                     <div className='p-4 flex flex-col items-center'>
                         <p className='typography-small-p text-font-gray'>Total Score:</p>
                         <div className='flex flex-col items-center text-font-accent'>
@@ -439,13 +442,17 @@ const Screening = ({ candidateId, jobId }) => {
                         <h3 className='typography-h3'>Current Call</h3>
                         {renderCallDetails(stageData?.currentCall)}
                         {!isRescheduling && (
-                            <div className='w-[170px]'>
-                                <Button
-                                    variant="secondary"
-                                    onClick={() => setIsRescheduling(true)}
-                                >
-                                    Reschedule Call
-                                </Button>
+                            <div className='w-full flex justify-end '>
+
+
+                                <div className='w-[170px]'>
+                                    <Button
+                                        variant="secondary"
+                                        onClick={() => setIsRescheduling(true)}
+                                    >
+                                        Reschedule Call
+                                    </Button>
+                                </div>
                             </div>
                         )}
                         {isRescheduling && (
@@ -542,14 +549,19 @@ const Screening = ({ candidateId, jobId }) => {
                         <p className='typography-small-p text-font-gray'>Feedback</p>
                         <p className='typography-body pb-2'>{stageData?.feedback}</p>
                     </div>
-                    <div className='flex gap-4 pb-4'>
-                        <div className='w-full'>
+                    <div className='flex gap-4 pb-4 w-full'>
+                        <div className='w-full flex  flex-col'>
                             <p className='typography-small-p text-font-gray mb-4'>Score</p>
-                            <div className='p-2 rounded-xl bg-background-60'>
-                                {renderScoreCategories()}
+                            <div className='grid grid-cols-2 gap-4'>
+                                <div className='p-2   rounded-xl bg-background-60'>
+                                    {renderScoreCategories()}
+                                </div>
+                                <div>
+                                    {!isReadOnly && renderBudgetScoreSection()}
+
+                                </div>
                             </div>
                         </div>
-                        {!isReadOnly && renderBudgetScoreSection()}
                     </div>
                 </div>
             </div>
@@ -596,7 +608,7 @@ const Screening = ({ candidateId, jobId }) => {
         ];
 
         return categories.map((category, index) => (
-            <div key={index} className='flex items-center justify-between'>
+            <div key={index} className='flex items-center w-full justify-between'>
                 <span className='typography-small-p text-font-gray'>{category.label}</span>
                 <BulletMarks marks={category.value} />
             </div>
@@ -687,6 +699,7 @@ const Screening = ({ candidateId, jobId }) => {
                                     value={stageData?.assignedTo}
                                     onChange={handleAssigneeChange}
                                     onSelect={handleAssigneeChange}
+                                    disabled={isDisabled} // Disable only if status is 'Rejected' or 'Cleared'
                                 />
 
                             )
