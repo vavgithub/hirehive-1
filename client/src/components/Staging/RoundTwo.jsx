@@ -24,6 +24,8 @@ import { Button } from '../ui/Button';
 import { RoundReview } from '../../pages/DesignReviewer/Reviews';
 import Scorer from '../ui/Scorer';
 import { useAuthContext } from '../../context/AuthProvider';
+import GreenTickIcon from '../../svg/Staging/GreenTickIcon';
+import RightTick from '../../svg/Staging/RightTick';
 
 const RoundTwo = ({ candidateId, jobId }) => {
     const { user } = useAuthContext();
@@ -374,21 +376,37 @@ const RoundTwo = ({ candidateId, jobId }) => {
             case 'Rejected':
                 return (
                     <div className='w-full'>
-                        <div className='flex justify-between gap-4'>
-                            <div className='w-full'>
-                                <p className='typography-small-p text-font-gray'>Remarks</p>
-                                <p className='typography-body pb-8'>{stageData?.status === 'Rejected' ? stageData?.rejectionReason : stageData?.feedback}</p>
-                            </div>
-                            <div className='bg-stars bg-cover rounded-xl w-[160px] my-4'>
-                                <div className='p-4 flex flex-col items-center'>
-                                    <p className='typography-small-p text-font-gray'>Total Score:</p>
-                                    <div className='flex flex-col items-center text-font-accent'>
-                                        <p className='display-d2 font-bold'>{stageData?.score}</p>
-                                        <p className='typography-small-p text-font-gray'>Out Of 5</p>
+
+                        {
+                            role === "Hiring Manager" && (
+
+
+                                <div className='flex justify-between gap-4'>
+                                    <div className='w-full'>
+                                        <p className='typography-small-p text-font-gray'>Remarks</p>
+                                        <p className='typography-body pb-8'>{stageData?.status === 'Rejected' ? stageData?.rejectionReason : stageData?.feedback}</p>
+                                    </div>
+                                    <div className='bg-stars bg-cover rounded-xl w-[160px] my-4'>
+                                        <div className='p-4 flex flex-col items-center'>
+                                            <p className='typography-small-p text-font-gray'>Total Score:</p>
+                                            <div className='flex flex-col items-center text-font-accent'>
+                                                <p className='display-d2 font-bold'>{stageData?.score}</p>
+                                                <p className='typography-small-p text-font-gray'>Out Of 5</p>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
+
+                            )
+                        }
+
+                        {
+                            role === "Candidate" && (
+                                <>
+                                    <Label icon={RightTick} text={"Congratulations! You will be contacted soon for the next stage of the application process."} />
+                                </>
+                            )
+                        }
                     </div>
                 );
             default:

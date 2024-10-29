@@ -75,7 +75,6 @@ export const rejectCandidate = async (req, res) => {
     try {
         const { candidateId, jobId, currentStage } = req.body;
 
-
         // Find the candidate and job
         const candidate = await candidates.findById(candidateId);
         const job = await jobs.findById(jobId);
@@ -91,13 +90,12 @@ export const rejectCandidate = async (req, res) => {
             return res.status(404).json({ message: 'Job application not found for this candidate' });
         }
 
-
         // Validate the current stage
         if (jobApplication.currentStage !== currentStage) {
             return res.status(400).json({ message: 'Invalid current stage' });
         }
 
-        const jobProfile = job.jobProfile; // Assuming job has a jobProfile field
+        const jobProfile = job.jobProfile;
         const stages = jobStagesStatuses[jobProfile];
         
         // Find the index of the current stage
@@ -123,14 +121,16 @@ export const rejectCandidate = async (req, res) => {
             const nextStageConfig = stages[currentStageIndex + 1];
             const nextStage = nextStageConfig.name;
 
-
             // Update the current (previous) stage status to 'Cleared'
             jobApplication.stageStatuses.get(currentStage).status = 'Cleared';
 
-
             // Initialize or update the next stage
+            // Check if the next stage is "Hired" stage
+            const isNextStageHired = nextStage === 'Hired';
+
             jobApplication.stageStatuses.set(nextStage, {
-                status: nextStageConfig.requiresCall ? 'Pending' : 'Not Assigned',
+                // Set status to 'Under Review' if it's Hired stage, otherwise follow the normal logic
+                status: isNextStageHired ? 'Under Review' : (nextStageConfig.requiresCall ? 'Pending' : 'Not Assigned'),
                 rejectionReason: 'N/A',
                 assignedTo: null,
                 score: {},
@@ -138,18 +138,15 @@ export const rejectCandidate = async (req, res) => {
                 callHistory: []
             });
 
-
             // Update the current stage
             jobApplication.currentStage = nextStage;
         }
-
 
         // Mark the jobApplications field as modified
         candidate.markModified('jobApplications');
 
         // Save the updated candidate document
         await candidate.save();
-
 
         res.status(200).json({ 
             message: isLastStage ? 'Candidate accepted in the final stage' : 'Candidate moved to next stage successfully',

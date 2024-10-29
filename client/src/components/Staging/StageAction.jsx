@@ -63,7 +63,7 @@ const StageActions = ({ stage, candidateId, jobId, isBudgetScoreSubmitted }) => 
         <div className='flex justify-end gap-4'>
            <div className='w-[176px]'>
                 <Button
-                    variant="cancel"
+                    variant="cancelSec"
                     onClick={() => setIsRejectModalOpen(true)}
                     disabled={!isBudgetScoreSubmitted}
                 >
