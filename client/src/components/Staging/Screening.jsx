@@ -26,53 +26,54 @@ import CopyToClipboard from 'react-copy-to-clipboard';
 import BulletMarks from '../ui/BulletMarks';
 import Scorer from '../ui/Scorer';
 import { useAuthContext } from '../../context/AuthProvider';
+import BudgetIcon from '../../svg/Staging/BudgetIcon';
 
 
 const ScreeningReview = ({ candidate, onSubmit }) => {
     const [ratings, setRatings] = useState({
-      Attitude: 0, Communication: 0, UX: 0, UI: 0, Tech: 0
+        Attitude: 0, Communication: 0, UX: 0, UI: 0, Tech: 0
     });
     const [feedback, setFeedback] = useState('');
-  
+
     const handleRatingChange = (category, value) => {
-      setRatings(prev => ({ ...prev, [category]: value }));
+        setRatings(prev => ({ ...prev, [category]: value }));
     };
     const handleSubmit = () => {
-      onSubmit(candidate._id, {
-        jobId: candidate.jobApplication.jobId,
-        stage: candidate.jobApplication.currentStage,
-        ratings,
-        feedback,
-      });
+        onSubmit(candidate._id, {
+            jobId: candidate.jobApplication.jobId,
+            stage: candidate.jobApplication.currentStage,
+            ratings,
+            feedback,
+        });
     };
-  
+
     return (
-      <div className='bg-background-90 grid grid-cols-2 gap-4 p-4'>
-        {Object.entries(ratings).map(([category, value]) => (
-          <div key={category} className='flex gap-4 items-center'>
-            <span className='w-32'>{category}</span>
-            <Scorer value={ratings[category]} onChange={(v) => handleRatingChange(category, v)} />
-  
-          </div>
-        ))}
-        <div className='flex gap-4'>
-  
-          <input
-            type="text"
-            className='w-full bg-background-80 text-white p-2 rounded'
-            placeholder='Enter Your Feedback'
-            value={feedback}
-            onChange={(e) => setFeedback(e.target.value)}
-          />
-          <div>
-            <Button variant="icon" onClick={handleSubmit}>Submit</Button>
-  
-          </div>
+        <div className='bg-background-90 grid grid-cols-2 gap-4 p-4'>
+            {Object.entries(ratings).map(([category, value]) => (
+                <div key={category} className='flex gap-4 items-center'>
+                    <span className='w-32'>{category}</span>
+                    <Scorer value={ratings[category]} onChange={(v) => handleRatingChange(category, v)} />
+
+                </div>
+            ))}
+            <div className='flex gap-4'>
+
+                <input
+                    type="text"
+                    className='w-full bg-background-80 text-white p-2 rounded'
+                    placeholder='Enter Your Feedback'
+                    value={feedback}
+                    onChange={(e) => setFeedback(e.target.value)}
+                />
+                <div>
+                    <Button variant="icon" onClick={handleSubmit}>Submit</Button>
+
+                </div>
+            </div>
+
         </div>
-  
-      </div>
     );
-  };
+};
 
 export const ScheduleForm = ({ candidateId, jobId, onSubmit, isRescheduling, initialData, onCancel }) => {
     const [date, setDate] = useState(isRescheduling ? null : (initialData ? new Date(initialData.scheduledDate) : null));
@@ -96,14 +97,40 @@ export const ScheduleForm = ({ candidateId, jobId, onSubmit, isRescheduling, ini
     return (
         <div className="flex flex-col gap-4">
             <div className='grid grid-cols-3 gap-4'>
-                <Datepicker onChange={setDate} value={date} />
-                <Timepicker onChange={setTime} value={time} />
-                <AssigneeSelector
-                    mode="default"
-                    value={assignee}
-                    onChange={setAssignee}
-                    onSelect={setAssignee}
-                />
+
+                <div className='flex flex-col gap-2'>
+                    <div>
+
+                        <label className="typography-body ">Date</label>
+                        <span className="text-red-100">*</span>
+                    </div>
+                    <Datepicker onChange={setDate} value={date} />
+                </div>
+
+
+                <div className='flex flex-col gap-2'>
+                    <div>
+
+                        <label className="typography-body ">Time</label>
+                        <span className="text-red-100">*</span>
+                    </div>
+                    <Timepicker onChange={setTime} value={time} />
+                </div>
+
+
+                <div className='flex flex-col gap-2'>
+                    <div>
+
+                        <label className="typography-body ">Reviewer</label>
+                        <span className="text-red-100">*</span>
+                    </div>
+                    <AssigneeSelector
+                        mode="default"
+                        value={assignee}
+                        onChange={setAssignee}
+                        onSelect={setAssignee}
+                    />
+                </div>
             </div>
             <InputField
                 id="meetingLink"
@@ -135,14 +162,18 @@ export const ScheduleForm = ({ candidateId, jobId, onSubmit, isRescheduling, ini
                         </div>
                     </>
                 ) : (
-                    <div className='w-[170px]'>
-                        <Button
-                            variant="primary"
-                            disabled={!isFormValid}
-                            onClick={handleSubmit}
-                        >
-                            Schedule Call
-                        </Button>
+                    <div className='flex w-full justify-end'>
+
+
+                        <div className='w-[170px]'>
+                            <Button
+                                variant="primary"
+                                disabled={!isFormValid}
+                                onClick={handleSubmit}
+                            >
+                                Schedule Call
+                            </Button>
+                        </div>
                     </div>
                 )}
             </div>
@@ -158,6 +189,7 @@ const Screening = ({ candidateId, jobId }) => {
     const queryClient = useQueryClient();
     const stageData = useSelector(state => state.applicationStage.stageStatuses.Screening);
     const candidateData = useSelector(state => state.candidate.candidateData);
+    console.log(candidateData);
 
     const { user } = useAuthContext();
     const role = user?.role || 'Candidate';
@@ -206,27 +238,27 @@ const Screening = ({ candidateId, jobId }) => {
 
     const submitReview = async ({ candidateId, reviewData }) => {
         const response = await axios.post('dr/submit-score-review', {
-          candidateId,
-          ...reviewData,
+            candidateId,
+            ...reviewData,
         });
         return response.data;
-      };
+    };
 
     const handleReviewSubmit = (candidateId, reviewData) => {
         submitReviewMutation.mutate({ candidateId, reviewData });
-      };
+    };
 
     const submitReviewMutation = useMutation({
         mutationFn: submitReview,
         onSuccess: () => {
 
             queryClient.invalidateQueries(['candidate', candidateId, jobId]);
-          showSuccessToast('Review Submitted', 'Your review has been successfully submitted.');
+            showSuccessToast('Review Submitted', 'Your review has been successfully submitted.');
         },
         onError: (error) => {
-          showErrorToast('Submission Failed', error.response?.data?.message || 'An error occurred while submitting your review.');
+            showErrorToast('Submission Failed', error.response?.data?.message || 'An error occurred while submitting your review.');
         },
-      });
+    });
 
 
 
@@ -448,7 +480,7 @@ const Screening = ({ candidateId, jobId }) => {
             case 'Pending':
                 return (
                     <div>
-                        <Label text={"The screening call has not yet been scheduled. Please check back later for updates."}/>
+                        <Label text={"The screening call has not yet been scheduled. Please check back later for updates."} />
                     </div>
                 )
             case 'Call Scheduled':
@@ -493,8 +525,8 @@ const Screening = ({ candidateId, jobId }) => {
             case 'Cleared':
                 return <Label icon={WarningIcon} text="You are now ready to move on to the next round. Our team will contact you soon with further details" />;
             case 'Rejected':
-                return <Label icon={WarningIcon} text="Unfortunately, you did not clear the round. Thank you for your interest. We encourage you to reapply in the future" />;                
-                // return renderReviewedContent(true);
+                return <Label icon={WarningIcon} text="Unfortunately, you did not clear the round. Thank you for your interest. We encourage you to reapply in the future" />;
+            // return renderReviewedContent(true);
             case 'No Show':
                 return <Label icon={WarningIcon} text="You missed the scheduled screening call. Please contact the hiring team for further instructions." />;
             default:
@@ -644,7 +676,8 @@ const Screening = ({ candidateId, jobId }) => {
                         <h3 className='typography-h3 mr-10'>Screening</h3>
                         {/* ... other content ... */}
                     </div>
-                    <Box display="flex" alignItems="center">
+                    <div className='flex items-center '>
+
                         <StatusBadge status={stageData?.status} />
                         {
                             role == "Hiring Manager" && (
@@ -658,7 +691,15 @@ const Screening = ({ candidateId, jobId }) => {
 
                             )
                         }
-                    </Box>
+
+                        <div className='h-8 w-1 rounded bg-background-70 mx-2'></div>
+
+
+                        <div className='w-8 h-8 rounded-full bg-background-80 flex items-center justify-center mr-2'>
+                            <BudgetIcon />
+                        </div>
+                        <span className='typograhpy-body'>{candidateData.jobApplication.professionalInfo.expectedCTC}LPA</span>
+                    </div>
                 </Box>
                 {renderContent()}
             </CardContent>

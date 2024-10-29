@@ -14,10 +14,11 @@ const theme = createTheme({
           '& .MuiInputBase-root': {
             backgroundColor: 'black',
             color: 'white',
-            borderRadius:"12px"
+            borderRadius:"12px",
+            height: "44px", // Add this line
           },
-          // '& .MuiOutlinedInput-notchedOutline': {
-          //   borderColor: 'teal',
+          //  '& .MuiOutlinedInput-notchedOutline': {
+          //  borderColor: 'teal',
           // },
           '& .MuiSvgIcon-root': {
             color: 'white',
@@ -53,7 +54,15 @@ export default function Datepicker({ onChange, value }) {
         <DesktopDatePicker
           value={value ? dayjs(value) : null}
           defaultValue={dayjs()}  //
-          onChange={(newValue) => onChange(newValue)} />
+          onChange={(newValue) => onChange(newValue)}
+          sx={{
+            '& .MuiInputBase-root': {
+              height: '44px',
+            },
+            '& .MuiOutlinedInput-input': {
+              padding: '0px 10px',
+            },
+          }} />
       </LocalizationProvider>
     </ThemeProvider>
   );
