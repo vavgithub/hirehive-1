@@ -379,7 +379,7 @@ const searchJobs = async (req, res) => {
 
 const filterJobs = asyncHandler(async (req, res) => {
   try {
-    const { employmentType, jobProfile, experience, budget } = req.body.filters;
+    const { employmentType, jobProfile, experience, budget, closingStatus } = req.body.filters;
     const query = { createdBy: req.user._id };
 
     // Add employment type filter
@@ -409,6 +409,15 @@ const filterJobs = asyncHandler(async (req, res) => {
       }
       if (budget.max !== '') {
         query.budgetTo = { $lte: Number(budget.max) };
+      }
+    }
+
+    // Add closing status filter
+    if (closingReason && closingReason.length > 0) {
+      if (closingStatus.includes('Hired')) {
+        query.closingReason = 'Hired';
+      } else if (closingStatus.includes('NotHired')) {
+        query.closingReason = { $ne: 'Hired' };
       }
     }
 

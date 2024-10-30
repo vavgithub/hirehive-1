@@ -119,7 +119,7 @@ const Filters = ({ filters = {}, handleCheckboxChange, activeTab, handleExperien
         { value: 'Frontend Developer', label: 'Frontend Developer' }
     ];
 
-    const draftOptions = [
+    const closedOptions = [
         {
             value: 'hired', label: 'Hired', icon: {
                 active: HiredIconActive,
@@ -165,9 +165,9 @@ const Filters = ({ filters = {}, handleCheckboxChange, activeTab, handleExperien
                 {activeTab === 'closed' && (
                     <CheckboxGroup
                         title="Job Status"
-                        options={draftOptions}
-                        filters={filters.draftStatus || []}
-                        handleCheckboxChange={(value) => handleCheckboxChange('draftStatus', value)}
+                        options={closedOptions}
+                        filters={filters.closingStatus || []}
+                        handleCheckboxChange={(value) => handleCheckboxChange('closingStatus', value)}
                         isDisabled={isDisabled}
                         useCustomIconCheckbox={true}
                     />

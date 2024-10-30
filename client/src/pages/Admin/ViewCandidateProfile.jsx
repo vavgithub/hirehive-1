@@ -195,11 +195,11 @@ const ViewCandidateProfile = () => {
                                     {data.firstName} {data.lastName}
                                 </h1>
                                 <div className="flex items-center gap-2 mb-3 mt-2">
-                                    <span className="typography-small-p text-gray-500">{data.jobApplied}</span>
+                                    <span className="typography-small-p text-font-gray">{data.jobApplication.jobApplied}</span>
                                     <svg xmlns="http://www.w3.org/2000/svg" width="4" height="4" viewBox="0 0 4 4" fill="none">
                                         <circle cx="2" cy="2" r="2" fill="#808389" />
                                     </svg>
-                                    <span className="typography-small-p text-gray-500">{data.location}</span>
+                                    <span className="typography-small-p text-font-gray">{data.location}</span>
                                 </div>
                                 <div className="flex mb-3 gap-5">
                                     <div className="flex items-center gap-2">
@@ -239,7 +239,7 @@ const ViewCandidateProfile = () => {
                         <div className="flex bg-stars flex-col items-center bg-background-90 w-[430px] bg-cover p-5 rounded-xl">
                             <h3 className="typography-h3">VAV SCORE</h3>
                             <span className="marks text-font-primary">{score?.totalScore}</span>
-                            <p className="typography-large">Out of 100</p>
+                            <p className="typography-large-p">Out of 100</p>
                         </div>
                     </div>
                 )

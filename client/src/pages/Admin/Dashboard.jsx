@@ -39,9 +39,9 @@ const Dashboard = () => {
         experienceLevel: [],
         jobProfile: [],
         experience: { min: '', max: '' },
-        budget: { min: '', max: '' }  // Add this
+        budget: { min: '', max: '' },
+        closingStatus: []  // Add this new filter
     });
-
     const navigate = useNavigate();
     const queryClient = useQueryClient();
 
@@ -148,7 +148,8 @@ const Dashboard = () => {
             experienceLevel: [],
             jobProfile: [],
             experience: { min: '', max: '' },
-            budget: { min: '', max: '' }
+            budget: { min: '', max: '' },
+            closingStatus: []  // Add this
         });
     };
 

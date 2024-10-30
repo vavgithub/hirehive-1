@@ -59,6 +59,11 @@ const StageActions = ({ stage, candidateId, jobId, isBudgetScoreSubmitted }) => 
         moveToNextRoundMutation.mutate();
     };
 
+    // Determine button text based on stage
+    const getButtonText = () => {
+        return stage === "Hired" ? "Hired" : "Move to Next Round";
+    };
+
     return (
         <div className='flex justify-end gap-4'>
            <div className='w-[176px]'>
@@ -77,7 +82,7 @@ const StageActions = ({ stage, candidateId, jobId, isBudgetScoreSubmitted }) => 
                     onClick={() => setIsMoveModalOpen(true)}
                     disabled={!isBudgetScoreSubmitted}
                 >
-                    Move to Next Round
+                    {getButtonText()}
                 </Button>
             </div>
 
