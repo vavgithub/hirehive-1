@@ -200,11 +200,18 @@ export const getCandidateById = async (req, res) => {
   try {
     const { candidateId, jobId } = req.params;
 
-    // Find the candidate
-    const candidate = await candidates.findById(candidateId).select("-password");
+    // Find the candidate and job concurrently
+    const [candidate, job] = await Promise.all([
+      candidates.findById(candidateId).select("-password"),
+      jobs.findById(jobId)
+    ]);
 
     if (!candidate) {
       return res.status(404).send({ message: "Candidate not found" });
+    }
+
+    if (!job) {
+      return res.status(404).send({ message: "Job not found" });
     }
 
     // Find the specific job application
@@ -215,6 +222,25 @@ export const getCandidateById = async (req, res) => {
     if (!jobApplication) {
       return res.status(404).send({ message: "Job application not found for this candidate" });
     }
+
+    // Create a map of questions from the job
+    const questionsMap = job.questions.reduce((acc, question) => {
+      acc[question._id.toString()] = question;
+      return acc;
+    }, {});
+
+    // Combine questions with answers
+    const enrichedQuestionResponses = jobApplication.questionResponses.map(response => ({
+      questionId: response.questionId,
+      answer: response.answer,
+      question: {
+        text: questionsMap[response.questionId.toString()]?.text || "Question not found",
+        type: questionsMap[response.questionId.toString()]?.type || "text",
+        options: questionsMap[response.questionId.toString()]?.options || [],
+        required: questionsMap[response.questionId.toString()]?.required || false,
+        answerType: questionsMap[response.questionId.toString()]?.answerType || "text"
+      }
+    }));
 
     // Get professional info from job application or fall back to candidate's global info
     const professionalInfo = jobApplication.professionalInfo || {
@@ -257,8 +283,7 @@ export const getCandidateById = async (req, res) => {
         rating: jobApplication.rating,
         currentStage: jobApplication.currentStage,
         stageStatuses: jobApplication.stageStatuses,
-        questionResponses: jobApplication.questionResponses,
-        // Include professionalInfo in jobApplication as well if needed
+        questionResponses: enrichedQuestionResponses,
         professionalInfo: jobApplication.professionalInfo
       }
     };

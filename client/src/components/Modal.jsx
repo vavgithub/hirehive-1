@@ -257,7 +257,7 @@ const Modal = ({
   return (
     <div
       onClick={onClose}
-      className="fixed inset-0 flex justify-center items-center transition-colors bg-black/20"
+      className="fixed z-10 inset-0 flex justify-center items-center transition-colors bg-black/20"
     >
       <div
         onClick={(e) => e.stopPropagation()}

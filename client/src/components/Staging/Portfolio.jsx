@@ -21,7 +21,6 @@ import { ensureAbsoluteUrl } from '../../utility/ensureAbsoluteUrl';
 
 
 const PortfolioReview = ({ candidate, onSubmit }) => {
-    console.log("please check this bro niside funtions", candidate)
 
     const [rating, setRating] = useState(0);
     const [feedback, setFeedback] = useState('');
@@ -62,13 +61,13 @@ const Portfolio = ({ candidateId, jobId }) => {
     const stageData = useSelector(state => state.applicationStage.stageStatuses.Portfolio);
     const candidateData = useSelector(state => state.candidate.candidateData);
 
+    console.log(candidateData);
+
+
+
     // Add this line outside renderContent
     const isDisabled = stageData?.status === 'Rejected' || stageData?.status === 'Cleared' || stageData?.status === 'Reviewed';
 
-
-
-
-    console.log("Current candiate data :", candidateData);
 
     const submitReview = async ({ candidateId, reviewData }) => {
         const response = await axios.post('dr/submit-score-review', {
@@ -271,48 +270,52 @@ const Portfolio = ({ candidateId, jobId }) => {
     };
 
     return (
-        <Card
-            sx={{
-                backgroundColor: "rgba(22, 23, 24, 1)",
-                borderRadius: "12px",
-                color: "white",
-                fontFamily: 'Outfit, sans-serif',
-            }}
-        >
-            <CardContent>
-                <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-                    <div className='flex'>
-                        <h3 className='typography-h3 mr-6'>Portfolio</h3>
-                        <div className='flex gap-2 items-center justify-center'>
+        <>
+            <Card
+                sx={{
+                    backgroundColor: "rgba(22, 23, 24, 1)",
+                    borderRadius: "12px",
+                    color: "white",
+                    fontFamily: 'Outfit, sans-serif',
+                    marginBottom: "12px"
+                }}
+            >
+                <CardContent>
+                    <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+                        <div className='flex'>
+                            <h3 className='typography-h3 mr-6'>Portfolio</h3>
+                            <div className='flex gap-2 items-center justify-center'>
 
 
 
-                            <div className='w-8 h-8 rounded-full bg-background-80 flex items-center justify-center'>
-                                <FileMainIcon />
+                                <div className='w-8 h-8 rounded-full bg-background-80 flex items-center justify-center'>
+                                    <FileMainIcon />
+                                </div>
+                                <a href={ensureAbsoluteUrl(candidateData?.jobApplication?.professionalInfo?.portfolio)} target="_blank" rel="noopener noreferrer" className='typography-body text-font-primary underline flex gap-2' >View Portfolio
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                        <path d="M18 13V19C18 19.5304 17.7893 20.0391 17.4142 20.4142C17.0391 20.7893 16.5304 21 16 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V8C3 7.46957 3.21071 6.96086 3.58579 6.58579C3.96086 6.21071 4.46957 6 5 6H11M15 3H21M21 3V9M21 3L10 14" stroke="#045FFD" strokeLinecap="round" strokeLinejoin="round" />
+                                    </svg>
+                                </a>
                             </div>
-                            <a href={ensureAbsoluteUrl(candidateData?.jobApplication?.professionalInfo?.portfolio)} target="_blank" rel="noopener noreferrer" className='typography-body text-font-primary underline flex gap-2' >View Portfolio
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                    <path d="M18 13V19C18 19.5304 17.7893 20.0391 17.4142 20.4142C17.0391 20.7893 16.5304 21 16 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V8C3 7.46957 3.21071 6.96086 3.58579 6.58579C3.96086 6.21071 4.46957 6 5 6H11M15 3H21M21 3V9M21 3L10 14" stroke="#045FFD" strokeLinecap="round" strokeLinejoin="round" />
-                                </svg>
-                            </a>
                         </div>
-                    </div>
-                    <Box display="flex" alignItems="center">
-                        <StatusBadge status={stageData?.status} />
-                        {role === 'Hiring Manager' && (
-                            <AssigneeSelector
-                                mode="icon"
-                                value={stageData?.assignedTo}
-                                onChange={handleAssigneeChange}
-                                onSelect={handleAssigneeChange}
-                                disabled={isDisabled} // Disable only if status is 'Rejected' or 'Cleared'
-                            />
-                        )}
+                        <Box display="flex" alignItems="center">
+                            <StatusBadge status={stageData?.status} />
+                            {role === 'Hiring Manager' && (
+                                <AssigneeSelector
+                                    mode="icon"
+                                    value={stageData?.assignedTo}
+                                    onChange={handleAssigneeChange}
+                                    onSelect={handleAssigneeChange}
+                                    disabled={isDisabled} // Disable only if status is 'Rejected' or 'Cleared'
+                                />
+                            )}
+                        </Box>
                     </Box>
-                </Box>
-                {renderContent()}
-            </CardContent>
-        </Card>
+                    {renderContent()}
+                </CardContent>
+            </Card>
+            
+        </>
     );
 };
 

@@ -35,6 +35,15 @@ const fetchTotalScore = async (candidateId, jobId) => {
     return data;
 }
 
+
+
+  // Fetch job data
+  const { data: formData, isLoading: isJobLoading } = useQuery({
+    queryKey: ['job', mainId],
+    queryFn: () => axios.get(`/jobs/getJobById/${mainId}`).then(res => res.data),
+});
+
+
 // Update the transformCandidateData function
 const transformCandidateData = (data) => {
     const professionalInfo = data.jobApplication.professionalInfo;
@@ -55,7 +64,6 @@ const ViewCandidateProfile = () => {
     const { user } = useAuthContext();
     const role = user?.role || 'Candidate'; // Default to Candidate if role is not specified
     const candidateData = useSelector(state => state.candidate.candidateData);
-    console.log("bad boii vevvvaar" , candidateData);
     const [activeTab, setActiveTab] = useState('application');
     const { candidateId, jobId } = useParams();
     const dispatch = useDispatch();
@@ -67,7 +75,6 @@ const ViewCandidateProfile = () => {
         cacheTime: 0,
         staleTime: 0,
         onError: (error) => {
-            console.error('Query Error:', error);
             dispatch(setError(error.message));
         },
     });
@@ -78,7 +85,6 @@ const ViewCandidateProfile = () => {
         cacheTime: 0,
         staleTime: 0,
         onError: (error) => {
-            console.error('Query Error:', error);
             dispatch(setError(error.message));
         },
     });
@@ -152,18 +158,13 @@ const ViewCandidateProfile = () => {
             </div>
         );
     }
-    // if (isLoading) {
-    //     console.log('Rendering loading state');
-    //     return <div>Loading...</div>;
-    // }
+ 
 
     if (isError) {
-        console.error('Rendering error state:', queryError);
         return <div>Error: {queryError.message}</div>;
     }
 
     if (!data) {
-        console.log('No data available, rendering null');
         return null;
     }
 
