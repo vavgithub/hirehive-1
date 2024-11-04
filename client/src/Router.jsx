@@ -21,8 +21,6 @@ import HomePage from './pages/Candidate/HomePage.jsx';
 import Text from './pages/Text.jsx';
 import ViewJob from './pages/Candidate/ViewJob.jsx';
 import ApplyJob from './pages/Candidate/ApplyJob.jsx';
-import MiniForm from './pages/Candidate/MiniForm.jsx';
-import Verification from './pages/Candidate/Verification.jsx';
 import PreAssessment from './pages/Candidate/PreAssessment.jsx';
 import ProtectedRouteCandidate from './routes/ProtectedRouteCandidate.jsx';
 import CandidateLogin from './pages/Candidate/CandidateLogin.jsx';

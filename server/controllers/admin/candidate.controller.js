@@ -1,5 +1,6 @@
 import { jobStagesStatuses } from "../../config/jobStagesStatuses.js";
 import { jobs } from "../../models/admin/jobs.model.js";
+import { Question, seedQuestions } from "../../models/admin/questions.model.js";
 import { candidates } from "../../models/candidate/candidate.model.js";
 
 // controllers/candidate.controller.js
@@ -532,6 +533,61 @@ export const getCandidateById = async (req, res) => {
       console.error('Error fetching candidates:', error);
       res.status(500).json({ 
         message: 'Internal server error',
+        error: error.message 
+      });
+    }
+  };
+
+  export const getRandomQuestions = async (req, res) => {
+    try {
+      // First, check if we have any questions in the database
+      const questionCount = await Question.countDocuments();
+      
+      if (questionCount === 0) {
+        console.log('No questions found in database. Seeding questions...');
+        await seedQuestions(); // Make sure this is imported
+      }
+  
+      const questions = await Question.aggregate([
+        { $sample: { size: 10 } },
+        {
+          $project: {
+            id: '$_id',
+            questionType: 1,
+            text: 1,
+            imageUrl: 1,
+            options: {
+              $map: {
+                input: '$options',
+                as: 'option',
+                in: {
+                  text: '$$option.text',
+                  imageUrl: '$$option.imageUrl'
+                }
+              }
+            }
+          }
+        }
+      ]);
+  
+      console.log(`Found ${questions.length} questions`);
+  
+      if (!questions.length) {
+        return res.status(404).json({ 
+          success: false,
+          message: 'No questions available' 
+        });
+      }
+  
+      res.status(200).json({ 
+        success: true,
+        questions 
+      });
+    } catch (error) {
+      console.error('Error in getRandomQuestions:', error);
+      res.status(500).json({ 
+        success: false,
+        message: 'Error fetching questions',
         error: error.message 
       });
     }
