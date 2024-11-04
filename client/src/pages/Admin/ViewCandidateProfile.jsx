@@ -36,14 +36,6 @@ const fetchTotalScore = async (candidateId, jobId) => {
 }
 
 
-
-  // Fetch job data
-  const { data: formData, isLoading: isJobLoading } = useQuery({
-    queryKey: ['job', mainId],
-    queryFn: () => axios.get(`/jobs/getJobById/${mainId}`).then(res => res.data),
-});
-
-
 // Update the transformCandidateData function
 const transformCandidateData = (data) => {
     const professionalInfo = data.jobApplication.professionalInfo;

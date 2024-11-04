@@ -192,15 +192,6 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
     },
   });
 
-
-  // const handleAutoAssign = (selectedReviewers) => {
-  //   autoAssignMutation.mutate({
-  //     jobId,
-  //     reviewerIds: selectedReviewers.map(r => r._id)
-  //   });
-  //   setIsAutoAssignModalOpen(false);
-  // };
-
   const handleAutoAssign = async (selectedReviewers) => {
     try {
       const response = await axios.post('/dr/auto-assign-portfolios', {
@@ -375,11 +366,6 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
       width: 120,
     },
     {
-      field: 'expectedCTC',
-      headerName: "Expected CTC",
-      width: 150,
-    },
-    {
       field: 'currentStage',
       headerName: 'Stage',
       width: 150,
@@ -408,16 +394,25 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
       headerName: 'Applied For',
       width: 200,
     },
-    {
-      field: 'email',
-      headerName: 'Email',
-      width: 200,
-    },
-    {
-      field: 'phone',
-      headerName: 'Phone',
-      width: 150,
-    },
+    ...(role === 'Hiring Manager' ? [
+      {
+        field: 'expectedCTC',
+        headerName: 'Expected CTC',
+        width: 150,
+      }, 
+     
+      {
+        field: 'email',
+        headerName: 'Email',
+        width: 200,
+      },
+      
+      {
+        field: 'phone',
+        headerName: 'Phone',
+        width: 150,
+      },
+    ] : []),   
   ];
 
   const defaultColumns = [
