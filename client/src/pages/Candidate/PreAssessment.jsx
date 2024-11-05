@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { ChevronDown, ChevronUp, Camera, Mic } from 'lucide-react';
+import { ChevronDown, ChevronUp , Mic } from 'lucide-react';
 import Webcam from 'react-webcam';
 import Assessment from './Assessment'; // Import your existing Assessment component
 import { Button } from '../../components/ui/Button';
+import Camera from '../../svg/Buttons/Camera';
 
 const AccordionItem = ({ title, content, isOpen, toggleOpen }) => (
     <div className="mb-4 bg-background-80 rounded-xl overflow-hidden">
@@ -89,24 +90,27 @@ const PreAssessment = () => {
                         </div>
                         <div className="flex justify-center space-x-4">
                             <button
-                                className={`p-2 rounded-full ${isCameraEnabled ? 'bg-green-500' : 'bg-gray-600'}`}
+                                className={`p-2 rounded-full ${isCameraEnabled ? 'bg-green-500' : 'bg-background-70'}`}
                                 onClick={toggleCamera}
                             >
-                                <Camera size={24} />
+                                <Camera/>
+                            
+                                {/* <Camera size={24} /> */}
                             </button>
                             <button
-                                className={`p-2 rounded-full ${isMicEnabled ? 'bg-green-500' : 'bg-gray-600'}`}
+                                className={`p-2 rounded-full ${isMicEnabled ? 'bg-green-500' : 'bg-background-70'}`}
                                 onClick={toggleMic}
-                            >
-                                <Mic size={24} />
+                                >
+                                <Mic/>
                             </button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div className="mt-8 flex w-[270px]">
-                {/* <button
+            <div className='mt-8 w-full flex justify-end'>
+                <div className="flex w-[270px]">
+                    {/* <button
                     className={`px-6 py-2 rounded-lg ${isCameraEnabled && isMicEnabled
                             ? 'bg-blue-500 hover:bg-blue-600'
                             : 'bg-gray-600 cursor-not-allowed'
@@ -116,12 +120,14 @@ const PreAssessment = () => {
                 >
                     Start Assessment
                 </button> */}
-                <Button
-                    disabled={!isCameraEnabled || !isMicEnabled}
-                    onClick={() => setStartAssessment(true)}
-                >
-                    Start Assessment
-                </Button>
+
+                    <Button
+                        disabled={!isCameraEnabled || !isMicEnabled}
+                        onClick={() => setStartAssessment(true)}
+                    >
+                        Start Assessment
+                    </Button>
+                </div>
             </div>
         </div>
     );

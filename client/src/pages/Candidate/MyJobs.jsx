@@ -47,8 +47,7 @@ const MyJobs = () => {
   };
 
   return (
-    <div className='m-2 pt-8'>
-      <AssessmentBanner />
+    <div className='m-2 pt-4'>
       <h1 className="typography-h1">My Jobs</h1>
       <div className="p-4 bg-background-30 rounded-xl">
         {appliedJobs.length === 0 ? (

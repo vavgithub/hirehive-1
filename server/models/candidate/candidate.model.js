@@ -157,6 +157,39 @@ const jobApplicationSchema = new mongoose.Schema(
   { _id: false }
 );
 
+// In your candidate model, add this schema
+const questionnaireResponseSchema = new mongoose.Schema({
+  questionId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Question',
+    required: true,
+  },
+  selectedAnswer: {
+    type: String,
+    required: true,
+  },
+  isCorrect: {
+    type: Boolean,
+    required: true,
+  }
+});
+
+const questionnaireAttemptSchema = new mongoose.Schema({
+  totalTimeInSeconds: {
+    type: Number,
+    required: true,
+  },
+  score: {
+    type: Number,
+    required: true,
+  },
+  responses: [questionnaireResponseSchema],
+  attemptDate: {
+    type: Date,
+    default: Date.now,
+  }
+});
+
 // Main candidate schema
 const candidateSchema = new mongoose.Schema(
   {
@@ -222,6 +255,7 @@ const candidateSchema = new mongoose.Schema(
     },
     skills: [String],
     jobApplications: [jobApplicationSchema], // Contains multiple job applications
+    questionnaireAttempts: [questionnaireAttemptSchema],
     location: String,
 
     // Removed 'stage', 'status', and 'stageStatus' from the root level

@@ -60,7 +60,7 @@ const QuestionSidebar = ({ questions, currentQuestion, onQuestionSelect, answers
     return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
   };
   return (
-    <div className="w-[200px] bg-background-30 overflow-y-auto flex-shrink-0">
+    <div className="w-[200px] bg-background-30 fixed h-screen overflow-y-auto flex-shrink-0">
       {/* Timer section remains the same */}
       <div className="mb-6 p-4 rounded-xl">
         <div className="flex flex-col p-2 rounded-xl items-center bg-background-80">
@@ -70,15 +70,15 @@ const QuestionSidebar = ({ questions, currentQuestion, onQuestionSelect, answers
           </span>
         </div>
       </div>
-      <h2 className="typography-h3 text-font-gray px-4">Questions</h2>
+      <h2 className="typography-h3 text-font-gray p-4">Questions</h2>
       {questions.map((q, index) => (
         <div
           key={q._id}
-          className={`typography-body py-2 px-4 my-2 cursor-pointer rounded flex items-center justify-between ${currentQuestion === index
+          className={`typography-body py-2 pl-4 my-2 cursor-pointer rounded flex items-center justify-between ${currentQuestion === index
               ? 'text-font-accent'
               : answers[q._id]
-                ? 'text-green-500'
-                : 'text-font-gray hover:bg-gray-800'
+                ? 'text-green-100'
+                : 'text-font-gray hover:bg-background-60'
             }`}
           onClick={() => onQuestionSelect(index)}
         >
@@ -87,7 +87,7 @@ const QuestionSidebar = ({ questions, currentQuestion, onQuestionSelect, answers
             {answers[q._id] && ' ✓'}
           </span>
           {currentQuestion === index && (
-            <div className="w-2 h-6 ml-2 rounded-tl-xl rounded-bl-xl bg-teal-500 flex-shrink-0" />
+            <div className="w-1 h-6 rounded-tl-xl rounded-bl-xl bg-teal-400 flex-shrink-0" />
           )}
         </div>
       ))}
@@ -107,7 +107,7 @@ const QuestionDisplay = ({
   isLast,
   isAllAnswered
 }) => (
-  <div className="flex-grow p-8">
+  <div className="flex-grow p-8 pl-[212px]">
     <div className="mb-8">
     <h1 className="typography-h1 mb-4">{`Question ${questionNumber + 1}: ${question.text}`}</h1>
       {question.questionType === 'image' && question.imageUrl && (
@@ -210,6 +210,7 @@ const WebcamView = ({ isMinimized, toggleMinimize }) => (
 );
 
 const Assessment = () => {
+  const [startTime] = useState(Date.now()); // Add this at the beginning
   const {
     data: questions,
     isLoading,
@@ -235,10 +236,27 @@ const Assessment = () => {
     }));
   };
 
-  const handleFinish = () => {
-    // Here you can implement the logic to submit all answers
-    console.log('All answers:', answers);
-    // You can add API call here to submit answers
+
+  const candidateId =  "67247a0c31deb23b1fe8eb5d";
+
+  const handleFinish = async () => {
+    try {
+      const totalTimeInSeconds = Math.floor((Date.now() - startTime) / 1000);
+      
+      const response = await axios.post(`/admin/candidate/questionnaire/${candidateId}`, {
+        answers,
+        totalTimeInSeconds
+      });
+
+      if (response.data.success) {
+        // Show success message or redirect
+        console.log('Assessment submitted:', response.data);
+        // Maybe redirect to a results page
+      }
+    } catch (error) {
+      console.error('Error submitting assessment:', error);
+      // Show error message to user
+    }
   };
 
   // Show loading state
@@ -280,7 +298,7 @@ const Assessment = () => {
         answers={answers} // Pass answers to show which questions are answered
       />
       <div className="flex-grow flex flex-col">
-        <div className="bg-background-90 p-4 flex gap-8 justify-between items-center">
+        <div className="bg-background-90 pl-[212px] p-4 flex gap-8 justify-between items-center">
           <ProgressBar answeredCount={answeredCount} total={questions.length} />
           <div className='typography-body text-font-gray'>
             {`${answeredCount}/${questions.length} Answered`}

@@ -7,6 +7,7 @@ import { Button } from '../../components/ui/Button';
 import StatsGrid from '../../components/ui/StatsGrid';
 import one from '../../svg/StatsCard/Jobs Page/one';
 import two from '../../svg/StatsCard/Jobs Page/two';
+import ForgotPassword from '../Admin/ForgotPassword';
 
 const statsOne = [
   { title: 'Jobs Posted', value: 100, icon: one },
@@ -16,6 +17,7 @@ const statsTwo = [
 ]
 
 const CandidateLogin = () => {
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -53,6 +55,11 @@ const CandidateLogin = () => {
       </div>
       {/* Right section with login form */}
       <div className="w-full lg:w-1/2 bg-background-30 p-4 md:p-28   flex flex-col justify-center">
+      {showForgotPassword ? (
+                    <ForgotPassword onBack={() => setShowForgotPassword(false)} />
+                ) : (
+                  <>
+
         <h2 className="typography-h1 mb-2 text-center font-semibold">Welcome Back</h2>
         <p className="typography-body mb-10 text-center font-normal">Login to your account below</p>
         {/* <button className="bg-blue-600 text-white py-2 px-4 rounded-lg mb-5 flex items-center justify-center">
@@ -73,11 +80,21 @@ const CandidateLogin = () => {
             <input type="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter your password" className="w-full focus:outline-teal-400 p-2 rounded-lg bg-black text-white" />
           </div>
           {error && <p className="text-red-500 mb-4">{error}</p>}
+          <div className='flex justify-end'>
+                                <span
+                                    onClick={() => setShowForgotPassword(true)}
+                                    className="text-font-primary cursor-pointer typography-body mb-6 mt-2 block text-left hover:underline"
+                                >
+                                    Forgot Password?
+                                </span>
+                            </div>
           {/* <a href="#" className="text-blue-500 mb-6 mt-2 block text-right">Forgot Password?</a> */}
           <Button type="submit" variant="primary" className="mt-6" disabled={!isFormValid}>
             Login
           </Button>
         </form>
+        </>
+                )}
         {/* <p className="text-center mt-6">
                 Don't have an account? <a href="#" className="text-blue-500">Sign up</a>
             </p> */}

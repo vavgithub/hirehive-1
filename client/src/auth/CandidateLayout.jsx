@@ -9,6 +9,7 @@ import { MyJobsIcon, MyJobsIconActive } from '../svg/Navbar/MyJobsIcon';
 import { Button } from '../components/ui/Button';
 import useAuthCandidate from '../hooks/useAuthCandidate';
 import Modal from '../components/Modal';
+import AssessmentBanner from '../components/ui/AssessmentBanner';
 
 const CandidateLayout = () => {
   const navigate = useNavigate();
@@ -19,9 +20,10 @@ const CandidateLayout = () => {
 
   // Initialize modal visibility state based on assessment status
   const [isAssessmentModalVisible, setIsAssessmentModalVisible] = useState(!candidateData?.hasGivenAssessment);
+  const [isAssessmentBannerVisible, setIsAssessmentBannerVisible] = useState(!candidateData?.hasGivenAssessment);
+  
 
-
-  console.log( "please check this?", candidateData)
+  console.log("please check this?", candidateData)
 
   const handleLogout = async () => {
     try {
@@ -86,8 +88,7 @@ const CandidateLayout = () => {
         to={to}
         end={to === '/candidate/dashboard'}
         className={({ isActive, isPending }) =>
-          `absolute right-0 w-1 h-6 rounded-tl-xl rounded-bl-xl ${
-            isActive || isPending ? 'bg-teal-400' : 'bg-transparent'
+          `absolute right-0 w-1 h-6 rounded-tl-xl rounded-bl-xl ${isActive || isPending ? 'bg-teal-400' : 'bg-transparent'
           }`
         }
       />
@@ -141,7 +142,7 @@ const CandidateLayout = () => {
         </div>
       </div>
 
-      
+
       {/* Assessment Modal */}
       <Modal
         open={isAssessmentModalVisible}
@@ -155,6 +156,8 @@ const CandidateLayout = () => {
 
       {/* Main Content */}
       <div className="md:ml-[192px] flex-1 p-4 md:p-6">
+        {isAssessmentBannerVisible && <AssessmentBanner />}
+
         <Outlet />
       </div>
 
