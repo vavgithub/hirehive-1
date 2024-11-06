@@ -1,74 +1,199 @@
 import dotenv from "dotenv";
-dotenv.config({
-  path: process.env.NODE_ENV === "production" ? ".env.production" : ".env",
-});
-
 import jwt from 'jsonwebtoken';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { User } from '../models/admin/user.model.js';
 import { candidates as Candidate } from '../models/candidate/candidate.model.js';
+import { getEnvironmentConfig } from '../config/environments.js';
 
-console.log("this is middlewares",process.env.JWT_SECRET)
+// Load environment-specific configuration
+const environment = process.env.NODE_ENV || "development";
+dotenv.config({
+  path: `.env.${environment}`
+});
 
-const protect = asyncHandler(async (req, res, next) => {
-    let token;
-  
-    if (req.cookies.jwt) {
-      token = req.cookies.jwt;
-    } else if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
-      token = req.headers.authorization.split(' ')[1];
-    }
-  
-    if (!token) {
-      return res.status(401).json({ message: 'Not authorized, no token' });
-    }
-  
-    try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      req.user = await User.findById(decoded.id).select('-password');
-      next();
-    } catch (error) {
-      console.error('Token verification failed:', error);
-      res.status(401).json({ message: 'Not authorized, token failed' });
-    }
-  });
+// Get environment config
+const envConfig = getEnvironmentConfig(environment);
 
-const roleProtect = (role) => {
-    return (req, res, next) => {
-        if (req.user && req.user.role === role) {
-            next();
-        } else {
-            res.status(403);
-            throw new Error('Not authorized for the desired role');
-        }
-    };
+const verifyToken = (token, secret) => {
+  try {
+    return jwt.verify(token, secret);
+  } catch (error) {
+    console.error(`Token verification failed: ${error.message}`);
+    return null;
+  }
 };
 
-const protectCandidate = async (req, res, next) => {
-  try {
-    const token = req.cookies.token;
+const getTokenFromRequest = (req) => {
+  // Check for token in cookies
+  if (req.cookies.jwt) {
+    return req.cookies.jwt;
+  }
+  
+  // Check for token in Authorization header
+  if (req.headers.authorization?.startsWith('Bearer')) {
+    return req.headers.authorization.split(' ')[1];
+  }
+  
+  return null;
+};
 
-    if (!token) {
-      return res.status(401).json({ message: 'Not authorized, token missing' });
+const protect = asyncHandler(async (req, res, next) => {
+  const token = getTokenFromRequest(req);
+
+  if (!token) {
+    return res.status(401).json({ 
+      status: 'error',
+      message: 'Not authorized, no token provided'
+    });
+  }
+
+  try {
+    const decoded = verifyToken(token, process.env.JWT_SECRET);
+    
+    if (!decoded) {
+      return res.status(401).json({ 
+        status: 'error',
+        message: 'Invalid or expired token'
+      });
     }
 
-    // Verify token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    // Get user and exclude password
+    const user = await User.findById(decoded.id).select('-password');
+    
+    if (!user) {
+      return res.status(401).json({ 
+        status: 'error',
+        message: 'User not found'
+      });
+    }
 
-    // Find candidate by ID
+    // Attach user to request object
+    req.user = user;
+    next();
+  } catch (error) {
+    console.error('Authentication error:', error);
+    res.status(401).json({ 
+      status: 'error',
+      message: 'Authentication failed',
+      error: environment === 'development' ? error.message : undefined
+    });
+  }
+});
+
+const roleProtect = (roles) => {
+  return asyncHandler(async (req, res, next) => {
+    if (!req.user) {
+      return res.status(401).json({ 
+        status: 'error',
+        message: 'User not authenticated'
+      });
+    }
+
+    // Allow single role or array of roles
+    const allowedRoles = Array.isArray(roles) ? roles : [roles];
+    
+    if (!allowedRoles.includes(req.user.role)) {
+      return res.status(403).json({ 
+        status: 'error',
+        message: `Role ${req.user.role} is not authorized to access this route`
+      });
+    }
+
+    next();
+  });
+};
+
+const protectCandidate = asyncHandler(async (req, res, next) => {
+  const token = req.cookies.token;
+
+  if (!token) {
+    return res.status(401).json({ 
+      status: 'error',
+      message: 'Not authorized, token missing'
+    });
+  }
+
+  try {
+    const decoded = verifyToken(token, process.env.JWT_SECRET);
+    
+    if (!decoded) {
+      return res.status(401).json({ 
+        status: 'error',
+        message: 'Invalid or expired token'
+      });
+    }
+
     const candidate = await Candidate.findById(decoded.id);
 
     if (!candidate) {
-      return res.status(404).json({ message: 'Candidate not found' });
+      return res.status(404).json({ 
+        status: 'error',
+        message: 'Candidate not found'
+      });
     }
 
     req.candidate = candidate;
     next();
   } catch (error) {
-    console.error('Error in protectCandidate middleware:', error);
-    res.status(401).json({ message: 'Not authorized, token failed' });
+    console.error('Candidate authentication error:', error);
+    res.status(401).json({ 
+      status: 'error',
+      message: 'Authentication failed',
+      error: environment === 'development' ? error.message : undefined
+    });
   }
+});
+
+// Optional: Add refresh token functionality
+const refreshToken = asyncHandler(async (req, res, next) => {
+  const refreshToken = req.cookies.refreshToken;
+
+  if (!refreshToken) {
+    return res.status(401).json({ 
+      status: 'error',
+      message: 'Refresh token not found'
+    });
+  }
+
+  try {
+    const decoded = verifyToken(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+    
+    if (!decoded) {
+      return res.status(401).json({ 
+        status: 'error',
+        message: 'Invalid or expired refresh token'
+      });
+    }
+
+    // Generate new access token
+    const accessToken = jwt.sign(
+      { id: decoded.id },
+      process.env.JWT_SECRET,
+      { expiresIn: process.env.ACCESS_TOKEN_EXPIRY }
+    );
+
+    // Set new access token in cookie
+    res.cookie('jwt', accessToken, {
+      httpOnly: true,
+      secure: environment !== 'development',
+      sameSite: 'strict',
+      maxAge: 24 * 60 * 60 * 1000 // 1 day
+    });
+
+    next();
+  } catch (error) {
+    console.error('Refresh token error:', error);
+    res.status(401).json({ 
+      status: 'error',
+      message: 'Token refresh failed',
+      error: environment === 'development' ? error.message : undefined
+    });
+  }
+});
+
+export { 
+  protect, 
+  roleProtect, 
+  protectCandidate,
+  refreshToken 
 };
-
-
-export { protect, roleProtect , protectCandidate};
