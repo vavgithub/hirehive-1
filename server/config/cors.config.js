@@ -3,9 +3,9 @@ const getCorsOrigin = (environment) => {
       case 'development':
         return ['http://localhost:5173', 'http://localhost:8008'];
       case 'staging':
-        return ['https://staging.antiquerustleatherbags.com'];
+        return ['https://api.antiquerustleatherbags.com'];
       case 'production':
-        return ['https://antiquerustleatherbags.com', 'https://hirehive-1-lmln.onrender.com'];
+        return ['https://hire.atvoid.com', 'https://api-hire.atvoid.com'];
       default:
         return ['http://localhost:5173'];
     }
