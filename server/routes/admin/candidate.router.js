@@ -1,5 +1,5 @@
 import express from "express";
-import { getAllCandidatesForJob, getAllCandidatesWithStats, getCandidateById, getRandomQuestions, submitQuestionnaireAttempt, updateStatusAndStage } from "../../controllers/admin/candidate.controller.js";
+import { getAllCandidatesForJob, getAllCandidatesWithStats, getCandidateById, getQuestionnaireDetails, getRandomQuestions, submitQuestionnaireAttempt, updateStatusAndStage } from "../../controllers/admin/candidate.controller.js";
 
 const router = express.Router();
 
@@ -13,6 +13,8 @@ router.patch("/update/:id",updateStatusAndStage);
 router.get("/questions/random",getRandomQuestions);
 
 router.post("/questionnaire/:candidateId/",submitQuestionnaireAttempt)
+
+router.get("/assessment/:candidateId", getQuestionnaireDetails);
 
 
 export default router;

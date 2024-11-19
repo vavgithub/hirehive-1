@@ -39,7 +39,7 @@ const fetchTotalScore = async (candidateId, jobId) => {
 // Update the transformCandidateData function
 const transformCandidateData = (data) => {
     const professionalInfo = data.jobApplication.professionalInfo;
-    
+
     return {
         professionalDetails: [
             { label: 'Experience', value: `${professionalInfo.experience} Years` },
@@ -70,6 +70,8 @@ const ViewCandidateProfile = () => {
             dispatch(setError(error.message));
         },
     });
+
+    console.log("this is the main principle datat",data)
 
     const { data: score, error } = useQuery({
         queryKey: ['candidateScore', candidateId, jobId],
@@ -150,7 +152,7 @@ const ViewCandidateProfile = () => {
             </div>
         );
     }
- 
+
 
     if (isError) {
         return <div>Error: {queryError.message}</div>;
@@ -160,9 +162,15 @@ const ViewCandidateProfile = () => {
         return null;
     }
 
-
-
     const transformedData = transformCandidateData(data);
+
+    const handleAssignmentNavigation = () => {
+
+        navigate(`/admin/assessment/${candidateId}`)
+
+    }
+
+
 
     return (
         <div className="mx-4 pt-4 h-screen">
@@ -204,23 +212,17 @@ const ViewCandidateProfile = () => {
                                         <span className="typography-large-p">{data.email}</span>
                                     </div>
                                 </div>
-                                <div className="flex gap-2 items-center">
+                                <div className="flex gap-2 items-center ">
                                     <a href={ensureAbsoluteUrl(data.portfolio)} target="_blank" rel="noopener noreferrer" className="icon-link">
                                         <FileMainIcon />
-
                                     </a>
-
-
-
                                     <a href={ensureAbsoluteUrl(data.website)} target="_blank" rel="noopener noreferrer" className="icon-link">
-
                                         <WebsiteMainIcon />
                                     </a>
-
                                     <ResumeIcon />
-
+                                    {console.log("please check this one",data.hasGivenAssessment)}
                                     {
-                                        data.hasGivenAssessment && <AssignmentIcon />
+                                        data.hasGivenAssessment && <div className='cursor-pointer' onClick={handleAssignmentNavigation}> <AssignmentIcon /> </div>
                                     }
 
                                 </div>

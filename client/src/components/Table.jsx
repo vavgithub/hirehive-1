@@ -488,14 +488,27 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
   //     navigate(`/admin/jobs/view-candidate/${params.id}/${readOnly ? params.row.jobId : jobId}`)
   //   }
 
-  const handleRowClick = (params) => {
-    if (role == "Hiring Manager") {
-      navigate(`/admin/jobs/view-candidate/${params?.row?._id}/${readOnly ? params.row.jobId : jobId}`)
-    } else {
-      navigate(`view-candidate/${params?.row?._id}/${readOnly ? params.row.jobId : jobId}`)
+  // const handleRowClick = (params) => {
+  //   if (role == "Hiring Manager") {
+  //     console.log("main waala cliked up")
+  //     navigate(`/admin/jobs/view-candidate/${params?.row?._id}/${readOnly ? params.row.jobId : jobId}`)
+  //   } else {
+  //     console.log("else waala cliked up")
+  //     navigate(`view-candidate/${params?.row?._id}/${readOnly ? params.row.jobId : jobId}`)
 
+  //   }
+  // }
+
+  const handleRowClick = (params) => {
+    if (role === "Hiring Manager") {
+      const baseUrl = readOnly 
+        ? "/admin/candidates/view-candidate" 
+        : "/admin/jobs/view-candidate";
+      navigate(`${baseUrl}/${params?.row?._id}/${readOnly ? params.row.jobId : jobId}`);
+    } else {
+      navigate(`view-candidate/${params?.row?._id}/${readOnly ? params.row.jobId : jobId}`);
     }
-  }
+  };
 
   const handleExport = () => {
     exportToExcel(filteredAndSearchedRowsData, 'my_data');

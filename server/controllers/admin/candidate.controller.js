@@ -201,18 +201,11 @@ export const getCandidateById = async (req, res) => {
   try {
     const { candidateId, jobId } = req.params;
 
-    // Find the candidate and job concurrently
-    const [candidate, job] = await Promise.all([
-      candidates.findById(candidateId).select("-password"),
-      jobs.findById(jobId)
-    ]);
+    // Find the candidate
+    const candidate = await candidates.findById(candidateId).select("-password");
 
     if (!candidate) {
       return res.status(404).send({ message: "Candidate not found" });
-    }
-
-    if (!job) {
-      return res.status(404).send({ message: "Job not found" });
     }
 
     // Find the specific job application
@@ -224,24 +217,44 @@ export const getCandidateById = async (req, res) => {
       return res.status(404).send({ message: "Job application not found for this candidate" });
     }
 
-    // Create a map of questions from the job
-    const questionsMap = job.questions.reduce((acc, question) => {
-      acc[question._id.toString()] = question;
-      return acc;
-    }, {});
+    // Try to find the job, but don't fail if not found
+    const job = await jobs.findById(jobId).catch(() => null);
 
-    // Combine questions with answers
-    const enrichedQuestionResponses = jobApplication.questionResponses.map(response => ({
-      questionId: response.questionId,
-      answer: response.answer,
-      question: {
-        text: questionsMap[response.questionId.toString()]?.text || "Question not found",
-        type: questionsMap[response.questionId.toString()]?.type || "text",
-        options: questionsMap[response.questionId.toString()]?.options || [],
-        required: questionsMap[response.questionId.toString()]?.required || false,
-        answerType: questionsMap[response.questionId.toString()]?.answerType || "text"
-      }
-    }));
+    // Handle question responses even if job is deleted
+    let enrichedQuestionResponses = [];
+    if (job && job.questions) {
+      // Create a map of questions from the job
+      const questionsMap = job.questions.reduce((acc, question) => {
+        acc[question._id.toString()] = question;
+        return acc;
+      }, {});
+
+      // Combine questions with answers
+      enrichedQuestionResponses = jobApplication.questionResponses.map(response => ({
+        questionId: response.questionId,
+        answer: response.answer,
+        question: {
+          text: questionsMap[response.questionId.toString()]?.text || "Original question no longer available",
+          type: questionsMap[response.questionId.toString()]?.type || "text",
+          options: questionsMap[response.questionId.toString()]?.options || [],
+          required: questionsMap[response.questionId.toString()]?.required || false,
+          answerType: questionsMap[response.questionId.toString()]?.answerType || "text"
+        }
+      }));
+    } else {
+      // If job is deleted, still show the answers but with placeholder question info
+      enrichedQuestionResponses = jobApplication.questionResponses.map(response => ({
+        questionId: response.questionId,
+        answer: response.answer,
+        question: {
+          text: "Original question no longer available",
+          type: "text",
+          options: [],
+          required: false,
+          answerType: "text"
+        }
+      }));
+    }
 
     // Get professional info from job application or fall back to candidate's global info
     const professionalInfo = jobApplication.professionalInfo || {
@@ -262,6 +275,7 @@ export const getCandidateById = async (req, res) => {
       lastName: candidate.lastName,
       email: candidate.email,
       phone: candidate.phone,
+      hasGivenAssessment: candidate.hasGivenAssessment,
       
       // Professional info (job-specific or fallback)
       website: professionalInfo.website,
@@ -298,7 +312,6 @@ export const getCandidateById = async (req, res) => {
     });
   }
 };
-
   // export const getAllCandidatesWithStats = async (req, res) => {
   //   try {
   //     const allCandidates = await candidates.aggregate([
@@ -398,7 +411,6 @@ export const getCandidateById = async (req, res) => {
   //   }
   // };
 
-
   export const getAllCandidatesWithStats = async (req, res) => {
     try {
       const allCandidates = await candidates.aggregate([
@@ -414,7 +426,10 @@ export const getCandidateById = async (req, res) => {
           }
         },
         {
-          $unwind: '$jobDetails'
+          // Instead of $unwind, we'll preserve entries even when jobDetails is empty
+          $addFields: {
+            jobDetail: { $arrayElemAt: ['$jobDetails', 0] }
+          }
         },
         {
           $project: {
@@ -451,7 +466,10 @@ export const getCandidateById = async (req, res) => {
             // Job application specific info
             currentStage: '$jobApplications.currentStage',
             stageStatuses: '$jobApplications.stageStatuses',
-            jobTitle: '$jobDetails.jobTitle',
+            // Use jobApplied as fallback when job is deleted
+            jobTitle: {
+              $ifNull: ['$jobDetail.jobTitle', '$jobApplications.jobApplied']
+            },
             jobId: '$jobApplications.jobId',
             rating: '$jobApplications.rating',
             resumeUrl: '$jobApplications.resumeUrl',
@@ -518,11 +536,14 @@ export const getCandidateById = async (req, res) => {
         'Design Task': 0,
         'Round 1': 0,
         'Round 2': 0,
-        'Offer Sent': 0
+        'Offer Sent': 0,
+        'Hired': 0
       };
   
       allCandidates.forEach(candidate => {
-        stats[candidate.currentStage] = (stats[candidate.currentStage] || 0) + 1;
+        if (candidate.currentStage) {
+          stats[candidate.currentStage] = (stats[candidate.currentStage] || 0) + 1;
+        }
       });
   
       res.status(200).json({
@@ -651,6 +672,105 @@ export const getCandidateById = async (req, res) => {
       res.status(500).json({
         success: false,
         message: 'Error saving assessment',
+        error: error.message
+      });
+    }
+  };
+
+  export const getQuestionnaireDetails = async (req, res) => {
+    try {
+      const { candidateId } = req.params;
+  
+      const candidate = await candidates.findById(candidateId)
+        .select('questionnaireAttempts firstName lastName phone email')
+        .lean();
+  
+      if (!candidate) {
+        return res.status(404).json({
+          success: false,
+          message: "Candidate not found"
+        });
+      }
+  
+      // Get the latest attempt
+      const latestAttempt = candidate.questionnaireAttempts[candidate.questionnaireAttempts.length - 1];
+  
+      if (!latestAttempt) {
+        return res.status(404).json({
+          success: false,
+          message: "No questionnaire attempts found for this candidate"
+        });
+      }
+  
+      // Get all question details in one query
+      const questionIds = latestAttempt.responses.map(response => response.questionId);
+      const questions = await Question.find({ _id: { $in: questionIds } }).lean();
+  
+      // Create a map for quick question lookup
+      const questionMap = questions.reduce((acc, question) => {
+        acc[question._id.toString()] = question;
+        return acc;
+      }, {});
+  
+      // Calculate statistics
+      const totalQuestions = latestAttempt.responses.length;
+      const correctAnswers = latestAttempt.responses.filter(response => response.isCorrect).length;
+      const incorrectAnswers = totalQuestions - correctAnswers;
+  
+      // Format time
+      const timeInMinutes = Math.floor(latestAttempt.totalTimeInSeconds / 60);
+      const timeInSeconds = latestAttempt.totalTimeInSeconds % 60;
+      const formattedTime = `${timeInMinutes}h ${timeInSeconds}mins`;
+  
+      // Enhanced response with question details
+      const response = {
+        success: true,
+        data: {
+          candidateInfo: {
+            name: `${candidate.firstName} ${candidate.lastName}`,
+            email: candidate.email,
+            phone: candidate.phone,
+            score: latestAttempt.score,
+            totalTimeSpent: formattedTime,
+            attemptDate: latestAttempt.attemptDate,
+          },
+          assessmentStats: {
+            totalQuestions,
+            correctAnswers,
+            incorrectAnswers,
+            scoreOutOf100: latestAttempt.score
+          },
+          questionResponses: latestAttempt.responses.map((response, index) => {
+            const question = questionMap[response.questionId.toString()];
+            return {
+              questionNumber: index + 1,
+              questionId: response.questionId,
+              questionDetails: {
+                text: question.text,
+                type: question.questionType,
+                category: question.category,
+                difficulty: question.difficulty,
+                imageUrl: question.imageUrl,
+                options: question.options.map(opt => ({
+                  text: opt.text,
+                  imageUrl: opt.imageUrl,
+                  isCorrect: opt.isCorrect
+                }))
+              },
+              selectedAnswer: response.selectedAnswer,
+              isCorrect: response.isCorrect
+            };
+          })
+        }
+      };
+  
+      return res.status(200).json(response);
+  
+    } catch (error) {
+      console.error("Error in getQuestionnaireDetails:", error);
+      return res.status(500).json({
+        success: false,
+        message: "Internal server error",
         error: error.message
       });
     }

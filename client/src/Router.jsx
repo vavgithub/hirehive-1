@@ -29,6 +29,7 @@ import CandidateLayout from './auth/CandidateLayout.jsx';
 import MyJobs from './pages/Candidate/MyJobs.jsx';
 import AllJobs from './pages/Candidate/AllJobs.jsx';
 import Profile from './pages/Admin/Profile.jsx';
+import AssessmentResponse from './pages/Admin/AssessmentResponse.jsx';
 
 export const router = createBrowserRouter([
    {
@@ -106,6 +107,10 @@ export const router = createBrowserRouter([
         element: <Dashboard />
       },
       {
+        path: "assessment/:id",
+        element:<AssessmentResponse/>
+      },
+      {
         path:"profile",
         element:<Profile/>
       },
@@ -137,6 +142,11 @@ export const router = createBrowserRouter([
       },
       {
         path: "jobs/view-candidate/:candidateId/:jobId",
+        element:
+          <ViewCandidateProfile />
+      },
+      {
+        path: "candidates/view-candidate/:candidateId/:jobId",
         element:
           <ViewCandidateProfile />
       },
