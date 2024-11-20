@@ -11,6 +11,7 @@ import { ReportsIcon, ReportsIconActive } from '../svg/Navbar/ReportsIcon';
 import Profile from '../svg/Buttons/Profile';
 import Logout from '../svg/Buttons/Logout';
 import { useAuthContext } from '../context/AuthProvider';
+import LightLogo from "../svg/Logo/lightLogo.svg"
 
 const Navbar = () => {
     const navigate = useNavigate();
@@ -169,6 +170,10 @@ const Navbar = () => {
         <div className='flex bg-main-bg bg-cover bg-top h-full overflow-x-hidden'>
             <div className="fixed flex h-screen w-48 flex-col gap-6 bg-background-100 text-font-gray typography-large-p justify-between py-4 ">
                 <div className='flex flex-col gap-5 typography-body'>
+                <div className='p-2'>
+
+                <img src={LightLogo}/>
+                </div>
                     {renderMenuItems()}
                 </div>
                 <div>
