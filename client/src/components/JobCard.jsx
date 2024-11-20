@@ -7,6 +7,16 @@ import PriceIcon from '../svg/JobCard/PriceIcon';
 import JobTypeIcon from '../svg/JobCard/JobTypeIcon';
 import GraphIcon from '../svg/JobCard/GraphIcon';
 
+// Helper function to truncate text to specific number of words
+const truncateWords = (text, wordLimit) => {
+  if (!text) return '';
+  const words = text.split(' ');
+  if (words.length > wordLimit) {
+    return words.slice(0, wordLimit).join(' ') + '...';
+  }
+  return text;
+};
+
 const JobDetailItem = ({ icon: Icon, text }) => (
   <div className="mr-8 flex gap-2 items-center">
     <Icon />
@@ -93,6 +103,8 @@ const JobCard = ({
       },
     ];
   }
+  // Truncate job description to 10 words
+  const truncatedDescription = truncateWords(job.jobDescription || 'No description available', 20);
 
   return (
     <div
@@ -122,12 +134,11 @@ const JobCard = ({
         text={`${job.experienceFrom} - ${job.experienceTo} Year`}
       />
     </div>
-  
-    <div className="px-4 pt-4">
-      <p className="typography-body w-[54vw] inline-block truncate text-ellipsis text-font-gray">
-        {job.jobDescription || 'No description available'}
-      </p>
-    </div>
+    <div className="px-4 p-4">
+        <p className="typography-body text-font-gray">
+          {truncatedDescription}
+        </p>
+      </div>
   
     {job.status === 'closed' && (
       <div className="flex p-4">

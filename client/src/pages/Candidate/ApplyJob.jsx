@@ -13,6 +13,7 @@ import useAuthCandidate from '../../hooks/useAuthCandidate';
 import { dummySkills } from '../../components/Form/dropdownOptions';
 import { showErrorToast, showSuccessToast } from '../../components/ui/Toast';
 import Loader from '../../components/ui/Loader';
+import Logo from '../../svg/Logo/lightLogo.svg'
 
 const fetchJobDetails = async (id) => {
   const response = await axios.get(`/jobs/getJobById/${id}`);
@@ -303,8 +304,6 @@ const ApplyJob = () => {
   };
 
 
-  console.log("check karr", candidateData);
-
   // Handler for additional questions input change
   const handleInputChange = (questionId, value) => {
     setAnswers((prevAnswers) => ({
@@ -314,13 +313,15 @@ const ApplyJob = () => {
   };
 
   return (
-    <>
+    <div className='md:mx-16 md:mt-4 container'>
+    
+<img className='h-12' src={Logo}/>
       {currentStep === 1 && (
-        <h1 className="typography-h1 m-4 md:mx-16">Application for {jobTitle}</h1>
+        <h1 className="typography-h1 m-4">Application for {jobTitle}</h1>
       )}
 
       {currentStep === 1 && (
-        <form className='md:mx-16 mx-4' onSubmit={handleSubmit(onSubmit)}>
+        <form className='mx-4' onSubmit={handleSubmit(onSubmit)}>
           {/* Personal Details */}
           {!isAuthenticated && (
             <>
@@ -780,7 +781,7 @@ const ApplyJob = () => {
         </div>
       )}
 
-    </>
+    </div>
   );
 };
 

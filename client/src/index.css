@@ -32,6 +32,12 @@ html{
   }
 }
 
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .custom-scrollbar {
   /* Enable horizontal scrolling */
   overflow-x: auto;
