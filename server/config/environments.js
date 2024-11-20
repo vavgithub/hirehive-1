@@ -17,7 +17,7 @@ const environments = {
     PORT: process.env.PORT || 8008,
     CORS_ORIGIN: "https://hirehive-1-1.onrender.com", // Update with your production domain
     DATABASE_URL:
-      "mongodb+srv://vevaaratvav:FOWCVU944K1Lj49Y@cluster0.wgbqmbj.mongodb.net/HireHive?retryWrites=true&w=majority&appName=Cluster0DATABASE_NAME = HireHive",
+      "mongodb+srv://vevaar:vevaar@vavprodcluster.lwurg.mongodb.net/?retryWrites=true&w=majority&appName=VAVProdCluster0DATABASE_NAME = HireHive",
     LOG_LEVEL: "error",
     UPLOAD_DIR: "./uploads/prod",
   },
