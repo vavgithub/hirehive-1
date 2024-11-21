@@ -80,7 +80,7 @@ const ViewJob = () => {
                                     Already Applied
                                 </Button>
                             ) : (
-                                <Button onClick={handleApplyClick} variant="primary">
+                                <Button variant="primary" onClick={handleApplyClick} iconPosition="right" icon={ArrowIcon}  >
                                     Apply Job
                                 </Button>
                             )}
@@ -122,7 +122,7 @@ const ViewJob = () => {
                                 Already Applied
                             </Button>
                         ) : (
-                            <Button onClick={handleApplyClick} iconPosition="right" icon={ArrowIcon} >
+                            <Button variant="primary" onClick={handleApplyClick} iconPosition="right" icon={ArrowIcon} >
                                 Apply Job
                             </Button>
                         )}
