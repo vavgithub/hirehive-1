@@ -85,7 +85,7 @@ export const router = createBrowserRouter([
     element:<PreAssessment/>
   },
   {
-    path: "/auth",
+    path: "/admin",
     element: <Authlayout />,
     children: [
       {
