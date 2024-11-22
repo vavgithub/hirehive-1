@@ -28,7 +28,7 @@ export const getEnvironmentConfig = (environment) => {
   console.log(baseConfig);
   return {
     ...baseConfig,
-    DATABASE_URL: process.env.MONGODB,
+    MONGODB: process.env.MONGODB,
     JWT_SECRET: process.env.JWT_SECRET,
     // Add other environment-specific variables
   };
