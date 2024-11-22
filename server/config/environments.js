@@ -28,8 +28,8 @@ export const getEnvironmentConfig = (environment) => {
   console.log(baseConfig);
   return {
     ...baseConfig,
-    MONGODB: process.env.MONGODB,
-    JWT_SECRET: process.env.JWT_SECRET,
+    DATABASE_URL: process.env.DATABASE_URL,
+    DATABASE_NAME: process.env.DATABASE_NAME
     // Add other environment-specific variables
   };
 };
@@ -37,7 +37,7 @@ export const getEnvironmentConfig = (environment) => {
 
 export const validateEnvVariables = () => {
   const requiredVars = [
-    "MONGODB",
+    "DATABASE_URL",
     "JWT_SECRET",
     "OTP_EMAIL",
     "OTP_EMAIL_CRED",
