@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 export const InputField = React.forwardRef(({ id, type , label, required,extraClass, ...props }, ref) => (
   <div className='space-y-1 flex flex-col gap-1'>
-    <label htmlFor={id} className="typography-body">{label}{required && <span className="text-red-100">*</span>}</label>
+    <label htmlFor={id} className="typography-body">{label} {required && <span className="text-red-100">*</span>}</label>
     <input
       id={id}
       type={type}

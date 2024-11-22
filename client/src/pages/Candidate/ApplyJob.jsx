@@ -586,8 +586,8 @@ const ApplyJob = () => {
                 }}
                 render={({ field, fieldState: { error } }) => (
                   <div className="w-full mb-4">
-                    <label htmlFor="skills" className="typograhpy-body mb-2">
-                      Skills<span className="text-red-100">*</span>
+                    <label htmlFor="skills" className="typography-body mb-2">
+                      Skills <span className="text-red-100">*</span>
                     </label>
                     <SkillsInput
                       value={field.value || []}
