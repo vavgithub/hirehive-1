@@ -321,7 +321,7 @@ const ApplyJob = () => {
         {currentStep === 1 && (
           <div className='container'>
              <div  >
-          <img className='h-12' src={Logo} />
+          <img className='h-12 m-4' src={Logo} />
           <h1 className="typography-h1 m-4">Application for {jobTitle}</h1>
           </div>          
           <form className='mx-4'  onSubmit={handleSubmit(onSubmit)}>
@@ -571,11 +571,11 @@ const ApplyJob = () => {
                   )}
               />
 
-              {/* Skills Input */}
 
             </div>
+              {/* Skills Input */}
 
-            <div className="grid md:grid-cols-2 grid-cols-1 pt-4">
+            <div className="grid md:grid-cols-2 grid-cols-1 gap-4 pt-4 ">
               <Controller
                 name="skills"
                 control={control}
@@ -599,10 +599,13 @@ const ApplyJob = () => {
                 )}
                 />
 
+
+
             </div>
 
+
             {/* Additional Questions */}
-            <div className="pt-4 mx-2">
+            <div className="pt-4 ">
               {questions.length != 0 && (
                 <>
                   <h2 className="typography-h2 mb-4">Additional Questions</h2>
@@ -617,8 +620,8 @@ const ApplyJob = () => {
                         rules={{ required: question.required }}
                         render={({ field }) => (
                           <div>
-                            <label className="block mb-2 ">
-                              {index + 1}. {question.text}
+                            <label className="block mb-2 typography-body ">
+                              Q{index + 1}. {question.text}
                               {question.required && (
                                 <span className="text-red-500 ml-1">*</span>
                               )}
