@@ -12,6 +12,8 @@ import Profile from '../svg/Buttons/Profile';
 import Logout from '../svg/Buttons/Logout';
 import { useAuthContext } from '../context/AuthProvider';
 import LightLogo from "../svg/Logo/lightLogo.svg"
+import {NotificationIcon, NotificationIconActive} from '../svg/Staging/NotificationIcon';
+import {SettingsIcon, SettingsIconActive} from '../svg/Staging/SettingsIcon';
 
 const Navbar = () => {
     const navigate = useNavigate();
@@ -54,7 +56,7 @@ const Navbar = () => {
         setAnchorEl(null); // Close the menu
     };
 
-    const NavItem = ({ to, icon: Icon, activeIcon: ActiveIcon, children }) => (
+    const NavItem = ({ to, icon: Icon, activeIcon: ActiveIcon, iconData, children }) => (
         <div className="relative flex flex-row items-center justify-between hover:bg-background-60">
             <NavLink
                 to={to}
@@ -65,7 +67,7 @@ const Navbar = () => {
             >
                 {({ isActive, isPending }) => (
                     <div className='flex items-center'>
-                        {isActive || isPending ? <ActiveIcon /> : <Icon />}
+                        {isActive || isPending ? <ActiveIcon count={iconData} /> : <Icon count={iconData} />}
                         <span>{children}</span>
                     </div>
                 )}
@@ -79,6 +81,22 @@ const Navbar = () => {
             />
         </div>
     );
+
+    const renderUtilityOptions = () =>{
+        if (user?.role === 'Hiring Manager') {
+            return(
+                <>
+                    <NavItem to="/admin/notificaton" icon={NotificationIcon} activeIcon={NotificationIconActive} iconData={2} >Notification</NavItem>
+                    <NavItem to="/admin/settings" icon={SettingsIcon} activeIcon={SettingsIconActive} >Settings</NavItem>
+                </>
+            )
+        } else if (user?.role === 'Design Reviewer') {
+            <>
+                <NavItem to="/design-reviewer/notificaton" icon={NotificationIcon} activeIcon={NotificationIconActive} iconData={2} >Notification</NavItem>
+                <NavItem to="/design-reviewer/settings" icon={SettingsIcon} activeIcon={SettingsIconActive} >Settings</NavItem>
+            </>
+        }
+    }
 
     // Adding Profile and Logout dropdown logic
     const renderProfileMenu = () => {
@@ -175,13 +193,14 @@ const Navbar = () => {
                 <img className='h-11' src={LightLogo}/>
                 </div>
                     {renderMenuItems()}
-                </div>
-                <div>
+                </div> 
+                <div className='flex flex-col gap-2'>
+                    {/* {renderUtilityOptions()} */}
                     {user && renderProfileMenu()}
                 </div>
             </div>
 
-            <div className='ml-[192px] w-screen h-full mr-48'>
+            <div className='ml-[192px] w-[calc(100vw-192px)] h-full '>
                 <Outlet />
             </div>
         </div>

@@ -55,7 +55,7 @@ const BudgetFilter = ({ onApply, shouldReset }) => {
               value={minBudget}
               onChange={handleMinBudgetChange}
               placeholder="0"
-              className="w-16 p-2 bg-background-40 text-center no-spinner rounded-xl"
+              className="w-16 p-2 bg-background-40 text-left no-spinner rounded-xl"
             />
             <span className="text-font-gray pr-2">LPA</span>
           </div>
@@ -68,7 +68,7 @@ const BudgetFilter = ({ onApply, shouldReset }) => {
               value={maxBudget}
               onChange={handleMaxBudgetChange}
               placeholder="0"
-              className="w-16 p-2 bg-background-40 text-center no-spinner rounded-xl"
+              className="w-16 p-2 bg-background-40 text-left no-spinner rounded-xl"
             />
             <span className="text-font-gray pr-2">LPA</span>
           </div>

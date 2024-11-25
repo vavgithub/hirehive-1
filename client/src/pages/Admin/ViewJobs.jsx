@@ -230,8 +230,10 @@ const ViewJobs = () => {
                                 </label>
                                 {(
                                     question.options.map((option, optionIndex) => (
-                                        <div key={optionIndex} className="mb-2 typography-body flex justify-start items-center gap-2">
+                                        <div key={optionIndex} className="mb-2 typography-body flex justify-start items-center gap-3">
                                             <div className='w-4 h-4 rounded-full border border-gray-600'></div>
+                                            {/* <div className='w-4'>
+                                            </div> */}
                                             <label htmlFor={`question-${question._id}-option-${optionIndex}`}>{option}</label>
                                         </div>
                                     ))
@@ -243,8 +245,8 @@ const ViewJobs = () => {
             )}
 
             {activeTab === 'candidate' && (
-                <div className='bg-background-30 p-4 rounded-xl mt-5'>
-                    <div className="w-full  mb-4">
+                <div className='bg-background-30 p-4 rounded-xl mt-5 max-w-[100%]'>
+                    <div className="max-w-full  mb-4">
                         <StatsGrid stats={candidateStats} />
                     </div>
                     <div>

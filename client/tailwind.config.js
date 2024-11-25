@@ -52,7 +52,7 @@ export default {
         },        
         black:{
           100:"rgba(12, 13, 13, 1)",
-        },        
+        },     
         grey:{
           100:"rgba(88, 91, 95, 1)",
           70:"rgba(32, 33, 34, 1)",
@@ -95,6 +95,7 @@ export default {
         },
         accent: {
           100: "var(--color-font-accent-100)",
+          300 : "var(--color-accent-300)",
           red: "var(--color-red-100)",
           yellow: "var(--color-yellow-100)",
           green: "var(--color-green-100)",

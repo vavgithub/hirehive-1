@@ -10,7 +10,7 @@ import BudgetFilter from './BudgetFilter';
 
 const CustomCheckbox = ({ label, icon: Icon, isChecked, onChange, count }) => (
     <div
-        className={`flex flex-col justify-center p-3 rounded-xl cursor-pointer hover:bg-background-60 ${isChecked ? 'bg-gray-800' : 'bg-background-40'
+        className={`flex flex-col justify-center p-3 rounded-xl cursor-pointer hover:bg-background-60 ${isChecked ? 'bg-accent-300' : 'bg-background-40'
             }`}
         onClick={onChange}
     >
@@ -28,7 +28,7 @@ const CustomCheckbox = ({ label, icon: Icon, isChecked, onChange, count }) => (
 
 const ButtonCheckbox = ({ label, isChecked, onChange }) => (
     <button
-        className={`px-4 py-2 rounded-xl typography-large-p ${isChecked ? 'bg-gray-800 text-font-accent' : 'bg-background-40 text-font-gray'
+        className={`px-4 py-2 rounded-xl typography-large-p ${isChecked ? 'bg-accent-300 text-font-accent' : 'bg-background-40 text-font-gray'
             } hover:bg-background-60 transition-colors duration-200`}
         onClick={onChange}
     >
@@ -154,6 +154,7 @@ const Filters = ({ filters = {}, handleCheckboxChange, activeTab, handleExperien
         <div className='w-[304px]'>
 
             <div className="bg-background-90 p-4 rounded-xl relative">
+                <h3 className='text-gray-200 font-semibold mb-2 text-lg tracking-wide' >Filter</h3>
                 <div className='flex flex-row-reverse absolute top-5 right-5'>
                     <button
                         onClick={handleClearAll}

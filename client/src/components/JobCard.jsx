@@ -152,7 +152,7 @@ const JobCard = ({
   
     {(isAdmin || isCandidate) && (
       <div className="flex items-center bg-background-40 p-4 rounded-b-xl">
-        <div className="flex justify-between w-full md:justify-start">
+        <div className="flex justify-between w-full md:justify-start gap-3">
           {(isAdmin ? adminFooterItems : candidateFooterItems).map(
             (item, index) => (
               <JobFooterItem

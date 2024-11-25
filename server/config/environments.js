@@ -5,6 +5,8 @@ const environments = {
     CORS_ORIGIN: "http://localhost:8008",
     LOG_LEVEL: "debug",
     UPLOAD_DIR: "./uploads/dev",
+    DATABASE_URL :`vevaaratvav:FOWCVU944K1Lj49Y@cluster0.wgbqmbj.mongodb.net/HireHive?retryWrites=true&w=majority&appName=Cluster0DATABASE_NAME = HireHive`
+ 
   },
   staging: {
     PORT: process.env.PORT || 8008,

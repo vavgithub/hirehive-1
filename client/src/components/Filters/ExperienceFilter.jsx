@@ -55,7 +55,7 @@ const ExperienceFilter = ({ onApply, shouldReset }) => {
               value={minExperience}
               onChange={handleMinExperienceChange}
               placeholder="0"
-              className="w-16 p-2 bg-background-40 text-center no-spinner rounded-xl"
+              className="w-16 p-2 bg-background-40 text-left no-spinner rounded-xl"
             />
             <span className="text-font-gray pr-2">Years</span>
           </div>
@@ -68,7 +68,7 @@ const ExperienceFilter = ({ onApply, shouldReset }) => {
               value={maxExperience}
               onChange={handleMaxExperienceChange}
               placeholder="0"
-              className="w-16 p-2 bg-background-40 text-center no-spinner rounded-xl"
+              className="w-16 p-2 bg-background-40 text-left no-spinner rounded-xl"
             />
             <span className="text-font-gray pr-2">Years</span>
           </div>
