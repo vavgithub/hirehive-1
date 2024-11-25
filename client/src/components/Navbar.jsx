@@ -38,7 +38,7 @@ const Navbar = () => {
         try {
             await logout();
             refetch();
-            navigate('/auth/login');
+            navigate('/admin/login');
         } catch (error) {
             console.error('Logout failed:', error);
         }

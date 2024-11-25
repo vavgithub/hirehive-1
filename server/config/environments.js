@@ -1,34 +1,43 @@
+// config/environments.js
 const environments = {
   development: {
     PORT: 8008,
-    CORS_ORIGIN: "http://localhost:8008", // Note: Consider restricting this in staging/production
-    DATABASE_URL:"mongodb+srv://vevaaratvav:FOWCVU944K1Lj49Y@cluster0.wgbqmbj.mongodb.net/HireHive?retryWrites=true&w=majority&appName=Cluster0DATABASE_NAME = HireHive",
+    CORS_ORIGIN: "http://localhost:8008",
     LOG_LEVEL: "debug",
     UPLOAD_DIR: "./uploads/dev",
   },
   staging: {
     PORT: process.env.PORT || 8008,
-    CORS_ORIGIN: "https://www.antiquerustleatherbags.com", // Update with your staging domain
+    CORS_ORIGIN: "https://stage.hire.atvoid.com",
     LOG_LEVEL: "info",
-    DATABASE_URL:"mongodb+srv://vevaaratvav:FOWCVU944K1Lj49Y@cluster0.wgbqmbj.mongodb.net/HireHive?retryWrites=true&w=majority&appName=Cluster0DATABASE_NAME = HireHive",
     UPLOAD_DIR: "./uploads/staging",
   },
   production: {
     PORT: process.env.PORT || 8008,
-    CORS_ORIGIN: "https://hirehive-1-1.onrender.com", // Update with your production domain
-    DATABASE_URL:
-      "mongodb+srv://vevaar:vevaar@vavprodcluster.lwurg.mongodb.net/?retryWrites=true&w=majority&appName=VAVProdCluster0DATABASE_NAME = HireHive",
+    CORS_ORIGIN: "https://hire.atvoid.com",
     LOG_LEVEL: "error",
     UPLOAD_DIR: "./uploads/prod",
   },
 };
 
 export const getEnvironmentConfig = (environment) => {
-  return environments[environment] || environments.development;
+  // Get base configuration for the environment
+  const baseConfig = environments[environment] || environments.development;
+  
+  // Merge with environment-specific variables from .env files
+  console.log(baseConfig);
+  return {
+    ...baseConfig,
+    DATABASE_URL: process.env.DATABASE_URL,
+    DATABASE_NAME: process.env.DATABASE_NAME
+    // Add other environment-specific variables
+  };
 };
+
 
 export const validateEnvVariables = () => {
   const requiredVars = [
+    "DATABASE_URL",
     "JWT_SECRET",
     "OTP_EMAIL",
     "OTP_EMAIL_CRED",

@@ -5,6 +5,7 @@ import { showErrorToast, showSuccessToast } from '../../components/ui/Toast';
 import axios from '../../api/axios';
 import { InputField } from '../../components/Form/FormFields';
 import OTPInput from '../../components/ui/OTPInput';
+import { BackButton } from '../../components/utility/Header';
 
 const ForgotPassword = ({ onBack }) => {
   const [step, setStep] = useState('email');
@@ -118,14 +119,17 @@ const ForgotPassword = ({ onBack }) => {
   };
 
   return (
-    <div className="w-full max-w-md mx-auto p-6">
-      <Button
-        variant="ghost"
-        className="mb-4"
-        onClick={onBack}
-      >
-        ← Back to Login
-      </Button>
+    <div className="w-full  p-6">
+      <div className='flex cursor-pointer gap-4 my-4 items-center'
+      onClick={onBack}>
+        <BackButton/>
+        <p className='typography-h3'>
+
+      Back to Login
+        </p>
+      </div>
+      
+      
 
       <h2 className="typography-h2 mb-6">Reset Password</h2>
 

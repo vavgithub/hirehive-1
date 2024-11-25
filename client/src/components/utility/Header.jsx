@@ -2,7 +2,7 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import ThreeDots from '../ThreeDots'
 
-const BackButton = () => {
+export const BackButton = () => {
     return (
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
             <path d="M22 12L2 12M2 12L12 22M2 12L12 2" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
