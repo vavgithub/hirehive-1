@@ -167,7 +167,7 @@ const Navbar = () => {
     };
 
     return (
-        <div className='flex bg-main-bg bg-cover bg-top h-full overflow-x-hidden'>
+        <div className='flex bg-main-bg bg-cover bg-top h-full overflow-x-hidden w-screen'>
             <div className="fixed flex h-screen w-48 flex-col gap-6 bg-background-100 text-font-gray typography-large-p justify-between py-4 ">
                 <div className='flex flex-col gap-5 typography-body'>
                 <div className='p-2 flex '>
@@ -181,7 +181,7 @@ const Navbar = () => {
                 </div>
             </div>
 
-            <div className='ml-[192px] w-full h-full'>
+            <div className='ml-[192px] w-screen h-full mr-48'>
                 <Outlet />
             </div>
         </div>

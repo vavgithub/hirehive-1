@@ -125,10 +125,11 @@ const JobCard = ({
   
     <div className="flex flex-col px-4 md:flex-row items-start gap-3">
       <JobDetailItem icon={JobTypeIcon} text={job.employmentType} />
+      {((job.budgetTo > 1) || (job.budgetFrom > 0)) && 
       <JobDetailItem
         icon={PriceIcon}
         text={`${job.budgetFrom} - ${job.budgetTo} LPA`}
-      />
+      />}
       <JobDetailItem
         icon={GraphIcon}
         text={`${job.experienceFrom} - ${job.experienceTo} Year`}

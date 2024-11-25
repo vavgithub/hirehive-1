@@ -72,6 +72,13 @@ const HomePage = () => {
         });
     };
 
+    const handleBudgetFilter = (budget) => {
+        setFilters(prevFilters => ({
+            ...prevFilters,
+            budget
+        }));
+    };
+
     const handleExperienceFilter = (experience) => {
         setFilters(prevFilters => ({
             ...prevFilters,
@@ -152,6 +159,7 @@ const HomePage = () => {
                         filters={filters}
                         handleCheckboxChange={handleCheckboxChange}
                         handleExperienceFilter={handleExperienceFilter}
+                        handleBudgetFilter={handleBudgetFilter}
                         clearAllFilters={clearAllFilters}
                     />
                 </div>

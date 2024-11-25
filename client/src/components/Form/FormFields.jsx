@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 export const InputField = React.forwardRef(({ id, type , label, required,extraClass, ...props }, ref) => (
   <div className='space-y-1 flex flex-col gap-1'>
@@ -17,6 +17,9 @@ export const InputField = React.forwardRef(({ id, type , label, required,extraCl
 export const CustomDropdown = React.forwardRef(({ field, label, options, value, onChange, required }, ref) => {
   const [isOpen, setIsOpen] = useState(false);
 
+  //Reference for current dropdown container
+  const dropdownRef = React.useRef(null);
+
   const toggleDropdown = () => setIsOpen(!isOpen);
 
   const handleOptionClick = (option) => {
@@ -24,17 +27,31 @@ export const CustomDropdown = React.forwardRef(({ field, label, options, value, 
     setIsOpen(false);
   };
 
+  const handleClickOutside = (event) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      setIsOpen(false); // Close dropdown if clicked outside
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('click', handleClickOutside);
+    return () => window.removeEventListener('click', handleClickOutside);
+  }, []);
+
   return (
-    <div className="space-y-1 flex flex-col gap-1">
+    <div className="space-y-1 flex flex-col gap-1" ref={dropdownRef}>
       <label className="typography-body">{label}{required && <span className="text-red-100">*</span>}</label>
       <div className="relative focus:outline focus:outline-teal-400">
         <button
           type="button"
           onClick={toggleDropdown}
-          className="mt-1 h-[44px] bg-background-40 block text-font-gray w-full outline-none rounded-xl shadow-sm focus:ring-teal-300 focus:border-teal-300 text-left px-4"
+          className="mt-1 h-[44px] flex items-center justify-between bg-background-40  text-font-gray w-full outline-none rounded-xl shadow-sm focus:ring-teal-300 focus:border-teal-300 text-left px-4"
           ref={ref}
         >
           {options.find(opt => opt.value === value)?.label || '-Select-'}
+          <svg width="18" height="9" viewBox="0 0 18 9" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M1 0.5L9 8.5L17 0.5" stroke="#585B5F" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
         </button>
         {isOpen && (
           <ul className="absolute mt-1 bg-background-40 rounded-md shadow-lg w-full space-y-2 z-10">
@@ -73,7 +90,7 @@ export const ExperienceField = React.forwardRef(({ value, onChange ,required }, 
   </div>
 ));
 
-export const BudgetField = React.forwardRef(({ value, onChange , required }, ref) => (
+export const BudgetField = React.forwardRef(({ value, onChange , required ,errors}, ref) => (
   <div>
     <label className="typography-body">Budget{required && <span className="text-red-100">*</span>}</label>
     <div className='flex gap-2'>
@@ -82,13 +99,14 @@ export const BudgetField = React.forwardRef(({ value, onChange , required }, ref
           key={label}
           label={label.charAt(0).toUpperCase() + label.slice(1)}
           value={value[label]}
-          onChange={(newValue) => onChange({ ...value, [label]: newValue })}
-          unit="Lpa"
+          onChange={(newValue) => onChange({ ...value, [label]: newValue === "" ? label === "to" ? 1 : 0 : parseInt(newValue,10) })}
+          unit="LPA"
           ref={ref}
           required
         />
       ))}
     </div>
+    {errors?.budgetTo?.message && <p className="text-red-100 text-xs">{errors?.budgetTo?.message}</p>}
   </div>
 ));
 
