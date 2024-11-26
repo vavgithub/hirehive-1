@@ -200,7 +200,7 @@ const Navbar = () => {
                 </div>
             </div>
 
-            <div className='ml-[192px] w-[calc(100vw-192px)] h-full '>
+            <div className='ml-[192px] w-[calc(100vw-192px)] flex justify-center h-full '>
                 <Outlet />
             </div>
         </div>
