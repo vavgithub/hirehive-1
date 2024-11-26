@@ -45,7 +45,7 @@ export const CustomDropdown = React.forwardRef(({ field, label, options, value, 
         <button
           type="button"
           onClick={toggleDropdown}
-          className={`${value ? "text-white" : "text-font-gray"} mt-1 h-[44px] flex items-center justify-between bg-background-40   w-full outline-none rounded-xl shadow-sm focus:ring-teal-300 focus:border-teal-300 text-left px-4`}
+          className={`${value ? "text-white" : "text-font-gray"} typography-body mt-1 h-[44px] flex items-center justify-between bg-background-40   w-full outline-none rounded-xl shadow-sm focus:ring-teal-300 focus:border-teal-300 text-left px-4`}
           ref={ref}
         >
           {options.find(opt => opt.value === value)?.label || '-Select-'}
@@ -59,7 +59,7 @@ export const CustomDropdown = React.forwardRef(({ field, label, options, value, 
               <li
                 key={option.value}
                 onClick={() => handleOptionClick(option)}
-                className="cursor-pointer px-4 py-2 hover:bg-background-60"
+                className="cursor-pointer px-4 py-2 typography-body hover:bg-background-60"
               >
                 {option.label}
               </li>

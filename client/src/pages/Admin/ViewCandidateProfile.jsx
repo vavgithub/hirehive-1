@@ -248,7 +248,7 @@ const ViewCandidateProfile = () => {
 
             {/* Content of the selected tab */}
             {activeTab === 'application' && (
-                <div>
+                <div className='w-[1032px]'>
                     <ApplicationStaging
                         candidateId={candidateId}
                         jobId={jobId}
