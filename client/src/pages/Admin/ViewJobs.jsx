@@ -193,7 +193,7 @@ const ViewJobs = () => {
 
 
     return (
-        <div className="mx-4 pt-4 h-screen">
+        <div className="mx-4 pt-4 container h-screen">
 
             <Header HeaderText={formData.jobTitle} withKebab="true" withBack="true" job={formData} handleAction={handleAction}></Header>
 

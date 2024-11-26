@@ -293,7 +293,7 @@ const Dashboard = () => {
                 <h1 className='typography-h1'>Jobs</h1>
                 {/* <Link to="/admin/create-job" className="bg-black text-white px-4 py-2 rounded">Create job listing</Link> */}
 
-                <div className='flex justify-center mb-3 '>
+                <div className='flex justify-center'>
                     <Tabs tabs={tabs} activeTab={activeTab} handleTabClick={handleTabClick} />
                 </div>
 

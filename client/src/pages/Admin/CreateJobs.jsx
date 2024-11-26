@@ -31,7 +31,7 @@ const CreateJobs = () => {
   };
 
   return (
-    <div className="bg-background-80 w-full ">
+    <div className="bg-background-80  w-full ">
       <div className='p-4 w-full'>
         <Header HeaderText="Create a New Job Listing" withBack="true" />
         <JobForm
