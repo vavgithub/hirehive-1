@@ -117,7 +117,7 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
       result = result.filter(row => filters.stage.includes(row.currentStage));
     }
     if (filters.status && filters.status.length > 0) {
-      result = result.filter(row => filters.status.includes(row.stageStatuses[row.currentStage]?.status));
+      result = result.filter(row => filters.status.includes(readOnly ? row?.status : row.stageStatuses[row.currentStage]?.status));
     }
     if (filters.experience) {
       const [min, max] = filters.experience.split('-').map(num => parseInt(num));
@@ -129,8 +129,8 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
     if (filters.rating && filters.rating.length > 0) {
       result = result.filter(row => filters.rating.includes(row.rating));
     }
-    if (filters.assignee && filters.assignee.length > 0) {
-      result = result.filter(row => filters.assignee.includes(row.stageStatuses[row.currentStage]?.assignedTo?.name));
+    if (!readOnly && filters.assignee && filters.assignee.length > 0) {
+      result = result.filter(row => filters.assignee.find(each=>each._id === row.stageStatuses[row.currentStage]?.assignedTo));
     }
 
     return result;
@@ -650,7 +650,7 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
             value={searchTerm}
             onChange={handleSearch}
           />
-          <FilterForDataTable onApplyFilters={handleApplyFilters} />
+          <FilterForDataTable onApplyFilters={handleApplyFilters} readOnly={readOnly} />
           <div className='flex items-center cursor-pointer gap-2 text-font-gray  typography-body' onClick={() => handleExport()}>
             <Export />
             Export
