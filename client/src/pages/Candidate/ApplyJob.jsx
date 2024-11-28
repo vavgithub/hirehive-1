@@ -14,6 +14,7 @@ import { dummySkills } from '../../components/Form/dropdownOptions';
 import { showErrorToast, showSuccessToast } from '../../components/ui/Toast';
 import Loader from '../../components/ui/Loader';
 import Logo from '../../svg/Logo/lightLogo.svg'
+import { emailRegex, mobileRegex } from '../../utility/regex';
 
 const fetchJobDetails = async (id) => {
   const response = await axios.get(`/jobs/getJobById/${id}`);
@@ -80,6 +81,16 @@ const ApplyJob = () => {
   } = useForm({
     mode: 'onChange',
     defaultValues: {
+      firstName: "",
+      lastName: "",
+      email: "",
+      phoneNumber: "",
+      website: '',
+      portfolio: '',
+      experience: '',
+      noticePeriod: '',
+      currentCTC: '',
+      expectedCTC: '',
       resumeFile: null,
       skills: [], // Add this line
     },
@@ -367,40 +378,35 @@ const ApplyJob = () => {
                     rules={{
                       required: true,
                       pattern: {
-                        value: /^\S+@\S+$/i,
+                        value: emailRegex,
                         message: 'Invalid email address',
                       },
                     }}
                     render={({ field }) => (
-                      <InputField
-                      id="email"
-                      type="email"
-                      label="Email"
-                      required={true}
-                      error={errors.email}
-                        {...field}
-                      />
+                      <div>
+                      <InputField id="email" type="email" label="Email" required={true} error={errors.email} {...field} />
+                      <p className="text-red-500 text-xs min-h-5">{errors.email && errors.email.message}</p>
+                    </div>
                     )}
                     />
                   <Controller
                     name="phoneNumber"
                     control={control}
                     rules={{
-                      required: true,
-                      pattern: {
-                        value: /^[0-9]{10}$/,
-                        message: 'Invalid phone number',
+                      required: 'Phone number is required', // Custom error message for required field
+                      validate: {
+                        isValidLength: (value) =>
+                          value?.length === 10 || 'Phone number must be exactly 10 digits',
+                        matchesPattern: (value) =>
+                          mobileRegex.test(value) || 'Invalid Phone Number',
                       },
                     }}
                     render={({ field }) => (
-                      <InputField
-                      type="number"
-                        id="phoneNumber"
-                        label="Phone Number"
-                        required={true}
-                        error={errors.phoneNumber}
-                        {...field}
-                        />
+                      <div>
+                        <InputField type="number" id="phoneNumber" label="Phone Number" required={true}
+                          error={errors.phoneNumber} {...field} />
+                      <p className="text-red-500 text-xs min-h-5">{errors.phoneNumber && errors.phoneNumber.message}</p>
+                      </div>
                       )}
                       />
                 </div>
@@ -446,7 +452,7 @@ const ApplyJob = () => {
                   )}
               />
 
-              <div className='md:col-span-2'>
+              <div className='md:col-span-2 flex flex-col gap-2'>
                 <label className="typography-body">Resume<span className="text-red-100">*</span></label>
                 <div
                   {...getRootProps({
@@ -497,7 +503,7 @@ const ApplyJob = () => {
                 {/* Hidden input field to include resumeFile in form validation */}
                 <input type="hidden" {...register('resumeFile', { required: 'Resume is required' })} />
                 {errors.resumeFile && (
-                  <span className="text-red-500">{errors.resumeFile.message}</span>
+                  <span className="text-red-500 text-xs">{errors.resumeFile.message}</span>
                 )}
               </div>
 
@@ -611,7 +617,7 @@ const ApplyJob = () => {
                   <h2 className="typography-h2 mb-4">Additional Questions</h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ">
                     {questions.map((question, index) => (
-                      <div className='bg-background-30 rounded-xl p-4'>
+                      <div key={question._id} className='bg-background-30 rounded-xl p-4'>
                       <Controller
                         key={question._id}
                         name={`question-${question._id}`}
@@ -685,6 +691,7 @@ const ApplyJob = () => {
                   >
                   {isSubmitting ? 'Submitting...' : 'Next'}
                 </Button>
+                <p className='text-red-40 text-xs mt-1 min-h-5'>{!isValid && `Please fill all required fields.`}</p>
               </div>
             </div>
           </form>

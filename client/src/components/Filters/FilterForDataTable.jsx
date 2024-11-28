@@ -16,7 +16,7 @@ const ArrowIcon = ({ isOpen }) => (
   </svg>
 );
 
-const FilterForDataTable = ({ onApplyFilters }) => {
+const FilterForDataTable = ({ onApplyFilters ,readOnly}) => {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef(null);
   const [selectedFilters, setSelectedFilters] = useState({
@@ -62,8 +62,12 @@ const FilterForDataTable = ({ onApplyFilters }) => {
     }
 
     return {
-      value: `${values[0]} +${values.length - 1} more`,
-      className: 'text-font-gray typography-body' // white for multiple selected values
+      value: (
+        <>
+          <span className="text-white">{values[0]} </span> + {values.length - 1} more
+        </>
+      ),
+      className: 'text-font-gray typography-body whitespace-nowrap text-ellipsis overflow-hidden' // white for multiple selected values
     };
   };
 
@@ -86,6 +90,19 @@ const FilterForDataTable = ({ onApplyFilters }) => {
     'Round 1': ['Call Pending', 'Call Scheduled', 'Not Assigned', 'Completed', 'No Show', 'Rejected'],
     'Round 2': ['Call Pending', 'Call Scheduled', 'Not Assigned', 'Completed', 'No Show', 'Rejected'],
   };
+
+  const allStatuses = [
+    'Not Assigned',
+    'Under Review',
+    'Completed',
+    'Rejected',
+    'Call Pending',
+    'Call Scheduled',
+    'No Show',
+    'Sent',
+    'Not Submitted'
+  ]
+  
 
   const handleSelect = (category, value) => {
     setSelectedFilters((prev) => ({
@@ -157,9 +174,9 @@ const FilterForDataTable = ({ onApplyFilters }) => {
 
   const categories = {
     stage: ['Portfolio', 'Screening', 'Design Task', 'Round 1', 'Round 2', 'Hired'],
-    status: selectedFilters.stage.length === 1 ? stageStatusMap[selectedFilters.stage[0]] : ['Rejected'],
+    status: selectedFilters.stage.length === 1 ? stageStatusMap[selectedFilters.stage[0]] : allStatuses,
     rating: ['Good Fit', 'Not A Good Fit', 'May Be'],
-    assignee: designReviewers.map(reviewer => reviewer.name),
+    ...(!readOnly && {assignee: designReviewers.map(reviewer => reviewer)}),
   };
 
   useEffect(() => {
@@ -172,16 +189,16 @@ const FilterForDataTable = ({ onApplyFilters }) => {
         <Filter /> Filter
       </div>
       {isOpen && (
-        <div className="absolute z-10 mt-2 w-[256px] max-w-64 bg-background-40 px-6 py-4 rounded-xl flex flex-col gap-4 shadow-[2px_4px_30px_rgba(0,0,0,0.3)]">
+        <div className="absolute z-10 mt-2 w-[290px] max-w-[19rem] bg-background-40 px-6 py-4 rounded-xl flex flex-col gap-4 shadow-[2px_4px_30px_rgba(0,0,0,0.3)]">
           {Object.keys(categories).map((category) => (
-            <div key={category} className="">
+            <div key={category} className="w-full">
               <div className="flex justify-between items-center cursor-pointer" onClick={() => handleDropdown(category)}>
-                <div className="flex gap-2">
+                <div className="flex gap-2 w-[90%] ">
                   <span className="capitalize text-gray-400">
                     {category}:
                   </span>
                   <span className={formatSelectedValues(category, selectedFilters[category]).className}>
-                    {formatSelectedValues(category, selectedFilters[category]).value}
+                    {formatSelectedValues(category,category === 'assignee' ? selectedFilters[category].map(each=>each.name)  : selectedFilters[category]).value}
                   </span>
                 </div>
                 <ArrowIcon isOpen={showDropdown[category]} />
@@ -192,14 +209,14 @@ const FilterForDataTable = ({ onApplyFilters }) => {
                 ) : (
                   <div className="px-6 py-4 rounded-xl absolute typography-body left-64 bg-background-40 w-max flex flex-col gap-4 shadow-[2px_4px_30px_rgba(0,0,0,0.3)]">
                     {categories[category].map((item) => (
-                      <label key={item} className="flex items-center text-white">
+                      <label key={category === 'assignee' ? item._id :item} className="flex items-center text-white">
                         <input
                           type="checkbox"
-                          checked={selectedFilters[category].includes(item)}
+                          checked={category === 'assignee' ? selectedFilters[category].find(each=>each.name === item.name) ?? "" :selectedFilters[category].includes(item)}
                           onChange={() => category === 'stage' ? handleStageSelect(item) : handleSelect(category, item)}
                           className="mr-2"
                         />
-                        {item}
+                        {category === 'assignee' ? item.name :item}
                       </label>
                     ))}
                   </div>
