@@ -9,7 +9,7 @@ export const fetchCandidateAuthData = createAsyncThunk(
       const response = await axios.get('/auth/candidate/dashboard');
       return response.data.candidate;
     } catch (error) {
-      return rejectWithValue(error.response?.data || 'Failed to fetch candidate data');
+      return rejectWithValue(error.response?.data.message || 'Failed to fetch candidate data');
     }
   }
 );

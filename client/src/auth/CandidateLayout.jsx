@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Outlet, useNavigate, NavLink } from 'react-router-dom';
 import { candidateLogout } from '../api/authApi';
 
@@ -7,11 +7,12 @@ import { DashboardIcon, DashboardIconActive } from '../svg/Navbar/DashboardIcon'
 import { JobsIcon, JobsIconActive } from '../svg/Navbar/JobsIcon';
 import { MyJobsIcon, MyJobsIconActive } from '../svg/Navbar/MyJobsIcon';
 import { Button } from '../components/ui/Button';
-import useAuthCandidate from '../hooks/useCandidateAuth';
+import useCandidateAuth  from '../hooks/useCandidateAuth';
 import Modal from '../components/Modal';
 import AssessmentBanner from '../components/ui/AssessmentBanner';
 import { useDispatch, useSelector } from 'react-redux';
 import { logoutCandidateAuth } from '../redux/candidateAuthSlice';
+import { showErrorToast, showSuccessToast } from '../components/ui/Toast';
 
 const CandidateLayout = () => {
   const navigate = useNavigate();
@@ -19,16 +20,14 @@ const CandidateLayout = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   // Get candidate data from Redux store
-  const { candidateAuthData, isAuthenticatedCandidate } = useSelector(
-    (state) => state.candidateAuth
-  );
+  const { candidateData, isAuthenticated } = useCandidateAuth()
 
   // Initialize modal visibility state based on assessment status
   const [isAssessmentModalVisible, setIsAssessmentModalVisible] = useState(
-    candidateAuthData && !candidateAuthData.hasGivenAssessment
+    candidateData && !candidateData.hasGivenAssessment
   );
   const [isAssessmentBannerVisible, setIsAssessmentBannerVisible] = useState(
-    candidateAuthData && !candidateAuthData.hasGivenAssessment
+    candidateData && !candidateData.hasGivenAssessment
   );
 
   const handleLogout = async () => {
@@ -102,8 +101,8 @@ const CandidateLayout = () => {
   );
 
   // Only render the layout if authenticated
-  if (!isAuthenticatedCandidate) {
-    navigate('/login');
+  if (!isAuthenticated) {
+    navigate('/');
     return null;
   }
 
@@ -146,10 +145,10 @@ const CandidateLayout = () => {
           ))}
         </div>
         <div className="px-4">
-        {candidateAuthData && (
+        {candidateData && (
             <>
               <span className="block mb-2 typography-body">
-                Welcome, {candidateAuthData.firstName}
+                Welcome, {candidateData.firstName}
               </span>
               <Button 
                 variant="secondary" 

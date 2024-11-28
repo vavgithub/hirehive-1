@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Button } from '../../components/ui/Button';
 import { formatDescription } from '../../utility/formatDescription';
 import SideCard from '../../components/ui/SideCard';
-import useAuthCandidate from '../../hooks/useCandidateAuth'; // Import the authentication hook
+import useAuthCandidate, { useCandidateAuth } from '../../hooks/useCandidateAuth'; // Import the authentication hook
 import Header from '../../components/utility/Header';
 import Loader from '../../components/ui/Loader';
 import ArrowIcon from '../../svg/ArrowIcon';
@@ -20,14 +20,12 @@ const ViewJob = () => {
     const { id: mainId } = useParams();
     const navigate = useNavigate();
     
-    const { isAuthenticatedCandidate, isLoadingAuth, candidateAuthData } = useSelector(
-      (state) => state.candidateAuth
-    );
+    const { isAuthenticated, isLoading, candidateData } = useCandidateAuth()
   
     const {
       data: formData,
       error,
-      isLoading,
+      isLoading : isApiLoading,
       isError
     } = useQuery({
       queryKey: ['viewJob', mainId],
@@ -35,7 +33,7 @@ const ViewJob = () => {
       enabled: !!mainId,
     });
   
-    if (isLoading || isLoadingAuth) {
+    if (isApiLoading || isLoading) {
       return (
         <div className="flex justify-center items-center min-h-screen">
           <Loader />
@@ -43,8 +41,8 @@ const ViewJob = () => {
       );
     }
   
-    const hasApplied = isAuthenticatedCandidate && candidateAuthData && candidateAuthData.jobApplications
-      ? candidateAuthData.jobApplications.some(application => 
+    const hasApplied = isAuthenticated && candidateData && candidateData.jobApplications
+      ? candidateData.jobApplications.some(application => 
           application.jobId.toString() === mainId
         )
       : false;

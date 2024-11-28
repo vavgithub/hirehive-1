@@ -14,6 +14,7 @@ import { showErrorToast, showSuccessToast } from '../../components/ui/Toast';
 import Loader from '../../components/ui/Loader';
 import Logo from '../../svg/Logo/lightLogo.svg';
 import { fetchCandidateAuthData } from '../../redux/candidateAuthSlice';
+import useCandidateAuth from '../../hooks/useCandidateAuth';
 
 const fetchJobDetails = async (id) => {
   const response = await axios.get(`/jobs/getJobById/${id}`);
@@ -22,9 +23,7 @@ const fetchJobDetails = async (id) => {
 
 const ApplyJob = () => {
   const dispatch = useDispatch();
-  const { candidateAuthData, isAuthenticatedCandidate } = useSelector(
-    (state) => state.candidateAuth
-  );
+  const { candidateData, isAuthenticated } = useCandidateAuth()
 
   const [currentStep, setCurrentStep] = useState(1);
   const [email, setEmail] = useState('');
@@ -39,7 +38,21 @@ const ApplyJob = () => {
   const navigate = useNavigate();
   const { id: jobId } = useParams();
   const hiddenFileInput = useRef(null);
-
+  
+  let initial = {
+    firstName: "",
+    lastName: "",
+    email: "",
+    phoneNumber: "",
+    website: "",
+    portfolio: "",
+    experience: "",
+    noticePeriod: "",
+    currentCTC: "",
+    expectedCTC: "",
+    resumeFile: null,
+    skills: "" || [],
+  }
   const {
     register,
     control,
@@ -50,10 +63,9 @@ const ApplyJob = () => {
     reset,
   } = useForm({
     mode: 'onChange',
-    defaultValues: {
-      resumeFile: null,
-      skills: [],
-    },
+    defaultValues: candidateData ? {
+      ...candidateData
+    } : initial,
   });
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -73,23 +85,23 @@ const ApplyJob = () => {
 
   // Pre-fill form with candidate data when authenticated
   useEffect(() => {
-    if (isAuthenticatedCandidate && candidateAuthData) {
+    if (isAuthenticated && candidateData) {
       reset({
-        firstName: candidateAuthData.firstName,
-        lastName: candidateAuthData.lastName,
-        email: candidateAuthData.email,
-        phoneNumber: candidateAuthData.phone,
-        website: candidateAuthData.website || '',
-        portfolio: candidateAuthData.portfolio || '',
-        experience: candidateAuthData.experience || '',
-        noticePeriod: candidateAuthData.noticePeriod || '',
-        currentCTC: candidateAuthData.currentCTC || '',
-        expectedCTC: candidateAuthData.expectedCTC || '',
+        firstName: candidateData.firstName,
+        lastName: candidateData.lastName,
+        email: candidateData.email,
+        phoneNumber: candidateData.phone,
+        website: candidateData.website || '',
+        portfolio: candidateData.portfolio || '',
+        experience: candidateData.experience || '',
+        noticePeriod: candidateData.noticePeriod || '',
+        currentCTC: candidateData.currentCTC || '',
+        expectedCTC: candidateData.expectedCTC || '',
         resumeFile: resumeFile,
-        skills: candidateAuthData.skills || [],
+        skills: candidateData.skills || [],
       });
     }
-  }, [isAuthenticatedCandidate, candidateAuthData, reset]);
+  }, [isAuthenticated, candidateData, reset]);
 
   const { data: jobDetails, isLoading } = useQuery({
     queryKey: ['jobDetails', jobId],
@@ -130,7 +142,7 @@ const ApplyJob = () => {
 
       const resumeUrl = await uploadResume(resumeFile);
 
-      if (isAuthenticatedCandidate) {
+      if (isAuthenticated) {
         const applicationData = {
           jobId,
           website: data.website,
@@ -263,7 +275,7 @@ const ApplyJob = () => {
           <div className='container'>
              <div  >
           <img className='h-12 m-4' src={Logo} />
-          <h1 className="typography-h1 m-4">Application for {jobTitle}</h1>
+          <h1 className="typography-h1 m-4">Application for {jobDetails?.jobTitle}</h1>
           </div>          
           <form className='mx-4'  onSubmit={handleSubmit(onSubmit)}>
             {/* Personal Details */}
@@ -547,12 +559,12 @@ const ApplyJob = () => {
 
             {/* Additional Questions */}
             <div className="pt-4 ">
-              {questions.length != 0 && (
+              {jobDetails?.questions.length != 0 && (
                 <>
                   <h2 className="typography-h2 mb-4">Additional Questions</h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ">
-                    {questions.map((question, index) => (
-                      <div className='bg-background-30 rounded-xl p-4'>
+                    {jobDetails?.questions.map((question, index) => (
+                      <div key={question?._id} className='bg-background-30 rounded-xl p-4'>
                       <Controller
                         key={question._id}
                         name={`question-${question._id}`}
