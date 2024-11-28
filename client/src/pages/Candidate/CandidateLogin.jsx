@@ -1,6 +1,7 @@
 // CandidateLogin.jsx
 import React, { useState } from 'react';
 import axios from '../../api/axios';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import sundarKanya from "../../svg/Background/sundar-kanya.png"
 import { Button } from '../../components/ui/Button';
@@ -8,6 +9,7 @@ import StatsGrid from '../../components/ui/StatsGrid';
 import one from '../../svg/StatsCard/Jobs Page/one';
 import two from '../../svg/StatsCard/Jobs Page/two';
 import ForgotPassword from '../Admin/ForgotPassword';
+import { loginCandidateAuth } from '../../redux/candidateAuthSlice';
 
 const statsOne = [
   { title: 'Jobs Posted', value: 100, icon: one },
@@ -17,6 +19,9 @@ const statsTwo = [
 ]
 
 const CandidateLogin = () => {
+  const dispatch = useDispatch();
+  const { authError, isLoadingAuth } = useSelector((state) => state.candidateAuth);
+
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -25,13 +30,14 @@ const CandidateLogin = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
-      await axios.post('/auth/candidate/login', { email, password });
-      // Redirect to candidate dashboard
-      navigate('/candidate/all-jobs');
+      const result = await dispatch(loginCandidateAuth({ email, password })).unwrap();
+      if (result) {
+        navigate('/candidate/all-jobs');
+      }
     } catch (error) {
-      setError(error.response?.data?.message || 'An error occurred');
+      // Error handling is now managed by Redux
+      console.error('Login failed:', error);
     }
   };
 
@@ -79,7 +85,7 @@ const CandidateLogin = () => {
             <label htmlFor="password" className="block mb-2">Password</label>
             <input type="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter your password" className="w-full focus:outline-teal-400 p-2 rounded-lg bg-black text-white" />
           </div>
-          {error && <p className="text-red-500 mb-4">{error}</p>}
+          {authError && <p className="text-red-500 mb-4">{authError}</p>}
           <div className='flex justify-end'>
                                 <span
                                     onClick={() => setShowForgotPassword(true)}

@@ -1,10 +1,11 @@
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from '../../api/axios';
+import { useSelector } from 'react-redux';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '../../components/ui/Button';
 import { formatDescription } from '../../utility/formatDescription';
 import SideCard from '../../components/ui/SideCard';
-import useAuthCandidate from '../../hooks/useAuthCandidate'; // Import the authentication hook
+import useAuthCandidate from '../../hooks/useCandidateAuth'; // Import the authentication hook
 import Header from '../../components/utility/Header';
 import Loader from '../../components/ui/Loader';
 import ArrowIcon from '../../svg/ArrowIcon';
@@ -18,35 +19,35 @@ const getJobById = async (id) => {
 const ViewJob = () => {
     const { id: mainId } = useParams();
     const navigate = useNavigate();
-    const { isAuthenticated, isLoading: isAuthLoading, candidateData } = useAuthCandidate();
-
+    
+    const { isAuthenticatedCandidate, isLoadingAuth, candidateAuthData } = useSelector(
+      (state) => state.candidateAuth
+    );
+  
     const {
-        data: formData,
-        error,
-        isLoading,
-        isError
+      data: formData,
+      error,
+      isLoading,
+      isError
     } = useQuery({
-        queryKey: ['viewJob', mainId],
-        queryFn: () => getJobById(mainId),
-        enabled: !!mainId,
+      queryKey: ['viewJob', mainId],
+      queryFn: () => getJobById(mainId),
+      enabled: !!mainId,
     });
-
-    if (isLoading || isAuthLoading) {
-        return (
-            <div className="flex justify-center items-center min-h-screen">
-                <Loader />
-            </div>
-        );
+  
+    if (isLoading || isLoadingAuth) {
+      return (
+        <div className="flex justify-center items-center min-h-screen">
+          <Loader />
+        </div>
+      );
     }
-
-    if (isError) {
-        return <div>Error fetching job: {error.message}</div>;
-    }
-
-    // Determine if the candidate has already applied to this job
-    const hasApplied = isAuthenticated && candidateData && candidateData.jobApplications
-        ? candidateData.jobApplications.some(application => application.jobId.toString() === mainId)
-        : false;
+  
+    const hasApplied = isAuthenticatedCandidate && candidateAuthData && candidateAuthData.jobApplications
+      ? candidateAuthData.jobApplications.some(application => 
+          application.jobId.toString() === mainId
+        )
+      : false;
 
     const handleApplyClick = async () => {
         try {

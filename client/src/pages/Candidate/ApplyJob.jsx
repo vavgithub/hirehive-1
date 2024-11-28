@@ -1,19 +1,19 @@
 // ApplyJob.jsx
-
 import React, { useEffect, useState, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useDropzone } from 'react-dropzone';
 import { useForm, Controller } from 'react-hook-form';
-import { InputField } from '../../components/Form/FormFields';
-import SkillsInput from '../../components/utility/SkillsInput';
-import { Button } from '../../components/ui/Button';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import axios from '../../api/axios';
-import useAuthCandidate from '../../hooks/useAuthCandidate';
+import { InputField } from '../../components/Form/FormFields';
+import SkillsInput from '../../components/utility/SkillsInput';
+import { Button } from '../../components/ui/Button';
 import { dummySkills } from '../../components/Form/dropdownOptions';
 import { showErrorToast, showSuccessToast } from '../../components/ui/Toast';
 import Loader from '../../components/ui/Loader';
-import Logo from '../../svg/Logo/lightLogo.svg'
+import Logo from '../../svg/Logo/lightLogo.svg';
+import { fetchCandidateAuthData } from '../../redux/candidateAuthSlice';
 
 const fetchJobDetails = async (id) => {
   const response = await axios.get(`/jobs/getJobById/${id}`);
@@ -21,53 +21,24 @@ const fetchJobDetails = async (id) => {
 };
 
 const ApplyJob = () => {
-  const [currentStep, setCurrentStep] = useState(1);
-  const [skills, setSkills] = useState([]);
+  const dispatch = useDispatch();
+  const { candidateAuthData, isAuthenticatedCandidate } = useSelector(
+    (state) => state.candidateAuth
+  );
 
-  // const [answers, setAnswers] = useState({});
+  const [currentStep, setCurrentStep] = useState(1);
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [otpError, setOtpError] = useState('');
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const navigate = useNavigate();
-  const { id: jobId } = useParams();
-  const { isAuthenticated, candidateData, refetch } = useAuthCandidate();
-
   const [resumeFile, setResumeFile] = useState(null);
   const [uploadProgress, setUploadProgress] = useState(0);
+  
+  const navigate = useNavigate();
+  const { id: jobId } = useParams();
   const hiddenFileInput = useRef(null);
-
-
-  const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      setResumeFile(file);
-      setValue('resumeFile', file, { shouldValidate: true });
-    }
-  };
-
-  const {
-    getRootProps,
-    getInputProps,
-    isDragActive,
-  } = useDropzone({
-    accept: {
-      'application/pdf': ['.pdf'],
-      'application/msword': ['.doc'],
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx'],
-    },
-    maxFiles: 1,
-    onDrop: (acceptedFiles) => {
-      if (acceptedFiles && acceptedFiles.length > 0) {
-        setResumeFile(acceptedFiles[0]);
-        setValue('resumeFile', acceptedFiles[0], { shouldValidate: true });
-      }
-    },
-
-  });
-
 
   const {
     register,
@@ -81,50 +52,54 @@ const ApplyJob = () => {
     mode: 'onChange',
     defaultValues: {
       resumeFile: null,
-      skills: [], // Add this line
+      skills: [],
     },
   });
 
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    accept: {
+      'application/pdf': ['.pdf'],
+      'application/msword': ['.doc'],
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx'],
+    },
+    maxFiles: 1,
+    onDrop: (acceptedFiles) => {
+      if (acceptedFiles && acceptedFiles.length > 0) {
+        setResumeFile(acceptedFiles[0]);
+        setValue('resumeFile', acceptedFiles[0], { shouldValidate: true });
+      }
+    },
+  });
+
+  // Pre-fill form with candidate data when authenticated
   useEffect(() => {
-    if (isAuthenticated && candidateData) {
-      // Pre-fill form fields with candidate data
+    if (isAuthenticatedCandidate && candidateAuthData) {
       reset({
-        firstName: candidateData.firstName,
-        lastName: candidateData.lastName,
-        email: candidateData.email,
-        phoneNumber: candidateData.phone,
-        website: candidateData.website || '',
-        portfolio: candidateData.portfolio || '',
-        experience: candidateData.experience || '',
-        noticePeriod: candidateData.noticePeriod || '',
-        currentCTC: candidateData.currentCTC || '',
-        expectedCTC: candidateData.expectedCTC || '',
+        firstName: candidateAuthData.firstName,
+        lastName: candidateAuthData.lastName,
+        email: candidateAuthData.email,
+        phoneNumber: candidateAuthData.phone,
+        website: candidateAuthData.website || '',
+        portfolio: candidateAuthData.portfolio || '',
+        experience: candidateAuthData.experience || '',
+        noticePeriod: candidateAuthData.noticePeriod || '',
+        currentCTC: candidateAuthData.currentCTC || '',
+        expectedCTC: candidateAuthData.expectedCTC || '',
         resumeFile: resumeFile,
-        skills: candidateData.skills || [], // Add this line
+        skills: candidateAuthData.skills || [],
       });
     }
-  }, [isAuthenticated, candidateData, reset]);
+  }, [isAuthenticatedCandidate, candidateAuthData, reset]);
 
   const { data: jobDetails, isLoading } = useQuery({
     queryKey: ['jobDetails', jobId],
     queryFn: () => fetchJobDetails(jobId),
   });
 
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <Loader />
-      </div>
-    );
-  }
-
-  const { jobTitle, questions = [] } = jobDetails || {};
-
-  const uploadResume = async () => {
-    if (!resumeFile) return null;
-
+  const uploadResume = async (file) => {
+    if (!file) return null;
     const formData = new FormData();
-    formData.append('resume', resumeFile);
+    formData.append('resume', file);
 
     try {
       const response = await axios.post('/auth/candidate/upload-resume', formData, {
@@ -145,9 +120,7 @@ const ApplyJob = () => {
 
   const onSubmit = async (data) => {
     setIsSubmitting(true);
-
     try {
-      // Extract questionResponses from form data
       const questionResponses = Object.keys(data)
         .filter((key) => key.startsWith('question-'))
         .map((key) => ({
@@ -155,26 +128,9 @@ const ApplyJob = () => {
           answer: data[key],
         }));
 
-      // Upload resume if provided
-      let resumeUrl = null;
-      if (resumeFile) {
-        const formData = new FormData();
-        formData.append('resume', resumeFile);
+      const resumeUrl = await uploadResume(resumeFile);
 
-        const uploadResponse = await axios.post('/auth/candidate/upload-resume', formData, {
-          headers: { 'Content-Type': 'multipart/form-data' },
-          onUploadProgress: (progressEvent) => {
-            const percentCompleted = Math.round(
-              (progressEvent.loaded * 100) / progressEvent.total
-            );
-            setUploadProgress(percentCompleted);
-          },
-        });
-        resumeUrl = uploadResponse.data.resumeUrl;
-      }
-
-      if (isAuthenticated) {
-        // For authenticated users, only send professional details
+      if (isAuthenticatedCandidate) {
         const applicationData = {
           jobId,
           website: data.website,
@@ -189,15 +145,10 @@ const ApplyJob = () => {
         };
 
         await axios.post('/auth/candidate/apply-job', applicationData);
-
-        // Update this line to use refetch
-        await refetch();
-
-        setIsSubmitting(false);
+        await dispatch(fetchCandidateAuthData()).unwrap();
         showSuccessToast('Success', 'Successfully applied to the job');
         navigate('/candidate/my-jobs');
       } else {
-        // For new users, send all required information
         const registrationData = {
           jobId,
           firstName: data.firstName,
@@ -220,18 +171,18 @@ const ApplyJob = () => {
         setPhone(data.phoneNumber);
         showSuccessToast('Create Password', "Please Create Your Password");
         setCurrentStep(2);
-        setIsSubmitting(false);
       }
     } catch (error) {
-      setIsSubmitting(false);
       showErrorToast(
         'Error',
         error.response?.data?.message || 'Failed to perform job action. Please try again.'
       );
+    } finally {
+      setIsSubmitting(false);
     }
   };
-  // Modified handleOtpSubmit function
-  const handleOtpSubmit = (e) => {
+
+  const handleOtpSubmit = async (e) => {
     e.preventDefault();
     const enteredOtp = otp.join('');
 
@@ -241,21 +192,17 @@ const ApplyJob = () => {
     }
 
     setIsSubmitting(true);
-
-    axios
-      .post('/auth/candidate/verify-otp', { email, otp: enteredOtp })
-      .then((response) => {
-        setIsSubmitting(false);
-        showSuccessToast('OTP Verified', 'Please create your password to continue.');
-        setCurrentStep(3); // Move to password creation step
-      })
-      .catch((error) => {
-        setIsSubmitting(false);
-        setOtpError(error.response.data.message);
-      });
+    try {
+      await axios.post('/auth/candidate/verify-otp', { email, otp: enteredOtp });
+      showSuccessToast('OTP Verified', 'Please create your password to continue.');
+      setCurrentStep(3);
+    } catch (error) {
+      setOtpError(error.response?.data?.message || 'Invalid OTP');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  // Modified handlePasswordSubmit function
   const handlePasswordSubmit = async (e) => {
     e.preventDefault();
     const password = getValues('password');
@@ -272,24 +219,18 @@ const ApplyJob = () => {
     }
 
     setIsSubmitting(true);
-
     try {
       await axios.post('/auth/candidate/create-password', { email, password });
-      setIsSubmitting(false);
+      await dispatch(fetchCandidateAuthData()).unwrap();
       showSuccessToast('Success', 'Account created successfully!');
-
-      // Update authentication state
-      // Update this line to use refetch
-      await refetch();
-
-
-      // Navigate to My Jobs page after successful password creation
       navigate('/candidate/my-jobs');
     } catch (error) {
-      setIsSubmitting(false);
       setPasswordError(error.response?.data?.message || 'An error occurred. Please try again.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
+
 
   // Handler for OTP input change
   const handleOtpChange = (element, index) => {

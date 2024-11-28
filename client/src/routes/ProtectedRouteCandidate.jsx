@@ -2,17 +2,19 @@
 
 import React, { useEffect, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
-import axios from '../api/axios';
-import useAuthCandidate from '../hooks/useAuthCandidate';
+import { useSelector } from 'react-redux';
+import Loader from '../components/ui/Loader';
 
 const ProtectedRouteCandidate = ({ children }) => {
-  const { isAuthenticated, isLoading } = useAuthCandidate();
+  const { isAuthenticatedCandidate, isLoadingAuth } = useSelector(
+    (state) => state.candidateAuth
+  );
 
-  if (isLoading) {
-    return <div>Loading...</div>;
+  if (isLoadingAuth) {
+    return <Loader />;
   }
 
-  return isAuthenticated ? children : <Navigate to="/login" />;
+  return isAuthenticatedCandidate ? children : <Navigate to="/login" />;
 };
 
 
