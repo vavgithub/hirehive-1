@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import Filters from '../../components/Filters';
+import Filters from '../../components/Filters/Filters';
 import Modal from '../../components/Modal';
 import JobCard from '../../components/JobCard';
-import Tabs from '../../components/Tabs';
-import StatsGrid from '../../components/StatsGrid';
+import Tabs from '../../components/ui/Tabs';
+import StatsGrid from '../../components/ui/StatsGrid';
 import one from '../../svg/StatsCard/Jobs Page/one';
 import two from '../../svg/StatsCard/Jobs Page/two';
 import three from '../../svg/StatsCard/Jobs Page/three';
@@ -19,16 +19,13 @@ import { ClosedIcon, ClosedIconActive } from '../../svg/Tabs/ClosedIcon';
 import { DraftsIcon, DraftsIconActive } from '../../svg/Tabs/DraftsIcon';
 import NoJobs from "../../svg/Background/NoJobs.svg"
 import { showErrorToast, showSuccessToast } from '../../components/ui/Toast';
+import Loader from '../../components/ui/Loader';
 
 
 const fetchJobs = () => axios.get('/jobs/jobs').then(res => res.data);
-const fetchJobCount = () => axios.get('/jobs/jobsCount').then(res => res.data.totalCount);
-const fetchStatistics = () => axios.get('/jobs/jobsStats').then(res => res.data);
-const fetchActiveJobsStats = () => axios.get('/jobs/activeJobsFilterCount').then(res => res.data);
-const fetchClosedJobsStats = () => axios.get('/jobs/closedJobsFilterCount').then(res => res.data);
+const fetchOverallStats = () => axios.get('/jobs/stats/overall').then(res => res.data.data);
 const searchJobs = (query) => axios.get(`/jobs/searchJobs?jobTitle=${encodeURIComponent(query)}`).then(res => res.data);
 const filterJobs = (filters) => axios.post('/jobs/filterJobs', { filters }).then(res => res.data);
-const fetchApplicationCount = () => axios.get('/jobs/candidates/stats').then(res => res.data.data.totalCount);
 
 const Dashboard = () => {
     const [searchQuery, setSearchQuery] = useState('');
@@ -41,19 +38,27 @@ const Dashboard = () => {
         employmentType: [],
         experienceLevel: [],
         jobProfile: [],
-        experience: { min: '', max: '' }
+        experience: { min: '', max: '' },
+        budget: { min: '', max: '' },
+        closingStatus: []  // Add this new filter
     });
-
     const navigate = useNavigate();
     const queryClient = useQueryClient();
 
-    const { data: jobs = [] } = useQuery({ queryKey: ['jobs'], queryFn: fetchJobs });
-    const { data: jobCount = 0 } = useQuery({ queryKey: ['jobCount'], queryFn: fetchJobCount });
-    const { data: applicationCount = 0 } = useQuery({ queryKey: ['applicationCount'], queryFn: fetchApplicationCount });
+    // Fetch jobs and overall stats
+    // Use the updated jobs query
+    const { data: jobs = [], isLoading: isJobsLoading } = useQuery({
+        queryKey: ['jobs'],
+        queryFn: fetchJobs
+    });
 
-    const { data: statistics = {} } = useQuery({ queryKey: ['statistics'], queryFn: fetchStatistics });
-    const { data: activeJobsCountFilter = {} } = useQuery({ queryKey: ['activeJobsStats'], queryFn: fetchActiveJobsStats });
-    const { data: closedJobsCountFilter = {} } = useQuery({ queryKey: ['closedJobsStats'], queryFn: fetchClosedJobsStats });
+    const { data: overallStats = { totalJobs: 0, totalCandidates: 0, totalHired: 0 }, isLoading: isStatsLoading } = useQuery({
+        queryKey: ['overallStats'],
+        queryFn: fetchOverallStats
+    });
+
+
+
 
     const handleAction = (action, jobId) => {
         const job = jobs.find(j => j._id === jobId);
@@ -62,7 +67,8 @@ const Dashboard = () => {
         setModalAction(action);
     };
 
-    const { data: filteredJobs = [] } = useQuery({
+    // Update the filteredJobs query to get the loading state
+    const { data: filteredJobs = [], isLoading: isFilteredJobsLoading } = useQuery({
         queryKey: ['filteredJobs', filters],
         queryFn: () => filterJobs(filters),
         enabled: Object.values(filters).some(filter =>
@@ -70,12 +76,12 @@ const Dashboard = () => {
         ),
     });
 
-    const { data: searchResults = [] } = useQuery({
+    // Update the search query to get the loading state
+    const { data: searchResults = [], isLoading: isSearchLoading } = useQuery({
         queryKey: ['searchJobs', searchQuery],
         queryFn: () => searchJobs(searchQuery),
         enabled: searchQuery !== '',
     });
-
     const deleteMutation = useMutation({
         mutationFn: (jobId) => axios.delete(`/jobs/deleteJob/${jobId}`),
         onSuccess: () => {
@@ -113,25 +119,37 @@ const Dashboard = () => {
 
     const closeMutation = useMutation({
         mutationFn: ({ jobId, reason }) =>
-            axios.put(`/jobs/closeJob/${jobId}`, { reason }),
+            axios.put(`/jobs/closeJob/${jobId}`, { reason }), // Add reason to request body
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['jobs'] });
             setModalOpen(false);
+            setCloseReason(''); // Reset the close reason
         },
-    })
+    });
 
     const handleSearch = (event) => {
         setSearchQuery(event.target.value);
     };
 
 
+    const handleBudgetFilter = (budget) => {
+        setFilters(prevFilters => ({
+            ...prevFilters,
+            budget
+        }));
+    };
 
+
+
+    // Update clearAllFilters
     const clearAllFilters = () => {
         setFilters({
             employmentType: [],
             experienceLevel: [],
             jobProfile: [],
-            experience: { min: '', max: '' }
+            experience: { min: '', max: '' },
+            budget: { min: '', max: '' },
+            closingStatus: []  // Add this
         });
     };
 
@@ -144,7 +162,10 @@ const Dashboard = () => {
                 draftMutation.mutate(job._id);
                 break;
             case ACTION_TYPES.CLOSE:
-                closeMutation.mutate({ jobId: job._id, closeReason });
+                closeMutation.mutate({ 
+                    jobId: job._id, 
+                    reason: closeReason  // Pass the closeReason
+                });
                 break;
             case ACTION_TYPES.REOPEN:
                 reOpenMutation.mutate(job._id)
@@ -162,8 +183,6 @@ const Dashboard = () => {
         setCloseReason(reason);
     };
 
-    // showSuccessToast('Job Posted', `"vevaar" created successfully`);
-    // showErrorToast('Job Posted', `"vevaar" created successfully`);
 
     const getModalMessage = (action, job) => {
         switch (action) {
@@ -219,7 +238,6 @@ const Dashboard = () => {
         navigate(`/admin/jobs/view-job/${jobId}`);
     };
 
-    const filtersConfig = activeTab === 'open' ? activeJobsCountFilter : closedJobsCountFilter;
 
     const tabs = [
         {
@@ -239,12 +257,30 @@ const Dashboard = () => {
     ];
 
     const JobsStats = [
-        { title: 'Jobs Posted', value: jobCount, icon: one },
-        { title: 'Application Received', value: applicationCount, icon: two },
-        { title: 'Hired', value: 0, icon: three }
+        {
+            title: 'Jobs Posted',
+            value: overallStats.totalJobs,
+            icon: one
+        },
+        {
+            title: 'Applications Received',  // This label is now more accurate
+            value: overallStats.totalApplications, // This now shows total applications
+            icon: two
+        },
+        {
+            title: 'Hired',
+            value: overallStats.totalHired,
+            icon: three
+        }
+    ];
 
-    ]
+    // Combined loading state
+    const isLoadingResults = (searchQuery.length > 0 && isSearchLoading) ||
+        (Object.values(filters).some(filter =>
+            Array.isArray(filter) ? filter.length > 0 : Object.values(filter).some(val => val !== '')
+        ) && isFilteredJobsLoading);
 
+    // Get the jobs to display based on search or filters
     const displayJobs = searchQuery.length > 0 ? searchResults :
         (Object.values(filters).some(filter => Array.isArray(filter) ? filter.length > 0 : Object.values(filter).some(val => val !== '')) ? filteredJobs : jobs);
 
@@ -252,12 +288,12 @@ const Dashboard = () => {
 
 
     return (
-        <div className="mx-4 pt-4 h-screen">
+        <div className="container mx-4 pt-4 h-screen">
             <div className="flex flex-row justify-between mb-4">
                 <h1 className='typography-h1'>Jobs</h1>
                 {/* <Link to="/admin/create-job" className="bg-black text-white px-4 py-2 rounded">Create job listing</Link> */}
 
-                <div className='flex justify-center mb-4'>
+                <div className='flex justify-center'>
                     <Tabs tabs={tabs} activeTab={activeTab} handleTabClick={handleTabClick} />
                 </div>
 
@@ -279,11 +315,17 @@ const Dashboard = () => {
                                 onChange={handleSearch}
                             />
                         </div>
-                        <Filters filters={filters} statistics={filtersConfig} handleCheckboxChange={handleCheckboxChange} activeTab={activeTab} handleExperienceFilter={handleExperienceFilter} clearAllFilters={clearAllFilters} />
+                        <Filters
+                            filters={filters}
+                            handleCheckboxChange={handleCheckboxChange}
+                            activeTab={activeTab}
+                            handleBudgetFilter={handleBudgetFilter}  // Add this
+                            handleExperienceFilter={handleExperienceFilter}
+                            clearAllFilters={clearAllFilters} />
                     </div>
                     <div className='w-full ml-4'>
                         <div className='flex justify-end '>
-                                {
+                            {
                                 activeTab == "open" && displayJobs.length != 0 && (
                                     <div className="w-[216px] mb-4">
                                         <Button variant="primary" icon={Create} iconPosition="left" onClick={() => { navigate("/admin/create-job") }}>Create A Job Listing</Button>
@@ -291,37 +333,43 @@ const Dashboard = () => {
                                 )
                             }
                         </div>
-                        {
-                            displayJobs.length === 0 && (
-                                <div className='bg-background-80 flex flex-col p-40 justify-center items-center rounded-xl'>
-
-                                    <img src={NoJobs}></img>
-                                    <span className='typography-body m-6'>Create a job post to attract top talent and build your dream team</span>
-
-                                    <div className="w-[216px]">
-                                        <Button variant="primary" icon={Create} iconPosition="left" onClick={() => { navigate("/admin/create-job") }}>Create A Job Listing</Button>
-                                    </div>
-
-
+                        {isLoadingResults ? (
+                            <div className="flex justify-center items-center min-h-[400px]">
+                                <Loader />
+                            </div>
+                        ) : displayJobs.length === 0 ? (
+                            <div className='bg-background-80 flex flex-col p-40 justify-center items-center rounded-xl'>
+                                <img src={NoJobs} alt="No jobs found" />
+                                <span className='typography-body m-6'>
+                                    Create a job post to attract top talent and build your dream team
+                                </span>
+                                <div className="w-[216px]">
+                                    <Button
+                                        variant="primary"
+                                        icon={Create}
+                                        iconPosition="left"
+                                        onClick={() => { navigate("/admin/create-job") }}
+                                    >
+                                        Create A Job Listing
+                                    </Button>
                                 </div>
-
-                            )
-                        }
-                        {displayJobs
-                            .filter(job => job.status === activeTab)
-                            .map((job) => (
-                                <JobCard
-                                    key={job._id}
-                                    job={job}
-                                    isAdmin={true}
-                                    withKebab={true}
-                                    page={currentPage}
-                                    status={activeTab}
-                                    handleAction={handleAction}
-                                    onClick={() => handleViewJob(job._id)}
-                                />
-                            ))
-                        }
+                            </div>
+                        ) : (
+                            displayJobs
+                                .filter(job => job.status === activeTab)
+                                .map((job) => (
+                                    <JobCard
+                                        key={job._id}
+                                        job={job}
+                                        isAdmin={true}
+                                        withKebab={true}
+                                        page={currentPage}
+                                        status={activeTab}
+                                        handleAction={handleAction}
+                                        onClick={() => handleViewJob(job._id)}
+                                    />
+                                ))
+                        )}
                     </div>
                 </div>
                 {/* <Modal open={open} onClose={() => setOpen(false)} action={modalAction} confirmAction={confirmAction} /> */}
@@ -332,7 +380,7 @@ const Dashboard = () => {
                         setCloseReason(''); // Reset close reason when modal is closed
                     }}
                     actionType={modalAction}
-                    onConfirm={(job) => confirmAction(job, closeReason)}
+                    onConfirm={(job) => confirmAction(job)}
                     item={selectedJob}
                     customMessage={selectedJob ? getModalMessage(modalAction, selectedJob) : ''}
                     closeReason={closeReason}

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import JobCard from '../../components/JobCard';
-import Filters from '../../components/Filters';
+import Filters from '../../components/Filters/Filters';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import axios from '../../api/axios';
@@ -121,8 +121,7 @@ const AllJobs = () => {
 
 
     return (
-        <div className='m-2 pt-8'>
-                <AssessmentBanner/>
+        <div className='m-2 pt-4'>
             <div className='flex items-center justify-between'>
                 <h1 className='typography-h1'>All Jobs</h1>
                 <div
@@ -144,7 +143,7 @@ const AllJobs = () => {
 
             </button> */}
 
-            <div className='flex flex-col md:flex-row gap-4 mt-4 bg-background-30 p-4 rounded-xl'>
+            <div className='flex flex-col md:flex-row gap-4  bg-background-30 p-4 rounded-xl'>
                 {/* Search and Filters */}
                 <div className={`${isFilterVisible ? 'block' : 'hidden'} md:block`}>
                     <input

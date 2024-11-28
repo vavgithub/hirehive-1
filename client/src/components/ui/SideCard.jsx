@@ -1,16 +1,16 @@
 import React from 'react'
-import { postedDate } from '../utility/postedDate';
-import EmploymentTypeIcon from '../svg/Sidecards/EmploymentTypeIcon';
-import DesignIcon from '../svg/Sidecards/DesignIcon';
-import ExperienceLevelIcon from '../svg/Sidecards/ExperienceLevelIcon';
-import PostedIcon from '../svg/Sidecards/PostedIcon';
+import { postedDate } from '../../utility/postedDate';
+import EmploymentTypeIcon from '../../svg/Sidecards/EmploymentTypeIcon';
+import DesignIcon from '../../svg/Sidecards/DesignIcon';
+import ExperienceLevelIcon from '../../svg/Sidecards/ExperienceLevelIcon';
+import PostedIcon from '../../svg/Sidecards/PostedIcon';
 
 const SideCard = ({ formData }) => {
     const formattedDate = postedDate(formData.createdAt);
     return (
 
         <div className="grid grid-cols-2 gap-3 w-full rounded-xl p-6 bg-background-90 mt-4 md:flex md:flex-col md:gap-6  " >
-            <div className="flex items-center">
+            <div className="flex items-center typography-body">
                 <EmploymentTypeIcon />
                 <div className="ml-2">
                     <p className="large-p">{formData.employmentType}</p>

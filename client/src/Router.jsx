@@ -21,8 +21,6 @@ import HomePage from './pages/Candidate/HomePage.jsx';
 import Text from './pages/Text.jsx';
 import ViewJob from './pages/Candidate/ViewJob.jsx';
 import ApplyJob from './pages/Candidate/ApplyJob.jsx';
-import MiniForm from './pages/Candidate/MiniForm.jsx';
-import Verification from './pages/Candidate/Verification.jsx';
 import PreAssessment from './pages/Candidate/PreAssessment.jsx';
 import ProtectedRouteCandidate from './routes/ProtectedRouteCandidate.jsx';
 import CandidateLogin from './pages/Candidate/CandidateLogin.jsx';
@@ -30,6 +28,8 @@ import CandidateDashboard from './pages/Candidate/CandidateDashboard.jsx';
 import CandidateLayout from './auth/CandidateLayout.jsx';
 import MyJobs from './pages/Candidate/MyJobs.jsx';
 import AllJobs from './pages/Candidate/AllJobs.jsx';
+import Profile from './pages/Admin/Profile.jsx';
+import AssessmentResponse from './pages/Admin/AssessmentResponse.jsx';
 
 export const router = createBrowserRouter([
    {
@@ -63,6 +63,10 @@ export const router = createBrowserRouter([
         element: <AllJobs />, // Protected HomePage with sidebar
       },
       {
+        path:'viewJob/:candidateId/:jobId',
+        element:<ViewCandidateProfile/>
+      },
+      {
         path: '',
         element: <Navigate to="dashboard" />, // Redirect to dashboard by default
       },
@@ -81,7 +85,7 @@ export const router = createBrowserRouter([
     element:<PreAssessment/>
   },
   {
-    path: "/auth",
+    path: "/admin",
     element: <Authlayout />,
     children: [
       {
@@ -101,6 +105,14 @@ export const router = createBrowserRouter([
       {
         path: "dashboard",
         element: <Dashboard />
+      },
+      {
+        path: "assessment/:id",
+        element:<AssessmentResponse/>
+      },
+      {
+        path:"profile",
+        element:<Profile/>
       },
       {
         path: "jobs",
@@ -134,6 +146,11 @@ export const router = createBrowserRouter([
           <ViewCandidateProfile />
       },
       {
+        path: "candidates/view-candidate/:candidateId/:jobId",
+        element:
+          <ViewCandidateProfile />
+      },
+      {
         path: "jobs/edit-candidate/:id",
         element:
           <EditCandidateProfile />
@@ -147,12 +164,16 @@ export const router = createBrowserRouter([
     children: [
       {
         path: "dashboard",
-        element: <DesignReviewerDashboard />,
+        element:<Candidates />
+        // element: <DesignReviewerDashboard />,
+      },
+      {
+        path:"profile",
+        element:<Profile/>
       },
       {
         path: "candidates",
-        element:
-          <Candidates />
+        element:<Candidates />
       },
       {
         path: "reviews",
@@ -160,7 +181,7 @@ export const router = createBrowserRouter([
           <Reviews />
       },
       {
-        path: "view-candidate/:id",
+        path: "candidates/view-candidate/:candidateId/:jobId",
         element:
           <ViewCandidateProfile />
       },

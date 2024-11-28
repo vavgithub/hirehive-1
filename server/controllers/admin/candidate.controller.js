@@ -1,79 +1,177 @@
 import { jobStagesStatuses } from "../../config/jobStagesStatuses.js";
 import { jobs } from "../../models/admin/jobs.model.js";
+import { Question, seedQuestions } from "../../models/admin/questions.model.js";
 import { candidates } from "../../models/candidate/candidate.model.js";
 
+// controllers/candidate.controller.js
+
 export const getAllCandidatesForJob = async (req, res) => {
-    try {
-      const { jobId } = req.params;
-  
-      // Validate jobId
-      if (!jobId) {
-        return res.status(400).json({ message: 'Job ID is required' });
-      }
-  
-      // Fetch the job to get its profile
-      const job = await jobs.findById(jobId);
-      if (!job) {
-        return res.status(404).json({ message: 'Job not found' });
-      }
-  
-      // Get the stages for this job profile
-      const stages = jobStagesStatuses[job.jobProfile] || [];
-  
-      // Fetch candidates who have applied for this job
-      const candidatesData = await candidates.find({
-        'jobApplications.jobId': jobId,
-        isVerified: true // Only fetch verified candidates
-      });
-  
-      // Process and format the candidate data
-      const formattedCandidates = candidatesData.map(candidate => {
-        const jobApplication = candidate.jobApplications.find(app => app.jobId.toString() === jobId);
-        
-        // Initialize an object to store stage statuses
-        const stageStatuses = {};
-        stages.forEach(stage => {
-          const stageStatus = jobApplication.stageStatuses.get(stage.name) || {
-            status: 'Not Assigned',
-            rejectionReason: 'N/A',
-            assignedTo: null,
-            score: {},
-            currentCall: null,
-            callHistory: []
-          };
-          stageStatuses[stage.name] = stageStatus;
-        });
-        // console.log("this is backend", candidate);
-  
-        return {
-          _id: candidate._id,
-          firstName: candidate.firstName,
-          lastName: candidate.lastName,
-          email: candidate.email,
-          phone: candidate.phone,
-          expectedCTC : candidate.expectedCTC,
-          experience:candidate.experience,
-          resumeUrl:candidate.resumeUrl,
-          website:candidate.website,
-          portfolio:candidate.portfolio,
-          rating:jobApplication.rating,
-          currentStage: jobApplication.currentStage,
-          applicationDate: jobApplication.applicationDate,
-          stageStatuses: stageStatuses,
-          questionResponses: jobApplication.questionResponses,
-          // Add any other relevant fields
-        };
-      });
-  
-      res.status(200).json({
-        candidates: formattedCandidates,
-        stages: stages.map(stage => stage.name)
-      });
-    } catch (error) {
-      console.error('Error fetching candidates:', error);
-      res.status(500).json({ message: 'Internal server error' });
+  try {
+    const { jobId } = req.params;
+
+    // Validate jobId
+    if (!jobId) {
+      return res.status(400).json({ message: 'Job ID is required' });
     }
-  };
+
+    // Fetch the job to get its profile
+    const job = await jobs.findById(jobId);
+    if (!job) {
+      return res.status(404).json({ message: 'Job not found' });
+    }
+
+    // Get the stages for this job profile
+    const stages = jobStagesStatuses[job.jobProfile] || [];
+
+    // Fetch candidates who have applied for this job
+    const candidatesData = await candidates.find({
+      'jobApplications.jobId': jobId,
+      isVerified: true
+    });
+
+    // Process and format the candidate data
+    const formattedCandidates = candidatesData.map(candidate => {
+      const jobApplication = candidate.jobApplications.find(app => 
+        app.jobId.toString() === jobId
+      );
+      
+      // Initialize stage statuses
+      const stageStatuses = {};
+      stages.forEach(stage => {
+        const stageStatus = jobApplication.stageStatuses.get(stage.name) || {
+          status: 'Not Assigned',
+          rejectionReason: 'N/A',
+          assignedTo: null,
+          score: {},
+          currentCall: null,
+          callHistory: []
+        };
+        stageStatuses[stage.name] = stageStatus;
+      });
+
+      // Get professional info specific to this job application
+      const professionalInfo = jobApplication.professionalInfo || {
+        website: candidate.website,
+        portfolio: candidate.portfolio,
+        noticePeriod: candidate.noticePeriod,
+        currentCTC: candidate.currentCTC,
+        expectedCTC: candidate.expectedCTC,
+        experience: candidate.experience,
+        skills: candidate.skills
+      };
+
+      return {
+        // Personal info (remains constant)
+        _id: candidate._id,
+        firstName: candidate.firstName,
+        lastName: candidate.lastName,
+        email: candidate.email,
+        phone: candidate.phone,
+
+        // Professional info (specific to this job application)
+        website: professionalInfo.website,
+        portfolio: professionalInfo.portfolio,
+        noticePeriod: professionalInfo.noticePeriod,
+        currentCTC: professionalInfo.currentCTC,
+        expectedCTC: professionalInfo.expectedCTC,
+        experience: professionalInfo.experience,
+        skills: professionalInfo.skills,
+
+        // Job application specific info
+        resumeUrl: jobApplication.resumeUrl,
+        rating: jobApplication.rating,
+        currentStage: jobApplication.currentStage,
+        applicationDate: jobApplication.applicationDate,
+        stageStatuses: stageStatuses,
+        questionResponses: jobApplication.questionResponses,
+      };
+    });
+
+    res.status(200).json({
+      candidates: formattedCandidates,
+      stages: stages.map(stage => stage.name)
+    });
+  } catch (error) {
+    console.error('Error fetching candidates:', error);
+    res.status(500).json({ 
+      message: 'Internal server error',
+      error: error.message 
+    });
+  }
+};
+
+// export const getAllCandidatesForJob = async (req, res) => {
+//     try {
+//       const { jobId } = req.params;
+  
+//       // Validate jobId
+//       if (!jobId) {
+//         return res.status(400).json({ message: 'Job ID is required' });
+//       }
+  
+//       // Fetch the job to get its profile
+//       const job = await jobs.findById(jobId);
+//       if (!job) {
+//         return res.status(404).json({ message: 'Job not found' });
+//       }
+  
+//       // Get the stages for this job profile
+//       const stages = jobStagesStatuses[job.jobProfile] || [];
+  
+//       // Fetch candidates who have applied for this job
+//       const candidatesData = await candidates.find({
+//         'jobApplications.jobId': jobId,
+//         isVerified: true // Only fetch verified candidates
+//       });
+  
+//       // Process and format the candidate data
+//       const formattedCandidates = candidatesData.map(candidate => {
+//         const jobApplication = candidate.jobApplications.find(app => app.jobId.toString() === jobId);
+        
+//         // Initialize an object to store stage statuses
+//         const stageStatuses = {};
+//         stages.forEach(stage => {
+//           const stageStatus = jobApplication.stageStatuses.get(stage.name) || {
+//             status: 'Not Assigned',
+//             rejectionReason: 'N/A',
+//             assignedTo: null,
+//             score: {},
+//             currentCall: null,
+//             callHistory: []
+//           };
+//           stageStatuses[stage.name] = stageStatus;
+//         });
+//         // console.log("this is backend", candidate);
+  
+//         return {
+//           _id: candidate._id,
+//           firstName: candidate.firstName,
+//           lastName: candidate.lastName,
+//           email: candidate.email,
+//           phone: candidate.phone,
+//           expectedCTC : candidate.expectedCTC,
+//           experience:candidate.experience,
+//           resumeUrl:candidate.resumeUrl,
+//           website:candidate.website,
+//           portfolio:candidate.portfolio,
+//           rating:jobApplication.rating,
+//           currentStage: jobApplication.currentStage,
+//           applicationDate: jobApplication.applicationDate,
+//           stageStatuses: stageStatuses,
+//           questionResponses: jobApplication.questionResponses,
+//           // Add any other relevant fields
+//         };
+//       });
+  
+//       res.status(200).json({
+//         candidates: formattedCandidates,
+//         stages: stages.map(stage => stage.name)
+//       });
+//     } catch (error) {
+//       console.error('Error fetching candidates:', error);
+//       res.status(500).json({ message: 'Internal server error' });
+//     }
+//   };
 
 
 export  const updateStatusAndStage = async (req, res) => {
@@ -97,57 +195,583 @@ export  const updateStatusAndStage = async (req, res) => {
     }
   };
 
-  export const getCandidateById = async (req, res) => {
+// controllers/candidate.controller.js
+
+export const getCandidateById = async (req, res) => {
+  try {
+    const { candidateId, jobId } = req.params;
+
+    // Find the candidate
+    const candidate = await candidates.findById(candidateId).select("-password");
+
+    if (!candidate) {
+      return res.status(404).send({ message: "Candidate not found" });
+    }
+
+    // Find the specific job application
+    const jobApplication = candidate.jobApplications.find(
+      app => app.jobId.toString() === jobId
+    );
+
+    if (!jobApplication) {
+      return res.status(404).send({ message: "Job application not found for this candidate" });
+    }
+
+    // Try to find the job, but don't fail if not found
+    const job = await jobs.findById(jobId).catch(() => null);
+
+    // Handle question responses even if job is deleted
+    let enrichedQuestionResponses = [];
+    if (job && job.questions) {
+      // Create a map of questions from the job
+      const questionsMap = job.questions.reduce((acc, question) => {
+        acc[question._id.toString()] = question;
+        return acc;
+      }, {});
+
+      // Combine questions with answers
+      enrichedQuestionResponses = jobApplication.questionResponses.map(response => ({
+        questionId: response.questionId,
+        answer: response.answer,
+        question: {
+          text: questionsMap[response.questionId.toString()]?.text || "Original question no longer available",
+          type: questionsMap[response.questionId.toString()]?.type || "text",
+          options: questionsMap[response.questionId.toString()]?.options || [],
+          required: questionsMap[response.questionId.toString()]?.required || false,
+          answerType: questionsMap[response.questionId.toString()]?.answerType || "text"
+        }
+      }));
+    } else {
+      // If job is deleted, still show the answers but with placeholder question info
+      enrichedQuestionResponses = jobApplication.questionResponses.map(response => ({
+        questionId: response.questionId,
+        answer: response.answer,
+        question: {
+          text: "Original question no longer available",
+          type: "text",
+          options: [],
+          required: false,
+          answerType: "text"
+        }
+      }));
+    }
+
+    // Get professional info from job application or fall back to candidate's global info
+    const professionalInfo = jobApplication.professionalInfo || {
+      website: candidate.website,
+      portfolio: candidate.portfolio,
+      noticePeriod: candidate.noticePeriod,
+      currentCTC: candidate.currentCTC,
+      expectedCTC: candidate.expectedCTC,
+      experience: candidate.experience,
+      skills: candidate.skills
+    };
+
+    // Construct the response object with relevant information
+    const response = {
+      // Personal info (constant)
+      _id: candidate._id,
+      firstName: candidate.firstName,
+      lastName: candidate.lastName,
+      email: candidate.email,
+      phone: candidate.phone,
+      hasGivenAssessment: candidate.hasGivenAssessment,
+      
+      // Professional info (job-specific or fallback)
+      website: professionalInfo.website,
+      portfolio: professionalInfo.portfolio,
+      noticePeriod: professionalInfo.noticePeriod,
+      currentCTC: professionalInfo.currentCTC,
+      expectedCTC: professionalInfo.expectedCTC,
+      experience: professionalInfo.experience,
+      skills: professionalInfo.skills,
+      
+      // Additional info
+      location: candidate.location,
+      resumeUrl: jobApplication.resumeUrl || candidate.resumeUrl,
+
+      // Job application specific info
+      jobApplication: {
+        jobId: jobApplication.jobId,
+        jobApplied: jobApplication.jobApplied,
+        applicationDate: jobApplication.applicationDate,
+        rating: jobApplication.rating,
+        currentStage: jobApplication.currentStage,
+        stageStatuses: jobApplication.stageStatuses,
+        questionResponses: enrichedQuestionResponses,
+        professionalInfo: jobApplication.professionalInfo
+      }
+    };
+
+    res.send(response);
+  } catch (error) {
+    console.error("Error in getCandidateById:", error);
+    res.status(500).send({ 
+      message: "Internal server error", 
+      error: error.message 
+    });
+  }
+};
+  // export const getAllCandidatesWithStats = async (req, res) => {
+  //   try {
+  //     const allCandidates = await candidates.aggregate([
+  //       {
+  //         $unwind: '$jobApplications'
+  //       },
+  //       {
+  //         $lookup: {
+  //           from: 'jobs',
+  //           localField: 'jobApplications.jobId',
+  //           foreignField: '_id',
+  //           as: 'jobDetails'
+  //         }
+  //       },
+  //       {
+  //         $unwind: '$jobDetails'
+  //       },
+  //       {
+  //         $project: {
+  //           _id: 1,
+  //           firstName: 1,
+  //           lastName: 1,
+  //           email: 1,
+  //           phone: 1,
+  //           experience: 1,
+  //           expectedCTC: 1,
+  //           currentStage: '$jobApplications.currentStage',
+  //           stageStatuses: '$jobApplications.stageStatuses',
+  //           jobTitle: '$jobDetails.jobTitle',
+  //           jobId: '$jobApplications.jobId',
+  //           rating: '$jobApplications.rating',
+  //           resumeUrl: '$jobApplications.resumeUrl',
+  //           portfolio: 1
+  //         }
+  //       },
+  //       {
+  //         $addFields: {
+  //           stageStatusesArray: { $objectToArray: '$stageStatuses' }
+  //         }
+  //       },
+  //       {
+  //         $addFields: {
+  //           currentStageStatus: {
+  //             $arrayElemAt: [
+  //               {
+  //                 $filter: {
+  //                   input: '$stageStatusesArray',
+  //                   cond: { $eq: ['$$this.k', '$currentStage'] }
+  //                 }
+  //               },
+  //               0
+  //             ]
+  //           }
+  //         }
+  //       },
+  //       {
+  //         $project: {
+  //           _id: 1,
+  //           firstName: 1,
+  //           lastName: 1,
+  //           email: 1,
+  //           phone: 1,
+  //           experience: 1,
+  //           expectedCTC: 1,
+  //           currentStage: 1,
+  //           jobTitle: 1,
+  //           jobId: 1,
+  //           rating: 1,
+  //           resumeUrl: 1,
+  //           portfolio: 1,
+  //           status: '$currentStageStatus.v.status'
+  //         }
+  //       }
+  //     ]);
+  
+  //     const stats = {
+  //       Total: allCandidates.length,
+  //       Portfolio: 0,
+  //       Screening: 0,
+  //       'Design Task': 0,
+  //       'Round 1': 0,
+  //       'Round 2': 0,
+  //       'Offer Sent': 0
+  //     };
+  
+  //     allCandidates.forEach(candidate => {
+  //       stats[candidate.currentStage] = (stats[candidate.currentStage] || 0) + 1;
+  //     });
+  
+  //     res.status(200).json({
+  //       candidates: allCandidates,
+  //       stats: stats
+  //     });
+  //   } catch (error) {
+  //     console.error('Error fetching candidates:', error);
+  //     res.status(500).json({ message: 'Internal server error' });
+  //   }
+  // };
+
+  export const getAllCandidatesWithStats = async (req, res) => {
     try {
-      const { candidateId, jobId } = req.params;
+      const allCandidates = await candidates.aggregate([
+        {
+          $unwind: '$jobApplications'
+        },
+        {
+          $lookup: {
+            from: 'jobs',
+            localField: 'jobApplications.jobId',
+            foreignField: '_id',
+            as: 'jobDetails'
+          }
+        },
+        {
+          // Instead of $unwind, we'll preserve entries even when jobDetails is empty
+          $addFields: {
+            jobDetail: { $arrayElemAt: ['$jobDetails', 0] }
+          }
+        },
+        {
+          $project: {
+            _id: 1,
+            // Personal info (constant across applications)
+            firstName: 1,
+            lastName: 1,
+            email: 1,
+            phone: 1,
+            
+            // Professional info (from job application or fallback to global)
+            experience: {
+              $ifNull: ['$jobApplications.professionalInfo.experience', '$experience']
+            },
+            expectedCTC: {
+              $ifNull: ['$jobApplications.professionalInfo.expectedCTC', '$expectedCTC']
+            },
+            currentCTC: {
+              $ifNull: ['$jobApplications.professionalInfo.currentCTC', '$currentCTC']
+            },
+            website: {
+              $ifNull: ['$jobApplications.professionalInfo.website', '$website']
+            },
+            portfolio: {
+              $ifNull: ['$jobApplications.professionalInfo.portfolio', '$portfolio']
+            },
+            noticePeriod: {
+              $ifNull: ['$jobApplications.professionalInfo.noticePeriod', '$noticePeriod']
+            },
+            skills: {
+              $ifNull: ['$jobApplications.professionalInfo.skills', '$skills']
+            },
+            
+            // Job application specific info
+            currentStage: '$jobApplications.currentStage',
+            stageStatuses: '$jobApplications.stageStatuses',
+            // Use jobApplied as fallback when job is deleted
+            jobTitle: {
+              $ifNull: ['$jobDetail.jobTitle', '$jobApplications.jobApplied']
+            },
+            jobId: '$jobApplications.jobId',
+            rating: '$jobApplications.rating',
+            resumeUrl: '$jobApplications.resumeUrl',
+            applicationDate: '$jobApplications.applicationDate'
+          }
+        },
+        {
+          $addFields: {
+            stageStatusesArray: { $objectToArray: '$stageStatuses' }
+          }
+        },
+        {
+          $addFields: {
+            currentStageStatus: {
+              $arrayElemAt: [
+                {
+                  $filter: {
+                    input: '$stageStatusesArray',
+                    cond: { $eq: ['$$this.k', '$currentStage'] }
+                  }
+                },
+                0
+              ]
+            }
+          }
+        },
+        {
+          $project: {
+            _id: 1,
+            // Personal info
+            firstName: 1,
+            lastName: 1,
+            email: 1,
+            phone: 1,
+            
+            // Professional info
+            experience: 1,
+            expectedCTC: 1,
+            currentCTC: 1,
+            website: 1,
+            portfolio: 1,
+            noticePeriod: 1,
+            skills: 1,
+            
+            // Job application info
+            currentStage: 1,
+            jobTitle: 1,
+            jobId: 1,
+            rating: 1,
+            resumeUrl: 1,
+            applicationDate: 1,
+            status: '$currentStageStatus.v.status'
+          }
+        },
+        {
+          $sort: { applicationDate: -1 } // Sort by application date, newest first
+        }
+      ]);
   
-      // Find the candidate
-      const candidate = await candidates.findById(candidateId).select("-password");
+      const stats = {
+        Total: allCandidates.length,
+        Portfolio: 0,
+        Screening: 0,
+        'Design Task': 0,
+        'Round 1': 0,
+        'Round 2': 0,
+        'Offer Sent': 0,
+        'Hired': 0
+      };
   
-      if (!candidate) {
-        return res.status(404).send({ message: "Candidate not found" });
+      allCandidates.forEach(candidate => {
+        if (candidate.currentStage) {
+          stats[candidate.currentStage] = (stats[candidate.currentStage] || 0) + 1;
+        }
+      });
+  
+      res.status(200).json({
+        candidates: allCandidates,
+        stats: stats
+      });
+    } catch (error) {
+      console.error('Error fetching candidates:', error);
+      res.status(500).json({ 
+        message: 'Internal server error',
+        error: error.message 
+      });
+    }
+  };
+
+  export const getRandomQuestions = async (req, res) => {
+    try {
+      // First, check if we have any questions in the database
+      const questionCount = await Question.countDocuments();
+      
+      if (questionCount === 0) {
+        console.log('No questions found in database. Seeding questions...');
+        await seedQuestions(); // Make sure this is imported
       }
   
-      // Find the specific job application
-      const jobApplication = candidate.jobApplications.find(
-        app => app.jobId.toString() === jobId
+      const questions = await Question.aggregate([
+        { $sample: { size: 10 } },
+        {
+          $project: {
+            id: '$_id',
+            questionType: 1,
+            text: 1,
+            imageUrl: 1,
+            options: {
+              $map: {
+                input: '$options',
+                as: 'option',
+                in: {
+                  text: '$$option.text',
+                  imageUrl: '$$option.imageUrl'
+                }
+              }
+            }
+          }
+        }
+      ]);
+  
+      console.log(`Found ${questions.length} questions`);
+  
+      if (!questions.length) {
+        return res.status(404).json({ 
+          success: false,
+          message: 'No questions available' 
+        });
+      }
+  
+      res.status(200).json({ 
+        success: true,
+        questions 
+      });
+    } catch (error) {
+      console.error('Error in getRandomQuestions:', error);
+      res.status(500).json({ 
+        success: false,
+        message: 'Error fetching questions',
+        error: error.message 
+      });
+    }
+  };
+
+  export const submitQuestionnaireAttempt = async (req, res) => {
+    try {
+      const { candidateId } = req.params;
+      const { answers, totalTimeInSeconds } = req.body;
+      
+      // Get questions to check correct answers
+      const questionIds = Object.keys(answers);
+      const questions = await Question.find({ _id: { $in: questionIds } });
+      
+      // Process answers and calculate score
+      const responses = questions.map(question => {
+        const selectedAnswer = answers[question._id];
+        const correctOption = question.options.find(opt => opt.isCorrect);
+        const isCorrect = selectedAnswer === correctOption.text;
+        
+        return {
+          questionId: question._id,
+          selectedAnswer,
+          isCorrect
+        };
+      });
+  
+      const correctAnswers = responses.filter(r => r.isCorrect).length;
+      const score = (correctAnswers / questions.length) * 100;
+  
+      // Create attempt data
+      const attemptData = {
+        totalTimeInSeconds,
+        score,
+        responses
+      };
+  
+      // Update candidate
+      const updatedCandidate = await candidates.findByIdAndUpdate(
+        candidateId,
+        {
+          $push: { questionnaireAttempts: attemptData },
+          hasGivenAssessment: true
+        },
+        { new: true }
       );
   
-      if (!jobApplication) {
-        return res.status(404).send({ message: "Job application not found for this candidate" });
+      res.status(200).json({
+        success: true,
+        message: 'Assessment completed successfully',
+        data: {
+          score,
+          totalTimeInSeconds,
+          correctAnswers,
+          totalQuestions: questions.length
+        }
+      });
+  
+    } catch (error) {
+      console.error('Error in submitQuestionnaireAttempt:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Error saving assessment',
+        error: error.message
+      });
+    }
+  };
+
+  export const getQuestionnaireDetails = async (req, res) => {
+    try {
+      const { candidateId } = req.params;
+  
+      const candidate = await candidates.findById(candidateId)
+        .select('questionnaireAttempts firstName lastName phone email')
+        .lean();
+  
+      if (!candidate) {
+        return res.status(404).json({
+          success: false,
+          message: "Candidate not found"
+        });
       }
   
-      // Construct the response object with relevant information
+      // Get the latest attempt
+      const latestAttempt = candidate.questionnaireAttempts[candidate.questionnaireAttempts.length - 1];
+  
+      if (!latestAttempt) {
+        return res.status(404).json({
+          success: false,
+          message: "No questionnaire attempts found for this candidate"
+        });
+      }
+  
+      // Get all question details in one query
+      const questionIds = latestAttempt.responses.map(response => response.questionId);
+      const questions = await Question.find({ _id: { $in: questionIds } }).lean();
+  
+      // Create a map for quick question lookup
+      const questionMap = questions.reduce((acc, question) => {
+        acc[question._id.toString()] = question;
+        return acc;
+      }, {});
+  
+      // Calculate statistics
+      const totalQuestions = latestAttempt.responses.length;
+      const correctAnswers = latestAttempt.responses.filter(response => response.isCorrect).length;
+      const incorrectAnswers = totalQuestions - correctAnswers;
+  
+      // Format time
+      const timeInMinutes = Math.floor(latestAttempt.totalTimeInSeconds / 60);
+      const timeInSeconds = latestAttempt.totalTimeInSeconds % 60;
+      const formattedTime = `${timeInMinutes}h ${timeInSeconds}mins`;
+  
+      // Enhanced response with question details
       const response = {
-        _id: candidate._id,
-        firstName: candidate.firstName,
-        lastName: candidate.lastName,
-        email: candidate.email,
-        phone: candidate.phone,
-        website: candidate.website,
-        portfolio: candidate.portfolio,
-        resumeUrl: jobApplication.resumeUrl || candidate.resumeUrl,
-        noticePeriod: candidate.noticePeriod,
-        currentCTC: candidate.currentCTC,
-        expectedCTC: candidate.expectedCTC,
-        experience: candidate.experience,
-        skills: candidate.skills,
-        location: candidate.location,
-        jobApplication: {
-          jobId: jobApplication.jobId,
-          jobApplied: jobApplication.jobApplied,
-          applicationDate: jobApplication.applicationDate,
-          rating: jobApplication.rating,
-          currentStage: jobApplication.currentStage,
-          stageStatuses: jobApplication.stageStatuses,
-          questionResponses: jobApplication.questionResponses
+        success: true,
+        data: {
+          candidateInfo: {
+            name: `${candidate.firstName} ${candidate.lastName}`,
+            email: candidate.email,
+            phone: candidate.phone,
+            score: latestAttempt.score,
+            totalTimeSpent: formattedTime,
+            attemptDate: latestAttempt.attemptDate,
+          },
+          assessmentStats: {
+            totalQuestions,
+            correctAnswers,
+            incorrectAnswers,
+            scoreOutOf100: latestAttempt.score
+          },
+          questionResponses: latestAttempt.responses.map((response, index) => {
+            const question = questionMap[response.questionId.toString()];
+            return {
+              questionNumber: index + 1,
+              questionId: response.questionId,
+              questionDetails: {
+                text: question.text,
+                type: question.questionType,
+                category: question.category,
+                difficulty: question.difficulty,
+                imageUrl: question.imageUrl,
+                options: question.options.map(opt => ({
+                  text: opt.text,
+                  imageUrl: opt.imageUrl,
+                  isCorrect: opt.isCorrect
+                }))
+              },
+              selectedAnswer: response.selectedAnswer,
+              isCorrect: response.isCorrect
+            };
+          })
         }
       };
   
-      res.send(response);
+      return res.status(200).json(response);
+  
     } catch (error) {
-      console.error("Error in getCandidateById:", error);
-      res.status(500).send({ message: "Internal server error", error: error.message });
+      console.error("Error in getQuestionnaireDetails:", error);
+      return res.status(500).json({
+        success: false,
+        message: "Internal server error",
+        error: error.message
+      });
     }
   };
-  

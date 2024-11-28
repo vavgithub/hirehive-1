@@ -17,10 +17,12 @@ const theme = createTheme({
           '& .MuiInputBase-root': {
             backgroundColor: 'black',
             color: 'white',
+            borderRadius:"12px",
+            height: "44px", // Add this line
           },
-          '& .MuiOutlinedInput-notchedOutline': {
-            borderColor: 'teal',
-          },
+          // '& .MuiOutlinedInput-notchedOutline': {
+          //   borderColor: 'teal',
+          // },
           '& .MuiSvgIcon-root': {
             color: 'white',
           },
@@ -55,7 +57,15 @@ export default function Timepicker({ onChange, value }) {
         <DesktopTimePicker
           value={value ? dayjs(`${value}`) : null}
           defaultValue={dayjs('2022-04-17T15:30')}
-          onChange={(newValue) => onChange(newValue)} />
+          onChange={(newValue) => onChange(newValue)}
+          sx={{
+            '& .MuiInputBase-root': {
+              height: '44px',
+            },
+            '& .MuiOutlinedInput-input': {
+              padding: '0px 10px',
+            },
+          }} /> 
       </LocalizationProvider>
     </ThemeProvider>
   );

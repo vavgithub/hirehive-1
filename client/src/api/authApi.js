@@ -21,12 +21,19 @@ export const getProfile = async () => {
     return response.data;
 };
 
+export const uploadProfilePicture = async (formData) => {
+  const response = await axios.post(`${API_URL}/profile-picture`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  return response.data;
+};
+
 export const fetchAvailableDesignReviewers = async () => {
     try {
-      console.log('Fetching available design reviewers...');
       const response = await axios.get(`${API_URL}/design-reviewers`, { withCredentials: true });
       
-      console.log('API Response:', response);
   
       if (response.status !== 200) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -36,7 +43,6 @@ export const fetchAvailableDesignReviewers = async () => {
         throw new Error('Invalid data structure received from API');
       }
   
-      console.log('Parsed reviewers data:', response.data.data);
       return response.data.data;
     } catch (error) {
       console.error('Error in fetchAvailableDesignReviewers:', error);

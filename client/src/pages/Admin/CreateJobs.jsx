@@ -8,16 +8,12 @@ import { showErrorToast, showSuccessToast } from '../../components/ui/Toast';
 
 const CreateJobs = () => {
   const navigate = useNavigate();
-
   const createJobMutation = useMutation({
     mutationFn: (jobData) => axios.post('/jobs/createJobs', jobData),
     onSuccess: (data) => {
       const action = data.data.status === 'draft' ? 'saved as draft' : 'created';
       showSuccessToast('Job Action', `"${data.data.jobTitle}" ${action} successfully`);
-      // Navigate after a short delay to ensure the toast is visible
-      setTimeout(() => {
-        navigate('/admin/jobs');
-      }, 500);
+      navigate('/admin/jobs');  
     },
     onError: (error) => {
       console.error('Error with job action:', error);
@@ -31,8 +27,8 @@ const CreateJobs = () => {
   };
 
   return (
-    <div className="bg-background-80 h-screen">
-      <div className='p-4'>
+    <div className="bg-background-80 w-full ">
+      <div className='p-4 container '>
         <Header HeaderText="Create a New Job Listing" withBack="true" />
         <JobForm
           onSubmit={handleSubmit}

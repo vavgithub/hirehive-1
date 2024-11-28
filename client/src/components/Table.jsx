@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { DataGrid } from '@mui/x-data-grid';
-import { FaFile, FaFileAlt, FaGlobe, FaUser } from 'react-icons/fa';
+import { FaEdit, FaFile, FaFileAlt, FaGlobe, FaUser } from 'react-icons/fa';
 import { Menu, MenuItem } from '@mui/material';
 
 import { Link, useNavigate } from 'react-router-dom';
@@ -21,9 +21,19 @@ import { BudgetField } from './Form/FormFields';
 import AutoAssign from '../svg/Buttons/AutoAssign';
 import { ACTION_TYPES } from '../utility/ActionTypes';
 import ResumeViewer from './utility/ResumeViewer';
+import FilterForDataTable from './Filters/FilterForDataTable';
+import { exportToExcel } from '../utility/exportToExcel';
+import Export from '../svg/Buttons/Export';
+import EditIcon from '../svg/KebabList/EditIcon';
+import DeleteIcon from '../svg/KebabList/DeleteIcon';
+import { showErrorToast, showSuccessToast } from './ui/Toast';
+import { useAuthContext } from '../context/AuthProvider';
 
 
-const Table = ({ jobId }) => {
+const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
+  //this is for setting up the context
+  const { user } = useAuthContext();
+  const role = user?.role
   const queryClient = useQueryClient();
   const [isAutoAssignModalOpen, setIsAutoAssignModalOpen] = useState(false);
   const [isBudgetModalOpen, setIsBudgetModalOpen] = useState(false);
@@ -38,26 +48,47 @@ const Table = ({ jobId }) => {
   const [isMoveModalOpen, setIsMoveModalOpen] = useState(false);
   const [selectedCandidate, setSelectedCandidate] = useState(null);
 
-   // ... other state declarations
- // ... other state declarations
- const [isDocumentViewerOpen, setIsDocumentViewerOpen] = useState(false);
- const [selectedDocumentUrl, setSelectedDocumentUrl] = useState('');
+  // ... other state declarations
+  // ... other state declarations
+  const [isDocumentViewerOpen, setIsDocumentViewerOpen] = useState(false);
+  const [selectedDocumentUrl, setSelectedDocumentUrl] = useState('');
 
- const handleDocumentClick = (documentUrl) => {
-    console.log(documentUrl);
-   setSelectedDocumentUrl(documentUrl);
-   setIsDocumentViewerOpen(true);
- };
+  // ..this are the table filters 
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filters, setFilters] = useState({});
 
-  const { data: apiResponse, isLoading, isError } = useQuery({
+  const [budgetMenuAnchorEl, setBudgetMenuAnchorEl] = useState(null);
+
+
+
+  const handleSearch = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const handleApplyFilters = (newFilters) => {
+    setFilters(newFilters);
+  };
+
+
+
+  const handleDocumentClick = (documentUrl) => {
+    setSelectedDocumentUrl(documentUrl);
+    setIsDocumentViewerOpen(true);
+  };
+
+  const { data: apiResponse, isLoading, isError, refetch } = useQuery({
     queryKey: ['candidates', jobId],
     queryFn: () => axios.get(`/admin/candidate/${jobId}`).then(res => res.data),
+    enabled: !readOnly, // Only fetch data if not in readOnly mode
   });
 
   // Extract candidates from the API response
-  const rowsData = apiResponse?.candidates || [];
+  // const rowsData = apiResponse?.candidates || [];
 
-  console.log(rowsData);
+
+  // Use readOnlyData if in readOnly mode, otherwise use data from API
+  const rowsData = readOnly ? readOnlyData : (apiResponse?.candidates || []);
+  // console.log(rowsData);
 
 
   // Apply budget filter
@@ -70,13 +101,47 @@ const Table = ({ jobId }) => {
     });
   }, [rowsData, budgetFilter]);
 
+  const filteredAndSearchedRowsData = React.useMemo(() => {
+    let result = filteredRowsData;
+
+    // Apply search
+    if (searchTerm) {
+      result = result.filter(row =>
+        `${row.firstName} ${row.lastName}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        row.email.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    // Apply filters
+    if (filters.stage && filters.stage.length > 0) {
+      result = result.filter(row => filters.stage.includes(row.currentStage));
+    }
+    if (filters.status && filters.status.length > 0) {
+      result = result.filter(row => filters.status.includes(readOnly ? row?.status : row.stageStatuses[row.currentStage]?.status));
+    }
+    if (filters.experience) {
+      const [min, max] = filters.experience.split('-').map(num => parseInt(num));
+      result = result.filter(row => {
+        const exp = parseInt(row.experience);
+        return exp >= min && exp <= max;
+      });
+    }
+    if (filters.rating && filters.rating.length > 0) {
+      result = result.filter(row => filters.rating.includes(row.rating));
+    }
+    if (!readOnly && filters.assignee && filters.assignee.length > 0) {
+      result = result.filter(row => filters.assignee.find(each=>each._id === row.stageStatuses[row.currentStage]?.assignedTo));
+    }
+
+    return result;
+  }, [filteredRowsData, searchTerm, filters]);
+
   const autoAssignMutation = useMutation({
     mutationFn: ({ jobId, reviewerIds }) =>
       axios.post('dr/auto-assign-portfolios', { jobId, reviewerIds }),
     onSuccess: (data) => {
       // Invalidate and refetch
       queryClient.invalidateQueries(['candidates', jobId]);
-      console.log('Auto-assign result:', data);
       refetch();
       // You might want to show a success message to the user here
     },
@@ -127,12 +192,25 @@ const Table = ({ jobId }) => {
     },
   });
 
+  const handleAutoAssign = async (selectedReviewers) => {
+    try {
+      const response = await axios.post('/dr/auto-assign-portfolios', {
+        jobId,
+        reviewerIds: selectedReviewers.map(reviewer => reviewer._id),
+        budgetMin: parseFloat(budgetFilter.from) || 0,
+        budgetMax: parseFloat(budgetFilter.to) || Infinity
+      });
 
-  const handleAutoAssign = (selectedReviewers) => {
-    autoAssignMutation.mutate({
-      jobId,
-      reviewerIds: selectedReviewers.map(r => r._id)
-    });
+      if (response.status === 200) {
+        await refetch();
+        showSuccessToast("Auto Assign Portfolio Done")
+      } else {
+        console.error('Failed to assign portfolios');
+      }
+    } catch (error) {
+      console.error('Error in auto-assigning portfolios:', error);
+      showErrorToast(`${error.message}`)
+    }
     setIsAutoAssignModalOpen(false);
   };
 
@@ -178,6 +256,7 @@ const Table = ({ jobId }) => {
     setBudgetFilter(tempBudgetFilter);
     localStorage.setItem(`budgetFilter_${jobId}`, JSON.stringify(tempBudgetFilter));
     setIsBudgetModalOpen(false);
+    showSuccessToast("Screened with budget", `Candidates successfully screened within the budget ${tempBudgetFilter.from}LPA - ${tempBudgetFilter.to}LPA`)
   };
 
   const clearBudgetFilter = () => {
@@ -185,6 +264,7 @@ const Table = ({ jobId }) => {
     setBudgetFilter(clearedFilter);
     setTempBudgetFilter(clearedFilter);
     localStorage.removeItem(`budgetFilter_${jobId}`);
+    showErrorToast("Budget Has Been Cleared")
   };
 
 
@@ -214,7 +294,6 @@ const Table = ({ jobId }) => {
   };
 
   const handleRatingClick = (event, row) => {
-    console.log('Rating clicked for row:', row);
     // console.log(params?.row?.rating);
     event.stopPropagation();
     setAnchorEl(event.currentTarget);
@@ -222,13 +301,11 @@ const Table = ({ jobId }) => {
   };
 
   const handleRatingClose = () => {
-    console.log('Closing rating menu');
     setAnchorEl(null);
     setSelectedRow(null);
   };
 
   const getRatingIcon = (rating) => {
-    console.log('Getting icon for rating:', rating);
     switch (rating) {
       case 'Good Fit':
         return <GoodFit />;
@@ -241,26 +318,44 @@ const Table = ({ jobId }) => {
     }
   };
 
-  const columns = [
+
+  //this is for opening the portfolios in different tab
+  const ensureAbsoluteUrl = (url) => {
+    if (url && !url.startsWith('http://') && !url.startsWith('https://')) {
+      return `https://${url}`;
+    }
+    return url;
+  };
+
+
+  const commonColumns = [
     {
       field: 'fullName',
       headerName: 'Full Name',
       width: 250,
       sortable: false,
-      valueGetter: (value, row) => `${row.firstName || ''} ${row.lastName || ''}`,
+      valueGetter: (params, row) => `${row?.firstName || ''} ${row?.lastName || ''}`,
       renderCell: (params) => (
         <div className="name-cell flex items-center gap-2">
           <span>{params.value}</span>
-          <div className="hover-icons flex">
-            <Link to={params?.row?.portfolio} target="_blank" className="icon-link">
-              <FaUser className="icon" />
-            </Link>
-            <Link to={params?.row?.portfolio} target="_blank" className="icon-link">
-              <FaGlobe className="icon" />
-            </Link>
-            <button onClick={() => handleDocumentClick(params.row.resumeUrl)} className="icon-link">
-              <FaFile className="icon" />
-            </button>
+          <div className="hover-icons flex"
+            onClick={(event) => event.stopPropagation()}
+          >
+            {params.row.portfolio && (
+              <a href={ensureAbsoluteUrl(params.row.portfolio)} target="_blank" rel="noopener noreferrer" className="icon-link">
+                <FaUser className="icon" />
+              </a>
+            )}
+            {params.row.website && params.row.website !== params.row.portfolio && (
+              <a href={ensureAbsoluteUrl(params.row.website)} target="_blank" rel="noopener noreferrer" className="icon-link">
+                <FaGlobe className="icon" />
+              </a>
+            )}
+            {params.row.resumeUrl && (
+              <button onClick={() => handleDocumentClick(params.row.resumeUrl)} className="icon-link">
+                <FaFile className="icon" />
+              </button>
+            )}
           </div>
         </div>
       ),
@@ -268,10 +363,7 @@ const Table = ({ jobId }) => {
     {
       field: 'experience',
       headerName: "Experience",
-    },
-    {
-      field: 'expectedCTC',
-      headerName: "Expected CTC",
+      width: 120,
     },
     {
       field: 'currentStage',
@@ -279,11 +371,52 @@ const Table = ({ jobId }) => {
       width: 150,
       renderCell: (params) => (
         <div className='h-full flex items-center'>
-
           <StageBadge stage={params.value} />
         </div>
       )
     },
+  ];
+
+  const readOnlyColumns = [
+    ...commonColumns,
+    {
+      field: 'status',
+      headerName: 'Status',
+      width: 150,
+      renderCell: (params) => (
+        <div className='h-full flex items-center'>
+          <StatusBadge status={params.row.status} />
+        </div>
+      ),
+    },
+    {
+      field: 'jobTitle',
+      headerName: 'Applied For',
+      width: 200,
+    },
+    ...(role === 'Hiring Manager' ? [
+      {
+        field: 'expectedCTC',
+        headerName: 'Expected CTC',
+        width: 150,
+      }, 
+     
+      {
+        field: 'email',
+        headerName: 'Email',
+        width: 200,
+      },
+      
+      {
+        field: 'phone',
+        headerName: 'Phone',
+        width: 150,
+      },
+    ] : []),   
+  ];
+
+  const defaultColumns = [
+    ...commonColumns,
     {
       field: 'status',
       headerName: 'Status',
@@ -298,13 +431,14 @@ const Table = ({ jobId }) => {
         );
       },
     },
-
     {
       field: 'assignee',
       headerName: 'Assignee',
       width: 100,
       renderCell: (params) => (
-        <div className='flex items-center justify-center h-full'>
+        <div className='flex items-center justify-center h-full'
+          onClick={(event) => event.stopPropagation()}
+        >
           <AssigneeSelector
             mode="icon"
             value={params.row.stageStatuses[params.row.currentStage]?.assignedTo}
@@ -313,7 +447,7 @@ const Table = ({ jobId }) => {
               params.row.currentStage,
               newAssignee
             )}
-            onSelect={() => {}}
+            onSelect={() => { }}
           />
         </div>
       ),
@@ -323,7 +457,9 @@ const Table = ({ jobId }) => {
       headerName: 'Actions',
       width: 150,
       renderCell: (params) => (
-        <div className='flex h-full items-center gap-2'>
+        <div className='flex h-full items-center gap-2'
+          onClick={(event) => event.stopPropagation()}
+        >
           <button
             onClick={() => handleMoveClick(params.row)}
             disabled={!canMove(params.row)}
@@ -336,20 +472,72 @@ const Table = ({ jobId }) => {
           >
             {canReject(params.row) ? <RejectActive /> : <Reject />}
           </button>
-          <button onClick={(e) => handleRatingClick(e, params?.row)}>
-            {getRatingIcon(params?.row?.rating)}
+          <button onClick={(e) => handleRatingClick(e, params.row)}>
+            {getRatingIcon(params.row.rating)}
           </button>
         </div>
       )
     }
   ];
 
+  const columns = readOnly ? readOnlyColumns : defaultColumns;
+
   const navigate = useNavigate();
 
-  const handleRowClick = (params)=>{
-    console.log(params)
-    navigate(`/admin/jobs/view-candidate/${params.id}/${jobId}`)
-  }
+  //  const handleRowClick = (params) => {
+  //     navigate(`/admin/jobs/view-candidate/${params.id}/${readOnly ? params.row.jobId : jobId}`)
+  //   }
+
+  // const handleRowClick = (params) => {
+  //   if (role == "Hiring Manager") {
+  //     console.log("main waala cliked up")
+  //     navigate(`/admin/jobs/view-candidate/${params?.row?._id}/${readOnly ? params.row.jobId : jobId}`)
+  //   } else {
+  //     console.log("else waala cliked up")
+  //     navigate(`view-candidate/${params?.row?._id}/${readOnly ? params.row.jobId : jobId}`)
+
+  //   }
+  // }
+
+  const handleRowClick = (params) => {
+    if (role === "Hiring Manager") {
+      const baseUrl = readOnly 
+        ? "/admin/candidates/view-candidate" 
+        : "/admin/jobs/view-candidate";
+      navigate(`${baseUrl}/${params?.row?._id}/${readOnly ? params.row.jobId : jobId}`);
+    } else {
+      navigate(`view-candidate/${params?.row?._id}/${readOnly ? params.row.jobId : jobId}`);
+    }
+  };
+
+  const handleExport = () => {
+    exportToExcel(filteredAndSearchedRowsData, 'my_data');
+  };
+
+  const handleBudgetButtonClick = (event) => {
+    if (budgetFilter.from && budgetFilter.to) {
+      setBudgetMenuAnchorEl(event.currentTarget);
+    } else {
+      setTempBudgetFilter(budgetFilter);
+      setIsBudgetModalOpen(true);
+    }
+  };
+
+  const handleBudgetMenuClose = () => {
+    setBudgetMenuAnchorEl(null);
+  };
+
+  const handleBudgetEdit = () => {
+    handleBudgetMenuClose();
+    setTempBudgetFilter(budgetFilter);
+    setIsBudgetModalOpen(true);
+  };
+
+  const handleBudgetClear = () => {
+    clearBudgetFilter();
+    handleBudgetMenuClose();
+  };
+
 
 
   return (
@@ -417,40 +605,92 @@ const Table = ({ jobId }) => {
           .MuiDataGrid-root .MuiDataGrid-row:hover {
             z-index: 2;
           }
+          .MuiDataGrid-main.css-3eek4p-MuiDataGrid-main {
+          max-width:83vw;
+          }
+          .MuiDataGrid-scrollbar.MuiDataGrid-scrollbar--horizontal.css-1rtad1::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+          }
+
+          /* Track */
+          .MuiDataGrid-scrollbar.MuiDataGrid-scrollbar--horizontal.css-1rtad1::-webkit-scrollbar-track {
+            border-radius: 5px;
+            background: #1D1D1D; 
+          }
+          
+          /* Handle */
+          .MuiDataGrid-scrollbar.MuiDataGrid-scrollbar--horizontal.css-1rtad1::-webkit-scrollbar-thumb {
+            background: #c1c1c1; 
+            border-radius: 100px;
+          }
+
+          /* Handle on hover */
+          .MuiDataGrid-scrollbar.MuiDataGrid-scrollbar--horizontal.css-1rtad1::-webkit-scrollbar-thumb:hover {
+            background: #fff; 
+          }
+          .css-1oudwrl::after {
+            display: none;
+          }
+          .css-tgsonj {
+          border-top:none;
+          }
+
     `}
       </style>
 
-      <div className='flex justify-end py-4 gap-2'>
-        <div className='w-[216px] '>
-          <Button
-            icon={AutoAssign}
-            variant="primary"
-            onClick={() => setIsAutoAssignModalOpen(true)}
-            disabled={autoAssignMutation.isLoading}
-          >
-            {autoAssignMutation.isLoading ? 'Auto-Assigning...' : 'Auto-Assign Portfolio'}
-          </Button>
-        </div>
-        <div className={`${budgetFilter.from && budgetFilter.to ? "auto" : "w-[216px]"}`}>
+      <div className='flex justify-between py-4 gap-2'>
 
-          <Button
-            variant={budgetFilter.from && budgetFilter.to ? "icon" : "primary"}
-            icon={Budget}
-            onClick={() => {
-              setTempBudgetFilter(budgetFilter);
-              setIsBudgetModalOpen(true);
-            }}
-          >
-            {budgetFilter.from && budgetFilter.to ? '' : 'Screen With Budget'}
-          </Button>
+        {/* {here is the place to add the search bar ,  filter , export button } */}
 
+        <div className='flex gap-4 items-center'>
+          <input
+            type="text"
+            placeholder="Search by name or email"
+            value={searchTerm}
+            onChange={handleSearch}
+          />
+          <FilterForDataTable onApplyFilters={handleApplyFilters} readOnly={readOnly} />
+          <div className='flex items-center cursor-pointer gap-2 text-font-gray  typography-body' onClick={() => handleExport()}>
+            <Export />
+            Export
+          </div>
         </div>
+
+        {!readOnly && (<div className='flex gap-4'>
+
+          <div className={`${budgetFilter.from && budgetFilter.to ? "w-[216px]" : "hidden"}`}>
+            <Button
+              icon={AutoAssign}
+              variant="primary"
+              onClick={() => setIsAutoAssignModalOpen(true)}
+              disabled={autoAssignMutation.isLoading}
+            >
+              {(autoAssignMutation.isLoading ? 'Auto-Assigning...' : 'Auto-Assign Portfolio')}
+            </Button>
+          </div>
+          <div className={`${budgetFilter.from && budgetFilter.to ? "auto" : "w-[216px]"}`}>
+
+            <Button
+              variant={budgetFilter.from && budgetFilter.to ? "icon" : "primary"}
+              icon={Budget}
+              // onClick={() => {
+              //   setTempBudgetFilter(budgetFilter);
+              //   setIsBudgetModalOpen(true);
+              // }}
+              onClick={handleBudgetButtonClick}
+            >
+              {budgetFilter.from && budgetFilter.to ? '' : 'Screen With Budget'}
+            </Button>
+
+          </div>
+        </div>)}
       </div>
 
       <DataGrid
-        rows={filteredRowsData}
+        rows={filteredAndSearchedRowsData}
         columns={columns}
-        getRowId={(row) => row._id}
+        getRowId={(row) => `${row._id}_${row.jobId}`} // Create a unique ID for each row
         initialState={{
           pagination: {
             paginationModel: { page: 0, pageSize: 5 },
@@ -537,7 +777,7 @@ const Table = ({ jobId }) => {
         onRowClick={(params) => handleRowClick(params)}
       />
 
-{isDocumentViewerOpen && (
+      {isDocumentViewerOpen && (
         <ResumeViewer
           documentUrl={selectedDocumentUrl}
           onClose={() => setIsDocumentViewerOpen(false)}
@@ -548,6 +788,8 @@ const Table = ({ jobId }) => {
         open={isAutoAssignModalOpen}
         onClose={() => setIsAutoAssignModalOpen(false)}
         onAssign={handleAutoAssign}
+        jobId={jobId}
+        budgetFilter={budgetFilter}
       />
 
       <Menu
@@ -572,6 +814,43 @@ const Table = ({ jobId }) => {
             </div>
           </MenuItem>
         ))}
+      </Menu>
+
+
+
+      <Menu
+        anchorEl={budgetMenuAnchorEl}
+        open={Boolean(budgetMenuAnchorEl)}
+        onClose={handleBudgetMenuClose}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'left',
+        }}
+        sx={{
+          "& .MuiList-root": {
+            backgroundColor: 'rgba(12, 13, 13, 1)',
+            color: "white",
+            font: "Outfit"
+          },
+          "& .MuiPaper-root": {
+            marginTop: '8px',
+            marginLeft: '-60px', // Adjust this value to move the menu more to the left
+          }
+        }}
+      >
+        <div className='flex items-center justify-evenly px-4 typograhy-body '>
+          <EditIcon />
+          <MenuItem onClick={handleBudgetEdit}>Edit</MenuItem>
+
+        </div>
+        <div className='flex items-center justify-evenly px-4 typograhy-body '>
+          <DeleteIcon />
+          <MenuItem onClick={handleBudgetClear}>Clear</MenuItem>
+        </div>
       </Menu>
 
 

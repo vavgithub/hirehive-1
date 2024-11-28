@@ -79,7 +79,7 @@ const EditCandidateProfile = () => {
   };
 
   return (
-    <div className="bg-background-80 h-screen">
+    <div className="bg-background-80  h-screen">
       <div className='p-4'>
 
         <Header HeaderText={`${data.firstName} ${data.lastName}`} withKebab='false' withBack="true" />

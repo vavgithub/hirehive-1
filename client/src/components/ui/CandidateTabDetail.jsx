@@ -27,59 +27,27 @@ const Experience = ({ company, position, startDate, endDate, index }) => (
     </div>
   );
 
-const CandidateTabDetail = ({ data }) => {
-  return (
-    <div>
-      <Card title="Professional Details"  gridLayout={true}>
-        {data.professionalDetails.map((detail, index) => (
-          <DetailRow key={index} label={detail.label} value={detail.value} />
-        ))}
-      </Card>
+  const CandidateTabDetail = ({ data }) => {
+    return (
+        <div>
+            <Card title="Professional Details" gridLayout={true}>
+                {data.professionalDetails.map((detail, index) => (
+                    <DetailRow key={index} label={detail.label} value={detail.value} />
+                ))}
+            </Card>
 
-      <Card title="Previous Experiences">
-        <div className="grid grid-cols-1 gap-4">
-          {data.previousExperiences.map((exp, index) => (
-            <Experience key={index} {...exp} index={index} />
-          ))}
+            <Card title="Skill Set">
+                <div className="flex flex-wrap gap-2">
+                    {data.skillSet.map((skill, index) => (
+                        <span key={index} className="bg-background-70 rounded-xl typography-body py-1 px-3">
+                            {skill}
+                        </span>
+                    ))}
+                </div>
+            </Card>
         </div>
-      </Card>
-
-      <Card title="Skill Set">
-        <div className="flex flex-wrap gap-2">
-          {data.skillSet.map((skill, index) => (
-            <span key={index} className="bg-background-70 rounded-xl typography-body py-1 px-3">
-              {skill}
-            </span>
-          ))}
-        </div>
-      </Card>
-    </div>
-  );
+    );
 };
 
-// Example usage
-const exampleData = {
-  professionalDetails: [
-    { label: "Experience", value: "8 Years" },
-    { label: "Notice Period", value: "1 Month" },
-    { label: "Current CTC", value: "4 LPA" },
-    { label: "Expected CTC", value: "8 LPA" },
-  ],
-  previousExperiences: [
-    {
-      company: "ABC Company",
-      position: "UI Designer",
-      startDate: "21 Jan 2022",
-      endDate: "05 July 2024",
-    },
-    {
-      company: "DEF Company",
-      position: "Junior UI Designer",
-      startDate: "16 Feb 2019",
-      endDate: "27 Sept 2021",
-    },
-  ],
-  skillSet: ["Figma", "Sketch", "Adobe Suites", "Zeplin"],
-};
-
-export default () => <CandidateTabDetail data={exampleData} />;
+// Remove the exampleData since we're using real data now
+export default CandidateTabDetail;

@@ -32,6 +32,89 @@ html{
   }
 }
 
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.custom-scrollbar {
+  /* Enable horizontal scrolling */
+  overflow-x: auto;
+  white-space: nowrap;
+  padding-bottom: 10px; /* Prevent hiding of bottom part of the cards */
+
+  /* Hide scrollbar by default */
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: #888 transparent; /* Firefox */
+}
+
+/* Webkit-based browsers (Chrome, Safari) custom scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  height: 2px; /* Horizontal scrollbar height */
+  width: 2px; /* Vertical scrollbar width if needed */
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #888; /* Scrollbar color */
+  border-radius: 10px; /* Rounded scrollbar */
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background-color: transparent; /* Scrollbar track background */
+}
+
+.custom-scrollbar:hover::-webkit-scrollbar-thumb {
+  background-color: #555; /* Darker scrollbar on hover */
+}
+
+/* Assuming this is the parent container for the StatsGrid */
+.parent-container {
+  width: 100%; /* Ensure it takes up the full width of the page */
+  max-width: 100%; /* Prevent overflow */
+  overflow: hidden; /* Prevent content from going out of bounds */
+  padding: 10px; /* Add some padding if needed */
+  box-sizing: border-box;
+}
+
+/* Add this to your global CSS file */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+@keyframes down {
+  0%, 100% {
+    transform: none;
+  }
+  25% {
+    transform: translateX(100%);
+  }
+  50% {
+    transform: translateX(100%) translateY(100%);
+  }
+  75% {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes up {
+  0%, 100% {
+    transform: none;
+  }
+  25% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(-100%) translateY(-100%);
+  }
+  75% {
+    transform: translateY(-100%);
+  }
+}
+
+
+
+
 
 
 body {

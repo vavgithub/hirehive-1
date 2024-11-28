@@ -14,6 +14,7 @@ export default {
         "assessment":"url('/src/svg/Background/AssessmentBanner.svg')",
         "verification":"url('/src/svg/Background/verification.svg')",
         "stars":"url('/src/svg/Background/Stars.svg')",
+        "score":"url('/src/svg/Background/Score.svg')",
         "que-bg":"url('/src/svg/Background/Que.svg')",      
         "login-screen":"url('/src/svg/Background/loginScreenBg.svg')",  
         "sundar-kanya":"url('/src/svg/Background/sundar-kanya.png')",  
@@ -38,10 +39,10 @@ export default {
         red:{
           100:"rgba(255, 31, 71, 1)",
           90:"rgba(255, 56, 92, 1)",
-          80:"rgba(255, 56, 92, 0.2)",
-          70:"rgba(255, 56, 92, 0.2)",
+          80:"rgba(255, 56, 92, 0.2)",        
           60:"rgba(255, 56, 92, 0.3)",
           50:"rgba(255, 56, 92, 0.05)",
+          40:"rgba(203, 0, 0, 1)",
         },
         blue:{
           100:"var(--color-primary-100)",
@@ -51,7 +52,7 @@ export default {
         },        
         black:{
           100:"rgba(12, 13, 13, 1)",
-        },        
+        },     
         grey:{
           100:"rgba(88, 91, 95, 1)",
           70:"rgba(32, 33, 34, 1)",
@@ -62,6 +63,7 @@ export default {
           100:"rgba(18, 211, 130, 1)",
           90:"rgba(20, 225, 89, 0.2)",
           80:"rgba(24, 233, 208, 0.3)",
+          70:"rgba(4, 203, 0, 1)",          
         },        
         yellow:{
           100:"rgba(237, 189, 20, 1)",
@@ -93,6 +95,7 @@ export default {
         },
         accent: {
           100: "var(--color-font-accent-100)",
+          300 : "var(--color-accent-300)",
           red: "var(--color-red-100)",
           yellow: "var(--color-yellow-100)",
           green: "var(--color-green-100)",

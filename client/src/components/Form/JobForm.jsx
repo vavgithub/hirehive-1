@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { InputField, CustomDropdown, ExperienceField, BudgetField } from './FormFields';
 import SkillsInput from '../utility/SkillsInput';
@@ -7,9 +7,10 @@ import { Button } from '../ui/Button';
 import Next from '../../svg/Buttons/Next';
 import SaveForLater from '../../svg/Buttons/SaveForLater';
 import Que from './Que';
+import Create from '../../svg/Buttons/Create';
 
 const JobForm = ({ initialData, onSubmit, isEditing, initialQuestions }) => {
-  const { control, handleSubmit, watch, setValue, getValues, formState: { errors, isValid } } = useForm({
+  const { control, handleSubmit, watch, setValue, setError, getValues,clearErrors, formState: { errors, isValid } } = useForm({
     defaultValues: {
       jobTitle: '',
       workplaceType: '',
@@ -29,7 +30,9 @@ const JobForm = ({ initialData, onSubmit, isEditing, initialQuestions }) => {
 
   const watchedFields = watch();
 
-  const areAllFieldsFilled = isValid &&
+
+
+  let areAllFieldsFilled = isValid &&
     watchedFields.jobTitle &&
     watchedFields.workplaceType &&
     watchedFields.employeeLocation &&
@@ -39,13 +42,52 @@ const JobForm = ({ initialData, onSubmit, isEditing, initialQuestions }) => {
     watchedFields.skills &&
     watchedFields.skills.length > 0 &&
     watchedFields.experienceFrom !== undefined &&
-    watchedFields.experienceTo !== undefined &&
-    watchedFields.budgetFrom !== undefined &&
-    watchedFields.budgetTo !== undefined;
+    watchedFields.experienceTo !== undefined 
+    // &&
+    // watchedFields.budgetFrom !== undefined &&
+    // watchedFields.budgetTo !== undefined;
+    
+    if(Array.isArray(watchedFields.questions)){
+      for(let question of watchedFields.questions){
+        if(question.text.trim() === ""){
+          areAllFieldsFilled = false
+          break
+        }
+      }
+    }
+
+    // Use useEffect to handle the logic for setting the error
+    useEffect(() => { 
+      if (watchedFields.budgetFrom > 0 && watchedFields.budgetTo < watchedFields.budgetFrom) {
+        setError("budgetTo", {
+          type: "manual",
+          message: "Budget Range Mismatch!!"
+        });
+      }else if(!watchedFields.budgetTo){
+        setError("budgetTo", {
+          type: "manual",
+          message: "Default Budget Range is 0 - 1"
+        });
+      } else {
+        // Clear the error when the condition is no longer met
+        clearErrors('budgetTo');
+      }
+    }, [watchedFields.budgetFrom, watchedFields.budgetTo, setError]);
+
+    if(watchedFields.budgetFrom > 0){
+      if(watchedFields.budgetTo < watchedFields.budgetFrom){
+        areAllFieldsFilled = false
+      }
+    }
+
+    if(!watchedFields.budgetTo){
+      areAllFieldsFilled = false
+    }
 
   console.log('Form validity:', { isValid, areAllFieldsFilled, watchedFields, errors });
 
   const handleFormSubmit = (data) => {
+    console.log("FORM SUB",data)
     onSubmit(data, false);
   };
 
@@ -67,6 +109,7 @@ const JobForm = ({ initialData, onSubmit, isEditing, initialQuestions }) => {
               type="text"
               id="jobTitle"
               label="Job Title"
+              extraClass={"mt-1"}
               required
               {...field}
             />
@@ -119,7 +162,7 @@ const JobForm = ({ initialData, onSubmit, isEditing, initialQuestions }) => {
         <Controller
           name="budgetFrom"
           control={control}
-          rules={{ required: true }}
+          // rules={{ required: true }}
           render={({ field: { value, onChange } }) => (
             <BudgetField
               value={{
@@ -130,7 +173,7 @@ const JobForm = ({ initialData, onSubmit, isEditing, initialQuestions }) => {
                 onChange(newValue.from);
                 setValue('budgetTo', newValue.to);
               }}
-              required
+              errors={errors}
             />
           )}
         />
@@ -146,7 +189,7 @@ const JobForm = ({ initialData, onSubmit, isEditing, initialQuestions }) => {
                 {...field}
                 id="jobDescription"
                 placeholder="Write a job description"
-                className="w-full rounded-xl px-3 py-2 bg-background-40  outline-none focus:outline-teal-300"
+                className="w-full rounded-xl px-3 py-2 bg-background-40  outline-none focus:outline-teal-300 resize-none"
                 required
                 rows="10"
               />
@@ -208,11 +251,14 @@ const JobForm = ({ initialData, onSubmit, isEditing, initialQuestions }) => {
             <Button
               variant="primary"
               type="submit"
-              icon={Next}
+              icon={Create}
+              iconPosition="left"
               disabled={!areAllFieldsFilled}
             >
-              {isEditing ? 'Save' : 'Next'}
+              {isEditing ? 'Save' : 'Create A Job Listing'}
+
             </Button>
+
           </div>
         </div>
 

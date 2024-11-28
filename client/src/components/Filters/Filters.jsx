@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
 import ExperienceFilter from './ExperienceFilter';
-import { FullTimeIcon, FullTimeIconActive } from '../svg/Checkboxes/FullTimeIcons';
-import { ContractIcon, ContractIconActive } from '../svg/Checkboxes/ContractIcons';
-import { InternIcon, InternIconActive } from '../svg/Checkboxes/InternIcons';
-import { HiredIcon, HiredIconActive } from '../svg/Checkboxes/HiredIcons';
-import { NotHired, NotHiredActive } from '../svg/Checkboxes/NotHired';
+import { FullTimeIcon, FullTimeIconActive } from '../../svg/Checkboxes/FullTimeIcons';
+import { ContractIcon, ContractIconActive } from '../../svg/Checkboxes/ContractIcons';
+import { InternIcon, InternIconActive } from '../../svg/Checkboxes/InternIcons';
+import { HiredIcon, HiredIconActive } from '../../svg/Checkboxes/HiredIcons';
+import { NotHired, NotHiredActive } from '../../svg/Checkboxes/NotHired';
+import BudgetFilter from './BudgetFilter';
 
 
 const CustomCheckbox = ({ label, icon: Icon, isChecked, onChange, count }) => (
     <div
-        className={`flex flex-col justify-center p-3 rounded-xl cursor-pointer hover:bg-background-60 ${isChecked ? 'bg-gray-800' : 'bg-background-40'
+        className={`flex flex-col justify-center p-3 rounded-xl cursor-pointer hover:bg-background-60 ${isChecked ? 'bg-accent-300' : 'bg-background-40'
             }`}
         onClick={onChange}
     >
@@ -27,7 +28,7 @@ const CustomCheckbox = ({ label, icon: Icon, isChecked, onChange, count }) => (
 
 const ButtonCheckbox = ({ label, isChecked, onChange }) => (
     <button
-        className={`px-4 py-2 rounded-xl typography-large-p ${isChecked ? 'bg-gray-800 text-font-accent' : 'bg-background-40 text-font-gray'
+        className={`px-4 py-2 rounded-xl typography-large-p ${isChecked ? 'bg-accent-300 text-font-accent' : 'bg-background-40 text-font-gray'
             } hover:bg-background-60 transition-colors duration-200`}
         onClick={onChange}
     >
@@ -73,8 +74,10 @@ const CheckboxGroup = ({ title, options, filters, handleCheckboxChange, isDisabl
     );
 };
 
-const Filters = ({ filters = {}, statistics, handleCheckboxChange, activeTab, handleExperienceFilter, clearAllFilters }) => {
+const Filters = ({ filters = {}, handleCheckboxChange, activeTab, handleExperienceFilter, handleBudgetFilter, clearAllFilters }) => {
     const isDisabled = activeTab === 'draft';
+    const [shouldResetExperience, setShouldResetExperience] = useState(false);
+    const [shouldResetBudget, setShouldResetBudget] = useState(false);
 
 
     const jobTypeOptions = [
@@ -116,7 +119,7 @@ const Filters = ({ filters = {}, statistics, handleCheckboxChange, activeTab, ha
         { value: 'Frontend Developer', label: 'Frontend Developer' }
     ];
 
-    const draftOptions = [
+    const closedOptions = [
         {
             value: 'hired', label: 'Hired', icon: {
                 active: HiredIconActive,
@@ -130,19 +133,28 @@ const Filters = ({ filters = {}, statistics, handleCheckboxChange, activeTab, ha
             }
         }
     ];
-
     const handleExperienceApply = (experience) => {
+        setShouldResetExperience(false);
         handleExperienceFilter(experience);
+    };
+
+    const handleBudgetApply = (budget) => {
+        setShouldResetBudget(false);
+        handleBudgetFilter(budget);
     };
 
     const handleClearAll = () => {
         clearAllFilters();
+        setShouldResetExperience(true);
+        setShouldResetBudget(true);
     };
+
 
     return (
         <div className='w-[304px]'>
 
             <div className="bg-background-90 p-4 rounded-xl relative">
+                <h3 className='text-gray-200 font-semibold mb-2 text-lg tracking-wide' >Filter</h3>
                 <div className='flex flex-row-reverse absolute top-5 right-5'>
                     <button
                         onClick={handleClearAll}
@@ -154,9 +166,9 @@ const Filters = ({ filters = {}, statistics, handleCheckboxChange, activeTab, ha
                 {activeTab === 'closed' && (
                     <CheckboxGroup
                         title="Job Status"
-                        options={draftOptions}
-                        filters={filters.draftStatus || []}
-                        handleCheckboxChange={(value) => handleCheckboxChange('draftStatus', value)}
+                        options={closedOptions}
+                        filters={filters.closingStatus || []}
+                        handleCheckboxChange={(value) => handleCheckboxChange('closingStatus', value)}
                         isDisabled={isDisabled}
                         useCustomIconCheckbox={true}
                     />
@@ -180,7 +192,19 @@ const Filters = ({ filters = {}, statistics, handleCheckboxChange, activeTab, ha
                 />
 
                 <div className="mb-4">
-                    <ExperienceFilter onApply={handleExperienceApply} />
+                <h3 className="typoraphy-large-p text-gray-200 font-semibold mb-2">Experience Filter</h3>
+                    <ExperienceFilter
+                        onApply={handleExperienceApply}
+                        shouldReset={shouldResetExperience}
+                    />
+                </div>
+
+                <div className="mb-4">
+                    <h3 className="typography-large-p text-gray-200 font-semibold mb-2">Budget Filter</h3>
+                    <BudgetFilter 
+                        onApply={handleBudgetApply}
+                        shouldReset={shouldResetBudget}
+                    />
                 </div>
 
             </div>

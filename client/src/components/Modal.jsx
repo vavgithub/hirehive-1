@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Button } from './ui/Button';
-import Label from './ui/Label';
+import { useNavigate } from 'react-router-dom';
+import AssessmentPopup from "../svg/Background/AssessmentPopup.svg"
 
 const ACTION_TYPES = {
   DELETE: 'DELETE',
@@ -11,6 +12,7 @@ const ACTION_TYPES = {
   ARCHIVE: 'ARCHIVE',
   BUDGET: 'BUDGET',
   MOVE: 'MOVE',
+  ASSESSMENT: 'ASSESSMENT',
 };
 
 const ACTION_PROPERTIES = {
@@ -51,6 +53,13 @@ const ACTION_PROPERTIES = {
     confirmLabel: 'Move',
     confirmVariant: 'primary',
   },
+  [ACTION_TYPES.ASSESSMENT]: {
+    title: 'Start the assessment!',
+    confirmLabel: 'Take Assessment',
+    confirmVariant: 'primary',
+    cancelLabel: 'Cancel',
+    message: 'Take the assessment now to get prioritized and improve your likelihood of advancing quickly.',
+  },
 };
 
 const CLOSE_REASONS = [
@@ -58,7 +67,7 @@ const CLOSE_REASONS = [
   { value: 'Lack of suitable candidates', label: 'Lack of suitable candidates' },
   { value: 'Budget Constraints', label: 'Budget Constraints' },
   { value: 'Changes in business needs', label: 'Changes in business needs' },
-  { value: 'Don’t want more entries', label: 'Don’t want more entries' },
+  { value: 'Dont want more entries', label: 'Dont want more entries' },
 ];
 
 const REJECTION_REASONS = [
@@ -68,7 +77,6 @@ const REJECTION_REASONS = [
   "Candidate did not appear for round two",
   "Candidate did not submit the design task"
 ];
-
 
 const RedWarning = () => {
   return (
@@ -93,58 +101,82 @@ const Modal = ({
   children,
   candidateName,
   jobTitle,
-  companyName
+  companyName,
+  closeReason,
+  onCloseReasonChange
 }) => {
   const [rejectionReason, setRejectionReason] = useState('');
   const [showEmailPreview, setShowEmailPreview] = useState(false);
 
   const action = ACTION_PROPERTIES[actionType] || {};
 
+  const navigate = useNavigate();
+
   const title = customTitle || action.title || 'Confirm Action';
-  const message = customMessage || `Are you sure you want to perform this action?`;
+  const message = customMessage || action.message || `Are you sure you want to perform this action?`;
   const confirmLabel = customConfirmLabel || action.confirmLabel || 'Confirm';
   const buttonVariant = confirmVariant || action.confirmVariant || 'primary';
 
   const handleReasonSelect = (reason) => {
-    setRejectionReason(reason);
     if (actionType === ACTION_TYPES.REJECT) {
+      setRejectionReason(reason);
       setShowEmailPreview(true);
+    } else if (actionType === ACTION_TYPES.CLOSE) {
+      onCloseReasonChange(reason);
     }
   };
-
   const handleConfirm = () => {
-    if (actionType === ACTION_TYPES.REJECT) {
-      if (!rejectionReason) {
-        alert('Please select a reason for rejecting the candidate.');
-        return;
-      }
-      onConfirm(item, rejectionReason);
+    if (actionType === ACTION_TYPES.ASSESSMENT) {
+        navigate('/assessment/asdasdasdasdas');
+    } else if (actionType === ACTION_TYPES.REJECT) {
+        if (!rejectionReason) {
+            alert('Please select a reason for rejecting the candidate.');
+            return;
+        }
+        onConfirm(item, rejectionReason);
+    } else if (actionType === ACTION_TYPES.CLOSE) {
+        if (!closeReason) {
+            alert('Please select a reason for closing the job.');
+            return;
+        }
+        onConfirm(item); // The closeReason is already available in the parent component
     } else {
-      onConfirm(item);
+        onConfirm?.(item);
     }
     onClose();
-  };
+};
 
   if (!open) return null;
 
-  return (
-    <div
-      onClick={onClose}
-      className={`fixed inset-0 flex justify-center items-center transition-colors ${open ? "visible bg-black/20" : "invisible"}`}
-    >
-      <div
-        onClick={(e) => e.stopPropagation()}
-        className={`bg-background-60 rounded-xl shadow transition-all ${open ? "scale-100 opacity-100" : "scale-125 opacity-0"}`}
-      >
-        <div className='p-6'>
+  const renderModalContent = () => {
+    if (actionType === ACTION_TYPES.ASSESSMENT) {
+      return (
+        <div className="flex flex-col items-center ">
+          <div className="mb-4">
+            <img
+              src={AssessmentPopup}
+              alt="Assessment"
+              className="h-auto"
+              onError={(e) => {
+                e.target.src = '/api/placeholder/256/256';
+              }}
+            />
+          </div>
+          <h1 className="typography-h1 mb-2">{title}</h1>
+          <p className="text-font-gray typography-body mb-6">{message}</p>
+        </div>
+      );
+    }
+
+    if (actionType === ACTION_TYPES.REJECT) {
+      return (
+        <>
           <h1 className="typography-h1">{title}</h1>
-          {actionType === ACTION_TYPES.REJECT ? (
-            <p className="text-font-gray typography-body">Are you sure you want to reject "{candidateName}"?</p>
-          ) : (
-            <p className="text-font-gray typography-body">{message}</p>
-          )}
+          <p className="text-font-gray typography-body">
+            Are you sure you want to reject "{candidateName}"?
+          </p>
           
-          {action.requiresReason && actionType === ACTION_TYPES.REJECT && !showEmailPreview && (
+          {!showEmailPreview && action.requiresReason && (
             <div className="mt-4">
               <label htmlFor="rejectionReason" className="block typography-body">
                 Please provide the reason for rejecting this candidate
@@ -163,13 +195,13 @@ const Modal = ({
             </div>
           )}
 
-          {actionType === ACTION_TYPES.REJECT && showEmailPreview && (
+          {showEmailPreview && (
             <>
               <p className="text-gray-300 mb-2">This rejection email will be sent to the candidate</p>
               <div className="bg-background-100 p-4 rounded mb-4">
                 <p className="text-white">Dear {candidateName},</p>
                 <p className="text-white mt-2">
-                  Thank you for applying for the {jobTitle} position at {companyName}. 
+                  Thank you for applying for the {jobTitle} position at {companyName}.
                   After careful review, we have decided to move forward with other candidates.
                 </p>
                 <p className="text-white mt-2">
@@ -183,9 +215,57 @@ const Modal = ({
               </div>
             </>
           )}
+        </>
+      );
+    }
 
+    if (actionType === ACTION_TYPES.CLOSE && action.requiresReason) {
+      return (
+        <>
+          <h1 className="typography-h1">{title}</h1>
+          <p className="text-font-gray typography-body">{message}</p>
+          <div className="mt-4">
+            <label htmlFor="closeReason" className="block typography-body">
+              Please select a reason for closing this job
+            </label>
+            <select
+              id="closeReason"
+              value={closeReason}
+              onChange={(e) => handleReasonSelect(e.target.value)}
+              className="mt-1 block w-full pl-3 pr-10 py-2 text-base bg-background-100 border-gray-300 focus:outline-none focus:ring-teal-400 focus:border-indigo-500 sm:text-sm rounded-md"
+            >
+              <option value="">Select reason</option>
+              {CLOSE_REASONS.map((reason) => (
+                <option key={reason.value} value={reason.value}>
+                  {reason.label}
+                </option>
+              ))}
+            </select>
+          </div>
+        </>
+      );
+    }
+
+    return (
+      <>
+        <h1 className="typography-h1">{title}</h1>
+        <p className="text-font-gray typography-body">{message}</p>
+      </>
+    );
+  };
+
+  return (
+    <div
+      onClick={onClose}
+      className="fixed z-10 inset-0 flex justify-center items-center transition-colors bg-black/20"
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="bg-background-60 rounded-xl shadow w-full max-w-lg mx-4 transform transition-transform duration-200 ease-out"
+      >
+        <div className="p-6">
+          {renderModalContent()}
           {children}
-
           <div className="flex justify-end gap-4 mt-4">
             <div className="w-[180px]">
               <Button variant={cancelVariant} onClick={onClose}>
@@ -193,10 +273,13 @@ const Modal = ({
               </Button>
             </div>
             <div className="w-[180px]">
-              <Button 
-                variant={buttonVariant} 
+              <Button
+                variant={buttonVariant}
                 onClick={handleConfirm}
-                disabled={actionType === ACTION_TYPES.REJECT && !rejectionReason}
+                disabled={
+                  (actionType === ACTION_TYPES.REJECT && !rejectionReason) ||
+                  (actionType === ACTION_TYPES.CLOSE && !closeReason)
+                }
               >
                 {confirmLabel}
               </Button>

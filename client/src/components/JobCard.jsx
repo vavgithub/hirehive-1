@@ -7,6 +7,16 @@ import PriceIcon from '../svg/JobCard/PriceIcon';
 import JobTypeIcon from '../svg/JobCard/JobTypeIcon';
 import GraphIcon from '../svg/JobCard/GraphIcon';
 
+// Helper function to truncate text to specific number of words
+const truncateWords = (text, wordLimit) => {
+  if (!text) return '';
+  const words = text.split(' ');
+  if (words.length > wordLimit) {
+    return words.slice(0, wordLimit).join(' ') + '...';
+  }
+  return text;
+};
+
 const JobDetailItem = ({ icon: Icon, text }) => (
   <div className="mr-8 flex gap-2 items-center">
     <Icon />
@@ -93,6 +103,8 @@ const JobCard = ({
       },
     ];
   }
+  // Truncate job description to 10 words
+  const truncatedDescription = truncateWords(job.jobDescription || 'No description available', 20);
 
   return (
     <div
@@ -113,21 +125,21 @@ const JobCard = ({
   
     <div className="flex flex-col px-4 md:flex-row items-start gap-3">
       <JobDetailItem icon={JobTypeIcon} text={job.employmentType} />
+      {((job.budgetTo > 1) || (job.budgetFrom > 0)) && 
       <JobDetailItem
         icon={PriceIcon}
         text={`${job.budgetFrom} - ${job.budgetTo} LPA`}
-      />
+      />}
       <JobDetailItem
         icon={GraphIcon}
         text={`${job.experienceFrom} - ${job.experienceTo} Year`}
       />
     </div>
-  
-    <div className="p-4">
-      <p className="typography-body w-[60%] inline-block truncate text-ellipsis text-font-gray">
-        {job.jobDescription || 'No description available'}
-      </p>
-    </div>
+    <div className="px-4 p-4">
+        <p className="typography-body text-font-gray">
+          {truncatedDescription}
+        </p>
+      </div>
   
     {job.status === 'closed' && (
       <div className="flex p-4">
@@ -140,7 +152,7 @@ const JobCard = ({
   
     {(isAdmin || isCandidate) && (
       <div className="flex items-center bg-background-40 p-4 rounded-b-xl">
-        <div className="flex justify-between w-full md:justify-start">
+        <div className="flex justify-between w-full md:justify-start gap-3">
           {(isAdmin ? adminFooterItems : candidateFooterItems).map(
             (item, index) => (
               <JobFooterItem

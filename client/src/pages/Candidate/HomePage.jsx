@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import Filters from '../../components/Filters'
+import Filters from '../../components/Filters/Filters'
 import JobCard from '../../components/JobCard';
 import { useQuery } from '@tanstack/react-query';
 import axios from '../../api/axios';
@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { FaGlobe, FaUser } from 'react-icons/fa';
 import { Button } from '../../components/ui/Button';
 import Filter from '../../svg/Buttons/Filter';
+import Logo from '../../svg/Logo/lightLogo.svg'
 
 const fetchOpenJobs = () => axios.get('/candidates/jobs/open').then(res => res.data);
 const searchJobs = (query) => axios.get(`/candidates/jobs/searchJobs?jobTitle=${encodeURIComponent(query)}`).then(res => res.data);
@@ -71,6 +72,13 @@ const HomePage = () => {
         });
     };
 
+    const handleBudgetFilter = (budget) => {
+        setFilters(prevFilters => ({
+            ...prevFilters,
+            budget
+        }));
+    };
+
     const handleExperienceFilter = (experience) => {
         setFilters(prevFilters => ({
             ...prevFilters,
@@ -107,16 +115,16 @@ const HomePage = () => {
         (Object.values(filters).some(filter => Array.isArray(filter) ? filter.length > 0 : Object.values(filter).some(val => val !== '')) ? filteredJobs : jobs);
 
     return (
-        <div className='px-4 md:px-[10%]'>
-            <div className='flex justify-between pt-4'>
+        <div className='container flex flex-col m-auto  px-4 '>
+            <div className=' flex justify-between pt-4'>
 
-                <h1 className='typography-h1'>Jobs</h1>
+                <img className='h-12' src={Logo}/>
                 <div className='md:w-[220px]'>
-
                     <Button variant="primary" onClick={() => navigate("/login")}>Login</Button>
                 </div>
             </div>
-            <div className='py-8 md:py-14 bg-main-bg bg-cover flex flex-col items-center rounded-xl justify-center'>
+                <h1 className='typography-h1 py-4'>Jobs</h1>
+            <div className=' py-8 bg-main-bg bg-cover flex flex-col items-center rounded-xl justify-center'>
                 <h1 className='display-d2 max-w-96 text-center'>Unlock Your Career Potential</h1>
                 <div className='flex justify-evenly gap-2 w-full md:w-4/5 mt-6 md:mt-9'>
                     <input
@@ -151,6 +159,7 @@ const HomePage = () => {
                         filters={filters}
                         handleCheckboxChange={handleCheckboxChange}
                         handleExperienceFilter={handleExperienceFilter}
+                        handleBudgetFilter={handleBudgetFilter}
                         clearAllFilters={clearAllFilters}
                     />
                 </div>

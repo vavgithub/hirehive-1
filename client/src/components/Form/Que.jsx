@@ -24,28 +24,29 @@ const Que = ({ onQuestionsChange, initialQuestions = [] }) => {
             required: false,
             answerType: type === 'text' ? 'text' : undefined,
         }
-        setQuestions([...questions, newQuestion])
+        setQuestions(prev=>[...prev, newQuestion])
         setOpen(false)
         setIsLastQuestionValid(false)
     }
 
     const updateQuestion = (updatedQuestion) => {
         const updatedQuestions = questions.map(q => 
-            q.id === updatedQuestion.id ? updatedQuestion : q
+          q._id ? (q._id === updatedQuestion._id ? updatedQuestion : q) :( q.id === updatedQuestion.id ? updatedQuestion : q)
         );
         setQuestions(updatedQuestions);
     }
 
     const deleteQuestion = (id) => {
-        setQuestions(questions.filter(q => q.id !== id))
+        setQuestions(questions.filter(q => (q._id ||  q?.id) !== id))
         if (questions.length > 0) {
             setIsLastQuestionValid(true)
         }
     }
 
     const copyQuestion = (questionToCopy) => {
+        const { _id, ...restOfCopied } = questionToCopy
         const copiedQuestion = {
-            ...questionToCopy,
+            ...restOfCopied,
             id: Date.now()
         }
         setQuestions([...questions, copiedQuestion])
@@ -71,20 +72,20 @@ const Que = ({ onQuestionsChange, initialQuestions = [] }) => {
                         questions.map((question, index) => (
                             question.type === 'multiple' 
                                 ? <MultipleChoiceQuestion 
-                                    key={question.id} 
+                                    key={question?.id ? question.id : question._id} 
                                     question={question}
                                     onUpdate={updateQuestion}
-                                    onDelete={() => deleteQuestion(question.id)}
+                                    onDelete={() => deleteQuestion(question?.id ? question.id : question._id)}
                                     onCopy={() => copyQuestion(question)}
                                     initialEditMode={index === questions.length - 1}
                                     onValidityChange={index === questions.length - 1 ? handleQuestionValidityChange : undefined}
                                     questionNumber={index + 1}
                                   />
                                 : <TextQuestion 
-                                    key={question.id} 
+                                    key={question?.id ? question.id : question._id} 
                                     question={question}
                                     onUpdate={updateQuestion}
-                                    onDelete={() => deleteQuestion(question.id)}
+                                    onDelete={() => deleteQuestion(question?.id ? question.id : question._id)}
                                     onCopy={() => copyQuestion(question)}
                                     initialEditMode={index === questions.length - 1}
                                     onValidityChange={index === questions.length - 1 ? handleQuestionValidityChange : undefined}

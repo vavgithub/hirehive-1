@@ -40,7 +40,7 @@ const EditJobs = () => {
   return (
     <div className="bg-background-80 min-h-screen">
       <div className='p-4'>
-        <Header HeaderText="Edit Job Listing" />
+        <Header HeaderText="Edit Job Listing" withBack={"true"} />
         {data?.data && (
           <JobForm
             initialData={data.data}
