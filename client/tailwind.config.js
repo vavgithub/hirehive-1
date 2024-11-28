@@ -16,7 +16,9 @@ export default {
         "stars":"url('/src/svg/Background/Stars.svg')",
         "score":"url('/src/svg/Background/Score.svg')",
         "que-bg":"url('/src/svg/Background/Que.svg')",      
-        "login-screen":"url('/src/svg/Background/loginScreenBg.svg')",  
+        "login-screen":"url('/src/svg/Background/loginScreenBg.svg')",
+        "admin-login-fg":"url('/src/svg/Background/adminLoginFG.png')",
+        "admin-login-bg":"url('/src/svg/Background/adminLoginBG.svg')",    
         "sundar-kanya":"url('/src/svg/Background/sundar-kanya.png')",  
         "custom-gradient":
           "linear-gradient(180deg, var(--tw-gradient-stops))",

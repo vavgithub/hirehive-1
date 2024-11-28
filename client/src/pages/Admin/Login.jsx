@@ -63,24 +63,24 @@ const Login = () => {
     }
 
     return (
-        <div className="flex h-screen">
+        <div className="flex h-screen bg-admin-login-bg bg-cover">
             {/* Left section with background image */}
-            <div className="hidden lg:flex lg:w-2/3 bg-login-screen backdrop-blur-lg bg-cover p-12 flex-col justify-between relative">
-                <div className='p-[45px]'>
-                    <h1 className="typography-h1 font-normal">HireHive</h1>
+            <div className="hidden lg:flex m-4 lg:w-2/3 bg-admin-login-fg backdrop-blur-lg bg-cover p-4 flex-col justify-end relative">
+                <div>
+                    <h1 className="typography-h1 font-normal">VAV - Hire Designers</h1>
                     <p className="display-d2 max-w-xl mt-7 mb-4">Discover, hire, and explore top talent with HireHive</p>
                     <p className='typography-body max-w-96'>Our advanced tools simplify job posting, application review, and career opportunities, ensuring you find the best candidates or land your next role effortlessly.</p>
                     <p className="mb-8"></p>
                 </div>
-                <div className="absolute bottom-12 right-12 flex space-x-4 z-10">
+                {/* <div className="absolute bottom-12 right-12 flex space-x-4 z-10">
                     <div className='absolute bottom-6 right-96'><StatsGrid stats={statsOne} /></div>
                     <div className='absolute bottom-20 right-14 w-64'><StatsGrid stats={statsTwo} /></div>
-                </div>
-                <img src={sundarKanya} alt="Sundar Kanya" className="absolute bottom-0 right-0 h-[70%]" />
+                </div> */}
+                {/* <img src={sundarKanya} alt="Sundar Kanya" className="absolute bottom-0 right-0 h-[70%]" /> */}
             </div>
 
             {/* Right section with login form */}
-            <div className="w-full lg:w-1/2 bg-background-30 p-28 flex flex-col justify-center">
+            <div className="w-full lg:w-1/2  p-28 flex flex-col justify-center">
                 {showForgotPassword ? (
                     <ForgotPassword onBack={() => setShowForgotPassword(false)} />
                 ) : (
