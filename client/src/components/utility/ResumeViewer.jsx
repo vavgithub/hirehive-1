@@ -6,6 +6,10 @@ const ResumeViewer = ({ documentUrl, onClose }) => {
     return url.split('.').pop().toLowerCase();
   };
 
+  const getFileName = (url)=>{
+    return url.split("/").pop().toLowerCase()
+  }
+
   const fileExtension = getFileExtension(documentUrl);
 
   const getDownloadUrl = (url) => {
@@ -25,12 +29,37 @@ const ResumeViewer = ({ documentUrl, onClose }) => {
     const downloadUrl = getDownloadUrl(documentUrl);
 
     // Create a temporary anchor element
-    const link = document.createElement('a');
-    link.href = downloadUrl;
-    link.setAttribute('download', '');
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    // const link = document.createElement('a');
+    // link.href = downloadUrl;
+    // link.setAttribute('download', fileExtension === "pdf" ? '' : 'resume.docx');
+    // document.body.appendChild(link);
+    // link.click();
+    // document.body.removeChild(link);
+
+    //fetching file to avoid CORS issues
+    fetch(downloadUrl)
+    .then(response => response.blob())  // Convert the file to a Blob
+    .then(blob => {
+      // Create an Object URL for the Blob
+      const blobUrl = URL.createObjectURL(blob);
+
+      // Set the filename for the download
+      const filename = fileExtension === "pdf" ? '' : `${getFileName(downloadUrl)}.docx`;  // Set the desired filename
+
+      // Create a temporary anchor element
+      const link = document.createElement('a');
+      link.href = blobUrl;  // Use the Blob URL as the href
+      link.download = filename;  // Set the download attribute with the filename
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      // Clean up the Blob URL
+      URL.revokeObjectURL(blobUrl);
+    })
+    .catch(error => {
+      console.error("Error downloading the file", error);
+    });
   };
 
   const renderContent = () => {
@@ -47,16 +76,24 @@ const ResumeViewer = ({ documentUrl, onClose }) => {
       );
     } else {
       return (
-        <div className="flex items-center justify-center h-full">
-          <p>Preview not available for this file type. Please use the download button to view the file.</p>
-        </div>
+        <iframe 
+          src={`https://docs.google.com/viewer?url=${documentUrl}&embedded=true`}
+          width="100%"
+          height="100%"
+          frameBorder="0"
+        >
+          This browser does not support PDFs. Please download the PDF to view it.
+        </iframe>
+        // <div className="flex items-center justify-center h-full">
+        //   <p>Preview not available for this file type. Please use the download button to view the file.</p>
+        // </div>
       );
     }
   };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white p-4 rounded-lg w-full max-w-4xl h-[80vh] flex flex-col">
+      <div className="bg-background-100 p-4 rounded-lg w-full max-w-4xl h-[80vh] flex flex-col">
         <div className="flex-grow relative overflow-hidden mb-4">
           {renderContent()}
         </div>
