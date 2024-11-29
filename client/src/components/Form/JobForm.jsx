@@ -84,10 +84,10 @@ const JobForm = ({ initialData, onSubmit, isEditing, initialQuestions }) => {
       areAllFieldsFilled = false
     }
 
-  console.log('Form validity:', { isValid, areAllFieldsFilled, watchedFields, errors });
+  
 
   const handleFormSubmit = (data) => {
-    console.log("FORM SUB",data)
+
     onSubmit(data, false);
   };
 

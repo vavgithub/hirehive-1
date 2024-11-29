@@ -27,7 +27,7 @@ export const getEnvironmentConfig = (environment) => {
   const baseConfig = environments[environment] || environments.development;
   
   // Merge with environment-specific variables from .env files
-  console.log(baseConfig);
+  
   return {
     ...baseConfig,
     DATABASE_URL: process.env.DATABASE_URL,

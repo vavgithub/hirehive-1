@@ -104,7 +104,7 @@ const AllJobs = () => {
     };
 
     const handleAction = () => {
-        console.log("Heheh")
+    return
     };
 
     const handleViewJob = (jobId) => {

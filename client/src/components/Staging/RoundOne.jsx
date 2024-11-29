@@ -68,7 +68,7 @@ const RoundOne = ({ candidateId, jobId }) => {
 
     const isDisabled = stageData?.status === 'Rejected' || stageData?.status === 'Cleared' || stageData?.status === 'Reviewed';
 
-    console.log("Current stage data:", stageData);
+   
 
 
     const submitReview = async ({ candidateId, reviewData }) => {
@@ -103,7 +103,7 @@ const RoundOne = ({ candidateId, jobId }) => {
             assigneeId: newAssignee._id
         }),
         onSuccess: (response) => {
-            console.log("Assignee update API response:", response);
+            
 
             const { updatedStageStatus, currentStage } = response.data;
 

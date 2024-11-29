@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { DataGrid } from '@mui/x-data-grid';
 import { FaEdit, FaFile, FaFileAlt, FaGlobe, FaUser } from 'react-icons/fa';
-import { Menu, MenuItem } from '@mui/material';
+import { Avatar, Menu, MenuItem } from '@mui/material';
 
 import { Link, useNavigate } from 'react-router-dom';
 import AssigneeSelector from './utility/AssigneeSelector';
@@ -28,6 +28,9 @@ import EditIcon from '../svg/KebabList/EditIcon';
 import DeleteIcon from '../svg/KebabList/DeleteIcon';
 import { showErrorToast, showSuccessToast } from './ui/Toast';
 import { useAuthContext } from '../context/AuthProvider';
+import WebsiteMainIcon from '../svg/WebsiteMainIcon';
+import FileMainIcon from '../svg/FileMainIcon';
+import ResumeIcon from '../svg/ResumeIcon';
 
 
 const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
@@ -88,7 +91,7 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
 
   // Use readOnlyData if in readOnly mode, otherwise use data from API
   const rowsData = readOnly ? readOnlyData : (apiResponse?.candidates || []);
-  // console.log(rowsData);
+
 
 
   // Apply budget filter
@@ -294,7 +297,7 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
   };
 
   const handleRatingClick = (event, row) => {
-    // console.log(params?.row?.rating);
+   
     event.stopPropagation();
     setAnchorEl(event.currentTarget);
     setSelectedRow(row);
@@ -337,23 +340,24 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
       valueGetter: (params, row) => `${row?.firstName || ''} ${row?.lastName || ''}`,
       renderCell: (params) => (
         <div className="name-cell flex items-center gap-2">
-          <span>{params.value}</span>
-          <div className="hover-icons flex"
+          <Avatar src={"https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg"} sx={{ width: 32, height: 32 }}/>
+          <p>{params.value}</p>
+          <div className="hover-icons flex items-center"
             onClick={(event) => event.stopPropagation()}
           >
             {params.row.portfolio && (
               <a href={ensureAbsoluteUrl(params.row.portfolio)} target="_blank" rel="noopener noreferrer" className="icon-link">
-                <FaUser className="icon" />
+                <FileMainIcon sizeClasses={'w-9 h-9'} />
               </a>
             )}
             {params.row.website && params.row.website !== params.row.portfolio && (
-              <a href={ensureAbsoluteUrl(params.row.website)} target="_blank" rel="noopener noreferrer" className="icon-link">
-                <FaGlobe className="icon" />
+              <a href={ensureAbsoluteUrl(params.row.website)} target="_blank" rel="noopener noreferrer" className="icon-link ">
+                <WebsiteMainIcon sizeClasses={'w-9 h-9'} />
               </a>
             )}
             {params.row.resumeUrl && (
               <button onClick={() => handleDocumentClick(params.row.resumeUrl)} className="icon-link">
-                <FaFile className="icon" />
+                <ResumeIcon sizeClasses={'w-9 h-9'}/>
               </button>
             )}
           </div>
@@ -361,14 +365,27 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
       ),
     },
     {
+      field: 'email',
+      headerName: 'Email',
+      width: 220,
+    },
+    
+    {
+      field: 'phone',
+      headerName: 'Phone',
+      width: 130,
+    },
+    {
       field: 'experience',
       headerName: "Experience",
-      width: 120,
+      width: 130,
+      align:'center',
+      headerAlign : 'center'
     },
     {
       field: 'currentStage',
       headerName: 'Stage',
-      width: 150,
+      width: 190,
       renderCell: (params) => (
         <div className='h-full flex items-center'>
           <StageBadge stage={params.value} />
@@ -382,7 +399,7 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
     {
       field: 'status',
       headerName: 'Status',
-      width: 150,
+      width: 180,
       renderCell: (params) => (
         <div className='h-full flex items-center'>
           <StatusBadge status={params.row.status} />
@@ -398,20 +415,10 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
       {
         field: 'expectedCTC',
         headerName: 'Expected CTC',
-        width: 150,
+        width: 130,
+        align :'center',
+        headerAlign : 'center'
       }, 
-     
-      {
-        field: 'email',
-        headerName: 'Email',
-        width: 200,
-      },
-      
-      {
-        field: 'phone',
-        headerName: 'Phone',
-        width: 150,
-      },
     ] : []),   
   ];
 
@@ -420,7 +427,7 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
     {
       field: 'status',
       headerName: 'Status',
-      width: 150,
+      width: 180,
       renderCell: (params) => {
         const currentStage = params.row.currentStage;
         const status = params.row.stageStatuses[currentStage]?.status || 'Unknown';
@@ -484,20 +491,6 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
 
   const navigate = useNavigate();
 
-  //  const handleRowClick = (params) => {
-  //     navigate(`/admin/jobs/view-candidate/${params.id}/${readOnly ? params.row.jobId : jobId}`)
-  //   }
-
-  // const handleRowClick = (params) => {
-  //   if (role == "Hiring Manager") {
-  //     console.log("main waala cliked up")
-  //     navigate(`/admin/jobs/view-candidate/${params?.row?._id}/${readOnly ? params.row.jobId : jobId}`)
-  //   } else {
-  //     console.log("else waala cliked up")
-  //     navigate(`view-candidate/${params?.row?._id}/${readOnly ? params.row.jobId : jobId}`)
-
-  //   }
-  // }
 
   const handleRowClick = (params) => {
     if (role === "Hiring Manager") {
@@ -564,6 +557,9 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
     .MuiDataGrid-row .MuiDataGrid-checkboxInput {
         visibility: hidden;
     }
+    .css-13edya7-MuiDataGrid-root .MuiDataGrid-virtualScrollerContent .MuiDataGrid-row.Mui-selected {
+        background: rgba(24, 233, 208, 0.2) !important;
+    }
     .MuiDataGrid-row:hover .MuiDataGrid-checkboxInput,
     .MuiDataGrid-row .MuiDataGrid-checkboxInput.Mui-checked {
         visibility: visible;
@@ -580,7 +576,18 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
         display: none;
         margin-left: auto;
     }
+    .Mui-selected .name-cell p{
+        color:rgb(24, 233, 208);
+    }
+    .name-cell:hover p{
+        width:20%;
+        white-space:nowrap;
+        overflow:hidden;
+        text-overflow:ellipsis;
+        color:rgb(24, 233, 208);
+    }
     .name-cell:hover .hover-icons {
+        width:80%;
         display: flex;
     }
     .icon-link {
@@ -752,24 +759,29 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
             color: 'white',
           },
           '& .MuiSvgIcon-root': {
-            color: 'white',
+            color:"white"
+          },
+          '& .Mui-selected .MuiSvgIcon-root': {
+            color: 'rgb(24, 233, 208)',
           },
           '& .first-row': {
+            borderRadius:2,
             backgroundColor: 'rgba(18, 19, 20, 1)',
             '&:hover': {
-              backgroundColor: 'rgba(32, 33, 34, 1)',
+              backgroundColor: '#232425',
             },
           },
           '& .second-row': {
+            borderRadius:2,
             backgroundColor: 'rgba(12, 13, 13, 1)',
             '&:hover': {
-              backgroundColor: 'rgba(32, 33, 34, 1)',
+              backgroundColor: '#232425',
             },
           },
           border: "none",
           backgroundColor: 'black',
           '& .MuiDataGrid-virtualScroller': {
-            backgroundColor: 'transparent', // Ensure the background behind rows is also transparent
+            backgroundColor: 'transparent ' , // Ensure the background behind rows is also transparent
           },
         }}
         pageSizeOptions={[5, 10]}

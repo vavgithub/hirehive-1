@@ -349,7 +349,7 @@ const DesignTask = ({ candidateId, jobId }) => {
             assigneeId: newAssignee._id
         }),
         onSuccess: (response) => {
-            console.log("Assignee update API response:", response);
+           
 
             const { updatedStageStatus, currentStage } = response.data;
 
@@ -511,7 +511,7 @@ const DesignTask = ({ candidateId, jobId }) => {
         </div>
     );
 
-    console.log(stageData)
+
 
     const renderReviewedStatus = () => (
 

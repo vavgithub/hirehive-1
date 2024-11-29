@@ -22,6 +22,7 @@ import { setCandidateData, setError, setLoading } from '../../redux/candidateSli
 import { setCurrentStage, setStageStatuses } from '../../redux/applicationStageSlice';
 import Loader from '../../components/ui/Loader';
 import { ensureAbsoluteUrl } from '../../utility/ensureAbsoluteUrl';
+import ResumeViewer from '../../components/utility/ResumeViewer';
 
 
 
@@ -57,6 +58,7 @@ const ViewCandidateProfile = () => {
     const role = user?.role || 'Candidate'; // Default to Candidate if role is not specified
     const candidateData = useSelector(state => state.candidate.candidateData);
     const [activeTab, setActiveTab] = useState('application');
+    const [resumeOpen,setResumeOpen] = useState(false);
     const { candidateId, jobId } = useParams();
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -71,7 +73,7 @@ const ViewCandidateProfile = () => {
         },
     });
 
-    console.log("this is the main principle datat",data)
+    
 
     const { data: score, error } = useQuery({
         queryKey: ['candidateScore', candidateId, jobId],
@@ -170,6 +172,9 @@ const ViewCandidateProfile = () => {
 
     }
 
+    const handleResumeOpen = ()=>{
+        setResumeOpen(true)
+    }
 
 
     return (
@@ -187,9 +192,9 @@ const ViewCandidateProfile = () => {
             {
                 (role === "Hiring Manager" || role === "Design Reviewer") && (
                     <div className="flex gap-3">
-                        <div className="bg-background-90 w-full p-4 rounded-xl flex">
-                            <div className="to-background-100">
-                                <img src="" alt="" />
+                        <div className="bg-background-90 w-full p-4 rounded-xl flex gap-3">
+                            <div className="to-background-100 w-[180px] rounded-xl overflow-hidden">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg" alt="" />
                             </div>
                             <div>
                                 <h1 className="typography-h2">
@@ -219,8 +224,11 @@ const ViewCandidateProfile = () => {
                                     <a href={ensureAbsoluteUrl(data.website)} target="_blank" rel="noopener noreferrer" className="icon-link">
                                         <WebsiteMainIcon />
                                     </a>
-                                    <ResumeIcon />
-                                    {console.log("please check this one",data.hasGivenAssessment)}
+                                    <div onClick={handleResumeOpen}>
+                                        <ResumeIcon  />
+                                    </div>
+                                    {resumeOpen && <ResumeViewer documentUrl={data.resumeUrl} onClose={() => setResumeOpen(false)}/>}
+                                   
                                     {
                                         data.hasGivenAssessment && <div className='cursor-pointer' onClick={handleAssignmentNavigation}> <AssignmentIcon /> </div>
                                     }

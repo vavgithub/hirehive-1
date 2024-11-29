@@ -75,7 +75,7 @@ const EditCandidateProfile = () => {
   const handleCancel = (formData) => {
     // Handle cancellation
     navigate(-1);
-    console.log('Cancelling. Current data:', formData);
+   
   };
 
   return (

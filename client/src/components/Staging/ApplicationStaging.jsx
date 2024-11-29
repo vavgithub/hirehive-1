@@ -112,7 +112,7 @@ const ApplicationStaging = ({ candidateId, jobId }) => {
     };
     const visibleStages = stages.filter(isStageVisible);
     if (!stages.length) {
-        console.log('No stages available');
+      
         return <div>No stages available. Please check the candidate data.</div>;
     }
     const renderQuestionResponses = () => {

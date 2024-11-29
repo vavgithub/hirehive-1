@@ -59,10 +59,10 @@ const AssessmentResponse = () => {
     }
 
     const assessmentData = data?.data;
-    console.log(assessmentData);
+
 
     const assessmentStat = data?.data
-    console.log(assessmentStat);
+  
 
     return (
         <div >
