@@ -232,17 +232,17 @@ const ViewJobs = () => {
                     </div>
 
                     <div className='bg-background-90 p-4 rounded-xl'>
-                        <h3 className='typography-h3 mb-8'>Additional Questions</h3>
+                        <h3 className='typography-h3 mb-4'>Additional Questions</h3>
                         {questions.map((question, index) => (
                             <div key={question._id} className="mb-4">
                                 <label className="typography-body">
-                                    {index + 1}. {question.text}
+                                    Q{index + 1}. { question.text} 
                                     {question.required && <span className="text-red-500 ml-1">*</span>}
                                 </label>
                                 {(
                                     question.options.map((option, optionIndex) => (
-                                        <div key={optionIndex} className="mb-2 typography-body flex justify-start items-center gap-3">
-                                            <div className='w-4 h-4 rounded-full border border-gray-600'></div>
+                                        <div key={optionIndex} className="my-2 typography-body flex justify-start items-center gap-3">
+                                            <div className='typography-small-p text-font-gray'>Option {optionIndex+1}  </div> 
                                             {/* <div className='w-4'>
                                             </div> */}
                                             <label htmlFor={`question-${question._id}-option-${optionIndex}`}>{option}</label>
