@@ -358,15 +358,14 @@ const Dashboard = () => {
                             displayJobs
                                 .filter(job => job.status === activeTab)
                                 .map((job) => (
-                                    <JobCard
-                                        key={job._id}
-                                        job={job}
-                                        isAdmin={true}
-                                        withKebab={true}
-                                        page={currentPage}
-                                        status={activeTab}
-                                        handleAction={handleAction}
-                                        onClick={() => handleViewJob(job._id)}
+                                    <JobCard 
+                                    key={job._id} job={job}
+                                    isAdmin={true} withKebab={true} page={currentPage}
+                                    status={activeTab}
+                                    handleAction={handleAction} 
+                                    onClick={(job.status==="deleted"
+                                    || job.status==="closed" ) ? undefined :
+                                    ()=> handleViewJob(job._id)}
                                     />
                                 ))
                         )}

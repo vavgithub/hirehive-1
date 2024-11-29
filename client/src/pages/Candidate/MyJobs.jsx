@@ -72,7 +72,7 @@ const MyJobs = () => {
                 <JobCard
                   job={application.jobId}
                   isCandidate={true}
-                  onClick={() => handleClick(application.jobId._id)}
+                  onClick={(application.jobId.status === "deleted" || application.jobId.status === "closed") ? undefined : () => handleClick(application.jobId._id)}
                   isAuthenticatedCandidate={true}
                   application={application}
                 />
