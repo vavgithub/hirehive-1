@@ -252,6 +252,7 @@ const ViewCandidateProfile = () => {
                     <ApplicationStaging
                         candidateId={candidateId}
                         jobId={jobId}
+                        jobStatus={data.jobApplication.jobStatus}
                     />
                 </div>
                 // <Staging currentStage={data.stage} candidateData={data} />

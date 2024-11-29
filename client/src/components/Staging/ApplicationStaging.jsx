@@ -60,7 +60,7 @@ const AccordionSection = ({ title, isOpen, onToggle, children, badge }) => (
         </div>
     </Card>
 );
-const ApplicationStaging = ({ candidateId, jobId }) => {
+const ApplicationStaging = ({ candidateId, jobId ,jobStatus}) => {
 
     const { user } = useAuthContext();
     const role = user?.role || 'Candidate'; // Default to Candidate if role is not specified
@@ -85,6 +85,7 @@ const ApplicationStaging = ({ candidateId, jobId }) => {
             candidateId,
             jobId,
             isActive: stage === currentStage,
+            isClosed : (jobStatus === "deleted" || jobStatus === "closed") 
         };
         return <StageComponent {...commonProps} />;
     };

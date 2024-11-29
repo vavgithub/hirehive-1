@@ -89,6 +89,10 @@ export const router = createBrowserRouter([
     element: <Authlayout />,
     children: [
       {
+        path: "", // Match the root `/admin` path
+        element: <Navigate to="login" />, // Redirect to `/admin/login`
+      },
+      {
         path: "login",
         element: <Login />,
       },

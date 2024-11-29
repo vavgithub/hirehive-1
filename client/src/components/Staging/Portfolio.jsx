@@ -16,6 +16,7 @@ import RightTick from '../../svg/Staging/RightTick';
 import PortfolioIcon from '../../svg/PortfolioIcon';
 import FileMainIcon from '../../svg/FileMainIcon';
 import { ensureAbsoluteUrl } from '../../utility/ensureAbsoluteUrl';
+import ClosedBadge from '../../svg/ClosedBadge';
 
 
 
@@ -52,7 +53,7 @@ const PortfolioReview = ({ candidate, onSubmit }) => {
 };
 
 
-const Portfolio = ({ candidateId, jobId }) => {
+const Portfolio = ({ candidateId, jobId ,isClosed}) => {
     const { user } = useAuthContext();
     const role = user?.role || 'Candidate'; // Default to Candidate if role is not specified
 
@@ -277,7 +278,9 @@ const Portfolio = ({ candidateId, jobId }) => {
                     borderRadius: "12px",
                     color: "white",
                     fontFamily: 'Outfit, sans-serif',
-                    marginBottom: "12px"
+                    marginBottom: "12px",
+                    position : "relative",
+                    minHeight : "12rem"
                 }}
             >
                 <CardContent>
@@ -286,7 +289,12 @@ const Portfolio = ({ candidateId, jobId }) => {
                             <h3 className='typography-h3 mr-6'>Portfolio</h3>
                             <div className='flex gap-2 items-center justify-center'>
 
-
+                                {
+                                    isClosed && 
+                                    <div className='absolute top-0  right-0 flex items-center justify-center h-full'>
+                                        <ClosedBadge />
+                                    </div>
+                                }
 
                                 <div className='w-8 h-8 rounded-full bg-background-80 flex items-center justify-center'>
                                     <FileMainIcon />
@@ -299,7 +307,7 @@ const Portfolio = ({ candidateId, jobId }) => {
                             </div>
                         </div>
                         <Box display="flex" alignItems="center">
-                            <StatusBadge status={stageData?.status} />
+                            {!isClosed && <StatusBadge status={stageData?.status} />}
                             {role === 'Hiring Manager' && (
                                 <AssigneeSelector
                                     mode="icon"
