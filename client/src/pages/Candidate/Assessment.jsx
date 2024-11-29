@@ -250,7 +250,7 @@ const Assessment = () => {
 
       if (response.data.success) {
         // Show success message or redirect
-        console.log('Assessment submitted:', response.data);
+        // console.log('Assessment submitted:', response.data);
         // Maybe redirect to a results page
       }
     } catch (error) {

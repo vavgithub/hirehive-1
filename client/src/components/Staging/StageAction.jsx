@@ -51,7 +51,7 @@ const StageActions = ({ stage, candidateId, jobId, isBudgetScoreSubmitted }) => 
     });
 
     const handleReject = (item, rejectionReason) => {
-        console.log('Rejection reason in StageActions:', rejectionReason);
+       
         rejectCandidateMutation.mutate({ candidateId, jobId, rejectionReason });
     };
 

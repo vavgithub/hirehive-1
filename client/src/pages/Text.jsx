@@ -14,7 +14,7 @@ const Text = () => {
     const [skills, setSkills] = useState([]);  // State to hold skills
     const allSkills = ["JavaScript", "React", "Node.js", "Python", "Java"];  // Example list of all skills
 
-    const onSubmit = (data) => console.log(data)
+   
 
     return (
 

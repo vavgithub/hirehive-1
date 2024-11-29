@@ -41,7 +41,6 @@ const RoundTwo = ({ candidateId, jobId }) => {
     const [score, setScore] = useState(0);
     const [feedback, setFeedback] = useState('');
 
-    console.log("Current stage data:", stageData);
 
     const updateAssigneeMutation = useMutation({
         mutationFn: (newAssignee) => axios.put('dr/update-assignee', {
@@ -51,8 +50,7 @@ const RoundTwo = ({ candidateId, jobId }) => {
             assigneeId: newAssignee._id
         }),
         onSuccess: (response) => {
-            console.log("Assignee update API response:", response);
-
+           
             const { updatedStageStatus, currentStage } = response.data;
 
             dispatch(updateStageStatus({

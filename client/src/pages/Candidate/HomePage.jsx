@@ -96,7 +96,7 @@ const HomePage = () => {
     };
 
     const handleAction = () => {
-        console.log("Heheh")
+        return 
     };
 
     const handleViewJob = (jobId) => {

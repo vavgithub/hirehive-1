@@ -26,7 +26,6 @@ const PortfolioReview = ({ candidate, onSubmit }) => {
     const [feedback, setFeedback] = useState('');
 
     const handleSubmit = () => {
-        console.log("please checkk karerere")
         onSubmit(candidate._id, {
             jobId: candidate.jobApplication.jobId,
             stage: candidate.jobApplication.currentStage,
@@ -61,7 +60,7 @@ const Portfolio = ({ candidateId, jobId }) => {
     const stageData = useSelector(state => state.applicationStage.stageStatuses.Portfolio);
     const candidateData = useSelector(state => state.candidate.candidateData);
 
-    console.log(candidateData);
+  
 
 
 
@@ -102,8 +101,7 @@ const Portfolio = ({ candidateId, jobId }) => {
             assigneeId: newAssignee._id
         }),
         onSuccess: (response) => {
-            console.log("Assignee update API response:", response);
-
+           
             const { updatedStageStatus, currentStage } = response.data;
 
             dispatch(updateStageStatus({

@@ -91,7 +91,7 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
 
   // Use readOnlyData if in readOnly mode, otherwise use data from API
   const rowsData = readOnly ? readOnlyData : (apiResponse?.candidates || []);
-  // console.log(rowsData);
+
 
 
   // Apply budget filter
@@ -297,7 +297,7 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
   };
 
   const handleRatingClick = (event, row) => {
-    // console.log(params?.row?.rating);
+   
     event.stopPropagation();
     setAnchorEl(event.currentTarget);
     setSelectedRow(row);
@@ -491,20 +491,6 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
 
   const navigate = useNavigate();
 
-  //  const handleRowClick = (params) => {
-  //     navigate(`/admin/jobs/view-candidate/${params.id}/${readOnly ? params.row.jobId : jobId}`)
-  //   }
-
-  // const handleRowClick = (params) => {
-  //   if (role == "Hiring Manager") {
-  //     console.log("main waala cliked up")
-  //     navigate(`/admin/jobs/view-candidate/${params?.row?._id}/${readOnly ? params.row.jobId : jobId}`)
-  //   } else {
-  //     console.log("else waala cliked up")
-  //     navigate(`view-candidate/${params?.row?._id}/${readOnly ? params.row.jobId : jobId}`)
-
-  //   }
-  // }
 
   const handleRowClick = (params) => {
     if (role === "Hiring Manager") {

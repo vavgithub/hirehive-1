@@ -33,7 +33,7 @@ const statsOne = [
 
 
 const PortfolioReview = ({ candidate, onSubmit }) => {
-  console.log("please check this bro", candidate)
+
 
   const [rating, setRating] = useState(0);
   const [feedback, setFeedback] = useState('');
@@ -292,7 +292,7 @@ const Reviews = () => {
   };
   
   const handleNavigate = ( candidate) =>{
-    console.log(candidate)
+   
     navigate(`/design-reviewer/candidates/view-candidate/${candidate._id}/${candidate.currentApplication.jobId}`)
   }
 

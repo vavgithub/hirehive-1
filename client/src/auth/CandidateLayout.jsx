@@ -23,8 +23,6 @@ const CandidateLayout = () => {
   const [isAssessmentBannerVisible, setIsAssessmentBannerVisible] = useState(!candidateData?.hasGivenAssessment);
   
 
-  console.log("please check this?", candidateData)
-
   const handleLogout = async () => {
     try {
       await candidateLogout();

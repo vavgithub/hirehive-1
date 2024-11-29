@@ -73,7 +73,7 @@ const ViewCandidateProfile = () => {
         },
     });
 
-    console.log("this is the main principle datat",data)
+    
 
     const { data: score, error } = useQuery({
         queryKey: ['candidateScore', candidateId, jobId],
@@ -228,7 +228,7 @@ const ViewCandidateProfile = () => {
                                         <ResumeIcon  />
                                     </div>
                                     {resumeOpen && <ResumeViewer documentUrl={data.resumeUrl} onClose={() => setResumeOpen(false)}/>}
-                                    {console.log("please check this one",data.hasGivenAssessment)}
+                                   
                                     {
                                         data.hasGivenAssessment && <div className='cursor-pointer' onClick={handleAssignmentNavigation}> <AssignmentIcon /> </div>
                                     }

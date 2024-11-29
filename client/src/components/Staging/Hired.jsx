@@ -33,7 +33,7 @@ const Hired = ({ candidateId, jobId }) => {
     const stageData = useSelector(state => state.applicationStage.stageStatuses.Hired);
     const candidateData = useSelector(state => state.candidate.candidateData);
     
-    console.log(candidateData);
+ 
 
     const renderContent = () => {
         switch (stageData?.status) {

@@ -20,8 +20,6 @@ const Navbar = () => {
     const location = useLocation();  // Get current route
     const { user } = useAuthContext(); // Get user data from the context
 
-    console.log(user);
-
     const [anchorEl, setAnchorEl] = useState(null); // State to control dropdown menu
     const { refetch } = useAuth();
 

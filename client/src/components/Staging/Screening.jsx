@@ -217,7 +217,7 @@ const Screening = ({ candidateId, jobId }) => {
     const submitBudgetScoreMutation = useMutation({
         mutationFn: (score) => axios.post('hr/submit-budget-score', { candidateId, jobId, stage: 'Screening', score }),
         onSuccess: (data) => {
-            console.log('Budget score submitted successfully:', data);
+        
             dispatch(updateStageStatus({
                 stage: 'Screening',
                 status: 'Reviewed',
@@ -268,7 +268,7 @@ const Screening = ({ candidateId, jobId }) => {
 
     const handleBudgetScoreSubmit = () => {
         if (budgetScore > 0) {
-            console.log('Submitting budget score:', budgetScore);
+           
             submitBudgetScoreMutation.mutate(budgetScore);
         }
     };
@@ -360,7 +360,7 @@ const Screening = ({ candidateId, jobId }) => {
             assigneeId: newAssignee._id
         }),
         onSuccess: (response) => {
-            console.log("Assignee update API response:", response);
+           
 
             const { updatedStageStatus, currentStage } = response.data;
 

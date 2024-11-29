@@ -18,7 +18,6 @@ const EditJobs = () => {
   const updateJobMutation = useMutation({
     mutationFn: (updatedJob) => axios.put(`/jobs/editJob/${id}`, updatedJob),
     onSuccess: (data) => {
-      console.log(data);
       showSuccessToast('Job Updated', `"${data.data.job.jobTitle}" updated successfully`);
       setTimeout(() => {
         navigate('/admin/jobs');
