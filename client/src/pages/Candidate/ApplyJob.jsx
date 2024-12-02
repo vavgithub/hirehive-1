@@ -1,18 +1,20 @@
 // ApplyJob.jsx
-
 import React, { useEffect, useState, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useDropzone } from 'react-dropzone';
 import { useForm, Controller } from 'react-hook-form';
-import { InputField } from '../../components/Form/FormFields';
-import SkillsInput from '../../components/utility/SkillsInput';
-import { Button } from '../../components/ui/Button';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import axios from '../../api/axios';
-import useAuthCandidate from '../../hooks/useAuthCandidate';
+import { InputField } from '../../components/Form/FormFields';
+import SkillsInput from '../../components/utility/SkillsInput';
+import { Button } from '../../components/ui/Button';
 import { dummySkills } from '../../components/Form/dropdownOptions';
 import { showErrorToast, showSuccessToast } from '../../components/ui/Toast';
 import Loader from '../../components/ui/Loader';
+import Logo from '../../svg/Logo/lightLogo.svg';
+import { fetchCandidateAuthData } from '../../redux/candidateAuthSlice';
+import useCandidateAuth from '../../hooks/useCandidateAuth';
 import Logo from '../../svg/Logo/lightLogo.svg'
 import { emailRegex, mobileRegex } from '../../utility/regex';
 
@@ -22,38 +24,53 @@ const fetchJobDetails = async (id) => {
 };
 
 const ApplyJob = () => {
-  const [currentStep, setCurrentStep] = useState(1);
-  const [skills, setSkills] = useState([]);
+  const dispatch = useDispatch();
+  const { candidateData, isAuthenticated } = useCandidateAuth()
 
-  // const [answers, setAnswers] = useState({});
+  const [currentStep, setCurrentStep] = useState(1);
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [otpError, setOtpError] = useState('');
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const navigate = useNavigate();
-  const { id: jobId } = useParams();
-  const { isAuthenticated, candidateData, refetch } = useAuthCandidate();
-
   const [resumeFile, setResumeFile] = useState(null);
   const [uploadProgress, setUploadProgress] = useState(0);
+  
+  const navigate = useNavigate();
+  const { id: jobId } = useParams();
   const hiddenFileInput = useRef(null);
-
-
-  const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      setResumeFile(file);
-      setValue('resumeFile', file, { shouldValidate: true });
-    }
-  };
-
+  
+  let initial = {
+    firstName: "",
+    lastName: "",
+    email: "",
+    phoneNumber: "",
+    website: "",
+    portfolio: "",
+    experience: "",
+    noticePeriod: "",
+    currentCTC: "",
+    expectedCTC: "",
+    resumeFile: null,
+    skills: "" || [],
+  }
   const {
-    getRootProps,
-    getInputProps,
-    isDragActive,
-  } = useDropzone({
+    register,
+    control,
+    handleSubmit,
+    formState: { errors, isValid },
+    getValues,
+    setValue,
+    reset,
+  } = useForm({
+    mode: 'onChange',
+    defaultValues: candidateData ? {
+      ...candidateData
+    } : initial,
+  });
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
     accept: {
       'application/pdf': ['.pdf'],
       'application/msword': ['.doc'],
@@ -66,6 +83,9 @@ const ApplyJob = () => {
         setValue('resumeFile', acceptedFiles[0], { shouldValidate: true });
       }
     },
+  });
+
+  // Pre-fill form with candidate data when authenticated
 
   });
 
@@ -98,7 +118,6 @@ const ApplyJob = () => {
 
   useEffect(() => {
     if (isAuthenticated && candidateData) {
-      // Pre-fill form fields with candidate data
       reset({
         firstName: candidateData.firstName,
         lastName: candidateData.lastName,
@@ -111,7 +130,7 @@ const ApplyJob = () => {
         currentCTC: candidateData.currentCTC || '',
         expectedCTC: candidateData.expectedCTC || '',
         resumeFile: resumeFile,
-        skills: candidateData.skills || [], // Add this line
+        skills: candidateData.skills || [],
       });
     }
   }, [isAuthenticated, candidateData, reset]);
@@ -121,21 +140,10 @@ const ApplyJob = () => {
     queryFn: () => fetchJobDetails(jobId),
   });
 
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <Loader />
-      </div>
-    );
-  }
-
-  const { jobTitle, questions = [] } = jobDetails || {};
-
-  const uploadResume = async () => {
-    if (!resumeFile) return null;
-
+  const uploadResume = async (file) => {
+    if (!file) return null;
     const formData = new FormData();
-    formData.append('resume', resumeFile);
+    formData.append('resume', file);
 
     try {
       const response = await axios.post('/auth/candidate/upload-resume', formData, {
@@ -156,9 +164,7 @@ const ApplyJob = () => {
 
   const onSubmit = async (data) => {
     setIsSubmitting(true);
-
     try {
-      // Extract questionResponses from form data
       const questionResponses = Object.keys(data)
         .filter((key) => key.startsWith('question-'))
         .map((key) => ({
@@ -166,26 +172,9 @@ const ApplyJob = () => {
           answer: data[key],
         }));
 
-      // Upload resume if provided
-      let resumeUrl = null;
-      if (resumeFile) {
-        const formData = new FormData();
-        formData.append('resume', resumeFile);
-
-        const uploadResponse = await axios.post('/auth/candidate/upload-resume', formData, {
-          headers: { 'Content-Type': 'multipart/form-data' },
-          onUploadProgress: (progressEvent) => {
-            const percentCompleted = Math.round(
-              (progressEvent.loaded * 100) / progressEvent.total
-            );
-            setUploadProgress(percentCompleted);
-          },
-        });
-        resumeUrl = uploadResponse.data.resumeUrl;
-      }
+      const resumeUrl = await uploadResume(resumeFile);
 
       if (isAuthenticated) {
-        // For authenticated users, only send professional details
         const applicationData = {
           jobId,
           website: data.website,
@@ -200,15 +189,10 @@ const ApplyJob = () => {
         };
 
         await axios.post('/auth/candidate/apply-job', applicationData);
-
-        // Update this line to use refetch
-        await refetch();
-
-        setIsSubmitting(false);
+        await dispatch(fetchCandidateAuthData()).unwrap();
         showSuccessToast('Success', 'Successfully applied to the job');
         navigate('/candidate/my-jobs');
       } else {
-        // For new users, send all required information
         const registrationData = {
           jobId,
           firstName: data.firstName,
@@ -231,18 +215,18 @@ const ApplyJob = () => {
         setPhone(data.phoneNumber);
         showSuccessToast('Create Password', "Please Create Your Password");
         setCurrentStep(2);
-        setIsSubmitting(false);
       }
     } catch (error) {
-      setIsSubmitting(false);
       showErrorToast(
         'Error',
         error.response?.data?.message || 'Failed to perform job action. Please try again.'
       );
+    } finally {
+      setIsSubmitting(false);
     }
   };
-  // Modified handleOtpSubmit function
-  const handleOtpSubmit = (e) => {
+
+  const handleOtpSubmit = async (e) => {
     e.preventDefault();
     const enteredOtp = otp.join('');
 
@@ -252,21 +236,17 @@ const ApplyJob = () => {
     }
 
     setIsSubmitting(true);
-
-    axios
-      .post('/auth/candidate/verify-otp', { email, otp: enteredOtp })
-      .then((response) => {
-        setIsSubmitting(false);
-        showSuccessToast('OTP Verified', 'Please create your password to continue.');
-        setCurrentStep(3); // Move to password creation step
-      })
-      .catch((error) => {
-        setIsSubmitting(false);
-        setOtpError(error.response.data.message);
-      });
+    try {
+      await axios.post('/auth/candidate/verify-otp', { email, otp: enteredOtp });
+      showSuccessToast('OTP Verified', 'Please create your password to continue.');
+      setCurrentStep(3);
+    } catch (error) {
+      setOtpError(error.response?.data?.message || 'Invalid OTP');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  // Modified handlePasswordSubmit function
   const handlePasswordSubmit = async (e) => {
     e.preventDefault();
     const password = getValues('password');
@@ -283,24 +263,18 @@ const ApplyJob = () => {
     }
 
     setIsSubmitting(true);
-
     try {
       await axios.post('/auth/candidate/create-password', { email, password });
-      setIsSubmitting(false);
+      await dispatch(fetchCandidateAuthData()).unwrap();
       showSuccessToast('Success', 'Account created successfully!');
-
-      // Update authentication state
-      // Update this line to use refetch
-      await refetch();
-
-
-      // Navigate to My Jobs page after successful password creation
       navigate('/candidate/my-jobs');
     } catch (error) {
-      setIsSubmitting(false);
       setPasswordError(error.response?.data?.message || 'An error occurred. Please try again.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
+
 
   // Handler for OTP input change
   const handleOtpChange = (element, index) => {
@@ -333,7 +307,7 @@ const ApplyJob = () => {
           <div className='container'>
              <div  >
           <img className='h-12 m-4' src={Logo} />
-          <h1 className="typography-h1 m-4">Application for {jobTitle}</h1>
+          <h1 className="typography-h1 m-4">Application for {jobDetails?.jobTitle}</h1>
           </div>          
           <form className='mx-4'  onSubmit={handleSubmit(onSubmit)}>
             {/* Personal Details */}
@@ -612,10 +586,12 @@ const ApplyJob = () => {
 
             {/* Additional Questions */}
             <div className="pt-4 ">
-              {questions.length != 0 && (
+              {jobDetails?.questions.length != 0 && (
                 <>
                   <h2 className="typography-h2 mb-4">Additional Questions</h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ">
+                    {jobDetails?.questions.map((question, index) => (
+                      <div key={question?._id} className='bg-background-30 rounded-xl p-4'>
                     {questions.map((question, index) => (
                       <div key={question._id} className='bg-background-30 rounded-xl p-4'>
                       <Controller

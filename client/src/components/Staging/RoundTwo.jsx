@@ -26,8 +26,9 @@ import Scorer from '../ui/Scorer';
 import { useAuthContext } from '../../context/AuthProvider';
 import GreenTickIcon from '../../svg/Staging/GreenTickIcon';
 import RightTick from '../../svg/Staging/RightTick';
+import ClosedBadge from '../../svg/ClosedBadge';
 
-const RoundTwo = ({ candidateId, jobId }) => {
+const RoundTwo = ({ candidateId, jobId ,isClosed }) => {
     const { user } = useAuthContext();
     const role = user?.role || 'Candidate'; // Default to Candidate if role is not specified
     const dispatch = useDispatch();
@@ -419,6 +420,8 @@ const RoundTwo = ({ candidateId, jobId }) => {
                 borderRadius: "12px",
                 color: "white",
                 fontFamily: 'Outfit, sans-serif',
+                position : "relative",
+                minHeight : "10rem"
             }}
         >
             <CardContent>
@@ -426,9 +429,15 @@ const RoundTwo = ({ candidateId, jobId }) => {
                     <div className='flex'>
                         <h3 className='typography-h3 mr-10'>Round 2</h3>
                         {/* ... other content ... */}
+                        {
+                            isClosed && 
+                            <div className='absolute top-0  right-0 flex items-center justify-center h-full'>
+                                <ClosedBadge />
+                            </div>
+                        }
                     </div>
                     <Box display="flex" alignItems="center">
-                        <StatusBadge status={stageData?.status} />
+                        {isClosed || <StatusBadge status={stageData?.status} />}
                         {role === 'Hiring Manager' && (
                             <AssigneeSelector
                                 mode="icon"

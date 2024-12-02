@@ -6,6 +6,7 @@ import { getTimeAgo } from '../utility/getTimeAgo';
 import PriceIcon from '../svg/JobCard/PriceIcon';
 import JobTypeIcon from '../svg/JobCard/JobTypeIcon';
 import GraphIcon from '../svg/JobCard/GraphIcon';
+import ClosedBadge from '../svg/ClosedBadge';
 
 // Helper function to truncate text to specific number of words
 const truncateWords = (text, wordLimit) => {
@@ -43,6 +44,7 @@ const JobCard = ({
   application, // Receive the application prop
 }) => {
   const formattedCreatedAt = getTimeAgo(job.createdAt);
+  const formattedAppliedAt = getTimeAgo(job.applicationDate);
 
   // Initialize variables for application data
   let applicationDate = null;
@@ -79,7 +81,7 @@ const JobCard = ({
       {
         label: 'Applied on',
         value: applicationDate
-          ? formattedCreatedAt
+          ? formattedAppliedAt
           : 'N/A',
       },
       {
@@ -108,21 +110,24 @@ const JobCard = ({
 
   return (
     <div
-    className="bg-background-90 hover:bg-background-60 transition-colors duration-200 shadow cursor-pointer rounded-xl mb-4 group"
+    className={(onClick ? 'cursor-pointer' : '' ) + ` bg-background-90 hover:bg-background-60 transition-colors duration-200 shadow rounded-xl mb-4 group relative`}
     onClick={onClick ? handleCardClick : undefined}
   >
     <div className="flex flex-col items-start justify-between p-4 md:flex-row gap-3">
       <h3 className="typography-h3 group-hover:text-font-accent">{job.jobTitle}</h3>
       <div className="flex items-center">
+        {(job.status !== "deleted" && job.status !== "closed") &&
         <span className="bg-background-70 typography-body px-4 py-2 rounded-xl">
           {job.jobProfile}
-        </span>
+        </span>}
         {withKebab && (
           <ThreeDots job={job} handleAction={handleAction} page={page} />
         )}
       </div>
     </div>
   
+    {job.status !== "deleted" ?
+    <>
     <div className="flex flex-col px-4 md:flex-row items-start gap-3">
       <JobDetailItem icon={JobTypeIcon} text={job.employmentType} />
       {((job.budgetTo > 1) || (job.budgetFrom > 0)) && 
@@ -140,18 +145,25 @@ const JobCard = ({
           {truncatedDescription}
         </p>
       </div>
-  
-    {job.status === 'closed' && (
-      <div className="flex p-4">
-        <p className="typography-body text-font-gray mr-2">
-          Closure Reason:
-        </p>
-        <p className="typography-body">{job.closingReason || 'N/A'}</p>
-      </div>
-    )}
+    </> :
+    <div className="px-4 p-4">
+    <p className="typography-body text-font-gray">
+      {truncatedDescription}
+    </p>
+  </div>
+      }
+  {(job.status === 'closed' || job.status === 'deleted' ) && (
+        <div className="flex p-4 w-fit">
+          <p className="typography-body text-font-gray mr-2 whitespace-nowrap">
+            Closure Reason :
+          </p>
+          <p className="typography-body">{job.closingReason || 'N/A'}</p>
+        </div>
+        )}
+    
   
     {(isAdmin || isCandidate) && (
-      <div className="flex items-center bg-background-40 p-4 rounded-b-xl">
+      <div className="flex items-center justify-between bg-background-40 p-4 rounded-b-xl">
         <div className="flex justify-between w-full md:justify-start gap-3">
           {(isAdmin ? adminFooterItems : candidateFooterItems).map(
             (item, index) => (
@@ -163,6 +175,17 @@ const JobCard = ({
             )
           )}
         </div>
+        {(job.status === 'closed' || job.status === 'deleted' ) && (
+        <div className="flex p-4 w-fit">
+          <p className="typography-body text-font-gray mr-2 whitespace-nowrap">
+            This job post has been closed 
+          </p>
+          {/* <p className="typography-body">{job.closingReason || 'N/A'}</p> */}
+          <div className='absolute top-0  right-0'>
+            <ClosedBadge />
+          </div>
+        </div>
+        )}
       </div>
     )}
   </div>

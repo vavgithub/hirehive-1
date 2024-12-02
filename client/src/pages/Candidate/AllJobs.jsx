@@ -18,22 +18,6 @@ const filterJobs = (filters) => axios.post('/candidates/filterJobs', { filters }
 const AllJobs = () => {
     const navigate = useNavigate();
 
-    useEffect(() => {
-        const checkAuth = async () => {
-            try {
-                // Try accessing a protected route
-                await axios.get('/auth/candidate/dashboard');
-                // If successful, redirect to protected HomePage
-                navigate('/candidate/all-jobs');
-            } catch (error) {
-                // Not authenticated, stay on the public HomePage
-            }
-        };
-
-        checkAuth();
-    }, [navigate]);
-
-
     const [isFilterVisible, setIsFilterVisible] = useState(false);
 
 

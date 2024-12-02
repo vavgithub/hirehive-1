@@ -608,42 +608,87 @@ export const applyToJob = async (req, res) => {
 // Modifications to getCandidateDashboard function
 export const getCandidateDashboard = async (req, res) => {
   try {
-    const candidate = await Candidate.findById(req.candidate._id).populate({
-      path: "jobApplications.jobId",
-      model: "jobs",
-      select: "jobTitle status",
-    });
-
-    if (!candidate) {
+    // const candidate = await Candidate.findById(req.candidate._id).populate({
+    //   path: "jobApplications.jobId",
+    //   model: "jobs",
+    //   select: "jobTitle status",
+    // });
+    const candidate = await Candidate.aggregate([
+      // Match the candidate by ID
+      {
+        $match: { _id: req.candidate._id },
+      },
+      // Perform a lookup to populate jobApplications.jobId
+      {
+        $lookup: {
+          from: "jobs", // The collection to join
+          localField: "jobApplications.jobId", // The field in Candidate
+          foreignField: "_id", // The field in Jobs
+          as: "jobDetails", // The resulting array of matching documents
+        },
+      },
+      // Project to include only necessary fields and format the output
+      {
+        $project: {
+          firstName: 1,
+          lastName: 1,
+          email: 1,
+          phone: 1,
+          expectedCTC: 1,
+          portfolio: 1,
+          website: 1,
+          noticePeriod: 1,
+          currentCTC: 1,
+          experience: 1,
+          skills: 1,
+          hasGivenAssessment: 1,
+          "jobApplications.applicationDate": 1,
+          "jobApplications.currentStage": 1,
+          "jobApplications.stageStatuses": 1,
+          "jobApplications.jobApplied": 1,
+          "jobApplications.jobId": 1,
+          "jobDetails": {
+            _id: 1,
+            jobTitle: 1,
+            status: 1,
+          },
+        },
+      },
+    ])
+    
+    if (candidate.length === 0) {
       return res.status(404).json({ message: "Candidate not found" });
     }
 
     // Format the response to include relevant job application details
-    const formattedApplications = candidate.jobApplications.map((app) => ({
-      jobId: app.jobId._id,
-      jobTitle: app.jobId.jobTitle,
-      jobStatus: app.jobId.status,
-      applicationDate: app.applicationDate,
-      currentStage: app.currentStage,
-      stageStatuses: Object.fromEntries(app.stageStatuses),
-    }));
+    const formattedApplications = candidate[0].jobApplications.map((app,index) => {
+      const isValid = candidate[0].jobDetails.find(currentJob=>currentJob._id.toString() === app.jobId.toString());
+      return ({
+        jobId: isValid?._id || app.jobId,
+        jobTitle:isValid?.jobTitle || app.jobApplied,
+        jobStatus: isValid?.status || 'deleted',
+        applicationDate: app.applicationDate,
+        currentStage: app.currentStage,
+        stageStatuses: Array.from(app.stageStatuses),
+      })
+    });
 
     res.status(200).json({
       candidate: {
-        _id: candidate._id,
-        firstName: candidate.firstName,
-        lastName: candidate.lastName,
-        email: candidate.email,
-        phone: candidate.phone,
-        expectedCTC: candidate.expectedCTC,
-        portfolio: candidate.portfolio,
-        website: candidate.website,
-        noticePeriod: candidate.noticePeriod,
-        currentCTC: candidate.currentCTC,
-        expectedCTC: candidate.expectedCTC,
-        experience: candidate.experience,
-        skills: candidate.skills,
-        hasGivenAssessment:candidate.hasGivenAssessment,
+        _id: candidate[0]._id,
+        firstName: candidate[0].firstName,
+        lastName: candidate[0].lastName,
+        email: candidate[0].email,
+        phone: candidate[0].phone,
+        expectedCTC: candidate[0].expectedCTC,
+        portfolio: candidate[0].portfolio,
+        website: candidate[0].website,
+        noticePeriod: candidate[0].noticePeriod,
+        currentCTC: candidate[0].currentCTC,
+        expectedCTC: candidate[0].expectedCTC,
+        experience: candidate[0].experience,
+        skills: candidate[0].skills,
+        hasGivenAssessment:candidate[0].hasGivenAssessment,
         jobApplications: formattedApplications, // Include jobApplications in the candidate object
         // Include other relevant candidate fields
       },
@@ -658,17 +703,70 @@ export const getCandidateDashboard = async (req, res) => {
 
 export const getCandidateAppliedJobs = async (req, res) => {
   try {
-    const candidate = await Candidate.findById(req.candidate._id).populate({
-      path: "jobApplications.jobId",
-      model: "jobs",
-    });
+    // const candidate = await Candidate.findById(req.candidate._id).populate({
+    //   path: "jobApplications.jobId",
+    //   model: "jobs",
+    // });
 
-    if (!candidate) {
+    const candidate = await Candidate.aggregate([
+      // Match the candidate by ID
+      {
+        $match: { _id: req.candidate._id },
+      },
+      // Perform a lookup to populate jobApplications.jobId
+      {
+        $lookup: {
+          from: "jobs", // The collection to join
+          localField: "jobApplications.jobId", // The field in Candidate
+          foreignField: "_id", // The field in Jobs
+          as: "jobDetails", // The resulting array of matching documents
+        },
+      },
+      // Project to include only necessary fields and format the output
+      {
+        $project: {
+          firstName: 1,
+          lastName: 1,
+          email: 1,
+          phone: 1,
+          expectedCTC: 1,
+          portfolio: 1,
+          website: 1,
+          noticePeriod: 1,
+          currentCTC: 1,
+          experience: 1,
+          skills: 1,
+          hasGivenAssessment: 1,
+          "jobApplications.applicationDate": 1,
+          "jobApplications.currentStage": 1,
+          "jobApplications.stageStatuses": 1,
+          "jobApplications.jobApplied": 1,
+          "jobApplications.jobId": 1,
+          "jobDetails": 1,
+        },
+      },
+    ])
+
+    if (candidate.length === 0) {
       return res.status(404).json({ message: "Candidate not found" });
     }
+    //validating applications by checking if its deleted or not
+    const formattedApplications = candidate[0].jobApplications.map((app,index) => {
+      const isValid = candidate[0].jobDetails.find(currentJob=>currentJob._id.toString() === app.jobId.toString()); 
+      let jobIdObj = isValid  ? {...isValid,applicationDate : app.applicationDate} : {
+        jobId : app.jobId,
+        jobTitle : app.jobApplied,
+        status : "deleted",
+        applicationDate : app.applicationDate
+      }
+      return ({
+        ...app,
+        jobId : jobIdObj
+      })
+    });
 
-    // Sort the jobApplications by 'applicationDate' in descending order
-    const sortedJobApplications = candidate.jobApplications.sort((a, b) => {
+    // Sort the validated jobApplications by 'applicationDate' in descending order
+    const sortedJobApplications = formattedApplications.sort((a, b) => {
       return new Date(b.applicationDate) - new Date(a.applicationDate);
     });
 

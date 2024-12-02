@@ -294,6 +294,7 @@ export const getCandidateById = async (req, res) => {
       jobApplication: {
         jobId: jobApplication.jobId,
         jobApplied: jobApplication.jobApplied,
+        jobStatus : job ? job.status : "deleted",
         applicationDate: jobApplication.applicationDate,
         rating: jobApplication.rating,
         currentStage: jobApplication.currentStage,
