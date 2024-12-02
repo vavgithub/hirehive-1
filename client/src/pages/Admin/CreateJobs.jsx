@@ -28,7 +28,7 @@ const CreateJobs = () => {
 
   return (
     <div className="bg-background-80 w-full ">
-      <div className='p-4 container '>
+      <div className='p-4 container mx-auto'>
         <Header HeaderText="Create a New Job Listing" withBack="true" />
         <JobForm
           onSubmit={handleSubmit}

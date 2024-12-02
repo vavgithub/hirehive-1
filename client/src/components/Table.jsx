@@ -534,7 +534,7 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
 
 
   return (
-    <div>
+    <div className='w-full'>
 
 
       <style>

@@ -37,8 +37,8 @@ const EditJobs = () => {
   if (error) return <div>Error: {error.message}</div>;
 
   return (
-    <div className="bg-background-80 min-h-screen">
-      <div className='p-4'>
+    <div className="bg-background-80 min-h-screen w-full">
+      <div className='p-4 container mx-auto'>
         <Header HeaderText="Edit Job Listing" withBack={"true"} />
         {data?.data && (
           <JobForm

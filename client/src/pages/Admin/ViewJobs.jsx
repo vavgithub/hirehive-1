@@ -193,7 +193,7 @@ const ViewJobs = () => {
 
 
     return (
-        <div className="mx-4 pt-4 container h-screen">
+        <div className="px-4 pt-4 container h-screen w-full">
  <Header 
                 HeaderText={formData.jobTitle} 
                 withKebab="true" 
@@ -256,18 +256,16 @@ const ViewJobs = () => {
             )}
 
             {activeTab === 'candidate' && (
-               <div className='bg-background-30 p-4 rounded-xl '>
+               <div className='bg-background-30 p-4 rounded-xl w-full'>
                     <div className="max-w-full  mb-4">
                         <StatsGrid stats={candidateStats} />
                     </div>
-                    <div>
-                        <div>
+                        <div className='w-full'>
                             <Table                             
                                 jobId={mainId} // Pass jobId to Table component
                             >
                             </Table>
                         </div>
-                    </div>
                 </div>
             )}
 

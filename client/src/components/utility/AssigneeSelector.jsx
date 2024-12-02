@@ -185,7 +185,7 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
               fontFamily: "Outfit",
             },
             "& .MuiOutlinedInput-root": {
-              padding: "0px",
+              padding: "0px !important",
               "& fieldset": {
                 border: "none",
               },
@@ -193,6 +193,12 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
                 padding: "0px 0px 0px 8px !important",  // Left padding of 8px, 0px for others
               }
             },
+            "& .Mui-focused": {
+              "& fieldset": {
+                border: "1px solid rgb(24, 233, 208) !important",
+                borderRadius : "0.75rem !important"
+              },
+            }
           }}
           InputProps={{
             ...params.InputProps,
