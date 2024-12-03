@@ -6,6 +6,7 @@ import axios from '../../api/axios';
 import { Phone, Mail, Circle } from 'lucide-react';
 import PhoneIcon from '../../svg/PhoneIcon';
 import EmailIcon from '../../svg/EmailIcon';
+import { Button } from '../../components/ui/Button';
 
 
 const Wronganswer = () => {
@@ -65,7 +66,7 @@ const AssessmentResponse = () => {
   
 
     return (
-        <div >
+        <div className='container'>
             <div className="p-7">
                 <Header withBack={"true"} HeaderText="Assessment details" />
 
@@ -74,22 +75,22 @@ const AssessmentResponse = () => {
                     {/* Candidate Info Card */}
                     <div className="bg-background-90 rounded-xl p-6 flex-grow">
                         <div className="flex gap-4">
-                            <div className="w-16 h-16 rounded-full bg-gray-200 overflow-hidden">
+                            <div className="to-background-100 w-[180px] rounded-xl overflow-hidden">
                                 <img
-                                    src="/api/placeholder/64/64"
+                                    src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg"
                                     alt={assessmentData?.candidateInfo?.name}
                                     className="w-full h-full object-cover"
                                 />
                             </div>
 
-                            <div className="flex flex-col">
+                            <div className="flex flex-col justify-between w-full">
                                 <h2 className="typography-h2">
                                     {assessmentData?.candidateInfo?.name}
                                 </h2>
 
 
                                 <div className="flex items-center gap-2 my-2">
-                                    <span className="text-font-gray">UX Design Level 1: Figma Skill</span>
+                                    <span className="text-white text-xl font-semibold">UX Design Level 1: Figma Skill</span>
                                     <Circle className="w-1 h-1 text-font-gray" />
                                 </div>
 
@@ -98,15 +99,16 @@ const AssessmentResponse = () => {
                                 <div className="flex mb-3 gap-5">
                                     <div className="flex items-center gap-2">
                                         <PhoneIcon />
-                                        <span className="typography-large-p">{assessmentData?.candidateInfo?.phone}</span>
+                                        <span className="text-font-gray typography-large-p">{assessmentData?.candidateInfo?.phone}</span>
                                     </div>
                                     <div className="flex items-center gap-2">
                                         <EmailIcon />
-                                        <span className="typography-large-p">{assessmentData?.candidateInfo?.email}</span>
+                                        <span className="text-font-gray typography-large-p">{assessmentData?.candidateInfo?.email}</span>
                                     </div>
                                 </div>
 
-                                <div className='grid grid-cols-3'>
+                                <div className='flex justify-between'>
+                                <div className='grid grid-cols-3 gap-x-6'>
                                     <div>
                                         <p className='typography-small-p text-font-gray'>
                                             Correct Answered
@@ -142,6 +144,8 @@ const AssessmentResponse = () => {
 
 
                                 </div>
+                                    <Button className="w-fit px-6">Assesment Recording</Button>
+                                </div>
 
                             </div>
                         </div>
@@ -173,11 +177,11 @@ const AssessmentResponse = () => {
 
                 {/* Question Progress Indicators */}
                 <div className="bg-background-90 rounded-xl p-4 mb-6">
-                    <div className="flex justify-between gap-2 ">
+                    <div className="grid grid-cols-10 justify-between gap-4">
                         {assessmentData?.questionResponses.map((response, index) => (
                             <div
                                 key={response.questionId}
-                                className={`p-8 typography-h3 relative w-14 h-8 rounded-md flex bg-background-80 items-center justify-center ${response.isCorrect ? 'bg-background-80' : 'bg-background-80'
+                                className={`p-8 typography-h3 relative  h-8 rounded-md flex bg-background-80 items-center justify-center ${response.isCorrect ? 'bg-background-80' : 'bg-background-80'
                                     } text-white`}
                             >
                                 <div className={`absolute right-1 top-1 w-4 h-4  flex bg-background-80 items-center justify-center text-white`}>
@@ -194,9 +198,9 @@ const AssessmentResponse = () => {
                 <div className='bg-background-90 rounded-xl'>
                     <h1 className='typography-h1 px-6 py-3 '>Question</h1>
                     {/* Questions List */}
-                    <div className="space-y-4">
+                    <div className="space-y-4 bg-background-80">
                         {assessmentData?.questionResponses.map((response, index) => (
-                            <div key={response.questionId} className="bg-background-80 rounded-xl p-6">
+                            <div key={response.questionId} className=" rounded-xl p-6">
                                 <h3 className="typography-h3 mb-4">
                                     Q{index + 1}. {response.questionDetails.text}
                                 </h3>
