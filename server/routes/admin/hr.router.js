@@ -1,5 +1,5 @@
 import express from "express"
-import { getCandidateScores, moveCandidate, rejectCandidate, rescheduleCall, rescheduleScreening, scheduleCall, scheduleScreening, scoreRoundTwo, sendDesignTask, submitBudgetScore, updateCandidateRating } from "../../controllers/admin/hr.controller.js";
+import { changeApplicationStatus, getCandidateScores, moveCandidate, rejectCandidate, rescheduleCall, rescheduleScreening, scheduleCall, scheduleScreening, scoreRoundTwo, sendDesignTask, submitBudgetScore, updateCandidateRating } from "../../controllers/admin/hr.controller.js";
 
 const router = express.Router();
 
@@ -24,6 +24,7 @@ router.post('/score-round-two', scoreRoundTwo);
 
 router.post('/send-design-task',sendDesignTask)
 
+router.post('/change-status/:candidateId/:jobId',changeApplicationStatus)
 
 
 export default router;                                                                               

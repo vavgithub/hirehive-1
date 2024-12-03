@@ -27,6 +27,7 @@ import { useAuthContext } from '../../context/AuthProvider';
 import GreenTickIcon from '../../svg/Staging/GreenTickIcon';
 import RightTick from '../../svg/Staging/RightTick';
 import ClosedBadge from '../../svg/ClosedBadge';
+import useScheduler from '../../hooks/useScheduler';
 
 const RoundTwo = ({ candidateId, jobId ,isClosed }) => {
     const { user } = useAuthContext();
@@ -42,6 +43,8 @@ const RoundTwo = ({ candidateId, jobId ,isClosed }) => {
     const [score, setScore] = useState(0);
     const [feedback, setFeedback] = useState('');
 
+    const data = useScheduler(candidateData,stageData,"Under Review")    
+    console.log("SCHEDULER : ",data);
 
     const updateAssigneeMutation = useMutation({
         mutationFn: (newAssignee) => axios.put('dr/update-assignee', {

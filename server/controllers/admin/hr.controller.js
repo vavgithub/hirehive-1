@@ -654,3 +654,53 @@ export const scoreRoundTwo = async (req, res) => {
       res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
+
+export const changeApplicationStatus = async (req, res) => {
+  try {
+    const { status } = req.body;
+    const { candidateId, jobId } = req.params;
+
+    if (!candidateId || !jobId || !status) {
+      return res.status(400).json({ message: 'Invalid Input Data' });
+    }
+
+    // Find the candidate 
+    const candidate = await candidates.findOne({
+      _id: candidateId,
+      "jobApplications.jobId": jobId,
+    });
+
+    if (!candidate) {
+      return res.status(404).json({ message: 'Candidate not found' });
+    }
+
+    // Locate the relevant job application
+    const jobApplication = candidate.jobApplications.find(
+      (app) => app.jobId.toString() === jobId
+    );
+
+    if (!jobApplication) {
+      return res.status(404).json({ message: 'Job application not found' });
+    }
+
+    const currentStage = jobApplication.currentStage;
+    if (!jobApplication.stageStatuses.has(currentStage)) {
+      return res.status(400).json({ message: 'Current stage not found' });
+    }
+
+    // Update the status in the Map
+    const stageStatus = jobApplication.stageStatuses.get(currentStage);
+    stageStatus.status = status; // Update the status
+    jobApplication.stageStatuses.set(currentStage, stageStatus); // Re-set the Map key
+
+    // Save the updated candidate document
+    await candidate.save();
+
+    res.status(200).json({
+      message: 'Status Updated Successfully.',
+    });
+  } catch (error) {
+    console.error('Error updating status:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
