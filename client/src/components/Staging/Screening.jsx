@@ -197,7 +197,6 @@ const Screening = ({ candidateId, jobId , isClosed}) => {
     const isDisabled = stageData?.status === 'Rejected' || stageData?.status === 'Cleared' || stageData?.status === 'Reviewed';
     
     const data = useScheduler(candidateData,stageData,"Under Review")    
-    console.log("SCHEDULER : ",data);
     
     const { user } = useAuthContext();
     const role = user?.role || 'Candidate';

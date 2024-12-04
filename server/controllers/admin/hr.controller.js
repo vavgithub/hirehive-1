@@ -655,6 +655,7 @@ export const scoreRoundTwo = async (req, res) => {
   }
 };
 
+//Universal Controller to Update Any Status for any applications.
 export const changeApplicationStatus = async (req, res) => {
   try {
     const { status } = req.body;

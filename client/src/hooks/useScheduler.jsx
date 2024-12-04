@@ -31,8 +31,8 @@ function useScheduler(candidateData, stageData,status) {
 
       let scheduledMilliseconds = scheduledDateObj.getTime();
       let timeFromNow = scheduledMilliseconds - new Date();
-
-      if (timeFromNow > 0 && timeFromNow < TWELVEHOURS) {
+      
+      if ((timeFromNow < TWELVEHOURS) && !data) {
         timeout = setTimeout(async() => {
           //do api call
           console.log("WORKED AT", scheduledDateObj);
@@ -40,7 +40,7 @@ function useScheduler(candidateData, stageData,status) {
           if(result?.message){
             setData(result.message)
           }
-        }, timeFromNow);
+        }, timeFromNow > 0 ? timeFromNow : 0);
       }
     }
     return () => clearTimeout(timeout);

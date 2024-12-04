@@ -72,7 +72,6 @@ const RoundOne = ({ candidateId, jobId ,isClosed}) => {
 
    
     const data = useScheduler(candidateData,stageData,"Under Review")    
-    console.log("SCHEDULER : ",data);
 
 
     const submitReview = async ({ candidateId, reviewData }) => {
