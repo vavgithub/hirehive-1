@@ -7,7 +7,7 @@ import { DashboardIcon, DashboardIconActive } from '../svg/Navbar/DashboardIcon'
 import { JobsIcon, JobsIconActive } from '../svg/Navbar/JobsIcon';
 import { MyJobsIcon, MyJobsIconActive } from '../svg/Navbar/MyJobsIcon';
 import { Button } from '../components/ui/Button';
-import useCandidateAuth  from '../hooks/useCandidateAuth';
+import useCandidateAuth from '../hooks/useCandidateAuth';
 import Modal from '../components/Modal';
 import AssessmentBanner from '../components/ui/AssessmentBanner';
 import { useDispatch, useSelector } from 'react-redux';
@@ -108,15 +108,15 @@ const CandidateLayout = () => {
 
 
   return (
-    <div className="flex flex-col md:flex-row bg-main-bg bg-cover bg-top min-h-screen">
+    <div className="flex flex-col md:flex-row bg-main-bg bg-cover bg-top h-full overflow-x-hidden">
       {/* Mobile Menu Button */}
       <div
         className="md:hidden fixed top-4 right-4 z-50 p-2 rounded-full shadow-lg"
         onClick={() => setIsMenuOpen(!isMenuOpen)}
       >
         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" />
-  </svg>
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" />
+        </svg>
       </div>
 
       {/* Sidebar for desktop / Floating menu for mobile */}
@@ -132,10 +132,10 @@ const CandidateLayout = () => {
         style={{ position: 'fixed' }}
       >
         <div className="flex flex-col gap-5 typography-body">
-        <div className='p-2 flex '>
+          <div className='p-2 flex '>
 
-<img className='h-11' src={LightLogo}/>
-</div>
+            <img className='h-11' src={LightLogo} />
+          </div>
           {menuItems.map((item) => (
             <NavItem
               key={item.name}
@@ -149,13 +149,13 @@ const CandidateLayout = () => {
           ))}
         </div>
         <div className="px-4">
-        {candidateData && (
+          {candidateData && (
             <>
               <span className="block mb-2 typography-body">
                 Welcome, {candidateData.firstName}
               </span>
-              <Button 
-                variant="secondary" 
+              <Button
+                variant="secondary"
                 onClick={handleLogout}
                 className="w-full"
               >
@@ -179,11 +179,14 @@ const CandidateLayout = () => {
       />
 
       {/* Main Content */}
-      <div className="md:ml-[192px] flex-1 p-4 md:p-6">
-        {isAssessmentBannerVisible && <AssessmentBanner />}
+      <div class="md:ml-[13rem] md:w-[calc(100vw-13rem)] flex flex-col items-center min-h-screen">
+        {isAssessmentBannerVisible &&  <AssessmentBanner />}
+                <Outlet />
+            </div>
+      {/* <div className="md:ml-[192px] flex-1 p-4 md:p-6">
 
         <Outlet />
-      </div>
+      </div> */}
 
       {/* Overlay for mobile */}
       {isMenuOpen && (

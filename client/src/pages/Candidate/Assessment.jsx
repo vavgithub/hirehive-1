@@ -8,6 +8,7 @@ import { Button } from '../../components/ui/Button';
 import Loader from '../../components/ui/Loader';
 import axios from "../../api/axios";
 import { showSuccessToast, showErrorToast } from '../../components/ui/Toast';
+import LightLogo from "../../svg/Logo/lightLogo.svg"
 
 // Utility function to format time
 const formatTime = (time) => {
@@ -57,6 +58,10 @@ const QuestionSidebar = ({ questions, currentQuestion, onQuestionSelect, answers
 
   return (
     <div className="w-[200px] bg-background-30 fixed h-screen overflow-y-auto flex-shrink-0">
+      <div className='p-4 flex items-center justify-center '>
+
+        <img className='h-11' src={LightLogo} />
+      </div>
       <div className="mb-6 p-4 rounded-xl">
         <div className="flex flex-col p-2 rounded-xl items-center bg-background-80">
           <p className='typography-body text-font-gray'>Time remaining</p>
@@ -69,13 +74,12 @@ const QuestionSidebar = ({ questions, currentQuestion, onQuestionSelect, answers
       {questions.map((q, index) => (
         <div
           key={q._id}
-          className={`typography-body py-2 pl-4 my-2 cursor-pointer rounded flex items-center justify-between ${
-            currentQuestion === index
+          className={`typography-body py-2 pl-4 my-2 cursor-pointer rounded flex items-center justify-between ${currentQuestion === index
               ? 'text-font-accent'
               : answers[q._id]
                 ? 'text-green-100'
                 : 'text-font-gray hover:bg-background-60'
-          }`}
+            }`}
           onClick={() => onQuestionSelect(index)}
         >
           <span className="truncate flex-grow mr-2">
@@ -209,7 +213,7 @@ const UploadProgressOverlay = ({ uploadProgress }) => (
       <Loader />
       <h3 className="typography-h3 text-font-gray">Uploading Assessment</h3>
       <div className="w-full max-w-md bg-background-70 rounded-full h-4 overflow-hidden">
-        <div 
+        <div
           className="bg-teal-400 h-full transition-all duration-300 ease-out"
           style={{ width: `${uploadProgress}%` }}
         />
@@ -247,7 +251,7 @@ const Assessment = () => {
       navigate('/login');
       return;
     }
-    
+
     if (candidateAuthData?.hasGivenAssessment) {
       navigate('/candidate/dashboard');
       showErrorToast('Error', 'You have already completed the assessment');
@@ -279,25 +283,25 @@ const Assessment = () => {
 
   const startRecording = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ 
+      const stream = await navigator.mediaDevices.getUserMedia({
         video: true,
-        audio: true 
+        audio: true
       });
-      
+
       webcamRef.current.video.srcObject = stream;
-      
+
       const mediaRecorder = new MediaRecorder(stream, {
         mimeType: 'video/webm;codecs=vp8,opus'
       });
       mediaRecorderRef.current = mediaRecorder;
-      
+
       mediaRecorder.ondataavailable = (event) => {
         if (event.data && event.data.size > 0) {
           chunksRef.current.push(event.data);
           console.log('Recording chunk received:', event.data.size);
         }
       };
-  
+
       mediaRecorder.onstop = async () => {
         console.log('Recording stopped, creating blob...');
         const blob = new Blob(chunksRef.current, {
@@ -307,7 +311,7 @@ const Assessment = () => {
         setRecordedBlob(blob);
         chunksRef.current = [];
       };
-  
+
       // Request data every second
       mediaRecorder.start(1000);
       setIsRecording(true);
@@ -332,11 +336,11 @@ const Assessment = () => {
           chunksRef.current = [];
           resolve(blob);
         };
-  
+
         // Stop the recording
         mediaRecorderRef.current.stop();
         setIsRecording(false);
-        
+
         // Stop all tracks
         const tracks = webcamRef.current.video.srcObject.getTracks();
         tracks.forEach(track => track.stop());
@@ -346,211 +350,211 @@ const Assessment = () => {
     });
   };
 
-//   const uploadVideo = async (videoBlob) => {
-//     if (!videoBlob) {
-//       throw new Error('No recording available');
-//     }
-  
-//     try {
-//       // Create a proper File object
-//       const videoFile = new File(
-//         [videoBlob], 
-//         'assessment-recording.webm',
-//         { 
-//           type: 'video/webm',
-//           lastModified: Date.now()
-//         }
-//       );
-  
-//       // Log the file to verify it's created correctly
-//       console.log('Video file created:', videoFile);
-  
-//       const formData = new FormData();
-//       // Use the same field name as expected by multer
-//       formData.append('video', videoFile);
-  
-//       // Log FormData contents
-//       console.log('FormData entries:');
-//       for (let pair of formData.entries()) {
-//         console.log(pair[0], pair[1]);
-//       }
-  
-//       const response = await axios.post('/admin/candidate/upload-recording', formData, {
-//         headers: {
-//           'Content-Type': 'multipart/form-data',
-//         },
-//         onUploadProgress: (progressEvent) => {
-//           const progress = Math.round(
-//             (progressEvent.loaded * 100) / progressEvent.total
-//           );
-//           setUploadProgress(progress);
-//         },
-//       });
-  
-//       return response.data.videoUrl;
-//     } catch (error) {
-//       console.error('Upload error:', error);
-//       if (error.response) {
-//         console.error('Response data:', error.response.data);
-//         console.error('Response status:', error.response.status);
-//       }
-//       throw error;
-//     }
-//   };
+  //   const uploadVideo = async (videoBlob) => {
+  //     if (!videoBlob) {
+  //       throw new Error('No recording available');
+  //     }
+
+  //     try {
+  //       // Create a proper File object
+  //       const videoFile = new File(
+  //         [videoBlob], 
+  //         'assessment-recording.webm',
+  //         { 
+  //           type: 'video/webm',
+  //           lastModified: Date.now()
+  //         }
+  //       );
+
+  //       // Log the file to verify it's created correctly
+  //       console.log('Video file created:', videoFile);
+
+  //       const formData = new FormData();
+  //       // Use the same field name as expected by multer
+  //       formData.append('video', videoFile);
+
+  //       // Log FormData contents
+  //       console.log('FormData entries:');
+  //       for (let pair of formData.entries()) {
+  //         console.log(pair[0], pair[1]);
+  //       }
+
+  //       const response = await axios.post('/admin/candidate/upload-recording', formData, {
+  //         headers: {
+  //           'Content-Type': 'multipart/form-data',
+  //         },
+  //         onUploadProgress: (progressEvent) => {
+  //           const progress = Math.round(
+  //             (progressEvent.loaded * 100) / progressEvent.total
+  //           );
+  //           setUploadProgress(progress);
+  //         },
+  //       });
+
+  //       return response.data.videoUrl;
+  //     } catch (error) {
+  //       console.error('Upload error:', error);
+  //       if (error.response) {
+  //         console.error('Response data:', error.response.data);
+  //         console.error('Response status:', error.response.status);
+  //       }
+  //       throw error;
+  //     }
+  //   };
 
 
-// // Modified submit mutation
-// const submitAssessmentMutation = useMutation({
-//   mutationFn: async (assessmentData) => {
-//     try {
-//       setIsUploading(true);
-      
-//       // Stop recording and get the blob
-//       const videoBlob = await stopRecording();
-      
-//       if (!videoBlob) {
-//         throw new Error('No recording available');
-//       }
+  // // Modified submit mutation
+  // const submitAssessmentMutation = useMutation({
+  //   mutationFn: async (assessmentData) => {
+  //     try {
+  //       setIsUploading(true);
 
-//       // Upload video and get URL
-//       const videoUrl = await uploadVideo(videoBlob);
+  //       // Stop recording and get the blob
+  //       const videoBlob = await stopRecording();
 
-//       if (!videoUrl) {
-//         throw new Error('Failed to get video URL');
-//       }
+  //       if (!videoBlob) {
+  //         throw new Error('No recording available');
+  //       }
+
+  //       // Upload video and get URL
+  //       const videoUrl = await uploadVideo(videoBlob);
+
+  //       if (!videoUrl) {
+  //         throw new Error('Failed to get video URL');
+  //       }
 
 
-//       // Then submit assessment with video URL
-//       const response = await axios.post(
-//         `/admin/candidate/questionnaire/${candidateAuthData._id}`,
-//         {
-//           ...assessmentData,
-//           recordingUrl: uploadResponse.data.videoUrl
-//         }
-//       );
-//       return response.data;
-//     } catch (error) {
-//       console.error('Submit error:', error);
-//       throw error;
-//     }
-//   },
-//   onSuccess: (data) => {
-//     showSuccessToast('Success', 'Assessment submitted successfully');
-//     navigate('/candidate/my-jobs');
-//   },
-//   onError: (error) => {
-//     showErrorToast(
-//       'Error',
-//       error.message || 'Failed to submit assessment'
-//     );
-//     setIsUploading(false);
-//   },
-//   onSettled: () => {
-//     setIsUploading(false);
-//     setUploadProgress(0);
-//   }
-// });
+  //       // Then submit assessment with video URL
+  //       const response = await axios.post(
+  //         `/admin/candidate/questionnaire/${candidateAuthData._id}`,
+  //         {
+  //           ...assessmentData,
+  //           recordingUrl: uploadResponse.data.videoUrl
+  //         }
+  //       );
+  //       return response.data;
+  //     } catch (error) {
+  //       console.error('Submit error:', error);
+  //       throw error;
+  //     }
+  //   },
+  //   onSuccess: (data) => {
+  //     showSuccessToast('Success', 'Assessment submitted successfully');
+  //     navigate('/candidate/my-jobs');
+  //   },
+  //   onError: (error) => {
+  //     showErrorToast(
+  //       'Error',
+  //       error.message || 'Failed to submit assessment'
+  //     );
+  //     setIsUploading(false);
+  //   },
+  //   onSettled: () => {
+  //     setIsUploading(false);
+  //     setUploadProgress(0);
+  //   }
+  // });
 
-const uploadVideo = async (videoBlob) => {
-  if (!videoBlob) {
-    throw new Error('No recording available');
-  }
-
-  try {
-    // Create a proper File object
-    const videoFile = new File(
-      [videoBlob], 
-      'assessment-recording.webm',
-      { 
-        type: 'video/webm',
-        lastModified: Date.now()
-      }
-    );
-
-    // Log the file to verify it's created correctly
-    console.log('Video file created:', videoFile);
-
-    const formData = new FormData();
-    formData.append('video', videoFile);
-
-    // Log FormData contents
-    console.log('FormData entries:');
-    for (let pair of formData.entries()) {
-      console.log(pair[0], pair[1]);
+  const uploadVideo = async (videoBlob) => {
+    if (!videoBlob) {
+      throw new Error('No recording available');
     }
 
-    const response = await axios.post('/admin/candidate/upload-recording', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-      onUploadProgress: (progressEvent) => {
-        const progress = Math.round(
-          (progressEvent.loaded * 100) / progressEvent.total
-        );
-        setUploadProgress(progress);
-      },
-    });
-
-    if (!response.data.videoUrl) {
-      throw new Error('No video URL received from server');
-    }
-
-    return response.data.videoUrl;
-  } catch (error) {
-    console.error('Upload error:', error);
-    if (error.response) {
-      console.error('Response data:', error.response.data);
-      console.error('Response status:', error.response.status);
-    }
-    throw error;
-  }
-};
-
-const submitAssessmentMutation = useMutation({
-  mutationFn: async (assessmentData) => {
     try {
-      setIsUploading(true);
-      
-      // Stop recording and get the blob
-      const videoBlob = await stopRecording();
-      
-      if (!videoBlob) {
-        throw new Error('No recording available');
-      }
-
-      // Upload video and get URL
-      const recordingUrl = await uploadVideo(videoBlob);
-
-      // Submit assessment with video URL
-      const response = await axios.post(
-        `/admin/candidate/questionnaire/${candidateAuthData._id}`,
+      // Create a proper File object
+      const videoFile = new File(
+        [videoBlob],
+        'assessment-recording.webm',
         {
-          ...assessmentData,
-          recordingUrl // Use the URL returned from uploadVideo
+          type: 'video/webm',
+          lastModified: Date.now()
         }
       );
-      return response.data;
+
+      // Log the file to verify it's created correctly
+      console.log('Video file created:', videoFile);
+
+      const formData = new FormData();
+      formData.append('video', videoFile);
+
+      // Log FormData contents
+      console.log('FormData entries:');
+      for (let pair of formData.entries()) {
+        console.log(pair[0], pair[1]);
+      }
+
+      const response = await axios.post('/admin/candidate/upload-recording', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+        onUploadProgress: (progressEvent) => {
+          const progress = Math.round(
+            (progressEvent.loaded * 100) / progressEvent.total
+          );
+          setUploadProgress(progress);
+        },
+      });
+
+      if (!response.data.videoUrl) {
+        throw new Error('No video URL received from server');
+      }
+
+      return response.data.videoUrl;
     } catch (error) {
-      console.error('Submit error:', error);
+      console.error('Upload error:', error);
+      if (error.response) {
+        console.error('Response data:', error.response.data);
+        console.error('Response status:', error.response.status);
+      }
       throw error;
     }
-  },
-  onSuccess: (data) => {
-    showSuccessToast('Success', 'Assessment submitted successfully');
-    navigate('/candidate/my-jobs');
-  },
-  onError: (error) => {
-    showErrorToast(
-      'Error',
-      error.message || 'Failed to submit assessment'
-    );
-    setIsUploading(false);
-  },
-  onSettled: () => {
-    setIsUploading(false);
-    setUploadProgress(0);
-  }
-});
+  };
+
+  const submitAssessmentMutation = useMutation({
+    mutationFn: async (assessmentData) => {
+      try {
+        setIsUploading(true);
+
+        // Stop recording and get the blob
+        const videoBlob = await stopRecording();
+
+        if (!videoBlob) {
+          throw new Error('No recording available');
+        }
+
+        // Upload video and get URL
+        const recordingUrl = await uploadVideo(videoBlob);
+
+        // Submit assessment with video URL
+        const response = await axios.post(
+          `/admin/candidate/questionnaire/${candidateAuthData._id}`,
+          {
+            ...assessmentData,
+            recordingUrl // Use the URL returned from uploadVideo
+          }
+        );
+        return response.data;
+      } catch (error) {
+        console.error('Submit error:', error);
+        throw error;
+      }
+    },
+    onSuccess: (data) => {
+      showSuccessToast('Success', 'Assessment submitted successfully');
+      navigate('/candidate/my-jobs');
+    },
+    onError: (error) => {
+      showErrorToast(
+        'Error',
+        error.message || 'Failed to submit assessment'
+      );
+      setIsUploading(false);
+    },
+    onSettled: () => {
+      setIsUploading(false);
+      setUploadProgress(0);
+    }
+  });
 
   const handleAnswer = (questionId, answer) => {
     setAnswers(prev => ({
@@ -560,22 +564,22 @@ const submitAssessmentMutation = useMutation({
   };
 
   // Simplified handleFinish
-const handleFinish = async () => {
-  if (!isAllAnswered) {
-    showErrorToast('Error', 'Please answer all questions before submitting');
-    return;
-  }
+  const handleFinish = async () => {
+    if (!isAllAnswered) {
+      showErrorToast('Error', 'Please answer all questions before submitting');
+      return;
+    }
 
-  try {
-    const totalTimeInSeconds = Math.floor((Date.now() - startTime) / 1000);
-    await submitAssessmentMutation.mutateAsync({
-      answers,
-      totalTimeInSeconds
-    });
-  } catch (error) {
-    console.error('Finish error:', error);
-  }
-};
+    try {
+      const totalTimeInSeconds = Math.floor((Date.now() - startTime) / 1000);
+      await submitAssessmentMutation.mutateAsync({
+        answers,
+        totalTimeInSeconds
+      });
+    } catch (error) {
+      console.error('Finish error:', error);
+    }
+  };
   // Loading and error states
   if (isLoading) {
     return (
