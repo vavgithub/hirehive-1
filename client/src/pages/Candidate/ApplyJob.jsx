@@ -15,6 +15,7 @@ import Loader from '../../components/ui/Loader';
 import Logo from '../../svg/Logo/lightLogo.svg';
 import { fetchCandidateAuthData } from '../../redux/candidateAuthSlice';
 import useCandidateAuth from '../../hooks/useCandidateAuth';
+import { digitsRegex, lowerCaseRegex, specialCharRegex, upperCaseRegex } from '../../utility/regex';
 
 const fetchJobDetails = async (id) => {
   const response = await axios.get(`/jobs/getJobById/${id}`);
@@ -227,6 +228,23 @@ const ApplyJob = () => {
 
     if (password.length < 8) {
       setPasswordError('Password must be at least 8 characters long');
+      return;
+    }
+
+    if (!upperCaseRegex.test(password)) {
+      setPasswordError('Password must contain at least one uppercase letter');
+      return;
+    }
+    if (!lowerCaseRegex.test(password)) {
+      setPasswordError('Password must contain at least one lowercase letter');
+      return;
+    }
+    if (!digitsRegex.test(password)) {
+      setPasswordError('Password must contain at least one number');
+      return;
+    }
+    if (!specialCharRegex.test(password)) {
+      setPasswordError('Password must contain at least one special character');
       return;
     }
 

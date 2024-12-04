@@ -12,6 +12,9 @@ import nodemailer from "nodemailer";
 import { jobs } from "../../models/admin/jobs.model.js";
 import { jobStagesStatuses } from "../../config/jobStagesStatuses.js";
 import { uploadToCloudinary } from "../../utils/cloudinary.js";
+import { asyncHandler } from "../../utils/asyncHandler.js";
+import { generateOTP, otpStore } from "../../utils/otp.js";
+import { sendEmail } from "../../utils/sentEmail.js";
 
 // Secret key for JWT (store this in environment variables)
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -570,3 +573,121 @@ export const getCandidateAppliedJobs = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+
+// Request Password Reset / Send OTP
+export const forgotPassword = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+
+  const candidate = await Candidate.findOne({ email });
+  if (!candidate) {
+    res.status(404);
+    throw new Error('Candidate not found');
+  }
+
+  // Generate OTP
+  const otp = generateOTP();
+  
+  // Store OTP with expiry (15 minutes)
+  otpStore.set(email, {
+    otp,
+    expiry: Date.now() + 15 * 60 * 1000
+  });
+
+  // Email content
+  const emailContent = `
+    Hello ${candidate.firstName},
+
+    You have requested to reset your password. 
+    Your OTP is: ${otp}
+
+    This OTP will expire in 15 minutes.
+
+    If you didn't request this, please ignore this email.
+
+    Best regards,
+    HireHive Team
+  `;
+
+  // Send email
+  await sendEmail(
+    email,
+    'Password Reset Request - HireHive',
+    emailContent
+  );
+
+  res.json({ message: 'OTP sent successfully' });
+});
+
+// Verify OTP
+export const verifyOTPForgot = asyncHandler(async (req, res) => {
+  const { email, otp } = req.body;
+
+  const storedOTPData = otpStore.get(email);
+  
+  if (!storedOTPData) {
+    res.status(400);
+    throw new Error('OTP expired or invalid');
+  }
+
+  if (Date.now() > storedOTPData.expiry) {
+    otpStore.delete(email);
+    res.status(400);
+    throw new Error('OTP expired');
+  }
+
+  if (storedOTPData.otp !== otp) {
+    res.status(400);
+    throw new Error('Invalid OTP');
+  }
+
+  res.json({ message: 'OTP verified successfully' });
+});
+
+// Reset Password
+export const resetPassword = asyncHandler(async (req, res) => {
+  const { email, otp, password } = req.body;
+
+  // Verify OTP again
+  const storedOTPData = otpStore.get(email);
+  if (!storedOTPData || storedOTPData.otp !== otp || Date.now() > storedOTPData.expiry) {
+    res.status(400);
+    throw new Error('Invalid or expired OTP');
+  }
+
+  // Find and update user
+  const candidate = await Candidate.findOne({ email });
+  if (!candidate) {
+    res.status(404);
+    throw new Error('Candidate not found');
+  }
+
+  //hash the new password
+  const hashedPassword = await bcrypt.hash(password, 12);
+  
+  // Update password
+  candidate.password = hashedPassword;
+  await candidate.save();
+
+  // Clear OTP
+  otpStore.delete(email);
+
+  // Send confirmation email
+  const emailContent = `
+    Hello ${candidate.firstName},
+
+    Your password has been successfully reset.
+    If you didn't make this change, please contact support immediately.
+
+    Best regards,
+    HireHive Team
+  `;
+
+  await sendEmail(
+    email,
+    'Password Reset Successful - HireHive',
+    emailContent
+  );
+
+  res.json({ message: 'Password reset successful' });
+});

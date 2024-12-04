@@ -57,9 +57,9 @@ const ViewJob = () => {
     };
 
     return (
-        <div className='h-screen flex justify-center bg-main-bg bg-cover'>
+        <div className='min-h-screen flex justify-center bg-main-bg bg-cover'>
 
-            <div className=" flex container flex-col items-center pt-6 mb-6">
+            <div className=" flex container flex-col items-center  p-6">
                 <div className='flex  w-full mb-4 '>
 
 
@@ -97,10 +97,10 @@ const ViewJob = () => {
 
                             {/* Skills section */}
                             <div>
-                                <h4 className="typography-h4 mt-6 mb-3">Skills</h4>
+                                <h4 className="typography-h4 font-bold font-outfit mt-6 mb-3">Skills</h4>
                                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
                                     {formData.skills && formData.skills.map((skill, index) => (
-                                        <span key={index} className="flex justify-center bg-background-70 px-6 py-2 rounded-full">
+                                        <span key={index} className="flex font-outfit justify-center bg-background-70 px-6 py-2 rounded-full">
                                             {skill}
                                         </span>
                                     ))}
