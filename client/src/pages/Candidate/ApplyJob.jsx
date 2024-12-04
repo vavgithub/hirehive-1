@@ -336,44 +336,60 @@ const ApplyJob = () => {
                     name="email"
                     control={control}
                     rules={{
-                      required: true,
+                      required: 'Email is required',
                       pattern: {
-                        value: /^\S+@\S+$/i,
-                        message: 'Invalid email address',
-                      },
+                        value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                        message: 'Please enter a valid email address'
+                      }
                     }}
                     render={({ field }) => (
                       <InputField
-                      id="email"
-                      type="email"
-                      label="Email"
-                      required={true}
-                      error={errors.email}
+                        id="email"
+                        type="email"
+                        label="Email"
+                        required={true}
+                        error={errors.email}
+                        errorMessage={errors.email?.message}
                         {...field}
                       />
                     )}
-                    />
+                  />
                   <Controller
                     name="phoneNumber"
                     control={control}
                     rules={{
-                      required: true,
+                      required: 'Phone number is required',
                       pattern: {
                         value: /^[0-9]{10}$/,
-                        message: 'Invalid phone number',
+                        message: 'Phone number must be exactly 10 digits'
                       },
+                      minLength: {
+                        value: 10,
+                        message: 'Phone number must be exactly 10 digits'
+                      },
+                      maxLength: {
+                        value: 10,
+                        message: 'Phone number must be exactly 10 digits'
+                      }
                     }}
                     render={({ field }) => (
                       <InputField
-                      type="number"
+                        type="number"
                         id="phoneNumber"
                         label="Phone Number"
                         required={true}
                         error={errors.phoneNumber}
+                        errorMessage={errors.phoneNumber?.message}
                         {...field}
-                        />
-                      )}
+                        onChange={(e) => {
+                          const value = e.target.value.replace(/[^0-9]/g, '');
+                          if (value.length <= 10) {
+                            field.onChange(value);
+                          }
+                        }}
                       />
+                    )}
+                  />
                 </div>
               </div>
             )}

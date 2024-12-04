@@ -70,7 +70,7 @@ export const seedQuestions = async () => {
     {
       questionType: 'image',
       text: 'Which UI pattern is demonstrated in this image?',
-      imageUrl: 'https://res.cloudinary.com/djuwzdbwy/image/upload/v1729771697/profile-pictures/1729771694175-2232162-Ai_Profile_wsujvf.png',
+      imageUrl: 'https://res.cloudinary.com/djuwzdbwy/image/upload/v1733340478/hbdvu7wbifvxvoz4u56o.png',
       options: [
         { text: 'Card Layout', isCorrect: true },
         { text: 'List View', isCorrect: false },
@@ -120,7 +120,7 @@ export const seedQuestions = async () => {
     {
       questionType: 'image',
       text: 'Which accessibility principle is violated in this design?',
-      imageUrl: 'https://res.cloudinary.com/djuwzdbwy/image/upload/v1729771697/profile-pictures/1729771694175-2232162-Ai_Profile_wsujvf.png',
+      imageUrl: 'https://res.cloudinary.com/djuwzdbwy/image/upload/v1733340478/hbdvu7wbifvxvoz4u56o.png',
       options: [
         { text: 'Color contrast', isCorrect: true },
         { text: 'Font size', isCorrect: false },
@@ -169,7 +169,7 @@ export const seedQuestions = async () => {
       {
         questionType: 'image',
         text: 'What type of chart is most appropriate for this data visualization?',
-        imageUrl: 'https://res.cloudinary.com/djuwzdbwy/image/upload/v1729771697/profile-pictures/1729771694175-2232162-Ai_Profile_wsujvf.png',
+        imageUrl: 'https://res.cloudinary.com/djuwzdbwy/image/upload/v1733340478/hbdvu7wbifvxvoz4u56o.png',
         options: [
           { text: 'Bar Chart', isCorrect: false },
           { text: 'Line Chart', isCorrect: true },
@@ -218,7 +218,7 @@ export const seedQuestions = async () => {
       {
         questionType: 'image',
         text: 'Which design principle is best illustrated in this layout?',
-        imageUrl: 'https://res.cloudinary.com/djuwzdbwy/image/upload/v1729771697/profile-pictures/1729771694175-2232162-Ai_Profile_wsujvf.png',
+        imageUrl: 'https://res.cloudinary.com/djuwzdbwy/image/upload/v1733340478/hbdvu7wbifvxvoz4u56o.png',
         options: [
           { text: 'Balance', isCorrect: true },
           { text: 'Movement', isCorrect: false },

@@ -71,6 +71,105 @@ export const uploadResumeController = async (req, res) => {
 };
 
 
+// export const registerCandidate = async (req, res) => {
+//   try {
+//     const {
+//       jobId,
+//       firstName,
+//       lastName,
+//       email,
+//       phone,
+//       website,
+//       portfolio,
+//       noticePeriod,
+//       currentCTC,
+//       expectedCTC,
+//       experience,
+//       skills,
+//       questionResponses,
+//       resumeUrl,
+//     } = req.body;
+
+//     const job = await jobs.findById(jobId);
+//     if (!job) {
+//       return res.status(404).json({ message: "Job not found" });
+//     }
+//     const jobApplied = job.jobTitle;
+
+//     const jobStages = getJobStages(job.jobProfile);
+
+//     const existingCandidate = await Candidate.findOne({
+//       $or: [{ email }, { phone }],
+//     });
+
+//     if (existingCandidate) {
+//       return res.status(400).json({ message: "Email or phone number already exists" });
+//     }
+
+//     // Generate OTP and hash it
+//     const otp = generateOtp();
+//     const hashedOtp = crypto.createHash("sha256").update(otp).digest("hex");
+
+//     const initialStageStatuses = {};
+//     jobStages.forEach((stage, index) => {
+//       const initialStatus = index === 0 
+//         ? stage.statuses[0] 
+//         : stage.statuses.find(status => status.toLowerCase().includes('not assigned')) || stage.statuses[0];
+//       initialStageStatuses[stage.name] = {
+//         status: initialStatus,
+//         rejectionReason: "N/A",
+//         assignedTo: null,
+//         score: {},
+//         currentCall: null,
+//         callHistory: [],
+//       };
+//     });
+
+//     // Professional info object
+//     const professionalInfo = {
+//       website,
+//       portfolio,
+//       noticePeriod,
+//       currentCTC,
+//       expectedCTC,
+//       experience,
+//       skills,
+//     };
+
+//     // Create new candidate with job application data
+//     const newCandidate = new Candidate({
+//       firstName,
+//       lastName,
+//       email,
+//       phone,
+//       ...professionalInfo, // Add professional info to global candidate data
+//       otp: hashedOtp,
+//       otpExpires: Date.now() + 10 * 60 * 1000,
+//       jobApplications: [
+//         {          
+//           jobId,
+//           jobApplied,
+//           questionResponses,
+//           applicationDate: new Date(),
+//           currentStage: jobStages[0]?.name || "",
+//           stageStatuses: initialStageStatuses,
+//           resumeUrl,
+//           professionalInfo // Also include professional info in the job application
+//         },
+//       ],
+//     });
+
+//     await newCandidate.save();
+//     await sendOtpEmail(email, otp);
+
+//     res.status(200).json({ message: "Candidate registered. OTP sent to email." });
+//   } catch (error) {
+//     console.error("Error registering candidate:", error);
+//     res.status(500).json({ message: "Server error" });
+//   }
+// };
+
+
 export const registerCandidate = async (req, res) => {
   try {
     const {
@@ -98,12 +197,29 @@ export const registerCandidate = async (req, res) => {
 
     const jobStages = getJobStages(job.jobProfile);
 
-    const existingCandidate = await Candidate.findOne({
-      $or: [{ email }, { phone }],
-    });
+    // Check for existing email and phone separately
+    const existingEmail = await Candidate.findOne({ email });
+    const existingPhone = await Candidate.findOne({ phone });
 
-    if (existingCandidate) {
-      return res.status(400).json({ message: "Email or phone number already exists" });
+    if (existingEmail && existingPhone) {
+      return res.status(400).json({ 
+        message: "Email and phone number already exist",
+        field: "both"
+      });
+    }
+    
+    if (existingEmail) {
+      return res.status(400).json({ 
+        message: "Email already exists",
+        field: "email"
+      });
+    }
+
+    if (existingPhone) {
+      return res.status(400).json({ 
+        message: "Phone number already exists",
+        field: "phone"
+      });
     }
 
     // Generate OTP and hash it
@@ -142,7 +258,7 @@ export const registerCandidate = async (req, res) => {
       lastName,
       email,
       phone,
-      ...professionalInfo, // Add professional info to global candidate data
+      ...professionalInfo,
       otp: hashedOtp,
       otpExpires: Date.now() + 10 * 60 * 1000,
       jobApplications: [
@@ -154,7 +270,7 @@ export const registerCandidate = async (req, res) => {
           currentStage: jobStages[0]?.name || "",
           stageStatuses: initialStageStatuses,
           resumeUrl,
-          professionalInfo // Also include professional info in the job application
+          professionalInfo
         },
       ],
     });
