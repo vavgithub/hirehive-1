@@ -29,6 +29,7 @@ import { useAuthContext } from '../../context/AuthProvider';
 import BudgetIcon from '../../svg/Staging/BudgetIcon';
 import RightTick from '../../svg/Staging/RightTick';
 import ClosedBadge from '../../svg/ClosedBadge';
+import useScheduler from '../../hooks/useScheduler';
 
 
 const ScreeningReview = ({ candidate, onSubmit }) => {
@@ -194,8 +195,9 @@ const Screening = ({ candidateId, jobId , isClosed}) => {
 
     // Add this line outside renderContent
     const isDisabled = stageData?.status === 'Rejected' || stageData?.status === 'Cleared' || stageData?.status === 'Reviewed';
-
-
+    
+    const data = useScheduler(candidateData,stageData,"Under Review")    
+    
     const { user } = useAuthContext();
     const role = user?.role || 'Candidate';
 

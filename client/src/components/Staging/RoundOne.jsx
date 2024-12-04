@@ -25,6 +25,7 @@ import { useAuthContext } from '../../context/AuthProvider';
 import Scorer from '../ui/Scorer';
 import RightTick from '../../svg/Staging/RightTick';
 import ClosedBadge from '../../svg/ClosedBadge';
+import useScheduler from '../../hooks/useScheduler';
 
 const RoundReview = ({ candidate, onSubmit }) => {
     const [rating, setRating] = useState(0);
@@ -70,6 +71,7 @@ const RoundOne = ({ candidateId, jobId ,isClosed}) => {
     const isDisabled = stageData?.status === 'Rejected' || stageData?.status === 'Cleared' || stageData?.status === 'Reviewed';
 
    
+    const data = useScheduler(candidateData,stageData,"Under Review")    
 
 
     const submitReview = async ({ candidateId, reviewData }) => {
