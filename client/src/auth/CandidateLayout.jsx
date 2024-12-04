@@ -20,15 +20,29 @@ const CandidateLayout = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   // Get candidate data from Redux store
-  const { candidateData, isAuthenticated } = useCandidateAuth()
+  const { candidateData, isAuthenticated, isDone } = useCandidateAuth();
 
   // Initialize modal visibility state based on assessment status
-  const [isAssessmentModalVisible, setIsAssessmentModalVisible] = useState(
-    candidateData && !candidateData.hasGivenAssessment
-  );
-  const [isAssessmentBannerVisible, setIsAssessmentBannerVisible] = useState(
-    candidateData && !candidateData.hasGivenAssessment
-  );
+  const [isAssessmentModalVisible, setIsAssessmentModalVisible] = useState(false);
+  const [isAssessmentBannerVisible, setIsAssessmentBannerVisible] = useState(false);
+
+  // Update visibility states when component mounts and when candidateData updates
+  useEffect(() => {
+    if (isDone && candidateData) {
+      console.log('Candidate data updated:', candidateData);
+      console.log('Assessment status:', candidateData.hasGivenAssessment);
+      setIsAssessmentModalVisible(!candidateData.hasGivenAssessment);
+      setIsAssessmentBannerVisible(!candidateData.hasGivenAssessment);
+    }
+  }, [candidateData, isDone]);
+
+  // Add cleanup on unmount
+  useEffect(() => {
+    return () => {
+      setIsAssessmentModalVisible(false);
+      setIsAssessmentBannerVisible(false);
+    };
+  }, []);
 
   const handleLogout = async () => {
     try {

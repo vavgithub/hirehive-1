@@ -49,6 +49,11 @@ const candidateAuthSlice = createSlice({
   reducers: {
     clearAuthError: (state) => {
       state.authError = null;
+    },
+    updateAssessmentStatus: (state) => {
+      if (state.candidateAuthData) {
+        state.candidateAuthData.hasGivenAssessment = true;
+      }
     }
   },
   extraReducers: (builder) => {
@@ -96,5 +101,5 @@ const candidateAuthSlice = createSlice({
   }
 });
 
-export const { clearAuthError } = candidateAuthSlice.actions;
+export const { clearAuthError, updateAssessmentStatus } = candidateAuthSlice.actions;
 export default candidateAuthSlice.reducer;

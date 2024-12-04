@@ -421,7 +421,7 @@ const ApplyJob = () => {
                 <label className="typography-body">Resume<span className="text-red-100">*</span></label>
                 <div
                   {...getRootProps({
-                    className: `bg-background-40 rounded-xl p-5 text-center cursor-pointer ${isDragActive ? 'border-teal-500 bg-teal-50' : 'border-gray-300'
+                    className: `bg-background-40 rounded-xl mt-2 p-5 text-center cursor-pointer ${isDragActive ? 'border-teal-500 bg-teal-50' : 'border-gray-300'
                       }`,
                   })}
                 >

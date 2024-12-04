@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Webcam from 'react-webcam';
 import { ChevronUp, ChevronDown, Camera, Mic } from 'lucide-react';
@@ -9,6 +9,7 @@ import Loader from '../../components/ui/Loader';
 import axios from "../../api/axios";
 import { showSuccessToast, showErrorToast } from '../../components/ui/Toast';
 import LightLogo from "../../svg/Logo/lightLogo.svg"
+import { fetchCandidateAuthData, updateAssessmentStatus } from '../../redux/candidateAuthSlice';
 
 // Utility function to format time
 const formatTime = (time) => {
@@ -75,10 +76,10 @@ const QuestionSidebar = ({ questions, currentQuestion, onQuestionSelect, answers
         <div
           key={q._id}
           className={`typography-body py-2 pl-4 my-2 cursor-pointer rounded flex items-center justify-between ${currentQuestion === index
-              ? 'text-font-accent'
-              : answers[q._id]
-                ? 'text-green-100'
-                : 'text-font-gray hover:bg-background-60'
+            ? 'text-font-accent'
+            : answers[q._id]
+              ? 'text-green-100'
+              : 'text-font-gray hover:bg-background-60'
             }`}
           onClick={() => onQuestionSelect(index)}
         >
@@ -226,6 +227,7 @@ const UploadProgressOverlay = ({ uploadProgress }) => (
 // Main Assessment Component
 const Assessment = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [startTime] = useState(Date.now());
   const { candidateAuthData, isAuthenticatedCandidate } = useSelector(
     (state) => state.candidateAuth
@@ -539,7 +541,12 @@ const Assessment = () => {
         throw error;
       }
     },
-    onSuccess: (data) => {
+    onSuccess:async (data) => {
+      // Update Redux state
+      dispatch(updateAssessmentStatus());
+
+      // Refetch candidate data to ensure everything is in sync
+      await dispatch(fetchCandidateAuthData()).unwrap();
       showSuccessToast('Success', 'Assessment submitted successfully');
       navigate('/candidate/my-jobs');
     },

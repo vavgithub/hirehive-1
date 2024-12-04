@@ -153,7 +153,7 @@ const JobCard = ({
   </div>
       }
   {(job.status === 'closed' || job.status === 'deleted' ) && (
-        <div className="flex p-4 w-fit">
+        <div className="flex px-4 pb-4 w-fit">
           <p className="typography-body text-font-gray mr-2 whitespace-nowrap">
             Closure Reason :
           </p>
