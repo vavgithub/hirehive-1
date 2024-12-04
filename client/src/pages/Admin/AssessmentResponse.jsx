@@ -18,12 +18,19 @@ const VideoModal = ({ isOpen, onClose, videoUrl }) => {
     if (!isOpen) return null;
   
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div className="bg-background-90 rounded-xl p-6 relative w-[80%] max-w-4xl">
+      <div className="fixed inset-0 flex items-center justify-center z-50">
+        {/* Blurred backdrop */}
+        <div 
+          className="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-md"
+          onClick={onClose} // Close modal when clicking backdrop
+        />
+  
+        {/* Modal content */}
+        <div className="bg-background-90  rounded-xl p-6 relative w-[80%] max-w-4xl z-10">
           {/* Close button */}
           <button 
             onClick={onClose}
-            className="absolute top-4 right-4 p-2 hover:bg-background-80 rounded-full transition-colors"
+            className="absolute -top-0 -right-0 p-2 bg-background-90 hover:bg-background-80 rounded-full transition-colors z-20"
           >
             <X className="w-6 h-6 text-font-gray" />
           </button>
@@ -32,7 +39,7 @@ const VideoModal = ({ isOpen, onClose, videoUrl }) => {
           <h2 className="typography-h2 mb-4">Assessment Recording</h2>
   
           {/* Video container with loader */}
-          <div className="relative aspect-video w-full bg-background-80 rounded-lg">
+          <div className="relative aspect-video w-full bg-background-80 rounded-lg overflow-hidden">
             {isLoading && (
               <div className="absolute inset-0 flex items-center justify-center">
                 <Loader />
@@ -56,6 +63,7 @@ const VideoModal = ({ isOpen, onClose, videoUrl }) => {
       </div>
     );
   };
+  
   
 
 const Wronganswer = () => {
