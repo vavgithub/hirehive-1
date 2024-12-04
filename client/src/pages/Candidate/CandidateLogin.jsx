@@ -91,7 +91,7 @@ const CandidateLogin = () => {
         {/* Right section with login form */}
         <div className="w-full lg:w-1/2 bg-background-30 p-4 md:p-28   flex flex-col justify-center">
         {showForgotPassword ? (
-                      <ForgotPassword onBack={() => setShowForgotPassword(false)} />
+                      <ForgotPassword role="Candidate" onBack={() => setShowForgotPassword(false)} />
                   ) : (
                     <>
 

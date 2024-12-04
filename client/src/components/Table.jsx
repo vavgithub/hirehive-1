@@ -375,6 +375,15 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
       headerName: 'Phone',
       width: 130,
     },
+    ...(role === 'Hiring Manager' ? [
+      {
+        field: 'expectedCTC',
+        headerName: 'Expected CTC',
+        width: 130,
+        align :'center',
+        headerAlign : 'center'
+      }, 
+    ] : []), 
     {
       field: 'experience',
       headerName: "Experience",
@@ -410,16 +419,7 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
       field: 'jobTitle',
       headerName: 'Applied For',
       width: 200,
-    },
-    ...(role === 'Hiring Manager' ? [
-      {
-        field: 'expectedCTC',
-        headerName: 'Expected CTC',
-        width: 130,
-        align :'center',
-        headerAlign : 'center'
-      }, 
-    ] : []),   
+    },  
   ];
 
   const defaultColumns = [
@@ -762,6 +762,15 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
           '& .MuiTablePagination-selectIcon': {
             color: 'white',
           },
+          '& .MuiTablePagination-selectLabel ' :{
+            fontFamily :"Outfit",
+          },
+          '& .MuiTablePagination-select ' :{
+            fontFamily :"Outfit",
+          },
+          '& .MuiTablePagination-displayedRows' :{
+            fontFamily :"Outfit",
+          },
           '& .MuiSvgIcon-root': {
             color:"white"
           },
@@ -786,6 +795,13 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
           backgroundColor: 'black',
           '& .MuiDataGrid-virtualScroller': {
             backgroundColor: 'transparent ' , // Ensure the background behind rows is also transparent
+          },
+          '& .MuiDataGrid-scrollbarFiller' :{
+            minWidth: "0px !important"
+          },
+          '& .MuiDataGrid-scrollbar' :{
+              display: "none",
+              background : "transparent"
           },
           '& .MuiDataGrid-overlayWrapper':{
             height:"3rem",
@@ -865,14 +881,22 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
           }
         }}
       >
-        <div className='flex items-center justify-evenly px-4 typograhy-body '>
+        <div className='flex items-center justify-start px-4 typograhy-body '>
           <EditIcon />
-          <MenuItem onClick={handleBudgetEdit}>Edit</MenuItem>
+          <MenuItem
+          sx={{
+            fontFamily :"Outfit",
+          }}
+          onClick={handleBudgetEdit}>Edit</MenuItem>
 
         </div>
-        <div className='flex items-center justify-evenly px-4 typograhy-body '>
+        <div className='flex items-center justify-start px-4 typograhy-body '>
           <DeleteIcon />
-          <MenuItem onClick={handleBudgetClear}>Clear</MenuItem>
+          <MenuItem 
+          sx={{
+            fontFamily :"Outfit",
+          }}
+          onClick={handleBudgetClear}>Clear</MenuItem>
         </div>
       </Menu>
 

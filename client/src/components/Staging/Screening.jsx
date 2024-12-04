@@ -194,8 +194,6 @@ const Screening = ({ candidateId, jobId , isClosed}) => {
 
     // Add this line outside renderContent
     const isDisabled = stageData?.status === 'Rejected' || stageData?.status === 'Cleared' || stageData?.status === 'Reviewed';
-
-
     const { user } = useAuthContext();
     const role = user?.role || 'Candidate';
 
@@ -389,36 +387,38 @@ const Screening = ({ candidateId, jobId , isClosed}) => {
         updateAssigneeMutation.mutate(newAssignee);
     };
 
-    const renderCallDetails = (call) => (
-        <div className='bg-background-80 grid grid-cols-3 rounded-xl p-4'>
+    const renderCallDetails = (call,isRescheduled) => (
+        <div className={(isRescheduled && "w-[43%] " ) +' bg-background-80 flex justify-between items-center rounded-xl p-4'}>
             <div className='flex flex-col'>
-                <span className='typography-small-p text-font-gray'>Date</span>
-                <div className='flex items-center gap-2'>
-                    <CalenderIcon />
-                    <h2>
+                {!isRescheduled && <span className='typography-small-p text-font-gray'>Date</span>}
+                <div className={(isRescheduled && "text-font-gray ") +' flex items-center gap-2'}>
+                    <CalenderIcon customStroke={"#808389"} />
+                    <h2 className={isRescheduled && 'typography-body'}>
                         {new Date(call?.scheduledDate).toLocaleDateString('en-US', { timeZone: 'UTC' })}
                     </h2>
                 </div>
             </div>
+            {isRescheduled && <div className='w-1 h-1 border-font-gray bg-font-gray border-[1px] rounded-full '></div>}
             <div className='flex flex-col'>
-                <span className='typography-small-p text-font-gray'>Time</span>
-                <div className='flex items-center gap-2'>
-                    <ClockIcon />
-                    <h2>
+                {!isRescheduled && <span className='typography-small-p text-font-gray'>Time</span>}
+                <div className={(isRescheduled && "text-font-gray ") +' flex items-center gap-2'}>
+                    <ClockIcon customStroke={"#808389"} />
+                    <h2 className={isRescheduled && 'typography-body'}>
                         {formatTime(call?.scheduledTime)}
                     </h2>
                 </div>
             </div>
+            {isRescheduled && <div className='w-1 h-1 border-font-gray bg-font-gray border-[1px] rounded-full '></div>}
             <div className='flex flex-col '>
-                <span className='typography-small-p text-font-gray'>Meeting Link</span>
-                <div className='flex items-center gap-2'>
-                    <LinkIcon />
-                    <h2 className='mr-2 text-font-primary'>screening_meeting_link</h2>
-                    <CopyToClipboard text={call?.meetingLink}>
+                {!isRescheduled && <span className='typography-small-p text-font-gray'>Meeting Link</span>}
+                <div className={(isRescheduled && "text-font-gray ") +' flex items-center gap-2'}>
+                    <LinkIcon customStroke={"#808389"} />
+                    <h2 className={(isRescheduled ? "text-font-gray typography-body " : "text-font-primary" ) + ' mr-2 '}>screening_meeting_link</h2>
+                    {!isRescheduled && <CopyToClipboard text={call?.meetingLink}>
                         <button className='flex items-center bg-background-70 px-[10px] py-[10px] rounded-xl'>
                             <ClipboardIcon />
                         </button>
-                    </CopyToClipboard>
+                    </CopyToClipboard>}
                 </div>
             </div>
         </div>
@@ -441,7 +441,7 @@ const Screening = ({ candidateId, jobId , isClosed}) => {
                 return (
                     <div className='flex flex-col gap-4'>
                         <Label icon={WarningIcon} text={"The screening call has been scheduled. You can reschedule if needed."} />
-                        <h3 className='typography-h3'>Current Call</h3>
+                        <h3 className='typography-small-p text-font-gray mt-1'>Active Schedule</h3>
                         {renderCallDetails(stageData?.currentCall)}
                         {!isRescheduling && (
                             <div className='w-full flex justify-end '>
@@ -548,14 +548,14 @@ const Screening = ({ candidateId, jobId , isClosed}) => {
             <div className='w-full'>
                 <div className='flex flex-col justify-between gap-4'>
                     <div className='w-full'>
-                        <p className='typography-small-p text-font-gray'>Feedback</p>
+                        <p className='typography-small-p text-font-gray'>Remarks</p>
                         <p className='typography-body pb-2'>{stageData?.feedback}</p>
                     </div>
                     <div className='flex gap-4 pb-4 w-full'>
                         <div className='w-full flex  flex-col'>
                             <p className='typography-small-p text-font-gray mb-4'>Score</p>
                             <div className='grid grid-cols-2 gap-4'>
-                                <div className='p-2   rounded-xl bg-background-60'>
+                                <div className='p-2   rounded-xl bg-background-60 flex min-h-[115px]'>
                                     {renderScoreCategories()}
                                 </div>
                                 <div>
@@ -609,12 +609,14 @@ const Screening = ({ candidateId, jobId , isClosed}) => {
             { label: 'Budget', value: stageData?.score?.Budget },
         ];
 
-        return categories.map((category, index) => (
-            <div key={index} className='flex items-center w-full justify-between'>
-                <span className='typography-small-p text-font-gray'>{category.label}</span>
-                <BulletMarks marks={category.value} />
-            </div>
-        ));
+        return (<div className='grid grid-cols-3 gap-3 w-full px-6 '>
+            {categories.map((category, index) => (
+                <div key={index} className='flex items-center w-full justify-between'>
+                    <span className='typography-body text-font-gray'>{category.label}</span>
+                    <BulletMarks marks={category.value} />
+                </div>
+            ))}
+        </div>)
     };
 
     // const renderBudgetScoreSection = () => (
@@ -649,11 +651,11 @@ const Screening = ({ candidateId, jobId , isClosed}) => {
         if (stageData.callHistory && stageData.callHistory.length > 0) {
             return (
                 <div className='mt-4'>
-                    <h3 className='typography-h3'>Previous Calls</h3>
+                    <h3 className='typography-small-p text-font-gray mt-1'>Reschedules</h3>
                     {stageData.callHistory.map((call, index) => (
                         <div key={index} className='mt-2'>
-                            {renderCallDetails(call)}
-                            <p className='typography-small-p text-font-gray mt-1'>Status: {call.status}</p>
+                            {renderCallDetails(call,true)}
+                            <p className='typography-small-p text-font-gray mt-3'>Status: {call.status}</p>
                         </div>
                     ))}
                 </div>
@@ -686,7 +688,10 @@ const Screening = ({ candidateId, jobId , isClosed}) => {
                 minHeight : "10rem"
             }}
         >
-            <CardContent>
+            <CardContent
+            sx={{
+                padding :"28px"
+            }}>
                 <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
                     <div className='flex'>
                         <h3 className='typography-h3 mr-10'>Screening</h3>
