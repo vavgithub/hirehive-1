@@ -326,7 +326,7 @@ const Dashboard = () => {
                     <div className='w-full ml-4'>
                         <div className='flex justify-end '>
                             {
-                                activeTab == "open" && displayJobs.length != 0 && (
+                                activeTab == "open" && displayJobs.length != 0 && displayJobs.filter(job=>job.status === "open").length !== 0 && (
                                     <div className="w-[216px] mb-4">
                                         <Button variant="primary" icon={Create} iconPosition="left" onClick={() => { navigate("/admin/create-job") }}>Create A Job Listing</Button>
                                     </div>
@@ -337,8 +337,8 @@ const Dashboard = () => {
                             <div className="flex justify-center items-center min-h-[400px]">
                                 <Loader />
                             </div>
-                        ) : displayJobs.length === 0 ? (
-                            <div className='bg-background-80 flex flex-col p-40 justify-center items-center rounded-xl'>
+                        ) : (displayJobs.length === 0 || displayJobs.filter(job=>job.status === activeTab).length === 0) ? (
+                            <div className='bg-background-80 h-full flex flex-col p-40 justify-center items-center rounded-xl'>
                                 <img src={NoJobs} alt="No jobs found" />
                                 <span className='typography-body m-6'>
                                     Create a job post to attract top talent and build your dream team
@@ -358,15 +358,13 @@ const Dashboard = () => {
                             displayJobs
                                 .filter(job => job.status === activeTab)
                                 .map((job) => (
-                                    <JobCard
-                                        key={job._id}
-                                        job={job}
-                                        isAdmin={true}
-                                        withKebab={true}
-                                        page={currentPage}
-                                        status={activeTab}
-                                        handleAction={handleAction}
-                                        onClick={() => handleViewJob(job._id)}
+                                    <JobCard 
+                                    key={job._id} job={job}
+                                    isAdmin={true} withKebab={true} page={currentPage}
+                                    status={activeTab}
+                                    handleAction={handleAction} 
+                                    onClick={job.status==="deleted" ? undefined :
+                                    ()=> handleViewJob(job._id)}
                                     />
                                 ))
                         )}

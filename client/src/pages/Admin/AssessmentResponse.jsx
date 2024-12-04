@@ -1,12 +1,70 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Header from '../../components/utility/Header';
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
 import axios from '../../api/axios';
-import { Phone, Mail, Circle } from 'lucide-react';
+import { Phone, Mail, Circle, X } from 'lucide-react';
 import PhoneIcon from '../../svg/PhoneIcon';
 import EmailIcon from '../../svg/EmailIcon';
+import { Button } from '../../components/ui/Button';
+import { showErrorToast } from '../../components/ui/Toast';
+import Loader from '../../components/ui/Loader';
 
+
+// Create a VideoModal component
+const VideoModal = ({ isOpen, onClose, videoUrl }) => {
+    const [isLoading, setIsLoading] = useState(true);
+  
+    if (!isOpen) return null;
+  
+    return (
+      <div className="fixed inset-0 flex items-center justify-center z-50">
+        {/* Blurred backdrop */}
+        <div 
+          className="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-md"
+          onClick={onClose} // Close modal when clicking backdrop
+        />
+  
+        {/* Modal content */}
+        <div className="bg-background-90  rounded-xl p-6 relative w-[80%] max-w-4xl z-10">
+          {/* Close button */}
+          <button 
+            onClick={onClose}
+            className="absolute -top-0 -right-0 p-2 bg-background-90 hover:bg-background-80 rounded-full transition-colors z-20"
+          >
+            <X className="w-6 h-6 text-font-gray" />
+          </button>
+  
+          {/* Video title */}
+          <h2 className="typography-h2 mb-4">Assessment Recording</h2>
+  
+          {/* Video container with loader */}
+          <div className="relative aspect-video w-full bg-background-80 rounded-lg overflow-hidden">
+            {isLoading && (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <Loader />
+              </div>
+            )}
+            
+            <video 
+              src={videoUrl}
+              controls
+              className="w-full h-full rounded-lg"
+              onLoadedData={() => setIsLoading(false)}
+              onError={(e) => {
+                console.error('Video loading error:', e);
+                setIsLoading(false);
+              }}
+            >
+              Your browser does not support the video element.
+            </video>
+          </div>
+        </div>
+      </div>
+    );
+  };
+  
+  
 
 const Wronganswer = () => {
     return (
@@ -35,6 +93,10 @@ const fetchAssessmentDetails = async (candidateId) => {
 };
 
 const AssessmentResponse = () => {
+
+    // Add state for modal
+    const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
+
     const { id: candidateId } = useParams();
 
     const { data, isLoading, isError } = useQuery({
@@ -59,14 +121,25 @@ const AssessmentResponse = () => {
     }
 
     const assessmentData = data?.data;
+    console.log("cehck this" , assessmentData);
 
 
     const assessmentStat = data?.data
-  
+
+    // Update the button click handler
+    const handleOpenRecording = () => {
+        if (assessmentData?.candidateInfo?.recordingUrl) {
+            setIsVideoModalOpen(true);
+        } else {
+            // Handle case when no recording is available
+            showErrorToast('No recording available for this assessment');
+        }
+    };
+
 
     return (
-        <div >
-            <div className="p-7">
+        <div className='container'>
+            <div className="p-4">
                 <Header withBack={"true"} HeaderText="Assessment details" />
 
                 {/* Top Section with Candidate Info and Score */}
@@ -74,22 +147,22 @@ const AssessmentResponse = () => {
                     {/* Candidate Info Card */}
                     <div className="bg-background-90 rounded-xl p-6 flex-grow">
                         <div className="flex gap-4">
-                            <div className="w-16 h-16 rounded-full bg-gray-200 overflow-hidden">
+                            <div className="to-background-100 w-[180px] rounded-xl overflow-hidden">
                                 <img
-                                    src="/api/placeholder/64/64"
+                                    src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg"
                                     alt={assessmentData?.candidateInfo?.name}
                                     className="w-full h-full object-cover"
                                 />
                             </div>
 
-                            <div className="flex flex-col">
+                            <div className="flex flex-col justify-between w-full">
                                 <h2 className="typography-h2">
                                     {assessmentData?.candidateInfo?.name}
                                 </h2>
 
 
                                 <div className="flex items-center gap-2 my-2">
-                                    <span className="text-font-gray">UX Design Level 1: Figma Skill</span>
+                                    <span className="text-white text-xl font-semibold">UX Design Level 1: Figma Skill</span>
                                     <Circle className="w-1 h-1 text-font-gray" />
                                 </div>
 
@@ -98,48 +171,55 @@ const AssessmentResponse = () => {
                                 <div className="flex mb-3 gap-5">
                                     <div className="flex items-center gap-2">
                                         <PhoneIcon />
-                                        <span className="typography-large-p">{assessmentData?.candidateInfo?.phone}</span>
+                                        <span className="text-font-gray typography-large-p">{assessmentData?.candidateInfo?.phone}</span>
                                     </div>
                                     <div className="flex items-center gap-2">
                                         <EmailIcon />
-                                        <span className="typography-large-p">{assessmentData?.candidateInfo?.email}</span>
+                                        <span className="text-font-gray typography-large-p">{assessmentData?.candidateInfo?.email}</span>
                                     </div>
                                 </div>
 
-                                <div className='grid grid-cols-3'>
-                                    <div>
-                                        <p className='typography-small-p text-font-gray'>
-                                            Correct Answered
-                                        </p>
-                                        <p className='typography-large-p'>
-                                            {assessmentData?.assessmentStats?.correctAnswers} / 
-                                            {assessmentData?.assessmentStats?.totalQuestions}  
-                                            
-                                        </p>
+                                <div className='flex justify-between'>
+                                    <div className='grid grid-cols-3 gap-x-6'>
+                                        <div>
+                                            <p className='typography-small-p text-font-gray'>
+                                                Correct Answered
+                                            </p>
+                                            <p className='typography-large-p'>
+                                                {assessmentData?.assessmentStats?.correctAnswers} /
+                                                {assessmentData?.assessmentStats?.totalQuestions}
+
+                                            </p>
+                                        </div>
+
+                                        <div>
+                                            <p className='typography-small-p text-font-gray'>
+                                                Finished on
+                                            </p>
+                                            <p className='typography-large-p'>
+                                                Aug 03, 2023
+                                            </p>
+                                        </div>
+
+                                        <div>
+                                            <p className='typography-small-p text-font-gray'>
+                                                Time taken
+                                            </p>
+                                            <p className='typography-large-p'>
+                                                {assessmentData?.candidateInfo?.totalTimeSpent}
+                                            </p>
+                                        </div>
+
+                                        <div>
+
+                                        </div>
+
+
                                     </div>
+                                    <div className='w-[204px]'>
 
-                                    <div>
-                                        <p className='typography-small-p text-font-gray'>
-                                            Finished on
-                                        </p>
-                                        <p className='typography-large-p'>
-                                            Aug 03, 2023
-                                        </p>
+                                        <Button onClick={handleOpenRecording}>Assesment Recording</Button>
                                     </div>
-
-                                    <div>
-                                        <p className='typography-small-p text-font-gray'>
-                                            Time taken
-                                        </p>
-                                        <p className='typography-large-p'>
-                                            {assessmentData?.candidateInfo?.totalTimeSpent}
-                                        </p>
-                                    </div>
-
-                                    <div>
-
-                                    </div>
-
 
                                 </div>
 
@@ -148,14 +228,14 @@ const AssessmentResponse = () => {
                     </div>
 
                     <div className="flex bg-stars flex-col items-center  w-[240px] bg-cover p-5 rounded-xl">
-                            <h3 className="typography-h3">SCORE</h3>
-                            <div className='bg-background-80'>
+                        <h3 className="typography-h3">SCORE</h3>
+                        <div className='bg-background-80'>
 
                             <span className="marks text-font-primary">{assessmentData?.assessmentStats?.scoreOutOf100}</span>
-                            </div>
-                                    
-                            <p className="typography-large-p">Out of 100</p>
                         </div>
+
+                        <p className="typography-large-p">Out of 100</p>
+                    </div>
 
                     {/* Score Card */}
                     {/* <div className="bg-background-90 rounded-xl p-6 w-80 flex flex-col items-center justify-center">
@@ -173,11 +253,11 @@ const AssessmentResponse = () => {
 
                 {/* Question Progress Indicators */}
                 <div className="bg-background-90 rounded-xl p-4 mb-6">
-                    <div className="flex justify-between gap-2 ">
+                    <div className="grid grid-cols-10 justify-between gap-4">
                         {assessmentData?.questionResponses.map((response, index) => (
                             <div
                                 key={response.questionId}
-                                className={`p-8 typography-h3 relative w-14 h-8 rounded-md flex bg-background-80 items-center justify-center ${response.isCorrect ? 'bg-background-80' : 'bg-background-80'
+                                className={`p-8 typography-h3 relative  h-8 rounded-md flex bg-background-80 items-center justify-center ${response.isCorrect ? 'bg-background-80' : 'bg-background-80'
                                     } text-white`}
                             >
                                 <div className={`absolute right-1 top-1 w-4 h-4  flex bg-background-80 items-center justify-center text-white`}>
@@ -194,9 +274,9 @@ const AssessmentResponse = () => {
                 <div className='bg-background-90 rounded-xl'>
                     <h1 className='typography-h1 px-6 py-3 '>Question</h1>
                     {/* Questions List */}
-                    <div className="space-y-4">
+                    <div className="space-y-4 bg-background-80">
                         {assessmentData?.questionResponses.map((response, index) => (
-                            <div key={response.questionId} className="bg-background-80 rounded-xl p-6">
+                            <div key={response.questionId} className=" rounded-xl p-6">
                                 <h3 className="typography-h3 mb-4">
                                     Q{index + 1}. {response.questionDetails.text}
                                 </h3>
@@ -227,6 +307,12 @@ const AssessmentResponse = () => {
                     </div>
                 </div>
             </div>
+
+            <VideoModal
+                isOpen={isVideoModalOpen}
+                onClose={() => setIsVideoModalOpen(false)}
+                videoUrl={assessmentData?.candidateInfo?.recordingUrl}
+            />
         </div>
     );
 };

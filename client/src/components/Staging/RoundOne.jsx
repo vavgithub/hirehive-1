@@ -24,6 +24,8 @@ import { Button } from '../ui/Button';
 import { useAuthContext } from '../../context/AuthProvider';
 import Scorer from '../ui/Scorer';
 import RightTick from '../../svg/Staging/RightTick';
+import ClosedBadge from '../../svg/ClosedBadge';
+import useScheduler from '../../hooks/useScheduler';
 
 const RoundReview = ({ candidate, onSubmit }) => {
     const [rating, setRating] = useState(0);
@@ -56,7 +58,7 @@ const RoundReview = ({ candidate, onSubmit }) => {
     );
 };
 
-const RoundOne = ({ candidateId, jobId }) => {
+const RoundOne = ({ candidateId, jobId ,isClosed}) => {
     const { user } = useAuthContext();
     const role = user?.role || 'Candidate'; // Default to Candidate if role is not specified
     const dispatch = useDispatch();
@@ -69,6 +71,7 @@ const RoundOne = ({ candidateId, jobId }) => {
     const isDisabled = stageData?.status === 'Rejected' || stageData?.status === 'Cleared' || stageData?.status === 'Reviewed';
 
    
+    const data = useScheduler(candidateData,stageData,"Under Review")    
 
 
     const submitReview = async ({ candidateId, reviewData }) => {
@@ -419,6 +422,8 @@ const RoundOne = ({ candidateId, jobId }) => {
                 borderRadius: "12px",
                 color: "white",
                 fontFamily: 'Outfit, sans-serif',
+                position : "relative",
+                minHeight : "10rem"
             }}
         >
             <CardContent>
@@ -426,9 +431,15 @@ const RoundOne = ({ candidateId, jobId }) => {
                     <div className='flex'>
                         <h3 className='typography-h3 mr-10'>Round 1</h3>
                         {/* ... other content ... */}
+                        {
+                            isClosed && 
+                            <div className='absolute top-0  right-0 flex items-center justify-center h-full'>
+                                <ClosedBadge />
+                            </div>
+                        }
                     </div>
                     <Box display="flex" alignItems="center">
-                        <StatusBadge status={stageData?.status} />
+                        {isClosed || <StatusBadge status={stageData?.status} />}
                         {role === 'Hiring Manager' && (
                             <AssigneeSelector
                                 mode="icon"

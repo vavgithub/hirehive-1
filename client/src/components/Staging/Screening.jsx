@@ -28,6 +28,8 @@ import Scorer from '../ui/Scorer';
 import { useAuthContext } from '../../context/AuthProvider';
 import BudgetIcon from '../../svg/Staging/BudgetIcon';
 import RightTick from '../../svg/Staging/RightTick';
+import ClosedBadge from '../../svg/ClosedBadge';
+import useScheduler from '../../hooks/useScheduler';
 
 
 const ScreeningReview = ({ candidate, onSubmit }) => {
@@ -182,7 +184,7 @@ export const ScheduleForm = ({ candidateId, jobId, onSubmit, isRescheduling, ini
     );
 };
 
-const Screening = ({ candidateId, jobId }) => {
+const Screening = ({ candidateId, jobId , isClosed}) => {
 
 
     const dispatch = useDispatch();
@@ -193,8 +195,9 @@ const Screening = ({ candidateId, jobId }) => {
 
     // Add this line outside renderContent
     const isDisabled = stageData?.status === 'Rejected' || stageData?.status === 'Cleared' || stageData?.status === 'Reviewed';
-
-
+    
+    const data = useScheduler(candidateData,stageData,"Under Review")    
+    
     const { user } = useAuthContext();
     const role = user?.role || 'Candidate';
 
@@ -681,6 +684,8 @@ const Screening = ({ candidateId, jobId }) => {
                 borderRadius: "12px",
                 color: "white",
                 fontFamily: 'Outfit, sans-serif',
+                position : "relative",
+                minHeight : "10rem"
             }}
         >
             <CardContent>
@@ -691,7 +696,14 @@ const Screening = ({ candidateId, jobId }) => {
                     </div>
                     <div className='flex items-center '>
 
-                        <StatusBadge status={stageData?.status} />
+                    {
+                    isClosed &&
+                    <div className='absolute top-0  right-0 flex items-center justify-center h-full'>
+                        <ClosedBadge />
+                    </div>
+                    }
+
+                        {isClosed || <StatusBadge status={stageData?.status} />}
                         {
                             role == "Hiring Manager" && (
 
@@ -706,13 +718,15 @@ const Screening = ({ candidateId, jobId }) => {
                             )
                         }
 
-                        <div className='h-8 w-1 rounded bg-background-70 mx-2'></div>
+                        {isClosed || 
+                        <>
+                            <div className='h-8 w-1 rounded bg-background-70 mx-2'></div>
 
-
-                        <div className='w-8 h-8 rounded-full bg-background-80 flex items-center justify-center mr-2'>
-                            <BudgetIcon />
-                        </div>
+                            <div className='w-8 h-8 rounded-full bg-background-80 flex items-center justify-center mr-2'>
+                                <BudgetIcon />
+                            </div>
                         <span className='typograhpy-body'>{candidateData.jobApplication.professionalInfo.expectedCTC}LPA</span>
+                        </>}
                     </div>
                 </Box>
                 {renderContent()}

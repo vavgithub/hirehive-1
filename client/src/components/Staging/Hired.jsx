@@ -9,7 +9,7 @@ import HiredStamp from "../../svg/Background/HiredStamp.svg"
 import StageActions from './StageAction';
 import { useAuthContext } from '../../context/AuthProvider';
 
-const Hired = ({ candidateId, jobId }) => {
+const Hired = ({ candidateId, jobId ,isClosed}) => {
     const fetchTotalScore = async (candidateId, jobId) => {
         const { data } = await axios.get(`hr/candidate/${candidateId}/job/${jobId}/scores`);
         return data;
@@ -166,12 +166,14 @@ const Hired = ({ candidateId, jobId }) => {
                 borderRadius: "12px",
                 color: "white",
                 fontFamily: 'Outfit, sans-serif',
+                position : "relative",
+                minHeight : "12rem"
             }}
         >
             {
                 stageData?.status === "Accepted" && (
 
-                    <img className='absolute left-3/4' src={HiredStamp} alt='Hired Stamp' />
+                    <img className='absolute top-2 left-3/4' src={HiredStamp} alt='Hired Stamp' />
 
                 )
             }

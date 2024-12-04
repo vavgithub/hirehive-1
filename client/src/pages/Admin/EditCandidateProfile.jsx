@@ -79,29 +79,31 @@ const EditCandidateProfile = () => {
   };
 
   return (
-    <div className="bg-background-80  h-screen">
-      <div className='p-4'>
+    <div className='w-full bg-background-80 min-h-full'>
+      <div className=" container mx-auto ">
+        <div className='p-4'>
 
-        <Header HeaderText={`${data.firstName} ${data.lastName}`} withKebab='false' withBack="true" />
-        <div className='flex gap-6 mt-5'>
-          <div className='bg-background-30 w-96 h-96 rounded-xl flex flex-col items-center p-4'>
-            <div className='w-64 h-64 bg-background-70 rounded-xl'>
-              <img src="" alt="" />
+          <Header HeaderText={`${data.firstName} ${data.lastName}`} withKebab='false' withBack="true" />
+          <div className='flex gap-6 mt-5'>
+            <div className='bg-background-30 w-96 h-96 rounded-xl flex flex-col items-center p-4'>
+              <div className='to-background-100 w-64 rounded-xl overflow-hidden'>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg" alt="" />
+              </div>
+              <h2 className='typography-h2 mt-4'>
+                {data.firstName} {data.lastName}
+              </h2>
             </div>
-            <h2 className='typography-h2 mt-4'>
-              {data.firstName} {data.lastName}
-            </h2>
-          </div>
 
-          <div className='col-span-2 w-full'>
-            <DynamicForm
-              formSections={formSections}
-              initialData={data}  // Pass the fetched data as initialData
-              primaryButtonText="Save"
-              secondaryButtonText="Cancel"
-              onPrimaryAction={handleSave}
-              onSecondaryAction={handleCancel}
-            />
+            <div className='col-span-2 w-full'>
+              <DynamicForm
+                formSections={formSections}
+                initialData={data}  // Pass the fetched data as initialData
+                primaryButtonText="Save"
+                secondaryButtonText="Cancel"
+                onPrimaryAction={handleSave}
+                onSecondaryAction={handleCancel}
+              />
+            </div>
           </div>
         </div>
       </div>

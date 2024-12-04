@@ -31,6 +31,7 @@ import { formatDescription } from '../../utility/formatDescription';
 import { ensureAbsoluteUrl } from '../../utility/ensureAbsoluteUrl';
 import GreenTickIcon from '../../svg/Staging/GreenTickIcon';
 import RightTick from '../../svg/Staging/RightTick';
+import ClosedBadge from '../../svg/ClosedBadge';
 
 const submitReview = async ({ candidateId, reviewData }) => {
     const response = await axios.post('dr/submit-score-review', {
@@ -71,7 +72,7 @@ const DesignTaskReview = ({ candidate, onSubmit }) => {
     );
 };
 
-const DesignTask = ({ candidateId, jobId }) => {
+const DesignTask = ({ candidateId, jobId ,isClosed}) => {
 
     const { user } = useAuthContext();
     const role = user?.role || 'Candidate'; // Default to Candidate if role is not specified
@@ -606,6 +607,8 @@ const DesignTask = ({ candidateId, jobId }) => {
                 borderRadius: "12px",
                 color: "white",
                 fontFamily: 'Outfit, sans-serif',
+                position : "relative",
+                minHeight : "10rem"
             }}
         >
             <CardContent>
@@ -613,8 +616,14 @@ const DesignTask = ({ candidateId, jobId }) => {
                     <div className='flex'>
                         <h3 className='typography-h3 mr-10'>Design Task</h3>
                     </div>
+                    {
+                    isClosed && 
+                    <div className='absolute top-0  right-0 flex items-center justify-center h-full'>
+                        <ClosedBadge />
+                    </div>
+                }
                     <Box display="flex" alignItems="center">
-                        <StatusBadge status={stageData?.status} />
+                        {isClosed || <StatusBadge status={stageData?.status} />}
                         {role === 'Hiring Manager' && (
                             <AssigneeSelector
                                 mode="icon"

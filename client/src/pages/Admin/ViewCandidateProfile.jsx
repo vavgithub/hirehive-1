@@ -102,7 +102,6 @@ const ViewCandidateProfile = () => {
         dispatch(setLoading(isLoading));
     }, [isLoading, dispatch]);
 
-    const reduxState = useSelector((state) => state);
 
     // Tab click handler
     const handleTabClick = (tab) => {
@@ -178,7 +177,7 @@ const ViewCandidateProfile = () => {
 
 
     return (
-        <div className="mx-4 pt-4 h-screen">
+        <div className="mx-4 pt-4 container h-screen">
             {/* Page header */}
             <Header
                 HeaderText="Candidate Profile"
@@ -256,10 +255,11 @@ const ViewCandidateProfile = () => {
 
             {/* Content of the selected tab */}
             {activeTab === 'application' && (
-                <div className='w-[1032px]'>
+                <div className='w-full'>
                     <ApplicationStaging
                         candidateId={candidateId}
                         jobId={jobId}
+                        jobStatus={data.jobApplication.jobStatus}
                     />
                 </div>
                 // <Staging currentStage={data.stage} candidateData={data} />

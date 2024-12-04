@@ -5,52 +5,74 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { uploadsDir } from '../config/paths.js';
 
-// Get the directory name in ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
-// Get the root directory (go up one level from utils)
 const rootDir = path.join(__dirname, '..');
 
-// Configure cloudinary
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-export const uploadToCloudinary = async (filename, folder) => {
-    const filePath = path.join(uploadsDir, filename);
+export const uploadToCloudinary = async (inputPath, folder) => {
+  try {
+    // Check if inputPath is already a full path or just a filename
+    const filePath = path.isAbsolute(inputPath) ? 
+      inputPath : 
+      path.join(uploadsDir, inputPath);
     
-    try {
-      // Verify file exists before attempting upload
-      await fs.access(filePath);
-      
-      const result = await cloudinary.uploader.upload(filePath, {
-        folder: folder,
-        resource_type: 'auto',
-        use_filename: true,
-        unique_filename: true
-      });
-  
-      // Delete the temporary file after successful upload
-      await fs.unlink(filePath);
-      return result.secure_url;
-      
-    } catch (error) {
-      console.error('Error in uploadToCloudinary:', error);
-      
-      // Try to clean up temp file if it exists
+    console.log('Attempting to upload from path:', filePath);
+
+    // Verify file exists before attempting upload
+    await fs.access(filePath);
+    
+    // Determine resource type based on file extension
+    const ext = path.extname(filePath).toLowerCase();
+    let resourceType = 'raw'; // default
+
+    if (['.mp4', '.webm', '.mov'].includes(ext)) {
+      resourceType = 'video';
+    } else if (['.jpg', '.jpeg', '.png', '.gif'].includes(ext)) {
+      resourceType = 'image';
+    } else if (['.pdf', '.doc', '.docx'].includes(ext)) {
+      resourceType = 'raw';
+    }
+
+    console.log('Uploading file as resource type:', resourceType);
+
+    const result = await cloudinary.uploader.upload(filePath, {
+      folder: folder,
+      resource_type: resourceType,
+      use_filename: true,
+      unique_filename: true
+    });
+
+    console.log('Cloudinary upload successful:', result.secure_url);
+
+    // Delete the temporary file after successful upload
+    await fs.unlink(filePath);
+    return result.secure_url;
+    
+  } catch (error) {
+    console.error('Error in uploadToCloudinary:', error);
+    
+    // If we have a filePath, try to clean up
+    if (inputPath) {
       try {
+        const filePath = path.isAbsolute(inputPath) ? 
+          inputPath : 
+          path.join(uploadsDir, inputPath);
         await fs.access(filePath);
         await fs.unlink(filePath);
       } catch (unlinkError) {
         // File doesn't exist or can't be deleted, ignore
       }
-      
-      throw error;
     }
-  };
+    
+    throw error;
+  }
+};
 
 // Helper function to get upload path
 export const getUploadPath = (filename) => {

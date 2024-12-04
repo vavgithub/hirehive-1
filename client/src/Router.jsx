@@ -32,7 +32,7 @@ import Profile from './pages/Admin/Profile.jsx';
 import AssessmentResponse from './pages/Admin/AssessmentResponse.jsx';
 
 export const router = createBrowserRouter([
-   {
+  {
     path: "/",
     element: <HomePage />,
   },
@@ -56,15 +56,15 @@ export const router = createBrowserRouter([
       },
       {
         path: 'my-jobs',
-        element: <MyJobs/>, // Create this component
+        element: <MyJobs />, // Create this component
       },
       {
         path: 'all-jobs',
         element: <AllJobs />, // Protected HomePage with sidebar
       },
       {
-        path:'viewJob/:candidateId/:jobId',
-        element:<ViewCandidateProfile/>
+        path: 'viewJob/:candidateId/:jobId',
+        element: <ViewCandidateProfile />
       },
       {
         path: '',
@@ -73,21 +73,29 @@ export const router = createBrowserRouter([
     ],
   },
   {
-    path:"/:id",
-    element:<ViewJob/>
+    path: "/:id",
+    element: <ViewJob />
   },
   {
-    path:"/apply-job/:id",
-    element:<ApplyJob/>
+    path: "/apply-job/:id",
+    element: <ApplyJob />
   },
   {
-    path:"/assessment/:id",
-    element:<PreAssessment/>
+    path: "/assessment",
+    element: (
+      <ProtectedRouteCandidate>
+        <PreAssessment />
+      </ProtectedRouteCandidate>
+    )
   },
   {
     path: "/admin",
     element: <Authlayout />,
     children: [
+      {
+        path: "", // Match the root `/admin` path
+        element: <Navigate to="login" />, // Redirect to `/admin/login`
+      },
       {
         path: "login",
         element: <Login />,
@@ -108,11 +116,11 @@ export const router = createBrowserRouter([
       },
       {
         path: "assessment/:id",
-        element:<AssessmentResponse/>
+        element: <AssessmentResponse />
       },
       {
-        path:"profile",
-        element:<Profile/>
+        path: "profile",
+        element: <Profile />
       },
       {
         path: "jobs",
@@ -164,16 +172,16 @@ export const router = createBrowserRouter([
     children: [
       {
         path: "dashboard",
-        element:<Candidates />
+        element: <Candidates />
         // element: <DesignReviewerDashboard />,
       },
       {
-        path:"profile",
-        element:<Profile/>
+        path: "profile",
+        element: <Profile />
       },
       {
         path: "candidates",
-        element:<Candidates />
+        element: <Candidates />
       },
       {
         path: "reviews",

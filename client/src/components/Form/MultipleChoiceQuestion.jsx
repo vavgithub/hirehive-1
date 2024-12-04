@@ -92,8 +92,8 @@ const MultipleChoiceQuestion = ({ question, onUpdate, onDelete, onCopy, initialE
         />
       </div>
       {localOptions.map((option, index) => (
-        <div key={index} className="flex w-96 mb-2 items-center gap-2">
-          <div className='w-4 h-4 border rounded-full'></div>
+        <div key={index} className="flex w-[400px] mb-2 items-center gap-2">
+          <div className='typography-small-p text-font-gray flex-shrink-0'>Option {index+1}</div>
           <input
             type="text"
             value={option}
