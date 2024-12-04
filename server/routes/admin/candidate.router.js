@@ -10,7 +10,7 @@ import {
   uploadAssessmentRecording,
 } from "../../controllers/admin/candidate.controller.js";
 import { protectCandidate } from "../../middlewares/authMiddleware.js";
-import {  uploadMiddleware  } from "../../middlewares/uploadMiddleware.js";
+import { uploadVideo  } from "../../middlewares/uploadMiddleware.js";
 
 const router = express.Router();
 
@@ -29,26 +29,7 @@ router.post("/questionnaire/:candidateId/", submitQuestionnaireAttempt);
 router.post(
     '/upload-recording',
     protectCandidate,
-    async (req, res, next) => {
-      try {
-        await new Promise((resolve, reject) => {
-          uploadMiddleware(req, res, (err) => {
-            if (err) {
-              console.error('Upload middleware error:', err);
-              reject(err);
-            } else {
-              resolve();
-            }
-          });
-        });
-        next();
-      } catch (error) {
-        return res.status(400).json({
-          success: false,
-          message: error.message || 'File upload failed'
-        });
-      }
-    },
+    uploadVideo,
     uploadAssessmentRecording
   );
 

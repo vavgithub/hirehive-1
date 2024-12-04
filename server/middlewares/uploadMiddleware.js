@@ -7,15 +7,12 @@ import fs from 'fs';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Create a simple upload path
 const UPLOAD_PATH = path.join(__dirname, '..', 'uploads');
 
-// Ensure upload directory exists
 if (!fs.existsSync(UPLOAD_PATH)) {
   fs.mkdirSync(UPLOAD_PATH, { recursive: true });
 }
 
-// Configure storage
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     console.log('Upload directory:', UPLOAD_PATH);
@@ -23,28 +20,41 @@ const storage = multer.diskStorage({
   },
   filename: function (req, file, cb) {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    const filename = `assessment-${uniqueSuffix}.webm`;
+    let filename;
+
+    // Check file type and generate appropriate filename
+    if (file.fieldname === 'video') {
+      filename = `assessment-${uniqueSuffix}.webm`;
+    } else if (file.fieldname === 'resume') {
+      const ext = path.extname(file.originalname);
+      filename = `resume-${uniqueSuffix}${ext}`;
+    }
+
     console.log('Generated filename:', filename);
     cb(null, filename);
   }
 });
 
-// Configure file filter
 const fileFilter = (req, file, cb) => {
   console.log('Incoming file:', {
     fieldname: file.fieldname,
     mimetype: file.mimetype
   });
 
-  if (file.mimetype === 'video/webm') {
+  // Different validation for video and resume
+  if (file.fieldname === 'video' && file.mimetype === 'video/webm') {
+    cb(null, true);
+  } else if (file.fieldname === 'resume' && 
+    ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document']
+    .includes(file.mimetype)) {
     cb(null, true);
   } else {
-    cb(new Error('Only video/webm format is allowed'), false);
+    cb(new Error(`Invalid file type for ${file.fieldname}`), false);
   }
 };
 
-// Create and export multer instance
-export const uploadMiddleware = multer({
+// Export separate middleware for different upload types
+export const uploadVideo = multer({
   storage: storage,
   fileFilter: fileFilter,
   limits: {
@@ -52,7 +62,14 @@ export const uploadMiddleware = multer({
   }
 }).single('video');
 
-// Error handling middleware
+export const uploadResume = multer({
+  storage: storage,
+  fileFilter: fileFilter,
+  limits: {
+    fileSize: 10 * 1024 * 1024 // 10MB limit for resumes
+  }
+}).single('resume');
+
 export const handleUploadError = (err, req, res, next) => {
   console.error('Upload error:', err);
   if (err instanceof multer.MulterError) {

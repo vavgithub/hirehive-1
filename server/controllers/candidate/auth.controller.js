@@ -47,123 +47,25 @@ const getJobStages = (jobProfile) => {
   return jobStagesStatuses[jobProfile] || [];
 };
 
+// auth.controller.js
 // Resume upload controller
-export const uploadResume = async (req, res) => {
+export const uploadResumeController = async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ message: "No file uploaded" });
   }
 
   try {
     const cloudinaryUrl = await uploadToCloudinary(
-      req.file.filename,
+      req.file.path, // Pass the complete path instead of just filename
       "resumes"
     );
 
     res.status(200).json({ resumeUrl: cloudinaryUrl });
   } catch (error) {
     console.error("Error in resume upload:", error);
-    res.status(500).json({ message: "Error uploading resume" });
+    res.status(500).json({ message: error.message || "Error uploading resume" });
   }
 };
-
-// Register candidate controller
-// export const registerCandidate = async (req, res) => {
-//   try {
-//     const {
-//       jobId,
-//       firstName,
-//       lastName,
-//       email,
-//       phone,
-//       website,
-//       portfolio,
-//       noticePeriod,
-//       currentCTC,
-//       expectedCTC,
-//       experience,
-//       skills,
-//       questionResponses,
-//       resumeUrl,
-//     } = req.body;
-
-//     const job = await jobs.findById(jobId);
-//     if (!job) {
-//       return res.status(404).json({ message: "Job not found" });
-//     }
-//     const jobApplied = job.jobTitle;
-
-//     const jobStages = getJobStages(job.jobProfile);
-
-//     const existingCandidate = await Candidate.findOne({
-//       $or: [{ email }, { phone }],
-//     });
-
-//     if (existingCandidate) {
-//       return res
-//         .status(400)
-//         .json({ message: "Email or phone number already exists" });
-//     }
-
-//     const otp = generateOtp();
-//     const hashedOtp = crypto.createHash("sha256").update(otp).digest("hex");
-
-//     const initialStageStatuses = {};
-//     jobStages.forEach((stage, index) => {
-//       const initialStatus =
-//         index === 0
-//           ? stage.statuses[0]
-//           : stage.statuses.find((status) =>
-//               status.toLowerCase().includes("not assigned")
-//             ) || stage.statuses[0];
-//       initialStageStatuses[stage.name] = {
-//         status: initialStatus,
-//         rejectionReason: "N/A",
-//         assignedTo: null,
-//         score: {},
-//         currentCall: null,
-//         callHistory: [],
-//       };
-//     });
-
-//     const newCandidate = new Candidate({
-//       firstName,
-//       lastName,
-//       email,
-//       phone,
-//       website,
-//       portfolio,
-//       noticePeriod,
-//       currentCTC,
-//       expectedCTC,
-//       experience,
-//       skills,
-//       otp: hashedOtp,
-//       otpExpires: Date.now() + 10 * 60 * 1000,
-//       resumeUrl,
-//       jobApplications: [
-//         {
-//           jobId,
-//           jobApplied,
-//           questionResponses,
-//           applicationDate: new Date(),
-//           currentStage: jobStages[0]?.name || "",
-//           stageStatuses: initialStageStatuses,
-//           resumeUrl,
-//         },
-//       ],
-//     });
-//     await newCandidate.save();
-
-//     await sendOtpEmail(email, otp);
-
-//     res
-//       .status(200)
-//       .json({ message: "Candidate registered. OTP sent to email." });
-//   } catch (error) {
-//     console.error("Error registering candidate:", error);
-//     res.status(500).json({ message: "Server error" });
-//   }
-// };
 
 
 export const registerCandidate = async (req, res) => {
@@ -500,120 +402,12 @@ export const applyToJob = async (req, res) => {
 };
 
 
-// export const applyToJob = async (req, res) => {
-//   try {
-//     const candidateId = req.candidate._id;
-//     const {
-//       jobId,
-//       // Professional details that can change per application
-//       website,
-//       portfolio,
-//       noticePeriod,
-//       currentCTC,
-//       expectedCTC,
-//       experience,
-//       skills,
-//       questionResponses,
-//       resumeUrl,
-//     } = req.body;
 
-//     const job = await jobs.findById(jobId);
-//     if (!job) {
-//       return res.status(404).json({ message: "Job not found" });
-//     }
-//     const jobApplied = job.jobTitle;
-//     const jobProfile = job.jobProfile;
-
-//     const candidate = await Candidate.findById(candidateId);
-//     if (!candidate) {
-//       return res.status(404).json({ message: "Candidate not found" });
-//     }
-
-//     const hasApplied = candidate.jobApplications.some(
-//       (application) => application.jobId.toString() === jobId
-//     );
-
-//     if (hasApplied) {
-//       return res.status(400).json({ message: "You have already applied to this job." });
-//     }
-
-//     // Update candidate's professional information
-//     const updatedProfessionalInfo = {
-//       website,
-//       portfolio,
-//       noticePeriod,
-//       currentCTC,
-//       expectedCTC,
-//       experience,
-//       skills,
-//     };
-
-//     // Update candidate's general professional information
-//     Object.assign(candidate, updatedProfessionalInfo);
-
-//     const jobStages = getJobStages(jobProfile);
-//     const initialStageStatuses = {};
-//     jobStages.forEach((stage, index) => {
-//       const initialStatus = index === 0 
-//         ? stage.statuses[0] 
-//         : stage.statuses.find(status => status.toLowerCase().includes('not assigned')) || stage.statuses[0];
-//       initialStageStatuses[stage.name] = {
-//         status: initialStatus,
-//         rejectionReason: "N/A",
-//         assignedTo: null,
-//         score: {},
-//         feedback: "N/A",
-//         callHistory: [],
-//         taskDescription: "",
-//         submittedTaskLink: "",
-//         submittedComment: "",
-//       };
-//     });
-
-//     // Create new job application with only professional info
-//     const newApplication = {
-//       jobId,
-//       jobApplied,
-//       questionResponses,
-//       applicationDate: new Date(),
-//       currentStage: jobStages[0]?.name || "",
-//       stageStatuses: initialStageStatuses,
-//       resumeUrl,
-//       rating: "N/A",
-//       // Store professional info at time of application
-//       professionalInfo: {
-//         website,
-//         portfolio,
-//         noticePeriod,
-//         currentCTC,
-//         expectedCTC,
-//         experience,
-//         skills,
-//       }
-//     };
-
-//     candidate.jobApplications.push(newApplication);
-//     await candidate.save();
-
-//     res.status(200).json({ 
-//       message: "Successfully applied to the job.",
-//       application: newApplication
-//     });
-//   } catch (error) {
-//     console.error("Error applying to job:", error);
-//     res.status(500).json({ message: "Server error" });
-//   }
-// };
 
 // Modifications to getCandidateDashboard function
 export const getCandidateDashboard = async (req, res) => {
   try {
-    // const candidate = await Candidate.findById(req.candidate._id).populate({
-    //   path: "jobApplications.jobId",
-    //   model: "jobs",
-    //   select: "jobTitle status",
-    // });
-    const candidate = await Candidate.aggregate([
+       const candidate = await Candidate.aggregate([
       // Match the candidate by ID
       {
         $match: { _id: req.candidate._id },
