@@ -2,6 +2,10 @@ import { jobStagesStatuses } from "../../config/jobStagesStatuses.js";
 import { jobs } from "../../models/admin/jobs.model.js";
 import { Question, seedQuestions } from "../../models/admin/questions.model.js";
 import { candidates } from "../../models/candidate/candidate.model.js";
+import { uploadToCloudinary } from '../../utils/cloudinary.js';
+import { promises as fs } from 'fs';
+import path from 'path';
+
 
 // controllers/candidate.controller.js
 
@@ -618,7 +622,7 @@ export const getCandidateById = async (req, res) => {
   export const submitQuestionnaireAttempt = async (req, res) => {
     try {
       const { candidateId } = req.params;
-      const { answers, totalTimeInSeconds } = req.body;
+      const { answers, totalTimeInSeconds, recordingUrl } = req.body;
       
       // Get questions to check correct answers
       const questionIds = Object.keys(answers);
@@ -644,7 +648,8 @@ export const getCandidateById = async (req, res) => {
       const attemptData = {
         totalTimeInSeconds,
         score,
-        responses
+        responses,
+        recordingUrl // Add this field
       };
   
       // Update candidate
@@ -732,6 +737,7 @@ export const getCandidateById = async (req, res) => {
             email: candidate.email,
             phone: candidate.phone,
             score: latestAttempt.score,
+            recordingUrl: latestAttempt.recordingUrl,
             totalTimeSpent: formattedTime,
             attemptDate: latestAttempt.attemptDate,
           },
@@ -773,6 +779,37 @@ export const getCandidateById = async (req, res) => {
         success: false,
         message: "Internal server error",
         error: error.message
+      });
+    }
+  };
+
+  export const uploadAssessmentRecording = async (req, res) => {
+    try {
+      console.log('Upload request received:', {
+        file: req.file,
+        body: req.body
+      });
+  
+      if (!req.file) {
+        return res.status(400).json({
+          success: false,
+          message: 'No video file uploaded'
+        });
+      }
+  
+      // Pass the full file path directly
+      const videoUrl = await uploadToCloudinary(req.file.path, 'assessment-recordings');
+  
+      return res.status(200).json({
+        success: true,
+        videoUrl
+      });
+  
+    } catch (error) {
+      console.error('Error in uploadAssessmentRecording:', error);
+      return res.status(500).json({
+        success: false,
+        message: error.message || 'Failed to process video upload'
       });
     }
   };

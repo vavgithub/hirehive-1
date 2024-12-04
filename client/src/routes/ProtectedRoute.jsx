@@ -3,13 +3,18 @@ import React from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
 import { useAuthContext } from '../context/AuthProvider';
+import Loader from '../components/ui/Loader';
 
 const ProtectedRoute = ({ allowedRoles, children }) => {
   const { user, isLoading, error } = useAuthContext();
 
 
   if (isLoading) {
-    return <p>Loading...</p>;
+    return (
+      <div className="flex justify-center items-center min-h-screen min-w-screen">
+      <Loader />
+    </div>
+    );
   }
 
   if (error || !user) {

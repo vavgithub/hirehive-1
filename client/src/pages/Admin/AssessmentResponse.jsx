@@ -1,13 +1,62 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Header from '../../components/utility/Header';
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
 import axios from '../../api/axios';
-import { Phone, Mail, Circle } from 'lucide-react';
+import { Phone, Mail, Circle, X } from 'lucide-react';
 import PhoneIcon from '../../svg/PhoneIcon';
 import EmailIcon from '../../svg/EmailIcon';
 import { Button } from '../../components/ui/Button';
+import { showErrorToast } from '../../components/ui/Toast';
+import Loader from '../../components/ui/Loader';
 
+
+// Create a VideoModal component
+const VideoModal = ({ isOpen, onClose, videoUrl }) => {
+    const [isLoading, setIsLoading] = useState(true);
+  
+    if (!isOpen) return null;
+  
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="bg-background-90 rounded-xl p-6 relative w-[80%] max-w-4xl">
+          {/* Close button */}
+          <button 
+            onClick={onClose}
+            className="absolute top-4 right-4 p-2 hover:bg-background-80 rounded-full transition-colors"
+          >
+            <X className="w-6 h-6 text-font-gray" />
+          </button>
+  
+          {/* Video title */}
+          <h2 className="typography-h2 mb-4">Assessment Recording</h2>
+  
+          {/* Video container with loader */}
+          <div className="relative aspect-video w-full bg-background-80 rounded-lg">
+            {isLoading && (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <Loader />
+              </div>
+            )}
+            
+            <video 
+              src={videoUrl}
+              controls
+              className="w-full h-full rounded-lg"
+              onLoadedData={() => setIsLoading(false)}
+              onError={(e) => {
+                console.error('Video loading error:', e);
+                setIsLoading(false);
+              }}
+            >
+              Your browser does not support the video element.
+            </video>
+          </div>
+        </div>
+      </div>
+    );
+  };
+  
 
 const Wronganswer = () => {
     return (
@@ -36,6 +85,10 @@ const fetchAssessmentDetails = async (candidateId) => {
 };
 
 const AssessmentResponse = () => {
+
+    // Add state for modal
+    const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
+
     const { id: candidateId } = useParams();
 
     const { data, isLoading, isError } = useQuery({
@@ -60,14 +113,25 @@ const AssessmentResponse = () => {
     }
 
     const assessmentData = data?.data;
+    console.log("cehck this" , assessmentData);
 
 
     const assessmentStat = data?.data
-  
+
+    // Update the button click handler
+    const handleOpenRecording = () => {
+        if (assessmentData?.candidateInfo?.recordingUrl) {
+            setIsVideoModalOpen(true);
+        } else {
+            // Handle case when no recording is available
+            showErrorToast('No recording available for this assessment');
+        }
+    };
+
 
     return (
         <div className='container'>
-            <div className="p-7">
+            <div className="p-4">
                 <Header withBack={"true"} HeaderText="Assessment details" />
 
                 {/* Top Section with Candidate Info and Score */}
@@ -108,43 +172,47 @@ const AssessmentResponse = () => {
                                 </div>
 
                                 <div className='flex justify-between'>
-                                <div className='grid grid-cols-3 gap-x-6'>
-                                    <div>
-                                        <p className='typography-small-p text-font-gray'>
-                                            Correct Answered
-                                        </p>
-                                        <p className='typography-large-p'>
-                                            {assessmentData?.assessmentStats?.correctAnswers} / 
-                                            {assessmentData?.assessmentStats?.totalQuestions}  
-                                            
-                                        </p>
+                                    <div className='grid grid-cols-3 gap-x-6'>
+                                        <div>
+                                            <p className='typography-small-p text-font-gray'>
+                                                Correct Answered
+                                            </p>
+                                            <p className='typography-large-p'>
+                                                {assessmentData?.assessmentStats?.correctAnswers} /
+                                                {assessmentData?.assessmentStats?.totalQuestions}
+
+                                            </p>
+                                        </div>
+
+                                        <div>
+                                            <p className='typography-small-p text-font-gray'>
+                                                Finished on
+                                            </p>
+                                            <p className='typography-large-p'>
+                                                Aug 03, 2023
+                                            </p>
+                                        </div>
+
+                                        <div>
+                                            <p className='typography-small-p text-font-gray'>
+                                                Time taken
+                                            </p>
+                                            <p className='typography-large-p'>
+                                                {assessmentData?.candidateInfo?.totalTimeSpent}
+                                            </p>
+                                        </div>
+
+                                        <div>
+
+                                        </div>
+
+
+                                    </div>
+                                    <div className='w-[204px]'>
+
+                                        <Button onClick={handleOpenRecording}>Assesment Recording</Button>
                                     </div>
 
-                                    <div>
-                                        <p className='typography-small-p text-font-gray'>
-                                            Finished on
-                                        </p>
-                                        <p className='typography-large-p'>
-                                            Aug 03, 2023
-                                        </p>
-                                    </div>
-
-                                    <div>
-                                        <p className='typography-small-p text-font-gray'>
-                                            Time taken
-                                        </p>
-                                        <p className='typography-large-p'>
-                                            {assessmentData?.candidateInfo?.totalTimeSpent}
-                                        </p>
-                                    </div>
-
-                                    <div>
-
-                                    </div>
-
-
-                                </div>
-                                    <Button className="w-fit px-6">Assesment Recording</Button>
                                 </div>
 
                             </div>
@@ -152,14 +220,14 @@ const AssessmentResponse = () => {
                     </div>
 
                     <div className="flex bg-stars flex-col items-center  w-[240px] bg-cover p-5 rounded-xl">
-                            <h3 className="typography-h3">SCORE</h3>
-                            <div className='bg-background-80'>
+                        <h3 className="typography-h3">SCORE</h3>
+                        <div className='bg-background-80'>
 
                             <span className="marks text-font-primary">{assessmentData?.assessmentStats?.scoreOutOf100}</span>
-                            </div>
-                                    
-                            <p className="typography-large-p">Out of 100</p>
                         </div>
+
+                        <p className="typography-large-p">Out of 100</p>
+                    </div>
 
                     {/* Score Card */}
                     {/* <div className="bg-background-90 rounded-xl p-6 w-80 flex flex-col items-center justify-center">
@@ -231,6 +299,12 @@ const AssessmentResponse = () => {
                     </div>
                 </div>
             </div>
+
+            <VideoModal
+                isOpen={isVideoModalOpen}
+                onClose={() => setIsVideoModalOpen(false)}
+                videoUrl={assessmentData?.candidateInfo?.recordingUrl}
+            />
         </div>
     );
 };

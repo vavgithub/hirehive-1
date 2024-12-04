@@ -127,7 +127,7 @@ const Modal = ({
   };
   const handleConfirm = () => {
     if (actionType === ACTION_TYPES.ASSESSMENT) {
-        navigate('/assessment/asdasdasdasdas');
+        navigate('/assessment');
     } else if (actionType === ACTION_TYPES.REJECT) {
         if (!rejectionReason) {
             alert('Please select a reason for rejecting the candidate.');

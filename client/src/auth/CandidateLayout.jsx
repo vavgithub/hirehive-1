@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Outlet, useNavigate, NavLink } from 'react-router-dom';
 import { candidateLogout } from '../api/authApi';
-
+import LightLogo from "../svg/Logo/lightLogo.svg"
 // Import icons
 import { DashboardIcon, DashboardIconActive } from '../svg/Navbar/DashboardIcon';
 import { JobsIcon, JobsIconActive } from '../svg/Navbar/JobsIcon';
@@ -132,6 +132,10 @@ const CandidateLayout = () => {
         style={{ position: 'fixed' }}
       >
         <div className="flex flex-col gap-5 typography-body">
+        <div className='p-2 flex '>
+
+<img className='h-11' src={LightLogo}/>
+</div>
           {menuItems.map((item) => (
             <NavItem
               key={item.name}

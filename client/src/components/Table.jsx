@@ -666,7 +666,7 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
 
         {!readOnly && (<div className='flex gap-4'>
 
-          <div className={`${budgetFilter.from && budgetFilter.to ? "w-[216px]" : "hidden"}`}>
+          <div className={`${budgetFilter.from && budgetFilter.to ? "w-[236px]" : "hidden"}`}>
             <Button
               icon={AutoAssign}
               variant="primary"

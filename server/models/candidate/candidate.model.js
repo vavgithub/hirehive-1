@@ -187,6 +187,10 @@ const questionnaireAttemptSchema = new mongoose.Schema({
   attemptDate: {
     type: Date,
     default: Date.now,
+  },
+   // Add recording URL field
+   recordingUrl: {
+    type: String,
   }
 });
 

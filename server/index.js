@@ -35,26 +35,10 @@ import corsConfig from "./config/cors.config.js";
 const app = express();
 await initializeUploadDir(envConfig.UPLOAD_DIR);
 
-// const corsOptions = {
-//   origin: envConfig.CORS_ORIGIN,
-//   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-//   allowedHeaders: ["Content-Type", "Authorization"],
-//   credentials: true,
-//   optionsSuccessStatus: 200,
-// };
-
-// app.use(cors(corsOptions));
-
 // Apply CORS configuration
 app.use(cors(corsConfig(environment)));
 
 
-// app.use((_, res, next) => {
-//   res.header("Access-Control-Allow-Origin", corsOptions.origin);
-//   res.header("Access-Control-Allow-Headers", corsOptions.allowedHeaders.join(','));
-//   res.header("Access-Control-Allow-Credentials", "true");
-//   next();
-// });
 
 // Middleware setup
 app.use(express.json({ limit: "30mb", extended: true }));
