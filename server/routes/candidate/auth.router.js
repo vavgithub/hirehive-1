@@ -2,7 +2,7 @@
 
 import express from 'express';
 import multer from 'multer';
-import { applyToJob, createPassword, getCandidateAppliedJobs, getCandidateDashboard, loginCandidate, logoutCandidate, registerCandidate , uploadResumeController, verifyOtp } from '../../controllers/candidate/auth.controller.js';
+import { applyToJob, createPassword,forgotPassword, getCandidateAppliedJobs, getCandidateDashboard, loginCandidate, logoutCandidate, registerCandidate ,resetPassword, uploadResumeController, verifyOtp ,  verifyOTPForgot } from '../../controllers/candidate/auth.controller.js';
 import { protectCandidate } from '../../middlewares/authMiddleware.js';
 import { uploadResume } from '../../middlewares/uploadMiddleware.js';
 
@@ -34,6 +34,10 @@ router.post('/apply-job', protectCandidate, applyToJob);
 
 router.get('/applied-jobs', protectCandidate, getCandidateAppliedJobs);
 
+//forgot password handling for candidate
+router.post('/forgot-password', forgotPassword);
+router.post('/verify-otp-pass', verifyOTPForgot);
+router.post('/reset-password', resetPassword);
 
 
 

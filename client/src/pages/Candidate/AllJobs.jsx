@@ -105,7 +105,7 @@ const AllJobs = () => {
 
 
     return (
-        <div className='m-2 pt-4'>
+        <div className='container m-4'>
             <div className='flex items-center justify-between'>
                 <h1 className='typography-h1'>All Jobs</h1>
                 <div

@@ -6,8 +6,9 @@ import axios from '../../api/axios';
 import { InputField } from '../../components/Form/FormFields';
 import OTPInput from '../../components/ui/OTPInput';
 import { BackButton } from '../../components/utility/Header';
+import { digitsRegex, lowerCaseRegex, specialCharRegex, upperCaseRegex } from '../../utility/regex';
 
-const ForgotPassword = ({ onBack }) => {
+const ForgotPassword = ({ onBack ,role }) => {
   const [step, setStep] = useState('email');
   const [email, setEmail] = useState('');
   const [otp, setOtp] = useState('');
@@ -17,7 +18,7 @@ const ForgotPassword = ({ onBack }) => {
   // Request OTP mutation
   const requestOtpMutation = useMutation({
     mutationFn: async (email) => {
-      const response = await axios.post('/auth/forgot-password', { email });
+      const response = await axios.post(role === "Candidate"  ? '/auth/candidate/forgot-password' :'/auth/forgot-password', { email });
       return response.data;
     },
     onSuccess: (data) => {
@@ -32,7 +33,7 @@ const ForgotPassword = ({ onBack }) => {
   // Verify OTP mutation
   const verifyOtpMutation = useMutation({
     mutationFn: async () => {
-      const response = await axios.post('/auth/verify-otp', { email, otp });
+      const response = await axios.post(role === "Candidate"  ? '/auth/candidate/verify-otp-pass' :'/auth/verify-otp', { email, otp });
       return response.data;
     },
     onSuccess: (data) => {
@@ -47,7 +48,7 @@ const ForgotPassword = ({ onBack }) => {
   // Reset password mutation
   const resetPasswordMutation = useMutation({
     mutationFn: async () => {
-      const response = await axios.post('/auth/reset-password', {
+      const response = await axios.post(role === "Candidate"  ? '/auth/candidate/reset-password' :'/auth/reset-password', {
         email,
         otp,
         password
@@ -91,19 +92,19 @@ const ForgotPassword = ({ onBack }) => {
       showErrorToast('Password must be at least 8 characters long');
       return;
     }
-    if (!/[A-Z]/.test(password)) {
+    if (!upperCaseRegex.test(password)) {
       showErrorToast('Password must contain at least one uppercase letter');
       return;
     }
-    if (!/[a-z]/.test(password)) {
+    if (!lowerCaseRegex.test(password)) {
       showErrorToast('Password must contain at least one lowercase letter');
       return;
     }
-    if (!/[0-9]/.test(password)) {
+    if (!digitsRegex.test(password)) {
       showErrorToast('Password must contain at least one number');
       return;
     }
-    if (!/[!@#$%^&*]/.test(password)) {
+    if (!specialCharRegex.test(password)) {
       showErrorToast('Password must contain at least one special character');
       return;
     }

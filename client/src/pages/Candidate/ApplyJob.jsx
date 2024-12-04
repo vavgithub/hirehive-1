@@ -15,6 +15,7 @@ import Loader from '../../components/ui/Loader';
 import Logo from '../../svg/Logo/lightLogo.svg';
 import { fetchCandidateAuthData } from '../../redux/candidateAuthSlice';
 import useCandidateAuth from '../../hooks/useCandidateAuth';
+import { digitsRegex, lowerCaseRegex, specialCharRegex, upperCaseRegex } from '../../utility/regex';
 
 const fetchJobDetails = async (id) => {
   const response = await axios.get(`/jobs/getJobById/${id}`);
@@ -230,6 +231,23 @@ const ApplyJob = () => {
       return;
     }
 
+    if (!upperCaseRegex.test(password)) {
+      setPasswordError('Password must contain at least one uppercase letter');
+      return;
+    }
+    if (!lowerCaseRegex.test(password)) {
+      setPasswordError('Password must contain at least one lowercase letter');
+      return;
+    }
+    if (!digitsRegex.test(password)) {
+      setPasswordError('Password must contain at least one number');
+      return;
+    }
+    if (!specialCharRegex.test(password)) {
+      setPasswordError('Password must contain at least one special character');
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       await axios.post('/auth/candidate/create-password', { email, password });
@@ -318,44 +336,60 @@ const ApplyJob = () => {
                     name="email"
                     control={control}
                     rules={{
-                      required: true,
+                      required: 'Email is required',
                       pattern: {
-                        value: /^\S+@\S+$/i,
-                        message: 'Invalid email address',
-                      },
+                        value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                        message: 'Please enter a valid email address'
+                      }
                     }}
                     render={({ field }) => (
                       <InputField
-                      id="email"
-                      type="email"
-                      label="Email"
-                      required={true}
-                      error={errors.email}
+                        id="email"
+                        type="email"
+                        label="Email"
+                        required={true}
+                        error={errors.email}
+                        errorMessage={errors.email?.message}
                         {...field}
                       />
                     )}
-                    />
+                  />
                   <Controller
                     name="phoneNumber"
                     control={control}
                     rules={{
-                      required: true,
+                      required: 'Phone number is required',
                       pattern: {
                         value: /^[0-9]{10}$/,
-                        message: 'Invalid phone number',
+                        message: 'Phone number must be exactly 10 digits'
                       },
+                      minLength: {
+                        value: 10,
+                        message: 'Phone number must be exactly 10 digits'
+                      },
+                      maxLength: {
+                        value: 10,
+                        message: 'Phone number must be exactly 10 digits'
+                      }
                     }}
                     render={({ field }) => (
                       <InputField
-                      type="number"
+                        type="number"
                         id="phoneNumber"
                         label="Phone Number"
                         required={true}
                         error={errors.phoneNumber}
+                        errorMessage={errors.phoneNumber?.message}
                         {...field}
-                        />
-                      )}
+                        onChange={(e) => {
+                          const value = e.target.value.replace(/[^0-9]/g, '');
+                          if (value.length <= 10) {
+                            field.onChange(value);
+                          }
+                        }}
                       />
+                    )}
+                  />
                 </div>
               </div>
             )}
@@ -403,7 +437,7 @@ const ApplyJob = () => {
                 <label className="typography-body">Resume<span className="text-red-100">*</span></label>
                 <div
                   {...getRootProps({
-                    className: `bg-background-40 rounded-xl p-5 text-center cursor-pointer ${isDragActive ? 'border-teal-500 bg-teal-50' : 'border-gray-300'
+                    className: `bg-background-40 rounded-xl mt-2 p-5 text-center cursor-pointer ${isDragActive ? 'border-teal-500 bg-teal-50' : 'border-gray-300'
                       }`,
                   })}
                 >

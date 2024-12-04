@@ -4,6 +4,7 @@ import generateToken from '../../utils/generateToken.js';
 import { getUploadPath, uploadToCloudinary } from '../../utils/cloudinary.js';
 import path from 'path';
 import { sendEmail } from '../../utils/sentEmail.js';
+import { generateOTP, otpStore } from '../../utils/otp.js';
 
 
 
@@ -155,14 +156,6 @@ export const getAvailableDesignReviewers = async (req, res) => {
       });
     }
   };
-
-  // Store OTPs in memory (in production, use Redis or similar)
-const otpStore = new Map();
-
-// Generate OTP
-const generateOTP = () => {
-  return Math.floor(100000 + Math.random() * 900000).toString();
-};
 
 // Request Password Reset / Send OTP
 export const forgotPassword = asyncHandler(async (req, res) => {

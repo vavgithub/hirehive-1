@@ -1,18 +1,51 @@
 import React, { useEffect, useState } from "react";
 
-export const InputField = React.forwardRef(({ id, type , label, required,extraClass, ...props }, ref) => (
-  <div className=' flex flex-col justify-between gap-2'>
-    <label htmlFor={id} className="typography-body">{label} {required && <span className="text-red-100">*</span>}</label>
+// export const InputField = React.forwardRef(({ id, type , label, required,extraClass, ...props }, ref) => (
+//   <div className=' flex flex-col justify-between gap-2'>
+//     <label htmlFor={id} className="typography-body">{label} {required && <span className="text-red-100">*</span>}</label>
+//     <input
+//       id={id}
+//       type={type}
+//       placeholder={`Enter ${label.toLowerCase()}`}
+//       className={extraClass}
+//       ref={ref}
+//       {...props}
+//     />
+//   </div>
+// ));
+
+
+export const InputField = React.forwardRef(({ 
+  id, 
+  type, 
+  label, 
+  required, 
+  extraClass,
+  error,
+  errorMessage, 
+  ...props 
+}, ref) => (
+  <div className='flex flex-col justify-between gap-2'>
+    <label htmlFor={id} className="typography-body">
+      {label} {required && <span className="text-red-100">*</span>}
+    </label>
     <input
       id={id}
       type={type}
       placeholder={`Enter ${label.toLowerCase()}`}
-      className={extraClass}
+      className={`w-full p-2 bg-background-40 rounded outline-none focus:outline-teal-300 ${
+        error ? 'border border-red-500' : ''
+      } ${extraClass || ''}`}
       ref={ref}
       {...props}
     />
+    {error && errorMessage && (
+      <span className="text-red-500 text-sm mt-1">{errorMessage}</span>
+    )}
   </div>
 ));
+
+InputField.displayName = 'InputField';
 
 export const CustomDropdown = React.forwardRef(({ field, label, options, value, onChange, required }, ref) => {
   const [isOpen, setIsOpen] = useState(false);

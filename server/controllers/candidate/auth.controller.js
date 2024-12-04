@@ -12,6 +12,9 @@ import nodemailer from "nodemailer";
 import { jobs } from "../../models/admin/jobs.model.js";
 import { jobStagesStatuses } from "../../config/jobStagesStatuses.js";
 import { uploadToCloudinary } from "../../utils/cloudinary.js";
+import { asyncHandler } from "../../utils/asyncHandler.js";
+import { generateOTP, otpStore } from "../../utils/otp.js";
+import { sendEmail } from "../../utils/sentEmail.js";
 
 // Secret key for JWT (store this in environment variables)
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -68,6 +71,105 @@ export const uploadResumeController = async (req, res) => {
 };
 
 
+// export const registerCandidate = async (req, res) => {
+//   try {
+//     const {
+//       jobId,
+//       firstName,
+//       lastName,
+//       email,
+//       phone,
+//       website,
+//       portfolio,
+//       noticePeriod,
+//       currentCTC,
+//       expectedCTC,
+//       experience,
+//       skills,
+//       questionResponses,
+//       resumeUrl,
+//     } = req.body;
+
+//     const job = await jobs.findById(jobId);
+//     if (!job) {
+//       return res.status(404).json({ message: "Job not found" });
+//     }
+//     const jobApplied = job.jobTitle;
+
+//     const jobStages = getJobStages(job.jobProfile);
+
+//     const existingCandidate = await Candidate.findOne({
+//       $or: [{ email }, { phone }],
+//     });
+
+//     if (existingCandidate) {
+//       return res.status(400).json({ message: "Email or phone number already exists" });
+//     }
+
+//     // Generate OTP and hash it
+//     const otp = generateOtp();
+//     const hashedOtp = crypto.createHash("sha256").update(otp).digest("hex");
+
+//     const initialStageStatuses = {};
+//     jobStages.forEach((stage, index) => {
+//       const initialStatus = index === 0 
+//         ? stage.statuses[0] 
+//         : stage.statuses.find(status => status.toLowerCase().includes('not assigned')) || stage.statuses[0];
+//       initialStageStatuses[stage.name] = {
+//         status: initialStatus,
+//         rejectionReason: "N/A",
+//         assignedTo: null,
+//         score: {},
+//         currentCall: null,
+//         callHistory: [],
+//       };
+//     });
+
+//     // Professional info object
+//     const professionalInfo = {
+//       website,
+//       portfolio,
+//       noticePeriod,
+//       currentCTC,
+//       expectedCTC,
+//       experience,
+//       skills,
+//     };
+
+//     // Create new candidate with job application data
+//     const newCandidate = new Candidate({
+//       firstName,
+//       lastName,
+//       email,
+//       phone,
+//       ...professionalInfo, // Add professional info to global candidate data
+//       otp: hashedOtp,
+//       otpExpires: Date.now() + 10 * 60 * 1000,
+//       jobApplications: [
+//         {          
+//           jobId,
+//           jobApplied,
+//           questionResponses,
+//           applicationDate: new Date(),
+//           currentStage: jobStages[0]?.name || "",
+//           stageStatuses: initialStageStatuses,
+//           resumeUrl,
+//           professionalInfo // Also include professional info in the job application
+//         },
+//       ],
+//     });
+
+//     await newCandidate.save();
+//     await sendOtpEmail(email, otp);
+
+//     res.status(200).json({ message: "Candidate registered. OTP sent to email." });
+//   } catch (error) {
+//     console.error("Error registering candidate:", error);
+//     res.status(500).json({ message: "Server error" });
+//   }
+// };
+
+
 export const registerCandidate = async (req, res) => {
   try {
     const {
@@ -95,12 +197,29 @@ export const registerCandidate = async (req, res) => {
 
     const jobStages = getJobStages(job.jobProfile);
 
-    const existingCandidate = await Candidate.findOne({
-      $or: [{ email }, { phone }],
-    });
+    // Check for existing email and phone separately
+    const existingEmail = await Candidate.findOne({ email });
+    const existingPhone = await Candidate.findOne({ phone });
 
-    if (existingCandidate) {
-      return res.status(400).json({ message: "Email or phone number already exists" });
+    if (existingEmail && existingPhone) {
+      return res.status(400).json({ 
+        message: "Email and phone number already exist",
+        field: "both"
+      });
+    }
+    
+    if (existingEmail) {
+      return res.status(400).json({ 
+        message: "Email already exists",
+        field: "email"
+      });
+    }
+
+    if (existingPhone) {
+      return res.status(400).json({ 
+        message: "Phone number already exists",
+        field: "phone"
+      });
     }
 
     // Generate OTP and hash it
@@ -139,7 +258,7 @@ export const registerCandidate = async (req, res) => {
       lastName,
       email,
       phone,
-      ...professionalInfo, // Add professional info to global candidate data
+      ...professionalInfo,
       otp: hashedOtp,
       otpExpires: Date.now() + 10 * 60 * 1000,
       jobApplications: [
@@ -151,7 +270,7 @@ export const registerCandidate = async (req, res) => {
           currentStage: jobStages[0]?.name || "",
           stageStatuses: initialStageStatuses,
           resumeUrl,
-          professionalInfo // Also include professional info in the job application
+          professionalInfo
         },
       ],
     });
@@ -570,3 +689,121 @@ export const getCandidateAppliedJobs = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+
+// Request Password Reset / Send OTP
+export const forgotPassword = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+
+  const candidate = await Candidate.findOne({ email });
+  if (!candidate) {
+    res.status(404);
+    throw new Error('Candidate not found');
+  }
+
+  // Generate OTP
+  const otp = generateOTP();
+  
+  // Store OTP with expiry (15 minutes)
+  otpStore.set(email, {
+    otp,
+    expiry: Date.now() + 15 * 60 * 1000
+  });
+
+  // Email content
+  const emailContent = `
+    Hello ${candidate.firstName},
+
+    You have requested to reset your password. 
+    Your OTP is: ${otp}
+
+    This OTP will expire in 15 minutes.
+
+    If you didn't request this, please ignore this email.
+
+    Best regards,
+    HireHive Team
+  `;
+
+  // Send email
+  await sendEmail(
+    email,
+    'Password Reset Request - HireHive',
+    emailContent
+  );
+
+  res.json({ message: 'OTP sent successfully' });
+});
+
+// Verify OTP
+export const verifyOTPForgot = asyncHandler(async (req, res) => {
+  const { email, otp } = req.body;
+
+  const storedOTPData = otpStore.get(email);
+  
+  if (!storedOTPData) {
+    res.status(400);
+    throw new Error('OTP expired or invalid');
+  }
+
+  if (Date.now() > storedOTPData.expiry) {
+    otpStore.delete(email);
+    res.status(400);
+    throw new Error('OTP expired');
+  }
+
+  if (storedOTPData.otp !== otp) {
+    res.status(400);
+    throw new Error('Invalid OTP');
+  }
+
+  res.json({ message: 'OTP verified successfully' });
+});
+
+// Reset Password
+export const resetPassword = asyncHandler(async (req, res) => {
+  const { email, otp, password } = req.body;
+
+  // Verify OTP again
+  const storedOTPData = otpStore.get(email);
+  if (!storedOTPData || storedOTPData.otp !== otp || Date.now() > storedOTPData.expiry) {
+    res.status(400);
+    throw new Error('Invalid or expired OTP');
+  }
+
+  // Find and update user
+  const candidate = await Candidate.findOne({ email });
+  if (!candidate) {
+    res.status(404);
+    throw new Error('Candidate not found');
+  }
+
+  //hash the new password
+  const hashedPassword = await bcrypt.hash(password, 12);
+  
+  // Update password
+  candidate.password = hashedPassword;
+  await candidate.save();
+
+  // Clear OTP
+  otpStore.delete(email);
+
+  // Send confirmation email
+  const emailContent = `
+    Hello ${candidate.firstName},
+
+    Your password has been successfully reset.
+    If you didn't make this change, please contact support immediately.
+
+    Best regards,
+    HireHive Team
+  `;
+
+  await sendEmail(
+    email,
+    'Password Reset Successful - HireHive',
+    emailContent
+  );
+
+  res.json({ message: 'Password reset successful' });
+});

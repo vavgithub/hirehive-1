@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 
 export const useCandidateAuth = () => {
   const dispatch = useDispatch();
-  const [isDone,setIsDone] = useState(false);
+  const [isDone, setIsDone] = useState(false);
   const {
     candidateAuthData,
     isAuthenticatedCandidate,
@@ -16,21 +16,20 @@ export const useCandidateAuth = () => {
   } = useSelector((state) => state.candidateAuth);
 
   useEffect(() => {
-    if (!candidateAuthData) {
-      async function fetchData(){
-        await dispatch(fetchCandidateAuthData()).unwrap();
-        setIsDone(true)
+    const fetchData = async () => {
+      try {
+        if (!candidateAuthData) {
+          await dispatch(fetchCandidateAuthData()).unwrap();
+        }
+        setIsDone(true);
+      } catch (error) {
+        console.error('Error fetching candidate data:', error);
+        setIsDone(true);
       }
-      fetchData()
-    }
+    };
 
-  }, [dispatch, isAuthenticatedCandidate, candidateAuthData]);
-
-  useEffect(()=>{
-    if(authError){
-      setIsDone(true)
-    }
-  },[authError])
+    fetchData();
+  }, [dispatch, candidateAuthData]);
 
   return {
     candidateData: candidateAuthData,
