@@ -207,7 +207,7 @@ const FilterForDataTable = ({ onApplyFilters ,readOnly}) => {
                 category === 'experience' ? (
                   <ExperienceFilter onApply={handleExperienceApply} />
                 ) : (
-                  <div className="px-6 py-4 rounded-xl absolute typography-body left-64 bg-background-40 w-max flex flex-col gap-4 shadow-[2px_4px_30px_rgba(0,0,0,0.3)]">
+                  <div className="px-8 py-4 rounded-xl absolute typography-body left-[18.1rem] bg-background-40 w-max flex flex-col gap-4 shadow-[2px_4px_30px_rgba(0,0,0,0.3)]">
                     {categories[category].map((item) => (
                       <label key={category === 'assignee' ? item._id :item} className="flex items-center text-white">
                         <input

@@ -706,6 +706,7 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
         getRowClassName={(params) =>
           params.indexRelativeToCurrentPage % 2 === 0 ? 'first-row' : 'second-row'
         }
+        localeText={{ noRowsLabel: <p style={{fontFamily:"Outfit"}}>No Candidates</p> }}
         sx={{
           '& .MuiDataGrid-root': {
             border: '0px',
@@ -755,6 +756,9 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
           '& .MuiDataGrid-filler': {
             backgroundColor: 'black',
           },
+          '& .css-8yphpr':{
+            height : "0px !important"
+          },
           '& .MuiTablePagination-selectIcon': {
             color: 'white',
           },
@@ -783,6 +787,13 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
           '& .MuiDataGrid-virtualScroller': {
             backgroundColor: 'transparent ' , // Ensure the background behind rows is also transparent
           },
+          '& .MuiDataGrid-overlayWrapper':{
+            height:"3rem",
+          },
+          '& .MuiDataGrid-overlay':{
+            color: 'white',
+            backgroundColor : 'rgba(12, 13, 13, 1)'
+          }
         }}
         pageSizeOptions={[5, 10]}
         checkboxSelection
