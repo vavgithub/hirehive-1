@@ -24,10 +24,6 @@ export default {
           "linear-gradient(180deg, var(--tw-gradient-stops))",
       },
       colors: {        
-        red: {
-          100:"rgba(255, 56, 92, 1)",
-          200: "rgba(255, 56, 92, 0.2)", // Custom value for red-200
-        },
         yellow:{
           100: "rgba(237, 189, 20, 0.2)",
         },
@@ -45,6 +41,8 @@ export default {
           60:"rgba(255, 56, 92, 0.3)",
           50:"rgba(255, 56, 92, 0.05)",
           40:"rgba(203, 0, 0, 1)",
+          300:"rgba(255, 56, 92, 1)",
+          200:"rgba(255,56,92,0.2)", // Custom value for red-200
         },
         blue:{
           100:"var(--color-primary-100)",

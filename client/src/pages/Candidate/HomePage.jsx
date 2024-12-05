@@ -12,6 +12,7 @@ import { clearAuthError, fetchCandidateAuthData } from '../../redux/candidateAut
 import { useDispatch } from 'react-redux';
 import useCandidateAuth from '../../hooks/useCandidateAuth';
 import Loader from '../../components/ui/Loader';
+import NoJobs from "../../svg/Background/NoJobs.svg"
 
 const fetchOpenJobs = () => axios.get('/candidates/jobs/open').then(res => res.data);
 const searchJobs = (query) => axios.get(`/candidates/jobs/searchJobs?jobTitle=${encodeURIComponent(query)}`).then(res => res.data);
@@ -47,7 +48,7 @@ const HomePage = () => {
 
     const { data: jobs = [] } = useQuery({ queryKey: ['jobs'], queryFn: fetchOpenJobs })
 
-    const { data: filteredJobs = [] } = useQuery({
+    const { data: filteredJobs = [] , isLoading: isFilteredJobsLoading} = useQuery({
         queryKey: ['filteredJobs', filters],
         queryFn: () => filterJobs(filters),
         enabled: Object.values(filters).some(filter =>
@@ -55,7 +56,7 @@ const HomePage = () => {
         ),
     });
 
-    const { data: searchResults = [] } = useQuery({
+    const { data: searchResults = [] , isLoading: isSearchLoading} = useQuery({
         queryKey: ['searchJobs', searchQuery],
         queryFn: () => searchJobs(searchQuery),
         enabled: searchQuery !== '',
@@ -118,6 +119,12 @@ const HomePage = () => {
         setIsFilterVisible(!isFilterVisible);
     };
 
+    // Combined loading state
+    const isLoadingResults = (searchQuery.length > 0 && isSearchLoading) ||
+    (Object.values(filters).some(filter =>
+        Array.isArray(filter) ? filter.length > 0 : Object.values(filter).some(val => val !== '')
+    ) && isFilteredJobsLoading);
+
     const displayJobs = searchQuery.length > 0 ? searchResults :
         (Object.values(filters).some(filter => Array.isArray(filter) ? filter.length > 0 : Object.values(filter).some(val => val !== '')) ? filteredJobs : jobs);
 
@@ -140,11 +147,11 @@ const HomePage = () => {
                     <h1 className='typography-h1 py-4'>Jobs</h1>
                 <div className=' py-8 bg-main-bg bg-cover flex flex-col items-center rounded-xl justify-center'>
                     <h1 className='display-d2 max-w-96 text-center'>Unlock Your Career Potential</h1>
-                    <div className='flex justify-evenly gap-2 w-full md:w-4/5 mt-6 md:mt-9'>
+                    <div className='flex justify-evenly gap-2 w-full md:w-3/5 mt-6 md:mt-9'>
                         <input
                             type='text'
                             className="w-full p-2 "
-                            placeholder="Job title or keyword"
+                            placeholder="Enter job title"
                             value={searchQuery}
                             onChange={handleSearch}
                         />
@@ -180,7 +187,19 @@ const HomePage = () => {
     
                     {/* Job listings */}
                     <div className='flex flex-col w-full md:w-fill-available'>
-                        {displayJobs.map((job) => (
+                        {isLoadingResults ? (
+                            <div className="flex justify-center items-center min-h-[400px]">
+                                <Loader />
+                            </div>
+                        ) :
+                        displayJobs?.length === 0 ? 
+                        <div className='bg-background-80 h-full flex flex-col p-40 justify-center items-center rounded-xl'>
+                            <img src={NoJobs} alt="No jobs found" />
+                            <span className='typography-body m-6'>
+                                No Jobs available
+                            </span>
+                        </div> :
+                        displayJobs.map((job) => (
                             <JobCard
                                 key={job._id}
                                 job={job}

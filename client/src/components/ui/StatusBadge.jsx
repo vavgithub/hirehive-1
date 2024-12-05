@@ -31,7 +31,7 @@ const StatusBadge = ({ status }) => {
   const displayStatus = typeof status === 'string' ? status : 'Unknown Status';
 
   return (
-    <div className={`flex items-center rounded-xl justify-between px-4 py-2 h-8 ${colorClasses}`}>
+    <div className={`flex items-center rounded-xl justify-center w-[85%] px-4 py-2 h-8 ${colorClasses}`}>
       <span className="typography-body">{displayStatus}</span>
     </div>
   );
