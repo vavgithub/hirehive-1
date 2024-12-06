@@ -193,7 +193,7 @@ const CandidateLayout = () => {
       />
 
       {/* Main Content */}
-      <div class="md:ml-[13rem] md:w-[calc(100vw-13rem)] flex flex-col items-center min-h-screen">
+      <div class="md:ml-[12rem] md:w-[calc(100vw-12rem)] flex flex-col items-center min-h-screen">
         {isAssessmentBannerVisible &&  <AssessmentBanner />}
                 <Outlet />
             </div>

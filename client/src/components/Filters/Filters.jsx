@@ -121,13 +121,13 @@ const Filters = ({ filters = {}, handleCheckboxChange, activeTab, handleExperien
 
     const closedOptions = [
         {
-            value: 'hired', label: 'Hired', icon: {
+            value: 'Hired', label: 'Hired', icon: {
                 active: HiredIconActive,
                 inactive: HiredIcon
             }
         },
         {
-            value: 'notHired', label: 'Not Hired', icon: {
+            value: 'NotHired', label: 'Not Hired', icon: {
                 active: NotHiredActive,
                 inactive: NotHired
             }

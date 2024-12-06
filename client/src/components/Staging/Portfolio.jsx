@@ -137,7 +137,7 @@ const Portfolio = ({ candidateId, jobId ,isClosed}) => {
 
                         <Label icon={WarningIcon} text="Candidate's portfolio has not yet been assigned to a reviewer." />
                         <div className='w-2/5'>
-                            <h4 className='typography-h4'>Select Reviewer</h4>
+                            <h4 className='typography-h4  my-4'>Select Reviewer</h4>
                             <AssigneeSelector
                                 mode="default"
                                 value={stageData?.assignedTo}
@@ -281,7 +281,9 @@ const Portfolio = ({ candidateId, jobId ,isClosed}) => {
                     minHeight : "12rem"
                 }}
             >
-                <CardContent>
+                <CardContent sx={{
+                    padding:"24px"
+                }}>
                     <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
                         <div className='flex'>
                             <h3 className='typography-h3 mr-6'>Portfolio</h3>
@@ -304,8 +306,8 @@ const Portfolio = ({ candidateId, jobId ,isClosed}) => {
                                 </a>
                             </div>
                         </div>
-                        <Box display="flex" alignItems="center">
-                            {!isClosed && <StatusBadge status={stageData?.status} />}
+                        <Box display="flex" alignItems="center" justifyContent={"end"} width={"40%"}>
+                            {!isClosed && <StatusBadge customWidth={'w-fit'} status={stageData?.status} />}
                             {role === 'Hiring Manager' && (
                                 <AssigneeSelector
                                     mode="icon"

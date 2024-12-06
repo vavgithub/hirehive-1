@@ -614,6 +614,7 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
           }
           .MuiDataGrid-root .MuiDataGrid-row {
             z-index: 1;
+            cursor: pointer
           }
           .MuiDataGrid-root .MuiDataGrid-row:hover {
             z-index: 2;

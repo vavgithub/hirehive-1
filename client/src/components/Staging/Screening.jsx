@@ -701,7 +701,7 @@ const Screening = ({ candidateId, jobId , isClosed}) => {
                         <h3 className='typography-h3 mr-10'>Screening</h3>
                         {/* ... other content ... */}
                     </div>
-                    <div className='flex items-center '>
+                    <div className='flex items-center w-[40%] justify-end'>
 
                     {
                     isClosed &&
@@ -710,7 +710,7 @@ const Screening = ({ candidateId, jobId , isClosed}) => {
                     </div>
                     }
 
-                        {isClosed || <StatusBadge status={stageData?.status} />}
+                        {isClosed || <StatusBadge customWidth={'w-fit'} status={stageData?.status} />}
                         {
                             role == "Hiring Manager" && (
 
