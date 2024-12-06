@@ -376,6 +376,7 @@ const ApplyJob = () => {
                       <InputField
                         type="number"
                         id="phoneNumber"
+                        extraClass="no-spinner"
                         label="Phone Number"
                         required={true}
                         error={errors.phoneNumber}
