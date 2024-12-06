@@ -394,9 +394,11 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
     {
       field: 'currentStage',
       headerName: 'Stage',
-      width: 190,
+      width: 200,
+      align:'center',
+      headerAlign : 'center',
       renderCell: (params) => (
-        <div className='h-full flex items-center'>
+        <div className='h-full flex items-center justify-center'>
           <StageBadge stage={params.value} />
         </div>
       )
@@ -408,9 +410,11 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
     {
       field: 'status',
       headerName: 'Status',
-      width: 180,
+      width: 200,
+      align:'center',
+      headerAlign : 'center',
       renderCell: (params) => (
-        <div className='h-full flex items-center'>
+        <div className='h-full flex items-center justify-center'>
           <StatusBadge status={params.row.status} />
         </div>
       ),
@@ -419,6 +423,8 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
       field: 'jobTitle',
       headerName: 'Applied For',
       width: 200,
+      align:'center',
+      headerAlign : 'center',
     },  
   ];
 

@@ -37,6 +37,7 @@ const JobCard = ({
   handleAction,
   page,
   onClick,
+  isApplied,
   withKebab,
   isAdmin,
   isCandidate,
@@ -115,7 +116,11 @@ const JobCard = ({
   >
     <div className="flex flex-col items-start justify-between p-4 md:flex-row gap-3">
       <h3 className="typography-h3 group-hover:text-font-accent">{job.jobTitle}</h3>
-      <div className="flex items-center">
+      <div className="flex items-center gap-3">
+        {isApplied &&         
+        <span className="bg-blue-300 text-blue-100 typography-body px-4 py-2 rounded-xl">
+          Applied
+        </span>}
         {(job.status !== "deleted" && job.status !== "closed") &&
         <span className="bg-background-70 typography-body px-4 py-2 rounded-xl">
           {job.jobProfile}

@@ -20,6 +20,7 @@ import { DraftsIcon, DraftsIconActive } from '../../svg/Tabs/DraftsIcon';
 import NoJobs from "../../svg/Background/NoJobs.svg"
 import { showErrorToast, showSuccessToast } from '../../components/ui/Toast';
 import Loader from '../../components/ui/Loader';
+import SearchIcon from '../../svg/SearchIcon';
 
 
 const fetchJobs = () => axios.get('/jobs/jobs').then(res => res.data);
@@ -307,10 +308,14 @@ const Dashboard = () => {
 
                 <div className='flex mt-4'>
                     <div>
-                        <div className='mb-4'>
+                        <div className='mb-4 relative '>
+                            <div className='absolute top-[10px] left-4'>
+                                <SearchIcon />
+                            </div>
                             <input
+                                style={{paddingLeft : "48px"}}
                                 type='text'
-                                placeholder="Job title or keyword"
+                                placeholder="Enter job title"
                                 value={searchQuery}
                                 onChange={handleSearch}
                             />

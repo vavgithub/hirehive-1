@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Webcam from 'react-webcam';
@@ -10,6 +10,10 @@ import axios from "../../api/axios";
 import { showSuccessToast, showErrorToast } from '../../components/ui/Toast';
 import LightLogo from "../../svg/Logo/lightLogo.svg"
 import { fetchCandidateAuthData, updateAssessmentStatus } from '../../redux/candidateAuthSlice';
+import TimerIconSmall from '../../svg/TimerIconSmall';
+import WarningIcon from '../../svg/WarningIcon';
+import Draggable from 'react-draggable';
+const FIVE_MIN_THIRTY_SEC = 330;
 
 // Utility function to format time
 const formatTime = (time) => {
@@ -57,18 +61,28 @@ const QuestionSidebar = ({ questions, currentQuestion, onQuestionSelect, answers
     return () => clearInterval(timer);
   }, []);
 
+  const [ min ,sec ] = useMemo(()=> formatTime(timeRemaining).split(":") ,[timeRemaining]) 
+  
   return (
-    <div className="w-[200px] bg-background-30 fixed h-screen overflow-y-auto flex-shrink-0">
+    <div className="w-[200px] bg-background-30 fixed h-screen overflow-y-auto flex-shrink-0 custom-scrollbar">
       <div className='p-4 flex items-center justify-center '>
 
         <img className='h-11' src={LightLogo} />
       </div>
       <div className="mb-6 p-4 rounded-xl">
-        <div className="flex flex-col p-2 rounded-xl items-center bg-background-80">
+        <div className="flex flex-col p-4 rounded-xl items-center bg-background-80">
+          <div className='flex items-center gap-2'>
+          <TimerIconSmall />
           <p className='typography-body text-font-gray'>Time remaining</p>
-          <span className="bg-background-70 typography-h3 p-2 rounded-xl">
-            {formatTime(timeRemaining)}
+          </div>
+          <div className='mt-3 flex items-center gap-3'>
+          <span className={(timeRemaining <= FIVE_MIN_THIRTY_SEC && "bg-red-200 text-red-300 ") +" bg-background-70 typography-h3 flex items-center justify-center w-12 h-12 rounded-xl"}>
+            {min}
+          </span> : 
+          <span className={(timeRemaining <= FIVE_MIN_THIRTY_SEC && "bg-red-200 text-red-300 ") +" bg-background-70 typography-h3 flex items-center justify-center w-12 h-12 rounded-xl"}>
+            {sec}
           </span>
+          </div>
         </div>
       </div>
       <h2 className="typography-h3 text-font-gray p-4">Questions</h2>
@@ -79,11 +93,14 @@ const QuestionSidebar = ({ questions, currentQuestion, onQuestionSelect, answers
             ? 'text-font-accent'
             : answers[q._id]
               ? 'text-green-100'
-              : 'text-font-gray hover:bg-background-60'
+              : (index < currentQuestion ) ? 
+              'text-yellow-100'
+              :'text-font-gray hover:bg-background-60'
             }`}
           onClick={() => onQuestionSelect(index)}
         >
-          <span className="truncate flex-grow mr-2">
+          <span className="truncate flex items-center gap-2 flex-grow mr-2">
+            {!answers[q._id] && ( index < currentQuestion ) && <WarningIcon/>}
             Question {index + 1}
             {answers[q._id] && ' ✓'}
           </span>
@@ -131,8 +148,8 @@ const QuestionDisplay = ({
                 value={option.text}
                 checked={currentAnswer === option.text}
                 onChange={() => onAnswer(question._id, option.text)}
-                className="form-radio h-5 w-5 text-red-600"
-              />
+                className="appearance-none border-2 rounded-full  form-radio h-5 w-5 checked:bg-teal-100 checked:ring-4 checked:w-3 checked:h-3 checked:border-0  checked:ring-teal-10"
+              /> 
               <div className="flex flex-col gap-2">
                 <span className='typography-body'>{option.text}</span>
                 {option.imageUrl && (
@@ -179,9 +196,12 @@ const QuestionDisplay = ({
 const WebcamView = ({ isMinimized, toggleMinimize, isRecording, webcamRef }) => (
   <div className={`bg-gray-800 rounded-lg overflow-hidden ${isMinimized ? 'w-64' : 'w-96'}`}>
     <div className="flex justify-between items-center p-2 bg-gray-700">
-      <h3 className="font-semibold">
-        {isRecording ? 'Recording...' : 'Camera Off'}
-      </h3>
+      <div className='flex items-center gap-3 px-1' >
+        <div className='bg-red-40 w-4 h-4 rounded-full border-2'></div>
+        <h3 className="font-semibold">
+          {isRecording ? 'Recording...' : 'Camera Off'}
+        </h3>
+      </div>
       <button onClick={toggleMinimize}>
         {isMinimized ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
       </button>
@@ -194,11 +214,11 @@ const WebcamView = ({ isMinimized, toggleMinimize, isRecording, webcamRef }) => 
           mirrored={true}
           className="absolute inset-0 w-full h-full object-cover"
         />
-        <div className="absolute bottom-2 right-2 flex space-x-2">
-          <div className={`p-2 rounded-full ${isRecording ? 'bg-red-500' : 'bg-gray-800'}`}>
+        <div className="absolute bottom-2 right-2 flex space-x-2 w-full justify-center">
+          <div className={`p-2 rounded-xl ${isRecording ? 'bg-red-500' : 'bg-gray-800'}`}>
             <Camera size={20} />
           </div>
-          <div className={`p-2 rounded-full ${isRecording ? 'bg-red-500' : 'bg-gray-800'}`}>
+          <div className={`p-2 rounded-xl ${isRecording ? 'bg-red-500' : 'bg-gray-800'}`}>
             <Mic size={20} />
           </div>
         </div>
@@ -628,14 +648,14 @@ const Assessment = () => {
   return (
     <>
       {isUploading && <UploadProgressOverlay uploadProgress={uploadProgress} />}
-      <div className="flex h-screen bg-background-90">
+      <div className=" flex min-h-screen bg-background-90 ">
         <QuestionSidebar
           questions={questions}
           currentQuestion={currentQuestion}
           onQuestionSelect={setCurrentQuestion}
           answers={answers}
         />
-        <div className="flex-grow flex flex-col">
+        <div className="flex-grow flex flex-col container mx-auto ">
           <div className="bg-background-90 pl-[212px] p-4 flex gap-8 justify-between items-center">
             <ProgressBar answeredCount={answeredCount} total={questions.length} />
             <div className='typography-body text-font-gray'>
@@ -660,14 +680,16 @@ const Assessment = () => {
             isAllAnswered={isAllAnswered}
             renderFinishButton={renderFinishButton}
           />
-          <div className="p-4 flex justify-end">
-            <WebcamView
-              isMinimized={isWebcamMinimized}
-              toggleMinimize={() => setIsWebcamMinimized(prev => !prev)}
-              isRecording={isRecording}
-              webcamRef={webcamRef}
-            />
-          </div>
+            <Draggable>
+              <div className="p-4 fixed bottom-3 right-3">
+                  <WebcamView
+                    isMinimized={isWebcamMinimized}
+                    toggleMinimize={() => setIsWebcamMinimized(prev => !prev)}
+                    isRecording={isRecording}
+                    webcamRef={webcamRef}
+                  />
+              </div>
+            </Draggable>
         </div>
       </div>
     </>

@@ -239,7 +239,7 @@ const ViewCandidateProfile = () => {
 
                         {/* VAV Score Section */}
                         <div className="flex bg-stars flex-col items-center bg-background-90 w-[430px] bg-cover p-5 rounded-xl">
-                            <h3 className="typography-h3">VAV SCORE</h3>
+                            <h3 className="typography-h2">VAV SCORE</h3>
                             <span className="marks text-font-primary">{score?.totalScore}</span>
                             <p className="typography-large-p">Out of 100</p>
                         </div>

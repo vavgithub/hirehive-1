@@ -25,7 +25,7 @@ export const InputField = React.forwardRef(({
   errorMessage, 
   ...props 
 }, ref) => (
-  <div className='flex flex-col justify-between gap-2'>
+  <div className='flex flex-col justify-start gap-4 relative'>
     <label htmlFor={id} className="typography-body">
       {label} {required && <span className="text-red-100">*</span>}
     </label>
@@ -40,7 +40,7 @@ export const InputField = React.forwardRef(({
       {...props}
     />
     {error && errorMessage && (
-      <span className="text-red-500 text-sm mt-1">{errorMessage}</span>
+      <span className="text-red-500 text-sm -bottom-3 absolute">{errorMessage}</span>
     )}
   </div>
 ));

@@ -473,8 +473,10 @@ const searchJobs = async (req, res) => {
     const jobArray = await jobs.find({
       jobTitle: { $regex: searchTerm, $options: "i" },
     });
+    //Filtererd into openJobs only for candidates
+    const openJobsFiltered = jobArray.filter(job=>job.status === "open");
     // Respond with the list of jobs
-    res.status(200).json(jobArray);
+    res.status(200).json(openJobsFiltered);
   } catch (error) {
     // Handle error if fetching jobs fails
     res.status(500).json({ message: error.message });

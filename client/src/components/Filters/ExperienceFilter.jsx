@@ -57,7 +57,7 @@ const ExperienceFilter = ({ onApply, shouldReset }) => {
               placeholder="0"
               className="w-16 p-2 bg-background-40 text-left no-spinner rounded-xl"
             />
-            <span className="text-font-gray pr-2">Years</span>
+            <span className="text-font-gray pr-2">Yrs</span>
           </div>
         </div>
         <div>
@@ -70,7 +70,7 @@ const ExperienceFilter = ({ onApply, shouldReset }) => {
               placeholder="0"
               className="w-16 p-2 bg-background-40 text-left no-spinner rounded-xl"
             />
-            <span className="text-font-gray pr-2">Years</span>
+            <span className="text-font-gray pr-2">Yrs</span>
           </div>
         </div>
       </div>

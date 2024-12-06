@@ -74,11 +74,13 @@ const ViewJob = () => {
                         {/* <h1 className="typography-h1"></h1> */}
                         {/* Button only visible on large screens */}
                         <div className="hidden lg:block w-44">
-                            {hasApplied ? (
-                                <Button variant="secondary" disabled>
-                                    Already Applied
-                                </Button>
-                            ) : (
+                            {!hasApplied && 
+                            // ? (
+                            //     <Button variant="secondary" disabled>
+                            //         Already Applied
+                            //     </Button>
+                            // ) : 
+                            (
                                 <Button variant="primary" onClick={handleApplyClick} iconPosition="right" icon={ArrowIcon}  >
                                     Apply Job
                                 </Button>
@@ -117,11 +119,13 @@ const ViewJob = () => {
 
                     {/* Apply Button on mobile version (appears at the bottom of the page) */}
                     <div className="lg:hidden mt-8">
-                        {hasApplied ? (
-                            <Button variant="secondary" disabled>
-                                Already Applied
-                            </Button>
-                        ) : (
+                        {!hasApplied &&
+                        //  ? (
+                        //     <Button variant="secondary" disabled>
+                        //         Already Applied
+                        //     </Button>
+                        // ) :
+                         (
                             <Button variant="primary" onClick={handleApplyClick} iconPosition="right" icon={ArrowIcon} >
                                 Apply Job
                             </Button>
