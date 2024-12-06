@@ -379,7 +379,7 @@ const searchJobs = async (req, res) => {
 
 const filterJobs = asyncHandler(async (req, res) => {
   try {
-    const { employmentType, jobProfile, experience, budget, closingReason } = req.body.filters;
+    const { employmentType, jobProfile, experience, budget, closingStatus } = req.body.filters;
     const query = { createdBy: req.user._id };
 
     // Add employment type filter
@@ -413,8 +413,8 @@ const filterJobs = asyncHandler(async (req, res) => {
     }
 
     // Add closing status filter
-    if (closingReason && closingReason.length > 0) {
-      if (closingReason.includes('Hired')) {
+    if (closingStatus && closingStatus.length > 0) {
+      if (closingStatus.includes('Hired')) {
         query.closingReason = 'Hired';
       } else if (closingStatus.includes('NotHired')) {
         query.closingReason = { $ne: 'Hired' };

@@ -438,8 +438,8 @@ const RoundOne = ({ candidateId, jobId ,isClosed}) => {
                             </div>
                         }
                     </div>
-                    <Box display="flex" alignItems="center">
-                        {isClosed || <StatusBadge status={stageData?.status} />}
+                    <Box display="flex" alignItems="center" justifyContent={"end"} width={"40%"}>
+                        {isClosed || <StatusBadge customWidth={'w-fit'} status={stageData?.status} />}
                         {role === 'Hiring Manager' && (
                             <AssigneeSelector
                                 mode="icon"
