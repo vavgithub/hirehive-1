@@ -4,6 +4,16 @@ const colors = require("tailwindcss/colors");
 export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
+    container: {
+      center: true,
+      screens: {
+        sm: '540px',    // reduced from 640px
+        md: '668px',    // reduced from 768px
+        lg: '924px',    // reduced from 1024px
+        xl: '1080px',   // reduced from 1280px
+        '2xl': '1280px' // reduced from 1536px
+      },
+    },
     extend: {
       width: {
         'fill-available': '-webkit-fill-available',
