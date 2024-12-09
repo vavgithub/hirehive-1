@@ -726,7 +726,7 @@ export const getCandidateById = async (req, res) => {
       // Format time
       const timeInMinutes = Math.floor(latestAttempt.totalTimeInSeconds / 60);
       const timeInSeconds = latestAttempt.totalTimeInSeconds % 60;
-      const formattedTime = `${timeInMinutes}h ${timeInSeconds}mins`;
+      const formattedTime = `${timeInMinutes}mins ${timeInSeconds}seconds`;
   
       // Enhanced response with question details
       const response = {
