@@ -1,11 +1,13 @@
 import express from "express"
-import { changeApplicationStatus, getCandidateScores, moveCandidate, rejectCandidate, rescheduleCall, rescheduleScreening, scheduleCall, scheduleScreening, scoreRoundTwo, sendDesignTask, submitBudgetScore, updateCandidateRating } from "../../controllers/admin/hr.controller.js";
+import { changeApplicationStatus, getCandidateScores, moveCandidate, noShow, rejectCandidate, rescheduleCall, rescheduleScreening, scheduleCall, scheduleScreening, scoreRoundTwo, sendDesignTask, submitBudgetScore, updateCandidateRating } from "../../controllers/admin/hr.controller.js";
 
 const router = express.Router();
 
 router.post('/reject-candidate', rejectCandidate);
 
 router.post('/move-candidate', moveCandidate);
+
+router.post('/no-show', noShow);
 
 router.post('/update-candidate-rating', updateCandidateRating);
 

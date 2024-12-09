@@ -197,7 +197,11 @@ const AssessmentResponse = () => {
                                                 Finished on
                                             </p>
                                             <p className='typography-large-p'>
-                                                Aug 03, 2023
+                                            {new Date(assessmentData?.candidateInfo?.attemptDate).toLocaleDateString('en-US', {
+                                                year: 'numeric',
+                                                month: 'short',
+                                                day: '2-digit',
+                                                })}
                                             </p>
                                         </div>
 

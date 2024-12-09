@@ -324,7 +324,10 @@ const Reviews = () => {
 
                             </span>
                             <a href={ensureAbsoluteUrl(candidate.portfolio)} target="_blank" rel="noopener noreferrer">
+                              <div onClick={(e)=>e.stopPropagation()}>
                               <FileMainIcon />
+
+                              </div>
                             </a>
                           </div>
 

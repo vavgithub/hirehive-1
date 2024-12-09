@@ -60,7 +60,10 @@ const theme = createTheme({
             color:"#ffffff",
             width: "100%",
             backgroundColor: "rgba(4, 95, 253, 1)"
-          }
+          },
+          '& .MuiButton-root:hover': {
+            backgroundColor: "rgba(4, 95, 253, 1) !important"
+            },
         },
       }
     },

@@ -66,7 +66,7 @@ const ViewJob = () => {
                     <img className='h-12' src={Logo} />
 
                 </div>
-                <div className=" bg-background-30 rounded-xl p-6">
+                <div className=" bg-background-30 rounded-xl p-6 w-full">
                     {/* Flex container for both desktop and mobile */}
                     <div className="flex flex-col lg:flex-row justify-between">
                         {/* Job Title */}
@@ -101,9 +101,9 @@ const ViewJob = () => {
                             {/* Skills section */}
                             <div>
                                 <h4 className="typography-h4 font-bold font-outfit mt-6 mb-3">Skills</h4>
-                                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                                <div className="flex flex-wrap gap-3">
                                     {formData.skills && formData.skills.map((skill, index) => (
-                                        <span key={index} className="flex font-outfit justify-center bg-background-70 px-6 py-2 rounded-full">
+                                        <span key={index} className="flex font-outfit justify-center w-fit bg-background-70 px-6 py-2 rounded-full">
                                             {skill}
                                         </span>
                                     ))}

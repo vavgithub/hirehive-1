@@ -8,7 +8,7 @@ const AssessmentBanner = () => {
         window.open("/assessment");
     }
     return (
-        <div className='container flex justify-between rounded-xl gap-4 bg-assessment p-6 m-4 items-center bg-cover'>
+        <div className='container flex justify-between rounded-xl gap-4 bg-assessment p-6 mx-4 md:m-4 items-center bg-cover w-[93%] md:w-[97%]'>
             <div className='flex gap-4 items-center'>
 
                 <div className='hidden w-16 h-16 rounded-full md:rounded-full bg-primary-300 border  border-primary-100 items-center md:flex justify-center '>

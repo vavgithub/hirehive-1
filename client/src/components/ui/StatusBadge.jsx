@@ -24,14 +24,14 @@ const getStatusColor = (status) => {
   }
 };
 
-const StatusBadge = ({ status }) => {
+const StatusBadge = ({ status ,customWidth}) => {
   const colorClasses = getStatusColor(status);
 
   // If status is not a string, display a fallback message
   const displayStatus = typeof status === 'string' ? status : 'Unknown Status';
 
   return (
-    <div className={`flex items-center rounded-xl justify-center w-[85%] px-4 py-2 h-8 ${colorClasses}`}>
+    <div className={`flex items-center rounded-xl justify-center ${customWidth ? customWidth : " w-[85%] "} px-4 py-2 h-8 ${colorClasses}`}>
       <span className="typography-body">{displayStatus}</span>
     </div>
   );

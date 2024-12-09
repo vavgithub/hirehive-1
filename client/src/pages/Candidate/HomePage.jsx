@@ -193,7 +193,7 @@ const HomePage = () => {
                             </div>
                         ) :
                         displayJobs?.length === 0 ? 
-                        <div className='bg-background-80 h-full flex flex-col p-40 justify-center items-center rounded-xl'>
+                        <div className='bg-background-80 h-full flex flex-col p-8 sm:p-20 xl:p-40 justify-center items-center rounded-xl'>
                             <img src={NoJobs} alt="No jobs found" />
                             <span className='typography-body m-6'>
                                 No Jobs available

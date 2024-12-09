@@ -36,11 +36,11 @@ const theme = createTheme({
           color: 'rgba(128, 131, 137, 1);',
           '&.Mui-selected': {
             color:"rgb(24, 233, 208)",
-            backgroundColor: 'rgba(24, 233, 208, 0.2)',
+            backgroundColor: 'rgba(24, 233, 208, 0.2) !important',
           },
           '&.Mui-selected:hover': {
             color:"rgb(24, 233, 208)",
-            backgroundColor: 'rgba(24, 233, 208, 0.3)',
+            backgroundColor: 'rgba(24, 233, 208, 0.3) !important',
           },
           '&:hover': {
             backgroundColor: 'rgba(35, 36, 37, 1)',

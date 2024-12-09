@@ -60,7 +60,7 @@ const MyJobs = () => {
   }
 
   return (
-    <div className='container m-4'>
+    <div className='container m-4 w-[97%]'>
       <h1 className="typography-h1">My Jobs</h1>
       <div className="p-4 bg-background-30 rounded-xl">
         {appliedJobs.length === 0 ? (
