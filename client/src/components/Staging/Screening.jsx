@@ -481,7 +481,17 @@ const Screening = ({ candidateId, jobId, isClosed }) => {
                     </div>
                 );
             case 'Under Review':
-                return <Label icon={WarningIcon} text="Screening is currently under review." />;
+                return (
+                    <>
+                            <Label icon={WarningIcon} text="Screening is currently under review." />;
+                        <NoShowAction
+                            stage={"Screening"}
+                            candidateId={candidateId}
+                            jobId={jobId}
+                        />
+
+                    </>
+                )
             case 'Reviewed':
                 return renderReviewedContent();
             case 'Cleared':
@@ -492,17 +502,17 @@ const Screening = ({ candidateId, jobId, isClosed }) => {
                     <>
                         <Label icon={WarningIcon} text="Candidate did not show up for the scheduled screening call." />
                         <div>
-                        {isRescheduling && (
-                            <ScheduleForm
-                                candidateId={candidateId}
-                                jobId={jobId}
-                                onSubmit={handleReschedule}
-                                isRescheduling={true}
-                                initialData={stageData.currentCall}
-                                onCancel={() => setIsRescheduling(false)}
-                            />
-                        )}
-                        {/* {renderCallHistory()} */}
+                            {isRescheduling && (
+                                <ScheduleForm
+                                    candidateId={candidateId}
+                                    jobId={jobId}
+                                    onSubmit={handleReschedule}
+                                    isRescheduling={true}
+                                    initialData={stageData.currentCall}
+                                    onCancel={() => setIsRescheduling(false)}
+                                />
+                            )}
+                            {/* {renderCallHistory()} */}
 
                         </div>
                         <StageActions
@@ -513,10 +523,10 @@ const Screening = ({ candidateId, jobId, isClosed }) => {
                         >
                             {/* This will only show if status is No Show */}
                             <div className="w-[176px]">
-                                <Button variant="primary"  onClick={() => setIsRescheduling(true)}>
+                                <Button variant="primary" onClick={() => setIsRescheduling(true)}>
                                     Reschedule Call
                                 </Button>
-                                
+
                             </div>
                         </StageActions>
                     </>
