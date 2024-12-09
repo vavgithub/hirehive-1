@@ -184,7 +184,7 @@ const Hired = ({ candidateId, jobId ,isClosed}) => {
                         {/* ... other content ... */}
                     </div>
                     <Box display="flex" alignItems="center">
-                        <StatusBadge status={stageData?.status} />
+                        <StatusBadge customWidth={"w-fit"} status={stageData?.status} />
                     </Box>
                 </Box>
                 {renderContent()}

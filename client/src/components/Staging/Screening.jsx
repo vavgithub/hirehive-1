@@ -483,13 +483,14 @@ const Screening = ({ candidateId, jobId, isClosed }) => {
             case 'Under Review':
                 return (
                     <>
-                            <Label icon={WarningIcon} text="Screening is currently under review." />;
-                        <NoShowAction
-                            stage={"Screening"}
-                            candidateId={candidateId}
-                            jobId={jobId}
-                        />
-
+                        <Label icon={WarningIcon} text="Screening is currently under review." />
+                        <div className='mt-4 flex justify-end'>
+                            <NoShowAction
+                                stage={"Screening"}
+                                candidateId={candidateId}
+                                jobId={jobId}
+                            />
+                        </div>
                     </>
                 )
             case 'Reviewed':
@@ -515,7 +516,7 @@ const Screening = ({ candidateId, jobId, isClosed }) => {
                             {/* {renderCallHistory()} */}
 
                         </div>
-                        <StageActions
+                        {!isRescheduling && <StageActions
                             stage={"Screening"}
                             candidateId={candidateId}
                             jobId={jobId}
@@ -528,7 +529,7 @@ const Screening = ({ candidateId, jobId, isClosed }) => {
                                 </Button>
 
                             </div>
-                        </StageActions>
+                        </StageActions>}
                     </>
 
                 )

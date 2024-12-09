@@ -73,7 +73,7 @@ const StageActions = ({
     };
 
     return (
-        <div className='flex justify-end gap-4'>
+        <div className='flex justify-end gap-4 mt-5'>
             <div className='w-[176px]'>
                 <Button
                     variant="cancelSec"

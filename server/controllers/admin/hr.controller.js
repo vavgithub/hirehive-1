@@ -491,7 +491,7 @@ export const rescheduleCall = async (req, res) => {
     }
 
     // Move current call to call history if it exists
-    if (stageStatus.currentCall) {
+    if (stageStatus.currentCall.toObject()) {
       if (!stageStatus.callHistory) {
         stageStatus.callHistory = [];
       }
