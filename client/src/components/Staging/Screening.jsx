@@ -30,6 +30,7 @@ import BudgetIcon from '../../svg/Staging/BudgetIcon';
 import RightTick from '../../svg/Staging/RightTick';
 import ClosedBadge from '../../svg/ClosedBadge';
 import useScheduler from '../../hooks/useScheduler';
+import NoShowAction from './NoShow';
 
 
 const ScreeningReview = ({ candidate, onSubmit }) => {
@@ -184,7 +185,7 @@ export const ScheduleForm = ({ candidateId, jobId, onSubmit, isRescheduling, ini
     );
 };
 
-const Screening = ({ candidateId, jobId , isClosed}) => {
+const Screening = ({ candidateId, jobId, isClosed }) => {
 
 
     const dispatch = useDispatch();
@@ -195,9 +196,9 @@ const Screening = ({ candidateId, jobId , isClosed}) => {
 
     // Add this line outside renderContent
     const isDisabled = stageData?.status === 'Rejected' || stageData?.status === 'Cleared' || stageData?.status === 'Reviewed';
-    
-    const data = useScheduler(candidateData,stageData,"Under Review")    
-    
+
+    const data = useScheduler(candidateData, stageData, "Under Review")
+
     const { user } = useAuthContext();
     const role = user?.role || 'Candidate';
 
@@ -220,7 +221,7 @@ const Screening = ({ candidateId, jobId , isClosed}) => {
     const submitBudgetScoreMutation = useMutation({
         mutationFn: (score) => axios.post('hr/submit-budget-score', { candidateId, jobId, stage: 'Screening', score }),
         onSuccess: (data) => {
-        
+
             dispatch(updateStageStatus({
                 stage: 'Screening',
                 status: 'Reviewed',
@@ -271,7 +272,7 @@ const Screening = ({ candidateId, jobId , isClosed}) => {
 
     const handleBudgetScoreSubmit = () => {
         if (budgetScore > 0) {
-           
+
             submitBudgetScoreMutation.mutate(budgetScore);
         }
     };
@@ -363,7 +364,7 @@ const Screening = ({ candidateId, jobId , isClosed}) => {
             assigneeId: newAssignee._id
         }),
         onSuccess: (response) => {
-           
+
 
             const { updatedStageStatus, currentStage } = response.data;
 
@@ -391,11 +392,11 @@ const Screening = ({ candidateId, jobId , isClosed}) => {
         updateAssigneeMutation.mutate(newAssignee);
     };
 
-    const renderCallDetails = (call,isRescheduled) => (
-        <div className={(isRescheduled && "w-[43%] " ) +' bg-background-80 flex justify-between items-center rounded-xl p-4'}>
+    const renderCallDetails = (call, isRescheduled) => (
+        <div className={(isRescheduled && "w-[43%] ") + ' bg-background-80 flex justify-between items-center rounded-xl p-4'}>
             <div className='flex flex-col'>
                 {!isRescheduled && <span className='typography-small-p text-font-gray'>Date</span>}
-                <div className={(isRescheduled && "text-font-gray ") +' flex items-center gap-2'}>
+                <div className={(isRescheduled && "text-font-gray ") + ' flex items-center gap-2'}>
                     <CalenderIcon customStroke={"#808389"} />
                     <h2 className={isRescheduled && 'typography-body'}>
                         {new Date(call?.scheduledDate).toLocaleDateString('en-US', { timeZone: 'UTC' })}
@@ -405,7 +406,7 @@ const Screening = ({ candidateId, jobId , isClosed}) => {
             {isRescheduled && <div className='w-1 h-1 border-font-gray bg-font-gray border-[1px] rounded-full '></div>}
             <div className='flex flex-col'>
                 {!isRescheduled && <span className='typography-small-p text-font-gray'>Time</span>}
-                <div className={(isRescheduled && "text-font-gray ") +' flex items-center gap-2'}>
+                <div className={(isRescheduled && "text-font-gray ") + ' flex items-center gap-2'}>
                     <ClockIcon customStroke={"#808389"} />
                     <h2 className={isRescheduled && 'typography-body'}>
                         {formatTime(call?.scheduledTime)}
@@ -415,9 +416,9 @@ const Screening = ({ candidateId, jobId , isClosed}) => {
             {isRescheduled && <div className='w-1 h-1 border-font-gray bg-font-gray border-[1px] rounded-full '></div>}
             <div className='flex flex-col '>
                 {!isRescheduled && <span className='typography-small-p text-font-gray'>Meeting Link</span>}
-                <div className={(isRescheduled && "text-font-gray ") +' flex items-center gap-2'}>
+                <div className={(isRescheduled && "text-font-gray ") + ' flex items-center gap-2'}>
                     <LinkIcon customStroke={"#808389"} />
-                    <h2 className={(isRescheduled ? "text-font-gray typography-body " : "text-font-primary" ) + ' mr-2 '}>screening_meeting_link</h2>
+                    <h2 className={(isRescheduled ? "text-font-gray typography-body " : "text-font-primary") + ' mr-2 '}>screening_meeting_link</h2>
                     {!isRescheduled && <CopyToClipboard text={call?.meetingLink}>
                         <button className='flex items-center bg-background-70 px-[10px] py-[10px] rounded-xl'>
                             <ClipboardIcon />
@@ -448,8 +449,13 @@ const Screening = ({ candidateId, jobId , isClosed}) => {
                         <h3 className='typography-small-p text-font-gray mt-1'>Active Schedule</h3>
                         {renderCallDetails(stageData?.currentCall)}
                         {!isRescheduling && (
-                            <div className='w-full flex justify-end '>
+                            <div className='w-full flex gap-4 justify-end '>
 
+                                <NoShowAction
+                                    stage={"Screening"}
+                                    candidateId={candidateId}
+                                    jobId={jobId}
+                                />
 
                                 <div className='w-[170px]'>
                                     <Button
@@ -482,7 +488,41 @@ const Screening = ({ candidateId, jobId , isClosed}) => {
             case 'Rejected':
                 return renderClearedRejectedContent();
             case 'No Show':
-                return <Label icon={WarningIcon} text="Candidate did not show up for the scheduled screening call." />;
+                return (
+                    <>
+                        <Label icon={WarningIcon} text="Candidate did not show up for the scheduled screening call." />
+                        <div>
+                        {isRescheduling && (
+                            <ScheduleForm
+                                candidateId={candidateId}
+                                jobId={jobId}
+                                onSubmit={handleReschedule}
+                                isRescheduling={true}
+                                initialData={stageData.currentCall}
+                                onCancel={() => setIsRescheduling(false)}
+                            />
+                        )}
+                        {/* {renderCallHistory()} */}
+
+                        </div>
+                        <StageActions
+                            stage={"Screening"}
+                            candidateId={candidateId}
+                            jobId={jobId}
+                            isBudgetScoreSubmitted={"true"}
+                        >
+                            {/* This will only show if status is No Show */}
+                            <div className="w-[176px]">
+                                <Button variant="primary"  onClick={() => setIsRescheduling(true)}>
+                                    Reschedule Call
+                                </Button>
+                                
+                            </div>
+                        </StageActions>
+                    </>
+
+                )
+
             default:
                 return null;
         }
@@ -658,7 +698,7 @@ const Screening = ({ candidateId, jobId , isClosed}) => {
                     <h3 className='typography-small-p text-font-gray mt-1'>Reschedules</h3>
                     {stageData.callHistory.map((call, index) => (
                         <div key={index} className='mt-2'>
-                            {renderCallDetails(call,true)}
+                            {renderCallDetails(call, true)}
                             <p className='typography-small-p text-font-gray mt-3'>Status: {call.status}</p>
                         </div>
                     ))}
@@ -688,14 +728,14 @@ const Screening = ({ candidateId, jobId , isClosed}) => {
                 borderRadius: "12px",
                 color: "white",
                 fontFamily: 'Outfit, sans-serif',
-                position : "relative",
-                minHeight : "10rem"
+                position: "relative",
+                minHeight: "10rem"
             }}
         >
             <CardContent
-            sx={{
-                padding :"28px"
-            }}>
+                sx={{
+                    padding: "28px"
+                }}>
                 <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
                     <div className='flex'>
                         <h3 className='typography-h3 mr-10'>Screening</h3>
@@ -703,12 +743,12 @@ const Screening = ({ candidateId, jobId , isClosed}) => {
                     </div>
                     <div className='flex items-center w-[40%] justify-end'>
 
-                    {
-                    isClosed &&
-                    <div className='absolute top-0  right-0 flex items-center justify-center h-full'>
-                        <ClosedBadge />
-                    </div>
-                    }
+                        {
+                            isClosed &&
+                            <div className='absolute top-0  right-0 flex items-center justify-center h-full'>
+                                <ClosedBadge />
+                            </div>
+                        }
 
                         {isClosed || <StatusBadge customWidth={'w-fit'} status={stageData?.status} />}
                         {
@@ -725,15 +765,15 @@ const Screening = ({ candidateId, jobId , isClosed}) => {
                             )
                         }
 
-                        {isClosed || 
-                        <>
-                            <div className='h-8 w-1 rounded bg-background-70 mx-2'></div>
+                        {isClosed ||
+                            <>
+                                <div className='h-8 w-1 rounded bg-background-70 mx-2'></div>
 
-                            <div className='w-8 h-8 rounded-full bg-background-80 flex items-center justify-center mr-2'>
-                                <BudgetIcon />
-                            </div>
-                        <span className='typograhpy-body'>{candidateData.jobApplication.professionalInfo.expectedCTC}LPA</span>
-                        </>}
+                                <div className='w-8 h-8 rounded-full bg-background-80 flex items-center justify-center mr-2'>
+                                    <BudgetIcon />
+                                </div>
+                                <span className='typograhpy-body'>{candidateData.jobApplication.professionalInfo.expectedCTC}LPA</span>
+                            </>}
                     </div>
                 </Box>
                 {renderContent()}

@@ -7,13 +7,22 @@ import { ACTION_TYPES } from '../../utility/ActionTypes';
 import { setCurrentStage, updateStageStatus } from '../../redux/applicationStageSlice';
 import { Button } from '../ui/Button';
 
-const StageActions = ({ stage, candidateId, jobId, isBudgetScoreSubmitted }) => {
+const StageActions = ({ 
+    stage, 
+    candidateId, 
+    jobId, 
+    isBudgetScoreSubmitted,
+    children // New prop for custom content
+}) => {
     const dispatch = useDispatch();
     const queryClient = useQueryClient();
     const [isRejectModalOpen, setIsRejectModalOpen] = React.useState(false);
     const [isMoveModalOpen, setIsMoveModalOpen] = React.useState(false);
 
     const candidateData = useSelector(state => state.candidate.candidateData);
+    // Get the current stage's status from the candidateData
+    const currentStageStatus = candidateData?.jobApplication?.stageStatuses?.[stage]?.status;
+    const isNoShow = currentStageStatus === 'No Show';
 
     const rejectCandidateMutation = useMutation({
         mutationFn: ({ candidateId, jobId, rejectionReason }) => 
@@ -50,8 +59,7 @@ const StageActions = ({ stage, candidateId, jobId, isBudgetScoreSubmitted }) => 
         },
     });
 
-    const handleReject = (item, rejectionReason) => {
-       
+    const handleReject = (item, rejectionReason) => {       
         rejectCandidateMutation.mutate({ candidateId, jobId, rejectionReason });
     };
 
@@ -66,7 +74,7 @@ const StageActions = ({ stage, candidateId, jobId, isBudgetScoreSubmitted }) => 
 
     return (
         <div className='flex justify-end gap-4'>
-           <div className='w-[176px]'>
+            <div className='w-[176px]'>
                 <Button
                     variant="cancelSec"
                     onClick={() => setIsRejectModalOpen(true)}
@@ -76,15 +84,21 @@ const StageActions = ({ stage, candidateId, jobId, isBudgetScoreSubmitted }) => 
                 </Button>
             </div>
 
-            <div className='w-[176px]'>
-                <Button
-                    variant="primary"
-                    onClick={() => setIsMoveModalOpen(true)}
-                    disabled={!isBudgetScoreSubmitted}
-                >
-                    {getButtonText()}
-                </Button>
-            </div>
+            {!isNoShow ? (
+                // Show Move to Next Round button if not No Show
+                <div className='w-[176px]'>
+                    <Button
+                        variant="primary"
+                        onClick={() => setIsMoveModalOpen(true)}
+                        disabled={!isBudgetScoreSubmitted}
+                    >
+                        {getButtonText()}
+                    </Button>
+                </div>
+            ) : (
+                // Show children component if No Show
+                children
+            )}
 
             <Modal
                 open={isRejectModalOpen}
