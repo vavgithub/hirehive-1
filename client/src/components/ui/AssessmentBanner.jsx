@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom'
 const AssessmentBanner = () => {
     const navigate = useNavigate();
     const handleAssessment = () => {
-        window.open("/assessment");
+        navigate("/assessment");
     }
     return (
         <div className='container flex justify-between rounded-xl gap-4 bg-assessment p-6 mx-4 md:m-4 items-center bg-cover w-[93%] md:w-[97%]'>
