@@ -122,7 +122,7 @@ const AllJobs = () => {
 
 
     return (
-        <div className='container m-4 w-[97%]'>
+        <div className='container m-4 w-[93%] md:w-[97%]'>
             <div className='flex items-center justify-between'>
                 <h1 className='typography-h1'>All Jobs</h1>
                 <div

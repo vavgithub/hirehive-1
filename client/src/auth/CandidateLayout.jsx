@@ -13,14 +13,15 @@ import AssessmentBanner from '../components/ui/AssessmentBanner';
 import { useDispatch, useSelector } from 'react-redux';
 import { logoutCandidateAuth } from '../redux/candidateAuthSlice';
 import { showErrorToast, showSuccessToast } from '../components/ui/Toast';
+import useScroll from '../hooks/useScroll';
 
 const CandidateLayout = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
   // Get candidate data from Redux store
   const { candidateData, isAuthenticated, isDone } = useCandidateAuth();
+  const scrollPosition = useScroll()
 
   // Initialize modal visibility state based on assessment status
   const [isAssessmentModalVisible, setIsAssessmentModalVisible] = useState(false);
@@ -124,13 +125,25 @@ const CandidateLayout = () => {
   return (
     <div className="flex flex-col md:flex-row bg-main-bg bg-cover bg-top h-full overflow-x-hidden">
       {/* Mobile Menu Button */}
-      <div
-        className="md:hidden fixed top-4 right-4 z-50 p-2 rounded-full shadow-lg"
-        onClick={() => setIsMenuOpen(!isMenuOpen)}
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" />
-        </svg>
+      <div className={'min-h-[4rem] w-full md:hidden z-30 fixed '}>
+        <div className='flex m-4 z-30'>
+          <img className='h-11 z-30' src={LightLogo} />
+        </div>
+        <div
+          className="md:hidden absolute top-4 right-4 z-50 p-2 rounded-full shadow-lg"
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" />
+          </svg>
+        </div>
+          <div
+          className="z-20 bg-gradient-to-b from-black-100 via-black-100 to-transparent w-full top-0 absolute"
+          style={{
+            transition: 'all 0.1s ease-in',
+            minHeight: scrollPosition > 30 ? '6rem' : '0rem', // Apply conditional minHeight
+          }}
+        ></div>
       </div>
 
       {/* Sidebar for desktop / Floating menu for mobile */}
@@ -193,7 +206,7 @@ const CandidateLayout = () => {
       />
 
       {/* Main Content */}
-      <div class="md:ml-[12rem] md:w-[calc(100vw-12rem)] flex flex-col items-center min-h-screen">
+      <div class="mt-[5rem] md:mt-0 md:ml-[12rem] md:w-[calc(100vw-12rem)] flex flex-col items-center min-h-screen">
         {isAssessmentBannerVisible &&  <AssessmentBanner />}
                 <Outlet />
             </div>
