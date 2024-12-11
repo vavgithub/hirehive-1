@@ -10,7 +10,8 @@ import { Button } from '../ui/Button';
 const StageActions = ({ 
     stage, 
     candidateId, 
-    jobId, 
+    jobId,
+    setIsLoading, 
     isBudgetScoreSubmitted,
     children // New prop for custom content
 }) => {
@@ -27,6 +28,9 @@ const StageActions = ({
     const rejectCandidateMutation = useMutation({
         mutationFn: ({ candidateId, jobId, rejectionReason }) => 
             axios.post('/hr/reject-candidate', { candidateId, jobId, rejectionReason }),
+        onMutate: () => {
+            setIsLoading(true); // Set loading to true when mutation starts
+        },
         onSuccess: (data) => {
             dispatch(updateStageStatus({
                 stage,
@@ -38,7 +42,12 @@ const StageActions = ({
             }));
             queryClient.invalidateQueries(['candidate', candidateId, jobId]);
             setIsRejectModalOpen(false);
+            setIsLoading(false); // Stop loading when task is successfully sent
         },
+        onError: (error) => {
+            console.error('Error sending Rejection:', error);
+            setIsLoading(false); // Stop loading in case of an error
+        }
     });
 
     const moveToNextRoundMutation = useMutation({
@@ -47,6 +56,9 @@ const StageActions = ({
             jobId,
             currentStage: stage
         }),
+        onMutate: () => {
+            setIsLoading(true); // Set loading to true when mutation starts
+        },
         onSuccess: (data) => {
             dispatch(updateStageStatus({
                 stage,
@@ -56,7 +68,12 @@ const StageActions = ({
             dispatch(setCurrentStage(data.nextStage));
             queryClient.invalidateQueries(['candidate', candidateId, jobId]);
             setIsMoveModalOpen(false);
+            setIsLoading(false); // Stop loading when task is successfully sent
         },
+        onError: (error) => {
+            console.error('Error moving to next round:', error);
+            setIsLoading(false); // Stop loading in case of an error
+        }
     });
 
     const handleReject = (item, rejectionReason) => {       

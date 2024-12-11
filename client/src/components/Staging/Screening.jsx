@@ -31,6 +31,7 @@ import RightTick from '../../svg/Staging/RightTick';
 import ClosedBadge from '../../svg/ClosedBadge';
 import useScheduler from '../../hooks/useScheduler';
 import NoShowAction from './NoShow';
+import Loader from '../ui/Loader';
 
 
 const ScreeningReview = ({ candidate, onSubmit }) => {
@@ -199,6 +200,8 @@ const Screening = ({ candidateId, jobId, isClosed }) => {
 
     const data = useScheduler(candidateData, stageData, "Under Review")
 
+    const [isLoading, setIsLoading] = useState(false); // Loading state
+
     const { user } = useAuthContext();
     const role = user?.role || 'Candidate';
 
@@ -315,6 +318,9 @@ const Screening = ({ candidateId, jobId, isClosed }) => {
             ...scheduleData,
             stage: 'Screening'
         }),
+        onMutate: () => {
+            setIsLoading(true); // Set loading to true when mutation starts
+        },
         onSuccess: (data) => {
             dispatch(updateStageStatus({
                 stage: 'Screening',
@@ -322,10 +328,12 @@ const Screening = ({ candidateId, jobId, isClosed }) => {
                 data: data.updatedStageStatus
             }));
             queryClient.invalidateQueries(['candidate', candidateId, jobId]);
+            setIsLoading(false); // Stop loading when task is successfully sent
         },
         onError: (error) => {
             console.error("Error scheduling interview:", error);
             // Handle error (e.g., show error message to user)
+            setIsLoading(false); // Stop loading in case of an error
         }
     });
 
@@ -334,6 +342,9 @@ const Screening = ({ candidateId, jobId, isClosed }) => {
             ...rescheduleData,
             stage: 'Screening'
         }),
+        onMutate: () => {
+            setIsLoading(true); // Set loading to true when mutation starts
+        },
         onSuccess: (data) => {
             dispatch(updateStageStatus({
                 stage: 'Screening',
@@ -342,10 +353,12 @@ const Screening = ({ candidateId, jobId, isClosed }) => {
             }));
             queryClient.invalidateQueries(['candidate', candidateId, jobId]);
             setIsRescheduling(false);
+            setIsLoading(false); // Stop loading when task is successfully sent
         },
         onError: (error) => {
             console.error("Error rescheduling interview:", error);
             // Handle error (e.g., show error message to user)
+            setIsLoading(false); // Stop loading in case of an error
         }
     });
 
@@ -454,6 +467,7 @@ const Screening = ({ candidateId, jobId, isClosed }) => {
                                 <NoShowAction
                                     stage={"Screening"}
                                     candidateId={candidateId}
+                                    setIsLoading={setIsLoading}
                                     jobId={jobId}
                                 />
 
@@ -488,6 +502,7 @@ const Screening = ({ candidateId, jobId, isClosed }) => {
                             <NoShowAction
                                 stage={"Screening"}
                                 candidateId={candidateId}
+                                setIsLoading={setIsLoading}
                                 jobId={jobId}
                             />
                         </div>
@@ -520,6 +535,7 @@ const Screening = ({ candidateId, jobId, isClosed }) => {
                             stage={"Screening"}
                             candidateId={candidateId}
                             jobId={jobId}
+                            setIsLoading={setIsLoading}
                             isBudgetScoreSubmitted={"true"}
                         >
                             {/* This will only show if status is No Show */}
@@ -627,6 +643,7 @@ const Screening = ({ candidateId, jobId, isClosed }) => {
                     stage="Screening"
                     candidateId={candidateId}
                     jobId={jobId}
+                    setIsLoading={setIsLoading}
                     isBudgetScoreSubmitted={isBudgetScoreSubmitted}
                 />
             )}
@@ -720,6 +737,15 @@ const Screening = ({ candidateId, jobId, isClosed }) => {
     };
 
     const renderContent = () => {
+        if (isLoading) {
+            return (
+                <div className='flex justify-center'>
+                    <Loader />
+                </div>
+
+            )
+
+        }
         switch (role) {
             case 'Hiring Manager':
                 return renderHiringManagerContent();

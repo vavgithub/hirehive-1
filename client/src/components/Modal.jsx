@@ -280,7 +280,7 @@ const Modal = ({
                 {cancelLabel}
               </Button>
             </div>
-            {(!isMobile && actionType === ACTION_TYPES.ASSESSMENT) && 
+            {( actionType !== ACTION_TYPES.ASSESSMENT || (!isMobile && actionType === ACTION_TYPES.ASSESSMENT)) && 
             <div className="w-[180px]">
               <Button
                 variant={buttonVariant}

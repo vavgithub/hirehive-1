@@ -17,6 +17,7 @@ import PortfolioIcon from '../../svg/PortfolioIcon';
 import FileMainIcon from '../../svg/FileMainIcon';
 import { ensureAbsoluteUrl } from '../../utility/ensureAbsoluteUrl';
 import ClosedBadge from '../../svg/ClosedBadge';
+import Loader from '../ui/Loader';
 
 
 
@@ -61,7 +62,7 @@ const Portfolio = ({ candidateId, jobId ,isClosed}) => {
     const stageData = useSelector(state => state.applicationStage.stageStatuses.Portfolio);
     const candidateData = useSelector(state => state.candidate.candidateData);
 
-  
+    const [isLoading, setIsLoading] = useState(false); // Loading state
 
 
 
@@ -229,6 +230,7 @@ const Portfolio = ({ candidateId, jobId ,isClosed}) => {
                     stage="Portfolio"
                     candidateId={candidateId}
                     jobId={jobId}
+                    setIsLoading={setIsLoading}
                     isBudgetScoreSubmitted={true}
                 />
             )}
@@ -256,6 +258,15 @@ const Portfolio = ({ candidateId, jobId ,isClosed}) => {
     );
 
     const renderContent = () => {
+        if (isLoading) {
+            return (
+                <div className='flex justify-center'>
+                    <Loader />
+                </div>
+
+            )
+
+        }
         switch (role) {
             case 'Hiring Manager':
                 return renderHiringManagerContent();

@@ -29,6 +29,8 @@ import RightTick from '../../svg/Staging/RightTick';
 import ClosedBadge from '../../svg/ClosedBadge';
 import useScheduler from '../../hooks/useScheduler';
 import NoShowAction from './NoShow';
+import Loader from '../ui/Loader';
+import RejectCrossIcon from '../../svg/Staging/RejectCrossIcon';
 
 const RoundTwo = ({ candidateId, jobId ,isClosed }) => {
     const { user } = useAuthContext();
@@ -44,7 +46,9 @@ const RoundTwo = ({ candidateId, jobId ,isClosed }) => {
     const [score, setScore] = useState(0);
     const [feedback, setFeedback] = useState('');
 
-    const data = useScheduler(candidateData,stageData,"Under Review")    
+    const data = useScheduler(candidateData,stageData,"Under Review");
+    
+    const [isLoading, setIsLoading] = useState(false); // Loading state
 
     const updateAssigneeMutation = useMutation({
         mutationFn: (newAssignee) => axios.put('dr/update-assignee', {
@@ -86,6 +90,9 @@ const RoundTwo = ({ candidateId, jobId ,isClosed }) => {
             ...scheduleData,
             stage: 'Round 2' // Specify the stage for Round 1
         }),
+        onMutate: () => {
+            setIsLoading(true); // Set loading to true when mutation starts
+        },
         onSuccess: (data) => {
             dispatch(updateStageStatus({
                 stage: 'Round 2',
@@ -93,10 +100,12 @@ const RoundTwo = ({ candidateId, jobId ,isClosed }) => {
                 data: data.updatedStageStatus
             }));
             queryClient.invalidateQueries(['candidate', candidateId, jobId]);
+            setIsLoading(false); // Stop loading when task is successfully sent
         },
         onError: (error) => {
             console.error("Error scheduling interview:", error);
             // Handle error (e.g., show error message to user)
+            setIsLoading(false); // Stop loading in case of an error
         }
     });
 
@@ -115,6 +124,9 @@ const RoundTwo = ({ candidateId, jobId ,isClosed }) => {
             ...rescheduleData,
             stage: 'Round 2' // Specify the stage for Round 1
         }),
+        onMutate: () => {
+            setIsLoading(true); // Set loading to true when mutation starts
+        },
         onSuccess: (data) => {
             dispatch(updateStageStatus({
                 stage: 'Round 2',
@@ -123,10 +135,12 @@ const RoundTwo = ({ candidateId, jobId ,isClosed }) => {
             }));
             queryClient.invalidateQueries(['candidate', candidateId, jobId]);
             setIsRescheduling(false);
+            setIsLoading(false); // Stop loading when task is successfully sent
         },
         onError: (error) => {
             console.error("Error rescheduling interview:", error);
             // Handle error (e.g., show error message to user)
+            setIsLoading(false); // Stop loading in case of an error
         }
     });
 
@@ -215,6 +229,15 @@ const RoundTwo = ({ candidateId, jobId ,isClosed }) => {
 
 
     const renderContent = () => {
+        if (isLoading) {
+            return (
+                <div className='flex justify-center'>
+                    <Loader />
+                </div>
+
+            )
+
+        }
         switch (stageData?.status) {
             case 'Pending':
                 return (
@@ -255,6 +278,7 @@ const RoundTwo = ({ candidateId, jobId ,isClosed }) => {
                                             <NoShowAction
                                                 stage={"Round 2"}
                                                 candidateId={candidateId}
+                                                setIsLoading={setIsLoading}
                                                 jobId={jobId}
                                             />
                                             <div className='w-[170px]'>
@@ -369,6 +393,7 @@ const RoundTwo = ({ candidateId, jobId ,isClosed }) => {
                                         stage="Round 2"
                                         candidateId={candidateId}
                                         jobId={jobId}
+                                        setIsLoading={setIsLoading}
                                         isBudgetScoreSubmitted={true}
                                     />
                                 </div>
@@ -418,7 +443,7 @@ const RoundTwo = ({ candidateId, jobId ,isClosed }) => {
                         {
                             role === "Candidate" && (
                                 <>
-                                    <Label icon={RightTick} text={"Congratulations! You will be contacted soon for the next stage of the application process."} />
+                                    <Label icon={RejectCrossIcon} text={"Unfortunately, you did not clear the round. Thank you for your interest. We encourage you to reapply in the future"} />
                                 </>
                             )
                         }
@@ -449,6 +474,7 @@ const RoundTwo = ({ candidateId, jobId ,isClosed }) => {
                                     stage={"Round 2"}
                                     candidateId={candidateId}
                                     jobId={jobId}
+                                    setIsLoading={setIsLoading}
                                     isBudgetScoreSubmitted={"true"}
                                 >
                                     {/* This will only show if status is No Show */}

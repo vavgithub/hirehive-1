@@ -1,5 +1,5 @@
 import { Box, Card, CardContent } from '@mui/material';
-import React from 'react'
+import React, { useState } from 'react'
 import StatusBadge from '../ui/StatusBadge';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
@@ -8,6 +8,7 @@ import Label from '../ui/Label';
 import HiredStamp from "../../svg/Background/HiredStamp.svg"
 import StageActions from './StageAction';
 import { useAuthContext } from '../../context/AuthProvider';
+import Loader from '../ui/Loader';
 
 const Hired = ({ candidateId, jobId ,isClosed}) => {
     const fetchTotalScore = async (candidateId, jobId) => {
@@ -33,9 +34,18 @@ const Hired = ({ candidateId, jobId ,isClosed}) => {
     const stageData = useSelector(state => state.applicationStage.stageStatuses.Hired);
     const candidateData = useSelector(state => state.candidate.candidateData);
     
- 
+    const [isLoading, setIsLoading] = useState(false); // Loading state
 
     const renderContent = () => {
+        if (isLoading) {
+            return (
+                <div className='flex justify-center'>
+                    <Loader />
+                </div>
+
+            )
+
+        }
         switch (stageData?.status) {
             case 'Under Review':
                 return (
@@ -61,6 +71,7 @@ const Hired = ({ candidateId, jobId ,isClosed}) => {
                                         stage="Hired"
                                         candidateId={candidateId}
                                         jobId={jobId}
+                                        setIsLoading={setIsLoading}
                                         isBudgetScoreSubmitted={true}
                                     />
                                 </div>
@@ -127,9 +138,10 @@ const Hired = ({ candidateId, jobId ,isClosed}) => {
                             </div>
                         </div>
                         <StageActions
-                            stage="Round 1"
+                            stage="Hired"
                             candidateId={candidateId}
                             jobId={jobId}
+                            setIsLoading={setIsLoading}
                             isBudgetScoreSubmitted={true}
                         />
                     </>

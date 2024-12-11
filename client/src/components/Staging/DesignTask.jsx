@@ -567,6 +567,7 @@ const DesignTask = ({ candidateId, jobId ,isClosed}) => {
                         stage="Design Task"
                         candidateId={candidateId}
                         jobId={jobId}
+                        setIsLoading={setIsLoading}
                         isBudgetScoreSubmitted={true}
                     />
                 )

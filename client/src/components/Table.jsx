@@ -346,17 +346,17 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
             onClick={(event) => event.stopPropagation()}
           >
             {params.row.portfolio && (
-              <a href={ensureAbsoluteUrl(params.row.portfolio)} target="_blank" rel="noopener noreferrer" className="icon-link">
+              <a title='Portfolio' href={ensureAbsoluteUrl(params.row.portfolio)} target="_blank" rel="noopener noreferrer" className="icon-link">
                 <FileMainIcon sizeClasses={'w-9 h-9'} />
               </a>
             )}
             {params.row.website && params.row.website !== params.row.portfolio && (
-              <a href={ensureAbsoluteUrl(params.row.website)} target="_blank" rel="noopener noreferrer" className="icon-link ">
+              <a title='Website' href={ensureAbsoluteUrl(params.row.website)} target="_blank" rel="noopener noreferrer" className="icon-link ">
                 <WebsiteMainIcon sizeClasses={'w-9 h-9'} />
               </a>
             )}
             {params.row.resumeUrl && (
-              <button onClick={() => handleDocumentClick(params.row.resumeUrl)} className="icon-link">
+              <button title='Resume' onClick={() => handleDocumentClick(params.row.resumeUrl)} className="icon-link">
                 <ResumeIcon sizeClasses={'w-9 h-9'}/>
               </button>
             )}

@@ -5,7 +5,7 @@ import axios from '../../api/axios';
 import { updateStageStatus } from '../../redux/applicationStageSlice';
 import { Button } from '../ui/Button';
 
-const NoShowAction = ({ stage, candidateId, jobId }) => {
+const NoShowAction = ({ stage, candidateId, jobId , setIsLoading }) => {
     const dispatch = useDispatch();
     const queryClient = useQueryClient();
 
@@ -15,6 +15,9 @@ const NoShowAction = ({ stage, candidateId, jobId }) => {
             jobId,
             currentStage: stage
         }),
+        onMutate: () => {
+            setIsLoading(true); // Set loading to true when mutation starts
+        },
         onSuccess: (data) => {
             dispatch(updateStageStatus({
                 stage,
@@ -22,7 +25,12 @@ const NoShowAction = ({ stage, candidateId, jobId }) => {
                 data: data
             }));
             queryClient.invalidateQueries(['candidate', candidateId, jobId]);
+            setIsLoading(false); // Stop loading when task is successfully sent
         },
+        onError : (error) => {
+            console.log("Error In triggering no-show",error.message);
+            setIsLoading(false); // Stop loading in case of an error
+        }
     });
 
     const handleNoShow = () => {

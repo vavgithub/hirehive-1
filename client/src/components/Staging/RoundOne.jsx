@@ -27,6 +27,7 @@ import RightTick from '../../svg/Staging/RightTick';
 import ClosedBadge from '../../svg/ClosedBadge';
 import useScheduler from '../../hooks/useScheduler';
 import NoShowAction from './NoShow';
+import Loader from '../ui/Loader';
 
 const RoundReview = ({ candidate, onSubmit }) => {
     const [rating, setRating] = useState(0);
@@ -73,6 +74,8 @@ const RoundOne = ({ candidateId, jobId ,isClosed}) => {
 
    
     const data = useScheduler(candidateData,stageData,"Under Review")    
+
+    const [isLoading, setIsLoading] = useState(false); // Loading state
 
 
     const submitReview = async ({ candidateId, reviewData }) => {
@@ -140,6 +143,9 @@ const RoundOne = ({ candidateId, jobId ,isClosed}) => {
             ...scheduleData,
             stage: 'Round 1' // Specify the stage for Round 1
         }),
+        onMutate: () => {
+            setIsLoading(true); // Set loading to true when mutation starts
+        },
         onSuccess: (data) => {
             dispatch(updateStageStatus({
                 stage: 'Round 1',
@@ -147,10 +153,12 @@ const RoundOne = ({ candidateId, jobId ,isClosed}) => {
                 data: data.updatedStageStatus
             }));
             queryClient.invalidateQueries(['candidate', candidateId, jobId]);
+            setIsLoading(false); // Stop loading when task is successfully sent
         },
         onError: (error) => {
             console.error("Error scheduling interview:", error);
             // Handle error (e.g., show error message to user)
+            setIsLoading(false); // Stop loading in case of an error
         }
     });
 
@@ -169,6 +177,9 @@ const RoundOne = ({ candidateId, jobId ,isClosed}) => {
             ...rescheduleData,
             stage: 'Round 1' // Specify the stage for Round 1
         }),
+        onMutate: () => {
+            setIsLoading(true); // Set loading to true when mutation starts
+        },
         onSuccess: (data) => {
             dispatch(updateStageStatus({
                 stage: 'Round 1',
@@ -177,10 +188,12 @@ const RoundOne = ({ candidateId, jobId ,isClosed}) => {
             }));
             queryClient.invalidateQueries(['candidate', candidateId, jobId]);
             setIsRescheduling(false);
+            setIsLoading(false); // Stop loading when task is successfully sent
         },
         onError: (error) => {
             console.error("Error rescheduling interview:", error);
             // Handle error (e.g., show error message to user)
+            setIsLoading(false); // Stop loading in case of an error
         }
     });
 
@@ -254,6 +267,7 @@ const RoundOne = ({ candidateId, jobId ,isClosed}) => {
                                     stage={"Round 1"}
                                     candidateId={candidateId}
                                     jobId={jobId}
+                                    setIsLoading={setIsLoading}
                                 />
                                 <div className='w-[170px]'>
                                     <Button
@@ -286,6 +300,7 @@ const RoundOne = ({ candidateId, jobId ,isClosed}) => {
                             <NoShowAction
                                 stage={"Round 1"}
                                 candidateId={candidateId}
+                                setIsLoading={setIsLoading}
                                 jobId={jobId}
                             />
                         </div>
@@ -318,6 +333,7 @@ const RoundOne = ({ candidateId, jobId ,isClosed}) => {
                             stage={"Round 1"}
                             candidateId={candidateId}
                             jobId={jobId}
+                            setIsLoading={setIsLoading}
                             isBudgetScoreSubmitted={"true"}
                         >
                             {/* This will only show if status is No Show */}
@@ -431,6 +447,7 @@ const RoundOne = ({ candidateId, jobId ,isClosed}) => {
                     stage="Round 1"
                     candidateId={candidateId}
                     jobId={jobId}
+                    setIsLoading={setIsLoading}
                     isBudgetScoreSubmitted={true}
                 />
             )}
@@ -458,6 +475,14 @@ const RoundOne = ({ candidateId, jobId ,isClosed}) => {
     );
 
     const renderContent = () => {
+        if (isLoading) {
+            return (
+                <div className='flex justify-center'>
+                    <Loader />
+                </div>
+
+            )
+        }
         switch (role) {
             case 'Hiring Manager':
                 return renderHiringManagerContent();
