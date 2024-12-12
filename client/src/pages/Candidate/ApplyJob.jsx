@@ -734,6 +734,7 @@ const ApplyJob = () => {
                   Create a password to secure your account. Make sure it’s strong
                   and easy to remember.
                 </p>
+                <div className='flex flex-col gap-4'>
                 <Controller
                   name="password"
                   control={control}
@@ -744,7 +745,6 @@ const ApplyJob = () => {
                       label="Create Password"
                       type="password"
                       required={true}
-                      extraClass={'mb-4'}
                       error={errors.password}
                       {...field}
                     />
@@ -765,6 +765,7 @@ const ApplyJob = () => {
                     />
                   )}
                 />
+                </div>
                 {passwordError && (
                   <span className="text-red-500">{passwordError}</span>
                 )}

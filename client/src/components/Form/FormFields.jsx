@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import TogglePassword from "../utility/TogglePassword";
 
 // export const InputField = React.forwardRef(({ id, type , label, required,extraClass, ...props }, ref) => (
 //   <div className=' flex flex-col justify-between gap-2'>
@@ -24,11 +25,30 @@ export const InputField = React.forwardRef(({
   error,
   errorMessage, 
   ...props 
-}, ref) => (
+}, ref) =>{
+  
+  //State to handle password type
+  const [passwordType,setPasswordType] = useState('password');
+
+  return (
   <div className='flex flex-col justify-start gap-4 relative'>
     <label htmlFor={id} className="typography-body">
       {label} {required && <span className="text-red-100">*</span>}
     </label>
+    {type === "password" ? 
+      <TogglePassword typeState={passwordType} setTypeState={setPasswordType}>
+        <input
+        id={id}
+        type={passwordType}
+        placeholder={`Enter ${label.toLowerCase()}`}
+        className={(props.value && "tracking-widest ") + ` w-full p-2 bg-background-40 rounded  outline-none focus:outline-teal-300 ${
+          error ? 'border border-red-500' : ''
+        } ${extraClass || ''}`}
+        ref={ref}
+        {...props}
+      />
+    </TogglePassword>
+    :
     <input
       id={id}
       type={type}
@@ -39,11 +59,12 @@ export const InputField = React.forwardRef(({
       ref={ref}
       {...props}
     />
+    }
     {error && errorMessage && (
-      <span className="text-red-500 text-sm -bottom-3 absolute">{errorMessage}</span>
+      <span className="text-red-500 text-sm -bottom-[24px] absolute">{errorMessage}</span>
     )}
   </div>
-));
+)});
 
 InputField.displayName = 'InputField';
 

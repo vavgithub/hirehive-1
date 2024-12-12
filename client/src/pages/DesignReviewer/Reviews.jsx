@@ -297,10 +297,10 @@ const Reviews = () => {
   }
 
   return (
-    <div className='p-4'>
+    <div className='container py-4 px-4 xl:px-2 2xl:px-6'>
       <Header HeaderText="Reviews" />
       <div className='bg-background-30  p-4 rounded-xl'>
-        <div className="w-full max-w-6xl">
+        <div className="w-full">
 
           <StatsGrid stats={updatedStatsOne} />
         </div>

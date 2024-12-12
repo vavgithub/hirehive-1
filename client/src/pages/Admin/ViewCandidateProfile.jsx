@@ -23,6 +23,7 @@ import { setCurrentStage, setStageStatuses } from '../../redux/applicationStageS
 import Loader from '../../components/ui/Loader';
 import { ensureAbsoluteUrl } from '../../utility/ensureAbsoluteUrl';
 import ResumeViewer from '../../components/utility/ResumeViewer';
+import CustomToolTip from '../../components/utility/CustomToolTip';
 
 
 
@@ -221,18 +222,28 @@ const ViewCandidateProfile = () => {
                                 </div>}
                                 <div className="flex gap-2 items-center ">
                                     <a href={ensureAbsoluteUrl(data.portfolio)} target="_blank" rel="noopener noreferrer" className="icon-link">
-                                        <FileMainIcon />
+                                        <CustomToolTip title={'Portfolio'} arrowed size={2}>
+                                            <FileMainIcon />
+                                        </CustomToolTip>
                                     </a>
                                     <a href={ensureAbsoluteUrl(data.website)} target="_blank" rel="noopener noreferrer" className="icon-link">
-                                        <WebsiteMainIcon />
+                                        <CustomToolTip title={'Website'} arrowed size={2}>
+                                            <WebsiteMainIcon />
+                                        </CustomToolTip>
                                     </a>
                                     <div onClick={handleResumeOpen}>
-                                        <ResumeIcon  />
+                                        <CustomToolTip title={'Resume'} arrowed size={2}>
+                                            <ResumeIcon  />
+                                        </CustomToolTip>
                                     </div>
                                     {resumeOpen && <ResumeViewer documentUrl={data.resumeUrl} onClose={() => setResumeOpen(false)}/>}
                                    
                                     {
-                                        (data.hasGivenAssessment && role === "Hiring Manager") && <div className='cursor-pointer' onClick={handleAssignmentNavigation}> <AssignmentIcon /> </div>
+                                        (data.hasGivenAssessment && role === "Hiring Manager") && <div className='cursor-pointer' onClick={handleAssignmentNavigation}> 
+                                            <CustomToolTip title={'Assessment'} arrowed size={2}>
+                                                <AssignmentIcon /> 
+                                            </CustomToolTip>
+                                        </div>
                                     }
 
                                 </div>

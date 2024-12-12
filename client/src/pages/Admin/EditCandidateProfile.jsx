@@ -5,6 +5,7 @@ import axios from '../../api/axios';
 import { QueryClient, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import DynamicForm from '../../components/utility/DynamicForm';
 import { showSuccessToast } from '../../components/ui/Toast';
+import Loader from '../../components/ui/Loader';
 
 
 const fetchCandidate = async ({ queryKey }) => {
@@ -36,8 +37,9 @@ const EditCandidateProfile = () => {
     }
   })
 
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error.message}</div>;
+  
+    ;
+  // if (error) return <div>Error: {error.message}</div>;
 
   const formSections = [
     {
@@ -78,37 +80,45 @@ const EditCandidateProfile = () => {
    
   };
 
-  return (
-    <div className='w-full bg-background-80 min-h-full'>
-      <div className=" container mx-auto ">
-        <div className='p-4'>
-
-          <Header HeaderText="Edit Candidate Profile" withKebab='false' withBack="true" />
-          <div className='flex gap-6 mt-5'>
-            <div className='bg-background-30 w-96 h-96 rounded-xl flex flex-col items-center p-4'>
-              <div className='to-background-100 w-64 rounded-xl overflow-hidden'>
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg" alt="" />
+  if (isLoading) {
+    return (
+      <div className='flex justify-center items-center w-full min-h-screen'>
+      <Loader />
+    </div>)
+  }else{
+    return (
+      <div className='w-full bg-background-80 min-h-full'>
+        <div className=" container mx-auto ">
+          <div className='p-4'>
+  
+            <Header HeaderText="Edit Candidate Profile" withKebab='false' withBack="true" />
+            <div className='flex gap-6 mt-5'>
+              <div className='bg-background-30 w-96 h-96 rounded-xl flex flex-col items-center p-4'>
+                <div className='to-background-100 w-64 rounded-xl overflow-hidden'>
+                  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg" alt="" />
+                </div>
+                <h2 className='typography-h2 mt-4'>
+                  {data.firstName} {data.lastName}
+                </h2>
               </div>
-              <h2 className='typography-h2 mt-4'>
-                {data.firstName} {data.lastName}
-              </h2>
-            </div>
-
-            <div className='col-span-2 w-full'>
-              <DynamicForm
-                formSections={formSections}
-                initialData={data}  // Pass the fetched data as initialData
-                primaryButtonText="Save"
-                secondaryButtonText="Cancel"
-                onPrimaryAction={handleSave}
-                onSecondaryAction={handleCancel}
-              />
+  
+              <div className='col-span-2 w-full'>
+                <DynamicForm
+                  formSections={formSections}
+                  initialData={data}  // Pass the fetched data as initialData
+                  isLoading={updateCandidateMutation.isPending}
+                  primaryButtonText={updateCandidateMutation.isPending ? "Saving..." :"Save"}
+                  secondaryButtonText="Cancel"
+                  onPrimaryAction={handleSave}
+                  onSecondaryAction={handleCancel}
+                />
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  )
+    )
+  }
 }
 
 export default EditCandidateProfile

@@ -106,10 +106,9 @@ const AssessmentResponse = () => {
 
     if (isLoading) {
         return (
-            <div className="p-7 flex justify-center items-center">
-                <div className="typography-h3">Loading assessment details...</div>
-            </div>
-        );
+            <div className='flex justify-center items-center w-full min-h-screen'>
+                <Loader />
+            </div>)
     }
 
     if (isError) {
