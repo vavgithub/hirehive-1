@@ -60,7 +60,7 @@ const ViewJob = () => {
         <div className='min-h-screen flex justify-center bg-main-bg bg-cover'>
 
             <div className=" flex container flex-col items-center  p-6">
-                <div className='flex  w-full mb-4 '>
+                <div className='flex  w-full mb-6 '>
 
 
                     <img className='h-12' src={Logo} />
@@ -89,7 +89,7 @@ const ViewJob = () => {
                     </div>
             
                     {/* Job Description and Skills */}
-                    <div className="flex flex-col md:flex md:flex-row md:justify-between mt-4">
+                    <div className="flex flex-col-reverse md:flex md:flex-row md:justify-between mt-4">
                         {/* Left section: Job description and skills */}
                         <div className="md:w-3/4">
                         <h3 className='typography-h3'>Job Description</h3>
@@ -112,7 +112,7 @@ const ViewJob = () => {
                         </div>
 
                         {/* Right section: SideCard */}
-                        <div className="mt-6 lg:mt-0">
+                        <div className="mb-8 lg:mb-0">
                             <SideCard formData={formData} />
                         </div>
                     </div>

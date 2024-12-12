@@ -622,7 +622,7 @@ const ApplyJob = () => {
                                     value={option}
                                     checked={field.value === option}
                                     onChange={() => field.onChange(option)}
-                                    className="mr-2"
+                                    className="mr-2 appearance-none border-2 rounded-full  form-radio h-5 w-5 checked:ring-offset-[5px] checked:ring-offset-black-100 checked:bg-teal-100 checked:ml-[4px] checked:mr-[12px] checked:ring-[2px] checked:w-3 checked:h-3 checked:border-0  checked:ring-teal-100"
                                     />
                                   <label
                                     htmlFor={`question-${question._id}-option-${optionIndex}`}
@@ -683,17 +683,17 @@ const ApplyJob = () => {
         {/* OTP Verification Step */}
         {currentStep === 2 && (
           <div className="flex items-center h-screen w-screen justify-center  bg-cover bg-verification ">
-            <div className="w-full max-w-md space-y-8 bg-background-90 rounded-lg shadow-xl  bg-opacity-15">
-              <form onSubmit={handleOtpSubmit} className="mx-16 text-center">
-                <h1 className="typography-h1 mt-8 mb-4">OTP Verification</h1>
+            <div className="w-full mx-8 md:mx-0 max-w-lg space-y-8 bg-background-90 rounded-lg shadow-xl  bg-opacity-15 ">
+              <form onSubmit={handleOtpSubmit} className="px-8 sm:px-16 text-center">
+                <h1 className="typography-h2 sm:typography-h1 mt-8 md:mt-20 mb-4 ">OTP Verification</h1>
                 <p className="text-font-gray text-center typography-large-p">
                   To ensure security, please enter the OTP (One-Time Password) to
                   verify your account. A code has been sent to
                 </p>
-                <h2 className='typograhpy-h2 text-font-gray'>
+                <h2 className='typography-h3 sm:typograhpy-h2 mt-3 md:mt-6 text-font-gray mx-auto w-[240px] min-[420px]:w-full whitespace-nowrap text-ellipsis overflow-hidden'>
                   {email}
                 </h2>
-                <div className="flex justify-center space-x-2 mt-4">
+                <div className="flex justify-center  space-x-2 mt-4 ">
                   {otp.map((data, index) => (
                     <input
                       key={index}
@@ -708,7 +708,7 @@ const ApplyJob = () => {
                 </div>
                 {otpError && <span className="text-red-500">{otpError}</span>}
 
-                <div className="flex mt-6 w-full gap-4 mr-16 mb-6">
+                <div className="flex mt-6 w-full gap-4 mr-16 mb-6 md:mb-20">
                   <Button
                     type="submit"
                     variant="primary"
@@ -725,9 +725,9 @@ const ApplyJob = () => {
         {/* Password Creation Step */}
         {currentStep === 3 && (
           <div className="flex items-center w-screen justify-center min-h-screen bg-cover bg-verification">
-            <div className="w-full max-w-md space-y-8 bg-background-90 rounded-lg shadow-xl bg-opacity-15">
-              <form onSubmit={handlePasswordSubmit} className="mx-16">
-                <h3 className="typography-h3 mt-8 mb-4 text-center">
+            <div className="w-full mx-8 md:mx-0 max-w-lg space-y-8 bg-background-90 rounded-lg shadow-xl bg-opacity-15">
+              <form onSubmit={handlePasswordSubmit} className="mx-8 sm:mx-16">
+                <h3 className="typography-h2 text-center sm:typography-h1 mt-5 sm:mt-8 md:mt-20 ">
                   Create Password
                 </h3>
                 <p className="typography-large-p py-4 text-font-gray text-center">
@@ -744,6 +744,7 @@ const ApplyJob = () => {
                       label="Create Password"
                       type="password"
                       required={true}
+                      extraClass={'mb-4'}
                       error={errors.password}
                       {...field}
                     />
@@ -768,7 +769,7 @@ const ApplyJob = () => {
                   <span className="text-red-500">{passwordError}</span>
                 )}
 
-                <div className="flex mt-6 gap-4 w-full mr-16 mb-6">
+                <div className="flex mt-6 gap-4 w-full mr-16 mb-6 md:mb-20">
                   <Button
                     type="submit"
                     variant="primary"

@@ -368,6 +368,9 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
       field: 'email',
       headerName: 'Email',
       width: 220,
+      renderCell : (params) =>(
+        <p className='w-full overflow-hidden whitespace-nowrap text-ellipsis'>{params.value}</p>
+      )
     },
     
     {
@@ -425,6 +428,9 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
       width: 200,
       align:'center',
       headerAlign : 'center',
+      renderCell : (params) =>(
+        <p className='w-full overflow-hidden whitespace-nowrap text-ellipsis'>{params.value}</p>
+      )
     },  
   ];
 

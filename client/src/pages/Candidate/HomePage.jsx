@@ -145,9 +145,9 @@ const HomePage = () => {
                     </div>
                 </div>
                     <h1 className='typography-h1 py-4'>Jobs</h1>
-                <div className=' py-8 bg-main-bg bg-cover flex flex-col items-center rounded-xl justify-center'>
-                    <h1 className='display-d2 max-w-96 text-center'>Unlock Your Career Potential</h1>
-                    <div className='flex justify-evenly gap-2 w-full md:w-3/5 mt-6 md:mt-9'>
+                <div className=' py-8 bg-home-bg bg-cover flex flex-col items-center rounded-xl justify-center'>
+                    <h1 className='typography-h1 sm:display-d2 px-6 sm:px-0 max-w-96 text-center'>Unlock Your Career Potential</h1>
+                    <div className='flex justify-evenly gap-2 px-4 w-full md:w-3/5 mt-6 md:mt-9'>
                         <input
                             type='text'
                             className="w-full p-2 "

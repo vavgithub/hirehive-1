@@ -3,6 +3,7 @@ import { Button } from './ui/Button';
 import { useNavigate } from 'react-router-dom';
 import AssessmentPopup from "../svg/Background/AssessmentPopup.svg"
 import { useMediaQuery } from 'react-responsive';
+import CloseButton from '../svg/CloseButton';
 
 const ACTION_TYPES = {
   DELETE: 'DELETE',
@@ -159,7 +160,10 @@ const Modal = ({
   const renderModalContent = () => {
     if (actionType === ACTION_TYPES.ASSESSMENT) {
       return (
-        <div className="flex flex-col items-center ">
+        <div className="flex flex-col items-center relative">
+          <div onClick={onClose} className=' cursor-pointer md:hidden absolute -top-14 -right-14 bg-background-60 p-1 rounded-xl'>
+              <CloseButton/>
+          </div>
           <div className="mb-4">
             <img
               src={AssessmentPopup}
@@ -171,7 +175,7 @@ const Modal = ({
             />
           </div>
           <h1 className={(isMobile  ?  "typography-h3" : "typography-h1") + " mb-2"}>{isMobile  ? action.mobTitle :title}</h1>
-          <p className={(isMobile ? "typography-large-p" :  "typography-body") +" text-font-gray typography-body mb-6"}>{isMobile  ? action.mobMessage :message}</p>
+          <p className={(isMobile ? "typography-large-p" :  "typography-body mb-6") +" text-font-gray typography-body "}>{isMobile  ? action.mobMessage :message}</p>
         </div>
       );
     }
@@ -265,7 +269,7 @@ const Modal = ({
   return (
     <div
       onClick={onClose}
-      className="fixed z-50 inset-0 flex justify-center items-center transition-colors bg-black/20 mx-4 md:mx-0"
+      className={((isMobile && actionType === ACTION_TYPES.ASSESSMENT ) ? "mx-6 " : "mx-4 ") + " fixed z-50 inset-0 flex justify-center items-center transition-colors bg-black/20  md:mx-0"}
     >
       <div
         onClick={(e) => e.stopPropagation()}
@@ -275,7 +279,7 @@ const Modal = ({
           {renderModalContent()}
           {children}
           <div className="flex justify-end gap-4 mt-4">
-            <div className={(isMobile && actionType === ACTION_TYPES.ASSESSMENT ) ? "w-full " : "w-[180px]"}>
+            <div className={(isMobile && actionType === ACTION_TYPES.ASSESSMENT ) ? "hidden" : "w-[180px]"}>
               <Button variant={cancelVariant} onClick={onClose}>
                 {cancelLabel}
               </Button>
