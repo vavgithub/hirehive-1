@@ -19,7 +19,7 @@ const truncateWords = (text, wordLimit) => {
 };
 
 const JobDetailItem = ({ icon: Icon, text }) => (
-  <div className="mr-8 flex gap-2 items-center">
+  <div className=" flex gap-2 items-center w-fit">
     <Icon />
     <p className="typography-body">{text}</p>
   </div>
@@ -114,8 +114,8 @@ const JobCard = ({
     className={(onClick ? 'cursor-pointer' : '' ) + ` bg-background-90 hover:bg-background-60 transition-colors duration-200 shadow rounded-xl mb-4 group relative`}
     onClick={onClick ? handleCardClick : undefined}
   >
-    <div className="flex flex-col items-start justify-between p-4 md:flex-row gap-3">
-      <h3 className="typography-h3 group-hover:text-font-accent">{job.jobTitle}</h3>
+    <div className={(isApplied && "flex-col md:flex-row" ) +" flex items-start justify-between p-4  gap-3"}>
+      <h3 className={(isApplied ? "w-full md:w-[50%] xl:w-[70%]" : "w-[70%]") + " typography-h3 group-hover:text-font-accent  text-ellipsis overflow-hidden whitespace-nowrap "}>{job.jobTitle}</h3>
       <div className="flex items-center gap-3">
         {isApplied &&         
         <span className="bg-blue-300 text-blue-100 typography-body px-4 py-2 rounded-xl">
@@ -133,7 +133,7 @@ const JobCard = ({
   
     {job.status !== "deleted" ?
     <>
-    <div className="flex flex-col px-4 md:flex-row items-start gap-3">
+    <div className="flex px-4 flex-row items-start flex-wrap gap-x-8 gap-y-5">
       <JobDetailItem icon={JobTypeIcon} text={job.employmentType} />
       {((job.budgetTo > 1) || (job.budgetFrom > 0)) && 
       <JobDetailItem

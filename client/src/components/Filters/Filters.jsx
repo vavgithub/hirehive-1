@@ -10,7 +10,7 @@ import BudgetFilter from './BudgetFilter';
 
 const CustomCheckbox = ({ label, icon: Icon, isChecked, onChange, count }) => (
     <div
-        className={`flex flex-col justify-center p-3 rounded-xl cursor-pointer hover:bg-background-60 ${isChecked ? 'bg-accent-300' : 'bg-background-40'
+        className={`flex flex-col w-[85px] justify-center p-3 rounded-xl cursor-pointer hover:bg-background-60 ${isChecked ? 'bg-accent-300' : 'bg-background-40'
             }`}
         onClick={onChange}
     >
@@ -39,9 +39,9 @@ const ButtonCheckbox = ({ label, isChecked, onChange }) => (
 const CheckboxGroup = ({ title, options, filters, handleCheckboxChange, isDisabled, statistics, useCustomIconCheckbox }) => {
     if (useCustomIconCheckbox) {
         return (
-            <div className="mb-4">
+            <div className="mb-4 ">
                 <h3 className="text-gray-200 font-semibold mb-2">{title}</h3>
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-3 gap-2 w-fit">
                     {options.map(({ value, label, statKey, icon }) => (
                         <CustomCheckbox
                             key={value}
@@ -121,13 +121,13 @@ const Filters = ({ filters = {}, handleCheckboxChange, activeTab, handleExperien
 
     const closedOptions = [
         {
-            value: 'hired', label: 'Hired', icon: {
+            value: 'Hired', label: 'Hired', icon: {
                 active: HiredIconActive,
                 inactive: HiredIcon
             }
         },
         {
-            value: 'notHired', label: 'Not Hired', icon: {
+            value: 'NotHired', label: 'Not Hired', icon: {
                 active: NotHiredActive,
                 inactive: NotHired
             }
@@ -151,7 +151,7 @@ const Filters = ({ filters = {}, handleCheckboxChange, activeTab, handleExperien
 
 
     return (
-        <div className='w-[304px]'>
+        <div className='md:w-[304px]'>
 
             <div className="bg-background-90 p-4 rounded-xl relative">
                 <h3 className='text-gray-200 font-semibold mb-2 text-lg tracking-wide' >Filter</h3>

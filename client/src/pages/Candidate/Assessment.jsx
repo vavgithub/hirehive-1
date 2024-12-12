@@ -568,7 +568,8 @@ const Assessment = () => {
       // Refetch candidate data to ensure everything is in sync
       await dispatch(fetchCandidateAuthData()).unwrap();
       showSuccessToast('Success', 'Assessment submitted successfully');
-      navigate('/candidate/my-jobs');
+      // navigate('/candidate/my-jobs');
+      window.location.href = "/candidate/my-jobs"
     },
     onError: (error) => {
       showErrorToast(

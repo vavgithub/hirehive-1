@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Button } from './ui/Button';
 import { useNavigate } from 'react-router-dom';
 import AssessmentPopup from "../svg/Background/AssessmentPopup.svg"
+import { useMediaQuery } from 'react-responsive';
+import CloseButton from '../svg/CloseButton';
 
 const ACTION_TYPES = {
   DELETE: 'DELETE',
@@ -55,10 +57,12 @@ const ACTION_PROPERTIES = {
   },
   [ACTION_TYPES.ASSESSMENT]: {
     title: 'Start the assessment!',
+    mobTitle: 'Take Your Assessment on Desktop',
     confirmLabel: 'Take Assessment',
     confirmVariant: 'primary',
     cancelLabel: 'Cancel',
     message: 'Take the assessment now to get prioritized and improve your likelihood of advancing quickly.',
+    mobMessage: 'Open the application on your desktop and take the assessment to get prioritized and improve your chances of advancing quickly.'
   },
 };
 
@@ -112,6 +116,11 @@ const Modal = ({
 
   const navigate = useNavigate();
 
+  // Find if it is mobile-screen
+  const isMobile = useMediaQuery({
+    query: '(max-width: 768px)'
+  })
+
   const title = customTitle || action.title || 'Confirm Action';
   const message = customMessage || action.message || `Are you sure you want to perform this action?`;
   const confirmLabel = customConfirmLabel || action.confirmLabel || 'Confirm';
@@ -151,7 +160,10 @@ const Modal = ({
   const renderModalContent = () => {
     if (actionType === ACTION_TYPES.ASSESSMENT) {
       return (
-        <div className="flex flex-col items-center ">
+        <div className="flex flex-col items-center relative">
+          <div onClick={onClose} className=' cursor-pointer md:hidden absolute -top-14 -right-14 bg-background-60 p-1 rounded-xl'>
+              <CloseButton/>
+          </div>
           <div className="mb-4">
             <img
               src={AssessmentPopup}
@@ -162,8 +174,8 @@ const Modal = ({
               }}
             />
           </div>
-          <h1 className="typography-h1 mb-2">{title}</h1>
-          <p className="text-font-gray typography-body mb-6">{message}</p>
+          <h1 className={(isMobile  ?  "typography-h3" : "typography-h1") + " mb-2"}>{isMobile  ? action.mobTitle :title}</h1>
+          <p className={(isMobile ? "typography-large-p" :  "typography-body mb-6") +" text-font-gray typography-body "}>{isMobile  ? action.mobMessage :message}</p>
         </div>
       );
     }
@@ -257,7 +269,7 @@ const Modal = ({
   return (
     <div
       onClick={onClose}
-      className="fixed z-10 inset-0 flex justify-center items-center transition-colors bg-black/20"
+      className={((isMobile && actionType === ACTION_TYPES.ASSESSMENT ) ? "mx-6 " : "mx-4 ") + " fixed z-50 inset-0 flex justify-center items-center transition-colors bg-black/20  md:mx-0"}
     >
       <div
         onClick={(e) => e.stopPropagation()}
@@ -267,11 +279,12 @@ const Modal = ({
           {renderModalContent()}
           {children}
           <div className="flex justify-end gap-4 mt-4">
-            <div className="w-[180px]">
+            <div className={(isMobile && actionType === ACTION_TYPES.ASSESSMENT ) ? "hidden" : "w-[180px]"}>
               <Button variant={cancelVariant} onClick={onClose}>
                 {cancelLabel}
               </Button>
             </div>
+            {( actionType !== ACTION_TYPES.ASSESSMENT || (!isMobile && actionType === ACTION_TYPES.ASSESSMENT)) && 
             <div className="w-[180px]">
               <Button
                 variant={buttonVariant}
@@ -283,7 +296,7 @@ const Modal = ({
               >
                 {confirmLabel}
               </Button>
-            </div>
+            </div>}
           </div>
         </div>
       </div>

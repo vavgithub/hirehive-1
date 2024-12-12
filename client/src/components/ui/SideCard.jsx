@@ -9,8 +9,8 @@ const SideCard = ({ formData }) => {
     const formattedDate = postedDate(formData.createdAt);
     return (
 
-        <div className="grid grid-cols-2 gap-3 w-full rounded-xl p-6 bg-background-90 mt-4 md:flex md:flex-col md:gap-6  " >
-            <div className="flex items-center typography-body">
+        <div className="grid grid-cols-2 gap-3 w-full rounded-xl p-6 bg-background-90 md:mt-4 md:flex md:flex-col md:gap-6  " >
+            <div className="flex items-center typography-body ">
                 <EmploymentTypeIcon />
                 <div className="ml-2">
                     <p className="large-p">{formData.employmentType}</p>

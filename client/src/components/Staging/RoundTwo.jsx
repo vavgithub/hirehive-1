@@ -28,6 +28,9 @@ import GreenTickIcon from '../../svg/Staging/GreenTickIcon';
 import RightTick from '../../svg/Staging/RightTick';
 import ClosedBadge from '../../svg/ClosedBadge';
 import useScheduler from '../../hooks/useScheduler';
+import NoShowAction from './NoShow';
+import Loader from '../ui/Loader';
+import RejectCrossIcon from '../../svg/Staging/RejectCrossIcon';
 
 const RoundTwo = ({ candidateId, jobId ,isClosed }) => {
     const { user } = useAuthContext();
@@ -43,8 +46,9 @@ const RoundTwo = ({ candidateId, jobId ,isClosed }) => {
     const [score, setScore] = useState(0);
     const [feedback, setFeedback] = useState('');
 
-    const data = useScheduler(candidateData,stageData,"Under Review")    
-    console.log("SCHEDULER : ",data);
+    const data = useScheduler(candidateData,stageData,"Under Review");
+    
+    const [isLoading, setIsLoading] = useState(false); // Loading state
 
     const updateAssigneeMutation = useMutation({
         mutationFn: (newAssignee) => axios.put('dr/update-assignee', {
@@ -86,6 +90,9 @@ const RoundTwo = ({ candidateId, jobId ,isClosed }) => {
             ...scheduleData,
             stage: 'Round 2' // Specify the stage for Round 1
         }),
+        onMutate: () => {
+            setIsLoading(true); // Set loading to true when mutation starts
+        },
         onSuccess: (data) => {
             dispatch(updateStageStatus({
                 stage: 'Round 2',
@@ -93,10 +100,12 @@ const RoundTwo = ({ candidateId, jobId ,isClosed }) => {
                 data: data.updatedStageStatus
             }));
             queryClient.invalidateQueries(['candidate', candidateId, jobId]);
+            setIsLoading(false); // Stop loading when task is successfully sent
         },
         onError: (error) => {
             console.error("Error scheduling interview:", error);
             // Handle error (e.g., show error message to user)
+            setIsLoading(false); // Stop loading in case of an error
         }
     });
 
@@ -115,6 +124,9 @@ const RoundTwo = ({ candidateId, jobId ,isClosed }) => {
             ...rescheduleData,
             stage: 'Round 2' // Specify the stage for Round 1
         }),
+        onMutate: () => {
+            setIsLoading(true); // Set loading to true when mutation starts
+        },
         onSuccess: (data) => {
             dispatch(updateStageStatus({
                 stage: 'Round 2',
@@ -123,10 +135,12 @@ const RoundTwo = ({ candidateId, jobId ,isClosed }) => {
             }));
             queryClient.invalidateQueries(['candidate', candidateId, jobId]);
             setIsRescheduling(false);
+            setIsLoading(false); // Stop loading when task is successfully sent
         },
         onError: (error) => {
             console.error("Error rescheduling interview:", error);
             // Handle error (e.g., show error message to user)
+            setIsLoading(false); // Stop loading in case of an error
         }
     });
 
@@ -158,38 +172,56 @@ const RoundTwo = ({ candidateId, jobId ,isClosed }) => {
         scoreRoundTwoMutation.mutate({ candidateId, jobId, score, feedback });
     };
 
+    const renderCallHistory = () => {
+        if (stageData.callHistory && stageData.callHistory.length > 0) {
+            return (
+                <div className='mt-4'>
+                    <h3 className='typography-small-p text-font-gray mt-1'>Reschedules</h3>
+                    {stageData.callHistory.map((call, index) => (
+                        <div key={index} className='mt-2'>
+                            {renderCallDetails(call, true)}
+                            <p className='typography-small-p text-font-gray mt-3'>Status: {call.status}</p>
+                        </div>
+                    ))}
+                </div>
+            );
+        }
+        return null;
+    };
 
 
-    const renderCallDetails = (call) => (
-        <div className='bg-background-80 grid grid-cols-3 rounded-xl p-4'>
+    const renderCallDetails = (call , isRescheduled) => (
+        <div className={(isRescheduled && "w-[43%] ") + ' bg-background-80 flex justify-between items-center rounded-xl p-4'}>
             <div className='flex flex-col'>
-                <span className='typography-small-p text-font-gray'>Date</span>
-                <div className='flex items-center gap-2'>
-                    <CalenderIcon />
-                    <h2>
+                {!isRescheduled && <span className='typography-small-p text-font-gray'>Date</span>}
+                <div className={(isRescheduled && "text-font-gray ") + ' flex items-center gap-2'}>
+                    <CalenderIcon customStroke={"#808389"} />
+                    <h2 className={isRescheduled && 'typography-body'}>
                         {new Date(call?.scheduledDate).toLocaleDateString('en-US', { timeZone: 'UTC' })}
                     </h2>
                 </div>
             </div>
+            {isRescheduled && <div className='w-1 h-1 border-font-gray bg-font-gray border-[1px] rounded-full '></div>}
             <div className='flex flex-col'>
-                <span className='typography-small-p text-font-gray'>Time</span>
-                <div className='flex items-center gap-2'>
-                    <ClockIcon />
-                    <h2>
+                {!isRescheduled && <span className='typography-small-p text-font-gray'>Time</span>}
+                <div className={(isRescheduled && "text-font-gray ") + ' flex items-center gap-2'}>
+                    <ClockIcon customStroke={"#808389"} />
+                    <h2 className={isRescheduled && 'typography-body'}>
                         {formatTime(call?.scheduledTime)}
                     </h2>
                 </div>
             </div>
+            {isRescheduled && <div className='w-1 h-1 border-font-gray bg-font-gray border-[1px] rounded-full '></div>}
             <div className='flex flex-col '>
-                <span className='typography-small-p text-font-gray'>Meeting Link</span>
-                <div className='flex items-center gap-2'>
-                    <LinkIcon />
-                    <h2 className='mr-2 text-font-primary'>screening_meeting_link</h2>
-                    <CopyToClipboard text={call?.meetingLink}>
+                {!isRescheduled && <span className='typography-small-p text-font-gray'>Meeting Link</span>}
+                <div className={(isRescheduled && "text-font-gray ") + ' flex items-center gap-2'}>
+                    <LinkIcon customStroke={"#808389"} />
+                    <h2 className={(isRescheduled ? "text-font-gray typography-body " : "text-font-primary") + ' mr-2 '}>screening_meeting_link</h2>
+                    {!isRescheduled && <CopyToClipboard text={call?.meetingLink}>
                         <button className='flex items-center bg-background-70 px-[10px] py-[10px] rounded-xl'>
                             <ClipboardIcon />
                         </button>
-                    </CopyToClipboard>
+                    </CopyToClipboard>}
                 </div>
             </div>
         </div>
@@ -197,6 +229,15 @@ const RoundTwo = ({ candidateId, jobId ,isClosed }) => {
 
 
     const renderContent = () => {
+        if (isLoading) {
+            return (
+                <div className='flex justify-center'>
+                    <Loader />
+                </div>
+
+            )
+
+        }
         switch (stageData?.status) {
             case 'Pending':
                 return (
@@ -229,19 +270,25 @@ const RoundTwo = ({ candidateId, jobId ,isClosed }) => {
                         {
                             role === "Hiring Manager" && (
                                 <>
-
-
-                                    <Label icon={WarningIcon} text={"The screening call has been scheduled. You can reschedule if needed."} />
-                                    <h3 className='typography-h3'>Current Call</h3>
+                                    <Label icon={WarningIcon} text="The round 2 call has been scheduled. You can reschedule if needed." />
+                                    <h3 className='typography-small-p text-font-gray mt-1'>Active Schedule</h3>
                                     {renderCallDetails(stageData?.currentCall)}
                                     {!isRescheduling && (
-                                        <div className='w-[170px]'>
-                                            <Button
-                                                variant="secondary"
-                                                onClick={() => setIsRescheduling(true)}
-                                            >
-                                                Reschedule Call
-                                            </Button>
+                                        <div className='w-full flex gap-4 justify-end '>
+                                            <NoShowAction
+                                                stage={"Round 2"}
+                                                candidateId={candidateId}
+                                                setIsLoading={setIsLoading}
+                                                jobId={jobId}
+                                            />
+                                            <div className='w-[170px]'>
+                                                <Button
+                                                    variant="secondary"
+                                                    onClick={() => setIsRescheduling(true)}
+                                                    >
+                                                    Reschedule Call
+                                                </Button>
+                                            </div>
                                         </div>
                                     )}
                                     {isRescheduling && (
@@ -254,17 +301,7 @@ const RoundTwo = ({ candidateId, jobId ,isClosed }) => {
                                             onCancel={() => setIsRescheduling(false)}
                                         />
                                     )}
-                                    {stageData.callHistory && stageData.callHistory.length > 0 && (
-                                        <div className='mt-4'>
-                                            <h3 className='typography-h3'>Previous Calls</h3>
-                                            {stageData.callHistory.map((call, index) => (
-                                                <div key={index} className='mt-2'>
-                                                    {renderCallDetails(call)}
-                                                    <p className='typography-small-p text-font-gray mt-1'>Status: {call.status}</p>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    )}
+                                    {renderCallHistory()}
                                 </>
                             )
                         }
@@ -356,6 +393,7 @@ const RoundTwo = ({ candidateId, jobId ,isClosed }) => {
                                         stage="Round 2"
                                         candidateId={candidateId}
                                         jobId={jobId}
+                                        setIsLoading={setIsLoading}
                                         isBudgetScoreSubmitted={true}
                                     />
                                 </div>
@@ -405,12 +443,53 @@ const RoundTwo = ({ candidateId, jobId ,isClosed }) => {
                         {
                             role === "Candidate" && (
                                 <>
-                                    <Label icon={RightTick} text={"Congratulations! You will be contacted soon for the next stage of the application process."} />
+                                    <Label icon={RejectCrossIcon} text={"Unfortunately, you did not clear the round. Thank you for your interest. We encourage you to reapply in the future"} />
                                 </>
                             )
                         }
                     </div>
                 );
+            case 'No Show':
+                return (
+                    <div className='w-full'>
+                    {
+                        role === "Hiring Manager" && (
+                            <>
+                            <Label icon={WarningIcon} text="Candidate did not show up for the scheduled Round 2 call." />
+                                <div>
+                                    {isRescheduling && (
+                                        <ScheduleForm
+                                            candidateId={candidateId}
+                                            jobId={jobId}
+                                            onSubmit={handleReschedule}
+                                            isRescheduling={true}
+                                            initialData={stageData.currentCall}
+                                            onCancel={() => setIsRescheduling(false)}
+                                        />
+                                    )}
+                                    {/* {renderCallHistory()} */}
+
+                                </div>
+                                {!isRescheduling && <StageActions
+                                    stage={"Round 2"}
+                                    candidateId={candidateId}
+                                    jobId={jobId}
+                                    setIsLoading={setIsLoading}
+                                    isBudgetScoreSubmitted={"true"}
+                                >
+                                    {/* This will only show if status is No Show */}
+                                    <div className="w-[176px]">
+                                        <Button variant="primary" onClick={() => setIsRescheduling(true)}>
+                                            Reschedule Call
+                                        </Button>
+
+                                    </div>
+                                </StageActions>}
+                            </>
+                        )
+                    }
+                    </div>
+                )
             default:
                 return null;
         }
@@ -439,8 +518,8 @@ const RoundTwo = ({ candidateId, jobId ,isClosed }) => {
                             </div>
                         }
                     </div>
-                    <Box display="flex" alignItems="center">
-                        {isClosed || <StatusBadge status={stageData?.status} />}
+                    <Box display="flex" alignItems="center" justifyContent={"end"} width={"40%"}>
+                        {isClosed || <StatusBadge customWidth={'w-fit'} status={stageData?.status} />}
                         {role === 'Hiring Manager' && (
                             <AssigneeSelector
                                 mode="icon"

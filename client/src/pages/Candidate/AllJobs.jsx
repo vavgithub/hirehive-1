@@ -122,16 +122,26 @@ const AllJobs = () => {
 
 
     return (
-        <div className='container m-4'>
+        <div className='container m-4 w-[93%] md:w-[97%]'>
             <div className='flex items-center justify-between'>
                 <h1 className='typography-h1'>All Jobs</h1>
-                <div
+            </div>
+               <div className='flex items-center justify-between mt-1 mb-4'>
+               <div className='block md:hidden  relative w-[86%] sm:w-[90%]'>
+                        <div className='absolute top-[10px] left-4'>
+                            <SearchIcon />
+                        </div>
+                        <input style={{paddingLeft : "48px"}} type='text' placeholder="Enter job title" value={searchQuery}
+                            onChange={handleSearch} />
+                    </div>
+               <div
                     className={`md:hidden ${isFilterVisible ? "bg-background-100" : "bg-background-40"} transition-colors duration-200 flex items-center gap-2 p-2 rounded-xl`}
                     onClick={toggleFilters}
                 >
+                    
                     <Filter />
                 </div>
-            </div>
+               </div>
 
             {/* Mobile filter toggle button */}
 
@@ -147,7 +157,7 @@ const AllJobs = () => {
             <div className='flex flex-col md:flex-row gap-4  bg-background-30 p-4 rounded-xl'>
                 {/* Search and Filters */}
                 <div className={`${isFilterVisible ? 'block' : 'hidden'} md:block`}>
-                    <div className='mb-4 relative '>
+                    <div className='hidden md:block  mb-4 relative '>
                         <div className='absolute top-[10px] left-4'>
                             <SearchIcon />
                         </div>

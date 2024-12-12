@@ -346,17 +346,17 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
             onClick={(event) => event.stopPropagation()}
           >
             {params.row.portfolio && (
-              <a href={ensureAbsoluteUrl(params.row.portfolio)} target="_blank" rel="noopener noreferrer" className="icon-link">
+              <a title='Portfolio' href={ensureAbsoluteUrl(params.row.portfolio)} target="_blank" rel="noopener noreferrer" className="icon-link">
                 <FileMainIcon sizeClasses={'w-9 h-9'} />
               </a>
             )}
             {params.row.website && params.row.website !== params.row.portfolio && (
-              <a href={ensureAbsoluteUrl(params.row.website)} target="_blank" rel="noopener noreferrer" className="icon-link ">
+              <a title='Website' href={ensureAbsoluteUrl(params.row.website)} target="_blank" rel="noopener noreferrer" className="icon-link ">
                 <WebsiteMainIcon sizeClasses={'w-9 h-9'} />
               </a>
             )}
             {params.row.resumeUrl && (
-              <button onClick={() => handleDocumentClick(params.row.resumeUrl)} className="icon-link">
+              <button title='Resume' onClick={() => handleDocumentClick(params.row.resumeUrl)} className="icon-link">
                 <ResumeIcon sizeClasses={'w-9 h-9'}/>
               </button>
             )}
@@ -368,6 +368,9 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
       field: 'email',
       headerName: 'Email',
       width: 220,
+      renderCell : (params) =>(
+        <p className='w-full overflow-hidden whitespace-nowrap text-ellipsis'>{params.value}</p>
+      )
     },
     
     {
@@ -425,6 +428,9 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
       width: 200,
       align:'center',
       headerAlign : 'center',
+      renderCell : (params) =>(
+        <p className='w-full overflow-hidden whitespace-nowrap text-ellipsis'>{params.value}</p>
+      )
     },  
   ];
 
@@ -614,6 +620,7 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
           }
           .MuiDataGrid-root .MuiDataGrid-row {
             z-index: 1;
+            cursor: pointer
           }
           .MuiDataGrid-root .MuiDataGrid-row:hover {
             z-index: 2;

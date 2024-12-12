@@ -60,13 +60,13 @@ const ViewJob = () => {
         <div className='min-h-screen flex justify-center bg-main-bg bg-cover'>
 
             <div className=" flex container flex-col items-center  p-6">
-                <div className='flex  w-full mb-4 '>
+                <div className='flex  w-full mb-6 '>
 
 
                     <img className='h-12' src={Logo} />
 
                 </div>
-                <div className=" bg-background-30 rounded-xl p-6">
+                <div className=" bg-background-30 rounded-xl p-6 w-full">
                     {/* Flex container for both desktop and mobile */}
                     <div className="flex flex-col lg:flex-row justify-between">
                         {/* Job Title */}
@@ -89,7 +89,7 @@ const ViewJob = () => {
                     </div>
             
                     {/* Job Description and Skills */}
-                    <div className="flex flex-col md:flex md:flex-row md:justify-between mt-4">
+                    <div className="flex flex-col-reverse md:flex md:flex-row md:justify-between mt-4">
                         {/* Left section: Job description and skills */}
                         <div className="md:w-3/4">
                         <h3 className='typography-h3'>Job Description</h3>
@@ -101,9 +101,9 @@ const ViewJob = () => {
                             {/* Skills section */}
                             <div>
                                 <h4 className="typography-h4 font-bold font-outfit mt-6 mb-3">Skills</h4>
-                                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                                <div className="flex flex-wrap gap-3">
                                     {formData.skills && formData.skills.map((skill, index) => (
-                                        <span key={index} className="flex font-outfit justify-center bg-background-70 px-6 py-2 rounded-full">
+                                        <span key={index} className="flex font-outfit justify-center w-fit bg-background-70 px-6 py-2 rounded-full">
                                             {skill}
                                         </span>
                                     ))}
@@ -112,7 +112,7 @@ const ViewJob = () => {
                         </div>
 
                         {/* Right section: SideCard */}
-                        <div className="mt-6 lg:mt-0">
+                        <div className="mb-8 lg:mb-0">
                             <SideCard formData={formData} />
                         </div>
                     </div>

@@ -115,12 +115,14 @@ const ViewCandidateProfile = () => {
             icon: <ApplicationIcon />,
             activeIcon: <ApplicationIconActive />,
         },
-        {
-            name: 'candidateDetails',
-            label: 'Candidate Details', // Add the space here
-            icon: <CandidateDetailsIcon />,
-            activeIcon: <CandidateDetailsIconActive />,
-        },
+        ...(role !== "Design Reviewer" ? [
+            {
+                name: 'candidateDetails',
+                label: 'Candidate Details',
+                icon: <CandidateDetailsIcon />,
+                activeIcon: <CandidateDetailsIconActive />,
+            }
+        ] : []),
     ];
 
     // Handle action switcher
@@ -177,7 +179,7 @@ const ViewCandidateProfile = () => {
 
 
     return (
-        <div className="mx-4 pt-4 container h-screen">
+        <div className="mx-4 pt-4 container w-[97%]">
             {/* Page header */}
             <Header
                 HeaderText="Candidate Profile"
@@ -195,17 +197,18 @@ const ViewCandidateProfile = () => {
                             <div className="to-background-100 w-[180px] rounded-xl overflow-hidden">
                                 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg" alt="" />
                             </div>
-                            <div>
+                            <div className='flex flex-col gap-2'>
                                 <h1 className="typography-h2">
                                     {data.firstName} {data.lastName}
                                 </h1>
                                 <div className="flex items-center gap-2 mb-3 mt-2">
                                     <span className="typography-small-p text-font-gray">{data.jobApplication.jobApplied}</span>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="4" height="4" viewBox="0 0 4 4" fill="none">
+                                    {/* <svg xmlns="http://www.w3.org/2000/svg" width="4" height="4" viewBox="0 0 4 4" fill="none">
                                         <circle cx="2" cy="2" r="2" fill="#808389" />
                                     </svg>
-                                    <span className="typography-small-p text-font-gray">{data.location}</span>
+                                    <span className="typography-small-p text-font-gray">{data.location}</span> */}
                                 </div>
+                                {role !== "Design Reviewer" &&
                                 <div className="flex mb-3 gap-5">
                                     <div className="flex items-center gap-2">
                                         <PhoneIcon />
@@ -215,7 +218,7 @@ const ViewCandidateProfile = () => {
                                         <EmailIcon />
                                         <span className="typography-large-p">{data.email}</span>
                                     </div>
-                                </div>
+                                </div>}
                                 <div className="flex gap-2 items-center ">
                                     <a href={ensureAbsoluteUrl(data.portfolio)} target="_blank" rel="noopener noreferrer" className="icon-link">
                                         <FileMainIcon />
@@ -229,7 +232,7 @@ const ViewCandidateProfile = () => {
                                     {resumeOpen && <ResumeViewer documentUrl={data.resumeUrl} onClose={() => setResumeOpen(false)}/>}
                                    
                                     {
-                                        data.hasGivenAssessment && <div className='cursor-pointer' onClick={handleAssignmentNavigation}> <AssignmentIcon /> </div>
+                                        (data.hasGivenAssessment && role === "Hiring Manager") && <div className='cursor-pointer' onClick={handleAssignmentNavigation}> <AssignmentIcon /> </div>
                                     }
 
                                 </div>
@@ -255,7 +258,7 @@ const ViewCandidateProfile = () => {
 
             {/* Content of the selected tab */}
             {activeTab === 'application' && (
-                <div className='w-full'>
+                <div className='w-full my-8'>
                     <ApplicationStaging
                         candidateId={candidateId}
                         jobId={jobId}
@@ -264,7 +267,7 @@ const ViewCandidateProfile = () => {
                 </div>
                 // <Staging currentStage={data.stage} candidateData={data} />
             )}
-            {activeTab === 'candidateDetails' && (
+            {activeTab === 'candidateDetails'  && (
                 <CandidateTabDetail data={transformedData} />
             )}
         </div>

@@ -83,7 +83,7 @@ const EditCandidateProfile = () => {
       <div className=" container mx-auto ">
         <div className='p-4'>
 
-          <Header HeaderText={`${data.firstName} ${data.lastName}`} withKebab='false' withBack="true" />
+          <Header HeaderText="Edit Candidate Profile" withKebab='false' withBack="true" />
           <div className='flex gap-6 mt-5'>
             <div className='bg-background-30 w-96 h-96 rounded-xl flex flex-col items-center p-4'>
               <div className='to-background-100 w-64 rounded-xl overflow-hidden'>
