@@ -201,20 +201,6 @@ export const registerCandidate = async (req, res) => {
     const existingEmail = await Candidate.findOne({ email });
     const existingPhone = await Candidate.findOne({ phone });
 
-    if (existingEmail && existingPhone) {
-      return res.status(400).json({ 
-        message: "Email and phone number already exist",
-        field: "both"
-      });
-    }
-    
-    if (existingEmail) {
-      return res.status(400).json({ 
-        message: "Email already exists",
-        field: "email"
-      });
-    }
-
     if (existingPhone) {
       return res.status(400).json({ 
         message: "Phone number already exists",
@@ -252,17 +238,50 @@ export const registerCandidate = async (req, res) => {
       skills,
     };
 
-    // Create new candidate with job application data
-    const newCandidate = new Candidate({
-      firstName,
-      lastName,
-      email,
-      phone,
-      ...professionalInfo,
-      otp: hashedOtp,
-      otpExpires: Date.now() + 10 * 60 * 1000,
-      jobApplications: [
-        {          
+    if(!existingEmail){
+  
+      // Create new candidate with job application data
+      const newCandidate = new Candidate({
+        firstName,
+        lastName,
+        email,
+        phone,
+        ...professionalInfo,
+        otp: hashedOtp,
+        otpExpires: Date.now() + 10 * 60 * 1000,
+        jobApplications: [
+          {          
+            jobId,
+            jobApplied,
+            questionResponses,
+            applicationDate: new Date(),
+            currentStage: jobStages[0]?.name || "",
+            stageStatuses: initialStageStatuses,
+            resumeUrl,
+            professionalInfo
+          },
+        ],
+      });
+  
+      await newCandidate.save();
+
+    }else{
+      existingEmail.otp = hashedOtp
+      existingEmail.otpExpires = Date.now() + 10 * 60 * 1000
+
+      //if email exist with different phone, new phone is updated
+      if(existingEmail && existingEmail.phone !== phone ){
+        existingEmail.phone = phone
+      }
+
+      // Check if the candidate has already applied for the same job
+      const alreadyAppliedJob = existingEmail.jobApplications.some(
+        (application) => application.jobId.toString() === jobId
+      );
+
+      //if not already applied job, create new job entry
+      if (!alreadyAppliedJob) {
+        const newJobApplication = {          
           jobId,
           jobApplied,
           questionResponses,
@@ -271,14 +290,18 @@ export const registerCandidate = async (req, res) => {
           stageStatuses: initialStageStatuses,
           resumeUrl,
           professionalInfo
-        },
-      ],
-    });
+        }
 
-    await newCandidate.save();
+        existingEmail.jobApplications.push(newJobApplication)
+      }
+
+      await existingEmail.save()
+    } 
+    
+    //send OTP anyways
     await sendOtpEmail(email, otp);
 
-    res.status(200).json({ message: "Candidate registered. OTP sent to email." });
+    res.status(200).json({ message: existingEmail ? "Account exists. OTP sent to email for verification." : "Candidate registered. OTP sent to email." });
   } catch (error) {
     console.error("Error registering candidate:", error);
     res.status(500).json({ message: "Server error" });
