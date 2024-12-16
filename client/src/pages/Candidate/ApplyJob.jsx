@@ -433,17 +433,17 @@ const ApplyJob = () => {
                   )}
               />
 
-              <div className='md:col-span-2'>
+              <div className='md:col-span-2 '>
                 <label className="typography-body">Resume<span className="text-red-100">*</span></label>
                 <div
                   {...getRootProps({
-                    className: `bg-background-40 rounded-xl mt-2 p-5 text-center cursor-pointer ${isDragActive ? 'border-teal-500 bg-teal-50' : 'border-gray-300'
+                    className: `bg-background-40 hover:bg-background-60 rounded-xl mt-2 p-5 text-center cursor-pointer ${isDragActive ? 'border-teal-500 bg-teal-50' : 'border-gray-300'
                       }`,
                   })}
                 >
                   <input {...getInputProps()} />
                   {resumeFile ? (
-                    <div className="flex bg-background-70 items-center justify-between p-4 rounded-xl">
+                    <div className="flex bg-background-70  items-center justify-between p-4 rounded-xl">
                       <span>{resumeFile.name}</span>
                       <button
                         onClick={(e) => {
@@ -734,7 +734,6 @@ const ApplyJob = () => {
                   Create a password to secure your account. Make sure it’s strong
                   and easy to remember.
                 </p>
-                <div className='flex flex-col gap-4'>
                 <Controller
                   name="password"
                   control={control}
@@ -745,6 +744,7 @@ const ApplyJob = () => {
                       label="Create Password"
                       type="password"
                       required={true}
+                      extraClass={'mb-4'}
                       error={errors.password}
                       {...field}
                     />
@@ -765,7 +765,6 @@ const ApplyJob = () => {
                     />
                   )}
                 />
-                </div>
                 {passwordError && (
                   <span className="text-red-500">{passwordError}</span>
                 )}
