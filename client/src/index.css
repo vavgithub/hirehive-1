@@ -32,6 +32,25 @@ html{
   }
 }
 
+/* Add this to your global CSS */
+input[type="number"].no-spinner::-webkit-inner-spin-button,
+input[type="number"].no-spinner::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"].no-spinner {
+  -moz-appearance: textfield;
+}
+
+/* Ensure error border isn't overridden */
+input.no-spinner {
+  border: 1px solid transparent; /* Add a transparent border by default */
+}
+
+input.no-spinner[class*="border-red-500"] {
+  border-color: rgb(239, 68, 68) !important; /* Force red border when error exists */
+}
 .truncate {
   overflow: hidden;
   text-overflow: ellipsis;

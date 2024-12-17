@@ -1,21 +1,6 @@
 import React, { useEffect, useState } from "react";
 import TogglePassword from "../utility/TogglePassword";
 
-// export const InputField = React.forwardRef(({ id, type , label, required,extraClass, ...props }, ref) => (
-//   <div className=' flex flex-col justify-between gap-2'>
-//     <label htmlFor={id} className="typography-body">{label} {required && <span className="text-red-100">*</span>}</label>
-//     <input
-//       id={id}
-//       type={type}
-//       placeholder={`Enter ${label.toLowerCase()}`}
-//       className={extraClass}
-//       ref={ref}
-//       {...props}
-//     />
-//   </div>
-// ));
-
-
 export const InputField = React.forwardRef(({ 
   id, 
   type, 
@@ -25,47 +10,53 @@ export const InputField = React.forwardRef(({
   error,
   errorMessage, 
   ...props 
-}, ref) =>{
-  
-  //State to handle password type
-  const [passwordType,setPasswordType] = useState('password');
+}, ref) => {
+  const [passwordType, setPasswordType] = useState('password');
+
+  // Use higher specificity for error border
+  const inputClasses = `
+    w-full 
+    p-2 
+    bg-background-40 
+    rounded 
+    outline-none 
+    focus:outline-teal-300
+    ${error ? '!border !border-red-500' : 'border border-transparent'} 
+    ${extraClass || ''}
+  `.trim();
 
   return (
-  <div className='flex flex-col justify-start gap-4 relative'>
-    <label htmlFor={id} className="typography-body">
-      {label} {required && <span className="text-red-100">*</span>}
-    </label>
-    {type === "password" ? 
-      <TogglePassword typeState={passwordType} setTypeState={setPasswordType}>
+    <div className='flex flex-col justify-start gap-4 relative'>
+      <label htmlFor={id} className="typography-body">
+        {label} {required && <span className="text-red-100">*</span>}
+      </label>
+      {type === "password" ? (
+        <TogglePassword typeState={passwordType} setTypeState={setPasswordType}>
+          <input
+            id={id}
+            type={passwordType}
+            placeholder={`Enter ${label.toLowerCase()}`}
+            className={(props.value && "tracking-widest ") + " " + inputClasses}
+            ref={ref}
+            {...props}
+          />
+        </TogglePassword>
+      ) : (
         <input
-        id={id}
-        type={passwordType}
-        placeholder={`Enter ${label.toLowerCase()}`}
-        className={(props.value && "tracking-widest ") + ` w-full p-2 bg-background-40 rounded  outline-none focus:outline-teal-300 ${
-          error ? 'border border-red-500' : ''
-        } ${extraClass || ''}`}
-        ref={ref}
-        {...props}
-      />
-    </TogglePassword>
-    :
-    <input
-      id={id}
-      type={type}
-      placeholder={`Enter ${label.toLowerCase()}`}
-      className={`w-full p-2 bg-background-40 rounded outline-none focus:outline-teal-300 ${
-        error ? 'border border-red-500' : ''
-      } ${extraClass || ''}`}
-      ref={ref}
-      {...props}
-    />
-    }
-    {error && errorMessage && (
-      <span className="text-red-500 text-sm -bottom-[8px] absolute">{errorMessage}</span>
-    )}
-  </div>
-)});
-
+          id={id}
+          type={type}
+          placeholder={`Enter ${label.toLowerCase()}`}
+          className={inputClasses}
+          ref={ref}
+          {...props}
+        />
+      )}
+      {error && errorMessage && (
+        <span className="text-red-500 text-sm -bottom-[8px] absolute">{errorMessage}</span>
+      )}
+    </div>
+  );
+});
 InputField.displayName = 'InputField';
 
 export const CustomDropdown = React.forwardRef(({ field, label, options, value, onChange, required }, ref) => {

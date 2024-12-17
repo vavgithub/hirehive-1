@@ -1,7 +1,6 @@
 // auth.routes.js
 
 import express from 'express';
-import multer from 'multer';
 import { applyToJob, createPassword,forgotPassword, getCandidateAppliedJobs, getCandidateDashboard, loginCandidate, logoutCandidate, registerCandidate ,resetPassword, uploadResumeController, verifyOtp ,  verifyOTPForgot } from '../../controllers/candidate/auth.controller.js';
 import { protectCandidate } from '../../middlewares/authMiddleware.js';
 import { uploadResume } from '../../middlewares/uploadMiddleware.js';

@@ -16,6 +16,8 @@ import Logo from '../../svg/Logo/lightLogo.svg';
 import { fetchCandidateAuthData } from '../../redux/candidateAuthSlice';
 import useCandidateAuth from '../../hooks/useCandidateAuth';
 import { digitsRegex, lowerCaseRegex, specialCharRegex, upperCaseRegex } from '../../utility/regex';
+import { PersonalDetailsSection, ProfessionalDetailsSection, ResumePortfolioSection } from '../../components/Form/ApplyJob';
+import { validationRules } from '../../utility/validationRules';
 
 const fetchJobDetails = async (id) => {
   const response = await axios.get(`/jobs/getJobById/${id}`);
@@ -35,11 +37,11 @@ const ApplyJob = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [resumeFile, setResumeFile] = useState(null);
   const [uploadProgress, setUploadProgress] = useState(0);
-  
+
   const navigate = useNavigate();
   const { id: jobId } = useParams();
   const hiddenFileInput = useRef(null);
-  
+
   let initial = {
     firstName: "",
     lastName: "",
@@ -130,6 +132,13 @@ const ApplyJob = () => {
       throw error;
     }
   };
+
+  // Register all fields with their validation rules
+  useEffect(() => {
+    Object.entries(validationRules).forEach(([fieldName, rules]) => {
+      register(fieldName, rules);
+    });
+  }, [register]);
 
   const onSubmit = async (data) => {
     setIsSubmitting(true);
@@ -274,173 +283,42 @@ const ApplyJob = () => {
     }
   };
 
-
-  // Handler for additional questions input change
-  const handleInputChange = (questionId, value) => {
-    setAnswers((prevAnswers) => ({
-      ...prevAnswers,
-      [questionId]: value,
-    }));
-  };
-
   return (
-    
+
 
     <div className='main-wrapper flex justify-center ' >
-      
 
-        {currentStep === 1 && (
-          <div className='container'>
-             <div  >
-          <img className='h-12 m-4' src={Logo} />
-          <h1 className="typography-h1 m-4">Application for {jobDetails?.jobTitle}</h1>
-          </div>          
-          <form className='mx-4'  onSubmit={handleSubmit(onSubmit)}>
+
+      {currentStep === 1 && (
+        <div className='container'>
+          <div  >
+            <img className='h-12 m-4' src={Logo} />
+            <h1 className="typography-h1 m-4">Application for {jobDetails?.jobTitle}</h1>
+          </div>
+          <form className='mx-4' onSubmit={handleSubmit(onSubmit)}>
             {/* Personal Details */}
             {!isAuthenticated && (
-              <div >
-
-                <h3 className="typography-h3 mt-8 mb-4">Personal Details</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ">
-                  <Controller
-                    name="firstName"
-                    control={control}
-                    rules={{ required: true }}
-                    render={({ field }) => (
-                      <InputField
-                        type="text"
-                        id="firstName"
-                        label="First Name"
-                        required={true}
-                        error={errors.firstName}
-                        {...field}
-                        />
-                      )}
-                  />
-                  <Controller
-                    name="lastName"
-                    control={control}
-                    rules={{ required: true }}
-                    render={({ field }) => (
-                      <InputField
-                        id="lastName"
-                        type="text"
-                        label="Last Name"
-                        required={true}
-                        error={errors.lastName}
-                        {...field}
-                        />
-                      )}
-                      />
-                  <Controller
-                    name="email"
-                    control={control}
-                    rules={{
-                      required: 'Email is required',
-                      pattern: {
-                        value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                        message: 'Please enter a valid email address'
-                      }
-                    }}
-                    render={({ field }) => (
-                      <InputField
-                        id="email"
-                        type="email"
-                        label="Email"
-                        required={true}
-                        error={errors.email}
-                        errorMessage={errors.email?.message}
-                        {...field}
-                      />
-                    )}
-                  />
-                  <Controller
-                    name="phoneNumber"
-                    control={control}
-                    rules={{
-                      required: 'Phone number is required',
-                      pattern: {
-                        value: /^[0-9]{10}$/,
-                        message: 'Phone number must be exactly 10 digits'
-                      },
-                      minLength: {
-                        value: 10,
-                        message: 'Phone number must be exactly 10 digits'
-                      },
-                      maxLength: {
-                        value: 10,
-                        message: 'Phone number must be exactly 10 digits'
-                      }
-                    }}
-                    render={({ field }) => (
-                      <InputField
-                        type="number"
-                        id="phoneNumber"
-                        label="Phone Number"
-                        required={true}
-                        error={errors.phoneNumber}
-                        errorMessage={errors.phoneNumber?.message}
-                        {...field}
-                        onChange={(e) => {
-                          const value = e.target.value.replace(/[^0-9]/g, '');
-                          if (value.length <= 10) {
-                            field.onChange(value);
-                          }
-                        }}
-                      />
-                    )}
-                  />
-                </div>
+              <div>
+                <PersonalDetailsSection control={control} />
               </div>
             )}
-
-            {/* Resume & Portfolio */}
-            <h3 className="typography-h3 mt-8 mb-4">Resume & Portfolio</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            
 
 
-              <Controller
-                name="portfolio"
-                control={control}
-                rules={{ required: true }}
-                render={({ field }) => (
-                  <InputField
-                    type="text"
-                    id="portfolio"
-                    label="Portfolio"
-                    required={true}
-                    error={errors.portfolio}
-                    {...field}
-                    />
-                )}
-              />
+              <ResumePortfolioSection control={control} />
+         
+          {
 
-
-
-              <Controller
-                name="website"
-                control={control}
-                rules={{ required: false }}
-                render={({ field }) => (
-                  <InputField
-                    type="text"
-                    id="website"
-                    label="Website"
-                    required={false}
-                    error={errors.website}
-                    {...field}
-                    />
-                  )}
-              />
-
-              <div className='md:col-span-2 '>
-                <label className="typography-body">Resume<span className="text-red-100">*</span></label>
-                <div
-                  {...getRootProps({
-                    className: `bg-background-40 hover:bg-background-60 rounded-xl mt-2 p-5 text-center cursor-pointer ${isDragActive ? 'border-teal-500 bg-teal-50' : 'border-gray-300'
-                      }`,
-                  })}
-                >
+            
+            <div className='md:col-span-2 '>
+            <label className="typography-body">Resume<span className="text-red-100">*</span></label>
+            <div
+                        {...getRootProps({
+                          className: `bg-background-40 hover:bg-background-60 rounded-xl mt-2 p-5 text-center cursor-pointer 
+                            ${isDragActive ? 'border border-teal-500 bg-background-60' : ''} 
+                            ${errors.resumeFile ? '!border !border-red-500' : ''}`,
+                          })}
+                      >
                   <input {...getInputProps()} />
                   {resumeFile ? (
                     <div className="flex bg-background-70  items-center justify-between p-4 rounded-xl">
@@ -488,79 +366,12 @@ const ApplyJob = () => {
                 )}
               </div>
 
-            </div>
+              
 
-            {/* Professional Details */}
-            <h3 className="typography-h3 mt-8 mb-4">Professional Details</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ">
-              <Controller
-                name="experience"
-                control={control}
-                rules={{ required: true }}
-                render={({ field }) => (
-                  <InputField
-                  type="number"
-                  extraClass="no-spinner"
-                    id="experience"
-                    label="Experience (In Years)"
-                    required={true}
-                    error={errors.experience}
-                    {...field}
-                  />
-                )}
-              />
-              <Controller
-                name="noticePeriod"
-                control={control}
-                rules={{ required: true }}
-                render={({ field }) => (
-                  <InputField
-                    id="noticePeriod"
-                    type="number"
-                    extraClass="no-spinner"
-                    label="Notice Period (In days)"
-                    required={true}
-                    error={errors.noticePeriod}
-                    {...field}
-                    />
-                )}
-                />
-              <Controller
-                name="currentCTC"
-                control={control}
-                rules={{ required: true }}
-                render={({ field }) => (
-                  <InputField
-                  type="number"
-                  id="currentCTC"
-                  extraClass="no-spinner"
-                  label="Current CTC (In LPA)"
-                  required={true}
-                  error={errors.currentCTC}
-                  {...field}
-                  />
-                )}
-              />
-              <Controller
-                name="expectedCTC"
-                control={control}
-                rules={{ required: true }}
-                render={({ field }) => (
-                  <InputField
-                  type="number"
-                  id="expectedCTC"
-                  extraClass="no-spinner"
-                    label="Expected CTC (In LPA)"
-                    required={true}
-                    error={errors.expectedCTC}
-                    {...field}
-                    />
-                  )}
-              />
+            }
 
-
-            </div>
-              {/* Skills Input */}
+            <ProfessionalDetailsSection control={control} />
+            {/* Skills Input */}
 
             <div className="grid md:grid-cols-2 grid-cols-1 gap-4 pt-4 ">
               <Controller
@@ -584,7 +395,7 @@ const ApplyJob = () => {
                     {error && <p className="text-red-500 text-sm mt-2">{error.message}</p>}
                   </div>
                 )}
-                />
+              />
 
 
 
@@ -599,53 +410,53 @@ const ApplyJob = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ">
                     {jobDetails?.questions.map((question, index) => (
                       <div key={question?._id} className='bg-background-30 rounded-xl p-4'>
-                      <Controller
-                        key={question._id}
-                        name={`question-${question._id}`}
-                        control={control}
-                        defaultValue=""
-                        rules={{ required: question.required }}
-                        render={({ field }) => (
-                          <div>
-                            <label className="block mb-2 typography-body ">
-                              Q{index + 1}. {question.text}
-                              {question.required && (
-                                <span className="text-red-500 ml-1">*</span>
-                              )}
-                            </label>
-                            {question.type === "multiple" ? (
-                              question.options.map((option, optionIndex) => (
-                                <div key={optionIndex} className="mb-2 flex items-center">
-                                  <input
-                                    type="radio"
-                                    id={`question-${question._id}-option-${optionIndex}`}
-                                    value={option}
-                                    checked={field.value === option}
-                                    onChange={() => field.onChange(option)}
-                                    className="mr-2 appearance-none border-2 rounded-full  form-radio h-5 w-5 checked:ring-offset-[5px] checked:ring-offset-black-100 checked:bg-teal-100 checked:ml-[4px] checked:mr-[12px] checked:ring-[2px] checked:w-3 checked:h-3 checked:border-0  checked:ring-teal-100"
+                        <Controller
+                          key={question._id}
+                          name={`question-${question._id}`}
+                          control={control}
+                          defaultValue=""
+                          rules={{ required: question.required }}
+                          render={({ field }) => (
+                            <div>
+                              <label className="block mb-2 typography-body ">
+                                Q{index + 1}. {question.text}
+                                {question.required && (
+                                  <span className="text-red-500 ml-1">*</span>
+                                )}
+                              </label>
+                              {question.type === "multiple" ? (
+                                question.options.map((option, optionIndex) => (
+                                  <div key={optionIndex} className="mb-2 flex items-center">
+                                    <input
+                                      type="radio"
+                                      id={`question-${question._id}-option-${optionIndex}`}
+                                      value={option}
+                                      checked={field.value === option}
+                                      onChange={() => field.onChange(option)}
+                                      className="mr-2 appearance-none border-2 rounded-full  form-radio h-5 w-5 checked:ring-offset-[5px] checked:ring-offset-black-100 checked:bg-teal-100 checked:ml-[4px] checked:mr-[12px] checked:ring-[2px] checked:w-3 checked:h-3 checked:border-0  checked:ring-teal-100"
                                     />
-                                  <label
-                                    htmlFor={`question-${question._id}-option-${optionIndex}`}
+                                    <label
+                                      htmlFor={`question-${question._id}-option-${optionIndex}`}
                                     >
-                                    {option}
-                                  </label>
-                                </div>
-                              ))
-                            ) : (
-                              <input
-                              type={question.answerType === "number" ? "number" : "text"}
-                                {...field}
-                                className="w-full p-2 bg-background-40 rounded outline-none focus:outline-teal-300"
-                                placeholder="Enter your answer"
+                                      {option}
+                                    </label>
+                                  </div>
+                                ))
+                              ) : (
+                                <input
+                                  type={question.answerType === "number" ? "number" : "text"}
+                                  {...field}
+                                  className="w-full p-2 bg-background-40 rounded outline-none focus:outline-teal-300"
+                                  placeholder="Enter your answer"
                                 />
                               )}
-                            {errors[`question-${question._id}`] && (
-                              <span className="text-red-500">This field is required</span>
-                            )}
-                          </div>
-                        )}
+                              {errors[`question-${question._id}`] && (
+                                <span className="text-red-500">This field is required</span>
+                              )}
+                            </div>
+                          )}
                         />
-                        </div>
+                      </div>
                     ))}
                   </div>
                 </>
@@ -660,7 +471,7 @@ const ApplyJob = () => {
                   type="button"
                   onClick={() => navigate(-1)}
                   variant="secondary"
-                  >
+                >
                   Cancel
                 </Button>
               </div>
@@ -668,123 +479,123 @@ const ApplyJob = () => {
                 <Button
                   type="submit"
                   variant="primary"
-                  disabled={!isValid || isSubmitting}
-                  >
+                  disabled={isSubmitting}
+                >
                   {isSubmitting ? 'Submitting...' : 'Next'}
                 </Button>
               </div>
             </div>
           </form>
+        </div>
+      )}
+
+
+
+      {/* OTP Verification Step */}
+      {currentStep === 2 && (
+        <div className="flex items-center h-screen w-screen justify-center  bg-cover bg-verification ">
+          <div className="w-full mx-8 md:mx-0 max-w-lg space-y-8 bg-background-90 rounded-lg shadow-xl  bg-opacity-15 ">
+            <form onSubmit={handleOtpSubmit} className="px-8 sm:px-16 text-center">
+              <h1 className="typography-h2 sm:typography-h1 mt-8 md:mt-20 mb-4 ">OTP Verification</h1>
+              <p className="text-font-gray text-center typography-large-p">
+                To ensure security, please enter the OTP (One-Time Password) to
+                verify your account. A code has been sent to
+              </p>
+              <h2 className='typography-h3 sm:typograhpy-h2 mt-3 md:mt-6 text-font-gray mx-auto w-[240px] min-[420px]:w-full whitespace-nowrap text-ellipsis overflow-hidden'>
+                {email}
+              </h2>
+              <div className="flex justify-center  space-x-2 mt-4 ">
+                {otp.map((data, index) => (
+                  <input
+                    key={index}
+                    id={`otp-input-${index}`}
+                    type="number"
+                    maxLength="1"
+                    className="no-spinner"
+                    value={data}
+                    onChange={(e) => handleOtpChange(e.target, index)}
+                  />
+                ))}
+              </div>
+              {otpError && <span className="text-red-500">{otpError}</span>}
+
+              <div className="flex mt-6 w-full gap-4 mr-16 mb-6 md:mb-20">
+                <Button
+                  type="submit"
+                  variant="primary"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? 'Submitting...' : 'Verify'}
+                </Button>
+              </div>
+            </form>
           </div>
-        )}
+        </div>
+      )}
 
-        
-
-        {/* OTP Verification Step */}
-        {currentStep === 2 && (
-          <div className="flex items-center h-screen w-screen justify-center  bg-cover bg-verification ">
-            <div className="w-full mx-8 md:mx-0 max-w-lg space-y-8 bg-background-90 rounded-lg shadow-xl  bg-opacity-15 ">
-              <form onSubmit={handleOtpSubmit} className="px-8 sm:px-16 text-center">
-                <h1 className="typography-h2 sm:typography-h1 mt-8 md:mt-20 mb-4 ">OTP Verification</h1>
-                <p className="text-font-gray text-center typography-large-p">
-                  To ensure security, please enter the OTP (One-Time Password) to
-                  verify your account. A code has been sent to
-                </p>
-                <h2 className='typography-h3 sm:typograhpy-h2 mt-3 md:mt-6 text-font-gray mx-auto w-[240px] min-[420px]:w-full whitespace-nowrap text-ellipsis overflow-hidden'>
-                  {email}
-                </h2>
-                <div className="flex justify-center  space-x-2 mt-4 ">
-                  {otp.map((data, index) => (
-                    <input
-                      key={index}
-                      id={`otp-input-${index}`}
-                      type="number"
-                      maxLength="1"
-                      className="no-spinner"
-                      value={data}
-                      onChange={(e) => handleOtpChange(e.target, index)}
-                    />
-                  ))}
-                </div>
-                {otpError && <span className="text-red-500">{otpError}</span>}
-
-                <div className="flex mt-6 w-full gap-4 mr-16 mb-6 md:mb-20">
-                  <Button
-                    type="submit"
-                    variant="primary"
-                    disabled={isSubmitting}
-                  >
-                    {isSubmitting ? 'Submitting...' : 'Verify'}
-                  </Button>
-                </div>
-              </form>
-            </div>
-          </div>
-        )}
-
-        {/* Password Creation Step */}
-        {currentStep === 3 && (
-          <div className="flex items-center w-screen justify-center min-h-screen bg-cover bg-verification">
-            <div className="w-full mx-8 md:mx-0 max-w-lg space-y-8 bg-background-90 rounded-lg shadow-xl bg-opacity-15">
-              <form onSubmit={handlePasswordSubmit} className="mx-8 sm:mx-16">
-                <h3 className="typography-h2 text-center sm:typography-h1 mt-5 sm:mt-8 md:mt-20 ">
-                  Create Password
-                </h3>
-                <p className="typography-large-p py-4 text-font-gray text-center">
-                  Create a password to secure your account. Make sure it’s strong
-                  and easy to remember.
-                </p>
-                <Controller
-                  name="password"
-                  control={control}
-                  rules={{ required: true }}
-                  render={({ field }) => (
-                    <InputField
-                      id="password"
-                      label="Create Password"
-                      type="password"
-                      required={true}
-                      extraClass={'mb-4'}
-                      error={errors.password}
-                      {...field}
-                    />
-                  )}
-                />
-                <Controller
-                  name="confirmPassword"
-                  control={control}
-                  rules={{ required: true }}
-                  render={({ field }) => (
-                    <InputField
-                      id="confirmPassword"
-                      label="Confirm Password"
-                      type="password"
-                      required={true}
-                      error={errors.confirmPassword}
-                      {...field}
-                    />
-                  )}
-                />
-                {passwordError && (
-                  <span className="text-red-500">{passwordError}</span>
+      {/* Password Creation Step */}
+      {currentStep === 3 && (
+        <div className="flex items-center w-screen justify-center min-h-screen bg-cover bg-verification">
+          <div className="w-full mx-8 md:mx-0 max-w-lg space-y-8 bg-background-90 rounded-lg shadow-xl bg-opacity-15">
+            <form onSubmit={handlePasswordSubmit} className="mx-8 sm:mx-16">
+              <h3 className="typography-h2 text-center sm:typography-h1 mt-5 sm:mt-8 md:mt-20 ">
+                Create Password
+              </h3>
+              <p className="typography-large-p py-4 text-font-gray text-center">
+                Create a password to secure your account. Make sure it’s strong
+                and easy to remember.
+              </p>
+              <Controller
+                name="password"
+                control={control}
+                rules={{ required: true }}
+                render={({ field }) => (
+                  <InputField
+                    id="password"
+                    label="Create Password"
+                    type="password"
+                    required={true}
+                    extraClass={'mb-4'}
+                    error={errors.password}
+                    {...field}
+                  />
                 )}
+              />
+              <Controller
+                name="confirmPassword"
+                control={control}
+                rules={{ required: true }}
+                render={({ field }) => (
+                  <InputField
+                    id="confirmPassword"
+                    label="Confirm Password"
+                    type="password"
+                    required={true}
+                    error={errors.confirmPassword}
+                    {...field}
+                  />
+                )}
+              />
+              {passwordError && (
+                <span className="text-red-500">{passwordError}</span>
+              )}
 
-                <div className="flex mt-6 gap-4 w-full mr-16 mb-6 md:mb-20">
-                  <Button
-                    type="submit"
-                    variant="primary"
-                    disabled={!isValid || isSubmitting}
-                  >
-                    {isSubmitting ? 'Submitting...' : 'Next'}
-                  </Button>
-                </div>
-              </form>
-            </div>
+              <div className="flex mt-6 gap-4 w-full mr-16 mb-6 md:mb-20">
+                <Button
+                  type="submit"
+                  variant="primary"
+                  disabled={!isValid || isSubmitting}
+                >
+                  {isSubmitting ? 'Submitting...' : 'Next'}
+                </Button>
+              </div>
+            </form>
           </div>
-        )}
+        </div>
+      )}
 
-      </div>
-    
+    </div>
+
   );
 };
 
