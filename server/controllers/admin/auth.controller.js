@@ -5,6 +5,7 @@ import { getUploadPath, uploadToCloudinary } from '../../utils/cloudinary.js';
 import path from 'path';
 import { sendEmail } from '../../utils/sentEmail.js';
 import { generateOTP, otpStore } from '../../utils/otp.js';
+import { getPasswordResetContent, getResetSuccessfulContent } from '../../utils/emailTemplates.js';
 
 
 
@@ -177,19 +178,7 @@ export const forgotPassword = asyncHandler(async (req, res) => {
   });
 
   // Email content
-  const emailContent = `
-    Hello ${user.name},
-
-    You have requested to reset your password. 
-    Your OTP is: ${otp}
-
-    This OTP will expire in 15 minutes.
-
-    If you didn't request this, please ignore this email.
-
-    Best regards,
-    HireHive Team
-  `;
+  const emailContent = getPasswordResetContent(user.name,otp)
 
   // Send email
   await sendEmail(
@@ -252,15 +241,7 @@ export const resetPassword = asyncHandler(async (req, res) => {
   otpStore.delete(email);
 
   // Send confirmation email
-  const emailContent = `
-    Hello ${user.name},
-
-    Your password has been successfully reset.
-    If you didn't make this change, please contact support immediately.
-
-    Best regards,
-    HireHive Team
-  `;
+  const emailContent = getResetSuccessfulContent(user.name)
 
   await sendEmail(
     email,

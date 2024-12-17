@@ -1,6 +1,7 @@
 import { jobStagesStatuses } from "../../config/jobStagesStatuses.js";
 import { jobs } from "../../models/admin/jobs.model.js";
 import { candidates } from "../../models/candidate/candidate.model.js";
+import { getDesignTaskContent, getRejectionEmailContent } from "../../utils/emailTemplates.js";
 import { sendEmail } from "../../utils/sentEmail.js";
 
 export const rejectCandidate = async (req, res) => {
@@ -51,18 +52,7 @@ export const rejectCandidate = async (req, res) => {
     await candidate.save();
 
     // Send rejection email
-    const emailContent = `
-        Dear ${candidate.firstName} ${candidate.lastName},
-  
-        Thank you for applying for the ${job.jobTitle} position at VAV. 
-        After careful review, we have decided to move forward with other candidates.
-  
-        We appreciate your interest in our company and wish you all the best in your job search.
-  
-        Best regards,
-        HR Manager
-        VAV
-      `;
+    const emailContent = getRejectionEmailContent(candidate.firstName + " " + candidate.lastName,job.jobTitle);
 
     await sendEmail(candidate.email, "Application Status Update", emailContent);
 
@@ -702,24 +692,9 @@ export const sendDesignTask = async (req, res) => {
 
     // Send email to candidate
     const emailSubject = "Design Task Assignment";
-    const emailContent = `
-          Dear ${candidate.firstName} ${candidate.lastName},
-
-          You have been assigned a design task for your job application. Please find the details below:
-
-          Task Description:
-          ${taskDescription}
-
-          Due Date: ${new Date(dueDate).toLocaleDateString()}
-          Due Time: ${dueTime}
-
-          Please submit your completed task before the due date and time.
-
-          Best regards,
-          [Your Company Name]
-      `;
-
-    await sendEmail(candidateEmail, emailSubject, emailContent);
+    const emailContent = getDesignTaskContent(candidate.firstName + " " + candidate.lastName,taskDescription,dueDate,dueTime)
+    
+    await sendEmail(candidateEmail, emailSubject, emailContent,"Design Task");
 
     await candidate.save();
 
