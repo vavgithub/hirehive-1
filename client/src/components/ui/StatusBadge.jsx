@@ -14,7 +14,7 @@ const getStatusColor = (status) => {
     case 'under review':
         return 'bg-yellow-90 text-yellow-100';
     case 'call scheduled':
-      return 'bg-yellow-100 text-yellow-200';
+      return 'bg-yellow-90 text-yellow-100';
     case 'reviewed':
     case 'cleared':
     case 'sent':

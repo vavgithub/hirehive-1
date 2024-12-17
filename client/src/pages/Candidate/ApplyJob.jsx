@@ -362,7 +362,7 @@ const ApplyJob = () => {
                 {/* Hidden input field to include resumeFile in form validation */}
                 <input type="hidden" {...register('resumeFile', { required: 'Resume is required' })} />
                 {errors.resumeFile && (
-                  <span className="text-red-500">{errors.resumeFile.message}</span>
+                  <span className="typography-small-p text-red-500">{errors.resumeFile.message}</span>
                 )}
               </div>
 
@@ -393,7 +393,7 @@ const ApplyJob = () => {
                       allSkills={dummySkills}
                       error={error}
                     />
-                    {error && <span className="text-red-500 text-sm mt-1">{error.message}</span>}
+                    {error && <span className="text-red-500 typography-small-p mt-1">{error.message}</span>}
                   </div>
                 )}
               />
@@ -471,7 +471,7 @@ const ApplyJob = () => {
                              
                               </div>
                               {errors[`question-${question._id}`] && (
-                                  <span className="text-red-500">This field is required</span>
+                                  <span className="text-red-500 typography-small-p">This field is required</span>
                                 )}
                             </div>
                           )}
