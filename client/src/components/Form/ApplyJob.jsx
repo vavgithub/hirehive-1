@@ -43,7 +43,7 @@ export const FormField = ({
     return (
       <div>
         <h3 className="typography-h3 mt-8 mb-4">Resume & Portfolio</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <FormField
             name="portfolio"
             control={control}
@@ -71,7 +71,7 @@ export const FormField = ({
     return (
       <div>
         <h3 className="typography-h3 mt-8 mb-4">Professional Details</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2  gap-8">
           <FormField
             name="experience"
             control={control}
@@ -120,7 +120,7 @@ export const FormField = ({
     return (
       <div>
         <h3 className="typography-h3 mt-8 mb-4">Personal Details</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <FormField
             name="firstName"
             control={control}

@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 
-const SkillsInput = ({ value = [], onChange, allSkills = [] }) => {
+const SkillsInput = ({ value = [], onChange, allSkills = [] ,error}) => {
   const [inputValue, setInputValue] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
 
@@ -78,7 +78,7 @@ const SkillsInput = ({ value = [], onChange, allSkills = [] }) => {
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
           placeholder="Add skills"
-          className="mt-2"
+          className={(error && '!border !border-red-500' ) + " mt-2"}
           aria-autocomplete="list"
           aria-controls="skills-suggestions"
           aria-expanded={showSuggestions}

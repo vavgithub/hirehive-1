@@ -310,7 +310,7 @@ const ApplyJob = () => {
           {
 
             
-            <div className='md:col-span-2 '>
+            <div className='md:col-span-2 mt-8'>
             <label className="typography-body">Resume<span className="text-red-100">*</span></label>
             <div
                         {...getRootProps({
@@ -373,7 +373,7 @@ const ApplyJob = () => {
             <ProfessionalDetailsSection control={control} />
             {/* Skills Input */}
 
-            <div className="grid md:grid-cols-2 grid-cols-1 gap-4 pt-4 ">
+            <div className="grid md:grid-cols-2 grid-cols-1 gap-4 pt-8 ">
               <Controller
                 name="skills"
                 control={control}
@@ -391,8 +391,9 @@ const ApplyJob = () => {
                       value={field.value || []}
                       onChange={field.onChange}
                       allSkills={dummySkills}
+                      error={error}
                     />
-                    {error && <p className="text-red-500 text-sm mt-2">{error.message}</p>}
+                    {error && <span className="text-red-500 text-sm mt-1">{error.message}</span>}
                   </div>
                 )}
               />
