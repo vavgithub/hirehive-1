@@ -302,23 +302,23 @@ const ApplyJob = () => {
                 <PersonalDetailsSection control={control} />
               </div>
             )}
-            
 
 
-              <ResumePortfolioSection control={control} />
-         
-          {
 
-            
-            <div className='md:col-span-2 '>
-            <label className="typography-body">Resume<span className="text-red-100">*</span></label>
-            <div
-                        {...getRootProps({
-                          className: `bg-background-40 hover:bg-background-60 rounded-xl mt-2 p-5 text-center cursor-pointer 
+            <ResumePortfolioSection control={control} />
+
+            {
+
+
+              <div className='md:col-span-2 '>
+                <label className="typography-body">Resume<span className="text-red-100">*</span></label>
+                <div
+                  {...getRootProps({
+                    className: `bg-background-40 hover:bg-background-60 rounded-xl mt-2 p-5 text-center cursor-pointer 
                             ${isDragActive ? 'border border-teal-500 bg-background-60' : ''} 
                             ${errors.resumeFile ? '!border !border-red-500' : ''}`,
-                          })}
-                      >
+                  })}
+                >
                   <input {...getInputProps()} />
                   {resumeFile ? (
                     <div className="flex bg-background-70  items-center justify-between p-4 rounded-xl">
@@ -366,7 +366,7 @@ const ApplyJob = () => {
                 )}
               </div>
 
-              
+
 
             }
 
@@ -403,13 +403,13 @@ const ApplyJob = () => {
 
 
             {/* Additional Questions */}
-            <div className="pt-4 ">
+            <div className="pt-4">
               {jobDetails?.questions.length != 0 && (
                 <>
                   <h2 className="typography-h2 mb-4">Additional Questions</h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {jobDetails?.questions.map((question, index) => (
-                      <div key={question?._id} className='bg-background-30 rounded-xl p-4'>
+                      <div key={question?._id} className="bg-background-30 rounded-xl p-4">
                         <Controller
                           key={question._id}
                           name={`question-${question._id}`}
@@ -418,41 +418,60 @@ const ApplyJob = () => {
                           rules={{ required: question.required }}
                           render={({ field }) => (
                             <div>
-                              <label className="block mb-2 typography-body ">
+                              <label className="block mb-2 typography-body">
                                 Q{index + 1}. {question.text}
                                 {question.required && (
                                   <span className="text-red-500 ml-1">*</span>
                                 )}
                               </label>
-                              {question.type === "multiple" ? (
-                                question.options.map((option, optionIndex) => (
-                                  <div key={optionIndex} className="mb-2 flex items-center">
+                              <div className="grid grid-cols-2 gap-4">
+                                {question.type === "multiple" ? (
+                                  question.options.map((option, optionIndex) => {
+                                    const inputId = `question-${question._id}-option-${optionIndex}`;
+
+                                    return (
+                                      <div
+                                        key={optionIndex}
+                                        className="mb-2 p-2 rounded-xl flex bg-background-60 items-center cursor-pointer hover:bg-background-70"
+                                        onClick={() => {
+                                          field.onChange(option);
+                                          document.getElementById(inputId).focus();
+                                        }}
+                                      >
+                                        <input
+                                          type="radio"
+                                          id={inputId}
+                                          value={option}
+                                          checked={field.value === option}
+                                          onChange={() => field.onChange(option)}
+                                          className="mr-2 appearance-none border-2 rounded-full form-radio h-5 w-5 checked:ring-offset-[5px] checked:ring-offset-black-100 checked:bg-teal-100 checked:ml-[4px] checked:mr-[12px] checked:ring-[2px] checked:w-3 checked:h-3 checked:border-0 checked:ring-teal-100"
+                                        />
+                                        <label className='typography-body' htmlFor={inputId}>{option}</label>
+                                      </div>
+                                    );
+                                  })
+                                ) : (
+                                  <div
+                                    className="w-full cursor-pointer"
+                                    onClick={() => {
+                                      const inputId = `question-${question._id}-input`;
+                                      document.getElementById(inputId).focus();
+                                    }}
+                                  >
                                     <input
-                                      type="radio"
-                                      id={`question-${question._id}-option-${optionIndex}`}
-                                      value={option}
-                                      checked={field.value === option}
-                                      onChange={() => field.onChange(option)}
-                                      className="mr-2 appearance-none border-2 rounded-full  form-radio h-5 w-5 checked:ring-offset-[5px] checked:ring-offset-black-100 checked:bg-teal-100 checked:ml-[4px] checked:mr-[12px] checked:ring-[2px] checked:w-3 checked:h-3 checked:border-0  checked:ring-teal-100"
+                                      id={`question-${question._id}-input`}
+                                      type={question.answerType === "number" ? "number" : "text"}
+                                      {...field}
+                                      className="w-full p-2 bg-background-40 rounded outline-none focus:outline-teal-300"
+                                      placeholder="Enter your answer"
                                     />
-                                    <label
-                                      htmlFor={`question-${question._id}-option-${optionIndex}`}
-                                    >
-                                      {option}
-                                    </label>
                                   </div>
-                                ))
-                              ) : (
-                                <input
-                                  type={question.answerType === "number" ? "number" : "text"}
-                                  {...field}
-                                  className="w-full p-2 bg-background-40 rounded outline-none focus:outline-teal-300"
-                                  placeholder="Enter your answer"
-                                />
-                              )}
+                                )}
+                             
+                              </div>
                               {errors[`question-${question._id}`] && (
-                                <span className="text-red-500">This field is required</span>
-                              )}
+                                  <span className="text-red-500">This field is required</span>
+                                )}
                             </div>
                           )}
                         />
