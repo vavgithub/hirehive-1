@@ -45,14 +45,14 @@ export const InputField = React.forwardRef(({
         <input
           id={id}
           type={type}
-          placeholder={`Enter ${label.toLowerCase()}`}
+          placeholder={`Enter ${label}`}
           className={inputClasses}
           ref={ref}
           {...props}
         />
       )}
       {error && errorMessage && (
-        <span className="text-red-500 text-sm -bottom-[8px] absolute">{errorMessage}</span>
+        <span className="text-red-500 text-sm top-[5.4rem] absolute">{errorMessage}</span>
       )}
     </div>
   );
