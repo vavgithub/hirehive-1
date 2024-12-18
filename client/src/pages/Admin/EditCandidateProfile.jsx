@@ -45,27 +45,27 @@ const EditCandidateProfile = () => {
     {
       title: 'Personnel Details',
       fields: [
-        { name: 'firstName', label: 'First Name', type: 'text', placeholder: 'Enter first name', },
-        { name: 'lastName', label: 'Last Name', type: 'text', placeholder: 'Enter last name' },
-        { name: 'email', label: 'Email', type: 'text', placeholder: 'Enter Your E-mail' },
-        { name: 'phone', label: 'Phone', type: 'text', placeholder: 'Enter Your Number' },
+        { name: 'firstName', label: 'First Name', type: 'text', placeholder: 'Enter First Name', },
+        { name: 'lastName', label: 'Last Name', type: 'text', placeholder: 'Enter Last Name' },
+        { name: 'email', label: 'Email', type: 'text', placeholder: 'Enter E-mail' },
+        { name: 'phone', label: 'Phone', type: 'text', placeholder: 'Enter Phone Number' },
         // ... other fields
       ],
     },
     {
       title: 'Resume and Portfolio',
       fields: [
-        { name: 'portfolio', label: 'Portfolio', type: 'text', placeholder: 'Enter Your E-mail' },
-        { name: 'website', label: 'Website', type: 'text', placeholder: 'Enter Your Number' },
+        { name: 'portfolio', label: 'Portfolio', type: 'text', placeholder: 'Enter Portfolio' },
+        { name: 'website', label: 'Website', type: 'text', placeholder: 'Enter Website' },
       ],
     },
     {
       title: 'Professional Details',
       fields: [
-        { name: 'experience', label: 'Experience', type: 'number' },
-        { name: 'currentCTC', label: 'Current CTC', type: 'number' },
-        { name: 'expectedCTC', label: 'Expected CTC', type: 'number' },
-        { name: 'noticePeriod', label: 'Notice Period', type: 'number' }
+        { name: 'experience', label: 'Experience', type: 'number' , placeholder: 'Enter Experience (In Years)' },
+        { name: 'currentCTC', label: 'Current CTC', type: 'number', placeholder: 'Enter Current CTC (In LPA)' },
+        { name: 'expectedCTC', label: 'Expected CTC', type: 'number', placeholder: 'Enter Expected CTC (In LPA)' },
+        { name: 'noticePeriod', label: 'Notice Period', type: 'number', placeholder: 'Enter Notice Period (In Days)' }
       ],
     },
     // ... other sections
