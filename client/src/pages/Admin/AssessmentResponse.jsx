@@ -255,7 +255,7 @@ const AssessmentResponse = () => {
                 </div>
 
                 {/* Question Progress Indicators */}
-                <div className="bg-background-90 rounded-xl p-4 mb-6">
+                {assessmentData?.questionResponses?.length > 0 && <div className="bg-background-90 rounded-xl p-4 mb-6">
                     <div className="grid grid-cols-10 justify-between gap-4">
                         {assessmentData?.questionResponses.map((response, index) => (
                             <div
@@ -272,12 +272,12 @@ const AssessmentResponse = () => {
                             </div>
                         ))}
                     </div>
-                </div>
+                </div>}
 
                 <div className='bg-background-90 rounded-xl'>
                     <h1 className='typography-h1 px-6 py-3 '>Question</h1>
                     {/* Questions List */}
-                    <div className="space-y-4 bg-background-80">
+                    {assessmentData?.questionResponses?.length > 0 ? <div className="space-y-4 bg-background-80">
                         {assessmentData?.questionResponses.map((response, index) => (
                             <div key={response.questionId} className=" rounded-xl p-6">
                                 <h3 className="typography-h3 mb-4">
@@ -308,6 +308,9 @@ const AssessmentResponse = () => {
                             </div>
                         ))}
                     </div>
+                    : 
+                    <div className='px-6 pb-6 '>
+                        <p className='font-outfit'>No questions are answered by the candidate.</p></div>}
                 </div>
             </div>
 

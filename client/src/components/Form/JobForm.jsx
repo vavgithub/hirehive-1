@@ -189,7 +189,7 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
                 {...field}
                 id="jobDescription"
                 placeholder="Write a job description"
-                className="w-full rounded-xl px-3 py-2 bg-background-40  outline-none focus:outline-teal-300 resize-none"
+                className="w-full rounded-xl px-3 py-2 bg-background-40 font-outfit hover:bg-background-60 outline-none focus:outline-teal-300 resize-none"
                 required
                 rows="10"
               />
