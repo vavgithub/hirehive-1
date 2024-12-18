@@ -31,7 +31,6 @@ const fetchCandidateData = async (candidateId, jobId) => {
     const { data } = await axios.get(`admin/candidate/${candidateId}/job/${jobId}`);
     return data;
 };
-
 const fetchTotalScore = async (candidateId, jobId) => {
     const { data } = await axios.get(`hr/candidate/${candidateId}/job/${jobId}/scores`);
     return data;
@@ -53,6 +52,19 @@ const transformCandidateData = (data) => {
         skillSet: professionalInfo.skills || [],
     };
 };
+
+// Add stage maximum scores mapping
+const STAGE_MAX_SCORES = {
+    'Portfolio': 5,
+    'Screening': 35,
+    'Design Task': 40,
+    'Round 1': 45,
+    'Round 2': 50
+  };
+
+  const getMaxScoreForStage = (currentStage) => {
+    return STAGE_MAX_SCORES[currentStage] || 45; // Default to 45 if stage not found
+  };
 
 const ViewCandidateProfile = () => {
     const { user } = useAuthContext();
@@ -86,6 +98,7 @@ const ViewCandidateProfile = () => {
         },
     });
 
+
     // Use useEffect to dispatch actions when data changes
     useEffect(() => {
         if (data) {
@@ -107,6 +120,14 @@ const ViewCandidateProfile = () => {
     // Tab click handler
     const handleTabClick = (tab) => {
         setActiveTab(tab);
+    };
+
+      // Get the maximum score based on current stage
+      const getMaxScore = () => {
+        if (data?.jobApplication?.currentStage) {
+            return getMaxScoreForStage(data.jobApplication.currentStage);
+        }
+        return 50; // Default maximum score
     };
 
     const tabs = [
@@ -255,7 +276,7 @@ const ViewCandidateProfile = () => {
                         <div className="flex bg-stars flex-col items-center bg-background-90 w-[430px] bg-cover p-5 rounded-xl">
                             <h3 className="typography-h2">VAV SCORE</h3>
                             <span className="marks text-font-primary">{score?.totalScore}</span>
-                            <p className="typography-large-p">Out of 100</p>
+                            <p className="typography-large-p">Out of {getMaxScore()}</p>
                         </div>
                     </div>
                 )
