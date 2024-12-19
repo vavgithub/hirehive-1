@@ -216,6 +216,7 @@ const WebcamView = ({ isMinimized, toggleMinimize, isRecording, webcamRef }) => 
     {!isMinimized && (
       <div className="relative aspect-video">
         <Webcam
+        muted
           ref={webcamRef}
           audio={true}
           mirrored={true}
