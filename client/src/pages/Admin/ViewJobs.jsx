@@ -217,13 +217,13 @@ const ViewJobs = () => {
                 <div className='bg-background-30 p-6 rounded-xl'>
                     <StatsGrid stats={jobsDetailStats} />
                     <div className='flex justify-between'>
-                        <div className='w-2/3'>
+                        <div className='w-4/5   '>
                             <h2 className="typography-h4 mt-4 mb-2">Job Description</h2>
                             <div className='text-font-gray font-outfit' dangerouslySetInnerHTML={{ __html: formData.jobDescription ? formatDescription(formData.jobDescription) : '' }}></div>
                             <h2 className="text-[16px] font-outfit font-bold mt-4 mb-5">Skills</h2>
-                            <div className='grid grid-cols-6 gap-3 mb-5'>
+                            <div className='flex flex-wrap gap-3'>
                                 {formData.skills && formData.skills.map((skill, index) => (
-                                    <span key={index} className="flex justify-center font-outfit bg-background-70 m px-6 py-2 rounded-full">{skill}</span>))}
+                                    <span key={index} className="flex justify-center font-outfit w-fit bg-background-70 m px-6 py-2 rounded-full">{skill}</span>))}
                             </div>
                         </div>
                         <div className='pb-4'>
@@ -231,7 +231,7 @@ const ViewJobs = () => {
                         </div>
                     </div>
 
-                    <div className='bg-background-90 p-4 rounded-xl'>
+                    <div className='bg-background-90 p-4 rounded-xl mt-12'>   
                         <h3 className='typography-h3 mb-4'>Additional Questions</h3>
                         {questions.map((question, index) => (
                             <div key={question._id} className="mb-4">

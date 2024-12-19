@@ -306,7 +306,7 @@ const Reviews = () => {
         </div>
         {Object.entries(groupedCandidates).map(([jobTitle, stages, jobProfile]) => (
           <div key={jobTitle} className="mb-8">
-            <h1 className="typography-h1 my-4">{jobTitle}</h1>
+            <h2 className="typography-h2 my-4">{jobTitle}</h2>
             {stageOrder.map(stage => {
               if (stages[stage] && stages[stage].length > 0) {
                 return (
