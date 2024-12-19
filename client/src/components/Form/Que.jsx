@@ -103,7 +103,7 @@ const Que = ({ onQuestionsChange, initialQuestions = [] }) => {
                         </div>
     
                         {open && (
-                            <div className='bg-background-70 mt-2 rounded-xl absolute w-full'>
+                            <div className='bg-background-70 mt-2 rounded-xl absolute bottom-6 w-full'>
                                 <ul className='p-2 typography-body'>
                                     <li className='p-2 cursor-pointer hover:bg-background-60' onClick={() => addQuestion('multiple')}>Multiple Choice</li>
                                     <li className='p-2 cursor-pointer hover:bg-background-60' onClick={() => addQuestion('text')}>Text</li>

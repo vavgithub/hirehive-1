@@ -484,7 +484,7 @@ const searchJobs = async (req, res) => {
 };
 
 const filterJobs = asyncHandler(async (req, res) => {
-  const { employmentType, jobProfile, experience } = req.body.filters;
+  const { employmentType, jobProfile, experience ,budget } = req.body.filters;
   const query = { status: 'open' }; // Add the status filter here
 
   if (employmentType && employmentType.length > 0) {
@@ -494,12 +494,21 @@ const filterJobs = asyncHandler(async (req, res) => {
     query.jobProfile = { $in: jobProfile };
   }
   if (experience && (experience.min !== '' || experience.max !== '')) {
-    query.fromExperience = {};
     if (experience.min !== '') {
-      query.fromExperience.$gte = Number(experience.min);
+      query.experienceFrom = { $gte : Number(experience.min)};
     }
     if (experience.max !== '') {
-      query.toExperience = { $lte: Number(experience.max) };
+      query.experienceTo = { $lte : Number(experience.max) };
+    }
+  }
+
+  // Add budget range filter
+  if (budget && (budget.min !== '' || budget.max !== '')) {
+    if (budget.min !== '') {
+      query.budgetFrom = { $gte: Number(budget.min) };
+    }
+    if (budget.max !== '') {
+      query.budgetTo = { $lte: Number(budget.max) };
     }
   }
 
