@@ -13,7 +13,7 @@ import { fetchCandidateAuthData, updateAssessmentStatus } from '../../redux/cand
 import TimerIconSmall from '../../svg/TimerIconSmall';
 import WarningIcon from '../../svg/WarningIcon';
 import Draggable from 'react-draggable';
-const FIVE_MIN_THIRTY_SEC = 330;
+const ONE_MINUTE = 60;
 
 // Utility function to format time
 const formatTime = (time) => {
@@ -41,9 +41,9 @@ export const useAssessmentQuestions = () => {
 const ProgressBar = ({ answeredCount, total }) => {
   const progress = (answeredCount / total) * 100;
   return (
-    <div className="w-full bg-background-90 h-2 rounded-full overflow-hidden">
+    <div className="w-full bg-background-60 h-2 rounded-full overflow-hidden">
       <div
-        className="bg-blue-100 h-full transition-all duration-300 ease-in-out"
+        className="bg-blue-100 h-full transition-all rounded-full duration-300 ease-in-out"
         style={{ width: `${progress}%` }}
       />
     </div>
@@ -51,8 +51,8 @@ const ProgressBar = ({ answeredCount, total }) => {
 };
 
 // Question Sidebar Component
-const QuestionSidebar = ({ questions, currentQuestion, onQuestionSelect, answers }) => {
-  const [timeRemaining, setTimeRemaining] = useState(30 * 60);
+const QuestionSidebar = ({ questions, currentQuestion, onQuestionSelect, answers , submitTest}) => {
+  const [timeRemaining, setTimeRemaining] = useState(5 * 60);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -60,6 +60,13 @@ const QuestionSidebar = ({ questions, currentQuestion, onQuestionSelect, answers
     }, 1000);
     return () => clearInterval(timer);
   }, []);
+
+  //If time exceeds, Automatic assessment submission is triggered.
+  useEffect(()=>{
+    if(timeRemaining === 0){
+      submitTest(true)
+    }
+  },[timeRemaining])
 
   const [ min ,sec ] = useMemo(()=> formatTime(timeRemaining).split(":") ,[timeRemaining]) 
   
@@ -76,10 +83,10 @@ const QuestionSidebar = ({ questions, currentQuestion, onQuestionSelect, answers
           <p className='typography-body text-font-gray'>Time remaining</p>
           </div>
           <div className='mt-3 flex items-center gap-3'>
-          <span className={(timeRemaining <= FIVE_MIN_THIRTY_SEC && "bg-red-200 text-red-300 ") +" bg-background-70 typography-h3 flex items-center justify-center w-12 h-12 rounded-xl"}>
+          <span className={(timeRemaining <= ONE_MINUTE && "bg-red-200 text-red-300 ") +" bg-background-70 typography-h3 flex items-center justify-center w-12 h-12 rounded-xl"}>
             {min}
           </span> : 
-          <span className={(timeRemaining <= FIVE_MIN_THIRTY_SEC && "bg-red-200 text-red-300 ") +" bg-background-70 typography-h3 flex items-center justify-center w-12 h-12 rounded-xl"}>
+          <span className={(timeRemaining <= ONE_MINUTE && "bg-red-200 text-red-300 ") +" bg-background-70 typography-h3 flex items-center justify-center w-12 h-12 rounded-xl"}>
             {sec}
           </span>
           </div>
@@ -148,7 +155,7 @@ const QuestionDisplay = ({
                 value={option.text}
                 checked={currentAnswer === option.text}
                 onChange={() => onAnswer(question._id, option.text)}
-                className="appearance-none border-2 rounded-full  form-radio h-5 w-5 checked:bg-teal-100 checked:ring-4 checked:w-3 checked:h-3 checked:border-0  checked:ring-teal-10"
+                className="appearance-none border-2 rounded-full form-radio h-5 w-5 checked:ring-offset-[5px] checked:ring-offset-black-100 checked:bg-teal-100 checked:ml-[4px] checked:mr-[4px] checked:ring-[2px] checked:w-3 checked:h-3 checked:border-0 checked:ring-teal-100"
               /> 
               <div className="flex flex-col gap-2">
                 <span className='typography-body'>{option.text}</span>
@@ -568,8 +575,7 @@ const Assessment = () => {
       // Refetch candidate data to ensure everything is in sync
       await dispatch(fetchCandidateAuthData()).unwrap();
       showSuccessToast('Success', 'Assessment submitted successfully');
-      // navigate('/candidate/my-jobs');
-      window.location.href = "/candidate/my-jobs"
+      setTimeout(()=> window.location.href = "/candidate/my-jobs",1000)
     },
     onError: (error) => {
       showErrorToast(
@@ -592,8 +598,8 @@ const Assessment = () => {
   };
 
   // Simplified handleFinish
-  const handleFinish = async () => {
-    if (!isAllAnswered) {
+  const handleFinish = async (isExceeded = false) => {
+    if (!isAllAnswered && !isExceeded) {
       showErrorToast('Error', 'Please answer all questions before submitting');
       return;
     }
@@ -655,6 +661,7 @@ const Assessment = () => {
           currentQuestion={currentQuestion}
           onQuestionSelect={setCurrentQuestion}
           answers={answers}
+          submitTest={handleFinish}
         />
         <div className="flex-grow flex flex-col container mx-auto ">
           <div className="bg-background-90 pl-[212px] p-4 flex gap-8 justify-between items-center">
