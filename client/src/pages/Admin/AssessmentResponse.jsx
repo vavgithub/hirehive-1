@@ -3,68 +3,69 @@ import Header from '../../components/utility/Header';
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
 import axios from '../../api/axios';
-import { Phone, Mail, Circle, X } from 'lucide-react';
+import { Phone, Mail, Circle, X, Info } from 'lucide-react';
 import PhoneIcon from '../../svg/PhoneIcon';
 import EmailIcon from '../../svg/EmailIcon';
 import { Button } from '../../components/ui/Button';
 import { showErrorToast } from '../../components/ui/Toast';
 import Loader from '../../components/ui/Loader';
+import CustomToolTip from '../../components/utility/CustomToolTip';
 
 
 // Create a VideoModal component
 const VideoModal = ({ isOpen, onClose, videoUrl }) => {
     const [isLoading, setIsLoading] = useState(true);
-  
+
     if (!isOpen) return null;
-  
+
     return (
-      <div className="fixed inset-0 flex items-center justify-center z-50">
-        {/* Blurred backdrop */}
-        <div 
-          className="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-md"
-          onClick={onClose} // Close modal when clicking backdrop
-        />
-  
-        {/* Modal content */}
-        <div className="bg-background-90  rounded-xl p-6 relative w-[80%] max-w-4xl z-10">
-          {/* Close button */}
-          <button 
-            onClick={onClose}
-            className="absolute -top-0 -right-0 p-2 bg-background-90 hover:bg-background-80 rounded-full transition-colors z-20"
-          >
-            <X className="w-6 h-6 text-font-gray" />
-          </button>
-  
-          {/* Video title */}
-          <h2 className="typography-h2 mb-4">Assessment Recording</h2>
-  
-          {/* Video container with loader */}
-          <div className="relative aspect-video w-full bg-background-80 rounded-lg overflow-hidden">
-            {isLoading && (
-              <div className="absolute inset-0 flex items-center justify-center">
-                <Loader />
-              </div>
-            )}
-            
-            <video 
-              src={videoUrl}
-              controls
-              className="w-full h-full rounded-lg"
-              onLoadedData={() => setIsLoading(false)}
-              onError={(e) => {
-                console.error('Video loading error:', e);
-                setIsLoading(false);
-              }}
-            >
-              Your browser does not support the video element.
-            </video>
-          </div>
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+            {/* Blurred backdrop */}
+            <div
+                className="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-md"
+                onClick={onClose} // Close modal when clicking backdrop
+            />
+
+            {/* Modal content */}
+            <div className="bg-background-90  rounded-xl p-6 relative w-[80%] max-w-4xl z-10">
+                {/* Close button */}
+                <button
+                    onClick={onClose}
+                    className="absolute -top-0 -right-0 p-2 bg-background-90 hover:bg-background-80 rounded-full transition-colors z-20"
+                >
+                    <X className="w-6 h-6 text-font-gray" />
+                </button>
+
+                {/* Video title */}
+                <h2 className="typography-h2 mb-4">Assessment Recording</h2>
+
+                {/* Video container with loader */}
+                <div className="relative aspect-video w-full bg-background-80 rounded-lg overflow-hidden">
+                    {isLoading && (
+                        <div className="absolute inset-0 flex items-center justify-center">
+                            <Loader />
+                        </div>
+                    )}
+
+                    <video
+                        src={videoUrl}
+                        controls
+                        className="w-full h-full rounded-lg"
+                        onLoadedData={() => setIsLoading(false)}
+                        onError={(e) => {
+                            console.error('Video loading error:', e);
+                            setIsLoading(false);
+                        }}
+                    >
+                        Your browser does not support the video element.
+                    </video>
+                </div>
+            </div>
         </div>
-      </div>
     );
-  };
-  
-  
+};
+
+
 
 const Wronganswer = () => {
     return (
@@ -106,10 +107,9 @@ const AssessmentResponse = () => {
 
     if (isLoading) {
         return (
-            <div className="p-7 flex justify-center items-center">
-                <div className="typography-h3">Loading assessment details...</div>
-            </div>
-        );
+            <div className='flex justify-center items-center w-full min-h-screen'>
+                <Loader />
+            </div>)
     }
 
     if (isError) {
@@ -121,7 +121,7 @@ const AssessmentResponse = () => {
     }
 
     const assessmentData = data?.data;
-    console.log("cehck this" , assessmentData);
+    console.log("cehck this", assessmentData);
 
 
     const assessmentStat = data?.data
@@ -197,10 +197,10 @@ const AssessmentResponse = () => {
                                                 Finished on
                                             </p>
                                             <p className='typography-large-p'>
-                                            {new Date(assessmentData?.candidateInfo?.attemptDate).toLocaleDateString('en-US', {
-                                                year: 'numeric',
-                                                month: 'short',
-                                                day: '2-digit',
+                                                {new Date(assessmentData?.candidateInfo?.attemptDate).toLocaleDateString('en-US', {
+                                                    year: 'numeric',
+                                                    month: 'short',
+                                                    day: '2-digit',
                                                 })}
                                             </p>
                                         </div>
@@ -232,8 +232,16 @@ const AssessmentResponse = () => {
                     </div>
 
                     <div className="flex bg-stars flex-col items-center  w-[240px] bg-cover p-5 rounded-xl">
-                        <h3 className="typography-h3">SCORE</h3>
-                        <div className='bg-background-80'>
+                        <div className="relative typography-h3  w-full flex justify-center ">
+                           <div className='absolute left-0'>
+
+                            <CustomToolTip title={'A Correct Answer Equals Ten Score'} arrowed size={2}>
+                                <Info className="w-4 h-4 text-font-gray" />
+                            </CustomToolTip>
+                           </div>
+                            <h3 className="typography-h3" >SCORE</h3>
+                        </div>
+                        <div>
 
                             <span className="marks text-font-primary">{assessmentData?.assessmentStats?.scoreOutOf100}</span>
                         </div>
@@ -256,7 +264,7 @@ const AssessmentResponse = () => {
                 </div>
 
                 {/* Question Progress Indicators */}
-                <div className="bg-background-90 rounded-xl p-4 mb-6">
+                {assessmentData?.questionResponses?.length > 0 && <div className="bg-background-90 rounded-xl p-4 mb-6">
                     <div className="grid grid-cols-10 justify-between gap-4">
                         {assessmentData?.questionResponses.map((response, index) => (
                             <div
@@ -273,12 +281,12 @@ const AssessmentResponse = () => {
                             </div>
                         ))}
                     </div>
-                </div>
+                </div>}
 
                 <div className='bg-background-90 rounded-xl'>
-                    <h1 className='typography-h1 px-6 py-3 '>Question</h1>
+                    <h2 className='typography-h2 px-6 py-3 '>Question</h2>
                     {/* Questions List */}
-                    <div className="space-y-4 bg-background-80">
+                    {assessmentData?.questionResponses?.length > 0 ? <div className="space-y-4 bg-background-80">
                         {assessmentData?.questionResponses.map((response, index) => (
                             <div key={response.questionId} className=" rounded-xl p-6">
                                 <h3 className="typography-h3 mb-4">
@@ -303,12 +311,15 @@ const AssessmentResponse = () => {
                                     ))}
                                 </div>
 
-                                <div className="mt-4 text-font-gray">
+                                {/* <div className="mt-4 text-font-gray">
                                     Points: {response.isCorrect ? "1" : "0"}/1
-                                </div>
+                                </div> */}
                             </div>
                         ))}
                     </div>
+                    : 
+                    <div className='px-6 pb-6 '>
+                        <p className='font-outfit'>No questions are answered by the candidate.</p></div>}
                 </div>
             </div>
 

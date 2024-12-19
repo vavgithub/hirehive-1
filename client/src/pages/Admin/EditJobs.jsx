@@ -5,6 +5,7 @@ import JobForm from '../../components/Form/JobForm';
 import axios from '../../api/axios';
 import Header from '../../components/utility/Header';
 import { showErrorToast, showSuccessToast } from '../../components/ui/Toast';
+import Loader from '../../components/ui/Loader';
 
 const EditJobs = () => {
   const { id } = useParams();
@@ -33,7 +34,13 @@ const EditJobs = () => {
     updateJobMutation.mutate(formData);
   };
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) {
+    return (
+      <div className='flex justify-center items-center w-full min-h-screen'>
+
+      <Loader />
+    </div>)
+  }
   if (error) return <div>Error: {error.message}</div>;
 
   return (
@@ -44,6 +51,7 @@ const EditJobs = () => {
           <JobForm
             initialData={data.data}
             onSubmit={handleSubmit}
+            isLoading={updateJobMutation.isPending}
             isEditing={true}
             initialQuestions={data.data.questions || []}
           />

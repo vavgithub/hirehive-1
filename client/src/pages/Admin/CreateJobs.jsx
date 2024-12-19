@@ -31,6 +31,7 @@ const CreateJobs = () => {
       <div className='p-4 container mx-auto'>
         <Header HeaderText="Create a New Job Listing" withBack="true" />
         <JobForm
+          isLoading={createJobMutation.isPending}
           onSubmit={handleSubmit}
           isEditing={false}
         />

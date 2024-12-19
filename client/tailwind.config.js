@@ -35,9 +35,6 @@ export default {
           "linear-gradient(180deg, var(--tw-gradient-stops))",
       },
       colors: {        
-        yellow:{
-          100: "rgba(237, 189, 20, 0.2)",
-        },
         green:{
           100:"rgba(20, 225, 89, 0.2)",
         },

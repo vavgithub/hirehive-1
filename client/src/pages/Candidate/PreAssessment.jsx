@@ -75,13 +75,13 @@ const PreAssessment = () => {
                             />
 
                             <AccordionItem
-                                title="Estimated 30 Minutes"
+                                title="Estimated 5 Minutes"
                                 isOpen={isTimeOpen}
                                 toggleOpen={() => setIsTimeOpen(!isTimeOpen)}
                                 preIcon={TimerClockIcon()}
                                 content={
                                     <ul className="list-disc pl-5">
-                                        <li>The estimated time for this assessment is 30 minutes.</li>
+                                        <li>The estimated time for this assessment is 5 minutes.</li>
                                         <li>Please keep an eye on the timer.</li>
                                         <li>Ensure you manage your time effectively to complete all questions within the allocated time.</li>
                                     </ul>

@@ -12,6 +12,7 @@ import ForgotPassword from '../Admin/ForgotPassword';
 import { loginCandidateAuth } from '../../redux/candidateAuthSlice';
 import useCandidateAuth from '../../hooks/useCandidateAuth';
 import Loader from '../../components/ui/Loader';
+import TogglePassword from '../../components/utility/TogglePassword';
 
 const statsOne = [
   { title: 'Jobs Posted', value: 100, icon: one },
@@ -31,6 +32,8 @@ const CandidateLogin = () => {
   const [loading,setLoading] = useState(true);
   const navigate = useNavigate();
   const { isAuthenticated ,isLoading ,isDone} = useCandidateAuth();
+
+  const [passwordType,setPasswordType] = useState('password');
 
   useEffect(()=>{
     if(isAuthenticated){
@@ -110,10 +113,12 @@ const CandidateLogin = () => {
               <label htmlFor="email" className="block mb-2">Email</label>
               <input type="email" id="email" placeholder="Enter your email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full p-2 rounded-lg bg-black text-white focus:outline-teal-400" />
             </div>
-            <div>
-              <label htmlFor="password" className="block mb-2">Password</label>
-              <input type="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter your password" className="w-full focus:outline-teal-400 p-2 rounded-lg bg-black text-white" />
-            </div>
+              <div>
+                <label htmlFor="password" className="block mb-2">Password</label>
+              <TogglePassword typeState={passwordType} setTypeState={setPasswordType}>
+                <input type={passwordType} id="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter your password" className={(password && "tracking-widest") +" w-full focus:outline-teal-400 p-2 rounded-lg bg-black text-white"} />
+              </TogglePassword>
+              </div>
             {error && <p className="text-red-500 mb-4">{error}</p>}
             <div className='flex justify-end'>
                                   <span

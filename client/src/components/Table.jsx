@@ -31,6 +31,7 @@ import { useAuthContext } from '../context/AuthProvider';
 import WebsiteMainIcon from '../svg/WebsiteMainIcon';
 import FileMainIcon from '../svg/FileMainIcon';
 import ResumeIcon from '../svg/ResumeIcon';
+import CustomToolTip from './utility/CustomToolTip';
 
 
 const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
@@ -346,18 +347,24 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
             onClick={(event) => event.stopPropagation()}
           >
             {params.row.portfolio && (
-              <a title='Portfolio' href={ensureAbsoluteUrl(params.row.portfolio)} target="_blank" rel="noopener noreferrer" className="icon-link">
-                <FileMainIcon sizeClasses={'w-9 h-9'} />
+              <a href={ensureAbsoluteUrl(params.row.portfolio)} target="_blank" rel="noopener noreferrer" className="icon-link">
+                <CustomToolTip title={'Portfolio'} arrowed>
+                  <FileMainIcon sizeClasses={'w-9 h-9'} />
+                </CustomToolTip>
               </a>
             )}
             {params.row.website && params.row.website !== params.row.portfolio && (
-              <a title='Website' href={ensureAbsoluteUrl(params.row.website)} target="_blank" rel="noopener noreferrer" className="icon-link ">
-                <WebsiteMainIcon sizeClasses={'w-9 h-9'} />
+              <a href={ensureAbsoluteUrl(params.row.website)} target="_blank" rel="noopener noreferrer" className="icon-link ">
+                <CustomToolTip title={'Website'} arrowed>
+                  <WebsiteMainIcon sizeClasses={'w-9 h-9'} />
+                </CustomToolTip>
               </a>
             )}
             {params.row.resumeUrl && (
-              <button title='Resume' onClick={() => handleDocumentClick(params.row.resumeUrl)} className="icon-link">
-                <ResumeIcon sizeClasses={'w-9 h-9'}/>
+              <button onClick={() => handleDocumentClick(params.row.resumeUrl)} className="icon-link">
+                <CustomToolTip title='Resume' arrowed>
+                  <ResumeIcon sizeClasses={'w-9 h-9'}/>
+                </CustomToolTip>
               </button>
             )}
           </div>
@@ -369,7 +376,9 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
       headerName: 'Email',
       width: 220,
       renderCell : (params) =>(
-        <p className='w-full overflow-hidden whitespace-nowrap text-ellipsis'>{params.value}</p>
+        <CustomToolTip title={params.value} arrowed size={2}>
+          <p className='w-full font-outfit text-white overflow-hidden text-start whitespace-nowrap text-ellipsis'>{params.value}</p>
+        </CustomToolTip>
       )
     },
     

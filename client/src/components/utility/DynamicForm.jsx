@@ -23,6 +23,7 @@ const FormSection = ({ title, fields, data, onChange }) => (
 const DynamicForm = ({
   formSections,
   initialData = {},
+  isLoading = false,
   primaryButtonText = 'Submit',
   secondaryButtonText = 'Cancel',
   onPrimaryAction,
@@ -76,7 +77,7 @@ const DynamicForm = ({
           </Button>
         </div>
         <div className='w-[152px]'>
-          <Button type="submit">
+          <Button disabled={isLoading} type="submit">
             {primaryButtonText}
           </Button>
         </div>

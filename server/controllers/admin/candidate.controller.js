@@ -628,8 +628,13 @@ export const getCandidateById = async (req, res) => {
       const questionIds = Object.keys(answers);
       const questions = await Question.find({ _id: { $in: questionIds } });
       
+      let responses = [];
+      let score = 0;
+      let correctAnswers = 0;
+      if(questionIds.length > 0){
+
       // Process answers and calculate score
-      const responses = questions.map(question => {
+       responses = questions.map(question => {
         const selectedAnswer = answers[question._id];
         const correctOption = question.options.find(opt => opt.isCorrect);
         const isCorrect = selectedAnswer === correctOption.text;
@@ -641,9 +646,11 @@ export const getCandidateById = async (req, res) => {
         };
       });
   
-      const correctAnswers = responses.filter(r => r.isCorrect).length;
-      const score = (correctAnswers / questions.length) * 100;
+      correctAnswers = responses.filter(r => r.isCorrect).length;
+      score = (correctAnswers / questions.length) * 100;
   
+      }
+
       // Create attempt data
       const attemptData = {
         totalTimeInSeconds,
@@ -656,7 +663,7 @@ export const getCandidateById = async (req, res) => {
       const updatedCandidate = await candidates.findByIdAndUpdate(
         candidateId,
         {
-          $push: { questionnaireAttempts: attemptData },
+          questionnaireAttempts: [attemptData] ,
           hasGivenAssessment: true
         },
         { new: true }

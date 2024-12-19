@@ -9,7 +9,7 @@ import SaveForLater from '../../svg/Buttons/SaveForLater';
 import Que from './Que';
 import Create from '../../svg/Buttons/Create';
 
-const JobForm = ({ initialData, onSubmit, isEditing, initialQuestions }) => {
+const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions }) => {
   const { control, handleSubmit, watch, setValue, setError, getValues,clearErrors, formState: { errors, isValid } } = useForm({
     defaultValues: {
       jobTitle: '',
@@ -189,7 +189,7 @@ const JobForm = ({ initialData, onSubmit, isEditing, initialQuestions }) => {
                 {...field}
                 id="jobDescription"
                 placeholder="Write a job description"
-                className="w-full rounded-xl px-3 py-2 bg-background-40  outline-none focus:outline-teal-300 resize-none"
+                className="w-full rounded-xl px-3 py-2 bg-background-40 font-outfit hover:bg-background-60 outline-none focus:outline-teal-300 resize-none"
                 required
                 rows="10"
               />
@@ -253,9 +253,9 @@ const JobForm = ({ initialData, onSubmit, isEditing, initialQuestions }) => {
               type="submit"
               icon={Create}
               iconPosition="left"
-              disabled={!areAllFieldsFilled}
+              disabled={!areAllFieldsFilled || isLoading}
             >
-              {isEditing ? 'Save' : 'Create A Job Listing'}
+              {isEditing ? isLoading ? 'Saving...' : 'Save' : isLoading ? 'Creating...' :'Create A Job Listing'}
 
             </Button>
 

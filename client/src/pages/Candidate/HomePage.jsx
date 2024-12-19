@@ -136,15 +136,19 @@ const HomePage = () => {
         );
     }else{
         return (
-            <div className='container flex flex-col m-auto  px-4 '>
-                <div className=' flex justify-between pt-4'>
-    
+            <div className='container flex flex-col m-auto  px-4 pt-6 '>
+                <div className=' flex justify-between items-center mt-6'>
+                    <div className='flex items-center justify-center gap-8'>
+
                     <img className='h-12' src={Logo}/>
+                    <h1 className='display-d2 py-4 hidden md:block'>Jobs</h1>
+                    </div>
                     <div className='md:w-[220px]'>
                         <Button variant="primary" onClick={() => navigate("/login")}>Login</Button>
                     </div>
                 </div>
-                    <h1 className='typography-h1 py-4'>Jobs</h1>
+                <h1 className='md:hidden display-d2 py-4'>Jobs</h1>
+                    
                 <div className=' py-8 bg-home-bg bg-cover flex flex-col items-center rounded-xl justify-center'>
                     <h1 className='typography-h1 sm:display-d2 px-6 sm:px-0 max-w-96 text-center'>Unlock Your Career Potential</h1>
                     <div className='flex justify-evenly gap-2 px-4 w-full md:w-3/5 mt-6 md:mt-9'>

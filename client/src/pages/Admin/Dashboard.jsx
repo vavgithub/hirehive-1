@@ -339,7 +339,7 @@ const Dashboard = () => {
                             }
                         </div>
                         {isLoadingResults ? (
-                            <div className="flex justify-center items-center min-h-[400px]">
+                            <div className="flex justify-center items-center min-h-full">
                                 <Loader />
                             </div>
                         ) : (displayJobs.length === 0 || displayJobs.filter(job=>job.status === activeTab).length === 0) ? (
