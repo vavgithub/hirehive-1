@@ -15,30 +15,31 @@ import { uploadToCloudinary } from "../../utils/cloudinary.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
 import { generateOTP, otpStore } from "../../utils/otp.js";
 import { sendEmail } from "../../utils/sentEmail.js";
+import { getPasswordResetContent, getResetSuccessfulContent, getSignupEmailContent } from "../../utils/emailTemplates.js";
 
 // Secret key for JWT (store this in environment variables)
 const JWT_SECRET = process.env.JWT_SECRET;
 
-// Configure nodemailer transporter
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.OTP_EMAIL,
-    pass: process.env.OTP_EMAIL_CRED,
-  },
-});
+// // Configure nodemailer transporter
+// const transporter = nodemailer.createTransport({
+//   service: "gmail",
+//   auth: {
+//     user: process.env.OTP_EMAIL,
+//     pass: process.env.OTP_EMAIL_CRED,
+//   },
+// });
 
-// Helper function to send OTP email
-const sendOtpEmail = async (email, otp) => {
-  const mailOptions = {
-    from: process.env.OTP_EMAIL,
-    to: email,
-    subject: "OTP Verification",
-    text: `Your OTP code is ${otp}`,
-  };
+// // Helper function to send OTP email
+// const sendOtpEmail = async (email, otp) => {
+//   const mailOptions = {
+//     from: process.env.OTP_EMAIL,
+//     to: email,
+//     subject: "OTP Verification",
+//     text: `Your OTP code is ${otp}`,
+//   };
 
-  await transporter.sendMail(mailOptions);
-};
+//   await transporter.sendMail(mailOptions);
+// };
 
 // Generate OTP
 const generateOtp = () => {
@@ -198,9 +199,12 @@ export const registerCandidate = async (req, res) => {
 
       await existingEmail.save()
     } 
+
+    //get custom HTML content for signup email
+    const mailContent = getSignupEmailContent(firstName + " " + lastName, otp) 
     
     //send OTP anyways
-    await sendOtpEmail(email, otp);
+    await sendEmail(email,"OTP Verification", mailContent);
 
     res.status(200).json({ message: existingEmail ? "Account exists. OTP sent to email for verification." : "Candidate registered. OTP sent to email." });
   } catch (error) {
@@ -635,19 +639,7 @@ export const forgotPassword = asyncHandler(async (req, res) => {
   });
 
   // Email content
-  const emailContent = `
-    Hello ${candidate.firstName},
-
-    You have requested to reset your password. 
-    Your OTP is: ${otp}
-
-    This OTP will expire in 15 minutes.
-
-    If you didn't request this, please ignore this email.
-
-    Best regards,
-    HireHive Team
-  `;
+  const emailContent = getPasswordResetContent(candidate.firstName + " " + candidate.lastName,otp)
 
   // Send email
   await sendEmail(
@@ -713,15 +705,7 @@ export const resetPassword = asyncHandler(async (req, res) => {
   otpStore.delete(email);
 
   // Send confirmation email
-  const emailContent = `
-    Hello ${candidate.firstName},
-
-    Your password has been successfully reset.
-    If you didn't make this change, please contact support immediately.
-
-    Best regards,
-    HireHive Team
-  `;
+  const emailContent = getResetSuccessfulContent(candidate.firstName + " " + candidate.lastName)
 
   await sendEmail(
     email,
