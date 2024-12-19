@@ -84,6 +84,8 @@ const DesignTask = ({ candidateId, jobId ,isClosed}) => {
     const candidateData = useSelector(state => state.candidate.candidateData);
     const candidateEmail = useSelector(state => state.candidate.candidateData.email);
 
+    console.log("heeloopo" , stageData);
+
 
     // Add this line outside renderContent
     const isDisabled = stageData?.status === 'Sent' || stageData?.status === 'Pending' || stageData?.status === 'Rejected' || stageData?.status === 'Cleared' || stageData?.status === 'Reviewed';
@@ -130,6 +132,13 @@ const DesignTask = ({ candidateId, jobId ,isClosed}) => {
                 return renderPendingStatus();
             case 'Sent':
                 return renderSentStatus();
+            case 'Under Review':
+                return (
+                    <div>
+                            <Label text="Design Task is currently under review by the design reviewer" />
+                        
+                    </div>
+                )    
             case 'Not Assigned':
                 return renderNotAssignedStatus();
             case 'Reviewed':
