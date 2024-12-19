@@ -618,8 +618,8 @@ const Assessment = () => {
   // Loading and error states
   if (isLoading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-background-90">
-        <div className="typography-h2 text-font-gray">Loading questions...</div>
+      <div className="flex justify-center items-center min-h-screen">
+        <Loader />
       </div>
     );
   }
