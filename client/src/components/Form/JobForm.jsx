@@ -80,6 +80,24 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
       }
     }
 
+    // Use useEffect to handle the logic for setting the error
+    useEffect(() => { 
+      if(watchedFields.experienceFrom > 0){
+        if(watchedFields.experienceTo < watchedFields.experienceFrom){
+          setError("experienceTo", {
+            type: "manual",
+            message: "Experience values mismatch!!"
+          });
+          areAllFieldsFilled = false
+        }else{
+          clearErrors('experienceTo')
+        }
+      }else{
+        clearErrors('experienceTo')
+      }
+      
+    }, [watchedFields.experienceFrom, watchedFields.experienceTo, setError]);    
+
     if(!watchedFields.budgetTo){
       areAllFieldsFilled = false
     }
@@ -87,7 +105,6 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
   
 
   const handleFormSubmit = (data) => {
-
     onSubmit(data, false);
   };
 
@@ -96,15 +113,16 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
     onSubmit(currentValues, true);
   };
 
+  
 
   return (
-    <form onSubmit={handleSubmit(handleFormSubmit)}>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-6">
+    <form onSubmit={handleSubmit(handleFormSubmit)} className='container-form mx-auto'>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
         <Controller
           name="jobTitle"
           control={control}
-          rules={{ required: true }}
-          render={({ field }) => (
+          rules={{ required: "Job title is required" }}
+          render={({ field ,fieldState : { error }}) => (
             <InputField
               type="text"
               id="jobTitle"
@@ -112,6 +130,8 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
               extraClass={"mt-1"}
               required
               {...field}
+              error={error}
+              errorMessage={error?.message}
             />
           )}
         />
@@ -121,14 +141,15 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
             key={field}
             name={field}
             control={control}
-            rules={{ required: true }}
-            render={({ field: { onChange, value } }) => (
+            rules={{ required: `${field.charAt(0).toUpperCase() + field.slice(1).replace(/([A-Z])/g, ' $1')} is required` }}
+            render={({ field: { onChange, value } ,fieldState : { error }}) => (
               <CustomDropdown
                 field={field}
                 label={field.charAt(0).toUpperCase() + field.slice(1).replace(/([A-Z])/g, ' $1')}
                 options={dropdownOptions[field]}
                 value={value}
                 required
+                error={error}
                 onChange={onChange}
               />
             )}
@@ -150,6 +171,7 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
                 from: value,
                 to: watchedFields.experienceTo
               }}
+              errors={errors}
               onChange={(newValue) => {
                 onChange(newValue.from);
                 setValue('experienceTo', newValue.to);
@@ -181,18 +203,18 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
         <Controller
           name="jobDescription"
           control={control}
-          rules={{ required: true }}
-          render={({ field }) => (
-            <div className='w-full'>
-              <label htmlFor="jobDescription" className="typography-body block mb-2">Job Description{<span className="text-red-100">*</span>}</label>
+          rules={{ required: "Job description is required" }}
+          render={({ field , fieldState : {error} }) => (
+            <div className='w-full relative'>
+              <label htmlFor="jobDescription" className="typography-body block mb-4">Job Description{<span className="text-red-100">*</span>}</label>
               <textarea
                 {...field}
                 id="jobDescription"
                 placeholder="Write a job description"
-                className="w-full rounded-xl px-3 py-2 bg-background-40 font-outfit hover:bg-background-60 outline-none focus:outline-teal-300 resize-none"
-                required
+                className={`${error ? '!border !border-red-500' : 'border border-transparent'}  w-full rounded-xl px-3 py-2 bg-background-40 font-outfit hover:bg-background-60 outline-none focus:outline-teal-300 resize-none`}
                 rows="10"
               />
+              {error && <p className="text-red-500 absolute typography-small-p top-[18.5rem]">{error.message}</p>}
             </div>
           )}
         />
@@ -206,7 +228,7 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
               Array.isArray(value) && value.length > 0 ? true : 'Please add at least one skill',
           }}
           render={({ field, fieldState: { error } }) => (
-            <div className="w-full mb-4">
+            <div className="w-full mb-4 relative">
               <label htmlFor="skills" className="typography-body mb-2">
                 Skills<span className="text-red-100">*</span>
               </label>
@@ -214,8 +236,9 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
                 value={field.value || []}
                 onChange={field.onChange}
                 allSkills={dummySkills}
+                error={error}
               />
-              {error && <p className="text-red-500 text-sm mt-2">{error.message}</p>}
+              {error && <p className="text-red-500 absolute typography-small-p top-[85px]">{error.message}</p>}
             </div>
           )}
         />
@@ -253,7 +276,7 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
               type="submit"
               icon={Create}
               iconPosition="left"
-              disabled={!areAllFieldsFilled || isLoading}
+              disabled={isLoading}
             >
               {isEditing ? isLoading ? 'Saving...' : 'Save' : isLoading ? 'Creating...' :'Create A Job Listing'}
 

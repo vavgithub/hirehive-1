@@ -292,10 +292,10 @@ const ApplyJob = () => {
       {currentStep === 1 && (
         <div className='container'>
           <div  >
-            <img className='h-12 m-4' src={Logo} />
-            <h1 className="typography-h1 m-4">Application for {jobDetails?.jobTitle}</h1>
+            <img className='h-12 mt-6 mx-6' src={Logo} />
+            <h1 className="typography-h1 p-6">Application for {jobDetails?.jobTitle}</h1>
           </div>
-          <form className='mx-4' onSubmit={handleSubmit(onSubmit)}>
+          <form className='mx-auto mt-2 container-form px-6' onSubmit={handleSubmit(onSubmit)}>
             {/* Personal Details */}
             {!isAuthenticated && (
               <div>
@@ -305,16 +305,16 @@ const ApplyJob = () => {
 
 
 
-            <ResumePortfolioSection control={control} />
+            <ResumePortfolioSection control={control} isAuthenticated={isAuthenticated} />
 
             {
 
             
-            <div className='md:col-span-2 mt-8'>
+            <div className='md:col-span-2 mt-6'>
             <label className="typography-body">Resume<span className="text-red-100">*</span></label>
             <div
                         {...getRootProps({
-                          className: `bg-background-40 hover:bg-background-60 rounded-xl mt-2 p-5 text-center cursor-pointer 
+                          className: `bg-background-40 hover:bg-background-60 rounded-xl mt-4 p-4 text-center cursor-pointer 
                             ${isDragActive ? 'border border-teal-500 bg-background-60' : ''} 
                             ${errors.resumeFile ? '!border !border-red-500' : ''}`,
                   })}
@@ -373,7 +373,7 @@ const ApplyJob = () => {
             <ProfessionalDetailsSection control={control} />
             {/* Skills Input */}
 
-            <div className="grid md:grid-cols-2 grid-cols-1 gap-8 pt-8 ">
+            <div className="grid md:grid-cols-2 grid-cols-1 gap-6 mt-8 ">
               <Controller
                 name="skills"
                 control={control}
@@ -383,8 +383,8 @@ const ApplyJob = () => {
                     Array.isArray(value) && value.length > 0 ? true : 'Please add at least one skill',
                 }}
                 render={({ field, fieldState: { error } }) => (
-                  <div className="w-full mb-4">
-                    <label htmlFor="skills" className="typography-body mb-2">
+                  <div className="w-full ">
+                    <label htmlFor="skills" className="typography-body">
                       Skills <span className="text-red-100">*</span>
                     </label>
                     <SkillsInput
@@ -404,7 +404,7 @@ const ApplyJob = () => {
 
 
             {/* Additional Questions */}
-            <div className="pt-4">
+            <div className="pt-8">
               {jobDetails?.questions.length != 0 && (
                 <>
                   <h2 className="typography-h2 mb-4">Additional Questions</h2>
@@ -419,7 +419,7 @@ const ApplyJob = () => {
                           rules={{ required: question.required }}
                           render={({ field }) => (
                             <div>
-                              <label className="block mb-2 typography-body">
+                              <label className="block mb-4 typography-body">
                                 Q{index + 1}. {question.text}
                                 {question.required && (
                                   <span className="text-red-500 ml-1">*</span>
@@ -463,7 +463,7 @@ const ApplyJob = () => {
                                       id={`question-${question._id}-input`}
                                       type={question.answerType === "number" ? "number" : "text"}
                                       {...field}
-                                      className="w-full p-2 bg-background-40 rounded outline-none focus:outline-teal-300"
+                                      className="w-full p-2 bg-background-40 rounded outline-none focus:outline-teal-300 "
                                       placeholder="Enter your answer"
                                     />
                                   </div>

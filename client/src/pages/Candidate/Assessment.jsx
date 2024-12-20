@@ -147,8 +147,8 @@ const QuestionDisplay = ({
       )}
       <div className='grid grid-cols-2 gap-x-4 items-center'>
         {question.options.map((option, index) => (
-          <div key={index} className="mb-4 bg-background-80 p-4 rounded-xl">
-            <label className="flex items-center space-x-3">
+          <div key={index} className="mb-4 bg-background-80  rounded-xl">
+            <label className="flex items-center space-x-3 p-4">
               <input
                 type="radio"
                 name={`question-${question._id}`}
@@ -308,6 +308,7 @@ const Assessment = () => {
       if (mediaRecorderRef.current && isRecording) {
         mediaRecorderRef.current.stop();
       }
+      window.location.href = "/candidate/my-jobs"
     };
   }, []);
 
@@ -349,6 +350,7 @@ const Assessment = () => {
     } catch (error) {
       console.error('Error starting recording:', error);
       showErrorToast('Error', 'Failed to start recording. Please ensure camera access is granted.');
+      setTimeout(()=>window.location.reload(),1000)
     }
   };
 

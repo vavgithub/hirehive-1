@@ -42,9 +42,12 @@ const CandidateLogin = () => {
   },[isAuthenticated])
 
   useEffect(()=>{
+    let timer;
     if(authError !== 'Not authorized, token missing'){
-      setError(authError)
+      setError(authError);
+      timer = setTimeout(()=>setError(""),2000)
     }
+    return ()=> clearTimeout(timer);
   },[authError])
 
   useEffect(()=>{

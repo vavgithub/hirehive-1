@@ -52,14 +52,14 @@ export const InputField = React.forwardRef(({
         />
       )}
       {error && errorMessage && (
-        <span className="text-red-500 typography-small-p top-[5.4rem] absolute">{errorMessage}</span>
+        <span className="text-red-500 typography-small-p top-[5.5rem] absolute">{errorMessage}</span>
       )}
     </div>
   );
 });
 InputField.displayName = 'InputField';
 
-export const CustomDropdown = React.forwardRef(({ field, label, options, value, onChange, required }, ref) => {
+export const CustomDropdown = React.forwardRef(({ field, label, options, value, onChange, required ,error }, ref) => {
   const [isOpen, setIsOpen] = useState(false);
 
   //Reference for current dropdown container
@@ -84,13 +84,13 @@ export const CustomDropdown = React.forwardRef(({ field, label, options, value, 
   }, []);
 
   return (
-    <div className="flex flex-col gap-4" ref={dropdownRef}>
+    <div className="flex flex-col gap-4 relative" ref={dropdownRef}>
       <label className="typography-body">{label}{required && <span className="text-red-100">*</span>}</label>
       <div className="relative focus:outline focus:outline-teal-400">
         <button
           type="button"
           onClick={toggleDropdown}
-          className={`${value ? "text-white" : "text-font-gray"} typography-body mt-1 h-[44px] flex items-center justify-between bg-background-40 hover:bg-background-60 w-full outline-none rounded-xl shadow-sm focus:ring-teal-300 focus:border-teal-300 text-left px-4`}
+          className={`${value ? "text-white" : "text-font-gray"} ${error ? '!border !border-red-500' : 'border border-transparent'}  typography-body mt-1 h-[44px] flex items-center justify-between bg-background-40 hover:bg-background-60 w-full outline-none rounded-xl shadow-sm focus:ring-teal-300 focus:border-teal-300 text-left px-4`}
           ref={ref}
         >
           {options.find(opt => opt.value === value)?.label || '-Select-'}
@@ -112,14 +112,15 @@ export const CustomDropdown = React.forwardRef(({ field, label, options, value, 
           </ul>
         )}
       </div>
+      {error && <p className="text-red-500 absolute typography-small-p top-[5.5rem]">{error.message}</p>}
     </div>
   );
 });
 
-export const ExperienceField = React.forwardRef(({ value, onChange ,required }, ref) => (
-  <div>
+export const ExperienceField = React.forwardRef(({ value, onChange ,required ,errors }, ref) => (
+  <div className="relative">
     <label className="typography-body">Experience{required && <span className="text-red-100">*</span>}</label>
-    <div className='flex gap-2'>
+    <div className='flex gap-4'>
       {['from', 'to'].map((label) => (
         <NumberInputField
           key={label}
@@ -132,13 +133,14 @@ export const ExperienceField = React.forwardRef(({ value, onChange ,required }, 
         />
       ))}
     </div>
+    {errors?.experienceTo?.message && <p className="text-red-500 absolute typography-small-p top-[92px]">{errors?.experienceTo?.message}</p>}
   </div>
 ));
 
 export const BudgetField = React.forwardRef(({ value, onChange , required ,errors}, ref) => (
-  <div>
+  <div className="relative">
     <label className="typography-body">Budget{required && <span className="text-red-100">*</span>}</label>
-    <div className='flex gap-2'>
+    <div className='flex gap-4'>
       {['from', 'to'].map((label) => (
         <NumberInputField
           key={label}
@@ -151,7 +153,7 @@ export const BudgetField = React.forwardRef(({ value, onChange , required ,error
         />
       ))}
     </div>
-    {errors?.budgetTo?.message && <p className="text-red-100 text-xs">{errors?.budgetTo?.message}</p>}
+    {errors?.budgetTo?.message && <p className="text-red-100 absolute typography-small-p top-[92px]">{errors?.budgetTo?.message}</p>}
   </div>
 ));
 

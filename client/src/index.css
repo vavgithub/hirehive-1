@@ -188,6 +188,18 @@ h2{
   .btn-blue {
     @apply bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded;
   }
+  .container-form {
+    width: 100%; /* Default style */
+    max-width: 640px; /* Default max width */
+
+    @media (min-width: 768px) { /* Medium screens */
+      max-width: 768px;
+    }
+
+    @media (min-width: 1024px) { /* Large screens */
+      max-width: 1024px;
+    }
+  }
 }
 
 .btn-blue {
