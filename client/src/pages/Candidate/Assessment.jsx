@@ -150,7 +150,7 @@ const QuestionDisplay = ({
       }}>
         {question.options.map((option, index) => (
           <div key={index} className="flex items-center bg-background-80  rounded-xl  h-full">
-            <label className="flex items-center space-x-3 p-4">
+            <label className="flex items-center space-x-3 p-4 w-full">
               <input
                 type="radio"
                 name={`question-${question._id}`}
