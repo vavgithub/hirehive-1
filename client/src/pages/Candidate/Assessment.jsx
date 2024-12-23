@@ -200,7 +200,7 @@ const QuestionDisplay = ({
 );
 
 // Webcam Component
-const WebcamView = ({ isMinimized, toggleMinimize, isRecording, webcamRef }) => (
+const WebcamView = ({ isMinimized, toggleMinimize, isRecording, webcamRef ,handleUserMedia}) => (
   <div className={`bg-gray-800 rounded-lg overflow-hidden ${isMinimized ? 'w-64' : 'w-96'}`}>
     <div className="flex justify-between items-center p-2 bg-gray-700">
       <div className='flex items-center gap-3 px-1' >
@@ -220,6 +220,7 @@ const WebcamView = ({ isMinimized, toggleMinimize, isRecording, webcamRef }) => 
           ref={webcamRef}
           audio={true}
           mirrored={true}
+          onUserMedia={handleUserMedia}
           className="absolute inset-0 w-full h-full object-cover"
         />
         <div className="absolute bottom-2 right-2 flex space-x-2 w-full justify-center">
@@ -269,6 +270,7 @@ const Assessment = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [recordedBlob, setRecordedBlob] = useState(null);
+  const [isWebcamReady, setIsWebcamReady] = useState(false);
 
   // Refs
   const webcamRef = useRef(null);
@@ -310,11 +312,17 @@ const Assessment = () => {
       if (mediaRecorderRef.current && isRecording) {
         mediaRecorderRef.current.stop();
       }
-      if(webcamRef.current){
-        window.location.href = "/candidate/my-jobs"
-      }
     };
-  }, [webcamRef.current]);
+  }, [isWebcamReady]);
+
+  //Reload to turn off the recording permissions
+  useEffect(()=>{
+    return () => window.location.href = "/candidate/my-jobs"
+  },[])
+
+  const handleUserMedia = (stream) => {
+    setIsWebcamReady(true);  // This state change will trigger the effect
+  };
 
   const startRecording = async () => {
     try {
@@ -702,6 +710,7 @@ const Assessment = () => {
                     toggleMinimize={() => setIsWebcamMinimized(prev => !prev)}
                     isRecording={isRecording}
                     webcamRef={webcamRef}
+                    handleUserMedia={handleUserMedia}
                   />
               </div>
             </Draggable>
