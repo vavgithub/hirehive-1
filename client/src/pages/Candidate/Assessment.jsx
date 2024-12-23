@@ -303,14 +303,18 @@ const Assessment = () => {
 
   // Recording functions
   useEffect(() => {
-    startRecording();
+    if(webcamRef.current){
+      startRecording();
+    }
     return () => {
       if (mediaRecorderRef.current && isRecording) {
         mediaRecorderRef.current.stop();
       }
-      window.location.href = "/candidate/my-jobs"
+      if(webcamRef.current){
+        window.location.href = "/candidate/my-jobs"
+      }
     };
-  }, []);
+  }, [webcamRef.current]);
 
   const startRecording = async () => {
     try {
