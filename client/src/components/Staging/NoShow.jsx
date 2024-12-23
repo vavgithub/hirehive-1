@@ -38,7 +38,6 @@ const NoShowAction = ({ stage, candidateId, jobId , setIsLoading }) => {
     };
 
     return (
-        <div className='w-[170px]'>
             <Button 
                 variant="cancelSec"
                 onClick={handleNoShow}
@@ -46,7 +45,6 @@ const NoShowAction = ({ stage, candidateId, jobId , setIsLoading }) => {
             >
                 {noShowMutation.isLoading ? 'Updating...' : 'No Show'}
             </Button>
-        </div>
     );
 };
 

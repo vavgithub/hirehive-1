@@ -220,11 +220,7 @@ const AssessmentResponse = () => {
 
 
                                     </div>
-                                    <div className='w-[204px]'>
-
-                                        <Button onClick={handleOpenRecording}>Assesment Recording</Button>
-                                    </div>
-
+                                    <Button onClick={handleOpenRecording}>Assesment Recording</Button>
                                 </div>
 
                             </div>

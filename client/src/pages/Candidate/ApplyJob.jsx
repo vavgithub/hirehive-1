@@ -292,10 +292,10 @@ const ApplyJob = () => {
       {currentStep === 1 && (
         <div className='container'>
           <div  >
-            <img className='h-12 m-4' src={Logo} />
-            <h1 className="typography-h1 m-4">Application for {jobDetails?.jobTitle}</h1>
+            <img className='h-12 mt-6 mx-6' src={Logo} />
+            <h1 className="typography-h1 p-6">Application for {jobDetails?.jobTitle}</h1>
           </div>
-          <form className='mx-4' onSubmit={handleSubmit(onSubmit)}>
+          <form className='mx-auto mt-2 container-form px-6' onSubmit={handleSubmit(onSubmit)}>
             {/* Personal Details */}
             {!isAuthenticated && (
               <div>
@@ -305,16 +305,16 @@ const ApplyJob = () => {
 
 
 
-            <ResumePortfolioSection control={control} />
+            <ResumePortfolioSection control={control} isAuthenticated={isAuthenticated} />
 
             {
 
             
-            <div className='md:col-span-2 mt-8'>
+            <div className='md:col-span-2 mt-6'>
             <label className="typography-body">Resume<span className="text-red-100">*</span></label>
             <div
                         {...getRootProps({
-                          className: `bg-background-40 hover:bg-background-60 rounded-xl mt-2 p-5 text-center cursor-pointer 
+                          className: `bg-background-40 hover:bg-background-60 rounded-xl mt-4 p-4 text-center cursor-pointer 
                             ${isDragActive ? 'border border-teal-500 bg-background-60' : ''} 
                             ${errors.resumeFile ? '!border !border-red-500' : ''}`,
                   })}
@@ -373,7 +373,7 @@ const ApplyJob = () => {
             <ProfessionalDetailsSection control={control} />
             {/* Skills Input */}
 
-            <div className="grid md:grid-cols-2 grid-cols-1 gap-8 pt-8 ">
+            <div className="grid md:grid-cols-2 grid-cols-1 gap-6 mt-8 ">
               <Controller
                 name="skills"
                 control={control}
@@ -383,8 +383,8 @@ const ApplyJob = () => {
                     Array.isArray(value) && value.length > 0 ? true : 'Please add at least one skill',
                 }}
                 render={({ field, fieldState: { error } }) => (
-                  <div className="w-full mb-4">
-                    <label htmlFor="skills" className="typography-body mb-2">
+                  <div className="w-full ">
+                    <label htmlFor="skills" className="typography-body">
                       Skills <span className="text-red-100">*</span>
                     </label>
                     <SkillsInput
@@ -404,7 +404,7 @@ const ApplyJob = () => {
 
 
             {/* Additional Questions */}
-            <div className="pt-4">
+            <div className="pt-8">
               {jobDetails?.questions.length != 0 && (
                 <>
                   <h2 className="typography-h2 mb-4">Additional Questions</h2>
@@ -419,13 +419,13 @@ const ApplyJob = () => {
                           rules={{ required: question.required }}
                           render={({ field }) => (
                             <div>
-                              <label className="block mb-2 typography-body">
+                              <label className="block mb-4 typography-body">
                                 Q{index + 1}. {question.text}
                                 {question.required && (
                                   <span className="text-red-500 ml-1">*</span>
                                 )}
                               </label>
-                              <div className="grid grid-cols-2 gap-4">
+                              <div className="grid grid-cols-2 gap-4" style={{gridAutoRows:"1fr"}}>
                                 {question.type === "multiple" ? (
                                   question.options.map((option, optionIndex) => {
                                     const inputId = `question-${question._id}-option-${optionIndex}`;
@@ -433,7 +433,7 @@ const ApplyJob = () => {
                                     return (
                                       <div
                                         key={optionIndex}
-                                        className="mb-2 p-2 rounded-xl flex bg-background-60 items-center cursor-pointer hover:bg-background-70"
+                                        className="px-4 py-2 min-h-11 rounded-xl flex bg-background-60 items-center cursor-pointer hover:bg-background-70"
                                         onClick={() => {
                                           field.onChange(option);
                                           document.getElementById(inputId).focus();
@@ -445,7 +445,7 @@ const ApplyJob = () => {
                                           value={option}
                                           checked={field.value === option}
                                           onChange={() => field.onChange(option)}
-                                          className="mr-2 appearance-none border-2 rounded-full form-radio h-5 w-5 checked:ring-offset-[5px] checked:ring-offset-black-100 checked:bg-teal-100 checked:ml-[4px] checked:mr-[12px] checked:ring-[2px] checked:w-3 checked:h-3 checked:border-0 checked:ring-teal-100"
+                                          className="mr-2 appearance-none border-2 rounded-full form-radio h-5 aspect-square max-h-5 w-5 max-w-5 checked:ring-offset-[5px] checked:ring-offset-black-100 checked:bg-teal-100 checked:ml-[4px] checked:mr-[12px] checked:ring-[2px] checked:w-3 checked:h-3 checked:border-0 checked:ring-teal-100"
                                         />
                                         <label className='typography-body' htmlFor={inputId}>{option}</label>
                                       </div>
@@ -463,7 +463,7 @@ const ApplyJob = () => {
                                       id={`question-${question._id}-input`}
                                       type={question.answerType === "number" ? "number" : "text"}
                                       {...field}
-                                      className="w-full p-2 bg-background-40 rounded outline-none focus:outline-teal-300"
+                                      className="w-full p-2 bg-background-40 rounded outline-none focus:outline-teal-300 "
                                       placeholder="Enter your answer"
                                     />
                                   </div>
@@ -486,7 +486,6 @@ const ApplyJob = () => {
 
             {/* Buttons */}
             <div className="flex mt-6 justify-end gap-4 mb-6">
-              <div className="md:w-[269px] w-full">
                 <Button
                   type="button"
                   onClick={() => navigate(-1)}
@@ -494,8 +493,6 @@ const ApplyJob = () => {
                 >
                   Cancel
                 </Button>
-              </div>
-              <div className="md:w-[269px] w-full">
                 <Button
                   type="submit"
                   variant="primary"
@@ -503,7 +500,6 @@ const ApplyJob = () => {
                 >
                   {isSubmitting ? 'Submitting...' : 'Next'}
                 </Button>
-              </div>
             </div>
           </form>
         </div>
@@ -515,7 +511,7 @@ const ApplyJob = () => {
       {currentStep === 2 && (
         <div className="flex items-center h-screen w-screen justify-center  bg-cover bg-verification ">
           <div className="w-full mx-8 md:mx-0 max-w-lg space-y-8 bg-background-90 rounded-lg shadow-xl  bg-opacity-15 ">
-            <form onSubmit={handleOtpSubmit} className="px-8 sm:px-16 text-center">
+            <form onSubmit={handleOtpSubmit} className="px-8 sm:px-16 text-center md:mb-20">
               <h1 className="typography-h2 sm:typography-h1 mt-8 md:mt-20 mb-4 ">OTP Verification</h1>
               <p className="text-font-gray text-center typography-large-p">
                 To ensure security, please enter the OTP (One-Time Password) to
@@ -539,11 +535,12 @@ const ApplyJob = () => {
               </div>
               {otpError && <span className="text-red-500">{otpError}</span>}
 
-              <div className="flex mt-6 w-full gap-4 mr-16 mb-6 md:mb-20">
+              <div className="flex justify-center mt-6 w-full gap-4  mb-6 ">
                 <Button
                   type="submit"
                   variant="primary"
                   disabled={isSubmitting}
+                  className="w-full "
                 >
                   {isSubmitting ? 'Submitting...' : 'Verify'}
                 </Button>
@@ -557,7 +554,7 @@ const ApplyJob = () => {
       {currentStep === 3 && (
         <div className="flex items-center w-screen justify-center min-h-screen bg-cover bg-verification">
           <div className="w-full mx-8 md:mx-0 max-w-lg space-y-8 bg-background-90 rounded-lg shadow-xl bg-opacity-15">
-            <form onSubmit={handlePasswordSubmit} className="mx-8 sm:mx-16">
+            <form onSubmit={handlePasswordSubmit} className="mx-8 sm:mx-16 md:mb-20">
               <h3 className="typography-h2 text-center sm:typography-h1 mt-5 sm:mt-8 md:mt-20 ">
                 Create Password
               </h3>
@@ -600,11 +597,12 @@ const ApplyJob = () => {
                 <span className="text-red-500">{passwordError}</span>
               )}
 
-              <div className="flex mt-6 gap-4 w-full mr-16 mb-6 md:mb-20">
+              <div className="flex mt-6 justify-center gap-4 w-full mr-16 mb-6 ">
                 <Button
                   type="submit"
                   variant="primary"
                   disabled={!isValid || isSubmitting}
+                  className="w-full "
                 >
                   {isSubmitting ? 'Submitting...' : 'Next'}
                 </Button>

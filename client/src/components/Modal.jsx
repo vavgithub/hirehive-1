@@ -15,6 +15,9 @@ const ACTION_TYPES = {
   BUDGET: 'BUDGET',
   MOVE: 'MOVE',
   ASSESSMENT: 'ASSESSMENT',
+  CAMERAERROR: 'CAMERA ERROR',
+  AUDIOERROR: 'AUDIO ERROR',
+  MEDIAERROR: 'MEDIA ERROR',
 };
 
 const ACTION_PROPERTIES = {
@@ -63,6 +66,18 @@ const ACTION_PROPERTIES = {
     cancelLabel: 'Cancel',
     message: 'Take the assessment now to get prioritized and improve your likelihood of advancing quickly.',
     mobMessage: 'Open the application on your desktop and take the assessment to get prioritized and improve your chances of advancing quickly.'
+  },
+  [ACTION_TYPES.CAMERAERROR]: {
+    title: 'Camera Access Denied',
+    message : "We need access to your camera to proceed. Please allow camera access in your browser settings (address bar) to continue."
+  },
+  [ACTION_TYPES.AUDIOERROR]: {
+    title: 'Audio Access Denied',
+    message : "We need access to your microphone to proceed. It seems you've denied permission. Please enable it in your browser settings (address bar)."
+  },
+  [ACTION_TYPES.MEDIAERROR]: {
+    title: 'Media Access Denied',
+    message : "We need access to your camera and microphone to proceed. It seems you've denied permission for both, please enable them in your browser settings (address bar)."
   },
 };
 
@@ -269,7 +284,7 @@ const Modal = ({
   return (
     <div
       onClick={onClose}
-      className={((isMobile && actionType === ACTION_TYPES.ASSESSMENT ) ? "mx-6 " : "mx-4 ") + " fixed z-50 inset-0 flex justify-center items-center transition-colors bg-black/20  md:mx-0"}
+      className={((isMobile && actionType === ACTION_TYPES.ASSESSMENT ) ? "mx-6 " : "mx-4 ") + " fixed z-50 inset-0 flex justify-center items-center bg-[#00000093] transition-colors bg-black/20  md:mx-0"}
     >
       <div
         onClick={(e) => e.stopPropagation()}
@@ -279,13 +294,15 @@ const Modal = ({
           {renderModalContent()}
           {children}
           <div className="flex justify-end gap-4 mt-4">
-            <div className={(isMobile && actionType === ACTION_TYPES.ASSESSMENT ) ? "hidden" : "w-[180px]"}>
+            <div className={(isMobile && actionType === ACTION_TYPES.ASSESSMENT ) ? "hidden" : ""}>
               <Button variant={cancelVariant} onClick={onClose}>
                 {cancelLabel}
               </Button>
             </div>
-            {( actionType !== ACTION_TYPES.ASSESSMENT || (!isMobile && actionType === ACTION_TYPES.ASSESSMENT)) && 
-            <div className="w-[180px]">
+            {( actionType !== ACTION_TYPES.ASSESSMENT || (!isMobile && actionType === ACTION_TYPES.ASSESSMENT)) 
+            && actionType !== ACTION_TYPES.CAMERAERROR 
+            && actionType !== ACTION_TYPES.AUDIOERROR 
+            && actionType !== ACTION_TYPES.MEDIAERROR &&
               <Button
                 variant={buttonVariant}
                 onClick={handleConfirm}
@@ -296,7 +313,7 @@ const Modal = ({
               >
                 {confirmLabel}
               </Button>
-            </div>}
+            }
           </div>
         </div>
       </div>

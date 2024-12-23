@@ -26,13 +26,13 @@ const Header = ({
         <div className="w-full">
             <div className="flex items-center justify-between mb-4">
                 {/* Left section with back button and title */}
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-4 w-full lg:w-[65%]">
                     {withBack === "true" && (
                         <div className="cursor-pointer" onClick={() => navigate(-1)}>
                             <BackButton />
                         </div>
                     )}
-                    <h1 className="typography-h2 md:typography-h1">
+                    <h1 className="typography-h2 md:typography-h1 w-full overflow-hidden whitespace-nowrap text-ellipsis">
                         {HeaderText}
                     </h1>
                 </div>

@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
     Card,
     CardContent,
@@ -84,9 +84,6 @@ const DesignTask = ({ candidateId, jobId ,isClosed}) => {
     const candidateData = useSelector(state => state.candidate.candidateData);
     const candidateEmail = useSelector(state => state.candidate.candidateData.email);
 
-    console.log("heeloopo" , stageData);
-
-
     // Add this line outside renderContent
     const isDisabled = stageData?.status === 'Sent' || stageData?.status === 'Pending' || stageData?.status === 'Rejected' || stageData?.status === 'Cleared' || stageData?.status === 'Reviewed';
 
@@ -94,11 +91,41 @@ const DesignTask = ({ candidateId, jobId ,isClosed}) => {
     const [dueDate, setDueDate] = useState(null);
     const [dueTime, setDueTime] = useState(null);
 
+    const [descriptionError, setDescriptionError] = useState(false);
+    const [dueDateError, setDueDateError] = useState(false);
+    const [dueTimeError, setDueTimeError] = useState(false);
+
     const [taskLink, setTaskLink] = useState('');
     const [comment, setComment] = useState('');
 
+    const validateErrors = ()=> {
+        if(!taskDescription.trim()){
+            setDescriptionError(true)
+        }else{
+            setDescriptionError(false)
+        }
+        if(!dueDate){
+            setDueDateError(true)
+        }else{
+            setDueDateError(false)
+        }
+        if(!dueTime){
+            setDueTimeError(true)
+        }else{
+            setDueTimeError(false)
+        }
+    }
+
+    //To detect if its a first render or not
+    const isFirstRender = useRef(true);
+
     const [isLoading, setIsLoading] = useState(false); // Loading state
 
+    useEffect(()=>{
+        if(!isFirstRender.current){
+            validateErrors()
+        }
+    },[taskDescription,dueDate,dueTime,isFirstRender])
 
     const handleReviewSubmit = (candidateId, reviewData) => {
         submitReviewMutation.mutate({ candidateId, reviewData });
@@ -277,7 +304,6 @@ const DesignTask = ({ candidateId, jobId ,isClosed}) => {
                             value={comment}
                             onChange={(e) => setComment(e.target.value)}
                         />
-                        <div className='w-[170px]'>
                             <Button
                                 variant="primary"
                                 disabled={!taskLink}
@@ -285,7 +311,6 @@ const DesignTask = ({ candidateId, jobId ,isClosed}) => {
                             >
                                 Submit Task
                             </Button>
-                        </div>
                     </div>
                 );
 
@@ -362,7 +387,9 @@ const DesignTask = ({ candidateId, jobId ,isClosed}) => {
     });
 
     const handleSendTask = () => {
-        if (taskDescription && dueDate && dueTime) {
+        isFirstRender.current = false;
+        validateErrors()
+        if (taskDescription.trim() && dueDate && dueTime) {
             sendTaskMutation.mutate({
                 candidateId,
                 jobId,
@@ -457,7 +484,7 @@ const DesignTask = ({ candidateId, jobId ,isClosed}) => {
 
 
     const renderPendingStatus = () => (
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 relative">
             <Label icon={WarningIcon} text="Design task not sent. Please provide task details and set a due date/time." />
             <div >
 
@@ -470,13 +497,14 @@ const DesignTask = ({ candidateId, jobId ,isClosed}) => {
                 type="text"
                 label="Task Description"
                 required
-                className="w-full rounded-xl px-3 py-2 bg-background-40  outline-none focus:outline-teal-300"
+                className={(descriptionError ? '!border !border-red-500 ' : 'border border-transparent ') + "w-full rounded-xl px-3 py-2 bg-background-40 resize-none outline-none focus:outline-teal-300"}
                 rows="10"
                 value={taskDescription}
                 onChange={(e) => setTaskDescription(e.target.value)}
             />
+            {descriptionError && <p className="text-red-500 absolute typography-small-p top-[23rem]">Task Description is required</p>}
             <div className='flex justify-normal gap-4'>
-                <div className='w-full'>
+                <div className='w-full relative'>
                     <div className='pb-4' >
 
                         <label className="typography-body ">Due Date</label>
@@ -484,29 +512,28 @@ const DesignTask = ({ candidateId, jobId ,isClosed}) => {
                     </div>
 
 
-                    <Datepicker onChange={setDueDate} value={dueDate} />
+                    <Datepicker error={dueDateError} onChange={setDueDate} value={dueDate} />
+                    {dueDateError && <p className='absolute text-red-100 typography-small-p top-[5.2rem]'>Date is required</p>}
                 </div>
-                <div className='w-full'>
+                <div className='w-full relative'>
                     <div className='pb-4'>
 
                         <label className="typography-body ">Due Time</label>
                         <span className="text-red-100">*</span>
                     </div>
 
-                    <Timepicker onChange={setDueTime} value={dueTime} />
+                    <Timepicker error={dueTimeError} onChange={setDueTime} value={dueTime} />
+                    {dueTimeError && <p className='absolute text-red-100 typography-small-p top-[5.2rem]'>Time is required</p>}
                 </div>
             </div>
             <div className='w-full flex justify-end'>
 
-                <div className='w-[170px]'>
                     <Button
                         variant="primary"
-                        disabled={!taskDescription || !dueDate || !dueTime}
                         onClick={handleSendTask}
                     >
                         Send Email
                     </Button>
-                </div>
             </div>
         </div>
     );

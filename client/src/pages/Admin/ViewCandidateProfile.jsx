@@ -201,7 +201,7 @@ const ViewCandidateProfile = () => {
 
 
     return (
-        <div className="mx-4 pt-4 container w-[97%]">
+        <div className="px-4 lg:px-0 md:mx-4 pt-4 container w-[97%]">
             {/* Page header */}
             <Header
                 HeaderText="Candidate Profile"

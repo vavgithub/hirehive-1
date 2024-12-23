@@ -39,10 +39,10 @@ export const FormField = ({
     );
   };
 
-  export const ResumePortfolioSection = ({ control }) => {
+  export const ResumePortfolioSection = ({ control , isAuthenticated }) => {
     return (
       <div>
-        <h3 className="typography-h3 mt-8 mb-4">Resume & Portfolio</h3>
+        <h3 className={(isAuthenticated ? " mt-2 " : " mt-8 ") + " typography-h3  mb-4"}>Resume & Portfolio</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <FormField
             name="portfolio"
@@ -71,7 +71,7 @@ export const FormField = ({
     return (
       <div>
         <h3 className="typography-h3 mt-8 mb-4">Professional Details</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2  gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2  gap-6">
           <FormField
             name="experience"
             control={control}
@@ -119,8 +119,8 @@ export const FormField = ({
   export const PersonalDetailsSection = ({ control }) => {
     return (
       <div>
-        <h3 className="typography-h3 mt-8 mb-4">Personal Details</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <h3 className="typography-h3 mb-4">Personal Details</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <FormField
             name="firstName"
             control={control}

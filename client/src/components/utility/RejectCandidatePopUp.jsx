@@ -26,12 +26,8 @@ const RejectCandidatePopUp = ({ name, onReject, onNext }) => {
                     </select>
                 </div>
                 <div className='flex gap-6 mt-4 relative z-20'>
-                    <div className='w-[236px]'>
                         <Button variant="primary" onClick={onNext}>Cancel</Button>
-                    </div>
-                    <div className='w-[236px]'>
                         <Button variant="cancel" onClick={onReject}>Reject</Button>
-                    </div>
                 </div>
             </div>
         </div>

@@ -276,7 +276,7 @@ const Reviews = () => {
 
   // Prepare statsOne object with real data
   const updatedStatsOne = statsOne.map((stat) => {
-    const foundStat = statsData.find(s => s.stage === stat.title);
+    const foundStat = statsData?.find(s => s.stage === stat.title);
     return { ...stat, value: foundStat ? foundStat.count : 0 };
   });
 

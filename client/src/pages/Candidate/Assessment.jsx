@@ -145,17 +145,19 @@ const QuestionDisplay = ({
           />
         </div>
       )}
-      <div className='grid grid-cols-2 gap-x-4 items-center'>
+      <div className='grid grid-cols-2 gap-4 items-center h-max' style={{
+        gridAutoRows: "1fr", // Ensures all rows are consistent based on tallest item
+      }}>
         {question.options.map((option, index) => (
-          <div key={index} className="mb-4 bg-background-80 p-4 rounded-xl">
-            <label className="flex items-center space-x-3">
+          <div key={index} className="flex items-center bg-background-80  rounded-xl  h-full">
+            <label className="flex items-center space-x-3 p-4">
               <input
                 type="radio"
                 name={`question-${question._id}`}
                 value={option.text}
                 checked={currentAnswer === option.text}
                 onChange={() => onAnswer(question._id, option.text)}
-                className="appearance-none border-2 rounded-full form-radio h-5 w-5 checked:ring-offset-[5px] checked:ring-offset-black-100 checked:bg-teal-100 checked:ml-[4px] checked:mr-[4px] checked:ring-[2px] checked:w-3 checked:h-3 checked:border-0 checked:ring-teal-100"
+                className="appearance-none border-2 rounded-full form-radio h-5 aspect-square max-h-5  max-w-5 checked:ring-offset-[5px] checked:ring-offset-black-100 checked:bg-teal-100 checked:ml-[4px] checked:mr-[4px] checked:ring-[2px] checked:w-3 checked:h-3 checked:border-0 checked:ring-teal-100"
               /> 
               <div className="flex flex-col gap-2">
                 <span className='typography-body'>{option.text}</span>
@@ -173,7 +175,6 @@ const QuestionDisplay = ({
       </div>
     </div>
     <div className="flex justify-between">
-      <div className="w-[152px]">
         <Button
           variant="secondary"
           onClick={onPrevious}
@@ -181,8 +182,7 @@ const QuestionDisplay = ({
         >
           Previous
         </Button>
-      </div>
-      <div className="w-[152px]">
+      <div >
         {isLast ? (
           renderFinishButton()
         ) : (
@@ -308,6 +308,7 @@ const Assessment = () => {
       if (mediaRecorderRef.current && isRecording) {
         mediaRecorderRef.current.stop();
       }
+      window.location.href = "/candidate/my-jobs"
     };
   }, []);
 
@@ -349,6 +350,7 @@ const Assessment = () => {
     } catch (error) {
       console.error('Error starting recording:', error);
       showErrorToast('Error', 'Failed to start recording. Please ensure camera access is granted.');
+      setTimeout(()=>window.location.reload(),1000)
     }
   };
 
