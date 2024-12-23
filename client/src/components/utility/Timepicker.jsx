@@ -98,7 +98,7 @@ const theme = createTheme({
   },
 });
 
-export default function Timepicker({ onChange, value }) {
+export default function Timepicker({ onChange, value ,error}) {
   return (
     <ThemeProvider theme={theme}>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -118,9 +118,11 @@ export default function Timepicker({ onChange, value }) {
             '& .MuiInputBase-root': {
               height: '44px',
               backgroundColor: "rgba(12,13,13,1)",
+              ...(error ? {border : "1px solid red"} : {})
             },
             '& .MuiOutlinedInput-input': {
               padding: '0px 10px',
+              ...(error ? {height : "42px"} : {})
             },
             "& .MuiOutlinedInput-root": {
               "& fieldset": {

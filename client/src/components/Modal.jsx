@@ -294,7 +294,7 @@ const Modal = ({
           {renderModalContent()}
           {children}
           <div className="flex justify-end gap-4 mt-4">
-            <div className={(isMobile && actionType === ACTION_TYPES.ASSESSMENT ) ? "hidden" : "w-[180px]"}>
+            <div className={(isMobile && actionType === ACTION_TYPES.ASSESSMENT ) ? "hidden" : ""}>
               <Button variant={cancelVariant} onClick={onClose}>
                 {cancelLabel}
               </Button>
@@ -303,7 +303,6 @@ const Modal = ({
             && actionType !== ACTION_TYPES.CAMERAERROR 
             && actionType !== ACTION_TYPES.AUDIOERROR 
             && actionType !== ACTION_TYPES.MEDIAERROR &&
-            <div className="w-[180px]">
               <Button
                 variant={buttonVariant}
                 onClick={handleConfirm}
@@ -314,7 +313,7 @@ const Modal = ({
               >
                 {confirmLabel}
               </Button>
-            </div>}
+            }
           </div>
         </div>
       </div>

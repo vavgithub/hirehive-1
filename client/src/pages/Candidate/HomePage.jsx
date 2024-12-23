@@ -143,9 +143,7 @@ const HomePage = () => {
                     <img className='h-12' src={Logo}/>
                     <h1 className='display-d2  hidden md:block'>Jobs</h1>
                     </div>
-                    <div className='md:w-[220px]'>
-                        <Button variant="primary" onClick={() => navigate("/login")}>Login</Button>
-                    </div>
+                    <Button variant="primary" onClick={() => navigate("/login")}>Login</Button>
                 </div>
                 <h1 className='md:hidden display-d2 py-4'>Jobs</h1>
                     

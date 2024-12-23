@@ -77,7 +77,7 @@ const SkillsInput = ({ value = [], onChange, allSkills = [] ,error}) => {
           value={inputValue}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
-          placeholder="Add skills"
+          placeholder="Add Skills"
           className={(error && '!border !border-red-500' )}
           aria-autocomplete="list"
           aria-controls="skills-suggestions"

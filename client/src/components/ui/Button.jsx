@@ -24,16 +24,16 @@ const Button = React.forwardRef(({
   const baseStyles = "inline-flex items-center justify-center gap-2 rounded-xl font-medium typography-body  transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background";
 
   const variants = {
-    primary: "bg-blue-100 w-full text-white typography-body hover:bg-blue-200",
-    secondary: "bg-blue-300 w-full text-blue-100 typography-body hover:bg-blue-400",
+    primary: "bg-blue-100 text-white typography-body hover:bg-blue-200",
+    secondary: "bg-blue-300 text-blue-100 typography-body hover:bg-blue-400",
     tertiary: "text-blue-600 typography-body hover:bg-blue-100",
-    cancel: "bg-red-500 w-full text-white typography-body hover:bg-red-600",
-    cancelSec: "bg-red-80 w-full text-red-100 typography-body hover:bg-red-60",
+    cancel: "bg-red-500 text-white typography-body hover:bg-red-600",
+    cancelSec: "bg-red-80 text-red-100 typography-body hover:bg-red-60",
     icon: "bg-blue-100 p-0"
   };
 
   const sizes = {
-    default: "h-10 py-2 px-4",
+    default: "h-11 py-2 px-12 w-fit",
     icon: "h-10 w-10"
   };
 

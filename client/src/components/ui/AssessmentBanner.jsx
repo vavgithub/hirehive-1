@@ -37,7 +37,7 @@ const AssessmentBanner = () => {
                 </div>
 
             </div>
-            <div className='md:w-[235px] md:flex hidden'>
+            <div className=' md:flex hidden'>
                 <Button variant="primary" onClick={handleAssessment} >Take Assessment</Button>
             </div>
         </div>

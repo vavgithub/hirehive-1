@@ -132,7 +132,7 @@ const CandidateLogin = () => {
                                   </span>
                               </div>
             {/* <a href="#" className="text-blue-500 mb-6 mt-2 block text-right">Forgot Password?</a> */}
-            <Button type="submit" variant="primary" className="mt-6" disabled={!isFormValid}>
+            <Button  type="submit" variant="primary" className="mt-6 w-full " disabled={!isFormValid}>
               Login
             </Button>
           </form>

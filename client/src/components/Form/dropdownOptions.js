@@ -1,18 +1,18 @@
 export const dropdownOptions = {
     employeeLocation: [
-      { value: '', label: 'Select employee location' },
+      { value: '', label: 'Select Employee Location' },
       { value: 'india', label: 'India' },
       { value: 'usa', label: 'USA' },
       { value: 'dubai', label: 'Dubai' },
     ],
     employmentType: [
-      { value: '', label: 'Select employment type' },
+      { value: '', label: 'Select Employment Type' },
       { value: 'Full Time', label: 'Full Time' },
       { value: 'Internship', label: 'Internship' },
       { value: 'Contract', label: 'Contract' },
     ],
     jobProfile: [
-        { value: '', label: 'Select job profile' },
+        { value: '', label: 'Select Job Profile' },
         { value: 'Frontend Developer', label: 'Frontend Developer' },
         { value: 'UI UX', label: 'UI UX' },
         { value: 'Motion Graphic', label: 'Motion Graphic' },
@@ -23,7 +23,7 @@ export const dropdownOptions = {
         { value: 'Art Director', label: 'Art Director' },
     ],
     workplaceType: [
-      { value: '', label: 'Select workplace type' },
+      { value: '', label: 'Select Workplace Type' },
       { value: 'On-Site', label: "On-Site" },
       { value: 'Remote', label: "Remote" },
       { value: 'Hybrid', label: "Hybrid" }

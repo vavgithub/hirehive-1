@@ -210,7 +210,7 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
               <textarea
                 {...field}
                 id="jobDescription"
-                placeholder="Write a job description"
+                placeholder="Write a Job Description"
                 className={`${error ? '!border !border-red-500' : 'border border-transparent'}  w-full rounded-xl px-3 py-2 bg-background-40 font-outfit hover:bg-background-60 outline-none focus:outline-teal-300 resize-none`}
                 rows="10"
               />
@@ -258,7 +258,6 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
 
       <div className="flex justify-end mt-4">
         <div className='flex gap-4'>
-          <div className='w-[240px]'>
             {!isEditing && (
               <Button
                 variant="secondary"
@@ -269,8 +268,6 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
                 Save For Later
               </Button>
             )}
-          </div>
-          <div className='w-[240px]'>
             <Button
               variant="primary"
               type="submit"
@@ -281,8 +278,6 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
               {isEditing ? isLoading ? 'Saving...' : 'Save' : isLoading ? 'Creating...' :'Create A Job Listing'}
 
             </Button>
-
-          </div>
         </div>
 
         {isEditing && watchedFields.status === 'draft' && (

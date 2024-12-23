@@ -79,6 +79,7 @@ const ExperienceFilter = ({ onApply, shouldReset }) => {
         onClick={handleApply} 
         size="default"
         disabled={minExperience !== '' && maxExperience !== '' && Number(maxExperience) < Number(minExperience)}
+        className={'w-full'}
       >
         Apply
       </Button>

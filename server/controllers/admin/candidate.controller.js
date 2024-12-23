@@ -31,7 +31,7 @@ export const getAllCandidatesForJob = async (req, res) => {
     const candidatesData = await candidates.find({
       'jobApplications.jobId': jobId,
       isVerified: true
-    });
+    }).sort({"jobApplications.applicationDate" : -1});
 
     // Process and format the candidate data
     const formattedCandidates = candidatesData.map(candidate => {

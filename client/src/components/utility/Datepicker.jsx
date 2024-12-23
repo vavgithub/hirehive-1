@@ -45,8 +45,10 @@ const theme = createTheme({
           '&:hover': {
             backgroundColor: 'rgba(35, 36, 37, 1)',
           },
-          
-        },
+          '&.Mui-disabled': {
+            color:"rgba(128, 131, 137, 0.5) !important",
+          },
+        }, 
       },
     },
     MuiDayCalendar: {
@@ -81,13 +83,14 @@ const theme = createTheme({
   },
 });
 
-export default function Datepicker({ onChange, value }) {
+export default function Datepicker({ onChange, value ,error }) {
   return (
     <ThemeProvider theme={theme}>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <DesktopDatePicker
           value={value ? dayjs(value) : null}
           defaultValue={dayjs()}  //
+          shouldDisableDate={(date) => date.isBefore(dayjs(), 'day')}
           slots={{
             openPickerIcon : DropDownIcon
           }}
@@ -101,10 +104,11 @@ export default function Datepicker({ onChange, value }) {
             '& .MuiInputBase-root': {
               height: '44px',
               backgroundColor: "rgba(12,13,13,1)",
-
+              ...(error ? {border : "1px solid red"} : {})
             },
             '& .MuiOutlinedInput-input': {
               padding: '0px 10px',
+              ...(error ? {height : "42px"} : {})
             },
             "& .MuiOutlinedInput-root": {
               "& fieldset": {
@@ -116,7 +120,7 @@ export default function Datepicker({ onChange, value }) {
                 border: "1px solid rgb(24, 233, 208) !important",
                 borderRadius : "0.75rem !important"
               },
-            }
+            },
           }} />
       </LocalizationProvider>
     </ThemeProvider>

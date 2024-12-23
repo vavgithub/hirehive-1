@@ -68,24 +68,22 @@ const ViewJob = () => {
                 </div>
                 <div className=" bg-background-30 rounded-xl p-6 w-full">
                     {/* Flex container for both desktop and mobile */}
-                    <div className="flex flex-col lg:flex-row justify-between">
+                    <div className="flex flex-col lg:flex-row justify-between w-full">
                         {/* Job Title */}
-                        <Header HeaderText={formData.jobTitle} withBack="true" />
-                        {/* <h1 className="typography-h1"></h1> */}
-                        {/* Button only visible on large screens */}
-                        <div className="hidden lg:block w-44">
+                        <Header HeaderText={formData.jobTitle} withBack="true"
+                        rightContent={
+                        <div className="hidden lg:flex justify-end">
                             {!hasApplied && 
-                            // ? (
-                            //     <Button variant="secondary" disabled>
-                            //         Already Applied
-                            //     </Button>
-                            // ) : 
                             (
                                 <Button variant="primary" onClick={handleApplyClick} iconPosition="right" icon={ArrowIcon}  >
                                     Apply Job
                                 </Button>
                             )}
-                        </div>
+                        </div>}
+                        />
+                        {/* <h1 className="typography-h1"></h1> */}
+                        {/* Button only visible on large screens */}
+
                     </div>
             
                     {/* Job Description and Skills */}
@@ -120,13 +118,8 @@ const ViewJob = () => {
                     {/* Apply Button on mobile version (appears at the bottom of the page) */}
                     <div className="lg:hidden mt-8">
                         {!hasApplied &&
-                        //  ? (
-                        //     <Button variant="secondary" disabled>
-                        //         Already Applied
-                        //     </Button>
-                        // ) :
                          (
-                            <Button variant="primary" onClick={handleApplyClick} iconPosition="right" icon={ArrowIcon} >
+                            <Button variant="primary" className="w-full " onClick={handleApplyClick} iconPosition="right" icon={ArrowIcon} >
                                 Apply Job
                             </Button>
                         )}

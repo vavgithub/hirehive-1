@@ -688,7 +688,7 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
 
         {!readOnly && (<div className='flex gap-4'>
 
-          <div className={`${budgetFilter.from && budgetFilter.to ? "w-[236px]" : "hidden"}`}>
+          <div className={`${budgetFilter.from && budgetFilter.to ? "" : "hidden"}`}>
             <Button
               icon={AutoAssign}
               variant="primary"
@@ -698,7 +698,7 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
               {(autoAssignMutation.isLoading ? 'Auto-Assigning...' : 'Auto-Assign Portfolio')}
             </Button>
           </div>
-          <div className={`${budgetFilter.from && budgetFilter.to ? "auto" : "w-[216px]"}`}>
+          <div className={`${budgetFilter.from && budgetFilter.to ? "auto" : ""}`}>
 
             <Button
               variant={budgetFilter.from && budgetFilter.to ? "icon" : "primary"}

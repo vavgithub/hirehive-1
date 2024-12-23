@@ -281,14 +281,12 @@ const RoundTwo = ({ candidateId, jobId ,isClosed }) => {
                                                 setIsLoading={setIsLoading}
                                                 jobId={jobId}
                                             />
-                                            <div className='w-[170px]'>
                                                 <Button
                                                     variant="secondary"
                                                     onClick={() => setIsRescheduling(true)}
                                                     >
                                                     Reschedule Call
                                                 </Button>
-                                            </div>
                                         </div>
                                     )}
                                     {isRescheduling && (
@@ -347,13 +345,9 @@ const RoundTwo = ({ candidateId, jobId ,isClosed }) => {
 
                                 </div>
                                 <div className='flex justify-end'>
-
-                                    <div className='w-[256px]'>
-
                                         <Button onClick={handleScoreSubmit} disabled={score === 0 || feedback === ''}>
                                             Submit Score
                                         </Button>
-                                    </div>
                                 </div>
                             </>)}
 
@@ -375,9 +369,9 @@ const RoundTwo = ({ candidateId, jobId ,isClosed }) => {
 
                                 <div className='w-full'>
                                     <div className='flex justify-between gap-4'>
-                                        <div className='w-full'>
+                                        <div className='w-full max-w-[80%]'>
                                             <p className='typography-small-p text-font-gray'>Remarks</p>
-                                            <p className='typography-body pb-8'>{stageData?.feedback}</p>
+                                            <p className='typography-body pb-8 text-ellipsis overflow-hidden'>{stageData?.feedback}</p>
                                         </div>
                                         <div className='bg-stars bg-cover rounded-xl w-[160px] my-4'>
                                             <div className='p-4 flex flex-col items-center'>
@@ -478,12 +472,9 @@ const RoundTwo = ({ candidateId, jobId ,isClosed }) => {
                                     isBudgetScoreSubmitted={"true"}
                                 >
                                     {/* This will only show if status is No Show */}
-                                    <div className="w-[176px]">
                                         <Button variant="primary" onClick={() => setIsRescheduling(true)}>
                                             Reschedule Call
                                         </Button>
-
-                                    </div>
                                 </StageActions>}
                             </>
                         )

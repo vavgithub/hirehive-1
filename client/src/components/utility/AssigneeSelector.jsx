@@ -16,7 +16,7 @@ import { fetchAvailableDesignReviewers } from '../../api/authApi';
 import SearchIcon from '../../svg/SearchIcon';
 // import SearchIcon from '@mui/icons-material/Search';
 
-const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled = false }) => {
+const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled = false , error}) => {
   const [reviewers, setReviewers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedReviewer, setSelectedReviewer] = useState(null);
@@ -183,6 +183,7 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
             "& .MuiInputBase-input": {
               color: "white",
               fontFamily: "Outfit",
+              ...(error ? {border : "1px solid red"} : {})
             },
             "& .MuiOutlinedInput-root": {
               padding: "0px !important",

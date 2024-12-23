@@ -204,25 +204,12 @@ const PreAssessment = () => {
                     open={showMediaErrorModal} 
                     cancelLabel='OK' cancelVariant='primary' />
 
-                    <div className='mt-8 w-full flex justify-end'>
-                        <div className="flex w-[270px]">
-                            {/* <button
-                            className={`px-6 py-2 rounded-lg ${isCameraEnabled && isMicEnabled
-                                    ? 'bg-blue-500 hover:bg-blue-600'
-                                    : 'bg-gray-600 cursor-not-allowed'
-                                }`}
-                            disabled={!isCameraEnabled || !isMicEnabled}
-                            onClick={() => setStartAssessment(true)}
-                        >
-                            Start Assessment
-                        </button> */}
-
+                    <div className='mt-8 w-full flex justify-end'>                            
                             <Button
                                 onClick={handleStartAssessment}
                             >
                                 Start Assessment
                             </Button>
-                        </div>
                     </div>
                 </div>
             </div>

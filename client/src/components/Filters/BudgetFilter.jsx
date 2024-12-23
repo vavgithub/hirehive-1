@@ -79,6 +79,7 @@ const BudgetFilter = ({ onApply, shouldReset }) => {
         onClick={handleApply} 
         size="default"
         disabled={minBudget !== '' && maxBudget !== '' && Number(maxBudget) < Number(minBudget)}
+        className={'w-full'}
       >
         Apply
       </Button>
