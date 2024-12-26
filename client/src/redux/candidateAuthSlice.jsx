@@ -74,6 +74,7 @@ const candidateAuthSlice = createSlice({
       })
       .addCase(loginCandidateAuth.pending, (state) => {
         state.isLoadingAuth = true;
+        state.authError = '';
       })
       .addCase(loginCandidateAuth.fulfilled, (state, action) => {
         state.isLoadingAuth = false;

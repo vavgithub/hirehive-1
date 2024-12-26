@@ -39,7 +39,7 @@ const Experience = ({ company, position, startDate, endDate, index }) => (
             <Card title="Skill Set">
                 <div className="flex flex-wrap gap-2">
                     {data.skillSet.map((skill, index) => (
-                        <span key={index} className="bg-background-70 rounded-xl typography-body py-1 px-3">
+                        <span key={index} className="bg-background-70 rounded-full typography-body py-3 px-4">
                             {skill}
                         </span>
                     ))}

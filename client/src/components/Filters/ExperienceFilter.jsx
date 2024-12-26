@@ -45,9 +45,9 @@ const ExperienceFilter = ({ onApply, shouldReset }) => {
   };
 
   return (
-    <div className="p-2 rounded">
+    <div className=" rounded">
       <div className="flex space-x-4 mb-4">
-        <div>
+        <div className='flex flex-col'>
           <label className="typography-small-p text-font-gray">Min Experience</label>
           <div className='flex items-center bg-background-40 rounded-xl rounded-br-xl mt-1'>
             <input
@@ -60,7 +60,7 @@ const ExperienceFilter = ({ onApply, shouldReset }) => {
             <span className="text-font-gray pr-2">Yrs</span>
           </div>
         </div>
-        <div>
+        <div className='flex flex-col'>
           <label className="typography-small-p text-font-gray">Max Experience</label>
           <div className='flex items-center bg-background-40 rounded-xl rounded-br-xl mt-1'>
             <input
@@ -79,6 +79,7 @@ const ExperienceFilter = ({ onApply, shouldReset }) => {
         onClick={handleApply} 
         size="default"
         disabled={minExperience !== '' && maxExperience !== '' && Number(maxExperience) < Number(minExperience)}
+        className={'w-full'}
       >
         Apply
       </Button>

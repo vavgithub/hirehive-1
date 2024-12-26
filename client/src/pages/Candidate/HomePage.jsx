@@ -136,16 +136,14 @@ const HomePage = () => {
         );
     }else{
         return (
-            <div className='container flex flex-col m-auto  px-4 pt-6 '>
-                <div className=' flex justify-between items-center mt-6'>
+            <div className='container flex flex-col m-auto p-6 '>
+                <div className=' flex justify-between items-center mb-4'>
                     <div className='flex items-center justify-center gap-8'>
 
                     <img className='h-12' src={Logo}/>
-                    <h1 className='display-d2 py-4 hidden md:block'>Jobs</h1>
+                    <h1 className='display-d2  hidden md:block'>Jobs</h1>
                     </div>
-                    <div className='md:w-[220px]'>
-                        <Button variant="primary" onClick={() => navigate("/login")}>Login</Button>
-                    </div>
+                    <Button variant="primary" onClick={() => navigate("/login")}>Login</Button>
                 </div>
                 <h1 className='md:hidden display-d2 py-4'>Jobs</h1>
                     
@@ -192,7 +190,7 @@ const HomePage = () => {
                     {/* Job listings */}
                     <div className='flex flex-col w-full md:w-fill-available'>
                         {isLoadingResults ? (
-                            <div className="flex justify-center items-center min-h-[400px]">
+                            <div className="flex justify-center items-center min-h-full">
                                 <Loader />
                             </div>
                         ) :

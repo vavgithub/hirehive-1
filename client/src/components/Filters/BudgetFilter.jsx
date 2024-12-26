@@ -45,9 +45,9 @@ const BudgetFilter = ({ onApply, shouldReset }) => {
   };
 
   return (
-    <div className="p-2 rounded">
+    <div className=" rounded">
       <div className="flex space-x-4 mb-4">
-        <div>
+        <div className='flex flex-col'>
           <label className="typography-small-p text-font-gray">Min Budget</label>
           <div className='flex items-center bg-background-40 rounded-xl rounded-br-xl mt-1'>
             <input
@@ -60,7 +60,7 @@ const BudgetFilter = ({ onApply, shouldReset }) => {
             <span className="text-font-gray pr-2">LPA</span>
           </div>
         </div>
-        <div>
+        <div className='flex flex-col'>
           <label className="typography-small-p text-font-gray">Max Budget</label>
           <div className='flex items-center bg-background-40 rounded-xl rounded-br-xl mt-1'>
             <input
@@ -79,6 +79,7 @@ const BudgetFilter = ({ onApply, shouldReset }) => {
         onClick={handleApply} 
         size="default"
         disabled={minBudget !== '' && maxBudget !== '' && Number(maxBudget) < Number(minBudget)}
+        className={'w-full'}
       >
         Apply
       </Button>

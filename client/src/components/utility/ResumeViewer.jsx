@@ -95,13 +95,8 @@ const ResumeViewer = ({ documentUrl, onClose }) => {
           )}
         </div>
         <div className="flex justify-end gap-4">
-
-          <div className='w-[172px]'>
             <Button onClick={onClose} variant="secondary">Cancel</Button>
-          </div>
-          <div className='w-[172px]'>
             <Button onClick={handleDownload} variant="primary">Download</Button>
-          </div>
         </div>
       </div>
     </div>

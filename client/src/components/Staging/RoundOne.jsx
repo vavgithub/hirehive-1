@@ -269,14 +269,12 @@ const RoundOne = ({ candidateId, jobId ,isClosed}) => {
                                     jobId={jobId}
                                     setIsLoading={setIsLoading}
                                 />
-                                <div className='w-[170px]'>
                                     <Button
                                         variant="secondary"
                                         onClick={() => setIsRescheduling(true)}
                                         >
                                         Reschedule Call
                                     </Button>
-                                </div>
                             </div>
                         )}
                         {isRescheduling && (
@@ -337,12 +335,10 @@ const RoundOne = ({ candidateId, jobId ,isClosed}) => {
                             isBudgetScoreSubmitted={"true"}
                         >
                             {/* This will only show if status is No Show */}
-                            <div className="w-[176px]">
                                 <Button variant="primary" onClick={() => setIsRescheduling(true)}>
                                     Reschedule Call
                                 </Button>
 
-                            </div>
                         </StageActions>}
                     </>
 
@@ -507,8 +503,11 @@ const RoundOne = ({ candidateId, jobId ,isClosed}) => {
                 minHeight : "10rem"
             }}
         >
-            <CardContent>
-                <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+            <CardContent 
+                sx={{
+                    padding: "24px"
+                }}>
+                <Box display="flex" justifyContent="space-between" alignItems="start" mb={1}>
                     <div className='flex'>
                         <h3 className='typography-h3 mr-10'>Round 1</h3>
                         {/* ... other content ... */}

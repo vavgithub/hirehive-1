@@ -145,17 +145,19 @@ const QuestionDisplay = ({
           />
         </div>
       )}
-      <div className='grid grid-cols-2 gap-x-4 items-center'>
+      <div className='grid grid-cols-2 gap-4 items-center h-max' style={{
+        gridAutoRows: "1fr", // Ensures all rows are consistent based on tallest item
+      }}>
         {question.options.map((option, index) => (
-          <div key={index} className="mb-4 bg-background-80 p-4 rounded-xl">
-            <label className="flex items-center space-x-3">
+          <div key={index} className="flex items-center bg-background-80  rounded-xl  h-full">
+            <label className="flex items-center space-x-3 p-4 w-full">
               <input
                 type="radio"
                 name={`question-${question._id}`}
                 value={option.text}
                 checked={currentAnswer === option.text}
                 onChange={() => onAnswer(question._id, option.text)}
-                className="appearance-none border-2 rounded-full form-radio h-5 w-5 checked:ring-offset-[5px] checked:ring-offset-black-100 checked:bg-teal-100 checked:ml-[4px] checked:mr-[4px] checked:ring-[2px] checked:w-3 checked:h-3 checked:border-0 checked:ring-teal-100"
+                className="appearance-none border-2 rounded-full form-radio h-5 aspect-square max-h-5  max-w-5 checked:ring-offset-[5px] checked:ring-offset-black-100 checked:bg-teal-100 checked:ml-[4px] checked:mr-[4px] checked:ring-[2px] checked:w-3 checked:h-3 checked:border-0 checked:ring-teal-100"
               /> 
               <div className="flex flex-col gap-2">
                 <span className='typography-body'>{option.text}</span>
@@ -173,7 +175,6 @@ const QuestionDisplay = ({
       </div>
     </div>
     <div className="flex justify-between">
-      <div className="w-[152px]">
         <Button
           variant="secondary"
           onClick={onPrevious}
@@ -181,8 +182,7 @@ const QuestionDisplay = ({
         >
           Previous
         </Button>
-      </div>
-      <div className="w-[152px]">
+      <div >
         {isLast ? (
           renderFinishButton()
         ) : (
@@ -200,7 +200,7 @@ const QuestionDisplay = ({
 );
 
 // Webcam Component
-const WebcamView = ({ isMinimized, toggleMinimize, isRecording, webcamRef }) => (
+const WebcamView = ({ isMinimized, toggleMinimize, isRecording, webcamRef ,handleUserMedia}) => (
   <div className={`bg-gray-800 rounded-lg overflow-hidden ${isMinimized ? 'w-64' : 'w-96'}`}>
     <div className="flex justify-between items-center p-2 bg-gray-700">
       <div className='flex items-center gap-3 px-1' >
@@ -220,6 +220,7 @@ const WebcamView = ({ isMinimized, toggleMinimize, isRecording, webcamRef }) => 
           ref={webcamRef}
           audio={true}
           mirrored={true}
+          onUserMedia={handleUserMedia}
           className="absolute inset-0 w-full h-full object-cover"
         />
         <div className="absolute bottom-2 right-2 flex space-x-2 w-full justify-center">
@@ -269,6 +270,7 @@ const Assessment = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [recordedBlob, setRecordedBlob] = useState(null);
+  const [isWebcamReady, setIsWebcamReady] = useState(false);
 
   // Refs
   const webcamRef = useRef(null);
@@ -303,13 +305,24 @@ const Assessment = () => {
 
   // Recording functions
   useEffect(() => {
-    startRecording();
+    if(webcamRef.current){
+      startRecording();
+    }
     return () => {
       if (mediaRecorderRef.current && isRecording) {
         mediaRecorderRef.current.stop();
       }
     };
-  }, []);
+  }, [isWebcamReady]);
+
+  //Reload to turn off the recording permissions
+  useEffect(()=>{
+    return () => window.location.href = "/candidate/my-jobs"
+  },[])
+
+  const handleUserMedia = (stream) => {
+    setIsWebcamReady(true);  // This state change will trigger the effect
+  };
 
   const startRecording = async () => {
     try {
@@ -349,6 +362,7 @@ const Assessment = () => {
     } catch (error) {
       console.error('Error starting recording:', error);
       showErrorToast('Error', 'Failed to start recording. Please ensure camera access is granted.');
+      setTimeout(()=>window.location.reload(),1000)
     }
   };
 
@@ -696,6 +710,7 @@ const Assessment = () => {
                     toggleMinimize={() => setIsWebcamMinimized(prev => !prev)}
                     isRecording={isRecording}
                     webcamRef={webcamRef}
+                    handleUserMedia={handleUserMedia}
                   />
               </div>
             </Draggable>

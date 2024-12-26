@@ -47,11 +47,11 @@ const SkillsInput = ({ value = [], onChange, allSkills = [] ,error}) => {
 
   return (
     <div>
-      <div className="flex flex-wrap gap-2 rounded">
+      <div className="flex flex-wrap gap-2 rounded mt-4">
         {value.map((skill, index) => (
           <div
             key={index}
-            className="p-2 flex items-center gap-1 typography-body bg-background-70 rounded-xl px-2"
+            className={`${error ? '!border !border-red-500' : 'border border-transparent'}  p-2 flex items-center gap-1 typography-body bg-background-70 rounded-xl px-2`}
           >
             {skill}
             <button type="button" onClick={() => removeSkill(index)}>
@@ -77,8 +77,8 @@ const SkillsInput = ({ value = [], onChange, allSkills = [] ,error}) => {
           value={inputValue}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
-          placeholder="Add skills"
-          className={(error && '!border !border-red-500' ) + " mt-2"}
+          placeholder="Add Skills"
+          className={(error && '!border !border-red-500' )}
           aria-autocomplete="list"
           aria-controls="skills-suggestions"
           aria-expanded={showSuggestions}

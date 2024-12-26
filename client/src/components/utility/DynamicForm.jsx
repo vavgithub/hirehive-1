@@ -67,7 +67,6 @@ const DynamicForm = ({
         />
       ))}
       <div className="flex justify-end space-x-4 mt-7">
-        <div className='w-[152px]'>
           <Button
             type="button"
             variant="secondary"
@@ -75,12 +74,9 @@ const DynamicForm = ({
           >
             {secondaryButtonText}
           </Button>
-        </div>
-        <div className='w-[152px]'>
           <Button disabled={isLoading} type="submit">
             {primaryButtonText}
           </Button>
-        </div>
       </div>
     </form>
   );

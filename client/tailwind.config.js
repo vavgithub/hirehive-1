@@ -15,6 +15,9 @@ export default {
       },
     },
     extend: {
+      animation:{
+        "bounce-5" : 'bounce 0.5s infinite'
+      },
       width: {
         'fill-available': '-webkit-fill-available',
       },

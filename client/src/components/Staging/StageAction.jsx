@@ -91,7 +91,6 @@ const StageActions = ({
 
     return (
         <div className='flex justify-end gap-4 mt-5'>
-            <div className='w-[176px]'>
                 <Button
                     variant="cancelSec"
                     onClick={() => setIsRejectModalOpen(true)}
@@ -99,11 +98,9 @@ const StageActions = ({
                 >
                     Reject
                 </Button>
-            </div>
 
             {!isNoShow ? (
                 // Show Move to Next Round button if not No Show
-                <div className='w-[176px]'>
                     <Button
                         variant="primary"
                         onClick={() => setIsMoveModalOpen(true)}
@@ -111,7 +108,6 @@ const StageActions = ({
                     >
                         {getButtonText()}
                     </Button>
-                </div>
             ) : (
                 // Show children component if No Show
                 children
