@@ -176,7 +176,7 @@ const AllJobs = () => {
                 {/* Job listings */}
                 <div className='flex flex-col w-full md:w-fill-available'>
                     {isLoadingResults ? (
-                            <div className="flex justify-center items-center min-h-[400px]">
+                            <div className="flex justify-center items-center min-h-full">
                                 <Loader />
                             </div>
                         ) :

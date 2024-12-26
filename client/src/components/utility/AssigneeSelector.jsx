@@ -79,7 +79,7 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
   if (mode === 'icon') {
     return (
       <>
-        <IconButton onClick={handleClick} size="small" disabled={disabled}>
+        <IconButton sx={{padding : "0 8px"}} onClick={handleClick} size="small" disabled={disabled}>
           {selectedReviewer ? (
             <Avatar src={selectedReviewer.profilePicture} sx={{ width: 32, height: 32 }}>
               {selectedReviewer.name[0].toUpperCase()}

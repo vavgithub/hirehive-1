@@ -295,7 +295,7 @@ const Portfolio = ({ candidateId, jobId ,isClosed}) => {
                 <CardContent sx={{
                     padding:"24px"
                 }}>
-                    <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+                    <Box display="flex" justifyContent="space-between" alignItems="start" mb={1}>
                         <div className='flex'>
                             <h3 className='typography-h3 mr-6'>Portfolio</h3>
                             <div className='flex gap-2 items-center justify-center'>

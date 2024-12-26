@@ -497,8 +497,11 @@ const RoundTwo = ({ candidateId, jobId ,isClosed }) => {
                 minHeight : "10rem"
             }}
         >
-            <CardContent>
-                <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+            <CardContent 
+                sx={{
+                    padding: "24px"
+                }}>
+                <Box display="flex" justifyContent="space-between" alignItems="start" mb={1}>
                     <div className='flex'>
                         <h3 className='typography-h3 mr-10'>Round 2</h3>
                         {/* ... other content ... */}

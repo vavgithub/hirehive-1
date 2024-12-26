@@ -643,7 +643,7 @@ const Screening = ({ candidateId, jobId, isClosed }) => {
                         <div className='w-full flex  flex-col'>
                             <p className='typography-small-p text-font-gray mb-4'>Score</p>
                             <div className='grid grid-cols-2 gap-4'>
-                                <div className='p-2   rounded-xl bg-background-60 flex min-h-[115px]'>
+                                <div className='p-4 rounded-xl bg-background-60 flex min-h-[115px]'>
                                     {renderScoreCategories()}
                                 </div>
                                 <div>
@@ -698,7 +698,7 @@ const Screening = ({ candidateId, jobId, isClosed }) => {
             { label: 'Budget', value: stageData?.score?.Budget },
         ];
 
-        return (<div className='grid grid-cols-3 gap-3 w-full px-6 '>
+        return (<div className='grid grid-cols-3 gap-3 w-full '>
             {categories.map((category, index) => (
                 <div key={index} className='flex items-center w-full justify-between'>
                     <span className='typography-body text-font-gray'>{category.label}</span>
@@ -788,9 +788,9 @@ const Screening = ({ candidateId, jobId, isClosed }) => {
         >
             <CardContent
                 sx={{
-                    padding: "28px"
+                    padding: "24px"
                 }}>
-                <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+                <Box display="flex" justifyContent="space-between" alignItems="start" mb={1}>
                     <div className='flex'>
                         <h3 className='typography-h3 mr-10'>Screening</h3>
                         {/* ... other content ... */}

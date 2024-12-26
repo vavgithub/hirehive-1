@@ -40,7 +40,7 @@ const CheckboxGroup = ({ title, options, filters, handleCheckboxChange, isDisabl
     if (useCustomIconCheckbox) {
         return (
             <div className="mb-4 ">
-                <h3 className="text-gray-200 font-semibold mb-2">{title}</h3>
+                <h3 className="typography-body font-bricolage text-gray-200 font-semibold mb-2">{title}</h3>
                 <div className="grid grid-cols-3 gap-2 w-fit">
                     {options.map(({ value, label, statKey, icon }) => (
                         <CustomCheckbox
@@ -59,7 +59,7 @@ const CheckboxGroup = ({ title, options, filters, handleCheckboxChange, isDisabl
     // Original checkbox group for other filter types
     return (
         <div className="mb-4">
-            <h3 className="typoraphy-large-p text-gray-200 font-semibold mb-2">{title}</h3>
+            <h3 className="typography-body font-bricolage text-gray-200 font-semibold mb-2">{title}</h3>
             <div className="flex flex-wrap gap-2">
                 {options.map(({ value, label }) => (
                     <ButtonCheckbox
@@ -154,7 +154,7 @@ const Filters = ({ filters = {}, handleCheckboxChange, activeTab, handleExperien
         <div className='md:w-[304px]'>
 
             <div className="bg-background-90 p-4 rounded-xl relative">
-                <h3 className='text-gray-200 font-semibold mb-2 text-lg tracking-wide' >Filter</h3>
+                <h3 className='text-gray-200 font-bricolage font-semibold mb-2 text-xl tracking-wide' >Filter</h3>
                 <div className='flex flex-row-reverse absolute top-5 right-5'>
                     <button
                         onClick={handleClearAll}
@@ -192,7 +192,7 @@ const Filters = ({ filters = {}, handleCheckboxChange, activeTab, handleExperien
                 />
 
                 <div className="mb-4">
-                <h3 className="typoraphy-large-p text-gray-200 font-semibold mb-2">Experience Filter</h3>
+                <h3 className="typography-body font-bricolage text-gray-200 font-semibold mb-2">Experience Filter</h3>
                     <ExperienceFilter
                         onApply={handleExperienceApply}
                         shouldReset={shouldResetExperience}
@@ -200,7 +200,7 @@ const Filters = ({ filters = {}, handleCheckboxChange, activeTab, handleExperien
                 </div>
 
                 <div className="mb-4">
-                    <h3 className="typography-large-p text-gray-200 font-semibold mb-2">Budget Filter</h3>
+                    <h3 className="typography-body font-bricolage text-gray-200 font-semibold mb-2">Budget Filter</h3>
                     <BudgetFilter 
                         onApply={handleBudgetApply}
                         shouldReset={shouldResetBudget}
