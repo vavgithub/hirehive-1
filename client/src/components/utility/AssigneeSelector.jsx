@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 import { fetchAvailableDesignReviewers } from '../../api/authApi';
 // import SearchIcon from '@mui/icons-material/Search';
-
+import SearchIcon from '../../svg/SearchIcon';
 const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled = false , error}) => {
   const [reviewers, setReviewers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
