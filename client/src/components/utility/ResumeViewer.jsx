@@ -82,7 +82,7 @@ const ResumeViewer = ({ documentUrl, onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+    <div onClick={onClose} className="fixed inset-0 bg-[#00000093]  flex justify-center items-center z-50">
       <div className="bg-background-100 p-4 rounded-lg w-full max-w-4xl h-[80vh] flex flex-col">
         <div className="flex-grow relative overflow-hidden mb-4">
           {/* Show Loader for a second, then render content */}

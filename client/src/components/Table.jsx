@@ -353,7 +353,7 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
                 </CustomToolTip>
               </a>
             )}
-            {params.row.website && params.row.website !== params.row.portfolio && (
+            {params.row.website && (
               <a href={ensureAbsoluteUrl(params.row.website)} target="_blank" rel="noopener noreferrer" className="icon-link ">
                 <CustomToolTip title={'Website'} arrowed>
                   <WebsiteMainIcon sizeClasses={'w-9 h-9'} />
@@ -676,6 +676,7 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
           <input
             type="text"
             placeholder="Search by name or email"
+            className='min-w-[300px]'
             value={searchTerm}
             onChange={handleSearch}
           />

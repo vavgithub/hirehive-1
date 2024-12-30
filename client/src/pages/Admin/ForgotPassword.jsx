@@ -120,7 +120,7 @@ const ForgotPassword = ({ onBack ,role }) => {
   };
 
   return (
-    <div className="w-full  p-6">
+    <div className="w-full">
       <div className='flex cursor-pointer gap-4 my-4 items-center'
       onClick={onBack}>
         <BackButton/>

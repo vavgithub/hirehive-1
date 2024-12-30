@@ -66,12 +66,12 @@ const CandidateLayout = () => {
 
   // Define sidebar menu items with icons
   const menuItems = [
-    {
-      name: 'Dashboard',
-      path: '/candidate/dashboard',
-      icon: DashboardIcon,
-      activeIcon: DashboardIconActive,
-    },
+    // {
+    //   name: 'Dashboard',
+    //   path: '/candidate/dashboard',
+    //   icon: DashboardIcon,
+    //   activeIcon: DashboardIconActive,
+    // },
     {
       name: 'All Jobs',
       path: '/candidate/all-jobs',
@@ -93,7 +93,7 @@ const CandidateLayout = () => {
         to={to}
         end={to === '/candidate/dashboard'}
         className={({ isActive, isPending }) =>
-          `w-full flex items-center gap-2 pl-2 ${isActive || isPending ? 'text-font-accent' : ''}`
+          `w-full flex items-center h-11 gap-2 pl-2 ${isActive || isPending ? 'text-font-accent' : ''}`
         }
         onClick={onClick}
       >

@@ -238,7 +238,7 @@ const WebcamView = ({ isMinimized, toggleMinimize, isRecording, webcamRef ,handl
 
 // Upload Progress Overlay Component
 const UploadProgressOverlay = ({ uploadProgress }) => (
-  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+  <div className="fixed inset-0 bg-[#000000a9] flex items-center justify-center z-50">
     <div className="bg-background-90 p-8 rounded-xl flex flex-col items-center space-y-4">
       <Loader />
       <h3 className="typography-h3 text-font-gray">Uploading Assessment</h3>

@@ -106,7 +106,7 @@ export const authUser = asyncHandler(async (req, res) => {
             role: user.role,
         });
     } else {
-        res.status(401);
+        res.status(401).json({error:"Invalid email or password"});
         throw new Error('Invalid email or password');
     }
 });

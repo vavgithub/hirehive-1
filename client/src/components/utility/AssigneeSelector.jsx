@@ -13,7 +13,6 @@ import {
   Autocomplete,
 } from '@mui/material';
 import { fetchAvailableDesignReviewers } from '../../api/authApi';
-import SearchIcon from '../../svg/SearchIcon';
 // import SearchIcon from '@mui/icons-material/Search';
 
 const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled = false , error}) => {
@@ -121,7 +120,6 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    {/* <SearchIcon /> */}
                     <SearchIcon />
                   </InputAdornment>
                 ),
@@ -181,8 +179,11 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
           }}
           sx={{
             "& .MuiInputBase-input": {
+              height: "44px", // Set explicit height
+              maxHeight : "44px !important", // Add this to target the Autocomplete input specifically
               color: "white",
               fontFamily: "Outfit",
+              boxSizing: "border-box",
               ...(error ? {border : "1px solid red"} : {})
             },
             "& .MuiOutlinedInput-root": {
@@ -190,8 +191,8 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
               "& fieldset": {
                 border: "none",
               },
-              "& .MuiAutocomplete-input": {  // Add this to target the Autocomplete input specifically
-                padding: "0px 0px 0px 8px !important",  // Left padding of 8px, 0px for others
+              "& .MuiAutocomplete-input": { 
+                padding: "8px 16px !important",  // Left padding of 8px, 0px for others
               }
             },
             "& .Mui-focused": {
@@ -250,7 +251,13 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
               {option.name[0].toUpperCase()}
             </Avatar>
           </ListItemAvatar>
-          <ListItemText primary={option.name} />
+          <ListItemText
+            sx={{
+              "& .MuiTypography-root": {
+                fontFamily: "Outfit", // Apply the custom font explicitly to the Typography
+              },
+            }}
+          primary={option.name} />
         </MenuItem>
       )}
     />

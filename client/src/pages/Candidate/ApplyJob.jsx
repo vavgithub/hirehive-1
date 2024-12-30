@@ -18,6 +18,7 @@ import useCandidateAuth from '../../hooks/useCandidateAuth';
 import { digitsRegex, lowerCaseRegex, specialCharRegex, upperCaseRegex } from '../../utility/regex';
 import { PersonalDetailsSection, ProfessionalDetailsSection, ResumePortfolioSection } from '../../components/Form/ApplyJob';
 import { validationRules } from '../../utility/validationRules';
+import Header from '../../components/utility/Header';
 
 const fetchJobDetails = async (id) => {
   const response = await axios.get(`/jobs/getJobById/${id}`);
@@ -293,9 +294,10 @@ const ApplyJob = () => {
         <div className='container'>
           <div  >
             <img className='h-12 mt-6 mx-6' src={Logo} />
-            <h1 className="typography-h1 p-6">Application for {jobDetails?.jobTitle}</h1>
           </div>
           <form className='mx-auto mt-2 container-form px-6' onSubmit={handleSubmit(onSubmit)}>
+            {/* <h1 className="typography-h1 py-6">Application for {jobDetails?.jobTitle}</h1> */}
+            <Header HeaderText={`Application for ${jobDetails?.jobTitle}`} withBack={"true"} />
             {/* Personal Details */}
             {!isAuthenticated && (
               <div>
@@ -345,7 +347,7 @@ const ApplyJob = () => {
 
                       </div>
                       <p className="mb-2 hidden typography-body text-font-gray md:flex">Drag and drop your resume here</p>
-                      <p className='text-font-gray typography-small-p hidden md:flex'>OR</p>
+                      <p className='text-font-gray typography-small-p hidden md:flex mb-2'>OR</p>
                       <div className='md:w-[276px]'>
 
                         <Button variant="secondary" type="button">Browse files</Button>
@@ -373,7 +375,7 @@ const ApplyJob = () => {
             <ProfessionalDetailsSection control={control} />
             {/* Skills Input */}
 
-            <div className="grid md:grid-cols-2 grid-cols-1 gap-6 mt-8 ">
+            <div className="grid md:grid-cols-2 grid-cols-1 gap-6 mt-4 ">
               <Controller
                 name="skills"
                 control={control}
@@ -404,11 +406,11 @@ const ApplyJob = () => {
 
 
             {/* Additional Questions */}
-            <div className="pt-8">
+            <div className="mt-12">
               {jobDetails?.questions.length != 0 && (
                 <>
-                  <h2 className="typography-h2 mb-4">Additional Questions</h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <h2 className="typography-h3 mb-4">Additional Questions</h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {jobDetails?.questions.map((question, index) => (
                       <div key={question?._id} className="bg-background-30 rounded-xl p-4">
                         <Controller
@@ -562,37 +564,40 @@ const ApplyJob = () => {
                 Create a password to secure your account. Make sure it’s strong
                 and easy to remember.
               </p>
-              <Controller
-                name="password"
-                control={control}
-                rules={{ required: true }}
-                render={({ field }) => (
-                  <InputField
-                    id="password"
-                    label="Create Password"
-                    type="password"
-                    required={true}
-                    extraClass={'mb-4'}
-                    error={errors.password}
-                    {...field}
-                  />
-                )}
-              />
-              <Controller
-                name="confirmPassword"
-                control={control}
-                rules={{ required: true }}
-                render={({ field }) => (
-                  <InputField
-                    id="confirmPassword"
-                    label="Confirm Password"
-                    type="password"
-                    required={true}
-                    error={errors.confirmPassword}
-                    {...field}
-                  />
-                )}
-              />
+              <div className='flex flex-col gap-4'>
+                <Controller
+                  name="password"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                    <InputField
+                      id="password"
+                      label="Create Password"
+                      type="password"
+                      placeholder="New Password"
+                      required={true}
+                      error={errors.password}
+                      {...field}
+                    />
+                  )}
+                />
+                <Controller
+                  name="confirmPassword"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                    <InputField
+                      id="confirmPassword"
+                      label="Confirm Password"
+                      placeholder="Confirm New Password"
+                      type="password"
+                      required={true}
+                      error={errors.confirmPassword}
+                      {...field}
+                    />
+                  )}
+                />
+              </div>
               {passwordError && (
                 <span className="text-red-500">{passwordError}</span>
               )}

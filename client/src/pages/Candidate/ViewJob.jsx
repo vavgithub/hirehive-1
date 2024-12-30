@@ -60,11 +60,11 @@ const ViewJob = () => {
         <div className='min-h-screen flex justify-center bg-main-bg bg-cover'>
 
             <div className=" flex container flex-col items-center  p-6">
-                <div className='flex  w-full mb-6 '>
+                <div className='flex  w-full mb-6 justify-between'>
 
 
                     <img className='h-12' src={Logo} />
-
+                    {!isAuthenticated && <div className='bg-white rounded-xl h-11' ><Button variant="secondary" onClick={() => navigate("/login")}>Login</Button></div>}
                 </div>
                 <div className=" bg-background-30 rounded-xl p-6 w-full">
                     {/* Flex container for both desktop and mobile */}
@@ -73,12 +73,18 @@ const ViewJob = () => {
                         <Header HeaderText={formData.jobTitle} withBack="true"
                         rightContent={
                         <div className="hidden lg:flex justify-end">
-                            {!hasApplied && 
+                            {!hasApplied ?
                             (
                                 <Button variant="primary" onClick={handleApplyClick} iconPosition="right" icon={ArrowIcon}  >
                                     Apply Job
                                 </Button>
-                            )}
+                            ) : 
+                            (
+                            <span className="bg-blue-300 text-blue-100 typography-body px-12 py-2 h-11 flex items-center rounded-xl">
+                                Applied
+                            </span>
+                            ) 
+                            }
                         </div>}
                         />
                         {/* <h1 className="typography-h1"></h1> */}

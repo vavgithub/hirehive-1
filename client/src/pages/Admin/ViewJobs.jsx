@@ -36,7 +36,7 @@ const ViewJobs = () => {
 
     const [closeReason, setCloseReason] = useState('');
 
-    const [activeTab, setActiveTab] = useState('jobDetails');
+    const [activeTab, setActiveTab] = useState('candidate');
 
     const [modalOpen, setModalOpen] = useState(false);
     const [modalAction, setModalAction] = useState('');

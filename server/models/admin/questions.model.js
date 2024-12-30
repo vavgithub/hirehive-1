@@ -360,7 +360,7 @@ export const seedQuestions = async () => {
     },       
     {
       questionType: 'image',
-      text: 'Can you identify and explain the UX issue in this design? (The many elements in the UI are the same color as the CTA)',
+      text: 'Can you identify and explain the UX issue in this design?',
       imageUrl: 'https://res.cloudinary.com/djuwzdbwy/image/upload/v1734515506/71c11fe2-6967-4762-9c1c-4f2302866000.png',
       options: [
         { text: 'Overuse of color increases engagement', isCorrect: false },
@@ -372,7 +372,7 @@ export const seedQuestions = async () => {
       category: 'UI/UX'
     },{
       questionType: 'image',
-      text: 'What would you adjust to make it more readable? (The font is almost the same color as the background)',
+      text: 'What would you adjust to make it more readable? ',
       imageUrl: 'https://res.cloudinary.com/djuwzdbwy/image/upload/v1734515738/b2034c6e-131f-4332-aa79-a3d8f59ce19f.png',
       options: [
         { text: 'Increase background contrast', isCorrect: false },
@@ -421,7 +421,7 @@ export const seedQuestions = async () => {
     },
     {
       "questionType": "text",
-      "text": "What is the recommended method for handling states (like hover, active, and disabled) in a button component?",
+      "text": "What is the recommended method for handling states in a button component?",
       "options": [
         { "text": "Creating separate components for each state", "isCorrect": false },
         { "text": "Using variants within a single component", "isCorrect": true },

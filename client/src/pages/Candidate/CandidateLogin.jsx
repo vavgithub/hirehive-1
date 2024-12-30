@@ -13,6 +13,7 @@ import { loginCandidateAuth } from '../../redux/candidateAuthSlice';
 import useCandidateAuth from '../../hooks/useCandidateAuth';
 import Loader from '../../components/ui/Loader';
 import TogglePassword from '../../components/utility/TogglePassword';
+import Logo from '../../svg/Logo/lightLogo.svg'
 
 const statsOne = [
   { title: 'Jobs Posted', value: 100, icon: one },
@@ -52,16 +53,23 @@ const CandidateLogin = () => {
 
   useEffect(()=>{
     if(!isLoading && loading && isDone){
-        setLoading(isLoading)
+      setLoading(isLoading)
     }
-},[isLoading,loading , isDone])
+  },[isLoading,loading , isDone])
+  
+  const isFormValid = email && password;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const result = await dispatch(loginCandidateAuth({ email, password })).unwrap();
-      if (result) {
-        navigate('/candidate/all-jobs',{replace:true});
+      if(isFormValid){
+        const result = await dispatch(loginCandidateAuth({ email, password })).unwrap();
+        if (result) {
+          navigate('/candidate/all-jobs',{replace:true});
+        }
+      }else{
+        (!email.trim() && !password.trim()) ? setError("Please enter your email and password") : !email.trim() ? setError("Please enter your email") :  !password.trim() ? setError("Please enter your password") :  setError("")
+        
       }
     } catch (error) {
       // Error handling is now managed by Redux
@@ -69,7 +77,6 @@ const CandidateLogin = () => {
     }
   };
 
-  const isFormValid = email && password;
   
   if(loading){
     return (
@@ -83,7 +90,8 @@ const CandidateLogin = () => {
         {/* Left section with background image */}
         <div className="hidden lg:flex lg:w-2/3 bg-login-screen backdrop-blur-lg bg-cover p-12 flex-col justify-between relative">
           <div className='p-[45px]'>
-            <h1 className="typography-h1 font-normal">VAV - Hire Designers</h1>
+            <img className='h-12' src={Logo} />
+            <h1 className="typography-h1 font-normal mt-8">VAV - Hire Designers</h1>
             <p className="display-d2 max-w-xl mt-7 mb-4">Discover, hire, and explore top talent with HireHive</p>
             <p className='typography-body max-w-96'>Our advanced tools simplify job posting, application review, and career opportunities, ensuring you find the best candidates or land your next role effortlessly.</p>
             <p className="mb-8"></p>
@@ -113,16 +121,16 @@ const CandidateLogin = () => {
               </div> */}
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
-              <label htmlFor="email" className="block mb-2">Email</label>
+              <label htmlFor="email" className="block mb-2 font-bricolage">Email</label>
               <input type="email" id="email" placeholder="Enter your email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full p-2 rounded-lg bg-black text-white focus:outline-teal-400" />
             </div>
               <div>
-                <label htmlFor="password" className="block mb-2">Password</label>
+                <label htmlFor="password" className="block mb-2 font-bricolage">Password</label>
               <TogglePassword typeState={passwordType} setTypeState={setPasswordType}>
                 <input type={passwordType} id="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter your password" className={(password && "tracking-widest") +" w-full focus:outline-teal-400 p-2 rounded-lg bg-black text-white"} />
               </TogglePassword>
               </div>
-            {error && <p className="text-red-500 mb-4">{error}</p>}
+            {error && <p className="text-red-500 typography-small-p mb-4">{error}</p>}
             <div className='flex justify-end'>
                                   <span
                                       onClick={() => setShowForgotPassword(true)}
@@ -132,8 +140,8 @@ const CandidateLogin = () => {
                                   </span>
                               </div>
             {/* <a href="#" className="text-blue-500 mb-6 mt-2 block text-right">Forgot Password?</a> */}
-            <Button  type="submit" variant="primary" className="mt-6 w-full " disabled={!isFormValid}>
-              Login
+            <Button  type="submit" variant="primary" className="mt-6 w-full " disabled={ isLoadingAuth}>
+              {isLoadingAuth ? "Logging In..." : "Login"}
             </Button>
           </form>
           </>

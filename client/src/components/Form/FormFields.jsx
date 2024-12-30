@@ -7,6 +7,7 @@ export const InputField = React.forwardRef(({
   label, 
   required, 
   extraClass,
+  placeholder,
   error,
   errorMessage, 
   ...props 
@@ -26,7 +27,7 @@ export const InputField = React.forwardRef(({
   `.trim();
 
   return (
-    <div className='flex flex-col justify-start gap-4 relative'>
+    <div className='flex flex-col justify-start gap-2 relative'>
       <label htmlFor={id} className="typography-body">
         {label} {required && <span className="text-red-100">*</span>}
       </label>
@@ -35,7 +36,7 @@ export const InputField = React.forwardRef(({
           <input
             id={id}
             type={passwordType}
-            placeholder={`Enter ${label.toLowerCase()}`}
+            placeholder={placeholder || `Enter ${label.toLowerCase()}`}
             className={(props.value && "tracking-widest ") + " " + inputClasses}
             ref={ref}
             {...props}
@@ -45,7 +46,7 @@ export const InputField = React.forwardRef(({
         <input
           id={id}
           type={type}
-          placeholder={`Enter ${label}`}
+          placeholder={placeholder || `Enter ${label}`}
           className={inputClasses}
           ref={ref}
           {...props}
