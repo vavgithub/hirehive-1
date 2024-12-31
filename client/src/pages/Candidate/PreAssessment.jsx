@@ -130,11 +130,9 @@ const PreAssessment = () => {
                                 preIcon={AssesmentIcon()}
                                 content={
                                     <ul className="list-disc pl-12">
-                                        <li className='pb-2'>This assessment consists of 30 questions.</li>
-                                        <li className='pb-2'>20 Multiple Choice Questions (MCQs)</li>
-                                        <li className='pb-2'>10 Open-ended questions</li>
-                                        <li className='pb-2'>Each question is worth 1 mark.</li>
-                                        <li className='pb-2'>You must attempt all 30 questions.</li>
+                                        <li className='pb-2'>This assessment consists of 10 questions.</li>        
+                                        <li className='pb-2'>Each question is worth 10 mark.</li>
+                                        <li className='pb-2'>You must attempt all 10 questions.</li>
                                         <li>Successfully completing this assessment is required to move to the next round.</li>
                                     </ul>
                                 }
