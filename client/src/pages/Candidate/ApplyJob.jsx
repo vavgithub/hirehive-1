@@ -19,6 +19,7 @@ import { digitsRegex, lowerCaseRegex, specialCharRegex, upperCaseRegex } from '.
 import { PersonalDetailsSection, ProfessionalDetailsSection, ResumePortfolioSection } from '../../components/Form/ApplyJob';
 import { validationRules } from '../../utility/validationRules';
 import Header from '../../components/utility/Header';
+import LoaderModal from '../../components/ui/LoaderModal';
 
 const fetchJobDetails = async (id) => {
   const response = await axios.get(`/jobs/getJobById/${id}`);
@@ -306,6 +307,9 @@ const ApplyJob = () => {
 
     <div className='main-wrapper flex justify-center ' >
 
+      {
+        isSubmitting && <LoaderModal/>
+      }
 
       {currentStep === 1 && (
         <div className='container'>

@@ -14,6 +14,7 @@ import useCandidateAuth from '../../hooks/useCandidateAuth';
 import Loader from '../../components/ui/Loader';
 import TogglePassword from '../../components/utility/TogglePassword';
 import Logo from '../../svg/Logo/lightLogo.svg'
+import LoaderModal from '../../components/ui/LoaderModal';
 
 const statsOne = [
   { title: 'Jobs Posted', value: 100, icon: one },
@@ -87,6 +88,7 @@ const CandidateLogin = () => {
   }else{
     return (
       <div className="flex h-screen">
+        {isLoadingAuth && <LoaderModal/>}
         {/* Left section with background image */}
         <div className="hidden lg:flex lg:w-2/3 bg-login-screen backdrop-blur-lg bg-cover p-12 flex-col justify-between relative">
           <div className='p-[45px]'>

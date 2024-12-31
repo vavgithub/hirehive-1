@@ -669,7 +669,7 @@ const Assessment = () => {
 
   return (
     <>
-      {true && <UploadProgressOverlay uploadProgress={uploadProgress} />}
+      {isUploading && <UploadProgressOverlay uploadProgress={uploadProgress} />}
       <div className=" flex min-h-screen bg-background-90 ">
         <QuestionSidebar
           questions={questions}
