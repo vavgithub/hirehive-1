@@ -194,6 +194,10 @@ const PreAssessment = () => {
                                 </div>
                                 </div>
                             </div>
+                                <p className='typography-large-p mt-4 p-4 rounded-xl bg-background-80'>
+                                    <span className='bg-blue-200 h-2 w-2 rounded-full inline-block mr-4' ></span>
+                                For the best experience, use the latest version of <strong>Google Chrome</strong> for recording.
+                                </p>
                         </div>
                     </div>
 

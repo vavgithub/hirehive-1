@@ -64,7 +64,7 @@ const ViewJob = () => {
 
 
                     <img className='h-12' src={Logo} />
-                    {!isAuthenticated && <div className='bg-white rounded-xl h-11' ><Button variant="secondary" onClick={() => navigate("/login")}>Login</Button></div>}
+                    {!isAuthenticated && <Button variant="secondary" onClick={() => navigate("/login")}>Login</Button>}
                 </div>
                 <div className=" bg-background-30 rounded-xl p-6 w-full">
                     {/* Flex container for both desktop and mobile */}

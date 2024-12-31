@@ -284,7 +284,7 @@ const Modal = ({
   return (
     <div
       onClick={onClose}
-      className={((isMobile && actionType === ACTION_TYPES.ASSESSMENT ) ? "mx-6 " : "mx-4 ") + " fixed z-50 inset-0 flex justify-center items-center bg-[#00000093] transition-colors bg-black/20  md:mx-0"}
+      className={((isMobile && actionType === ACTION_TYPES.ASSESSMENT ) ? "mx-6 " : "mx-4 ") + " fixed z-50 inset-0 flex justify-center items-center bg-background-overlay transition-colors bg-black/20  md:mx-0"}
     >
       <div
         onClick={(e) => e.stopPropagation()}

@@ -33,6 +33,7 @@ const ApplyJob = () => {
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [passwordError, setPasswordError] = useState('');
+  const [cPasswordError, setCpasswordError] = useState('');
   const [otpError, setOtpError] = useState('');
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -230,6 +231,22 @@ const ApplyJob = () => {
     e.preventDefault();
     const password = getValues('password');
     const confirmPassword = getValues('confirmPassword');
+    console.log(password,confirmPassword);
+    
+    if(!password?.trim() && !confirmPassword?.trim()){
+      setPasswordError("Please enter your new password");
+      return;
+    }
+
+    if(!password?.trim()){
+      setPasswordError("Please enter your new password");
+      return;
+    }
+    
+    if(!confirmPassword?.trim()){
+      setPasswordError("Please confirm your password");
+      return;
+    }
 
     if (password !== confirmPassword) {
       setPasswordError("Passwords don't match");
@@ -576,7 +593,7 @@ const ApplyJob = () => {
                       type="password"
                       placeholder="New Password"
                       required={true}
-                      error={errors.password}
+                      error={passwordError}
                       {...field}
                     />
                   )}
@@ -592,21 +609,33 @@ const ApplyJob = () => {
                       placeholder="Confirm New Password"
                       type="password"
                       required={true}
-                      error={errors.confirmPassword}
+                      error={passwordError}
                       {...field}
                     />
                   )}
                 />
               </div>
               {passwordError && (
-                <span className="text-red-500">{passwordError}</span>
+                <span className="text-red-500 typography-small-p">{passwordError}</span>
               )}
+
+              {/* Validation criteria */}
+              <div>
+                <p className='typography-large-p pt-4 pb-2 text-font-gray'>Password must meet the following criteria:</p>
+                <ul className='list-disc list-inside'>
+                  <li className='typography-large-p pb-2 text-font-gray'>Password must be at least 8 characters long.</li>
+                  <li className='typography-large-p pb-2 text-font-gray'>Password must include at least one uppercase letter (A-Z).</li>
+                  <li className='typography-large-p pb-2 text-font-gray'>Password must include at least one lowercase letter (a-z).</li>
+                  <li className='typography-large-p pb-2 text-font-gray'>Password must include at least one number (0-9).</li>
+                  <li className='typography-large-p pb-2 text-font-gray'> Password must include at least one special character .</li>
+                </ul>
+              </div>
 
               <div className="flex mt-6 justify-center gap-4 w-full mr-16 mb-6 ">
                 <Button
                   type="submit"
                   variant="primary"
-                  disabled={!isValid || isSubmitting}
+                  disabled={ isSubmitting}
                   className="w-full "
                 >
                   {isSubmitting ? 'Submitting...' : 'Next'}

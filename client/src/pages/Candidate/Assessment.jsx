@@ -238,8 +238,8 @@ const WebcamView = ({ isMinimized, toggleMinimize, isRecording, webcamRef ,handl
 
 // Upload Progress Overlay Component
 const UploadProgressOverlay = ({ uploadProgress }) => (
-  <div className="fixed inset-0 bg-[#000000a9] flex items-center justify-center z-50">
-    <div className="bg-background-90 p-8 rounded-xl flex flex-col items-center space-y-4">
+  <div className="fixed inset-0 bg-background-overlay flex items-center justify-center z-50">
+    <div className=" p-8 rounded-xl flex flex-col items-center space-y-4">
       <Loader />
       <h3 className="typography-h3 text-font-gray">Uploading Assessment</h3>
       <div className="w-full max-w-md bg-background-70 rounded-full h-4 overflow-hidden">
@@ -669,7 +669,7 @@ const Assessment = () => {
 
   return (
     <>
-      {isUploading && <UploadProgressOverlay uploadProgress={uploadProgress} />}
+      {true && <UploadProgressOverlay uploadProgress={uploadProgress} />}
       <div className=" flex min-h-screen bg-background-90 ">
         <QuestionSidebar
           questions={questions}
