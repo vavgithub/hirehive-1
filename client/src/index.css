@@ -200,6 +200,14 @@ h2{
       max-width: 1024px;
     }
   }
+  .otp-input{
+    padding: 16px ;
+    text-align: center !important;
+    
+    @media (max-width:768px) {
+      padding: 0 !important;
+    }
+  }
 }
 
 .btn-blue {

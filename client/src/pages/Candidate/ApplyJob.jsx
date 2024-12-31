@@ -550,7 +550,7 @@ const ApplyJob = () => {
                     id={`otp-input-${index}`}
                     type="number"
                     maxLength="1"
-                    className="no-spinner"
+                    className="no-spinner otp-input"
                     value={data}
                     onChange={(e) => handleOtpChange(e.target, index)}
                   />
