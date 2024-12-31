@@ -5,7 +5,7 @@ export const formatDescription = (description) => {
         return '';
     }
 
-    const keywords = ["Description", "Responsibilities", "Requirements", "Job Overview:", "Key Responsibilities:", "Key Features:", "Required Skills and Qualifications:", "Preferred Skills:", "What We Offer:"];
+    const keywords = ["Why Join Us?"  , "Who You Are:", "What You’ll Be Up To:" , "🌟 About the Role",  "Description", "Responsibilities", "Requirements", "Job Overview:", "Key Responsibilities:", "Key Features:", "Required Skills and Qualifications:", "Preferred Skills:", "What We Offer:"];
 
     // Escape special characters for regex
     const escapedKeywords = keywords.map(keyword => keyword.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&'));
