@@ -30,8 +30,6 @@ const CandidateLayout = () => {
   // Update visibility states when component mounts and when candidateData updates
   useEffect(() => {
     if (isDone && candidateData) {
-      console.log('Candidate data updated:', candidateData);
-      console.log('Assessment status:', candidateData.hasGivenAssessment);
       setIsAssessmentModalVisible(!candidateData.hasGivenAssessment);
       setIsAssessmentBannerVisible(!candidateData.hasGivenAssessment);
     }
