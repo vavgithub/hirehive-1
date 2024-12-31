@@ -1,6 +1,6 @@
 // ProfilePictureUpload.jsx
 import React, { useRef } from 'react';
-import { Camera, Upload } from 'lucide-react';
+import { Button } from '../ui/Button';
 
 export const ProfilePictureUpload = ({ 
   previewUrl,
@@ -22,25 +22,19 @@ export const ProfilePictureUpload = ({
         className="bg-background-40 hover:bg-background-60 cursor-pointer rounded-xl p-4 mt-2 flex flex-col items-center justify-center"
         onClick={() => fileInputRef.current?.click()}
       >
-        {previewUrl ? (
-          <div className="relative w-24 h-24">
-            <img 
-              src={previewUrl} 
-              alt="Profile" 
-              className="w-full h-full object-cover rounded-full"
-            />
-            <div className="absolute bottom-0 right-0 p-1 bg-background-90 rounded-full">
-              <Camera size={16} />
+          <div className='flex justify-start w-full gap-4'>
+            <div className="relative w-24 h-24">
+              <img src={previewUrl || "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg"} alt="Profile" className="w-full h-full object-cover rounded-full" />
+              <div className="absolute bottom-0 right-0 p-1 bg-background-90 rounded-full">
+              </div>
+            </div>
+            <div className="flex flex-col items-start">
+              <span className="typography-small-p text-font-gray my-2">
+                Click to {previewUrl ? "edit" : "upload"}  profile picture
+              </span>
+              <Button variant="secondary" type="button" >{previewUrl ? "Edit" : "Upload"} </Button>
             </div>
           </div>
-        ) : (
-          <div className="flex flex-col items-center">
-            <Upload className="w-8 h-8 mb-2" />
-            <span className="typography-small-p text-font-gray">
-              Click to upload profile picture
-            </span>
-          </div>
-        )}
         <input
           ref={fileInputRef}
           type="file"

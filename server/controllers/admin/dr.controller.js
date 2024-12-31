@@ -186,6 +186,7 @@ export const getAssignedCandidates = async (req, res) => {
           lastName: { $first: '$lastName' },
           email: { $first: '$email' },
           phone: { $first: '$phone' },
+          profilePictureUrl: { $first: '$profilePictureUrl' },
           jobApplications: { $push: '$jobApplications' },
           portfolio: { $first: '$portfolio' }, // Adding portfolio here
         },

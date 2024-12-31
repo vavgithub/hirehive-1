@@ -95,7 +95,7 @@ const EditCandidateProfile = () => {
             <div className='flex gap-6 mt-5'>
               <div className='bg-background-30 w-96 h-96 rounded-xl flex flex-col items-center p-4'>
                 <div className='to-background-100 w-64 rounded-xl overflow-hidden'>
-                  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg" alt="" />
+                  <img src={data.profilePictureUrl || " https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg"} alt="" className='object-cover h-full' />
                 </div>
                 <h2 className='typography-h2 mt-4'>
                   {data.firstName} {data.lastName}

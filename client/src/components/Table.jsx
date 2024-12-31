@@ -341,7 +341,7 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
       valueGetter: (params, row) => `${row?.firstName || ''} ${row?.lastName || ''}`,
       renderCell: (params) => (
         <div className="name-cell flex items-center gap-2">
-          <Avatar src={"https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg"} sx={{ width: 32, height: 32 }}/>
+          <Avatar src={params?.row?.profilePictureUrl || "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg"} sx={{ width: 32, height: 32 }}/>
           <p>{params.value}</p>
           <div className="hover-icons flex items-center"
             onClick={(event) => event.stopPropagation()}

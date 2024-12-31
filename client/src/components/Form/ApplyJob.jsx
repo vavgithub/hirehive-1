@@ -118,7 +118,7 @@ export const FormField = ({
   };
   
   // And similarly for personal details:
-  export const PersonalDetailsSection = ({ control, onProfilePictureSelect, previewUrl }) => {
+  export const PersonalDetailsSection = ({ control, onProfilePictureSelect, profilePicturePreview }) => {
     return (
       <div>
         <h3 className="typography-h3 mb-4">Personal Details</h3>
@@ -126,7 +126,7 @@ export const FormField = ({
         <ProfilePictureUpload 
           control={control} 
           onFileSelect={onProfilePictureSelect}
-          previewUrl={previewUrl}  // Pass the preview URL to ProfilePictureUpload
+          previewUrl={profilePicturePreview}  // Pass the preview URL to ProfilePictureUpload
         />
           {/* This empty div is just for adding vacant space only */}
           <div>
