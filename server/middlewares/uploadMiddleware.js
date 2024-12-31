@@ -1,4 +1,3 @@
-// middleware/upload.middleware.js
 import multer from 'multer';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -28,6 +27,9 @@ const storage = multer.diskStorage({
     } else if (file.fieldname === 'resume') {
       const ext = path.extname(file.originalname);
       filename = `resume-${uniqueSuffix}${ext}`;
+    } else if (file.fieldname === 'profilePicture') {
+      const ext = path.extname(file.originalname);
+      filename = `profile-${uniqueSuffix}${ext}`;
     }
 
     console.log('Generated filename:', filename);
@@ -41,11 +43,15 @@ const fileFilter = (req, file, cb) => {
     mimetype: file.mimetype
   });
 
-  // Different validation for video and resume
+  // Different validation for video, resume, and profile picture
   if (file.fieldname === 'video' && file.mimetype === 'video/webm') {
     cb(null, true);
   } else if (file.fieldname === 'resume' && 
     ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document']
+    .includes(file.mimetype)) {
+    cb(null, true);
+  } else if (file.fieldname === 'profilePicture' && 
+    ['image/jpeg', 'image/png', 'image/jpg']
     .includes(file.mimetype)) {
     cb(null, true);
   } else {
@@ -69,6 +75,14 @@ export const uploadResume = multer({
     fileSize: 10 * 1024 * 1024 // 10MB limit for resumes
   }
 }).single('resume');
+
+export const uploadProfilePicture = multer({
+  storage: storage,
+  fileFilter: fileFilter,
+  limits: {
+    fileSize: 5 * 1024 * 1024 // 5MB limit for profile pictures
+  }
+}).single('profilePicture');
 
 export const handleUploadError = (err, req, res, next) => {
   console.error('Upload error:', err);

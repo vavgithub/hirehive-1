@@ -279,6 +279,7 @@ export const getCandidateById = async (req, res) => {
       lastName: candidate.lastName,
       email: candidate.email,
       phone: candidate.phone,
+      profilePictureUrl : candidate.profilePictureUrl,
       hasGivenAssessment: candidate.hasGivenAssessment,
       
       // Professional info (job-specific or fallback)

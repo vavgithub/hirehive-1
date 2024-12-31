@@ -71,6 +71,24 @@ export const uploadResumeController = async (req, res) => {
   }
 };
 
+export const uploadProfilePictureController = async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ message: "No file uploaded" });
+  }
+
+  try {
+    const cloudinaryUrl = await uploadToCloudinary(
+      req.file.path, // Pass the complete path instead of just filename
+      "candidate-profile-pictures"
+    );
+
+    res.status(200).json({ profilePictureUrl: cloudinaryUrl });
+  } catch (error) {
+    console.error("Error in profile picture upload:", error);
+    res.status(500).json({ message: error.message || "Error uploading profile picture" });
+  }
+};
+
 
 export const registerCandidate = async (req, res) => {
   try {
@@ -89,6 +107,7 @@ export const registerCandidate = async (req, res) => {
       skills,
       questionResponses,
       resumeUrl,
+      profilePictureUrl, // Add this new field
     } = req.body;
 
     const job = await jobs.findById(jobId);
@@ -150,6 +169,7 @@ export const registerCandidate = async (req, res) => {
         phone,
         ...professionalInfo,
         otp: hashedOtp,
+        profilePictureUrl, // Add the profile picture URL
         otpExpires: Date.now() + 10 * 60 * 1000,
         jobApplications: [
           {          
@@ -174,6 +194,10 @@ export const registerCandidate = async (req, res) => {
       //if email exist with different phone, new phone is updated
       if(existingEmail && existingEmail.phone !== phone ){
         existingEmail.phone = phone
+      }
+
+      if(profilePictureUrl) {
+        existingEmail.profilePictureUrl = profilePictureUrl; // Update profile picture if provided
       }
 
       // Check if the candidate has already applied for the same job

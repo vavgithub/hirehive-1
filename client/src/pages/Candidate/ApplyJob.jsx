@@ -1,4 +1,4 @@
-// ApplyJob.jsx
+// ApplyJob.jsx this is the page
 import React, { useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useDropzone } from 'react-dropzone';
@@ -38,6 +38,10 @@ const ApplyJob = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [resumeFile, setResumeFile] = useState(null);
   const [uploadProgress, setUploadProgress] = useState(0);
+
+  const [profilePictureFile, setProfilePictureFile] = useState(null);
+  const [profilePicturePreview, setProfilePicturePreview] = useState(null);
+
 
   const navigate = useNavigate();
   const { id: jobId } = useParams();
@@ -112,6 +116,40 @@ const ApplyJob = () => {
     queryFn: () => fetchJobDetails(jobId),
   });
 
+  const handleProfilePictureSelect = (file) => {
+    setProfilePictureFile(file);
+    if (file) {
+      const previewUrl = URL.createObjectURL(file);
+      setProfilePicturePreview(previewUrl);
+    }
+  };
+
+  // Add cleanup useEffect
+useEffect(() => {
+  return () => {
+    // Cleanup preview URL when component unmounts
+    if (profilePicturePreview) {
+      URL.revokeObjectURL(profilePicturePreview);
+    }
+  };
+}, [profilePicturePreview]);
+  const uploadProfilePicture = async (file) => {
+    if (!file) return null;
+    const formData = new FormData();
+    formData.append('profilePicture', file);
+
+    try {
+      const response = await axios.post('/auth/candidate/upload-profile-picture', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      return response.data.profilePictureUrl;
+    } catch (error) {
+      console.error('Error uploading profile picture:', error);
+      throw error;
+    }
+  };
+
+
   const uploadResume = async (file) => {
     if (!file) return null;
     const formData = new FormData();
@@ -151,6 +189,11 @@ const ApplyJob = () => {
           answer: data[key],
         }));
 
+        let profilePictureUrl;
+        if (profilePictureFile) {
+          profilePictureUrl = await uploadProfilePicture(profilePictureFile);
+        }  
+
       const resumeUrl = await uploadResume(resumeFile);
 
       if (isAuthenticated) {
@@ -164,7 +207,8 @@ const ApplyJob = () => {
           experience: data.experience,
           skills: data.skills,
           questionResponses,
-          resumeUrl
+          resumeUrl,
+          profilePictureUrl // Add this to the payload
         };
 
         await axios.post('/auth/candidate/apply-job', applicationData);
@@ -186,7 +230,8 @@ const ApplyJob = () => {
           experience: data.experience,
           skills: data.skills,
           questionResponses,
-          resumeUrl
+          resumeUrl,
+          profilePictureUrl // Add this to the payload
         };
 
         await axios.post('/auth/candidate/register', registrationData);
@@ -301,7 +346,11 @@ const ApplyJob = () => {
             {/* Personal Details */}
             {!isAuthenticated && (
               <div>
-                <PersonalDetailsSection control={control} />
+                 <PersonalDetailsSection 
+                  control={control}
+                  onProfilePictureSelect={handleProfilePictureSelect}
+                  profilePicturePreview={profilePicturePreview}
+                />
               </div>
             )}
 
