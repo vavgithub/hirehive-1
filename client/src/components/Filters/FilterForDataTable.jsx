@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import ExperienceFilter from './ExperienceFilter';
 import Filter from '../../svg/Buttons/Filter';
-import { fetchAvailableDesignReviewers } from '../../api/authApi';
+import { fetchAllDesignReviewers, fetchAvailableDesignReviewers } from '../../api/authApi';
+import { useQuery } from '@tanstack/react-query';
 
 const ArrowIcon = ({ isOpen }) => (
   <svg
@@ -71,17 +72,31 @@ const FilterForDataTable = ({ onApplyFilters ,readOnly}) => {
     };
   };
 
-  useEffect(() => {
-    const loadDesignReviewers = async () => {
-      try {
-        const managers = await fetchAvailableDesignReviewers();
-        setDesignReviewers(managers);
-      } catch (error) {
-        console.error('Error fetching hiring managers:', error);
-      }
-    };
-    loadDesignReviewers();
-  }, []);
+  // useEffect(() => {
+  //   const loadDesignReviewers = async () => {
+  //     try {
+  //       const managers = await fetchAvailableDesignReviewers();
+  //       setDesignReviewers(managers);
+  //     } catch (error) {
+  //       console.error('Error fetching hiring managers:', error);
+  //     }
+  //   };
+  //   loadDesignReviewers();
+  // }, []);
+
+  const { data: allDesignReviewers, isLoading : reviewersLoading } = useQuery({
+    queryKey: ['getAllDesignReviewers'],
+    queryFn: () => fetchAllDesignReviewers(),
+  });
+
+
+  useEffect(()=>{
+    if(allDesignReviewers && allDesignReviewers?.data?.length > 0){
+      setDesignReviewers(allDesignReviewers?.data)
+    }else{
+      setDesignReviewers([])
+    }
+  },[allDesignReviewers])
 
   const stageStatusMap = {
     Portfolio: ['Not Assigned', 'Under Review', 'Completed', 'Rejected'],
