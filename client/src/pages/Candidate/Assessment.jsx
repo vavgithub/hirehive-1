@@ -52,13 +52,15 @@ const ProgressBar = ({ answeredCount, total }) => {
 };
 
 // Question Sidebar Component
-const QuestionSidebar = ({ questions, currentQuestion, onQuestionSelect, answers , submitTest}) => {
+const QuestionSidebar = ({ questions, currentQuestion, onQuestionSelect, answers , submitTest, isUploading}) => {
   const [timeRemaining, setTimeRemaining] = useState(5 * 60);
+  const [timerRef,setTimerRef] = useState(null);
 
   useEffect(() => {
     const timer = setInterval(() => {
       setTimeRemaining((prevTime) => (prevTime > 0 ? prevTime - 1 : 0));
     }, 1000);
+    setTimerRef(timer);
     return () => clearInterval(timer);
   }, []);
 
@@ -68,6 +70,12 @@ const QuestionSidebar = ({ questions, currentQuestion, onQuestionSelect, answers
       submitTest(true)
     }
   },[timeRemaining])
+
+  useEffect(()=>{
+    if(isUploading){
+      clearInterval(timerRef)
+    }
+  },[isUploading])
 
   const [ min ,sec ] = useMemo(()=> formatTime(timeRemaining).split(":") ,[timeRemaining]) 
   
@@ -332,12 +340,49 @@ const Assessment = () => {
         audio: true
       });
 
+      //Checks if both audio and video is live
+      const videoTrack = stream.getVideoTracks()[0];
+      const audioTrack = stream.getAudioTracks()[0];
+
+      if (!videoTrack || videoTrack.readyState !== 'live') {
+        throw new Error('Video track is not live.');
+      }
+      if (!audioTrack || audioTrack.readyState !== 'live') {
+        throw new Error('Audio track is not live.');
+      }
+      
+
       webcamRef.current.video.srcObject = stream;
 
+      //Checks if media recorder is supported
+      if (!window.MediaRecorder) {
+        throw new Error('MediaRecorder is not supported in this browser.');
+      }
+      
+      // Check for codec support
+      let mimeType;
+      if (MediaRecorder.isTypeSupported('video/webm;codecs=vp8,opus')) {
+        mimeType = 'video/webm;codecs=vp8,opus'; // Preferred option
+      } else if (MediaRecorder.isTypeSupported('video/mp4;codecs=avc1.42E01E,mp4a.40.2')) {
+        mimeType = 'video/mp4;codecs=avc1.42E01E,mp4a.40.2'; // Fallback option
+      } else {
+        throw new Error('No supported MIME type found for recording.');
+      }
+
       const mediaRecorder = new MediaRecorder(stream, {
-        mimeType: 'video/webm;codecs=vp8,opus'
+        mimeType
       });
+
+      // const mediaRecorder = new MediaRecorder(stream, {
+      //   mimeType: 'video/webm;codecs=vp8,opus'
+      // });
+
       mediaRecorderRef.current = mediaRecorder;
+
+      //checks media recorder is already in use
+      if (mediaRecorder.state !== 'inactive') {
+        throw new Error('Another recording is already in progress.');
+      }      
 
       mediaRecorder.ondataavailable = (event) => {
         if (event.data && event.data.size > 0) {
@@ -346,13 +391,18 @@ const Assessment = () => {
         }
       };
 
+      mediaRecorder.onerror = (event) => {
+        console.error('MediaRecorder encountered an error:', event.error.name, event.error.message);
+        throw new Error('Recording failed due to your system limitations.');
+      };
+
       mediaRecorder.onstop = async () => {
         // console.log('Recording stopped, creating blob...');
         const blob = new Blob(chunksRef.current, {
           type: 'video/webm'
         });
         // console.log('Blob created:', blob.size);
-        setRecordedBlob(blob);
+        // setRecordedBlob(blob);
         chunksRef.current = [];
       };
 
@@ -362,7 +412,7 @@ const Assessment = () => {
       // console.log('Recording started');
     } catch (error) {
       console.error('Error starting recording:', error);
-      showErrorToast('Error', 'Failed to start recording. Please ensure camera access is granted.');
+      showErrorToast('Error', error.message || 'Failed to start recording. Please ensure camera access is granted.');
       setTimeout(()=>window.location.reload(),1000)
     }
   };
@@ -377,7 +427,7 @@ const Assessment = () => {
             type: 'video/webm'
           });
           console.log('Blob created:', blob.size);
-          setRecordedBlob(blob);
+          // setRecordedBlob(blob);
           chunksRef.current = [];
           resolve(blob);
         };
@@ -760,6 +810,7 @@ const Assessment = () => {
           onQuestionSelect={setCurrentQuestion}
           answers={answers}
           submitTest={handleFinish}
+          isUploading={isUploading}
         />
         <div className="flex-grow flex flex-col container mx-auto ">
           <div className="bg-background-90 pl-[212px] p-4 flex gap-8 justify-between items-center">
