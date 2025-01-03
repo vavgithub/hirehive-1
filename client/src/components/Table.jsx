@@ -32,6 +32,7 @@ import WebsiteMainIcon from '../svg/WebsiteMainIcon';
 import FileMainIcon from '../svg/FileMainIcon';
 import ResumeIcon from '../svg/ResumeIcon';
 import CustomToolTip from './utility/CustomToolTip';
+import  { AssignmentIconStroke } from '../svg/AssignmentIcon';
 
 
 const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
@@ -337,12 +338,25 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
       field: 'fullName',
       headerName: 'Full Name',
       width: 250,
-      sortable: false,
-      valueGetter: (params, row) => `${row?.firstName || ''} ${row?.lastName || ''}`,
+      sortable: true,
+      disableColumnMenu: true,
+      valueGetter: (params, row) => {
+        const name = `${row?.firstName || ''} ${row?.lastName || ''}`
+        const hasGivenAssessment = row.hasGivenAssessment;
+        return {
+          name,
+          hasGivenAssessment
+        }
+      },
       renderCell: (params) => (
         <div className="name-cell flex items-center gap-2">
           <Avatar src={"https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg"} sx={{ width: 32, height: 32 }}/>
-          <p>{params.value}</p>
+          <p className='flex items-center gap-2'>{params.value.name}
+            {params.value.hasGivenAssessment && 
+            <span>
+                <AssignmentIconStroke  />
+            </span>}
+          </p>
           <div className="hover-icons flex items-center"
             onClick={(event) => event.stopPropagation()}
           >
@@ -372,9 +386,55 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
       ),
     },
     {
+      field: 'currentStage',
+      headerName: 'Stage',
+      width: 200,
+      align:'left',
+      headerAlign : 'left',
+      disableColumnMenu: true,
+      renderCell: (params) => (
+        <div className='h-full flex items-center justify-start'>
+          <StageBadge stage={params.value} />
+        </div>
+      )
+    },
+  ];
+
+  const expAndCtcColumns = [
+    ...(role === 'Hiring Manager' ? [
+      {
+        field: 'currentCTC',
+        headerName: 'Current CTC',
+        width: 130,
+        align :'center',
+        headerAlign : 'center',
+        disableColumnMenu: true,
+      }, 
+      {
+        field: 'expectedCTC',
+        headerName: 'Expected CTC',
+        width: 130,
+        align :'center',
+        headerAlign : 'center',
+        disableColumnMenu: true,
+      },
+    ] : []), 
+    {
+      field: 'experience',
+      headerName: "Experience",
+      width: 130,
+      align:'center',
+      headerAlign : 'center',
+      disableColumnMenu: true,
+    },
+  ]
+
+  const infoColumns = [
+    {
       field: 'email',
       headerName: 'Email',
       width: 220,
+      disableColumnMenu: true,
       renderCell : (params) =>(
         <CustomToolTip title={params.value} arrowed size={2}>
           <p className='w-full font-outfit text-white overflow-hidden text-start whitespace-nowrap text-ellipsis'>{params.value}</p>
@@ -386,36 +446,9 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
       field: 'phone',
       headerName: 'Phone',
       width: 130,
+      disableColumnMenu: true,
     },
-    ...(role === 'Hiring Manager' ? [
-      {
-        field: 'expectedCTC',
-        headerName: 'Expected CTC',
-        width: 130,
-        align :'center',
-        headerAlign : 'center'
-      }, 
-    ] : []), 
-    {
-      field: 'experience',
-      headerName: "Experience",
-      width: 130,
-      align:'center',
-      headerAlign : 'center'
-    },
-    {
-      field: 'currentStage',
-      headerName: 'Stage',
-      width: 200,
-      align:'center',
-      headerAlign : 'center',
-      renderCell: (params) => (
-        <div className='h-full flex items-center justify-center'>
-          <StageBadge stage={params.value} />
-        </div>
-      )
-    },
-  ];
+  ]
 
   const readOnlyColumns = [
     ...commonColumns,
@@ -424,23 +457,27 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
       headerName: 'Status',
       width: 200,
       align:'center',
-      headerAlign : 'center',
+      headerAlign : 'left',
+      disableColumnMenu: true,
       renderCell: (params) => (
-        <div className='h-full flex items-center justify-center'>
+        <div className='h-full flex items-center justify-start'>
           <StatusBadge status={params.row.status} />
         </div>
       ),
     },
+    ...expAndCtcColumns,
     {
       field: 'jobTitle',
       headerName: 'Applied For',
       width: 200,
       align:'center',
       headerAlign : 'center',
+      disableColumnMenu: true,
       renderCell : (params) =>(
         <p className='w-full overflow-hidden whitespace-nowrap text-ellipsis'>{params.value}</p>
       )
-    },  
+    },
+    ...infoColumns  
   ];
 
   const defaultColumns = [
@@ -449,9 +486,14 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
       field: 'status',
       headerName: 'Status',
       width: 180,
+      disableColumnMenu: true,
+      valueGetter: (value,row) =>{
+        const currentStage = row.currentStage;
+        const status = row.stageStatuses[currentStage]?.status || 'Unknown';
+        return status;
+      }, 
       renderCell: (params) => {
-        const currentStage = params.row.currentStage;
-        const status = params.row.stageStatuses[currentStage]?.status || 'Unknown';
+        const status = params.value
         return (
           <div className='h-full flex items-center'>
             <StatusBadge status={status} />
@@ -460,9 +502,33 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
       },
     },
     {
+      field: 'score',
+      headerName: 'Score',
+      headerAlign : "center",
+      width: 120,
+      disableColumnMenu: true,
+      valueGetter: (value,row) =>{
+        const currentStage = row.currentStage;
+        const score = row.stageStatuses[currentStage]?.score || 0;
+        return score;
+      }, 
+      renderCell: (params) => {
+        const score = params.value
+        return (
+          <p className='text-center'>
+            {score}
+          </p>
+        );
+      },
+    },
+    {
       field: 'assignee',
       headerName: 'Assignee',
       width: 100,
+      disableColumnMenu: true,
+      valueGetter: (value,row) => {
+        return row.stageStatuses[row.currentStage]?.assignedTo
+      },
       renderCell: (params) => (
         <div className='flex items-center justify-center h-full'
           onClick={(event) => event.stopPropagation()}
@@ -484,6 +550,7 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
       field: 'actions',
       headerName: 'Actions',
       width: 150,
+      disableColumnMenu: true,
       renderCell: (params) => (
         <div className='flex h-full items-center gap-2'
           onClick={(event) => event.stopPropagation()}
@@ -505,7 +572,9 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
           </button>
         </div>
       )
-    }
+    },
+    ...expAndCtcColumns,
+    ...infoColumns  
   ];
 
   const columns = readOnly ? readOnlyColumns : defaultColumns;
@@ -681,7 +750,7 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
             onChange={handleSearch}
           />
           <FilterForDataTable onApplyFilters={handleApplyFilters} readOnly={readOnly} />
-          <div className='flex items-center cursor-pointer gap-2 text-font-gray  typography-body' onClick={() => handleExport()}>
+          <div className='flex items-center cursor-pointer gap-2 text-font-gray hover:bg-background-60 hover:text-accent-100 rounded-xl typography-body h-12 p-3' onClick={() => handleExport()}>
             <Export />
             Export
           </div>
@@ -723,8 +792,32 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
         getRowId={(row) => `${row._id}_${row.jobId}`} // Create a unique ID for each row
         initialState={{
           pagination: {
-            paginationModel: { page: 0, pageSize: 5 },
+            paginationModel: { page: 0, pageSize: 10 },
           },
+        }}
+        slotProps={{
+          pagination : {
+            SelectProps: {
+              sx: {
+                fontFamily: 'Outfit, sans-serif !important'
+              },
+              MenuProps: {
+                sx :{
+                  "& .MuiMenuItem-root": {
+                    fontFamily: "Outfit, sans-serif !important"
+                  }
+                },
+                PaperProps: {
+                  sx: {
+                    backgroundColor: '#0C0D0D', // Set background to yellow for the pagination select dropdown
+                    color : "white",
+                    fontFamily : 'Outfit, sans-serif !important',
+                  },
+                },
+                
+              },
+            },
+          }
         }}
         getRowClassName={(params) =>
           params.indexRelativeToCurrentPage % 2 === 0 ? 'first-row' : 'second-row'
@@ -732,23 +825,33 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
         localeText={{ noRowsLabel: <p style={{fontFamily:"Outfit"}}>No Candidates</p> }}
         sx={{
           '& .MuiDataGrid-root': {
-            border: '0px',
-            fontFamily: 'Outfit, sans-serif',
-            border: "none",
-            borderBottom: "none",
+            borderRadius: '12px !important',
+            fontFamily: 'Outfit, sans-serif !important',
             backgroundColor: 'black !important', // Ensure each header cell is transparent
+          },
+          '& .MuiDataGrid-topContainer': {
+            borderRadius : "12px !important"
+          },
+          '& .css-yrdy0g-MuiDataGrid-columnHeaderRow' :{
+            borderRadius: '12px !important',
+          },
+          '& .MuiTablePagination-root .MuiSelect-select.MuiTablePagination-select': {
+            fontFamily: 'Outfit, sans-serif !important'
+          },
+          '& .MuiTablePagination-menuItem': {
+            fontFamily: 'Outfit, sans-serif !important ', // Font family for menu items
           },
           '& .MuiDataGrid-cell': {
             color: 'white',
             borderBottom: 'none',
             borderTop: 'none',
-            fontFamily: 'Outfit, sans-serif',
+            fontFamily: 'Outfit, sans-serif !important',
           },
           '& .MuiDataGrid-columnHeaders': {
             borderTop: 'none',
             borderBottom: 'none',
             color: 'gray',
-            fontFamily: 'Outfit, sans-serif',
+            fontFamily: 'Outfit, sans-serif !important',
             backgroundColor: 'black !important', // Force transparent background
           },
           '& .MuiDataGrid-columnHeader': {
@@ -767,14 +870,15 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
           '& .MuiDataGrid-footerContainer': {
             borderTop: 'none',
             color: 'white',
-            fontFamily: 'Outfit, sans-serif',
+            fontFamily: 'Outfit, sans-serif !important',
           },
           '& .MuiTablePagination-root': {
             color: 'white',
-            fontFamily: 'Outfit, sans-serif',
+            fontFamily: 'Outfit, sans-serif !important',
           },
           '& .MuiTablePagination-toolbar': {
             color: 'white',
+            fontFamily: 'Outfit, sans-serif !important',
           },
           '& .MuiDataGrid-filler': {
             backgroundColor: 'black',
@@ -784,6 +888,7 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
           },
           '& .MuiTablePagination-selectIcon': {
             color: 'white',
+            fontFamily: 'Outfit, sans-serif !important',
           },
           '& .MuiTablePagination-selectLabel ' :{
             fontFamily :"Outfit",
@@ -814,10 +919,11 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
               backgroundColor: '#232425',
             },
           },
-          border: "none",
+          borderRadius: "12px",
           backgroundColor: 'black',
           '& .MuiDataGrid-virtualScroller': {
             backgroundColor: 'transparent ' , // Ensure the background behind rows is also transparent
+            borderRadius: '12px !important',
           },
           '& .MuiDataGrid-scrollbarFiller' :{
             minWidth: "0px !important"
@@ -832,9 +938,9 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
           '& .MuiDataGrid-overlay':{
             color: 'white',
             backgroundColor : 'rgba(12, 13, 13, 1)'
-          }
+          },
         }}
-        pageSizeOptions={[5, 10]}
+        pageSizeOptions={[10,20,30,40,50]}
         checkboxSelection
         onRowClick={(params) => handleRowClick(params)}
       />

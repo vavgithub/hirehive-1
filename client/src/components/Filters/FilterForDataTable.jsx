@@ -13,7 +13,7 @@ const ArrowIcon = ({ isOpen }) => (
     fill="none"
     style={{ transform: isOpen ? 'rotate(90deg)' : 'rotate(0deg)', transition: 'transform 0.3s ease' }}
   >
-    <path d="M8 20L16 12L8 4" stroke="#808389" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M8 20L16 12L8 4" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
 
@@ -44,7 +44,7 @@ const FilterForDataTable = ({ onApplyFilters ,readOnly}) => {
     if (!values || values.length === 0) {
       return {
         value: 'All',
-        className: 'text-white typography-body' // lighter gray for 'All'
+        className: 'text-white typography-body group-hover:text-accent-100' // lighter gray for 'All'
       };
     }
 
@@ -58,14 +58,14 @@ const FilterForDataTable = ({ onApplyFilters ,readOnly}) => {
     if (values.length === 1) {
       return {
         value: values[0],
-        className: 'text-white typography-body' // white for single selected value
+        className: ' typography-body text-accent-100' // white for single selected value
       };
     }
 
     return {
       value: (
         <>
-          <span className="text-white">{values[0]} </span> + {values.length - 1} more
+          <span className="text-accent-100">{values[0]} </span> + {values.length - 1} more
         </>
       ),
       className: 'text-font-gray typography-body whitespace-nowrap text-ellipsis overflow-hidden' // white for multiple selected values
@@ -200,37 +200,40 @@ const FilterForDataTable = ({ onApplyFilters ,readOnly}) => {
 
   return (
     <div className="relative" ref={menuRef}>
-      <div className="cursor-pointer gap-2 text-font-gray flex typography-body" onClick={(e) => toggleMenu(e)}>
+      <div className={"cursor-pointer gap-2  flex typography-body hover:bg-background-60 hover:text-accent-100 rounded-xl h-12 p-3 " + (Object.values(selectedFilters).map((filter)=> Array.isArray(filter) ? filter : !filter ? [] : [filter]).flat()?.length > 0 ? "text-accent-100 bg-accent-300 " : "text-font-gray")} onClick={(e) => toggleMenu(e)}>
         <Filter /> Filter
       </div>
       {isOpen && (
-        <div className="absolute z-10 mt-2 w-[290px] max-w-[19rem] bg-background-40 px-6 py-4 rounded-xl flex flex-col gap-4 shadow-[2px_4px_30px_rgba(0,0,0,0.3)]">
+        <div className="absolute z-10 mt-2 p-2 w-[290px] max-w-[19rem] bg-background-40 rounded-xl flex flex-col gap-2 shadow-[5px_5px_50px_rgba(0,0,0,0.9)]">
           {Object.keys(categories).map((category) => (
             <div key={category} className="w-full">
-              <div className="flex justify-between items-center cursor-pointer" onClick={() => handleDropdown(category)}>
+              <div className={"flex justify-between font-outfit group h-10  hover:bg-background-60 p-4 rounded-xl items-center cursor-pointer " + (selectedFilters[category]?.length > 0 ? "text-accent-100 bg-accent-300 " : "text-font-gray")} onClick={() => handleDropdown(category)}>
                 <div className="flex gap-2 w-[90%] ">
-                  <span className="capitalize text-gray-400">
+                  <span className="capitalize font-thin">
                     {category}:
                   </span>
                   <span className={formatSelectedValues(category, selectedFilters[category]).className}>
                     {formatSelectedValues(category,category === 'assignee' ? selectedFilters[category].map(each=>each.name)  : selectedFilters[category]).value}
                   </span>
                 </div>
+                <div className='group-hover:text-accent-100'>
                 <ArrowIcon isOpen={showDropdown[category]} />
+                </div>
               </div>
               {showDropdown[category] && (
                 category === 'experience' ? (
                   <ExperienceFilter onApply={handleExperienceApply} />
                 ) : (
-                  <div className="px-8 py-4 rounded-xl absolute typography-body left-[18.1rem] bg-background-40 w-max flex flex-col gap-4 shadow-[2px_4px_30px_rgba(0,0,0,0.3)]">
+                  <div className="p-2 rounded-xl absolute typography-body left-[18.5rem] min-w-[250px] bg-background-40 w-max flex gap-2 flex-col " style={{boxShadow:"5px 5px 50px rgba(0,0,0,0.9)"}}>
                     {categories[category].map((item) => (
-                      <label key={category === 'assignee' ? item._id :item} className="flex items-center text-white">
+                      <label key={category === 'assignee' ? item._id :item} className={"group relative flex items-center p-4  h-10 hover:bg-background-60 hover:text-accent-100 rounded-xl " + (category === 'assignee' ? selectedFilters[category].find(each=>each.name === item.name) ?? "" :selectedFilters[category].includes(item) ? "bg-accent-300 text-accent-100 " : "text-white")}>
                         <input
                           type="checkbox"
                           checked={category === 'assignee' ? selectedFilters[category].find(each=>each.name === item.name) ?? "" :selectedFilters[category].includes(item)}
                           onChange={() => category === 'stage' ? handleStageSelect(item) : handleSelect(category, item)}
-                          className="mr-2"
+                          className="appearance-none border border-background-80 mr-2 h-4 w-4 text-black-100 rounded-md bg-background-80 hover:border-grey-100 checked:bg-accent-100 checked:border-accent-100 peer"
                         />
+                        <span className="absolute hidden left-4 h-4 w-4 text-black-100 items-center justify-center text-black peer-checked:flex ">✔</span>
                         {category === 'assignee' ? item.name :item}
                       </label>
                     ))}
