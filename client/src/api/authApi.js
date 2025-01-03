@@ -63,6 +63,11 @@ export const fetchAvailableDesignReviewers = async () => {
     }
   };
 
+export const fetchAllDesignReviewers = async () => {
+      const response = await axios.get(`${API_URL}/design-reviewers`, { withCredentials: true });
+      return response.data;
+}
+
 export const candidateLogout = async ()=>{
     const response = await axios.post("/auth/candidate/logout",{ withCredentials: true })
     return response.data;

@@ -71,6 +71,7 @@ export const getAllCandidatesForJob = async (req, res) => {
         lastName: candidate.lastName,
         email: candidate.email,
         phone: candidate.phone,
+        hasGivenAssessment:candidate.hasGivenAssessment,
 
         // Professional info (specific to this job application)
         website: professionalInfo.website,
@@ -444,6 +445,7 @@ export const getCandidateById = async (req, res) => {
             lastName: 1,
             email: 1,
             phone: 1,
+            hasGivenAssessment:1,
             
             // Professional info (from job application or fallback to global)
             experience: {
@@ -509,7 +511,8 @@ export const getCandidateById = async (req, res) => {
             lastName: 1,
             email: 1,
             phone: 1,
-            
+            hasGivenAssessment:1,
+
             // Professional info
             experience: 1,
             expectedCTC: 1,

@@ -12,32 +12,49 @@ import {
   Box,
   Autocomplete,
 } from '@mui/material';
-import { fetchAvailableDesignReviewers } from '../../api/authApi';
+import { fetchAllDesignReviewers, fetchAvailableDesignReviewers } from '../../api/authApi';
 // import SearchIcon from '@mui/icons-material/Search';
 import SearchIcon from '../../svg/SearchIcon';
+import { useQuery } from '@tanstack/react-query';
+
+
 const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled = false , error}) => {
   const [reviewers, setReviewers] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  // const [isLoading, setIsLoading] = useState(true);
   const [selectedReviewer, setSelectedReviewer] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
 
   // Fetch reviewers on component mount
-  useEffect(() => {
-    const loadReviewers = async () => {
-      try {
-        setIsLoading(true);
-        const data = await fetchAvailableDesignReviewers();
-        setReviewers(data);
-      } catch (error) {
-        console.error('Error fetching design reviewers:', error);
-        setReviewers([]);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    loadReviewers();
-  }, []);
+  // useEffect(() => {
+  //   const loadReviewers = async () => {
+  //     try {
+  //       setIsLoading(true);
+  //       const data = await fetchAvailableDesignReviewers();
+  //       setReviewers(data);
+  //     } catch (error) {
+  //       console.error('Error fetching design reviewers:', error);
+  //       setReviewers([]);
+  //     } finally {
+  //       setIsLoading(false);
+  //     }
+  //   };
+  //   loadReviewers();
+  // }, []);
+
+
+  const { data: designReviewers, isLoading } = useQuery({
+    queryKey: ['getAllDesignReviewers'],
+    queryFn: () => fetchAllDesignReviewers(),
+  });
+
+  useEffect(()=>{
+    if(designReviewers && designReviewers?.data?.length > 0){
+      setReviewers(designReviewers?.data)
+    }else{
+      setReviewers([])
+    }
+  },[designReviewers])
 
   // Update selected reviewer when value or reviewers change
   useEffect(() => {
@@ -70,9 +87,9 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
     setAnchorEl(null);
   };
   // Filtered reviewers based on search term
-  const filteredReviewers = reviewers.filter(reviewer =>
+  const filteredReviewers = reviewers?.length  > 0 ? reviewers.filter(reviewer =>
     reviewer.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  ) : [];
 
   // Render for 'icon' mode
   if (mode === 'icon') {
