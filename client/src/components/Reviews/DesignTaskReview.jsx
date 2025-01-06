@@ -9,11 +9,11 @@ function DesignTaskReview({ candidate, onSubmit }) {
   
     const handleSubmit = () => {
       if(rating < 1){
-        showErrorToast("Error","Please rate the candidate");
+        showErrorToast("Oopss","Please rate the candidate");
         return
       }
       onSubmit(candidate._id, {
-        jobId: candidate.currentApplication.jobId,
+        jobId: candidate.currentApplication?.jobId ? candidate.currentApplication.jobId  : candidate.jobApplication.jobId ,
         stage: 'Design Task',
         ratings: rating,
         feedback,

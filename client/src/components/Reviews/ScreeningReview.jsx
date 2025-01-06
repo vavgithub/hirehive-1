@@ -14,12 +14,12 @@ function ScreeningReview({ candidate, onSubmit }){
     };
     const handleSubmit = () => {
         if(ratings.Attitude < 1 || ratings.Communication < 1 || ratings.UX < 1 || ratings.UI < 1 || ratings.Tech < 1){
-            showErrorToast("Error","Please rate the candidate")
+            showErrorToast("Oopss","Please rate the candidate")
             return
         }
       onSubmit(candidate._id, {
-        jobId: candidate.currentApplication.jobId,
-        stage: candidate.currentApplication.currentStage,
+        jobId: candidate.currentApplication?.jobId ? candidate.currentApplication.jobId  : candidate.jobApplication.jobId ,
+        stage: candidate.currentApplication?.currentStage ? candidate.currentApplication.currentStage : candidate.jobApplication.currentStage,
         ratings,
         feedback,
       });
