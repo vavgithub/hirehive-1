@@ -11,12 +11,13 @@ function PortfolioReview({ candidate, onSubmit }) {
   
     const handleSubmit = () => {
       if(rating < 1){
-        showErrorToast("Error","Please rate the candidate")
+        showErrorToast("Oopss","Please rate the candidate")
         return
       }
+      console.log(candidate)
       onSubmit(candidate._id, {
-        jobId: candidate.currentApplication.jobId,
-        stage: candidate.currentApplication.currentStage,
+        jobId: candidate.currentApplication?.jobId ? candidate.currentApplication.jobId  : candidate.jobApplication.jobId ,
+        stage: candidate.currentApplication?.currentStage ? candidate.currentApplication.currentStage : candidate.jobApplication.currentStage,
         ratings: rating,
         feedback,
       });
