@@ -123,7 +123,6 @@ export const getRejectionEmailContent = (candidateName,jobTitle) =>{
                     We sincerely value your time and effort into this process, and we will make sure to keep your application on file. More roles will open in the future and we will re-visit this application. We are honoured you showed interest in us - and we hope to work together in the future. 
                 </p>            
                 <p style="margin-top: 12px; ">
-                    7. Stay positive and persistent</p>
                     <p style="margin-top: 16px; margin-bottom: 16px;">
                         From all of us at VAV, we thank you for your time and effort.
                     </p>
