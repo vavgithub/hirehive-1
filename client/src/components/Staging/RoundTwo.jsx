@@ -21,7 +21,6 @@ import ClockIcon from '../../svg/Staging/ClockIcon';
 import { formatTime } from '../../utility/formatTime';
 import CalenderIcon from '../../svg/Staging/CalenderIcon';
 import { Button } from '../ui/Button';
-import { RoundReview } from '../../pages/DesignReviewer/Reviews';
 import Scorer from '../ui/Scorer';
 import { useAuthContext } from '../../context/AuthProvider';
 import GreenTickIcon from '../../svg/Staging/GreenTickIcon';

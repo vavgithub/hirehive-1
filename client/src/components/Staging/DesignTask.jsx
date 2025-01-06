@@ -32,6 +32,7 @@ import { ensureAbsoluteUrl } from '../../utility/ensureAbsoluteUrl';
 import GreenTickIcon from '../../svg/Staging/GreenTickIcon';
 import RightTick from '../../svg/Staging/RightTick';
 import ClosedBadge from '../../svg/ClosedBadge';
+import DesignTaskReview from '../Reviews/DesignTaskReview';
 
 const submitReview = async ({ candidateId, reviewData }) => {
     const response = await axios.post('dr/submit-score-review', {
@@ -41,36 +42,6 @@ const submitReview = async ({ candidateId, reviewData }) => {
     return response.data;
 };
 
-
-const DesignTaskReview = ({ candidate, onSubmit }) => {
-    const [rating, setRating] = useState(0);
-    const [feedback, setFeedback] = useState('');
-
-    const handleSubmit = () => {
-        onSubmit(candidate._id, {
-            jobId: candidate.jobApplication.jobId,
-            stage: 'Design Task',
-            ratings: rating,
-            feedback,
-        });
-    };
-
-    return (
-        <div className='bg-background-100 flex gap-4 justify-between items-center p-4'>
-            <span className='flex-shrink-0'>Design Task Ratings</span>
-            <Scorer value={rating} onChange={setRating} />
-
-            <input
-                type="text"
-                className='w-full bg-background-80 text-white p-2 rounded'
-                placeholder='Enter Your Feedback'
-                value={feedback}
-                onChange={(e) => setFeedback(e.target.value)}
-            />
-            <Button variant="icon" onClick={handleSubmit}>Submit</Button>
-        </div>
-    );
-};
 
 const DesignTask = ({ candidateId, jobId ,isClosed}) => {
 

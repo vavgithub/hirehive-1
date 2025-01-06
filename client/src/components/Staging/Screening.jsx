@@ -32,50 +32,8 @@ import ClosedBadge from '../../svg/ClosedBadge';
 import useScheduler from '../../hooks/useScheduler';
 import NoShowAction from './NoShow';
 import Loader from '../ui/Loader';
+import ScreeningReview from '../Reviews/ScreeningReview';
 
-
-const ScreeningReview = ({ candidate, onSubmit }) => {
-    const [ratings, setRatings] = useState({
-        Attitude: 0, Communication: 0, UX: 0, UI: 0, Tech: 0
-    });
-    const [feedback, setFeedback] = useState('');
-
-    const handleRatingChange = (category, value) => {
-        setRatings(prev => ({ ...prev, [category]: value }));
-    };
-    const handleSubmit = () => {
-        onSubmit(candidate._id, {
-            jobId: candidate.jobApplication.jobId,
-            stage: candidate.jobApplication.currentStage,
-            ratings,
-            feedback,
-        });
-    };
-
-    return (
-        <div className='bg-background-90 grid grid-cols-2 gap-4 p-4'>
-            {Object.entries(ratings).map(([category, value]) => (
-                <div key={category} className='flex gap-4 items-center'>
-                    <span className='w-32'>{category}</span>
-                    <Scorer value={ratings[category]} onChange={(v) => handleRatingChange(category, v)} />
-
-                </div>
-            ))}
-            <div className='flex gap-4'>
-
-                <input
-                    type="text"
-                    className='w-full bg-background-80 text-white p-2 rounded'
-                    placeholder='Enter Your Feedback'
-                    value={feedback}
-                    onChange={(e) => setFeedback(e.target.value)}
-                />
-                <Button variant="icon" onClick={handleSubmit}>Submit</Button>
-            </div>
-
-        </div>
-    );
-};
 
 export const ScheduleForm = ({ candidateId, jobId, onSubmit, isRescheduling, initialData, onCancel }) => {
     const [date, setDate] = useState(isRescheduling ? null : (initialData ? new Date(initialData.scheduledDate) : null));

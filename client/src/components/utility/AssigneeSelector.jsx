@@ -113,20 +113,18 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
           open={Boolean(anchorEl)}
           onClose={handleClose}
           PaperProps={{
-            style: { maxHeight: 300, width: '250px' },
+            style: { maxHeight: 300, width: '250px' ,boxShadow: '3px 5px 50px rgba(25, 25, 25, 0.75)', borderRadius : "12px",padding : "8px",backgroundColor: 'rgba(12, 13, 13, 1)'},
           }}
           sx={{
             "& .MuiList-root": {
               backgroundColor: 'rgba(12, 13, 13, 1)',
               color: "white",
-              font: "Outfit"
-            }
-          }}
-          MenuListProps={{
-            style: { paddingTop: 0, paddingBottom: 0 },
+              font: "Outfit",
+              padding : "0px "
+            },
           }}
         >
-          <Box sx={{ padding: 1 }}>
+          <Box sx={{ position:"relative"}}>
             <TextField
               placeholder="Search"
               value={searchTerm}
@@ -134,14 +132,36 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
               fullWidth
               variant="outlined"
               size="small"
+              sx={{
+                boxSizing:"border-box",
+                '& .css-1n4twyu-MuiInputBase-input-MuiOutlinedInput-input' :{
+                  height : "44px !important",
+                  padding : "0px 40px"
+                },
+                '& .css-1ua80n0-MuiInputBase-input-MuiOutlinedInput-input' : {
+                  height : "44px !important",
+                  padding : "0px 40px"
+                },
+                '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                  borderColor: 'rgba(24, 233, 208, 1) !important', // Change the outline color on focus
+                },
+              }}
               InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon />
-                  </InputAdornment>
-                ),
+                // startAdornment: (
+                //   <InputAdornment style={{background : "transparent"}} position="start">
+                //     <SearchIcon />
+                //   </InputAdornment>
+                // ),
+                style : {
+                  color : "white",
+                  height : "44px",
+                  borderRadius : "12px",
+                }
               }}
             />
+            <div className='absolute top-[0.6rem] left-2'>
+              <SearchIcon />
+            </div>
           </Box>
           {isLoading ? (
             <MenuItem>
@@ -150,6 +170,27 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
           ) : filteredReviewers.length > 0 ? (
             filteredReviewers.map((reviewer) => (
               <MenuItem
+                selected={reviewer?.name[0].toUpperCase() === selectedReviewer?.name[0].toUpperCase()}
+                sx={{
+                  margin : "8px 0px !important",
+                  padding :"8px 16px",
+                  borderRadius : "12px",
+                  ':hover' :{
+                    background :"rgba(35,36,37,1)"
+                  },
+                  ':hover .MuiTypography-root' :{
+                    color :"rgba(24,233,208,1)"
+                  },
+                  '&.Mui-selected': {
+                    background: "rgba(24,233,208,0.1) !important", // Red background for selected item
+                  },
+                  '&.Mui-selected:hover' : {
+                    background :"rgba(35,36,37,1) !important"
+                  },
+                  '&.Mui-selected span': {
+                    color: "rgba(24,233,208,1) !important", // Slightly darker red on hover
+                  },
+                }}
                 key={reviewer._id}
                 onClick={() => handleSelect(reviewer)}
               >
@@ -158,7 +199,16 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
                     {reviewer.name[0].toUpperCase()}
                   </Avatar>
                 </ListItemAvatar>
-                <ListItemText primary={reviewer.name} />
+                <ListItemText
+                primaryTypographyProps={{
+                  component : 'span'
+                }}
+                sx={{
+                  "& .MuiTypography-root": {
+                    fontFamily: "Outfit", // Apply the custom font explicitly to the Typography
+                  },
+                }}
+                primary={reviewer.name} />
               </MenuItem>
             ))
           ) : (
@@ -179,6 +229,7 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
       onChange={(event, newValue) => handleSelect(newValue)}
       ListboxProps={{
         sx: {
+          padding : "8px !important",
           backgroundColor: 'black', // Set the background color of the list
           "& .MuiInputBase-root": {
               padding: "0px !important", // Override the default padding
@@ -252,14 +303,21 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
             backgroundColor: 'black', // Set the background color of each option
             color: 'white',           // Set the text color of each option
             fontFamily: 'Outfit',
-            '&:hover': {
-              backgroundColor: 'gray', // Optional: Change background on hover
+            borderRadius : "12px",
+            ':hover' :{
+              background :"rgba(35,36,37,1) !important"
+            },
+            ':hover .MuiTypography-root' :{
+              color :"rgba(24,233,208,1)"
             },
             '&.Mui-selected': {
-              backgroundColor: 'darkgray', // Optional: Change background when selected
+              background: "rgba(24,233,208,0.1) !important", // Red background for selected item
             },
-            '& .MuiOutlinedInput-input': {
-              padding: '0px 10px',
+            '&.Mui-selected:hover' : {
+              background :"rgba(35,36,37,1) !important"
+            },
+            '&.Mui-selected span': {
+              color: "rgba(24,233,208,1) !important", // Slightly darker red on hover
             },
           }}
         >

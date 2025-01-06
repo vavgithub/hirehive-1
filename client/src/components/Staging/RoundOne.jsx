@@ -28,37 +28,9 @@ import ClosedBadge from '../../svg/ClosedBadge';
 import useScheduler from '../../hooks/useScheduler';
 import NoShowAction from './NoShow';
 import Loader from '../ui/Loader';
-
-const RoundReview = ({ candidate, onSubmit }) => {
-    const [rating, setRating] = useState(0);
-    const [feedback, setFeedback] = useState('');
-
-    const handleSubmit = () => {
-        onSubmit(candidate._id, {
-            jobId: candidate.jobApplication.jobId,
-            stage: `Round 1`,
-            ratings: rating,
-            feedback,
-        });
-    };
+import RoundReview from '../Reviews/RoundReview';
 
 
-    return (
-        <div className='bg-background-100 flex gap-4 justify-between items-center p-4'>
-            <span className='flex-shrink-0'>{`Round 1 ratings`}</span>
-            <Scorer value={rating} onChange={setRating} />
-
-            <input
-                type="text"
-                className='w-full bg-background-80 text-white p-2 rounded'
-                placeholder='Enter Your Feedback'
-                value={feedback}
-                onChange={(e) => setFeedback(e.target.value)}
-            />
-            <Button variant="icon" onClick={handleSubmit}>Submit</Button>
-        </div>
-    );
-};
 
 const RoundOne = ({ candidateId, jobId ,isClosed}) => {
     const { user } = useAuthContext();
