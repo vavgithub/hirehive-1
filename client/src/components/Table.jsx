@@ -349,7 +349,7 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
         }
       },
       renderCell: (params) => (
-        <div className="name-cell flex items-center gap-2">
+        <div className="name-cell flex items-center gap-2 h-12">
           <Avatar src={"https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg"} sx={{ width: 32, height: 32 }}/>
           <p className='flex items-center gap-2'>{params.value.name}
             {params.value.hasGivenAssessment && 
@@ -357,7 +357,7 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
                 <AssignmentIconStroke  />
             </span>}
           </p>
-          <div className="hover-icons flex items-center"
+          <div className="hover-icons h-full flex items-center"
             onClick={(event) => event.stopPropagation()}
           >
             {params.row.portfolio && (
@@ -509,7 +509,19 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
       disableColumnMenu: true,
       valueGetter: (value,row) =>{
         const currentStage = row.currentStage;
-        const score = row.stageStatuses[currentStage]?.score || 0;
+        let score = 0;
+        if(currentStage === "Screening"){
+          let attitudeScore = parseInt(row.stageStatuses[currentStage]?.score?.Attitude ?? 0);
+          let communicationScore = parseInt(row.stageStatuses[currentStage]?.score?.Communication ?? 0);
+          let uxScore = parseInt(row.stageStatuses[currentStage]?.score?.UX ?? 0);
+          let uiScore = parseInt(row.stageStatuses[currentStage]?.score?.UI ?? 0);
+          let techScore = parseInt(row.stageStatuses[currentStage]?.score?.Tech ?? 0);
+          let budgetScore = parseInt(row.stageStatuses[currentStage]?.score?.Budget ?? 0);
+          score = attitudeScore + communicationScore + uiScore + uxScore + techScore + budgetScore; 
+        }else{
+          score = row.stageStatuses[currentStage]?.score || 0;
+        }
+        
         return score;
       }, 
       renderCell: (params) => {
@@ -669,11 +681,11 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
     .Mui-selected .name-cell p{
         color:rgb(24, 233, 208);
     }
-    .name-cell:hover p{
+    .name-cell:hover  p{
         width:20%;
         white-space:nowrap;
-        overflow:hidden;
-        text-overflow:ellipsis;
+        overflow:hidden !important;
+        text-overflow:ellipsis !important;
         color:rgb(24, 233, 208);
     }
     .name-cell:hover .hover-icons {
@@ -684,6 +696,9 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
         margin-left: 8px;
         color: #666;
         transition: color 0.3s;
+        display : flex;
+        justify-content : "center",
+        align-items : "center"
     }
     .icon-link:hover {
         color: #000;
