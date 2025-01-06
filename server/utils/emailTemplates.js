@@ -121,41 +121,13 @@ export const getRejectionEmailContent = (candidateName,jobTitle) =>{
                 </p>
                 <p style="margin-top: 16px; margin-bottom: 16px;">
                     We sincerely value your time and effort into this process, and we will make sure to keep your application on file. More roles will open in the future and we will re-visit this application. We are honoured you showed interest in us - and we hope to work together in the future. 
-                </p>
-                <p style="margin-top: 16px; margin-bottom: 16px;">
-                    Feel free to check out all our live roles:
-                </p>
-                <a style="margin-top: 16px; margin-bottom: 16px; padding: 12px; width: 280px; display: block; background-color: rgba(4, 95, 253, 1); color: #ffffff; border-radius: 12px; text-decoration: underline; text-align: center;">
-                    Visit Website
-                </a>
-                <p style="margin-top: 16px; margin-bottom: 24px;">
-                    Finally, here are our VAV Recruiter's top 7 tips to securing your dream job: 
-                </p>
-                <p style="margin-top: 16px; ">
-                    1. Know your strengths and skills - take some time to identify these
-                </p>
-                <p style="margin-top: 12px; ">
-                    2. Polish your resume and cover letter
-                </p>
-                <p style="margin-top: 12px; ">
-                    3. Leverage your network
-                </p>
-                <p style="margin-top: 12px; ">
-                    4. Be proactive - reach out to companies and recruiters
-                </p>
-                <p style="margin-top: 12px; ">
-                    5. Research companies
-                </p>
-                <p style="margin-top: 12px; ">
-                    6. Practice interviewing
-                </p>
+                </p>            
                 <p style="margin-top: 12px; ">
                     7. Stay positive and persistent</p>
                     <p style="margin-top: 16px; margin-bottom: 16px;">
                         From all of us at VAV, we thank you for your time and effort.
                     </p>
                 <p style="margin-bottom: 16px;">Regards,<br>VAV Hiring Team</p>
-
                 <hr>
                 <div style=" width: 100%;">
                     <table style="margin:auto; width:50%; border-spacing:22px 0px;margin-top:40px;margin-bottom:20px">
