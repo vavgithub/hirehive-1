@@ -99,16 +99,17 @@ const FilterForDataTable = ({ onApplyFilters ,readOnly}) => {
   },[allDesignReviewers])
 
   const stageStatusMap = {
-    Portfolio: ['Not Assigned', 'Under Review', 'Completed', 'Rejected'],
-    Screening: ['Call Pending', 'Call Scheduled', 'Under Review', 'Completed', 'No Show', 'Rejected'],
-    'Design Task': ['Sent', 'Not Assigned', 'Under Review', 'Completed', 'Rejected', 'Not Submitted'],
-    'Round 1': ['Call Pending', 'Call Scheduled', 'Not Assigned', 'Completed', 'No Show', 'Rejected'],
-    'Round 2': ['Call Pending', 'Call Scheduled', 'Not Assigned', 'Completed', 'No Show', 'Rejected'],
+    Portfolio: ['Not Assigned', 'Under Review','Reviewed', 'Completed', 'Rejected'],
+    Screening: ['Call Pending', 'Call Scheduled', 'Under Review','Reviewed', 'Completed', 'No Show', 'Rejected'],
+    'Design Task': ['Sent', 'Not Assigned', 'Under Review','Reviewed', 'Completed', 'Rejected', 'Not Submitted'],
+    'Round 1': ['Call Pending', 'Call Scheduled', 'Not Assigned','Reviewed', 'Completed', 'No Show', 'Rejected'],
+    'Round 2': ['Call Pending', 'Call Scheduled', 'Not Assigned','Reviewed', 'Completed', 'No Show', 'Rejected'],
   };
 
   const allStatuses = [
     'Not Assigned',
     'Under Review',
+    'Reviewed',
     'Completed',
     'Rejected',
     'Call Pending',
