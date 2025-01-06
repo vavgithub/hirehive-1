@@ -190,6 +190,12 @@ export const getAssignedCandidates = async (req, res) => {
           portfolio: { $first: '$portfolio' }, // Adding portfolio here
         },
       },
+      //Sorted with Firstname
+      {
+        $sort : {
+          firstName : 1
+        }
+      }
     ]);
 
     // Fetch job details as before

@@ -203,12 +203,14 @@ const Reviews = () => {
   const { data: candidates, isLoading, isError, error } = useQuery({
     queryKey: ['assignedCandidates'],
     queryFn: fetchCandidates,
+    refetchOnWindowFocus : false
   });
 
   // Fetch stats
   const { data: statsData, isLoading: isStatsLoading, isError: isStatsError, error: statsError } = useQuery({
     queryKey: ['underReviewStats'],
     queryFn: fetchUnderReviewStats,
+    refetchOnWindowFocus : false
   });
 
 
