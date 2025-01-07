@@ -218,7 +218,7 @@ export const getDesignTaskContent = (candidateName,jobTitle,taskDescription,dueD
 
                     <h4 style="margin-top: 16px; margin-bottom: 16px;">Important Note</h4>
                     <ul style="margin-top: 16px; margin-bottom: 16px; padding:0;">
-                        <li style="transform: translateX(20px);"> Please don't reply to this mail. Login and Submit your task on this for the applied job <a href="https://hire.atvoid.com">link</a>.</li>
+                        <li style="transform: translateX(20px);"> Please don't reply to this mail. Login and then Submit your task on this <a href="https://hire.atvoid.com">link</a>.</li>
                     </ul>
                 
                     <p style="margin-top: 16px; margin-bottom: 24px;">Best Regards,<br>Team Value at Void</p>
