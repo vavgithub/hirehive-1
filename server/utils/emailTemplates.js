@@ -208,9 +208,7 @@ export const getDesignTaskContent = (candidateName,jobTitle,taskDescription,dueD
 
                     <h4 style="margin-top: 16px; margin-bottom: 16px;">Your Assignment</h4>
                     <pre style="margin-top: 16px; margin-bottom: 16px; width:600px; white-space:break-spaces; font-family: Open Sans, sans-serif;">${taskDescription.trim()}</pre>
-                    <p style="margin-top: 16px; margin-bottom: 16px;">
-                        Think about clarity, hierarchy, and accessibility. How can you turn data into a story that feels seamless and empowering for users?
-                    </p>
+            
 
                     <h4 style="margin-top: 16px; margin-bottom: 16px;">Timeline</h4>
                     <ul style="margin-top: 16px; margin-bottom: 16px; padding:0;">
@@ -220,16 +218,9 @@ export const getDesignTaskContent = (candidateName,jobTitle,taskDescription,dueD
 
                     <h4 style="margin-top: 16px; margin-bottom: 16px;">Important Note</h4>
                     <ul style="margin-top: 16px; margin-bottom: 16px; padding:0;">
-                        <li style="transform: translateX(20px);"> Please don't reply to this mail. Submit your task on this <a href="https://hire.atvoid.com">link</a>.</li>
+                        <li style="transform: translateX(20px);"> Please don't reply to this mail. Login and Submit your task on this for the applied job <a href="https://hire.atvoid.com">link</a>.</li>
                     </ul>
-
-                    <p style="margin-top: 16px; margin-bottom: 16px;">
-                        We value thoughtfulness and creativity as much as speed. If you need clarity or want to bounce ideas, feel free to reach out.
-                    </p>
-                    <p style="margin-top: 16px; margin-bottom: 16px;">
-                        Let’s design something that’s simple, useful, and maybe… a little delightful.
-                    </p>
-                    
+                
                     <p style="margin-top: 16px; margin-bottom: 24px;">Best Regards,<br>Team Value at Void</p>
 
                     <hr>
