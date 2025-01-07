@@ -134,6 +134,10 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
               size="small"
               sx={{
                 boxSizing:"border-box",
+                '& .MuiOutlinedInput-input' : {
+                  height : "44px !important",
+                  padding : "0px 40px"
+                },
                 '& .css-1n4twyu-MuiInputBase-input-MuiOutlinedInput-input' :{
                   height : "44px !important",
                   padding : "0px 40px"
@@ -170,7 +174,7 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
           ) : filteredReviewers.length > 0 ? (
             filteredReviewers.map((reviewer) => (
               <MenuItem
-                selected={reviewer?.name[0].toUpperCase() === selectedReviewer?.name[0].toUpperCase()}
+                selected={reviewer?._id === selectedReviewer?._id}
                 sx={{
                   margin : "8px 0px !important",
                   padding :"8px 16px",
@@ -299,6 +303,7 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
         <MenuItem
           {...props}
           key={option._id}
+          selected={option?._id === selectedReviewer?._id}
           sx={{
             backgroundColor: 'black', // Set the background color of each option
             color: 'white',           // Set the text color of each option

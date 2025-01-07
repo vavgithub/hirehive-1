@@ -691,8 +691,8 @@ export const sendDesignTask = async (req, res) => {
     });
 
     // Send email to candidate
-    const emailSubject = "Design Task Assignment";
-    const emailContent = getDesignTaskContent(candidate.firstName + " " + candidate.lastName,taskDescription,dueDate,dueTime)
+    const emailSubject = `Value At Void : ${jobApplication.jobApplied} | Design Task for ${candidate.firstName} (3 days)`;
+    const emailContent = getDesignTaskContent(candidate.firstName + " " + candidate.lastName,jobApplication.jobApplied,taskDescription,dueDate,dueTime)
     
     await sendEmail(candidateEmail, emailSubject, emailContent,"Design Task");
 

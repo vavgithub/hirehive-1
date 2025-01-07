@@ -51,13 +51,13 @@ export const sendEmail = async (to, subject, content,type = "", extraAttachments
     ]
 
     if(type === "Design Task"){
-      const bgGradient = await readFile(path.join(__dirname, "/email_assets/bgGradient.png"), { encoding: "base64" });
-      attachmentsArray.push({
-        filename: "bgGradient.png",
-        content: bgGradient,
-        encoding: "base64",
-        cid: "bgGradient",
-      })
+      // const bgGradient = await readFile(path.join(__dirname, "/email_assets/bgGradient.png"), { encoding: "base64" });
+      // attachmentsArray.push({
+      //   filename: "bgGradient.png",
+      //   content: bgGradient,
+      //   encoding: "base64",
+      //   cid: "bgGradient",
+      // })
    }
 
     if(extraAttachments?.length > 0){
