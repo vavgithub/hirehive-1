@@ -201,9 +201,6 @@ export const getDesignTaskContent = (candidateName,jobTitle,taskDescription,dueD
                     <p style="margin-bottom: 16px;">
                         Thank you for maintaining your interest in the ${jobTitle} position at Value at Void™. After discussing with the team, we believe you are a strong fit and would like to invite you to proceed with the next steps.
                     </p>
-                    <p style="margin-top: 16px; margin-bottom: 16px;">
-                        We believe in you potential an how you tackle the situation. 
-                    </p>
 
                     <h4 style="margin-top: 16px; margin-bottom: 16px;">Your Assignment</h4>
                     <pre style="margin-top: 16px; margin-bottom: 16px; width:600px; white-space:break-spaces; font-family: Open Sans, sans-serif;">${taskDescription.trim()}</pre>
