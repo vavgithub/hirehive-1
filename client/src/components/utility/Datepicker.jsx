@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useEffect } from 'react';
 import dayjs from 'dayjs';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -6,6 +6,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import DropDownIcon from '../../svg/DropDownIcon';
 import CalenderIcon from '../../svg/Staging/CalenderIcon';
+import 'dayjs/locale/en-gb';
 
 const theme = createTheme({
   typography: {
@@ -84,9 +85,14 @@ const theme = createTheme({
 });
 
 export default function Datepicker({ onChange, value ,error }) {
+
+  useEffect(()=>{
+    onChange(dayjs())
+  },[])
+
   return (
     <ThemeProvider theme={theme}>
-      <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='en-gb'>
         <DesktopDatePicker
           value={value ? dayjs(value) : null}
           defaultValue={dayjs()}  //
