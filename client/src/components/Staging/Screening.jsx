@@ -392,7 +392,7 @@ const Screening = ({ candidateId, jobId, isClosed }) => {
                 <div className={(isRescheduled && "text-font-gray ") + ' flex items-center gap-2'}>
                     <CalenderIcon customStroke={"#808389"} />
                     <h2 className={isRescheduled && 'typography-body'}>
-                        {new Date(call?.scheduledDate).toLocaleDateString('en-US', { timeZone: 'UTC' })}
+                        {new Date(call?.scheduledDate).toLocaleDateString('en-gb', { timeZone: 'UTC' })}
                     </h2>
                 </div>
             </div>
@@ -595,7 +595,7 @@ const Screening = ({ candidateId, jobId, isClosed }) => {
                 <div className='flex flex-col justify-between gap-4'>
                     <div className='w-full'>
                         <p className='typography-small-p text-font-gray'>Remarks</p>
-                        <p className='typography-body pb-2'>{stageData?.feedback}</p>
+                        <p className='typography-body pb-2'>{stageData?.feedback  || 'No feedbacks'}</p>
                     </div>
                     <div className='flex gap-4 pb-4 w-full'>
                         <div className='w-full flex  flex-col'>

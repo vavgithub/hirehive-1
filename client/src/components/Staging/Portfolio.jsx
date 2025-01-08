@@ -181,7 +181,7 @@ const Portfolio = ({ candidateId, jobId ,isClosed}) => {
                 <div className='flex justify-between gap-4'>
                     <div className='w-full'>
                         <p className='typography-small-p text-font-gray'>Remarks</p>
-                        <p className='typography-body pb-8'>{stageData?.feedback}</p>
+                        <p className='typography-body pb-8'>{stageData?.feedback || 'No feedbacks'}</p>
                     </div>
                     <div className='bg-stars bg-cover rounded-xl w-[160px] my-4'>
                         <div className='p-4 flex flex-col items-center'>
@@ -211,7 +211,7 @@ const Portfolio = ({ candidateId, jobId ,isClosed}) => {
             <div className='flex justify-between gap-4'>
                 <div className='w-full'>
                     <p className='typography-small-p text-font-gray'>Remarks</p>
-                    <p className='typography-body pb-8'>{stageData?.status === 'Rejected' ? stageData?.rejectionReason : stageData?.feedback}</p>
+                    <p className='typography-body pb-8'>{stageData?.status === 'Rejected' ? stageData?.rejectionReason : stageData?.feedback ? stageData?.feedback : 'No feedbacks'}</p>
                 </div>
                 <div className='bg-stars bg-cover rounded-xl w-[160px] my-4'>
                     <div className='p-4 flex flex-col items-center'>
