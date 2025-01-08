@@ -606,9 +606,18 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
   };
 
   const handleExport = () => {
-    exportToExcel(filteredAndSearchedRowsData, 'my_data');
+    // Get today's date in DD-MM-YYYY format
+    const date = new Date();
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    const today = `${day}-${month}-${year}`;
+  
+    // Create filename: JobName_Date_data.xlsx
+    const fileName = `${today}_datasheet`;
+    
+    exportToExcel(filteredAndSearchedRowsData, fileName);
   };
-
   const handleBudgetButtonClick = (event) => {
     if (budgetFilter.from && budgetFilter.to) {
       setBudgetMenuAnchorEl(event.currentTarget);
