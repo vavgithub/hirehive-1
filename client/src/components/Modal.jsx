@@ -288,7 +288,7 @@ const Modal = ({
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="bg-background-60 rounded-xl shadow w-full max-w-lg mx-4 transform transition-transform duration-200 ease-out"
+        className={"bg-background-60 rounded-xl shadow w-full  mx-4 transform transition-transform duration-200 ease-out " + (actionType === ACTION_TYPES.BUDGET ? "max-w-xl" : "max-w-lg")}
       >
         <div className="p-6">
           {renderModalContent()}

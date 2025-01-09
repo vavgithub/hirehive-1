@@ -1067,11 +1067,13 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
         customConfirmLabel="Apply"
         onConfirm={handleApplyBudgetFilter}
       >
-        <BudgetField
-          value={tempBudgetFilter}
-          onChange={handleBudgetChange}
-          required
-        />
+        <div className='mt-4 my-8'>
+          <BudgetField
+            value={tempBudgetFilter}
+            onChange={handleBudgetChange}
+            required
+          />
+        </div>
       </Modal>
 
       <Modal
