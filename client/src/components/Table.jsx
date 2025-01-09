@@ -567,6 +567,7 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
     {
       field: 'actions',
       headerName: 'Actions',
+      sortable: false,
       width: 150,
       disableColumnMenu: true,
       renderCell: (params) => (
