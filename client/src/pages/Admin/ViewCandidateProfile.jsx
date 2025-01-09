@@ -247,11 +247,13 @@ const ViewCandidateProfile = () => {
                                             <FileMainIcon />
                                         </CustomToolTip>
                                     </a>
-                                    <a href={ensureAbsoluteUrl(data.website)} target="_blank" rel="noopener noreferrer" className="icon-link">
-                                        <CustomToolTip title={'Website'} arrowed size={2}>
-                                            <WebsiteMainIcon />
-                                        </CustomToolTip>
-                                    </a>
+                                    {data.website && (
+                                        <a href={ensureAbsoluteUrl(data.website)} target="_blank" rel="noopener noreferrer" className="icon-link">
+                                            <CustomToolTip title={'Website'} arrowed size={2}>
+                                                <WebsiteMainIcon />
+                                            </CustomToolTip>
+                                        </a>
+                                    )}
                                     <div onClick={handleResumeOpen}>
                                         <CustomToolTip title={'Resume'} arrowed size={2}>
                                             <ResumeIcon  />

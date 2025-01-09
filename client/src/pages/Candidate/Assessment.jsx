@@ -803,7 +803,7 @@ const Assessment = () => {
   return (
     <>
       {isUploading && <UploadProgressOverlay uploadProgress={uploadProgress} />}
-      <div className=" flex min-h-screen bg-background-90 ">
+      <div className="no-selection flex min-h-screen bg-background-90 ">
         <QuestionSidebar
           questions={questions}
           currentQuestion={currentQuestion}

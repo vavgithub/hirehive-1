@@ -541,22 +541,26 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
       valueGetter: (value,row) => {
         return row.stageStatuses[row.currentStage]?.assignedTo
       },
-      renderCell: (params) => (
-        <div className='flex items-center justify-center h-full'
-          onClick={(event) => event.stopPropagation()}
-        >
-          <AssigneeSelector
-            mode="icon"
-            value={params.row.stageStatuses[params.row.currentStage]?.assignedTo}
-            onChange={(newAssignee) => handleAssigneeChange(
-              params.row._id,
-              params.row.currentStage,
-              newAssignee
-            )}
-            onSelect={() => { }}
-          />
-        </div>
-      ),
+      renderCell: (params) => {
+        const isReviewed = params?.row?.stageStatuses[params?.row?.currentStage]?.status === 'Reviewed';  
+        return (
+          <div className='flex items-center justify-center h-full'
+            onClick={(event) => event.stopPropagation()}
+          >
+            <AssigneeSelector
+              mode="icon"
+              disabled={isReviewed}
+              value={params.row.stageStatuses[params.row.currentStage]?.assignedTo}
+              onChange={(newAssignee) => handleAssigneeChange(
+                params.row._id,
+                params.row.currentStage,
+                newAssignee
+              )}
+              onSelect={() => { }}
+            />
+          </div>
+        )
+      },
     },
     {
       field: 'actions',
@@ -606,9 +610,18 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
   };
 
   const handleExport = () => {
-    exportToExcel(filteredAndSearchedRowsData, 'my_data');
+    // Get today's date in DD-MM-YYYY format
+    const date = new Date();
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    const today = `${day}-${month}-${year}`;
+  
+    // Create filename: JobName_Date_data.xlsx
+    const fileName = `${today}_datasheet`;
+    
+    exportToExcel(filteredAndSearchedRowsData, fileName);
   };
-
   const handleBudgetButtonClick = (event) => {
     if (budgetFilter.from && budgetFilter.to) {
       setBudgetMenuAnchorEl(event.currentTarget);
@@ -786,7 +799,7 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
           <div className={`${budgetFilter.from && budgetFilter.to ? "auto" : ""}`}>
 
             <Button
-              variant={budgetFilter.from && budgetFilter.to ? "icon" : "primary"}
+              variant={budgetFilter.from && budgetFilter.to ? "iconSec" : "primary"}
               icon={Budget}
               // onClick={() => {
               //   setTempBudgetFilter(budgetFilter);
@@ -1054,11 +1067,13 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
         customConfirmLabel="Apply"
         onConfirm={handleApplyBudgetFilter}
       >
-        <BudgetField
-          value={tempBudgetFilter}
-          onChange={handleBudgetChange}
-          required
-        />
+        <div className='mt-4 my-8'>
+          <BudgetField
+            value={tempBudgetFilter}
+            onChange={handleBudgetChange}
+            required
+          />
+        </div>
       </Modal>
 
       <Modal
