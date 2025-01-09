@@ -101,6 +101,12 @@ input.no-spinner[class*="border-red-500"] {
   display: none;
 }
 
+  /* TextEditor classes */
+  .editor-paragraph {
+    border-radius: 12px;
+    background: var(--color-background-40);
+  }
+
 @keyframes down {
   0%, 100% {
     transform: none;

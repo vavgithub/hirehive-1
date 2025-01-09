@@ -8,6 +8,7 @@ import Next from '../../svg/Buttons/Next';
 import SaveForLater from '../../svg/Buttons/SaveForLater';
 import Que from './Que';
 import Create from '../../svg/Buttons/Create';
+import TextEditor from '../utility/TextEditor';
 
 const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions }) => {
   const { control, handleSubmit, watch, setValue, setError, getValues,clearErrors, formState: { errors, isValid } } = useForm({
@@ -207,13 +208,14 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
           render={({ field , fieldState : {error} }) => (
             <div className='w-full relative'>
               <label htmlFor="jobDescription" className="typography-body block mb-4">Job Description{<span className="text-red-100">*</span>}</label>
-              <textarea
+              <TextEditor/>
+              {/* <textarea
                 {...field}
                 id="jobDescription"
                 placeholder="Write a Job Description"
                 className={`${error ? '!border !border-red-500' : 'border border-transparent'}  w-full rounded-xl px-3 py-2 bg-background-40 font-outfit hover:bg-background-60 outline-none focus:outline-teal-300 resize-none`}
                 rows="10"
-              />
+              /> */}
               {error && <p className="text-red-500 absolute typography-small-p top-[18.5rem]">{error.message}</p>}
             </div>
           )}

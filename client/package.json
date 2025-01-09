@@ -18,6 +18,7 @@
   "dependencies": {
     "@emotion/react": "^11.13.0",
     "@emotion/styled": "^11.13.0",
+    "@lexical/react": "^0.23.0",
     "@mui/material": "^5.16.5",
     "@mui/x-data-grid": "^7.6.1",
     "@mui/x-date-pickers": "^7.11.0",
@@ -28,6 +29,7 @@
     "date-fns": "^3.6.0",
     "dayjs": "^1.11.12",
     "file-saver": "^2.0.5",
+    "lexical": "^0.23.0",
     "lottie-web": "^5.12.2",
     "lucide-react": "^0.428.0",
     "react": "^18.2.0",
