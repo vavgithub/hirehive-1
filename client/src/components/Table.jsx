@@ -795,7 +795,7 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
           <div className={`${budgetFilter.from && budgetFilter.to ? "auto" : ""}`}>
 
             <Button
-              variant={budgetFilter.from && budgetFilter.to ? "icon" : "primary"}
+              variant={budgetFilter.from && budgetFilter.to ? "iconSec" : "primary"}
               icon={Budget}
               // onClick={() => {
               //   setTempBudgetFilter(budgetFilter);
