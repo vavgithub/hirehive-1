@@ -33,9 +33,9 @@ const AccordionSection = ({ title, isOpen, onToggle, children, badge }) => (
         <div className="w-full">
             <button
                 onClick={onToggle}
-                className="w-full px-6 py-4 flex justify-between items-center border-b border-background-80"
+                className="w-full px-6 py-4 flex justify-between bg-background-90 items-center border-b border-background-80"
             >
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-4 ">
                     <h3 className="typography-h3">{title}</h3>
                     {badge}
                 </div>
@@ -128,18 +128,18 @@ const ApplicationStaging = ({ candidateId, jobId ,jobStatus}) => {
         }
 
         return (
-            <div className="space-y-6">
+            <div className="">
                 {responses.map((response, index) => (
                     <div
                         key={response.questionId}
-                        className="border border-background-80 rounded-lg p-4"
+                        className="  rounded-lg pb-6"
                     >
                         <div className="flex items-start gap-4">
-                            <div className="flex-shrink-0 w-6 h-6 rounded-full bg-background-80 flex items-center justify-center">
-                                <span className="text-sm text-font-primary">{index + 1}</span>
+                            <div className="flex-shrink-0  h-6  flex items-center justify-center">
+                                <span className="text-sm ">{index + 1}</span>
                             </div>
                             <div className="flex-1 space-y-2">
-                                <div className="typography-body text-font-gray">
+                                <div className="typography-body ">
                                     {response.question.text}
                                     {response.question.required && (
                                         <span className="ml-1 text-red-500">*</span>
@@ -148,7 +148,7 @@ const ApplicationStaging = ({ candidateId, jobId ,jobStatus}) => {
                                 <div className="typography-body text-white">
                                     {response.question.type === 'multiple' ? (
                                         <div className="flex gap-2">
-                                            <span className="px-3 py-1 bg-background-80 rounded-full">
+                                            <span className="px-3 py-1 ">
                                                 {response.answer}
                                             </span>
                                         </div>
@@ -209,7 +209,7 @@ const ApplicationStaging = ({ candidateId, jobId ,jobStatus}) => {
                 role === "Hiring Manager" && (
 
                     <AccordionSection
-                        title="Application Questions"
+                        title="Additional Questions"
                         isOpen={isQuestionsOpen}
                         onToggle={() => setIsQuestionsOpen(!isQuestionsOpen)}
                         badge={

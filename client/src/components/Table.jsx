@@ -541,22 +541,26 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
       valueGetter: (value,row) => {
         return row.stageStatuses[row.currentStage]?.assignedTo
       },
-      renderCell: (params) => (
-        <div className='flex items-center justify-center h-full'
-          onClick={(event) => event.stopPropagation()}
-        >
-          <AssigneeSelector
-            mode="icon"
-            value={params.row.stageStatuses[params.row.currentStage]?.assignedTo}
-            onChange={(newAssignee) => handleAssigneeChange(
-              params.row._id,
-              params.row.currentStage,
-              newAssignee
-            )}
-            onSelect={() => { }}
-          />
-        </div>
-      ),
+      renderCell: (params) => {
+        const isReviewed = params?.row?.stageStatuses[params?.row?.currentStage]?.status === 'Reviewed';  
+        return (
+          <div className='flex items-center justify-center h-full'
+            onClick={(event) => event.stopPropagation()}
+          >
+            <AssigneeSelector
+              mode="icon"
+              disabled={isReviewed}
+              value={params.row.stageStatuses[params.row.currentStage]?.assignedTo}
+              onChange={(newAssignee) => handleAssigneeChange(
+                params.row._id,
+                params.row.currentStage,
+                newAssignee
+              )}
+              onSelect={() => { }}
+            />
+          </div>
+        )
+      },
     },
     {
       field: 'actions',
@@ -1063,11 +1067,13 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
         customConfirmLabel="Apply"
         onConfirm={handleApplyBudgetFilter}
       >
-        <BudgetField
-          value={tempBudgetFilter}
-          onChange={handleBudgetChange}
-          required
-        />
+        <div className='mt-4 my-8'>
+          <BudgetField
+            value={tempBudgetFilter}
+            onChange={handleBudgetChange}
+            required
+          />
+        </div>
       </Modal>
 
       <Modal
