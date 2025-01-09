@@ -612,7 +612,7 @@ const Screening = ({ candidateId, jobId, isClosed }) => {
                         <div className='max-w-[75%] flex  flex-col'>
                             <p className='typography-small-p text-font-gray mb-4'>Score</p>
                             
-                                <div className='p-4 rounded-xl bg-background-60 flex min-h-[115px]'>
+                                <div className='p-4 rounded-xl bg-background-60 flex min-h-[115px] '>
                                     {renderScoreCategories()}
                                 </div>
                         </div>
@@ -644,7 +644,7 @@ const Screening = ({ candidateId, jobId, isClosed }) => {
             <p className='typography-small-p text-font-gray'>{stageData?.status === 'Rejected' ? "Rejection Reason" : "Feedback"}</p>
             <p className='typography-body pb-8'>{stageData?.status === 'Rejected' ? stageData?.rejectionReason : stageData?.feedback}</p>
             <div className='flex gap-4'>
-                <div className='w-full p-2 rounded-xl bg-background-60'>
+                <div className='w-full p-4 rounded-xl bg-background-60 flex items-center max-w-[75%]'>
                     {renderScoreCategories()}
                 </div>
                 <div className='bg-stars bg-cover rounded-xl w-[160px]'>
