@@ -34,7 +34,7 @@ const ACTION_PROPERTIES = {
   [ACTION_TYPES.DRAFT]: {
     title: 'Confirm Draft',
     confirmLabel: 'Draft',
-    confirmVariant: 'secondary',
+    confirmVariant: 'primary',
   },
   [ACTION_TYPES.CLOSE]: {
     title: 'Close Job Posting',
