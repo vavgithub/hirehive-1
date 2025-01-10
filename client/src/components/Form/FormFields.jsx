@@ -60,7 +60,7 @@ export const InputField = React.forwardRef(({
 });
 InputField.displayName = 'InputField';
 
-export const CustomDropdown = React.forwardRef(({ field, label, options, value, onChange, required ,error }, ref) => {
+export const CustomDropdown = React.forwardRef(({ field, label, options, value, onChange, required ,error ,extraStylesForLabel}, ref) => {
   const [isOpen, setIsOpen] = useState(false);
 
   //Reference for current dropdown container
@@ -69,7 +69,7 @@ export const CustomDropdown = React.forwardRef(({ field, label, options, value, 
   const toggleDropdown = () => setIsOpen(!isOpen);
 
   const handleOptionClick = (option) => {
-    onChange(option.value);
+    onChange(option?.value || option);
     setIsOpen(false);
   };
 
@@ -86,7 +86,7 @@ export const CustomDropdown = React.forwardRef(({ field, label, options, value, 
 
   return (
     <div className="flex flex-col gap-4 relative" ref={dropdownRef}>
-      <label className="typography-body">{label}{required && <span className="text-red-100">*</span>}</label>
+      <label className={"typography-body " + extraStylesForLabel }>{label}{required && <span className="text-red-100">*</span>}</label>
       <div className="relative focus:outline focus:outline-teal-400">
         <button
           type="button"
@@ -103,11 +103,11 @@ export const CustomDropdown = React.forwardRef(({ field, label, options, value, 
           <ul className="absolute mt-1 bg-background-40 rounded-md shadow-lg w-full space-y-2 z-10">
             {options.map((option) => (
               <li
-                key={option.value}
+                key={option?.value || option}
                 onClick={() => handleOptionClick(option)}
                 className="cursor-pointer px-4 py-2 typography-body hover:bg-background-60"
               >
-                {option.label}
+                {option.label ? option.label : typeof option === "string" ? option : ""}
               </li>
             ))}
           </ul>

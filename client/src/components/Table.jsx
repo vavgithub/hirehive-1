@@ -33,6 +33,8 @@ import FileMainIcon from '../svg/FileMainIcon';
 import ResumeIcon from '../svg/ResumeIcon';
 import CustomToolTip from './utility/CustomToolTip';
 import  { AssignmentIconStroke } from '../svg/AssignmentIcon';
+import { getCandidateScore } from './Staging/StageAction';
+import { getMaxScoreForStage } from '../pages/Admin/ViewCandidateProfile';
 
 
 const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
@@ -1083,6 +1085,8 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
         onConfirm={handleRejectConfirm}
         item={selectedCandidate}
         candidateName={`${selectedCandidate?.firstName} ${selectedCandidate?.lastName}`}
+        candidateScore={getCandidateScore(selectedCandidate?.stageStatuses)}
+        maxScoreOfStage={getMaxScoreForStage(selectedCandidate?.currentStage)}
         jobTitle={"jobTitle"}
         companyName={"companyName"}
       />

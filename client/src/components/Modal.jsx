@@ -4,6 +4,9 @@ import { useNavigate } from 'react-router-dom';
 import AssessmentPopup from "../svg/Background/AssessmentPopup.svg"
 import { useMediaQuery } from 'react-responsive';
 import CloseButton from '../svg/CloseButton';
+import { CustomDropdown } from './Form/FormFields';
+import Label from './ui/Label';
+import RedInfoIcon from '../svg/RedInfoIcon';
 
 const ACTION_TYPES = {
   DELETE: 'DELETE',
@@ -119,6 +122,8 @@ const Modal = ({
   cancelVariant = "secondary",
   children,
   candidateName,
+  candidateScore,
+  maxScoreOfStage,
   jobTitle,
   companyName,
   closeReason,
@@ -199,16 +204,25 @@ const Modal = ({
       return (
         <>
           <h1 className="typography-h1">{title}</h1>
-          <p className="text-font-gray typography-body">
+          <p className="text-font-gray typography-body mb-4">
             Are you sure you want to reject "{candidateName}"?
           </p>
+
+          <Label icon={RedInfoIcon} text={`The candidate has scored ${candidateScore}`} spanContent={`/${maxScoreOfStage}`} />
           
           {!showEmailPreview && action.requiresReason && (
             <div className="mt-4">
-              <label htmlFor="rejectionReason" className="block typography-body">
+              {/* <label htmlFor="rejectionReason" className="block typography-body">
                 Please provide the reason for rejecting this candidate
-              </label>
-              <select
+              </label> */}
+              <CustomDropdown 
+              extraStylesForLabel="font-bricolage font-semibold" 
+              label={'Please provide the reason for rejecting this candidate'} 
+              options={REJECTION_REASONS} 
+              value={rejectionReason}
+              onChange={handleReasonSelect}
+              />
+              {/* <select
                 id="rejectionReason"
                 value={rejectionReason}
                 onChange={(e) => handleReasonSelect(e.target.value)}
@@ -218,14 +232,14 @@ const Modal = ({
                 {REJECTION_REASONS.map((reason, index) => (
                   <option key={index} value={reason}>{reason}</option>
                 ))}
-              </select>
+              </select> */}
             </div>
           )}
 
           {showEmailPreview && (
             <>
-              <p className="text-gray-300 mb-2">This rejection email will be sent to the candidate</p>
-              <div className="bg-background-100 p-4 rounded mb-4">
+              <p className="text-gray-300 mt-4 font-outfit mb-2">This rejection email will be sent to the candidate</p>
+              <div className="bg-background-100 p-4 rounded mb-4 font-outfit">
                 <p className="text-white">Dear {candidateName},</p>
                 <p className="text-white mt-2">
                   Thank you for applying for the {jobTitle} position at {companyName}.
