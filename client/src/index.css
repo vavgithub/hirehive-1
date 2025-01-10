@@ -101,11 +101,32 @@ input.no-spinner[class*="border-red-500"] {
   display: none;
 }
 
-  /* TextEditor classes */
-  .editor-paragraph {
-    border-radius: 12px;
-    background: var(--color-background-40);
-  }
+/* TextEditor classes */
+.editor-paragraph {
+  font-family: "Outfit", sans-serif !important;
+}
+
+
+
+.editor-editable{
+  position: relative;
+  background: var(--color-background-40);
+  border-radius: 12px;
+  max-width: 100%;
+  min-height : 16rem;
+  max-height : 16rem;
+  overflow-y: scroll;
+  outline : none;
+  padding : 4rem 16px 8px 16px
+}
+
+.editor-editable:hover {
+  background: var(--color-background-60);
+}
+
+.editor-editable:focus {
+  outline: 2px solid rgba(24, 233, 208, 1);
+}
 
 @keyframes down {
   0%, 100% {

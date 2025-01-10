@@ -7,6 +7,7 @@ import {
   CAN_UNDO_COMMAND,
   FORMAT_ELEMENT_COMMAND,
   FORMAT_TEXT_COMMAND,
+  KEY_DOWN_COMMAND,
   REDO_COMMAND,
   SELECTION_CHANGE_COMMAND,
   UNDO_COMMAND,
@@ -29,6 +30,7 @@ import CenterAlignedIcon from '../../../svg/Editor/CenterAlignedIcon';
 import UnderlineIcon from '../../../svg/Editor/UnderlineIcon';
 import BulletListIcon from '../../../svg/Editor/BulletListIcon';
 import NumberedListIcon from '../../../svg/Editor/NumberedListIcon';
+import EmojiPlugin from './EmojiPlugin';
 
 const LowPriority = 1;
 
@@ -41,7 +43,7 @@ function ToolButton({Icon,command,commandType,isActive}){
         onClick={() => {
           editor.dispatchCommand(command, commandType);
         }}
-        className={'m-2 rounded-xl ' + (isActive ? 'bg-background-60' : '')}
+        className={'m-2 hover:bg-background-60 rounded-xl ' + (isActive ? 'bg-accent-300' : '')}
         aria-label="Format Bold">
             {Icon()}
       </button>
@@ -52,7 +54,6 @@ function ListToolButton({Icon,isActive,isNumberedList}){
     const [editor] = useLexicalComposerContext();
 
     const handleRemoveList = ()=>{
-      console.log("REmove");
       editor.dispatchCommand(REMOVE_LIST_COMMAND, undefined);
     }
 
@@ -75,7 +76,7 @@ function ListToolButton({Icon,isActive,isNumberedList}){
       <button
           type='button'
           onClick={isActive ? handleRemoveList : handleMakeList}
-          className={'m-2 rounded-xl ' + (isActive ? 'bg-background-60' : '')}
+          className={'m-2 hover:bg-background-60 rounded-xl ' + (isActive ? 'bg-accent-300' : '')}
           aria-label="Format Bold">
               {Icon()}
         </button>
@@ -86,7 +87,7 @@ function Divider() {
   return <div className='w-[1px]  min-h-[70%] bg-divide r-100' />;
 }
 
-export default function ToolbarPlugin() {
+export default function ToolbarPlugin({errors}) {
   const [editor] = useLexicalComposerContext();
   const toolbarRef = useRef(null);
   const [canUndo, setCanUndo] = useState(false);
@@ -94,6 +95,11 @@ export default function ToolbarPlugin() {
   const [isBold, setIsBold] = useState(false);
   const [isItalic, setIsItalic] = useState(false);
   const [isUnderline, setIsUnderline] = useState(false);
+
+  const [isLeftAligned, setIsLeftAligned] = useState(false);
+  const [isCenterAligned, setIsCenterAligned] = useState(false);
+  const [isRightAligned, setIsRightAligned] = useState(false);
+
   const [isStrikethrough, setIsStrikethrough] = useState(false);
   const [isBulletList, setIsBulletList] = useState(false);
   const [isNumberedList, setIsNumberedList] = useState(false);
@@ -107,12 +113,18 @@ export default function ToolbarPlugin() {
       setIsUnderline(selection.hasFormat('underline'));
       setIsStrikethrough(selection.hasFormat('strikethrough'));
 
+      const alignedParent = selection.getNodes()[0]?.getParent();
+      const alignment = alignedParent?.getFormatType('align'); // `align` key depends on your implementation
+      
+      setIsLeftAligned(alignment === 'left'); // Default alignment is usually `left`
+      setIsCenterAligned(alignment === 'center');
+      setIsRightAligned(alignment === 'right');
+
       const anchorNode = selection.anchor.getNode();
       const parentNode = anchorNode.getParent();
-      const desiredParent = parentNode.getParent();
+      const desiredParent = parentNode?.getParent();
       const isListItemNode = $isListItemNode(parentNode);
       const isListNode = $isListNode(parentNode);
-      console.log("DET",isListNode ,isListItemNode, desiredParent,parentNode);
         
       setIsBulletList((isListItemNode || isListNode) && (desiredParent.__tag === 'ul' || parentNode.__tag === 'ul'));
       setIsNumberedList((isListNode || isListItemNode) && (desiredParent.__tag === 'ol' || parentNode.__tag === 'ol'));
@@ -154,7 +166,7 @@ export default function ToolbarPlugin() {
   }, [editor, $updateToolbar]);
 
   return (
-    <div className="h-14 flex items-center bg-background-40 rounded-t-xl overflow-hidden" ref={toolbarRef}>
+    <div className={"absolute top-0 left-0 min-h-14 z-20 flex items-center bg-background-40 rounded-t-xl    " + (errors ? "w-[calc(100%-2px)] ml-[1px] mt-[1px]" : "w-full")} ref={toolbarRef}>
       {/* <button
         type='button'
         disabled={!canUndo}
@@ -181,13 +193,15 @@ export default function ToolbarPlugin() {
       <ToolButton Icon={UnderlineIcon} command={FORMAT_TEXT_COMMAND} commandType={'underline'} isActive={isUnderline} />
       {/* <ToolButton Icon={()=><div>S</div>} command={FORMAT_TEXT_COMMAND} commandType={'strikethrough'} isActive={isStrikethrough} /> */}
       <Divider />
-      <ToolButton Icon={LeftAligned} command={FORMAT_ELEMENT_COMMAND} commandType={'left'} isActive={isUnderline} />
-      <ToolButton Icon={CenterAlignedIcon} command={FORMAT_ELEMENT_COMMAND} commandType={'center'} isActive={isUnderline} />
-      <ToolButton Icon={RightAligned} command={FORMAT_ELEMENT_COMMAND} commandType={'right'} isActive={isUnderline} />
+      <ToolButton Icon={LeftAligned} command={FORMAT_ELEMENT_COMMAND} commandType={'left'} isActive={isLeftAligned} />
+      <ToolButton Icon={CenterAlignedIcon} command={FORMAT_ELEMENT_COMMAND} commandType={'center'} isActive={isCenterAligned} />
+      <ToolButton Icon={RightAligned} command={FORMAT_ELEMENT_COMMAND} commandType={'right'} isActive={isRightAligned} />
       {/* <ToolButton Icon={()=><div>J</div>} command={FORMAT_ELEMENT_COMMAND} commandType={'justify'} isActive={isUnderline} /> */}
       <Divider />
       <ListToolButton Icon={BulletListIcon} isNumberedList={false} isActive={isBulletList} />
       <ListToolButton Icon={NumberedListIcon} isNumberedList={true} isActive={isNumberedList} />
+      <Divider />
+      <EmojiPlugin/>
     </div>
   );
 }
