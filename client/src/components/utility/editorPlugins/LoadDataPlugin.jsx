@@ -1,13 +1,15 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { $generateNodesFromDOM } from '@lexical/html';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
 import { $createParagraphNode, $getRoot } from 'lexical';
 
-function LoadDataPlugin({htmlData}) {
+function LoadDataPlugin({htmlData,loaded}) {
     const [editor] = useLexicalComposerContext();
+    const firstRender = useRef(true);
 
     useEffect(()=>{
-        if(htmlData){
+        if(htmlData && loaded && firstRender.current){
+            firstRender.current = false;
             editor.update(() => {
                 const parser = new DOMParser();
                 const dom = parser.parseFromString(htmlData, "text/html");
@@ -22,7 +24,7 @@ function LoadDataPlugin({htmlData}) {
                 nodes.forEach((node) => root.append(node));
             });
         }
-    },[htmlData])
+    },[htmlData , loaded , firstRender.current])
 
   return null
 }

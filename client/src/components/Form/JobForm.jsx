@@ -219,7 +219,7 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
           render={({ field , fieldState : {error} }) => (
             <div className='w-full relative'>
               <label htmlFor="jobDescription" className="typography-body block mb-2">Job Description{<span className="text-red-100">*</span>}</label>
-              <TextEditor htmlData={field?.value} errors={error} placeholder={"Write a Job Description"} setEditorContent={(data)=>setValue('jobDescription',data)} />
+              <TextEditor htmlData={field?.value} loaded={isEditing} errors={error} placeholder={"Write a Job Description"} setEditorContent={(data)=>setValue('jobDescription',data)} />
               {/* <textarea
                 {...field}
                 id="jobDescription"

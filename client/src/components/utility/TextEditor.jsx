@@ -1,12 +1,10 @@
-import {$createParagraphNode, $getRoot, $getSelection} from 'lexical';
-import {useEffect, useMemo} from 'react';
+import { useMemo } from 'react';
 import {LexicalComposer} from '@lexical/react/LexicalComposer';
 import {RichTextPlugin} from '@lexical/react/LexicalRichTextPlugin';
 import {ContentEditable} from '@lexical/react/LexicalContentEditable';
 import {HistoryPlugin} from '@lexical/react/LexicalHistoryPlugin';
 import { ListPlugin } from '@lexical/react/LexicalListPlugin'
 import {LexicalErrorBoundary} from '@lexical/react/LexicalErrorBoundary';
-import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
 import { ListNode , ListItemNode } from '@lexical/list'
 import ToolbarPlugin from './editorPlugins/ToolbarPlugin';
 import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin"
@@ -25,15 +23,6 @@ const theme = {
     }
 }
 
-// function OnChangePlugin({onChange}){
-//     const [ editor ] = useLexicalComposerContext();
-
-//     useEffect(()=>{
-//         return editor.registerUpdateListener(({editorState})=>{
-//             onChange(editorState)
-//         })
-//     },[onChange,editor])
-// }
 
 // Catch any errors that occur during Lexical updates and log them
 // or throw them as needed. If you don't throw them, Lexical will
@@ -42,7 +31,7 @@ function onError(error) {
   console.error(error);
 }
 
-function TextEditor({htmlData,errors,placeholder,setEditorContent}) {
+function TextEditor({htmlData,loaded,errors,placeholder,setEditorContent}) {
 
     const initialConfig = {
         namespace: 'MyEditor',
@@ -81,7 +70,7 @@ function TextEditor({htmlData,errors,placeholder,setEditorContent}) {
         <div className='w-full relative bg-background-40 rounded-xl  '>
             <LexicalComposer initialConfig={initialConfig}>
                 <ListPlugin />
-                <LoadDataPlugin htmlData={htmlData} />
+                <LoadDataPlugin htmlData={htmlData} loaded />
                 <ToolbarPlugin errors={errors} />
                 <RichTextPlugin contentEditable={CustomContent} placeholder={CustomPlaceholder}
                     ErrorBoundary={LexicalErrorBoundary} />
