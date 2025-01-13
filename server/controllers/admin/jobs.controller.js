@@ -5,6 +5,7 @@ import { asyncHandler } from "../../utils/asyncHandler.js";
 import mongoose from "mongoose";
 import { jobStagesStatuses } from "../../config/jobStagesStatuses.js";
 import { candidates } from "../../models/candidate/candidate.model.js";
+import { sanitizeLexicalHtml } from "../../utils/sanitize-html.js";
 // Controller function to create a new job
 
 export const StatisticsController = {
@@ -291,6 +292,8 @@ const createJob = async (req, res) => {
       questions
     } = req.body;
 
+    const sanitizedDescription = sanitizeLexicalHtml(jobDescription);
+
     const newJob = new jobs({
       jobTitle,
       workplaceType,
@@ -302,7 +305,7 @@ const createJob = async (req, res) => {
       budgetFrom,
       budgetTo,
       skills,
-      jobDescription,
+      jobDescription : sanitizedDescription,
       status,
       createdBy: req.user._id,
       questions
@@ -584,6 +587,11 @@ const reOpenJob = async (req, res) => {
 const editJob = async (req, res) => {
   const { id } = req.params;
   const updates = req.body;
+
+  if(updates.jobDescription){
+    const sanitizedDescription = sanitizeLexicalHtml(updates.jobDescription)
+    updates.jobDescription = sanitizedDescription;
+  }
 
   try {
       const job = await jobs.findById(id);
