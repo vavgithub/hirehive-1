@@ -5,6 +5,7 @@ import { StyledToastContainer } from './components/ui/Toast'
 import { AuthProvider } from './context/AuthProvider';
 import { Provider } from 'react-redux'
 import { store } from './redux/store';
+import StatePreserver from './context/StatePreserver';
 
 const queryClient = new QueryClient();
 
@@ -13,8 +14,10 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <Provider store={store}>
         <AuthProvider>
-          <RouterProvider router={router} />
-          <StyledToastContainer />
+          <StatePreserver>
+            <RouterProvider router={router} />
+            <StyledToastContainer />
+          </StatePreserver>
         </AuthProvider>
       </Provider>
     </QueryClientProvider>

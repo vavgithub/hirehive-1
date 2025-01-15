@@ -33,6 +33,7 @@ import FileMainIcon from '../svg/FileMainIcon';
 import ResumeIcon from '../svg/ResumeIcon';
 import CustomToolTip from './utility/CustomToolTip';
 import  { AssignmentIconStroke } from '../svg/AssignmentIcon';
+import { usePreserver } from '../context/StatePreserver';
 
 
 const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
@@ -64,10 +65,19 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
 
   const [budgetMenuAnchorEl, setBudgetMenuAnchorEl] = useState(null);
 
+  const { query , setQuery } = usePreserver();
+
+  useEffect(()=>{
+    console.log("Rende")
+    if(query && query !== searchTerm){
+      setSearchTerm(query)
+    }
+  },[])
 
 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
+    setQuery(event.target.value)
   };
 
   const handleApplyFilters = (newFilters) => {
