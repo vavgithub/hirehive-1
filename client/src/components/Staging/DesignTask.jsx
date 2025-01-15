@@ -155,20 +155,20 @@ const DesignTask = ({ candidateId, jobId ,isClosed}) => {
                     <p className='typography-small-p text-font-gray'>Remarks</p>
                     <p className='typography-body pb-8'>{stageData?.status === 'Rejected' ? stageData?.rejectionReason : stageData?.feedback ? stageData?.feedback  : 'No feedbacks'}</p>
                 </div>
+            {
+                role === "Hiring Manager" &&
                 <div className='bg-stars bg-cover rounded-xl w-[160px] my-4'>
                     <div className='p-4 flex flex-col items-center'>
                         <p className='typography-small-p text-font-gray'>Total Score:</p>
                         <div className='flex flex-col items-center text-font-accent'>
-                            <p className='display-d2 font-bold'>{stageData?.score}</p>
+                            <p className='display-d2 font-bold'>{stageData?.score || 0}</p>
                             <p className='typography-small-p text-font-gray'>Out Of 5</p>
                         </div>
                     </div>
                 </div>
+            }
             </div>
 
-            {
-                role === ""
-            }
         </div>
     );
 
@@ -558,7 +558,7 @@ const DesignTask = ({ candidateId, jobId ,isClosed}) => {
                             <div className='p-4 flex flex-col items-center'>
                                 <p className='typography-small-p text-font-gray'>Total Score:</p>
                                 <div className='flex flex-col items-center text-font-accent'>
-                                    <p className='display-d2 font-bold'>{stageData?.score}</p>
+                                    <p className='display-d2 font-bold'>{stageData?.score || 0}</p>
                                     <p className='typography-small-p text-font-gray'>Out Of 5</p>
                                 </div>
                             </div>
@@ -595,7 +595,7 @@ const DesignTask = ({ candidateId, jobId ,isClosed}) => {
                             <div className='p-4 flex flex-col items-center'>
                                 <p className='typography-small-p text-font-gray'>Total Score:</p>
                                 <div className='flex flex-col items-center text-font-accent'>
-                                    <p className='display-d2 font-bold'>{stageData?.score}</p>
+                                    <p className='display-d2 font-bold'>{stageData?.score || 0}</p>
                                     <p className='typography-small-p text-font-gray'>Out Of 5</p>
                                 </div>
                             </div>

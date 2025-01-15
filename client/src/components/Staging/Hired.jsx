@@ -88,7 +88,7 @@ const Hired = ({ candidateId, jobId ,isClosed}) => {
                         {
                             role === "Candidate" && (
                                 <div>
-                                    <Label text={"Your application is under review. Please wait wile s omeone from out team contacts you"} />
+                                    <Label text={"Your application is under review. Please wait while someone from our team contacts you"} />
                                 </div>
                             )
                         }
