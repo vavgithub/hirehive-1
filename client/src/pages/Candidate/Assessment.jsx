@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Webcam from 'react-webcam';
@@ -209,7 +209,9 @@ const QuestionDisplay = ({
 );
 
 // Webcam Component
-const WebcamView = ({ isMinimized, toggleMinimize, isRecording, webcamRef ,handleUserMedia}) => (
+const WebcamView = React.memo(({ isMinimized, toggleMinimize, isRecording, webcamRef ,handleUserMedia}) => {
+ console.log("WEBCAM") 
+  return(
   <div className={`bg-gray-800 rounded-lg overflow-hidden ${isMinimized ? 'w-64' : 'w-96'}`}>
     <div className="flex justify-between items-center p-2 bg-gray-700">
       <div className='flex items-center gap-3 px-1' >
@@ -243,7 +245,7 @@ const WebcamView = ({ isMinimized, toggleMinimize, isRecording, webcamRef ,handl
       </div>
     )}
   </div>
-);
+)});
 
 // Upload Progress Overlay Component
 const UploadProgressOverlay = ({ uploadProgress }) => (
@@ -329,9 +331,9 @@ const Assessment = () => {
     return () => window.location.href = "/candidate/my-jobs"
   },[])
 
-  const handleUserMedia = (stream) => {
-    setIsWebcamReady(true);  // This state change will trigger the effect
-  };
+  const handleUserMedia = useCallback((stream) => {
+    setIsWebcamReady(true);  // Set the state only when necessary
+  }, []);  // Empty dependency array to ensure it's not recreated unnecessarily  
 
   const startRecording = async () => {
     try {
@@ -434,11 +436,16 @@ const Assessment = () => {
 
         // Stop the recording
         mediaRecorderRef.current.stop();
+        
+        // // Stop all tracks
+        // const tracks = webcamRef.current.video.srcObject.getTracks();
+        // tracks.forEach(track => track.stop());
+        if (webcamRef.current && webcamRef.current.video?.srcObject) {
+          console.log("REF")
+          const tracks = webcamRef.current.video.srcObject.getTracks();
+          tracks.forEach(track => track.stop());
+        }        
         setIsRecording(false);
-
-        // Stop all tracks
-        const tracks = webcamRef.current.video.srcObject.getTracks();
-        tracks.forEach(track => track.stop());
       } else {
         resolve(null);
       }
@@ -622,6 +629,8 @@ const Assessment = () => {
   //   }
   // });
 
+  console.log("RETRIGGERS..")
+
   const uploadVideo = async (videoBlob) => {
     if (!videoBlob) {
       throw new Error('No recording available');
@@ -745,6 +754,11 @@ const Assessment = () => {
     }));
   };
 
+  const toggleMinimize = useCallback(() => {
+    setIsWebcamMinimized((prev) => !prev);
+  }, []);
+  
+
   // Simplified handleFinish
   const handleFinish = async (isExceeded = false) => {
     if (!isAllAnswered && !isExceeded) {
@@ -841,7 +855,7 @@ const Assessment = () => {
               <div className="p-4 fixed bottom-3 right-3">
                   <WebcamView
                     isMinimized={isWebcamMinimized}
-                    toggleMinimize={() => setIsWebcamMinimized(prev => !prev)}
+                    toggleMinimize={toggleMinimize}
                     isRecording={isRecording}
                     webcamRef={webcamRef}
                     handleUserMedia={handleUserMedia}

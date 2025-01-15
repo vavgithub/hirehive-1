@@ -67,8 +67,8 @@ const MyJobs = () => {
           <p>You have not applied to any jobs yet.</p>
         ) : (
           <ul>
-            {appliedJobs.map((application) => (
-              <li key={application.jobId.jobId} className="mb-4">
+            {appliedJobs.map((application,index) => (
+              <li key={application.jobId._id || index} className="mb-4">
                 <JobCard
                   job={application.jobId}
                   isCandidate={true}
