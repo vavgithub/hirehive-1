@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useLayoutEffect, useState } from 'react'
 import { DataGrid } from '@mui/x-data-grid';
 import { FaEdit, FaFile, FaFileAlt, FaGlobe, FaUser } from 'react-icons/fa';
 import { Avatar, Menu, MenuItem } from '@mui/material';
@@ -62,17 +62,28 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
   // ..this are the table filters 
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState({});
+  const [currentPage,setCurrentPage] = useState(0);
+  const [pageSize,setPageSize] = useState(10);
 
   const [budgetMenuAnchorEl, setBudgetMenuAnchorEl] = useState(null);
 
-  const { query , setQuery } = usePreserver();
+  const { 
+    query , 
+    setQuery ,
+    filters : preservedFilters,
+    setFilters : setPreservedFilters ,
+    currentPage : preservedCurrentPage, 
+    setCurrentPage : setPreservedCurrentPage,
+    pageSize : preservedPageSize,
+    setPageSize : setPreservedPageSize,
+  } = usePreserver(jobId || 'Candidates');
 
-  useEffect(()=>{
-    console.log("Rende")
-    if(query && query !== searchTerm){
+  useLayoutEffect(()=>{
       setSearchTerm(query)
-    }
-  },[])
+      setFilters(preservedFilters)
+      setCurrentPage(preservedCurrentPage)
+      setPageSize(preservedPageSize)
+  },[query,preservedFilters,preservedCurrentPage,preservedPageSize])
 
 
   const handleSearch = (event) => {
@@ -82,6 +93,7 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
 
   const handleApplyFilters = (newFilters) => {
     setFilters(newFilters);
+    setPreservedFilters(newFilters)
   };
 
 
@@ -790,7 +802,7 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
             value={searchTerm}
             onChange={handleSearch}
           />
-          <FilterForDataTable onApplyFilters={handleApplyFilters} readOnly={readOnly} />
+          <FilterForDataTable onApplyFilters={handleApplyFilters} readOnly={readOnly} preservedFilters={preservedFilters} />
           <div className='flex items-center cursor-pointer gap-2 text-font-gray hover:bg-background-60 hover:text-accent-100 rounded-xl typography-body h-12 p-3' onClick={() => handleExport()}>
             <Export />
             Export
@@ -826,15 +838,17 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
           </div>
         </div>)}
       </div>
-
       <DataGrid
         rows={filteredAndSearchedRowsData}
         columns={columns}
         getRowId={(row) => `${row._id}_${row.jobId}`} // Create a unique ID for each row
-        initialState={{
-          pagination: {
-            paginationModel: { page: 0, pageSize: 10 },
-          },
+        paginationModel= {{ page: currentPage, pageSize: pageSize }}
+        onPaginationModelChange={(paginationModel) => {
+          const { page, pageSize } = paginationModel;
+          setCurrentPage(page); // Update your state or perform actions for page change
+          setPreservedCurrentPage(page)
+          setPageSize(pageSize); // Update your state or perform actions for page size change
+          setPreservedPageSize(pageSize)
         }}
         slotProps={{
           pagination : {

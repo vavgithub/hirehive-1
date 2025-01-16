@@ -1,27 +1,73 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 const PreserverContext = createContext(null);
 
-export const usePreserver = ()=> useContext(PreserverContext)
+export const usePreserver = (key) => {
+  const { unique, setUnique, ...rest } = useContext(PreserverContext);
 
-import React from 'react'
+  useEffect(() => {
+    if (key && key !== unique) {
+      setUnique(key);
+    }
+  }, [key]);
 
-function StatePreserver({children}) {
-    const [filters,setFilters] = useState({
-        stage: [],
-        status: [],
-        experience: [],
-        budget: [],
-        rating: [],
-        assignee: [],
+  //Abstracted Unique keyword from local usage
+  return rest;
+};
+
+import React from "react";
+
+function StatePreserver({ children }) {
+  const [unique, setUnique] = useState("");
+
+  //Table Preservations
+  const [filters, setFilters] = useState({
+    stage: [],
+    status: [],
+    experience: "",
+    budget: [],
+    rating: [],
+    assignee: [],
+  });
+  const [query, setQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(0);
+  const [pageSize, setPageSize] = useState(10);
+  //Add other preservations
+
+  useEffect(() => {
+    setFilters({
+      stage: [],
+      status: [],
+      experience: "",
+      budget: [],
+      rating: [],
+      assignee: [],
     });
-    const [query,setQuery] = useState('');
+    setQuery("");
+    setCurrentPage(0);
+    setPageSize(10);
+    //Add other preservations
+  }, [unique]);
+
 
   return (
-    <PreserverContext.Provider value={{filters,setFilters,query,setQuery}}>
-        {children}
+    <PreserverContext.Provider
+      value={{
+        filters,
+        setFilters,
+        query,
+        setQuery,
+        unique,
+        setUnique,
+        currentPage,
+        setCurrentPage,
+        pageSize,
+        setPageSize,
+      }}
+    >
+      {children}
     </PreserverContext.Provider>
-  )
+  );
 }
 
-export default StatePreserver
+export default StatePreserver;
