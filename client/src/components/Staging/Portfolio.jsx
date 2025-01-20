@@ -187,7 +187,7 @@ const Portfolio = ({ candidateId, jobId ,isClosed}) => {
                         <div className='p-4 flex flex-col items-center'>
                             <p className='typography-small-p text-font-gray'>Total Score:</p>
                             <div className='flex flex-col items-center text-font-accent'>
-                                <p className='display-d2 font-bold'>{stageData?.score}</p>
+                                <p className='display-d2 font-bold'>{stageData?.score || 0}</p>
                                 <p className='typography-small-p text-font-gray'>Out Of 5</p>
                             </div>
                         </div>
@@ -217,7 +217,7 @@ const Portfolio = ({ candidateId, jobId ,isClosed}) => {
                     <div className='p-4 flex flex-col items-center'>
                         <p className='typography-small-p text-font-gray'>Total Score:</p>
                         <div className='flex flex-col items-center text-font-accent'>
-                            <p className='display-d2 font-bold'>{stageData?.score}</p>
+                            <p className='display-d2 font-bold'>{stageData?.score || 0}</p>
                             <p className='typography-small-p text-font-gray'>Out Of 5</p>
                         </div>
                     </div>

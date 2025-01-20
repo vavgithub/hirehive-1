@@ -338,7 +338,7 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
       field: 'fullName',
       headerName: 'Full Name',
       width: 250,
-      sortable: true,
+      sortable: false,
       disableColumnMenu: true,
       valueGetter: (params, row) => {
         const name = `${row?.firstName || ''} ${row?.lastName || ''}`
@@ -434,6 +434,7 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
       field: 'email',
       headerName: 'Email',
       width: 220,
+      sortable: false,
       disableColumnMenu: true,
       renderCell : (params) =>(
         <CustomToolTip title={params.value} arrowed size={2}>
@@ -445,6 +446,7 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
     {
       field: 'phone',
       headerName: 'Phone',
+      sortable: false,
       width: 130,
       disableColumnMenu: true,
     },
@@ -565,6 +567,7 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
     {
       field: 'actions',
       headerName: 'Actions',
+      sortable: false,
       width: 150,
       disableColumnMenu: true,
       renderCell: (params) => (

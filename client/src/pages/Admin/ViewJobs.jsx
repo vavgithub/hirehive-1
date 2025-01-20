@@ -214,7 +214,7 @@ const ViewJobs = () => {
 
 
             {activeTab === 'jobDetails' && (
-                <div className='bg-background-30 p-6 rounded-xl'>
+                <div className='bg-background-30 p-4 rounded-xl'>
                     <StatsGrid stats={jobsDetailStats} />
                     <div className='flex justify-between'>
                         <div className='w-4/5   '>
@@ -256,7 +256,7 @@ const ViewJobs = () => {
             )}
 
             {activeTab === 'candidate' && (
-               <div className='bg-background-30 p-6 rounded-xl w-full'>
+               <div className='bg-background-30 p-4 rounded-xl'>
                     <div className="max-w-full  mb-4">
                         <StatsGrid stats={candidateStats} />
                     </div>
