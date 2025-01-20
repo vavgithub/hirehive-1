@@ -111,6 +111,9 @@ export default {
           yellow: "var(--color-yellow-100)",
           green: "var(--color-green-100)",
         },
+        divider:{
+          100 :"rgba(44, 45, 47, 1)"
+        },
         background: {
           100: "var(--color-background-100)",
           90: "var(--color-background-90)",
