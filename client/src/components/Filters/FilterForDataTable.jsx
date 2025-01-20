@@ -17,10 +17,13 @@ const ArrowIcon = ({ isOpen }) => (
   </svg>
 );
 
-const FilterForDataTable = ({ onApplyFilters ,readOnly}) => {
+const FilterForDataTable = ({ onApplyFilters ,readOnly , preservedFilters }) => {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef(null);
-  const [selectedFilters, setSelectedFilters] = useState({
+
+  const firstRenderRef = useRef(true);
+
+  const [selectedFilters, setSelectedFilters] = useState(preservedFilters ? preservedFilters : {
     stage: [],
     status: [],
     experience: '',
@@ -38,6 +41,10 @@ const FilterForDataTable = ({ onApplyFilters ,readOnly}) => {
   });
 
   const [designReviewers, setDesignReviewers] = useState([]);
+
+  useEffect(()=> {
+    setSelectedFilters(preservedFilters)
+  },[preservedFilters])
 
   // Updated formatSelectedValues to return an object with value and className
   const formatSelectedValues = (category, values) => {
@@ -196,7 +203,11 @@ const FilterForDataTable = ({ onApplyFilters ,readOnly}) => {
   };
 
   useEffect(() => {
-    onApplyFilters(selectedFilters);
+    if(firstRenderRef.current){
+      firstRenderRef.current = false
+    }else{
+      onApplyFilters(selectedFilters);
+    }
   }, [selectedFilters]);
 
   return (
