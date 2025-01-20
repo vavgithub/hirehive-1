@@ -32,50 +32,8 @@ import ClosedBadge from '../../svg/ClosedBadge';
 import useScheduler from '../../hooks/useScheduler';
 import NoShowAction from './NoShow';
 import Loader from '../ui/Loader';
+import ScreeningReview from '../Reviews/ScreeningReview';
 
-
-const ScreeningReview = ({ candidate, onSubmit }) => {
-    const [ratings, setRatings] = useState({
-        Attitude: 0, Communication: 0, UX: 0, UI: 0, Tech: 0
-    });
-    const [feedback, setFeedback] = useState('');
-
-    const handleRatingChange = (category, value) => {
-        setRatings(prev => ({ ...prev, [category]: value }));
-    };
-    const handleSubmit = () => {
-        onSubmit(candidate._id, {
-            jobId: candidate.jobApplication.jobId,
-            stage: candidate.jobApplication.currentStage,
-            ratings,
-            feedback,
-        });
-    };
-
-    return (
-        <div className='bg-background-90 grid grid-cols-2 gap-4 p-4'>
-            {Object.entries(ratings).map(([category, value]) => (
-                <div key={category} className='flex gap-4 items-center'>
-                    <span className='w-32'>{category}</span>
-                    <Scorer value={ratings[category]} onChange={(v) => handleRatingChange(category, v)} />
-
-                </div>
-            ))}
-            <div className='flex gap-4'>
-
-                <input
-                    type="text"
-                    className='w-full bg-background-80 text-white p-2 rounded'
-                    placeholder='Enter Your Feedback'
-                    value={feedback}
-                    onChange={(e) => setFeedback(e.target.value)}
-                />
-                <Button variant="icon" onClick={handleSubmit}>Submit</Button>
-            </div>
-
-        </div>
-    );
-};
 
 export const ScheduleForm = ({ candidateId, jobId, onSubmit, isRescheduling, initialData, onCancel }) => {
     const [date, setDate] = useState(isRescheduling ? null : (initialData ? new Date(initialData.scheduledDate) : null));
@@ -322,7 +280,7 @@ const Screening = ({ candidateId, jobId, isClosed }) => {
             );
         } else {
             return (
-                <div className='bg-stars bg-cover rounded-xl w-[160px] '>
+                <div className='bg-stars bg-cover rounded-xl w-[160px]'>
                     <div className='p-4 flex flex-col items-center'>
                         <p className='typography-small-p text-font-gray'>Total Score:</p>
                         <div className='flex flex-col items-center text-font-accent'>
@@ -434,7 +392,7 @@ const Screening = ({ candidateId, jobId, isClosed }) => {
                 <div className={(isRescheduled && "text-font-gray ") + ' flex items-center gap-2'}>
                     <CalenderIcon customStroke={"#808389"} />
                     <h2 className={isRescheduled && 'typography-body'}>
-                        {new Date(call?.scheduledDate).toLocaleDateString('en-US', { timeZone: 'UTC' })}
+                        {new Date(call?.scheduledDate).toLocaleDateString('en-gb', { timeZone: 'UTC' })}
                     </h2>
                 </div>
             </div>
@@ -631,26 +589,39 @@ const Screening = ({ candidateId, jobId, isClosed }) => {
         }
     };
 
-    const renderReviewedContent = (isReadOnly = false) => (
+    const renderReviewedContent = (isReadOnly = false) => {
+
+        const getTotalScore = ()=>{
+            let score = 0;    
+            return score + (stageData?.score?.Attitude ?? 0) +
+            (stageData?.score?.UX ?? 0) +
+            (stageData?.score?.Tech ?? 0) +
+            (stageData?.score?.Communication ?? 0) +
+            (stageData?.score?.UI ?? 0) +
+            (stageData?.score?.Budget ?? 0)
+        }
+        return (
         <>
             <div className='w-full'>
                 <div className='flex flex-col justify-between gap-4'>
                     <div className='w-full'>
                         <p className='typography-small-p text-font-gray'>Remarks</p>
-                        <p className='typography-body pb-2'>{stageData?.feedback}</p>
+                        <p className='typography-body'>{stageData?.feedback  || 'No feedbacks'}</p>
                     </div>
                     <div className='flex gap-4 pb-4 w-full'>
-                        <div className='w-full flex  flex-col'>
+                        <div className='max-w-[75%] flex  flex-col'>
                             <p className='typography-small-p text-font-gray mb-4'>Score</p>
-                            <div className='grid grid-cols-2 gap-4'>
-                                <div className='p-4 rounded-xl bg-background-60 flex min-h-[115px]'>
+                            
+                                <div className='p-4 rounded-xl bg-background-60 flex min-h-[115px] '>
                                     {renderScoreCategories()}
                                 </div>
-                                <div>
-                                    {!isReadOnly && renderBudgetScoreSection()}
-
-                                </div>
-                            </div>
+                        </div>
+                        <div className={'flex flex-col  ' + (isBudgetScoreSubmitted ? "justify-end" : "justify-between")}>
+                            {!isReadOnly && renderBudgetScoreSection()}
+                            {!isBudgetScoreSubmitted && <div className='self-end flex flex-col'>
+                                <p className='typography-small-p text-font-gray'>Total Score</p>
+                                <h1 className='typography-h2 self-end'>{getTotalScore()}</h1>
+                            </div>}
                         </div>
                     </div>
                 </div>
@@ -665,14 +636,15 @@ const Screening = ({ candidateId, jobId, isClosed }) => {
                 />
             )}
         </>
-    );
+        )
+    }
 
     const renderClearedRejectedContent = () => (
         <div className='w-full'>
             <p className='typography-small-p text-font-gray'>{stageData?.status === 'Rejected' ? "Rejection Reason" : "Feedback"}</p>
             <p className='typography-body pb-8'>{stageData?.status === 'Rejected' ? stageData?.rejectionReason : stageData?.feedback}</p>
             <div className='flex gap-4'>
-                <div className='w-full p-2 rounded-xl bg-background-60'>
+                <div className='w-full p-4 rounded-xl bg-background-60 flex items-center max-w-[75%]'>
                     {renderScoreCategories()}
                 </div>
                 <div className='bg-stars bg-cover rounded-xl w-[160px]'>
@@ -695,13 +667,13 @@ const Screening = ({ candidateId, jobId, isClosed }) => {
             { label: 'Tech', value: stageData?.score?.Tech },
             { label: 'Communication', value: stageData?.score?.Communication },
             { label: 'UI', value: stageData?.score?.UI },
-            { label: 'Budget', value: stageData?.score?.Budget },
+            ...(isBudgetScoreSubmitted ? [{ label: 'Budget', value: stageData?.score?.Budget }] : []),
         ];
 
         return (<div className='grid grid-cols-3 gap-3 w-full '>
             {categories.map((category, index) => (
-                <div key={index} className='flex items-center w-full justify-between'>
-                    <span className='typography-body text-font-gray'>{category.label}</span>
+                <div key={index} className='grid grid-cols-[1fr,1fr] w-full gap-4 items-center'>
+                    <span className='typography-body text-font-gray '>{category.label}</span>
                     <BulletMarks marks={category.value} />
                 </div>
             ))}

@@ -53,7 +53,7 @@ export const InputField = React.forwardRef(({
         />
       )}
       {error && errorMessage && (
-        <span className="text-red-500 typography-small-p top-[5.5rem] absolute">{errorMessage}</span>
+        <span className="text-red-500 typography-small-p top-[4.8rem] absolute">{errorMessage}</span>
       )}
     </div>
   );

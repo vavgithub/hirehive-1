@@ -2,7 +2,7 @@ import React from 'react';
 
 const BulletMarks = ({ marks }) => {
   return (
-    <div className='flex space-x-1 w-[40%]'>
+    <div className='flex space-x-1 h-2'>
       {Array.from({ length: 5 }).map((_, index) => (
         <div 
           key={index} 

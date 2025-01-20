@@ -40,6 +40,8 @@ const PreAssessment = () => {
     const [hasAudioError,setHasAudioError] = useState(false);
     const [showMediaErrorModal,setShowMediaErrorModal] = useState(false);
 
+    const [isMediaRecorderOk,setIsMediaRecorderOk] = useState(true);
+
     //Check the status of microphone access
     const checkAudioStatus = async ()=> {
         try {
@@ -99,6 +101,10 @@ const PreAssessment = () => {
     }
 
     useEffect(()=>{
+      //Checks if media recorder is supported
+      if (!window.MediaRecorder) {
+        setIsMediaRecorderOk(false)
+      }
         //Redirecting to refresh the page, to turn of the Camera and Microphone Permissions
         return () => window.location.href = "/candidate/all-jobs"
     },[])
@@ -130,11 +136,9 @@ const PreAssessment = () => {
                                 preIcon={AssesmentIcon()}
                                 content={
                                     <ul className="list-disc pl-12">
-                                        <li className='pb-2'>This assessment consists of 30 questions.</li>
-                                        <li className='pb-2'>20 Multiple Choice Questions (MCQs)</li>
-                                        <li className='pb-2'>10 Open-ended questions</li>
-                                        <li className='pb-2'>Each question is worth 1 mark.</li>
-                                        <li className='pb-2'>You must attempt all 30 questions.</li>
+                                        <li className='pb-2'>This assessment consists of 10 questions.</li>        
+                                        <li className='pb-2'>Each question is worth 10 mark.</li>
+                                        <li className='pb-2'>You must attempt all 10 questions.</li>
                                         <li>Successfully completing this assessment is required to move to the next round.</li>
                                     </ul>
                                 }
@@ -194,6 +198,15 @@ const PreAssessment = () => {
                                 </div>
                                 </div>
                             </div>
+                                <p className='typography-large-p mt-4 p-4 rounded-xl bg-background-80'>
+                                    <span className='bg-blue-200 h-2 w-2 rounded-full inline-block mr-4' ></span>
+                                For the best experience, use the latest version of <strong>Google Chrome</strong> for recording.
+                                </p>
+                                {!isMediaRecorderOk && 
+                                <p className='typography-large-p mt-4 p-4 rounded-xl bg-background-80'>
+                                    <span className='bg-red-40 h-2 w-2 rounded-full inline-block mr-4' ></span>
+                                    Your system does not support recording. Try with alternative browsers.
+                                </p>}
                         </div>
                     </div>
 
@@ -207,6 +220,7 @@ const PreAssessment = () => {
                     <div className='mt-8 w-full flex justify-end'>                            
                             <Button
                                 onClick={handleStartAssessment}
+                                disabled={!isMediaRecorderOk}
                             >
                                 Start Assessment
                             </Button>

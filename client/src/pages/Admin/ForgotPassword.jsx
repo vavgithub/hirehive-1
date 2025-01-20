@@ -7,6 +7,7 @@ import { InputField } from '../../components/Form/FormFields';
 import OTPInput from '../../components/ui/OTPInput';
 import { BackButton } from '../../components/utility/Header';
 import { digitsRegex, lowerCaseRegex, specialCharRegex, upperCaseRegex } from '../../utility/regex';
+import LoaderModal from '../../components/ui/LoaderModal';
 
 const ForgotPassword = ({ onBack ,role }) => {
   const [step, setStep] = useState('email');
@@ -121,6 +122,7 @@ const ForgotPassword = ({ onBack ,role }) => {
 
   return (
     <div className="w-full">
+      {(requestOtpMutation.isPending || verifyOtpMutation.isPending || resetPasswordMutation.isPending) && <LoaderModal />}
       <div className='flex cursor-pointer gap-4 my-4 items-center'
       onClick={onBack}>
         <BackButton/>

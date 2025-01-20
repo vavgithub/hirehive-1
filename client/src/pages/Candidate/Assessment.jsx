@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Webcam from 'react-webcam';
@@ -13,6 +13,7 @@ import { fetchCandidateAuthData, updateAssessmentStatus } from '../../redux/cand
 import TimerIconSmall from '../../svg/TimerIconSmall';
 import WarningIcon from '../../svg/WarningIcon';
 import Draggable from 'react-draggable';
+import { uploadAssessment } from '../../utility/cloudinary';
 const ONE_MINUTE = 60;
 
 // Utility function to format time
@@ -51,13 +52,15 @@ const ProgressBar = ({ answeredCount, total }) => {
 };
 
 // Question Sidebar Component
-const QuestionSidebar = ({ questions, currentQuestion, onQuestionSelect, answers , submitTest}) => {
+const QuestionSidebar = ({ questions, currentQuestion, onQuestionSelect, answers , submitTest, isUploading}) => {
   const [timeRemaining, setTimeRemaining] = useState(5 * 60);
+  const [timerRef,setTimerRef] = useState(null);
 
   useEffect(() => {
     const timer = setInterval(() => {
       setTimeRemaining((prevTime) => (prevTime > 0 ? prevTime - 1 : 0));
     }, 1000);
+    setTimerRef(timer);
     return () => clearInterval(timer);
   }, []);
 
@@ -67,6 +70,12 @@ const QuestionSidebar = ({ questions, currentQuestion, onQuestionSelect, answers
       submitTest(true)
     }
   },[timeRemaining])
+
+  useEffect(()=>{
+    if(isUploading){
+      clearInterval(timerRef)
+    }
+  },[isUploading])
 
   const [ min ,sec ] = useMemo(()=> formatTime(timeRemaining).split(":") ,[timeRemaining]) 
   
@@ -200,7 +209,9 @@ const QuestionDisplay = ({
 );
 
 // Webcam Component
-const WebcamView = ({ isMinimized, toggleMinimize, isRecording, webcamRef ,handleUserMedia}) => (
+const WebcamView = React.memo(({ isMinimized, toggleMinimize, isRecording, webcamRef ,handleUserMedia}) => {
+ console.log("WEBCAM") 
+  return(
   <div className={`bg-gray-800 rounded-lg overflow-hidden ${isMinimized ? 'w-64' : 'w-96'}`}>
     <div className="flex justify-between items-center p-2 bg-gray-700">
       <div className='flex items-center gap-3 px-1' >
@@ -234,12 +245,12 @@ const WebcamView = ({ isMinimized, toggleMinimize, isRecording, webcamRef ,handl
       </div>
     )}
   </div>
-);
+)});
 
 // Upload Progress Overlay Component
 const UploadProgressOverlay = ({ uploadProgress }) => (
-  <div className="fixed inset-0 bg-[#000000a9] flex items-center justify-center z-50">
-    <div className="bg-background-90 p-8 rounded-xl flex flex-col items-center space-y-4">
+  <div className="fixed inset-0 bg-background-overlay flex items-center justify-center z-50">
+    <div className=" p-8 rounded-xl flex flex-col items-center space-y-4">
       <Loader />
       <h3 className="typography-h3 text-font-gray">Uploading Assessment</h3>
       <div className="w-full max-w-md bg-background-70 rounded-full h-4 overflow-hidden">
@@ -320,9 +331,9 @@ const Assessment = () => {
     return () => window.location.href = "/candidate/my-jobs"
   },[])
 
-  const handleUserMedia = (stream) => {
-    setIsWebcamReady(true);  // This state change will trigger the effect
-  };
+  const handleUserMedia = useCallback((stream) => {
+    setIsWebcamReady(true);  // Set the state only when necessary
+  }, []);  // Empty dependency array to ensure it's not recreated unnecessarily  
 
   const startRecording = async () => {
     try {
@@ -331,37 +342,79 @@ const Assessment = () => {
         audio: true
       });
 
+      //Checks if both audio and video is live
+      const videoTrack = stream.getVideoTracks()[0];
+      const audioTrack = stream.getAudioTracks()[0];
+
+      if (!videoTrack || videoTrack.readyState !== 'live') {
+        throw new Error('Video track is not live.');
+      }
+      if (!audioTrack || audioTrack.readyState !== 'live') {
+        throw new Error('Audio track is not live.');
+      }
+      
+
       webcamRef.current.video.srcObject = stream;
 
+      //Checks if media recorder is supported
+      if (!window.MediaRecorder) {
+        throw new Error('MediaRecorder is not supported in this browser.');
+      }
+      
+      // Check for codec support
+      let mimeType;
+      if (MediaRecorder.isTypeSupported('video/webm;codecs=vp8,opus')) {
+        mimeType = 'video/webm;codecs=vp8,opus'; // Preferred option
+      } else if (MediaRecorder.isTypeSupported('video/mp4;codecs=avc1.42E01E,mp4a.40.2')) {
+        mimeType = 'video/mp4;codecs=avc1.42E01E,mp4a.40.2'; // Fallback option
+      } else {
+        throw new Error('No supported MIME type found for recording.');
+      }
+
       const mediaRecorder = new MediaRecorder(stream, {
-        mimeType: 'video/webm;codecs=vp8,opus'
+        mimeType
       });
+
+      // const mediaRecorder = new MediaRecorder(stream, {
+      //   mimeType: 'video/webm;codecs=vp8,opus'
+      // });
+
       mediaRecorderRef.current = mediaRecorder;
+
+      //checks media recorder is already in use
+      if (mediaRecorder.state !== 'inactive') {
+        throw new Error('Another recording is already in progress.');
+      }      
 
       mediaRecorder.ondataavailable = (event) => {
         if (event.data && event.data.size > 0) {
           chunksRef.current.push(event.data);
-          console.log('Recording chunk received:', event.data.size);
+          // console.log('Recording chunk received:', event.data.size);
         }
       };
 
+      mediaRecorder.onerror = (event) => {
+        console.error('MediaRecorder encountered an error:', event.error.name, event.error.message);
+        throw new Error('Recording failed due to your system limitations.');
+      };
+
       mediaRecorder.onstop = async () => {
-        console.log('Recording stopped, creating blob...');
+        // console.log('Recording stopped, creating blob...');
         const blob = new Blob(chunksRef.current, {
           type: 'video/webm'
         });
-        console.log('Blob created:', blob.size);
-        setRecordedBlob(blob);
+        // console.log('Blob created:', blob.size);
+        // setRecordedBlob(blob);
         chunksRef.current = [];
       };
 
       // Request data every second
       mediaRecorder.start(1000);
       setIsRecording(true);
-      console.log('Recording started');
+      // console.log('Recording started');
     } catch (error) {
       console.error('Error starting recording:', error);
-      showErrorToast('Error', 'Failed to start recording. Please ensure camera access is granted.');
+      showErrorToast('Error', error.message || 'Failed to start recording. Please ensure camera access is granted.');
       setTimeout(()=>window.location.reload(),1000)
     }
   };
@@ -371,28 +424,105 @@ const Assessment = () => {
       if (mediaRecorderRef.current && isRecording) {
         // Set up a one-time event listener for when recording stops
         mediaRecorderRef.current.onstop = async () => {
-          console.log('Recording stopped, creating blob...');
+          // console.log('Recording stopped, creating blob...');
           const blob = new Blob(chunksRef.current, {
             type: 'video/webm'
           });
           console.log('Blob created:', blob.size);
-          setRecordedBlob(blob);
+          // setRecordedBlob(blob);
           chunksRef.current = [];
           resolve(blob);
         };
 
         // Stop the recording
         mediaRecorderRef.current.stop();
+        
+        // // Stop all tracks
+        // const tracks = webcamRef.current.video.srcObject.getTracks();
+        // tracks.forEach(track => track.stop());
+        if (webcamRef.current && webcamRef.current.video?.srcObject) {
+          console.log("REF")
+          const tracks = webcamRef.current.video.srcObject.getTracks();
+          tracks.forEach(track => track.stop());
+        }        
         setIsRecording(false);
-
-        // Stop all tracks
-        const tracks = webcamRef.current.video.srcObject.getTracks();
-        tracks.forEach(track => track.stop());
       } else {
         resolve(null);
       }
     });
   };
+
+
+//   const startRecording = async () => {
+//     try {
+//         const stream = await navigator.mediaDevices.getUserMedia({
+//             video: true,
+//             audio: false // Focus on video only
+//         });
+
+//         // Attach the stream to the video element for live preview
+//         webcamRef.current.video.srcObject = stream;
+
+//         // Create canvas for extracting frames
+//         const videoElement = document.createElement('video');
+//         videoElement.srcObject = stream;
+//         const canvas = document.createElement('canvas');
+//         const ctx = canvas.getContext('2d');
+
+//         // Array to store video frames as blobs
+//         const videoChunks = [];
+
+//         // Set up interval for extracting frames at 1 FPS
+//         const extractFramesInterval = setInterval(() => {
+//             // Ensure the canvas matches the video dimensions
+//             if (!canvas.width || !canvas.height) {
+//                 canvas.width = videoElement.videoWidth;
+//                 canvas.height = videoElement.videoHeight;
+//             }
+
+//             // Draw the current video frame on the canvas
+//             ctx.drawImage(videoElement, 0, 0);
+
+//             // Convert the canvas content to a Blob and store it
+//             canvas.toBlob((blob) => {
+//               if (blob) {
+//                   // Ensure each chunk is of type video/webm
+//                   videoChunks.push(blob);
+//                   console.log('Frame captured:', blob.size,blob.type);
+//               }
+//           }, 'video/webm');
+          
+//         }, 1000); // 1 FPS
+
+//         setIsRecording(true);
+//         console.log('Recording started');
+
+//         const stopRecording = () => {
+//           return new Promise((resolve) => {
+//               clearInterval(extractFramesInterval); // Stop frame extraction
+//               videoElement.srcObject = null;
+      
+//               // Create a final video Blob from captured frames
+//               const finalBlob = new Blob(videoChunks, { type: 'video/webm' });
+//               console.log('Recording stopped. Final blob size:', finalBlob.size , finalBlob.type);
+      
+//               setRecordedBlob(finalBlob);  // Update state with the final blob
+
+//               // Resolve the promise with the final blob
+//               resolve(finalBlob);
+//           });
+//       };
+
+//         // Attach stopRecording to a reference for external control
+//         mediaRecorderRef.current = { stop : stopRecording };
+//     } catch (error) {
+//         console.error('Error starting recording:', error);
+//         showErrorToast('Error', 'Failed to start recording. Please ensure camera access is granted.');
+//         // setTimeout(() => window.location.reload(), 1000);
+//     }
+// };
+
+
 
   //   const uploadVideo = async (videoBlob) => {
   //     if (!videoBlob) {
@@ -499,16 +629,19 @@ const Assessment = () => {
   //   }
   // });
 
+  console.log("RETRIGGERS..")
+
   const uploadVideo = async (videoBlob) => {
     if (!videoBlob) {
       throw new Error('No recording available');
     }
 
     try {
+      const currentTime = Date.now();
       // Create a proper File object
       const videoFile = new File(
         [videoBlob],
-        'assessment-recording.webm',
+        `assessment-recording-${currentTime}.webm`,
         {
           type: 'video/webm',
           lastModified: Date.now()
@@ -516,34 +649,42 @@ const Assessment = () => {
       );
 
       // Log the file to verify it's created correctly
-      console.log('Video file created:', videoFile);
+      // console.log('Video file created:', videoFile);
 
-      const formData = new FormData();
-      formData.append('video', videoFile);
+      const recordingUrl = await uploadAssessment(videoFile,setUploadProgress);
 
-      // Log FormData contents
-      console.log('FormData entries:');
-      for (let pair of formData.entries()) {
-        console.log(pair[0], pair[1]);
-      }
+      // const formData = new FormData();
+      // formData.append('video', videoFile);
 
-      const response = await axios.post('/admin/candidate/upload-recording', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-        onUploadProgress: (progressEvent) => {
-          const progress = Math.round(
-            (progressEvent.loaded * 100) / progressEvent.total
-          );
-          setUploadProgress(progress);
-        },
-      });
+      // // Log FormData contents
+      // console.log('FormData entries:');
+      // for (let pair of formData.entries()) {
+      //   console.log(pair[0], pair[1]);
+      // }
 
-      if (!response.data.videoUrl) {
+      // const response = await axios.post('/admin/candidate/upload-recording', formData, {
+      //   headers: {
+      //     'Content-Type': 'multipart/form-data',
+      //   },
+      //   onUploadProgress: (progressEvent) => {
+      //     const progress = Math.round(
+      //       (progressEvent.loaded * 100) / progressEvent.total
+      //     );
+      //     setUploadProgress(progress);
+      //   },
+      // });
+
+      // if (!response.data.videoUrl) {
+      //   throw new Error('No video URL received from server');
+      // }
+
+      // return response.data.videoUrl;
+
+      if (!recordingUrl) {
         throw new Error('No video URL received from server');
       }
 
-      return response.data.videoUrl;
+      return recordingUrl;
     } catch (error) {
       console.error('Upload error:', error);
       if (error.response) {
@@ -561,6 +702,7 @@ const Assessment = () => {
 
         // Stop recording and get the blob
         const videoBlob = await stopRecording();
+        // const videoBlob = await mediaRecorderRef.current.stop();
 
         if (!videoBlob) {
           throw new Error('No recording available');
@@ -611,6 +753,11 @@ const Assessment = () => {
       [questionId]: answer
     }));
   };
+
+  const toggleMinimize = useCallback(() => {
+    setIsWebcamMinimized((prev) => !prev);
+  }, []);
+  
 
   // Simplified handleFinish
   const handleFinish = async (isExceeded = false) => {
@@ -670,13 +817,14 @@ const Assessment = () => {
   return (
     <>
       {isUploading && <UploadProgressOverlay uploadProgress={uploadProgress} />}
-      <div className=" flex min-h-screen bg-background-90 ">
+      <div className="no-selection flex min-h-screen bg-background-90 ">
         <QuestionSidebar
           questions={questions}
           currentQuestion={currentQuestion}
           onQuestionSelect={setCurrentQuestion}
           answers={answers}
           submitTest={handleFinish}
+          isUploading={isUploading}
         />
         <div className="flex-grow flex flex-col container mx-auto ">
           <div className="bg-background-90 pl-[212px] p-4 flex gap-8 justify-between items-center">
@@ -707,7 +855,7 @@ const Assessment = () => {
               <div className="p-4 fixed bottom-3 right-3">
                   <WebcamView
                     isMinimized={isWebcamMinimized}
-                    toggleMinimize={() => setIsWebcamMinimized(prev => !prev)}
+                    toggleMinimize={toggleMinimize}
                     isRecording={isRecording}
                     webcamRef={webcamRef}
                     handleUserMedia={handleUserMedia}

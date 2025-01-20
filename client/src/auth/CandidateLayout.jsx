@@ -30,8 +30,6 @@ const CandidateLayout = () => {
   // Update visibility states when component mounts and when candidateData updates
   useEffect(() => {
     if (isDone && candidateData) {
-      console.log('Candidate data updated:', candidateData);
-      console.log('Assessment status:', candidateData.hasGivenAssessment);
       setIsAssessmentModalVisible(!candidateData.hasGivenAssessment);
       setIsAssessmentBannerVisible(!candidateData.hasGivenAssessment);
     }
@@ -206,7 +204,7 @@ const CandidateLayout = () => {
       />
 
       {/* Main Content */}
-      <div class="mt-[5rem] md:mt-0 md:ml-[12rem] md:w-[calc(100vw-12rem)] flex flex-col items-center min-h-screen">
+      <div className="mt-[5rem] md:mt-0 md:ml-[12rem] md:w-[calc(100vw-12rem)] flex flex-col items-center min-h-screen">
         {isAssessmentBannerVisible &&  <AssessmentBanner />}
                 <Outlet />
             </div>

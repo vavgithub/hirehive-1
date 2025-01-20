@@ -21,7 +21,6 @@ import ClockIcon from '../../svg/Staging/ClockIcon';
 import { formatTime } from '../../utility/formatTime';
 import CalenderIcon from '../../svg/Staging/CalenderIcon';
 import { Button } from '../ui/Button';
-import { RoundReview } from '../../pages/DesignReviewer/Reviews';
 import Scorer from '../ui/Scorer';
 import { useAuthContext } from '../../context/AuthProvider';
 import GreenTickIcon from '../../svg/Staging/GreenTickIcon';
@@ -197,7 +196,7 @@ const RoundTwo = ({ candidateId, jobId ,isClosed }) => {
                 <div className={(isRescheduled && "text-font-gray ") + ' flex items-center gap-2'}>
                     <CalenderIcon customStroke={"#808389"} />
                     <h2 className={isRescheduled && 'typography-body'}>
-                        {new Date(call?.scheduledDate).toLocaleDateString('en-US', { timeZone: 'UTC' })}
+                        {new Date(call?.scheduledDate).toLocaleDateString('en-gb', { timeZone: 'UTC' })}
                     </h2>
                 </div>
             </div>
@@ -418,7 +417,7 @@ const RoundTwo = ({ candidateId, jobId ,isClosed }) => {
                                 <div className='flex justify-between gap-4'>
                                     <div className='w-full'>
                                         <p className='typography-small-p text-font-gray'>Remarks</p>
-                                        <p className='typography-body pb-8'>{stageData?.status === 'Rejected' ? stageData?.rejectionReason : stageData?.feedback}</p>
+                                        <p className='typography-body pb-8'>{stageData?.status === 'Rejected' ? stageData?.rejectionReason : stageData?.feedback ? stageData?.feedback : 'No feedbacks'}</p>
                                     </div>
                                     <div className='bg-stars bg-cover rounded-xl w-[160px] my-4'>
                                         <div className='p-4 flex flex-col items-center'>

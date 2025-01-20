@@ -19,6 +19,10 @@ import Round1 from '../../svg/StatsCard/View Candidate/Round1';
 import Round2 from '../../svg/StatsCard/View Candidate/Round2';
 import Loader from '../../components/ui/Loader';
 import { useNavigate } from 'react-router-dom';
+import PortfolioReview from '../../components/Reviews/PortfolioReview';
+import ScreeningReview from '../../components/Reviews/ScreeningReview';
+import DesignTaskReview from '../../components/Reviews/DesignTaskReview';
+import RoundReview from '../../components/Reviews/RoundReview';
 
 
 const statsOne = [
@@ -31,144 +35,6 @@ const statsOne = [
   { title: 'Offer Sent', value: 0, icon: OfferSent },
 ]
 
-
-const PortfolioReview = ({ candidate, onSubmit }) => {
-
-
-  const [rating, setRating] = useState(0);
-  const [feedback, setFeedback] = useState('');
-
-  const handleSubmit = () => {
-    onSubmit(candidate._id, {
-      jobId: candidate.currentApplication.jobId,
-      stage: candidate.currentApplication.currentStage,
-      ratings: rating,
-      feedback,
-    });
-  };
-
-  return (
-    <div className='bg-background-90 flex gap-4 justify-between rounded-b-xl  items-center p-4'>
-      <span className='flex-shrink-0'>Portfolio ratings</span>
-      <Scorer value={rating} onChange={setRating} />
-      <input
-        type="text"
-        className='w-full bg-background-80 text-white p-2 rounded'
-        placeholder='Enter Your Feedback'
-        value={feedback}
-        onChange={(e) => setFeedback(e.target.value)}
-      />
-      <Button variant="icon" onClick={handleSubmit}>Submit</Button>
-    </div>
-  );
-};
-
-const ScreeningReview = ({ candidate, onSubmit }) => {
-  const [ratings, setRatings] = useState({
-    Attitude: 0, Communication: 0, UX: 0, UI: 0, Tech: 0
-  });
-  const [feedback, setFeedback] = useState('');
-
-  const handleRatingChange = (category, value) => {
-    setRatings(prev => ({ ...prev, [category]: value }));
-  };
-  const handleSubmit = () => {
-    onSubmit(candidate._id, {
-      jobId: candidate.currentApplication.jobId,
-      stage: candidate.currentApplication.currentStage,
-      ratings,
-      feedback,
-    });
-  };
-
-  return (
-    <div className='bg-background-90 grid grid-cols-2 gap-4 p-4'>
-      {Object.entries(ratings).map(([category, value]) => (
-        <div key={category} className='flex gap-4 items-center'>
-          <span className='w-32'>{category}</span>
-          <Scorer value={ratings[category]} onChange={(v) => handleRatingChange(category, v)} />
-
-        </div>
-      ))}
-      <div className='flex gap-4'>
-
-        <input
-          type="text"
-          className='w-full bg-background-80 text-white p-2 rounded'
-          placeholder='Enter Your Feedback'
-          value={feedback}
-          onChange={(e) => setFeedback(e.target.value)}
-        />
-        <div>
-          <Button variant="icon" onClick={handleSubmit}>Submit</Button>
-
-        </div>
-      </div>
-
-    </div>
-  );
-};
-
-export const RoundReview = ({ roundNumber, candidate, onSubmit }) => {
-  const [rating, setRating] = useState(0);
-  const [feedback, setFeedback] = useState('');
-
-  const handleSubmit = () => {
-    onSubmit(candidate._id, {
-      jobId: candidate.currentApplication.jobId,
-      stage: `Round ${roundNumber}`,
-      ratings: rating,
-      feedback,
-    });
-  };
-
-
-  return (
-    <div className='bg-background-100 flex gap-4 justify-between items-center p-4'>
-      <span className='flex-shrink-0'>{`Round ${roundNumber} ratings`}</span>
-      <Scorer value={rating} onChange={setRating} />
-
-      <input
-        type="text"
-        className='w-full bg-background-80 text-white p-2 rounded'
-        placeholder='Enter Your Feedback'
-        value={feedback}
-        onChange={(e) => setFeedback(e.target.value)}
-      />
-      <Button variant="icon" onClick={handleSubmit}>Submit</Button>
-    </div>
-  );
-};
-
-const DesignTaskReview = ({ candidate, onSubmit }) => {
-  const [rating, setRating] = useState(0);
-  const [feedback, setFeedback] = useState('');
-
-  const handleSubmit = () => {
-    onSubmit(candidate._id, {
-      jobId: candidate.currentApplication.jobId,
-      stage: 'Design Task',
-      ratings: rating,
-      feedback,
-    });
-  };
-
-  return (
-    <div className='bg-background-100 flex gap-4 justify-between items-center p-4'>
-      <span className='flex-shrink-0'>Design Task Ratings</span>
-      <Scorer value={rating} onChange={setRating} />
-
-      <input
-        type="text"
-        className='w-full bg-background-80 text-white p-2 rounded'
-        placeholder='Enter Your Feedback'
-        value={feedback}
-        onChange={(e) => setFeedback(e.target.value)}
-      />
-      <Button variant="icon" onClick={handleSubmit}>Submit</Button>
-    </div>
-  );
-};
 
 const Round1Review = (props) => <RoundReview roundNumber={1} {...props} />;
 const Round2Review = (props) => <RoundReview roundNumber={2} {...props} />;
@@ -203,12 +69,14 @@ const Reviews = () => {
   const { data: candidates, isLoading, isError, error } = useQuery({
     queryKey: ['assignedCandidates'],
     queryFn: fetchCandidates,
+    refetchOnWindowFocus : false
   });
 
   // Fetch stats
   const { data: statsData, isLoading: isStatsLoading, isError: isStatsError, error: statsError } = useQuery({
     queryKey: ['underReviewStats'],
     queryFn: fetchUnderReviewStats,
+    refetchOnWindowFocus : false
   });
 
 
@@ -236,7 +104,13 @@ const Reviews = () => {
         }
         jobAcc[application.jobTitle][application.currentStage].push({ ...candidate, currentApplication: application });
       });
-      return jobAcc;
+
+      //Sorting data based on JobTitle
+      const sortedJobAcc = Object.fromEntries(
+        Object.keys(jobAcc).sort().map(key => [key, jobAcc[key]])
+      );
+
+      return sortedJobAcc;
     }, {});
   };
   const handleReviewSubmit = (candidateId, reviewData) => {

@@ -18,39 +18,8 @@ import FileMainIcon from '../../svg/FileMainIcon';
 import { ensureAbsoluteUrl } from '../../utility/ensureAbsoluteUrl';
 import ClosedBadge from '../../svg/ClosedBadge';
 import Loader from '../ui/Loader';
+import PortfolioReview from '../Reviews/PortfolioReview';
 
-
-
-
-const PortfolioReview = ({ candidate, onSubmit }) => {
-
-    const [rating, setRating] = useState(0);
-    const [feedback, setFeedback] = useState('');
-
-    const handleSubmit = () => {
-        onSubmit(candidate._id, {
-            jobId: candidate.jobApplication.jobId,
-            stage: candidate.jobApplication.currentStage,
-            ratings: rating,
-            feedback,
-        });
-    };
-
-    return (
-        <div className='bg-background-90 flex gap-4 justify-between rounded-b-xl  items-center p-4'>
-            <span className='flex-shrink-0'>Portfolio ratings</span>
-            <Scorer value={rating} onChange={setRating} />
-            <input
-                type="text"
-                className='w-full bg-background-80 text-white p-2 rounded'
-                placeholder='Enter Your Feedback'
-                value={feedback}
-                onChange={(e) => setFeedback(e.target.value)}
-            />
-            <Button variant="icon" onClick={handleSubmit}>Submit</Button>
-        </div>
-    );
-};
 
 
 const Portfolio = ({ candidateId, jobId ,isClosed}) => {
@@ -212,7 +181,7 @@ const Portfolio = ({ candidateId, jobId ,isClosed}) => {
                 <div className='flex justify-between gap-4'>
                     <div className='w-full'>
                         <p className='typography-small-p text-font-gray'>Remarks</p>
-                        <p className='typography-body pb-8'>{stageData?.feedback}</p>
+                        <p className='typography-body pb-8'>{stageData?.feedback || 'No feedbacks'}</p>
                     </div>
                     <div className='bg-stars bg-cover rounded-xl w-[160px] my-4'>
                         <div className='p-4 flex flex-col items-center'>
@@ -242,7 +211,7 @@ const Portfolio = ({ candidateId, jobId ,isClosed}) => {
             <div className='flex justify-between gap-4'>
                 <div className='w-full'>
                     <p className='typography-small-p text-font-gray'>Remarks</p>
-                    <p className='typography-body pb-8'>{stageData?.status === 'Rejected' ? stageData?.rejectionReason : stageData?.feedback}</p>
+                    <p className='typography-body pb-8'>{stageData?.status === 'Rejected' ? stageData?.rejectionReason : stageData?.feedback ? stageData?.feedback : 'No feedbacks'}</p>
                 </div>
                 <div className='bg-stars bg-cover rounded-xl w-[160px] my-4'>
                     <div className='p-4 flex flex-col items-center'>

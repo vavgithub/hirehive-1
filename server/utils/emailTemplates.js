@@ -121,41 +121,13 @@ export const getRejectionEmailContent = (candidateName,jobTitle) =>{
                 </p>
                 <p style="margin-top: 16px; margin-bottom: 16px;">
                     We sincerely value your time and effort into this process, and we will make sure to keep your application on file. More roles will open in the future and we will re-visit this application. We are honoured you showed interest in us - and we hope to work together in the future. 
-                </p>
-                <p style="margin-top: 16px; margin-bottom: 16px;">
-                    Feel free to check out all our live roles:
-                </p>
-                <a style="margin-top: 16px; margin-bottom: 16px; padding: 12px; width: 280px; display: block; background-color: rgba(4, 95, 253, 1); color: #ffffff; border-radius: 12px; text-decoration: underline; text-align: center;">
-                    Visit Website
-                </a>
-                <p style="margin-top: 16px; margin-bottom: 24px;">
-                    Finally, here are our VAV Recruiter's top 7 tips to securing your dream job: 
-                </p>
-                <p style="margin-top: 16px; ">
-                    1. Know your strengths and skills - take some time to identify these
-                </p>
-                <p style="margin-top: 12px; ">
-                    2. Polish your resume and cover letter
-                </p>
-                <p style="margin-top: 12px; ">
-                    3. Leverage your network
-                </p>
-                <p style="margin-top: 12px; ">
-                    4. Be proactive - reach out to companies and recruiters
-                </p>
-                <p style="margin-top: 12px; ">
-                    5. Research companies
-                </p>
-                <p style="margin-top: 12px; ">
-                    6. Practice interviewing
-                </p>
+                </p>            
                 <p style="margin-top: 12px; ">
                     7. Stay positive and persistent</p>
                     <p style="margin-top: 16px; margin-bottom: 16px;">
                         From all of us at VAV, we thank you for your time and effort.
                     </p>
                 <p style="margin-bottom: 16px;">Regards,<br>VAV Hiring Team</p>
-
                 <hr>
                 <div style=" width: 100%;">
                     <table style="margin:auto; width:50%; border-spacing:22px 0px;margin-top:40px;margin-bottom:20px">
@@ -194,7 +166,7 @@ const formattedDueDateWithTime = (dueDate,dueTime) => {
     return date.toLocaleString()
 }
 
-export const getDesignTaskContent = (candidateName,taskDescription,dueDate,dueTime) =>{
+export const getDesignTaskContent = (candidateName,jobTitle,taskDescription,dueDate,dueTime) =>{
     return `<!DOCTYPE html>
         <html lang="en">
 
@@ -226,29 +198,17 @@ export const getDesignTaskContent = (candidateName,taskDescription,dueDate,dueTi
                     <img style="object-fit: cover; width:100%; " src="cid:vavLogo" alt="">
                 </div>
                 <div style="font-size: 14px;">
-                    <div style="width: 472px; margin-bottom: 16px; margin: auto;">
-                        <img style="width: 100%; object-fit: cover;" src="cid:bgGradient" alt="">
-                    </div>
                     <p style="margin-bottom: 16px;">Hi ${candidateName},</p>
                     <p style="margin-bottom: 16px;">
-                        We are excited to let you know that we are moving forward with the next step: the Design Task Assessment. This is a chance to showcase your design  thinking, creativity and problem-solving skills in action.
+                        Thank you for maintaining your interest in the ${jobTitle} position at Value at Void™. After discussing with the team, we believe you are a strong fit and would like to invite you to proceed with the next steps.
                     </p>
                     <p style="margin-top: 16px; margin-bottom: 16px;">
                         We believe in you potential an how you tackle the situation. 
                     </p>
 
-                    <h4 style="margin-top: 16px; margin-bottom: 16px;">Your Mission</h4>
+                    <h4 style="margin-top: 16px; margin-bottom: 16px;">Your Assignment</h4>
                     <pre style="margin-top: 16px; margin-bottom: 16px; width:600px; white-space:break-spaces; font-family: Open Sans, sans-serif;">${taskDescription.trim()}</pre>
-                    <p style="margin-top: 16px; margin-bottom: 16px;">
-                        Think about clarity, hierarchy, and accessibility. How can you turn data into a story that feels seamless and empowering for users?
-                    </p>
-
-                    <h4 style="margin-top: 16px; margin-bottom: 16px;">Deliverables</h4>
-                    <ul style="margin-top: 16px; margin-bottom: 16px; padding:0;">
-                        <li style="transform: translateX(20px);"> Wireframes – Low or high fidelity.</li>
-                        <li style="transform: translateX(20px);"> UI Screens – Figma, Sketch, or XD.</li>
-                        <li style="transform: translateX(20px);"> Design Rationale – A brief note explaining your design choices.</li>
-                    </ul>
+            
 
                     <h4 style="margin-top: 16px; margin-bottom: 16px;">Timeline</h4>
                     <ul style="margin-top: 16px; margin-bottom: 16px; padding:0;">
@@ -256,14 +216,12 @@ export const getDesignTaskContent = (candidateName,taskDescription,dueDate,dueTi
                         <li style="transform: translateX(20px);"> Due : ${formattedDueDateWithTime(dueDate,dueTime)}</li>
                     </ul>
 
-                    <p style="margin-top: 16px; margin-bottom: 16px;">
-                        We value thoughtfulness and creativity as much as speed. If you need clarity or want to bounce ideas, feel free to reach out.
-                    </p>
-                    <p style="margin-top: 16px; margin-bottom: 16px;">
-                        Let’s design something that’s simple, useful, and maybe… a little delightful.
-                    </p>
-                    
-                    <p style="margin-top: 16px; margin-bottom: 24px;">Best Regards,<br>San Hazare <br>Design Director, <br>Value at Void</p>
+                    <h4 style="margin-top: 16px; margin-bottom: 16px;">Important Note</h4>
+                    <ul style="margin-top: 16px; margin-bottom: 16px; padding:0;">
+                        <li style="transform: translateX(20px);"> Please don't reply to this mail. Login and then Submit your task on this <a href="https://hire.atvoid.com">link</a>.</li>
+                    </ul>
+                
+                    <p style="margin-top: 16px; margin-bottom: 24px;">Best Regards,<br>Team Value at Void</p>
 
                     <hr>
                     <div style=" width: 100%;">

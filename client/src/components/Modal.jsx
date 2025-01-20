@@ -284,11 +284,11 @@ const Modal = ({
   return (
     <div
       onClick={onClose}
-      className={((isMobile && actionType === ACTION_TYPES.ASSESSMENT ) ? "mx-6 " : "mx-4 ") + " fixed z-50 inset-0 flex justify-center items-center bg-[#00000093] transition-colors bg-black/20  md:mx-0"}
+      className={((isMobile && actionType === ACTION_TYPES.ASSESSMENT ) ? "px-6 " : "px-4 ") + " fixed z-50 inset-0 flex justify-center items-center bg-background-overlay transition-colors bg-black/20  md:mx-0"}
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="bg-background-60 rounded-xl shadow w-full max-w-lg mx-4 transform transition-transform duration-200 ease-out"
+        className={"bg-background-60 rounded-xl shadow w-full  mx-4 transform transition-transform duration-200 ease-out " + (actionType === ACTION_TYPES.BUDGET ? "max-w-xl" : "max-w-lg")}
       >
         <div className="p-6">
           {renderModalContent()}

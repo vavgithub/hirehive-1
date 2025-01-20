@@ -32,6 +32,7 @@ import { ensureAbsoluteUrl } from '../../utility/ensureAbsoluteUrl';
 import GreenTickIcon from '../../svg/Staging/GreenTickIcon';
 import RightTick from '../../svg/Staging/RightTick';
 import ClosedBadge from '../../svg/ClosedBadge';
+import DesignTaskReview from '../Reviews/DesignTaskReview';
 
 const submitReview = async ({ candidateId, reviewData }) => {
     const response = await axios.post('dr/submit-score-review', {
@@ -41,36 +42,6 @@ const submitReview = async ({ candidateId, reviewData }) => {
     return response.data;
 };
 
-
-const DesignTaskReview = ({ candidate, onSubmit }) => {
-    const [rating, setRating] = useState(0);
-    const [feedback, setFeedback] = useState('');
-
-    const handleSubmit = () => {
-        onSubmit(candidate._id, {
-            jobId: candidate.jobApplication.jobId,
-            stage: 'Design Task',
-            ratings: rating,
-            feedback,
-        });
-    };
-
-    return (
-        <div className='bg-background-100 flex gap-4 justify-between items-center p-4'>
-            <span className='flex-shrink-0'>Design Task Ratings</span>
-            <Scorer value={rating} onChange={setRating} />
-
-            <input
-                type="text"
-                className='w-full bg-background-80 text-white p-2 rounded'
-                placeholder='Enter Your Feedback'
-                value={feedback}
-                onChange={(e) => setFeedback(e.target.value)}
-            />
-            <Button variant="icon" onClick={handleSubmit}>Submit</Button>
-        </div>
-    );
-};
 
 const DesignTask = ({ candidateId, jobId ,isClosed}) => {
 
@@ -182,7 +153,7 @@ const DesignTask = ({ candidateId, jobId ,isClosed}) => {
             <div className='flex justify-between gap-4'>
                 <div className='w-full'>
                     <p className='typography-small-p text-font-gray'>Remarks</p>
-                    <p className='typography-body pb-8'>{stageData?.status === 'Rejected' ? stageData?.rejectionReason : stageData?.feedback}</p>
+                    <p className='typography-body pb-8'>{stageData?.status === 'Rejected' ? stageData?.rejectionReason : stageData?.feedback ? stageData?.feedback  : 'No feedbacks'}</p>
                 </div>
                 <div className='bg-stars bg-cover rounded-xl w-[160px] my-4'>
                     <div className='p-4 flex flex-col items-center'>
@@ -547,7 +518,7 @@ const DesignTask = ({ candidateId, jobId ,isClosed}) => {
                         <div className='flex items-center gap-2'>
                             <CalenderIcon />
                             <h2>
-                                {new Date(stageData?.currentCall?.scheduledDate).toLocaleDateString('en-US', { timeZone: 'UTC' })}
+                                {new Date(stageData?.currentCall?.scheduledDate).toLocaleDateString('en-gb', { timeZone: 'UTC' })}
                             </h2>
                         </div>
                     </div>
@@ -579,7 +550,7 @@ const DesignTask = ({ candidateId, jobId ,isClosed}) => {
                 <div className='flex justify-between gap-4'>
                     <div className='w-full'>
                         <p className='typography-small-p text-font-gray'>Remarks</p>
-                        <p className='typography-body pb-8'>{stageData?.feedback}</p>
+                        <p className='typography-body pb-8'>{stageData?.feedback || 'No feedbacks'}</p>
                     </div>
                     {/* this below div */}
                     {role === 'Hiring Manager' && (
@@ -618,7 +589,7 @@ const DesignTask = ({ candidateId, jobId ,isClosed}) => {
                     <div className='flex justify-between gap-4'>
                         <div className='w-full'>
                             <p className='typography-small-p text-font-gray'>Remarks</p>
-                            <p className='typography-body pb-8'>{stageData?.feedback}</p>
+                            <p className='typography-body pb-8'>{stageData?.feedback || 'No feedbacks'}</p>
                         </div>
                         <div className='bg-stars bg-cover rounded-xl w-[160px] my-4'>
                             <div className='p-4 flex flex-col items-center'>
@@ -641,7 +612,7 @@ const DesignTask = ({ candidateId, jobId ,isClosed}) => {
                 <div className='flex justify-between gap-4'>
                     <div className='w-full'>
                         <p className='typography-small-p text-font-gray'>Remarks</p>
-                        <p className='typography-body pb-8'>{stageData?.rejectionReason}</p>
+                        <p className='typography-body pb-8'>{stageData?.rejectionReason || 'No Reason'}</p>
                     </div>
                     <div className='bg-stars bg-cover rounded-xl w-[160px] my-4'>
                         <div className='p-4 flex flex-col items-center'>

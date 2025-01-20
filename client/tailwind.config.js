@@ -120,6 +120,7 @@ export default {
           40: "var(--color-background-40)",
           30: `var(--color-background-30)`,
           green:"rgba(24, 233, 208, 0.3)",
+          overlay : "rgba(0, 0, 0, 0.80)",
         },
         font: {
           primary: "var(--color-primary-100)",

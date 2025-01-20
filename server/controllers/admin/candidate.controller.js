@@ -72,7 +72,7 @@ export const getAllCandidatesForJob = async (req, res) => {
         email: candidate.email,
         phone: candidate.phone,
         profilePictureUrl : candidate.profilePictureUrl,
-        
+        hasGivenAssessment:candidate.hasGivenAssessment,
         // Professional info (specific to this job application)
         website: professionalInfo.website,
         portfolio: professionalInfo.portfolio,
@@ -447,6 +447,7 @@ export const getCandidateById = async (req, res) => {
             email: 1,
             phone: 1,
             profilePictureUrl : 1,
+            hasGivenAssessment:1,
             // Professional info (from job application or fallback to global)
             experience: {
               $ifNull: ['$jobApplications.professionalInfo.experience', '$experience']
@@ -512,6 +513,7 @@ export const getCandidateById = async (req, res) => {
             email: 1,
             phone: 1,
             profilePictureUrl : 1,
+            hasGivenAssessment:1,
 
             // Professional info
             experience: 1,

@@ -200,6 +200,21 @@ h2{
       max-width: 1024px;
     }
   }
+  .otp-input{
+    padding: 16px ;
+    text-align: center !important;
+    
+    @media (max-width:768px) {
+      padding: 0 !important;
+    }
+  }
+
+  .no-selection{
+  -webkit-user-select: none; /* Safari, Chrome (older versions) */
+  -moz-user-select: none;    /* Firefox (older versions) */
+  -ms-user-select: none;     /* Internet Explorer 10+ */
+  user-select: none;         /* Standard */
+  }
 }
 
 .btn-blue {
@@ -217,8 +232,10 @@ h2{
   :root {
     --color-primary-100: rgba(4, 95, 253, 1);
   --color-primary-200: rgba(2, 84, 228, 1);
-    --color-primary-300: rgba(4, 95, 253, 0.2);
-    --color-primary-400: rgba(4, 95, 253, 0.3);
+    /* --color-primary-300: rgba(4, 95, 253, 0.2); */
+    /* --color-primary-400: rgba(4, 95, 253, 0.3); */
+    --color-primary-300: #122243;
+    --color-primary-400: #132c5d;
 
     /* Add other color variables here */
     --color-secondary-500: 99 102 241;
