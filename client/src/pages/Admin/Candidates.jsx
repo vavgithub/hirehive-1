@@ -52,7 +52,7 @@ const Candidates = () => {
   if (isError) return <div>Error fetching candidates</div>;
 
   return (
-    <div className="container mx-4 pt-4 h-screen">
+    <div className="container mx-4 p-4 h-screen">
       <Header HeaderText="Candidates" />
       <div className='bg-background-100 rounded-xl p-4'>
         <div className="w-full max-w-7xl relative">

@@ -8,6 +8,7 @@ import Next from '../../svg/Buttons/Next';
 import SaveForLater from '../../svg/Buttons/SaveForLater';
 import Que from './Que';
 import Create from '../../svg/Buttons/Create';
+import TextEditor from '../utility/TextEditor';
 
 const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions }) => {
   const { control, handleSubmit, watch, setValue, setError, getValues,clearErrors, formState: { errors, isValid } } = useForm({
@@ -113,11 +114,22 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
     onSubmit(currentValues, true);
   };
 
-  
+  // Function to strip HTML tags
+  const stripHtmlTags = (html) => {
+    return html.replace(/<[^>]*>/g, '').trim(); // Removes all HTML tags and trims spaces
+  };
+
+  const customDescriptionValidation = (value) =>{
+    if(!stripHtmlTags(value)){
+      return "Job description is required"
+    }else{
+      return true
+    }
+  }
 
   return (
     <form onSubmit={handleSubmit(handleFormSubmit)} className='container-form mx-auto'>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
         <Controller
           name="jobTitle"
           control={control}
@@ -203,18 +215,19 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
         <Controller
           name="jobDescription"
           control={control}
-          rules={{ required: "Job description is required" }}
+          rules={{ required: "Job description is required" ,validate : customDescriptionValidation}}
           render={({ field , fieldState : {error} }) => (
             <div className='w-full relative'>
-              <label htmlFor="jobDescription" className="typography-body block mb-4">Job Description{<span className="text-red-100">*</span>}</label>
-              <textarea
+              <label htmlFor="jobDescription" className="typography-body block mb-2">Job Description{<span className="text-red-100">*</span>}</label>
+              <TextEditor htmlData={field?.value} loaded={isEditing} errors={error} placeholder={"Write a Job Description"} setEditorContent={(data)=>setValue('jobDescription',data)} />
+              {/* <textarea
                 {...field}
                 id="jobDescription"
                 placeholder="Write a Job Description"
                 className={`${error ? '!border !border-red-500' : 'border border-transparent'}  w-full rounded-xl px-3 py-2 bg-background-40 font-outfit hover:bg-background-60 outline-none focus:outline-teal-300 resize-none`}
                 rows="10"
-              />
-              {error && <p className="text-red-500 absolute typography-small-p top-[18.5rem]">{error.message}</p>}
+              /> */}
+              {error && <p className="text-red-500 absolute typography-small-p top-[18rem]">{error.message}</p>}
             </div>
           )}
         />
@@ -238,7 +251,7 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
                 allSkills={dummySkills}
                 error={error}
               />
-              {error && <p className="text-red-500 absolute typography-small-p top-[85px]">{error.message}</p>}
+              {error && <p className="text-red-500 absolute typography-small-p top-[75px]">{error.message}</p>}
             </div>
           )}
         />
@@ -256,7 +269,7 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
         )}
       />
 
-      <div className="flex justify-end mt-4">
+      <div className="flex justify-end mt-6">
         <div className='flex gap-4'>
             {!isEditing && (
               <Button

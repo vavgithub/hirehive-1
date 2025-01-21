@@ -123,7 +123,6 @@ export const getRejectionEmailContent = (candidateName,jobTitle) =>{
                     We sincerely value your time and effort into this process, and we will make sure to keep your application on file. More roles will open in the future and we will re-visit this application. We are honoured you showed interest in us - and we hope to work together in the future. 
                 </p>            
                 <p style="margin-top: 12px; ">
-                    7. Stay positive and persistent</p>
                     <p style="margin-top: 16px; margin-bottom: 16px;">
                         From all of us at VAV, we thank you for your time and effort.
                     </p>
@@ -201,9 +200,6 @@ export const getDesignTaskContent = (candidateName,jobTitle,taskDescription,dueD
                     <p style="margin-bottom: 16px;">Hi ${candidateName},</p>
                     <p style="margin-bottom: 16px;">
                         Thank you for maintaining your interest in the ${jobTitle} position at Value at Void™. After discussing with the team, we believe you are a strong fit and would like to invite you to proceed with the next steps.
-                    </p>
-                    <p style="margin-top: 16px; margin-bottom: 16px;">
-                        We believe in you potential an how you tackle the situation. 
                     </p>
 
                     <h4 style="margin-top: 16px; margin-bottom: 16px;">Your Assignment</h4>

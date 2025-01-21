@@ -59,8 +59,8 @@ const Que = ({ onQuestionsChange, initialQuestions = [] }) => {
 
     return (
         <div className="bg-background-80  ">
-            <div className='pt-4 flex flex-col justify-between h-full '>
-                <span className='typography-body mb-4'>Additional Questions </span>
+            <div className='pt-6 flex flex-col justify-between h-full '>
+                <span className='typography-body mb-2'>Additional Questions </span>
                 <div className='bg-background-30 rounded-xl h-full flex flex-col items-center justify-start border border-dashed border-gray-500'>
                     {questions.length === 0 ? (
                         <>

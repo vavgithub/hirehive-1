@@ -47,7 +47,7 @@ const SkillsInput = ({ value = [], onChange, allSkills = [] ,error}) => {
 
   return (
     <div>
-      <div className="flex flex-wrap gap-2 rounded mt-4">
+      <div className="flex flex-wrap gap-2 rounded mt-2">
         {value.map((skill, index) => (
           <div
             key={index}
