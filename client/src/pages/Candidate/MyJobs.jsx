@@ -8,6 +8,7 @@ import JobCard from '../../components/JobCard';
 import AssessmentBanner from '../../components/ui/AssessmentBanner';
 import Loader from '../../components/ui/Loader';
 import useCandidateAuth from '../../hooks/useCandidateAuth';
+import StyledCard from '../../components/ui/StyledCard';
 
 // Keep the fetchAppliedJobs function separate for better organization
 const fetchAppliedJobs = async () => {
@@ -79,16 +80,17 @@ const MyJobs = () => {
   }
 
   return (
-    <div className='container m-4 w-[97%]'>
+    <div className='w-full p-4'>
+    <div className='container '>
       <h1 className="typography-h1">My Jobs</h1>
       {isAssessmentBannerVisible &&  <AssessmentBanner />}
-      <div className="p-4 bg-background-30 rounded-xl">
+      <StyledCard padding={2} backgroundColor={"bg-background-30"}>
         {appliedJobs.length === 0 ? (
           <p>You have not applied to any jobs yet.</p>
         ) : (
-          <ul>
+          <ul className='flex flex-col gap-4'>
             {appliedJobs.map((application,index) => (
-              <li key={application.jobId._id || index} className="mb-4">
+              <li key={application.jobId._id || index} >
                 <JobCard
                   job={application.jobId}
                   isCandidate={true}
@@ -100,7 +102,8 @@ const MyJobs = () => {
             ))}
           </ul>
         )}
-      </div>
+      </StyledCard>
+    </div>
     </div>
   );
 };

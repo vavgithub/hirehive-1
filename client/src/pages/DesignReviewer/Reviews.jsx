@@ -23,6 +23,7 @@ import PortfolioReview from '../../components/Reviews/PortfolioReview';
 import ScreeningReview from '../../components/Reviews/ScreeningReview';
 import DesignTaskReview from '../../components/Reviews/DesignTaskReview';
 import RoundReview from '../../components/Reviews/RoundReview';
+import StyledCard from '../../components/ui/StyledCard';
 
 
 const statsOne = [
@@ -171,9 +172,10 @@ const Reviews = () => {
   }
 
   return (
-    <div className='container py-4 px-4 xl:px-2 2xl:px-6'>
+    <div className='w-full p-4'>
+      <div className='container mx-auto'>
       <Header HeaderText="Reviews" />
-      <div className='bg-background-30  p-4 rounded-xl'>
+      <StyledCard backgroundColor={"bg-background-30"} padding={2}>
         <div className="w-full">
 
           <StatsGrid stats={updatedStatsOne} />
@@ -221,7 +223,8 @@ const Reviews = () => {
             })}
           </div>
         ))}
-      </div>
+      </StyledCard>
+    </div>
     </div>
   );
 };

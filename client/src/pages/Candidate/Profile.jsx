@@ -8,7 +8,7 @@ import PencilIcon from "../../svg/Buttons/PencilIcon";
 
 const PersonalDetails = ({candidateData}) => {
     return (
-        <StyledCard >
+        <StyledCard backgroundColor={"bg-background-40"}>
           <h2 className="typography-h2 mb-6">Personal Details</h2>
           <div className="flex justify-between flex-col gap-6 sm:flex-row">
             <div className="grid grid-cols-2 sm:w-[45%] gap-[10%] ">
@@ -17,8 +17,8 @@ const PersonalDetails = ({candidateData}) => {
                 <p className="text-font-gray whitespace-nowrap">Email</p>
               </div>
               <div className="flex flex-col gap-6 typography-body">
-                <p>{candidateData.firstName}</p>
-                <p>{candidateData.email}</p>
+                <p className="whitespace-nowrap overflow-hidden text-ellipsis">{candidateData.firstName}</p>
+                <p className="whitespace-nowrap overflow-hidden text-ellipsis">{candidateData.email}</p>
               </div>
             </div>
               <div className="grid grid-cols-2 sm:w-[45%] gap-[10%] justify-between">
@@ -27,7 +27,7 @@ const PersonalDetails = ({candidateData}) => {
                   <p className="text-font-gray whitespace-nowrap">Phone Number</p>
                 </div>
                 <div className="flex flex-col gap-6 typography-body">
-                  <p>{candidateData.lastName}</p>
+                  <p className="whitespace-nowrap overflow-hidden text-ellipsis">{candidateData.lastName}</p>
                   <p>{candidateData.phone}</p>
                 </div>
             </div>
@@ -38,7 +38,7 @@ const PersonalDetails = ({candidateData}) => {
 
 const ResumeAndPortfolioDetails = ({candidateData}) => {
   return (
-      <StyledCard >
+      <StyledCard backgroundColor={"bg-background-40"}>
         <h2 className="typography-h2 mb-6">Resume and Portfolio</h2>
         <div className="flex justify-between flex-col gap-6 sm:flex-row">
             <div className="grid grid-cols-2 sm:w-[45%] gap-[10%] justify-between">
@@ -47,8 +47,8 @@ const ResumeAndPortfolioDetails = ({candidateData}) => {
                 <p className="text-font-gray">Website</p>
               </div>
               <div className="flex flex-col gap-6 typography-body">
-                <p className="w-fit"><a href={candidateData.resumeUrl} target="_blank" rel="noopener noreferrer" className="underline text-blue-100">{candidateData?.firstName+"'s Resume"}</a></p>
-                <p  className="w-fit"><a href={ensureAbsoluteUrl(candidateData.website)} target="_blank" rel="noopener noreferrer"  className="underline text-blue-100">{candidateData?.website}</a></p>
+                <p className="w-fit whitespace-nowrap overflow-hidden text-ellipsis"><a href={candidateData.resumeUrl} target="_blank" rel="noopener noreferrer" className="underline text-blue-100">{candidateData?.firstName+"'s Resume"}</a></p>
+                <p  className="w-fit whitespace-nowrap overflow-hidden text-ellipsis"><a href={ensureAbsoluteUrl(candidateData.website)} target="_blank" rel="noopener noreferrer"  className="underline text-blue-100">{candidateData?.website}</a></p>
               </div>
             </div>
               <div className="grid grid-cols-2 sm:w-[45%] gap-[10%] justify-between">
@@ -58,7 +58,7 @@ const ResumeAndPortfolioDetails = ({candidateData}) => {
                 </div>
                 <div className="flex flex-col gap-6 typography-body">
                   <p className="hidden sm:block opacity-0">Dummy Div</p>
-                  <p><a href={ensureAbsoluteUrl(candidateData.portfolio)} target="_blank" rel="noopener noreferrer"  className="underline text-blue-100">{candidateData?.portfolio}</a></p>
+                  <p className="whitespace-nowrap overflow-hidden text-ellipsis"><a href={ensureAbsoluteUrl(candidateData.portfolio)} target="_blank" rel="noopener noreferrer"  className="underline text-blue-100">{candidateData?.portfolio}</a></p>
                 </div>
             </div>
           </div>
@@ -68,7 +68,7 @@ const ResumeAndPortfolioDetails = ({candidateData}) => {
 
 const ProfessionalDetails = ({candidateData}) => {
   return (
-      <StyledCard >
+      <StyledCard backgroundColor={"bg-background-40"}>
         <h2 className="typography-h2 mb-6">Professional Details</h2>
         <div className="flex justify-between flex-col gap-6 sm:flex-row">
             <div className="grid grid-cols-2 sm:w-[45%] gap-[10%] justify-between">
@@ -116,12 +116,12 @@ function Profile() {
     };
   }, []);
   return (
-    <div className="w-full bg-background-80 min-h-screen py-6 px-4 md:py-0 ">
+    <div className="w-full bg-background-80 min-h-screen py-4 px-4 ">
       <div className="container  mx-auto">
-      {isAssessmentBannerVisible &&  <AssessmentBanner />}
         <Header HeaderText={"My Profile"}  />
+      {isAssessmentBannerVisible &&  <AssessmentBanner />}
         <div className="flex w-full gap-6 flex-col-reverse lg:flex-row mt-8 lg:mt-0 ">
-          <div className="lg:w-[70%] flex flex-col gap-4">
+          <div className="lg:w-[70%] flex flex-col gap-6">
             <PersonalDetails candidateData={candidateData} />
             <ResumeAndPortfolioDetails candidateData={candidateData} />
             <ProfessionalDetails candidateData={candidateData} />

@@ -33,6 +33,7 @@ import useScheduler from '../../hooks/useScheduler';
 import NoShowAction from './NoShow';
 import Loader from '../ui/Loader';
 import ScreeningReview from '../Reviews/ScreeningReview';
+import StyledCard from '../ui/StyledCard';
 
 
 export const ScheduleForm = ({ candidateId, jobId, onSubmit, isRescheduling, initialData, onCancel }) => {
@@ -748,19 +749,14 @@ const Screening = ({ candidateId, jobId, isClosed }) => {
     };
 
     return (
-        <Card
-            sx={{
-                backgroundColor: "rgba(22, 23, 24, 1)",
-                borderRadius: "12px",
-                color: "white",
-                fontFamily: 'Outfit, sans-serif',
-                position: "relative",
-                minHeight: "10rem"
-            }}
+        <StyledCard
+            padding={3}
+            backgroundColor={"bg-background-30"}
+            extraStyles={"relative min-h-[10rem]"}
         >
             <CardContent
                 sx={{
-                    padding: "24px"
+                    padding: "0"
                 }}>
                 <Box display="flex" justifyContent="space-between" alignItems="start" mb={1}>
                     <div className='flex'>
@@ -798,13 +794,13 @@ const Screening = ({ candidateId, jobId, isClosed }) => {
                                 <div className='w-8 h-8 rounded-full bg-background-80 flex items-center justify-center mr-2'>
                                     <BudgetIcon />
                                 </div>
-                                <span className='typograhpy-body'>{candidateData.jobApplication.professionalInfo.expectedCTC}LPA</span>
+                                <span className='typograhpy-body font-outfit'>{candidateData.jobApplication.professionalInfo.expectedCTC}LPA</span>
                             </>}
                     </div>
                 </Box>
                 {renderContent()}
             </CardContent>
-        </Card>
+        </StyledCard>
     );
 };
 

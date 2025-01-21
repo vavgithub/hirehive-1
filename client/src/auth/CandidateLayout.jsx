@@ -239,7 +239,7 @@ const CandidateLayout = () => {
             </NavItem>
           ))}
         </div>
-        <div className="px-4">
+        <div >
           {candidateData && 
           // (
           //   <>
@@ -273,7 +273,7 @@ const CandidateLayout = () => {
       />
 
       {/* Main Content */}
-      <div className="mt-[4.6rem] md:mt-0 md:ml-[12rem] md:w-[calc(100vw-12rem)] flex flex-col items-center min-h-screen">
+      <div className="mt-[4.6rem] md:mt-0 md:ml-[12rem] md:w-[calc(100vw-12rem)] flex flex-col items-center min-h-screen ">
         {/* {isAssessmentBannerVisible &&  <AssessmentBanner />} */}
                 <Outlet />
             </div>

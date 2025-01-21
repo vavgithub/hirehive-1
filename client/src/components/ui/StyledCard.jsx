@@ -1,15 +1,21 @@
 import React from 'react'
 
-function StyledCard({children,onClick,extraStyles,padding,backgroundColor,isRounded = true}) {
+function StyledCard({children,onClick,extraStyles,padding,backgroundColor,borderRadius,...props}) {
+
+  let valueSteps = {
+    0 : "0",
+    1 : "2",
+    2 : "4",
+    3 : "6",
+    4 : "8"
+  }
 
   const styles = 
-  ` ${padding ? padding : 'p-6'} 
-    ${backgroundColor ? backgroundColor : 'bg-background-40'} 
-    ${isRounded ? "rounded-xl" : ""} 
+  ` ${padding?.toString() ? `p-${valueSteps[padding]}` : 'p-6'} ${backgroundColor ? backgroundColor : 'bg-background-90'} ${borderRadius ? borderRadius : "rounded-xl"} 
   `
 
   return (
-    <div className={`${styles}  ${extraStyles}`}>
+    <div {...props}  onClick={onClick} className={`${styles}  ${extraStyles}`}>
       {children}
     </div>
   )

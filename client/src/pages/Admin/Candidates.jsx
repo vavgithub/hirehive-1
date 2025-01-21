@@ -13,6 +13,7 @@ import Round2 from '../../svg/StatsCard/View Candidate/Round2';
 import OfferSent from '../../svg/StatsCard/View Candidate/OfferSent';
 import Total from '../../svg/StatsCard/View Candidate/Total';
 import Loader from '../../components/ui/Loader';
+import StyledCard from '../../components/ui/StyledCard';
 
 const statsOne = [
   { title: 'Total', value: 0, icon: Total },
@@ -52,16 +53,18 @@ const Candidates = () => {
   if (isError) return <div>Error fetching candidates</div>;
 
   return (
-    <div className="container mx-4 p-4 h-screen">
+    <div className='w-full p-4'>
+      <div className="container mx-auto">
       <Header HeaderText="Candidates" />
-      <div className='bg-background-100 rounded-xl p-4'>
+      <StyledCard padding={2} backgroundColor={"bg-background-100"}>
         <div className="w-full max-w-7xl relative">
          
           <div className="absolute right-0 z-10 h-full w-28 bg-gradient-to-tr from-background via-background-green to-transparent pointer-events-none" />
           <StatsGrid stats={statsOne} />
         </div>
         <Table readOnly={true} readOnlyData={data?.candidates || []} />
-      </div>
+      </StyledCard>
+    </div>
     </div>
   );
 }

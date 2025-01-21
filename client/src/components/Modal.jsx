@@ -7,6 +7,7 @@ import CloseButton from '../svg/CloseButton';
 import { CustomDropdown } from './Form/FormFields';
 import Label from './ui/Label';
 import RedInfoIcon from '../svg/RedInfoIcon';
+import StyledCard from './ui/StyledCard';
 
 const ACTION_TYPES = {
   DELETE: 'DELETE',
@@ -300,9 +301,11 @@ const Modal = ({
       onClick={onClose}
       className={((isMobile && actionType === ACTION_TYPES.ASSESSMENT ) ? "px-6 " : "px-4 ") + " fixed z-50 inset-0 flex justify-center items-center bg-background-overlay transition-colors bg-black/20  md:mx-0"}
     >
-      <div
+      <StyledCard
         onClick={(e) => e.stopPropagation()}
-        className={"bg-background-60 rounded-xl shadow w-full  mx-4 transform transition-transform duration-200 ease-out " + (actionType === ACTION_TYPES.BUDGET ? "max-w-xl" : "max-w-lg")}
+        backgroundColor={"bg-background-60 "}
+        padding={0}
+        extraStyles={"shadow w-full  mx-4 transform transition-transform duration-200 ease-out " + (actionType === ACTION_TYPES.BUDGET ? "max-w-xl" : "max-w-lg")}
       >
         <div className="p-6">
           {renderModalContent()}
@@ -330,7 +333,7 @@ const Modal = ({
             }
           </div>
         </div>
-      </div>
+      </StyledCard>
     </div>
   );
 };

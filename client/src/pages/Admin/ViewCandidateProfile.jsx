@@ -24,6 +24,7 @@ import Loader from '../../components/ui/Loader';
 import { ensureAbsoluteUrl } from '../../utility/ensureAbsoluteUrl';
 import ResumeViewer from '../../components/utility/ResumeViewer';
 import CustomToolTip from '../../components/utility/CustomToolTip';
+import StyledCard from '../../components/ui/StyledCard';
 
 
 
@@ -201,7 +202,8 @@ const ViewCandidateProfile = () => {
 
 
     return (
-        <div className="px-4 lg:px-0 md:mx-4 pt-4 container w-[97%]">
+        <div className='w-full p-4'>
+            <div className="container mx-auto">
             {/* Page header */}
             <Header
                 HeaderText="Candidate Profile"
@@ -215,7 +217,7 @@ const ViewCandidateProfile = () => {
             {
                 (role === "Hiring Manager" || role === "Design Reviewer") && (
                     <div className="flex gap-3">
-                        <div className="bg-background-90 w-full p-4 rounded-xl flex gap-3">
+                        <StyledCard padding={2} extraStyles="w-full flex gap-3">
                             <div className="to-background-100 w-[180px] rounded-xl overflow-hidden">
                                 <img src={data.profilePictureUrl || " https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg"} alt="" className='object-cover h-full' />
                             </div>
@@ -272,14 +274,14 @@ const ViewCandidateProfile = () => {
                                 </div>
                                 <p>{data.location}</p>
                             </div>
-                        </div>
+                        </StyledCard>
 
                         {/* VAV Score Section */}
-                        <div className="flex bg-stars  flex-col items-center bg-background-90 w-[430px] bg-cover p-5 rounded-xl">
+                        <StyledCard extraStyles="flex bg-stars  flex-col items-center  w-[430px] bg-cover ">
                             <h3 className="typography-h2">VAV SCORE</h3>
                             <span className="marks text-font-primary">{score?.totalScore}</span>
                             <p className="typography-large-p">Out of {getMaxScore()}</p>
-                        </div>
+                        </StyledCard>
                     </div>
                 )
             }
@@ -304,6 +306,7 @@ const ViewCandidateProfile = () => {
             {activeTab === 'candidateDetails'  && (
                 <CandidateTabDetail data={transformedData} />
             )}
+        </div>
         </div>
     );
 };

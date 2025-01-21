@@ -12,6 +12,7 @@ import NoJobs from "../../svg/Background/NoJobs.svg"
 import Loader from '../../components/ui/Loader';
 import SearchIcon from '../../svg/SearchIcon';
 import useCandidateAuth from '../../hooks/useCandidateAuth';
+import StyledCard from '../../components/ui/StyledCard';
 
 const fetchOpenJobs = () => axios.get('/candidates/jobs/open').then(res => res.data);
 const searchJobs = (query) => axios.get(`/candidates/jobs/searchJobs?jobTitle=${encodeURIComponent(query)}`).then(res => res.data);
@@ -139,7 +140,8 @@ const AllJobs = () => {
 
 
     return (
-        <div className='container m-4 w-[93%] md:w-[97%]'>
+        <div className='w-full p-4'>
+        <div className='container '>
             <div className='flex items-center justify-between'>
                 <h1 className='typography-h1'>All Jobs</h1>
             </div>
@@ -172,7 +174,7 @@ const AllJobs = () => {
 
             </button> */}
 
-            <div className='flex flex-col md:flex-row gap-4  bg-background-30 p-4 rounded-xl'>
+            <StyledCard padding={2} backgroundColor={"bg-background-30 "} extraStyles={'flex flex-col md:flex-row gap-4 '}>
                 {/* Search and Filters */}
                 <div className={`${isFilterVisible ? 'block' : 'hidden'} md:block`}>
                     <div className='hidden md:block  mb-4 relative '>
@@ -192,7 +194,7 @@ const AllJobs = () => {
                 </div>
 
                 {/* Job listings */}
-                <div className='flex flex-col w-full md:w-fill-available'>
+                <div className='flex flex-col gap-4 w-full md:w-fill-available'>
                     {isLoadingResults ? (
                             <div className="flex justify-center items-center min-h-full">
                                 <Loader />
@@ -219,8 +221,9 @@ const AllJobs = () => {
                         />
                     )})}
                 </div>
-            </div>
+            </StyledCard>
         </div>
+    </div>
     )
 }
 
