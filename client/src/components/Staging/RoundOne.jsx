@@ -45,7 +45,7 @@ const RoundOne = ({ candidateId, jobId ,isClosed}) => {
     const isDisabled = stageData?.status === 'Rejected' || stageData?.status === 'Cleared' || stageData?.status === 'Reviewed';
 
    
-    const data = useScheduler(candidateData,stageData,"Under Review")    
+    // const data = useScheduler(candidateData,stageData,"Under Review")    
 
     const [isLoading, setIsLoading] = useState(false); // Loading state
 

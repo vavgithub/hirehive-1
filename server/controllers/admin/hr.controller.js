@@ -2,6 +2,7 @@ import { jobStagesStatuses } from "../../config/jobStagesStatuses.js";
 import { jobs } from "../../models/admin/jobs.model.js";
 import { candidates } from "../../models/candidate/candidate.model.js";
 import { getDesignTaskContent, getRejectionEmailContent } from "../../utils/emailTemplates.js";
+import { triggerScheduledStatusUpdater } from "../../utils/scheduler.js";
 import { sendEmail } from "../../utils/sentEmail.js";
 
 export const rejectCandidate = async (req, res) => {
@@ -397,6 +398,54 @@ export const scheduleScreening = async (req, res) => {
   }
 };
 
+//Status Update Function
+const updateCallStatus = async (candidateId, jobId,status,stage) => {
+    try {
+        if (!candidateId || !jobId || !status) {
+          throw new Error("Invalid Input Data" );
+        }
+
+        // Find the candidate
+        const candidate = await candidates.findOne({
+          _id: candidateId,
+          "jobApplications.jobId": jobId,
+        });
+
+        if (!candidate) {
+          throw new Error("Candidate not found" );
+        }
+
+        // Locate the relevant job application
+        const jobApplication = candidate.jobApplications.find(
+          (app) => app.jobId.toString() === jobId
+        );
+
+        if (!jobApplication) {
+          throw new Error("Job application not found");
+        }
+
+        const currentStage = jobApplication.currentStage;
+        if (!jobApplication.stageStatuses.has(currentStage)) {
+          throw new Error("Current stage not found" );
+        }
+
+        // Update the status in the Map
+        const stageStatus = jobApplication.stageStatuses.get(currentStage);
+        if(stageStatus.status === "Call Scheduled" && currentStage === stage){
+          stageStatus.status = status; // Update the status
+          jobApplication.stageStatuses.set(currentStage, stageStatus); // Re-set the Map key
+      
+          // Save the updated candidate document
+          await candidate.save();
+        }else{
+          throw new Error("Invalid call or stage to change ");
+        }
+        return true
+    } catch (error) {
+        console.log("Error : ",error.message)
+    }
+}
+
 export const scheduleCall = async (req, res) => {
   try {
     const { candidateId, jobId, stage, date, time, assigneeId, meetingLink } =
@@ -438,6 +487,8 @@ export const scheduleCall = async (req, res) => {
       message: `${stage} call scheduled successfully`,
       updatedStageStatus: jobApplication.stageStatuses.get(stage),
     });
+
+    triggerScheduledStatusUpdater(date,time,candidateId,jobId,stage,"Under Review",updateCallStatus)
   } catch (error) {
     console.error("Error scheduling interview:", error);
     res.status(500).json({ message: "Server error", error: error.message });
@@ -509,6 +560,8 @@ export const rescheduleCall = async (req, res) => {
     candidate.markModified("jobApplications");
 
     await candidate.save();
+    
+    triggerScheduledStatusUpdater(date,time,candidateId,jobId,stage,"Under Review",updateCallStatus)
 
     const updatedCandidate = await candidates.findById(candidateId);
     const updatedJobApplication = updatedCandidate.jobApplications.find(
