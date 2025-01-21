@@ -23,11 +23,28 @@ const AllJobs = () => {
     const navigate = useNavigate();
 
     const [isFilterVisible, setIsFilterVisible] = useState(false);
-    const { candidateData } = useCandidateAuth()
+    const { candidateData , isDone} = useCandidateAuth()
 
     const toggleFilters = () => {
         setIsFilterVisible(!isFilterVisible);
     };
+
+    const [isAssessmentBannerVisible, setIsAssessmentBannerVisible] =
+        useState(false); 
+    
+      // Update visibility states when component mounts and when candidateData updates
+      useEffect(() => {
+        if (isDone && candidateData) {
+          setIsAssessmentBannerVisible(!candidateData.hasGivenAssessment);
+        }
+      }, [candidateData, isDone]);
+    
+      // Add cleanup on unmount
+      useEffect(() => {
+        return () => {
+          setIsAssessmentBannerVisible(false);
+        };
+      }, []); 
 
 
     const [searchQuery, setSearchQuery] = useState('');
@@ -126,6 +143,7 @@ const AllJobs = () => {
             <div className='flex items-center justify-between'>
                 <h1 className='typography-h1'>All Jobs</h1>
             </div>
+            {isAssessmentBannerVisible &&  <AssessmentBanner />}
                <div className='flex items-center justify-between mt-1 mb-4'>
                <div className='block md:hidden  relative w-[86%] sm:w-[90%]'>
                         <div className='absolute top-[10px] left-4'>

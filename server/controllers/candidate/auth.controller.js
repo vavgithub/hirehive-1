@@ -497,6 +497,7 @@ export const getCandidateDashboard = async (req, res) => {
         $project: {
           firstName: 1,
           lastName: 1,
+          profilePictureUrl:1,
           email: 1,
           phone: 1,
           expectedCTC: 1,
@@ -512,6 +513,7 @@ export const getCandidateDashboard = async (req, res) => {
           "jobApplications.stageStatuses": 1,
           "jobApplications.jobApplied": 1,
           "jobApplications.jobId": 1,
+          "jobApplications.resumeUrl": 1,
           "jobDetails": {
             _id: 1,
             jobTitle: 1,
@@ -535,14 +537,19 @@ export const getCandidateDashboard = async (req, res) => {
         applicationDate: app.applicationDate,
         currentStage: app.currentStage,
         stageStatuses: Array.from(app.stageStatuses),
+        resumeUrl : app.resumeUrl
       })
     });
+
+    const latestResume = formattedApplications?.length > 0 ? 
+      formattedApplications.sort((a,b)=>b.applicationDate - a.applicationDate )[0].resumeUrl : "";
 
     res.status(200).json({
       candidate: {
         _id: candidate[0]._id,
         firstName: candidate[0].firstName,
         lastName: candidate[0].lastName,
+        profilePictureUrl : candidate[0].profilePictureUrl,
         email: candidate[0].email,
         phone: candidate[0].phone,
         expectedCTC: candidate[0].expectedCTC,
@@ -553,6 +560,7 @@ export const getCandidateDashboard = async (req, res) => {
         expectedCTC: candidate[0].expectedCTC,
         experience: candidate[0].experience,
         skills: candidate[0].skills,
+        resumeUrl : latestResume,
         hasGivenAssessment:candidate[0].hasGivenAssessment,
         jobApplications: formattedApplications, // Include jobApplications in the candidate object
         // Include other relevant candidate fields

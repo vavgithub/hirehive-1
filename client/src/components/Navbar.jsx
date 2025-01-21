@@ -14,6 +14,7 @@ import { useAuthContext } from '../context/AuthProvider';
 import LightLogo from "../svg/Logo/lightLogo.svg"
 import {NotificationIcon, NotificationIconActive} from '../svg/Staging/NotificationIcon';
 import {SettingsIcon, SettingsIconActive} from '../svg/Staging/SettingsIcon';
+import StyledMenu from './ui/StyledMenu';
 
 const Navbar = () => {
     const navigate = useNavigate();
@@ -100,6 +101,35 @@ const Navbar = () => {
     const renderProfileMenu = () => {
         const profilePath = getProfilePath();
 
+        const itemComponents = [
+            {
+              onClick : handleMenuClose,
+              content : () => (
+                <NavLink
+                to={profilePath}
+                className={({ isActive }) =>
+                    `w-full flex items-center ${isActive ? "text-font-accent" : ""}  hover:bg-background-60 px-4 py-2 rounded-xl `}
+                >
+                    <Profile />
+                    <span className='typography-body  ml-2 font-outfit'>
+                        Profile
+                    </span>
+                </NavLink>
+              )
+            },
+            {
+              onClick : handleLogout,
+              content : () => (
+                <div className='flex items-center hover:bg-background-60 px-4 py-2 w-full rounded-xl'>
+                    <Logout />
+                    <span className='typography-body  ml-2 font-outfit'>
+                        Logout
+                    </span>
+                </div>
+              )
+            }
+          ]
+
         return (
             <>
                 <div className={`flex items-center px-2 justify-start hover:bg-background-60`}>
@@ -109,52 +139,12 @@ const Navbar = () => {
                     >
                         <Avatar alt={user?.name} sx={{ width: "32px", height: "32px" }}
                             src={user?.profilePicture} />
-                        <span className='typography-body text-white'>{user?.name}</span>
+                        <span className={`typography-body  ${location.pathname === profilePath ? "text-font-accent" : "text-white"} `}>{user?.name}</span>
                     </IconButton>
                     <div className={`absolute right-0 w-1 h-6 rounded-tl-xl rounded-bl-xl ${location.pathname === profilePath ? "bg-teal-400" : "bg-transparent"}`} />
                 </div>
-
-                <Menu
-                    anchorEl={anchorEl}
-                    open={Boolean(anchorEl)}
-                    onClose={handleMenuClose}
-                    anchorOrigin={{
-                        vertical: 'bottom',
-                        horizontal: 'center',
-                    }}
-                    transformOrigin={{
-                        vertical: 'top',
-                        horizontal: 'center',
-                    }}
-                    sx={{
-                        "& .MuiList-root": {
-                            backgroundColor: 'rgba(12, 13, 13, 1)',
-                            borderColor: 'rgba(12, 13, 13, 1)',
-                            color: "white",
-                            font: "Outfit"
-                        }
-                    }}
-                >
-                    <MenuItem onClick={handleMenuClose}>
-                        <NavLink
-                            to={profilePath}
-                            className={({ isActive }) =>
-                                `w-full flex items-center ${isActive ? "text-font-accent" : ""}`}
-                        >
-                            <Profile />
-                            <span className='typography-large ml-2'>
-                                Profile
-                            </span>
-                        </NavLink>
-                    </MenuItem>
-
-                    <MenuItem onClick={handleLogout}>
-                        <Logout />
-                        <span className='typography-large ml-2'>
-                            Logout
-                        </span>
-                    </MenuItem>
-                </Menu>
+                <StyledMenu anchorEl={anchorEl} handleMenuClose={handleMenuClose} itemComponents={itemComponents} />
+                
             </>
         );
     };
