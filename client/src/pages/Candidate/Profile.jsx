@@ -120,8 +120,8 @@ function Profile() {
       <div className="container  mx-auto">
         <Header HeaderText={"My Profile"}  />
       {isAssessmentBannerVisible &&  <AssessmentBanner />}
-        <div className="flex w-full gap-6 flex-col-reverse lg:flex-row mt-8 lg:mt-0 ">
-          <div className="lg:w-[70%] flex flex-col gap-6">
+        <div className="flex w-full gap-4 flex-col-reverse lg:flex-row mt-8 lg:mt-0 ">
+          <div className="lg:w-[70%] flex flex-col gap-4">
             <PersonalDetails candidateData={candidateData} />
             <ResumeAndPortfolioDetails candidateData={candidateData} />
             <ProfessionalDetails candidateData={candidateData} />
