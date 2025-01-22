@@ -7,7 +7,9 @@ export const InputField = React.forwardRef(({
   label, 
   required, 
   extraClass,
+  labelStyles,
   placeholder,
+  rowWise = false,
   error,
   errorMessage, 
   ...props 
@@ -27,8 +29,8 @@ export const InputField = React.forwardRef(({
   `.trim();
 
   return (
-    <div className='flex flex-col justify-start gap-2 relative'>
-      <label htmlFor={id} className="typography-body">
+    <div className={'flex  gap-2 relative ' + (rowWise ? "justify-between items-center" : "flex-col justify-start")}>
+      <label htmlFor={id} className={labelStyles + " typography-body "  + (rowWise ? "w-[40%]" : "")}>
         {label} {required && <span className="text-red-100">*</span>}
       </label>
       {type === "password" ? (
@@ -53,7 +55,7 @@ export const InputField = React.forwardRef(({
         />
       )}
       {error && errorMessage && (
-        <span className="text-red-500 typography-small-p top-[5rem] absolute">{errorMessage}</span>
+        <span className={"text-red-500 typography-small-p  absolute " + (rowWise ? "top-[42px] left-[30%]" : "top-[5rem]")}>{errorMessage}</span>
       )}
     </div>
   );

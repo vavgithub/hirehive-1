@@ -572,6 +572,55 @@ export const getCandidateDashboard = async (req, res) => {
   }
 };
 
+
+export const editCandidateProfile = async (req, res) => {
+  try {
+      const { 
+        firstName, 
+        lastName, 
+        email ,
+        phone ,
+        resume,
+        portfolio ,
+        website ,
+        experience ,
+        noticePeriod ,
+        currentCTC ,
+        expectedCTC ,
+        profilePictureUrl
+      } = req.body;
+      
+      const OTP_STAGE = "OTP";
+      const DONE_STAGE = "DONE";
+      console.log(req.body,req.candidate._id);
+
+      const candidateData = await Candidate.findById({_id:req.candidate?._id});
+
+      if(candidateData.phone !== phone){
+        //Check mobile number exists
+        const isMobileExist = await Candidate.find({phone : phone});
+        if(isMobileExist?.length > 1 
+          || (isMobileExist?.length === 1 && isMobileExist[0]?._id?.toString() !== req.candidate?._id)){
+            throw new Error("Mobile Number is already registered");
+        }
+      }
+
+      if(candidateData.email !== email){        
+        //Check email exists
+        const isEmailExist = await Candidate.find({email : email});
+        if(isEmailExist?.length > 1 
+          || (isEmailExist?.length === 1 && isEmailExist[0]?._id?.toString() !== req.candidate?._id)){
+            throw new Error("Email ID is already registered");
+        }
+      }
+
+      res.status(200).json({success:true,stage:DONE_STAGE})
+  } catch (error) {
+    console.error("Error editing candidate profile:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 // auth.controller.js
 
 export const getCandidateAppliedJobs = async (req, res) => {
