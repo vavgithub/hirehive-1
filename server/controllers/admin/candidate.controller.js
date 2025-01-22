@@ -319,6 +319,24 @@ export const getCandidateById = async (req, res) => {
     });
   }
 };
+
+export const getCandidateJobs = async (req,res) => {
+  try {
+    const { candidateId } = req.params;
+
+    // Find the candidate
+    const candidate = await candidates.findById(candidateId).select("-password");
+
+    if (!candidate) {
+      return res.status(404).send({ message: "Candidate not found" });
+    }
+
+    res.status(200).json({jobs : candidate?.jobApplications.length > 0 ? candidate.jobApplications : []});
+  } catch (error) {
+    console.error("Error in getCandidateJobs:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+}
   // export const getAllCandidatesWithStats = async (req, res) => {
   //   try {
   //     const allCandidates = await candidates.aggregate([

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import ResumeIcon from '../../svg/ResumeIcon';
 import AssignmentIcon from '../../svg/AssignmentIcon';
@@ -25,6 +25,7 @@ import { ensureAbsoluteUrl } from '../../utility/ensureAbsoluteUrl';
 import ResumeViewer from '../../components/utility/ResumeViewer';
 import CustomToolTip from '../../components/utility/CustomToolTip';
 import StyledCard from '../../components/ui/StyledCard';
+import { CustomDropdown } from '../../components/Form/FormFields';
 
 
 
@@ -37,6 +38,10 @@ const fetchTotalScore = async (candidateId, jobId) => {
     return data;
 }
 
+const fetchCandidateJobs = async (candidateId) => {
+    const { data } = await axios.get(`admin/candidate/${candidateId}/jobs`);
+    return data;
+};
 
 // Update the transformCandidateData function
 const transformCandidateData = (data) => {
@@ -77,6 +82,9 @@ const ViewCandidateProfile = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
+    const switchJobRef = useRef();
+    const [selectedJob,setSelectedJob] = useState(jobId);
+
     const { data, isLoading, isError, error: queryError } = useQuery({
         queryKey: ['candidate', candidateId, jobId],
         queryFn: () => fetchCandidateData(candidateId, jobId),
@@ -87,7 +95,11 @@ const ViewCandidateProfile = () => {
         },
     });
 
-    
+    useEffect(()=>{
+        if(selectedJob && role === "Hiring Manager"){
+            navigate(`/admin/candidates/view-candidate/${candidateId}/${selectedJob}`)
+        }
+    },[selectedJob])
 
     const { data: score, error } = useQuery({
         queryKey: ['candidateScore', candidateId, jobId],
@@ -100,6 +112,12 @@ const ViewCandidateProfile = () => {
     });
 
 
+    const { data: candidateJobs, error : jobsError } = useQuery({
+        queryKey: ['candidateJobs', candidateId],
+        queryFn: () => fetchCandidateJobs(candidateId),
+    });
+
+    const formattedAppliedJobs = candidateJobs?.jobs?.map(appliedJob => ({value : appliedJob.jobId, label : appliedJob.jobApplied})) || []
     // Use useEffect to dispatch actions when data changes
     useEffect(() => {
         if (data) {
@@ -211,6 +229,15 @@ const ViewCandidateProfile = () => {
                 withBack="true"
                 page="page1"
                 handleAction={handleAction}
+                rightContent={role === "Hiring Manager" &&
+                <div className='flex items-center h-full w-[285px] -translate-y-[6px] z-10'>
+                    <CustomDropdown 
+                    extraStylesForLabel=" w-[285px] " 
+                    value={selectedJob} 
+                    onChange={setSelectedJob} 
+                    options={formattedAppliedJobs} 
+                    ref={switchJobRef}/>
+                </div>}
             />
             {/* Candidate Profile Card */}
 
