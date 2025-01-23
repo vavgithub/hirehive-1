@@ -108,7 +108,7 @@ const Portfolio = ({ candidateId, jobId ,isClosed}) => {
 
                         <Label icon={WarningIcon} text="Candidate's portfolio has not yet been assigned to a reviewer." />
                         <div className='w-2/5'>
-                            <h4 className='typography-h4  my-4'>Select Reviewer</h4>
+                            <h4 className='typography-body my-4 font-outfit'>Select Reviewer</h4>
                             <AssigneeSelector
                                 mode="default"
                                 value={stageData?.assignedTo}

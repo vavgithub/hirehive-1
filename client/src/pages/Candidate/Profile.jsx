@@ -12,6 +12,10 @@ import UploadIcon from "../../svg/Buttons/UploadIcon";
 import { validationRules } from "../../utility/validationRules";
 import { uploadProfilePicture, uploadResume } from "./ApplyJob";
 import axios from "../../api/axios";
+import { showErrorToast, showSuccessToast } from "../../components/ui/Toast";
+import { useDispatch } from "react-redux";
+import { fetchCandidateAuthData } from "../../redux/candidateAuthSlice";
+import LoaderModal from "../../components/ui/LoaderModal";
 
 const PersonalDetails = ({candidateData, isEditing , control}) => {
     return (
@@ -338,12 +342,29 @@ function Profile() {
   const { candidateData, isAuthenticated, isDone } = useCandidateAuth();
   const [isEditing,setIsEditing] = useState(false);
 
+  const [stage,setStage] = useState("EDITING");
+  const [email,setEmail] = useState("");
+  const [showOTPModal,setShowOTPModal] = useState(false);
+  const [otp, setOtp] = useState(['', '', '', '', '', '']);
+
   const [isAssessmentBannerVisible, setIsAssessmentBannerVisible] =
     useState(false); 
 
   const profileImageRef = useRef();
   const [resumeFile,setResumeFile] = useState(null);
   const [profileFile,setProfileFile] = useState(null);
+
+  const [isLoading,setIsLoading] = useState(false);
+
+  const dispatch = useDispatch();
+
+  useEffect(()=>{
+    if(stage === "DONE"){
+      setIsEditing(false);
+    }else if(stage === "OTP"){
+      setShowOTPModal(true);
+    }
+  },[stage])
 
   const { control, handleSubmit, watch, setValue, setError, getValues,clearErrors, formState: { errors, isValid } } = useForm({
     defaultValues: {
@@ -371,18 +392,54 @@ function Profile() {
   }, [candidateData, isDone]);
 
   const handleEditProfile = async (data) => {
-    console.log(resumeFile,profileFile,data)
+    try {
+      setIsLoading(true);
+      if(resumeFile){
+        data.resume = await uploadResume(resumeFile,()=>{})
+      }
+      if(profileFile){
+        data.profilePictureUrl = await uploadProfilePicture(profileFile)
+      }
 
-    if(resumeFile){
-      data.resume = await uploadResume(resumeFile,()=>{})
+      const response = await axios.post("/auth/candidate/edit-profile",data)
+      if(response?.data?.stage === "OTP"){
+        setIsLoading(false);
+        setEmail(response?.data?.email)
+        setStage("OTP")
+      }else if(response?.data?.stage === "DONE"){
+        await dispatch(fetchCandidateAuthData()).unwrap();
+        setIsLoading(false);
+        showSuccessToast("Success","Profile updated Successfully")
+        setStage("DONE")
+      }
+    } catch (error) {
+      setIsLoading(false);
+      showErrorToast("Error",error?.response?.data?.message );
     }
-    if(profileFile){
-      data.profilePictureUrl = await uploadProfilePicture(profileFile)
-    }
-    console.log(data)
-    const response = await axios.post("/auth/candidate/edit-profile",data)
-    console.log("VANNU",response)
   }
+
+  const handleOtpSubmit = async (e) => {
+      e.preventDefault();
+      const enteredOtp = otp.join('');
+  
+      if (enteredOtp.length !== 6) {
+        showErrorToast("Invalid OTP Error",'Please enter the 6-digit OTP sent to your email.');
+        return;
+      }
+  
+      setIsLoading(true);
+      try {
+        await axios.post('/auth/candidate/verify-email-otp', { email, otp: enteredOtp });
+        setShowOTPModal(false);
+        await dispatch(fetchCandidateAuthData()).unwrap();
+        showSuccessToast("Success","Profile updated Successfully")
+        setStage("DONE");
+      } catch (error) {
+        showErrorToast("Invalid OTP Error",error.response?.data?.message || 'Invalid OTP');
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
   // Add cleanup on unmount
   useEffect(() => {
@@ -390,8 +447,62 @@ function Profile() {
       setIsAssessmentBannerVisible(false);
     };
   }, []);
+
+    // Handler for OTP input change
+    const handleOtpChange = (element, index) => {
+      if (isNaN(element.value)) return false;
+  
+      setOtp([...otp.map((d, idx) => (idx === index ? element.value : d))]);
+  
+      // Focus next input
+      if (element.value && index < 5) {
+        document.getElementById(`otp-input-${index + 1}`).focus();
+      }
+    };
+
   return (
     <div className="w-full bg-background-80 min-h-screen py-4 px-4 ">
+      {isLoading && <LoaderModal/>}
+      {showOTPModal && isEditing && 
+              <div className="flex items-center h-screen w-screen justify-center fixed bg-background-overlay z-50 top-0 left-0">
+                <div className="w-full mx-8 md:mx-0 max-w-lg space-y-8 bg-background-90 rounded-lg shadow-xl  bg-opacity-15 ">
+                  <form onSubmit={handleOtpSubmit} className="px-8 sm:px-16 text-center md:mb-20">
+                    <h1 className="typography-h2 sm:typography-h1 mt-8 md:mt-20 mb-4 ">OTP Verification</h1>
+                    <p className="text-font-gray text-center typography-large-p">
+                      To ensure security, please enter the OTP (One-Time Password) to
+                      verify your account. A code has been sent to
+                    </p>
+                    <h2 className='typography-h3 sm:typograhpy-h2 mt-3 md:mt-6 text-font-gray mx-auto w-[240px] min-[420px]:w-full whitespace-nowrap text-ellipsis overflow-hidden'>
+                      {email}
+                    </h2>
+                    <div className="flex justify-center  space-x-2 mt-4 ">
+                      {otp.map((data, index) => (
+                        <input
+                          key={index}
+                          id={`otp-input-${index}`}
+                          type="number"
+                          maxLength="1"
+                          className="no-spinner otp-input"
+                          value={data}
+                          onChange={(e) => handleOtpChange(e.target, index)}
+                        />
+                      ))}
+                    </div>
+      
+                    <div className="flex justify-center mt-6 w-full gap-4  mb-6 ">
+                      <Button
+                        type="submit"
+                        variant="primary"
+                        disabled={isLoading}
+                        className="w-full "
+                      >
+                        {isLoading ? 'Verifying...' : 'Verify'}
+                      </Button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            }
       <div className="container  mx-auto">
         <Header HeaderText={"My Profile"}  />
       {isAssessmentBannerVisible &&  <AssessmentBanner />}
@@ -440,7 +551,10 @@ function Profile() {
             {isEditing && 
             <div className="place-self-end flex gap-4 mt-4">
               <Button onClick={()=>setIsEditing(false)} type="button" variant="secondary" >Cancel</Button>
-              <Button type="Submit" >Save</Button>
+              <Button 
+              type="Submit" 
+              disabled={isLoading}
+              >Save</Button>
             </div>}
         </form>
       </div>
