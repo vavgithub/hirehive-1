@@ -33,7 +33,7 @@ const MyJobs = () => {
 
   // Maintain mobile detection
   const isMobile = useMediaQuery({ maxWidth: 768 });
-  const { candidateData, isAuthenticated, isDone } = useCandidateAuth();
+  const { candidateData, hasGivenAssessment, isAuthenticated, isDone } = useCandidateAuth();
 
   // Navigation handler with mobile check
   const handleClick = (jobId) => {
@@ -48,9 +48,9 @@ const MyJobs = () => {
     // Update visibility states when component mounts and when candidateData updates
     useEffect(() => {
       if (isDone && candidateData) {
-        setIsAssessmentBannerVisible(!candidateData.hasGivenAssessment);
+        setIsAssessmentBannerVisible(!hasGivenAssessment);
       }
-    }, [candidateData, isDone]);
+    }, [hasGivenAssessment, isDone]);
   
     // Add cleanup on unmount
     useEffect(() => {

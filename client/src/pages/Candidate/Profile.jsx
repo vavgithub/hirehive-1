@@ -14,8 +14,9 @@ import { uploadProfilePicture, uploadResume } from "./ApplyJob";
 import axios from "../../api/axios";
 import { showErrorToast, showSuccessToast } from "../../components/ui/Toast";
 import { useDispatch } from "react-redux";
-import { fetchCandidateAuthData } from "../../redux/candidateAuthSlice";
+import { fetchCandidateAuthData, updateWithoutAssessment } from "../../redux/candidateAuthSlice";
 import LoaderModal from "../../components/ui/LoaderModal";
+import CustomToolTip from "../../components/utility/CustomToolTip";
 
 const PersonalDetails = ({candidateData, isEditing , control}) => {
     return (
@@ -339,7 +340,7 @@ const ProfessionalDetails = ({candidateData, isEditing ,control}) => {
 }
 
 function Profile() {
-  const { candidateData, isAuthenticated, isDone } = useCandidateAuth();
+  const { candidateData, hasGivenAssessment, isDone } = useCandidateAuth();
   const [isEditing,setIsEditing] = useState(false);
 
   const [stage,setStage] = useState("EDITING");
@@ -384,12 +385,24 @@ function Profile() {
     mode: 'onChange'
   });
 
+  const fetchAndUpdateCandidate = async () => {
+    try {
+        const response = await axios.get('/auth/candidate/dashboard');
+        if(response.data?.candidate){
+          dispatch(updateWithoutAssessment(response.data.candidate))
+        }
+    } catch (error) {
+      console.log("ERR",error)
+      throw new Error("Error while fetch candidate data")
+    }
+  }
+
   // Update visibility states when component mounts and when candidateData updates
   useEffect(() => {
     if (isDone && candidateData) {
-      setIsAssessmentBannerVisible(!candidateData.hasGivenAssessment);
+      setIsAssessmentBannerVisible(!hasGivenAssessment);
     }
-  }, [candidateData, isDone]);
+  }, [hasGivenAssessment, isDone]);
 
   const handleEditProfile = async (data) => {
     try {
@@ -407,7 +420,7 @@ function Profile() {
         setEmail(response?.data?.email)
         setStage("OTP")
       }else if(response?.data?.stage === "DONE"){
-        await dispatch(fetchCandidateAuthData()).unwrap();
+        await fetchAndUpdateCandidate()
         setIsLoading(false);
         showSuccessToast("Success","Profile updated Successfully")
         setStage("DONE")
@@ -431,7 +444,7 @@ function Profile() {
       try {
         await axios.post('/auth/candidate/verify-email-otp', { email, otp: enteredOtp });
         setShowOTPModal(false);
-        await dispatch(fetchCandidateAuthData()).unwrap();
+        await fetchAndUpdateCandidate()
         showSuccessToast("Success","Profile updated Successfully")
         setStage("DONE");
       } catch (error) {
@@ -515,8 +528,10 @@ function Profile() {
             </div>
             <div className="w-[100%] sm:w-[50%] mx-auto lg:w-[30%] ">
                 <StyledCard backgroundColor={"bg-background-30"} extraStyles=" flex flex-col items-center relative">
-                  {isEditing || <button type="button" onClick={()=>setIsEditing(true)} className="absolute top-6 right-6 border rounded-xl p-2 border-font-gray hover:bg-background-60">
-                    <PencilIcon/>
+                  {isEditing || <button type="button" onClick={()=>setIsEditing(true)} className="absolute top-6 right-6 border rounded-xl p-2 border-font-gray hover:bg-background-70">
+                    <CustomToolTip title={"Edit Profile"} arrowed>
+                      <PencilIcon/>
+                    </CustomToolTip>
                   </button>}
                   <div className="relative w-[8rem] min-h-[5rem] ">
                     <div  className="absolute w-[8rem] left-0  -top-14 aspect-square overflow-hidden rounded-full">

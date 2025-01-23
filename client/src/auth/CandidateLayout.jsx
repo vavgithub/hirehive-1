@@ -24,7 +24,7 @@ const CandidateLayout = () => {
   const dispatch = useDispatch();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   // Get candidate data from Redux store
-  const { candidateData, isAuthenticated, isDone } = useCandidateAuth();
+  const { candidateData, hasGivenAssessment, isAuthenticated, isDone } = useCandidateAuth();
   const scrollPosition = useScroll()
 
   // Initialize modal visibility state based on assessment status
@@ -34,10 +34,10 @@ const CandidateLayout = () => {
   // Update visibility states when component mounts and when candidateData updates
   useEffect(() => {
     if (isDone && candidateData) {
-      setIsAssessmentModalVisible(!candidateData.hasGivenAssessment);
-      setIsAssessmentBannerVisible(!candidateData.hasGivenAssessment);
+      setIsAssessmentModalVisible(!hasGivenAssessment);
+      setIsAssessmentBannerVisible(!hasGivenAssessment);
     }
-  }, [candidateData, isDone]);
+  }, [hasGivenAssessment, isDone]);
 
   // Add cleanup on unmount
   useEffect(() => {
