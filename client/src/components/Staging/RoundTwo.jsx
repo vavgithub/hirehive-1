@@ -406,6 +406,30 @@ const RoundTwo = ({ candidateId, jobId ,isClosed }) => {
                     </>
                 );
             case 'Cleared':
+                return <>
+                <div className='w-full '>
+                    {role === 'Hiring Manager' || role === 'Design Reviewer' ? (
+                        <div className='flex justify-between gap-4'>
+                            <div className='w-full'>
+                                <p className='typography-small-p text-font-gray'>Remarks</p>
+                                <p className='typography-body pb-4'>{stageData?.feedback || 'No feedbacks'}</p>
+
+                            </div>
+                            <div className='bg-stars bg-cover rounded-xl w-[160px] my-4'>
+                                <div className='p-4 flex flex-col items-center'>
+                                    <p className='typography-small-p text-font-gray'>Total Score:</p>
+                                    <div className='flex flex-col items-center text-font-accent'>
+                                        <p className='display-d2 font-bold'>{stageData?.score}</p>
+                                        <p className='typography-small-p text-font-gray'>Out Of 5</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>)
+                        :    
+                        <Label icon={RightTick} text={"You are now ready to move on to the next round. Our team will contact you soon with further details"}/>
+                    }
+                </div>
+            </>
             case 'Rejected':
                 return (
                     <div className='w-full'>
