@@ -37,6 +37,7 @@ import { getCandidateScore } from './Staging/StageAction';
 import { getMaxScoreForStage } from '../pages/Admin/ViewCandidateProfile';
 import { usePreserver } from '../context/StatePreserver';
 import LoaderModal from './ui/LoaderModal';
+import MultiSelectBar from './utility/MultiSelectBar';
 
 
 const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
@@ -668,6 +669,25 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
     }
   };
 
+  const [selectedRows,setSelectedRows] = useState([]);
+
+  const handleSelectionChange = (selectionModel) => {
+    console.log(selectionModel)
+    
+    const candidateIds = [];
+    const jobIds = [];
+
+    selectionModel?.map(selectionData=>{
+      const [candidateId,jobId] = selectionData.split("_");
+      candidateIds.push(candidateId);
+      jobIds.push(jobId);
+    })
+    console.log("CAN",candidateIds)
+    const selectedData = filteredAndSearchedRowsData.filter((row) => candidateIds.includes(row._id) && (row.jobId ? jobIds.includes(row.jobId) : true));
+    console.log('Selected Rows Data:', selectedData);
+    setSelectedRows(selectedData)
+  }
+
   const handleBudgetMenuClose = () => {
     setBudgetMenuAnchorEl(null);
   };
@@ -851,10 +871,11 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
           </div>
         </div>)}
       </div>
+      {!readOnly && selectedRows?.length > 0 && <MultiSelectBar selectedData={selectedRows} jobId={jobId} />}
       <DataGrid
         rows={filteredAndSearchedRowsData}
         columns={columns}
-        getRowId={(row) => `${row._id}_${row.jobId}`} // Create a unique ID for each row
+        getRowId={(row) => `${row._id}_${row.jobId ?? jobId}`} // Create a unique ID for each row
         paginationModel= {{ page: currentPage, pageSize: pageSize }}
         onPaginationModelChange={(paginationModel) => {
           const { page, pageSize } = paginationModel;
@@ -970,6 +991,9 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
           '& .MuiSvgIcon-root': {
             color:"white"
           },
+          '& .MuiDataGrid-selectedRowCount ' : {
+            opacity : 0
+          },
           '& .Mui-selected .MuiSvgIcon-root': {
             color: 'rgb(24, 233, 208)',
           },
@@ -1010,6 +1034,7 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
         }}
         pageSizeOptions={[10,20,30,40,50]}
         checkboxSelection
+        onRowSelectionModelChange={(newSelection) => handleSelectionChange(newSelection)} // Updates on selection change
         onRowClick={(params) => handleRowClick(params)}
       />
 
