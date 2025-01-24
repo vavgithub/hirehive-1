@@ -36,6 +36,7 @@ import  { AssignmentIconStroke } from '../svg/AssignmentIcon';
 import { getCandidateScore } from './Staging/StageAction';
 import { getMaxScoreForStage } from '../pages/Admin/ViewCandidateProfile';
 import { usePreserver } from '../context/StatePreserver';
+import LoaderModal from './ui/LoaderModal';
 
 
 const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
@@ -166,17 +167,19 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
   }, [filteredRowsData, searchTerm, filters]);
 
   const autoAssignMutation = useMutation({
-    mutationFn: ({ jobId, reviewerIds }) =>
-      axios.post('dr/auto-assign-portfolios', { jobId, reviewerIds }),
-    onSuccess: (data) => {
+    mutationFn: ({ jobId, reviewerIds ,budgetMin , budgetMax}) =>
+      axios.post('dr/auto-assign-portfolios', { jobId, reviewerIds ,budgetMin , budgetMax}),
+    onSuccess: async (data) => {
       // Invalidate and refetch
       queryClient.invalidateQueries(['candidates', jobId]);
-      refetch();
+      await refetch();
       // You might want to show a success message to the user here
+      showSuccessToast("Auto Assign Portfolio Done")
     },
     onError: (error) => {
       console.error('Auto-assign error:', error);
       // You might want to show an error message to the user here
+      showErrorToast("Error",`${error.response?.data?.message}`)
     }
   });
 
@@ -222,24 +225,31 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
   });
 
   const handleAutoAssign = async (selectedReviewers) => {
-    try {
-      const response = await axios.post('/dr/auto-assign-portfolios', {
-        jobId,
-        reviewerIds: selectedReviewers.map(reviewer => reviewer._id),
-        budgetMin: parseFloat(budgetFilter.from) || 0,
-        budgetMax: parseFloat(budgetFilter.to) || Infinity
-      });
+    // try {
+    //   const response = await axios.post('/dr/auto-assign-portfolios', {
+    //     jobId,
+    //     reviewerIds: selectedReviewers.map(reviewer => reviewer._id),
+    //     budgetMin: parseFloat(budgetFilter.from) || 0,
+    //     budgetMax: parseFloat(budgetFilter.to) || Infinity
+    //   });
 
-      if (response.status === 200) {
-        await refetch();
-        showSuccessToast("Auto Assign Portfolio Done")
-      } else {
-        console.error('Failed to assign portfolios');
-      }
-    } catch (error) {
-      console.error('Error in auto-assigning portfolios:', error);
-      showErrorToast(`${error.message}`)
-    }
+    //   if (response.status === 200) {
+    //     await refetch();
+    //     showSuccessToast("Auto Assign Portfolio Done")
+    //   } else {
+    //     console.error('Failed to assign portfolios');
+    //   }
+    // } catch (error) {
+    //   console.error('Error in auto-assigning portfolios:', error.response);
+    //   showErrorToast("Error",`${error.response?.data?.message}`)
+    // }
+
+    await autoAssignMutation.mutateAsync({
+          jobId,
+          reviewerIds: selectedReviewers.map(reviewer => reviewer._id),
+          budgetMin: parseFloat(budgetFilter.from) || 0,
+          budgetMax: parseFloat(budgetFilter.to) || Infinity
+        })
     setIsAutoAssignModalOpen(false);
   };
 
@@ -678,6 +688,7 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
   return (
     <div className='w-full'>
 
+    {autoAssignMutation.isPending && <LoaderModal/>}
 
       <style>
         {`

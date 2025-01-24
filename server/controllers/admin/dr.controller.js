@@ -333,7 +333,7 @@ export const autoAssignPortfolios = async (req, res) => {
     if (eligibleCandidates.length === 0) {
       await session.abortTransaction();
       session.endSession();
-      return res.status(404).json({ message: 'No eligible candidates found for assignment within the specified budget range.' });
+      return res.status(400).json({ message: 'No eligible candidates found for assignment within the specified budget range.' });
     }
 
     // Calculate how many candidates each reviewer should get
