@@ -138,14 +138,14 @@ const AssessmentResponse = () => {
 
 
     return (
-        <div className='container'>
-            <div className="p-4">
+        <div className="container mx-4 p-4 h-screen">
+            <div >
                 <Header withBack={"true"} HeaderText="Assessment details" />
 
                 {/* Top Section with Candidate Info and Score */}
                 <div className="flex gap-4 mb-6">
                     {/* Candidate Info Card */}
-                    <div className="bg-background-90 rounded-xl p-6 flex-grow">
+                    <div className="bg-background-90 rounded-xl p-4 flex-grow">
                         <div className="flex gap-4">
                             <div className="to-background-100 w-[180px] rounded-xl overflow-hidden">
                                 <img
@@ -280,11 +280,11 @@ const AssessmentResponse = () => {
                 </div>}
 
                 <div className='bg-background-90 rounded-xl'>
-                    <h2 className='typography-h2 px-6 py-3 '>Question</h2>
+                    <h2 className='typography-h2 px-4 py-3 '>Question</h2>
                     {/* Questions List */}
                     {assessmentData?.questionResponses?.length > 0 ? <div className="space-y-4 bg-background-80">
                         {assessmentData?.questionResponses.map((response, index) => (
-                            <div key={response.questionId} className=" rounded-xl p-6">
+                            <div key={response.questionId} className=" rounded-xl p-4">
                                 <h3 className="typography-h3 mb-4">
                                     Q{index + 1}. {response.questionDetails.text}
                                 </h3>

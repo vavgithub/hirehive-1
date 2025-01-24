@@ -1,0 +1,105 @@
+export const combinedEmojis = [
+  { name: "Grinning Face", emoji: "😀", unicode: "\u{1F600}" },
+  { name: "Smiling Face with Smiling Eyes", emoji: "😊", unicode: "\u{1F60A}" },
+  { name: "Face with Tears of Joy", emoji: "😂", unicode: "\u{1F602}" },
+  { name: "Winking Face", emoji: "😉", unicode: "\u{1F609}" },
+  { name: "Confused Face", emoji: "😕", unicode: "\u{1F615}" },
+  { name: "Thinking Face", emoji: "🤔", unicode: "\u{1F914}" },
+
+  // Aiming/Target Symbols
+  { name: "Target", emoji: "🎯", unicode: "\u{1F3AF}" },
+  { name: "Bullseye", emoji: "🔘", unicode: "\u{1F518}" },
+
+  // Miscellaneous
+  { name: "Exclamation", emoji: "❗", unicode: "\u{2757}" },
+  { name: "Checkmark", emoji: "✅", unicode: "\u{2705}" },
+  { name: "Cross Mark", emoji: "❌", unicode: "\u{274C}" },
+  { name: "Star", emoji: "⭐", unicode: "\u{2B50}" },
+  { name: "Sparkles", emoji: "✨", unicode: "\u{2728}" },
+
+  // Arrows
+  { name: "Right Arrow", emoji: "➡️", unicode: "\u{27A1}" },
+  { name: "Left Arrow", emoji: "⬅️", unicode: "\u{2B05}" },
+  { name: "Up Arrow", emoji: "⬆️", unicode: "\u{2B06}" },
+  { name: "Down Arrow", emoji: "⬇️", unicode: "\u{2B07}" },
+  { name: "Double Arrow", emoji: "⏩", unicode: "\u{23E9}" },
+  { name: "Curved Up Arrow", emoji: "↗️", unicode: "\u{2197}" },
+  { name: "Curved Down Arrow", emoji: "↘️", unicode: "\u{2198}" },
+  { name: "Back Arrow", emoji: "🔙", unicode: "\u{1F519}" },
+
+  // Job/Work Symbols
+  { name: "Briefcase", emoji: "💼", unicode: "\u{1F4BC}" },
+  { name: "Laptop", emoji: "💻", unicode: "\u{1F4BB}" },
+  { name: "Desk", emoji: "🖥️", unicode: "\u{1F5A5}" },
+  { name: "Pen", emoji: "🖊️", unicode: "\u{1F58A}" },
+  { name: "Clipboard", emoji: "📋", unicode: "\u{1F4CB}" },
+  { name: "File Folder", emoji: "📁", unicode: "\u{1F4C1}" },
+
+  // Location & Maps
+  { name: "Location Pin", emoji: "📍", unicode: "\u{1F4CD}" },
+  { name: "Globe", emoji: "🌍", unicode: "\u{1F30D}" },
+  { name: "Building Construction", emoji: "🏗️", unicode: "\u{1F3D7}" },
+  { name: "Office Building", emoji: "🏢", unicode: "\u{1F3E2}" },
+
+  // Time/Deadline
+  { name: "Clock", emoji: "⏰", unicode: "\u{23F0}" },
+  { name: "Calendar", emoji: "📅", unicode: "\u{1F4C5}" },
+  { name: "Hourglass", emoji: "⏳", unicode: "\u{23F3}" },
+
+  // Team/Collaboration
+  { name: "People", emoji: "👥", unicode: "\u{1F465}" },
+  { name: "Handshake", emoji: "🤝", unicode: "\u{1F91D}" },
+  { name: "Raising Hands", emoji: "🙋‍♂️", unicode: "\u{1F64B}" },
+
+  // Benefits/Perks
+  { name: "Money Bag", emoji: "💰", unicode: "\u{1F4B0}" },
+  { name: "Chart Increasing", emoji: "📈", unicode: "\u{1F4C8}" },
+  { name: "Dollar Banknote", emoji: "💵", unicode: "\u{1F4B5}" },
+
+  // Extended Professional Emojis
+  { name: "Zipper-Mouth Face", emoji: "🤐", unicode: "\u{1F910}" },
+  { name: "Money with Wings", emoji: "💸", unicode: "\u{1F4B8}" },
+  { name: "Envelope with Arrow", emoji: "📩", unicode: "\u{1F4E9}" },
+  { name: "Postbox", emoji: "📮", unicode: "\u{1F4EE}" },
+  { name: "Incoming Envelope", emoji: "📥", unicode: "\u{1F4E5}" },
+  { name: "Package", emoji: "📦", unicode: "\u{1F4E6}" },
+  { name: "Shopping Cart", emoji: "🛒", unicode: "\u{1F6D2}" },
+  { name: "Hammer and Wrench", emoji: "🛠️", unicode: "\u{1F6E0}" },
+  { name: "Pushpin", emoji: "📌", unicode: "\u{1F4CC}" },
+  { name: "Paperclip", emoji: "📎", unicode: "\u{1F4CE}" },
+  { name: "Scissors", emoji: "✂️", unicode: "\u{2702}" },
+  { name: "Bookmark", emoji: "🔖", unicode: "\u{1F516}" },
+  { name: "Clockwise Arrow", emoji: "🔃", unicode: "\u{1F503}" },
+  { name: "Anticlockwise Arrow", emoji: "🔄", unicode: "\u{1F504}" },
+  { name: "Recycling Symbol", emoji: "♻️", unicode: "\u{267B}" },
+  { name: "Check Mark Button", emoji: "✅", unicode: "\u{2705}" },
+  { name: "Heavy Check Mark", emoji: "✔️", unicode: "\u{2714}" },
+  { name: "Information Source", emoji: "ℹ️", unicode: "\u{2139}" },
+  { name: "Right Angle", emoji: "⊾", unicode: "\u{22BE}" },
+  { name: "Copyright", emoji: "©️", unicode: "\u{A9}" },
+  { name: "Registered Trademark", emoji: "®️", unicode: "\u{AE}" },
+  { name: "No Entry", emoji: "⛔", unicode: "\u{26D4}" },
+  { name: "Heavy Dollar Sign", emoji: "💵", unicode: "\u{1F4B5}" },
+  { name: "Euro Banknote", emoji: "💶", unicode: "\u{1F4B6}" },
+  { name: "Pound Banknote", emoji: "💷", unicode: "\u{1F4B7}" },
+  { name: "Yen Banknote", emoji: "💴", unicode: "\u{1F4B4}" },
+  { name: "Ticket", emoji: "🎫", unicode: "\u{1F3AB}" },
+  { name: "Credit Card", emoji: "💳", unicode: "\u{1F4B3}" },
+  { name: "Trophy", emoji: "🏆", unicode: "\u{1F3C6}" },
+  { name: "Ribbon", emoji: "🎀", unicode: "\u{1F380}" },
+  { name: "Gem Stone", emoji: "💎", unicode: "\u{1F48E}" },
+  { name: "Chart with Upwards Trend", emoji: "📈", unicode: "\u{1F4C8}" },
+  { name: "Alarm Clock", emoji: "⏰", unicode: "\u{23F0}" },
+  { name: "Notebook", emoji: "📓", unicode: "\u{1F4D3}" },
+  { name: "Memo", emoji: "📝", unicode: "\u{1F4DD}" },
+  { name: "Pencil", emoji: "✏️", unicode: "\u{270F}" },
+  { name: "Mag Glass Tilted Right", emoji: "🔍", unicode: "\u{1F50D}" },
+  { name: "Mag Glass", emoji: "🔎", unicode: "\u{1F50E}" },
+  { name: "Toolbox", emoji: "🧰", unicode: "\u{1F9F0}" },
+  { name: "Wrench", emoji: "🔧", unicode: "\u{1F527}" },
+  { name: "Lock", emoji: "🔒", unicode: "\u{1F512}" },
+  { name: "Key", emoji: "🔑", unicode: "\u{1F511}" },
+  { name: "Laptop with Code", emoji: "💻💻", unicode: "\u{1F4BB}" },
+  { name: "CPU", emoji: "💻", unicode: "\u{1F4BB}" },
+  { name: "Atom", emoji: "⚛️", unicode: "\u{269B}" },
+];

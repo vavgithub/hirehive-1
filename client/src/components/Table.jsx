@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useLayoutEffect, useState } from 'react'
 import { DataGrid } from '@mui/x-data-grid';
 import { FaEdit, FaFile, FaFileAlt, FaGlobe, FaUser } from 'react-icons/fa';
 import { Avatar, Menu, MenuItem } from '@mui/material';
@@ -33,6 +33,9 @@ import FileMainIcon from '../svg/FileMainIcon';
 import ResumeIcon from '../svg/ResumeIcon';
 import CustomToolTip from './utility/CustomToolTip';
 import  { AssignmentIconStroke } from '../svg/AssignmentIcon';
+import { getCandidateScore } from './Staging/StageAction';
+import { getMaxScoreForStage } from '../pages/Admin/ViewCandidateProfile';
+import { usePreserver } from '../context/StatePreserver';
 
 
 const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
@@ -61,17 +64,38 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
   // ..this are the table filters 
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState({});
+  const [currentPage,setCurrentPage] = useState(0);
+  const [pageSize,setPageSize] = useState(10);
 
   const [budgetMenuAnchorEl, setBudgetMenuAnchorEl] = useState(null);
 
+  const { 
+    query , 
+    setQuery ,
+    filters : preservedFilters,
+    setFilters : setPreservedFilters ,
+    currentPage : preservedCurrentPage, 
+    setCurrentPage : setPreservedCurrentPage,
+    pageSize : preservedPageSize,
+    setPageSize : setPreservedPageSize,
+  } = usePreserver(jobId || 'Candidates');
+
+  useLayoutEffect(()=>{
+      setSearchTerm(query)
+      setFilters(preservedFilters)
+      setCurrentPage(preservedCurrentPage)
+      setPageSize(preservedPageSize)
+  },[query,preservedFilters,preservedCurrentPage,preservedPageSize])
 
 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
+    setQuery(event.target.value)
   };
 
   const handleApplyFilters = (newFilters) => {
     setFilters(newFilters);
+    setPreservedFilters(newFilters)
   };
 
 
@@ -338,7 +362,7 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
       field: 'fullName',
       headerName: 'Full Name',
       width: 250,
-      sortable: true,
+      sortable: false,
       disableColumnMenu: true,
       valueGetter: (params, row) => {
         const name = `${row?.firstName || ''} ${row?.lastName || ''}`
@@ -434,6 +458,7 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
       field: 'email',
       headerName: 'Email',
       width: 220,
+      sortable: false,
       disableColumnMenu: true,
       renderCell : (params) =>(
         <CustomToolTip title={params.value} arrowed size={2}>
@@ -445,6 +470,7 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
     {
       field: 'phone',
       headerName: 'Phone',
+      sortable: false,
       width: 130,
       disableColumnMenu: true,
     },
@@ -565,6 +591,7 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
     {
       field: 'actions',
       headerName: 'Actions',
+      sortable: false,
       width: 150,
       disableColumnMenu: true,
       renderCell: (params) => (
@@ -777,7 +804,7 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
             value={searchTerm}
             onChange={handleSearch}
           />
-          <FilterForDataTable onApplyFilters={handleApplyFilters} readOnly={readOnly} />
+          <FilterForDataTable onApplyFilters={handleApplyFilters} readOnly={readOnly} preservedFilters={preservedFilters} />
           <div className='flex items-center cursor-pointer gap-2 text-font-gray hover:bg-background-60 hover:text-accent-100 rounded-xl typography-body h-12 p-3' onClick={() => handleExport()}>
             <Export />
             Export
@@ -813,15 +840,17 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
           </div>
         </div>)}
       </div>
-
       <DataGrid
         rows={filteredAndSearchedRowsData}
         columns={columns}
         getRowId={(row) => `${row._id}_${row.jobId}`} // Create a unique ID for each row
-        initialState={{
-          pagination: {
-            paginationModel: { page: 0, pageSize: 10 },
-          },
+        paginationModel= {{ page: currentPage, pageSize: pageSize }}
+        onPaginationModelChange={(paginationModel) => {
+          const { page, pageSize } = paginationModel;
+          setCurrentPage(page); // Update your state or perform actions for page change
+          setPreservedCurrentPage(page)
+          setPageSize(pageSize); // Update your state or perform actions for page size change
+          setPreservedPageSize(pageSize)
         }}
         slotProps={{
           pagination : {
@@ -1083,6 +1112,8 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
         onConfirm={handleRejectConfirm}
         item={selectedCandidate}
         candidateName={`${selectedCandidate?.firstName} ${selectedCandidate?.lastName}`}
+        candidateScore={getCandidateScore(selectedCandidate?.stageStatuses)}
+        maxScoreOfStage={getMaxScoreForStage(selectedCandidate?.currentStage)}
         jobTitle={"jobTitle"}
         companyName={"companyName"}
       />

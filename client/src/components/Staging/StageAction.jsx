@@ -6,6 +6,29 @@ import Modal from '../Modal';
 import { ACTION_TYPES } from '../../utility/ActionTypes';
 import { setCurrentStage, updateStageStatus } from '../../redux/applicationStageSlice';
 import { Button } from '../ui/Button';
+import { getMaxScoreForStage } from '../../pages/Admin/ViewCandidateProfile';
+
+export const getCandidateScore = (stageStatuses) => {
+    let totalScore = 0;
+    let stages = stageStatuses;
+    const getScreeningScore = (scoreObj) =>{
+        let totalScreeningScore = 0;
+        totalScreeningScore += 
+        parseInt(scoreObj.Attitude ?? 0) +
+        parseInt(scoreObj.Tech ?? 0) +
+        parseInt(scoreObj.Communication ?? 0) +
+        parseInt(scoreObj.UI ?? 0) +
+        parseInt(scoreObj.UX ?? 0) +
+        parseInt(scoreObj.Budget ?? 0) 
+        return totalScreeningScore;
+    }
+    if(stages){
+        Object.values(stages).forEach(stage=>
+            stage.score ? typeof stage.score !== "object" ? totalScore += parseInt(stage.score) : totalScore += getScreeningScore(stage.score) : totalScore += 0
+        )
+    }
+    return totalScore;
+}
 
 const StageActions = ({ 
     stage, 
@@ -120,6 +143,8 @@ const StageActions = ({
                 onConfirm={handleReject}
                 item={{ candidateId, jobId }}
                 candidateName={`${candidateData?.firstName} ${candidateData?.lastName}`}
+                candidateScore={getCandidateScore(candidateData?.jobApplication?.stageStatuses)}
+                maxScoreOfStage={getMaxScoreForStage(stage)}
                 jobTitle={candidateData?.jobApplication?.jobApplied}
                 companyName="Your Company Name"
             />

@@ -11,7 +11,7 @@ import ClosedBadge from '../svg/ClosedBadge';
 // Helper function to truncate text to specific number of words
 const truncateWords = (text, wordLimit) => {
   if (!text) return '';
-  const words = text.split(' ');
+  const words = text.replace("<br>","").split(' ');
   if (words.length > wordLimit) {
     return words.slice(0, wordLimit).join(' ') + '...';
   }
@@ -146,14 +146,14 @@ const JobCard = ({
       />
     </div>
     <div className="px-4 p-4">
-        <p className="typography-body text-font-gray">
-          {truncatedDescription}
+        <p className="typography-body text-font-gray" dangerouslySetInnerHTML={{__html : truncatedDescription}}>
+          {/* {truncatedDescription} */}
         </p>
       </div>
     </> :
     <div className="px-4 p-4">
-    <p className="typography-body text-font-gray">
-      {truncatedDescription}
+    <p className="typography-body text-font-gray" dangerouslySetInnerHTML={{__html : truncatedDescription}}>
+      {/* {truncatedDescription} */}
     </p>
   </div>
       }

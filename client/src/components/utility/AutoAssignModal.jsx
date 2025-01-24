@@ -2,6 +2,8 @@ import React, { useState, useEffect ,useRef } from 'react';
 import { fetchAvailableDesignReviewers } from '../../api/authApi';
 import Modal from '../Modal';
 import axios from '../../api/axios';
+import ProfileIcon from '../../svg/ProfileIcon';
+import CloseButton from '../../svg/CloseButton';
 
 const AutoAssignModal = ({ open, onClose, onAssign, jobId, budgetFilter }) => {
     const [reviewers, setReviewers] = useState([]);
@@ -86,57 +88,64 @@ const AutoAssignModal = ({ open, onClose, onAssign, jobId, budgetFilter }) => {
   
   
     const customContent = (
-      <div className="relative" ref={dropdownRef}>
+      <div className="relative mt-4" ref={dropdownRef}>
+        <h1 className='typography-h3 mb-2'>Select reviewers</h1>
         <div 
-          className="w-full p-2 bg-background-100 rounded flex items-center cursor-pointer"
+          className={"w-full bg-black-100 h-11 flex items-center cursor-pointer rounded-xl hover:bg-background-90 overflow-hidden " + (isDropdownOpen ? "border border-teal-100" : "")}
           onClick={() => setIsDropdownOpen(!isDropdownOpen)}
         >
-          <div className="flex-grow flex flex-wrap gap-2">
+          <div className="flex-grow flex flex-wrap gap-2 h-full px-4 py-1 items-center font-outfit text-font-gray hover:bg-background-90">
+          <ProfileIcon/>
+
             {selectedReviewers.map(reviewer => (
-              <div key={reviewer._id} className="bg-background-70 px-2 py-1 rounded-full flex items-center">
-                <span>{reviewer.name}</span>
+              <div key={reviewer._id} className="bg-background-70 px-4 py-1 rounded-xl flex items-center text-white">
+                <span className='typography-body'>{reviewer.name}</span>
                 <button 
                   onClick={(e) => {
                     e.stopPropagation();
                     handleRemoveReviewer(reviewer._id);
                   }} 
-                  className="ml-2 text-red-500"
+                  className="ml-2 "
                 >
-                  ×
+                  <CloseButton/>
                 </button>
               </div>
             ))}
-            {selectedReviewers.length === 0 && <span className="text-gray-400">Select reviewers</span>}
+            {selectedReviewers.length === 0 && <span className=" typography-body flex items-center gap-2">-Select-</span>}
           </div>
-          <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <svg className="w-4 h-4 mr-4" fill="none" stroke="#808389" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
           </svg>
         </div>
         {isDropdownOpen && (
-          <div className="absolute z-10 w-full mt-1 bg-background-100 rounded shadow-lg max-h-60 overflow-y-auto">
+          <div className="absolute z-10 w-full mt-1 bg-black-100 shadow-lg max-h-60 overflow-y-auto font-outfit typography-body rounded-xl">
             {isLoading ? (
-              <p className="p-2">Loading reviewers...</p>
+              <p className="px-4 py-2">Loading reviewers...</p>
             ) : error ? (
-              <p className="p-2 text-red-500">{error}</p>
+              <p className="px-4 py-2 text-red-500">{error}</p>
             ) : (
               <>
                 <button 
-                  className="w-full p-2 text-left hover:bg-background-70"
+                  className="w-full px-4 py-2 text-left hover:bg-background-70 h-11"
                   onClick={handleSelectAll}
                 >
-                  {selectedReviewers.length === reviewers.length ? 'Deselect All' : 'Select All'}
+                  {selectedReviewers.length === reviewers.length ? '-Deselect All-' : '-Select All-'}
                 </button>
                 {reviewers.map(reviewer => (
-                  <div key={reviewer._id} className="flex items-center p-2 hover:bg-background-70">
+                  <label  htmlFor={`reviewer-${reviewer._id}`} key={reviewer._id} className="flex items-center px-4 py-2 hover:bg-background-70 h-11">
                     <input
                       type="checkbox"
                       id={`reviewer-${reviewer._id}`}
                       checked={selectedReviewers.some(r => r._id === reviewer._id)}
                       onChange={() => handleReviewerToggle(reviewer)}
-                      className="mr-2"
+                      className="appearance-none border border-background-80  h-4 w-4 text-black-100 rounded-md bg-background-80 hover:border-grey-100 checked:bg-accent-100 checked:border-accent-100 peer"
                     />
-                    <label htmlFor={`reviewer-${reviewer._id}`}>{reviewer.name}</label>
-                  </div>
+                    <span className="absolute hidden left-4 h-4 w-4 text-black-100 items-center justify-center text-black peer-checked:flex ">✔</span>
+                    <span className='w-8 h-8 rounded-full overflow-hidden mx-4'>
+                      <img src={reviewer.profilePicture || "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg"} alt="" />
+                    </span>
+                    <span>{reviewer.name}</span>
+                  </label>
                 ))}
               </>
             )}
@@ -152,7 +161,7 @@ const AutoAssignModal = ({ open, onClose, onAssign, jobId, budgetFilter }) => {
         customTitle="Auto-Assign Portfolio"
         customMessage="Select reviewers to auto-assign portfolios:"
         cancelLabel="Cancel"
-        confirmLabel="Assign"
+        customConfirmLabel="Assign"
         confirmVariant="primary"
         onConfirm={handleAssign}
         confirmDisabled={selectedReviewers.length === 0}

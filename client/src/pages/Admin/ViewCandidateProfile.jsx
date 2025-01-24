@@ -62,7 +62,7 @@ const STAGE_MAX_SCORES = {
     'Round 2': 50
   };
 
-  const getMaxScoreForStage = (currentStage) => {
+export const getMaxScoreForStage = (currentStage) => {
     return STAGE_MAX_SCORES[currentStage] || 50; // Default to 50 if stage not found
   };
 

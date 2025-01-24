@@ -1,10 +1,10 @@
 import React from 'react'
 
-const Label = ({text , icon: Icon }) => {
+const Label = ({text , icon: Icon ,spanContent}) => {
   return (
     <div className='rounded-xl flex gap-4 p-4 bg-background-80 typography-large-p'>
           {Icon && <Icon />} 
-        {text}
+        <p>{text}{spanContent && <span className='text-font-gray ml-[2px]'>{spanContent}</span>}</p>
     </div>
   )
 }
