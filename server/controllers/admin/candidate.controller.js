@@ -650,7 +650,7 @@ export const getCandidateById = async (req, res) => {
       });
   
       correctAnswers = responses.filter(r => r.isCorrect).length;
-      score = (correctAnswers / questions.length) * 100;
+      score = correctAnswers * 10;
   
       }
 
