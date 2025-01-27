@@ -670,21 +670,19 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
   };
 
   const [selectedRows,setSelectedRows] = useState([]);
+  const [rowSelectionModel,setRowSelectionModel] = useState([]);
 
   const handleSelectionChange = (selectionModel) => {
-    console.log(selectionModel)
     
     const candidateIds = [];
     const jobIds = [];
-
+    setRowSelectionModel(selectionModel)
     selectionModel?.map(selectionData=>{
       const [candidateId,jobId] = selectionData.split("_");
       candidateIds.push(candidateId);
       jobIds.push(jobId);
     })
-    console.log("CAN",candidateIds)
     const selectedData = filteredAndSearchedRowsData.filter((row) => candidateIds.includes(row._id) && (row.jobId ? jobIds.includes(row.jobId) : true));
-    console.log('Selected Rows Data:', selectedData);
     setSelectedRows(selectedData)
   }
 
@@ -871,7 +869,7 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
           </div>
         </div>)}
       </div>
-      {!readOnly && selectedRows?.length > 0 && <MultiSelectBar selectedData={selectedRows} jobId={jobId} />}
+      {!readOnly && selectedRows?.length > 0 && <MultiSelectBar selectedData={selectedRows} clearSelection={()=>{setSelectedRows([]); setRowSelectionModel([])}} jobId={jobId} />}
       <DataGrid
         rows={filteredAndSearchedRowsData}
         columns={columns}
@@ -1035,6 +1033,7 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
         pageSizeOptions={[10,20,30,40,50]}
         checkboxSelection
         onRowSelectionModelChange={(newSelection) => handleSelectionChange(newSelection)} // Updates on selection change
+        rowSelectionModel={rowSelectionModel}
         onRowClick={(params) => handleRowClick(params)}
       />
 

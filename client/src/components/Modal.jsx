@@ -92,7 +92,7 @@ const CLOSE_REASONS = [
   { value: 'Dont want more entries', label: 'Dont want more entries' },
 ];
 
-const REJECTION_REASONS = [
+export const REJECTION_REASONS = [
   "Candidate's scores did not meet the criteria",
   "Candidate did not appear for the screening",
   "Candidate did not appear for round one",
