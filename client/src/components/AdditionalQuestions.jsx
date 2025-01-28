@@ -44,7 +44,7 @@ function AdditionalQuestions({jobDetails, control ,errors}) {
                                 onChange={() => field.onChange(option)}
                                 className="mr-2 appearance-none border-2 rounded-full form-radio h-5 aspect-square max-h-5 w-5 max-w-5 checked:ring-offset-[5px] checked:ring-offset-black-100 checked:bg-teal-100 checked:ml-[4px] checked:mr-[12px] checked:ring-[2px] checked:w-3 checked:h-3 checked:border-0 checked:ring-teal-100"
                             />
-                            <label className='typography-body' htmlFor={inputId}>{option}</label>
+                            <label className='typography-body overflow-hidden whitespace-nowrap text-ellipsis' htmlFor={inputId}>{option}</label>
                             </div>
                         );
                         })
