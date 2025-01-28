@@ -1,6 +1,7 @@
 // ProfilePictureUpload.jsx
 import React, { useRef } from 'react';
 import { Button } from '../ui/Button';
+import StyledCard from '../ui/StyledCard';
 
 export const ProfilePictureUpload = ({ 
   previewUrl,
@@ -18,8 +19,10 @@ export const ProfilePictureUpload = ({
   return (
     <div>
       <label className="typography-body">Profile Picture</label>
-      <div 
-        className="bg-background-40 hover:bg-background-60 cursor-pointer rounded-xl p-4 mt-2 flex flex-col items-center justify-center"
+      <StyledCard 
+        padding={2}
+        backgroundColor={"bg-background-40"}
+        extraStyles=" hover:bg-background-60 cursor-pointer  mt-2 flex flex-col items-center justify-center"
         onClick={() => fileInputRef.current?.click()}
       >
           <div className='flex justify-start w-full gap-4'>
@@ -42,7 +45,7 @@ export const ProfilePictureUpload = ({
           className="hidden"
           onChange={handleFileSelect}
         />
-      </div>
+      </StyledCard>
       {error && (
         <span className="text-red-500 typography-small-p mt-1">{error}</span>
       )}
