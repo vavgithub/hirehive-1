@@ -2,7 +2,7 @@ import { Menu, MenuItem } from '@mui/material';
 import React from 'react'
 import { GoodFit, MayBe, NotAGoodFit, Rating } from '../../svg/Buttons/Rating';
 
-const getRatingIcon = (rating) => {
+export const getRatingIcon = (rating) => {
     switch (rating) {
         case 'Good Fit':
         return <GoodFit />;

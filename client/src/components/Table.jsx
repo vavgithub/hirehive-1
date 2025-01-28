@@ -1,24 +1,14 @@
-import React, { useEffect, useLayoutEffect, useState } from 'react'
+import React, { useLayoutEffect, useState } from 'react'
 import { DataGrid } from '@mui/x-data-grid';
-import { FaEdit, FaFile, FaFileAlt, FaGlobe, FaUser } from 'react-icons/fa';
-import { Avatar, Menu, MenuItem } from '@mui/material';
+import { Menu, MenuItem } from '@mui/material';
 
-import { Link, useNavigate } from 'react-router-dom';
-import AssigneeSelector from './utility/AssigneeSelector';
+import { useNavigate } from 'react-router-dom';
 import axios from '../api/axios';
-import { Button } from './ui/Button';
 import AutoAssignModal from './utility/AutoAssignModal';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import StatusBadge from './ui/StatusBadge';
-import StageBadge from './ui/StageBadge';
-import { Move, MoveActive } from '../svg/Buttons/Move';
-import { Reject, RejectActive } from '../svg/Buttons/Reject';
-import { GoodFit, MayBe, NotAGoodFit, Rating } from '../svg/Buttons/Rating';
-import Budget from '../svg/Buttons/Budget';
 import Modal from './Modal';
 import { BudgetField } from './Form/FormFields';
-import AutoAssign from '../svg/Buttons/AutoAssign';
 import { ACTION_TYPES } from '../utility/ActionTypes';
 import ResumeViewer from './utility/ResumeViewer';
 import FilterForDataTable from './Filters/FilterForDataTable';
@@ -28,17 +18,16 @@ import EditIcon from '../svg/KebabList/EditIcon';
 import DeleteIcon from '../svg/KebabList/DeleteIcon';
 import { showErrorToast, showSuccessToast } from './ui/Toast';
 import { useAuthContext } from '../context/AuthProvider';
-import WebsiteMainIcon from '../svg/WebsiteMainIcon';
-import FileMainIcon from '../svg/FileMainIcon';
-import ResumeIcon from '../svg/ResumeIcon';
-import CustomToolTip from './utility/CustomToolTip';
-import  { AssignmentIconStroke } from '../svg/AssignmentIcon';
 import { getCandidateScore } from './Staging/StageAction';
 import { getMaxScoreForStage } from '../pages/Admin/ViewCandidateProfile';
 import { usePreserver } from '../context/StatePreserver';
 import LoaderModal from './ui/LoaderModal';
 import MultiSelectBar from './utility/MultiSelectBar';
-
+import RatingSelector from './utility/RatingSelector';
+import { getDefaultColumns, getReadOnlyColumns } from './tableUtilities/GetColumns'
+import AutoAssignWithBudget from './tableUtilities/AutoAssignWithBudget';
+import MuiCustomStylesForDataGrid from './tableUtilities/MuiCustomStylesForDataGrid';
+import BudgetMenu from './tableUtilities/BudgetMenu';
 
 const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
   //this is for setting up the context
@@ -100,8 +89,6 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
     setPreservedFilters(newFilters)
   };
 
-
-
   const handleDocumentClick = (documentUrl) => {
     setSelectedDocumentUrl(documentUrl);
     setIsDocumentViewerOpen(true);
@@ -113,14 +100,8 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
     enabled: !readOnly, // Only fetch data if not in readOnly mode
   });
 
-  // Extract candidates from the API response
-  // const rowsData = apiResponse?.candidates || [];
-
-
   // Use readOnlyData if in readOnly mode, otherwise use data from API
   const rowsData = readOnly ? readOnlyData : (apiResponse?.candidates || []);
-
-
 
   // Apply budget filter
   const filteredRowsData = React.useMemo(() => {
@@ -226,25 +207,6 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
   });
 
   const handleAutoAssign = async (selectedReviewers) => {
-    // try {
-    //   const response = await axios.post('/dr/auto-assign-portfolios', {
-    //     jobId,
-    //     reviewerIds: selectedReviewers.map(reviewer => reviewer._id),
-    //     budgetMin: parseFloat(budgetFilter.from) || 0,
-    //     budgetMax: parseFloat(budgetFilter.to) || Infinity
-    //   });
-
-    //   if (response.status === 200) {
-    //     await refetch();
-    //     showSuccessToast("Auto Assign Portfolio Done")
-    //   } else {
-    //     console.error('Failed to assign portfolios');
-    //   }
-    // } catch (error) {
-    //   console.error('Error in auto-assigning portfolios:', error.response);
-    //   showErrorToast("Error",`${error.response?.data?.message}`)
-    // }
-
     await autoAssignMutation.mutateAsync({
           jobId,
           reviewerIds: selectedReviewers.map(reviewer => reviewer._id),
@@ -345,293 +307,16 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
     setSelectedRow(null);
   };
 
-  const getRatingIcon = (rating) => {
-    switch (rating) {
-      case 'Good Fit':
-        return <GoodFit />;
-      case 'Not A Good Fit':
-        return <NotAGoodFit />;
-      case 'May Be':
-        return <MayBe />;
-      default:
-        return <Rating />;
-    }
-  };
-
-
-  //this is for opening the portfolios in different tab
-  const ensureAbsoluteUrl = (url) => {
-    if (url && !url.startsWith('http://') && !url.startsWith('https://')) {
-      return `https://${url}`;
-    }
-    return url;
-  };
-
-
-  const commonColumns = [
-    {
-      field: 'fullName',
-      headerName: 'Full Name',
-      width: 250,
-      sortable: false,
-      disableColumnMenu: true,
-      valueGetter: (params, row) => {
-        const name = `${row?.firstName || ''} ${row?.lastName || ''}`
-        const hasGivenAssessment = row.hasGivenAssessment;
-        return {
-          name,
-          hasGivenAssessment
-        }
-      },
-      renderCell: (params) => (
-        <div className="name-cell flex items-center gap-2 h-12">
-          <Avatar src={"https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg"} sx={{ width: 32, height: 32 }}/>
-          <p className='flex items-center gap-2'>{params.value.name}
-            {params.value.hasGivenAssessment && 
-            <span>
-                <AssignmentIconStroke  />
-            </span>}
-          </p>
-          <div className="hover-icons h-full flex items-center"
-            onClick={(event) => event.stopPropagation()}
-          >
-            {params.row.portfolio && (
-              <a href={ensureAbsoluteUrl(params.row.portfolio)} target="_blank" rel="noopener noreferrer" className="icon-link">
-                <CustomToolTip title={'Portfolio'} arrowed>
-                  <FileMainIcon sizeClasses={'w-9 h-9'} />
-                </CustomToolTip>
-              </a>
-            )}
-            {params.row.website && (
-              <a href={ensureAbsoluteUrl(params.row.website)} target="_blank" rel="noopener noreferrer" className="icon-link ">
-                <CustomToolTip title={'Website'} arrowed>
-                  <WebsiteMainIcon sizeClasses={'w-9 h-9'} />
-                </CustomToolTip>
-              </a>
-            )}
-            {params.row.resumeUrl && (
-              <button onClick={() => handleDocumentClick(params.row.resumeUrl)} className="icon-link">
-                <CustomToolTip title='Resume' arrowed>
-                  <ResumeIcon sizeClasses={'w-9 h-9'}/>
-                </CustomToolTip>
-              </button>
-            )}
-          </div>
-        </div>
-      ),
-    },
-    {
-      field: 'currentStage',
-      headerName: 'Stage',
-      width: 200,
-      align:'left',
-      headerAlign : 'left',
-      disableColumnMenu: true,
-      renderCell: (params) => (
-        <div className='h-full flex items-center justify-start'>
-          <StageBadge stage={params.value} />
-        </div>
-      )
-    },
-  ];
-
-  const expAndCtcColumns = [
-    ...(role === 'Hiring Manager' ? [
-      {
-        field: 'currentCTC',
-        headerName: 'Current CTC',
-        width: 130,
-        align :'center',
-        headerAlign : 'center',
-        disableColumnMenu: true,
-      }, 
-      {
-        field: 'expectedCTC',
-        headerName: 'Expected CTC',
-        width: 130,
-        align :'center',
-        headerAlign : 'center',
-        disableColumnMenu: true,
-      },
-    ] : []), 
-    {
-      field: 'experience',
-      headerName: "Experience",
-      width: 130,
-      align:'center',
-      headerAlign : 'center',
-      disableColumnMenu: true,
-    },
-  ]
-
-  const infoColumns = [
-    {
-      field: 'email',
-      headerName: 'Email',
-      width: 220,
-      sortable: false,
-      disableColumnMenu: true,
-      renderCell : (params) =>(
-        <CustomToolTip title={params.value} arrowed size={2}>
-          <p className='w-full font-outfit text-white overflow-hidden text-start whitespace-nowrap text-ellipsis'>{params.value}</p>
-        </CustomToolTip>
-      )
-    },
-    
-    {
-      field: 'phone',
-      headerName: 'Phone',
-      sortable: false,
-      width: 130,
-      disableColumnMenu: true,
-    },
-  ]
-
-  const readOnlyColumns = [
-    ...commonColumns,
-    {
-      field: 'status',
-      headerName: 'Status',
-      width: 200,
-      align:'center',
-      headerAlign : 'left',
-      disableColumnMenu: true,
-      renderCell: (params) => (
-        <div className='h-full flex items-center justify-start'>
-          <StatusBadge status={params.row.status} />
-        </div>
-      ),
-    },
-    ...expAndCtcColumns,
-    {
-      field: 'jobTitle',
-      headerName: 'Applied For',
-      width: 200,
-      align:'center',
-      headerAlign : 'center',
-      disableColumnMenu: true,
-      renderCell : (params) =>(
-        <p className='w-full overflow-hidden whitespace-nowrap text-ellipsis'>{params.value}</p>
-      )
-    },
-    ...infoColumns  
-  ];
-
-  const defaultColumns = [
-    ...commonColumns,
-    {
-      field: 'status',
-      headerName: 'Status',
-      width: 180,
-      disableColumnMenu: true,
-      valueGetter: (value,row) =>{
-        const currentStage = row.currentStage;
-        const status = row.stageStatuses[currentStage]?.status || 'Unknown';
-        return status;
-      }, 
-      renderCell: (params) => {
-        const status = params.value
-        return (
-          <div className='h-full flex items-center'>
-            <StatusBadge status={status} />
-          </div>
-        );
-      },
-    },
-    {
-      field: 'score',
-      headerName: 'Score',
-      headerAlign : "center",
-      width: 120,
-      disableColumnMenu: true,
-      valueGetter: (value,row) =>{
-        const currentStage = row.currentStage;
-        let score = 0;
-        if(currentStage === "Screening"){
-          let attitudeScore = parseInt(row.stageStatuses[currentStage]?.score?.Attitude ?? 0);
-          let communicationScore = parseInt(row.stageStatuses[currentStage]?.score?.Communication ?? 0);
-          let uxScore = parseInt(row.stageStatuses[currentStage]?.score?.UX ?? 0);
-          let uiScore = parseInt(row.stageStatuses[currentStage]?.score?.UI ?? 0);
-          let techScore = parseInt(row.stageStatuses[currentStage]?.score?.Tech ?? 0);
-          let budgetScore = parseInt(row.stageStatuses[currentStage]?.score?.Budget ?? 0);
-          score = attitudeScore + communicationScore + uiScore + uxScore + techScore + budgetScore; 
-        }else{
-          score = row.stageStatuses[currentStage]?.score || 0;
-        }
-        
-        return score;
-      }, 
-      renderCell: (params) => {
-        const score = params.value
-        return (
-          <p className='text-center'>
-            {score}
-          </p>
-        );
-      },
-    },
-    {
-      field: 'assignee',
-      headerName: 'Assignee',
-      width: 100,
-      disableColumnMenu: true,
-      valueGetter: (value,row) => {
-        return row.stageStatuses[row.currentStage]?.assignedTo
-      },
-      renderCell: (params) => {
-        const isReviewed = params?.row?.stageStatuses[params?.row?.currentStage]?.status === 'Reviewed';  
-        return (
-          <div className='flex items-center justify-center h-full'
-            onClick={(event) => event.stopPropagation()}
-          >
-            <AssigneeSelector
-              mode="icon"
-              disabled={isReviewed}
-              value={params.row.stageStatuses[params.row.currentStage]?.assignedTo}
-              onChange={(newAssignee) => handleAssigneeChange(
-                params.row._id,
-                params.row.currentStage,
-                newAssignee
-              )}
-              onSelect={() => { }}
-            />
-          </div>
-        )
-      },
-    },
-    {
-      field: 'actions',
-      headerName: 'Actions',
-      sortable: false,
-      width: 150,
-      disableColumnMenu: true,
-      renderCell: (params) => (
-        <div className='flex h-full items-center gap-2'
-          onClick={(event) => event.stopPropagation()}
-        >
-          <button
-            onClick={() => handleMoveClick(params.row)}
-            disabled={!canMove(params.row)}
-          >
-            {canMove(params.row) ? <MoveActive /> : <Move />}
-          </button>
-          <button
-            onClick={() => handleRejectClick(params.row)}
-            disabled={!canReject(params.row)}
-          >
-            {canReject(params.row) ? <RejectActive /> : <Reject />}
-          </button>
-          <button onClick={(e) => handleRatingClick(e, params.row)}>
-            {getRatingIcon(params.row.rating)}
-          </button>
-        </div>
-      )
-    },
-    ...expAndCtcColumns,
-    ...infoColumns  
-  ];
-
-  const columns = readOnly ? readOnlyColumns : defaultColumns;
+  //getting column configurations
+  const columns = readOnly ? 
+  getReadOnlyColumns(role,handleDocumentClick) : 
+  getDefaultColumns(role,
+    canMove,canReject,
+    handleAssigneeChange,
+    handleMoveClick,
+    handleRejectClick,
+    handleRatingClick,
+    handleDocumentClick);
 
   const navigate = useNavigate();
 
@@ -706,120 +391,11 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
   return (
     <div className='w-full'>
 
-    {autoAssignMutation.isPending && <LoaderModal/>}
+    {autoAssignMutation.isPending || 
+    rejectCandidateMutation.isPending || 
+    moveCandidateMutation.isPending && <LoaderModal/>}
 
-      <style>
-        {`
-    .MuiDataGrid-root .MuiDataGrid-columnHeader:focus,
-    .MuiDataGrid-root .MuiDataGrid-cell:focus {
-        outline: none !important;                      
-        border: none !important
-    
-    }
-    .MuiDataGrid-root {
-        outline: none !important;                      
-        border: none !important;                
-    }
-    
-    .MuiDataGrid-columnHeaderRow {
-        color:"red",
-        font-style:"outfit"
-    }    
-    .MuiDataGrid-row .MuiDataGrid-checkboxInput {
-        visibility: hidden;
-    }
-    .css-13edya7-MuiDataGrid-root .MuiDataGrid-virtualScrollerContent .MuiDataGrid-row.Mui-selected {
-        background: rgba(24, 233, 208, 0.2) !important;
-    }
-    .MuiDataGrid-row:hover .MuiDataGrid-checkboxInput,
-    .MuiDataGrid-row .MuiDataGrid-checkboxInput.Mui-checked {
-        visibility: visible;
-    }
-    .MuiDataGrid-columnHeaders .MuiDataGrid-checkboxInput {
-        visibility: visible !important;
-    }
-    .name-cell {
-        display: flex;
-        align-items: center;
-        width: 100%;
-    }
-    .hover-icons {
-        display: none;
-        margin-left: auto;
-    }
-    .Mui-selected .name-cell p{
-        color:rgb(24, 233, 208);
-    }
-    .name-cell:hover  p{
-        width:20%;
-        white-space:nowrap;
-        overflow:hidden !important;
-        text-overflow:ellipsis !important;
-        color:rgb(24, 233, 208);
-    }
-    .name-cell:hover .hover-icons {
-        width:80%;
-        display: flex;
-    }
-    .icon-link {
-        margin-left: 8px;
-        color: #666;
-        transition: color 0.3s;
-        display : flex;
-        justify-content : "center",
-        align-items : "center"
-    }
-    .icon-link:hover {
-        color: #000;
-    }
- 
-    .icon {
-        font-size: 1.2rem;
-    }  
-
-          .MuiDataGrid-root .MuiDataGrid-cell {
-            overflow: visible !important;
-          }
-          .MuiDataGrid-root .MuiDataGrid-row {
-            z-index: 1;
-            cursor: pointer
-          }
-          .MuiDataGrid-root .MuiDataGrid-row:hover {
-            z-index: 2;
-          }
-          .MuiDataGrid-main.css-3eek4p-MuiDataGrid-main {
-          max-width:83vw;
-          }
-          .MuiDataGrid-scrollbar.MuiDataGrid-scrollbar--horizontal.css-1rtad1::-webkit-scrollbar {
-            width: 5px;
-            height: 5px;
-          }
-
-          /* Track */
-          .MuiDataGrid-scrollbar.MuiDataGrid-scrollbar--horizontal.css-1rtad1::-webkit-scrollbar-track {
-            border-radius: 5px;
-            background: #1D1D1D; 
-          }
-          
-          /* Handle */
-          .MuiDataGrid-scrollbar.MuiDataGrid-scrollbar--horizontal.css-1rtad1::-webkit-scrollbar-thumb {
-            background: #c1c1c1; 
-            border-radius: 100px;
-          }
-
-          /* Handle on hover */
-          .MuiDataGrid-scrollbar.MuiDataGrid-scrollbar--horizontal.css-1rtad1::-webkit-scrollbar-thumb:hover {
-            background: #fff; 
-          }
-          .css-1oudwrl::after {
-            display: none;
-          }
-          .css-tgsonj {
-          border-top:none;
-          }
-
-    `}
-      </style>
+      <MuiCustomStylesForDataGrid/>
 
       <div className='flex justify-between py-4 gap-2'>
 
@@ -840,36 +416,17 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
           </div>
         </div>
 
-        {!readOnly && (<div className='flex gap-4'>
-
-          <div className={`${budgetFilter.from && budgetFilter.to ? "" : "hidden"}`}>
-            <Button
-              icon={AutoAssign}
-              variant="primary"
-              onClick={() => setIsAutoAssignModalOpen(true)}
-              disabled={autoAssignMutation.isLoading}
-            >
-              {(autoAssignMutation.isLoading ? 'Auto-Assigning...' : 'Auto-Assign Portfolio')}
-            </Button>
-          </div>
-          <div className={`${budgetFilter.from && budgetFilter.to ? "auto" : ""}`}>
-
-            <Button
-              variant={budgetFilter.from && budgetFilter.to ? "iconSec" : "primary"}
-              icon={Budget}
-              // onClick={() => {
-              //   setTempBudgetFilter(budgetFilter);
-              //   setIsBudgetModalOpen(true);
-              // }}
-              onClick={handleBudgetButtonClick}
-            >
-              {budgetFilter.from && budgetFilter.to ? '' : 'Screen With Budget'}
-            </Button>
-
-          </div>
-        </div>)}
+        {!readOnly && (
+          <AutoAssignWithBudget 
+          autoAssignMutation={autoAssignMutation} 
+          budgetFilter={budgetFilter} 
+          handleBudgetButtonClick={handleBudgetButtonClick} 
+          setIsAutoAssignModalOpen={setIsAutoAssignModalOpen} 
+          />)}
       </div>
+
       {!readOnly && selectedRows?.length > 0 && <MultiSelectBar selectedData={selectedRows} clearSelection={()=>{setSelectedRows([]); setRowSelectionModel([])}} jobId={jobId} />}
+
       <DataGrid
         rows={filteredAndSearchedRowsData}
         columns={columns}
@@ -1052,74 +609,18 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
         budgetFilter={budgetFilter}
       />
 
-      <Menu
-        anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
-        onClose={handleRatingClose}
-        sx={{
-          "& .MuiList-root": {
-            backgroundColor: 'rgba(12, 13, 13, 1)',
-            color: "white",
-            font: "Outfit"
-          }
-        }}
-      >
-        {['Good Fit', 'Not A Good Fit', 'May Be'].map((rating) => (
-          <MenuItem key={rating} onClick={() => handleRatingSelect(rating)}
+      <RatingSelector 
+      anchorEl={anchorEl} 
+      onSelectRating={handleRatingSelect} 
+      setAnchorEl={handleRatingClose} 
+      />
 
-          >
-            <div className="flex items-center gap-2">
-              {getRatingIcon(rating)}
-              <span>{rating}</span>
-            </div>
-          </MenuItem>
-        ))}
-      </Menu>
-
-
-
-      <Menu
-        anchorEl={budgetMenuAnchorEl}
-        open={Boolean(budgetMenuAnchorEl)}
-        onClose={handleBudgetMenuClose}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'left',
-        }}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'left',
-        }}
-        sx={{
-          "& .MuiList-root": {
-            backgroundColor: 'rgba(12, 13, 13, 1)',
-            color: "white",
-            font: "Outfit"
-          },
-          "& .MuiPaper-root": {
-            marginTop: '8px',
-            marginLeft: '-60px', // Adjust this value to move the menu more to the left
-          }
-        }}
-      >
-        <div className='flex items-center justify-start px-4 typograhy-body '>
-          <EditIcon />
-          <MenuItem
-          sx={{
-            fontFamily :"Outfit",
-          }}
-          onClick={handleBudgetEdit}>Edit</MenuItem>
-
-        </div>
-        <div className='flex items-center justify-start px-4 typograhy-body '>
-          <DeleteIcon />
-          <MenuItem 
-          sx={{
-            fontFamily :"Outfit",
-          }}
-          onClick={handleBudgetClear}>Clear</MenuItem>
-        </div>
-      </Menu>
+      <BudgetMenu 
+      budgetMenuAnchorEl={budgetMenuAnchorEl} 
+      handleBudgetMenuClose={handleBudgetMenuClose} 
+      handleBudgetEdit={handleBudgetEdit} 
+      handleBudgetClear={handleBudgetClear} 
+      />
 
 
       <Modal
