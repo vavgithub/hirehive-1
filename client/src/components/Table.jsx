@@ -1,6 +1,5 @@
 import React, { useLayoutEffect, useState } from 'react'
 import { DataGrid } from '@mui/x-data-grid';
-import { Menu, MenuItem } from '@mui/material';
 
 import { useNavigate } from 'react-router-dom';
 import axios from '../api/axios';
@@ -14,8 +13,6 @@ import ResumeViewer from './utility/ResumeViewer';
 import FilterForDataTable from './Filters/FilterForDataTable';
 import { exportToExcel } from '../utility/exportToExcel';
 import Export from '../svg/Buttons/Export';
-import EditIcon from '../svg/KebabList/EditIcon';
-import DeleteIcon from '../svg/KebabList/DeleteIcon';
 import { showErrorToast, showSuccessToast } from './ui/Toast';
 import { useAuthContext } from '../context/AuthProvider';
 import { getCandidateScore } from './Staging/StageAction';
