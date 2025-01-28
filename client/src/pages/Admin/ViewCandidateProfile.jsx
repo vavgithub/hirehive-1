@@ -217,7 +217,7 @@ const ViewCandidateProfile = () => {
                     <div className="flex gap-3">
                         <div className="bg-background-90 w-full p-4 rounded-xl flex gap-3">
                             <div className="to-background-100 w-[180px] rounded-xl overflow-hidden">
-                                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg" alt="" />
+                                <img src={data.profilePictureUrl || " https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg"} alt="" className='object-cover h-full' />
                             </div>
                             <div className='flex flex-col gap-2'>
                                 <h1 className="typography-h2">

@@ -71,6 +71,24 @@ export const uploadResumeController = async (req, res) => {
   }
 };
 
+export const uploadProfilePictureController = async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ message: "No file uploaded" });
+  }
+
+  try {
+    const cloudinaryUrl = await uploadToCloudinary(
+      req.file.path, // Pass the complete path instead of just filename
+      "candidate-profile-pictures"
+    );
+
+    res.status(200).json({ profilePictureUrl: cloudinaryUrl });
+  } catch (error) {
+    console.error("Error in profile picture upload:", error);
+    res.status(500).json({ message: error.message || "Error uploading profile picture" });
+  }
+};
+
 
 export const registerCandidate = async (req, res) => {
   try {
@@ -89,6 +107,7 @@ export const registerCandidate = async (req, res) => {
       skills,
       questionResponses,
       resumeUrl,
+      profilePictureUrl, // Add this new field
     } = req.body;
 
     const job = await jobs.findById(jobId);
@@ -150,6 +169,7 @@ export const registerCandidate = async (req, res) => {
         phone,
         ...professionalInfo,
         otp: hashedOtp,
+        profilePictureUrl, // Add the profile picture URL
         otpExpires: Date.now() + 10 * 60 * 1000,
         jobApplications: [
           {          
@@ -174,6 +194,10 @@ export const registerCandidate = async (req, res) => {
       //if email exist with different phone, new phone is updated
       if(existingEmail && existingEmail.phone !== phone ){
         existingEmail.phone = phone
+      }
+
+      if(profilePictureUrl) {
+        existingEmail.profilePictureUrl = profilePictureUrl; // Update profile picture if provided
       }
 
       // Check if the candidate has already applied for the same job
@@ -473,6 +497,7 @@ export const getCandidateDashboard = async (req, res) => {
         $project: {
           firstName: 1,
           lastName: 1,
+          profilePictureUrl:1,
           email: 1,
           phone: 1,
           expectedCTC: 1,
@@ -488,6 +513,7 @@ export const getCandidateDashboard = async (req, res) => {
           "jobApplications.stageStatuses": 1,
           "jobApplications.jobApplied": 1,
           "jobApplications.jobId": 1,
+          "jobApplications.resumeUrl": 1,
           "jobDetails": {
             _id: 1,
             jobTitle: 1,
@@ -511,14 +537,19 @@ export const getCandidateDashboard = async (req, res) => {
         applicationDate: app.applicationDate,
         currentStage: app.currentStage,
         stageStatuses: Array.from(app.stageStatuses),
+        resumeUrl : app.resumeUrl
       })
     });
+
+    const latestResume = formattedApplications?.length > 0 ? 
+      formattedApplications.sort((a,b)=>b.applicationDate - a.applicationDate )[0].resumeUrl : "";
 
     res.status(200).json({
       candidate: {
         _id: candidate[0]._id,
         firstName: candidate[0].firstName,
         lastName: candidate[0].lastName,
+        profilePictureUrl : candidate[0].profilePictureUrl,
         email: candidate[0].email,
         phone: candidate[0].phone,
         expectedCTC: candidate[0].expectedCTC,
@@ -529,6 +560,7 @@ export const getCandidateDashboard = async (req, res) => {
         expectedCTC: candidate[0].expectedCTC,
         experience: candidate[0].experience,
         skills: candidate[0].skills,
+        resumeUrl : latestResume,
         hasGivenAssessment:candidate[0].hasGivenAssessment,
         jobApplications: formattedApplications, // Include jobApplications in the candidate object
         // Include other relevant candidate fields

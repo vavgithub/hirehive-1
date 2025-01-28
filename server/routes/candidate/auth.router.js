@@ -1,16 +1,15 @@
 // auth.routes.js
 
 import express from 'express';
-import { applyToJob, createPassword,forgotPassword, getCandidateAppliedJobs, getCandidateDashboard, loginCandidate, logoutCandidate, registerCandidate ,resetPassword, uploadResumeController, verifyOtp ,  verifyOTPForgot } from '../../controllers/candidate/auth.controller.js';
+import { applyToJob, createPassword,forgotPassword, getCandidateAppliedJobs, getCandidateDashboard, loginCandidate, logoutCandidate, registerCandidate ,resetPassword, uploadProfilePictureController, uploadResumeController, verifyOtp ,  verifyOTPForgot } from '../../controllers/candidate/auth.controller.js';
 import { protectCandidate } from '../../middlewares/authMiddleware.js';
-import { uploadResume } from '../../middlewares/uploadMiddleware.js';
+import { uploadProfilePicture, uploadResume } from '../../middlewares/uploadMiddleware.js';
 
 const router = express.Router();
 
 
 router.post("/upload-resume", uploadResume , uploadResumeController);
 
-// router.post("/upload-resume", upload.single('resume') ,uploadResume)
 
 // Route to register a candidate
 router.post('/register', registerCandidate);
@@ -28,6 +27,9 @@ router.post('/logout', logoutCandidate);
 // Protected route for candidate dashboard      
 router.get('/dashboard', protectCandidate, getCandidateDashboard);
 router.post('/apply-job', protectCandidate, applyToJob);
+
+// Add this new route for profile picture upload (no auth required)
+router.post("/upload-profile-picture", uploadProfilePicture, uploadProfilePictureController);
 
 // auth.routes.js
 

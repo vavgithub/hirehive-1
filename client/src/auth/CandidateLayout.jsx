@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Outlet, useNavigate, NavLink } from 'react-router-dom';
+import { Outlet, useNavigate, NavLink, useLocation } from 'react-router-dom';
 import { candidateLogout } from '../api/authApi';
 import LightLogo from "../svg/Logo/lightLogo.svg"
 // Import icons
@@ -14,6 +14,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { logoutCandidateAuth } from '../redux/candidateAuthSlice';
 import { showErrorToast, showSuccessToast } from '../components/ui/Toast';
 import useScroll from '../hooks/useScroll';
+import { Avatar, IconButton, Menu, MenuItem } from '@mui/material';
+import Logout from '../svg/Buttons/Logout';
+import Profile from '../svg/Buttons/Profile';
+import StyledMenu from '../components/ui/StyledMenu';
 
 const CandidateLayout = () => {
   const navigate = useNavigate();
@@ -113,17 +117,79 @@ const CandidateLayout = () => {
     </div>
   );
 
+
+  const ProfileComponent = () => {
+    const profilePath = "/candidate/profile";
+      const [anchorEl,setAnchorEl] = useState(null)
+        // Function to handle dropdown menu opening
+        const handleMenuClick = (event) => {
+          setAnchorEl(event.currentTarget); // Set the element that opens the menu
+      };
+  
+      // Function to handle dropdown menu closing
+      const handleMenuClose = () => {
+          setAnchorEl(null); // Close the menu
+      };
+
+      const itemComponents = [
+        {
+          onClick : handleMenuClose,
+          content : () => (
+            <NavLink to={profilePath} className={({ isActive })=>
+              `w-full flex items-center ${isActive ? "text-font-accent" : ""} hover:bg-background-60 px-4 py-2 rounded-xl `}
+              >
+              <Profile />
+              <span className='typography-large ml-2 font-outfit'>
+                Profile
+              </span>
+            </NavLink>
+          )
+        },
+        {
+          onClick : handleLogout,
+          content : () => (
+            <div className='flex items-center hover:bg-background-60 px-4 py-2 w-full rounded-xl'>
+              <Logout />
+              <span className='typography-large ml-2 font-outfit'> 
+                Logout
+              </span>
+            </div>
+          )
+        }
+      ]
+
+    return (
+      <>
+      <div className={`flex items-center px-2 justify-start hover:bg-background-60`}>
+        <IconButton onClick={handleMenuClick} className={`flex gap-2 ${location.pathname===profilePath ? "text-font-accent"
+          : "" }`}>
+          <Avatar alt={candidateData?.firstName} sx={{ width: "32px", height: "32px" }} src={candidateData?.profilePictureUrl || "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg"} />
+          <span className={`typography-body  ${location.pathname===profilePath ? "text-font-accent"
+          : "text-white" }`}>{candidateData?.firstName}</span>
+        </IconButton>
+        <div className={`absolute right-0 w-1 h-6 rounded-tl-xl rounded-bl-xl ${location.pathname===profilePath
+          ? "bg-teal-400" : "bg-transparent" }`} />
+      </div>
+
+          <StyledMenu anchorEl={anchorEl} handleMenuClose={handleMenuClose} itemComponents={itemComponents} />
+    </>
+    )
+  }
+
   // Only render the layout if authenticated
   if (!isAuthenticated) {
     navigate('/');
     return null;
   }
 
+  const location = useLocation();
+
+  const darkBgPaths = ["/candidate/profile"]
 
   return (
     <div className="flex flex-col md:flex-row bg-main-bg bg-cover bg-top h-full overflow-x-hidden">
       {/* Mobile Menu Button */}
-      <div className={'min-h-[4rem] w-full md:hidden z-30 fixed '}>
+      <div className={'min-h-[4rem] w-full md:hidden z-30 fixed ' + (darkBgPaths.includes(location.pathname) ? "bg-background-80" : "")}>
         <div className='flex m-4 z-30'>
           <img className='h-11 z-30' src={LightLogo} />
         </div>
@@ -174,20 +240,23 @@ const CandidateLayout = () => {
           ))}
         </div>
         <div className="px-4">
-          {candidateData && (
-            <>
-              <span className="block mb-2 typography-body">
-                Welcome, {candidateData.firstName}
-              </span>
-              <Button
-                variant="secondary"
-                onClick={handleLogout}
-                className="w-full"
-              >
-                Logout
-              </Button>
-            </>
-          )}
+          {candidateData && 
+          // (
+          //   <>
+          //     <span className="block mb-2 typography-body">
+          //       Welcome, {candidateData.firstName}
+          //     </span>
+          //     <Button
+          //       variant="secondary"
+          //       onClick={handleLogout}
+          //       className="w-full"
+          //     >
+          //       Logout
+          //     </Button>
+          //   </>
+          // )
+          <ProfileComponent/>
+          }
         </div>
       </div>
 
@@ -204,8 +273,8 @@ const CandidateLayout = () => {
       />
 
       {/* Main Content */}
-      <div className="mt-[5rem] md:mt-0 md:ml-[12rem] md:w-[calc(100vw-12rem)] flex flex-col items-center min-h-screen">
-        {isAssessmentBannerVisible &&  <AssessmentBanner />}
+      <div className="mt-[4.6rem] md:mt-0 md:ml-[12rem] md:w-[calc(100vw-12rem)] flex flex-col items-center min-h-screen">
+        {/* {isAssessmentBannerVisible &&  <AssessmentBanner />} */}
                 <Outlet />
             </div>
       {/* <div className="md:ml-[192px] flex-1 p-4 md:p-6">

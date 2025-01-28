@@ -45,7 +45,7 @@ const RoundTwo = ({ candidateId, jobId ,isClosed }) => {
     const [score, setScore] = useState(0);
     const [feedback, setFeedback] = useState('');
 
-    const data = useScheduler(candidateData,stageData,"Under Review");
+    // const data = useScheduler(candidateData,stageData,"Under Review");
     
     const [isLoading, setIsLoading] = useState(false); // Loading state
 

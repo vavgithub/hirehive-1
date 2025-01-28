@@ -178,7 +178,7 @@ const Screening = ({ candidateId, jobId, isClosed }) => {
     // Add this line outside renderContent
     const isDisabled = stageData?.status === 'Rejected' || stageData?.status === 'Cleared' || stageData?.status === 'Reviewed';
 
-    const data = useScheduler(candidateData, stageData, "Under Review")
+    // const data = useScheduler(candidateData, stageData, "Under Review")
 
     const [isLoading, setIsLoading] = useState(false); // Loading state
 

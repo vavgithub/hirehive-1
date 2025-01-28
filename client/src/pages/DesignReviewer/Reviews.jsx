@@ -192,7 +192,7 @@ const Reviews = () => {
                           <div className='flex items-center gap-4'>
 
 
-                            <Avatar alt={candidate?.firstName} sx={{ width: "32px", height: "32px" }} src="/path-to-profile-image.jpg" />
+                            <Avatar alt={candidate?.firstName} sx={{ width: "32px", height: "32px" }} src={candidate.profilePictureUrl} />
                             <span className="typography-body ">
                               {candidate.firstName} {candidate.lastName}
 

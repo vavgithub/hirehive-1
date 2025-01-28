@@ -8,7 +8,7 @@ const AssessmentBanner = () => {
         navigate("/assessment");
     }
     return (
-        <div className='container flex justify-between rounded-xl gap-4 bg-assessment p-6 mx-4 md:m-4 items-center bg-cover w-[93%] md:w-[97%]'>
+        <div className='container flex justify-between rounded-xl gap-4 bg-assessment p-6  my-4 items-center bg-cover '>
             <div className='flex gap-4 items-center'>
 
                 <div className='hidden w-16 h-16 rounded-full md:rounded-full bg-primary-300 border  border-primary-100 items-center md:flex justify-center '>
@@ -32,8 +32,8 @@ const AssessmentBanner = () => {
                     <h2 className='hidden md:flex typography-h2 '>
                         Accelerate
                     </h2>
-                    <p className='md:hidden typograhpy-body'>Please Logged into Desktop Version to submit your assessment for high priority selection</p>
-                    <p className='hidden md:flex typograhpy-body'>Complete the assessment to be prioritized and improve your chances of moving forward quickly</p>
+                    <p className='md:hidden typograhpy-body font-outfit'>Please Logged into Desktop Version to submit your assessment for high priority selection</p>
+                    <p className='hidden md:flex typograhpy-body font-outfit'>Complete the assessment to be prioritized and improve your chances of moving forward quickly</p>
                 </div>
 
             </div>

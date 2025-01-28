@@ -25,6 +25,7 @@ import PreAssessment from './pages/Candidate/PreAssessment.jsx';
 import ProtectedRouteCandidate from './routes/ProtectedRouteCandidate.jsx';
 import CandidateLogin from './pages/Candidate/CandidateLogin.jsx';
 import CandidateDashboard from './pages/Candidate/CandidateDashboard.jsx';
+import CandidateProfilePage from "./pages/Candidate/Profile.jsx"
 import CandidateLayout from './auth/CandidateLayout.jsx';
 import MyJobs from './pages/Candidate/MyJobs.jsx';
 import AllJobs from './pages/Candidate/AllJobs.jsx';
@@ -53,6 +54,10 @@ export const router = createBrowserRouter([
       {
         path: 'dashboard',
         element: <CandidateDashboard />,
+      },
+      {
+        path: 'profile',
+        element: <CandidateProfilePage />,
       },
       {
         path: 'my-jobs',
