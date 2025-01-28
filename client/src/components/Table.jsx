@@ -384,8 +384,8 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
       },
       renderCell: (params) => (
         <div className="name-cell flex items-center gap-2 h-12">
-          <Avatar src={"https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg"} sx={{ width: 32, height: 32 }}/>
-          <p className='flex items-center gap-2'>{params.value.name}
+          <Avatar src={params?.row?.profilePictureUrl || "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg"} sx={{ width: 32, height: 32 }}/>
+           <p className='flex items-center gap-2'>{params.value.name}
             {params.value.hasGivenAssessment && 
             <span>
                 <AssignmentIconStroke  />

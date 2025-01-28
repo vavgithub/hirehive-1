@@ -10,6 +10,7 @@ import Header from '../../components/utility/Header';
 import Loader from '../../components/ui/Loader';
 import ArrowIcon from '../../svg/ArrowIcon';
 import Logo from '../../svg/Logo/lightLogo.svg'
+import StyledCard from '../../components/ui/StyledCard';
 // Function to fetch the job data by ID
 const getJobById = async (id) => {
     const response = await axios.get(`jobs/getJobById/${id}`);
@@ -66,7 +67,7 @@ const ViewJob = () => {
                     <img className='h-12' src={Logo} />
                     {!isAuthenticated && <Button variant="secondary" onClick={() => navigate("/login")}>Login</Button>}
                 </div>
-                <div className=" bg-background-30 rounded-xl p-6 w-full">
+                <StyledCard padding={3} backgroundColor={"bg-background-30"} extraStyles={" w-full"}>
                     {/* Flex container for both desktop and mobile */}
                     <div className="flex flex-col lg:flex-row justify-between w-full">
                         {/* Job Title */}
@@ -130,7 +131,7 @@ const ViewJob = () => {
                             </Button>
                         )}
                     </div>
-                </div>
+                </StyledCard>
             </div>
         </div>
     );

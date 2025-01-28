@@ -71,8 +71,8 @@ export const getAllCandidatesForJob = async (req, res) => {
         lastName: candidate.lastName,
         email: candidate.email,
         phone: candidate.phone,
+        profilePictureUrl : candidate.profilePictureUrl,
         hasGivenAssessment:candidate.hasGivenAssessment,
-
         // Professional info (specific to this job application)
         website: professionalInfo.website,
         portfolio: professionalInfo.portfolio,
@@ -280,6 +280,7 @@ export const getCandidateById = async (req, res) => {
       lastName: candidate.lastName,
       email: candidate.email,
       phone: candidate.phone,
+      profilePictureUrl : candidate.profilePictureUrl,
       hasGivenAssessment: candidate.hasGivenAssessment,
       
       // Professional info (job-specific or fallback)
@@ -318,6 +319,24 @@ export const getCandidateById = async (req, res) => {
     });
   }
 };
+
+export const getCandidateJobs = async (req,res) => {
+  try {
+    const { candidateId } = req.params;
+
+    // Find the candidate
+    const candidate = await candidates.findById(candidateId).select("-password");
+
+    if (!candidate) {
+      return res.status(404).send({ message: "Candidate not found" });
+    }
+
+    res.status(200).json({jobs : candidate?.jobApplications.length > 0 ? candidate.jobApplications : []});
+  } catch (error) {
+    console.error("Error in getCandidateJobs:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+}
   // export const getAllCandidatesWithStats = async (req, res) => {
   //   try {
   //     const allCandidates = await candidates.aggregate([
@@ -445,8 +464,8 @@ export const getCandidateById = async (req, res) => {
             lastName: 1,
             email: 1,
             phone: 1,
+            profilePictureUrl : 1,
             hasGivenAssessment:1,
-            
             // Professional info (from job application or fallback to global)
             experience: {
               $ifNull: ['$jobApplications.professionalInfo.experience', '$experience']
@@ -511,6 +530,7 @@ export const getCandidateById = async (req, res) => {
             lastName: 1,
             email: 1,
             phone: 1,
+            profilePictureUrl : 1,
             hasGivenAssessment:1,
 
             // Professional info

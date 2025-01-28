@@ -29,6 +29,7 @@ import useScheduler from '../../hooks/useScheduler';
 import NoShowAction from './NoShow';
 import Loader from '../ui/Loader';
 import RoundReview from '../Reviews/RoundReview';
+import StyledCard from '../ui/StyledCard';
 
 
 
@@ -465,19 +466,14 @@ const RoundOne = ({ candidateId, jobId ,isClosed}) => {
 
 
     return (
-        <Card
-            sx={{
-                backgroundColor: "rgba(22, 23, 24, 1)",
-                borderRadius: "12px",
-                color: "white",
-                fontFamily: 'Outfit, sans-serif',
-                position : "relative",
-                minHeight : "10rem"
-            }}
+        <StyledCard
+            padding={3}
+            backgroundColor={"bg-background-30"}
+            extraStyles={"relative min-h-[10rem]"}
         >
             <CardContent 
                 sx={{
-                    padding: "24px"
+                    padding: "0px"
                 }}>
                 <Box display="flex" justifyContent="space-between" alignItems="start" mb={1}>
                     <div className='flex'>
@@ -505,7 +501,7 @@ const RoundOne = ({ candidateId, jobId ,isClosed}) => {
                 </Box>
                 {renderContent()}
             </CardContent>
-        </Card>
+        </StyledCard>
     );
 };
 

@@ -186,6 +186,7 @@ export const getAssignedCandidates = async (req, res) => {
           lastName: { $first: '$lastName' },
           email: { $first: '$email' },
           phone: { $first: '$phone' },
+          profilePictureUrl: { $first: '$profilePictureUrl' },
           jobApplications: { $push: '$jobApplications' },
           portfolio: { $first: '$portfolio' }, // Adding portfolio here
         },
@@ -235,7 +236,10 @@ export const getAssignedCandidates = async (req, res) => {
       })
     );
 
-    res.status(200).json(candidatesWithJobDetails);
+
+    const filteredCandidatesWithDetails = candidatesWithJobDetails.filter(candidate=>candidate.jobApplications[0].currentStage !== "Round 2")
+
+    res.status(200).json(filteredCandidatesWithDetails);
   } catch (error) {
     console.error('Error fetching assigned candidates:', error);
     res.status(500).json({ message: 'Server error' });

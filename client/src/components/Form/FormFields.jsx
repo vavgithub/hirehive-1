@@ -100,7 +100,7 @@ export const CustomDropdown = React.forwardRef(({ field, label, options, value, 
           </svg>
         </button>
         {isOpen && (
-          <ul className="absolute mt-1 bg-background-40 rounded-md shadow-lg w-full space-y-2 z-10">
+          <ul className="absolute mt-1 bg-background-40 rounded-xl shadow-lg w-full space-y-2 z-10">
             {options.map((option) => (
               <li
                 key={option?.value || option}

@@ -10,6 +10,7 @@ import { Button } from '../../components/ui/Button';
 import { showErrorToast } from '../../components/ui/Toast';
 import Loader from '../../components/ui/Loader';
 import CustomToolTip from '../../components/utility/CustomToolTip';
+import StyledCard from '../../components/ui/StyledCard';
 
 
 // Create a VideoModal component
@@ -27,7 +28,7 @@ const VideoModal = ({ isOpen, onClose, videoUrl }) => {
             />
 
             {/* Modal content */}
-            <div className="bg-background-90  rounded-xl p-6 relative w-[80%] max-w-4xl z-10">
+            <StyledCard extraStyles="relative w-[80%] max-w-4xl z-10">
                 {/* Close button */}
                 <button
                     onClick={onClose}
@@ -60,7 +61,7 @@ const VideoModal = ({ isOpen, onClose, videoUrl }) => {
                         Your browser does not support the video element.
                     </video>
                 </div>
-            </div>
+            </StyledCard>
         </div>
     );
 };
@@ -138,15 +139,16 @@ const AssessmentResponse = () => {
 
 
     return (
-        <div className="container mx-4 p-4 h-screen">
+        <div className='w-full p-4'>
+            <div className="container ">
             <div >
                 <Header withBack={"true"} HeaderText="Assessment details" />
 
                 {/* Top Section with Candidate Info and Score */}
                 <div className="flex gap-4 mb-6">
                     {/* Candidate Info Card */}
-                    <div className="bg-background-90 rounded-xl p-4 flex-grow">
-                        <div className="flex gap-4">
+                    <StyledCard padding={2} extraStyles="flex-grow">
+                        <div className="flex gap-4 h-full">
                             <div className="to-background-100 w-[180px] rounded-xl overflow-hidden">
                                 <img
                                     src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg"
@@ -225,9 +227,9 @@ const AssessmentResponse = () => {
 
                             </div>
                         </div>
-                    </div>
+                    </StyledCard>
 
-                    <div className="flex bg-stars flex-col items-center  w-[240px] bg-cover p-5 rounded-xl">
+                    <StyledCard padding={3} extraStyles="flex bg-stars flex-col items-center  w-[240px] bg-cover ">
                         <div className="relative typography-h3  w-full flex justify-center ">
                            <div className='absolute left-0'>
 
@@ -243,7 +245,7 @@ const AssessmentResponse = () => {
                         </div>
 
                         <p className="typography-large-p">Out of 100</p>
-                    </div>
+                    </StyledCard>
 
                     {/* Score Card */}
                     {/* <div className="bg-background-90 rounded-xl p-6 w-80 flex flex-col items-center justify-center">
@@ -260,7 +262,8 @@ const AssessmentResponse = () => {
                 </div>
 
                 {/* Question Progress Indicators */}
-                {assessmentData?.questionResponses?.length > 0 && <div className="bg-background-90 rounded-xl p-4 mb-6">
+                {assessmentData?.questionResponses?.length > 0 && 
+                <StyledCard padding={2} extraStyles=" mb-6">
                     <div className="grid grid-cols-10 justify-between gap-4">
                         {assessmentData?.questionResponses.map((response, index) => (
                             <div
@@ -277,9 +280,9 @@ const AssessmentResponse = () => {
                             </div>
                         ))}
                     </div>
-                </div>}
+                </StyledCard>}
 
-                <div className='bg-background-90 rounded-xl'>
+                <StyledCard padding={0}>
                     <h2 className='typography-h2 px-4 py-3 '>Question</h2>
                     {/* Questions List */}
                     {assessmentData?.questionResponses?.length > 0 ? <div className="space-y-4 bg-background-80">
@@ -316,7 +319,7 @@ const AssessmentResponse = () => {
                     : 
                     <div className='px-6 pb-6 '>
                         <p className='font-outfit'>No questions are answered by the candidate.</p></div>}
-                </div>
+                </StyledCard>
             </div>
 
             <VideoModal
@@ -324,6 +327,7 @@ const AssessmentResponse = () => {
                 onClose={() => setIsVideoModalOpen(false)}
                 videoUrl={assessmentData?.candidateInfo?.recordingUrl}
             />
+        </div>
         </div>
     );
 };

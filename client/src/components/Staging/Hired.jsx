@@ -9,6 +9,7 @@ import HiredStamp from "../../svg/Background/HiredStamp.svg"
 import StageActions from './StageAction';
 import { useAuthContext } from '../../context/AuthProvider';
 import Loader from '../ui/Loader';
+import StyledCard from '../ui/StyledCard';
 
 const Hired = ({ candidateId, jobId ,isClosed}) => {
     const fetchTotalScore = async (candidateId, jobId) => {
@@ -172,15 +173,10 @@ const Hired = ({ candidateId, jobId ,isClosed}) => {
         }
     };
     return (
-        <Card
-            sx={{
-                backgroundColor: "rgba(22, 23, 24, 1)",
-                borderRadius: "12px",
-                color: "white",
-                fontFamily: 'Outfit, sans-serif',
-                position : "relative",
-                minHeight : "12rem"
-            }}
+        <StyledCard
+            padding={3}
+            backgroundColor={"bg-background-30"}
+            extraStyles={"relative min-h-[12rem]"}
         >
             {
                 stageData?.status === "Accepted" && (
@@ -191,7 +187,7 @@ const Hired = ({ candidateId, jobId ,isClosed}) => {
             }
             <CardContent 
                 sx={{
-                    padding: "24px"
+                    padding: "0px"
                 }}>
                 <Box display="flex" justifyContent="space-between" alignItems="start" mb={1}>
                     <div className='flex'>
@@ -204,7 +200,7 @@ const Hired = ({ candidateId, jobId ,isClosed}) => {
                 </Box>
                 {renderContent()}
             </CardContent>
-        </Card>
+        </StyledCard>
     );
 }
 

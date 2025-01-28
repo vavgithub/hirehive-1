@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
@@ -7,6 +7,8 @@ import axios from '../../api/axios';
 import JobCard from '../../components/JobCard';
 import AssessmentBanner from '../../components/ui/AssessmentBanner';
 import Loader from '../../components/ui/Loader';
+import useCandidateAuth from '../../hooks/useCandidateAuth';
+import StyledCard from '../../components/ui/StyledCard';
 
 // Keep the fetchAppliedJobs function separate for better organization
 const fetchAppliedJobs = async () => {
@@ -31,6 +33,7 @@ const MyJobs = () => {
 
   // Maintain mobile detection
   const isMobile = useMediaQuery({ maxWidth: 768 });
+  const { candidateData, isAuthenticated, isDone } = useCandidateAuth();
 
   // Navigation handler with mobile check
   const handleClick = (jobId) => {
@@ -38,6 +41,23 @@ const MyJobs = () => {
       navigate(`/candidate/viewJob/${candidateId}/${jobId}`);
     }
   };
+
+   const [isAssessmentBannerVisible, setIsAssessmentBannerVisible] =
+      useState(false);  
+  
+    // Update visibility states when component mounts and when candidateData updates
+    useEffect(() => {
+      if (isDone && candidateData) {
+        setIsAssessmentBannerVisible(!candidateData.hasGivenAssessment);
+      }
+    }, [candidateData, isDone]);
+  
+    // Add cleanup on unmount
+    useEffect(() => {
+      return () => {
+        setIsAssessmentBannerVisible(false);
+      };
+    }, []);
 
   if (isLoading) {
     return (
@@ -60,15 +80,17 @@ const MyJobs = () => {
   }
 
   return (
-    <div className='container m-4 w-[97%]'>
+    <div className='w-full p-4'>
+    <div className='container '>
       <h1 className="typography-h1">My Jobs</h1>
-      <div className="p-4 bg-background-30 rounded-xl">
+      {isAssessmentBannerVisible &&  <AssessmentBanner />}
+      <StyledCard padding={2} backgroundColor={"bg-background-30"}>
         {appliedJobs.length === 0 ? (
           <p>You have not applied to any jobs yet.</p>
         ) : (
-          <ul>
+          <ul className='flex flex-col gap-4'>
             {appliedJobs.map((application,index) => (
-              <li key={application.jobId._id || index} className="mb-4">
+              <li key={application.jobId._id || index} >
                 <JobCard
                   job={application.jobId}
                   isCandidate={true}
@@ -80,7 +102,8 @@ const MyJobs = () => {
             ))}
           </ul>
         )}
-      </div>
+      </StyledCard>
+    </div>
     </div>
   );
 };

@@ -3,6 +3,7 @@ import { useAuthContext } from '../../context/AuthProvider';
 import Header from '../../components/utility/Header';
 import { Camera } from 'lucide-react';
 import { useProfilePicture } from '../../hooks/useProfilePicture';
+import StyledCard from '../../components/ui/StyledCard';
 
 const Profile = () => {
   const { user } = useAuthContext();
@@ -21,9 +22,10 @@ const Profile = () => {
   };
 
   return (
-    <div className='p-4'>
+    <div className='w-full p-4'>
+      <div className='container mx-auto'>
       <Header HeaderText={"Profile"} withBack="false" withKebab="false" />
-      <div className='bg-background-30 flex rounded-xl p-4'>
+      <StyledCard padding={2} backgroundColor={"bg-background-30"} extraStyles=' flex '>
         <div className='relative w-32 h-32 rounded-full overflow-hidden border border-gray-200'>
           {user?.profilePicture ? (
             <img
@@ -59,7 +61,8 @@ const Profile = () => {
           </div>
 
         </div>
-      </div>
+      </StyledCard>
+    </div>
     </div>
   );
 };

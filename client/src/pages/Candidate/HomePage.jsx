@@ -188,7 +188,7 @@ const HomePage = () => {
                     </div>
     
                     {/* Job listings */}
-                    <div className='flex flex-col w-full md:w-fill-available'>
+                    <div className='flex flex-col gap-4 w-full md:w-fill-available'>
                         {isLoadingResults ? (
                             <div className="flex justify-center items-center min-h-full">
                                 <Loader />

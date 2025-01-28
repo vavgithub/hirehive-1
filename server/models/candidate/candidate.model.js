@@ -209,6 +209,10 @@ const candidateSchema = new mongoose.Schema(
       trim: true,
       unique: true, // Ensure uniqueness
     },
+    profilePictureUrl: {
+      type: String,
+      default: '',
+    },
     password: {
       type: String,
       required: false,

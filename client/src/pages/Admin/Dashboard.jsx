@@ -21,6 +21,7 @@ import NoJobs from "../../svg/Background/NoJobs.svg"
 import { showErrorToast, showSuccessToast } from '../../components/ui/Toast';
 import Loader from '../../components/ui/Loader';
 import SearchIcon from '../../svg/SearchIcon';
+import StyledCard from '../../components/ui/StyledCard';
 
 
 const fetchJobs = () => axios.get('/jobs/jobs').then(res => res.data);
@@ -300,7 +301,7 @@ const Dashboard = () => {
 
             </div>
 
-            <div className='bg-background-100 rounded-xl p-4'>
+            <StyledCard padding={2} backgroundColor={"bg-background-100"}>
 
                 <div className='flex gap-3'>
                     <StatsGrid stats={JobsStats} />
@@ -328,16 +329,16 @@ const Dashboard = () => {
                             handleExperienceFilter={handleExperienceFilter}
                             clearAllFilters={clearAllFilters} />
                     </div>
-                    <div className='w-full ml-4'>
-                        <div className='flex justify-end '>
+                    <div className='w-full ml-4 flex flex-col gap-4'>
                             {
                                 activeTab == "open" && displayJobs.length != 0 && displayJobs.filter(job=>job.status === "open").length !== 0 && (
-                                    <div className=" mb-4">
-                                        <Button variant="primary" icon={Create} iconPosition="left" onClick={() => { navigate("/admin/create-job") }}>Create A Job Listing</Button>
+                                    <div className='flex justify-end '>
+                                        <div >
+                                            <Button variant="primary" icon={Create} iconPosition="left" onClick={() => { navigate("/admin/create-job") }}>Create A Job Listing</Button>
+                                        </div> 
                                     </div>
                                 )
                             }
-                        </div>
                         {isLoadingResults ? (
                             <div className="flex justify-center items-center min-h-full">
                                 <Loader />
@@ -387,7 +388,7 @@ const Dashboard = () => {
                     closeReason={closeReason}
                     onCloseReasonChange={handleCloseReasonChange}
                 />
-            </div>
+            </StyledCard>
         </div>
     );
 };
