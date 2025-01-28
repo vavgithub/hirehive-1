@@ -2,9 +2,13 @@
 export const validationRules = {
     firstName: {
       required: 'First name is required',
+      validate: (value) =>
+        value.trim() !== '' || 'First name is required',
     },
     lastName: {
       required: 'Last name is required',
+      validate: (value) =>
+        value.trim() !== '' || 'Last name is required',
     },
     email: {
       required: 'Email is required',
@@ -25,6 +29,8 @@ export const validationRules = {
       pattern: {
         message: 'Please enter a valid URL',
       },
+      validate: (value) =>
+        value.trim() !== '' || 'Portfolio link is required',
     },
     experience: {
       required: 'Experience is required',

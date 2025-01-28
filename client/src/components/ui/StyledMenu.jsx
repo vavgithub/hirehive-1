@@ -29,9 +29,9 @@ function StyledMenu({handleMenuClose,anchorEl,itemComponents}) {
       }}
     >
         {
-            itemComponents.map((item)=>{
+            itemComponents.map((item,i)=>{
                 return (      
-                <MenuItem sx={{
+                <MenuItem key={i} sx={{
                     height : "44px",
                     padding : "0px"
                 }} onClick={item.onClick}>

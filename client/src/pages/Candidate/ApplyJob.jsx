@@ -26,6 +26,45 @@ const fetchJobDetails = async (id) => {
   return response.data;
 };
 
+export const uploadProfilePicture = async (file) => {
+  if (!file) return null;
+  const formData = new FormData();
+  formData.append('profilePicture', file);
+
+  try {
+    const response = await axios.post('/auth/candidate/upload-profile-picture', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return response.data.profilePictureUrl;
+  } catch (error) {
+    console.error('Error uploading profile picture:', error);
+    throw error;
+  }
+};
+
+
+export const uploadResume = async (file,setUploadProgress) => {
+  if (!file) return null;
+  const formData = new FormData();
+  formData.append('resume', file);
+
+  try {
+    const response = await axios.post('/auth/candidate/upload-resume', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+      onUploadProgress: (progressEvent) => {
+        const percentCompleted = Math.round(
+          (progressEvent.loaded * 100) / progressEvent.total
+        );
+        setUploadProgress(percentCompleted);
+      },
+    });
+    return response.data.resumeUrl;
+  } catch (error) {
+    console.error('Error uploading resume:', error);
+    throw error;
+  }
+};
+
 const ApplyJob = () => {
   const dispatch = useDispatch();
   const { candidateData, isAuthenticated } = useCandidateAuth()
@@ -135,44 +174,7 @@ useEffect(() => {
     }
   };
 }, [profilePicturePreview]);
-  const uploadProfilePicture = async (file) => {
-    if (!file) return null;
-    const formData = new FormData();
-    formData.append('profilePicture', file);
-
-    try {
-      const response = await axios.post('/auth/candidate/upload-profile-picture', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
-      return response.data.profilePictureUrl;
-    } catch (error) {
-      console.error('Error uploading profile picture:', error);
-      throw error;
-    }
-  };
-
-
-  const uploadResume = async (file) => {
-    if (!file) return null;
-    const formData = new FormData();
-    formData.append('resume', file);
-
-    try {
-      const response = await axios.post('/auth/candidate/upload-resume', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-        onUploadProgress: (progressEvent) => {
-          const percentCompleted = Math.round(
-            (progressEvent.loaded * 100) / progressEvent.total
-          );
-          setUploadProgress(percentCompleted);
-        },
-      });
-      return response.data.resumeUrl;
-    } catch (error) {
-      console.error('Error uploading resume:', error);
-      throw error;
-    }
-  };
+ 
 
   // Register all fields with their validation rules
   useEffect(() => {
@@ -196,7 +198,7 @@ useEffect(() => {
           profilePictureUrl = await uploadProfilePicture(profilePictureFile);
         }  
 
-      const resumeUrl = await uploadResume(resumeFile);
+      const resumeUrl = await uploadResume(resumeFile,setUploadProgress);
 
       if (isAuthenticated) {
         const applicationData = {

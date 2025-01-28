@@ -42,6 +42,7 @@ const candidateAuthSlice = createSlice({
   name: 'candidateAuth',
   initialState: {
     candidateAuthData: null,
+    hasGivenAssessment : false,
     isAuthenticatedCandidate: false,
     isLoadingAuth: false,
     authError: null
@@ -52,7 +53,13 @@ const candidateAuthSlice = createSlice({
     },
     updateAssessmentStatus: (state) => {
       if (state.candidateAuthData) {
+        state.hasGivenAssessment = true;
         state.candidateAuthData.hasGivenAssessment = true;
+      }
+    },
+    updateWithoutAssessment : (state,action) => {
+      if (state.candidateAuthData) {
+        state.candidateAuthData = action.payload
       }
     }
   },
@@ -64,6 +71,7 @@ const candidateAuthSlice = createSlice({
       .addCase(fetchCandidateAuthData.fulfilled, (state, action) => {
         state.isLoadingAuth = false;
         state.candidateAuthData = action.payload;
+        state.hasGivenAssessment = action.payload.hasGivenAssessment;
         state.isAuthenticatedCandidate = true;
         state.authError = null;
       })
@@ -102,5 +110,5 @@ const candidateAuthSlice = createSlice({
   }
 });
 
-export const { clearAuthError, updateAssessmentStatus } = candidateAuthSlice.actions;
+export const { clearAuthError, updateAssessmentStatus , updateWithoutAssessment} = candidateAuthSlice.actions;
 export default candidateAuthSlice.reducer;

@@ -24,7 +24,7 @@ const AllJobs = () => {
     const navigate = useNavigate();
 
     const [isFilterVisible, setIsFilterVisible] = useState(false);
-    const { candidateData , isDone} = useCandidateAuth()
+    const { candidateData , hasGivenAssessment , isDone} = useCandidateAuth()
 
     const toggleFilters = () => {
         setIsFilterVisible(!isFilterVisible);
@@ -36,9 +36,9 @@ const AllJobs = () => {
       // Update visibility states when component mounts and when candidateData updates
       useEffect(() => {
         if (isDone && candidateData) {
-          setIsAssessmentBannerVisible(!candidateData.hasGivenAssessment);
+          setIsAssessmentBannerVisible(!hasGivenAssessment);
         }
-      }, [candidateData, isDone]);
+      }, [hasGivenAssessment, isDone]);
     
       // Add cleanup on unmount
       useEffect(() => {
