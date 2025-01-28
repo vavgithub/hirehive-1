@@ -1,5 +1,6 @@
 import { jobStagesStatuses } from "../../config/jobStagesStatuses.js";
 import { jobs } from "../../models/admin/jobs.model.js";
+import { User } from "../../models/admin/user.model.js";
 import { candidates } from "../../models/candidate/candidate.model.js";
 import { getDesignTaskContent, getRejectionEmailContent } from "../../utils/emailTemplates.js";
 import { sendEmail } from "../../utils/sentEmail.js";
@@ -432,6 +433,79 @@ export const moveMultipleCandidates = async (req, res) => {
       .json({ message: "Error moving candidate", error: error.message });
   }
 };
+
+export const updateAssigneeForMultipleCandidates = async (req,res) => {
+  try {
+    const { candidateData, assigneeId } = req.body;
+
+    if(!candidateData || candidateData?.length === 0){
+      throw new Error("No Candidates Found")
+    }
+    
+    if(!assigneeId){
+      throw new Error("Invalid Assignee Data")
+    }
+
+    const isAssigneeExist = await User.findOne({_id:assigneeId,role:"Design Reviewer"});
+    if(!isAssigneeExist){
+      throw new Error("No Assignee Found")
+    }
+
+    for(let eachCandidate of candidateData){
+      // Find the candidate
+      const candidate = await candidates.findById(eachCandidate?.candidateId);
+      if (!candidate) {
+        return res.status(404).json({ message: 'Candidate not found' });
+      }
+
+      // Find the specific job application
+      const jobApplication = candidate.jobApplications.find(
+        (app) => app.jobId.toString() === eachCandidate?.jobId
+      );
+      if (!jobApplication) {
+        return res.status(404).json({ message: 'Job application not found' });
+      }
+
+      // Initialize the stage status if it doesn't exist
+      if (!jobApplication.stageStatuses.has(eachCandidate?.stage)) {
+        jobApplication.stageStatuses.set(eachCandidate?.stage, {
+          status: 'Not Assigned',
+          assignedTo: null,
+          rejectionReason: 'N/A',
+          score: {},
+          currentCall: null,
+          callHistory: []
+        });
+      }
+
+      const stageStatus = jobApplication.stageStatuses.get(eachCandidate?.stage);
+
+      // Update the assignee
+      stageStatus.assignedTo = assigneeId;
+
+      // Update the status based on the stage
+      if (['Portfolio', 'Design Task'].includes(eachCandidate?.stage)) {
+        stageStatus.status = assigneeId ? 'Under Review' : 'Not Assigned';
+      }
+      // Add more stage-specific logic here as needed
+
+      // If this is the first stage and an assignee is added, update the current stage
+      if (['Portfolio', 'Design Task'].includes(eachCandidate?.stage) && assigneeId && !jobApplication.currentStage) {
+        jobApplication.currentStage = eachCandidate?.stage;
+      }
+
+      // Save the changes
+      await candidate.save();
+    }
+
+    res.status(200).json({ 
+      message: 'Assignee updated successfully',
+    });
+  } catch (error) {
+    console.error('Error updating assignee:', error);
+    res.status(500).json({ message: error?.message || 'Server error' });
+  }
+}
 
 export const updateCandidateRating = async (req, res) => {
   try {

@@ -18,7 +18,7 @@ import SearchIcon from '../../svg/SearchIcon';
 import { useQuery } from '@tanstack/react-query';
 
 
-const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled = false , error}) => {
+const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled = false , error , selectedAnchor , closeSelectedAnchor}) => {
   const [reviewers, setReviewers] = useState([]);
   // const [isLoading, setIsLoading] = useState(true);
   const [selectedReviewer, setSelectedReviewer] = useState(null);
@@ -84,6 +84,9 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
     }
   };
   const handleClose = () => {
+    if(closeSelectedAnchor){
+      closeSelectedAnchor(null);
+    }
     setAnchorEl(null);
   };
   // Filtered reviewers based on search term
@@ -111,6 +114,125 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
         <Menu
           anchorEl={anchorEl}
           open={Boolean(anchorEl)}
+          onClose={handleClose}
+          PaperProps={{
+            style: { maxHeight: 300, width: '250px' ,boxShadow: '3px 5px 50px rgba(25, 25, 25, 0.75)', borderRadius : "12px",padding : "8px",backgroundColor: 'rgba(12, 13, 13, 1)'},
+          }}
+          sx={{
+            "& .MuiList-root": {
+              backgroundColor: 'rgba(12, 13, 13, 1)',
+              color: "white",
+              font: "Outfit",
+              padding : "0px "
+            },
+          }}
+        >
+          <Box sx={{ position:"relative"}}>
+            <TextField
+              placeholder="Search"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              fullWidth
+              variant="outlined"
+              size="small"
+              sx={{
+                boxSizing:"border-box",
+                '& .MuiOutlinedInput-input' : {
+                  height : "44px !important",
+                  padding : "0px 40px"
+                },
+                '& .css-1n4twyu-MuiInputBase-input-MuiOutlinedInput-input' :{
+                  height : "44px !important",
+                  padding : "0px 40px"
+                },
+                '& .css-1ua80n0-MuiInputBase-input-MuiOutlinedInput-input' : {
+                  height : "44px !important",
+                  padding : "0px 40px"
+                },
+                '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                  borderColor: 'rgba(24, 233, 208, 1) !important', // Change the outline color on focus
+                },
+              }}
+              InputProps={{
+                // startAdornment: (
+                //   <InputAdornment style={{background : "transparent"}} position="start">
+                //     <SearchIcon />
+                //   </InputAdornment>
+                // ),
+                style : {
+                  color : "white",
+                  height : "44px",
+                  borderRadius : "12px",
+                }
+              }}
+            />
+            <div className='absolute top-[0.6rem] left-2'>
+              <SearchIcon />
+            </div>
+          </Box>
+          {isLoading ? (
+            <MenuItem>
+              <CircularProgress size={24} />
+            </MenuItem>
+          ) : filteredReviewers.length > 0 ? (
+            filteredReviewers.map((reviewer) => (
+              <MenuItem
+                selected={reviewer?._id === selectedReviewer?._id}
+                sx={{
+                  margin : "8px 0px !important",
+                  padding :"8px 16px",
+                  borderRadius : "12px",
+                  ':hover' :{
+                    background :"rgba(35,36,37,1)"
+                  },
+                  ':hover .MuiTypography-root' :{
+                    color :"rgba(24,233,208,1)"
+                  },
+                  '&.Mui-selected': {
+                    background: "rgba(24,233,208,0.1) !important", // Red background for selected item
+                  },
+                  '&.Mui-selected:hover' : {
+                    background :"rgba(35,36,37,1) !important"
+                  },
+                  '&.Mui-selected span': {
+                    color: "rgba(24,233,208,1) !important", // Slightly darker red on hover
+                  },
+                }}
+                key={reviewer._id}
+                onClick={() => handleSelect(reviewer)}
+              >
+                <ListItemAvatar>
+                  <Avatar src={reviewer.profilePicture} sx={{ width: 32, height: 32 }}>
+                    {reviewer.name[0].toUpperCase()}
+                  </Avatar>
+                </ListItemAvatar>
+                <ListItemText
+                primaryTypographyProps={{
+                  component : 'span'
+                }}
+                sx={{
+                  "& .MuiTypography-root": {
+                    fontFamily: "Outfit", // Apply the custom font explicitly to the Typography
+                  },
+                }}
+                primary={reviewer.name} />
+              </MenuItem>
+            ))
+          ) : (
+            <MenuItem>No reviewers found</MenuItem>
+          )}
+        </Menu>
+      </>
+    );
+  }
+
+  //Render mode is dropdown only
+  if (mode === 'dropdown') {
+    return (
+      <>
+        <Menu
+          anchorEl={selectedAnchor}
+          open={Boolean(selectedAnchor)}
           onClose={handleClose}
           PaperProps={{
             style: { maxHeight: 300, width: '250px' ,boxShadow: '3px 5px 50px rgba(25, 25, 25, 0.75)', borderRadius : "12px",padding : "8px",backgroundColor: 'rgba(12, 13, 13, 1)'},

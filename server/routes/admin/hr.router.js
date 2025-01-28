@@ -1,5 +1,5 @@
 import express from "express"
-import { changeApplicationStatus, getCandidateScores, moveCandidate, moveMultipleCandidates, noShow, rejectCandidate, rejectMultipleCandidates, rescheduleCall, rescheduleScreening, scheduleCall, scheduleScreening, scoreRoundTwo, sendDesignTask, submitBudgetScore, updateCandidateRating } from "../../controllers/admin/hr.controller.js";
+import { changeApplicationStatus, getCandidateScores, moveCandidate, moveMultipleCandidates, noShow, rejectCandidate, rejectMultipleCandidates, rescheduleCall, rescheduleScreening, scheduleCall, scheduleScreening, scoreRoundTwo, sendDesignTask, submitBudgetScore, updateAssigneeForMultipleCandidates, updateCandidateRating } from "../../controllers/admin/hr.controller.js";
 
 const router = express.Router();
 
@@ -10,6 +10,8 @@ router.post('/reject-multiple-candidates', rejectMultipleCandidates);
 router.post('/move-candidate', moveCandidate);
 
 router.post('/move-multiple-candidates', moveMultipleCandidates);
+
+router.post('/update-assignee-multiple-candidates', updateAssigneeForMultipleCandidates);
 
 router.post('/no-show', noShow);
 

@@ -14,6 +14,7 @@ import { showErrorToast, showSuccessToast } from '../ui/Toast'
 import { useQueryClient } from '@tanstack/react-query'
 import { CustomDropdown } from '../Form/FormFields'
 import LoaderModal from '../ui/LoaderModal'
+import AssigneeSelector from './AssigneeSelector'
 
 export const getMaxScoreEachStage = (currentStage) =>{
     let stageScores = {
@@ -36,6 +37,11 @@ const rejectMultipleCandidates = async (candidateData) => {
     return response.data;
 } 
 
+const assignReviewerForCandidates = async (candidateData,assigneeId) => {
+    const response = await axios.post(`/hr/update-assignee-multiple-candidates`,{candidateData,assigneeId})
+    return response.data;
+} 
+
 const globalStages = ['Portfolio','Screening','Design Task','Round 1','Round 2', 'Hired']
 
 const multiSelectConfig = [
@@ -47,6 +53,7 @@ const multiSelectConfig = [
         icon : ArrowIcon,
         apiFunction : moveMultipleCandidates, 
         validStatus : ["Reviewed"],
+        type : "MODAL",
         extraStyles : ""
     },
     {
@@ -57,6 +64,7 @@ const multiSelectConfig = [
         icon : BlendCloseButton,
         apiFunction : rejectMultipleCandidates, 
         validStatus : ["Reviewed"],
+        type : "MODAL",
         extraStyles : "text-red-500"
     },
     {
@@ -65,34 +73,39 @@ const multiSelectConfig = [
         customTitle : "Assignee",
         customMessage : "",
         icon : WhiteProfileIcon,
-        validStatus : [],
+        apiFunction : assignReviewerForCandidates,
+        validStatus : ["Sent","Under Review","Not Assigned","Pending"],
+        type : "POPUP",
         extraStyles : ""
     },
-    {
-        name : "STAGE",
-        label : "Stage",
-        customTitle : "Stage",
-        customMessage : "",
-        icon : StageIcon,
-        validStatus : [],
-        extraStyles : ""
-    },
-    {
-        name : "STATUS",
-        label : "Status",
-        customTitle : "Status",
-        customMessage : "",
-        icon : StatusIcon,
-        validStatus : [],
-        extraStyles : ""
-    },
+    // {
+    //     name : "STAGE",
+    //     label : "Stage",
+    //     customTitle : "Stage",
+    //     customMessage : "",
+    //     icon : StageIcon,
+    //     validStatus : [],
+    //     type : "POPUP",
+    //     extraStyles : ""
+    // },
+    // {
+    //     name : "STATUS",
+    //     label : "Status",
+    //     customTitle : "Status",
+    //     customMessage : "",
+    //     icon : StatusIcon,
+    //     validStatus : [],
+    //     type : "POPUP",
+    //     extraStyles : ""
+    // },
     {
         name : "RATING",
         label : "Rating",
         customTitle : "Rating",
         customMessage : "",
         icon : Rating,
-        validStatus : [],
+        validStatus : ["Reviewed","Sent","Cleared","Under Review","Not Assigned","Pending"],
+        type : "POPUP",
         extraStyles : ""
     },
     {
@@ -102,6 +115,7 @@ const multiSelectConfig = [
         customMessage : "",
         icon : WhiteCalenderIcon,
         validStatus : [],
+        type : "POPUP",
         extraStyles : ""
     },
     {
@@ -111,6 +125,7 @@ const multiSelectConfig = [
         customMessage : "",
         icon : BellIcon,
         validStatus : [],
+        type : "POPUP",
         extraStyles : ""
     },
 ]
@@ -122,7 +137,7 @@ function isSubsetAndOnly(validArray, itemsArray) {
 
 function MultiSelectBar({selectedData,jobId,clearSelection}) {
   const [filteredCandidates,setFilteredCandidates] = useState([]);
-  const [trimCount,setTrimCount] = useState(6);
+  const [trimCount,setTrimCount] = useState(4);
   const [openPalette,setOpenPalette] = useState(false);
   const [action,setAction] = useState(null);
   const [multiSelectConfigState,setMultiSelectConfigState] = useState(multiSelectConfig);
@@ -130,6 +145,11 @@ function MultiSelectBar({selectedData,jobId,clearSelection}) {
   const queryClient = useQueryClient();
 
   const [isLoading,setIsLoading] = useState(false);
+
+  const [selectedAssignee,setSelectedAssignee] = useState({});
+  
+  //For assignee dropdown anchor
+  const [selectedAnchor,setSelectedAnchor] = useState(null);
 
   useEffect(()=>{
     if(selectedData && Array.isArray(selectedData)){
@@ -245,8 +265,42 @@ function MultiSelectBar({selectedData,jobId,clearSelection}) {
     }
   }
 
+  const getCandidatesArray = (candidatesData) => {
+    const updatedCandidatesData = Object.entries(candidatesData).map(([stage,candidates]) => {
+        let candidatesArray = candidates.map(eachCandidate =>{
+            
+                return { 
+                    candidateId : eachCandidate?.candidate._id,
+                    jobId : eachCandidate?.candidate?.jobId || jobId,
+                    stage : stage,
+                }
+        }) 
+        return candidatesArray
+    }).flat()
+    return updatedCandidatesData
+  }
+
+  const handleAssigneeChange = async (assignee) => {
+      try {
+        setIsLoading(true);
+        const selectedCandidates = getCandidatesArray(filteredCandidates)
+        const response = await action?.apiFunction(selectedCandidates,assignee?._id);
+        if(response?.message){
+            showSuccessToast("Success",response.message)
+            queryClient.invalidateQueries(['candidates', jobId], { refetch: true });
+        }
+        setIsLoading(false);
+        clearSelection([])
+        setAction(null);
+      } catch (error) {
+        setIsLoading(false);
+        console.log(`${action.name} Function error `,error)
+        showErrorToast("Error",error?.response?.data?.error || `Error in ${action.label} action`)
+      }
+  }
+
   return (
-    <div className='bg-black-100 font-outfit p-4 rounded-xl mb-4 flex justify-between items-center h-14'>
+    <div className='bg-black-100 font-outfit p-4 rounded-xl mb-4 flex justify-between items-center h-14 relative'>
         {isLoading && <LoaderModal/>}
         <div>
             <p className='text-teal-100 typography-body'>{selectedData?.length ?? 0} Items Selected</p>
@@ -256,12 +310,33 @@ function MultiSelectBar({selectedData,jobId,clearSelection}) {
                 multiSelectConfigState.map((config,i)=>{
                     return (
                         i < trimCount ?
-                        <div key={config.name} className='flex justify-between items-center gap-4 '>
+                        <div key={config.name} className='flex justify-between items-center gap-4 relative'>
                         {i !== 0 && <div className='h-8 w-[1px] bg-font-gray'></div>}
-                        <div onClick={!config?.disabled ? ()=>setAction(config) : null} className={'flex items-center justify-center gap-4 ' + (config?.disabled ? "text-font-gray" : `cursor-pointer  ${config.extraStyles}`)}>
+                        <div onClick={!config?.disabled ? (e)=>{setAction(prev => prev ? null : config); setSelectedAnchor(e.currentTarget)} : null} className={'flex items-center justify-center gap-4 ' + (config?.disabled ? "text-font-gray" : `cursor-pointer  ${config.extraStyles}`)}>
                             {config?.icon && config.icon()}
                             <p className={'typography-body '}>{config.label}</p>
                         </div>
+                        {
+                            action?.type === "POPUP" && action?.name === config?.name && (action?.name === "ASSIGNEE" ? 
+                            <AssigneeSelector
+                            mode='dropdown'
+                            selectedAnchor={selectedAnchor}
+                            value={selectedAssignee?._id ?? ""}
+                            onChange={(newAssignee) => handleAssigneeChange(
+                                newAssignee
+                            )}
+                            closeSelectedAnchor={setSelectedAnchor}
+                            onSelect={() => { }}
+                            />
+                            : 
+                            <div className='absolute top-12 left-0 z-10 bg-background-60 p-4 rounded-xl flex flex-col gap-2 min-w-[200px]'>
+                                <p>Content 1</p>
+                                <p>Content 1</p>
+                                <p>Content 1</p>
+                                <p>Content 1</p>
+                                <p>Content 1</p>
+                            </div>)
+                        }
                         </div>
                         : i === trimCount ? 
                         <div key={config.name} className='relative flex items-center justify-between gap-4'>
@@ -289,6 +364,7 @@ function MultiSelectBar({selectedData,jobId,clearSelection}) {
                 })
             }
         </div>
+        {action?.type === "MODAL" && 
         <Modal
             open={action}
             onConfirm={()=>handleConfirm(action?.apiFunction)}
@@ -361,7 +437,7 @@ function MultiSelectBar({selectedData,jobId,clearSelection}) {
                     )
                 })}
            </div>
-        </Modal>
+        </Modal>}
     </div>
   )
 }

@@ -195,7 +195,7 @@ const ViewJobs = () => {
     return (
         <div className="px-4 pt-4 container h-screen w-full">
  <Header 
-                HeaderText={formData.jobTitle} 
+                HeaderText={formData?.jobTitle} 
                 withKebab="true" 
                 withBack="true" 
                 job={formData} 
