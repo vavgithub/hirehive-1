@@ -5,6 +5,8 @@ import { candidates } from "../../models/candidate/candidate.model.js";
 import { getDesignTaskContent, getRejectionEmailContent } from "../../utils/emailTemplates.js";
 import { sendEmail } from "../../utils/sentEmail.js";
 
+const RATINGS = ['Good Fit', 'Not A Good Fit', 'May Be'];
+
 export const rejectCandidate = async (req, res) => {
   try {
     const { candidateId, jobId, rejectionReason } = req.body;
@@ -548,6 +550,61 @@ export const updateCandidateRating = async (req, res) => {
       });
   }
 };
+
+export const rateMultipleCandidates = async (req,res) => {
+  try {
+    const { candidateData, rating } = req.body;
+
+    if(!candidateData || candidateData?.length === 0){
+      throw new Error("No Candidates Found")
+    }
+    
+    if(!rating){
+      throw new Error("No Rating Found")
+    }
+
+    if(!RATINGS.includes(rating)){
+      throw new Error("Invalid Rating")
+    }
+
+    for(let eachCandidate of candidateData){
+
+      const candidate = await candidates.findById(eachCandidate?.candidateId);
+  
+      if (!candidate) {
+        return res.status(404).json({ message: "Candidate not found" });
+      }
+  
+      const jobApplication = candidate.jobApplications.find(
+        (app) => app.jobId.toString() === eachCandidate?.jobId
+      );
+  
+      if (!jobApplication) {
+        return res
+          .status(404)
+          .json({ message: "Job application not found for this candidate" });
+      }
+  
+      jobApplication.rating = rating;
+  
+      // Mark the jobApplications field as modified
+      candidate.markModified("jobApplications");
+  
+      await candidate.save();
+    }
+
+    res.status(200).json({
+      message: "Candidates rating updated successfully",
+    });
+  } catch (error) {
+    console.error("Error updating candidate rating:", error);
+    res
+      .status(500)
+      .json({
+        message: error.message || "Error updating candidate rating",
+      });
+  }
+}
 
 export const getCandidateScores = async (req, res) => {
   const { candidateId, jobId } = req.params;

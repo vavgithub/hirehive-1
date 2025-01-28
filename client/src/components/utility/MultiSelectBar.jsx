@@ -15,6 +15,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { CustomDropdown } from '../Form/FormFields'
 import LoaderModal from '../ui/LoaderModal'
 import AssigneeSelector from './AssigneeSelector'
+import RatingSelector from './RatingSelector'
 
 export const getMaxScoreEachStage = (currentStage) =>{
     let stageScores = {
@@ -39,6 +40,11 @@ const rejectMultipleCandidates = async (candidateData) => {
 
 const assignReviewerForCandidates = async (candidateData,assigneeId) => {
     const response = await axios.post(`/hr/update-assignee-multiple-candidates`,{candidateData,assigneeId})
+    return response.data;
+} 
+
+const rateMultipleCandidates = async (candidateData,rating) => {
+    const response = await axios.post(`/hr/rate-multiple-candidates`,{candidateData,rating})
     return response.data;
 } 
 
@@ -104,7 +110,21 @@ const multiSelectConfig = [
         customTitle : "Rating",
         customMessage : "",
         icon : Rating,
-        validStatus : ["Reviewed","Sent","Cleared","Under Review","Not Assigned","Pending"],
+        apiFunction : rateMultipleCandidates, 
+        validStatus : [
+            "Accepted",
+            "Call Scheduled",
+            "Cleared",
+            "No Show",
+            "Not Assigned",
+            "Not Submitted",
+            "Offer Sent",
+            "Pending",
+            "Rejected",
+            "Reviewed",
+            "Sent",
+            "Under Review"
+          ],
         type : "POPUP",
         extraStyles : ""
     },
@@ -118,16 +138,16 @@ const multiSelectConfig = [
         type : "POPUP",
         extraStyles : ""
     },
-    {
-        name : "REMIND CANDIDATE",
-        label : "Remind Candidate",
-        customTitle : "Remind Candidate",
-        customMessage : "",
-        icon : BellIcon,
-        validStatus : [],
-        type : "POPUP",
-        extraStyles : ""
-    },
+    // {
+    //     name : "REMIND CANDIDATE",
+    //     label : "Remind Candidate",
+    //     customTitle : "Remind Candidate",
+    //     customMessage : "",
+    //     icon : BellIcon,
+    //     validStatus : [],
+    //     type : "POPUP",
+    //     extraStyles : ""
+    // },
 ]
 
 function isSubsetAndOnly(validArray, itemsArray) {
@@ -299,6 +319,25 @@ function MultiSelectBar({selectedData,jobId,clearSelection}) {
       }
   }
 
+  const handleRatingSelect = async (rating) => {
+    try {
+        setIsLoading(true);
+        const selectedCandidates = getCandidatesArray(filteredCandidates)
+        const response = await action?.apiFunction(selectedCandidates,rating);
+        if(response?.message){
+            showSuccessToast("Success",response.message)
+            queryClient.invalidateQueries(['candidates', jobId], { refetch: true });
+        }
+        setIsLoading(false);
+        clearSelection([])
+        setAction(null);
+      } catch (error) {
+        setIsLoading(false);
+        console.log(`${action.name} Function error `,error)
+        showErrorToast("Error",error?.response?.data?.error || `Error in ${action.label} action`)
+      }
+  }
+
   return (
     <div className='bg-black-100 font-outfit p-4 rounded-xl mb-4 flex justify-between items-center h-14 relative'>
         {isLoading && <LoaderModal/>}
@@ -325,17 +364,15 @@ function MultiSelectBar({selectedData,jobId,clearSelection}) {
                             onChange={(newAssignee) => handleAssigneeChange(
                                 newAssignee
                             )}
-                            closeSelectedAnchor={setSelectedAnchor}
+                            closeSelectedAnchor={()=>{setSelectedAnchor(null); setAction(null)}}
                             onSelect={() => { }}
                             />
-                            : 
-                            <div className='absolute top-12 left-0 z-10 bg-background-60 p-4 rounded-xl flex flex-col gap-2 min-w-[200px]'>
-                                <p>Content 1</p>
-                                <p>Content 1</p>
-                                <p>Content 1</p>
-                                <p>Content 1</p>
-                                <p>Content 1</p>
-                            </div>)
+                            : action?.name === "RATING" ? 
+                                <RatingSelector 
+                                anchorEl={selectedAnchor} 
+                                setAnchorEl={()=>{setSelectedAnchor(null); setAction(null)}} 
+                                onSelectRating={handleRatingSelect} />
+                            : <></>)
                         }
                         </div>
                         : i === trimCount ? 
