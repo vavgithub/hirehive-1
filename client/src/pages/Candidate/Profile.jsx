@@ -380,7 +380,7 @@ function Profile() {
       noticePeriod : candidateData?.noticePeriod ? candidateData.noticePeriod : 0,
       currentCTC : candidateData?.currentCTC ? candidateData.currentCTC : 0,
       expectedCTC : candidateData?.expectedCTC ? candidateData.expectedCTC : 0,
-
+      location : candidateData?.location ? candidateData.location : "",
     },
     mode: 'onChange'
   });
@@ -413,7 +413,7 @@ function Profile() {
       if(profileFile){
         data.profilePictureUrl = await uploadProfilePicture(profileFile)
       }
-
+      
       const response = await axios.post("/auth/candidate/edit-profile",data)
       if(response?.data?.stage === "OTP"){
         setIsLoading(false);
@@ -545,10 +545,8 @@ function Profile() {
                   </div>
                   <h1 className="typography-h1 whitespace-nowrap overflow-hidden w-full text-ellipsis text-center">{candidateData?.firstName + " " + candidateData?.lastName}</h1>
                   {!isEditing ? <>
-                  <div className="w-full flex justify-center items-center gap-2">
-                    <p className=" text-font-gray gap-2 typography-small-p">UX Designer</p>
-                    <span className="inline-block min-w-[6px] bg-font-gray h-[6px] rounded-full"></span>
-                    <p className=" text-font-gray gap-2 typography-small-p">Banglore</p>
+                  <div className="w-full flex justify-center items-center gap-2">               
+                    <p className=" text-font-gray gap-2 typography-small-p">{candidateData?.location}</p>
                   </div>
                   <div className="mt-6 w-full font-outfit flex justify-between">
                     <p className="typography-body">Jobs Applied</p>
@@ -556,8 +554,27 @@ function Profile() {
                   </div>
                   </> :
                   <div className="flex flex-col mt-2 gap-4">
-                      <InputField type="text" label="Role"  rowWise={true} />
-                      <InputField type="text" label="Location" rowWise={true} />
+                      {/* <InputField type="text" label="Role"  rowWise={true} /> */}
+                      <Controller
+              name="location"
+              control={control}
+              defaultValue={""}
+              rules={validationRules.location}
+              render={({ field ,fieldState : { error }}) => (
+                <InputField
+                  type="text"
+                  id="location"
+                  label="location"
+                  labelStyles="text-font-gray"
+                  value={field.value ?? ""}
+                  onChange={field.onChange}
+                  error={error}
+                  rowWise={true}
+                  errorMessage={error?.message}
+                />
+              )}
+            />
+                     
                   </div>
                   }
                 </StyledCard>

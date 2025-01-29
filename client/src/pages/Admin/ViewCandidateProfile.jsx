@@ -254,10 +254,10 @@ const ViewCandidateProfile = () => {
                                 </h1>
                                 <div className="flex items-center gap-2 mb-3 mt-2">
                                     <span className="typography-small-p text-font-gray">{data.jobApplication.jobApplied}</span>
-                                    {/* <svg xmlns="http://www.w3.org/2000/svg" width="4" height="4" viewBox="0 0 4 4" fill="none">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="4" height="4" viewBox="0 0 4 4" fill="none">
                                         <circle cx="2" cy="2" r="2" fill="#808389" />
                                     </svg>
-                                    <span className="typography-small-p text-font-gray">{data.location}</span> */}
+                                    <span className="typography-small-p text-font-gray">{data.location}</span>
                                 </div>
                                 {role !== "Design Reviewer" &&
                                 <div className="flex mb-3 gap-5">
@@ -299,7 +299,6 @@ const ViewCandidateProfile = () => {
                                     }
 
                                 </div>
-                                <p>{data.location}</p>
                             </div>
                         </StyledCard>
 

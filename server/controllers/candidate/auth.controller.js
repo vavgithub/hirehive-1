@@ -508,6 +508,7 @@ export const getCandidateDashboard = async (req, res) => {
           experience: 1,
           skills: 1,
           resumeUrl : 1,
+          location:1,
           hasGivenAssessment: 1,
           "jobApplications.applicationDate": 1,
           "jobApplications.currentStage": 1,
@@ -564,6 +565,7 @@ export const getCandidateDashboard = async (req, res) => {
         resumeUrl : candidate[0].resumeUrl || latestResume,
         hasGivenAssessment:candidate[0].hasGivenAssessment,
         jobApplications: formattedApplications, // Include jobApplications in the candidate object
+        location: candidate[0].location,
         // Include other relevant candidate fields
       },
     });
@@ -588,8 +590,11 @@ export const editCandidateProfile = async (req, res) => {
         noticePeriod ,
         currentCTC ,
         expectedCTC ,
-        profilePictureUrl
+        profilePictureUrl,
+        location,
       } = req.body;
+
+      console.log(req.body);
       
       const OTP_STAGE = "OTP";
       const DONE_STAGE = "DONE";
@@ -605,7 +610,9 @@ export const editCandidateProfile = async (req, res) => {
         { field: 'Experience', value: experience },
         { field: 'Notice Period', value: noticePeriod },
         { field: 'Current CTC', value: currentCTC },
-        { field: 'Expected CTC', value: expectedCTC }
+        { field: 'Expected CTC', value: expectedCTC },
+        { field: 'Location', value: location},
+
       ];
 
       // Validate each field for empty or whitespace-only values
@@ -665,7 +672,8 @@ export const editCandidateProfile = async (req, res) => {
         candidateData.experience = experience; 
         candidateData.noticePeriod = noticePeriod; 
         candidateData.currentCTC = currentCTC; 
-        candidateData.expectedCTC = expectedCTC; 
+        candidateData.expectedCTC = expectedCTC;
+        candidateData.location = location; 
         if(profilePictureUrl){
           candidateData.profilePictureUrl = profilePictureUrl;
         }
