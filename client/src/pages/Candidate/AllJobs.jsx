@@ -146,8 +146,8 @@ const AllJobs = () => {
                 <h1 className='typography-h1'>All Jobs</h1>
             </div>
             {isAssessmentBannerVisible &&  <AssessmentBanner />}
-               <div className='flex items-center justify-between mt-1 mb-4'>
-               <div className='block md:hidden  relative w-[86%] sm:w-[90%]'>
+               <div className='md:hidden flex items-center justify-between mt-1 mb-4'>
+               <div className='relative w-[86%] sm:w-[90%]'>
                         <div className='absolute top-[10px] left-4'>
                             <SearchIcon />
                         </div>
