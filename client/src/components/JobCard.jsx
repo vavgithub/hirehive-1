@@ -147,14 +147,14 @@ const JobCard = ({
         text={`${job.experienceFrom} - ${job.experienceTo} Year`}
       />
     </div>
-    <div className="px-4 p-4">
-        <p className="typography-body text-font-gray" dangerouslySetInnerHTML={{__html : truncatedDescription}}>
+    <div className=" p-4 ">
+        <p className="typography-body text-font-gray h-11 overflow-hidden" dangerouslySetInnerHTML={{__html : truncatedDescription}}>
           {/* {truncatedDescription} */}
         </p>
       </div>
     </> :
-    <div className="px-4 p-4">
-    <p className="typography-body text-font-gray" dangerouslySetInnerHTML={{__html : truncatedDescription}}>
+    <div className=" p-4 ">
+    <p className="typography-body text-font-gray h-11 overflow-hidden" dangerouslySetInnerHTML={{__html : truncatedDescription}}>
       {/* {truncatedDescription} */}
     </p>
   </div>

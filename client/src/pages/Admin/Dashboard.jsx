@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import Filters from '../../components/Filters/Filters';
@@ -22,6 +22,7 @@ import { showErrorToast, showSuccessToast } from '../../components/ui/Toast';
 import Loader from '../../components/ui/Loader';
 import SearchIcon from '../../svg/SearchIcon';
 import StyledCard from '../../components/ui/StyledCard';
+import Pagination from '../../components/utility/Pagination';
 
 
 const fetchJobs = () => axios.get('/jobs/jobs').then(res => res.data);
@@ -60,7 +61,12 @@ const Dashboard = () => {
     });
 
 
+    const [page,setPage] = useState(1);
+    const PAGE_LIMIT = 3;
 
+    useEffect(()=>{
+        setPage(1);
+    },[activeTab,searchQuery,filters])
 
     const handleAction = (action, jobId) => {
         const job = jobs.find(j => j._id === jobId);
@@ -361,17 +367,23 @@ const Dashboard = () => {
                         ) : (
                             displayJobs
                                 .filter(job => job.status === activeTab)
-                                .map((job) => (
-                                    <JobCard 
-                                    key={job._id} job={job}
-                                    isAdmin={true} withKebab={true} page={currentPage}
-                                    status={activeTab}
-                                    handleAction={handleAction} 
-                                    onClick={job.status==="deleted" ? undefined :
-                                    ()=> handleViewJob(job._id)}
-                                    />
-                                ))
+                                .map((job, index) => {
+                                    let skipValue = (page - 1) * PAGE_LIMIT;
+                                    let allowedValue = skipValue + PAGE_LIMIT;
+                                    if(index >= skipValue && index < allowedValue)
+                                    return (
+                                        <JobCard 
+                                        key={job._id} job={job}
+                                        isAdmin={true} withKebab={true} page={currentPage}
+                                        status={activeTab}
+                                        handleAction={handleAction} 
+                                        onClick={job.status==="deleted" ? undefined :
+                                        ()=> handleViewJob(job._id)}
+                                        />
+                                    )
+                                })
                         )}
+                        <Pagination currentPage={page} setCurrentPage={setPage} pageLimit={PAGE_LIMIT} totalItems={displayJobs.filter(job => job.status === activeTab)?.length} />
                     </div>
                 </div>
                 {/* <Modal open={open} onClose={() => setOpen(false)} action={modalAction} confirmAction={confirmAction} /> */}
