@@ -10,6 +10,10 @@ import Que from './Que';
 import Create from '../../svg/Buttons/Create';
 import TextEditor from '../utility/TextEditor';
 
+function hasDuplicates(arr) {
+  return new Set(arr).size !== arr.length;
+}
+
 const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions }) => {
   const { control, handleSubmit, watch, setValue, setError, getValues,clearErrors, formState: { errors, isValid } } = useForm({
     defaultValues: {
@@ -256,15 +260,34 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
           )}
         />
       </div>
-
       <Controller
         name="questions"
         control={control}
         defaultValue={initialQuestions || []}
-        render={({ field: { onChange, value } }) => (
+        rules={{
+          validate: (value) => {
+            if(value?.length > 0){
+              let questions = [];
+              for(let question of value){
+                if(hasDuplicates(question.options)){
+                  return 'Please remove duplicate options.'
+                }
+              }
+              for(let question of value){
+                questions.push(question.text)
+              }
+              if(hasDuplicates(questions)){
+                return 'Please remove duplicate questions.'
+              }
+            }
+            return true;
+          },
+        }}
+        render={({ field: { onChange, value } , fieldState: { error }  }) => (
           <Que
             onQuestionsChange={onChange}
             initialQuestions={value}
+            error={error}
           />
         )}
       />
