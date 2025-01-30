@@ -19,6 +19,10 @@ export const StatisticsController = {
           // Get total number of jobs
           const totalJobs = await jobs.countDocuments();
 
+          const totalOpenJobs = await jobs.countDocuments({status : { $in : ["", "open"]}});
+          const totalClosedJobs = await jobs.countDocuments({status : "closed"});
+          const totalDraftedJobs = await jobs.countDocuments({status : "draft"});
+
           // Get total number of applications
           // Using aggregation to count total applications across all candidates
           const totalApplicationsResult = await candidates.aggregate([
@@ -65,6 +69,9 @@ export const StatisticsController = {
               success: true,
               data: {
                   totalJobs,
+                  totalOpenJobs,
+                  totalClosedJobs,
+                  totalDraftedJobs,
                   totalApplications,  // Changed from totalCandidates to totalApplications
                   totalHired
               }
@@ -180,11 +187,16 @@ export const StatisticsController = {
 
 const getJobs = async (req, res) => {
   try {
+      const { page ,status } = req.query;
+      const pageNumber = page ? parseInt(page) : 1;
+      const LIMIT = 3;
+
       const jobsWithStats = await jobs.aggregate([
           // Match jobs created by the current user
           {
               $match: {
-                  createdBy: new mongoose.Types.ObjectId(req.user._id)
+                  createdBy: new mongoose.Types.ObjectId(req.user._id),
+                  status : status
               }
           },
           // Sort by creation date (newest first)
@@ -259,6 +271,12 @@ const getJobs = async (req, res) => {
               $project: {
                   applicationStats: 0
               }
+          },
+          { 
+            $skip : (pageNumber - 1) * LIMIT
+          },
+          {
+            $limit : LIMIT
           }
       ]);
 
@@ -363,6 +381,11 @@ export const incrementApplyClickCount = async (req, res) => {
 
 const searchJobs = async (req, res) => {
   const searchTerm = req.query.jobTitle;
+
+  const { page , status } = req.query;
+  const pageNumber = page ? parseInt(page) : 1;
+  const LIMIT = 3;
+
   if (!searchTerm) {
     return res.status(400).json({ error: "Search term (title) is required" });
   }
@@ -370,10 +393,17 @@ const searchJobs = async (req, res) => {
     // Fetch all jobs from the database
     const jobArray = await jobs.find({
       jobTitle: { $regex: searchTerm, $options: "i" },
-      createdBy: req.user._id
-    });
+      createdBy: req.user._id,
+      status : status
+    }).skip((pageNumber - 1 ) * LIMIT).limit(LIMIT);
+
+    const jobCount = await jobs.countDocuments({
+      jobTitle: { $regex: searchTerm, $options: "i" },
+      createdBy: req.user._id,
+      status : status
+    })
     // Respond with the list of jobs
-    res.status(200).json(jobArray);
+    res.status(200).json({jobArray,jobCount});
   } catch (error) {
     // Handle error if fetching jobs fails
     res.status(500).json({ message: error.message });
@@ -384,6 +414,9 @@ const filterJobs = asyncHandler(async (req, res) => {
   try {
     const { employmentType, jobProfile, experience, budget, closingStatus } = req.body.filters;
     const query = { createdBy: req.user._id };
+    const { page , status } = req.body;
+    const pageNumber = page ? parseInt(page) : 1;
+    const LIMIT = 3;
 
     // Add employment type filter
     if (employmentType && employmentType.length > 0) {
@@ -424,9 +457,14 @@ const filterJobs = asyncHandler(async (req, res) => {
       }
     }
 
-    const filteredJobs = await jobs.find(query);
-    
-    res.status(200).json(filteredJobs);
+    if(status){
+      query.status = status
+    }
+
+    const filteredJobs = await jobs.find(query).skip((pageNumber - 1) * LIMIT).limit(LIMIT);
+    const filteredCount = await jobs.countDocuments(query);
+
+    res.status(200).json({filteredJobs,filteredCount});
   } catch (error) {
     console.error('Error in filterJobs:', error);
     res.status(500).json({ 
