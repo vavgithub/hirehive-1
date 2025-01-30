@@ -164,7 +164,7 @@ const ResumeAndPortfolioDetails = ({candidateData, isEditing, control ,resumeFil
                 </div>
             </div>
           </div>
-          : <div className="flex flex-col gap-4">
+          : <div className="flex flex-col gap-4 w-full">
               <Controller
                 name="resume"
                 control={control}
@@ -180,7 +180,7 @@ const ResumeAndPortfolioDetails = ({candidateData, isEditing, control ,resumeFil
                     <input onChange={handleResume} 
                     accept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                     ref={resumeRef} type="file"
-                    className="opacity-0 w-0 h-0" />
+                    className="hidden w-0 h-0" />
                 </div>
                 )}
               />
@@ -366,6 +366,12 @@ function Profile() {
       setShowOTPModal(true);
     }
   },[stage])
+
+  useEffect(()=>{
+    if(stage !== "EDITING"){
+      setStage("EDITING")
+    }
+  },[isEditing])
 
   const { control, handleSubmit, watch, setValue, setError, getValues,clearErrors, formState: { errors, isValid } } = useForm({
     defaultValues: {
@@ -553,27 +559,27 @@ function Profile() {
                     <p>{candidateData?.jobApplications?.length || 0}</p>
                   </div>
                   </> :
-                  <div className="flex flex-col mt-2 gap-4">
+                  <div className="flex flex-col mt-2 gap-4  w-full">
                       {/* <InputField type="text" label="Role"  rowWise={true} /> */}
                       <Controller
-              name="location"
-              control={control}
-              defaultValue={""}
-              rules={validationRules.location}
-              render={({ field ,fieldState : { error }}) => (
-                <InputField
-                  type="text"
-                  id="location"
-                  label="location"
-                  labelStyles="text-font-gray"
-                  value={field.value ?? ""}
-                  onChange={field.onChange}
-                  error={error}
-                  rowWise={true}
-                  errorMessage={error?.message}
-                />
-              )}
-            />
+                        name="location"
+                        control={control}
+                        defaultValue={""}
+                        rules={validationRules.location}
+                        render={({ field ,fieldState : { error }}) => (
+                          <InputField
+                            type="text"
+                            id="location"
+                            label="Location"
+                            labelStyles="text-font-gray"
+                            value={field.value ?? ""}
+                            onChange={field.onChange}
+                            error={error}
+                            rowWise={true}
+                            errorMessage={error?.message}
+                          />
+                        )}
+                      />
                      
                   </div>
                   }
