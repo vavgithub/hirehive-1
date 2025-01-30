@@ -55,7 +55,13 @@ const fileFilter = (req, file, cb) => {
     .includes(file.mimetype)) {
     cb(null, true);
   } else {
-    cb(new Error(`Invalid file type for ${file.fieldname}`), false);
+    let fileTypes = "";
+    if(file.fieldname === "profilePicture"){
+      fileTypes = "JPG, PNG or JPEG files"
+    }else if(file.fieldname === "resume"){
+      fileTypes = "PDF or DOCX files"
+    }
+    cb(new Error(`Unsupported file type. ${fileTypes ? "Try " + fileTypes : ""}`), false);
   }
 };
 
@@ -87,9 +93,15 @@ export const uploadProfilePicture = multer({
 export const handleUploadError = (err, req, res, next) => {
   console.error('Upload error:', err);
   if (err instanceof multer.MulterError) {
+    if(err?.code === "LIMIT_FILE_SIZE"){
+      return res.status(400).json({
+        success: false,
+        message: `File size too large. Please upload a file smaller than ${err?.field === "resume" ? '10MB' : err?.field === "video" ? "50MB" : "5MB"}`
+      });
+    }
     return res.status(400).json({
       success: false,
-      message: `Upload error: ${err.message}`
+      message: `${err.message}`
     });
   } else if (err) {
     return res.status(500).json({

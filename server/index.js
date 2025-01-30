@@ -32,6 +32,7 @@ import startScheduledJobs from "./utils/scheduledJobs.js";
 import { initializeUploadDir } from "./config/paths.js";
 import corsConfig from "./config/cors.config.js";
 import cookieSession from "cookie-session";
+import { handleUploadError } from "./middlewares/uploadMiddleware.js";
 
 const app = express();
 await initializeUploadDir(envConfig.UPLOAD_DIR);
@@ -77,6 +78,8 @@ app.use("/api/v1/admin/candidate", adminCandidateRoutes);
 app.use("/api/v1/dr", drRoutes);
 
 const PORT = envConfig.PORT;
+
+app.use(handleUploadError)
 
 connectDB()
   .then(() => {
