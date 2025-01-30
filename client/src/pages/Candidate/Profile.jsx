@@ -173,8 +173,11 @@ const ResumeAndPortfolioDetails = ({candidateData, isEditing, control ,resumeFil
                     <p className="w-[28%] text-font-gray ">Resume</p>
                     <div className="w-[71%] bg-background-40 h-11 rounded-xl flex justify-between">
                     <p className="px-4 py-2 whitespace-nowrap overflow-hidden text-ellipsis">{fileName ? fileName : candidateData?.firstName + "'s Resume"}</p>
-                    <span className="">
-                    <Button icon={UploadIcon} variant="secondary" type="button" onClick={()=>resumeRef.current.click()}>{resumeFile ? "Edit" : "Choose"}</Button>   
+                    <span className="hidden md:block">
+                      <Button icon={UploadIcon} variant="secondary" type="button" onClick={()=>resumeRef.current.click()}>{resumeFile ? "Edit" : "Choose"}</Button>   
+                    </span>
+                    <span className="block md:hidden">
+                      <Button icon={UploadIcon} variant="iconSec"  type="button" onClick={()=>resumeRef.current.click()}/>   
                     </span>
                   </div>
                     <input onChange={handleResume} 
