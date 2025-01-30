@@ -268,7 +268,7 @@ const getCommonColumns = (handleDocumentClick) => [
           >
             {canReject(params.row) ? <RejectActive /> : <Reject />}
           </button>
-          <button onClick={(e) => handleRatingClick(e, params.row)}>
+          <button className={params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Rejected" ? "text-font-gray" : "text-white"} disabled={params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Rejected"} onClick={(e) => handleRatingClick(e, params.row)}>
             {getRatingIcon(params.row.rating)}
           </button>
         </div>

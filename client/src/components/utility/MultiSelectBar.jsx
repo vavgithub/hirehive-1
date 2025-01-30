@@ -120,7 +120,6 @@ const multiSelectConfig = [
             "Not Submitted",
             "Offer Sent",
             "Pending",
-            "Rejected",
             "Reviewed",
             "Sent",
             "Under Review"
@@ -387,7 +386,7 @@ function MultiSelectBar({selectedData,jobId,clearSelection}) {
                                 multiSelectConfigState.map((config,i)=>{
                                     return (
                                         i >= trimCount &&
-                                        <div onClick={!config?.disabled ? ()=>setAction(config) : null} className={'flex items-center justify-start gap-4 '}>
+                                        <div onClick={!config?.disabled ? ()=>setAction(config) : null} className={'flex items-center justify-start gap-4 ' + (config?.disabled ? "text-font-gray" : `cursor-pointer  ${config.extraStyles}`)}>
                                             {config?.icon && config.icon()}
                                             <p className={'typography-body whitespace-nowrap' + config.extraStyles}>{config.label}</p>
                                         </div>
