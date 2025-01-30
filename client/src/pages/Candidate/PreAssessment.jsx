@@ -11,9 +11,10 @@ import ProfileIcon from '../../svg/ProfileIcon';
 import CameraDisabled from '../../svg/Buttons/CameraDisabled';
 import MicDisabled from '../../svg/Buttons/MicDisabled';
 import Modal from '../../components/Modal';
+import StyledCard from '../../components/ui/StyledCard';
 
 const AccordionItem = ({ title, content, isOpen, toggleOpen , preIcon}) => (
-    <div className="mb-4 p-6  bg-background-80 rounded-xl overflow-hidden">
+    <StyledCard backgroundColor={"bg-background-80"} extraStyles="mb-4 overflow-hidden">
         <div className='flex items-center gap-3'>
             {preIcon}
             <button
@@ -25,7 +26,7 @@ const AccordionItem = ({ title, content, isOpen, toggleOpen , preIcon}) => (
             </button>
         </div>
         {isOpen && <div className="p-4 bg-background-80 text-font-gray typography-body">{content}</div>}
-    </div>
+    </StyledCard>
 );
 
 const PreAssessment = () => {
@@ -161,7 +162,7 @@ const PreAssessment = () => {
 
                         {/* Right Column */}
                         <div className="w-1/2">
-                            <div className="bg-background-80 flex flex-col rounded-xl pt-4 p-6">
+                            <StyledCard backgroundColor={"bg-background-80"} extraStyles=" flex flex-col pt-4">
                                 <h3 className="typography-h3 mb-6">Check your webcam</h3>
                                 <div className="relative aspect-video bg-black rounded-xl bg-background-80 flex overflow-hidden min-w-full">
                                     {isCameraEnabled ? (
@@ -197,7 +198,7 @@ const PreAssessment = () => {
                                     </button>
                                 </div>
                                 </div>
-                            </div>
+                            </StyledCard>
                                 <p className='typography-large-p mt-4 p-4 rounded-xl bg-background-80'>
                                     <span className='bg-blue-200 h-2 w-2 rounded-full inline-block mr-4' ></span>
                                 For the best experience, use the latest version of <strong>Google Chrome</strong> for recording.

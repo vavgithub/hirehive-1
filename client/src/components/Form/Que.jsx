@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import MultipleChoiceQuestion from './MultipleChoiceQuestion'
 import TextQuestion from './TextQuestion'
+import StyledCard from '../ui/StyledCard'
+import { Button } from '../ui/Button'
 
-const Que = ({ onQuestionsChange, initialQuestions = [] }) => {
+const Que = ({ onQuestionsChange, initialQuestions = [] , error}) => {
     const [open, setOpen] = useState(false)
     const [questions, setQuestions] = useState(initialQuestions)
     const [isLastQuestionValid, setIsLastQuestionValid] = useState(true)
@@ -61,7 +63,7 @@ const Que = ({ onQuestionsChange, initialQuestions = [] }) => {
         <div className="bg-background-80  ">
             <div className='pt-6 flex flex-col justify-between h-full '>
                 <span className='typography-body mb-2'>Additional Questions </span>
-                <div className='bg-background-30 rounded-xl h-full flex flex-col items-center justify-start border border-dashed border-gray-500'>
+                <div className={'bg-background-30 rounded-xl h-full  flex flex-col items-center justify-start border border-dashed ' + (error ? "border-red-100" : "border-gray-500")}>
                     {questions.length === 0 ? (
                         <>
                             <p className='typography-body text-font-gray p-8'>
@@ -94,22 +96,26 @@ const Que = ({ onQuestionsChange, initialQuestions = [] }) => {
                         ))
                     )}
 
-                    <div className='w-[240px] relative mb-4'>
-                        <div 
+                    <div className={'relative mb-4 px-4 font-outfit ' + (questions.length > 0 ? "self-start" : "")}>
+                        <Button 
+                        variant="secondary"
+                        disabled={!isLastQuestionValid && questions.length > 0}
+                        type="button"
                             className={`text-font-primary cursor-pointer typography-large ${!isLastQuestionValid && questions.length > 0 ? 'opacity-50 cursor-not-allowed' : ''}`} 
                             onClick={isLastQuestionValid ? toggleDropdown : undefined}
                         >
-                            + Add question
-                        </div>
-    
+                            + Add 
+                        </Button>
+
                         {open && (
-                            <div className='bg-background-70 mt-2 rounded-xl absolute bottom-6 w-full'>
-                                <ul className='p-2 typography-body'>
-                                    <li className='p-2 cursor-pointer hover:bg-background-60' onClick={() => addQuestion('multiple')}>Multiple Choice</li>
-                                    <li className='p-2 cursor-pointer hover:bg-background-60' onClick={() => addQuestion('text')}>Text</li>
+                            <StyledCard padding={1} backgroundColor={"bg-background-70"} extraStyles=' mt-2 absolute bottom-6 min-w-[200px]'>
+                                <ul className='flex flex-col gap-2 typography-body '>
+                                    <li className=' cursor-pointer hover:bg-background-80 rounded-xl px-4 py-2' onClick={() => addQuestion('multiple')}>Multiple Choice</li>
+                                    <li className=' cursor-pointer hover:bg-background-80 rounded-xl px-4 py-2' onClick={() => addQuestion('text')}>Text</li>
                                 </ul>
-                            </div>
+                            </StyledCard>
                         )}
+                        {error && <p className='text-red-500 typography-small-p mt-1'>{error?.message}</p>}
                     </div>
                 </div>
             </div>
