@@ -383,7 +383,7 @@ const Dashboard = () => {
                                     )
                                 })
                         )}
-                        <Pagination currentPage={page} setCurrentPage={setPage} pageLimit={PAGE_LIMIT} totalItems={displayJobs.filter(job => job.status === activeTab)?.length} />
+                        {displayJobs.filter(job => job.status === activeTab)?.length !== 0 && <Pagination currentPage={page} setCurrentPage={setPage} pageLimit={PAGE_LIMIT} totalItems={displayJobs.filter(job => job.status === activeTab)?.length} />}
                     </div>
                 </div>
                 {/* <Modal open={open} onClose={() => setOpen(false)} action={modalAction} confirmAction={confirmAction} /> */}
