@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card, CardContent, Box } from '@mui/material';
+import {  CardContent, Box } from '@mui/material';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
 import axios from '../../api/axios';
 import StatusBadge from '../ui/StatusBadge';
@@ -19,6 +19,7 @@ import { ensureAbsoluteUrl } from '../../utility/ensureAbsoluteUrl';
 import ClosedBadge from '../../svg/ClosedBadge';
 import Loader from '../ui/Loader';
 import PortfolioReview from '../Reviews/PortfolioReview';
+import StyledCard from '../ui/StyledCard';
 
 
 
@@ -107,7 +108,7 @@ const Portfolio = ({ candidateId, jobId ,isClosed}) => {
 
                         <Label icon={WarningIcon} text="Candidate's portfolio has not yet been assigned to a reviewer." />
                         <div className='w-2/5'>
-                            <h4 className='typography-h4  my-4'>Select Reviewer</h4>
+                            <h4 className='typography-body my-4 font-outfit'>Select Reviewer</h4>
                             <AssigneeSelector
                                 mode="default"
                                 value={stageData?.assignedTo}
@@ -250,19 +251,13 @@ const Portfolio = ({ candidateId, jobId ,isClosed}) => {
 
     return (
         <>
-            <Card
-                sx={{
-                    backgroundColor: "rgba(22, 23, 24, 1)",
-                    borderRadius: "12px",
-                    color: "white",
-                    fontFamily: 'Outfit, sans-serif',
-                    marginBottom: "12px",
-                    position : "relative",
-                    minHeight : "12rem"
-                }}
-            >
+        <StyledCard
+            padding={3}
+            backgroundColor={"bg-background-30"}
+            extraStyles={"relative min-h-[10rem]"}
+        >
                 <CardContent sx={{
-                    padding:"24px"
+                    padding:"0px"
                 }}>
                     <Box display="flex" justifyContent="space-between" alignItems="start" mb={1}>
                         <div className='flex'>
@@ -301,7 +296,7 @@ const Portfolio = ({ candidateId, jobId ,isClosed}) => {
                     </Box>
                     {renderContent()}
                 </CardContent>
-            </Card>
+            </StyledCard>
             
         </>
     );

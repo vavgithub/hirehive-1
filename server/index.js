@@ -31,6 +31,8 @@ import hrRoutes from "./routes/admin/hr.router.js"
 import startScheduledJobs from "./utils/scheduledJobs.js";
 import { initializeUploadDir } from "./config/paths.js";
 import corsConfig from "./config/cors.config.js";
+import cookieSession from "cookie-session";
+import { handleUploadError } from "./middlewares/uploadMiddleware.js";
 
 const app = express();
 await initializeUploadDir(envConfig.UPLOAD_DIR);
@@ -38,7 +40,13 @@ await initializeUploadDir(envConfig.UPLOAD_DIR);
 // Apply CORS configuration
 app.use(cors(corsConfig(environment)));
 
-
+app.use(
+  cookieSession({
+    name: 'hhv-session', // Name of the cookie
+    keys: ['ygruwgy764t3667gwerwgyfgw367268'], // Encryption keys
+    maxAge: 24 * 60 * 60 * 1000, // Cookie expiration time (1 day in milliseconds)
+  })
+);
 
 // Middleware setup
 app.use(express.json({ limit: "30mb", extended: true }));
@@ -70,6 +78,8 @@ app.use("/api/v1/admin/candidate", adminCandidateRoutes);
 app.use("/api/v1/dr", drRoutes);
 
 const PORT = envConfig.PORT;
+
+app.use(handleUploadError)
 
 connectDB()
   .then(() => {

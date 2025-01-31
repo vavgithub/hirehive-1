@@ -6,6 +6,7 @@ import { InternIcon, InternIconActive } from '../../svg/Checkboxes/InternIcons';
 import { HiredIcon, HiredIconActive } from '../../svg/Checkboxes/HiredIcons';
 import { NotHired, NotHiredActive } from '../../svg/Checkboxes/NotHired';
 import BudgetFilter from './BudgetFilter';
+import StyledCard from '../ui/StyledCard';
 
 
 const CustomCheckbox = ({ label, icon: Icon, isChecked, onChange, count }) => (
@@ -151,9 +152,7 @@ const Filters = ({ filters = {}, handleCheckboxChange, activeTab, handleExperien
 
 
     return (
-        <div className='md:w-[304px]'>
-
-            <div className="bg-background-90 p-4 rounded-xl relative">
+            <StyledCard padding={2} extraStyles={" relative md:w-[304px]"}>
                 <h3 className='text-gray-200 font-bricolage font-semibold mb-2 text-xl tracking-wide' >Filter</h3>
                 <div className='flex flex-row-reverse absolute top-5 right-5'>
                     <button
@@ -207,8 +206,7 @@ const Filters = ({ filters = {}, handleCheckboxChange, activeTab, handleExperien
                     />
                 </div>
 
-            </div>
-        </div>
+            </StyledCard>
     );
 };
 

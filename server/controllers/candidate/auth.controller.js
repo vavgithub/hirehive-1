@@ -15,7 +15,7 @@ import { uploadToCloudinary } from "../../utils/cloudinary.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
 import { generateOTP, otpStore } from "../../utils/otp.js";
 import { sendEmail } from "../../utils/sentEmail.js";
-import { getPasswordResetContent, getResetSuccessfulContent, getSignupEmailContent } from "../../utils/emailTemplates.js";
+import { getEditProfileContent, getPasswordResetContent, getResetSuccessfulContent, getSignupEmailContent } from "../../utils/emailTemplates.js";
 
 // Secret key for JWT (store this in environment variables)
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -71,6 +71,24 @@ export const uploadResumeController = async (req, res) => {
   }
 };
 
+export const uploadProfilePictureController = async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ message: "No file uploaded" });
+  }
+
+  try {
+    const cloudinaryUrl = await uploadToCloudinary(
+      req.file.path, // Pass the complete path instead of just filename
+      "candidate-profile-pictures"
+    );
+
+    res.status(200).json({ profilePictureUrl: cloudinaryUrl });
+  } catch (error) {
+    console.error("Error in profile picture upload:", error);
+    res.status(500).json({ message: error.message || "Error uploading profile picture" });
+  }
+};
+
 
 export const registerCandidate = async (req, res) => {
   try {
@@ -89,6 +107,7 @@ export const registerCandidate = async (req, res) => {
       skills,
       questionResponses,
       resumeUrl,
+      profilePictureUrl, // Add this new field
     } = req.body;
 
     const job = await jobs.findById(jobId);
@@ -150,6 +169,7 @@ export const registerCandidate = async (req, res) => {
         phone,
         ...professionalInfo,
         otp: hashedOtp,
+        profilePictureUrl, // Add the profile picture URL
         otpExpires: Date.now() + 10 * 60 * 1000,
         jobApplications: [
           {          
@@ -174,6 +194,10 @@ export const registerCandidate = async (req, res) => {
       //if email exist with different phone, new phone is updated
       if(existingEmail && existingEmail.phone !== phone ){
         existingEmail.phone = phone
+      }
+
+      if(profilePictureUrl) {
+        existingEmail.profilePictureUrl = profilePictureUrl; // Update profile picture if provided
       }
 
       // Check if the candidate has already applied for the same job
@@ -473,6 +497,7 @@ export const getCandidateDashboard = async (req, res) => {
         $project: {
           firstName: 1,
           lastName: 1,
+          profilePictureUrl:1,
           email: 1,
           phone: 1,
           expectedCTC: 1,
@@ -482,12 +507,15 @@ export const getCandidateDashboard = async (req, res) => {
           currentCTC: 1,
           experience: 1,
           skills: 1,
+          resumeUrl : 1,
+          location:1,
           hasGivenAssessment: 1,
           "jobApplications.applicationDate": 1,
           "jobApplications.currentStage": 1,
           "jobApplications.stageStatuses": 1,
           "jobApplications.jobApplied": 1,
           "jobApplications.jobId": 1,
+          "jobApplications.resumeUrl": 1,
           "jobDetails": {
             _id: 1,
             jobTitle: 1,
@@ -511,14 +539,19 @@ export const getCandidateDashboard = async (req, res) => {
         applicationDate: app.applicationDate,
         currentStage: app.currentStage,
         stageStatuses: Array.from(app.stageStatuses),
+        resumeUrl : app.resumeUrl
       })
     });
+
+    const latestResume = formattedApplications?.length > 0 ? 
+      formattedApplications.sort((a,b)=>b.applicationDate - a.applicationDate )[0].resumeUrl : "";
 
     res.status(200).json({
       candidate: {
         _id: candidate[0]._id,
         firstName: candidate[0].firstName,
         lastName: candidate[0].lastName,
+        profilePictureUrl : candidate[0].profilePictureUrl,
         email: candidate[0].email,
         phone: candidate[0].phone,
         expectedCTC: candidate[0].expectedCTC,
@@ -529,8 +562,10 @@ export const getCandidateDashboard = async (req, res) => {
         expectedCTC: candidate[0].expectedCTC,
         experience: candidate[0].experience,
         skills: candidate[0].skills,
+        resumeUrl : candidate[0].resumeUrl || latestResume,
         hasGivenAssessment:candidate[0].hasGivenAssessment,
         jobApplications: formattedApplications, // Include jobApplications in the candidate object
+        location: candidate[0].location,
         // Include other relevant candidate fields
       },
     });
@@ -539,6 +574,184 @@ export const getCandidateDashboard = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+
+export const editCandidateProfile = async (req, res) => {
+  try {
+      const { 
+        firstName, 
+        lastName, 
+        email ,
+        phone ,
+        resume,
+        portfolio ,
+        website ,
+        experience ,
+        noticePeriod ,
+        currentCTC ,
+        expectedCTC ,
+        profilePictureUrl,
+        location,
+      } = req.body;
+
+      console.log(req.body);
+      
+      const OTP_STAGE = "OTP";
+      const DONE_STAGE = "DONE";
+
+      // Array of fields to validate
+      const requiredFields = [
+        { field: 'First Name', value: firstName },
+        { field: 'Last Name', value: lastName },
+        { field: 'Email', value: email },
+        { field: 'Phone', value: phone },
+        { field: 'Resume', value: resume },
+        { field: 'Portfolio', value: portfolio },
+        { field: 'Experience', value: experience },
+        { field: 'Notice Period', value: noticePeriod },
+        { field: 'Current CTC', value: currentCTC },
+        { field: 'Expected CTC', value: expectedCTC },
+        { field: 'Location', value: location},
+
+      ];
+
+      // Validate each field for empty or whitespace-only values
+      for (const { field, value } of requiredFields) {
+        if (!value.toString() || value.toString().trim() === '') {
+          throw new Error( `${field} cannot be empty.`);
+        }
+      }
+
+      const candidateData = await Candidate.findById({_id:req.candidate?._id});
+
+      if(candidateData.phone !== phone){
+        //Check mobile number exists
+        const isMobileExist = await Candidate.find({phone : phone});
+        if(isMobileExist?.length > 1 
+          || (isMobileExist?.length === 1 && isMobileExist[0]?._id?.toString() !== req.candidate?._id)){
+            throw new Error("Mobile Number is already registered");
+        }
+      }
+
+      if(candidateData.email !== email){        
+        //Check email exists
+        const isEmailExist = await Candidate.find({email : email});
+        if(isEmailExist?.length > 1 
+          || (isEmailExist?.length === 1 && isEmailExist[0]?._id?.toString() !== req.candidate?._id)){
+            throw new Error("Email ID is already registered");
+        }
+        req.session.userEditedData = req.body;
+
+        // Generate OTP
+        const otp = generateOTP();
+        
+        // Store OTP with expiry (15 minutes)
+        otpStore.set(email, {
+          otp,
+          expiry: Date.now() + 15 * 60 * 1000
+        });
+
+        // Email content
+          const emailContent = getEditProfileContent(candidateData.firstName + " " + candidateData.lastName,otp)
+
+          // Send email
+          await sendEmail(
+            email,
+            'Email Reset Request - HireHive',
+            emailContent
+          );
+
+        return res.status(200).json({success:true,stage:OTP_STAGE,email})
+      }else{
+        candidateData.firstName = firstName;
+        candidateData.lastName = lastName;
+        candidateData.phone = phone;
+        candidateData.resumeUrl = resume;
+        candidateData.portfolio = portfolio; 
+        candidateData.website = website; 
+        candidateData.experience = experience; 
+        candidateData.noticePeriod = noticePeriod; 
+        candidateData.currentCTC = currentCTC; 
+        candidateData.expectedCTC = expectedCTC;
+        candidateData.location = location; 
+        if(profilePictureUrl){
+          candidateData.profilePictureUrl = profilePictureUrl;
+        }
+        await candidateData.save()
+        return res.status(200).json({success:true,stage:DONE_STAGE})
+      }
+
+  } catch (error) {
+    console.error("Error editing candidate profile:", error);
+    res.status(500).json({ message: error?.message || "Server error" });
+  }
+};
+
+
+export const verifyOTPEmail = asyncHandler(async (req, res) => {
+  const { email, otp } = req.body;
+  
+  const storedOTPData = otpStore.get(email);
+  
+  if (!storedOTPData) {
+    res.status(400);
+    throw new Error('OTP expired or invalid');
+  }
+
+  if (Date.now() > storedOTPData.expiry) {
+    otpStore.delete(email);
+    res.status(400);
+    throw new Error('OTP expired');
+  }
+
+  if (storedOTPData.otp !== otp) {
+    res.status(400);
+    throw new Error('Invalid OTP');
+  }
+
+
+  if(req.session?.userEditedData){
+    
+    const { 
+      firstName, 
+      lastName, 
+      phone ,
+      resume,
+      portfolio ,
+      website ,
+      experience ,
+      noticePeriod ,
+      currentCTC ,
+      expectedCTC ,
+      profilePictureUrl
+    } = req.session?.userEditedData;
+
+    const candidateData = await Candidate.findById({_id:req.candidate?._id});
+    candidateData.firstName = firstName;
+    candidateData.lastName = lastName;
+    candidateData.email = email;
+    candidateData.phone = phone;
+    candidateData.resumeUrl = resume;
+    candidateData.portfolio = portfolio; 
+    candidateData.website = website; 
+    candidateData.experience = experience; 
+    candidateData.noticePeriod = noticePeriod; 
+    candidateData.currentCTC = currentCTC; 
+    candidateData.expectedCTC = expectedCTC; 
+    if(profilePictureUrl){
+      candidateData.profilePictureUrl = profilePictureUrl;
+    }
+    await candidateData.save()
+
+    otpStore.delete(email);
+    delete req.session.userEditedData;
+  }else{
+    res.status(400);
+    throw new Error("Request Session Expired", "Try again after sometime")
+  }
+
+  res.status(200).json({ success: true, stage: "DONE" });
+});
 
 // auth.controller.js
 
@@ -672,8 +885,7 @@ export const verifyOTPForgot = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error('Invalid OTP');
   }
-
-  res.json({ message: 'OTP verified successfully' });
+  res.status(200).json({ message: 'OTP verified successfully' });
 });
 
 // Reset Password

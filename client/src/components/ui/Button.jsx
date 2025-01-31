@@ -48,7 +48,7 @@ const Button = React.forwardRef(({
   };
 
   const renderContent = () => {
-    if (variant === "icon") {
+    if (variant === "icon" || variant === "iconSec") {
       return renderIcon();
     }
 

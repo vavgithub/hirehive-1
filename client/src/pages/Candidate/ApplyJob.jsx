@@ -1,4 +1,4 @@
-// ApplyJob.jsx
+// ApplyJob.jsx this is the page
 import React, { useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useDropzone } from 'react-dropzone';
@@ -6,12 +6,10 @@ import { useForm, Controller } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import axios from '../../api/axios';
-import { InputField } from '../../components/Form/FormFields';
 import SkillsInput from '../../components/utility/SkillsInput';
 import { Button } from '../../components/ui/Button';
 import { dummySkills } from '../../components/Form/dropdownOptions';
 import { showErrorToast, showSuccessToast } from '../../components/ui/Toast';
-import Loader from '../../components/ui/Loader';
 import Logo from '../../svg/Logo/lightLogo.svg';
 import { fetchCandidateAuthData } from '../../redux/candidateAuthSlice';
 import useCandidateAuth from '../../hooks/useCandidateAuth';
@@ -20,10 +18,52 @@ import { PersonalDetailsSection, ProfessionalDetailsSection, ResumePortfolioSect
 import { validationRules } from '../../utility/validationRules';
 import Header from '../../components/utility/Header';
 import LoaderModal from '../../components/ui/LoaderModal';
+import AdditionalQuestions from '../../components/AdditionalQuestions';
+import OtpComponent from '../../components/OtpComponent';
+import PasswordComponent from '../../components/PasswordComponent';
 
 const fetchJobDetails = async (id) => {
   const response = await axios.get(`/jobs/getJobById/${id}`);
   return response.data;
+};
+
+export const uploadProfilePicture = async (file) => {
+  if (!file) return null;
+  const formData = new FormData();
+  formData.append('profilePicture', file);
+
+  try {
+    const response = await axios.post('/auth/candidate/upload-profile-picture', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return response.data.profilePictureUrl;
+  } catch (error) {
+    console.error('Error uploading profile picture:', error);
+    throw error;
+  }
+};
+
+
+export const uploadResume = async (file,setUploadProgress) => {
+  if (!file) return null;
+  const formData = new FormData();
+  formData.append('resume', file);
+
+  try {
+    const response = await axios.post('/auth/candidate/upload-resume', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+      onUploadProgress: (progressEvent) => {
+        const percentCompleted = Math.round(
+          (progressEvent.loaded * 100) / progressEvent.total
+        );
+        setUploadProgress(percentCompleted);
+      },
+    });
+    return response.data.resumeUrl;
+  } catch (error) {
+    console.error('Error uploading resume:', error);
+    throw error;
+  }
 };
 
 const ApplyJob = () => {
@@ -34,16 +74,17 @@ const ApplyJob = () => {
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [passwordError, setPasswordError] = useState('');
-  const [cPasswordError, setCpasswordError] = useState('');
   const [otpError, setOtpError] = useState('');
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [resumeFile, setResumeFile] = useState(null);
   const [uploadProgress, setUploadProgress] = useState(0);
 
+  const [profilePictureFile, setProfilePictureFile] = useState(null);
+  const [profilePicturePreview, setProfilePicturePreview] = useState(null);
+
   const navigate = useNavigate();
   const { id: jobId } = useParams();
-  const hiddenFileInput = useRef(null);
 
   let initial = {
     firstName: "",
@@ -114,27 +155,24 @@ const ApplyJob = () => {
     queryFn: () => fetchJobDetails(jobId),
   });
 
-  const uploadResume = async (file) => {
-    if (!file) return null;
-    const formData = new FormData();
-    formData.append('resume', file);
-
-    try {
-      const response = await axios.post('/auth/candidate/upload-resume', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-        onUploadProgress: (progressEvent) => {
-          const percentCompleted = Math.round(
-            (progressEvent.loaded * 100) / progressEvent.total
-          );
-          setUploadProgress(percentCompleted);
-        },
-      });
-      return response.data.resumeUrl;
-    } catch (error) {
-      console.error('Error uploading resume:', error);
-      throw error;
+  const handleProfilePictureSelect = (file) => {
+    setProfilePictureFile(file);
+    if (file) {
+      const previewUrl = URL.createObjectURL(file);
+      setProfilePicturePreview(previewUrl);
     }
   };
+
+  // Add cleanup useEffect
+useEffect(() => {
+  return () => {
+    // Cleanup preview URL when component unmounts
+    if (profilePicturePreview) {
+      URL.revokeObjectURL(profilePicturePreview);
+    }
+  };
+}, [profilePicturePreview]);
+ 
 
   // Register all fields with their validation rules
   useEffect(() => {
@@ -153,7 +191,12 @@ const ApplyJob = () => {
           answer: data[key],
         }));
 
-      const resumeUrl = await uploadResume(resumeFile);
+        let profilePictureUrl;
+        if (profilePictureFile) {
+          profilePictureUrl = await uploadProfilePicture(profilePictureFile);
+        }  
+
+      const resumeUrl = await uploadResume(resumeFile,setUploadProgress);
 
       if (isAuthenticated) {
         const applicationData = {
@@ -166,7 +209,8 @@ const ApplyJob = () => {
           experience: data.experience,
           skills: data.skills,
           questionResponses,
-          resumeUrl
+          resumeUrl,
+          profilePictureUrl // Add this to the payload
         };
 
         await axios.post('/auth/candidate/apply-job', applicationData);
@@ -188,7 +232,8 @@ const ApplyJob = () => {
           experience: data.experience,
           skills: data.skills,
           questionResponses,
-          resumeUrl
+          resumeUrl,
+          profilePictureUrl // Add this to the payload
         };
 
         await axios.post('/auth/candidate/register', registrationData);
@@ -232,7 +277,6 @@ const ApplyJob = () => {
     e.preventDefault();
     const password = getValues('password');
     const confirmPassword = getValues('confirmPassword');
-    console.log(password,confirmPassword);
     
     if(!password?.trim() && !confirmPassword?.trim()){
       setPasswordError("Please enter your new password");
@@ -289,19 +333,6 @@ const ApplyJob = () => {
     }
   };
 
-
-  // Handler for OTP input change
-  const handleOtpChange = (element, index) => {
-    if (isNaN(element.value)) return false;
-
-    setOtp([...otp.map((d, idx) => (idx === index ? element.value : d))]);
-
-    // Focus next input
-    if (element.value && index < 5) {
-      document.getElementById(`otp-input-${index + 1}`).focus();
-    }
-  };
-
   return (
 
 
@@ -322,7 +353,11 @@ const ApplyJob = () => {
             {/* Personal Details */}
             {!isAuthenticated && (
               <div>
-                <PersonalDetailsSection control={control} />
+                 <PersonalDetailsSection 
+                  control={control}
+                  onProfilePictureSelect={handleProfilePictureSelect}
+                  profilePicturePreview={profilePicturePreview}
+                />
               </div>
             )}
 
@@ -429,80 +464,7 @@ const ApplyJob = () => {
             {/* Additional Questions */}
             <div className="mt-12">
               {jobDetails?.questions.length != 0 && (
-                <>
-                  <h2 className="typography-h3 mb-4">Additional Questions</h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {jobDetails?.questions.map((question, index) => (
-                      <div key={question?._id} className="bg-background-30 rounded-xl p-4">
-                        <Controller
-                          key={question._id}
-                          name={`question-${question._id}`}
-                          control={control}
-                          defaultValue=""
-                          rules={{ required: question.required }}
-                          render={({ field }) => (
-                            <div>
-                              <label className="block mb-4 typography-body">
-                                Q{index + 1}. {question.text}
-                                {question.required && (
-                                  <span className="text-red-500 ml-1">*</span>
-                                )}
-                              </label>
-                              <div className="grid grid-cols-2 gap-4" style={{gridAutoRows:"1fr"}}>
-                                {question.type === "multiple" ? (
-                                  question.options.map((option, optionIndex) => {
-                                    const inputId = `question-${question._id}-option-${optionIndex}`;
-
-                                    return (
-                                      <div
-                                        key={optionIndex}
-                                        className="px-4 py-2 min-h-11 rounded-xl flex bg-background-60 items-center cursor-pointer hover:bg-background-70"
-                                        onClick={() => {
-                                          field.onChange(option);
-                                          document.getElementById(inputId).focus();
-                                        }}
-                                      >
-                                        <input
-                                          type="radio"
-                                          id={inputId}
-                                          value={option}
-                                          checked={field.value === option}
-                                          onChange={() => field.onChange(option)}
-                                          className="mr-2 appearance-none border-2 rounded-full form-radio h-5 aspect-square max-h-5 w-5 max-w-5 checked:ring-offset-[5px] checked:ring-offset-black-100 checked:bg-teal-100 checked:ml-[4px] checked:mr-[12px] checked:ring-[2px] checked:w-3 checked:h-3 checked:border-0 checked:ring-teal-100"
-                                        />
-                                        <label className='typography-body' htmlFor={inputId}>{option}</label>
-                                      </div>
-                                    );
-                                  })
-                                ) : (
-                                  <div
-                                    className="w-full cursor-pointer"
-                                    onClick={() => {
-                                      const inputId = `question-${question._id}-input`;
-                                      document.getElementById(inputId).focus();
-                                    }}
-                                  >
-                                    <input
-                                      id={`question-${question._id}-input`}
-                                      type={question.answerType === "number" ? "number" : "text"}
-                                      {...field}
-                                      className="w-full p-2 bg-background-40 rounded outline-none focus:outline-teal-300 "
-                                      placeholder="Enter your answer"
-                                    />
-                                  </div>
-                                )}
-                             
-                              </div>
-                              {errors[`question-${question._id}`] && (
-                                  <span className="text-red-500 typography-small-p">This field is required</span>
-                                )}
-                            </div>
-                          )}
-                        />
-                      </div>
-                    ))}
-                  </div>
-                </>
+                <AdditionalQuestions jobDetails={jobDetails} control={control} errors={errors} />
               )}
             </div>
 
@@ -532,122 +494,12 @@ const ApplyJob = () => {
 
       {/* OTP Verification Step */}
       {currentStep === 2 && (
-        <div className="flex items-center h-screen w-screen justify-center  bg-cover bg-verification ">
-          <div className="w-full mx-8 md:mx-0 max-w-lg space-y-8 bg-background-90 rounded-lg shadow-xl  bg-opacity-15 ">
-            <form onSubmit={handleOtpSubmit} className="px-8 sm:px-16 text-center md:mb-20">
-              <h1 className="typography-h2 sm:typography-h1 mt-8 md:mt-20 mb-4 ">OTP Verification</h1>
-              <p className="text-font-gray text-center typography-large-p">
-                To ensure security, please enter the OTP (One-Time Password) to
-                verify your account. A code has been sent to
-              </p>
-              <h2 className='typography-h3 sm:typograhpy-h2 mt-3 md:mt-6 text-font-gray mx-auto w-[240px] min-[420px]:w-full whitespace-nowrap text-ellipsis overflow-hidden'>
-                {email}
-              </h2>
-              <div className="flex justify-center  space-x-2 mt-4 ">
-                {otp.map((data, index) => (
-                  <input
-                    key={index}
-                    id={`otp-input-${index}`}
-                    type="number"
-                    maxLength="1"
-                    className="no-spinner otp-input"
-                    value={data}
-                    onChange={(e) => handleOtpChange(e.target, index)}
-                  />
-                ))}
-              </div>
-              {otpError && <span className="text-red-500">{otpError}</span>}
-
-              <div className="flex justify-center mt-6 w-full gap-4  mb-6 ">
-                <Button
-                  type="submit"
-                  variant="primary"
-                  disabled={isSubmitting}
-                  className="w-full "
-                >
-                  {isSubmitting ? 'Submitting...' : 'Verify'}
-                </Button>
-              </div>
-            </form>
-          </div>
-        </div>
+        <OtpComponent email={email} handleOtpSubmit={handleOtpSubmit} isSubmitting={isSubmitting} otp={otp} otpError={otpError} setOtp={setOtp} />
       )}
 
       {/* Password Creation Step */}
       {currentStep === 3 && (
-        <div className="flex items-center w-screen justify-center min-h-screen bg-cover bg-verification">
-          <div className="w-full mx-8 md:mx-0 max-w-lg space-y-8 bg-background-90 rounded-lg shadow-xl bg-opacity-15">
-            <form onSubmit={handlePasswordSubmit} className="mx-8 sm:mx-16 md:mb-20">
-              <h3 className="typography-h2 text-center sm:typography-h1 mt-5 sm:mt-8 md:mt-20 ">
-                Create Password
-              </h3>
-              <p className="typography-large-p py-4 text-font-gray text-center">
-                Create a password to secure your account. Make sure it’s strong
-                and easy to remember.
-              </p>
-              <div className='flex flex-col gap-4'>
-                <Controller
-                  name="password"
-                  control={control}
-                  rules={{ required: true }}
-                  render={({ field }) => (
-                    <InputField
-                      id="password"
-                      label="Create Password"
-                      type="password"
-                      placeholder="New Password"
-                      required={true}
-                      error={passwordError}
-                      {...field}
-                    />
-                  )}
-                />
-                <Controller
-                  name="confirmPassword"
-                  control={control}
-                  rules={{ required: true }}
-                  render={({ field }) => (
-                    <InputField
-                      id="confirmPassword"
-                      label="Confirm Password"
-                      placeholder="Confirm New Password"
-                      type="password"
-                      required={true}
-                      error={passwordError}
-                      {...field}
-                    />
-                  )}
-                />
-              </div>
-              {passwordError && (
-                <span className="text-red-500 typography-small-p">{passwordError}</span>
-              )}
-
-              {/* Validation criteria */}
-              <div>
-                <p className='typography-large-p pt-4 pb-2 text-font-gray'>Password must meet the following criteria:</p>
-                <ul className='list-disc list-inside'>
-                  <li className='typography-large-p pb-2 text-font-gray'>Password must be at least 8 characters long.</li>
-                  <li className='typography-large-p pb-2 text-font-gray'>Password must include at least one uppercase letter (A-Z).</li>
-                  <li className='typography-large-p pb-2 text-font-gray'>Password must include at least one lowercase letter (a-z).</li>
-                  <li className='typography-large-p pb-2 text-font-gray'>Password must include at least one number (0-9).</li>
-                  <li className='typography-large-p pb-2 text-font-gray'> Password must include at least one special character .</li>
-                </ul>
-              </div>
-
-              <div className="flex mt-6 justify-center gap-4 w-full mr-16 mb-6 ">
-                <Button
-                  type="submit"
-                  variant="primary"
-                  disabled={ isSubmitting}
-                  className="w-full "
-                >
-                  {isSubmitting ? 'Submitting...' : 'Next'}
-                </Button>
-              </div>
-            </form>
-          </div>
-        </div>
+        <PasswordComponent control={control} handlePasswordSubmit={handlePasswordSubmit} isSubmitting={isSubmitting} passwordError={passwordError} />
       )}
 
     </div>

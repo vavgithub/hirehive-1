@@ -7,6 +7,7 @@ import PriceIcon from '../svg/JobCard/PriceIcon';
 import JobTypeIcon from '../svg/JobCard/JobTypeIcon';
 import GraphIcon from '../svg/JobCard/GraphIcon';
 import ClosedBadge from '../svg/ClosedBadge';
+import StyledCard from './ui/StyledCard';
 
 // Helper function to truncate text to specific number of words
 const truncateWords = (text, wordLimit) => {
@@ -110,8 +111,9 @@ const JobCard = ({
   const truncatedDescription = truncateWords(job.jobDescription || 'No description available', 20);
 
   return (
-    <div
-    className={(onClick ? 'cursor-pointer' : '' ) + ` bg-background-90 hover:bg-background-60 transition-colors duration-200 shadow rounded-xl mb-4 group relative`}
+    <StyledCard
+    padding={0}
+    extraStyles={(onClick ? 'cursor-pointer' : '' ) + `  hover:bg-background-60 transition-colors duration-200 shadow rounded-xl  group relative`}
     onClick={onClick ? handleCardClick : undefined}
   >
     <div className={(isApplied && "flex-col md:flex-row" ) +" flex items-start justify-between p-4  gap-3"}>
@@ -145,14 +147,14 @@ const JobCard = ({
         text={`${job.experienceFrom} - ${job.experienceTo} Year`}
       />
     </div>
-    <div className="px-4 p-4">
-        <p className="typography-body text-font-gray" dangerouslySetInnerHTML={{__html : truncatedDescription}}>
+    <div className=" p-4 ">
+        <p className="typography-body text-font-gray h-11 overflow-hidden" dangerouslySetInnerHTML={{__html : truncatedDescription}}>
           {/* {truncatedDescription} */}
         </p>
       </div>
     </> :
-    <div className="px-4 p-4">
-    <p className="typography-body text-font-gray" dangerouslySetInnerHTML={{__html : truncatedDescription}}>
+    <div className=" p-4 ">
+    <p className="typography-body text-font-gray h-11 overflow-hidden" dangerouslySetInnerHTML={{__html : truncatedDescription}}>
       {/* {truncatedDescription} */}
     </p>
   </div>
@@ -193,7 +195,7 @@ const JobCard = ({
         )}
       </div>
     )}
-  </div>
+  </StyledCard>
   
   
   );

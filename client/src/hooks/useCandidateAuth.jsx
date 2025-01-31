@@ -11,6 +11,7 @@ export const useCandidateAuth = () => {
   const {
     candidateAuthData,
     isAuthenticatedCandidate,
+    hasGivenAssessment,
     isLoadingAuth,
     authError
   } = useSelector((state) => state.candidateAuth);
@@ -30,10 +31,10 @@ export const useCandidateAuth = () => {
 
     fetchData();
   }, [dispatch, candidateAuthData]);
-
   return {
     candidateData: candidateAuthData,
     isAuthenticated: isAuthenticatedCandidate,
+    hasGivenAssessment,
     isLoading: isLoadingAuth,
     error: authError,
     isDone

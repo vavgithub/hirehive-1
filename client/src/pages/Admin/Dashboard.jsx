@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import Filters from '../../components/Filters/Filters';
@@ -21,12 +21,14 @@ import NoJobs from "../../svg/Background/NoJobs.svg"
 import { showErrorToast, showSuccessToast } from '../../components/ui/Toast';
 import Loader from '../../components/ui/Loader';
 import SearchIcon from '../../svg/SearchIcon';
+import StyledCard from '../../components/ui/StyledCard';
+import Pagination from '../../components/utility/Pagination';
 
 
-const fetchJobs = () => axios.get('/jobs/jobs').then(res => res.data);
+const fetchJobs = (page,status) => axios.get(`/jobs/jobs?page=${page}&status=${status}`).then(res => res.data);
 const fetchOverallStats = () => axios.get('/jobs/stats/overall').then(res => res.data.data);
-const searchJobs = (query) => axios.get(`/jobs/searchJobs?jobTitle=${encodeURIComponent(query)}`).then(res => res.data);
-const filterJobs = (filters) => axios.post('/jobs/filterJobs', { filters }).then(res => res.data);
+const searchJobs = (query,page,status) => axios.get(`/jobs/searchJobs?jobTitle=${encodeURIComponent(query)}&page=${page}&status=${status}`).then(res => res.data);
+const filterJobs = (filters,page,status) => axios.post('/jobs/filterJobs', { filters , page , status }).then(res => res.data);
 
 const Dashboard = () => {
     const [searchQuery, setSearchQuery] = useState('');
@@ -46,20 +48,32 @@ const Dashboard = () => {
     const navigate = useNavigate();
     const queryClient = useQueryClient();
 
+    const [page,setPage] = useState(1);
+    const PAGE_LIMIT = 3;
+
+    //For resetting page on each result change
+    useEffect(()=>{
+        setPage(1);
+    },[activeTab,searchQuery,filters])
+
     // Fetch jobs and overall stats
     // Use the updated jobs query
     const { data: jobs = [], isLoading: isJobsLoading } = useQuery({
-        queryKey: ['jobs'],
-        queryFn: fetchJobs
+        queryKey: ['jobs',page ,activeTab],
+        queryFn: () => fetchJobs(page,activeTab)
     });
 
-    const { data: overallStats = { totalJobs: 0, totalCandidates: 0, totalHired: 0 }, isLoading: isStatsLoading } = useQuery({
+    const { 
+        data: overallStats = { totalJobs: 0, 
+            totalOpenJobs : 0, 
+            totalClosedJobs : 0, 
+            totalDraftedJobs : 0, 
+            totalCandidates: 0, 
+            totalHired: 0 }, 
+        isLoading: isStatsLoading } = useQuery({
         queryKey: ['overallStats'],
         queryFn: fetchOverallStats
     });
-
-
-
 
     const handleAction = (action, jobId) => {
         const job = jobs.find(j => j._id === jobId);
@@ -69,18 +83,18 @@ const Dashboard = () => {
     };
 
     // Update the filteredJobs query to get the loading state
-    const { data: filteredJobs = [], isLoading: isFilteredJobsLoading } = useQuery({
-        queryKey: ['filteredJobs', filters],
-        queryFn: () => filterJobs(filters),
+    const { data: filteredData, isLoading: isFilteredJobsLoading } = useQuery({
+        queryKey: ['filteredJobs', filters,page,activeTab],
+        queryFn: () => filterJobs(filters,page,activeTab),
         enabled: Object.values(filters).some(filter =>
             Array.isArray(filter) ? filter.length > 0 : Object.values(filter).some(val => val !== '')
         ),
     });
 
     // Update the search query to get the loading state
-    const { data: searchResults = [], isLoading: isSearchLoading } = useQuery({
-        queryKey: ['searchJobs', searchQuery],
-        queryFn: () => searchJobs(searchQuery),
+    const { data: { jobArray: searchResults = [], jobCount = 0 } = {}, isLoading: isSearchLoading } = useQuery({
+        queryKey: ['searchJobs', searchQuery, page, activeTab],
+        queryFn: () => searchJobs(searchQuery,page,activeTab),
         enabled: searchQuery !== '',
     });
     const deleteMutation = useMutation({
@@ -275,18 +289,21 @@ const Dashboard = () => {
         }
     ];
 
+    const isFiltered = (Object.values(filters).some(filter =>
+        Array.isArray(filter) ? filter.length > 0 : Object.values(filter).some(val => val !== '')
+    ));
+
     // Combined loading state
     const isLoadingResults = (searchQuery.length > 0 && isSearchLoading) ||
-        (Object.values(filters).some(filter =>
-            Array.isArray(filter) ? filter.length > 0 : Object.values(filter).some(val => val !== '')
-        ) && isFilteredJobsLoading);
+        (isFiltered && isFilteredJobsLoading);
 
     // Get the jobs to display based on search or filters
-    const displayJobs = searchQuery.length > 0 ? searchResults :
-        (Object.values(filters).some(filter => Array.isArray(filter) ? filter.length > 0 : Object.values(filter).some(val => val !== '')) ? filteredJobs : jobs);
+    const displayJobs = useMemo(()=>{
+        return (searchQuery.length > 0 && !isSearchLoading) ? searchResults :
+        (isFiltered && !isFilteredJobsLoading ? filteredData?.filteredJobs : jobs);
+    }, [filteredData, isFiltered , searchQuery, jobs, searchResults]);
 
     const currentPage = 'dashboard';
-
 
     return (
         <div className="container mx-4 pt-4 h-screen">
@@ -300,7 +317,7 @@ const Dashboard = () => {
 
             </div>
 
-            <div className='bg-background-100 rounded-xl p-4'>
+            <StyledCard padding={2} backgroundColor={"bg-background-100"}>
 
                 <div className='flex gap-3'>
                     <StatsGrid stats={JobsStats} />
@@ -328,17 +345,17 @@ const Dashboard = () => {
                             handleExperienceFilter={handleExperienceFilter}
                             clearAllFilters={clearAllFilters} />
                     </div>
-                    <div className='w-full ml-4'>
-                        <div className='flex justify-end '>
+                    <div className='w-full ml-4 flex flex-col gap-4'>
                             {
                                 activeTab == "open" && displayJobs.length != 0 && displayJobs.filter(job=>job.status === "open").length !== 0 && (
-                                    <div className=" mb-4">
-                                        <Button variant="primary" icon={Create} iconPosition="left" onClick={() => { navigate("/admin/create-job") }}>Create A Job Listing</Button>
+                                    <div className='flex justify-end '>
+                                        <div >
+                                            <Button variant="primary" icon={Create} iconPosition="left" onClick={() => { navigate("/admin/create-job") }}>Create A Job Listing</Button>
+                                        </div> 
                                     </div>
                                 )
                             }
-                        </div>
-                        {isLoadingResults ? (
+                        {isLoadingResults || isJobsLoading ? (
                             <div className="flex justify-center items-center min-h-full">
                                 <Loader />
                             </div>
@@ -360,17 +377,34 @@ const Dashboard = () => {
                         ) : (
                             displayJobs
                                 .filter(job => job.status === activeTab)
-                                .map((job) => (
-                                    <JobCard 
-                                    key={job._id} job={job}
-                                    isAdmin={true} withKebab={true} page={currentPage}
-                                    status={activeTab}
-                                    handleAction={handleAction} 
-                                    onClick={job.status==="deleted" ? undefined :
-                                    ()=> handleViewJob(job._id)}
-                                    />
-                                ))
+                                .map((job, index) => {
+                                    // let skipValue = (page - 1) * PAGE_LIMIT;
+                                    // let allowedValue = skipValue + PAGE_LIMIT;
+                                    // if(index >= skipValue && index < allowedValue)
+                                    return (
+                                        <JobCard 
+                                        key={job._id} job={job}
+                                        isAdmin={true} withKebab={true} page={currentPage}
+                                        status={activeTab}
+                                        handleAction={handleAction} 
+                                        onClick={job.status==="deleted" ? undefined :
+                                        ()=> handleViewJob(job._id)}
+                                        />
+                                    )
+                                })
                         )}
+                        {(searchQuery ? jobCount : isFiltered ? filteredData?.filteredCount :
+                                (activeTab === "draft" ? overallStats?.totalDraftedJobs : activeTab === "closed" ? overallStats?.totalClosedJobs : overallStats?.totalOpenJobs) ) !== 0 && 
+                        <Pagination 
+                            currentPage={page} 
+                            setCurrentPage={setPage} 
+                            pageLimit={PAGE_LIMIT} 
+                            totalItems={
+                                searchQuery ? jobCount : isFiltered ? filteredData?.filteredCount :
+                                (activeTab === "draft" ? overallStats?.totalDraftedJobs : activeTab === "closed" ? overallStats?.totalClosedJobs : overallStats?.totalOpenJobs) 
+                                } 
+                        />
+                        }
                     </div>
                 </div>
                 {/* <Modal open={open} onClose={() => setOpen(false)} action={modalAction} confirmAction={confirmAction} /> */}
@@ -387,7 +421,7 @@ const Dashboard = () => {
                     closeReason={closeReason}
                     onCloseReasonChange={handleCloseReasonChange}
                 />
-            </div>
+            </StyledCard>
         </div>
     );
 };

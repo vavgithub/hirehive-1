@@ -14,6 +14,7 @@ import TimerIconSmall from '../../svg/TimerIconSmall';
 import WarningIcon from '../../svg/WarningIcon';
 import Draggable from 'react-draggable';
 import { uploadAssessment } from '../../utility/cloudinary';
+import StyledCard from '../../components/ui/StyledCard';
 const ONE_MINUTE = 60;
 
 // Utility function to format time
@@ -86,7 +87,7 @@ const QuestionSidebar = ({ questions, currentQuestion, onQuestionSelect, answers
         <img className='h-11' src={LightLogo} />
       </div>
       <div className="mb-6 p-4 rounded-xl">
-        <div className="flex flex-col p-4 rounded-xl items-center bg-background-80">
+        <StyledCard padding={2} backgroundColor={"bg-background-80"} extraStyles="flex flex-col items-center ">
           <div className='flex items-center gap-2'>
           <TimerIconSmall />
           <p className='typography-body text-font-gray'>Time remaining</p>
@@ -99,7 +100,7 @@ const QuestionSidebar = ({ questions, currentQuestion, onQuestionSelect, answers
             {sec}
           </span>
           </div>
-        </div>
+        </StyledCard>
       </div>
       <h2 className="typography-h3 text-font-gray p-4">Questions</h2>
       {questions.map((q, index) => (

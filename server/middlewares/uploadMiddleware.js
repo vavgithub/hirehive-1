@@ -1,4 +1,3 @@
-// middleware/upload.middleware.js
 import multer from 'multer';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -28,6 +27,9 @@ const storage = multer.diskStorage({
     } else if (file.fieldname === 'resume') {
       const ext = path.extname(file.originalname);
       filename = `resume-${uniqueSuffix}${ext}`;
+    } else if (file.fieldname === 'profilePicture') {
+      const ext = path.extname(file.originalname);
+      filename = `profile-${uniqueSuffix}${ext}`;
     }
 
     console.log('Generated filename:', filename);
@@ -41,15 +43,25 @@ const fileFilter = (req, file, cb) => {
     mimetype: file.mimetype
   });
 
-  // Different validation for video and resume
+  // Different validation for video, resume, and profile picture
   if (file.fieldname === 'video' && file.mimetype === 'video/webm') {
     cb(null, true);
   } else if (file.fieldname === 'resume' && 
     ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document']
     .includes(file.mimetype)) {
     cb(null, true);
+  } else if (file.fieldname === 'profilePicture' && 
+    ['image/jpeg', 'image/png', 'image/jpg']
+    .includes(file.mimetype)) {
+    cb(null, true);
   } else {
-    cb(new Error(`Invalid file type for ${file.fieldname}`), false);
+    let fileTypes = "";
+    if(file.fieldname === "profilePicture"){
+      fileTypes = "JPG, PNG or JPEG files"
+    }else if(file.fieldname === "resume"){
+      fileTypes = "PDF or DOCX files"
+    }
+    cb(new Error(`Unsupported file type. ${fileTypes ? "Try " + fileTypes : ""}`), false);
   }
 };
 
@@ -70,12 +82,26 @@ export const uploadResume = multer({
   }
 }).single('resume');
 
+export const uploadProfilePicture = multer({
+  storage: storage,
+  fileFilter: fileFilter,
+  limits: {
+    fileSize: 5 * 1024 * 1024 // 5MB limit for profile pictures
+  }
+}).single('profilePicture');
+
 export const handleUploadError = (err, req, res, next) => {
   console.error('Upload error:', err);
   if (err instanceof multer.MulterError) {
+    if(err?.code === "LIMIT_FILE_SIZE"){
+      return res.status(400).json({
+        success: false,
+        message: `File size too large. Please upload a file smaller than ${err?.field === "resume" ? '10MB' : err?.field === "video" ? "50MB" : "5MB"}`
+      });
+    }
     return res.status(400).json({
       success: false,
-      message: `Upload error: ${err.message}`
+      message: `${err.message}`
     });
   } else if (err) {
     return res.status(500).json({

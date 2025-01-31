@@ -6,6 +6,7 @@ import { QueryClient, useMutation, useQuery, useQueryClient } from '@tanstack/re
 import DynamicForm from '../../components/utility/DynamicForm';
 import { showSuccessToast } from '../../components/ui/Toast';
 import Loader from '../../components/ui/Loader';
+import StyledCard from '../../components/ui/StyledCard';
 
 
 const fetchCandidate = async ({ queryKey }) => {
@@ -87,20 +88,19 @@ const EditCandidateProfile = () => {
     </div>)
   }else{
     return (
-      <div className='w-full bg-background-80 min-h-full'>
+      <div className='w-full bg-background-80 min-h-full p-4'>
         <div className=" container mx-auto ">
-          <div className='p-4'>
   
             <Header HeaderText="Edit Candidate Profile" withKebab='false' withBack="true" />
             <div className='flex gap-6 mt-5'>
-              <div className='bg-background-30 w-96 h-96 rounded-xl flex flex-col items-center p-4'>
+              <StyledCard backgroundColor={"bg-background-30"} padding={2} extraStyles=' w-96 h-96  flex flex-col items-center'>
                 <div className='to-background-100 w-64 rounded-xl overflow-hidden'>
-                  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg" alt="" />
+                  <img src={data.profilePictureUrl || " https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg"} alt="" className='object-cover h-full' />
                 </div>
                 <h2 className='typography-h2 mt-4'>
                   {data.firstName} {data.lastName}
                 </h2>
-              </div>
+              </StyledCard>
   
               <div className='col-span-2 w-full'>
                 <DynamicForm
@@ -114,7 +114,6 @@ const EditCandidateProfile = () => {
                 />
               </div>
             </div>
-          </div>
         </div>
       </div>
     )

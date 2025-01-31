@@ -1,7 +1,9 @@
+// ApplyJob.jsx this is the component of every form field in the apply job page
 import React from 'react';
 import { Controller } from 'react-hook-form';
 import { InputField } from '../../components/Form/FormFields';
 import { validationRules } from '../../utility/validationRules';
+import { ProfilePictureUpload } from './ProfilePictureUpload';
 
 // Reusable form field component
 export const FormField = ({ 
@@ -116,11 +118,21 @@ export const FormField = ({
   };
   
   // And similarly for personal details:
-  export const PersonalDetailsSection = ({ control }) => {
+  export const PersonalDetailsSection = ({ control, onProfilePictureSelect, profilePicturePreview }) => {
     return (
       <div>
         <h3 className="typography-h3 mb-4">Personal Details</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <ProfilePictureUpload 
+          control={control} 
+          onFileSelect={onProfilePictureSelect}
+          previewUrl={profilePicturePreview}  // Pass the preview URL to ProfilePictureUpload
+        />
+          {/* This empty div is just for adding vacant space only */}
+          <div>
+      
+          </div>
+
           <FormField
             name="firstName"
             control={control}

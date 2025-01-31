@@ -27,6 +27,7 @@ import QuaApp from '../../svg/StatsCard/View Details/Portfolio';
 import AppRec from '../../svg/StatsCard/View Details/AppRec';
 import Views from '../../svg/StatsCard/View Details/Views';
 import Loader from '../../components/ui/Loader';
+import StyledCard from '../../components/ui/StyledCard';
 
 
 const ViewJobs = () => {
@@ -212,9 +213,8 @@ const ViewJobs = () => {
                 <Tabs tabs={tabs} activeTab={activeTab} handleTabClick={handleTabClick} />
             </div> */}
 
-
             {activeTab === 'jobDetails' && (
-                <div className='bg-background-30 p-4 rounded-xl'>
+                <StyledCard padding={2} backgroundColor={"bg-background-30"}>
                     <StatsGrid stats={jobsDetailStats} />
                     <div className='flex justify-between'>
                         <div className='w-4/5   '>
@@ -231,7 +231,7 @@ const ViewJobs = () => {
                         </div>
                     </div>
 
-                    <div className='bg-background-90 p-4 rounded-xl mt-12'>   
+                    <StyledCard padding={2} extraStyles='mt-12'>   
                         <h3 className='typography-h3 mb-4'>Additional Questions</h3>
                         {questions.map((question, index) => (
                             <div key={question._id} className="mb-4">
@@ -251,12 +251,12 @@ const ViewJobs = () => {
                                 )}
                             </div>
                         ))}
-                    </div>
-                </div>
+                    </StyledCard>
+                </StyledCard>
             )}
 
             {activeTab === 'candidate' && (
-               <div className='bg-background-30 p-4 rounded-xl'>
+               <StyledCard backgroundColor={"bg-background-30"} padding={2}>
                     <div className="max-w-full  mb-4">
                         <StatsGrid stats={candidateStats} />
                     </div>
@@ -266,7 +266,7 @@ const ViewJobs = () => {
                             >
                             </Table>
                         </div>
-                </div>
+                </StyledCard>
             )}
 
             <Modal

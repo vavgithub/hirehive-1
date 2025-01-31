@@ -1,8 +1,9 @@
 import React, { useEffect } from 'react'
 import { Button } from '../ui/Button';
+import StyledCard from '../ui/StyledCard';
 
 const FormSection = ({ title, fields, data, onChange }) => (
-  <div className="bg-background-30 p-6 rounded-xl mb-4">
+  <StyledCard backgroundColor={"bg-background-30"} extraStyles="mb-4">
     <h2 className="typography-h2">{title}</h2>
     <div className="grid grid-cols-2 gap-4">
       {fields.map((field) => (
@@ -17,7 +18,7 @@ const FormSection = ({ title, fields, data, onChange }) => (
         </React.Fragment>
       ))}
     </div>
-  </div>
+  </StyledCard>
 );
 
 const DynamicForm = ({

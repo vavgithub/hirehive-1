@@ -33,6 +33,7 @@ import GreenTickIcon from '../../svg/Staging/GreenTickIcon';
 import RightTick from '../../svg/Staging/RightTick';
 import ClosedBadge from '../../svg/ClosedBadge';
 import DesignTaskReview from '../Reviews/DesignTaskReview';
+import StyledCard from '../ui/StyledCard';
 
 const submitReview = async ({ candidateId, reviewData }) => {
     const response = await axios.post('dr/submit-score-review', {
@@ -675,19 +676,14 @@ const DesignTask = ({ candidateId, jobId ,isClosed}) => {
 
 
     return (
-        <Card
-            sx={{
-                backgroundColor: "rgba(22, 23, 24, 1)",
-                borderRadius: "12px",
-                color: "white",
-                fontFamily: 'Outfit, sans-serif',
-                position : "relative",
-                minHeight : "10rem"
-            }}
+        <StyledCard
+            padding={3}
+            backgroundColor={"bg-background-30"}
+            extraStyles={"relative min-h-[10rem]"}
         >
             <CardContent 
             sx={{
-                padding : "24px"
+                padding : "0px"
             }}
             >
                 <Box display="flex" justifyContent="space-between" alignItems="start" mb={1}>
@@ -715,7 +711,7 @@ const DesignTask = ({ candidateId, jobId ,isClosed}) => {
                 </Box>
                 {renderContent()}
             </CardContent>
-        </Card>
+        </StyledCard>
     );
 };
 
