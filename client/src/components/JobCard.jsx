@@ -108,7 +108,7 @@ const JobCard = ({
     ];
   }
   // Truncate job description to 10 words
-  const truncatedDescription = truncateWords(job.jobDescription || 'No description available', 20);
+  const truncatedDescription = truncateWords(job.jobDescription || 'No description available', 40);
 
   return (
     <StyledCard
