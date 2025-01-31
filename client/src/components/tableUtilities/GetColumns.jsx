@@ -226,14 +226,15 @@ const getCommonColumns = (handleDocumentClick) => [
         return row.stageStatuses[row.currentStage]?.assignedTo
       },
       renderCell: (params) => {
-        const isReviewed = params?.row?.stageStatuses[params?.row?.currentStage]?.status === 'Reviewed';  
+        const isDisabled = params?.row?.stageStatuses[params?.row?.currentStage]?.status === 'Reviewed' || 
+        params?.row?.stageStatuses[params?.row?.currentStage]?.status === 'Rejected';  
         return (
           <div className='flex items-center justify-center h-full'
             onClick={(event) => event.stopPropagation()}
           >
             <AssigneeSelector
               mode="icon"
-              disabled={isReviewed}
+              disabled={isDisabled}
               value={params.row.stageStatuses[params.row.currentStage]?.assignedTo}
               onChange={(newAssignee) => handleAssigneeChange(
                 params.row._id,
