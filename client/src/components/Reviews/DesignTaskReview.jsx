@@ -2,8 +2,12 @@ import React, { useState } from 'react'
 import Scorer from '../ui/Scorer';
 import { Button } from '../ui/Button';
 import { showErrorToast } from '../ui/Toast';
+import StyledCard from '../ui/StyledCard';
 
-function DesignTaskReview({ candidate, onSubmit }) {
+function DesignTaskReview({ candidate, onSubmit ,rounded = "bottom"}) {
+
+    const roundedClass =  rounded === "bottom" ? 'rounded-b-xl' : rounded === "top" ? "rounded-t-xl" : "rounded-xl"   
+
     const [rating, setRating] = useState(0);
     const [feedback, setFeedback] = useState('');
   
@@ -21,7 +25,7 @@ function DesignTaskReview({ candidate, onSubmit }) {
     };
   
     return (
-      <div className='bg-background-100 flex gap-4 justify-between items-center p-4'>
+      <StyledCard padding={2} borderRadius={roundedClass} extraStyles=' flex gap-4 justify-between  items-center  font-outfit'>
         <span className='flex-shrink-0'>Design Task Ratings</span>
         <Scorer value={rating} onChange={setRating} />
   
@@ -33,7 +37,7 @@ function DesignTaskReview({ candidate, onSubmit }) {
           onChange={(e) => setFeedback(e.target.value)}
         />
         <Button variant="icon" onClick={handleSubmit}>Submit</Button>
-      </div>
+      </StyledCard>
     );
   };
 

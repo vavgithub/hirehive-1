@@ -551,7 +551,7 @@ const Screening = ({ candidateId, jobId, isClosed }) => {
                 return (
                     <div className='flex flex-col gap-4'>
                         <Label icon={WarningIcon} text="Please review the candidate's performance and provide scores." />
-                        <ScreeningReview candidate={candidateData} onSubmit={handleReviewSubmit} />;
+                        <ScreeningReview candidate={candidateData} onSubmit={handleReviewSubmit} rounded='full' />
                     </div>
                 );
             case 'Reviewed':
@@ -727,7 +727,7 @@ const Screening = ({ candidateId, jobId, isClosed }) => {
     };
 
     const renderContent = () => {
-        if (isLoading) {
+        if (isLoading || submitReviewMutation?.isPending || updateAssigneeMutation?.isPending) {
             return (
                 <div className='flex justify-center'>
                     <Loader />

@@ -229,7 +229,7 @@ const RoundTwo = ({ candidateId, jobId ,isClosed }) => {
 
 
     const renderContent = () => {
-        if (isLoading) {
+        if (isLoading || updateAssigneeMutation?.isPending) {
             return (
                 <div className='flex justify-center'>
                     <Loader />
@@ -254,6 +254,12 @@ const RoundTwo = ({ candidateId, jobId ,isClosed }) => {
                                     onSubmit={handleSchedule}
                                 />
                             </div>
+                        )}
+
+                        {role === "Design Reviewer" && (
+
+                        <Label icon={WarningIcon} text={"The Round 2 call has not yet been scheduled."} />
+
                         )}
 
                         {role === "Candidate" && (
@@ -304,6 +310,13 @@ const RoundTwo = ({ candidateId, jobId ,isClosed }) => {
                             )
                         }
 
+                        
+                        {role === "Design Reviewer" && (
+
+                        <Label icon={WarningIcon} text={"The Round 2 call has been scheduled."} />
+
+                        )}
+
                         {
                             role === "Candidate" && (
                                 <>
@@ -351,6 +364,12 @@ const RoundTwo = ({ candidateId, jobId ,isClosed }) => {
                                 </div>
                             </>)}
 
+                            {role === "Design Reviewer" && (
+
+                            <Label icon={WarningIcon} text={"Candidate's performance is now being reviewed."} />
+
+                            )}
+
                         {
                             role === "Candidate" && (
                                 <>
@@ -395,6 +414,12 @@ const RoundTwo = ({ candidateId, jobId ,isClosed }) => {
 
                             )
                         }
+
+                        {role === "Design Reviewer" && (
+
+                        <Label icon={WarningIcon} text={"Candidate's performance is reviewed by HR."} />
+
+                        )}
 
                         {
                             role === "Candidate" && (
@@ -458,6 +483,12 @@ const RoundTwo = ({ candidateId, jobId ,isClosed }) => {
                             )
                         }
 
+                        {role === "Design Reviewer" && (
+
+                        <Label icon={WarningIcon} text={"Candidate is rejected in Round 2."} />
+
+                        )}
+
                         {
                             role === "Candidate" && (
                                 <>
@@ -503,6 +534,12 @@ const RoundTwo = ({ candidateId, jobId ,isClosed }) => {
                             </>
                         )
                     }
+
+                    {role === "Design Reviewer" && (
+
+                    <Label icon={WarningIcon} text={"Candidate doesn't appeared for Round 2 call."} />
+
+                    )}
                     </div>
                 )
             default:

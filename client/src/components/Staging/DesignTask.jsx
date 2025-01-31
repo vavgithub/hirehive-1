@@ -117,15 +117,6 @@ const DesignTask = ({ candidateId, jobId ,isClosed}) => {
 
 
     const renderHiringManagerContent = () => {
-        if (isLoading) {
-            return (
-                <div className='flex justify-center'>
-                    <Loader />
-                </div>
-
-            )
-
-        }
         switch (stageData?.status) {
             case 'Pending':
                 return renderPendingStatus();
@@ -220,9 +211,9 @@ const DesignTask = ({ candidateId, jobId ,isClosed}) => {
                 );
             case 'Under Review':
                 return (
-                    <div className="flex flex-col">
+                    <div className="flex flex-col gap-4">
                         <Label icon={WarningIcon} text="Please review the candidate's submission and provide feedback." />
-                        <div className='grid grid-cols-2 bg-background-80 p-4 rounded-xl mt-5'>
+                        <div className='grid grid-cols-2 bg-background-80 p-4 rounded-xl '>
                         <div>
                             <p className='typography-small-p text-font-gray'> Task</p>
                             <a href={ensureAbsoluteUrl(stageData?.submittedTaskLink)} target="_blank" rel="noopener noreferrer" className='typography-body text-font-primary  flex gap-2' >Design Task_{candidateData.firstName}
@@ -236,7 +227,7 @@ const DesignTask = ({ candidateId, jobId ,isClosed}) => {
                                 <p>{stageData?.submittedComment}</p>
                             </div>
                         </div>
-                        <DesignTaskReview candidate={candidateData} onSubmit={handleReviewSubmit} />
+                        <DesignTaskReview candidate={candidateData} onSubmit={handleReviewSubmit} rounded='full' />
                     </div>
                 );
             case 'Reviewed':
@@ -347,6 +338,15 @@ const DesignTask = ({ candidateId, jobId ,isClosed}) => {
     };
 
     const renderContent = () => {
+        if (isLoading || submitReviewMutation?.isPending || updateAssigneeMutation?.isPending) {
+            return (
+                <div className='flex justify-center'>
+                    <Loader />
+                </div>
+
+            )
+
+        }
         switch (role) {
             case 'Hiring Manager':
                 return renderHiringManagerContent();

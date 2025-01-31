@@ -335,10 +335,10 @@ const RoundOne = ({ candidateId, jobId ,isClosed}) => {
                 );
             case 'Under Review':
                 return (
-                    <div>
+                    <div className='flex flex-col gap-4'>
 
                         <Label text="Please review the candidate’s performance and update the details below." />
-                        <RoundReview roundNumber={1} candidate={candidateData} onSubmit={handleReviewSubmit} />
+                        <RoundReview roundNumber={1} candidate={candidateData} onSubmit={handleReviewSubmit} rounded='full'  />
                     </div>
                 )
             case 'Reviewed':
@@ -444,7 +444,7 @@ const RoundOne = ({ candidateId, jobId ,isClosed}) => {
     );
 
     const renderContent = () => {
-        if (isLoading) {
+        if (isLoading || submitReviewMutation?.isPending || updateAssigneeMutation?.isPending) {
             return (
                 <div className='flex justify-center'>
                     <Loader />
