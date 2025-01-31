@@ -13,10 +13,11 @@ import Loader from '../../components/ui/Loader';
 import SearchIcon from '../../svg/SearchIcon';
 import useCandidateAuth from '../../hooks/useCandidateAuth';
 import StyledCard from '../../components/ui/StyledCard';
+import Pagination from '../../components/utility/Pagination';
 
-const fetchOpenJobs = () => axios.get('/candidates/jobs/open').then(res => res.data);
-const searchJobs = (query) => axios.get(`/candidates/jobs/searchJobs?jobTitle=${encodeURIComponent(query)}`).then(res => res.data);
-const filterJobs = (filters) => axios.post('/candidates/filterJobs', { filters }).then(res => res.data);
+const fetchOpenJobs = (page) => axios.get(`/candidates/jobs/open?page=${page}`).then(res => res.data);
+const searchJobs = (query,page) => axios.get(`/candidates/jobs/searchJobs?jobTitle=${encodeURIComponent(query)}&page=${page}`).then(res => res.data);
+const filterJobs = (filters,page) => axios.post('/candidates/filterJobs', { filters ,page}).then(res => res.data);
 
 
 
@@ -47,6 +48,8 @@ const AllJobs = () => {
         };
       }, []); 
 
+    const [page,setPage] = useState(1);
+    const PAGE_LIMIT = 3;
 
     const [searchQuery, setSearchQuery] = useState('');
     const [filters, setFilters] = useState({
@@ -57,20 +60,25 @@ const AllJobs = () => {
         budget: { min: '', max: '' },
     });
 
-    const { data: jobs = [] } = useQuery({ queryKey: ['jobs'], queryFn: fetchOpenJobs })
+    //For resetting page on each result change
+    useEffect(()=>{
+        setPage(1);
+    },[searchQuery,filters])
+
+    const { data: jobData , isLoading : isJobsLoading} = useQuery({ queryKey: ['jobs',page], queryFn: ()=>fetchOpenJobs(page) })
 
 
-    const { data: filteredJobs = [] , isLoading: isFilteredJobsLoading} = useQuery({
-        queryKey: ['filteredJobs', filters],
-        queryFn: () => filterJobs(filters),
+    const { data: filteredData , isLoading: isFilteredJobsLoading} = useQuery({
+        queryKey: ['filteredJobs', filters, page],
+        queryFn: () => filterJobs(filters,page),
         enabled: Object.values(filters).some(filter =>
             Array.isArray(filter) ? filter.length > 0 : Object.values(filter).some(val => val !== '')
         ),
     });
 
-    const { data: searchResults = []  , isLoading: isSearchLoading} = useQuery({
-        queryKey: ['searchJobs', searchQuery],
-        queryFn: () => searchJobs(searchQuery),
+    const { data: searchResults , isLoading: isSearchLoading} = useQuery({
+        queryKey: ['searchJobs', searchQuery, page],
+        queryFn: () => searchJobs(searchQuery,page),
         enabled: searchQuery !== '',
     });
 
@@ -129,14 +137,16 @@ const AllJobs = () => {
         }));
     };
 
+    const isFiltered = (Object.values(filters).some(filter =>
+        Array.isArray(filter) ? filter.length > 0 : Object.values(filter).some(val => val !== '')
+    ));
+
     // Combined loading state
     const isLoadingResults = (searchQuery.length > 0 && isSearchLoading) ||
-    (Object.values(filters).some(filter =>
-        Array.isArray(filter) ? filter.length > 0 : Object.values(filter).some(val => val !== '')
-    ) && isFilteredJobsLoading);
+    (isFiltered && isFilteredJobsLoading) || isJobsLoading;
 
-    const displayJobs = searchQuery.length > 0 ? searchResults :
-        (Object.values(filters).some(filter => Array.isArray(filter) ? filter.length > 0 : Object.values(filter).some(val => val !== '')) ? filteredJobs : jobs);
+    const displayJobs = searchQuery.length > 0 ? searchResults?.searchJobs :
+        (isFiltered ? filteredData?.filteredJobs : jobData?.activeJobs);
 
 
     return (
@@ -207,7 +217,7 @@ const AllJobs = () => {
                             No Jobs available
                         </span>
                     </div> :
-                    displayJobs.map((job) => { 
+                    displayJobs?.map((job) => { 
                         return(
                         <JobCard
                             isCandidate={true}
@@ -220,6 +230,14 @@ const AllJobs = () => {
                             onClick={() => handleViewJob(job._id)}
                         />
                     )})}
+                    <Pagination 
+                    currentPage={page} 
+                    setCurrentPage={setPage} 
+                    pageLimit={PAGE_LIMIT} 
+                    totalItems={
+                        searchQuery.length > 0 ? searchResults?.searchJobsCount :
+                        isFiltered ? filteredData?.filteredJobsCount : jobData?.totalOpenJobs} 
+                    />
                 </div>
             </StyledCard>
         </div>

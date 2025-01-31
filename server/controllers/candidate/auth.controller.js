@@ -761,6 +761,9 @@ export const getCandidateAppliedJobs = async (req, res) => {
     //   path: "jobApplications.jobId",
     //   model: "jobs",
     // });
+    const { page } = req.query;
+    const pageNumber = page ? parseInt(page) : 1;
+    const LIMIT = 3;
 
     const candidate = await Candidate.aggregate([
       // Match the candidate by ID
@@ -774,6 +777,42 @@ export const getCandidateAppliedJobs = async (req, res) => {
           localField: "jobApplications.jobId", // The field in Candidate
           foreignField: "_id", // The field in Jobs
           as: "jobDetails", // The resulting array of matching documents
+        },
+      },
+      // Unwind jobApplications array so sorting works correctly
+      {
+        $unwind: "$jobApplications",
+      },
+      // Sort jobApplications by applicationDate in descending order
+      {
+        $sort: {
+          "jobApplications.applicationDate": -1, // Descending order (-1)
+        },
+      },
+      {
+        $skip : (pageNumber - 1) * LIMIT
+      },
+      {
+        $limit : LIMIT
+      },
+      // Group back into an array after sorting (if needed)
+      {
+        $group: {
+          _id: "$_id",
+          firstName: { $first: "$firstName" },
+          lastName: { $first: "$lastName" },
+          email: { $first: "$email" },
+          phone: { $first: "$phone" },
+          expectedCTC: { $first: "$expectedCTC" },
+          portfolio: { $first: "$portfolio" },
+          website: { $first: "$website" },
+          noticePeriod: { $first: "$noticePeriod" },
+          currentCTC: { $first: "$currentCTC" },
+          experience: { $first: "$experience" },
+          skills: { $first: "$skills" },
+          hasGivenAssessment: { $first: "$hasGivenAssessment" },
+          jobApplications: { $push: "$jobApplications" }, // Reconstruct sorted jobApplications array
+          jobDetails: { $first: "$jobDetails" },
         },
       },
       // Project to include only necessary fields and format the output
@@ -800,7 +839,6 @@ export const getCandidateAppliedJobs = async (req, res) => {
         },
       },
     ])
-
     if (candidate.length === 0) {
       return res.status(404).json({ message: "Candidate not found" });
     }
@@ -819,12 +857,14 @@ export const getCandidateAppliedJobs = async (req, res) => {
       })
     });
 
-    // Sort the validated jobApplications by 'applicationDate' in descending order
-    const sortedJobApplications = formattedApplications.sort((a, b) => {
-      return new Date(b.applicationDate) - new Date(a.applicationDate);
-    });
+    // // Sort the validated jobApplications by 'applicationDate' in descending order
+    // const sortedJobApplications = formattedApplications.sort((a, b) => {
+    //   return new Date(b.applicationDate) - new Date(a.applicationDate);
+    // });
 
-    res.status(200).json({ jobApplications: sortedJobApplications });
+    const totalAppliedJobs = await Candidate.findById({ _id: req.candidate._id })
+
+    res.status(200).json({ jobApplications: formattedApplications ,totalAppliedJobs : totalAppliedJobs?.jobApplications?.length || 0});
   } catch (error) {
     console.error("Error fetching applied jobs:", error);
     res.status(500).json({ message: "Server error" });
