@@ -65,6 +65,7 @@ const submitReview = async ({ candidateId, reviewData }) => {
 const Reviews = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const [groupedCandidates,setGroupedCandidates] = useState({});
 
   // Fetch candidates
   const { data: candidates, isLoading, isError, error } = useQuery({
@@ -80,23 +81,9 @@ const Reviews = () => {
     refetchOnWindowFocus : false
   });
 
-
-  const submitReviewMutation = useMutation({
-    mutationFn: submitReview,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['assignedCandidates'] });
-      queryClient.invalidateQueries({ queryKey: ['underReviewStats'] }); // Invalidate stats on success
-      showSuccessToast('Review Submitted', 'Your review has been successfully submitted.');
-    },
-    onError: (error) => {
-      showErrorToast('Submission Failed', error.response?.data?.message || 'An error occurred while submitting your review.');
-    },
-  });
-
-
   const groupCandidatesByJobAndStage = (candidates) => {
     return candidates.reduce((jobAcc, candidate) => {
-      candidate.jobApplications.forEach(application => {
+      candidate?.jobApplications.forEach(application => {
         if (!jobAcc[application.jobTitle]) {
           jobAcc[application.jobTitle] = {};
         }
@@ -114,6 +101,44 @@ const Reviews = () => {
       return sortedJobAcc;
     }, {});
   };
+
+  useEffect(()=>{
+    if(candidates?.length > 0 && !isLoading){
+      setGroupedCandidates(groupCandidatesByJobAndStage(candidates))
+    }
+  },[candidates])
+
+  const [searchTerm,setSearchTerm] = useState("");
+
+  useEffect(()=>{
+    if(candidates?.length > 0){
+      let regex = new RegExp(searchTerm, "i");
+      const filteredCandidates = candidates?.filter(candidate =>{
+        if(regex.test(candidate.firstName) || regex.test(candidate.lastName) || regex.test(candidate.email)){
+          return candidate
+        }
+      })
+      setGroupedCandidates(groupCandidatesByJobAndStage(filteredCandidates))
+    }
+  },[searchTerm,candidates])
+
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value)
+  }
+
+
+  const submitReviewMutation = useMutation({
+    mutationFn: submitReview,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['assignedCandidates'] });
+      queryClient.invalidateQueries({ queryKey: ['underReviewStats'] }); // Invalidate stats on success
+      showSuccessToast('Review Submitted', 'Your review has been successfully submitted.');
+    },
+    onError: (error) => {
+      showErrorToast('Submission Failed', error.response?.data?.message || 'An error occurred while submitting your review.');
+    },
+  });
+
   const handleReviewSubmit = (candidateId, reviewData) => {
     submitReviewMutation.mutate({ candidateId, reviewData });
   };
@@ -147,7 +172,6 @@ const Reviews = () => {
   if (isError) return <div>Error: {error.message}</div>;
 
 
-  const groupedCandidates = groupCandidatesByJobAndStage(candidates);
 
   // Prepare statsOne object with real data
   const updatedStatsOne = statsOne.map((stat) => {
@@ -171,6 +195,8 @@ const Reviews = () => {
     navigate(`/design-reviewer/candidates/view-candidate/${candidate._id}/${candidate.currentApplication.jobId}`)
   }
 
+  const groupedEntries = Object.entries(groupedCandidates);
+
   return (
     <div className='w-full p-4'>
       <div className='container mx-auto'>
@@ -180,7 +206,17 @@ const Reviews = () => {
 
           <StatsGrid stats={updatedStatsOne} />
         </div>
-        {Object.entries(groupedCandidates).map(([jobTitle, stages, jobProfile]) => (
+        <div className='flex gap-4 items-center mt-4 w-full'>
+          <div className='w-[20%]'>
+          <input
+            type="text"
+            placeholder="Search by name or email"
+            value={searchTerm}
+            onChange={handleSearch}
+          />
+          </div>
+        </div>
+        {groupedEntries?.length > 0 ? groupedEntries.map(([jobTitle, stages, jobProfile]) => (
           <div key={jobTitle} className="mb-8">
             <h2 className="typography-h2 my-4">{jobTitle}</h2>
             {stageOrder.map(stage => {
@@ -222,7 +258,12 @@ const Reviews = () => {
               return null;
             })}
           </div>
-        ))}
+        )) :
+        <div className='my-4 font-outfit flex flex-col items-center justify-center'>
+          <h2 className='font-bricolage typography-h2'>No Candidates</h2>
+          <p className='typography-small-p text-font-gray'>No candidate assigned for review</p>
+        </div>
+        }
       </StyledCard>
     </div>
     </div>
