@@ -14,7 +14,7 @@ import { uploadProfilePicture, uploadResume } from "./ApplyJob";
 import axios from "../../api/axios";
 import { showErrorToast, showSuccessToast } from "../../components/ui/Toast";
 import { useDispatch } from "react-redux";
-import { fetchCandidateAuthData, updateWithoutAssessment } from "../../redux/candidateAuthSlice";
+import { updateWithoutAssessment } from "../../redux/candidateAuthSlice";
 import LoaderModal from "../../components/ui/LoaderModal";
 import CustomToolTip from "../../components/utility/CustomToolTip";
 
