@@ -14,6 +14,7 @@ import SearchIcon from '../../svg/SearchIcon';
 import useCandidateAuth from '../../hooks/useCandidateAuth';
 import StyledCard from '../../components/ui/StyledCard';
 import Pagination from '../../components/utility/Pagination';
+import useDebounce from '../../hooks/useDebounce';
 
 const fetchOpenJobs = (page) => axios.get(`/candidates/jobs/open?page=${page}`).then(res => res.data);
 const searchJobs = (query,page) => axios.get(`/candidates/jobs/searchJobs?jobTitle=${encodeURIComponent(query)}&page=${page}`).then(res => res.data);
@@ -60,10 +61,12 @@ const AllJobs = () => {
         budget: { min: '', max: '' },
     });
 
+    const [debouncedQuery] = useDebounce(searchQuery);
+
     //For resetting page on each result change
     useEffect(()=>{
         setPage(1);
-    },[searchQuery,filters])
+    },[debouncedQuery,filters])
 
     const { data: jobData , isLoading : isJobsLoading} = useQuery({ queryKey: ['jobs',page], queryFn: ()=>fetchOpenJobs(page) })
 
@@ -77,9 +80,9 @@ const AllJobs = () => {
     });
 
     const { data: searchResults , isLoading: isSearchLoading} = useQuery({
-        queryKey: ['searchJobs', searchQuery, page],
-        queryFn: () => searchJobs(searchQuery,page),
-        enabled: searchQuery !== '',
+        queryKey: ['searchJobs', debouncedQuery, page],
+        queryFn: () => searchJobs(debouncedQuery,page),
+        enabled: debouncedQuery !== '',
     });
 
 
@@ -142,10 +145,10 @@ const AllJobs = () => {
     ));
 
     // Combined loading state
-    const isLoadingResults = (searchQuery.length > 0 && isSearchLoading) ||
+    const isLoadingResults = (debouncedQuery.length > 0 && isSearchLoading) ||
     (isFiltered && isFilteredJobsLoading) || isJobsLoading;
 
-    const displayJobs = searchQuery.length > 0 ? searchResults?.searchJobs :
+    const displayJobs = debouncedQuery.length > 0 ? searchResults?.searchJobs :
         (isFiltered ? filteredData?.filteredJobs : jobData?.activeJobs);
 
 
@@ -235,7 +238,7 @@ const AllJobs = () => {
                     setCurrentPage={setPage} 
                     pageLimit={PAGE_LIMIT} 
                     totalItems={
-                        searchQuery.length > 0 ? searchResults?.searchJobsCount :
+                        debouncedQuery.length > 0 ? searchResults?.searchJobsCount :
                         isFiltered ? filteredData?.filteredJobsCount : jobData?.totalOpenJobs} 
                     />
                 </div>

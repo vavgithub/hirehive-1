@@ -14,6 +14,7 @@ import useCandidateAuth from '../../hooks/useCandidateAuth';
 import Loader from '../../components/ui/Loader';
 import NoJobs from "../../svg/Background/NoJobs.svg"
 import Pagination from '../../components/utility/Pagination';
+import useDebounce from '../../hooks/useDebounce';
 
 const fetchOpenJobs = (page) => axios.get(`/candidates/jobs/open?page=${page}`).then(res => res.data);
 const searchJobs = (query,page) => axios.get(`/candidates/jobs/searchJobs?jobTitle=${encodeURIComponent(query)}&page=${page}`).then(res => res.data);
@@ -50,10 +51,13 @@ const HomePage = () => {
     const [page,setPage] = useState(1);
     const PAGE_LIMIT = 3;
 
+    const [debouncedQuery] = useDebounce(searchQuery);
+
     //For resetting page on each result change
     useEffect(()=>{
         setPage(1);
-    },[searchQuery,filters])
+    },[debouncedQuery,filters])
+
 
     const { data: jobData , isLoading : isJobsLoading } = useQuery({ queryKey: ['jobs',page], queryFn: () => fetchOpenJobs(page) })
 
@@ -66,9 +70,9 @@ const HomePage = () => {
     });
 
     const { data: searchResults , isLoading: isSearchLoading} = useQuery({
-        queryKey: ['searchJobs', searchQuery,page],
-        queryFn: () => searchJobs(searchQuery,page),
-        enabled: searchQuery !== '',
+        queryKey: ['searchJobs', debouncedQuery,page],
+        queryFn: () => searchJobs(debouncedQuery,page),
+        enabled: debouncedQuery !== '',
     });
 
     const handleCheckboxChange = (filterType, value) => {
@@ -133,10 +137,10 @@ const HomePage = () => {
     ));
 
     // Combined loading state
-    const isLoadingResults = (searchQuery.length > 0 && isSearchLoading) ||
+    const isLoadingResults = (debouncedQuery.length > 0 && isSearchLoading) ||
     (isFiltered && isFilteredJobsLoading) || isJobsLoading;
 
-    const displayJobs = searchQuery.length > 0 ? searchResults?.searchJobs :
+    const displayJobs = debouncedQuery.length > 0 ? searchResults?.searchJobs :
         (isFiltered ? filteredData?.filteredJobs : jobData?.activeJobs);
 
     if(loading){
@@ -228,7 +232,7 @@ const HomePage = () => {
                         setCurrentPage={setPage} 
                         pageLimit={PAGE_LIMIT} 
                         totalItems={
-                            searchQuery.length > 0 ? searchResults?.searchJobsCount :
+                            debouncedQuery.length > 0 ? searchResults?.searchJobsCount :
                             isFiltered ? filteredData?.filteredJobsCount : jobData?.totalOpenJobs} 
                         />
                     </div>

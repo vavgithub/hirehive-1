@@ -23,6 +23,7 @@ import Loader from '../../components/ui/Loader';
 import SearchIcon from '../../svg/SearchIcon';
 import StyledCard from '../../components/ui/StyledCard';
 import Pagination from '../../components/utility/Pagination';
+import useDebounce from '../../hooks/useDebounce';
 
 
 const fetchJobs = (page,status) => axios.get(`/jobs/jobs?page=${page}&status=${status}`).then(res => res.data);
@@ -51,10 +52,12 @@ const Dashboard = () => {
     const [page,setPage] = useState(1);
     const PAGE_LIMIT = 3;
 
+    const [debouncedQuery] = useDebounce(searchQuery);
+
     //For resetting page on each result change
     useEffect(()=>{
         setPage(1);
-    },[activeTab,searchQuery,filters])
+    },[activeTab,debouncedQuery,filters])
 
     // Fetch jobs and overall stats
     // Use the updated jobs query
@@ -93,9 +96,9 @@ const Dashboard = () => {
 
     // Update the search query to get the loading state
     const { data: { jobArray: searchResults = [], jobCount = 0 } = {}, isLoading: isSearchLoading } = useQuery({
-        queryKey: ['searchJobs', searchQuery, page, activeTab],
-        queryFn: () => searchJobs(searchQuery,page,activeTab),
-        enabled: searchQuery !== '',
+        queryKey: ['searchJobs', debouncedQuery, page, activeTab],
+        queryFn: () => searchJobs(debouncedQuery,page,activeTab),
+        enabled: debouncedQuery !== '',
     });
     const deleteMutation = useMutation({
         mutationFn: (jobId) => axios.delete(`/jobs/deleteJob/${jobId}`),
@@ -294,14 +297,14 @@ const Dashboard = () => {
     ));
 
     // Combined loading state
-    const isLoadingResults = (searchQuery.length > 0 && isSearchLoading) ||
+    const isLoadingResults = (debouncedQuery.length > 0 && isSearchLoading) ||
         (isFiltered && isFilteredJobsLoading);
 
     // Get the jobs to display based on search or filters
     const displayJobs = useMemo(()=>{
-        return (searchQuery.length > 0 && !isSearchLoading) ? searchResults :
+        return (debouncedQuery.length > 0 && !isSearchLoading) ? searchResults :
         (isFiltered && !isFilteredJobsLoading ? filteredData?.filteredJobs : jobs);
-    }, [filteredData, isFiltered , searchQuery, jobs, searchResults]);
+    }, [filteredData, isFiltered , debouncedQuery, jobs, searchResults]);
 
     const currentPage = 'dashboard';
 
@@ -393,14 +396,14 @@ const Dashboard = () => {
                                     )
                                 })
                         )}
-                        {(searchQuery ? jobCount : isFiltered ? filteredData?.filteredCount :
+                        {(debouncedQuery ? jobCount : isFiltered ? filteredData?.filteredCount :
                                 (activeTab === "draft" ? overallStats?.totalDraftedJobs : activeTab === "closed" ? overallStats?.totalClosedJobs : overallStats?.totalOpenJobs) ) !== 0 && 
                         <Pagination 
                             currentPage={page} 
                             setCurrentPage={setPage} 
                             pageLimit={PAGE_LIMIT} 
                             totalItems={
-                                searchQuery ? jobCount : isFiltered ? filteredData?.filteredCount :
+                                debouncedQuery ? jobCount : isFiltered ? filteredData?.filteredCount :
                                 (activeTab === "draft" ? overallStats?.totalDraftedJobs : activeTab === "closed" ? overallStats?.totalClosedJobs : overallStats?.totalOpenJobs) 
                                 } 
                         />
