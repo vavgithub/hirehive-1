@@ -15,7 +15,7 @@ import { fetchCandidateAuthData } from '../../redux/candidateAuthSlice';
 import useCandidateAuth from '../../hooks/useCandidateAuth';
 import { digitsRegex, lowerCaseRegex, specialCharRegex, upperCaseRegex } from '../../utility/regex';
 import { PersonalDetailsSection, ProfessionalDetailsSection, ResumePortfolioSection } from '../../components/Form/ApplyJob';
-import { validationRules } from '../../utility/validationRules';
+import { validateProfileImages, validateResume, validationRules } from '../../utility/validationRules';
 import Header from '../../components/utility/Header';
 import LoaderModal from '../../components/ui/LoaderModal';
 import AdditionalQuestions from '../../components/AdditionalQuestions';
@@ -28,10 +28,10 @@ const fetchJobDetails = async (id) => {
 };
 
 export const uploadProfilePicture = async (file) => {
-  if (!file) return null;
+  if (!file) throw new Error("No file selected.");
+  validateProfileImages(file)
   const formData = new FormData();
   formData.append('profilePicture', file);
-
   try {
     const response = await axios.post('/auth/candidate/upload-profile-picture', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
@@ -45,7 +45,8 @@ export const uploadProfilePicture = async (file) => {
 
 
 export const uploadResume = async (file,setUploadProgress) => {
-  if (!file) return null;
+  if (!file) throw new Error("No file selected.");
+  validateResume(file)
   const formData = new FormData();
   formData.append('resume', file);
 
@@ -245,7 +246,7 @@ useEffect(() => {
     } catch (error) {
       showErrorToast(
         'Error',
-        error.response?.data?.message || 'Failed to perform job action. Please try again.'
+        error.response?.data?.message || error?.message || 'Failed to perform job action. Please try again.'
       );
     } finally {
       setIsSubmitting(false);

@@ -73,3 +73,27 @@ export const validationRules = {
     },
   };
   
+export const validateProfileImages = (file) => {
+  if (!file) throw new Error("No file selected.");
+
+  // Allowed file types
+  const allowedTypes = ["image/jpeg", "image/jpg", "image/png"];
+
+  if (!allowedTypes.includes(file.type)) {
+    throw new Error("Invalid file type. Only JPG, JPEG, and PNG files are allowed.");
+  }
+
+  return true
+}
+
+export const validateResume = (file) => {
+  if (!file) throw new Error("No file selected.");
+
+  // Allowed file types
+  const allowedTypes = ["application/pdf", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"]; // PDF and DOCX
+
+  if (!allowedTypes.includes(file.type)) {
+    throw new Error("Invalid file type. Only PDF and DOCX files are allowed.");
+  }
+  return true
+}
