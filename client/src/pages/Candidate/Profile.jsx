@@ -436,7 +436,7 @@ function Profile() {
       }
     } catch (error) {
       setIsLoading(false);
-      showErrorToast("Error",error?.response?.data?.message );
+      showErrorToast("Error",error?.response?.data?.message || error?.message || "Profile Updation Failed.");
     }
   }
 
