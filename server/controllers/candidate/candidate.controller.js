@@ -146,16 +146,24 @@ const jobSpecificStats = asyncHandler(async (req, res, next) => {
 
 const fetchActiveJobs = async (req, res) => {
   try {
+    const { page } = req.query;
+    const pageNumber = page ? parseInt(page) : 1;
+    const LIMIT = 3;
+
     // Find jobs where status is "open" and sort by creation date in descending order
     const activeJobs = await jobs
       .find({ status: "open" })
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .skip((pageNumber - 1) * LIMIT)
+      .limit(LIMIT);
+
+    const totalOpenJobs = await jobs.countDocuments({status: "open"})  
 
     if (activeJobs.length === 0) {
       return res.status(404).json({ message: "No active jobs found" });
     }
 
-    res.status(200).json(activeJobs);
+    res.status(200).json({activeJobs,totalOpenJobs});
   } catch (error) {
     res.status(500).json({ message: "Error fetching open jobs", error: error.message });
   }
@@ -465,6 +473,10 @@ const fetchAssignedCandidate = async (req, res) => {
 
 const searchJobs = async (req, res) => {
   const searchTerm = req.query.jobTitle;
+  const { page } = req.query;
+  const pageNumber = page ? parseInt(page) : 1;
+  const LIMIT = 3;
+
   if (!searchTerm) {
     return res.status(400).json({ error: "Search term (title) is required" });
   }
@@ -472,11 +484,19 @@ const searchJobs = async (req, res) => {
     // Fetch all jobs from the database
     const jobArray = await jobs.find({
       jobTitle: { $regex: searchTerm, $options: "i" },
-    });
+    })
+    .sort({ createdAt: -1 })
+    .skip((pageNumber - 1) * LIMIT)
+    .limit(LIMIT);
     //Filtererd into openJobs only for candidates
     const openJobsFiltered = jobArray.filter(job=>job.status === "open");
+    
+    const searchJobsCount = await jobs.countDocuments({
+      jobTitle: { $regex: searchTerm, $options: "i" },
+      status : "open"
+    })
     // Respond with the list of jobs
-    res.status(200).json(openJobsFiltered);
+    res.status(200).json({searchJobs:openJobsFiltered, searchJobsCount});
   } catch (error) {
     // Handle error if fetching jobs fails
     res.status(500).json({ message: error.message });
@@ -486,6 +506,10 @@ const searchJobs = async (req, res) => {
 const filterJobs = asyncHandler(async (req, res) => {
   const { employmentType, jobProfile, experience ,budget } = req.body.filters;
   const query = { status: 'open' }; // Add the status filter here
+
+  const { page } = req.body;
+  const pageNumber = page ? parseInt(page) : 1;
+  const LIMIT = 3;
 
   if (employmentType && employmentType.length > 0) {
     query.employmentType = { $in: employmentType };
@@ -512,8 +536,14 @@ const filterJobs = asyncHandler(async (req, res) => {
     }
   }
 
-  const filteredJobs = await jobs.find(query); // Fetch jobs with the new query including status: 'open'
-  res.status(200).json(filteredJobs);
+  const filteredJobs = await jobs.find(query)
+  .sort({ createdAt: -1 })
+  .skip((pageNumber - 1) * LIMIT)
+  .limit(LIMIT); // Fetch jobs with the new query including status: 'open'
+
+  const filteredJobsCount = await jobs.countDocuments(query);
+
+  res.status(200).json({filteredJobs,filteredJobsCount});
 });
 
 

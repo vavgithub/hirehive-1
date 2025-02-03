@@ -2,9 +2,11 @@ import React, { useState } from 'react'
 import Scorer from '../ui/Scorer';
 import { Button } from '../ui/Button';
 import { showErrorToast } from '../ui/Toast';
+import StyledCard from '../ui/StyledCard';
 
-function PortfolioReview({ candidate, onSubmit }) {
+function PortfolioReview({ candidate, onSubmit ,rounded = "bottom"}) {
 
+    const roundedClass =  rounded === "bottom" ? 'rounded-b-xl' : rounded === "top" ? "rounded-t-xl" : "rounded-xl"   
 
     const [rating, setRating] = useState(0);
     const [feedback, setFeedback] = useState('');
@@ -14,7 +16,6 @@ function PortfolioReview({ candidate, onSubmit }) {
         showErrorToast("Oopss","Please rate the candidate")
         return
       }
-      console.log(candidate)
       onSubmit(candidate._id, {
         jobId: candidate.currentApplication?.jobId ? candidate.currentApplication.jobId  : candidate.jobApplication.jobId ,
         stage: candidate.currentApplication?.currentStage ? candidate.currentApplication.currentStage : candidate.jobApplication.currentStage,
@@ -24,7 +25,7 @@ function PortfolioReview({ candidate, onSubmit }) {
     };
   
     return (
-      <div className='bg-background-90 flex gap-4 justify-between rounded-b-xl  items-center p-4'>
+      <StyledCard padding={2} borderRadius={roundedClass} extraStyles=' flex gap-4 justify-between  items-center  font-outfit'>
         <span className='flex-shrink-0'>Portfolio ratings</span>
         <Scorer value={rating} onChange={setRating} />
         <input
@@ -35,7 +36,7 @@ function PortfolioReview({ candidate, onSubmit }) {
           onChange={(e) => setFeedback(e.target.value)}
         />
         <Button variant="icon" onClick={handleSubmit}>Submit</Button>
-      </div>
+      </StyledCard>
     );
   };
 

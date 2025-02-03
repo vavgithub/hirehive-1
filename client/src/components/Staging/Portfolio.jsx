@@ -141,10 +141,10 @@ const Portfolio = ({ candidateId, jobId ,isClosed}) => {
                 );
             case 'Under Review':
                 return (
-                    <>
+                    <div className='flex flex-col gap-4'>
                         <Label text="Please review the portfolio and update the details below." />
-                        <PortfolioReview candidate={candidateData} onSubmit={handleReviewSubmit} />
-                    </>
+                        <PortfolioReview candidate={candidateData} onSubmit={handleReviewSubmit} rounded='full' />
+                    </div>
                 );
             case 'Reviewed':
             case 'Cleared':
@@ -228,7 +228,7 @@ const Portfolio = ({ candidateId, jobId ,isClosed}) => {
     );
 
     const renderContent = () => {
-        if (isLoading) {
+        if (isLoading || submitReviewMutation?.isPending || updateAssigneeMutation?.isPending) {
             return (
                 <div className='flex justify-center'>
                     <Loader />
