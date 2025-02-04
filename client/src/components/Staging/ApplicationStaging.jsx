@@ -12,6 +12,7 @@ import Hired from './Hired';
 import QuestionResponses from './QuestionResponses';
 import { Card } from '@mui/material';
 import { useAuthContext } from '../../context/AuthProvider';
+import GlobalStaging from './GlobalStaging';
 const stageComponents = {
     Portfolio,
     Screening,
@@ -201,6 +202,7 @@ const ApplicationStaging = ({ candidateId, jobId ,jobStatus}) => {
             {/* Stage Content */}
             <div className="stages-content mt-8">
                 {selectedStage && renderStageComponent(selectedStage)}
+                {/* <GlobalStaging role={role} selectedStage={selectedStage} stageStatuses={stageStatuses} /> */}
             </div>
 
             {/* Question Responses Accordion */}
