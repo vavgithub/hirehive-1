@@ -412,6 +412,9 @@ export const applyToJob = async (req, res) => {
       (application) => application.jobId.toString() === jobId
     );
 
+    //Added to avoid breaking with JobProfile for existing jobs and candidates
+    candidate.jobApplications.forEach(app=>app.jobProfile = jobProfile)
+
     if (hasApplied) {
       return res.status(400).json({ message: "You have already applied to this job." });
     }
@@ -450,6 +453,7 @@ export const applyToJob = async (req, res) => {
     const newApplication = {
       jobId,
       jobApplied,
+      jobProfile,
       questionResponses,
       applicationDate: new Date(),
       currentStage: jobStages[0]?.name || "",

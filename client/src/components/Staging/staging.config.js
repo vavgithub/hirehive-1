@@ -4,7 +4,7 @@ import WarningIcon from "../../svg/Staging/WarningIcon";
 import PortfolioHeader from "./PortfolioHeader";
 
 export const stagingConfig = {
-    'UI/UX' : [
+    'UI UX' : [
         {
             name : "Portfolio",
             statuses : [
@@ -199,7 +199,15 @@ export const stagingConfig = {
             statuses : [
                 'Pending', 'Call Scheduled', 'Under Review', 'Reviewed', 'Cleared', 'No Show', 'Rejected'
             ],
-            score : 5,
+            score : {
+                Attitude : 5,
+                UI : 5,
+                UX : 5,
+                Tech : 5,
+                Communication : 5,
+                Budget : 5,
+            },
+            hasSplitScoring : true,
             extraHeaderContent : false,
             contentConfig : {
                 "Pending" : {

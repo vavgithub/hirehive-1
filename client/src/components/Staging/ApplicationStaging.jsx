@@ -201,8 +201,14 @@ const ApplicationStaging = ({ candidateId, jobId ,jobStatus}) => {
 
             {/* Stage Content */}
             <div className="stages-content mt-8">
-                {selectedStage && renderStageComponent(selectedStage)}
-                {/* <GlobalStaging role={role} selectedStage={selectedStage} stageStatuses={stageStatuses} /> */}
+                {/* {selectedStage && renderStageComponent(selectedStage)} */}
+                <GlobalStaging 
+                role={role} 
+                selectedStage={selectedStage} 
+                stageStatuses={stageStatuses} 
+                jobProfile={candidateData?.jobApplication?.jobProfile || "UI UX"} 
+                isClosed={(jobStatus === "deleted" || jobStatus === "closed")}
+                />
             </div>
 
             {/* Question Responses Accordion */}
