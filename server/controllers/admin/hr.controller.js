@@ -3,6 +3,7 @@ import { jobs } from "../../models/admin/jobs.model.js";
 import { candidates } from "../../models/candidate/candidate.model.js";
 import { getDesignTaskContent, getRejectionEmailContent } from "../../utils/emailTemplates.js";
 import { sendEmail } from "../../utils/sentEmail.js";
+import '../../utils/zoom.js'
 
 export const rejectCandidate = async (req, res) => {
   try {
