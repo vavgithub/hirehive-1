@@ -4,6 +4,7 @@ import { Controller } from 'react-hook-form';
 import { InputField } from '../../components/Form/FormFields';
 import { validationRules } from '../../utility/validationRules';
 import { ProfilePictureUpload } from './ProfilePictureUpload';
+import { PhoneInputField } from './PhoneInputField';
 
 // Reusable form field component
 export const FormField = ({ 
@@ -158,14 +159,13 @@ export const FormField = ({
             required={true}
           />
           
-          <FormField
-            name="phoneNumber"
-            control={control}
-            rules={validationRules.phoneNumber}
-            label="Phone Number"
-            type="number"
-            required={true}
-          />
+          {/* Replace your normal phone number FormField with the new PhoneInputField */}
+        <PhoneInputField
+          name="phoneNumber"
+          control={control}
+          label="Phone Number"
+          required
+        />
         </div>
       </div>
     );
