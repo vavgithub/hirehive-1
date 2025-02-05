@@ -133,7 +133,6 @@ const jobApplicationSchema = new mongoose.Schema(
     },
     jobProfile: {
       type: String,
-      required: true,
     },
     questionResponses: [answerSchema],
     applicationDate: {

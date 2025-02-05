@@ -26,6 +26,12 @@ import ClipboardIcon from '../../svg/Staging/ClipboardIcon.jsx';
 import { formatTime } from '../../utility/formatTime.js';
 import NoShowAction from './NoShow.jsx';
 import useScheduler from '../../hooks/useScheduler.jsx';
+import BulletMarks from '../ui/BulletMarks.jsx';
+import Scorer from '../ui/Scorer.jsx';
+import TaskForm, { SubmissionForm } from './TaskForm.jsx';
+import TaskDetails, { SubmissionDetails } from './TaskDetails.jsx';
+import HiredStamp from "../../svg/Background/HiredStamp.svg"
+import Loader from '../ui/Loader.jsx';
 
 const submitReview = async ({ candidateId, reviewData }) => {
     const response = await axios.post('dr/submit-score-review', {
@@ -52,7 +58,6 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
       return {stageTitle, stageConfig, stageBasedConfig, candidateId, jobId}
     },[candidateData,jobProfile,selectedStage,role])
 
-    console.log(stagingConfig[jobProfile],stageData,candidateData)
 
     const data = useScheduler(candidateData, stageData, "Under Review")
 
@@ -64,10 +69,11 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
     const [isModalOpen,setIsModalOpen] = useState(false);
     const [isBudgetScoreSubmitted, setIsBudgetScoreSubmitted] = useState(false);
     const [isRescheduling, setIsRescheduling] = useState(false);
+    const [budgetScore, setBudgetScore] = useState(0);
 
     useEffect(()=>{
       if(stageTitle === "Screening"){
-        if(stageData?.score?.budget){
+        if(stageData?.score?.Budget){
           setIsBudgetScoreSubmitted(true)
         }
       }
@@ -78,7 +84,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
       mutationFn: (newAssignee) => axios.put('dr/update-assignee', {
           candidateId,
           jobId,
-          stage: 'Portfolio',
+          stage: stageTitle,
           assigneeId: newAssignee._id
       }),
       onSuccess: (response) => {
@@ -86,7 +92,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
           const { updatedStageStatus, currentStage } = response.data;
 
           dispatch(updateStageStatus({
-              stage: 'Portfolio',
+              stage: stageTitle,
               status: updatedStageStatus.status,
               data: {
                   ...stageData,
@@ -191,14 +197,14 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
     const scheduleMutation = useMutation({
         mutationFn: (scheduleData) => axios.post('hr/schedule-call', {
             ...scheduleData,
-            stage: 'Screening'
+            stage: stageTitle
         }),
         onMutate: () => {
             setIsLoading(true); // Set loading to true when mutation starts
         },
         onSuccess: (data) => {
             dispatch(updateStageStatus({
-                stage: 'Screening',
+                stage: stageTitle,
                 status: 'Call Scheduled',
                 data: data.updatedStageStatus
             }));
@@ -215,14 +221,14 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
     const rescheduleMutation = useMutation({
         mutationFn: (rescheduleData) => axios.post('hr/reschedule-call', {
             ...rescheduleData,
-            stage: 'Screening'
+            stage: stageTitle
         }),
         onMutate: () => {
             setIsLoading(true); // Set loading to true when mutation starts
         },
         onSuccess: (data) => {
             dispatch(updateStageStatus({
-                stage: 'Screening',
+                stage: stageTitle,
                 status: 'Call Scheduled',
                 data: data.updatedStageStatus
             }));
@@ -244,6 +250,86 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
     const handleReschedule = (rescheduleData) => {
         rescheduleMutation.mutate({ candidateId, jobId, ...rescheduleData });
     };
+
+    //Scoring functions
+    const getTotalScore = ()=>{
+        let score = 0;    
+        return score + (stageData?.score?.Attitude ?? 0) +
+        (stageData?.score?.UX ?? 0) +
+        (stageData?.score?.Tech ?? 0) +
+        (stageData?.score?.Communication ?? 0) +
+        (stageData?.score?.UI ?? 0) +
+        (stageData?.score?.Budget ?? 0)
+    }
+
+    const submitBudgetScoreMutation = useMutation({
+        mutationFn: (score) => axios.post('hr/submit-budget-score', { candidateId, jobId, stage: 'Screening', score }),
+        onSuccess: (data) => {
+
+            dispatch(updateStageStatus({
+                stage: 'Screening',
+                status: 'Reviewed',
+                data: {
+                    ...stageData,
+                    score: data.updatedScore,
+                }
+            }));
+            queryClient.invalidateQueries(['candidate', candidateId, jobId]);
+            setIsBudgetScoreSubmitted(true);
+
+            // Recalculate total score
+            // const scores = Object.values(data.updatedScore);
+            // const sum = scores.reduce((acc, curr) => acc + (typeof curr === 'number' ? curr : 0), 0);
+            // setTotalScore(sum);
+        },
+        onError: (error) => {
+            console.error('Error submitting budget score:', error);
+            // You can add user-facing error handling here, e.g., showing an error message
+        }
+    });
+
+    const handleBudgetScoreSubmit = () => {
+        if (budgetScore > 0) {
+
+            submitBudgetScoreMutation.mutate(budgetScore);
+        }
+    };
+
+    const { totalSum , grandSum } = useMemo(() => {
+        let totalSum = 0;
+        let grandSum = 0;
+        if(stageStatuses && jobProfile && stageTitle){
+            let stages = stagingConfig[jobProfile];
+            for(let stage of stages){
+                if(stage?.name !== stageTitle){
+                    if(stage?.hasSplitScoring){
+                        Object.keys(stage?.score)?.map(scoring=>{
+                            totalSum += stageStatuses[stage?.name]?.score ? parseInt(stageStatuses[stage?.name]?.score[scoring] ?? 0) : 0
+                            grandSum += stage?.score[scoring]
+                        })
+                    }else{
+                        totalSum += parseInt(stageStatuses[stage?.name]?.score ?? 0)
+                        grandSum += stage?.score
+                    }
+                }else{
+                    if(stage?.hasSplitScoring){
+                        Object.keys(stage?.score)?.map(scoring=>{
+                            totalSum += stageStatuses[stage?.name]?.score ? parseInt(stageStatuses[stage?.name]?.score[scoring] ?? 0) : 0
+                            grandSum += stage?.score[scoring]
+                        })
+                    }else{
+                        totalSum += parseInt(stageStatuses[stage?.name]?.score ?? 0)
+                        grandSum += stage?.score
+                    }
+                    break
+                }
+            }
+        }
+        return {
+            totalSum : isNaN(totalSum) ? 0 : totalSum,
+            grandSum : isNaN(grandSum) ? 0 : grandSum,
+        }
+    },[stagingConfig,jobProfile,stageStatuses,stageTitle]);
 
     const renderCallData = (call,isRescheduled) => (
       <div className={(isRescheduled && "w-[43%] ") + ' bg-background-80 flex justify-between items-center rounded-xl p-4'}>
@@ -282,8 +368,33 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
         </div>
     )
 
+
+    const renderScoreCategories = () => {
+        const categories = [
+            { label: 'Attitude', value: stageData?.score?.Attitude },
+            { label: 'UX', value: stageData?.score?.UX },
+            { label: 'Tech', value: stageData?.score?.Tech },
+            { label: 'Communication', value: stageData?.score?.Communication },
+            { label: 'UI', value: stageData?.score?.UI },
+            ...(isBudgetScoreSubmitted ? [{ label: 'Budget', value: stageData?.score?.Budget }] : []),
+        ];
+
+        return (<div className='grid grid-cols-3 gap-3 w-full '>
+            {categories.map((category, index) => (
+                <div key={index} className='grid grid-cols-[1fr,1fr] w-full gap-4 items-center'>
+                    <span className='typography-body text-font-gray '>{category.label}</span>
+                    <BulletMarks marks={category.value} />
+                </div>
+            ))}
+        </div>)
+    };
+
   return (
-    <StyledCard padding={3} >
+    <StyledCard 
+    padding={3} 
+    backgroundColor={"bg-background-30"}
+    extraStyles={"relative min-h-[12rem]"}
+    >
       {/* Header Part */}
       <div className='flex justify-between items-center'>
         <div className='flex items-center gap-4'>
@@ -325,8 +436,19 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
             </div>
       </div>
       {/* Body Section */}
-      <div className='mt-4'>
-        {stageBasedConfig?.hasLabel && <Label icon={stageBasedConfig?.hasLabel?.icon} text={stageBasedConfig?.hasLabel?.content} />}
+      {
+        isLoading ? 
+            <div className='flex justify-center items-center w-full'>
+                <Loader />
+            </div>
+        :
+        <>
+        <div >
+        {stageBasedConfig?.hasLabel && <div className='mt-4'><Label icon={stageBasedConfig?.hasLabel?.icon} text={stageBasedConfig?.hasLabel?.hasCustomContent ? (stageBasedConfig?.hasLabel?.content + candidateData?.jobApplication?.jobApplied) : stageBasedConfig?.hasLabel?.content} /></div>}
+        {
+            stageBasedConfig?.hasSubmissionDetails && 
+            <SubmissionDetails candidateData={candidateData} stageData={stageData} />
+        }
         {stageBasedConfig?.hasAssigneeSelector && 
           <div className='w-2/5'>
               <h4 className='typography-body my-4 font-outfit'>Select Reviewer</h4>
@@ -337,27 +459,78 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
                   onSelect={handleAssigneeChange}
               />
           </div>
-          }
-          
-        {
-          stageBasedConfig?.hasRatingComponent && <StageRating name={stageConfig?.name} candidate={candidateData} onSubmit={handleReviewSubmit} stageConfig={stageConfig} />
         }
-        <div className='flex justify-between gap-4'>
+        {
+            stageBasedConfig?.hasTaskForm && 
+            <TaskForm
+            candidateId={candidateId}
+            jobId={jobId}
+            candidateEmail={candidateData?.email}
+            setIsLoading={setIsLoading}
+            />
+        }
+        {
+            stageBasedConfig?.hasTaskDetails && 
+            <TaskDetails stageData={stageData} />
+        }
+        {
+            stageBasedConfig?.hasHiredLabel && 
+                <img className='absolute top-2 left-3/4' src={HiredStamp} alt='Hired Stamp' />
+        }
+        {
+            stageBasedConfig?.hasSubmissionForm && 
+            <SubmissionForm candidateId={candidateId} jobId={jobId} stageData={stageData} />
+        }
+        {
+          stageBasedConfig?.hasRatingComponent && <StageRating candidateId={candidateId} jobId={jobId} name={stageConfig?.name} candidate={candidateData} onSubmit={handleReviewSubmit} stageConfig={stageConfig} />
+        }
+        <div className='flex gap-4 w-full '>
+            <div className='w-[75%] flex flex-col justify-between gap-4 '>
             {(stageBasedConfig?.hasRemarks || stageBasedConfig?.hasRejectionReason) && 
-            <div className='w-full'>
-                <p className='typography-small-p text-font-gray'>Remarks</p>
-                <p className='typography-body pb-8'>{currentStatus === 'Rejected' ? stageData?.rejectionReason : stageData?.feedback ? stageData?.feedback : 'No feedbacks'}</p>
-            </div>}
-            
-            {stageBasedConfig?.hasScoreCard && <div className='bg-stars bg-cover rounded-xl w-[160px] my-4'>
+                <div className='mt-4'>
+                    <p className='typography-small-p text-font-gray'>{currentStatus === 'Rejected' ? "Rejection Reason" : "Remarks"}</p>
+                    <p className='typography-body '>{currentStatus === 'Rejected' ? stageData?.rejectionReason : stageData?.feedback ? stageData?.feedback : 'No feedbacks'}</p>
+                </div>
+            }
+            {
+                stageBasedConfig?.hasScoreBoard && 
+                <div className=' flex flex-col'>
+                    <p className='typography-small-p text-font-gray mb-4'>Score</p>                   
+                    <div className='p-4 rounded-xl bg-background-60 flex min-h-[115px] '>
+                        {renderScoreCategories()}
+                    </div>
+                </div>
+            }
+            </div>
+            <div className='w-[35%] flex flex-col'>
+            {stageBasedConfig?.hasScoreCard && 
+            <div className='bg-stars bg-cover rounded-xl w-[160px] h-fit my-4 self-end'>
                 <div className='p-4 flex flex-col items-center'>
                     <p className='typography-small-p text-font-gray'>Total Score:</p>
                     <div className='flex flex-col items-center text-font-accent'>
-                        <p className='display-d2 font-bold'>{stageData?.score || 0}</p>
-                        <p className='typography-small-p text-font-gray'>Out Of 5</p>
+                        <p className='display-d2 font-bold'>{stageConfig?.showGrandTotal ? totalSum : stageConfig?.hasSplitScoring ? getTotalScore() : stageData?.score || 0}</p>
+                        <p className='typography-small-p text-font-gray'>Out Of {stageConfig?.showGrandTotal ? grandSum :stageConfig?.hasSplitScoring ? Object.values(stageConfig?.score).reduce((acc,curr)=>(acc + curr),0) : stageConfig?.score}</p>
                     </div>
                 </div>
             </div>}
+            {
+                (stageBasedConfig?.hasBudgetScoring && !isBudgetScoreSubmitted) && 
+                <div>
+                    <p className='typography-small-p text-font-gray mb-4'>Score Budget</p>
+                    <div className='flex gap-4'>
+                        <Scorer value={budgetScore} onChange={setBudgetScore} />
+                        <Button
+                            variant="icon"
+                            onClick={handleBudgetScoreSubmit}
+                            disabled={budgetScore === 0}
+                        >
+                            Submit
+                        </Button>
+                    </div>
+                </div>
+            }
+            </div>
+            
         </div>
       </div>
       
@@ -404,11 +577,11 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
       {stageBasedConfig?.actions && 
       <div className='w-full flex justify-end mt-4'>
           <div className='flex items-center gap-4'>
-              {stageBasedConfig.actions?.hasRejectAction && 
+              {(stageBasedConfig.actions?.hasRejectAction && !isRescheduling) && 
                   <Button
                       variant="cancelSec"
                       onClick={() => setIsModalOpen("REJECT")}
-                      disabled={stageTitle === "Screening" ? !isBudgetScoreSubmitted : false}
+                      disabled={(stageTitle === "Screening" && currentStatus !== "No Show") ? !isBudgetScoreSubmitted : false}
                   >
                       Reject
                   </Button>
@@ -417,14 +590,23 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
                   <Button
                       variant="primary"
                       onClick={() => setIsModalOpen("MOVE")}
-                      disabled={stageTitle === "Screening" ? !isBudgetScoreSubmitted : false}
+                      disabled={(stageTitle === "Screening" && currentStatus !== "No Show") ? !isBudgetScoreSubmitted : false}
                   >
                       Move to Next Round
                   </Button>
               }
+                {stageBasedConfig?.actions?.hasHiredAction && 
+                  <Button
+                      variant="primary"
+                      onClick={() => setIsModalOpen("MOVE")}
+                      disabled={(stageTitle === "Screening" && currentStatus !== "No Show") ? !isBudgetScoreSubmitted : false}
+                  >
+                      Hired
+                  </Button>
+                 }
               {(stageBasedConfig?.actions?.hasNoShowAction && !isRescheduling) && 
                 <NoShowAction
-                stage={"Screening"}
+                stage={stageTitle}
                 candidateId={candidateId}
                 setIsLoading={setIsLoading}
                 jobId={jobId}
@@ -440,6 +622,8 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
               } 
           </div>
       </div>}
+      </>
+      }
 
       {/* Modal Section */}
       {stageBasedConfig?.actions?.hasRejectAction && 
@@ -457,6 +641,16 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
       />}
 
       {stageBasedConfig?.actions?.hasMoveToNextRoundAction && 
+      <Modal
+          open={isModalOpen === "MOVE"}
+          onClose={() => setIsModalOpen(false)}
+          actionType={ACTION_TYPES.MOVE}
+          onConfirm={handleMoveToNextRound}
+          candidateName={`${candidateData?.firstName} ${candidateData?.lastName}`}
+          currentStage={stageTitle}
+      />}
+
+    {stageBasedConfig?.actions?.hasHiredAction && 
       <Modal
           open={isModalOpen === "MOVE"}
           onClose={() => setIsModalOpen(false)}

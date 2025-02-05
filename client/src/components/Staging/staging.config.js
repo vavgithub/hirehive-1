@@ -618,7 +618,7 @@ export const stagingConfig = {
                             content : "You have been assigned a design task. Please complete it and submit the link before the due date.",
                             icon : WarningIcon
                         },
-                        hasTaskDetails : true,
+                        hasTaskDetails : false,
                         hasSubmissionForm : true
                     }
                 },
@@ -644,7 +644,7 @@ export const stagingConfig = {
                         hasBudgetLabel : false,
                         hasLabel : {
                             content : "Waiting for the task to be sent to the candidate.",
-                            icon : false
+                            icon : WarningIcon
                         },
                     },
                     "Candidate" : {
@@ -1476,6 +1476,7 @@ export const stagingConfig = {
                 'Under Review', 'Offer Sent', 'Accepted', 'Rejected'
             ],
             score : 0,
+            showGrandTotal : true,
             extraHeaderContent : false,
             contentConfig : {
                 "Under Review" : {
@@ -1533,7 +1534,8 @@ export const stagingConfig = {
                         hasAssigneeSelector : false,
                         hasBudgetLabel : false,
                         hasLabel : {
-                            content : 'Candidate hired for the role of "After Merge Testing Job"',
+                            hasCustomContent : true,
+                            content : 'Candidate hired for the role of ',
                             icon : RightTick
                         },
                         hasHiredLabel: true,
@@ -1547,7 +1549,8 @@ export const stagingConfig = {
                         hasAssigneeSelector : false,
                         hasBudgetLabel : false,
                         hasLabel : {
-                            content : "Candidate is hired.",
+                            hasCustomContent : true,
+                            content : "Candidate is hired for ",
                             icon : RightTick
                         },
                         hasHiredLabel: true,
@@ -1562,7 +1565,8 @@ export const stagingConfig = {
                         hasAssigneeSelector : false,
                         hasBudgetLabel : false,
                         hasLabel : {
-                            content : 'Congratulations! You have been successfully hired as a "After Merge Testing Job"',
+                            hasCustomContent : true,
+                            content : 'Congratulations! You have been successfully hired as a ',
                             icon : RightTick
                         },
                         hasHiredLabel: true,
@@ -1599,8 +1603,11 @@ export const stagingConfig = {
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
                         hasBudgetLabel : false,
-                        hasLabel : false,
-                        hasRejectionReason : true,
+                        hasLabel : {
+                            content : "Thank you for your interest. Unfortunately, we will not be moving forward with your application at this time. We encourage you to reapply in the future",
+                            icon : RejectCrossIcon
+                        },
+                        hasRejectionReason : false,
                         hasScoreCard : false,
                         hasCallDetails : false,
                         hasCallHistory : false,
