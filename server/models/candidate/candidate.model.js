@@ -57,12 +57,14 @@ const stageStatusSchema = new mongoose.Schema(
     currentCall: {
       scheduledDate: Date,
       scheduledTime: String,
+      hostLink : String,
       meetingLink: String,
     },
     callHistory: [
       {
         scheduledDate: Date,
         scheduledTime: String,
+        hostLink : String,
         meetingLink: String,
         status: String, // e.g., 'Scheduled', 'Completed', 'Rescheduled', 'No Show', 'Cancelled'
       },

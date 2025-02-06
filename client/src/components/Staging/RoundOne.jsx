@@ -205,7 +205,7 @@ const RoundOne = ({ candidateId, jobId ,isClosed}) => {
                 <div className={(isRescheduled && "text-font-gray ") + ' flex items-center gap-2'}>
                     <LinkIcon customStroke={"#808389"} />
                     <h2 className={(isRescheduled ? "text-font-gray typography-body " : "text-font-primary") + ' mr-2 '}>screening_meeting_link</h2>
-                    {!isRescheduled && <CopyToClipboard text={call?.meetingLink}>
+                    {!isRescheduled && <CopyToClipboard text={role === "Hiring Manager" ? call?.hostLink : call?.meetingLink}>
                         <button className='flex items-center bg-background-70 px-[10px] py-[10px] rounded-xl'>
                             <ClipboardIcon />
                         </button>

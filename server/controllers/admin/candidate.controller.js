@@ -271,6 +271,30 @@ export const getCandidateById = async (req, res) => {
       experience: candidate.experience,
       skills: candidate.skills
     };
+    //Role-based custom response of Meeting Links 
+    let stageStatuses = {}
+    if (req.candidate || req.user?.role === "Design Reviewer") {
+      let stageStatusObj = Object.fromEntries(jobApplication.stageStatuses.toObject()); // Convert Map to Object
+    
+      const currentStage = jobApplication?.currentStage;
+      if (stageStatusObj[currentStage]?.currentCall?.meetingLink) {
+        const obj = JSON.parse(JSON.stringify(stageStatusObj[currentStage]));
+    
+        const customObj = {
+          ...obj,
+          currentCall: {
+            ...obj?.currentCall,
+            hostLink: null
+          }
+        };
+        // Now, modifying a plain object
+        stageStatusObj[currentStage] = customObj;
+      }
+    
+      stageStatuses = stageStatusObj; // Fully converted object
+    } else {
+      stageStatuses = jobApplication?.stageStatuses;
+    }
 
     // Construct the response object with relevant information
     const response = {
@@ -304,7 +328,7 @@ export const getCandidateById = async (req, res) => {
         applicationDate: jobApplication.applicationDate,
         rating: jobApplication.rating,
         currentStage: jobApplication.currentStage,
-        stageStatuses: jobApplication.stageStatuses,
+        stageStatuses: stageStatuses, 
         questionResponses: enrichedQuestionResponses,
         professionalInfo: jobApplication.professionalInfo
       }

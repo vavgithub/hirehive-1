@@ -2,8 +2,10 @@ import { jobStagesStatuses } from "../../config/jobStagesStatuses.js";
 import { jobs } from "../../models/admin/jobs.model.js";
 import { candidates } from "../../models/candidate/candidate.model.js";
 import { getDesignTaskContent, getRejectionEmailContent } from "../../utils/emailTemplates.js";
+import { getFormattedDateAndTime } from "../../utils/formatter.js";
 import { sendEmail } from "../../utils/sentEmail.js";
 import '../../utils/zoom.js'
+import { createMeeting } from "../../utils/zoom.js";
 
 export const rejectCandidate = async (req, res) => {
   try {
@@ -400,7 +402,7 @@ export const scheduleScreening = async (req, res) => {
 
 export const scheduleCall = async (req, res) => {
   try {
-    const { candidateId, jobId, stage, date, time, assigneeId, meetingLink } =
+    const { candidateId, jobId, stage, date, time, assigneeId } =
       req.body;
 
     const candidate = await candidates.findById(candidateId);
@@ -421,6 +423,8 @@ export const scheduleCall = async (req, res) => {
       return res.status(400).json({ message: "Invalid stage" });
     }
 
+    const formattedDatewithTime = getFormattedDateAndTime(date,time);
+    const { start_url, join_url } = await createMeeting(formattedDatewithTime,stage);
     // Update the stage status
     jobApplication.stageStatuses.set(stage, {
       status: "Call Scheduled",
@@ -428,7 +432,8 @@ export const scheduleCall = async (req, res) => {
       currentCall: {
         scheduledDate: date,
         scheduledTime: time,
-        meetingLink: meetingLink,
+        hostLink : start_url,
+        meetingLink: join_url,
       },
     });
 
@@ -488,17 +493,20 @@ export const rescheduleCall = async (req, res) => {
       }
       stageStatus.callHistory.unshift({
         ...stageStatus.currentCall,
+        hostLink : null,
         status: "Rescheduled",
       });
     } else {
       console.log("No current call to move to history");
     }
-
+    const formattedDatewithTime = getFormattedDateAndTime(date,time);
+    const { start_url, join_url } = await createMeeting(formattedDatewithTime,stage);
     // Update current call with new details
     stageStatus.currentCall = {
       scheduledDate: date,
       scheduledTime: time,
-      meetingLink: meetingLink,
+      hostLink : start_url,
+      meetingLink: join_url,
     };
     stageStatus.assignedTo = assigneeId;
     stageStatus.status = "Call Scheduled";

@@ -34,11 +34,14 @@ export const createMeeting = async (dateTime,stage = "Interview") =>{
         Authorization: `Bearer ${access_token}`,
         "Content-Type": "application/json",
       };
-  
+
+      // Ensure `dateTime` is converted properly to ISO 8601 without milliseconds
+      const formattedStartTime = new Date(dateTime).toISOString().split(".")[0] + "Z";
+
       let data = JSON.stringify({
         topic: `HireHive ${stage} call`,
         type: 2,
-        start_time: dateTime,
+        start_time: formattedStartTime,
         duration: 60,
         default_password: false,
         timezone: "Asia/Kolkata",
