@@ -149,11 +149,11 @@ const AssessmentResponse = () => {
                     {/* Candidate Info Card */}
                     <StyledCard padding={2} extraStyles="flex-grow">
                         <div className="flex gap-4 h-full">
-                            <div className="to-background-100 w-[180px] rounded-xl overflow-hidden">
+                            <div className="to-background-100 min-w-[200px max-w-[200px] max-h-[200px]  rounded-xl overflow-hidden">
                                 <img
-                                    src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg"
+                                    src={assessmentData?.candidateInfo?.profilePictureUrl || "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg"}
                                     alt={assessmentData?.candidateInfo?.name}
-                                    className="w-full h-full object-cover"
+                                    className="w-full  object-cover "
                                 />
                             </div>
 
