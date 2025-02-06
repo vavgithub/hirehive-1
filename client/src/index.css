@@ -133,14 +133,21 @@ input.no-spinner[class*="border-red-500"] {
 
 
 /* below is the css for react-tel-input that is country code box */
+.react-tel-input {
+  display: flex;
+}
 .react-tel-input .form-control {
-  width: 100%;
+  width: 70%;
   height: 44px;
   background-color: var(--color-background-40);
   border: none;
   border-radius: 12px;
   cursor: pointer;
   scrollbar-width: none;
+  padding: 0;
+  z-index: 2;
+  margin: 56px;
+  font-size: 16px;
 }
 
 
@@ -151,18 +158,27 @@ input.no-spinner[class*="border-red-500"] {
 
 .react-tel-input .selected-flag {
   border-radius: 12px 0 0 12px;
+  position: absolute;
+  width: 48px;
+  background-color: #0C0D0D;
+  padding: 0px 0px 0px 12px;
 }
 .react-tel-input .country-list{
-  border-radius: 0 0 12px 12px;
-  font: "Outfit", sans-serif;
+  border-radius: 12px;
+  font-family: "Outfit", sans-serif;
   background-color: var(--color-background-40);
+  position: absolute;
+  top: 44px;
+  width: 100%;
+  padding: 0px 8px 8px 8px;
 }
 
 .react-tel-input .flag-dropdown{
-  border-radius: 12px 0 0 12px;
+  border-radius: 12px;
   font: "Outfit", sans-serif;
   background-color: var(--color-background-40);
   border: none;
+  width: 100%;
 }
 
 .react-tel-input .country-list .country:hover {
@@ -196,21 +212,33 @@ input.no-spinner[class*="border-red-500"] {
 .react-tel-input .flag-dropdown.open {
   z-index: 2;
   background: var(--color-background-40);
-  border-radius: 12px 0 0 12px;
+  border-radius: 12px;
 }
 
 .search-emoji {
   display: none;
 }
 
+.react-tel-input .country-list .search {
+  padding: 14px 0px 0px 0px;
+  margin: 0;
+}
+.react-tel-input .country-list li {
+  border-radius: 12px;
+  margin: 8px 0px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+}
 .react-tel-input .country-list .search-box {
   border: none;
   border-radius: 12px;
   font-size: 15px;
-  line-height: 15px;
   margin-left: 0px;
-  padding: none;
+  padding: 4px 8px;
   outline: none;
+  width: 100%;
+  height: 44px;
 }
 
 @keyframes down {

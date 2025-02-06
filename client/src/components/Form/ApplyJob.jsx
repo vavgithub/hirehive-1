@@ -162,6 +162,7 @@ export const FormField = ({
           {/* Replace your normal phone number FormField with the new PhoneInputField */}
         <PhoneInputField
           name="phoneNumber"
+          rules={validationRules?.phoneNumber}
           control={control}
           label="Phone Number"
           required

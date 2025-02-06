@@ -17,6 +17,9 @@ export const validationRules = {
         message: 'Please enter a valid email address',
       },
     },
+    phoneNumber: {
+      required: 'Phone Number is required',
+    },
     portfolio: {
       required: 'Portfolio link is required',
       pattern: {

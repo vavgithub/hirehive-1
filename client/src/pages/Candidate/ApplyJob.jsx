@@ -333,7 +333,7 @@ useEffect(() => {
       setIsSubmitting(false);
     }
   };
-
+  console.log(errors)
   return (
 
 
