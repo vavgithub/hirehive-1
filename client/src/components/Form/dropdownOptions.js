@@ -9,6 +9,7 @@ export const dropdownOptions = {
       { value: '', label: 'Select Employment Type' },
       { value: 'Full Time', label: 'Full Time' },
       { value: 'Internship', label: 'Internship' },
+      {value: 'Part Time', label: 'Part Time'},
       { value: 'Contract', label: 'Contract' },
     ],
     jobProfile: [

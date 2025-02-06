@@ -432,7 +432,7 @@ useEffect(() => {
             <ProfessionalDetailsSection control={control} />
             {/* Skills Input */}
 
-            <div className="grid md:grid-cols-2 grid-cols-1 gap-6 mt-4 ">
+            <div className="grid md:grid-cols-2 grid-cols-1 gap-6 mt-6 ">
               <Controller
                 name="skills"
                 control={control}
