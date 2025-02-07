@@ -475,7 +475,73 @@ const filterJobs = asyncHandler(async (req, res) => {
   }
 });
 
+const filterSearchJobs = asyncHandler(async (req, res) => {
+  try {
+    const { employmentType, jobProfile, experience, budget, closingStatus } = req.body.filters;
+    const query = { createdBy: req.user._id };
+    const { page , status } = req.body;
+    const pageNumber = page ? parseInt(page) : 1;
+    const LIMIT = 3;
 
+    const searchTerm = req.body?.query ?? "";
+    query.jobTitle = { $regex: searchTerm, $options: "i" }
+
+    // Add employment type filter
+    if (employmentType && employmentType.length > 0) {
+      query.employmentType = { $in: employmentType };
+    }
+
+    // Add job profile filter
+    if (jobProfile && jobProfile.length > 0) {
+      query.jobProfile = { $in: jobProfile };
+    }
+
+    // Add experience range filter
+    if (experience && (experience.min !== '' || experience.max !== '')) {
+      if (experience.min !== '') {
+        query.experienceFrom = { $gte: Number(experience.min) };
+      }
+      if (experience.max !== '') {
+        query.experienceTo = { $lte: Number(experience.max) };
+      }
+    }
+
+    // Add budget range filter
+    if (budget && (budget.min !== '' || budget.max !== '')) {
+      if (budget.min !== '') {
+        query.budgetFrom = { $gte: Number(budget.min) };
+      }
+      if (budget.max !== '') {
+        query.budgetTo = { $lte: Number(budget.max) };
+      }
+    }
+
+    // Add closing status filter
+    if (closingStatus && closingStatus.length > 0) {
+      if (closingStatus.includes('Hired')) {
+        query.closingReason = 'Hired';
+      } else if (closingStatus.includes('NotHired')) {
+        query.closingReason = { $ne: 'Hired' };
+      }
+    }
+
+    if(status){
+      query.status = status
+    }
+
+    const filteredSearchJobs = await jobs.find(query).skip((pageNumber - 1) * LIMIT).limit(LIMIT);
+    const filteredSearchCount = await jobs.countDocuments(query);
+
+    res.status(200).json({filteredSearchJobs,filteredSearchCount});
+  } catch (error) {
+    console.error('Error in filterJobs:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Error filtering jobs',
+      error: error.message 
+    });
+  }
+});
 
 const deleteJob = async (req, res) => {
   const { id } = req.params;
@@ -675,6 +741,7 @@ export {
   getTotalJobCount,
   searchJobs,
   filterJobs,
+  filterSearchJobs,
   deleteJob,
   updateJob,
   archiveJob,

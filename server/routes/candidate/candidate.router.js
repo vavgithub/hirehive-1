@@ -4,6 +4,7 @@ import {
   createCandidate, 
   fetchActiveJobs,    
   filterJobs, 
+  filterSearchJobs, 
   getCandidate, 
   getCandidateById, 
   jobSpecificStats, 
@@ -24,6 +25,7 @@ const router = express.Router();
 router.get('/jobs/open', fetchActiveJobs);
 router.get('/jobs/searchJobs', searchJobs);
 router.post('/filterJobs', filterJobs);
+router.post('/filterSearchJobs', filterSearchJobs);
 router.get('/allCandidates', allCandidate);
 router.get('/stats', stats);
 router.post('/createCandidate', createCandidate);

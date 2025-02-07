@@ -546,6 +546,54 @@ const filterJobs = asyncHandler(async (req, res) => {
   res.status(200).json({filteredJobs,filteredJobsCount});
 });
 
+//Filter with search for Homepage
+const filterSearchJobs = asyncHandler(async (req, res) => {
+  const { employmentType, jobProfile, experience ,budget } = req.body.filters;
+  const query = { status: 'open' }; // Add the status filter here
+
+  const { page } = req.body;
+  const pageNumber = page ? parseInt(page) : 1;
+  const LIMIT = 3;
+
+  //Search
+  const searchTerm = req.body?.query ?? "";
+  query.jobTitle =  { $regex: searchTerm, $options: "i" }
+
+  if (employmentType && employmentType.length > 0) {
+    query.employmentType = { $in: employmentType };
+  }
+  if (jobProfile && jobProfile.length > 0) {
+    query.jobProfile = { $in: jobProfile };
+  }
+  if (experience && (experience.min !== '' || experience.max !== '')) {
+    if (experience.min !== '') {
+      query.experienceFrom = { $gte : Number(experience.min)};
+    }
+    if (experience.max !== '') {
+      query.experienceTo = { $lte : Number(experience.max) };
+    }
+  }
+
+  // Add budget range filter
+  if (budget && (budget.min !== '' || budget.max !== '')) {
+    if (budget.min !== '') {
+      query.budgetFrom = { $gte: Number(budget.min) };
+    }
+    if (budget.max !== '') {
+      query.budgetTo = { $lte: Number(budget.max) };
+    }
+  }
+
+  const filteredSearchJobs = await jobs.find(query)
+  .sort({ createdAt: -1 })
+  .skip((pageNumber - 1) * LIMIT)
+  .limit(LIMIT); // Fetch jobs with the new query including status: 'open'
+
+  const filteredSearchJobsCount = await jobs.countDocuments(query);
+
+  res.status(200).json({filteredSearchJobs,filteredSearchJobsCount});
+});
+
 
 const submitApplication = async (req, res) => {
   try {
@@ -651,5 +699,6 @@ export {
   fetchAssignedCandidate,
   jobSpecificStats,
   filterJobs,
+  filterSearchJobs,
   searchJobs,
 };

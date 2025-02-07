@@ -1,5 +1,5 @@
 import express from 'express';
-import { archiveJob , closeJob, createJob, deleteJob, draftJob, editJob, filterJobs, 
+import { archiveJob , closeJob, createJob, deleteJob, draftJob, editJob, filterJobs, filterSearchJobs, 
      getJobById, getJobs, getTotalJobCount , reOpenJob, searchJobs, StatisticsController, unarchiveJob, updateJob } from '../../controllers/admin/jobs.controller.js';
 import { protect } from '../../middlewares/authMiddleware.js';
 
@@ -14,6 +14,7 @@ router.get('/stats/job/:jobId', StatisticsController.getJobStats);
 
 router.post('/createJobs',protect, createJob);
 router.post('/filterJobs', protect,filterJobs);
+router.post('/filterSearchJobs', protect,filterSearchJobs);
 
 router.put('/updateJob/:id', updateJob);
 router.put('/archiveJob/:id', archiveJob);
