@@ -27,7 +27,7 @@ const generateAccountToken = async () => {
     }
 }
 
-export const createMeeting = async (dateTime,stage = "Interview") =>{
+export const createMeeting = async (dateTime,stage = "Interview",emails) =>{
     try {
       const access_token = await generateAccountToken() 
       const headers = {
@@ -37,7 +37,8 @@ export const createMeeting = async (dateTime,stage = "Interview") =>{
 
       // Ensure `dateTime` is converted properly to ISO 8601 without milliseconds
       const formattedStartTime = new Date(dateTime).toISOString().split(".")[0] + "Z";
-
+      const emailArray = emails?.map(email=>({email : email}));
+      
       let data = JSON.stringify({
         topic: `HireHive ${stage} call`,
         type: 2,
@@ -48,6 +49,9 @@ export const createMeeting = async (dateTime,stage = "Interview") =>{
         settings: {
           join_before_host: true,
           waiting_room: false,
+          email_notification : true,
+          calendar_type : 2,
+          meeting_invitees : emailArray
         },
       });
       const response = await axios.request({

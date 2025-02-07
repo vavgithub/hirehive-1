@@ -1,8 +1,9 @@
 import { jobStagesStatuses } from "../../config/jobStagesStatuses.js";
 import { jobs } from "../../models/admin/jobs.model.js";
+import { User } from "../../models/admin/user.model.js";
 import { candidates } from "../../models/candidate/candidate.model.js";
-import { getDesignTaskContent, getRejectionEmailContent } from "../../utils/emailTemplates.js";
-import { getFormattedDateAndTime } from "../../utils/formatter.js";
+import { getDesignTaskContent, getRejectionEmailContent, getScheduledCallEmailContent } from "../../utils/emailTemplates.js";
+import { convertToIST, getFormattedDateAndTime } from "../../utils/formatter.js";
 import { sendEmail } from "../../utils/sentEmail.js";
 import '../../utils/zoom.js'
 import { createMeeting } from "../../utils/zoom.js";
@@ -423,8 +424,20 @@ export const scheduleCall = async (req, res) => {
       return res.status(400).json({ message: "Invalid stage" });
     }
 
+    const assignee = await User.findById({_id : assigneeId});
+
+    let emails = [assignee?.email,candidate?.email]
+
     const formattedDatewithTime = getFormattedDateAndTime(date,time);
-    const { start_url, join_url } = await createMeeting(formattedDatewithTime,stage);
+    const { start_url, join_url } = await createMeeting(formattedDatewithTime,stage,emails);
+    const { formattedDate, formattedTime } = convertToIST(formattedDatewithTime);
+
+    const content = getScheduledCallEmailContent(candidate?.firstName + " " + candidate?.lastName,
+      jobApplication?.jobApplied,
+      formattedDate,
+      formattedTime,
+      join_url)
+    await sendEmail(candidate?.email,"HireHive Interview Call",content);
     // Update the stage status
     jobApplication.stageStatuses.set(stage, {
       status: "Call Scheduled",
@@ -499,8 +512,23 @@ export const rescheduleCall = async (req, res) => {
     } else {
       console.log("No current call to move to history");
     }
+
+    const assignee = await User.findById({_id : assigneeId});
+
+    let emails = [assignee?.email,candidate?.email]
+
     const formattedDatewithTime = getFormattedDateAndTime(date,time);
-    const { start_url, join_url } = await createMeeting(formattedDatewithTime,stage);
+    const { start_url, join_url } = await createMeeting(formattedDatewithTime,stage,emails);
+
+    const { formattedDate, formattedTime } = convertToIST(formattedDatewithTime);
+
+    const content = getScheduledCallEmailContent(candidate?.firstName + " " + candidate?.lastName,
+      jobApplication?.jobApplied,
+      formattedDate,
+      formattedTime,
+      join_url)
+    await sendEmail(candidate?.email,"HireHive Interview Call",content);
+    
     // Update current call with new details
     stageStatus.currentCall = {
       scheduledDate: date,

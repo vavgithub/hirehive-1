@@ -483,3 +483,89 @@ export const getResetSuccessfulContent = (candidateName) =>{
     </html>
     `
 }
+
+export const getScheduledCallEmailContent = (candidateName,jobTitle,date,time,link) => {
+    return `<!DOCTYPE html>
+        <html lang="en">
+
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>HireHive - Signup</title>
+            <style>
+                @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap" rel="stylesheet');
+                @import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet');
+                * {
+                    padding: 0;
+                    margin: 0;
+                    box-sizing: border-box;
+                    width: 600px;
+                }
+                #text{
+                    display: none;
+                }
+            </style>
+        </head>
+
+        <body>
+            <div style="background-color: #ffffff;
+            padding: 64px;
+            width: 600px;
+            font-family: Open Sans, sans-serif;">
+                <div style="margin-bottom: 30px; width:125px; height: 50px;">
+                    <img style="object-fit: cover; width:100%; " src="cid:vavLogo" alt="">
+                </div>
+                <div style="font-size: 14px;">
+                    <p style="margin-bottom: 16px;">Hi ${candidateName},</p>
+                    <p style="margin-bottom: 16px;">
+                        Thank you for maintaining your interest in the ${jobTitle} position at Value at Void™. After discussing with the team, we believe you are a strong fit and would like to invite you to proceed with the next steps.
+                        We are pleased to invite you to an interview for the ${jobTitle} position at  Value at Void™. Please find the details of your Zoom interview below:
+                        <br><br>
+                        Date: ${date}
+                        <br>
+                        Time: ${time}
+                        <br>
+                        Join Link: ${link}
+                        <br>
+                    </p>
+
+                    <p style="margin-bottom: 16px;">
+                        Please ensure you have a stable internet connection and join the meeting a few minutes early.
+                        <br>
+                        If you have any questions or need to reschedule, feel free to reply to this email.
+                        <br>
+                        Looking forward to speaking with you!
+                    </p>
+                
+                    <p style="margin-top: 16px; margin-bottom: 24px;">Best Regards,<br>Team Value at Void</p>
+
+                    <hr>
+                    <div style=" width: 100%;">
+                        <table style="margin:auto; width:50%; border-spacing:22px 0px;margin-top:40px;margin-bottom:20px">
+                            <!-- Instagram icon -->
+                            <td style="text-align:right;">
+                                <a href="https://www.instagram.com/valueatvoid/">
+                                    <img style="width: 28px; height: 28px;" src="cid:instaLogo" alt="">
+                                </a>
+                            </td>
+                            <!-- Youtube Icon -->
+                            <td style="padding-top: 5px; text-align:center;">
+                                <a href="https://www.youtube.com/c/ValueatVoid">
+                                    <img style="width: 28px; height: 28px;" src="cid:ytLogo" alt="">
+                                </a>
+                            </td>
+                            <!-- Linkedin icon -->
+                        <td>
+                            <a href="https://www.linkedin.com/company/atvoid/">
+                                <img style="width: 28px; height: 28px;" src="cid:linkedinLogo" alt="">
+                            </a>
+                        </td>
+                        </table>
+                        <a style="text-align: center; display: block; font-size:16px; color: rgba(99, 115, 129, 1); width: 100%;" href="www.atvoid.com">www.atvoid.com</a>
+                    </div>
+                </div>
+            </div>
+        </body>
+
+        </html>`
+} 
