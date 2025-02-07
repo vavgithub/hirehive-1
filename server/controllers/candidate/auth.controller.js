@@ -594,7 +594,6 @@ export const editCandidateProfile = async (req, res) => {
         location,
       } = req.body;
 
-      console.log(req.body);
       
       const OTP_STAGE = "OTP";
       const DONE_STAGE = "DONE";

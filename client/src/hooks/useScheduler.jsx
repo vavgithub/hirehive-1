@@ -35,7 +35,6 @@ function useScheduler(candidateData, stageData,status) {
       if ((timeFromNow < TWELVEHOURS) && !data) {
         timeout = setTimeout(async() => {
           //do api call
-          console.log("WORKED AT", scheduledDateObj);
           let result = await updateStatus(candidateData._id,candidateData.jobApplication.jobId,status);
           if(result?.message){
             setData(result.message)

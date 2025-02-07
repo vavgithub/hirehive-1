@@ -122,10 +122,6 @@ const AssessmentResponse = () => {
     }
 
     const assessmentData = data?.data;
-    console.log("cehck this", assessmentData);
-
-
-    const assessmentStat = data?.data
 
     // Update the button click handler
     const handleOpenRecording = () => {

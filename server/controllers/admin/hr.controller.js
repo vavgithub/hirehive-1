@@ -95,7 +95,6 @@ export const noShow = async (req, res) => {
 
     // Get the stages for this job profile
     const jobStages = jobStagesStatuses[job.jobProfile];
-    console.log(jobStages);
     if (!jobStages) {
       return res.status(400).json({ 
         message: "Invalid job profile or stages not defined" 

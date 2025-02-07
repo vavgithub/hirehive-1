@@ -14,7 +14,7 @@ if (!fs.existsSync(UPLOAD_PATH)) {
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    console.log('Upload directory:', UPLOAD_PATH);
+    // console.log('Upload directory:', UPLOAD_PATH);
     cb(null, UPLOAD_PATH);
   },
   filename: function (req, file, cb) {
@@ -32,7 +32,7 @@ const storage = multer.diskStorage({
       filename = `profile-${uniqueSuffix}${ext}`;
     }
 
-    console.log('Generated filename:', filename);
+    // console.log('Generated filename:', filename);
     cb(null, filename);
   }
 });
