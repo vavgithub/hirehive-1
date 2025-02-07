@@ -43,7 +43,7 @@ function useScheduler(candidateData, stageData,status) {
       }
     }
     return () => clearTimeout(timeout);
-  }, [stageData.status, stageData.currentCall, candidateData?._id]);
+  }, [stageData?.status, stageData?.currentCall, candidateData?._id]);
   return data;
 }
 

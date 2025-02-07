@@ -300,6 +300,7 @@ export const getCandidateById = async (req, res) => {
       jobApplication: {
         jobId: jobApplication.jobId,
         jobApplied: jobApplication.jobApplied,
+        jobProfile: jobApplication?.jobProfile || "UI UX",
         jobStatus : job ? job.status : "deleted",
         applicationDate: jobApplication.applicationDate,
         rating: jobApplication.rating,
