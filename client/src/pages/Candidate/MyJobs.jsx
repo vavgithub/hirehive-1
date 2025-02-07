@@ -77,7 +77,7 @@ const MyJobs = () => {
   }
 
   if (isError) {
-    console.error('Error fetching applied jobs:', error);
+    // console.error('Error fetching applied jobs:', error);
     return (
       <div className="m-2 pt-4">
         <h1 className="typography-h1">My Jobs</h1>

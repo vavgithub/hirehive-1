@@ -126,7 +126,7 @@ const ViewCandidateProfile = () => {
                 dispatch(setCurrentStage(data.jobApplication.currentStage));
                 dispatch(setStageStatuses(data.jobApplication.stageStatuses));
             } else {
-                console.error('jobApplication data is missing');
+                // console.error('jobApplication data is missing');
             }
         }
     }, [data, dispatch]);
@@ -244,7 +244,7 @@ const ViewCandidateProfile = () => {
             {
                 (role === "Hiring Manager" || role === "Design Reviewer") && (
                     <div className="flex gap-3">
-                        <StyledCard padding={2} extraStyles="w-full flex gap-3">
+                        <StyledCard padding={2} extraStyles="w-full flex gap-4">
                             <div className="to-background-100 w-[200px] min-h-auto max-h-[200px] rounded-xl overflow-hidden">
                                 <img src={data.profilePictureUrl || " https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg"} alt="" className='object-cover w-full overflow-hidden' />
                             </div>

@@ -38,7 +38,7 @@ export const uploadProfilePicture = async (file) => {
     });
     return response.data.profilePictureUrl;
   } catch (error) {
-    console.error('Error uploading profile picture:', error);
+    // console.error('Error uploading profile picture:', error);
     throw error;
   }
 };
@@ -62,7 +62,7 @@ export const uploadResume = async (file,setUploadProgress) => {
     });
     return response.data.resumeUrl;
   } catch (error) {
-    console.error('Error uploading resume:', error);
+    // console.error('Error uploading resume:', error);
     throw error;
   }
 };

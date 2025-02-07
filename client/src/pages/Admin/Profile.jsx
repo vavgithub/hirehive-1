@@ -15,7 +15,7 @@ const Profile = () => {
 
     uploadPicture(file, {
       onError: (error) => {
-        console.error('Error uploading profile picture:', error);
+        // console.error('Error uploading profile picture:', error);
         // You can add a toast notification here
       }
     });

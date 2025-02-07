@@ -324,6 +324,7 @@ export const getCandidateById = async (req, res) => {
       jobApplication: {
         jobId: jobApplication.jobId,
         jobApplied: jobApplication.jobApplied,
+        jobProfile: jobApplication?.jobProfile || "UI UX",
         jobStatus : job ? job.status : "deleted",
         applicationDate: jobApplication.applicationDate,
         rating: jobApplication.rating,
@@ -742,7 +743,7 @@ export const getCandidateJobs = async (req,res) => {
       const { candidateId } = req.params;
   
       const candidate = await candidates.findById(candidateId)
-        .select('questionnaireAttempts firstName lastName phone email')
+        .select('questionnaireAttempts firstName lastName phone email profilePictureUrl')
         .lean();
   
       if (!candidate) {
@@ -791,6 +792,7 @@ export const getCandidateJobs = async (req,res) => {
             email: candidate.email,
             phone: candidate.phone,
             score: latestAttempt.score,
+            profilePictureUrl : candidate?.profilePictureUrl,
             recordingUrl: latestAttempt.recordingUrl,
             totalTimeSpent: formattedTime,
             attemptDate: latestAttempt.attemptDate,

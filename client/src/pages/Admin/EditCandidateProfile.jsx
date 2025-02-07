@@ -33,7 +33,7 @@ const EditCandidateProfile = () => {
       navigate(-1)
     },
     onError: (error) => {
-      console.error('Error updating candidate:', error);
+      // console.error('Error updating candidate:', error);
       // Handle error (e.g., show an error message to the user)
     }
   })

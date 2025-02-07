@@ -20,7 +20,6 @@ import FileMainIcon from '../../svg/FileMainIcon';
 
 const PortfolioStage = ({ stageData, onAssign, onViewPortfolio, onReject, onMoveToNextRound }) => {
     const { status, assignedTo, score, remarks, rejectionReason } = stageData;
-    console.log(stageData);
 
     const renderContent = () => {
         switch (status) {

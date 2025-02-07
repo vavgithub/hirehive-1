@@ -22,7 +22,7 @@ export const uploadToCloudinary = async (inputPath, folder) => {
       inputPath : 
       path.join(uploadsDir, inputPath);
     
-    console.log('Attempting to upload from path:', filePath);
+    // console.log('Attempting to upload from path:', filePath);
 
     // Verify file exists before attempting upload
     await fs.access(filePath);
@@ -39,7 +39,7 @@ export const uploadToCloudinary = async (inputPath, folder) => {
       resourceType = 'raw';
     }
 
-    console.log('Uploading file as resource type:', resourceType);
+    // console.log('Uploading file as resource type:', resourceType);
 
     const result = await cloudinary.uploader.upload(filePath, {
       folder: folder,
@@ -48,7 +48,7 @@ export const uploadToCloudinary = async (inputPath, folder) => {
       unique_filename: true
     });
 
-    console.log('Cloudinary upload successful:', result.secure_url);
+    // console.log('Cloudinary upload successful:', result.secure_url);
 
     // Delete the temporary file after successful upload
     await fs.unlink(filePath);

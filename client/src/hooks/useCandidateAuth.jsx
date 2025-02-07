@@ -24,7 +24,7 @@ export const useCandidateAuth = () => {
         }
         setIsDone(true);
       } catch (error) {
-        console.error('Error fetching candidate data:', error);
+        // console.error('Error fetching candidate data:', error);
         setIsDone(true);
       }
     };

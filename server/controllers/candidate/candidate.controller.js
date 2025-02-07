@@ -596,11 +596,12 @@ const submitApplication = async (req, res) => {
         answer: answer || null
       };
     });
-
+    
     // Create new candidate
     const newCandidate = new candidates({
       jobId,
       jobApplied: job.title,
+      jobProfile : job.jobProfile,
       firstName,
       lastName,
       email,

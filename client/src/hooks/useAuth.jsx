@@ -9,7 +9,7 @@ const useAuth = () => {
                 const data = await getProfile();
                 return data;
             } catch (error) {
-                console.error('Error fetching profile:', error);
+                // console.error('Error fetching profile:', error);
                 return null;
             }
         },

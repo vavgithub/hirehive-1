@@ -53,7 +53,7 @@ const ViewJob = () => {
             await axios.post(`/candidates/${mainId}/increment-apply-click`);
             navigate(`/apply-job/${mainId}`);
         } catch (error) {
-            console.error('Error incrementing apply click count:', error);
+            // console.error('Error incrementing apply click count:', error);
         }
     };
 

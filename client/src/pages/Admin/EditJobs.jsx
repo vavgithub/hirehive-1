@@ -25,7 +25,7 @@ const EditJobs = () => {
       }, 1000);
     },
     onError: (error) => {
-      console.error('Error updating job:', error);
+      // console.error('Error updating job:', error);
       showErrorToast('Error', error.response?.data?.message || 'Failed to update job. Please try again.');
     }
   });

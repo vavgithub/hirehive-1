@@ -16,7 +16,7 @@ const CreateJobs = () => {
       navigate('/admin/jobs');  
     },
     onError: (error) => {
-      console.error('Error with job action:', error);
+      // console.error('Error with job action:', error);
       showErrorToast('Error', error.response?.data?.message || 'Failed to perform job action. Please try again.');
     }
   });

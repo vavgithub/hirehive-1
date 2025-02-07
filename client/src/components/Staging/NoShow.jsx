@@ -28,7 +28,7 @@ const NoShowAction = ({ stage, candidateId, jobId , setIsLoading }) => {
             setIsLoading(false); // Stop loading when task is successfully sent
         },
         onError : (error) => {
-            console.log("Error In triggering no-show",error.message);
+            // console.log("Error In triggering no-show",error.message);
             setIsLoading(false); // Stop loading in case of an error
         }
     });
