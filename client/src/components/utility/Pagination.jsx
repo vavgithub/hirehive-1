@@ -23,7 +23,7 @@ function Pagination({currentPage, pageLimit , totalItems ,setCurrentPage}) {
     return pages
   },[numberOfPages,currentPage])
 
-  return (
+  return totalItems ? (
     <div className='font-outfit flex justify-between'>
       <div>
       <p className='typography-body text-font-gray flex gap-2'>Showing <span className='text-white'>{resultValue} {resultValue > 1 ? " results" : " result"}</span> of <span className='text-white'>{totalItems}</span></p>
@@ -34,7 +34,7 @@ function Pagination({currentPage, pageLimit , totalItems ,setCurrentPage}) {
           </div>
             {
               getVisibilePageNumbers?.map(item =>{
-                return <p onClick={()=>setCurrentPage(item)} className={currentPage === item ? "text-white cursor-pointer" : "text-font-gray cursor-pointer"}>{item}</p>
+                return <p key={item} onClick={()=>setCurrentPage(item)} className={currentPage === item ? "text-white cursor-pointer" : "text-font-gray cursor-pointer"}>{item}</p>
               })
             }
           <div onClick={currentPage !== numberOfPages ? ()=>setCurrentPage(prev => prev + 1) : null} className={currentPage === numberOfPages ? "text-font-gray" : "text-white cursor-pointer"}>
@@ -42,7 +42,7 @@ function Pagination({currentPage, pageLimit , totalItems ,setCurrentPage}) {
           </div>
       </div>
     </div>
-  )
+  ) : null
 }
 
 export default Pagination

@@ -211,7 +211,6 @@ const QuestionDisplay = ({
 
 // Webcam Component
 const WebcamView = React.memo(({ isMinimized, toggleMinimize, isRecording, webcamRef ,handleUserMedia}) => {
- console.log("WEBCAM") 
   return(
   <div className={`bg-gray-800 rounded-lg overflow-hidden ${isMinimized ? 'w-64' : 'w-96'}`}>
     <div className="flex justify-between items-center p-2 bg-gray-700">
@@ -429,7 +428,7 @@ const Assessment = () => {
           const blob = new Blob(chunksRef.current, {
             type: 'video/webm'
           });
-          console.log('Blob created:', blob.size);
+          // console.log('Blob created:', blob.size);
           // setRecordedBlob(blob);
           chunksRef.current = [];
           resolve(blob);
@@ -442,7 +441,6 @@ const Assessment = () => {
         // const tracks = webcamRef.current.video.srcObject.getTracks();
         // tracks.forEach(track => track.stop());
         if (webcamRef.current && webcamRef.current.video?.srcObject) {
-          console.log("REF")
           const tracks = webcamRef.current.video.srcObject.getTracks();
           tracks.forEach(track => track.stop());
         }        
@@ -630,7 +628,6 @@ const Assessment = () => {
   //   }
   // });
 
-  console.log("RETRIGGERS..")
 
   const uploadVideo = async (videoBlob) => {
     if (!videoBlob) {
@@ -687,11 +684,11 @@ const Assessment = () => {
 
       return recordingUrl;
     } catch (error) {
-      console.error('Upload error:', error);
-      if (error.response) {
-        console.error('Response data:', error.response.data);
-        console.error('Response status:', error.response.status);
-      }
+      // console.error('Upload error:', error);
+      // if (error.response) {
+      //   console.error('Response data:', error.response.data);
+      //   console.error('Response status:', error.response.status);
+      // }
       throw error;
     }
   };
@@ -722,7 +719,7 @@ const Assessment = () => {
         );
         return response.data;
       } catch (error) {
-        console.error('Submit error:', error);
+        // console.error('Submit error:', error);
         throw error;
       }
     },
@@ -774,7 +771,7 @@ const Assessment = () => {
         totalTimeInSeconds
       });
     } catch (error) {
-      console.error('Finish error:', error);
+      // console.error('Finish error:', error);
     }
   };
   // Loading and error states

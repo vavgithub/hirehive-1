@@ -51,10 +51,10 @@ const CandidateLayout = () => {
     try {
       await dispatch(logoutCandidateAuth()).unwrap();
       showSuccessToast('Success', 'Logged out successfully');
-      navigate('/login');
+      navigate('/');
     } catch (error) {
       showErrorToast('Error', error.message || 'Logout failed');
-      console.error('Logout failed:', error);
+      // console.error('Logout failed:', error);
     }
   };
 

@@ -68,7 +68,7 @@ const StageActions = ({
             setIsLoading(false); // Stop loading when task is successfully sent
         },
         onError: (error) => {
-            console.error('Error sending Rejection:', error);
+            // console.error('Error sending Rejection:', error);
             setIsLoading(false); // Stop loading in case of an error
         }
     });
@@ -94,7 +94,7 @@ const StageActions = ({
             setIsLoading(false); // Stop loading when task is successfully sent
         },
         onError: (error) => {
-            console.error('Error moving to next round:', error);
+            // console.error('Error moving to next round:', error);
             setIsLoading(false); // Stop loading in case of an error
         }
     });

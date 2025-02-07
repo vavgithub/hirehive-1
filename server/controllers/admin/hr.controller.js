@@ -24,6 +24,9 @@ export const rejectCandidate = async (req, res) => {
       (app) => app.jobId.toString() === jobId
     );
 
+    //Added to avoid breaking with JobProfile for existing jobs and candidates
+    candidate.jobApplications.forEach(app=>app.jobProfile = job?.jobProfile)
+
     if (!jobApplication) {
       return res
         .status(404)
@@ -156,6 +159,9 @@ export const noShow = async (req, res) => {
       (app) => app.jobId.toString() === jobId
     );
 
+    //Added to avoid breaking with JobProfile for existing jobs and candidates
+    candidate.jobApplications.forEach(app=>app.jobProfile = job?.jobProfile)
+
     if (!jobApplication) {
       return res.status(404).json({ 
         message: "Job application not found for this candidate" 
@@ -169,7 +175,6 @@ export const noShow = async (req, res) => {
 
     // Get the stages for this job profile
     const jobStages = jobStagesStatuses[job.jobProfile];
-    console.log(jobStages);
     if (!jobStages) {
       return res.status(400).json({ 
         message: "Invalid job profile or stages not defined" 
@@ -242,6 +247,9 @@ export const moveCandidate = async (req, res) => {
     const jobApplication = candidate.jobApplications.find(
       (app) => app.jobId.toString() === jobId
     );
+
+    //Added to avoid breaking with JobProfile for existing jobs and candidates
+    candidate.jobApplications.forEach(app=>app.jobProfile = job?.jobProfile)
 
     if (!jobApplication) {
       return res
@@ -714,10 +722,15 @@ export const scheduleCall = async (req, res) => {
     if (!candidate) {
       return res.status(404).json({ message: "Candidate not found" });
     }
+    const job = await jobs.findById(jobId);
 
     const jobApplication = candidate.jobApplications.find(
       (app) => app.jobId.toString() === jobId
     );
+
+    //Added to avoid breaking with JobProfile for existing jobs and candidates
+    candidate.jobApplications.forEach(app=>app.jobProfile = job?.jobProfile)
+    
     if (!jobApplication) {
       return res.status(404).json({ message: "Job application not found" });
     }

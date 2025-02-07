@@ -12,7 +12,7 @@ export const formatTime = (timeString) => {
     
     // Check if the date is valid
     if (isNaN(date.getTime())) {
-        console.error('Invalid time format:', timeString);
+        // console.error('Invalid time format:', timeString);
         return 'Invalid Time';
     }
 

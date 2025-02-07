@@ -12,7 +12,7 @@ const updateStatus = async (candidateId,jobId,status) => {
         const response = await axios.post(`/hr/change-status/${candidateId}/${jobId}`,{status})
         return response.data
     } catch (error) {
-        console.log("Error in status update",error.response.data);
+        // console.log("Error in status update",error.response.data);
         return false
     }
 };
@@ -35,7 +35,6 @@ function useScheduler(candidateData, stageData,status) {
       if ((timeFromNow < TWELVEHOURS) && !data) {
         timeout = setTimeout(async() => {
           //do api call
-          console.log("WORKED AT", scheduledDateObj);
           let result = await updateStatus(candidateData._id,candidateData.jobApplication.jobId,status);
           if(result?.message){
             setData(result.message)
@@ -44,7 +43,7 @@ function useScheduler(candidateData, stageData,status) {
       }
     }
     return () => clearTimeout(timeout);
-  }, [stageData.status, stageData.currentCall, candidateData?._id]);
+  }, [stageData?.status, stageData?.currentCall, candidateData?._id]);
   return data;
 }
 

@@ -15,7 +15,7 @@ import { fetchCandidateAuthData } from '../../redux/candidateAuthSlice';
 import useCandidateAuth from '../../hooks/useCandidateAuth';
 import { digitsRegex, lowerCaseRegex, specialCharRegex, upperCaseRegex } from '../../utility/regex';
 import { PersonalDetailsSection, ProfessionalDetailsSection, ResumePortfolioSection } from '../../components/Form/ApplyJob';
-import { validationRules } from '../../utility/validationRules';
+import { validateProfileImages, validateResume, validationRules } from '../../utility/validationRules';
 import Header from '../../components/utility/Header';
 import LoaderModal from '../../components/ui/LoaderModal';
 import AdditionalQuestions from '../../components/AdditionalQuestions';
@@ -28,24 +28,25 @@ const fetchJobDetails = async (id) => {
 };
 
 export const uploadProfilePicture = async (file) => {
-  if (!file) return null;
+  if (!file) throw new Error("No file selected.");
+  validateProfileImages(file)
   const formData = new FormData();
   formData.append('profilePicture', file);
-
   try {
     const response = await axios.post('/auth/candidate/upload-profile-picture', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
     return response.data.profilePictureUrl;
   } catch (error) {
-    console.error('Error uploading profile picture:', error);
+    // console.error('Error uploading profile picture:', error);
     throw error;
   }
 };
 
 
 export const uploadResume = async (file,setUploadProgress) => {
-  if (!file) return null;
+  if (!file) throw new Error("No file selected.");
+  validateResume(file)
   const formData = new FormData();
   formData.append('resume', file);
 
@@ -61,7 +62,7 @@ export const uploadResume = async (file,setUploadProgress) => {
     });
     return response.data.resumeUrl;
   } catch (error) {
-    console.error('Error uploading resume:', error);
+    // console.error('Error uploading resume:', error);
     throw error;
   }
 };
@@ -245,7 +246,7 @@ useEffect(() => {
     } catch (error) {
       showErrorToast(
         'Error',
-        error.response?.data?.message || 'Failed to perform job action. Please try again.'
+        error.response?.data?.message || error?.message || 'Failed to perform job action. Please try again.'
       );
     } finally {
       setIsSubmitting(false);
@@ -431,7 +432,7 @@ useEffect(() => {
             <ProfessionalDetailsSection control={control} />
             {/* Skills Input */}
 
-            <div className="grid md:grid-cols-2 grid-cols-1 gap-6 mt-4 ">
+            <div className="grid md:grid-cols-2 grid-cols-1 gap-6 mt-6 ">
               <Controller
                 name="skills"
                 control={control}

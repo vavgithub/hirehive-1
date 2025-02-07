@@ -34,7 +34,7 @@ export const uploadAssessment = async (videoFile,setUploadProgress) => {
       throw new Error("Cloudinary : Can't generate URL")
     }
   } catch (error) {
-    console.log("Cloudinary Error : ", error);
+    // console.log("Cloudinary Error : ", error);
     throw new Error(error.message || "Error uplaoding to cloudinary");
   }
 };

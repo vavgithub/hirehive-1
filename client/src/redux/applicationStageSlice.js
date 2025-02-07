@@ -21,7 +21,7 @@ const applicationStageSlice = createSlice({
       if (state.stageStatuses[stage]) {
         state.stageStatuses[stage] = { ...state.stageStatuses[stage], status, ...data };
       } else {
-        console.warn(`Attempted to update non-existent stage: ${stage}`);
+        // console.warn(`Attempted to update non-existent stage: ${stage}`);
       }
     },
   },

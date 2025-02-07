@@ -2,8 +2,12 @@ import React, { useState } from 'react'
 import Scorer from '../ui/Scorer';
 import { Button } from '../ui/Button';
 import { showErrorToast } from '../ui/Toast';
+import StyledCard from '../ui/StyledCard';
 
-function ScreeningReview({ candidate, onSubmit }){
+function ScreeningReview({ candidate, onSubmit ,rounded = "bottom"}){
+
+  const roundedClass =  rounded === "bottom" ? 'rounded-b-xl' : rounded === "top" ? "rounded-t-xl" : "rounded-xl";
+
     const [ratings, setRatings] = useState({
       Attitude: 0, Communication: 0, UX: 0, UI: 0, Tech: 0
     });
@@ -26,7 +30,7 @@ function ScreeningReview({ candidate, onSubmit }){
     };
   
     return (
-      <div className='bg-background-90 grid grid-cols-2 gap-4 p-4'>
+      <StyledCard padding={2} borderRadius={roundedClass} extraStyles=' grid grid-cols-2 gap-4  font-outfit'>
         {Object.entries(ratings).map(([category, value]) => (
           <div key={category} className='flex gap-4 items-center'>
             <span className='w-32'>{category}</span>
@@ -49,7 +53,7 @@ function ScreeningReview({ candidate, onSubmit }){
           </div>
         </div>
   
-      </div>
+      </StyledCard>
     );
   };
 

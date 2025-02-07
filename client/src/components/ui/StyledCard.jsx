@@ -1,6 +1,6 @@
 import React from 'react'
 
-function StyledCard({children,onClick,extraStyles,padding,backgroundColor,borderRadius,...props}) {
+function StyledCard({children,onClick,extraStyles,padding,rounded,backgroundColor,borderRadius,...props}) {
 
   let valueSteps = {
     0 : "0",

@@ -9,24 +9,33 @@ import AssessmentBanner from '../../components/ui/AssessmentBanner';
 import Loader from '../../components/ui/Loader';
 import useCandidateAuth from '../../hooks/useCandidateAuth';
 import StyledCard from '../../components/ui/StyledCard';
+import Pagination from '../../components/utility/Pagination';
 
 // Keep the fetchAppliedJobs function separate for better organization
-const fetchAppliedJobs = async () => {
-  const response = await axios.get('/auth/candidate/applied-jobs');
-  return response.data.jobApplications || [];
+const fetchAppliedJobs = async (page) => {
+  const response = await axios.get(`/auth/candidate/applied-jobs?page=${page}`);
+  return response.data;
 };
 
 const MyJobs = () => {
   const navigate = useNavigate();
-  
+  const [page,setPage] = useState(1);
+  const PAGE_LIMIT = 3;
+
   // Replace useAuthCandidate with Redux selector
   const { candidateAuthData } = useSelector((state) => state.candidateAuth);
   const candidateId = candidateAuthData?._id || null;
 
+  
+    //For resetting page on each result change
+    useEffect(()=>{
+        setPage(1);
+    },[])
+
   // Keep React Query for data fetching
-  const { data: appliedJobs = [], isLoading, isError, error } = useQuery({
-    queryKey: ['appliedJobs'],
-    queryFn: fetchAppliedJobs,
+  const { data: appliedJobs , isLoading, isError, error } = useQuery({
+    queryKey: ['appliedJobs',page],
+    queryFn: () => fetchAppliedJobs(page),
     // Add enabled condition to prevent unnecessary fetching
     enabled: !!candidateId,
   });
@@ -68,7 +77,7 @@ const MyJobs = () => {
   }
 
   if (isError) {
-    console.error('Error fetching applied jobs:', error);
+    // console.error('Error fetching applied jobs:', error);
     return (
       <div className="m-2 pt-4">
         <h1 className="typography-h1">My Jobs</h1>
@@ -85,11 +94,9 @@ const MyJobs = () => {
       <h1 className="typography-h1">My Jobs</h1>
       {isAssessmentBannerVisible &&  <AssessmentBanner />}
       <StyledCard padding={2} backgroundColor={"bg-background-30"}>
-        {appliedJobs.length === 0 ? (
-          <p>You have not applied to any jobs yet.</p>
-        ) : (
+        {appliedJobs?.jobApplications?.length > 0 ? (
           <ul className='flex flex-col gap-4'>
-            {appliedJobs.map((application,index) => (
+            {appliedJobs?.jobApplications?.map((application,index) => (
               <li key={application.jobId._id || index} >
                 <JobCard
                   job={application.jobId}
@@ -101,7 +108,22 @@ const MyJobs = () => {
               </li>
             ))}
           </ul>
+        ) : (
+          <div className='flex flex-col justify-center items-center'>
+            <h2 className='typography-h2'>No Applied Jobs</h2>
+            <p className='font-outfit typography-small-p text-font-gray'>You have not applied to any jobs yet.</p>
+          </div>
         )}
+        
+        <div className='mt-4'>
+          <Pagination 
+          currentPage={page} 
+          setCurrentPage={setPage} 
+          pageLimit={PAGE_LIMIT} 
+          totalItems={
+            appliedJobs?.totalAppliedJobs} 
+          />
+        </div>
       </StyledCard>
     </div>
     </div>
