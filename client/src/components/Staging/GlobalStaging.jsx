@@ -17,7 +17,7 @@ import Modal from '../Modal.jsx';
 import { ACTION_TYPES } from '../../utility/ActionTypes.js';
 import { getMaxScoreForStage } from '../../pages/Admin/ViewCandidateProfile.jsx';
 import { getCandidateScore } from './StageAction.jsx';
-import { ScheduleForm } from './Screening.jsx';
+import ScheduleForm from './ScheduleForm.jsx';
 import CalenderIcon from '../../svg/Staging/CalenderIcon.jsx';
 import ClockIcon from '../../svg/Staging/ClockIcon.jsx';
 import LinkIcon from '../../svg/Staging/LinkIcon.jsx';

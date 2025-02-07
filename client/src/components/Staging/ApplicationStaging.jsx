@@ -1,26 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import Portfolio from './Portfolio';
-import Screening from './Screening';
 import StageProgressBar from './StageProgressBar';
-import DesignTask from './DesignTask';
-import RoundOne from './RoundOne';
-import RoundTwo from './RoundTwo';
 import GreenTickIcon from '../../svg/Staging/GreenTickIcon';
 import RejectTickIcon from '../../svg/Staging/RejectTickIcon';
-import Hired from './Hired';
 import QuestionResponses from './QuestionResponses';
 import { Card } from '@mui/material';
 import { useAuthContext } from '../../context/AuthProvider';
 import GlobalStaging from './GlobalStaging';
-const stageComponents = {
-    Portfolio,
-    Screening,
-    'Design Task': DesignTask,
-    'Round 1': RoundOne,
-    'Round 2': RoundTwo,
-    Hired
-};
+// const stageComponents = {
+//     Portfolio,
+//     Screening,
+//     'Design Task': DesignTask,
+//     'Round 1': RoundOne,
+//     'Round 2': RoundTwo,
+//     Hired
+// };
 const AccordionSection = ({ title, isOpen, onToggle, children, badge }) => (
     <Card
         sx={{
@@ -75,21 +69,21 @@ const ApplicationStaging = ({ candidateId, jobId ,jobStatus}) => {
         // Set the selected stage to the current stage when the component mounts or currentStage changes
         setSelectedStage(currentStage);
     }, [currentStage]);
-    const renderStageComponent = (stage) => {
-        const StageComponent = stageComponents[stage];
-        if (!StageComponent) {
-            console.warn(`No component found for stage: ${stage}`);
-            return null;
-        }
-        const commonProps = {
-            stageData: stageStatuses[stage],
-            candidateId,
-            jobId,
-            isActive: stage === currentStage,
-            isClosed : (jobStatus === "deleted" || jobStatus === "closed") 
-        };
-        return <StageComponent {...commonProps} />;
-    };
+    // const renderStageComponent = (stage) => {
+    //     const StageComponent = stageComponents[stage];
+    //     if (!StageComponent) {
+    //         console.warn(`No component found for stage: ${stage}`);
+    //         return null;
+    //     }
+    //     const commonProps = {
+    //         stageData: stageStatuses[stage],
+    //         candidateId,
+    //         jobId,
+    //         isActive: stage === currentStage,
+    //         isClosed : (jobStatus === "deleted" || jobStatus === "closed") 
+    //     };
+    //     return <StageComponent {...commonProps} />;
+    // };
     const isStageVisible = (stage) => {
         const stageIndex = stages.indexOf(stage);
         const currentStageIndex = stages.indexOf(currentStage);
