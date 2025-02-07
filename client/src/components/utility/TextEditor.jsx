@@ -28,7 +28,7 @@ const theme = {
 // or throw them as needed. If you don't throw them, Lexical will
 // try to recover gracefully without losing user data.
 function onError(error) {
-  console.error(error);
+//   console.error(error);
 }
 
 function TextEditor({htmlData,loaded,errors,placeholder,setEditorContent}) {

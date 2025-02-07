@@ -51,7 +51,7 @@ const ResumeViewer = ({ documentUrl, onClose }) => {
         URL.revokeObjectURL(blobUrl);
       })
       .catch(error => {
-        console.error("Error downloading the file", error);
+        // console.error("Error downloading the file", error);
       });
   };
 

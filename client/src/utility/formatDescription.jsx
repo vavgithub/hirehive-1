@@ -1,7 +1,7 @@
 export const formatDescription = (description) => {
     // Check if description is undefined or null
     if (description == null) {
-        console.warn('Description is undefined or null');
+        // console.warn('Description is undefined or null');
         return '';
     }
 

@@ -177,7 +177,7 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
       showSuccessToast("Auto Assign Portfolio Done")
     },
     onError: (error) => {
-      console.error('Auto-assign error:', error);
+      // console.error('Auto-assign error:', error);
       // You might want to show an error message to the user here
       showErrorToast("Error",`${error.response?.data?.message}`)
     }

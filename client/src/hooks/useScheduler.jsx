@@ -12,7 +12,7 @@ const updateStatus = async (candidateId,jobId,status) => {
         const response = await axios.post(`/hr/change-status/${candidateId}/${jobId}`,{status})
         return response.data
     } catch (error) {
-        console.log("Error in status update",error.response.data);
+        // console.log("Error in status update",error.response.data);
         return false
     }
 };

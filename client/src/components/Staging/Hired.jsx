@@ -25,7 +25,7 @@ const Hired = ({ candidateId, jobId ,isClosed}) => {
         cacheTime: 0,
         staleTime: 0,
         onError: (error) => {
-            console.error('Query Error:', error);
+            // console.error('Query Error:', error);
             dispatch(setError(error.message));
         },
     });

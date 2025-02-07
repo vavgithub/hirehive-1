@@ -92,7 +92,7 @@ const Portfolio = ({ candidateId, jobId ,isClosed}) => {
             queryClient.invalidateQueries(['candidate', candidateId, jobId]);
         },
         onError: (error) => {
-            console.error("Assignee update error:", error);
+            // console.error("Assignee update error:", error);
         }
     });
 

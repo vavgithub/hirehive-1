@@ -77,7 +77,7 @@ const RoundTwo = ({ candidateId, jobId ,isClosed }) => {
             queryClient.invalidateQueries(['candidate', candidateId, jobId]);
         },
         onError: (error) => {
-            console.error("Assignee update error:", error);
+            // console.error("Assignee update error:", error);
         }
     });
 
@@ -103,7 +103,7 @@ const RoundTwo = ({ candidateId, jobId ,isClosed }) => {
             setIsLoading(false); // Stop loading when task is successfully sent
         },
         onError: (error) => {
-            console.error("Error scheduling interview:", error);
+            // console.error("Error scheduling interview:", error);
             // Handle error (e.g., show error message to user)
             setIsLoading(false); // Stop loading in case of an error
         }
@@ -138,7 +138,7 @@ const RoundTwo = ({ candidateId, jobId ,isClosed }) => {
             setIsLoading(false); // Stop loading when task is successfully sent
         },
         onError: (error) => {
-            console.error("Error rescheduling interview:", error);
+            // console.error("Error rescheduling interview:", error);
             // Handle error (e.g., show error message to user)
             setIsLoading(false); // Stop loading in case of an error
         }
@@ -163,7 +163,7 @@ const RoundTwo = ({ candidateId, jobId ,isClosed }) => {
             queryClient.invalidateQueries(['candidate', candidateId, jobId]);
         },
         onError: (error) => {
-            console.error("Error scoring Round 2:", error);
+            // console.error("Error scoring Round 2:", error);
             // Handle error (e.g., show error message to user)
         }
     });

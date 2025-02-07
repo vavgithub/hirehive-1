@@ -74,7 +74,7 @@ const CandidateLogin = () => {
       }
     } catch (error) {
       // Error handling is now managed by Redux
-      console.error('Login failed:', error);
+      // console.error('Login failed:', error);
     }
   };
 

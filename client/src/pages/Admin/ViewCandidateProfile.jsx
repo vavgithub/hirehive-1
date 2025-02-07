@@ -126,7 +126,7 @@ const ViewCandidateProfile = () => {
                 dispatch(setCurrentStage(data.jobApplication.currentStage));
                 dispatch(setStageStatuses(data.jobApplication.stageStatuses));
             } else {
-                console.error('jobApplication data is missing');
+                // console.error('jobApplication data is missing');
             }
         }
     }, [data, dispatch]);

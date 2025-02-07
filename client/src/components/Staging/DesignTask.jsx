@@ -176,7 +176,7 @@ const DesignTask = ({ candidateId, jobId ,isClosed}) => {
             queryClient.invalidateQueries(['candidate', candidateId, jobId]);
         },
         onError: (error) => {
-            console.error('Error submitting design task:', error);
+            // console.error('Error submitting design task:', error);
             // Handle error (e.g., show error message to user)
         }
     });
@@ -374,7 +374,7 @@ const DesignTask = ({ candidateId, jobId ,isClosed}) => {
             setIsLoading(false); // Stop loading when task is successfully sent
         },
         onError: (error) => {
-            console.error('Error sending design task:', error);
+            // console.error('Error sending design task:', error);
             setIsLoading(false); // Stop loading in case of an error
         }
     });
@@ -422,7 +422,7 @@ const DesignTask = ({ candidateId, jobId ,isClosed}) => {
             queryClient.invalidateQueries(['candidate', candidateId, jobId]);
         },
         onError: (error) => {
-            console.error("Assignee update error:", error);
+            // console.error("Assignee update error:", error);
         }
     });
 

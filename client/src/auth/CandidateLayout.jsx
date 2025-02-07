@@ -54,7 +54,7 @@ const CandidateLayout = () => {
       navigate('/login');
     } catch (error) {
       showErrorToast('Error', error.message || 'Logout failed');
-      console.error('Logout failed:', error);
+      // console.error('Logout failed:', error);
     }
   };
 

@@ -54,7 +54,7 @@ const VideoModal = ({ isOpen, onClose, videoUrl }) => {
                         className="w-full h-full rounded-lg"
                         onLoadedData={() => setIsLoading(false)}
                         onError={(e) => {
-                            console.error('Video loading error:', e);
+                            // console.error('Video loading error:', e);
                             setIsLoading(false);
                         }}
                     >

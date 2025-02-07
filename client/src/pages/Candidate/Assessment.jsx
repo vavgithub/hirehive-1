@@ -684,11 +684,11 @@ const Assessment = () => {
 
       return recordingUrl;
     } catch (error) {
-      console.error('Upload error:', error);
-      if (error.response) {
-        console.error('Response data:', error.response.data);
-        console.error('Response status:', error.response.status);
-      }
+      // console.error('Upload error:', error);
+      // if (error.response) {
+      //   console.error('Response data:', error.response.data);
+      //   console.error('Response status:', error.response.status);
+      // }
       throw error;
     }
   };
@@ -719,7 +719,7 @@ const Assessment = () => {
         );
         return response.data;
       } catch (error) {
-        console.error('Submit error:', error);
+        // console.error('Submit error:', error);
         throw error;
       }
     },
@@ -771,7 +771,7 @@ const Assessment = () => {
         totalTimeInSeconds
       });
     } catch (error) {
-      console.error('Finish error:', error);
+      // console.error('Finish error:', error);
     }
   };
   // Loading and error states
