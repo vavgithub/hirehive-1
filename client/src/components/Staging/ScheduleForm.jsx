@@ -10,25 +10,25 @@ export const ScheduleForm = ({ candidateId, jobId, onSubmit, isRescheduling, ini
     const [date, setDate] = useState(isRescheduling ? null : (initialData ? new Date(initialData.scheduledDate) : null));
     const [time, setTime] = useState(isRescheduling ? null : (initialData ? initialData.scheduledTime : null));
     const [assignee, setAssignee] = useState(isRescheduling ? null : (initialData ? initialData.assignedTo : null));
-    const [meetingLink, setMeetingLink] = useState(isRescheduling ? '' : (initialData ? initialData.meetingLink : ''));
+    // const [meetingLink, setMeetingLink] = useState(isRescheduling ? '' : (initialData ? initialData.meetingLink : ''));
 
     const [dateError,setDateError] = useState(false);
     const [timeError,setTimeError] = useState(false);
     const [assigneeError,setAssigneeError] = useState(false);
-    const [linkError,setLinkError] = useState(false);
+    // const [linkError,setLinkError] = useState(false);
 
     //validating every fields
     const validateErrors = ()=>{
         !date ? setDateError(true) : setDateError(false);
         !time ? setTimeError(true) : setTimeError(false);
         !assignee ? setAssigneeError(true) : setAssigneeError(false);
-        !meetingLink ? setLinkError(true) : setLinkError(false);
+        // !meetingLink ? setLinkError(true) : setLinkError(false);
     }
 
     //To detect if its a first render or not
     const isFirstRender = useRef(true);
 
-    const isFormValid = date && time && assignee && meetingLink;
+    const isFormValid = date && time && assignee ;
 
     const handleSubmit = () => {
         //Once form submitted, firstRender is made false to trigger continuous validations
@@ -39,7 +39,6 @@ export const ScheduleForm = ({ candidateId, jobId, onSubmit, isRescheduling, ini
                 date: date.toISOString(),
                 time: time.format('HH:mm'),
                 assigneeId: assignee._id,
-                meetingLink
             });
         }
     };
@@ -49,7 +48,7 @@ export const ScheduleForm = ({ candidateId, jobId, onSubmit, isRescheduling, ini
         if(!isFirstRender.current){
             validateErrors()
         }
-    },[isFirstRender,date,time,assignee,meetingLink])
+    },[isFirstRender,date,time,assignee])
 
     return (
         <div className="flex flex-col gap-4">
@@ -93,7 +92,7 @@ export const ScheduleForm = ({ candidateId, jobId, onSubmit, isRescheduling, ini
                     {assigneeError && <p className='absolute text-red-100 typography-small-p top-[5.2rem]'>Reviewer is required</p>}
                 </div>
             </div>
-            <InputField
+            {/* <InputField
                 id="meetingLink"
                 type="text"
                 label="Meeting Link"
@@ -102,7 +101,7 @@ export const ScheduleForm = ({ candidateId, jobId, onSubmit, isRescheduling, ini
                 onChange={(e) => setMeetingLink(e.target.value)}
                 error={linkError}
                 errorMessage="Meeting link is required"
-            />
+            /> */}
             <div className='flex gap-4'>
                 {isRescheduling ? (
                     <div className='flex gap-4 w-full justify-end'>
