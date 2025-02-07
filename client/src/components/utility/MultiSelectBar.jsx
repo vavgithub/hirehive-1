@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import ArrowIcon from '../../svg/ArrowIcon'
 import { BlendCloseButton } from '../../svg/CloseButton'
 import { WhiteProfileIcon } from '../../svg/ProfileIcon'
@@ -127,16 +127,16 @@ const multiSelectConfig = [
         type : "POPUP",
         extraStyles : ""
     },
-    {
-        name : "RESCHEDULE",
-        label : "Reschedule",
-        customTitle : "Reschedule",
-        customMessage : "",
-        icon : WhiteCalenderIcon,
-        validStatus : [],
-        type : "POPUP",
-        extraStyles : ""
-    },
+    // {
+    //     name : "RESCHEDULE",
+    //     label : "Reschedule",
+    //     customTitle : "Reschedule",
+    //     customMessage : "",
+    //     icon : WhiteCalenderIcon,
+    //     validStatus : [],
+    //     type : "POPUP",
+    //     extraStyles : ""
+    // },
     // {
     //     name : "REMIND CANDIDATE",
     //     label : "Remind Candidate",
@@ -169,6 +169,33 @@ function MultiSelectBar({selectedData,jobId,clearSelection}) {
   
   //For assignee dropdown anchor
   const [selectedAnchor,setSelectedAnchor] = useState(null);
+
+  const [isValid,setIsValid] = useState(false);
+
+  useEffect(()=>{
+    if(action?.name === "REJECT"){
+        setIsValid(false)
+    }else{
+        setIsValid(true)
+    }
+  },[action])
+
+  useEffect(()=> {
+    if(action?.name === "REJECT"){
+        let isValidForRejection = true;
+        Object.entries(filteredCandidates).map(([currentStage,currentCandidates])=>{
+            currentCandidates.map((eachCandidate)=>{
+                    if(eachCandidate?.checked && !eachCandidate?.rejectionReason){
+                        isValidForRejection = false
+                    }
+                    return eachCandidate
+            })
+                return [currentStage,currentCandidates]
+            }
+        )
+        setIsValid(isValidForRejection)
+    }
+  },[filteredCandidates])
 
   useEffect(()=>{
     if(selectedData && Array.isArray(selectedData)){
@@ -405,21 +432,23 @@ function MultiSelectBar({selectedData,jobId,clearSelection}) {
             open={action}
             onConfirm={()=>handleConfirm(action?.apiFunction)}
             onClose={() => setAction(null)}
+            isconfirmButtonDisabled={!isValid}
             customTitle={action?.customTitle}
             customConfirmLabel={action?.confirmLabel || action?.customTitle}
             confirmVariant={action?.name === "REJECT" ? "cancel" : null}
             customMessage={action?.customMessage}
+            specifiedWidth={"max-w-4xl"}
         >
-           <div className='mt-6'>
+           <div className='mt-6 max-h-[60vh] scrollbar-hide overflow-y-scroll '>
             {Object.entries(filteredCandidates)?.map(([stage,candidateData])=>{
                     const nextStageIndex = globalStages.findIndex(each=>each === stage)
                     return (
                         <div key={stage}>
-                            <div className='flex items-center justify-between'>
+                            <div className='flex items-center justify-between my-2'>
                                 <h2>{globalStages[nextStageIndex + 1] || stage}</h2>
                                 <p className='typography-small-p font-light text-font-gray'>{candidateData?.length ?? 0} candidates</p>
                             </div>
-                            <div className='bg-background-80 p-4 rounded-xl my-4'>
+                            <div className='gap-4 grid grid-cols-2  bg-background-70 rounded-xl p-4'>
                                 {
                                     candidateData?.map(({candidate,checked,rejectionReason})=>{
                                         let score =  0;
@@ -434,7 +463,7 @@ function MultiSelectBar({selectedData,jobId,clearSelection}) {
                                             score = candidate.stageStatuses[stage].score 
                                         }
                                         return (
-                                            <div key={candidate?._id} className='relative flex flex-col typography-body items-center min-h-11'>
+                                            <div key={candidate?._id} className='bg-background-80  p-4 rounded-xl relative flex flex-col typography-body  items-center min-h-11'>
                                                 <label  htmlFor={candidate?._id} className='flex justify-between items-center w-full'>
                                                     <div className='flex items-center gap-4'>
                                                         <input 
@@ -444,7 +473,7 @@ function MultiSelectBar({selectedData,jobId,clearSelection}) {
                                                         checked={checked}
                                                         className="appearance-none border border-background-80  h-4 w-4 text-black-100 rounded-sm bg-background-60 hover:border-grey-100 checked:bg-accent-100 checked:border-accent-100 peer" 
                                                         />
-                                                        <span className="absolute hidden left-0 h-4 w-4 text-black-100 items-center justify-center text-black peer-checked:flex ">✔</span>
+                                                        <span className="absolute hidden left-4 h-4 w-4 text-black-100 items-center justify-center text-black peer-checked:flex ">✔</span>
                                                         <div className='w-8 h-8 rounded-full overflow-hidden'>
                                                             <img src={candidate?.profilePictureUrl || "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg"} alt="" className='object-cover w-full' />
                                                         </div>
@@ -455,9 +484,9 @@ function MultiSelectBar({selectedData,jobId,clearSelection}) {
                                                     </div>
                                                 </label>
                                                 {action?.name === "REJECT" && 
-                                                <div className='mt-2'>
+                                                <div className='mt-2 w-full '>
                                                     <CustomDropdown 
-                                                    extraStylesForLabel="font-bricolage font-semibold" 
+                                                    extraStylesForLabel="font-bricolage font-semibold text-sm" 
                                                     label={'Please provide the reason for rejecting this candidate'} 
                                                     options={REJECTION_REASONS} 
                                                     value={rejectionReason ?? ""}
