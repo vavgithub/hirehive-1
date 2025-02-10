@@ -162,6 +162,22 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
     if (!readOnly && filters.assignee && filters.assignee.length > 0) {
       result = result.filter(row => filters.assignee.find(each=>each._id === row.stageStatuses[row.currentStage]?.assignedTo));
     }
+    if(filters?.assessment && filters.assessment?.length > 0){
+      let isCompleted = false;
+      let isNotCompleted = false;
+      filters.assessment.map(state=>{
+        state === "Completed" && (isCompleted = true)
+        state === "Not Completed" && (isNotCompleted = true)
+      })
+      if(isCompleted && isNotCompleted){
+        result = result
+      }else if(isCompleted){
+        result = result.filter(row => row.hasGivenAssessment === true);
+      }else if(isNotCompleted){
+        result = result.filter(row => row.hasGivenAssessment === false);
+      }
+
+    }
 
     return result;
   }, [filteredRowsData, searchTerm, filters]);

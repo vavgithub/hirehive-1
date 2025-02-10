@@ -25,6 +25,7 @@ function StatePreserver({ children }) {
     stage: [],
     status: [],
     experience: "",
+    assessment: [],
     budget: [],
     rating: [],
     assignee: [],
@@ -41,6 +42,7 @@ function StatePreserver({ children }) {
       experience: "",
       budget: [],
       rating: [],
+      assessment : [],
       assignee: [],
     });
     setQuery("");

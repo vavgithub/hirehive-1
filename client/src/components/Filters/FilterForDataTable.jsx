@@ -28,6 +28,7 @@ const FilterForDataTable = ({ onApplyFilters ,readOnly , preservedFilters }) => 
     status: [],
     experience: '',
     rating: [],
+    assessment : [],  
     assignee: [],
   });
 
@@ -37,6 +38,7 @@ const FilterForDataTable = ({ onApplyFilters ,readOnly , preservedFilters }) => 
     experience: false,
     budget: false,
     rating: false,
+    assessment :false,
     assignee: false,
   });
 
@@ -199,6 +201,7 @@ const FilterForDataTable = ({ onApplyFilters ,readOnly , preservedFilters }) => 
     stage: ['Portfolio', 'Screening', 'Design Task', 'Round 1', 'Round 2', 'Hired'],
     status: selectedFilters.stage.length === 1 ? stageStatusMap[selectedFilters.stage[0]] : allStatuses,
     rating: ['Good Fit', 'Not A Good Fit', 'May Be'],
+    assessment : ["Completed","Not Completed"],
     ...(!readOnly && {assignee: designReviewers.map(reviewer => reviewer)}),
   };
 

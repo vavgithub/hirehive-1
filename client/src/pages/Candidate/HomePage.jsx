@@ -19,6 +19,7 @@ import useDebounce from '../../hooks/useDebounce';
 const fetchOpenJobs = (page) => axios.get(`/candidates/jobs/open?page=${page}`).then(res => res.data);
 const searchJobs = (query,page) => axios.get(`/candidates/jobs/searchJobs?jobTitle=${encodeURIComponent(query)}&page=${page}`).then(res => res.data);
 const filterJobs = (filters,page) => axios.post('/candidates/filterJobs', { filters ,page}).then(res => res.data);
+const filterSearchJobs = (query,filters,page) => axios.post('/candidates/filterSearchJobs', { filters , page , query }).then(res => res.data);
 
 const HomePage = () => {
     const navigate = useNavigate();
@@ -61,18 +62,26 @@ const HomePage = () => {
 
     const { data: jobData , isLoading : isJobsLoading } = useQuery({ queryKey: ['jobs',page], queryFn: () => fetchOpenJobs(page) })
 
-    const { data: filteredData , isLoading: isFilteredJobsLoading} = useQuery({
-        queryKey: ['filteredJobs', filters,page],
-        queryFn: () => filterJobs(filters,page),
-        enabled: Object.values(filters).some(filter =>
-            Array.isArray(filter) ? filter.length > 0 : Object.values(filter).some(val => val !== '')
-        ),
-    });
+    // const { data: filteredData , isLoading: isFilteredJobsLoading} = useQuery({
+    //     queryKey: ['filteredJobs', filters,page],
+    //     queryFn: () => filterJobs(filters,page),
+    //     enabled: Object.values(filters).some(filter =>
+    //         Array.isArray(filter) ? filter.length > 0 : Object.values(filter).some(val => val !== '')
+    //     ),
+    // });
 
-    const { data: searchResults , isLoading: isSearchLoading} = useQuery({
-        queryKey: ['searchJobs', debouncedQuery,page],
-        queryFn: () => searchJobs(debouncedQuery,page),
-        enabled: debouncedQuery !== '',
+    // const { data: searchResults , isLoading: isSearchLoading} = useQuery({
+    //     queryKey: ['searchJobs', debouncedQuery,page],
+    //     queryFn: () => searchJobs(debouncedQuery,page),
+    //     enabled: debouncedQuery !== '',
+    // });
+
+    const { data: filteredData , isLoading: isFilteredJobsLoading} = useQuery({
+        queryKey: ['filteredSearchJobs',debouncedQuery, filters,page],
+        queryFn: () => filterSearchJobs(debouncedQuery,filters,page),
+        enabled: Object.values(filters).some(filter =>
+            Array.isArray(filter) ? filter.length > 0 : Object.values(filter).some(val => val !== '') || debouncedQuery !== ''
+        ),
     });
 
     const handleCheckboxChange = (filterType, value) => {
@@ -136,12 +145,16 @@ const HomePage = () => {
         Array.isArray(filter) ? filter.length > 0 : Object.values(filter).some(val => val !== '')
     ));
 
-    // Combined loading state
-    const isLoadingResults = (debouncedQuery.length > 0 && isSearchLoading) ||
-    (isFiltered && isFilteredJobsLoading) || isJobsLoading;
+    // const isLoadingResults = (debouncedQuery.length > 0 && isSearchLoading) ||
+    // (isFiltered && isFilteredJobsLoading) || isJobsLoading;
 
-    const displayJobs = debouncedQuery.length > 0 ? searchResults?.searchJobs :
-        (isFiltered ? filteredData?.filteredJobs : jobData?.activeJobs);
+    // Combined loading state
+    const isLoadingResults = ((debouncedQuery.length > 0 || isFiltered) && isFilteredJobsLoading) || isJobsLoading;
+
+    // const displayJobs = debouncedQuery.length > 0 ? searchResults?.searchJobs :
+    //     (isFiltered ? filteredData?.filteredJobs : jobData?.activeJobs);
+
+    const displayJobs = ( debouncedQuery.length > 0 || isFiltered)? filteredData?.filteredSearchJobs : jobData?.activeJobs;
 
     if(loading){
         return (
@@ -232,8 +245,10 @@ const HomePage = () => {
                         setCurrentPage={setPage} 
                         pageLimit={PAGE_LIMIT} 
                         totalItems={
-                            debouncedQuery.length > 0 ? searchResults?.searchJobsCount :
-                            isFiltered ? filteredData?.filteredJobsCount : jobData?.totalOpenJobs} 
+                            // debouncedQuery.length > 0 ? searchResults?.searchJobsCount :
+                            // isFiltered ? filteredData?.filteredJobsCount : jobData?.totalOpenJobs
+                            (debouncedQuery.length > 0 || isFiltered) ? filteredData?.filteredSearchJobsCount : jobData?.totalOpenJobs
+                        } 
                         />
                     </div>
                 </div>
