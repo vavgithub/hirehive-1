@@ -80,6 +80,61 @@ const protect = asyncHandler(async (req, res, next) => {
   }
 });
 
+const roleExtract = (roles) => {
+  return asyncHandler(async (req, res, next) => {
+    const token = req.cookies.token;
+    const adminToken = getTokenFromRequest(req);
+
+    if (!token && !adminToken) {
+      return res.status(401).json({ 
+        status: 'error',
+        message: 'Not authorized, token missing'
+      });
+    }
+
+      const decoded = verifyToken(token ? token : adminToken, process.env.JWT_SECRET);
+      
+      if (!decoded) {
+        return res.status(401).json({ 
+          status: 'error',
+          message: 'Invalid or expired token'
+        });
+      }
+
+      const candidate = await Candidate.findById(decoded.id);
+      const user = await User.findById(decoded.id).select('-password');
+    
+      // Attach user to request object
+      req.user = user;
+      req.candidate = candidate;
+      
+    if (!req.user && !req.candidate) {
+      return res.status(401).json({ 
+        status: 'error',
+        message: 'User not authenticated'
+      });
+    }
+    // Allow single role or array of roles
+    const allowedRoles = Array.isArray(roles) ? roles : [roles];
+    
+    if (req.user && !allowedRoles.includes(req.user.role)) {
+      return res.status(403).json({ 
+        status: 'error',
+        message: `Role ${req.user.role} is not authorized to access this route`
+      });
+    }
+
+    if (req.candidate && !allowedRoles.includes("Candidate")) {
+      return res.status(403).json({ 
+        status: 'error',
+        message: `Candidate is not authorized to access this route`
+      });
+    }
+
+    next();
+  });
+}
+
 const roleProtect = (roles) => {
   return asyncHandler(async (req, res, next) => {
     if (!req.user) {
@@ -194,6 +249,7 @@ const refreshToken = asyncHandler(async (req, res, next) => {
 export { 
   protect, 
   roleProtect, 
+  roleExtract,
   protectCandidate,
   refreshToken 
 };

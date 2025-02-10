@@ -10,7 +10,7 @@ import {
   updateStatusAndStage,
   uploadAssessmentRecording,
 } from "../../controllers/admin/candidate.controller.js";
-import { protect, protectCandidate, roleProtect } from "../../middlewares/authMiddleware.js";
+import { protect, protectCandidate, roleExtract, roleProtect } from "../../middlewares/authMiddleware.js";
 import { uploadVideo  } from "../../middlewares/uploadMiddleware.js";
 
 const router = express.Router();
@@ -19,7 +19,7 @@ router.get("/getData/data/allCandidatesWithStats", getAllCandidatesWithStats);
 
 router.get("/:jobId", getAllCandidatesForJob);
 // router.get('/data/:id', getCandidateById);
-router.get("/:candidateId/job/:jobId", getCandidateById);
+router.get("/:candidateId/job/:jobId" ,roleExtract(["Hiring Manager","Design Reviewer","Candidate"]), getCandidateById);
 
 router.get("/:candidateId/jobs",protect, roleProtect("Hiring Manager"), getCandidateJobs);
 
