@@ -16,6 +16,7 @@ import { CustomDropdown } from '../Form/FormFields'
 import LoaderModal from '../ui/LoaderModal'
 import AssigneeSelector from './AssigneeSelector'
 import RatingSelector from './RatingSelector'
+import RejectionSelector from './RejectionSelector'
 
 export const getMaxScoreEachStage = (currentStage) =>{
     let stageScores = {
@@ -251,6 +252,10 @@ function MultiSelectBar({selectedData,jobId,clearSelection}) {
     })
   }
 
+    const [anchorEl, setAnchorEl] = useState(null);
+    const [chosenCandidate, setChosenCandidate] = useState(null);
+    const [chosenStage, setChosenStage] = useState(null);
+
   const handleReasonSelect = (reason,candidateId,stage) => {
     setFilteredCandidates(prevCandidates => {
         let prevCandidatesArray = Object.entries(prevCandidates);
@@ -273,6 +278,9 @@ function MultiSelectBar({selectedData,jobId,clearSelection}) {
         })
         return Object.fromEntries(updatedCandidates)
     })
+    setChosenCandidate(null)
+    setChosenStage(null)
+    setAnchorEl(null)
   }
 
   const handleConfirm = async (confirmFunction) =>{
@@ -439,7 +447,7 @@ function MultiSelectBar({selectedData,jobId,clearSelection}) {
             customMessage={action?.customMessage}
             specifiedWidth={"max-w-4xl"}
         >
-           <div className='mt-6 max-h-[60vh] scrollbar-hide overflow-y-scroll '>
+           <div className='mt-6 max-h-[60vh] scrollbar-hide overflow-y-scroll'>
             {Object.entries(filteredCandidates)?.map(([stage,candidateData])=>{
                     const nextStageIndex = globalStages.findIndex(each=>each === stage)
                     return (
@@ -485,13 +493,14 @@ function MultiSelectBar({selectedData,jobId,clearSelection}) {
                                                 </label>
                                                 {action?.name === "REJECT" && 
                                                 <div className='mt-2 w-full '>
-                                                    <CustomDropdown 
-                                                    extraStylesForLabel="font-bricolage font-semibold text-sm" 
-                                                    label={'Please provide the reason for rejecting this candidate'} 
-                                                    options={REJECTION_REASONS} 
-                                                    value={rejectionReason ?? ""}
-                                                    onChange={(reason)=>handleReasonSelect(reason,candidate?._id,stage)}
-                                                    />
+                                                    <p className='typography-h3 text-sm font-bricolage my-4'>Please provide the reason for rejecting this candidate</p>
+                                                    <div 
+                                                    onClick={(e)=>{setAnchorEl(!anchorEl ? e.currentTarget : null); setChosenCandidate(chosenCandidate ? null : candidate?._id); setChosenStage(chosenStage ? null : stage);}}
+                                                    className={`${rejectionReason ? "text-white" : "text-font-gray"}   typography-body mt-1 h-[44px] flex items-center justify-between bg-background-40 hover:bg-background-60 w-full outline-none rounded-xl shadow-sm focus:ring-teal-300 focus:border-teal-300 text-left px-4`}
+                                                    >
+                                                    <p>{rejectionReason ? rejectionReason : "-Select-"}</p>
+                                                    
+                                                    </div>
                                                 </div>}
                                             </div>
                                         )
@@ -503,6 +512,12 @@ function MultiSelectBar({selectedData,jobId,clearSelection}) {
                 })}
            </div>
         </Modal>}
+        <RejectionSelector 
+        selectedAnchor={anchorEl} 
+        handleClose={()=>{setAnchorEl(null); setChosenCandidate(null); setChosenStage(null)}} 
+        handleReasonSelect={(reason) => {
+            handleReasonSelect(reason,chosenCandidate,chosenStage)
+        }} />
     </div>
   )
 }
