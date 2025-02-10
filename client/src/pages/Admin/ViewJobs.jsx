@@ -194,10 +194,9 @@ const ViewJobs = () => {
 
 
     return (
-        <div className='w-full p-4'>
-            <div className="container mx-auto">
-            <Header 
-                HeaderText={formData.jobTitle} 
+        <div className="px-4 pt-4 container h-screen w-full">
+ <Header 
+                HeaderText={formData?.jobTitle} 
                 withKebab="true" 
                 withBack="true" 
                 job={formData} 
@@ -213,7 +212,6 @@ const ViewJobs = () => {
             {/* <div className='absolute right-24 top-5'>
                 <Tabs tabs={tabs} activeTab={activeTab} handleTabClick={handleTabClick} />
             </div> */}
-
 
             {activeTab === 'jobDetails' && (
                 <StyledCard padding={2} backgroundColor={"bg-background-30"}>
@@ -284,7 +282,6 @@ const ViewJobs = () => {
                 closeReason={closeReason}
                 onCloseReasonChange={handleCloseReasonChange}
             />
-        </div>
         </div>
     );
 };

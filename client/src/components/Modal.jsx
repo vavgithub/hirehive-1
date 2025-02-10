@@ -93,7 +93,7 @@ const CLOSE_REASONS = [
   { value: 'Dont want more entries', label: 'Dont want more entries' },
 ];
 
-const REJECTION_REASONS = [
+export const REJECTION_REASONS = [
   "Candidate's scores did not meet the criteria",
   "Candidate did not appear for the screening",
   "Candidate did not appear for round one",
@@ -118,6 +118,7 @@ const Modal = ({
   customTitle,
   customMessage,
   customConfirmLabel,
+  isconfirmButtonDisabled,
   cancelLabel = "Cancel",
   confirmVariant,
   cancelVariant = "secondary",
@@ -128,7 +129,8 @@ const Modal = ({
   jobTitle,
   companyName,
   closeReason,
-  onCloseReasonChange
+  onCloseReasonChange,
+  specifiedWidth
 }) => {
   const [rejectionReason, setRejectionReason] = useState('');
   const [showEmailPreview, setShowEmailPreview] = useState(false);
@@ -305,7 +307,7 @@ const Modal = ({
         onClick={(e) => e.stopPropagation()}
         backgroundColor={"bg-background-60 "}
         padding={0}
-        extraStyles={"shadow w-full  mx-4 transform transition-transform duration-200 ease-out " + (actionType === ACTION_TYPES.BUDGET ? "max-w-xl" : "max-w-lg")}
+        extraStyles={"shadow w-full  mx-4 transform transition-transform duration-200 ease-out " + (specifiedWidth ? specifiedWidth : actionType === ACTION_TYPES.BUDGET ? "max-w-xl" : "max-w-lg")}
       >
         <div className="p-6">
           {renderModalContent()}
@@ -324,7 +326,7 @@ const Modal = ({
                 variant={buttonVariant}
                 onClick={handleConfirm}
                 disabled={
-                  (actionType === ACTION_TYPES.REJECT && !rejectionReason) ||
+                  isconfirmButtonDisabled || (actionType === ACTION_TYPES.REJECT && !rejectionReason) ||
                   (actionType === ACTION_TYPES.CLOSE && !closeReason)
                 }
               >

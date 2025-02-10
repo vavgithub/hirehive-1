@@ -1,15 +1,23 @@
 import express from "express"
-import { changeApplicationStatus, getCandidateScores, moveCandidate, noShow, rejectCandidate, rescheduleCall, rescheduleScreening, scheduleCall, scheduleScreening, scoreRoundTwo, sendDesignTask, submitBudgetScore, updateCandidateRating } from "../../controllers/admin/hr.controller.js";
+import { changeApplicationStatus, getCandidateScores, moveCandidate, moveMultipleCandidates, noShow, rateMultipleCandidates, rejectCandidate, rejectMultipleCandidates, rescheduleCall, rescheduleScreening, scheduleCall, scheduleScreening, scoreRoundTwo, sendDesignTask, submitBudgetScore, updateAssigneeForMultipleCandidates, updateCandidateRating } from "../../controllers/admin/hr.controller.js";
 
 const router = express.Router();
 
 router.post('/reject-candidate', rejectCandidate);
 
+router.post('/reject-multiple-candidates', rejectMultipleCandidates);
+
 router.post('/move-candidate', moveCandidate);
+
+router.post('/move-multiple-candidates', moveMultipleCandidates);
+
+router.post('/update-assignee-multiple-candidates', updateAssigneeForMultipleCandidates);
 
 router.post('/no-show', noShow);
 
 router.post('/update-candidate-rating', updateCandidateRating);
+
+router.post('/rate-multiple-candidates', rateMultipleCandidates);
 
 router.get('/candidate/:candidateId/job/:jobId/scores', getCandidateScores);
 

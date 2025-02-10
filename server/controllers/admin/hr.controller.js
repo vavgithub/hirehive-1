@@ -1,8 +1,11 @@
 import { jobStagesStatuses } from "../../config/jobStagesStatuses.js";
 import { jobs } from "../../models/admin/jobs.model.js";
+import { User } from "../../models/admin/user.model.js";
 import { candidates } from "../../models/candidate/candidate.model.js";
 import { getDesignTaskContent, getRejectionEmailContent } from "../../utils/emailTemplates.js";
 import { sendEmail } from "../../utils/sentEmail.js";
+
+const RATINGS = ['Good Fit', 'Not A Good Fit', 'May Be'];
 
 export const rejectCandidate = async (req, res) => {
   try {
@@ -60,6 +63,77 @@ export const rejectCandidate = async (req, res) => {
     await sendEmail(candidate.email, "Application Status Update", emailContent);
 
     res.status(200).json({ message: "Candidate rejected successfully" });
+  } catch (error) {
+    console.error("Error rejecting candidate:", error);
+    res
+      .status(500)
+      .json({ message: "Error rejecting candidate", error: error.message });
+  }
+};
+
+export const rejectMultipleCandidates = async (req, res) => {
+  try {
+    const { candidateData } = req.body;
+
+    if(!candidateData || candidateData?.length === 0){
+      throw new Error("No Candidates Found")
+    }
+
+    for(let eachCandidate of candidateData){
+      if(!eachCandidate?.candidateId || !eachCandidate?.jobId || !eachCandidate?.rejectionReason){
+        throw new Error("Invalid Candidates Data")
+      }
+
+      // Find the candidate and job
+      const candidate = await candidates.findById(eachCandidate?.candidateId);
+      const job = await jobs.findById(eachCandidate?.jobId);
+
+      if (!candidate || !job) {
+        return res.status(404).json({ message: "Candidate or Job not found" });
+      }
+
+      // Find the job application for this specific job
+      const jobApplication = candidate.jobApplications.find(
+        (app) => app.jobId.toString() === eachCandidate?.jobId
+      );
+
+      if (!jobApplication) {
+        return res
+          .status(404)
+          .json({ message: "Job application not found for this candidate" });
+      }
+
+      // Get the current stage
+      const currentStage = jobApplication.currentStage;
+
+      // Update the status of the current stage to 'Rejected'
+      if (jobApplication.stageStatuses.has(currentStage)) {
+        const stageStatus = jobApplication.stageStatuses.get(currentStage);
+        stageStatus.status = "Rejected";
+        stageStatus.rejectionReason = eachCandidate?.rejectionReason;
+        jobApplication.stageStatuses.set(currentStage, stageStatus);
+      } else {
+        // If for some reason the current stage doesn't exist in stageStatuses, create it
+        jobApplication.stageStatuses.set(currentStage, {
+          status: "Rejected",
+          rejectionReason: eachCandidate?.rejectionReason,
+          assignedTo: null,
+          score: {},
+          currentCall: null,
+          callHistory: [],
+        });
+      }
+
+      // Save the updated candidate document
+      await candidate.save();
+
+      // Send rejection email
+      const emailContent = getRejectionEmailContent(candidate.firstName + " " + candidate.lastName,job.jobTitle);
+
+      await sendEmail(candidate.email, "Application Status Update", emailContent);
+    }
+
+    res.status(200).json({ message: "Selected candidates rejected successfully" });
   } catch (error) {
     console.error("Error rejecting candidate:", error);
     res
@@ -264,6 +338,185 @@ export const moveCandidate = async (req, res) => {
   }
 };
 
+export const moveMultipleCandidates = async (req, res) => {
+  try {
+    const { candidateData } = req.body;
+
+    if(!candidateData || candidateData?.length === 0){
+      throw new Error("No Candidates Found")
+    }
+
+    for(let eachCandidate of candidateData){
+        if(!eachCandidate?.candidateId || !eachCandidate?.jobId){
+            throw new Error("Invalid Candidates Data")
+        }
+        // Find the candidate and job
+        const candidate = await candidates.findById(eachCandidate.candidateId);
+        const job = await jobs.findById(eachCandidate.jobId);
+
+        if (!candidate || !job) {
+          return res.status(404).json({ message: "Candidate or Job not found" });
+        }
+
+        // Find the job application for this specific job
+        const jobApplication = candidate.jobApplications.find(
+          (app) => app.jobId.toString() === eachCandidate.jobId
+        );
+
+        if (!jobApplication) {
+          return res
+            .status(404)
+            .json({ message: "Job application not found for this candidate" });
+        }
+
+        // Validate the current stage
+        if (jobApplication.currentStage !== eachCandidate.stage) {
+          return res.status(400).json({ message: "Invalid current stage" });
+        }
+
+        const jobProfile = job.jobProfile;
+        const stages = jobStagesStatuses[jobProfile];
+
+        // Find the index of the current stage
+        const currentStageIndex = stages.findIndex(
+          (stage) => stage.name === eachCandidate.stage
+        );
+
+        if (currentStageIndex === -1) {
+          return res
+            .status(400)
+            .json({ message: "Current stage not found in job stages" });
+        }
+
+        // Determine if this is the last stage
+        const isLastStage = currentStageIndex === stages.length - 1;
+
+        if (isLastStage) {
+          // This is the last stage, update status to Accepted
+          jobApplication.stageStatuses.get(eachCandidate.stage).status = "Accepted";
+    
+          // You might want to add an additional field to indicate the candidate is hired
+          jobApplication.hired = true;
+          jobApplication.hireDate = new Date();
+        } else {
+          // Existing logic for moving to the next stage
+          const nextStageConfig = stages[currentStageIndex + 1];
+          const nextStage = nextStageConfig.name;
+    
+          // Update the current (previous) stage status to 'Cleared'
+          jobApplication.stageStatuses.get(eachCandidate.stage).status = "Cleared";
+    
+          // Initialize or update the next stage
+          // Check if the next stage is "Hired" stage
+          const isNextStageHired = nextStage === "Hired";
+    
+          jobApplication.stageStatuses.set(nextStage, {
+            // Set status to 'Under Review' if it's Hired stage, otherwise follow the normal logic
+            status: isNextStageHired
+              ? "Under Review"
+              : nextStageConfig.requiresCall
+              ? "Pending"
+              : "Not Assigned",
+            rejectionReason: "N/A",
+            assignedTo: null,
+            score: {},
+            currentCall: null,
+            callHistory: [],
+          });
+    
+          // Update the current stage
+          jobApplication.currentStage = nextStage;
+        }
+    
+        // Mark the jobApplications field as modified
+        candidate.markModified("jobApplications");
+        
+        // Save the updated candidate document
+        await candidate.save();
+    };
+    
+    res.status(200).json({message:"Selected candidates are moved to respective stages successfully."})
+  } catch (error) {
+    console.error("Error moving candidate:", error);
+    res
+      .status(500)
+      .json({ message: "Error moving candidate", error: error.message });
+  }
+};
+
+export const updateAssigneeForMultipleCandidates = async (req,res) => {
+  try {
+    const { candidateData, assigneeId } = req.body;
+
+    if(!candidateData || candidateData?.length === 0){
+      throw new Error("No Candidates Found")
+    }
+    
+    if(!assigneeId){
+      throw new Error("Invalid Assignee Data")
+    }
+
+    const isAssigneeExist = await User.findOne({_id:assigneeId,role:"Design Reviewer"});
+    if(!isAssigneeExist){
+      throw new Error("No Assignee Found")
+    }
+
+    for(let eachCandidate of candidateData){
+      // Find the candidate
+      const candidate = await candidates.findById(eachCandidate?.candidateId);
+      if (!candidate) {
+        return res.status(404).json({ message: 'Candidate not found' });
+      }
+
+      // Find the specific job application
+      const jobApplication = candidate.jobApplications.find(
+        (app) => app.jobId.toString() === eachCandidate?.jobId
+      );
+      if (!jobApplication) {
+        return res.status(404).json({ message: 'Job application not found' });
+      }
+
+      // Initialize the stage status if it doesn't exist
+      if (!jobApplication.stageStatuses.has(eachCandidate?.stage)) {
+        jobApplication.stageStatuses.set(eachCandidate?.stage, {
+          status: 'Not Assigned',
+          assignedTo: null,
+          rejectionReason: 'N/A',
+          score: {},
+          currentCall: null,
+          callHistory: []
+        });
+      }
+
+      const stageStatus = jobApplication.stageStatuses.get(eachCandidate?.stage);
+
+      // Update the assignee
+      stageStatus.assignedTo = assigneeId;
+
+      // Update the status based on the stage
+      if (['Portfolio', 'Design Task'].includes(eachCandidate?.stage)) {
+        stageStatus.status = assigneeId ? 'Under Review' : 'Not Assigned';
+      }
+      // Add more stage-specific logic here as needed
+
+      // If this is the first stage and an assignee is added, update the current stage
+      if (['Portfolio', 'Design Task'].includes(eachCandidate?.stage) && assigneeId && !jobApplication.currentStage) {
+        jobApplication.currentStage = eachCandidate?.stage;
+      }
+
+      // Save the changes
+      await candidate.save();
+    }
+
+    res.status(200).json({ 
+      message: 'Assignee updated successfully',
+    });
+  } catch (error) {
+    console.error('Error updating assignee:', error);
+    res.status(500).json({ message: error?.message || 'Server error' });
+  }
+}
+
 export const updateCandidateRating = async (req, res) => {
   try {
     const { candidateId, jobId, rating } = req.body;
@@ -305,6 +558,61 @@ export const updateCandidateRating = async (req, res) => {
       });
   }
 };
+
+export const rateMultipleCandidates = async (req,res) => {
+  try {
+    const { candidateData, rating } = req.body;
+
+    if(!candidateData || candidateData?.length === 0){
+      throw new Error("No Candidates Found")
+    }
+    
+    if(!rating){
+      throw new Error("No Rating Found")
+    }
+
+    if(!RATINGS.includes(rating)){
+      throw new Error("Invalid Rating")
+    }
+
+    for(let eachCandidate of candidateData){
+
+      const candidate = await candidates.findById(eachCandidate?.candidateId);
+  
+      if (!candidate) {
+        return res.status(404).json({ message: "Candidate not found" });
+      }
+  
+      const jobApplication = candidate.jobApplications.find(
+        (app) => app.jobId.toString() === eachCandidate?.jobId
+      );
+  
+      if (!jobApplication) {
+        return res
+          .status(404)
+          .json({ message: "Job application not found for this candidate" });
+      }
+  
+      jobApplication.rating = rating;
+  
+      // Mark the jobApplications field as modified
+      candidate.markModified("jobApplications");
+  
+      await candidate.save();
+    }
+
+    res.status(200).json({
+      message: "Candidates rating updated successfully",
+    });
+  } catch (error) {
+    console.error("Error updating candidate rating:", error);
+    res
+      .status(500)
+      .json({
+        message: error.message || "Error updating candidate rating",
+      });
+  }
+}
 
 export const getCandidateScores = async (req, res) => {
   const { candidateId, jobId } = req.params;

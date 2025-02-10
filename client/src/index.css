@@ -16,6 +16,40 @@ html{
   .scrollbar-hide::-webkit-scrollbar {
     display: none;  /* Safari and Chrome */
   }
+/* For WebKit Browsers (Chrome, Edge, Safari) */
+.thin-black-scrollbar::-webkit-scrollbar {
+  width: 6px;  /* Thin scrollbar */
+  height: 6px; /* For horizontal scrollbar */
+}
+
+.thin-black-scrollbar::-webkit-scrollbar-track {
+  background: transparent; /* Transparent track */
+  border-radius: 50px; /* Fully rounded track */
+}
+
+.thin-black-scrollbar::-webkit-scrollbar-thumb {
+  background: black; /* Black scrollbar */
+  border-radius: 50px; /* Fully rounded edges */
+  border: none;
+}
+
+.thin-black-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.8); /* Slightly lighter on hover */
+}
+
+/* Completely Remove Scrollbar Buttons (Arrows) */
+.thin-black-scrollbar::-webkit-scrollbar-button {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
+/* For Firefox */
+.thin-black-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: black transparent;
+}
+
 }
 
 .no-spinner {

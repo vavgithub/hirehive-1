@@ -96,7 +96,7 @@ export const CustomDropdown = React.forwardRef(({ field, label, options, value, 
           className={`${value ? "text-white" : "text-font-gray"} ${error ? '!border !border-red-500' : 'border border-transparent'}  typography-body mt-1 h-[44px] flex items-center justify-between bg-background-40 hover:bg-background-60 w-full outline-none rounded-xl shadow-sm focus:ring-teal-300 focus:border-teal-300 text-left px-4`}
           ref={ref}
         >
-          {options.find(opt => opt.value === value)?.label || '-Select-'}
+          {options.find(opt => opt.value === value)?.label || options.find(opt => opt === value) || '-Select-'}
           <svg width="18" height="9" viewBox="0 0 18 9" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M1 0.5L9 8.5L17 0.5" stroke="#585B5F" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
