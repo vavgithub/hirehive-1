@@ -6,7 +6,7 @@ import { Button } from '../ui/Button'
 function AutoAssignWithBudget({handleBudgetButtonClick,budgetFilter,autoAssignMutation,setIsAutoAssignModalOpen}) {
   return (
     <div className='flex gap-4'>
-        <div className={`${budgetFilter.from && budgetFilter.to ? "" : "hidden"}`}>
+        <div className={`${budgetFilter.from || budgetFilter.to ? "" : "hidden"}`}>
             <Button
                 icon={AutoAssign}
                 variant="primary"
@@ -16,14 +16,14 @@ function AutoAssignWithBudget({handleBudgetButtonClick,budgetFilter,autoAssignMu
                 {(autoAssignMutation.isLoading ? 'Auto-Assigning...' : 'Auto-Assign Portfolio')}
             </Button>
             </div>
-            <div className={`${budgetFilter.from && budgetFilter.to ? "auto" : ""}`}>
+            <div className={`${budgetFilter.from || budgetFilter.to ? "auto" : ""}`}>
 
             <Button
-                variant={budgetFilter.from && budgetFilter.to ? "iconSec" : "primary"}
+                variant={budgetFilter.from || budgetFilter.to ? "iconSec" : "primary"}
                 icon={Budget}
                 onClick={handleBudgetButtonClick}
             >
-                {budgetFilter.from && budgetFilter.to ? '' : 'Screen With Budget'}
+                {budgetFilter.from || budgetFilter.to ? '' : 'Screen With Budget'}
             </Button>
         </div>
     </div>

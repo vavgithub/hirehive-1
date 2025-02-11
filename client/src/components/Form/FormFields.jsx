@@ -149,7 +149,7 @@ export const BudgetField = React.forwardRef(({ value, onChange , required ,error
           key={label}
           label={label.charAt(0).toUpperCase() + label.slice(1)}
           value={value[label]}
-          onChange={(newValue) => onChange({ ...value, [label]: newValue === "" ? label === "to" ? 1 : 0 : parseInt(newValue,10) })}
+          onChange={(newValue) => onChange({ ...value, [label]: newValue === "" ? newValue : parseInt(newValue,10) })}
           unit="LPA"
           ref={ref}
           required

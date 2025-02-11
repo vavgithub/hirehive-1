@@ -268,6 +268,10 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
   };
 
   const handleApplyBudgetFilter = () => {
+    if(!tempBudgetFilter?.from && !tempBudgetFilter?.to){
+        showErrorToast("Error","Invalid budget values for Screen with Budget");
+        return
+    }
     setBudgetFilter(tempBudgetFilter);
     localStorage.setItem(`budgetFilter_${jobId}`, JSON.stringify(tempBudgetFilter));
     setIsBudgetModalOpen(false);
@@ -359,7 +363,7 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
     exportToExcel(filteredAndSearchedRowsData, fileName);
   };
   const handleBudgetButtonClick = (event) => {
-    if (budgetFilter.from && budgetFilter.to) {
+    if (budgetFilter.from || budgetFilter.to) {
       setBudgetMenuAnchorEl(event.currentTarget);
     } else {
       setTempBudgetFilter(budgetFilter);
