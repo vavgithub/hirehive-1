@@ -556,7 +556,8 @@ export const stagingConfig = {
                         hasRemarks : false,
                         hasScoreCard : false,
                         actions : false,
-                        hasTaskForm : true
+                        hasTaskForm : true,
+                        hasScheduledLabel : true
                     },
                     "Design Reviewer" : {
                         hasAssigneeSelectorIcon : false,

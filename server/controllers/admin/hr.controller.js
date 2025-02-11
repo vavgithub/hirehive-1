@@ -986,6 +986,8 @@ export const sendDesignTask = async (req, res) => {
       dueDate,
       dueTime,
       candidateEmail,
+      scheduledDate,
+      scheduledTime
     } = req.body;
 
     const candidate = await candidates.findById(candidateId);
@@ -999,30 +1001,55 @@ export const sendDesignTask = async (req, res) => {
     if (!jobApplication) {
       return res.status(404).json({ message: "Job application not found" });
     }
+    if(scheduledDate && scheduledTime){
+      const [hour,minutes] = scheduledTime?.split(":");
+      const mailScheduledDate = new Date(scheduledDate);
+      mailScheduledDate.setHours(hour,minutes,0,0);
 
-    // Update the Design Task stage status
-    jobApplication.stageStatuses.set("Design Task", {
-      status: "Sent",
-      currentCall: {
-        scheduledDate: new Date(dueDate),
-        scheduledTime: dueTime,
-        meetingLink: "", // You can leave this empty or use it for a submission link if needed
-      },
-      taskDescription: taskDescription,
-    });
+      // Update the Design Task stage status
+      jobApplication.stageStatuses.set("Design Task", {
+        status: "Pending",
+        currentCall: {
+          scheduledDate: new Date(dueDate),
+          scheduledTime: dueTime,
+          meetingLink: "", // You can leave this empty or use it for a submission link if needed
+        },
+        taskDescription: taskDescription,
+        scheduledDate : mailScheduledDate
+      });
 
-    // Send email to candidate
-    const emailSubject = `Value At Void : ${jobApplication.jobApplied} | Design Task for ${candidate.firstName} (3 days)`;
-    const emailContent = getDesignTaskContent(candidate.firstName + " " + candidate.lastName,jobApplication.jobApplied,taskDescription,dueDate,dueTime)
-    
-    await sendEmail(candidateEmail, emailSubject, emailContent,"Design Task");
+      await candidate.save();
 
-    await candidate.save();
+      res.status(200).json({
+        message: "Design task scheduled successfully",
+        updatedStageStatus: jobApplication.stageStatuses.get("Design Task"),
+      });
+    }else{
 
-    res.status(200).json({
-      message: "Design task sent successfully",
-      updatedStageStatus: jobApplication.stageStatuses.get("Design Task"),
-    });
+      // Update the Design Task stage status
+      jobApplication.stageStatuses.set("Design Task", {
+        status: "Sent",
+        currentCall: {
+          scheduledDate: new Date(dueDate),
+          scheduledTime: dueTime,
+          meetingLink: "", // You can leave this empty or use it for a submission link if needed
+        },
+        taskDescription: taskDescription,
+      });
+  
+      // Send email to candidate
+      const emailSubject = `Value At Void : ${jobApplication.jobApplied} | Design Task for ${candidate.firstName} (3 days)`;
+      const emailContent = getDesignTaskContent(candidate.firstName + " " + candidate.lastName,jobApplication.jobApplied,taskDescription,dueDate,dueTime)
+      
+      await sendEmail(candidateEmail, emailSubject, emailContent,"Design Task");
+  
+      await candidate.save();
+  
+      res.status(200).json({
+        message: "Design task sent successfully",
+        updatedStageStatus: jobApplication.stageStatuses.get("Design Task"),
+      });
+    }
   } catch (error) {
     console.error("Error sending design task:", error);
     res.status(500).json({ message: "Server error", error: error.message });

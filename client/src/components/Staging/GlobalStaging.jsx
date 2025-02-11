@@ -23,7 +23,7 @@ import ClockIcon from '../../svg/Staging/ClockIcon.jsx';
 import LinkIcon from '../../svg/Staging/LinkIcon.jsx';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import ClipboardIcon from '../../svg/Staging/ClipboardIcon.jsx';
-import { formatTime } from '../../utility/formatTime.js';
+import { formatIntoLocaleString, formatTime } from '../../utility/formatTime.js';
 import NoShowAction from './NoShow.jsx';
 import useScheduler from '../../hooks/useScheduler.jsx';
 import BulletMarks from '../ui/BulletMarks.jsx';
@@ -59,7 +59,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
     },[candidateData,jobProfile,selectedStage,role])
 
 
-    const data = useScheduler(candidateData, stageData, "Under Review")
+    // const data = useScheduler(candidateData, stageData, "Under Review")
 
     const dispatch = useDispatch();
     const queryClient = useQueryClient();
@@ -388,7 +388,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
             ))}
         </div>)
     };
-
+    console.log(stageData)
   return (
     <StyledCard 
     padding={3} 
@@ -461,13 +461,20 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
           </div>
         }
         {
-            stageBasedConfig?.hasTaskForm && 
+            (stageBasedConfig?.hasTaskForm && !stageData?.scheduledDate) && 
             <TaskForm
             candidateId={candidateId}
             jobId={jobId}
             candidateEmail={candidateData?.email}
             setIsLoading={setIsLoading}
             />
+        }
+        {
+            (stageBasedConfig?.hasScheduledLabel && stageData?.scheduledDate) &&
+            <div className='mt-4'>
+            <Label text={`Design Task mail is Scheduled for ${formatIntoLocaleString(stageData?.scheduledDate)}`}/>
+            <TaskDetails stageData={stageData} />
+            </div>
         }
         {
             stageBasedConfig?.hasTaskDetails && 

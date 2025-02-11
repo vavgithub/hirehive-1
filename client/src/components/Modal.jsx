@@ -112,6 +112,7 @@ const RedWarning = () => {
 const Modal = ({
   open,
   onClose,
+  isReadyToClose = true,
   actionType,
   onConfirm,
   item,
@@ -175,7 +176,7 @@ const Modal = ({
     } else {
         onConfirm?.(item);
     }
-    onClose();
+   isReadyToClose && onClose();
 };
 
   if (!open) return null;
