@@ -28,6 +28,7 @@ function StatePreserver({ children }) {
     assessment: [],
     budget: [],
     rating: [],
+    score : "",
     assignee: [],
   });
   const [query, setQuery] = useState("");
@@ -43,6 +44,7 @@ function StatePreserver({ children }) {
       budget: [],
       rating: [],
       assessment : [],
+      score : "",
       assignee: [],
     });
     setQuery("");
