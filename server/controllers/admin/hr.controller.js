@@ -3,6 +3,7 @@ import { jobs } from "../../models/admin/jobs.model.js";
 import { User } from "../../models/admin/user.model.js";
 import { candidates } from "../../models/candidate/candidate.model.js";
 import { getDesignTaskContent, getRejectionEmailContent } from "../../utils/emailTemplates.js";
+import { sanitizeLexicalHtml } from "../../utils/sanitize-html.js";
 import { sendEmail } from "../../utils/sentEmail.js";
 
 const RATINGS = ['Good Fit', 'Not A Good Fit', 'May Be'];
@@ -1000,6 +1001,8 @@ export const sendDesignTask = async (req, res) => {
       return res.status(404).json({ message: "Job application not found" });
     }
 
+    const sanitizedDescription = sanitizeLexicalHtml(taskDescription);
+
     // Update the Design Task stage status
     jobApplication.stageStatuses.set("Design Task", {
       status: "Sent",
@@ -1008,12 +1011,12 @@ export const sendDesignTask = async (req, res) => {
         scheduledTime: dueTime,
         meetingLink: "", // You can leave this empty or use it for a submission link if needed
       },
-      taskDescription: taskDescription,
+      taskDescription: sanitizedDescription,
     });
 
     // Send email to candidate
     const emailSubject = `Value At Void : ${jobApplication.jobApplied} | Design Task for ${candidate.firstName} (3 days)`;
-    const emailContent = getDesignTaskContent(candidate.firstName + " " + candidate.lastName,jobApplication.jobApplied,taskDescription,dueDate,dueTime)
+    const emailContent = getDesignTaskContent(candidate.firstName + " " + candidate.lastName,jobApplication.jobApplied,sanitizedDescription,dueDate,dueTime)
     
     await sendEmail(candidateEmail, emailSubject, emailContent,"Design Task");
 
