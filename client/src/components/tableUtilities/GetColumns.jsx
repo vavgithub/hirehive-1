@@ -261,17 +261,17 @@ const getCommonColumns = (handleDocumentClick) => [
         >
           <button
             onClick={() => handleMoveClick(params.row)}
-            disabled={!canMove(params.row)}
+            disabled={(params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Reviewed" && params?.row?.stageStatuses[params?.row?.currentStage]?.scheduledDate) || !canMove(params.row)}
           >
-            {canMove(params.row) ? <MoveActive /> : <Move />}
+            {!(params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Reviewed" && params?.row?.stageStatuses[params?.row?.currentStage]?.scheduledDate) && canMove(params.row) ? <MoveActive /> : <Move />}
           </button>
           <button
             onClick={() => handleRejectClick(params.row)}
-            disabled={!canReject(params.row)}
+            disabled={(params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Reviewed" && params?.row?.stageStatuses[params?.row?.currentStage]?.scheduledDate) || !canReject(params.row)}
           >
-            {canReject(params.row) ? <RejectActive /> : <Reject />}
+            {!(params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Reviewed" && params?.row?.stageStatuses[params?.row?.currentStage]?.scheduledDate) && canReject(params.row) ? <RejectActive /> : <Reject />}
           </button>
-          <button className={params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Rejected" ? "text-font-gray" : "text-white"} disabled={params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Rejected"} onClick={(e) => handleRatingClick(e, params.row)}>
+          <button className={(params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Reviewed" && params?.row?.stageStatuses[params?.row?.currentStage]?.scheduledDate) || params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Rejected" ? "text-font-gray" : "text-white"} disabled={(params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Reviewed" && params?.row?.stageStatuses[params?.row?.currentStage]?.scheduledDate) || params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Rejected"} onClick={(e) => handleRatingClick(e, params.row)}>
             {getRatingIcon(params.row.rating)}
           </button>
         </div>

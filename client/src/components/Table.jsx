@@ -209,8 +209,8 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
 
   // Reject candidate mutation
   const rejectCandidateMutation = useMutation({
-    mutationFn: ({ candidateId, jobId, rejectionReason }) =>
-      axios.post('/hr/reject-candidate', { candidateId, jobId, rejectionReason }),
+    mutationFn: ({ candidateId, jobId, rejectionReason, scheduledDate , scheduledTime }) =>
+      axios.post('/hr/reject-candidate', { candidateId, jobId, rejectionReason, scheduledDate , scheduledTime }),
     onSuccess: () => {
       queryClient.invalidateQueries(['candidates', jobId]);
       setIsRejectModalOpen(false);
@@ -258,11 +258,13 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
     });
   };
 
-  const handleRejectConfirm = (candidate, rejectionReason) => {
+  const handleRejectConfirm = (candidate, rejectionReason , scheduledDate , scheduledTime) => {
     rejectCandidateMutation.mutate({
       candidateId: candidate._id,
       jobId,
-      rejectionReason
+      rejectionReason, 
+      scheduledDate , 
+      scheduledTime
     });
   };
 

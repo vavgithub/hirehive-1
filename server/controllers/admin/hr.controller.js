@@ -10,7 +10,7 @@ const RATINGS = ['Good Fit', 'Not A Good Fit', 'May Be'];
 
 export const rejectCandidate = async (req, res) => {
   try {
-    const { candidateId, jobId, rejectionReason } = req.body;
+    const { candidateId, jobId, rejectionReason , scheduledDate , scheduledTime } = req.body;
 
     // Find the candidate and job
     const candidate = await candidates.findById(candidateId);
@@ -37,33 +37,63 @@ export const rejectCandidate = async (req, res) => {
     // Get the current stage
     const currentStage = jobApplication.currentStage;
 
-    // Update the status of the current stage to 'Rejected'
-    if (jobApplication.stageStatuses.has(currentStage)) {
-      const stageStatus = jobApplication.stageStatuses.get(currentStage);
-      stageStatus.status = "Rejected";
-      stageStatus.rejectionReason = rejectionReason;
-      jobApplication.stageStatuses.set(currentStage, stageStatus);
-    } else {
-      // If for some reason the current stage doesn't exist in stageStatuses, create it
-      jobApplication.stageStatuses.set(currentStage, {
-        status: "Rejected",
-        rejectionReason: rejectionReason,
-        assignedTo: null,
-        score: {},
-        currentCall: null,
-        callHistory: [],
-      });
+    if(scheduledDate && scheduledTime){
+      const [hour,minutes] = scheduledTime?.split(":");
+      const mailScheduledDate = new Date(scheduledDate);
+      mailScheduledDate.setHours(hour,minutes,0,0);
+
+      // Update the status of the current stage to 'Rejected'
+      if (jobApplication.stageStatuses.has(currentStage)) {
+        const stageStatus = jobApplication.stageStatuses.get(currentStage);
+        stageStatus.rejectionReason = rejectionReason;
+        stageStatus.scheduledDate = mailScheduledDate;
+        jobApplication.stageStatuses.set(currentStage, stageStatus);
+      } else {
+        // If for some reason the current stage doesn't exist in stageStatuses, create it
+        jobApplication.stageStatuses.set(currentStage, {
+          rejectionReason: rejectionReason,
+          assignedTo: null,
+          score: {},
+          scheduledDate : mailScheduledDate,
+          currentCall: null,
+          callHistory: [],
+        });
+      }
+
+      // Save the updated candidate document
+      await candidate.save();
+
+      res.status(200).json({ message: "Candidate rejection scheduled successfully" });
+    }else{
+
+      // Update the status of the current stage to 'Rejected'
+      if (jobApplication.stageStatuses.has(currentStage)) {
+        const stageStatus = jobApplication.stageStatuses.get(currentStage);
+        stageStatus.status = "Rejected";
+        stageStatus.rejectionReason = rejectionReason;
+        jobApplication.stageStatuses.set(currentStage, stageStatus);
+      } else {
+        // If for some reason the current stage doesn't exist in stageStatuses, create it
+        jobApplication.stageStatuses.set(currentStage, {
+          status: "Rejected",
+          rejectionReason: rejectionReason,
+          assignedTo: null,
+          score: {},
+          currentCall: null,
+          callHistory: [],
+        });
+      }
+  
+      // Save the updated candidate document
+      await candidate.save();
+  
+      // Send rejection email
+      const emailContent = getRejectionEmailContent(candidate.firstName + " " + candidate.lastName,job.jobTitle);
+  
+      await sendEmail(candidate.email, "Application Status Update", emailContent);
+  
+      res.status(200).json({ message: "Candidate rejected successfully" });
     }
-
-    // Save the updated candidate document
-    await candidate.save();
-
-    // Send rejection email
-    const emailContent = getRejectionEmailContent(candidate.firstName + " " + candidate.lastName,job.jobTitle);
-
-    await sendEmail(candidate.email, "Application Status Update", emailContent);
-
-    res.status(200).json({ message: "Candidate rejected successfully" });
   } catch (error) {
     console.error("Error rejecting candidate:", error);
     res
@@ -79,6 +109,8 @@ export const rejectMultipleCandidates = async (req, res) => {
     if(!candidateData || candidateData?.length === 0){
       throw new Error("No Candidates Found")
     }
+
+    let isScheduled = false;
 
     for(let eachCandidate of candidateData){
       if(!eachCandidate?.candidateId || !eachCandidate?.jobId || !eachCandidate?.rejectionReason){
@@ -107,34 +139,73 @@ export const rejectMultipleCandidates = async (req, res) => {
       // Get the current stage
       const currentStage = jobApplication.currentStage;
 
-      // Update the status of the current stage to 'Rejected'
-      if (jobApplication.stageStatuses.has(currentStage)) {
-        const stageStatus = jobApplication.stageStatuses.get(currentStage);
-        stageStatus.status = "Rejected";
-        stageStatus.rejectionReason = eachCandidate?.rejectionReason;
-        jobApplication.stageStatuses.set(currentStage, stageStatus);
-      } else {
-        // If for some reason the current stage doesn't exist in stageStatuses, create it
-        jobApplication.stageStatuses.set(currentStage, {
-          status: "Rejected",
-          rejectionReason: eachCandidate?.rejectionReason,
-          assignedTo: null,
-          score: {},
-          currentCall: null,
-          callHistory: [],
-        });
+      const { scheduledDate, scheduledTime } = eachCandidate;
+
+      if(scheduledDate && scheduledTime){
+        
+        const [hour,minutes] = scheduledTime?.split(":");
+        const mailScheduledDate = new Date(scheduledDate);
+        mailScheduledDate.setHours(hour,minutes,0,0);
+  
+        // Update the status of the current stage to 'Rejected'
+        if (jobApplication.stageStatuses.has(currentStage)) {
+          const stageStatus = jobApplication.stageStatuses.get(currentStage);
+          stageStatus.rejectionReason = eachCandidate?.rejectionReason;
+          stageStatus.scheduledDate = mailScheduledDate;
+          jobApplication.stageStatuses.set(currentStage, stageStatus);
+        } else {
+          // If for some reason the current stage doesn't exist in stageStatuses, create it
+          jobApplication.stageStatuses.set(currentStage, {
+            rejectionReason: eachCandidate?.rejectionReason,
+            assignedTo: null,
+            score: {},
+            scheduledDate : mailScheduledDate,
+            currentCall: null,
+            callHistory: [],
+          });
+        }
+  
+        // Save the updated candidate document
+        await candidate.save();
+
+        isScheduled = true;
+  
+      }else{
+  
+        // Update the status of the current stage to 'Rejected'
+        if (jobApplication.stageStatuses.has(currentStage)) {
+          const stageStatus = jobApplication.stageStatuses.get(currentStage);
+          stageStatus.status = "Rejected";
+          stageStatus.rejectionReason = eachCandidate?.rejectionReason;
+          jobApplication.stageStatuses.set(currentStage, stageStatus);
+        } else {
+          // If for some reason the current stage doesn't exist in stageStatuses, create it
+          jobApplication.stageStatuses.set(currentStage, {
+            status: "Rejected",
+            rejectionReason: eachCandidate?.rejectionReason,
+            assignedTo: null,
+            score: {},
+            currentCall: null,
+            callHistory: [],
+          });
+        }
+    
+        // Save the updated candidate document
+        await candidate.save();
+    
+        // Send rejection email
+        const emailContent = getRejectionEmailContent(candidate.firstName + " " + candidate.lastName,job.jobTitle);
+    
+        await sendEmail(candidate.email, "Application Status Update", emailContent);
+    
       }
-
-      // Save the updated candidate document
-      await candidate.save();
-
-      // Send rejection email
-      const emailContent = getRejectionEmailContent(candidate.firstName + " " + candidate.lastName,job.jobTitle);
-
-      await sendEmail(candidate.email, "Application Status Update", emailContent);
     }
 
-    res.status(200).json({ message: "Selected candidates rejected successfully" });
+    if(isScheduled){
+      res.status(200).json({ message: "Selected candidates rejection scheduled successfully" });
+    }else{
+      res.status(200).json({ message: "Selected candidates rejected successfully" });
+    }
   } catch (error) {
     console.error("Error rejecting candidate:", error);
     res

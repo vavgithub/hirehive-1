@@ -4,7 +4,7 @@ import Modal from '../Modal';
 import Datepicker from '../utility/Datepicker';
 import Timepicker from '../utility/Timepicker';
 
-function SchedulerButton({buttonVariant,extraClasses,modalTitle,modalMessage,onConfirm}) {
+function SchedulerButton({buttonText,buttonVariant,extraClasses,modalTitle,modalMessage,onConfirm,disabled}) {
     const [isOpen,setIsOpen] = useState(false);
     const [scheduleModal,setScheduleModal] = useState(false);
     const [scheduledDate,setScheduledDate] = useState(null);
@@ -64,13 +64,14 @@ function SchedulerButton({buttonVariant,extraClasses,modalTitle,modalMessage,onC
     return (
     <>
     <button
+    disabled={disabled}
     className={
-         " h-11  relative w-fit  flex justify-center items-center gap-[1px] " + extraClasses
+         " h-11  relative w-fit  flex justify-center items-center gap-[1px] disabled:opacity-50 disabled:pointer-events-none" + extraClasses
     }
     type='button'
     >
-        <span onClick={()=>onConfirm()} className={variants[buttonVariant] +' rounded-s-xl flex gap-2 h-full justify-center items-center pl-12 pr-6'}>
-        Send Email
+        <span onClick={()=>onConfirm()} className={variants[buttonVariant] +' rounded-s-xl flex gap-2 h-full justify-center items-center pl-12 pr-6 font-normal'}>
+        {buttonText}
         </span>
             <span onClick={(e)=>{e.stopPropagation(); setIsOpen(!isOpen)}} className={variants[buttonVariant] + ' rounded-e-xl flex h-full items-center pl-4 pr-4'}>
             {isOpen ? 
@@ -80,7 +81,7 @@ function SchedulerButton({buttonVariant,extraClasses,modalTitle,modalMessage,onC
             </span>
         {isOpen && 
         <span className='typography-body bg-background-40 rounded-xl p-2   absolute -top-16 right-0 '>
-            <p onClick={()=>setScheduleModal(true)} className='hover:bg-background-60 w-full py-2 px-8 rounded-xl hover:text-accent-100'>Scheduled Send</p>
+            <p onClick={()=>setScheduleModal(true)} className='hover:bg-background-60 w-full whitespace-nowrap py-2 px-8 rounded-xl hover:text-accent-100'>Scheduled Send</p>
         </span>}
     </button>
     <Modal

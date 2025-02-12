@@ -96,6 +96,7 @@ export const stagingConfig = {
                         hasLabel : false,
                         hasRemarks : true,
                         hasScoreCard : true,
+                        hasScheduledLabel : true,
                         actions : {
                             hasRejectAction : true,
                             hasMoveToNextRoundAction : true
@@ -412,6 +413,7 @@ export const stagingConfig = {
                         hasCallDetails : false,
                         hasCallHistory : false,
                         hasScheduledForm : false,
+                        hasScheduledLabel : true,
                         actions : {
                             hasRejectAction : true,
                             hasMoveToNextRoundAction : true
@@ -706,6 +708,7 @@ export const stagingConfig = {
                         hasLabel : false,
                         hasRemarks : true,
                         hasScoreCard : true,
+                        hasScheduledLabel : true,
                         actions : {
                             hasRejectAction : true,
                             hasMoveToNextRoundAction : true
@@ -1034,6 +1037,7 @@ export const stagingConfig = {
                         hasCallDetails : false,
                         hasCallHistory : false,
                         hasScheduledForm : false,
+                        hasScheduledLabel : true,
                         actions : {
                             hasRejectAction : true,
                             hasMoveToNextRoundAction : true
@@ -1353,6 +1357,7 @@ export const stagingConfig = {
                         hasCallDetails : false,
                         hasCallHistory : false,
                         hasScheduledForm : false,
+                        hasScheduledLabel : true,
                         actions : {
                             hasRejectAction : true,
                             hasMoveToNextRoundAction : true

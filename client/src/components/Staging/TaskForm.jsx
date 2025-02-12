@@ -213,7 +213,7 @@ function TaskForm({candidateId,candidateEmail,jobId,setIsLoading}) {
                     >
                         Send Email
                     </Button> */}
-                    <SchedulerButton onConfirm={handleSendTask} modalTitle={"Schedule Email"} modalMessage={"Schedule design task email with specified date and time"} buttonVariant={"primary"}/>
+                    <SchedulerButton buttonText={"Send Email"} onConfirm={handleSendTask} modalTitle={"Schedule Email"} modalMessage={"Schedule design task email with specified date and time"} buttonVariant={"primary"}/>
             </div>
         </div>
   )

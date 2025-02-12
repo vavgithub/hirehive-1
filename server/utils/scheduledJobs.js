@@ -1,6 +1,6 @@
 import cron from 'node-cron';
 import { candidates } from '../models/candidate/candidate.model.js';
-import { getDesignTaskContent } from './emailTemplates.js';
+import { getDesignTaskContent, getRejectionEmailContent } from './emailTemplates.js';
 import { sendEmail } from './sentEmail.js';
 
 const updateCallStatuses = async () => {
@@ -34,34 +34,42 @@ const updateMailSendAndStatuses = async () => {
     for (const stage of stages) {
       const result = await candidates.find(
         {
-          $and: [
-            stage === "Design Task"
-              ? {
-                  $or: [
-                    { [`jobApplications.stageStatuses.${stage}.status`]: "Pending" },
-                    { [`jobApplications.stageStatuses.${stage}.status`]: "Reviewed" }
-                  ]
-                }
-              : { [`jobApplications.stageStatuses.${stage}.status`]: "Reviewed" },
-            { [`jobApplications.stageStatuses.${stage}.scheduledDate`]: { $lt: now } }
-          ]
+          jobApplications: {
+            $elemMatch: {
+              [`stageStatuses.${stage}.status`]: stage === "Design Task" 
+                ? { $in: ["Pending", "Reviewed"] }
+                : "Reviewed",
+              [`stageStatuses.${stage}.scheduledDate`]: {
+                $exists: true,
+                $ne: null,
+                $lt: now
+              }
+            }
+          }
         },
         {
           "_id": 1,
-          "firstName" : 1,
-          "lastName" : 1,
-          "email" : 1,
-          "jobApplications.$": 1 // Only return the matched jobApplication
+          "firstName": 1,
+          "lastName": 1,
+          "email": 1,
+          "jobApplications.$": 1
         }
       );
       
       for(let candidate of result){
+        const currentStageStatus = candidate?.jobApplications[0]?.stageStatuses.get(stage)?.status;
+        if(candidate?.jobApplications[0]?.currentStage === "Design Task" && candidate?.jobApplications[0]?.stageStatuses.get("Design Task")?.status === "Pending"){
+          // Send design email to candidate
+          const emailSubject = `Value At Void : ${candidate?.jobApplications[0]?.jobApplied} | Design Task for ${candidate.firstName} (3 days)`;
+          const emailContent = getDesignTaskContent(candidate.firstName + " " + candidate.lastName,candidate?.jobApplications[0]?.jobApplied,candidate?.jobApplications[0]?.stageStatuses.get(stage)?.taskDescription,candidate?.jobApplications[0]?.stageStatuses.get(stage)?.currentCall?.scheduledDate,candidate?.jobApplications[0]?.stageStatuses.get(stage)?.currentCall?.scheduledTime)
+  
+          await sendEmail(candidate?.email, emailSubject, emailContent,"Design Task");
+        }else{
+          // Send rejection email
+          const emailContent = getRejectionEmailContent(candidate.firstName + " " + candidate.lastName,candidate?.jobApplications[0]?.jobApplied);
 
-        // Send email to candidate
-        const emailSubject = `Value At Void : ${candidate?.jobApplications[0]?.jobApplied} | Design Task for ${candidate.firstName} (3 days)`;
-        const emailContent = getDesignTaskContent(candidate.firstName + " " + candidate.lastName,candidate?.jobApplications[0]?.jobApplied,candidate?.jobApplications[0]?.stageStatuses.get(stage)?.taskDescription,candidate?.jobApplications[0]?.stageStatuses.get(stage)?.currentCall?.scheduledDate,candidate?.jobApplications[0]?.stageStatuses.get(stage)?.currentCall?.scheduledTime)
-
-        await sendEmail(candidate?.email, emailSubject, emailContent,"Design Task");
+          await sendEmail(candidate.email, "Application Status Update", emailContent);
+        }
 
         await candidates.updateOne(
           {
@@ -70,7 +78,8 @@ const updateMailSendAndStatuses = async () => {
           },
           {
             $set: {
-              [`jobApplications.$.stageStatuses.${stage}.status`]: stage === "Design Task" ? "Sent" :"Rejected",
+              [`jobApplications.$.stageStatuses.${stage}.status`]: (stage === "Design Task" && currentStageStatus === "Pending" ) ? "Sent" :"Rejected",
+              [`jobApplications.$.stageStatuses.${stage}.scheduledDate`] : null
             }
           }
         );
