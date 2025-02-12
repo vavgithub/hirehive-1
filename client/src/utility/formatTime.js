@@ -24,3 +24,20 @@ export const formatTime = (timeString) => {
     const minutesStr = minutes.toString().padStart(2, '0');
     return `${hours}:${minutesStr}${ampm}`;
 };
+
+export const formatIntoLocaleString = (date) =>{
+    const options = {
+        timeZone: 'Asia/Kolkata', // IST Timezone
+        day: '2-digit',
+        month: 'long', // 'July'
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true, // Use 12-hour format
+      };
+      
+      const formattedDate = new Date(date).toLocaleString('en-IN', options)
+        .replace(' at ', ', ') // Adjusting separator for consistency
+      
+      return formattedDate
+}
