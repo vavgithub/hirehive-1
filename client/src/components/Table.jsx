@@ -157,6 +157,26 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
       }
 
     }
+    if(filters?.score){
+      const [min,max] = filters?.score?.split(" - ");
+      result = result?.filter((row,i)=>{
+        let totalScore = 0;
+        Object.entries(row?.stageStatuses).forEach(([stage,stageData])=>{
+          if(stage === "Screening"){
+            totalScore += !stageData?.score ? 0 : ((stageData?.score?.Attitude ?? 0)  + 
+              (stageData?.score?.Tech ?? 0) + 
+              (stageData?.score?.Communication ?? 0) + 
+              (stageData?.score?.UI ?? 0) + 
+              (stageData?.score?.UX ?? 0) + 
+              (stageData?.score?.Budget ?? 0) 
+            )
+          }else{
+            totalScore += stageData?.score ?? 0
+          }
+        })
+        return (totalScore < parseInt(max) && totalScore > parseInt(min) )
+      })
+    }
 
     return result;
   }, [filteredRowsData, searchTerm, filters]);

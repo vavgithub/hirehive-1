@@ -3,6 +3,7 @@ import ExperienceFilter from './ExperienceFilter';
 import Filter from '../../svg/Buttons/Filter';
 import { fetchAllDesignReviewers, fetchAvailableDesignReviewers } from '../../api/authApi';
 import { useQuery } from '@tanstack/react-query';
+import ScoreFilter, { MAX_SCORE, MIN_SCORE } from './ScoreFilter';
 
 const ArrowIcon = ({ isOpen }) => (
   <svg
@@ -17,6 +18,16 @@ const ArrowIcon = ({ isOpen }) => (
   </svg>
 );
 
+const ClearIcon = () => {
+  return (
+    <svg width="12" height="14" viewBox="0 0 12 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path
+        d="M1.5 3.50033H2.5M2.5 3.50033H10.5M2.5 3.50033V11.667C2.5 11.9764 2.60536 12.2732 2.79289 12.4919C2.98043 12.7107 3.23478 12.8337 3.5 12.8337H8.5C8.76522 12.8337 9.01957 12.7107 9.20711 12.4919C9.39464 12.2732 9.5 11.9764 9.5 11.667V3.50033H2.5ZM4 3.50033V2.33366C4 2.02424 4.10536 1.72749 4.29289 1.5087C4.48043 1.28991 4.73478 1.16699 5 1.16699H7C7.26522 1.16699 7.51957 1.28991 7.70711 1.5087C7.89464 1.72749 8 2.02424 8 2.33366V3.50033"
+        stroke="#FF385C" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  )
+}
+
 const FilterForDataTable = ({ onApplyFilters ,readOnly , preservedFilters }) => {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef(null);
@@ -29,6 +40,7 @@ const FilterForDataTable = ({ onApplyFilters ,readOnly , preservedFilters }) => 
     experience: '',
     rating: [],
     assessment : [],  
+    score : "",
     assignee: [],
   });
 
@@ -38,7 +50,8 @@ const FilterForDataTable = ({ onApplyFilters ,readOnly , preservedFilters }) => 
     experience: false,
     budget: false,
     rating: false,
-    assessment :false,
+    assessment : false,
+    score : false,
     assignee: false,
   });
 
@@ -61,6 +74,13 @@ const FilterForDataTable = ({ onApplyFilters ,readOnly , preservedFilters }) => 
       return {
         value: values,
         className: 'text-blue-400 typography-body' // blue color for experience values
+      };
+    }
+
+    if (category === 'score' && values) {
+      return {
+        value: !values ? "All" : `${values}`,
+        className: 'text-white typography-body group-hover:text-accent-100' // lighter gray for 'All'
       };
     }
 
@@ -159,6 +179,17 @@ const FilterForDataTable = ({ onApplyFilters ,readOnly , preservedFilters }) => 
     }));
   };
 
+  const handleScoreChange = (scoreObj) => {
+    setSelectedFilters((prev) => ({
+      ...prev,
+      score : `${(scoreObj?.min && !isNaN(scoreObj?.min)) ? scoreObj?.min : MIN_SCORE} - ${(scoreObj?.max && !isNaN(scoreObj?.max)) ? scoreObj?.max : MAX_SCORE}`
+    }));
+    // setShowDropdown((prev) => ({
+    //   ...prev,
+    //   score: false
+    // }));
+  };
+
   const handleDropdown = (category) => {
     setShowDropdown({
       stage: false,
@@ -167,6 +198,8 @@ const FilterForDataTable = ({ onApplyFilters ,readOnly , preservedFilters }) => 
       budget: false,
       rating: false,
       assignee: false,
+      assessment : false,
+      score : false,
       [category]: !showDropdown[category],
     });
   };
@@ -181,8 +214,22 @@ const FilterForDataTable = ({ onApplyFilters ,readOnly , preservedFilters }) => 
       budget: false,
       rating: false,
       assignee: false,
+      assessment : false,
+      score: false,
     });
   };
+
+  const handleClearAll = () => {
+    setSelectedFilters({
+      stage: [],
+      status: [],
+      experience: '',
+      rating: [],
+      assessment : [],  
+      score : "",
+      assignee: [],
+    })
+  }
 
   const handleClickOutside = (event) => {
     if (menuRef.current && !menuRef.current.contains(event.target)) {
@@ -202,6 +249,7 @@ const FilterForDataTable = ({ onApplyFilters ,readOnly , preservedFilters }) => 
     status: selectedFilters.stage.length === 1 ? stageStatusMap[selectedFilters.stage[0]] : allStatuses,
     rating: ['Good Fit', 'Not A Good Fit', 'May Be'],
     assessment : ["Completed","Not Completed"],
+    // score : ["Min Score","Max Score"],
     ...(!readOnly && {assignee: designReviewers.map(reviewer => reviewer)}),
   };
 
@@ -215,11 +263,12 @@ const FilterForDataTable = ({ onApplyFilters ,readOnly , preservedFilters }) => 
 
   return (
     <div className="relative" ref={menuRef}>
-      <div className={"cursor-pointer gap-2  flex typography-body hover:bg-background-60 hover:text-accent-100 rounded-xl h-12 p-3 " + (Object.values(selectedFilters).map((filter)=> Array.isArray(filter) ? filter : !filter ? [] : [filter]).flat()?.length > 0 ? "text-accent-100 bg-accent-300 " : "text-font-gray")} onClick={(e) => toggleMenu(e)}>
-        <Filter /> Filter
+      <div className={"cursor-pointer gap-2  flex typography-body hover:bg-background-60 hover:text-accent-100 rounded-xl h-12 p-3 text-font-gray"} onClick={(e) => toggleMenu(e)}>
+        <Filter /> Filter {Object.values(selectedFilters).map((filter)=> Array.isArray(filter) ? filter : !filter ? [] : [filter]).flat()?.length > 0 && <span className='w-2 h-2 rounded-full my-auto bg-red-40'></span>}
       </div>
       {isOpen && (
         <div className="absolute z-10 mt-2 p-2 w-[290px] max-w-[19rem] bg-background-40 rounded-xl flex flex-col gap-2 shadow-[5px_5px_50px_rgba(0,0,0,0.9)]">
+          {Object.values(selectedFilters).map((filter)=> Array.isArray(filter) ? filter : !filter ? [] : [filter]).flat()?.length > 0 && <p onClick={handleClearAll} className='cursor-pointer flex gap-2 items-center text-accent-red justify-end w-full typography-small-p pr-4 pt-2'><ClearIcon/>Clear All</p>}
           {Object.keys(categories).map((category) => (
             <div key={category} className="w-full">
               <div className={"flex justify-between font-outfit group h-10  hover:bg-background-60 p-4 rounded-xl items-center cursor-pointer " + (selectedFilters[category]?.length > 0 ? "text-accent-100 bg-accent-300 " : "text-font-gray")} onClick={() => handleDropdown(category)}>
@@ -228,7 +277,7 @@ const FilterForDataTable = ({ onApplyFilters ,readOnly , preservedFilters }) => 
                     {category}:
                   </span>
                   <span className={formatSelectedValues(category, selectedFilters[category]).className}>
-                    {formatSelectedValues(category,category === 'assignee' ? selectedFilters[category].map(each=>each.name)  : selectedFilters[category]).value}
+                    {formatSelectedValues(category,category === 'assignee' ? selectedFilters[category].map(each=>each.name)  : category === "score" ? selectedFilters[category] :selectedFilters[category]).value}
                   </span>
                 </div>
                 <div className='group-hover:text-accent-100'>
@@ -238,7 +287,11 @@ const FilterForDataTable = ({ onApplyFilters ,readOnly , preservedFilters }) => 
               {showDropdown[category] && (
                 category === 'experience' ? (
                   <ExperienceFilter onApply={handleExperienceApply} />
-                ) : (
+                ) : 
+                category === 'score' ? (
+                  <ScoreFilter handleScoreChange={handleScoreChange} />
+                ) : 
+                (
                   <div className="p-2 rounded-xl absolute typography-body left-[18.5rem] min-w-[250px] bg-background-40 w-max flex gap-2 flex-col " style={{boxShadow:"5px 5px 50px rgba(0,0,0,0.9)"}}>
                     {categories[category].map((item) => (
                       <label key={category === 'assignee' ? item._id :item} className={"group relative flex items-center p-4  h-10 hover:bg-background-60 hover:text-accent-100 rounded-xl " + (category === 'assignee' ? selectedFilters[category].find(each=>each.name === item.name) ?? "" :selectedFilters[category].includes(item) ? "bg-accent-300 text-accent-100 " : "text-white")}>

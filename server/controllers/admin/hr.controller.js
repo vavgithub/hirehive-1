@@ -3,6 +3,7 @@ import { jobs } from "../../models/admin/jobs.model.js";
 import { User } from "../../models/admin/user.model.js";
 import { candidates } from "../../models/candidate/candidate.model.js";
 import { getDesignTaskContent, getRejectionEmailContent } from "../../utils/emailTemplates.js";
+import { sanitizeLexicalHtml } from "../../utils/sanitize-html.js";
 import { sendEmail } from "../../utils/sentEmail.js";
 
 const RATINGS = ['Good Fit', 'Not A Good Fit', 'May Be'];
@@ -990,6 +991,8 @@ export const sendDesignTask = async (req, res) => {
       scheduledTime
     } = req.body;
 
+    const sanitizedDescription = sanitizeLexicalHtml(taskDescription);
+
     const candidate = await candidates.findById(candidateId);
     if (!candidate) {
       return res.status(404).json({ message: "Candidate not found" });
@@ -1014,7 +1017,7 @@ export const sendDesignTask = async (req, res) => {
           scheduledTime: dueTime,
           meetingLink: "", // You can leave this empty or use it for a submission link if needed
         },
-        taskDescription: taskDescription,
+        taskDescription: sanitizedDescription,
         scheduledDate : mailScheduledDate
       });
 
@@ -1034,12 +1037,12 @@ export const sendDesignTask = async (req, res) => {
           scheduledTime: dueTime,
           meetingLink: "", // You can leave this empty or use it for a submission link if needed
         },
-        taskDescription: taskDescription,
+        taskDescription: sanitizedDescription,
       });
   
       // Send email to candidate
       const emailSubject = `Value At Void : ${jobApplication.jobApplied} | Design Task for ${candidate.firstName} (3 days)`;
-      const emailContent = getDesignTaskContent(candidate.firstName + " " + candidate.lastName,jobApplication.jobApplied,taskDescription,dueDate,dueTime)
+      const emailContent = getDesignTaskContent(candidate.firstName + " " + candidate.lastName,jobApplication.jobApplied,sanitizedDescription,dueDate,dueTime)
       
       await sendEmail(candidateEmail, emailSubject, emailContent,"Design Task");
   

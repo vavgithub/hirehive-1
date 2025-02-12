@@ -22,14 +22,16 @@ const getCommonColumns = (handleDocumentClick) => [
       valueGetter: (params, row) => {
         const name = `${row?.firstName || ''} ${row?.lastName || ''}`
         const hasGivenAssessment = row.hasGivenAssessment;
+        const profilePictureUrl = row?.profilePictureUrl ?? "";
         return {
           name,
-          hasGivenAssessment
+          hasGivenAssessment,
+          profilePictureUrl
         }
       },
       renderCell: (params) => (
         <div className="name-cell flex items-center gap-2 h-12">
-          <Avatar src={"https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg"} sx={{ width: 32, height: 32 }}/>
+          <Avatar src={params?.value?.profilePictureUrl || "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg"} sx={{ width: 32, height: 32 }}/>
           <p className='flex items-center gap-2'>{params.value.name}
             {params.value.hasGivenAssessment && 
             <span>
