@@ -7,6 +7,8 @@ import { HiredIcon, HiredIconActive } from '../../svg/Checkboxes/HiredIcons';
 import { NotHired, NotHiredActive } from '../../svg/Checkboxes/NotHired';
 import BudgetFilter from './BudgetFilter';
 import StyledCard from '../ui/StyledCard';
+import { useAuthContext } from '../../context/AuthProvider';
+import { PartTimeIcon, PartTimeIconActive } from '../../svg/Checkboxes/PartTimeIcons';
 
 
 const CustomCheckbox = ({ label, icon: Icon, isChecked, onChange, count }) => (
@@ -80,6 +82,8 @@ const Filters = ({ filters = {}, handleCheckboxChange, activeTab, handleExperien
     const [shouldResetExperience, setShouldResetExperience] = useState(false);
     const [shouldResetBudget, setShouldResetBudget] = useState(false);
 
+    const { user } = useAuthContext();
+    const role = user?.role || 'Candidate'; // Default to Candidate if role is not specified
 
     const jobTypeOptions = [
         {
@@ -106,7 +110,15 @@ const Filters = ({ filters = {}, handleCheckboxChange, activeTab, handleExperien
                 active: ContractIconActive,
                 inactive: ContractIcon
             }
-        }
+        },
+        ...(role === "Hiring Manager" ? [{
+            value: 'Part Time',
+            label: 'Part-time',
+            icon: {
+                active: PartTimeIconActive,
+                inactive: PartTimeIcon
+            }
+        }] : []),
     ];
 
     const jobProfileOptions = [
