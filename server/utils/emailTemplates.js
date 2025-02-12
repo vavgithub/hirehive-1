@@ -1,3 +1,4 @@
+//emailTemplates.js
 export const getSignupEmailContent = (candidateName,otp) =>{
     return `
 <!DOCTYPE html>

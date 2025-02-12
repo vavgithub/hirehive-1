@@ -5,7 +5,7 @@ import { getUploadPath, uploadToCloudinary } from '../../utils/cloudinary.js';
 import path from 'path';
 import { sendEmail } from '../../utils/sentEmail.js';
 import { generateOTP, otpStore } from '../../utils/otp.js';
-import { getPasswordResetContent, getResetSuccessfulContent } from '../../utils/emailTemplates.js';
+import { getPasswordResetContent, getResetSuccessfulContent, getSignupEmailContent } from '../../utils/emailTemplates.js';
 
 
 
@@ -253,3 +253,221 @@ export const resetPassword = asyncHandler(async (req, res) => {
 });
 
  
+//here are the v2 controllers for onboarding hiring manager : 
+// Initialize registration
+export const initializeRegistration = asyncHandler(async (req, res) => {
+  const { email, fullName } = req.body;
+  
+  // Check if user already exists
+  const existingUser = await User.findOne({ email });
+  if (existingUser) {
+    return res.status(400).json({
+      status: 'error',
+      message: 'Email already registered'
+    });
+  }
+
+  // Generate OTP
+  const otp = generateOTP();
+  
+  // Store OTP with user details
+  otpStore.set(email, {
+    fullName,
+    otp,
+    timestamp: Date.now(),
+    registrationStep: 'OTP_PENDING'
+  });
+
+  // Send OTP email using template
+  await sendEmail(
+    email,
+    'Welcome to HireHive - Verify Your Email',
+    getSignupEmailContent(fullName, otp)
+  );
+
+  res.status(200).json({
+    status: 'success',
+    message: 'OTP sent successfully'
+  });
+});
+
+// Verify OTP
+export const verifyOTPforAdmin = asyncHandler(async (req, res) => {
+  const { email, otp } = req.body;
+  
+  const userData = otpStore.get(email);
+  if (!userData || userData.otp !== otp) {
+    return res.status(400).json({
+      status: 'error',
+      message: 'Invalid OTP'
+    });
+  }
+
+  // Check OTP expiration (10 minutes)
+  const tenMinutes = 10 * 60 * 1000;
+  if (Date.now() - userData.timestamp > tenMinutes) {
+    otpStore.delete(email);
+    return res.status(400).json({
+      status: 'error',
+      message: 'OTP has expired'
+    });
+  }
+
+  // Update registration step
+  userData.registrationStep = 'PASSWORD_PENDING';
+  otpStore.set(email, userData);
+
+  res.status(200).json({
+    status: 'success',
+    message: 'OTP verified successfully'
+  });
+});
+
+// Set password
+export const setPassword = asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
+  
+  const userData = otpStore.get(email);
+  if (!userData || userData.registrationStep !== 'PASSWORD_PENDING') {
+    return res.status(400).json({
+      status: 'error',
+      message: 'Invalid registration state'
+    });
+  }
+
+  // Update registration step
+  userData.password = password;
+  userData.registrationStep = 'COMPANY_DETAILS_PENDING';
+  otpStore.set(email, userData);
+
+  res.status(200).json({
+    status: 'success',
+    message: 'Password set successfully'
+  });
+});
+
+// Complete Hiring Manager registration
+export const completeHiringManagerRegistration = asyncHandler(async (req, res) => {
+  const { email, companyDetails } = req.body;
+  
+  const userData = otpStore.get(email);
+  if (!userData || userData.registrationStep !== 'COMPANY_DETAILS_PENDING') {
+    return res.status(400).json({
+      status: 'error',
+      message: 'Invalid registration state'
+    });
+  }
+
+  // Create new user
+  const user = await User.create({
+    name: userData.fullName,
+    email,
+    password: userData.password,
+    role: 'Hiring Manager',
+    company: companyDetails.companyName,
+    industry: companyDetails.industry,
+    location: companyDetails.location,
+    companySize: companyDetails.companySize
+  });
+
+  // Clear OTP store
+  otpStore.delete(email);
+
+  // Generate JWT
+  const token = jwt.sign(
+    { id: user._id },
+    process.env.JWT_SECRET,
+    { expiresIn: '30d' }
+  );
+
+  res.status(201).json({
+    status: 'success',
+    data: {
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        company: user.company
+      },
+      token
+    }
+  });
+});
+
+// Invite team member (Design Reviewer)
+export const inviteTeamMember = asyncHandler(async (req, res) => {
+  const { email, name } = req.body;
+  
+  // Check if user already exists
+  const existingUser = await User.findOne({ email });
+  if (existingUser) {
+    return res.status(400).json({
+      status: 'error',
+      message: 'Email already registered'
+    });
+  }
+
+  // Generate invitation token
+  const inviteToken = jwt.sign(
+    { email, name, role: 'Design Reviewer' },
+    process.env.JWT_SECRET,
+    { expiresIn: '7d' }
+  );
+
+  const inviteUrl = `${process.env.FRONTEND_URL}/register?token=${inviteToken}`;
+
+  // Send invitation email using template
+  await sendEmail(
+    email,
+    'Join HireHive as Design Reviewer',
+    getSignupEmailContent(name, generateOTP()) // You might want to create a specific template for invitations
+  );
+
+  res.status(200).json({
+    status: 'success',
+    message: 'Invitation sent successfully'
+  });
+});
+
+// Complete Design Reviewer registration
+export const completeDesignReviewerRegistration = asyncHandler(async (req, res) => {
+  const { token, password } = req.body;
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    
+    // Create new user
+    const user = await User.create({
+      name: decoded.name,
+      email: decoded.email,
+      password,
+      role: 'Design Reviewer'
+    });
+
+    // Generate JWT
+    const authToken = jwt.sign(
+      { id: user._id },
+      process.env.JWT_SECRET,
+      { expiresIn: '30d' }
+    );
+
+    res.status(201).json({
+      status: 'success',
+      data: {
+        user: {
+          id: user._id,
+          name: user.name,
+          email: user.email,
+          role: user.role
+        },
+        token: authToken
+      }
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: 'error',
+      message: 'Invalid or expired invitation token'
+    });
+  }
+});

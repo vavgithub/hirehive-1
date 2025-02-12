@@ -1,5 +1,5 @@
 import express from 'express';
-import { registerUser, authUser, logoutUser, getUserProfile, getAvailableDesignReviewers, uploadProfilePicture, resetPassword, verifyOTP, forgotPassword } from '../../controllers/admin/auth.controller.js';
+import { registerUser, authUser, logoutUser, getUserProfile, getAvailableDesignReviewers, uploadProfilePicture, resetPassword, verifyOTP, forgotPassword, initializeRegistration, verifyOTPforAdmin, setPassword, completeHiringManagerRegistration, inviteTeamMember, completeDesignReviewerRegistration } from '../../controllers/admin/auth.controller.js';
 import { protect } from '../../middlewares/authMiddleware.js';
 import multer from 'multer';
 import { promises as fs } from 'fs';
@@ -75,5 +75,17 @@ router.post(
     handleMulterError,
     uploadProfilePicture
   );
+
+
+// Registration flow routes
+router.post('/register/init', initializeRegistration);
+router.post('/register/verify-otp-for-admin', verifyOTPforAdmin);
+router.post('/register/set-password', setPassword);
+router.post('/register/complete-hiring-manager', completeHiringManagerRegistration);
+
+// Team member invitation routes
+router.post('/invite-team-member', protect, inviteTeamMember);
+router.post('/register/complete-design-reviewer', completeDesignReviewerRegistration);
+
   
 export default router;
