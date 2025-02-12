@@ -9,6 +9,7 @@ import axios from '../../api/axios';
 import { formatDescription } from '../../utility/formatDescription';
 import { InputField } from '../Form/FormFields';
 import { formatTime } from '../../utility/formatTime';
+import TextEditor from '../utility/TextEditor';
 
 export function SubmissionForm({candidateId,jobId,stageData}){
     const [taskLink, setTaskLink] = useState('');
@@ -46,10 +47,10 @@ export function SubmissionForm({candidateId,jobId,stageData}){
 
     return (
         <div className="flex flex-col gap-4 mt-4 font-outfit">
-            <div className='flex justify-between'>
-                <div>
-                    <h4>Task Description</h4>
-                    <div className='text-font-gray typography-large-p' dangerouslySetInnerHTML={{ __html: stageData?.taskDescription ? formatDescription(stageData?.taskDescription) : '' }}></div>
+            <div className='flex justify-between mb-4'>
+                <div className='w-[80%]'>
+                    <h4 className='mb-2 typography-large-p text-font-gray'>Task Description</h4>
+                    <div className='text-font-gray typography-large-p' dangerouslySetInnerHTML={{ __html: stageData?.taskDescription ? stageData?.taskDescription : '' }}></div>
                 </div>
                 <div>
                     <p className='text-font-gray typography-large-p'>Due on</p>
@@ -164,7 +165,7 @@ function TaskForm({candidateId,candidateEmail,jobId,setIsLoading}) {
                 <label className="typography-body ">Design task details </label>
                 <span className="text-red-100">*</span>
             </div>
-            <textarea
+            {/* <textarea
                 id="taskDescription"
                 placeholder='Task Description'
                 type="text"
@@ -174,7 +175,9 @@ function TaskForm({candidateId,candidateEmail,jobId,setIsLoading}) {
                 rows="10"
                 value={taskDescription}
                 onChange={(e) => setTaskDescription(e.target.value)}
-            />
+            /> */}
+            <TextEditor htmlData={taskDescription} loaded={false} errors={descriptionError} placeholder={"Write a Task Description"} setEditorContent={(data)=>setTaskDescription(data)} />
+
             {descriptionError && <p className="text-red-500 absolute typography-small-p top-[23rem]">Task Description is required</p>}
             <div className='flex justify-normal gap-4'>
                 <div className='w-full relative'>

@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import CalenderIcon from '../../svg/Staging/CalenderIcon'
 import ClockIcon from '../../svg/Staging/ClockIcon'
 import { formatTime } from '../../utility/formatTime'
-import { formatDescription } from '../../utility/formatDescription'
 import { ensureAbsoluteUrl } from '../../utility/ensureAbsoluteUrl'
 
 export function SubmissionDetails({stageData,candidateData}){
@@ -51,8 +50,7 @@ function TaskDetails({stageData}) {
             </div>
             <div>
                 <span className='typography-small-p text-font-gray'>Task Description</span>
-
-                <div dangerouslySetInnerHTML={{ __html: stageData?.taskDescription ? formatDescription(stageData?.taskDescription) : '' }}></div>
+                <div className='text-font-gray typography-large-p mt-2' dangerouslySetInnerHTML={{ __html: stageData?.taskDescription ? stageData?.taskDescription : '' }}></div>
             </div>
         </div>
     </div>
