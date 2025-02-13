@@ -2,7 +2,7 @@ import React from 'react'
 import { Button } from './ui/Button'
 import StyledCard from './ui/StyledCard';
 
-function OtpComponent({handleOtpSubmit , email , otp , isSubmitting , otpError , setOtp}) {
+function OtpComponent({handleOtpSubmit , email , otp , isSubmitting , otpError , setOtp, cardbg = ""}) {
     
     // Handler for OTP input change
   const handleOtpChange = (element, index) => {
@@ -18,7 +18,7 @@ function OtpComponent({handleOtpSubmit , email , otp , isSubmitting , otpError ,
 
   return (
         <div className="flex items-center h-screen w-screen justify-center  bg-cover bg-verification ">
-          <StyledCard padding={0}  extraStyles="w-full mx-8 md:mx-0 max-w-lg space-y-8  shadow-xl ">
+          <StyledCard padding={0}  extraStyles={"w-full mx-8 md:mx-0 max-w-lg space-y-8  shadow-xl " + cardbg}>
             <form onSubmit={handleOtpSubmit} className="px-8 sm:px-16 text-center md:mb-20">
               <h1 className="typography-h2 sm:typography-h1 mt-8 md:mt-20 mb-4 ">OTP Verification</h1>
               <p className="text-font-gray text-center typography-large-p">

@@ -4,10 +4,10 @@ import { InputField } from './Form/FormFields'
 import { Button } from './ui/Button'
 import StyledCard from './ui/StyledCard'
 
-function PasswordComponent({handlePasswordSubmit , control , passwordError , isSubmitting}) {
+function PasswordComponent({handlePasswordSubmit , control , passwordError , isSubmitting ,cardbg = ""}) {
   return (
     <div className="flex items-center w-screen justify-center min-h-screen bg-cover bg-verification">
-        <StyledCard padding={0} extraStyles="w-full mx-8 md:mx-0 max-w-lg space-y-8 shadow-xl ">
+        <StyledCard padding={0} extraStyles={"w-full mx-8 md:mx-0 max-w-lg space-y-8 shadow-xl " + cardbg}>
         <form onSubmit={handlePasswordSubmit} className="mx-8 sm:mx-16 md:mb-20">
             <h3 className="typography-h2 text-center sm:typography-h1 mt-5 sm:mt-8 md:mt-20 ">
             Create Password

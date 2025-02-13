@@ -54,9 +54,9 @@ export const InputField = React.forwardRef(({
           {...props}
         />
       )}
-      {error && errorMessage && (
+      {/* {error && errorMessage && (
         <span className={"text-red-500 typography-small-p  absolute " + (rowWise ? "top-[42px] left-[30%]" : "top-[5rem]")}>{errorMessage}</span>
-      )}
+      )} */}
     </div>
   );
 });
@@ -88,7 +88,7 @@ export const CustomDropdown = React.forwardRef(({ field, label, options, value, 
 
   return (
     <div className="flex flex-col gap-2 relative" ref={dropdownRef}>
-      <label className={"typography-body " + extraStylesForLabel }>{label}{required && <span className="text-red-100">*</span>}</label>
+      {label && <label className={"typography-body " + extraStylesForLabel }>{label}{required && <span className="text-red-100 ml-1">*</span>}</label>}
       <div className="relative focus:outline focus:outline-teal-400">
         <button
           type="button"
