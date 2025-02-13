@@ -19,10 +19,31 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
+    default : null
   },
   role: {
     type: String,
     enum: ['Hiring Manager', 'Design Reviewer'],
+    required: true,
+  },
+  team_members : [{
+    id : String,
+    name : String,
+    email : String,
+    role : {
+      type : String,
+      enum: ['Hiring Manager', 'Design Reviewer'],
+    },
+    invited : Boolean,
+    member_id : {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'users',
+      default : null
+    }
+  }],
+  verficationStage: {
+    type: String,
+    enum: ['INITIAL', 'OTP' , 'PASSWORD' ,'COMPANY DETAILS' ,'ADD MEMBERS','DONE'],
     required: true,
   },
   profilePicture: {

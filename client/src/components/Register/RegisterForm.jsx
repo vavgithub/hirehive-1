@@ -6,11 +6,12 @@ import { Button } from '../../components/ui/Button';
 import StatsGrid from '../../components/ui/StatsGrid';
 import one from '../../svg/StatsCard/Jobs Page/one';
 import two from '../../svg/StatsCard/Jobs Page/two';
-import Loader from '../../components/ui/Loader';
 import Logo from '../../svg/Logo/lightLogo.svg'
 import LoaderModal from '../../components/ui/LoaderModal';
 import GoogleIcon from '../../svg/GoogleIcon';
 import { steps } from '../../pages/Admin/Register';
+
+
 
 const statsOne = [
     { title: 'Jobs Posted', value: 100, icon: one },
@@ -64,7 +65,7 @@ function RegisterForm({setCurrentStep}) {
                   <label htmlFor="fullname" className="block mb-2 font-bricolage">Full Name</label>
                   <input type="text" id="fullname" placeholder="Enter your full name" value={name} onChange={(e) => setName(e.target.value)} className="w-full p-2 rounded-lg bg-black text-white focus:outline-teal-400" />
                 </div>
-                <div className="mb-4">
+                <div className="mb-1">
                   <label htmlFor="email" className="block mb-2 font-bricolage">Work Email</label>
                   <input type="email" id="email" placeholder="Enter your work email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full p-2 rounded-lg bg-black text-white focus:outline-teal-400" />
                 </div>

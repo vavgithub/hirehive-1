@@ -259,36 +259,50 @@ export const initializeRegistration = asyncHandler(async (req, res) => {
   const { email, fullName } = req.body;
   
   // Check if user already exists
-  const existingUser = await User.findOne({ email });
-  if (existingUser) {
+  const existingUser = await User.findOne({ email }).select('-password');
+
+  if (existingUser && (!existingUser?.verficationStage || existingUser?.verficationStage === "DONE")) {
     return res.status(400).json({
       status: 'error',
       message: 'Email already registered'
     });
   }
-
-  // Generate OTP
-  const otp = generateOTP();
   
-  // Store OTP with user details
-  otpStore.set(email, {
-    fullName,
-    otp,
-    timestamp: Date.now(),
-    registrationStep: 'OTP_PENDING'
-  });
+  if (existingUser && existingUser?.verficationStage ) {
 
-  // Send OTP email using template
-  await sendEmail(
-    email,
-    'Welcome to HireHive - Verify Your Email',
-    getSignupEmailContent(fullName, otp)
-  );
+    return res.status(400).json({
+      message: 'Registration needs to be completed',
+      userData : existingUser,
+      currentStage : existingUser?.verficationStage
+    });
+  }
+  
+  if(!existingUser){ 
+    // Generate OTP
+    const otp = generateOTP();
+    
+    // Store OTP with user details
+    otpStore.set(email, {
+      fullName,
+      otp,
+      timestamp: Date.now(),
+      registrationStep: 'OTP_PENDING'
+    });
 
-  res.status(200).json({
-    status: 'success',
-    message: 'OTP sent successfully'
-  });
+    // Send OTP email using template
+    await sendEmail(
+      email,
+      'Welcome to HireHive - Verify Your Email',
+      getSignupEmailContent(fullName, otp)
+    );
+
+    res.status(200).json({
+      status: 'success',
+      message: 'OTP sent successfully',
+      currentStage : "INITIAL"
+    });
+  }
+
 });
 
 // Verify OTP
@@ -314,12 +328,21 @@ export const verifyOTPforAdmin = asyncHandler(async (req, res) => {
   }
 
   // Update registration step
-  userData.registrationStep = 'PASSWORD_PENDING';
-  otpStore.set(email, userData);
+  // userData.registrationStep = 'PASSWORD_PENDING';
+  // otpStore.set(email, userData);
+
+  const saveUser = await User.create({
+    name : userData?.fullname,
+    email,
+    role : "Hiring Manager",
+    verficationStage : "OTP"
+  })
 
   res.status(200).json({
     status: 'success',
-    message: 'OTP verified successfully'
+    message: 'OTP verified successfully',
+    userData : saveUser,
+    currentStage : "OTP"
   });
 });
 

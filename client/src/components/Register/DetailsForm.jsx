@@ -11,7 +11,7 @@ function DetailsForm({currentStep,setCurrentStep}) {
   return (
     <div className="flex items-center w-screen justify-center min-h-screen bg-cover bg-verification">
         <StyledCard padding={0} backgroundColor={"bg-background-100"} extraStyles="mx-8 md:mx-0 w-[55%] max-w-[760px] shadow-xl overflow-hidden ">
-            <Stepper padding={4} steps={steps?.filter((each,index)=> index > 2)} currentStep={currentStep} />
+            <Stepper padding={4} steps={steps?.filter((each,index)=> index > 2)} currentStep={currentStep} setCurrentStep={setCurrentStep} />
             {
                 currentStep === "COMPANY DETAILS" &&  <CompanyDetails currentStep={currentStep} setCurrentStep={setCurrentStep} />
             }
