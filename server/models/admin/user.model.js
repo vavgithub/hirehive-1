@@ -19,12 +19,16 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
-    default : null
+    default : "INVALID"
   },
   role: {
     type: String,
-    enum: ['Hiring Manager', 'Design Reviewer'],
+    enum: ['Admin','Hiring Manager', 'Design Reviewer'],
     required: true,
+  },
+  company_id : {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Company',
   },
   team_members : [{
     id : String,
@@ -41,9 +45,9 @@ const userSchema = new mongoose.Schema({
       default : null
     }
   }],
-  verficationStage: {
+  verificationStage: {
     type: String,
-    enum: ['INITIAL', 'OTP' , 'PASSWORD' ,'COMPANY DETAILS' ,'ADD MEMBERS','DONE'],
+    enum: ['REGISTER', 'OTP' , 'PASSWORD' ,'COMPANY DETAILS' ,'ADD MEMBERS','DONE'],
     required: true,
   },
   profilePicture: {

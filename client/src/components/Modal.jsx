@@ -22,6 +22,7 @@ const ACTION_TYPES = {
   CAMERAERROR: 'CAMERA ERROR',
   AUDIOERROR: 'AUDIO ERROR',
   MEDIAERROR: 'MEDIA ERROR',
+  COMPANYEXIST: 'COMPANY EXIST',
 };
 
 const ACTION_PROPERTIES = {
@@ -82,6 +83,9 @@ const ACTION_PROPERTIES = {
   [ACTION_TYPES.MEDIAERROR]: {
     title: 'Media Access Denied',
     message : "We need access to your camera and microphone to proceed. It seems you've denied permission for both, please enable them in your browser settings (address bar)."
+  },
+  [ACTION_TYPES.COMPANYEXIST]: {
+    title: 'Company Regsitered',
   },
 };
 
@@ -321,7 +325,8 @@ const Modal = ({
             {( actionType !== ACTION_TYPES.ASSESSMENT || (!isMobile && actionType === ACTION_TYPES.ASSESSMENT)) 
             && actionType !== ACTION_TYPES.CAMERAERROR 
             && actionType !== ACTION_TYPES.AUDIOERROR 
-            && actionType !== ACTION_TYPES.MEDIAERROR &&
+            && actionType !== ACTION_TYPES.MEDIAERROR 
+            && actionType !== ACTION_TYPES.COMPANYEXIST &&
               <Button
                 variant={buttonVariant}
                 onClick={handleConfirm}

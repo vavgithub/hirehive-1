@@ -10,8 +10,16 @@ import Logo from '../../svg/Logo/lightLogo.svg'
 import LoaderModal from '../../components/ui/LoaderModal';
 import GoogleIcon from '../../svg/GoogleIcon';
 import { steps } from '../../pages/Admin/Register';
+import { useMutation } from '@tanstack/react-query';
+import { showErrorToast, showSuccessToast } from "../ui/Toast"
+import { useOnboardingContext } from '../../context/OnboardingProvider';
 
+export const emailPattern = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i
 
+const registerAdmin = async ({fullName, email}) => {
+    const response = await axios.post('/auth/register/init',{fullName, email});
+    return response.data
+}
 
 const statsOne = [
     { title: 'Jobs Posted', value: 100, icon: one },
@@ -25,14 +33,58 @@ function RegisterForm({setCurrentStep}) {
     const [name, setName] = useState('');
     const [error, setError] = useState('');
 
-    const handleFormSubmit = (e) =>{
+    const { setOnboardData } = useOnboardingContext();
+
+    const registerAdminMutation = useMutation({
+      mutationFn : registerAdmin,
+      onSuccess : (data) => {
+        if(data?.message){
+          showSuccessToast("Success",data?.message)
+        }
+        if(data?.currentStage){
+          steps.forEach((step,index,stepsArr) => {
+            if(step?.id === data?.currentStage){
+              setCurrentStep(stepsArr[index + 1]?.id)
+            }
+          })
+        }
+        if(data?.userData){
+          setOnboardData(data?.userData)
+        }else{
+          setOnboardData({
+            name ,
+            email
+          })
+        }
+      },
+      onError : (error) => {
+        showErrorToast("Error",error?.response?.data?.message || "Unexpected Registration Error. Try again")
+      }
+    })
+
+    const handleFormSubmit =  (e) =>{
         e.preventDefault()
-        setCurrentStep(steps[1]?.id)
+        if(!email && !name){
+          setError('Please fill all the details')
+          return
+        }else if (!email){
+          setError('Please fill the email')
+          return
+        }else if(!emailPattern.test(email)){
+          setError('Invalid email format')
+          return
+        }else if(!name.trim()){
+          setError('Please fill the full name')
+          return
+        }else{
+          setError("")
+          registerAdminMutation.mutate({fullName : name, email})
+        }
     }
 
   return (
       <div className="flex h-screen ">
-            {/* {isLoadingAuth && <LoaderModal/>} */}
+            {registerAdminMutation?.isPending && <LoaderModal/>}
             {/* Left section with background image */}
             <div className="hidden lg:flex lg:w-2/3 bg-login-screen backdrop-blur-lg bg-cover p-12 flex-col justify-between relative">
               <div className='p-[45px]'>

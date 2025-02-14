@@ -6,6 +6,7 @@ import path from 'path';
 import { sendEmail } from '../../utils/sentEmail.js';
 import { generateOTP, otpStore } from '../../utils/otp.js';
 import { getPasswordResetContent, getResetSuccessfulContent, getSignupEmailContent } from '../../utils/emailTemplates.js';
+import { Company } from '../../models/admin/company.model.js';
 
 
 
@@ -95,8 +96,15 @@ export const authUser = asyncHandler(async (req, res) => {
     const user = await User.findOne({ email });
 
     if (user && (await user.matchPassword(password))) {
-        const token = generateToken(user._id);
 
+      if(user?.verificationStage !== "DONE"){
+        return res
+        .status(401)
+        .json({error:"You are currently not completed verfication. Please follow Registration."});
+      }
+
+      const token = generateToken(user._id);
+      
         res.cookie('jwt', token, cookieOptions);
 
         res.json({
@@ -106,8 +114,7 @@ export const authUser = asyncHandler(async (req, res) => {
             role: user.role,
         });
     } else {
-        res.status(401).json({error:"Invalid email or password"});
-        throw new Error('Invalid email or password');
+        return res.status(401).json({error:"Invalid email or password"});
     }
 });
 
@@ -257,23 +264,30 @@ export const resetPassword = asyncHandler(async (req, res) => {
 // Initialize registration
 export const initializeRegistration = asyncHandler(async (req, res) => {
   const { email, fullName } = req.body;
-  
-  // Check if user already exists
-  const existingUser = await User.findOne({ email }).select('-password');
 
-  if (existingUser && (!existingUser?.verficationStage || existingUser?.verficationStage === "DONE")) {
+  if(!email?.trim() || !fullName?.trim()){
+    return res.status(400).json({
+      status: 'error',
+      message: 'Incomplete registration data'
+    });
+  }
+
+  // Check if user already exists
+  const existingUser = await User.findOne({ email }).populate('company_id').select('-password');
+
+  if (existingUser && (!existingUser?.verificationStage || existingUser?.verificationStage === "DONE")) {
     return res.status(400).json({
       status: 'error',
       message: 'Email already registered'
     });
   }
   
-  if (existingUser && existingUser?.verficationStage ) {
+  if (existingUser && existingUser?.verificationStage ) {
 
-    return res.status(400).json({
+    return res.status(200).json({
       message: 'Registration needs to be completed',
       userData : existingUser,
-      currentStage : existingUser?.verficationStage
+      currentStage : existingUser?.verificationStage
     });
   }
   
@@ -299,7 +313,7 @@ export const initializeRegistration = asyncHandler(async (req, res) => {
     res.status(200).json({
       status: 'success',
       message: 'OTP sent successfully',
-      currentStage : "INITIAL"
+      currentStage : "REGISTER"
     });
   }
 
@@ -332,11 +346,13 @@ export const verifyOTPforAdmin = asyncHandler(async (req, res) => {
   // otpStore.set(email, userData);
 
   const saveUser = await User.create({
-    name : userData?.fullname,
+    name : userData?.fullName,
     email,
-    role : "Hiring Manager",
-    verficationStage : "OTP"
+    role : "Admin",
+    verificationStage : "OTP"
   })
+
+  otpStore.delete(email);
 
   res.status(200).json({
     status: 'success',
@@ -350,8 +366,9 @@ export const verifyOTPforAdmin = asyncHandler(async (req, res) => {
 export const setPassword = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
   
-  const userData = otpStore.get(email);
-  if (!userData || userData.registrationStep !== 'PASSWORD_PENDING') {
+  const userData = await User.findOne({ email });
+
+  if (!userData || userData.verificationStage !== 'OTP') {
     return res.status(400).json({
       status: 'error',
       message: 'Invalid registration state'
@@ -360,63 +377,121 @@ export const setPassword = asyncHandler(async (req, res) => {
 
   // Update registration step
   userData.password = password;
-  userData.registrationStep = 'COMPANY_DETAILS_PENDING';
-  otpStore.set(email, userData);
+  userData.verificationStage = 'PASSWORD';
+
+  await userData.save();
 
   res.status(200).json({
     status: 'success',
-    message: 'Password set successfully'
+    message: 'Password set successfully',
+    currentStage : "PASSWORD"
   });
 });
 
 // Complete Hiring Manager registration
 export const completeHiringManagerRegistration = asyncHandler(async (req, res) => {
   const { email, companyDetails } = req.body;
+
+  if(!companyDetails || !companyDetails?.companyName?.trim() || !companyDetails.location?.trim() || !companyDetails.industry?.trim() || !companyDetails.companySize?.trim()){
+    return res.status(400).json({
+      status: 'error',
+      message: 'Incomplete company data to continue registration'
+    });
+  }
   
-  const userData = otpStore.get(email);
-  if (!userData || userData.registrationStep !== 'COMPANY_DETAILS_PENDING') {
+  const userData = await User.findOne({ email }).select('-password');
+  if (!userData || userData.verificationStage !== 'PASSWORD') {
     return res.status(400).json({
       status: 'error',
       message: 'Invalid registration state'
     });
   }
 
+  const companies = await Company.find().lean();
+
+  const existingCompany = companies.filter(company=>{
+    return company.name?.replace(/\s+/g, '')?.toLowerCase() === companyDetails?.companyName?.replace(/\s+/g, '')?.toLowerCase()
+  })
+
+  if(existingCompany?.length > 0){
+    return res.status(400).json({
+      status: 'error',
+      message: `Company registration exists. Contact admin at ${existingCompany[0]?.registeredBy?.email}`,
+      companyExist : true
+    });
+  }
+
   // Create new user
-  const user = await User.create({
-    name: userData.fullName,
-    email,
-    password: userData.password,
-    role: 'Hiring Manager',
-    company: companyDetails.companyName,
-    industry: companyDetails.industry,
+  const company = await Company.create({
+    name: companyDetails.companyName,
+    industryType: companyDetails.industry,
     location: companyDetails.location,
-    companySize: companyDetails.companySize
+    size: companyDetails.companySize,
+    registeredBy : {
+      user_id : userData?._id,
+      name : userData?.name,
+      email : userData?.email
+    }
   });
 
-  // Clear OTP store
-  otpStore.delete(email);
+  //Update user data with company
+  userData.company_id = company?._id;
+  userData.verificationStage = "COMPANY DETAILS"
+
+  await userData.save();
 
   // Generate JWT
-  const token = jwt.sign(
-    { id: user._id },
-    process.env.JWT_SECRET,
-    { expiresIn: '30d' }
-  );
+  const token = generateToken(userData._id)
+
+  res.cookie('jwt', token, cookieOptions);
 
   res.status(201).json({
     status: 'success',
-    data: {
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        company: user.company
-      },
-      token
-    }
+    message : "Company details added successfully",
+    userData : {
+      ...userData.toObject(),
+      company_id : {
+        name: companyDetails.companyName,
+        industryType: companyDetails.industry,
+        location: companyDetails.location,
+        size: companyDetails.companySize,
+      }
+    },
+    currentStage : "COMPANY DETAILS"
   });
 });
+
+
+//add Team members controller
+export const addTeamMembers = asyncHandler(async (req,res) => {
+  const { email , teamMembers } = req.body;
+
+  // Validtion for registration data
+  const userData = await User.findOne({ email }).select('-password');
+  if (!userData || userData.verificationStage !== 'COMPANY DETAILS' || teamMembers?.length <= 0) {
+    return res.status(400).json({
+      status: 'error',
+      message: 'Invalid registration state'
+    });
+  }
+
+  let isValid = 0;
+  for(let member of teamMembers){
+    if(member?.firstName && member?.lastName && member?.email && member?.role){
+      isValid += 1
+    }
+  }
+  if(isValid !== teamMembers?.length){
+    return res.status(400).json({
+      status: 'error',
+      message: 'Invalid registration state'
+    });
+  }
+
+
+  //Add members to Admin database
+
+})
 
 // Invite team member (Design Reviewer)
 export const inviteTeamMember = asyncHandler(async (req, res) => {
@@ -433,7 +508,7 @@ export const inviteTeamMember = asyncHandler(async (req, res) => {
 
   // Generate invitation token
   const inviteToken = jwt.sign(
-    { email, name, role: 'Design Reviewer' },
+    { email, name, role: 'Design Reviewer' , company_id : existingUser?.company_id },
     process.env.JWT_SECRET,
     { expiresIn: '7d' }
   );

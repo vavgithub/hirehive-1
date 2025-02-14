@@ -13,7 +13,6 @@ export const steps = [
     { id: "PASSWORD", label: "Password" },
     { id: "COMPANY DETAILS", label: "Company Details" },
     { id: "ADD MEMBERS", label: "Add Members" },
-    { id: "INVITE MEMBERS", label: "Invite Members" }
   ];
 
 const Register = () => {

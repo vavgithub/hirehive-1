@@ -1,11 +1,17 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import DetailsFooter from './DetailsFooter'
 import { CustomDropdown, InputField } from '../Form/FormFields';
 import { Button } from '../ui/Button';
 import StyledCard from '../ui/StyledCard';
 import DeleteIcon from '../../svg/KebabList/DeleteIcon';
+import { useOnboardingContext } from '../../context/OnboardingProvider';
+import GlobalDropDown from '../utility/GlobalDropDown';
 
 export const roleOptions = [
+    {
+        label : "Admin",
+        value : "Admin"
+    },
     {
         label : "HR",
         value : "Hiring Manager"
@@ -15,6 +21,12 @@ export const roleOptions = [
         value : "Design Reviewer"
     },
 ]
+
+const addTeamMembers = async ({companyDetails, email}) => {
+    const response = await axios.post('/auth/register/complete-hiring-manager',{email, companyDetails});
+    return response.data
+}
+
 function AddMembers({currentStep,setCurrentStep}) {
     const [members,setMembers] = useState([]);
     const [firstName, setFirstName] = useState("");
@@ -22,13 +34,53 @@ function AddMembers({currentStep,setCurrentStep}) {
     const [email, setEmail] = useState("");
     const [role, setRole] = useState("");
 
+    const [adminRole,setAdminRole] = useState("") 
+    const { onboardData , setOnboardData } = useOnboardingContext();
+
+    const [hasSubmissionError,setHasSubmissionError] = useState(false);
+
+    useEffect(()=>{
+        if(onboardData?.role){
+            setAdminRole(onboardData?.role)
+        }
+    },[onboardData])
 
     const handleSubmit = ()=>{
-        setCurrentStep("INVITE MEMBERS");
-        //write code to persist data
+
     }
 
-    const addMembers = () => {
+    //validation useEffect
+    useEffect(()=>{
+        let adminCount = 0;
+        let emailSet = new Set();
+
+        if(members?.length > 0){
+            for(let member of members){
+                if(member?.role === "Admin"){
+                    adminCount += 1
+                }
+                emailSet.add(member.email)
+            }
+            if(emailSet.size !== members?.length){
+                setHasSubmissionError("Duplicate emails are not allowed")
+                return
+            }
+        }
+
+        if(adminRole === "Admin"){
+            adminCount += 1
+        }
+
+        if(adminCount > 1){
+            setHasSubmissionError("Only 1 admin is allowed")
+        }else if(adminCount === 1){
+            setHasSubmissionError(false)
+        }else{
+            setHasSubmissionError("Only 1 admin is allowed")
+        }
+    },[adminRole,members])
+
+    const addMembers = () => {    
         setMembers(prev => ([...prev, {
             id : firstName + Date.now(),
             firstName,
@@ -48,6 +100,21 @@ function AddMembers({currentStep,setCurrentStep}) {
             <h1 className='typography-h1'>Add Your Team Members</h1>
             <p className='typography-large-p text-font-gray font-light mt-2'>Add key team members and assign their roles for the hiring process.</p>
         </div>
+
+        {onboardData && 
+        <StyledCard padding={2} extraStyles={' mx-8 mb-4'}>
+            <div  className='flex justify-between items-center '>
+                <p className='font-medium font-bricolage'>{onboardData?.name}</p>
+                <p className='typography-body text-font-gray'>{onboardData?.email}</p>
+                <div className='w-[25%]'>
+                <CustomDropdown
+                value={adminRole}
+                onChange={setAdminRole}
+                options={roleOptions}
+                />
+                </div>
+            </div>
+        </StyledCard>}
         
         <div className='max-h-[38vh] overflow-y-scroll scrollbar-hide'>
             {/* Members List */}
@@ -60,13 +127,14 @@ function AddMembers({currentStep,setCurrentStep}) {
                             <div key={member?.id} className='flex justify-between items-center '>
                                 <p className='font-medium font-bricolage'>{member?.firstName + " " + member?.lastName}</p>
                                 <p className='typography-body text-font-gray'>{member?.email}</p>
-                                <div className='w-[25%]'>
+                                <p className='typography-body text-font-gray'>{roleOptions?.find(role=>role.value === member?.role).label}</p>
+                                {/* <div className='w-[25%]'>
                                 <CustomDropdown
                                 value={member?.role}
                                 onChange={setRole}
                                 options={roleOptions}
                                 />
-                                </div>
+                                </div> */}
                                 <div onClick={()=>removeMember(member.id)} className='cursor-pointer bg-black-100 h-11 w-11 flex justify-center items-center rounded-xl hover:bg-background-60'>
                                     <DeleteIcon />
                                 </div>
@@ -109,11 +177,20 @@ function AddMembers({currentStep,setCurrentStep}) {
                         required
                         error=""
                         />
-                        <CustomDropdown
+                        {/* <CustomDropdown
                         label="Role" 
                         required
                         extraStylesForLabel="font-bricolage font-medium"
                         value={role}
+                        onChange={setRole}
+                        options={roleOptions}
+                        /> */}
+                        <GlobalDropDown 
+                        label="Role" 
+                        required
+                        extraStylesForLabel="font-bricolage font-medium"
+                        value={role}
+                        error=""
                         onChange={setRole}
                         options={roleOptions}
                         />
@@ -122,7 +199,7 @@ function AddMembers({currentStep,setCurrentStep}) {
             </div>
         </div>
             
-        <DetailsFooter hasNextButton={true} hasSkipButton={true} currentStep={currentStep} setCurrentStep={setCurrentStep} nextFunction={handleSubmit} />
+        <DetailsFooter submissionError={hasSubmissionError} isNextDisabled={hasSubmissionError} hasNextButton={true} hasSkipButton={true} currentStep={currentStep} setCurrentStep={setCurrentStep} nextFunction={handleSubmit} />
     </>
   )
 }

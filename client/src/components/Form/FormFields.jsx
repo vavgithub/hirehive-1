@@ -54,15 +54,15 @@ export const InputField = React.forwardRef(({
           {...props}
         />
       )}
-      {/* {error && errorMessage && (
+      {error && errorMessage && (
         <span className={"text-red-500 typography-small-p  absolute " + (rowWise ? "top-[42px] left-[30%]" : "top-[5rem]")}>{errorMessage}</span>
-      )} */}
+      )}
     </div>
   );
 });
 InputField.displayName = 'InputField';
 
-export const CustomDropdown = React.forwardRef(({ field, label, options, value, onChange, required ,error ,extraStylesForLabel}, ref) => {
+export const CustomDropdown = React.forwardRef(({ field, label, options, value, onChange, required ,error ,extraStylesForLabel, maxHeight}, ref) => {
   const [isOpen, setIsOpen] = useState(false);
 
   //Reference for current dropdown container
@@ -102,7 +102,7 @@ export const CustomDropdown = React.forwardRef(({ field, label, options, value, 
           </svg>
         </button>
         {isOpen && (
-          <ul className="absolute mt-1 bg-background-40 rounded-xl shadow-lg w-full space-y-2 z-10">
+          <ul className="absolute mt-1 bg-background-40 rounded-xl shadow-lg w-full space-y-2 z-10 max-h-[200px] overflow-y-scroll scrollbar-hide">
             {options.map((option) => (
               <li
                 key={option?.value || option}

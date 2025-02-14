@@ -1,9 +1,20 @@
-import React from 'react'
+import React, { useState } from 'react'
 import PasswordComponent from '../PasswordComponent'
 import { useForm } from 'react-hook-form';
 import { steps } from '../../pages/Admin/Register';
+import { digitsRegex, lowerCaseRegex, specialCharRegex, upperCaseRegex } from '../../utility/regex';
+import axios from '../../api/axios';
+import { useMutation } from '@tanstack/react-query';
+import { useOnboardingContext } from '../../context/OnboardingProvider';
+import { showErrorToast, showSuccessToast } from '../ui/Toast';
+
+const setPassword = async ({password, email}) => {
+    const response = await axios.post('/auth/register/set-password',{password, email});
+    return response.data
+}
 
 function PasswordForm({setCurrentStep}) {
+    const [passwordError,setPasswordError] = useState("")
     const {
         register,
         control,
@@ -20,15 +31,84 @@ function PasswordForm({setCurrentStep}) {
         },
       });
 
-      console.log(errors)
+      const { onboardData , setOnboardData } = useOnboardingContext();
 
-      const handlePasswordSubmit = (data) =>{
-            console.log(data)
-            setCurrentStep(steps[3].id)
+      const setPasswordMutation = useMutation({
+        mutationFn : setPassword,
+        onSuccess : (data) => {
+          if(data?.message){
+            showSuccessToast("Success",data?.message)
+          }
+          if(data?.currentStage){
+            steps.forEach((step,index,stepsArr) => {
+              if(step?.id === data?.currentStage){
+                setCurrentStep(stepsArr[index + 1]?.id)
+              }
+            })
+          }
+        },
+        onError : (error) => {
+          showErrorToast("Error",error?.response?.data?.message || "Unexpected Registration Error. Try again")
+        } 
+      })
+
+      const handlePasswordSubmit = (e) =>{
+          e.preventDefault();
+          const password = getValues('password');
+          const confirmPassword = getValues('confirmPassword');
+          
+          if(!password?.trim() && !confirmPassword?.trim()){
+            setPasswordError("Please enter your new password");
+            return;
+          }
+      
+          if(!password?.trim()){
+            setPasswordError("Please enter your new password");
+            return;
+          }
+          
+          if(!confirmPassword?.trim()){
+            setPasswordError("Please confirm your password");
+            return;
+          }
+      
+          if (password !== confirmPassword) {
+            setPasswordError("Passwords don't match");
+            return;
+          }
+      
+          if (password.length < 8) {
+            setPasswordError('Password must be at least 8 characters long');
+            return;
+          }
+      
+          if (!upperCaseRegex.test(password)) {
+            setPasswordError('Password must contain at least one uppercase letter');
+            return;
+          }
+          if (!lowerCaseRegex.test(password)) {
+            setPasswordError('Password must contain at least one lowercase letter');
+            return;
+          }
+          if (!digitsRegex.test(password)) {
+            setPasswordError('Password must contain at least one number');
+            return;
+          }
+          if (!specialCharRegex.test(password)) {
+            setPasswordError('Password must contain at least one special character');
+            return;
+          }
+          //Email exist error handling
+          if(!onboardData?.email){
+            showErrorToast("Error", "Unexpected error. Please Try again");
+            setTimeout(()=>window.location.reload(),1000);
+            return 
+          }
+          setPasswordMutation.mutate({password,email : onboardData?.email})
       }
   return (
     <div>
-      <PasswordComponent cardbg='bg-card-bg bg-cover bg-center bg-no-repeat' handlePasswordSubmit={handleSubmit(handlePasswordSubmit)} control={control}  />
+      <PasswordComponent cardbg='bg-card-bg bg-cover bg-center bg-no-repeat' handlePasswordSubmit={handlePasswordSubmit} control={control} passwordError={passwordError} />
     </div>
   )
 }

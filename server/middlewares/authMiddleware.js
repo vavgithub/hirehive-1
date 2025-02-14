@@ -60,6 +60,56 @@ const protect = asyncHandler(async (req, res, next) => {
 
     // Get user and exclude password
     const user = await User.findById(decoded.id).select('-password');
+
+    if(user?.verificationStage !== "DONE"){
+      return res.status(401).json({ 
+        status: 'error',
+        message: 'User not verified'
+      });
+    }
+    
+    if (!user) {
+      return res.status(401).json({ 
+        status: 'error',
+        message: 'User not found'
+      });
+    }
+
+    // Attach user to request object
+    req.user = user;
+    next();
+  } catch (error) {
+    console.error('Authentication error:', error);
+    res.status(401).json({ 
+      status: 'error',
+      message: 'Authentication failed',
+      error: environment === 'development' ? error.message : undefined
+    });
+  }
+});
+
+const protectWithoutVerification = asyncHandler(async (req, res, next) => {
+  const token = getTokenFromRequest(req);
+
+  if (!token) {
+    return res.status(401).json({ 
+      status: 'error',
+      message: 'Not authorized, no token provided'
+    });
+  }
+
+  try {
+    const decoded = verifyToken(token, process.env.JWT_SECRET);
+    
+    if (!decoded) {
+      return res.status(401).json({ 
+        status: 'error',
+        message: 'Invalid or expired token'
+      });
+    }
+
+    // Get user and exclude password
+    const user = await User.findById(decoded.id).select('-password');
     
     if (!user) {
       return res.status(401).json({ 
@@ -148,6 +198,7 @@ const protectCandidate = asyncHandler(async (req, res, next) => {
 
 export { 
   protect, 
+  protectWithoutVerification,
   roleProtect, 
   protectCandidate,
 };

@@ -31,6 +31,7 @@ import MyJobs from './pages/Candidate/MyJobs.jsx';
 import AllJobs from './pages/Candidate/AllJobs.jsx';
 import Profile from './pages/Admin/Profile.jsx';
 import AssessmentResponse from './pages/Admin/AssessmentResponse.jsx';
+import { OnboardingProvider } from './context/OnboardingProvider.jsx';
 
 export const router = createBrowserRouter([
   {
@@ -107,7 +108,9 @@ export const router = createBrowserRouter([
       },
       {
         path: "register",
-        element: <Register />,
+        element: <OnboardingProvider>
+          <Register />
+        </OnboardingProvider>,
       }
     ],
   },

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { Fragment, useEffect, useMemo, useState } from 'react'
 
 function Stepper({padding,steps,currentStep,setCurrentStep}) {
 
@@ -27,8 +27,8 @@ function Stepper({padding,steps,currentStep,setCurrentStep}) {
             {
                 steps?.map((stepObj,index,stepsArr)=>{
                     return (
-                        <>
-                        <div className='flex flex-col justify-center items-center gap-2 z-20 mx-4'>
+                        <Fragment key={index}>
+                        <div  className='flex flex-col justify-center items-center gap-2 z-20 mx-4'>
                             <div onClick={()=>setCurrentStep(stepObj?.id)} className={'border-2  rounded-full aspect-square w-9 flex justify-center cursor-pointer items-center p-1 ' + (((currentStep === stepObj.id) || (index < currentIndex)) ? "border-teal-100 text-teal-100" : "border-font-gray text-font-gray")}>
                                 <p>{index + 1}</p>
                             </div>
@@ -41,7 +41,7 @@ function Stepper({padding,steps,currentStep,setCurrentStep}) {
                                 width : `${currentStep === stepObj.id ? 50 : index > currentIndex ? 0 : 100}%`
                             }} className='bg-teal-100 h-1  z-10'></div>
                         </div>}
-                        </>
+                        </Fragment>
                     )
                 })
             }

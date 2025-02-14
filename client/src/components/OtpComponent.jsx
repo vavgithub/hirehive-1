@@ -41,7 +41,7 @@ function OtpComponent({handleOtpSubmit , email , otp , isSubmitting , otpError ,
                   />
                 ))}
               </div>
-              {otpError && <span className="text-red-500">{otpError}</span>}
+              {otpError && <span className="text-red-500 text-xs font-outfit">{otpError}</span>}
 
               <div className="flex justify-center mt-6 w-full gap-4  mb-6 ">
                 <Button
