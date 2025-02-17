@@ -222,6 +222,7 @@ export const stagingConfig = {
                         },
                         hasRemarks : false,
                         hasScoreCard : false,
+                        hasBudgetScoring : true,
                         actions : false,
                         hasCallHistory : false,
                         hasScheduledForm : true
@@ -407,7 +408,6 @@ export const stagingConfig = {
                         hasLabel : false,
                         hasRemarks : true,
                         hasScoreBoard : true,
-                        hasBudgetScoring : true,
                         hasScoreCard : true,
                         hasCallDetails : false,
                         hasCallHistory : false,
