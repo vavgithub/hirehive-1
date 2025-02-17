@@ -5,9 +5,9 @@ import { getUploadPath, uploadToCloudinary } from '../../utils/cloudinary.js';
 import path from 'path';
 import { sendEmail } from '../../utils/sentEmail.js';
 import { generateOTP, otpStore } from '../../utils/otp.js';
-import { getPasswordResetContent, getResetSuccessfulContent, getSignupEmailContent } from '../../utils/emailTemplates.js';
+import { getInvitationContent, getPasswordResetContent, getResetSuccessfulContent, getSignupEmailContent } from '../../utils/emailTemplates.js';
 import { Company } from '../../models/admin/company.model.js';
-
+import jwt from 'jsonwebtoken'
 
 
 
@@ -464,7 +464,7 @@ export const completeHiringManagerRegistration = asyncHandler(async (req, res) =
 
 //add Team members controller
 export const addTeamMembers = asyncHandler(async (req,res) => {
-  const { email , teamMembers } = req.body;
+  const { email , teamMembers , currentRole } = req.body;
 
   // Validtion for registration data
   const userData = await User.findOne({ email }).select('-password');
@@ -475,22 +475,123 @@ export const addTeamMembers = asyncHandler(async (req,res) => {
     });
   }
 
+  let adminCount = 0;
+
+  if(currentRole === "Admin"){
+    adminCount += 1
+  }
+
   let isValid = 0;
+  let validRoles = ['Admin','Hiring Manager','Design Reviewer'];
+
   for(let member of teamMembers){
-    if(member?.firstName && member?.lastName && member?.email && member?.role){
+    if(member?.firstName && member?.lastName && member?.email && member?.role && validRoles.includes(member.role)){
       isValid += 1
+      if(member.role === "Admin"){
+        adminCount += 1
+      }
     }
   }
-  if(isValid !== teamMembers?.length){
+  
+  if((isValid !== teamMembers?.length) || adminCount !== 1 ){
     return res.status(400).json({
       status: 'error',
       message: 'Invalid registration state'
     });
   }
 
+  if(currentRole !== userData.role && validRoles.includes(currentRole)){
+    userData.role = currentRole
+  }
 
-  //Add members to Admin database
+  //Add members to Company database + send invites
+  for(let member of teamMembers){
+    const customMember = {
+      id : member.id,
+      name : member.firstName + " " + member.lastName,
+      email : member.email,
+      role : member.role,
+      invited : false,
+    }
+    const updatedCompany = await Company.findByIdAndUpdate(
+      { _id : userData?.company_id} , 
+      { $push : {
+          invited_team_members : customMember
+        }
+      },
+      { new : true , runValidators : true}
+    )
 
+    //Sending invites to members
+    // Generate invitation token
+    const inviteToken = jwt.sign(
+      { email : customMember.email , name : customMember.name, role: customMember.role , company_id : userData?.company_id },
+      process.env.JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+
+    const inviteUrl = `${process.env.FRONTEND_URL}/admin/register?token=${inviteToken}`;
+
+    // Send invitation email using template
+    await sendEmail(
+      customMember.email,
+      `Join HireHive as ${customMember.role}`,
+      getInvitationContent(customMember.name,customMember.role,updatedCompany?.name,inviteUrl) // You might want to create a specific template for invitations
+    );
+
+  }
+
+  userData.verificationStage = "DONE"
+  await userData.save();
+
+  const companyDetails = await Company.findById({_id : userData.company_id})
+
+  // Generate verified Token JWT
+  const token = generateToken(userData._id)
+
+  res.cookie('jwt', token, cookieOptions);
+
+  return res.status(200).json({
+    status: 'success',
+    message : "Added Team members successfully",
+    userData : {
+      ...userData.toObject(),
+      company_id : {
+        name: companyDetails.companyName,
+        industryType: companyDetails.industry,
+        location: companyDetails.location,
+        size: companyDetails.companySize,
+      }
+    },
+    currentStage : "DONE"
+  })
+})
+
+export const skipAddMember = asyncHandler(async (req,res)=> {
+    const { _id } = req.user;
+    const user = await User.findById({_id});
+    
+    //Current completed stage verification
+    if(user.verificationStage !== "COMPANY DETAILS"){
+      return res.status(400).json({
+        status: 'error',
+        message: 'Invalid stage to skip registration'
+      });
+    }
+
+    user.verificationStage = "DONE"
+    await user.save();
+
+    // Generate verified Token JWT
+    const token = generateToken(user._id)
+
+    res.cookie('jwt', token, cookieOptions);
+
+    return res.status(200).json({
+      status: 'success',
+      message : "Added Team members successfully",
+      currentStage : "DONE"
+    })
 })
 
 // Invite team member (Design Reviewer)

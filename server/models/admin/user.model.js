@@ -16,6 +16,33 @@ const userSchema = new mongoose.Schema({
     trim: true,
     lowercase: true,
   },
+  phone : {
+    type: String,
+    trim: true,
+    unique: true, // Ensure uniqueness
+  },
+  jobTitle : {
+    type: String,
+    trim: true,
+  },
+  location : {
+    type: String,
+    trim: true,
+  },
+  experience: {
+    type: Number,
+    default: 0,
+  },
+  skills: [String],
+  tools_used: [String],
+  tasks_done : {
+    type: Number,
+    default: 0,
+  },
+  tasks_pending : {
+    type: Number,
+    default: 0,
+  },
   password: {
     type: String,
     required: true,
@@ -30,21 +57,6 @@ const userSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Company',
   },
-  team_members : [{
-    id : String,
-    name : String,
-    email : String,
-    role : {
-      type : String,
-      enum: ['Hiring Manager', 'Design Reviewer'],
-    },
-    invited : Boolean,
-    member_id : {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'users',
-      default : null
-    }
-  }],
   verificationStage: {
     type: String,
     enum: ['REGISTER', 'OTP' , 'PASSWORD' ,'COMPANY DETAILS' ,'ADD MEMBERS','DONE'],

@@ -22,6 +22,21 @@ const companyschema = new mongoose.Schema({
         required: true,
         trim: true,
     },
+    invited_team_members : [{
+        id : String,
+        name : String,
+        email : String,
+        role : {
+          type : String,
+          enum: ['Admin','Hiring Manager', 'Design Reviewer'],
+        },
+        invited : Boolean,
+        member_id : {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'users',
+          default : null
+        }
+    }],
     registeredBy : {
         user_id : {
             type: String,

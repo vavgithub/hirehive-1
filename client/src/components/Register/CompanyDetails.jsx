@@ -178,6 +178,7 @@ function CompanyDetails({currentStep,setCurrentStep}) {
                 />
             </div>
             <DetailsFooter hasNextButton={true} currentStep={currentStep} setCurrentStep={setCurrentStep} nextFunction={handleSubmit} />
+            {/* Company Details Suggestion Modal */}
             <Modal 
             actionType={ACTION_TYPES.COMPANYEXIST} 
             onClose={()=>{setShowExistModal(false)}} 
