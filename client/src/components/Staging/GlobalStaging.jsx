@@ -447,7 +447,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
         {stageBasedConfig?.hasLabel && <div className='my-4'><Label icon={stageBasedConfig?.hasLabel?.icon} text={stageBasedConfig?.hasLabel?.hasCustomContent ? (stageBasedConfig?.hasLabel?.content + candidateData?.jobApplication?.jobApplied) : stageBasedConfig?.hasLabel?.content} /></div>}
         {
             stageBasedConfig?.hasSubmissionDetails && 
-            <SubmissionDetails candidateData={candidateData} stageData={stageData} />
+            <SubmissionDetails isEditable={stageBasedConfig?.isSubmissionEditable} candidateData={candidateData} stageData={stageData} />
         }
         {stageBasedConfig?.hasAssigneeSelector && 
           <div className='w-2/5'>

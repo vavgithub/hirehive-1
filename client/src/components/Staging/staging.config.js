@@ -657,6 +657,7 @@ export const stagingConfig = {
                             icon : WarningIcon
                         },
                         hasSubmissionDetails : true,
+                        isSubmissionEditable : true,
                     }
                 },
                 "Under Review" : {
