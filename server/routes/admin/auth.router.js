@@ -81,7 +81,7 @@ router.post(
 router.post('/register/init', initializeRegistration);
 router.post('/register/verify-otp-for-admin', verifyOTPforAdmin);
 router.post('/register/set-password', setPassword);
-router.post('/register/complete-hiring-manager', completeHiringManagerRegistration);
+router.post('/register/complete-hiring-manager', upload.single('companyLogo'), completeHiringManagerRegistration);
 router.post('/register/skip-add-member',protectWithoutVerification, skipAddMember)
 router.post('/register/send-invite-otp', sendInviteOTP);
 

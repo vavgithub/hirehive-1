@@ -471,7 +471,8 @@ export const setPassword = asyncHandler(async (req, res) => {
 
 // Complete Hiring Manager registration
 export const completeHiringManagerRegistration = asyncHandler(async (req, res) => {
-  const { email, companyDetails } = req.body;
+  const { email } = req.body;
+  const companyDetails = JSON.parse(req.body?.companyDetails);
 
   if(!companyDetails || !companyDetails?.companyName?.trim() || !companyDetails.location?.trim() || !companyDetails.industry?.trim() || !companyDetails.companySize?.trim()){
     return res.status(400).json({
@@ -497,14 +498,24 @@ export const completeHiringManagerRegistration = asyncHandler(async (req, res) =
   if(existingCompany?.length > 0){
     return res.status(400).json({
       status: 'error',
-      message: `Company registration exists. Contact admin at ${existingCompany[0]?.registeredBy?.email}`,
+      message: `This company is already registered. Contact admin at ${existingCompany[0]?.registeredBy?.email}`,
       companyExist : true
     });
+  }
+
+  let companyLogoUrl = "";
+  if(req.file){
+      // Pass just the filename instead of full path
+      companyLogoUrl = await uploadToCloudinary(
+        req.file.filename,
+        'company-logo'
+      );
   }
 
   // Create new user
   const company = await Company.create({
     name: companyDetails.companyName,
+    logoUrl : companyLogoUrl,
     industryType: companyDetails.industry,
     location: companyDetails.location,
     size: companyDetails.companySize,
@@ -533,6 +544,7 @@ export const completeHiringManagerRegistration = asyncHandler(async (req, res) =
       ...userData.toObject(),
       company_id : {
         name: companyDetails.companyName,
+        logoUrl : companyLogoUrl, 
         industryType: companyDetails.industry,
         location: companyDetails.location,
         size: companyDetails.companySize,
@@ -563,7 +575,15 @@ export const addTeamMembers = asyncHandler(async (req,res) => {
 
   for(let member of teamMembers){
     if(member?.firstName && member?.lastName && member?.email && member?.role && validRoles.includes(member.role)){
-      isValid += 1
+      const isExisting = await User.findOne({ email : member?.email });
+      if(isExisting){
+        return res.status(400).json({
+          status: 'error',
+          message: `${member?.email} is already registered. Please check`
+        });
+      }else{
+        isValid += 1
+      }
       if(member.role === "Admin"){
         adminCount += 1
       }
@@ -637,6 +657,7 @@ export const addTeamMembers = asyncHandler(async (req,res) => {
       ...userData.toObject(),
       company_id : {
         name: companyDetails.companyName,
+        logoUrl : companyDetails.logoUrl, 
         industryType: companyDetails.industry,
         location: companyDetails.location,
         size: companyDetails.companySize,

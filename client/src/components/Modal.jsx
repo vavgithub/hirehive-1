@@ -85,7 +85,7 @@ const ACTION_PROPERTIES = {
     message : "We need access to your camera and microphone to proceed. It seems you've denied permission for both, please enable them in your browser settings (address bar)."
   },
   [ACTION_TYPES.COMPANYEXIST]: {
-    title: 'Company Regsitered',
+    title: 'This Company Already Exists',
   },
 };
 

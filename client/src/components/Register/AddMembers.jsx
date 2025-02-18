@@ -15,6 +15,8 @@ import axios from '../../api/axios';
 import { showErrorToast, showSuccessToast } from '../ui/Toast';
 import useAuth from '../../hooks/useAuth';
 import { emailPattern } from './RegisterForm';
+import Modal from '../Modal';
+import PencilIcon from '../../svg/Buttons/PencilIcon';
 
 export const roleOptions = [
     {
@@ -55,6 +57,9 @@ function AddMembers({currentStep,setCurrentStep}) {
     const [emailError, setEmailError] = useState("");
     const [roleError, setRoleError] = useState("");
 
+    const [showAddModal,setShowAddmodal] = useState(false);
+    const [showEditModal,setShowEditmodal] = useState(false);
+
     const { onboardData , setOnboardData } = useOnboardingContext();
     const navigate = useNavigate();
     const { data: authData, isLoading: authLoading, refetch: refetchAuth } = useAuth();
@@ -67,7 +72,7 @@ function AddMembers({currentStep,setCurrentStep}) {
             setMembers(prev=>[...prev,{
                 ...onboardData,
                 firstName : firstName,
-                lastName : lastName,
+                lastName : lastName ?? "",
                 noAction : true
             }])
         }
@@ -197,6 +202,33 @@ function AddMembers({currentStep,setCurrentStep}) {
     const removeMember = (id) => {
         setMembers(prev=> prev.filter(member => member.id !== id))
     }
+    const editMember = (id) => {
+        const currentMember = members.filter(member => member.id === id);
+        setFirstName(currentMember[0]?.firstName)
+        setLastName(currentMember[0]?.lastName)
+        setEmail(currentMember[0]?.email)
+        setRole(currentMember[0]?.role)
+        setShowEditmodal(id);
+    }
+
+    const confirmEditMember = (id) => {
+        setMembers(prev =>  prev.map(member => {
+                if(member.id === id){
+                    console.log(member)
+                    return {
+                        id,
+                        firstName,
+                        lastName,
+                        email,
+                        role
+                    }
+                }else{
+
+                    return member
+                }
+            })
+        )
+    }
 
     const columns = [
         {
@@ -207,7 +239,7 @@ function AddMembers({currentStep,setCurrentStep}) {
             headerAlign : 'center',
             disableColumnMenu: true,
             renderCell : (params) =>(
-              <p className='w-full overflow-hidden whitespace-nowrap text-ellipsis'>{params?.row?.firstName + " " + params?.row?.lastName}</p>
+              <p className='w-full overflow-hidden whitespace-nowrap text-ellipsis'>{params?.row?.firstName + " " + params?.row?.lastName ?? ""}</p>
             )
         },
         {
@@ -242,12 +274,25 @@ function AddMembers({currentStep,setCurrentStep}) {
             renderCell : (params) =>{
                 if(!params?.row?.noAction)
                 return (
-                <div onClick={()=>removeMember(params?.row?.id)} className='cursor-pointer bg-black-100 h-11 w-11 flex justify-center items-center rounded-xl hover:bg-background-60'>
-                    <DeleteIcon />
-                </div>
+                    <div className='flex items-center justify-center gap-2'>
+                        <div onClick={()=>editMember(params?.row?.id)} className='cursor-pointer bg-black-100 h-11 w-11 flex justify-center items-center rounded-xl hover:bg-background-40'>
+                            <PencilIcon />
+                        </div>
+                        <div onClick={()=>removeMember(params?.row?.id)} className='cursor-pointer bg-black-100 h-11 w-11 flex justify-center items-center rounded-xl hover:bg-background-40'>
+                            <DeleteIcon />
+                        </div>
+                    </div>
             )}
         }
     ]
+
+    const handleShowModal = ()=>{
+        setShowAddmodal(true)
+        setFirstName("")
+        setLastName("")
+        setEmail("")
+        setRole("")
+    }
 
   return (
     <>
@@ -278,6 +323,16 @@ function AddMembers({currentStep,setCurrentStep}) {
             {members?.length > 0 && 
             <div className='mx-8 mb-8 flex flex-col gap-4'>
                 <MuiCustomStylesForDataGrid/>
+                <div className='flex justify-between items-center'>
+                <label className='font-bricolage font-semibold typography-body'>Team Members</label>
+                <Button
+                variant="secondary"
+                type="button"
+                onClick={handleShowModal}
+                >
+                   Add new member
+                </Button>
+                </div>
                 <DataGrid
                 rows={members}
                 columns={columns}
@@ -435,29 +490,21 @@ function AddMembers({currentStep,setCurrentStep}) {
                 hideFooterPagination
                 hideFooterSelectedRowCount 
                 />
-                        {/* // <StyledCard padding={2} extraStyles={' overflow-hidden'}>
-                        //     <div key={member?.id} className='flex justify-between items-center '>
-                        //         <p className='font-medium font-bricolage'>{member?.firstName + " " + member?.lastName}</p>
-                        //         <p className='typography-body text-font-gray'>{member?.email}</p>
-                        //         <p className='typography-body text-font-gray'>{roleOptions?.find(role=>role.value === member?.role).label}</p>
-                        //         {/* <div className='w-[25%]'>
-                        //         <CustomDropdown
-                        //         value={member?.role}
-                        //         onChange={setRole}
-                        //         options={roleOptions}
-                        //         />
-                        //         </div>
-                        //         <div onClick={()=>removeMember(member.id)} className='cursor-pointer bg-black-100 h-11 w-11 flex justify-center items-center rounded-xl hover:bg-background-60'>
-                        //             <DeleteIcon />
-                        //         </div>
-                        //     </div>
-                        // </StyledCard> */}
-
             </div>
             }
+            
+        </div>
+        <Modal
+        open={showAddModal || showEditModal}
+        onClose={showAddModal ? ()=>setShowAddmodal(false) : ()=>setShowEditmodal(false)}
+        onConfirm={showAddModal ? addMembers : ()=>confirmEditMember(showEditModal)}
+        customConfirmLabel={showAddModal ?"Add" :"Edit"}
+        customTitle={showAddModal ?"Add Team Member" : "Edit Team Member"}
+        customMessage={showAddModal ? "Add Team members of your company and invite them to join." : "Edit Team member of your company and invite them to join."}
+        >
             {/* Add Memeber Form */}
-            <div className='px-8 pb-8 flex flex-col gap-4'>
-                <StyledCard padding={2} extraStyles={'grid grid-cols-2 gap-x-6 gap-y-5'}>
+            <div className='mt-4 flex flex-col gap-4'>
+                <StyledCard padding={2}  extraStyles={'flex flex-col gap-4'}>
                         <InputField
                         type="text"
                         label="First Name"
@@ -508,11 +555,19 @@ function AddMembers({currentStep,setCurrentStep}) {
                         options={roleOptions}
                         />
                 </StyledCard>
-                <Button variant="secondary" className="self-end" onClick={addMembers}>Add</Button>
             </div>
-        </div>
-            
-        <DetailsFooter skipFunction={handleSkip} submissionError={hasSubmissionError} isNextDisabled={hasSubmissionError || (members?.length === 0)} hasNextButton={true} hasSkipButton={true} currentStep={currentStep} setCurrentStep={setCurrentStep} nextFunction={handleSubmit} />
+        </Modal>
+        <DetailsFooter 
+        skipType={"ADD TEAM MEMBERS"} 
+        skipTitle={"Skip Adding Team Members?"} 
+        skipMessage={"Adding your team members now allows for better collaboration, streamlined reviews, and faster hiring decisions."} 
+        skipFunction={handleSkip} 
+        submissionError={hasSubmissionError} 
+        isNextDisabled={hasSubmissionError || (members?.length === 0)} 
+        hasNextButton={true} 
+        hasSkipButton={true}  
+        nextFunction={handleSubmit} 
+        />
     </>
   )
 }

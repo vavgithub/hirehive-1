@@ -5,10 +5,6 @@ function GlobalDropDown({onChange,options, label ,error, value, extraStylesForLa
     const dropdownRef = useRef(null);
     const [anchorEl, setAnchorEl] = useState(null);
 
-    useEffect(()=>{
-        console.log(anchorEl)
-    },[anchorEl])
-
     return (
         <div ref={dropdownRef} className='w-full'>
             {label && 

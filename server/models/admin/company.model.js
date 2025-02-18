@@ -7,6 +7,9 @@ const companyschema = new mongoose.Schema({
         trim: true,
         unique : true
     },
+    logoUrl : {
+        type: String,
+    },
     size : {
         type: String,
         required: true,
