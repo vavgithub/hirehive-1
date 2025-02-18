@@ -15,7 +15,7 @@ dotenv.config({
 // Get environment config
 const envConfig = getEnvironmentConfig(environment);
 
-const verifyToken = (token, secret) => {
+export const verifyToken = (token, secret) => {
   try {
     return jwt.verify(token, secret);
   } catch (error) {

@@ -6,10 +6,16 @@ import { showErrorToast, showSuccessToast } from '../ui/Toast';
 import { useMutation } from '@tanstack/react-query';
 import LoaderModal from '../ui/LoaderModal';
 import axios from '../../api/axios';
+import { useSearchParams } from 'react-router-dom';
 
 const verifyOnboardOTP = async ({otp, email}) => {
     const response = await axios.post('/auth/register/verify-otp-for-admin',{otp, email});
     return response.data
+}
+
+const sendOTP = async ({token}) => {
+  const response = await axios.post('/auth/register/send-invite-otp',{token});
+  return response.data
 }
 
 function OtpForm({setCurrentStep}) {
@@ -17,6 +23,10 @@ function OtpForm({setCurrentStep}) {
     const [otpError,setOtpError] = useState("");
 
     const { onboardData , setOnboardData } = useOnboardingContext();
+
+    const [searchParams] = useSearchParams();
+
+    const token = searchParams.get("token");
 
     const verifyOnboardOTPMutation = useMutation({
       mutationFn : verifyOnboardOTP,
@@ -56,10 +66,39 @@ function OtpForm({setCurrentStep}) {
         verifyOnboardOTPMutation.mutate({otp : otp?.join(""),email : onboardData?.email})
     }
 
+    const handleSendOtp = () => {
+      sendInviteOTPMutation.mutate({token})
+    }
+  
+    const sendInviteOTPMutation = useMutation({
+      mutationFn : sendOTP,
+      onSuccess : (data) => {
+        if(data?.message){
+          showSuccessToast("Success",data?.message)
+        }
+        if(data?.currentStage){
+          steps.forEach((step,index,stepsArr) => {
+            if(step?.id === data?.currentStage){
+              setCurrentStep(stepsArr[index + 1]?.id)
+            }
+          })
+        }
+        if(data?.email){
+          setOnboardData(prev => ({
+            ...prev,
+            email : data?.email
+          }))
+        }
+      },
+      onError : (error) => {
+        showErrorToast("Error",error?.response?.data?.message || "Unexpected Registration Error. Try again")
+      }
+    })
+
   return (
     <div>
-      {verifyOnboardOTPMutation?.isPending && <LoaderModal />}
-      <OtpComponent isSubmitting={verifyOnboardOTPMutation?.isPending} cardbg='bg-card-bg bg-cover bg-center bg-no-repeat' handleOtpSubmit={handleOtpSubmit} otpError={otpError} email={onboardData?.email} otp={otp} setOtp={setOtp}/>
+      {(verifyOnboardOTPMutation?.isPending || sendInviteOTPMutation?.isPending) && <LoaderModal />}
+      <OtpComponent showSendOTP={onboardData?.email ? false : token} handleSendOtp={handleSendOtp} isSubmitting={verifyOnboardOTPMutation?.isPending} cardbg='bg-card-bg bg-cover bg-center bg-no-repeat' handleOtpSubmit={handleOtpSubmit} otpError={otpError} email={onboardData?.email} otp={otp} setOtp={setOtp}/>
     </div>
   )
 }

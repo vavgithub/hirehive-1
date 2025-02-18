@@ -1,5 +1,5 @@
 import express from 'express';
-import { registerUser, authUser, logoutUser, getUserProfile, getAvailableDesignReviewers, uploadProfilePicture, resetPassword, verifyOTP, forgotPassword, initializeRegistration, verifyOTPforAdmin, setPassword, completeHiringManagerRegistration, inviteTeamMember, completeDesignReviewerRegistration, addTeamMembers, skipAddMember } from '../../controllers/admin/auth.controller.js';
+import { registerUser, authUser, logoutUser, getUserProfile, getAvailableDesignReviewers, uploadProfilePicture, resetPassword, verifyOTP, forgotPassword, initializeRegistration, verifyOTPforAdmin, setPassword, completeHiringManagerRegistration, inviteTeamMember, completeDesignReviewerRegistration, addTeamMembers, skipAddMember, sendInviteOTP } from '../../controllers/admin/auth.controller.js';
 import { protect, protectWithoutVerification } from '../../middlewares/authMiddleware.js';
 import multer from 'multer';
 import { promises as fs } from 'fs';
@@ -83,6 +83,7 @@ router.post('/register/verify-otp-for-admin', verifyOTPforAdmin);
 router.post('/register/set-password', setPassword);
 router.post('/register/complete-hiring-manager', completeHiringManagerRegistration);
 router.post('/register/skip-add-member',protectWithoutVerification, skipAddMember)
+router.post('/register/send-invite-otp', sendInviteOTP);
 
 // Team member invitation routes
 router.post('/register/add-team-member', protectWithoutVerification , addTeamMembers);

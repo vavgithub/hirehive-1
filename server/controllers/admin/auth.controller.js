@@ -8,6 +8,7 @@ import { generateOTP, otpStore } from '../../utils/otp.js';
 import { getInvitationContent, getPasswordResetContent, getResetSuccessfulContent, getSignupEmailContent } from '../../utils/emailTemplates.js';
 import { Company } from '../../models/admin/company.model.js';
 import jwt from 'jsonwebtoken'
+import { verifyToken } from '../../middlewares/authMiddleware.js';
 
 
 
@@ -284,6 +285,11 @@ export const initializeRegistration = asyncHandler(async (req, res) => {
   
   if (existingUser && existingUser?.verificationStage ) {
 
+    // Generate JWT
+    const token = generateToken(existingUser._id)
+
+    res.cookie('jwt', token, cookieOptions);
+
     return res.status(200).json({
       message: 'Registration needs to be completed',
       userData : existingUser,
@@ -319,6 +325,69 @@ export const initializeRegistration = asyncHandler(async (req, res) => {
 
 });
 
+export const sendInviteOTP = asyncHandler(async (req,res) => {
+    const { token } = req.body;
+    if(!token){
+      return res.status(400).json({
+        status: 'error',
+        message: 'Invalid Registration token'
+      });
+    }
+
+    const decoded = verifyToken(token,process.env.JWT_SECRET);
+    if (!decoded) {
+      return res.status(401).json({ 
+        status: 'error',
+        message: 'Invalid or expired token'
+      });
+    }
+
+    const { email , name , role , company_id } = decoded;
+
+    const existingUser = await User.findOne({ email });
+
+    if(existingUser){
+      const company = await Company.findById({_id : company_id});
+      if(company 
+        && company?.invited_team_members?.find(member=>((member?.email === email) && (member?.invited === true))) 
+        && existingUser.verificationStage === "PASSWORD"){
+        await User.deleteOne({ email })
+      }else{
+        return res.status(401).json({ 
+          status: 'error',
+          message: 'Account already registered'
+        });
+      }
+    }
+
+    // Generate OTP
+    const otp = generateOTP();
+
+    // Store OTP with user details
+    otpStore.set(email, {
+      fullName : name,
+      otp,
+      role,
+      company_id,
+      timestamp: Date.now(),
+      registrationStep: 'OTP_PENDING'
+    });
+
+    // Send OTP email using template
+    await sendEmail(
+      email,
+      'Welcome to HireHive - Verify Your Email',
+      getSignupEmailContent(name, otp)
+    );
+
+    return res.status(200).json({
+      status: 'success',
+      email : email,
+      message: 'OTP sent successfully',
+      currentStage : "REGISTER"
+    })
+})
+
 // Verify OTP
 export const verifyOTPforAdmin = asyncHandler(async (req, res) => {
   const { email, otp } = req.body;
@@ -348,7 +417,8 @@ export const verifyOTPforAdmin = asyncHandler(async (req, res) => {
   const saveUser = await User.create({
     name : userData?.fullName,
     email,
-    role : "Admin",
+    role : userData?.role ?? "Admin",
+    ...(userData?.company_id ? {company_id : userData?.company_id} : {}),
     verificationStage : "OTP"
   })
 
@@ -377,14 +447,25 @@ export const setPassword = asyncHandler(async (req, res) => {
 
   // Update registration step
   userData.password = password;
-  userData.verificationStage = 'PASSWORD';
+
+  //Specific to HR and DR onboarding
+  if(userData?.role === "Hiring Manager" || userData?.role === "Design Reviewer"){
+    userData.verificationStage = 'DONE'
+    // Generate JWT
+    const token = generateToken(userData._id)
+
+    res.cookie('jwt', token, cookieOptions);
+  }else{
+    //local to admin onboarding process
+    userData.verificationStage = 'PASSWORD';
+  }
 
   await userData.save();
 
   res.status(200).json({
     status: 'success',
     message: 'Password set successfully',
-    currentStage : "PASSWORD"
+    currentStage : userData.verificationStage
   });
 });
 
@@ -464,7 +545,7 @@ export const completeHiringManagerRegistration = asyncHandler(async (req, res) =
 
 //add Team members controller
 export const addTeamMembers = asyncHandler(async (req,res) => {
-  const { email , teamMembers , currentRole } = req.body;
+  const { email , teamMembers} = req.body;
 
   // Validtion for registration data
   const userData = await User.findOne({ email }).select('-password');
@@ -475,11 +556,7 @@ export const addTeamMembers = asyncHandler(async (req,res) => {
     });
   }
 
-  let adminCount = 0;
-
-  if(currentRole === "Admin"){
-    adminCount += 1
-  }
+  let adminCount = 1;
 
   let isValid = 0;
   let validRoles = ['Admin','Hiring Manager','Design Reviewer'];
@@ -498,10 +575,6 @@ export const addTeamMembers = asyncHandler(async (req,res) => {
       status: 'error',
       message: 'Invalid registration state'
     });
-  }
-
-  if(currentRole !== userData.role && validRoles.includes(currentRole)){
-    userData.role = currentRole
   }
 
   //Add members to Company database + send invites
@@ -539,6 +612,12 @@ export const addTeamMembers = asyncHandler(async (req,res) => {
       getInvitationContent(customMember.name,customMember.role,updatedCompany?.name,inviteUrl) // You might want to create a specific template for invitations
     );
 
+    // Update the invited field directly in MongoDB
+    await Company.findOneAndUpdate(
+      { _id: userData?.company_id, "invited_team_members.email": customMember.email }, 
+      { $set: { "invited_team_members.$.invited": true } },
+      { new: true }
+    );
   }
 
   userData.verificationStage = "DONE"

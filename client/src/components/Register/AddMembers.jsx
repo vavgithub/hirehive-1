@@ -13,6 +13,8 @@ import { useNavigate } from 'react-router-dom';
 import LoaderModal from '../ui/LoaderModal';
 import axios from '../../api/axios';
 import { showErrorToast, showSuccessToast } from '../ui/Toast';
+import useAuth from '../../hooks/useAuth';
+import { emailPattern } from './RegisterForm';
 
 export const roleOptions = [
     {
@@ -29,8 +31,8 @@ export const roleOptions = [
     },
 ]
 
-const addTeamMembers = async ({teamMembers, email , currentRole}) => {
-    const response = await axios.post('/auth/register/add-team-member',{email, teamMembers , currentRole});
+const addTeamMembers = async ({teamMembers, email }) => {
+    const response = await axios.post('/auth/register/add-team-member',{email, teamMembers });
     return response.data
 }
 
@@ -48,15 +50,26 @@ function AddMembers({currentStep,setCurrentStep}) {
     const [email, setEmail] = useState("");
     const [role, setRole] = useState("");
 
-    const [adminRole,setAdminRole] = useState("") 
+    const [firstNameError, setFirstNameError] = useState("");
+    const [lastNameError, setLastNameError] = useState("");
+    const [emailError, setEmailError] = useState("");
+    const [roleError, setRoleError] = useState("");
+
     const { onboardData , setOnboardData } = useOnboardingContext();
     const navigate = useNavigate();
+    const { data: authData, isLoading: authLoading, refetch: refetchAuth } = useAuth();
 
     const [hasSubmissionError,setHasSubmissionError] = useState(false);
 
     useEffect(()=>{
-        if(onboardData?.role){
-            setAdminRole(onboardData?.role)
+        if(onboardData){
+            const [firstName,lastName] = onboardData?.name?.split(" ");
+            setMembers(prev=>[...prev,{
+                ...onboardData,
+                firstName : firstName,
+                lastName : lastName,
+                noAction : true
+            }])
         }
     },[onboardData])
 
@@ -68,6 +81,7 @@ function AddMembers({currentStep,setCurrentStep}) {
                 showSuccessToast("Success",data?.message)
             }
             if(data?.currentStage === "DONE"){
+                refetchAuth()
                 navigate("/admin/dashboard")
             }
             if(data?.userData){
@@ -86,6 +100,7 @@ function AddMembers({currentStep,setCurrentStep}) {
                 showSuccessToast("Success",data?.message)
             }
             if(data?.currentStage === "DONE"){
+                refetchAuth()
                 navigate("/admin/dashboard")
             }
             if(data?.userData){
@@ -98,21 +113,21 @@ function AddMembers({currentStep,setCurrentStep}) {
     })
 
     const handleSubmit = ()=>{
-        if(members?.length <= 0 ){
+        if(members?.length <= 1 ){
             setHasSubmissionError("No members selected")
             return
         }
-        if(!validRoles.includes(adminRole)){
-            setHasSubmissionError("No admin added")
-            return
-        }
+        // if(!validRoles.includes(adminRole)){
+        //     setHasSubmissionError("No admin added")
+        //     return
+        // }
         //Email exist error handling
         if(!onboardData?.email){
             showErrorToast("Error", "Unexpected error. Please Try again");
             setTimeout(()=>window.location.reload(),1000);
             return 
         }
-        addMembersMutation.mutate({teamMembers : members, email : onboardData?.email , currentRole : adminRole})
+        addMembersMutation.mutate({teamMembers : members.filter(member=>member?.role !== "Admin"), email : onboardData?.email })
     }
 
     const handleSkip = ()=>{
@@ -137,10 +152,6 @@ function AddMembers({currentStep,setCurrentStep}) {
             }
         }
 
-        if(adminRole === "Admin"){
-            adminCount += 1
-        }
-
         if(adminCount > 1){
             setHasSubmissionError("Only 1 admin is allowed")
         }else if(adminCount === 1){
@@ -148,9 +159,32 @@ function AddMembers({currentStep,setCurrentStep}) {
         }else{
             setHasSubmissionError("At least 1 admin is required")
         }
-    },[adminRole,members])
+    },[members])
 
-    const addMembers = () => {    
+    const addMembers = () => {   
+        if(firstName?.trim() === ""){
+            setFirstNameError("Please enter the firstname");
+            return
+        } 
+        
+        if(lastName?.trim() === ""){
+            setLastNameError("Please enter the lastName");
+            return
+        } 
+        
+        if(role?.trim() === ""){
+            setRoleError("Please select a role");
+            return
+        } 
+        
+        if(email?.trim() === ""){
+            setEmailError("Please enter the email");
+            return
+        } 
+        if(!emailPattern.test(email)){
+            setEmailError('Invalid email format')
+            return
+        }
         setMembers(prev => ([...prev, {
             id : firstName + Date.now(),
             firstName,
@@ -205,11 +239,13 @@ function AddMembers({currentStep,setCurrentStep}) {
             align:'center',
             headerAlign : 'center',
             disableColumnMenu: true,
-            renderCell : (params) =>(
+            renderCell : (params) =>{
+                if(!params?.row?.noAction)
+                return (
                 <div onClick={()=>removeMember(params?.row?.id)} className='cursor-pointer bg-black-100 h-11 w-11 flex justify-center items-center rounded-xl hover:bg-background-60'>
                     <DeleteIcon />
                 </div>
-            )
+            )}
         }
     ]
 
@@ -221,20 +257,21 @@ function AddMembers({currentStep,setCurrentStep}) {
             <p className='typography-large-p text-font-gray font-light mt-2'>Add key team members and assign their roles for the hiring process.</p>
         </div>
 
-        {onboardData && 
+        {/* {onboardData && 
         <StyledCard padding={2} extraStyles={' mx-8 mb-4'}>
             <div  className='flex justify-between items-center '>
                 <p className='font-medium font-bricolage'>{onboardData?.name}</p>
                 <p className='typography-body text-font-gray'>{onboardData?.email}</p>
-                <div className='w-[25%]'>
-                <CustomDropdown
+                <div className='w-[30%]'>
+                <p className='typography-body text-font-gray'>{roleOptions.find(option=>option.value === onboardData?.role)?.label}</p>
+                 <CustomDropdown
                 value={adminRole}
                 onChange={setAdminRole}
                 options={roleOptions}
-                />
+                /> 
                 </div>
             </div>
-        </StyledCard>}
+        </StyledCard>} */}
         
         <div className='max-h-[38vh] overflow-y-scroll scrollbar-hide'>
             {/* Members List */}
@@ -429,7 +466,8 @@ function AddMembers({currentStep,setCurrentStep}) {
                         value={firstName}
                         onChange={(e)=>setFirstName(e.target.value)}
                         required
-                        error=""
+                        error={firstNameError}
+                        errorMessage={firstNameError}
                         />
                         <InputField
                         type="text"
@@ -438,8 +476,8 @@ function AddMembers({currentStep,setCurrentStep}) {
                         extraClass="mt-1"
                         value={lastName}
                         onChange={(e)=>setLastName(e.target.value)}
-                        required
-                        error=""
+                        error={lastNameError}
+                        errorMessage={lastNameError}
                         />
                         <InputField
                         type="email"
@@ -449,7 +487,8 @@ function AddMembers({currentStep,setCurrentStep}) {
                         onChange={(e)=>setEmail(e.target.value)}
                         extraClass="mt-1"
                         required
-                        error=""
+                        error={emailError}
+                        errorMessage={emailError}
                         />
                         {/* <CustomDropdown
                         label="Role" 
@@ -464,7 +503,7 @@ function AddMembers({currentStep,setCurrentStep}) {
                         required
                         extraStylesForLabel="font-bricolage font-medium"
                         value={role}
-                        error=""
+                        error={roleError}
                         onChange={setRole}
                         options={roleOptions}
                         />

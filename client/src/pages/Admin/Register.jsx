@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
 import RegisterForm from '../../components/Register/RegisterForm';
 import OtpForm from '../../components/Register/OtpForm';
 import PasswordForm from '../../components/Register/PasswordForm';
 import DetailsForm from '../../components/Register/DetailsForm';
 import useAuth from '../../hooks/useAuth';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import Loader from '../../components/ui/Loader';
 
 export const steps = [
@@ -19,6 +19,16 @@ const Register = () => {
     const [currentStep,setCurrentStep] = useState(steps[0]?.id);
     const navigate = useNavigate();    
     const { data: authData, isLoading: authLoading, refetch: refetchAuth } = useAuth();
+
+    const [searchParams] = useSearchParams();
+
+    //token check for invited entry
+    useLayoutEffect(()=>{
+      const token = searchParams.get('token')
+      if(token){
+          setCurrentStep(steps[1]?.id)
+      }
+    },[searchParams])
 
     useEffect(() => {
         if (authData) {

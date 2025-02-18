@@ -7,6 +7,7 @@ import axios from '../../api/axios';
 import { useMutation } from '@tanstack/react-query';
 import { useOnboardingContext } from '../../context/OnboardingProvider';
 import { showErrorToast, showSuccessToast } from '../ui/Toast';
+import useAuth from '../../hooks/useAuth';
 
 const setPassword = async ({password, email}) => {
     const response = await axios.post('/auth/register/set-password',{password, email});
@@ -14,7 +15,8 @@ const setPassword = async ({password, email}) => {
 }
 
 function PasswordForm({setCurrentStep}) {
-    const [passwordError,setPasswordError] = useState("")
+    const [passwordError,setPasswordError] = useState("");
+    const { data: authData, isLoading: authLoading, refetch: refetchAuth } = useAuth();
     const {
         register,
         control,
@@ -39,12 +41,14 @@ function PasswordForm({setCurrentStep}) {
           if(data?.message){
             showSuccessToast("Success",data?.message)
           }
-          if(data?.currentStage){
+          if(data?.currentStage !== "DONE"){
             steps.forEach((step,index,stepsArr) => {
               if(step?.id === data?.currentStage){
                 setCurrentStep(stepsArr[index + 1]?.id)
               }
             })
+          }else{
+            refetchAuth()
           }
         },
         onError : (error) => {
