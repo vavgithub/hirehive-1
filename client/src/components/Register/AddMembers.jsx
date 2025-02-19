@@ -20,10 +20,6 @@ import PencilIcon from '../../svg/Buttons/PencilIcon';
 
 export const roleOptions = [
     {
-        label : "Admin",
-        value : "Admin"
-    },
-    {
         label : "HR",
         value : "Hiring Manager"
     },
@@ -43,7 +39,6 @@ const skipAddMembers = async () => {
     return response.data
 }
 
-const validRoles = ["Admin","Hiring Manager","Design Reviewer"];
 
 function AddMembers({currentStep,setCurrentStep}) {
     const [members,setMembers] = useState([]);
@@ -302,21 +297,6 @@ function AddMembers({currentStep,setCurrentStep}) {
             <p className='typography-large-p text-font-gray font-light mt-2'>Add key team members and assign their roles for the hiring process.</p>
         </div>
 
-        {/* {onboardData && 
-        <StyledCard padding={2} extraStyles={' mx-8 mb-4'}>
-            <div  className='flex justify-between items-center '>
-                <p className='font-medium font-bricolage'>{onboardData?.name}</p>
-                <p className='typography-body text-font-gray'>{onboardData?.email}</p>
-                <div className='w-[30%]'>
-                <p className='typography-body text-font-gray'>{roleOptions.find(option=>option.value === onboardData?.role)?.label}</p>
-                 <CustomDropdown
-                value={adminRole}
-                onChange={setAdminRole}
-                options={roleOptions}
-                /> 
-                </div>
-            </div>
-        </StyledCard>} */}
         
         <div className='max-h-[38vh] overflow-y-scroll scrollbar-hide'>
             {/* Members List */}
@@ -537,14 +517,6 @@ function AddMembers({currentStep,setCurrentStep}) {
                         error={emailError}
                         errorMessage={emailError}
                         />
-                        {/* <CustomDropdown
-                        label="Role" 
-                        required
-                        extraStylesForLabel="font-bricolage font-medium"
-                        value={role}
-                        onChange={setRole}
-                        options={roleOptions}
-                        /> */}
                         <GlobalDropDown 
                         label="Role" 
                         required

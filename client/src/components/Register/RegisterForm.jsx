@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import axios from '../../api/axios';
-import { useNavigate } from 'react-router-dom';
 import sundarKanya from "../../svg/Background/sundar-kanya.png"
 import { Button } from '../../components/ui/Button';
 import StatsGrid from '../../components/ui/StatsGrid';

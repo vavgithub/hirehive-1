@@ -87,7 +87,7 @@ export const CustomDropdown = React.forwardRef(({ field, label, options, value, 
   }, []);
 
   return (
-    <div className="flex flex-col gap-2 relative" ref={dropdownRef}>
+    <div className="flex flex-col gap-2 relative w-full" ref={dropdownRef}>
       {label && <label className={"typography-body " + extraStylesForLabel }>{label}{required && <span className="text-red-100 ml-1">*</span>}</label>}
       <div className="relative focus:outline focus:outline-teal-400">
         <button

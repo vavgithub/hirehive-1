@@ -4,7 +4,6 @@ import Stepper from './Stepper';
 import { steps } from '../../pages/Admin/Register';
 import CompanyDetails from './CompanyDetails';
 import AddMembers from './AddMembers';
-import InviteMembers from './InviteMembers';
 
 function DetailsForm({currentStep,setCurrentStep}) {
 
@@ -18,9 +17,6 @@ function DetailsForm({currentStep,setCurrentStep}) {
             {
                 currentStep === "ADD MEMBERS" &&  <AddMembers currentStep={currentStep} setCurrentStep={setCurrentStep} />
             }
-            {/* {
-                currentStep === "INVITE MEMBERS" &&  <InviteMembers currentStep={currentStep} setCurrentStep={setCurrentStep} />
-            } */}
         </StyledCard>
     </div>
   )
