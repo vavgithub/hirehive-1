@@ -370,7 +370,7 @@ const Dashboard = () => {
                                 activeTab == "open" && displayJobs.length != 0 && displayJobs.filter(job=>job.status === "open").length !== 0 && (
                                     <div className='flex justify-end '>
                                         <div >
-                                            <Button variant="primary" icon={Create} iconPosition="left" onClick={() => { navigate("/admin/create-job") }}>Create A Job Listing</Button>
+                                            <Button variant="primary" icon={Create} iconPosition="left" onClick={() => { navigate("/hiring-manager/create-job") }}>Create A Job Listing</Button>
                                         </div> 
                                     </div>
                                 )
