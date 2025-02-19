@@ -27,11 +27,10 @@ const Navbar = () => {
     // Get profile path based on user role
     const getProfilePath = () => {
         if (user?.role === 'Hiring Manager') {
-            return '/admin/profile';
+            return '/hiring-manager/profile';
         } else if (user?.role === 'Design Reviewer') {
             return '/design-reviewer/profile';
         }
-        return '/admin/profile'; // Default fallback
     };
 
 

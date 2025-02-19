@@ -437,12 +437,16 @@ export const getCandidateJobs = async (req,res) => {
   //   }
   // };
 
-  export const getAllCandidatesWithStats = async (req, res) => {
+  export const getAllCandidatesWithStats = async (req, res) => { 
     try {
+      const adminId = req.user._id; // Extract the admin's _id from the authenticated user
+  
       const allCandidates = await candidates.aggregate([
+        // Unwind the jobApplications array to work with each application separately
         {
           $unwind: '$jobApplications'
         },
+        // Lookup job details based on the jobId in the candidate's application
         {
           $lookup: {
             from: 'jobs',
@@ -451,12 +455,19 @@ export const getCandidateJobs = async (req,res) => {
             as: 'jobDetails'
           }
         },
+        // Add a field to extract the first jobDetail (if exists)
         {
-          // Instead of $unwind, we'll preserve entries even when jobDetails is empty
           $addFields: {
             jobDetail: { $arrayElemAt: ['$jobDetails', 0] }
           }
         },
+        // Filter only those applications for jobs created by the logged-in admin
+        {
+          $match: {
+            "jobDetail.createdBy": adminId
+          }
+        },
+        // Project the required fields
         {
           $project: {
             _id: 1,
@@ -465,8 +476,8 @@ export const getCandidateJobs = async (req,res) => {
             lastName: 1,
             email: 1,
             phone: 1,
-            profilePictureUrl : 1,
-            hasGivenAssessment:1,
+            profilePictureUrl: 1,
+            hasGivenAssessment: 1,
             // Professional info (from job application or fallback to global)
             experience: {
               $ifNull: ['$jobApplications.professionalInfo.experience', '$experience']
@@ -489,7 +500,6 @@ export const getCandidateJobs = async (req,res) => {
             skills: {
               $ifNull: ['$jobApplications.professionalInfo.skills', '$skills']
             },
-            
             // Job application specific info
             currentStage: '$jobApplications.currentStage',
             stageStatuses: '$jobApplications.stageStatuses',
@@ -503,11 +513,13 @@ export const getCandidateJobs = async (req,res) => {
             applicationDate: '$jobApplications.applicationDate'
           }
         },
+        // Convert the stageStatuses object into an array for further processing
         {
           $addFields: {
             stageStatusesArray: { $objectToArray: '$stageStatuses' }
           }
         },
+        // Find the status corresponding to the currentStage
         {
           $addFields: {
             currentStageStatus: {
@@ -523,6 +535,7 @@ export const getCandidateJobs = async (req,res) => {
             }
           }
         },
+        // Final projection to format the output
         {
           $project: {
             _id: 1,
@@ -531,9 +544,8 @@ export const getCandidateJobs = async (req,res) => {
             lastName: 1,
             email: 1,
             phone: 1,
-            profilePictureUrl : 1,
-            hasGivenAssessment:1,
-
+            profilePictureUrl: 1,
+            hasGivenAssessment: 1,
             // Professional info
             experience: 1,
             expectedCTC: 1,
@@ -542,7 +554,6 @@ export const getCandidateJobs = async (req,res) => {
             portfolio: 1,
             noticePeriod: 1,
             skills: 1,
-            
             // Job application info
             currentStage: 1,
             jobTitle: 1,
@@ -553,11 +564,13 @@ export const getCandidateJobs = async (req,res) => {
             status: '$currentStageStatus.v.status'
           }
         },
+        // Sort the candidate applications by application date in descending order (newest first)
         {
-          $sort: { applicationDate: -1 } // Sort by application date, newest first
+          $sort: { applicationDate: -1 }
         }
       ]);
-  
+    
+      // Initialize statistics counters
       const stats = {
         Total: allCandidates.length,
         Portfolio: 0,
@@ -568,13 +581,15 @@ export const getCandidateJobs = async (req,res) => {
         'Offer Sent': 0,
         'Hired': 0
       };
-  
+    
+      // Count candidate statuses for statistics
       allCandidates.forEach(candidate => {
         if (candidate.currentStage) {
           stats[candidate.currentStage] = (stats[candidate.currentStage] || 0) + 1;
         }
       });
-  
+    
+      // Send the results
       res.status(200).json({
         candidates: allCandidates,
         stats: stats
@@ -587,6 +602,7 @@ export const getCandidateJobs = async (req,res) => {
       });
     }
   };
+  
 
   export const getRandomQuestions = async (req, res) => {
     try {
