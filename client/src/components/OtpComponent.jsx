@@ -2,7 +2,7 @@ import React from 'react'
 import { Button } from './ui/Button'
 import StyledCard from './ui/StyledCard';
 
-function OtpComponent({showSendOTP, handleSendOtp, handleOtpSubmit , email , otp , isSubmitting , otpError , setOtp, cardbg = ""}) {
+function OtpComponent({showSendOTP, inviteMail , handleSendOtp, handleOtpSubmit , email , otp , isSubmitting , otpError , setOtp, cardbg = ""}) {
    
 
     // Handler for OTP input change
@@ -29,12 +29,13 @@ function OtpComponent({showSendOTP, handleSendOtp, handleOtpSubmit , email , otp
                 "To ensure security, please enter the OTP (One-Time Password) to verify your account. A code has been sent to"}
               </p>
               <h2 className='typography-h3 sm:typograhpy-h2 mt-3 md:mt-6 text-font-gray mx-auto w-[240px] min-[420px]:w-full whitespace-nowrap text-ellipsis overflow-hidden'>
-                {email}
+                {showSendOTP ? inviteMail :email}
               </h2>
               {showSendOTP ? 
                 <Button
                 variant="primary"
                 className="w-full mt-6"
+                type="button"
                 onClick={handleSendOtp}
                 >
                   Send OTP

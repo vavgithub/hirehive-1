@@ -633,7 +633,7 @@ export const addTeamMembers = asyncHandler(async (req,res) => {
       { expiresIn: '7d' }
     );
 
-    const inviteUrl = `${process.env.FRONTEND_URL}/admin/register?token=${inviteToken}`;
+    const inviteUrl = `${process.env.FRONTEND_URL}/admin/register?token=${inviteToken}&email=${customMember.email}`;
 
     // Send invitation email using template
     await sendEmail(

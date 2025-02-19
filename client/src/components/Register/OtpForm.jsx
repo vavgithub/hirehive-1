@@ -27,6 +27,7 @@ function OtpForm({setCurrentStep}) {
     const [searchParams] = useSearchParams();
 
     const token = searchParams.get("token");
+    const inviteMail = searchParams.get("email");
 
     const verifyOnboardOTPMutation = useMutation({
       mutationFn : verifyOnboardOTP,
@@ -98,7 +99,7 @@ function OtpForm({setCurrentStep}) {
   return (
     <div>
       {(verifyOnboardOTPMutation?.isPending || sendInviteOTPMutation?.isPending) && <LoaderModal />}
-      <OtpComponent showSendOTP={onboardData?.email ? false : token} handleSendOtp={handleSendOtp} isSubmitting={verifyOnboardOTPMutation?.isPending} cardbg='bg-card-bg bg-cover bg-center bg-no-repeat' handleOtpSubmit={handleOtpSubmit} otpError={otpError} email={onboardData?.email} otp={otp} setOtp={setOtp}/>
+      <OtpComponent inviteMail={inviteMail} showSendOTP={onboardData?.email ? false : token} handleSendOtp={handleSendOtp} isSubmitting={verifyOnboardOTPMutation?.isPending} cardbg='bg-card-bg bg-cover bg-center bg-no-repeat' handleOtpSubmit={handleOtpSubmit} otpError={otpError} email={onboardData?.email} otp={otp} setOtp={setOtp}/>
     </div>
   )
 }

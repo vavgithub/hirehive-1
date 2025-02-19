@@ -245,7 +245,9 @@ function CompanyDetails({currentStep,setCurrentStep}) {
             onClose={()=>{setShowExistModal(false)}} 
             customMessage={showExistModal}
             open={showExistModal} 
-            cancelLabel='OK' cancelVariant='primary' />
+            cancelLabel='OK' cancelVariant='primary' 
+            specifiedWidth={"max-w-xl"}
+            />
     </>
   )
 }

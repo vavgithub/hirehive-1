@@ -117,7 +117,7 @@ export const getInvitationContent = (candidateName,role,companyName,link) => {
                 <p style="margin-bottom: 16px;">Welcome to HireHive! <br>
                     You are being invited to join as a ${role} for ${companyName}. Please use the invite link below to join as a ${role}.
                 </p>
-                <p><a href=${link}>${link}</a></p>
+                <p><a href=${link}>Click Here</a></p>
                 <p style="margin-top: 16px; margin-bottom: 16px;">Please not that the link is valid for 7 days.</p>
                 <p style="margin-bottom: 16px;">Thank you,<br>The VAV Team</p>
                 <hr>

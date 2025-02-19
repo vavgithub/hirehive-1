@@ -162,6 +162,13 @@ function AddMembers({currentStep,setCurrentStep}) {
     },[members])
 
     const addMembers = () => {   
+        if(firstName?.trim() === "" && lastName?.trim() === "" && role?.trim() === "" && email?.trim() === "" ){
+            setFirstNameError("Please enter the firstname");
+            setLastNameError("Please enter the lastName");
+            setRoleError("Please select a role");
+            setEmailError("Please enter the email");
+            return
+        }
         if(firstName?.trim() === ""){
             setFirstNameError("Please enter the firstname");
             return
@@ -287,6 +294,10 @@ function AddMembers({currentStep,setCurrentStep}) {
         setLastName("")
         setEmail("")
         setRole("")
+        setFirstNameError("")
+        setLastNameError("")
+        setEmailError("")
+        setRoleError("")
     }
 
   return (
@@ -484,7 +495,7 @@ function AddMembers({currentStep,setCurrentStep}) {
         >
             {/* Add Memeber Form */}
             <div className='mt-4 flex flex-col gap-4'>
-                <StyledCard padding={2}  extraStyles={'flex flex-col gap-4'}>
+                <StyledCard padding={2}  extraStyles={'flex flex-col gap-4 '}>
                         <InputField
                         type="text"
                         label="First Name"
@@ -523,6 +534,7 @@ function AddMembers({currentStep,setCurrentStep}) {
                         extraStylesForLabel="font-bricolage font-medium"
                         value={role}
                         error={roleError}
+                        errorMessage={roleError}
                         onChange={setRole}
                         options={roleOptions}
                         />

@@ -1,12 +1,12 @@
 import { ListItemText, Menu, MenuItem } from '@mui/material';
 import React, { useEffect, useRef, useState } from 'react'
 
-function GlobalDropDown({onChange,options, label ,error, value, extraStylesForLabel , required}) {
+function GlobalDropDown({onChange,options, label ,error,errorMessage, value, extraStylesForLabel , required}) {
     const dropdownRef = useRef(null);
     const [anchorEl, setAnchorEl] = useState(null);
 
     return (
-        <div ref={dropdownRef} className='w-full'>
+        <div ref={dropdownRef} className='w-full relative'>
             {label && 
             <label className={"typography-body " + extraStylesForLabel }>{label}{required && <span className="text-red-100 ml-1">*</span>}</label>}
             <button
@@ -19,6 +19,9 @@ function GlobalDropDown({onChange,options, label ,error, value, extraStylesForLa
                     <path d="M1 0.5L9 8.5L17 0.5" stroke="#585B5F" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
                 </button>
+                {error && errorMessage && (
+                    <span className={"text-red-500 typography-small-p  absolute top-[5rem]"}>{errorMessage}</span>
+                )}
             <Menu
                 anchorEl={anchorEl}
                 open={Boolean(anchorEl)}
