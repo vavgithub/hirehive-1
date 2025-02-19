@@ -12,7 +12,7 @@ import { setCurrentStage, updateStageStatus } from '../../redux/applicationStage
 import axios from '../../api/axios.js';
 import StageRating from './StageRating.jsx';
 import { showErrorToast, showSuccessToast } from '../ui/Toast.jsx';
-import { Button } from '../ui/Button.jsx';
+import { Button, DefaultIcon } from '../ui/Button.jsx';
 import Modal from '../Modal.jsx';
 import { ACTION_TYPES } from '../../utility/ActionTypes.js';
 import { getMaxScoreForStage } from '../../pages/Admin/ViewCandidateProfile.jsx';
@@ -444,10 +444,10 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
         :
         <>
         <div >
-        {stageBasedConfig?.hasLabel && <div className='mt-4'><Label icon={stageBasedConfig?.hasLabel?.icon} text={stageBasedConfig?.hasLabel?.hasCustomContent ? (stageBasedConfig?.hasLabel?.content + candidateData?.jobApplication?.jobApplied) : stageBasedConfig?.hasLabel?.content} /></div>}
+        {stageBasedConfig?.hasLabel && <div className='my-4'><Label icon={stageBasedConfig?.hasLabel?.icon} text={stageBasedConfig?.hasLabel?.hasCustomContent ? (stageBasedConfig?.hasLabel?.content + candidateData?.jobApplication?.jobApplied) : stageBasedConfig?.hasLabel?.content} /></div>}
         {
             stageBasedConfig?.hasSubmissionDetails && 
-            <SubmissionDetails candidateData={candidateData} stageData={stageData} />
+            <SubmissionDetails isEditable={stageBasedConfig?.isSubmissionEditable} candidateData={candidateData} stageData={stageData} />
         }
         {stageBasedConfig?.hasAssigneeSelector && 
           <div className='w-2/5'>
@@ -485,6 +485,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
           stageBasedConfig?.hasRatingComponent && <StageRating candidateId={candidateId} jobId={jobId} name={stageConfig?.name} candidate={candidateData} onSubmit={handleReviewSubmit} stageConfig={stageConfig} />
         }
         <div className='flex gap-4 w-full '>
+            {(stageBasedConfig?.hasRemarks || stageBasedConfig?.hasRejectionReason || stageBasedConfig?.hasScoreBoard) && 
             <div className='w-[75%] flex flex-col justify-between gap-4 '>
             {(stageBasedConfig?.hasRemarks || stageBasedConfig?.hasRejectionReason) && 
                 <div className='mt-4'>
@@ -501,7 +502,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
                     </div>
                 </div>
             }
-            </div>
+            </div>}
             <div className='w-[35%] flex flex-col'>
             {stageBasedConfig?.hasScoreCard && 
             <div className='bg-stars bg-cover rounded-xl w-[160px] h-fit my-4 self-end'>
@@ -516,11 +517,12 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
             {
                 (stageBasedConfig?.hasBudgetScoring && !isBudgetScoreSubmitted) && 
                 <div>
-                    <p className='typography-small-p text-font-gray mb-4'>Score Budget</p>
+                    <p className='typography-body text-white mb-4'>Score Budget</p>
                     <div className='flex gap-4'>
                         <Scorer value={budgetScore} onChange={setBudgetScore} />
-                        <Button
-                            variant="icon"
+                        <Button 
+                            icon={DefaultIcon}   
+                            variant="iconSec"
                             onClick={handleBudgetScoreSubmit}
                             disabled={budgetScore === 0}
                         >
@@ -544,6 +546,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
       {stageBasedConfig?.hasScheduledForm && 
         <div className='w-full mt-4'>
           <ScheduleForm
+            isDisabled={!isBudgetScoreSubmitted}
             candidateId={candidateId}
             jobId={jobId}
             onSubmit={handleSchedule}
@@ -552,6 +555,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
       {
         isRescheduling && 
         <ScheduleForm
+            isDisabled={!isBudgetScoreSubmitted}
             candidateId={candidateId}
             jobId={jobId}
             onSubmit={handleReschedule}
