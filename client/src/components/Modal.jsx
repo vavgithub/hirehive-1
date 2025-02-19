@@ -8,6 +8,7 @@ import { CustomDropdown } from './Form/FormFields';
 import Label from './ui/Label';
 import RedInfoIcon from '../svg/RedInfoIcon';
 import StyledCard from './ui/StyledCard';
+import SchedulerButton from './ui/SchedulerButton';
 
 const ACTION_TYPES = {
   DELETE: 'DELETE',
@@ -112,6 +113,7 @@ const RedWarning = () => {
 const Modal = ({
   open,
   onClose,
+  isReadyToClose = true,
   actionType,
   onConfirm,
   item,
@@ -130,7 +132,8 @@ const Modal = ({
   companyName,
   closeReason,
   onCloseReasonChange,
-  specifiedWidth
+  specifiedWidth,
+  useScheduledReject = false
 }) => {
   const [rejectionReason, setRejectionReason] = useState('');
   const [showEmailPreview, setShowEmailPreview] = useState(false);
@@ -157,7 +160,7 @@ const Modal = ({
       onCloseReasonChange(reason);
     }
   };
-  const handleConfirm = () => {
+  const handleConfirm = ( scheduledDate, scheduledTime ) => {
     if (actionType === ACTION_TYPES.ASSESSMENT) {
         navigate('/assessment');
     } else if (actionType === ACTION_TYPES.REJECT) {
@@ -165,17 +168,27 @@ const Modal = ({
             alert('Please select a reason for rejecting the candidate.');
             return;
         }
-        onConfirm(item, rejectionReason);
+        if(scheduledDate && scheduledTime){
+          onConfirm(item, rejectionReason , scheduledDate?.toISOString(), scheduledTime?.format('HH:mm'));
+        }else{
+          onConfirm(item, rejectionReason);
+        }
     } else if (actionType === ACTION_TYPES.CLOSE) {
         if (!closeReason) {
             alert('Please select a reason for closing the job.');
             return;
         }
         onConfirm(item); // The closeReason is already available in the parent component
+    }else if(useScheduledReject){
+      if(scheduledDate && scheduledTime){
+        onConfirm(item , scheduledDate?.toISOString(), scheduledTime?.format('HH:mm'));
+      }else{
+        onConfirm(item);
+      }
     } else {
         onConfirm?.(item);
     }
-    onClose();
+   isReadyToClose && onClose();
 };
 
  // Reset rejection states when modal is closed
@@ -330,7 +343,9 @@ const Modal = ({
             {( actionType !== ACTION_TYPES.ASSESSMENT || (!isMobile && actionType === ACTION_TYPES.ASSESSMENT)) 
             && actionType !== ACTION_TYPES.CAMERAERROR 
             && actionType !== ACTION_TYPES.AUDIOERROR 
-            && actionType !== ACTION_TYPES.MEDIAERROR &&
+            && actionType !== ACTION_TYPES.REJECT 
+            && !useScheduledReject
+            && actionType !== ACTION_TYPES.MEDIAERROR && 
               <Button
                 variant={buttonVariant}
                 onClick={handleConfirm}
@@ -341,6 +356,10 @@ const Modal = ({
               >
                 {confirmLabel}
               </Button>
+            }
+            {
+             (actionType === ACTION_TYPES.REJECT || useScheduledReject) && 
+             <SchedulerButton onConfirm={handleConfirm} disabled={isconfirmButtonDisabled || (useScheduledReject ? false : !rejectionReason)} buttonText={"Reject"}  modalTitle={"Schedule Email"} modalMessage={"Schedule rejection email with specified date and time"} buttonVariant={"cancel"} />
             }
           </div>
         </div>

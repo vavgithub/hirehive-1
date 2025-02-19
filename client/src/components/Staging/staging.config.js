@@ -96,6 +96,7 @@ export const stagingConfig = {
                         hasLabel : false,
                         hasRemarks : true,
                         hasScoreCard : true,
+                        hasScheduledLabel : true,
                         actions : {
                             hasRejectAction : true,
                             hasMoveToNextRoundAction : true
@@ -412,6 +413,7 @@ export const stagingConfig = {
                         hasCallDetails : false,
                         hasCallHistory : false,
                         hasScheduledForm : false,
+                        hasScheduledLabel : true,
                         actions : {
                             hasRejectAction : true,
                             hasMoveToNextRoundAction : true
@@ -556,7 +558,8 @@ export const stagingConfig = {
                         hasRemarks : false,
                         hasScoreCard : false,
                         actions : false,
-                        hasTaskForm : true
+                        hasTaskForm : true,
+                        hasScheduledLabel : true
                     },
                     "Design Reviewer" : {
                         hasAssigneeSelectorIcon : false,
@@ -705,6 +708,7 @@ export const stagingConfig = {
                         hasLabel : false,
                         hasRemarks : true,
                         hasScoreCard : true,
+                        hasScheduledLabel : true,
                         actions : {
                             hasRejectAction : true,
                             hasMoveToNextRoundAction : true
@@ -1033,6 +1037,7 @@ export const stagingConfig = {
                         hasCallDetails : false,
                         hasCallHistory : false,
                         hasScheduledForm : false,
+                        hasScheduledLabel : true,
                         actions : {
                             hasRejectAction : true,
                             hasMoveToNextRoundAction : true
@@ -1352,6 +1357,7 @@ export const stagingConfig = {
                         hasCallDetails : false,
                         hasCallHistory : false,
                         hasScheduledForm : false,
+                        hasScheduledLabel : true,
                         actions : {
                             hasRejectAction : true,
                             hasMoveToNextRoundAction : true

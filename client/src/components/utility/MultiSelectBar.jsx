@@ -283,7 +283,7 @@ function MultiSelectBar({selectedData,jobId,clearSelection}) {
     setAnchorEl(null)
   }
 
-  const handleConfirm = async (confirmFunction) =>{
+  const handleConfirm = async (confirmFunction, scheduledDate, scheduledTime) =>{
     try {
         setIsLoading(true);
         const candidatesData = Object.entries(filteredCandidates).map(([stage,candidates]) => {
@@ -293,7 +293,9 @@ function MultiSelectBar({selectedData,jobId,clearSelection}) {
                         candidateId : eachCandidate?.candidate._id,
                         jobId : eachCandidate?.candidate?.jobId || jobId,
                         stage : stage,
-                        rejectionReason : eachCandidate?.rejectionReason
+                        rejectionReason : eachCandidate?.rejectionReason,
+                        ...(scheduledDate ? {scheduledDate : scheduledDate} : {}),
+                        ...(scheduledTime ? {scheduledTime : scheduledTime} : {}),
                     }
                 }else{
                     return { 
@@ -438,12 +440,13 @@ function MultiSelectBar({selectedData,jobId,clearSelection}) {
         {action?.type === "MODAL" && 
         <Modal
             open={action}
-            onConfirm={()=>handleConfirm(action?.apiFunction)}
+            onConfirm={(_,scheduledDate, scheduledTime)=>handleConfirm(action?.apiFunction, scheduledDate, scheduledTime)}
             onClose={() => setAction(null)}
             isconfirmButtonDisabled={!isValid}
             customTitle={action?.customTitle}
             customConfirmLabel={action?.confirmLabel || action?.customTitle}
             confirmVariant={action?.name === "REJECT" ? "cancel" : null}
+            useScheduledReject={action?.name === "REJECT"}
             customMessage={action?.customMessage}
             specifiedWidth={"max-w-4xl"}
         >
