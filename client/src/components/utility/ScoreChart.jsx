@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useMemo, useRef, useState } from 'react'
 import ReactECharts from "echarts-for-react";
 import StyledCard from '../ui/StyledCard';
 
@@ -43,7 +43,8 @@ function ScoreChart({scoreData}) {
 
     const hasScreening = useMemo(()=>scoreData?.find(stageScores=>(stageScores?.name === "Screening") && stageScores?.scoreObj),[scoreData]);
 
-    const options = {
+    const options = useMemo(()=>{
+      return {
         tooltip: {
             trigger: "item",
             backgroundColor: "#232425", // Custom background color
@@ -88,27 +89,25 @@ function ScoreChart({scoreData}) {
             data: scoreData,
           },
         ],
-      };
+      }
+    },[scoreData]);
 
-          // Define event handlers
-    const onEvents = {
-        mouseover: (params) => {
-            setHoveredSegment(params.name); // Store hovered segment
-        },
-        mouseout: (params) => {
-            setHoveredSegment(null); // Clear when mouse leaves
-        },
-    };
+    // Define event handlers
+    const eventHandlers = useRef({
+      mouseover: (params) => setHoveredSegment(params.name),
+      mouseout: () => setHoveredSegment(null),
+    });
+          
     
-      return (
-        <>
-            <ReactECharts option={options} onEvents={onEvents} style={{ height: 140, width: "100%" }} />
-            {(hoveredSegment === "Screening" && hasScreening) &&
-            <StyledCard padding={2} extraStyles='absolute left-0 -bottom-32 font-outfit w-[350px]'>
-                <ScreeningChart scoreData={hasScreening?.scoreObj} />
-            </StyledCard>}
-        </>
-      );
+    return (
+      <>
+          <ReactECharts option={options} onEvents={eventHandlers.current} style={{ height: 140, width: "100%" }} />
+          {(hoveredSegment === "Screening" && hasScreening) &&
+          <StyledCard padding={2} extraStyles={`absolute left-0 -bottom-32 font-outfit w-[350px] transition-opacity duration-200 ${hoveredSegment === "Screening" && hasScreening ? "opacity-100" : "opacity-0"}`}>
+              <ScreeningChart scoreData={hasScreening?.scoreObj} />
+          </StyledCard>}
+      </>
+    );
 }
 
 export default ScoreChart
