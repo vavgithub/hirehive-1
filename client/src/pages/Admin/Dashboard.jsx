@@ -264,7 +264,7 @@ const Dashboard = () => {
     };
 
     const handleViewJob = (jobId) => {
-        navigate(`/admin/jobs/view-job/${jobId}`);
+        navigate(`/hiring-manager/jobs/view-job/${jobId}`);
     };
 
 
