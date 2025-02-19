@@ -115,8 +115,68 @@ export const router = createBrowserRouter([
     ],
   },
   {
-    path: "/admin",
+    path: "/hiring-manager",
     element: <ProtectedRoute allowedRoles={['Hiring Manager']}><Navbar /></ProtectedRoute>,
+    children: [
+      {
+        path: "dashboard",
+        element: <Dashboard />
+      },
+      {
+        path: "assessment/:id",
+        element: <AssessmentResponse />
+      },
+      {
+        path: "profile",
+        element: <Profile />
+      },
+      {
+        path: "jobs",
+        element:
+          <Dashboard />
+      },
+      {
+        path: "candidates",
+        element:
+          <Candidates />
+      },
+      {
+        path: "create-job",
+        element:
+
+          <CreateJobs />
+      },
+      {
+        path: "edit-job/:id",
+        element:
+          <EditJobs />
+      },
+      {
+        path: "jobs/view-job/:id",
+        element:
+          <ViewJobs />
+      },
+      {
+        path: "jobs/view-candidate/:candidateId/:jobId",
+        element:
+          <ViewCandidateProfile />
+      },
+      {
+        path: "candidates/view-candidate/:candidateId/:jobId",
+        element:
+          <ViewCandidateProfile />
+      },
+      {
+        path: "jobs/edit-candidate/:id",
+        element:
+          <EditCandidateProfile />
+      }
+    ]
+  },
+
+  {
+    path: "/admin",
+    element: <ProtectedRoute allowedRoles={['Admin']}><Navbar /></ProtectedRoute>,
     children: [
       {
         path: "dashboard",

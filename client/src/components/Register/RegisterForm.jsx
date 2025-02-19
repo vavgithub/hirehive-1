@@ -103,14 +103,14 @@ function RegisterForm({setCurrentStep}) {
             <div className="w-full lg:w-1/2 bg-background-30 p-4 md:p-28   flex flex-col justify-center">
               <h2 className="typography-h1  text-center font-semibold">Sign Up</h2>
               <p className="typography-body mb-8 text-center text-font-gray font-normal">Create an account</p>
-                    <Button type="button" variant="secondary" icon={GoogleIcon} className="w-full" >
+                    {/* <Button type="button" variant="secondary" icon={GoogleIcon} className="w-full" >
                         Continue With Google
-                    </Button>
-                  <div className="flex items-center my-4">
+                    </Button> */}
+                  {/* <div className="flex items-center my-4">
                       <hr className="flex-grow border-grey-100" />
                       <span className="px-3 text-grey-100">OR</span>
                       <hr className="flex-grow border-grey-100" />
-                  </div> 
+                  </div>  */}
               <form onSubmit={handleFormSubmit}>
                 <div className="mb-4">
                   <label htmlFor="fullname" className="block mb-2 font-bricolage">Full Name</label>

@@ -150,17 +150,31 @@ const Navbar = () => {
     };
 
     const renderMenuItems = () => {
-        if (user?.role === 'Hiring Manager') {
+        if (user?.role ==='Hiring Manager') {
             return (
                 <>
                     {/* <NavItem to="/admin/dashboard" icon={DashboardIcon} activeIcon={DashboardIconActive}>Dashboard</NavItem> */}
-                    <NavItem to="/admin/jobs" icon={JobsIcon} activeIcon={JobsIconActive}>Jobs</NavItem>
-                    <NavItem to="/admin/candidates" icon={CandidatesIcon} activeIcon={CandidatesIconActive}>Candidates</NavItem>
+                    <NavItem to="/hiring-manager/jobs" icon={JobsIcon} activeIcon={JobsIconActive}>Jobs</NavItem>
+                    <NavItem to="/hiring-manager/candidates" icon={CandidatesIcon} activeIcon={CandidatesIconActive}>Candidates</NavItem>
                     {/* <NavItem to="/admin/reviews" icon={ReviewsIcon} activeIcon={ReviewsIconActive}>Reviews</NavItem>
                     <NavItem to="/admin/reports" icon={ReportsIcon} activeIcon={ReportsIconActive}>Reports</NavItem> */}
                 </>
             );
-        } else if (user?.role === 'Design Reviewer') {
+        } 
+        if(user?.role === 'Admin'){
+            return (
+                <>
+                    <NavItem to="/admin/dashboard" icon={DashboardIcon} activeIcon={DashboardIconActive}>Dashboard</NavItem>
+                    <NavItem to="/admin/jobs" icon={JobsIcon} activeIcon={JobsIconActive}>Jobs</NavItem>
+                    <NavItem to="/admin/candidates" icon={CandidatesIcon} activeIcon={CandidatesIconActive}>Candidates</NavItem>
+                    <NavItem to="/admin/reviews" icon={ReviewsIcon} activeIcon={ReviewsIconActive}>Reviews</NavItem>
+                    <NavItem to="/admin/reports" icon={ReportsIcon} activeIcon={ReportsIconActive}>Teams</NavItem>
+                    {/* <NavItem to="/admin/reviews" icon={ReviewsIcon} activeIcon={ReviewsIconActive}>Reviews</NavItem>
+                    <NavItem to="/admin/reports" icon={ReportsIcon} activeIcon={ReportsIconActive}>Reports</NavItem> */}
+                </>
+            );
+        }
+        else if (user?.role === 'Design Reviewer') {
             return (
                 <>
                     {/* <NavItem to="/design-reviewer/dashboard" icon={DashboardIcon} activeIcon={DashboardIconActive}>Dashboard</NavItem> */}
