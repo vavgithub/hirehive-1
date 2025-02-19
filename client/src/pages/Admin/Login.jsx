@@ -31,8 +31,12 @@ const Login = () => {
     useEffect(() => {
         if (authData) {
             if (authData.role === 'Hiring Manager') {
+                navigate('/hiring-manager/dashboard');
+            }
+            if(authData.role === 'Admin') {
                 navigate('/admin/dashboard');
-            } else if (authData.role === 'Design Reviewer') {
+            }
+             else if (authData.role === 'Design Reviewer') {
                 navigate('/design-reviewer/dashboard');
             }
         }
