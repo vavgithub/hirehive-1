@@ -15,7 +15,7 @@ import { uploadVideo  } from "../../middlewares/uploadMiddleware.js";
 
 const router = express.Router();
 
-router.get("/getData/data/allCandidatesWithStats", getAllCandidatesWithStats);
+router.get("/getData/data/allCandidatesWithStats",protect, getAllCandidatesWithStats);
 
 router.get("/:jobId", getAllCandidatesForJob);
 // router.get('/data/:id', getCandidateById);

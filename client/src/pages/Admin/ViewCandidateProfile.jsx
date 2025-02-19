@@ -97,7 +97,7 @@ const ViewCandidateProfile = () => {
 
     useEffect(()=>{
         if(selectedJob && role === "Hiring Manager"){
-            navigate(`/admin/candidates/view-candidate/${candidateId}/${selectedJob}`)
+            navigate(`/hiring-manager/candidates/view-candidate/${candidateId}/${selectedJob}`)
         }
     },[selectedJob])
 
@@ -170,7 +170,7 @@ const ViewCandidateProfile = () => {
     const handleAction = (action) => {
         switch (action) {
             case ACTION_TYPES.EDIT:
-                navigate(`/admin/jobs/edit-candidate/${candidateId}`);
+                navigate(`/hiring-manager/jobs/edit-candidate/${candidateId}`);
                 break;
             case 'ACTION_2':
                 navigate('/some-other-page');
@@ -210,7 +210,7 @@ const ViewCandidateProfile = () => {
 
     const handleAssignmentNavigation = () => {
 
-        navigate(`/admin/assessment/${candidateId}`)
+        navigate(`/hiring-manager/assessment/${candidateId}`)
 
     }
 

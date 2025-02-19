@@ -15,76 +15,108 @@ export const StatisticsController = {
    * @param {Object} res - Express response object
    */
   async getOverallStats(req, res) {
-      try {
-          // Get total number of jobs
-          const totalJobs = await jobs.countDocuments();
-
-          const totalOpenJobs = await jobs.countDocuments({status : { $in : ["", "open"]}});
-          const totalClosedJobs = await jobs.countDocuments({status : "closed"});
-          const totalDraftedJobs = await jobs.countDocuments({status : "draft"});
-
-          // Get total number of applications
-          // Using aggregation to count total applications across all candidates
-          const totalApplicationsResult = await candidates.aggregate([
-              // First unwind the jobApplications array to create a document for each application
-              { $unwind: "$jobApplications" },
-              // Count the total number of applications
-              {
-                  $count: "totalApplications"
-              }
-          ]);
-
-          // Extract the total applications count or default to 0 if no applications
-          const totalApplications = totalApplicationsResult[0]?.totalApplications || 0;
-
-          // Get total number of hired candidates
-          const hiredCandidatesCount = await candidates.aggregate([
-              // Unwind the jobApplications array
-              { $unwind: "$jobApplications" },
-              // Match documents where currentStage is 'Hired' and the corresponding status is 'Accepted'
-              {
-                  $match: {
-                      "jobApplications.currentStage": "Hired",
-                      "jobApplications.stageStatuses.Hired.status": "Accepted"
-                  }
-              },
-              // Group by candidate to avoid counting the same candidate multiple times
-              {
-                  $group: {
-                      _id: "$_id",
-                      count: { $sum: 1 }
-                  }
-              },
-              // Get the final count
-              {
-                  $count: "totalHired"
-              }
-          ]);
-
-          // Extract the count or default to 0 if no hired candidates
-          const totalHired = hiredCandidatesCount[0]?.totalHired || 0;
-
-          // Return the statistics
-          return res.status(200).json({
-              success: true,
-              data: {
-                  totalJobs,
-                  totalOpenJobs,
-                  totalClosedJobs,
-                  totalDraftedJobs,
-                  totalApplications,  // Changed from totalCandidates to totalApplications
-                  totalHired
-              }
-          });
-      } catch (error) {
-          console.error('Error in getOverallStats:', error);
-          return res.status(500).json({
-              success: false,
-              message: 'Error fetching statistics',
-              error: error.message
-          });
-      }
-  } , 
+    try {
+      // Extract the admin's _id from the authenticated user
+      const adminId = req.user._id;
+      
+      // ------------------------
+      // JOB STATISTICS (Filter by jobs created by this admin)
+      // ------------------------
+      const totalJobs = await jobs.countDocuments({ createdBy: adminId });
+      
+      const totalOpenJobs = await jobs.countDocuments({ 
+        createdBy: adminId,
+        status: { $in: ["", "open"] }
+      });
+      
+      const totalClosedJobs = await jobs.countDocuments({ 
+        createdBy: adminId,
+        status: "closed" 
+      });
+      
+      const totalDraftedJobs = await jobs.countDocuments({ 
+        createdBy: adminId,
+        status: "draft" 
+      });
+      
+      // ------------------------
+      // CANDIDATE STATISTICS (Filter applications for jobs created by this admin)
+      // ------------------------
+      // Count total applications for jobs created by the admin
+      const totalApplicationsResult = await candidates.aggregate([
+        // Unwind the jobApplications array to get a document per application
+        { $unwind: "$jobApplications" },
+        // Join the jobs collection to fetch details of each job
+        {
+          $lookup: {
+            from: "jobs",
+            localField: "jobApplications.jobId",
+            foreignField: "_id",
+            as: "jobDetails"
+          }
+        },
+        // Unwind the jobDetails array
+        { $unwind: "$jobDetails" },
+        // Match only those applications where the job was created by the admin
+        {
+          $match: {
+            "jobDetails.createdBy": adminId
+          }
+        },
+        // Count the total number of matching applications
+        { $count: "totalApplications" }
+      ]);
+      const totalApplications = totalApplicationsResult[0]?.totalApplications || 0;
+      
+      // Count total hired candidates for jobs created by the admin
+      const hiredCandidatesCount = await candidates.aggregate([
+        { $unwind: "$jobApplications" },
+        {
+          $lookup: {
+            from: "jobs",
+            localField: "jobApplications.jobId",
+            foreignField: "_id",
+            as: "jobDetails"
+          }
+        },
+        { $unwind: "$jobDetails" },
+        {
+          $match: {
+            "jobDetails.createdBy": adminId,
+            "jobApplications.currentStage": "Hired",
+            "jobApplications.stageStatuses.Hired.status": "Accepted"
+          }
+        },
+        // Group by candidate to avoid counting a candidate more than once if they have multiple hired applications
+        { $group: { _id: "$_id" } },
+        { $count: "totalHired" }
+      ]);
+      const totalHired = hiredCandidatesCount[0]?.totalHired || 0;
+      
+      // Return the filtered statistics
+      return res.status(200).json({
+        success: true,
+        data: {
+          totalJobs,
+          totalOpenJobs,
+          totalClosedJobs,
+          totalDraftedJobs,
+          totalApplications,
+          totalHired
+        }
+      });
+      
+    } catch (error) {
+      console.error('Error in getOverallStats:', error);
+      return res.status(500).json({
+        success: false,
+        message: 'Error fetching statistics',
+        error: error.message
+      });
+    }
+  }
+  ,
+  
   
   async getJobStats(req, res) {
     try {

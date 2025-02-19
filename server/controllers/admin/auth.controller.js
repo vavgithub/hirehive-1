@@ -131,20 +131,28 @@ export const logoutUser = asyncHandler(async (req, res) => {
 
 // Get User Profile
 export const getUserProfile = asyncHandler(async (req, res) => {
-    const user = await User.findById(req.user._id);
+  const user = await User.findById(req.user._id);
 
-    if (user) {
-        res.json({
-            _id: user._id,
-            name: user.name,
-            email: user.email,
-            role: user.role,
-            profilePicture:user.profilePicture,
-        });
-    } else {
-        res.status(404);
-        throw new Error('User not found');
-    }
+  if (user) {
+      res.json({
+          _id: user._id,
+          name: user.name,
+          email: user.email,
+          phone: user.phone,
+          jobTitle: user.jobTitle,
+          location: user.location,
+          experience: user.experience,
+          skills: user.skills,
+          tools_used: user.tools_used,
+          tasks_done: user.tasks_done,
+          tasks_pending: user.tasks_pending,
+          role: user.role,
+          profilePicture: user.profilePicture
+      });
+  } else {
+      res.status(404);
+      throw new Error('User not found');
+  }
 });
 
 export const getAvailableDesignReviewers = async (req, res) => {
@@ -259,6 +267,8 @@ export const resetPassword = asyncHandler(async (req, res) => {
 
   res.json({ message: 'Password reset successful' });
 });
+
+
 
  
 //here are the v2 controllers for onboarding hiring manager : 
@@ -767,6 +777,61 @@ export const completeDesignReviewerRegistration = asyncHandler(async (req, res) 
     res.status(400).json({
       status: 'error',
       message: 'Invalid or expired invitation token'
+    });
+  }
+});
+
+export const editUserProfile = asyncHandler(async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const {
+      firstName,
+      lastName,
+      phone,
+      jobTitle,
+      experience,
+      skills,
+      tools_used
+    } = req.body;
+
+    // Combine first and last name
+    const name = `${firstName} ${lastName}`.trim();
+
+    // Find and update the user
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      {
+        name,
+        phone,
+        jobTitle,
+        experience,
+        skills,
+        tools_used
+      },
+      { 
+        new: true,
+        runValidators: true
+      }
+    ).select('-password');
+
+    if (!updatedUser) {
+      return res.status(404).json({
+        status: 'error',
+        message: 'User not found'
+      });
+    }
+
+    res.status(200).json({
+      status: 'success',
+      message: 'Profile updated successfully',
+      user: updatedUser
+    });
+
+  } catch (error) {
+    res.status(400).json({
+      status: 'error',
+      message: error.message || 'Error updating profile',
+      error: process.env.NODE_ENV === 'development' ? error : undefined
     });
   }
 });
