@@ -607,7 +607,7 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
           backgroundColor: 'black',
           '& .MuiDataGrid-virtualScroller': {
             backgroundColor: 'transparent ' , // Ensure the background behind rows is also transparent
-            borderRadius: '12px !important',
+            borderRadius: '0px !important',
           },
           '& .MuiDataGrid-scrollbarFiller' :{
             minWidth: "0px !important"

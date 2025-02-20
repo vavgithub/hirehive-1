@@ -318,7 +318,7 @@ const Modal = ({
     >
       <StyledCard
         onClick={(e) => e.stopPropagation()}
-        backgroundColor={"bg-background-60 "}
+        backgroundColor={"bg-background-80 "}
         padding={0}
         extraStyles={"shadow w-full  mx-4 transform transition-transform duration-200 ease-out " + (specifiedWidth ? specifiedWidth : actionType === ACTION_TYPES.BUDGET ? "max-w-xl" : "max-w-lg")}
       >

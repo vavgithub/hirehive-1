@@ -54,6 +54,7 @@ function AddMembers({currentStep,setCurrentStep}) {
 
     const [showAddModal,setShowAddmodal] = useState(false);
     const [showEditModal,setShowEditmodal] = useState(false);
+    const [showInvitesModal,setShowInvitesModal] = useState(false);
 
     const { onboardData , setOnboardData } = useOnboardingContext();
     const navigate = useNavigate();
@@ -461,7 +462,7 @@ function AddMembers({currentStep,setCurrentStep}) {
                     backgroundColor: 'black',
                     '& .MuiDataGrid-virtualScroller': {
                     backgroundColor: 'transparent ' , // Ensure the background behind rows is also transparent
-                    borderRadius: '12px !important',
+                    borderRadius: '0px !important',
                     },
                     '& .MuiDataGrid-scrollbarFiller' :{
                     minWidth: "0px !important"
@@ -495,7 +496,7 @@ function AddMembers({currentStep,setCurrentStep}) {
         >
             {/* Add Memeber Form */}
             <div className='mt-4 flex flex-col gap-4'>
-                <StyledCard padding={2}  extraStyles={'flex flex-col gap-4 '}>
+                <StyledCard padding={0} backgroundColor={"bg-transparent"} extraStyles={'flex flex-col gap-4 mb-4'}>
                         <InputField
                         type="text"
                         label="First Name"
@@ -541,6 +542,14 @@ function AddMembers({currentStep,setCurrentStep}) {
                 </StyledCard>
             </div>
         </Modal>
+        <Modal
+        open={showInvitesModal}
+        onClose={()=>setShowInvitesModal(false)}
+        onConfirm={handleSubmit}
+        customTitle={"Send Team Invitations"}
+        customMessage={"All your team members will receive an invite to join your organization."}
+        customConfirmLabel={"Send"}
+        />
         <DetailsFooter 
         skipType={"ADD TEAM MEMBERS"} 
         skipTitle={"Skip Adding Team Members?"} 
@@ -550,7 +559,7 @@ function AddMembers({currentStep,setCurrentStep}) {
         isNextDisabled={hasSubmissionError || (members?.length === 0)} 
         hasNextButton={true} 
         hasSkipButton={true}  
-        nextFunction={handleSubmit} 
+        nextFunction={()=>setShowInvitesModal(true)} 
         />
     </>
   )

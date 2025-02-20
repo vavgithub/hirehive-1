@@ -13,6 +13,13 @@ function MuiCustomStylesForDataGrid() {
             .MuiDataGrid-root {
                 outline: none !important;                      
                 border: none !important;                
+                }
+            .MuiDataGrid-row {
+                    border-radius : 0px !important;
+            }
+
+            .MuiDataGrid-row--lastVisible  {
+                    border-radius : 0px !important;
             }
             
             .MuiDataGrid-columnHeaderRow {

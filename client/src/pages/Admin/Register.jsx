@@ -32,8 +32,10 @@ const Register = () => {
 
     useEffect(() => {
         if (authData) {
-            if (authData.role === 'Hiring Manager') {
+            if (authData.role === 'Admin') {
                 navigate('/admin/dashboard');
+            } else if (authData.role === 'Hiring Manager') {
+                navigate('/hiring-manager/dashboard');
             } else if (authData.role === 'Design Reviewer') {
                 navigate('/design-reviewer/dashboard');
             }
