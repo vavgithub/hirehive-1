@@ -28,6 +28,8 @@
     "classnames": "^2.5.1",
     "date-fns": "^3.6.0",
     "dayjs": "^1.11.12",
+    "echarts": "^5.6.0",
+    "echarts-for-react": "^3.0.2",
     "file-saver": "^2.0.5",
     "lexical": "^0.23.0",
     "lottie-web": "^5.12.2",

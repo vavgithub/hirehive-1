@@ -1,7 +1,7 @@
 // auth.routes.js
 
 import express from 'express';
-import { applyToJob, createPassword,editCandidateProfile,forgotPassword, getCandidateAppliedJobs, getCandidateDashboard, loginCandidate, logoutCandidate, registerCandidate ,resetPassword, uploadProfilePictureController, uploadResumeController, verifyOtp ,  verifyOTPEmail,  verifyOTPForgot } from '../../controllers/candidate/auth.controller.js';
+import { applyToJob, createPassword,editCandidateProfile,forgotPassword, getCandidateAppliedJobs, getCandidateDashboard, loginCandidate, logoutCandidate, registerCandidate ,resetPassword, updateDesignTask, uploadProfilePictureController, uploadResumeController, verifyOtp ,  verifyOTPEmail,  verifyOTPForgot } from '../../controllers/candidate/auth.controller.js';
 import { protectCandidate } from '../../middlewares/authMiddleware.js';
 import { uploadProfilePicture, uploadResume } from '../../middlewares/uploadMiddleware.js';
 
@@ -34,7 +34,7 @@ router.post('/verify-email-otp', protectCandidate, verifyOTPEmail);
 router.post("/upload-profile-picture", uploadProfilePicture, uploadProfilePictureController);
 
 // auth.routes.js
-
+router.post('/update-design-task',protectCandidate,updateDesignTask)
 router.get('/applied-jobs', protectCandidate, getCandidateAppliedJobs);
 
 //forgot password handling for candidate
