@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import DetailsFooter from './DetailsFooter';
 import { CustomDropdown, InputField } from '../Form/FormFields';
 import { showErrorToast, showSuccessToast } from '../ui/Toast';
@@ -73,7 +73,8 @@ function CompanyDetails({currentStep,setCurrentStep}) {
     const [file,setFile] = useState(null);
 
     const fileInputRef = useRef(null);
-  
+    const isFirstRender = useRef(true);
+
     const handleFileSelect = (event) => {
       const file = event.target.files[0];
       if (!file) return;
@@ -108,28 +109,54 @@ function CompanyDetails({currentStep,setCurrentStep}) {
       }
     })
 
-    const handleSubmit = ()=>{
-        console.log(file)
-        if(!companyName?.trim() && !location?.trim() && !industry?.trim() && !companySize.trim()){
+    useEffect(()=>{
+        if(!isFirstRender.current){
+            validateForm()
+        }
+    },[isFirstRender, companyName , location, industry, companySize])
+
+    const validateForm = () =>{
+      let isValid = false;
+      if(!companyName?.trim() && !location?.trim() && !industry?.trim() && !companySize.trim()){
           showErrorToast("Error","Please fill all the forms")
-          return
+          isValid = false
         }
         if(!companyName?.trim()){
           setCompanyNameError("Please enter a company name")
-          return
+          isValid = false
+        }else{
+          setCompanyNameError("")
+          isValid = true
         }
         if(!companySize?.trim()){
           setCompanySizeError("Please select a company size")
-          return
+          isValid = false
+        }else{
+          setCompanySizeError("")
+          isValid = true
         }
         if(!location?.trim()){
           setLocationError("Please select company location")
-          return
+          isValid = false
+        }else{
+          setLocationError("")
+          isValid = true
         }
         if(!industry?.trim()){
           setIndustryError("Please select company industry")
-          return
+          isValid = false
+        }else{
+          setIndustryError("")
+          isValid = true
         }
+        return isValid
+    }
+
+    const handleSubmit = ()=>{
+        isFirstRender.current = false;
+
+        const isValid = validateForm();
+
         //Email exist error handling
         if(!onboardData?.email){
           showErrorToast("Error", "Unexpected error. Please Try again");
@@ -153,7 +180,7 @@ function CompanyDetails({currentStep,setCurrentStep}) {
             setImageError(error?.message)
           }
         }
-        (!file || (file && !imageError)) && saveCompanyDetailsMutation.mutate(formData)
+        (!file || (file && !imageError)) && isValid && saveCompanyDetailsMutation.mutate(formData)
     }
   return (
     <>
