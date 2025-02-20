@@ -25,7 +25,7 @@ export default function ErrorPage() {
             </p>
 
             <Button variant="primary" onClick={()=>navigate("admin/jobs")}>
-              Let's Go Home Vevaar
+              Let's Go Home
             </Button>
 
           </div>

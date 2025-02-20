@@ -12,6 +12,9 @@ import SkillsInput from '../../components/utility/SkillsInput';
 import { showSuccessToast, showErrorToast } from '../../components/ui/Toast';
 import axios from '../../api/axios';
 import LoaderModal from '../../components/ui/LoaderModal';
+import {  useQueryClient } from '@tanstack/react-query';
+
+
 
 // Dummy data for skills and tools
 const dummySkills = [
@@ -22,7 +25,7 @@ const dummySkills = [
 
 const dummyTools = [
   'Figma', 'Adobe XD', 'Sketch', 'InVision', 'Zeplin',
-  'Principle', 'Photoshop', 'Illustrator', 'Proto.io', 'Marvel'
+  'Principle', 'Photoshop', 'Illustrator', 'Proto.io', 'Marvel', 'Asana' , 'Jira'
 ];
 
 const PersonalDetails = ({ userData, isEditing, control }) => {
@@ -141,6 +144,7 @@ function Profile() {
   const profileImageRef = useRef();
   const [profileFile, setProfileFile] = useState(null);
   const { mutate: uploadPicture, isLoading: uploading } = useProfilePicture();
+  const queryClient = useQueryClient();
 
   const { control, handleSubmit, reset } = useForm({
     defaultValues: {
@@ -184,6 +188,8 @@ function Profile() {
       });
 
       if (response.data.status === 'success') {
+         // Invalidate the query to refetch user data
+        queryClient.invalidateQueries('user');
         showSuccessToast('Success', 'Profile updated successfully');
         setIsEditing(false);
       }
@@ -232,13 +238,13 @@ function Profile() {
                 ) : (
                   <div className="flex flex-col gap-4">
                     <Controller
-                      name="jobTitle"
+                      name="role"
                       control={control}
-                      defaultValue={user?.jobTitle}
+                      defaultValue={user?.role}
                       render={({ field, fieldState: { error } }) => (
                         <InputField
                           type="text"
-                          id="jobTitle"
+                          id="role"
                           label="Job Title"
                           labelStyles="text-font-gray"
                           rowWise
@@ -260,6 +266,7 @@ function Profile() {
                           label="Experience"
                           labelStyles="text-font-gray"
                           rowWise
+                          extraClass="no-spinner"
                           value={field.value}
                           onChange={field.onChange}
                           error={error}
@@ -306,7 +313,7 @@ function Profile() {
                       render={({ field, fieldState: { error } }) => (
                         <div className="w-full">
                           <label htmlFor="skills" className="text-font-gray typography-body">
-                            Primary Skills <span className="text-red-100">*</span>
+                            Primary Skills 
                           </label>
                           <SkillsInput
                             value={field.value || []}
@@ -329,7 +336,7 @@ function Profile() {
                       render={({ field, fieldState: { error } }) => (
                         <div className="w-full">
                           <label htmlFor="tools" className="text-font-gray typography-body">
-                            Tools Proficiency <span className="text-red-100">*</span>
+                            Tools Proficiency 
                           </label>
                           <SkillsInput
                             value={field.value || []}
@@ -396,7 +403,7 @@ function Profile() {
                 <div className="mt-6 w-full grid grid-cols-2 gap-4">
                   <div>
                     <p className="text-gray-500 text-sm">Reviews Completed</p>
-                    <p className="text-xl font-semibold">{user?.tasks_done || 0}+</p>
+                    <p className="text-xl font-semibold">{user?.tasks_done || 0}</p>
                   </div>
                   <div>
                     <p className="text-gray-500 text-sm">Pending Reviews</p>
