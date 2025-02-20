@@ -11,7 +11,7 @@ const FormSection = ({ title, fields, data, onChange }) => (
           <p className="typography-body text-font-gray self-center">{field.label}</p>
           <input
             type={field.type}
-            value={data[field.name] || ''}
+            value={data[field.name] ?? ''}
             onChange={(e) => onChange(field.name, e.target.value)}
             placeholder={field.placeholder}
           />

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from './ui/Button';
 import { useNavigate } from 'react-router-dom';
 import AssessmentPopup from "../svg/Background/AssessmentPopup.svg"
@@ -181,6 +181,15 @@ const Modal = ({
     }
     onClose();
 };
+
+ // Reset rejection states when modal is closed
+ useEffect(() => {
+  if (!open) {
+    setRejectionReason('');
+    setShowEmailPreview(false);
+  }
+}, [open]);
+
 
   if (!open) return null;
 

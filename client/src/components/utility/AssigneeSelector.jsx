@@ -362,6 +362,29 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
             },
         },
       }}
+       // Override the default noOptionsText with a styled MenuItem
+       // 1) Override Paper to ensure a black background
+       componentsProps={{
+        paper: {
+          sx: {
+            backgroundColor: 'black',
+            color: 'white',
+          },
+        },
+      }}
+      // 2) Customize the "no options" text
+      noOptionsText={
+        <MenuItem
+          sx={{
+            backgroundColor: 'black',
+            color: 'white',
+            fontFamily: 'Outfit',
+          }}
+        >
+          No reviewers found
+        </MenuItem>
+      }
+     
       renderInput={(params) => (
         <TextField
           {...params}

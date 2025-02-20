@@ -6,7 +6,7 @@ import { Button } from '../ui/Button';
 import { InputField } from '../Form/FormFields';
 
 
-export const ScheduleForm = ({ candidateId, jobId, onSubmit, isRescheduling, initialData, onCancel }) => {
+export const ScheduleForm = ({ candidateId, jobId, onSubmit, isRescheduling, initialData, onCancel ,isDisabled}) => {
     const [date, setDate] = useState(isRescheduling ? null : (initialData ? new Date(initialData.scheduledDate) : null));
     const [time, setTime] = useState(isRescheduling ? null : (initialData ? initialData.scheduledTime : null));
     const [assignee, setAssignee] = useState(isRescheduling ? null : (initialData ? initialData.assignedTo : null));
@@ -125,7 +125,7 @@ export const ScheduleForm = ({ candidateId, jobId, onSubmit, isRescheduling, ini
 
                             <Button
                                 variant="primary"
-                                // disabled={!isFormValid}
+                                disabled={isDisabled}
                                 onClick={handleSubmit}
                             >
                                 Schedule Call
