@@ -2,6 +2,7 @@ import cron from 'node-cron';
 import { candidates } from '../models/candidate/candidate.model.js';
 import { getDesignTaskContent, getRejectionEmailContent } from './emailTemplates.js';
 import { sendEmail } from './sentEmail.js';
+import { REJECTION_REASON } from '../controllers/admin/hr.controller.js';
 
 const updateCallStatuses = async () => {
   const now = new Date();
@@ -65,10 +66,15 @@ const updateMailSendAndStatuses = async () => {
   
           await sendEmail(candidate?.email, emailSubject, emailContent,"Design Task");
         }else{
-          // Send rejection email
-          const emailContent = getRejectionEmailContent(candidate.firstName + " " + candidate.lastName,candidate?.jobApplications[0]?.jobApplied);
 
-          await sendEmail(candidate.email, "Application Status Update", emailContent);
+          //Selective Email sending
+          const canSendEmail = !!REJECTION_REASON.find(reasonObj =>(reasonObj?.reason === candidate?.jobApplications[0]?.stageStatuses.get(stage)?.rejectionReason?.trim() && reasonObj?.email))
+          if(canSendEmail){
+            // Send rejection email
+            const emailContent = getRejectionEmailContent(candidate.firstName + " " + candidate.lastName,candidate?.jobApplications[0]?.jobApplied);
+  
+            await sendEmail(candidate.email, "Application Status Update", emailContent);
+          }
         }
 
         await candidates.updateOne(

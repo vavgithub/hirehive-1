@@ -8,6 +8,46 @@ import { sendEmail } from "../../utils/sentEmail.js";
 
 const RATINGS = ['Good Fit', 'Not A Good Fit', 'May Be'];
 
+export const REJECTION_REASON = [
+  {
+    reason : "Candidate's scores did not meet the criteria",
+    email : true
+  },
+  {
+    reason: "Candidate has reapplied but was previously rejected",
+    email: false
+  },
+  {
+    reason: "Candidate's portfolio/work samples did not meet expectations",
+    email: false
+  },
+  {
+    reason: "Candidate displayed unprofessional or bad attitude",
+    email: false
+  },
+  {
+    reason: "Candidate's skills do not align with job requirements",
+    email: false
+  },
+  {
+    reason: "Candidate withdrew their application",
+    email: false
+  },
+  {
+    reason: "Candidate requested an unrealistic salary",
+    email: false
+  },
+  {
+    reason: "Candidate was unresponsive to communication",
+    email: false
+  },
+  {
+    reason: "Candidate provided misleading or false information",
+    email: false
+  }
+];
+
+
 export const rejectCandidate = async (req, res) => {
   try {
     const { candidateId, jobId, rejectionReason , scheduledDate , scheduledTime } = req.body;
@@ -86,11 +126,15 @@ export const rejectCandidate = async (req, res) => {
   
       // Save the updated candidate document
       await candidate.save();
-  
+      
+    //Selective Email sending
+    const canSendEmail = !!REJECTION_REASON.find(reasonObj =>(reasonObj?.reason === rejectionReason?.trim() && reasonObj?.email))
+    if(canSendEmail){
       // Send rejection email
       const emailContent = getRejectionEmailContent(candidate.firstName + " " + candidate.lastName,job.jobTitle);
-  
+
       await sendEmail(candidate.email, "Application Status Update", emailContent);
+    }
   
       res.status(200).json({ message: "Candidate rejected successfully" });
     }
@@ -193,11 +237,14 @@ export const rejectMultipleCandidates = async (req, res) => {
         // Save the updated candidate document
         await candidate.save();
     
-        // Send rejection email
-        const emailContent = getRejectionEmailContent(candidate.firstName + " " + candidate.lastName,job.jobTitle);
-    
-        await sendEmail(candidate.email, "Application Status Update", emailContent);
-    
+        //Selective Email sending
+        const canSendEmail = !!REJECTION_REASON.find(reasonObj =>(reasonObj?.reason === eachCandidate?.rejectionReason?.trim() && reasonObj?.email))
+        if(canSendEmail){
+          // Send rejection email
+          const emailContent = getRejectionEmailContent(candidate.firstName + " " + candidate.lastName,job.jobTitle);
+
+          await sendEmail(candidate.email, "Application Status Update", emailContent);
+        }
       }
     }
 

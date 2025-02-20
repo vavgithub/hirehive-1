@@ -100,10 +100,19 @@ const CLOSE_REASONS = [
 
 export const REJECTION_REASONS = [
   "Candidate's scores did not meet the criteria",
-  "Candidate did not appear for the screening",
-  "Candidate did not appear for round one",
-  "Candidate did not appear for round two",
-  "Candidate did not submit the design task"
+  // "Candidate did not appear for the screening",
+  // "Candidate did not appear for round one",
+  // "Candidate did not appear for round two",
+  // "Candidate did not submit the design task"
+  "Candidate has reapplied but was previously rejected",
+  "Candidate's portfolio/work samples did not meet expectations",
+  "Candidate displayed unprofessional or bad attitude",
+  "Candidate's skills do not align with job requirements",
+  "Candidate withdrew their application",
+  "Candidate requested an unrealistic salary",
+  "Candidate was unresponsive to communication",
+  "Candidate provided misleading or false information"
+
 ];
 
 const RedWarning = () => {

@@ -33,6 +33,7 @@ import TaskDetails, { SubmissionDetails } from './TaskDetails.jsx';
 import HiredStamp from "../../svg/Background/HiredStamp.svg"
 import Loader from '../ui/Loader.jsx';
 import WarningIcon from '../../svg/Staging/WarningIcon.jsx';
+import { useNavigate } from 'react-router-dom';
 
 const submitReview = async ({ candidateId, reviewData }) => {
     const response = await axios.post('dr/submit-score-review', {
@@ -46,17 +47,22 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
     const stageData = stageStatuses[selectedStage];
     const currentStatus = stageData?.status;
     const candidateData = useSelector(state => state.candidate.candidateData);
+    const navigate = useNavigate();
 
     const { stageTitle, stageConfig, stageBasedConfig , candidateId, jobId} = useMemo(()=>{
-      const isValidstage =  stagingConfig[jobProfile]?.filter(stage=> stage?.name === selectedStage);
-      const stageTitle = isValidstage?.length > 0 ? isValidstage[0]?.name : "";
-  
-      const stageConfig = isValidstage[0];
-      const stageBasedConfig = isValidstage[0]?.contentConfig[currentStatus][role];
-      const candidateId = candidateData?._id;
-      const jobId = candidateData?.jobApplication?.jobId;
-
-      return {stageTitle, stageConfig, stageBasedConfig, candidateId, jobId}
+        try {
+            const isValidstage =  stagingConfig[jobProfile]?.filter(stage=> stage?.name === selectedStage);
+            const stageTitle = isValidstage?.length > 0 ? isValidstage[0]?.name : "";
+        
+            const stageConfig = isValidstage[0];
+            const stageBasedConfig = isValidstage[0]?.contentConfig[currentStatus][role];
+            const candidateId = candidateData?._id;
+            const jobId = candidateData?.jobApplication?.jobId;
+      
+            return {stageTitle, stageConfig, stageBasedConfig, candidateId, jobId}
+        } catch (error) {
+            navigate(-1);
+        }
     },[candidateData,jobProfile,selectedStage,role])
 
 
