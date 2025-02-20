@@ -462,7 +462,7 @@ function AddMembers({currentStep,setCurrentStep}) {
                     backgroundColor: 'black',
                     '& .MuiDataGrid-virtualScroller': {
                     backgroundColor: 'transparent ' , // Ensure the background behind rows is also transparent
-                    borderRadius: '0px !important',
+                    borderRadius: '12px 12px 0px 0px !important',
                     },
                     '& .MuiDataGrid-scrollbarFiller' :{
                     minWidth: "0px !important"
