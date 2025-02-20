@@ -28,7 +28,10 @@ const Navbar = () => {
     const getProfilePath = () => {
         if (user?.role === 'Hiring Manager') {
             return '/hiring-manager/profile';
-        } else if (user?.role === 'Design Reviewer') {
+        } if(user?.role === 'Admin'){
+            return '/admin/profile';
+        }
+         else if (user?.role === 'Design Reviewer') {
             return '/design-reviewer/profile';
         }
     };
