@@ -238,8 +238,8 @@ function AddMembers({currentStep,setCurrentStep}) {
             field: 'name',
             headerName: 'Name',
             width: 200,
-            align:'center',
-            headerAlign : 'center',
+            align:'left',
+            headerAlign : 'left',
             disableColumnMenu: true,
             renderCell : (params) =>(
               <p className='w-full overflow-hidden whitespace-nowrap text-ellipsis'>{params?.row?.firstName + " " + params?.row?.lastName ?? ""}</p>
@@ -249,8 +249,8 @@ function AddMembers({currentStep,setCurrentStep}) {
             field: 'email',
             headerName: 'Email',
             width: 200,
-            align:'center',
-            headerAlign : 'center',
+            align:'left',
+            headerAlign : 'left',
             disableColumnMenu: true,
             renderCell : (params) =>(
               <p className='w-full overflow-hidden whitespace-nowrap text-ellipsis'>{params?.row?.email}</p>
@@ -260,8 +260,8 @@ function AddMembers({currentStep,setCurrentStep}) {
             field: 'role',
             headerName: 'Role',
             width: 150,
-            align:'center',
-            headerAlign : 'center',
+            align:'left',
+            headerAlign : 'left',
             disableColumnMenu: true,
             renderCell : (params) =>(
               <p className='w-full overflow-hidden whitespace-nowrap text-ellipsis'>{params?.row?.role}</p>
