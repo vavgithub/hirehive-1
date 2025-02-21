@@ -124,8 +124,6 @@ const ApplicationStaging = ({ candidateId, jobId ,jobStatus}) => {
             );
         }
 
-        console.log(responses);
-
         return (
             <div className="">
                 {responses.map((response, index) => (
