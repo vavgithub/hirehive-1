@@ -7,6 +7,8 @@ import QuestionResponses from './QuestionResponses';
 import { Card } from '@mui/material';
 import { useAuthContext } from '../../context/AuthProvider';
 import GlobalStaging from './GlobalStaging';
+import { ensureAbsoluteUrl } from '../../utility/ensureAbsoluteUrl';
+import LinkView from '../ui/LinkView';
 // const stageComponents = {
 //     Portfolio,
 //     Screening,
@@ -122,6 +124,8 @@ const ApplicationStaging = ({ candidateId, jobId ,jobStatus}) => {
             );
         }
 
+        console.log(responses);
+
         return (
             <div className="">
                 {responses.map((response, index) => (
@@ -149,7 +153,12 @@ const ApplicationStaging = ({ candidateId, jobId ,jobStatus}) => {
                                         </div>
                                     ) : (
                                         <div className="bg-background-80 p-3 rounded-lg">
-                                            {response.answer}
+                                            {response.question.answerType === 'link' ? (
+                                                <LinkView url={response.answer} text="View Link"/>
+                                                                                       
+                                            ) : (
+                                                <span>{response.answer}</span>
+                                            )}
                                         </div>
                                     )}
                                 </div>

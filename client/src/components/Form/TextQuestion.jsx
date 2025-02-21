@@ -81,6 +81,7 @@ const TextQuestion = ({ question, onUpdate, onDelete, onCopy, initialEditMode = 
         >
           <option value="text">Text</option>
           <option value="number">Number</option>
+          <option value="link">Link</option>
         </select>
       </div>
       <div className="flex justify-end mt-2 p-4 items-center bg-background-40 rounded-xl space-x-4">
