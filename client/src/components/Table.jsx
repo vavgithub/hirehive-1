@@ -27,6 +27,9 @@ import MuiCustomStylesForDataGrid from './tableUtilities/MuiCustomStylesForDataG
 import BudgetMenu from './tableUtilities/BudgetMenu';
 
 const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
+
+  console.log("Table readOnly prop is:", readOnly);
+
   //this is for setting up the context
   const { user } = useAuthContext();
   const role = user?.role
@@ -358,14 +361,25 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
   const navigate = useNavigate();
 
 
-  const handleRowClick = (params) => {
+ const handleRowClick = (params) => {
     if (role === "Hiring Manager") {
-      const baseUrl = readOnly 
-        ? "/admin/candidates/view-candidate" 
-        : "/admin/jobs/view-candidate";
-      navigate(`${baseUrl}/${params?.row?._id}/${readOnly ? params.row.jobId : jobId}`);
+      // Determine if we're on the jobs page or candidates page
+      const isJobsPage = location.pathname.includes('/admin/jobs/');
+      
+      // Set the correct base URL based on the current page, not just readOnly prop
+      const baseUrl = isJobsPage 
+        ? "/admin/jobs/view-candidate" 
+        : "/admin/candidates/view-candidate";
+      
+      // Use the appropriate jobId
+      const targetJobId = isJobsPage ? jobId : params.row.jobId;
+      
+      const fullUrl = `${baseUrl}/${params.row._id}/${targetJobId}`;
+      console.log("Navigating to:", fullUrl);
+      
+      navigate(fullUrl, { replace: true }); // Add replace:true to prevent extra history entry
     } else {
-      navigate(`view-candidate/${params?.row?._id}/${readOnly ? params.row.jobId : jobId}`);
+      navigate(`view-candidate/${params.row._id}/${readOnly ? params.row.jobId : jobId}`, { replace: true });
     }
   };
 

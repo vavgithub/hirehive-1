@@ -18,9 +18,21 @@ const Header = ({
     handleAction, 
     page,
     children,
-    rightContent // New prop for content that should appear on the right side
+    rightContent, // New prop for content that should appear on the right side
+    onBack // Add custom back handler prop
 }) => {
     const navigate = useNavigate();
+
+    const handleBackClick = () => {
+        if (onBack) {
+            // Use custom back handler if provided
+            onBack();
+        } else {
+            // Default back behavior
+            navigate(-1);
+        }
+    };
+
 
     return (
         <div className="w-full">
@@ -28,7 +40,7 @@ const Header = ({
                 {/* Left section with back button and title */}
                 <div className={"flex items-center gap-4 w-full " + (rightContent && "lg:w-[65%]")}>
                     {withBack === "true" && (
-                        <div className="cursor-pointer" onClick={() => navigate(-1)}>
+                        <div className="cursor-pointer" onClick={handleBackClick}>
                             <BackButton />
                         </div>
                     )}

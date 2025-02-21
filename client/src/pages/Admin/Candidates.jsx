@@ -1,3 +1,4 @@
+//candidates.jx page
 import React from 'react'
 import Header from '../../components/utility/Header'
 import StatsGrid from '../../components/ui/StatsGrid'

@@ -95,11 +95,47 @@ const ViewCandidateProfile = () => {
         },
     });
 
-    useEffect(()=>{
-        if(selectedJob && role === "Hiring Manager"){
-            navigate(`/admin/candidates/view-candidate/${candidateId}/${selectedJob}`)
+    // Modified useEffect to respect the origin path
+    // useEffect(() => {
+    //     if (selectedJob && role === "Hiring Manager") {
+    //         // Check if we came from jobs or candidates page
+    //         const isFromJobsPage = location.pathname.includes('/admin/jobs/');
+    //         const basePath = isFromJobsPage ? '/admin/jobs' : '/admin/candidates';
+            
+    //         navigate(`${basePath}/view-candidate/${candidateId}/${selectedJob}`);
+    //     }
+    // }, [selectedJob, location.pathname]);
+
+     // Store the original entry path when component mounts
+    //  const [originalPath] = useState(location.pathname.includes('/admin/jobs/') ? '/admin/jobs' : '/admin/candidates');
+
+     const [originalPath] = useState(()=>{
+        const isJobPath = location.pathname.includes('/admin/jobs/');
+        if (isJobPath) {
+            return `/admin/jobs/view-job/${jobId}`;
         }
-    },[selectedJob])
+        return `/admin/candidates`;
+     })
+
+   // Effect for job switching
+   useEffect(() => {
+    if (selectedJob && role === "Hiring Manager" && selectedJob !== jobId) {
+        const isJobsPath = originalPath.includes('/admin/jobs/');
+        const basePath = isJobsPath ? '/admin/jobs' : '/admin/candidates';
+        
+        navigate(`${basePath}/view-candidate/${candidateId}/${selectedJob}`, { 
+            replace: true,
+            state: { from: originalPath }
+        });
+    }
+}, [selectedJob]);
+
+    // Handle back navigation
+    const handleBack = () => {
+        // Navigate back to the original listing page
+        navigate(originalPath);
+    };
+
 
     const { data: score, error } = useQuery({
         queryKey: ['candidateScore', candidateId, jobId],
@@ -224,21 +260,24 @@ const ViewCandidateProfile = () => {
             <div className="container mx-auto">
             {/* Page header */}
             <Header
-                HeaderText="Candidate Profile"
-                withKebab={role === "Hiring Manager" ? "true" : "false"}
-                withBack="true"
-                page="page1"
-                handleAction={handleAction}
-                rightContent={role === "Hiring Manager" &&
-                <div className='flex items-center h-full w-[285px] -translate-y-[6px] z-10'>
-                    <CustomDropdown 
-                    extraStylesForLabel=" w-[285px] " 
-                    value={selectedJob} 
-                    onChange={setSelectedJob} 
-                    options={formattedAppliedJobs} 
-                    ref={switchJobRef}/>
-                </div>}
-            />
+                    HeaderText="Candidate Profile"
+                    withKebab={role === "Hiring Manager" ? "true" : "false"}
+                    withBack="true"
+                    page="page1"
+                    handleAction={handleAction}
+                    onBack={handleBack} // Pass custom back handler
+                    rightContent={role === "Hiring Manager" &&
+                        <div className='flex items-center h-full w-[285px] -translate-y-[6px] z-10'>
+                            <CustomDropdown 
+                                extraStylesForLabel=" w-[285px] " 
+                                value={selectedJob} 
+                                onChange={setSelectedJob} 
+                                options={formattedAppliedJobs} 
+                                ref={switchJobRef}
+                            />
+                        </div>
+                    }
+                />
             {/* Candidate Profile Card */}
 
             {
