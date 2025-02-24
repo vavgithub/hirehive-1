@@ -230,77 +230,48 @@ const getJobs = async (req, res) => {
         },
       },
       // Lookup application statistics from candidates collection
+     {
+  $lookup: {
+    from: "candidates",
+    let: { jobId: "$_id" },
+    pipeline: [
+      { $unwind: "$jobApplications" },
       {
-        $lookup: {
-          from: "candidates",
-          let: { jobId: "$_id" },
-          pipeline: [
-            { $unwind: "$jobApplications" },
-            {
-              $match: {
-                $expr: {
-                  $eq: ["$jobApplications.jobId", "$$jobId"],
-                },
-              },
-            },
-            {
-              $group: {
-                _id: "$jobApplications.jobId",
-                totalApplications: { $sum: 1 },
-                processedApplications: {
-                  $sum: {
-                    $cond: [
-                      {
-                        $or: [
-                          {
-                            $eq: [
-                              "$jobApplications.stageStatuses.Portfolio.status",
-                              "Cleared",
-                            ],
-                          },
-                          {
-                            $eq: [
-                              "$jobApplications.stageStatuses.Screening.status",
-                              "Cleared",
-                            ],
-                          },
-                          {
-                            $eq: [
-                              "$jobApplications.stageStatuses.Design Task.status",
-                              "Cleared",
-                            ],
-                          },
-                          {
-                            $eq: [
-                              "$jobApplications.stageStatuses.Round 1.status",
-                              "Cleared",
-                            ],
-                          },
-                          {
-                            $eq: [
-                              "$jobApplications.stageStatuses.Round 2.status",
-                              "Cleared",
-                            ],
-                          },
-                          {
-                            $eq: [
-                              "$jobApplications.stageStatuses.Hired.status",
-                              "Accepted",
-                            ],
-                          },
-                        ],
-                      },
-                      1,
-                      0,
-                    ],
-                  },
-                },
-              },
-            },
-          ],
-          as: "applicationStats",
+        $match: {
+          isVerified: true, // Added condition to filter only verified candidates
+          $expr: {
+            $eq: ["$jobApplications.jobId", "$$jobId"],
+          },
         },
       },
+      {
+        $group: {
+          _id: "$jobApplications.jobId",
+          totalApplications: { $sum: 1 },
+          processedApplications: {
+            $sum: {
+              $cond: [
+                {
+                  $or: [
+                    { $eq: ["$jobApplications.stageStatuses.Portfolio.status", "Cleared"] },
+                    { $eq: ["$jobApplications.stageStatuses.Screening.status", "Cleared"] },
+                    { $eq: ["$jobApplications.stageStatuses.Design Task.status", "Cleared"] },
+                    { $eq: ["$jobApplications.stageStatuses.Round 1.status", "Cleared"] },
+                    { $eq: ["$jobApplications.stageStatuses.Round 2.status", "Cleared"] },
+                    { $eq: ["$jobApplications.stageStatuses.Hired.status", "Accepted"] },
+                  ],
+                },
+                1,
+                0,
+              ],
+            },
+          },
+        },
+      },
+    ],
+    as: "applicationStats",
+  },
+},
       // Add applied and processed fields
       {
         $addFields: {
