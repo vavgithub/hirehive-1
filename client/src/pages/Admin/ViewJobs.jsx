@@ -195,10 +195,11 @@ const ViewJobs = () => {
 
     return (
         <div className="px-4 pt-4 container h-screen w-full">
- <Header 
+                <Header 
                 HeaderText={formData?.jobTitle} 
                 withKebab="true" 
-                withBack="true" 
+                withBack="true"
+                onBack={() => navigate("/admin/jobs")} 
                 job={formData} 
                 handleAction={handleAction}
                 rightContent={
