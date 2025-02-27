@@ -15,7 +15,7 @@ import { exportToExcel } from '../utility/exportToExcel';
 import Export from '../svg/Buttons/Export';
 import { showErrorToast, showSuccessToast } from './ui/Toast';
 import { useAuthContext } from '../context/AuthProvider';
-import { getCandidateScore } from './Staging/StageAction';
+import { getCandidateScore } from './Staging/StageAction';    
 import { getMaxScoreForStage } from '../pages/Admin/ViewCandidateProfile';
 import { usePreserver } from '../context/StatePreserver';
 import LoaderModal from './ui/LoaderModal';
@@ -362,6 +362,8 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
 
 
  const handleRowClick = (params) => {
+  // Save the current window scroll position before navigation
+  sessionStorage.setItem('candidates_scroll_position', window.scrollY);
     if (role === "Hiring Manager") {
       // Determine if we're on the jobs page or candidates page
       const isJobsPage = location.pathname.includes('/admin/jobs/');
