@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
-import { Button } from '../ui/Button'
-import Modal from '../Modal'
+import { Button } from '../Buttons/Button'
+import Modal from '../Modals/Modal'
 
 function DetailsFooter({skipType,skipTitle,skipMessage,submissionError,isNextDisabled,hasNextButton,hasSkipButton,nextFunction,skipFunction}) {
     const [showSkipModal,setShowSkipModal] = useState(false);

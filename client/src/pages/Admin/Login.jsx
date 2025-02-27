@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import one from '../../svg/StatsCard/Jobs Page/one';
 import two from '../../svg/StatsCard/Jobs Page/two';
-import { Button } from '../../components/ui/Button';
+import { Button } from '../../components/Buttons/Button';
 import { useNavigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import { login } from '../../api/authApi';
 import useAuth from '../../hooks/useAuth';
 import ForgotPassword from './ForgotPassword';
 import { showErrorToast } from '../../components/ui/Toast';
-import { InputField } from '../../components/Form/FormFields';
-import Loader from '../../components/ui/Loader';
+import Loader from '../../components/Loaders/Loader';
 import Logo from '../../svg/Logo/lightLogo.svg'
+import { InputField } from '../../components/Inputs/InputField';
 
 const statsOne = [
     { title: 'Jobs Posted', value: 100, icon: one },

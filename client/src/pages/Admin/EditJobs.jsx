@@ -5,7 +5,7 @@ import JobForm from '../../components/Form/JobForm';
 import axios from '../../api/axios';
 import Header from '../../components/utility/Header';
 import { showErrorToast, showSuccessToast } from '../../components/ui/Toast';
-import Loader from '../../components/ui/Loader';
+import Loader from '../../components/Loaders/Loader';
 
 const EditJobs = () => {
   const { id } = useParams();

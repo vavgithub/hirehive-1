@@ -6,9 +6,9 @@ import { useForm, Controller } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import axios from '../../api/axios';
-import SkillsInput from '../../components/utility/SkillsInput';
-import { Button } from '../../components/ui/Button';
-import { dummySkills } from '../../components/Form/dropdownOptions';
+import SkillsInput from '../../components/Inputs/SkillsInput';
+import { Button } from '../../components/Buttons/Button';
+import { dummySkills } from '../../components/Dropdowns/dropdownOptions';
 import { showErrorToast, showSuccessToast } from '../../components/ui/Toast';
 import Logo from '../../svg/Logo/lightLogo.svg';
 import { fetchCandidateAuthData } from '../../redux/candidateAuthSlice';
@@ -17,10 +17,10 @@ import { digitsRegex, lowerCaseRegex, specialCharRegex, upperCaseRegex } from '.
 import { PersonalDetailsSection, ProfessionalDetailsSection, ResumePortfolioSection } from '../../components/Form/ApplyJob';
 import { validateProfileImages, validateResume, validationRules } from '../../utility/validationRules';
 import Header from '../../components/utility/Header';
-import LoaderModal from '../../components/ui/LoaderModal';
-import AdditionalQuestions from '../../components/AdditionalQuestions';
-import OtpComponent from '../../components/OtpComponent';
-import PasswordComponent from '../../components/PasswordComponent';
+import LoaderModal from '../../components/Loaders/LoaderModal';
+import AdditionalQuestions from '../../components/QuestionUtilities/AdditionalQuestions';
+import OtpComponent from '../../components/utility/OtpComponent';
+import PasswordComponent from '../../components/utility/PasswordComponent';
 
 const fetchJobDetails = async (id) => {
   const response = await axios.get(`/jobs/getJobById/${id}`);

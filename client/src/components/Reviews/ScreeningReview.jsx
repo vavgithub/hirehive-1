@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import Scorer from '../ui/Scorer';
-import { Button } from '../ui/Button';
+import { Button } from '../Buttons/Button';
 import { showErrorToast } from '../ui/Toast';
-import StyledCard from '../ui/StyledCard';
+import StyledCard from '../Cards/StyledCard';
 
 function ScreeningReview({ candidate, onSubmit ,rounded = "bottom"}){
 

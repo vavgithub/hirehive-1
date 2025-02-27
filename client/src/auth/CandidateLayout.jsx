@@ -6,9 +6,8 @@ import LightLogo from "../svg/Logo/lightLogo.svg"
 import { DashboardIcon, DashboardIconActive } from '../svg/Navbar/DashboardIcon';
 import { JobsIcon, JobsIconActive } from '../svg/Navbar/JobsIcon';
 import { MyJobsIcon, MyJobsIconActive } from '../svg/Navbar/MyJobsIcon';
-import { Button } from '../components/ui/Button';
+import { Button } from '../components/Buttons/Button';
 import useCandidateAuth from '../hooks/useCandidateAuth';
-import Modal from '../components/Modal';
 import AssessmentBanner from '../components/ui/AssessmentBanner';
 import { useDispatch, useSelector } from 'react-redux';
 import { logoutCandidateAuth } from '../redux/candidateAuthSlice';
@@ -17,7 +16,8 @@ import useScroll from '../hooks/useScroll';
 import { Avatar, IconButton, Menu, MenuItem } from '@mui/material';
 import Logout from '../svg/Buttons/Logout';
 import Profile from '../svg/Buttons/Profile';
-import StyledMenu from '../components/ui/StyledMenu';
+import StyledMenu from '../components/MUIUtilities/StyledMenu';
+import Modal from '../components/Modals/Modal';
 
 const CandidateLayout = () => {
   const navigate = useNavigate();

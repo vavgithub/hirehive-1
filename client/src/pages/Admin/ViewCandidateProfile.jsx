@@ -19,15 +19,15 @@ import ApplicationStaging from '../../components/Staging/ApplicationStaging';
 import { useDispatch, useSelector } from 'react-redux';
 import { setCandidateData, setError, setLoading } from '../../redux/candidateSlice';
 import { setCurrentStage, setStageStatuses } from '../../redux/applicationStageSlice';
-import Loader from '../../components/ui/Loader';
+import Loader from '../../components/Loaders/Loader';
 import { ensureAbsoluteUrl } from '../../utility/ensureAbsoluteUrl';
 import ResumeViewer from '../../components/utility/ResumeViewer';
-import CustomToolTip from '../../components/utility/CustomToolTip';
-import StyledCard from '../../components/ui/StyledCard';
-import { CustomDropdown } from '../../components/Form/FormFields';
+import CustomToolTip from '../../components/Tooltip/CustomToolTip';
+import StyledCard from '../../components/Cards/StyledCard';
 import SwitchArrows from '../../svg/SwitchArrows';
-import ScoreChart from '../../components/utility/ScoreChart';
+import ScoreChart from '../../components/Charts/ScoreChart';
 import { getStageColor, maxScoreOfEachStage } from '../../components/Staging/staging.config';
+import { CustomDropdown } from '../../components/Dropdowns/CustomDropdown';
 
 export const VAVScoreCard = ({score,stage,scoreStages})=>{
     const [showBreakDown,setShowBreakDown] = useState(false);

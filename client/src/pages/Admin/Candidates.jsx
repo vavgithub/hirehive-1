@@ -2,7 +2,6 @@ import React from 'react'
 import Header from '../../components/utility/Header'
 import StatsGrid from '../../components/ui/StatsGrid'
 import one from '../../svg/StatsCard/Jobs Page/one';
-import Table from '../../components/Table';
 import axios from "../../api/axios"
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import Portfolio from '../../svg/StatsCard/View Candidate/Portfolio';
@@ -12,8 +11,9 @@ import Round1 from '../../svg/StatsCard/View Candidate/Round1';
 import Round2 from '../../svg/StatsCard/View Candidate/Round2';
 import OfferSent from '../../svg/StatsCard/View Candidate/OfferSent';
 import Total from '../../svg/StatsCard/View Candidate/Total';
-import Loader from '../../components/ui/Loader';
-import StyledCard from '../../components/ui/StyledCard';
+import Loader from '../../components/Loaders/Loader';
+import StyledCard from '../../components/Cards/StyledCard';
+import Table from '../../components/TableUtilities/Table';
 
 const statsOne = [
   { title: 'Total', value: 0, icon: Total },

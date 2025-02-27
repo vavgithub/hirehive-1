@@ -1,9 +1,9 @@
 // ApplyJob.jsx this is the component of every form field in the apply job page
 import React from 'react';
 import { Controller } from 'react-hook-form';
-import { InputField } from '../../components/Form/FormFields';
 import { validationRules } from '../../utility/validationRules';
-import { ProfilePictureUpload } from './ProfilePictureUpload';
+import { ProfilePictureUpload } from '../FormUtilities/ProfilePictureUpload';
+import { InputField } from '../Inputs/InputField';
 
 // Reusable form field component
 export const FormField = ({ 

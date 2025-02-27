@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
-import OtpComponent from '../OtpComponent'
+import OtpComponent from '../utility/OtpComponent'
 import { steps } from '../../pages/Admin/Register';
 import { useOnboardingContext } from '../../context/OnboardingProvider';
 import { showErrorToast, showSuccessToast } from '../ui/Toast';
 import { useMutation } from '@tanstack/react-query';
-import LoaderModal from '../ui/LoaderModal';
+import LoaderModal from '../Loaders/LoaderModal';
 import axios from '../../api/axios';
 import { useSearchParams } from 'react-router-dom';
 

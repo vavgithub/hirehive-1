@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import PasswordComponent from '../PasswordComponent'
+import PasswordComponent from '../utility/PasswordComponent'
 import { useForm } from 'react-hook-form';
 import { steps } from '../../pages/Admin/Register';
 import { digitsRegex, lowerCaseRegex, specialCharRegex, upperCaseRegex } from '../../utility/regex';

@@ -6,10 +6,9 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from '../../api/axios';
 import Tabs from '../../components/ui/Tabs';
 import StatsGrid from '../../components/ui/StatsGrid';
-import Modal from '../../components/Modal';
 import { formatDescription } from '../../utility/formatDescription';
 import SideCard from '../../components/ui/SideCard';
-import Table from '../../components/Table';
+import Table from '../../components/TableUtilities/Table';
 import one from '../../svg/StatsCard/Jobs Page/one';
 import Header from '../../components/utility/Header';
 import { ACTION_TYPES } from '../../utility/ActionTypes';
@@ -26,8 +25,10 @@ import EngRate from '../../svg/StatsCard/View Details/EngRate';
 import QuaApp from '../../svg/StatsCard/View Details/Portfolio';
 import AppRec from '../../svg/StatsCard/View Details/AppRec';
 import Views from '../../svg/StatsCard/View Details/Views';
-import Loader from '../../components/ui/Loader';
-import StyledCard from '../../components/ui/StyledCard';
+import Loader from '../../components/Loaders/Loader';
+import StyledCard from '../../components/Cards/StyledCard';
+import Modal from '../../components/Modals/Modal';
+import CustomBadge from '../../components/Badge/CustomBadge';
 
 
 const ViewJobs = () => {
@@ -223,7 +224,8 @@ const ViewJobs = () => {
                             <h2 className="text-[16px] font-outfit font-bold mt-4 mb-5">Skills</h2>
                             <div className='flex flex-wrap gap-3'>
                                 {formData.skills && formData.skills.map((skill, index) => (
-                                    <span key={index} className="flex justify-center font-outfit w-fit bg-background-70 m px-6 py-2 rounded-full">{skill}</span>))}
+                                    <CustomBadge key={index} label={skill} borderRadius={10} />
+                                ))}
                             </div>
                         </div>
                         <div className='pb-4'>

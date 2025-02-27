@@ -2,10 +2,10 @@ import React from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from '../../api/axios';
-import Modal from '../Modal';
+import Modal from '../Modals/Modal';
 import { ACTION_TYPES } from '../../utility/ActionTypes';
 import { setCurrentStage, updateStageStatus } from '../../redux/applicationStageSlice';
-import { Button } from '../ui/Button';
+import { Button } from '../Buttons/Button';
 import { getMaxScoreForStage } from '../../pages/Admin/ViewCandidateProfile';
 
 export const getCandidateScore = (stageStatuses) => {

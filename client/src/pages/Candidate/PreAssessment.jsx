@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { ChevronDown, ChevronUp , Mic, TimerIcon } from 'lucide-react';
 import Webcam from 'react-webcam';
 import Assessment from './Assessment'; // Import your existing Assessment component
-import { Button } from '../../components/ui/Button';
+import { Button } from '../../components/Buttons/Button';
 import Camera from '../../svg/Buttons/Camera';
 import Logo from '../../svg/Logo/lightLogo.svg'
 import AssesmentIcon from '../../svg/AssesmentIcon';
@@ -10,8 +10,8 @@ import TimerClockIcon from '../../svg/TimerClockIcon';
 import ProfileIcon from '../../svg/ProfileIcon';
 import CameraDisabled from '../../svg/Buttons/CameraDisabled';
 import MicDisabled from '../../svg/Buttons/MicDisabled';
-import Modal from '../../components/Modal';
-import StyledCard from '../../components/ui/StyledCard';
+import StyledCard from '../../components/Cards/StyledCard';
+import Modal from '../../components/Modals/Modal';
 
 const AccordionItem = ({ title, content, isOpen, toggleOpen , preIcon}) => (
     <StyledCard backgroundColor={"bg-background-80"} extraStyles="mb-4 overflow-hidden">

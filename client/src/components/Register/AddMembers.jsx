@@ -1,22 +1,22 @@
 import React, { useEffect, useState } from 'react'
 import DetailsFooter from './DetailsFooter'
-import { CustomDropdown, InputField } from '../Form/FormFields';
-import { Button } from '../ui/Button';
-import StyledCard from '../ui/StyledCard';
+import { Button } from '../Buttons/Button';
+import StyledCard from '../Cards/StyledCard';
 import DeleteIcon from '../../svg/KebabList/DeleteIcon';
 import { useOnboardingContext } from '../../context/OnboardingProvider';
-import GlobalDropDown from '../utility/GlobalDropDown';
+import GlobalDropDown from '../Dropdowns/GlobalDropDown';
 import { DataGrid } from '@mui/x-data-grid';
-import MuiCustomStylesForDataGrid from '../tableUtilities/MuiCustomStylesForDataGrid';
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
-import LoaderModal from '../ui/LoaderModal';
+import LoaderModal from '../Loaders/LoaderModal';
 import axios from '../../api/axios';
 import { showErrorToast, showSuccessToast } from '../ui/Toast';
 import useAuth from '../../hooks/useAuth';
 import { emailPattern } from './RegisterForm';
-import Modal from '../Modal';
+import Modal from '../Modals/Modal';
 import PencilIcon from '../../svg/Buttons/PencilIcon';
+import { InputField } from '../Inputs/InputField';
+import MuiCustomStylesForDataGrid from '../TableUtilities/MuiCustomStylesForDataGrid';
 
 export const roleOptions = [
     {
@@ -329,156 +329,156 @@ function AddMembers({currentStep,setCurrentStep}) {
                 rows={members}
                 columns={columns}
                 getRowId={(row) => `${row.id}`} // Create a unique ID for each row
-                slotProps={{
-                    pagination : {
-                    SelectProps: {
-                        sx: {
-                        fontFamily: 'Outfit, sans-serif !important'
-                        },
-                        MenuProps: {
-                        sx :{
-                            "& .MuiMenuItem-root": {
-                            fontFamily: "Outfit, sans-serif !important"
-                            }
-                        },
-                        PaperProps: {
-                            sx: {
-                            backgroundColor: '#0C0D0D', // Set background to yellow for the pagination select dropdown
-                            color : "white",
-                            fontFamily : 'Outfit, sans-serif !important',
-                            },
-                        },
+                // slotProps={{
+                //     pagination : {
+                //     SelectProps: {
+                //         sx: {
+                //         fontFamily: 'Outfit, sans-serif !important'
+                //         },
+                //         MenuProps: {
+                //         sx :{
+                //             "& .MuiMenuItem-root": {
+                //             fontFamily: "Outfit, sans-serif !important"
+                //             }
+                //         },
+                //         PaperProps: {
+                //             sx: {
+                //             backgroundColor: '#0C0D0D', // Set background to yellow for the pagination select dropdown
+                //             color : "white",
+                //             fontFamily : 'Outfit, sans-serif !important',
+                //             },
+                //         },
                         
-                        },
-                    },
-                    }
-                }}
+                //         },
+                //     },
+                //     }
+                // }}
                 getRowClassName={(params) =>
                     params.indexRelativeToCurrentPage % 2 === 0 ? 'first-row' : 'second-row'
                 }
                 localeText={{ noRowsLabel: <p style={{fontFamily:"Outfit"}}>No Candidates</p> }}
-                sx={{
-                    '& .MuiDataGrid-root': {
-                    borderRadius: '12px !important',
-                    fontFamily: 'Outfit, sans-serif !important',
-                    backgroundColor: 'black !important', // Ensure each header cell is transparent
-                    },
-                    '& .MuiDataGrid-topContainer': {
-                    borderRadius : "12px !important"
-                    },
-                    '& .css-yrdy0g-MuiDataGrid-columnHeaderRow' :{
-                    borderRadius: '12px !important',
-                    },
-                    '& .MuiTablePagination-root .MuiSelect-select.MuiTablePagination-select': {
-                    fontFamily: 'Outfit, sans-serif !important'
-                    },
-                    '& .MuiTablePagination-menuItem': {
-                    fontFamily: 'Outfit, sans-serif !important ', // Font family for menu items
-                    },
-                    '& .MuiDataGrid-cell': {
-                    color: 'white',
-                    borderBottom: 'none',
-                    borderTop: 'none',
-                    fontFamily: 'Outfit, sans-serif !important',
-                    display: 'flex',
-                    alignItems: 'center' // Center content vertically
-                    },
-                    '& .MuiDataGrid-columnHeaders': {
-                    borderTop: 'none',
-                    borderBottom: 'none',
-                    color: 'gray',
-                    fontFamily: 'Outfit, sans-serif !important',
-                    backgroundColor: 'black !important', // Force transparent background
-                    },
-                    '& .MuiDataGrid-columnHeader': {
-                    backgroundColor: 'black !important', // Ensure each header cell is transparent
-                    },
-                    '& .MuiDataGrid-columnHeaderTitle': {
-                    color: 'gray', // Ensure the header text is gray
-                    },
-                    '& .MuiDataGrid-row': {
-                    borderBottom: 'none',
-                    borderTop: 'none',
-                    },
-                    '& .MuiDataGrid-columnSeparator': {
-                    display: 'none',
-                    },
-                    '& .MuiDataGrid-footerContainer': {
-                    borderTop: 'none',
-                    color: 'white',
-                    fontFamily: 'Outfit, sans-serif !important',
-                    },
-                    '& .MuiTablePagination-root': {
-                    color: 'white',
-                    fontFamily: 'Outfit, sans-serif !important',
-                    },
-                    '& .MuiTablePagination-toolbar': {
-                    color: 'white',
-                    fontFamily: 'Outfit, sans-serif !important',
-                    },
-                    '& .MuiDataGrid-filler': {
-                    backgroundColor: 'black',
-                    },
-                    '& .css-8yphpr':{
-                    height : "0px !important"
-                    },
-                    '& .MuiTablePagination-selectIcon': {
-                    color: 'white',
-                    fontFamily: 'Outfit, sans-serif !important',
-                    },
-                    '& .MuiTablePagination-selectLabel ' :{
-                    fontFamily :"Outfit",
-                    },
-                    '& .MuiTablePagination-select ' :{
-                    fontFamily :"Outfit",
-                    },
-                    '& .MuiTablePagination-displayedRows' :{
-                    fontFamily :"Outfit",
-                    },
-                    '& .MuiSvgIcon-root': {
-                    color:"white"
-                    },
-                    '& .MuiDataGrid-selectedRowCount ' : {
-                    opacity : 0
-                    },
-                    '& .Mui-selected .MuiSvgIcon-root': {
-                    color: 'rgb(24, 233, 208)',
-                    },
-                    '& .first-row': {
-                    borderRadius:2,
-                    backgroundColor: 'rgba(18, 19, 20, 1)',
-                    '&:hover': {
-                        backgroundColor: '#232425',
-                    },
-                    },
-                    '& .second-row': {
-                    borderRadius:2,
-                    backgroundColor: 'rgba(12, 13, 13, 1)',
-                    '&:hover': {
-                        backgroundColor: '#232425',
-                    },
-                    },
-                    borderRadius: "12px",
-                    backgroundColor: 'black',
-                    '& .MuiDataGrid-virtualScroller': {
-                    backgroundColor: 'transparent ' , // Ensure the background behind rows is also transparent
-                    borderRadius: '12px 12px 0px 0px !important',
-                    },
-                    '& .MuiDataGrid-scrollbarFiller' :{
-                    minWidth: "0px !important"
-                    },
-                    '& .MuiDataGrid-scrollbar' :{
-                        display: "none",
-                        background : "transparent"
-                    },
-                    '& .MuiDataGrid-overlayWrapper':{
-                    height:"3rem",
-                    },
-                    '& .MuiDataGrid-overlay':{
-                    color: 'white',
-                    backgroundColor : 'rgba(12, 13, 13, 1)'
-                    },
-                }}
+                // sx={{
+                //     '& .MuiDataGrid-root': {
+                //     borderRadius: '12px !important',
+                //     fontFamily: 'Outfit, sans-serif !important',
+                //     backgroundColor: 'black !important', // Ensure each header cell is transparent
+                //     },
+                //     '& .MuiDataGrid-topContainer': {
+                //     borderRadius : "12px !important"
+                //     },
+                //     '& .css-yrdy0g-MuiDataGrid-columnHeaderRow' :{
+                //     borderRadius: '12px !important',
+                //     },
+                //     '& .MuiTablePagination-root .MuiSelect-select.MuiTablePagination-select': {
+                //     fontFamily: 'Outfit, sans-serif !important'
+                //     },
+                //     '& .MuiTablePagination-menuItem': {
+                //     fontFamily: 'Outfit, sans-serif !important ', // Font family for menu items
+                //     },
+                //     '& .MuiDataGrid-cell': {
+                //     color: 'white',
+                //     borderBottom: 'none',
+                //     borderTop: 'none',
+                //     fontFamily: 'Outfit, sans-serif !important',
+                //     display: 'flex',
+                //     alignItems: 'center' // Center content vertically
+                //     },
+                //     '& .MuiDataGrid-columnHeaders': {
+                //     borderTop: 'none',
+                //     borderBottom: 'none',
+                //     color: 'gray',
+                //     fontFamily: 'Outfit, sans-serif !important',
+                //     backgroundColor: 'black !important', // Force transparent background
+                //     },
+                //     '& .MuiDataGrid-columnHeader': {
+                //     backgroundColor: 'black !important', // Ensure each header cell is transparent
+                //     },
+                //     '& .MuiDataGrid-columnHeaderTitle': {
+                //     color: 'gray', // Ensure the header text is gray
+                //     },
+                //     '& .MuiDataGrid-row': {
+                //     borderBottom: 'none',
+                //     borderTop: 'none',
+                //     },
+                //     '& .MuiDataGrid-columnSeparator': {
+                //     display: 'none',
+                //     },
+                //     '& .MuiDataGrid-footerContainer': {
+                //     borderTop: 'none',
+                //     color: 'white',
+                //     fontFamily: 'Outfit, sans-serif !important',
+                //     },
+                //     '& .MuiTablePagination-root': {
+                //     color: 'white',
+                //     fontFamily: 'Outfit, sans-serif !important',
+                //     },
+                //     '& .MuiTablePagination-toolbar': {
+                //     color: 'white',
+                //     fontFamily: 'Outfit, sans-serif !important',
+                //     },
+                //     '& .MuiDataGrid-filler': {
+                //     backgroundColor: 'black',
+                //     },
+                //     '& .css-8yphpr':{
+                //     height : "0px !important"
+                //     },
+                //     '& .MuiTablePagination-selectIcon': {
+                //     color: 'white',
+                //     fontFamily: 'Outfit, sans-serif !important',
+                //     },
+                //     '& .MuiTablePagination-selectLabel ' :{
+                //     fontFamily :"Outfit",
+                //     },
+                //     '& .MuiTablePagination-select ' :{
+                //     fontFamily :"Outfit",
+                //     },
+                //     '& .MuiTablePagination-displayedRows' :{
+                //     fontFamily :"Outfit",
+                //     },
+                //     '& .MuiSvgIcon-root': {
+                //     color:"white"
+                //     },
+                //     '& .MuiDataGrid-selectedRowCount ' : {
+                //     opacity : 0
+                //     },
+                //     '& .Mui-selected .MuiSvgIcon-root': {
+                //     color: 'rgb(24, 233, 208)',
+                //     },
+                //     '& .first-row': {
+                //     borderRadius:2,
+                //     backgroundColor: 'rgba(18, 19, 20, 1)',
+                //     '&:hover': {
+                //         backgroundColor: '#232425',
+                //     },
+                //     },
+                //     '& .second-row': {
+                //     borderRadius:2,
+                //     backgroundColor: 'rgba(12, 13, 13, 1)',
+                //     '&:hover': {
+                //         backgroundColor: '#232425',
+                //     },
+                //     },
+                //     borderRadius: "12px",
+                //     backgroundColor: 'black',
+                //     '& .MuiDataGrid-virtualScroller': {
+                //     backgroundColor: 'transparent ' , // Ensure the background behind rows is also transparent
+                //     borderRadius: '12px 12px 0px 0px !important',
+                //     },
+                //     '& .MuiDataGrid-scrollbarFiller' :{
+                //     minWidth: "0px !important"
+                //     },
+                //     '& .MuiDataGrid-scrollbar' :{
+                //         display: "none",
+                //         background : "transparent"
+                //     },
+                //     '& .MuiDataGrid-overlayWrapper':{
+                //     height:"3rem",
+                //     },
+                //     '& .MuiDataGrid-overlay':{
+                //     color: 'white',
+                //     backgroundColor : 'rgba(12, 13, 13, 1)'
+                //     },
+                // }}
                 hideFooterPagination
                 hideFooterSelectedRowCount 
                 />

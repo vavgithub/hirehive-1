@@ -2,14 +2,14 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import Filters from '../../components/Filters/Filters';
-import Modal from '../../components/Modal';
-import JobCard from '../../components/JobCard';
+import Modal from '../../components/Modals/Modal';
+import JobCard from '../../components/Cards/JobCard';
 import Tabs from '../../components/ui/Tabs';
 import StatsGrid from '../../components/ui/StatsGrid';
 import one from '../../svg/StatsCard/Jobs Page/one';
 import two from '../../svg/StatsCard/Jobs Page/two';
 import three from '../../svg/StatsCard/Jobs Page/three';
-import { Button } from '../../components/ui/Button';
+import { Button } from '../../components/Buttons/Button';
 import axios from "../../api/axios"
 import Create from '../../svg/Buttons/Create';
 import { ACTION_TYPES } from '../../utility/ActionTypes';
@@ -19,9 +19,9 @@ import { ClosedIcon, ClosedIconActive } from '../../svg/Tabs/ClosedIcon';
 import { DraftsIcon, DraftsIconActive } from '../../svg/Tabs/DraftsIcon';
 import NoJobs from "../../svg/Background/NoJobs.svg"
 import { showErrorToast, showSuccessToast } from '../../components/ui/Toast';
-import Loader from '../../components/ui/Loader';
+import Loader from '../../components/Loaders/Loader';
 import SearchIcon from '../../svg/SearchIcon';
-import StyledCard from '../../components/ui/StyledCard';
+import StyledCard from '../../components/Cards/StyledCard';
 import Pagination from '../../components/utility/Pagination';
 import useDebounce from '../../hooks/useDebounce';
 import { useAuthContext } from '../../context/AuthProvider';
@@ -206,7 +206,7 @@ const Dashboard = () => {
                 reOpenMutation.mutate(job._id)
                 break;
             case ACTION_TYPES.EDIT:
-                navigate(`/admin/edit-job/${job._id}`);
+                navigate(`/${role === 'Admin' ? 'admin' : 'hiring-manager'}/edit-job/${job._id}`);
                 setModalOpen(false);
                 break;
             default:

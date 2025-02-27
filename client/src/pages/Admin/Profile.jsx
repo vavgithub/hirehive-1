@@ -1,18 +1,18 @@
 import React, { useState, useRef } from 'react';
 import { useAuthContext } from '../../context/AuthProvider';
 import Header from '../../components/utility/Header';
-import StyledCard from '../../components/ui/StyledCard';
+import StyledCard from '../../components/Cards/StyledCard';
 import { Controller, useForm } from 'react-hook-form';
-import { InputField } from '../../components/Form/FormFields';
-import { Button } from '../../components/ui/Button';
+import { Button } from '../../components/Buttons/Button';
 import { PencilEditIcon } from '../../svg/Buttons/PencilIcon';
-import CustomToolTip from '../../components/utility/CustomToolTip';
+import CustomToolTip from '../../components/Tooltip/CustomToolTip';
 import { useProfilePicture } from '../../hooks/useProfilePicture';
-import SkillsInput from '../../components/utility/SkillsInput';
+import SkillsInput from '../../components/Inputs/SkillsInput';
 import { showSuccessToast, showErrorToast } from '../../components/ui/Toast';
 import axios from '../../api/axios';
-import LoaderModal from '../../components/ui/LoaderModal';
+import LoaderModal from '../../components/Loaders/LoaderModal';
 import {  useQueryClient } from '@tanstack/react-query';
+import { InputField } from '../../components/Inputs/InputField';
 
 
 

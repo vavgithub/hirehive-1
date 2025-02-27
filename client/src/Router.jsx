@@ -4,11 +4,10 @@ import {
 } from 'react-router-dom';
 import Login from './pages/Admin/Login';
 import Dashboard from './pages/Admin/Dashboard';
-import Navbar from './components/Navbar';
 import CreateJobs from './pages/Admin/CreateJobs';
 import Authlayout from './auth/Authlayout';
 import Register from './pages/Admin/Register';
-import EditJobs from './pages/Admin/EditJobs';
+import EditJobs from './pages/Admin/EditJobs.jsx';
 import ViewJobs from './pages/Admin/ViewJobs';
 import ViewCandidateProfile from './pages/Admin/ViewCandidateProfile';
 import Candidates from './pages/Admin/Candidates';
@@ -32,6 +31,7 @@ import AllJobs from './pages/Candidate/AllJobs.jsx';
 import Profile from './pages/Admin/Profile.jsx';
 import AssessmentResponse from './pages/Admin/AssessmentResponse.jsx';
 import { OnboardingProvider } from './context/OnboardingProvider.jsx';
+import AdminLayout from './components/AdminLayout.jsx';
 
 export const router = createBrowserRouter([
   {
@@ -116,7 +116,7 @@ export const router = createBrowserRouter([
   },
   {
     path: "/hiring-manager",
-    element: <ProtectedRoute allowedRoles={['Hiring Manager']}><Navbar /></ProtectedRoute>,
+    element: <ProtectedRoute allowedRoles={['Hiring Manager']}><AdminLayout /></ProtectedRoute>,
     children: [
       {
         path: "dashboard",
@@ -176,7 +176,7 @@ export const router = createBrowserRouter([
 
   {
     path: "/admin",
-    element: <ProtectedRoute allowedRoles={['Admin']}><Navbar /></ProtectedRoute>,
+    element: <ProtectedRoute allowedRoles={['Admin']}><AdminLayout /></ProtectedRoute>,
     children: [
       {
         path: "dashboard",
@@ -236,7 +236,7 @@ export const router = createBrowserRouter([
 
   {
     path: "/design-reviewer",
-    element: <ProtectedRoute allowedRoles={['Design Reviewer']}><Navbar /></ProtectedRoute>,
+    element: <ProtectedRoute allowedRoles={['Design Reviewer']}><AdminLayout /></ProtectedRoute>,
     children: [
       {
         path: "dashboard",

@@ -1,17 +1,18 @@
 import React, { useEffect, useRef, useState } from 'react'
 import DetailsFooter from './DetailsFooter';
-import { CustomDropdown, InputField } from '../Form/FormFields';
 import { showErrorToast, showSuccessToast } from '../ui/Toast';
 import { useMutation } from '@tanstack/react-query';
-import LoaderModal from '../ui/LoaderModal';
+import LoaderModal from '../Loaders/LoaderModal';
 import { useOnboardingContext } from '../../context/OnboardingProvider';
 import axios from '../../api/axios';
 import { steps } from '../../pages/Admin/Register';
-import Modal from '../Modal';
+import Modal from '../Modals/Modal';
 import { ACTION_TYPES } from '../../utility/ActionTypes';
-import StyledCard from '../ui/StyledCard';
-import { Button } from '../ui/Button';
+import StyledCard from '../Cards/StyledCard';
+import { Button } from '../Buttons/Button';
 import { validateProfileImages } from '../../utility/validationRules';
+import { InputField } from '../Inputs/InputField';
+import { CustomDropdown } from '../Dropdowns/CustomDropdown';
 
 const LocationOptions = [
   { value: 'india', label: 'India' },

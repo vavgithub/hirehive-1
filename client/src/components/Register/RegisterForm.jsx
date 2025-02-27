@@ -1,12 +1,12 @@
 import React, { useState } from 'react'
 import axios from '../../api/axios';
 import sundarKanya from "../../svg/Background/sundar-kanya.png"
-import { Button } from '../../components/ui/Button';
+import { Button } from '../Buttons/Button';
 import StatsGrid from '../../components/ui/StatsGrid';
 import one from '../../svg/StatsCard/Jobs Page/one';
 import two from '../../svg/StatsCard/Jobs Page/two';
 import Logo from '../../svg/Logo/lightLogo.svg'
-import LoaderModal from '../../components/ui/LoaderModal';
+import LoaderModal from '../Loaders/LoaderModal';
 import GoogleIcon from '../../svg/GoogleIcon';
 import { steps } from '../../pages/Admin/Register';
 import { useMutation } from '@tanstack/react-query';

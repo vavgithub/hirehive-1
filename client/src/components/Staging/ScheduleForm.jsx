@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
-import AssigneeSelector from '../utility/AssigneeSelector';
-import Datepicker from '../utility/Datepicker'
-import Timepicker from '../utility/Timepicker'
-import { Button } from '../ui/Button';
-import { InputField } from '../Form/FormFields';
+import AssigneeSelector from '../MUIUtilities/AssigneeSelector';
+import Datepicker from '../MUIUtilities/Datepicker'
+import Timepicker from '../MUIUtilities/Timepicker'
+import { Button } from '../Buttons/Button';
+import { InputField } from '../Inputs/InputField';
 
 
 export const ScheduleForm = ({ candidateId, jobId, onSubmit, isRescheduling, initialData, onCancel ,isDisabled}) => {

@@ -5,7 +5,7 @@ import PasswordForm from '../../components/Register/PasswordForm';
 import DetailsForm from '../../components/Register/DetailsForm';
 import useAuth from '../../hooks/useAuth';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import Loader from '../../components/ui/Loader';
+import Loader from '../../components/Loaders/Loader';
 
 export const steps = [
     { id: "REGISTER", label: "Register" },

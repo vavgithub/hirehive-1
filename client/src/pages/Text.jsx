@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import { useForm, Controller } from "react-hook-form"
-import { InputField } from '../components/Form/FormFields'
-import { Button } from '../components/ui/Button'
-import SkillsInput from '../components/utility/SkillsInput'
+import { Button } from '../components/Buttons/Button'
+import SkillsInput from '../components/Inputs/SkillsInput'
+import { InputField } from '../components/Inputs/InputField'
 
 const Text = () => {
     const {

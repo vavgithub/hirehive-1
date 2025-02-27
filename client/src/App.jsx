@@ -6,12 +6,15 @@ import { AuthProvider } from './context/AuthProvider';
 import { Provider } from 'react-redux'
 import { store } from './redux/store';
 import StatePreserver from './context/StatePreserver';
+import { ThemeProvider } from '@mui/material';
+import theme from './components/MUIUtilities/theme';
 
 const queryClient = new QueryClient();
 
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
+      <ThemeProvider theme={theme} >
       <Provider store={store}>
         <AuthProvider>
           <StatePreserver>
@@ -20,6 +23,7 @@ function App() {
           </StatePreserver>
         </AuthProvider>
       </Provider>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }

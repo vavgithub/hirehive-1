@@ -6,76 +6,10 @@ import { InternIcon, InternIconActive } from '../../svg/Checkboxes/InternIcons';
 import { HiredIcon, HiredIconActive } from '../../svg/Checkboxes/HiredIcons';
 import { NotHired, NotHiredActive } from '../../svg/Checkboxes/NotHired';
 import BudgetFilter from './BudgetFilter';
-import StyledCard from '../ui/StyledCard';
+import StyledCard from '../Cards/StyledCard';
 import { useAuthContext } from '../../context/AuthProvider';
 import { PartTimeIcon, PartTimeIconActive } from '../../svg/Checkboxes/PartTimeIcons';
-
-
-const CustomCheckbox = ({ label, icon: Icon, isChecked, onChange, count }) => (
-    <div
-        className={`flex flex-col w-[85px] justify-center p-3 rounded-xl cursor-pointer hover:bg-background-60 ${isChecked ? 'bg-accent-300' : 'bg-background-40'
-            }`}
-        onClick={onChange}
-    >
-        <Icon />
-        <span className={` mt-2 typography-large-p ${isChecked ? 'text-font-accent' : 'text-font-gray'}`}>
-            {label}
-        </span>
-        {/* {count !== undefined && (
-            <span className={`mt-1 text-xs ${isChecked ? 'text-teal-300' : 'text-gray-500'}`}>
-                {count}
-            </span>
-        )} */}
-    </div>
-);
-
-const ButtonCheckbox = ({ label, isChecked, onChange }) => (
-    <button
-        className={`px-4 py-2 rounded-xl typography-large-p ${isChecked ? 'bg-accent-300 text-font-accent' : 'bg-background-40 text-font-gray'
-            } hover:bg-background-60 transition-colors duration-200`}
-        onClick={onChange}
-    >
-        {label}
-    </button>
-);
-
-const CheckboxGroup = ({ title, options, filters, handleCheckboxChange, isDisabled, statistics, useCustomIconCheckbox }) => {
-    if (useCustomIconCheckbox) {
-        return (
-            <div className="mb-4 ">
-                <h3 className="typography-body font-bricolage text-gray-200 font-semibold mb-2">{title}</h3>
-                <div className="grid grid-cols-3 gap-2 w-fit">
-                    {options.map(({ value, label, statKey, icon }) => (
-                        <CustomCheckbox
-                            key={value}
-                            label={label}
-                            icon={filters.includes(value) ? icon.active : icon.inactive}
-                            isChecked={filters.includes(value)}
-                            onChange={() => handleCheckboxChange(value)}
-                        />
-                    ))}
-                </div>
-            </div>
-        );
-    }
-
-    // Original checkbox group for other filter types
-    return (
-        <div className="mb-4">
-            <h3 className="typography-body font-bricolage text-gray-200 font-semibold mb-2">{title}</h3>
-            <div className="flex flex-wrap gap-2">
-                {options.map(({ value, label }) => (
-                    <ButtonCheckbox
-                        key={value}
-                        label={label}
-                        isChecked={filters.includes(value)}
-                        onChange={() => handleCheckboxChange(value)}
-                    />
-                ))}
-            </div>
-        </div>
-    );
-};
+import { CheckboxGroup } from '../Checkboxes/CheckboxGroup';
 
 const Filters = ({ filters = {}, handleCheckboxChange, activeTab, handleExperienceFilter, handleBudgetFilter, clearAllFilters }) => {
     const isDisabled = activeTab === 'draft';

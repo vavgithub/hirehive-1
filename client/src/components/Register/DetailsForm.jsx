@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
-import StyledCard from '../ui/StyledCard'
-import Stepper from './Stepper';
+import StyledCard from '../Cards/StyledCard'
+import Stepper from '../utility/Stepper';
 import { steps } from '../../pages/Admin/Register';
 import CompanyDetails from './CompanyDetails';
 import AddMembers from './AddMembers';

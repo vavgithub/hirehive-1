@@ -1,9 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import StyledCard from '../ui/StyledCard'
+import StyledCard from '../Cards/StyledCard.jsx'
 import StatusBadge from '../ui/StatusBadge'
 import { stagingConfig } from './staging.config.js';   
 import ClosedBadge from '../../svg/ClosedBadge.jsx';
-import AssigneeSelector from '../utility/AssigneeSelector.jsx';
+import AssigneeSelector from '../MUIUtilities/AssigneeSelector.jsx';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import BudgetIcon from '../../svg/Staging/BudgetIcon.jsx';
 import { useDispatch, useSelector } from 'react-redux';
@@ -12,8 +12,8 @@ import { setCurrentStage, updateStageStatus } from '../../redux/applicationStage
 import axios from '../../api/axios.js';
 import StageRating from './StageRating.jsx';
 import { showErrorToast, showSuccessToast } from '../ui/Toast.jsx';
-import { Button, DefaultIcon } from '../ui/Button.jsx';
-import Modal from '../Modal.jsx';
+import { Button, DefaultIcon } from '../Buttons/Button.jsx';
+import Modal from '../Modals/Modal.jsx';
 import { ACTION_TYPES } from '../../utility/ActionTypes.js';
 import { getMaxScoreForStage } from '../../pages/Admin/ViewCandidateProfile.jsx';
 import { getCandidateScore } from './StageAction.jsx';
@@ -31,7 +31,7 @@ import Scorer from '../ui/Scorer.jsx';
 import TaskForm, { SubmissionForm } from './TaskForm.jsx';
 import TaskDetails, { SubmissionDetails } from './TaskDetails.jsx';
 import HiredStamp from "../../svg/Background/HiredStamp.svg"
-import Loader from '../ui/Loader.jsx';
+import Loader from '../Loaders/Loader.jsx';
 
 const submitReview = async ({ candidateId, reviewData }) => {
     const response = await axios.post('dr/submit-score-review', {
@@ -49,7 +49,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
     const { stageTitle, stageConfig, stageBasedConfig , candidateId, jobId} = useMemo(()=>{
       const isValidstage =  stagingConfig[jobProfile]?.filter(stage=> stage?.name === selectedStage);
       const stageTitle = isValidstage?.length > 0 ? isValidstage[0]?.name : "";
-  
+        console.log(stageTitle,candidateData,isValidstage[0]?.contentConfig,isValidstage[0]?.contentConfig[currentStatus],currentStatus)  
       const stageConfig = isValidstage[0];
       const stageBasedConfig = isValidstage[0]?.contentConfig[currentStatus][role];
       const candidateId = candidateData?._id;

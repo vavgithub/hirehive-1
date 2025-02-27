@@ -4,8 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import Webcam from 'react-webcam';
 import { ChevronUp, ChevronDown, Camera, Mic } from 'lucide-react';
 import { useQuery, useMutation } from '@tanstack/react-query';
-import { Button } from '../../components/ui/Button';
-import Loader from '../../components/ui/Loader';
+import { Button } from '../../components/Buttons/Button';
+import Loader from '../../components/Loaders/Loader';
 import axios from "../../api/axios";
 import { showSuccessToast, showErrorToast } from '../../components/ui/Toast';
 import LightLogo from "../../svg/Logo/lightLogo.svg"
@@ -14,7 +14,7 @@ import TimerIconSmall from '../../svg/TimerIconSmall';
 import WarningIcon from '../../svg/WarningIcon';
 import Draggable from 'react-draggable';
 import { uploadAssessment } from '../../utility/cloudinary';
-import StyledCard from '../../components/ui/StyledCard';
+import StyledCard from '../../components/Cards/StyledCard';
 const ONE_MINUTE = 60;
 
 // Utility function to format time
