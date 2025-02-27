@@ -1,6 +1,7 @@
 import React from 'react'
 import { Button } from '../Buttons/Button'
 import StyledCard from '../Cards/StyledCard';
+import OTPInput from '../Inputs/OTPInput';
 
 function OtpComponent({showSendOTP, inviteMail , handleSendOtp, handleOtpSubmit , email , otp , isSubmitting , otpError , setOtp, cardbg = ""}) {
    
@@ -42,7 +43,7 @@ function OtpComponent({showSendOTP, inviteMail , handleSendOtp, handleOtpSubmit 
                 </Button>
                 :
               <>
-              <div className="flex justify-center  space-x-2 mt-4 ">
+              {/* <div className="flex justify-center  space-x-2 mt-4 ">
                 {otp?.map((data, index) => (
                   <input
                     key={index}
@@ -54,6 +55,13 @@ function OtpComponent({showSendOTP, inviteMail , handleSendOtp, handleOtpSubmit 
                     onChange={(e) => handleOtpChange(e.target, index)}
                   />
                 ))}
+              </div> */}
+              <div className='mt-4'>
+                <OTPInput 
+                length={6}
+                onChange={setOtp}
+                value={otp}
+                />
               </div>
               {otpError && <span className="text-red-500 text-xs font-outfit">{otpError}</span>}
 

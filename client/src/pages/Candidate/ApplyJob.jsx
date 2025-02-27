@@ -76,7 +76,7 @@ const ApplyJob = () => {
   const [phone, setPhone] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [otpError, setOtpError] = useState('');
-  const [otp, setOtp] = useState(['', '', '', '', '', '']);
+  const [otp, setOtp] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [resumeFile, setResumeFile] = useState(null);
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -255,7 +255,7 @@ useEffect(() => {
 
   const handleOtpSubmit = async (e) => {
     e.preventDefault();
-    const enteredOtp = otp.join('');
+    const enteredOtp = otp;
 
     if (enteredOtp.length !== 6) {
       setOtpError('Please enter the 6-digit OTP sent to your email.');

@@ -19,7 +19,7 @@ const sendOTP = async ({token}) => {
 }
 
 function OtpForm({setCurrentStep}) {
-    const [otp, setOtp] = useState(['', '', '', '', '', '']);
+    const [otp, setOtp] = useState("");
     const [otpError,setOtpError] = useState("");
 
     const { onboardData , setOnboardData } = useOnboardingContext();
@@ -53,7 +53,7 @@ function OtpForm({setCurrentStep}) {
 
     const handleOtpSubmit = (e)=> {
         e.preventDefault();
-        if(otp.join("")?.length !== 6){
+        if(otp?.length !== 6){
           setOtpError('Please enter the correct OTP')
           return
         }else{
@@ -64,7 +64,7 @@ function OtpForm({setCurrentStep}) {
           setTimeout(()=>window.location.reload(),1000);
           return 
         }
-        verifyOnboardOTPMutation.mutate({otp : otp?.join(""),email : onboardData?.email})
+        verifyOnboardOTPMutation.mutate({otp : otp,email : onboardData?.email})
     }
 
     const handleSendOtp = () => {
