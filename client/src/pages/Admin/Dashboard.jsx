@@ -20,7 +20,7 @@ import { DraftsIcon, DraftsIconActive } from '../../svg/Tabs/DraftsIcon';
 import NoJobs from "../../svg/Background/NoJobs.svg"
 import { showErrorToast, showSuccessToast } from '../../components/ui/Toast';
 import Loader from '../../components/Loaders/Loader';
-import SearchIcon from '../../svg/SearchIcon';
+import SearchIcon from '../../svg/Icons/SearchIcon';
 import StyledCard from '../../components/Cards/StyledCard';
 import Pagination from '../../components/utility/Pagination';
 import useDebounce from '../../hooks/useDebounce';

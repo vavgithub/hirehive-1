@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 import { fetchAllDesignReviewers, fetchAvailableDesignReviewers } from '../../api/authApi';
 // import SearchIcon from '@mui/icons-material/Search';
-import SearchIcon from '../../svg/SearchIcon';
+import SearchIcon from '../../svg/Icons/SearchIcon';
 import { useQuery } from '@tanstack/react-query';
 
 

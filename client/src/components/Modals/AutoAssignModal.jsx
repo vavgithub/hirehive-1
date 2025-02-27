@@ -2,8 +2,8 @@ import React, { useState, useEffect ,useRef } from 'react';
 import { fetchAvailableDesignReviewers } from '../../api/authApi';
 import Modal from './Modal';
 import axios from '../../api/axios';
-import ProfileIcon from '../../svg/ProfileIcon';
-import CloseButton from '../../svg/CloseButton';
+import ProfileIcon from '../../svg/Icons/ProfileIcon';
+import CloseButton from '../../svg/Icons/CloseButton';
 
 const AutoAssignModal = ({ open, onClose, onAssign, jobId, budgetFilter }) => {
     const [reviewers, setReviewers] = useState([]);

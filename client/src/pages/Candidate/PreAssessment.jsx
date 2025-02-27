@@ -5,9 +5,9 @@ import Assessment from './Assessment'; // Import your existing Assessment compon
 import { Button } from '../../components/Buttons/Button';
 import Camera from '../../svg/Buttons/Camera';
 import Logo from '../../svg/Logo/lightLogo.svg'
-import AssesmentIcon from '../../svg/AssesmentIcon';
-import TimerClockIcon from '../../svg/TimerClockIcon';
-import ProfileIcon from '../../svg/ProfileIcon';
+import AssesmentIcon from '../../svg/Icons/AssesmentIcon';
+import TimerClockIcon from '../../svg/Icons/TimerClockIcon';
+import ProfileIcon from '../../svg/Icons/ProfileIcon';
 import CameraDisabled from '../../svg/Buttons/CameraDisabled';
 import MicDisabled from '../../svg/Buttons/MicDisabled';
 import StyledCard from '../../components/Cards/StyledCard';

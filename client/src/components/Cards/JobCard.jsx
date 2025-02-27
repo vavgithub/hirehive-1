@@ -6,7 +6,7 @@ import { getTimeAgo } from '../../utility/getTimeAgo';
 import PriceIcon from '../../svg/JobCard/PriceIcon';
 import JobTypeIcon from '../../svg/JobCard/JobTypeIcon';
 import GraphIcon from '../../svg/JobCard/GraphIcon';
-import ClosedBadge from '../../svg/ClosedBadge';
+import ClosedBadge from '../../svg/Icons/ClosedBadge';
 import StyledCard from './StyledCard';
 import CustomBadge from '../Badge/CustomBadge';
 

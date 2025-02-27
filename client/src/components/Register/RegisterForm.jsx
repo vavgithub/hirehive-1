@@ -7,7 +7,7 @@ import one from '../../svg/StatsCard/Jobs Page/one';
 import two from '../../svg/StatsCard/Jobs Page/two';
 import Logo from '../../svg/Logo/lightLogo.svg'
 import LoaderModal from '../Loaders/LoaderModal';
-import GoogleIcon from '../../svg/GoogleIcon';
+import GoogleIcon from '../../svg/Icons/GoogleIcon';
 import { steps } from '../../pages/Admin/Register';
 import { useMutation } from '@tanstack/react-query';
 import { showErrorToast, showSuccessToast } from "../ui/Toast"

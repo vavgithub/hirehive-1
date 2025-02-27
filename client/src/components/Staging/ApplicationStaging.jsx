@@ -67,10 +67,8 @@ const ApplicationStaging = ({ candidateId, jobId ,jobStatus}) => {
     const stages = Object.keys(stageStatuses);
 
     useEffect(() => {
-        if (currentStage !== selectedStage) {
-            setSelectedStage(currentStage);
-        }
-    }, [currentStage, selectedStage]);
+        setSelectedStage(currentStage);
+    }, [currentStage]);
     // const renderStageComponent = (stage) => {
     //     const StageComponent = stageComponents[stage];
     //     if (!StageComponent) {

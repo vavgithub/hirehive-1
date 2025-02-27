@@ -10,7 +10,7 @@ import Filter from '../../svg/Buttons/Filter';
 import AssessmentBanner from '../../components/ui/AssessmentBanner';
 import NoJobs from "../../svg/Background/NoJobs.svg"
 import Loader from '../../components/Loaders/Loader';
-import SearchIcon from '../../svg/SearchIcon';
+import SearchIcon from '../../svg/Icons/SearchIcon';
 import useCandidateAuth from '../../hooks/useCandidateAuth';
 import Pagination from '../../components/utility/Pagination';
 import useDebounce from '../../hooks/useDebounce';

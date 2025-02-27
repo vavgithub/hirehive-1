@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ACTION_TYPES } from '../../utility/ActionTypes';
-import ThreeDotsIcon from '../../svg/ThreeDotsIcon';
 import EditIcon from '../../svg/KebabList/EditIcon';
 import ArchiveIcon from '../../svg/KebabList/ArchivedIcon';
 import DeleteIcon from '../../svg/KebabList/DeleteIcon';
 import CloseIcon from '../../svg/KebabList/CloseIcon';
 import ReOpenIcon from '../../svg/KebabList/ReOpenIcon';
+import ThreeDotsIcon from '../../svg/Icons/ThreeDotsIcon';
 
 const MenuItems = {
   job: {

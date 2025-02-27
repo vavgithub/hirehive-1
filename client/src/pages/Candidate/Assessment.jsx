@@ -10,8 +10,8 @@ import axios from "../../api/axios";
 import { showSuccessToast, showErrorToast } from '../../components/ui/Toast';
 import LightLogo from "../../svg/Logo/lightLogo.svg"
 import { fetchCandidateAuthData, updateAssessmentStatus } from '../../redux/candidateAuthSlice';
-import TimerIconSmall from '../../svg/TimerIconSmall';
-import WarningIcon from '../../svg/WarningIcon';
+import TimerIconSmall from '../../svg/Icons/TimerIconSmall';
+import WarningIcon from '../../svg/Icons/WarningIcon';
 import Draggable from 'react-draggable';
 import { uploadAssessment } from '../../utility/cloudinary';
 import StyledCard from '../../components/Cards/StyledCard';

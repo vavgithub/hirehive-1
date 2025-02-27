@@ -13,7 +13,7 @@ import DesignTask from '../../svg/StatsCard/View Candidate/DesignTask';
 import { showErrorToast, showSuccessToast } from '../../components/ui/Toast';
 import { Avatar } from '@mui/material';
 import { FaFile, FaGlobe } from 'react-icons/fa';
-import FileMainIcon from '../../svg/FileMainIcon';
+import FileMainIcon from '../../svg/Icons/FileMainIcon';
 import OfferSent from '../../svg/StatsCard/View Candidate/OfferSent';
 import Round1 from '../../svg/StatsCard/View Candidate/Round1';
 import Round2 from '../../svg/StatsCard/View Candidate/Round2';

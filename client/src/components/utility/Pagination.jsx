@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react'
-import LeftPagination from '../../svg/LeftPagination'
-import RightPagination from '../../svg/RightPagination'
+import LeftPagination from '../../svg/Icons/LeftPagination'
+import RightPagination from '../../svg/Icons/RightPagination'
 
 function Pagination({currentPage, pageLimit , totalItems ,setCurrentPage}) {
   const numberOfPages = Math.ceil(totalItems/pageLimit);

@@ -8,7 +8,7 @@ import SideCard from '../../components/ui/SideCard';
 import useAuthCandidate, { useCandidateAuth } from '../../hooks/useCandidateAuth'; // Import the authentication hook
 import Header from '../../components/utility/Header';
 import Loader from '../../components/Loaders/Loader';
-import ArrowIcon from '../../svg/ArrowIcon';
+import ArrowIcon from '../../svg/Icons/ArrowIcon';
 import Logo from '../../svg/Logo/lightLogo.svg'
 import StyledCard from '../../components/Cards/StyledCard';
 // Function to fetch the job data by ID

@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import StyledCard from '../Cards/StyledCard.jsx'
 import StatusBadge from '../ui/StatusBadge'
 import { stagingConfig } from './staging.config.js';   
-import ClosedBadge from '../../svg/ClosedBadge.jsx';
+import ClosedBadge from '../../svg/Icons/ClosedBadge.jsx';
 import AssigneeSelector from '../MUIUtilities/AssigneeSelector.jsx';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import BudgetIcon from '../../svg/Staging/BudgetIcon.jsx';
@@ -49,7 +49,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
     const { stageTitle, stageConfig, stageBasedConfig , candidateId, jobId} = useMemo(()=>{
       const isValidstage =  stagingConfig[jobProfile]?.filter(stage=> stage?.name === selectedStage);
       const stageTitle = isValidstage?.length > 0 ? isValidstage[0]?.name : "";
-        console.log(stageTitle,candidateData,isValidstage[0]?.contentConfig,isValidstage[0]?.contentConfig[currentStatus],currentStatus)  
+        
       const stageConfig = isValidstage[0];
       const stageBasedConfig = isValidstage[0]?.contentConfig[currentStatus][role];
       const candidateId = candidateData?._id;

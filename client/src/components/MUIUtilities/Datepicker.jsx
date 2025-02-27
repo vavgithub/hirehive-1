@@ -4,7 +4,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
-import DropDownIcon from '../../svg/DropDownIcon';
+import DropDownIcon from '../../svg/Icons/DropDownIcon';
 import CalenderIcon from '../../svg/Staging/CalenderIcon';
 import 'dayjs/locale/en-gb';
 
