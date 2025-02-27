@@ -7,6 +7,7 @@ import { CustomDropdown } from '../Dropdowns/CustomDropdown';
 import StyledCard from '../Cards/StyledCard';
 import { Button } from '../Buttons/Button';
 import WarningIcon from '../../svg/Staging/WarningIcon';
+import AssessmentPopup from '../../svg/Background/AssessmentPopup.svg';
 
 const ACTION_TYPES = {
   DELETE: 'DELETE',

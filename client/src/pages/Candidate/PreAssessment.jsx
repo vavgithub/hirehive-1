@@ -12,22 +12,7 @@ import CameraDisabled from '../../svg/Buttons/CameraDisabled';
 import MicDisabled from '../../svg/Buttons/MicDisabled';
 import StyledCard from '../../components/Cards/StyledCard';
 import Modal from '../../components/Modals/Modal';
-
-const AccordionItem = ({ title, content, isOpen, toggleOpen , preIcon}) => (
-    <StyledCard backgroundColor={"bg-background-80"} extraStyles="mb-4 overflow-hidden">
-        <div className='flex items-center gap-3'>
-            {preIcon}
-            <button
-                className="w-full  text-left typography-h3 flex justify-between items-center"
-                onClick={toggleOpen}
-            >
-                {title}
-                {isOpen ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
-            </button>
-        </div>
-        {isOpen && <div className="p-4 bg-background-80 text-font-gray typography-body">{content}</div>}
-    </StyledCard>
-);
+import { AccordionItem } from '../../components/Accordion/AccordionItem';
 
 const PreAssessment = () => {
     const [isOverviewOpen, setIsOverviewOpen] = useState(true);

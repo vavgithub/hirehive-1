@@ -34,7 +34,10 @@ function GlobalDropDown({onChange,options, label ,error,errorMessage, value, ext
                     backgroundColor: 'rgba(12, 13, 13, 1)',
                     color: "white",
                     font: "Outfit",
-                    padding : "0px "
+                    padding : "0px ",
+                    display : "flex",
+                    flexDirection : "column",
+                    gap : "8px"
                 },
                 }}
             >
@@ -43,21 +46,10 @@ function GlobalDropDown({onChange,options, label ,error,errorMessage, value, ext
                 options?.map((optionObj) => (
                     <MenuItem
                     sx={{
-                        margin : "8px 0px !important",
+                        margin : "0px !important",
                         padding :"8px 16px",
                         borderRadius : "12px",
-                        ':hover' :{
-                        background :"rgba(35,36,37,1)"
-                        },
-                        '&.Mui-selected': {
-                        background: "rgba(24,233,208,0.1) !important", // Red background for selected item
-                        },
-                        '&.Mui-selected:hover' : {
-                        background :"rgba(35,36,37,1) !important"
-                        },
-                        '&.Mui-selected span': {
-                        color: "rgba(24,233,208,1) !important", // Slightly darker red on hover
-                        },
+                        backgroundColor: 'rgba(12, 13, 13, 1)',
                     }}
                     key={optionObj?.value}
                     onClick={()=>{onChange(optionObj?.value); setAnchorEl(null)}}
@@ -65,11 +57,6 @@ function GlobalDropDown({onChange,options, label ,error,errorMessage, value, ext
                     <ListItemText
                     primaryTypographyProps={{
                         component : 'span'
-                    }}
-                    sx={{
-                        "& .MuiTypography-root": {
-                        fontFamily: "Outfit", // Apply the custom font explicitly to the Typography
-                        },
                     }}
                     primary={optionObj?.label} />
                     </MenuItem>
