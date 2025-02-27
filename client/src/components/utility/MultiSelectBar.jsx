@@ -453,7 +453,7 @@ function MultiSelectBar({selectedData,jobId,clearSelection}) {
                     return (
                         <div key={stage}>
                             <div className='flex items-center justify-between my-2'>
-                                <h2>{globalStages[nextStageIndex + 1] || stage}</h2>
+                                <h2>{action?.name === "REJECT" ? globalStages[nextStageIndex] : globalStages[nextStageIndex + 1] || stage}</h2>
                                 <p className='typography-small-p font-light text-font-gray'>{candidateData?.length ?? 0} candidates</p>
                             </div>
                             <div className='gap-4 grid grid-cols-2  bg-background-70 rounded-xl p-4'>
