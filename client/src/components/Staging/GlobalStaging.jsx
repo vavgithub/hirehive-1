@@ -517,7 +517,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
             {
                 (stageBasedConfig?.hasBudgetScoring && !isBudgetScoreSubmitted) && 
                 <div>
-                    <p className='typography-body text-white mb-4'>Score Budget</p>
+                    <p className={currentStatus === "Reviewed" ? "typography-small-p text-font-gray mb-2" :'typography-body text-white mb-4'}>Score Budget</p>
                     <div className='flex gap-4'>
                         <Scorer value={budgetScore} onChange={setBudgetScore} />
                         <Button 

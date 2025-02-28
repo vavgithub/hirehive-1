@@ -411,6 +411,7 @@ export const stagingConfig = {
                         hasRemarks : true,
                         hasScoreBoard : true,
                         hasScoreCard : true,
+                        hasBudgetScoring : true,
                         hasCallDetails : false,
                         hasCallHistory : false,
                         hasScheduledForm : false,
