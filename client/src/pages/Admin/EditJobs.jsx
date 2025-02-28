@@ -6,10 +6,13 @@ import axios from '../../api/axios';
 import Header from '../../components/utility/Header';
 import { showErrorToast, showSuccessToast } from '../../components/ui/Toast';
 import Loader from '../../components/Loaders/Loader';
+import { useAuthContext } from '../../context/AuthProvider';
 
 const EditJobs = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuthContext(); // Get user data from the context
+  const role = user?.role || 'Admin';
 
   const { isLoading, error, data } = useQuery({
     queryKey: ['job', id],
@@ -21,7 +24,7 @@ const EditJobs = () => {
     onSuccess: (data) => {
       showSuccessToast('Job Updated', `"${data.data.job.jobTitle}" updated successfully`);
       setTimeout(() => {
-        navigate('/admin/jobs');
+        navigate(role === "Admin" ? '/admin/jobs' : '/hiring-manager/jobs');  
       }, 1000);
     },
     onError: (error) => {

@@ -29,12 +29,15 @@ import Loader from '../../components/Loaders/Loader';
 import StyledCard from '../../components/Cards/StyledCard';
 import Modal from '../../components/Modals/Modal';
 import CustomBadge from '../../components/Badge/CustomBadge';
+import { useAuthContext } from '../../context/AuthProvider';
 
 
 const ViewJobs = () => {
     const { id: mainId } = useParams();
     const navigate = useNavigate();
     const queryClient = useQueryClient();
+    const { user } = useAuthContext(); // Get user data from the context
+    const role = user?.role || 'Admin';
 
     const [closeReason, setCloseReason] = useState('');
 
@@ -79,7 +82,7 @@ const ViewJobs = () => {
                 closeMutation.mutate({ jobId: mainId, closeReason });
                 break;
             case ACTION_TYPES.EDIT:
-                navigate(`/admin/edit-job/${mainId}`);
+                navigate(role === "Admin" ? `/admin/edit-job/${mainId}` : `/hiring-manager/edit-job/${mainId}`);
                 setModalOpen(false);
                 break;
             default:
