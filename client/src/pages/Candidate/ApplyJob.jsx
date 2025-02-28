@@ -104,6 +104,7 @@ const ApplyJob = () => {
   const {
     register,
     control,
+    watch,
     handleSubmit,
     formState: { errors, isValid },
     getValues,
@@ -500,7 +501,7 @@ useEffect(() => {
 
       {/* Password Creation Step */}
       {currentStep === 3 && (
-        <PasswordComponent control={control} handlePasswordSubmit={handlePasswordSubmit} isSubmitting={isSubmitting} passwordError={passwordError} />
+        <PasswordComponent watch={watch} control={control} handlePasswordSubmit={handlePasswordSubmit} isSubmitting={isSubmitting} passwordError={passwordError} />
       )}
 
     </div>

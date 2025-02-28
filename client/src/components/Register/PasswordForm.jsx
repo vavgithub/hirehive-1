@@ -23,6 +23,7 @@ function PasswordForm({setCurrentStep}) {
         handleSubmit,
         formState: { errors, isValid },
         getValues,
+        watch,
         setValue,
         reset,
       } = useForm({
@@ -112,7 +113,7 @@ function PasswordForm({setCurrentStep}) {
       }
   return (
     <div>
-      <PasswordComponent cardbg='bg-card-bg bg-cover bg-center bg-no-repeat' handlePasswordSubmit={handlePasswordSubmit} control={control} passwordError={passwordError} />
+      <PasswordComponent watch={watch} cardbg='bg-card-bg bg-cover bg-center bg-no-repeat' handlePasswordSubmit={handlePasswordSubmit} control={control} passwordError={passwordError} />
     </div>
   )
 }

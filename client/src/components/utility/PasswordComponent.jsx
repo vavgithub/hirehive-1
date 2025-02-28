@@ -1,11 +1,14 @@
 import React from 'react'
-import { Controller } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 import StyledCard from '../Cards/StyledCard'
 import { InputField } from '../Inputs/InputField'
 import { Button } from '../Buttons/Button'
+import PasswordRuleValidator from './PasswordRuleValidator'
 
 
-function PasswordComponent({handlePasswordSubmit , control , passwordError , isSubmitting ,cardbg = ""}) {
+function PasswordComponent({handlePasswordSubmit , watch , control , passwordError , isSubmitting ,cardbg = ""}) {
+    const password = watch("password");
+    console.log(password)
   return (
     <div className="flex items-center w-screen justify-center min-h-screen bg-cover bg-verification">
         <StyledCard padding={0} extraStyles={"w-full mx-8 md:mx-0 max-w-lg space-y-8 shadow-xl " + cardbg}>
@@ -56,16 +59,7 @@ function PasswordComponent({handlePasswordSubmit , control , passwordError , isS
             )}
 
             {/* Validation criteria */}
-            <div>
-            <p className='typography-large-p pt-4 pb-2 text-font-gray'>Password must meet the following criteria:</p>
-            <ul className='list-disc list-inside'>
-                <li className='typography-large-p pb-2 text-font-gray'>Password must be at least 8 characters long.</li>
-                <li className='typography-large-p pb-2 text-font-gray'>Password must include at least one uppercase letter (A-Z).</li>
-                <li className='typography-large-p pb-2 text-font-gray'>Password must include at least one lowercase letter (a-z).</li>
-                <li className='typography-large-p pb-2 text-font-gray'>Password must include at least one number (0-9).</li>
-                <li className='typography-large-p pb-2 text-font-gray'> Password must include at least one special character .</li>
-            </ul>
-            </div>
+            <PasswordRuleValidator password={password} />
 
             <div className="flex mt-6 justify-center gap-4 w-full mr-16 mb-6 ">
             <Button
