@@ -95,26 +95,13 @@ const ViewCandidateProfile = () => {
         },
     });
 
-    // Modified useEffect to respect the origin path
-    // useEffect(() => {
-    //     if (selectedJob && role === "Hiring Manager") {
-    //         // Check if we came from jobs or candidates page
-    //         const isFromJobsPage = location.pathname.includes('/admin/jobs/');
-    //         const basePath = isFromJobsPage ? '/admin/jobs' : '/admin/candidates';
-            
-    //         navigate(`${basePath}/view-candidate/${candidateId}/${selectedJob}`);
-    //     }
-    // }, [selectedJob, location.pathname]);
-
-     // Store the original entry path when component mounts
-    //  const [originalPath] = useState(location.pathname.includes('/admin/jobs/') ? '/admin/jobs' : '/admin/candidates');
 
      const [originalPath] = useState(()=>{
         const isJobPath = location.pathname.includes('/admin/jobs/');
         if (isJobPath) {
             return `/admin/jobs/view-job/${jobId}`;
         }
-        return `/admin/candidates`;
+        return role === "Hiring Manager" ?  `/admin/candidates` :`/design-reviewer/candidates`; ;
      })
 
    // Effect for job switching
