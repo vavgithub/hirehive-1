@@ -157,8 +157,11 @@ export const getUserProfile = asyncHandler(async (req, res) => {
 
 export const getAvailableDesignReviewers = async (req, res) => {
     try {
+      const company_id = req.user?.company_id;
+
       const allReviewers = await User.find({ 
-        role: 'Design Reviewer'
+        role: 'Design Reviewer',
+        company_id : company_id
       }).select('_id name email isAvailable profilePicture'); // Include _id and isAvailable
   
       res.status(200).json({ 

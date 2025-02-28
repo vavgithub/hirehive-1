@@ -1,6 +1,7 @@
 import { jobStagesStatuses } from "../../config/jobStagesStatuses.js";
 import { jobs } from "../../models/admin/jobs.model.js";
 import { Question, seedQuestions } from "../../models/admin/questions.model.js";
+import { User } from "../../models/admin/user.model.js";
 import { candidates } from "../../models/candidate/candidate.model.js";
 import { uploadToCloudinary } from '../../utils/cloudinary.js';
 import { promises as fs } from 'fs';
@@ -440,7 +441,13 @@ export const getCandidateJobs = async (req,res) => {
   export const getAllCandidatesWithStats = async (req, res) => { 
     try {
       const adminId = req.user._id; // Extract the admin's _id from the authenticated user
-  
+      const company_id = req.user.company_id;
+      
+      // Find all users in the same company
+      const usersInCompany = await User.find({ company_id }, '_id'); // Get only _id fields
+      // Extract user _id values into an array
+      const userIds = usersInCompany.map(user => user._id);
+
       const allCandidates = await candidates.aggregate([
         // Unwind the jobApplications array to work with each application separately
         {
@@ -464,7 +471,7 @@ export const getCandidateJobs = async (req,res) => {
         // Filter only those applications for jobs created by the logged-in admin
         {
           $match: {
-            "jobDetail.createdBy": adminId
+            "jobDetail.createdBy": { $in: userIds } 
           }
         },
         // Project the required fields

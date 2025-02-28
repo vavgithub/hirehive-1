@@ -62,7 +62,7 @@ router.post('/register', registerUser);
 router.post('/login', authUser);
 router.post('/logout', logoutUser);
 router.get('/profile', protect, getUserProfile);
-router.get('/design-reviewers', getAvailableDesignReviewers);
+router.get('/design-reviewers',protect, getAvailableDesignReviewers);
 
 router.post('/forgot-password', forgotPassword);
 router.post('/verify-otp', verifyOTP);

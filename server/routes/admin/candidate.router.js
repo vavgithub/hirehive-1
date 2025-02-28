@@ -21,7 +21,7 @@ router.get("/:jobId", getAllCandidatesForJob);
 // router.get('/data/:id', getCandidateById);
 router.get("/:candidateId/job/:jobId", getCandidateById);
 
-router.get("/:candidateId/jobs",protect, roleProtect("Hiring Manager"), getCandidateJobs);
+router.get("/:candidateId/jobs",protect, roleProtect(["Admin","Hiring Manager"]), getCandidateJobs);
 
 router.patch("/update/:id", updateStatusAndStage);
 

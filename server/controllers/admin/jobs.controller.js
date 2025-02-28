@@ -6,6 +6,7 @@ import mongoose from "mongoose";
 import { jobStagesStatuses } from "../../config/jobStagesStatuses.js";
 import { candidates } from "../../models/candidate/candidate.model.js";
 import { sanitizeLexicalHtml } from "../../utils/sanitize-html.js";
+import { User } from "../../models/admin/user.model.js";
 // Controller function to create a new job
 
 export const StatisticsController = {
@@ -18,24 +19,29 @@ export const StatisticsController = {
     try {
       // Extract the admin's _id from the authenticated user
       const adminId = req.user._id;
+      const company_id = req.user.company_id;
       
+      // Find all users in the same company
+      const usersInCompany = await User.find({ company_id }, '_id'); // Get only _id fields
+      // Extract user _id values into an array
+      const userIds = usersInCompany.map(user => user._id);
       // ------------------------
       // JOB STATISTICS (Filter by jobs created by this admin)
       // ------------------------
-      const totalJobs = await jobs.countDocuments({ createdBy: adminId });
+      const totalJobs = await jobs.countDocuments({ createdBy: { $in: userIds }  });
       
       const totalOpenJobs = await jobs.countDocuments({ 
-        createdBy: adminId,
+        createdBy: { $in: userIds } ,
         status: { $in: ["", "open"] }
       });
       
       const totalClosedJobs = await jobs.countDocuments({ 
-        createdBy: adminId,
+        createdBy: { $in: userIds } ,
         status: "closed" 
       });
       
       const totalDraftedJobs = await jobs.countDocuments({ 
-        createdBy: adminId,
+        createdBy: { $in: userIds } ,
         status: "draft" 
       });
       
@@ -60,7 +66,7 @@ export const StatisticsController = {
         // Match only those applications where the job was created by the admin
         {
           $match: {
-            "jobDetails.createdBy": adminId
+            "jobDetails.createdBy": { $in: userIds } 
           }
         },
         // Count the total number of matching applications
@@ -82,7 +88,7 @@ export const StatisticsController = {
         { $unwind: "$jobDetails" },
         {
           $match: {
-            "jobDetails.createdBy": adminId,
+            "jobDetails.createdBy": { $in: userIds } ,
             "jobApplications.currentStage": "Hired",
             "jobApplications.stageStatuses.Hired.status": "Accepted"
           }
@@ -244,11 +250,21 @@ const getJobs = async (req, res) => {
     const pageNumber = page ? parseInt(page) : 1;
     const LIMIT = 3;
 
+    const company_id = req.user.company_id;
+    let userIds = [];
+
+    if(company_id){
+      // Find all users in the same company
+      const usersInCompany = await User.find({ company_id }, '_id'); // Get only _id fields
+      // Extract user _id values into an array
+       userIds = usersInCompany.map(user => user._id);
+    }
+
     const jobsWithStats = await jobs.aggregate([
       // Match jobs created by the current user
       {
         $match: {
-          createdBy: new mongoose.Types.ObjectId(req.user._id),
+          createdBy: {$in : userIds},
           status: status,
         },
       },
@@ -574,7 +590,15 @@ const filterSearchJobs = asyncHandler(async (req, res) => {
   try {
     const { employmentType, jobProfile, experience, budget, closingStatus } =
       req.body.filters;
-    const query = { createdBy: req.user._id };
+
+    const company_id = req.user.company_id;
+    
+    // Find all users in the same company
+    const usersInCompany = await User.find({ company_id }, '_id'); // Get only _id fields
+    // Extract user _id values into an array
+    const userIds = usersInCompany.map(user => user._id);
+
+    const query = { createdBy: { $in: userIds }  };
     const { page, status } = req.body;
     const pageNumber = page ? parseInt(page) : 1;
     const LIMIT = 3;

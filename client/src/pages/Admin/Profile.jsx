@@ -396,17 +396,17 @@ function Profile() {
                   {user?.name}
                 </h1>
                 <div className="flex items-center gap-4 mt-2">
-                  <p className="text-gray-600">{user?.email}</p>
+                  <p className="font-outfit text-gray-600">{user?.email}</p>
                   <span className="w-1 h-1 bg-gray-400 rounded-full"></span>
-                  <p className="text-gray-600">{user?.role}</p>
+                  <p className="font-outfit text-gray-600">{user?.role}</p>
                 </div>
                 <div className="mt-6 w-full grid grid-cols-2 gap-4">
                   <div>
-                    <p className="text-gray-500 text-sm">Reviews Completed</p>
+                    <p className="font-outfit text-gray-500 text-sm">Reviews Completed</p>
                     <p className="text-xl font-semibold">{user?.tasks_done || 0}</p>
                   </div>
                   <div>
-                    <p className="text-gray-500 text-sm">Pending Reviews</p>
+                    <p className="font-outfit text-gray-500 text-sm">Pending Reviews</p>
                     <p className="text-xl font-semibold">{user?.tasks_pending || 0}</p>
                   </div>
                 </div>
