@@ -195,7 +195,7 @@ const Reviews = () => {
     navigate(`/design-reviewer/candidates/view-candidate/${candidate._id}/${candidate.currentApplication.jobId}`)
   }
 
-  const groupedEntries = Object.entries(groupedCandidates);
+  const groupedEntries = candidates?.length > 0 ? Object.entries(groupedCandidates) : [];
 
   return (
     <div className='w-full p-4'>

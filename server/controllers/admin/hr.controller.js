@@ -751,6 +751,8 @@ export const scheduleCall = async (req, res) => {
         scheduledTime: time,
         meetingLink: meetingLink,
       },
+      //Populating score to get the score given before calls (Budget)
+    ...(jobApplication.stageStatuses.get(stage)?.score ? {score :  jobApplication.stageStatuses.get(stage)?.score} : {})
     });
 
     // Save the changes
