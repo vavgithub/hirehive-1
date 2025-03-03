@@ -17,7 +17,7 @@ const updateCallStatuses = async () => {
         }
       );
       
-      // console.log(`[${new Date().toISOString()}] Updated ${result.modifiedCount} documents for ${stage}`);
+      console.log(`[${new Date().toISOString()}] Updated ${result.modifiedCount} documents for ${stage}`);
     }
   } catch (error) {
     console.error(`[${new Date().toISOString()}] Error updating call statuses:`, error);
