@@ -747,7 +747,7 @@ export const scheduleCall = async (req, res) => {
       status: "Call Scheduled",
       assignedTo: assigneeId,
       currentCall: {
-        scheduledDate: updateDateWithTime(date,time),
+        scheduledDate: date,
         scheduledTime: time,
         meetingLink: meetingLink,
       },
