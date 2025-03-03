@@ -59,7 +59,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
     },[candidateData,jobProfile,selectedStage,role])
 
 
-    const data = useScheduler(candidateData, stageData, "Under Review")
+    // const data = useScheduler(candidateData, stageData, "Under Review")
 
     const dispatch = useDispatch();
     const queryClient = useQueryClient();
