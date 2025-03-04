@@ -17,6 +17,7 @@ import { uploadAssessment } from '../../utility/cloudinary';
 import StyledCard from '../../components/Cards/StyledCard';
 import { SizableEyeIcon } from '../../svg/Icons/EyeIcon';
 import CameraDisabled from '../../svg/Buttons/CameraDisabled';
+import ImageModal from '../../components/Modals/ImageModal';
 const ONE_MINUTE = 60;
 
 // Utility function to format time
@@ -157,18 +158,24 @@ const QuestionDisplay = ({
   isLast,
   isAllAnswered,
   renderFinishButton,
-}) => (
+}) => {
+  const [showImage,setShowImage] = useState(false);
+
+  return(
   <div className="flex-grow p-8 pl-[212px]">
     <div className="mb-8">
       <StyledCard backgroundColor={"bg-background-70"} padding={3} extraStyles={"flex flex-col gap-4"} >
         <h1 className="typography-h1 ">{`Question ${questionNumber + 1}: ${question.text}`}</h1>
         {question.questionType === 'image' && question.imageUrl && (
-          <div className="">
+          <div className="relative w-fit">
             <img
               src={question.imageUrl}
               alt="Question visual"
               className="max-w-md rounded-xl"
             />
+            <div onClick={()=>setShowImage(question.imageUrl)} className={`absolute bottom-2 cursor-pointer right-2 p-2 rounded-xl bg-gray-800`}>
+              <SizableEyeIcon width={18} height={16} />
+            </div>
           </div>
         )}
       </StyledCard>
@@ -225,8 +232,9 @@ const QuestionDisplay = ({
         )}
       </div>
     </div>
+    <ImageModal isOpen={showImage} onClose={()=>setShowImage(false)} imageUrl={showImage} />
   </div>
-);
+)};
 
 // Webcam Component
 const WebcamView = React.memo(({ isMinimized, toggleMinimize, isRecording, webcamRef ,handleUserMedia}) => {
@@ -257,9 +265,9 @@ const WebcamView = React.memo(({ isMinimized, toggleMinimize, isRecording, webca
           {/* <div className={`p-2 rounded-xl ${isRecording ? 'bg-red-500' : 'bg-gray-800'}`}>
             <Camera size={20} />
           </div> */}
-          <div className={`p-2 rounded-xl bg-gray-800`}>
+          {/* <div className={`p-2 rounded-xl bg-gray-800`}>
             <SizableEyeIcon width={18} height={16} />
-          </div>
+          </div> */}
         </div>
         {!isRecording && 
         <div className='absolute flex items-center justify-center opacity-25 w-full h-full top-0 left-0 bg-background-80'>
