@@ -17,6 +17,7 @@ import { useDispatch } from "react-redux";
 import { updateWithoutAssessment } from "../../redux/candidateAuthSlice";
 import LoaderModal from "../../components/ui/LoaderModal";
 import CustomToolTip from "../../components/utility/CustomToolTip";
+import { emailRegex, mobileRegex } from "../../utility/regex";
 
 const PersonalDetails = ({candidateData, isEditing , control}) => {
     return (
@@ -416,6 +417,21 @@ function Profile() {
   const handleEditProfile = async (data) => {
     try {
       setIsLoading(true);
+      
+      if (!data.firstName?.trim()) throw new Error("First name is required.");
+      if (!data.lastName?.trim()) throw new Error("Last name is required.");
+      if (!data.email?.trim() || !emailRegex.test(data.email)) 
+          throw new Error("Valid email is required.");
+      if (!data.phone?.trim() || !mobileRegex.test(data.phone)) 
+          throw new Error("Valid 10-digit phone number is required.");
+      if (!data.location?.trim()) throw new Error("Location is required.");
+      if (data.currentCTC < 0) throw new Error("Current CTC cannot be negative.");
+      if (data.expectedCTC < data.currentCTC) 
+          throw new Error("Expected CTC must be greater than or equal to Current CTC.");
+      if (data.experience < 0) throw new Error("Experience cannot be negative.");
+      if (data.noticePeriod < 0) throw new Error("Notice period cannot be negative.");
+      if (data.portfolio.trim() === "") throw new Error("Valid portfolio URL is required.");
+
       if(resumeFile){
         data.resume = await uploadResume(resumeFile,()=>{})
       }

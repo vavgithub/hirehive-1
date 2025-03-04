@@ -28,8 +28,8 @@ export const ProfilePictureUpload = ({
           <div className='flex justify-start w-full gap-4'>
             <div className="relative w-24 h-24">
               <img src={previewUrl || "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg"} alt="Profile" className="w-full h-full object-cover rounded-full" />
-              <div className="absolute bottom-0 right-0 p-1 bg-background-90 rounded-full">
-              </div>
+              {/* <div className="absolute bottom-0 right-0 p-1 bg-background-90 rounded-full">
+              </div> */}
             </div>
             <div className="flex flex-col items-start">
               <span className="typography-small-p text-font-gray my-2">
