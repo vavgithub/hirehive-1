@@ -1,6 +1,7 @@
 import cron from 'node-cron';
 import { candidates } from '../models/candidate/candidate.model.js';
 import mongoose from 'mongoose';
+import moment from 'moment-timezone';
 
 const updateCallStatuses = async () => {
   const now = new Date();
@@ -41,8 +42,13 @@ const updateCallStatuses = async () => {
           const [hours, minutes] = currentCall.scheduledTime.split(':').map(Number);
           
           // Set the hours and minutes on the scheduled date
-          const callDateTime = new Date(scheduledDate);
-          callDateTime.setUTCHours(hours, minutes, 0, 0);
+          // const callDateTime = new Date(scheduledDate);
+          // callDateTime.setHours(hours, minutes, 0, 0);
+          const callDateTime = moment(scheduledDate)
+          .tz('Asia/Kolkata') // Ensure the date is interpreted in IST
+          .set({ hour: hours, minute: minutes, second: 0 }) // Set time
+          .utc() // Convert to UTC
+          .toDate()
           
           console.log(`Job ${jobApp.jobId} scheduled for ${callDateTime}, current time: ${now}`);
           
