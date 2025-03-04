@@ -44,7 +44,7 @@ const updateCallStatuses = async () => {
           const callDateTime = new Date(scheduledDate);
           callDateTime.setHours(hours, minutes, 0, 0);
           
-          console.log(`Job ${jobApp.jobId} scheduled for ${callDateTime.toISOString()}, current time: ${now.toISOString()}`);
+          console.log(`Job ${jobApp.jobId} scheduled for ${callDateTime}, current time: ${now}`);
           
           // Check if time has passed
           if (callDateTime < now) {
