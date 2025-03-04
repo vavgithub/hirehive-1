@@ -505,7 +505,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
             </div>}
             <div className='w-[35%] flex flex-col'>
             {stageBasedConfig?.hasScoreCard && 
-            <div className='bg-stars bg-cover rounded-xl w-[160px] h-fit my-4 self-end'>
+            <div className='bg-stars bg-cover rounded-xl w-[50%] h-fit my-4 self-end'>
                 <div className='p-4 flex flex-col items-center'>
                     <p className='typography-small-p text-font-gray'>Total Score:</p>
                     <div className='flex flex-col items-center text-font-accent'>

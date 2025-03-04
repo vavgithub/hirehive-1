@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useState } from 'react'
+import React, { useLayoutEffect, useMemo, useState } from 'react'
 import { DataGrid } from '@mui/x-data-grid';
 
 import { useNavigate } from 'react-router-dom';
@@ -343,17 +343,33 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
     setAnchorEl(null);
     setSelectedRow(null);
   };
-
-  //getting column configurations
-  const columns = readOnly ? 
-  getReadOnlyColumns(role,handleDocumentClick) : 
-  getDefaultColumns(role,
-    canMove,canReject,
-    handleAssigneeChange,
-    handleMoveClick,
-    handleRejectClick,
-    handleRatingClick,
-    handleDocumentClick);
+console.log("Table rendered   ")
+// Memoize the columns configuration
+const columns = useMemo(() => {
+  return readOnly 
+    ? getReadOnlyColumns(role, handleDocumentClick) 
+    : getDefaultColumns(
+        role,
+        canMove,
+        canReject,
+        handleAssigneeChange,
+        handleMoveClick,
+        handleRejectClick,
+        handleRatingClick,
+        handleDocumentClick
+      );
+}, [
+  readOnly, 
+  role, 
+  // Only include dependencies that actually affect the column configuration
+  canMove,
+  canReject,
+  handleAssigneeChange,
+  handleMoveClick,
+  handleRejectClick,
+  handleRatingClick,
+  handleDocumentClick
+]);
 
   const navigate = useNavigate();
 
@@ -438,11 +454,11 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
 
         {/* {here is the place to add the search bar ,  filter , export button } */}
 
-        <div className='flex gap-4 items-center'>
+        <div className='flex gap-4 items-center w-full'>
           <input
             type="text"
             placeholder="Search by name or email"
-            className='min-w-[300px]'
+            className='max-w-[35%]'
             value={searchTerm}
             onChange={handleSearch}
           />

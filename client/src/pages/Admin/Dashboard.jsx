@@ -364,7 +364,7 @@ const Dashboard = () => {
                 </div>
 
                 <div className='flex mt-4'>
-                    <div>
+                    <div className='w-[35%]'>
                         <div className='mb-4 relative '>
                             <div className='absolute top-[10px] left-4'>
                                 <SearchIcon />
