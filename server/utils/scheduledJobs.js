@@ -42,7 +42,7 @@ const updateCallStatuses = async () => {
           
           // Set the hours and minutes on the scheduled date
           const callDateTime = new Date(scheduledDate);
-          callDateTime.setHours(hours, minutes, 0, 0);
+          callDateTime.setUTCHours(hours, minutes, 0, 0);
           
           console.log(`Job ${jobApp.jobId} scheduled for ${callDateTime}, current time: ${now}`);
           
