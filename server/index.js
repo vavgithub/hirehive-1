@@ -90,7 +90,7 @@ connectDB()
     );
     
     // Start the scheduled jobs
-    // startScheduledJobs();
+    startScheduledJobs();
 
     app.on("error", (error) => {
       console.log("Error in starting server", error);

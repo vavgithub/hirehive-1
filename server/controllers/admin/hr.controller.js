@@ -3,6 +3,7 @@ import { jobs } from "../../models/admin/jobs.model.js";
 import { User } from "../../models/admin/user.model.js";
 import { candidates } from "../../models/candidate/candidate.model.js";
 import { getDesignTaskContent, getRejectionEmailContent } from "../../utils/emailTemplates.js";
+import { updateDateWithTime } from "../../utils/formatter.js";
 import { sanitizeLexicalHtml } from "../../utils/sanitize-html.js";
 import { sendEmail } from "../../utils/sentEmail.js";
 
@@ -741,7 +742,6 @@ export const scheduleCall = async (req, res) => {
     if (!validStages.includes(stage)) {
       return res.status(400).json({ message: "Invalid stage" });
     }
-
     // Update the stage status
     jobApplication.stageStatuses.set(stage, {
       status: "Call Scheduled",
@@ -817,7 +817,7 @@ export const rescheduleCall = async (req, res) => {
 
     // Update current call with new details
     stageStatus.currentCall = {
-      scheduledDate: date,
+      scheduledDate: updateDateWithTime(date,time),
       scheduledTime: time,
       meetingLink: meetingLink,
     };
