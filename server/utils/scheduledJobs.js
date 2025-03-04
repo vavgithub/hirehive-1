@@ -5,7 +5,7 @@ import moment from 'moment-timezone';
 
 const updateCallStatuses = async () => {
   const now = new Date();
-  const stages = ['Screening', 'Round 1'];
+  const stages = ['Screening', 'Round 1', 'Round 2'];
   
   console.log(`Job running at server time: ${now.toISOString()}`);
   
