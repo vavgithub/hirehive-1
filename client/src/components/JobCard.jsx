@@ -1,5 +1,3 @@
-// JobCard.jsx
-
 import React from 'react';
 import ThreeDots from './ThreeDots';
 import { getTimeAgo } from '../utility/getTimeAgo';
@@ -47,6 +45,12 @@ const JobCard = ({
 }) => {
   const formattedCreatedAt = getTimeAgo(job.createdAt);
   const formattedAppliedAt = getTimeAgo(job.applicationDate);
+
+  // Determine if job is hourly rate type (Part Time or Contract)
+  const isHourlyRateJob = job.employmentType === 'Part Time' || job.employmentType === 'Contract';
+  
+  // Set the appropriate pay unit based on employment type
+  const payUnit = isHourlyRateJob ? 'INR/hr' : 'LPA';
 
   // Initialize variables for application data
   let applicationDate = null;
@@ -140,7 +144,7 @@ const JobCard = ({
       {((job.budgetTo > 1) || (job.budgetFrom > 0)) && 
       <JobDetailItem
         icon={PriceIcon}
-        text={`${job.budgetFrom} - ${job.budgetTo} LPA`}
+        text={`${job.budgetFrom} - ${job.budgetTo} ${payUnit}`}
       />}
       <JobDetailItem
         icon={GraphIcon}
@@ -149,13 +153,11 @@ const JobCard = ({
     </div>
     <div className=" p-4 ">
         <p className="typography-body text-font-gray h-11 overflow-hidden" dangerouslySetInnerHTML={{__html : truncatedDescription}}>
-          {/* {truncatedDescription} */}
         </p>
       </div>
     </> :
     <div className=" p-4 ">
     <p className="typography-body text-font-gray h-11 overflow-hidden" dangerouslySetInnerHTML={{__html : truncatedDescription}}>
-      {/* {truncatedDescription} */}
     </p>
   </div>
       }
@@ -187,7 +189,6 @@ const JobCard = ({
           <p className="typography-body text-font-gray mr-2 whitespace-nowrap">
             This job post has been closed 
           </p>
-          {/* <p className="typography-body">{job.closingReason || 'N/A'}</p> */}
           <div className='absolute top-0  right-0'>
             <ClosedBadge />
           </div>

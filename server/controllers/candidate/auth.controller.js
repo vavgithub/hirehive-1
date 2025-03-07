@@ -103,6 +103,7 @@ export const registerCandidate = async (req, res) => {
       noticePeriod,
       currentCTC,
       expectedCTC,
+      hourlyRate,
       experience,
       skills,
       questionResponses,
@@ -155,6 +156,7 @@ export const registerCandidate = async (req, res) => {
       noticePeriod,
       currentCTC,
       expectedCTC,
+      hourlyRate,
       experience,
       skills,
     };

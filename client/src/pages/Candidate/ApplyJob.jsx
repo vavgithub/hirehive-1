@@ -98,6 +98,7 @@ const ApplyJob = () => {
     noticePeriod: "",
     currentCTC: "",
     expectedCTC: "",
+    hourlyRate: "",
     resumeFile: null,
     skills: "" || [],
   }
@@ -131,9 +132,17 @@ const ApplyJob = () => {
     },
   });
 
+  const { data: jobDetails, isLoading } = useQuery({
+    queryKey: ['jobDetails', jobId],
+    queryFn: () => fetchJobDetails(jobId),
+  });
+
   // Pre-fill form with candidate data when authenticated
   useEffect(() => {
-    if (isAuthenticated && candidateData) {
+    if (isAuthenticated && candidateData && jobDetails) {
+      
+      const isHourlyRateJob = jobDetails?.employmentType === 'Part Time' || jobDetails?.employmentType === 'Contract';
+      
       reset({
         firstName: candidateData.firstName,
         lastName: candidateData.lastName,
@@ -143,18 +152,16 @@ const ApplyJob = () => {
         portfolio: candidateData.portfolio || '',
         experience: candidateData.experience || '',
         noticePeriod: candidateData.noticePeriod || '',
-        currentCTC: candidateData.currentCTC || '',
-        expectedCTC: candidateData.expectedCTC || '',
+        ...(isHourlyRateJob ? {hourlyRate:candidateData.hourlyRate || ''}:{
+          currentCTC: candidateData.currentCTC || '',
+          expectedCTC: candidateData.expectedCTC || '',
+        }),
         resumeFile: resumeFile,
         skills: candidateData.skills || [],
       });
     }
-  }, [isAuthenticated, candidateData, reset]);
+  }, [isAuthenticated, candidateData, jobDetails, reset]);
 
-  const { data: jobDetails, isLoading } = useQuery({
-    queryKey: ['jobDetails', jobId],
-    queryFn: () => fetchJobDetails(jobId),
-  });
 
   const handleProfilePictureSelect = (file) => {
     setProfilePictureFile(file);
@@ -199,19 +206,26 @@ useEffect(() => {
 
       const resumeUrl = await uploadResume(resumeFile,setUploadProgress);
 
+        // Determine if job is hourly rate type
+    const isHourlyRateJob = jobDetails?.employmentType === 'Part Time' || 
+    jobDetails?.employmentType === 'Contract';
+
+        const compensationData = isHourlyRateJob ? 
+        { hourlyRate: data.hourlyRate } :
+        { currentCTC: data.currentCTC, expectedCTC: data.expectedCTC };
+
       if (isAuthenticated) {
         const applicationData = {
           jobId,
           website: data.website,
           portfolio: data.portfolio,
           noticePeriod: data.noticePeriod,
-          currentCTC: data.currentCTC,
-          expectedCTC: data.expectedCTC,
           experience: data.experience,
           skills: data.skills,
           questionResponses,
           resumeUrl,
-          profilePictureUrl // Add this to the payload
+          profilePictureUrl,
+          ...compensationData,
         };
 
         await axios.post('/auth/candidate/apply-job', applicationData);
@@ -234,7 +248,8 @@ useEffect(() => {
           skills: data.skills,
           questionResponses,
           resumeUrl,
-          profilePictureUrl // Add this to the payload
+          profilePictureUrl,
+          ...compensationData,
         };
 
         await axios.post('/auth/candidate/register', registrationData);
@@ -429,7 +444,7 @@ useEffect(() => {
 
             }
 
-            <ProfessionalDetailsSection control={control} />
+            <ProfessionalDetailsSection control={control} jobDetails={jobDetails} />
             {/* Skills Input */}
 
             <div className="grid md:grid-cols-2 grid-cols-1 gap-6 mt-6 ">
@@ -456,9 +471,6 @@ useEffect(() => {
                   </div>
                 )}
               />
-
-
-
             </div>
 
 

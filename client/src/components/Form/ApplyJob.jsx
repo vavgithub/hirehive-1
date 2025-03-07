@@ -69,11 +69,16 @@ export const FormField = ({
   };
   
   // Example usage in your form sections:
-  export const ProfessionalDetailsSection = ({ control }) => {
+// Updated ProfessionalDetailsSection to handle employment type conditionally
+  export const ProfessionalDetailsSection = ({ control, jobDetails }) => {
+    console.log("this is the breakpoint", jobDetails);
+    // Check if job is part-time or contract to determine compensation field type
+    const isHourlyRateJob = jobDetails?.employmentType === 'Part Time' || jobDetails?.employmentType === 'Contract';
+    
     return (
       <div>
         <h3 className="typography-h3 mt-12 mb-4">Professional Details</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2  gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <FormField
             name="experience"
             control={control}
@@ -81,7 +86,6 @@ export const FormField = ({
             label="Experience (In Years)"
             type="number"
             required={true}
-   
           />
           
           <FormField
@@ -91,44 +95,61 @@ export const FormField = ({
             label="Notice Period (In days)"
             type="number"
             required={true}
-     
           />
           
-          <FormField
-            name="currentCTC"
-            control={control}
-            label="Current CTC (In LPA)"
-            type="number"
-            required={false}  
-            rules={{
-              // No "required" rule here
-              validate: (value) => {
-                // Optional: If you want to ensure it's a valid number when provided
-                if (value && isNaN(value)) {
-                  return 'Value must be a valid number.';
-                }
-                return true;
-              },
-            }}
-          />
-          
-          <FormField
-            name="expectedCTC"
-            control={control}
-            label="Expected CTC (In LPA)"
-            type="number"
-            required={false}
-            rules={{
-              // No "required" rule here
-              validate: (value) => {
-                // Optional: If you want to ensure it's a valid number when provided
-                if (value && isNaN(value)) {
-                  return 'Value must be a valid number.';
-                }
-                return true;
-              },
-            }}
-          />
+          {/* Conditional rendering based on employment type */}
+          {isHourlyRateJob ? (
+            <FormField
+              name="hourlyRate"
+              control={control}
+              label="Hourly Rate (INR/hr)"
+              type="number"
+              required={true}
+              rules={{
+                required: "Hourly rate is required",
+                validate: (value) => {
+                  if (isNaN(value)) {
+                    return 'Value must be a valid number.';
+                  }
+                  return true;
+                },
+              }}
+            />
+          ) : (
+            <>
+              <FormField
+                name="currentCTC"
+                control={control}
+                label="Current CTC (In LPA)"
+                type="number"
+                required={false}
+                rules={{
+                  validate: (value) => {
+                    if (value && isNaN(value)) {
+                      return 'Value must be a valid number.';
+                    }
+                    return true;
+                  },
+                }}
+              />
+              
+              <FormField
+                name="expectedCTC"
+                control={control}
+                label="Expected CTC (In LPA)"
+                type="number"
+                required={false}
+                rules={{
+                  validate: (value) => {
+                    if (value && isNaN(value)) {
+                      return 'Value must be a valid number.';
+                    }
+                    return true;
+                  },
+                }}
+              />
+            </>
+          )}
         </div>
       </div>
     );

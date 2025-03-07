@@ -76,6 +76,16 @@ export const validationRules = {
       return true;
     },
   },
+  hourlyRate: {
+    validate: (value) => {
+      // If you want to enforce it being greater than 0 (or any other rules)
+      if (value !== undefined && value !== null && value !== '' && 
+          (isNaN(value) || parseFloat(value) <= 0)) {
+        return 'Hourly rate must be a positive number.';
+      }
+      return true;
+    }
+  },
   resumeFile: {
     required: "Resume is required",
   },

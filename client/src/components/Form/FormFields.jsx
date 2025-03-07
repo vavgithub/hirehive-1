@@ -140,25 +140,36 @@ export const ExperienceField = React.forwardRef(({ value, onChange ,required ,er
   </div>
 ));
 
-export const BudgetField = React.forwardRef(({ value, onChange , required ,errors}, ref) => (
-  <div className="relative">
-    <label className="typography-body">Budget{required && <span className="text-red-100">*</span>}</label>
-    <div className='flex gap-4'>
-      {['from', 'to'].map((label) => (
-        <NumberInputField
-          key={label}
-          label={label.charAt(0).toUpperCase() + label.slice(1)}
-          value={value[label]}
-          onChange={(newValue) => onChange({ ...value, [label]: newValue === "" ? newValue : parseInt(newValue,10) })}
-          unit="LPA"
-          ref={ref}
-          required
-        />
-      ))}
+export const BudgetField = React.forwardRef(({ value, onChange, required, errors, employmentType }, ref) => {
+  // Determine if we should show hourly rate instead of annual salary
+  const isHourlyRate = employmentType === 'Part Time' || employmentType === 'Contract';
+  
+  // Set the appropriate unit based on employment type
+  const unit = isHourlyRate ? 'INR/hr' : 'LPA';
+  
+  // Field label based on employment type
+  const fieldLabel = isHourlyRate ? 'Hourly Rate' : 'Budget';
+
+  return (
+    <div className="relative">
+      <label className="typography-body">{fieldLabel}{required && <span className="text-red-100">*</span>}</label>
+      <div className='flex gap-4'>
+        {['from', 'to'].map((label) => (
+          <NumberInputField
+            key={label}
+            label={label.charAt(0).toUpperCase() + label.slice(1)}
+            value={value[label]}
+            onChange={(newValue) => onChange({ ...value, [label]: newValue === "" ? newValue : parseInt(newValue,10) })}
+            unit={unit}
+            ref={ref}
+            required
+          />
+        ))}
+      </div>
+      {errors?.budgetTo?.message && <p className="text-red-100 absolute typography-small-p top-[92px]">{errors?.budgetTo?.message}</p>}
     </div>
-    {errors?.budgetTo?.message && <p className="text-red-100 absolute typography-small-p top-[92px]">{errors?.budgetTo?.message}</p>}
-  </div>
-));
+  );
+});
 
 export const NumberInputField = React.forwardRef(({ label , value, onChange, unit }, ref) => {
   const handleIncrement = () => onChange(parseInt(value, 10) + 1);
