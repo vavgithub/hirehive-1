@@ -1,7 +1,7 @@
-import React, { useLayoutEffect, useState } from 'react'
+import React, { useEffect, useLayoutEffect, useState } from 'react'
 import { DataGrid } from '@mui/x-data-grid';
 
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import axios from '../api/axios';
 import AutoAssignModal from './utility/AutoAssignModal';
 
@@ -28,7 +28,8 @@ import BudgetMenu from './tableUtilities/BudgetMenu';
 
 const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
 
-  console.log("Table readOnly prop is:", readOnly);
+  //For getting routes
+  const location = useLocation();
 
   //this is for setting up the context
   const { user } = useAuthContext();
@@ -363,7 +364,11 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
 
  const handleRowClick = (params) => {
   // Save the current window scroll position before navigation
-  sessionStorage.setItem('candidates_scroll_position', window.scrollY);
+    if(location.pathname === '/admin/candidates' || location.pathname === '/hiring-manager/candidates'){
+      sessionStorage.setItem('candidates_scroll_position', window.scrollY);
+    }else{
+      sessionStorage.setItem('job_candidates_scroll_position',document.getElementById('adminContainer').scrollTop);
+    }
     if (role === "Hiring Manager") {
       // Determine if we're on the jobs page or candidates page
       const isJobsPage = location.pathname.includes('/admin/jobs/');
@@ -377,7 +382,7 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
       const targetJobId = isJobsPage ? jobId : params.row.jobId;
       
       const fullUrl = `${baseUrl}/${params.row._id}/${targetJobId}`;
-      console.log("Navigating to:", fullUrl);
+      // console.log("Navigating to:", fullUrl);
       
       navigate(fullUrl, { replace: true }); // Add replace:true to prevent extra history entry
     } else {
