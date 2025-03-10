@@ -92,7 +92,8 @@ const getExpAndCtcColumns = (role) => [
       disableColumnMenu: true,
       renderCell: (params) => (
         <span className='h-full flex items-center justify-center'>
-          {params?.value === 0 ? "-" : params.value}
+         {(params.value === undefined || params.value === 0) ? "-" : params.value}
+
         </span>
       )
     },
