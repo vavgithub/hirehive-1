@@ -302,7 +302,7 @@ const ViewCandidateProfile = () => {
             {/* Candidate Profile Card */}
 
             {
-                (role === "Hiring Manager" || role === "Design Reviewer") && (
+                (role === "Admin" || role === "Hiring Manager" || role === "Design Reviewer") && (
                     <div className="flex gap-3">
                         <StyledCard padding={2} extraStyles="w-full flex gap-4">
                             <div className="to-background-100 w-[200px] min-h-auto max-h-[200px] rounded-xl overflow-hidden">

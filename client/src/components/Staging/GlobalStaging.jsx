@@ -503,7 +503,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
                 </div>
             }
             </div>}
-            <div className='w-[35%] flex flex-col'>
+            <div className={(stageTitle === "Hired" ? 'w-[100%]' : 'w-[35%]') + ' flex flex-col '}>
             {stageBasedConfig?.hasScoreCard && 
             <div className='bg-stars bg-cover rounded-xl w-[160px] h-fit my-4 self-end'>
                 <div className='p-4 flex flex-col items-center'>
@@ -546,7 +546,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
       {stageBasedConfig?.hasScheduledForm && 
         <div className='w-full mt-4'>
           <ScheduleForm
-            isDisabled={!isBudgetScoreSubmitted}
+            isDisabled={!isBudgetScoreSubmitted && stageTitle === "Screening"}
             candidateId={candidateId}
             jobId={jobId}
             onSubmit={handleSchedule}
@@ -555,7 +555,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
       {
         isRescheduling && 
         <ScheduleForm
-            isDisabled={!isBudgetScoreSubmitted}
+            isDisabled={!isBudgetScoreSubmitted && stageTitle === "Screening"}
             candidateId={candidateId}
             jobId={jobId}
             onSubmit={handleReschedule}
