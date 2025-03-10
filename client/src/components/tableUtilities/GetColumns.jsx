@@ -106,7 +106,7 @@ const getExpAndCtcColumns = (role) => [
       disableColumnMenu: true,
       renderCell: (params) => (
         <span className='h-full flex items-center justify-center'>
-          {params?.value === 0 ? "-" : params.value}
+          {!params?.value || params.value === 0 ? "-" : params.value}
         </span>
       )
     },
@@ -119,7 +119,7 @@ const getExpAndCtcColumns = (role) => [
       disableColumnMenu: true,
       renderCell: (params) => (
         <span className='h-full flex items-center justify-center'>
-          {params?.value === 0 ? "-" : params.value}
+          {!params?.value || params.value === 0 ? "-" : params.value}
         </span>
       )
     },
