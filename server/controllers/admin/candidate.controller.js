@@ -273,6 +273,7 @@ export const getCandidateById = async (req, res) => {
       noticePeriod: candidate.noticePeriod,
       currentCTC: candidate.currentCTC,
       expectedCTC: candidate.expectedCTC,
+      hourlyRate: candidate.hourlyRate,
       experience: candidate.experience,
       skills: candidate.skills
     };
@@ -294,6 +295,7 @@ export const getCandidateById = async (req, res) => {
       noticePeriod: professionalInfo.noticePeriod,
       currentCTC: professionalInfo.currentCTC,
       expectedCTC: professionalInfo.expectedCTC,
+      hourlyRate: professionalInfo.hourlyRate,
       experience: professionalInfo.experience,
       skills: professionalInfo.skills,
       

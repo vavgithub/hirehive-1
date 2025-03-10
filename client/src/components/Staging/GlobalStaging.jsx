@@ -431,7 +431,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
                     <div className='w-8 h-8 rounded-full bg-background-80 flex items-center justify-center mr-2'>
                         <BudgetIcon />
                     </div>
-                    <span className='typograhpy-body font-outfit'>{candidateData?.jobApplication?.professionalInfo?.expectedCTC}LPA</span>
+                    <span className='typograhpy-body font-outfit'>{candidateData?.jobApplication?.professionalInfo?.expectedCTC ? `${candidateData?.jobApplication?.professionalInfo?.expectedCTC} LPA` : candidateData?.jobApplication?.professionalInfo?.hourlyRate ? `${candidateData?.jobApplication?.professionalInfo?.hourlyRate} INR/hr` : '-'}</span>
                 </>}
             </div>
       </div>

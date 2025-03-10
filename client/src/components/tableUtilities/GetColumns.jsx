@@ -90,6 +90,11 @@ const getExpAndCtcColumns = (role) => [
       align: 'center',
       headerAlign: 'center',
       disableColumnMenu: true,
+      renderCell: (params) => (
+        <span className='h-full flex items-center justify-center'>
+          {params?.value === 0 ? "-" : params.value}
+        </span>
+      )
     },
     {
       field: 'currentCTC',
@@ -98,6 +103,11 @@ const getExpAndCtcColumns = (role) => [
       align: 'center',
       headerAlign: 'center',
       disableColumnMenu: true,
+      renderCell: (params) => (
+        <span className='h-full flex items-center justify-center'>
+          {params?.value === 0 ? "-" : params.value}
+        </span>
+      )
     },
     {
       field: 'expectedCTC',
@@ -106,6 +116,11 @@ const getExpAndCtcColumns = (role) => [
       align: 'center',
       headerAlign: 'center',
       disableColumnMenu: true,
+      renderCell: (params) => (
+        <span className='h-full flex items-center justify-center'>
+          {params?.value === 0 ? "-" : params.value}
+        </span>
+      )
     },
   ] : []),
   {

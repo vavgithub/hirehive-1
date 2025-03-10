@@ -236,7 +236,8 @@ const ProfessionalDetails = ({candidateData, isEditing ,control}) => {
       <StyledCard backgroundColor={"bg-background-30"}>
         <h2 className="typography-h2 mb-6">Professional Details</h2>
         {!isEditing ? 
-        <div className="flex justify-between flex-col gap-6 sm:flex-row">
+        <div className="flex justify-between flex-col gap-6 ">
+          <div className="flex justify-between flex-col gap-6 sm:flex-row">
             <div className="grid grid-cols-2 sm:w-[45%] gap-[10%] justify-between">
               <div className="flex flex-col gap-6 typography-body">
                 <p className="text-font-gray">Experience</p>
@@ -258,6 +259,18 @@ const ProfessionalDetails = ({candidateData, isEditing ,control}) => {
                 </div>
             </div>
           </div>
+          {candidateData?.hourlyRate && 
+          <div className="flex justify-between flex-col gap-6 sm:flex-row">
+            <div className="grid grid-cols-2 sm:w-[45%] gap-[10%] justify-between">
+              <div className="flex flex-col gap-6 typography-body">
+                <p className="text-font-gray">Hourly Rate</p>
+              </div>
+              <div className="flex flex-col gap-6 typography-body">
+              <p>{candidateData?.hourlyRate ?? 0 } INR / hour</p>
+              </div>
+            </div>
+          </div>}
+        </div>
           :
           <div className="flex flex-col gap-4">
               <Controller
@@ -336,6 +349,26 @@ const ProfessionalDetails = ({candidateData, isEditing ,control}) => {
                   />
                 )}
               />
+              {candidateData?.hourlyRate && 
+              <Controller
+                name="hourlyRate"
+                control={control}
+                defaultValue={""}
+                rules={validationRules.hourlyRate}
+                render={({ field ,fieldState : { error }}) => (
+                  <InputField
+                    type="number"
+                    id="hourlyRate"
+                    label="Hourly Rate"
+                    labelStyles="text-font-gray"
+                    rowWise
+                    value={field.value ?? 0}
+                    onChange={field.onChange}
+                    error={error}
+                    errorMessage={error?.message}
+                  />
+                )}
+              />}
               
             </div>
           }
@@ -390,6 +423,7 @@ function Profile() {
       noticePeriod : candidateData?.noticePeriod ? candidateData.noticePeriod : 0,
       currentCTC : candidateData?.currentCTC ? candidateData.currentCTC : 0,
       expectedCTC : candidateData?.expectedCTC ? candidateData.expectedCTC : 0,
+      ...(candidateData?.hourlyRate ? {hourlyRate : candidateData.hourlyRate }: {}),
       location : candidateData?.location ? candidateData.location : "",
     },
     mode: 'onChange'
