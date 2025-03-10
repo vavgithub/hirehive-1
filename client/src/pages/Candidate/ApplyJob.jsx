@@ -21,6 +21,11 @@ import LoaderModal from '../../components/ui/LoaderModal';
 import AdditionalQuestions from '../../components/AdditionalQuestions';
 import OtpComponent from '../../components/OtpComponent';
 import PasswordComponent from '../../components/PasswordComponent';
+import Modal from '../../components/Modal';
+import StyledCard from '../../components/ui/StyledCard';
+import { PencilEditIcon } from '../../svg/Buttons/PencilIcon';
+import { InputField } from '../../components/Form/FormFields';
+import RightTick from '../../svg/Staging/RightTick';
 
 const fetchJobDetails = async (id) => {
   const response = await axios.get(`/jobs/getJobById/${id}`);
@@ -81,11 +86,16 @@ const ApplyJob = () => {
   const [resumeFile, setResumeFile] = useState(null);
   const [uploadProgress, setUploadProgress] = useState(0);
 
+  const [showConfirm,setShowConfirm] = useState(false);
+  const [editEmail,setEditEmail] = useState("");
+
   const [profilePictureFile, setProfilePictureFile] = useState(null);
   const [profilePicturePreview, setProfilePicturePreview] = useState(null);
 
   const navigate = useNavigate();
   const { id: jobId } = useParams();
+
+  const submitBtnRef = useRef(null);
 
   let initial = {
     firstName: "",
@@ -108,7 +118,9 @@ const ApplyJob = () => {
     handleSubmit,
     formState: { errors, isValid },
     getValues,
+    watch,
     setValue,
+    trigger,
     reset,
   } = useForm({
     mode: 'onChange',
@@ -492,13 +504,37 @@ useEffect(() => {
                   Cancel
                 </Button>
                 <Button
-                  type="submit"
+                  type="button"
+                  onClick={async ()=>{
+                    const isValid = await trigger()
+                    isValid && setShowConfirm(true)}
+                  }
                   variant="primary"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? 'Submitting...' : 'Next'}
                 </Button>
+                <button ref={submitBtnRef} type='submit' className='hidden'>Submit</button>
             </div>
+            <Modal
+            open={showConfirm}
+            onClose={()=>setShowConfirm(false)}
+            onConfirm={()=>submitBtnRef.current.click()}
+            customTitle={"Is this email correct ?"}
+            customMessage={"For account registration, we are sending an OTP to this email. Are you sure this email is correct ? "}
+            customConfirmLabel={"Sent"}
+            >
+              <StyledCard padding={2} backgroundColor={"bg-background-80 mt-4"}>
+              <div className='font-outfit typography-body w-full flex items-center justify-between gap-4'>
+                {!editEmail ? <p className='w-full'>{getValues("email")}</p> : 
+                  <div className='w-full'>
+                    <InputField type="text" placeholder="Enter your email" value={watch("email")} onChange={(e)=>setValue("email",e.target.value)}  />
+                  </div>
+                }
+                <button type='button' onClick={()=>setEditEmail(!editEmail)}>{!editEmail ? <div className='rounded-xl bg-background-60 h-11 w-11 flex justify-center items-center'><PencilEditIcon/></div> : <div className='rounded-xl bg-background-60 h-11 w-11 flex justify-center items-center'><RightTick /></div>}</button>
+              </div>
+              </StyledCard> 
+            </Modal>
           </form>
         </div>
       )}
