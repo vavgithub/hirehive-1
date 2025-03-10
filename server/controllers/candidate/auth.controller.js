@@ -123,13 +123,13 @@ export const registerCandidate = async (req, res) => {
     const existingEmail = await Candidate.findOne({ email });
     const existingPhone = await Candidate.findOne({ phone });
 
-    if (existingPhone) {
+    if (existingPhone && existingPhone?.isVerified) {
       return res.status(400).json({ 
         message: "Phone number already exists",
         field: "phone"
       });
     }
-
+    
     // Generate OTP and hash it
     const otp = generateOtp();
     const hashedOtp = crypto.createHash("sha256").update(otp).digest("hex");
