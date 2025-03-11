@@ -142,7 +142,8 @@ export const ExperienceField = React.forwardRef(({ value, onChange ,required ,er
 
 export const BudgetField = React.forwardRef(({ value, onChange, required, errors, employmentType }, ref) => {
   // Determine if we should show hourly rate instead of annual salary
-  const isHourlyRate = employmentType === 'Part Time' || employmentType === 'Contract';
+  // const isHourlyRate = employmentType === 'Part Time' || employmentType === 'Contract';
+  const isHourlyRate = employmentType === 'Contract';
   
   // Set the appropriate unit based on employment type
   const unit = isHourlyRate ? 'INR/hr' : 'LPA';
