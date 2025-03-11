@@ -44,36 +44,30 @@ export const validationRules = {
     },
   },
   currentCTC: {
+    required: 'Current CTC is required',
     min: {
       value: 0,
-      message: "CTC cannot be negative",
+      message: 'CTC cannot be negative',
     },
     max: {
       value: 99,
-      message: "Current CTC must be a two-digit value (e.g., 3 or 15)",
-    },
-    validate: (value) => {
-      if (value && isNaN(value)) {
-        return "Value must be a valid number.";
-      }
-      return true;
+      message: 'Current CTC must be a two-digit value (e.g., 3 or 15)',
     },
   },
   expectedCTC: {
+    required: 'Expected CTC is required',
     min: {
       value: 0,
-      message: "CTC cannot be negative",
+      message: 'CTC cannot be negative',
     },
     max: {
       value: 99,
-      message: "Expected CTC must be a two-digit value (e.g., 3 or 15)",
+      message: 'Expected CTC must be a two-digit value (e.g., 3 or 15)',
     },
     // Custom validation to ensure expectedCTC is greater than currentCTC
-    validate: (value) => {
-      if (value && isNaN(value)) {
-        return "Value must be a valid number.";
-      }
-      return true;
+    validate: (value, formValues) => {
+      const currentCTC = parseFloat(formValues.currentCTC);
+      return parseFloat(value) > currentCTC || 'Expected CTC should be higher than current CTC';
     },
   },
   hourlyRate: {

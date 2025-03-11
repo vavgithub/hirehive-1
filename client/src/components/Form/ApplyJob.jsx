@@ -122,31 +122,16 @@ export const FormField = ({
                 control={control}
                 label="Current CTC (In LPA)"
                 type="number"
-                required={false}
-                rules={{
-                  validate: (value) => {
-                    if (value && isNaN(value)) {
-                      return 'Value must be a valid number.';
-                    }
-                    return true;
-                  },
-                }}
-              />
-              
+                required={true}
+                rules={validationRules.currentCTC}
+              />              
               <FormField
                 name="expectedCTC"
                 control={control}
                 label="Expected CTC (In LPA)"
                 type="number"
-                required={false}
-                rules={{
-                  validate: (value) => {
-                    if (value && isNaN(value)) {
-                      return 'Value must be a valid number.';
-                    }
-                    return true;
-                  },
-                }}
+                required={true}
+                rules={validationRules.expectedCTC}
               />
             </>
           )}
