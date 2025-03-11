@@ -120,8 +120,11 @@ const ViewCandidateProfile = () => {
 
     // Handle back navigation
     const handleBack = () => {
-        // Navigate back to the original listing page
-        navigate(originalPath);
+        if (role === "Candidate") {
+            navigate(-1);
+        } else {
+            navigate(originalPath);
+        }
     };
 
 
