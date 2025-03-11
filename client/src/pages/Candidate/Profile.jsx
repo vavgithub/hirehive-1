@@ -116,6 +116,7 @@ const PersonalDetails = ({candidateData, isEditing , control}) => {
                   id="phone"
                   label="Phone Number"
                   labelStyles="text-font-gray"
+                  extraClass="no-spinner"
                   rowWise
                   value={field.value ?? 0}
                   onChange={field.onChange}
@@ -234,9 +235,9 @@ const ResumeAndPortfolioDetails = ({candidateData, isEditing, control ,resumeFil
 const ProfessionalDetails = ({ candidateData, isEditing, control }) => {
   // Determine if full-time fields should be shown (both fields are filled)
   const hasFullTimeData =
-    candidateData.currentCTC !== null && candidateData.expectedCTC !== null;
+    candidateData.currentCTC  > 0 || candidateData.expectedCTC  > 0;
   // Determine if hourly rate is available
-  const hasHourlyRate = candidateData.hourlyRate !== null;
+  const hasHourlyRate = candidateData.hourlyRate > 0;
 
   return (
     <StyledCard backgroundColor={"bg-background-30"}>
@@ -297,8 +298,9 @@ const ProfessionalDetails = ({ candidateData, isEditing, control }) => {
                 id="experience"
                 label="Experience"
                 labelStyles="text-font-gray"
+                extraClass="no-spinner"
                 rowWise
-                value={field.value || 0}
+                value={field.value ?? 0}
                 onChange={field.onChange}
                 error={error}
                 errorMessage={error?.message}
@@ -316,8 +318,9 @@ const ProfessionalDetails = ({ candidateData, isEditing, control }) => {
                 id="noticePeriod"
                 label="Notice Period"
                 labelStyles="text-font-gray"
+                extraClass="no-spinner"
                 rowWise
-                value={field.value || 0}
+                value={field.value ?? 0}
                 onChange={field.onChange}
                 error={error}
                 errorMessage={error?.message}
@@ -338,8 +341,9 @@ const ProfessionalDetails = ({ candidateData, isEditing, control }) => {
                     id="currentCTC"
                     label="Current CTC"
                     labelStyles="text-font-gray"
+                    extraClass="no-spinner"
                     rowWise
-                    value={field.value || 0}
+                    value={field.value ?? 0}
                     onChange={field.onChange}
                     error={error}
                     errorMessage={error?.message}
@@ -357,8 +361,9 @@ const ProfessionalDetails = ({ candidateData, isEditing, control }) => {
                     id="expectedCTC"
                     label="Expected CTC"
                     labelStyles="text-font-gray"
+                    extraClass="no-spinner"
                     rowWise
-                    value={field.value || 0}
+                    value={field.value ?? 0}
                     onChange={field.onChange}
                     error={error}
                     errorMessage={error?.message}
@@ -379,8 +384,9 @@ const ProfessionalDetails = ({ candidateData, isEditing, control }) => {
                   id="hourlyRate"
                   label="Hourly Rate"
                   labelStyles="text-font-gray"
+                  extraClass="no-spinner"
                   rowWise
-                  value={field.value || 0}
+                  value={field.value ?? 0}
                   onChange={field.onChange}
                   error={error}
                   errorMessage={error?.message}
