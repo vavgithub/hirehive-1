@@ -103,6 +103,7 @@ export const registerCandidate = async (req, res) => {
       noticePeriod,
       currentCTC,
       expectedCTC,
+      hourlyRate,
       experience,
       skills,
       questionResponses,
@@ -155,6 +156,7 @@ export const registerCandidate = async (req, res) => {
       noticePeriod,
       currentCTC,
       expectedCTC,
+      hourlyRate,
       experience,
       skills,
     };
@@ -391,6 +393,7 @@ export const applyToJob = async (req, res) => {
       currentCTC,
       expectedCTC,
       experience,
+      hourlyRate,
       skills,
       questionResponses,
       resumeUrl,
@@ -424,8 +427,9 @@ export const applyToJob = async (req, res) => {
       website,
       portfolio,
       noticePeriod,
-      currentCTC,
-      expectedCTC,
+      ...(currentCTC ? {currentCTC} : candidate?.currentCTC > 0 ? {currentCTC : candidate.currentCTC} : {currentCTC : 0}),
+      ...(expectedCTC ? {expectedCTC} : candidate?.expectedCTC > 0 ? {expectedCTC : candidate.expectedCTC} : {expectedCTC : 0}),
+      ...(hourlyRate ? {hourlyRate} : candidate?.hourlyRate > 0 ? {hourlyRate : candidate.hourlyRate} : {hourlyRate : 0}),
       experience,
       skills,
     };
@@ -460,7 +464,11 @@ export const applyToJob = async (req, res) => {
       stageStatuses: initialStageStatuses,
       resumeUrl,
       rating: "N/A",
-      professionalInfo // Include professional info in the job application
+      professionalInfo : {
+        ...professionalInfo,
+        ...((job.employmentType !== "Part Time" && job.employmentType !== "Contract") ? {currentCTC : professionalInfo.currentCTC,expectedCTC : professionalInfo.expectedCTC} : {currentCTC : 0,expectedCTC : 0}),
+        ...((job.employmentType === "Part Time" || job.employmentType === "Contract") ? {hourlyRate : professionalInfo.hourlyRate} : {hourlyRate : 0})
+      } // Include professional info in the job application
     };
 
     candidate.jobApplications.push(newApplication);
@@ -505,6 +513,7 @@ export const getCandidateDashboard = async (req, res) => {
           email: 1,
           phone: 1,
           expectedCTC: 1,
+          hourlyRate: 1,
           portfolio: 1,
           website: 1,
           noticePeriod: 1,
@@ -564,6 +573,7 @@ export const getCandidateDashboard = async (req, res) => {
         noticePeriod: candidate[0].noticePeriod,
         currentCTC: candidate[0].currentCTC,
         expectedCTC: candidate[0].expectedCTC,
+        hourlyRate: candidate[0]?.hourlyRate,
         experience: candidate[0].experience,
         skills: candidate[0].skills,
         resumeUrl : candidate[0].resumeUrl || latestResume,
@@ -594,11 +604,11 @@ export const editCandidateProfile = async (req, res) => {
         noticePeriod ,
         currentCTC ,
         expectedCTC ,
+        hourlyRate,
         profilePictureUrl,
         location,
       } = req.body;
 
-      
       const OTP_STAGE = "OTP";
       const DONE_STAGE = "DONE";
 
@@ -676,6 +686,7 @@ export const editCandidateProfile = async (req, res) => {
         candidateData.noticePeriod = noticePeriod; 
         candidateData.currentCTC = currentCTC; 
         candidateData.expectedCTC = expectedCTC;
+        candidateData.hourlyRate = hourlyRate;
         candidateData.location = location; 
         if(profilePictureUrl){
           candidateData.profilePictureUrl = profilePictureUrl;

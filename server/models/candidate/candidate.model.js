@@ -110,6 +110,10 @@ const professionalInfoSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    hourlyRate:{
+      type: Number,
+      default: 0,
+    },
     experience: {
       type: Number,
       default: 0,
@@ -257,6 +261,10 @@ const candidateSchema = new mongoose.Schema(
       default: 0,
     },
     expectedCTC: {
+      type: Number,
+      default: 0,
+    },
+    hourlyRate:{
       type: Number,
       default: 0,
     },

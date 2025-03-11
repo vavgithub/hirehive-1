@@ -17,6 +17,7 @@ import { useDispatch } from "react-redux";
 import { updateWithoutAssessment } from "../../redux/candidateAuthSlice";
 import LoaderModal from "../../components/ui/LoaderModal";
 import CustomToolTip from "../../components/utility/CustomToolTip";
+import { emailRegex, mobileRegex } from "../../utility/regex";
 
 const PersonalDetails = ({candidateData, isEditing , control}) => {
     return (
@@ -115,6 +116,7 @@ const PersonalDetails = ({candidateData, isEditing , control}) => {
                   id="phone"
                   label="Phone Number"
                   labelStyles="text-font-gray"
+                  extraClass="no-spinner"
                   rowWise
                   value={field.value ?? 0}
                   onChange={field.onChange}
@@ -230,84 +232,116 @@ const ResumeAndPortfolioDetails = ({candidateData, isEditing, control ,resumeFil
   )
 }
 
-const ProfessionalDetails = ({candidateData, isEditing ,control}) => {
+const ProfessionalDetails = ({ candidateData, isEditing, control }) => {
+  // Determine if full-time fields should be shown (both fields are filled)
+  const hasFullTimeData =
+    candidateData.currentCTC  > 0 || candidateData.expectedCTC  > 0;
+  // Determine if hourly rate is available
+  const hasHourlyRate = candidateData.hourlyRate > 0;
+
   return (
-      <StyledCard backgroundColor={"bg-background-30"}>
-        <h2 className="typography-h2 mb-6">Professional Details</h2>
-        {!isEditing ? 
-        <div className="flex justify-between flex-col gap-6 sm:flex-row">
+    <StyledCard backgroundColor={"bg-background-30"}>
+      <h2 className="typography-h2 mb-6">Professional Details</h2>
+      {!isEditing ? (
+        <div className="flex flex-col gap-6">
+          <div className="flex justify-between flex-col gap-6 sm:flex-row">
+            {/* Always show Experience and Notice Period */}
             <div className="grid grid-cols-2 sm:w-[45%] gap-[10%] justify-between">
               <div className="flex flex-col gap-6 typography-body">
                 <p className="text-font-gray">Experience</p>
                 <p className="text-font-gray">Notice Period</p>
               </div>
               <div className="flex flex-col gap-6 typography-body">
-              <p>{candidateData.experience } Years</p>
-              <p>{candidateData.noticePeriod} Days</p>
+                <p>{candidateData.experience} Years</p>
+                <p>{candidateData.noticePeriod} Days</p>
               </div>
             </div>
+            {/* Show full-time fields only if both currentCTC and expectedCTC are filled */}
+            {hasFullTimeData && (
               <div className="grid grid-cols-2 sm:w-[45%] gap-[10%] justify-between">
                 <div className="flex flex-col gap-6 typography-body">
-                  <p className="text-font-gray ">Current CTC</p>
+                  <p className="text-font-gray">Current CTC</p>
                   <p className="text-font-gray">Expected CTC</p>
                 </div>
                 <div className="flex flex-col gap-6 typography-body">
                   <p>{candidateData.currentCTC} LPA</p>
                   <p>{candidateData.expectedCTC} LPA</p>
                 </div>
-            </div>
+              </div>
+            )}
           </div>
-          :
-          <div className="flex flex-col gap-4">
-              <Controller
-                name="experience"
-                control={control}
-                defaultValue={""}
-                rules={validationRules.experience}
-                render={({ field ,fieldState : { error }}) => (
-                  <InputField
-                    type="number"
-                    id="experience"
-                    label="Experience"
-                    labelStyles="text-font-gray"
-                    rowWise
-                    value={field.value ?? 0}
-                    onChange={field.onChange}
-                    error={error}
-                    errorMessage={error?.message}
-                  />
-                )}
+          {/* Show hourly rate if available */}
+          {hasHourlyRate && (
+            <div className="flex justify-between flex-col gap-6 sm:flex-row">
+              <div className="grid grid-cols-2 sm:w-[45%] gap-[10%] justify-between">
+                <div className="flex flex-col gap-6 typography-body">
+                  <p className="text-font-gray">Hourly Rate</p>
+                </div>
+                <div className="flex flex-col gap-6 typography-body">
+                  <p>{candidateData.hourlyRate} INR / hour</p>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      ) : (
+        // Edit mode: Render input fields conditionally
+        <div className="flex flex-col gap-4">
+          <Controller
+            name="experience"
+            control={control}
+            defaultValue={""}
+            rules={validationRules.experience}
+            render={({ field, fieldState: { error } }) => (
+              <InputField
+                type="number"
+                id="experience"
+                label="Experience"
+                labelStyles="text-font-gray"
+                extraClass="no-spinner"
+                rowWise
+                value={field.value ?? 0}
+                onChange={field.onChange}
+                error={error}
+                errorMessage={error?.message}
               />
-              <Controller
-                name="noticePeriod"
-                control={control}
-                defaultValue={""}
-                rules={validationRules.noticePeriod}
-                render={({ field ,fieldState : { error }}) => (
-                  <InputField
-                    type="number"
-                    id="noticePeriod"
-                    label="Notice Period"
-                    labelStyles="text-font-gray"
-                    rowWise
-                    value={field.value ?? 0}
-                    onChange={field.onChange}
-                    error={error}
-                    errorMessage={error?.message}
-                  />
-                )}
+            )}
+          />
+          <Controller
+            name="noticePeriod"
+            control={control}
+            defaultValue={""}
+            rules={validationRules.noticePeriod}
+            render={({ field, fieldState: { error } }) => (
+              <InputField
+                type="number"
+                id="noticePeriod"
+                label="Notice Period"
+                labelStyles="text-font-gray"
+                extraClass="no-spinner"
+                rowWise
+                value={field.value ?? 0}
+                onChange={field.onChange}
+                error={error}
+                errorMessage={error?.message}
               />
+            )}
+          />
+          {/* Only show full-time fields if data exists */}
+          {hasFullTimeData && (
+            <>
               <Controller
                 name="currentCTC"
                 control={control}
                 defaultValue={""}
                 rules={validationRules.currentCTC}
-                render={({ field ,fieldState : { error }}) => (
+                render={({ field, fieldState: { error } }) => (
                   <InputField
                     type="number"
                     id="currentCTC"
                     label="Current CTC"
                     labelStyles="text-font-gray"
+                    extraClass="no-spinner"
                     rowWise
                     value={field.value ?? 0}
                     onChange={field.onChange}
@@ -321,12 +355,13 @@ const ProfessionalDetails = ({candidateData, isEditing ,control}) => {
                 control={control}
                 defaultValue={""}
                 rules={validationRules.expectedCTC}
-                render={({ field ,fieldState : { error }}) => (
+                render={({ field, fieldState: { error } }) => (
                   <InputField
                     type="number"
                     id="expectedCTC"
                     label="Expected CTC"
                     labelStyles="text-font-gray"
+                    extraClass="no-spinner"
                     rowWise
                     value={field.value ?? 0}
                     onChange={field.onChange}
@@ -335,12 +370,36 @@ const ProfessionalDetails = ({candidateData, isEditing ,control}) => {
                   />
                 )}
               />
-              
-            </div>
-          }
-      </StyledCard>
-  )
-}
+            </>
+          )}
+          {hasHourlyRate && (
+            <Controller
+              name="hourlyRate"
+              control={control}
+              defaultValue={""}
+              rules={validationRules.hourlyRate}
+              render={({ field, fieldState: { error } }) => (
+                <InputField
+                  type="number"
+                  id="hourlyRate"
+                  label="Hourly Rate"
+                  labelStyles="text-font-gray"
+                  extraClass="no-spinner"
+                  rowWise
+                  value={field.value ?? 0}
+                  onChange={field.onChange}
+                  error={error}
+                  errorMessage={error?.message}
+                />
+              )}
+            />
+          )}
+        </div>
+      )}
+    </StyledCard>
+  );
+};
+
 
 function Profile() {
   const { candidateData, hasGivenAssessment, isDone } = useCandidateAuth();
@@ -389,6 +448,7 @@ function Profile() {
       noticePeriod : candidateData?.noticePeriod ? candidateData.noticePeriod : 0,
       currentCTC : candidateData?.currentCTC ? candidateData.currentCTC : 0,
       expectedCTC : candidateData?.expectedCTC ? candidateData.expectedCTC : 0,
+      ...(candidateData?.hourlyRate ? {hourlyRate : candidateData.hourlyRate }: {}),
       location : candidateData?.location ? candidateData.location : "",
     },
     mode: 'onChange'
@@ -416,6 +476,21 @@ function Profile() {
   const handleEditProfile = async (data) => {
     try {
       setIsLoading(true);
+      
+      if (!data.firstName?.trim()) throw new Error("First name is required.");
+      if (!data.lastName?.trim()) throw new Error("Last name is required.");
+      if (!data.email?.trim() || !emailRegex.test(data.email)) 
+          throw new Error("Valid email is required.");
+      if (!data.phone?.trim() || !mobileRegex.test(data.phone)) 
+          throw new Error("Valid 10-digit phone number is required.");
+      if (!data.location?.trim()) throw new Error("Location is required.");
+      if (data.currentCTC < 0) throw new Error("Current CTC cannot be negative.");
+      if (data.expectedCTC < data.currentCTC) 
+          throw new Error("Expected CTC must be greater than or equal to Current CTC.");
+      if (data.experience < 0) throw new Error("Experience cannot be negative.");
+      if (data.noticePeriod < 0) throw new Error("Notice period cannot be negative.");
+      if (data.portfolio.trim() === "") throw new Error("Valid portfolio URL is required.");
+
       if(resumeFile){
         data.resume = await uploadResume(resumeFile,()=>{})
       }

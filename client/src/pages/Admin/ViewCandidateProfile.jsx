@@ -51,8 +51,9 @@ const transformCandidateData = (data) => {
         professionalDetails: [
             { label: 'Experience', value: `${professionalInfo.experience} Years` },
             { label: 'Notice Period', value: `${professionalInfo.noticePeriod} Days` },
-            { label: 'Current CTC', value: `${professionalInfo.currentCTC} LPA` },
-            { label: 'Expected CTC', value: `${professionalInfo.expectedCTC} LPA` },
+            { label: 'Current CTC', value: professionalInfo?.currentCTC ? `${professionalInfo.currentCTC} LPA` : '-' },
+            { label: 'Expected CTC', value: professionalInfo?.expectedCTC ? `${professionalInfo.expectedCTC} LPA` : '-' },
+            { label: 'Hourly Rate', value: professionalInfo?.hourlyRate ? `${professionalInfo.hourlyRate} INR/hr` : '-'  },
         ],
         // Remove previousExperiences since it's not in the API yet
         skillSet: professionalInfo.skills || [],

@@ -60,6 +60,7 @@ export const getAllCandidatesForJob = async (req, res) => {
         noticePeriod: candidate.noticePeriod,
         currentCTC: candidate.currentCTC,
         expectedCTC: candidate.expectedCTC,
+        hourlyRate: candidate.hourlyRate,
         experience: candidate.experience,
         skills: candidate.skills
       };
@@ -80,7 +81,9 @@ export const getAllCandidatesForJob = async (req, res) => {
         currentCTC: professionalInfo.currentCTC,
         expectedCTC: professionalInfo.expectedCTC,
         experience: professionalInfo.experience,
+        hourlyRate: professionalInfo.hourlyRate,
         skills: professionalInfo.skills,
+
 
         // Job application specific info
         resumeUrl: jobApplication.resumeUrl,
@@ -91,6 +94,8 @@ export const getAllCandidatesForJob = async (req, res) => {
         questionResponses: jobApplication.questionResponses,
       };
     });
+
+    console.log("this is backend", formattedCandidates);
 
     res.status(200).json({
       candidates: formattedCandidates,
@@ -268,6 +273,7 @@ export const getCandidateById = async (req, res) => {
       noticePeriod: candidate.noticePeriod,
       currentCTC: candidate.currentCTC,
       expectedCTC: candidate.expectedCTC,
+      hourlyRate: candidate.hourlyRate,
       experience: candidate.experience,
       skills: candidate.skills
     };
@@ -289,6 +295,7 @@ export const getCandidateById = async (req, res) => {
       noticePeriod: professionalInfo.noticePeriod,
       currentCTC: professionalInfo.currentCTC,
       expectedCTC: professionalInfo.expectedCTC,
+      hourlyRate: professionalInfo.hourlyRate,
       experience: professionalInfo.experience,
       skills: professionalInfo.skills,
       
@@ -477,6 +484,9 @@ export const getCandidateJobs = async (req,res) => {
             currentCTC: {
               $ifNull: ['$jobApplications.professionalInfo.currentCTC', '$currentCTC']
             },
+            hourlyRate:{
+              $ifNull: ['$jobApplications.professionalInfo.hourlyRate', '$hourlyRate']
+            },
             website: {
               $ifNull: ['$jobApplications.professionalInfo.website', '$website']
             },
@@ -538,6 +548,7 @@ export const getCandidateJobs = async (req,res) => {
             experience: 1,
             expectedCTC: 1,
             currentCTC: 1,
+            hourlyRate:1,
             website: 1,
             portfolio: 1,
             noticePeriod: 1,

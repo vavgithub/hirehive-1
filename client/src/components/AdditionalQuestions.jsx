@@ -13,7 +13,12 @@ function AdditionalQuestions({jobDetails, control ,errors}) {
                 name={`question-${question._id}`}
                 control={control}
                 defaultValue=""
-                rules={{ required: question.required }}
+                rules={{ required: question.required ,
+                    validate: (value) =>
+                        question.answerType === "number" && value < 0
+                          ? "Negative numbers are not allowed"
+                          : true,
+                }}
                 render={({ field }) => (
                 <div>
                     <label className="block mb-4 typography-body">
@@ -60,7 +65,8 @@ function AdditionalQuestions({jobDetails, control ,errors}) {
                             id={`question-${question._id}-input`}
                             type={question.answerType === "number" ? "number" : "text"}
                             {...field}
-                            className="w-full p-2 bg-background-40 rounded outline-none focus:outline-teal-300 "
+                            onWheel={(event) => event.currentTarget.blur()}
+                            className="w-full p-2 bg-background-40 rounded outline-none focus:outline-teal-300 no-spinner"
                             placeholder="Enter your answer"
                         />
                         </div>
@@ -68,7 +74,7 @@ function AdditionalQuestions({jobDetails, control ,errors}) {
                     
                     </div>
                     {errors[`question-${question._id}`] && (
-                        <span className="text-red-500 typography-small-p">This field is required</span>
+                        <span className="text-red-500 typography-small-p">{errors[`question-${question._id}`].message || "This field is required"}</span>
                     )}
                 </div>
                 )}

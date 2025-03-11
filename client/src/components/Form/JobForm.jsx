@@ -197,24 +197,25 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
           )}
         />
 
-        <Controller
-          name="budgetFrom"
-          control={control}
-          // rules={{ required: true }}
-          render={({ field: { value, onChange } }) => (
-            <BudgetField
-              value={{
-                from: value,
-                to: watchedFields.budgetTo
-              }}
-              onChange={(newValue) => {
-                onChange(newValue.from);
-                setValue('budgetTo', newValue.to);
-              }}
-              errors={errors}
-            />
-          )}
-        />
+<Controller
+  name="budgetFrom"
+  control={control}
+  // rules={{ required: true }}
+  render={({ field: { value, onChange } }) => (
+    <BudgetField
+      value={{
+        from: value,
+        to: watchedFields.budgetTo
+      }}
+      onChange={(newValue) => {
+        onChange(newValue.from);
+        setValue('budgetTo', newValue.to);
+      }}
+      errors={errors}
+      employmentType={watchedFields.employmentType}
+    />
+  )}
+/>
 
         <Controller
           name="jobDescription"
