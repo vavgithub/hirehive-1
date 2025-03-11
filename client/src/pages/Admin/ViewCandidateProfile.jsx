@@ -7,7 +7,7 @@ import EmailIcon from '../../svg/EmailIcon';
 import Tabs from '../../components/ui/Tabs';
 import Header from '../../components/utility/Header';
 import axios from '../../api/axios';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ACTION_TYPES } from '../../utility/ActionTypes';
 import CandidateTabDetail from '../../components/ui/CandidateTabDetail';
 
@@ -26,6 +26,11 @@ import ResumeViewer from '../../components/utility/ResumeViewer';
 import CustomToolTip from '../../components/utility/CustomToolTip';
 import StyledCard from '../../components/ui/StyledCard';
 import { CustomDropdown } from '../../components/Form/FormFields';
+import PencilIcon from '../../svg/Buttons/PencilIcon';
+import Modal from '../../components/Modal';
+import TextEditor from '../../components/utility/TextEditor';
+import LoaderModal from '../../components/ui/LoaderModal';
+import EyeIcon from '../../svg/EyeIcon';
 
 
 
@@ -41,6 +46,11 @@ const fetchTotalScore = async (candidateId, jobId) => {
 const fetchCandidateJobs = async (candidateId) => {
     const { data } = await axios.get(`admin/candidate/${candidateId}/jobs`);
     return data;
+};
+
+const addNotes = async ({candidateId,jobId,notesData}) => {
+    const response = await axios.post(`admin/candidate/${candidateId}/${jobId}/addNotes`,notesData);
+    return response?.data;
 };
 
 // Update the transformCandidateData function
@@ -86,6 +96,11 @@ const ViewCandidateProfile = () => {
     const switchJobRef = useRef();
     const [selectedJob,setSelectedJob] = useState(jobId);
 
+    const [openNotes,setOpenNotes] = useState(false);
+    const [openNotesView,setOpenNotesView] = useState(false);
+    const [notes,setNotes] = useState("");
+    const queryClient = useQueryClient();
+
     const { data, isLoading, isError, error: queryError } = useQuery({
         queryKey: ['candidate', candidateId, jobId],
         queryFn: () => fetchCandidateData(candidateId, jobId),
@@ -96,6 +111,13 @@ const ViewCandidateProfile = () => {
         },
     });
 
+    useEffect(() => {
+        if (candidateData?.jobApplication?.notes?.content !== undefined) {
+          setNotes(candidateData?.jobApplication?.notes?.content);
+        }else{
+            setNotes("")
+        }
+      }, [candidateData,jobId]);
 
      const [originalPath] = useState(()=>{
         const isJobPath = location.pathname.includes('/admin/jobs/');
@@ -190,6 +212,22 @@ const ViewCandidateProfile = () => {
         ] : []),
     ];
 
+    const addNotesMutation = useMutation({
+        mutationFn : addNotes,
+        onSuccess: (data) => {
+            console.log(data)
+            queryClient.invalidateQueries(['candidate', candidateId, jobId]);
+        },
+        onError: (error) => {
+            console.error("Error adding notes :", error);
+            // Handle error (e.g., show error message to user)
+        }
+    })
+
+    const handleAddNotes = ()=>{
+        addNotesMutation.mutate({candidateId,jobId,notesData : {notes : notes}})
+    }
+
     // Handle action switcher
     const handleAction = (action) => {
         switch (action) {
@@ -246,6 +284,7 @@ const ViewCandidateProfile = () => {
     return (
         <div className='w-full p-4'>
             <div className="container mx-auto">
+            {addNotesMutation?.isPending && <LoaderModal />}
             {/* Page header */}
             <Header
                     HeaderText="Candidate Profile"
@@ -271,62 +310,76 @@ const ViewCandidateProfile = () => {
             {
                 (role === "Hiring Manager" || role === "Design Reviewer") && (
                     <div className="flex gap-3">
-                        <StyledCard padding={2} extraStyles="w-full flex gap-4">
-                            <div className="to-background-100 w-[200px] min-h-auto max-h-[200px] rounded-xl overflow-hidden">
-                                <img src={data.profilePictureUrl || " https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg"} alt="" className='object-cover w-full overflow-hidden' />
-                            </div>
-                            <div className='flex flex-col gap-2'>
-                                <h1 className="typography-h2">
-                                    {data.firstName} {data.lastName}
-                                </h1>
-                                <div className="flex items-center gap-2 mb-3 mt-2">
-                                    <span className="typography-small-p text-font-gray">{data.jobApplication.jobApplied}</span>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="4" height="4" viewBox="0 0 4 4" fill="none">
-                                        <circle cx="2" cy="2" r="2" fill="#808389" />
-                                    </svg>
-                                    <span className="typography-small-p text-font-gray">{data.location}</span>
+                        <StyledCard padding={2} extraStyles="w-full flex gap-4 justify-between relative">
+                            <div className='flex gap-4'>
+                                <div className="to-background-100 w-[200px] min-h-auto max-h-[200px] rounded-xl overflow-hidden">
+                                    <img src={data.profilePictureUrl || " https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg"} alt="" className='object-cover w-full overflow-hidden' />
                                 </div>
-                                {role !== "Design Reviewer" &&
-                                <div className="flex mb-3 gap-5">
-                                    <div className="flex items-center gap-2">
-                                        <PhoneIcon />
-                                        <span className="typography-large-p">{data.phone}</span>
+                                <div className='flex flex-col gap-2'>
+                                    <h1 className="typography-h2">
+                                        {data.firstName} {data.lastName}
+                                    </h1>
+                                    <div className="flex items-center gap-2 mb-3 mt-2">
+                                        <span className="typography-small-p text-font-gray">{data.jobApplication.jobApplied}</span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="4" height="4" viewBox="0 0 4 4" fill="none">
+                                            <circle cx="2" cy="2" r="2" fill="#808389" />
+                                        </svg>
+                                        <span className="typography-small-p text-font-gray">{data.location}</span>
                                     </div>
-                                    <div className="flex items-center gap-2">
-                                        <EmailIcon />
-                                        <span className="typography-large-p">{data.email}</span>
-                                    </div>
-                                </div>}
-                                <div className="flex gap-2 items-center ">
-                                    <a href={ensureAbsoluteUrl(data.portfolio)} target="_blank" rel="noopener noreferrer" className="icon-link">
-                                        <CustomToolTip title={'Portfolio'} arrowed size={2}>
-                                            <FileMainIcon />
-                                        </CustomToolTip>
-                                    </a>
-                                    {data.website && (
-                                        <a href={ensureAbsoluteUrl(data.website)} target="_blank" rel="noopener noreferrer" className="icon-link">
-                                            <CustomToolTip title={'Website'} arrowed size={2}>
-                                                <WebsiteMainIcon />
+                                    {role !== "Design Reviewer" &&
+                                    <div className="flex mb-3 gap-5">
+                                        <div className="flex items-center gap-2">
+                                            <PhoneIcon />
+                                            <span className="typography-large-p">{data.phone}</span>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <EmailIcon />
+                                            <span className="typography-large-p">{data.email}</span>
+                                        </div>
+                                    </div>}
+                                    <div className="flex gap-2 items-center ">
+                                        <a href={ensureAbsoluteUrl(data.portfolio)} target="_blank" rel="noopener noreferrer" className="icon-link">
+                                            <CustomToolTip title={'Portfolio'} arrowed size={2}>
+                                                <FileMainIcon />
                                             </CustomToolTip>
                                         </a>
-                                    )}
-                                    <div onClick={handleResumeOpen}>
-                                        <CustomToolTip title={'Resume'} arrowed size={2}>
-                                            <ResumeIcon  />
-                                        </CustomToolTip>
-                                    </div>
-                                    {resumeOpen && <ResumeViewer documentUrl={data.resumeUrl} onClose={() => setResumeOpen(false)}/>}
-                                   
-                                    {
-                                        (data.hasGivenAssessment && role === "Hiring Manager") && <div className='cursor-pointer' onClick={handleAssignmentNavigation}> 
-                                            <CustomToolTip title={'Assessment'} arrowed size={2}>
-                                                <AssignmentIcon /> 
+                                        {data.website && (
+                                            <a href={ensureAbsoluteUrl(data.website)} target="_blank" rel="noopener noreferrer" className="icon-link">
+                                                <CustomToolTip title={'Website'} arrowed size={2}>
+                                                    <WebsiteMainIcon />
+                                                </CustomToolTip>
+                                            </a>
+                                        )}
+                                        <div onClick={handleResumeOpen}>
+                                            <CustomToolTip title={'Resume'} arrowed size={2}>
+                                                <ResumeIcon  />
                                             </CustomToolTip>
                                         </div>
-                                    }
+                                        {resumeOpen && <ResumeViewer documentUrl={data.resumeUrl} onClose={() => setResumeOpen(false)}/>}
+                                    
+                                        {
+                                            (data.hasGivenAssessment && role === "Hiring Manager") && <div className='cursor-pointer' onClick={handleAssignmentNavigation}> 
+                                                <CustomToolTip title={'Assessment'} arrowed size={2}>
+                                                    <AssignmentIcon /> 
+                                                </CustomToolTip>
+                                            </div>
+                                        }
 
+                                    </div>
                                 </div>
                             </div>
+                            {role === "Hiring Manager" && candidateData?.jobApplication?.notes?.content && 
+                            <StyledCard padding={2} backgroundColor={"bg-background-80"} extraStyles={'w-[30%] h-[140px] relative overflow-hidden'}>
+                                <h3 className='typography-body font-semibold font-bricolage'>Notes</h3>
+                                <div className='text-sm overflow-hidden text-font-gray max-h-[78%]' dangerouslySetInnerHTML={{__html : candidateData?.jobApplication?.notes?.content}}></div>
+                                <div onClick={()=>setOpenNotesView(true)} className='absolute cursor-pointer right-4 bottom-4 p-2 bg-background-70 rounded-xl'><EyeIcon/></div>
+                            </StyledCard>}
+                            {/* Notes Icon */}
+                            {role === "Hiring Manager" && <div onClick={()=>setOpenNotes(true)} className='absolute hover:bg-accent-300  bottom-4 right-4 bg-background-70 p-2 rounded-xl'>
+                                <CustomToolTip title={candidateData?.jobApplication?.notes?.content ? "Edit notes" :"Add a note"} arrowed>
+                                    <PencilIcon />
+                                </CustomToolTip>
+                            </div>}
                         </StyledCard>
 
                         {/* VAV Score Section */}
@@ -338,6 +391,51 @@ const ViewCandidateProfile = () => {
                     </div>
                 )
             }
+
+            {/* Notes Editor Modal */}
+            <Modal
+            open={openNotes}
+            onClose={()=>setOpenNotes(false)}
+            onConfirm={handleAddNotes}
+            customTitle={candidateData?.jobApplication?.notes?.content ? "Edit notes" : "Add Notes"}
+            customMessage={`${candidateData?.jobApplication?.notes?.content ? "Edit" : "Add"} valuable insights and observations about  ${candidateData?.firstName + " " + candidateData?.lastName} here.`}
+            customConfirmLabel={candidateData?.jobApplication?.notes?.content ? "Edit" : "Add"}
+            specifiedWidth={"max-w-xl"}
+            >
+                <div className='mt-4'>
+                    <TextEditor htmlData={notes} loaded={false} placeholder={"Add Your Notes Here"} setEditorContent={(data)=> setNotes(data)} />
+                </div>
+            </Modal>
+
+            {/* Notes Display Modal */}
+            <Modal
+            open={openNotesView}
+            onClose={()=>setOpenNotesView(false)}
+            customTitle={"Notes"}
+            customMessage={`Insights and observations about  ${candidateData?.firstName + " " + candidateData?.lastName}.`}
+            noCancel={true}
+            customConfirmLabel={"OK"}
+            >
+                <div className='mt-4 overflow-scroll scrollbar-hide text-ellipsis max-h-[50vh]'>
+                    {
+                        candidateData?.applications?.filter(app=>(app?.notes?.content !== "" && app?.notes?.content !== undefined && app?.notes?.content !== null))?.map(app=>{
+                            return (
+                                <div className='mb-4'>
+                                    <div className='flex justify-between items-center'>
+                                        <h3 className='typography-body font-regular'>{app?.jobApplied}</h3>
+                                        <p className='text-font-gray typography-small-p '>{new Date(app.notes?.addedDate).toLocaleDateString("en-GB", {
+                                            day: "2-digit",
+                                            month: "long",
+                                            year: "numeric",
+                                        })}</p>
+                                    </div>
+                                    <div className='text-sm text-font-gray p-1' dangerouslySetInnerHTML={{__html : app?.notes?.content}}></div>
+                                </div>
+                            )
+                        })
+                    }
+                </div>
+            </Modal>
 
             {/* Conditional rendering of tabs for "Hiring Manager" */}
 

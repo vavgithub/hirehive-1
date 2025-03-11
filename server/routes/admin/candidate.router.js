@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  addNotes,
   getAllCandidatesForJob,
   getAllCandidatesWithStats,
   getCandidateById,
@@ -20,6 +21,8 @@ router.get("/getData/data/allCandidatesWithStats", getAllCandidatesWithStats);
 router.get("/:jobId", getAllCandidatesForJob);
 // router.get('/data/:id', getCandidateById);
 router.get("/:candidateId/job/:jobId", getCandidateById);
+
+router.post("/:candidateId/:jobId/addNotes", addNotes);
 
 router.get("/:candidateId/jobs",protect, roleProtect("Hiring Manager"), getCandidateJobs);
 
