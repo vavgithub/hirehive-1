@@ -671,6 +671,7 @@ export const stagingConfig = {
                         },
                         hasRemarks : false,
                         hasScoreCard : false,
+                        hasSubmissionDetails : true,
                         actions : false,
                     },
                     "Design Reviewer" : {
@@ -705,6 +706,7 @@ export const stagingConfig = {
                         hasLabel : false,
                         hasRemarks : true,
                         hasScoreCard : true,
+                        hasSubmissionDetails : true,
                         actions : {
                             hasRejectAction : true,
                             hasMoveToNextRoundAction : true
@@ -715,6 +717,7 @@ export const stagingConfig = {
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
                         hasBudgetLabel : false,
+                        hasSubmissionDetails : true,
                         hasLabel : false,
                         hasRemarks : true,
                     },
