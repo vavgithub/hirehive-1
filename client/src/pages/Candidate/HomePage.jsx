@@ -15,6 +15,7 @@ import Loader from '../../components/ui/Loader';
 import NoJobs from "../../svg/Background/NoJobs.svg"
 import Pagination from '../../components/utility/Pagination';
 import useDebounce from '../../hooks/useDebounce';
+import ContactUs from '../../components/Form/ContactUs';
 
 const fetchOpenJobs = (page) => axios.get(`/candidates/jobs/open?page=${page}`).then(res => res.data);
 const searchJobs = (query,page) => axios.get(`/candidates/jobs/searchJobs?jobTitle=${encodeURIComponent(query)}&page=${page}`).then(res => res.data);
@@ -252,6 +253,7 @@ const HomePage = () => {
                         />
                     </div>
                 </div>
+                <ContactUs />
             </div>
         )
     }
