@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useDropzone } from 'react-dropzone';
 import { useForm, Controller } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import axios from '../../api/axios';
 import SkillsInput from '../../components/utility/SkillsInput';
 import { Button } from '../../components/ui/Button';
@@ -72,6 +72,11 @@ export const uploadResume = async (file,setUploadProgress) => {
   }
 };
 
+const updateEmail = ({email}) => {
+  const response = axios.post('/auth/candidate/update-email',{email});
+  return response?.data;
+}
+
 const ApplyJob = () => {
   const dispatch = useDispatch();
   const { candidateData, isAuthenticated } = useCandidateAuth()
@@ -87,6 +92,7 @@ const ApplyJob = () => {
   const [uploadProgress, setUploadProgress] = useState(0);
 
   const [showConfirm,setShowConfirm] = useState(false);
+  const [isExist,setIsExist] = useState(false);
   const [editEmail,setEditEmail] = useState("");
 
   const [profilePictureFile, setProfilePictureFile] = useState(null);
@@ -264,11 +270,19 @@ useEffect(() => {
           ...compensationData,
         };
 
-        await axios.post('/auth/candidate/register', registrationData);
-        setEmail(data.email);
-        setPhone(data.phoneNumber);
-        showSuccessToast('Create Password', "Please Create Your Password");
-        setCurrentStep(2);
+        const response = await axios.post('/auth/candidate/register', registrationData);
+        if(response?.data?.currentStage === 'MODAL'){
+          setValue("email",response.data?.email)
+          setIsExist(true)
+          setShowConfirm(true)
+        }else{
+          setEmail(data.email);
+          setPhone(data.phoneNumber);
+          setIsExist(false)
+          setShowConfirm(false)
+        }
+        showSuccessToast('Success', response?.data?.message || "Please Create Your Password");
+        setCurrentStep(response?.data?.currentStage !== 'MODAL' ? 2 : 1);
       }
     } catch (error) {
       showErrorToast(
@@ -279,6 +293,21 @@ useEffect(() => {
       setIsSubmitting(false);
     }
   };
+
+  const updateEmailMutation = useMutation({
+    mutationFn : updateEmail,
+    onSuccess : (data) => {
+      submitBtnRef.current.click()
+    },
+    onError : (error) => {
+
+      showErrorToast('Error', error.response?.data?.message || 'Failed to update email. Please try again.');
+    }
+  })
+
+  const handleUpdateEmail = () => {
+    updateEmailMutation.mutate({email : getValues("email")})
+  }
 
   const handleOtpSubmit = async (e) => {
     e.preventDefault();
@@ -367,7 +396,7 @@ useEffect(() => {
     <div className='main-wrapper flex justify-center ' >
 
       {
-        isSubmitting && <LoaderModal/>
+        (isSubmitting || updateEmailMutation?.isPending ) && <LoaderModal/>
       }
 
       {currentStep === 1 && (
@@ -506,8 +535,15 @@ useEffect(() => {
                 <Button
                   type="button"
                   onClick={async ()=>{
-                    const isValid = await trigger()
-                    isValid && setShowConfirm(true)}
+                    setIsExist(false)
+                    setEditEmail(false)
+                    if(isAuthenticated){
+                      submitBtnRef.current.click()
+                    }else{
+                      const isValid = await trigger()
+                      isValid && setShowConfirm(true)
+                    }
+                  }
                   }
                   variant="primary"
                   disabled={isSubmitting}
@@ -519,9 +555,9 @@ useEffect(() => {
             <Modal
             open={showConfirm}
             onClose={()=>setShowConfirm(false)}
-            onConfirm={()=>submitBtnRef.current.click()}
-            customTitle={"Is this email correct ?"}
-            customMessage={"For account registration, we are sending an OTP to this email. Are you sure this email is correct ? "}
+            onConfirm={isExist ? handleUpdateEmail : ()=>submitBtnRef.current.click()}
+            customTitle={isExist ? 'Confirm your Email' :"Is this email correct ?"}
+            customMessage={isExist ? "For account registration, we are sending an OTP to this attached email. Are you sure this email is correct ?" : "For account registration, we are sending an OTP to this email. Are you sure this email is correct ? "}
             customConfirmLabel={"Sent"}
             >
               <StyledCard padding={2} backgroundColor={"bg-background-80 mt-4"}>

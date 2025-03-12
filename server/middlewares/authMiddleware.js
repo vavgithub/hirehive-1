@@ -144,6 +144,47 @@ const protectCandidate = asyncHandler(async (req, res, next) => {
   }
 });
 
+const protectWithEmailtoken = asyncHandler(async (req, res, next) => {
+  const token = req.cookies.email_token;
+
+  if (!token) {
+    return res.status(401).json({ 
+      status: 'error',
+      message: 'Not authorized, token missing'
+    });
+  }
+
+  try {
+    const decoded = verifyToken(token, process.env.JWT_SECRET);
+    
+    if (!decoded) {
+      return res.status(401).json({ 
+        status: 'error',
+        message: 'Invalid or expired token'
+      });
+    }
+
+    const candidate = await Candidate.findById(decoded.id);
+
+    if (!candidate) {
+      return res.status(404).json({ 
+        status: 'error',
+        message: 'Candidate not found'
+      });
+    }
+
+    req.candidate = candidate;
+    next();
+  } catch (error) {
+    console.error('Candidate authentication error:', error);
+    res.status(401).json({ 
+      status: 'error',
+      message: 'Authentication failed',
+      error: environment === 'development' ? error.message : undefined
+    });
+  }
+});
+
 // Optional: Add refresh token functionality
 const refreshToken = asyncHandler(async (req, res, next) => {
   const refreshToken = req.cookies.refreshToken;
@@ -195,5 +236,6 @@ export {
   protect, 
   roleProtect, 
   protectCandidate,
+  protectWithEmailtoken,
   refreshToken 
 };
