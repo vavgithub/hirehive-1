@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import ResumeIcon from '../../svg/ResumeIcon';
 import AssignmentIcon from '../../svg/AssignmentIcon';
@@ -10,7 +10,6 @@ import axios from '../../api/axios';
 import { useQuery } from '@tanstack/react-query';
 import { ACTION_TYPES } from '../../utility/ActionTypes';
 import CandidateTabDetail from '../../components/ui/CandidateTabDetail';
-
 import WebsiteMainIcon from '../../svg/WebsiteMainIcon';
 import FileMainIcon from '../../svg/FileMainIcon';
 import { ApplicationIcon, ApplicationIconActive } from '../../svg/Tabs/ApplicationIcon';
@@ -26,8 +25,69 @@ import ResumeViewer from '../../components/utility/ResumeViewer';
 import CustomToolTip from '../../components/utility/CustomToolTip';
 import StyledCard from '../../components/ui/StyledCard';
 import { CustomDropdown } from '../../components/Form/FormFields';
+import SwitchArrows from '../../svg/SwitchArrows';
+import ScoreChart from '../../components/utility/ScoreChart';
+import { getStageColor, maxScoreOfEachStage } from '../../components/Staging/staging.config';
 
+export const VAVScoreCard = ({score,stage,scoreStages})=>{
+    const [showBreakDown,setShowBreakDown] = useState(false);
 
+    const getScreeningTotalScore = (scoreObj) => {
+        const Attitude = scoreObj?.Attitude ?? 0;
+        const Communication = scoreObj?.Communication ?? 0;
+        const Tech = scoreObj?.Tech ?? 0;
+        const UI = scoreObj?.UI ?? 0;
+        const UX = scoreObj?.UX ?? 0;
+        const Budget = scoreObj?.Budget ?? 0;
+        return 0 + Attitude + Communication + Tech + UI + UX + Budget 
+    }
+
+    const scoreData = useMemo(()=>{
+        const mappedData = Object.entries(scoreStages)?.map(([stage,stageData])=>{
+            if(stage !== "Screening"){
+                return {
+                    name : stage,
+                    value : stageData?.score ? parseInt(stageData?.score) : 0,
+                    maxScore : maxScoreOfEachStage(stage),
+                    itemStyle  : {
+                        color : getStageColor(stage)
+                    }
+                }
+            }else {
+                return {
+                    name : stage,
+                    value : stageData?.score ? getScreeningTotalScore(stageData?.score) : 0,
+                    scoreObj : stageData?.score,
+                    maxScore : maxScoreOfEachStage(stage),
+                    itemStyle  : {
+                        color : getStageColor(stage)
+                    }
+                }
+            }
+        })
+        return mappedData.filter(data=>data?.name !== "Hired");
+    },[scoreStages])
+
+    if(!showBreakDown){
+        return(
+        <StyledCard extraStyles="flex bg-stars  flex-col items-center  w-[430px] bg-cover relative">
+            <h3 className="typography-h2">VAV SCORE</h3>
+            <button onClick={()=>setShowBreakDown(true)} className='absolute top-8 right-8 hover:text-font-gray'>
+             <SwitchArrows />
+            </button>
+            <span className="marks text-font-primary">{score}</span>
+            <p className="typography-large-p">Out of {getMaxScoreForStage(stage)}</p>
+        </StyledCard>
+    )}else{
+        return(<StyledCard extraStyles="flex bg-stars  flex-col items-center  w-[430px] bg-cover relative">
+            <h3 className="typography-h2">Score Breakdown</h3>
+            <button onClick={()=>setShowBreakDown(false)} className='absolute top-8 right-8 hover:text-font-gray'>
+             <SwitchArrows />
+            </button>
+            <ScoreChart scoreData={scoreData} />
+        </StyledCard>)
+    }
+}
 
 const fetchCandidateData = async (candidateId, jobId) => {
     const { data } = await axios.get(`admin/candidate/${candidateId}/job/${jobId}`);
@@ -333,11 +393,7 @@ const ViewCandidateProfile = () => {
                         </StyledCard>
 
                         {/* VAV Score Section */}
-                        <StyledCard extraStyles="flex bg-stars  flex-col items-center  w-[430px] bg-cover ">
-                            <h3 className="typography-h2">VAV SCORE</h3>
-                            <span className="marks text-font-primary">{score?.totalScore}</span>
-                            <p className="typography-large-p">Out of {getMaxScore()}</p>
-                        </StyledCard>
+                        <VAVScoreCard score={score?.totalScore} stage={data?.jobApplication?.currentStage} scoreStages={data?.jobApplication?.stageStatuses} />
                     </div>
                 )
             }

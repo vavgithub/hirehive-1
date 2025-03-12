@@ -885,6 +885,49 @@ export const getCandidateAppliedJobs = async (req, res) => {
   }
 };
 
+export const updateDesignTask = asyncHandler( async (req,res) => {
+  const { taskLink, comment ,jobId} = req.body;
+  if(!taskLink?.trim() || !comment?.trim()){
+    res.status(400);
+    throw new Error('Insufficient data for Design task updation');
+  }
+  
+  const job = await jobs.findById({_id: jobId});
+  if(!jobId?.trim() || !job){
+    res.status(400);
+    throw new Error('Invalid JobId');
+  }
+
+  const candidate = await Candidate.findOne({_id : req.candidate?._id, "jobApplications.jobId" : jobId}, {"jobApplications.$":1});
+  if(!candidate){
+    res.status(400);
+    throw new Error('Invalid candidate data');
+  }
+
+  if(candidate?.jobApplications[0]?.stageStatuses.get("Design Task")?.status !== "Not Assigned"){
+    res.status(400);
+    throw new Error('Invalid stageStatus for updation');
+  }
+
+  const updatedCandidate = await Candidate.findOneAndUpdate(
+    {
+      _id: req.candidate?._id, // Find candidate by ID
+      "jobApplications.jobId": jobId, // Match the specific job application
+    },
+
+    {
+      $set: {
+        "jobApplications.$.stageStatuses.Design Task.submittedComment": comment,
+        "jobApplications.$.stageStatuses.Design Task.submittedTaskLink": taskLink
+      }
+    },
+    { new: true, runValidators: true }
+  );
+
+  res.status(200).json({
+    message : "Updated task successfully"
+  })
+})
 
 // Request Password Reset / Send OTP
 export const forgotPassword = asyncHandler(async (req, res) => {

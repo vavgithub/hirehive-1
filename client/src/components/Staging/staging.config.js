@@ -11,6 +11,7 @@ export const stagingConfig = {
                 'Not Assigned', 'Under Review', 'Reviewed', 'Cleared', 'Rejected'
             ],
             score : 5,
+            totalScore : 5,
             extraHeaderContent : PortfolioHeader,
             contentConfig : {
                 "Not Assigned" : {
@@ -207,6 +208,7 @@ export const stagingConfig = {
                 Communication : 5,
                 Budget : 5,
             },
+            totalScore : 30,
             hasSplitScoring : true,
             extraHeaderContent : false,
             contentConfig : {
@@ -222,6 +224,7 @@ export const stagingConfig = {
                         },
                         hasRemarks : false,
                         hasScoreCard : false,
+                        hasBudgetScoring : true,
                         actions : false,
                         hasCallHistory : false,
                         hasScheduledForm : true
@@ -407,7 +410,6 @@ export const stagingConfig = {
                         hasLabel : false,
                         hasRemarks : true,
                         hasScoreBoard : true,
-                        hasBudgetScoring : true,
                         hasScoreCard : true,
                         hasCallDetails : false,
                         hasCallHistory : false,
@@ -541,6 +543,7 @@ export const stagingConfig = {
                 'Pending','Not Assigned', 'Sent', 'Under Review', 'Reviewed', 'Cleared', 'Rejected', 'Not Submitted'
             ],
             score : 5,
+            totalScore : 5,
             extraHeaderContent : false,
             contentConfig : {
                 "Pending" : {
@@ -657,6 +660,7 @@ export const stagingConfig = {
                             icon : WarningIcon
                         },
                         hasSubmissionDetails : true,
+                        isSubmissionEditable : true,
                     }
                 },
                 "Under Review" : {
@@ -832,6 +836,7 @@ export const stagingConfig = {
                 'Pending', 'Call Scheduled', 'Not Assigned', 'Reviewed', 'Cleared', 'No Show', 'Rejected'
             ],
             score : 5,
+            totalScore : 5,
             extraHeaderContent : false,
             contentConfig : {
                 "Pending" : {
@@ -1157,6 +1162,7 @@ export const stagingConfig = {
                 'Pending', 'Call Scheduled', 'Not Assigned', 'Reviewed', 'Cleared', 'No Show', 'Rejected'
             ],
             score : 5,
+            totalScore : 5,
             extraHeaderContent : false,
             contentConfig : {
                 "Pending" : {
@@ -1476,6 +1482,7 @@ export const stagingConfig = {
                 'Under Review', 'Offer Sent', 'Accepted', 'Rejected'
             ],
             score : 0,
+            totalScore : 0,
             showGrandTotal : true,
             extraHeaderContent : false,
             contentConfig : {
@@ -1669,3 +1676,30 @@ export const statusConfig = {
         color: "#EDBD14" 
     }
   };
+
+export const getStageColor = (stage) => {
+    switch (stage.toLowerCase()) {
+      case 'portfolio':
+        return 'rgb(59, 130, 246)';
+      case 'screening':
+        return 'rgb(234, 179, 8)';
+      case 'design task':
+        return 'rgb(168, 85, 247)';
+      case 'round 1':
+        return 'rgb(34, 197, 94)';
+      case 'round 2':
+        return 'rgb(249, 115, 22)';
+      default:
+        return 'rgb(255, 255, 255)';
+    }
+};
+
+  export const maxScoreOfEachStage = (stageTitle) => {
+    let totalScore = 0;
+    stagingConfig["UI UX"].map(eachStage => {
+        if(eachStage?.name === stageTitle){
+            totalScore = eachStage?.totalScore;
+        }
+    })
+    return totalScore
+  }
