@@ -8,7 +8,7 @@ import StyledCard from '../Cards/StyledCard';
 import { Button } from '../Buttons/Button';
 import WarningIcon from '../../svg/Staging/WarningIcon';
 import AssessmentPopup from '../../svg/Background/AssessmentPopup.svg';
-import SchedulerButton from './ui/SchedulerButton';
+import SchedulerButton from '../ui/SchedulerButton';
 
 const ACTION_TYPES = {
   DELETE: 'DELETE',

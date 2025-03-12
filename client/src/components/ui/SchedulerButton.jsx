@@ -1,8 +1,8 @@
 import { ChevronDown, ChevronUp } from 'lucide-react'
 import React, { useEffect, useRef, useState } from 'react'
-import Modal from '../Modal';
-import Datepicker from '../utility/Datepicker';
-import Timepicker from '../utility/Timepicker';
+import Modal from '../Modals/Modal';
+import Datepicker from '../MUIUtilities/Datepicker';
+import Timepicker from '../MUIUtilities/Timepicker';
 
 function SchedulerButton({buttonText,buttonVariant,extraClasses,modalTitle,modalMessage,onConfirm,disabled}) {
     const [isOpen,setIsOpen] = useState(false);
