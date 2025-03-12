@@ -282,7 +282,7 @@ function MultiSelectBar({selectedData,jobId,clearSelection}) {
     setAnchorEl(null)
   }
 
-  const handleConfirm = async (confirmFunction) =>{
+  const handleConfirm = async (confirmFunction, scheduledDate, scheduledTime) =>{
     try {
         setIsLoading(true);
         const candidatesData = Object.entries(filteredCandidates).map(([stage,candidates]) => {
@@ -292,7 +292,9 @@ function MultiSelectBar({selectedData,jobId,clearSelection}) {
                         candidateId : eachCandidate?.candidate._id,
                         jobId : eachCandidate?.candidate?.jobId || jobId,
                         stage : stage,
-                        rejectionReason : eachCandidate?.rejectionReason
+                        rejectionReason : eachCandidate?.rejectionReason,
+                        ...(scheduledDate ? {scheduledDate : scheduledDate} : {}),
+                        ...(scheduledTime ? {scheduledTime : scheduledTime} : {}),
                     }
                 }else{
                     return { 
@@ -437,12 +439,13 @@ function MultiSelectBar({selectedData,jobId,clearSelection}) {
         {action?.type === "MODAL" && 
         <Modal
             open={action}
-            onConfirm={()=>handleConfirm(action?.apiFunction)}
+            onConfirm={(_,scheduledDate, scheduledTime)=>handleConfirm(action?.apiFunction, scheduledDate, scheduledTime)}
             onClose={() => setAction(null)}
             isconfirmButtonDisabled={!isValid}
             customTitle={action?.customTitle}
             customConfirmLabel={action?.confirmLabel || action?.customTitle}
             confirmVariant={action?.name === "REJECT" ? "cancel" : null}
+            useScheduledReject={action?.name === "REJECT"}
             customMessage={action?.customMessage}
             specifiedWidth={"max-w-4xl"}
         >
@@ -497,7 +500,7 @@ function MultiSelectBar({selectedData,jobId,clearSelection}) {
                                                     onClick={(e)=>{setAnchorEl(!anchorEl ? e.currentTarget : null); setChosenCandidate(chosenCandidate ? null : candidate?._id); setChosenStage(chosenStage ? null : stage);}}
                                                     className={`${rejectionReason ? "text-white" : "text-font-gray"}   typography-body mt-1 h-[44px] flex items-center justify-between bg-background-40 hover:bg-background-60 w-full outline-none rounded-xl shadow-sm focus:ring-teal-300 focus:border-teal-300 text-left px-4`}
                                                     >
-                                                    <p>{rejectionReason ? rejectionReason : "-Select-"}</p>
+                                                    <p className='whitespace-nowrap text-ellipsis overflow-hidden'>{rejectionReason ? rejectionReason : "-Select-"}</p>
                                                     
                                                     </div>
                                                 </div>}

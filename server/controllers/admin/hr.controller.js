@@ -8,9 +8,49 @@ import { sendEmail } from "../../utils/sentEmail.js";
 
 const RATINGS = ['Good Fit', 'Not A Good Fit', 'May Be'];
 
+export const REJECTION_REASON = [
+  {
+    reason : "Candidate's scores did not meet the criteria",
+    email : true
+  },
+  {
+    reason: "Candidate has reapplied but was previously rejected",
+    email: false
+  },
+  {
+    reason: "Candidate's portfolio/work samples did not meet expectations",
+    email: false
+  },
+  {
+    reason: "Candidate displayed unprofessional or bad attitude",
+    email: false
+  },
+  {
+    reason: "Candidate's skills do not align with job requirements",
+    email: false
+  },
+  {
+    reason: "Candidate withdrew their application",
+    email: false
+  },
+  {
+    reason: "Candidate requested an unrealistic salary",
+    email: false
+  },
+  {
+    reason: "Candidate was unresponsive to communication",
+    email: false
+  },
+  {
+    reason: "Candidate provided misleading or false information",
+    email: false
+  }
+];
+
+
 export const rejectCandidate = async (req, res) => {
   try {
-    const { candidateId, jobId, rejectionReason } = req.body;
+    const { candidateId, jobId, rejectionReason , scheduledDate , scheduledTime } = req.body;
 
     // Find the candidate and job
     const candidate = await candidates.findById(candidateId);
@@ -37,33 +77,67 @@ export const rejectCandidate = async (req, res) => {
     // Get the current stage
     const currentStage = jobApplication.currentStage;
 
-    // Update the status of the current stage to 'Rejected'
-    if (jobApplication.stageStatuses.has(currentStage)) {
-      const stageStatus = jobApplication.stageStatuses.get(currentStage);
-      stageStatus.status = "Rejected";
-      stageStatus.rejectionReason = rejectionReason;
-      jobApplication.stageStatuses.set(currentStage, stageStatus);
-    } else {
-      // If for some reason the current stage doesn't exist in stageStatuses, create it
-      jobApplication.stageStatuses.set(currentStage, {
-        status: "Rejected",
-        rejectionReason: rejectionReason,
-        assignedTo: null,
-        score: {},
-        currentCall: null,
-        callHistory: [],
-      });
+    if(scheduledDate && scheduledTime){
+      const [hour,minutes] = scheduledTime?.split(":");
+      const mailScheduledDate = new Date(scheduledDate);
+      mailScheduledDate.setHours(hour,minutes,0,0);
+
+      // Update the status of the current stage to 'Rejected'
+      if (jobApplication.stageStatuses.has(currentStage)) {
+        const stageStatus = jobApplication.stageStatuses.get(currentStage);
+        stageStatus.rejectionReason = rejectionReason;
+        stageStatus.scheduledDate = mailScheduledDate;
+        jobApplication.stageStatuses.set(currentStage, stageStatus);
+      } else {
+        // If for some reason the current stage doesn't exist in stageStatuses, create it
+        jobApplication.stageStatuses.set(currentStage, {
+          rejectionReason: rejectionReason,
+          assignedTo: null,
+          score: {},
+          scheduledDate : mailScheduledDate,
+          currentCall: null,
+          callHistory: [],
+        });
+      }
+
+      // Save the updated candidate document
+      await candidate.save();
+
+      res.status(200).json({ message: "Candidate rejection scheduled successfully" });
+    }else{
+
+      // Update the status of the current stage to 'Rejected'
+      if (jobApplication.stageStatuses.has(currentStage)) {
+        const stageStatus = jobApplication.stageStatuses.get(currentStage);
+        stageStatus.status = "Rejected";
+        stageStatus.rejectionReason = rejectionReason;
+        jobApplication.stageStatuses.set(currentStage, stageStatus);
+      } else {
+        // If for some reason the current stage doesn't exist in stageStatuses, create it
+        jobApplication.stageStatuses.set(currentStage, {
+          status: "Rejected",
+          rejectionReason: rejectionReason,
+          assignedTo: null,
+          score: {},
+          currentCall: null,
+          callHistory: [],
+        });
+      }
+  
+      // Save the updated candidate document
+      await candidate.save();
+      
+    //Selective Email sending
+    const canSendEmail = !!REJECTION_REASON.find(reasonObj =>(reasonObj?.reason === rejectionReason?.trim() && reasonObj?.email))
+    if(canSendEmail){
+      // Send rejection email
+      const emailContent = getRejectionEmailContent(candidate.firstName + " " + candidate.lastName,job.jobTitle);
+
+      await sendEmail(candidate.email, "Application Status Update", emailContent);
     }
-
-    // Save the updated candidate document
-    await candidate.save();
-
-    // Send rejection email
-    const emailContent = getRejectionEmailContent(candidate.firstName + " " + candidate.lastName,job.jobTitle);
-
-    await sendEmail(candidate.email, "Application Status Update", emailContent);
-
-    res.status(200).json({ message: "Candidate rejected successfully" });
+  
+      res.status(200).json({ message: "Candidate rejected successfully" });
+    }
   } catch (error) {
     console.error("Error rejecting candidate:", error);
     res
@@ -79,6 +153,8 @@ export const rejectMultipleCandidates = async (req, res) => {
     if(!candidateData || candidateData?.length === 0){
       throw new Error("No Candidates Found")
     }
+
+    let isScheduled = false;
 
     for(let eachCandidate of candidateData){
       if(!eachCandidate?.candidateId || !eachCandidate?.jobId || !eachCandidate?.rejectionReason){
@@ -107,34 +183,76 @@ export const rejectMultipleCandidates = async (req, res) => {
       // Get the current stage
       const currentStage = jobApplication.currentStage;
 
-      // Update the status of the current stage to 'Rejected'
-      if (jobApplication.stageStatuses.has(currentStage)) {
-        const stageStatus = jobApplication.stageStatuses.get(currentStage);
-        stageStatus.status = "Rejected";
-        stageStatus.rejectionReason = eachCandidate?.rejectionReason;
-        jobApplication.stageStatuses.set(currentStage, stageStatus);
-      } else {
-        // If for some reason the current stage doesn't exist in stageStatuses, create it
-        jobApplication.stageStatuses.set(currentStage, {
-          status: "Rejected",
-          rejectionReason: eachCandidate?.rejectionReason,
-          assignedTo: null,
-          score: {},
-          currentCall: null,
-          callHistory: [],
-        });
+      const { scheduledDate, scheduledTime } = eachCandidate;
+
+      if(scheduledDate && scheduledTime){
+        
+        const [hour,minutes] = scheduledTime?.split(":");
+        const mailScheduledDate = new Date(scheduledDate);
+        mailScheduledDate.setHours(hour,minutes,0,0);
+  
+        // Update the status of the current stage to 'Rejected'
+        if (jobApplication.stageStatuses.has(currentStage)) {
+          const stageStatus = jobApplication.stageStatuses.get(currentStage);
+          stageStatus.rejectionReason = eachCandidate?.rejectionReason;
+          stageStatus.scheduledDate = mailScheduledDate;
+          jobApplication.stageStatuses.set(currentStage, stageStatus);
+        } else {
+          // If for some reason the current stage doesn't exist in stageStatuses, create it
+          jobApplication.stageStatuses.set(currentStage, {
+            rejectionReason: eachCandidate?.rejectionReason,
+            assignedTo: null,
+            score: {},
+            scheduledDate : mailScheduledDate,
+            currentCall: null,
+            callHistory: [],
+          });
+        }
+  
+        // Save the updated candidate document
+        await candidate.save();
+
+        isScheduled = true;
+  
+      }else{
+  
+        // Update the status of the current stage to 'Rejected'
+        if (jobApplication.stageStatuses.has(currentStage)) {
+          const stageStatus = jobApplication.stageStatuses.get(currentStage);
+          stageStatus.status = "Rejected";
+          stageStatus.rejectionReason = eachCandidate?.rejectionReason;
+          jobApplication.stageStatuses.set(currentStage, stageStatus);
+        } else {
+          // If for some reason the current stage doesn't exist in stageStatuses, create it
+          jobApplication.stageStatuses.set(currentStage, {
+            status: "Rejected",
+            rejectionReason: eachCandidate?.rejectionReason,
+            assignedTo: null,
+            score: {},
+            currentCall: null,
+            callHistory: [],
+          });
+        }
+    
+        // Save the updated candidate document
+        await candidate.save();
+    
+        //Selective Email sending
+        const canSendEmail = !!REJECTION_REASON.find(reasonObj =>(reasonObj?.reason === eachCandidate?.rejectionReason?.trim() && reasonObj?.email))
+        if(canSendEmail){
+          // Send rejection email
+          const emailContent = getRejectionEmailContent(candidate.firstName + " " + candidate.lastName,job.jobTitle);
+
+          await sendEmail(candidate.email, "Application Status Update", emailContent);
+        }
       }
-
-      // Save the updated candidate document
-      await candidate.save();
-
-      // Send rejection email
-      const emailContent = getRejectionEmailContent(candidate.firstName + " " + candidate.lastName,job.jobTitle);
-
-      await sendEmail(candidate.email, "Application Status Update", emailContent);
     }
 
-    res.status(200).json({ message: "Selected candidates rejected successfully" });
+    if(isScheduled){
+      res.status(200).json({ message: "Selected candidates rejection scheduled successfully" });
+    }else{
+      res.status(200).json({ message: "Selected candidates rejected successfully" });
+    }
   } catch (error) {
     console.error("Error rejecting candidate:", error);
     res
@@ -989,7 +1107,11 @@ export const sendDesignTask = async (req, res) => {
       dueDate,
       dueTime,
       candidateEmail,
+      scheduledDate,
+      scheduledTime
     } = req.body;
+
+    const sanitizedDescription = sanitizeLexicalHtml(taskDescription);
 
     const candidate = await candidates.findById(candidateId);
     if (!candidate) {
@@ -1002,32 +1124,55 @@ export const sendDesignTask = async (req, res) => {
     if (!jobApplication) {
       return res.status(404).json({ message: "Job application not found" });
     }
+    if(scheduledDate && scheduledTime){
+      const [hour,minutes] = scheduledTime?.split(":");
+      const mailScheduledDate = new Date(scheduledDate);
+      mailScheduledDate.setHours(hour,minutes,0,0);
 
-    const sanitizedDescription = sanitizeLexicalHtml(taskDescription);
+      // Update the Design Task stage status
+      jobApplication.stageStatuses.set("Design Task", {
+        status: "Pending",
+        currentCall: {
+          scheduledDate: new Date(dueDate),
+          scheduledTime: dueTime,
+          meetingLink: "", // You can leave this empty or use it for a submission link if needed
+        },
+        taskDescription: sanitizedDescription,
+        scheduledDate : mailScheduledDate
+      });
 
-    // Update the Design Task stage status
-    jobApplication.stageStatuses.set("Design Task", {
-      status: "Sent",
-      currentCall: {
-        scheduledDate: new Date(dueDate),
-        scheduledTime: dueTime,
-        meetingLink: "", // You can leave this empty or use it for a submission link if needed
-      },
-      taskDescription: sanitizedDescription,
-    });
+      await candidate.save();
 
-    // Send email to candidate
-    const emailSubject = `Value At Void : ${jobApplication.jobApplied} | Design Task for ${candidate.firstName} (3 days)`;
-    const emailContent = getDesignTaskContent(candidate.firstName + " " + candidate.lastName,jobApplication.jobApplied,sanitizedDescription,dueDate,dueTime)
-    
-    await sendEmail(candidateEmail, emailSubject, emailContent,"Design Task");
+      res.status(200).json({
+        message: "Design task scheduled successfully",
+        updatedStageStatus: jobApplication.stageStatuses.get("Design Task"),
+      });
+    }else{
 
-    await candidate.save();
-
-    res.status(200).json({
-      message: "Design task sent successfully",
-      updatedStageStatus: jobApplication.stageStatuses.get("Design Task"),
-    });
+      // Update the Design Task stage status
+      jobApplication.stageStatuses.set("Design Task", {
+        status: "Sent",
+        currentCall: {
+          scheduledDate: new Date(dueDate),
+          scheduledTime: dueTime,
+          meetingLink: "", // You can leave this empty or use it for a submission link if needed
+        },
+        taskDescription: sanitizedDescription,
+      });
+  
+      // Send email to candidate
+      const emailSubject = `Value At Void : ${jobApplication.jobApplied} | Design Task for ${candidate.firstName} (3 days)`;
+      const emailContent = getDesignTaskContent(candidate.firstName + " " + candidate.lastName,jobApplication.jobApplied,sanitizedDescription,dueDate,dueTime)
+      
+      await sendEmail(candidateEmail, emailSubject, emailContent,"Design Task");
+  
+      await candidate.save();
+  
+      res.status(200).json({
+        message: "Design task sent successfully",
+        updatedStageStatus: jobApplication.stageStatuses.get("Design Task"),
+      });
+    }
   } catch (error) {
     console.error("Error sending design task:", error);
     res.status(500).json({ message: "Server error", error: error.message });
