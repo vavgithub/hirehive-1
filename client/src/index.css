@@ -270,6 +270,22 @@ h2{
     }
   }
 
+  @keyframes dotsAnimation {
+    0% { width: 0; }
+    25% { width: 0.4em; }
+    50% { width: 0.8em; }
+    75% { width: 0.4em; }
+    100% { width: 0; }
+  }
+  
+  .animated-dots {
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+    width: 0;
+    animation: dotsAnimation 1.5s infinite steps(5);
+  }
+
   .no-selection{
   -webkit-user-select: none; /* Safari, Chrome (older versions) */
   -moz-user-select: none;    /* Firefox (older versions) */

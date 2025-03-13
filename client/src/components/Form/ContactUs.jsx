@@ -6,6 +6,8 @@ import axios from 'axios';
 import Loader from '../ui/Loader';
 import { useForm } from 'react-hook-form';
 import { showErrorToast, showSuccessToast } from '../ui/Toast';
+import LoaderModal from '../ui/LoaderModal';
+import StyledCard from '../ui/StyledCard';
 
 const CLOUDINARY_URL_SS = import.meta.env.VITE_CLOUDINARY_URL_SS;
 const CLOUDINARY_SCREENSHOT_UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_SCREENSHOT_UPLOAD_PRESET;
@@ -115,7 +117,7 @@ const ContactUs = () => {
       // Build URL with form data as query parameters
       const url = `${GOOGLE_SCRIPT_URL}?name=${encodeURIComponent(data.name)}&email=${encodeURIComponent(data.email)}&message=${encodeURIComponent(data.message)}&screenshotUrl=${encodeURIComponent(data.screenshotUrl || '')}&timestamp=${encodeURIComponent(data.timestamp)}`;
       
-      console.log("Submitting to URL:", url);
+      // console.log("Submitting to URL:", url);
       
       // Use no-cors mode since Google Script returns CORS errors
       await fetch(url, {
@@ -193,18 +195,6 @@ const ContactUs = () => {
 
   // Render the form or loader based on submission state
   const renderContent = () => {
-    if (showLoader) {
-      return (
-        <div className="flex flex-col items-center justify-center py-4">
-          <Loader loop={!isSuccess} autoplay={true} />
-          <p className="text-center mt-4 typography-body text-font-gray">
-            {isSuccess 
-              ? "Your message has been sent successfully!" 
-              : "Sending your message..."}
-          </p>
-        </div>
-      );
-    }
 
     return (
       <form onSubmit={handleFormSubmit(onSubmit)} className="space-y-4 mt-4">
@@ -330,6 +320,16 @@ const ContactUs = () => {
   return (
     <>
       {/* Floating Button */}
+      {isSubmitting &&  
+        <div className="flex fixed top-0 left-0 h-screen w-screen z-[100] flex-col items-center justify-center py-4 bg-background-overlay">
+          <StyledCard>
+          <Loader loop={!isSuccess} autoplay={true} />
+          <p className="text-center mt-4 typography-body text-font-gray flex items-center justify-center">
+            Sending your message<span className=' animated-dots '>...</span>
+          </p>
+          </StyledCard>
+        </div>
+      }
       <button
         onClick={toggleModal}
         className="fixed bottom-6 right-6 z-40 w-14 h-14 rounded-full bg-teal-400 hover:bg-teal-500 text-white shadow-lg flex items-center justify-center transition-all duration-300 hover:scale-105"
