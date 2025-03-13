@@ -32,7 +32,7 @@ import PencilIcon from '../../svg/Buttons/PencilIcon';
 import Modal from '../../components/Modal';
 import TextEditor from '../../components/utility/TextEditor';
 import LoaderModal from '../../components/ui/LoaderModal';
-import EyeIcon from '../../svg/EyeIcon';
+import EyeIcon, { EyeIconSmall } from '../../svg/EyeIcon';
 
 
 
@@ -239,7 +239,6 @@ const ViewCandidateProfile = () => {
     const addNotesMutation = useMutation({
         mutationFn : addNotes,
         onSuccess: (data) => {
-            console.log(data)
             queryClient.invalidateQueries(['candidate', candidateId, jobId]);
         },
         onError: (error) => {
@@ -406,18 +405,19 @@ const ViewCandidateProfile = () => {
                                     </div>
                                 </div>}
                             </div>
-                            {role === "Hiring Manager" && candidateData?.jobApplication?.notes?.content && 
-                            <StyledCard padding={2} backgroundColor={"bg-background-80"} extraStyles={'w-[30%] h-[140px] relative overflow-hidden'}>
-                                <h3 className='typography-body font-semibold font-bricolage'>Notes</h3>
-                                <div className='text-sm overflow-hidden text-font-gray max-h-[78%]' dangerouslySetInnerHTML={{__html : candidateData?.jobApplication?.notes?.content}}></div>
-                                <div onClick={()=>setOpenNotesView(true)} className='absolute cursor-pointer right-4 bottom-4 p-2 bg-background-70 rounded-xl'><EyeIcon/></div>
-                            </StyledCard>}
-                            {/* Notes Icon */}
-                            {role === "Hiring Manager" && <div onClick={()=>setOpenNotes(true)} className='absolute hover:bg-accent-300  bottom-4 right-4 bg-background-70 p-2 rounded-xl'>
-                                <CustomToolTip title={candidateData?.jobApplication?.notes?.content ? "Edit notes" :"Add a note"} arrowed>
-                                    <PencilIcon />
-                                </CustomToolTip>
-                            </div>}
+                                {role === "Hiring Manager" && candidateData?.jobApplication?.notes?.content && 
+                                <StyledCard padding={2} backgroundColor={"bg-background-80"} extraStyles={'w-[30%] h-[140px] relative overflow-hidden'}>
+                                    <h3 className='typography-body font-semibold font-bricolage'>Notes</h3>
+                                    <div className='text-sm overflow-hidden text-font-gray max-h-[78%]' dangerouslySetInnerHTML={{__html : candidateData?.jobApplication?.notes?.content}}></div>
+                                    <div onClick={()=>setOpenNotesView(true)} className='absolute cursor-pointer right-4 bottom-4 p-2 bg-background-70 hover:bg-accent-300  rounded-xl'><EyeIconSmall/></div>
+                                </StyledCard>}
+                                {/* Notes Icon */}
+                                {role === "Hiring Manager" && 
+                                <div onClick={()=>setOpenNotes(true)} className={'absolute hover:bg-accent-300  bg-background-70 p-2 rounded-xl' + (candidateData?.jobApplication?.notes?.content ? " top-8 right-8 " : " top-4 right-4")}>
+                                    <CustomToolTip title={candidateData?.jobApplication?.notes?.content ? "Edit notes" :"Add a note"} arrowed>
+                                        <PencilIcon />
+                                    </CustomToolTip>
+                                </div>}
                         </StyledCard>
 
                         {/* VAV Score Section */}
