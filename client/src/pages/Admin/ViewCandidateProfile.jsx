@@ -26,6 +26,8 @@ import ResumeViewer from '../../components/utility/ResumeViewer';
 import CustomToolTip from '../../components/utility/CustomToolTip';
 import StyledCard from '../../components/ui/StyledCard';
 import { CustomDropdown } from '../../components/Form/FormFields';
+import RatingSelector, { getRatingIcon } from '../../components/utility/RatingSelector';
+import { fetchAllDesignReviewers } from '../../api/authApi';
 import PencilIcon from '../../svg/Buttons/PencilIcon';
 import Modal from '../../components/Modal';
 import TextEditor from '../../components/utility/TextEditor';
@@ -99,6 +101,8 @@ const ViewCandidateProfile = () => {
     const [openNotes,setOpenNotes] = useState(false);
     const [openNotesView,setOpenNotesView] = useState(false);
     const [notes,setNotes] = useState("");
+
+    const [ratingAnchor,setRatingAnchor] = useState(null);
     const queryClient = useQueryClient();
 
     const { data, isLoading, isError, error: queryError } = useQuery({
@@ -118,6 +122,23 @@ const ViewCandidateProfile = () => {
             setNotes("")
         }
       }, [candidateData,jobId]);
+    const { data: designReviewers, isLoading : isDesignReviewersLoading } = useQuery({
+    queryKey: ['getAllDesignReviewers'],
+    queryFn: () => fetchAllDesignReviewers(),
+    });
+
+    const updateCandidateRatingMutation = useMutation({
+    mutationFn: ({ candidateId, jobId, rating }) =>
+        axios.post('/hr/update-candidate-rating', { candidateId, jobId, rating }),
+    onSuccess: () => {
+        setRatingAnchor(null)
+        queryClient.invalidateQueries(['candidate',candidateId, jobId]);
+    },
+    });
+
+    const handleRateCandidate = (rating) => {
+        updateCandidateRatingMutation.mutate({candidateId,jobId,rating})
+    }
 
      const [originalPath] = useState(()=>{
         const isJobPath = location.pathname.includes('/admin/jobs/');
@@ -142,8 +163,11 @@ const ViewCandidateProfile = () => {
 
     // Handle back navigation
     const handleBack = () => {
-        // Navigate back to the original listing page
-        navigate(originalPath);
+        if (role === "Candidate") {
+            navigate(-1);
+        } else {
+            navigate(originalPath);
+        }
     };
 
 
@@ -310,10 +334,14 @@ const ViewCandidateProfile = () => {
             {
                 (role === "Hiring Manager" || role === "Design Reviewer") && (
                     <div className="flex gap-3">
-                        <StyledCard padding={2} extraStyles="w-full flex gap-4 justify-between relative">
+                        <StyledCard padding={2} extraStyles="w-full flex gap-4 relative justify-between relative">
                             <div className='flex gap-4'>
-                                <div className="to-background-100 w-[200px] min-h-auto max-h-[200px] rounded-xl overflow-hidden">
+                                <div className="relative to-background-100 w-[200px] min-h-auto max-h-[200px] rounded-xl overflow-hidden">
                                     <img src={data.profilePictureUrl || " https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg"} alt="" className='object-cover w-full overflow-hidden' />
+                                {(role === "Hiring Manager" || role === "Admin") && 
+                                <span onClick={(e)=>setRatingAnchor(e.currentTarget)} className='absolute cursor-pointer bg-[#2d2d2eae] min-w-10 min-h-10 top-2 right-2 rounded-full flex justify-center items-center'>
+                                    {getRatingIcon(data?.jobApplication?.rating)}
+                                </span>}
                                 </div>
                                 <div className='flex flex-col gap-2'>
                                     <h1 className="typography-h2">
@@ -367,6 +395,16 @@ const ViewCandidateProfile = () => {
 
                                     </div>
                                 </div>
+                                {data?.jobApplication?.stageStatuses[data?.jobApplication?.currentStage]?.assignedTo && (role === "Hiring Manager" || role === "Admin") &&
+                                <div className='absolute bottom-4 right-4 flex gap-2'>
+                                    <div className='flex flex-col items-end'>
+                                        <p className='typography-small-p text-font-gray'>Current reviewer </p>
+                                        <p className='typography-small-p '>{designReviewers?.data?.find(dr=>dr?._id === data?.jobApplication?.stageStatuses[data?.jobApplication?.currentStage]?.assignedTo)?.name}</p>
+                                    </div>
+                                    <div className='w-8 h-8 overflow-hidden rounded-full'>
+                                        <img src={designReviewers?.data?.find(dr=>dr?._id === data?.jobApplication?.stageStatuses[data?.jobApplication?.currentStage]?.assignedTo)?.profilePicture || "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg"} alt="" className='object-cover w-full overflow-hidden' />
+                                    </div>
+                                </div>}
                             </div>
                             {role === "Hiring Manager" && candidateData?.jobApplication?.notes?.content && 
                             <StyledCard padding={2} backgroundColor={"bg-background-80"} extraStyles={'w-[30%] h-[140px] relative overflow-hidden'}>
@@ -391,6 +429,12 @@ const ViewCandidateProfile = () => {
                     </div>
                 )
             }
+
+            <RatingSelector 
+            anchorEl={ratingAnchor}
+            onSelectRating={handleRateCandidate}
+            setAnchorEl={()=>setRatingAnchor(null)}
+            />
 
             {/* Notes Editor Modal */}
             <Modal
