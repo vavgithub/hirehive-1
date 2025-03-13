@@ -7,7 +7,7 @@ import EmailIcon from '../../svg/EmailIcon';
 import Tabs from '../../components/ui/Tabs';
 import Header from '../../components/utility/Header';
 import axios from '../../api/axios';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ACTION_TYPES } from '../../utility/ActionTypes';
 import CandidateTabDetail from '../../components/ui/CandidateTabDetail';
 
@@ -26,6 +26,7 @@ import ResumeViewer from '../../components/utility/ResumeViewer';
 import CustomToolTip from '../../components/utility/CustomToolTip';
 import StyledCard from '../../components/ui/StyledCard';
 import { CustomDropdown } from '../../components/Form/FormFields';
+import RatingSelector, { getRatingIcon } from '../../components/utility/RatingSelector';
 
 
 
@@ -86,6 +87,9 @@ const ViewCandidateProfile = () => {
     const switchJobRef = useRef();
     const [selectedJob,setSelectedJob] = useState(jobId);
 
+    const [ratingAnchor,setRatingAnchor] = useState(null);
+    const queryClient = useQueryClient();
+    
     const { data, isLoading, isError, error: queryError } = useQuery({
         queryKey: ['candidate', candidateId, jobId],
         queryFn: () => fetchCandidateData(candidateId, jobId),
@@ -96,6 +100,18 @@ const ViewCandidateProfile = () => {
         },
     });
 
+    const updateCandidateRatingMutation = useMutation({
+    mutationFn: ({ candidateId, jobId, rating }) =>
+        axios.post('/hr/update-candidate-rating', { candidateId, jobId, rating }),
+    onSuccess: () => {
+        setRatingAnchor(null)
+        queryClient.invalidateQueries(['candidate',candidateId, jobId]);
+    },
+    });
+
+    const handleRateCandidate = (rating) => {
+        updateCandidateRatingMutation.mutate({candidateId,jobId,rating})
+    }
 
      const [originalPath] = useState(()=>{
         const isJobPath = location.pathname.includes('/admin/jobs/');
@@ -275,8 +291,11 @@ const ViewCandidateProfile = () => {
                 (role === "Hiring Manager" || role === "Design Reviewer") && (
                     <div className="flex gap-3">
                         <StyledCard padding={2} extraStyles="w-full flex gap-4">
-                            <div className="to-background-100 w-[200px] min-h-auto max-h-[200px] rounded-xl overflow-hidden">
+                            <div className="relative to-background-100 w-[200px] min-h-auto max-h-[200px] rounded-xl overflow-hidden">
                                 <img src={data.profilePictureUrl || " https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg"} alt="" className='object-cover w-full overflow-hidden' />
+                                <span onClick={(e)=>setRatingAnchor(e.currentTarget)} className='absolute cursor-pointer bg-[#2d2d2eae] min-w-10 min-h-10 top-2 right-2 rounded-full flex justify-center items-center'>
+                                    {getRatingIcon(data?.jobApplication?.rating)}
+                                </span>
                             </div>
                             <div className='flex flex-col gap-2'>
                                 <h1 className="typography-h2">
@@ -341,6 +360,12 @@ const ViewCandidateProfile = () => {
                     </div>
                 )
             }
+
+            <RatingSelector 
+            anchorEl={ratingAnchor}
+            onSelectRating={handleRateCandidate}
+            setAnchorEl={()=>setRatingAnchor(null)}
+            />
 
             {/* Conditional rendering of tabs for "Hiring Manager" */}
 
