@@ -393,6 +393,8 @@ export const sendInviteOTP = asyncHandler(async (req,res) => {
       getSignupEmailContent(name, otp)
     );
 
+    req.session.isInvited = email;
+
     return res.status(200).json({
       status: 'success',
       email : email,
@@ -434,6 +436,28 @@ export const verifyOTPforAdmin = asyncHandler(async (req, res) => {
     ...(userData?.company_id ? {company_id : userData?.company_id} : {}),
     verificationStage : "OTP"
   })
+
+  if(req.session?.isInvited === email){
+    const company = await Company.findOne({
+      _id: saveUser?.company_id,
+      "invited_team_members.email": email
+    });
+    
+    if (!company) {
+      console.error("No matching document found!");
+    } else {
+      // Find the specific team member and update the `member_id`
+      company?.invited_team_members.forEach(member => {
+        if (member.email === email) {
+          member.member_id = saveUser._id;  // Update member_id
+        }
+      });
+
+      // Save the updated document
+      await company.save();
+    }
+    delete req.session.isInvited
+  }
 
   otpStore.delete(email);
 

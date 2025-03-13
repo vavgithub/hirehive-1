@@ -13,7 +13,7 @@ import OfferSent from '../../svg/StatsCard/View Candidate/OfferSent';
 import Total from '../../svg/StatsCard/View Candidate/Total';
 import Loader from '../../components/Loaders/Loader';
 import StyledCard from '../../components/Cards/StyledCard';
-import Table from '../../components/TableUtilities/Table';
+import Table from '../../components/tableUtilities/Table';
 
 const statsOne = [
   { title: 'Total', value: 0, icon: Total },

@@ -16,7 +16,7 @@ import { emailPattern } from './RegisterForm';
 import Modal from '../Modals/Modal';
 import PencilIcon from '../../svg/Buttons/PencilIcon';
 import { InputField } from '../Inputs/InputField';
-import MuiCustomStylesForDataGrid from '../TableUtilities/MuiCustomStylesForDataGrid';
+import MuiCustomStylesForDataGrid from '../tableUtilities/MuiCustomStylesForDataGrid';
 
 export const roleOptions = [
     {

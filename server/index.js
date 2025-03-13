@@ -28,6 +28,7 @@ import candidateAuthRoutes from "./routes/candidate/auth.router.js"
 import adminCandidateRoutes from "./routes/admin/candidate.router.js"
 import drRoutes from "./routes/admin/dr.router.js"
 import hrRoutes from "./routes/admin/hr.router.js"
+import adminRoutes from "./routes/admin/admin.router.js"
 import startScheduledJobs from "./utils/scheduledJobs.js";
 import { initializeUploadDir } from "./config/paths.js";
 import corsConfig from "./config/cors.config.js";
@@ -72,6 +73,7 @@ if (environment === "development") {
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/jobs", jobRoutes);
 app.use("/api/v1/hr", hrRoutes);
+app.use("/api/v1/admin", adminRoutes);
 app.use('/api/v1/auth/candidate', candidateAuthRoutes);
 app.use("/api/v1/candidates", candidateRoutes);
 app.use("/api/v1/admin/candidate", adminCandidateRoutes);

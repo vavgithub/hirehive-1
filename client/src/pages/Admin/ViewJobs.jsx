@@ -8,7 +8,7 @@ import Tabs from '../../components/ui/Tabs';
 import StatsGrid from '../../components/ui/StatsGrid';
 import { formatDescription } from '../../utility/formatDescription';
 import SideCard from '../../components/ui/SideCard';
-import Table from '../../components/TableUtilities/Table';
+import Table from '../../components/tableUtilities/Table';
 import one from '../../svg/StatsCard/Jobs Page/one';
 import Header from '../../components/utility/Header';
 import { ACTION_TYPES } from '../../utility/ActionTypes';
