@@ -27,6 +27,7 @@ import CustomToolTip from '../../components/utility/CustomToolTip';
 import StyledCard from '../../components/ui/StyledCard';
 import { CustomDropdown } from '../../components/Form/FormFields';
 import RatingSelector, { getRatingIcon } from '../../components/utility/RatingSelector';
+import { fetchAllDesignReviewers } from '../../api/authApi';
 
 
 
@@ -89,7 +90,7 @@ const ViewCandidateProfile = () => {
 
     const [ratingAnchor,setRatingAnchor] = useState(null);
     const queryClient = useQueryClient();
-    
+
     const { data, isLoading, isError, error: queryError } = useQuery({
         queryKey: ['candidate', candidateId, jobId],
         queryFn: () => fetchCandidateData(candidateId, jobId),
@@ -98,6 +99,11 @@ const ViewCandidateProfile = () => {
         onError: (error) => {
             dispatch(setError(error.message));
         },
+    });
+
+    const { data: designReviewers, isLoading : isDesignReviewersLoading } = useQuery({
+    queryKey: ['getAllDesignReviewers'],
+    queryFn: () => fetchAllDesignReviewers(),
     });
 
     const updateCandidateRatingMutation = useMutation({
@@ -290,12 +296,13 @@ const ViewCandidateProfile = () => {
             {
                 (role === "Hiring Manager" || role === "Design Reviewer") && (
                     <div className="flex gap-3">
-                        <StyledCard padding={2} extraStyles="w-full flex gap-4">
+                        <StyledCard padding={2} extraStyles="w-full flex gap-4 relative">
                             <div className="relative to-background-100 w-[200px] min-h-auto max-h-[200px] rounded-xl overflow-hidden">
                                 <img src={data.profilePictureUrl || " https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg"} alt="" className='object-cover w-full overflow-hidden' />
+                                {(role === "Hiring Manager" || role === "Admin") && 
                                 <span onClick={(e)=>setRatingAnchor(e.currentTarget)} className='absolute cursor-pointer bg-[#2d2d2eae] min-w-10 min-h-10 top-2 right-2 rounded-full flex justify-center items-center'>
                                     {getRatingIcon(data?.jobApplication?.rating)}
-                                </span>
+                                </span>}
                             </div>
                             <div className='flex flex-col gap-2'>
                                 <h1 className="typography-h2">
@@ -349,6 +356,16 @@ const ViewCandidateProfile = () => {
 
                                 </div>
                             </div>
+                                {data?.jobApplication?.stageStatuses[data?.jobApplication?.currentStage]?.assignedTo && (role === "Hiring Manager" || role === "Admin") &&
+                                <div className='absolute bottom-4 right-4 flex gap-2'>
+                                    <div className='flex flex-col items-end'>
+                                        <p className='typography-small-p text-font-gray'>Current reviewer </p>
+                                        <p className='typography-small-p '>{designReviewers?.data?.find(dr=>dr?._id === data?.jobApplication?.stageStatuses[data?.jobApplication?.currentStage]?.assignedTo)?.name}</p>
+                                    </div>
+                                    <div className='w-8 h-8 overflow-hidden rounded-full'>
+                                        <img src={designReviewers?.data?.find(dr=>dr?._id === data?.jobApplication?.stageStatuses[data?.jobApplication?.currentStage]?.assignedTo)?.profilePicture || "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg"} alt="" className='object-cover w-full overflow-hidden' />
+                                    </div>
+                                </div>}
                         </StyledCard>
 
                         {/* VAV Score Section */}
