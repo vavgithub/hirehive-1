@@ -130,7 +130,8 @@ const Modal = ({
   companyName,
   closeReason,
   onCloseReasonChange,
-  specifiedWidth
+  specifiedWidth,
+  noCancel = false
 }) => {
   const [rejectionReason, setRejectionReason] = useState('');
   const [showEmailPreview, setShowEmailPreview] = useState(false);
@@ -314,7 +315,7 @@ const Modal = ({
     >
       <StyledCard
         onClick={(e) => e.stopPropagation()}
-        backgroundColor={"bg-background-60 "}
+        backgroundColor={"bg-background-80 "}
         padding={0}
         extraStyles={"shadow w-full  mx-4 transform transition-transform duration-200 ease-out " + (specifiedWidth ? specifiedWidth : actionType === ACTION_TYPES.BUDGET ? "max-w-xl" : "max-w-lg")}
       >
@@ -323,9 +324,10 @@ const Modal = ({
           {children}
           <div className="flex justify-end gap-4 mt-4">
             <div className={(isMobile && actionType === ACTION_TYPES.ASSESSMENT ) ? "hidden" : ""}>
+              {!noCancel && 
               <Button variant={cancelVariant} onClick={onClose}>
                 {cancelLabel}
-              </Button>
+              </Button>}
             </div>
             {( actionType !== ACTION_TYPES.ASSESSMENT || (!isMobile && actionType === ACTION_TYPES.ASSESSMENT)) 
             && actionType !== ACTION_TYPES.CAMERAERROR 
