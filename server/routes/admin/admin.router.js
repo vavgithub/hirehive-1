@@ -8,5 +8,8 @@ router.post('/add-member',protect,roleProtect("Admin"), addTeamMember);
 
 router.get('/get-all-members',protect,roleProtect("Admin"), getAllTeamMember);
 
+router.get('/get-member/:id',protect,roleProtect("Admin"), getAllTeamMember);
+
+
 
 export default router;                                                                               

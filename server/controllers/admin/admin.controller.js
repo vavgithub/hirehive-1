@@ -3,10 +3,11 @@ import { User } from "../../models/admin/user.model.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
 import { getInvitationContent } from "../../utils/emailTemplates.js";
 import { sendEmail } from "../../utils/sentEmail.js";
+import jwt from "jsonwebtoken";
 
 //add Team members controller
 export const addTeamMember = asyncHandler(async (req,res) => {
-    const { teamMember} = req.body;
+    const { teamMember } = req.body;
 
     const userData = req.user;
 
@@ -22,11 +23,11 @@ export const addTeamMember = asyncHandler(async (req,res) => {
     let validRoles = ['Hiring Manager','Design Reviewer'];
   
       if(teamMember?.firstName && teamMember?.lastName && teamMember?.email && teamMember?.role && validRoles.includes(teamMember.role)){
-        const isExisting = await User.findOne({ email : member?.email });
+        const isExisting = await User.findOne({ email : teamMember?.email });
         if(isExisting){
           return res.status(400).json({
             status: 'error',
-            message: `${member?.email} is already registered. Please check`
+            message: `${teamMember?.email} is already registered. Please check`
           });
         }
       }else{
@@ -38,10 +39,10 @@ export const addTeamMember = asyncHandler(async (req,res) => {
   
     //Add members to Company database + send invites
       const customMember = {
-        id : member.id,
-        name : member.firstName + " " + member.lastName,
-        email : member.email,
-        role : member.role,
+        id : teamMember.id,
+        name : teamMember.firstName + " " + teamMember.lastName,
+        email : teamMember.email,
+        role : teamMember.role,
         invited : false,
       }
       const updatedCompany = await Company.findByIdAndUpdate(
@@ -77,30 +78,9 @@ export const addTeamMember = asyncHandler(async (req,res) => {
         { new: true }
       );
   
-    userData.verificationStage = "DONE"
-    await userData.save();
-  
-    const companyDetails = await Company.findById({_id : userData.company_id})
-  
-    // Generate verified Token JWT
-    const token = generateToken(userData._id)
-  
-    res.cookie('jwt', token, cookieOptions);
-  
     return res.status(200).json({
       status: 'success',
-      message : "Added Team members successfully",
-      userData : {
-        ...userData.toObject(),
-        company_id : {
-          name: companyDetails.companyName,
-          logoUrl : companyDetails.logoUrl, 
-          industryType: companyDetails.industry,
-          location: companyDetails.location,
-          size: companyDetails.companySize,
-        }
-      },
-      currentStage : "DONE"
+      message : "Added & invited team member successfully",
     })
   })
 
