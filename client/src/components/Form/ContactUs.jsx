@@ -248,7 +248,7 @@ const ContactUs = () => {
             id="message"
             rows={4}
             placeholder="How can we help you?"
-            className={`w-full p-2 bg-background-40 rounded outline-none focus:outline-teal-300 ${
+            className={` px-4 pt-2 bg-background-40  hover:bg-background-60 cursor-pointer  rounded-xl placeholder:text-font-gray placeholder:font-body  focus:ring-teal-400 focus:outline-teal-500 outline-none typography-body w-full ${
               errors.message ? '!border !border-red-500' : 'border border-transparent'
             }`}
             {...register("message", { 
@@ -346,7 +346,7 @@ const ContactUs = () => {
         onClose={toggleModal}
         customTitle={showLoader ? (isSuccess ? "Thank You!" : "Sending...") : "Contact Us"}
         customMessage={showLoader ? "" : "Please fill out the form below and we'll get back to you as soon as possible."}
-        customConfirmLabel={isSubmitting ? "Sending..." : "Send Message"}
+        customConfirmLabel={isSubmitting ? "Sending..." : "Send"}
         confirmVariant="primary"
         cancelLabel="Cancel"
         onConfirm={handleFormSubmit(onSubmit)}
