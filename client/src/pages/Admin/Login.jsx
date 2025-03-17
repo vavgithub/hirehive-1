@@ -32,8 +32,7 @@ const Login = () => {
         if (authData) {
             if (authData.role === 'Hiring Manager') {
                 navigate('/hiring-manager/dashboard');
-            }
-            if(authData.role === 'Admin') {
+            }else if(authData.role === 'Admin') {
                 navigate('/admin/dashboard');
             }
              else if (authData.role === 'Design Reviewer') {

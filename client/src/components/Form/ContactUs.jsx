@@ -1,13 +1,12 @@
 import React, { useState, useCallback } from 'react';
-import { Button } from '../ui/Button';
-import Modal from '../Modal';
 import { useDropzone } from 'react-dropzone';
 import axios from 'axios';
-import Loader from '../ui/Loader';
 import { useForm } from 'react-hook-form';
-import { showErrorToast, showSuccessToast } from '../ui/Toast';
-import LoaderModal from '../ui/LoaderModal';
-import StyledCard from '../ui/StyledCard';
+import { Button } from '../Buttons/Button';
+import StyledCard from '../Cards/StyledCard';
+import Loader from '../Loaders/Loader';
+import Modal from '../Modals/Modal';
+
 
 const CLOUDINARY_URL_SS = import.meta.env.VITE_CLOUDINARY_URL_SS;
 const CLOUDINARY_SCREENSHOT_UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_SCREENSHOT_UPLOAD_PRESET;

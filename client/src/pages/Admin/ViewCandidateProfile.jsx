@@ -159,19 +159,26 @@ const ViewCandidateProfile = () => {
 
      const [originalPath] = useState(()=>{
         const isJobPath = location.pathname.includes('/admin/jobs/');
+        const isJobPathHR = location.pathname.includes('/hiring-manager/jobs/');
         if (isJobPath) {
             return `/admin/jobs/view-job/${jobId}`;
         }
-        return role === "Hiring Manager" ?  `/admin/candidates` :`/design-reviewer/candidates`; ;
+        if (isJobPathHR) {
+            return `/hiring-manager/jobs/view-job/${jobId}`;
+        }
+        return role === "Hiring Manager" ?  `/hiring-manager/candidates` : role === "Admin" ? `/admin/candidates` :`/design-reviewer/candidates`; ;
      })
 
    // Effect for job switching
    useEffect(() => {
-    if (selectedJob && role === "Hiring Manager" && selectedJob !== jobId) {
+    if (selectedJob && (role === "Hiring Manager" || role === "Admin") && selectedJob !== jobId) {
         const isJobsPath = originalPath.includes('/admin/jobs/');
-        const basePath = isJobsPath ? '/admin/jobs' : '/admin/candidates';
+        const isJobsPathHR = originalPath.includes('/hiring-manager/jobs/');
+
+        const basePath = ( role === "Admin" && isJobsPath ) ? '/admin/jobs' : '/admin/candidates';
+        const basePathHR = ( role === "Hiring Manager" && isJobsPathHR ) ? '/hiring-manager/jobs' : '/hiring-manager/candidates';
         
-        navigate(`${basePath}/view-candidate/${candidateId}/${selectedJob}`, { 
+        navigate(`${role === "Admin" ? basePath : basePathHR}/view-candidate/${candidateId}/${selectedJob}`, { 
             replace: true,
             state: { from: originalPath }
         });
@@ -317,7 +324,7 @@ const ViewCandidateProfile = () => {
                     page="page1"
                     handleAction={handleAction}
                     onBack={handleBack} // Pass custom back handler
-                    rightContent={role === "Hiring Manager" &&
+                    rightContent={(role === "Admin" || role === "Hiring Manager") &&
                         <div className='flex items-center h-full w-[285px] -translate-y-[6px] z-10'>
                             <CustomDropdown 
                                 extraStylesForLabel=" w-[285px] " 
