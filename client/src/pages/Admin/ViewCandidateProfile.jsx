@@ -36,6 +36,7 @@ import EyeIcon, { EyeIconSmall } from '../../svg/EyeIcon';
 import AddNotes from '../../svg/Buttons/AddNotes';
 import EditNotes from '../../svg/Buttons/EditNotes';
 import { truncatedText } from '../../utility/truncatedHTML';
+import { ChevronDown, ChevronRight } from 'lucide-react';
 
 
 
@@ -104,6 +105,7 @@ const ViewCandidateProfile = () => {
     const [openNotes, setOpenNotes] = useState(false);
     const [openNotesView, setOpenNotesView] = useState(false);
     const [notes, setNotes] = useState("");
+    const [showMore,setShowMore] = useState(false);
 
     const [ratingAnchor, setRatingAnchor] = useState(null);
     const queryClient = useQueryClient();
@@ -429,7 +431,7 @@ const ViewCandidateProfile = () => {
                                             </div>
                                         </div>
 
-                                        <div className='overflow-hidden font-outfit text-font-gray break-words text-ellipsis' dangerouslySetInnerHTML={{ __html: truncatedText(candidateData?.jobApplication?.notes?.content,55) }}></div>
+                                        <div className='overflow-hidden font-outfit text-font-gray ' dangerouslySetInnerHTML={{ __html: truncatedText(candidateData?.jobApplication?.notes?.content,55) }}></div>
 
                                     </StyledCard> : 
                                     <div onClick={handleOpenNotes} className={'hover:bg-accent-300  bg-background-70 p-2 h-fit rounded-xl' + (candidateData?.jobApplication?.notes?.content ? " top-8 right-8 " : " top-4 right-4")}>
@@ -484,8 +486,19 @@ const ViewCandidateProfile = () => {
                     customConfirmLabel={"OK"}
                 >
                     <div className='mt-4  overflow-y-scroll scrollbar-hide text-ellipsis max-h-[50vh] w-full'>
+                        <div className='mb-4 bg-background-40 p-4 rounded-xl'>
+                            <div className='flex justify-between items-center '>
+                                <h3 className='typography-body font-regular'>{candidateData?.jobApplication?.jobApplied}</h3>
+                                <p className='text-font-gray typography-large-p '>{new Date(candidateData?.jobApplication?.notes?.addedDate).toLocaleDateString("en-GB", {
+                                    day: "2-digit",
+                                    month: "long",
+                                    year: "numeric",
+                                })}</p>
+                            </div>
+                            <div className='text-font-gray p-1 w-full overflow-x-hidden overflow-y-scroll scrollbar-hide text-ellipsis whitespace-normal break-words' dangerouslySetInnerHTML={{ __html: candidateData?.jobApplication?.notes?.content }}></div>
+                        </div>
                         {
-                            candidateData?.applications?.filter(app => (app?.notes?.content !== "" && app?.notes?.content !== undefined && app?.notes?.content !== null))?.map(app => {
+                           showMore && candidateData?.applications?.filter(app => (app?.notes?.content !== "" && app?.notes?.content !== undefined && app?.notes?.content !== null && app.jobId !== jobId))?.map(app => {
                                 return (
                                     <div className='mb-4 bg-background-40 p-4 rounded-xl'>
                                         <div className='flex justify-between items-center '>
@@ -501,6 +514,7 @@ const ViewCandidateProfile = () => {
                                 )
                             })
                         }
+                        <p onClick={() => setShowMore(!showMore)} className='cursor-pointer typography-body text-font-gray text-start flex gap-1 items-center'>{showMore ?  <> <ChevronDown/> Hide </> :   <> <ChevronRight/> Show more </>}</p>
                     </div>
                 </Modal>
 
