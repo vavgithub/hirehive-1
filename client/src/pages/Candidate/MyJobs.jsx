@@ -4,12 +4,12 @@ import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { useMediaQuery } from 'react-responsive';
 import axios from '../../api/axios';
-import JobCard from '../../components/JobCard';
+import Loader from '../../components/Loaders/Loader';
 import AssessmentBanner from '../../components/ui/AssessmentBanner';
-import Loader from '../../components/ui/Loader';
-import useCandidateAuth from '../../hooks/useCandidateAuth';
-import StyledCard from '../../components/ui/StyledCard';
+import StyledCard from '../../components/Cards/StyledCard';
+import JobCard from '../../components/Cards/JobCard';
 import Pagination from '../../components/utility/Pagination';
+import useCandidateAuth from '../../hooks/useCandidateAuth';
 
 // Keep the fetchAppliedJobs function separate for better organization
 const fetchAppliedJobs = async (page) => {

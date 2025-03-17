@@ -3,10 +3,10 @@ import Header from '../../components/utility/Header'
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from '../../api/axios';
 import { QueryClient, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import DynamicForm from '../../components/utility/DynamicForm';
+import DynamicForm from '../../components/Form/DynamicForm';
 import { showSuccessToast } from '../../components/ui/Toast';
-import Loader from '../../components/ui/Loader';
-import StyledCard from '../../components/ui/StyledCard';
+import Loader from '../../components/Loaders/Loader';
+import StyledCard from '../../components/Cards/StyledCard';
 
 
 const fetchCandidate = async ({ queryKey }) => {

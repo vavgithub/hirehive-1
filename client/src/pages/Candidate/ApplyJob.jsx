@@ -6,9 +6,9 @@ import { useForm, Controller } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import axios from '../../api/axios';
-import SkillsInput from '../../components/utility/SkillsInput';
-import { Button } from '../../components/ui/Button';
-import { dummySkills } from '../../components/Form/dropdownOptions';
+import SkillsInput from '../../components/Inputs/SkillsInput';
+import { Button } from '../../components/Buttons/Button';
+import { dummySkills } from '../../components/Dropdowns/dropdownOptions';
 import { showErrorToast, showSuccessToast } from '../../components/ui/Toast';
 import Logo from '../../svg/Logo/lightLogo.svg';
 import { fetchCandidateAuthData } from '../../redux/candidateAuthSlice';
@@ -17,10 +17,10 @@ import { digitsRegex, lowerCaseRegex, specialCharRegex, upperCaseRegex } from '.
 import { PersonalDetailsSection, ProfessionalDetailsSection, ResumePortfolioSection } from '../../components/Form/ApplyJob';
 import { validateProfileImages, validateResume, validationRules } from '../../utility/validationRules';
 import Header from '../../components/utility/Header';
-import LoaderModal from '../../components/ui/LoaderModal';
-import AdditionalQuestions from '../../components/AdditionalQuestions';
-import OtpComponent from '../../components/OtpComponent';
-import PasswordComponent from '../../components/PasswordComponent';
+import LoaderModal from '../../components/Loaders/LoaderModal';
+import AdditionalQuestions from '../../components/QuestionUtilities/AdditionalQuestions';
+import OtpComponent from '../../components/utility/OtpComponent';
+import PasswordComponent from '../../components/utility/PasswordComponent';
 import ContactUs from '../../components/Form/ContactUs';
 
 const fetchJobDetails = async (id) => {
@@ -77,7 +77,7 @@ const ApplyJob = () => {
   const [phone, setPhone] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [otpError, setOtpError] = useState('');
-  const [otp, setOtp] = useState(['', '', '', '', '', '']);
+  const [otp, setOtp] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [resumeFile, setResumeFile] = useState(null);
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -106,6 +106,7 @@ const ApplyJob = () => {
   const {
     register,
     control,
+    watch,
     handleSubmit,
     formState: { errors, isValid },
     getValues,
@@ -271,7 +272,7 @@ useEffect(() => {
 
   const handleOtpSubmit = async (e) => {
     e.preventDefault();
-    const enteredOtp = otp.join('');
+    const enteredOtp = otp;
 
     if (enteredOtp.length !== 6) {
       setOtpError('Please enter the 6-digit OTP sent to your email.');
@@ -513,7 +514,7 @@ useEffect(() => {
 
       {/* Password Creation Step */}
       {currentStep === 3 && (
-        <PasswordComponent control={control} handlePasswordSubmit={handlePasswordSubmit} isSubmitting={isSubmitting} passwordError={passwordError} />
+        <PasswordComponent watch={watch} control={control} handlePasswordSubmit={handlePasswordSubmit} isSubmitting={isSubmitting} passwordError={passwordError} />
       )}
 
       <ContactUs/>

@@ -1,5 +1,5 @@
 import React from 'react'
-import FileMainIcon from '../../svg/FileMainIcon'
+import FileMainIcon from '../../svg/Icons/FileMainIcon'
 import { ensureAbsoluteUrl } from '../../utility/ensureAbsoluteUrl'
 
 function PortfolioHeader({portfolio}) {

@@ -16,13 +16,50 @@ const userSchema = new mongoose.Schema({
     trim: true,
     lowercase: true,
   },
+  phone : {
+    type: String,
+    trim: true,
+    unique: true, // Ensure uniqueness
+  },
+  jobTitle : {
+    type: String,
+    trim: true,
+  },
+  location : {
+    type: String,
+    trim: true,
+  },
+  experience: {
+    type: Number,
+    default: 0,
+  },
+  skills: [String],
+  tools_used: [String],
+  tasks_done : {
+    type: Number,
+    default: 0,
+  },
+  tasks_pending : {
+    type: Number,
+    default: 0,
+  },
   password: {
     type: String,
     required: true,
+    default : "INVALID"
   },
   role: {
     type: String,
-    enum: ['Hiring Manager', 'Design Reviewer'],
+    enum: ['Admin','Hiring Manager', 'Design Reviewer'],
+    required: true,
+  },
+  company_id : {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Company',
+  },
+  verificationStage: {
+    type: String,
+    enum: ['REGISTER', 'OTP' , 'PASSWORD' ,'COMPANY DETAILS' ,'ADD MEMBERS','DONE'],
     required: true,
   },
   profilePicture: {

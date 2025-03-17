@@ -10,7 +10,7 @@ router.post('/auto-assign-portfolios', autoAssignPortfolios)
 
 router.get('/assigned-candidates', protect , roleProtect("Design Reviewer") , getAssignedCandidates);
 
-router.post('/submit-score-review' , protect , roleProtect("Design Reviewer") ,submitScoreReview);
+router.post('/submit-score-review' , protect , roleProtect(["Admin","Design Reviewer"]) ,submitScoreReview);
 
 router.get('/under-review-stats' , protect , getUnderReviewStats)
 

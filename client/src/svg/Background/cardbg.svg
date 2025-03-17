@@ -1,0 +1,26 @@
+<svg width="576" height="480" viewBox="0 0 576 480" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_3052_1076)">
+<rect width="576" height="480" rx="12" fill="#121314"/>
+<ellipse opacity="0.05" cx="441" cy="382.521" rx="441" ry="382.521" transform="matrix(-0.552537 -0.833488 -0.833488 0.552537 1215.99 887.133)" fill="url(#paint0_linear_3052_1076)"/>
+<ellipse opacity="0.05" cx="441" cy="382.521" rx="441" ry="382.521" transform="matrix(1.19249e-08 1 1 -1.19249e-08 -343 -613)" fill="url(#paint1_linear_3052_1076)"/>
+</g>
+<defs>
+<linearGradient id="paint0_linear_3052_1076" x1="254" y1="382.521" x2="981.38" y2="383.544" gradientUnits="userSpaceOnUse">
+<stop offset="0.492012" stop-color="#090D2D"/>
+<stop offset="0.598494" stop-color="#072973"/>
+<stop offset="0.659019" stop-color="#063FAB"/>
+<stop offset="0.735262" stop-color="#4B64D7"/>
+<stop offset="0.820063" stop-color="#8886FE"/>
+</linearGradient>
+<linearGradient id="paint1_linear_3052_1076" x1="254" y1="382.521" x2="981.38" y2="383.544" gradientUnits="userSpaceOnUse">
+<stop offset="0.492012" stop-color="#090D2D"/>
+<stop offset="0.598494" stop-color="#072973"/>
+<stop offset="0.659019" stop-color="#063FAB"/>
+<stop offset="0.735262" stop-color="#4B64D7"/>
+<stop offset="0.820063" stop-color="#8886FE"/>
+</linearGradient>
+<clipPath id="clip0_3052_1076">
+<rect width="576" height="480" rx="12" fill="white"/>
+</clipPath>
+</defs>
+</svg>

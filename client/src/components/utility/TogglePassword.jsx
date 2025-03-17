@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
-import EyeIcon from '../../svg/EyeIcon';
-import EyeIconCrossed from '../../svg/EyeIconCrossed';
+import EyeIcon from '../../svg/Icons/EyeIcon';
+import EyeIconCrossed from '../../svg/Icons/EyeIconCrossed';
 
 function TogglePassword({ children, typeState, setTypeState }) {
   // Local state to manage visibility of the password

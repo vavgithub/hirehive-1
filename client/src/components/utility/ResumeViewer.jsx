@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Button } from '../ui/Button';
-import Loader from '../ui/Loader'; // Import your Loader component
+import { Button } from '../Buttons/Button';
+import Loader from '../Loaders/Loader'; // Import your Loader component
 
 const ResumeViewer = ({ documentUrl, onClose }) => {
   const [loading, setLoading] = useState(true); // Track loading state

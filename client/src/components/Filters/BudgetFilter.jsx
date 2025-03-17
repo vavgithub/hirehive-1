@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button } from '../ui/Button';
+import { Button } from '../Buttons/Button';
 
 const BudgetFilter = ({ onApply, shouldReset }) => {
   const [minBudget, setMinBudget] = useState('');

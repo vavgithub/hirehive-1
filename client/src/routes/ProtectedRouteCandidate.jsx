@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import Loader from "../components/ui/Loader";
+import Loader from "../components/Loaders/Loader";
 import { fetchCandidateAuthData } from "../redux/candidateAuthSlice";
 
 const ProtectedRouteCandidate = ({ children }) => {

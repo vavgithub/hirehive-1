@@ -1,5 +1,5 @@
 import { Link, Navigate, useNavigate, useRouteError } from "react-router-dom";
-import { Button } from "../../components/ui/Button";
+import { Button } from "../../components/Buttons/Button";
 
 export default function ErrorPage() {
   const error = useRouteError();
@@ -25,7 +25,7 @@ export default function ErrorPage() {
             </p>
 
             <Button variant="primary" onClick={()=>navigate("admin/jobs")}>
-              Let's Go Home Vevaar
+              Let's Go Home
             </Button>
 
           </div>

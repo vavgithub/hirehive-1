@@ -6,6 +6,7 @@ import mongoose from "mongoose";
 import { jobStagesStatuses } from "../../config/jobStagesStatuses.js";
 import { candidates } from "../../models/candidate/candidate.model.js";
 import { sanitizeLexicalHtml } from "../../utils/sanitize-html.js";
+import { User } from "../../models/admin/user.model.js";
 // Controller function to create a new job
 
 export const StatisticsController = {
@@ -16,58 +17,89 @@ export const StatisticsController = {
    */
   async getOverallStats(req, res) {
     try {
-      // Get total number of jobs
-      const totalJobs = await jobs.countDocuments();
-
-      const totalOpenJobs = await jobs.countDocuments({
-        status: { $in: ["", "open"] },
+      // Extract the admin's _id from the authenticated user
+      const adminId = req.user._id;
+      const company_id = req.user.company_id;
+      
+      // Find all users in the same company
+      const usersInCompany = await User.find({ company_id }, '_id'); // Get only _id fields
+      // Extract user _id values into an array
+      const userIds = usersInCompany.map(user => user._id);
+      // ------------------------
+      // JOB STATISTICS (Filter by jobs created by this admin)
+      // ------------------------
+      const totalJobs = await jobs.countDocuments({ createdBy: { $in: userIds }  });
+      
+      const totalOpenJobs = await jobs.countDocuments({ 
+        createdBy: { $in: userIds } ,
+        status: { $in: ["", "open"] }
       });
-      const totalClosedJobs = await jobs.countDocuments({ status: "closed" });
-      const totalDraftedJobs = await jobs.countDocuments({ status: "draft" });
-
-      // Get total number of applications
-      // Using aggregation to count total applications across all candidates
+      
+      const totalClosedJobs = await jobs.countDocuments({ 
+        createdBy: { $in: userIds } ,
+        status: "closed" 
+      });
+      
+      const totalDraftedJobs = await jobs.countDocuments({ 
+        createdBy: { $in: userIds } ,
+        status: "draft" 
+      });
+      
+      // ------------------------
+      // CANDIDATE STATISTICS (Filter applications for jobs created by this admin)
+      // ------------------------
+      // Count total applications for jobs created by the admin
       const totalApplicationsResult = await candidates.aggregate([
-        // First unwind the jobApplications array to create a document for each application
+        // Unwind the jobApplications array to get a document per application
         { $unwind: "$jobApplications" },
-        // Count the total number of applications
+        // Join the jobs collection to fetch details of each job
         {
-          $count: "totalApplications",
+          $lookup: {
+            from: "jobs",
+            localField: "jobApplications.jobId",
+            foreignField: "_id",
+            as: "jobDetails"
+          }
         },
-      ]);
-
-      // Extract the total applications count or default to 0 if no applications
-      const totalApplications =
-        totalApplicationsResult[0]?.totalApplications || 0;
-
-      // Get total number of hired candidates
-      const hiredCandidatesCount = await candidates.aggregate([
-        // Unwind the jobApplications array
-        { $unwind: "$jobApplications" },
-        // Match documents where currentStage is 'Hired' and the corresponding status is 'Accepted'
+        // Unwind the jobDetails array
+        { $unwind: "$jobDetails" },
+        // Match only those applications where the job was created by the admin
         {
           $match: {
-            "jobApplications.currentStage": "Hired",
-            "jobApplications.stageStatuses.Hired.status": "Accepted",
-          },
+            "jobDetails.createdBy": { $in: userIds } 
+          }
         },
-        // Group by candidate to avoid counting the same candidate multiple times
-        {
-          $group: {
-            _id: "$_id",
-            count: { $sum: 1 },
-          },
-        },
-        // Get the final count
-        {
-          $count: "totalHired",
-        },
+        // Count the total number of matching applications
+        { $count: "totalApplications" }
       ]);
-
-      // Extract the count or default to 0 if no hired candidates
+      const totalApplications = totalApplicationsResult[0]?.totalApplications || 0;
+      
+      // Count total hired candidates for jobs created by the admin
+      const hiredCandidatesCount = await candidates.aggregate([
+        { $unwind: "$jobApplications" },
+        {
+          $lookup: {
+            from: "jobs",
+            localField: "jobApplications.jobId",
+            foreignField: "_id",
+            as: "jobDetails"
+          }
+        },
+        { $unwind: "$jobDetails" },
+        {
+          $match: {
+            "jobDetails.createdBy": { $in: userIds } ,
+            "jobApplications.currentStage": "Hired",
+            "jobApplications.stageStatuses.Hired.status": "Accepted"
+          }
+        },
+        // Group by candidate to avoid counting a candidate more than once if they have multiple hired applications
+        { $group: { _id: "$_id" } },
+        { $count: "totalHired" }
+      ]);
       const totalHired = hiredCandidatesCount[0]?.totalHired || 0;
-
-      // Return the statistics
+      
+      // Return the filtered statistics
       return res.status(200).json({
         success: true,
         data: {
@@ -75,20 +107,23 @@ export const StatisticsController = {
           totalOpenJobs,
           totalClosedJobs,
           totalDraftedJobs,
-          totalApplications, // Changed from totalCandidates to totalApplications
-          totalHired,
-        },
+          totalApplications,
+          totalHired
+        }
       });
+      
     } catch (error) {
-      console.error("Error in getOverallStats:", error);
+      console.error('Error in getOverallStats:', error);
       return res.status(500).json({
         success: false,
-        message: "Error fetching statistics",
-        error: error.message,
+        message: 'Error fetching statistics',
+        error: error.message
       });
     }
-  },
-
+  }
+  ,
+  
+  
   async getJobStats(req, res) {
     try {
       const { jobId } = req.params;
@@ -215,11 +250,21 @@ const getJobs = async (req, res) => {
     const pageNumber = page ? parseInt(page) : 1;
     const LIMIT = 3;
 
+    const company_id = req.user.company_id;
+    let userIds = [];
+
+    if(company_id){
+      // Find all users in the same company
+      const usersInCompany = await User.find({ company_id }, '_id'); // Get only _id fields
+      // Extract user _id values into an array
+       userIds = usersInCompany.map(user => user._id);
+    }
+
     const jobsWithStats = await jobs.aggregate([
       // Match jobs created by the current user
       {
         $match: {
-          createdBy: new mongoose.Types.ObjectId(req.user._id),
+          createdBy: {$in : userIds},
           status: status,
         },
       },
@@ -516,7 +561,15 @@ const filterSearchJobs = asyncHandler(async (req, res) => {
   try {
     const { employmentType, jobProfile, experience, budget, closingStatus } =
       req.body.filters;
-    const query = { createdBy: req.user._id };
+
+    const company_id = req.user.company_id;
+    
+    // Find all users in the same company
+    const usersInCompany = await User.find({ company_id }, '_id'); // Get only _id fields
+    // Extract user _id values into an array
+    const userIds = usersInCompany.map(user => user._id);
+
+    const query = { createdBy: { $in: userIds }  };
     const { page, status } = req.body;
     const pageNumber = page ? parseInt(page) : 1;
     const LIMIT = 3;

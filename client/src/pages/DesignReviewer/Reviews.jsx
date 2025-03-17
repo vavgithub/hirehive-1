@@ -4,7 +4,7 @@ import Header from '../../components/utility/Header';
 import StatsGrid from '../../components/ui/StatsGrid';
 import one from '../../svg/StatsCard/Jobs Page/one';
 import Scorer from '../../components/ui/Scorer';
-import { Button } from '../../components/ui/Button';
+import { Button } from '../../components/Buttons/Button';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import Total from '../../svg/StatsCard/View Candidate/Total';
 import Portfolio from '../../svg/StatsCard/View Candidate/Portfolio';
@@ -13,17 +13,17 @@ import DesignTask from '../../svg/StatsCard/View Candidate/DesignTask';
 import { showErrorToast, showSuccessToast } from '../../components/ui/Toast';
 import { Avatar } from '@mui/material';
 import { FaFile, FaGlobe } from 'react-icons/fa';
-import FileMainIcon from '../../svg/FileMainIcon';
+import FileMainIcon from '../../svg/Icons/FileMainIcon';
 import OfferSent from '../../svg/StatsCard/View Candidate/OfferSent';
 import Round1 from '../../svg/StatsCard/View Candidate/Round1';
 import Round2 from '../../svg/StatsCard/View Candidate/Round2';
-import Loader from '../../components/ui/Loader';
+import Loader from '../../components/Loaders/Loader';
 import { useNavigate } from 'react-router-dom';
 import PortfolioReview from '../../components/Reviews/PortfolioReview';
 import ScreeningReview from '../../components/Reviews/ScreeningReview';
 import DesignTaskReview from '../../components/Reviews/DesignTaskReview';
 import RoundReview from '../../components/Reviews/RoundReview';
-import StyledCard from '../../components/ui/StyledCard';
+import StyledCard from '../../components/Cards/StyledCard';
 
 
 const statsOne = [
@@ -195,7 +195,7 @@ const Reviews = () => {
     navigate(`/design-reviewer/candidates/view-candidate/${candidate._id}/${candidate.currentApplication.jobId}`)
   }
 
-  const groupedEntries = Object.entries(groupedCandidates);
+  const groupedEntries = candidates?.length > 0 ? Object.entries(groupedCandidates) : [];
 
   return (
     <div className='w-full p-4'>

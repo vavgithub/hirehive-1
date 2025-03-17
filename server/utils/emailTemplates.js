@@ -1,3 +1,4 @@
+//emailTemplates.js
 export const getSignupEmailContent = (candidateName,otp) =>{
     return `
 <!DOCTYPE html>
@@ -78,6 +79,76 @@ export const getSignupEmailContent = (candidateName,otp) =>{
 </body>
 
 </html>`
+}
+
+export const getInvitationContent = (candidateName,role,companyName,link) => {
+    return `
+    <!DOCTYPE html>
+    <html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>HireHive - Signup OTP</title>
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet');
+            * {
+                padding: 0;
+                margin: 0;
+                box-sizing: border-box;
+                max-width: 600px;
+            }
+            #text{
+                display: none;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div style="background-color: #ffffff !important;
+        padding: 64px;
+        width: 600px;
+        font-family: Open Sans, sans-serif;">
+            <div style="margin-bottom: 30px; width:125px; height: 50px;">
+                <img style="object-fit: cover; width:100%; " src="cid:vavLogo" alt="">
+            </div>
+            <div style="font-size: 14px;">
+                <p style="margin-bottom: 16px;">Hi ${candidateName},</p>
+                <p style="margin-bottom: 16px;">Welcome to HireHive! <br>
+                    You are being invited to join as a ${role} for ${companyName}. Please use the invite link below to join as a ${role}.
+                </p>
+                <p><a href=${link}>Click Here</a></p>
+                <p style="margin-top: 16px; margin-bottom: 16px;">Please not that the link is valid for 7 days.</p>
+                <p style="margin-bottom: 16px;">Thank you,<br>The VAV Team</p>
+                <hr>
+                <div style=" width: 100%;">
+                    <table style="margin:auto; width:50%; border-spacing:22px 0px;margin-top:40px;margin-bottom:20px">
+                        <!-- Instagram icon -->
+                        <td style="text-align:right;">
+                            <a href="https://www.instagram.com/valueatvoid/">
+                                <img style="width: 28px; height: 28px;" src="cid:instaLogo" alt="">
+                            </a>
+                        </td>
+                        <!-- Youtube Icon -->
+                        <td style="padding-top: 5px; text-align:center;">
+                            <a href="https://www.youtube.com/c/ValueatVoid">
+                                <img style="width: 28px; height: 28px;" src="cid:ytLogo" alt="">
+                            </a>
+                        </td>
+                        <!-- Linkedin icon -->
+                    <td>
+                        <a href="https://www.linkedin.com/company/atvoid/">
+                            <img style="width: 28px; height: 28px;" src="cid:linkedinLogo" alt="">
+                        </a>
+                    </td>
+                    </table>
+                    <a style="text-align: center; display: block; font-size:16px;  color: rgba(99, 115, 129, 1); width: 100%;" href="www.atvoid.com">www.atvoid.com</a>
+                </div>
+            </div>
+        </div>
+    </body>
+
+    </html>`
 }
 
 export const getRejectionEmailContent = (candidateName,jobTitle) =>{

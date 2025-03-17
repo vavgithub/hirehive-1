@@ -3,7 +3,6 @@
 import React, { useEffect, useRef } from 'react'
 import Header from '../../components/utility/Header'
 import StatsGrid from '../../components/ui/StatsGrid'
-import Table from '../../components/Table';
 import axios from "../../api/axios"
 import { useQuery } from '@tanstack/react-query';
 import Portfolio from '../../svg/StatsCard/View Candidate/Portfolio';
@@ -13,8 +12,9 @@ import Round1 from '../../svg/StatsCard/View Candidate/Round1';
 import Round2 from '../../svg/StatsCard/View Candidate/Round2';
 import OfferSent from '../../svg/StatsCard/View Candidate/OfferSent';
 import Total from '../../svg/StatsCard/View Candidate/Total';
-import Loader from '../../components/ui/Loader';
-import StyledCard from '../../components/ui/StyledCard';
+import Loader from '../../components/Loaders/Loader';
+import StyledCard from '../../components/Cards/StyledCard';
+import Table from '../../components/tableUtilities/Table';
 
 
 const Candidates = () => {
@@ -25,7 +25,7 @@ const Candidates = () => {
     queryFn: () => axios.get('/admin/candidate/getData/data/allCandidatesWithStats').then(res => res.data),
   });
 
-  console.log("what is this ?" , data);
+  // console.log("what is this ?" , data);
 
   // 1. Disable browser auto scroll restoration
   useEffect(() => {

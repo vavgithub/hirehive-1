@@ -1,13 +1,13 @@
 import { Avatar } from "@mui/material";
-import { AssignmentIconStroke } from "../../svg/AssignmentIcon";
-import CustomToolTip from "../utility/CustomToolTip";
-import FileMainIcon from "../../svg/FileMainIcon";
-import WebsiteMainIcon from "../../svg/WebsiteMainIcon";
-import ResumeIcon from "../../svg/ResumeIcon";
-import AssigneeSelector from "../utility/AssigneeSelector";
+import { AssignmentIconStroke } from "../../svg/Icons/AssignmentIcon";
+import CustomToolTip from "../Tooltip/CustomToolTip";
+import FileMainIcon from "../../svg/Icons/FileMainIcon";
+import WebsiteMainIcon from "../../svg/Icons/WebsiteMainIcon";
+import ResumeIcon from "../../svg/Icons/ResumeIcon";
+import AssigneeSelector from "../MUIUtilities/AssigneeSelector";
 import { Move, MoveActive } from "../../svg/Buttons/Move";
 import { Reject, RejectActive } from "../../svg/Buttons/Reject";
-import { getRatingIcon } from "../utility/RatingSelector";
+import { getRatingIcon } from "../MUIUtilities/RatingSelector";
 import StatusBadge from "../ui/StatusBadge";
 import StageBadge from "../ui/StageBadge";
 import { ensureAbsoluteUrl } from "../../utility/ensureAbsoluteUrl";
@@ -283,21 +283,21 @@ export const getDefaultColumns = (role, canMove, canReject, handleAssigneeChange
       <div className='flex h-full items-center gap-2'
         onClick={(event) => event.stopPropagation()}
       >
-        <button
-          onClick={() => handleMoveClick(params.row)}
-          disabled={!canMove(params.row)}
-        >
-          {canMove(params.row) ? <MoveActive /> : <Move />}
-        </button>
-        <button
-          onClick={() => handleRejectClick(params.row)}
-          disabled={!canReject(params.row)}
-        >
-          {canReject(params.row) ? <RejectActive /> : <Reject />}
-        </button>
-        <button className={params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Rejected" ? "text-font-gray" : "text-white"} disabled={params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Rejected"} onClick={(e) => handleRatingClick(e, params.row)}>
-          {getRatingIcon(params.row.rating)}
-        </button>
+          <button
+            onClick={() => handleMoveClick(params.row)}
+            disabled={(params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Reviewed" && params?.row?.stageStatuses[params?.row?.currentStage]?.scheduledDate) || !canMove(params.row)}
+          >
+            {!(params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Reviewed" && params?.row?.stageStatuses[params?.row?.currentStage]?.scheduledDate) && canMove(params.row) ? <MoveActive /> : <Move />}
+          </button>
+          <button
+            onClick={() => handleRejectClick(params.row)}
+            disabled={(params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Reviewed" && params?.row?.stageStatuses[params?.row?.currentStage]?.scheduledDate) || !canReject(params.row)}
+          >
+            {!(params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Reviewed" && params?.row?.stageStatuses[params?.row?.currentStage]?.scheduledDate) && canReject(params.row) ? <RejectActive /> : <Reject />}
+          </button>
+          <button className={(params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Reviewed" && params?.row?.stageStatuses[params?.row?.currentStage]?.scheduledDate) || params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Rejected" ? "text-font-gray" : "text-white"} disabled={(params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Reviewed" && params?.row?.stageStatuses[params?.row?.currentStage]?.scheduledDate) || params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Rejected"} onClick={(e) => handleRatingClick(e, params.row)}>
+            {getRatingIcon(params.row.rating)}
+          </button>
       </div>
     )
   },

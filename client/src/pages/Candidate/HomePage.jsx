@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from 'react'
 import Filters from '../../components/Filters/Filters'
-import JobCard from '../../components/JobCard';
 import { useQuery } from '@tanstack/react-query';
 import axios from '../../api/axios';
 import { useNavigate } from 'react-router-dom';
 import { FaGlobe, FaUser } from 'react-icons/fa';
-import { Button } from '../../components/ui/Button';
+import { Button } from '../../components/Buttons/Button';
 import Filter from '../../svg/Buttons/Filter';
 import Logo from '../../svg/Logo/lightLogo.svg'
 import { clearAuthError, fetchCandidateAuthData } from '../../redux/candidateAuthSlice';
 import { useDispatch } from 'react-redux';
 import useCandidateAuth from '../../hooks/useCandidateAuth';
-import Loader from '../../components/ui/Loader';
+import Loader from '../../components/Loaders/Loader';
 import NoJobs from "../../svg/Background/NoJobs.svg"
 import Pagination from '../../components/utility/Pagination';
 import useDebounce from '../../hooks/useDebounce';
+import JobCard from '../../components/Cards/JobCard';
 import ContactUs from '../../components/Form/ContactUs';
 
 const fetchOpenJobs = (page) => axios.get(`/candidates/jobs/open?page=${page}`).then(res => res.data);

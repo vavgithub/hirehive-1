@@ -1,7 +1,7 @@
 import React from 'react'
 import Budget from '../../svg/Buttons/Budget'
 import AutoAssign from '../../svg/Buttons/AutoAssign'
-import { Button } from '../ui/Button'
+import { Button } from '../Buttons/Button'
 
 function AutoAssignWithBudget({handleBudgetButtonClick,budgetFilter,autoAssignMutation,setIsAutoAssignModalOpen}) {
   return (

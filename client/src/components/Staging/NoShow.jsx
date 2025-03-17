@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useDispatch } from 'react-redux';
 import axios from '../../api/axios';
 import { updateStageStatus } from '../../redux/applicationStageSlice';
-import { Button } from '../ui/Button';
+import { Button } from '../Buttons/Button';
 
 const NoShowAction = ({ stage, candidateId, jobId , setIsLoading }) => {
     const dispatch = useDispatch();

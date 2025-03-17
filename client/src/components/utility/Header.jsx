@@ -1,6 +1,6 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import ThreeDots from '../ThreeDots'
+import ThreeDots from '../ui/ThreeDots'
 
 export const BackButton = () => {
     return (

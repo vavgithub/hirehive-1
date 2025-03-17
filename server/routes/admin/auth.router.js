@@ -1,6 +1,6 @@
 import express from 'express';
-import { registerUser, authUser, logoutUser, getUserProfile, getAvailableDesignReviewers, uploadProfilePicture, resetPassword, verifyOTP, forgotPassword } from '../../controllers/admin/auth.controller.js';
-import { protect } from '../../middlewares/authMiddleware.js';
+import { registerUser, authUser, logoutUser, getUserProfile, getAvailableDesignReviewers, uploadProfilePicture, resetPassword, verifyOTP, forgotPassword, initializeRegistration, verifyOTPforAdmin, setPassword, completeHiringManagerRegistration, inviteTeamMember, completeDesignReviewerRegistration, addTeamMembers, skipAddMember, editUserProfile, sendInviteOTP } from '../../controllers/admin/auth.controller.js';
+import { protect, protectWithoutVerification } from '../../middlewares/authMiddleware.js';
 import multer from 'multer';
 import { promises as fs } from 'fs';
 import path from 'path';
@@ -62,7 +62,7 @@ router.post('/register', registerUser);
 router.post('/login', authUser);
 router.post('/logout', logoutUser);
 router.get('/profile', protect, getUserProfile);
-router.get('/design-reviewers', getAvailableDesignReviewers);
+router.get('/design-reviewers',protect, getAvailableDesignReviewers);
 
 router.post('/forgot-password', forgotPassword);
 router.post('/verify-otp', verifyOTP);
@@ -75,5 +75,20 @@ router.post(
     handleMulterError,
     uploadProfilePicture
   );
+
+
+// Registration flow routes
+router.put('/register/edit-profile', protect, editUserProfile);
+router.post('/register/init', initializeRegistration);
+router.post('/register/verify-otp-for-admin', verifyOTPforAdmin);
+router.post('/register/set-password', setPassword);
+router.post('/register/complete-hiring-manager', upload.single('companyLogo'), completeHiringManagerRegistration);
+router.post('/register/skip-add-member',protectWithoutVerification, skipAddMember)
+router.post('/register/send-invite-otp', sendInviteOTP);
+
+// Team member invitation routes
+router.post('/register/add-team-member', protectWithoutVerification , addTeamMembers);
+router.post('/register/complete-design-reviewer', completeDesignReviewerRegistration);
+
   
 export default router;

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import JobCard from '../../components/JobCard';
+import JobCard from '../../components/Cards/JobCard';
 import Filters from '../../components/Filters/Filters';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
@@ -9,12 +9,12 @@ import Export from '../../svg/Buttons/Export';
 import Filter from '../../svg/Buttons/Filter';
 import AssessmentBanner from '../../components/ui/AssessmentBanner';
 import NoJobs from "../../svg/Background/NoJobs.svg"
-import Loader from '../../components/ui/Loader';
-import SearchIcon from '../../svg/SearchIcon';
+import Loader from '../../components/Loaders/Loader';
+import SearchIcon from '../../svg/Icons/SearchIcon';
 import useCandidateAuth from '../../hooks/useCandidateAuth';
-import StyledCard from '../../components/ui/StyledCard';
 import Pagination from '../../components/utility/Pagination';
 import useDebounce from '../../hooks/useDebounce';
+import StyledCard from '../../components/Cards/StyledCard';
 
 const fetchOpenJobs = (page) => axios.get(`/candidates/jobs/open?page=${page}`).then(res => res.data);
 const searchJobs = (query,page) => axios.get(`/candidates/jobs/searchJobs?jobTitle=${encodeURIComponent(query)}&page=${page}`).then(res => res.data);

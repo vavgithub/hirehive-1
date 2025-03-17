@@ -67,8 +67,8 @@ const ApplicationStaging = ({ candidateId, jobId ,jobStatus}) => {
     const [selectedStage, setSelectedStage] = useState(null);
     const [isQuestionsOpen, setIsQuestionsOpen] = useState(false);
     const stages = Object.keys(stageStatuses);
+
     useEffect(() => {
-        // Set the selected stage to the current stage when the component mounts or currentStage changes
         setSelectedStage(currentStage);
     }, [currentStage]);
     // const renderStageComponent = (stage) => {

@@ -2,14 +2,14 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import Filters from '../../components/Filters/Filters';
-import Modal from '../../components/Modal';
-import JobCard from '../../components/JobCard';
+import Modal from '../../components/Modals/Modal';
+import JobCard from '../../components/Cards/JobCard';
 import Tabs from '../../components/ui/Tabs';
 import StatsGrid from '../../components/ui/StatsGrid';
 import one from '../../svg/StatsCard/Jobs Page/one';
 import two from '../../svg/StatsCard/Jobs Page/two';
 import three from '../../svg/StatsCard/Jobs Page/three';
-import { Button } from '../../components/ui/Button';
+import { Button } from '../../components/Buttons/Button';
 import axios from "../../api/axios"
 import Create from '../../svg/Buttons/Create';
 import { ACTION_TYPES } from '../../utility/ActionTypes';
@@ -19,18 +19,19 @@ import { ClosedIcon, ClosedIconActive } from '../../svg/Tabs/ClosedIcon';
 import { DraftsIcon, DraftsIconActive } from '../../svg/Tabs/DraftsIcon';
 import NoJobs from "../../svg/Background/NoJobs.svg"
 import { showErrorToast, showSuccessToast } from '../../components/ui/Toast';
-import Loader from '../../components/ui/Loader';
-import SearchIcon from '../../svg/SearchIcon';
-import StyledCard from '../../components/ui/StyledCard';
+import Loader from '../../components/Loaders/Loader';
+import SearchIcon from '../../svg/Icons/SearchIcon';
+import StyledCard from '../../components/Cards/StyledCard';
 import Pagination from '../../components/utility/Pagination';
 import useDebounce from '../../hooks/useDebounce';
+import { useAuthContext } from '../../context/AuthProvider';
 
 
-const fetchJobs = (page,status) => axios.get(`/jobs/jobs?page=${page}&status=${status}`).then(res => res.data);
+const fetchJobs = (page, status) => axios.get(`/jobs/jobs?page=${page}&status=${status}`).then(res => res.data);
 const fetchOverallStats = () => axios.get('/jobs/stats/overall').then(res => res.data.data);
-const searchJobs = (query,page,status) => axios.get(`/jobs/searchJobs?jobTitle=${encodeURIComponent(query)}&page=${page}&status=${status}`).then(res => res.data);
-const filterJobs = (filters,page,status) => axios.post('/jobs/filterJobs', { filters , page , status }).then(res => res.data);
-const filterSearchJobs = (query,filters,page,status) => axios.post('/jobs/filterSearchJobs', { filters , page , status ,query}).then(res => res.data);
+const searchJobs = (query, page, status) => axios.get(`/jobs/searchJobs?jobTitle=${encodeURIComponent(query)}&page=${page}&status=${status}`).then(res => res.data);
+const filterJobs = (filters, page, status) => axios.post('/jobs/filterJobs', { filters, page, status }).then(res => res.data);
+const filterSearchJobs = (query, filters, page, status) => axios.post('/jobs/filterSearchJobs', { filters, page, status, query }).then(res => res.data);
 
 const Dashboard = () => {
     const [searchQuery, setSearchQuery] = useState('');
@@ -50,34 +51,39 @@ const Dashboard = () => {
     const navigate = useNavigate();
     const queryClient = useQueryClient();
 
-    const [page,setPage] = useState(1);
+    const [page, setPage] = useState(1);
     const PAGE_LIMIT = 3;
 
     const [debouncedQuery] = useDebounce(searchQuery);
 
+    const { user } = useAuthContext();
+    const role = user?.role;
+
     //For resetting page on each result change
-    useEffect(()=>{
+    useEffect(() => {
         setPage(1);
-    },[activeTab,debouncedQuery,filters])
+    }, [activeTab, debouncedQuery, filters])
 
     // Fetch jobs and overall stats
     // Use the updated jobs query
     const { data: jobs = [], isLoading: isJobsLoading } = useQuery({
-        queryKey: ['jobs',page ,activeTab],
-        queryFn: () => fetchJobs(page,activeTab)
+        queryKey: ['jobs', page, activeTab],
+        queryFn: () => fetchJobs(page, activeTab)
     });
 
-    const { 
-        data: overallStats = { totalJobs: 0, 
-            totalOpenJobs : 0, 
-            totalClosedJobs : 0, 
-            totalDraftedJobs : 0, 
-            totalCandidates: 0, 
-            totalHired: 0 }, 
+    const {
+        data: overallStats = {
+            totalJobs: 0,
+            totalOpenJobs: 0,
+            totalClosedJobs: 0,
+            totalDraftedJobs: 0,
+            totalCandidates: 0,
+            totalHired: 0
+        },
         isLoading: isStatsLoading } = useQuery({
-        queryKey: ['overallStats'],
-        queryFn: fetchOverallStats
-    });
+            queryKey: ['overallStats'],
+            queryFn: fetchOverallStats
+        });
 
     const handleAction = (action, jobId) => {
         const job = jobs.find(j => j._id === jobId);
@@ -104,8 +110,8 @@ const Dashboard = () => {
 
     //Combined search and filter for jobs
     const { data: filteredSearchData, isLoading: isFilteredSearchJobsLoading } = useQuery({
-        queryKey: ['filteredSearchJobs',debouncedQuery, filters,page,activeTab],
-        queryFn: () => filterSearchJobs(debouncedQuery,filters,page,activeTab),
+        queryKey: ['filteredSearchJobs', debouncedQuery, filters, page, activeTab],
+        queryFn: () => filterSearchJobs(debouncedQuery, filters, page, activeTab),
         enabled: Object.values(filters).some(filter =>
             Array.isArray(filter) ? filter.length > 0 : Object.values(filter).some(val => val !== '') || debouncedQuery !== '',
         ),
@@ -191,8 +197,8 @@ const Dashboard = () => {
                 draftMutation.mutate(job._id);
                 break;
             case ACTION_TYPES.CLOSE:
-                closeMutation.mutate({ 
-                    jobId: job._id, 
+                closeMutation.mutate({
+                    jobId: job._id,
                     reason: closeReason  // Pass the closeReason
                 });
                 break;
@@ -200,7 +206,7 @@ const Dashboard = () => {
                 reOpenMutation.mutate(job._id)
                 break;
             case ACTION_TYPES.EDIT:
-                navigate(`/admin/edit-job/${job._id}`);
+                navigate(`/${role === 'Admin' ? 'admin' : 'hiring-manager'}/edit-job/${job._id}`);
                 setModalOpen(false);
                 break;
             default:
@@ -264,8 +270,22 @@ const Dashboard = () => {
     };
 
     const handleViewJob = (jobId) => {
-        navigate(`/admin/jobs/view-job/${jobId}`);
+        if (role === "Admin") {
+            navigate(`/admin/jobs/view-job/${jobId}`);
+        }
+        if (role === "Hiring Manager") {
+            navigate(`/hiring-manager/jobs/view-job/${jobId}`);
+        }
     };
+
+    const handleCreateJob = ()=>{
+        if(role === "Admin"){
+            navigate("/admin/create-job");
+        }
+        if(role === "Hiring Manager"){
+            navigate("/hiring-manager/create-job");
+        }
+    }
 
 
     const tabs = [
@@ -319,9 +339,9 @@ const Dashboard = () => {
     //     (isFiltered && !isFilteredJobsLoading ? filteredData?.filteredJobs : jobs);
     // }, [filteredData, isFiltered , debouncedQuery, jobs, searchResults]);
 
-    const displayJobs = useMemo(()=>{
+    const displayJobs = useMemo(() => {
         return ((debouncedQuery.length > 0 || isFiltered) && !isFilteredSearchJobsLoading) ? filteredSearchData?.filteredSearchJobs : jobs;
-    }, [filteredSearchData, isFiltered , debouncedQuery, jobs]);
+    }, [filteredSearchData, isFiltered, debouncedQuery, jobs]);
 
     const currentPage = 'dashboard';
 
@@ -350,7 +370,7 @@ const Dashboard = () => {
                                 <SearchIcon />
                             </div>
                             <input
-                                style={{paddingLeft : "48px"}}
+                                style={{ paddingLeft: "48px" }}
                                 type='text'
                                 placeholder="Enter job title"
                                 value={searchQuery}
@@ -366,33 +386,33 @@ const Dashboard = () => {
                             clearAllFilters={clearAllFilters} />
                     </div>
                     <div className='w-full ml-4 flex flex-col gap-4'>
-                            {
-                                activeTab == "open" && displayJobs.length != 0 && displayJobs.filter(job=>job.status === "open").length !== 0 && (
-                                    <div className='flex justify-end '>
-                                        <div >
-                                            <Button variant="primary" icon={Create} iconPosition="left" onClick={() => { navigate("/admin/create-job") }}>Create A Job Listing</Button>
-                                        </div> 
+                        {
+                            activeTab == "open" && displayJobs.length != 0 && displayJobs.filter(job => job.status === "open").length !== 0 && (
+                                <div className='flex justify-end '>
+                                    <div >
+                                        <Button variant="primary" icon={Create} iconPosition="left" onClick={handleCreateJob}>Create A Job Listing</Button>
                                     </div>
-                                )
-                            }
+                                </div>
+                            )
+                        }
                         {isLoadingResults || isJobsLoading ? (
                             <div className="flex justify-center items-center min-h-full">
                                 <Loader />
                             </div>
-                        ) : (displayJobs.length === 0 || displayJobs.filter(job=>job.status === activeTab).length === 0) ? (
+                        ) : (displayJobs.length === 0 || displayJobs.filter(job => job.status === activeTab).length === 0) ? (
                             <div className='bg-background-80 h-full flex flex-col p-40 justify-center items-center rounded-xl'>
                                 <img src={NoJobs} alt="No jobs found" />
                                 <span className='typography-body m-6'>
                                     Create a job post to attract top talent and build your dream team
                                 </span>
-                                    <Button
-                                        variant="primary"
-                                        icon={Create}
-                                        iconPosition="left"
-                                        onClick={() => { navigate("/admin/create-job") }}
-                                    >
-                                        Create A Job Listing
-                                    </Button>
+                                <Button
+                                    variant="primary"
+                                    icon={Create}
+                                    iconPosition="left"
+                                    onClick={handleCreateJob}
+                                >
+                                    Create A Job Listing
+                                </Button>
                             </div>
                         ) : (
                             displayJobs
@@ -402,30 +422,30 @@ const Dashboard = () => {
                                     // let allowedValue = skipValue + PAGE_LIMIT;
                                     // if(index >= skipValue && index < allowedValue)
                                     return (
-                                        <JobCard 
-                                        key={job._id} job={job}
-                                        isAdmin={true} withKebab={true} page={currentPage}
-                                        status={activeTab}
-                                        handleAction={handleAction} 
-                                        onClick={job.status==="deleted" ? undefined :
-                                        ()=> handleViewJob(job._id)}
+                                        <JobCard
+                                            key={job._id} job={job}
+                                            isAdmin={true} withKebab={true} page={currentPage}
+                                            status={activeTab}
+                                            handleAction={handleAction}
+                                            onClick={job.status === "deleted" ? undefined :
+                                                () => handleViewJob(job._id)}
                                         />
                                     )
                                 })
                         )}
                         {((debouncedQuery || isFiltered) ? filteredSearchData?.filteredSearchCount :
-                                (activeTab === "draft" ? overallStats?.totalDraftedJobs : activeTab === "closed" ? overallStats?.totalClosedJobs : overallStats?.totalOpenJobs) ) !== 0 && 
-                        <Pagination 
-                            currentPage={page} 
-                            setCurrentPage={setPage} 
-                            pageLimit={PAGE_LIMIT} 
-                            totalItems={
-                                // debouncedQuery ? jobCount : isFiltered ? filteredData?.filteredCount :
-                                // (activeTab === "draft" ? overallStats?.totalDraftedJobs : activeTab === "closed" ? overallStats?.totalClosedJobs : overallStats?.totalOpenJobs) 
-                                (debouncedQuery ||isFiltered) ? filteredSearchData?.filteredSearchCount :
-                                (activeTab === "draft" ? overallStats?.totalDraftedJobs : activeTab === "closed" ? overallStats?.totalClosedJobs : overallStats?.totalOpenJobs) 
-                            } 
-                        />
+                            (activeTab === "draft" ? overallStats?.totalDraftedJobs : activeTab === "closed" ? overallStats?.totalClosedJobs : overallStats?.totalOpenJobs)) !== 0 &&
+                            <Pagination
+                                currentPage={page}
+                                setCurrentPage={setPage}
+                                pageLimit={PAGE_LIMIT}
+                                totalItems={
+                                    // debouncedQuery ? jobCount : isFiltered ? filteredData?.filteredCount :
+                                    // (activeTab === "draft" ? overallStats?.totalDraftedJobs : activeTab === "closed" ? overallStats?.totalClosedJobs : overallStats?.totalOpenJobs) 
+                                    (debouncedQuery || isFiltered) ? filteredSearchData?.filteredSearchCount :
+                                        (activeTab === "draft" ? overallStats?.totalDraftedJobs : activeTab === "closed" ? overallStats?.totalClosedJobs : overallStats?.totalOpenJobs)
+                                }
+                            />
                         }
                     </div>
                 </div>

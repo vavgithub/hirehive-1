@@ -1,18 +1,17 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import ResumeIcon from '../../svg/ResumeIcon';
-import AssignmentIcon from '../../svg/AssignmentIcon';
-import PhoneIcon from '../../svg/PhoneIcon';
-import EmailIcon from '../../svg/EmailIcon';
+import ResumeIcon from '../../svg/Icons/ResumeIcon';
+import AssignmentIcon from '../../svg/Icons/AssignmentIcon';
+import PhoneIcon from '../../svg/Icons/PhoneIcon';
+import EmailIcon from '../../svg/Icons/EmailIcon';
 import Tabs from '../../components/ui/Tabs';
 import Header from '../../components/utility/Header';
 import axios from '../../api/axios';
 import { useQuery } from '@tanstack/react-query';
 import { ACTION_TYPES } from '../../utility/ActionTypes';
 import CandidateTabDetail from '../../components/ui/CandidateTabDetail';
-
-import WebsiteMainIcon from '../../svg/WebsiteMainIcon';
-import FileMainIcon from '../../svg/FileMainIcon';
+import WebsiteMainIcon from '../../svg/Icons/WebsiteMainIcon';
+import FileMainIcon from '../../svg/Icons/FileMainIcon';
 import { ApplicationIcon, ApplicationIconActive } from '../../svg/Tabs/ApplicationIcon';
 import { CandidateDetailsIcon, CandidateDetailsIconActive } from '../../svg/Tabs/CandidateDetailsIcon';
 import { useAuthContext } from '../../context/AuthProvider';
@@ -20,14 +19,75 @@ import ApplicationStaging from '../../components/Staging/ApplicationStaging';
 import { useDispatch, useSelector } from 'react-redux';
 import { setCandidateData, setError, setLoading } from '../../redux/candidateSlice';
 import { setCurrentStage, setStageStatuses } from '../../redux/applicationStageSlice';
-import Loader from '../../components/ui/Loader';
+import Loader from '../../components/Loaders/Loader';
 import { ensureAbsoluteUrl } from '../../utility/ensureAbsoluteUrl';
 import ResumeViewer from '../../components/utility/ResumeViewer';
-import CustomToolTip from '../../components/utility/CustomToolTip';
-import StyledCard from '../../components/ui/StyledCard';
-import { CustomDropdown } from '../../components/Form/FormFields';
+import CustomToolTip from '../../components/Tooltip/CustomToolTip';
+import StyledCard from '../../components/Cards/StyledCard';
+import SwitchArrows from '../../svg/Icons/SwitchArrows';
+import ScoreChart from '../../components/Charts/ScoreChart';
+import { getStageColor, maxScoreOfEachStage } from '../../components/Staging/staging.config';
+import { CustomDropdown } from '../../components/Dropdowns/CustomDropdown';
 
+export const VAVScoreCard = ({score,stage,scoreStages})=>{
+    const [showBreakDown,setShowBreakDown] = useState(false);
 
+    const getScreeningTotalScore = (scoreObj) => {
+        const Attitude = scoreObj?.Attitude ?? 0;
+        const Communication = scoreObj?.Communication ?? 0;
+        const Tech = scoreObj?.Tech ?? 0;
+        const UI = scoreObj?.UI ?? 0;
+        const UX = scoreObj?.UX ?? 0;
+        const Budget = scoreObj?.Budget ?? 0;
+        return 0 + Attitude + Communication + Tech + UI + UX + Budget 
+    }
+
+    const scoreData = useMemo(()=>{
+        const mappedData = Object.entries(scoreStages)?.map(([stage,stageData])=>{
+            if(stage !== "Screening"){
+                return {
+                    name : stage,
+                    value : stageData?.score ? parseInt(stageData?.score) : 0,
+                    maxScore : maxScoreOfEachStage(stage),
+                    itemStyle  : {
+                        color : getStageColor(stage)
+                    }
+                }
+            }else {
+                return {
+                    name : stage,
+                    value : stageData?.score ? getScreeningTotalScore(stageData?.score) : 0,
+                    scoreObj : stageData?.score,
+                    maxScore : maxScoreOfEachStage(stage),
+                    itemStyle  : {
+                        color : getStageColor(stage)
+                    }
+                }
+            }
+        })
+        return mappedData.filter(data=>data?.name !== "Hired");
+    },[scoreStages])
+
+    if(!showBreakDown){
+        return(
+        <StyledCard extraStyles="flex bg-stars  flex-col items-center  w-[430px] bg-cover relative">
+            <h3 className="typography-h2">VAV SCORE</h3>
+            <button onClick={()=>setShowBreakDown(true)} className='absolute top-8 right-8 hover:text-font-gray'>
+             <SwitchArrows />
+            </button>
+            <span className="marks text-font-primary">{score}</span>
+            <p className="typography-large-p">Out of {getMaxScoreForStage(stage)}</p>
+        </StyledCard>
+    )}else{
+        return(<StyledCard extraStyles="flex bg-stars  flex-col items-center  w-[430px] bg-cover relative">
+            <h3 className="typography-h2">Score Breakdown</h3>
+            <button onClick={()=>setShowBreakDown(false)} className='absolute top-8 right-8 hover:text-font-gray'>
+             <SwitchArrows />
+            </button>
+            <ScoreChart scoreData={scoreData} />
+        </StyledCard>)
+    }
+}
 
 const fetchCandidateData = async (candidateId, jobId) => {
     const { data } = await axios.get(`admin/candidate/${candidateId}/job/${jobId}`);
@@ -197,7 +257,7 @@ const ViewCandidateProfile = () => {
     const handleAction = (action) => {
         switch (action) {
             case ACTION_TYPES.EDIT:
-                navigate(`/admin/jobs/edit-candidate/${candidateId}`);
+                navigate(`/hiring-manager/jobs/edit-candidate/${candidateId}`);
                 break;
             case 'ACTION_2':
                 navigate('/some-other-page');
@@ -237,7 +297,7 @@ const ViewCandidateProfile = () => {
 
     const handleAssignmentNavigation = () => {
 
-        navigate(`/admin/assessment/${candidateId}`)
+        navigate(`/hiring-manager/assessment/${candidateId}`)
 
     }
 
@@ -272,7 +332,7 @@ const ViewCandidateProfile = () => {
             {/* Candidate Profile Card */}
 
             {
-                (role === "Hiring Manager" || role === "Design Reviewer") && (
+                (role === "Admin" || role === "Hiring Manager" || role === "Design Reviewer") && (
                     <div className="flex gap-3">
                         <StyledCard padding={2} extraStyles="w-full flex gap-4">
                             <div className="to-background-100 w-[200px] min-h-auto max-h-[200px] rounded-xl overflow-hidden">
@@ -333,11 +393,7 @@ const ViewCandidateProfile = () => {
                         </StyledCard>
 
                         {/* VAV Score Section */}
-                        <StyledCard extraStyles="flex bg-stars  flex-col items-center  w-[430px] bg-cover ">
-                            <h3 className="typography-h2">VAV SCORE</h3>
-                            <span className="marks text-font-primary">{score?.totalScore}</span>
-                            <p className="typography-large-p">Out of {getMaxScore()}</p>
-                        </StyledCard>
+                        <VAVScoreCard score={score?.totalScore} stage={data?.jobApplication?.currentStage} scoreStages={data?.jobApplication?.stageStatuses} />
                     </div>
                 )
             }

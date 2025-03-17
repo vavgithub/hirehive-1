@@ -4,17 +4,17 @@ import axios from '../../api/axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import sundarKanya from "../../svg/Background/sundar-kanya.png"
-import { Button } from '../../components/ui/Button';
+import { Button } from '../../components/Buttons/Button';
 import StatsGrid from '../../components/ui/StatsGrid';
 import one from '../../svg/StatsCard/Jobs Page/one';
 import two from '../../svg/StatsCard/Jobs Page/two';
 import ForgotPassword from '../Admin/ForgotPassword';
 import { loginCandidateAuth } from '../../redux/candidateAuthSlice';
 import useCandidateAuth from '../../hooks/useCandidateAuth';
-import Loader from '../../components/ui/Loader';
+import Loader from '../../components/Loaders/Loader';
 import TogglePassword from '../../components/utility/TogglePassword';
 import Logo from '../../svg/Logo/lightLogo.svg'
-import LoaderModal from '../../components/ui/LoaderModal';
+import LoaderModal from '../../components/Loaders/LoaderModal';
 
 const statsOne = [
   { title: 'Jobs Posted', value: 100, icon: one },

@@ -2,33 +2,18 @@ import React, { useEffect, useState } from 'react';
 import { ChevronDown, ChevronUp , Mic, TimerIcon } from 'lucide-react';
 import Webcam from 'react-webcam';
 import Assessment from './Assessment'; // Import your existing Assessment component
-import { Button } from '../../components/ui/Button';
+import { Button } from '../../components/Buttons/Button';
 import Camera from '../../svg/Buttons/Camera';
 import Logo from '../../svg/Logo/lightLogo.svg'
-import AssesmentIcon from '../../svg/AssesmentIcon';
-import TimerClockIcon from '../../svg/TimerClockIcon';
-import ProfileIcon from '../../svg/ProfileIcon';
+import AssesmentIcon from '../../svg/Icons/AssesmentIcon';
+import TimerClockIcon from '../../svg/Icons/TimerClockIcon';
+import ProfileIcon from '../../svg/Icons/ProfileIcon';
 import CameraDisabled from '../../svg/Buttons/CameraDisabled';
 import MicDisabled from '../../svg/Buttons/MicDisabled';
-import Modal from '../../components/Modal';
-import StyledCard from '../../components/ui/StyledCard';
+import StyledCard from '../../components/Cards/StyledCard';
+import Modal from '../../components/Modals/Modal';
+import { AccordionItem } from '../../components/Accordion/AccordionItem';
 import ContactUs from '../../components/Form/ContactUs';
-
-const AccordionItem = ({ title, content, isOpen, toggleOpen , preIcon}) => (
-    <StyledCard backgroundColor={"bg-background-80"} extraStyles="mb-4 overflow-hidden">
-        <div className='flex items-center gap-3'>
-            {preIcon}
-            <button
-                className="w-full  text-left typography-h3 flex justify-between items-center"
-                onClick={toggleOpen}
-            >
-                {title}
-                {isOpen ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
-            </button>
-        </div>
-        {isOpen && <div className="p-4 bg-background-80 text-font-gray typography-body">{content}</div>}
-    </StyledCard>
-);
 
 const PreAssessment = () => {
     const [isOverviewOpen, setIsOverviewOpen] = useState(true);

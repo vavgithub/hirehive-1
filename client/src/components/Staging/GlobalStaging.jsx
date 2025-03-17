@@ -1,9 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import StyledCard from '../ui/StyledCard'
+import StyledCard from '../Cards/StyledCard.jsx'
 import StatusBadge from '../ui/StatusBadge'
 import { stagingConfig } from './staging.config.js';   
-import ClosedBadge from '../../svg/ClosedBadge.jsx';
-import AssigneeSelector from '../utility/AssigneeSelector.jsx';
+import ClosedBadge from '../../svg/Icons/ClosedBadge.jsx';
+import AssigneeSelector from '../MUIUtilities/AssigneeSelector.jsx';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import BudgetIcon from '../../svg/Staging/BudgetIcon.jsx';
 import { useDispatch, useSelector } from 'react-redux';
@@ -12,8 +12,8 @@ import { setCurrentStage, updateStageStatus } from '../../redux/applicationStage
 import axios from '../../api/axios.js';
 import StageRating from './StageRating.jsx';
 import { showErrorToast, showSuccessToast } from '../ui/Toast.jsx';
-import { Button } from '../ui/Button.jsx';
-import Modal from '../Modal.jsx';
+import { Button, DefaultIcon } from '../Buttons/Button.jsx';
+import Modal from '../Modals/Modal.jsx';
 import { ACTION_TYPES } from '../../utility/ActionTypes.js';
 import { getMaxScoreForStage } from '../../pages/Admin/ViewCandidateProfile.jsx';
 import { getCandidateScore } from './StageAction.jsx';
@@ -23,7 +23,7 @@ import ClockIcon from '../../svg/Staging/ClockIcon.jsx';
 import LinkIcon from '../../svg/Staging/LinkIcon.jsx';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import ClipboardIcon from '../../svg/Staging/ClipboardIcon.jsx';
-import { formatTime } from '../../utility/formatTime.js';
+import { formatIntoLocaleString, formatTime } from '../../utility/formatTime.js';
 import NoShowAction from './NoShow.jsx';
 import useScheduler from '../../hooks/useScheduler.jsx';
 import BulletMarks from '../ui/BulletMarks.jsx';
@@ -31,7 +31,9 @@ import Scorer from '../ui/Scorer.jsx';
 import TaskForm, { SubmissionForm } from './TaskForm.jsx';
 import TaskDetails, { SubmissionDetails } from './TaskDetails.jsx';
 import HiredStamp from "../../svg/Background/HiredStamp.svg"
-import Loader from '../ui/Loader.jsx';
+import Loader from '../Loaders/Loader.jsx';
+import WarningIcon from '../../svg/Staging/WarningIcon.jsx';
+import { useNavigate } from 'react-router-dom';
 
 const submitReview = async ({ candidateId, reviewData }) => {
     const response = await axios.post('dr/submit-score-review', {
@@ -45,11 +47,12 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
     const stageData = stageStatuses[selectedStage];
     const currentStatus = stageData?.status;
     const candidateData = useSelector(state => state.candidate.candidateData);
+    const navigate = useNavigate();
 
     const { stageTitle, stageConfig, stageBasedConfig , candidateId, jobId} = useMemo(()=>{
       const isValidstage =  stagingConfig[jobProfile]?.filter(stage=> stage?.name === selectedStage);
       const stageTitle = isValidstage?.length > 0 ? isValidstage[0]?.name : "";
-  
+        
       const stageConfig = isValidstage[0];
       const stageBasedConfig = isValidstage[0]?.contentConfig[currentStatus][role];
       const candidateId = candidateData?._id;
@@ -135,8 +138,8 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
 
   //Actions API
   const rejectCandidateMutation = useMutation({
-      mutationFn: ({ candidateId, jobId, rejectionReason }) => 
-          axios.post('/hr/reject-candidate', { candidateId, jobId, rejectionReason }),
+      mutationFn: ({ candidateId, jobId, rejectionReason, scheduledDate , scheduledTime }) => 
+          axios.post('/hr/reject-candidate', { candidateId, jobId, rejectionReason, scheduledDate , scheduledTime }),
       onMutate: () => {
           setIsLoading(true); // Set loading to true when mutation starts
       },
@@ -185,8 +188,8 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
         }
     });
   
-    const handleReject = (item, rejectionReason) => {       
-        rejectCandidateMutation.mutate({ candidateId, jobId, rejectionReason });
+    const handleReject = (item, rejectionReason, scheduledDate , scheduledTime) => {     
+        rejectCandidateMutation.mutate({ candidateId, jobId, rejectionReason, scheduledDate , scheduledTime });
     };
 
     const handleMoveToNextRound = () => {
@@ -389,7 +392,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
         </div>)
     };
 
-  return (
+    return (
     <StyledCard 
     padding={3} 
     backgroundColor={"bg-background-30"}
@@ -444,10 +447,10 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
         :
         <>
         <div >
-        {stageBasedConfig?.hasLabel && <div className='mt-4'><Label icon={stageBasedConfig?.hasLabel?.icon} text={stageBasedConfig?.hasLabel?.hasCustomContent ? (stageBasedConfig?.hasLabel?.content + candidateData?.jobApplication?.jobApplied) : stageBasedConfig?.hasLabel?.content} /></div>}
+        {stageBasedConfig?.hasLabel && <div className='my-4'><Label icon={stageBasedConfig?.hasLabel?.icon} text={stageBasedConfig?.hasLabel?.hasCustomContent ? (stageBasedConfig?.hasLabel?.content + candidateData?.jobApplication?.jobApplied) : stageBasedConfig?.hasLabel?.content} /></div>}
         {
             stageBasedConfig?.hasSubmissionDetails && 
-            <SubmissionDetails candidateData={candidateData} stageData={stageData} />
+            <SubmissionDetails isEditable={stageBasedConfig?.isSubmissionEditable} candidateData={candidateData} stageData={stageData} />
         }
         {stageBasedConfig?.hasAssigneeSelector && 
           <div className='w-2/5'>
@@ -461,13 +464,20 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
           </div>
         }
         {
-            stageBasedConfig?.hasTaskForm && 
+            (stageBasedConfig?.hasTaskForm && !stageData?.scheduledDate) && 
             <TaskForm
             candidateId={candidateId}
             jobId={jobId}
             candidateEmail={candidateData?.email}
             setIsLoading={setIsLoading}
             />
+        }
+        {
+            (stageBasedConfig?.hasScheduledLabel && stageData?.scheduledDate && stageTitle === "Design Task") &&
+            <div className='mt-4'>
+            <Label icon={WarningIcon} text={`Design Task mail is Scheduled for ${formatIntoLocaleString(stageData?.scheduledDate)}`}/>
+            <TaskDetails stageData={stageData} />
+            </div>
         }
         {
             stageBasedConfig?.hasTaskDetails && 
@@ -485,6 +495,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
           stageBasedConfig?.hasRatingComponent && <StageRating candidateId={candidateId} jobId={jobId} name={stageConfig?.name} candidate={candidateData} onSubmit={handleReviewSubmit} stageConfig={stageConfig} />
         }
         <div className='flex gap-4 w-full '>
+            {(stageBasedConfig?.hasRemarks || stageBasedConfig?.hasRejectionReason || stageBasedConfig?.hasScoreBoard) && 
             <div className='w-[75%] flex flex-col justify-between gap-4 '>
             {(stageBasedConfig?.hasRemarks || stageBasedConfig?.hasRejectionReason) && 
                 <div className='mt-4'>
@@ -501,8 +512,8 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
                     </div>
                 </div>
             }
-            </div>
-            <div className='w-[35%] flex flex-col'>
+            </div>}
+            <div className={(stageTitle === "Hired" ? 'w-[100%]' : 'w-[35%]') + ' flex flex-col '}>
             {stageBasedConfig?.hasScoreCard && 
             <div className='bg-stars bg-cover rounded-xl w-[160px] h-fit my-4 self-end'>
                 <div className='p-4 flex flex-col items-center'>
@@ -516,11 +527,12 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
             {
                 (stageBasedConfig?.hasBudgetScoring && !isBudgetScoreSubmitted) && 
                 <div>
-                    <p className='typography-small-p text-font-gray mb-4'>Score Budget</p>
+                    <p className={currentStatus === "Reviewed" ? "typography-small-p text-font-gray mb-2" :'typography-body text-white mb-4'}>Score Budget</p>
                     <div className='flex gap-4'>
                         <Scorer value={budgetScore} onChange={setBudgetScore} />
-                        <Button
-                            variant="icon"
+                        <Button 
+                            icon={DefaultIcon}   
+                            variant="iconSec"
                             onClick={handleBudgetScoreSubmit}
                             disabled={budgetScore === 0}
                         >
@@ -544,6 +556,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
       {stageBasedConfig?.hasScheduledForm && 
         <div className='w-full mt-4'>
           <ScheduleForm
+            isDisabled={!isBudgetScoreSubmitted && stageTitle === "Screening"}
             candidateId={candidateId}
             jobId={jobId}
             onSubmit={handleSchedule}
@@ -552,6 +565,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
       {
         isRescheduling && 
         <ScheduleForm
+            isDisabled={!isBudgetScoreSubmitted && stageTitle === "Screening"}
             candidateId={candidateId}
             jobId={jobId}
             onSubmit={handleReschedule}
@@ -572,9 +586,12 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
           ))}
       </div>
     }
-
+    {
+        (stageBasedConfig?.hasScheduledLabel && currentStatus === "Reviewed" && stageData?.scheduledDate) &&
+        <Label icon={WarningIcon} text={`Rejection mail is Scheduled for ${formatIntoLocaleString(stageData?.scheduledDate)}`}/>
+    }
       {/* Action Section */}
-      {stageBasedConfig?.actions && 
+      {stageBasedConfig?.actions && !(currentStatus === "Reviewed" && stageData?.scheduledDate) &&
       <div className='w-full flex justify-end mt-4'>
           <div className='flex items-center gap-4'>
               {(stageBasedConfig.actions?.hasRejectAction && !isRescheduling) && 

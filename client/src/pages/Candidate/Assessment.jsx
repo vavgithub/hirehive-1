@@ -4,17 +4,20 @@ import { useNavigate } from 'react-router-dom';
 import Webcam from 'react-webcam';
 import { ChevronUp, ChevronDown, Camera, Mic } from 'lucide-react';
 import { useQuery, useMutation } from '@tanstack/react-query';
-import { Button } from '../../components/ui/Button';
-import Loader from '../../components/ui/Loader';
+import { Button } from '../../components/Buttons/Button';
+import Loader from '../../components/Loaders/Loader';
 import axios from "../../api/axios";
 import { showSuccessToast, showErrorToast } from '../../components/ui/Toast';
 import LightLogo from "../../svg/Logo/lightLogo.svg"
 import { fetchCandidateAuthData, updateAssessmentStatus } from '../../redux/candidateAuthSlice';
-import TimerIconSmall from '../../svg/TimerIconSmall';
-import WarningIcon from '../../svg/WarningIcon';
+import TimerIconSmall from '../../svg/Icons/TimerIconSmall';
+import WarningIcon from '../../svg/Icons/WarningIcon';
 import Draggable from 'react-draggable';
 import { uploadAssessment } from '../../utility/cloudinary';
-import StyledCard from '../../components/ui/StyledCard';
+import StyledCard from '../../components/Cards/StyledCard';
+import { SizableEyeIcon } from '../../svg/Icons/EyeIcon';
+import CameraDisabled from '../../svg/Buttons/CameraDisabled';
+import ImageModal from '../../components/Modals/ImageModal';
 import ContactUs from '../../components/Form/ContactUs';
 const ONE_MINUTE = 60;
 
@@ -54,7 +57,7 @@ const ProgressBar = ({ answeredCount, total }) => {
 };
 
 // Question Sidebar Component
-const QuestionSidebar = ({ questions, currentQuestion, onQuestionSelect, answers , submitTest, isUploading}) => {
+const QuestionSidebar = ({ questions, currentQuestion, answeredCount, onQuestionSelect, answers , submitTest, isUploading, isRecording,webcamRef,handleUserMedia}) => {
   const [timeRemaining, setTimeRemaining] = useState(5 * 60);
   const [timerRef,setTimerRef] = useState(null);
 
@@ -82,51 +85,64 @@ const QuestionSidebar = ({ questions, currentQuestion, onQuestionSelect, answers
   const [ min ,sec ] = useMemo(()=> formatTime(timeRemaining).split(":") ,[timeRemaining]) 
   
   return (
-    <div className="w-[200px] bg-background-30 fixed h-screen overflow-y-auto flex-shrink-0 custom-scrollbar">
-      <div className='p-4 flex items-center justify-center '>
+    <div className="w-[15%] bg-background-30 fixed h-screen overflow-y-auto  custom-scrollbar ">
+      <div className='flex items-center justify-start px-6 py-6 '>
 
         <img className='h-11' src={LightLogo} />
       </div>
-      <div className="mb-6 p-4 rounded-xl">
-        <StyledCard padding={2} backgroundColor={"bg-background-80"} extraStyles="flex flex-col items-center ">
-          <div className='flex items-center gap-2'>
-          <TimerIconSmall />
-          <p className='typography-body text-font-gray'>Time remaining</p>
+      <div className="py-8 px-6 border-b border-t border-background-60 w-full">
+        <div className=" flex flex-col items-center ">
+          <div className='w-full flex items-center gap-2'>
+          {/* <TimerIconSmall /> */}
+          <p className=' text-white font-bricolage'>Time remaining</p>
           </div>
-          <div className='mt-3 flex items-center gap-3'>
-          <span className={(timeRemaining <= ONE_MINUTE && "bg-red-200 text-red-300 ") +" bg-background-70 typography-h3 flex items-center justify-center w-12 h-12 rounded-xl"}>
+          <div className='mt-3 w-full flex items-center justify-around gap-3'>
+          <span className={(timeRemaining <= ONE_MINUTE && "bg-red-200 text-red-300 ") +" bg-background-70 typography-h3 flex items-center justify-center w-16 h-16 rounded-xl"}>
             {min}
           </span> : 
-          <span className={(timeRemaining <= ONE_MINUTE && "bg-red-200 text-red-300 ") +" bg-background-70 typography-h3 flex items-center justify-center w-12 h-12 rounded-xl"}>
+          <span className={(timeRemaining <= ONE_MINUTE && "bg-red-200 text-red-300 ") +" bg-background-70 typography-h3 flex items-center justify-center w-16 h-16 rounded-xl"}>
             {sec}
           </span>
           </div>
-        </StyledCard>
+        </div>
       </div>
-      <h2 className="typography-h3 text-font-gray p-4">Questions</h2>
+      <div className='py-8 px-6 border-b border-background-60'>
+        <span className='font-bricolage mb-2 inline-block'>{(answeredCount/questions.length) * 100}% Completed</span>
+      <ProgressBar answeredCount={answeredCount} total={questions.length} />
+      </div>
+      {/* <h2 className="typography-h3 text-font-gray p-4">Questions</h2> */}
+      <div className='grid grid-cols-5 gap-2  py-8 px-6 border-b border-background-60'>
       {questions.map((q, index) => (
         <div
           key={q._id}
-          className={`typography-body py-2 pl-4 my-2 cursor-pointer rounded flex items-center justify-between ${currentQuestion === index
+          className={`typography-body cursor-pointer rounded-full flex items-center justify-center bg-background-70 aspect-square  max-h-fit ${currentQuestion === index
             ? 'text-font-accent'
             : answers[q._id]
               ? 'text-green-100'
               : (index < currentQuestion ) ? 
-              'text-yellow-100'
+              'text-font-gray'
               :'text-font-gray hover:bg-background-60'
             }`}
           onClick={() => onQuestionSelect(index)}
         >
-          <span className="truncate flex items-center gap-2 flex-grow mr-2">
-            {!answers[q._id] && ( index < currentQuestion ) && <WarningIcon/>}
-            Question {index + 1}
-            {answers[q._id] && ' ✓'}
+          <span className="truncate typography-large-p w-fit">
+            {/* {!answers[q._id] && ( index < currentQuestion ) && <WarningIcon/>} */}
+            {index + 1}
+            {/* {answers[q._id] && ' ✓'} */}
           </span>
-          {currentQuestion === index && (
+          {/* {currentQuestion === index && (
             <div className="w-1 h-6 rounded-tl-xl rounded-bl-xl bg-teal-400 flex-shrink-0" />
-          )}
+          )} */}
         </div>
       ))}
+      </div>
+      <div className="p-6">
+          <WebcamView
+            isRecording={isRecording}
+            webcamRef={webcamRef}
+            handleUserMedia={handleUserMedia}
+          />
+      </div>
     </div>
   );
 };
@@ -143,49 +159,59 @@ const QuestionDisplay = ({
   isLast,
   isAllAnswered,
   renderFinishButton,
-}) => (
+}) => {
+  const [showImage,setShowImage] = useState(false);
+
+  return(
   <div className="flex-grow p-8 pl-[212px]">
     <div className="mb-8">
-      <h1 className="typography-h1 mb-4">{`Question ${questionNumber + 1}: ${question.text}`}</h1>
-      {question.questionType === 'image' && question.imageUrl && (
-        <div className="mb-4">
-          <img
-            src={question.imageUrl}
-            alt="Question visual"
-            className="max-w-md rounded-xl"
-          />
-        </div>
-      )}
-      <div className='grid grid-cols-2 gap-4 items-center h-max' style={{
-        gridAutoRows: "1fr", // Ensures all rows are consistent based on tallest item
-      }}>
-        {question.options.map((option, index) => (
-          <div key={index} className="flex items-center bg-background-80  rounded-xl  h-full">
-            <label className="flex items-center space-x-3 p-4 w-full">
-              <input
-                type="radio"
-                name={`question-${question._id}`}
-                value={option.text}
-                checked={currentAnswer === option.text}
-                onChange={() => onAnswer(question._id, option.text)}
-                className="appearance-none border-2 rounded-full form-radio h-5 aspect-square max-h-5  max-w-5 checked:ring-offset-[5px] checked:ring-offset-black-100 checked:bg-teal-100 checked:ml-[4px] checked:mr-[4px] checked:ring-[2px] checked:w-3 checked:h-3 checked:border-0 checked:ring-teal-100"
-              /> 
-              <div className="flex flex-col gap-2">
-                <span className='typography-body'>{option.text}</span>
-                {option.imageUrl && (
-                  <img
-                    src={option.imageUrl}
-                    alt={option.text}
-                    className="max-w-xs rounded-lg mt-2"
-                  />
-                )}
-              </div>
-            </label>
+      <StyledCard backgroundColor={"bg-background-70"} padding={3} extraStyles={"flex flex-col gap-4"} >
+        <h1 className="typography-h1 ">{`Question ${questionNumber + 1}: ${question.text}`}</h1>
+        {question.questionType === 'image' && question.imageUrl && (
+          <div className="relative w-fit">
+            <img
+              src={question.imageUrl}
+              alt="Question visual"
+              className="max-w-md rounded-xl"
+            />
+            <div onClick={()=>setShowImage(question.imageUrl)} className={`absolute bottom-2 cursor-pointer right-2 p-2 rounded-xl bg-gray-800`}>
+              <SizableEyeIcon width={18} height={16} />
+            </div>
           </div>
-        ))}
-      </div>
+        )}
+      </StyledCard>
+      <StyledCard backgroundColor={"bg-background-30"} borderRadius={" rounded-br-xl rounded-bl-xl "} extraStyles={"w-[95%] mx-auto"}>
+        <div className='grid grid-cols-2 gap-4 items-center h-max' style={{
+          gridAutoRows: "1fr", // Ensures all rows are consistent based on tallest item
+        }}>
+          {question.options.map((option, index) => (
+            <div key={index} className="flex items-center bg-background-80  rounded-xl  h-full">
+              <label className="flex items-center space-x-3 p-4 w-full">
+                <input
+                  type="radio"
+                  name={`question-${question._id}`}
+                  value={option.text}
+                  checked={currentAnswer === option.text}
+                  onChange={() => onAnswer(question._id, option.text)}
+                  className="appearance-none border-2 rounded-full form-radio h-5 aspect-square max-h-5  max-w-5 checked:ring-offset-[5px] checked:ring-offset-black-100 checked:bg-teal-100 checked:ml-[4px] checked:mr-[4px] checked:ring-[2px] checked:w-3 checked:h-3 checked:border-0 checked:ring-teal-100"
+                /> 
+                <div className="flex flex-col gap-2">
+                  <span className='typography-body'>{option.text}</span>
+                  {option.imageUrl && (
+                    <img
+                      src={option.imageUrl}
+                      alt={option.text}
+                      className="max-w-xs rounded-lg mt-2"
+                    />
+                  )}
+                </div>
+              </label>
+            </div>
+          ))}
+        </div>
+      </StyledCard>
     </div>
-    <div className="flex justify-between">
+    <div className="absolute bottom-8 right-8 flex gap-4 justify-between">
         <Button
           variant="secondary"
           onClick={onPrevious}
@@ -207,25 +233,26 @@ const QuestionDisplay = ({
         )}
       </div>
     </div>
+    <ImageModal isOpen={showImage} onClose={()=>setShowImage(false)} imageUrl={showImage} />
   </div>
-);
+)};
 
 // Webcam Component
 const WebcamView = React.memo(({ isMinimized, toggleMinimize, isRecording, webcamRef ,handleUserMedia}) => {
   return(
-  <div className={`bg-gray-800 rounded-lg overflow-hidden ${isMinimized ? 'w-64' : 'w-96'}`}>
-    <div className="flex justify-between items-center p-2 bg-gray-700">
-      <div className='flex items-center gap-3 px-1' >
+  <div className={`bg-gray-800 rounded-lg overflow-hidden `}>
+    {/* <div className="flex justify-between items-center p-2 bg-gray-700">
+      {/* <div className='flex items-center gap-3 px-1' >
         <div className='bg-red-40 w-4 h-4 rounded-full border-2'></div>
         <h3 className="font-semibold">
           {isRecording ? 'Recording...' : 'Camera Off'}
         </h3>
-      </div>
-      <button onClick={toggleMinimize}>
+      </div> */}
+      {/* <button onClick={toggleMinimize}>
         {isMinimized ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
-      </button>
-    </div>
-    {!isMinimized && (
+      </button> */}
+    {/* </div>  */}
+    
       <div className="relative aspect-video">
         <Webcam
         muted
@@ -235,16 +262,19 @@ const WebcamView = React.memo(({ isMinimized, toggleMinimize, isRecording, webca
           onUserMedia={handleUserMedia}
           className="absolute inset-0 w-full h-full object-cover"
         />
-        <div className="absolute bottom-2 right-2 flex space-x-2 w-full justify-center">
-          <div className={`p-2 rounded-xl ${isRecording ? 'bg-red-500' : 'bg-gray-800'}`}>
+        <div className="absolute bottom-2 right-2 flex space-x-2 w-fit justify-center">
+          {/* <div className={`p-2 rounded-xl ${isRecording ? 'bg-red-500' : 'bg-gray-800'}`}>
             <Camera size={20} />
-          </div>
-          <div className={`p-2 rounded-xl ${isRecording ? 'bg-red-500' : 'bg-gray-800'}`}>
-            <Mic size={20} />
-          </div>
+          </div> */}
+          {/* <div className={`p-2 rounded-xl bg-gray-800`}>
+            <SizableEyeIcon width={18} height={16} />
+          </div> */}
         </div>
+        {!isRecording && 
+        <div className='absolute flex items-center justify-center opacity-25 w-full h-full top-0 left-0 bg-background-80'>
+            <CameraDisabled />
+        </div>}
       </div>
-    )}
   </div>
 )});
 
@@ -822,16 +852,20 @@ const Assessment = () => {
           currentQuestion={currentQuestion}
           onQuestionSelect={setCurrentQuestion}
           answers={answers}
+          answeredCount={answeredCount}
           submitTest={handleFinish}
           isUploading={isUploading}
+          webcamRef={webcamRef}
+          handleUserMedia={handleUserMedia}
+          isRecording={isRecording}
+
         />
-        <div className="flex-grow flex flex-col container mx-auto ">
-          <div className="bg-background-90 pl-[212px] p-4 flex gap-8 justify-between items-center">
-            <ProgressBar answeredCount={answeredCount} total={questions.length} />
+        <div className="flex-grow flex flex-col container mx-auto relative">
+          {/* <div className="bg-background-90 pl-[212px] p-4 flex gap-8 justify-between items-center">
             <div className='typography-body text-font-gray'>
               {`${answeredCount}/${questions.length} Answered`}
             </div>
-          </div>
+          </div> */}
           <QuestionDisplay
             question={questions[currentQuestion]}
             questionNumber={currentQuestion}
@@ -850,18 +884,7 @@ const Assessment = () => {
             isAllAnswered={isAllAnswered}
             renderFinishButton={renderFinishButton}
           />
-            <Draggable>
-              <div className="p-4 fixed bottom-3 right-3">
-                  <WebcamView
-                    isMinimized={isWebcamMinimized}
-                    toggleMinimize={toggleMinimize}
-                    isRecording={isRecording}
-                    webcamRef={webcamRef}
-                    handleUserMedia={handleUserMedia}
-                  />
-              </div>
-            </Draggable>
-        </div>
+          </div>
         <ContactUs/>
       </div>
     </>

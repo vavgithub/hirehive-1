@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import { InputField, CustomDropdown, ExperienceField, BudgetField } from './FormFields';
-import SkillsInput from '../utility/SkillsInput';
-import { dropdownOptions, dummySkills } from '../Form/dropdownOptions';
-import { Button } from '../ui/Button';
+import SkillsInput from '../Inputs/SkillsInput';
+import { dropdownOptions, dummySkills } from '../Dropdowns/dropdownOptions';
+import { Button } from '../Buttons/Button';
 import Next from '../../svg/Buttons/Next';
 import SaveForLater from '../../svg/Buttons/SaveForLater';
-import Que from './Que';
+import Que from '../QuestionUtilities/Que';
 import Create from '../../svg/Buttons/Create';
 import TextEditor from '../utility/TextEditor';
+import { InputField } from '../Inputs/InputField';
+import { ExperienceField } from '../FormUtilities/ExperienceField';
+import { BudgetField } from '../FormUtilities/BudgetField';
+import { CustomDropdown } from '../Dropdowns/CustomDropdown';
 
 function hasDuplicates(arr) {
   return new Set(arr).size !== arr.length;

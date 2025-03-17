@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import { Button } from '../../components/ui/Button';
+import { Button } from '../../components/Buttons/Button';
 import { useMutation } from '@tanstack/react-query';
 import { showErrorToast, showSuccessToast } from '../../components/ui/Toast';
 import axios from '../../api/axios';
-import { InputField } from '../../components/Form/FormFields';
-import OTPInput from '../../components/ui/OTPInput';
+import OTPInput from '../../components/Inputs/OTPInput';
 import { BackButton } from '../../components/utility/Header';
 import { digitsRegex, lowerCaseRegex, specialCharRegex, upperCaseRegex } from '../../utility/regex';
-import LoaderModal from '../../components/ui/LoaderModal';
+import LoaderModal from '../../components/Loaders/LoaderModal';
+import { InputField } from '../../components/Inputs/InputField';
 
 const ForgotPassword = ({ onBack ,role }) => {
   const [step, setStep] = useState('email');

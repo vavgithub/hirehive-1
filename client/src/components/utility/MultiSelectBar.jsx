@@ -1,22 +1,21 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import ArrowIcon from '../../svg/ArrowIcon'
-import { BlendCloseButton } from '../../svg/CloseButton'
-import { WhiteProfileIcon } from '../../svg/ProfileIcon'
-import StageIcon from '../../svg/StageIcon'
-import StatusIcon from '../../svg/StatusIcon'
+import ArrowIcon from '../../svg/Icons/ArrowIcon'
+import { BlendCloseButton } from '../../svg/Icons/CloseButton'
+import { WhiteProfileIcon } from '../../svg/Icons/ProfileIcon'
+import StageIcon from '../../svg/Icons/StageIcon'
+import StatusIcon from '../../svg/Icons/StatusIcon'
 import { Rating } from '../../svg/Buttons/Rating'
 import { WhiteCalenderIcon } from '../../svg/Staging/CalenderIcon'
-import BellIcon from '../../svg/BellIcon'
-import ThreeDotsHorizontal from '../../svg/ThreeDotsHorizontal'
-import Modal, { REJECTION_REASONS } from '../Modal'
+import BellIcon from '../../svg/Icons/BellIcon'
+import ThreeDotsHorizontal from '../../svg/Icons/ThreeDotsHorizontal'
+import Modal from '../Modals/Modal'
 import axios from '../../api/axios'
 import { showErrorToast, showSuccessToast } from '../ui/Toast'
 import { useQueryClient } from '@tanstack/react-query'
-import { CustomDropdown } from '../Form/FormFields'
-import LoaderModal from '../ui/LoaderModal'
-import AssigneeSelector from './AssigneeSelector'
-import RatingSelector from './RatingSelector'
-import RejectionSelector from './RejectionSelector'
+import LoaderModal from '../Loaders/LoaderModal'
+import AssigneeSelector from '../MUIUtilities/AssigneeSelector'
+import RatingSelector from '../MUIUtilities/RatingSelector'
+import RejectionSelector from '../MUIUtilities/RejectionSelector'
 
 export const getMaxScoreEachStage = (currentStage) =>{
     let stageScores = {
@@ -283,7 +282,7 @@ function MultiSelectBar({selectedData,jobId,clearSelection}) {
     setAnchorEl(null)
   }
 
-  const handleConfirm = async (confirmFunction) =>{
+  const handleConfirm = async (confirmFunction, scheduledDate, scheduledTime) =>{
     try {
         setIsLoading(true);
         const candidatesData = Object.entries(filteredCandidates).map(([stage,candidates]) => {
@@ -293,7 +292,9 @@ function MultiSelectBar({selectedData,jobId,clearSelection}) {
                         candidateId : eachCandidate?.candidate._id,
                         jobId : eachCandidate?.candidate?.jobId || jobId,
                         stage : stage,
-                        rejectionReason : eachCandidate?.rejectionReason
+                        rejectionReason : eachCandidate?.rejectionReason,
+                        ...(scheduledDate ? {scheduledDate : scheduledDate} : {}),
+                        ...(scheduledTime ? {scheduledTime : scheduledTime} : {}),
                     }
                 }else{
                     return { 
@@ -438,12 +439,13 @@ function MultiSelectBar({selectedData,jobId,clearSelection}) {
         {action?.type === "MODAL" && 
         <Modal
             open={action}
-            onConfirm={()=>handleConfirm(action?.apiFunction)}
+            onConfirm={(_,scheduledDate, scheduledTime)=>handleConfirm(action?.apiFunction, scheduledDate, scheduledTime)}
             onClose={() => setAction(null)}
             isconfirmButtonDisabled={!isValid}
             customTitle={action?.customTitle}
             customConfirmLabel={action?.confirmLabel || action?.customTitle}
             confirmVariant={action?.name === "REJECT" ? "cancel" : null}
+            useScheduledReject={action?.name === "REJECT"}
             customMessage={action?.customMessage}
             specifiedWidth={"max-w-4xl"}
         >
@@ -498,7 +500,7 @@ function MultiSelectBar({selectedData,jobId,clearSelection}) {
                                                     onClick={(e)=>{setAnchorEl(!anchorEl ? e.currentTarget : null); setChosenCandidate(chosenCandidate ? null : candidate?._id); setChosenStage(chosenStage ? null : stage);}}
                                                     className={`${rejectionReason ? "text-white" : "text-font-gray"}   typography-body mt-1 h-[44px] flex items-center justify-between bg-background-40 hover:bg-background-60 w-full outline-none rounded-xl shadow-sm focus:ring-teal-300 focus:border-teal-300 text-left px-4`}
                                                     >
-                                                    <p>{rejectionReason ? rejectionReason : "-Select-"}</p>
+                                                    <p className='whitespace-nowrap text-ellipsis overflow-hidden'>{rejectionReason ? rejectionReason : "-Select-"}</p>
                                                     
                                                     </div>
                                                 </div>}

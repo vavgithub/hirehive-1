@@ -2,16 +2,17 @@ import { useNavigate, useParams } from 'react-router-dom';
 import axios from '../../api/axios';
 import { useSelector } from 'react-redux';
 import { useQuery } from '@tanstack/react-query';
-import { Button } from '../../components/ui/Button';
+import { Button } from '../../components/Buttons/Button';
 import { formatDescription } from '../../utility/formatDescription';
 import SideCard from '../../components/ui/SideCard';
 import useAuthCandidate, { useCandidateAuth } from '../../hooks/useCandidateAuth'; // Import the authentication hook
 import Header from '../../components/utility/Header';
-import Loader from '../../components/ui/Loader';
-import ArrowIcon from '../../svg/ArrowIcon';
+import Loader from '../../components/Loaders/Loader';
+import ArrowIcon from '../../svg/Icons/ArrowIcon';
 import Logo from '../../svg/Logo/lightLogo.svg'
-import StyledCard from '../../components/ui/StyledCard';
+import StyledCard from '../../components/Cards/StyledCard';
 import ContactUs from '../../components/Form/ContactUs';
+
 // Function to fetch the job data by ID
 const getJobById = async (id) => {
     const response = await axios.get(`jobs/getJobById/${id}`);

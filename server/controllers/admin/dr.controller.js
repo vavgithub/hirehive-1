@@ -434,9 +434,13 @@ export const autoAssignPortfolios = async (req, res) => {
  
      // Update the stage status
      const stageStatus = jobApplication.stageStatuses.get(stage);
- 
+     
      // Update score and feedback
-     stageStatus.score = ratings; // Can be a number or an object with multiple ratings
+     if(stage === "Screening"){
+      stageStatus.score = { ...ratings, Budget : stageStatus?.score?.Budget}; // Can be a number or an object with multiple ratings
+     }else{
+       stageStatus.score = ratings; // Can be a number or an object with multiple ratings
+     }
      stageStatus.feedback = feedback;
  
      // Update the status from 'Under Review' to 'Reviewed'

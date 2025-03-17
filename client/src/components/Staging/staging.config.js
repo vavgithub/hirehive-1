@@ -11,9 +11,20 @@ export const stagingConfig = {
                 'Not Assigned', 'Under Review', 'Reviewed', 'Cleared', 'Rejected'
             ],
             score : 5,
+            totalScore : 5,
             extraHeaderContent : PortfolioHeader,
             contentConfig : {
                 "Not Assigned" : {
+                    "Admin" : {
+                        hasAssigneeSelectorIcon : true,
+                        hasAssigneeSelectorEnabled : true,
+                        hasAssigneeSelector : true,
+                        hasBudgetLabel : false,
+                        hasLabel : {
+                            content : "Candidate's portfolio has not yet been assigned to a reviewer.",
+                            icon : WarningIcon
+                        }
+                    },
                     "Hiring Manager" : {
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
@@ -22,6 +33,9 @@ export const stagingConfig = {
                         hasLabel : {
                             content : "Candidate's portfolio has not yet been assigned to a reviewer.",
                             icon : WarningIcon
+                        },
+                        actions : {
+                            hasRejectAction : true,
                         }
                     },
                     "Design Reviewer" : {
@@ -46,6 +60,20 @@ export const stagingConfig = {
                     }
                 },
                 "Under Review" : {
+                    "Admin" : {
+                        hasAssigneeSelectorIcon : true,
+                        hasAssigneeSelectorEnabled : true,
+                        hasAssigneeSelector : false,
+                        hasBudgetLabel : false,
+                        hasLabel : {
+                            content : "Portfolio is currently under review by the design reviewer.",
+                            icon : WarningIcon
+                        },
+                        hasRemarks : false,
+                        hasRatingComponent : true,
+                        hasScoreCard : false,
+                        actions : false
+                    },
                     "Hiring Manager" : {
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
@@ -88,6 +116,19 @@ export const stagingConfig = {
                     }
                 },
                 "Reviewed" : {
+                    "Admin" : {
+                        hasAssigneeSelectorIcon : true,
+                        hasAssigneeSelectorEnabled : true,
+                        hasAssigneeSelector : false,
+                        hasBudgetLabel : false,
+                        hasLabel : false,
+                        hasRemarks : true,
+                        hasScoreCard : true,
+                        actions : {
+                            hasRejectAction : true,
+                            hasMoveToNextRoundAction : true
+                        }
+                    },
                     "Hiring Manager" : {
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
@@ -96,6 +137,7 @@ export const stagingConfig = {
                         hasLabel : false,
                         hasRemarks : true,
                         hasScoreCard : true,
+                        hasScheduledLabel : true,
                         actions : {
                             hasRejectAction : true,
                             hasMoveToNextRoundAction : true
@@ -126,6 +168,17 @@ export const stagingConfig = {
                     }
                 },
                 "Rejected" : {
+                    "Admin" : {
+                        hasAssigneeSelectorIcon : true,
+                        hasAssigneeSelectorEnabled : false,
+                        hasAssigneeSelector : false,
+                        hasBudgetLabel : false,
+                        hasLabel : false,
+                        hasRemarks : false,
+                        hasRejectionReason : true,
+                        hasScoreCard : true,
+                        actions : false
+                    },
                     "Hiring Manager" : {
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
@@ -160,6 +213,16 @@ export const stagingConfig = {
                     }
                 },
                 "Cleared" : {
+                    "Admin" : {
+                        hasAssigneeSelectorIcon : true,
+                        hasAssigneeSelectorEnabled : false,
+                        hasAssigneeSelector : false,
+                        hasBudgetLabel : false,
+                        hasLabel : false,
+                        hasRemarks : true,
+                        hasScoreCard : true,
+                        actions : false
+                    },
                     "Hiring Manager" : {
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
@@ -207,10 +270,27 @@ export const stagingConfig = {
                 Communication : 5,
                 Budget : 5,
             },
+            totalScore : 30,
             hasSplitScoring : true,
             extraHeaderContent : false,
             contentConfig : {
                 "Pending" : {
+                    "Admin" : {
+                        hasAssigneeSelectorIcon : true,
+                        hasAssigneeSelectorEnabled : true,
+                        hasAssigneeSelector : false,
+                        hasBudgetLabel : true,
+                        hasLabel : {
+                            content : "Call not scheduled. Please contact the candidate to schedule the screening call and update the details below",
+                            icon : WarningIcon
+                        },
+                        hasRemarks : false,
+                        hasScoreCard : false,
+                        hasBudgetScoring : true,
+                        actions : false,
+                        hasCallHistory : false,
+                        hasScheduledForm : true
+                    },
                     "Hiring Manager" : {
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
@@ -222,6 +302,7 @@ export const stagingConfig = {
                         },
                         hasRemarks : false,
                         hasScoreCard : false,
+                        hasBudgetScoring : true,
                         actions : false,
                         hasCallHistory : false,
                         hasScheduledForm : true
@@ -252,6 +333,25 @@ export const stagingConfig = {
                     }
                 },
                 "Call Scheduled" : {
+                    "Admin" : {
+                        hasAssigneeSelectorIcon : true,
+                        hasAssigneeSelectorEnabled : true,
+                        hasAssigneeSelector : false,
+                        hasBudgetLabel : true,
+                        hasLabel : {
+                            content : "The screening call has been scheduled. You can reschedule if needed.",
+                            icon : WarningIcon
+                        },
+                        hasRemarks : false,
+                        hasScoreCard : false,
+                        hasCallDetails : true,
+                        hasCallHistory : true,
+                        hasScheduledForm : false,
+                        actions : {
+                            hasRescheduleAction : true,
+                            hasNoShowAction : true,
+                        }
+                    },
                     "Hiring Manager" : {
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
@@ -301,6 +401,25 @@ export const stagingConfig = {
                     }
                 },
                 "No Show" : {
+                    "Admin" : {
+                        hasAssigneeSelectorIcon : true,
+                        hasAssigneeSelectorEnabled : true,
+                        hasAssigneeSelector : false,
+                        hasBudgetLabel : true,
+                        hasLabel : {
+                            content : "Candidate did not show up for the scheduled screening call.",
+                            icon : WarningIcon
+                        },
+                        hasRemarks : false,
+                        hasScoreCard : false,
+                        hasCallDetails : false,
+                        hasCallHistory : false,
+                        hasScheduledForm : false,
+                        actions : {
+                            hasRescheduleAction : true,
+                            hasRejectAction : true,
+                        }
+                    },
                     "Hiring Manager" : {
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
@@ -350,6 +469,25 @@ export const stagingConfig = {
                     }
                 },
                 "Under Review" : {
+                    "Admin" : {
+                        hasAssigneeSelectorIcon : true,
+                        hasAssigneeSelectorEnabled : true,
+                        hasAssigneeSelector : false,
+                        hasBudgetLabel : true,
+                        hasLabel : {
+                            content : "Screening is currently under review.",
+                            icon : WarningIcon
+                        },
+                        hasScheduledForm : false,
+                        hasRatingComponent : true,
+                        hasRemarks : false,
+                        hasScoreCard : false,
+                        hasCallDetails : false,
+                        hasCallHistory : false,
+                        actions : {
+                            hasNoShowAction : true,
+                        }
+                    },
                     "Hiring Manager" : {
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
@@ -399,6 +537,24 @@ export const stagingConfig = {
                     }
                 },
                 "Reviewed" : {
+                    "Admin" : {
+                        hasAssigneeSelectorIcon : true,
+                        hasAssigneeSelectorEnabled : false,
+                        hasAssigneeSelector : false,
+                        hasBudgetLabel : true,
+                        hasLabel : false,
+                        hasRemarks : true,
+                        hasScoreBoard : true,
+                        hasScoreCard : true,
+                        hasBudgetScoring : true,
+                        hasCallDetails : false,
+                        hasCallHistory : false,
+                        hasScheduledForm : false,
+                        actions : {
+                            hasRejectAction : true,
+                            hasMoveToNextRoundAction : true
+                        }
+                    },
                     "Hiring Manager" : {
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
@@ -407,11 +563,12 @@ export const stagingConfig = {
                         hasLabel : false,
                         hasRemarks : true,
                         hasScoreBoard : true,
-                        hasBudgetScoring : true,
                         hasScoreCard : true,
+                        hasBudgetScoring : true,
                         hasCallDetails : false,
                         hasCallHistory : false,
                         hasScheduledForm : false,
+                        hasScheduledLabel : true,
                         actions : {
                             hasRejectAction : true,
                             hasMoveToNextRoundAction : true
@@ -446,6 +603,20 @@ export const stagingConfig = {
                     }
                 },
                 "Cleared" : {
+                    "Admin" : {
+                        hasAssigneeSelectorIcon : true,
+                        hasAssigneeSelectorEnabled : false,
+                        hasAssigneeSelector : false,
+                        hasBudgetLabel : true,
+                        hasLabel : false,
+                        hasRemarks : true,
+                        hasScoreBoard : true,
+                        hasScoreCard : true,
+                        hasCallDetails : false,
+                        hasCallHistory : false,
+                        hasScheduledForm : false,
+                        actions : false
+                    },
                     "Hiring Manager" : {
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
@@ -489,6 +660,21 @@ export const stagingConfig = {
                     }
                 },
                 "Rejected" : {
+                    "Admin" : {
+                        hasAssigneeSelectorIcon : true,
+                        hasAssigneeSelectorEnabled : false,
+                        hasAssigneeSelector : false,
+                        hasBudgetLabel : true,
+                        hasLabel : false,
+                        hasRemarks : false,
+                        hasRejectionReason : true,
+                        hasScoreBoard : true,
+                        hasScoreCard : true,
+                        hasCallDetails : false,
+                        hasCallHistory : false,
+                        hasScheduledForm : false,
+                        actions : false
+                    },
                     "Hiring Manager" : {
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
@@ -541,10 +727,11 @@ export const stagingConfig = {
                 'Pending','Not Assigned', 'Sent', 'Under Review', 'Reviewed', 'Cleared', 'Rejected', 'Not Submitted'
             ],
             score : 5,
+            totalScore : 5,
             extraHeaderContent : false,
             contentConfig : {
                 "Pending" : {
-                    "Hiring Manager" : {
+                    "Admin" : {
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -557,6 +744,21 @@ export const stagingConfig = {
                         hasScoreCard : false,
                         actions : false,
                         hasTaskForm : true
+                    },
+                    "Hiring Manager" : {
+                        hasAssigneeSelectorIcon : true,
+                        hasAssigneeSelectorEnabled : false,
+                        hasAssigneeSelector : false,
+                        hasBudgetLabel : false,
+                        hasLabel : {
+                            content : "Design task not sent. Please provide task details and set a due date/time.",
+                            icon : WarningIcon
+                        },
+                        hasRemarks : false,
+                        hasScoreCard : false,
+                        actions : false,
+                        hasTaskForm : true,
+                        hasScheduledLabel : true
                     },
                     "Design Reviewer" : {
                         hasAssigneeSelectorIcon : false,
@@ -584,6 +786,20 @@ export const stagingConfig = {
                     }
                 },
                 "Sent" : {
+                    "Admin" : {
+                        hasAssigneeSelectorIcon : true,
+                        hasAssigneeSelectorEnabled : false,
+                        hasAssigneeSelector : false,
+                        hasBudgetLabel : false,
+                        hasLabel : {
+                            content : "The design task has been sent to the candidate.",
+                            icon : WarningIcon
+                        },
+                        hasRemarks : false,
+                        hasScoreCard : false,
+                        actions : false,
+                        hasTaskDetails : true
+                    },
                     "Hiring Manager" : {
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
@@ -623,6 +839,20 @@ export const stagingConfig = {
                     }
                 },
                 "Not Assigned" : {
+                    "Admin" : {
+                        hasAssigneeSelectorIcon : true,
+                        hasAssigneeSelectorEnabled : true,
+                        hasAssigneeSelector : true,
+                        hasBudgetLabel : false,
+                        hasLabel : {
+                            content : "Candidate’s design task has not yet been assigned to a reviewer.",
+                            icon : WarningIcon
+                        },
+                        hasRemarks : false,
+                        hasScoreCard : false,
+                        actions : false,
+                        hasSubmissionDetails : true
+                    },
                     "Hiring Manager" : {
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
@@ -657,9 +887,25 @@ export const stagingConfig = {
                             icon : WarningIcon
                         },
                         hasSubmissionDetails : true,
+                        isSubmissionEditable : true,
                     }
                 },
                 "Under Review" : {
+                    "Admin" : {
+                        hasAssigneeSelectorIcon : true,
+                        hasAssigneeSelectorEnabled : true,
+                        hasAssigneeSelector : false,
+                        hasBudgetLabel : false,
+                        hasLabel : {
+                            content : "Design Task is currently under review by the design reviewer",
+                            icon : WarningIcon
+                        },
+                        hasRemarks : false,
+                        hasScoreCard : false,
+                        hasSubmissionDetails : true,
+                        hasRatingComponent : true,
+                        actions : false,
+                    },
                     "Hiring Manager" : {
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
@@ -698,6 +944,19 @@ export const stagingConfig = {
                     }
                 },
                 "Reviewed" : {
+                    "Admin" : {
+                        hasAssigneeSelectorIcon : true,
+                        hasAssigneeSelectorEnabled : false,
+                        hasAssigneeSelector : false,
+                        hasBudgetLabel : false,
+                        hasLabel : false,
+                        hasRemarks : true,
+                        hasScoreCard : true,
+                        actions : {
+                            hasRejectAction : true,
+                            hasMoveToNextRoundAction : true
+                        }
+                    },
                     "Hiring Manager" : {
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
@@ -706,6 +965,7 @@ export const stagingConfig = {
                         hasLabel : false,
                         hasRemarks : true,
                         hasScoreCard : true,
+                        hasScheduledLabel : true,
                         hasSubmissionDetails : true,
                         actions : {
                             hasRejectAction : true,
@@ -731,6 +991,16 @@ export const stagingConfig = {
                     }
                 },
                 "Cleared" : {
+                    "Admin" : {
+                        hasAssigneeSelectorIcon : true,
+                        hasAssigneeSelectorEnabled : false,
+                        hasAssigneeSelector : false,
+                        hasBudgetLabel : false,
+                        hasLabel : false,
+                        hasRemarks : true,
+                        hasScoreCard : true,
+                        hasSubmissionDetails : true
+                    },
                     "Hiring Manager" : {
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
@@ -762,6 +1032,15 @@ export const stagingConfig = {
                     }
                 },
                 "Rejected" : {
+                    "Admin" : {
+                        hasAssigneeSelectorIcon : true,
+                        hasAssigneeSelectorEnabled : false,
+                        hasAssigneeSelector : false,
+                        hasBudgetLabel : false,
+                        hasLabel : false,
+                        hasRejectionReason : true,
+                        hasScoreCard : true,
+                    },
                     "Hiring Manager" : {
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
@@ -789,6 +1068,20 @@ export const stagingConfig = {
                     }
                 },
                 "Not Submitted" : {
+                    "Admin" : {
+                        hasAssigneeSelectorIcon : true,
+                        hasAssigneeSelectorEnabled : false,
+                        hasAssigneeSelector : false,
+                        hasBudgetLabel : false,
+                        hasLabel : {
+                            content : "The design task has not yet submitted by the candidate.",
+                            icon : WarningIcon
+                        },
+                        hasRemarks : false,
+                        hasScoreCard : false,
+                        actions : false,
+                        hasTaskDetails : true
+                    },
                     "Hiring Manager" : {
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
@@ -835,9 +1128,24 @@ export const stagingConfig = {
                 'Pending', 'Call Scheduled', 'Not Assigned', 'Reviewed', 'Cleared', 'No Show', 'Rejected'
             ],
             score : 5,
+            totalScore : 5,
             extraHeaderContent : false,
             contentConfig : {
                 "Pending" : {
+                    "Admin" : {
+                        hasAssigneeSelectorIcon : true,
+                        hasAssigneeSelectorEnabled : true,
+                        hasAssigneeSelector : false,
+                        hasBudgetLabel : false,
+                        hasLabel : {
+                            content : "Call not scheduled. Please contact the candidate to schedule the screening call and update the details below",
+                            icon : WarningIcon
+                        },
+                        hasRemarks : false,
+                        hasScoreCard : false,
+                        actions : false,
+                        hasScheduledForm : true
+                    },
                     "Hiring Manager" : {
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
@@ -878,6 +1186,25 @@ export const stagingConfig = {
                     }
                 },
                 "Call Scheduled" : {
+                    "Admin" : {
+                        hasAssigneeSelectorIcon : true,
+                        hasAssigneeSelectorEnabled : true,
+                        hasAssigneeSelector : false,
+                        hasBudgetLabel : false,
+                        hasLabel : {
+                            content : "The round 1 call has been scheduled. You can reschedule if needed.",
+                            icon : WarningIcon
+                        },
+                        hasRemarks : false,
+                        hasScoreCard : false,
+                        hasCallDetails : true,
+                        hasCallHistory : true,
+                        hasScheduledForm : false,
+                        actions : {
+                            hasRescheduleAction : true,
+                            hasNoShowAction : true,
+                        }
+                    },
                     "Hiring Manager" : {
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
@@ -927,6 +1254,25 @@ export const stagingConfig = {
                     }
                 },
                 "No Show" : {
+                    "Admin" : {
+                        hasAssigneeSelectorIcon : true,
+                        hasAssigneeSelectorEnabled : true,
+                        hasAssigneeSelector : false,
+                        hasBudgetLabel : false,
+                        hasLabel : {
+                            content : "Candidate did not show up for the scheduled Round 1 call.",
+                            icon : WarningIcon
+                        },
+                        hasRemarks : false,
+                        hasScoreCard : false,
+                        hasCallDetails : false,
+                        hasCallHistory : false,
+                        hasScheduledForm : false,
+                        actions : {
+                            hasRescheduleAction : true,
+                            hasRejectAction : true,
+                        }
+                    },
                     "Hiring Manager" : {
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
@@ -976,6 +1322,25 @@ export const stagingConfig = {
                     }
                 },
                 "Under Review" : {
+                    "Admin" : {
+                        hasAssigneeSelectorIcon : true,
+                        hasAssigneeSelectorEnabled : true,
+                        hasAssigneeSelector : false,
+                        hasBudgetLabel : false,
+                        hasLabel : {
+                            content : "Round 1 interview is currently under review.",
+                            icon : WarningIcon
+                        },
+                        hasRemarks : false,
+                        hasScoreCard : false,
+                        hasCallDetails : false,
+                        hasCallHistory : false,
+                        hasScheduledForm : false,
+                        hasRatingComponent : true,
+                        actions : {
+                            hasNoShowAction : true,
+                        }
+                    },
                     "Hiring Manager" : {
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
@@ -1025,6 +1390,22 @@ export const stagingConfig = {
                     }
                 },
                 "Reviewed" : {
+                    "Admin" : {
+                        hasAssigneeSelectorIcon : true,
+                        hasAssigneeSelectorEnabled : false,
+                        hasAssigneeSelector : false,
+                        hasBudgetLabel : false,
+                        hasLabel : false,
+                        hasRemarks : true,
+                        hasScoreCard : true,
+                        hasCallDetails : false,
+                        hasCallHistory : false,
+                        hasScheduledForm : false,
+                        actions : {
+                            hasRejectAction : true,
+                            hasMoveToNextRoundAction : true
+                        }
+                    },
                     "Hiring Manager" : {
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
@@ -1036,6 +1417,7 @@ export const stagingConfig = {
                         hasCallDetails : false,
                         hasCallHistory : false,
                         hasScheduledForm : false,
+                        hasScheduledLabel : true,
                         actions : {
                             hasRejectAction : true,
                             hasMoveToNextRoundAction : true
@@ -1069,6 +1451,19 @@ export const stagingConfig = {
                     }
                 },
                 "Cleared" : {
+                    "Admin" : {
+                        hasAssigneeSelectorIcon : true,
+                        hasAssigneeSelectorEnabled : false,
+                        hasAssigneeSelector : false,
+                        hasBudgetLabel : false,
+                        hasLabel : false,
+                        hasRemarks : true,
+                        hasScoreCard : true,
+                        hasCallDetails : false,
+                        hasCallHistory : false,
+                        hasScheduledForm : false,
+                        actions : false
+                    },
                     "Hiring Manager" : {
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
@@ -1110,6 +1505,20 @@ export const stagingConfig = {
                     }
                 },
                 "Rejected" : {
+                    "Admin" : {
+                        hasAssigneeSelectorIcon : true,
+                        hasAssigneeSelectorEnabled : false,
+                        hasAssigneeSelector : false,
+                        hasBudgetLabel : false,
+                        hasLabel : false,
+                        hasRemarks : false,
+                        hasRejectionReason : true,
+                        hasScoreCard : true,
+                        hasCallDetails : false,
+                        hasCallHistory : false,
+                        hasScheduledForm : false,
+                        actions : false
+                    },
                     "Hiring Manager" : {
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
@@ -1160,9 +1569,24 @@ export const stagingConfig = {
                 'Pending', 'Call Scheduled', 'Not Assigned', 'Reviewed', 'Cleared', 'No Show', 'Rejected'
             ],
             score : 5,
+            totalScore : 5,
             extraHeaderContent : false,
             contentConfig : {
                 "Pending" : {
+                    "Admin" : {
+                        hasAssigneeSelectorIcon : true,
+                        hasAssigneeSelectorEnabled : true,
+                        hasAssigneeSelector : false,
+                        hasBudgetLabel : false,
+                        hasLabel : {
+                            content : "Call not scheduled. Please contact the candidate to schedule the round 2 call and update the details below",
+                            icon : WarningIcon
+                        },
+                        hasRemarks : false,
+                        hasScoreCard : false,
+                        actions : false,
+                        hasScheduledForm : true
+                    },
                     "Hiring Manager" : {
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
@@ -1203,6 +1627,25 @@ export const stagingConfig = {
                     }
                 },
                 "Call Scheduled" : {
+                    "Admin" : {
+                        hasAssigneeSelectorIcon : true,
+                        hasAssigneeSelectorEnabled : true,
+                        hasAssigneeSelector : false,
+                        hasBudgetLabel : false,
+                        hasLabel : {
+                            content : "The round 2 call has been scheduled. You can reschedule if needed.",
+                            icon : WarningIcon
+                        },
+                        hasRemarks : false,
+                        hasScoreCard : false,
+                        hasCallDetails : true,
+                        hasCallHistory : true,
+                        hasScheduledForm : false,
+                        actions : {
+                            hasRescheduleAction : true,
+                            hasNoShowAction : true,
+                        }
+                    },
                     "Hiring Manager" : {
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
@@ -1250,6 +1693,25 @@ export const stagingConfig = {
                     }
                 },
                 "No Show" : {
+                    "Admin" : {
+                        hasAssigneeSelectorIcon : true,
+                        hasAssigneeSelectorEnabled : true,
+                        hasAssigneeSelector : false,
+                        hasBudgetLabel : false,
+                        hasLabel : {
+                            content : "Candidate did not show up for the scheduled Round 2 call.",
+                            icon : WarningIcon
+                        },
+                        hasRemarks : false,
+                        hasScoreCard : false,
+                        hasCallDetails : false,
+                        hasCallHistory : false,
+                        hasScheduledForm : false,
+                        actions : {
+                            hasRescheduleAction : true,
+                            hasRejectAction : true,
+                        }
+                    },
                     "Hiring Manager" : {
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
@@ -1299,6 +1761,21 @@ export const stagingConfig = {
                     }
                 },
                 "Under Review" : {
+                    "Admin" : {
+                        hasAssigneeSelectorIcon : true,
+                        hasAssigneeSelectorEnabled : true,
+                        hasAssigneeSelector : false,
+                        hasBudgetLabel : false,
+                        hasLabel : {
+                            content : "Please review the candidate's performance and provide a score and feedback.",
+                            icon : WarningIcon
+                        },
+                        hasRemarks : false,
+                        hasScoreCard : false,
+                        hasCallDetails : false,
+                        hasCallHistory : false,
+                        hasRatingComponent : true,
+                    },
                     "Hiring Manager" : {
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
@@ -1344,6 +1821,22 @@ export const stagingConfig = {
                     }
                 },
                 "Reviewed" : {
+                    "Admin" : {
+                        hasAssigneeSelectorIcon : true,
+                        hasAssigneeSelectorEnabled : false,
+                        hasAssigneeSelector : false,
+                        hasBudgetLabel : false,
+                        hasLabel : false,
+                        hasRemarks : true,
+                        hasScoreCard : true,
+                        hasCallDetails : false,
+                        hasCallHistory : false,
+                        hasScheduledForm : false,
+                        actions : {
+                            hasRejectAction : true,
+                            hasMoveToNextRoundAction : true
+                        }
+                    },
                     "Hiring Manager" : {
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
@@ -1355,6 +1848,7 @@ export const stagingConfig = {
                         hasCallDetails : false,
                         hasCallHistory : false,
                         hasScheduledForm : false,
+                        hasScheduledLabel : true,
                         actions : {
                             hasRejectAction : true,
                             hasMoveToNextRoundAction : true
@@ -1388,6 +1882,19 @@ export const stagingConfig = {
                     }
                 },
                 "Cleared" : {
+                    "Admin" : {
+                        hasAssigneeSelectorIcon : true,
+                        hasAssigneeSelectorEnabled : false,
+                        hasAssigneeSelector : false,
+                        hasBudgetLabel : false,
+                        hasLabel : false,
+                        hasRemarks : true,
+                        hasScoreCard : true,
+                        hasCallDetails : false,
+                        hasCallHistory : false,
+                        hasScheduledForm : false,
+                        actions : false
+                    },
                     "Hiring Manager" : {
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
@@ -1429,6 +1936,20 @@ export const stagingConfig = {
                     }
                 },
                 "Rejected" : {
+                    "Admin" : {
+                        hasAssigneeSelectorIcon : true,
+                        hasAssigneeSelectorEnabled : false,
+                        hasAssigneeSelector : false,
+                        hasBudgetLabel : false,
+                        hasLabel : false,
+                        hasRemarks : false,
+                        hasRejectionReason : true,
+                        hasScoreCard : true,
+                        hasCallDetails : false,
+                        hasCallHistory : false,
+                        hasScheduledForm : false,
+                        actions : false
+                    },
                     "Hiring Manager" : {
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
@@ -1479,10 +2000,29 @@ export const stagingConfig = {
                 'Under Review', 'Offer Sent', 'Accepted', 'Rejected'
             ],
             score : 0,
+            totalScore : 0,
             showGrandTotal : true,
             extraHeaderContent : false,
             contentConfig : {
                 "Under Review" : {
+                    "Admin" : {
+                        hasAssigneeSelectorIcon : false,
+                        hasAssigneeSelectorEnabled : false,
+                        hasAssigneeSelector : false,
+                        hasBudgetLabel : false,
+                        hasLabel : {
+                            content : "Please confirm if the candidate was hired.",
+                            icon : WarningIcon
+                        },
+                        hasRemarks : false,
+                        hasScoreCard : true,
+                        hasCallDetails : false,
+                        hasCallHistory : false,
+                        actions : {
+                            hasRejectAction : true,
+                            hasHiredAction : true
+                        }
+                    },
                     "Hiring Manager" : {
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
@@ -1531,6 +2071,21 @@ export const stagingConfig = {
                     }
                 },
                 "Accepted" : {
+                    "Admin" : {
+                        hasAssigneeSelectorIcon : false,
+                        hasAssigneeSelectorEnabled : false,
+                        hasAssigneeSelector : false,
+                        hasBudgetLabel : false,
+                        hasLabel : {
+                            hasCustomContent : true,
+                            content : 'Candidate hired for the role of ',
+                            icon : RightTick
+                        },
+                        hasHiredLabel: true,
+                        hasRemarks : false,
+                        hasCallDetails : false,
+                        hasCallHistory : false,
+                    },
                     "Hiring Manager" : {
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
@@ -1580,6 +2135,16 @@ export const stagingConfig = {
                     }
                 },
                 "Rejected" : {
+                    "Admin" : {
+                        hasAssigneeSelectorIcon : false,
+                        hasAssigneeSelectorEnabled : false,
+                        hasAssigneeSelector : false,
+                        hasBudgetLabel : false,
+                        hasLabel : false,
+                        hasRejectionReason : true,
+                        hasCallDetails : false,
+                        hasCallHistory : false,
+                    },
                     "Hiring Manager" : {
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
@@ -1672,3 +2237,30 @@ export const statusConfig = {
         color: "#EDBD14" 
     }
   };
+
+export const getStageColor = (stage) => {
+    switch (stage.toLowerCase()) {
+      case 'portfolio':
+        return 'rgb(59, 130, 246)';
+      case 'screening':
+        return 'rgb(234, 179, 8)';
+      case 'design task':
+        return 'rgb(168, 85, 247)';
+      case 'round 1':
+        return 'rgb(34, 197, 94)';
+      case 'round 2':
+        return 'rgb(249, 115, 22)';
+      default:
+        return 'rgb(255, 255, 255)';
+    }
+};
+
+  export const maxScoreOfEachStage = (stageTitle) => {
+    let totalScore = 0;
+    stagingConfig["UI UX"].map(eachStage => {
+        if(eachStage?.name === stageTitle){
+            totalScore = eachStage?.totalScore;
+        }
+    })
+    return totalScore
+  }

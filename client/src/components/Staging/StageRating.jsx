@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import Scorer from '../ui/Scorer';
-import { Button } from '../ui/Button';
+import { Button } from '../Buttons/Button';
 import { showErrorToast } from '../ui/Toast';
 import axios from '../../api/axios';
 import { useMutation, useQueryClient } from '@tanstack/react-query';

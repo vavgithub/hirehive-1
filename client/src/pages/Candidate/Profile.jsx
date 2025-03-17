@@ -2,12 +2,11 @@ import React, { useEffect, useRef, useState } from "react";
 import Header from "../../components/utility/Header";
 import useCandidateAuth from "../../hooks/useCandidateAuth";
 import AssessmentBanner from "../../components/ui/AssessmentBanner";
-import StyledCard from "../../components/ui/StyledCard";
+import StyledCard from "../../components/Cards/StyledCard";
 import { ensureAbsoluteUrl } from "../../utility/ensureAbsoluteUrl";
 import PencilIcon, { PencilEditIcon } from "../../svg/Buttons/PencilIcon";
-import { InputField } from "../../components/Form/FormFields";
 import { Controller, useForm } from "react-hook-form";
-import { Button } from "../../components/ui/Button";
+import { Button } from "../../components/Buttons/Button";
 import UploadIcon from "../../svg/Buttons/UploadIcon";
 import { validationRules } from "../../utility/validationRules";
 import { uploadProfilePicture, uploadResume } from "./ApplyJob";
@@ -15,8 +14,9 @@ import axios from "../../api/axios";
 import { showErrorToast, showSuccessToast } from "../../components/ui/Toast";
 import { useDispatch } from "react-redux";
 import { updateWithoutAssessment } from "../../redux/candidateAuthSlice";
-import LoaderModal from "../../components/ui/LoaderModal";
-import CustomToolTip from "../../components/utility/CustomToolTip";
+import LoaderModal from "../../components/Loaders/LoaderModal";
+import CustomToolTip from "../../components/Tooltip/CustomToolTip";
+import { InputField } from "../../components/Inputs/InputField";
 import { emailRegex, mobileRegex } from "../../utility/regex";
 
 const PersonalDetails = ({candidateData, isEditing , control}) => {

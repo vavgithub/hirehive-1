@@ -1,47 +1,63 @@
-import React, { useState } from 'react'
+import React, { useEffect, useLayoutEffect, useState } from 'react';
+import RegisterForm from '../../components/Register/RegisterForm';
+import OtpForm from '../../components/Register/OtpForm';
+import PasswordForm from '../../components/Register/PasswordForm';
+import DetailsForm from '../../components/Register/DetailsForm';
+import useAuth from '../../hooks/useAuth';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import Loader from '../../components/Loaders/Loader';
+
+export const steps = [
+    { id: "REGISTER", label: "Register" },
+    { id: "OTP", label: "Otp" },
+    { id: "PASSWORD", label: "Password" },
+    { id: "COMPANY DETAILS", label: "Company Details" },
+    { id: "ADD MEMBERS", label: "Add Members" },
+  ];
 
 const Register = () => {
-    const [data , setData] = useState({ email: '', password: '' });
+    const [currentStep,setCurrentStep] = useState(steps[0]?.id);
+    const navigate = useNavigate();    
+    const { data: authData, isLoading: authLoading, refetch: refetchAuth } = useAuth();
 
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prevData) => ({
-            ...prevData,
-            [name]: value
-        }));
-    };
-    return (
-        <section className="bg-gray-50 dark:bg-gray-900">
-            <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
+    const [searchParams] = useSearchParams();
 
-                <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
-                    <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
+    //token check for invited entry
+    useLayoutEffect(()=>{
+      const token = searchParams.get('token')
+      if(token){
+          setCurrentStep(steps[1]?.id)
+      }
+    },[searchParams])
 
-                        <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
-                            HireHive
-                        </h1>
-                        <div className='flex'>
+    useEffect(() => {
+        if (authData) {
+            if (authData.role === 'Admin') {
+                navigate('/admin/dashboard');
+            } else if (authData.role === 'Hiring Manager') {
+                navigate('/hiring-manager/dashboard');
+            } else if (authData.role === 'Design Reviewer') {
+                navigate('/design-reviewer/dashboard');
+            }
+        }
+    }, [authData, navigate]);
 
-                            <h1 className="text-xl  font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
-                                SignUp
-                            </h1>
-                        </div>
+    if (authLoading) {
+      return (
+          <div className="flex justify-center items-center min-h-screen">
+              <Loader />
+          </div>
+      );
+    }else if(currentStep === "REGISTER"){
+      return <RegisterForm setCurrentStep={setCurrentStep} />
+    }else if(currentStep === "OTP"){
+      return <OtpForm setCurrentStep={setCurrentStep} />   
+    }else if(currentStep === "PASSWORD"){
+      return <PasswordForm setCurrentStep={setCurrentStep} />   
+    }else{
+      return <DetailsForm currentStep={currentStep} setCurrentStep={setCurrentStep} />
+    }
 
-                        <form className="space-y-4 md:space-y-6" action="#">
-                            {/* <Formfields name="email" type="email" label="Your Email" placeholder="name@company.com" handleInputChange={handleInputChange}/>
-                            <Formfields name="password" type="password" label="Password" placeholder="••••••••" />
-                            <Formfields name="confirm-password" type="password" label="Confirm password" placeholder="••••••••" /> */}
-
-                            <button type="submit" className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">Create an account</button>
-                            <p className="text-sm font-light text-gray-500 dark:text-gray-400">
-                                Existing User? <a href="#" className="font-medium text-black hover:underline dark:text-primary-500">Login here</a>
-                            </p>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </section>
-    )
 };
 
 

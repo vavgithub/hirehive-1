@@ -3,7 +3,7 @@ import React from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
 import { useAuthContext } from '../context/AuthProvider';
-import Loader from '../components/ui/Loader';
+import Loader from '../components/Loaders/Loader';
 
 const ProtectedRoute = ({ allowedRoles, children }) => {
   const { user, isLoading, error } = useAuthContext();
