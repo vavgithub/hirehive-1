@@ -514,7 +514,7 @@ const ViewCandidateProfile = () => {
                                 )
                             })
                         }
-                        <p onClick={() => setShowMore(!showMore)} className='cursor-pointer typography-body text-font-gray text-start flex gap-1 items-center'>{showMore ?  <> <ChevronDown/> Hide </> :   <> <ChevronRight/> Show more </>}</p>
+                        {candidateData?.applications?.filter(app => (app?.notes?.content !== "" && app?.notes?.content !== undefined && app?.notes?.content !== null && app.jobId !== jobId))?.length > 0 && <p onClick={() => setShowMore(!showMore)} className='cursor-pointer typography-body text-font-gray text-start flex gap-1 items-center'>{showMore ?  <> <ChevronDown/> Hide </> :   <> <ChevronRight/> Show more </>}</p>}
                     </div>
                 </Modal>
 
