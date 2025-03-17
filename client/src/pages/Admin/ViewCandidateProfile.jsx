@@ -35,6 +35,7 @@ import LoaderModal from '../../components/ui/LoaderModal';
 import EyeIcon, { EyeIconSmall } from '../../svg/EyeIcon';
 import AddNotes from '../../svg/Buttons/AddNotes';
 import EditNotes from '../../svg/Buttons/EditNotes';
+import { truncatedText } from '../../utility/truncatedHTML';
 
 
 
@@ -414,8 +415,8 @@ const ViewCandidateProfile = () => {
                                             </div>
                                         </div>}
                                 </div>
-                                {role === "Hiring Manager" && candidateData?.jobApplication?.notes?.content &&
-                                    <StyledCard onClick={() => setOpenNotesView(true)} padding={2} backgroundColor={"bg-background-80"} extraStyles={'w-[30%] max-h-36 cursor-pointer max  relative overflow-hidden'}>
+                                {role === "Hiring Manager" && candidateData?.jobApplication?.notes?.content ?
+                                    <StyledCard onClick={() => setOpenNotesView(true)} padding={2} backgroundColor={"bg-background-80"} extraStyles={'w-[30%] h-fit max-h-36 cursor-pointer max  relative overflow-hidden'}>
                                         <div className=' flex justify-between items-center  ' >
 
                                             <h3 className='typography-body font-semibold font-bricolage'>Notes</h3>
@@ -428,9 +429,17 @@ const ViewCandidateProfile = () => {
                                             </div>
                                         </div>
 
-                                        <div className='overflow-hidden h-[50%] text-font-gray' dangerouslySetInnerHTML={{ __html: candidateData?.jobApplication?.notes?.content }}></div>
+                                        <div className='overflow-hidden font-outfit text-font-gray break-words text-ellipsis' dangerouslySetInnerHTML={{ __html: truncatedText(candidateData?.jobApplication?.notes?.content,55) }}></div>
 
-                                    </StyledCard>}
+                                    </StyledCard> : 
+                                    <div onClick={handleOpenNotes} className={'hover:bg-accent-300  bg-background-70 p-2 h-fit rounded-xl' + (candidateData?.jobApplication?.notes?.content ? " top-8 right-8 " : " top-4 right-4")}>
+                                        <CustomToolTip title={candidateData?.jobApplication?.notes?.content ? "Edit notes" : "Add a note"} arrowed>
+                                            {
+                                                candidateData?.jobApplication?.notes?.content ? <EditNotes /> : <AddNotes />
+                                            }
+                                        </CustomToolTip>
+                                    </div>
+                                    }
 
                             </StyledCard>
 
@@ -474,7 +483,7 @@ const ViewCandidateProfile = () => {
                     noCancel={true}
                     customConfirmLabel={"OK"}
                 >
-                    <div className='mt-4 overflow-scroll scrollbar-hide text-ellipsis max-h-[50vh]'>
+                    <div className='mt-4  overflow-y-scroll scrollbar-hide text-ellipsis max-h-[50vh] w-full'>
                         {
                             candidateData?.applications?.filter(app => (app?.notes?.content !== "" && app?.notes?.content !== undefined && app?.notes?.content !== null))?.map(app => {
                                 return (
@@ -487,7 +496,7 @@ const ViewCandidateProfile = () => {
                                                 year: "numeric",
                                             })}</p>
                                         </div>
-                                        <div className='text-font-gray p-1' dangerouslySetInnerHTML={{ __html: app?.notes?.content }}></div>
+                                        <div className='text-font-gray p-1 w-full overflow-x-hidden overflow-y-scroll scrollbar-hide text-ellipsis whitespace-normal break-words' dangerouslySetInnerHTML={{ __html: app?.notes?.content }}></div>
                                     </div>
                                 )
                             })
