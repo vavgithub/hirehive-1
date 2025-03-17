@@ -21,6 +21,7 @@ import LoaderModal from '../../components/ui/LoaderModal';
 import AdditionalQuestions from '../../components/AdditionalQuestions';
 import OtpComponent from '../../components/OtpComponent';
 import PasswordComponent from '../../components/PasswordComponent';
+import ContactUs from '../../components/Form/ContactUs';
 
 const fetchJobDetails = async (id) => {
   const response = await axios.get(`/jobs/getJobById/${id}`);
@@ -514,6 +515,8 @@ useEffect(() => {
       {currentStep === 3 && (
         <PasswordComponent control={control} handlePasswordSubmit={handlePasswordSubmit} isSubmitting={isSubmitting} passwordError={passwordError} />
       )}
+
+      <ContactUs/>
 
     </div>
 

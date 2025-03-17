@@ -200,6 +200,11 @@ input.no-spinner[class*="border-red-500"] {
 body {
   @apply text-white;
 }
+
+textarea {
+  @apply bg-background-40 hover:bg-background-60 cursor-pointer  rounded-xl placeholder:text-font-gray placeholder:font-body  focus:ring-teal-400 focus:outline-teal-500 outline-none typography-body w-full;  /* Replace bg-gray-200 with your desired background color class */
+}
+
 input[type="text"] {
   @apply bg-background-40 hover:bg-background-60 cursor-pointer h-[44px] px-4 rounded-xl placeholder:text-font-gray placeholder:font-body  focus:ring-teal-400 focus:outline-teal-500 outline-none typography-body w-full;  /* Replace bg-gray-200 with your desired background color class */
 }
@@ -268,6 +273,22 @@ h2{
     @media (max-width:768px) {
       padding: 0 !important;
     }
+  }
+
+  @keyframes dotsAnimation {
+    0% { width: 0; }
+    25% { width: 0.4em; }
+    50% { width: 0.8em; }
+    75% { width: 0.4em; }
+    100% { width: 0; }
+  }
+  
+  .animated-dots {
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+    width: 0;
+    animation: dotsAnimation 1.5s infinite steps(5);
   }
 
   .no-selection{
