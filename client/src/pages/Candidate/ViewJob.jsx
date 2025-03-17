@@ -11,6 +11,7 @@ import Loader from '../../components/ui/Loader';
 import ArrowIcon from '../../svg/ArrowIcon';
 import Logo from '../../svg/Logo/lightLogo.svg'
 import StyledCard from '../../components/ui/StyledCard';
+import ContactUs from '../../components/Form/ContactUs';
 // Function to fetch the job data by ID
 const getJobById = async (id) => {
     const response = await axios.get(`jobs/getJobById/${id}`);
@@ -133,6 +134,7 @@ const ViewJob = () => {
                     </div>
                 </StyledCard>
             </div>
+            <ContactUs/>
         </div>
     );
 };
