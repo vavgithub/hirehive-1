@@ -331,7 +331,6 @@ const ContactUs = () => {
         </div>
       }
 
-      <div className='bg-red-40'>
 
       <button
         onClick={toggleModal}
@@ -344,7 +343,7 @@ const ContactUs = () => {
       </button>
 
       
-        </div>
+    
       
       {/* Modal for Contact Form */}
       <Modal
