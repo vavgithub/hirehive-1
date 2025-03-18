@@ -29,7 +29,6 @@ function Teams() {
         queryFn: () => axios.get('/admin/get-all-members').then(res => res.data),
     })
 
-    console.log(teamMembers)
 
     const addMembers = () => {   
             if(firstName?.trim() === "" && lastName?.trim() === "" && role?.trim() === "" && email?.trim() === "" ){

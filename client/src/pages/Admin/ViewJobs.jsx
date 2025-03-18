@@ -205,7 +205,7 @@ const ViewJobs = () => {
                 HeaderText={formData?.jobTitle} 
                 withKebab="true" 
                 withBack="true"
-                onBack={() => navigate("/admin/jobs")} 
+                onBack={() => navigate(-1)} 
                 job={formData} 
                 handleAction={handleAction}
                 rightContent={

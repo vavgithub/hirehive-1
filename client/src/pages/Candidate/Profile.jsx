@@ -461,7 +461,6 @@ function Profile() {
           dispatch(updateWithoutAssessment(response.data.candidate))
         }
     } catch (error) {
-      // console.log("ERR",error)
       throw new Error("Error while fetch candidate data")
     }
   }

@@ -420,7 +420,6 @@ const Assessment = () => {
       mediaRecorder.ondataavailable = (event) => {
         if (event.data && event.data.size > 0) {
           chunksRef.current.push(event.data);
-          // console.log('Recording chunk received:', event.data.size);
         }
       };
 
@@ -430,11 +429,9 @@ const Assessment = () => {
       };
 
       mediaRecorder.onstop = async () => {
-        // console.log('Recording stopped, creating blob...');
         const blob = new Blob(chunksRef.current, {
           type: 'video/webm'
         });
-        // console.log('Blob created:', blob.size);
         // setRecordedBlob(blob);
         chunksRef.current = [];
       };

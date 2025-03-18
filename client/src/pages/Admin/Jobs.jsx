@@ -29,11 +29,9 @@ import { useAuthContext } from '../../context/AuthProvider';
 
 const fetchJobs = (page, status) => axios.get(`/jobs/jobs?page=${page}&status=${status}`).then(res => res.data);
 const fetchOverallStats = () => axios.get('/jobs/stats/overall').then(res => res.data.data);
-const searchJobs = (query, page, status) => axios.get(`/jobs/searchJobs?jobTitle=${encodeURIComponent(query)}&page=${page}&status=${status}`).then(res => res.data);
-const filterJobs = (filters, page, status) => axios.post('/jobs/filterJobs', { filters, page, status }).then(res => res.data);
 const filterSearchJobs = (query, filters, page, status) => axios.post('/jobs/filterSearchJobs', { filters, page, status, query }).then(res => res.data);
 
-const Dashboard = () => {
+const Jobs = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [activeTab, setActiveTab] = useState('open');
     const [modalOpen, setModalOpen] = useState(false);
@@ -92,21 +90,7 @@ const Dashboard = () => {
         setModalAction(action);
     };
 
-    // Update the filteredJobs query to get the loading state
-    // const { data: filteredData, isLoading: isFilteredJobsLoading } = useQuery({
-    //     queryKey: ['filteredJobs', filters,page,activeTab],
-    //     queryFn: () => filterJobs(filters,page,activeTab),
-    //     enabled: Object.values(filters).some(filter =>
-    //         Array.isArray(filter) ? filter.length > 0 : Object.values(filter).some(val => val !== '')
-    //     ),
-    // });
 
-    // // Update the search query to get the loading state
-    // const { data: { jobArray: searchResults = [], jobCount = 0 } = {}, isLoading: isSearchLoading } = useQuery({
-    //     queryKey: ['searchJobs', debouncedQuery, page, activeTab],
-    //     queryFn: () => searchJobs(debouncedQuery,page,activeTab),
-    //     enabled: debouncedQuery !== '',
-    // });
 
     //Combined search and filter for jobs
     const { data: filteredSearchData, isLoading: isFilteredSearchJobsLoading } = useQuery({
@@ -327,17 +311,9 @@ const Dashboard = () => {
         Array.isArray(filter) ? filter.length > 0 : Object.values(filter).some(val => val !== '')
     ));
 
-    // Combined loading state
-    // const isLoadingResults = (debouncedQuery.length > 0 && isSearchLoading) ||
-    //     (isFiltered && isFilteredJobsLoading);
 
     const isLoadingResults = (debouncedQuery.length > 0 || isFiltered) ? isFilteredSearchJobsLoading : isJobsLoading;
 
-    // Get the jobs to display based on search or filters
-    // const displayJobs = useMemo(()=>{
-    //     return (debouncedQuery.length > 0 && !isSearchLoading) ? searchResults :
-    //     (isFiltered && !isFilteredJobsLoading ? filteredData?.filteredJobs : jobs);
-    // }, [filteredData, isFiltered , debouncedQuery, jobs, searchResults]);
 
     const displayJobs = useMemo(() => {
         return ((debouncedQuery.length > 0 || isFiltered) && !isFilteredSearchJobsLoading) ? filteredSearchData?.filteredSearchJobs : jobs;
@@ -440,8 +416,6 @@ const Dashboard = () => {
                                 setCurrentPage={setPage}
                                 pageLimit={PAGE_LIMIT}
                                 totalItems={
-                                    // debouncedQuery ? jobCount : isFiltered ? filteredData?.filteredCount :
-                                    // (activeTab === "draft" ? overallStats?.totalDraftedJobs : activeTab === "closed" ? overallStats?.totalClosedJobs : overallStats?.totalOpenJobs) 
                                     (debouncedQuery || isFiltered) ? filteredSearchData?.filteredSearchCount :
                                         (activeTab === "draft" ? overallStats?.totalDraftedJobs : activeTab === "closed" ? overallStats?.totalClosedJobs : overallStats?.totalOpenJobs)
                                 }
@@ -449,7 +423,6 @@ const Dashboard = () => {
                         }
                     </div>
                 </div>
-                {/* <Modal open={open} onClose={() => setOpen(false)} action={modalAction} confirmAction={confirmAction} /> */}
                 <Modal
                     open={modalOpen}
                     onClose={() => {
@@ -467,4 +440,4 @@ const Dashboard = () => {
         </div>
     );
 };
-export default Dashboard;
+export default Jobs;

@@ -71,7 +71,6 @@ export const FormField = ({
   // Example usage in your form sections:
 // Updated ProfessionalDetailsSection to handle employment type conditionally
   export const ProfessionalDetailsSection = ({ control, jobDetails }) => {
-    console.log("this is the breakpoint", jobDetails);
     // Check if job is part-time or contract to determine compensation field type
     const isHourlyRateJob = jobDetails?.employmentType === 'Part Time' || jobDetails?.employmentType === 'Contract';
     

@@ -115,9 +115,7 @@ const ContactUs = () => {
     try {
       // Build URL with form data as query parameters
       const url = `${GOOGLE_SCRIPT_URL}?name=${encodeURIComponent(data.name)}&email=${encodeURIComponent(data.email)}&message=${encodeURIComponent(data.message)}&screenshotUrl=${encodeURIComponent(data.screenshotUrl || '')}&timestamp=${encodeURIComponent(data.timestamp)}`;
-      
-      // console.log("Submitting to URL:", url);
-      
+           
       // Use no-cors mode since Google Script returns CORS errors
       await fetch(url, {
         method: 'GET',
@@ -146,9 +144,7 @@ const ContactUs = () => {
       
       // Upload screenshot to Cloudinary if a file was selected
       if (screenshotFile) {
-        console.log("Uploading screenshot to Cloudinary...");
         screenshotUrl = await uploadScreenshot(screenshotFile);
-        console.log("Screenshot uploaded successfully:", screenshotUrl);
       }
       
       // Prepare data for Google Sheets
@@ -160,7 +156,6 @@ const ContactUs = () => {
         timestamp: new Date().toISOString()
       };
       
-      console.log("Submitting form data:", contactFormData);
       
       // Submit to Google Sheets
       await submitToGoogleSheets(contactFormData);

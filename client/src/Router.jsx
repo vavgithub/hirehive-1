@@ -3,7 +3,6 @@ import {
   Navigate,
 } from 'react-router-dom';
 import Login from './pages/Admin/Login';
-import Dashboard from './pages/Admin/Dashboard';
 import CreateJobs from './pages/Admin/CreateJobs';
 import Authlayout from './auth/Authlayout';
 import Register from './pages/Admin/Register';
@@ -33,6 +32,7 @@ import AssessmentResponse from './pages/Admin/AssessmentResponse.jsx';
 import { OnboardingProvider } from './context/OnboardingProvider.jsx';
 import AdminLayout from './components/AdminLayout.jsx';
 import Teams from './pages/Admin/Teams.jsx';
+import Jobs from './pages/Admin/Jobs.jsx';
 
 export const router = createBrowserRouter([
   {
@@ -121,7 +121,7 @@ export const router = createBrowserRouter([
     children: [
       {
         path: "dashboard",
-        element: <Dashboard />
+        element: <Jobs />
       },
       {
         path: "assessment/:id",
@@ -134,7 +134,7 @@ export const router = createBrowserRouter([
       {
         path: "jobs",
         element:
-          <Dashboard />
+          <Jobs />
       },
       {
         path: "candidates",
@@ -181,7 +181,7 @@ export const router = createBrowserRouter([
     children: [
       {
         path: "dashboard",
-        element: <Dashboard />
+        element: <Jobs />
       },
       {
         path: "teams",
@@ -198,7 +198,7 @@ export const router = createBrowserRouter([
       {
         path: "jobs",
         element:
-          <Dashboard />
+          <Jobs />
       },
       {
         path: "candidates",
