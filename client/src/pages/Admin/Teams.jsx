@@ -47,7 +47,6 @@ function Teams() {
             showSuccessToast("Success",data?.message || 'Team member added successfully.');
         },
         onError : (error) => {
-            console.log(error)
             showErrorToast("Error",error?.response?.data?.message || 'Error in adding team member.')
         }
     })
