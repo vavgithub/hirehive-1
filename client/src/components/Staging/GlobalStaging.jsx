@@ -447,12 +447,12 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
         :
         <>
         <div >
-        {stageBasedConfig?.hasLabel && <div className='my-4'><Label icon={stageBasedConfig?.hasLabel?.icon} text={stageBasedConfig?.hasLabel?.hasCustomContent ? (stageBasedConfig?.hasLabel?.content + candidateData?.jobApplication?.jobApplied) : stageBasedConfig?.hasLabel?.content} /></div>}
+        {(!stageData?.scheduledDate && stageBasedConfig?.hasLabel) && <div className='my-4'><Label icon={stageBasedConfig?.hasLabel?.icon} text={stageBasedConfig?.hasLabel?.hasCustomContent ? (stageBasedConfig?.hasLabel?.content + candidateData?.jobApplication?.jobApplied) : stageBasedConfig?.hasLabel?.content} /></div>}
         {
             stageBasedConfig?.hasSubmissionDetails && 
             <SubmissionDetails isEditable={stageBasedConfig?.isSubmissionEditable} candidateData={candidateData} stageData={stageData} />
         }
-        {stageBasedConfig?.hasAssigneeSelector && 
+        {(!stageData?.scheduledDate && stageBasedConfig?.hasAssigneeSelector) && 
           <div className='w-2/5'>
               <h4 className='typography-body my-4 font-outfit'>Select Reviewer</h4>
               <AssigneeSelector
@@ -587,11 +587,11 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
       </div>
     }
     {
-        (stageBasedConfig?.hasScheduledLabel && currentStatus === "Reviewed" && stageData?.scheduledDate) &&
-        <Label icon={WarningIcon} text={`Rejection mail is Scheduled for ${formatIntoLocaleString(stageData?.scheduledDate)}`}/>
+        (stageBasedConfig?.hasScheduledLabel && (currentStatus === "Reviewed" || stageTitle === "Portfolio") && stageData?.scheduledDate) &&
+        <div className='mt-4'><Label icon={WarningIcon} text={`Rejection mail is Scheduled for ${formatIntoLocaleString(stageData?.scheduledDate)}`}/></div>
     }
       {/* Action Section */}
-      {stageBasedConfig?.actions && !(currentStatus === "Reviewed" && stageData?.scheduledDate) &&
+      {stageBasedConfig?.actions && !((currentStatus === "Reviewed" || stageTitle === "Portfolio")&& stageData?.scheduledDate) &&
       <div className='w-full flex justify-end mt-4'>
           <div className='flex items-center gap-4'>
               {(stageBasedConfig.actions?.hasRejectAction && !isRescheduling) && 

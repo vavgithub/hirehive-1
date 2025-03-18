@@ -39,7 +39,7 @@ const updateMailSendAndStatuses = async () => {
             $elemMatch: {
               [`stageStatuses.${stage}.status`]: stage === "Design Task" 
                 ? { $in: ["Pending", "Reviewed"] }
-                : "Reviewed",
+                : stage === "Portfolio" ? { $in: ["Not Assigned","Pending", "Reviewed"] } : "Reviewed",
               [`stageStatuses.${stage}.scheduledDate`]: {
                 $exists: true,
                 $ne: null,
