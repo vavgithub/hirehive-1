@@ -197,7 +197,7 @@ const ContactUs = () => {
   const renderContent = () => {
 
     return (
-      <form onSubmit={handleFormSubmit(onSubmit)} className="space-y-4 mt-4">
+      <form onSubmit={handleFormSubmit(onSubmit)} className="space-y-4 mt-4 max-h-[50vh] p-1 overflow-y-scroll scrollbar-hide">
         <div className="flex flex-col gap-2">
           <label htmlFor="name" className="typography-body">
             Name <span className="text-red-100">*</span>
@@ -248,7 +248,7 @@ const ContactUs = () => {
             id="message"
             rows={4}
             placeholder="How can we help you?"
-            className={`w-full p-2 bg-background-40 rounded outline-none focus:outline-teal-300 ${
+            className={`w-full p-2 bg-background-40 rounded-xl resize-none font-outfit font-light outline-none focus:outline-teal-300 ${
               errors.message ? '!border !border-red-500' : 'border border-transparent'
             }`}
             {...register("message", { 
