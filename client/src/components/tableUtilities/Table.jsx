@@ -366,6 +366,11 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
         ? "/hiring-manager/candidates/view-candidate" 
         : "/hiring-manager/jobs/view-candidate";
       navigate(`${baseUrl}/${params?.row?._id}/${readOnly ? params.row.jobId : jobId}`);
+    }else if (role === "Admin") {
+      const baseUrl = readOnly 
+        ? "/admin/candidates/view-candidate" 
+        : "/admin/jobs/view-candidate";
+      navigate(`${baseUrl}/${params?.row?._id}/${readOnly ? params.row.jobId : jobId}`);
     } else {
       navigate(`view-candidate/${params?.row?._id}/${readOnly ? params.row.jobId : jobId}`);
     }

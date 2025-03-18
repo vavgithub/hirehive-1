@@ -363,11 +363,6 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
       // 2) Customize the "no options" text
       noOptionsText={
         <MenuItem
-          // sx={{
-          //   backgroundColor: 'black',
-          //   color: 'white',
-          //   fontFamily: 'Outfit',
-          // }}
         >
           No reviewers found
         </MenuItem>
