@@ -12,6 +12,7 @@ import CameraDisabled from '../../svg/Buttons/CameraDisabled';
 import MicDisabled from '../../svg/Buttons/MicDisabled';
 import Modal from '../../components/Modal';
 import StyledCard from '../../components/ui/StyledCard';
+import ContactUs from '../../components/Form/ContactUs';
 
 const AccordionItem = ({ title, content, isOpen, toggleOpen , preIcon}) => (
     <StyledCard backgroundColor={"bg-background-80"} extraStyles="mb-4 overflow-hidden">
@@ -228,6 +229,7 @@ const PreAssessment = () => {
                     </div>
                 </div>
             </div>
+            <ContactUs/>
         </div>
     );
 };

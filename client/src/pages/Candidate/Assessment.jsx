@@ -15,6 +15,7 @@ import WarningIcon from '../../svg/WarningIcon';
 import Draggable from 'react-draggable';
 import { uploadAssessment } from '../../utility/cloudinary';
 import StyledCard from '../../components/ui/StyledCard';
+import ContactUs from '../../components/Form/ContactUs';
 const ONE_MINUTE = 60;
 
 // Utility function to format time
@@ -861,6 +862,7 @@ const Assessment = () => {
               </div>
             </Draggable>
         </div>
+        <ContactUs/>
       </div>
     </>
   );
