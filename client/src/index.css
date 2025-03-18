@@ -140,8 +140,6 @@ input.no-spinner[class*="border-red-500"] {
   font-family: "Outfit", sans-serif !important;
 }
 
-
-
 .editor-editable{
   position: relative;
   background: var(--color-background-40);
