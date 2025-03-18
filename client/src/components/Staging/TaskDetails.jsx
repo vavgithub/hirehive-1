@@ -18,7 +18,7 @@ export function SubmissionDetails({stageData,candidateData}){
             </div>
             <div>
                 <p className='typography-small-p text-font-gray'> Comment</p>
-                <p>{stageData?.submittedComment}</p>
+                <p className='typography-large-p'>{stageData?.submittedComment || "No Comments"}  </p>
             </div>
         </div>
     )

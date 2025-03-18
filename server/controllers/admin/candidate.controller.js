@@ -5,6 +5,7 @@ import { candidates } from "../../models/candidate/candidate.model.js";
 import { uploadToCloudinary } from '../../utils/cloudinary.js';
 import { promises as fs } from 'fs';
 import path from 'path';
+import { sanitizeLexicalHtml } from "../../utils/sanitize-html.js";
 
 
 // controllers/candidate.controller.js
@@ -309,13 +310,17 @@ export const getCandidateById = async (req, res) => {
         jobApplied: jobApplication.jobApplied,
         jobProfile: jobApplication?.jobProfile || "UI UX",
         jobStatus : job ? job.status : "deleted",
+        notes: jobApplication.notes,
         applicationDate: jobApplication.applicationDate,
         rating: jobApplication.rating,
         currentStage: jobApplication.currentStage,
         stageStatuses: jobApplication.stageStatuses,
         questionResponses: enrichedQuestionResponses,
         professionalInfo: jobApplication.professionalInfo
-      }
+      },
+
+      //Entire job applications
+      applications : candidate?.jobApplications
     };
 
     res.send(response);
@@ -327,6 +332,48 @@ export const getCandidateById = async (req, res) => {
     });
   }
 };
+
+export const addNotes = async (req,res) => {
+  try {
+    const { candidateId ,jobId } = req.params;
+    const { notes } = req.body;
+
+    const sanitizedNotes = sanitizeLexicalHtml(notes);
+
+    if(!sanitizedNotes){
+      return res.status(404).send({ message: "Invalid notes data" });
+    }
+
+    // Find the candidate and job
+    const candidate = await candidates.findById(candidateId);
+    const hasJob = candidate.jobApplications.find(app => app.jobId.toString() === jobId)
+
+    if (!candidate) {
+      return res.status(404).send({ message: "Candidate not found" });
+    }
+
+    if (!hasJob) {
+      return res.status(404).send({ message: "Job not found" });
+    }
+
+    candidate.jobApplications.forEach(app=>{
+      if(app.jobId.toString() === jobId){
+        app.notes = {
+          content : sanitizedNotes,
+          addedDate : new Date()
+        }
+      }
+      return app
+    })
+
+    await candidate.save();
+
+    res.status(200).json({message : "Notes added successfully"});
+  } catch (error) {
+    console.error("Error in getCandidateJobs:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+}
 
 export const getCandidateJobs = async (req,res) => {
   try {
