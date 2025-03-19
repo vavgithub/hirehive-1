@@ -7,6 +7,7 @@ import GraphIcon from '../../svg/JobCard/GraphIcon';
 import ClosedBadge from '../../svg/Icons/ClosedBadge';
 import StyledCard from './StyledCard';
 import CustomBadge from '../Badge/CustomBadge';
+import CompanyIcon from '../../svg/Icons/CompanyIcon';
 
 // Helper function to truncate text to specific number of words
 const truncateWords = (text, wordLimit) => {
@@ -43,6 +44,7 @@ const JobCard = ({
   isCandidate,
   isAuthenticatedCandidate,
   application, // Receive the application prop
+  role
 }) => {
   const formattedCreatedAt = getTimeAgo(job.createdAt);
   const formattedAppliedAt = getTimeAgo(job.applicationDate);
@@ -149,6 +151,10 @@ const JobCard = ({
         icon={GraphIcon}
         text={`${job.experienceFrom} - ${job.experienceTo} Year`}
       />
+      {(role !== "Admin" && role !== "Hiring Manager" && role !== "Design Reviewer") && job?.companyDetails?.name && <JobDetailItem
+      icon={CompanyIcon}
+      text={job?.companyDetails?.name}
+      />}
     </div>
     <div className=" p-4 ">
         <p className="typography-body text-font-gray h-11 overflow-hidden" dangerouslySetInnerHTML={{__html : truncatedDescription}}>

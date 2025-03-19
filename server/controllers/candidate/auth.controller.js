@@ -111,7 +111,7 @@ export const registerCandidate = async (req, res) => {
       profilePictureUrl, // Add this new field
     } = req.body;
 
-    const job = await jobs.findById(jobId);
+    const job = await jobs.findById(jobId).populate('company_id');
     if (!job) {
       return res.status(404).json({ message: "Job not found" });
     }
@@ -182,6 +182,10 @@ export const registerCandidate = async (req, res) => {
             currentStage: jobStages[0]?.name || "",
             stageStatuses: initialStageStatuses,
             resumeUrl,
+            companyDetails : {
+              _id : job?.company_id?._id,
+              name : job?.company_id?.name
+            },
             professionalInfo
           },
         ],
@@ -399,7 +403,7 @@ export const applyToJob = async (req, res) => {
       resumeUrl,
     } = req.body;
 
-    const job = await jobs.findById(jobId);
+    const job = await jobs.findById(jobId).populate('company_id');
     if (!job) {
       return res.status(404).json({ message: "Job not found" });
     }
@@ -462,6 +466,10 @@ export const applyToJob = async (req, res) => {
       applicationDate: new Date(),
       currentStage: jobStages[0]?.name || "",
       stageStatuses: initialStageStatuses,
+      companyDetails : {
+        _id : job?.company_id?._id,
+        name : job?.company_id?.name
+      },
       resumeUrl,
       rating: "N/A",
       professionalInfo : {
@@ -849,21 +857,24 @@ export const getCandidateAppliedJobs = async (req, res) => {
           "jobApplications.stageStatuses": 1,
           "jobApplications.jobApplied": 1,
           "jobApplications.jobId": 1,
+          "jobApplications.companyDetails": 1,
           "jobDetails": 1,
         },
       },
     ])
+
     if (candidate.length === 0) {
       return res.status(404).json({ message: "Candidate not found" });
     }
     //validating applications by checking if its deleted or not
     const formattedApplications = candidate[0].jobApplications.map((app,index) => {
       const isValid = candidate[0].jobDetails.find(currentJob=>currentJob._id.toString() === app.jobId.toString()); 
-      let jobIdObj = isValid  ? {...isValid,applicationDate : app.applicationDate} : {
+      let jobIdObj = isValid  ? {...isValid,applicationDate : app.applicationDate, companyDetails : app.companyDetails} : {
         jobId : app.jobId,
         jobTitle : app.jobApplied,
         status : "deleted",
-        applicationDate : app.applicationDate
+        applicationDate : app.applicationDate,
+        companyDetails : app.companyDetails
       }
       return ({
         ...app,

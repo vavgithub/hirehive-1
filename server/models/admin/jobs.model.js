@@ -103,6 +103,11 @@ const jobSchema = new mongoose.Schema(
       ref: 'User',
       required: true,
     },
+    company_id : {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Company',
+      required: true,
+    },
     questions: [questionSchema],
     // No 'stages' field here; stages are defined externally
   },
