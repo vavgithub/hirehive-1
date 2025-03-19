@@ -183,6 +183,63 @@ export const getAllCandidatesForJob = async (req, res) => {
 //     }
 //   };
 
+export const updateCandidateProfessionalDetails = async (req, res) => {
+  try {
+    const { id, jobId } = req.params;
+    const { experience, noticePeriod, hourlyRate, currentCTC, expectedCTC } = req.body;
+
+    // Fetch candidate
+    const candidate = await candidates.findById(id);
+    if (!candidate) {
+      return res.status(400).json({ message: "Invalid Candidate Data" });
+    }
+
+    // Fetch job
+    const job = await jobs.findById(jobId);
+    if (!job) {
+      return res.status(400).json({ message: "Invalid Job Data" });
+    }
+
+    // Validation based on employment type
+    if (job?.employmentType === "Contract" || job?.employmentType === "Part Time") {
+      if (!hourlyRate || hourlyRate.toString().trim() === "") {
+        return res.status(400).json({ message: "Hourly Rate is Required for Part Time / Contract Jobs" });
+      }
+    }
+    if (job?.employmentType === "Full Time") {
+      if (!currentCTC || currentCTC.toString().trim() === "") {
+        return res.status(400).json({ message: "Current CTC is Required for Full Time Jobs" });
+      }
+      if (!expectedCTC || expectedCTC.toString().trim() === "") {
+        return res.status(400).json({ message: "Expected CTC is Required for Full Time Jobs" });
+      }
+    }
+
+    const professionalInfo = {
+      ...candidate.jobApplications?.find(app => app.jobId?.toString() === jobId)?.professionalInfo.toObject(),
+      expectedCTC,
+      currentCTC,
+      hourlyRate,
+      experience,
+      noticePeriod
+    }
+
+    const updateCandidate = await candidates.findOneAndUpdate({
+      _id : id,
+      'jobApplications.jobId' : jobId
+    },{
+      $set : {
+        'jobApplications.$.professionalInfo' : professionalInfo
+      }
+    })
+
+    res.status(200).json({ message: "Candidate details updated successfully" });
+  } catch (error) {
+    res.status(400).json({ message: "Error updating candidate", error: error.message });
+  }
+};
+
+
 
 export  const updateStatusAndStage = async (req, res) => {
     try {
@@ -309,6 +366,7 @@ export const getCandidateById = async (req, res) => {
         jobApplied: jobApplication.jobApplied,
         jobProfile: jobApplication?.jobProfile || "UI UX",
         jobStatus : job ? job.status : "deleted",
+        jobType : job ? job.employmentType : 'NA',
         applicationDate: jobApplication.applicationDate,
         rating: jobApplication.rating,
         currentStage: jobApplication.currentStage,
