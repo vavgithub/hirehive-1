@@ -8,6 +8,11 @@ import ClosedBadge from '../../svg/Icons/ClosedBadge';
 import StyledCard from './StyledCard';
 import CustomBadge from '../Badge/CustomBadge';
 import CompanyIcon from '../../svg/Icons/CompanyIcon';
+import { Copy } from 'lucide-react';
+import CustomToolTip from '../Tooltip/CustomToolTip';
+import { copyToClipboard } from '../../utility/CopyToClipboard';
+import { useLocation } from 'react-router-dom';
+import { showSuccessToast } from '../ui/Toast';
 
 // Helper function to truncate text to specific number of words
 const truncateWords = (text, wordLimit) => {
@@ -48,6 +53,8 @@ const JobCard = ({
 }) => {
   const formattedCreatedAt = getTimeAgo(job.createdAt);
   const formattedAppliedAt = getTimeAgo(job.applicationDate);
+
+  const location = useLocation();
 
   // Determine if job is hourly rate type (Part Time or Contract)
   const isHourlyRateJob = job.employmentType === 'Part Time' || job.employmentType === 'Contract';
@@ -117,6 +124,12 @@ const JobCard = ({
   // Truncate job description to 10 words
   const truncatedDescription = truncateWords(job.jobDescription || 'No description available', 40);
 
+  const handleCopyLink = async (e,jobId) => {
+    e.stopPropagation()
+    await copyToClipboard(`${window.location.origin}/${jobId}`)
+    showSuccessToast("Success","Job link copied successfuully")
+  }
+
   return (
     <StyledCard
     padding={0}
@@ -130,6 +143,14 @@ const JobCard = ({
         <span className="bg-blue-300 text-blue-100 typography-body px-4 py-2 rounded-xl">
           Applied
         </span>}
+        {(role === "Admin" || role === "Hiring Manager") && 
+        <div>
+          <CustomToolTip arrowed title={"Copy link"}>
+            <div onClick={(e) => handleCopyLink(e,job?._id)} className='cursor-pointer p-2 h-10 flex justify-center items-center bg-background-70 hover:bg-background-80 rounded-xl'>
+              <Copy size={20} strokeWidth={1} color='#808389'/>            
+            </div>
+          </CustomToolTip>
+        </div>}
         {(job.status !== "deleted" && job.status !== "closed") &&
           <CustomBadge label={job?.jobProfile} paddingX={2} />}
         {withKebab && (
