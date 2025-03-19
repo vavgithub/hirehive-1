@@ -138,6 +138,18 @@ const ViewJobs = () => {
         },
     });
 
+    //scroll preserve for table
+    // 2. Restore scroll position after data is loaded
+    useEffect(() => {
+    if (!isCandidatesLoading && activeTab === "candidate") {
+        const savedScrollY = sessionStorage.getItem('job_candidates_scroll_position');
+        if (savedScrollY) {
+        requestAnimationFrame(() => {
+            document.getElementById('adminContainer').scrollTo(0, parseFloat(savedScrollY));
+        });
+        }
+    }
+    }, [isCandidatesLoading,activeTab]);
 
     // Show loader if data is loading
  // Show loader if any data is loading
