@@ -160,6 +160,15 @@ const jobApplicationSchema = new mongoose.Schema(
       of: stageStatusSchema,
       default: {},
     },
+    companyDetails : {
+      _id : {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Company',
+      },
+      name : {
+        type: String,
+      }
+    },
     resumeUrl: String,
     // Add professional info field to store information at time of application
     professionalInfo: professionalInfoSchema,

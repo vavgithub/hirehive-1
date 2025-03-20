@@ -34,6 +34,9 @@ import { initializeUploadDir } from "./config/paths.js";
 import corsConfig from "./config/cors.config.js";
 import cookieSession from "cookie-session";
 import { handleUploadError } from "./middlewares/uploadMiddleware.js";
+import { jobs } from "./models/admin/jobs.model.js";
+import { User } from "./models/admin/user.model.js";
+import { candidates } from "./models/candidate/candidate.model.js";
 
 const app = express();
 await initializeUploadDir(envConfig.UPLOAD_DIR);
@@ -83,6 +86,48 @@ const PORT = envConfig.PORT;
 
 app.use(handleUploadError)
 
+function updationForCompany(){
+
+    // let jobsArr = await jobs.find()
+    // jobsArr.forEach(async(job) => {
+    //   // Find the user associated with the job
+    //   const user = await User.findOne({ _id: job.createdBy });
+
+    //   // If user exists, update the job with company_id from user
+    //   if (user && user.company_id) {
+    //     await jobs.updateOne(
+    //       { _id: job._id }, // Find the specific job document
+    //       { $set: { company_id: user.company_id } } // Only update company_id
+    //     );
+    //   }
+    // });
+
+    // console.time("Execution Time"); // Start measuring time
+    // const users = await candidates.find();
+    // for(let user of users){
+    //   for(let app of user?.jobApplications){
+    //     const job = await jobs.findById({_id : app.jobId}).populate('company_id');
+
+    //     const companyDetails = {
+    //       _id : job?.company_id?._id,
+    //       name :job?.company_id?.name
+    //     }
+
+    //     if(job?.company_id?._id && job?.company_id?.name && app?.jobId){
+    //       const userWithApplication = await candidates.findOneAndUpdate({
+    //         _id: user?._id,
+    //         "jobApplications.jobId" : app.jobId
+    //       },{
+    //         $set : {
+    //           "jobApplications.$.companyDetails" : companyDetails
+    //         }
+    //       })
+    //     }
+    //   }
+    // }
+    // console.timeEnd("Execution Time"); // End measuring time and log it
+}
+
 connectDB()
   .then(() => {
     app.listen(PORT, () =>
@@ -93,6 +138,7 @@ connectDB()
     
     // Start the scheduled jobs
     startScheduledJobs();
+    // updationForCompany()
 
     app.on("error", (error) => {
       console.log("Error in starting server", error);

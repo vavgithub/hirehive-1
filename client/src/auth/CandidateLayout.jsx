@@ -75,12 +75,12 @@ const CandidateLayout = () => {
     //   icon: DashboardIcon,
     //   activeIcon: DashboardIconActive,
     // },
-    {
-      name: 'All Jobs',
-      path: '/candidate/all-jobs',
-      icon: JobsIcon,
-      activeIcon: JobsIconActive,
-    },
+    // {
+    //   name: 'All Jobs',
+    //   path: '/candidate/all-jobs',
+    //   icon: JobsIcon,
+    //   activeIcon: JobsIconActive,
+    // },
     {
       name: 'My Jobs',
       path: '/candidate/my-jobs',
