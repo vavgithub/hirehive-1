@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 import moment from 'moment-timezone';
 import { getDesignTaskContent, getRejectionEmailContent } from './emailTemplates.js';
 import { sendEmail } from './sentEmail.js';
+import { REJECTION_REASON } from '../controllers/admin/hr.controller.js';
 
 const updateCallStatuses = async () => {
   const now = new Date();
@@ -83,7 +84,7 @@ const updateMailSendAndStatuses = async () => {
             $elemMatch: {
               [`stageStatuses.${stage}.status`]: stage === "Design Task" 
                 ? { $in: ["Pending", "Reviewed"] }
-                : "Reviewed",
+                : stage === "Portfolio" ? { $in: ["Not Assigned","Pending", "Reviewed"] } : "Reviewed",
               [`stageStatuses.${stage}.scheduledDate`]: {
                 $exists: true,
                 $ne: null,
@@ -110,10 +111,14 @@ const updateMailSendAndStatuses = async () => {
   
           await sendEmail(candidate?.email, emailSubject, emailContent,"Design Task");
         }else{
-          // Send rejection email
-          const emailContent = getRejectionEmailContent(candidate.firstName + " " + candidate.lastName,candidate?.jobApplications[0]?.jobApplied);
-
-          await sendEmail(candidate.email, "Application Status Update", emailContent);
+          //Selective Email sending
+          const canSendEmail = !!REJECTION_REASON.find(reasonObj =>(reasonObj?.reason === candidate?.jobApplications[0]?.stageStatuses.get(stage)?.rejectionReason?.trim() && reasonObj?.email))
+          if(canSendEmail){
+            // Send rejection email
+            const emailContent = getRejectionEmailContent(candidate.firstName + " " + candidate.lastName,candidate?.jobApplications[0]?.jobApplied);
+  
+            await sendEmail(candidate.email, "Application Status Update", emailContent);
+          }
         }
 
         await candidates.updateOne(

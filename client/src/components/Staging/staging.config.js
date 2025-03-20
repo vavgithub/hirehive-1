@@ -22,6 +22,10 @@ export const stagingConfig = {
                         hasLabel : {
                             content : "Candidate's portfolio has not yet been assigned to a reviewer.",
                             icon : WarningIcon
+                        },
+                        hasScheduledLabel : true,
+                        actions : {
+                            hasRejectAction : true,
                         }
                     },
                     "Design Reviewer" : {
