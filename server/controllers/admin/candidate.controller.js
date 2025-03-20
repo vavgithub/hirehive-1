@@ -206,7 +206,7 @@ export const updateCandidateProfessionalDetails = async (req, res) => {
         return res.status(400).json({ message: "Hourly Rate is Required for Part Time / Contract Jobs" });
       }
     }
-    if (job?.employmentType === "Full Time") {
+    if (!(job?.employmentType === "Contract" || job?.employmentType === "Part Time")) {
       if (!currentCTC || currentCTC.toString().trim() === "") {
         return res.status(400).json({ message: "Current CTC is Required for Full Time Jobs" });
       }

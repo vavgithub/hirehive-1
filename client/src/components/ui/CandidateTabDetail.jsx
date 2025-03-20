@@ -163,7 +163,7 @@ const Experience = ({ company, position, startDate, endDate, index }) => (
                     )}
                   />
                   {/* Only show full-time fields if data exists */}
-                  {job?.jobType === 'Full Time' && (
+                  {!(job?.jobType === 'Contract' || job?.jobType === 'Part Time') ? (
                     <>
                       <Controller
                         name="currentCTC"
@@ -206,8 +206,7 @@ const Experience = ({ company, position, startDate, endDate, index }) => (
                         )}
                       />
                   </>
-                )}
-                {(job?.jobType === 'Contract' || job?.jobType === 'Part Time') && (
+                ) : (
                   <Controller
                     name="hourlyRate"
                     control={control}
