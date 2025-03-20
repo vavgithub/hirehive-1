@@ -54,6 +54,9 @@ const stageStatusSchema = new mongoose.Schema(
       type: String,
       default: "N/A",
     },
+    scheduledDate : {
+      type : Date
+    },
     currentCall: {
       scheduledDate: Date,
       scheduledTime: String,

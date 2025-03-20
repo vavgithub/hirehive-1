@@ -10,7 +10,7 @@ function RejectionSelector({selectedAnchor,handleClose,handleReasonSelect}) {
             open={Boolean(selectedAnchor)}
             onClose={handleClose}
             PaperProps={{
-              style: { maxHeight: 300,  width: selectedAnchor?.width , borderRadius : "12px",padding : "8px",backgroundColor: 'rgba(12, 13, 13, 1)'},
+              style: { maxHeight: 300,  width:  selectedAnchor?.getBoundingClientRect()?.width , borderRadius : "12px",padding : "8px",backgroundColor: 'rgba(12, 13, 13, 1)'},
             }}
             sx={{
               "& .MuiList-root": {
