@@ -2,7 +2,7 @@
 
 import express from 'express';
 import { applyToJob, createPassword,editCandidateProfile,forgotPassword, getCandidateAppliedJobs, getCandidateDashboard, loginCandidate, logoutCandidate, registerCandidate ,resetPassword, updateEmail, uploadProfilePictureController, uploadResumeController, verifyOtp ,  verifyOTPEmail,  verifyOTPForgot } from '../../controllers/candidate/auth.controller.js';
-import { protectCandidate, protectWithEmailtoken } from '../../middlewares/authMiddleware.js';
+import { protectCandidate } from '../../middlewares/authMiddleware.js';
 import { uploadProfilePicture, uploadResume } from '../../middlewares/uploadMiddleware.js';
 
 const router = express.Router();
@@ -13,7 +13,7 @@ router.post("/upload-resume", uploadResume , uploadResumeController);
 
 // Route to register a candidate
 router.post('/register', registerCandidate);
-router.post('/update-email',protectWithEmailtoken, updateEmail);
+router.post('/update-email', updateEmail);
 
 // Route to create a password for the candidate
 router.post('/create-password', createPassword);

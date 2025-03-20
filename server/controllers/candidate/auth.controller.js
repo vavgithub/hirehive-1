@@ -169,23 +169,24 @@ export const registerCandidate = async (req, res) => {
     
     if(existingPhone && existingPhone?.currentStage === 'OTP' && !existingEmail){
 
-      // Generate JWT token for email change
-      const token = jwt.sign({ id: existingPhone._id }, JWT_SECRET, {
-        expiresIn: "5m",
-      });
+      // // Generate JWT token for email change
+      // const token = jwt.sign({ id: existingPhone._id }, JWT_SECRET, {
+      //   expiresIn: "5m",
+      // });
 
-      // Send token in HTTP-only cookie
-      res.cookie("email_token", token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production", // Use 'true' in production
-        sameSite: "strict",
-        maxAge: 5 * 60 * 1000, // 5 min
-      });
+      // // Send token in HTTP-only cookie
+      // res.cookie("email_token", token, {
+      //   httpOnly: true,
+      //   secure: process.env.NODE_ENV === "production", // Use 'true' in production
+      //   sameSite: "strict",
+      //   maxAge: 5 * 60 * 1000, // 5 min
+      // });
 
       return res.status(200).json({
         message : "Account exists with this phone number. Please confirm your email",
         currentStage : "MODAL",
-        email : existingPhone?.email
+        email : existingPhone?.email,
+        userId : existingPhone?._id
       })
     }
 
@@ -272,17 +273,21 @@ export const registerCandidate = async (req, res) => {
 
 export const updateEmail = async (req, res) => {
   try {
-    const { email } = req.body;
+    const { email , userId } = req.body;
 
     if(!email?.trim()){
       return res.status(400).json({ message: "Invalid email" });
     }
 
     // Update candidate's password
-    const candidate = await Candidate.findById({_id : req.candidate._id});
+    const candidate = await Candidate.findById({_id : userId});
 
     if (!candidate) {
       return res.status(400).json({ message: "Candidate not found" });
+    }
+
+    if(candidate?.currentStage !== 'OTP'){
+      return res.status(400).json({ message: "You are unable to update email" });
     }
 
     candidate.email = email;
@@ -395,6 +400,12 @@ export const loginCandidate = async (req, res) => {
 
     if (!candidate) {
       return res.status(404).json({ message: "Candidate not found" });
+    }
+
+    if(candidate?.currentStage !== "DONE"){
+      return res
+        .status(401)
+        .json({ message: "Please complete your registration" });
     }
 
     // Check if candidate is verified

@@ -72,14 +72,17 @@ export const uploadResume = async (file,setUploadProgress) => {
   }
 };
 
-const updateEmail = ({email}) => {
-  const response = axios.post('/auth/candidate/update-email',{email});
+const updateEmail = ({email, userId}) => {
+  const response = axios.post('/auth/candidate/update-email',{email, userId});
   return response?.data;
 }
 
 const ApplyJob = () => {
   const dispatch = useDispatch();
   const { candidateData, isAuthenticated } = useCandidateAuth()
+
+  //to store email update candidates ID
+  const IdRef = useRef(null);
 
   const [currentStep, setCurrentStep] = useState(1);
   const [email, setEmail] = useState('');
@@ -273,6 +276,7 @@ useEffect(() => {
         const response = await axios.post('/auth/candidate/register', registrationData);
         if(response?.data?.currentStage === 'MODAL'){
           setValue("email",response.data?.email)
+          IdRef.current = response.data?.userId
           setIsExist(true)
           setShowConfirm(true)
         }else{
@@ -306,7 +310,7 @@ useEffect(() => {
   })
 
   const handleUpdateEmail = () => {
-    updateEmailMutation.mutate({email : getValues("email")})
+    updateEmailMutation.mutate({email : getValues("email"), userId : IdRef?.current})
   }
 
   const handleOtpSubmit = async (e) => {
