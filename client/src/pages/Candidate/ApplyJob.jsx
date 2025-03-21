@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useDropzone } from 'react-dropzone';
 import { useForm, Controller } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import axios from '../../api/axios';
 import SkillsInput from '../../components/utility/SkillsInput';
 import { Button } from '../../components/ui/Button';
@@ -21,6 +21,11 @@ import LoaderModal from '../../components/ui/LoaderModal';
 import AdditionalQuestions from '../../components/AdditionalQuestions';
 import OtpComponent from '../../components/OtpComponent';
 import PasswordComponent from '../../components/PasswordComponent';
+import Modal from '../../components/Modal';
+import StyledCard from '../../components/ui/StyledCard';
+import { PencilEditIcon } from '../../svg/Buttons/PencilIcon';
+import { InputField } from '../../components/Form/FormFields';
+import RightTick from '../../svg/Staging/RightTick';
 import ContactUs from '../../components/Form/ContactUs';
 
 const fetchJobDetails = async (id) => {
@@ -68,9 +73,17 @@ export const uploadResume = async (file,setUploadProgress) => {
   }
 };
 
+const updateEmail = ({email, userId}) => {
+  const response = axios.post('/auth/candidate/update-email',{email, userId});
+  return response?.data;
+}
+
 const ApplyJob = () => {
   const dispatch = useDispatch();
   const { candidateData, isAuthenticated } = useCandidateAuth()
+
+  //to store email update candidates ID
+  const IdRef = useRef(null);
 
   const [currentStep, setCurrentStep] = useState(1);
   const [email, setEmail] = useState('');
@@ -82,11 +95,17 @@ const ApplyJob = () => {
   const [resumeFile, setResumeFile] = useState(null);
   const [uploadProgress, setUploadProgress] = useState(0);
 
+  const [showConfirm,setShowConfirm] = useState(false);
+  const [isExist,setIsExist] = useState(false);
+  const [editEmail,setEditEmail] = useState("");
+
   const [profilePictureFile, setProfilePictureFile] = useState(null);
   const [profilePicturePreview, setProfilePicturePreview] = useState(null);
 
   const navigate = useNavigate();
   const { id: jobId } = useParams();
+
+  const submitBtnRef = useRef(null);
 
   let initial = {
     firstName: "",
@@ -109,7 +128,9 @@ const ApplyJob = () => {
     handleSubmit,
     formState: { errors, isValid },
     getValues,
+    watch,
     setValue,
+    trigger,
     reset,
   } = useForm({
     mode: 'onChange',
@@ -253,11 +274,20 @@ useEffect(() => {
           ...compensationData,
         };
 
-        await axios.post('/auth/candidate/register', registrationData);
-        setEmail(data.email);
-        setPhone(data.phoneNumber);
-        showSuccessToast('Create Password', "Please Create Your Password");
-        setCurrentStep(2);
+        const response = await axios.post('/auth/candidate/register', registrationData);
+        if(response?.data?.currentStage === 'MODAL'){
+          setValue("email",response.data?.email)
+          IdRef.current = response.data?.userId
+          setIsExist(true)
+          setShowConfirm(true)
+        }else{
+          setEmail(data.email);
+          setPhone(data.phoneNumber);
+          setIsExist(false)
+          setShowConfirm(false)
+        }
+        showSuccessToast('Success', response?.data?.message || "Please Create Your Password");
+        setCurrentStep(response?.data?.currentStage !== 'MODAL' ? 2 : 1);
       }
     } catch (error) {
       showErrorToast(
@@ -268,6 +298,21 @@ useEffect(() => {
       setIsSubmitting(false);
     }
   };
+
+  const updateEmailMutation = useMutation({
+    mutationFn : updateEmail,
+    onSuccess : (data) => {
+      submitBtnRef.current.click()
+    },
+    onError : (error) => {
+
+      showErrorToast('Error', error.response?.data?.message || 'Failed to update email. Please try again.');
+    }
+  })
+
+  const handleUpdateEmail = () => {
+    updateEmailMutation.mutate({email : getValues("email"), userId : IdRef?.current})
+  }
 
   const handleOtpSubmit = async (e) => {
     e.preventDefault();
@@ -356,7 +401,7 @@ useEffect(() => {
     <div className='main-wrapper flex justify-center ' >
 
       {
-        isSubmitting && <LoaderModal/>
+        (isSubmitting || updateEmailMutation?.isPending ) && <LoaderModal/>
       }
 
       {currentStep === 1 && (
@@ -493,13 +538,44 @@ useEffect(() => {
                   Cancel
                 </Button>
                 <Button
-                  type="submit"
+                  type="button"
+                  onClick={async ()=>{
+                    setIsExist(false)
+                    setEditEmail(false)
+                    if(isAuthenticated){
+                      submitBtnRef.current.click()
+                    }else{
+                      const isValid = await trigger()
+                      isValid && setShowConfirm(true)
+                    }
+                  }
+                  }
                   variant="primary"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? 'Submitting...' : 'Next'}
                 </Button>
+                <button ref={submitBtnRef} type='submit' className='hidden'>Submit</button>
             </div>
+            <Modal
+            open={showConfirm}
+            onClose={()=>setShowConfirm(false)}
+            onConfirm={isExist ? handleUpdateEmail : ()=>submitBtnRef.current.click()}
+            customTitle={isExist ? 'Confirm your Email' :"Is this email correct ?"}
+            customMessage={isExist ? "For account registration, we are sending an OTP to this attached email. Are you sure this email is correct ?" : "For account registration, we are sending an OTP to this email. Are you sure this email is correct ? "}
+            customConfirmLabel={"Sent"}
+            >
+              <StyledCard padding={2} backgroundColor={"bg-background-80 mt-4"}>
+              <div className='font-outfit typography-body w-full flex items-center justify-between gap-4'>
+                {!editEmail ? <p className='w-full'>{getValues("email")}</p> : 
+                  <div className='w-full'>
+                    <InputField type="text" placeholder="Enter your email" value={watch("email")} onChange={(e)=>setValue("email",e.target.value)}  />
+                  </div>
+                }
+                <button type='button' onClick={()=>setEditEmail(!editEmail)}>{!editEmail ? <div className='rounded-xl bg-background-60 h-11 w-11 flex justify-center items-center'><PencilEditIcon/></div> : <div className='rounded-xl bg-background-60 h-11 w-11 flex justify-center items-center'><RightTick /></div>}</button>
+              </div>
+              </StyledCard> 
+            </Modal>
           </form>
         </div>
       )}
