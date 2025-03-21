@@ -31,6 +31,8 @@ import UnderlineIcon from '../../../svg/Editor/UnderlineIcon';
 import BulletListIcon from '../../../svg/Editor/BulletListIcon';
 import NumberedListIcon from '../../../svg/Editor/NumberedListIcon';
 import EmojiPlugin from './EmojiPlugin';
+import LinkPlugin from './LinkPlugin';
+import { $isLinkNode } from '@lexical/link';
 
 const LowPriority = 1;
 
@@ -43,7 +45,7 @@ function ToolButton({Icon,command,commandType,isActive}){
         onClick={() => {
           editor.dispatchCommand(command, commandType);
         }}
-        className={'m-2 hover:bg-background-60 rounded-xl ' + (isActive ? 'bg-accent-300' : '')}
+        className={'m-1 hover:bg-background-60 rounded-xl ' + (isActive ? 'bg-accent-300' : '')}
         aria-label="Format Bold">
             {Icon()}
       </button>
@@ -84,7 +86,7 @@ function ListToolButton({Icon,isActive,isNumberedList}){
   }
 
 function Divider() {
-  return <div className='w-[1px]  min-h-[70%] bg-divide r-100' />;
+  return <div className='w-[1px]  min-h-[70%] bg-divider-100' />;
 }
 
 export default function ToolbarPlugin({errors}) {
@@ -103,6 +105,8 @@ export default function ToolbarPlugin({errors}) {
   const [isStrikethrough, setIsStrikethrough] = useState(false);
   const [isBulletList, setIsBulletList] = useState(false);
   const [isNumberedList, setIsNumberedList] = useState(false);
+
+  const [isLink, setIsLink] = useState(false);
   
   const $updateToolbar = useCallback(() => {
     const selection = $getSelection();
@@ -128,6 +132,8 @@ export default function ToolbarPlugin({errors}) {
         
       setIsBulletList((isListItemNode || isListNode) && (desiredParent.__tag === 'ul' || parentNode.__tag === 'ul'));
       setIsNumberedList((isListNode || isListItemNode) && (desiredParent.__tag === 'ol' || parentNode.__tag === 'ol'));
+
+      setIsLink($isLinkNode(parentNode));
     }
   }, []);
 
@@ -166,7 +172,7 @@ export default function ToolbarPlugin({errors}) {
   }, [editor, $updateToolbar]);
 
   return (
-    <div className={"absolute top-0 left-0 min-h-14 z-20 flex items-center bg-background-40 rounded-t-xl    " + (errors ? "w-[calc(100%-2px)] ml-[1px] mt-[1px]" : "w-full")} ref={toolbarRef}>
+    <div className={"absolute top-0 left-0 min-h-14 z-20 flex items-center bg-background-40 rounded-t-xl   " + (errors ? "w-[calc(100%-2px)] ml-[1px] mt-[1px]" : "w-full")} ref={toolbarRef}>
       {/* <button
         type='button'
         disabled={!canUndo}
@@ -202,6 +208,8 @@ export default function ToolbarPlugin({errors}) {
       <ListToolButton Icon={NumberedListIcon} isNumberedList={true} isActive={isNumberedList} />
       <Divider />
       <EmojiPlugin/>
+      <Divider />
+      <LinkPlugin isActive={isLink}  />
     </div>
   );
 }
