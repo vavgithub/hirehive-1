@@ -257,6 +257,11 @@ const candidateSchema = new mongoose.Schema(
     website: {
       type: String,
     },
+    currentStage : {
+      type : String,
+      enum : ['INITIAL','OTP','PASSWORD','DONE'],
+      default : 'INITIAL'
+    },
     resumeUrl: String,
     portfolio: {
       type: String,
