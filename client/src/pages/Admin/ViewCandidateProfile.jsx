@@ -7,7 +7,7 @@ import EmailIcon from '../../svg/EmailIcon';
 import Tabs from '../../components/ui/Tabs';
 import Header from '../../components/utility/Header';
 import axios from '../../api/axios';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ACTION_TYPES } from '../../utility/ActionTypes';
 import CandidateTabDetail from '../../components/ui/CandidateTabDetail';
 
@@ -26,6 +26,17 @@ import ResumeViewer from '../../components/utility/ResumeViewer';
 import CustomToolTip from '../../components/utility/CustomToolTip';
 import StyledCard from '../../components/ui/StyledCard';
 import { CustomDropdown } from '../../components/Form/FormFields';
+import RatingSelector, { getRatingIcon } from '../../components/utility/RatingSelector';
+import { fetchAllDesignReviewers } from '../../api/authApi';
+import PencilIcon from '../../svg/Buttons/PencilIcon';
+import Modal from '../../components/Modal';
+import TextEditor from '../../components/utility/TextEditor';
+import LoaderModal from '../../components/ui/LoaderModal';
+import EyeIcon, { EyeIconSmall } from '../../svg/EyeIcon';
+import AddNotes from '../../svg/Buttons/AddNotes';
+import EditNotes from '../../svg/Buttons/EditNotes';
+import { truncatedText } from '../../utility/truncatedHTML';
+import { ChevronDown, ChevronRight } from 'lucide-react';
 
 
 
@@ -43,6 +54,11 @@ const fetchCandidateJobs = async (candidateId) => {
     return data;
 };
 
+const addNotes = async ({ candidateId, jobId, notesData }) => {
+    const response = await axios.post(`admin/candidate/${candidateId}/${jobId}/addNotes`, notesData);
+    return response?.data;
+};
+
 // Update the transformCandidateData function
 const transformCandidateData = (data) => {
     const professionalInfo = data.jobApplication.professionalInfo;
@@ -53,7 +69,7 @@ const transformCandidateData = (data) => {
             { label: 'Notice Period', value: `${professionalInfo.noticePeriod} Days` },
             { label: 'Current CTC', value: professionalInfo?.currentCTC ? `${professionalInfo.currentCTC} LPA` : '-' },
             { label: 'Expected CTC', value: professionalInfo?.expectedCTC ? `${professionalInfo.expectedCTC} LPA` : '-' },
-            { label: 'Hourly Rate', value: professionalInfo?.hourlyRate ? `${professionalInfo.hourlyRate} INR/hr` : '-'  },
+            { label: 'Hourly Rate', value: professionalInfo?.hourlyRate ? `${professionalInfo.hourlyRate} INR/hr` : '-' },
         ],
         // Remove previousExperiences since it's not in the API yet
         skillSet: professionalInfo.skills || [],
@@ -67,24 +83,32 @@ const STAGE_MAX_SCORES = {
     'Design Task': 40,
     'Round 1': 45,
     'Round 2': 50
-  };
+};
 
 export const getMaxScoreForStage = (currentStage) => {
     return STAGE_MAX_SCORES[currentStage] || 50; // Default to 50 if stage not found
-  };
+};
 
 const ViewCandidateProfile = () => {
     const { user } = useAuthContext();
     const role = user?.role || 'Candidate'; // Default to Candidate if role is not specified
     const candidateData = useSelector(state => state.candidate.candidateData);
     const [activeTab, setActiveTab] = useState('application');
-    const [resumeOpen,setResumeOpen] = useState(false);
+    const [resumeOpen, setResumeOpen] = useState(false);
     const { candidateId, jobId } = useParams();
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
     const switchJobRef = useRef();
-    const [selectedJob,setSelectedJob] = useState(jobId);
+    const [selectedJob, setSelectedJob] = useState(jobId);
+
+    const [openNotes, setOpenNotes] = useState(false);
+    const [openNotesView, setOpenNotesView] = useState(false);
+    const [notes, setNotes] = useState("");
+    const [showMore,setShowMore] = useState(false);
+
+    const [ratingAnchor, setRatingAnchor] = useState(null);
+    const queryClient = useQueryClient();
 
     const { data, isLoading, isError, error: queryError } = useQuery({
         queryKey: ['candidate', candidateId, jobId],
@@ -96,27 +120,51 @@ const ViewCandidateProfile = () => {
         },
     });
 
+    useEffect(() => {
+        if (candidateData?.jobApplication?.notes?.content !== undefined) {
+            setNotes(candidateData?.jobApplication?.notes?.content);
+        } else {
+            setNotes("")
+        }
+    }, [candidateData, jobId]);
+    const { data: designReviewers, isLoading: isDesignReviewersLoading } = useQuery({
+        queryKey: ['getAllDesignReviewers'],
+        queryFn: () => fetchAllDesignReviewers(),
+    });
 
-     const [originalPath] = useState(()=>{
+    const updateCandidateRatingMutation = useMutation({
+        mutationFn: ({ candidateId, jobId, rating }) =>
+            axios.post('/hr/update-candidate-rating', { candidateId, jobId, rating }),
+        onSuccess: () => {
+            setRatingAnchor(null)
+            queryClient.invalidateQueries(['candidate', candidateId, jobId]);
+        },
+    });
+
+    const handleRateCandidate = (rating) => {
+        updateCandidateRatingMutation.mutate({ candidateId, jobId, rating })
+    }
+
+    const [originalPath] = useState(() => {
         const isJobPath = location.pathname.includes('/admin/jobs/');
         if (isJobPath) {
             return `/admin/jobs/view-job/${jobId}`;
         }
-        return role === "Hiring Manager" ?  `/admin/candidates` :`/design-reviewer/candidates`; ;
-     })
+        return role === "Hiring Manager" ? `/admin/candidates` : `/design-reviewer/candidates`;;
+    })
 
-   // Effect for job switching
-   useEffect(() => {
-    if (selectedJob && role === "Hiring Manager" && selectedJob !== jobId) {
-        const isJobsPath = originalPath.includes('/admin/jobs/');
-        const basePath = isJobsPath ? '/admin/jobs' : '/admin/candidates';
-        
-        navigate(`${basePath}/view-candidate/${candidateId}/${selectedJob}`, { 
-            replace: true,
-            state: { from: originalPath }
-        });
-    }
-}, [selectedJob]);
+    // Effect for job switching
+    useEffect(() => {
+        if (selectedJob && role === "Hiring Manager" && selectedJob !== jobId) {
+            const isJobsPath = originalPath.includes('/admin/jobs/');
+            const basePath = isJobsPath ? '/admin/jobs' : '/admin/candidates';
+
+            navigate(`${basePath}/view-candidate/${candidateId}/${selectedJob}`, {
+                replace: true,
+                state: { from: originalPath }
+            });
+        }
+    }, [selectedJob]);
 
     // Handle back navigation
     const handleBack = () => {
@@ -139,12 +187,12 @@ const ViewCandidateProfile = () => {
     });
 
 
-    const { data: candidateJobs, error : jobsError } = useQuery({
+    const { data: candidateJobs, error: jobsError } = useQuery({
         queryKey: ['candidateJobs', candidateId],
         queryFn: () => fetchCandidateJobs(candidateId),
     });
 
-    const formattedAppliedJobs = candidateJobs?.jobs?.map(appliedJob => ({value : appliedJob.jobId, label : appliedJob.jobApplied})) || []
+    const formattedAppliedJobs = candidateJobs?.jobs?.map(appliedJob => ({ value: appliedJob.jobId, label: appliedJob.jobApplied })) || []
     // Use useEffect to dispatch actions when data changes
     useEffect(() => {
         if (data) {
@@ -168,8 +216,8 @@ const ViewCandidateProfile = () => {
         setActiveTab(tab);
     };
 
-      // Get the maximum score based on current stage
-      const getMaxScore = () => {
+    // Get the maximum score based on current stage
+    const getMaxScore = () => {
         if (data?.jobApplication?.currentStage) {
             return getMaxScoreForStage(data.jobApplication.currentStage);
         }
@@ -192,6 +240,21 @@ const ViewCandidateProfile = () => {
             }
         ] : []),
     ];
+
+    const addNotesMutation = useMutation({
+        mutationFn: addNotes,
+        onSuccess: (data) => {
+            queryClient.invalidateQueries(['candidate', candidateId, jobId]);
+        },
+        onError: (error) => {
+            console.error("Error adding notes :", error);
+            // Handle error (e.g., show error message to user)
+        }
+    })
+
+    const handleAddNotes = () => {
+        addNotesMutation.mutate({ candidateId, jobId, notesData: { notes: notes } })
+    }
 
     // Handle action switcher
     const handleAction = (action) => {
@@ -241,16 +304,22 @@ const ViewCandidateProfile = () => {
 
     }
 
-    const handleResumeOpen = ()=>{
+    const handleResumeOpen = () => {
         setResumeOpen(true)
+    }
+
+    const handleOpenNotes = (e)=>{
+        setOpenNotes(true)
+        e.stopPropagation();
     }
 
 
     return (
         <div className='w-full p-4'>
             <div className="container mx-auto">
-            {/* Page header */}
-            <Header
+                {addNotesMutation?.isPending && <LoaderModal />}
+                {/* Page header */}
+                <Header
                     HeaderText="Candidate Profile"
                     withKebab={role === "Hiring Manager" ? "true" : "false"}
                     withBack="true"
@@ -259,110 +328,217 @@ const ViewCandidateProfile = () => {
                     onBack={handleBack} // Pass custom back handler
                     rightContent={role === "Hiring Manager" &&
                         <div className='flex items-center h-full w-[285px] -translate-y-[6px] z-10'>
-                            <CustomDropdown 
-                                extraStylesForLabel=" w-[285px] " 
-                                value={selectedJob} 
-                                onChange={setSelectedJob} 
-                                options={formattedAppliedJobs} 
+                            <CustomDropdown
+                                extraStylesForLabel=" w-[285px] "
+                                value={selectedJob}
+                                onChange={setSelectedJob}
+                                options={formattedAppliedJobs}
                                 ref={switchJobRef}
                             />
                         </div>
                     }
                 />
-            {/* Candidate Profile Card */}
+                {/* Candidate Profile Card */}
 
-            {
-                (role === "Hiring Manager" || role === "Design Reviewer") && (
-                    <div className="flex gap-3">
-                        <StyledCard padding={2} extraStyles="w-full flex gap-4">
-                            <div className="to-background-100 w-[200px] min-h-auto max-h-[200px] rounded-xl overflow-hidden">
-                                <img src={data.profilePictureUrl || " https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg"} alt="" className='object-cover w-full overflow-hidden' />
-                            </div>
-                            <div className='flex flex-col gap-2'>
-                                <h1 className="typography-h2">
-                                    {data.firstName} {data.lastName}
-                                </h1>
-                                <div className="flex items-center gap-2 mb-3 mt-2">
-                                    <span className="typography-small-p text-font-gray">{data.jobApplication.jobApplied}</span>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="4" height="4" viewBox="0 0 4 4" fill="none">
-                                        <circle cx="2" cy="2" r="2" fill="#808389" />
-                                    </svg>
-                                    <span className="typography-small-p text-font-gray">{data.location}</span>
-                                </div>
-                                {role !== "Design Reviewer" &&
-                                <div className="flex mb-3 gap-5">
-                                    <div className="flex items-center gap-2">
-                                        <PhoneIcon />
-                                        <span className="typography-large-p">{data.phone}</span>
+                {
+                    (role === "Hiring Manager" || role === "Design Reviewer") && (
+                        <div className="flex gap-3">
+                            <StyledCard padding={2} extraStyles="w-full flex gap-4 relative justify-between relative">
+                                <div className='flex gap-4'>
+                                    <div className="relative to-background-100 w-[200px] min-h-auto max-h-[200px] rounded-xl overflow-hidden">
+                                        <img src={data.profilePictureUrl || " https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg"} alt="" className='object-cover w-full overflow-hidden' />
+                                        {(role === "Hiring Manager" || role === "Admin") &&
+                                            <span onClick={(e) => setRatingAnchor(e.currentTarget)} className='absolute cursor-pointer bg-[#2d2d2eae] min-w-10 min-h-10 top-2 right-2 rounded-full flex justify-center items-center'>
+                                                {getRatingIcon(data?.jobApplication?.rating)}
+                                            </span>}
                                     </div>
-                                    <div className="flex items-center gap-2">
-                                        <EmailIcon />
-                                        <span className="typography-large-p">{data.email}</span>
-                                    </div>
-                                </div>}
-                                <div className="flex gap-2 items-center ">
-                                    <a href={ensureAbsoluteUrl(data.portfolio)} target="_blank" rel="noopener noreferrer" className="icon-link">
-                                        <CustomToolTip title={'Portfolio'} arrowed size={2}>
-                                            <FileMainIcon />
-                                        </CustomToolTip>
-                                    </a>
-                                    {data.website && (
-                                        <a href={ensureAbsoluteUrl(data.website)} target="_blank" rel="noopener noreferrer" className="icon-link">
-                                            <CustomToolTip title={'Website'} arrowed size={2}>
-                                                <WebsiteMainIcon />
-                                            </CustomToolTip>
-                                        </a>
-                                    )}
-                                    <div onClick={handleResumeOpen}>
-                                        <CustomToolTip title={'Resume'} arrowed size={2}>
-                                            <ResumeIcon  />
-                                        </CustomToolTip>
-                                    </div>
-                                    {resumeOpen && <ResumeViewer documentUrl={data.resumeUrl} onClose={() => setResumeOpen(false)}/>}
-                                   
-                                    {
-                                        (data.hasGivenAssessment && role === "Hiring Manager") && <div className='cursor-pointer' onClick={handleAssignmentNavigation}> 
-                                            <CustomToolTip title={'Assessment'} arrowed size={2}>
-                                                <AssignmentIcon /> 
-                                            </CustomToolTip>
+                                    <div className='flex flex-col gap-2'>
+                                        <h1 className="typography-h2">
+                                            {data.firstName} {data.lastName}
+                                        </h1>
+                                        <div className="flex items-center gap-2 mb-3 mt-2">
+                                            <span className="typography-small-p text-font-gray">{data.jobApplication.jobApplied}</span>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="4" height="4" viewBox="0 0 4 4" fill="none">
+                                                <circle cx="2" cy="2" r="2" fill="#808389" />
+                                            </svg>
+                                            <span className="typography-small-p text-font-gray">{data.location}</span>
                                         </div>
+                                        {role !== "Design Reviewer" &&
+                                            <div className="flex mb-3 gap-5">
+                                                <div className="flex items-center gap-2">
+                                                    <PhoneIcon />
+                                                    <span className="typography-large-p">{data.phone}</span>
+                                                </div>
+                                                <div className="flex items-center gap-2">
+                                                    <EmailIcon />
+                                                    <span className="typography-large-p">{data.email}</span>
+                                                </div>
+                                            </div>}
+                                        <div className="flex gap-2 items-center ">
+                                            <a href={ensureAbsoluteUrl(data.portfolio)} target="_blank" rel="noopener noreferrer" className="icon-link">
+                                                <CustomToolTip title={'Portfolio'} arrowed size={2}>
+                                                    <FileMainIcon />
+                                                </CustomToolTip>
+                                            </a>
+                                            {data.website && (
+                                                <a href={ensureAbsoluteUrl(data.website)} target="_blank" rel="noopener noreferrer" className="icon-link">
+                                                    <CustomToolTip title={'Website'} arrowed size={2}>
+                                                        <WebsiteMainIcon />
+                                                    </CustomToolTip>
+                                                </a>
+                                            )}
+                                            <div onClick={handleResumeOpen}>
+                                                <CustomToolTip title={'Resume'} arrowed size={2}>
+                                                    <ResumeIcon />
+                                                </CustomToolTip>
+                                            </div>
+                                            {resumeOpen && <ResumeViewer documentUrl={data.resumeUrl} onClose={() => setResumeOpen(false)} />}
+
+                                            {
+                                                (data.hasGivenAssessment && role === "Hiring Manager") && <div className='cursor-pointer' onClick={handleAssignmentNavigation}>
+                                                    <CustomToolTip title={'Assessment'} arrowed size={2}>
+                                                        <AssignmentIcon />
+                                                    </CustomToolTip>
+                                                </div>
+                                            }
+
+                                        </div>
+                                    </div>
+
+                                    {/* ready only current reviewer */}
+                                    {data?.jobApplication?.stageStatuses[data?.jobApplication?.currentStage]?.assignedTo && (role === "Hiring Manager" || role === "Admin") &&
+                                        <div className='absolute bottom-4 right-4 flex gap-2'>
+                                            <div className='flex flex-col items-end'>
+                                                <p className='typography-small-p text-font-gray'>Current reviewer </p>
+                                                <p className='typography-small-p '>{designReviewers?.data?.find(dr => dr?._id === data?.jobApplication?.stageStatuses[data?.jobApplication?.currentStage]?.assignedTo)?.name}</p>
+                                            </div>
+                                            <div className='w-8 h-8 overflow-hidden rounded-full'>
+                                                <img src={designReviewers?.data?.find(dr => dr?._id === data?.jobApplication?.stageStatuses[data?.jobApplication?.currentStage]?.assignedTo)?.profilePicture || "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg"} alt="" className='object-cover w-full overflow-hidden' />
+                                            </div>
+                                        </div>}
+                                </div>
+                                {role === "Hiring Manager" && candidateData?.jobApplication?.notes?.content ?
+                                    <StyledCard onClick={() => setOpenNotesView(true)} padding={2} backgroundColor={"bg-background-80"} extraStyles={'w-[30%] h-fit max-h-36 cursor-pointer max  relative overflow-hidden'}>
+                                        <div className=' flex justify-between items-center  ' >
+
+                                            <h3 className='typography-body font-semibold font-bricolage'>Notes</h3>
+                                            <div onClick={handleOpenNotes} className={'hover:bg-accent-300  bg-background-70 p-2 rounded-xl' + (candidateData?.jobApplication?.notes?.content ? " top-8 right-8 " : " top-4 right-4")}>
+                                                <CustomToolTip title={candidateData?.jobApplication?.notes?.content ? "Edit notes" : "Add a note"} arrowed>
+                                                    {
+                                                        candidateData?.jobApplication?.notes?.content ? <EditNotes /> : <AddNotes />
+                                                    }
+                                                </CustomToolTip>
+                                            </div>
+                                        </div>
+
+                                        <div className='overflow-hidden font-outfit text-font-gray ' dangerouslySetInnerHTML={{ __html: truncatedText(candidateData?.jobApplication?.notes?.content,55) }}></div>
+
+                                    </StyledCard> : 
+                                    <div onClick={handleOpenNotes} className={'hover:bg-accent-300  bg-background-70 p-2 h-fit rounded-xl' + (candidateData?.jobApplication?.notes?.content ? " top-8 right-8 " : " top-4 right-4")}>
+                                        <CustomToolTip title={candidateData?.jobApplication?.notes?.content ? "Edit notes" : "Add a note"} arrowed>
+                                            {
+                                                candidateData?.jobApplication?.notes?.content ? <EditNotes /> : <AddNotes />
+                                            }
+                                        </CustomToolTip>
+                                    </div>
                                     }
 
-                                </div>
-                            </div>
-                        </StyledCard>
+                            </StyledCard>
 
-                        {/* VAV Score Section */}
-                        <StyledCard extraStyles="flex bg-stars  flex-col items-center  w-[430px] bg-cover ">
-                            <h3 className="typography-h2">VAV SCORE</h3>
-                            <span className="marks text-font-primary">{score?.totalScore}</span>
-                            <p className="typography-large-p">Out of {getMaxScore()}</p>
-                        </StyledCard>
+                            {/* VAV Score Section */}
+                            <StyledCard extraStyles="flex bg-stars  flex-col items-center  w-[430px] bg-cover ">
+                                <h3 className="typography-h2">VAV SCORE</h3>
+                                <span className="marks text-font-primary">{score?.totalScore}</span>
+                                <p className="typography-large-p">Out of {getMaxScore()}</p>
+                            </StyledCard>
+                        </div>
+                    )
+                }
+
+                <RatingSelector
+                    anchorEl={ratingAnchor}
+                    onSelectRating={handleRateCandidate}
+                    setAnchorEl={() => setRatingAnchor(null)}
+                />
+
+                {/* Notes Editor Modal */}
+                <Modal
+                    open={openNotes}
+                    onClose={() => setOpenNotes(false)}
+                    onConfirm={handleAddNotes}
+                    customTitle={candidateData?.jobApplication?.notes?.content ? "Edit notes" : "Add Notes"}
+                    customMessage={`${candidateData?.jobApplication?.notes?.content ? "Edit" : "Add"} valuable insights and observations about  ${candidateData?.firstName + " " + candidateData?.lastName} here.`}
+                    customConfirmLabel={candidateData?.jobApplication?.notes?.content ? "Save" : "Add"}
+                    specifiedWidth={"max-w-xl"}
+                >
+                    <div className='mt-4'>
+                        <TextEditor htmlData={notes} loaded={false} placeholder={"Add Your Notes Here"} setEditorContent={(data) => setNotes(data)} />
                     </div>
-                )
-            }
+                </Modal>
 
-            {/* Conditional rendering of tabs for "Hiring Manager" */}
+                {/* Notes Display Modal */}
+                <Modal
+                    open={openNotesView}
+                    onClose={() => setOpenNotesView(false)}
+                    customTitle={"Notes"}
+                    customMessage={`Insights and observations about  ${candidateData?.firstName + " " + candidateData?.lastName}.`}
+                    noCancel={true}
+                    customConfirmLabel={"OK"}
+                >
+                    <div className='mt-4  overflow-y-scroll scrollbar-hide text-ellipsis max-h-[50vh] w-full'>
+                        <div className='mb-4 bg-background-40 p-4 rounded-xl'>
+                            <div className='flex justify-between items-center '>
+                                <h3 className='typography-body font-regular'>{candidateData?.jobApplication?.jobApplied}</h3>
+                                <p className='text-font-gray typography-large-p '>{new Date(candidateData?.jobApplication?.notes?.addedDate).toLocaleDateString("en-GB", {
+                                    day: "2-digit",
+                                    month: "long",
+                                    year: "numeric",
+                                })}</p>
+                            </div>
+                            <div className='text-font-gray p-1 w-full overflow-x-hidden overflow-y-scroll scrollbar-hide text-ellipsis whitespace-normal break-words' dangerouslySetInnerHTML={{ __html: candidateData?.jobApplication?.notes?.content }}></div>
+                        </div>
+                        {
+                           showMore && candidateData?.applications?.filter(app => (app?.notes?.content !== "" && app?.notes?.content !== undefined && app?.notes?.content !== null && app.jobId !== jobId))?.map(app => {
+                                return (
+                                    <div className='mb-4 bg-background-40 p-4 rounded-xl'>
+                                        <div className='flex justify-between items-center '>
+                                            <h3 className='typography-body font-regular'>{app?.jobApplied}</h3>
+                                            <p className='text-font-gray typography-large-p '>{new Date(app.notes?.addedDate).toLocaleDateString("en-GB", {
+                                                day: "2-digit",
+                                                month: "long",
+                                                year: "numeric",
+                                            })}</p>
+                                        </div>
+                                        <div className='text-font-gray p-1 w-full overflow-x-hidden overflow-y-scroll scrollbar-hide text-ellipsis whitespace-normal break-words' dangerouslySetInnerHTML={{ __html: app?.notes?.content }}></div>
+                                    </div>
+                                )
+                            })
+                        }
+                        {candidateData?.applications?.filter(app => (app?.notes?.content !== "" && app?.notes?.content !== undefined && app?.notes?.content !== null && app.jobId !== jobId))?.length > 0 && <p onClick={() => setShowMore(!showMore)} className='cursor-pointer typography-body text-font-gray text-start flex gap-1 items-center'>{showMore ?  <> <ChevronDown/> Hide </> :   <> <ChevronRight/> Show more </>}</p>}
+                    </div>
+                </Modal>
 
-            <div className="flex mt-4 mb-4">
-                <Tabs tabs={tabs} activeTab={activeTab} handleTabClick={handleTabClick} />
-            </div>
+                {/* Conditional rendering of tabs for "Hiring Manager" */}
 
-            {/* Content of the selected tab */}
-            {activeTab === 'application' && (
-                <div className='w-full my-8'>
-                    <ApplicationStaging
-                        candidateId={candidateId}
-                        jobId={jobId}
-                        jobStatus={data.jobApplication.jobStatus}
-                    />
+                <div className="flex mt-4 mb-4">
+                    <Tabs tabs={tabs} activeTab={activeTab} handleTabClick={handleTabClick} />
                 </div>
-                // <Staging currentStage={data.stage} candidateData={data} />
-            )}
-            {activeTab === 'candidateDetails'  && (
-                <CandidateTabDetail data={transformedData} />
-            )}
-        </div>
+
+                {/* Content of the selected tab */}
+                {activeTab === 'application' && (
+                    <div className='w-full my-8'>
+                        <ApplicationStaging
+                            candidateId={candidateId}
+                            jobId={jobId}
+                            jobStatus={data.jobApplication.jobStatus}
+                        />
+                    </div>
+                    // <Staging currentStage={data.stage} candidateData={data} />
+                )}
+                {activeTab === 'candidateDetails' && (
+                    <CandidateTabDetail data={transformedData} />
+                )}
+            </div>
         </div>
     );
 };
