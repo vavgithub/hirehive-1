@@ -245,6 +245,20 @@ const ViewCandidateProfile = () => {
         setResumeOpen(true)
     }
 
+    const handleWhatsappOpen = (name,phone) => {
+        const text = `Hi ${name}, \n\nWe are from VAV. Are you availabe to talk ? \n\n For more information log on to : https://www.hire.atvoid.com`
+        const message = encodeURIComponent(text);   
+        const url = `https://wa.me/${phone}?text=${message}`;
+        window.open(url, "_blank");
+    }
+
+    const handleEmailOpen = (name,email) => {
+        const subject = encodeURIComponent("Let's Connect!");
+        const body = encodeURIComponent(`Hi ${name},\n\nWe are from VAV. Are you available to talk? \n\n For more information log on to : https://www.hire.atvoid.com`);
+        const mailtoLink = `mailto:${email}?subject=${subject}&body=${body}`;
+    
+        window.open(mailtoLink, "_blank");
+    }
 
     return (
         <div className='w-full p-4'>
@@ -292,11 +306,15 @@ const ViewCandidateProfile = () => {
                                 {role !== "Design Reviewer" &&
                                 <div className="flex mb-3 gap-5">
                                     <div className="flex items-center gap-2">
-                                        <PhoneIcon />
+                                        <div className='cursor-pointer' onClick={() => handleWhatsappOpen(data.firstName + " " + data.lastName, data.phone)}>
+                                            <PhoneIcon />
+                                        </div>
                                         <span className="typography-large-p">{data.phone}</span>
                                     </div>
                                     <div className="flex items-center gap-2">
-                                        <EmailIcon />
+                                        <div className='cursor-pointer' onClick={() => handleEmailOpen(data.firstName + " " + data.lastName, data.email)}>
+                                            <EmailIcon />
+                                        </div>
                                         <span className="typography-large-p">{data.email}</span>
                                     </div>
                                 </div>}
