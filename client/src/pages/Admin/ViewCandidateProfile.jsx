@@ -26,6 +26,7 @@ import ResumeViewer from '../../components/utility/ResumeViewer';
 import CustomToolTip from '../../components/utility/CustomToolTip';
 import StyledCard from '../../components/ui/StyledCard';
 import { CustomDropdown } from '../../components/Form/FormFields';
+import { formatTime } from '../../utility/formatTime';
 
 
 
@@ -245,20 +246,35 @@ const ViewCandidateProfile = () => {
         setResumeOpen(true)
     }
 
-    const handleWhatsappOpen = (name,phone) => {
-        const text = `Hi ${name}, \n\nWe are from VAV. Are you availabe to talk ? \n\n For more information log on to : https://www.hire.atvoid.com`
+    const handleWhatsappOpen = (candidateName,phone) => {
+        const text = `Hi ${candidateName},\n\n` +
+            `Hope you're doing well.\n\n` +
+            `I'm ${user.name} from the Value at Void team. Can we schedule a call with you ? \n\n` +
+            `Please let me know if this works for you, and I’ll go ahead and schedule the call.\n\n` +
+            `Best regards,\nTeam VAV\n\n` +
+            `For more information, log on to: https://www.hire.atvoid.com`
         const message = encodeURIComponent(text);   
         const url = `https://wa.me/${phone}?text=${message}`;
         window.open(url, "_blank");
     }
 
-    const handleEmailOpen = (name,email) => {
-        const subject = encodeURIComponent("Let's Connect!");
-        const body = encodeURIComponent(`Hi ${name},\n\nWe are from VAV. Are you available to talk? \n\n For more information log on to : https://www.hire.atvoid.com`);
-        const mailtoLink = `mailto:${email}?subject=${subject}&body=${body}`;
+    const handleEmailOpen = (candidateName, email, designation, dateTime) => {
+        const subject = encodeURIComponent(`Application for the ${designation} Role – Value at Void`);
+        
+        const body = encodeURIComponent(
+            `Hi ${candidateName},\n\n` +
+            `Hope you're doing well.\n\n` +
+            `I'm ${user.name} from the Value at Void team. We’ve received your application for the ${designation} role and were really impressed with the portfolio and profile you shared.\n\n` +
+            `We’d love to schedule a 15-minute screening call with you on ${dateTime ?? new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}.\n\n` +
+            `Please let me know if this works for you, and I’ll go ahead and schedule the call.\n\n` +
+            `Best regards,\nTeam VAV\n\n` +
+            `For more information, log on to: https://www.hire.atvoid.com`
+        );
     
+        const mailtoLink = `mailto:${email}?subject=${subject}&body=${body}`;
         window.open(mailtoLink, "_blank");
-    }
+    };
+    
 
     return (
         <div className='w-full p-4'>
@@ -284,7 +300,6 @@ const ViewCandidateProfile = () => {
                     }
                 />
             {/* Candidate Profile Card */}
-
             {
                 (role === "Hiring Manager" || role === "Design Reviewer") && (
                     <div className="flex gap-3">
@@ -312,7 +327,7 @@ const ViewCandidateProfile = () => {
                                         <span className="typography-large-p">{data.phone}</span>
                                     </div>
                                     <div className="flex items-center gap-2">
-                                        <div className='cursor-pointer' onClick={() => handleEmailOpen(data.firstName + " " + data.lastName, data.email)}>
+                                        <div className='cursor-pointer' onClick={() => handleEmailOpen(data.firstName + " " + data.lastName, data.email,data.jobApplication.jobApplied,new Date(data.jobApplication.stageStatuses['Screening'].currentCall.scheduledDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) + " " + formatTime(data.jobApplication.stageStatuses['Screening'].currentCall.scheduledTime))}>
                                             <EmailIcon />
                                         </div>
                                         <span className="typography-large-p">{data.email}</span>
