@@ -220,7 +220,7 @@ const CandidateLayout = () => {
           md:w-48 w-64 h-screen
           bg-background-100 text-font-gray
           flex flex-col justify-between py-4
-        `}
+          `}
         style={{ position: 'fixed' }}
       >
         <div className="flex flex-col gap-5 typography-body">
@@ -264,11 +264,12 @@ const CandidateLayout = () => {
       <div className="mt-[4.6rem] md:mt-0 md:ml-[12rem] md:w-[calc(100vw-12rem)] flex flex-col items-center min-h-screen ">
         {/* {isAssessmentBannerVisible &&  <AssessmentBanner />} */}
         <Outlet />
+        {/* <ContactUs /> */}
       </div>
       {/* <div className="md:ml-[192px] flex-1 p-4 md:p-6">
 
-        <Outlet />
-      </div> */}
+<Outlet />
+</div> */}
 
       {/* Overlay for mobile */}
       {isMenuOpen && (
@@ -278,7 +279,6 @@ const CandidateLayout = () => {
         ></div>
       )}
 
-      <ContactUs />
     </div>
   );
 };

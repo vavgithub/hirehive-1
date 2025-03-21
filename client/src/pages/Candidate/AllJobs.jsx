@@ -15,41 +15,42 @@ import useCandidateAuth from '../../hooks/useCandidateAuth';
 import StyledCard from '../../components/ui/StyledCard';
 import Pagination from '../../components/utility/Pagination';
 import useDebounce from '../../hooks/useDebounce';
+import ContactUs from '../../components/Form/ContactUs';
 
 const fetchOpenJobs = (page) => axios.get(`/candidates/jobs/open?page=${page}`).then(res => res.data);
-const searchJobs = (query,page) => axios.get(`/candidates/jobs/searchJobs?jobTitle=${encodeURIComponent(query)}&page=${page}`).then(res => res.data);
-const filterJobs = (filters,page) => axios.post('/candidates/filterJobs', { filters ,page}).then(res => res.data);
-const filterSearchJobs = (query,filters,page) => axios.post('/candidates/filterSearchJobs', { filters , page , query }).then(res => res.data);
+const searchJobs = (query, page) => axios.get(`/candidates/jobs/searchJobs?jobTitle=${encodeURIComponent(query)}&page=${page}`).then(res => res.data);
+const filterJobs = (filters, page) => axios.post('/candidates/filterJobs', { filters, page }).then(res => res.data);
+const filterSearchJobs = (query, filters, page) => axios.post('/candidates/filterSearchJobs', { filters, page, query }).then(res => res.data);
 
 
 const AllJobs = () => {
     const navigate = useNavigate();
 
     const [isFilterVisible, setIsFilterVisible] = useState(false);
-    const { candidateData , hasGivenAssessment , isDone} = useCandidateAuth()
+    const { candidateData, hasGivenAssessment, isDone } = useCandidateAuth()
 
     const toggleFilters = () => {
         setIsFilterVisible(!isFilterVisible);
     };
 
     const [isAssessmentBannerVisible, setIsAssessmentBannerVisible] =
-        useState(false); 
-    
-      // Update visibility states when component mounts and when candidateData updates
-      useEffect(() => {
-        if (isDone && candidateData) {
-          setIsAssessmentBannerVisible(!hasGivenAssessment);
-        }
-      }, [hasGivenAssessment, isDone]);
-    
-      // Add cleanup on unmount
-      useEffect(() => {
-        return () => {
-          setIsAssessmentBannerVisible(false);
-        };
-      }, []); 
+        useState(false);
 
-    const [page,setPage] = useState(1);
+    // Update visibility states when component mounts and when candidateData updates
+    useEffect(() => {
+        if (isDone && candidateData) {
+            setIsAssessmentBannerVisible(!hasGivenAssessment);
+        }
+    }, [hasGivenAssessment, isDone]);
+
+    // Add cleanup on unmount
+    useEffect(() => {
+        return () => {
+            setIsAssessmentBannerVisible(false);
+        };
+    }, []);
+
+    const [page, setPage] = useState(1);
     const PAGE_LIMIT = 3;
 
     const [searchQuery, setSearchQuery] = useState('');
@@ -64,11 +65,11 @@ const AllJobs = () => {
     const [debouncedQuery] = useDebounce(searchQuery);
 
     //For resetting page on each result change
-    useEffect(()=>{
+    useEffect(() => {
         setPage(1);
-    },[debouncedQuery,filters])
+    }, [debouncedQuery, filters])
 
-    const { data: jobData , isLoading : isJobsLoading} = useQuery({ queryKey: ['jobs',page], queryFn: ()=>fetchOpenJobs(page) })
+    const { data: jobData, isLoading: isJobsLoading } = useQuery({ queryKey: ['jobs', page], queryFn: () => fetchOpenJobs(page) })
 
 
     // const { data: filteredData , isLoading: isFilteredJobsLoading} = useQuery({
@@ -85,9 +86,9 @@ const AllJobs = () => {
     //     enabled: debouncedQuery !== '',
     // });
 
-    const { data: filteredData , isLoading: isFilteredJobsLoading} = useQuery({
-        queryKey: ['filteredSearchJobs',debouncedQuery, filters,page],
-        queryFn: () => filterSearchJobs(debouncedQuery,filters,page),
+    const { data: filteredData, isLoading: isFilteredJobsLoading } = useQuery({
+        queryKey: ['filteredSearchJobs', debouncedQuery, filters, page],
+        queryFn: () => filterSearchJobs(debouncedQuery, filters, page),
         enabled: Object.values(filters).some(filter =>
             Array.isArray(filter) ? filter.length > 0 : Object.values(filter).some(val => val !== '') || debouncedQuery !== ''
         ),
@@ -129,7 +130,7 @@ const AllJobs = () => {
     };
 
     const handleAction = () => {
-    return
+        return
     };
 
     const handleViewJob = (jobId) => {
@@ -159,103 +160,95 @@ const AllJobs = () => {
     // const displayJobs = debouncedQuery.length > 0 ? searchResults?.searchJobs :
     //     (isFiltered ? filteredData?.filteredJobs : jobData?.activeJobs);
 
-    const displayJobs = ( debouncedQuery.length > 0 || isFiltered)? filteredData?.filteredSearchJobs : jobData?.activeJobs;
+    const displayJobs = (debouncedQuery.length > 0 || isFiltered) ? filteredData?.filteredSearchJobs : jobData?.activeJobs;
 
     return (
         <div className='w-full p-4'>
-        <div className='container '>
-            <div className='flex items-center justify-between'>
-                <h1 className='typography-h1'>All Jobs</h1>
-            </div>
-            {isAssessmentBannerVisible &&  <AssessmentBanner />}
-               <div className='md:hidden flex items-center justify-between mt-1 mb-4'>
-               <div className='relative w-[86%] sm:w-[90%]'>
+            <div className='container '>
+                <div className='flex items-center justify-between'>
+                    <h1 className='typography-h1'>All Jobs</h1>
+                </div>
+                {isAssessmentBannerVisible && <AssessmentBanner />}
+                <div className='md:hidden flex items-center justify-between mt-1 mb-4'>
+                    <div className='relative w-[86%] sm:w-[90%]'>
                         <div className='absolute top-[10px] left-4'>
                             <SearchIcon />
                         </div>
-                        <input style={{paddingLeft : "48px"}} type='text' placeholder="Enter job title" value={searchQuery}
+                        <input style={{ paddingLeft: "48px" }} type='text' placeholder="Enter job title" value={searchQuery}
                             onChange={handleSearch} />
                     </div>
-               <div
-                    className={`md:hidden ${isFilterVisible ? "bg-background-100" : "bg-background-40"} transition-colors duration-200 flex items-center gap-2 p-2 rounded-xl`}
-                    onClick={toggleFilters}
-                >
-                    
-                    <Filter />
+                    <div
+                        className={`md:hidden ${isFilterVisible ? "bg-background-100" : "bg-background-40"} transition-colors duration-200 flex items-center gap-2 p-2 rounded-xl`}
+                        onClick={toggleFilters}
+                    >
+
+                        <Filter />
+                    </div>
                 </div>
-               </div>
 
-            {/* Mobile filter toggle button */}
 
-            {/* <button
-                className="md:hidden mb-4 flex items-center gap-2 bg-background-60 p-2 rounded-lg"
-                onClick={toggleFilters}
-                {isFilterVisible ? 'Hide Filters' : 'Show Filters'}
-            >
-                <FaUser size={20} />
-
-            </button> */}
-
-            <StyledCard padding={2} backgroundColor={"bg-background-30 "} extraStyles={'flex flex-col md:flex-row gap-4 '}>
-                {/* Search and Filters */}
-                <div className={`${isFilterVisible ? 'block' : 'hidden'} md:block`}>
-                    <div className='hidden md:block  mb-4 relative '>
-                        <div className='absolute top-[10px] left-4'>
-                            <SearchIcon />
+                <StyledCard padding={2} backgroundColor={"bg-background-30 "} extraStyles={'flex flex-col md:flex-row gap-4 '}>
+                    {/* Search and Filters */}
+                    <div className={`${isFilterVisible ? 'block' : 'hidden'} md:block`}>
+                        <div className='hidden md:block  mb-4 relative '>
+                            <div className='absolute top-[10px] left-4'>
+                                <SearchIcon />
+                            </div>
+                            <input style={{ paddingLeft: "48px" }} type='text' placeholder="Enter job title" value={searchQuery}
+                                onChange={handleSearch} />
                         </div>
-                        <input style={{paddingLeft : "48px"}} type='text' placeholder="Enter job title" value={searchQuery}
-                            onChange={handleSearch} />
+                        <Filters
+                            filters={filters}
+                            handleCheckboxChange={handleCheckboxChange}
+                            handleExperienceFilter={handleExperienceFilter}
+                            handleBudgetFilter={handleBudgetFilter}  // Add this
+                            clearAllFilters={clearAllFilters}
+                        />
                     </div>
-                    <Filters
-                        filters={filters}
-                        handleCheckboxChange={handleCheckboxChange}
-                        handleExperienceFilter={handleExperienceFilter}
-                        handleBudgetFilter={handleBudgetFilter}  // Add this
-                        clearAllFilters={clearAllFilters}
-                    />
-                </div>
 
-                {/* Job listings */}
-                <div className='flex flex-col gap-4 w-full md:w-fill-available'>
-                    {isLoadingResults ? (
+                    {/* Job listings */}
+                    <div className='flex flex-col gap-4 w-full md:w-fill-available'>
+                        {isLoadingResults ? (
                             <div className="flex justify-center items-center min-h-full">
                                 <Loader />
                             </div>
                         ) :
-                    displayJobs?.length === 0 ? 
-                    <div className='bg-background-80 h-full flex flex-col p-40 justify-center items-center rounded-xl'>
-                        <img src={NoJobs} alt="No jobs found" />
-                        <span className='typography-body m-6'>
-                            No Jobs available
-                        </span>
-                    </div> :
-                    displayJobs?.map((job) => { 
-                        return(
-                        <JobCard
-                            isCandidate={true}
-                            key={job._id}
-                            job={job}
-                            status={open}
-                            isApplied={candidateData?.jobApplications.some(app=>app.jobId === job._id)}
-                            withKebab={false}
-                            handleAction={handleAction}
-                            onClick={() => handleViewJob(job._id)}
+                            displayJobs?.length === 0 ?
+                                <div className='bg-background-80 h-full flex flex-col p-40 justify-center items-center rounded-xl'>
+                                    <img src={NoJobs} alt="No jobs found" />
+                                    <span className='typography-body m-6'>
+                                        No Jobs available
+                                    </span>
+                                </div> :
+                                displayJobs?.map((job) => {
+                                    return (
+                                        <JobCard
+                                            isCandidate={true}
+                                            key={job._id}
+                                            job={job}
+                                            status={open}
+                                            isApplied={candidateData?.jobApplications.some(app => app.jobId === job._id)}
+                                            withKebab={false}
+                                            handleAction={handleAction}
+                                            onClick={() => handleViewJob(job._id)}
+                                        />
+                                    )
+                                })}
+                        <Pagination
+                            currentPage={page}
+                            setCurrentPage={setPage}
+                            pageLimit={PAGE_LIMIT}
+                            totalItems={
+                                // debouncedQuery.length > 0 ? searchResults?.searchJobsCount :
+                                // isFiltered ? filteredData?.filteredJobsCount : jobData?.totalOpenJobs
+                                (debouncedQuery.length > 0 || isFiltered) ? filteredData?.filteredSearchJobsCount : jobData?.totalOpenJobs
+                            }
                         />
-                    )})}
-                    <Pagination 
-                    currentPage={page} 
-                    setCurrentPage={setPage} 
-                    pageLimit={PAGE_LIMIT} 
-                    totalItems={
-                        // debouncedQuery.length > 0 ? searchResults?.searchJobsCount :
-                        // isFiltered ? filteredData?.filteredJobsCount : jobData?.totalOpenJobs
-                        (debouncedQuery.length > 0 || isFiltered) ? filteredData?.filteredSearchJobsCount : jobData?.totalOpenJobs
-                    }
-                    />
-                </div>
-            </StyledCard>
+                        <ContactUs />
+                    </div>
+                </StyledCard>
+            </div>
         </div>
-    </div>
     )
 }
 

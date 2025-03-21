@@ -21,33 +21,33 @@ const getJobById = async (id) => {
 const ViewJob = () => {
     const { id: mainId } = useParams();
     const navigate = useNavigate();
-    
+
     const { isAuthenticated, isLoading, candidateData } = useCandidateAuth()
-  
+
     const {
-      data: formData,
-      error,
-      isLoading : isApiLoading,
-      isError
+        data: formData,
+        error,
+        isLoading: isApiLoading,
+        isError
     } = useQuery({
-      queryKey: ['viewJob', mainId],
-      queryFn: () => getJobById(mainId),
-      enabled: !!mainId,
+        queryKey: ['viewJob', mainId],
+        queryFn: () => getJobById(mainId),
+        enabled: !!mainId,
     });
-  
+
     if (isApiLoading || isLoading) {
-      return (
-        <div className="flex justify-center items-center min-h-screen">
-          <Loader />
-        </div>
-      );
+        return (
+            <div className="flex justify-center items-center min-h-screen">
+                <Loader />
+            </div>
+        );
     }
-  
+
     const hasApplied = isAuthenticated && candidateData && candidateData.jobApplications
-      ? candidateData.jobApplications.some(application => 
-          application.jobId.toString() === mainId
+        ? candidateData.jobApplications.some(application =>
+            application.jobId.toString() === mainId
         )
-      : false;
+        : false;
 
     const handleApplyClick = async () => {
         try {
@@ -73,32 +73,32 @@ const ViewJob = () => {
                     <div className="flex flex-col lg:flex-row justify-between w-full">
                         {/* Job Title */}
                         <Header HeaderText={formData.jobTitle} withBack="true"
-                        rightContent={
-                        <div className="hidden lg:flex justify-end">
-                            {!hasApplied ?
-                            (
-                                <Button variant="primary" onClick={handleApplyClick} iconPosition="right" icon={ArrowIcon}  >
-                                    Apply Job
-                                </Button>
-                            ) : 
-                            (
-                            <span className="bg-blue-300 text-blue-100 typography-body px-12 py-2 h-11 flex items-center rounded-xl">
-                                Applied
-                            </span>
-                            ) 
-                            }
-                        </div>}
+                            rightContent={
+                                <div className="hidden lg:flex justify-end">
+                                    {!hasApplied ?
+                                        (
+                                            <Button variant="primary" onClick={handleApplyClick} iconPosition="right" icon={ArrowIcon}  >
+                                                Apply Job
+                                            </Button>
+                                        ) :
+                                        (
+                                            <span className="bg-blue-300 text-blue-100 typography-body px-12 py-2 h-11 flex items-center rounded-xl">
+                                                Applied
+                                            </span>
+                                        )
+                                    }
+                                </div>}
                         />
                         {/* <h1 className="typography-h1"></h1> */}
                         {/* Button only visible on large screens */}
 
                     </div>
-            
+
                     {/* Job Description and Skills */}
                     <div className="flex flex-col-reverse md:flex md:flex-row md:justify-between mt-4">
                         {/* Left section: Job description and skills */}
                         <div className="md:w-3/4">
-                        <h3 className='typography-h3'>Job Description</h3>
+                            <h3 className='typography-h3'>Job Description</h3>
                             <div
                                 className="text-font-gray font-outfit"
                                 dangerouslySetInnerHTML={{ __html: formatDescription(formData.jobDescription) }}
@@ -107,13 +107,17 @@ const ViewJob = () => {
                             {/* Skills section */}
                             <div>
                                 <h4 className="typography-h4 font-bold font-outfit mt-6 mb-3">Skills</h4>
-                                <div className="flex flex-wrap gap-3">
+                                <div className="flex flex-wrap gap-3 mb-6">
                                     {formData.skills && formData.skills.map((skill, index) => (
                                         <span key={index} className="flex font-outfit justify-center w-fit bg-background-70 px-6 py-2 rounded-full">
                                             {skill}
                                         </span>
                                     ))}
                                 </div>
+                            </div>
+                            <div className='hidden lg:block'>
+
+                                <ContactUs />
                             </div>
                         </div>
 
@@ -126,15 +130,15 @@ const ViewJob = () => {
                     {/* Apply Button on mobile version (appears at the bottom of the page) */}
                     <div className="lg:hidden mt-8">
                         {!hasApplied &&
-                         (
-                            <Button variant="primary" className="w-full " onClick={handleApplyClick} iconPosition="right" icon={ArrowIcon} >
-                                Apply Job
-                            </Button>
-                        )}
+                            (
+                                <Button variant="primary" className="w-full mb-4" onClick={handleApplyClick} iconPosition="right" icon={ArrowIcon} >
+                                    Apply Job
+                                </Button>
+                            )}
+                        <ContactUs />
                     </div>
                 </StyledCard>
             </div>
-            <ContactUs/>
         </div>
     );
 };

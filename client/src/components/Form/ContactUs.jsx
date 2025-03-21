@@ -22,10 +22,10 @@ const ContactUs = () => {
   const [isSuccess, setIsSuccess] = useState(false);
 
   // React Hook Form setup
-  const { 
-    register, 
-    handleSubmit: handleFormSubmit, 
-    formState: { errors, isValid }, 
+  const {
+    register,
+    handleSubmit: handleFormSubmit,
+    formState: { errors, isValid },
     reset,
     watch
   } = useForm({
@@ -43,7 +43,7 @@ const ContactUs = () => {
   const toggleModal = () => {
     // Only close modal if not in loader display mode
     if (showLoader && !isSuccess) return;
-    
+
     setIsOpen(!isOpen);
     if (!isOpen) {
       // Reset form when opening
@@ -54,19 +54,19 @@ const ContactUs = () => {
       setIsSuccess(false);
     }
   };
-  
+
   // File upload handling with react-dropzone
   const onDrop = useCallback(acceptedFiles => {
     if (acceptedFiles.length > 0) {
       const file = acceptedFiles[0];
       setScreenshotFile(file);
-      
+
       // Reset upload progress when a new file is selected
       setUploadProgress(0);
     }
   }, []);
-  
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({ 
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: {
       'image/*': ['.png', '.jpg', '.jpeg', '.gif', '.bmp'],
@@ -75,7 +75,7 @@ const ContactUs = () => {
     maxSize: 5 * 1024 * 1024, // 5MB limit
     maxFiles: 1
   });
-  
+
   // Upload screenshot to Cloudinary
   const uploadScreenshot = async (file) => {
     try {
@@ -116,21 +116,21 @@ const ContactUs = () => {
     try {
       // Build URL with form data as query parameters
       const url = `${GOOGLE_SCRIPT_URL}?name=${encodeURIComponent(data.name)}&email=${encodeURIComponent(data.email)}&message=${encodeURIComponent(data.message)}&screenshotUrl=${encodeURIComponent(data.screenshotUrl || '')}&timestamp=${encodeURIComponent(data.timestamp)}`;
-      
+
       // console.log("Submitting to URL:", url);
-      
+
       // Use no-cors mode since Google Script returns CORS errors
       await fetch(url, {
         method: 'GET',
         mode: 'no-cors',
         cache: 'no-cache',
       });
-      
+
       // Store submission in localStorage as backup
       const storedSubmissions = JSON.parse(localStorage.getItem('contactFormSubmissions') || '[]');
       storedSubmissions.push(data);
       localStorage.setItem('contactFormSubmissions', JSON.stringify(storedSubmissions));
-      
+
       return true;
     } catch (error) {
       console.error('Error submitting to Google Sheets:', error);
@@ -141,17 +141,17 @@ const ContactUs = () => {
   const onSubmit = async (formData) => {
     setIsSubmitting(true);
     setShowLoader(true); // Show the loader animation
-    
+
     try {
       let screenshotUrl = null;
-      
+
       // Upload screenshot to Cloudinary if a file was selected
       if (screenshotFile) {
         console.log("Uploading screenshot to Cloudinary...");
         screenshotUrl = await uploadScreenshot(screenshotFile);
         console.log("Screenshot uploaded successfully:", screenshotUrl);
       }
-      
+
       // Prepare data for Google Sheets
       const contactFormData = {
         name: formData.name,
@@ -160,21 +160,21 @@ const ContactUs = () => {
         screenshotUrl: screenshotUrl || '',
         timestamp: new Date().toISOString()
       };
-      
+
       console.log("Submitting form data:", contactFormData);
-      
+
       // Submit to Google Sheets
       await submitToGoogleSheets(contactFormData);
-      
+
       // Display success state
       setIsSuccess(true);
       showSuccessToast('Success', 'Your message has been sent successfully!');
-      
+
       // Close modal after showing loader for 2 seconds
       setTimeout(() => {
         toggleModal();
       }, 2000);
-      
+
       return true;
     } catch (error) {
       console.error("Form submission error:", error);
@@ -187,11 +187,11 @@ const ContactUs = () => {
   };
 
   // Check if the form is valid for enabling/disabling the submit button
-  const isFormValid = isValid && 
-                     formValues.name && 
-                     formValues.email && 
-                     formValues.message && 
-                     formValues.message.length >= 10;
+  const isFormValid = isValid &&
+    formValues.name &&
+    formValues.email &&
+    formValues.message &&
+    formValues.message.length >= 10;
 
   // Render the form or loader based on submission state
   const renderContent = () => {
@@ -206,16 +206,15 @@ const ContactUs = () => {
             id="name"
             type="text"
             placeholder="Enter your name"
-            className={`w-full p-2 bg-background-40 rounded outline-none focus:outline-teal-300 ${
-              errors.name ? '!border !border-red-500' : 'border border-transparent'
-            }`}
+            className={`w-full p-2 bg-background-40 rounded outline-none focus:outline-teal-300 ${errors.name ? '!border !border-red-500' : 'border border-transparent'
+              }`}
             {...register("name", { required: "Name is required" })}
           />
           {errors.name && (
             <span className="text-red-500 typography-small-p">{errors.name.message}</span>
           )}
         </div>
-        
+
         <div className="flex flex-col gap-2">
           <label htmlFor="email" className="typography-body">
             Email <span className="text-red-100">*</span>
@@ -224,10 +223,9 @@ const ContactUs = () => {
             id="email"
             type="email"
             placeholder="Enter your email"
-            className={`w-full p-2 bg-background-40 rounded outline-none focus:outline-teal-300 ${
-              errors.email ? '!border !border-red-500' : 'border border-transparent'
-            }`}
-            {...register("email", { 
+            className={`w-full p-2 bg-background-40 rounded outline-none focus:outline-teal-300 ${errors.email ? '!border !border-red-500' : 'border border-transparent'
+              }`}
+            {...register("email", {
               required: "Email is required",
               pattern: {
                 value: /\S+@\S+\.\S+/,
@@ -239,7 +237,7 @@ const ContactUs = () => {
             <span className="text-red-500 typography-small-p">{errors.email.message}</span>
           )}
         </div>
-        
+
         <div className="flex flex-col gap-2">
           <label htmlFor="message" className="typography-body">
             Message <span className="text-red-100">*</span>
@@ -248,10 +246,9 @@ const ContactUs = () => {
             id="message"
             rows={4}
             placeholder="How can we help you?"
-            className={` px-4 pt-2 bg-background-40  hover:bg-background-60 cursor-pointer  rounded-xl placeholder:text-font-gray placeholder:font-body  focus:ring-teal-400 focus:outline-teal-500 outline-none typography-body w-full ${
-              errors.message ? '!border !border-red-500' : 'border border-transparent'
-            }`}
-            {...register("message", { 
+            className={` px-4 pt-2 bg-background-40  hover:bg-background-60 cursor-pointer  rounded-xl placeholder:text-font-gray placeholder:font-body  focus:ring-teal-400 focus:outline-teal-500 outline-none typography-body w-full ${errors.message ? '!border !border-red-500' : 'border border-transparent'
+              }`}
+            {...register("message", {
               required: "Message is required",
               minLength: {
                 value: 10,
@@ -263,7 +260,7 @@ const ContactUs = () => {
             <span className="text-red-500 typography-small-p">{errors.message.message}</span>
           )}
         </div>
-        
+
         {/* Screenshot Upload Section */}
         <div className="mt-6">
           <label className="typography-body">Screenshot (Optional)</label>
@@ -320,31 +317,42 @@ const ContactUs = () => {
   return (
     <>
       {/* Floating Button */}
-      {isSubmitting &&  
+      {isSubmitting &&
         <div className="flex fixed top-0 left-0 h-screen w-screen z-[100] flex-col items-center justify-center py-4 bg-background-overlay">
           <StyledCard>
-          <Loader loop={!isSuccess} autoplay={true} />
-          <p className="text-center mt-4 typography-body text-font-gray flex items-center justify-center">
-            Sending your message<span className=' animated-dots '>...</span>
-          </p>
+            <Loader loop={!isSuccess} autoplay={true} />
+            <p className="text-center mt-4 typography-body text-font-gray flex items-center justify-center">
+              Sending your message<span className=' animated-dots '>...</span>
+            </p>
           </StyledCard>
         </div>
       }
 
 
-      <button
+      <StyledCard
         onClick={toggleModal}
-        className="fixed bottom-6 right-6 z-40 w-14 h-14 rounded-xl bg-background-70 hover:text-accent-100 text-white shadow-lg flex items-center justify-center transition-all duration-300 hover:scale-105"
-        aria-label="Contact Us"
-        >
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
-        </svg>
-      </button>
+        extraStyles={`py-4 cursor-pointer hover:bg-background-60`}
 
-      
-    
-      
+      >
+        <p className='typography-body mb-2'>Need Help?</p>
+        <div className='flex items-center gap-2'>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g clip-path="url(#clip0_6602_234551)">
+              <path d="M14.6689 11.2827V13.2827C14.6697 13.4683 14.6316 13.6521 14.5572 13.8222C14.4829 13.9924 14.3738 14.1451 14.237 14.2706C14.1001 14.3961 13.9386 14.4917 13.7627 14.5511C13.5869 14.6106 13.4005 14.6327 13.2156 14.616C11.1641 14.3931 9.19357 13.6921 7.46223 12.5693C5.85145 11.5458 4.48579 10.1801 3.46223 8.56934C2.33555 6.83014 1.6344 4.85 1.41557 2.78934C1.39891 2.60498 1.42082 2.41918 1.4799 2.24375C1.53898 2.06833 1.63395 1.90713 1.75874 1.77042C1.88354 1.6337 2.03544 1.52448 2.20476 1.44968C2.37409 1.37489 2.55713 1.33618 2.74223 1.336H4.74223C5.06577 1.33282 5.37943 1.44739 5.62474 1.65836C5.87006 1.86933 6.03029 2.1623 6.07557 2.48267C6.15998 3.12271 6.31653 3.75115 6.54223 4.356C6.63193 4.59462 6.65134 4.85395 6.59817 5.10326C6.545 5.35257 6.42148 5.58141 6.24223 5.76267L5.39557 6.60934C6.3446 8.27837 7.72654 9.6603 9.39557 10.6093L10.2422 9.76267C10.4235 9.58343 10.6523 9.4599 10.9016 9.40673C11.151 9.35356 11.4103 9.37297 11.6489 9.46267C12.2537 9.68837 12.8822 9.84492 13.5222 9.92934C13.8461 9.97502 14.1418 10.1381 14.3533 10.3877C14.5647 10.6372 14.677 10.9557 14.6689 11.2827Z" stroke="#045FFD" stroke-linecap="round" stroke-linejoin="round" />
+            </g>
+            <defs>
+              <clipPath id="clip0_6602_234551">
+                <rect width="16" height="16" fill="white" />
+              </clipPath>
+            </defs>
+          </svg>
+          <p className='typography-small-p text-primary-100' >Connect with support team</p>
+        </div>
+      </StyledCard>
+
+
+
+
       {/* Modal for Contact Form */}
       <Modal
         open={isOpen}
