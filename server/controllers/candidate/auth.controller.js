@@ -122,6 +122,21 @@ export const registerCandidate = async (req, res) => {
     // Check for existing email and phone separately
     const existingEmail = await Candidate.findOne({ email });
     const existingPhone = await Candidate.findOne({ phone });
+
+    if(existingEmail && existingPhone && (existingEmail._id.toString() !== existingPhone._id.toString())){
+      if(existingEmail?.currentStage === 'DONE'){
+        return res.status(400).json({ 
+          message: "Account already exists. Please login to continue.",
+          field: "email"
+        });
+      }
+      if(existingPhone?.currentStage === 'DONE'){
+        return res.status(400).json({ 
+          message: "Account already exists with this phone number",
+          field: "phone"
+        });
+      }
+    }
     
     if (existingEmail && existingEmail?.currentStage === 'DONE') {
       return res.status(400).json({ 
