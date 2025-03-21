@@ -94,7 +94,7 @@ const MyJobs = () => {
       <div className='container '>
         <h1 className="typography-h1">My Jobs</h1>
         {isAssessmentBannerVisible && <AssessmentBanner />}
-        <StyledCard padding={2} backgroundColor={"bg-background-30"}>
+        <StyledCard padding={2} backgroundColor={"bg-background-30 lg:pb-16 "}>
           {appliedJobs?.jobApplications?.length > 0 ? (
             <ul className='flex flex-col gap-4'>
               {appliedJobs?.jobApplications?.map((application, index) => (

@@ -187,7 +187,7 @@ const AllJobs = () => {
                 </div>
 
 
-                <StyledCard padding={2} backgroundColor={"bg-background-30 "} extraStyles={'flex flex-col md:flex-row gap-4 '}>
+                <StyledCard padding={2} backgroundColor={"bg-background-30 "} extraStyles={'flex flex-col md:flex-row gap-4 lg:pb-8 '}>
                     {/* Search and Filters */}
                     <div className={`${isFilterVisible ? 'block' : 'hidden'} md:block`}>
                         <div className='hidden md:block  mb-4 relative '>
