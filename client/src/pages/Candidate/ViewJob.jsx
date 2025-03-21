@@ -115,10 +115,6 @@ const ViewJob = () => {
                                     ))}
                                 </div>
                             </div>
-                            <div className='hidden lg:block'>
-
-                                <ContactUs />
-                            </div>
                         </div>
 
                         {/* Right section: SideCard */}
@@ -135,9 +131,11 @@ const ViewJob = () => {
                                     Apply Job
                                 </Button>
                             )}
-                        <ContactUs />
                     </div>
                 </StyledCard>
+                <div className='w-full mt-4'>
+                    <ContactUs />
+                </div>
             </div>
         </div>
     );

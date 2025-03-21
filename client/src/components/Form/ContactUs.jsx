@@ -331,8 +331,8 @@ const ContactUs = () => {
 
       <StyledCard
         onClick={toggleModal}
-        extraStyles={`py-4 cursor-pointer hover:bg-background-60`}
-
+        extraStyles={` cursor-pointer hover:bg-background-60`}
+        padding={2}
       >
         <p className='typography-body mb-2'>Need Help?</p>
         <div className='flex items-center gap-2'>
