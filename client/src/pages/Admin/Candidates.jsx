@@ -25,7 +25,7 @@ const Candidates = () => {
     queryFn: () => axios.get('/admin/candidate/getData/data/allCandidatesWithStats').then(res => res.data),
   });
 
-  console.log("what is this ?" , data);
+  // console.log("what is this ?" , data);
 
   // 1. Disable browser auto scroll restoration
   useEffect(() => {
@@ -47,8 +47,14 @@ const Candidates = () => {
     }
   }, [isLoading, isError]);
 
+  const candidateStats = {
+    monthly : `${data?.stats?.statistics?.total?.monthly ?? 0}% since last month`,
+    weekly : `${data?.stats?.statistics?.total?.weekly ?? 0}% since last week`,
+    yesterday : `${data?.stats?.statistics?.total?.yesterday ?? 0}% since yesterday`,
+}
+
   const statsOne = [
-    { title: 'Total', value: data?.stats?.Total || 0, icon: Total },
+    { title: 'Total', value: data?.stats?.Total || 0, icon: Total , statistics : candidateStats},
     { title: 'Portfolio', value: data?.stats?.Portfolio || 0, icon: Portfolio },
     { title: 'Screening', value: data?.stats?.Screening || 0, icon: Screening },
     { title: 'Design Task', value: data?.stats?.['Design Task'] || 0, icon: DesignTask },

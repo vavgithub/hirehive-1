@@ -6,6 +6,7 @@ import { uploadToCloudinary } from '../../utils/cloudinary.js';
 import { promises as fs } from 'fs';
 import path from 'path';
 import { sanitizeLexicalHtml } from "../../utils/sanitize-html.js";
+import { getPreviousMonthRange, getPreviousWeekRange, getYesterdayTodayRange } from "../../utils/dateRanges.js";
 
 
 // controllers/candidate.controller.js
@@ -96,7 +97,7 @@ export const getAllCandidatesForJob = async (req, res) => {
       };
     });
 
-    console.log("this is backend", formattedCandidates);
+    // console.log("this is backend", formattedCandidates);
 
     res.status(200).json({
       candidates: formattedCandidates,
@@ -509,6 +510,76 @@ export const getCandidateJobs = async (req,res) => {
           $sort: { applicationDate: -1 }
         }
       ]);
+
+      //MONTHLY
+      const { firstDayPreviousMonth, lastDayPreviousMonth, firstDayCurrentMonth } = getPreviousMonthRange();
+      const { firstDayPreviousWeek, lastDayPreviousWeek, firstDayCurrentWeek } = getPreviousWeekRange();
+      const { startOfYesterday, endOfYesterday, startOfToday } = getYesterdayTodayRange();
+
+      // Query to count jobs created in the current month
+      const currentMonthJobs = await candidates.countDocuments({
+        isVerified : true,
+        createdAt: { $gte: firstDayCurrentMonth }
+      });
+
+      // Query to count candidates created in the previous month
+      const previousMonthJobs = await candidates.countDocuments({
+        isVerified : true,
+        createdAt: { $gte: firstDayPreviousMonth, $lte: lastDayPreviousMonth }
+      });
+
+      // Calculate the percentage change
+      let monthlyPercentageChange = 0;
+      // Monthly Percentage Change
+      if (previousMonthJobs === 0) {
+        monthlyPercentageChange = currentMonthJobs * 100;
+      } else {
+        monthlyPercentageChange = ((currentMonthJobs - previousMonthJobs) / previousMonthJobs) * 100;
+      }
+
+      //WEEKLY
+      // Query to count candidates created in the current week
+      const currentWeekJobs = await candidates.countDocuments({
+        isVerified : true,
+        createdAt: { $gte: firstDayCurrentWeek }
+      });
+
+      // Query to count candidates created in the previous week
+      const previousWeekJobs = await candidates.countDocuments({
+        isVerified : true,
+        createdAt: { $gte: firstDayPreviousWeek, $lte: lastDayPreviousWeek }
+      });
+
+      // Calculate the percentage change
+      let weeklyPercentageChange = 0;
+      // Weekly Percentage Change
+      if (previousWeekJobs === 0) {
+        weeklyPercentageChange = currentWeekJobs * 100;
+      } else {
+        weeklyPercentageChange = ((currentWeekJobs - previousWeekJobs) / previousWeekJobs) * 100;
+      }
+
+      //YESTERDAYS
+      // Query to count candidates created today
+      const todayJobs = await candidates.countDocuments({
+        isVerified : true,
+        createdAt: { $gte: startOfToday }
+      });
+
+      // Query to count candidates created yesterday
+      const yesterdayJobs = await candidates.countDocuments({
+        isVerified : true,
+        createdAt: { $gte: startOfYesterday, $lte: endOfYesterday }
+      });
+
+      // Calculate the percentage change
+      let dailyPercentageChange = 0;
+      // Daily Percentage Change
+      if (yesterdayJobs === 0) {
+        dailyPercentageChange = todayJobs * 100; // Treat as a full increase
+      } else {
+        dailyPercentageChange = ((todayJobs - yesterdayJobs) / yesterdayJobs) * 100;
+      }
   
       const stats = {
         Total: allCandidates.length,
@@ -518,7 +589,14 @@ export const getCandidateJobs = async (req,res) => {
         'Round 1': 0,
         'Round 2': 0,
         'Offer Sent': 0,
-        'Hired': 0
+        'Hired': 0,
+        statistics : {
+          total : {
+            monthly : monthlyPercentageChange.toFixed(2),
+            weekly : weeklyPercentageChange.toFixed(2),
+            yesterday : dailyPercentageChange.toFixed(2),
+          }
+        }
       };
   
       allCandidates.forEach(candidate => {

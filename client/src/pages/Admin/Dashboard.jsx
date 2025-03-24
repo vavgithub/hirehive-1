@@ -289,17 +289,32 @@ const Dashboard = () => {
         {
             title: 'Jobs Posted',
             value: overallStats.totalJobs,
-            icon: one
+            icon: one,
+            statistics : {
+                monthly : `${overallStats?.jobStatistics?.monthly ?? 0}% since last month`,
+                weekly : `${overallStats?.jobStatistics?.weekly ?? 0}% since last week`,
+                yesterday : `${overallStats?.jobStatistics?.yesterday ?? 0}% since yesterday`,
+            }
         },
         {
             title: 'Applications Received',  // This label is now more accurate
             value: overallStats.totalApplications, // This now shows total applications
-            icon: two
+            icon: two,
+            statistics : {
+                monthly : `${overallStats?.applicationStatistics?.monthly ?? 0}% since last month`,
+                weekly : `${overallStats?.applicationStatistics?.weekly ?? 0}% since last week`,
+                yesterday : `${overallStats?.applicationStatistics?.yesterday ?? 0}% since yesterday`,
+            }
         },
         {
             title: 'Hired',
             value: overallStats.totalHired,
-            icon: three
+            icon: three,
+            statistics : {
+                monthly : `${overallStats?.hiredStatistics?.monthly ?? 0}% since last month`,
+                weekly : `${overallStats?.hiredStatistics?.weekly ?? 0}% since last week`,
+                yesterday : `${overallStats?.hiredStatistics?.yesterday ?? 0}% since yesterday`,
+            }
         }
     ];
 

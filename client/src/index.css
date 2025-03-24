@@ -273,6 +273,26 @@ h2{
     }
   }
 
+  @keyframes flip {
+  0% { transform: rotateX(90deg); opacity: 0; }
+  100% { transform: rotateX(0deg); opacity: 1; }
+}
+
+.flip {
+  display: inline-block;
+  transition: transform 0.5s ease-in-out, opacity 0.5s;
+  transform-origin: center;
+  backface-visibility: hidden;
+  transform: rotateX(90deg);
+  opacity: 0;
+}
+
+.flip.show {
+  transform: rotateX(0deg);
+  opacity: 1;
+}
+
+
   @keyframes dotsAnimation {
     0% { width: 0; }
     25% { width: 0.4em; }
