@@ -249,8 +249,7 @@ const ViewCandidateProfile = () => {
     const handleWhatsappOpen = (candidateName,phone) => {
         const text = `Hi ${candidateName},\n\n` +
             `Hope you're doing well.\n\n` +
-            `I'm ${user.name} from the Value at Void team. Can we schedule a call with you ? \n\n` +
-            `Please let me know if this works for you, and I’ll go ahead and schedule the call.\n\n` +
+            `I'm ${user.name} from the Value at Void team.\n\n` +
             `Best regards,\nTeam VAV\n\n` +
             `For more information, log on to: https://www.hire.atvoid.com`
         const message = encodeURIComponent(text);   
@@ -265,8 +264,6 @@ const ViewCandidateProfile = () => {
             `Hi ${candidateName},\n\n` +
             `Hope you're doing well.\n\n` +
             `I'm ${user.name} from the Value at Void team. We’ve received your application for the ${designation} role and were really impressed with the portfolio and profile you shared.\n\n` +
-            `We’d love to schedule a 15-minute screening call with you on ${dateTime ?? new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}.\n\n` +
-            `Please let me know if this works for you, and I’ll go ahead and schedule the call.\n\n` +
             `Best regards,\nTeam VAV\n\n` +
             `For more information, log on to: https://www.hire.atvoid.com`
         );
