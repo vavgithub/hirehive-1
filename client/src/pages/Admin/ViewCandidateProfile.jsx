@@ -536,7 +536,7 @@ const ViewCandidateProfile = () => {
                     // <Staging currentStage={data.stage} candidateData={data} />
                 )}
                 {activeTab === 'candidateDetails' && (
-                    <CandidateTabDetail data={transformedData} />
+                    <CandidateTabDetail data={transformedData} job={data?.jobApplication} candidateId={data?._id} role={role} />
                 )}
             </div>
         </div>

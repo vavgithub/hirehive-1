@@ -8,6 +8,7 @@ import {
   getQuestionnaireDetails,
   getRandomQuestions,
   submitQuestionnaireAttempt,
+  updateCandidateProfessionalDetails,
   updateStatusAndStage,
   uploadAssessmentRecording,
 } from "../../controllers/admin/candidate.controller.js";
@@ -23,6 +24,8 @@ router.get("/:jobId", getAllCandidatesForJob);
 router.get("/:candidateId/job/:jobId", getCandidateById);
 
 router.post("/:candidateId/:jobId/addNotes", addNotes);
+
+router.patch("/update-candidate/:id/:jobId",protect, roleProtect(["Hiring Manager","Admin"]), updateCandidateProfessionalDetails);
 
 router.get("/:candidateId/jobs",protect, roleProtect("Hiring Manager"), getCandidateJobs);
 
