@@ -12,6 +12,7 @@ import CameraDisabled from '../../svg/Buttons/CameraDisabled';
 import MicDisabled from '../../svg/Buttons/MicDisabled';
 import Modal from '../../components/Modal';
 import StyledCard from '../../components/ui/StyledCard';
+import ContactUs from '../../components/Form/ContactUs';
 
 const AccordionItem = ({ title, content, isOpen, toggleOpen , preIcon}) => (
     <StyledCard backgroundColor={"bg-background-80"} extraStyles="mb-4 overflow-hidden">
@@ -218,7 +219,7 @@ const PreAssessment = () => {
                     open={showMediaErrorModal} 
                     cancelLabel='OK' cancelVariant='primary' />
 
-                    <div className='mt-8 w-full flex justify-end'>                            
+                    <div className='mt-8 mb-4 w-full flex justify-end'>                            
                             <Button
                                 onClick={handleStartAssessment}
                                 disabled={!isMediaRecorderOk}
@@ -226,6 +227,7 @@ const PreAssessment = () => {
                                 Start Assessment
                             </Button>
                     </div>
+            <ContactUs/>
                 </div>
             </div>
         </div>

@@ -32,6 +32,7 @@ import TaskForm, { SubmissionForm } from './TaskForm.jsx';
 import TaskDetails, { SubmissionDetails } from './TaskDetails.jsx';
 import HiredStamp from "../../svg/Background/HiredStamp.svg"
 import Loader from '../ui/Loader.jsx';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 
 const submitReview = async ({ candidateId, reviewData }) => {
     const response = await axios.post('dr/submit-score-review', {
@@ -64,6 +65,8 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
     const dispatch = useDispatch();
     const queryClient = useQueryClient();
     const [isLoading,setIsLoading] = useState(false);
+
+    const [showMore,setShowMore] = useState(false);
 
     //Actions management
     const [isModalOpen,setIsModalOpen] = useState(false);
@@ -332,7 +335,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
     },[stagingConfig,jobProfile,stageStatuses,stageTitle]);
 
     const renderCallData = (call,isRescheduled) => (
-      <div className={(isRescheduled && "w-[43%] ") + ' bg-background-80 flex justify-between items-center rounded-xl p-4'}>
+      <div className={' bg-background-80 flex justify-between items-center rounded-xl p-4'}>
             <div className='flex flex-col'>
                 {!isRescheduled && <span className='typography-small-p text-font-gray'>Date</span>}
                 <div className={(isRescheduled && "text-font-gray ") + ' flex items-center gap-2'}>
@@ -562,14 +565,21 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
       }
 
     {(stageBasedConfig?.hasCallHistory && stageData?.callHistory?.length > 0) && 
-      <div className='mt-4'>
+      <div className='mt-4 relative w-[50%]'>
           <h3 className='typography-small-p text-font-gray mt-1'>Reschedules</h3>
-          {stageData.callHistory.map((call, index) => (
-              <div key={index} className='mt-2'>
+          {stageData.callHistory.filter((call,index) => index === 0).map((call, index) => (
+              <div key={index} className='mt-2 '>
                   {renderCallData(call, true)}
-                  <p className='typography-small-p text-font-gray mt-3'>Status: {call.status}</p>
+                  {/* <p className='typography-small-p text-font-gray mt-3'>Status: {call.status}</p> */}
+              </div>
+          ))}       
+          {showMore && stageData.callHistory.filter((call,index)=>index !== 0).map((call, index) => (
+              <div key={index} className='mt-2 '>
+                  {renderCallData(call, true)}
+                  {/* <p className='typography-small-p text-font-gray mt-3'>Status: {call.status}</p> */}
               </div>
           ))}
+           {stageData?.callHistory?.length > 1 && <p onClick={() => setShowMore(!showMore)} className='cursor-pointer mt-2 typography-small-p text-font-gray flex items-center gap-1 '>{!showMore ? <><ChevronDown size={16} /> Show More </> : <> <ChevronUp size={16} /> Hide</>}</p>}
       </div>
     }
 

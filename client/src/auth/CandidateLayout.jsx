@@ -18,6 +18,7 @@ import { Avatar, IconButton, Menu, MenuItem } from '@mui/material';
 import Logout from '../svg/Buttons/Logout';
 import Profile from '../svg/Buttons/Profile';
 import StyledMenu from '../components/ui/StyledMenu';
+import ContactUs from '../components/Form/ContactUs';
 
 const CandidateLayout = () => {
   const navigate = useNavigate();
@@ -120,59 +121,59 @@ const CandidateLayout = () => {
 
   const ProfileComponent = () => {
     const profilePath = "/candidate/profile";
-      const [anchorEl,setAnchorEl] = useState(null)
-        // Function to handle dropdown menu opening
-        const handleMenuClick = (event) => {
-          setAnchorEl(event.currentTarget); // Set the element that opens the menu
-      };
-  
-      // Function to handle dropdown menu closing
-      const handleMenuClose = () => {
-          setAnchorEl(null); // Close the menu
-      };
+    const [anchorEl, setAnchorEl] = useState(null)
+    // Function to handle dropdown menu opening
+    const handleMenuClick = (event) => {
+      setAnchorEl(event.currentTarget); // Set the element that opens the menu
+    };
 
-      const itemComponents = [
-        {
-          onClick : handleMenuClose,
-          content : () => (
-            <NavLink to={profilePath} className={({ isActive })=>
-              `w-full flex items-center ${isActive ? "text-font-accent" : ""} hover:bg-background-60 px-4 py-2 rounded-xl `}
-              >
-              <Profile />
-              <span className='typography-large ml-2 font-outfit'>
-                Profile
-              </span>
-            </NavLink>
-          )
-        },
-        {
-          onClick : handleLogout,
-          content : () => (
-            <div className='flex items-center hover:bg-background-60 px-4 py-2 w-full rounded-xl'>
-              <Logout />
-              <span className='typography-large ml-2 font-outfit'> 
-                Logout
-              </span>
-            </div>
-          )
-        }
-      ]
+    // Function to handle dropdown menu closing
+    const handleMenuClose = () => {
+      setAnchorEl(null); // Close the menu
+    };
+
+    const itemComponents = [
+      {
+        onClick: handleMenuClose,
+        content: () => (
+          <NavLink to={profilePath} className={({ isActive }) =>
+            `w-full flex items-center ${isActive ? "text-font-accent" : ""} hover:bg-background-60 px-4 py-2 rounded-xl `}
+          >
+            <Profile />
+            <span className='typography-large ml-2 font-outfit'>
+              Profile
+            </span>
+          </NavLink>
+        )
+      },
+      {
+        onClick: handleLogout,
+        content: () => (
+          <div className='flex items-center hover:bg-background-60 px-4 py-2 w-full rounded-xl'>
+            <Logout />
+            <span className='typography-large ml-2 font-outfit'>
+              Logout
+            </span>
+          </div>
+        )
+      }
+    ]
 
     return (
       <>
-      <div className={`flex items-center px-2 justify-start hover:bg-background-60`}>
-        <IconButton onClick={handleMenuClick} className={`flex gap-2 ${location.pathname===profilePath ? "text-font-accent"
-          : "" }`}>
-          <Avatar alt={candidateData?.firstName} sx={{ width: "32px", height: "32px" }} src={candidateData?.profilePictureUrl || "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg"} />
-          <span className={`typography-body  ${location.pathname===profilePath ? "text-font-accent"
-          : "text-white" }`}>{candidateData?.firstName}</span>
-        </IconButton>
-        <div className={`absolute right-0 w-1 h-6 rounded-tl-xl rounded-bl-xl ${location.pathname===profilePath
-          ? "bg-teal-400" : "bg-transparent" }`} />
-      </div>
+        <div className={`flex items-center px-2 justify-start hover:bg-background-60`}>
+          <IconButton onClick={handleMenuClick} className={`flex gap-2 ${location.pathname === profilePath ? "text-font-accent"
+            : ""}`}>
+            <Avatar alt={candidateData?.firstName} sx={{ width: "32px", height: "32px" }} src={candidateData?.profilePictureUrl || "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg"} />
+            <span className={`typography-body  ${location.pathname === profilePath ? "text-font-accent"
+              : "text-white"}`}>{candidateData?.firstName}</span>
+          </IconButton>
+          <div className={`absolute right-0 w-1 h-6 rounded-tl-xl rounded-bl-xl ${location.pathname === profilePath
+            ? "bg-teal-400" : "bg-transparent"}`} />
+        </div>
 
-          <StyledMenu anchorEl={anchorEl} handleMenuClose={handleMenuClose} itemComponents={itemComponents} />
-    </>
+        <StyledMenu anchorEl={anchorEl} handleMenuClose={handleMenuClose} itemComponents={itemComponents} />
+      </>
     )
   }
 
@@ -201,7 +202,7 @@ const CandidateLayout = () => {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" />
           </svg>
         </div>
-          <div
+        <div
           className="z-20 bg-gradient-to-b from-black-100 via-black-100 to-transparent w-full top-0 absolute"
           style={{
             transition: 'all 0.1s ease-in',
@@ -219,7 +220,7 @@ const CandidateLayout = () => {
           md:w-48 w-64 h-screen
           bg-background-100 text-font-gray
           flex flex-col justify-between py-4
-        `}
+          `}
         style={{ position: 'fixed' }}
       >
         <div className="flex flex-col gap-5 typography-body">
@@ -240,22 +241,9 @@ const CandidateLayout = () => {
           ))}
         </div>
         <div >
-          {candidateData && 
-          // (
-          //   <>
-          //     <span className="block mb-2 typography-body">
-          //       Welcome, {candidateData.firstName}
-          //     </span>
-          //     <Button
-          //       variant="secondary"
-          //       onClick={handleLogout}
-          //       className="w-full"
-          //     >
-          //       Logout
-          //     </Button>
-          //   </>
-          // )
-          <ProfileComponent/>
+          {candidateData &&
+
+            <ProfileComponent />
           }
         </div>
       </div>
@@ -275,12 +263,13 @@ const CandidateLayout = () => {
       {/* Main Content */}
       <div className="mt-[4.6rem] md:mt-0 md:ml-[12rem] md:w-[calc(100vw-12rem)] flex flex-col items-center min-h-screen ">
         {/* {isAssessmentBannerVisible &&  <AssessmentBanner />} */}
-                <Outlet />
-            </div>
+        <Outlet />
+        {/* <ContactUs /> */}
+      </div>
       {/* <div className="md:ml-[192px] flex-1 p-4 md:p-6">
 
-        <Outlet />
-      </div> */}
+<Outlet />
+</div> */}
 
       {/* Overlay for mobile */}
       {isMenuOpen && (
@@ -289,6 +278,7 @@ const CandidateLayout = () => {
           onClick={() => setIsMenuOpen(false)}
         ></div>
       )}
+
     </div>
   );
 };

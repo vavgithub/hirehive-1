@@ -26,6 +26,7 @@ import StyledCard from '../../components/ui/StyledCard';
 import { PencilEditIcon } from '../../svg/Buttons/PencilIcon';
 import { InputField } from '../../components/Form/FormFields';
 import RightTick from '../../svg/Staging/RightTick';
+import ContactUs from '../../components/Form/ContactUs';
 
 const fetchJobDetails = async (id) => {
   const response = await axios.get(`/jobs/getJobById/${id}`);
@@ -49,7 +50,7 @@ export const uploadProfilePicture = async (file) => {
 };
 
 
-export const uploadResume = async (file,setUploadProgress) => {
+export const uploadResume = async (file, setUploadProgress) => {
   if (!file) throw new Error("No file selected.");
   validateResume(file)
   const formData = new FormData();
@@ -161,9 +162,9 @@ const ApplyJob = () => {
   // Pre-fill form with candidate data when authenticated
   useEffect(() => {
     if (isAuthenticated && candidateData && jobDetails) {
-      
+
       const isHourlyRateJob = jobDetails?.employmentType === 'Part Time' || jobDetails?.employmentType === 'Contract';
-      
+
       reset({
         firstName: candidateData.firstName,
         lastName: candidateData.lastName,
@@ -173,7 +174,7 @@ const ApplyJob = () => {
         portfolio: candidateData.portfolio || '',
         experience: candidateData.experience || '',
         noticePeriod: candidateData.noticePeriod || '',
-        ...(isHourlyRateJob ? {hourlyRate:candidateData.hourlyRate || ''}:{
+        ...(isHourlyRateJob ? { hourlyRate: candidateData.hourlyRate || '' } : {
           currentCTC: candidateData.currentCTC || '',
           expectedCTC: candidateData.expectedCTC || '',
         }),
@@ -193,15 +194,15 @@ const ApplyJob = () => {
   };
 
   // Add cleanup useEffect
-useEffect(() => {
-  return () => {
-    // Cleanup preview URL when component unmounts
-    if (profilePicturePreview) {
-      URL.revokeObjectURL(profilePicturePreview);
-    }
-  };
-}, [profilePicturePreview]);
- 
+  useEffect(() => {
+    return () => {
+      // Cleanup preview URL when component unmounts
+      if (profilePicturePreview) {
+        URL.revokeObjectURL(profilePicturePreview);
+      }
+    };
+  }, [profilePicturePreview]);
+
 
   // Register all fields with their validation rules
   useEffect(() => {
@@ -220,18 +221,18 @@ useEffect(() => {
           answer: data[key],
         }));
 
-        let profilePictureUrl;
-        if (profilePictureFile) {
-          profilePictureUrl = await uploadProfilePicture(profilePictureFile);
-        }  
+      let profilePictureUrl;
+      if (profilePictureFile) {
+        profilePictureUrl = await uploadProfilePicture(profilePictureFile);
+      }
 
-      const resumeUrl = await uploadResume(resumeFile,setUploadProgress);
+      const resumeUrl = await uploadResume(resumeFile, setUploadProgress);
 
-        // Determine if job is hourly rate type
-    const isHourlyRateJob = jobDetails?.employmentType === 'Part Time' || 
-    jobDetails?.employmentType === 'Contract';
+      // Determine if job is hourly rate type
+      const isHourlyRateJob = jobDetails?.employmentType === 'Part Time' ||
+        jobDetails?.employmentType === 'Contract';
 
-        const compensationData = isHourlyRateJob ? 
+      const compensationData = isHourlyRateJob ?
         { hourlyRate: data.hourlyRate } :
         { currentCTC: data.currentCTC, expectedCTC: data.expectedCTC };
 
@@ -338,18 +339,18 @@ useEffect(() => {
     e.preventDefault();
     const password = getValues('password');
     const confirmPassword = getValues('confirmPassword');
-    
-    if(!password?.trim() && !confirmPassword?.trim()){
+
+    if (!password?.trim() && !confirmPassword?.trim()) {
       setPasswordError("Please enter your new password");
       return;
     }
 
-    if(!password?.trim()){
+    if (!password?.trim()) {
       setPasswordError("Please enter your new password");
       return;
     }
-    
-    if(!confirmPassword?.trim()){
+
+    if (!confirmPassword?.trim()) {
       setPasswordError("Please confirm your password");
       return;
     }
@@ -400,7 +401,7 @@ useEffect(() => {
     <div className='main-wrapper flex justify-center ' >
 
       {
-        (isSubmitting || updateEmailMutation?.isPending ) && <LoaderModal/>
+        (isSubmitting || updateEmailMutation?.isPending ) && <LoaderModal />
       }
 
       {currentStep === 1 && (
@@ -414,7 +415,7 @@ useEffect(() => {
             {/* Personal Details */}
             {!isAuthenticated && (
               <div>
-                 <PersonalDetailsSection 
+                <PersonalDetailsSection
                   control={control}
                   onProfilePictureSelect={handleProfilePictureSelect}
                   profilePicturePreview={profilePicturePreview}
@@ -428,12 +429,12 @@ useEffect(() => {
 
             {
 
-            
-            <div className='md:col-span-2 mt-6'>
-            <label className="typography-body">Resume<span className="text-red-100">*</span></label>
-            <div
-                        {...getRootProps({
-                          className: `bg-background-40 hover:bg-background-60 rounded-xl mt-4 p-4 text-center cursor-pointer 
+
+              <div className='md:col-span-2 mt-6'>
+                <label className="typography-body">Resume<span className="text-red-100">*</span></label>
+                <div
+                  {...getRootProps({
+                    className: `bg-background-40 hover:bg-background-60 rounded-xl mt-4 p-4 text-center cursor-pointer 
                             ${isDragActive ? 'border border-teal-500 bg-background-60' : ''} 
                             ${errors.resumeFile ? '!border !border-red-500' : ''}`,
                   })}
@@ -529,15 +530,15 @@ useEffect(() => {
 
             {/* Buttons */}
             <div className="flex mt-6 justify-end gap-4 mb-6">
-                <Button
-                  type="button"
-                  onClick={() => navigate(-1)}
-                  variant="secondary"
-                >
-                  Cancel
-                </Button>
-                <Button
-                  type="button"
+              <Button
+                type="button"
+                onClick={() => navigate(-1)}
+                variant="secondary"
+              >
+                Cancel
+              </Button>
+              <Button
+                type="button"
                   onClick={async ()=>{
                     setIsExist(false)
                     setEditEmail(false)
@@ -549,11 +550,11 @@ useEffect(() => {
                     }
                   }
                   }
-                  variant="primary"
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting ? 'Submitting...' : 'Next'}
-                </Button>
+                variant="primary"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? 'Submitting...' : 'Next'}
+              </Button>
                 <button ref={submitBtnRef} type='submit' className='hidden'>Submit</button>
             </div>
             <Modal
@@ -575,6 +576,10 @@ useEffect(() => {
               </div>
               </StyledCard> 
             </Modal>
+            <div className='mb-6'>
+
+              <ContactUs />
+            </div>
           </form>
         </div>
       )}
@@ -590,6 +595,8 @@ useEffect(() => {
       {currentStep === 3 && (
         <PasswordComponent control={control} handlePasswordSubmit={handlePasswordSubmit} isSubmitting={isSubmitting} passwordError={passwordError} />
       )}
+
+
 
     </div>
 
