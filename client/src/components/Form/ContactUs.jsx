@@ -333,9 +333,9 @@ const ContactUs = () => {
         onClick={toggleModal}
         extraStyles={`lg:fixed bottom-6 right-6 lg:bottom-0 lg:right-0  w-full lg:w-fit cursor-pointer hover:bg-background-60`}
         padding={2}
-        borderRadius={'rounded-xl lg:rounded-l-xl   lg:rounded-r-none  '}
+        borderRadius={'rounded-xl lg:rounded-tl-xl  lg:rounded-bl-none lg:rounded-r-none  '}
       >
-        <p className='typography-body mb-2 '>Need Help?</p>
+        <p className='typography-body mb-2  '>Need Help?</p>
         <div className='flex items-center gap-2'>
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
             <g clip-path="url(#clip0_6602_234551)">
