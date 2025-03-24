@@ -327,7 +327,7 @@ const ViewCandidateProfile = () => {
                                         <span className="typography-large-p">{data.phone}</span>
                                     </div>
                                     <div className="flex items-center gap-2">
-                                        <div className='cursor-pointer' onClick={() => handleEmailOpen(data.firstName + " " + data.lastName, data.email,data.jobApplication.jobApplied,new Date(data.jobApplication.stageStatuses['Screening'].currentCall.scheduledDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) + " " + formatTime(data.jobApplication.stageStatuses['Screening'].currentCall.scheduledTime))}>
+                                        <div className='cursor-pointer' onClick={() => handleEmailOpen(data?.firstName + " " + data?.lastName, data?.email,data?.jobApplication?.jobApplied,new Date(data?.jobApplication?.stageStatuses['Screening']?.currentCall?.scheduledDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) + " " + formatTime(data?.jobApplication?.stageStatuses['Screening']?.currentCall?.scheduledTime))}>
                                             <EmailIcon />
                                         </div>
                                         <span className="typography-large-p">{data.email}</span>
