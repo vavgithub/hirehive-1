@@ -37,6 +37,7 @@ import AddNotes from '../../svg/Buttons/AddNotes';
 import EditNotes from '../../svg/Buttons/EditNotes';
 import { truncatedText } from '../../utility/truncatedHTML';
 import { ChevronDown, ChevronRight } from 'lucide-react';
+import { formatTime } from '../../utility/formatTime';
 
 
 
@@ -308,6 +309,32 @@ const ViewCandidateProfile = () => {
         setResumeOpen(true)
     }
 
+    const handleWhatsappOpen = (candidateName,phone) => {
+        const text = `Hi ${candidateName},\n\n` +
+            `Hope you're doing well.\n\n` +
+            `I'm ${user.name} from the Value at Void team.\n\n` +
+            `Best regards,\nTeam VAV\n\n` +
+            `For more information, log on to: https://www.hire.atvoid.com`
+        const message = encodeURIComponent(text);   
+        const url = `https://wa.me/${phone}?text=${message}`;
+        window.open(url, "_blank");
+    }
+
+    const handleEmailOpen = (candidateName, email, designation, dateTime) => {
+        const subject = encodeURIComponent(`Application for the ${designation} Role – Value at Void`);
+        
+        const body = encodeURIComponent(
+            `Hi ${candidateName},\n\n` +
+            `Hope you're doing well.\n\n` +
+            `I'm ${user.name} from the Value at Void team. We’ve received your application for the ${designation} role and were really impressed with the portfolio and profile you shared.\n\n` +
+            `Best regards,\nTeam VAV\n\n` +
+            `For more information, log on to: https://www.hire.atvoid.com`
+        );
+    
+        const mailtoLink = `mailto:${email}?subject=${subject}&body=${body}`;
+        window.open(mailtoLink, "_blank");
+    };
+    
     const handleOpenNotes = (e)=>{
         setOpenNotes(true)
         e.stopPropagation();
@@ -339,7 +366,6 @@ const ViewCandidateProfile = () => {
                     }
                 />
                 {/* Candidate Profile Card */}
-
                 {
                     (role === "Hiring Manager" || role === "Design Reviewer") && (
                         <div className="flex gap-3">
@@ -366,12 +392,16 @@ const ViewCandidateProfile = () => {
                                         {role !== "Design Reviewer" &&
                                             <div className="flex mb-3 gap-5">
                                                 <div className="flex items-center gap-2">
-                                                    <PhoneIcon />
-                                                    <span className="typography-large-p">{data.phone}</span>
+                                                    <div className='cursor-pointer' onClick={() => handleWhatsappOpen(data.firstName + " " + data.lastName, data.phone)}>
+                                            <PhoneIcon />
+                                                    </div>
+                                        <span className="typography-large-p">{data.phone}</span>
                                                 </div>
                                                 <div className="flex items-center gap-2">
-                                                    <EmailIcon />
-                                                    <span className="typography-large-p">{data.email}</span>
+                                                    <div className='cursor-pointer' onClick={() => handleEmailOpen(data?.firstName + " " + data?.lastName, data?.email,data?.jobApplication?.jobApplied,new Date(data?.jobApplication?.stageStatuses['Screening']?.currentCall?.scheduledDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) + " " + formatTime(data?.jobApplication?.stageStatuses['Screening']?.currentCall?.scheduledTime))}>
+                                            <EmailIcon />
+                                                    </div>
+                                        <span className="typography-large-p">{data.email}</span>
                                                 </div>
                                             </div>}
                                         <div className="flex gap-2 items-center ">

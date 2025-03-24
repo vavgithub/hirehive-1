@@ -10,6 +10,9 @@ import ToolbarPlugin from './editorPlugins/ToolbarPlugin';
 import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin"
 import { $generateHtmlFromNodes, $generateNodesFromDOM  } from '@lexical/html'
 import LoadDataPlugin from './editorPlugins/LoadDataPlugin';
+import { LinkNode } from '@lexical/link';
+import { ClickableLinkPlugin } from '@lexical/react/LexicalClickableLinkPlugin'
+import { LinkPlugin as LexicalLinkPlugin } from '@lexical/react/LexicalLinkPlugin'
 
 const theme = {
     paragraph: 'font-outfit',
@@ -20,7 +23,8 @@ const theme = {
     list : {
         ol : 'ml-5 list-decimal font-outfit',
         ul : "ml-5 list-disc font-outfit"
-    }
+    },
+    link: 'text-blue-500 underline cursor-pointer hover:text-blue-700',
 }
 
 
@@ -28,7 +32,7 @@ const theme = {
 // or throw them as needed. If you don't throw them, Lexical will
 // try to recover gracefully without losing user data.
 function onError(error) {
-//   console.error(error);
+    // console.error("Lexical Editor Error:", error);
 }
 
 function TextEditor({htmlData,loaded,errors,placeholder,setEditorContent}) {
@@ -38,7 +42,8 @@ function TextEditor({htmlData,loaded,errors,placeholder,setEditorContent}) {
         theme,
         nodes : [
             ListNode,
-            ListItemNode
+            ListItemNode,
+            LinkNode
         ],
         onError,
       };
@@ -69,9 +74,11 @@ function TextEditor({htmlData,loaded,errors,placeholder,setEditorContent}) {
       return (
         <div className='w-full relative bg-background-40 rounded-xl  '>
             <LexicalComposer initialConfig={initialConfig}>
-                <ListPlugin />
-                <LoadDataPlugin htmlData={htmlData} loaded />
                 <ToolbarPlugin errors={errors} />
+                <ListPlugin />
+                <LexicalLinkPlugin />
+                <ClickableLinkPlugin />
+                <LoadDataPlugin htmlData={htmlData} loaded />
                 <RichTextPlugin contentEditable={CustomContent} placeholder={CustomPlaceholder}
                     ErrorBoundary={LexicalErrorBoundary} />
                 <HistoryPlugin />
