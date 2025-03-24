@@ -99,7 +99,6 @@ const ViewJobs = () => {
         queryKey: ['candidates', mainId],
         queryFn: () => axios.get(`/admin/candidate/${mainId}`).then(res => res.data),
     });
-    console.log("this tabel data", candidatesData);
 
     // Add new query for job statistics
     const { data: jobStats = { data: { totalCount: 0, stageStats: {}, jobDetails: {} } }, 

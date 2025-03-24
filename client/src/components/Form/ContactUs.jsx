@@ -147,9 +147,9 @@ const ContactUs = () => {
 
       // Upload screenshot to Cloudinary if a file was selected
       if (screenshotFile) {
-        console.log("Uploading screenshot to Cloudinary...");
+        // console.log("Uploading screenshot to Cloudinary...");
         screenshotUrl = await uploadScreenshot(screenshotFile);
-        console.log("Screenshot uploaded successfully:", screenshotUrl);
+        // console.log("Screenshot uploaded successfully:", screenshotUrl);
       }
 
       // Prepare data for Google Sheets
@@ -161,7 +161,7 @@ const ContactUs = () => {
         timestamp: new Date().toISOString()
       };
 
-      console.log("Submitting form data:", contactFormData);
+      // console.log("Submitting form data:", contactFormData);
 
       // Submit to Google Sheets
       await submitToGoogleSheets(contactFormData);
