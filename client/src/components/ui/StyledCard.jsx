@@ -15,7 +15,7 @@ function StyledCard({children,onClick,extraStyles,padding,rounded,backgroundColo
   `
 
   return (
-    <div {...props}  onClick={onClick} className={`${styles}  ${extraStyles}`}>
+    <div {...props}  onClick={onClick} className={`${styles}  ${extraStyles ?? ''}`}>
       {children}
     </div>
   )
