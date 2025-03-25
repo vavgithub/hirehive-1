@@ -32,6 +32,7 @@ import AssessmentResponse from './pages/Admin/AssessmentResponse.jsx';
 import { OnboardingProvider } from './context/OnboardingProvider.jsx';
 import AdminLayout from './components/AdminLayout.jsx';
 import Teams from './pages/Admin/Teams.jsx';
+import TeamsProfile from './pages/Admin/TeamsProfile.jsx';
 import Jobs from './pages/Admin/Jobs.jsx';
 
 export const router = createBrowserRouter([
@@ -186,6 +187,10 @@ export const router = createBrowserRouter([
       {
         path: "teams",
         element: <Teams />    
+      },
+      {
+        path: "teams/profile/:id",
+        element: <TeamsProfile />    
       },
       {
         path: "assessment/:id",
