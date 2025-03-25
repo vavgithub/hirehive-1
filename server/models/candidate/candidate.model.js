@@ -135,6 +135,10 @@ const jobApplicationSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    shortlisted: {
+      type: Boolean,
+      default: false,
+    },
     jobProfile: {
       type: String,
     },
