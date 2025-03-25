@@ -136,7 +136,7 @@ export const addTeamMember = asyncHandler(async (req,res) => {
   
     return res.status(200).json({
       status: 'success',
-      message : "Added & invited team member successfully",
+      message : "Invited team member successfully",
     })
   })
 
