@@ -405,6 +405,7 @@ export const getCandidateById = async (req, res) => {
         notes: jobApplication.notes,
         jobType: job ? job.employmentType : "NA",
         applicationDate: jobApplication.applicationDate,
+        shortlisted: jobApplication.shortlisted,
         rating: jobApplication.rating,
         currentStage: jobApplication.currentStage,
         stageStatuses: jobApplication.stageStatuses,

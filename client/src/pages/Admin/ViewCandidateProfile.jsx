@@ -38,7 +38,7 @@ import EditNotes from '../../svg/Buttons/EditNotes';
 import { truncatedText } from '../../utility/truncatedHTML';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 import { formatTime } from '../../utility/formatTime';
-import { BookmarkFilledIcon, BookmarkIcon } from '../../svg/Checkboxes/BookmarkIcons';
+import { BookmarkIcon, BookmarkWhiteFilledIcon } from '../../svg/Checkboxes/BookmarkIcons';
 
 
 
@@ -460,9 +460,9 @@ const ViewCandidateProfile = () => {
 
                                             {/* Add Shortlist Button/Icon */}
                                             {(role === "Hiring Manager" || role === "Admin") &&
-                                                <div className='cursor-pointer' onClick={handleToggleShortlist}>
+                                                <div className='cursor-pointer bg-background-70 hover:bg-accent-300 rounded-xl w-11 h-11 flex justify-center items-center' onClick={handleToggleShortlist}>
                                                     <CustomToolTip title={data?.jobApplication?.shortlisted ? 'Remove from Shortlist' : 'Add to Shortlist'} arrowed size={2}>
-                                                        {data?.jobApplication?.shortlisted ? <BookmarkFilledIcon /> : <BookmarkIcon />}
+                                                        {data?.jobApplication?.shortlisted ? <BookmarkWhiteFilledIcon /> : <BookmarkIcon />}
                                                     </CustomToolTip>
                                                 </div>
                                             }
