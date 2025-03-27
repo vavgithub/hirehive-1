@@ -96,7 +96,7 @@ export const getAllCandidatesForJob = async (req, res) => {
       };
     });
 
-    console.log("this is backend", formattedCandidates);
+    // console.log("this is backend", formattedCandidates);
 
     res.status(200).json({
       candidates: formattedCandidates,
