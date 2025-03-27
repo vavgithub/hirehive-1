@@ -23,7 +23,7 @@ import ClockIcon from '../../svg/Staging/ClockIcon.jsx';
 import LinkIcon from '../../svg/Staging/LinkIcon.jsx';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import ClipboardIcon from '../../svg/Staging/ClipboardIcon.jsx';
-import { formatTime } from '../../utility/formatTime.js';
+import { formatIntoLocaleString, formatTime } from '../../utility/formatTime.js';
 import NoShowAction from './NoShow.jsx';
 import useScheduler from '../../hooks/useScheduler.jsx';
 import BulletMarks from '../ui/BulletMarks.jsx';
@@ -32,6 +32,7 @@ import TaskForm, { SubmissionForm } from './TaskForm.jsx';
 import TaskDetails, { SubmissionDetails } from './TaskDetails.jsx';
 import HiredStamp from "../../svg/Background/HiredStamp.svg"
 import Loader from '../ui/Loader.jsx';
+import WarningIcon from '../../svg/Staging/WarningIcon.jsx';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 
 const submitReview = async ({ candidateId, reviewData }) => {
@@ -138,8 +139,8 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
 
   //Actions API
   const rejectCandidateMutation = useMutation({
-      mutationFn: ({ candidateId, jobId, rejectionReason }) => 
-          axios.post('/hr/reject-candidate', { candidateId, jobId, rejectionReason }),
+      mutationFn: ({ candidateId, jobId, rejectionReason, scheduledDate , scheduledTime }) => 
+          axios.post('/hr/reject-candidate', { candidateId, jobId, rejectionReason, scheduledDate , scheduledTime }),
       onMutate: () => {
           setIsLoading(true); // Set loading to true when mutation starts
       },
@@ -188,8 +189,8 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
         }
     });
   
-    const handleReject = (item, rejectionReason) => {       
-        rejectCandidateMutation.mutate({ candidateId, jobId, rejectionReason });
+    const handleReject = (item, rejectionReason, scheduledDate , scheduledTime) => {     
+        rejectCandidateMutation.mutate({ candidateId, jobId, rejectionReason, scheduledDate , scheduledTime });
     };
 
     const handleMoveToNextRound = () => {
@@ -392,7 +393,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
         </div>)
     };
 
-  return (
+    return (
     <StyledCard 
     padding={3} 
     backgroundColor={"bg-background-30"}
@@ -447,12 +448,12 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
         :
         <>
         <div >
-        {stageBasedConfig?.hasLabel && <div className='mt-4'><Label icon={stageBasedConfig?.hasLabel?.icon} text={stageBasedConfig?.hasLabel?.hasCustomContent ? (stageBasedConfig?.hasLabel?.content + candidateData?.jobApplication?.jobApplied) : stageBasedConfig?.hasLabel?.content} /></div>}
+        {(!stageData?.scheduledDate && stageBasedConfig?.hasLabel) && <div className='my-4'><Label icon={stageBasedConfig?.hasLabel?.icon} text={stageBasedConfig?.hasLabel?.hasCustomContent ? (stageBasedConfig?.hasLabel?.content + candidateData?.jobApplication?.jobApplied) : stageBasedConfig?.hasLabel?.content} /></div>}
         {
             stageBasedConfig?.hasSubmissionDetails && 
             <SubmissionDetails candidateData={candidateData} stageData={stageData} />
         }
-        {stageBasedConfig?.hasAssigneeSelector && 
+        {(!stageData?.scheduledDate && stageBasedConfig?.hasAssigneeSelector) && 
           <div className='w-2/5'>
               <h4 className='typography-body my-4 font-outfit'>Select Reviewer</h4>
               <AssigneeSelector
@@ -464,13 +465,20 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
           </div>
         }
         {
-            stageBasedConfig?.hasTaskForm && 
+            (stageBasedConfig?.hasTaskForm && !stageData?.scheduledDate) && 
             <TaskForm
             candidateId={candidateId}
             jobId={jobId}
             candidateEmail={candidateData?.email}
             setIsLoading={setIsLoading}
             />
+        }
+        {
+            (stageBasedConfig?.hasScheduledLabel && stageData?.scheduledDate && stageTitle === "Design Task" && currentStatus === "Pending") &&
+            <div className='mt-4'>
+            <Label icon={WarningIcon} text={`Design Task mail is Scheduled for ${formatIntoLocaleString(stageData?.scheduledDate)}`}/>
+            <TaskDetails stageData={stageData} />
+            </div>
         }
         {
             stageBasedConfig?.hasTaskDetails && 
@@ -582,9 +590,12 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
            {stageData?.callHistory?.length > 1 && <p onClick={() => setShowMore(!showMore)} className='cursor-pointer mt-2 typography-small-p text-font-gray flex items-center gap-1 '>{!showMore ? <><ChevronDown size={16} /> Show More </> : <> <ChevronUp size={16} /> Hide</>}</p>}
       </div>
     }
-
+    {
+        (stageBasedConfig?.hasScheduledLabel && (currentStatus === "Reviewed" || stageTitle === "Portfolio") && stageData?.scheduledDate) &&
+        <div className='mt-4'><Label icon={WarningIcon} text={`Rejection mail is Scheduled for ${formatIntoLocaleString(stageData?.scheduledDate)}`}/></div>
+    }
       {/* Action Section */}
-      {stageBasedConfig?.actions && 
+      {stageBasedConfig?.actions && !((currentStatus === "Reviewed" || stageTitle === "Portfolio")&& stageData?.scheduledDate) &&
       <div className='w-full flex justify-end mt-4'>
           <div className='flex items-center gap-4'>
               {(stageBasedConfig.actions?.hasRejectAction && !isRescheduling) && 

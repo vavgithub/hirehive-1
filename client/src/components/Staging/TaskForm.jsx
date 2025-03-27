@@ -10,6 +10,7 @@ import { formatDescription } from '../../utility/formatDescription';
 import { InputField } from '../Form/FormFields';
 import { formatTime } from '../../utility/formatTime';
 import TextEditor from '../utility/TextEditor';
+import SchedulerButton from '../ui/SchedulerButton';
 
 export function SubmissionForm({candidateId,jobId,stageData}){
     const [taskLink, setTaskLink] = useState('');
@@ -145,7 +146,7 @@ function TaskForm({candidateId,candidateEmail,jobId,setIsLoading}) {
         }
     });
 
-    const handleSendTask = () => {
+    const handleSendTask = (scheduledDate,scheduledTime) => {
         isFirstRender.current = false;
         validateErrors()
         if (taskDescription.trim() && dueDate && dueTime) {
@@ -155,7 +156,9 @@ function TaskForm({candidateId,candidateEmail,jobId,setIsLoading}) {
                 taskDescription,
                 dueDate: dueDate.toISOString(),
                 dueTime: dueTime.format('HH:mm'),
-                candidateEmail
+                candidateEmail,
+                ...(scheduledDate ? {scheduledDate : scheduledDate?.toISOString()} : {}),
+                ...(scheduledTime ? {scheduledTime : scheduledTime?.format('HH:mm')} : {}),
             });
         }
     };
@@ -204,12 +207,13 @@ function TaskForm({candidateId,candidateEmail,jobId,setIsLoading}) {
             </div>
             <div className='w-full flex justify-end'>
 
-                    <Button
+                    {/* <Button
                         variant="primary"
                         onClick={handleSendTask}
                     >
                         Send Email
-                    </Button>
+                    </Button> */}
+                    <SchedulerButton buttonText={"Send Email"} onConfirm={handleSendTask} modalTitle={"Schedule Email"} modalMessage={"Schedule design task email with specified date and time"} buttonVariant={"primary"}/>
             </div>
         </div>
   )
