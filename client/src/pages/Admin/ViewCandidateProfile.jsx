@@ -39,6 +39,7 @@ import { truncatedText } from '../../utility/truncatedHTML';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 import { formatTime } from '../../utility/formatTime';
 import { BookmarkIcon, BookmarkWhiteFilledIcon } from '../../svg/Checkboxes/BookmarkIcons';
+import { showSuccessToast } from '../../components/ui/Toast';
 
 
 
@@ -252,6 +253,7 @@ const ViewCandidateProfile = () => {
         mutationFn: toggleShortlistStatus,
         onSuccess: () => {
           queryClient.invalidateQueries(['candidate', candidateId, jobId]);
+          showSuccessToast("Candidate shortlisted successfully");
         },
         onError: (error) => {
           console.error("Error updating shortlist status:", error);

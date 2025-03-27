@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from '../../api/axios';
 import Header from '../../components/utility/Header';
 import StyledCard from '../../components/ui/StyledCard';
 import Loader from '../../components/ui/Loader';
 import { ensureAbsoluteUrl } from '../../utility/ensureAbsoluteUrl';
-import { BookmarkFilledIcon } from '../../svg/Checkboxes/BookmarkIcons';
+import { BookmarkFilledIcon, BookmarkWhiteFilledIcon } from '../../svg/Checkboxes/BookmarkIcons';
 import StageBadge from '../../components/ui/StageBadge';
+import { getRatingIcon } from '../../components/utility/RatingSelector';
 
 // API function to fetch shortlisted candidates
 const fetchShortlistedCandidates = async () => {
@@ -15,15 +16,43 @@ const fetchShortlistedCandidates = async () => {
     return data;
 };
 
+const toggleShortlistStatus = async ({ candidateId, jobId, shortlisted }) => {
+    const response = await axios.post(`/admin/candidate/${candidateId}/job/${jobId}/shortlist`, { shortlisted });
+    return response?.data;
+};
+
 const Shortlisted = () => {
     const navigate = useNavigate();
     const [searchTerm, setSearchTerm] = useState('');
+    const queryClient = useQueryClient();
 
     // Fetch shortlisted candidates
     const { data, isLoading, isError, error } = useQuery({
         queryKey: ['shortlistedCandidates'],
         queryFn: fetchShortlistedCandidates,
     });
+
+    const shortlistMutation = useMutation({
+        mutationFn: toggleShortlistStatus,
+        onSuccess: () => {
+            // Invalidate and refetch the shortlisted candidates query
+            queryClient.invalidateQueries(['shortlistedCandidates']);
+        },
+        onError: (error) => {
+            console.error("Error updating shortlist status:", error);
+        }
+    });
+
+    // Updated handler function with the correct parameters
+    const handleToggleShortlist = (e, candidateId, jobId) => {
+        e.stopPropagation();
+        // Since these are already shortlisted candidates, we want to unshortlist them
+        shortlistMutation.mutate({
+            candidateId,
+            jobId,
+            shortlisted: false // Set to false to remove from shortlist
+        });
+    };
 
     // Filter candidates based on search term
     const filteredCandidates = data?.candidates?.filter(candidate => {
@@ -55,13 +84,7 @@ const Shortlisted = () => {
             <div className="container mx-auto">
                 <Header HeaderText={"Shortlisted Candidates"} />
 
-
-
-                {/* Search box */}
-
-
                 <StyledCard padding={2} backgroundColor={"bg-background-100 "}>
-
                     <div className="mb-4">
                         <input
                             type="text"
@@ -96,28 +119,34 @@ const Shortlisted = () => {
                                             <div className="flex-1">
                                                 <div className="flex justify-between">
                                                     <h3 className="typography-h3 mb-1">{candidate.firstName} {candidate.lastName}</h3>
-                                                    <BookmarkFilledIcon />
+                                                    <div
+                                                        className="cursor-pointer hover:scale-110 transition-transform"
+                                                        onClick={(e) => handleToggleShortlist(e, candidate._id, application.jobId)}
+                                                    >
+                                                        <BookmarkWhiteFilledIcon />
+                                                    </div>
                                                 </div>
 
                                                 <p className="typography-small-p text-font-gray">{application.jobApplied}</p>
 
                                                 <div className="flex items-center mt-2 text-xs text-font-gray">
-                                                    <span className="mr-2">{candidate.location || 'N/A'}</span>
-                                                    <span className="mr-2">•</span>
+                                                    {/* <span className="mr-2">{candidate.location || 'N/A'}</span> */}
+                                                    {/* <span className="mr-2">•</span> */}
                                                     <span>{candidate.experience || 0} Years Exp.</span>
                                                 </div>
 
-
                                                 <div className="mt-2 flex justify-between items-center">
                                                     <StageBadge stage={application.currentStage} />
+                                                    {(
+                                                        <div>
 
-                                                    {application.rating !== 'N/A' && (
-                                                        <div className={`px-2 py-1 rounded text-xs ${application.rating === 'Good Fit' ? 'bg-green-100 text-green-700' :
-                                                                application.rating === 'May Be' ? 'bg-yellow-100 text-yellow-700' :
-                                                                    'bg-red-100 text-red-700'
-                                                            }`}>
-                                                            {application.rating}
+                                                            <span className='cursor-pointer bg-[#2d2d2eae] min-w-10 min-h-10 top-2 right-2 rounded-full flex justify-center items-center'>
+                                                                {getRatingIcon(application.rating)}
+                                                            </span>
+
                                                         </div>
+
+
                                                     )}
                                                 </div>
                                             </div>

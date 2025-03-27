@@ -5,7 +5,7 @@
 <ellipse cx="581.373" cy="504.279" rx="581.373" ry="504.279" transform="matrix(-0.552537 -0.833488 -0.833488 0.552537 1750.08 803.133)" fill="url(#paint2_linear_1116_75700)"/>
 </g>
 <g filter="url(#filter0_b_1116_75700)">
-<rect width="1155" height="360" fill="#0F174F" fill-opacity="0.36"/>
+<rect width="1155" height="360" fill="#0F174F" fillOpacity="0.36"/>
 </g>
 <defs>
 <filter id="filter0_b_1116_75700" x="-5.5" y="-5.5" width="1166" height="371" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
