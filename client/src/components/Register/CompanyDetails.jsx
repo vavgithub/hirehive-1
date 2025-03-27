@@ -14,7 +14,7 @@ import { validateProfileImages } from '../../utility/validationRules';
 import { InputField } from '../Inputs/InputField';
 import { CustomDropdown } from '../Dropdowns/CustomDropdown';
 
-const LocationOptions = [
+export const LocationOptions = [
   { value: 'india', label: 'India' },
   { value: 'usa', label: 'USA' },
   { value: 'dubai', label: 'Dubai' },
@@ -31,7 +31,7 @@ const companySizeOptions = [
   { value: '10000+', label: '10,000+ Employees' }
 ]
 
-const industryTypeOptions = [
+export const industryTypeOptions = [
   { value: 'it_software', label: 'IT & Software' },
   { value: 'finance', label: 'Finance & Banking' },
   { value: 'healthcare', label: 'Healthcare & Pharmaceuticals' },

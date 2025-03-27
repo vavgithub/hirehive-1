@@ -34,6 +34,7 @@ export const stagingConfig = {
                             content : "Candidate's portfolio has not yet been assigned to a reviewer.",
                             icon : WarningIcon
                         },
+                        hasScheduledLabel : true,
                         actions : {
                             hasRejectAction : true,
                         }
@@ -740,6 +741,7 @@ export const stagingConfig = {
                             content : "Design task not sent. Please provide task details and set a due date/time.",
                             icon : WarningIcon
                         },
+                        hasScheduledLabel : true,
                         hasRemarks : false,
                         hasScoreCard : false,
                         actions : false,
