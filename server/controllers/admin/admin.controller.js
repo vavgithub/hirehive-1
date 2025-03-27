@@ -478,6 +478,7 @@ export const getDetailsForDashboard = asyncHandler(async (req,res) => {
             phone: 1,
             profilePictureUrl: 1,
             hasGivenAssessment: 1,
+            jobApplications: 1,
             assessmentScore: { $arrayElemAt: ["$questionnaireAttempts.score", 0] }
           }
         },
@@ -493,6 +494,7 @@ export const getDetailsForDashboard = asyncHandler(async (req,res) => {
                 phone: { $first: "$phone" },
                 profilePictureUrl: { $first: "$profilePictureUrl" },
                 hasGivenAssessment: { $first: "$hasGivenAssessment" },
+                jobApplications: { $first: "$jobApplications" },
                 assessmentScore: { $first: "$assessmentScore" }
             }
         },

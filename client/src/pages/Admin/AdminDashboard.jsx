@@ -17,6 +17,8 @@ function AdminDashboard() {
   
   const [viewMore,setViewMore] = useState(false);
 
+  const navigate = useNavigate();
+
   const { data : dashboardDetails , isLoading : isDetailsLoading } = useQuery({
       queryKey: ['admin_dashboard'],
       queryFn: () => axios.get('/admin/dashboard').then(res => res.data),
@@ -118,7 +120,7 @@ function AdminDashboard() {
             {
               dashboardDetails?.leaderBoard?.candidates?.length > 0 && dashboardDetails.leaderBoard.candidates.filter((_,i)=> viewMore ? i >= 0 : i < 6).map((candidate) => {
                 return (
-                  <StyledCard padding={2} backgroundColor={'bg-background-70'} extraStyles={'flex justify-between'}>
+                  <StyledCard onClick={()=>navigate(`/admin/candidates/view-candidate/${candidate?._id}/${candidate?.jobApplications?.jobId}`)} padding={2} backgroundColor={'bg-background-70'} extraStyles={'flex justify-between cursor-pointer hover:bg-background-60'}>
                     <div className='flex gap-2'>
                       <div  className=" w-[3rem] h-[3rem] aspect-square overflow-hidden rounded-full ">
                         <img src={candidate?.profilePictureUrl ? candidate?.profilePictureUrl :"https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg"} alt="" className="object-cover w-full" />
