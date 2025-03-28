@@ -1,9 +1,9 @@
 import { Avatar } from "@mui/material";
 import { AssignmentIconStroke } from "../../svg/Icons/AssignmentIcon";
 import CustomToolTip from "../Tooltip/CustomToolTip";
-import FileMainIcon from "../../svg/Icons/FileMainIcon";
-import WebsiteMainIcon from "../../svg/Icons/WebsiteMainIcon";
-import ResumeIcon from "../../svg/Icons/ResumeIcon";
+import FileMainIcon, { FileMainIconSmall } from "../../svg/Icons/FileMainIcon";
+import WebsiteMainIcon, { WebsiteMainIconSmall } from "../../svg/Icons/WebsiteMainIcon";
+import ResumeIcon, { ResumeIconSmall } from "../../svg/Icons/ResumeIcon";
 import AssigneeSelector from "../MUIUtilities/AssigneeSelector";
 import { Move, MoveActive } from "../../svg/Buttons/Move";
 import { Reject, RejectActive } from "../../svg/Buttons/Reject";
@@ -11,6 +11,7 @@ import { getRatingIcon } from "../MUIUtilities/RatingSelector";
 import StatusBadge from "../ui/StatusBadge";
 import StageBadge from "../ui/StageBadge";
 import { ensureAbsoluteUrl } from "../../utility/ensureAbsoluteUrl";
+import IconWrapper from "../Cards/IconWrapper";
 
 const getCommonColumns = (handleDocumentClick) => [
   {
@@ -44,21 +45,27 @@ const getCommonColumns = (handleDocumentClick) => [
           {params.row.portfolio && (
             <a href={ensureAbsoluteUrl(params.row.portfolio)} target="_blank" rel="noopener noreferrer" className="icon-link">
               <CustomToolTip title={'Portfolio'} arrowed>
-                <FileMainIcon sizeClasses={'w-9 h-9'} />
+              <IconWrapper hasBg size={3}>
+                <FileMainIconSmall />
+              </IconWrapper>
               </CustomToolTip>
             </a>
           )}
           {params.row.website && (
             <a href={ensureAbsoluteUrl(params.row.website)} target="_blank" rel="noopener noreferrer" className="icon-link ">
               <CustomToolTip title={'Website'} arrowed>
-                <WebsiteMainIcon sizeClasses={'w-9 h-9'} />
+              <IconWrapper hasBg size={3}>
+                <WebsiteMainIconSmall />  
+              </IconWrapper>
               </CustomToolTip>
             </a>
           )}
           {params.row.resumeUrl && (
             <button onClick={() => handleDocumentClick(params.row.resumeUrl)} className="icon-link">
               <CustomToolTip title='Resume' arrowed>
-                <ResumeIcon sizeClasses={'w-9 h-9'} />
+                  <IconWrapper hasBg size={3}>
+                    <ResumeIconSmall />
+                  </IconWrapper>
               </CustomToolTip>
             </button>
           )}

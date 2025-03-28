@@ -29,6 +29,7 @@ import ScoreChart from '../../components/Charts/ScoreChart';
 import { getStageColor, maxScoreOfEachStage } from '../../components/Staging/staging.config';
 import { CustomDropdown } from '../../components/Dropdowns/CustomDropdown';
 import Container from '../../components/Cards/Container';
+import IconWrapper from '../../components/Cards/IconWrapper';
 
 export const VAVScoreCard = ({score,stage,scoreStages})=>{
     const [showBreakDown,setShowBreakDown] = useState(false);
@@ -372,19 +373,25 @@ const ViewCandidateProfile = () => {
                                 <div className="flex gap-2 items-center ">
                                     <a href={ensureAbsoluteUrl(data.portfolio)} target="_blank" rel="noopener noreferrer" className="icon-link">
                                         <CustomToolTip title={'Portfolio'} arrowed size={2}>
-                                            <FileMainIcon />
+                                            <IconWrapper hasBg>
+                                                <FileMainIcon />
+                                            </IconWrapper>
                                         </CustomToolTip>
                                     </a>
                                     {data.website && (
                                         <a href={ensureAbsoluteUrl(data.website)} target="_blank" rel="noopener noreferrer" className="icon-link">
                                             <CustomToolTip title={'Website'} arrowed size={2}>
-                                                <WebsiteMainIcon />
+                                                <IconWrapper hasBg>
+                                                    <WebsiteMainIcon />
+                                                </IconWrapper>
                                             </CustomToolTip>
                                         </a>
                                     )}
                                     <div onClick={handleResumeOpen}>
                                         <CustomToolTip title={'Resume'} arrowed size={2}>
-                                            <ResumeIcon  />
+                                            <IconWrapper hasBg>
+                                                <ResumeIcon  />
+                                            </IconWrapper>
                                         </CustomToolTip>
                                     </div>
                                     {resumeOpen && <ResumeViewer documentUrl={data.resumeUrl} onClose={() => setResumeOpen(false)}/>}
@@ -392,7 +399,9 @@ const ViewCandidateProfile = () => {
                                     {
                                         (data.hasGivenAssessment && role === "Hiring Manager") && <div className='cursor-pointer' onClick={handleAssignmentNavigation}> 
                                             <CustomToolTip title={'Assessment'} arrowed size={2}>
+                                            <IconWrapper hasBg>
                                                 <AssignmentIcon /> 
+                                            </IconWrapper>
                                             </CustomToolTip>
                                         </div>
                                     }

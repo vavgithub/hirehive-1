@@ -1,22 +1,31 @@
 import React from 'react'
 
-const ResumeIcon = ({sizeClasses}) => {
+const ResumeIcon = () => {
     return (
-        <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className={`group ${sizeClasses ? sizeClasses : 'w-11 h-11'}`}>
-            <rect x="0.5" y="0.5" width="39" height="39" rx="11.5" className="fill-[#202122] group-hover:fill-accent-300 transition-colors duration-100" />
-            <rect x="0.5" y="0.5" width="39" height="39" rx="11.5" stroke="#202122" />
-            <g clipPath="url(#clip0_1391_37668)">
-                <path d="M12 30H26C26.5304 30 27.0391 29.7893 27.4142 29.4142C27.7893 29.0391 28 28.5304 28 28V15L23 10H14C13.4696 10 12.9609 10.2107 12.5858 10.5858C12.2107 10.9609 12 11.4696 12 12V14M22 10V14C22 14.5304 22.2107 15.0391 22.5858 15.4142C22.9609 15.7893 23.4696 16 24 16H28" stroke="#FFFFFF" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
-                <path d="M17 27C17 25.9391 16.5786 24.9217 15.8284 24.1716C15.0783 23.4214 14.0609 23 13 23M13 23C11.9391 23 10.9217 23.4214 10.1716 24.1716C9.42143 24.9217 9 25.9391 9 27M13 23C14.6569 23 16 21.6569 16 20C16 18.3431 14.6569 17 13 17C11.3431 17 10 18.3431 10 20C10 21.6569 11.3431 23 13 23Z" stroke="#FFFFFF" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
-            </g>
-            <defs>
-                <clipPath id="clip0_1391_37668">
-                    <rect width="24" height="24" fill="#202122" transform="translate(8 8)" />
-                </clipPath>
-            </defs>
-        </svg>
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path
+            d="M4 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V7L15 2H6C5.46957 2 4.96086 2.21071 4.58579 2.58579C4.21071 2.96086 4 3.46957 4 4V6M14 2V6C14 6.53043 14.2107 7.03914 14.5858 7.41421C14.9609 7.78929 15.4696 8 16 8H20"
+            stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        <path
+            d="M9 19C9 17.9391 8.57857 16.9217 7.82843 16.1716C7.07828 15.4214 6.06087 15 5 15M5 15C3.93913 15 2.92172 15.4214 2.17157 16.1716C1.42143 16.9217 1 17.9391 1 19M5 15C6.65685 15 8 13.6569 8 12C8 10.3431 6.65685 9 5 9C3.34315 9 2 10.3431 2 12C2 13.6569 3.34315 15 5 15Z"
+            stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
 
     )
 }
 
 export default ResumeIcon
+
+export const ResumeIconSmall = () => {
+    return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path
+            d="M4 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V7L15 2H6C5.46957 2 4.96086 2.21071 4.58579 2.58579C4.21071 2.96086 4 3.46957 4 4V6M14 2V6C14 6.53043 14.2107 7.03914 14.5858 7.41421C14.9609 7.78929 15.4696 8 16 8H20"
+            stroke="white" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
+        <path
+            d="M9 19C9 17.9391 8.57857 16.9217 7.82843 16.1716C7.07828 15.4214 6.06087 15 5 15M5 15C3.93913 15 2.92172 15.4214 2.17157 16.1716C1.42143 16.9217 1 17.9391 1 19M5 15C6.65685 15 8 13.6569 8 12C8 10.3431 6.65685 9 5 9C3.34315 9 2 10.3431 2 12C2 13.6569 3.34315 15 5 15Z"
+            stroke="white" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+
+    )
+}
