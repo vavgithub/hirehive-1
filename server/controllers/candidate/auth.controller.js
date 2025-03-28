@@ -221,7 +221,8 @@ export const registerCandidate = async (req, res) => {
         jobApplications: [
           {          
             jobId,
-            jobApplied,
+            jobApplied, 
+            jobType : job.employmentType,
             questionResponses,
             applicationDate: new Date(),
             currentStage: jobStages[0]?.name || "",
@@ -548,6 +549,7 @@ export const applyToJob = async (req, res) => {
       jobId,
       jobApplied,
       jobProfile,
+      jobType : job.employmentType,
       questionResponses,
       applicationDate: new Date(),
       currentStage: jobStages[0]?.name || "",

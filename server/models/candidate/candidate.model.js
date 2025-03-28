@@ -141,6 +141,9 @@ const jobApplicationSchema = new mongoose.Schema(
     jobProfile: {
       type: String,
     },
+    jobType: {
+      type: String,
+    },
     notes : {
       content : {
         type : String,

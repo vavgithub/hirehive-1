@@ -511,6 +511,9 @@ export const getCandidateJobs = async (req,res) => {
             jobTitle: {
               $ifNull: ['$jobDetail.jobTitle', '$jobApplications.jobApplied']
             },
+            jobType: {
+              $ifNull: ['$jobDetail.employmentType', '$jobApplications.jobType']
+            },
             jobId: '$jobApplications.jobId',
             rating: '$jobApplications.rating',
             resumeUrl: '$jobApplications.resumeUrl',
@@ -555,6 +558,7 @@ export const getCandidateJobs = async (req,res) => {
             noticePeriod: 1,
             skills: 1,
             currentStage: 1,
+            jobType: 1,
             jobTitle: 1,
             jobId: 1,
             rating: 1,

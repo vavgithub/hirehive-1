@@ -25,7 +25,7 @@ const Candidates = () => {
     queryFn: () => axios.get('/admin/candidate/getData/data/allCandidatesWithStats').then(res => res.data),
   });
 
-  console.log("what is this ?" , data);
+  // console.log("what is this ?" , data);
 
   // 1. Disable browser auto scroll restoration
   useEffect(() => {
