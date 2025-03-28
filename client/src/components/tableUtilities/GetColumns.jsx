@@ -81,9 +81,9 @@ const getCommonColumns = (handleDocumentClick) => [
   },
 ];
 
-const getExpAndCtcColumns = (role) => [
+const getExpAndCtcColumns = (role,disableCTC = false,disableHourly = false) => [
   ...(role === 'Hiring Manager' ? [
-    {
+    ...(disableHourly ? [] : [{
       field: 'hourlyRate',
       headerName: 'Hourly Rate',
       width: 130,
@@ -96,8 +96,8 @@ const getExpAndCtcColumns = (role) => [
 
         </span>
       )
-    },
-    {
+    }]),
+    ...(disableCTC ? [] : [{
       field: 'currentCTC',
       headerName: 'Current CTC',
       width: 130,
@@ -109,8 +109,8 @@ const getExpAndCtcColumns = (role) => [
           {!params?.value || params.value === 0 ? "-" : params.value}
         </span>
       )
-    },
-    {
+    }]),
+    ...(disableCTC ? [] : [{
       field: 'expectedCTC',
       headerName: 'Expected CTC',
       width: 130,
@@ -122,7 +122,7 @@ const getExpAndCtcColumns = (role) => [
           {!params?.value || params.value === 0 ? "-" : params.value}
         </span>
       )
-    },
+    }]),
   ] : []),
   {
     field: 'experience',
@@ -157,7 +157,7 @@ const getInfoColumns = () => [
   },
 ]
 
-export const getReadOnlyColumns = (role, handleDocumentClick) => {
+export const getReadOnlyColumns = (role, handleDocumentClick,disableCTC) => {
 
   return ([
     ...getCommonColumns(handleDocumentClick),
@@ -174,7 +174,7 @@ export const getReadOnlyColumns = (role, handleDocumentClick) => {
         </div>
       ),
     },
-    ...getExpAndCtcColumns(role),
+    ...getExpAndCtcColumns(role,disableCTC),
     {
       field: 'jobTitle',
       headerName: 'Applied For',

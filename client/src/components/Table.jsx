@@ -366,7 +366,7 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
 
   //getting column configurations
   const columns = readOnly ? 
-  getReadOnlyColumns(role,handleDocumentClick) : 
+  getReadOnlyColumns(role,handleDocumentClick,showContractors) : 
   getDefaultColumns(role,
     canMove,canReject,
     handleAssigneeChange,
