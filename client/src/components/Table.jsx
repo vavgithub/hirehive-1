@@ -160,6 +160,10 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
         result = result.filter(row => row.hasGivenAssessment === false);
       }
 
+      // Ensure unique results by _id
+      const uniqueResults = new Map();
+      result.forEach(row => uniqueResults.set(row._id, row));
+      result = Array.from(uniqueResults.values());
     }
     if(filters?.score){
       const [min,max] = filters?.score?.split(" - ");
