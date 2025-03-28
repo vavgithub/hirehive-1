@@ -81,9 +81,9 @@ const getCommonColumns = (handleDocumentClick) => [
   },
 ];
 
-const getExpAndCtcColumns = (role) => [
+const getExpAndCtcColumns = (role,disableCTC = false,disableHourly = false) => [
   ...(role === 'Hiring Manager' ? [
-    {
+    ...(disableHourly ? [] : [{
       field: 'hourlyRate',
       headerName: 'Hourly Rate',
       width: 130,
@@ -96,8 +96,8 @@ const getExpAndCtcColumns = (role) => [
 
         </span>
       )
-    },
-    {
+    }]),
+    ...(disableCTC ? [] : [{
       field: 'currentCTC',
       headerName: 'Current CTC',
       width: 130,
@@ -109,8 +109,8 @@ const getExpAndCtcColumns = (role) => [
           {!params?.value || params.value === 0 ? "-" : params.value}
         </span>
       )
-    },
-    {
+    }]),
+    ...(disableCTC ? [] : [{
       field: 'expectedCTC',
       headerName: 'Expected CTC',
       width: 130,
@@ -122,7 +122,7 @@ const getExpAndCtcColumns = (role) => [
           {!params?.value || params.value === 0 ? "-" : params.value}
         </span>
       )
-    },
+    }]),
   ] : []),
   {
     field: 'experience',
@@ -157,7 +157,7 @@ const getInfoColumns = () => [
   },
 ]
 
-export const getReadOnlyColumns = (role, handleDocumentClick) => {
+export const getReadOnlyColumns = (role, handleDocumentClick,disableCTC) => {
 
   return ([
     ...getCommonColumns(handleDocumentClick),
@@ -174,7 +174,7 @@ export const getReadOnlyColumns = (role, handleDocumentClick) => {
         </div>
       ),
     },
-    ...getExpAndCtcColumns(role),
+    ...getExpAndCtcColumns(role,disableCTC),
     {
       field: 'jobTitle',
       headerName: 'Applied For',
@@ -284,20 +284,20 @@ export const getDefaultColumns = (role, canMove, canReject, handleAssigneeChange
         onClick={(event) => event.stopPropagation()}
       >
         <button
-          onClick={() => handleMoveClick(params.row)}
-          disabled={!canMove(params.row)}
-        >
-          {canMove(params.row) ? <MoveActive /> : <Move />}
-        </button>
-        <button
-          onClick={() => handleRejectClick(params.row)}
-          disabled={!canReject(params.row)}
-        >
-          {canReject(params.row) ? <RejectActive /> : <Reject />}
-        </button>
-        <button className={params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Rejected" ? "text-font-gray" : "text-white"} disabled={params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Rejected"} onClick={(e) => handleRatingClick(e, params.row)}>
-          {getRatingIcon(params.row.rating)}
-        </button>
+            onClick={() => handleMoveClick(params.row)}
+            disabled={(params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Reviewed" && params?.row?.stageStatuses[params?.row?.currentStage]?.scheduledDate) || !canMove(params.row)}
+          >
+            {!(params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Reviewed" && params?.row?.stageStatuses[params?.row?.currentStage]?.scheduledDate) && canMove(params.row) ? <MoveActive /> : <Move />}
+          </button>
+          <button
+            onClick={() => handleRejectClick(params.row)}
+            disabled={(params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Reviewed" && params?.row?.stageStatuses[params?.row?.currentStage]?.scheduledDate) || !canReject(params.row)}
+          >
+            {!(params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Reviewed" && params?.row?.stageStatuses[params?.row?.currentStage]?.scheduledDate) && canReject(params.row) ? <RejectActive /> : <Reject />}
+          </button>
+          <button className={(params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Reviewed" && params?.row?.stageStatuses[params?.row?.currentStage]?.scheduledDate) || params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Rejected" ? "text-font-gray" : "text-white"} disabled={(params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Reviewed" && params?.row?.stageStatuses[params?.row?.currentStage]?.scheduledDate) || params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Rejected"} onClick={(e) => handleRatingClick(e, params.row)}>
+            {getRatingIcon(params.row.rating)}
+          </button>
       </div>
     )
   },

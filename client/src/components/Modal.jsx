@@ -8,6 +8,7 @@ import { CustomDropdown } from './Form/FormFields';
 import Label from './ui/Label';
 import RedInfoIcon from '../svg/RedInfoIcon';
 import StyledCard from './ui/StyledCard';
+import SchedulerButton from './ui/SchedulerButton';
 
 const ACTION_TYPES = {
   DELETE: 'DELETE',
@@ -95,10 +96,19 @@ const CLOSE_REASONS = [
 
 export const REJECTION_REASONS = [
   "Candidate's scores did not meet the criteria",
-  "Candidate did not appear for the screening",
-  "Candidate did not appear for round one",
-  "Candidate did not appear for round two",
-  "Candidate did not submit the design task"
+  // "Candidate did not appear for the screening",
+   // "Candidate did not appear for round one",
+   // "Candidate did not appear for round two",
+   // "Candidate did not submit the design task"
+   "Candidate has reapplied but was previously rejected",
+   "Candidate's portfolio/work samples did not meet expectations",
+   "Candidate displayed unprofessional or bad attitude",
+   "Candidate's skills do not align with job requirements",
+   "Candidate withdrew their application",
+   "Candidate requested an unrealistic salary",
+   "Candidate was unresponsive to communication",
+   "Candidate provided misleading or false information"
+ 
 ];
 
 const RedWarning = () => {
@@ -112,6 +122,7 @@ const RedWarning = () => {
 const Modal = ({
   open,
   onClose,
+  isReadyToClose = true,
   actionType,
   onConfirm,
   item,
@@ -131,7 +142,8 @@ const Modal = ({
   closeReason,
   onCloseReasonChange,
   specifiedWidth,
-  noCancel = false
+  noCancel = false,
+  useScheduledReject = false
 }) => {
   const [rejectionReason, setRejectionReason] = useState('');
   const [showEmailPreview, setShowEmailPreview] = useState(false);
@@ -158,7 +170,7 @@ const Modal = ({
       onCloseReasonChange(reason);
     }
   };
-  const handleConfirm = () => {
+  const handleConfirm = ( scheduledDate, scheduledTime ) => {
     if (actionType === ACTION_TYPES.ASSESSMENT) {
         navigate('/assessment');
     } else if (actionType === ACTION_TYPES.REJECT) {
@@ -166,17 +178,27 @@ const Modal = ({
             alert('Please select a reason for rejecting the candidate.');
             return;
         }
-        onConfirm(item, rejectionReason);
+        if(scheduledDate && scheduledTime){
+          onConfirm(item, rejectionReason , scheduledDate?.toISOString(), scheduledTime?.format('HH:mm'));
+        }else{
+          onConfirm(item, rejectionReason);
+        }
     } else if (actionType === ACTION_TYPES.CLOSE) {
         if (!closeReason) {
             alert('Please select a reason for closing the job.');
             return;
         }
         onConfirm(item); // The closeReason is already available in the parent component
+    }else if(useScheduledReject){
+      if(scheduledDate && scheduledTime){
+        onConfirm(item , scheduledDate?.toISOString(), scheduledTime?.format('HH:mm'));
+      }else{
+        onConfirm(item);
+      }
     } else {
         onConfirm?.(item);
     }
-    onClose();
+   isReadyToClose && onClose();
 };
 
  // Reset rejection states when modal is closed
@@ -332,7 +354,9 @@ const Modal = ({
             {( actionType !== ACTION_TYPES.ASSESSMENT || (!isMobile && actionType === ACTION_TYPES.ASSESSMENT)) 
             && actionType !== ACTION_TYPES.CAMERAERROR 
             && actionType !== ACTION_TYPES.AUDIOERROR 
-            && actionType !== ACTION_TYPES.MEDIAERROR &&
+            && actionType !== ACTION_TYPES.REJECT 
+            && !useScheduledReject
+            && actionType !== ACTION_TYPES.MEDIAERROR && 
               <Button
                 variant={buttonVariant}
                 onClick={handleConfirm}
@@ -343,6 +367,10 @@ const Modal = ({
               >
                 {confirmLabel}
               </Button>
+            }
+            {
+             (actionType === ACTION_TYPES.REJECT || useScheduledReject) && 
+             <SchedulerButton onConfirm={handleConfirm} disabled={isconfirmButtonDisabled || (useScheduledReject ? false : !rejectionReason)} buttonText={"Reject"}  modalTitle={"Schedule Email"} modalMessage={"Schedule rejection email with specified date and time"} buttonVariant={"cancel"} />
             }
           </div>
         </div>

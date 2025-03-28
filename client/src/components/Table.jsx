@@ -61,6 +61,8 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
 
   const [budgetMenuAnchorEl, setBudgetMenuAnchorEl] = useState(null);
 
+  const [showContractors,setShowContractors] = useState(false);
+
   const { 
     query , 
     setQuery ,
@@ -160,6 +162,10 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
         result = result.filter(row => row.hasGivenAssessment === false);
       }
 
+      // Ensure unique results by _id
+      const uniqueResults = new Map();
+      result.forEach(row => uniqueResults.set(row._id, row));
+      result = Array.from(uniqueResults.values());
     }
     if(filters?.score){
       const [min,max] = filters?.score?.split(" - ");
@@ -182,8 +188,16 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
       })
     }
 
+    if(filters?.["job Type"]?.length > 0){
+      result = result.filter(row => filters?.["job Type"].includes(row.jobType));
+    }
+
+    if(showContractors){
+      result = result?.filter(row => row.jobType === "Contract")
+    }
+
     return result;
-  }, [filteredRowsData, searchTerm, filters]);
+  }, [filteredRowsData, searchTerm, filters,showContractors]);
 
   const autoAssignMutation = useMutation({
     mutationFn: ({ jobId, reviewerIds ,budgetMin , budgetMax}) =>
@@ -213,8 +227,8 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
 
   // Reject candidate mutation
   const rejectCandidateMutation = useMutation({
-    mutationFn: ({ candidateId, jobId, rejectionReason }) =>
-      axios.post('/hr/reject-candidate', { candidateId, jobId, rejectionReason }),
+    mutationFn: ({ candidateId, jobId, rejectionReason, scheduledDate , scheduledTime }) =>
+      axios.post('/hr/reject-candidate', { candidateId, jobId, rejectionReason, scheduledDate , scheduledTime }),
     onSuccess: () => {
       queryClient.invalidateQueries(['candidates', jobId]);
       setIsRejectModalOpen(false);
@@ -262,11 +276,13 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
     });
   };
 
-  const handleRejectConfirm = (candidate, rejectionReason) => {
+  const handleRejectConfirm = (candidate, rejectionReason , scheduledDate , scheduledTime) => {
     rejectCandidateMutation.mutate({
       candidateId: candidate._id,
       jobId,
-      rejectionReason
+      rejectionReason, 
+      scheduledDate , 
+      scheduledTime
     });
   };
 
@@ -350,7 +366,7 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
 
   //getting column configurations
   const columns = readOnly ? 
-  getReadOnlyColumns(role,handleDocumentClick) : 
+  getReadOnlyColumns(role,handleDocumentClick,showContractors) : 
   getDefaultColumns(role,
     canMove,canReject,
     handleAssigneeChange,
@@ -472,6 +488,28 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
             <Export />
             Export
           </div>
+
+          { readOnly && <div className="flex items-center gap-2">
+            <div className="relative h-fit translate-y-[3px]">
+              <input 
+                type="checkbox" 
+                id="typeCheck" 
+                value={showContractors}
+                onChange={(e)=>setShowContractors(e.target.checked)}
+                className="appearance-none border-[1px] h-[20px] w-[20px] text-black-100 rounded-sm bg-transparent border-grey-100 checked:border-accent-100 peer"
+              />
+              <svg 
+                className="hidden peer-checked:block absolute top-[1px] left-0 w-[20px] h-[20px] text-white pointer-events-none" 
+                viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"
+              >
+                <path d="M5 12l4 4L19 7"></path>
+              </svg>
+            </div>
+            <label htmlFor="typeCheck" className="typography-body whitespace-nowrap text-font-gray">
+              Show Contractors Only
+            </label>
+          </div>}
+
         </div>
 
         {!readOnly && (
