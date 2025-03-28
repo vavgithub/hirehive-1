@@ -86,11 +86,11 @@ const QuestionSidebar = ({ questions, currentQuestion, answeredCount, onQuestion
   
   return (
     <div className="w-[15%] bg-background-30 fixed h-screen overflow-y-auto  custom-scrollbar ">
-      <div className='flex items-center justify-start px-6 py-6 '>
+      <div className='flex items-center justify-start py-6 px-4 '>
 
         <img className='h-11' src={LightLogo} />
       </div>
-      <div className="py-8 px-6 border-b border-t border-background-60 w-full">
+      <div className="py-8 px-4 border-b border-t border-background-60 w-full">
         <div className=" flex flex-col items-center ">
           <div className='w-full flex items-center gap-2'>
           {/* <TimerIconSmall /> */}
@@ -106,12 +106,12 @@ const QuestionSidebar = ({ questions, currentQuestion, answeredCount, onQuestion
           </div>
         </div>
       </div>
-      <div className='py-8 px-6 border-b border-background-60'>
+      <div className='py-8 px-4 border-b border-background-60'>
         <span className='font-bricolage mb-2 inline-block'>{(answeredCount/questions.length) * 100}% Completed</span>
       <ProgressBar answeredCount={answeredCount} total={questions.length} />
       </div>
       {/* <h2 className="typography-h3 text-font-gray p-4">Questions</h2> */}
-      <div className='grid grid-cols-5 gap-2  py-8 px-6 border-b border-background-60'>
+      <div className='grid grid-cols-5 gap-2  py-8 px-4 border-b border-background-60'>
       {questions.map((q, index) => (
         <div
           key={q._id}
@@ -136,7 +136,7 @@ const QuestionSidebar = ({ questions, currentQuestion, answeredCount, onQuestion
         </div>
       ))}
       </div>
-      <div className="p-6">
+      <div className="py-6 px-4">
           <WebcamView
             isRecording={isRecording}
             webcamRef={webcamRef}
@@ -163,7 +163,7 @@ const QuestionDisplay = ({
   const [showImage,setShowImage] = useState(false);
 
   return(
-  <div className="flex-grow p-8 pl-[212px]">
+  <div className="flex-grow p-6 pl-[212px]">
     <div className="mb-8">
       <StyledCard backgroundColor={"bg-background-70"} padding={3} extraStyles={"flex flex-col gap-4"} >
         <h1 className="typography-h1 ">{`Question ${questionNumber + 1}: ${question.text}`}</h1>

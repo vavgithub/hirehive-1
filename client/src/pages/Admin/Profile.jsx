@@ -13,6 +13,7 @@ import axios from '../../api/axios';
 import LoaderModal from '../../components/Loaders/LoaderModal';
 import {  useQueryClient } from '@tanstack/react-query';
 import { InputField } from '../../components/Inputs/InputField';
+import Container from '../../components/Cards/Container';
 
 
 
@@ -209,9 +210,10 @@ function Profile() {
   };
 
   return (
-    <div className="w-full bg-background-80 min-h-screen py-4 px-4">
+    // <div className="w-full bg-background-80 min-h-screen p-4">
+    //   <div className="container">
+    <Container hasBgColor>
       {isLoading && <LoaderModal />}
-      <div className="container mx-auto">
         <Header HeaderText="My Profile" />
         <form onSubmit={handleSubmit(handleEditProfile)}>
           <div className="flex w-full gap-4 flex-col-reverse lg:flex-row mt-8 lg:mt-0">
@@ -403,11 +405,11 @@ function Profile() {
                 <div className="mt-6 w-full grid grid-cols-2 gap-4">
                   <div>
                     <p className="font-outfit text-gray-500 text-sm">Reviews Completed</p>
-                    <p className="text-xl font-semibold">{user?.tasks_done || 0}</p>
+                    <p className="typography-h3">{user?.tasks_done || 0}</p>
                   </div>
                   <div>
                     <p className="font-outfit text-gray-500 text-sm">Pending Reviews</p>
-                    <p className="text-xl font-semibold">{user?.tasks_pending || 0}</p>
+                    <p className="typography-h3">{user?.tasks_pending || 0}</p>
                   </div>
                 </div>
               </StyledCard>
@@ -432,8 +434,9 @@ function Profile() {
             </div>
           )}
         </form>
-      </div>
-    </div>
+        </Container>
+    //   </div>
+    // </div>
   );
 }
 

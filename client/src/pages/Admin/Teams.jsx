@@ -12,6 +12,7 @@ import axios from "../../api/axios";
 import { showErrorToast, showSuccessToast } from "../../components/ui/Toast";
 import LoaderModal from "../../components/Loaders/LoaderModal";
 import { useNavigate } from "react-router-dom";
+import Container from "../../components/Cards/Container";
 
 const addMember = async ({teamMember}) => {
     const response = await axios.post('/admin/add-member',{teamMember});
@@ -100,11 +101,13 @@ function Teams() {
         }
 
   return (
-    <div className="container mx-4 pt-4 h-screen">
-      <div className="flex flex-row justify-between mb-4">
-        <h1 className="typography-h1">Teams</h1>
-        {addMemberMutation?.isPending && <LoaderModal />}
-      </div>
+    // <div className="w-full p-4 min-h-screen">
+    //     <div className="container">
+    <Container>
+        <div className="flex flex-row justify-between mb-4">
+            <h1 className="typography-h1">Teams</h1>
+            {addMemberMutation?.isPending && <LoaderModal />}
+        </div>
         <div className="grid grid-cols-5 gap-6">
             {/* Add Card */}
             <StyledCard padding={2} extraStyles={'flex flex-col items-center justify-between gap-4'}>
@@ -202,7 +205,9 @@ function Teams() {
                 </StyledCard>
             </div>
         </Modal>
-    </div>
+    </Container>
+    //     </div>
+    // </div>
   );
 }
 

@@ -7,6 +7,7 @@ import Header from '../../components/utility/Header';
 import { showErrorToast, showSuccessToast } from '../../components/ui/Toast';
 import Loader from '../../components/Loaders/Loader';
 import { useAuthContext } from '../../context/AuthProvider';
+import Container from '../../components/Cards/Container';
 
 const EditJobs = () => {
   const { id } = useParams();
@@ -47,8 +48,7 @@ const EditJobs = () => {
   if (error) return <div>Error: {error.message}</div>;
 
   return (
-    <div className="bg-background-80 min-h-screen w-full">
-      <div className='p-4 container mx-auto'>
+    <Container hasBgColor>
         <Header HeaderText="Edit Job Listing" withBack={"true"} />
         {data?.data && (
           <JobForm
@@ -59,8 +59,7 @@ const EditJobs = () => {
             initialQuestions={data.data.questions || []}
           />
         )}
-      </div>
-    </div>
+    </Container>
   );
 };
 

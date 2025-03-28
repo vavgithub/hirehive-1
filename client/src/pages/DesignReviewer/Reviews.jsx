@@ -24,6 +24,7 @@ import ScreeningReview from '../../components/Reviews/ScreeningReview';
 import DesignTaskReview from '../../components/Reviews/DesignTaskReview';
 import RoundReview from '../../components/Reviews/RoundReview';
 import StyledCard from '../../components/Cards/StyledCard';
+import Container from '../../components/Cards/Container';
 
 
 const statsOne = [
@@ -198,8 +199,9 @@ const Reviews = () => {
   const groupedEntries = candidates?.length > 0 ? Object.entries(groupedCandidates) : [];
 
   return (
-    <div className='w-full p-4'>
-      <div className='container mx-auto'>
+    // <div className='w-full p-4'>
+    //   <div className='container'>
+    <Container>
       <Header HeaderText="Reviews" />
       <StyledCard backgroundColor={"bg-background-30"} padding={2}>
         <div className="w-full">
@@ -265,8 +267,9 @@ const Reviews = () => {
         </div>
         }
       </StyledCard>
-    </div>
-    </div>
+    </Container>
+    // </div>
+    // </div>
   );
 };
 

@@ -10,6 +10,7 @@ import StyledCard from '../../components/Cards/StyledCard';
 import JobCard from '../../components/Cards/JobCard';
 import Pagination from '../../components/utility/Pagination';
 import useCandidateAuth from '../../hooks/useCandidateAuth';
+import Container from '../../components/Cards/Container';
 
 // Keep the fetchAppliedJobs function separate for better organization
 const fetchAppliedJobs = async (page) => {
@@ -89,8 +90,9 @@ const MyJobs = () => {
   }
 
   return (
-    <div className='w-full p-4'>
-    <div className='container '>
+    // <div className='w-full p-4'>
+    // <div className='container '>
+    <Container>
       <h1 className="typography-h1">My Jobs</h1>
       {isAssessmentBannerVisible &&  <AssessmentBanner />}
       <StyledCard padding={2} backgroundColor={"bg-background-30"}>
@@ -125,8 +127,9 @@ const MyJobs = () => {
           />
         </div>
       </StyledCard>
-    </div>
-    </div>
+    </Container>
+    // </div>
+    // </div>
   );
 };
 

@@ -15,6 +15,7 @@ import { roleOptions } from '../../components/Register/AddMembers'
 import { showErrorToast, showSuccessToast } from '../../components/ui/Toast'
 import { validationRules } from '../../utility/validationRules'
 import LoaderModal from '../../components/Loaders/LoaderModal'
+import Container from '../../components/Cards/Container'
 
 const editMember = async ({teamMember,memberId}) => {
     const response = await axios.patch('/admin/edit-member',{teamMember,memberId});
@@ -275,92 +276,96 @@ function TeamsProfile() {
     }
 
   return (
-    <div className="container mx-4 pt-4 h-screen">
-        <Header
-        HeaderText="Teams Profile"
-        withBack="true"
-        page="page1"
-        />
-        {( reInviteMemberMutation?.isPending || editMemberMutation?.isPending || changeMemberStatusMutation?.isPending) && <LoaderModal/>}
-        <form onSubmit={handleSubmit(handleEditMember)} className='w-full flex flex-col gap-4'>
-          <div className='w-full flex gap-4'>
-            <div className="lg:w-[70%] flex flex-col gap-4">
-                <PersonalDetails memberData={member} isEditing={isEditing} control={control} />  
-                <ProfessionalDetails memberData={member} />  
-                <SkillsExpertiseSection memberData={member} />
-            </div>
-            <div className="w-[100%] sm:w-[50%] mx-auto lg:w-[30%] ">
-                <StyledCard backgroundColor={"bg-background-30"} extraStyles=" flex flex-col items-center relative">
-                    {!member?.member_id && <button type="button" onClick={()=>setIsEditing(!isEditing)} className="absolute top-6 right-6 border rounded-xl p-2 border-font-gray hover:bg-background-70">
-                    <CustomToolTip title={"Edit Profile"} arrowed>
-                        <PencilIcon/>
-                    </CustomToolTip>
-                    </button>}
-                    <div className="relative w-[8rem] min-h-[5rem] ">
-                    <div  className="absolute w-[8rem] left-0  -top-14 aspect-square overflow-hidden rounded-full">
-                        <img src={member?.profilePicture ? member?.profilePicture : "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg"} alt="" className="object-cover w-full" />
-                    </div>
-                    </div>
-                    <h1 className="typography-h1 whitespace-nowrap overflow-hidden w-full text-ellipsis text-center">{member?.name}</h1>
-                    <div className='w-full'>
-                    {isEditing ? 
-                    <Controller
-                      name="role"
-                      control={control}
-                      defaultValue={member?.role}
-                      render={({ field, fieldState: { error } }) => (
-                      <div className='flex gap-2 items-center'>
-                        <p className='typography-body text-font-gray w-[40%]'>Role</p>
-                        <GlobalDropDown 
-                        required
-                        value={field?.value}
-                        error={error}
-                        errorMessage={error?.message}
-                        onChange={field?.onChange}
-                        options={roleOptions}
-                        />
-                      </div>
-                      )}
-                    />
-                    : <p className="typography-small-p text-center text-font-gray">{member?.role}</p>}
-                    </div>
-                    {/* Actions */}
-                    <div className='flex justify-between w-full mt-4 items-center'>
-                        <p className='typography-body'>Status</p>
-                        <p className='flex items-center gap-1 typography-large-p text-font-gray'>{active ? "Active" : "InActive"}
-                          {member?.member_id && <ToggleSwitch disabled={!member?.member_id} checkValue={active} setCheckValue={handleToggle} />}
-                        </p>
-                    </div>
-                    <div className='flex justify-between w-full mt-4 items-center'>
-                        <p className='typography-body'>Joining Status</p>
-                        <p className='flex items-center gap-1 typography-large-p text-font-gray'>{member?.member_id ? "Joined" :member?.invited ? "Invited" : "Added"}</p>
-                    </div>
-                    {!member?.member_id && <div className='flex justify-center w-full mt-4 items-center'>
-                      <Button type="button" disabled={reInviteMemberMutation?.isPending} variant="primary" onClick={handleReInvite} >Re-invite</Button>
-                    </div>}
-                </StyledCard>
-            </div>
-          </div>
-            {
-              isEditing && <div>
-                <div className="place-self-end flex gap-4 my-4">
-                    <Button
-                      onClick={handleCancel}
-                      type="button"
-                      variant="secondary"
-                    >
-                      Cancel
-                    </Button>
-                    <Button
-                      type="submit"
-                    >
-                      {false ? 'Saving...' : 'Save'}
-                    </Button>
-                  </div>
+    // <div className="w-full p-4 min-h-screen">
+    //     <div className='container'>
+    <Container>
+          <Header
+          HeaderText="Teams Profile"
+          withBack="true"
+          page="page1"
+          />
+          {( reInviteMemberMutation?.isPending || editMemberMutation?.isPending || changeMemberStatusMutation?.isPending) && <LoaderModal/>}
+          <form onSubmit={handleSubmit(handleEditMember)} className='w-full flex flex-col gap-4'>
+            <div className='w-full flex gap-4'>
+              <div className="lg:w-[70%] flex flex-col gap-4">
+                  <PersonalDetails memberData={member} isEditing={isEditing} control={control} />  
+                  <ProfessionalDetails memberData={member} />  
+                  <SkillsExpertiseSection memberData={member} />
               </div>
-            }
-        </form>
-    </div>
+              <div className="w-[100%] sm:w-[50%] mx-auto lg:w-[30%] ">
+                  <StyledCard backgroundColor={"bg-background-30"} extraStyles=" flex flex-col items-center relative">
+                      {!member?.member_id && <button type="button" onClick={()=>setIsEditing(!isEditing)} className="absolute top-6 right-6 border rounded-xl p-2 border-font-gray hover:bg-background-70">
+                      <CustomToolTip title={"Edit Profile"} arrowed>
+                          <PencilIcon/>
+                      </CustomToolTip>
+                      </button>}
+                      <div className="relative w-[8rem] min-h-[5rem] ">
+                      <div  className="absolute w-[8rem] left-0  -top-14 aspect-square overflow-hidden rounded-full">
+                          <img src={member?.profilePicture ? member?.profilePicture : "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg"} alt="" className="object-cover w-full" />
+                      </div>
+                      </div>
+                      <h1 className="typography-h1 whitespace-nowrap overflow-hidden w-full text-ellipsis text-center">{member?.name}</h1>
+                      <div className='w-full'>
+                      {isEditing ? 
+                      <Controller
+                        name="role"
+                        control={control}
+                        defaultValue={member?.role}
+                        render={({ field, fieldState: { error } }) => (
+                        <div className='flex gap-2 items-center'>
+                          <p className='typography-body text-font-gray w-[40%]'>Role</p>
+                          <GlobalDropDown 
+                          required
+                          value={field?.value}
+                          error={error}
+                          errorMessage={error?.message}
+                          onChange={field?.onChange}
+                          options={roleOptions}
+                          />
+                        </div>
+                        )}
+                      />
+                      : <p className="typography-small-p text-center text-font-gray">{member?.role}</p>}
+                      </div>
+                      {/* Actions */}
+                      <div className='flex justify-between w-full mt-4 items-center'>
+                          <p className='typography-body'>Status</p>
+                          <p className='flex items-center gap-1 typography-large-p text-font-gray'>{active ? "Active" : "InActive"}
+                            {member?.member_id && <ToggleSwitch disabled={!member?.member_id} checkValue={active} setCheckValue={handleToggle} />}
+                          </p>
+                      </div>
+                      <div className='flex justify-between w-full mt-4 items-center'>
+                          <p className='typography-body'>Joining Status</p>
+                          <p className='flex items-center gap-1 typography-large-p text-font-gray'>{member?.member_id ? "Joined" :member?.invited ? "Invited" : "Added"}</p>
+                      </div>
+                      {!member?.member_id && <div className='flex justify-center w-full mt-4 items-center'>
+                        <Button type="button" disabled={reInviteMemberMutation?.isPending} variant="primary" onClick={handleReInvite} >Re-invite</Button>
+                      </div>}
+                  </StyledCard>
+              </div>
+            </div>
+              {
+                isEditing && <div>
+                  <div className="place-self-end flex gap-4 my-4">
+                      <Button
+                        onClick={handleCancel}
+                        type="button"
+                        variant="secondary"
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        type="submit"
+                      >
+                        {false ? 'Saving...' : 'Save'}
+                      </Button>
+                    </div>
+                </div>
+              }
+          </form>
+      </Container>
+    //     </div>
+    // </div>
   )
 }
 

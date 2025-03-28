@@ -22,6 +22,7 @@ import AdditionalQuestions from '../../components/QuestionUtilities/AdditionalQu
 import OtpComponent from '../../components/utility/OtpComponent';
 import PasswordComponent from '../../components/utility/PasswordComponent';
 import ContactUs from '../../components/Form/ContactUs';
+import Container from '../../components/Cards/Container';
 
 const fetchJobDetails = async (id) => {
   const response = await axios.get(`/jobs/getJobById/${id}`);
@@ -354,7 +355,8 @@ useEffect(() => {
   return (
 
 
-    <div className='main-wrapper flex justify-center ' >
+    // <div className=' flex justify-center ' >
+    <Container extraStyles="flex justify-center " hasContainerDiv={false} >
 
       {
         isSubmitting && <LoaderModal/>
@@ -363,7 +365,7 @@ useEffect(() => {
       {currentStep === 1 && (
         <div className='container'>
           <div  >
-            <img className='h-12 mt-6 mx-6' src={Logo} />
+            <img className='h-12 mt-2 mx-4' src={Logo} />
           </div>
           <form className='mx-auto mt-2 container-form px-6' onSubmit={handleSubmit(onSubmit)}>
             {/* <h1 className="typography-h1 py-6">Application for {jobDetails?.jobTitle}</h1> */}
@@ -518,8 +520,8 @@ useEffect(() => {
       )}
 
       <ContactUs/>
-
-    </div>
+  </Container>
+    // </div>
 
   );
 };

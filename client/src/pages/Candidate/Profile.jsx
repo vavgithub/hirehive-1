@@ -18,6 +18,7 @@ import LoaderModal from "../../components/Loaders/LoaderModal";
 import CustomToolTip from "../../components/Tooltip/CustomToolTip";
 import { InputField } from "../../components/Inputs/InputField";
 import { emailRegex, mobileRegex } from "../../utility/regex";
+import Container from "../../components/Cards/Container";
 
 const PersonalDetails = ({candidateData, isEditing , control}) => {
     return (
@@ -557,7 +558,9 @@ function Profile() {
     };
 
   return (
-    <div className="w-full bg-background-80 min-h-screen py-4 px-4 ">
+    // <div className="w-full bg-background-80 min-h-screen p-4 ">
+    //   <div className="container ">
+    <Container hasBgColor>
       {isLoading && <LoaderModal/>}
       {showOTPModal && isEditing && 
               <div className="flex items-center h-screen w-screen justify-center fixed bg-background-overlay z-50 top-0 left-0">
@@ -599,7 +602,6 @@ function Profile() {
                 </div>
               </div>
             }
-      <div className="container  mx-auto">
         <Header HeaderText={"My Profile"}  />
       {isAssessmentBannerVisible &&  <AssessmentBanner />}
         <form onSubmit={handleSubmit(handleEditProfile)}>
@@ -672,8 +674,9 @@ function Profile() {
               >Save</Button>
             </div>}
         </form>
-      </div>
-    </div>
+      </Container>
+    //   </div>
+    // </div>
   );
 }
 

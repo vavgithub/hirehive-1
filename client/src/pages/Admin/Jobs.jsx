@@ -25,6 +25,7 @@ import StyledCard from '../../components/Cards/StyledCard';
 import Pagination from '../../components/utility/Pagination';
 import useDebounce from '../../hooks/useDebounce';
 import { useAuthContext } from '../../context/AuthProvider';
+import Container from '../../components/Cards/Container';
 
 
 const fetchJobs = (page, status) => axios.get(`/jobs/jobs?page=${page}&status=${status}`).then(res => res.data);
@@ -322,7 +323,7 @@ const Jobs = () => {
     const currentPage = 'dashboard';
 
     return (
-        <div className="container mx-4 pt-4 h-screen">
+        <Container >
             <div className="flex flex-row justify-between mb-4">
                 <h1 className='typography-h1'>Jobs</h1>
                 {/* <Link to="/admin/create-job" className="bg-black text-white px-4 py-2 rounded">Create job listing</Link> */}
@@ -437,7 +438,7 @@ const Jobs = () => {
                     onCloseReasonChange={handleCloseReasonChange}
                 />
             </StyledCard>
-        </div>
+        </Container>
     );
 };
 export default Jobs;

@@ -14,6 +14,7 @@ import StyledCard from '../../components/Cards/StyledCard';
 import Modal from '../../components/Modals/Modal';
 import { AccordionItem } from '../../components/Accordion/AccordionItem';
 import ContactUs from '../../components/Form/ContactUs';
+import Container from '../../components/Cards/Container';
 
 const PreAssessment = () => {
     const [isOverviewOpen, setIsOverviewOpen] = useState(true);
@@ -101,9 +102,10 @@ const PreAssessment = () => {
     }
 
     return (
-        <div className='bg-background-90'>
-            <div className=" min-h-screen p-6 container mx-auto">
-                <div className='flex  w-full mb-10 '>
+        // <div className='bg-background-90 p-4 min-h-screen '>
+        //     <div className=" container ">
+        <Container hasBgColor="bg-background-90">
+                <div className='flex  w-full mt-2 mb-10 '>
                     <img className='h-12' src={Logo} />
                 </div>
                 <div>
@@ -213,9 +215,10 @@ const PreAssessment = () => {
                             </Button>
                     </div>
                 </div>
-            </div>
-            <ContactUs/>
-        </div>
+                <ContactUs/>
+            </Container>
+        //     </div>
+        // </div>
     );
 };
 

@@ -28,6 +28,7 @@ import SwitchArrows from '../../svg/Icons/SwitchArrows';
 import ScoreChart from '../../components/Charts/ScoreChart';
 import { getStageColor, maxScoreOfEachStage } from '../../components/Staging/staging.config';
 import { CustomDropdown } from '../../components/Dropdowns/CustomDropdown';
+import Container from '../../components/Cards/Container';
 
 export const VAVScoreCard = ({score,stage,scoreStages})=>{
     const [showBreakDown,setShowBreakDown] = useState(false);
@@ -314,8 +315,9 @@ const ViewCandidateProfile = () => {
 
 
     return (
-        <div className='w-full p-4'>
-            <div className="container mx-auto">
+        // <div className='w-full p-4'>
+        //     <div className="container ">
+        <Container>
             {/* Page header */}
             <Header
                     HeaderText="Candidate Profile"
@@ -425,8 +427,9 @@ const ViewCandidateProfile = () => {
             {activeTab === 'candidateDetails'  && (
                 <CandidateTabDetail data={transformedData} />
             )}
-        </div>
-        </div>
+        </Container>
+        // </div>
+        // </div>
     );
 };
 

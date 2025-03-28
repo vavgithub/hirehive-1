@@ -14,6 +14,7 @@ import CustomToolTip from '../../components/Tooltip/CustomToolTip';
 import { VideoModal } from '../../components/Modals/VideoModal';
 import { Correctanswer } from '../../svg/Answers/CorrectAnswer';
 import { Wronganswer } from '../../svg/Answers/WrongAnswers';
+import Container from '../../components/Cards/Container';
 
 // Fetch function
 const fetchAssessmentDetails = async (candidateId) => {
@@ -62,8 +63,7 @@ const AssessmentResponse = () => {
 
 
     return (
-        <div className='w-full p-4'>
-            <div className="container ">
+        <Container>
             <div >
                 <Header withBack={"true"} HeaderText="Assessment details" />
 
@@ -250,8 +250,7 @@ const AssessmentResponse = () => {
                 onClose={() => setIsVideoModalOpen(false)}
                 videoUrl={assessmentData?.candidateInfo?.recordingUrl}
             />
-        </div>
-        </div>
+    </Container>
     );
 };
 

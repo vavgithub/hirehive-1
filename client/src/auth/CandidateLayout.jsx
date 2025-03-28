@@ -219,12 +219,12 @@ const CandidateLayout = () => {
           transition-transform duration-300 ease-in-out
           md:w-48 w-64 h-screen
           bg-background-100 text-font-gray
-          flex flex-col justify-between py-4
+          flex flex-col justify-between py-6
         `}
         style={{ position: 'fixed' }}
       >
         <div className="flex flex-col gap-5 typography-body">
-          <div className='p-2 flex '>
+          <div className='px-4 flex '>
 
             <img className='h-11' src={LightLogo} />
           </div>

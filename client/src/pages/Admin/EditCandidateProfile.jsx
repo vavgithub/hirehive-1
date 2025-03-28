@@ -7,6 +7,7 @@ import DynamicForm from '../../components/Form/DynamicForm';
 import { showSuccessToast } from '../../components/ui/Toast';
 import Loader from '../../components/Loaders/Loader';
 import StyledCard from '../../components/Cards/StyledCard';
+import Container from '../../components/Cards/Container';
 
 
 const fetchCandidate = async ({ queryKey }) => {
@@ -88,9 +89,7 @@ const EditCandidateProfile = () => {
     </div>)
   }else{
     return (
-      <div className='w-full bg-background-80 min-h-full p-4'>
-        <div className=" container mx-auto ">
-  
+          <Container hasBgColor >
             <Header HeaderText="Edit Candidate Profile" withKebab='false' withBack="true" />
             <div className='flex gap-6 mt-5'>
               <StyledCard backgroundColor={"bg-background-30"} padding={2} extraStyles=' w-96 h-96  flex flex-col items-center'>
@@ -114,8 +113,7 @@ const EditCandidateProfile = () => {
                 />
               </div>
             </div>
-        </div>
-      </div>
+        </Container>
     )
   }
 }

@@ -15,10 +15,10 @@ import Total from '../../svg/StatsCard/View Candidate/Total';
 import Loader from '../../components/Loaders/Loader';
 import StyledCard from '../../components/Cards/StyledCard';
 import Table from '../../components/tableUtilities/Table';
+import Container from '../../components/Cards/Container';
 
 
 const Candidates = () => {
-  const containerRef = useRef(null);
   
   const { data, isLoading, isError } = useQuery({
     queryKey: ['candidates'],
@@ -68,8 +68,7 @@ const Candidates = () => {
   if (isError) return <div>Error fetching candidates</div>;
 
   return (
-    <div className='w-full p-4' ref={containerRef}>
-      <div className="container mx-auto">
+    <Container >
         <Header HeaderText="Candidates" />
         <StyledCard padding={2} backgroundColor={"bg-background-100"}>
           <div className="w-full max-w-7xl relative">
@@ -78,8 +77,7 @@ const Candidates = () => {
           </div>
           <Table readOnly={true} readOnlyData={data?.candidates || []} />
         </StyledCard>
-      </div>
-    </div>
+    </Container>
   );
 };
 
