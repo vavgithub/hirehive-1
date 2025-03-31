@@ -102,7 +102,7 @@ connectDB()
         `Server running in ${environment} mode on port ${PORT}`
       )
     );
-    // dbUpdater()
+    dbUpdater()
     // Start the scheduled jobs
     startScheduledJobs();
 
