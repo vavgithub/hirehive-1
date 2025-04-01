@@ -614,7 +614,7 @@ export const stagingConfig = {
                         hasScoreBoard : true,
                         hasScoreCard : true,
                         hasCallDetails : false,
-                        hasCallHistory : false,
+                        hasCallHistory : true,
                         hasScheduledForm : false,
                         actions : false
                     },
@@ -1462,7 +1462,7 @@ export const stagingConfig = {
                         hasRemarks : true,
                         hasScoreCard : true,
                         hasCallDetails : false,
-                        hasCallHistory : false,
+                        hasCallHistory : true,
                         hasScheduledForm : false,
                         actions : false
                     },
@@ -1893,7 +1893,7 @@ export const stagingConfig = {
                         hasRemarks : true,
                         hasScoreCard : true,
                         hasCallDetails : false,
-                        hasCallHistory : false,
+                        hasCallHistory : true,
                         hasScheduledForm : false,
                         actions : false
                     },
