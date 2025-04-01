@@ -36,6 +36,7 @@ import TextEditor from '../../components/utility/TextEditor';
 import LoaderModal from '../../components/Loaders/LoaderModal';
 import { truncatedText } from '../../utility/truncatedHTML';
 import { ChevronDown, ChevronRight } from 'lucide-react';
+import { formatTime } from '../../utility/formatTime';
 
 export const VAVScoreCard = ({score,stage,scoreStages})=>{
     const [showBreakDown,setShowBreakDown] = useState(false);

@@ -11,17 +11,21 @@ function BudgetMenu({budgetMenuAnchorEl , handleBudgetMenuClose , handleBudgetEd
         onClose={handleBudgetMenuClose}
         anchorOrigin={{
           vertical: 'bottom',
-          horizontal: 'left',
+          horizontal: 'right',
         }}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'left',
-        }}
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'left',
+          }}
         sx={{
           "& .MuiList-root": {
             backgroundColor: 'rgba(12, 13, 13, 1)',
             color: "white",
-            font: "Outfit"
+            font: "Outfit",
+            padding : "8px",
+            display : "flex",
+            flexDirection : "column",
+            gap:"8px",
           },
           "& .MuiPaper-root": {
             marginTop: '8px',
@@ -29,22 +33,30 @@ function BudgetMenu({budgetMenuAnchorEl , handleBudgetMenuClose , handleBudgetEd
           }
         }}
       >
-        <div className='flex items-center justify-start px-4 typograhy-body '>
-          <EditIcon />
+        <div className='flex items-center justify-start typograhy-body'>
           <MenuItem
           sx={{
             fontFamily :"Outfit",
+            width : "100%",
+            display : "flex",
+            gap: "4px"
           }}
-          onClick={handleBudgetEdit}>Edit</MenuItem>
+          onClick={handleBudgetEdit}>
+          <EditIcon />
+            Edit</MenuItem>
 
         </div>
-        <div className='flex items-center justify-start px-4 typograhy-body '>
-          <DeleteIcon />
+        <div className='flex items-center justify-start typograhy-body '>
           <MenuItem 
           sx={{
             fontFamily :"Outfit",
+            width : "100%",
+            display : "flex",
+            gap: "4px"
           }}
-          onClick={handleBudgetClear}>Clear</MenuItem>
+          onClick={handleBudgetClear}>
+          <DeleteIcon />
+            Clear</MenuItem>
         </div>
       </Menu>
   )
