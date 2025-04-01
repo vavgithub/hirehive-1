@@ -572,22 +572,26 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
         />
       }
 
-    {(stageBasedConfig?.hasCallHistory && stageData?.callHistory?.length > 0) && 
+    {(stageBasedConfig?.hasCallHistory ) && 
       <div className='mt-4 relative w-[50%]'>
-          <h3 className='typography-small-p text-font-gray mt-1'>Reschedules</h3>
-          {stageData.callHistory.filter((call,index) => index === 0).map((call, index) => (
+          <h3 className='typography-small-p text-font-gray mt-1'>{currentStatus !== "Cleared" ? "Reschedules" : "Calls"}</h3>
+          {currentStatus !== "Cleared" ? ( stageData?.callHistory?.length > 0 && stageData.callHistory.filter((call,index) => index === 0).map((call, index) => (
               <div key={index} className='mt-2 '>
                   {renderCallData(call, true)}
                   {/* <p className='typography-small-p text-font-gray mt-3'>Status: {call.status}</p> */}
               </div>
-          ))}       
-          {showMore && stageData.callHistory.filter((call,index)=>index !== 0).map((call, index) => (
+          )) ): 
+        <div  className='mt-2 '>
+            {renderCallData(stageData?.currentCall, true)}
+        </div>
+          }       
+          {showMore &&  stageData?.callHistory?.length > 0 && stageData.callHistory.filter((call,index)=>currentStatus !== "Cleared" ? index !== 0 : true).map((call, index) => (
               <div key={index} className='mt-2 '>
                   {renderCallData(call, true)}
                   {/* <p className='typography-small-p text-font-gray mt-3'>Status: {call.status}</p> */}
               </div>
           ))}
-           {stageData?.callHistory?.length > 1 && <p onClick={() => setShowMore(!showMore)} className='cursor-pointer mt-2 typography-small-p text-font-gray flex items-center gap-1 '>{!showMore ? <><ChevronDown size={16} /> Show More </> : <> <ChevronUp size={16} /> Hide</>}</p>}
+           {stageData?.callHistory?.length > 0 && <p onClick={() => setShowMore(!showMore)} className='cursor-pointer mt-2 typography-small-p text-font-gray flex items-center gap-1 '>{!showMore ? <><ChevronDown size={16} /> Show More </> : <> <ChevronUp size={16} /> Hide</>}</p>}
       </div>
     }
     {
