@@ -1631,6 +1631,9 @@ export const stagingConfig = {
     ]
 }
 
+export const getStages = (jobProfile) => {
+    return stagingConfig[jobProfile]?.map(stage => stage?.name)
+}
 
 export const statusConfig = {
     "Accepted": { 

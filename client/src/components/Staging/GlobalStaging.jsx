@@ -555,16 +555,14 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
       {stageBasedConfig?.hasScheduledForm && 
         <div className='w-full mt-4'>
           <ScheduleForm
-            candidateId={candidateId}
-            jobId={jobId}
+            candidateData={candidateData}
             onSubmit={handleSchedule}
           />
         </div>}
       {
         isRescheduling && 
         <ScheduleForm
-            candidateId={candidateId}
-            jobId={jobId}
+            candidateData={candidateData}
             onSubmit={handleReschedule}
             isRescheduling={true}
             initialData={stageData.currentCall}
@@ -591,7 +589,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
                   {/* <p className='typography-small-p text-font-gray mt-3'>Status: {call.status}</p> */}
               </div>
           ))}
-           {stageData?.callHistory?.length > 0 && <p onClick={() => setShowMore(!showMore)} className='cursor-pointer mt-2 typography-small-p text-font-gray flex items-center gap-1 '>{!showMore ? <><ChevronDown size={16} /> Show More </> : <> <ChevronUp size={16} /> Hide</>}</p>}
+           {stageData?.callHistory?.length > (currentStatus !== "Cleared" ? 1 : 0)&& <p onClick={() => setShowMore(!showMore)} className='cursor-pointer mt-2 typography-small-p text-font-gray flex items-center gap-1 '>{!showMore ? <><ChevronDown size={16} /> Show More </> : <> <ChevronUp size={16} /> Hide</>}</p>}
       </div>
     }
     {

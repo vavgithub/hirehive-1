@@ -4,9 +4,10 @@ import Datepicker from '../utility/Datepicker'
 import Timepicker from '../utility/Timepicker'
 import { Button } from '../ui/Button';
 import { InputField } from '../Form/FormFields';
+import { getStages } from './staging.config';
 
 
-export const ScheduleForm = ({ candidateId, jobId, onSubmit, isRescheduling, initialData, onCancel }) => {
+export const ScheduleForm = ({ candidateData, onSubmit, isRescheduling, initialData, onCancel }) => {
     const [date, setDate] = useState(isRescheduling ? null : (initialData ? new Date(initialData.scheduledDate) : null));
     const [time, setTime] = useState(isRescheduling ? null : (initialData ? initialData.scheduledTime : null));
     const [assignee, setAssignee] = useState(isRescheduling ? null : (initialData ? initialData.assignedTo : null));
@@ -17,6 +18,9 @@ export const ScheduleForm = ({ candidateId, jobId, onSubmit, isRescheduling, ini
     const [assigneeError,setAssigneeError] = useState(false);
     const [linkError,setLinkError] = useState(false);
 
+    const stages = getStages("UI UX")
+    const currentStageIndex = stages.findIndex(stage => stage === candidateData?.jobApplication?.currentStage);
+    
     //validating every fields
     const validateErrors = ()=>{
         !date ? setDateError(true) : setDateError(false);
@@ -89,6 +93,8 @@ export const ScheduleForm = ({ candidateId, jobId, onSubmit, isRescheduling, ini
                         onChange={setAssignee}
                         onSelect={setAssignee}
                         error={assigneeError}
+                        autoFill={currentStageIndex > 0 ? candidateData?.jobApplication?.stageStatuses[stages[currentStageIndex - 1]]?.assignedTo : false}
+                        previousAssigneeId={candidateData?.jobApplication?.stageStatuses[stages[currentStageIndex - 1]]?.assignedTo ?? false}
                     />
                     {assigneeError && <p className='absolute text-red-100 typography-small-p top-[5.2rem]'>Reviewer is required</p>}
                 </div>
