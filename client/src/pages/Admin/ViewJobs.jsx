@@ -165,7 +165,7 @@ const ViewJobs = () => {
     const applicationsReceivedStats = {
         monthly : `${jobStats?.data?.comparison?.applicationsReceived?.monthly ?? 0}% since last month`,
         weekly : `${jobStats?.data?.comparison?.applicationsReceived?.weekly ?? 0}% since last week`,
-        yesterday : `${jobStats?.data?.comparison?.applicationsReceived?.yesterday ?? 0}% since yesterday`,
+        daily : `${jobStats?.data?.comparison?.applicationsReceived?.daily ?? 0}% since yesterday`,
     }
 
     // Update the stats arrays to use the fetched data

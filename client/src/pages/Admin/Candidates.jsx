@@ -50,7 +50,7 @@ const Candidates = () => {
   const candidateStats = {
     monthly : `${data?.stats?.statistics?.total?.monthly ?? 0}% since last month`,
     weekly : `${data?.stats?.statistics?.total?.weekly ?? 0}% since last week`,
-    yesterday : `${data?.stats?.statistics?.total?.yesterday ?? 0}% since yesterday`,
+    daily : `${data?.stats?.statistics?.total?.daily ?? 0}% since yesterday`,
 }
 
   const statsOne = [

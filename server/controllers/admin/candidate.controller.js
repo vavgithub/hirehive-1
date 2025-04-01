@@ -594,7 +594,7 @@ export const getCandidateJobs = async (req,res) => {
           total : {
             monthly : monthlyPercentageChange.toFixed(2),
             weekly : weeklyPercentageChange.toFixed(2),
-            yesterday : dailyPercentageChange.toFixed(2),
+            daily : dailyPercentageChange.toFixed(2),
           }
         }
       };

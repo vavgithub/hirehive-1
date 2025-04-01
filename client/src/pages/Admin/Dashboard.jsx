@@ -293,7 +293,7 @@ const Dashboard = () => {
             statistics : {
                 monthly : `${overallStats?.jobStatistics?.monthly ?? 0}% since last month`,
                 weekly : `${overallStats?.jobStatistics?.weekly ?? 0}% since last week`,
-                yesterday : `${overallStats?.jobStatistics?.yesterday ?? 0}% since yesterday`,
+                daily : `${overallStats?.jobStatistics?.daily ?? 0}% since yesterday`,
             }
         },
         {
@@ -303,7 +303,7 @@ const Dashboard = () => {
             statistics : {
                 monthly : `${overallStats?.applicationStatistics?.monthly ?? 0}% since last month`,
                 weekly : `${overallStats?.applicationStatistics?.weekly ?? 0}% since last week`,
-                yesterday : `${overallStats?.applicationStatistics?.yesterday ?? 0}% since yesterday`,
+                daily : `${overallStats?.applicationStatistics?.daily ?? 0}% since yesterday`,
             }
         },
         {
@@ -313,7 +313,7 @@ const Dashboard = () => {
             statistics : {
                 monthly : `${overallStats?.hiredStatistics?.monthly ?? 0}% since last month`,
                 weekly : `${overallStats?.hiredStatistics?.weekly ?? 0}% since last week`,
-                yesterday : `${overallStats?.hiredStatistics?.yesterday ?? 0}% since yesterday`,
+                daily : `${overallStats?.hiredStatistics?.daily ?? 0}% since yesterday`,
             }
         }
     ];

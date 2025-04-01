@@ -391,17 +391,17 @@ export const StatisticsController = {
           jobStatistics : {
             monthly : monthlyPercentageChange.toFixed(2),
             weekly : weeklyPercentageChange.toFixed(2),
-            yesterday : dailyPercentageChange.toFixed(2),
+            daily : dailyPercentageChange.toFixed(2),
           },
           applicationStatistics : {
             monthly : monthlyApplicationsPercentageChange.toFixed(2),
             weekly : weeklyApplicationsPercentageChange.toFixed(2),
-            yesterday : dailyApplicationsPercentageChange.toFixed(2),
+            daily : dailyApplicationsPercentageChange.toFixed(2),
           },
           hiredStatistics : {
             monthly : monthlyHiresPercentageChange.toFixed(2),
             weekly : weeklyHiresPercentageChange.toFixed(2),
-            yesterday : dailyHiresPercentageChange.toFixed(2),
+            daily : dailyHiresPercentageChange.toFixed(2),
           },
         },
       });
@@ -650,7 +650,7 @@ export const StatisticsController = {
           applicationsReceived : {
             monthly : monthlyApplicationsPercentageChange.toFixed(2),
             weekly : weeklyApplicationsPercentageChange.toFixed(2),
-            yesterday : dailyApplicationsPercentageChange.toFixed(2),
+            daily : dailyApplicationsPercentageChange.toFixed(2),
           }
         }
       };
