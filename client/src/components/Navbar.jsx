@@ -56,12 +56,12 @@ const Navbar = () => {
     };
 
     const NavItem = ({ to, icon: Icon, activeIcon: ActiveIcon, iconData, children }) => (
-        <div className="relative flex flex-row items-center justify-between hover:bg-background-60">
+        <div className="relative flex flex-row items-center justify-between hover:bg-background-60 rounded-xl mx-2">
             <NavLink
                 to={to}
                 end={to === "/admin/dashboard" || to === "/design-reviewer/dashboard"}
                 className={({ isActive, isPending }) =>
-                    `w-full flex items-center gap-2 pl-2 ${isActive || isPending ? "text-font-accent" : ""}`
+                    `w-full flex items-center min-h-11 gap-2 pl-2 py-2 rounded-xl ${isActive || isPending ? "text-font-accent bg-background-60" : ""}`
                 }
             >
                 {({ isActive, isPending }) => (
@@ -108,7 +108,7 @@ const Navbar = () => {
                 <NavLink
                 to={profilePath}
                 className={({ isActive }) =>
-                    `w-full flex items-center ${isActive ? "text-font-accent" : ""}  hover:bg-background-60 px-4 py-2 rounded-xl `}
+                    `w-full flex items-center ${isActive ? "text-font-accent  " : ""}  hover:bg-background-60 px-4 py-2 rounded-xl `}
                 >
                     <Profile />
                     <span className='typography-body  ml-2 font-outfit'>
@@ -132,16 +132,16 @@ const Navbar = () => {
 
         return (
             <>
-                <div className={`flex items-center px-2 justify-start hover:bg-background-60`}>
+                <div className={`flex items-center px-2 py-1 mx-2 rounded-xl justify-start hover:bg-background-60 ${location.pathname === profilePath ? "bg-background-60" : ""}`}>
                     <IconButton
                         onClick={handleMenuClick}
-                        className={`flex gap-2  ${location.pathname === profilePath ? "text-font-accent" : ""}`}
+                        className={`flex gap-2  ${location.pathname === profilePath ? "text-font-accent  " : ""}`}
                     >
                         <Avatar alt={user?.name} sx={{ width: "32px", height: "32px" }}
                             src={user?.profilePicture} />
                         <span className={`typography-body  ${location.pathname === profilePath ? "text-font-accent" : "text-white"} `}>{user?.name}</span>
                     </IconButton>
-                    <div className={`absolute right-0 w-1 h-6 rounded-tl-xl rounded-bl-xl ${location.pathname === profilePath ? "bg-teal-400" : "bg-transparent"}`} />
+                    <div className={`absolute right-2 w-1 h-6 rounded-tl-xl rounded-bl-xl ${location.pathname === profilePath ? "bg-teal-400" : "bg-transparent"}`} />
                 </div>
                 <StyledMenu anchorEl={anchorEl} handleMenuClose={handleMenuClose} itemComponents={itemComponents} />
                 
