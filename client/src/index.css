@@ -291,8 +291,8 @@ h2{
 
 @layer base {
   :root {
-    --color-primary-100: rgba(4, 95, 253, 1);
-  --color-primary-200: rgba(2, 84, 228, 1);
+    --color-primary-100: rgb(4, 95, 253);
+  --color-primary-200: rgb(2, 84, 228);
     /* --color-primary-300: rgba(4, 95, 253, 0.2); */
     /* --color-primary-400: rgba(4, 95, 253, 0.3); */
     --color-primary-300: #122243;
@@ -302,7 +302,7 @@ h2{
     --color-secondary-500: 99 102 241;
 
 
-    --color-accent-100: rgba(24, 233, 208, 1);
+    --color-accent-100: rgb(24, 233, 208);
     --color-accent-200: rgba(24, 233, 208, 0.3);
     --color-accent-300: rgba(24, 233, 208, 0.1);
     /* ... */

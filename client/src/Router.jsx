@@ -34,6 +34,7 @@ import AdminLayout from './components/AdminLayout.jsx';
 import Teams from './pages/Admin/Teams.jsx';
 import TeamsProfile from './pages/Admin/TeamsProfile.jsx';
 import Jobs from './pages/Admin/Jobs.jsx';
+import AdminDashboard from './pages/Admin/AdminDashboard.jsx';
 
 export const router = createBrowserRouter([
   {
@@ -182,7 +183,7 @@ export const router = createBrowserRouter([
     children: [
       {
         path: "dashboard",
-        element: <Jobs />
+        element: <AdminDashboard />
       },
       {
         path: "teams",
