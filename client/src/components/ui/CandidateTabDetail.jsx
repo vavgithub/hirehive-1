@@ -3,18 +3,33 @@ import PencilIcon, { PencilEditIcon } from '../../svg/Buttons/PencilIcon';
 import { Controller, useForm } from 'react-hook-form';
 import { InputField } from '../Form/FormFields';
 import { validationRules } from '../../utility/validationRules';
-import { Button } from './Button';
 import axios from '../../api/axios';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { showErrorToast, showSuccessToast } from './Toast';
+import StyledCard from '../Cards/StyledCard';
+import CustomHeading from '../Heading/CustomHeading';
+import { GridRow } from '../Grid/GridRow';
+import { Button } from '../Buttons/Button';
 
 const updateProfessionalDetails = async ({experience, noticePeriod, currentCTC, expectedCTC, hourlyRate , id, jobId}) => {
     const response = await axios.patch(`/admin/candidate/update-candidate/${id}/${jobId}`,{experience, noticePeriod, currentCTC, expectedCTC, hourlyRate });
     return response?.data
 }
-import StyledCard from '../Cards/StyledCard';
-import CustomHeading from '../Heading/CustomHeading';
-import { GridRow } from '../Grid/GridRow';
+
+const Card = ({ title, children, gridLayout = false , extraClass }) => (
+  <div className={`bg-background-90 p-4 rounded-xl mb-4 ${extraClass}`} >
+    <h2 className="typography-h3 mb-5">{title}</h2>
+    <div className={gridLayout ? "grid grid-cols-2 gap-3" : ""}>{children}</div>
+  </div>
+);
+
+const DetailRow = ({ label, value }) => (
+  <div className="grid grid-cols-2">
+    
+    <span className="text-font-gray typography-body">{label}</span>
+    <span className="typography-body">{value}</span>
+  </div>
+);
 
 const Experience = ({ company, position, startDate, endDate, index }) => (
     <div className="mb-4">

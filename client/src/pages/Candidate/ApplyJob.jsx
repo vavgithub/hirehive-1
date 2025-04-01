@@ -21,12 +21,12 @@ import LoaderModal from '../../components/Loaders/LoaderModal';
 import AdditionalQuestions from '../../components/QuestionUtilities/AdditionalQuestions';
 import OtpComponent from '../../components/utility/OtpComponent';
 import PasswordComponent from '../../components/utility/PasswordComponent';
-import Modal from '../../components/Modal';
-import StyledCard from '../../components/ui/StyledCard';
 import { PencilEditIcon } from '../../svg/Buttons/PencilIcon';
 import { InputField } from '../../components/Form/FormFields';
 import RightTick from '../../svg/Staging/RightTick';
 import ContactUs from '../../components/Form/ContactUs';
+import Modal from '../../components/Modals/Modal';
+import StyledCard from '../../components/Cards/StyledCard';
 
 const fetchJobDetails = async (id) => {
   const response = await axios.get(`/jobs/getJobById/${id}`);
@@ -125,7 +125,6 @@ const ApplyJob = () => {
   const {
     register,
     control,
-    watch,
     handleSubmit,
     formState: { errors, isValid },
     getValues,

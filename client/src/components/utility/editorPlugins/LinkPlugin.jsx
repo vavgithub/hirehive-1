@@ -2,10 +2,10 @@ import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext
 import { $getSelection, $isRangeSelection, $createTextNode } from 'lexical';
 import { $createLinkNode, $isLinkNode } from '@lexical/link';
 import { Link } from 'lucide-react';
-import Modal from '../../Modal'
 import React, { useState } from 'react';
 import { InputField } from '../../Form/FormFields';
 import { showErrorToast } from '../../ui/Toast'
+import Modal from '../../Modals/Modal';
 
 function LinkPlugin({isActive}) {
     const [editor] = useLexicalComposerContext();

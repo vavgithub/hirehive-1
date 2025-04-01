@@ -28,6 +28,14 @@ import SwitchArrows from '../../svg/Icons/SwitchArrows';
 import ScoreChart from '../../components/Charts/ScoreChart';
 import { getStageColor, maxScoreOfEachStage } from '../../components/Staging/staging.config';
 import { CustomDropdown } from '../../components/Dropdowns/CustomDropdown';
+import RatingSelector, { getRatingIcon } from '../../components/MUIUtilities/RatingSelector';
+import EditNotes from '../../svg/Buttons/EditNotes';
+import AddNotes from '../../svg/Buttons/AddNotes';
+import Modal from '../../components/Modals/Modal';
+import TextEditor from '../../components/utility/TextEditor';
+import LoaderModal from '../../components/Loaders/LoaderModal';
+import { truncatedText } from '../../utility/truncatedHTML';
+import { ChevronDown, ChevronRight } from 'lucide-react';
 
 export const VAVScoreCard = ({score,stage,scoreStages})=>{
     const [showBreakDown,setShowBreakDown] = useState(false);
@@ -430,7 +438,7 @@ const ViewCandidateProfile = () => {
                                         <img src={data.profilePictureUrl || " https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg"} alt="" className='object-cover w-full overflow-hidden' />
                                         {(role === "Hiring Manager" || role === "Admin") &&
                                             <span onClick={(e) => setRatingAnchor(e.currentTarget)} className='absolute cursor-pointer bg-[#2d2d2eae] min-w-10 min-h-10 top-2 right-2 rounded-full flex justify-center items-center'>
-                                                {getRatingIcon(data?.jobApplication?.rating)}
+                                                {getRatingIcon(data?.jobApplication?.rating)}    
                                             </span>}
                                     </div>
                                     <div className='flex flex-col gap-2'>
@@ -536,6 +544,68 @@ const ViewCandidateProfile = () => {
                 )
             }
 
+                <RatingSelector
+                    anchorEl={ratingAnchor}
+                    onSelectRating={handleRateCandidate}
+                    setAnchorEl={() => setRatingAnchor(null)}
+                />
+
+                {/* Notes Editor Modal */}
+                <Modal    
+                    open={openNotes}
+                    onClose={() => setOpenNotes(false)}
+                    onConfirm={handleAddNotes}
+                    customTitle={candidateData?.jobApplication?.notes?.content ? "Edit notes" : "Add Notes"}
+                    customMessage={`${candidateData?.jobApplication?.notes?.content ? "Edit" : "Add"} valuable insights and observations about  ${candidateData?.firstName + " " + candidateData?.lastName} here.`}
+                    customConfirmLabel={candidateData?.jobApplication?.notes?.content ? "Save" : "Add"}
+                    specifiedWidth={"max-w-xl"}
+                >
+                    <div className='mt-4'>
+                        <TextEditor htmlData={notes} loaded={false} placeholder={"Add Your Notes Here"} setEditorContent={(data) => setNotes(data)} />
+                    </div>
+                </Modal>
+
+                {/* Notes Display Modal */}
+                <Modal
+                    open={openNotesView}
+                    onClose={() => setOpenNotesView(false)}
+                    customTitle={"Notes"}
+                    customMessage={`Insights and observations about  ${candidateData?.firstName + " " + candidateData?.lastName}.`}
+                    noCancel={true}
+                    customConfirmLabel={"OK"}
+                >
+                    <div className='mt-4  overflow-y-scroll scrollbar-hide text-ellipsis max-h-[50vh] w-full'>
+                        <div className='mb-4 bg-background-40 p-4 rounded-xl'>
+                            <div className='flex justify-between items-center '>
+                                <h3 className='typography-body font-regular'>{candidateData?.jobApplication?.jobApplied}</h3>
+                                <p className='text-font-gray typography-large-p '>{new Date(candidateData?.jobApplication?.notes?.addedDate).toLocaleDateString("en-GB", {
+                                    day: "2-digit",
+                                    month: "long",
+                                    year: "numeric",
+                                })}</p>
+                            </div>
+                            <div className='text-font-gray p-1 w-full overflow-x-hidden overflow-y-scroll scrollbar-hide text-ellipsis whitespace-normal break-words' dangerouslySetInnerHTML={{ __html: candidateData?.jobApplication?.notes?.content }}></div>
+                        </div>
+                        {
+                           showMore && candidateData?.applications?.filter(app => (app?.notes?.content !== "" && app?.notes?.content !== undefined && app?.notes?.content !== null && app.jobId !== jobId))?.map(app => {
+                                return (
+                                    <div className='mb-4 bg-background-40 p-4 rounded-xl'>
+                                        <div className='flex justify-between items-center '>
+                                            <h3 className='typography-body font-regular'>{app?.jobApplied}</h3>
+                                            <p className='text-font-gray typography-large-p '>{new Date(app.notes?.addedDate).toLocaleDateString("en-GB", {
+                                                day: "2-digit",
+                                                month: "long",
+                                                year: "numeric",
+                                            })}</p>
+                                        </div>
+                                        <div className='text-font-gray p-1 w-full overflow-x-hidden overflow-y-scroll scrollbar-hide text-ellipsis whitespace-normal break-words' dangerouslySetInnerHTML={{ __html: app?.notes?.content }}></div>
+                                    </div>
+                                )
+                            })
+                        }
+                        {candidateData?.applications?.filter(app => (app?.notes?.content !== "" && app?.notes?.content !== undefined && app?.notes?.content !== null && app.jobId !== jobId))?.length > 0 && <p onClick={() => setShowMore(!showMore)} className='cursor-pointer typography-body text-font-gray text-start flex gap-1 items-center'>{showMore ?  <> <ChevronDown/> Hide </> :   <> <ChevronRight/> Show more </>}</p>}
+                    </div>
+                </Modal>
                 {/* Conditional rendering of tabs for "Hiring Manager" */}
 
                 <div className="flex mt-4 mb-4">

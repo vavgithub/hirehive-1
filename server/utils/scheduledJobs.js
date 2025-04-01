@@ -5,8 +5,6 @@ import moment from 'moment-timezone';
 import { getDesignTaskContent, getRejectionEmailContent } from './emailTemplates.js';
 import { sendEmail } from './sentEmail.js';
 import { REJECTION_REASON } from '../controllers/admin/hr.controller.js';
-import mongoose from 'mongoose';
-import moment from 'moment-timezone';
 
 const updateCallStatuses = async () => {
   const now = new Date();
