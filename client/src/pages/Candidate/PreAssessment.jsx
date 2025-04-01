@@ -204,7 +204,7 @@ const PreAssessment = () => {
                     open={showMediaErrorModal} 
                     cancelLabel='OK' cancelVariant='primary' />
 
-                    <div className='mt-8 w-full flex justify-end'>                            
+                    <div className='mt-8 mb-4 w-full flex justify-end'>                            
                             <Button
                                 onClick={handleStartAssessment}
                                 disabled={!isMediaRecorderOk}
@@ -212,9 +212,9 @@ const PreAssessment = () => {
                                 Start Assessment
                             </Button>
                     </div>
+            <ContactUs/>
                 </div>
             </div>
-            <ContactUs/>
         </div>
     );
 };

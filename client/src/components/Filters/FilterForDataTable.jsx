@@ -42,6 +42,7 @@ const FilterForDataTable = ({ onApplyFilters ,readOnly , preservedFilters }) => 
     assessment : [],  
     score : "",
     assignee: [],
+    "job Type" : []
   });
 
   const [showDropdown, setShowDropdown] = useState({
@@ -53,6 +54,7 @@ const FilterForDataTable = ({ onApplyFilters ,readOnly , preservedFilters }) => 
     assessment : false,
     score : false,
     assignee: false,
+    "job Type" : false
   });
 
   const [designReviewers, setDesignReviewers] = useState([]);
@@ -199,6 +201,7 @@ const FilterForDataTable = ({ onApplyFilters ,readOnly , preservedFilters }) => 
       rating: false,
       assignee: false,
       assessment : false,
+      "job Type" : false,
       score : false,
       [category]: !showDropdown[category],
     });
@@ -216,6 +219,7 @@ const FilterForDataTable = ({ onApplyFilters ,readOnly , preservedFilters }) => 
       assignee: false,
       assessment : false,
       score: false,
+      "job Type" : false
     });
   };
 
@@ -228,6 +232,7 @@ const FilterForDataTable = ({ onApplyFilters ,readOnly , preservedFilters }) => 
       assessment : [],  
       score : "",
       assignee: [],
+      "job Type" : []
     })
   }
 
@@ -248,6 +253,7 @@ const FilterForDataTable = ({ onApplyFilters ,readOnly , preservedFilters }) => 
     stage: ['Portfolio', 'Screening', 'Design Task', 'Round 1', 'Round 2', 'Hired'],
     status: selectedFilters.stage.length === 1 ? stageStatusMap[selectedFilters.stage[0]] : allStatuses,
     rating: ['Good Fit', 'Not A Good Fit', 'May Be'],
+    ...(readOnly && {"job Type" : ["Full Time", "Part Time", "Contract", "Internship"]}),
     assessment : ["Completed","Not Completed"],
     // score : ["Min Score","Max Score"],
     ...(!readOnly && {assignee: designReviewers.map(reviewer => reviewer)}),

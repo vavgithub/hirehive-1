@@ -6,6 +6,7 @@ import { candidates } from "../../models/candidate/candidate.model.js";
 import { uploadToCloudinary } from '../../utils/cloudinary.js';
 import { promises as fs } from 'fs';
 import path from 'path';
+import { sanitizeLexicalHtml } from "../../utils/sanitize-html.js";
 
 
 // controllers/candidate.controller.js
@@ -109,6 +110,136 @@ export const getAllCandidatesForJob = async (req, res) => {
     });
   }
 };
+
+// export const getAllCandidatesForJob = async (req, res) => {
+//     try {
+//       const { jobId } = req.params;
+  
+//       // Validate jobId
+//       if (!jobId) {
+//         return res.status(400).json({ message: 'Job ID is required' });
+//       }
+  
+//       // Fetch the job to get its profile
+//       const job = await jobs.findById(jobId);
+//       if (!job) {
+//         return res.status(404).json({ message: 'Job not found' });
+//       }
+  
+//       // Get the stages for this job profile
+//       const stages = jobStagesStatuses[job.jobProfile] || [];
+  
+//       // Fetch candidates who have applied for this job
+//       const candidatesData = await candidates.find({
+//         'jobApplications.jobId': jobId,
+//         isVerified: true // Only fetch verified candidates
+//       });
+  
+//       // Process and format the candidate data
+//       const formattedCandidates = candidatesData.map(candidate => {
+//         const jobApplication = candidate.jobApplications.find(app => app.jobId.toString() === jobId);
+        
+//         // Initialize an object to store stage statuses
+//         const stageStatuses = {};
+//         stages.forEach(stage => {
+//           const stageStatus = jobApplication.stageStatuses.get(stage.name) || {
+//             status: 'Not Assigned',
+//             rejectionReason: 'N/A',
+//             assignedTo: null,
+//             score: {},
+//             currentCall: null,
+//             callHistory: []
+//           };
+//           stageStatuses[stage.name] = stageStatus;
+//         });
+//         // console.log("this is backend", candidate);
+  
+//         return {
+//           _id: candidate._id,
+//           firstName: candidate.firstName,
+//           lastName: candidate.lastName,
+//           email: candidate.email,
+//           phone: candidate.phone,
+//           expectedCTC : candidate.expectedCTC,
+//           experience:candidate.experience,
+//           resumeUrl:candidate.resumeUrl,
+//           website:candidate.website,
+//           portfolio:candidate.portfolio,
+//           rating:jobApplication.rating,
+//           currentStage: jobApplication.currentStage,
+//           applicationDate: jobApplication.applicationDate,
+//           stageStatuses: stageStatuses,
+//           questionResponses: jobApplication.questionResponses,
+//           // Add any other relevant fields
+//         };
+//       });
+  
+//       res.status(200).json({
+//         candidates: formattedCandidates,
+//         stages: stages.map(stage => stage.name)
+//       });
+//     } catch (error) {
+//       console.error('Error fetching candidates:', error);
+//       res.status(500).json({ message: 'Internal server error' });
+//     }
+//   };
+
+export const updateCandidateProfessionalDetails = async (req, res) => {
+  try {
+    const { id, jobId } = req.params;
+    const { experience, noticePeriod, hourlyRate, currentCTC, expectedCTC } = req.body;
+
+    // Fetch candidate
+    const candidate = await candidates.findById(id);
+    if (!candidate) {
+      return res.status(400).json({ message: "Invalid Candidate Data" });
+    }
+
+    // Fetch job
+    const job = await jobs.findById(jobId);
+    if (!job) {
+      return res.status(400).json({ message: "Invalid Job Data" });
+    }
+
+    // Validation based on employment type
+    if (job?.employmentType === "Contract" || job?.employmentType === "Part Time") {
+      if (!hourlyRate || hourlyRate.toString().trim() === "") {
+        return res.status(400).json({ message: "Hourly Rate is Required for Part Time / Contract Jobs" });
+      }
+    }
+    if (!(job?.employmentType === "Contract" || job?.employmentType === "Part Time")) {
+      if (!currentCTC || currentCTC.toString().trim() === "") {
+        return res.status(400).json({ message: "Current CTC is Required for Full Time Jobs" });
+      }
+      if (!expectedCTC || expectedCTC.toString().trim() === "") {
+        return res.status(400).json({ message: "Expected CTC is Required for Full Time Jobs" });
+      }
+    }
+
+    const professionalInfo = {
+      ...candidate.jobApplications?.find(app => app.jobId?.toString() === jobId)?.professionalInfo.toObject(),
+      expectedCTC,
+      currentCTC,
+      hourlyRate,
+      experience,
+      noticePeriod
+    }
+
+    const updateCandidate = await candidates.findOneAndUpdate({
+      _id : id,
+      'jobApplications.jobId' : jobId
+    },{
+      $set : {
+        'jobApplications.$.professionalInfo' : professionalInfo
+      }
+    })
+
+    res.status(200).json({ message: "Candidate details updated successfully" });
+  } catch (error) {
+    res.status(400).json({ message: "Error updating candidate", error: error.message });
+  }
+};
+
 
 
 export  const updateStatusAndStage = async (req, res) => {
@@ -236,13 +367,18 @@ export const getCandidateById = async (req, res) => {
         jobApplied: jobApplication.jobApplied,
         jobProfile: jobApplication?.jobProfile || "UI UX",
         jobStatus : job ? job.status : "deleted",
+        notes: jobApplication.notes,
+        jobType : job ? job.employmentType : 'NA',
         applicationDate: jobApplication.applicationDate,
         rating: jobApplication.rating,
         currentStage: jobApplication.currentStage,
         stageStatuses: jobApplication.stageStatuses,
         questionResponses: enrichedQuestionResponses,
         professionalInfo: jobApplication.professionalInfo
-      }
+      },
+
+      //Entire job applications
+      applications : candidate?.jobApplications
     };
 
     res.send(response);
@@ -254,6 +390,48 @@ export const getCandidateById = async (req, res) => {
     });
   }
 };
+
+export const addNotes = async (req,res) => {
+  try {
+    const { candidateId ,jobId } = req.params;
+    const { notes } = req.body;
+
+    const sanitizedNotes = sanitizeLexicalHtml(notes);
+
+    if(!sanitizedNotes){
+      return res.status(404).send({ message: "Invalid notes data" });
+    }
+
+    // Find the candidate and job
+    const candidate = await candidates.findById(candidateId);
+    const hasJob = candidate.jobApplications.find(app => app.jobId.toString() === jobId)
+
+    if (!candidate) {
+      return res.status(404).send({ message: "Candidate not found" });
+    }
+
+    if (!hasJob) {
+      return res.status(404).send({ message: "Job not found" });
+    }
+
+    candidate.jobApplications.forEach(app=>{
+      if(app.jobId.toString() === jobId){
+        app.notes = {
+          content : sanitizedNotes,
+          addedDate : new Date()
+        }
+      }
+      return app
+    })
+
+    await candidate.save();
+
+    res.status(200).json({message : "Notes added successfully"});
+  } catch (error) {
+    console.error("Error in getCandidateJobs:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+}
 
 export const getCandidateJobs = async (req,res) => {
   try {
@@ -351,6 +529,9 @@ export const getCandidateJobs = async (req,res) => {
             jobTitle: {
               $ifNull: ['$jobDetail.jobTitle', '$jobApplications.jobApplied']
             },
+            jobType: {
+              $ifNull: ['$jobDetail.employmentType', '$jobApplications.jobType']
+            },
             jobId: '$jobApplications.jobId',
             rating: '$jobApplications.rating',
             resumeUrl: '$jobApplications.resumeUrl',
@@ -399,6 +580,7 @@ export const getCandidateJobs = async (req,res) => {
             skills: 1,
             // Job application info
             currentStage: 1,
+            jobType: 1,
             jobTitle: 1,
             jobId: 1,
             rating: 1,

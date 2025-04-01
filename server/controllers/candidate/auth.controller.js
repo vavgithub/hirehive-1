@@ -123,22 +123,43 @@ export const registerCandidate = async (req, res) => {
     const existingEmail = await Candidate.findOne({ email });
     const existingPhone = await Candidate.findOne({ phone });
 
-    if (existingPhone) {
+    if(existingEmail && existingPhone && (existingEmail._id.toString() !== existingPhone._id.toString())){
+      if(existingEmail?.currentStage === 'DONE'){
+        return res.status(400).json({ 
+          message: "Account already exists. Please login to continue.",
+          field: "email"
+        });
+      }
+      if(existingPhone?.currentStage === 'DONE'){
+        return res.status(400).json({ 
+          message: "Account already exists with this phone number",
+          field: "phone"
+        });
+      }
+    }
+    
+    if (existingEmail && existingEmail?.currentStage === 'DONE') {
       return res.status(400).json({ 
-        message: "Phone number already exists",
+        message: "Account already exists. Please login to continue.",
+        field: "email"
+      });
+    }
+    if (existingPhone && (existingPhone?.currentStage === 'PASSWORD' || existingPhone?.currentStage === 'DONE') && !existingEmail) {
+      return res.status(400).json({ 
+        message: "Account already exists with this phone number",
         field: "phone"
       });
     }
-
+    
     // Generate OTP and hash it
     const otp = generateOtp();
     const hashedOtp = crypto.createHash("sha256").update(otp).digest("hex");
-
+    
     const initialStageStatuses = {};
     jobStages.forEach((stage, index) => {
       const initialStatus = index === 0 
-        ? stage.statuses[0] 
-        : stage.statuses.find(status => status.toLowerCase().includes('not assigned')) || stage.statuses[0];
+      ? stage.statuses[0] 
+      : stage.statuses.find(status => status.toLowerCase().includes('not assigned')) || stage.statuses[0];
       initialStageStatuses[stage.name] = {
         status: initialStatus,
         rejectionReason: "N/A",
@@ -148,7 +169,7 @@ export const registerCandidate = async (req, res) => {
         callHistory: [],
       };
     });
-
+    
     // Professional info object
     const professionalInfo = {
       website,
@@ -160,6 +181,29 @@ export const registerCandidate = async (req, res) => {
       experience,
       skills,
     };
+    
+    if(existingPhone && existingPhone?.currentStage === 'OTP' && !existingEmail){
+
+      // // Generate JWT token for email change
+      // const token = jwt.sign({ id: existingPhone._id }, JWT_SECRET, {
+      //   expiresIn: "5m",
+      // });
+
+      // // Send token in HTTP-only cookie
+      // res.cookie("email_token", token, {
+      //   httpOnly: true,
+      //   secure: process.env.NODE_ENV === "production", // Use 'true' in production
+      //   sameSite: "strict",
+      //   maxAge: 5 * 60 * 1000, // 5 min
+      // });
+
+      return res.status(200).json({
+        message : "Account exists with this phone number. Please confirm your email",
+        currentStage : "MODAL",
+        email : existingPhone?.email,
+        userId : existingPhone?._id
+      })
+    }
 
     if(!existingEmail){
   
@@ -173,10 +217,12 @@ export const registerCandidate = async (req, res) => {
         otp: hashedOtp,
         profilePictureUrl, // Add the profile picture URL
         otpExpires: Date.now() + 10 * 60 * 1000,
+        currentStage : "OTP",
         jobApplications: [
           {          
             jobId,
-            jobApplied,
+            jobApplied, 
+            jobType : job.employmentType,
             questionResponses,
             applicationDate: new Date(),
             currentStage: jobStages[0]?.name || "",
@@ -220,9 +266,10 @@ export const registerCandidate = async (req, res) => {
           professionalInfo
         }
 
-        existingEmail.jobApplications.push(newJobApplication)
+        existingEmail.jobApplications = [newJobApplication]
       }
 
+      existingEmail.currentStage = 'OTP';
       await existingEmail.save()
     } 
 
@@ -232,9 +279,46 @@ export const registerCandidate = async (req, res) => {
     //send OTP anyways
     await sendEmail(email,"OTP Verification", mailContent);
 
-    res.status(200).json({ message: existingEmail ? "Account exists. OTP sent to email for verification." : "Candidate registered. OTP sent to email." });
+    res.status(200).json({ message: existingEmail ? "Account exists. OTP sent to email for verification." : "Candidate registered. OTP sent to email." , currentStage : existingEmail ? existingEmail?.currentStage : "OTP"});
   } catch (error) {
     console.error("Error registering candidate:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+
+export const updateEmail = async (req, res) => {
+  try {
+    const { email , userId } = req.body;
+
+    if(!email?.trim()){
+      return res.status(400).json({ message: "Invalid email" });
+    }
+
+    // Update candidate's password
+    const candidate = await Candidate.findById({_id : userId});
+
+    if (!candidate) {
+      return res.status(400).json({ message: "Candidate not found" });
+    }
+
+    if(candidate?.currentStage !== 'OTP'){
+      return res.status(400).json({ message: "You are unable to update email" });
+    }
+
+    candidate.email = email;
+    candidate.currentStage = 'OTP'
+    await candidate.save();
+
+    res.clearCookie("email_token", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+    });
+
+    res.status(200).json({ message: "Email updated successfully" });
+  } catch (error) {
+    console.error("Error creating password:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
@@ -257,13 +341,26 @@ export const createPassword = async (req, res) => {
     // Update candidate's password
     const candidate = await Candidate.findOneAndUpdate(
       { email },
-      { password: hashedPassword },
+      { password: hashedPassword ,currentStage : 'DONE'},
       { new: true }
     );
 
     if (!candidate) {
       return res.status(404).json({ message: "Candidate not found" });
     }
+
+    // Generate JWT token
+    const token = jwt.sign({ id: candidate._id }, JWT_SECRET, {
+      expiresIn: "7d",
+    });
+
+    // Send token in HTTP-only cookie
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production", // Use 'true' in production
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    });
 
     res.status(200).json({ message: "Password created successfully" });
   } catch (error) {
@@ -300,20 +397,8 @@ export const verifyOtp = async (req, res) => {
     candidate.isVerified = true;
     candidate.otp = undefined;
     candidate.otpExpires = undefined;
+    candidate.currentStage = 'PASSWORD'
     await candidate.save();
-
-    // Generate JWT token
-    const token = jwt.sign({ id: candidate._id }, JWT_SECRET, {
-      expiresIn: "7d",
-    });
-
-    // Send token in HTTP-only cookie
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // Use 'true' in production
-      sameSite: "strict",
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    });
 
     res.status(200).json({ message: "OTP verified successfully" });
   } catch (error) {
@@ -331,6 +416,12 @@ export const loginCandidate = async (req, res) => {
 
     if (!candidate) {
       return res.status(404).json({ message: "Candidate not found" });
+    }
+
+    if(candidate?.currentStage !== "DONE"){
+      return res
+        .status(401)
+        .json({ message: "Please complete your registration" });
     }
 
     // Check if candidate is verified
@@ -458,6 +549,7 @@ export const applyToJob = async (req, res) => {
       jobId,
       jobApplied,
       jobProfile,
+      jobType : job.employmentType,
       questionResponses,
       applicationDate: new Date(),
       currentStage: jobStages[0]?.name || "",

@@ -48,7 +48,6 @@ export const REJECTION_REASON = [
   }
 ];
 
-
 export const rejectCandidate = async (req, res) => {
   try {
     const { candidateId, jobId, rejectionReason , scheduledDate , scheduledTime } = req.body;

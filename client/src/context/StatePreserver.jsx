@@ -30,6 +30,7 @@ function StatePreserver({ children }) {
     rating: [],
     score : "",
     assignee: [],
+    "job Type" : []
   });
   const [query, setQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
@@ -46,6 +47,7 @@ function StatePreserver({ children }) {
       assessment : [],
       score : "",
       assignee: [],
+      "job Type" : []
     });
     setQuery("");
     setCurrentPage(0);

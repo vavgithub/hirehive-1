@@ -91,12 +91,12 @@ const CandidateLayout = () => {
 
   // NavItem component for consistent styling
   const NavItem = ({ to, icon: Icon, activeIcon: ActiveIcon, children, onClick }) => (
-    <div className="relative flex flex-row items-center justify-between hover:bg-background-60">
+    <div className="relative flex flex-row items-center justify-between hover:bg-background-60 mx-2 rounded-xl">
       <NavLink
         to={to}
         end={to === '/candidate/dashboard'}
         className={({ isActive, isPending }) =>
-          `w-full flex items-center h-11 gap-2 pl-2 ${isActive || isPending ? 'text-font-accent' : ''}`
+          `w-full flex items-center min-h-11 gap-2 pl-2 py-2 rounded-xl ${isActive || isPending ? 'text-font-accent bg-background-60  ' : ''}`
         }
         onClick={onClick}
       >
@@ -119,7 +119,7 @@ const CandidateLayout = () => {
   );
 
 
-  const ProfileComponent = () => {
+  const   ProfileComponent = () => {
     const profilePath = "/candidate/profile";
     const [anchorEl, setAnchorEl] = useState(null)
     // Function to handle dropdown menu opening
@@ -161,14 +161,14 @@ const CandidateLayout = () => {
 
     return (
       <>
-        <div className={`flex items-center px-2 justify-start hover:bg-background-60`}>
+        <div className={`flex items-center px-2 mx-2 py-1 justify-start hover:bg-background-60 rounded-xl ${location.pathname === profilePath ? "bg-background-60" : ""}`}>
           <IconButton onClick={handleMenuClick} className={`flex gap-2 ${location.pathname === profilePath ? "text-font-accent"
             : ""}`}>
             <Avatar alt={candidateData?.firstName} sx={{ width: "32px", height: "32px" }} src={candidateData?.profilePictureUrl || "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg"} />
             <span className={`typography-body  ${location.pathname === profilePath ? "text-font-accent"
               : "text-white"}`}>{candidateData?.firstName}</span>
           </IconButton>
-          <div className={`absolute right-0 w-1 h-6 rounded-tl-xl rounded-bl-xl ${location.pathname === profilePath
+          <div className={`absolute right-2 w-1 h-6 rounded-tl-xl rounded-bl-xl ${location.pathname === profilePath
             ? "bg-teal-400" : "bg-transparent"}`} />
         </div>
 
@@ -220,7 +220,7 @@ const CandidateLayout = () => {
           md:w-48 w-64 h-screen
           bg-background-100 text-font-gray
           flex flex-col justify-between py-4
-        `}
+          `}
         style={{ position: 'fixed' }}
       >
         <div className="flex flex-col gap-5 typography-body">
@@ -264,11 +264,12 @@ const CandidateLayout = () => {
       <div className="mt-[4.6rem] md:mt-0 md:ml-[12rem] md:w-[calc(100vw-12rem)] flex flex-col items-center min-h-screen ">
         {/* {isAssessmentBannerVisible &&  <AssessmentBanner />} */}
         <Outlet />
+        {/* <ContactUs /> */}
       </div>
       {/* <div className="md:ml-[192px] flex-1 p-4 md:p-6">
 
-        <Outlet />
-      </div> */}
+<Outlet />
+</div> */}
 
       {/* Overlay for mobile */}
       {isMenuOpen && (
@@ -278,7 +279,6 @@ const CandidateLayout = () => {
         ></div>
       )}
 
-      <ContactUs />
     </div>
   );
 };

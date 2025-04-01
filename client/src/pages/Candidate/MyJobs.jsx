@@ -9,6 +9,7 @@ import AssessmentBanner from '../../components/ui/AssessmentBanner';
 import StyledCard from '../../components/Cards/StyledCard';
 import JobCard from '../../components/Cards/JobCard';
 import Pagination from '../../components/utility/Pagination';
+import ContactUs from '../../components/Form/ContactUs';
 import useCandidateAuth from '../../hooks/useCandidateAuth';
 
 // Keep the fetchAppliedJobs function separate for better organization
@@ -19,22 +20,22 @@ const fetchAppliedJobs = async (page) => {
 
 const MyJobs = () => {
   const navigate = useNavigate();
-  const [page,setPage] = useState(1);
+  const [page, setPage] = useState(1);
   const PAGE_LIMIT = 3;
 
   // Replace useAuthCandidate with Redux selector
   const { candidateAuthData } = useSelector((state) => state.candidateAuth);
   const candidateId = candidateAuthData?._id || null;
 
-  
-    //For resetting page on each result change
-    useEffect(()=>{
-        setPage(1);
-    },[])
+
+  //For resetting page on each result change
+  useEffect(() => {
+    setPage(1);
+  }, [])
 
   // Keep React Query for data fetching
-  const { data: appliedJobs , isLoading, isError, error } = useQuery({
-    queryKey: ['appliedJobs',page],
+  const { data: appliedJobs, isLoading, isError, error } = useQuery({
+    queryKey: ['appliedJobs', page],
     queryFn: () => fetchAppliedJobs(page),
     // Add enabled condition to prevent unnecessary fetching
     enabled: !!candidateId,
@@ -51,22 +52,22 @@ const MyJobs = () => {
     }
   };
 
-   const [isAssessmentBannerVisible, setIsAssessmentBannerVisible] =
-      useState(false);  
-  
-    // Update visibility states when component mounts and when candidateData updates
-    useEffect(() => {
-      if (isDone && candidateData) {
-        setIsAssessmentBannerVisible(!hasGivenAssessment);
-      }
-    }, [hasGivenAssessment, isDone]);
-  
-    // Add cleanup on unmount
-    useEffect(() => {
-      return () => {
-        setIsAssessmentBannerVisible(false);
-      };
-    }, []);
+  const [isAssessmentBannerVisible, setIsAssessmentBannerVisible] =
+    useState(false);
+
+  // Update visibility states when component mounts and when candidateData updates
+  useEffect(() => {
+    if (isDone && candidateData) {
+      setIsAssessmentBannerVisible(!hasGivenAssessment);
+    }
+  }, [hasGivenAssessment, isDone]);
+
+  // Add cleanup on unmount
+  useEffect(() => {
+    return () => {
+      setIsAssessmentBannerVisible(false);
+    };
+  }, []);
 
   if (isLoading) {
     return (
@@ -90,42 +91,43 @@ const MyJobs = () => {
 
   return (
     <div className='w-full p-4'>
-    <div className='container '>
-      <h1 className="typography-h1">My Jobs</h1>
-      {isAssessmentBannerVisible &&  <AssessmentBanner />}
-      <StyledCard padding={2} backgroundColor={"bg-background-30"}>
-        {appliedJobs?.jobApplications?.length > 0 ? (
-          <ul className='flex flex-col gap-4'>
-            {appliedJobs?.jobApplications?.map((application,index) => (
-              <li key={application.jobId._id || index} >
-                <JobCard
-                  job={application.jobId}
-                  isCandidate={true}
-                  onClick={(application.jobId.status === "deleted" || application.jobId.status === "closed") ? undefined : () => handleClick(application.jobId._id)}
-                  isAuthenticatedCandidate={true}
-                  application={application}
-                />
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <div className='flex flex-col justify-center items-center'>
-            <h2 className='typography-h2'>No Applied Jobs</h2>
-            <p className='font-outfit typography-small-p text-font-gray'>You have not applied to any jobs yet.</p>
+      <div className='container '>
+        <h1 className="typography-h1">My Jobs</h1>
+        {isAssessmentBannerVisible && <AssessmentBanner />}
+        <StyledCard padding={2} backgroundColor={"bg-background-30 lg:pb-16 "}>
+          {appliedJobs?.jobApplications?.length > 0 ? (
+            <ul className='flex flex-col gap-4'>
+              {appliedJobs?.jobApplications?.map((application, index) => (
+                <li key={application.jobId._id || index} >
+                  <JobCard
+                    job={application.jobId}
+                    isCandidate={true}
+                    onClick={(application.jobId.status === "deleted" || application.jobId.status === "closed") ? undefined : () => handleClick(application.jobId._id)}
+                    isAuthenticatedCandidate={true}
+                    application={application}
+                  />
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <div className='flex flex-col justify-center items-center'>
+              <h2 className='typography-h2'>No Applied Jobs</h2>
+              <p className='font-outfit typography-small-p text-font-gray'>You have not applied to any jobs yet.</p>
+            </div>
+          )}
+
+          <div className='my-4'>
+            <Pagination
+              currentPage={page}
+              setCurrentPage={setPage}
+              pageLimit={PAGE_LIMIT}
+              totalItems={
+                appliedJobs?.totalAppliedJobs}
+            />
           </div>
-        )}
-        
-        <div className='mt-4'>
-          <Pagination 
-          currentPage={page} 
-          setCurrentPage={setPage} 
-          pageLimit={PAGE_LIMIT} 
-          totalItems={
-            appliedJobs?.totalAppliedJobs} 
-          />
-        </div>
-      </StyledCard>
-    </div>
+          <ContactUs />
+        </StyledCard>
+      </div>
     </div>
   );
 };

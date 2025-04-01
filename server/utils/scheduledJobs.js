@@ -1,5 +1,7 @@
 import cron from 'node-cron';
 import { candidates } from '../models/candidate/candidate.model.js';
+import mongoose from 'mongoose';
+import moment from 'moment-timezone';
 import { getDesignTaskContent, getRejectionEmailContent } from './emailTemplates.js';
 import { sendEmail } from './sentEmail.js';
 import { REJECTION_REASON } from '../controllers/admin/hr.controller.js';
@@ -111,7 +113,6 @@ const updateMailSendAndStatuses = async () => {
   
           await sendEmail(candidate?.email, emailSubject, emailContent,"Design Task");
         }else{
-
           //Selective Email sending
           const canSendEmail = !!REJECTION_REASON.find(reasonObj =>(reasonObj?.reason === candidate?.jobApplications[0]?.stageStatuses.get(stage)?.rejectionReason?.trim() && reasonObj?.email))
           if(canSendEmail){

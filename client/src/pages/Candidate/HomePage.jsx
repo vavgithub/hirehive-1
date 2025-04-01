@@ -251,9 +251,9 @@ const HomePage = () => {
                             (debouncedQuery.length > 0 || isFiltered) ? filteredData?.filteredSearchJobsCount : jobData?.totalOpenJobs
                         } 
                         />
+                        <ContactUs />
                     </div>
                 </div>
-                <ContactUs />
             </div>
         )
     }

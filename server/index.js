@@ -34,6 +34,8 @@ import { initializeUploadDir } from "./config/paths.js";
 import corsConfig from "./config/cors.config.js";
 import cookieSession from "cookie-session";
 import { handleUploadError } from "./middlewares/uploadMiddleware.js";
+import { candidates } from "./models/candidate/candidate.model.js";
+import { jobs } from "./models/admin/jobs.model.js";
 
 const app = express();
 await initializeUploadDir(envConfig.UPLOAD_DIR);
@@ -83,6 +85,18 @@ const PORT = envConfig.PORT;
 
 app.use(handleUploadError)
 
+const dbUpdater = async () =>{
+  const candidatesData = await candidates.find();
+  for (const candidate of candidatesData) {
+    for (const jobApp of candidate.jobApplications) {
+      const job = await jobs.findById(jobApp.jobId);
+      jobApp.jobType = job ? job.employmentType : "NA";
+    }
+    await candidate.save();
+  }
+
+}
+
 connectDB()
   .then(() => {
     app.listen(PORT, () =>
@@ -90,7 +104,7 @@ connectDB()
         `Server running in ${environment} mode on port ${PORT}`
       )
     );
-    
+    // dbUpdater()
     // Start the scheduled jobs
     startScheduledJobs();
 

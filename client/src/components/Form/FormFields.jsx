@@ -30,9 +30,9 @@ export const InputField = React.forwardRef(({
 
   return (
     <div className={'flex  gap-2 relative ' + (rowWise ? "justify-between items-center" : "flex-col justify-start")}>
-      <label htmlFor={id} className={labelStyles + " typography-body "  + (rowWise ? "w-[40%]" : "")}>
+      {label && <label htmlFor={id} className={labelStyles + " typography-body "  + (rowWise ? "w-[40%]" : "")}>
         {label} {required && <span className="text-red-100">*</span>}
-      </label>
+      </label>}
       {type === "password" ? (
         <TogglePassword typeState={passwordType} setTypeState={setPasswordType}>
           <input
@@ -55,7 +55,7 @@ export const InputField = React.forwardRef(({
         />
       )}
       {error && errorMessage && (
-        <span className={"text-red-500 typography-small-p  absolute " + (rowWise ? "top-[42px] left-[30%]" : "top-[5rem]")}>{errorMessage}</span>
+        <span className={"text-red-500 typography-small-p  absolute " + (rowWise ? "top-[44px] left-[30%]" : "top-[5rem]")}>{errorMessage}</span>
       )}
     </div>
   );

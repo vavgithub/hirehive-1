@@ -141,6 +141,19 @@ const jobApplicationSchema = new mongoose.Schema(
     jobProfile: {
       type: String,
     },
+    jobType: {
+      type: String,
+    },
+    notes : {
+      content : {
+        type : String,
+        default : ""
+      },
+      addedDate : {
+        type : Date,
+        default : new Date()
+      }
+    },
     questionResponses: [answerSchema],
     applicationDate: {
       type: Date,
@@ -249,6 +262,11 @@ const candidateSchema = new mongoose.Schema(
     },
     website: {
       type: String,
+    },
+    currentStage : {
+      type : String,
+      enum : ['INITIAL','OTP','PASSWORD','DONE'],
+      default : 'INITIAL'
     },
     resumeUrl: String,
     portfolio: {

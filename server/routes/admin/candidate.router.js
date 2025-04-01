@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  addNotes,
   getAllCandidatesForJob,
   getAllCandidatesWithStats,
   getCandidateById,
@@ -7,6 +8,7 @@ import {
   getQuestionnaireDetails,
   getRandomQuestions,
   submitQuestionnaireAttempt,
+  updateCandidateProfessionalDetails,
   updateStatusAndStage,
   uploadAssessmentRecording,
 } from "../../controllers/admin/candidate.controller.js";
@@ -20,6 +22,14 @@ router.get("/getData/data/allCandidatesWithStats",protect, getAllCandidatesWithS
 router.get("/:jobId", getAllCandidatesForJob);
 // router.get('/data/:id', getCandidateById);
 router.get("/:candidateId/job/:jobId", getCandidateById);
+
+router.post("/:candidateId/:jobId/addNotes", addNotes);
+
+router.patch("/update-candidate/:id/:jobId",protect, roleProtect(["Hiring Manager","Admin"]), updateCandidateProfessionalDetails);
+
+router.post("/:candidateId/:jobId/addNotes", addNotes);
+
+router.patch("/update-candidate/:id/:jobId",protect, roleProtect(["Hiring Manager","Admin"]), updateCandidateProfessionalDetails);
 
 router.get("/:candidateId/jobs",protect, roleProtect(["Admin","Hiring Manager"]), getCandidateJobs);
 
