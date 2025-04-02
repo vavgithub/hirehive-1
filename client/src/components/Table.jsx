@@ -26,7 +26,7 @@ import AutoAssignWithBudget from './tableUtilities/AutoAssignWithBudget';
 import MuiCustomStylesForDataGrid from './tableUtilities/MuiCustomStylesForDataGrid';
 import BudgetMenu from './tableUtilities/BudgetMenu';
 
-const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
+const Table = ({ jobId, jobData, readOnly = false, readOnlyData = [] }) => {
 
   //For getting routes
   const location = useLocation();
@@ -111,8 +111,8 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
     if (!rowsData) return [];
     if (budgetFilter.from === '' || budgetFilter.to === '') return rowsData;
     return rowsData?.filter(row => {
-      const expectedCTC = parseFloat(row.expectedCTC);
-      return expectedCTC >= parseFloat(budgetFilter.from) && expectedCTC <= parseFloat(budgetFilter.to);
+      const budgetValue = parseFloat((jobData?.employmentType === "Contract") ? (row.hourlyRate ?? 0) : row.expectedCTC);
+      return budgetValue >= parseFloat(budgetFilter.from) && budgetValue <= parseFloat(budgetFilter.to);
     });
   }, [rowsData, budgetFilter]);
 
@@ -315,7 +315,7 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
     setBudgetFilter(tempBudgetFilter);
     localStorage.setItem(`budgetFilter_${jobId}`, JSON.stringify(tempBudgetFilter));
     setIsBudgetModalOpen(false);
-    showSuccessToast("Screened with budget", `Candidates successfully screened within the budget ${tempBudgetFilter.from}LPA - ${tempBudgetFilter.to}LPA`)
+    showSuccessToast("Screened with budget", `Candidates successfully screened within the budget ${tempBudgetFilter.from}${jobData?.employmentType === "Contract" ? " INR/hr" :" LPA"} - ${tempBudgetFilter.to}${jobData?.employmentType === "Contract" ? " INR/hr" :" LPA"}`)
   };
 
   const clearBudgetFilter = () => {
@@ -733,6 +733,7 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
             value={tempBudgetFilter}
             onChange={handleBudgetChange}
             required
+            employmentType={jobData?.employmentType}
           />
         </div>
       </Modal>
