@@ -15,6 +15,7 @@ import LightLogo from "../svg/Logo/lightLogo.svg"
 import {NotificationIcon, NotificationIconActive} from '../svg/Staging/NotificationIcon';
 import {SettingsIcon, SettingsIconActive} from '../svg/Staging/SettingsIcon';
 import StyledMenu from './ui/StyledMenu';
+import { BookmarkFilledIcon, BookmarkIcon } from '../svg/Checkboxes/BookmarkIcons';
 
 const Navbar = () => {
     const navigate = useNavigate();
@@ -155,7 +156,8 @@ const Navbar = () => {
                 <>
                     {/* <NavItem to="/admin/dashboard" icon={DashboardIcon} activeIcon={DashboardIconActive}>Dashboard</NavItem> */}
                     <NavItem to="/admin/jobs" icon={JobsIcon} activeIcon={JobsIconActive}>Jobs</NavItem>
-                    <NavItem to="/admin/candidates" icon={CandidatesIcon} activeIcon={CandidatesIconActive}>Candidates</NavItem>
+                    <NavItem to="/admin/candidates" icon={CandidatesIcon} activeIcon={CandidatesIconActive}>All Candidates</NavItem>
+                    <NavItem to="/admin/shortlisted" icon={BookmarkIcon} activeIcon={BookmarkFilledIcon}>Future Gems</NavItem>
                     {/* <NavItem to="/admin/reviews" icon={ReviewsIcon} activeIcon={ReviewsIconActive}>Reviews</NavItem>
                     <NavItem to="/admin/reports" icon={ReportsIcon} activeIcon={ReportsIconActive}>Reports</NavItem> */}
                 </>

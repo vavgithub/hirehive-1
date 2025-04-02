@@ -7,7 +7,9 @@ import {
   getCandidateJobs,
   getQuestionnaireDetails,
   getRandomQuestions,
+  shortlistCandidate,
   submitQuestionnaireAttempt,
+  toggleShortlistCandidate,
   updateCandidateProfessionalDetails,
   updateStatusAndStage,
   uploadAssessmentRecording,
@@ -17,11 +19,14 @@ import { uploadVideo  } from "../../middlewares/uploadMiddleware.js";
 
 const router = express.Router();
 
+router.get('/shortlisted',shortlistCandidate);
 router.get("/getData/data/allCandidatesWithStats", getAllCandidatesWithStats);
 
 router.get("/:jobId", getAllCandidatesForJob);
-// router.get('/data/:id', getCandidateById);
+
 router.get("/:candidateId/job/:jobId", getCandidateById);
+
+router.post('/:candidateId/job/:jobId/shortlist',toggleShortlistCandidate);
 
 router.post("/:candidateId/:jobId/addNotes", addNotes);
 
