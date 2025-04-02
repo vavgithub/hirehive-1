@@ -16,6 +16,8 @@ import Loader from '../../components/Loaders/Loader';
 import StyledCard from '../../components/Cards/StyledCard';
 import Table from '../../components/tableUtilities/Table';
 import Container from '../../components/Cards/Container';
+import IconWrapper from '../../components/Cards/IconWrapper';
+import { Briefcase, Folder, MonitorDot, PenTool, Users } from 'lucide-react';
 
 
 const Candidates = () => {
@@ -48,13 +50,13 @@ const Candidates = () => {
   }, [isLoading, isError]);
 
   const statsOne = [
-    { title: 'Total', value: data?.stats?.Total || 0, icon: Total },
-    { title: 'Portfolio', value: data?.stats?.Portfolio || 0, icon: Portfolio },
-    { title: 'Screening', value: data?.stats?.Screening || 0, icon: Screening },
-    { title: 'Design Task', value: data?.stats?.['Design Task'] || 0, icon: DesignTask },
-    { title: 'Round 1', value: data?.stats?.['Round 1'] || 0, icon: Round1 },
-    { title: 'Round 2', value: data?.stats?.['Round 2'] || 0, icon: Round2 },
-    { title: 'Hired', value: data?.stats?.Hired || 0, icon: OfferSent },
+    { title: 'Total', value: data?.stats?.Total || 0, icon:  () => <IconWrapper size={10} isInActiveIcon icon={Users} /> },
+    { title: 'Portfolio', value: data?.stats?.Portfolio || 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={Folder} /> },
+    { title: 'Screening', value: data?.stats?.Screening || 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={MonitorDot} /> },
+    { title: 'Design Task', value: data?.stats?.['Design Task'] || 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={PenTool} /> },
+    { title: 'Round 1', value: data?.stats?.['Round 1'] || 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={Briefcase} /> },
+    { title: 'Round 2', value: data?.stats?.['Round 2'] || 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={Briefcase} /> },
+    { title: 'Hired', value: data?.stats?.Hired || 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={PenTool} /> },
   ];
 
   if (isLoading) {

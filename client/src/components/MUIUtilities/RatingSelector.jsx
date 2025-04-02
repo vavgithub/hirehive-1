@@ -1,17 +1,18 @@
 import { Menu, MenuItem } from '@mui/material';
 import React from 'react'
-import { GoodFit, MayBe, NotAGoodFit, Rating } from '../../svg/Buttons/Rating';
+import IconWrapper from '../Cards/IconWrapper';
+import { Star } from 'lucide-react';
 
 export const getRatingIcon = (rating) => {
     switch (rating) {
         case 'Good Fit':
-        return <GoodFit />;
+        return <div className='text-[#12D382]'><IconWrapper inheritColor icon={Star} size={0} customIconSize={5} /></div>;
         case 'Not A Good Fit':
-        return <NotAGoodFit />;
+        return <div className='text-[#FF385C]'><IconWrapper inheritColor icon={Star} size={0} customIconSize={5} /></div>;
         case 'May Be':
-        return <MayBe />;
+        return <div className='text-[#EDBD14]'><IconWrapper inheritColor icon={Star} size={0} customIconSize={5} /></div>;
         default:
-        return <Rating />;
+        return <IconWrapper inheritColor icon={Star} size={0} isInActiveIcon customIconSize={5} />;
     }
 };
 

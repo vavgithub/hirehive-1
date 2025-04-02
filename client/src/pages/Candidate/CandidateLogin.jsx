@@ -15,12 +15,14 @@ import Loader from '../../components/Loaders/Loader';
 import TogglePassword from '../../components/utility/TogglePassword';
 import Logo from '../../svg/Logo/lightLogo.svg'
 import LoaderModal from '../../components/Loaders/LoaderModal';
+import IconWrapper from '../../components/Cards/IconWrapper';
+import { Briefcase, FileText } from 'lucide-react';
 
 const statsOne = [
-  { title: 'Jobs Posted', value: 100, icon: one },
+  { title: 'Jobs Posted', value: 100, icon: () => <IconWrapper size={10} isInActiveIcon icon={Briefcase} /> },
 ]
 const statsTwo = [
-  { title: 'Application Received', value: 10, icon: two },
+  { title: 'Application Received', value: 10, icon: () => <IconWrapper size={10} isInActiveIcon icon={FileText} /> },
 ]
 
 const CandidateLogin = () => {

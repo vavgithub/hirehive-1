@@ -4,6 +4,8 @@ import Modal from './Modal';
 import axios from '../../api/axios';
 import ProfileIcon from '../../svg/Icons/ProfileIcon';
 import CloseButton from '../../svg/Icons/CloseButton';
+import IconWrapper from '../Cards/IconWrapper';
+import { User, X } from 'lucide-react';
 
 const AutoAssignModal = ({ open, onClose, onAssign, jobId, budgetFilter }) => {
     const [reviewers, setReviewers] = useState([]);
@@ -95,7 +97,7 @@ const AutoAssignModal = ({ open, onClose, onAssign, jobId, budgetFilter }) => {
           onClick={() => setIsDropdownOpen(!isDropdownOpen)}
         >
           <div className="flex-grow flex flex-wrap gap-2 h-full px-4 py-1 items-center font-outfit text-font-gray hover:bg-background-90">
-          <ProfileIcon/>
+          <IconWrapper icon={User} size={0} customIconSize={5} inheritColor />
 
             {selectedReviewers.map(reviewer => (
               <div key={reviewer._id} className="bg-background-70 px-4 py-1 rounded-xl flex items-center text-white">
@@ -107,7 +109,7 @@ const AutoAssignModal = ({ open, onClose, onAssign, jobId, budgetFilter }) => {
                   }} 
                   className="ml-2 "
                 >
-                  <CloseButton/>
+                  <IconWrapper icon={X} size={0} customIconSize={5} />
                 </button>
               </div>
             ))}

@@ -12,6 +12,8 @@ import { steps } from '../../pages/Admin/Register';
 import { useMutation } from '@tanstack/react-query';
 import { showErrorToast, showSuccessToast } from "../ui/Toast"
 import { useOnboardingContext } from '../../context/OnboardingProvider';
+import IconWrapper from '../Cards/IconWrapper';
+import { Briefcase, FileText } from 'lucide-react';
 
 export const emailPattern = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i
 
@@ -21,10 +23,10 @@ const registerAdmin = async ({fullName, email}) => {
 }
 
 const statsOne = [
-    { title: 'Jobs Posted', value: 100, icon: one },
+    { title: 'Jobs Posted', value: 100, icon: () => <IconWrapper size={10} isInActiveIcon icon={Briefcase} /> },
   ]
   const statsTwo = [
-    { title: 'Application Received', value: 10, icon: two },
+    { title: 'Application Received', value: 10, icon: () => <IconWrapper size={10} isInActiveIcon icon={FileText} /> },
   ]
 
 function RegisterForm({setCurrentStep}) {

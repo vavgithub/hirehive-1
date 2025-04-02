@@ -16,6 +16,8 @@ import { showErrorToast, showSuccessToast } from '../../components/ui/Toast'
 import { validationRules } from '../../utility/validationRules'
 import LoaderModal from '../../components/Loaders/LoaderModal'
 import Container from '../../components/Cards/Container'
+import IconWrapper from '../../components/Cards/IconWrapper'
+import { PencilLine } from 'lucide-react'
 
 const editMember = async ({teamMember,memberId}) => {
     const response = await axios.patch('/admin/edit-member',{teamMember,memberId});
@@ -296,7 +298,7 @@ function TeamsProfile() {
                   <StyledCard backgroundColor={"bg-background-30"} extraStyles=" flex flex-col items-center relative">
                       {!member?.member_id && <button type="button" onClick={()=>setIsEditing(!isEditing)} className="absolute top-6 right-6 border rounded-xl p-2 border-font-gray hover:bg-background-70">
                       <CustomToolTip title={"Edit Profile"} arrowed>
-                          <PencilIcon/>
+                          <IconWrapper size={2} customIconSize={3}  icon={PencilLine} />
                       </CustomToolTip>
                       </button>}
                       <div className="relative w-[8rem] min-h-[5rem] ">

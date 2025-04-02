@@ -2,12 +2,12 @@ import React, { useRef, useEffect } from 'react';
 
 // StatCard component (unchanged)
 const StatCard = ({ title, value, icon: Icon }) => (
-  <div className="flex flex-shrink-0 justify-between items-center bg-card-pattern w-[240px] rounded-md shadow">
+  <div className="flex flex-shrink-0 justify-between items-center bg-card-pattern w-[240px] min-h-[104px] relative rounded-md shadow overflow-hidden">
     <div className="ml-[15px] w-max">
       <p className="typography-small-p text-font-gray w-max">{title}</p>
       <p className="typography-h2">{value}</p>
     </div>
-    <div>
+    <div className='absolute -right-5 -bottom-4 opacity-10'>
       <Icon />
     </div>
   </div>

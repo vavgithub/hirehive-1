@@ -1,6 +1,8 @@
 import React, { useMemo } from 'react'
 import LeftPagination from '../../svg/Icons/LeftPagination'
 import RightPagination from '../../svg/Icons/RightPagination'
+import IconWrapper from '../Cards/IconWrapper';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 function Pagination({currentPage, pageLimit , totalItems ,setCurrentPage}) {
   const numberOfPages = Math.ceil(totalItems/pageLimit);
@@ -30,7 +32,7 @@ function Pagination({currentPage, pageLimit , totalItems ,setCurrentPage}) {
       </div>
       <div className='flex items-center gap-4'>
           <div onClick={currentPage > 1 ? ()=> setCurrentPage(prev => prev - 1) : null} className={currentPage > 1 ? "text-white cursor-pointer" : "text-font-gray"}>
-            <LeftPagination />
+            <IconWrapper icon={ChevronLeft} size={0} customIconSize={5} customStrokeWidth={5} />
           </div>
             {
               getVisibilePageNumbers?.map(item =>{
@@ -38,7 +40,7 @@ function Pagination({currentPage, pageLimit , totalItems ,setCurrentPage}) {
               })
             }
           <div onClick={currentPage !== numberOfPages ? ()=>setCurrentPage(prev => prev + 1) : null} className={currentPage === numberOfPages ? "text-font-gray" : "text-white cursor-pointer"}>
-            <RightPagination />
+            <IconWrapper icon={ChevronRight} size={0} customIconSize={5} customStrokeWidth={5} />
           </div>
       </div>
     </div>

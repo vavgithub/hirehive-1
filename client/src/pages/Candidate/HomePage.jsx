@@ -17,6 +17,8 @@ import useDebounce from '../../hooks/useDebounce';
 import JobCard from '../../components/Cards/JobCard';
 import ContactUs from '../../components/Form/ContactUs';
 import Container from '../../components/Cards/Container';
+import IconWrapper from '../../components/Cards/IconWrapper';
+import { SlidersHorizontal } from 'lucide-react';
 
 const fetchOpenJobs = (page) => axios.get(`/candidates/jobs/open?page=${page}`).then(res => res.data);
 const searchJobs = (query,page) => axios.get(`/candidates/jobs/searchJobs?jobTitle=${encodeURIComponent(query)}&page=${page}`).then(res => res.data);
@@ -193,7 +195,7 @@ const HomePage = () => {
                             className={`md:hidden ${isFilterVisible ? "bg-background-100" : "bg-background-40"} transition-colors duration-200 flex items-center gap-2 p-2 rounded-xl`}
                             onClick={toggleFilters}
                         >
-                            <Filter />
+                        <IconWrapper isInActiveIcon size={0} customIconSize={4} customStrokeWidth={5}  icon={SlidersHorizontal} />
                         </div>
                         </div>
                     </div>

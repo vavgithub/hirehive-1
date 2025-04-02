@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import DeleteButton from '../../svg/MiniFormButtons/DeleteButton';
 import ToggleSwitch from '../ui/ToggleSwitch';
+import IconWrapper from '../Cards/IconWrapper';
+import { Copy, Trash } from 'lucide-react';
 
 const TextQuestion = ({ question, onUpdate, onDelete, onCopy, initialEditMode = false, onValidityChange ,  questionNumber }) => {
   const [isEditing, setIsEditing] = useState(initialEditMode);
@@ -77,7 +79,7 @@ const TextQuestion = ({ question, onUpdate, onDelete, onCopy, initialEditMode = 
         <select
           value={localAnswerType}
           onChange={(e) => setLocalAnswerType(e.target.value)}
-          className="w-full p-2 bg-background-40 rounded-xl"
+          className="w-full p-2 bg-background-40 rounded-xl font-outfit "
         >
           <option value="text">Text</option>
           <option value="number">Number</option>
@@ -87,13 +89,10 @@ const TextQuestion = ({ question, onUpdate, onDelete, onCopy, initialEditMode = 
       <div className="flex justify-end mt-2 p-4 items-center bg-background-40 rounded-xl space-x-4">
         <ToggleSwitch checkValue={localRequired} setCheckValue={setLocalRequired} label={"Required"} />
         <div onClick={(e) => { e.stopPropagation(); onCopy(); }} className='bg-blue-200 w-11 h-11  rounded-xl flex items-center justify-center cursor-pointer'>
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-          </svg>
+        <IconWrapper icon={Copy} customStrokeWidth={7} />
         </div>
         <div onClick={(e) => { e.stopPropagation(); onDelete(); }} className='bg-red-200 w-11 h-11  rounded-xl flex items-center justify-center cursor-pointer'>
-          <DeleteButton />
+          <IconWrapper icon={Trash} isErrorIcon customStrokeWidth={7} />
         </div>
       </div>
     </div>

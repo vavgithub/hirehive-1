@@ -1,6 +1,8 @@
 import React, { useRef, useState } from 'react';
 import EyeIcon from '../../svg/Icons/EyeIcon';
 import EyeIconCrossed from '../../svg/Icons/EyeIconCrossed';
+import IconWrapper from '../Cards/IconWrapper';
+import { Eye, EyeOff } from 'lucide-react';
 
 function TogglePassword({ children, typeState, setTypeState }) {
   // Local state to manage visibility of the password
@@ -42,7 +44,7 @@ function TogglePassword({ children, typeState, setTypeState }) {
       {/* Icon to toggle visibility of password */}
       <div onClick={handleVisibility} className="absolute top-0 right-4 flex items-center h-full">
         {/* Conditionally render either crossed or normal eye icon based on visibility */}
-        {!isVisible ? <EyeIconCrossed /> : <EyeIcon />}
+        {!isVisible ? <IconWrapper size={0} customIconSize={5} isInActiveIcon icon={EyeOff} /> : <IconWrapper size={0} customIconSize={5} isInActiveIcon icon={Eye} />}
       </div>
     </div>
   );

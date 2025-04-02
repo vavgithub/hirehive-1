@@ -22,15 +22,9 @@ import {
   REMOVE_LIST_COMMAND
 } from '@lexical/list'
 import {useCallback, useEffect, useRef, useState} from 'react';
-import BoldIcon from '../../../svg/Editor/BoldIcon';
-import ItalicIcon from '../../../svg/Editor/ItalicIcon';
-import LeftAligned from '../../../svg/Editor/LeftAligned';
-import RightAligned from '../../../svg/Editor/RightAligned';
-import CenterAlignedIcon from '../../../svg/Editor/CenterAlignedIcon';
-import UnderlineIcon from '../../../svg/Editor/UnderlineIcon';
-import BulletListIcon from '../../../svg/Editor/BulletListIcon';
-import NumberedListIcon from '../../../svg/Editor/NumberedListIcon';
 import EmojiPlugin from './EmojiPlugin';
+import IconWrapper from '../../Cards/IconWrapper';
+import { AlignCenter, AlignLeft, AlignRight, Bold, Italic, List, ListOrdered, Underline } from 'lucide-react';
 
 const LowPriority = 1;
 
@@ -188,18 +182,18 @@ export default function ToolbarPlugin({errors}) {
         Redo
       </button>
       <Divider /> */}
-      <ToolButton Icon={BoldIcon} command={FORMAT_TEXT_COMMAND} commandType={'bold'} isActive={isBold} />
-      <ToolButton Icon={ItalicIcon} command={FORMAT_TEXT_COMMAND} commandType={'italic'} isActive={isItalic} />
-      <ToolButton Icon={UnderlineIcon} command={FORMAT_TEXT_COMMAND} commandType={'underline'} isActive={isUnderline} />
+      <ToolButton Icon={()=><IconWrapper icon={Bold} size={3} customStrokeWidth={5} />} command={FORMAT_TEXT_COMMAND} commandType={'bold'} isActive={isBold} />
+      <ToolButton Icon={()=><IconWrapper icon={Italic} size={3} customStrokeWidth={5} />} command={FORMAT_TEXT_COMMAND} commandType={'italic'} isActive={isItalic} />
+      <ToolButton Icon={()=><IconWrapper icon={Underline} size={3} customStrokeWidth={5} />} command={FORMAT_TEXT_COMMAND} commandType={'underline'} isActive={isUnderline} />
       {/* <ToolButton Icon={()=><div>S</div>} command={FORMAT_TEXT_COMMAND} commandType={'strikethrough'} isActive={isStrikethrough} /> */}
       <Divider />
-      <ToolButton Icon={LeftAligned} command={FORMAT_ELEMENT_COMMAND} commandType={'left'} isActive={isLeftAligned} />
-      <ToolButton Icon={CenterAlignedIcon} command={FORMAT_ELEMENT_COMMAND} commandType={'center'} isActive={isCenterAligned} />
-      <ToolButton Icon={RightAligned} command={FORMAT_ELEMENT_COMMAND} commandType={'right'} isActive={isRightAligned} />
+      <ToolButton Icon={()=><IconWrapper icon={AlignLeft} size={3} customStrokeWidth={5} />} command={FORMAT_ELEMENT_COMMAND} commandType={'left'} isActive={isLeftAligned} />
+      <ToolButton Icon={()=><IconWrapper icon={AlignCenter} size={3} customStrokeWidth={5} />} command={FORMAT_ELEMENT_COMMAND} commandType={'center'} isActive={isCenterAligned} />
+      <ToolButton Icon={()=><IconWrapper icon={AlignRight} size={3} customStrokeWidth={5} />} command={FORMAT_ELEMENT_COMMAND} commandType={'right'} isActive={isRightAligned} />
       {/* <ToolButton Icon={()=><div>J</div>} command={FORMAT_ELEMENT_COMMAND} commandType={'justify'} isActive={isUnderline} /> */}
       <Divider />
-      <ListToolButton Icon={BulletListIcon} isNumberedList={false} isActive={isBulletList} />
-      <ListToolButton Icon={NumberedListIcon} isNumberedList={true} isActive={isNumberedList} />
+      <ListToolButton Icon={()=><IconWrapper icon={List} size={3} customStrokeWidth={5} />} isNumberedList={false} isActive={isBulletList} />
+      <ListToolButton Icon={()=><IconWrapper icon={ListOrdered} size={3} customStrokeWidth={5} />} isNumberedList={true} isActive={isNumberedList} />
       <Divider />
       <EmojiPlugin/>
     </div>

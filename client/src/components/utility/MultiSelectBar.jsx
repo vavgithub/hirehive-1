@@ -2,10 +2,9 @@ import React, { useCallback, useEffect, useState } from 'react'
 import ArrowIcon from '../../svg/Icons/ArrowIcon'
 import { BlendCloseButton } from '../../svg/Icons/CloseButton'
 import { WhiteProfileIcon } from '../../svg/Icons/ProfileIcon'
+import { Rating } from '../../svg/Buttons/Rating'
 import StageIcon from '../../svg/Icons/StageIcon'
 import StatusIcon from '../../svg/Icons/StatusIcon'
-import { Rating } from '../../svg/Buttons/Rating'
-import { WhiteCalenderIcon } from '../../svg/Staging/CalenderIcon'
 import BellIcon from '../../svg/Icons/BellIcon'
 import ThreeDotsHorizontal from '../../svg/Icons/ThreeDotsHorizontal'
 import Modal from '../Modals/Modal'
@@ -16,6 +15,8 @@ import LoaderModal from '../Loaders/LoaderModal'
 import AssigneeSelector from '../MUIUtilities/AssigneeSelector'
 import RatingSelector from '../MUIUtilities/RatingSelector'
 import RejectionSelector from '../MUIUtilities/RejectionSelector'
+import IconWrapper from '../Cards/IconWrapper'
+import { ArrowRight, Star, User, X } from 'lucide-react'
 
 export const getMaxScoreEachStage = (currentStage) =>{
     let stageScores = {
@@ -56,7 +57,7 @@ const multiSelectConfig = [
         label : "Move to next round",
         customTitle : "Move to next round",
         customMessage : "All selected candidates will be moved to the following round. Are you sure you want to proceed?",
-        icon : ArrowIcon,
+        icon : ()=> <IconWrapper inheritColor icon={ArrowRight} size={0} isInActiveIcon customIconSize={5} />,
         apiFunction : moveMultipleCandidates, 
         validStatus : ["Reviewed"],
         type : "MODAL",
@@ -67,7 +68,7 @@ const multiSelectConfig = [
         label : "Reject",
         customTitle : "Reject",
         customMessage : "",
-        icon : BlendCloseButton,
+        icon : ()=> <IconWrapper inheritColor icon={X} size={0} isInActiveIcon customIconSize={5} />,
         apiFunction : rejectMultipleCandidates, 
         validStatus : ["Reviewed"],
         type : "MODAL",
@@ -78,7 +79,7 @@ const multiSelectConfig = [
         label : "Assignee",
         customTitle : "Assignee",
         customMessage : "",
-        icon : WhiteProfileIcon,
+        icon : ()=> <IconWrapper inheritColor icon={User} size={0} isInActiveIcon customIconSize={5} />,
         apiFunction : assignReviewerForCandidates,
         validStatus : ["Sent","Under Review","Not Assigned","Pending"],
         type : "POPUP",
@@ -109,7 +110,7 @@ const multiSelectConfig = [
         label : "Rating",
         customTitle : "Rating",
         customMessage : "",
-        icon : Rating,
+        icon : ()=> <IconWrapper inheritColor icon={Star} size={0} isInActiveIcon customIconSize={5} />,
         apiFunction : rateMultipleCandidates, 
         validStatus : [
             "Accepted",

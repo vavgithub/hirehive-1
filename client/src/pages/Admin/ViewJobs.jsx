@@ -31,6 +31,8 @@ import Modal from '../../components/Modals/Modal';
 import CustomBadge from '../../components/Badge/CustomBadge';
 import { useAuthContext } from '../../context/AuthProvider';
 import Container from '../../components/Cards/Container';
+import IconWrapper from '../../components/Cards/IconWrapper';
+import { Briefcase, Check, Eye, File, FileText, Folder, MonitorDot, MousePointer2, PenTool, Users } from 'lucide-react';
 
 
 const ViewJobs = () => {
@@ -54,12 +56,12 @@ const ViewJobs = () => {
 
     const tabs = [
         {
-            name: 'jobDetails', label: 'Job Details', icon: <CandidateDetailsIcon />,
-            activeIcon: <CandidateDetailsIconActive />,
+            name: 'jobDetails', label: 'Job Details', icon: <IconWrapper icon={FileText} size={0} isInActiveIcon={true}  customIconSize={4} />,
+            activeIcon: <IconWrapper icon={FileText} size={0} isActiveIcon={true}  customIconSize={4} />,
         },
         {
-            name: 'candidate', label: 'Candidates', icon: <ApplicationIcon />,
-            activeIcon: <ApplicationIconActive />,
+            name: 'candidate', label: 'Candidates', icon: <IconWrapper icon={Users} size={0} isInActiveIcon={true}  customIconSize={4} />,
+            activeIcon: <IconWrapper icon={Users} size={0} isActiveIcon={true}  customIconSize={4} />,
         }
     ];
 
@@ -158,19 +160,19 @@ const ViewJobs = () => {
 
     // Update the stats arrays to use the fetched data
     const candidateStats = [
-        { title: 'Total', value: jobStats?.data?.totalCount || 0, icon: Total },
-        { title: 'Portfolio', value: jobStats?.data?.stageStats?.Portfolio || 0, icon: Portfolio },
-        { title: 'Screening', value: jobStats?.data?.stageStats?.Screening || 0, icon: Screening },
-        { title: 'Design Task', value: jobStats?.data?.stageStats['Design Task'] || 0, icon: DesignTask },
-        { title: 'Round 1', value: jobStats?.data?.stageStats['Round 1'] || 0, icon: Round1 },
-        { title: 'Round 2', value: jobStats?.data?.stageStats['Round 2'] || 0, icon: Round2 },
-        { title: 'Offer Sent', value: jobStats?.data?.stageStats?.Hired || 0, icon: OfferSent },
+        { title: 'Total', value: jobStats?.data?.totalCount || 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={Users} /> },
+        { title: 'Portfolio', value: jobStats?.data?.stageStats?.Portfolio || 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={Folder} /> },
+        { title: 'Screening', value: jobStats?.data?.stageStats?.Screening || 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={MonitorDot} /> },
+        { title: 'Design Task', value: jobStats?.data?.stageStats['Design Task'] || 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={PenTool} /> },
+        { title: 'Round 1', value: jobStats?.data?.stageStats['Round 1'] || 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={Briefcase} /> },
+        { title: 'Round 2', value: jobStats?.data?.stageStats['Round 2'] || 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={Briefcase} /> },
+        { title: 'Offer Sent', value: jobStats?.data?.stageStats?.Hired || 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={PenTool} /> },
     ];
     const jobsDetailStats = [
-        { title: 'Clicks', value: jobStats?.data?.jobDetails?.views || 0, icon: Views },
-        { title: 'Applications Received', value: jobStats?.data?.jobDetails?.applicationsReceived || 0, icon: AppRec },
-        { title: 'Qualified applications', value: jobStats?.data?.jobDetails?.qualifiedApplications || 0, icon: QuaApp },
-        { title: 'Engagement Rate', value: `${jobStats?.data?.jobDetails?.engagementRate || 0}%`, icon: EngRate },
+        { title: 'Clicks', value: jobStats?.data?.jobDetails?.views || 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={Eye} /> },
+        { title: 'Applications Received', value: jobStats?.data?.jobDetails?.applicationsReceived || 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={File} /> },
+        { title: 'Qualified applications', value: jobStats?.data?.jobDetails?.qualifiedApplications || 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={Check} /> },
+        { title: 'Engagement Rate', value: `${jobStats?.data?.jobDetails?.engagementRate || 0}%`, icon: () => <IconWrapper size={10} isInActiveIcon icon={MousePointer2} /> },
     ];
 
 

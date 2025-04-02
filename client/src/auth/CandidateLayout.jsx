@@ -2,11 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Outlet, useNavigate, NavLink, useLocation } from 'react-router-dom';
 import { candidateLogout } from '../api/authApi';
 import LightLogo from "../svg/Logo/lightLogo.svg"
-// Import icons
-import { DashboardIcon, DashboardIconActive } from '../svg/Navbar/DashboardIcon';
-import { JobsIcon, JobsIconActive } from '../svg/Navbar/JobsIcon';
-import { MyJobsIcon, MyJobsIconActive } from '../svg/Navbar/MyJobsIcon';
-import { Button } from '../components/Buttons/Button';
 import useCandidateAuth from '../hooks/useCandidateAuth';
 import AssessmentBanner from '../components/ui/AssessmentBanner';
 import { useDispatch, useSelector } from 'react-redux';
@@ -14,11 +9,11 @@ import { logoutCandidateAuth } from '../redux/candidateAuthSlice';
 import { showErrorToast, showSuccessToast } from '../components/ui/Toast';
 import useScroll from '../hooks/useScroll';
 import { Avatar, IconButton, Menu, MenuItem } from '@mui/material';
-import Logout from '../svg/Buttons/Logout';
-import Profile from '../svg/Buttons/Profile';
 import StyledMenu from '../components/MUIUtilities/StyledMenu';
 import Modal from '../components/Modals/Modal';
 import ContactUs from '../components/Form/ContactUs';
+import IconWrapper from '../components/Cards/IconWrapper';
+import { Briefcase, BriefcaseBusiness, LogOut, User } from 'lucide-react';
 
 const CandidateLayout = () => {
   const navigate = useNavigate();
@@ -78,14 +73,14 @@ const CandidateLayout = () => {
     {
       name: 'All Jobs',
       path: '/candidate/all-jobs',
-      icon: JobsIcon,
-      activeIcon: JobsIconActive,
+      icon: ()=><IconWrapper isInActiveIcon icon={Briefcase} />,
+      activeIcon: ()=><IconWrapper isActiveIcon icon={Briefcase} />,
     },
     {
       name: 'My Jobs',
       path: '/candidate/my-jobs',
-      icon: MyJobsIcon,
-      activeIcon: MyJobsIconActive,
+      icon: ()=><IconWrapper isInActiveIcon icon={BriefcaseBusiness} />,
+      activeIcon: ()=><IconWrapper isActiveIcon icon={BriefcaseBusiness} />,
     },
   ];
 
@@ -137,9 +132,9 @@ const CandidateLayout = () => {
         onClick: handleMenuClose,
         content: () => (
           <NavLink to={profilePath} className={({ isActive }) =>
-            `w-full flex items-center ${isActive ? "text-font-accent" : ""} hover:bg-background-60 px-4 py-2 rounded-xl `}
+            `w-full flex items-center ${isActive ? "text-font-accent" : ""} hover:bg-background-60 hover:text-font-accent px-4 py-2 rounded-xl `}
           >
-            <Profile />
+            <IconWrapper inheritColor={true} size={0} customIconSize={5}  icon={User} />
             <span className='typography-large ml-2 font-outfit'>
               Profile
             </span>
@@ -149,8 +144,8 @@ const CandidateLayout = () => {
       {
         onClick: handleLogout,
         content: () => (
-          <div className='flex items-center hover:bg-background-60 px-4 py-2 w-full rounded-xl'>
-            <Logout />
+          <div className='flex items-center hover:bg-background-60 hover:text-font-accent px-4 py-2 w-full rounded-xl'>
+            <IconWrapper inheritColor={true} size={0} customIconSize={5}  icon={LogOut} />
             <span className='typography-large ml-2 font-outfit'>
               Logout
             </span>

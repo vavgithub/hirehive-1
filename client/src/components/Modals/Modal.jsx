@@ -9,6 +9,8 @@ import { Button } from '../Buttons/Button';
 import WarningIcon from '../../svg/Staging/WarningIcon';
 import AssessmentPopup from '../../svg/Background/AssessmentPopup.svg';
 import SchedulerButton from '../ui/SchedulerButton';
+import IconWrapper from '../Cards/IconWrapper';
+import { X } from 'lucide-react';
 
 const ACTION_TYPES = {
   DELETE: 'DELETE',
@@ -220,7 +222,7 @@ const Modal = ({
       return (
         <div className="flex flex-col items-center relative">
           <div onClick={onClose} className=' cursor-pointer md:hidden absolute -top-14 -right-14 bg-background-60 p-1 rounded-xl'>
-              <CloseButton/>
+            <IconWrapper icon={X} size={0} customIconSize={5} />
           </div>
           <div className="mb-4">
             <img

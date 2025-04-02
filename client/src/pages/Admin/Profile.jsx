@@ -14,6 +14,8 @@ import LoaderModal from '../../components/Loaders/LoaderModal';
 import {  useQueryClient } from '@tanstack/react-query';
 import { InputField } from '../../components/Inputs/InputField';
 import Container from '../../components/Cards/Container';
+import { PencilLine } from 'lucide-react';
+import IconWrapper from '../../components/Cards/IconWrapper';
 
 
 
@@ -363,7 +365,7 @@ function Profile() {
                     className="absolute top-6 right-6 border rounded-xl p-2 border-font-gray hover:bg-background-70"
                   >
                     <CustomToolTip title="Edit Profile" arrowed>
-                      <PencilEditIcon />
+                      <IconWrapper size={2} customIconSize={3}  icon={PencilLine} />
                     </CustomToolTip>
                   </button>
                 )}
@@ -390,7 +392,7 @@ function Profile() {
                       className="absolute bottom-1 -right-1 rounded-xl"
                       disabled={uploading}
                     >
-                      <PencilEditIcon className={uploading ? 'opacity-50' : ''} />
+                      <IconWrapper hasBg={true} customBgHover={'hover:bg-background-60'} size={3} customIconSize={3}  icon={PencilLine} />
                     </button>
                   )}
                 </div>

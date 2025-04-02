@@ -9,6 +9,8 @@ import { useAuthContext } from '../../context/AuthProvider';
 import GlobalStaging from './GlobalStaging';
 import { ensureAbsoluteUrl } from '../../utility/ensureAbsoluteUrl';
 import LinkView from '../ui/LinkView';
+import IconWrapper from '../Cards/IconWrapper';
+import { ChevronDown } from 'lucide-react';
 // const stageComponents = {
 //     Portfolio,
 //     Screening,
@@ -36,17 +38,7 @@ const AccordionSection = ({ title, isOpen, onToggle, children, badge }) => (
                     <h3 className="typography-h3">{title}</h3>
                     {badge}
                 </div>
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    className={`transform transition-transform ${isOpen ? 'rotate-180' : ''}`}
-                >
-                    <path d="M6 9l6 6 6-6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
+                <IconWrapper icon={ChevronDown} size={0} customStrokeWidth={5} customIconSize={5}  />
             </button>
 
             {isOpen && (
@@ -177,7 +169,7 @@ const ApplicationStaging = ({ candidateId, jobId ,jobStatus}) => {
                 {stages.map((stage, index) => (
                     <React.Fragment key={stage}>
                         <div
-                            className={`stage-item flex typography-body flex-col gap-2 justify-center items-center cursor-pointer ${isStageVisible(stage) ? '' : 'opacity-50'}`}
+                            className={`stage-item flex typography-body flex-col gap-2 justify-center items-center ${isStageVisible(stage) ? ' cursor-pointer  ' : ' cursor-default opacity-50'}`}
                             onClick={() => isStageVisible(stage) && setSelectedStage(stage)}
                         >
                             <div className="stage-icon">

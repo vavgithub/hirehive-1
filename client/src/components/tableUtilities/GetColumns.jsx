@@ -12,6 +12,7 @@ import StatusBadge from "../ui/StatusBadge";
 import StageBadge from "../ui/StageBadge";
 import { ensureAbsoluteUrl } from "../../utility/ensureAbsoluteUrl";
 import IconWrapper from "../Cards/IconWrapper";
+import { CircleCheck, CircleX, ClipboardCheck, FileUser, FolderOpen, Globe } from "lucide-react";
 
 const getCommonColumns = (handleDocumentClick) => [
   {
@@ -36,7 +37,7 @@ const getCommonColumns = (handleDocumentClick) => [
         <p className='flex items-center gap-2'>{params.value.name}
           {params.value.hasGivenAssessment &&
             <span>
-              <AssignmentIconStroke />
+                <IconWrapper size={3} customIconSize={1} icon={ClipboardCheck} />
             </span>}
         </p>
         <div className="hover-icons h-full flex items-center"
@@ -45,27 +46,21 @@ const getCommonColumns = (handleDocumentClick) => [
           {params.row.portfolio && (
             <a href={ensureAbsoluteUrl(params.row.portfolio)} target="_blank" rel="noopener noreferrer" className="icon-link">
               <CustomToolTip title={'Portfolio'} arrowed>
-              <IconWrapper hasBg size={3}>
-                <FileMainIconSmall />
-              </IconWrapper>
+              <IconWrapper hasBg size={3} icon={FolderOpen} />
               </CustomToolTip>
             </a>
           )}
           {params.row.website && (
             <a href={ensureAbsoluteUrl(params.row.website)} target="_blank" rel="noopener noreferrer" className="icon-link ">
               <CustomToolTip title={'Website'} arrowed>
-              <IconWrapper hasBg size={3}>
-                <WebsiteMainIconSmall />  
-              </IconWrapper>
+              <IconWrapper hasBg size={3} icon={Globe} />
               </CustomToolTip>
             </a>
           )}
           {params.row.resumeUrl && (
             <button onClick={() => handleDocumentClick(params.row.resumeUrl)} className="icon-link">
               <CustomToolTip title='Resume' arrowed>
-                  <IconWrapper hasBg size={3}>
-                    <ResumeIconSmall />
-                  </IconWrapper>
+                  <IconWrapper hasBg size={3} icon={FileUser} />
               </CustomToolTip>
             </button>
           )}
@@ -294,13 +289,17 @@ export const getDefaultColumns = (role, canMove, canReject, handleAssigneeChange
             onClick={() => handleMoveClick(params.row)}
             disabled={(params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Reviewed" && params?.row?.stageStatuses[params?.row?.currentStage]?.scheduledDate) || !canMove(params.row)}
           >
-            {!(params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Reviewed" && params?.row?.stageStatuses[params?.row?.currentStage]?.scheduledDate) && canMove(params.row) ? <MoveActive /> : <Move />}
+            {!(params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Reviewed" && params?.row?.stageStatuses[params?.row?.currentStage]?.scheduledDate) && canMove(params.row) ? 
+            <IconWrapper icon={CircleCheck} size={0} customIconSize={5} />
+            : <IconWrapper icon={CircleCheck} isInActiveIcon customIconSize={5} size={0} />}
           </button>
           <button
             onClick={() => handleRejectClick(params.row)}
             disabled={(params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Reviewed" && params?.row?.stageStatuses[params?.row?.currentStage]?.scheduledDate) || !canReject(params.row)}
           >
-            {!(params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Reviewed" && params?.row?.stageStatuses[params?.row?.currentStage]?.scheduledDate) && canReject(params.row) ? <RejectActive /> : <Reject />}
+            {!(params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Reviewed" && params?.row?.stageStatuses[params?.row?.currentStage]?.scheduledDate) && canReject(params.row) ? 
+            <IconWrapper icon={CircleX} size={0} customIconSize={5} />
+            : <IconWrapper icon={CircleX} isInActiveIcon customIconSize={5} size={0} />}
           </button>
           <button className={(params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Reviewed" && params?.row?.stageStatuses[params?.row?.currentStage]?.scheduledDate) || params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Rejected" ? "text-font-gray" : "text-white"} disabled={(params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Reviewed" && params?.row?.stageStatuses[params?.row?.currentStage]?.scheduledDate) || params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Rejected"} onClick={(e) => handleRatingClick(e, params.row)}>
             {getRatingIcon(params.row.rating)}

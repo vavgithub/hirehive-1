@@ -30,6 +30,7 @@ import { getStageColor, maxScoreOfEachStage } from '../../components/Staging/sta
 import { CustomDropdown } from '../../components/Dropdowns/CustomDropdown';
 import Container from '../../components/Cards/Container';
 import IconWrapper from '../../components/Cards/IconWrapper';
+import { ClipboardCheck, FileText, FileUser, FolderOpen, Globe, Mail, Phone, Users } from 'lucide-react';
 
 export const VAVScoreCard = ({score,stage,scoreStages})=>{
     const [showBreakDown,setShowBreakDown] = useState(false);
@@ -249,15 +250,15 @@ const ViewCandidateProfile = () => {
         {
             name: 'application',
             label: 'Application',
-            icon: <ApplicationIcon />,
-            activeIcon: <ApplicationIconActive />,
+            icon: <IconWrapper icon={Users} size={0} isInActiveIcon={true}  customIconSize={4} /> ,
+            activeIcon: <IconWrapper icon={Users} isActiveIcon={true} size={0} customIconSize={4} />,
         },
         ...(role !== "Design Reviewer" ? [
             {
                 name: 'candidateDetails',
                 label: 'Candidate Details',
-                icon: <CandidateDetailsIcon />,
-                activeIcon: <CandidateDetailsIconActive />,
+                icon: <IconWrapper icon={FileText} size={0} isInActiveIcon={true} customIconSize={4} />,
+                activeIcon: <IconWrapper isActiveIcon={true} icon={FileText} size={0} customIconSize={4} />,
             }
         ] : []),
     ];
@@ -362,36 +363,30 @@ const ViewCandidateProfile = () => {
                                 {role !== "Design Reviewer" &&
                                 <div className="flex mb-3 gap-5">
                                     <div className="flex items-center gap-2">
-                                        <PhoneIcon />
+                                        <IconWrapper size={0} customIconSize={1} icon={Phone} />
                                         <span className="typography-large-p">{data.phone}</span>
                                     </div>
                                     <div className="flex items-center gap-2">
-                                        <EmailIcon />
+                                        <IconWrapper size={0} customIconSize={1} icon={Mail} />
                                         <span className="typography-large-p">{data.email}</span>
                                     </div>
                                 </div>}
                                 <div className="flex gap-2 items-center ">
                                     <a href={ensureAbsoluteUrl(data.portfolio)} target="_blank" rel="noopener noreferrer" className="icon-link">
                                         <CustomToolTip title={'Portfolio'} arrowed size={2}>
-                                            <IconWrapper hasBg>
-                                                <FileMainIcon />
-                                            </IconWrapper>
+                                            <IconWrapper hasBg icon={FolderOpen} />
                                         </CustomToolTip>
                                     </a>
                                     {data.website && (
                                         <a href={ensureAbsoluteUrl(data.website)} target="_blank" rel="noopener noreferrer" className="icon-link">
                                             <CustomToolTip title={'Website'} arrowed size={2}>
-                                                <IconWrapper hasBg>
-                                                    <WebsiteMainIcon />
-                                                </IconWrapper>
+                                                <IconWrapper hasBg icon={Globe} />
                                             </CustomToolTip>
                                         </a>
                                     )}
                                     <div onClick={handleResumeOpen}>
                                         <CustomToolTip title={'Resume'} arrowed size={2}>
-                                            <IconWrapper hasBg>
-                                                <ResumeIcon  />
-                                            </IconWrapper>
+                                            <IconWrapper hasBg icon={FileUser} />
                                         </CustomToolTip>
                                     </div>
                                     {resumeOpen && <ResumeViewer documentUrl={data.resumeUrl} onClose={() => setResumeOpen(false)}/>}
@@ -399,9 +394,7 @@ const ViewCandidateProfile = () => {
                                     {
                                         (data.hasGivenAssessment && role === "Hiring Manager") && <div className='cursor-pointer' onClick={handleAssignmentNavigation}> 
                                             <CustomToolTip title={'Assessment'} arrowed size={2}>
-                                            <IconWrapper hasBg>
-                                                <AssignmentIcon /> 
-                                            </IconWrapper>
+                                            <IconWrapper hasBg icon={ClipboardCheck} />
                                             </CustomToolTip>
                                         </div>
                                     }

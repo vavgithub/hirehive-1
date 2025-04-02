@@ -6,6 +6,8 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DesktopTimePicker } from '@mui/x-date-pickers/DesktopTimePicker';
 import DropDownIcon from '../../svg/Icons/DropDownIcon';
 import ClockIcon from '../../svg/Staging/ClockIcon';
+import IconWrapper from '../Cards/IconWrapper';
+import { ChevronDown, Clock } from 'lucide-react';
 
 
 const theme = createTheme({
@@ -104,11 +106,11 @@ export default function Timepicker({ onChange, value ,error}) {
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <DesktopTimePicker
           slots={{
-            openPickerIcon : DropDownIcon
+            openPickerIcon : ()=> <IconWrapper icon={ChevronDown} size={0} customIconSize={5} isInActiveIcon />
           }}
           slotProps={{
             textField: {
-              InputProps: { startAdornment: <ClockIcon customStroke="#585B5F" /> }   
+              InputProps: { startAdornment: <IconWrapper icon={Clock} size={0} isInActiveIcon={true} /> }   
             }
           }}
           value={value ? dayjs(`${value}`) : null}
