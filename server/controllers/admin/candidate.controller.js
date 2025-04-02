@@ -963,6 +963,59 @@ export const toggleShortlistCandidate = async (req, res) => {
   }
 };
 
+// export const shortlistCandidate = async (req, res) => {
+//   try {
+//     // Find all candidates with at least one shortlisted job application
+//     const shortlistedCandidates = await candidates.find({
+//       "jobApplications.shortlisted": true,
+//     });
+
+//     // Format response to include only relevant information
+//     const formattedCandidates = shortlistedCandidates.map((candidate) => {
+//       // Filter only shortlisted job applications
+//       const shortlistedApplications = candidate.jobApplications.filter(
+//         (app) => app.shortlisted
+//       );
+      
+//       console.log("this is backendb shortlisted", shortlistedApplications);
+      
+//       return {
+//         _id: candidate._id,
+//         firstName: candidate.firstName,
+//         lastName: candidate.lastName,
+//         email: candidate.email,
+//         phone: candidate.phone,
+//         profilePictureUrl: candidate.profilePictureUrl,
+//         location: candidate.location,
+//         portfolio: candidate.portfolio,
+//         website: candidate.website,
+//         resumeUrl: candidate.resumeUrl,
+//         experience: candidate.experience,
+//         applications: shortlistedApplications.map((app) => ({
+//           jobId: app.jobId,
+//           jobApplied: app.jobApplied,
+//           applicationDate: app.applicationDate,
+//           currentStage: app.currentStage,
+//           status: app.status,
+//           rating: app.rating,
+//           currentCTC: app.professionalInfo?.currentCTC || 0,
+//           expectedCTC: app.professionalInfo?.expectedCTC || 0,
+//           hourlyRate: app.professionalInfo?.hourlyRate || 0,
+//         })),
+//       };
+//     });
+    
+//     console.log("this is backend", formattedCandidates);
+//     return res.status(200).json({ candidates: formattedCandidates });
+//   } catch (error) {
+//     console.error("Error fetching shortlisted candidates:", error);
+//     return res
+//     .status(500)
+//       .json({ message: "Server error", error: error.message });
+//   }
+// };
+
+
 export const shortlistCandidate = async (req, res) => {
   try {
     // Find all candidates with at least one shortlisted job application
@@ -976,7 +1029,7 @@ export const shortlistCandidate = async (req, res) => {
       const shortlistedApplications = candidate.jobApplications.filter(
         (app) => app.shortlisted
       );
-
+      
       return {
         _id: candidate._id,
         firstName: candidate.firstName,
@@ -984,21 +1037,41 @@ export const shortlistCandidate = async (req, res) => {
         email: candidate.email,
         phone: candidate.phone,
         profilePictureUrl: candidate.profilePictureUrl,
-        location: candidate.location,
+        location: candidate.location || "",
         portfolio: candidate.portfolio,
         website: candidate.website,
-        resumeUrl: candidate.resumeUrl,
+        resumeUrl: candidate.resumeUrl || "", // Ensure resumeUrl is not undefined
         experience: candidate.experience,
-        applications: shortlistedApplications.map((app) => ({
-          jobId: app.jobId,
-          jobApplied: app.jobApplied,
-          applicationDate: app.applicationDate,
-          currentStage: app.currentStage,
-          rating: app.rating,
-        })),
+        applications: shortlistedApplications.map((app) => {
+          // Convert Map to regular object for stageStatuses
+          const stageStatusesObj = {};
+          if (app.stageStatuses && app.stageStatuses instanceof Map) {
+            for (const [key, value] of app.stageStatuses.entries()) {
+              stageStatusesObj[key] = value;
+            }
+          }
+          
+          // Get the current stage status
+          const currentStageStatus = app.stageStatuses && app.stageStatuses.get(app.currentStage);
+          
+          return {
+            jobId: app.jobId,
+            jobApplied: app.jobApplied || app.jobProfile || "", // Fallback to jobProfile if jobApplied is empty
+            applicationDate: app.applicationDate,
+            currentStage: app.currentStage,
+            status: currentStageStatus?.status || "Under Review", // Get the status of the current stage
+            rating: app.rating,
+            currentCTC: app.professionalInfo?.currentCTC || 0,
+            expectedCTC: app.professionalInfo?.expectedCTC || 0,
+            hourlyRate: app.professionalInfo?.hourlyRate || 0,
+            stageStatuses: stageStatusesObj, // Add the converted stageStatuses
+            // Include other fields from the schema if needed
+            jobProfile: app.jobProfile || "" // Include jobProfile as a fallback
+          };
+        }),
       };
     });
-
+    
     return res.status(200).json({ candidates: formattedCandidates });
   } catch (error) {
     console.error("Error fetching shortlisted candidates:", error);

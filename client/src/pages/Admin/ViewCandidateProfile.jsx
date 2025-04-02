@@ -39,7 +39,7 @@ import { truncatedText } from '../../utility/truncatedHTML';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 import { formatTime } from '../../utility/formatTime';
 import { BookmarkIcon, BookmarkWhiteFilledIcon } from '../../svg/Checkboxes/BookmarkIcons';
-import { showSuccessToast } from '../../components/ui/Toast';
+import { showErrorToast, showSuccessToast } from '../../components/ui/Toast';
 
 
 
@@ -251,15 +251,21 @@ const ViewCandidateProfile = () => {
 
     const shortlistMutation = useMutation({
         mutationFn: toggleShortlistStatus,
-        onSuccess: () => {
+        onSuccess: (data, variables) => {
           queryClient.invalidateQueries(['candidate', candidateId, jobId]);
-          showSuccessToast("Candidate shortlisted successfully");
+          
+          // Show different toast messages based on the shortlist action
+          if (variables.shortlisted) {
+            showSuccessToast("Added to Future Gems", "Candidate has been added to Future Gems");
+          } else {
+            showErrorToast("Removed", "Candidate has been removed from Future Gems");
+          }
         },
         onError: (error) => {
           console.error("Error updating shortlist status:", error);
+          showErrorToast("Error", "Failed to update Future Gems status");
         }
       });
-      
       // Add this handler function
       const handleToggleShortlist = () => {
         const currentStatus = data?.jobApplication?.shortlisted || false;
@@ -463,7 +469,7 @@ const ViewCandidateProfile = () => {
                                             {/* Add Shortlist Button/Icon */}
                                             {(role === "Hiring Manager" || role === "Admin") &&
                                                 <div className='cursor-pointer bg-background-70 hover:bg-accent-300 rounded-xl w-11 h-11 flex justify-center items-center' onClick={handleToggleShortlist}>
-                                                    <CustomToolTip title={data?.jobApplication?.shortlisted ? 'Remove from Shortlist' : 'Add to Shortlist'} arrowed size={2}>
+                                                    <CustomToolTip title={data?.jobApplication?.shortlisted ? 'Remove from Future Gems' : 'Add to Future Gems'} arrowed size={2}>
                                                         {data?.jobApplication?.shortlisted ? <BookmarkWhiteFilledIcon /> : <BookmarkIcon />}
                                                     </CustomToolTip>
                                                 </div>

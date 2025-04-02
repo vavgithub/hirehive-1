@@ -156,8 +156,8 @@ const Navbar = () => {
                 <>
                     {/* <NavItem to="/admin/dashboard" icon={DashboardIcon} activeIcon={DashboardIconActive}>Dashboard</NavItem> */}
                     <NavItem to="/admin/jobs" icon={JobsIcon} activeIcon={JobsIconActive}>Jobs</NavItem>
-                    <NavItem to="/admin/candidates" icon={CandidatesIcon} activeIcon={CandidatesIconActive}>Candidates</NavItem>
-                    <NavItem to="/admin/shortlisted" icon={BookmarkIcon} activeIcon={BookmarkFilledIcon}>Shortlisted</NavItem>
+                    <NavItem to="/admin/candidates" icon={CandidatesIcon} activeIcon={CandidatesIconActive}>All Candidates</NavItem>
+                    <NavItem to="/admin/shortlisted" icon={BookmarkIcon} activeIcon={BookmarkFilledIcon}>Future Gems</NavItem>
                     {/* <NavItem to="/admin/reviews" icon={ReviewsIcon} activeIcon={ReviewsIconActive}>Reviews</NavItem>
                     <NavItem to="/admin/reports" icon={ReportsIcon} activeIcon={ReportsIconActive}>Reports</NavItem> */}
                 </>

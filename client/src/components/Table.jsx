@@ -26,7 +26,12 @@ import AutoAssignWithBudget from './tableUtilities/AutoAssignWithBudget';
 import MuiCustomStylesForDataGrid from './tableUtilities/MuiCustomStylesForDataGrid';
 import BudgetMenu from './tableUtilities/BudgetMenu';
 
-const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
+const Table = ({ 
+  jobId, 
+  readOnly = false, 
+  readOnlyData = [],
+  additionalColumns = [] // New prop for custom columns
+}) => {
 
   //For getting routes
   const location = useLocation();
@@ -349,15 +354,25 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
   };
 
   //getting column configurations
-  const columns = readOnly ? 
-  getReadOnlyColumns(role,handleDocumentClick) : 
-  getDefaultColumns(role,
-    canMove,canReject,
-    handleAssigneeChange,
-    handleMoveClick,
-    handleRejectClick,
-    handleRatingClick,
-    handleDocumentClick);
+   // Update the columns generation
+   const columns = (() => {
+    let baseColumns = readOnly ? 
+      getReadOnlyColumns(role, handleDocumentClick) : 
+      getDefaultColumns(role, canMove, canReject, handleAssigneeChange, 
+        handleMoveClick, handleRejectClick, handleRatingClick, handleDocumentClick);
+    
+    // Insert additional columns after the first column
+    if (additionalColumns.length > 0) {
+      return [
+        ...baseColumns.slice(0, 1), // Keep the first column (fullName)
+        ...baseColumns.slice(1,6),     // Add the rest of the columns
+        ...additionalColumns,       // Add custom columns
+        ...baseColumns.slice(6,10),     // Add the rest of the columns
+      ];
+    }
+    
+    return baseColumns;
+  })();
 
   const navigate = useNavigate();
 

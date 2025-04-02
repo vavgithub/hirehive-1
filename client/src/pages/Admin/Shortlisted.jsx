@@ -1,41 +1,27 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import React from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from '../../api/axios';
 import Header from '../../components/utility/Header';
-import StyledCard from '../../components/ui/StyledCard';
+import Table from '../../components/Table';
+import { BookmarkWhiteFilledIcon } from '../../svg/Checkboxes/BookmarkIcons';
 import Loader from '../../components/ui/Loader';
-import { ensureAbsoluteUrl } from '../../utility/ensureAbsoluteUrl';
-import { BookmarkFilledIcon, BookmarkWhiteFilledIcon } from '../../svg/Checkboxes/BookmarkIcons';
-import StageBadge from '../../components/ui/StageBadge';
-import { getRatingIcon } from '../../components/utility/RatingSelector';
-
-// API function to fetch shortlisted candidates
-const fetchShortlistedCandidates = async () => {
-    const { data } = await axios.get('admin/candidate/shortlisted');
-    return data;
-};
-
-const toggleShortlistStatus = async ({ candidateId, jobId, shortlisted }) => {
-    const response = await axios.post(`/admin/candidate/${candidateId}/job/${jobId}/shortlist`, { shortlisted });
-    return response?.data;
-};
+import StyledCard from '../../components/ui/StyledCard';
+import { MoveActive } from '../../svg/Buttons/Move';
+import { RejectActive } from '../../svg/Buttons/Reject';
 
 const Shortlisted = () => {
-    const navigate = useNavigate();
-    const [searchTerm, setSearchTerm] = useState('');
     const queryClient = useQueryClient();
 
     // Fetch shortlisted candidates
     const { data, isLoading, isError, error } = useQuery({
         queryKey: ['shortlistedCandidates'],
-        queryFn: fetchShortlistedCandidates,
+        queryFn: () => axios.get('admin/candidate/shortlisted').then(res => res.data),
     });
 
     const shortlistMutation = useMutation({
-        mutationFn: toggleShortlistStatus,
+        mutationFn: ({ candidateId, jobId, shortlisted }) =>
+            axios.post(`/admin/candidate/${candidateId}/job/${jobId}/shortlist`, { shortlisted }),
         onSuccess: () => {
-            // Invalidate and refetch the shortlisted candidates query
             queryClient.invalidateQueries(['shortlistedCandidates']);
         },
         onError: (error) => {
@@ -43,123 +29,97 @@ const Shortlisted = () => {
         }
     });
 
-    // Updated handler function with the correct parameters
-    const handleToggleShortlist = (e, candidateId, jobId) => {
-        e.stopPropagation();
-        // Since these are already shortlisted candidates, we want to unshortlist them
-        shortlistMutation.mutate({
-            candidateId,
-            jobId,
-            shortlisted: false // Set to false to remove from shortlist
-        });
-    };
-
-    // Filter candidates based on search term
-    const filteredCandidates = data?.candidates?.filter(candidate => {
-        const fullName = `${candidate.firstName} ${candidate.lastName}`.toLowerCase();
-        const jobs = candidate.applications.map(app => app.jobApplied.toLowerCase()).join(' ');
-        const searchTermLower = searchTerm.toLowerCase();
-        return fullName.includes(searchTermLower) || jobs.includes(searchTermLower);
-    });
-
-    // Handle navigation to candidate profile
-    const handleViewCandidate = (candidateId, jobId) => {
-        navigate(`/admin/candidates/view-candidate/${candidateId}/${jobId}`);
-    };
-
-    if (isLoading) {
-        return (
-            <div className="flex justify-center items-center min-h-screen">
-                <Loader />
-            </div>
+    // Format data for the table
+    const formatCandidatesForTable = () => {
+        if (!data?.candidates) return [];
+        
+        return data.candidates.flatMap(candidate => 
+          candidate.applications.map(application => ({
+            _id: candidate._id,
+            jobId: application.jobId,
+            firstName: candidate.firstName,
+            lastName: candidate.lastName,
+            email: candidate.email,
+            phone: candidate.phone,
+            profilePictureUrl: candidate.profilePictureUrl,
+            location: candidate.location,
+            portfolio: candidate.portfolio,
+            website: candidate.website,
+            resumeUrl: candidate.resumeUrl,
+            experience: candidate.experience,
+            // Professional info
+            currentCTC: application.currentCTC,
+            expectedCTC: application.expectedCTC,
+            hourlyRate: application.hourlyRate,
+            // Stage info
+            currentStage: application.currentStage,
+            status: application.status,
+            // Rating
+            rating: application.rating,
+            // Job details
+            jobApplied: application.jobApplied,
+            jobTitle: application.jobApplied, // Add jobTitle mapped from jobApplied for the table
+            // Add stageStatuses for components that need them
+            stageStatuses: application.stageStatuses || {},
+            // Add any other needed fields
+            hasGivenAssessment: candidate.hasGivenAssessment || false
+          }))
         );
-    }
+    };
 
-    if (isError) {
-        return <div>Error: {error.message}</div>;
-    }
+    // Custom shortlist column
+    const getShortlistColumn = () => [
+        {
+            field: 'shortlistAction',
+            headerName: 'Action',
+            
+            align: 'left',
+            headerAlign: 'left',
+            disableColumnMenu: true,
+
+            
+            renderCell: (params) => (
+                <div
+                className='h-full flex items-center justify-start cursor-pointer'
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        shortlistMutation.mutate({
+                            candidateId: params.row._id,
+                            jobId: params.row.jobId,
+                            shortlisted: false // Remove from shortlist
+                        });
+                    }}
+                >
+                    <RejectActive/> 
+                </div>
+            ),
+        }
+    ];
+
+    if (isLoading) return <div className="flex justify-center items-center min-h-screen"><Loader /></div>;
+    if (isError) return <div>Error: {error.message}</div>;
+
+    const tableData = formatCandidatesForTable();
+    
+    // Debug: Log the formatted data to check structure
+    console.log("Formatted table data:", tableData);
 
     return (
         <div className='w-full p-4'>
             <div className="container mx-auto">
-                <Header HeaderText={"Shortlisted Candidates"} />
-
-                <StyledCard padding={2} backgroundColor={"bg-background-100 "}>
-                    <div className="mb-4">
-                        <input
-                            type="text"
-                            placeholder="Search by name or job title..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-[300px]"
+                <Header HeaderText={"Future Gems"} />
+                <StyledCard padding={2} backgroundColor={"bg-background-100"}>
+                    {tableData.length > 0 ? (
+                        <Table
+                            readOnly={true}
+                            readOnlyData={tableData}
+                            additionalColumns={getShortlistColumn()}
                         />
-                    </div>
-                    {filteredCandidates && filteredCandidates.length > 0 ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                            {filteredCandidates.map((candidate) => (
-                                candidate.applications.map((application) => (
-                                    <StyledCard
-                                        key={`${candidate._id}-${application.jobId}`}
-                                        padding={2}
-                                        backgroundColor={"bg-background-80 hover:bg-background-60"}
-                                        extraStyles="cursor-pointer hover:shadow-md transition-all"
-                                        onClick={() => handleViewCandidate(candidate._id, application.jobId)}
-                                    >
-                                        <div className="flex">
-                                            {/* Profile picture */}
-                                            <div className="w-16 h-16 rounded-full overflow-hidden mr-4">
-                                                <img
-                                                    src={candidate.profilePictureUrl || "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg"}
-                                                    alt=""
-                                                    className="w-full h-full object-cover"
-                                                />
-                                            </div>
-
-                                            {/* Candidate details */}
-                                            <div className="flex-1">
-                                                <div className="flex justify-between">
-                                                    <h3 className="typography-h3 mb-1">{candidate.firstName} {candidate.lastName}</h3>
-                                                    <div
-                                                        className="cursor-pointer hover:scale-110 transition-transform"
-                                                        onClick={(e) => handleToggleShortlist(e, candidate._id, application.jobId)}
-                                                    >
-                                                        <BookmarkWhiteFilledIcon />
-                                                    </div>
-                                                </div>
-
-                                                <p className="typography-small-p text-font-gray">{application.jobApplied}</p>
-
-                                                <div className="flex items-center mt-2 text-xs text-font-gray">
-                                                    {/* <span className="mr-2">{candidate.location || 'N/A'}</span> */}
-                                                    {/* <span className="mr-2">•</span> */}
-                                                    <span>{candidate.experience || 0} Years Exp.</span>
-                                                </div>
-
-                                                <div className="mt-2 flex justify-between items-center">
-                                                    <StageBadge stage={application.currentStage} />
-                                                    {(
-                                                        <div>
-
-                                                            <span className='cursor-pointer bg-[#2d2d2eae] min-w-10 min-h-10 top-2 right-2 rounded-full flex justify-center items-center'>
-                                                                {getRatingIcon(application.rating)}
-                                                            </span>
-
-                                                        </div>
-
-
-                                                    )}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </StyledCard>
-                                ))
-                            ))}
-                        </div>
                     ) : (
-                        <div className="text-center py-8">
-                            <p className="typography-h4 text-font-gray">No shortlisted candidates found.</p>
+                        <div className="text-center py-8 bg-background-80 rounded-xl p-6">
+                            <p className="typography-h2 text-font-gray">No star candidates found.</p>
                             <p className="typography-large-p mt-2">
-                                Start shortlisting candidates to see them here.
+                                Star candidates to see them here.
                             </p>
                         </div>
                     )}
