@@ -7,6 +7,7 @@ import { BookmarkWhiteFilledIcon } from '../../svg/Checkboxes/BookmarkIcons';
 import Loader from '../../components/ui/Loader';
 import StyledCard from '../../components/ui/StyledCard';
 import { showSuccessToast, showErrorToast } from '../../components/ui/Toast';
+import { RejectActive } from '../../svg/Buttons/Reject';
 
 const Shortlisted = () => {
     const queryClient = useQueryClient();
@@ -80,14 +81,14 @@ const Shortlisted = () => {
     const getShortlistColumn = () => [
         {
             field: 'shortlistAction',
-            headerName: 'Shortlisted',
+            headerName: 'Action',
             width: 120,
             align: 'center',
             headerAlign: 'center',
             disableColumnMenu: true,
             renderCell: (params) => (
                 <div
-                    className="cursor-pointer hover:scale-110 transition-transform"
+                    className="flex cursor-pointer h-full items-center justify-center"
                     onClick={(e) => {
                         e.stopPropagation();
                         shortlistMutation.mutate({
@@ -97,7 +98,7 @@ const Shortlisted = () => {
                         });
                     }}
                 >
-                    <BookmarkWhiteFilledIcon />
+                    <RejectActive />
                 </div>
             ),
         }
@@ -116,15 +117,16 @@ const Shortlisted = () => {
     return (
         <div className='w-full p-4'>
             <div className="container mx-auto">
-                <Header HeaderText={"Shortlisted Candidates"} />
+                <Header HeaderText={"Future Gems"} />
                 <StyledCard padding={2} backgroundColor={"bg-background-100"}>
                     {tableData.length > 0 ? (
-                        <Table
-                            readOnly={true}
-                            readOnlyData={tableData}
-                            additionalColumns={getShortlistColumn()}
-                            jobData={jobData} // Pass job data for employment type filtering
-                        />
+                         <Table
+                         readOnly={true}
+                         readOnlyData={tableData}
+                         additionalColumns={getShortlistColumn()}
+                         jobData={jobData} // Pass job data for employment type filtering
+                         customNavigationPath="/admin/shortlisted/view-candidate" // Custom navigation path for shortlisted view
+                     />
                     ) : (
                         <div className="text-center py-8 bg-background-80 rounded-xl p-6">
                             <p className="typography-h4 text-font-gray">No shortlisted candidates found.</p>

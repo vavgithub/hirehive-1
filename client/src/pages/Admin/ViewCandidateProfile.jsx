@@ -155,11 +155,16 @@ const ViewCandidateProfile = () => {
 
     const [originalPath] = useState(() => {
         const isJobPath = location.pathname.includes('/admin/jobs/');
-        if (isJobPath) {
-            return `/admin/jobs/view-job/${jobId}`;
+        const isShortlistedPath = location.pathname.includes('/admin/shortlisted/');
+        
+        if (isShortlistedPath) {
+          return '/admin/shortlisted';
+        } else if (isJobPath) {
+          return `/admin/jobs/view-job/${jobId}`;
         }
-        return role === "Hiring Manager" ? `/admin/candidates` : `/design-reviewer/candidates`;;
-    })
+        
+        return role === "Hiring Manager" ? `/admin/candidates` : `/design-reviewer/candidates`;
+      });
 
     // Effect for job switching
     useEffect(() => {
@@ -177,11 +182,19 @@ const ViewCandidateProfile = () => {
     // Handle back navigation
     const handleBack = () => {
         if (role === "Candidate") {
-            navigate(-1);
+          navigate(-1);
         } else {
+          // Check if we're on a shortlisted candidate view
+          const isShortlistedPath = location.pathname.includes('/admin/shortlisted/');
+          
+          if (isShortlistedPath) {
+            navigate('/admin/shortlisted');
+          } else {
             navigate(originalPath);
+          }
         }
-    };
+      };
+      
 
 
     const { data: score, error } = useQuery({

@@ -169,6 +169,11 @@ export const router = createBrowserRouter([
           <ViewCandidateProfile />
       },
       {
+        path: "shortlisted/view-candidate/:candidateId/:jobId",
+        element:
+          <ViewCandidateProfile />
+      },
+      {
         path: "jobs/edit-candidate/:id",
         element:
           <EditCandidateProfile />

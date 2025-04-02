@@ -30,7 +30,8 @@ const Table = ({
   jobId, jobData, 
   readOnly = false, 
   readOnlyData = [],
-  additionalColumns = [] // New prop for custom columns
+  additionalColumns = [], // New prop for custom columns
+  customNavigationPath = null // New prop for custom navigation path
 }) => {
 
   //For getting routes
@@ -393,13 +394,22 @@ const Table = ({
   const navigate = useNavigate();
 
 
- const handleRowClick = (params) => {
-  // Save the current window scroll position before navigation
+  const handleRowClick = (params) => {
+    // Save the current window scroll position before navigation
     if(location.pathname === '/admin/candidates' || location.pathname === '/hiring-manager/candidates'){
       sessionStorage.setItem('candidates_scroll_position', window.scrollY);
-    }else{
-      sessionStorage.setItem('job_candidates_scroll_position',document.getElementById('adminContainer').scrollTop);
+    } else {
+      sessionStorage.setItem('job_candidates_scroll_position',document.getElementById('adminContainer')?.scrollTop || 0);
     }
+
+    // Use custom navigation path if provided
+    if (customNavigationPath) {
+      const targetJobId = readOnly ? params.row.jobId : jobId;
+      navigate(`${customNavigationPath}/${params.row._id}/${targetJobId}`, { replace: true });
+      return;
+    }
+
+    // Default navigation logic
     if (role === "Hiring Manager") {
       // Determine if we're on the jobs page or candidates page
       const isJobsPage = location.pathname.includes('/admin/jobs/');
@@ -413,7 +423,6 @@ const Table = ({
       const targetJobId = isJobsPage ? jobId : params.row.jobId;
       
       const fullUrl = `${baseUrl}/${params.row._id}/${targetJobId}`;
-      // console.log("Navigating to:", fullUrl);
       
       navigate(fullUrl, { replace: true }); // Add replace:true to prevent extra history entry
     } else {
@@ -520,7 +529,7 @@ const Table = ({
                 <path d="M5 12l4 4L19 7"></path>
               </svg>
             </div>
-            <label htmlFor="typeCheck" className="typography-body whitespace-nowrap text-font-gray">
+            <label htmlFor="typeCheck" className="typography-body whitespace-nowrap text-font-gray cursor-pointer">
               Show Contractors Only
             </label>
           </div>}
