@@ -99,6 +99,7 @@ const ViewJobs = () => {
         queryKey: ['candidates', mainId],
         queryFn: () => axios.get(`/admin/candidate/${mainId}`).then(res => res.data),
     });
+    // console.log("this tabel data", candidatesData);
 
     // Add new query for job statistics
     const { data: jobStats = { data: { totalCount: 0, stageStats: {}, jobDetails: {} } }, 
@@ -161,10 +162,15 @@ const ViewJobs = () => {
 }
     const { questions = [] } = formData || {};
 
+    const applicationsReceivedStats = {
+        monthly : `${jobStats?.data?.comparison?.applicationsReceived?.monthly ?? 0}% since last month`,
+        weekly : `${jobStats?.data?.comparison?.applicationsReceived?.weekly ?? 0}% since last week`,
+        daily : `${jobStats?.data?.comparison?.applicationsReceived?.daily ?? 0}% since yesterday`,
+    }
 
     // Update the stats arrays to use the fetched data
     const candidateStats = [
-        { title: 'Total', value: jobStats?.data?.totalCount || 0, icon: Total },
+        { title: 'Total', value: jobStats?.data?.totalCount || 0, icon: Total , statistics : applicationsReceivedStats},
         { title: 'Portfolio', value: jobStats?.data?.stageStats?.Portfolio || 0, icon: Portfolio },
         { title: 'Screening', value: jobStats?.data?.stageStats?.Screening || 0, icon: Screening },
         { title: 'Design Task', value: jobStats?.data?.stageStats['Design Task'] || 0, icon: DesignTask },
@@ -172,9 +178,10 @@ const ViewJobs = () => {
         { title: 'Round 2', value: jobStats?.data?.stageStats['Round 2'] || 0, icon: Round2 },
         { title: 'Offer Sent', value: jobStats?.data?.stageStats?.Hired || 0, icon: OfferSent },
     ];
+
     const jobsDetailStats = [
         { title: 'Clicks', value: jobStats?.data?.jobDetails?.views || 0, icon: Views },
-        { title: 'Applications Received', value: jobStats?.data?.jobDetails?.applicationsReceived || 0, icon: AppRec },
+        { title: 'Applications Received', value: jobStats?.data?.jobDetails?.applicationsReceived || 0, icon: AppRec , statistics : applicationsReceivedStats},
         { title: 'Qualified applications', value: jobStats?.data?.jobDetails?.qualifiedApplications || 0, icon: QuaApp },
         { title: 'Engagement Rate', value: `${jobStats?.data?.jobDetails?.engagementRate || 0}%`, icon: EngRate },
     ];

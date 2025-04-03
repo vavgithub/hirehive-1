@@ -6,6 +6,7 @@ import { uploadToCloudinary } from "../../utils/cloudinary.js";
 import { promises as fs } from "fs";
 import path from "path";
 import { sanitizeLexicalHtml } from "../../utils/sanitize-html.js";
+import { getPreviousMonthRange, getPreviousWeekRange, getYesterdayTodayRange } from "../../utils/dateRanges.js";
 import mongoose from "mongoose";
 
 // controllers/candidate.controller.js
@@ -572,9 +573,9 @@ export const getAllCandidatesWithStats = async (req, res) => {
           jobTitle: {
             $ifNull: ["$jobDetail.jobTitle", "$jobApplications.jobApplied"],
           },
-            jobType: {
-              $ifNull: ['$jobDetail.employmentType', '$jobApplications.jobType']
-            },
+          jobType: {
+            $ifNull: ['$jobDetail.employmentType', '$jobApplications.jobType']
+          },
           jobId: "$jobApplications.jobId",
           rating: "$jobApplications.rating",
           resumeUrl: "$jobApplications.resumeUrl",
@@ -596,10 +597,10 @@ export const getAllCandidatesWithStats = async (req, res) => {
                   cond: { $eq: ["$$this.k", "$currentStage"] },
                 },
               },
-              0,
-            ],
-          },
-        },
+              0
+            ]
+          }
+        }
       },
       {
         $project: {
@@ -619,47 +620,123 @@ export const getAllCandidatesWithStats = async (req, res) => {
           noticePeriod: 1,
           skills: 1,
           currentStage: 1,
-            jobType: 1,
           jobTitle: 1,
+          jobType: 1,
           jobId: 1,
           rating: 1,
           resumeUrl: 1,
           applicationDate: 1,
-          status: "$currentStageStatus.v.status",
-        },
+          status: '$currentStageStatus.v.status'
+        }
       },
       {
-        $sort: { applicationDate: -1 },
-      },
+        $sort: { applicationDate: -1 }
+      }
     ]);
+
+    //MONTHLY
+    const { firstDayPreviousMonth, lastDayPreviousMonth, firstDayCurrentMonth } = getPreviousMonthRange();
+    const { firstDayPreviousWeek, lastDayPreviousWeek, firstDayCurrentWeek } = getPreviousWeekRange();
+    const { startOfYesterday, endOfYesterday, startOfToday } = getYesterdayTodayRange();
+
+    // Query to count jobs created in the current month
+    const currentMonthJobs = await candidates.countDocuments({
+      isVerified: true,
+      createdAt: { $gte: firstDayCurrentMonth }
+    });
+
+    // Query to count candidates created in the previous month
+    const previousMonthJobs = await candidates.countDocuments({
+      isVerified: true,
+      createdAt: { $gte: firstDayPreviousMonth, $lte: lastDayPreviousMonth }
+    });
+
+    // Calculate the percentage change
+    let monthlyPercentageChange = 0;
+    // Monthly Percentage Change
+    if (previousMonthJobs === 0) {
+      monthlyPercentageChange = currentMonthJobs * 100;
+    } else {
+      monthlyPercentageChange = ((currentMonthJobs - previousMonthJobs) / previousMonthJobs) * 100;
+    }
+
+    //WEEKLY
+    // Query to count candidates created in the current week
+    const currentWeekJobs = await candidates.countDocuments({
+      isVerified: true,
+      createdAt: { $gte: firstDayCurrentWeek }
+    });
+
+    // Query to count candidates created in the previous week
+    const previousWeekJobs = await candidates.countDocuments({
+      isVerified: true,
+      createdAt: { $gte: firstDayPreviousWeek, $lte: lastDayPreviousWeek }
+    });
+
+    // Calculate the percentage change
+    let weeklyPercentageChange = 0;
+    // Weekly Percentage Change
+    if (previousWeekJobs === 0) {
+      weeklyPercentageChange = currentWeekJobs * 100;
+    } else {
+      weeklyPercentageChange = ((currentWeekJobs - previousWeekJobs) / previousWeekJobs) * 100;
+    }
+
+    //YESTERDAYS
+    // Query to count candidates created today
+    const todayJobs = await candidates.countDocuments({
+      isVerified: true,
+      createdAt: { $gte: startOfToday }
+    });
+
+    // Query to count candidates created yesterday
+    const yesterdayJobs = await candidates.countDocuments({
+      isVerified: true,
+      createdAt: { $gte: startOfYesterday, $lte: endOfYesterday }
+    });
+
+    // Calculate the percentage change
+    let dailyPercentageChange = 0;
+    // Daily Percentage Change
+    if (yesterdayJobs === 0) {
+      dailyPercentageChange = todayJobs * 100; // Treat as a full increase
+    } else {
+      dailyPercentageChange = ((todayJobs - yesterdayJobs) / yesterdayJobs) * 100;
+    }
 
     const stats = {
       Total: allCandidates.length,
       Portfolio: 0,
       Screening: 0,
-      "Design Task": 0,
-      "Round 1": 0,
-      "Round 2": 0,
-      "Offer Sent": 0,
-      Hired: 0,
+      'Design Task': 0,
+      'Round 1': 0,
+      'Round 2': 0,
+      'Offer Sent': 0,
+      'Hired': 0,
+      statistics: {
+        total: {
+          monthly: monthlyPercentageChange.toFixed(2),
+          weekly: weeklyPercentageChange.toFixed(2),
+          daily: dailyPercentageChange.toFixed(2),
+        }
+      }
     };
 
-    allCandidates.forEach((candidate) => {
+    allCandidates.forEach(candidate => {
       if (candidate.currentStage) {
-        stats[candidate.currentStage] =
-          (stats[candidate.currentStage] || 0) + 1;
+        stats[candidate.currentStage] = (stats[candidate.currentStage] || 0) + 1;
       }
     });
 
     res.status(200).json({
       candidates: allCandidates,
-      stats: stats,
+      stats: stats
     });
   } catch (error) {
-    console.error("Error fetching candidates:", error);
+    console.error('Error fetching candidates:', error);
     res.status(500).json({
-      message: "Internal server error",
-      error: error.message,
+      message: 'Internal server error',
+      error: error.message
     });
   }
 };

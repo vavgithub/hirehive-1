@@ -28,8 +28,6 @@ import useDebounce from '../../hooks/useDebounce';
 
 const fetchJobs = (page,status) => axios.get(`/jobs/jobs?page=${page}&status=${status}`).then(res => res.data);
 const fetchOverallStats = () => axios.get('/jobs/stats/overall').then(res => res.data.data);
-const searchJobs = (query,page,status) => axios.get(`/jobs/searchJobs?jobTitle=${encodeURIComponent(query)}&page=${page}&status=${status}`).then(res => res.data);
-const filterJobs = (filters,page,status) => axios.post('/jobs/filterJobs', { filters , page , status }).then(res => res.data);
 const filterSearchJobs = (query,filters,page,status) => axios.post('/jobs/filterSearchJobs', { filters , page , status ,query}).then(res => res.data);
 
 const Dashboard = () => {
@@ -86,21 +84,7 @@ const Dashboard = () => {
         setModalAction(action);
     };
 
-    // Update the filteredJobs query to get the loading state
-    // const { data: filteredData, isLoading: isFilteredJobsLoading } = useQuery({
-    //     queryKey: ['filteredJobs', filters,page,activeTab],
-    //     queryFn: () => filterJobs(filters,page,activeTab),
-    //     enabled: Object.values(filters).some(filter =>
-    //         Array.isArray(filter) ? filter.length > 0 : Object.values(filter).some(val => val !== '')
-    //     ),
-    // });
 
-    // // Update the search query to get the loading state
-    // const { data: { jobArray: searchResults = [], jobCount = 0 } = {}, isLoading: isSearchLoading } = useQuery({
-    //     queryKey: ['searchJobs', debouncedQuery, page, activeTab],
-    //     queryFn: () => searchJobs(debouncedQuery,page,activeTab),
-    //     enabled: debouncedQuery !== '',
-    // });
 
     //Combined search and filter for jobs
     const { data: filteredSearchData, isLoading: isFilteredSearchJobsLoading } = useQuery({
@@ -289,17 +273,32 @@ const Dashboard = () => {
         {
             title: 'Jobs Posted',
             value: overallStats.totalJobs,
-            icon: one
+            icon: one,
+            statistics : {
+                monthly : `${overallStats?.jobStatistics?.monthly ?? 0}% since last month`,
+                weekly : `${overallStats?.jobStatistics?.weekly ?? 0}% since last week`,
+                daily : `${overallStats?.jobStatistics?.daily ?? 0}% since last day`,
+            }
         },
         {
             title: 'Applications Received',  // This label is now more accurate
             value: overallStats.totalApplications, // This now shows total applications
-            icon: two
+            icon: two,
+            statistics : {
+                monthly : `${overallStats?.applicationStatistics?.monthly ?? 0}% since last month`,
+                weekly : `${overallStats?.applicationStatistics?.weekly ?? 0}% since last week`,
+                daily : `${overallStats?.applicationStatistics?.daily ?? 0}% since last day`,
+            }
         },
         {
             title: 'Hired',
             value: overallStats.totalHired,
-            icon: three
+            icon: three,
+            statistics : {
+                monthly : `${overallStats?.hiredStatistics?.monthly ?? 0}% since last month`,
+                weekly : `${overallStats?.hiredStatistics?.weekly ?? 0}% since last week`,
+                daily : `${overallStats?.hiredStatistics?.daily ?? 0}% since last day`,
+            }
         }
     ];
 
@@ -307,17 +306,8 @@ const Dashboard = () => {
         Array.isArray(filter) ? filter.length > 0 : Object.values(filter).some(val => val !== '')
     ));
 
-    // Combined loading state
-    // const isLoadingResults = (debouncedQuery.length > 0 && isSearchLoading) ||
-    //     (isFiltered && isFilteredJobsLoading);
 
     const isLoadingResults = (debouncedQuery.length > 0 || isFiltered) ? isFilteredSearchJobsLoading : isJobsLoading;
-
-    // Get the jobs to display based on search or filters
-    // const displayJobs = useMemo(()=>{
-    //     return (debouncedQuery.length > 0 && !isSearchLoading) ? searchResults :
-    //     (isFiltered && !isFilteredJobsLoading ? filteredData?.filteredJobs : jobs);
-    // }, [filteredData, isFiltered , debouncedQuery, jobs, searchResults]);
 
     const displayJobs = useMemo(()=>{
         return ((debouncedQuery.length > 0 || isFiltered) && !isFilteredSearchJobsLoading) ? filteredSearchData?.filteredSearchJobs : jobs;

@@ -47,8 +47,14 @@ const Candidates = () => {
     }
   }, [isLoading, isError]);
 
+  const candidateStats = {
+    monthly : `${data?.stats?.statistics?.total?.monthly ?? 0}% since last month`,
+    weekly : `${data?.stats?.statistics?.total?.weekly ?? 0}% since last week`,
+    daily : `${data?.stats?.statistics?.total?.daily ?? 0}% since yesterday`,
+}
+
   const statsOne = [
-    { title: 'Total', value: data?.stats?.Total || 0, icon: Total },
+    { title: 'Total', value: data?.stats?.Total || 0, icon: Total , statistics : candidateStats},
     { title: 'Portfolio', value: data?.stats?.Portfolio || 0, icon: Portfolio },
     { title: 'Screening', value: data?.stats?.Screening || 0, icon: Screening },
     { title: 'Design Task', value: data?.stats?.['Design Task'] || 0, icon: DesignTask },
