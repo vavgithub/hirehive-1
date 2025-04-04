@@ -31,6 +31,7 @@ import { CustomDropdown } from '../../components/Dropdowns/CustomDropdown';
 import Container from '../../components/Cards/Container';
 import IconWrapper from '../../components/Cards/IconWrapper';
 import { ClipboardCheck, FileText, FileUser, FolderOpen, Globe, Mail, Phone, Users } from 'lucide-react';
+import { UNKNOWN_PROFILE_PICTURE_URL } from '../../utility/config';
 
 export const VAVScoreCard = ({score,stage,scoreStages})=>{
     const [showBreakDown,setShowBreakDown] = useState(false);
@@ -347,7 +348,7 @@ const ViewCandidateProfile = () => {
                     <div className="flex gap-3">
                         <StyledCard padding={2} extraStyles="w-full flex gap-4">
                             <div className="to-background-100 w-[200px] min-h-auto max-h-[200px] rounded-xl overflow-hidden">
-                                <img src={data.profilePictureUrl || " https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg"} alt="" className='object-cover w-full overflow-hidden' />
+                                <img src={data.profilePictureUrl || UNKNOWN_PROFILE_PICTURE_URL } alt="" className='object-cover w-full overflow-hidden' />
                             </div>
                             <div className='flex flex-col gap-2'>
                                 <h1 className="typography-h2">

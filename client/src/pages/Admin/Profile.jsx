@@ -16,6 +16,7 @@ import { InputField } from '../../components/Inputs/InputField';
 import Container from '../../components/Cards/Container';
 import { PencilLine } from 'lucide-react';
 import IconWrapper from '../../components/Cards/IconWrapper';
+import { UNKNOWN_PROFILE_PICTURE_URL } from '../../utility/config';
 
 
 
@@ -372,7 +373,7 @@ function Profile() {
                 <div className="relative w-[8rem] min-h-[5rem]">
                   <div className="absolute w-[8rem] left-0 -top-14 aspect-square overflow-hidden rounded-full">
                     <img
-                      src={profileFile ? URL.createObjectURL(profileFile) : user?.profilePicture || "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg"}
+                      src={profileFile ? URL.createObjectURL(profileFile) : user?.profilePicture || UNKNOWN_PROFILE_PICTURE_URL }
                       alt=""
                       className="object-cover w-full h-full"
                     />

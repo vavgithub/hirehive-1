@@ -18,6 +18,7 @@ import LoaderModal from '../../components/Loaders/LoaderModal'
 import Container from '../../components/Cards/Container'
 import IconWrapper from '../../components/Cards/IconWrapper'
 import { PencilLine } from 'lucide-react'
+import { UNKNOWN_PROFILE_PICTURE_URL } from '../../utility/config'
 
 const editMember = async ({teamMember,memberId}) => {
     const response = await axios.patch('/admin/edit-member',{teamMember,memberId});
@@ -303,7 +304,7 @@ function TeamsProfile() {
                       </button>}
                       <div className="relative w-[8rem] min-h-[5rem] ">
                       <div  className="absolute w-[8rem] left-0  -top-14 aspect-square overflow-hidden rounded-full">
-                          <img src={member?.profilePicture ? member?.profilePicture : "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg"} alt="" className="object-cover w-full" />
+                          <img src={member?.profilePicture ? member?.profilePicture : UNKNOWN_PROFILE_PICTURE_URL } alt="" className="object-cover w-full" />
                       </div>
                       </div>
                       <h1 className="typography-h1 whitespace-nowrap overflow-hidden w-full text-ellipsis text-center">{member?.name}</h1>

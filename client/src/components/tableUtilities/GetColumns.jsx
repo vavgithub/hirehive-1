@@ -13,6 +13,7 @@ import StageBadge from "../ui/StageBadge";
 import { ensureAbsoluteUrl } from "../../utility/ensureAbsoluteUrl";
 import IconWrapper from "../Cards/IconWrapper";
 import { CircleCheck, CircleX, ClipboardCheck, FileUser, FolderOpen, Globe } from "lucide-react";
+import { UNKNOWN_PROFILE_PICTURE_URL } from "../../utility/config";
 
 const getCommonColumns = (handleDocumentClick) => [
   {
@@ -33,7 +34,7 @@ const getCommonColumns = (handleDocumentClick) => [
     },
     renderCell: (params) => (
       <div className="name-cell flex items-center gap-2 h-12">
-        <Avatar src={params?.value?.profilePictureUrl || "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg"} sx={{ width: 32, height: 32 }} />
+        <Avatar src={params?.value?.profilePictureUrl || UNKNOWN_PROFILE_PICTURE_URL } sx={{ width: 32, height: 32 }} />
         <p className='flex items-center gap-2'>{params.value.name}
           {params.value.hasGivenAssessment &&
             <span>

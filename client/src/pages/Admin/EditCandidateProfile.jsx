@@ -8,6 +8,7 @@ import { showSuccessToast } from '../../components/ui/Toast';
 import Loader from '../../components/Loaders/Loader';
 import StyledCard from '../../components/Cards/StyledCard';
 import Container from '../../components/Cards/Container';
+import { UNKNOWN_PROFILE_PICTURE_URL } from '../../utility/config';
 
 
 const fetchCandidate = async ({ queryKey }) => {
@@ -94,7 +95,7 @@ const EditCandidateProfile = () => {
             <div className='flex gap-6 mt-5'>
               <StyledCard backgroundColor={"bg-background-30"} padding={2} extraStyles=' w-96 h-96  flex flex-col items-center'>
                 <div className='to-background-100 w-64 rounded-xl overflow-hidden'>
-                  <img src={data.profilePictureUrl || " https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg"} alt="" className='object-cover h-full' />
+                  <img src={data.profilePictureUrl || UNKNOWN_PROFILE_PICTURE_URL} alt="" className='object-cover h-full' />
                 </div>
                 <h2 className='typography-h2 mt-4'>
                   {data.firstName} {data.lastName}

@@ -17,6 +17,7 @@ import RatingSelector from '../MUIUtilities/RatingSelector'
 import RejectionSelector from '../MUIUtilities/RejectionSelector'
 import IconWrapper from '../Cards/IconWrapper'
 import { ArrowRight, Star, User, X } from 'lucide-react'
+import { UNKNOWN_PROFILE_PICTURE_URL } from '../../utility/config'
 
 export const getMaxScoreEachStage = (currentStage) =>{
     let stageScores = {
@@ -486,7 +487,7 @@ function MultiSelectBar({selectedData,jobId,clearSelection}) {
                                                         />
                                                         <span className="absolute hidden left-4 h-4 w-4 text-black-100 items-center justify-center text-black peer-checked:flex ">✔</span>
                                                         <div className='w-8 h-8 rounded-full overflow-hidden'>
-                                                            <img src={candidate?.profilePictureUrl || "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg"} alt="" className='object-cover w-full' />
+                                                            <img src={candidate?.profilePictureUrl || UNKNOWN_PROFILE_PICTURE_URL } alt="" className='object-cover w-full' />
                                                         </div>
                                                         {candidate?.firstName + " " + candidate?.lastName}
                                                     </div>

@@ -14,6 +14,7 @@ import Modal from '../components/Modals/Modal';
 import ContactUs from '../components/Form/ContactUs';
 import IconWrapper from '../components/Cards/IconWrapper';
 import { Briefcase, BriefcaseBusiness, LogOut, User } from 'lucide-react';
+import { UNKNOWN_PROFILE_PICTURE_URL } from '../utility/config';
 
 const CandidateLayout = () => {
   const navigate = useNavigate();
@@ -159,7 +160,7 @@ const CandidateLayout = () => {
         <div className={`flex items-center px-2 justify-start hover:bg-background-60`}>
           <IconButton onClick={handleMenuClick} className={`flex gap-2 ${location.pathname === profilePath ? "text-font-accent"
             : ""}`}>
-            <Avatar alt={candidateData?.firstName} sx={{ width: "32px", height: "32px" }} src={candidateData?.profilePictureUrl || "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg"} />
+            <Avatar alt={candidateData?.firstName} sx={{ width: "32px", height: "32px" }} src={candidateData?.profilePictureUrl || UNKNOWN_PROFILE_PICTURE_URL} />
             <span className={`typography-body  ${location.pathname === profilePath ? "text-font-accent"
               : "text-white"}`}>{candidateData?.firstName}</span>
           </IconButton>

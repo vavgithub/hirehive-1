@@ -19,6 +19,7 @@ import CustomToolTip from "../../components/Tooltip/CustomToolTip";
 import { InputField } from "../../components/Inputs/InputField";
 import { emailRegex, mobileRegex } from "../../utility/regex";
 import Container from "../../components/Cards/Container";
+import { UNKNOWN_PROFILE_PICTURE_URL } from "../../utility/config";
 
 const PersonalDetails = ({candidateData, isEditing , control}) => {
     return (
@@ -620,7 +621,7 @@ function Profile() {
                   </button>}
                   <div className="relative w-[8rem] min-h-[5rem] ">
                     <div  className="absolute w-[8rem] left-0  -top-14 aspect-square overflow-hidden rounded-full">
-                      <img src={profileFile ? URL.createObjectURL(profileFile) : candidateData?.profilePictureUrl ? candidateData?.profilePictureUrl : "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg"} alt="" className="object-cover w-full" />
+                      <img src={profileFile ? URL.createObjectURL(profileFile) : candidateData?.profilePictureUrl ? candidateData?.profilePictureUrl : UNKNOWN_PROFILE_PICTURE_URL } alt="" className="object-cover w-full" />
                       <input accept="image/*" onChange={(e)=>setProfileFile(e.target.files[0])} type="file" className="hidden" ref={profileImageRef} />
                     </div>
                     {isEditing && 

@@ -10,6 +10,7 @@ import {SettingsIcon, SettingsIconActive} from '../svg/Staging/SettingsIcon';
 import StyledMenu from './MUIUtilities/StyledMenu';
 import IconWrapper from './Cards/IconWrapper';
 import { Briefcase, FileText, LayoutGrid, LogOut, Star, User, Users } from 'lucide-react';
+import { UNKNOWN_PROFILE_PICTURE_URL } from '../utility/config';
 
 const AdminLayout = () => {
     const navigate = useNavigate();
@@ -135,7 +136,7 @@ const AdminLayout = () => {
                         className={`flex gap-2  ${location.pathname === profilePath ? "text-font-accent" : ""}`}
                     >
                         <Avatar alt={user?.name} sx={{ width: "32px", height: "32px" }}
-                            src={user?.profilePicture} />
+                            src={user?.profilePicture || UNKNOWN_PROFILE_PICTURE_URL } />
                         <span className={`typography-body  ${location.pathname === profilePath ? "text-font-accent" : "text-white"} `}>{user?.name}</span>
                     </IconButton>
                     <div className={`absolute right-0 w-1 h-6 rounded-tl-xl rounded-bl-xl ${location.pathname === profilePath ? "bg-teal-400" : "bg-transparent"}`} />
