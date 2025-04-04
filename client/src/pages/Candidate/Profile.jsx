@@ -18,6 +18,8 @@ import LoaderModal from "../../components/Loaders/LoaderModal";
 import CustomToolTip from "../../components/Tooltip/CustomToolTip";
 import { InputField } from "../../components/Inputs/InputField";
 import { emailRegex, mobileRegex } from "../../utility/regex";
+import Container from "../../components/Cards/Container";
+import { UNKNOWN_PROFILE_PICTURE_URL } from "../../utility/config";
 import ContactUs from "../../components/Form/ContactUs";
 
 const PersonalDetails = ({ candidateData, isEditing, control }) => {
@@ -558,51 +560,50 @@ function Profile() {
   };
 
   return (
-    <div className="w-full bg-background-80 min-h-screen py-4 px-4 ">
-      {isLoading && <LoaderModal />}
-      {showOTPModal && isEditing &&
-        <div className="flex items-center h-screen w-screen justify-center fixed bg-background-overlay z-50 top-0 left-0">
-          <div className="w-full mx-8 md:mx-0 max-w-lg space-y-8 bg-background-90 rounded-lg shadow-xl  bg-opacity-15 ">
-            <form onSubmit={handleOtpSubmit} className="px-8 sm:px-16 text-center md:mb-20">
-              <h1 className="typography-h2 sm:typography-h1 mt-8 md:mt-20 mb-4 ">OTP Verification</h1>
-              <p className="text-font-gray text-center typography-large-p">
-                To ensure security, please enter the OTP (One-Time Password) to
-                verify your account. A code has been sent to
-              </p>
-              <h2 className='typography-h3 sm:typograhpy-h2 mt-3 md:mt-6 text-font-gray mx-auto w-[240px] min-[420px]:w-full whitespace-nowrap text-ellipsis overflow-hidden'>
-                {email}
-              </h2>
-              <div className="flex justify-center  space-x-2 mt-4 ">
-                {otp.map((data, index) => (
-                  <input
-                    key={index}
-                    id={`otp-input-${index}`}
-                    type="number"
-                    maxLength="1"
-                    className="no-spinner otp-input"
-                    value={data}
-                    onChange={(e) => handleOtpChange(e.target, index)}
-                  />
-                ))}
+    <Container hasBgColor>
+      {isLoading && <LoaderModal/>}
+      {showOTPModal && isEditing && 
+              <div className="flex items-center h-screen w-screen justify-center fixed bg-background-overlay z-50 top-0 left-0">
+                <div className="w-full mx-8 md:mx-0 max-w-lg space-y-8 bg-background-90 rounded-lg shadow-xl  bg-opacity-15 ">
+                  <form onSubmit={handleOtpSubmit} className="px-8 sm:px-16 text-center md:mb-20">
+                    <h1 className="typography-h2 sm:typography-h1 mt-8 md:mt-20 mb-4 ">OTP Verification</h1>
+                    <p className="text-font-gray text-center typography-large-p">
+                      To ensure security, please enter the OTP (One-Time Password) to
+                      verify your account. A code has been sent to
+                    </p>
+                    <h2 className='typography-h3 sm:typograhpy-h2 mt-3 md:mt-6 text-font-gray mx-auto w-[240px] min-[420px]:w-full whitespace-nowrap text-ellipsis overflow-hidden'>
+                      {email}
+                    </h2>
+                    <div className="flex justify-center  space-x-2 mt-4 ">
+                      {otp.map((data, index) => (
+                        <input
+                          key={index}
+                          id={`otp-input-${index}`}
+                          type="number"
+                          maxLength="1"
+                          className="no-spinner otp-input"
+                          value={data}
+                          onChange={(e) => handleOtpChange(e.target, index)}
+                        />
+                      ))}
+                    </div>
+      
+                    <div className="flex justify-center mt-6 w-full gap-4  mb-6 ">
+                      <Button
+                        type="submit"
+                        variant="primary"
+                        disabled={isLoading}
+                        className="w-full "
+                      >
+                        {isLoading ? 'Verifying...' : 'Verify'}
+                      </Button>
+                    </div>
+                  </form>
+                </div>
               </div>
-
-              <div className="flex justify-center mt-6 w-full gap-4  mb-6 ">
-                <Button
-                  type="submit"
-                  variant="primary"
-                  disabled={isLoading}
-                  className="w-full "
-                >
-                  {isLoading ? 'Verifying...' : 'Verify'}
-                </Button>
-              </div>
-            </form>
-          </div>
-        </div>
-      }
-      <div className="container  mx-auto">
-        <Header HeaderText={"My Profile"} />
-        {isAssessmentBannerVisible && <AssessmentBanner />}
+            }
+        <Header HeaderText={"My Profile"}  />
+      {isAssessmentBannerVisible &&  <AssessmentBanner />}
         <form onSubmit={handleSubmit(handleEditProfile)}>
           <div className="flex w-full gap-4 flex-col-reverse lg:flex-row mt-8 lg:mt-0 ">
             <div className="lg:w-[70%] flex flex-col gap-4">
@@ -611,20 +612,20 @@ function Profile() {
               <ProfessionalDetails candidateData={candidateData} isEditing={isEditing} control={control} />
             </div>
             <div className="w-[100%] sm:w-[50%] mx-auto lg:w-[30%] ">
-              <StyledCard backgroundColor={"bg-background-30"} extraStyles=" flex flex-col items-center relative">
-                {isEditing || <button type="button" onClick={() => setIsEditing(true)} className="absolute top-6 right-6 border rounded-xl p-2 border-font-gray hover:bg-background-70">
-                  <CustomToolTip title={"Edit Profile"} arrowed>
-                    <PencilIcon />
-                  </CustomToolTip>
-                </button>}
-                <div className="relative w-[8rem] min-h-[5rem] ">
-                  <div className="absolute w-[8rem] left-0  -top-14 aspect-square overflow-hidden rounded-full">
-                    <img src={profileFile ? URL.createObjectURL(profileFile) : candidateData?.profilePictureUrl ? candidateData?.profilePictureUrl : "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg"} alt="" className="object-cover w-full" />
-                    <input accept="image/*" onChange={(e) => setProfileFile(e.target.files[0])} type="file" className="hidden" ref={profileImageRef} />
-                  </div>
-                  {isEditing &&
-                    <button type="button" onClick={() => profileImageRef.current.click()} className="absolute bottom-1 -right-1  rounded-xl">
-                      <PencilEditIcon />
+                <StyledCard backgroundColor={"bg-background-30"} extraStyles=" flex flex-col items-center relative">
+                  {isEditing || <button type="button" onClick={()=>setIsEditing(true)} className="absolute top-6 right-6 border rounded-xl p-2 border-font-gray hover:bg-background-70">
+                    <CustomToolTip title={"Edit Profile"} arrowed>
+                      <PencilIcon/>
+                    </CustomToolTip>
+                  </button>}
+                  <div className="relative w-[8rem] min-h-[5rem] ">
+                    <div  className="absolute w-[8rem] left-0  -top-14 aspect-square overflow-hidden rounded-full">
+                      <img src={profileFile ? URL.createObjectURL(profileFile) : candidateData?.profilePictureUrl ? candidateData?.profilePictureUrl : UNKNOWN_PROFILE_PICTURE_URL } alt="" className="object-cover w-full" />
+                      <input accept="image/*" onChange={(e)=>setProfileFile(e.target.files[0])} type="file" className="hidden" ref={profileImageRef} />
+                    </div>
+                    {isEditing && 
+                    <button type="button" onClick={()=>profileImageRef.current.click()} className="absolute bottom-1 -right-1  rounded-xl">
+                      <PencilEditIcon/>
                     </button>}
                 </div>
                 <h1 className="typography-h1 whitespace-nowrap overflow-hidden w-full text-ellipsis text-center">{candidateData?.firstName + " " + candidateData?.lastName}</h1>
@@ -677,8 +678,7 @@ function Profile() {
           <ContactUs />
 
         </div>
-      </div>
-    </div>
+      </Container>
   );
 }
 

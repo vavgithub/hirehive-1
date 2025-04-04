@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Webcam from 'react-webcam';
-import { ChevronUp, ChevronDown, Camera, Mic } from 'lucide-react';
+import { ChevronUp, ChevronDown, Camera, Mic, Eye } from 'lucide-react';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { Button } from '../../components/Buttons/Button';
 import Loader from '../../components/Loaders/Loader';
@@ -10,15 +10,13 @@ import axios from "../../api/axios";
 import { showSuccessToast, showErrorToast } from '../../components/ui/Toast';
 import LightLogo from "../../svg/Logo/lightLogo.svg"
 import { fetchCandidateAuthData, updateAssessmentStatus } from '../../redux/candidateAuthSlice';
-import TimerIconSmall from '../../svg/Icons/TimerIconSmall';
-import WarningIcon from '../../svg/Icons/WarningIcon';
-import Draggable from 'react-draggable';
 import { uploadAssessment } from '../../utility/cloudinary';
 import StyledCard from '../../components/Cards/StyledCard';
 import { SizableEyeIcon } from '../../svg/Icons/EyeIcon';
 import CameraDisabled from '../../svg/Buttons/CameraDisabled';
 import ImageModal from '../../components/Modals/ImageModal';
 import ContactUs from '../../components/Form/ContactUs';
+import IconWrapper from '../../components/Cards/IconWrapper';
 const ONE_MINUTE = 60;
 
 // Utility function to format time
@@ -86,11 +84,11 @@ const QuestionSidebar = ({ questions, currentQuestion, answeredCount, onQuestion
   
   return (
     <div className="w-[15%] bg-background-30 fixed h-screen overflow-y-auto  custom-scrollbar ">
-      <div className='flex items-center justify-start px-6 py-6 '>
+      <div className='flex items-center justify-start py-6 px-4 '>
 
         <img className='h-11' src={LightLogo} />
       </div>
-      <div className="py-8 px-6 border-b border-t border-background-60 w-full">
+      <div className="py-8 px-4 border-b border-t border-background-60 w-full">
         <div className=" flex flex-col items-center ">
           <div className='w-full flex items-center gap-2'>
           {/* <TimerIconSmall /> */}
@@ -106,12 +104,12 @@ const QuestionSidebar = ({ questions, currentQuestion, answeredCount, onQuestion
           </div>
         </div>
       </div>
-      <div className='py-8 px-6 border-b border-background-60'>
+      <div className='py-8 px-4 border-b border-background-60'>
         <span className='font-bricolage mb-2 inline-block'>{(answeredCount/questions.length) * 100}% Completed</span>
       <ProgressBar answeredCount={answeredCount} total={questions.length} />
       </div>
       {/* <h2 className="typography-h3 text-font-gray p-4">Questions</h2> */}
-      <div className='grid grid-cols-5 gap-2  py-8 px-6 border-b border-background-60'>
+      <div className='grid grid-cols-5 gap-2  py-8 px-4 border-b border-background-60'>
       {questions.map((q, index) => (
         <div
           key={q._id}
@@ -136,7 +134,7 @@ const QuestionSidebar = ({ questions, currentQuestion, answeredCount, onQuestion
         </div>
       ))}
       </div>
-      <div className="p-6">
+      <div className="py-6 px-4">
           <WebcamView
             isRecording={isRecording}
             webcamRef={webcamRef}
@@ -163,7 +161,7 @@ const QuestionDisplay = ({
   const [showImage,setShowImage] = useState(false);
 
   return(
-  <div className="flex-grow p-8 pl-[212px]">
+  <div className="flex-grow p-6 pl-[212px]">
     <div className="mb-8">
       <StyledCard backgroundColor={"bg-background-70"} padding={3} extraStyles={"flex flex-col gap-4"} >
         <h1 className="typography-h1 ">{`Question ${questionNumber + 1}: ${question.text}`}</h1>
@@ -175,7 +173,7 @@ const QuestionDisplay = ({
               className="max-w-md rounded-xl"
             />
             <div onClick={()=>setShowImage(question.imageUrl)} className={`absolute bottom-2 cursor-pointer right-2 p-2 rounded-xl bg-gray-800`}>
-              <SizableEyeIcon width={18} height={16} />
+              <IconWrapper icon={Eye} size={0} customIconSize={3} hasBg customBgHover={"NA"} />
             </div>
           </div>
         )}

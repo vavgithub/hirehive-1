@@ -10,6 +10,8 @@ import StyledCard from '../Cards/StyledCard';
 import { useAuthContext } from '../../context/AuthProvider';
 import { PartTimeIcon, PartTimeIconActive } from '../../svg/Checkboxes/PartTimeIcons';
 import { CheckboxGroup } from '../Checkboxes/CheckboxGroup';
+import IconWrapper from '../Cards/IconWrapper';
+import { CircleSlash2, ClockArrowUp, ClockFading, GraduationCap, Handshake, Hourglass } from 'lucide-react';
 
 const Filters = ({ filters = {}, handleCheckboxChange, activeTab, handleExperienceFilter, handleBudgetFilter, clearAllFilters }) => {
     const isDisabled = activeTab === 'draft';
@@ -24,33 +26,32 @@ const Filters = ({ filters = {}, handleCheckboxChange, activeTab, handleExperien
             value: 'Full Time',
             label: 'Full-time',
             icon: {
-                active: FullTimeIconActive,
-                inactive: FullTimeIcon
+                active: () => <IconWrapper size={0} icon={ClockArrowUp} customIconSize={6} isActiveIcon />,
+                inactive: () => <IconWrapper size={0} icon={ClockArrowUp} customIconSize={6} isInActiveIcon />
             }
         },
         {
             value: 'Contract',
             label: 'Contract',
-
             icon: {
-                active: InternIconActive,
-                inactive: InternIcon
+                active: () => <IconWrapper size={0} icon={Hourglass} customIconSize={6} isActiveIcon />,
+                inactive: () => <IconWrapper size={0} icon={Hourglass} customIconSize={6} isInActiveIcon />
             }
         },
         {
             value: 'Internship',
             label: 'Intern',
             icon: {
-                active: ContractIconActive,
-                inactive: ContractIcon
+                active: () => <IconWrapper size={0} icon={GraduationCap} customIconSize={6} isActiveIcon />,
+                inactive: () => <IconWrapper size={0} icon={GraduationCap} customIconSize={6} isInActiveIcon />
             }
         },
-        ...(role === "Hiring Manager" ? [{
+        ...((role === "Hiring Manager" || role === "Admin")? [{
             value: 'Part Time',
             label: 'Part-time',
             icon: {
-                active: PartTimeIconActive,
-                inactive: PartTimeIcon
+                active: () => <IconWrapper size={0} icon={ClockFading} customIconSize={6} isActiveIcon />,
+                inactive: () => <IconWrapper size={0} icon={ClockFading} customIconSize={6} isInActiveIcon />
             }
         }] : []),
     ];
@@ -69,14 +70,14 @@ const Filters = ({ filters = {}, handleCheckboxChange, activeTab, handleExperien
     const closedOptions = [
         {
             value: 'Hired', label: 'Hired', icon: {
-                active: HiredIconActive,
-                inactive: HiredIcon
+                active: () => <IconWrapper size={0} icon={Handshake} customIconSize={6} isActiveIcon />,
+                inactive: () => <IconWrapper size={0} icon={Handshake} customIconSize={6} isInActiveIcon />
             }
         },
         {
             value: 'NotHired', label: 'Not Hired', icon: {
-                active: NotHiredActive,
-                inactive: NotHired
+                active: () => <IconWrapper size={0} icon={CircleSlash2} customIconSize={6} isActiveIcon />,
+                inactive: () => <IconWrapper size={0} icon={CircleSlash2} customIconSize={6} isInActiveIcon />
             }
         }
     ];

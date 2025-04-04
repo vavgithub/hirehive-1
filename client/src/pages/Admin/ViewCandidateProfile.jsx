@@ -28,6 +28,10 @@ import SwitchArrows from '../../svg/Icons/SwitchArrows';
 import ScoreChart from '../../components/Charts/ScoreChart';
 import { getStageColor, maxScoreOfEachStage } from '../../components/Staging/staging.config';
 import { CustomDropdown } from '../../components/Dropdowns/CustomDropdown';
+import Container from '../../components/Cards/Container';
+import IconWrapper from '../../components/Cards/IconWrapper';
+import { ClipboardCheck, FileText, FileUser, FolderOpen, Globe, Mail, Phone, Users } from 'lucide-react';
+import { UNKNOWN_PROFILE_PICTURE_URL } from '../../utility/config';
 import RatingSelector, { getRatingIcon } from '../../components/MUIUtilities/RatingSelector';
 import EditNotes from '../../svg/Buttons/EditNotes';
 import AddNotes from '../../svg/Buttons/AddNotes';
@@ -293,15 +297,15 @@ const ViewCandidateProfile = () => {
         {
             name: 'application',
             label: 'Application',
-            icon: <ApplicationIcon />,
-            activeIcon: <ApplicationIconActive />,
+            icon: <IconWrapper icon={Users} size={0} isInActiveIcon={true}  customIconSize={4} /> ,
+            activeIcon: <IconWrapper icon={Users} isActiveIcon={true} size={0} customIconSize={4} />,
         },
         ...(role !== "Design Reviewer" ? [
             {
                 name: 'candidateDetails',
                 label: 'Candidate Details',
-                icon: <CandidateDetailsIcon />,
-                activeIcon: <CandidateDetailsIconActive />,
+                icon: <IconWrapper icon={FileText} size={0} isInActiveIcon={true} customIconSize={4} />,
+                activeIcon: <IconWrapper isActiveIcon={true} icon={FileText} size={0} customIconSize={4} />,
             }
         ] : []),
     ];
@@ -406,8 +410,7 @@ const ViewCandidateProfile = () => {
 
 
     return (
-        <div className='w-full p-4'>
-            <div className="container mx-auto">
+        <Container>
                 {addNotesMutation?.isPending && <LoaderModal />}
                 {/* Page header */}
                 <Header
@@ -436,7 +439,7 @@ const ViewCandidateProfile = () => {
                             <StyledCard padding={2} extraStyles="w-full flex gap-4 relative justify-between relative">
                                 <div className='flex gap-4'>
                                     <div className="relative to-background-100 w-[200px] min-h-auto max-h-[200px] rounded-xl overflow-hidden">
-                                        <img src={data.profilePictureUrl || " https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg"} alt="" className='object-cover w-full overflow-hidden' />
+                                        <img src={data.profilePictureUrl || UNKNOWN_PROFILE_PICTURE_URL } alt="" className='object-cover w-full overflow-hidden' />
                                         {(role === "Hiring Manager" || role === "Admin") &&
                                             <span onClick={(e) => setRatingAnchor(e.currentTarget)} className='absolute cursor-pointer bg-[#2d2d2eae] min-w-10 min-h-10 top-2 right-2 rounded-full flex justify-center items-center'>
                                                 {getRatingIcon(data?.jobApplication?.rating)}    
@@ -457,44 +460,44 @@ const ViewCandidateProfile = () => {
                                             <div className="flex mb-3 gap-5">
                                                 <div className="flex items-center gap-2">
                                                     <div className='cursor-pointer' onClick={() => handleWhatsappOpen(data.firstName + " " + data.lastName, data.phone)}>
-                                            <PhoneIcon />
+                                                        <IconWrapper size={0} customIconSize={1} icon={Phone} />
                                                     </div>
                                         <span className="typography-large-p">{data.phone}</span>
                                                 </div>
                                                 <div className="flex items-center gap-2">
                                                     <div className='cursor-pointer' onClick={() => handleEmailOpen(data?.firstName + " " + data?.lastName, data?.email,data?.jobApplication?.jobApplied,new Date(data?.jobApplication?.stageStatuses['Screening']?.currentCall?.scheduledDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) + " " + formatTime(data?.jobApplication?.stageStatuses['Screening']?.currentCall?.scheduledTime))}>
-                                            <EmailIcon />
+                                                        <IconWrapper size={0} customIconSize={1} icon={Mail} />
                                                     </div>
                                         <span className="typography-large-p">{data.email}</span>
-                                                </div>
-                                            </div>}
-                                        <div className="flex gap-2 items-center ">
-                                            <a href={ensureAbsoluteUrl(data.portfolio)} target="_blank" rel="noopener noreferrer" className="icon-link">
-                                                <CustomToolTip title={'Portfolio'} arrowed size={2}>
-                                                    <FileMainIcon />
-                                                </CustomToolTip>
-                                            </a>
-                                            {data.website && (
-                                                <a href={ensureAbsoluteUrl(data.website)} target="_blank" rel="noopener noreferrer" className="icon-link">
-                                                    <CustomToolTip title={'Website'} arrowed size={2}>
-                                                        <WebsiteMainIcon />
-                                                    </CustomToolTip>
-                                                </a>
-                                            )}
-                                            <div onClick={handleResumeOpen}>
-                                                <CustomToolTip title={'Resume'} arrowed size={2}>
-                                                    <ResumeIcon />
-                                                </CustomToolTip>
-                                            </div>
-                                            {resumeOpen && <ResumeViewer documentUrl={data.resumeUrl} onClose={() => setResumeOpen(false)} />}
-
-                                            {
-                                                (data.hasGivenAssessment && role === "Hiring Manager") && <div className='cursor-pointer' onClick={handleAssignmentNavigation}>
-                                                    <CustomToolTip title={'Assessment'} arrowed size={2}>
-                                                        <AssignmentIcon />
-                                                    </CustomToolTip>
-                                                </div>
-                                            }
+                                    </div>
+                                </div>}
+                                <div className="flex gap-2 items-center ">
+                                    <a href={ensureAbsoluteUrl(data.portfolio)} target="_blank" rel="noopener noreferrer" className="icon-link">
+                                        <CustomToolTip title={'Portfolio'} arrowed size={2}>
+                                            <IconWrapper hasBg icon={FolderOpen} />
+                                        </CustomToolTip>
+                                    </a>
+                                    {data.website && (
+                                        <a href={ensureAbsoluteUrl(data.website)} target="_blank" rel="noopener noreferrer" className="icon-link">
+                                            <CustomToolTip title={'Website'} arrowed size={2}>
+                                                <IconWrapper hasBg icon={Globe} />
+                                            </CustomToolTip>
+                                        </a>
+                                    )}
+                                    <div onClick={handleResumeOpen}>
+                                        <CustomToolTip title={'Resume'} arrowed size={2}>
+                                            <IconWrapper hasBg icon={FileUser} />
+                                        </CustomToolTip>
+                                    </div>
+                                    {resumeOpen && <ResumeViewer documentUrl={data.resumeUrl} onClose={() => setResumeOpen(false)}/>}
+                                   
+                                    {
+                                        (data.hasGivenAssessment && role === "Hiring Manager") && <div className='cursor-pointer' onClick={handleAssignmentNavigation}> 
+                                            <CustomToolTip title={'Assessment'} arrowed size={2}>
+                                            <IconWrapper hasBg icon={ClipboardCheck} />
+                                            </CustomToolTip>
+                                        </div>
+                                    }
 
                                         </div>
                                     </div>
@@ -627,8 +630,9 @@ const ViewCandidateProfile = () => {
                 {activeTab === 'candidateDetails' && (
                     <CandidateTabDetail data={transformedData} job={data?.jobApplication} candidateId={data?._id} role={role} />
                 )}
-            </div>
-        </div>
+            </Container>
+        // </div>
+        // </div>
     );
 };
 

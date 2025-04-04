@@ -2,6 +2,7 @@
 import React, { useRef } from 'react';
 import { Button } from '../Buttons/Button';
 import StyledCard from '../Cards/StyledCard';
+import { UNKNOWN_PROFILE_PICTURE_URL } from '../../utility/config';
 
 export const ProfilePictureUpload = ({ 
   previewUrl,
@@ -27,7 +28,7 @@ export const ProfilePictureUpload = ({
       >
           <div className='flex justify-start w-full gap-4'>
             <div className="relative w-24 h-24">
-              <img src={previewUrl || "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg"} alt="Profile" className="w-full h-full object-cover rounded-full" />
+              <img src={previewUrl || UNKNOWN_PROFILE_PICTURE_URL} alt="Profile" className="w-full h-full object-cover rounded-full" />
               {/* <div className="absolute bottom-0 right-0 p-1 bg-background-90 rounded-full">
               </div> */}
             </div>

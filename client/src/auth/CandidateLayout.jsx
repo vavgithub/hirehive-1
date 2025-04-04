@@ -2,11 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Outlet, useNavigate, NavLink, useLocation } from 'react-router-dom';
 import { candidateLogout } from '../api/authApi';
 import LightLogo from "../svg/Logo/lightLogo.svg"
-// Import icons
-import { DashboardIcon, DashboardIconActive } from '../svg/Navbar/DashboardIcon';
-import { JobsIcon, JobsIconActive } from '../svg/Navbar/JobsIcon';
-import { MyJobsIcon, MyJobsIconActive } from '../svg/Navbar/MyJobsIcon';
-import { Button } from '../components/Buttons/Button';
 import useCandidateAuth from '../hooks/useCandidateAuth';
 import AssessmentBanner from '../components/ui/AssessmentBanner';
 import { useDispatch, useSelector } from 'react-redux';
@@ -14,11 +9,12 @@ import { logoutCandidateAuth } from '../redux/candidateAuthSlice';
 import { showErrorToast, showSuccessToast } from '../components/ui/Toast';
 import useScroll from '../hooks/useScroll';
 import { Avatar, IconButton, Menu, MenuItem } from '@mui/material';
-import Logout from '../svg/Buttons/Logout';
-import Profile from '../svg/Buttons/Profile';
 import StyledMenu from '../components/MUIUtilities/StyledMenu';
 import Modal from '../components/Modals/Modal';
 import ContactUs from '../components/Form/ContactUs';
+import IconWrapper from '../components/Cards/IconWrapper';
+import { Briefcase, BriefcaseBusiness, LogOut, User } from 'lucide-react';
+import { UNKNOWN_PROFILE_PICTURE_URL } from '../utility/config';
 
 const CandidateLayout = () => {
   const navigate = useNavigate();
@@ -78,14 +74,14 @@ const CandidateLayout = () => {
     {
       name: 'All Jobs',
       path: '/candidate/all-jobs',
-      icon: JobsIcon,
-      activeIcon: JobsIconActive,
+      icon: ()=><IconWrapper isInActiveIcon icon={Briefcase} />,
+      activeIcon: ()=><IconWrapper isActiveIcon icon={Briefcase} />,
     },
     {
       name: 'My Jobs',
       path: '/candidate/my-jobs',
-      icon: MyJobsIcon,
-      activeIcon: MyJobsIconActive,
+      icon: ()=><IconWrapper isInActiveIcon icon={BriefcaseBusiness} />,
+      activeIcon: ()=><IconWrapper isActiveIcon icon={BriefcaseBusiness} />,
     },
   ];
 
@@ -137,9 +133,9 @@ const CandidateLayout = () => {
         onClick: handleMenuClose,
         content: () => (
           <NavLink to={profilePath} className={({ isActive }) =>
-            `w-full flex items-center ${isActive ? "text-font-accent" : ""} hover:bg-background-60 px-4 py-2 rounded-xl `}
+            `w-full flex items-center ${isActive ? "text-font-accent" : ""} hover:bg-background-60 hover:text-font-accent px-4 py-2 rounded-xl `}
           >
-            <Profile />
+            <IconWrapper inheritColor={true} size={0} customIconSize={5}  icon={User} />
             <span className='typography-large ml-2 font-outfit'>
               Profile
             </span>
@@ -149,8 +145,8 @@ const CandidateLayout = () => {
       {
         onClick: handleLogout,
         content: () => (
-          <div className='flex items-center hover:bg-background-60 px-4 py-2 w-full rounded-xl'>
-            <Logout />
+          <div className='flex items-center hover:bg-background-60 hover:text-font-accent px-4 py-2 w-full rounded-xl'>
+            <IconWrapper inheritColor={true} size={0} customIconSize={5}  icon={LogOut} />
             <span className='typography-large ml-2 font-outfit'>
               Logout
             </span>
@@ -164,7 +160,7 @@ const CandidateLayout = () => {
         <div className={`flex items-center px-2 mx-2 py-1 justify-start hover:bg-background-60 rounded-xl ${location.pathname === profilePath ? "bg-background-60" : ""}`}>
           <IconButton onClick={handleMenuClick} className={`flex gap-2 ${location.pathname === profilePath ? "text-font-accent"
             : ""}`}>
-            <Avatar alt={candidateData?.firstName} sx={{ width: "32px", height: "32px" }} src={candidateData?.profilePictureUrl || "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg"} />
+            <Avatar alt={candidateData?.firstName} sx={{ width: "32px", height: "32px" }} src={candidateData?.profilePictureUrl || UNKNOWN_PROFILE_PICTURE_URL} />
             <span className={`typography-body  ${location.pathname === profilePath ? "text-font-accent"
               : "text-white"}`}>{candidateData?.firstName}</span>
           </IconButton>
@@ -219,12 +215,12 @@ const CandidateLayout = () => {
           transition-transform duration-300 ease-in-out
           md:w-48 w-64 h-screen
           bg-background-100 text-font-gray
-          flex flex-col justify-between py-4
-          `}
+          flex flex-col justify-between py-6
+        `}
         style={{ position: 'fixed' }}
       >
         <div className="flex flex-col gap-5 typography-body">
-          <div className='p-2 flex '>
+          <div className='px-4 flex '>
 
             <img className='h-11' src={LightLogo} />
           </div>

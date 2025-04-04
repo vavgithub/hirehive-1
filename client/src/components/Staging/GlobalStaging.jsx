@@ -5,7 +5,6 @@ import { stagingConfig } from './staging.config.js';
 import ClosedBadge from '../../svg/Icons/ClosedBadge.jsx';
 import AssigneeSelector from '../MUIUtilities/AssigneeSelector.jsx';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import BudgetIcon from '../../svg/Staging/BudgetIcon.jsx';
 import { useDispatch, useSelector } from 'react-redux';
 import Label from '../ui/Label.jsx';
 import { setCurrentStage, updateStageStatus } from '../../redux/applicationStageSlice.js';
@@ -18,11 +17,7 @@ import { ACTION_TYPES } from '../../utility/ActionTypes.js';
 import { getMaxScoreForStage } from '../../pages/Admin/ViewCandidateProfile.jsx';
 import { getCandidateScore } from './StageAction.jsx';
 import ScheduleForm from './ScheduleForm.jsx';
-import CalenderIcon from '../../svg/Staging/CalenderIcon.jsx';
-import ClockIcon from '../../svg/Staging/ClockIcon.jsx';
-import LinkIcon from '../../svg/Staging/LinkIcon.jsx';
 import CopyToClipboard from 'react-copy-to-clipboard';
-import ClipboardIcon from '../../svg/Staging/ClipboardIcon.jsx';
 import { formatIntoLocaleString, formatTime } from '../../utility/formatTime.js';
 import NoShowAction from './NoShow.jsx';
 import useScheduler from '../../hooks/useScheduler.jsx';
@@ -35,6 +30,8 @@ import Loader from '../Loaders/Loader.jsx';
 import WarningIcon from '../../svg/Staging/WarningIcon.jsx';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import IconWrapper from '../Cards/IconWrapper.jsx';
+import { Calendar, Clock, Copy, DatabaseZap, Link } from 'lucide-react';
 
 const submitReview = async ({ candidateId, reviewData }) => {
     const response = await axios.post('dr/submit-score-review', {
@@ -342,7 +339,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
             <div className='flex flex-col'>
                 {!isRescheduled && <span className='typography-small-p text-font-gray'>Date</span>}
                 <div className={(isRescheduled && "text-font-gray ") + ' flex items-center gap-2'}>
-                    <CalenderIcon customStroke={"#808389"} />
+                    <IconWrapper icon={Calendar} size={0} customIconSize={5} isInActiveIcon={true} customStrokeWidth={4} />
                     <h2 className={isRescheduled && 'typography-body'}>
                         {new Date(call?.scheduledDate).toLocaleDateString('en-gb', { timeZone: 'UTC' })}
                     </h2>
@@ -352,7 +349,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
             <div className='flex flex-col'>
                 {!isRescheduled && <span className='typography-small-p text-font-gray'>Time</span>}
                 <div className={(isRescheduled && "text-font-gray ") + ' flex items-center gap-2'}>
-                    <ClockIcon customStroke={"#808389"} />
+                    <IconWrapper icon={Clock} size={0} customIconSize={5} isInActiveIcon={true} customStrokeWidth={4} />
                     <h2 className={isRescheduled && 'typography-body'}>
                         {formatTime(call?.scheduledTime)}
                     </h2>
@@ -362,12 +359,10 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
             <div className='flex flex-col '>
                 {!isRescheduled && <span className='typography-small-p text-font-gray'>Meeting Link</span>}
                 <div className={(isRescheduled && "text-font-gray ") + ' flex items-center gap-2'}>
-                    <LinkIcon customStroke={"#808389"} />
+                    <IconWrapper icon={Link} size={0} customIconSize={5} isInActiveIcon={true} customStrokeWidth={4} />
                     <h2 className={(isRescheduled ? "text-font-gray typography-body " : "text-font-primary") + ' mr-2 '}>screening_meeting_link</h2>
                     {!isRescheduled && <CopyToClipboard text={call?.meetingLink}>
-                        <button className='flex items-center bg-background-70 px-[10px] py-[10px] rounded-xl'>
-                            <ClipboardIcon />
-                        </button>
+                        <IconWrapper hasBg icon={Copy} size={4} customIconSize={5}  customStrokeWidth={4} />
                     </CopyToClipboard>}
                 </div>
             </div>
@@ -435,7 +430,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
                     <div className='h-8 w-1 rounded bg-background-70 mx-2'></div>
 
                     <div className='w-8 h-8 rounded-full bg-background-80 flex items-center justify-center mr-2'>
-                        <BudgetIcon />
+                        <IconWrapper icon={DatabaseZap} customIconSize={0} />
                     </div>
                     <span className='typograhpy-body font-outfit'>{candidateData?.jobApplication?.professionalInfo?.expectedCTC ? `${candidateData?.jobApplication?.professionalInfo?.expectedCTC} LPA` : candidateData?.jobApplication?.professionalInfo?.hourlyRate ? `${candidateData?.jobApplication?.professionalInfo?.hourlyRate} INR/hr` : '-'}</span>
                 </>}

@@ -11,6 +11,7 @@ import JobCard from '../../components/Cards/JobCard';
 import Pagination from '../../components/utility/Pagination';
 import ContactUs from '../../components/Form/ContactUs';
 import useCandidateAuth from '../../hooks/useCandidateAuth';
+import Container from '../../components/Cards/Container';
 
 // Keep the fetchAppliedJobs function separate for better organization
 const fetchAppliedJobs = async (page) => {
@@ -90,8 +91,7 @@ const MyJobs = () => {
   }
 
   return (
-    <div className='w-full p-4'>
-      <div className='container '>
+    <Container>
         <h1 className="typography-h1">My Jobs</h1>
         {isAssessmentBannerVisible && <AssessmentBanner />}
         <StyledCard padding={2} backgroundColor={"bg-background-30 lg:pb-16 "}>
@@ -127,8 +127,7 @@ const MyJobs = () => {
           </div>
           <ContactUs />
         </StyledCard>
-      </div>
-    </div>
+      </Container>
   );
 };
 

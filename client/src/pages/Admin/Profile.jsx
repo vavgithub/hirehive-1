@@ -13,6 +13,10 @@ import axios from '../../api/axios';
 import LoaderModal from '../../components/Loaders/LoaderModal';
 import {  useQueryClient } from '@tanstack/react-query';
 import { InputField } from '../../components/Inputs/InputField';
+import Container from '../../components/Cards/Container';
+import { PencilLine } from 'lucide-react';
+import IconWrapper from '../../components/Cards/IconWrapper';
+import { UNKNOWN_PROFILE_PICTURE_URL } from '../../utility/config';
 
 
 
@@ -209,9 +213,10 @@ function Profile() {
   };
 
   return (
-    <div className="w-full bg-background-80 min-h-screen py-4 px-4">
+    // <div className="w-full bg-background-80 min-h-screen p-4">
+    //   <div className="container">
+    <Container hasBgColor>
       {isLoading && <LoaderModal />}
-      <div className="container mx-auto">
         <Header HeaderText="My Profile" />
         <form onSubmit={handleSubmit(handleEditProfile)}>
           <div className="flex w-full gap-4 flex-col-reverse lg:flex-row mt-8 lg:mt-0">
@@ -361,14 +366,14 @@ function Profile() {
                     className="absolute top-6 right-6 border rounded-xl p-2 border-font-gray hover:bg-background-70"
                   >
                     <CustomToolTip title="Edit Profile" arrowed>
-                      <PencilEditIcon />
+                      <IconWrapper size={2} customIconSize={3}  icon={PencilLine} />
                     </CustomToolTip>
                   </button>
                 )}
                 <div className="relative w-[8rem] min-h-[5rem]">
                   <div className="absolute w-[8rem] left-0 -top-14 aspect-square overflow-hidden rounded-full">
                     <img
-                      src={profileFile ? URL.createObjectURL(profileFile) : user?.profilePicture || "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg"}
+                      src={profileFile ? URL.createObjectURL(profileFile) : user?.profilePicture || UNKNOWN_PROFILE_PICTURE_URL }
                       alt=""
                       className="object-cover w-full h-full"
                     />
@@ -388,7 +393,7 @@ function Profile() {
                       className="absolute bottom-1 -right-1 rounded-xl"
                       disabled={uploading}
                     >
-                      <PencilEditIcon className={uploading ? 'opacity-50' : ''} />
+                      <IconWrapper hasBg={true} customBgHover={'hover:bg-background-60'} size={3} customIconSize={3}  icon={PencilLine} />
                     </button>
                   )}
                 </div>
@@ -403,11 +408,11 @@ function Profile() {
                 <div className="mt-6 w-full grid grid-cols-2 gap-4">
                   <div>
                     <p className="font-outfit text-gray-500 text-sm">Reviews Completed</p>
-                    <p className="text-xl font-semibold">{user?.tasks_done || 0}</p>
+                    <p className="typography-h3">{user?.tasks_done || 0}</p>
                   </div>
                   <div>
                     <p className="font-outfit text-gray-500 text-sm">Pending Reviews</p>
-                    <p className="text-xl font-semibold">{user?.tasks_pending || 0}</p>
+                    <p className="typography-h3">{user?.tasks_pending || 0}</p>
                   </div>
                 </div>
               </StyledCard>
@@ -432,8 +437,9 @@ function Profile() {
             </div>
           )}
         </form>
-      </div>
-    </div>
+        </Container>
+    //   </div>
+    // </div>
   );
 }
 

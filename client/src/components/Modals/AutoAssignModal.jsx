@@ -4,6 +4,9 @@ import Modal from './Modal';
 import axios from '../../api/axios';
 import ProfileIcon from '../../svg/Icons/ProfileIcon';
 import CloseButton from '../../svg/Icons/CloseButton';
+import IconWrapper from '../Cards/IconWrapper';
+import { User, X } from 'lucide-react';
+import { UNKNOWN_PROFILE_PICTURE_URL } from '../../utility/config';
 
 const AutoAssignModal = ({ open, onClose, onAssign, jobId, budgetFilter }) => {
     const [reviewers, setReviewers] = useState([]);
@@ -95,7 +98,7 @@ const AutoAssignModal = ({ open, onClose, onAssign, jobId, budgetFilter }) => {
           onClick={() => setIsDropdownOpen(!isDropdownOpen)}
         >
           <div className="flex-grow flex flex-wrap gap-2 h-full px-4 py-1 items-center font-outfit text-font-gray hover:bg-background-90">
-          <ProfileIcon/>
+          <IconWrapper icon={User} size={0} customIconSize={5} inheritColor />
 
             {selectedReviewers.map(reviewer => (
               <div key={reviewer._id} className="bg-background-70 px-4 py-1 rounded-xl flex items-center text-white">
@@ -107,7 +110,7 @@ const AutoAssignModal = ({ open, onClose, onAssign, jobId, budgetFilter }) => {
                   }} 
                   className="ml-2 "
                 >
-                  <CloseButton/>
+                  <IconWrapper icon={X} size={0} customIconSize={5} />
                 </button>
               </div>
             ))}
@@ -142,7 +145,7 @@ const AutoAssignModal = ({ open, onClose, onAssign, jobId, budgetFilter }) => {
                     />
                     <span className="absolute hidden left-4 h-4 w-4 text-black-100 items-center justify-center text-black peer-checked:flex ">✔</span>
                     <span className='w-8 h-8 rounded-full overflow-hidden mx-4'>
-                      <img src={reviewer.profilePicture || "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg"} alt="" />
+                      <img src={reviewer.profilePicture || UNKNOWN_PROFILE_PICTURE_URL } alt="" />
                     </span>
                     <span>{reviewer.name}</span>
                   </label>

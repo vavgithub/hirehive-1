@@ -317,7 +317,7 @@ h2{
 
 
     --color-font-accent-100:rgba(24, 233, 208, 1);
-    --color-font-gray-90:rgba(128, 131, 137, 1);
+    --color-font-gray-90:rgb(128, 131, 137);
 
     --color-redbg:rgba(255, 56, 92, 0.2)
 

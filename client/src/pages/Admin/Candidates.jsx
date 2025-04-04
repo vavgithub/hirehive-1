@@ -15,10 +15,12 @@ import Total from '../../svg/StatsCard/View Candidate/Total';
 import Loader from '../../components/Loaders/Loader';
 import StyledCard from '../../components/Cards/StyledCard';
 import Table from '../../components/tableUtilities/Table';
+import Container from '../../components/Cards/Container';
+import IconWrapper from '../../components/Cards/IconWrapper';
+import { Briefcase, Folder, MonitorDot, PenTool, Users } from 'lucide-react';
 
 
 const Candidates = () => {
-  const containerRef = useRef(null);
   
   const { data, isLoading, isError } = useQuery({
     queryKey: ['candidates'],
@@ -48,13 +50,13 @@ const Candidates = () => {
   }, [isLoading, isError]);
 
   const statsOne = [
-    { title: 'Total', value: data?.stats?.Total || 0, icon: Total },
-    { title: 'Portfolio', value: data?.stats?.Portfolio || 0, icon: Portfolio },
-    { title: 'Screening', value: data?.stats?.Screening || 0, icon: Screening },
-    { title: 'Design Task', value: data?.stats?.['Design Task'] || 0, icon: DesignTask },
-    { title: 'Round 1', value: data?.stats?.['Round 1'] || 0, icon: Round1 },
-    { title: 'Round 2', value: data?.stats?.['Round 2'] || 0, icon: Round2 },
-    { title: 'Hired', value: data?.stats?.Hired || 0, icon: OfferSent },
+    { title: 'Total', value: data?.stats?.Total || 0, icon:  () => <IconWrapper size={10} isInActiveIcon icon={Users} /> },
+    { title: 'Portfolio', value: data?.stats?.Portfolio || 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={Folder} /> },
+    { title: 'Screening', value: data?.stats?.Screening || 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={MonitorDot} /> },
+    { title: 'Design Task', value: data?.stats?.['Design Task'] || 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={PenTool} /> },
+    { title: 'Round 1', value: data?.stats?.['Round 1'] || 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={Briefcase} /> },
+    { title: 'Round 2', value: data?.stats?.['Round 2'] || 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={Briefcase} /> },
+    { title: 'Hired', value: data?.stats?.Hired || 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={PenTool} /> },
   ];
 
   if (isLoading) {
@@ -68,8 +70,7 @@ const Candidates = () => {
   if (isError) return <div>Error fetching candidates</div>;
 
   return (
-    <div className='w-full p-4' ref={containerRef}>
-      <div className="container mx-auto">
+    <Container >
         <Header HeaderText="Candidates" />
         <StyledCard padding={2} backgroundColor={"bg-background-100"}>
           <div className="w-full max-w-7xl relative">
@@ -78,8 +79,7 @@ const Candidates = () => {
           </div>
           <Table readOnly={true} readOnlyData={data?.candidates || []} />
         </StyledCard>
-      </div>
-    </div>
+    </Container>
   );
 };
 

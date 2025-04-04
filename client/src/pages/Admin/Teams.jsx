@@ -12,6 +12,8 @@ import axios from "../../api/axios";
 import { showErrorToast, showSuccessToast } from "../../components/ui/Toast";
 import LoaderModal from "../../components/Loaders/LoaderModal";
 import { useNavigate } from "react-router-dom";
+import Container from "../../components/Cards/Container";
+import { UNKNOWN_PROFILE_PICTURE_URL } from "../../utility/config";
 
 const addMember = async ({teamMember}) => {
     const response = await axios.post('/admin/add-member',{teamMember});
@@ -100,18 +102,20 @@ function Teams() {
         }
 
   return (
-    <div className="container mx-4 pt-4 h-screen">
-      <div className="flex flex-row justify-between mb-4">
-        <h1 className="typography-h1">Teams</h1>
-        {addMemberMutation?.isPending && <LoaderModal />}
-      </div>
+    // <div className="w-full p-4 min-h-screen">
+    //     <div className="container">
+    <Container>
+        <div className="flex flex-row justify-between mb-4">
+            <h1 className="typography-h1">Teams</h1>
+            {addMemberMutation?.isPending && <LoaderModal />}
+        </div>
         <div className="grid grid-cols-5 gap-6">
             {/* Add Card */}
             <StyledCard padding={2} extraStyles={'flex flex-col items-center justify-between gap-4'}>
                 {/* Member Profile Picture */}
                 <div className="relative w-full aspect-square rounded-xl overflow-hidden">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg" alt="" className='object-cover w-full overflow-hidden' />
-                    <span className="absolute top-7 right-12 font-bold text-[#BBBFC1] scale-[3.4]">+</span>
+                    <img src={ UNKNOWN_PROFILE_PICTURE_URL } alt="" className='object-cover w-full overflow-hidden' />
+                    <span className="absolute top-7 right-12 font-bold text-[#3d3c3c] scale-[3.4]">+</span>
                 </div>
                 {/* Memeber Details */}
                 <div className="flex flex-col ">
@@ -131,7 +135,7 @@ function Teams() {
                             <span className="absolute top-2 right-2 p-2 bg-background-60 rounded-xl">
                                 <PencilIcon />
                             </span>} */}
-                            <img src={member?.profilePicture || "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg"} alt="" className='object-cover w-full overflow-hidden' />
+                            <img src={member?.profilePicture || UNKNOWN_PROFILE_PICTURE_URL } alt="" className='object-cover w-full overflow-hidden' />
                         </div>
                         {/* Memeber Details */}
                         <div className="flex flex-col w-full">
@@ -202,7 +206,9 @@ function Teams() {
                 </StyledCard>
             </div>
         </Modal>
-    </div>
+    </Container>
+    //     </div>
+    // </div>
   );
 }
 

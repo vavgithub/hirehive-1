@@ -2,6 +2,8 @@ import { Menu, MenuItem } from '@mui/material'
 import React from 'react'
 import EditIcon from '../../svg/KebabList/EditIcon'
 import DeleteIcon from '../../svg/KebabList/DeleteIcon'
+import IconWrapper from '../Cards/IconWrapper'
+import { SquarePen, Trash } from 'lucide-react'
 
 function BudgetMenu({budgetMenuAnchorEl , handleBudgetMenuClose , handleBudgetEdit , handleBudgetClear}) {
   return (
@@ -33,7 +35,8 @@ function BudgetMenu({budgetMenuAnchorEl , handleBudgetMenuClose , handleBudgetEd
           }
         }}
       >
-        <div className='flex items-center justify-start typograhy-body'>
+        <div className='flex items-center justify-start px-4 typograhy-body '>
+          <IconWrapper icon={SquarePen} size={0} customIconSize={4} />
           <MenuItem
           sx={{
             fontFamily :"Outfit",
@@ -46,7 +49,8 @@ function BudgetMenu({budgetMenuAnchorEl , handleBudgetMenuClose , handleBudgetEd
             Edit</MenuItem>
 
         </div>
-        <div className='flex items-center justify-start typograhy-body '>
+        <div className='flex items-center justify-start px-4 typograhy-body '>
+          <IconWrapper icon={Trash} isErrorIcon size={0} customIconSize={4} />
           <MenuItem 
           sx={{
             fontFamily :"Outfit",

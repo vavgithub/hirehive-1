@@ -25,6 +25,9 @@ import StyledCard from '../../components/Cards/StyledCard';
 import Pagination from '../../components/utility/Pagination';
 import useDebounce from '../../hooks/useDebounce';
 import { useAuthContext } from '../../context/AuthProvider';
+import Container from '../../components/Cards/Container';
+import IconWrapper from '../../components/Cards/IconWrapper';
+import { Archive, Briefcase, CircleCheck, CircleCheckBig, CirclePlus, CircleX, FileText, Search } from 'lucide-react';
 
 
 const fetchJobs = (page, status) => axios.get(`/jobs/jobs?page=${page}&status=${status}`).then(res => res.data);
@@ -276,16 +279,16 @@ const Jobs = () => {
         {
             name: 'open',
             label: 'Open',
-            icon: <OpenIcon />,
-            activeIcon: <OpenIconActive />,
+            icon: <IconWrapper size={0} customIconSize={5} customStrokeWidth={4} isInActiveIcon icon={CircleCheck} />,
+            activeIcon: <IconWrapper size={0} customIconSize={5} customStrokeWidth={4} isActiveIcon icon={CircleCheck} />,
         },
         {
-            name: 'closed', label: 'Closed', icon: <ClosedIcon />,
-            activeIcon: <ClosedIconActive />,
+            name: 'closed', label: 'Closed', icon: <IconWrapper size={0} customIconSize={5} customStrokeWidth={4} isInActiveIcon icon={CircleX} />,
+            activeIcon: <IconWrapper size={0} customIconSize={5} customStrokeWidth={4} isActiveIcon icon={CircleX} />,
         },
         {
-            name: 'draft', label: 'Draft', icon: <DraftsIcon />,
-            activeIcon: <DraftsIconActive />,
+            name: 'draft', label: 'Draft', icon: <IconWrapper size={0} customIconSize={5} customStrokeWidth={4} isInActiveIcon icon={Archive} />,
+            activeIcon: <IconWrapper size={0} customIconSize={5} customStrokeWidth={4} isActiveIcon icon={Archive} />,
         },
     ];
 
@@ -293,17 +296,17 @@ const Jobs = () => {
         {
             title: 'Jobs Posted',
             value: overallStats.totalJobs,
-            icon: one
+            icon: () => <IconWrapper size={10} isInActiveIcon icon={Briefcase} />
         },
         {
             title: 'Applications Received',  // This label is now more accurate
             value: overallStats.totalApplications, // This now shows total applications
-            icon: two
+            icon: () => <IconWrapper size={10} isInActiveIcon icon={FileText} />
         },
         {
             title: 'Hired',
             value: overallStats.totalHired,
-            icon: three
+            icon: () => <IconWrapper size={10} isInActiveIcon icon={CircleCheckBig} />
         }
     ];
 
@@ -322,7 +325,7 @@ const Jobs = () => {
     const currentPage = 'dashboard';
 
     return (
-        <div className="container mx-4 pt-4 h-screen">
+        <Container >
             <div className="flex flex-row justify-between mb-4">
                 <h1 className='typography-h1'>Jobs</h1>
                 {/* <Link to="/admin/create-job" className="bg-black text-white px-4 py-2 rounded">Create job listing</Link> */}
@@ -342,8 +345,8 @@ const Jobs = () => {
                 <div className='flex mt-4'>
                     <div>
                         <div className='mb-4 relative '>
-                            <div className='absolute top-[10px] left-4'>
-                                <SearchIcon />
+                            <div className='absolute top-[12px] left-4'>
+                                <IconWrapper icon={Search} size={0} customIconSize={3} isInActiveIcon />
                             </div>
                             <input
                                 style={{ paddingLeft: "48px" }}
@@ -366,7 +369,7 @@ const Jobs = () => {
                             activeTab == "open" && displayJobs.length != 0 && displayJobs.filter(job => job.status === "open").length !== 0 && (
                                 <div className='flex justify-end '>
                                     <div >
-                                        <Button variant="primary" icon={Create} iconPosition="left" onClick={handleCreateJob}>Create A Job Listing</Button>
+                                        <Button variant="primary" icon={()=><IconWrapper icon={CirclePlus} size={0} customIconSize={5} customStrokeWidth={5} />} iconPosition="left" onClick={handleCreateJob}>Create A Job Listing</Button>
                                     </div>
                                 </div>
                             )
@@ -437,7 +440,7 @@ const Jobs = () => {
                     onCloseReasonChange={handleCloseReasonChange}
                 />
             </StyledCard>
-        </div>
+        </Container>
     );
 };
 export default Jobs;

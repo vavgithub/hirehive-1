@@ -5,8 +5,9 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import DropDownIcon from '../../svg/Icons/DropDownIcon';
-import CalenderIcon from '../../svg/Staging/CalenderIcon';
 import 'dayjs/locale/en-gb';
+import IconWrapper from '../Cards/IconWrapper';
+import { Calendar, ChevronDown } from 'lucide-react';
 
 const theme = createTheme({
   typography: {
@@ -98,11 +99,11 @@ export default function Datepicker({ onChange, value ,error }) {
           defaultValue={dayjs()}  //
           shouldDisableDate={(date) => date.isBefore(dayjs(), 'day')}
           slots={{
-            openPickerIcon : DropDownIcon
+            openPickerIcon :()=> <IconWrapper icon={ChevronDown} size={0} customIconSize={5} isInActiveIcon />
           }}
           slotProps={{
             textField: {
-              InputProps: { startAdornment: <CalenderIcon customStroke="#585B5F" /> }   
+              InputProps: { startAdornment: <IconWrapper icon={Calendar} size={0} isInActiveIcon={true} /> }   
             }
           }}
           onChange={(newValue) => onChange(newValue)}

@@ -1,38 +1,34 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ACTION_TYPES } from '../../utility/ActionTypes';
-import EditIcon from '../../svg/KebabList/EditIcon';
-import ArchiveIcon from '../../svg/KebabList/ArchivedIcon';
-import DeleteIcon from '../../svg/KebabList/DeleteIcon';
-import CloseIcon from '../../svg/KebabList/CloseIcon';
-import ReOpenIcon from '../../svg/KebabList/ReOpenIcon';
-import ThreeDotsIcon from '../../svg/Icons/ThreeDotsIcon';
+import IconWrapper from '../Cards/IconWrapper';
+import { Archive, CircleCheck, CircleX, EllipsisVertical, SquarePen, Trash } from 'lucide-react';
 
 const MenuItems = {
   job: {
     open: [
-      { action: ACTION_TYPES.EDIT, icon: EditIcon, label: 'Edit' },
-      { action: ACTION_TYPES.DRAFT, icon: ArchiveIcon, label: 'Move To Draft' },
-      { action: ACTION_TYPES.CLOSE, icon: CloseIcon, label: 'Close job' },
-      { action: ACTION_TYPES.DELETE, icon: DeleteIcon, label: 'Delete', className: 'text-red-100' },
+      { action: ACTION_TYPES.EDIT, icon: () => <IconWrapper size={0} customIconSize={5} icon={SquarePen} />, label: 'Edit' },
+      { action: ACTION_TYPES.DRAFT, icon: () => <IconWrapper size={0} customIconSize={5} icon={Archive} />, label: 'Move To Draft' },
+      { action: ACTION_TYPES.CLOSE, icon: () => <IconWrapper size={0} customIconSize={5} icon={CircleX} />, label: 'Close job' },
+      { action: ACTION_TYPES.DELETE, icon: () => <IconWrapper size={0} customIconSize={5} isErrorIcon icon={Trash} />, label: 'Delete', className: 'text-red-100' },
     ],
     closed: [
-      { action: ACTION_TYPES.REOPEN, icon: ReOpenIcon, label: 'Re-open' },
-      { action: ACTION_TYPES.EDIT, icon: EditIcon, label: 'Edit' },
-      { action: ACTION_TYPES.DRAFT, icon: ArchiveIcon, label: 'Move To Draft' },
-      { action: ACTION_TYPES.DELETE, icon: DeleteIcon, label: 'Delete', className: 'text-red-100' },
+      { action: ACTION_TYPES.REOPEN, icon: () => <IconWrapper size={0} customIconSize={5} icon={CircleCheck} />, label: 'Re-open' },
+      { action: ACTION_TYPES.EDIT, icon: () => <IconWrapper size={0} customIconSize={5} icon={SquarePen} />, label: 'Edit' },
+      { action: ACTION_TYPES.DRAFT, icon: () => <IconWrapper size={0} customIconSize={5} icon={Archive} />, label: 'Move To Draft' },
+      { action: ACTION_TYPES.DELETE, icon: () => <IconWrapper size={0} customIconSize={5} isErrorIcon icon={Trash} />, label: 'Delete', className: 'text-red-100' },
     ],
     draft: [
-      { action: ACTION_TYPES.EDIT, icon: EditIcon, label: 'Edit' },
-      { action: ACTION_TYPES.DELETE, icon: DeleteIcon, label: 'Delete' },
+      { action: ACTION_TYPES.EDIT, icon: () => <IconWrapper size={0} customIconSize={5} icon={SquarePen} />, label: 'Edit' },
+      { action: ACTION_TYPES.DELETE, icon: () => <IconWrapper size={0} customIconSize={5} isErrorIcon icon={Trash} />, label: 'Delete' },
     ],
   },
   page1: [
-    { action: ACTION_TYPES.EDIT, icon: EditIcon, label: 'Edit' },
-    // { action: ACTION_TYPES.DELETE, icon: DeleteIcon, label: 'Delete', className: 'text-red-100' },
+    { action: ACTION_TYPES.EDIT, icon: () => <IconWrapper size={0} customIconSize={5} icon={SquarePen} />, label: 'Edit' },
+    // { action: ACTION_TYPES.DELETE, icon: () => <IconWrapper size={0} customIconSize={5} isErrorIcon icon={Trash} />, label: 'Delete', className: 'text-red-100' },
   ],
   page2: [
-    { action: 'ACTION_3', icon: DeleteIcon, label: 'Action 3' },
-    { action: 'ACTION_4', icon: CloseIcon, label: 'Action 4' },
+    { action: 'ACTION_3', icon: () => <IconWrapper size={0} customIconSize={5} isErrorIcon icon={Trash} />, label: 'Action 3' },
+    { action: 'ACTION_4', icon: () => <IconWrapper size={0} customIconSize={5} icon={CircleX} />, label: 'Action 4' },
   ],
   // Add more page-specific menu items as needed
 };
@@ -71,7 +67,7 @@ const ThreeDots = ({ job, handleAction, page }) => {
   return (
     <div className="relative" ref={menuRef}>
       <button onClick={toggleMenu} className="focus:outline-none flex items-center">
-        <ThreeDotsIcon />
+        <IconWrapper icon={EllipsisVertical} customIconSize={7} customStrokeWidth={7} />
       </button>
       {isOpen && (
         <div className="absolute right-0 mt-2 w-48 bg-background-70 shadow-lg cursor-pointer rounded-md z-10">

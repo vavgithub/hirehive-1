@@ -14,6 +14,8 @@ import CustomToolTip from '../../components/Tooltip/CustomToolTip';
 import { VideoModal } from '../../components/Modals/VideoModal';
 import { Correctanswer } from '../../svg/Answers/CorrectAnswer';
 import { Wronganswer } from '../../svg/Answers/WrongAnswers';
+import Container from '../../components/Cards/Container';
+import { UNKNOWN_PROFILE_PICTURE_URL } from '../../utility/config';
 
 // Fetch function
 const fetchAssessmentDetails = async (candidateId) => {
@@ -62,8 +64,7 @@ const AssessmentResponse = () => {
 
 
     return (
-        <div className='w-full p-4'>
-            <div className="container ">
+        <Container>
             <div >
                 <Header withBack={"true"} HeaderText="Assessment details" />
 
@@ -74,7 +75,7 @@ const AssessmentResponse = () => {
                         <div className="flex gap-4 h-full">
                             <div className="to-background-100 min-w-[200px max-w-[200px] max-h-[200px]  rounded-xl overflow-hidden">
                                 <img
-                                    src={assessmentData?.candidateInfo?.profilePictureUrl || "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg"}
+                                    src={assessmentData?.candidateInfo?.profilePictureUrl || UNKNOWN_PROFILE_PICTURE_URL }
                                     alt={assessmentData?.candidateInfo?.name}
                                     className="w-full  object-cover "
                                 />
@@ -250,8 +251,7 @@ const AssessmentResponse = () => {
                 onClose={() => setIsVideoModalOpen(false)}
                 videoUrl={assessmentData?.candidateInfo?.recordingUrl}
             />
-        </div>
-        </div>
+    </Container>
     );
 };
 

@@ -6,17 +6,10 @@ import one from '../../svg/StatsCard/Jobs Page/one';
 import Scorer from '../../components/ui/Scorer';
 import { Button } from '../../components/Buttons/Button';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import Total from '../../svg/StatsCard/View Candidate/Total';
-import Portfolio from '../../svg/StatsCard/View Candidate/Portfolio';
-import Screening from '../../svg/StatsCard/View Candidate/Screening';
-import DesignTask from '../../svg/StatsCard/View Candidate/DesignTask';
 import { showErrorToast, showSuccessToast } from '../../components/ui/Toast';
 import { Avatar } from '@mui/material';
 import { FaFile, FaGlobe } from 'react-icons/fa';
 import FileMainIcon from '../../svg/Icons/FileMainIcon';
-import OfferSent from '../../svg/StatsCard/View Candidate/OfferSent';
-import Round1 from '../../svg/StatsCard/View Candidate/Round1';
-import Round2 from '../../svg/StatsCard/View Candidate/Round2';
 import Loader from '../../components/Loaders/Loader';
 import { useNavigate } from 'react-router-dom';
 import PortfolioReview from '../../components/Reviews/PortfolioReview';
@@ -24,16 +17,19 @@ import ScreeningReview from '../../components/Reviews/ScreeningReview';
 import DesignTaskReview from '../../components/Reviews/DesignTaskReview';
 import RoundReview from '../../components/Reviews/RoundReview';
 import StyledCard from '../../components/Cards/StyledCard';
+import Container from '../../components/Cards/Container';
+import IconWrapper from '../../components/Cards/IconWrapper';
+import { Briefcase, Folder, FolderOpen, MonitorDot, PenTool, Users } from 'lucide-react';
 
 
 const statsOne = [
-  { title: 'Total', value: 0, icon: Total },
-  { title: 'Portfolio', value: 0, icon: Portfolio },
-  { title: 'Screening', value: 0, icon: Screening },
-  { title: 'Design Task', value: 0, icon: DesignTask },
-  { title: 'Round 1', value: 0, icon: Round1 },
-  { title: 'Round 2', value: 0, icon: Round2 },
-  { title: 'Offer Sent', value: 0, icon: OfferSent },
+  { title: 'Total', value: 0, icon:  () => <IconWrapper size={10} isInActiveIcon icon={Users} /> },
+  { title: 'Portfolio', value: 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={Folder} /> },
+  { title: 'Screening', value: 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={MonitorDot} /> },
+  { title: 'Design Task', value: 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={PenTool} /> },
+  { title: 'Round 1', value: 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={Briefcase} /> },
+  { title: 'Round 2', value: 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={Briefcase} /> },
+  { title: 'Offer Sent', value: 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={PenTool} /> },
 ]
 
 
@@ -198,8 +194,9 @@ const Reviews = () => {
   const groupedEntries = candidates?.length > 0 ? Object.entries(groupedCandidates) : [];
 
   return (
-    <div className='w-full p-4'>
-      <div className='container mx-auto'>
+    // <div className='w-full p-4'>
+    //   <div className='container'>
+    <Container>
       <Header HeaderText="Reviews" />
       <StyledCard backgroundColor={"bg-background-30"} padding={2}>
         <div className="w-full">
@@ -237,8 +234,7 @@ const Reviews = () => {
                             </span>
                             <a href={ensureAbsoluteUrl(candidate.portfolio)} target="_blank" rel="noopener noreferrer">
                               <div onClick={(e)=>e.stopPropagation()}>
-                              <FileMainIcon />
-
+                              <IconWrapper hasBg={true} icon={FolderOpen} />
                               </div>
                             </a>
                           </div>
@@ -265,8 +261,9 @@ const Reviews = () => {
         </div>
         }
       </StyledCard>
-    </div>
-    </div>
+    </Container>
+    // </div>
+    // </div>
   );
 };
 

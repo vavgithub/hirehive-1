@@ -16,6 +16,7 @@ import Pagination from '../../components/utility/Pagination';
 import useDebounce from '../../hooks/useDebounce';
 import ContactUs from '../../components/Form/ContactUs';
 import StyledCard from '../../components/Cards/StyledCard';
+import Container from '../../components/Cards/Container';
 
 const fetchOpenJobs = (page) => axios.get(`/candidates/jobs/open?page=${page}`).then(res => res.data);
 const searchJobs = (query, page) => axios.get(`/candidates/jobs/searchJobs?jobTitle=${encodeURIComponent(query)}&page=${page}`).then(res => res.data);
@@ -163,14 +164,13 @@ const AllJobs = () => {
     const displayJobs = (debouncedQuery.length > 0 || isFiltered) ? filteredData?.filteredSearchJobs : jobData?.activeJobs;
 
     return (
-        <div className='w-full p-4'>
-            <div className='container '>
-                <div className='flex items-center justify-between'>
-                    <h1 className='typography-h1'>All Jobs</h1>
-                </div>
-                {isAssessmentBannerVisible && <AssessmentBanner />}
-                <div className='md:hidden flex items-center justify-between mt-1 mb-4'>
-                    <div className='relative w-[86%] sm:w-[90%]'>
+        <Container>
+            <div className='flex items-center justify-between'>
+                <h1 className='typography-h1'>All Jobs</h1>
+            </div>
+            {isAssessmentBannerVisible &&  <AssessmentBanner />}
+               <div className='md:hidden flex items-center justify-between mt-1 mb-4'>
+               <div className='relative w-[86%] sm:w-[90%]'>
                         <div className='absolute top-[10px] left-4'>
                             <SearchIcon />
                         </div>
@@ -247,8 +247,7 @@ const AllJobs = () => {
                         <ContactUs />
                     </div>
                 </StyledCard>
-            </div>
-        </div>
+            </Container>
     )
 }
 

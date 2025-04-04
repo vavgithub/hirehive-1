@@ -3,18 +3,14 @@ import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom'; //
 import { Menu, MenuItem, IconButton, Avatar } from '@mui/material';
 import { logout } from '../api/authApi';
 import useAuth from '../hooks/useAuth';
-import { DashboardIcon, DashboardIconActive } from '../svg/Navbar/DashboardIcon';
-import { JobsIcon, JobsIconActive } from '../svg/Navbar/JobsIcon';
-import { CandidatesIcon, CandidatesIconActive } from '../svg/Navbar/CandidatesIcon';
-import { ReviewsIcon, ReviewsIconActive } from '../svg/Navbar/ReviewsIcon';
-import { ReportsIcon, ReportsIconActive } from '../svg/Navbar/ReportsIcon';
-import Profile from '../svg/Buttons/Profile';
-import Logout from '../svg/Buttons/Logout';
 import { useAuthContext } from '../context/AuthProvider';
 import LightLogo from "../svg/Logo/lightLogo.svg"
 import {NotificationIcon, NotificationIconActive} from '../svg/Staging/NotificationIcon';
 import {SettingsIcon, SettingsIconActive} from '../svg/Staging/SettingsIcon';
 import StyledMenu from './MUIUtilities/StyledMenu';
+import IconWrapper from './Cards/IconWrapper';
+import { Briefcase, FileText, LayoutGrid, LogOut, Star, User, Users } from 'lucide-react';
+import { UNKNOWN_PROFILE_PICTURE_URL } from '../utility/config';
 
 const AdminLayout = () => {
     const navigate = useNavigate();
@@ -83,21 +79,21 @@ const AdminLayout = () => {
         </div>
     );
 
-    const renderUtilityOptions = () =>{
-        if (user?.role === 'Hiring Manager') {
-            return(
-                <>
-                    <NavItem to="/admin/notificaton" icon={NotificationIcon} activeIcon={NotificationIconActive} iconData={2} >Notification</NavItem>
-                    <NavItem to="/admin/settings" icon={SettingsIcon} activeIcon={SettingsIconActive} >Settings</NavItem>
-                </>
-            )
-        } else if (user?.role === 'Design Reviewer') {
-            <>
-                <NavItem to="/design-reviewer/notificaton" icon={NotificationIcon} activeIcon={NotificationIconActive} iconData={2} >Notification</NavItem>
-                <NavItem to="/design-reviewer/settings" icon={SettingsIcon} activeIcon={SettingsIconActive} >Settings</NavItem>
-            </>
-        }
-    }
+    // const renderUtilityOptions = () =>{
+    //     if (user?.role === 'Hiring Manager') {
+    //         return(
+    //             <>
+    //                 <NavItem to="/admin/notificaton" icon={NotificationIcon} activeIcon={NotificationIconActive} iconData={2} >Notification</NavItem>
+    //                 <NavItem to="/admin/settings" icon={SettingsIcon} activeIcon={SettingsIconActive} >Settings</NavItem>
+    //             </>
+    //         )
+    //     } else if (user?.role === 'Design Reviewer') {
+    //         <>
+    //             <NavItem to="/design-reviewer/notificaton" icon={NotificationIcon} activeIcon={NotificationIconActive} iconData={2} >Notification</NavItem>
+    //             <NavItem to="/design-reviewer/settings" icon={SettingsIcon} activeIcon={SettingsIconActive} >Settings</NavItem>
+    //         </>
+    //     }
+    // }
 
     // Adding Profile and Logout dropdown logic
     const renderProfileMenu = () => {
@@ -110,9 +106,9 @@ const AdminLayout = () => {
                 <NavLink
                 to={profilePath}
                 className={({ isActive }) =>
-                    `w-full flex items-center ${isActive ? "text-font-accent  " : ""}  hover:bg-background-60 px-4 py-2 rounded-xl `}
+                    `w-full flex items-center ${isActive ? "text-font-accent" : ""}  hover:bg-background-60 hover:text-font-accent px-4 py-2 rounded-xl `}
                 >
-                    <Profile />
+                    <IconWrapper inheritColor={true} size={0} customIconSize={5}  icon={User} />
                     <span className='typography-body  ml-2 font-outfit'>
                         Profile
                     </span>
@@ -122,8 +118,8 @@ const AdminLayout = () => {
             {
               onClick : handleLogout,
               content : () => (
-                <div className='flex items-center hover:bg-background-60 px-4 py-2 w-full rounded-xl'>
-                    <Logout />
+                <div className='flex items-center hover:bg-background-60 hover:text-accent-100 px-4 py-2 w-full rounded-xl'>
+                    <IconWrapper inheritColor={true} size={0} customIconSize={5}  icon={LogOut} />
                     <span className='typography-body  ml-2 font-outfit'>
                         Logout
                     </span>
@@ -140,7 +136,7 @@ const AdminLayout = () => {
                         className={`flex gap-2  ${location.pathname === profilePath ? "text-font-accent  " : ""}`}
                     >
                         <Avatar alt={user?.name} sx={{ width: "32px", height: "32px" }}
-                            src={user?.profilePicture} />
+                            src={user?.profilePicture || UNKNOWN_PROFILE_PICTURE_URL } />
                         <span className={`typography-body  ${location.pathname === profilePath ? "text-font-accent" : "text-white"} `}>{user?.name}</span>
                     </IconButton>
                     <div className={`absolute right-2 w-1 h-6 rounded-tl-xl rounded-bl-xl ${location.pathname === profilePath ? "bg-teal-400" : "bg-transparent"}`} />
@@ -156,8 +152,8 @@ const AdminLayout = () => {
             return (
                 <>
                     {/* <NavItem to="/admin/dashboard" icon={DashboardIcon} activeIcon={DashboardIconActive}>Dashboard</NavItem> */}
-                    <NavItem to="/hiring-manager/jobs" icon={JobsIcon} activeIcon={JobsIconActive}>Jobs</NavItem>
-                    <NavItem to="/hiring-manager/candidates" icon={CandidatesIcon} activeIcon={CandidatesIconActive}>Candidates</NavItem>
+                    <NavItem to="/hiring-manager/jobs" icon={()=><IconWrapper isInActiveIcon icon={Briefcase} />} activeIcon={()=><IconWrapper isActiveIcon icon={Briefcase} />}>Jobs</NavItem>
+                    <NavItem to="/hiring-manager/candidates" icon={()=><IconWrapper isInActiveIcon icon={Users} />} activeIcon={()=><IconWrapper isActiveIcon icon={Users} />}>Candidates</NavItem>
                     {/* <NavItem to="/admin/reviews" icon={ReviewsIcon} activeIcon={ReviewsIconActive}>Reviews</NavItem>
                     <NavItem to="/admin/reports" icon={ReportsIcon} activeIcon={ReportsIconActive}>Reports</NavItem> */}
                 </>
@@ -166,10 +162,10 @@ const AdminLayout = () => {
         if(user?.role === 'Admin'){
             return (
                 <>
-                    <NavItem to="/admin/dashboard" icon={DashboardIcon} activeIcon={DashboardIconActive}>Dashboard</NavItem>
-                    <NavItem to="/admin/jobs" icon={JobsIcon} activeIcon={JobsIconActive}>Jobs</NavItem>
-                    <NavItem to="/admin/candidates" icon={CandidatesIcon} activeIcon={CandidatesIconActive}>Candidates</NavItem>
-                    <NavItem to="/admin/teams" icon={ReportsIcon} activeIcon={ReportsIconActive}>Teams</NavItem>
+                    <NavItem to="/admin/dashboard" icon={()=><IconWrapper isInActiveIcon icon={LayoutGrid} />} activeIcon={()=><IconWrapper isActiveIcon icon={LayoutGrid} />}>Dashboard</NavItem>
+                    <NavItem to="/admin/jobs" icon={()=><IconWrapper isInActiveIcon icon={Briefcase} />} activeIcon={()=><IconWrapper isActiveIcon icon={Briefcase} />}>Jobs</NavItem>
+                    <NavItem to="/admin/candidates" icon={()=><IconWrapper isInActiveIcon icon={Users} />} activeIcon={()=><IconWrapper isActiveIcon icon={Users} />}>Candidates</NavItem>
+                    <NavItem to="/admin/teams" icon={()=><IconWrapper isInActiveIcon icon={FileText} />} activeIcon={()=><IconWrapper isActiveIcon icon={FileText} />}>Teams</NavItem>
                     {/* <NavItem to="/admin/reviews" icon={ReviewsIcon} activeIcon={ReviewsIconActive}>Reviews</NavItem> */}
                     {/* <NavItem to="/admin/reviews" icon={ReviewsIcon} activeIcon={ReviewsIconActive}>Reviews</NavItem>
                     <NavItem to="/admin/reports" icon={ReportsIcon} activeIcon={ReportsIconActive}>Reports</NavItem> */}
@@ -180,8 +176,8 @@ const AdminLayout = () => {
             return (
                 <>
                     {/* <NavItem to="/design-reviewer/dashboard" icon={DashboardIcon} activeIcon={DashboardIconActive}>Dashboard</NavItem> */}
-                    <NavItem to="/design-reviewer/candidates" icon={CandidatesIcon} activeIcon={CandidatesIconActive}>Candidates</NavItem>
-                    <NavItem to="/design-reviewer/reviews" icon={ReviewsIcon} activeIcon={ReviewsIconActive}>Reviews</NavItem>
+                    <NavItem to="/design-reviewer/candidates" icon={()=><IconWrapper isInActiveIcon icon={Users} />} activeIcon={()=><IconWrapper isActiveIcon icon={Users} />}>Candidates</NavItem>
+                    <NavItem to="/design-reviewer/reviews" icon={()=><IconWrapper isInActiveIcon icon={Star} />} activeIcon={()=><IconWrapper isActiveIcon icon={Star} />}>Reviews</NavItem>
                 </>
             );
         }

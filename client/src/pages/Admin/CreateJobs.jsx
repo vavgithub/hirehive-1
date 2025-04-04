@@ -6,6 +6,7 @@ import axios from '../../api/axios';
 import Header from '../../components/utility/Header';
 import { showErrorToast, showSuccessToast } from '../../components/ui/Toast';
 import { useAuthContext } from '../../context/AuthProvider';
+import Container from '../../components/Cards/Container';
 
 const CreateJobs = () => {
   const navigate = useNavigate();
@@ -31,16 +32,14 @@ const CreateJobs = () => {
   };
 
   return (
-    <div className="bg-background-80 w-full ">
-      <div className='p-4 container mx-auto'>
+    <Container hasBgColor>
         <Header HeaderText="Create a New Job Listing" withBack="true" />
         <JobForm
           isLoading={createJobMutation.isPending}
           onSubmit={handleSubmit}
           isEditing={false}
         />
-      </div>
-    </div>
+    </Container>
   );
 };
 

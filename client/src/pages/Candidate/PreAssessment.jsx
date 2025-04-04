@@ -1,19 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { ChevronDown, ChevronUp , Mic, TimerIcon } from 'lucide-react';
+import { BookText, ChevronDown, ChevronUp , Timer, TimerIcon, Mic, MicOff, User, Video, VideoOff } from 'lucide-react';
 import Webcam from 'react-webcam';
 import Assessment from './Assessment'; // Import your existing Assessment component
 import { Button } from '../../components/Buttons/Button';
-import Camera from '../../svg/Buttons/Camera';
 import Logo from '../../svg/Logo/lightLogo.svg'
-import AssesmentIcon from '../../svg/Icons/AssesmentIcon';
-import TimerClockIcon from '../../svg/Icons/TimerClockIcon';
-import ProfileIcon from '../../svg/Icons/ProfileIcon';
-import CameraDisabled from '../../svg/Buttons/CameraDisabled';
-import MicDisabled from '../../svg/Buttons/MicDisabled';
 import StyledCard from '../../components/Cards/StyledCard';
 import Modal from '../../components/Modals/Modal';
 import { AccordionItem } from '../../components/Accordion/AccordionItem';
 import ContactUs from '../../components/Form/ContactUs';
+import Container from '../../components/Cards/Container';
+import IconWrapper from '../../components/Cards/IconWrapper';
 
 const PreAssessment = () => {
     const [isOverviewOpen, setIsOverviewOpen] = useState(true);
@@ -101,9 +97,10 @@ const PreAssessment = () => {
     }
 
     return (
-        <div className='bg-background-90'>
-            <div className=" min-h-screen p-6 container mx-auto">
-                <div className='flex  w-full mb-10 '>
+        // <div className='bg-background-90 p-4 min-h-screen '>
+        //     <div className=" container ">
+        <Container hasBgColor="bg-background-90">
+                <div className='flex  w-full mt-2 mb-10 '>
                     <img className='h-12' src={Logo} />
                 </div>
                 <div>
@@ -120,7 +117,7 @@ const PreAssessment = () => {
                                 title="Assessment Overview"
                                 isOpen={isOverviewOpen}
                                 toggleOpen={() => setIsOverviewOpen(!isOverviewOpen)}
-                                preIcon={AssesmentIcon()}
+                                preIcon={<IconWrapper isInActiveIcon size={4} hasBg="bg-background-30" icon={BookText} />}
                                 content={
                                     <ul className="list-disc pl-12">
                                         <li className='pb-2'>This assessment consists of 10 questions.</li>        
@@ -135,7 +132,7 @@ const PreAssessment = () => {
                                 title="Estimated 5 Minutes"
                                 isOpen={isTimeOpen}
                                 toggleOpen={() => setIsTimeOpen(!isTimeOpen)}
-                                preIcon={TimerClockIcon()}
+                                preIcon={<IconWrapper isInActiveIcon size={4} hasBg="bg-background-30" icon={Timer} />}
                                 content={
                                     <ul className="list-disc pl-12">
                                         <li className='pb-2'>The estimated time for this assessment is 5 minutes.</li>
@@ -158,7 +155,7 @@ const PreAssessment = () => {
                                     ) : (
                                         <div className="absolute left-0 flex items-center justify-center h-full w-full bg-black-100 rounded-xl">
                                             <div className='p-6 rounded-full bg-background-80'>
-                                                <ProfileIcon />
+                                                <IconWrapper isInActiveIcon size={6}  icon={User} />
                                                 {/* <Camera size={48} className="text-gray-600" /> */}
                                             </div>
                                         </div>
@@ -169,7 +166,7 @@ const PreAssessment = () => {
                                         onClick={toggleCamera}
                                     >
                                         {
-                                            isCameraEnabled ? <Camera/> : <CameraDisabled ping={pingCamera} />
+                                            isCameraEnabled ? <IconWrapper size={0} customIconSize={5} customStrokeWidth={6}  icon={Video} /> : pingCamera ? <IconWrapper size={0} isErrorIcon customIconSize={5} customStrokeWidth={6}  icon={VideoOff} /> : <IconWrapper size={0} customIconSize={5} customStrokeWidth={6}  icon={VideoOff} />
                                         }
                                     
                                         {/* <Camera size={24} /> */}
@@ -179,7 +176,7 @@ const PreAssessment = () => {
                                         onClick={toggleMic}
                                         >
                                         {
-                                          isMicEnabled  ?  <Mic/> :  <MicDisabled ping={pingMic} />
+                                          isMicEnabled  ?  <IconWrapper size={0} customIconSize={5} customStrokeWidth={6}  icon={Mic} /> : pingMic ? <IconWrapper size={0} isErrorIcon customIconSize={5} customStrokeWidth={6}  icon={MicOff} /> : <IconWrapper size={0} customIconSize={5} customStrokeWidth={6}  icon={MicOff} />
                                         }
                                     </button>
                                 </div>
@@ -212,10 +209,9 @@ const PreAssessment = () => {
                                 Start Assessment
                             </Button>
                     </div>
-            <ContactUs/>
                 </div>
-            </div>
-        </div>
+                <ContactUs/>
+            </Container>
     );
 };
 

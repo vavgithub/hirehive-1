@@ -30,6 +30,9 @@ import StyledCard from '../../components/Cards/StyledCard';
 import Modal from '../../components/Modals/Modal';
 import CustomBadge from '../../components/Badge/CustomBadge';
 import { useAuthContext } from '../../context/AuthProvider';
+import Container from '../../components/Cards/Container';
+import IconWrapper from '../../components/Cards/IconWrapper';
+import { Briefcase, Check, Eye, File, FileText, Folder, MonitorDot, MousePointer2, PenTool, Users } from 'lucide-react';
 
 
 const ViewJobs = () => {
@@ -53,12 +56,12 @@ const ViewJobs = () => {
 
     const tabs = [
         {
-            name: 'jobDetails', label: 'Job Details', icon: <CandidateDetailsIcon />,
-            activeIcon: <CandidateDetailsIconActive />,
+            name: 'jobDetails', label: 'Job Details', icon: <IconWrapper icon={FileText} size={0} isInActiveIcon={true}  customIconSize={4} />,
+            activeIcon: <IconWrapper icon={FileText} size={0} isActiveIcon={true}  customIconSize={4} />,
         },
         {
-            name: 'candidate', label: 'Candidates', icon: <ApplicationIcon />,
-            activeIcon: <ApplicationIconActive />,
+            name: 'candidate', label: 'Candidates', icon: <IconWrapper icon={Users} size={0} isInActiveIcon={true}  customIconSize={4} />,
+            activeIcon: <IconWrapper icon={Users} size={0} isActiveIcon={true}  customIconSize={4} />,
         }
     ];
 
@@ -169,19 +172,19 @@ const ViewJobs = () => {
 
     // Update the stats arrays to use the fetched data
     const candidateStats = [
-        { title: 'Total', value: jobStats?.data?.totalCount || 0, icon: Total },
-        { title: 'Portfolio', value: jobStats?.data?.stageStats?.Portfolio || 0, icon: Portfolio },
-        { title: 'Screening', value: jobStats?.data?.stageStats?.Screening || 0, icon: Screening },
-        { title: 'Design Task', value: jobStats?.data?.stageStats['Design Task'] || 0, icon: DesignTask },
-        { title: 'Round 1', value: jobStats?.data?.stageStats['Round 1'] || 0, icon: Round1 },
-        { title: 'Round 2', value: jobStats?.data?.stageStats['Round 2'] || 0, icon: Round2 },
-        { title: 'Offer Sent', value: jobStats?.data?.stageStats?.Hired || 0, icon: OfferSent },
+        { title: 'Total', value: jobStats?.data?.totalCount || 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={Users} /> },
+        { title: 'Portfolio', value: jobStats?.data?.stageStats?.Portfolio || 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={Folder} /> },
+        { title: 'Screening', value: jobStats?.data?.stageStats?.Screening || 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={MonitorDot} /> },
+        { title: 'Design Task', value: jobStats?.data?.stageStats['Design Task'] || 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={PenTool} /> },
+        { title: 'Round 1', value: jobStats?.data?.stageStats['Round 1'] || 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={Briefcase} /> },
+        { title: 'Round 2', value: jobStats?.data?.stageStats['Round 2'] || 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={Briefcase} /> },
+        { title: 'Offer Sent', value: jobStats?.data?.stageStats?.Hired || 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={PenTool} /> },
     ];
     const jobsDetailStats = [
-        { title: 'Clicks', value: jobStats?.data?.jobDetails?.views || 0, icon: Views },
-        { title: 'Applications Received', value: jobStats?.data?.jobDetails?.applicationsReceived || 0, icon: AppRec },
-        { title: 'Qualified applications', value: jobStats?.data?.jobDetails?.qualifiedApplications || 0, icon: QuaApp },
-        { title: 'Engagement Rate', value: `${jobStats?.data?.jobDetails?.engagementRate || 0}%`, icon: EngRate },
+        { title: 'Clicks', value: jobStats?.data?.jobDetails?.views || 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={Eye} /> },
+        { title: 'Applications Received', value: jobStats?.data?.jobDetails?.applicationsReceived || 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={File} /> },
+        { title: 'Qualified applications', value: jobStats?.data?.jobDetails?.qualifiedApplications || 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={Check} /> },
+        { title: 'Engagement Rate', value: `${jobStats?.data?.jobDetails?.engagementRate || 0}%`, icon: () => <IconWrapper size={10} isInActiveIcon icon={MousePointer2} /> },
     ];
 
 
@@ -212,97 +215,101 @@ const ViewJobs = () => {
 
 
     return (
-        <div className="px-4 pt-4 container h-screen w-full">
+        // <div className="p-4  min-h-screen w-full">
+        //     <div className='container'>
+        <Container>
                 <Header 
-                HeaderText={formData?.jobTitle} 
-                withKebab="true" 
-                withBack="true"
-                onBack={() => navigate(-1)} 
-                job={formData} 
-                handleAction={handleAction}
-                rightContent={
-                    <Tabs 
-                        tabs={tabs} 
-                        activeTab={activeTab} 
-                        handleTabClick={handleTabClick} 
-                    />
-                }
-            />
-            {/* <div className='absolute right-24 top-5'>
-                <Tabs tabs={tabs} activeTab={activeTab} handleTabClick={handleTabClick} />
-            </div> */}
+                    HeaderText={formData?.jobTitle} 
+                    withKebab="true" 
+                    withBack="true"
+                    onBack={() => navigate(-1)} 
+                    job={formData} 
+                    handleAction={handleAction}
+                    rightContent={
+                        <Tabs 
+                            tabs={tabs} 
+                            activeTab={activeTab} 
+                            handleTabClick={handleTabClick} 
+                        />
+                    }
+                />
+                {/* <div className='absolute right-24 top-5'>
+                    <Tabs tabs={tabs} activeTab={activeTab} handleTabClick={handleTabClick} />
+                </div> */}
 
-            {activeTab === 'jobDetails' && (
-                <StyledCard padding={2} backgroundColor={"bg-background-30"}>
-                    <StatsGrid stats={jobsDetailStats} />
-                    <div className='flex justify-between'>
-                        <div className='w-4/5   '>
-                            <h2 className="typography-h4 mt-4 mb-2">Job Description</h2>
-                            <div className='text-font-gray font-outfit' dangerouslySetInnerHTML={{ __html: formData.jobDescription ? formatDescription(formData.jobDescription) : '' }}></div>
-                            <h2 className="text-[16px] font-outfit font-bold mt-4 mb-5">Skills</h2>
-                            <div className='flex flex-wrap gap-3'>
-                                {formData.skills && formData.skills.map((skill, index) => (
-                                    <CustomBadge key={index} label={skill} borderRadius={10} />
-                                ))}
+                {activeTab === 'jobDetails' && (
+                    <StyledCard padding={2} backgroundColor={"bg-background-30"}>
+                        <StatsGrid stats={jobsDetailStats} />
+                        <div className='flex justify-between'>
+                            <div className='w-4/5   '>
+                                <h2 className="typography-h4 mt-4 mb-2">Job Description</h2>
+                                <div className='text-font-gray font-outfit' dangerouslySetInnerHTML={{ __html: formData.jobDescription ? formatDescription(formData.jobDescription) : '' }}></div>
+                                <h2 className="text-[16px] font-outfit font-bold mt-4 mb-5">Skills</h2>
+                                <div className='flex flex-wrap gap-3'>
+                                    {formData.skills && formData.skills.map((skill, index) => (
+                                        <CustomBadge key={index} label={skill} borderRadius={10} />
+                                    ))}
+                                </div>
+                            </div>
+                            <div className='pb-4'>
+                                <SideCard formData={formData} />
                             </div>
                         </div>
-                        <div className='pb-4'>
-                            <SideCard formData={formData} />
-                        </div>
-                    </div>
 
-                    <StyledCard padding={2} extraStyles='mt-12'>   
-                        <h3 className='typography-h3 mb-4'>Additional Questions</h3>
-                        {questions.map((question, index) => (
-                            <div key={question._id} className="mb-4">
-                                <label className="typography-body">
-                                    Q{index + 1}. { question.text} 
-                                    {question.required && <span className="text-red-500 ml-1">*</span>}
-                                </label>
-                                {(
-                                    question.options.map((option, optionIndex) => (
-                                        <div key={optionIndex} className="my-2 typography-body flex justify-start items-center gap-3">
-                                            <div className='typography-small-p text-font-gray'>Option {optionIndex+1}  </div> 
-                                            {/* <div className='w-4'>
-                                            </div> */}
-                                            <label htmlFor={`question-${question._id}-option-${optionIndex}`}>{option}</label>
-                                        </div>
-                                    ))
-                                )}
-                            </div>
-                        ))}
+                        <StyledCard padding={2} extraStyles='mt-12'>   
+                            <h3 className='typography-h3 mb-4'>Additional Questions</h3>
+                            {questions.map((question, index) => (
+                                <div key={question._id} className="mb-4">
+                                    <label className="typography-body">
+                                        Q{index + 1}. { question.text} 
+                                        {question.required && <span className="text-red-500 ml-1">*</span>}
+                                    </label>
+                                    {(
+                                        question.options.map((option, optionIndex) => (
+                                            <div key={optionIndex} className="my-2 typography-body flex justify-start items-center gap-3">
+                                                <div className='typography-small-p text-font-gray'>Option {optionIndex+1}  </div> 
+                                                {/* <div className='w-4'>
+                                                </div> */}
+                                                <label htmlFor={`question-${question._id}-option-${optionIndex}`}>{option}</label>
+                                            </div>
+                                        ))
+                                    )}
+                                </div>
+                            ))}
+                        </StyledCard>
                     </StyledCard>
-                </StyledCard>
-            )}
+                )}
 
-            {activeTab === 'candidate' && (
-               <StyledCard backgroundColor={"bg-background-30"} padding={2}>
-                    <div className="max-w-full  ">
-                        <StatsGrid stats={candidateStats} />
-                    </div>
-                        <div className='w-full'>
-                            <Table                             
-                                jobId={mainId} // Pass jobId to Table component
-                            >
-                            </Table>
+                {activeTab === 'candidate' && (
+                <StyledCard backgroundColor={"bg-background-30"} padding={2}>
+                        <div className="max-w-full  ">
+                            <StatsGrid stats={candidateStats} />
                         </div>
-                </StyledCard>
-            )}
+                            <div className='w-full'>
+                                <Table                             
+                                    jobId={mainId} // Pass jobId to Table component
+                                >
+                                </Table>
+                            </div>
+                    </StyledCard>
+                )}
 
-            <Modal
-                open={modalOpen}
-                onClose={() => {
-                    setModalOpen(false);
-                    setCloseReason(''); // Reset close reason when modal is closed
-                }}
-                actionType={modalAction}
-                onConfirm={(job) => confirmAction(job, closeReason)}
-                item={selectedJob}
-                customMessage={selectedJob ? getModalMessage(modalAction, selectedJob) : ''}
-                closeReason={closeReason}
-                onCloseReasonChange={handleCloseReasonChange}
-            />
-        </div>
+                <Modal
+                    open={modalOpen}
+                    onClose={() => {
+                        setModalOpen(false);
+                        setCloseReason(''); // Reset close reason when modal is closed
+                    }}
+                    actionType={modalAction}
+                    onConfirm={(job) => confirmAction(job, closeReason)}
+                    item={selectedJob}
+                    customMessage={selectedJob ? getModalMessage(modalAction, selectedJob) : ''}
+                    closeReason={closeReason}
+                    onCloseReasonChange={handleCloseReasonChange}
+                />
+        </Container>
+        //     </div>
+        // </div>
     );
 };
 

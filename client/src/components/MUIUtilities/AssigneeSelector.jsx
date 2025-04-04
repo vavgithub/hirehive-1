@@ -16,6 +16,8 @@ import { fetchAllDesignReviewers, fetchAvailableDesignReviewers } from '../../ap
 // import SearchIcon from '@mui/icons-material/Search';
 import SearchIcon from '../../svg/Icons/SearchIcon';
 import { useQuery } from '@tanstack/react-query';
+import IconWrapper from '../Cards/IconWrapper';
+import { Search, UserRoundPlus } from 'lucide-react';
 
 
 const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled = false , error , selectedAnchor , closeSelectedAnchor}) => {
@@ -104,11 +106,9 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
               {selectedReviewer.name[0].toUpperCase()}
             </Avatar>
           ) : (
-            // Render your own icon here
-            <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-              <rect width="32" height="32" rx="16" fill="#1B1C1D" />
-              <path d="M18.6641 22V20.6667C18.6641 19.9594 18.3831 19.2811 17.883 18.7811C17.3829 18.281 16.7046 18 15.9974 18H11.3307C10.6235 18 9.94521 18.281 9.44511 18.7811C8.94501 19.2811 8.66406 19.9594 8.66406 20.6667V22M21.3307 13.3333V17.3333M23.3307 15.3333H19.3307M16.3307 12.6667C16.3307 14.1394 15.1368 15.3333 13.6641 15.3333C12.1913 15.3333 10.9974 14.1394 10.9974 12.6667C10.9974 11.1939 12.1913 10 13.6641 10C15.1368 10 16.3307 11.1939 16.3307 12.6667Z" stroke="white" strokeWidth="0.825" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
+            <div className='rounded-full bg-background-30'>
+              <IconWrapper icon={UserRoundPlus} customIconSize={2}  size={3} />
+            </div>
           )}
         </IconButton>
         <Menu
@@ -166,7 +166,7 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
               }}
             />
             <div className='absolute top-[0.6rem] left-2'>
-              <SearchIcon />
+              <IconWrapper icon={Search} size={0} customIconSize={3} isInActiveIcon />
             </div>
           </Box>
           {isLoading ? (
@@ -272,7 +272,7 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
               // }}
             />
             <div className='absolute top-[0.6rem] left-2'>
-              <SearchIcon />
+              <IconWrapper icon={Search} size={0} customIconSize={3} isInActiveIcon />
             </div>
           </Box>
           {isLoading ? (

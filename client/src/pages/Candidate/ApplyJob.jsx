@@ -25,6 +25,7 @@ import { PencilEditIcon } from '../../svg/Buttons/PencilIcon';
 import { InputField } from '../../components/Form/FormFields';
 import RightTick from '../../svg/Staging/RightTick';
 import ContactUs from '../../components/Form/ContactUs';
+import Container from '../../components/Cards/Container';
 import Modal from '../../components/Modals/Modal';
 import StyledCard from '../../components/Cards/StyledCard';
 
@@ -398,7 +399,8 @@ const ApplyJob = () => {
   return (
 
 
-    <div className='main-wrapper flex justify-center ' >
+    // <div className=' flex justify-center ' >
+    <Container extraStyles="flex justify-center " hasContainerDiv={false} >
 
       {
         (isSubmitting || updateEmailMutation?.isPending ) && <LoaderModal />
@@ -407,7 +409,7 @@ const ApplyJob = () => {
       {currentStep === 1 && (
         <div className='container'>
           <div  >
-            <img className='h-12 mt-6 mx-6' src={Logo} />
+            <img className='h-12 mt-2 mx-4' src={Logo} />
           </div>
           <form className='mx-auto mt-2 container-form px-6' onSubmit={handleSubmit(onSubmit)}>
             {/* <h1 className="typography-h1 py-6">Application for {jobDetails?.jobTitle}</h1> */}
@@ -596,9 +598,8 @@ const ApplyJob = () => {
         <PasswordComponent watch={watch} control={control} handlePasswordSubmit={handlePasswordSubmit} isSubmitting={isSubmitting} passwordError={passwordError} />
       )}
 
-
-
-    </div>
+      <ContactUs/>
+  </Container>
 
   );
 };

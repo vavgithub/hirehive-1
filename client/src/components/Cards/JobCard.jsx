@@ -7,6 +7,8 @@ import GraphIcon from '../../svg/JobCard/GraphIcon';
 import ClosedBadge from '../../svg/Icons/ClosedBadge';
 import StyledCard from './StyledCard';
 import CustomBadge from '../Badge/CustomBadge';
+import IconWrapper from './IconWrapper';
+import { ClockArrowUp, DatabaseZap, SignalHigh } from 'lucide-react';
 
 // Helper function to truncate text to specific number of words
 const truncateWords = (text, wordLimit) => {
@@ -139,14 +141,14 @@ const JobCard = ({
     {job.status !== "deleted" ?
     <>
     <div className="flex px-4 flex-row items-start flex-wrap gap-x-8 gap-y-5">
-      <JobDetailItem icon={JobTypeIcon} text={job.employmentType} />
+      <JobDetailItem icon={() => <IconWrapper size={1} icon={ClockArrowUp}  isInActiveIcon />} text={job.employmentType} />
       {((job.budgetTo > 1) || (job.budgetFrom > 0)) && 
       <JobDetailItem
-        icon={PriceIcon}
+        icon={() => <IconWrapper size={1} icon={DatabaseZap}  isInActiveIcon />}
         text={`${job.budgetFrom} - ${job.budgetTo} ${payUnit}`}
       />}
       <JobDetailItem
-        icon={GraphIcon}
+        icon={() => <IconWrapper size={1} icon={SignalHigh}  isInActiveIcon />}
         text={`${job.experienceFrom} - ${job.experienceTo} Year`}
       />
     </div>

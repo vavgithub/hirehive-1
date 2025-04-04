@@ -4,6 +4,8 @@ import Filter from '../../svg/Buttons/Filter';
 import { fetchAllDesignReviewers, fetchAvailableDesignReviewers } from '../../api/authApi';
 import { useQuery } from '@tanstack/react-query';
 import ScoreFilter, { MAX_SCORE, MIN_SCORE } from './ScoreFilter';
+import IconWrapper from '../Cards/IconWrapper';
+import { SlidersHorizontal } from 'lucide-react';
 
 const ArrowIcon = ({ isOpen }) => (
   <svg
@@ -270,7 +272,8 @@ const FilterForDataTable = ({ onApplyFilters ,readOnly , preservedFilters }) => 
   return (
     <div className="relative" ref={menuRef}>
       <div className={"cursor-pointer gap-2  flex typography-body hover:bg-background-60 hover:text-accent-100 rounded-xl h-12 p-3 text-font-gray"} onClick={(e) => toggleMenu(e)}>
-        <Filter /> Filter {Object.values(selectedFilters).map((filter)=> Array.isArray(filter) ? filter : !filter ? [] : [filter]).flat()?.length > 0 && <span className='w-2 h-2 rounded-full my-auto bg-red-40'></span>}
+        <IconWrapper inheritColor={true} size={0} customIconSize={4} customStrokeWidth={5}  icon={SlidersHorizontal} />
+         Filter {Object.values(selectedFilters).map((filter)=> Array.isArray(filter) ? filter : !filter ? [] : [filter]).flat()?.length > 0 && <span className='w-2 h-2 rounded-full my-auto bg-red-40'></span>}
       </div>
       {isOpen && (
         <div className="absolute z-10 mt-2 p-2 w-[290px] max-w-[19rem] bg-background-40 rounded-xl flex flex-col gap-2 shadow-[5px_5px_50px_rgba(0,0,0,0.9)]">

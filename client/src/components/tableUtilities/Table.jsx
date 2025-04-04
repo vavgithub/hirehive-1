@@ -4,7 +4,6 @@ import { DataGrid } from '@mui/x-data-grid';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from '../../api/axios';
 import AutoAssignModal from '../Modals/AutoAssignModal';
-
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import Modal from '../Modals/Modal';
 import { ACTION_TYPES } from '../../utility/ActionTypes';
@@ -25,6 +24,8 @@ import AutoAssignWithBudget from './AutoAssignWithBudget';
 import BudgetMenu from './BudgetMenu';
 import { BudgetField } from '../FormUtilities/BudgetField';
 import MuiCustomStylesForDataGrid from './MuiCustomStylesForDataGrid';
+import IconWrapper from '../Cards/IconWrapper';
+import { Download } from 'lucide-react';
 
 const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
 
@@ -480,7 +481,7 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
           />
           <FilterForDataTable onApplyFilters={handleApplyFilters} readOnly={readOnly} preservedFilters={preservedFilters} />
           <div className='flex items-center cursor-pointer gap-2 text-font-gray hover:bg-background-60 hover:text-accent-100 rounded-xl typography-body h-12 p-3' onClick={() => handleExport()}>
-            <Export />
+            <IconWrapper inheritColor={true}  icon={Download} />
             Export
           </div>
 

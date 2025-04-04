@@ -16,6 +16,9 @@ import Pagination from '../../components/utility/Pagination';
 import useDebounce from '../../hooks/useDebounce';
 import JobCard from '../../components/Cards/JobCard';
 import ContactUs from '../../components/Form/ContactUs';
+import Container from '../../components/Cards/Container';
+import IconWrapper from '../../components/Cards/IconWrapper';
+import { SlidersHorizontal } from 'lucide-react';
 
 const fetchOpenJobs = (page) => axios.get(`/candidates/jobs/open?page=${page}`).then(res => res.data);
 const searchJobs = (query,page) => axios.get(`/candidates/jobs/searchJobs?jobTitle=${encodeURIComponent(query)}&page=${page}`).then(res => res.data);
@@ -165,96 +168,100 @@ const HomePage = () => {
         );
     }else{
         return (
-            <div className='container flex flex-col m-auto p-6 '>
-                <div className=' flex justify-between items-center mb-4'>
-                    <div className='flex items-center justify-center gap-8'>
+            // <div className='w-full  p-4 '>
+            //     <div className='container'>
+            <Container>
+                    <div className=' flex justify-between items-center mt-2 mb-4'>
+                        <div className='flex items-center justify-center gap-8'>
 
-                    <img className='h-12' src={Logo}/>
-                    <h1 className='display-d2  hidden md:block'>Jobs</h1>
+                        <img className='h-12' src={Logo}/>
+                        <h1 className='display-d2  hidden md:block'>Jobs</h1>
+                        </div>
+                        <Button variant="primary" onClick={() => navigate("/login")}>Login</Button>
                     </div>
-                    <Button variant="primary" onClick={() => navigate("/login")}>Login</Button>
-                </div>
-                <h1 className='md:hidden display-d2 py-4'>Jobs</h1>
-                    
-                <div className=' py-8 bg-home-bg bg-cover flex flex-col items-center rounded-xl justify-center'>
-                    <h1 className='typography-h1 sm:display-d2 px-6 sm:px-0 max-w-96 text-center'>Unlock Your Career Potential</h1>
-                    <div className='flex justify-evenly gap-2 px-4 w-full md:w-3/5 mt-6 md:mt-9'>
-                        <input
-                            type='text'
-                            className="w-full p-2 "
-                            placeholder="Enter job title"
-                            value={searchQuery}
-                            onChange={handleSearch}
-                        />
-                      <div
-                        className={`md:hidden ${isFilterVisible ? "bg-background-100" : "bg-background-40"} transition-colors duration-200 flex items-center gap-2 p-2 rounded-xl`}
+                    <h1 className='md:hidden display-d2 py-4'>Jobs</h1>
+                        
+                    <div className=' py-8 bg-home-bg bg-cover flex flex-col items-center rounded-xl justify-center'>
+                        <h1 className='typography-h1 sm:display-d2 px-6 sm:px-0 max-w-96 text-center'>Unlock Your Career Potential</h1>
+                        <div className='flex justify-evenly gap-2 px-4 w-full md:w-3/5 mt-6 md:mt-9'>
+                            <input
+                                type='text'
+                                className="w-full p-2 "
+                                placeholder="Enter job title"
+                                value={searchQuery}
+                                onChange={handleSearch}
+                            />
+                        <div
+                            className={`md:hidden ${isFilterVisible ? "bg-background-100" : "bg-background-40"} transition-colors duration-200 flex items-center gap-2 p-2 rounded-xl`}
+                            onClick={toggleFilters}
+                        >
+                        <IconWrapper isInActiveIcon size={0} customIconSize={4} customStrokeWidth={5}  icon={SlidersHorizontal} />
+                        </div>
+                        </div>
+                    </div>
+        
+                    {/* Mobile filter toggle button */}
+                    {/* <button
+                        className="md:hidden my-4 flex items-center gap-2 bg-background-60 p-2 rounded-lg"
                         onClick={toggleFilters}
                     >
-                        <Filter />
-                    </div>
-                    </div>
-                </div>
-    
-                {/* Mobile filter toggle button */}
-                {/* <button
-                    className="md:hidden my-4 flex items-center gap-2 bg-background-60 p-2 rounded-lg"
-                    onClick={toggleFilters}
-                >
-                    <FaUser size={20} />
-                    {isFilterVisible ? 'Hide Filters' : 'Show Filters'}
-                </button> */}
-    
-                <div className='flex flex-col md:flex-row gap-4 mt-4'>
-                    {/* Filters */}
-                    <div className={`${isFilterVisible ? 'block' : 'hidden'} md:block`}>
-                        <Filters
-                            filters={filters}
-                            handleCheckboxChange={handleCheckboxChange}
-                            handleExperienceFilter={handleExperienceFilter}
-                            handleBudgetFilter={handleBudgetFilter}
-                            clearAllFilters={clearAllFilters}
-                        />
-                    </div>
-    
-                    {/* Job listings */}
-                    <div className='flex flex-col gap-4 w-full md:w-fill-available'>
-                        {isLoadingResults ? (
-                            <div className="flex justify-center items-center min-h-full">
-                                <Loader />
-                            </div>
-                        ) :
-                        displayJobs?.length === 0 ? 
-                        <div className='bg-background-80 h-full flex flex-col p-8 sm:p-20 xl:p-40 justify-center items-center rounded-xl'>
-                            <img src={NoJobs} alt="No jobs found" />
-                            <span className='typography-body m-6'>
-                                No Jobs available
-                            </span>
-                        </div> :
-                        displayJobs.map((job) => (
-                            <JobCard
-                                key={job._id}
-                                job={job}
-                                status={open}
-                                isCandidate={true}
-                                withKebab={false}
-                                handleAction={handleAction}
-                                onClick={() => handleViewJob(job._id)}
+                        <FaUser size={20} />
+                        {isFilterVisible ? 'Hide Filters' : 'Show Filters'}
+                    </button> */}
+        
+                    <div className='flex flex-col md:flex-row gap-4 mt-4'>
+                        {/* Filters */}
+                        <div className={`${isFilterVisible ? 'block' : 'hidden'} md:block`}>
+                            <Filters
+                                filters={filters}
+                                handleCheckboxChange={handleCheckboxChange}
+                                handleExperienceFilter={handleExperienceFilter}
+                                handleBudgetFilter={handleBudgetFilter}
+                                clearAllFilters={clearAllFilters}
                             />
-                        ))}
-                        <Pagination 
-                        currentPage={page} 
-                        setCurrentPage={setPage} 
-                        pageLimit={PAGE_LIMIT} 
-                        totalItems={
-                            // debouncedQuery.length > 0 ? searchResults?.searchJobsCount :
-                            // isFiltered ? filteredData?.filteredJobsCount : jobData?.totalOpenJobs
-                            (debouncedQuery.length > 0 || isFiltered) ? filteredData?.filteredSearchJobsCount : jobData?.totalOpenJobs
-                        } 
-                        />
-                        <ContactUs />
+                        </div>
+        
+                        {/* Job listings */}
+                        <div className='flex flex-col gap-4 w-full md:w-fill-available'>
+                            {isLoadingResults ? (
+                                <div className="flex justify-center items-center min-h-full">
+                                    <Loader />
+                                </div>
+                            ) :
+                            displayJobs?.length === 0 ? 
+                            <div className='bg-background-80 h-full flex flex-col p-8 sm:p-20 xl:p-40 justify-center items-center rounded-xl'>
+                                <img src={NoJobs} alt="No jobs found" />
+                                <span className='typography-body m-6'>
+                                    No Jobs available
+                                </span>
+                            </div> :
+                            displayJobs.map((job) => (
+                                <JobCard
+                                    key={job._id}
+                                    job={job}
+                                    status={open}
+                                    isCandidate={true}
+                                    withKebab={false}
+                                    handleAction={handleAction}
+                                    onClick={() => handleViewJob(job._id)}
+                                />
+                            ))}
+                            <Pagination 
+                            currentPage={page} 
+                            setCurrentPage={setPage} 
+                            pageLimit={PAGE_LIMIT} 
+                            totalItems={
+                                // debouncedQuery.length > 0 ? searchResults?.searchJobsCount :
+                                // isFiltered ? filteredData?.filteredJobsCount : jobData?.totalOpenJobs
+                                (debouncedQuery.length > 0 || isFiltered) ? filteredData?.filteredSearchJobsCount : jobData?.totalOpenJobs
+                            } 
+                            />
+                        </div>
                     </div>
-                </div>
-            </div>
+                    <ContactUs />
+            </Container>
+            //     </div>
+            // </div>
         )
     }
 }
