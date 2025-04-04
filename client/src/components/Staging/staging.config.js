@@ -781,6 +781,7 @@ export const stagingConfig = {
                         hasLabel : false,
                         hasRejectionReason : true,
                         hasScoreCard : true,
+                        hasSubmissionDetails : true
                     },
                     "Design Reviewer" : {
                         hasAssigneeSelectorIcon : false,
