@@ -495,7 +495,7 @@ const Table = ({
 
       <MuiCustomStylesForDataGrid/>
 
-      <div className='flex justify-between py-4 gap-2'>
+      <div className='flex justify-between pb-2 gap-2'>
 
         {/* {here is the place to add the search bar ,  filter , export button } */}
 
