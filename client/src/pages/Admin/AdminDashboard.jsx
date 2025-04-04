@@ -9,7 +9,6 @@ import { useNavigate } from 'react-router-dom'
 import { industryTypeOptions, LocationOptions } from '../../components/Register/CompanyDetails'
 import LoaderModal from '../../components/Loaders/LoaderModal'
 import LeaderBadge from '../../svg/Icons/LeaderBadge'
-import { FullTimeIcon } from '../../svg/Checkboxes/FullTimeIcons';
 import InterviewsChart from '../../components/Charts/InterviewsChart'
 import StageBadge from '../../components/ui/StageBadge'
 

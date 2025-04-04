@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import PencilIcon, { PencilEditIcon } from '../../svg/Buttons/PencilIcon';
 import { Controller, useForm } from 'react-hook-form';
 import { InputField } from '../Form/FormFields';
 import { validationRules } from '../../utility/validationRules';
@@ -10,6 +9,8 @@ import StyledCard from '../Cards/StyledCard';
 import CustomHeading from '../Heading/CustomHeading';
 import { GridRow } from '../Grid/GridRow';
 import { Button } from '../Buttons/Button';
+import IconWrapper from '../Cards/IconWrapper';
+import { Pencil } from 'lucide-react';
 
 const updateProfessionalDetails = async ({experience, noticePeriod, currentCTC, expectedCTC, hourlyRate , id, jobId}) => {
     const response = await axios.patch(`/admin/candidate/update-candidate/${id}/${jobId}`,{experience, noticePeriod, currentCTC, expectedCTC, hourlyRate });
@@ -121,7 +122,7 @@ const Experience = ({ company, position, startDate, endDate, index }) => (
                   ))}
                   {(job?.jobStatus === "open" && (role === "Admin" || role === "Hiring Manager")) && 
                   <div onClick={()=>setIsEditing(!isEditing)} className='absolute right-4 bottom-4 p-2 bg-background-70 hover:bg-background-60 rounded-xl cursor-pointer'>
-                    <PencilIcon />    
+                      <IconWrapper  icon={Pencil} size={0} />
                   </div>}
                 </> : 
                 <>

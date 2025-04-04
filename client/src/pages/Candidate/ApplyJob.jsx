@@ -21,13 +21,13 @@ import LoaderModal from '../../components/Loaders/LoaderModal';
 import AdditionalQuestions from '../../components/QuestionUtilities/AdditionalQuestions';
 import OtpComponent from '../../components/utility/OtpComponent';
 import PasswordComponent from '../../components/utility/PasswordComponent';
-import { PencilEditIcon } from '../../svg/Buttons/PencilIcon';
 import { InputField } from '../../components/Form/FormFields';
-import RightTick from '../../svg/Staging/RightTick';
 import ContactUs from '../../components/Form/ContactUs';
 import Container from '../../components/Cards/Container';
 import Modal from '../../components/Modals/Modal';
 import StyledCard from '../../components/Cards/StyledCard';
+import IconWrapper from '../../components/Cards/IconWrapper';
+import { Check, PencilLine } from 'lucide-react';
 
 const fetchJobDetails = async (id) => {
   const response = await axios.get(`/jobs/getJobById/${id}`);
@@ -574,7 +574,9 @@ const ApplyJob = () => {
                     <InputField type="text" placeholder="Enter your email" value={watch("email")} onChange={(e)=>setValue("email",e.target.value)}  />
                   </div>
                 }
-                <button type='button' onClick={()=>setEditEmail(!editEmail)}>{!editEmail ? <div className='rounded-xl bg-background-60 h-11 w-11 flex justify-center items-center'><PencilEditIcon/></div> : <div className='rounded-xl bg-background-60 h-11 w-11 flex justify-center items-center'><RightTick /></div>}</button>
+                <button type='button' onClick={()=>setEditEmail(!editEmail)}>{!editEmail ? <div className='rounded-xl bg-background-60 h-11 w-11 flex justify-center items-center'>
+                  <IconWrapper size={2} customIconSize={3}  icon={PencilLine} />
+                  </div> : <div className='rounded-xl bg-background-60 h-11 w-11 flex justify-center items-center text-green-70'><IconWrapper size={2} customIconSize={3} inheritColor icon={Check} /></div>}</button>
               </div>
               </StyledCard> 
             </Modal>

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Webcam from 'react-webcam';
-import { ChevronUp, ChevronDown, Camera, Mic, Eye } from 'lucide-react';
+import { ChevronUp, ChevronDown, Camera, Mic, Eye, VideoOff } from 'lucide-react';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { Button } from '../../components/Buttons/Button';
 import Loader from '../../components/Loaders/Loader';
@@ -12,8 +12,6 @@ import LightLogo from "../../svg/Logo/lightLogo.svg"
 import { fetchCandidateAuthData, updateAssessmentStatus } from '../../redux/candidateAuthSlice';
 import { uploadAssessment } from '../../utility/cloudinary';
 import StyledCard from '../../components/Cards/StyledCard';
-import { SizableEyeIcon } from '../../svg/Icons/EyeIcon';
-import CameraDisabled from '../../svg/Buttons/CameraDisabled';
 import ImageModal from '../../components/Modals/ImageModal';
 import ContactUs from '../../components/Form/ContactUs';
 import IconWrapper from '../../components/Cards/IconWrapper';
@@ -270,7 +268,7 @@ const WebcamView = React.memo(({ isMinimized, toggleMinimize, isRecording, webca
         </div>
         {!isRecording && 
         <div className='absolute flex items-center justify-center opacity-25 w-full h-full top-0 left-0 bg-background-80'>
-            <CameraDisabled />
+            <IconWrapper size={0} customIconSize={5} customStrokeWidth={6}  icon={VideoOff} />
         </div>}
       </div>
   </div>

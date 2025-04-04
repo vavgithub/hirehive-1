@@ -1,9 +1,6 @@
 import React from 'react';
 import ThreeDots from '../ui/ThreeDots';
 import { getTimeAgo } from '../../utility/getTimeAgo';
-import PriceIcon from '../../svg/JobCard/PriceIcon';
-import JobTypeIcon from '../../svg/JobCard/JobTypeIcon';
-import GraphIcon from '../../svg/JobCard/GraphIcon';
 import ClosedBadge from '../../svg/Icons/ClosedBadge';
 import StyledCard from './StyledCard';
 import CustomBadge from '../Badge/CustomBadge';

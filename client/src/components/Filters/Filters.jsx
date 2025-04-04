@@ -1,14 +1,8 @@
 import React, { useState } from 'react';
 import ExperienceFilter from './ExperienceFilter';
-import { FullTimeIcon, FullTimeIconActive } from '../../svg/Checkboxes/FullTimeIcons';
-import { ContractIcon, ContractIconActive } from '../../svg/Checkboxes/ContractIcons';
-import { InternIcon, InternIconActive } from '../../svg/Checkboxes/InternIcons';
-import { HiredIcon, HiredIconActive } from '../../svg/Checkboxes/HiredIcons';
-import { NotHired, NotHiredActive } from '../../svg/Checkboxes/NotHired';
 import BudgetFilter from './BudgetFilter';
 import StyledCard from '../Cards/StyledCard';
 import { useAuthContext } from '../../context/AuthProvider';
-import { PartTimeIcon, PartTimeIconActive } from '../../svg/Checkboxes/PartTimeIcons';
 import { CheckboxGroup } from '../Checkboxes/CheckboxGroup';
 import IconWrapper from '../Cards/IconWrapper';
 import { CircleSlash2, ClockArrowUp, ClockFading, GraduationCap, Handshake, Hourglass } from 'lucide-react';

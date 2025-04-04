@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMediaQuery } from 'react-responsive';
-import CloseButton from '../../svg/Icons/CloseButton';
 import Label from '../ui/Label';
 import { CustomDropdown } from '../Dropdowns/CustomDropdown';
 import StyledCard from '../Cards/StyledCard';

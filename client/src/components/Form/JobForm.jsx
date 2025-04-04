@@ -3,15 +3,14 @@ import { useForm, Controller } from 'react-hook-form';
 import SkillsInput from '../Inputs/SkillsInput';
 import { dropdownOptions, dummySkills } from '../Dropdowns/dropdownOptions';
 import { Button } from '../Buttons/Button';
-import Next from '../../svg/Buttons/Next';
-import SaveForLater from '../../svg/Buttons/SaveForLater';
 import Que from '../QuestionUtilities/Que';
-import Create from '../../svg/Buttons/Create';
 import TextEditor from '../utility/TextEditor';
 import { InputField } from '../Inputs/InputField';
 import { ExperienceField } from '../FormUtilities/ExperienceField';
 import { BudgetField } from '../FormUtilities/BudgetField';
 import { CustomDropdown } from '../Dropdowns/CustomDropdown';
+import IconWrapper from '../Cards/IconWrapper';
+import { Bookmark, CirclePlus } from 'lucide-react';
 
 function hasDuplicates(arr) {
   return new Set(arr).size !== arr.length;
@@ -302,7 +301,7 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
               <Button
                 variant="secondary"
                 type="button"
-                icon={SaveForLater}
+                icon={()=><IconWrapper icon={Bookmark} inheritColor size={0} customIconSize={5} customStrokeWidth={5} />}
                 onClick={handleSaveForLater}
               >
                 Save For Later
@@ -311,7 +310,7 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
             <Button
               variant="primary"
               type="submit"
-              icon={Create}
+              icon={()=><IconWrapper icon={CirclePlus} inheritColor size={0} customIconSize={5} customStrokeWidth={5} />}
               iconPosition="left"
               disabled={isLoading}
             >

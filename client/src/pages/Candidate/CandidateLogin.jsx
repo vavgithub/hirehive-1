@@ -6,8 +6,6 @@ import { useNavigate } from 'react-router-dom';
 import sundarKanya from "../../svg/Background/sundar-kanya.png"
 import { Button } from '../../components/Buttons/Button';
 import StatsGrid from '../../components/ui/StatsGrid';
-import one from '../../svg/StatsCard/Jobs Page/one';
-import two from '../../svg/StatsCard/Jobs Page/two';
 import ForgotPassword from '../Admin/ForgotPassword';
 import { loginCandidateAuth } from '../../redux/candidateAuthSlice';
 import useCandidateAuth from '../../hooks/useCandidateAuth';

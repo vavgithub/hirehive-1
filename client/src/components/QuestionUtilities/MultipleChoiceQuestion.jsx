@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import CutButton from '../../svg/MiniFormButtons/CutButton';
-import DeleteButton from '../../svg/MiniFormButtons/DeleteButton';
 import { Button } from '../Buttons/Button';
 import ToggleSwitch from '../ui/ToggleSwitch';
 import IconWrapper from '../Cards/IconWrapper';

@@ -4,7 +4,6 @@ import Header from '../../components/utility/Header';
 import StyledCard from '../../components/Cards/StyledCard';
 import { Controller, useForm } from 'react-hook-form';
 import { Button } from '../../components/Buttons/Button';
-import { PencilEditIcon } from '../../svg/Buttons/PencilIcon';
 import CustomToolTip from '../../components/Tooltip/CustomToolTip';
 import { useProfilePicture } from '../../hooks/useProfilePicture';
 import SkillsInput from '../../components/Inputs/SkillsInput';

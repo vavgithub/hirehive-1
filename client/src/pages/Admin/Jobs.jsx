@@ -6,21 +6,12 @@ import Modal from '../../components/Modals/Modal';
 import JobCard from '../../components/Cards/JobCard';
 import Tabs from '../../components/ui/Tabs';
 import StatsGrid from '../../components/ui/StatsGrid';
-import one from '../../svg/StatsCard/Jobs Page/one';
-import two from '../../svg/StatsCard/Jobs Page/two';
-import three from '../../svg/StatsCard/Jobs Page/three';
 import { Button } from '../../components/Buttons/Button';
 import axios from "../../api/axios"
-import Create from '../../svg/Buttons/Create';
 import { ACTION_TYPES } from '../../utility/ActionTypes';
-import { DashboardIcon, DashboardIconActive } from '../../svg/Navbar/DashboardIcon';
-import { OpenIcon, OpenIconActive } from '../../svg/Tabs/OpenIcon';
-import { ClosedIcon, ClosedIconActive } from '../../svg/Tabs/ClosedIcon';
-import { DraftsIcon, DraftsIconActive } from '../../svg/Tabs/DraftsIcon';
 import NoJobs from "../../svg/Background/NoJobs.svg"
 import { showErrorToast, showSuccessToast } from '../../components/ui/Toast';
 import Loader from '../../components/Loaders/Loader';
-import SearchIcon from '../../svg/Icons/SearchIcon';
 import StyledCard from '../../components/Cards/StyledCard';
 import Pagination from '../../components/utility/Pagination';
 import useDebounce from '../../hooks/useDebounce';
@@ -386,7 +377,7 @@ const Jobs = () => {
                                 </span>
                                 <Button
                                     variant="primary"
-                                    icon={Create}
+                                    icon={()=><IconWrapper icon={CirclePlus} size={0} customIconSize={5} customStrokeWidth={5} />}
                                     iconPosition="left"
                                     onClick={handleCreateJob}
                                 >

@@ -1,12 +1,6 @@
 import { Avatar } from "@mui/material";
-import { AssignmentIconStroke } from "../../svg/Icons/AssignmentIcon";
 import CustomToolTip from "../Tooltip/CustomToolTip";
-import FileMainIcon, { FileMainIconSmall } from "../../svg/Icons/FileMainIcon";
-import WebsiteMainIcon, { WebsiteMainIconSmall } from "../../svg/Icons/WebsiteMainIcon";
-import ResumeIcon, { ResumeIconSmall } from "../../svg/Icons/ResumeIcon";
 import AssigneeSelector from "../MUIUtilities/AssigneeSelector";
-import { Move, MoveActive } from "../../svg/Buttons/Move";
-import { Reject, RejectActive } from "../../svg/Buttons/Reject";
 import { getRatingIcon } from "../MUIUtilities/RatingSelector";
 import StatusBadge from "../ui/StatusBadge";
 import StageBadge from "../ui/StageBadge";

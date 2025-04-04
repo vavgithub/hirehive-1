@@ -1,6 +1,4 @@
 import React, { useRef, useState } from 'react';
-import EyeIcon from '../../svg/Icons/EyeIcon';
-import EyeIconCrossed from '../../svg/Icons/EyeIconCrossed';
 import IconWrapper from '../Cards/IconWrapper';
 import { Eye, EyeOff } from 'lucide-react';
 

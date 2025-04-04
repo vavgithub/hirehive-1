@@ -1,6 +1,4 @@
 import React, { useMemo } from 'react'
-import LeftPagination from '../../svg/Icons/LeftPagination'
-import RightPagination from '../../svg/Icons/RightPagination'
 import IconWrapper from '../Cards/IconWrapper';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 

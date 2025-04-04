@@ -1,19 +1,11 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import ResumeIcon from '../../svg/Icons/ResumeIcon';
-import AssignmentIcon from '../../svg/Icons/AssignmentIcon';
-import PhoneIcon from '../../svg/Icons/PhoneIcon';
-import EmailIcon from '../../svg/Icons/EmailIcon';
 import Tabs from '../../components/ui/Tabs';
 import Header from '../../components/utility/Header';
 import axios from '../../api/axios';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ACTION_TYPES } from '../../utility/ActionTypes';
 import CandidateTabDetail from '../../components/ui/CandidateTabDetail';
-import WebsiteMainIcon from '../../svg/Icons/WebsiteMainIcon';
-import FileMainIcon from '../../svg/Icons/FileMainIcon';
-import { ApplicationIcon, ApplicationIconActive } from '../../svg/Tabs/ApplicationIcon';
-import { CandidateDetailsIcon, CandidateDetailsIconActive } from '../../svg/Tabs/CandidateDetailsIcon';
 import { useAuthContext } from '../../context/AuthProvider';
 import ApplicationStaging from '../../components/Staging/ApplicationStaging';
 import { useDispatch, useSelector } from 'react-redux';
@@ -24,17 +16,14 @@ import { ensureAbsoluteUrl } from '../../utility/ensureAbsoluteUrl';
 import ResumeViewer from '../../components/utility/ResumeViewer';
 import CustomToolTip from '../../components/Tooltip/CustomToolTip';
 import StyledCard from '../../components/Cards/StyledCard';
-import SwitchArrows from '../../svg/Icons/SwitchArrows';
 import ScoreChart from '../../components/Charts/ScoreChart';
 import { getStageColor, maxScoreOfEachStage } from '../../components/Staging/staging.config';
 import { CustomDropdown } from '../../components/Dropdowns/CustomDropdown';
 import Container from '../../components/Cards/Container';
 import IconWrapper from '../../components/Cards/IconWrapper';
-import { ClipboardCheck, FileText, FileUser, FolderOpen, Globe, Mail, Phone, Users } from 'lucide-react';
+import { ArrowLeftRight, ClipboardCheck, FileText, FileUser, FolderOpen, Globe, Mail, Notebook, NotebookPen, Phone, Users } from 'lucide-react';
 import { UNKNOWN_PROFILE_PICTURE_URL } from '../../utility/config';
 import RatingSelector, { getRatingIcon } from '../../components/MUIUtilities/RatingSelector';
-import EditNotes from '../../svg/Buttons/EditNotes';
-import AddNotes from '../../svg/Buttons/AddNotes';
 import Modal from '../../components/Modals/Modal';
 import TextEditor from '../../components/utility/TextEditor';
 import LoaderModal from '../../components/Loaders/LoaderModal';
@@ -86,7 +75,7 @@ export const VAVScoreCard = ({score,stage,scoreStages})=>{
         <StyledCard extraStyles="flex bg-stars  flex-col items-center  w-[430px] bg-cover relative">
             <h3 className="typography-h2">VAV SCORE</h3>
             <button onClick={()=>setShowBreakDown(true)} className='absolute top-8 right-8 hover:text-font-gray'>
-             <SwitchArrows />
+             <IconWrapper icon={ArrowLeftRight} size={0} customStrokeWidth={7} inheritColor />
             </button>
             <span className="marks text-font-primary">{score}</span>
             <p className="typography-large-p">Out of {getMaxScoreForStage(stage)}</p>
@@ -95,7 +84,7 @@ export const VAVScoreCard = ({score,stage,scoreStages})=>{
         return(<StyledCard extraStyles="flex bg-stars  flex-col items-center  w-[430px] bg-cover relative">
             <h3 className="typography-h2">Score Breakdown</h3>
             <button onClick={()=>setShowBreakDown(false)} className='absolute top-8 right-8 hover:text-font-gray'>
-             <SwitchArrows />
+             <IconWrapper icon={ArrowLeftRight} size={0} customStrokeWidth={7} inheritColor />
             </button>
             <ScoreChart scoreData={scoreData} />
         </StyledCard>)
@@ -519,10 +508,10 @@ const ViewCandidateProfile = () => {
                                         <div className=' flex justify-between items-center  ' >
 
                                             <h3 className='typography-body font-semibold font-bricolage'>Notes</h3>
-                                            <div onClick={handleOpenNotes} className={'hover:bg-accent-300  bg-background-70 p-2 rounded-xl' + (candidateData?.jobApplication?.notes?.content ? " top-8 right-8 " : " top-4 right-4")}>
+                                            <div onClick={handleOpenNotes} className={'hover:bg-accent-300  bg-background-70  rounded-xl' + (candidateData?.jobApplication?.notes?.content ? " top-8 right-8 " : " top-4 right-4")}>
                                                 <CustomToolTip title={candidateData?.jobApplication?.notes?.content ? "Edit notes" : "Add a note"} arrowed>
                                                     {
-                                                        candidateData?.jobApplication?.notes?.content ? <EditNotes /> : <AddNotes />
+                                                        candidateData?.jobApplication?.notes?.content ? <IconWrapper icon={NotebookPen}  /> : <IconWrapper icon={Notebook}  />
                                                     }
                                                 </CustomToolTip>
                                             </div>
@@ -531,10 +520,10 @@ const ViewCandidateProfile = () => {
                                         <div className='overflow-hidden font-outfit text-font-gray ' dangerouslySetInnerHTML={{ __html: truncatedText(candidateData?.jobApplication?.notes?.content,55) }}></div>
 
                                     </StyledCard> : 
-                                    <div onClick={handleOpenNotes} className={'hover:bg-accent-300  bg-background-70 p-2 h-fit rounded-xl' + (candidateData?.jobApplication?.notes?.content ? " top-8 right-8 " : " top-4 right-4")}>
+                                    <div onClick={handleOpenNotes} className={'hover:bg-accent-300  bg-background-70  h-fit rounded-xl' + (candidateData?.jobApplication?.notes?.content ? " top-8 right-8 " : " top-4 right-4")}>
                                         <CustomToolTip title={candidateData?.jobApplication?.notes?.content ? "Edit notes" : "Add a note"} arrowed>
                                             {
-                                                candidateData?.jobApplication?.notes?.content ? <EditNotes /> : <AddNotes />
+                                                candidateData?.jobApplication?.notes?.content ? <IconWrapper icon={NotebookPen}  /> : <IconWrapper icon={Notebook}  />
                                             }
                                         </CustomToolTip>
                                     </div>

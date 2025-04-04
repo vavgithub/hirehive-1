@@ -1,9 +1,5 @@
 import React from 'react'
 import { postedDate } from '../../utility/postedDate';
-import EmploymentTypeIcon from '../../svg/Sidecards/EmploymentTypeIcon';
-import DesignIcon from '../../svg/Sidecards/DesignIcon';
-import ExperienceLevelIcon from '../../svg/Sidecards/ExperienceLevelIcon';
-import PostedIcon from '../../svg/Sidecards/PostedIcon';
 import IconWrapper from '../Cards/IconWrapper';
 import { Calendar, FileText, GraduationCap, PenTool } from 'lucide-react';
 

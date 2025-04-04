@@ -13,8 +13,6 @@ import {
   Autocomplete,
 } from '@mui/material';
 import { fetchAllDesignReviewers, fetchAvailableDesignReviewers } from '../../api/authApi';
-// import SearchIcon from '@mui/icons-material/Search';
-import SearchIcon from '../../svg/Icons/SearchIcon';
 import { useQuery } from '@tanstack/react-query';
 import IconWrapper from '../Cards/IconWrapper';
 import { Search, UserRoundPlus } from 'lucide-react';

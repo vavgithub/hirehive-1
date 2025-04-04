@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import StyledCard from "../../components/Cards/StyledCard";
 import { Button } from "../../components/Buttons/Button";
-import PencilIcon from "../../svg/Buttons/PencilIcon";
 import Modal from "../../components/Modals/Modal";
 import { InputField } from "../../components/Inputs/InputField";
 import GlobalDropDown from "../../components/Dropdowns/GlobalDropDown";

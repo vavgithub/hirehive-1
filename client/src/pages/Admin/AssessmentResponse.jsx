@@ -4,8 +4,6 @@ import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
 import axios from '../../api/axios';
 import { Phone, Mail, Circle, X, Info } from 'lucide-react';
-import PhoneIcon from '../../svg/Icons/PhoneIcon';
-import EmailIcon from '../../svg/Icons/EmailIcon';
 import { Button } from '../../components/Buttons/Button';
 import { showErrorToast } from '../../components/ui/Toast';
 import Loader from '../../components/Loaders/Loader';
@@ -16,6 +14,7 @@ import { Correctanswer } from '../../svg/Answers/CorrectAnswer';
 import { Wronganswer } from '../../svg/Answers/WrongAnswers';
 import Container from '../../components/Cards/Container';
 import { UNKNOWN_PROFILE_PICTURE_URL } from '../../utility/config';
+import IconWrapper from '../../components/Cards/IconWrapper';
 
 // Fetch function
 const fetchAssessmentDetails = async (candidateId) => {
@@ -96,11 +95,11 @@ const AssessmentResponse = () => {
 
                                 <div className="flex mb-3 gap-5">
                                     <div className="flex items-center gap-2">
-                                        <PhoneIcon />
+                                        <IconWrapper size={0} customIconSize={1} icon={Phone} />
                                         <span className="text-font-gray typography-large-p">{assessmentData?.candidateInfo?.phone}</span>
                                     </div>
                                     <div className="flex items-center gap-2">
-                                        <EmailIcon />
+                                        <IconWrapper size={0} customIconSize={1} icon={Mail} />
                                         <span className="text-font-gray typography-large-p">{assessmentData?.candidateInfo?.email}</span>
                                     </div>
                                 </div>

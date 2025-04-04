@@ -8,11 +8,12 @@ import SideCard from '../../components/ui/SideCard';
 import useAuthCandidate, { useCandidateAuth } from '../../hooks/useCandidateAuth'; // Import the authentication hook
 import Header from '../../components/utility/Header';
 import Loader from '../../components/Loaders/Loader';
-import ArrowIcon from '../../svg/Icons/ArrowIcon';
 import Logo from '../../svg/Logo/lightLogo.svg'
 import StyledCard from '../../components/Cards/StyledCard';
 import ContactUs from '../../components/Form/ContactUs';
 import Container from '../../components/Cards/Container';
+import IconWrapper from '../../components/Cards/IconWrapper';
+import { ArrowRight } from 'lucide-react';
 
 // Function to fetch the job data by ID
 const getJobById = async (id) => {
@@ -77,7 +78,7 @@ const ViewJob = () => {
                                 <div className="hidden lg:flex justify-end">
                                     {!hasApplied ?
                                         (
-                                            <Button variant="primary" onClick={handleApplyClick} iconPosition="right" icon={ArrowIcon}  >
+                                            <Button variant="primary" onClick={handleApplyClick} iconPosition="right" icon={()=><IconWrapper inheritColor icon={ArrowRight} size={0} customIconSize={5} customStrokeWidth={5} />}  >
                                                 Apply Job
                                             </Button>
                                         ) :

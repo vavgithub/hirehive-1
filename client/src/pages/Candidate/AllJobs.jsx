@@ -4,19 +4,17 @@ import Filters from '../../components/Filters/Filters';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import axios from '../../api/axios';
-import { FaGlobe, FaUser } from 'react-icons/fa';
-import Export from '../../svg/Buttons/Export';
-import Filter from '../../svg/Buttons/Filter';
 import AssessmentBanner from '../../components/ui/AssessmentBanner';
 import NoJobs from "../../svg/Background/NoJobs.svg"
 import Loader from '../../components/Loaders/Loader';
-import SearchIcon from '../../svg/Icons/SearchIcon';
 import useCandidateAuth from '../../hooks/useCandidateAuth';
 import Pagination from '../../components/utility/Pagination';
 import useDebounce from '../../hooks/useDebounce';
 import ContactUs from '../../components/Form/ContactUs';
 import StyledCard from '../../components/Cards/StyledCard';
 import Container from '../../components/Cards/Container';
+import IconWrapper from '../../components/Cards/IconWrapper';
+import { Search, SlidersHorizontal } from 'lucide-react';
 
 const fetchOpenJobs = (page) => axios.get(`/candidates/jobs/open?page=${page}`).then(res => res.data);
 const searchJobs = (query, page) => axios.get(`/candidates/jobs/searchJobs?jobTitle=${encodeURIComponent(query)}&page=${page}`).then(res => res.data);
@@ -172,7 +170,7 @@ const AllJobs = () => {
                <div className='md:hidden flex items-center justify-between mt-1 mb-4'>
                <div className='relative w-[86%] sm:w-[90%]'>
                         <div className='absolute top-[10px] left-4'>
-                            <SearchIcon />
+                            <IconWrapper icon={Search} size={0} customIconSize={3} isInActiveIcon />
                         </div>
                         <input style={{ paddingLeft: "48px" }} type='text' placeholder="Enter job title" value={searchQuery}
                             onChange={handleSearch} />
@@ -182,7 +180,7 @@ const AllJobs = () => {
                         onClick={toggleFilters}
                     >
 
-                        <Filter />
+                    <IconWrapper isInActiveIcon size={0} customIconSize={4} customStrokeWidth={5}  icon={SlidersHorizontal} />
                     </div>
                 </div>
 
@@ -192,7 +190,7 @@ const AllJobs = () => {
                     <div className={`${isFilterVisible ? 'block' : 'hidden'} md:block`}>
                         <div className='hidden md:block  mb-4 relative '>
                             <div className='absolute top-[10px] left-4'>
-                                <SearchIcon />
+                                <IconWrapper icon={Search} size={0} customIconSize={3} isInActiveIcon />
                             </div>
                             <input style={{ paddingLeft: "48px" }} type='text' placeholder="Enter job title" value={searchQuery}
                                 onChange={handleSearch} />

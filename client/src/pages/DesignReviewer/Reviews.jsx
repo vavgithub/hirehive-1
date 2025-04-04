@@ -2,14 +2,10 @@ import React, { useEffect, useState } from 'react'
 import axios from '../../api/axios';
 import Header from '../../components/utility/Header';
 import StatsGrid from '../../components/ui/StatsGrid';
-import one from '../../svg/StatsCard/Jobs Page/one';
-import Scorer from '../../components/ui/Scorer';
-import { Button } from '../../components/Buttons/Button';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { showErrorToast, showSuccessToast } from '../../components/ui/Toast';
 import { Avatar } from '@mui/material';
 import { FaFile, FaGlobe } from 'react-icons/fa';
-import FileMainIcon from '../../svg/Icons/FileMainIcon';
 import Loader from '../../components/Loaders/Loader';
 import { useNavigate } from 'react-router-dom';
 import PortfolioReview from '../../components/Reviews/PortfolioReview';

@@ -3,9 +3,7 @@ import Filters from '../../components/Filters/Filters'
 import { useQuery } from '@tanstack/react-query';
 import axios from '../../api/axios';
 import { useNavigate } from 'react-router-dom';
-import { FaGlobe, FaUser } from 'react-icons/fa';
 import { Button } from '../../components/Buttons/Button';
-import Filter from '../../svg/Buttons/Filter';
 import Logo from '../../svg/Logo/lightLogo.svg'
 import { clearAuthError, fetchCandidateAuthData } from '../../redux/candidateAuthSlice';
 import { useDispatch } from 'react-redux';

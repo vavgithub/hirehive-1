@@ -4,7 +4,6 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
-import DropDownIcon from '../../svg/Icons/DropDownIcon';
 import 'dayjs/locale/en-gb';
 import IconWrapper from '../Cards/IconWrapper';
 import { Calendar, ChevronDown } from 'lucide-react';

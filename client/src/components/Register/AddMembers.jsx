@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import DetailsFooter from './DetailsFooter'
 import { Button } from '../Buttons/Button';
 import StyledCard from '../Cards/StyledCard';
-import DeleteIcon from '../../svg/KebabList/DeleteIcon';
 import { useOnboardingContext } from '../../context/OnboardingProvider';
 import GlobalDropDown from '../Dropdowns/GlobalDropDown';
 import { DataGrid } from '@mui/x-data-grid';
@@ -14,9 +13,10 @@ import { showErrorToast, showSuccessToast } from '../ui/Toast';
 import useAuth from '../../hooks/useAuth';
 import { emailPattern } from './RegisterForm';
 import Modal from '../Modals/Modal';
-import PencilIcon from '../../svg/Buttons/PencilIcon';
 import { InputField } from '../Inputs/InputField';
 import MuiCustomStylesForDataGrid from '../tableUtilities/MuiCustomStylesForDataGrid';
+import IconWrapper from '../Cards/IconWrapper';
+import { Pencil, Trash } from 'lucide-react';
 
 export const roleOptions = [
     {
@@ -278,11 +278,11 @@ function AddMembers({currentStep,setCurrentStep}) {
                 if(!params?.row?.noAction)
                 return (
                     <div className='flex items-center justify-center gap-2'>
-                        <div onClick={()=>editMember(params?.row?.id)} className='cursor-pointer bg-black-100 h-11 w-11 flex justify-center items-center rounded-xl hover:bg-background-40'>
-                            <PencilIcon />
+                        <div onClick={()=>editMember(params?.row?.id)} className='cursor-pointer bg-black-100 h-11 min-w-11 flex justify-center items-center rounded-xl hover:bg-background-40'>
+                            <IconWrapper icon={Pencil} size={0} />
                         </div>
-                        <div onClick={()=>removeMember(params?.row?.id)} className='cursor-pointer bg-black-100 h-11 w-11 flex justify-center items-center rounded-xl hover:bg-background-40'>
-                            <DeleteIcon />
+                        <div onClick={()=>removeMember(params?.row?.id)} className='cursor-pointer bg-black-100 h-11 min-w-11 flex justify-center items-center rounded-xl hover:bg-background-40'>
+                            <IconWrapper icon={Trash} size={0} />
                         </div>
                     </div>
             )}

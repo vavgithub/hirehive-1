@@ -4,10 +4,8 @@ import useCandidateAuth from "../../hooks/useCandidateAuth";
 import AssessmentBanner from "../../components/ui/AssessmentBanner";
 import StyledCard from "../../components/Cards/StyledCard";
 import { ensureAbsoluteUrl } from "../../utility/ensureAbsoluteUrl";
-import PencilIcon, { PencilEditIcon } from "../../svg/Buttons/PencilIcon";
 import { Controller, useForm } from "react-hook-form";
 import { Button } from "../../components/Buttons/Button";
-import UploadIcon from "../../svg/Buttons/UploadIcon";
 import { validationRules } from "../../utility/validationRules";
 import { uploadProfilePicture, uploadResume } from "./ApplyJob";
 import axios from "../../api/axios";
@@ -21,6 +19,8 @@ import { emailRegex, mobileRegex } from "../../utility/regex";
 import Container from "../../components/Cards/Container";
 import { UNKNOWN_PROFILE_PICTURE_URL } from "../../utility/config";
 import ContactUs from "../../components/Form/ContactUs";
+import IconWrapper from "../../components/Cards/IconWrapper";
+import { Pencil, PencilLine, Upload } from "lucide-react";
 
 const PersonalDetails = ({ candidateData, isEditing, control }) => {
   return (
@@ -179,10 +179,10 @@ const ResumeAndPortfolioDetails = ({ candidateData, isEditing, control, resumeFi
                 <div className="w-[71%] bg-background-40 h-11 rounded-xl flex justify-between">
                   <p className="px-4 py-2 whitespace-nowrap overflow-hidden text-ellipsis">{fileName ? fileName : candidateData?.firstName + "'s Resume"}</p>
                   <span className="hidden md:block">
-                    <Button icon={UploadIcon} variant="secondary" type="button" onClick={() => resumeRef.current.click()}>{resumeFile ? "Edit" : "Choose"}</Button>
+                    <Button icon={()=><IconWrapper icon={Upload} inheritColor size={0} customIconSize={4} customStrokeWidth={7} />} variant="secondary" type="button" onClick={() => resumeRef.current.click()}>{resumeFile ? "Edit" : "Choose"}</Button>
                   </span>
                   <span className="block md:hidden">
-                    <Button icon={UploadIcon} variant="iconSec" type="button" onClick={() => resumeRef.current.click()} />
+                    <Button icon={()=><IconWrapper icon={Upload} inheritColor size={0} customIconSize={4} customStrokeWidth={7} />} variant="iconSec" type="button" onClick={() => resumeRef.current.click()} />
                   </span>
                 </div>
                 <input onChange={handleResume}
@@ -613,9 +613,9 @@ function Profile() {
             </div>
             <div className="w-[100%] sm:w-[50%] mx-auto lg:w-[30%] ">
                 <StyledCard backgroundColor={"bg-background-30"} extraStyles=" flex flex-col items-center relative">
-                  {isEditing || <button type="button" onClick={()=>setIsEditing(true)} className="absolute top-6 right-6 border rounded-xl p-2 border-font-gray hover:bg-background-70">
+                  {isEditing || <button type="button" onClick={()=>setIsEditing(true)} className="absolute top-6 right-6 border rounded-xl  border-font-gray hover:bg-background-70">
                     <CustomToolTip title={"Edit Profile"} arrowed>
-                      <PencilIcon/>
+                      <IconWrapper icon={Pencil}  />
                     </CustomToolTip>
                   </button>}
                   <div className="relative w-[8rem] min-h-[5rem] ">
@@ -625,7 +625,7 @@ function Profile() {
                     </div>
                     {isEditing && 
                     <button type="button" onClick={()=>profileImageRef.current.click()} className="absolute bottom-1 -right-1  rounded-xl">
-                      <PencilEditIcon/>
+                        <IconWrapper icon={PencilLine} size={3} hasBg customBgHover={'hover:bg-background-60'}  />
                     </button>}
                 </div>
                 <h1 className="typography-h1 whitespace-nowrap overflow-hidden w-full text-ellipsis text-center">{candidateData?.firstName + " " + candidateData?.lastName}</h1>

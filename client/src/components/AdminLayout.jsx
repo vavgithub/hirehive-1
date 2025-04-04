@@ -5,8 +5,6 @@ import { logout } from '../api/authApi';
 import useAuth from '../hooks/useAuth';
 import { useAuthContext } from '../context/AuthProvider';
 import LightLogo from "../svg/Logo/lightLogo.svg"
-import {NotificationIcon, NotificationIconActive} from '../svg/Staging/NotificationIcon';
-import {SettingsIcon, SettingsIconActive} from '../svg/Staging/SettingsIcon';
 import StyledMenu from './MUIUtilities/StyledMenu';
 import IconWrapper from './Cards/IconWrapper';
 import { Briefcase, FileText, LayoutGrid, LogOut, Star, User, Users } from 'lucide-react';
@@ -79,21 +77,6 @@ const AdminLayout = () => {
         </div>
     );
 
-    // const renderUtilityOptions = () =>{
-    //     if (user?.role === 'Hiring Manager') {
-    //         return(
-    //             <>
-    //                 <NavItem to="/admin/notificaton" icon={NotificationIcon} activeIcon={NotificationIconActive} iconData={2} >Notification</NavItem>
-    //                 <NavItem to="/admin/settings" icon={SettingsIcon} activeIcon={SettingsIconActive} >Settings</NavItem>
-    //             </>
-    //         )
-    //     } else if (user?.role === 'Design Reviewer') {
-    //         <>
-    //             <NavItem to="/design-reviewer/notificaton" icon={NotificationIcon} activeIcon={NotificationIconActive} iconData={2} >Notification</NavItem>
-    //             <NavItem to="/design-reviewer/settings" icon={SettingsIcon} activeIcon={SettingsIconActive} >Settings</NavItem>
-    //         </>
-    //     }
-    // }
 
     // Adding Profile and Logout dropdown logic
     const renderProfileMenu = () => {
@@ -195,7 +178,6 @@ const AdminLayout = () => {
                     {renderMenuItems()}
                 </div> 
                 <div className='flex flex-col gap-2'>
-                    {/* {renderUtilityOptions()} */}
                     {user && renderProfileMenu()}
                 </div>
             </div>

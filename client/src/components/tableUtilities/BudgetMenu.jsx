@@ -1,7 +1,5 @@
 import { Menu, MenuItem } from '@mui/material'
 import React from 'react'
-import EditIcon from '../../svg/KebabList/EditIcon'
-import DeleteIcon from '../../svg/KebabList/DeleteIcon'
 import IconWrapper from '../Cards/IconWrapper'
 import { SquarePen, Trash } from 'lucide-react'
 
@@ -35,8 +33,7 @@ function BudgetMenu({budgetMenuAnchorEl , handleBudgetMenuClose , handleBudgetEd
           }
         }}
       >
-        <div className='flex items-center justify-start px-4 typograhy-body '>
-          <IconWrapper icon={SquarePen} size={0} customIconSize={4} />
+        <div className='flex items-center justify-start  typograhy-body '>
           <MenuItem
           sx={{
             fontFamily :"Outfit",
@@ -45,12 +42,11 @@ function BudgetMenu({budgetMenuAnchorEl , handleBudgetMenuClose , handleBudgetEd
             gap: "4px"
           }}
           onClick={handleBudgetEdit}>
-          <EditIcon />
+          <IconWrapper icon={SquarePen} size={0} customIconSize={4} />
             Edit</MenuItem>
 
         </div>
-        <div className='flex items-center justify-start px-4 typograhy-body '>
-          <IconWrapper icon={Trash} isErrorIcon size={0} customIconSize={4} />
+        <div className='flex items-center justify-start  typograhy-body '>
           <MenuItem 
           sx={{
             fontFamily :"Outfit",
@@ -59,7 +55,7 @@ function BudgetMenu({budgetMenuAnchorEl , handleBudgetMenuClose , handleBudgetEd
             gap: "4px"
           }}
           onClick={handleBudgetClear}>
-          <DeleteIcon />
+          <IconWrapper icon={Trash} isErrorIcon size={0} customIconSize={4} />
             Clear</MenuItem>
         </div>
       </Menu>

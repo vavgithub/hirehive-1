@@ -2,8 +2,6 @@ import React, { useState, useEffect ,useRef } from 'react';
 import { fetchAvailableDesignReviewers } from '../../api/authApi';
 import Modal from './Modal';
 import axios from '../../api/axios';
-import ProfileIcon from '../../svg/Icons/ProfileIcon';
-import CloseButton from '../../svg/Icons/CloseButton';
 import IconWrapper from '../Cards/IconWrapper';
 import { User, X } from 'lucide-react';
 import { UNKNOWN_PROFILE_PICTURE_URL } from '../../utility/config';

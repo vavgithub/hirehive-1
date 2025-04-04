@@ -9,13 +9,9 @@ import {
     Avatar,
     IconButton
 } from '@mui/material';
-import VisibilityIcon from '@mui/icons-material/Visibility';
 import StatusBadge from '../ui/StatusBadge';
 import Label from '../ui/Label';
 import WarningIcon from '../../svg/Staging/WarningIcon';
-import PortfolioIcon from '../../svg/PortfolioIcon';
-import WebsiteMainIcon from '../../svg/WebsiteMainIcon';
-import FileMainIcon from '../../svg/FileMainIcon';
 // import StatusBadge from '../ui/StatusBadge';
 
 const PortfolioStage = ({ stageData, onAssign, onViewPortfolio, onReject, onMoveToNextRound }) => {
@@ -132,7 +128,6 @@ const PortfolioStage = ({ stageData, onAssign, onViewPortfolio, onReject, onMove
                         <div className='flex gap-4 items-center'>
 
                             <div className='w-8 h-8 rounded-full bg-background-80 flex items-center justify-center'>
-                                <FileMainIcon />
                             </div>
                             <a className='typography-body text-font-primary underline flex gap-2' href={"duumy"}>View Portfolio
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">

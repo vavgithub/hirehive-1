@@ -5,13 +5,6 @@ import Header from '../../components/utility/Header'
 import StatsGrid from '../../components/ui/StatsGrid'
 import axios from "../../api/axios"
 import { useQuery } from '@tanstack/react-query';
-import Portfolio from '../../svg/StatsCard/View Candidate/Portfolio';
-import Screening from '../../svg/StatsCard/View Candidate/Screening';
-import DesignTask from '../../svg/StatsCard/View Candidate/DesignTask';
-import Round1 from '../../svg/StatsCard/View Candidate/Round1';
-import Round2 from '../../svg/StatsCard/View Candidate/Round2';
-import OfferSent from '../../svg/StatsCard/View Candidate/OfferSent';
-import Total from '../../svg/StatsCard/View Candidate/Total';
 import Loader from '../../components/Loaders/Loader';
 import StyledCard from '../../components/Cards/StyledCard';
 import Table from '../../components/tableUtilities/Table';

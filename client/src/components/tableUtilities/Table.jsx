@@ -10,7 +10,6 @@ import { ACTION_TYPES } from '../../utility/ActionTypes';
 import ResumeViewer from '../utility/ResumeViewer';
 import FilterForDataTable from '../Filters/FilterForDataTable';
 import { exportToExcel } from '../../utility/exportToExcel';
-import Export from '../../svg/Buttons/Export';
 import { showErrorToast, showSuccessToast } from '../ui/Toast';
 import { useAuthContext } from '../../context/AuthProvider';
 import { getCandidateScore } from '../Staging/StageAction';

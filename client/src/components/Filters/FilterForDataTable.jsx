@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 import ExperienceFilter from './ExperienceFilter';
-import Filter from '../../svg/Buttons/Filter';
 import { fetchAllDesignReviewers, fetchAvailableDesignReviewers } from '../../api/authApi';
 import { useQuery } from '@tanstack/react-query';
 import ScoreFilter, { MAX_SCORE, MIN_SCORE } from './ScoreFilter';

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import DeleteButton from '../../svg/MiniFormButtons/DeleteButton';
 import ToggleSwitch from '../ui/ToggleSwitch';
 import IconWrapper from '../Cards/IconWrapper';
 import { Copy, Trash } from 'lucide-react';
