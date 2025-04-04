@@ -602,8 +602,11 @@ export const stagingConfig = {
                         },
                         hasRemarks : false,
                         hasScoreCard : false,
-                        actions : false,
-                        hasTaskDetails : true
+                        actions : {
+                            hasRejectAction : true,
+                        },
+                        hasTaskDetails : true,
+                        hasScheduledLabel : true
                     },
                     "Design Reviewer" : {
                         hasAssigneeSelectorIcon : false,
