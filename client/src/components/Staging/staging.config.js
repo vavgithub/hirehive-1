@@ -132,7 +132,7 @@ export const stagingConfig = {
                 },
                 "Rejected" : {
                     "Hiring Manager" : {
-                        hasAssigneeSelectorIcon : true,
+                        hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
                         hasBudgetLabel : false,
@@ -496,7 +496,7 @@ export const stagingConfig = {
                 },
                 "Rejected" : {
                     "Hiring Manager" : {
-                        hasAssigneeSelectorIcon : true,
+                        hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
                         hasBudgetLabel : true,
@@ -771,7 +771,7 @@ export const stagingConfig = {
                 },
                 "Rejected" : {
                     "Hiring Manager" : {
-                        hasAssigneeSelectorIcon : true,
+                        hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
                         hasBudgetLabel : false,
@@ -1120,7 +1120,7 @@ export const stagingConfig = {
                 },
                 "Rejected" : {
                     "Hiring Manager" : {
-                        hasAssigneeSelectorIcon : true,
+                        hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
                         hasBudgetLabel : false,
@@ -1440,7 +1440,7 @@ export const stagingConfig = {
                 },
                 "Rejected" : {
                     "Hiring Manager" : {
-                        hasAssigneeSelectorIcon : true,
+                        hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
                         hasBudgetLabel : false,
