@@ -715,10 +715,10 @@ export const getAllCandidatesWithStats = async (req, res) => {
       'Hired': 0,
       statistics: {
         total: {
-          monthly: monthlyPercentageChange.toFixed(2),
-          weekly: weeklyPercentageChange.toFixed(2),
-          daily: dailyPercentageChange.toFixed(2),
-        }
+          monthly: Math.round(monthlyPercentageChange),
+          weekly: Math.round(weeklyPercentageChange),
+          daily: Math.round(dailyPercentageChange),
+        },        
       }
     };
 

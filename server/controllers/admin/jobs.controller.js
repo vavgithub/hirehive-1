@@ -388,20 +388,20 @@ export const StatisticsController = {
           totalDraftedJobs,
           totalApplications, // Changed from totalCandidates to totalApplications
           totalHired,
-          jobStatistics : {
-            monthly : monthlyPercentageChange.toFixed(2),
-            weekly : weeklyPercentageChange.toFixed(2),
-            daily : dailyPercentageChange.toFixed(2),
+          jobStatistics: {
+            monthly: Math.round(monthlyPercentageChange),
+            weekly: Math.round(weeklyPercentageChange),
+            daily: Math.round(dailyPercentageChange),
           },
-          applicationStatistics : {
-            monthly : monthlyApplicationsPercentageChange.toFixed(2),
-            weekly : weeklyApplicationsPercentageChange.toFixed(2),
-            daily : dailyApplicationsPercentageChange.toFixed(2),
+          applicationStatistics: {
+            monthly: Math.round(monthlyApplicationsPercentageChange),
+            weekly: Math.round(weeklyApplicationsPercentageChange),
+            daily: Math.round(dailyApplicationsPercentageChange),
           },
-          hiredStatistics : {
-            monthly : monthlyHiresPercentageChange.toFixed(2),
-            weekly : weeklyHiresPercentageChange.toFixed(2),
-            daily : dailyHiresPercentageChange.toFixed(2),
+          hiredStatistics: {
+            monthly: Math.round(monthlyHiresPercentageChange),
+            weekly: Math.round(weeklyHiresPercentageChange),
+            daily: Math.round(dailyHiresPercentageChange),
           },
         },
       });
@@ -647,11 +647,11 @@ export const StatisticsController = {
             : 0,
         },
         comparison : {
-          applicationsReceived : {
-            monthly : monthlyApplicationsPercentageChange.toFixed(2),
-            weekly : weeklyApplicationsPercentageChange.toFixed(2),
-            daily : dailyApplicationsPercentageChange.toFixed(2),
-          }
+          applicationsReceived: {
+            monthly: Math.round(monthlyApplicationsPercentageChange),
+            weekly: Math.round(weeklyApplicationsPercentageChange),
+            daily: Math.round(dailyApplicationsPercentageChange),
+          },          
         }
       };
 
