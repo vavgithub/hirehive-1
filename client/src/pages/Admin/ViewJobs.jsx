@@ -278,7 +278,7 @@ const ViewJobs = () => {
 
             {activeTab === 'candidate' && (
                <StyledCard backgroundColor={"bg-background-30"} padding={2}>
-                    <div className="max-w-full  ">
+                    <div className="mb-2">
                         <StatsGrid stats={candidateStats} />
                     </div>
                         <div className='w-full'>
