@@ -860,6 +860,7 @@ const createJob = async (req, res) => {
       jobDescription: sanitizedDescription,
       status,
       createdBy: req.user._id,
+      company_id : req.user?.company_id,
       questions,
     });
 

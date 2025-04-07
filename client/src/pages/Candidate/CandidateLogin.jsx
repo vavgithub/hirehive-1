@@ -39,7 +39,7 @@ const CandidateLogin = () => {
 
   useEffect(()=>{
     if(isAuthenticated){
-      navigate('/candidate/all-jobs',{replace:true});
+      navigate('/candidate/my-jobs',{replace:true});
     }
   },[isAuthenticated])
 
@@ -66,7 +66,7 @@ const CandidateLogin = () => {
       if(isFormValid){
         const result = await dispatch(loginCandidateAuth({ email, password })).unwrap();
         if (result) {
-          navigate('/candidate/all-jobs',{replace:true});
+          navigate('/candidate/my-jobs',{replace:true});
         }
       }else{
         (!email.trim() && !password.trim()) ? setError("Please enter your email and password") : !email.trim() ? setError("Please enter your email") :  !password.trim() ? setError("Please enter your password") :  setError("")

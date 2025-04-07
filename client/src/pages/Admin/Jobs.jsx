@@ -414,6 +414,7 @@ const Jobs = () => {
                                             handleAction={handleAction}
                                             onClick={job.status === "deleted" ? undefined :
                                                 () => handleViewJob(job._id)}
+                                            role={role}
                                         />
                                     )
                                 })
