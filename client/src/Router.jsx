@@ -36,11 +36,16 @@ import Teams from './pages/Admin/Teams.jsx';
 import TeamsProfile from './pages/Admin/TeamsProfile.jsx';
 import Jobs from './pages/Admin/Jobs.jsx';
 import AdminDashboard from './pages/Admin/AdminDashboard.jsx';
+import CompanyHome from './pages/Candidate/CompanyHome.jsx';
 
 export const router = createBrowserRouter([
   {
     path: "/",
     element: <HomePage />,
+  },
+  {
+    path: "/:companyId",
+    element: <CompanyHome />,
   },
   {
     path: '/login',

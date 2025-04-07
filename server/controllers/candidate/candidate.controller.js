@@ -6,6 +6,7 @@ import { asyncHandler } from "../../utils/asyncHandler.js";
 import { User } from "../../models/admin/user.model.js";
 import { jobs } from "../../models/admin/jobs.model.js";
 import { archiveJob } from "../admin/jobs.controller.js";
+import { Company } from "../../models/admin/company.model.js";
 
 export const submitDesignTask = async (req, res) => {
   try {
@@ -146,24 +147,35 @@ const jobSpecificStats = asyncHandler(async (req, res, next) => {
 
 const fetchActiveJobs = async (req, res) => {
   try {
-    const { page } = req.query;
+    const { page ,companyId } = req.query;
     const pageNumber = page ? parseInt(page) : 1;
     const LIMIT = 3;
 
+    let userIds = [];
+    let companyDetails = {};
+
+    if(companyId){
+      companyDetails = await Company.findById({_id : companyId});
+      // Find all users in the same company
+      const usersInCompany = await User.find({ company_id : companyId }, '_id'); // Get only _id fields
+      // Extract user _id values into an array
+        userIds = usersInCompany.map(user => user._id);
+    }
+
     // Find jobs where status is "open" and sort by creation date in descending order
     const activeJobs = await jobs
-      .find({ status: "open" }).populate('company_id')
+      .find(userIds?.length > 0 ? { status: "open" , createdBy : { $in : userIds }} : { status: "open" }).populate('company_id')
       .sort({ createdAt: -1 })
       .skip((pageNumber - 1) * LIMIT)
       .limit(LIMIT);
 
-    const totalOpenJobs = await jobs.countDocuments({status: "open"})  
+    const totalOpenJobs = await jobs.countDocuments(userIds?.length > 0 ? { status: "open" , createdBy : { $in : userIds }} : { status: "open" })  
 
     if (activeJobs.length === 0) {
       return res.status(404).json({ message: "No active jobs found" });
     }
 
-    res.status(200).json({activeJobs,totalOpenJobs});
+    res.status(200).json(userIds?.length > 0 ? {companyDetails,activeJobs,totalOpenJobs} : {activeJobs,totalOpenJobs});
   } catch (error) {
     res.status(500).json({ message: "Error fetching open jobs", error: error.message });
   }
@@ -551,13 +563,17 @@ const filterSearchJobs = asyncHandler(async (req, res) => {
   const { employmentType, jobProfile, experience ,budget } = req.body.filters;
   const query = { status: 'open' }; // Add the status filter here
 
-  const { page } = req.body;
+  const { page , companyId } = req.body;
   const pageNumber = page ? parseInt(page) : 1;
   const LIMIT = 3;
 
   //Search
   const searchTerm = req.body?.query ?? "";
   query.jobTitle =  { $regex: searchTerm, $options: "i" }
+
+  if(companyId){
+    query.company_id = companyId
+  }
 
   if (employmentType && employmentType.length > 0) {
     query.employmentType = { $in: employmentType };
@@ -584,7 +600,7 @@ const filterSearchJobs = asyncHandler(async (req, res) => {
     }
   }
 
-  const filteredSearchJobs = await jobs.find(query)
+  const filteredSearchJobs = await jobs.find(query).populate('company_id')
   .sort({ createdAt: -1 })
   .skip((pageNumber - 1) * LIMIT)
   .limit(LIMIT); // Fetch jobs with the new query including status: 'open'

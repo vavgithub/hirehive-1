@@ -142,7 +142,7 @@ const JobCard = ({
         <span className="bg-blue-300 text-blue-100 typography-body px-4 py-2 rounded-xl">
           Applied
         </span>}
-        {(role === "Admin" || role === "Hiring Manager") && 
+        {(role === "Admin" || role === "Hiring Manager") && job?.status === 'open' && 
         <div>
           <CustomToolTip arrowed title={"Copy link"}>
             <div onClick={(e) => handleCopyLink(e,job?._id)} className='cursor-pointer p-2 h-10 flex justify-center items-center bg-background-70 hover:bg-background-80 rounded-xl'>
