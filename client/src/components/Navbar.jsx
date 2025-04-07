@@ -15,6 +15,7 @@ import LightLogo from "../svg/Logo/lightLogo.svg"
 import {NotificationIcon, NotificationIconActive} from '../svg/Staging/NotificationIcon';
 import {SettingsIcon, SettingsIconActive} from '../svg/Staging/SettingsIcon';
 import StyledMenu from './ui/StyledMenu';
+import { BookmarkFilledIcon, BookmarkIcon } from '../svg/Checkboxes/BookmarkIcons';
 
 const Navbar = () => {
     const navigate = useNavigate();
@@ -56,12 +57,12 @@ const Navbar = () => {
     };
 
     const NavItem = ({ to, icon: Icon, activeIcon: ActiveIcon, iconData, children }) => (
-        <div className="relative flex flex-row items-center justify-between hover:bg-background-60">
+        <div className="relative flex flex-row items-center justify-between hover:bg-background-60 rounded-xl mx-2">
             <NavLink
                 to={to}
                 end={to === "/admin/dashboard" || to === "/design-reviewer/dashboard"}
                 className={({ isActive, isPending }) =>
-                    `w-full flex items-center gap-2 pl-2 ${isActive || isPending ? "text-font-accent" : ""}`
+                    `w-full flex items-center min-h-11 gap-2 pl-2 py-2 rounded-xl ${isActive || isPending ? "text-font-accent bg-background-60" : ""}`
                 }
             >
                 {({ isActive, isPending }) => (
@@ -108,7 +109,7 @@ const Navbar = () => {
                 <NavLink
                 to={profilePath}
                 className={({ isActive }) =>
-                    `w-full flex items-center ${isActive ? "text-font-accent" : ""}  hover:bg-background-60 px-4 py-2 rounded-xl `}
+                    `w-full flex items-center ${isActive ? "text-font-accent  " : ""}  hover:bg-background-60 px-4 py-2 rounded-xl `}
                 >
                     <Profile />
                     <span className='typography-body  ml-2 font-outfit'>
@@ -132,16 +133,16 @@ const Navbar = () => {
 
         return (
             <>
-                <div className={`flex items-center px-2 justify-start hover:bg-background-60`}>
+                <div className={`flex items-center px-2 py-1 mx-2 rounded-xl justify-start hover:bg-background-60 ${location.pathname === profilePath ? "bg-background-60" : ""}`}>
                     <IconButton
                         onClick={handleMenuClick}
-                        className={`flex gap-2  ${location.pathname === profilePath ? "text-font-accent" : ""}`}
+                        className={`flex gap-2  ${location.pathname === profilePath ? "text-font-accent  " : ""}`}
                     >
                         <Avatar alt={user?.name} sx={{ width: "32px", height: "32px" }}
                             src={user?.profilePicture} />
                         <span className={`typography-body  ${location.pathname === profilePath ? "text-font-accent" : "text-white"} `}>{user?.name}</span>
                     </IconButton>
-                    <div className={`absolute right-0 w-1 h-6 rounded-tl-xl rounded-bl-xl ${location.pathname === profilePath ? "bg-teal-400" : "bg-transparent"}`} />
+                    <div className={`absolute right-2 w-1 h-6 rounded-tl-xl rounded-bl-xl ${location.pathname === profilePath ? "bg-teal-400" : "bg-transparent"}`} />
                 </div>
                 <StyledMenu anchorEl={anchorEl} handleMenuClose={handleMenuClose} itemComponents={itemComponents} />
                 
@@ -155,7 +156,8 @@ const Navbar = () => {
                 <>
                     {/* <NavItem to="/admin/dashboard" icon={DashboardIcon} activeIcon={DashboardIconActive}>Dashboard</NavItem> */}
                     <NavItem to="/admin/jobs" icon={JobsIcon} activeIcon={JobsIconActive}>Jobs</NavItem>
-                    <NavItem to="/admin/candidates" icon={CandidatesIcon} activeIcon={CandidatesIconActive}>Candidates</NavItem>
+                    <NavItem to="/admin/candidates" icon={CandidatesIcon} activeIcon={CandidatesIconActive}>All Candidates</NavItem>
+                    <NavItem to="/admin/shortlisted" icon={BookmarkIcon} activeIcon={BookmarkFilledIcon}>Future Gems</NavItem>
                     {/* <NavItem to="/admin/reviews" icon={ReviewsIcon} activeIcon={ReviewsIconActive}>Reviews</NavItem>
                     <NavItem to="/admin/reports" icon={ReportsIcon} activeIcon={ReportsIconActive}>Reports</NavItem> */}
                 </>
@@ -174,10 +176,9 @@ const Navbar = () => {
 
     return (
         <div id='adminContainer' className='flex bg-main-bg bg-cover bg-top h-full overflow-x-hidden '>
-            <div className="fixed flex min-h-screen w-48 flex-col gap-6 bg-background-100 text-font-gray typography-large-p justify-between py-4 ">
+            <div className="fixed flex min-h-screen w-[16rem] flex-col gap-6 bg-background-100 text-font-gray typography-large-p justify-between py-4 ">
                 <div className='flex flex-col gap-5 typography-body'>
                 <div className='p-2 flex '>
-
                 <img className='h-11' src={LightLogo}/>
                 </div>
                     {renderMenuItems()}
@@ -188,7 +189,7 @@ const Navbar = () => {
                 </div>
             </div>
 
-            <div className='ml-[12rem] w-[calc(100vw-12rem)] flex justify-center min-h-screen'>
+            <div className='ml-[16rem] w-[calc(100vw-16rem)] flex justify-center min-h-screen'>
                 <Outlet />
             </div>
         </div>

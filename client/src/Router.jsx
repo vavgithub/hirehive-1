@@ -31,6 +31,7 @@ import MyJobs from './pages/Candidate/MyJobs.jsx';
 import AllJobs from './pages/Candidate/AllJobs.jsx';
 import Profile from './pages/Admin/Profile.jsx';
 import AssessmentResponse from './pages/Admin/AssessmentResponse.jsx';
+import Shortlisted from './pages/Admin/Shortlisted.jsx';
 
 export const router = createBrowserRouter([
   {
@@ -120,6 +121,10 @@ export const router = createBrowserRouter([
         element: <Dashboard />
       },
       {
+        path: "shortlisted",
+        element: <Shortlisted />
+      },
+      {
         path: "assessment/:id",
         element: <AssessmentResponse />
       },
@@ -160,6 +165,11 @@ export const router = createBrowserRouter([
       },
       {
         path: "candidates/view-candidate/:candidateId/:jobId",
+        element:
+          <ViewCandidateProfile />
+      },
+      {
+        path: "shortlisted/view-candidate/:candidateId/:jobId",
         element:
           <ViewCandidateProfile />
       },

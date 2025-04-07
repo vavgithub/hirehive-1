@@ -177,13 +177,13 @@ const ApplicationStaging = ({ candidateId, jobId ,jobStatus}) => {
                 {stages.map((stage, index) => (
                     <React.Fragment key={stage}>
                         <div
-                            className={`stage-item flex typography-body flex-col gap-2 justify-center items-center cursor-pointer ${isStageVisible(stage) ? '' : 'opacity-50'}`}
+                            className={`stage-item flex typography-body flex-col gap-2 justify-center items-center ${isStageVisible(stage) ? '' : 'opacity-50 cursor-not-allowed'}`}
                             onClick={() => isStageVisible(stage) && setSelectedStage(stage)}
                         >
                             <div className="stage-icon">
                                 {getStageIcon(stage, index)}
                             </div>
-                            <div className={`stage-name mb-2 typography-body ${stage === currentStage ? "text-font-accent" : "text-white"}`}>
+                            <div className={`stage-name mb-2 typography-body ${stage === currentStage ? "text-font-accent cursor-pointer " : "text-white "}  `}>
                                 {stage}
                             </div>
                         </div>

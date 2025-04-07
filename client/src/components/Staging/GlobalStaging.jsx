@@ -408,7 +408,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
         <div className='flex items-center w-[40%] justify-end'>
             {
                 isClosed &&
-                <div className='absolute top-0  right-0 flex items-center justify-center h-full'>
+                <div className='absolute top-4  right-0 flex items-center justify-center h-fit'>
                     <ClosedBadge />
                 </div>
             }
@@ -450,7 +450,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
         <div >
         {(!stageData?.scheduledDate && stageBasedConfig?.hasLabel) && <div className='my-4'><Label icon={stageBasedConfig?.hasLabel?.icon} text={stageBasedConfig?.hasLabel?.hasCustomContent ? (stageBasedConfig?.hasLabel?.content + candidateData?.jobApplication?.jobApplied) : stageBasedConfig?.hasLabel?.content} /></div>}
         {
-            stageBasedConfig?.hasSubmissionDetails && 
+            stageBasedConfig?.hasSubmissionDetails  && 
             <SubmissionDetails candidateData={candidateData} stageData={stageData} />
         }
         {(!stageData?.scheduledDate && stageBasedConfig?.hasAssigneeSelector) && 
@@ -481,12 +481,19 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
             </div>
         }
         {
-            stageBasedConfig?.hasTaskDetails && 
+            (stageBasedConfig?.hasScheduledLabel && stageData?.scheduledDate && stageTitle === "Design Task" && currentStatus === "Sent") &&
+            <div className='mt-4'>
+            <Label icon={WarningIcon} text={`Rejection mail is Scheduled for ${formatIntoLocaleString(stageData?.scheduledDate)}`}/>
+            <TaskDetails stageData={stageData} />
+            </div>
+        }
+        {
+            stageBasedConfig?.hasTaskDetails && !stageData?.scheduledDate && 
             <TaskDetails stageData={stageData} />
         }
         {
             stageBasedConfig?.hasHiredLabel && 
-                <img className='absolute top-2 left-3/4' src={HiredStamp} alt='Hired Stamp' />
+                <img className='absolute top-4 left-3/4' src={HiredStamp} alt='Hired Stamp' />
         }
         {
             stageBasedConfig?.hasSubmissionForm && 
@@ -555,16 +562,14 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
       {stageBasedConfig?.hasScheduledForm && 
         <div className='w-full mt-4'>
           <ScheduleForm
-            candidateId={candidateId}
-            jobId={jobId}
+            candidateData={candidateData}
             onSubmit={handleSchedule}
           />
         </div>}
       {
         isRescheduling && 
         <ScheduleForm
-            candidateId={candidateId}
-            jobId={jobId}
+            candidateData={candidateData}
             onSubmit={handleReschedule}
             isRescheduling={true}
             initialData={stageData.currentCall}
@@ -572,22 +577,26 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
         />
       }
 
-    {(stageBasedConfig?.hasCallHistory && stageData?.callHistory?.length > 0) && 
+    {(stageBasedConfig?.hasCallHistory ) && 
       <div className='mt-4 relative w-[50%]'>
-          <h3 className='typography-small-p text-font-gray mt-1'>Reschedules</h3>
-          {stageData.callHistory.filter((call,index) => index === 0).map((call, index) => (
+          <h3 className='typography-small-p text-font-gray mt-1'>{currentStatus !== "Cleared" ? "Reschedules" : "Calls"}</h3>
+          {currentStatus !== "Cleared" ? ( stageData?.callHistory?.length > 0 && stageData.callHistory.filter((call,index) => index === 0).map((call, index) => (
               <div key={index} className='mt-2 '>
                   {renderCallData(call, true)}
                   {/* <p className='typography-small-p text-font-gray mt-3'>Status: {call.status}</p> */}
               </div>
-          ))}       
-          {showMore && stageData.callHistory.filter((call,index)=>index !== 0).map((call, index) => (
+          )) ): 
+        <div  className='mt-2 '>
+            {renderCallData(stageData?.currentCall, true)}
+        </div>
+          }       
+          {showMore &&  stageData?.callHistory?.length > 0 && stageData.callHistory.filter((call,index)=>currentStatus !== "Cleared" ? index !== 0 : true).map((call, index) => (
               <div key={index} className='mt-2 '>
                   {renderCallData(call, true)}
                   {/* <p className='typography-small-p text-font-gray mt-3'>Status: {call.status}</p> */}
               </div>
           ))}
-           {stageData?.callHistory?.length > 1 && <p onClick={() => setShowMore(!showMore)} className='cursor-pointer mt-2 typography-small-p text-font-gray flex items-center gap-1 '>{!showMore ? <><ChevronDown size={16} /> Show More </> : <> <ChevronUp size={16} /> Hide</>}</p>}
+           {stageData?.callHistory?.length > (currentStatus !== "Cleared" ? 1 : 0)&& <p onClick={() => setShowMore(!showMore)} className='cursor-pointer mt-2 typography-small-p text-font-gray flex items-center gap-1 '>{!showMore ? <><ChevronDown size={16} /> Show More </> : <> <ChevronUp size={16} /> Hide</>}</p>}
       </div>
     }
     {
@@ -595,7 +604,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
         <div className='mt-4'><Label icon={WarningIcon} text={`Rejection mail is Scheduled for ${formatIntoLocaleString(stageData?.scheduledDate)}`}/></div>
     }
       {/* Action Section */}
-      {stageBasedConfig?.actions && !((currentStatus === "Reviewed" || stageTitle === "Portfolio")&& stageData?.scheduledDate) &&
+      {stageBasedConfig?.actions && !((currentStatus === "Reviewed" || stageTitle === "Portfolio" || stageTitle === "Design Task")&& stageData?.scheduledDate) &&
       <div className='w-full flex justify-end mt-4'>
           <div className='flex items-center gap-4'>
               {(stageBasedConfig.actions?.hasRejectAction && !isRescheduling) && 

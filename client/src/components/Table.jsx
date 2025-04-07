@@ -26,7 +26,13 @@ import AutoAssignWithBudget from './tableUtilities/AutoAssignWithBudget';
 import MuiCustomStylesForDataGrid from './tableUtilities/MuiCustomStylesForDataGrid';
 import BudgetMenu from './tableUtilities/BudgetMenu';
 
-const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
+const Table = ({ 
+  jobId, jobData, 
+  readOnly = false, 
+  readOnlyData = [],
+  additionalColumns = [], // New prop for custom columns
+  customNavigationPath = null // New prop for custom navigation path
+}) => {
 
   //For getting routes
   const location = useLocation();
@@ -111,8 +117,8 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
     if (!rowsData) return [];
     if (budgetFilter.from === '' || budgetFilter.to === '') return rowsData;
     return rowsData?.filter(row => {
-      const expectedCTC = parseFloat(row.expectedCTC);
-      return expectedCTC >= parseFloat(budgetFilter.from) && expectedCTC <= parseFloat(budgetFilter.to);
+      const budgetValue = parseFloat((jobData?.employmentType === "Contract") ? (row.hourlyRate ?? 0) : row.expectedCTC);
+      return budgetValue >= parseFloat(budgetFilter.from) && budgetValue <= parseFloat(budgetFilter.to);
     });
   }, [rowsData, budgetFilter]);
 
@@ -315,7 +321,7 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
     setBudgetFilter(tempBudgetFilter);
     localStorage.setItem(`budgetFilter_${jobId}`, JSON.stringify(tempBudgetFilter));
     setIsBudgetModalOpen(false);
-    showSuccessToast("Screened with budget", `Candidates successfully screened within the budget ${tempBudgetFilter.from}LPA - ${tempBudgetFilter.to}LPA`)
+    showSuccessToast("Screened with budget", `Candidates successfully screened within the budget ${tempBudgetFilter.from}${jobData?.employmentType === "Contract" ? " INR/hr" :" LPA"} - ${tempBudgetFilter.to}${jobData?.employmentType === "Contract" ? " INR/hr" :" LPA"}`)
   };
 
   const clearBudgetFilter = () => {
@@ -365,26 +371,45 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
   };
 
   //getting column configurations
-  const columns = readOnly ? 
-  getReadOnlyColumns(role,handleDocumentClick,showContractors) : 
-  getDefaultColumns(role,
-    canMove,canReject,
-    handleAssigneeChange,
-    handleMoveClick,
-    handleRejectClick,
-    handleRatingClick,
-    handleDocumentClick);
+   // Update the columns generation
+   const columns = (() => {
+    let baseColumns = readOnly ? 
+      getReadOnlyColumns(role, handleDocumentClick) : 
+      getDefaultColumns(role, canMove, canReject, handleAssigneeChange, 
+        handleMoveClick, handleRejectClick, handleRatingClick, handleDocumentClick);
+    
+    // Insert additional columns after the first column
+    if (additionalColumns.length > 0) {
+      return [
+        ...baseColumns.slice(0, 1), // Keep the first column (fullName)
+        ...baseColumns.slice(1,6),     // Add the rest of the columns
+        ...additionalColumns,       // Add custom columns
+        ...baseColumns.slice(6,10),     // Add the rest of the columns
+      ];
+    }
+    
+    return baseColumns;
+  })();
 
   const navigate = useNavigate();
 
 
- const handleRowClick = (params) => {
-  // Save the current window scroll position before navigation
+  const handleRowClick = (params) => {
+    // Save the current window scroll position before navigation
     if(location.pathname === '/admin/candidates' || location.pathname === '/hiring-manager/candidates'){
       sessionStorage.setItem('candidates_scroll_position', window.scrollY);
-    }else{
-      sessionStorage.setItem('job_candidates_scroll_position',document.getElementById('adminContainer').scrollTop);
+    } else {
+      sessionStorage.setItem('job_candidates_scroll_position',document.getElementById('adminContainer')?.scrollTop || 0);
     }
+
+    // Use custom navigation path if provided
+    if (customNavigationPath) {
+      const targetJobId = readOnly ? params.row.jobId : jobId;
+      navigate(`${customNavigationPath}/${params.row._id}/${targetJobId}`, { replace: true });
+      return;
+    }
+
+    // Default navigation logic
     if (role === "Hiring Manager") {
       // Determine if we're on the jobs page or candidates page
       const isJobsPage = location.pathname.includes('/admin/jobs/');
@@ -398,7 +423,6 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
       const targetJobId = isJobsPage ? jobId : params.row.jobId;
       
       const fullUrl = `${baseUrl}/${params.row._id}/${targetJobId}`;
-      // console.log("Navigating to:", fullUrl);
       
       navigate(fullUrl, { replace: true }); // Add replace:true to prevent extra history entry
     } else {
@@ -471,7 +495,7 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
 
       <MuiCustomStylesForDataGrid/>
 
-      <div className='flex justify-between py-4 gap-2'>
+      <div className='flex justify-between pb-2 gap-2'>
 
         {/* {here is the place to add the search bar ,  filter , export button } */}
 
@@ -505,7 +529,7 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
                 <path d="M5 12l4 4L19 7"></path>
               </svg>
             </div>
-            <label htmlFor="typeCheck" className="typography-body whitespace-nowrap text-font-gray">
+            <label htmlFor="typeCheck" className="typography-body whitespace-nowrap text-font-gray cursor-pointer">
               Show Contractors Only
             </label>
           </div>}
@@ -733,6 +757,7 @@ const Table = ({ jobId, readOnly = false, readOnlyData = [] }) => {
             value={tempBudgetFilter}
             onChange={handleBudgetChange}
             required
+            employmentType={jobData?.employmentType}
           />
         </div>
       </Modal>

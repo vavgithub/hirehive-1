@@ -132,7 +132,7 @@ export const stagingConfig = {
                 },
                 "Rejected" : {
                     "Hiring Manager" : {
-                        hasAssigneeSelectorIcon : true,
+                        hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
                         hasBudgetLabel : false,
@@ -496,7 +496,7 @@ export const stagingConfig = {
                 },
                 "Rejected" : {
                     "Hiring Manager" : {
-                        hasAssigneeSelectorIcon : true,
+                        hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
                         hasBudgetLabel : true,
@@ -602,8 +602,11 @@ export const stagingConfig = {
                         },
                         hasRemarks : false,
                         hasScoreCard : false,
-                        actions : false,
-                        hasTaskDetails : true
+                        actions : {
+                            hasRejectAction : true,
+                        },
+                        hasTaskDetails : true,
+                        hasScheduledLabel : true
                     },
                     "Design Reviewer" : {
                         hasAssigneeSelectorIcon : false,
@@ -771,13 +774,14 @@ export const stagingConfig = {
                 },
                 "Rejected" : {
                     "Hiring Manager" : {
-                        hasAssigneeSelectorIcon : true,
+                        hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
                         hasBudgetLabel : false,
                         hasLabel : false,
                         hasRejectionReason : true,
                         hasScoreCard : true,
+                        hasSubmissionDetails : true
                     },
                     "Design Reviewer" : {
                         hasAssigneeSelectorIcon : false,
@@ -1120,7 +1124,7 @@ export const stagingConfig = {
                 },
                 "Rejected" : {
                     "Hiring Manager" : {
-                        hasAssigneeSelectorIcon : true,
+                        hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
                         hasBudgetLabel : false,
@@ -1440,7 +1444,7 @@ export const stagingConfig = {
                 },
                 "Rejected" : {
                     "Hiring Manager" : {
-                        hasAssigneeSelectorIcon : true,
+                        hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
                         hasBudgetLabel : false,
@@ -1631,6 +1635,9 @@ export const stagingConfig = {
     ]
 }
 
+export const getStages = (jobProfile) => {
+    return stagingConfig[jobProfile]?.map(stage => stage?.name)
+}
 
 export const statusConfig = {
     "Accepted": { 
