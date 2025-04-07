@@ -172,9 +172,9 @@ const JobCard = ({
         icon={GraphIcon}
         text={`${job.experienceFrom} - ${job.experienceTo} Year`}
       />
-      {(role !== "Admin" && role !== "Hiring Manager" && role !== "Design Reviewer") && job?.companyDetails?.name && <JobDetailItem
+      {(role !== "Admin" && role !== "Hiring Manager" && role !== "Design Reviewer") && (job?.companyDetails?.name || job?.company_id?.name ) && <JobDetailItem
       icon={CompanyIcon}
-      text={job?.companyDetails?.name}
+      text={job?.companyDetails?.name || job?.company_id?.name }
       />}
     </div>
     <div className=" p-4 ">

@@ -152,7 +152,7 @@ const fetchActiveJobs = async (req, res) => {
 
     // Find jobs where status is "open" and sort by creation date in descending order
     const activeJobs = await jobs
-      .find({ status: "open" })
+      .find({ status: "open" }).populate('company_id')
       .sort({ createdAt: -1 })
       .skip((pageNumber - 1) * LIMIT)
       .limit(LIMIT);
