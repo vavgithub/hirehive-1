@@ -156,7 +156,6 @@ const PreAssessment = () => {
                                         <div className="absolute left-0 flex items-center justify-center h-full w-full bg-black-100 rounded-xl">
                                             <div className='p-6 rounded-full bg-background-80'>
                                                 <IconWrapper isInActiveIcon size={6}  icon={User} />
-                                                {/* <Camera size={48} className="text-gray-600" /> */}
                                             </div>
                                         </div>
                                     )}
@@ -169,7 +168,6 @@ const PreAssessment = () => {
                                             isCameraEnabled ? <IconWrapper size={0} customIconSize={5} customStrokeWidth={6}  icon={Video} /> : pingCamera ? <IconWrapper size={0} isErrorIcon customIconSize={5} customStrokeWidth={6}  icon={VideoOff} /> : <IconWrapper size={0} customIconSize={5} customStrokeWidth={6}  icon={VideoOff} />
                                         }
                                     
-                                        {/* <Camera size={24} /> */}
                                     </button>
                                     <button
                                         className={`p-3 h-fit rounded-xl bg-background-70   ${pingMic && " animate-bounce-5 "} `}

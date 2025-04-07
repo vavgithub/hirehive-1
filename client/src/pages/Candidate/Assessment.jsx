@@ -259,12 +259,6 @@ const WebcamView = React.memo(({ isMinimized, toggleMinimize, isRecording, webca
           className="absolute inset-0 w-full h-full object-cover"
         />
         <div className="absolute bottom-2 right-2 flex space-x-2 w-fit justify-center">
-          {/* <div className={`p-2 rounded-xl ${isRecording ? 'bg-red-500' : 'bg-gray-800'}`}>
-            <Camera size={20} />
-          </div> */}
-          {/* <div className={`p-2 rounded-xl bg-gray-800`}>
-            <SizableEyeIcon width={18} height={16} />
-          </div> */}
         </div>
         {!isRecording && 
         <div className='absolute flex items-center justify-center opacity-25 w-full h-full top-0 left-0 bg-background-80'>

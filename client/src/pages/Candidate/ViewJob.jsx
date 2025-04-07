@@ -128,7 +128,7 @@ const ViewJob = () => {
                     <div className="lg:hidden mt-8">
                         {!hasApplied &&
                             (
-                                <Button variant="primary" className="w-full mb-4" onClick={handleApplyClick} iconPosition="right" icon={ArrowIcon} >
+                                <Button variant="primary" className="w-full mb-4" onClick={handleApplyClick} iconPosition="right" icon={()=><IconWrapper icon={ArrowRight} size={0} />} >
                                     Apply Job
                                 </Button>
                             )}

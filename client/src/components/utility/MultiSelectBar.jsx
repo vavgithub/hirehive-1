@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import ThreeDotsHorizontal from '../../svg/Icons/ThreeDotsHorizontal'
 import Modal from '../Modals/Modal'
 import axios from '../../api/axios'
 import { showErrorToast, showSuccessToast } from '../ui/Toast'
@@ -9,7 +8,7 @@ import AssigneeSelector from '../MUIUtilities/AssigneeSelector'
 import RatingSelector from '../MUIUtilities/RatingSelector'
 import RejectionSelector from '../MUIUtilities/RejectionSelector'
 import IconWrapper from '../Cards/IconWrapper'
-import { ArrowRight, Star, User, X } from 'lucide-react'
+import { ArrowRight, Calendar, Ellipsis, Star, User, X } from 'lucide-react'
 import { UNKNOWN_PROFILE_PICTURE_URL } from '../../utility/config'
 
 export const getMaxScoreEachStage = (currentStage) =>{
@@ -127,7 +126,7 @@ const multiSelectConfig = [
     //     label : "Reschedule",
     //     customTitle : "Reschedule",
     //     customMessage : "",
-    //     icon : WhiteCalenderIcon,
+    //     icon : ()=> <IconWrapper inheritColor icon={Calendar} size={0} isInActiveIcon customIconSize={5} />,
     //     validStatus : [],
     //     type : "POPUP",
     //     extraStyles : ""
@@ -409,7 +408,7 @@ function MultiSelectBar({selectedData,jobId,clearSelection}) {
                         <div key={config.name} className='relative flex items-center justify-between gap-4'>
                         <div className='h-8 w-[1px] bg-font-gray'></div>
                         <div onClick={()=>setOpenPalette(!openPalette)} className='flex items-center justify-center gap-4 cursor-pointer'>
-                            <ThreeDotsHorizontal/>
+                            <IconWrapper icon={Ellipsis} size={0} customIconSize={5} />
                             <p className={'typography-body '}>More</p>
                         </div>
                         {openPalette && <div className='absolute top-12 right-0 z-10 w-fit flex flex-col gap-4 bg-grey-70 p-4 rounded-xl'>

@@ -130,10 +130,6 @@ function Teams() {
                     <StyledCard key={member?.member_id ? member?.member_id : member?._id} onClick={()=>navigate(`/admin/teams/profile/${member?.member_id ? member?.member_id : member?._id}`)} padding={2} extraStyles={'flex flex-col items-center cursor-pointer justify-between gap-4'}>
                         {/* Member Profile Picture */}
                         <div className="w-full aspect-square rounded-xl overflow-hidden relative">
-                            {/* {!member?.member_id && 
-                            <span className="absolute top-2 right-2 p-2 bg-background-60 rounded-xl">
-                                <PencilIcon />
-                            </span>} */}
                             <img src={member?.profilePicture || UNKNOWN_PROFILE_PICTURE_URL } alt="" className='object-cover w-full overflow-hidden' />
                         </div>
                         {/* Memeber Details */}
