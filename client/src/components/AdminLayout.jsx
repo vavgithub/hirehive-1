@@ -7,9 +7,8 @@ import { useAuthContext } from '../context/AuthProvider';
 import LightLogo from "../svg/Logo/lightLogo.svg"
 import StyledMenu from './MUIUtilities/StyledMenu';
 import IconWrapper from './Cards/IconWrapper';
-import { Briefcase, FileText, LayoutGrid, LogOut, Star, User, Users } from 'lucide-react';
+import { Briefcase, FileText, LayoutGrid, LogOut, MonitorDot, Star, User, Users } from 'lucide-react';
 import { UNKNOWN_PROFILE_PICTURE_URL } from '../utility/config';
-import { BookmarkFilledIcon, BookmarkIcon } from '../svg/Checkboxes/BookmarkIcons';
 
 const AdminLayout = () => {
     const navigate = useNavigate();
@@ -149,7 +148,7 @@ const AdminLayout = () => {
                     <NavItem to="/admin/dashboard" icon={()=><IconWrapper isInActiveIcon icon={LayoutGrid} />} activeIcon={()=><IconWrapper isActiveIcon icon={LayoutGrid} />}>Dashboard</NavItem>
                     <NavItem to="/admin/jobs" icon={()=><IconWrapper isInActiveIcon icon={Briefcase} />} activeIcon={()=><IconWrapper isActiveIcon icon={Briefcase} />}>Jobs</NavItem>
                     <NavItem to="/admin/candidates" icon={()=><IconWrapper isInActiveIcon icon={Users} />} activeIcon={()=><IconWrapper isActiveIcon icon={Users} />}>All Candidates</NavItem>
-                    <NavItem to="/admin/shortlisted" icon={BookmarkIcon} activeIcon={BookmarkFilledIcon}>Future Gems</NavItem>
+                    <NavItem to="/admin/shortlisted" icon={()=><IconWrapper isInActiveIcon icon={MonitorDot} />} activeIcon={()=><IconWrapper isActiveIcon icon={MonitorDot} />}>Future Gems</NavItem>
                     <NavItem to="/admin/teams" icon={()=><IconWrapper isInActiveIcon icon={FileText} />} activeIcon={()=><IconWrapper isActiveIcon icon={FileText} />}>Teams</NavItem>
                     {/* <NavItem to="/admin/reviews" icon={ReviewsIcon} activeIcon={ReviewsIconActive}>Reviews</NavItem> */}
                     {/* <NavItem to="/admin/reviews" icon={ReviewsIcon} activeIcon={ReviewsIconActive}>Reviews</NavItem>

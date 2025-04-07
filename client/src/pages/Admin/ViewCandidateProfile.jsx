@@ -21,7 +21,7 @@ import { getStageColor, maxScoreOfEachStage } from '../../components/Staging/sta
 import { CustomDropdown } from '../../components/Dropdowns/CustomDropdown';
 import Container from '../../components/Cards/Container';
 import IconWrapper from '../../components/Cards/IconWrapper';
-import { ArrowLeftRight, ClipboardCheck, FileText, FileUser, FolderOpen, Globe, Mail, Notebook, NotebookPen, Phone, Users } from 'lucide-react';
+import { ArrowLeftRight, ClipboardCheck, FileText, FileUser, FolderOpen, Globe, Mail, MonitorDot, Notebook, NotebookPen, Phone, Users } from 'lucide-react';
 import { UNKNOWN_PROFILE_PICTURE_URL } from '../../utility/config';
 import RatingSelector, { getRatingIcon } from '../../components/MUIUtilities/RatingSelector';
 import Modal from '../../components/Modals/Modal';
@@ -30,7 +30,6 @@ import LoaderModal from '../../components/Loaders/LoaderModal';
 import { truncatedText } from '../../utility/truncatedHTML';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 import { formatTime } from '../../utility/formatTime';
-import { BookmarkIcon, BookmarkWhiteFilledIcon } from '../../svg/Checkboxes/BookmarkIcons';
 import { showErrorToast, showSuccessToast } from '../../components/ui/Toast';
 
 export const VAVScoreCard = ({score,stage,scoreStages})=>{
@@ -539,7 +538,7 @@ const ViewCandidateProfile = () => {
                                             {(role === "Hiring Manager" || role === "Admin") &&
                                                 <div className='cursor-pointer bg-background-70 hover:bg-accent-300 rounded-xl w-11 h-11 flex justify-center items-center' onClick={handleToggleShortlist}>
                                                     <CustomToolTip title={data?.jobApplication?.shortlisted ? 'Remove from Future Gems' : 'Add to Future Gems'} arrowed size={2}>
-                                                        {data?.jobApplication?.shortlisted ? <BookmarkWhiteFilledIcon /> : <BookmarkIcon />}
+                                                        {data?.jobApplication?.shortlisted ? <IconWrapper hasBg icon={MonitorDot} /> : <IconWrapper isInActiveIcon hasBg icon={MonitorDot} />}
                                                     </CustomToolTip>
                                                 </div>
                                             }
