@@ -44,7 +44,7 @@ export const router = createBrowserRouter([
     element: <HomePage />,
   },
   {
-    path: "/:companyId",
+    path: "/org/:companyId",
     element: <CompanyHome />,
   },
   {
@@ -89,6 +89,10 @@ export const router = createBrowserRouter([
   },
   {
     path: "/:id",
+    element: <ViewJob />
+  },
+  {
+    path: "/org/:companyId/view-job/:id",
     element: <ViewJob />
   },
   {

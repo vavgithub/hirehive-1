@@ -131,7 +131,7 @@ const CompanyHome = () => {
     };
 
     const handleViewJob = (jobId) => {
-        navigate(`/${jobId}`)
+        navigate(`view-job/${jobId}`)
     };
 
     const handleSearch = (event) => {
