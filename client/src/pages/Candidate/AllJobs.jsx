@@ -132,8 +132,8 @@ const AllJobs = () => {
         return
     };
 
-    const handleViewJob = (jobId) => {
-        navigate(`/${jobId}`)
+    const handleViewJob = (jobId,companyId) => {
+        navigate(`/org/${companyId}/view-job/${jobId}`)
     };
 
     const handleSearch = (event) => {
@@ -228,7 +228,7 @@ const AllJobs = () => {
                                             isApplied={candidateData?.jobApplications.some(app => app.jobId === job._id)}
                                             withKebab={false}
                                             handleAction={handleAction}
-                                            onClick={() => handleViewJob(job._id)}
+                                            onClick={() => handleViewJob(job._id,job?.companyDetails?._id ?? job?.company_id?._id)}
                                         />
                                     )
                                 })}
