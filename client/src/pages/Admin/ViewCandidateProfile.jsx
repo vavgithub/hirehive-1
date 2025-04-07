@@ -30,6 +30,8 @@ import LoaderModal from '../../components/Loaders/LoaderModal';
 import { truncatedText } from '../../utility/truncatedHTML';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 import { formatTime } from '../../utility/formatTime';
+import { BookmarkIcon, BookmarkWhiteFilledIcon } from '../../svg/Checkboxes/BookmarkIcons';
+import { showErrorToast, showSuccessToast } from '../../components/ui/Toast';
 
 export const VAVScoreCard = ({score,stage,scoreStages})=>{
     const [showBreakDown,setShowBreakDown] = useState(false);
@@ -110,6 +112,11 @@ const addNotes = async ({ candidateId, jobId, notesData }) => {
     return response?.data;
 };
 
+const toggleShortlistStatus = async ({ candidateId, jobId, shortlisted }) => {
+    const response = await axios.post(`/admin/candidate/${candidateId}/job/${jobId}/shortlist`, { shortlisted });
+    return response?.data;
+  };
+
 // Update the transformCandidateData function
 const transformCandidateData = (data) => {
     const professionalInfo = data.jobApplication.professionalInfo;
@@ -156,7 +163,7 @@ const ViewCandidateProfile = () => {
     const [openNotes, setOpenNotes] = useState(false);
     const [openNotesView, setOpenNotesView] = useState(false);
     const [notes, setNotes] = useState("");
-    const [showMore,setShowMore] = useState(false);
+    const [showMore, setShowMore] = useState(false);
 
     const [ratingAnchor, setRatingAnchor] = useState(null);
     const queryClient = useQueryClient();
@@ -199,14 +206,19 @@ const ViewCandidateProfile = () => {
     const [originalPath] = useState(() => {
         const isJobPath = location.pathname.includes('/admin/jobs/');
         const isJobPathHR = location.pathname.includes('/hiring-manager/jobs/');
-        if (isJobPath) {
-            return `/admin/jobs/view-job/${jobId}`;
+        const isShortlistedPath = location.pathname.includes('/admin/shortlisted/');
+        
+        if (isShortlistedPath) {
+          return '/admin/shortlisted';
+        } else if (isJobPath) {
+          return `/admin/jobs/view-job/${jobId}`;
         }
         if (isJobPathHR) {
             return `/hiring-manager/jobs/view-job/${jobId}`;
         }
-        return role === "Hiring Manager" ?  `/hiring-manager/candidates` : role === "Admin" ? `/admin/candidates` :`/design-reviewer/candidates`; ;
-     })
+        
+        return role === "Hiring Manager" ?  `/hiring-manager/candidates` : role === "Admin" ? `/admin/candidates` :`/design-reviewer/candidates`; 
+       });
 
    // Effect for job switching
    useEffect(() => {
@@ -227,11 +239,19 @@ const ViewCandidateProfile = () => {
     // Handle back navigation
     const handleBack = () => {
         if (role === "Candidate") {
-            navigate(-1);
+          navigate(-1);
         } else {
+          // Check if we're on a shortlisted candidate view
+          const isShortlistedPath = location.pathname.includes('/admin/shortlisted/');
+          
+          if (isShortlistedPath) {
+            navigate('/admin/shortlisted');
+          } else {
             navigate(originalPath);
+          }
         }
-    };
+      };
+      
 
 
     const { data: score, error } = useQuery({
@@ -298,6 +318,33 @@ const ViewCandidateProfile = () => {
             }
         ] : []),
     ];
+
+    const shortlistMutation = useMutation({
+        mutationFn: toggleShortlistStatus,
+        onSuccess: (data, variables) => {
+          queryClient.invalidateQueries(['candidate', candidateId, jobId]);
+          
+          // Show different toast messages based on the shortlist action
+          if (variables.shortlisted) {
+            showSuccessToast("Added to Future Gems", "Candidate has been added to Future Gems");
+          } else {
+            showErrorToast("Removed", "Candidate has been removed from Future Gems");
+          }
+        },
+        onError: (error) => {
+          console.error("Error updating shortlist status:", error);
+          showErrorToast("Error", "Failed to update Future Gems status");
+        }
+      });
+      // Add this handler function
+      const handleToggleShortlist = () => {
+        const currentStatus = data?.jobApplication?.shortlisted || false;
+        shortlistMutation.mutate({
+          candidateId,
+          jobId,
+          shortlisted: !currentStatus
+        });
+      };
 
     const addNotesMutation = useMutation({
         mutationFn: addNotes,
@@ -366,20 +413,20 @@ const ViewCandidateProfile = () => {
         setResumeOpen(true)
     }
 
-    const handleWhatsappOpen = (candidateName,phone) => {
+    const handleWhatsappOpen = (candidateName, phone) => {
         const text = `Hi ${candidateName},\n\n` +
             `Hope you're doing well.\n\n` +
             `I'm ${user.name} from the Value at Void team.\n\n` +
             `Best regards,\nTeam VAV\n\n` +
             `For more information, log on to: https://www.hire.atvoid.com`
-        const message = encodeURIComponent(text);   
+        const message = encodeURIComponent(text);
         const url = `https://wa.me/${phone}?text=${message}`;
         window.open(url, "_blank");
     }
 
     const handleEmailOpen = (candidateName, email, designation, dateTime) => {
         const subject = encodeURIComponent(`Application for the ${designation} Role – Value at Void`);
-        
+
         const body = encodeURIComponent(
             `Hi ${candidateName},\n\n` +
             `Hope you're doing well.\n\n` +
@@ -387,12 +434,12 @@ const ViewCandidateProfile = () => {
             `Best regards,\nTeam VAV\n\n` +
             `For more information, log on to: https://www.hire.atvoid.com`
         );
-    
+
         const mailtoLink = `mailto:${email}?subject=${subject}&body=${body}`;
         window.open(mailtoLink, "_blank");
     };
-    
-    const handleOpenNotes = (e)=>{
+
+    const handleOpenNotes = (e) => {
         setOpenNotes(true)
         e.stopPropagation();
     }
@@ -451,7 +498,7 @@ const ViewCandidateProfile = () => {
                                                     <div className='cursor-pointer' onClick={() => handleWhatsappOpen(data.firstName + " " + data.lastName, data.phone)}>
                                                         <IconWrapper size={0} customIconSize={1} icon={Phone} />
                                                     </div>
-                                        <span className="typography-large-p">{data.phone}</span>
+                                                    <span className="typography-large-p">{data.phone}</span>
                                                 </div>
                                                 <div className="flex items-center gap-2">
                                                     <div className='cursor-pointer' onClick={() => handleEmailOpen(data?.firstName + " " + data?.lastName, data?.email,data?.jobApplication?.jobApplied,new Date(data?.jobApplication?.stageStatuses['Screening']?.currentCall?.scheduledDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) + " " + formatTime(data?.jobApplication?.stageStatuses['Screening']?.currentCall?.scheduledTime))}>
@@ -488,6 +535,15 @@ const ViewCandidateProfile = () => {
                                         </div>
                                     }
 
+                                            {/* Add Shortlist Button/Icon */}
+                                            {(role === "Hiring Manager" || role === "Admin") &&
+                                                <div className='cursor-pointer bg-background-70 hover:bg-accent-300 rounded-xl w-11 h-11 flex justify-center items-center' onClick={handleToggleShortlist}>
+                                                    <CustomToolTip title={data?.jobApplication?.shortlisted ? 'Remove from Future Gems' : 'Add to Future Gems'} arrowed size={2}>
+                                                        {data?.jobApplication?.shortlisted ? <BookmarkWhiteFilledIcon /> : <BookmarkIcon />}
+                                                    </CustomToolTip>
+                                                </div>
+                                            }
+
                                         </div>
                                     </div>
 
@@ -517,9 +573,9 @@ const ViewCandidateProfile = () => {
                                             </div>
                                         </div>
 
-                                        <div className='overflow-hidden font-outfit text-font-gray ' dangerouslySetInnerHTML={{ __html: truncatedText(candidateData?.jobApplication?.notes?.content,55) }}></div>
+                                        <div className='overflow-hidden font-outfit text-font-gray ' dangerouslySetInnerHTML={{ __html: truncatedText(candidateData?.jobApplication?.notes?.content, 55) }}></div>
 
-                                    </StyledCard> : 
+                                    </StyledCard> :
                                     <div onClick={handleOpenNotes} className={'hover:bg-accent-300  bg-background-70  h-fit rounded-xl' + (candidateData?.jobApplication?.notes?.content ? " top-8 right-8 " : " top-4 right-4")}>
                                         <CustomToolTip title={candidateData?.jobApplication?.notes?.content ? "Edit notes" : "Add a note"} arrowed>
                                             {
@@ -527,7 +583,7 @@ const ViewCandidateProfile = () => {
                                             }
                                         </CustomToolTip>
                                     </div>
-                                    }
+                                }
 
                             </StyledCard>
 
@@ -580,7 +636,7 @@ const ViewCandidateProfile = () => {
                             <div className='text-font-gray p-1 w-full overflow-x-hidden overflow-y-scroll scrollbar-hide text-ellipsis whitespace-normal break-words' dangerouslySetInnerHTML={{ __html: candidateData?.jobApplication?.notes?.content }}></div>
                         </div>
                         {
-                           showMore && candidateData?.applications?.filter(app => (app?.notes?.content !== "" && app?.notes?.content !== undefined && app?.notes?.content !== null && app.jobId !== jobId))?.map(app => {
+                            showMore && candidateData?.applications?.filter(app => (app?.notes?.content !== "" && app?.notes?.content !== undefined && app?.notes?.content !== null && app.jobId !== jobId))?.map(app => {
                                 return (
                                     <div className='mb-4 bg-background-40 p-4 rounded-xl'>
                                         <div className='flex justify-between items-center '>
@@ -596,7 +652,7 @@ const ViewCandidateProfile = () => {
                                 )
                             })
                         }
-                        {candidateData?.applications?.filter(app => (app?.notes?.content !== "" && app?.notes?.content !== undefined && app?.notes?.content !== null && app.jobId !== jobId))?.length > 0 && <p onClick={() => setShowMore(!showMore)} className='cursor-pointer typography-body text-font-gray text-start flex gap-1 items-center'>{showMore ?  <> <ChevronDown/> Hide </> :   <> <ChevronRight/> Show more </>}</p>}
+                        {candidateData?.applications?.filter(app => (app?.notes?.content !== "" && app?.notes?.content !== undefined && app?.notes?.content !== null && app.jobId !== jobId))?.length > 0 && <p onClick={() => setShowMore(!showMore)} className='cursor-pointer typography-body text-font-gray text-start flex gap-1 items-center'>{showMore ? <> <ChevronDown /> Hide </> : <> <ChevronRight /> Show more </>}</p>}
                     </div>
                 </Modal>
                 {/* Conditional rendering of tabs for "Hiring Manager" */}

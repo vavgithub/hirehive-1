@@ -287,17 +287,32 @@ const Jobs = () => {
         {
             title: 'Jobs Posted',
             value: overallStats.totalJobs,
-            icon: () => <IconWrapper size={10} isInActiveIcon icon={Briefcase} />
+            icon: () => <IconWrapper size={10} isInActiveIcon icon={Briefcase} />,
+            statistics : {
+                monthly : `${overallStats?.jobStatistics?.monthly ?? 0}% since last month`,
+                weekly : `${overallStats?.jobStatistics?.weekly ?? 0}% since last week`,
+                daily : `${overallStats?.jobStatistics?.daily ?? 0}% since last day`,
+            }
         },
         {
             title: 'Applications Received',  // This label is now more accurate
             value: overallStats.totalApplications, // This now shows total applications
-            icon: () => <IconWrapper size={10} isInActiveIcon icon={FileText} />
+            icon: () => <IconWrapper size={10} isInActiveIcon icon={FileText} />,
+            statistics : {
+                monthly : `${overallStats?.applicationStatistics?.monthly ?? 0}% since last month`,
+                weekly : `${overallStats?.applicationStatistics?.weekly ?? 0}% since last week`,
+                daily : `${overallStats?.applicationStatistics?.daily ?? 0}% since last day`,
+            }
         },
         {
             title: 'Hired',
             value: overallStats.totalHired,
-            icon: () => <IconWrapper size={10} isInActiveIcon icon={CircleCheckBig} />
+            icon: () => <IconWrapper size={10} isInActiveIcon icon={CircleCheckBig} />,
+            statistics : {
+                monthly : `${overallStats?.hiredStatistics?.monthly ?? 0}% since last month`,
+                weekly : `${overallStats?.hiredStatistics?.weekly ?? 0}% since last week`,
+                daily : `${overallStats?.hiredStatistics?.daily ?? 0}% since last day`,
+            }
         }
     ];
 

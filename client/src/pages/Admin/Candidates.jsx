@@ -42,8 +42,14 @@ const Candidates = () => {
     }
   }, [isLoading, isError]);
 
+  const candidateStats = {
+    monthly : `${data?.stats?.statistics?.total?.monthly ?? 0}% since last month`,
+    weekly : `${data?.stats?.statistics?.total?.weekly ?? 0}% since last week`,
+    daily : `${data?.stats?.statistics?.total?.daily ?? 0}% since yesterday`,
+}
+
   const statsOne = [
-    { title: 'Total', value: data?.stats?.Total || 0, icon:  () => <IconWrapper size={10} isInActiveIcon icon={Users} /> },
+    { title: 'Total', value: data?.stats?.Total || 0, icon:  () => <IconWrapper size={10} isInActiveIcon icon={Users} /> , statistics : candidateStats},
     { title: 'Portfolio', value: data?.stats?.Portfolio || 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={Folder} /> },
     { title: 'Screening', value: data?.stats?.Screening || 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={MonitorDot} /> },
     { title: 'Design Task', value: data?.stats?.['Design Task'] || 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={PenTool} /> },
@@ -66,7 +72,7 @@ const Candidates = () => {
     <Container >
         <Header HeaderText="Candidates" />
         <StyledCard padding={2} backgroundColor={"bg-background-100"}>
-          <div className="w-full max-w-7xl relative">
+          <div className="w-full max-w-7xl relative mb-2">
             <div className="absolute right-0 z-10 h-full w-28 bg-gradient-to-tr from-background via-background-green to-transparent pointer-events-none" />
             <StatsGrid stats={statsOne} />
           </div>

@@ -9,6 +9,7 @@ import StyledMenu from './MUIUtilities/StyledMenu';
 import IconWrapper from './Cards/IconWrapper';
 import { Briefcase, FileText, LayoutGrid, LogOut, Star, User, Users } from 'lucide-react';
 import { UNKNOWN_PROFILE_PICTURE_URL } from '../utility/config';
+import { BookmarkFilledIcon, BookmarkIcon } from '../svg/Checkboxes/BookmarkIcons';
 
 const AdminLayout = () => {
     const navigate = useNavigate();
@@ -147,7 +148,8 @@ const AdminLayout = () => {
                 <>
                     <NavItem to="/admin/dashboard" icon={()=><IconWrapper isInActiveIcon icon={LayoutGrid} />} activeIcon={()=><IconWrapper isActiveIcon icon={LayoutGrid} />}>Dashboard</NavItem>
                     <NavItem to="/admin/jobs" icon={()=><IconWrapper isInActiveIcon icon={Briefcase} />} activeIcon={()=><IconWrapper isActiveIcon icon={Briefcase} />}>Jobs</NavItem>
-                    <NavItem to="/admin/candidates" icon={()=><IconWrapper isInActiveIcon icon={Users} />} activeIcon={()=><IconWrapper isActiveIcon icon={Users} />}>Candidates</NavItem>
+                    <NavItem to="/admin/candidates" icon={()=><IconWrapper isInActiveIcon icon={Users} />} activeIcon={()=><IconWrapper isActiveIcon icon={Users} />}>All Candidates</NavItem>
+                    <NavItem to="/admin/shortlisted" icon={BookmarkIcon} activeIcon={BookmarkFilledIcon}>Future Gems</NavItem>
                     <NavItem to="/admin/teams" icon={()=><IconWrapper isInActiveIcon icon={FileText} />} activeIcon={()=><IconWrapper isActiveIcon icon={FileText} />}>Teams</NavItem>
                     {/* <NavItem to="/admin/reviews" icon={ReviewsIcon} activeIcon={ReviewsIconActive}>Reviews</NavItem> */}
                     {/* <NavItem to="/admin/reviews" icon={ReviewsIcon} activeIcon={ReviewsIconActive}>Reviews</NavItem>
@@ -169,10 +171,9 @@ const AdminLayout = () => {
 
     return (
         <div id='adminContainer' className='flex bg-main-bg bg-cover bg-top h-full overflow-x-hidden '>
-            <div className="fixed flex min-h-screen w-48 flex-col gap-6 bg-background-100 text-font-gray typography-large-p justify-between py-4 ">
+            <div className="fixed flex min-h-screen w-[16rem] flex-col gap-6 bg-background-100 text-font-gray typography-large-p justify-between py-4 ">
                 <div className='flex flex-col gap-5 typography-body'>
                 <div className='p-2 flex '>
-
                 <img className='h-11' src={LightLogo}/>
                 </div>
                     {renderMenuItems()}
@@ -182,7 +183,7 @@ const AdminLayout = () => {
                 </div>
             </div>
 
-            <div className='ml-[12rem] w-[calc(100vw-12rem)] flex justify-center min-h-screen'>
+            <div className='ml-[16rem] w-[calc(100vw-16rem)] flex justify-center min-h-screen'>
                 <Outlet />
             </div>
         </div>

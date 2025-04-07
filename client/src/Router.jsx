@@ -29,6 +29,7 @@ import MyJobs from './pages/Candidate/MyJobs.jsx';
 import AllJobs from './pages/Candidate/AllJobs.jsx';
 import Profile from './pages/Admin/Profile.jsx';
 import AssessmentResponse from './pages/Admin/AssessmentResponse.jsx';
+import Shortlisted from './pages/Admin/Shortlisted.jsx';
 import { OnboardingProvider } from './context/OnboardingProvider.jsx';
 import AdminLayout from './components/AdminLayout.jsx';
 import Teams from './pages/Admin/Teams.jsx';
@@ -194,6 +195,10 @@ export const router = createBrowserRouter([
         element: <TeamsProfile />    
       },
       {
+        path: "shortlisted",
+        element: <Shortlisted />
+      },
+      {
         path: "assessment/:id",
         element: <AssessmentResponse />
       },
@@ -234,6 +239,88 @@ export const router = createBrowserRouter([
       },
       {
         path: "candidates/view-candidate/:candidateId/:jobId",
+        element:
+          <ViewCandidateProfile />
+      },
+      {
+        path: "shortlisted/view-candidate/:candidateId/:jobId",
+        element:
+          <ViewCandidateProfile />
+      },
+      {
+        path: "jobs/edit-candidate/:id",
+        element:
+          <EditCandidateProfile />
+      }
+    ]
+  },
+
+  {
+    path: "/admin",
+    element: <ProtectedRoute allowedRoles={['Admin']}><AdminLayout /></ProtectedRoute>,
+    children: [
+      {
+        path: "dashboard",
+        element: <AdminDashboard />
+      },
+      {
+        path: "teams",
+        element: <Teams />    
+      },
+      {
+        path: "teams/profile/:id",
+        element: <TeamsProfile />    
+      },
+      {
+        path: "shortlisted",
+        element: <Shortlisted />
+      },
+      {
+        path: "assessment/:id",
+        element: <AssessmentResponse />
+      },
+      {
+        path: "profile",
+        element: <Profile />
+      },
+      {
+        path: "jobs",
+        element:
+          <Jobs />
+      },
+      {
+        path: "candidates",
+        element:
+          <Candidates />
+      },
+      {
+        path: "create-job",
+        element:
+
+          <CreateJobs />
+      },
+      {
+        path: "edit-job/:id",
+        element:
+          <EditJobs />
+      },
+      {
+        path: "jobs/view-job/:id",
+        element:
+          <ViewJobs />
+      },
+      {
+        path: "jobs/view-candidate/:candidateId/:jobId",
+        element:
+          <ViewCandidateProfile />
+      },
+      {
+        path: "candidates/view-candidate/:candidateId/:jobId",
+        element:
+          <ViewCandidateProfile />
+      },
+      {
+        path: "shortlisted/view-candidate/:candidateId/:jobId",
         element:
           <ViewCandidateProfile />
       },

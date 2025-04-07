@@ -175,7 +175,7 @@ const ApplicationStaging = ({ candidateId, jobId ,jobStatus}) => {
                             <div className="stage-icon">
                                 {getStageIcon(stage, index)}
                             </div>
-                            <div className={`stage-name mb-2 typography-body ${stage === currentStage ? "text-font-accent" : "text-white"}`}>
+                            <div className={`stage-name mb-2 typography-body ${stage === currentStage ? "text-font-accent cursor-pointer " : "text-white "}  `}>
                                 {stage}
                             </div>
                         </div>

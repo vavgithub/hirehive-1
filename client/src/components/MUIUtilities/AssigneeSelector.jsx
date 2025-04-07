@@ -18,7 +18,7 @@ import IconWrapper from '../Cards/IconWrapper';
 import { Search, UserRoundPlus } from 'lucide-react';
 
 
-const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled = false , error , selectedAnchor , closeSelectedAnchor}) => {
+const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled = false , error , selectedAnchor , closeSelectedAnchor , autoFill = false , previousAssigneeId = null}) => {
   const [reviewers, setReviewers] = useState([]);
   // const [isLoading, setIsLoading] = useState(true);
   const [selectedReviewer, setSelectedReviewer] = useState(null);
@@ -55,6 +55,12 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
       setReviewers([])
     }
   },[designReviewers])
+
+  useEffect(()=>{
+    if(autoFill && previousAssigneeId){
+      handleSelect(reviewers?.find(r => r._id === previousAssigneeId))
+    }
+  },[reviewers,autoFill,previousAssigneeId])
 
   // Update selected reviewer when value or reviewers change
   useEffect(() => {

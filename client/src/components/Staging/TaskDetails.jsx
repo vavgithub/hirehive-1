@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import { formatTime } from '../../utility/formatTime'
 import { ensureAbsoluteUrl } from '../../utility/ensureAbsoluteUrl'
+import { isTruncationNeeded, truncatedText } from '../../utility/truncatedHTML'
+import { ChevronDown, ChevronUp } from 'lucide-react'
 import { Button } from '../Buttons/Button'
 import axios from '../../api/axios'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
@@ -89,6 +91,7 @@ export function SubmissionDetails({stageData,candidateData, isEditable}){
 }
 
 function TaskDetails({stageData}) {
+    const [showMore, setShowMore] = useState(false);
   return (
     <div className='flex flex-col gap-4 mt-4'>
         <div className='bg-background-80 rounded-xl p-4'>
@@ -112,9 +115,10 @@ function TaskDetails({stageData}) {
                     </div>
                 </div>
             </div>
-            <div>
+            <div className='flex flex-col '>
                 <span className='typography-small-p text-font-gray'>Task Description</span>
-                <div className='text-font-gray typography-large-p mt-2' dangerouslySetInnerHTML={{ __html: stageData?.taskDescription ? stageData?.taskDescription : '' }}></div>
+                <div className='text-font-gray typography-large-p mt-2 whitespace-normal break-words' dangerouslySetInnerHTML={{ __html: stageData?.taskDescription ? showMore ? stageData?.taskDescription : truncatedText(stageData?.taskDescription,400) : '' }}></div>
+                {isTruncationNeeded(stageData?.taskDescription,400) && <p onClick={() => setShowMore(!showMore)} className='self-end cursor-pointer typography-small-p text-font-gray text-start flex gap-1 items-center'>{showMore ? <> <ChevronUp size={16} /> Hide </> : <> <ChevronDown size={16} /> Show more </>}</p>}
             </div>
         </div>
     </div>
