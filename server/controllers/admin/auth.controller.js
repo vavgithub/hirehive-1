@@ -507,6 +507,36 @@ export const setPassword = asyncHandler(async (req, res) => {
   });
 });
 
+
+// Set password
+export const verifyPassword = asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
+  
+  const userData = await User.findOne({ email });
+
+  if (!userData ) {
+    return res.status(400).json({
+      status: 'error',
+      message: 'Invalid Email ID'
+    });
+  }
+
+  const isVerified = await userData.matchPassword(password);
+
+  if(!isVerified){
+    return res.status(400).json({
+      status: 'error',
+      message: 'Invalid Password'
+    });
+  }
+
+  res.status(200).json({
+    status: 'success',
+    message: 'Password confirmed successfully',
+    currentStage : userData.verificationStage
+  });
+});
+
 // Complete Hiring Manager registration
 export const completeHiringManagerRegistration = asyncHandler(async (req, res) => {
   const { email } = req.body;

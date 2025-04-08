@@ -184,6 +184,11 @@ function CompanyDetails({currentStep,setCurrentStep}) {
         }
         (!file || (file && !imageError)) && isValid && saveCompanyDetailsMutation.mutate(formData)
     }
+
+    const handleRequest = () => {
+      console.log(onboardData?.email)
+    }
+
   return (
     <>
     {saveCompanyDetailsMutation.isPending && <LoaderModal />}
@@ -273,6 +278,8 @@ function CompanyDetails({currentStep,setCurrentStep}) {
             actionType={ACTION_TYPES.COMPANYEXIST} 
             onClose={()=>{setShowExistModal(false)}} 
             customMessage={showExistModal}
+            onConfirm={handleRequest}
+            customConfirmLabel={"Request to Join"}
             open={showExistModal} 
             cancelLabel='OK' cancelVariant='primary' 
             specifiedWidth={"max-w-xl"}

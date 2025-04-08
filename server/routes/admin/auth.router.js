@@ -1,5 +1,5 @@
 import express from 'express';
-import { registerUser, authUser, logoutUser, getUserProfile, getAvailableDesignReviewers, uploadProfilePicture, resetPassword, verifyOTP, forgotPassword, initializeRegistration, verifyOTPforAdmin, setPassword, completeHiringManagerRegistration, inviteTeamMember, completeDesignReviewerRegistration, addTeamMembers, skipAddMember, editUserProfile, sendInviteOTP } from '../../controllers/admin/auth.controller.js';
+import { registerUser, authUser, logoutUser, getUserProfile, getAvailableDesignReviewers, uploadProfilePicture, resetPassword, verifyOTP, forgotPassword, initializeRegistration, verifyOTPforAdmin, setPassword, completeHiringManagerRegistration, inviteTeamMember, completeDesignReviewerRegistration, addTeamMembers, skipAddMember, editUserProfile, sendInviteOTP, verifyPassword } from '../../controllers/admin/auth.controller.js';
 import { protect, protectWithoutVerification } from '../../middlewares/authMiddleware.js';
 import multer from 'multer';
 import { promises as fs } from 'fs';
@@ -82,6 +82,7 @@ router.put('/register/edit-profile', protect, editUserProfile);
 router.post('/register/init', initializeRegistration);
 router.post('/register/verify-otp-for-admin', verifyOTPforAdmin);
 router.post('/register/set-password', setPassword);
+router.post('/register/verify-password', verifyPassword);
 router.post('/register/complete-hiring-manager', upload.single('companyLogo'), completeHiringManagerRegistration);
 router.post('/register/skip-add-member',protectWithoutVerification, skipAddMember)
 router.post('/register/send-invite-otp', sendInviteOTP);

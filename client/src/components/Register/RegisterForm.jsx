@@ -12,12 +12,20 @@ import { showErrorToast, showSuccessToast } from "../ui/Toast"
 import { useOnboardingContext } from '../../context/OnboardingProvider';
 import IconWrapper from '../Cards/IconWrapper';
 import { Briefcase, FileText } from 'lucide-react';
+import Modal from '../Modals/Modal';
+import TogglePassword from '../utility/TogglePassword';
+import { digitsRegex, lowerCaseRegex, passwordRegex, specialCharRegex, upperCaseRegex } from '../../utility/regex';
 
 export const emailPattern = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i
 
 const registerAdmin = async ({fullName, email}) => {
     const response = await axios.post('/auth/register/init',{fullName, email});
     return response.data
+}
+
+const verifyPassword = async ({ email , password }) => {
+  const response = await axios.post('/auth/register/verify-password',{email, password});
+  return response.data
 }
 
 const statsOne = [
@@ -32,7 +40,11 @@ function RegisterForm({setCurrentStep}) {
     const [name, setName] = useState('');
     const [error, setError] = useState('');
 
-    const { setOnboardData } = useOnboardingContext();
+    const { onboardData, setOnboardData } = useOnboardingContext();
+
+    const [showPasswordPopup,setShowPasswordPopup] = useState(false);
+    const [passwordType, setPasswordType] = useState('password');
+    const [password, setPassword] = useState('');
 
     const registerAdminMutation = useMutation({
       mutationFn : registerAdmin,
@@ -41,11 +53,15 @@ function RegisterForm({setCurrentStep}) {
           showSuccessToast("Success",data?.message)
         }
         if(data?.currentStage){
-          steps.forEach((step,index,stepsArr) => {
-            if(step?.id === data?.currentStage){
-              setCurrentStep(stepsArr[index + 1]?.id)
-            }
-          })
+          if(['PASSWORD','COMPANY DETAILS','ADD MEMBERS'].includes(data?.currentStage)){
+            setShowPasswordPopup(true)
+          }else{
+            steps.forEach((step,index,stepsArr) => {
+              if(step?.id === data?.currentStage){
+                setCurrentStep(stepsArr[index + 1]?.id)
+              }
+            })
+          }
         }
         if(data?.userData){
           setOnboardData(data?.userData)
@@ -54,6 +70,26 @@ function RegisterForm({setCurrentStep}) {
             name ,
             email
           })
+        }
+      },
+      onError : (error) => {
+        showErrorToast("Error",error?.response?.data?.message || "Unexpected Registration Error. Try again")
+      }
+    })
+
+
+    const verifyPasswordMutation = useMutation({
+      mutationFn : verifyPassword,
+      onSuccess : (data) => {
+        if(data?.message){
+          showSuccessToast("Success",data?.message)
+        }
+        if(data?.currentStage){
+            steps.forEach((step,index,stepsArr) => {
+              if(step?.id === data?.currentStage){
+                setCurrentStep(stepsArr[index + 1]?.id)
+              }
+            })
         }
       },
       onError : (error) => {
@@ -79,6 +115,40 @@ function RegisterForm({setCurrentStep}) {
           setError("")
           registerAdminMutation.mutate({fullName : name, email})
         }
+    }
+  
+    const handlePassword = () => {
+      if(!onboardData?.email){
+        showErrorToast("Error", "Unexpected error. Please Try again");
+        setTimeout(()=>window.location.reload(),1000);
+        return 
+      }
+      if(password?.trim() === ""){
+        showErrorToast("Error", "Invalid Password. Please enter the correct password");
+        return
+      }
+      if (password.length < 8) {
+        showErrorToast("Error", "Invalid Password. Please enter the correct password");
+        return;
+      }
+  
+      if (!upperCaseRegex.test(password)) {
+        showErrorToast("Error", "Invalid Password. Please enter the correct password");
+        return;
+      }
+      if (!lowerCaseRegex.test(password)) {
+        showErrorToast("Error", "Invalid Password. Please enter the correct password");
+        return;
+      }
+      if (!digitsRegex.test(password)) {
+        showErrorToast("Error", "Invalid Password. Please enter the correct password");
+        return;
+      }
+      if (!specialCharRegex.test(password)) {
+        showErrorToast("Error", "Invalid Password. Please enter the correct password");
+        return;
+      }
+      verifyPasswordMutation.mutate({email : onboardData?.email , password })
     }
 
   return (
@@ -136,6 +206,21 @@ function RegisterForm({setCurrentStep}) {
                     Already have an account? <a href="/admin/login" className="text-blue-500">Sign in</a>
                 </p>
             </div>
+            <Modal
+            open={showPasswordPopup}
+            onClose={()=>setShowPasswordPopup(false)}
+            customTitle={"Confirm Your Password"}
+            customMessage={"Please confirm your password to continue"}
+            customConfirmLabel={'Confirm'}
+            onConfirm={handlePassword}
+            >
+              <div>
+                <label htmlFor="password" className="block mt-4 mb-2 font-bricolage">Password</label>
+                <TogglePassword typeState={passwordType} setTypeState={setPasswordType}>
+                  <input type={passwordType} id="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter your password" className={(password && "tracking-widest") +" w-full focus:outline-teal-400 p-2 rounded-lg bg-black text-white"} />
+                </TogglePassword>
+              </div>
+            </Modal>
           </div>
   )
 }

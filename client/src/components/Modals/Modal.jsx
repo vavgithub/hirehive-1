@@ -361,8 +361,7 @@ const Modal = ({
             && actionType !== ACTION_TYPES.AUDIOERROR 
             && actionType !== ACTION_TYPES.REJECT 
             && !useScheduledReject
-            && actionType !== ACTION_TYPES.MEDIAERROR 
-            && actionType !== ACTION_TYPES.COMPANYEXIST && 
+            && actionType !== ACTION_TYPES.MEDIAERROR && 
               <Button
                 variant={buttonVariant}
                 onClick={handleConfirm}
@@ -371,7 +370,7 @@ const Modal = ({
                   (actionType === ACTION_TYPES.CLOSE && !closeReason)
                 }
               >
-                {confirmLabel}
+                {ACTION_TYPES.COMPANYEXIST ? customConfirmLabel :confirmLabel}
               </Button>
             }
             {
