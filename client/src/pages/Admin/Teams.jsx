@@ -19,6 +19,16 @@ const addMember = async ({teamMember}) => {
     return response?.data
 }
 
+const approveRequest = async ({ email }) => {
+    const response = await axios.post('/admin/register/approve-request', { email });
+    return response?.data
+}
+
+const rejectRequest = async ({ email }) => {
+    const response = await axios.post('/admin/register/reject-request', { email });
+    return response?.data
+}
+
 function Teams() {
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
@@ -51,6 +61,38 @@ function Teams() {
             showErrorToast("Error",error?.response?.data?.message || 'Error in adding team member.')
         }
     })
+
+    const approveRequestMutation = useMutation({
+        mutationFn : approveRequest,
+        onSuccess : (data) => {
+            queryClient.invalidateQueries('team_members');
+            showSuccessToast("Success",data?.message || 'Request approved successfully.');
+        },
+        onError : (error) => {
+            showErrorToast("Error",error?.response?.data?.message || 'Error in approving request.')
+        }
+    })
+
+    const handleApprove = (e,email) => {
+        e.stopPropagation();
+        approveRequestMutation.mutate({email})
+    }
+
+    const rejectRequestMutation = useMutation({
+        mutationFn : rejectRequest,
+        onSuccess : (data) => {
+            queryClient.invalidateQueries('team_members');
+            showSuccessToast("Success",data?.message || 'Request rejected successfully.');
+        },
+        onError : (error) => {
+            showErrorToast("Error",error?.response?.data?.message || 'Error in rejecting request.')
+        }
+    })
+
+    const handleReject = (e,email) => {
+        e.stopPropagation();
+        rejectRequestMutation.mutate({email})
+    }
 
     const addMembers = () => {   
             if(firstName?.trim() === "" && lastName?.trim() === "" && role?.trim() === "" && email?.trim() === "" ){
@@ -106,11 +148,11 @@ function Teams() {
     <Container>
         <div className="flex flex-row justify-between mb-4">
             <h1 className="typography-h1">Teams</h1>
-            {addMemberMutation?.isPending && <LoaderModal />}
+            {(addMemberMutation?.isPending || rejectRequestMutation?.isPending || approveRequestMutation?.isPending) && <LoaderModal />}
         </div>
-        <div className="grid grid-cols-5 gap-6">
+        <div className="flex gap-4 overflow-x-scroll scrollbar-hide">
             {/* Add Card */}
-            <StyledCard padding={2} extraStyles={'flex flex-col items-center justify-between gap-4'}>
+            <StyledCard padding={2} extraStyles={'flex flex-col items-center justify-between gap-4 min-w-[240px] lg:min-w-[20%] max-w-[20%]'}>
                 {/* Member Profile Picture */}
                 <div className="relative w-full aspect-square rounded-xl overflow-hidden">
                     <img src={ UNKNOWN_PROFILE_PICTURE_URL } alt="" className='object-cover w-full overflow-hidden' />
@@ -125,9 +167,9 @@ function Teams() {
                 </div>
             </StyledCard>
 
-            {teamMembers?.members?.map(member => {
+            {teamMembers?.members?.filter(member => member?.status !== "REQUESTED").map(member => {
                 return (
-                    <StyledCard key={member?.member_id ? member?.member_id : member?._id} onClick={()=>navigate(`/admin/teams/profile/${member?.member_id ? member?.member_id : member?._id}`)} padding={2} extraStyles={'flex flex-col items-center cursor-pointer justify-between gap-4'}>
+                    <StyledCard key={member?.member_id ? member?.member_id : member?._id} onClick={()=>navigate(`/admin/teams/profile/${member?.member_id ? member?.member_id : member?._id}`)} padding={2} extraStyles={'flex flex-col items-center cursor-pointer justify-between gap-4 min-w-[240px] lg:min-w-[20%] max-w-[20%]'}>
                         {/* Member Profile Picture */}
                         <div className="w-full aspect-square rounded-xl overflow-hidden relative">
                             <img src={member?.profilePicture || UNKNOWN_PROFILE_PICTURE_URL } alt="" className='object-cover w-full overflow-hidden' />
@@ -137,13 +179,54 @@ function Teams() {
                             <h3 className="typography-h3 text-center">{member?.name}</h3>
                             <p className="typography-small-p text-center text-font-gray">{member?.role}</p>
                         </div>
-                        <div>
-                            <p className="font-bricolage text-sm rounded-full font-medium tracking-wider border border-accent-100 text-accent-100 px-4 py-1">{ member?.member_id ? "Joined" : "Invited"}</p>
+                        <div className="w-full flex justify-center">
+                            {
+                                member?.status === "REQUESTED" ? 
+                                <div className="flex justify-between w-full">
+                                    <button type="button" onClick={(event) =>handleApprove(event,member?.email)}  className="text-sm font-bricolage font-medium px-4 py-1 border-2 rounded-xl border-green-700 text-green-500 hover:bg-green-90">Approve</button>
+                                    <button type="button" onClick={(event) =>handleReject(event,member?.email)}  className="text-sm font-bricolage font-medium px-4 py-1 border-2 rounded-xl border-red-90 text-red-500 hover:bg-red-60">Reject</button>
+                                </div>
+                                :
+                                <p className=" w-fit font-bricolage text-sm rounded-full font-medium tracking-wider border border-accent-100 text-accent-100 px-4 py-1">{ member?.status === "JOINED" ? "Joined" : "Invited"}</p>
+                            }
                         </div>
                     </StyledCard>
                 )
             }) }
+
         </div>
+        {teamMembers?.members?.filter(member => member?.status === "REQUESTED")?.length > 0 && 
+        <div className="w-full">
+            <h2 className="typography-h2 mt-6 mb-4">New Member Request</h2>
+            <div  className="flex gap-4 overflow-x-scroll scrollbar-hide">
+            {teamMembers?.members?.filter(member => member?.status === "REQUESTED").map(member => {
+                return (
+                    <StyledCard key={member?.member_id ? member?.member_id : member?._id} onClick={()=>navigate(`/admin/teams/profile/${member?.member_id ? member?.member_id : member?._id}`)} padding={2} extraStyles={'flex flex-col items-center cursor-pointer justify-between gap-4 min-w-[240px] lg:min-w-[20%] max-w-[20%]'}>
+                        {/* Member Profile Picture */}
+                        <div className="w-full aspect-square rounded-xl overflow-hidden relative">
+                            <img src={member?.profilePicture || UNKNOWN_PROFILE_PICTURE_URL } alt="" className='object-cover w-full overflow-hidden' />
+                        </div>
+                        {/* Memeber Details */}
+                        <div className="flex flex-col w-full">
+                            <h3 className="typography-h3 text-center">{member?.name}</h3>
+                            <p className="typography-small-p text-center text-font-gray">{member?.role}</p>
+                        </div>
+                        <div className="w-full flex justify-center">
+                            {
+                                member?.status === "REQUESTED" ? 
+                                <div className="flex justify-between w-full">
+                                    <button type="button" onClick={(event) =>handleApprove(event,member?.email)}  className="text-sm font-bricolage font-medium px-4 py-1 border-2 rounded-xl border-green-700 text-green-500 hover:bg-green-90">Approve</button>
+                                    <button type="button" onClick={(event) =>handleReject(event,member?.email)}  className="text-sm font-bricolage font-medium px-4 py-1 border-2 rounded-xl border-red-90 text-red-500 hover:bg-red-60">Reject</button>
+                                </div>
+                                :
+                                <p className=" w-fit font-bricolage text-sm rounded-full font-medium tracking-wider border border-accent-100 text-accent-100 px-4 py-1">{ member?.status === "JOINED" ? "Joined" : "Invited"}</p>
+                            }
+                        </div>
+                    </StyledCard>
+                )
+            }) }
+            </div>
+        </div>}
         <Modal
         open={showAddModal || showEditModal}
         onClose={showAddModal ? ()=>setShowAddmodal(false) : ()=>setShowEditmodal(false)}

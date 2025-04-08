@@ -99,9 +99,21 @@ export const authUser = asyncHandler(async (req, res) => {
     if (user && (await user.matchPassword(password))) {
 
       if(user?.verificationStage !== "DONE"){
+        let isRequestedUser = false;
+        if(user?.company_id){
+          const userRequested = await Company.findOne({_id : user.company_id });
+          if(userRequested?.invited_team_members?.length > 0){
+            for(let member of userRequested.invited_team_members){
+              if(member?.email === user.email && member.status === "REQUESTED"){
+                isRequestedUser = true;
+                break
+              }
+            }
+          }
+        }
         return res
         .status(401)
-        .json({error:"You are currently not completed verfication. Please follow Registration."});
+        .json({error: isRequestedUser ? "You request is under processing. Please try again after sometime." :"You are currently not completed verfication. Please follow Registration."});
       }
 
       const token = generateToken(user._id);
@@ -363,7 +375,7 @@ export const sendInviteOTP = asyncHandler(async (req,res) => {
     if(existingUser){
       const company = await Company.findById({_id : company_id});
       if(company 
-        && company?.invited_team_members?.find(member=>((member?.email === email) && (member?.invited === true))) 
+        && company?.invited_team_members?.find(member=>((member?.email === email) && (member?.status === "INVITED"))) 
         && existingUser.verificationStage === "PASSWORD"){
         await User.deleteOne({ email })
       }else{
@@ -451,6 +463,7 @@ export const verifyOTPforAdmin = asyncHandler(async (req, res) => {
       company?.invited_team_members.forEach(member => {
         if (member.email === email) {
           member.member_id = saveUser._id;  // Update member_id
+          member.status = "JOINED"
         }
       });
 
@@ -508,7 +521,7 @@ export const setPassword = asyncHandler(async (req, res) => {
 });
 
 
-// Set password
+// Verify password
 export const verifyPassword = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
   
@@ -536,6 +549,66 @@ export const verifyPassword = asyncHandler(async (req, res) => {
     currentStage : userData.verificationStage
   });
 });
+
+// Send Member Request to Join Team
+export const sendMemberRequest = asyncHandler(async (req, res) => {
+  const { email, companyId } = req.body;
+  
+  const userData = await User.findOne({ email });
+
+  if (!userData ) {
+    return res.status(400).json({
+      status: 'error',
+      message: 'Invalid Email ID'
+    });
+  }
+
+  const companyData = await Company.findOne({ _id : companyId });
+  
+    if (!companyData ) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Invalid Data. Please try again.'
+      });
+    }
+  
+    // ✅ Check if a member with the email already exists
+    const emailExists = companyData.invited_team_members.some(
+      member => member.email === userData.email
+    );
+
+    if(emailExists){
+      return res.status(400).json({
+        status: 'error',
+        message: `Your Request is already processing at ${companyData?.name}. Please try to login after sometime.`
+      });
+    }
+
+  const memberData = {
+    id : userData?.name?.split(" ")[0] + Date.now(),
+    name : userData.name,
+    email : userData.email,
+    role : "Hiring Manager",
+    status : "REQUESTED",
+  }
+
+  // Push the new member to the array
+  companyData.invited_team_members.push(memberData);
+
+  await companyData.save();
+
+  //update company Id and role of user
+  userData.role = "Hiring Manager";
+  userData.company_id = companyData._id;
+
+  await userData.save();
+
+  res.status(200).json({
+    status: 'success',
+    message: 'Request sent successfully. Please Login to continue.',
+  });
+});
+
 
 // Complete Hiring Manager registration
 export const completeHiringManagerRegistration = asyncHandler(async (req, res) => {
@@ -566,8 +639,9 @@ export const completeHiringManagerRegistration = asyncHandler(async (req, res) =
   if(existingCompany?.length > 0){
     return res.status(400).json({
       status: 'error',
-      message: `This company is already registered. Contact admin at ${existingCompany[0]?.registeredBy?.email}`,
-      companyExist : true
+      message: `This company is already registered. Contact admin at ${existingCompany[0]?.registeredBy?.email} or send a request to join`,
+      companyExist : true,
+      companyId : existingCompany[0]?._id
     });
   }
 
@@ -672,7 +746,7 @@ export const addTeamMembers = asyncHandler(async (req,res) => {
       name : member.firstName + " " + member.lastName,
       email : member.email,
       role : member.role,
-      invited : false,
+      status : "ADDED",
     }
     const updatedCompany = await Company.findByIdAndUpdate(
       { _id : userData?.company_id} , 
@@ -703,7 +777,7 @@ export const addTeamMembers = asyncHandler(async (req,res) => {
     // Update the invited field directly in MongoDB
     await Company.findOneAndUpdate(
       { _id: userData?.company_id, "invited_team_members.email": customMember.email }, 
-      { $set: { "invited_team_members.$.invited": true } },
+      { $set: { "invited_team_members.$.status": "INVITED" } },
       { new: true }
     );
   }

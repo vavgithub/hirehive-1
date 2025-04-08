@@ -338,9 +338,9 @@ function TeamsProfile() {
                       </div>
                       <div className='flex justify-between w-full mt-4 items-center'>
                           <p className='typography-body'>Joining Status</p>
-                          <p className='flex items-center gap-1 typography-large-p text-font-gray'>{member?.member_id ? "Joined" :member?.invited ? "Invited" : "Added"}</p>
+                          <p className='flex items-center gap-1 typography-large-p text-font-gray'>{member?.status === "JOINED" ? "Joined" :member?.status === "INVITED" ? "Invited" : member?.status === "REQUESTED" ? "Requested" : "Added"}</p>
                       </div>
-                      {!member?.member_id && <div className='flex justify-center w-full mt-4 items-center'>
+                      {(!member?.member_id && member?.status !== "REQUESTED") && <div className='flex justify-center w-full mt-4 items-center'>
                         <Button type="button" disabled={reInviteMemberMutation?.isPending} variant="primary" onClick={handleReInvite} >Re-invite</Button>
                       </div>}
                   </StyledCard>

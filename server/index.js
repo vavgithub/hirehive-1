@@ -37,6 +37,7 @@ import { handleUploadError } from "./middlewares/uploadMiddleware.js";
 import { User } from "./models/admin/user.model.js";
 import { candidates } from "./models/candidate/candidate.model.js";
 import { jobs } from "./models/admin/jobs.model.js";
+import { Company } from "./models/admin/company.model.js";
 
 const app = express();
 await initializeUploadDir(envConfig.UPLOAD_DIR);
@@ -128,6 +129,7 @@ app.use(handleUploadError)
 //     console.timeEnd("Execution Time"); // End measuring time and log it
 // }
 
+//For JobType based filters
 const dbUpdater = async () =>{
   const candidatesData = await candidates.find();
   for (const candidate of candidatesData) {
@@ -138,6 +140,93 @@ const dbUpdater = async () =>{
     await candidate.save();
   }
 
+}
+
+const inviteToRequestUpdater = async () => {
+  try {
+    // Fetch all company documents
+    const companies = await Company.find();
+
+    let updatedCount = 0;
+
+    for (const company of companies) {
+      let modified = false;
+
+      // Update each invited_team_member based on `invited` flag
+      company.invited_team_members = company.invited_team_members.map(member => {
+        const wasInvited = member.invited === true;
+        const newStatus = wasInvited ? "INVITED" : "ADDED";
+
+        if (member.status !== newStatus) {
+          member.status = newStatus;
+          modified = true;
+        }
+
+        return member;
+      });
+
+      if (modified) {
+        await company.save();
+        updatedCount++;
+      }
+    }
+
+    console.log(`✅ Updated ${updatedCount} company documents.`);
+  } catch (error) {
+    console.error("❌ Error during status update:", error);
+  }
+};
+
+
+const inviteToRequestUpdaterMember = async () => {
+  try {
+    // 1. Find all companies
+    const companies = await Company.find();
+
+    let updatedCount = 0;
+
+    for (const company of companies) {
+      let modified = false;
+
+      // 2. Loop through invited_team_members
+      company.invited_team_members = company.invited_team_members.map(member => {
+        if (member.member_id) {
+          member.status = "JOINED";
+          modified = true;
+        }
+        return member;
+      });
+
+      // 3. Save only if modified
+      if (modified) {
+        await company.save();
+        updatedCount++;
+      }
+    }
+
+    console.log(`✅ Updated ${updatedCount} documents.`);
+  } catch (error) {
+    console.error("❌ Error updating members:", error);
+  }
+};
+
+
+const removeInvitedKey = async () => {
+  await Company.updateMany(
+    { "invited_team_members.invited": { $exists: true } },
+    {
+      $unset: {
+        "invited_team_members.$[elem].invited": ""
+      }
+    },
+    {
+      arrayFilters: [
+        { "elem.invited": { $exists: true } }
+      ]
+    }
+  );
+  
+  
 }
 
 connectDB()
@@ -151,6 +240,9 @@ connectDB()
     // Start the scheduled jobs
     startScheduledJobs();
     // updationForCompany()
+    // inviteToRequestUpdater() //First
+    // inviteToRequestUpdaterMember() //Second
+    // removeInvitedKey() //Third
 
     app.on("error", (error) => {
       console.log("Error in starting server", error);

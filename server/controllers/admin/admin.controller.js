@@ -47,7 +47,7 @@ export const addTeamMember = asyncHandler(async (req,res) => {
         name : teamMember.firstName + " " + teamMember.lastName,
         email : teamMember.email,
         role : teamMember.role,
-        invited : false,
+        status : "ADDED",
       }
       const updatedCompany = await Company.findByIdAndUpdate(
         { _id : userData?.company_id} , 
@@ -78,7 +78,7 @@ export const addTeamMember = asyncHandler(async (req,res) => {
       // Update the invited field directly in MongoDB
       await Company.findOneAndUpdate(
         { _id: userData?.company_id, "invited_team_members.email": customMember.email }, 
-        { $set: { "invited_team_members.$.invited": true } },
+        { $set: { "invited_team_members.$.status": "INVITED" } },
         { new: true }
       );
   
@@ -134,7 +134,7 @@ export const addTeamMember = asyncHandler(async (req,res) => {
     // Update the invited field directly in MongoDB
     await Company.findOneAndUpdate(
       { _id: userData?.company_id, "invited_team_members.email": isMemberExistWithCompany?.invited_team_members[0]?.email }, 
-      { $set: { "invited_team_members.$.invited": true } },
+      { $set: { "invited_team_members.$.status": "INVITED" } },
       { new: true }
     );
   
@@ -529,3 +529,82 @@ export const getDetailsForDashboard = asyncHandler(async (req,res) => {
       }
     })
 })
+
+
+// Approve Request to Join Team
+export const approveRequest = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+  
+  const userData = await User.findOne({ email });
+
+  if (!userData ) {
+    return res.status(400).json({
+      status: 'error',
+      message: 'Invalid Email ID'
+    });
+  }
+
+  const companyData = await Company.findOne({ _id : req.user?.company_id , "invited_team_members.email" : userData.email});
+  
+    if (!companyData ) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Requested User does not exist with this company.'
+      });
+    }
+
+  if(req.user?.company_id?.toString() !== userData?.company_id?.toString()){
+    return res.status(400).json({
+      status: 'error',
+      message: 'Unable to approve request. User joined some other company.'
+    });
+  }
+    
+  const updatedUserData = await Company.findOneAndUpdate({ _id : req.user?.company_id , "invited_team_members.email" : userData.email}
+    , {
+      $set : {
+        "invited_team_members.$.status" : "JOINED",
+        "invited_team_members.$.member_id" : userData._id
+      }
+    }
+  );
+
+  userData.verificationStage = "DONE";
+  await userData.save();
+
+  res.status(200).json({
+    status: 'success',
+    message: 'Request approved successfully.',
+  });
+});
+
+// Reject Request to Join Team
+export const rejectRequest = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+  
+  const userData = await User.findOne({ email });
+
+  if (!userData ) {
+    return res.status(400).json({
+      status: 'error',
+      message: 'Invalid Email ID'
+    });
+  }
+
+  const companyData = await Company.findOne({ _id : req.user?.company_id , "invited_team_members.email" : userData.email});
+  
+    if (!companyData ) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Requested User does not exist with this company.'
+      });
+    }
+
+    companyData.invited_team_members.pull({ email: userData.email });
+    await companyData.save();
+
+  res.status(200).json({
+    status: 'success',
+    message: 'Request rejected successfully.',
+  });
+});

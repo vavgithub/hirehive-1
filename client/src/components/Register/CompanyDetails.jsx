@@ -14,6 +14,8 @@ import { validateProfileImages } from '../../utility/validationRules';
 import { InputField } from '../Inputs/InputField';
 import { CustomDropdown } from '../Dropdowns/CustomDropdown';
 import { UNKNOWN_PROFILE_PICTURE_URL } from '../../utility/config';
+import { useNavigate } from 'react-router-dom';
+import GlobalDropDown from '../Dropdowns/GlobalDropDown';
 
 export const LocationOptions = [
   { value: 'india', label: 'India' },
@@ -56,6 +58,11 @@ const saveCompanyDetails = async (formData) => {
     return response.data
 }
 
+const sendJoinRequest = async ({email,companyId}) => {
+  const response = await axios.post('/auth/register/send-join-request',{email, companyId });
+  return response.data
+}
+
 function CompanyDetails({currentStep,setCurrentStep}) {
     const [companyName,setCompanyName] = useState('');
     const [companySize,setCompanySize] = useState('');
@@ -77,12 +84,27 @@ function CompanyDetails({currentStep,setCurrentStep}) {
     const fileInputRef = useRef(null);
     const isFirstRender = useRef(true);
 
+    const navigate = useNavigate();
+
     const handleFileSelect = (event) => {
       const file = event.target.files[0];
       if (!file) return;
       setFile(file);
       setPreviewUrl(URL.createObjectURL(file))
     };
+
+    const sendJoinRequestMutation = useMutation({
+      mutationFn : sendJoinRequest,
+      onSuccess : (data) => {
+        if(data?.message){
+          showSuccessToast("Success",data?.message)
+          setTimeout(()=> navigate('/admin/login',{replace : true}),1500)
+        }
+      },
+      onError : (error) => {
+        showErrorToast("Error",error?.response?.data?.message || "Unexpected Error. Try again")
+      }
+    })
 
     const saveCompanyDetailsMutation = useMutation({
       mutationFn : saveCompanyDetails,
@@ -104,6 +126,7 @@ function CompanyDetails({currentStep,setCurrentStep}) {
       onError : (error) => {
         if(error?.response?.data?.companyExist){
           setShowExistModal(error?.response?.data?.message)
+          setOnboardData(prev => ({...prev, company_id : error?.response?.data?.companyId }))
         }else{
           console.log(error)
           showErrorToast("Error",error?.response?.data?.message || "Unexpected Registration Error. Try again")
@@ -186,12 +209,18 @@ function CompanyDetails({currentStep,setCurrentStep}) {
     }
 
     const handleRequest = () => {
-      console.log(onboardData?.email)
+      //Email exist error handling
+      if(!onboardData?.email || !onboardData?.company_id){
+        showErrorToast("Error", "Unexpected error. Please Try again");
+        setTimeout(()=>window.location.reload(),1000);
+        return 
+      }
+      sendJoinRequestMutation.mutate({email : onboardData.email , companyId : onboardData.company_id})
     }
 
   return (
     <>
-    {saveCompanyDetailsMutation.isPending && <LoaderModal />}
+    {(saveCompanyDetailsMutation.isPending || sendJoinRequestMutation.isPending ) && <LoaderModal />}
     <div className='w-full px-8  pt-6 pb-12 flex flex-col justify-center items-center'>
                 <h1 className='typography-h1'>Tell us about your company</h1>
                 <p className='typography-large-p text-font-gray font-light mt-2'>Provide your company details to help us match you with the right candidates.</p>
@@ -244,7 +273,7 @@ function CompanyDetails({currentStep,setCurrentStep}) {
                 value={companyName}
                 onChange={(e)=>setCompanyName(e.target.value)}
                 />
-                <CustomDropdown    
+                <GlobalDropDown    
                 label="Company Size" 
                 required
                 extraStylesForLabel="font-bricolage font-medium"
@@ -253,7 +282,7 @@ function CompanyDetails({currentStep,setCurrentStep}) {
                 onChange={setCompanySize}
                 options={companySizeOptions}
                 />
-                <CustomDropdown
+                <GlobalDropDown
                 label="Location" 
                 required
                 extraStylesForLabel="font-bricolage font-medium"
@@ -262,7 +291,7 @@ function CompanyDetails({currentStep,setCurrentStep}) {
                 onChange={setLocation}
                 options={LocationOptions}
                 />
-                <CustomDropdown
+                <GlobalDropDown
                 label="Industry" 
                 required
                 extraStylesForLabel="font-bricolage font-medium"

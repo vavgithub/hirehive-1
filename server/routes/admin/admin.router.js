@@ -1,6 +1,6 @@
 import express from "express"
 import { protect, roleProtect } from "../../middlewares/authMiddleware.js";
-import { addTeamMember, changeMemberStatus, editTeamMember, getAllTeamMember, getDetailsForDashboard, reInviteMember } from "../../controllers/admin/admin.controller.js";
+import { addTeamMember, approveRequest, changeMemberStatus, editTeamMember, getAllTeamMember, getDetailsForDashboard, reInviteMember, rejectRequest } from "../../controllers/admin/admin.controller.js";
 
 const router = express.Router();
 
@@ -18,6 +18,9 @@ router.get('/get-all-members',protect,roleProtect("Admin"), getAllTeamMember);
 
 router.get('/get-member/:id',protect,roleProtect("Admin"), getAllTeamMember);
 
+router.post('/register/approve-request',protect,roleProtect('Admin'), approveRequest);
+
+router.post('/register/reject-request',protect,roleProtect('Admin'), rejectRequest);
 
 
 export default router;                                                                               

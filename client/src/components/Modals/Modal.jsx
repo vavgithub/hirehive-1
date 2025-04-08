@@ -370,7 +370,7 @@ const Modal = ({
                   (actionType === ACTION_TYPES.CLOSE && !closeReason)
                 }
               >
-                {ACTION_TYPES.COMPANYEXIST ? customConfirmLabel :confirmLabel}
+                {confirmLabel}
               </Button>
             }
             {

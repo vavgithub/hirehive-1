@@ -34,6 +34,10 @@ const companyschema = new mongoose.Schema({
           enum: ['Admin','Hiring Manager', 'Design Reviewer'],
         },
         invited : Boolean,
+        status : {
+            type : String,
+            enum: ["ADDED",'INVITED','JOINED', 'REQUESTED','APPROVED'],
+          },
         member_id : {
           type: mongoose.Schema.Types.ObjectId,
           ref: 'users',
