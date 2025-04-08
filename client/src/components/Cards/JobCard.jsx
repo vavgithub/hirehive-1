@@ -4,8 +4,7 @@ import { getTimeAgo } from '../../utility/getTimeAgo';
 import ClosedBadge from '../../svg/Icons/ClosedBadge';
 import StyledCard from './StyledCard';
 import CustomBadge from '../Badge/CustomBadge';
-import CompanyIcon from '../../svg/Icons/CompanyIcon';
-import { Copy } from 'lucide-react';
+import { Building, Building2, Copy } from 'lucide-react';
 import CustomToolTip from '../Tooltip/CustomToolTip';
 import { copyToClipboard } from '../../utility/CopyToClipboard';
 import { useLocation } from 'react-router-dom';
@@ -172,7 +171,7 @@ const JobCard = ({
         text={`${job.experienceFrom} - ${job.experienceTo} Year`}
       />
       {(role !== "Admin" && role !== "Hiring Manager" && role !== "Design Reviewer") && (job?.companyDetails?.name || job?.company_id?.name ) && <JobDetailItem
-      icon={CompanyIcon}
+      icon={() => <IconWrapper size={1} icon={Building2}  isInActiveIcon />}
       text={job?.companyDetails?.name || job?.company_id?.name }
       />}
     </div>

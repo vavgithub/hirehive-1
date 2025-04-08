@@ -11,9 +11,9 @@ import { Button } from '../../components/Buttons/Button';
 import { dummySkills } from '../../components/Dropdowns/dropdownOptions';
 import { showErrorToast, showSuccessToast } from '../../components/ui/Toast';
 import Logo from '../../svg/Logo/lightLogo.svg';
-import { fetchCandidateAuthData } from '../../redux/candidateAuthSlice';
+import { fetchCandidateAuthData, loginCandidateAuth } from '../../redux/candidateAuthSlice';
 import useCandidateAuth from '../../hooks/useCandidateAuth';
-import { digitsRegex, lowerCaseRegex, specialCharRegex, upperCaseRegex } from '../../utility/regex';
+import { digitsRegex, emailRegex, lowerCaseRegex, specialCharRegex, upperCaseRegex } from '../../utility/regex';
 import { PersonalDetailsSection, ProfessionalDetailsSection, ResumePortfolioSection } from '../../components/Form/ApplyJob';
 import { validateProfileImages, validateResume, validationRules } from '../../utility/validationRules';
 import Header from '../../components/utility/Header';
@@ -28,6 +28,7 @@ import Modal from '../../components/Modals/Modal';
 import StyledCard from '../../components/Cards/StyledCard';
 import IconWrapper from '../../components/Cards/IconWrapper';
 import { Check, PencilLine } from 'lucide-react';
+import TogglePassword from '../../components/utility/TogglePassword';
 
 const fetchJobDetails = async (id) => {
   const response = await axios.get(`/jobs/getJobById/${id}`);
@@ -100,11 +101,15 @@ const ApplyJob = () => {
   const [isExist,setIsExist] = useState(false);
   const [editEmail,setEditEmail] = useState("");
 
+  const [showLoginPopup,setShowLoginPopup] = useState(false);
+  const [password,setPassword] = useState("");
+  const [passwordType,setPasswordType] = useState("password");
+
   const [profilePictureFile, setProfilePictureFile] = useState(null);
   const [profilePicturePreview, setProfilePicturePreview] = useState(null);
 
   const navigate = useNavigate();
-  const { id: jobId } = useParams();
+  const { id: jobId , companyId } = useParams();
 
   const submitBtnRef = useRef(null);
 
@@ -291,10 +296,14 @@ const ApplyJob = () => {
         setCurrentStep(response?.data?.currentStage !== 'MODAL' ? 2 : 1);
       }
     } catch (error) {
-      showErrorToast(
-        'Error',
-        error.response?.data?.message || error?.message || 'Failed to perform job action. Please try again.'
-      );
+      if(error.response?.data?.next === "LOGIN"){
+          setShowLoginPopup(true);
+      }else{
+        showErrorToast(
+          'Error',
+          error.response?.data?.message || error?.message || 'Failed to perform job action. Please try again.'
+        );
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -395,6 +404,31 @@ const ApplyJob = () => {
       setIsSubmitting(false);
     }
   };
+
+    const handleLogin = async () => {
+      try {
+        if(!email.trim() && !password.trim()){
+          return showErrorToast("Error","Please enter your email and password")
+        }else if(!email.trim()){
+          return  showErrorToast("Error","Please enter your email")
+        }else if(!emailRegex.test(email)){
+          return  showErrorToast("Error","Please invalid email format")
+        }else if(!password.trim()){
+          return showErrorToast("Error","Please enter your password")
+        }else{
+          const result = await dispatch(loginCandidateAuth({ email, password })).unwrap();
+          if (result) {
+            navigate(`/apply-job/${jobId}`,{replace:true});
+            showSuccessToast("Success","Logged in Successfully")
+            window.scrollTo(0,0)
+          }
+        }
+      } catch (error) {
+        // Error handling is now managed by Redux
+        console.error('Login failed:', error);
+        showErrorToast("Error",error);
+      }
+    };
 
   return (
 
@@ -579,6 +613,38 @@ const ApplyJob = () => {
                   </div> : <div className='rounded-xl bg-background-60 h-11 w-11 flex justify-center items-center text-green-70'><IconWrapper size={2} customIconSize={3} inheritColor icon={Check} /></div>}</button>
               </div>
               </StyledCard> 
+            </Modal>
+
+            {/* Login Popup */}
+            <Modal
+            open={showLoginPopup}
+            onClose={()=>setShowLoginPopup(false)}
+            customTitle={"Login"}
+            customMessage={"Your account already exists. Please Login to continue."}
+            customConfirmLabel={"Login"}
+            onConfirm={handleLogin}
+            >
+              <div className='mt-4'>
+                <div className="mb-4">
+                  <label htmlFor="loginemail" className="block mb-2 font-bricolage">Email</label>
+                  <input type="email" id="loginemail" placeholder="Enter your email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full p-2 rounded-lg bg-black text-white focus:outline-teal-400" />
+                </div>
+                  <div>
+                    <label htmlFor="password" className="block mb-2 font-bricolage">Password</label>
+                  <TogglePassword typeState={passwordType} setTypeState={setPasswordType}>
+                    <input type={passwordType} id="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter your password" className={(password && "tracking-widest") +" w-full focus:outline-teal-400 p-2 rounded-lg bg-black text-white"} />
+                  </TogglePassword>
+                  </div>
+                {/* {error && <p className="text-red-500 typography-small-p mb-4">{error}</p>} */}
+                <div className='flex justify-end'>
+                    <span
+                        onClick={() => setShowForgotPassword(true)}
+                        className="text-font-primary cursor-pointer typography-body  mt-2 block text-left hover:underline"
+                    >
+                        Forgot Password?
+                    </span>
+                </div>
+              </div>
             </Modal>
             <div className='mb-6'>
 

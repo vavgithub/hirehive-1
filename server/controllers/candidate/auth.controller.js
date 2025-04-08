@@ -127,7 +127,8 @@ export const registerCandidate = async (req, res) => {
       if(existingEmail?.currentStage === 'DONE'){
         return res.status(400).json({ 
           message: "Account already exists. Please login to continue.",
-          field: "email"
+          field: "email",
+          next : "LOGIN"
         });
       }
       if(existingPhone?.currentStage === 'DONE'){
@@ -141,7 +142,8 @@ export const registerCandidate = async (req, res) => {
     if (existingEmail && existingEmail?.currentStage === 'DONE') {
       return res.status(400).json({ 
         message: "Account already exists. Please login to continue.",
-        field: "email"
+        field: "email",
+        next : "LOGIN"
       });
     }
     if (existingPhone && (existingPhone?.currentStage === 'PASSWORD' || existingPhone?.currentStage === 'DONE') && !existingEmail) {
