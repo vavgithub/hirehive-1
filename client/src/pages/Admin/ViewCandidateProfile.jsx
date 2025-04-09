@@ -527,7 +527,7 @@ const ViewCandidateProfile = () => {
                                     {resumeOpen && <ResumeViewer documentUrl={data.resumeUrl} onClose={() => setResumeOpen(false)}/>}
                                    
                                     {
-                                        (data.hasGivenAssessment && role === "Hiring Manager") && <div className='cursor-pointer' onClick={handleAssignmentNavigation}> 
+                                        (data.hasGivenAssessment && (role === "Hiring Manager" || role === "Admin")) && <div className='cursor-pointer' onClick={handleAssignmentNavigation}> 
                                             <CustomToolTip title={'Assessment'} arrowed size={2}>
                                             <IconWrapper hasBg icon={ClipboardCheck} />
                                             </CustomToolTip>

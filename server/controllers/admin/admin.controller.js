@@ -416,6 +416,7 @@ export const getDetailsForDashboard = asyncHandler(async (req,res) => {
                     _id: "$assigneeDetails._id",
                     name: "$assigneeDetails.name",
                     email: "$assigneeDetails.email",
+                    role : "$assigneeDetails.role",
                     profilePicture: "$assigneeDetails.profilePicture"
                 } // Populate only required assignee fields
             }
@@ -508,6 +509,22 @@ export const getDetailsForDashboard = asyncHandler(async (req,res) => {
   };
 
   const topCandidates = await getTopCandidates();
+  const getAllCandidates = await candidates.aggregate([
+    { $unwind: "$jobApplications" }, // Flatten jobApplications array
+    { 
+        $match: { 
+            "jobApplications.jobId": { $in: companyJobIds },
+        } 
+    },
+    {
+      $group : {
+        _id : "$_id"
+      }
+    },
+    {
+      $count :  "totalUniqueCandidatesCount" 
+    },
+  ])
 
   return res.status(200).json({
       status: 'success',
@@ -525,7 +542,9 @@ export const getDetailsForDashboard = asyncHandler(async (req,res) => {
         stageBasedInterviewsCount
       },
       leaderBoard : {
-        candidates : topCandidates
+        candidates : topCandidates,
+        totalUniqueCandidatesCount : getAllCandidates[0]?.totalUniqueCandidatesCount,
+        totalAssessmentsDone : topCandidates?.length ?? 0
       }
     })
 })

@@ -2,7 +2,6 @@ import React, { useMemo, useState } from 'react'
 import StyledCard from '../../components/Cards/StyledCard'
 import ApplicationChart from '../../components/Charts/ApplicationChart'
 import MuiCustomStylesForDataGrid from '../../components/tableUtilities/MuiCustomStylesForDataGrid'
-import { Button } from '../../components/Buttons/Button'
 import axios from '../../api/axios'
 import { useQuery } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
@@ -11,6 +10,9 @@ import LoaderModal from '../../components/Loaders/LoaderModal'
 import LeaderBadge from '../../svg/Icons/LeaderBadge'
 import InterviewsChart from '../../components/Charts/InterviewsChart'
 import StageBadge from '../../components/ui/StageBadge'
+import IconWrapper from '../../components/Cards/IconWrapper'
+import { CalendarDays, ChevronDown, ChevronUp, ClipboardCheck, Users } from 'lucide-react'
+import StatsGrid from '../../components/ui/StatsGrid'
 
 function AdminDashboard() {
   
@@ -24,6 +26,10 @@ function AdminDashboard() {
       enabled : true
   })
 
+  const leaderBoardStats = [
+    { title: 'Unique Candidates', value: dashboardDetails?.leaderBoard?.totalUniqueCandidatesCount || 0, icon:  () => <IconWrapper size={10} isInActiveIcon icon={Users} /> },
+    { title: 'Assessments', value: dashboardDetails?.leaderBoard?.totalAssessmentsDone || 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={ClipboardCheck} /> },
+  ];
 
   return (
     <div className="container mx-4 pt-4 pb-6 ">
@@ -57,31 +63,40 @@ function AdminDashboard() {
       </div>
 
       <div className='flex gap-4 w-full mt-4'>
-        <StyledCard padding={2} extraStyles={'w-[50%]'}>
+        <StyledCard padding={2} extraStyles={'overflow-hidden w-[40%]'}>
           <h2 className='typography-h2'>Upcoming Interviews</h2>
           {
             dashboardDetails?.interviews?.upcomingInterviews?.length > 0 ? dashboardDetails.interviews.upcomingInterviews.map(interview =>{
               return(
-                <StyledCard key={interview?._id} padding={2} backgroundColor={'bg-background-30'} extraStyles={' mt-4 relative'}>
-                    <p className='typography-h3  flex items-center gap-2 w-full ' >
-                      <StageBadge stage={interview?.jobApplications?.currentStage} customWidth={'w-[25%]'} />-
-                      <span className='typography-body font-semibold w-[60%] text-ellipsis overflow-hidden whitespace-nowrap'>{interview?.firstName + " " + interview?.lastName} & {interview?.assignee?.name}</span>
-                    </p>
-                    <p className='typography-large-p text-font-gray mt-2'>{new Date(interview?.interviewDate).toLocaleString('en-GB', { 
+                <StyledCard onClick={()=>navigate(`/admin/candidates/view-candidate/${interview?._id}/${interview?.jobApplications?.jobId}`)} key={interview?._id} padding={2} backgroundColor={'bg-background-30'} extraStyles={' mt-4 relative cursor-pointer'}>
+                    <p className='typography-h3  flex items-center justify-between gap-2 w-full ' >
+                      <StageBadge stage={interview?.jobApplications?.currentStage} customWidth={'w-fit'} />
+                      <span className='typography-large-p h-full text-font-gray flex gap-2 items-center'><IconWrapper isInActiveIcon size={0} icon={CalendarDays} />{new Date(interview?.interviewDate).toLocaleString('en-GB', { 
                         day: '2-digit', 
                         month: 'long', 
                         year: 'numeric', 
                         hour: '2-digit', 
                         minute: '2-digit', 
                         hour12: true 
-                    })}</p>
+                    })}</span>
+                    </p>
+                    <div className='mt-2 flex max-w-full'>
+                      <div className='border-r border-font-gray w-[50%] overflow-hidden'>
+                        <p className='typography-h3 whitespace-nowrap text-ellipsis overflow-hidden'>{interview?.firstName + " " + interview?.lastName}</p>
+                        <p className='typography-large-p text-font-gray'>Candidate</p>
+                      </div>
+                      <div className=' w-[50%]'>
+                        <p className='typography-h3 text-end whitespace-nowrap text-ellipsis overflow-hidden'>{interview?.assignee?.name}</p>
+                        <p className='typography-large-p text-font-gray text-end'>{interview?.assignee?.role ?? "Design Reviewer"}</p>
+                      </div>
+                    </div>
               </StyledCard> 
               )
             }) : <p className='typography-body h-full w-full flex justify-center items-center'>No Upcoming Interviews </p>
           }
 
         </StyledCard>
-        <StyledCard padding={2} extraStyles={'w-[50%]'}>
+        <StyledCard padding={2} extraStyles={'w-[60%]'}>
           <h2 className='typography-h2'>Scheduled Interviews</h2>
           <InterviewsChart dataSet={dashboardDetails?.interviews?.stageBasedInterviewsCount} />    
         </StyledCard>
@@ -89,14 +104,15 @@ function AdminDashboard() {
 
       {/* LeaderBoard */}
       <StyledCard padding={2} extraStyles={'mt-4'}>
-      <h2 className='typography-h2'>Leaderboard</h2>
+      <h2 className='typography-h2 mb-2'>Leaderboard</h2>
+      <StatsGrid stats={leaderBoardStats} />
         {/* Leading Positions */}
-        <div className='mt-2 grid grid-cols-10 gap-2'>
+        <div className='mt-4 grid grid-cols-10 gap-2'>
             {/* Single Lead */}
             {
               dashboardDetails?.leaderBoard?.candidates?.length > 0 ? dashboardDetails.leaderBoard.candidates.filter((_,i)=> i < 10).map((candidate,index) => {
                 return (
-                  <div className='flex flex-col items-center gap-2 relative'>
+                  <div key={candidate?._id} onClick={()=>navigate(`/admin/candidates/view-candidate/${candidate?._id}/${candidate?.jobApplications?.jobId}`)} className='flex flex-col items-center gap-2 relative cursor-pointer'>
                   <div className='absolute bottom-6 right-4'>
                     <div className='relative'>
                       <p className='absolute font-bricolage font-bold flex justify-center items-center w-full h-full'>{index + 1}</p>
@@ -117,7 +133,7 @@ function AdminDashboard() {
         <div className='mt-4 grid grid-cols-3 gap-4'>
           
             {
-              dashboardDetails?.leaderBoard?.candidates?.length > 0 && dashboardDetails.leaderBoard.candidates.filter((_,i)=> viewMore ? i >= 0 : i < 6).map((candidate) => {
+              dashboardDetails?.leaderBoard?.candidates?.length > 10 && dashboardDetails.leaderBoard.candidates.filter((_,i)=> viewMore ? (i >= 10) : (i < 16 && i >= 10)).map((candidate) => {
                 return (
                   <StyledCard onClick={()=>navigate(`/admin/candidates/view-candidate/${candidate?._id}/${candidate?.jobApplications?.jobId}`)} padding={2} backgroundColor={'bg-background-70'} extraStyles={'flex justify-between cursor-pointer hover:bg-background-60'}>
                     <div className='flex gap-2'>
@@ -139,7 +155,9 @@ function AdminDashboard() {
             }
 
         </div>
-        {dashboardDetails?.leaderBoard?.candidates?.length > 6 && <div className='w-full flex justify-end mt-4'><Button onClick={()=>setViewMore(!viewMore)} type="button" variant="primary">{viewMore? "View Less" :"View More"}</Button></div>}
+        {dashboardDetails?.leaderBoard?.candidates?.length > 16 && <div className='w-full flex justify-end mt-4'>
+          <button className='flex items-center gap-1 typography-large-p text-font-gray' onClick={()=>setViewMore(!viewMore)} type="button" >{viewMore?<> <IconWrapper inheritColor icon={ChevronUp} size={0} customIconSize={3} customStrokeWidth={5} /> View Less</> :<><IconWrapper inheritColor icon={ChevronDown} size={0} customIconSize={3} customStrokeWidth={5} />View More</>}</button>
+          </div>}
       </StyledCard>
     </div>
   )
