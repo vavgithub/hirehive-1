@@ -148,6 +148,7 @@ const Modal = ({
   onCloseReasonChange,
   specifiedWidth,
   noCancel = false,
+  noConfirm = false,
   useScheduledReject = false
 }) => {
   const [rejectionReason, setRejectionReason] = useState('');
@@ -361,7 +362,7 @@ const Modal = ({
             && actionType !== ACTION_TYPES.AUDIOERROR 
             && actionType !== ACTION_TYPES.REJECT 
             && !useScheduledReject
-            && actionType !== ACTION_TYPES.MEDIAERROR && 
+            && actionType !== ACTION_TYPES.MEDIAERROR && !noConfirm &&
               <Button
                 variant={buttonVariant}
                 onClick={handleConfirm}

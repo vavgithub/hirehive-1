@@ -9,7 +9,7 @@ import { digitsRegex, lowerCaseRegex, specialCharRegex, upperCaseRegex } from '.
 import LoaderModal from '../../components/Loaders/LoaderModal';
 import { InputField } from '../../components/Inputs/InputField';
 
-const ForgotPassword = ({ onBack ,role }) => {
+const ForgotPassword = ({ onBack ,role , isModal = false , setIsLoading = () => {} }) => {
   const [step, setStep] = useState('email');
   const [email, setEmail] = useState('');
   const [otp, setOtp] = useState('');
@@ -22,11 +22,16 @@ const ForgotPassword = ({ onBack ,role }) => {
       const response = await axios.post(role === "Candidate"  ? '/auth/candidate/forgot-password' :'/auth/forgot-password', { email });
       return response.data;
     },
+    onMutate : () =>{
+      isModal && setIsLoading(true)
+    },
     onSuccess: (data) => {
+      isModal && setIsLoading(false)
       showSuccessToast('OTP sent to your email');
       setStep('otp');
     },
     onError: (error) => {
+      isModal && setIsLoading(false)
       showErrorToast(error.response?.data?.message || 'Failed to send OTP. Please try again.');
     }
   });
@@ -37,11 +42,16 @@ const ForgotPassword = ({ onBack ,role }) => {
       const response = await axios.post(role === "Candidate"  ? '/auth/candidate/verify-otp-pass' :'/auth/verify-otp', { email, otp });
       return response.data;
     },
+    onMutate : () =>{
+      isModal && setIsLoading(true)
+    },
     onSuccess: (data) => {
+      isModal && setIsLoading(false)
       showSuccessToast('OTP verified successfully');
       setStep('newPassword');
     },
     onError: (error) => {
+      isModal && setIsLoading(false)
       showErrorToast(error.response?.data?.message || 'Invalid OTP. Please try again.');
     }
   });
@@ -56,11 +66,16 @@ const ForgotPassword = ({ onBack ,role }) => {
       });
       return response.data;
     },
+    onMutate : () =>{
+      isModal && setIsLoading(true)
+    },
     onSuccess: (data) => {
+      isModal && setIsLoading(false)
       showSuccessToast('Password reset successfully');
       setTimeout(() => onBack(), 2000);
     },
     onError: (error) => {
+      isModal && setIsLoading(false)
       showErrorToast(error.response?.data?.message || 'Failed to reset password. Please try again.');
     }
   });
@@ -122,19 +137,19 @@ const ForgotPassword = ({ onBack ,role }) => {
 
   return (
     <div className="w-full">
-      {(requestOtpMutation.isPending || verifyOtpMutation.isPending || resetPasswordMutation.isPending) && <LoaderModal />}
-      <div className='flex cursor-pointer gap-4 my-4 items-center'
+      {((requestOtpMutation.isPending || verifyOtpMutation.isPending || resetPasswordMutation.isPending) && !isModal) && <LoaderModal />}
+      {!isModal && <div className='flex cursor-pointer gap-4 my-4 items-center'
       onClick={onBack}>
         <BackButton/>
         <p className='typography-h3'>
 
       Back to Login
         </p>
-      </div>
+      </div>}
       
       
 
-      <h2 className="typography-h2 mb-6">Reset Password</h2>
+      {!isModal && <h2 className="typography-h2 mb-6">Reset Password</h2>}
 
       {step === 'email' && (
         <form onSubmit={handleEmailSubmit}>
@@ -159,7 +174,7 @@ const ForgotPassword = ({ onBack ,role }) => {
       {step === 'otp' && (
         <form onSubmit={handleOtpSubmit}>
           <div className="space-y-4">
-            <div className="text-center">
+            <div className={isModal ? "text-start" : "text-center"}>
               <label className="block mb-4 typography-body">
                 Enter the verification code sent to your email
               </label>

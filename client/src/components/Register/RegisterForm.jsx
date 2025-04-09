@@ -11,10 +11,11 @@ import { useMutation } from '@tanstack/react-query';
 import { showErrorToast, showSuccessToast } from "../ui/Toast"
 import { useOnboardingContext } from '../../context/OnboardingProvider';
 import IconWrapper from '../Cards/IconWrapper';
-import { Briefcase, FileText } from 'lucide-react';
+import { Briefcase, FileText, X } from 'lucide-react';
 import Modal from '../Modals/Modal';
 import TogglePassword from '../utility/TogglePassword';
 import { digitsRegex, lowerCaseRegex, passwordRegex, specialCharRegex, upperCaseRegex } from '../../utility/regex';
+import ForgotPassword from '../../pages/Admin/ForgotPassword';
 
 export const emailPattern = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i
 
@@ -40,11 +41,15 @@ function RegisterForm({setCurrentStep}) {
     const [name, setName] = useState('');
     const [error, setError] = useState('');
 
+    const [loading, setLoading] = useState(false);
+
     const { onboardData, setOnboardData } = useOnboardingContext();
 
     const [showPasswordPopup,setShowPasswordPopup] = useState(false);
     const [passwordType, setPasswordType] = useState('password');
     const [password, setPassword] = useState('');
+
+    const [showForgotPassword,setShowForgotPassword] = useState(false);
 
     const registerAdminMutation = useMutation({
       mutationFn : registerAdmin,
@@ -153,7 +158,7 @@ function RegisterForm({setCurrentStep}) {
 
   return (
       <div className="flex h-screen ">
-            {registerAdminMutation?.isPending && <LoaderModal/>}
+            {(registerAdminMutation?.isPending || loading) && <LoaderModal/>}
             {/* Left section with background image */}
             <div className="hidden lg:flex lg:w-2/3 bg-login-screen backdrop-blur-lg bg-cover p-12 flex-col justify-between relative">
               <div className='p-[45px]'>
@@ -215,10 +220,37 @@ function RegisterForm({setCurrentStep}) {
             onConfirm={handlePassword}
             >
               <div>
-                <label htmlFor="password" className="block mt-4 mb-2 font-bricolage">Password</label>
-                <TogglePassword typeState={passwordType} setTypeState={setPasswordType}>
-                  <input type={passwordType} id="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter your password" className={(password && "tracking-widest") +" w-full focus:outline-teal-400 p-2 rounded-lg bg-black text-white"} />
-                </TogglePassword>
+                <div>
+                  <label htmlFor="password" className="block mt-4 mb-2 font-bricolage">Password</label>
+                  <TogglePassword typeState={passwordType} setTypeState={setPasswordType}>
+                    <input type={passwordType} id="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter your password" className={(password && "tracking-widest") +" w-full focus:outline-teal-400 p-2 rounded-lg bg-black text-white"} />
+                  </TogglePassword>
+                </div>
+                <div className='flex justify-end'>
+                    <span
+                      onClick={() => {setShowForgotPassword(true) ; setShowPasswordPopup(false)}}
+                      className="text-font-primary cursor-pointer typography-body  mt-2 block text-left hover:underline"
+                    >
+                        Forgot Password?
+                    </span>
+                </div>
+              </div>
+            </Modal>
+            <Modal
+            open={showForgotPassword}
+            onClose={()=>setShowForgotPassword(false)}
+            customTitle={"Reset Your Password"}
+            customMessage={"Please reset your password to continue"}
+            customConfirmLabel={'Send OTP'}
+            onConfirm={()=>console.log("HI")}
+            noCancel
+            noConfirm
+            >
+              <div className='mt-2 '>
+              <ForgotPassword onBack={()=>{setShowForgotPassword(false); }} isModal setIsLoading={setLoading} />
+                <div onClick={()=>setShowForgotPassword(false)} className='absolute -top-4 -right-4 cursor-pointer'>
+                  <IconWrapper icon={X} hasBg customBgHover={"hover:bg-background-60"} />
+                </div>
               </div>
             </Modal>
           </div>
