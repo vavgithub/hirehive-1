@@ -376,7 +376,7 @@ const Table = ({
     let baseColumns = readOnly ? 
       getReadOnlyColumns(role, handleDocumentClick) : 
       getDefaultColumns(role, canMove, canReject, handleAssigneeChange, 
-        handleMoveClick, handleRejectClick, handleRatingClick, handleDocumentClick);
+        handleMoveClick, handleRejectClick, handleRatingClick, handleDocumentClick , jobData?.status === "closed");
     
     // Insert additional columns after the first column
     if (additionalColumns.length > 0) {
@@ -541,7 +541,7 @@ const Table = ({
           />)}
       </div>
 
-      {!readOnly && selectedRows?.length > 0 && <MultiSelectBar selectedData={selectedRows} clearSelection={()=>{setSelectedRows([]); setRowSelectionModel([])}} jobId={jobId} />}
+      {(!readOnly && selectedRows?.length > 0 && jobData?.status !== "closed" ) && <MultiSelectBar selectedData={selectedRows} clearSelection={()=>{setSelectedRows([]); setRowSelectionModel([])}} jobId={jobId} />}
 
       <DataGrid
         rows={filteredAndSearchedRowsData}

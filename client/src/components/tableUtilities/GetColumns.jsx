@@ -187,7 +187,7 @@ export const getReadOnlyColumns = (role, handleDocumentClick,disableCTC) => {
   ])
 };
 
-export const getDefaultColumns = (role, canMove, canReject, handleAssigneeChange, handleMoveClick, handleRejectClick, handleRatingClick, handleDocumentClick) => [
+export const getDefaultColumns = (role, canMove, canReject, handleAssigneeChange, handleMoveClick, handleRejectClick, handleRatingClick, handleDocumentClick , isClosed) => [
   ...getCommonColumns(handleDocumentClick),
   {
     field: 'status',
@@ -250,7 +250,7 @@ export const getDefaultColumns = (role, canMove, canReject, handleAssigneeChange
     },
     renderCell: (params) => {
       const isDisabled = params?.row?.stageStatuses[params?.row?.currentStage]?.status === 'Reviewed' ||
-        params?.row?.stageStatuses[params?.row?.currentStage]?.status === 'Rejected';
+        params?.row?.stageStatuses[params?.row?.currentStage]?.status === 'Rejected' || isClosed;
       return (
         <div className='flex items-center justify-center h-full'
           onClick={(event) => event.stopPropagation()}
@@ -282,21 +282,21 @@ export const getDefaultColumns = (role, canMove, canReject, handleAssigneeChange
       >
           <button
             onClick={() => handleMoveClick(params.row)}
-            disabled={(params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Reviewed" && params?.row?.stageStatuses[params?.row?.currentStage]?.scheduledDate) || !canMove(params.row)}
+            disabled={(params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Reviewed" && params?.row?.stageStatuses[params?.row?.currentStage]?.scheduledDate) || !canMove(params.row) || isClosed}
           >
-            {!(params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Reviewed" && params?.row?.stageStatuses[params?.row?.currentStage]?.scheduledDate) && canMove(params.row) ? 
+            {!(params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Reviewed" && params?.row?.stageStatuses[params?.row?.currentStage]?.scheduledDate) && canMove(params.row) && !isClosed ? 
             <IconWrapper icon={CircleCheck} size={0} customIconSize={5} />
             : <IconWrapper icon={CircleCheck} isInActiveIcon customIconSize={5} size={0} />}
           </button>
           <button
             onClick={() => handleRejectClick(params.row)}
-            disabled={(params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Reviewed" && params?.row?.stageStatuses[params?.row?.currentStage]?.scheduledDate) || !canReject(params.row)}
+            disabled={(params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Reviewed" && params?.row?.stageStatuses[params?.row?.currentStage]?.scheduledDate) || !canReject(params.row) || isClosed}
           >
-            {!(params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Reviewed" && params?.row?.stageStatuses[params?.row?.currentStage]?.scheduledDate) && canReject(params.row) ? 
+            {!(params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Reviewed" && params?.row?.stageStatuses[params?.row?.currentStage]?.scheduledDate) && canReject(params.row) && !isClosed ? 
             <IconWrapper icon={CircleX} size={0} customIconSize={5} />
             : <IconWrapper icon={CircleX} isInActiveIcon customIconSize={5} size={0} />}
           </button>
-          <button className={(params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Reviewed" && params?.row?.stageStatuses[params?.row?.currentStage]?.scheduledDate) || params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Rejected" ? "text-font-gray" : "text-white"} disabled={(params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Reviewed" && params?.row?.stageStatuses[params?.row?.currentStage]?.scheduledDate) || params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Rejected"} onClick={(e) => handleRatingClick(e, params.row)}>
+          <button className={((params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Reviewed" && params?.row?.stageStatuses[params?.row?.currentStage]?.scheduledDate) || params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Rejected" || isClosed) ? "text-font-gray" : "text-white"} disabled={(params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Reviewed" && params?.row?.stageStatuses[params?.row?.currentStage]?.scheduledDate) || params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Rejected" || isClosed} onClick={(e) => handleRatingClick(e, params.row)}>
             {getRatingIcon(params.row.rating)}
           </button>
       </div>

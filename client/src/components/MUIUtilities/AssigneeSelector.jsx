@@ -110,7 +110,7 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
               {selectedReviewer.name[0].toUpperCase()}
             </Avatar>
           ) : (
-            <div className='rounded-full bg-background-30'>
+            <div className={'rounded-full bg-background-70 ' + (!disabled && 'hover:bg-background-60')}>
               <IconWrapper icon={UserRoundPlus} customIconSize={2}  size={3} />
             </div>
           )}

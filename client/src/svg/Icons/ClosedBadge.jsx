@@ -3,7 +3,7 @@ import React from 'react'
 function ClosedBadge() {
   return (
     <svg width="270" height="170" viewBox="0 0 270 204" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <g opacity="0.06">
+        <g opacity="0.2">
             <circle cx="122.672" cy="84.6729" r="75.0723" transform="rotate(-10.2397 122.672 84.6729)" stroke="white"
                 strokeWidth="2.50241" />
             <circle cx="122.677" cy="84.6673" r="68.3992" transform="rotate(-10.2397 122.677 84.6673)" stroke="white"

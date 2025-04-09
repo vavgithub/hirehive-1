@@ -394,8 +394,17 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
     <StyledCard 
     padding={3} 
     backgroundColor={"bg-background-30"}
-    extraStyles={"relative min-h-[12rem]"}
+    extraStyles={"relative min-h-[12rem] "}
     >
+        {
+            isClosed &&
+            <div className='absolute top-4 right-0 flex items-center justify-center h-fit z-20'>
+                <ClosedBadge />
+            </div>
+        }
+        {isClosed &&
+        <div className='absolute top-0 z-10 right-0 flex items-center justify-center h-full w-full bg-[#00000080] rounded-xl'>
+        </div>}
       {/* Header Part */}
       <div className='flex justify-between items-center'>
         <div className='flex items-center gap-4'>
@@ -403,12 +412,6 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
             {stageConfig?.extraHeaderContent && stageConfig?.extraHeaderContent({portfolio : candidateData.jobApplication.professionalInfo.portfolio})}
         </div>
         <div className='flex items-center w-[40%] justify-end'>
-            {
-                isClosed &&
-                <div className='absolute top-4  right-0 flex items-center justify-center h-fit'>
-                    <ClosedBadge />
-                </div>
-            }
 
             {isClosed || <StatusBadge customWidth={'w-fit'} status={currentStatus} />}
             {
