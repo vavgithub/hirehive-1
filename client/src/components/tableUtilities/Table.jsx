@@ -25,10 +25,11 @@ import { BudgetField } from '../FormUtilities/BudgetField';
 import MuiCustomStylesForDataGrid from './MuiCustomStylesForDataGrid';
 import IconWrapper from '../Cards/IconWrapper';
 import { Download } from 'lucide-react';
+import TickCheckbox from '../Checkboxes/TickCheckbox';
 
-const Table = ({ 
-  jobId, jobData, 
-  readOnly = false, 
+const Table = ({
+  jobId, jobData,
+  readOnly = false,
   readOnlyData = [],
   additionalColumns = [], // New prop for custom columns
   customNavigationPath = null // New prop for custom navigation path
@@ -62,30 +63,30 @@ const Table = ({
   // ..this are the table filters 
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState({});
-  const [currentPage,setCurrentPage] = useState(0);
-  const [pageSize,setPageSize] = useState(10);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [pageSize, setPageSize] = useState(10);
 
   const [budgetMenuAnchorEl, setBudgetMenuAnchorEl] = useState(null);
 
-  const [showContractors,setShowContractors] = useState(false);
+  const [showContractors, setShowContractors] = useState(false);
 
-  const { 
-    query , 
-    setQuery ,
-    filters : preservedFilters,
-    setFilters : setPreservedFilters ,
-    currentPage : preservedCurrentPage, 
-    setCurrentPage : setPreservedCurrentPage,
-    pageSize : preservedPageSize,
-    setPageSize : setPreservedPageSize,
+  const {
+    query,
+    setQuery,
+    filters: preservedFilters,
+    setFilters: setPreservedFilters,
+    currentPage: preservedCurrentPage,
+    setCurrentPage: setPreservedCurrentPage,
+    pageSize: preservedPageSize,
+    setPageSize: setPreservedPageSize,
   } = usePreserver(jobId || 'Candidates');
 
-  useLayoutEffect(()=>{
-      setSearchTerm(query)
-      setFilters(preservedFilters)
-      setCurrentPage(preservedCurrentPage)
-      setPageSize(preservedPageSize)
-  },[query,preservedFilters,preservedCurrentPage,preservedPageSize])
+  useLayoutEffect(() => {
+    setSearchTerm(query)
+    setFilters(preservedFilters)
+    setCurrentPage(preservedCurrentPage)
+    setPageSize(preservedPageSize)
+  }, [query, preservedFilters, preservedCurrentPage, preservedPageSize])
 
 
   const handleSearch = (event) => {
@@ -151,20 +152,20 @@ const Table = ({
       result = result.filter(row => filters.rating.includes(row.rating));
     }
     if (!readOnly && filters.assignee && filters.assignee.length > 0) {
-      result = result.filter(row => filters.assignee.find(each=>each._id === row.stageStatuses[row.currentStage]?.assignedTo));
+      result = result.filter(row => filters.assignee.find(each => each._id === row.stageStatuses[row.currentStage]?.assignedTo));
     }
-    if(filters?.assessment && filters.assessment?.length > 0){
+    if (filters?.assessment && filters.assessment?.length > 0) {
       let isCompleted = false;
       let isNotCompleted = false;
-      filters.assessment.map(state=>{
+      filters.assessment.map(state => {
         state === "Completed" && (isCompleted = true)
         state === "Not Completed" && (isNotCompleted = true)
       })
-      if(isCompleted && isNotCompleted){
+      if (isCompleted && isNotCompleted) {
         result = result
-      }else if(isCompleted){
+      } else if (isCompleted) {
         result = result.filter(row => row.hasGivenAssessment === true);
-      }else if(isNotCompleted){
+      } else if (isNotCompleted) {
         result = result.filter(row => row.hasGivenAssessment === false);
       }
 
@@ -173,41 +174,41 @@ const Table = ({
       result.forEach(row => uniqueResults.set(row._id, row));
       result = Array.from(uniqueResults.values());
     }
-    if(filters?.score){
-      const [min,max] = filters?.score?.split(" - ");
-      result = result?.filter((row,i)=>{
+    if (filters?.score) {
+      const [min, max] = filters?.score?.split(" - ");
+      result = result?.filter((row, i) => {
         let totalScore = 0;
-        Object.entries(row?.stageStatuses).forEach(([stage,stageData])=>{
-          if(stage === "Screening"){
-            totalScore += !stageData?.score ? 0 : ((stageData?.score?.Attitude ?? 0)  + 
-              (stageData?.score?.Tech ?? 0) + 
-              (stageData?.score?.Communication ?? 0) + 
-              (stageData?.score?.UI ?? 0) + 
-              (stageData?.score?.UX ?? 0) + 
-              (stageData?.score?.Budget ?? 0) 
+        Object.entries(row?.stageStatuses).forEach(([stage, stageData]) => {
+          if (stage === "Screening") {
+            totalScore += !stageData?.score ? 0 : ((stageData?.score?.Attitude ?? 0) +
+              (stageData?.score?.Tech ?? 0) +
+              (stageData?.score?.Communication ?? 0) +
+              (stageData?.score?.UI ?? 0) +
+              (stageData?.score?.UX ?? 0) +
+              (stageData?.score?.Budget ?? 0)
             )
-          }else{
+          } else {
             totalScore += stageData?.score ?? 0
           }
         })
-        return (totalScore < parseInt(max) && totalScore > parseInt(min) )
+        return (totalScore < parseInt(max) && totalScore > parseInt(min))
       })
     }
 
-    if(filters?.["job Type"]?.length > 0){
+    if (filters?.["job Type"]?.length > 0) {
       result = result.filter(row => filters?.["job Type"].includes(row.jobType));
     }
 
-    if(showContractors){
+    if (showContractors) {
       result = result?.filter(row => row.jobType === "Contract")
     }
 
     return result;
-  }, [filteredRowsData, searchTerm, filters,showContractors]);
+  }, [filteredRowsData, searchTerm, filters, showContractors]);
 
   const autoAssignMutation = useMutation({
-    mutationFn: ({ jobId, reviewerIds ,budgetMin , budgetMax}) =>
-      axios.post('dr/auto-assign-portfolios', { jobId, reviewerIds ,budgetMin , budgetMax}),
+    mutationFn: ({ jobId, reviewerIds, budgetMin, budgetMax }) =>
+      axios.post('dr/auto-assign-portfolios', { jobId, reviewerIds, budgetMin, budgetMax }),
     onSuccess: async (data) => {
       // Invalidate and refetch
       queryClient.invalidateQueries(['candidates', jobId]);
@@ -218,7 +219,7 @@ const Table = ({
     onError: (error) => {
       // console.error('Auto-assign error:', error);
       // You might want to show an error message to the user here
-      showErrorToast("Error",`${error.response?.data?.message}`)
+      showErrorToast("Error", `${error.response?.data?.message}`)
     }
   });
 
@@ -233,8 +234,8 @@ const Table = ({
 
   // Reject candidate mutation
   const rejectCandidateMutation = useMutation({
-    mutationFn: ({ candidateId, jobId, rejectionReason, scheduledDate , scheduledTime }) =>
-      axios.post('/hr/reject-candidate', { candidateId, jobId, rejectionReason, scheduledDate , scheduledTime }),
+    mutationFn: ({ candidateId, jobId, rejectionReason, scheduledDate, scheduledTime }) =>
+      axios.post('/hr/reject-candidate', { candidateId, jobId, rejectionReason, scheduledDate, scheduledTime }),
     onSuccess: () => {
       queryClient.invalidateQueries(['candidates', jobId]);
       setIsRejectModalOpen(false);
@@ -265,11 +266,11 @@ const Table = ({
 
   const handleAutoAssign = async (selectedReviewers) => {
     await autoAssignMutation.mutateAsync({
-          jobId,
-          reviewerIds: selectedReviewers.map(reviewer => reviewer._id),
-          budgetMin: parseFloat(budgetFilter.from) || 0,
-          budgetMax: parseFloat(budgetFilter.to) || Infinity
-        })
+      jobId,
+      reviewerIds: selectedReviewers.map(reviewer => reviewer._id),
+      budgetMin: parseFloat(budgetFilter.from) || 0,
+      budgetMax: parseFloat(budgetFilter.to) || Infinity
+    })
     setIsAutoAssignModalOpen(false);
   };
 
@@ -282,12 +283,12 @@ const Table = ({
     });
   };
 
-  const handleRejectConfirm = (candidate, rejectionReason , scheduledDate , scheduledTime) => {
+  const handleRejectConfirm = (candidate, rejectionReason, scheduledDate, scheduledTime) => {
     rejectCandidateMutation.mutate({
       candidateId: candidate._id,
       jobId,
-      rejectionReason, 
-      scheduledDate , 
+      rejectionReason,
+      scheduledDate,
       scheduledTime
     });
   };
@@ -314,14 +315,14 @@ const Table = ({
   };
 
   const handleApplyBudgetFilter = () => {
-    if(!tempBudgetFilter?.from && !tempBudgetFilter?.to){
-        showErrorToast("Error","Invalid budget values for Screen with Budget");
-        return
+    if (!tempBudgetFilter?.from && !tempBudgetFilter?.to) {
+      showErrorToast("Error", "Invalid budget values for Screen with Budget");
+      return
     }
     setBudgetFilter(tempBudgetFilter);
     localStorage.setItem(`budgetFilter_${jobId}`, JSON.stringify(tempBudgetFilter));
     setIsBudgetModalOpen(false);
-    showSuccessToast("Screened with budget", `Candidates successfully screened within the budget ${tempBudgetFilter.from}${jobData?.employmentType === "Contract" ? " INR/hr" :" LPA"} - ${tempBudgetFilter.to}${jobData?.employmentType === "Contract" ? " INR/hr" :" LPA"}`)
+    showSuccessToast("Screened with budget", `Candidates successfully screened within the budget ${tempBudgetFilter.from}${jobData?.employmentType === "Contract" ? " INR/hr" : " LPA"} - ${tempBudgetFilter.to}${jobData?.employmentType === "Contract" ? " INR/hr" : " LPA"}`)
   };
 
   const clearBudgetFilter = () => {
@@ -359,7 +360,7 @@ const Table = ({
   };
 
   const handleRatingClick = (event, row) => {
-   
+
     event.stopPropagation();
     setAnchorEl(event.currentTarget);
     setSelectedRow(row);
@@ -371,23 +372,23 @@ const Table = ({
   };
 
   //getting column configurations
-   // Update the columns generation
-   const columns = (() => {
-    let baseColumns = readOnly ? 
-      getReadOnlyColumns(role, handleDocumentClick) : 
-      getDefaultColumns(role, canMove, canReject, handleAssigneeChange, 
+  // Update the columns generation
+  const columns = (() => {
+    let baseColumns = readOnly ?
+      getReadOnlyColumns(role, handleDocumentClick) :
+      getDefaultColumns(role, canMove, canReject, handleAssigneeChange,
         handleMoveClick, handleRejectClick, handleRatingClick, handleDocumentClick);
-    
+
     // Insert additional columns after the first column
     if (additionalColumns.length > 0) {
       return [
         ...baseColumns.slice(0, 1), // Keep the first column (fullName)
-        ...baseColumns.slice(1,6),     // Add the rest of the columns
+        ...baseColumns.slice(1, 6),     // Add the rest of the columns
         ...additionalColumns,       // Add custom columns
-        ...baseColumns.slice(6,10),     // Add the rest of the columns
+        ...baseColumns.slice(6, 10),     // Add the rest of the columns
       ];
     }
-    
+
     return baseColumns;
   })();
 
@@ -396,10 +397,10 @@ const Table = ({
 
   const handleRowClick = (params) => {
     // Save the current window scroll position before navigation
-    if(location.pathname === '/admin/candidates' || location.pathname === '/hiring-manager/candidates'){
+    if (location.pathname === '/admin/candidates' || location.pathname === '/hiring-manager/candidates') {
       sessionStorage.setItem('candidates_scroll_position', window.scrollY);
     } else {
-      sessionStorage.setItem('job_candidates_scroll_position',document.getElementById('adminContainer')?.scrollTop || 0);
+      sessionStorage.setItem('job_candidates_scroll_position', document.getElementById('adminContainer')?.scrollTop || 0);
     }
 
     // Use custom navigation path if provided
@@ -412,13 +413,13 @@ const Table = ({
     // Default navigation logic
     if (role === "Hiring Manager") {
 
-      const baseUrl = readOnly 
-        ? "/hiring-manager/candidates/view-candidate" 
+      const baseUrl = readOnly
+        ? "/hiring-manager/candidates/view-candidate"
         : "/hiring-manager/jobs/view-candidate";
       navigate(`${baseUrl}/${params?.row?._id}/${readOnly ? params.row.jobId : jobId}`);
-    }else if (role === "Admin") {
-      const baseUrl = readOnly 
-        ? "/admin/candidates/view-candidate" 
+    } else if (role === "Admin") {
+      const baseUrl = readOnly
+        ? "/admin/candidates/view-candidate"
         : "/admin/jobs/view-candidate";
       navigate(`${baseUrl}/${params?.row?._id}/${readOnly ? params.row.jobId : jobId}`);
     } else {
@@ -433,10 +434,10 @@ const Table = ({
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const year = date.getFullYear();
     const today = `${day}-${month}-${year}`;
-  
+
     // Create filename: JobName_Date_data.xlsx
     const fileName = `${today}_datasheet`;
-    
+
     exportToExcel(filteredAndSearchedRowsData, fileName);
   };
   const handleBudgetButtonClick = (event) => {
@@ -448,16 +449,16 @@ const Table = ({
     }
   };
 
-  const [selectedRows,setSelectedRows] = useState([]);
-  const [rowSelectionModel,setRowSelectionModel] = useState([]);
+  const [selectedRows, setSelectedRows] = useState([]);
+  const [rowSelectionModel, setRowSelectionModel] = useState([]);
 
   const handleSelectionChange = (selectionModel) => {
-    
+
     const candidateIds = [];
     const jobIds = [];
     setRowSelectionModel(selectionModel)
-    selectionModel?.map(selectionData=>{
-      const [candidateId,jobId] = selectionData.split("_");
+    selectionModel?.map(selectionData => {
+      const [candidateId, jobId] = selectionData.split("_");
       candidateIds.push(candidateId);
       jobIds.push(jobId);
     })
@@ -485,13 +486,13 @@ const Table = ({
   return (
     <div className='w-full'>
 
-    {autoAssignMutation.isPending || 
-    rejectCandidateMutation.isPending || 
-    moveCandidateMutation.isPending && <LoaderModal/>}
+      {autoAssignMutation.isPending ||
+        rejectCandidateMutation.isPending ||
+        moveCandidateMutation.isPending && <LoaderModal />}
 
-      <MuiCustomStylesForDataGrid/>
+      <MuiCustomStylesForDataGrid />
 
-      <div className='flex justify-between pb-2 gap-2'>
+      <div className='flex justify-between pb-4 gap-2'>
 
         {/* {here is the place to add the search bar ,  filter , export button } */}
 
@@ -504,50 +505,56 @@ const Table = ({
             onChange={handleSearch}
           />
           <FilterForDataTable onApplyFilters={handleApplyFilters} readOnly={readOnly} preservedFilters={preservedFilters} />
-          <div className='flex items-center cursor-pointer gap-2 text-font-gray hover:bg-background-60 hover:text-accent-100 rounded-xl typography-body h-12 p-3' onClick={() => handleExport()}>
-            <IconWrapper inheritColor={true}  icon={Download} />
+          <div className="cursor-pointer gap-2 flex  items-center typography-body hover:bg-background-60 hover:text-accent-100 rounded-xl p-2 text-font-gray" onClick={() => handleExport()}>
+            <IconWrapper inheritColor={true} icon={Download} size={0} customIconSize={4} customStrokeWidth={5} />
             Export
           </div>
 
-          { readOnly && <div className="flex items-center gap-2">
-            <div className="relative h-fit translate-y-[3px]">
+          {/* { readOnly && <div className="flex items-center gap-2 hover:bg-background-60 hover:text-accent-100 p-2 rounded-xl">
+            <div className="relative">
               <input 
                 type="checkbox" 
                 id="typeCheck" 
                 value={showContractors}
                 onChange={(e)=>setShowContractors(e.target.checked)}
-                className="appearance-none border-[1px] h-[20px] w-[20px] text-black-100 rounded-sm bg-transparent border-grey-100 checked:border-accent-100 peer"
+                className="appearance-none border border-background-80 mr-2 h-4 w-4  rounded-md bg-background-80 hover:border-grey-100 checked:bg-accent-100 checked:border-accent-100 peer"
               />
-              <svg 
-                className="hidden peer-checked:block absolute top-[1px] left-0 w-[20px] h-[20px] text-white pointer-events-none" 
-                viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"
-              >
-                <path d="M5 12l4 4L19 7"></path>
-              </svg>
+              
+              <span className="absolute hidden  h-4 w-4 text-black-100 items-center justify-center text-black peer-checked:flex ">✔</span>
             </div>
-            <label htmlFor="typeCheck" className="typography-body whitespace-nowrap text-font-gray cursor-pointer">
+            <label htmlFor="typeCheck" className="typography-body hover:text-accent-100 whitespace-nowrap text-font-gray cursor-pointer">
               Show Contractors Only
             </label>
-          </div>}
+          </div>} */}
+
+          {readOnly && (
+            <TickCheckbox
+              id="typeCheck"
+              checked={showContractors}
+              onChange={(e) => setShowContractors(e.target.checked)}
+              label="Show Contractors Only"
+              className="flex items-center gap-2 hover:bg-background-60 hover:text-accent-100 p-2 rounded-xl"
+            />
+          )}
 
         </div>
 
         {!readOnly && (
-          <AutoAssignWithBudget 
-          autoAssignMutation={autoAssignMutation} 
-          budgetFilter={budgetFilter} 
-          handleBudgetButtonClick={handleBudgetButtonClick} 
-          setIsAutoAssignModalOpen={setIsAutoAssignModalOpen} 
+          <AutoAssignWithBudget
+            autoAssignMutation={autoAssignMutation}
+            budgetFilter={budgetFilter}
+            handleBudgetButtonClick={handleBudgetButtonClick}
+            setIsAutoAssignModalOpen={setIsAutoAssignModalOpen}
           />)}
       </div>
 
-      {!readOnly && selectedRows?.length > 0 && <MultiSelectBar selectedData={selectedRows} clearSelection={()=>{setSelectedRows([]); setRowSelectionModel([])}} jobId={jobId} />}
+      {!readOnly && selectedRows?.length > 0 && <MultiSelectBar selectedData={selectedRows} clearSelection={() => { setSelectedRows([]); setRowSelectionModel([]) }} jobId={jobId} />}
 
       <DataGrid
         rows={filteredAndSearchedRowsData}
         columns={columns}
         getRowId={(row) => `${row._id}_${row.jobId ?? jobId}`} // Create a unique ID for each row
-        paginationModel= {{ page: currentPage, pageSize: pageSize }}
+        paginationModel={{ page: currentPage, pageSize: pageSize }}
         onPaginationModelChange={(paginationModel) => {
           const { page, pageSize } = paginationModel;
           setCurrentPage(page); // Update your state or perform actions for page change
@@ -559,9 +566,9 @@ const Table = ({
         getRowClassName={(params) =>
           params.indexRelativeToCurrentPage % 2 === 0 ? 'first-row' : 'second-row'
         }
-        localeText={{ noRowsLabel: <p style={{fontFamily:"Outfit"}}>No Candidates</p> }}
+        localeText={{ noRowsLabel: <p style={{ fontFamily: "Outfit" }}>No Candidates</p> }}
 
-        pageSizeOptions={[10,20,30,40,50]}
+        pageSizeOptions={[10, 20, 30, 40, 50]}
         checkboxSelection
         onRowSelectionModelChange={(newSelection) => handleSelectionChange(newSelection)} // Updates on selection change
         rowSelectionModel={rowSelectionModel}
@@ -583,17 +590,17 @@ const Table = ({
         budgetFilter={budgetFilter}
       />
 
-      <RatingSelector 
-      anchorEl={anchorEl} 
-      onSelectRating={handleRatingSelect} 
-      setAnchorEl={handleRatingClose} 
+      <RatingSelector
+        anchorEl={anchorEl}
+        onSelectRating={handleRatingSelect}
+        setAnchorEl={handleRatingClose}
       />
 
-      <BudgetMenu 
-      budgetMenuAnchorEl={budgetMenuAnchorEl} 
-      handleBudgetMenuClose={handleBudgetMenuClose} 
-      handleBudgetEdit={handleBudgetEdit} 
-      handleBudgetClear={handleBudgetClear} 
+      <BudgetMenu
+        budgetMenuAnchorEl={budgetMenuAnchorEl}
+        handleBudgetMenuClose={handleBudgetMenuClose}
+        handleBudgetEdit={handleBudgetEdit}
+        handleBudgetClear={handleBudgetClear}
       />
 
 
