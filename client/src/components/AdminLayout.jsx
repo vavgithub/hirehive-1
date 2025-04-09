@@ -9,6 +9,7 @@ import StyledMenu from './MUIUtilities/StyledMenu';
 import IconWrapper from './Cards/IconWrapper';
 import { Briefcase, FileText, LayoutGrid, LogOut, MonitorDot, Star, User, Users } from 'lucide-react';
 import { UNKNOWN_PROFILE_PICTURE_URL } from '../utility/config';
+import { useSelector } from 'react-redux';
 
 const AdminLayout = () => {
     const navigate = useNavigate();
@@ -17,6 +18,8 @@ const AdminLayout = () => {
 
     const [anchorEl, setAnchorEl] = useState(null); // State to control dropdown menu
     const { refetch } = useAuth();
+
+    const { newMembersCount } = useSelector(state => state.admin)
 
     // Get profile path based on user role
     const getProfilePath = () => {
@@ -51,7 +54,7 @@ const AdminLayout = () => {
         setAnchorEl(null); // Close the menu
     };
 
-    const NavItem = ({ to, icon: Icon, activeIcon: ActiveIcon, iconData, children }) => (
+    const NavItem = ({ to, icon: Icon, activeIcon: ActiveIcon, iconData, children , hasHighlighter}) => (
         <div className="relative flex flex-row items-center justify-between hover:bg-background-60 rounded-xl mx-2">
             <NavLink
                 to={to}
@@ -67,6 +70,7 @@ const AdminLayout = () => {
                     </div>
                 )}
             </NavLink>
+                {hasHighlighter && <p className='w-2 absolute right-4 h-2 rounded-full bg-blue-100'></p>}
             <NavLink
                 to={to}
                 end={to === "/admin/dashboard" || to === "/design-reviewer/dashboard"}
@@ -149,7 +153,7 @@ const AdminLayout = () => {
                     <NavItem to="/admin/jobs" icon={()=><IconWrapper isInActiveIcon icon={Briefcase} />} activeIcon={()=><IconWrapper isActiveIcon icon={Briefcase} />}>Jobs</NavItem>
                     <NavItem to="/admin/candidates" icon={()=><IconWrapper isInActiveIcon icon={Users} />} activeIcon={()=><IconWrapper isActiveIcon icon={Users} />}>All Candidates</NavItem>
                     <NavItem to="/admin/shortlisted" icon={()=><IconWrapper isInActiveIcon icon={MonitorDot} />} activeIcon={()=><IconWrapper isActiveIcon icon={MonitorDot} />}>Future Gems</NavItem>
-                    <NavItem to="/admin/teams" icon={()=><IconWrapper isInActiveIcon icon={FileText} />} activeIcon={()=><IconWrapper isActiveIcon icon={FileText} />}>Teams</NavItem>
+                    <NavItem to="/admin/teams" hasHighlighter={newMembersCount > 0} icon={()=><IconWrapper isInActiveIcon icon={FileText} />} activeIcon={()=><IconWrapper isActiveIcon icon={FileText} />}>Teams</NavItem>
                     {/* <NavItem to="/admin/reviews" icon={ReviewsIcon} activeIcon={ReviewsIconActive}>Reviews</NavItem> */}
                     {/* <NavItem to="/admin/reviews" icon={ReviewsIcon} activeIcon={ReviewsIconActive}>Reviews</NavItem>
                     <NavItem to="/admin/reports" icon={ReportsIcon} activeIcon={ReportsIconActive}>Reports</NavItem> */}

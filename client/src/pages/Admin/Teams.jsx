@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import StyledCard from "../../components/Cards/StyledCard";
 import { Button } from "../../components/Buttons/Button";
 import Modal from "../../components/Modals/Modal";
@@ -13,6 +13,8 @@ import LoaderModal from "../../components/Loaders/LoaderModal";
 import { useNavigate } from "react-router-dom";
 import Container from "../../components/Cards/Container";
 import { UNKNOWN_PROFILE_PICTURE_URL } from "../../utility/config";
+import { useDispatch } from "react-redux";
+import { setMembersCount } from "../../redux/AdminSlice";
 
 const addMember = async ({teamMember}) => {
     const response = await axios.post('/admin/add-member',{teamMember});
@@ -45,11 +47,22 @@ function Teams() {
 
     const queryClient = useQueryClient();
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     const { data : teamMembers , isLoading : isTeamMembersLoading } = useQuery({
         queryKey: ['team_members'],
         queryFn: () => axios.get('/admin/get-all-members').then(res => res.data),
     })
+
+    useEffect(()=>{
+        if(teamMembers?.members?.length > 0){
+            dispatch(setMembersCount(
+                teamMembers.members.filter(member => member.status === "REQUESTED")?.length
+            ))
+        }else{
+            dispatch(setMembersCount(0))
+        }
+    },[teamMembers])
 
     const addMemberMutation = useMutation({
         mutationFn : addMember,

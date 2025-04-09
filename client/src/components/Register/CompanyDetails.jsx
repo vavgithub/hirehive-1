@@ -103,6 +103,7 @@ function CompanyDetails({currentStep,setCurrentStep}) {
       },
       onError : (error) => {
         showErrorToast("Error",error?.response?.data?.message || "Unexpected Error. Try again")
+        setTimeout(()=> navigate('/admin/login',{replace : true}),1500)
       }
     })
 

@@ -572,7 +572,7 @@ export const sendMemberRequest = asyncHandler(async (req, res) => {
       });
     }
   
-    // ✅ Check if a member with the email already exists
+    // Check if a member with the email already exists
     const emailExists = companyData.invited_team_members.some(
       member => member.email === userData.email
     );
