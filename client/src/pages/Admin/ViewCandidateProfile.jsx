@@ -480,7 +480,7 @@ const ViewCandidateProfile = () => {
                                                 {getRatingIcon(data?.jobApplication?.rating)}    
                                             </span>}
                                     </div>
-                                    <div className='flex flex-col gap-2'>
+                                    <div className='flex flex-col gap-2 max-w-[60%]'>
                                         <h1 className="typography-h2">
                                             {data.firstName} {data.lastName}
                                         </h1>
@@ -499,11 +499,11 @@ const ViewCandidateProfile = () => {
                                                     </div>
                                                     <span className="typography-large-p">{data.phone}</span>
                                                 </div>
-                                                <div className="flex items-center gap-2">
+                                                <div className="flex items-center gap-2 overflow-hidden">
                                                     <div className='cursor-pointer' onClick={() => handleEmailOpen(data?.firstName + " " + data?.lastName, data?.email,data?.jobApplication?.jobApplied,new Date(data?.jobApplication?.stageStatuses['Screening']?.currentCall?.scheduledDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) + " " + formatTime(data?.jobApplication?.stageStatuses['Screening']?.currentCall?.scheduledTime))}>
                                                         <IconWrapper size={0} customIconSize={1} icon={Mail} />
                                                     </div>
-                                        <span className="typography-large-p">{data.email}</span>
+                                        <span className="typography-large-p whitespace-nowrap text-ellipsis overflow-hidden ">{data.email}</span>
                                     </div>
                                 </div>}
                                 <div className="flex gap-2 items-center ">
@@ -558,7 +558,7 @@ const ViewCandidateProfile = () => {
                                             </div>
                                         </div>}
                                 </div>
-                                {role === "Hiring Manager" && candidateData?.jobApplication?.notes?.content ?
+                                {(role === "Hiring Manager" || role === "Admin") && candidateData?.jobApplication?.notes?.content ?
                                     <StyledCard onClick={() => setOpenNotesView(true)} padding={2} backgroundColor={"bg-background-80"} extraStyles={'w-[30%] h-fit max-h-36 cursor-pointer max  relative overflow-hidden'}>
                                         <div className=' flex justify-between items-center  ' >
 
