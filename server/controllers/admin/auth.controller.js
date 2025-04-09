@@ -167,6 +167,7 @@ export const getUserProfile = asyncHandler(async (req, res) => {
   }
 });
 
+//Getting Design Reviewers + Admin of one company
 export const getAvailableDesignReviewers = async (req, res) => {
     try {
       const company_id = req.user?.company_id;
@@ -177,9 +178,16 @@ export const getAvailableDesignReviewers = async (req, res) => {
         isAvailable : true
       }).select('_id name email isAvailable profilePicture'); // Include _id and isAvailable
   
+      const admin = await User.findOne({ 
+        role: 'Admin',
+        company_id : company_id,
+        isAvailable : true
+      }).select('_id name email isAvailable profilePicture'); 
+
       res.status(200).json({ 
         success: true, 
-        data: allReviewers 
+        data: allReviewers,
+        admin 
       });
     } catch (error) {
       res.status(500).json({ 

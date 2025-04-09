@@ -442,6 +442,10 @@ export const autoAssignPortfolios = async (req, res) => {
        stageStatus.score = ratings; // Can be a number or an object with multiple ratings
      }
      stageStatus.feedback = feedback;
+
+     if(req.user.role === "Admin"){
+      stageStatus.assignedTo = req.user._id
+     }
  
      // Update the status from 'Under Review' to 'Reviewed'
      if (stageStatus.status === 'Under Review') {

@@ -551,10 +551,10 @@ const ViewCandidateProfile = () => {
                                         <div className='absolute bottom-4 right-4 flex gap-2'>
                                             <div className='flex flex-col items-end'>
                                                 <p className='typography-small-p text-font-gray'>Current reviewer </p>
-                                                <p className='typography-small-p '>{designReviewers?.data?.find(dr => dr?._id === data?.jobApplication?.stageStatuses[data?.jobApplication?.currentStage]?.assignedTo)?.name}</p>
+                                                <p className='typography-small-p '>{designReviewers?.data?.find(dr => dr?._id === data?.jobApplication?.stageStatuses[data?.jobApplication?.currentStage]?.assignedTo)?.name ?? ((designReviewers?.admin?._id === data?.jobApplication?.stageStatuses[data?.jobApplication?.currentStage]?.assignedTo) ? designReviewers?.admin?.name : "")}</p>
                                             </div>
                                             <div className='w-8 h-8 overflow-hidden rounded-full'>
-                                                <img src={designReviewers?.data?.find(dr => dr?._id === data?.jobApplication?.stageStatuses[data?.jobApplication?.currentStage]?.assignedTo)?.profilePicture || "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg"} alt="" className='object-cover w-full overflow-hidden' />
+                                                <img src={(designReviewers?.data?.find(dr => dr?._id === data?.jobApplication?.stageStatuses[data?.jobApplication?.currentStage]?.assignedTo)?.profilePicture ?? ((designReviewers?.admin?._id === data?.jobApplication?.stageStatuses[data?.jobApplication?.currentStage]?.assignedTo) ? designReviewers?.admin?.profilePicture : UNKNOWN_PROFILE_PICTURE_URL))  ?? UNKNOWN_PROFILE_PICTURE_URL } alt="" className='object-cover w-full overflow-hidden' />
                                             </div>
                                         </div>}
                                 </div>

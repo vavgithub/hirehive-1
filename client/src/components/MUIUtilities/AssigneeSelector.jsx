@@ -50,7 +50,7 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
 
   useEffect(()=>{
     if(designReviewers && designReviewers?.data?.length > 0){
-      setReviewers(designReviewers?.data)
+      setReviewers([...designReviewers?.data,designReviewers?.admin])
     }else{
       setReviewers([])
     }
