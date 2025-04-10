@@ -1,6 +1,7 @@
-// ApplyJob.jsx this is the page
+// ApplyJob.jsx - complete modified code
+
 import React, { useEffect, useState, useRef } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useDropzone } from 'react-dropzone';
 import { useForm, Controller } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -37,7 +38,7 @@ const fetchJobDetails = async (id) => {
 
 export const uploadProfilePicture = async (file) => {
   if (!file) throw new Error("No file selected.");
-  validateProfileImages(file)
+  validateProfileImages(file);
   const formData = new FormData();
   formData.append('profilePicture', file);
   try {
@@ -46,15 +47,13 @@ export const uploadProfilePicture = async (file) => {
     });
     return response.data.profilePictureUrl;
   } catch (error) {
-    // console.error('Error uploading profile picture:', error);
     throw error;
   }
 };
 
-
 export const uploadResume = async (file, setUploadProgress) => {
   if (!file) throw new Error("No file selected.");
-  validateResume(file)
+  validateResume(file);
   const formData = new FormData();
   formData.append('resume', file);
 
@@ -70,21 +69,20 @@ export const uploadResume = async (file, setUploadProgress) => {
     });
     return response.data.resumeUrl;
   } catch (error) {
-    // console.error('Error uploading resume:', error);
     throw error;
   }
 };
 
-const updateEmail = ({email, userId}) => {
-  const response = axios.post('/auth/candidate/update-email',{email, userId});
+const updateEmail = ({ email, userId }) => {
+  const response = axios.post('/auth/candidate/update-email', { email, userId });
   return response?.data;
-}
+};
 
 const ApplyJob = () => {
   const dispatch = useDispatch();
-  const { candidateData, isAuthenticated } = useCandidateAuth()
+  const { candidateData, isAuthenticated } = useCandidateAuth();
 
-  //to store email update candidates ID
+  // to store email update candidates ID
   const IdRef = useRef(null);
 
   const [currentStep, setCurrentStep] = useState(1);
@@ -97,19 +95,19 @@ const ApplyJob = () => {
   const [resumeFile, setResumeFile] = useState(null);
   const [uploadProgress, setUploadProgress] = useState(0);
 
-  const [showConfirm,setShowConfirm] = useState(false);
-  const [isExist,setIsExist] = useState(false);
-  const [editEmail,setEditEmail] = useState("");
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [isExist, setIsExist] = useState(false);
+  const [editEmail, setEditEmail] = useState("");
 
-  const [showLoginPopup,setShowLoginPopup] = useState(false);
-  const [password,setPassword] = useState("");
-  const [passwordType,setPasswordType] = useState("password");
+  const [showLoginPopup, setShowLoginPopup] = useState(false);
+  const [password, setPassword] = useState("");
+  const [passwordType, setPasswordType] = useState("password");
 
   const [profilePictureFile, setProfilePictureFile] = useState(null);
   const [profilePicturePreview, setProfilePicturePreview] = useState(null);
 
   const navigate = useNavigate();
-  const { id: jobId , companyId } = useParams();
+  const { id: jobId, companyId } = useParams();
 
   const submitBtnRef = useRef(null);
 
@@ -126,13 +124,14 @@ const ApplyJob = () => {
     expectedCTC: "",
     hourlyRate: "",
     resumeFile: null,
-    skills: "" || [],
-  }
+    skills: [] // default empty array for skills
+  };
+
   const {
     register,
     control,
     handleSubmit,
-    formState: { errors, isValid },
+    formState: { errors },
     getValues,
     watch,
     setValue,
@@ -160,7 +159,7 @@ const ApplyJob = () => {
     },
   });
 
-  const { data: jobDetails, isLoading } = useQuery({
+  const { data: jobDetails } = useQuery({
     queryKey: ['jobDetails', jobId],
     queryFn: () => fetchJobDetails(jobId),
   });
@@ -168,7 +167,6 @@ const ApplyJob = () => {
   // Pre-fill form with candidate data when authenticated
   useEffect(() => {
     if (isAuthenticated && candidateData && jobDetails) {
-
       const isHourlyRateJob = jobDetails?.employmentType === 'Part Time' || jobDetails?.employmentType === 'Contract';
 
       reset({
@@ -188,8 +186,7 @@ const ApplyJob = () => {
         skills: candidateData.skills || [],
       });
     }
-  }, [isAuthenticated, candidateData, jobDetails, reset]);
-
+  }, [isAuthenticated, candidateData, jobDetails, reset, resumeFile]);
 
   const handleProfilePictureSelect = (file) => {
     setProfilePictureFile(file);
@@ -199,16 +196,14 @@ const ApplyJob = () => {
     }
   };
 
-  // Add cleanup useEffect
+  // Cleanup profile picture preview URL on unmount
   useEffect(() => {
     return () => {
-      // Cleanup preview URL when component unmounts
       if (profilePicturePreview) {
         URL.revokeObjectURL(profilePicturePreview);
       }
     };
   }, [profilePicturePreview]);
-
 
   // Register all fields with their validation rules
   useEffect(() => {
@@ -216,6 +211,20 @@ const ApplyJob = () => {
       register(fieldName, rules);
     });
   }, [register]);
+
+  // Helper function to scroll to first error field
+  const scrollToErrorField = () => {
+    const errorFieldKeys = Object.keys(errors);
+    if (errorFieldKeys.length > 0) {
+      // Taking the first error field found
+      const firstErrorKey = errorFieldKeys[0];
+      const errorElement = document.getElementById(firstErrorKey);
+      if (errorElement) {
+        errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        errorElement.focus();
+      }
+    }
+  };
 
   const onSubmit = async (data) => {
     setIsSubmitting(true);
@@ -281,24 +290,24 @@ const ApplyJob = () => {
         };
 
         const response = await axios.post('/auth/candidate/register', registrationData);
-        if(response?.data?.currentStage === 'MODAL'){
-          setValue("email",response.data?.email)
-          IdRef.current = response.data?.userId
-          setIsExist(true)
-          setShowConfirm(true)
-        }else{
+        if (response?.data?.currentStage === 'MODAL') {
+          setValue("email", response.data?.email);
+          IdRef.current = response.data?.userId;
+          setIsExist(true);
+          setShowConfirm(true);
+        } else {
           setEmail(data.email);
           setPhone(data.phoneNumber);
-          setIsExist(false)
-          setShowConfirm(false)
+          setIsExist(false);
+          setShowConfirm(false);
         }
         showSuccessToast('Success', response?.data?.message || "Please Create Your Password");
         setCurrentStep(response?.data?.currentStage !== 'MODAL' ? 2 : 1);
       }
     } catch (error) {
-      if(error.response?.data?.next === "LOGIN"){
-          setShowLoginPopup(true);
-      }else{
+      if (error.response?.data?.next === "LOGIN") {
+        setShowLoginPopup(true);
+      } else {
         showErrorToast(
           'Error',
           error.response?.data?.message || error?.message || 'Failed to perform job action. Please try again.'
@@ -310,19 +319,18 @@ const ApplyJob = () => {
   };
 
   const updateEmailMutation = useMutation({
-    mutationFn : updateEmail,
-    onSuccess : (data) => {
-      submitBtnRef.current.click()
+    mutationFn: updateEmail,
+    onSuccess: (data) => {
+      submitBtnRef.current.click();
     },
-    onError : (error) => {
-
+    onError: (error) => {
       showErrorToast('Error', error.response?.data?.message || 'Failed to update email. Please try again.');
     }
-  })
+  });
 
   const handleUpdateEmail = () => {
-    updateEmailMutation.mutate({email : getValues("email"), userId : IdRef?.current})
-  }
+    updateEmailMutation.mutate({ email: getValues("email"), userId: IdRef?.current });
+  };
 
   const handleOtpSubmit = async (e) => {
     e.preventDefault();
@@ -405,48 +413,40 @@ const ApplyJob = () => {
     }
   };
 
-    const handleLogin = async () => {
-      try {
-        if(!email.trim() && !password.trim()){
-          return showErrorToast("Error","Please enter your email and password")
-        }else if(!email.trim()){
-          return  showErrorToast("Error","Please enter your email")
-        }else if(!emailRegex.test(email)){
-          return  showErrorToast("Error","Please invalid email format")
-        }else if(!password.trim()){
-          return showErrorToast("Error","Please enter your password")
-        }else{
-          const result = await dispatch(loginCandidateAuth({ email, password })).unwrap();
-          if (result) {
-            navigate(`/apply-job/${jobId}`,{replace:true});
-            showSuccessToast("Success","Logged in Successfully")
-            window.scrollTo(0,0)
-          }
+  const handleLogin = async () => {
+    try {
+      if (!email.trim() && !password.trim()) {
+        return showErrorToast("Error", "Please enter your email and password");
+      } else if (!email.trim()) {
+        return showErrorToast("Error", "Please enter your email");
+      } else if (!emailRegex.test(email)) {
+        return showErrorToast("Error", "Please enter a valid email format");
+      } else if (!password.trim()) {
+        return showErrorToast("Error", "Please enter your password");
+      } else {
+        const result = await dispatch(loginCandidateAuth({ email, password })).unwrap();
+        if (result) {
+          navigate(`/apply-job/${jobId}`, { replace: true });
+          showSuccessToast("Success", "Logged in Successfully");
+          window.scrollTo(0, 0);
         }
-      } catch (error) {
-        // Error handling is now managed by Redux
-        console.error('Login failed:', error);
-        showErrorToast("Error",error);
       }
-    };
+    } catch (error) {
+      console.error('Login failed:', error);
+      showErrorToast("Error", error);
+    }
+  };
 
   return (
-
-
-    // <div className=' flex justify-center ' >
     <Container extraStyles={"flex justify-center " + (currentStep !== 1 ? "p-0" : '')} hasContainerDiv={false} >
-
-      {
-        (isSubmitting || updateEmailMutation?.isPending ) && <LoaderModal />
-      }
+      {(isSubmitting || updateEmailMutation?.isPending) && <LoaderModal />}
 
       {currentStep === 1 && (
         <div className='container'>
-          <div  >
-            <img className='h-12 mt-2 mx-4' src={Logo} />
+          <div>
+            <img className='h-12 mt-2 mx-4' src={Logo} alt="Logo" />
           </div>
           <form className='mx-auto mt-2 container-form px-6' onSubmit={handleSubmit(onSubmit)}>
-            {/* <h1 className="typography-h1 py-6">Application for {jobDetails?.jobTitle}</h1> */}
             <Header HeaderText={`Application for ${jobDetails?.jobTitle}`} withBack={"true"} />
             {/* Personal Details */}
             {!isAuthenticated && (
@@ -459,77 +459,66 @@ const ApplyJob = () => {
               </div>
             )}
 
-
-
             <ResumePortfolioSection control={control} isAuthenticated={isAuthenticated} />
 
-            {
-
-
-              <div className='md:col-span-2 mt-6'>
-                <label className="typography-body">Resume<span className="text-red-100">*</span></label>
-                <div
-                  {...getRootProps({
-                    className: `bg-background-40 hover:bg-background-60 rounded-xl mt-4 p-4 text-center cursor-pointer 
-                            ${isDragActive ? 'border border-teal-500 bg-background-60' : ''} 
-                            ${errors.resumeFile ? '!border !border-red-500' : ''}`,
-                  })}
-                >
-                  <input {...getInputProps()} />
-                  {resumeFile ? (
-                    <div className="flex bg-background-70  items-center justify-between p-4 rounded-xl">
-                      <span>{resumeFile.name}</span>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setResumeFile(null);
-                          setValue('resumeFile', null, { shouldValidate: true });
-                        }}
-                        className="ml-2"
-                      >
-                        <svg width="10" height="9" viewBox="0 0 10 9" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M9 0.5L1 8.5M1 0.5L9 8.5" stroke="white" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
-                      </button>
+            <div className='md:col-span-2 mt-6'>
+              <label className="typography-body">
+                Resume<span className="text-red-100">*</span>
+              </label>
+              <div
+                {...getRootProps({
+                  className: `bg-background-40 hover:bg-background-60 rounded-xl mt-4 p-4 text-center cursor-pointer 
+                    ${isDragActive ? 'border border-teal-500 bg-background-60' : ''} 
+                    ${errors.resumeFile ? '!border !border-red-500' : ''}`,
+                })}
+              >
+                <input {...getInputProps()} />
+                {resumeFile ? (
+                  <div className="flex bg-background-70 items-center justify-between p-4 rounded-xl">
+                    <span>{resumeFile.name}</span>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setResumeFile(null);
+                        setValue('resumeFile', null, { shouldValidate: true });
+                      }}
+                      className="ml-2"
+                    >
+                      <svg width="10" height="9" viewBox="0 0 10 9" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M9 0.5L1 8.5M1 0.5L9 8.5" stroke="white" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </button>
+                  </div>
+                ) : (
+                  <div className='flex items-center flex-col'>
+                    <div className='hidden md:flex'>
+                      <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M24.999 16.9999V22.3333C24.999 23.0405 24.7181 23.7188 24.218 24.2189C23.7179 24.719 23.0396 24.9999 22.3324 24.9999H3.66569C2.95845 24.9999 2.28017 24.719 1.78007 24.2189C1.27997 23.7188 0.999023 23.0405 0.999023 22.3333V16.9999M19.6657 7.66661L12.999 0.999939M12.999 0.999939L6.33236 7.66661M12.999 0.999939V16.9999" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
                     </div>
-                  ) : (
-                    <div className='flex items-center flex-col'>
-                      <div className='hidden md:flex'>
-                        <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M24.999 16.9999V22.3333C24.999 23.0405 24.7181 23.7188 24.218 24.2189C23.7179 24.719 23.0396 24.9999 22.3324 24.9999H3.66569C2.95845 24.9999 2.28017 24.719 1.78007 24.2189C1.27997 23.7188 0.999023 23.0405 0.999023 22.3333V16.9999M19.6657 7.66661L12.999 0.999939M12.999 0.999939L6.33236 7.66661M12.999 0.999939V16.9999" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
-
-                      </div>
-                      <p className="mb-2 hidden typography-body text-font-gray md:flex">Drag and drop your resume here</p>
-                      <p className='text-font-gray typography-small-p hidden md:flex mb-2'>OR</p>
-                      <div className='md:w-[276px]'>
-
-                        <Button variant="secondary" type="button">Browse files</Button>
-                      </div>
+                    <p className="mb-2 hidden typography-body text-font-gray md:flex">Drag and drop your resume here</p>
+                    <p className='text-font-gray typography-small-p hidden md:flex mb-2'>OR</p>
+                    <div className='md:w-[276px]'>
+                      <Button variant="secondary" type="button">Browse files</Button>
                     </div>
-                  )}
-                </div>
-                {uploadProgress > 0 && uploadProgress < 100 && (
-                  <div className="mt-2">
-                    <progress value={uploadProgress} max="100" className="w-full" />
-                    <span>{uploadProgress}% uploaded</span>
                   </div>
                 )}
-                {/* Hidden input field to include resumeFile in form validation */}
-                <input type="hidden" {...register('resumeFile', { required: 'Resume is required' })} />
-                {errors.resumeFile && (
-                  <span className="typography-small-p text-red-500">{errors.resumeFile.message}</span>
-                )}
               </div>
-
-
-
-            }
+              {uploadProgress > 0 && uploadProgress < 100 && (
+                <div className="mt-2">
+                  <progress value={uploadProgress} max="100" className="w-full" />
+                  <span>{uploadProgress}% uploaded</span>
+                </div>
+              )}
+              <input type="hidden" {...register('resumeFile', { required: 'Resume is required' })} />
+              {errors.resumeFile && (
+                <span className="typography-small-p text-red-500">{errors.resumeFile.message}</span>
+              )}
+            </div>
 
             <ProfessionalDetailsSection control={control} jobDetails={jobDetails} />
-            {/* Skills Input */}
 
-            <div className="grid md:grid-cols-2 grid-cols-1 gap-6 mt-6 ">
+            <div className="grid md:grid-cols-2 grid-cols-1 gap-6 mt-6">
               <Controller
                 name="skills"
                 control={control}
@@ -539,7 +528,7 @@ const ApplyJob = () => {
                     Array.isArray(value) && value.length > 0 ? true : 'Please add at least one skill',
                 }}
                 render={({ field, fieldState: { error } }) => (
-                  <div className="w-full ">
+                  <div className="w-full">
                     <label htmlFor="skills" className="typography-body">
                       Skills <span className="text-red-100">*</span>
                     </label>
@@ -555,16 +544,12 @@ const ApplyJob = () => {
               />
             </div>
 
-
-            {/* Additional Questions */}
             <div className="mt-12">
-              {jobDetails?.questions.length != 0 && (
+              {jobDetails?.questions.length !== 0 && (
                 <AdditionalQuestions jobDetails={jobDetails} control={control} errors={errors} />
               )}
             </div>
 
-
-            {/* Buttons */}
             <div className="flex mt-6 justify-end gap-4 mb-6">
               <Button
                 type="button"
@@ -575,100 +560,105 @@ const ApplyJob = () => {
               </Button>
               <Button
                 type="button"
-                  onClick={async ()=>{
-                    setIsExist(false)
-                    setEditEmail(false)
-                    if(isAuthenticated){
-                      submitBtnRef.current.click()
-                    }else{
-                      const isValid = await trigger()
-                      isValid && setShowConfirm(true)
+                onClick={async () => {
+                  setIsExist(false);
+                  setEditEmail(false);
+                  if (isAuthenticated) {
+                    submitBtnRef.current.click();
+                  } else {
+                    const valid = await trigger();
+                    if (valid) {
+                      setShowConfirm(true);
+                    } else {
+                      scrollToErrorField();
                     }
                   }
-                  }
+                }}
                 variant="primary"
                 disabled={isSubmitting}
               >
                 {isSubmitting ? 'Submitting...' : 'Next'}
               </Button>
-                <button ref={submitBtnRef} type='submit' className='hidden'>Submit</button>
+              <button ref={submitBtnRef} type='submit' className='hidden'>Submit</button>
             </div>
             <Modal
-            open={showConfirm}
-            onClose={()=>setShowConfirm(false)}
-            onConfirm={isExist ? handleUpdateEmail : ()=>submitBtnRef.current.click()}
-            customTitle={isExist ? 'Confirm your Email' :"Is this email correct ?"}
-            customMessage={isExist ? "For account registration, we are sending an OTP to this attached email. Are you sure this email is correct ?" : "For account registration, we are sending an OTP to this email. Are you sure this email is correct ? "}
-            customConfirmLabel={"Sent"}
+              open={showConfirm}
+              onClose={() => setShowConfirm(false)}
+              onConfirm={isExist ? handleUpdateEmail : () => submitBtnRef.current.click()}
+              customTitle={isExist ? 'Confirm your Email' : "Is this email correct ?"}
+              customMessage={isExist ? "For account registration, we are sending an OTP to this attached email. Are you sure this email is correct ?" : "For account registration, we are sending an OTP to this email. Are you sure this email is correct ? "}
+              customConfirmLabel={"Sent"}
             >
               <StyledCard padding={2} backgroundColor={"bg-background-80 mt-4"}>
-              <div className='font-outfit typography-body w-full flex items-center justify-between gap-4'>
-                {!editEmail ? <p className='w-full'>{getValues("email")}</p> : 
-                  <div className='w-full'>
-                    <InputField type="text" placeholder="Enter your email" value={watch("email")} onChange={(e)=>setValue("email",e.target.value)}  />
-                  </div>
-                }
-                <button type='button' onClick={()=>setEditEmail(!editEmail)}>{!editEmail ? <div className='rounded-xl bg-background-60 h-11 w-11 flex justify-center items-center'>
-                  <IconWrapper size={2} customIconSize={3}  icon={PencilLine} />
-                  </div> : <div className='rounded-xl bg-background-60 h-11 w-11 flex justify-center items-center text-green-70'><IconWrapper size={2} customIconSize={3} inheritColor icon={Check} /></div>}</button>
-              </div>
-              </StyledCard> 
+                <div className='font-outfit typography-body w-full flex items-center justify-between gap-4'>
+                  {!editEmail ? (
+                    <p className='w-full'>{getValues("email")}</p>
+                  ) : (
+                    <div className='w-full'>
+                      <InputField type="text" placeholder="Enter your email" value={watch("email")} onChange={(e) => setValue("email", e.target.value)} />
+                    </div>
+                  )}
+                  <button type='button' onClick={() => setEditEmail(!editEmail)}>
+                    {!editEmail ? (
+                      <div className='rounded-xl bg-background-60 h-11 w-11 flex justify-center items-center'>
+                        <IconWrapper size={2} customIconSize={3} icon={PencilLine} />
+                      </div>
+                    ) : (
+                      <div className='rounded-xl bg-background-60 h-11 w-11 flex justify-center items-center text-green-70'>
+                        <IconWrapper size={2} customIconSize={3} inheritColor icon={Check} />
+                      </div>
+                    )}
+                  </button>
+                </div>
+              </StyledCard>
             </Modal>
 
-            {/* Login Popup */}
             <Modal
-            open={showLoginPopup}
-            onClose={()=>setShowLoginPopup(false)}
-            customTitle={"Login"}
-            customMessage={"Your account already exists. Please Login to continue."}
-            customConfirmLabel={"Login"}
-            onConfirm={handleLogin}
+              open={showLoginPopup}
+              onClose={() => setShowLoginPopup(false)}
+              customTitle={"Login"}
+              customMessage={"Your account already exists. Please Login to continue."}
+              customConfirmLabel={"Login"}
+              onConfirm={handleLogin}
             >
               <div className='mt-4'>
                 <div className="mb-4">
                   <label htmlFor="loginemail" className="block mb-2 font-bricolage">Email</label>
                   <input type="email" id="loginemail" placeholder="Enter your email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full p-2 rounded-lg bg-black text-white focus:outline-teal-400" />
                 </div>
-                  <div>
-                    <label htmlFor="password" className="block mb-2 font-bricolage">Password</label>
+                <div>
+                  <label htmlFor="password" className="block mb-2 font-bricolage">Password</label>
                   <TogglePassword typeState={passwordType} setTypeState={setPasswordType}>
-                    <input type={passwordType} id="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter your password" className={(password && "tracking-widest") +" w-full focus:outline-teal-400 p-2 rounded-lg bg-black text-white"} />
+                    <input type={passwordType} id="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter your password" className={(password && "tracking-widest") + " w-full focus:outline-teal-400 p-2 rounded-lg bg-black text-white"} />
                   </TogglePassword>
-                  </div>
-                {/* {error && <p className="text-red-500 typography-small-p mb-4">{error}</p>} */}
+                </div>
                 <div className='flex justify-end'>
-                    <span
-                        onClick={() => setShowForgotPassword(true)}
-                        className="text-font-primary cursor-pointer typography-body  mt-2 block text-left hover:underline"
-                    >
-                        Forgot Password?
-                    </span>
+                  <span
+                    onClick={() => setShowForgotPassword(true)}
+                    className="text-font-primary cursor-pointer typography-body mt-2 block text-left hover:underline"
+                  >
+                    Forgot Password?
+                  </span>
                 </div>
               </div>
             </Modal>
             <div className='mb-6'>
-
               <ContactUs />
             </div>
           </form>
         </div>
       )}
 
-
-
-      {/* OTP Verification Step */}
       {currentStep === 2 && (
         <OtpComponent email={email} handleOtpSubmit={handleOtpSubmit} isSubmitting={isSubmitting} otp={otp} otpError={otpError} setOtp={setOtp} />
       )}
 
-      {/* Password Creation Step */}
       {currentStep === 3 && (
         <PasswordComponent watch={watch} control={control} handlePasswordSubmit={handlePasswordSubmit} isSubmitting={isSubmitting} passwordError={passwordError} />
       )}
 
-      <ContactUs/>
-  </Container>
-
+      <ContactUs />
+    </Container>
   );
 };
 
