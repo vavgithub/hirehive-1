@@ -495,13 +495,13 @@ const ViewCandidateProfile = () => {
                                             <div className="flex mb-3 gap-5">
                                                 <div className="flex items-center gap-2">
                                                     <div className='cursor-pointer' onClick={() => handleWhatsappOpen(data.firstName + " " + data.lastName, data.phone)}>
-                                                        <IconWrapper size={0} customIconSize={1} icon={Phone} />
+                                                        <IconWrapper size={0} customIconSize={2} icon={Phone} />
                                                     </div>
                                                     <span className="typography-large-p">{data.phone}</span>
                                                 </div>
                                                 <div className="flex items-center gap-2">
                                                     <div className='cursor-pointer' onClick={() => handleEmailOpen(data?.firstName + " " + data?.lastName, data?.email,data?.jobApplication?.jobApplied,new Date(data?.jobApplication?.stageStatuses['Screening']?.currentCall?.scheduledDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) + " " + formatTime(data?.jobApplication?.stageStatuses['Screening']?.currentCall?.scheduledTime))}>
-                                                        <IconWrapper size={0} customIconSize={1} icon={Mail} />
+                                                        <IconWrapper size={0} customIconSize={2} icon={Mail} />
                                                     </div>
                                         <span className="typography-large-p">{data.email}</span>
                                     </div>

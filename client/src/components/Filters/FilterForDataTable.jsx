@@ -4,7 +4,7 @@ import { fetchAllDesignReviewers, fetchAvailableDesignReviewers } from '../../ap
 import { useQuery } from '@tanstack/react-query';
 import ScoreFilter, { MAX_SCORE, MIN_SCORE } from './ScoreFilter';
 import IconWrapper from '../Cards/IconWrapper';
-import { SlidersHorizontal } from 'lucide-react';
+import { SlidersHorizontal, Trash } from 'lucide-react';
 import TickCheckbox from '../Checkboxes/TickCheckbox';
 
 const ArrowIcon = ({ isOpen }) => (
@@ -258,7 +258,7 @@ const FilterForDataTable = ({ onApplyFilters, readOnly, preservedFilters }) => {
       </div>
       {isOpen && (
         <div className="absolute z-10 mt-2 p-2 w-[18rem] max-w-[19rem] bg-background-40 rounded-xl flex flex-col gap-2 shadow-[5px_5px_50px_rgba(0,0,0,0.9)]">
-          {Object.values(selectedFilters).map((filter) => Array.isArray(filter) ? filter : !filter ? [] : [filter]).flat()?.length > 0 && <p onClick={handleClearAll} className='cursor-pointer flex gap-2 items-center text-accent-red justify-end w-full typography-small-p pr-4 pt-2'><ClearIcon />Clear All</p>}
+          {Object.values(selectedFilters).map((filter) => Array.isArray(filter) ? filter : !filter ? [] : [filter]).flat()?.length > 0 && <p onClick={handleClearAll} className='cursor-pointer flex gap-2 items-center text-accent-red justify-end w-full typography-body pr-4 pt-2'><IconWrapper icon={Trash} size={0} inheritColor></IconWrapper> Clear All</p>}
           {Object.keys(categories).map((category) => (
             <div key={category} className="w-full">
               <div className={"flex justify-between group h-10 hover:bg-background-60 p-4 rounded-xl items-center cursor-pointer " + (selectedFilters[category]?.length > 0 ? "text-accent-100 bg-accent-300 " : "text-font-gray")} onClick={() => handleDropdown(category)}>
