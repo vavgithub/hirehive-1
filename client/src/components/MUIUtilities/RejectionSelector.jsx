@@ -62,8 +62,8 @@ function RejectionSelector({selectedAnchor,handleClose,handleReasonSelect}) {
                       color :"white"
                     },
                   }}
-                  key={reason}
-                  onClick={()=>handleReasonSelect(reason)}
+                  key={reason?.label}
+                  onClick={()=>handleReasonSelect(reason?.value)}
                 >
                   <ListItemText
                   primaryTypographyProps={{
@@ -77,7 +77,7 @@ function RejectionSelector({selectedAnchor,handleClose,handleReasonSelect}) {
                       overflow : "hidden"
                     },
                   }}
-                  primary={reason} />
+                  primary={reason?.label} />
                 </MenuItem>
               ))
             ) : (

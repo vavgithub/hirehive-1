@@ -100,21 +100,53 @@ const CLOSE_REASONS = [
 ];
 
 export const REJECTION_REASONS = [
-  "Candidate's scores did not meet the criteria",
-  // "Candidate did not appear for the screening",
-  // "Candidate did not appear for round one",
-  // "Candidate did not appear for round two",
-  // "Candidate did not submit the design task"
-  "Candidate has reapplied but was previously rejected",
-  "Candidate's portfolio/work samples did not meet expectations",
-  "Candidate displayed unprofessional or bad attitude",
-  "Candidate's skills do not align with job requirements",
-  "Candidate withdrew their application",
-  "Candidate requested an unrealistic salary",
-  "Candidate was unresponsive to communication",
-  "Candidate provided misleading or false information"
-
+  {
+    label: "Candidate's scores did not meet the criteria",
+    value: "Candidate's scores did not meet the criteria",
+    email: true,
+  },
+  {
+    label: "Candidate has reapplied but was previously rejected",
+    value: "Candidate has reapplied but was previously rejected",
+    email: false,
+  },
+  {
+    label: "Candidate's portfolio/work samples did not meet expectations",
+    value: "Candidate's portfolio/work samples did not meet expectations",
+    email: false,
+  },
+  {
+    label: "Candidate displayed unprofessional or bad attitude",
+    value: "Candidate displayed unprofessional or bad attitude",
+    email: false,
+  },
+  {
+    label: "Candidate's skills do not align with job requirements",
+    value: "Candidate's skills do not align with job requirements",
+    email: false,
+  },
+  {
+    label: "Candidate withdrew their application",
+    value: "Candidate withdrew their application",
+    email: false,
+  },
+  {
+    label: "Candidate requested an unrealistic salary",
+    value: "Candidate requested an unrealistic salary",
+    email: false,
+  },
+  {
+    label: "Candidate was unresponsive to communication",
+    value: "Candidate was unresponsive to communication",
+    email: false,
+  },
+  {
+    label: "Candidate provided misleading or false information",
+    value: "Candidate provided misleading or false information",
+    email: false,
+  },
 ];
+
 
 const RedWarning = () => {
   return (
@@ -251,7 +283,6 @@ const Modal = ({
 
           <Label icon={WarningIcon} text={`The candidate has scored ${candidateScore}`} spanContent={`/${maxScoreOfStage}`} />   
           
-          {!showEmailPreview && action.requiresReason && (
             <div className="mt-4">
               {/* <label htmlFor="rejectionReason" className="block typography-body">
                 Please provide the reason for rejecting this candidate
@@ -275,9 +306,7 @@ const Modal = ({
                 ))}
               </select> */}
             </div>
-          )}
-
-          {showEmailPreview && (
+          {(showEmailPreview && REJECTION_REASONS.find(reason => reason.value === rejectionReason)?.email )&& (
             <>
               <p className="text-gray-300 mt-4 font-outfit mb-2">This rejection email will be sent to the candidate</p>
               <div className="bg-background-100 p-4 rounded mb-4 font-outfit">
