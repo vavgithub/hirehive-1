@@ -59,7 +59,7 @@ const StatCard = ({ title, value, icon: Icon, statistics }) => {
   ]
 
   return (
-    <div className="flex flex-shrink-0 justify-between relative items-center bg-card-pattern w-[240px] rounded-md shadow h-[6.5rem] min-h-fit overflow-hidden">
+    <div className="flex flex-shrink-0 overflow-hidden justify-between relative items-center bg-card-pattern w-[240px] rounded-md shadow h-[6.5rem] min-h-fit">
       <div className="ml-[15px] w-full ">
         <p className="typography-small-p text-font-gray w-max">{title}</p>
         <p className="typography-h2">{value ?? 0}</p>

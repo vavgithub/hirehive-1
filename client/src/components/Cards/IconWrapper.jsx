@@ -42,6 +42,7 @@ function IconWrapper({ icon  : Icon, isActiveIcon, inheritColor , isInActiveIcon
       "secondary" : "#808389",
       "error" : "#FF385C",
       "white" : "#ffffff",
+    
     }
 
     const sizeStyles = ` ${(typeof size === 'number') ? sizeOptions[size] : sizeOptions[4]} `
