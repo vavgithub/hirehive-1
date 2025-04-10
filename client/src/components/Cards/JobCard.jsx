@@ -122,12 +122,14 @@ const JobCard = ({
   // Truncate job description to 10 words
   const truncatedDescription = truncateWords(job.jobDescription || 'No description available', 40);
 
-  const handleCopyLink = async (e,jobId) => {
+  const handleCopyLink = async (e,jobId,company_id) => {
     e.stopPropagation()
-    await copyToClipboard(`${window.location.origin}/${jobId}`)
+    await copyToClipboard(`${window.location.origin}/org/${company_id}/view-job/${jobId}`)
     showSuccessToast("Success","Job link copied successfuully")
   }
 
+
+  console.log("job", job);
   return (
     <StyledCard
     padding={0}
@@ -144,7 +146,7 @@ const JobCard = ({
         {(role === "Admin" || role === "Hiring Manager") && job?.status === 'open' && 
         <div>
           <CustomToolTip arrowed title={"Copy link"}>
-            <div onClick={(e) => handleCopyLink(e,job?._id)} className='cursor-pointer p-2 h-10 flex justify-center items-center bg-background-70 hover:bg-background-80 rounded-xl'>
+            <div onClick={(e) => handleCopyLink(e,job?._id , job?.company_id)} className='cursor-pointer p-2 h-10 flex justify-center items-center bg-background-70 hover:bg-background-80 rounded-xl'>
               <Copy size={20} strokeWidth={1} color='#808389'/>            
             </div>
           </CustomToolTip>
