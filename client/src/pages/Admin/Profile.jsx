@@ -43,7 +43,7 @@ const PersonalDetails = ({ userData, isEditing, control }) => {
               <p className="text-font-gray whitespace-nowrap">Email</p>
             </div>
             <div className="flex flex-col gap-6 typography-body">
-              <p className="whitespace-nowrap overflow-hidden text-ellipsis">{userData.name?.split(' ')[0]}</p>
+              <p className="whitespace-nowrap overflow-hidden text-ellipsis">{userData.name?.split(' ')[0] ?? '-'}</p>
               <p className="whitespace-nowrap overflow-hidden text-ellipsis">{userData.email}</p>
             </div>
           </div>
@@ -53,7 +53,7 @@ const PersonalDetails = ({ userData, isEditing, control }) => {
               <p className="text-font-gray whitespace-nowrap">Phone Number</p>
             </div>
             <div className="flex flex-col gap-6 typography-body">
-              <p className="whitespace-nowrap overflow-hidden text-ellipsis">{userData.name?.split(' ')[1]}</p>
+              <p className="whitespace-nowrap overflow-hidden text-ellipsis ">{userData.name?.split(' ')[1] ?? '-'}</p>
               <p>{userData.phone}</p>
             </div>
           </div>
