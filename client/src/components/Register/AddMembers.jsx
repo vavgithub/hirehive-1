@@ -277,11 +277,11 @@ function AddMembers({currentStep,setCurrentStep}) {
             renderCell : (params) =>{
                 if(!params?.row?.noAction)
                 return (
-                    <div className='flex items-center justify-center gap-2'>
-                        <div onClick={()=>editMember(params?.row?.id)} className='cursor-pointer bg-black-100 h-11 min-w-11 flex justify-center items-center rounded-xl hover:bg-background-40'>
+                    <div className='flex items-center h-full justify-center gap-2'>
+                        <div onClick={()=>editMember(params?.row?.id)} className='cursor-pointer bg-background-70 h-9 min-w-9 flex justify-center items-center rounded-xl hover:bg-background-80'>
                             <IconWrapper icon={Pencil} size={0} />
                         </div>
-                        <div onClick={()=>removeMember(params?.row?.id)} className='cursor-pointer bg-black-100 h-11 min-w-11 flex justify-center items-center rounded-xl hover:bg-background-40'>
+                        <div onClick={()=>removeMember(params?.row?.id)} className='cursor-pointer bg-background-70 h-9 min-w-9 flex justify-center items-center rounded-xl hover:bg-background-80'>
                             <IconWrapper icon={Trash} size={0} />
                         </div>
                     </div>

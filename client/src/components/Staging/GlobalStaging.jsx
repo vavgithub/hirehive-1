@@ -32,6 +32,7 @@ import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import IconWrapper from '../Cards/IconWrapper.jsx';
 import { Calendar, Clock, Copy, DatabaseZap, Link } from 'lucide-react';
+import useAuth from '../../hooks/useAuth.jsx';
 
 const submitReview = async ({ candidateId, reviewData }) => {
     const response = await axios.post('dr/submit-score-review', {
@@ -46,6 +47,9 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
     const currentStatus = stageData?.status;
     const candidateData = useSelector(state => state.candidate.candidateData);
     const navigate = useNavigate();
+    
+    //To get admin Data for companyDetails
+    const { data : adminData } = useAuth();
 
     const { stageTitle, stageConfig, stageBasedConfig , candidateId, jobId} = useMemo(()=>{
       const isValidstage =  stagingConfig[jobProfile]?.filter(stage=> stage?.name === selectedStage);
@@ -671,7 +675,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
           candidateScore={getCandidateScore(candidateData?.jobApplication?.stageStatuses)}
           maxScoreOfStage={getMaxScoreForStage(stageTitle)}
           jobTitle={candidateData?.jobApplication?.jobApplied}
-          companyName="Your Company Name"
+          companyName={adminData?.companyDetails?.name}
       />}
 
       {stageBasedConfig?.actions?.hasMoveToNextRoundAction && 

@@ -143,7 +143,7 @@ export const logoutUser = asyncHandler(async (req, res) => {
 
 // Get User Profile
 export const getUserProfile = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.user._id);
+  const user = await User.findById(req.user._id).populate('company_id');
 
   if (user) {
       res.json({
@@ -159,7 +159,8 @@ export const getUserProfile = asyncHandler(async (req, res) => {
           tasks_done: user.tasks_done,
           tasks_pending: user.tasks_pending,
           role: user.role,
-          profilePicture: user.profilePicture
+          profilePicture: user.profilePicture,
+          companyDetails : user?.company_id
       });
   } else {
       res.status(404);

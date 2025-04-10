@@ -16,6 +16,7 @@ import Container from '../../components/Cards/Container';
 import { PencilLine } from 'lucide-react';
 import IconWrapper from '../../components/Cards/IconWrapper';
 import { UNKNOWN_PROFILE_PICTURE_URL } from '../../utility/config';
+import { companySizeOptions, industryTypeOptions, LocationOptions } from '../../components/Register/CompanyDetails';
 
 
 
@@ -43,7 +44,7 @@ const PersonalDetails = ({ userData, isEditing, control }) => {
               <p className="text-font-gray whitespace-nowrap">Email</p>
             </div>
             <div className="flex flex-col gap-6 typography-body">
-              <p className="whitespace-nowrap overflow-hidden text-ellipsis">{userData.name?.split(' ')[0]}</p>
+              <p className="whitespace-nowrap overflow-hidden text-ellipsis">{userData.name?.split(' ')[0] ?? '-'}</p>
               <p className="whitespace-nowrap overflow-hidden text-ellipsis">{userData.email}</p>
             </div>
           </div>
@@ -53,7 +54,7 @@ const PersonalDetails = ({ userData, isEditing, control }) => {
               <p className="text-font-gray whitespace-nowrap">Phone Number</p>
             </div>
             <div className="flex flex-col gap-6 typography-body">
-              <p className="whitespace-nowrap overflow-hidden text-ellipsis">{userData.name?.split(' ')[1]}</p>
+              <p className="whitespace-nowrap overflow-hidden text-ellipsis ">{userData.name?.split(' ')[1] ?? '-'}</p>
               <p>{userData.phone}</p>
             </div>
           </div>
@@ -399,21 +400,27 @@ function Profile() {
                 <h1 className="typography-h1 whitespace-nowrap overflow-hidden w-full text-ellipsis text-center">
                   {user?.name}
                 </h1>
-                <div className="flex items-center gap-4 mt-2">
-                  <p className="font-outfit text-gray-600">{user?.email}</p>
-                  <span className="w-1 h-1 bg-gray-400 rounded-full"></span>
-                  <p className="font-outfit text-gray-600">{user?.role}</p>
-                </div>
-                <div className="mt-6 w-full grid grid-cols-2 gap-4">
-                  <div>
-                    <p className="font-outfit text-gray-500 text-sm">Reviews Completed</p>
-                    <p className="typography-h3">{user?.tasks_done || 0}</p>
-                  </div>
-                  <div>
-                    <p className="font-outfit text-gray-500 text-sm">Pending Reviews</p>
-                    <p className="typography-h3">{user?.tasks_pending || 0}</p>
+              </StyledCard>
+              {console.log(user)}
+              <StyledCard backgroundColor="bg-background-30" extraStyles="flex flex-col items-center relative mt-4">
+              <div className="relative w-[8rem] min-h-[5rem]">
+                  <div className="absolute w-[8rem] left-0 -top-14 aspect-square overflow-hidden rounded-full">
+                    <img
+                      src={ user?.companyDetails?.logoUrl || UNKNOWN_PROFILE_PICTURE_URL }
+                      alt=""
+                      className="object-cover w-full h-full"
+                    />
                   </div>
                 </div>
+                <h1 className="typography-h1 whitespace-nowrap overflow-hidden w-full text-ellipsis text-center">
+                  {user?.companyDetails?.name}
+                </h1>
+                <div className="w-full flex justify-center items-center gap-2">
+                    <p className=" text-font-gray gap-2 typography-small-p   ">{LocationOptions?.find(loc => loc.value === user?.companyDetails?.location)?.label}</p>
+                    <span className='w-[6px] h-[6px] bg-font-gray rounded-full'></span>
+                    <p className=" text-font-gray gap-2 typography-small-p   ">{industryTypeOptions?.find(loc => loc.value === user?.companyDetails?.industryType)?.label}</p>
+                </div>
+                <p className='typography-large-p flex justify-between w-full mt-4'><span className='text-font-gray'>Size</span> <span>{companySizeOptions?.find(loc => loc.value === user?.companyDetails?.size)?.label}</span></p>
               </StyledCard>
             </div>
           </div>

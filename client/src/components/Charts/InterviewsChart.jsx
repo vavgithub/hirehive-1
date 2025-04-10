@@ -63,7 +63,7 @@ function InterviewsChart({dataSet}) {
           }
         ]
       };
-  return <ReactECharts option={options} style={{height : "90%"}} />;
+  return <ReactECharts option={options} style={{minHeight : "20rem",height : "90%"}} />;
 }
 
 export default InterviewsChart

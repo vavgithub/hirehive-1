@@ -438,7 +438,7 @@ const ApplyJob = () => {
   };
 
   return (
-    <Container extraStyles={"flex justify-center " + (currentStep !== 1 ? "p-0" : '')} hasContainerDiv={false} >
+    <Container extraStyles={"flex justify-center "} customPadding={(currentStep !== 1 ? "p-0" : '')} hasContainerDiv={false} >
       {(isSubmitting || updateEmailMutation?.isPending) && <LoaderModal />}
 
       {currentStep === 1 && (

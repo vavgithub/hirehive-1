@@ -34,7 +34,7 @@ const PersonalDetails = ({ candidateData, isEditing, control }) => {
               <p className="text-font-gray whitespace-nowrap">Email</p>
             </div>
             <div className="flex flex-col gap-6 typography-body">
-              <p className="whitespace-nowrap overflow-hidden text-ellipsis">{candidateData.firstName}</p>
+              <p className="whitespace-nowrap overflow-hidden text-ellipsis">{candidateData.firstName ?? '-'}</p>
               <p className="whitespace-nowrap overflow-hidden text-ellipsis">{candidateData.email}</p>
             </div>
           </div>
@@ -44,7 +44,7 @@ const PersonalDetails = ({ candidateData, isEditing, control }) => {
               <p className="text-font-gray whitespace-nowrap">Phone Number</p>
             </div>
             <div className="flex flex-col gap-6 typography-body">
-              <p className="whitespace-nowrap overflow-hidden text-ellipsis">{candidateData.lastName}</p>
+              <p className="whitespace-nowrap overflow-hidden text-ellipsis">{candidateData.lastName ?? '-'}</p>
               <p>{candidateData.phone}</p>
             </div>
           </div>

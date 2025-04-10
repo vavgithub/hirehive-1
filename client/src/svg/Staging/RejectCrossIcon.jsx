@@ -1,12 +1,9 @@
 import React from 'react'
+import IconWrapper from '../../components/Cards/IconWrapper'
+import { X } from 'lucide-react'
 
 function RejectCrossIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M15 5L5 15M5 5L15 15" stroke="#FF385C" strokeWidth="1.5" strokeLinecap="round"
-            strokeLinejoin="round" />
-    </svg>
-  )
+  return  <span className='text-red-100'><IconWrapper customStrokeWidth={4} customIconSize={4} icon={X} inheritColor size={0} /></span>
 }
 
 export default RejectCrossIcon

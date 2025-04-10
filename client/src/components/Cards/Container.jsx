@@ -9,10 +9,11 @@ const  Container = forwardRef(({
   hasBgImage = false,
   mainProps = {},
   containerProps = {},
-  hasContainerDiv = true
+  hasContainerDiv = true,
+  customPadding = ""
 },ref) => {
     
-  const basicMainStyles = " w-full p-4 min-h-screen ";
+  const basicMainStyles = ` w-full ${customPadding ? customPadding?.toString() : 'p-4'} min-h-screen `;
   const basicContainerStyles = " container ";
 
   const bgImageStyles = ` ${(typeof hasBgImage === 'string' && hasBgImage.trim() !== 'bg-main-bg') ? hasBgImage : " bg-main-bg " }  bg-cover `;
