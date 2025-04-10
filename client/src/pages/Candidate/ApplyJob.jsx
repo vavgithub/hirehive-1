@@ -27,8 +27,9 @@ import Container from '../../components/Cards/Container';
 import Modal from '../../components/Modals/Modal';
 import StyledCard from '../../components/Cards/StyledCard';
 import IconWrapper from '../../components/Cards/IconWrapper';
-import { Check, PencilLine } from 'lucide-react';
+import { Check, PencilLine, X } from 'lucide-react';
 import TogglePassword from '../../components/utility/TogglePassword';
+import ForgotPassword from '../Admin/ForgotPassword';
 
 const fetchJobDetails = async (id) => {
   const response = await axios.get(`/jobs/getJobById/${id}`);
@@ -104,6 +105,9 @@ const ApplyJob = () => {
   const [showLoginPopup,setShowLoginPopup] = useState(false);
   const [password,setPassword] = useState("");
   const [passwordType,setPasswordType] = useState("password");
+
+  const [showForgotPassword,setShowForgotPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [profilePictureFile, setProfilePictureFile] = useState(null);
   const [profilePicturePreview, setProfilePicturePreview] = useState(null);
@@ -437,7 +441,7 @@ const ApplyJob = () => {
     <Container extraStyles={"flex justify-center "} customPadding={(currentStep !== 1 ? "p-0" : '')} hasContainerDiv={false} >
 
       {
-        (isSubmitting || updateEmailMutation?.isPending ) && <LoaderModal />
+        (isSubmitting || updateEmailMutation?.isPending || loading) && <LoaderModal />
       }
 
       {currentStep === 1 && (
@@ -638,7 +642,7 @@ const ApplyJob = () => {
                 {/* {error && <p className="text-red-500 typography-small-p mb-4">{error}</p>} */}
                 <div className='flex justify-end'>
                     <span
-                        onClick={() => setShowForgotPassword(true)}
+                        onClick={() => {setShowForgotPassword(true) ; setShowLoginPopup(false)}}
                         className="text-font-primary cursor-pointer typography-body  mt-2 block text-left hover:underline"
                     >
                         Forgot Password?
@@ -651,6 +655,24 @@ const ApplyJob = () => {
               <ContactUs />
             </div>
           </form>
+          {/* Forgot Password Popup */}
+          <Modal
+            open={showForgotPassword}
+            onClose={()=>setShowForgotPassword(false)}
+            customTitle={"Reset Your Password"}
+            customMessage={"Please reset your password to continue"}
+            customConfirmLabel={'Send OTP'}
+            onConfirm={()=>console.log("HI")}
+            noCancel
+            noConfirm
+            >
+              <div className='mt-2 '>
+              <ForgotPassword role={"Candidate"} onBack={()=>{setShowForgotPassword(false); }} isModal setIsLoading={setLoading} />
+                <div onClick={()=>setShowForgotPassword(false)} className='absolute -top-4 -right-4 cursor-pointer'>
+                  <IconWrapper icon={X} hasBg customBgHover={"hover:bg-background-60"} />
+                </div>
+              </div>
+            </Modal>
         </div>
       )}
 

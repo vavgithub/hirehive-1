@@ -249,7 +249,7 @@ export const getAllTeamMember = asyncHandler(async (req,res) => {
         for(let member of company.invited_team_members){
             if(member?.member_id){
                 const user = await User.findById({_id : member.member_id}).select('-password');
-                membersData.push({...member.toObject(),...user.toObject()});
+                membersData.push({...member?.toObject(),...user?.toObject()});
             }else{
                 membersData.push(member)
             }
