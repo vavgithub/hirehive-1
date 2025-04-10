@@ -3,6 +3,8 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Success from '../../svg/Toast/Success';
 import Delete from '../../svg/Toast/Delete';
+import IconWrapper from '../Cards/IconWrapper';
+import { X } from 'lucide-react';
 
 // Custom toast component
 const CustomToast = ({ title, message, variant }) => (
@@ -28,11 +30,7 @@ const CustomToast = ({ title, message, variant }) => (
 // Custom close button
 const CloseButton = ({ closeToast }) => (
   <button onClick={closeToast} className="text-gray-500 hover:text-gray-700 absolute top-7 right-6">
-    {
-      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-        <path d="M15 5L5 15M5 5L15 15" stroke="#808389" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-    }
+      <IconWrapper icon={X} isInActiveIcon size={0} customIconSize={3} />
   </button>
 );
 
