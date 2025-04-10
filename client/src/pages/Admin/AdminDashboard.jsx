@@ -13,10 +13,15 @@ import StageBadge from '../../components/ui/StageBadge'
 import IconWrapper from '../../components/Cards/IconWrapper'
 import { CalendarDays, ChevronDown, ChevronUp, ClipboardCheck, Users } from 'lucide-react'
 import StatsGrid from '../../components/ui/StatsGrid'
+import { DataGrid } from '@mui/x-data-grid'
+import { Avatar } from '@mui/material'
+import { UNKNOWN_PROFILE_PICTURE_URL } from '../../utility/config'
 
 function AdminDashboard() {
   
   const [viewMore,setViewMore] = useState(false);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [pageSize, setPageSize] = useState(5);
 
   const navigate = useNavigate();
 
@@ -30,6 +35,94 @@ function AdminDashboard() {
     { title: 'Unique Candidates', value: dashboardDetails?.leaderBoard?.totalUniqueCandidatesCount || 0, icon:  () => <IconWrapper size={10} isInActiveIcon icon={Users} /> },
     { title: 'Assessments', value: dashboardDetails?.leaderBoard?.totalAssessmentsDone || 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={ClipboardCheck} /> },
   ];
+
+  const columns = [
+        {
+            field: 'name',
+            headerName: 'Name',
+            width: 230,
+            align:'left',
+            headerAlign : 'left',
+            disableColumnMenu: true,
+            renderCell : (params) =>(
+              <div className=" flex items-center gap-2 h-12 pl-1">
+              <Avatar src={params?.row?.profilePictureUrl || UNKNOWN_PROFILE_PICTURE_URL } sx={{ width: 32, height: 32 }} />
+              <p className='w-full overflow-hidden whitespace-nowrap text-ellipsis'>{params?.row?.firstName + " " + params?.row?.lastName ?? ""}</p>
+              </div>
+            )
+        },
+        {
+            field: 'email',
+            headerName: 'Email',
+            width: 230,
+            align:'left',
+            headerAlign : 'left',
+            disableColumnMenu: true,
+            renderCell : (params) =>(
+              <p className='w-full overflow-hidden whitespace-nowrap text-ellipsis'>{params?.row?.email}</p>
+            )
+        },
+        {
+          field: 'phone',
+          headerName: 'Phone',
+          sortable: false,
+          width: 150,
+          disableColumnMenu: true,
+        },
+        {
+          field: 'score',
+          headerName: 'Score',
+          headerAlign: "center",
+          width: 140,
+          disableColumnMenu: true,
+          renderCell: (params) => {
+            const score = params?.row?.assessmentScore
+            return (
+              <p className='text-center'>
+                {score}
+              </p>
+            );
+          },
+        },
+        {
+          field: 'hourlyRate',
+          headerName: 'Hourly Rate',
+          width: 150,
+          align: 'center',
+          headerAlign: 'center',
+          disableColumnMenu: true,
+          renderCell: (params) => (
+            <span className='h-full flex items-center justify-center'>
+             {(params.value === undefined || params.value === 0) ? "-" : params.value}
+    
+            </span>
+          )
+        },{
+          field: 'currentCTC',
+          headerName: 'Current CTC',
+          width: 150,
+          align: 'center',
+          headerAlign: 'center',
+          disableColumnMenu: true,
+          renderCell: (params) => (
+            <span className='h-full flex items-center justify-center'>
+              {!params?.value || params.value === 0 ? "-" : params.value}
+            </span>
+          )
+        },{
+          field: 'expectedCTC',
+          headerName: 'Expected CTC',
+          width: 150,
+          align: 'center',
+          headerAlign: 'center',
+          disableColumnMenu: true,
+          renderCell: (params) => (
+            <span className='h-full flex items-center justify-center'>
+              {!params?.value || params.value === 0 ? "-" : params.value}
+            </span>
+          )
+        }
+    ]
 
   return (
     <div className="container mx-4 pt-4 pb-6 ">
@@ -105,10 +198,32 @@ function AdminDashboard() {
       {/* LeaderBoard */}
       <StyledCard padding={2} extraStyles={'mt-4'}>
       <h2 className='typography-h2 mb-2'>Leaderboard</h2>
-      <StatsGrid stats={leaderBoardStats} />
+      <StatsGrid stats={leaderBoardStats} /> 
+
+          {/* Table for LeaderBoard */}
+          <div className='mt-4'>
+            <DataGrid
+            rows={dashboardDetails?.leaderBoard?.candidates ?? []}
+            columns={columns}
+            autoHeight
+            paginationModel={{ page: currentPage, pageSize: pageSize }}
+            onPaginationModelChange={(paginationModel) => {
+              const { page, pageSize } = paginationModel;
+              setCurrentPage(page); // Update your state or perform actions for page change
+              setPageSize(pageSize); // Update your state or perform actions for page size change
+            }}
+            getRowId={(row) => `${row._id}`} // Create a unique ID for each row
+            getRowClassName={(params) =>
+                params.indexRelativeToCurrentPage % 2 === 0 ? 'first-row' : 'second-row'
+            }
+            localeText={{ noRowsLabel: <p style={{fontFamily:"Outfit"}}>No Candidates</p> }}
+            pageSizeOptions={[5,10, 20, 30, 40, 50]}
+
+            />
+          </div>
         {/* Leading Positions */}
-        <div className='mt-4 grid grid-cols-10 gap-2'>
             {/* Single Lead */}
+        {/* <div className='mt-4 grid grid-cols-10 gap-2'>
             {
               dashboardDetails?.leaderBoard?.candidates?.length > 0 ? dashboardDetails.leaderBoard.candidates.filter((_,i)=> i < 10).map((candidate,index) => {
                 return (
@@ -157,7 +272,7 @@ function AdminDashboard() {
         </div>
         {dashboardDetails?.leaderBoard?.candidates?.length > 16 && <div className='w-full flex justify-end mt-4'>
           <button className='flex items-center gap-1 typography-large-p text-font-gray' onClick={()=>setViewMore(!viewMore)} type="button" >{viewMore?<> <IconWrapper inheritColor icon={ChevronUp} size={0} customIconSize={3} customStrokeWidth={5} /> View Less</> :<><IconWrapper inheritColor icon={ChevronDown} size={0} customIconSize={3} customStrokeWidth={5} />View More</>}</button>
-          </div>}
+          </div>} */}
       </StyledCard>
     </div>
   )

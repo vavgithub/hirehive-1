@@ -463,46 +463,60 @@ export const getDetailsForDashboard = asyncHandler(async (req,res) => {
   //Top Applicants with Higher Assessment Score
   const getTopCandidates = async () => {
     const pipeline = [
-        { $unwind: "$jobApplications" }, // Flatten jobApplications array
-        { 
-            $match: { 
-                "jobApplications.jobId": { $in: companyJobIds },
-                hasGivenAssessment: true
-            } 
-        },
-        {
-          $project: {
-            _id: 1, // Keep the unique identifier
-            firstName: 1,
-            lastName: 1,
-            email: 1,
-            phone: 1,
-            profilePictureUrl: 1,
-            hasGivenAssessment: 1,
-            jobApplications: 1,
-            assessmentScore: { $arrayElemAt: ["$questionnaireAttempts.score", 0] }
-          }
-        },
-        { 
-            $sort: { assessmentScore: -1 } // Sort candidates by highest assessment score
-        },
-        {
-            $group: {
-                _id: "$_id", // Group by unique candidate ID
-                firstName: { $first: "$firstName" },
-                lastName: { $first: "$lastName" },
-                email: { $first: "$email" },
-                phone: { $first: "$phone" },
-                profilePictureUrl: { $first: "$profilePictureUrl" },
-                hasGivenAssessment: { $first: "$hasGivenAssessment" },
-                jobApplications: { $first: "$jobApplications" },
-                assessmentScore: { $first: "$assessmentScore" }
-            }
-        },
-        { 
-            $sort: { assessmentScore: -1 } // Ensure sorting is maintained after grouping
+      { $unwind: "$jobApplications" },
+      { 
+        $match: { 
+          "jobApplications.jobId": { $in: companyJobIds },
+          hasGivenAssessment: true
         }
+      },
+      {
+        $project: {
+          _id: 1,
+          firstName: 1,
+          lastName: 1,
+          email: 1,
+          phone: 1,
+          profilePictureUrl: 1,
+          hasGivenAssessment: 1,
+          jobApplications: 1,
+          experience: "$experience",
+          expectedCTC: "$expectedCTC",   
+          currentCTC: "$currentCTC",  
+          hourlyRate: "$hourlyRate",
+          website:  "$website",
+          portfolio: "$portfolio",
+          noticePeriod:  "$noticePeriod",
+          skills:  "$skills",
+          assessmentScore: { $arrayElemAt: ["$questionnaireAttempts.score", 0] }
+        }
+      },
+      {
+        $group: {
+          _id: "$_id",
+          firstName: { $first: "$firstName" },
+          lastName: { $first: "$lastName" },
+          email: { $first: "$email" },
+          phone: { $first: "$phone" },
+          profilePictureUrl: { $first: "$profilePictureUrl" },
+          hasGivenAssessment: { $first: "$hasGivenAssessment" },
+          jobApplications: { $first: "$jobApplications" },
+          experience: { $first: "$experience" },
+          expectedCTC: { $first: "$expectedCTC" },
+          currentCTC: { $first: "$currentCTC" },
+          hourlyRate: { $first: "$hourlyRate" },
+          website: { $first: "$website" },
+          portfolio: { $first: "$portfolio" },
+          noticePeriod: { $first: "$noticePeriod" },
+          skills: { $first: "$skills" },
+          assessmentScore: { $first: "$assessmentScore" }
+        }
+      },
+      { 
+        $sort: { assessmentScore: -1 } 
+      },
     ];
+    
 
     const result = await candidates.aggregate(pipeline);
     return result.length > 0 ? result : [];

@@ -311,7 +311,7 @@ function CompanyDetails({currentStep,setCurrentStep}) {
             onConfirm={handleRequest}
             customConfirmLabel={"Request to Join"}
             open={showExistModal} 
-            cancelLabel='OK' cancelVariant='primary' 
+            cancelLabel='OK' cancelVariant='secondary' 
             specifiedWidth={"max-w-xl"}
             />
     </>
