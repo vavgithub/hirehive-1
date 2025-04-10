@@ -50,7 +50,7 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
 
   useEffect(()=>{
     if(designReviewers && designReviewers?.data?.length > 0){
-      setReviewers([...designReviewers?.data,designReviewers?.admin])
+      setReviewers(designReviewers?.data)
     }else{
       setReviewers([])
     }
@@ -66,11 +66,11 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
   useEffect(() => {
     if (value && reviewers.length > 0) {
       const reviewer = reviewers.find(r => r._id === value || r._id === value._id);
-      setSelectedReviewer(reviewer || null);
+      setSelectedReviewer(reviewer || (designReviewers?.admin?._id === (value || value?._id) ? designReviewers?.admin : null) || null);
     } else {
       setSelectedReviewer(null);
     }
-  }, [value, reviewers]);
+  }, [value, reviewers , designReviewers]);
 
   // Handle selection change
   const handleSelect = (reviewer) => {
