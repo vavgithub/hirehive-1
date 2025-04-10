@@ -23,7 +23,7 @@ export const LocationOptions = [
   { value: 'dubai', label: 'Dubai' },
 ]
 
-const companySizeOptions = [
+export const companySizeOptions = [
   { value: '1-10', label: '1-10 Employees' },
   { value: '11-50', label: '11-50 Employees' },
   { value: '51-200', label: '51-200 Employees' },
