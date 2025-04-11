@@ -108,12 +108,14 @@ export const StatisticsController = {
 
       // Query to count jobs created in the current month
       const currentMonthJobs = await jobs.countDocuments({
-        createdAt: { $gte: firstDayCurrentMonth }
+        createdAt: { $gte: firstDayCurrentMonth },
+        createdBy : { $in : userIds }
       });
 
       // Query to count jobs created in the previous month
       const previousMonthJobs = await jobs.countDocuments({
-        createdAt: { $gte: firstDayPreviousMonth, $lte: lastDayPreviousMonth }
+        createdAt: { $gte: firstDayPreviousMonth, $lte: lastDayPreviousMonth },
+        createdBy : { $in : userIds }
       });
 
       // Calculate the percentage change
@@ -128,12 +130,14 @@ export const StatisticsController = {
       //WEEKLY
       // Query to count jobs created in the current week
       const currentWeekJobs = await jobs.countDocuments({
-        createdAt: { $gte: firstDayCurrentWeek }
+        createdAt: { $gte: firstDayCurrentWeek },
+        createdBy : { $in : userIds }
       });
 
       // Query to count jobs created in the previous week
       const previousWeekJobs = await jobs.countDocuments({
-        createdAt: { $gte: firstDayPreviousWeek, $lte: lastDayPreviousWeek }
+        createdAt: { $gte: firstDayPreviousWeek, $lte: lastDayPreviousWeek },
+        createdBy : { $in : userIds }
       });
 
       // Calculate the percentage change
@@ -148,12 +152,14 @@ export const StatisticsController = {
       //YESTERDAYS
       // Query to count jobs created today
       const todayJobs = await jobs.countDocuments({
-        createdAt: { $gte: startOfToday }
+        createdAt: { $gte: startOfToday },
+        createdBy : { $in : userIds }
       });
 
       // Query to count jobs created yesterday
       const yesterdayJobs = await jobs.countDocuments({
-        createdAt: { $gte: startOfYesterday, $lte: endOfYesterday }
+        createdAt: { $gte: startOfYesterday, $lte: endOfYesterday },
+        createdBy : { $in : userIds }
       });
 
       // Calculate the percentage change
@@ -174,6 +180,7 @@ export const StatisticsController = {
         { 
           $match: { 
             isVerified : true,
+            "jobApplications.companyDetails._id" : req.user.company_id,
             "jobApplications.applicationDate": { $gte: firstDayPreviousMonth }
           } 
         },
@@ -220,6 +227,7 @@ export const StatisticsController = {
           { 
             $match: { 
               isVerified : true,
+              "jobApplications.companyDetails._id" : req.user.company_id,
               "jobApplications.applicationDate": { 
                 $gte: startDate, 
                 $lte: endDate 
@@ -256,6 +264,7 @@ export const StatisticsController = {
         { 
           $match: { 
             isVerified : true,
+            "jobApplications.companyDetails._id" : req.user.company_id,
             "jobApplications.applicationDate": { 
               $gte: startDate, 
               $lte: endDate 
@@ -295,7 +304,8 @@ export const StatisticsController = {
         $match: { 
           isVerified : true,
           updatedAt: { $gte: firstDayPreviousMonth },
-          "jobApplications.stageStatuses.Hired.status": "Accepted"
+          "jobApplications.stageStatuses.Hired.status": "Accepted",
+          "jobApplications.companyDetails._id" : req.user.company_id
         } 
       },
 
@@ -326,6 +336,7 @@ export const StatisticsController = {
       entry._id.year === firstDayCurrentMonth.getFullYear()
     )?.totalApplications || 0;
 
+
     // Calculate percentage change
     let monthlyHiresPercentageChange = 0;
     if (previousMonthHires === 0) {
@@ -341,6 +352,7 @@ export const StatisticsController = {
         { 
           $match: { 
             isVerified : true,
+            "jobApplications.companyDetails._id" : req.user.company_id,
             updatedAt: { 
               $gte: startDate, 
               $lte: endDate 
@@ -378,6 +390,7 @@ export const StatisticsController = {
         { 
           $match: { 
             isVerified : true,
+            "jobApplications.companyDetails._id" : req.user.company_id,
             updatedAt: { 
               $gte: startDate, 
               $lte: endDate 
@@ -602,7 +615,7 @@ export const StatisticsController = {
           { 
             $match: { 
               isVerified : true,
-            "jobApplications.jobId" : new mongoose.Types.ObjectId(jobId),
+              "jobApplications.jobId" : new mongoose.Types.ObjectId(jobId),
               "jobApplications.applicationDate": { 
                 $gte: startDate, 
                 $lte: endDate 

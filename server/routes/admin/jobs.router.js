@@ -9,7 +9,7 @@ router.get('/jobsCount',protect, getTotalJobCount);
 router.get('/searchJobs',protect, searchJobs);
 router.get('/jobs',protect, getJobs);
 router.get('/stats/overall',protect, StatisticsController.getOverallStats);
-router.get('/stats/job/:jobId', StatisticsController.getJobStats);
+router.get('/stats/job/:jobId',protect, StatisticsController.getJobStats);
 
 
 router.post('/createJobs',protect, createJob);

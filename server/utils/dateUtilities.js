@@ -109,8 +109,6 @@ export function get24HoursOfYesterday() {
 }
 
 
-console.log(get24HoursOfYesterday())
-
 export function formatDateRange(startDate, endDate) {
     const format = new Intl.DateTimeFormat('en-GB', {
         day: '2-digit',

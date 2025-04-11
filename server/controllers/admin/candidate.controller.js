@@ -657,12 +657,14 @@ export const getAllCandidatesWithStats = async (req, res) => {
     // Query to count jobs created in the current month
     const currentMonthJobs = await candidates.countDocuments({
       isVerified: true,
+      'jobApplications.companyDetails._id' : req.user.company_id ,
       createdAt: { $gte: firstDayCurrentMonth }
     });
 
     // Query to count candidates created in the previous month
     const previousMonthJobs = await candidates.countDocuments({
       isVerified: true,
+      'jobApplications.companyDetails._id' : req.user.company_id ,  
       createdAt: { $gte: firstDayPreviousMonth, $lte: lastDayPreviousMonth }
     });
 
@@ -679,12 +681,14 @@ export const getAllCandidatesWithStats = async (req, res) => {
     // Query to count candidates created in the current week
     const currentWeekJobs = await candidates.countDocuments({
       isVerified: true,
+      'jobApplications.companyDetails._id' : req.user.company_id ,  
       createdAt: { $gte: firstDayCurrentWeek }
     });
 
     // Query to count candidates created in the previous week
     const previousWeekJobs = await candidates.countDocuments({
       isVerified: true,
+      'jobApplications.companyDetails._id' : req.user.company_id ,  
       createdAt: { $gte: firstDayPreviousWeek, $lte: lastDayPreviousWeek }
     });
 
@@ -701,12 +705,14 @@ export const getAllCandidatesWithStats = async (req, res) => {
     // Query to count candidates created today
     const todayJobs = await candidates.countDocuments({
       isVerified: true,
+      'jobApplications.companyDetails._id' : req.user.company_id ,  
       createdAt: { $gte: startOfToday }
     });
 
     // Query to count candidates created yesterday
     const yesterdayJobs = await candidates.countDocuments({
       isVerified: true,
+      'jobApplications.companyDetails._id' : req.user.company_id ,  
       createdAt: { $gte: startOfYesterday, $lte: endOfYesterday }
     });
 
