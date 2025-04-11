@@ -142,6 +142,9 @@ input.no-spinner[class*="border-red-500"] {
 
 
 
+
+
+
 .editor-editable{
   position: relative;
   background: var(--color-background-40);
@@ -160,6 +163,116 @@ input.no-spinner[class*="border-red-500"] {
 
 .editor-editable:focus {
   outline: 2px solid rgba(24, 233, 208, 1);
+}
+
+
+/* below is the css for react-tel-input that is country code box */
+.react-tel-input {
+  display: flex;
+}
+.react-tel-input .form-control {
+  width: 70%;
+  height: 44px;
+  background-color: var(--color-background-40);
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  scrollbar-width: none;
+  padding: 0;
+  z-index: 2;
+  margin: 56px;
+  font-size: 16px;
+}
+
+
+
+.react-tel-input .form-control::placeholder {
+  font-family: "Outfit", sans-serif;
+}
+
+.react-tel-input .selected-flag {
+  border-radius: 12px 0 0 12px;
+  position: absolute;
+  width: 48px;
+  background-color: #0C0D0D;
+  padding: 0px 0px 0px 12px;
+}
+.react-tel-input .country-list{
+  border-radius: 12px;
+  font-family: "Outfit", sans-serif;
+  background-color: var(--color-background-40);
+  position: absolute;
+  top: 44px;
+  width: 100%;
+  padding: 0px 8px 8px 8px;
+}
+
+.react-tel-input .flag-dropdown{
+  border-radius: 12px;
+  font: "Outfit", sans-serif;
+  background-color: var(--color-background-40);
+  border: none;
+  width: 100%;
+}
+
+.react-tel-input .country-list .country:hover {
+  background-color: var(--color-background-60)!important;
+  color: var(--color-font-accent-100);
+}
+
+.react-tel-input .country-list .country.highlight {
+  background-color: var(--color-background-60)!important;
+} 
+
+.react-tel-input .country-list .search {
+  background-color: var(--color-background-40);
+  border-radius: 0 0 12px 12px;
+}
+.react-tel-input .flag-dropdown.open .selected-flag {
+  background: var(--color-background-60);
+  border-radius: 12px 0 0 12px;
+}
+
+.react-tel-input .flag-dropdown.open .selected-flag:hover {
+  background: var(--color-background-60)!important;
+  border-radius: 12px 0 0 12px;
+}
+
+.react-tel-input .selected-flag:hover{
+  background: var(--color-background-60);
+  border-radius: 12px 0 0 12px;
+}
+
+.react-tel-input .flag-dropdown.open {
+  z-index: 2;
+  background: var(--color-background-40);
+  border-radius: 12px;
+}
+
+.search-emoji {
+  display: none;
+}
+
+.react-tel-input .country-list .search {
+  padding: 14px 0px 0px 0px;
+  margin: 0;
+}
+.react-tel-input .country-list li {
+  border-radius: 12px;
+  margin: 8px 0px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+}
+.react-tel-input .country-list .search-box {
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  margin-left: 0px;
+  padding: 4px 8px;
+  outline: none;
+  width: 100%;
+  height: 44px;
 }
 
 @keyframes down {
@@ -203,7 +316,9 @@ body {
 input[type="text"] {
   @apply bg-background-40 hover:bg-background-60 cursor-pointer h-[44px] px-4 rounded-xl placeholder:text-font-gray placeholder:font-body  focus:ring-teal-400 focus:outline-teal-500 outline-none typography-body w-full;  /* Replace bg-gray-200 with your desired background color class */
 }
-
+input[type="search"] {
+  @apply bg-background-40 hover:bg-background-60 cursor-pointer h-[36px] px-4 rounded-xl placeholder:text-font-gray placeholder:font-body  focus:ring-teal-400 focus:outline-teal-500 outline-none typography-body ;  /* Replace bg-gray-200 with your desired background color class */
+}
 input[type="email"] {
   @apply bg-background-40 hover:bg-background-60 cursor-pointer h-[44px] px-4 rounded-xl placeholder:text-font-gray placeholder:font-body  focus:ring-teal-400 focus:outline-teal-500 outline-none typography-body w-full;  /* Replace bg-gray-200 with your desired background color class */
 }
@@ -330,4 +445,3 @@ h2{
   
 }
 
-  
