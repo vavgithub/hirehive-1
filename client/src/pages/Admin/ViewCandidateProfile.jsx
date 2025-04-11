@@ -417,7 +417,7 @@ const ViewCandidateProfile = () => {
             `Hope you're doing well.\n\n` +
             `I'm ${user.name} from the Value at Void team.\n\n` +
             `Best regards,\nTeam VAV\n\n` +
-            `For more information, log on to: https://www.hire.atvoid.com`
+            `For more information, log on to: https://hire.atvoid.com`
         const message = encodeURIComponent(text);
         const url = `https://wa.me/${phone}?text=${message}`;
         window.open(url, "_blank");
@@ -431,7 +431,7 @@ const ViewCandidateProfile = () => {
             `Hope you're doing well.\n\n` +
             `I'm ${user.name} from the Value at Void team. We’ve received your application for the ${designation} role and were really impressed with the portfolio and profile you shared.\n\n` +
             `Best regards,\nTeam VAV\n\n` +
-            `For more information, log on to: https://www.hire.atvoid.com`
+            `For more information, log on to: https://hire.atvoid.com`
         );
 
         const mailtoLink = `mailto:${email}?subject=${subject}&body=${body}`;
