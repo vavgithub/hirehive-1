@@ -134,7 +134,9 @@ const ViewJob = () => {
                             )}
                     </div>
                 </StyledCard>
-                <ContactUs/>
+                <div className='mt-4 w-full'>
+                    <ContactUs/>
+                </div>
             </Container>
     );
 };

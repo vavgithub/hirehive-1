@@ -679,7 +679,6 @@ const ApplyJob = () => {
         <PasswordComponent watch={watch} control={control} handlePasswordSubmit={handlePasswordSubmit} isSubmitting={isSubmitting} passwordError={passwordError} />
       )}
 
-      <ContactUs />
     </Container>
   );
 };
