@@ -23,6 +23,8 @@ function AdminDashboard() {
   const [currentPage, setCurrentPage] = useState(0);
   const [pageSize, setPageSize] = useState(5);
 
+  const [selectedChartFilter,setSelectedChartFilter] = useState('monthly');
+
   const navigate = useNavigate();
 
   const { data : dashboardDetails , isLoading : isDetailsLoading } = useQuery({
@@ -134,8 +136,14 @@ function AdminDashboard() {
       {/* Chart + Company Details Section */}
       <div className='flex gap-4'>
         <StyledCard padding={2} extraStyles={'w-[70%]'}>
-          <h2 className='typography-h2'>Monthly Application Trends</h2>
-          <ApplicationChart dataArray={dashboardDetails?.applications?.monthlyApplications} />
+          <h2 className='typography-h2'>Application Trends</h2>
+          <div className='flex my-2 gap-2'>
+            <p onClick={()=>setSelectedChartFilter('monthly')} className={(selectedChartFilter === 'monthly' ? 'bg-accent-300 text-accent-100' : 'bg-background-60 text-font-gray ') + ' px-6 py-2 typography-large-p rounded-xl cursor-pointer'}>Monthly</p>
+            <p onClick={()=>setSelectedChartFilter('weekly')} className={(selectedChartFilter === 'weekly' ? 'bg-accent-300 text-accent-100' : 'bg-background-60 text-font-gray ') + ' px-6 py-2 typography-large-p rounded-xl cursor-pointer'}>Weekly</p>
+            <p onClick={()=>setSelectedChartFilter('daily')} className={(selectedChartFilter === 'daily' ? 'bg-accent-300 text-accent-100' : 'bg-background-60 text-font-gray ') + ' px-6 py-2 typography-large-p rounded-xl cursor-pointer'}>Daily</p>
+            <p onClick={()=>setSelectedChartFilter('yesterday')} className={(selectedChartFilter === 'yesterday' ? 'bg-accent-300 text-accent-100' : 'bg-background-60 text-font-gray ') + ' px-6 py-2 typography-large-p rounded-xl cursor-pointer'}>Yesterday</p>
+          </div>
+          <ApplicationChart type={selectedChartFilter} dataArray={selectedChartFilter === "weekly" ? dashboardDetails?.applications?.weeklyApplications : selectedChartFilter === 'daily' ? dashboardDetails?.applications?.dailyApplications : selectedChartFilter === 'yesterday' ? dashboardDetails?.applications?.yesterdaysApplications : dashboardDetails?.applications?.monthlyApplications} />
         </StyledCard>
         <StyledCard padding={2} extraStyles={' w-[30%] flex flex-col items-center gap-6'}>
             <div  className=" w-[8rem]  aspect-square overflow-hidden rounded-full">

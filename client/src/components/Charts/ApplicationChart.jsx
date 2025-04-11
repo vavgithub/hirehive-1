@@ -1,8 +1,8 @@
 import React, { useMemo } from "react";
 import ReactECharts from "echarts-for-react";
 
-function ApplicationChart({dataArray}) {
-    const months = dataArray?.map(data => data?.month);
+function ApplicationChart({type,dataArray}) {
+    const xData = dataArray?.map(data => type === "weekly" ? data?.week : type === "daily" ? data?.day : type === "yesterday" ? data?.hour : data?.month);
     const values = dataArray?.map(data => data?.totalCount ?? 0);
 
   const options = useMemo(()=>(
@@ -18,10 +18,10 @@ function ApplicationChart({dataArray}) {
         },
         xAxis: {
           type: "category",
-          name: "Months",
+          name: type === "daily" ? "Days" : type === "weekly" ? "Weeks" : "Months",
           nameLocation: "middle",
           nameGap: 30,
-          data: months,
+          data: xData,
           axisLabel: {
             fontFamily: "Outfit, sans-serif",  // Font for x-axis labels
             fontSize: 12
@@ -82,7 +82,7 @@ function ApplicationChart({dataArray}) {
           }
         ]
       }
-  ),[months,values])
+  ),[xData,values,type])
 
   return <ReactECharts option={options} />;
 }

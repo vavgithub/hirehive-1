@@ -3,7 +3,7 @@ import { jobs } from "../../models/admin/jobs.model.js";
 import { User } from "../../models/admin/user.model.js";
 import { candidates } from "../../models/candidate/candidate.model.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
-import { getLast12Months } from "../../utils/dateUtilities.js";
+import { formatDateRange, get24HoursOfYesterday, getLast12Months, getLast4Weeks, getLast7Days } from "../../utils/dateUtilities.js";
 import { getInvitationContent } from "../../utils/emailTemplates.js";
 import { updateDateWithTime } from "../../utils/formatter.js";
 import { sendEmail } from "../../utils/sentEmail.js";
@@ -290,6 +290,9 @@ export const getDetailsForDashboard = asyncHandler(async (req,res) => {
 
   //Monthly Applications
   const monthData = getLast12Months();
+  const weekData = getLast4Weeks();
+  const dailyData = getLast7Days();
+  const yesterdaysData = get24HoursOfYesterday();
 
   const companyJobs = await jobs.find({company_id : req.user?.company_id });
   const companyJobIds = companyJobs?.map(job => job._id);
@@ -345,6 +348,33 @@ export const getDetailsForDashboard = asyncHandler(async (req,res) => {
     const count = await getApplicationCount(monthObj.startDate,monthObj.endDate);
     monthlyApplications.push({
       month : monthObj.monthName,
+      totalCount : count
+    })
+  }
+
+  const weeklyApplications = [];
+  for(let weekObj of weekData){
+    const count = await getApplicationCount(weekObj.startDate,weekObj.endDate);
+    weeklyApplications.push({
+      week : formatDateRange(weekObj.startDate, weekObj.endDate),
+      totalCount : count
+    })
+  }
+
+  const dailyApplications = [];
+  for(let dailyObj of dailyData){
+    const count = await getApplicationCount(dailyObj.startDate,dailyObj.endDate);
+    dailyApplications.push({
+      day : dailyObj.dayLabel,
+      totalCount : count
+    })
+  }
+
+  const yesterdaysApplications = [];
+  for(let hourObj of yesterdaysData){
+    const count = await getApplicationCount(hourObj.startDate,hourObj.endDate);
+    yesterdaysApplications.push({
+      hour : hourObj.hourLabel,
       totalCount : count
     })
   }
@@ -548,6 +578,9 @@ export const getDetailsForDashboard = asyncHandler(async (req,res) => {
       applications : {
         totalApplicationsCount,
         monthlyApplications : monthlyApplications.reverse(),
+        weeklyApplications : weeklyApplications.reverse(),
+        dailyApplications : dailyApplications,
+        yesterdaysApplications : yesterdaysApplications,
       },
       activeJobs : companyJobs?.length,
       interviews : {
