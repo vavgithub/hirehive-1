@@ -137,7 +137,7 @@ const JobCard = ({
   >
     <div className={(isApplied && "flex-col md:flex-row" ) +" flex items-start justify-between pt-4 px-4  gap-3"}>
       <h3 className={(isApplied ? "w-full md:w-[50%] xl:w-[70%]" : "w-[70%]") + " typography-h3 group-hover:text-font-accent  text-ellipsis overflow-hidden whitespace-nowrap "}>{job.jobTitle}</h3>
-      <div className="flex items-center gap-3">
+      <div className={"flex items-center gap-3 " + (isApplied ? " mb-2 md:mb-0 " : "")}>
         {isApplied &&         
         <span className="bg-blue-300 text-blue-100 typography-body px-4 py-2 rounded-xl">
           Applied
@@ -157,7 +157,6 @@ const JobCard = ({
         )}
       </div>
     </div>
-        {console.log()}
     {job.status !== "deleted" ?
     <>
     <div className="flex px-4 flex-row items-start flex-wrap gap-x-8 gap-y-5">
