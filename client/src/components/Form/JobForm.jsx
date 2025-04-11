@@ -11,6 +11,7 @@ import { BudgetField } from '../FormUtilities/BudgetField';
 import { CustomDropdown } from '../Dropdowns/CustomDropdown';
 import IconWrapper from '../Cards/IconWrapper';
 import { Bookmark, CirclePlus } from 'lucide-react';
+import TickCheckbox from '../Checkboxes/TickCheckbox';
 
 function hasDuplicates(arr) {
   return new Set(arr).size !== arr.length;
@@ -24,6 +25,7 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
       employeeLocation: '',
       employmentType: '',
       jobProfile: '',
+      isPublic: true,
       experienceFrom: 0,
       experienceTo: 1,
       budgetFrom: 0,
@@ -36,8 +38,6 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
   });
 
   const watchedFields = watch();
-
-
 
   let areAllFieldsFilled = isValid &&
     watchedFields.jobTitle &&
@@ -295,7 +295,22 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
         )}
       />
 
-      <div className="flex justify-end mt-6">
+      <div className="flex justify-between mt-6">
+        <div>
+        <Controller
+          name="isPublic"
+          control={control}
+          render={({ field: { onChange, value } , fieldState: { error }  }) => (
+            <TickCheckbox
+              id="publicCheck"
+              checked={value}
+              onChange={(e) => onChange(e.target.checked)}
+              label="Show on Homepage"
+              className="flex items-center gap-2 hover:bg-background-60 hover:text-accent-100 p-2 rounded-xl"
+            />
+            )}
+          />
+        </div>
         <div className='flex gap-4'>
             {!isEditing && (
               <Button

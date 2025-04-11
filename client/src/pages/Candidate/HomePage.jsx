@@ -32,7 +32,7 @@ const HomePage = () => {
 
     useEffect(() => {
         if(isAuthenticated){
-            navigate('/candidate/my-jobs',{replace:true});
+            navigate('/candidate/all-jobs',{replace:true});
         }
         return ()=> dispatch(clearAuthError())
     }, [navigate,isAuthenticated]);

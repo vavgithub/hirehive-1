@@ -87,6 +87,13 @@ const PORT = envConfig.PORT;
 
 app.use(handleUploadError)
 
+async function makeJobPublic(){
+  await jobs.updateMany(
+    {isPublic : { $exists : false }},
+    {$set : {isPublic : true}}
+  )
+}
+
 // async function updationForCompany(){
 
 //     let jobsArr = await jobs.find()
@@ -243,6 +250,7 @@ connectDB()
     // inviteToRequestUpdater() //First
     // inviteToRequestUpdaterMember() //Second
     // removeInvitedKey() //Third
+    // makeJobPublic()
 
     app.on("error", (error) => {
       console.log("Error in starting server", error);

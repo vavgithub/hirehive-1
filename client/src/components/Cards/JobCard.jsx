@@ -4,7 +4,7 @@ import { getTimeAgo } from '../../utility/getTimeAgo';
 import ClosedBadge from '../../svg/Icons/ClosedBadge';
 import StyledCard from './StyledCard';
 import CustomBadge from '../Badge/CustomBadge';
-import { Building, Building2, Copy } from 'lucide-react';
+import { Building, Building2, Copy, Rss } from 'lucide-react';
 import CustomToolTip from '../Tooltip/CustomToolTip';
 import { copyToClipboard } from '../../utility/CopyToClipboard';
 import { useLocation } from 'react-router-dom';
@@ -157,7 +157,7 @@ const JobCard = ({
         )}
       </div>
     </div>
-  
+        {console.log()}
     {job.status !== "deleted" ?
     <>
     <div className="flex px-4 flex-row items-start flex-wrap gap-x-8 gap-y-5">
@@ -174,6 +174,10 @@ const JobCard = ({
       {(role !== "Admin" && role !== "Hiring Manager" && role !== "Design Reviewer") && (job?.companyDetails?.name || job?.company_id?.name ) && <JobDetailItem
       icon={() => <IconWrapper size={1} icon={Building2}  isInActiveIcon />}
       text={job?.companyDetails?.name || job?.company_id?.name }
+      />}
+      {(role === "Admin" || role === "Hiring Manager" ) && (job?.isPublic ) && <JobDetailItem
+      icon={() => <IconWrapper size={1} icon={Rss}  isInActiveIcon />}
+      text={"Open to All"}
       />}
     </div>
     <div className=" p-4 ">

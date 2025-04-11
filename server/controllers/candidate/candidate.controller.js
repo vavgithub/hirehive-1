@@ -164,12 +164,12 @@ const fetchActiveJobs = async (req, res) => {
 
     // Find jobs where status is "open" and sort by creation date in descending order
     const activeJobs = await jobs
-      .find(userIds?.length > 0 ? { status: "open" , createdBy : { $in : userIds }} : { status: "open" }).populate('company_id')
+      .find(userIds?.length > 0 ? { status: "open" , createdBy : { $in : userIds } , isPublic : true} : { status: "open" , isPublic : true}).populate('company_id')
       .sort({ createdAt: -1 })
       .skip((pageNumber - 1) * LIMIT)
       .limit(LIMIT);
 
-    const totalOpenJobs = await jobs.countDocuments(userIds?.length > 0 ? { status: "open" , createdBy : { $in : userIds }} : { status: "open" })  
+    const totalOpenJobs = await jobs.countDocuments(userIds?.length > 0 ? { status: "open" , createdBy : { $in : userIds } , isPublic : true} : { status: "open" ,isPublic : true})  
 
     if (activeJobs.length === 0) {
       return res.status(404).json({ message: "No active jobs found" });
@@ -570,6 +570,7 @@ const filterSearchJobs = asyncHandler(async (req, res) => {
   //Search
   const searchTerm = req.body?.query ?? "";
   query.jobTitle =  { $regex: searchTerm, $options: "i" }
+  query.isPublic = true;
 
   if(companyId){
     query.company_id = companyId

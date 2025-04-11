@@ -60,6 +60,10 @@ const jobSchema = new mongoose.Schema(
       ],
       default: "Frontend Developer",
     },
+    isPublic : {
+      type : Boolean,
+      default : true
+    },
     experienceFrom: {
       type: Number,
       min: 0,
