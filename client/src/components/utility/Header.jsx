@@ -18,8 +18,9 @@ const Header = ({
     handleAction, 
     page,
     children,
-    rightContent, // New prop for content that should appear on the right side
-    onBack // Add custom back handler prop
+    rightContent,
+    onBack,
+    orgId // New prop for organization ID
 }) => {
     const navigate = useNavigate();
 
@@ -32,7 +33,6 @@ const Header = ({
             navigate(-1);
         }
     };
-
 
     return (
         <div className="w-full">
@@ -57,6 +57,7 @@ const Header = ({
                             job={job} 
                             handleAction={handleAction} 
                             page={page}
+                            orgId={orgId} // Pass the organization ID to ThreeDots
                         />
                     )}
                 </div>

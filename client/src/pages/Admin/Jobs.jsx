@@ -19,6 +19,7 @@ import { useAuthContext } from '../../context/AuthProvider';
 import Container from '../../components/Cards/Container';
 import IconWrapper from '../../components/Cards/IconWrapper';
 import { Archive, Briefcase, CircleCheck, CircleCheckBig, CirclePlus, CircleX, FileText, Search } from 'lucide-react';
+import Header from '../../components/utility/Header';
 
 
 const fetchJobs = (page, status) => axios.get(`/jobs/jobs?page=${page}&status=${status}`).then(res => res.data);
@@ -49,7 +50,10 @@ const Jobs = () => {
     const [debouncedQuery] = useDebounce(searchQuery);
 
     const { user } = useAuthContext();
+    console.log("user", user);
     const role = user?.role;
+    // Add this line somewhere at the top of your component to extract the organization ID
+    const orgId = user?.companyDetails?._id;
 
     //For resetting page on each result change
     useEffect(() => {
@@ -256,11 +260,11 @@ const Jobs = () => {
         }
     };
 
-    const handleCreateJob = ()=>{
-        if(role === "Admin"){
+    const handleCreateJob = () => {
+        if (role === "Admin") {
             navigate("/admin/create-job");
         }
-        if(role === "Hiring Manager"){
+        if (role === "Hiring Manager") {
             navigate("/hiring-manager/create-job");
         }
     }
@@ -288,30 +292,30 @@ const Jobs = () => {
             title: 'Jobs Posted',
             value: overallStats.totalJobs,
             icon: () => <IconWrapper size={10} isInActiveIcon icon={Briefcase} />,
-            statistics : {
-                monthly : `${overallStats?.jobStatistics?.monthly ?? 0}% since last month`,
-                weekly : `${overallStats?.jobStatistics?.weekly ?? 0}% since last week`,
-                daily : `${overallStats?.jobStatistics?.daily ?? 0}% since last day`,
+            statistics: {
+                monthly: `${overallStats?.jobStatistics?.monthly ?? 0}% since last month`,
+                weekly: `${overallStats?.jobStatistics?.weekly ?? 0}% since last week`,
+                daily: `${overallStats?.jobStatistics?.daily ?? 0}% since last day`,
             }
         },
         {
             title: 'Applications Received',  // This label is now more accurate
             value: overallStats.totalApplications, // This now shows total applications
             icon: () => <IconWrapper size={10} isInActiveIcon icon={FileText} />,
-            statistics : {
-                monthly : `${overallStats?.applicationStatistics?.monthly ?? 0}% since last month`,
-                weekly : `${overallStats?.applicationStatistics?.weekly ?? 0}% since last week`,
-                daily : `${overallStats?.applicationStatistics?.daily ?? 0}% since last day`,
+            statistics: {
+                monthly: `${overallStats?.applicationStatistics?.monthly ?? 0}% since last month`,
+                weekly: `${overallStats?.applicationStatistics?.weekly ?? 0}% since last week`,
+                daily: `${overallStats?.applicationStatistics?.daily ?? 0}% since last day`,
             }
         },
         {
             title: 'Hired',
             value: overallStats.totalHired,
             icon: () => <IconWrapper size={10} isInActiveIcon icon={CircleCheckBig} />,
-            statistics : {
-                monthly : `${overallStats?.hiredStatistics?.monthly ?? 0}% since last month`,
-                weekly : `${overallStats?.hiredStatistics?.weekly ?? 0}% since last week`,
-                daily : `${overallStats?.hiredStatistics?.daily ?? 0}% since last day`,
+            statistics: {
+                monthly: `${overallStats?.hiredStatistics?.monthly ?? 0}% since last month`,
+                weekly: `${overallStats?.hiredStatistics?.weekly ?? 0}% since last week`,
+                daily: `${overallStats?.hiredStatistics?.daily ?? 0}% since last day`,
             }
         }
     ];
@@ -328,19 +332,33 @@ const Jobs = () => {
         return ((debouncedQuery.length > 0 || isFiltered) && !isFilteredSearchJobsLoading) ? filteredSearchData?.filteredSearchJobs : jobs;
     }, [filteredSearchData, isFiltered, debouncedQuery, jobs]);
 
-    const currentPage = 'dashboard';
+    const currentPage = 'Jobs';
 
     return (
         <Container >
-            <div className="flex flex-row justify-between mb-4">
-                <h1 className='typography-h1'>Jobs</h1>
-                {/* <Link to="/admin/create-job" className="bg-black text-white px-4 py-2 rounded">Create job listing</Link> */}
+           <Header
+            withKebab="true"
+            page={currentPage}
+            HeaderText="Jobs"
+            handleAction={handleAction}
+            withBack="false"
+            orgId={orgId} // Pass the organization ID to Header
+            rightContent={
+                <Tabs
+                    tabs={tabs}
+                    activeTab={activeTab}
+                    handleTabClick={handleTabClick}
+                />
+            }
+        >
+        </Header>
+            {/* <h1 className='typography-h1'>Jobs</h1> */}
+            {/* <Link to="/admin/create-job" className="bg-black text-white px-4 py-2 rounded">Create job listing</Link> */}
 
-                <div className='flex justify-center items-center'>
+            {/* <div className='flex justify-center items-center'>
                     <Tabs tabs={tabs} activeTab={activeTab} handleTabClick={handleTabClick} />
-                </div>
+                </div> */}
 
-            </div>
 
             <StyledCard padding={2} backgroundColor={"bg-background-100"}>
 
@@ -375,7 +393,7 @@ const Jobs = () => {
                             activeTab == "open" && displayJobs.length != 0 && displayJobs.filter(job => job.status === "open").length !== 0 && (
                                 <div className='flex justify-end '>
                                     <div >
-                                        <Button variant="primary" icon={()=><IconWrapper icon={CirclePlus} size={0} customIconSize={5} customStrokeWidth={5} />} iconPosition="left" onClick={handleCreateJob}>Create A Job Listing</Button>
+                                        <Button variant="primary" icon={() => <IconWrapper icon={CirclePlus} size={0} customIconSize={5} customStrokeWidth={5} />} iconPosition="left" onClick={handleCreateJob}>Create A Job Listing</Button>
                                     </div>
                                 </div>
                             )
@@ -392,7 +410,7 @@ const Jobs = () => {
                                 </span>
                                 <Button
                                     variant="primary"
-                                    icon={()=><IconWrapper icon={CirclePlus} size={0} customIconSize={5} customStrokeWidth={5} />}
+                                    icon={() => <IconWrapper icon={CirclePlus} size={0} customIconSize={5} customStrokeWidth={5} />}
                                     iconPosition="left"
                                     onClick={handleCreateJob}
                                 >

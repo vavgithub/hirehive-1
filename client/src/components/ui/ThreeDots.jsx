@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ACTION_TYPES } from '../../utility/ActionTypes';
 import IconWrapper from '../Cards/IconWrapper';
-import { Archive, CircleCheck, CircleX, EllipsisVertical, SquarePen, Trash } from 'lucide-react';
+import { Archive, CircleCheck, CircleX, EllipsisVertical, SquarePen, Share2, Trash } from 'lucide-react';
 
 const MenuItems = {
   job: {
@@ -24,16 +24,17 @@ const MenuItems = {
   },
   page1: [
     { action: ACTION_TYPES.EDIT, icon: () => <IconWrapper size={0} customIconSize={5} icon={SquarePen} />, label: 'Edit' },
-    // { action: ACTION_TYPES.DELETE, icon: () => <IconWrapper size={0} customIconSize={5} isErrorIcon icon={Trash} />, label: 'Delete', className: 'text-red-100' },
   ],
   page2: [
     { action: 'ACTION_3', icon: () => <IconWrapper size={0} customIconSize={5} isErrorIcon icon={Trash} />, label: 'Action 3' },
     { action: 'ACTION_4', icon: () => <IconWrapper size={0} customIconSize={5} icon={CircleX} />, label: 'Action 4' },
   ],
-  // Add more page-specific menu items as needed
+  Jobs: [
+    { action: ACTION_TYPES.SHARE, icon: () => <IconWrapper size={0} customIconSize={5} icon={Share2} />, label: 'Share' },
+  ]
 };
 
-const ThreeDots = ({ job, handleAction, page }) => {
+const ThreeDots = ({ job, handleAction, page, orgId }) => {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef(null);
 
@@ -64,6 +65,30 @@ const ThreeDots = ({ job, handleAction, page }) => {
 
   const menuItems = getMenuItems();
 
+  const handleMenuItemClick = (action, jobId, e) => {
+    e.stopPropagation();
+    
+    if (action === ACTION_TYPES.SHARE) {
+      // For share action, use orgId passed from props
+      const baseUrl = window.location.origin;
+      
+      // Check if orgId is available from props or fallback to job.company_id if needed
+      const companyId = orgId || (job && job.company_id);
+      
+      if (companyId) {
+        const shareUrl = `${baseUrl}/org/${companyId}/`;
+        window.open(shareUrl, '_blank');
+      } else {
+        console.error('Organization ID not found');
+      }
+    } else {
+      // For other actions, call the parent handler
+      handleAction(action, jobId);
+    }
+    
+    setIsOpen(false);
+  };
+
   return (
     <div className="relative" ref={menuRef}>
       <button onClick={toggleMenu} className="focus:outline-none flex items-center">
@@ -76,10 +101,7 @@ const ThreeDots = ({ job, handleAction, page }) => {
               <li
                 key={action}
                 className={`px-4 py-2 flex items-center gap-1 typography-body ${className || ''}`}
-                onClick={(e) => {
-                  handleAction(action, job ? job._id : null);
-                  e.stopPropagation();
-                }}
+                onClick={(e) => handleMenuItemClick(action, job ? job._id : null, e)}
               >
                 <button className="text-black rounded m-1">
                   <Icon />
