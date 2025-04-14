@@ -24,7 +24,7 @@ export default {
       backgroundImage: {
         "card-pattern": "url('/src/svg/StatsCard/stats-bg.png')",
         "main-bg":"url('/src/svg/Background/rate.png')",
-        "home-bg":"url('/src/svg/Background/HomeBG.svg')",
+        "home-bg":"url('/src/svg/Background/NewHomeBG.svg')",
         "assessment":"url('/src/svg/Background/AssessmentBanner.svg')",
         "verification":"url('/src/svg/Background/verification.svg')",
         "stars":"url('/src/svg/Background/Stars.svg')",
