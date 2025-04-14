@@ -1,6 +1,7 @@
 import React, { useRef, useState } from "react";
 import { Controller } from "react-hook-form";
 import PhoneInput from "react-phone-input-2";
+import { parsePhoneNumberFromString } from 'libphonenumber-js';
 import "react-phone-input-2/lib/style.css"; // Import default CSS
 
 export const PhoneInputField = ({
@@ -8,6 +9,7 @@ export const PhoneInputField = ({
   control,
   rules,
   label,
+  rowWise = false,
   required = false,
   ...props
 }) => {
@@ -23,11 +25,11 @@ export const PhoneInputField = ({
         }
       }}
       render={({ field: { onChange, value }, fieldState: { error } }) => (
-        <div className="flex flex-col relative">
+        <div className={"flex  relative " + (rowWise ? "flex-row justify-between items-center gap-2" : "flex-col")}>
           {label && (
             <label
               htmlFor={name}
-              className="typography-body mb-2"
+              className={"typography-body mb-2 w-fit whitespace-nowrap " + (rowWise ? " min-w-[25%] max-w-[25%] text-font-gray" : "")}
             >
               {label}
               {required && <span className="text-red-100">*</span>}
@@ -39,9 +41,9 @@ export const PhoneInputField = ({
           value={value}
           onChange={onChange}
           placeholder={'Enter Phone Number'}
-          containerClass={"rounded-xl " + (error && "border border-red-500")}
-          dropdownClass=" scrollbar-hide "
-          inputClass="typography-body text-white "
+          containerClass={"rounded-xl " + (rowWise ? "  min-w-[60%] w-[100%] " : "")  + (error && "border border-red-500")}
+          dropdownClass=" scrollbar-hide w-[100%]"
+          inputClass="typography-body text-white w-[100%]"
           searchPlaceholder="Search"
           // Optionally enable search functionality in the dropdown
           enableSearch={true}
@@ -62,4 +64,12 @@ export const PhoneInputField = ({
       )}
     />
   );
+};
+
+
+export const formatPhoneNumber = (phoneNumber) => {
+  const parsed = parsePhoneNumberFromString('+' + phoneNumber);
+  if (!parsed) return phoneNumber;
+
+  return `${parsed.countryCallingCode}-${parsed.nationalNumber}`;
 };

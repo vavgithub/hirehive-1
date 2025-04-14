@@ -31,6 +31,7 @@ import { truncatedText } from '../../utility/truncatedHTML';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 import { formatTime } from '../../utility/formatTime';
 import { showErrorToast, showSuccessToast } from '../../components/ui/Toast';
+import { formatPhoneNumber } from '../../components/Form/PhoneInputField';
 
 export const VAVScoreCard = ({score,stage,scoreStages})=>{
     const [showBreakDown,setShowBreakDown] = useState(false);
@@ -497,7 +498,7 @@ const ViewCandidateProfile = () => {
                                                     <div className='cursor-pointer' onClick={() => handleWhatsappOpen(data.firstName + " " + data.lastName, data.phone)}>
                                                         <IconWrapper size={0} customIconSize={2} icon={Phone} />
                                                     </div>
-                                                    <span className="typography-large-p">{data.phone}</span>
+                                                    <span className="typography-large-p whitespace-nowrap">{formatPhoneNumber(data.phone)}</span>
                                                 </div>
                                                 <div className="flex items-center gap-2 overflow-hidden">
                                                     <div className='cursor-pointer' onClick={() => handleEmailOpen(data?.firstName + " " + data?.lastName, data?.email,data?.jobApplication?.jobApplied,new Date(data?.jobApplication?.stageStatuses['Screening']?.currentCall?.scheduledDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) + " " + formatTime(data?.jobApplication?.stageStatuses['Screening']?.currentCall?.scheduledTime))}>

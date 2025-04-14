@@ -30,7 +30,7 @@ export const InputField = React.forwardRef(({
 
   return (
     <div className={'flex  gap-2 relative ' + (rowWise ? "justify-between items-center" : "flex-col justify-start")}>
-      <label htmlFor={id} className={labelStyles + " typography-body "  + (rowWise ? "w-[40%]" : "")}>
+      <label htmlFor={id} className={labelStyles + " typography-body "  + (rowWise ? " min-w-[25%] max-w-[25%] " : "")}>
         {label} {required && <span className="text-red-100">*</span>}
       </label>
       {type === "password" ? (

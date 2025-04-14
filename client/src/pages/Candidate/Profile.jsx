@@ -21,6 +21,7 @@ import { UNKNOWN_PROFILE_PICTURE_URL } from "../../utility/config";
 import ContactUs from "../../components/Form/ContactUs";
 import IconWrapper from "../../components/Cards/IconWrapper";
 import { Pencil, PencilLine, Upload } from "lucide-react";
+import { formatPhoneNumber, PhoneInputField } from "../../components/Form/PhoneInputField";
 
 const PersonalDetails = ({ candidateData, isEditing, control }) => {
   return (
@@ -45,7 +46,7 @@ const PersonalDetails = ({ candidateData, isEditing, control }) => {
             </div>
             <div className="flex flex-col gap-6 typography-body">
               <p className="whitespace-nowrap overflow-hidden text-ellipsis">{candidateData.lastName ?? '-'}</p>
-              <p>{candidateData.phone}</p>
+              <p>{formatPhoneNumber(candidateData.phone)}</p>
             </div>
           </div>
         </div>
@@ -108,7 +109,7 @@ const PersonalDetails = ({ candidateData, isEditing, control }) => {
               />
             )}
           />
-          <Controller
+          {/* <Controller
             name="phone"
             control={control}
             defaultValue={""}
@@ -127,6 +128,13 @@ const PersonalDetails = ({ candidateData, isEditing, control }) => {
                 errorMessage={error?.message}
               />
             )}
+          /> */}
+          <PhoneInputField
+            name="phone"
+            rules={validationRules?.phoneNumber}
+            control={control}
+            rowWise
+            label="Phone Number"
           />
         </div>
       }
@@ -175,8 +183,8 @@ const ResumeAndPortfolioDetails = ({ candidateData, isEditing, control, resumeFi
             control={control}
             render={({ field, fieldState: { error } }) => (
               <div className="h-11 w-full flex items-center typography-body justify-between gap-2 font-outfit">
-                <p className="w-[28%] text-font-gray ">Resume</p>
-                <div className="w-[71%] bg-background-40 h-11 rounded-xl flex justify-between">
+                <p className="w-[25%] text-font-gray ">Resume</p>
+                <div className="w-[75%] bg-background-40 h-11 rounded-xl flex justify-between">
                   <p className="px-4 py-2 whitespace-nowrap overflow-hidden text-ellipsis">{fileName ? fileName : candidateData?.firstName + "'s Resume"}</p>
                   <span className="hidden md:block">
                     <Button icon={()=><IconWrapper icon={Upload} inheritColor size={0} customIconSize={4} customStrokeWidth={7} />} variant="secondary" type="button" onClick={() => resumeRef.current.click()}>{resumeFile ? "Edit" : "Choose"}</Button>
@@ -666,7 +674,7 @@ function Profile() {
             </div>
           </div>
           {isEditing &&
-            <div className="place-self-end flex gap-4 mt-4">
+            <div className="place-self-end flex gap-4 mt-4 lg:mb-20">
               <Button onClick={() => setIsEditing(false)} type="button" variant="secondary" >Cancel</Button>
               <Button
                 type="Submit"
