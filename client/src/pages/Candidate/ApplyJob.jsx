@@ -163,7 +163,7 @@ const ApplyJob = () => {
     },
   });
 
-  const { data: jobDetails } = useQuery({
+  const { data: jobDetails , isLoading } = useQuery({
     queryKey: ['jobDetails', jobId],
     queryFn: () => fetchJobDetails(jobId),
   });
@@ -443,7 +443,7 @@ const ApplyJob = () => {
 
   return (
     <Container extraStyles={"flex justify-center "} customPadding={(currentStep !== 1 ? "p-0" : '')} hasContainerDiv={false} >
-      {(isSubmitting || updateEmailMutation?.isPending|| loading) && <LoaderModal />}
+      {(isSubmitting || updateEmailMutation?.isPending|| loading || isLoading) && <LoaderModal />}
 
       {currentStep === 1 && (
         <div className='container'>

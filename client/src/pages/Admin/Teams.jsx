@@ -161,7 +161,7 @@ function Teams() {
     <Container>
         <div className="flex flex-row justify-between mb-4">
             <h1 className="typography-h1">Teams</h1>
-            {(addMemberMutation?.isPending || rejectRequestMutation?.isPending || approveRequestMutation?.isPending) && <LoaderModal />}
+            {(addMemberMutation?.isPending || rejectRequestMutation?.isPending || approveRequestMutation?.isPending || isTeamMembersLoading) && <LoaderModal />}
         </div>
         <div className="grid gap-4 grid-cols-5 ">
             {/* Add Card */}

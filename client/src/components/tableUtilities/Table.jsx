@@ -488,7 +488,7 @@ const Table = ({
 
       {autoAssignMutation.isPending ||
         rejectCandidateMutation.isPending ||
-        moveCandidateMutation.isPending && <LoaderModal />}
+        moveCandidateMutation.isPending || isLoading && <LoaderModal />}
 
       <MuiCustomStylesForDataGrid />
 

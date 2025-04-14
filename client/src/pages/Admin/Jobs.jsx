@@ -20,6 +20,7 @@ import Container from '../../components/Cards/Container';
 import IconWrapper from '../../components/Cards/IconWrapper';
 import { Archive, Briefcase, CircleCheck, CircleCheckBig, CirclePlus, CircleX, FileText, Search } from 'lucide-react';
 import Header from '../../components/utility/Header';
+import LoaderModal from '../../components/Loaders/LoaderModal';
 
 
 const fetchJobs = (page, status) => axios.get(`/jobs/jobs?page=${page}&status=${status}`).then(res => res.data);
@@ -359,7 +360,7 @@ const Jobs = () => {
                     <Tabs tabs={tabs} activeTab={activeTab} handleTabClick={handleTabClick} />
                 </div> */}
 
-
+            {(isStatsLoading ) && <LoaderModal />}
             <StyledCard padding={2} backgroundColor={"bg-background-100"}>
 
                 <div className='flex gap-3'>

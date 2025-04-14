@@ -153,7 +153,7 @@ const Reviews = () => {
   };
 
   // Show loader if data is loading
-  if (isLoading) {
+  if (isLoading || isStatsLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <Loader />

@@ -286,7 +286,7 @@ function TeamsProfile() {
           withBack="true"
           page="page1"
           />
-          {( reInviteMemberMutation?.isPending || editMemberMutation?.isPending || changeMemberStatusMutation?.isPending) && <LoaderModal/>}
+          {( reInviteMemberMutation?.isPending || editMemberMutation?.isPending || changeMemberStatusMutation?.isPending || isTeamMembersLoading) && <LoaderModal/>}
           <form onSubmit={handleSubmit(handleEditMember)} className='w-full flex flex-col gap-4'>
             <div className='w-full flex gap-4'>
               <div className="lg:w-[70%] flex flex-col gap-4">
