@@ -720,9 +720,18 @@ export const StatisticsController = {
 
 const getJobs = async (req, res) => {
   try {
-    const { page, status } = req.query;
+    const { page, status , pinned } = req.query;
     const pageNumber = page ? parseInt(page) : 1;
     const LIMIT = 3;
+
+    let pinnedIds = pinned ? JSON.parse(pinned) : [];
+    let closedPins = []
+
+    if(pinnedIds?.length > LIMIT){
+      return res.status(400).json({
+        message: `Exceeded Pinned Jobs Count. Only ${LIMIT} jobs are allowed to pin.`,
+      });
+    }
 
     const company_id = req.user.company_id;
     let userIds = [];
@@ -734,101 +743,307 @@ const getJobs = async (req, res) => {
        userIds = usersInCompany.map(user => user._id);
     }
 
-    const jobsWithStats = await jobs.aggregate([
-      // Match jobs created by the current user
-      {
-        $match: {
-          createdBy: {$in : userIds},
-          status: status,
-        },
-      },
-      // Sort by creation date (newest first)
-      {
-        $sort: {
-          createdAt: -1,
-        },
-      },
-      // Lookup application statistics from candidates collection
-     {
-  $lookup: {
-    from: "candidates",
-    let: { jobId: "$_id" },
-    pipeline: [
-      { $unwind: "$jobApplications" },
-      {
-        $match: {
-          isVerified: true, // Added condition to filter only verified candidates
-          $expr: {
-            $eq: ["$jobApplications.jobId", "$$jobId"],
+      //check pinned jobs are open or not
+      for(let pinnedJob of pinnedIds){
+        const job = await jobs.findOne({_id: pinnedJob, createdBy: {$in : userIds} , status : "open" , })
+        if(!job){
+          closedPins.push(pinnedJob)
+          pinnedIds = pinnedIds.filter(id => id !== pinnedJob)
+        }
+      }
+
+    let jobsWithStats = []
+
+    if(pageNumber === 1 && status === 'open' && pinnedIds?.length > 0 && pinnedIds?.length <= LIMIT){
+      jobsWithStats = await jobs.aggregate([
+        // Match jobs created by the current user
+        {
+          $match: {
+            createdBy: {$in : userIds},
+            status: status,
+            _id : {$in : pinnedIds.map(id => new mongoose.Types.ObjectId(id))}
           },
         },
-      },
-      {
-        $group: {
-          _id: "$jobApplications.jobId",
-          totalApplications: { $sum: 1 },
-          processedApplications: {
-            $sum: {
-              $cond: [
-                {
-                  $or: [
-                    { $eq: ["$jobApplications.stageStatuses.Portfolio.status", "Cleared"] },
-                    { $eq: ["$jobApplications.stageStatuses.Screening.status", "Cleared"] },
-                    { $eq: ["$jobApplications.stageStatuses.Design Task.status", "Cleared"] },
-                    { $eq: ["$jobApplications.stageStatuses.Round 1.status", "Cleared"] },
-                    { $eq: ["$jobApplications.stageStatuses.Round 2.status", "Cleared"] },
-                    { $eq: ["$jobApplications.stageStatuses.Hired.status", "Accepted"] },
+        // Sort by creation date (newest first)
+        {
+          $sort: {
+            createdAt: -1,
+          },
+        },
+        // Lookup application statistics from candidates collection
+       {
+    $lookup: {
+      from: "candidates",
+      let: { jobId: "$_id" },
+      pipeline: [
+        { $unwind: "$jobApplications" },
+        {
+          $match: {
+            isVerified: true, // Added condition to filter only verified candidates
+            $expr: {
+              $eq: ["$jobApplications.jobId", "$$jobId"],
+            },
+          },
+        },
+        {
+          $group: {
+            _id: "$jobApplications.jobId",
+            totalApplications: { $sum: 1 },
+            processedApplications: {
+              $sum: {
+                $cond: [
+                  {
+                    $or: [
+                      { $eq: ["$jobApplications.stageStatuses.Portfolio.status", "Cleared"] },
+                      { $eq: ["$jobApplications.stageStatuses.Screening.status", "Cleared"] },
+                      { $eq: ["$jobApplications.stageStatuses.Design Task.status", "Cleared"] },
+                      { $eq: ["$jobApplications.stageStatuses.Round 1.status", "Cleared"] },
+                      { $eq: ["$jobApplications.stageStatuses.Round 2.status", "Cleared"] },
+                      { $eq: ["$jobApplications.stageStatuses.Hired.status", "Accepted"] },
+                    ],
+                  },
+                  1,
+                  0,
+                ],
+              },
+            },
+          },
+        },
+      ],
+      as: "applicationStats",
+    },
+  },
+        // Add applied and processed fields
+        {
+          $addFields: {
+            applied: {
+              $cond: {
+                if: { $gt: [{ $size: "$applicationStats" }, 0] },
+                then: {
+                  $arrayElemAt: ["$applicationStats.totalApplications", 0],
+                },
+                else: 0,
+              },
+            },
+            processed: {
+              $cond: {
+                if: { $gt: [{ $size: "$applicationStats" }, 0] },
+                then: {
+                  $arrayElemAt: ["$applicationStats.processedApplications", 0],
+                },
+                else: 0,
+              },
+            },
+          },
+        },
+        // Remove the applicationStats array from final output
+        {
+          $project: {
+            applicationStats: 0,
+          },
+        },
+        {
+          $skip: (pageNumber - 1) * LIMIT,
+        },
+        {
+          $limit: LIMIT,
+        },
+      ]);
+      if(jobsWithStats?.length < LIMIT){
+        const extraJobs = await jobs.aggregate([
+          // Match jobs created by the current user
+          {
+            $match: {
+              createdBy: {$in : userIds},
+              status: status,
+            _id : {$nin : pinnedIds.map(id => new mongoose.Types.ObjectId(id))}
+            },
+          },
+          // Sort by creation date (newest first)
+          {
+            $sort: {
+              createdAt: -1,
+            },
+          },
+          // Lookup application statistics from candidates collection
+         {
+      $lookup: {
+        from: "candidates",
+        let: { jobId: "$_id" },
+        pipeline: [
+          { $unwind: "$jobApplications" },
+          {
+            $match: {
+              isVerified: true, // Added condition to filter only verified candidates
+              $expr: {
+                $eq: ["$jobApplications.jobId", "$$jobId"],
+              },
+            },
+          },
+          {
+            $group: {
+              _id: "$jobApplications.jobId",
+              totalApplications: { $sum: 1 },
+              processedApplications: {
+                $sum: {
+                  $cond: [
+                    {
+                      $or: [
+                        { $eq: ["$jobApplications.stageStatuses.Portfolio.status", "Cleared"] },
+                        { $eq: ["$jobApplications.stageStatuses.Screening.status", "Cleared"] },
+                        { $eq: ["$jobApplications.stageStatuses.Design Task.status", "Cleared"] },
+                        { $eq: ["$jobApplications.stageStatuses.Round 1.status", "Cleared"] },
+                        { $eq: ["$jobApplications.stageStatuses.Round 2.status", "Cleared"] },
+                        { $eq: ["$jobApplications.stageStatuses.Hired.status", "Accepted"] },
+                      ],
+                    },
+                    1,
+                    0,
                   ],
                 },
-                1,
-                0,
-              ],
-            },
-          },
-        },
-      },
-    ],
-    as: "applicationStats",
-  },
-},
-      // Add applied and processed fields
-      {
-        $addFields: {
-          applied: {
-            $cond: {
-              if: { $gt: [{ $size: "$applicationStats" }, 0] },
-              then: {
-                $arrayElemAt: ["$applicationStats.totalApplications", 0],
               },
-              else: 0,
             },
           },
-          processed: {
-            $cond: {
-              if: { $gt: [{ $size: "$applicationStats" }, 0] },
-              then: {
-                $arrayElemAt: ["$applicationStats.processedApplications", 0],
+        ],
+        as: "applicationStats",
+      },
+    },
+          // Add applied and processed fields
+          {
+            $addFields: {
+              applied: {
+                $cond: {
+                  if: { $gt: [{ $size: "$applicationStats" }, 0] },
+                  then: {
+                    $arrayElemAt: ["$applicationStats.totalApplications", 0],
+                  },
+                  else: 0,
+                },
               },
-              else: 0,
+              processed: {
+                $cond: {
+                  if: { $gt: [{ $size: "$applicationStats" }, 0] },
+                  then: {
+                    $arrayElemAt: ["$applicationStats.processedApplications", 0],
+                  },
+                  else: 0,
+                },
+              },
             },
           },
-        },
-      },
-      // Remove the applicationStats array from final output
-      {
-        $project: {
-          applicationStats: 0,
-        },
-      },
-      {
-        $skip: (pageNumber - 1) * LIMIT,
-      },
-      {
-        $limit: LIMIT,
-      },
-    ]);
+          // Remove the applicationStats array from final output
+          {
+            $project: {
+              applicationStats: 0,
+            },
+          },
+          {
+            $limit: (LIMIT - pinnedIds?.length),
+          },
+        ]);
 
-    res.status(200).json(jobsWithStats);
+        jobsWithStats.push(...extraJobs)
+      }
+    }else{
+
+      jobsWithStats = await jobs.aggregate([
+        // Match jobs created by the current user
+        {
+          $match: {
+            createdBy: {$in : userIds},
+            status: status,
+            _id : {$nin : pinnedIds.map(id => new mongoose.Types.ObjectId(id))}
+          },
+        },
+        // Sort by creation date (newest first)
+        {
+          $sort: {
+            createdAt: -1,
+          },
+        },
+        // Lookup application statistics from candidates collection
+       {
+    $lookup: {
+      from: "candidates",
+      let: { jobId: "$_id" },
+      pipeline: [
+        { $unwind: "$jobApplications" },
+        {
+          $match: {
+            isVerified: true, // Added condition to filter only verified candidates
+            $expr: {
+              $eq: ["$jobApplications.jobId", "$$jobId"],
+            },
+          },
+        },
+        {
+          $group: {
+            _id: "$jobApplications.jobId",
+            totalApplications: { $sum: 1 },
+            processedApplications: {
+              $sum: {
+                $cond: [
+                  {
+                    $or: [
+                      { $eq: ["$jobApplications.stageStatuses.Portfolio.status", "Cleared"] },
+                      { $eq: ["$jobApplications.stageStatuses.Screening.status", "Cleared"] },
+                      { $eq: ["$jobApplications.stageStatuses.Design Task.status", "Cleared"] },
+                      { $eq: ["$jobApplications.stageStatuses.Round 1.status", "Cleared"] },
+                      { $eq: ["$jobApplications.stageStatuses.Round 2.status", "Cleared"] },
+                      { $eq: ["$jobApplications.stageStatuses.Hired.status", "Accepted"] },
+                    ],
+                  },
+                  1,
+                  0,
+                ],
+              },
+            },
+          },
+        },
+      ],
+      as: "applicationStats",
+    },
+  },
+        // Add applied and processed fields
+        {
+          $addFields: {
+            applied: {
+              $cond: {
+                if: { $gt: [{ $size: "$applicationStats" }, 0] },
+                then: {
+                  $arrayElemAt: ["$applicationStats.totalApplications", 0],
+                },
+                else: 0,
+              },
+            },
+            processed: {
+              $cond: {
+                if: { $gt: [{ $size: "$applicationStats" }, 0] },
+                then: {
+                  $arrayElemAt: ["$applicationStats.processedApplications", 0],
+                },
+                else: 0,
+              },
+            },
+          },
+        },
+        // Remove the applicationStats array from final output
+        {
+          $project: {
+            applicationStats: 0,
+          },
+        },
+        {
+          $skip: (pinnedIds?.length === 0 || status !== 'open')  ? (pageNumber - 1) * LIMIT : (pageNumber === 2 ? (LIMIT - pinnedIds?.length) : ((pageNumber - 1) * LIMIT ) - (pinnedIds?.length)),
+        },
+        {
+          $limit: LIMIT,
+        },
+      ]);
+    }
+
+
+    res.status(200).json({jobs : jobsWithStats , closedPins });
   } catch (error) {
     console.error("Error in getJobs:", error);
     res.status(500).json({

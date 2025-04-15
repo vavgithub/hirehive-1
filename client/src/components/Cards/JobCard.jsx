@@ -4,7 +4,7 @@ import { getTimeAgo } from '../../utility/getTimeAgo';
 import ClosedBadge from '../../svg/Icons/ClosedBadge';
 import StyledCard from './StyledCard';
 import CustomBadge from '../Badge/CustomBadge';
-import { Building, Building2, Copy, Rss } from 'lucide-react';
+import { Building, Building2, Copy, Pin, Rss } from 'lucide-react';
 import CustomToolTip from '../Tooltip/CustomToolTip';
 import { copyToClipboard } from '../../utility/CopyToClipboard';
 import { useLocation } from 'react-router-dom';
@@ -47,7 +47,8 @@ const JobCard = ({
   isCandidate,
   isAuthenticatedCandidate,
   application, // Receive the application prop
-  role
+  role, 
+  pinnedJobs = []
 }) => {
   const formattedCreatedAt = getTimeAgo(job.createdAt);
   const formattedAppliedAt = getTimeAgo(job.applicationDate);
@@ -143,7 +144,13 @@ const JobCard = ({
           Applied
         </span>}
         {(role === "Admin" || role === "Hiring Manager") && job?.status === 'open' && 
-        <div>
+        <div className='flex items-center gap-4'>
+          {
+            pinnedJobs?.includes(job?._id) && 
+            <div className='rotate-45'>
+              <IconWrapper icon={Pin} size={0} isInActiveIcon />
+            </div>
+          }
           <CustomToolTip arrowed title={"Copy link"}>
             <div onClick={(e) => handleCopyLink(e,job?._id , job?.company_id)} className='cursor-pointer p-2 h-10 flex justify-center items-center bg-background-70 hover:bg-background-80 rounded-xl'>
               <Copy size={20} strokeWidth={1} color='#808389'/>            
@@ -153,7 +160,7 @@ const JobCard = ({
         {(job.status !== "deleted" && job.status !== "closed") &&
           <CustomBadge label={job?.jobProfile} paddingX={2} />}
         {withKebab && (
-          <ThreeDots job={job} handleAction={handleAction} page={page} />
+          <ThreeDots job={job} handleAction={handleAction} page={page} isPinned={pinnedJobs?.includes(job?._id)} role={role} />
         )}
       </div>
     </div>

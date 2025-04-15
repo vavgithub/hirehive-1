@@ -21,9 +21,10 @@ import IconWrapper from '../../components/Cards/IconWrapper';
 import { Archive, Briefcase, CircleCheck, CircleCheckBig, CirclePlus, CircleX, FileText, Search } from 'lucide-react';
 import Header from '../../components/utility/Header';
 import LoaderModal from '../../components/Loaders/LoaderModal';
+import usePinnedJobs from '../../hooks/usePinnedJobs';
 
 
-const fetchJobs = (page, status) => axios.get(`/jobs/jobs?page=${page}&status=${status}`).then(res => res.data);
+const fetchJobs = (page, status,pinned) => axios.get(`/jobs/jobs?page=${page}&status=${status}&pinned=${JSON.stringify(pinned)}`).then(res => res.data);
 const fetchOverallStats = () => axios.get('/jobs/stats/overall').then(res => res.data.data);
 const filterSearchJobs = (query, filters, page, status) => axios.post('/jobs/filterSearchJobs', { filters, page, status, query }).then(res => res.data);
 
@@ -49,13 +50,15 @@ const Jobs = () => {
     const PAGE_LIMIT = 3;
 
     const [debouncedQuery] = useDebounce(searchQuery);
-
+    
     const { user } = useAuthContext();
-    console.log("user", user);
+
     const role = user?.role;
     // Add this line somewhere at the top of your component to extract the organization ID
     const orgId = user?.companyDetails?._id;
 
+    const { setPinnedJobs, pinnedJobs , pinLoading, setUnPinnedJobs } = usePinnedJobs(user?.email)
+    
     //For resetting page on each result change
     useEffect(() => {
         setPage(1);
@@ -63,10 +66,19 @@ const Jobs = () => {
 
     // Fetch jobs and overall stats
     // Use the updated jobs query
-    const { data: jobs = [], isLoading: isJobsLoading } = useQuery({
-        queryKey: ['jobs', page, activeTab],
-        queryFn: () => fetchJobs(page, activeTab)
+    const { data: fetchJobData , isLoading: isJobsLoading } = useQuery({
+        queryKey: ['jobs', page, activeTab,pinnedJobs],
+        queryFn: () => fetchJobs(page, activeTab,pinnedJobs),
+        enabled: !pinLoading, 
     });
+
+    const jobs = fetchJobData?.jobs ?? [];
+
+    if(fetchJobData?.closedPins?.length > 0){
+        for(let jobId of fetchJobData.closedPins){
+            setUnPinnedJobs(jobId)
+        }
+    }
 
     const {
         data: overallStats = {
@@ -84,9 +96,25 @@ const Jobs = () => {
 
     const handleAction = (action, jobId) => {
         const job = jobs.find(j => j._id === jobId);
-        setModalOpen(true);
-        setSelectedJob(job);
-        setModalAction(action);
+        //HANDLING PIN AND UNPIN JOBS
+        if(action === ACTION_TYPES.PIN ){
+            if(pinnedJobs?.length >= 3){//PIN LIMIT = 3 (as pagination limit is 3)
+                showErrorToast("Exceeded Pin Count",`Only 3 Jobs can be pinned. Please unpin one job and continue.`)
+                return
+            }
+            setPinnedJobs(jobId)
+            showSuccessToast("Success",`${job.jobTitle} job pinned successfully`)
+        }else if(action === ACTION_TYPES.UNPIN){
+            setUnPinnedJobs(jobId)
+            showSuccessToast("Success",`${job.jobTitle} job unpinned successfully`)
+        }else{
+                if((action === ACTION_TYPES.CLOSE || action === ACTION_TYPES.DRAFT || action === ACTION_TYPES.DELETE) &&  pinnedJobs?.includes(jobId)){
+                    setUnPinnedJobs(jobId)
+                }
+            setModalOpen(true);
+            setSelectedJob(job);
+            setModalAction(action);
+        }
     };
 
 
@@ -99,6 +127,7 @@ const Jobs = () => {
             Array.isArray(filter) ? filter.length > 0 : Object.values(filter).some(val => val !== '') || debouncedQuery !== '',
         ),
     });
+
 
     const deleteMutation = useMutation({
         mutationFn: (jobId) => axios.delete(`/jobs/deleteJob/${jobId}`),
@@ -330,8 +359,8 @@ const Jobs = () => {
 
 
     const displayJobs = useMemo(() => {
-        return ((debouncedQuery.length > 0 || isFiltered) && !isFilteredSearchJobsLoading) ? filteredSearchData?.filteredSearchJobs : jobs;
-    }, [filteredSearchData, isFiltered, debouncedQuery, jobs]);
+        return ((debouncedQuery.length > 0 || isFiltered) && !isFilteredSearchJobsLoading) ? filteredSearchData?.filteredSearchJobs : [...jobs?.filter(job => pinnedJobs.includes(job._id)),...jobs?.filter(job => !pinnedJobs.includes(job._id))];
+    }, [filteredSearchData, isFiltered, debouncedQuery, jobs, pinnedJobs]);
 
     const currentPage = 'Jobs';
 
@@ -434,6 +463,7 @@ const Jobs = () => {
                                             onClick={job.status === "deleted" ? undefined :
                                                 () => handleViewJob(job._id)}
                                             role={role}
+                                            pinnedJobs={pinnedJobs}
                                         />
                                     )
                                 })

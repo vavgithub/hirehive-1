@@ -1,7 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ACTION_TYPES } from '../../utility/ActionTypes';
 import IconWrapper from '../Cards/IconWrapper';
-import { Archive, CircleCheck, CircleX, EllipsisVertical, SquarePen, Share2, Trash } from 'lucide-react';
+import { Archive, CircleCheck, CircleX, EllipsisVertical, SquarePen, Share2, Trash, Pin, PinOff } from 'lucide-react';
+
+const pinUnpinMenuItems = {
+  pin : { action: ACTION_TYPES.PIN, icon: () => <IconWrapper size={0} customIconSize={5} icon={Pin} />, label: 'Pin' },
+  unpin : { action: ACTION_TYPES.UNPIN, icon: () => <IconWrapper size={0} customIconSize={5} icon={PinOff} />, label: 'Unpin' },
+}
 
 const MenuItems = {
   job: {
@@ -34,7 +39,7 @@ const MenuItems = {
   ]
 };
 
-const ThreeDots = ({ job, handleAction, page, orgId }) => {
+const ThreeDots = ({ job, handleAction, page, orgId , isPinned , role}) => {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef(null);
 
@@ -97,6 +102,23 @@ const ThreeDots = ({ job, handleAction, page, orgId }) => {
       {isOpen && (
         <div className="absolute right-0 mt-2 w-48 bg-background-70 shadow-lg cursor-pointer rounded-md z-10">
           <ul className="py-1">
+            {(job?.status === 'open' && ( role === "Admin" || role === "Hiring Manager" ) ) && 
+            <li
+              key={pinUnpinMenuItems[isPinned ? 'unpin' : 'pin']?.action}
+              className={`px-4 py-2 flex items-center gap-1 typography-body ${pinUnpinMenuItems[isPinned ? 'unpin' : 'pin']?.className || ''}`}
+              onClick={(e) => handleMenuItemClick(pinUnpinMenuItems[isPinned ? 'unpin' : 'pin']?.action, job ? job._id : null, e)}
+            >
+              <button className="text-black rounded m-1">
+              {
+                (() => {
+                  const DynamicIcon = pinUnpinMenuItems[isPinned ? 'unpin' : 'pin']?.icon;
+                  return DynamicIcon ? <DynamicIcon /> : null;
+                })()
+              }
+              </button>
+              {pinUnpinMenuItems[isPinned ? 'unpin' : 'pin']?.label}
+            </li>
+            }
             {menuItems.map(({ action, icon: Icon, label, className }) => (
               <li
                 key={action}
