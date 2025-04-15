@@ -10,7 +10,7 @@ import { formatDescription } from '../../utility/formatDescription';
 import SideCard from '../../components/ui/SideCard';
 import Table from '../../components/tableUtilities/Table';
 import Header from '../../components/utility/Header';
-import { ACTION_TYPES } from '../../utility/ActionTypes';
+import { ACTION_TYPES, getModalMessage } from '../../utility/ActionTypes';
 import Loader from '../../components/Loaders/Loader';
 import StyledCard from '../../components/Cards/StyledCard';
 import Modal from '../../components/Modals/Modal';
@@ -69,6 +69,9 @@ const ViewJobs = () => {
                 break;
             case ACTION_TYPES.CLOSE:
                 closeMutation.mutate({ jobId: mainId, closeReason });
+                break;
+            case ACTION_TYPES.REOPEN:
+                reOpenMutation.mutate(job._id)
                 break;
             case ACTION_TYPES.EDIT:
                 navigate(role === "Admin" ? `/admin/edit-job/${mainId}` : `/hiring-manager/edit-job/${mainId}`);
@@ -131,6 +134,15 @@ const ViewJobs = () => {
         },
     });
 
+    const reOpenMutation = useMutation({
+        mutationFn: (jobId) => axios.put(`/jobs/reOpen/${jobId}`),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['jobs'] });
+            setModalOpen(false);
+            navigate(-1);
+        },
+    })
+
     //scroll preserve for table
     // 2. Restore scroll position after data is loaded
     useEffect(() => {
@@ -186,24 +198,6 @@ const ViewJobs = () => {
         setModalAction(action);
     };
 
-    const getModalMessage = (action, job) => {
-        switch (action) {
-            case ACTION_TYPES.DELETE:
-                return `Are you sure you want to delete the "${formData.jobTitle}" job post?`;
-            case ACTION_TYPES.EDIT:
-                return `Are you sure you want to edit the "${formData.jobTitle}" job post?`;
-            case ACTION_TYPES.DRAFT:
-                return `Are you sure you want to move "${formData.jobTitle}" to drafts?`;
-            case ACTION_TYPES.CLOSE:
-                return `Are you sure you want to close the "${formData.jobTitle}" job post?`;
-            case ACTION_TYPES.REJECT:
-                return `Are you sure you want to reject the candidate for "${formData.jobTitle}"?`;
-            case ACTION_TYPES.ARCHIVE:
-                return `Are you sure you want to archive the "${formData.jobTitle}" job post?`;
-            default:
-                return `Are you sure you want to perform this action on "${formData.jobTitle}"?`;
-        }
-    };
 
 
     return (
@@ -296,7 +290,7 @@ const ViewJobs = () => {
                 actionType={modalAction}
                 onConfirm={(job) => confirmAction(job, closeReason)}
                 item={selectedJob}
-                customMessage={selectedJob ? getModalMessage(modalAction, selectedJob) : ''}
+                customMessage={selectedJob ? getModalMessage(modalAction, formData?.jobTitle) : ''}
                 closeReason={closeReason}
                 onCloseReasonChange={handleCloseReasonChange}
             />

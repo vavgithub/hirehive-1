@@ -8,7 +8,7 @@ import Tabs from '../../components/ui/Tabs';
 import StatsGrid from '../../components/ui/StatsGrid';
 import { Button } from '../../components/Buttons/Button';
 import axios from "../../api/axios"
-import { ACTION_TYPES } from '../../utility/ActionTypes';
+import { ACTION_TYPES, getModalMessage } from '../../utility/ActionTypes';
 import NoJobs from "../../svg/Background/NoJobs.svg"
 import { showErrorToast, showSuccessToast } from '../../components/ui/Toast';
 import Loader from '../../components/Loaders/Loader';
@@ -230,27 +230,6 @@ const Jobs = () => {
         setCloseReason(reason);
     };
 
-
-    const getModalMessage = (action, job) => {
-        switch (action) {
-            case ACTION_TYPES.DELETE:
-                return `Are you sure you want to delete the "${job.jobTitle}" job post?`;
-            case ACTION_TYPES.EDIT:
-                return `Are you sure you want to edit the "${job.jobTitle}" job post?`;
-            case ACTION_TYPES.DRAFT:
-                return `Are you sure you want to move "${job.jobTitle}" to drafts?`;
-            case ACTION_TYPES.CLOSE:
-                return `Are you sure you want to close the "${job.jobTitle}" job post?`;
-            case ACTION_TYPES.REJECT:
-                return `Are you sure you want to reject the candidate for "${job.jobTitle}"?`;
-            case ACTION_TYPES.ARCHIVE:
-                return `Are you sure you want to archive the "${job.jobTitle}" job post?`;
-            case ACTION_TYPES.REOPEN:
-                return `Are you sure you want to reOpen the "${job.jobTitle}" job post?`;
-            default:
-                return `Are you sure you want to perform this action on "${job.jobTitle}"?`;
-        }
-    };
 
     const handleCheckboxChange = (filterType, value) => {
         setFilters((prevFilters) => {
@@ -491,7 +470,7 @@ const Jobs = () => {
                     actionType={modalAction}
                     onConfirm={(job) => confirmAction(job)}
                     item={selectedJob}
-                    customMessage={selectedJob ? getModalMessage(modalAction, selectedJob) : ''}
+                    customMessage={selectedJob ? getModalMessage(modalAction, selectedJob?.jobTitle) : ''}
                     closeReason={closeReason}
                     onCloseReasonChange={handleCloseReasonChange}
                 />

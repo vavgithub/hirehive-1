@@ -44,6 +44,7 @@ const ThreeDots = ({ job, handleAction, page, orgId , isPinned , role}) => {
   const menuRef = useRef(null);
 
   const toggleMenu = (e) => {
+    console.log("TO")
     e.stopPropagation();
     setIsOpen(!isOpen);
   };
@@ -95,7 +96,7 @@ const ThreeDots = ({ job, handleAction, page, orgId , isPinned , role}) => {
   };
 
   return (
-    <div className="relative" ref={menuRef}>
+    <div className="relative z-40" ref={menuRef}>
       <button onClick={toggleMenu} className="focus:outline-none flex items-center">
         <IconWrapper icon={EllipsisVertical} customIconSize={7} customStrokeWidth={7} />
       </button>

@@ -224,7 +224,7 @@ const JobCard = ({
           <p className="typography-body text-font-gray mr-2 whitespace-nowrap">
             This job post has been closed 
           </p>
-          <div className='absolute top-0  right-0'>
+          <div className='absolute top-0 z-30 right-0'>
             <ClosedBadge />
           </div>
         </div>

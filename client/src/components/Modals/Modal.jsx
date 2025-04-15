@@ -10,22 +10,23 @@ import AssessmentPopup from '../../svg/Background/AssessmentPopup.svg';
 import SchedulerButton from '../ui/SchedulerButton';
 import IconWrapper from '../Cards/IconWrapper';
 import { X } from 'lucide-react';
+import { ACTION_TYPES } from '../../utility/ActionTypes';
 
-const ACTION_TYPES = {
-  DELETE: 'DELETE',
-  EDIT: 'EDIT',
-  DRAFT: 'DRAFT',
-  CLOSE: 'CLOSE',
-  REJECT: 'REJECT',
-  ARCHIVE: 'ARCHIVE',
-  BUDGET: 'BUDGET',
-  MOVE: 'MOVE',
-  ASSESSMENT: 'ASSESSMENT',
-  CAMERAERROR: 'CAMERA ERROR',
-  AUDIOERROR: 'AUDIO ERROR',
-  MEDIAERROR: 'MEDIA ERROR',
-  COMPANYEXIST: 'COMPANY EXIST',
-};
+// const ACTION_TYPES = {
+//   DELETE: 'DELETE',
+//   EDIT: 'EDIT',
+//   DRAFT: 'DRAFT',
+//   CLOSE: 'CLOSE',
+//   REJECT: 'REJECT',
+//   ARCHIVE: 'ARCHIVE',
+//   BUDGET: 'BUDGET',
+//   MOVE: 'MOVE',
+//   ASSESSMENT: 'ASSESSMENT',
+//   CAMERAERROR: 'CAMERA ERROR',
+//   AUDIOERROR: 'AUDIO ERROR',
+//   MEDIAERROR: 'MEDIA ERROR',
+//   COMPANYEXIST: 'COMPANY EXIST',
+// };
 
 const ACTION_PROPERTIES = {
   [ACTION_TYPES.DELETE]: {

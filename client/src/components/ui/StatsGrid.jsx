@@ -10,14 +10,12 @@ const StatCard = ({ title, value, icon: Icon, statistics }) => {
 
 
   useEffect(() => {
-    console.log(statistics)
     if (statistics?.monthly) {
       setCurrentStatistics(statistics.monthly);
     }
   }, [statistics])
 
   const handleDropDown = (e) => {
-    console.log(e)
     setShow(e.currentTarget)
   }
 
@@ -63,7 +61,7 @@ const StatCard = ({ title, value, icon: Icon, statistics }) => {
       <div className="ml-[15px] w-full ">
         <p className="typography-small-p text-font-gray w-max">{title}</p>
         <p className="typography-h2">{value ?? 0}</p>
-        {<p key={currentStatistics} onClick={currentStatistics ? handleDropDown : ""} className={`typography-small-p min-h-[18px] text-font-gray  flex items-center gap-1  ${currentStatistics ? "cursor-pointer" : ""}`}>
+        {<p key={currentStatistics} onClick={currentStatistics ? handleDropDown : undefined} className={`typography-small-p min-h-[18px] text-font-gray  flex items-center gap-1  ${currentStatistics ? "cursor-pointer" : ""}`}>
           <span className={/\-/.test(currentStatistics?.split(' ')[0]) ? 'text-red-40' : 'text-green-70'}>{currentStatistics && (/\-/.test(currentStatistics?.split(' ')[0]) || '+')}{currentStatistics?.split(' ')[0]}</span> {currentStatistics?.split(' ').slice(1).join(' ')}
           {
             currentStatistics &&
