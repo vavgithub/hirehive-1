@@ -186,7 +186,7 @@ const AdminLayout = () => {
                 </div>
             </div>
 
-            <div className='ml-[16rem] w-[calc(100vw-16rem)] flex justify-center min-h-screen'>
+            <div className='ml-[16rem] w-[calc(100%-16rem)] flex justify-center min-h-screen'>
                 <Outlet />
             </div>
         </div>

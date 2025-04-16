@@ -288,6 +288,12 @@ export const getDetailsForDashboard = asyncHandler(async (req,res) => {
       }
   }
 
+  let userIds = [];
+
+  const usersInCompany = await User.find({ company_id : req.user?.company_id }, '_id'); // Get only _id fields
+  // Extract user _id values into an array
+  userIds = usersInCompany.map(user => user._id);
+
   //Monthly Applications
   const monthData = getLast12Months();
   const weekData = getLast4Weeks();
@@ -570,6 +576,103 @@ export const getDetailsForDashboard = asyncHandler(async (req,res) => {
     },
   ])
 
+
+  //Top jobs
+  const jobsWithStats = await jobs.aggregate([
+          // Match jobs created by the current user
+          {
+            $match: {
+              createdBy: {$in : userIds},
+              status: 'open',
+            },
+          },
+          // Sort by creation date (newest first)
+          {
+            $sort: {
+              createdAt: -1,
+            },
+          },
+          // Lookup application statistics from candidates collection
+         {
+      $lookup: {
+        from: "candidates",
+        let: { jobId: "$_id" },
+        pipeline: [
+          { $unwind: "$jobApplications" },
+          {
+            $match: {
+              isVerified: true, // Added condition to filter only verified candidates
+              $expr: {
+                $eq: ["$jobApplications.jobId", "$$jobId"],
+              },
+            },
+          },
+          {
+            $group: {
+              _id: "$jobApplications.jobId",
+              totalApplications: { $sum: 1 },
+                    processedApplications: {
+                      $sum: {
+                        $cond: [
+                          {
+                            $or: [
+                              { $eq: ["$jobApplications.stageStatuses.Portfolio.status", "Cleared"] },
+                              { $eq: ["$jobApplications.stageStatuses.Screening.status", "Cleared"] },
+                              { $eq: ["$jobApplications.stageStatuses.Design Task.status", "Cleared"] },
+                              { $eq: ["$jobApplications.stageStatuses.Round 1.status", "Cleared"] },
+                              { $eq: ["$jobApplications.stageStatuses.Round 2.status", "Cleared"] },
+                              { $eq: ["$jobApplications.stageStatuses.Hired.status", "Accepted"] },
+                            ],
+                          },
+                          1,
+                          0,
+                        ],
+                      },
+                    },
+                  },
+                },
+              ],
+              as: "applicationStats",
+            },
+          },
+          // Add applied and processed fields
+          {
+            $addFields: {
+              applied: {
+                $cond: {
+                  if: { $gt: [{ $size: "$applicationStats" }, 0] },
+                  then: {
+                    $arrayElemAt: ["$applicationStats.totalApplications", 0],
+                  },
+                  else: 0,
+                },
+              },
+              processed: {
+                $cond: {
+                  if: { $gt: [{ $size: "$applicationStats" }, 0] },
+                  then: {
+                    $arrayElemAt: ["$applicationStats.processedApplications", 0],
+                  },
+                  else: 0,
+                },
+              },
+            },
+          },
+          // Remove the applicationStats array from final output
+          {
+            $project: {
+              applicationStats: 0,
+            },
+          },
+          {
+            $sort : {
+              applied : -1,
+              processed : -1,
+              applyClickCount : -1
+            }
+          }
+        ]);
+
   return res.status(200).json({
       status: 'success',
       message : "Fetched Details successfully",
@@ -582,6 +685,7 @@ export const getDetailsForDashboard = asyncHandler(async (req,res) => {
         dailyApplications : dailyApplications,
         yesterdaysApplications : yesterdaysApplications,
       },
+      jobsWithStats,
       activeJobs : companyJobs?.length,
       interviews : {
         totalCount : totalInterviews,

@@ -16,6 +16,7 @@ import StatsGrid from '../../components/ui/StatsGrid'
 import { DataGrid } from '@mui/x-data-grid'
 import { Avatar } from '@mui/material'
 import { UNKNOWN_PROFILE_PICTURE_URL } from '../../utility/config'
+import { formatIntoDateString } from '../../utility/formatTime'
 
 function AdminDashboard() {
   
@@ -126,8 +127,67 @@ function AdminDashboard() {
         }
     ]
 
+    const jobColumns = [
+      {
+          field: 'jobTitle',
+          headerName: 'Job Title',
+          width: 230,
+          align:'left',
+          headerAlign : 'left',
+          disableColumnMenu: true,
+      },
+      {
+          field: 'jobProfile',
+          headerName: 'Job Profile',
+          width: 180,
+          align:'left',
+          headerAlign : 'left',
+          disableColumnMenu: true,
+      },
+      {
+        field: 'workplaceType',
+        headerName: 'Workplace',
+        sortable: false,
+        width: 130,
+        disableColumnMenu: true,
+      },
+      {
+        field: 'applyClickCount',
+        headerName: 'Engagement',
+        headerAlign: "center",
+        align:'center',
+        width: 140,
+        disableColumnMenu: true,
+      },
+      {
+        field: 'processed',
+        headerName: 'Processed Applications',
+        width: 160,
+        align: 'center',
+        headerAlign: 'center',
+        disableColumnMenu: true
+      },{
+        field: 'applied',
+        headerName: 'Applied Candidates',
+        width: 160,
+        align: 'center',
+        headerAlign: 'center',
+        disableColumnMenu: true,
+      },{
+        field: 'createdAt',
+        headerName: 'Posted On',
+        width: 180,
+        align: 'center',
+        headerAlign: 'center',
+        disableColumnMenu: true,
+        renderCell : (params) => (
+          <p>{formatIntoDateString(params.value)}</p>
+        )
+      }
+  ]
+
   return (
-    <div className="container mx-4 pt-4 pb-6 ">
+    <div className="container px-4 pt-4 pb-6 ">
       <div className="flex flex-row justify-between mb-4">
         <h1 className='typography-h1'>Dashboard</h1>
         {isDetailsLoading && <LoaderModal/>}
@@ -203,6 +263,28 @@ function AdminDashboard() {
         </StyledCard>
       </div>
 
+      {/* Best Jobs */}
+      <StyledCard padding={2} extraStyles={'mt-4 max-w-full '}>
+      <h2 className='typography-h2 mb-2 whitespace-nowrap'>Top Performing Jobs </h2>
+      <DataGrid
+        rows={dashboardDetails?.jobsWithStats ?? []}
+        columns={jobColumns}
+        autoHeight
+        paginationModel={{ page: currentPage, pageSize: pageSize }}
+        onPaginationModelChange={(paginationModel) => {
+          const { page, pageSize } = paginationModel;
+          setCurrentPage(page); // Update your state or perform actions for page change
+          setPageSize(pageSize); // Update your state or perform actions for page size change
+        }}
+        getRowId={(row) => `${row._id}`} // Create a unique ID for each row
+        getRowClassName={(params) =>
+            params.indexRelativeToCurrentPage % 2 === 0 ? 'first-row' : 'second-row'
+        }
+        localeText={{ noRowsLabel: <p style={{fontFamily:"Outfit"}}>No Candidates</p> }}
+        pageSizeOptions={[5,10, 20, 30, 40, 50]}
+
+        />
+      </StyledCard>
       {/* LeaderBoard */}
       <StyledCard padding={2} extraStyles={'mt-4'}>
       <h2 className='typography-h2 mb-2'>Leaderboard</h2>

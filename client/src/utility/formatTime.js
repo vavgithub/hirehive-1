@@ -41,3 +41,16 @@ export const formatIntoLocaleString = (date) =>{
       
       return formattedDate
 }
+
+export const formatIntoDateString = (date) =>{
+    const options = {
+        timeZone: 'Asia/Kolkata', // IST Timezone
+        day: '2-digit',
+        month: 'long', // 'July'
+        year: 'numeric',
+      };
+      
+      const formattedDate = new Date(date).toLocaleDateString('en-IN', options)
+      
+      return formattedDate
+}
