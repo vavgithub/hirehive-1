@@ -186,6 +186,14 @@ function AdminDashboard() {
       }
   ]
 
+  const handleLeaderBoardRowClick = (params) => {
+    navigate(`/admin/candidates/view-candidate/${params?.row?._id}/${params?.row?.jobApplications?.jobId}`)
+  }
+
+  const handleJobRowClick = (params) => {
+    navigate(`/admin/jobs/view-job/${params?.row?._id}`)
+  }
+
   return (
     <div className="container px-4 pt-4 pb-6 ">
       <div className="flex flex-row justify-between mb-4">
@@ -282,7 +290,7 @@ function AdminDashboard() {
         }
         localeText={{ noRowsLabel: <p style={{fontFamily:"Outfit"}}>No Candidates</p> }}
         pageSizeOptions={[5,10, 20, 30, 40, 50]}
-
+        onRowClick={(params) => handleJobRowClick(params)}
         />
       </StyledCard>
       {/* LeaderBoard */}
@@ -308,7 +316,7 @@ function AdminDashboard() {
             }
             localeText={{ noRowsLabel: <p style={{fontFamily:"Outfit"}}>No Candidates</p> }}
             pageSizeOptions={[5,10, 20, 30, 40, 50]}
-
+            onRowClick={(params) => handleLeaderBoardRowClick(params)}
             />
           </div>
         {/* Leading Positions */}
