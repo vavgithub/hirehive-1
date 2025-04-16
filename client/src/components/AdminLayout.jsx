@@ -176,7 +176,7 @@ const AdminLayout = () => {
         <div id='adminContainer' className='flex bg-main-bg bg-cover bg-top h-full overflow-x-hidden '>
             <div className="fixed flex min-h-screen  w-[16rem] flex-col  bg-background-100 text-font-gray typography-large-p justify-between py-4 ">
                 <div className='flex flex-col gap-5 typography-body'>
-                <div className='px-4 flex '>
+                <div className='px-4 pl-6 flex '>
                 <img className='h-11' src={LightLogo}/>
                 </div>
                     {renderMenuItems()}

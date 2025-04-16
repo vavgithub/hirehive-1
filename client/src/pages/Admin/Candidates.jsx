@@ -71,12 +71,14 @@ const Candidates = () => {
   return (
     <Container >
         <Header HeaderText="Candidates" />
-        <StyledCard padding={2} backgroundColor={"bg-background-100"}>
+        <StyledCard padding={0} backgroundColor={"bg-background-100 "} extraStyles={"py-4 pl-4"}>
           <div className="w-full max-w-7xl relative mb-4">
             <div className="absolute right-0 z-10 h-full w-28 bg-gradient-to-tr from-background via-background-green to-transparent pointer-events-none" />
             <StatsGrid stats={statsOne} />
           </div>
-          <Table readOnly={true} readOnlyData={data?.candidates || []} />
+          <div className='mr-4'>
+            <Table readOnly={true} readOnlyData={data?.candidates || []} />
+          </div>
         </StyledCard>
     </Container>
   );

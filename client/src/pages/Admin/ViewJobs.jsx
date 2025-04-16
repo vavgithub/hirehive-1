@@ -267,11 +267,11 @@ const ViewJobs = () => {
             )}
 
             {activeTab === 'candidate' && (
-                <StyledCard backgroundColor={"bg-background-30"} padding={2}>
+                <StyledCard backgroundColor={"bg-background-30"} padding={0} extraStyles={"py-4 pl-4"}>
                     <div className="mb-4">
                         <StatsGrid stats={candidateStats} />
                     </div>
-                    <div className='w-full'>
+                    <div className='max-w-full mr-4'>
                         <Table
                             jobId={mainId} // Pass jobId to Table component
                             jobData={formData}
