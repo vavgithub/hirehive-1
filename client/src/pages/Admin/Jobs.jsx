@@ -334,7 +334,7 @@ const Jobs = () => {
     ));
 
 
-    const isLoadingResults = (debouncedQuery.length > 0 || isFiltered) ? isFilteredSearchJobsLoading : isJobsLoading;
+    const isLoadingResults = (debouncedQuery.length > 0 || isFiltered) ? isFilteredSearchJobsLoading : false;
 
 
     const displayJobs = useMemo(() => {
@@ -368,7 +368,7 @@ const Jobs = () => {
                     <Tabs tabs={tabs} activeTab={activeTab} handleTabClick={handleTabClick} />
                 </div> */}
 
-            {(isStatsLoading ) && <LoaderModal />}
+            {(isStatsLoading  || isJobsLoading) && <LoaderModal />}
             <StyledCard padding={2} backgroundColor={"bg-background-100"}>
 
                 <div className='flex gap-3'>
@@ -407,7 +407,7 @@ const Jobs = () => {
                                 </div>
                             )
                         }
-                        {isLoadingResults || isJobsLoading ? (
+                        {isLoadingResults  ? (
                             <div className="flex justify-center items-center min-h-full">
                                 <Loader />
                             </div>
