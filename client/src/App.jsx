@@ -8,6 +8,7 @@ import { store } from './redux/store';
 import StatePreserver from './context/StatePreserver';
 import { ThemeProvider } from '@mui/material';
 import theme from './components/MUIUtilities/theme';
+import ProductTour from './context/ProductTour';
 
 const queryClient = new QueryClient();
 
@@ -18,6 +19,7 @@ function App() {
       <Provider store={store}>
         <AuthProvider>
           <StatePreserver>
+            <ProductTour />
             <RouterProvider router={router} />
             <StyledToastContainer />
           </StatePreserver>
