@@ -402,7 +402,7 @@ const Jobs = () => {
                             activeTab == "open" && displayJobs.length != 0 && displayJobs.filter(job => job.status === "open").length !== 0 && (
                                 <div className='flex justify-end '>
                                     <div >
-                                        <Button variant="primary" icon={() => <IconWrapper icon={CirclePlus} size={0} customIconSize={5} customStrokeWidth={5} />} iconPosition="left" onClick={handleCreateJob}>Create A Job Listing</Button>
+                                        <Button id="createJobBtn" variant="primary" icon={() => <IconWrapper icon={CirclePlus} size={0} customIconSize={5} customStrokeWidth={5} />} iconPosition="left" onClick={handleCreateJob}>Create A Job Listing</Button>
                                     </div>
                                 </div>
                             )
@@ -417,14 +417,14 @@ const Jobs = () => {
                                 <span className='typography-body m-6'>
                                     Create a job post to attract top talent and build your dream team
                                 </span>
-                                <Button
-                                    variant="primary"
-                                    icon={() => <IconWrapper icon={CirclePlus} size={0} customIconSize={5} customStrokeWidth={5} />}
-                                    iconPosition="left"
-                                    onClick={handleCreateJob}
-                                >
-                                    Create A Job Listing
-                                </Button>
+                                    <Button
+                                        variant="primary"
+                                        icon={() => <IconWrapper icon={CirclePlus} size={0} customIconSize={5} customStrokeWidth={5} />}
+                                        iconPosition="left"
+                                        onClick={handleCreateJob}
+                                    >
+                                        Create A Job Listing
+                                    </Button>
                             </div>
                         ) : (
                             displayJobs
