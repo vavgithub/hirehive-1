@@ -29,7 +29,7 @@ const Loader = ({  loop = true, autoplay = true }) => {
 
 
 
-  return <div ref={containerRef} style={{ width: '400px',height: '400px' ,overflow: "hidden"}} />;
+  return <div ref={containerRef} style={{ width: '300px',height: '300px' ,overflow: "visible"}} />;
 };
 
 export default Loader;
