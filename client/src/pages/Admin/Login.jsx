@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import one from '../../svg/StatsCard/Jobs Page/one';
-import two from '../../svg/StatsCard/Jobs Page/two';
 import { Button } from '../../components/Buttons/Button';
 import { useNavigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
@@ -11,13 +9,15 @@ import { showErrorToast } from '../../components/ui/Toast';
 import Loader from '../../components/Loaders/Loader';
 import Logo from '../../svg/Logo/lightLogo.svg'
 import { InputField } from '../../components/Inputs/InputField';
+import IconWrapper from '../../components/Cards/IconWrapper';
+import { Briefcase, FileText } from 'lucide-react';
 
 const statsOne = [
-    { title: 'Jobs Posted', value: 100, icon: one },
-]
-const statsTwo = [
-    { title: 'Application Received', value: 10, icon: two },
-]
+    { title: 'Jobs Posted', value: 100, icon: () => <IconWrapper size={10} isInActiveIcon icon={Briefcase} /> },
+  ]
+  const statsTwo = [
+    { title: 'Application Received', value: 10, icon: () => <IconWrapper size={10} isInActiveIcon icon={FileText} /> },
+  ]
 
 
 

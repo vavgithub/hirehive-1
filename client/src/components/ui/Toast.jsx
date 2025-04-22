@@ -1,10 +1,8 @@
 import React from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Success from '../../svg/Toast/Success';
-import Delete from '../../svg/Toast/Delete';
 import IconWrapper from '../Cards/IconWrapper';
-import { X } from 'lucide-react';
+import { CircleCheckBig, Trash, X } from 'lucide-react';
 
 // Custom toast component
 const CustomToast = ({ title, message, variant }) => (
@@ -12,11 +10,11 @@ const CustomToast = ({ title, message, variant }) => (
     <div className="flex-shrink-0 mt-1">
       {variant === 'success' ? (
         <div className='bg-background-80 w-11 h-11 flex items-center justify-center rounded-xl'>
-          <Success />
+          <IconWrapper icon={CircleCheckBig} inheritColor size={0} customIconSize={6} />
         </div>
       ) : (
         <div className='bg-background-80 w-11 h-11 flex items-center justify-center rounded-xl'>
-          <Delete />
+          <IconWrapper icon={Trash} inheritColor size={0} customIconSize={6} />
         </div>
       )}
     </div>

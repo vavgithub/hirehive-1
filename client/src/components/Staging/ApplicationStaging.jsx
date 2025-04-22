@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import StageProgressBar from './StageProgressBar';
-import GreenTickIcon from '../../svg/Staging/GreenTickIcon';
-import RejectTickIcon from '../../svg/Staging/RejectTickIcon';
 import QuestionResponses from './QuestionResponses';
 import { Card } from '@mui/material';
 import { useAuthContext } from '../../context/AuthProvider';
@@ -10,7 +8,7 @@ import GlobalStaging from './GlobalStaging';
 import { ensureAbsoluteUrl } from '../../utility/ensureAbsoluteUrl';
 import LinkView from '../ui/LinkView';
 import IconWrapper from '../Cards/IconWrapper';
-import { ChevronDown } from 'lucide-react';
+import { Check, ChevronDown, X } from 'lucide-react';
 // const stageComponents = {
 //     Portfolio,
 //     Screening,
@@ -89,9 +87,9 @@ const ApplicationStaging = ({ candidateId, jobId ,jobStatus}) => {
     const getStageIcon = (stage, index) => {
         const status = stageStatuses[stage]?.status;
         if (status === 'Cleared') {
-            return <GreenTickIcon />;
+            return <div className='bg-green-100 rounded-full p-1'><IconWrapper icon={Check}  size={0} customStrokeWidth={7} customIconSize={1}  /></div> ;
         } else if (status === 'Rejected') {
-            return <RejectTickIcon />;
+            return <div className='bg-red-300 rounded-full p-1'><IconWrapper icon={X}  size={0} customStrokeWidth={7} customIconSize={1}  /></div> ;
         } else {
             return (
                 <div className={`w-6 h-6 flex items-center justify-center rounded-full border  ${stage === currentStage ? 'border-teal-400 text-font-accent' : ''}`}>

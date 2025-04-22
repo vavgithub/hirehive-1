@@ -7,7 +7,6 @@ import { useQuery } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import { industryTypeOptions, LocationOptions } from '../../components/Register/CompanyDetails'
 import LoaderModal from '../../components/Loaders/LoaderModal'
-import LeaderBadge from '../../svg/Icons/LeaderBadge'
 import InterviewsChart from '../../components/Charts/InterviewsChart'
 import StageBadge from '../../components/ui/StageBadge'
 import IconWrapper from '../../components/Cards/IconWrapper'
@@ -319,58 +318,6 @@ function AdminDashboard() {
             onRowClick={(params) => handleLeaderBoardRowClick(params)}
             />
           </div>
-        {/* Leading Positions */}
-            {/* Single Lead */}
-        {/* <div className='mt-4 grid grid-cols-10 gap-2'>
-            {
-              dashboardDetails?.leaderBoard?.candidates?.length > 0 ? dashboardDetails.leaderBoard.candidates.filter((_,i)=> i < 10).map((candidate,index) => {
-                return (
-                  <div key={candidate?._id} onClick={()=>navigate(`/admin/candidates/view-candidate/${candidate?._id}/${candidate?.jobApplications?.jobId}`)} className='flex flex-col items-center gap-2 relative cursor-pointer'>
-                  <div className='absolute bottom-6 right-4'>
-                    <div className='relative'>
-                      <p className='absolute font-bricolage font-bold flex justify-center items-center w-full h-full'>{index + 1}</p>
-                      <LeaderBadge />
-                    </div>                
-                  </div>
-                  <div  className=" w-[5rem] aspect-square overflow-hidden rounded-full ">
-                    <img src={candidate?.profilePictureUrl ? candidate?.profilePictureUrl : "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg"} alt="" className="object-cover w-full" />
-                  </div>
-                  <p className='typography-large-p whitespace-nowrap w-[8   0%] overflow-hidden text-ellipsis text-center'>{candidate?.firstName + " " + candidate?.lastName}</p>
-                </div>
-                )
-              })
-              : <p className='typography-body h-full w-full flex justify-center items-center'>No Candidates </p>
-            }
-        </div>
-
-        <div className='mt-4 grid grid-cols-3 gap-4'>
-          
-            {
-              dashboardDetails?.leaderBoard?.candidates?.length > 10 && dashboardDetails.leaderBoard.candidates.filter((_,i)=> viewMore ? (i >= 10) : (i < 16 && i >= 10)).map((candidate) => {
-                return (
-                  <StyledCard onClick={()=>navigate(`/admin/candidates/view-candidate/${candidate?._id}/${candidate?.jobApplications?.jobId}`)} padding={2} backgroundColor={'bg-background-70'} extraStyles={'flex justify-between cursor-pointer hover:bg-background-60'}>
-                    <div className='flex gap-2'>
-                      <div  className=" w-[3rem] h-[3rem] aspect-square overflow-hidden rounded-full ">
-                        <img src={candidate?.profilePictureUrl ? candidate?.profilePictureUrl :"https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg"} alt="" className="object-cover w-full" />
-                      </div>
-                      <div>
-                        <p className='typography-h3'>{candidate?.firstName + " " + candidate?.lastName}</p>
-                        <p className='typography-large-p text-font-gray'>{candidate?.email}</p>
-                      </div>
-                    </div>
-                    <div className='flex flex-col items-end'>
-                        <p className='typography-small-p text-font-gray'>Score</p>
-                        <p className='typography-h3'>{candidate?.assessmentScore ?? 0}</p>
-                    </div>
-                  </StyledCard>
-                )
-              })
-            }
-
-        </div>
-        {dashboardDetails?.leaderBoard?.candidates?.length > 16 && <div className='w-full flex justify-end mt-4'>
-          <button className='flex items-center gap-1 typography-large-p text-font-gray' onClick={()=>setViewMore(!viewMore)} type="button" >{viewMore?<> <IconWrapper inheritColor icon={ChevronUp} size={0} customIconSize={3} customStrokeWidth={5} /> View Less</> :<><IconWrapper inheritColor icon={ChevronDown} size={0} customIconSize={3} customStrokeWidth={5} />View More</>}</button>
-          </div>} */}
       </StyledCard>
     </div>
   )
