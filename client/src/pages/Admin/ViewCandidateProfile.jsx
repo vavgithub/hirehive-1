@@ -404,7 +404,7 @@ const ViewCandidateProfile = () => {
 
     const handleAssignmentNavigation = () => {
 
-        navigate(`/hiring-manager/assessment/${candidateId}`)
+        navigate(`/${role === "Admin"? 'admin' :'hiring-manager'}/assessment/${candidateId}`)
 
     }
 
@@ -450,7 +450,7 @@ const ViewCandidateProfile = () => {
                 {/* Page header */}
                 <Header
                     HeaderText="Candidate Profile"
-                    withKebab={role === "Hiring Manager" ? "true" : "false"}
+                    withKebab={( role === "Hiring Manager" || role === "Admin" ) ? "true" : "false"}
                     withBack="true"
                     page="page1"
                     handleAction={handleAction}

@@ -398,7 +398,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
     <StyledCard 
     padding={3} 
     backgroundColor={"bg-background-30"}
-    extraStyles={"relative min-h-[12rem] "}
+    extraStyles={"relative min-h-[12rem] overflow-hidden"}
     >
         {
             isClosed &&
