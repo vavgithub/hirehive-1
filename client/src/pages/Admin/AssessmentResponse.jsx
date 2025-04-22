@@ -3,15 +3,13 @@ import Header from '../../components/utility/Header';
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
 import axios from '../../api/axios';
-import { Phone, Mail, Circle, X, Info } from 'lucide-react';
+import { Phone, Mail, Circle, X, Info, Check } from 'lucide-react';
 import { Button } from '../../components/Buttons/Button';
 import { showErrorToast } from '../../components/ui/Toast';
 import Loader from '../../components/Loaders/Loader';
 import StyledCard from '../../components/Cards/StyledCard';
 import CustomToolTip from '../../components/Tooltip/CustomToolTip';
 import { VideoModal } from '../../components/Modals/VideoModal';
-import { Correctanswer } from '../../svg/Answers/CorrectAnswer';
-import { Wronganswer } from '../../svg/Answers/WrongAnswers';
 import Container from '../../components/Cards/Container';
 import { UNKNOWN_PROFILE_PICTURE_URL } from '../../utility/config';
 import IconWrapper from '../../components/Cards/IconWrapper';
@@ -196,7 +194,9 @@ const AssessmentResponse = () => {
                             >
                                 <div className={`absolute right-1 top-1 w-4 h-4  flex bg-background-80 items-center justify-center text-white`}>
                                     {
-                                        response.isCorrect ? <Correctanswer /> : <Wronganswer />
+                                        response.isCorrect ? 
+                                        <div className='bg-green-100 rounded-sm  text-black-100'><IconWrapper inheritColor icon={Check}  size={0} customStrokeWidth={11} customIconSize={1}  /></div> 
+                                        : <div className='bg-red-100 rounded-sm  text-black-100'><IconWrapper inheritColor icon={X}  size={0} customStrokeWidth={11} customIconSize={1}  /></div>
                                     }
                                 </div>
                                 {index + 1}

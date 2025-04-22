@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import ToggleSwitch from '../ui/ToggleSwitch';
 import IconWrapper from '../Cards/IconWrapper';
 import { Copy, Trash } from 'lucide-react';
+import GlobalDropDown from '../Dropdowns/GlobalDropDown';
 
 const TextQuestion = ({ question, onUpdate, onDelete, onCopy, initialEditMode = false, onValidityChange ,  questionNumber }) => {
   const [isEditing, setIsEditing] = useState(initialEditMode);
@@ -74,8 +75,30 @@ const TextQuestion = ({ question, onUpdate, onDelete, onCopy, initialEditMode = 
         />
       </div>
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700 mb-1">Answer Format</label>
-        <select
+        <label className="block typography-large-p text-gray-700 mb-1">Answer Format</label>
+        <div className='max-w-full sm:max-w-[75%] lg:max-w-[40%]'>
+          <GlobalDropDown 
+          extraStylesForLabel="hidden"
+          value={localAnswerType}
+          onChange={setLocalAnswerType}
+          options={
+            [
+              {
+                value : "text",
+                label : "Text"
+              },
+              {
+                value : "number",
+                label : "Number"
+              },
+              {
+                value : "link",
+                label : "Link"
+              },
+            ]}
+          />
+        </div>
+        {/* <select
           value={localAnswerType}
           onChange={(e) => setLocalAnswerType(e.target.value)}
           className="w-full p-2 bg-background-40 rounded-xl font-outfit "
@@ -83,15 +106,17 @@ const TextQuestion = ({ question, onUpdate, onDelete, onCopy, initialEditMode = 
           <option value="text">Text</option>
           <option value="number">Number</option>
           <option value="link">Link</option>
-        </select>
+        </select> */}
       </div>
-      <div className="flex justify-end mt-2 p-4 items-center bg-background-40 rounded-xl space-x-4">
-        <ToggleSwitch checkValue={localRequired} setCheckValue={setLocalRequired} label={"Required"} />
-        <div onClick={(e) => { e.stopPropagation(); onCopy(); }} className='bg-blue-200 w-11 h-11  rounded-xl flex items-center justify-center cursor-pointer'>
-        <IconWrapper icon={Copy} customStrokeWidth={7} />
-        </div>
-        <div onClick={(e) => { e.stopPropagation(); onDelete(); }} className='bg-red-200 w-11 h-11  rounded-xl flex items-center justify-center cursor-pointer'>
-          <IconWrapper icon={Trash} isErrorIcon customStrokeWidth={7} />
+      <div className='flex justify-end'>
+        <div className="flex justify-end w-fit mt-2 p-4 items-center bg-background-40 rounded-xl space-x-4">
+          <ToggleSwitch checkValue={localRequired} setCheckValue={setLocalRequired} label={"Required"} />
+          <div onClick={(e) => { e.stopPropagation(); onCopy(); }} className='bg-blue-200 w-11 h-11  rounded-xl flex items-center justify-center cursor-pointer'>
+            <IconWrapper icon={Copy} customStrokeWidth={7} />
+          </div>
+          <div onClick={(e) => { e.stopPropagation(); onDelete(); }} className='bg-red-200 w-11 h-11  rounded-xl flex items-center justify-center cursor-pointer'>
+            <IconWrapper icon={Trash} isErrorIcon customStrokeWidth={7} />
+          </div>
         </div>
       </div>
     </div>

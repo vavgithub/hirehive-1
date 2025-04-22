@@ -22,7 +22,8 @@ function IconWrapper({ icon  : Icon, isActiveIcon, inheritColor , isInActiveIcon
       4 : 1.5, 
       5 : 1.5, 
       6 : 1.5,
-      10 : 2
+      10 : 2,
+      11 : 3,
     }
 
     const iconSizeOptions = {
