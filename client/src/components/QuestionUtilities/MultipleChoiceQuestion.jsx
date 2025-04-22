@@ -113,13 +113,15 @@ const MultipleChoiceQuestion = ({ question, onUpdate, onDelete, onCopy, initialE
           + Add Option
         </div>
       </div>
-      <div className="flex justify-end mt-2 p-4 items-center bg-background-40 rounded-xl space-x-4">
-        <ToggleSwitch checkValue={localRequired} setCheckValue={setLocalRequired} label={"Required"} />
-        <div onClick={(e) => { e.stopPropagation(); onCopy(); }} className='bg-blue-200 w-11 h-11  rounded-xl flex items-center justify-center cursor-pointer'>
-          <IconWrapper icon={Copy} customStrokeWidth={7} />
-        </div>
-        <div onClick={(e) => { e.stopPropagation(); onDelete(); }} className='bg-red-200 w-11 h-11  rounded-xl flex items-center justify-center cursor-pointer'>
-          <IconWrapper icon={Trash} isErrorIcon customStrokeWidth={7} />
+      <div className='flex justify-end'>
+        <div className="flex justify-end w-fit mt-2 p-4 items-center bg-background-40 rounded-xl space-x-4">
+          <ToggleSwitch checkValue={localRequired} setCheckValue={setLocalRequired} label={"Required"} />
+          <div onClick={(e) => { e.stopPropagation(); onCopy(); }} className='bg-blue-200 w-11 h-11  rounded-xl flex items-center justify-center cursor-pointer'>
+            <IconWrapper icon={Copy} customStrokeWidth={7} />
+          </div>
+          <div onClick={(e) => { e.stopPropagation(); onDelete(); }} className='bg-red-200 w-11 h-11  rounded-xl flex items-center justify-center cursor-pointer'>
+            <IconWrapper icon={Trash} isErrorIcon customStrokeWidth={7} />
+          </div>
         </div>
       </div>
     </div>
