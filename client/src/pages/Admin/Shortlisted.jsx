@@ -8,6 +8,7 @@ import StyledCard from '../../components/Cards/StyledCard';
 import Loader from '../../components/Loaders/Loader';
 import IconWrapper from '../../components/Cards/IconWrapper';
 import { CircleX } from 'lucide-react';
+import Container from '../../components/Cards/Container';
 
 const Shortlisted = () => {
     const queryClient = useQueryClient();
@@ -23,7 +24,7 @@ const Shortlisted = () => {
             axios.post(`/admin/candidate/${candidateId}/job/${jobId}/shortlist`, { shortlisted }),
         onSuccess: (data, variables) => {
             queryClient.invalidateQueries(['shortlistedCandidates']);
-            
+
             // Show different toast messages based on action performed
             if (variables.shortlisted) {
                 showSuccessToast("Added to Future Gems", "Candidate has been added to Future Gems");
@@ -40,8 +41,8 @@ const Shortlisted = () => {
     // Format data for the table
     const formatCandidatesForTable = () => {
         if (!data?.candidates) return [];
-        
-        return data.candidates.flatMap(candidate => 
+
+        return data.candidates.flatMap(candidate =>
             candidate.applications.map(application => ({
                 _id: candidate._id,
                 jobId: application.jobId,
@@ -108,36 +109,34 @@ const Shortlisted = () => {
     if (isError) return <div>Error: {error.message}</div>;
 
     const tableData = formatCandidatesForTable();
-    
+
     // Create dummy jobData to help with budget filtering for contractors
     const jobData = {
         employmentType: "Mixed" // This will allow both contract and full-time filtering
     };
 
     return (
-        <div className='w-full p-4'>
-            <div className="container mx-auto">
-                <Header HeaderText={"Future Gems"} />
-                <StyledCard padding={2} backgroundColor={"bg-background-100"}>
-                    {tableData.length > 0 ? (
-                         <Table
-                         readOnly={true}
-                         readOnlyData={tableData}
-                         additionalColumns={getShortlistColumn()}
-                         jobData={jobData} // Pass job data for employment type filtering
-                         customNavigationPath="/admin/shortlisted/view-candidate" // Custom navigation path for shortlisted view
-                     />
-                    ) : (
-                        <div className="text-center py-8 bg-background-80 rounded-xl p-6">
-                            <p className="typography-h2 text-font-gray">No shortlisted candidates found.</p>
-                            <p className="typography-large-p mt-2">
-                                Start shortlisting candidates to see them here.
-                            </p>
-                        </div>
-                    )}
-                </StyledCard>
-            </div>
-        </div>
+        <Container>
+            <Header HeaderText={"Future Gems"} />
+            <StyledCard padding={2} backgroundColor={"bg-background-100"}>
+                {tableData.length > 0 ? (
+                    <Table
+                        readOnly={true}
+                        readOnlyData={tableData}
+                        additionalColumns={getShortlistColumn()}
+                        jobData={jobData} // Pass job data for employment type filtering
+                        customNavigationPath="/admin/shortlisted/view-candidate" // Custom navigation path for shortlisted view
+                    />
+                ) : (
+                    <div className="text-center py-8 bg-background-80 rounded-xl p-6">
+                        <p className="typography-h2 text-font-gray">No shortlisted candidates found.</p>
+                        <p className="typography-large-p mt-2">
+                            Start shortlisting candidates to see them here.
+                        </p>
+                    </div>
+                )}
+            </StyledCard>
+        </Container>
     );
 };
 

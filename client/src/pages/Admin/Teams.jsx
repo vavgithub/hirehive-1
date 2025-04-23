@@ -156,8 +156,7 @@ function Teams() {
         }
 
   return (
-    // <div className="w-full p-4 min-h-screen">
-    //     <div className="container">
+
     <Container>
         <div className="flex flex-row justify-between mb-4">
             <h1 className="typography-h1">Teams</h1>
@@ -298,8 +297,6 @@ function Teams() {
             </div>
         </Modal>
     </Container>
-    //     </div>
-    // </div>
   );
 }
 

@@ -201,8 +201,7 @@ const ViewJobs = () => {
 
 
     return (
-        // <div className="p-4  min-h-screen w-full">
-        //     <div className='container'>
+
         <Container>
             <Header
                 HeaderText={formData?.jobTitle}
@@ -219,25 +218,23 @@ const ViewJobs = () => {
                     />
                 }
             />
-            {/* <div className='absolute right-24 top-5'>
-                    <Tabs tabs={tabs} activeTab={activeTab} handleTabClick={handleTabClick} />
-                </div> */}
+
 
             {activeTab === 'jobDetails' && (
                 <StyledCard padding={2} backgroundColor={"bg-background-30"}>
                     <StatsGrid stats={jobsDetailStats} />
-                    <div className='flex justify-between'>
+                    <div className='flex justify-between mt-4' >
                         <div className='w-4/5   '>
-                            <h2 className="typography-h4 mt-4 mb-2">Job Description</h2>
+                            <h2 className="typography-h4 mb-2">Job Description</h2>
                             <div className='text-font-gray font-outfit' dangerouslySetInnerHTML={{ __html: formData.jobDescription ? formatDescription(formData.jobDescription) : '' }}></div>
-                            <h2 className="text-[16px] font-outfit font-bold mt-4 mb-5">Skills</h2>
-                            <div className='flex flex-wrap gap-3'>
+                            <h3 className="typography-h3 mt-4 mb-2">Skills</h3>
+                            <div className='flex flex-wrap gap-2'>
                                 {formData.skills && formData.skills.map((skill, index) => (
                                     <CustomBadge key={index} label={skill} borderRadius={10} />
                                 ))}
                             </div>
                         </div>
-                        <div className='pb-4'>
+                        <div className='pb-2 '>
                             <SideCard formData={formData} />
                         </div>
                     </div>
@@ -271,7 +268,7 @@ const ViewJobs = () => {
                     <div className="mb-4">
                         <StatsGrid stats={candidateStats} />
                     </div>
-                    <div className='max-w-full mr-4'>
+                    <div className='mr-4'>
                         <Table
                             jobId={mainId} // Pass jobId to Table component
                             jobData={formData}
@@ -295,8 +292,7 @@ const ViewJobs = () => {
                 onCloseReasonChange={handleCloseReasonChange}
             />
         </Container>
-        //     </div>
-        // </div>
+
     );
 };
 

@@ -675,8 +675,6 @@ const ViewCandidateProfile = () => {
                     <CandidateTabDetail data={transformedData} job={data?.jobApplication} candidateId={data?._id} role={role} />
                 )}
             </Container>
-        // </div>
-        // </div>
     );
 };
 

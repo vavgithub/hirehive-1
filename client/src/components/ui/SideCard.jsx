@@ -8,7 +8,7 @@ const SideCard = ({ formData }) => {
     const formattedDate = postedDate(formData.createdAt);
     return (
 
-        <StyledCard>
+        <StyledCard padding={2}>
             <h3 className='typography-h3 mr-8 mb-4'>Job Overview</h3>
             <div className="grid grid-cols-2 gap-3 w-full  md:flex md:flex-col md:gap-6  " >
                 <div className="flex items-center w-full typography-body ">
