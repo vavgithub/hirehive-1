@@ -1,6 +1,4 @@
 import React from 'react'
-import Budget from '../../svg/Buttons/Budget'
-import AutoAssign from '../../svg/Buttons/AutoAssign'
 import { Button } from '../Buttons/Button'
 import { Banknote , FolderSync} from 'lucide-react'
 import IconWrapper from '../Cards/IconWrapper'
