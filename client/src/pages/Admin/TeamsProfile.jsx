@@ -36,7 +36,7 @@ const changeMemberStatus = async ({memberId}) => {
 
 function PersonalDetails({memberData,isEditing , control}){
     return (
-      <StyledCard backgroundColor="bg-background-30">
+      <StyledCard padding={2} backgroundColor="bg-background-30">
       <h2 className="typography-h2 mb-4">Personal Details</h2>
       {!isEditing ? (
         <div className="flex justify-between flex-col gap-6 sm:flex-row">
@@ -130,7 +130,7 @@ function PersonalDetails({memberData,isEditing , control}){
 
 function ProfessionalDetails({memberData}){
     return (
-        <StyledCard backgroundColor="bg-background-30">
+        <StyledCard padding={2} backgroundColor="bg-background-30">
             <h2 className="typography-h2 mb-4">Professional Details</h2>
             <div className="flex justify-between flex-col gap-6 sm:flex-row">
 
@@ -151,7 +151,7 @@ function ProfessionalDetails({memberData}){
 
 function SkillsExpertiseSection({memberData}){
   return(
-      <StyledCard backgroundColor="bg-background-30">
+      <StyledCard padding={2} backgroundColor="bg-background-30">
       <h2 className="typography-h2 mb-4">Skills & Expertise</h2>
         <div className="flex flex-col gap-6 typography-body">
           <div>
