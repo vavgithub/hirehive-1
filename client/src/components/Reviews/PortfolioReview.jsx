@@ -26,7 +26,7 @@ function PortfolioReview({ candidate, onSubmit ,rounded = "bottom"}) {
   
     return (
       <StyledCard padding={2} borderRadius={roundedClass} extraStyles=' flex gap-4 justify-between  items-center  font-outfit'>
-        <span className='flex-shrink-0'>Portfolio ratings</span>
+        <span className='flex-shrink-0'>Portfolio Ratings</span>
         <Scorer value={rating} onChange={setRating} />
         <input
           type="text"

@@ -117,7 +117,7 @@ function StageRating({candidateId,jobId,name,candidate,onSubmit,stageConfig}) {
           </>
           :
           <>
-          <span className='flex-shrink-0 font-outfit'>{name} ratings</span>
+          <span className='flex-shrink-0 font-outfit'>{name} Ratings</span>
             <div className='flex w-[70%] gap-4'>
           <Scorer value={rating} onChange={setRating} />
             <input
