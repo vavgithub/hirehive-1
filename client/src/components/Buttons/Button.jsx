@@ -34,7 +34,7 @@ const Button = React.forwardRef(({
   };
 
   const sizes = {
-    default: "py-3 px-12 w-fit",
+    default: "h-11 px-12 w-fit",
     icon: "h-10 w-10"
   };
 
