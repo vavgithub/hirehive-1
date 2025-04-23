@@ -16,6 +16,7 @@ import StatsGrid from '../../components/ui/StatsGrid'
 import { DataGrid } from '@mui/x-data-grid'
 import { Avatar } from '@mui/material'
 import { UNKNOWN_PROFILE_PICTURE_URL } from '../../utility/config'
+import { formatPhoneNumber } from '../../components/Form/PhoneInputField'
 import { formatIntoDateString } from '../../utility/formatTime'
 
 function AdminDashboard() {
@@ -71,6 +72,7 @@ function AdminDashboard() {
           sortable: false,
           width: 150,
           disableColumnMenu: true,
+          renderCell: (params) => ( <>{formatPhoneNumber(params.value)}</> )
         },
         {
           field: 'score',

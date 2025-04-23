@@ -17,10 +17,10 @@ export const validationRules = {
   },
   phoneNumber: {
     required: "Phone number is required",
-    pattern: {
-      value: /^[0-9]{10}$/,
-      message: "Phone number must be exactly 10 digits",
-    },
+    // pattern: {
+    //   value: /^[0-9]{10}$/,
+    //   message: "Phone number must be exactly 10 digits",
+    // },
   },
   portfolio: {
     required: "Portfolio link is required",
