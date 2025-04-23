@@ -30,11 +30,11 @@ const Button = React.forwardRef(({
     cancel: "bg-red-500 text-white typography-body hover:bg-red-600",
     cancelSec: "bg-red-80 text-red-100 typography-body hover:bg-red-60",
     icon: "bg-blue-100",
-    iconSec: "bg-blue-300 "
+    iconSec: "bg-blue-300 hover:bg-blue-400 "
   };
 
   const sizes = {
-    default: "h-11 py-2 px-12 w-fit",
+    default: "py-3 px-12 w-fit",
     icon: "h-10 w-10"
   };
 
