@@ -28,7 +28,7 @@ import Container from '../../components/Cards/Container';
 import Modal from '../../components/Modals/Modal';
 import StyledCard from '../../components/Cards/StyledCard';
 import IconWrapper from '../../components/Cards/IconWrapper';
-import { Check, PencilLine, X } from 'lucide-react';
+import { Check, PencilLine, Upload, X } from 'lucide-react';
 import TogglePassword from '../../components/utility/TogglePassword';
 import ForgotPassword from '../Admin/ForgotPassword';
 
@@ -104,7 +104,7 @@ const ApplyJob = () => {
   const [password, setPassword] = useState("");
   const [passwordType, setPasswordType] = useState("password");
 
-  const [showForgotPassword,setShowForgotPassword] = useState(false);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const [profilePictureFile, setProfilePictureFile] = useState(null);
@@ -163,7 +163,7 @@ const ApplyJob = () => {
     },
   });
 
-  const { data: jobDetails , isLoading } = useQuery({
+  const { data: jobDetails, isLoading } = useQuery({
     queryKey: ['jobDetails', jobId],
     queryFn: () => fetchJobDetails(jobId),
   });
@@ -443,7 +443,7 @@ const ApplyJob = () => {
 
   return (
     <Container extraStyles={"flex justify-center "} customPadding={(currentStep !== 1 ? "p-0" : '')} hasContainerDiv={false} >
-      {(isSubmitting || updateEmailMutation?.isPending|| loading || isLoading) && <LoaderModal />}
+      {(isSubmitting || updateEmailMutation?.isPending || loading || isLoading) && <LoaderModal />}
 
       {currentStep === 1 && (
         <div className='container'>
@@ -478,7 +478,7 @@ const ApplyJob = () => {
               >
                 <input {...getInputProps()} />
                 {resumeFile ? (
-                  <div className="flex bg-background-70 items-center justify-between p-4 rounded-xl">
+                  <div className="flex bg-background-70 typography-body items-center justify-between p-4 rounded-xl">
                     <span>{resumeFile.name}</span>
                     <button
                       onClick={(e) => {
@@ -488,23 +488,19 @@ const ApplyJob = () => {
                       }}
                       className="ml-2"
                     >
-                      <svg width="10" height="9" viewBox="0 0 10 9" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M9 0.5L1 8.5M1 0.5L9 8.5" stroke="white" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
+                      <IconWrapper icon={X} />
+
                     </button>
                   </div>
                 ) : (
                   <div className='flex items-center flex-col'>
                     <div className='hidden md:flex'>
-                      <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M24.999 16.9999V22.3333C24.999 23.0405 24.7181 23.7188 24.218 24.2189C23.7179 24.719 23.0396 24.9999 22.3324 24.9999H3.66569C2.95845 24.9999 2.28017 24.719 1.78007 24.2189C1.27997 23.7188 0.999023 23.0405 0.999023 22.3333V16.9999M19.6657 7.66661L12.999 0.999939M12.999 0.999939L6.33236 7.66661M12.999 0.999939V16.9999" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
+                      <IconWrapper icon={Upload} />
+
                     </div>
                     <p className="mb-2 hidden typography-body text-font-gray md:flex">Drag and drop your resume here</p>
                     <p className='text-font-gray typography-small-p hidden md:flex mb-2'>OR</p>
-                    <div className='md:w-[276px]'>
-                      <Button variant="secondary" type="button">Browse files</Button>
-                    </div>
+                    <Button variant="secondary" type="button">Browse files</Button>
                   </div>
                 )}
               </div>
@@ -516,7 +512,7 @@ const ApplyJob = () => {
               )}
               <input type="hidden" {...register('resumeFile', { required: 'Resume is required' })} />
               {errors.resumeFile && (
-                <span className="typography-small-p text-red-500">{errors.resumeFile.message}</span>
+                <span className="typography-small-p text-red-100">{errors.resumeFile.message}</span>
               )}
             </div>
 
@@ -594,7 +590,7 @@ const ApplyJob = () => {
               customConfirmLabel={"Sent"}
             >
               <StyledCard padding={2} backgroundColor={"bg-background-80 mt-4"}>
-                <div className='font-outfit typography-body w-full flex items-center justify-between gap-4'>
+                <div className='typography-body w-full flex items-center justify-between gap-4'>
                   {!editEmail ? (
                     <p className='w-full'>{getValues("email")}</p>
                   ) : (
@@ -638,7 +634,7 @@ const ApplyJob = () => {
                 </div>
                 <div className='flex justify-end'>
                   <span
-                    onClick={() => {setShowForgotPassword(true) ; setShowLoginPopup(false)}}
+                    onClick={() => { setShowForgotPassword(true); setShowLoginPopup(false) }}
                     className="text-font-primary cursor-pointer typography-body mt-2 block text-left hover:underline"
                   >
                     Forgot Password?
@@ -653,21 +649,21 @@ const ApplyJob = () => {
           {/* Forgot Password Popup */}
           <Modal
             open={showForgotPassword}
-            onClose={()=>setShowForgotPassword(false)}
+            onClose={() => setShowForgotPassword(false)}
             customTitle={"Reset Your Password"}
             customMessage={"Please reset your password to continue"}
             customConfirmLabel={'Send OTP'}
-            onConfirm={()=>console.log("HI")}
+            onConfirm={() => console.log("HI")}
             noCancel
             noConfirm
-            >
-              <div className='mt-2 '>
-              <ForgotPassword role={"Candidate"} onBack={()=>{setShowForgotPassword(false); }} isModal setIsLoading={setLoading} />
-                <div onClick={()=>setShowForgotPassword(false)} className='absolute -top-4 -right-4 cursor-pointer'>
-                  <IconWrapper icon={X} hasBg customBgHover={"hover:bg-background-60"} />
-                </div>
+          >
+            <div className='mt-2 '>
+              <ForgotPassword role={"Candidate"} onBack={() => { setShowForgotPassword(false); }} isModal setIsLoading={setLoading} />
+              <div onClick={() => setShowForgotPassword(false)} className='absolute -top-4 -right-4 cursor-pointer'>
+                <IconWrapper icon={X} hasBg customBgHover={"hover:bg-background-60"} />
               </div>
-            </Modal>
+            </div>
+          </Modal>
         </div>
       )}
 
