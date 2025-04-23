@@ -2,7 +2,7 @@ import React from 'react';
 
 const Tabs = ({ tabs, activeTab, handleTabClick }) => {
     return (
-        <div className={ ' flex gap-8 bg-background-100  rounded-xl items-center px-8 max-h-[48px]'}>
+        <div className={ ' flex gap-8 bg-background-100  rounded-xl items-center px-8 '}>
             {tabs.map((tab) => (
                 <div
                     key={tab.name}

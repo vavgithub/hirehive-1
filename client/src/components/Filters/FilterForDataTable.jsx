@@ -6,6 +6,7 @@ import ScoreFilter, { MAX_SCORE, MIN_SCORE } from './ScoreFilter';
 import IconWrapper from '../Cards/IconWrapper';
 import { SlidersHorizontal, Trash } from 'lucide-react';
 import TickCheckbox from '../Checkboxes/TickCheckbox';
+import { allStatuses, stageStatusMap } from './config.filter';
 
 const ArrowIcon = ({ isOpen }) => (
   <svg
@@ -20,15 +21,6 @@ const ArrowIcon = ({ isOpen }) => (
   </svg>
 );
 
-const ClearIcon = () => {
-  return (
-    <svg width="12" height="14" viewBox="0 0 12 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path
-        d="M1.5 3.50033H2.5M2.5 3.50033H10.5M2.5 3.50033V11.667C2.5 11.9764 2.60536 12.2732 2.79289 12.4919C2.98043 12.7107 3.23478 12.8337 3.5 12.8337H8.5C8.76522 12.8337 9.01957 12.7107 9.20711 12.4919C9.39464 12.2732 9.5 11.9764 9.5 11.667V3.50033H2.5ZM4 3.50033V2.33366C4 2.02424 4.10536 1.72749 4.29289 1.5087C4.48043 1.28991 4.73478 1.16699 5 1.16699H7C7.26522 1.16699 7.51957 1.28991 7.70711 1.5087C7.89464 1.72749 8 2.02424 8 2.33366V3.50033"
-        stroke="#FF385C" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  )
-}
 
 const FilterForDataTable = ({ onApplyFilters, readOnly, preservedFilters }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -63,7 +55,7 @@ const FilterForDataTable = ({ onApplyFilters, readOnly, preservedFilters }) => {
 
   useEffect(() => {
     setSelectedFilters(preservedFilters)
-  }, [preservedFilters])
+  }, [preservedFilters]);
 
   // Updated formatSelectedValues to return an object with value and className
   const formatSelectedValues = (category, values) => {
@@ -116,28 +108,7 @@ const FilterForDataTable = ({ onApplyFilters, readOnly, preservedFilters }) => {
     } else {
       setDesignReviewers([])
     }
-  }, [allDesignReviewers])
-
-  const stageStatusMap = {
-    Portfolio: ['Not Assigned', 'Under Review', 'Reviewed', 'Completed', 'Rejected'],
-    Screening: ['Call Pending', 'Call Scheduled', 'Under Review', 'Reviewed', 'Completed', 'No Show', 'Rejected'],
-    'Design Task': ['Sent', 'Not Assigned', 'Under Review', 'Reviewed', 'Completed', 'Rejected', 'Not Submitted'],
-    'Round 1': ['Call Pending', 'Call Scheduled', 'Not Assigned', 'Reviewed', 'Completed', 'No Show', 'Rejected'],
-    'Round 2': ['Call Pending', 'Call Scheduled', 'Not Assigned', 'Reviewed', 'Completed', 'No Show', 'Rejected'],
-  };
-
-  const allStatuses = [
-    'Not Assigned',
-    'Under Review',
-    'Reviewed',
-    'Completed',
-    'Rejected',
-    'Call Pending',
-    'Call Scheduled',
-    'No Show',
-    'Sent',
-    'Not Submitted'
-  ]
+  }, [allDesignReviewers]);
 
   const handleSelect = (category, value) => {
     setSelectedFilters((prev) => ({
@@ -218,7 +189,7 @@ const FilterForDataTable = ({ onApplyFilters, readOnly, preservedFilters }) => {
       assignee: [],
       "job Type": []
     })
-  }
+  };
 
   const handleClickOutside = (event) => {
     if (menuRef.current && !menuRef.current.contains(event.target)) {
@@ -284,7 +255,7 @@ const FilterForDataTable = ({ onApplyFilters, readOnly, preservedFilters }) => {
                     (
                       <div className="p-2 rounded-xl absolute typography-body left-[18.5rem] min-w-[250px] bg-background-40 w-max flex gap-2 flex-col " style={{ boxShadow: "5px 5px 50px rgba(0,0,0,0.9)" }}>
                         {categories[category].map((item) => (
-                          <label key={category === 'assignee' ? item._id : item} className={"group relative flex items-center p-4 h-10 hover:bg-background-60 hover:text-accent-100 rounded-xl " + (category === 'assignee' ? selectedFilters[category].find(each => each.name === item.name) ? "bg-accent-300 text-accent-100 " : "" : selectedFilters[category].includes(item) ? "bg-accent-300 text-accent-100 " : "text-white")}>
+                          <label key={category === 'assignee' ? item._id : item} className={"group relative flex items-center p-4 h-10 hover:bg-background-60 cursor-pointer hover:text-accent-100 rounded-xl " + (category === 'assignee' ? selectedFilters[category].find(each => each.name === item.name) ? "bg-accent-300 text-accent-100 " : "" : selectedFilters[category].includes(item) ? "bg-accent-300 text-accent-100 " : "text-white")}>
                             <TickCheckbox
                               id={`${category}-${category === 'assignee' ? item._id : item}`}
                               checked={category === 'assignee' ? 
