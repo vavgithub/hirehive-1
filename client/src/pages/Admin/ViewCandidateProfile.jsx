@@ -73,7 +73,7 @@ export const VAVScoreCard = ({score,stage,scoreStages})=>{
 
     if(!showBreakDown){
         return(
-        <StyledCard extraStyles="flex bg-stars  flex-col items-center  w-[430px] bg-cover relative">
+        <StyledCard extraStyles="flex bg-stars  flex-col items-center sm:w-[55%] lg:w-[35%]  max-w-[430px] bg-cover relative">
             <h3 className="typography-h2">VAV SCORE</h3>
             <button onClick={()=>setShowBreakDown(true)} className='absolute top-8 right-8 hover:text-font-gray'>
              <IconWrapper icon={ArrowLeftRight} size={0} customStrokeWidth={7} inheritColor />
@@ -82,7 +82,7 @@ export const VAVScoreCard = ({score,stage,scoreStages})=>{
             <p className="typography-large-p">Out of {getMaxScoreForStage(stage)}</p>
         </StyledCard>
     )}else{
-        return(<StyledCard extraStyles="flex bg-stars  flex-col items-center  w-[430px] bg-cover relative">
+        return(<StyledCard extraStyles="flex bg-stars  flex-col items-center sm:w-[55%] lg:w-[35%]  max-w-[430px] bg-cover relative">
             <h3 className="typography-h2">Score Breakdown</h3>
             <button onClick={()=>setShowBreakDown(false)} className='absolute top-8 right-8 hover:text-font-gray'>
              <IconWrapper icon={ArrowLeftRight} size={0} customStrokeWidth={7} inheritColor />

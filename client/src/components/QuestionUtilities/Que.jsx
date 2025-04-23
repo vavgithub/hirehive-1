@@ -108,10 +108,10 @@ const Que = ({ onQuestionsChange, initialQuestions = [] , error}) => {
                         </Button>
 
                         {open && (
-                            <StyledCard padding={1} backgroundColor={"bg-background-70"} extraStyles=' mt-2 absolute bottom-6 min-w-[200px]'>
+                            <StyledCard padding={1} backgroundColor={"bg-background-70"} extraStyles=' mt-2 absolute bottom-6 min-w-fit'>
                                 <ul className='flex flex-col gap-2 typography-body '>
-                                    <li className=' cursor-pointer hover:bg-background-80 rounded-xl px-4 py-2' onClick={() => addQuestion('multiple')}>Multiple Choice</li>
-                                    <li className=' cursor-pointer hover:bg-background-80 rounded-xl px-4 py-2' onClick={() => addQuestion('text')}>Text</li>
+                                    <li className=' cursor-pointer hover:bg-background-80 rounded-xl px-4 py-2 whitespace-nowrap' onClick={() => addQuestion('multiple')}>Multiple Choice</li>
+                                    <li className=' cursor-pointer hover:bg-background-80 rounded-xl px-4 py-2 whitespace-nowrap' onClick={() => addQuestion('text')}>Text</li>
                                 </ul>
                             </StyledCard>
                         )}

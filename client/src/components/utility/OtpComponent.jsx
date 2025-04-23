@@ -29,7 +29,7 @@ function OtpComponent({showSendOTP, inviteMail , handleSendOtp, handleOtpSubmit 
                 :
                 "To ensure security, please enter the OTP (One-Time Password) to verify your account. A code has been sent to"}
               </p>
-              <h2 className='typography-h3 sm:typograhpy-h2 mt-3 md:mt-6 text-font-gray mx-auto w-[240px] min-[420px]:w-full whitespace-nowrap text-ellipsis overflow-hidden'>
+              <h2 className='typography-h3 sm:typograhpy-h2 mt-3 md:mt-6 text-font-gray mx-auto w-[90%] sm:w-[75%] whitespace-nowrap text-ellipsis overflow-hidden'>
                 {showSendOTP ? inviteMail :email}
               </h2>
               {showSendOTP ? 

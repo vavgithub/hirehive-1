@@ -214,7 +214,7 @@ function AdminDashboard() {
         </StyledCard>
         <StyledCard padding={2} extraStyles={' w-[30%] flex flex-col items-center gap-6'}>
             <div  className=" w-[8rem]  aspect-square overflow-hidden rounded-full">
-                <img src={ "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg"} alt="" className="object-cover w-full" />
+                <img src={dashboardDetails?.companyDetails?.logoUrl ?? UNKNOWN_PROFILE_PICTURE_URL} alt="" className="object-cover w-full" />
                 <input accept="image/*"  type="file" className="hidden"  />
             </div>
             <div>

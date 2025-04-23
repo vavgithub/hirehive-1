@@ -44,7 +44,7 @@ function EmojiPlugin() {
         <p className='scale-[1.5] pb-7'>{"\u263A"}</p>
         {
             showEmojiPicker && 
-            <div className=' absolute  grid grid-cols-5 top-11 left-0 z-30 h-[12rem] overflow-y-scroll scrollbar-hide  w-[16rem] bg-background-40 rounded-xl p-2 drop-shadow-[0px_0px_20px_rgba(28,28,25,0.9)]'>
+            <div className=' absolute  grid grid-cols-5 top-11 left-0 z-30 h-[12rem] overflow-y-scroll scrollbar-hide min-w-[500%] max-w-[16rem] bg-background-40 rounded-xl p-2 drop-shadow-[0px_0px_20px_rgba(28,28,25,0.9)]'>
                 {
                     combinedEmojis.map(emoji=>{
                         return <EmojiPickerButton key={emoji.name} emoji={emoji} setShowPicker={setShowEmojiPicker} />

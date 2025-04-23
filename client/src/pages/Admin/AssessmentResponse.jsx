@@ -70,7 +70,7 @@ const AssessmentResponse = () => {
                     {/* Candidate Info Card */}
                     <StyledCard padding={2} extraStyles="flex-grow">
                         <div className="flex gap-4 h-full">
-                            <div className="to-background-100 min-w-[200px max-w-[200px] max-h-[200px]  rounded-xl overflow-hidden">
+                            <div className="to-background-100 min-w-[20%] max-w-[200px] aspect-square max-h-[200px]  rounded-xl overflow-hidden">
                                 <img
                                     src={assessmentData?.candidateInfo?.profilePictureUrl || UNKNOWN_PROFILE_PICTURE_URL }
                                     alt={assessmentData?.candidateInfo?.name}
@@ -150,7 +150,7 @@ const AssessmentResponse = () => {
                         </div>
                     </StyledCard>
 
-                    <StyledCard padding={3} extraStyles="flex bg-stars flex-col items-center  w-[240px] bg-cover ">
+                    <StyledCard padding={3} extraStyles="flex bg-stars flex-col items-center w-[35%] max-w-[240px] bg-cover ">
                         <div className="relative typography-h3  w-full flex justify-center ">
                            <div className='absolute left-0'>
 
