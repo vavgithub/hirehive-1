@@ -4,8 +4,8 @@ import IconWrapper from '../Cards/IconWrapper';
 import { Archive, CircleCheck, CircleX, EllipsisVertical, SquarePen, Share2, Trash, Pin, PinOff } from 'lucide-react';
 
 const pinUnpinMenuItems = {
-  pin : { action: ACTION_TYPES.PIN, icon: () => <IconWrapper size={0} customIconSize={5} icon={Pin} />, label: 'Pin' },
-  unpin : { action: ACTION_TYPES.UNPIN, icon: () => <IconWrapper size={0} customIconSize={5} icon={PinOff} />, label: 'Unpin' },
+  pin: { action: ACTION_TYPES.PIN, icon: () => <IconWrapper size={0} customIconSize={5} icon={Pin} />, label: 'Pin' },
+  unpin: { action: ACTION_TYPES.UNPIN, icon: () => <IconWrapper size={0} customIconSize={5} icon={PinOff} />, label: 'Unpin' },
 }
 
 const MenuItems = {
@@ -39,7 +39,7 @@ const MenuItems = {
   ]
 };
 
-const ThreeDots = ({ job, handleAction, page, orgId , isPinned , role}) => {
+const ThreeDots = ({ job, handleAction, page, orgId, isPinned, role }) => {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef(null);
 
@@ -73,14 +73,14 @@ const ThreeDots = ({ job, handleAction, page, orgId , isPinned , role}) => {
 
   const handleMenuItemClick = (action, jobId, e) => {
     e.stopPropagation();
-    
+
     if (action === ACTION_TYPES.SHARE) {
       // For share action, use orgId passed from props
       const baseUrl = window.location.origin;
-      
+
       // Check if orgId is available from props or fallback to job.company_id if needed
       const companyId = orgId || (job && job.company_id);
-      
+
       if (companyId) {
         const shareUrl = `${baseUrl}/org/${companyId}/`;
         window.open(shareUrl, '_blank');
@@ -91,39 +91,39 @@ const ThreeDots = ({ job, handleAction, page, orgId , isPinned , role}) => {
       // For other actions, call the parent handler
       handleAction(action, jobId);
     }
-    
+
     setIsOpen(false);
   };
 
   return (
-    <div className="relative z-40" ref={menuRef}>
+    <div className="relative" ref={menuRef}>
       <button onClick={toggleMenu} className="focus:outline-none flex items-center">
         <IconWrapper icon={EllipsisVertical} customIconSize={7} customStrokeWidth={7} />
       </button>
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-48 bg-background-70 shadow-lg cursor-pointer rounded-md z-10">
+        <div className="absolute right-0 mt-2 w-48 bg-background-100 shadow-lg cursor-pointer z-50 rounded-xl  ">
           <ul className="py-1">
-            {(job?.status === 'open' && ( role === "Admin" || role === "Hiring Manager" ) ) && 
-            <li
-              key={pinUnpinMenuItems[isPinned ? 'unpin' : 'pin']?.action}
-              className={`px-4 py-2 flex items-center gap-1 typography-body ${pinUnpinMenuItems[isPinned ? 'unpin' : 'pin']?.className || ''}`}
-              onClick={(e) => handleMenuItemClick(pinUnpinMenuItems[isPinned ? 'unpin' : 'pin']?.action, job ? job._id : null, e)}
-            >
-              <button className="text-black rounded m-1">
-              {
-                (() => {
-                  const DynamicIcon = pinUnpinMenuItems[isPinned ? 'unpin' : 'pin']?.icon;
-                  return DynamicIcon ? <DynamicIcon /> : null;
-                })()
-              }
-              </button>
-              {pinUnpinMenuItems[isPinned ? 'unpin' : 'pin']?.label}
-            </li>
+            {(job?.status === 'open' && (role === "Admin" || role === "Hiring Manager")) &&
+              <li
+                key={pinUnpinMenuItems[isPinned ? 'unpin' : 'pin']?.action}
+                className={` typography-body mx-2 my-2 p-2 flex items-center gap-2 typography-body hover:bg-background-60 rounded-xl  ${pinUnpinMenuItems[isPinned ? 'unpin' : 'pin']?.className || ''}`}
+                onClick={(e) => handleMenuItemClick(pinUnpinMenuItems[isPinned ? 'unpin' : 'pin']?.action, job ? job._id : null, e)}
+              >
+                <button className="text-black rounded m-1">
+                  {
+                    (() => {
+                      const DynamicIcon = pinUnpinMenuItems[isPinned ? 'unpin' : 'pin']?.icon;
+                      return DynamicIcon ? <DynamicIcon /> : null;
+                    })()
+                  }
+                </button>
+                {pinUnpinMenuItems[isPinned ? 'unpin' : 'pin']?.label}
+              </li>
             }
             {menuItems.map(({ action, icon: Icon, label, className }) => (
               <li
                 key={action}
-                className={`px-4 py-2 flex items-center gap-1 typography-body ${className || ''}`}
+                className={`m-2 p-2 flex items-center gap-2 typography-body hover:bg-background-60 rounded-xl ${className || ''}`}
                 onClick={(e) => handleMenuItemClick(action, job ? job._id : null, e)}
               >
                 <button className="text-black rounded m-1">

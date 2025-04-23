@@ -383,7 +383,7 @@ const Table = ({
     if (additionalColumns.length > 0) {
       return [
         ...baseColumns.slice(0, 1), // Keep the first column (fullName)
-        ...baseColumns.slice(1, 6),     // Add the rest of the columns
+        ...baseColumns.slice(1, 5),     // Add the rest of the columns
         ...additionalColumns,       // Add custom columns
         ...baseColumns.slice(6, 10),     // Add the rest of the columns
       ];
