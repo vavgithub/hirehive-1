@@ -364,7 +364,7 @@ const ViewCandidateProfile = () => {
     const handleAction = (action) => {
         switch (action) {
             case ACTION_TYPES.EDIT:
-                navigate(`/admin/jobs/edit-candidate/${candidateId}`);
+                navigate(`/${role === "Admin" ? 'admin' : "hiring-manager"}/jobs/edit-candidate/${candidateId}`);
                 break;
             case 'ACTION_2':
                 navigate('/some-other-page');
