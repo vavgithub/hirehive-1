@@ -191,7 +191,7 @@ const ApplicationStaging = ({ candidateId, jobId ,jobStatus}) => {
             </div>
 
             {/* Stage Content */}
-            <div className="stages-content mt-8">
+            <div className="stages-content mt-4">
                 {/* {selectedStage && renderStageComponent(selectedStage)} */}
                 <GlobalStaging 
                 role={role} 
