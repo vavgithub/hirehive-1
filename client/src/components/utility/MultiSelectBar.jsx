@@ -368,7 +368,7 @@ function MultiSelectBar({selectedData,jobId,clearSelection}) {
   }
 
   return (
-    <div className='bg-black-100 font-outfit p-4 rounded-xl mb-4 flex justify-between items-center h-14 relative'>
+    <div className='bg-black-100  p-4 rounded-xl mb-4 flex justify-between items-center h-14 relative'>
         {isLoading && <LoaderModal/>}
         <div>
             <p className='text-teal-100 typography-body'>{selectedData?.length ?? 0} Items Selected</p>

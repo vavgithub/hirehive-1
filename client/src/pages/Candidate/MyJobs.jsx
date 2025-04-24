@@ -112,7 +112,7 @@ const MyJobs = () => {
           ) : (
             <div className='flex flex-col justify-center items-center'>
               <h2 className='typography-h2'>No Applied Jobs</h2>
-              <p className='font-outfit typography-small-p text-font-gray'>You have not applied to any jobs yet.</p>
+              <p className='typography-small-p text-font-gray'>You have not applied to any jobs yet.</p>
             </div>
           )}
 

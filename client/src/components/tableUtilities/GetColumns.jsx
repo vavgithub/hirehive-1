@@ -140,7 +140,7 @@ const getInfoColumns = () => [
     disableColumnMenu: true,
     renderCell: (params) => (
       <CustomToolTip title={params.value} arrowed size={2}>
-        <p className='w-full font-outfit text-white overflow-hidden text-start whitespace-nowrap text-ellipsis'>{params.value}</p>
+        <p className='w-full typography-body text-white overflow-hidden text-start whitespace-nowrap text-ellipsis'>{params.value}</p>
       </CustomToolTip>
     )
   },

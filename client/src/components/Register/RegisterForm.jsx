@@ -189,7 +189,7 @@ function RegisterForm({setCurrentStep}) {
               <form onSubmit={handleFormSubmit}>
                 <div className="mb-4">
                   <label htmlFor="fullname" className="block mb-2 font-bricolage">Full Name</label>
-                  <input type="text" id="fullname" placeholder="Enter your full name" value={name} onChange={(e) => setName(e.target.value)} className="w-full p-2 rounded-lg bg-black text-white focus:outline-teal-400" />
+                  <input type="text" id="fullname" placeholder="Enter your full name" value={name} onChange={(e) => setName(e.target.value)} className="w-full p-2 rounded bg-black text-white focus:outline-teal-400" />
                 </div>
                 <div className="mb-1">
                   <label htmlFor="email" className="block mb-2 font-bricolage">Work Email</label>

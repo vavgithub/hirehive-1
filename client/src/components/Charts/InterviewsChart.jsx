@@ -12,7 +12,7 @@ function InterviewsChart({dataSet}) {
 
     const options = {
         textStyle: {
-            fontFamily: "Outfit, sans-serif"  // Apply Outfit font globally
+            fontFamily: "Gilroy, sans-serif"  // Apply Gilroy font globally
           },
         tooltip: {
           trigger: 'item',
@@ -25,7 +25,7 @@ function InterviewsChart({dataSet}) {
             type: "none",
           },
           textStyle: {
-            fontFamily: "Outfit, sans-serif", // Font for tooltip
+            fontFamily: "Gilroy, sans-serif", // Font for tooltip
             fontSize: 12,
             color : "white"
           },

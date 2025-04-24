@@ -24,7 +24,7 @@ function CustomBadge({pointer,children,extraStyles,paddingX,paddingY,label,backg
     }
 
     const styles = 
-    `font-outfit 
+    `font-gilroy 
     ${pointer ? "cursor-pointer" : "cursor-default"}  
     ${paddingY?.toString() ? `py-${valueSteps[paddingY]}` : 'py-2'}  
     ${paddingX?.toString() ? `px-${valueSteps[paddingX]}` : 'px-6'} 

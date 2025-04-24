@@ -63,7 +63,7 @@ function OtpComponent({showSendOTP, inviteMail , handleSendOtp, handleOtpSubmit 
                 value={otp}
                 />
               </div>
-              {otpError && <span className="text-red-500 text-xs font-outfit">{otpError}</span>}
+              {otpError && <span className="text-red-500 typography-small-p">{otpError}</span>}
 
               <div className="flex justify-center mt-6 w-full gap-4  mb-6 ">
                 <Button

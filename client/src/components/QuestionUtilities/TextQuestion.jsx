@@ -98,15 +98,7 @@ const TextQuestion = ({ question, onUpdate, onDelete, onCopy, initialEditMode = 
             ]}
           />
         </div>
-        {/* <select
-          value={localAnswerType}
-          onChange={(e) => setLocalAnswerType(e.target.value)}
-          className="w-full p-2 bg-background-40 rounded-xl font-outfit "
-        >
-          <option value="text">Text</option>
-          <option value="number">Number</option>
-          <option value="link">Link</option>
-        </select> */}
+      
       </div>
       <div className='flex justify-end'>
         <div className="flex justify-end w-fit mt-2 p-4 items-center bg-background-40 rounded-xl space-x-4">

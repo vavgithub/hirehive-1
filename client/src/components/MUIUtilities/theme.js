@@ -14,7 +14,7 @@ const theme = createTheme({
     },
   },
   typography: {
-    fontFamily: 'Outfit, sans-serif',
+    fontFamily: 'Gilroy, sans-serif',
   },
   components: {
     MuiButton: {
@@ -63,7 +63,7 @@ const theme = createTheme({
           root: {
             backgroundColor: "black", // Background color of each option
             color: "white",           // Text color of each option
-            fontFamily: "Outfit",
+            fontFamily: "Gilroy",
             borderRadius: "12px",
             "&:hover": {
               background: "rgba(35,36,37,1) !important",
@@ -97,7 +97,7 @@ const theme = createTheme({
     MuiListItemText: {
       styleOverrides: {
         primary: {
-          fontFamily: 'Outfit, sans-serif',
+          fontFamily: 'Gilroy, sans-serif',
         },
       },
     },
@@ -240,7 +240,7 @@ const theme = createTheme({
           backgroundColor: 'black',
           color: 'white',
           borderRadius: '20px',
-          fontFamily: 'Outfit, sans-serif',
+          fontFamily: 'Gilroy, sans-serif',
           overflowY: "auto", // Ensures scrolling
           scrollbarWidth: "none !important", // Hide scrollbar for Firefox
           "&::-webkit-scrollbar": { display: "none" }, // Hide scrollbar in Chrome/Safari
@@ -278,7 +278,7 @@ const theme = createTheme({
             height: '44px',
             maxHeight: '44px !important',
             color: 'white',
-            fontFamily: 'Outfit',
+            fontFamily: 'Gilroy',
             boxSizing: 'border-box',
           },
           '& .MuiOutlinedInput-root': {
@@ -318,7 +318,7 @@ const theme = createTheme({
         root: {
           backgroundColor: 'black',
           color: 'white',
-          fontFamily: 'Outfit',
+          fontFamily: 'Gilroy',
           padding: '0px',
           scrollbarWidth: "none", // Hide scrollbar in Firefox
           "&::-webkit-scrollbar": { display: "none" }, // Hide scrollbar in Chrome/Safari
@@ -412,13 +412,13 @@ const theme = createTheme({
           color: "white",
         },
         select: {
-          fontFamily: "Outfit, sans-serif !important",
+          fontFamily: "Gilroy, sans-serif !important",
         },
         selectLabel: {
-          fontFamily: "Outfit",
+          fontFamily: "Gilroy",
         },
         displayedRows: {
-          fontFamily: "Outfit",
+          fontFamily: "Gilroy",
         },
         selectIcon: {
           color: "white",

@@ -16,7 +16,7 @@ function RejectionSelector({selectedAnchor,handleClose,handleReasonSelect}) {
               "& .MuiList-root": {
                 backgroundColor: 'rgba(12, 13, 13, 1)',
                 color: "white",
-                font: "Outfit",
+                font: "Gilroy",
                 padding : "0px "
               },
               "& .MuiMenu-paper": {
@@ -71,7 +71,7 @@ function RejectionSelector({selectedAnchor,handleClose,handleReasonSelect}) {
                   }}
                   sx={{
                     "& .MuiTypography-root": {
-                      fontFamily: "Outfit", // Apply the custom font explicitly to the Typography
+                      fontFamily: "Gilroy", // Apply the custom font explicitly to the Typography
                       whiteSpace : "nowrap",
                       textOverflow : "ellipsis",
                       overflow : "hidden"

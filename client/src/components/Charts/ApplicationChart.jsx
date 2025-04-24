@@ -8,7 +8,7 @@ function ApplicationChart({type,dataArray}) {
   const options = useMemo(()=>(
     {
         textStyle: {
-          fontFamily: "Outfit, sans-serif"  // Apply Outfit font globally
+          fontFamily: "Gilroy, sans-serif" 
         },
         grid: {
           left: "8%",
@@ -23,11 +23,11 @@ function ApplicationChart({type,dataArray}) {
           nameGap: 30,
           data: xData,
           axisLabel: {
-            fontFamily: "Outfit, sans-serif",  // Font for x-axis labels
+            fontFamily: "Gilroy, sans-serif",  // Font for x-axis labels
             fontSize: 12
           },
           nameTextStyle: {
-            fontFamily: "Outfit, sans-serif", // Font for x-axis name
+            fontFamily: "Gilroy, sans-serif", // Font for x-axis name
             fontSize: 14
           }
         },
@@ -43,11 +43,11 @@ function ApplicationChart({type,dataArray}) {
             }
           },
           axisLabel: {
-            fontFamily: "Outfit, sans-serif",  // Font for y-axis labels
+            fontFamily: "Gilroy, sans-serif",  // Font for y-axis labels
             fontSize: 12
           },
           nameTextStyle: {
-            fontFamily: "Outfit, sans-serif", // Font for y-axis name
+            fontFamily: "Gilroy, sans-serif", // Font for y-axis name
             fontSize: 14
           }
         },
@@ -62,7 +62,7 @@ function ApplicationChart({type,dataArray}) {
             type: "none",
           },
           textStyle: {
-            fontFamily: "Outfit, sans-serif", // Font for tooltip
+            fontFamily: "Gilroy, sans-serif", // Font for tooltip
             fontSize: 12,
             color : "white"
           },

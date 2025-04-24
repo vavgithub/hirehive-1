@@ -33,7 +33,7 @@ function GlobalDropDown({onChange,options, label ,error,errorMessage, value, ext
                 "& .MuiList-root": {
                     backgroundColor: 'rgba(12, 13, 13, 1)',
                     color: "white",
-                    font: "Outfit",
+                    font: "Gilroy",
                     padding : "0px ",
                     display : "flex",
                     flexDirection : "column",

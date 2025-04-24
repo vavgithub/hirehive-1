@@ -90,12 +90,12 @@ const AutoAssignModal = ({ open, onClose, onAssign, jobId, budgetFilter }) => {
   
     const customContent = (
       <div className="relative mt-4" ref={dropdownRef}>
-        <h1 className='typography-h3 mb-2'>Select reviewers</h1>
+        <h3 className='typography-h3 mb-2'>Select reviewers</h3>
         <div 
           className={"w-full bg-black-100 h-11 flex items-center cursor-pointer rounded-xl hover:bg-background-90 overflow-hidden " + (isDropdownOpen ? "border border-teal-100" : "")}
           onClick={() => setIsDropdownOpen(!isDropdownOpen)}
         >
-          <div className="flex-grow flex flex-wrap gap-2 h-full px-4 py-1 items-center font-outfit text-font-gray hover:bg-background-90">
+          <div className="flex-grow flex flex-wrap gap-2 h-full px-4 py-1 items-center  text-font-gray hover:bg-background-90">
           <IconWrapper icon={User} size={0} customIconSize={5} inheritColor />
 
             {selectedReviewers.map(reviewer => (
@@ -119,7 +119,7 @@ const AutoAssignModal = ({ open, onClose, onAssign, jobId, budgetFilter }) => {
           </svg>
         </div>
         {isDropdownOpen && (
-          <div className="absolute z-10 w-full mt-1 bg-black-100 shadow-lg max-h-60 overflow-y-auto font-outfit typography-body rounded-xl">
+          <div className="absolute z-10 w-full mt-1 bg-black-100 shadow-lg max-h-60 overflow-y-auto typography-body rounded-xl">
             {isLoading ? (
               <p className="px-4 py-2">Loading reviewers...</p>
             ) : error ? (

@@ -439,7 +439,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
                     <div className='w-8 h-8 rounded-full bg-background-80 flex items-center justify-center mr-2'>
                         <IconWrapper icon={DatabaseZap} customIconSize={0} />
                     </div>
-                    <span className='typograhpy-body font-outfit'>{candidateData?.jobApplication?.professionalInfo?.expectedCTC ? `${candidateData?.jobApplication?.professionalInfo?.expectedCTC} LPA` : candidateData?.jobApplication?.professionalInfo?.hourlyRate ? `${candidateData?.jobApplication?.professionalInfo?.hourlyRate} INR/hr` : '-'}</span>
+                    <span className='typograhpy-body'>{candidateData?.jobApplication?.professionalInfo?.expectedCTC ? `${candidateData?.jobApplication?.professionalInfo?.expectedCTC} LPA` : candidateData?.jobApplication?.professionalInfo?.hourlyRate ? `${candidateData?.jobApplication?.professionalInfo?.hourlyRate} INR/hr` : '-'}</span>
                 </>}
             </div>
       </div>
@@ -459,7 +459,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
         }
         {(!stageData?.scheduledDate && stageBasedConfig?.hasAssigneeSelector) && 
           <div className='w-2/5'>
-              <h4 className='typography-body my-4 font-outfit'>Select Reviewer</h4>
+              <h4 className='typography-body my-4 '>Select Reviewer</h4>
               <AssigneeSelector
                   mode="default"
                   value={stageData?.assignedTo}

@@ -174,7 +174,7 @@ const ResumeAndPortfolioDetails = ({ candidateData, isEditing, control, resumeFi
             name="resume"
             control={control}
             render={({ field, fieldState: { error } }) => (
-              <div className="h-11 w-full flex items-center typography-body justify-between gap-2 font-outfit">
+              <div className="h-11 w-full flex items-center typography-body justify-between gap-2">
                 <p className="w-[28%] text-font-gray ">Resume</p>
                 <div className="w-[71%] bg-background-40 h-11 rounded-xl flex justify-between">
                   <p className="px-4 py-2 whitespace-nowrap overflow-hidden text-ellipsis">{fileName ? fileName : candidateData?.firstName + "'s Resume"}</p>
@@ -633,7 +633,7 @@ function Profile() {
                   <div className="w-full flex justify-center items-center gap-2">
                     <p className=" text-font-gray gap-2 typography-small-p">{candidateData?.location}</p>
                   </div>
-                  <div className="mt-6 w-full font-outfit flex justify-between">
+                  <div className="mt-6 w-full flex justify-between">
                     <p className="typography-body">Jobs Applied</p>
                     <p>{candidateData?.jobApplications?.length || 0}</p>
                   </div>

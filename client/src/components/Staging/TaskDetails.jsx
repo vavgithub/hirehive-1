@@ -57,7 +57,7 @@ export function SubmissionDetails({stageData,candidateData, isEditable}){
                 </div>
                 <div>
                     <p className='typography-small-p text-font-gray'> Comment</p>
-                    {!isEditing ? <p  className='font-outfit typography-large-p'>{stageData?.submittedComment || "No Comments"}  </p>
+                    {!isEditing ? <p  className=' typography-large-p'>{stageData?.submittedComment || "No Comments"}  </p>
                     :
                     <input type="text" className='mt-2' value={comment} onChange={(e)=>setComment(e.target.value)} />
                     }

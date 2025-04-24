@@ -200,11 +200,7 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
                 primaryTypographyProps={{
                   component : 'span'
                 }}
-                // sx={{
-                //   "& .MuiTypography-root": {
-                //     fontFamily: "Outfit", // Apply the custom font explicitly to the Typography
-                //   },
-                // }}
+                
                 primary={reviewer.name} />
               </MenuItem>
             ))
@@ -224,17 +220,7 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
           anchorEl={selectedAnchor}
           open={Boolean(selectedAnchor)}
           onClose={handleClose}
-          // PaperProps={{
-          //   style: { maxHeight: 300, width: '250px' ,boxShadow: '3px 5px 50px rgba(25, 25, 25, 0.75)', borderRadius : "12px",padding : "8px",backgroundColor: 'rgba(12, 13, 13, 1)'},
-          // }}
-          // sx={{
-          //   "& .MuiList-root": {
-          //     backgroundColor: 'rgba(12, 13, 13, 1)',
-          //     color: "white",
-          //     font: "Outfit",
-          //     padding : "0px "
-          //   },
-          // }}
+         
         >
           <Box sx={{ position:"relative"}}>
             <TextField
@@ -244,36 +230,7 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
               fullWidth
               variant="outlined"
               size="small"
-              // sx={{
-              //   boxSizing:"border-box",
-              //   '& .MuiOutlinedInput-input' : {
-              //     height : "44px !important",
-              //     padding : "0px 40px"
-              //   },
-              //   '& .css-1n4twyu-MuiInputBase-input-MuiOutlinedInput-input' :{
-              //     height : "44px !important",
-              //     padding : "0px 40px"
-              //   },
-              //   '& .css-1ua80n0-MuiInputBase-input-MuiOutlinedInput-input' : {
-              //     height : "44px !important",
-              //     padding : "0px 40px"
-              //   },
-              //   '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
-              //     borderColor: 'rgba(24, 233, 208, 1) !important', // Change the outline color on focus
-              //   },
-              // }}
-              // InputProps={{
-              //   // startAdornment: (
-              //   //   <InputAdornment style={{background : "transparent"}} position="start">
-              //   //     <SearchIcon />
-              //   //   </InputAdornment>
-              //   // ),
-              //   style : {
-              //     color : "white",
-              //     height : "44px",
-              //     borderRadius : "12px",
-              //   }
-              // }}
+             
             />
             <div className='absolute top-[0.6rem] left-2'>
               <IconWrapper icon={Search} size={0} customIconSize={3} isInActiveIcon />
@@ -321,11 +278,7 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
                 primaryTypographyProps={{
                   component : 'span'
                 }}
-                // sx={{
-                //   "& .MuiTypography-root": {
-                //     fontFamily: "Outfit", // Apply the custom font explicitly to the Typography
-                //   },
-                // }}
+               
                 primary={reviewer.name} />
               </MenuItem>
             ))
@@ -381,31 +334,7 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
             shrink: false, // Prevent the label from shrinking
             style: { display: 'none' }, // Hide the label visually
           }}
-          // sx={{
-          //   "& .MuiInputBase-input": {
-          //     height: "44px", // Set explicit height
-          //     maxHeight : "44px !important", // Add this to target the Autocomplete input specifically
-          //     color: "white",
-          //     fontFamily: "Outfit",
-          //     boxSizing: "border-box",
-          //     ...(error ? {border : "1px solid red"} : {})
-          //   },
-          //   "& .MuiOutlinedInput-root": {
-          //     padding: "0px !important",
-          //     "& fieldset": {
-          //       border: "none",
-          //     },
-          //     "& .MuiAutocomplete-input": { 
-          //       padding: "8px 16px !important",  // Left padding of 8px, 0px for others
-          //     }
-          //   },
-          //   "& .Mui-focused": {
-          //     "& fieldset": {
-          //       border: "1px solid rgb(24, 233, 208) !important",
-          //       borderRadius : "0.75rem !important"
-          //     },
-          //   }
-          // }}
+         
           InputProps={{
             ...params.InputProps,
             endAdornment: (
@@ -416,15 +345,7 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
             ),
             startAdornment: (
               <>
-                {/* <Avatar src={selectedReviewer?.profilePicture} sx={{ width: 24, height: 24, marginRight: 1 }}>
-                  {selectedReviewer ? selectedReviewer.name[0].toUpperCase() : (
-                    // Render your own icon here
-                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-                      <rect width="32" height="32" rx="16" fill="#1B1C1D" />
-                      <path d="M18.6641 22V20.6667C18.6641 19.9594 18.3831 19.2811 17.883 18.7811C17.3829 18.281 16.7046 18 15.9974 18H11.3307C10.6235 18 9.94521 18.281 9.44511 18.7811C8.94501 19.2811 8.66406 19.9594 8.66406 20.6667V22M21.3307 13.3333V17.3333M23.3307 15.3333H19.3307M16.3307 12.6667C16.3307 14.1394 15.1368 15.3333 13.6641 15.3333C12.1913 15.3333 10.9974 14.1394 10.9974 12.6667C10.9974 11.1939 12.1913 10 13.6641 10C15.1368 10 16.3307 11.1939 16.3307 12.6667Z" stroke="white" strokeWidth="0.825" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  )}
-                </Avatar> */}
+               
                 {params.InputProps.startAdornment}
               </>
             ),
@@ -439,24 +360,9 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
           sx={{
             backgroundColor: 'black', // Set the background color of each option
             color: 'white',           // Set the text color of each option
-            fontFamily: 'Outfit',
+            fontFamily: 'Gilroy',
             margin : "4px 0px",
-            // borderRadius : "12px",
-            // ':hover' :{
-            //   background :"rgba(35,36,37,1) !important"
-            // },
-            // ':hover .MuiTypography-root' :{
-            //   color :"rgba(24,233,208,1)"
-            // },
-            // '&.Mui-selected': {
-            //   background: "rgba(24,233,208,0.1) !important", // Red background for selected item
-            // },
-            // '&.Mui-selected:hover' : {
-            //   background :"rgba(35,36,37,1) !important"
-            // },
-            // '&.Mui-selected span': {
-            //   color: "rgba(24,233,208,1) !important", // Slightly darker red on hover
-            // },
+           
           }}
         >
           <ListItemAvatar>
@@ -467,11 +373,7 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
             </Avatar>
           </ListItemAvatar>
           <ListItemText
-            // sx={{
-            //   "& .MuiTypography-root": {
-            //     fontFamily: "Outfit", // Apply the custom font explicitly to the Typography
-            //   },
-            // }}
+           
           primary={option.name} />
         </MenuItem>
       )}

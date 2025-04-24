@@ -63,8 +63,8 @@ function StageRating({candidateId,jobId,name,candidate,onSubmit,stageConfig}) {
     if(stageConfig?.name === "Round 2"){
       return (
         <>
-            <div className='flex gap-4 mt-4 font-outfit'>
-                <div className="flex flex-col w-full  gap-4">
+            <div className='flex gap-4 mt-4'>
+                <div className="flex flex-col w-full typography-body gap-4">
                     <span>Feedback:</span>
 
                     <textarea
@@ -81,7 +81,7 @@ function StageRating({candidateId,jobId,name,candidate,onSubmit,stageConfig}) {
                 </div>
 
             </div>
-            <div className='flex justify-end'>
+            <div className='flex justify-end typography-body'>
                     <Button onClick={handleScoreSubmit} disabled={score === 0 || feedback === ''}>
                         Submit Score
                     </Button>
@@ -90,7 +90,7 @@ function StageRating({candidateId,jobId,name,candidate,onSubmit,stageConfig}) {
       )
     }else{
       return (
-        <div className='bg-background-90 flex gap-4 justify-between rounded-xl mt-4 items-center p-4'>
+        <div className='bg-background-90 flex typography-body gap-4 justify-between rounded-xl mt-4 items-center p-4'>
           {stageConfig?.hasSplitScoring ? 
           <>
           <div className='grid grid-cols-2 w-full gap-4'>
@@ -98,7 +98,7 @@ function StageRating({candidateId,jobId,name,candidate,onSubmit,stageConfig}) {
               if(category !== "Budget")
               return (
               <div key={category} className='flex gap-4 items-center'>
-                <span className='w-32  font-outfit'>{category}</span>
+                <span className='w-32 '>{category}</span>
                 <Scorer value={rating[category]} onChange={(v) => handleRatingChange(category, v)} />
       
               </div>
@@ -117,7 +117,7 @@ function StageRating({candidateId,jobId,name,candidate,onSubmit,stageConfig}) {
           </>
           :
           <>
-          <span className='flex-shrink-0 font-outfit'>{name} Ratings</span>
+          <span className='flex-shrink-0 '>{name} Ratings</span>
             <div className='flex w-[70%] gap-4'>
           <Scorer value={rating} onChange={setRating} />
             <input

@@ -23,8 +23,8 @@ const AssessmentBanner = () => {
                     <h2 className='hidden md:flex typography-h2 '>
                         Accelerate
                     </h2>
-                    <p className='md:hidden typograhpy-body font-outfit'>Please Logged into Desktop Version to submit your assessment for high priority selection</p>
-                    <p className='hidden md:flex typograhpy-body font-outfit'>Complete the assessment to be prioritized and improve your chances of moving forward quickly</p>
+                    <p className='md:hidden typograhpy-body '>Please Logged into Desktop Version to submit your assessment for high priority selection</p>
+                    <p className='hidden md:flex typograhpy-body '>Complete the assessment to be prioritized and improve your chances of moving forward quickly</p>
                 </div>
 
             </div>

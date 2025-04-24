@@ -21,7 +21,7 @@ function BudgetMenu({budgetMenuAnchorEl , handleBudgetMenuClose , handleBudgetEd
           "& .MuiList-root": {
             backgroundColor: 'rgba(12, 13, 13, 1)',
             color: "white",
-            font: "Outfit",
+            font: "Gilroy",
             padding : "8px",
             display : "flex",
             flexDirection : "column",
@@ -36,7 +36,7 @@ function BudgetMenu({budgetMenuAnchorEl , handleBudgetMenuClose , handleBudgetEd
         <div className='flex items-center justify-start  typograhy-body '>
           <MenuItem
           sx={{
-            fontFamily :"Outfit",
+            fontFamily :"Gilroy",
             width : "100%",
             display : "flex",
             gap: "4px"
@@ -49,7 +49,7 @@ function BudgetMenu({budgetMenuAnchorEl , handleBudgetMenuClose , handleBudgetEd
         <div className='flex items-center justify-start  typograhy-body '>
           <MenuItem 
           sx={{
-            fontFamily :"Outfit",
+            fontFamily :"Gilroy",
             width : "100%",
             display : "flex",
             gap: "4px"

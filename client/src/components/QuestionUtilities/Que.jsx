@@ -96,7 +96,7 @@ const Que = ({ onQuestionsChange, initialQuestions = [] , error}) => {
                         ))
                     )}
 
-                    <div className={'relative mb-4 px-4 font-outfit ' + (questions.length > 0 ? "self-start" : "")}>
+                    <div className={'relative mb-4 px-4  ' + (questions.length > 0 ? "self-start" : "")}>
                         <Button 
                         variant="secondary"
                         disabled={!isLastQuestionValid && questions.length > 0}

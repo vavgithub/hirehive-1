@@ -3,7 +3,7 @@ import React from 'react'
 function ToggleSwitch({label,checkValue,setCheckValue,disabled}) {
   return (
     <label className="inline-flex items-center cursor-pointer">
-        <span className="me-3 typography-body font-outfit text-white dark:text-gray-300">{label}</span>
+        <span className="me-3 typography-body  text-white dark:text-gray-300">{label}</span>
         <input type="checkbox" disabled={disabled} checked={checkValue} onChange={()=> setCheckValue(!checkValue)}
         className="sr-only peer"
         />

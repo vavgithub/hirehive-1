@@ -241,7 +241,7 @@ const AssessmentResponse = () => {
                     </div>
                     : 
                     <div className='px-6 pb-6 '>
-                        <p className='font-outfit'>No questions are answered by the candidate.</p></div>}
+                        <p className='typography-body'>No questions are answered by the candidate.</p></div>}
                 </StyledCard>
             </div>
 

@@ -139,6 +139,7 @@ export default {
       fontFamily: {
         bricolage: ['"Bricolage Grotesque"', "sans-serif"],
         outfit: ["Outfit", "sans-serif"],
+        gilroy: ['Gilroy', 'sans-serif'], 
       },
       fontSize: {
         h1: ["36px", { lineHeight: "54px" }],

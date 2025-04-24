@@ -310,8 +310,8 @@ const Modal = ({
             </div>
           {(showEmailPreview && REJECTION_REASONS.find(reason => reason.value === rejectionReason)?.email )&& (
             <>
-              <p className="text-gray-300 mt-4 font-outfit mb-2">This rejection email will be sent to the candidate</p>
-              <div className="bg-background-100 p-4 rounded mb-4 font-outfit">
+              <p className="text-gray-300 mt-4 mb-2">This rejection email will be sent to the candidate</p>
+              <div className="bg-background-100 p-4 rounded mb-4 typography-body ">
                 <p className="text-white">Dear {candidateName},</p>
                 <p className="text-white mt-2">
                   Thank you for applying for the {jobTitle} position at {companyName}.

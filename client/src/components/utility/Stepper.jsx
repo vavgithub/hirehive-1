@@ -22,7 +22,7 @@ function Stepper({padding,steps,currentStep,setCurrentStep}) {
 
   return (
         <div className={`p-${valueSteps[padding]}` + ' w-[80%] mx-auto'}>
-            <div className='flex w-full justify-center items-center font-outfit relative'> 
+            <div className='flex w-full justify-center items-center  relative'> 
 
             {
                 steps?.map((stepObj,index,stepsArr)=>{

@@ -292,7 +292,7 @@ function Profile() {
                       <p className="text-font-gray mb-2">Primary Skills</p>
                       <div className="flex gap-2 flex-wrap">
                         {(user?.skills).map((tool, index) => (
-                          <span key={index} className="flex justify-center font-outfit w-fit bg-background-70 m px-6 py-2 rounded-full">{tool}</span>
+                          <span key={index} className="flex justify-center  w-fit bg-background-70 m px-6 py-2 rounded-full">{tool}</span>
                         ))}
                       </div>
                     </div>
@@ -300,7 +300,7 @@ function Profile() {
                       <p className="text-font-gray mb-2">Tools Proficiency</p>
                       <div className="flex gap-2 flex-wrap">
                         {(user?.tools_used).map((tool, index) => (
-                          <span key={index} className="flex justify-center font-outfit w-fit bg-background-70 m px-6 py-2 rounded-full">{tool}</span>
+                          <span key={index} className="flex justify-center  w-fit bg-background-70 m px-6 py-2 rounded-full">{tool}</span>
                         ))}
                       </div>
                     </div>

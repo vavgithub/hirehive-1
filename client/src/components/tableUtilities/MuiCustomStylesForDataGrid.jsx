@@ -1,18 +1,19 @@
 import React from 'react'
 
 function MuiCustomStylesForDataGrid() {
-  return (
+    return (
         <style>
                 {`
             .MuiDataGrid-root .MuiDataGrid-columnHeader:focus,
             .MuiDataGrid-root .MuiDataGrid-cell:focus {
                 outline: none !important;                      
                 border: none !important
-            
-            }
-            .MuiDataGrid-root {
-                outline: none !important;                      
-                border: none !important;                
+                
+                }
+                .MuiDataGrid-root {
+                    outline: none !important;                      
+                    border: none !important;                
+                    font-style:"Gilroy" !important
                 }
             .MuiDataGrid-row {
                     border-radius : 0px !important;
@@ -23,8 +24,8 @@ function MuiCustomStylesForDataGrid() {
             }
             
             .MuiDataGrid-columnHeaderRow {
+                font-style:"Gilroy"
                 color:"red",
-                font-style:"outfit"
             }    
             .MuiDataGrid-row .MuiDataGrid-checkboxInput {
                 visibility: hidden;
