@@ -18,6 +18,7 @@ import Container from '../../components/Cards/Container'
 import IconWrapper from '../../components/Cards/IconWrapper'
 import { PencilLine } from 'lucide-react'
 import { UNKNOWN_PROFILE_PICTURE_URL } from '../../utility/config'
+import { formatPhoneNumber } from '../../components/Form/PhoneInputField'
 
 const editMember = async ({teamMember,memberId}) => {
     const response = await axios.patch('/admin/edit-member',{teamMember,memberId});
@@ -56,8 +57,8 @@ function PersonalDetails({memberData,isEditing , control}){
               <p className="text-font-gray whitespace-nowrap">Phone Number</p>
             </div>
             <div className="flex flex-col gap-6 typography-body">
-              <p className="whitespace-nowrap overflow-hidden text-ellipsis">{memberData?.name?.split(' ')[1]}</p>
-              <p>{memberData?.phone ?? "NA"}</p>
+              <p className="whitespace-nowrap overflow-hidden text-ellipsis">{memberData?.name?.split(' ')[1]?.length ? memberData?.name?.split(' ')[1] : "-"}</p>
+              <p>{formatPhoneNumber(memberData?.phone) ?? "NA"}</p>
             </div>
           </div>
         </div>
@@ -120,7 +121,7 @@ function PersonalDetails({memberData,isEditing , control}){
           />
           <div className="flex gap-2 typography-body">
             <p className="whitespace-nowrap text-font-gray overflow-hidden text-ellipsis w-[40%]">Phone Number</p>
-            <p className='w-full'>{memberData?.phone ?? "NA"}</p>
+            <p className='w-full'>{formatPhoneNumber(memberData?.phone) ?? "NA"}</p>
           </div>
         </div>
       )}

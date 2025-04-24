@@ -17,6 +17,8 @@ import { PencilLine } from 'lucide-react';
 import IconWrapper from '../../components/Cards/IconWrapper';
 import { UNKNOWN_PROFILE_PICTURE_URL } from '../../utility/config';
 import { companySizeOptions, industryTypeOptions, LocationOptions } from '../../components/Register/CompanyDetails';
+import { formatPhoneNumber, PhoneInputField } from '../../components/Form/PhoneInputField';
+import { validationRules } from '../../utility/validationRules';
 
 
 
@@ -55,7 +57,7 @@ const PersonalDetails = ({ userData, isEditing, control }) => {
             </div>
             <div className="flex flex-col gap-6 typography-body">
               <p className="whitespace-nowrap overflow-hidden text-ellipsis ">{userData.name?.split(' ')[1] ?? '-'}</p>
-              <p>{userData.phone}</p>
+              <p>{formatPhoneNumber(userData.phone)}</p>
             </div>
           </div>
         </div>
@@ -115,25 +117,21 @@ const PersonalDetails = ({ userData, isEditing, control }) => {
               />
             )}
           />
-          <Controller
+          {/* <Controller
             name="phone"
             control={control}
             defaultValue={userData.phone}
             rules={{ required: 'Phone number is required' }}
             render={({ field, fieldState: { error } }) => (
-              <InputField
-                type="number"
-                id="phone"
-                label="Phone Number"
-                labelStyles="text-font-gray"
-                extraClass="no-spinner"
-                rowWise
-                value={field.value}
-                onChange={field.onChange}
-                error={error}
-                errorMessage={error?.message}
-              />
+
             )}
+          /> */}
+          <PhoneInputField
+            name="phone"
+            rules={validationRules?.phoneNumber}
+            control={control}
+            rowWise
+            label="Phone Number"
           />
         </div>
       )}
