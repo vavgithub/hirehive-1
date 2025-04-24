@@ -12,7 +12,6 @@ import StyledCard from '../Cards/StyledCard';
 import { Button } from '../Buttons/Button';
 import { validateProfileImages } from '../../utility/validationRules';
 import { InputField } from '../Inputs/InputField';
-import { CustomDropdown } from '../Dropdowns/CustomDropdown';
 import { UNKNOWN_PROFILE_PICTURE_URL } from '../../utility/config';
 import { useNavigate } from 'react-router-dom';
 import GlobalDropDown from '../Dropdowns/GlobalDropDown';
@@ -239,8 +238,6 @@ function CompanyDetails({currentStep,setCurrentStep}) {
                       <div className='flex justify-start w-full gap-4'>
                         <div className="relative w-20 h-20">
                           <img src={previewUrl || UNKNOWN_PROFILE_PICTURE_URL } alt="Profile" className="w-full h-full object-cover rounded-full" />
-                          <div className="absolute bottom-0 right-0 p-1 bg-background-90 rounded-full">
-                          </div>
                         </div>
                         <div className="flex flex-col items-start">
                           <span className="typography-small-p text-font-gray my-2">
