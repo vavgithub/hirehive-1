@@ -90,7 +90,7 @@ const CandidateLogin = () => {
       <div className="flex h-screen">
         {isLoadingAuth && <LoaderModal/>}
         {/* Left section with background image */}
-        <div className="hidden lg:flex lg:w-2/3 bg-login-screen backdrop-blur-lg bg-cover p-12 flex-col justify-between relative">
+        <div className="hidden lg:flex lg:w-3/5 bg-login-screen backdrop-blur-lg bg-cover p-12 flex-col justify-between relative">
           <div className='p-[45px]'>
             <img className='h-12' src={Logo} />
             <h1 className="typography-h1 font-normal mt-8">VAV - Hire Designers</h1>
@@ -105,7 +105,7 @@ const CandidateLogin = () => {
           <img src={sundarKanya} alt="Sundar Kanya" className="absolute bottom-0 right-0 h-[70%]" />
         </div>
         {/* Right section with login form */}
-        <div className="w-full lg:w-1/2 bg-background-30 p-4 md:p-28   flex flex-col justify-center">
+        <div className="w-full lg:w-2/5 bg-background-30 p-4 md:p-28   flex flex-col justify-center">
         {showForgotPassword ? (
                       <ForgotPassword role="Candidate" onBack={() => setShowForgotPassword(false)} />
                   ) : (
@@ -142,7 +142,7 @@ const CandidateLogin = () => {
                                   </span>
                               </div>
             {/* <a href="#" className="text-blue-500 mb-6 mt-2 block text-right">Forgot Password?</a> */}
-            <Button  type="submit" variant="primary" className="mt-6 w-full " disabled={ isLoadingAuth}>
+            <Button  type="submit" variant="primary" className="mt-6 " disabled={ isLoadingAuth}>
               {isLoadingAuth ? "Logging In..." : "Login"}
             </Button>
           </form>

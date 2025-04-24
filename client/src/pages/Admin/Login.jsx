@@ -67,7 +67,7 @@ const Login = () => {
     return (
         <div className="flex h-screen bg-admin-login-bg bg-cover">
             {/* Left section with background image */}
-            <div className="hidden lg:flex m-4 lg:w-2/3 bg-admin-login-fg backdrop-blur-lg bg-cover p-4 flex-col justify-end relative">
+            <div className="hidden lg:flex m-4 lg:w-3/5 bg-admin-login-fg backdrop-blur-lg bg-cover p-4 flex-col justify-end relative">
                 <div>
                     <img className='h-12' src={Logo} />
                     <h1 className="typography-h1 mt-8">VAV - Hire Designers</h1>
@@ -83,7 +83,7 @@ const Login = () => {
             </div>
 
             {/* Right section with login form */}
-            <div className="w-full lg:w-1/2  p-28 flex flex-col justify-center items-start ">
+            <div className="w-full lg:w-2/5  p-28 flex flex-col justify-center items-start ">
                 {showForgotPassword ? (
                     <ForgotPassword onBack={() => setShowForgotPassword(false)} />
                 ) : (
@@ -127,7 +127,6 @@ const Login = () => {
                             <Button
                                 type="submit"
                                 variant="primary"
-                                className="w-full"
                                 disabled={mutation.isPending}
                             >
                                 {mutation.isPending ? 'Logging in...' : 'Login'}

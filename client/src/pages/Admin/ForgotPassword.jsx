@@ -164,7 +164,7 @@ const ForgotPassword = ({ onBack ,role , isModal = false , setIsLoading = () => 
           <Button
             type="submit"
             variant="primary"
-            className="w-full mt-4"
+            className="mt-4"
             disabled={requestOtpMutation.isPending}
           >
             {requestOtpMutation.isPending ? 'Sending...' : 'Send OTP'}
@@ -187,7 +187,7 @@ const ForgotPassword = ({ onBack ,role , isModal = false , setIsLoading = () => 
             <Button
               type="submit"
               variant="primary"
-              className="w-full mt-6"
+              className=" mt-6"
               disabled={verifyOtpMutation.isPending || otp.length !== 6}
             >
               {verifyOtpMutation.isPending ? 'Verifying...' : 'Verify OTP'}
@@ -221,7 +221,7 @@ const ForgotPassword = ({ onBack ,role , isModal = false , setIsLoading = () => 
           <Button
             type="submit"
             variant="primary"
-            className="w-full mt-4"
+            className=" mt-4"
             disabled={resetPasswordMutation.isPending}
           >
             {resetPasswordMutation.isPending ? 'Resetting...' : 'Reset Password'}
