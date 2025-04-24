@@ -87,12 +87,12 @@ const CandidateLayout = () => {
 
   // NavItem component for consistent styling
   const NavItem = ({ to, icon: Icon, activeIcon: ActiveIcon, children, onClick }) => (
-    <div className="relative flex flex-row items-center justify-between hover:bg-background-60 mx-2 rounded-xl">
+    <div className="relative flex flex-row items-center justify-between hover:bg-background-60 mx-4 rounded-xl">
       <NavLink
         to={to}
         end={to === '/candidate/dashboard'}
         className={({ isActive, isPending }) =>
-          `w-full flex items-center min-h-11 gap-2 pl-2 py-2 rounded-xl ${isActive || isPending ? 'text-font-accent bg-background-60  ' : ''}`
+          `w-full flex items-center min-h-11 gap-2  py-2 rounded-xl ${isActive || isPending ? 'text-font-accent bg-background-60  ' : ''}`
         }
         onClick={onClick}
       >
@@ -157,7 +157,7 @@ const CandidateLayout = () => {
 
     return (
       <>
-        <div className={`flex items-center px-2 mx-2 py-1 justify-start hover:bg-background-60 rounded-xl ${location.pathname === profilePath ? "bg-background-60" : ""}`}>
+        <div className={`flex items-center px-2 mx-4 py-1 justify-start hover:bg-background-60 rounded-xl ${location.pathname === profilePath ? "bg-background-60" : ""}`}>
           <IconButton onClick={handleMenuClick} className={`flex gap-2 ${location.pathname === profilePath ? "text-font-accent"
             : ""}`}>
             <Avatar alt={candidateData?.firstName} sx={{ width: "32px", height: "32px" }} src={candidateData?.profilePictureUrl || UNKNOWN_PROFILE_PICTURE_URL} />
@@ -211,16 +211,16 @@ const CandidateLayout = () => {
       <div
         className={`
           fixed md:relative z-40
-          ${isMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
+          ${isMenuOpen ? 'translate-x-0' : '-translate-x-[110%] md:translate-x-0'}
           transition-transform duration-300 ease-in-out
-          md:w-48 w-64 h-screen
+          w-60 h-[calc(100vh-2rem)] m-4 rounded-xl
           bg-background-100 text-font-gray
           flex flex-col justify-between py-6
         `}
         style={{ position: 'fixed' }}
       >
-        <div className="flex flex-col gap-5 typography-body">
-          <div className='px-4 flex '>
+        <div className="flex flex-col gap-5 typography-body ">
+          <div className='px-6 pt-2  flex '>
 
             <img className='h-11' src={LightLogo} />
           </div>
@@ -257,7 +257,7 @@ const CandidateLayout = () => {
       />
 
       {/* Main Content */}
-      <div className="mt-[4.6rem] md:mt-0 md:ml-[12rem] md:w-[calc(100vw-12rem)] flex flex-col items-center min-h-screen ">
+      <div className="mt-[4.6rem] md:mt-0 md:ml-[16rem] md:w-[calc(100vw-16rem)] flex flex-col items-center min-h-screen ">
         {/* {isAssessmentBannerVisible &&  <AssessmentBanner />} */}
         <Outlet />
         {/* <ContactUs /> */}

@@ -55,7 +55,7 @@ const AdminLayout = () => {
     };
 
     const NavItem = ({ to, icon: Icon, activeIcon: ActiveIcon, iconData, children , hasHighlighter}) => (
-        <div className="relative flex flex-row items-center justify-between hover:bg-background-60 rounded-xl mx-2">
+        <div className="relative flex flex-row items-center justify-between hover:bg-background-60 rounded-xl ">
             <NavLink
                 to={to}
                 end={to === "/admin/dashboard" || to === "/design-reviewer/dashboard"}
@@ -117,7 +117,7 @@ const AdminLayout = () => {
 
         return (
             <>
-                <div className={`flex items-center px-2 py-1 mx-2 rounded-xl justify-start hover:bg-background-60 ${location.pathname === profilePath ? "bg-background-60" : ""}`}>
+                <div className={`flex items-center px-2 py-1  rounded-xl justify-start hover:bg-background-60 ${location.pathname === profilePath ? "bg-background-60" : ""}`}>
                     <IconButton
                         onClick={handleMenuClick}
                         className={`flex gap-2  ${location.pathname === profilePath ? "text-font-accent  " : ""}`}
@@ -174,14 +174,14 @@ const AdminLayout = () => {
 
     return (
         <div id='adminContainer' className='flex bg-main-bg bg-cover bg-top h-full overflow-x-hidden '>
-            <div className="fixed flex min-h-screen  w-[16rem] flex-col  bg-background-100 text-font-gray typography-large-p justify-between py-4 ">
-                <div className='flex flex-col gap-5 typography-body'>
-                <div className='px-4 pl-6 flex '>
-                <img className='h-11' src={LightLogo}/>
-                </div>
+            <div className="fixed flex  w-[15rem] h-[calc(100vh-2rem)] m-4 rounded-xl flex-col  bg-background-100 text-font-gray typography-large-p justify-between py-4 ">
+                <div className='flex flex-col gap-5 typography-body px-4'>
+                    <div className=' pl-2 pt-4 flex '>
+                        <img className='h-11' src={LightLogo}/>
+                    </div>
                     {renderMenuItems()}
                 </div> 
-                <div className='flex flex-col gap-2'>
+                <div className='flex flex-col gap-2 px-4'>
                     {user && renderProfileMenu()}
                 </div>
             </div>
