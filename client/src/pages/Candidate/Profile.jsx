@@ -22,6 +22,7 @@ import ContactUs from "../../components/Form/ContactUs";
 import IconWrapper from "../../components/Cards/IconWrapper";
 import { Pencil, PencilLine, Upload } from "lucide-react";
 import { formatPhoneNumber, PhoneInputField } from "../../components/Form/PhoneInputField";
+import parsePhoneNumberFromString from "libphonenumber-js";
 
 const PersonalDetails = ({ candidateData, isEditing, control }) => {
   return (
@@ -491,8 +492,8 @@ function Profile() {
       if (!data.lastName?.trim()) throw new Error("Last name is required.");
       if (!data.email?.trim() || !emailRegex.test(data.email))
         throw new Error("Valid email is required.");
-      if (!data.phone?.trim() || !mobileRegex.test(data.phone))
-        throw new Error("Valid 10-digit phone number is required.");
+      if (!data.phone?.trim() || (!parsePhoneNumberFromString(data.phone)?.isValid()))
+        throw new Error("Valid phone number is required.");
       if (!data.location?.trim()) throw new Error("Location is required.");
       if (data.currentCTC < 0) throw new Error("Current CTC cannot be negative.");
       if (data.expectedCTC < data.currentCTC)

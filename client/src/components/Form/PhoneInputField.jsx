@@ -20,9 +20,9 @@ export const PhoneInputField = ({
       name={name}
       control={control}
       rules={{...rules,
-        validate : () => {
-          return internalErrorRef.current ? "Invalid Phone Number" : true
-        }
+        // validate : () => {
+        //   return internalErrorRef.current ? "Invalid Phone Number" : true
+        // }
       }}
       render={({ field: { onChange, value }, fieldState: { error } }) => (
         <div className={"flex  relative " + (rowWise ? "flex-row justify-between items-center gap-2" : "flex-col")}>
@@ -39,7 +39,11 @@ export const PhoneInputField = ({
          //All styles are in index.css file 
           country="in" // Set the default country code (customize as needed)
           value={value}
-          onChange={onChange}
+          onChange={
+            (phone) => {
+              // Make sure it's in +E.164 format
+              onChange(phone.startsWith('+') ? phone : `+${phone}`);
+            }}
           placeholder={'Enter Phone Number'}
           containerClass={"rounded-xl " + (rowWise ? "  min-w-[60%] w-[100%] " : "")  + (error && "border border-red-500")}
           dropdownClass=" scrollbar-hide w-[100%]"
@@ -68,8 +72,13 @@ export const PhoneInputField = ({
 
 
 export const formatPhoneNumber = (phoneNumber) => {
-  const parsed = parsePhoneNumberFromString('+' + phoneNumber);
-  if (!parsed) return phoneNumber;
+  if (!phoneNumber) return phoneNumber;
 
-  return `${parsed.countryCallingCode}-${parsed.nationalNumber}`;
+  // Ensure number starts with '+'
+  const normalized = phoneNumber.startsWith('+') ? phoneNumber : '+' + phoneNumber;
+
+  const parsed = parsePhoneNumberFromString(normalized);
+  if (!parsed) return phoneNumber; // fallback to raw if parsing fails
+
+  return `+${parsed.countryCallingCode}-${parsed.nationalNumber}`;
 };

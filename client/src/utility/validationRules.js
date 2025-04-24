@@ -1,3 +1,5 @@
+import parsePhoneNumberFromString from "libphonenumber-js";
+
 // Validation rules in a separate file, e.g., validationRules.js
 export const validationRules = {
   firstName: {
@@ -21,6 +23,14 @@ export const validationRules = {
     //   value: /^[0-9]{10}$/,
     //   message: "Phone number must be exactly 10 digits",
     // },
+    validate: (value) => {
+      const phoneNumber = parsePhoneNumberFromString(value || '');
+      if (!phoneNumber ||(phoneNumber && !phoneNumber.isValid())) {
+        return "Please enter a valid phone number";
+      }
+
+      return true;
+    },
   },
   portfolio: {
     required: "Portfolio link is required",
