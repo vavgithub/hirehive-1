@@ -71,7 +71,7 @@ const ViewJobs = () => {
                 closeMutation.mutate({ jobId: mainId, closeReason });
                 break;
             case ACTION_TYPES.REOPEN:
-                reOpenMutation.mutate(job._id)
+                reOpenMutation.mutate(job?._id ?? mainId)
                 break;
             case ACTION_TYPES.EDIT:
                 navigate(role === "Admin" ? `/admin/edit-job/${mainId}` : `/hiring-manager/edit-job/${mainId}`);

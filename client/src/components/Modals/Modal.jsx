@@ -11,6 +11,7 @@ import SchedulerButton from '../ui/SchedulerButton';
 import IconWrapper from '../Cards/IconWrapper';
 import { X } from 'lucide-react';
 import { ACTION_TYPES } from '../../utility/ActionTypes';
+import GlobalDropDown from '../Dropdowns/GlobalDropDown';
 
 // const ACTION_TYPES = {
 //   DELETE: 'DELETE',
@@ -337,10 +338,16 @@ const Modal = ({
           <h1 className="typography-h1">{title}</h1>
           <p className="text-font-gray typography-body">{message}</p>
           <div className="mt-4">
-            <label htmlFor="closeReason" className="block typography-body">
+            <label htmlFor="closeReason" className="block typography-body mb-2">
               Please select a reason for closing this job
             </label>
-            <select
+            <GlobalDropDown
+              extraStylesForLabel="hidden"
+              value={closeReason}
+              onChange={handleReasonSelect}
+              options={CLOSE_REASONS}
+              />
+            {/* <select
               id="closeReason"
               value={closeReason}
               onChange={(e) => handleReasonSelect(e.target.value)}
@@ -352,7 +359,7 @@ const Modal = ({
                   {reason.label}
                 </option>
               ))}
-            </select>
+            </select> */}
           </div>
         </>
       );
