@@ -60,7 +60,7 @@ export const PhoneInputField = ({
 
         />
           {error && (
-            <p className="text-red-500 text-xs font-outfit absolute top-[4.9rem]">
+            <p className="text-red-500 text-xs font-outfit absolute top-[44px] left-[27%]">
               {error.message}
             </p>
           )}
