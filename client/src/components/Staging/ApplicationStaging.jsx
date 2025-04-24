@@ -205,7 +205,7 @@ const ApplicationStaging = ({ candidateId, jobId ,jobStatus}) => {
             {/* Question Responses Accordion */}
 
             {
-                role === "Hiring Manager" && (
+                (role === "Hiring Manager" || role === "Admin") && (
 
                     <AccordionSection
                         title="Additional Questions"
