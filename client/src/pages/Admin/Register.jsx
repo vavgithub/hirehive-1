@@ -16,7 +16,7 @@ export const steps = [
   ];
 
 const Register = () => {
-    const [currentStep,setCurrentStep] = useState(steps[3]?.id);
+    const [currentStep,setCurrentStep] = useState(steps[0]?.id);
     const navigate = useNavigate();    
     const { data: authData, isLoading: authLoading, refetch: refetchAuth } = useAuth();
 
