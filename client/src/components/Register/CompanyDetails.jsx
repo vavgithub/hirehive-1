@@ -326,6 +326,7 @@ function CompanyDetails({currentStep,setCurrentStep}) {
                 />
                 <GlobalDropDown    
                 label="Company Size" 
+                defaultValue='1-10'
                 required
                 extraStylesForLabel="font-bricolage font-medium"
                 value={companySize}

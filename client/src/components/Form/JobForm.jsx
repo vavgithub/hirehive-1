@@ -165,6 +165,7 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
                 field={field}
                 label={field.charAt(0).toUpperCase() + field.slice(1).replace(/([A-Z])/g, ' $1')}
                 options={dropdownOptions[field]}
+                searchEnabled={field === "employeeLocation"}
                 value={value}
                 required
                 error={error}

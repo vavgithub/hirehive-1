@@ -20,7 +20,7 @@ import { Pencil, Trash } from 'lucide-react';
 
 export const roleOptions = [
     {
-        label : "HR",
+        label : "Hiring Manager",
         value : "Hiring Manager"
     },
     {
@@ -534,6 +534,7 @@ function AddMembers({currentStep,setCurrentStep}) {
                         required
                         extraStylesForLabel="font-bricolage font-medium"
                         value={role}
+                        defaultValue='Hiring Manager'
                         error={roleError}
                         errorMessage={roleError}
                         onChange={setRole}

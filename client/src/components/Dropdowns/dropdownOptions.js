@@ -1,9 +1,12 @@
+import { LocationOptions } from "../Register/CompanyDetails";
+
 export const dropdownOptions = {
     employeeLocation: [
       { value: '', label: 'Select Employee Location' },
-      { value: 'india', label: 'India' },
-      { value: 'usa', label: 'USA' },
-      { value: 'dubai', label: 'Dubai' },
+      // { value: 'india', label: 'India' },
+      // { value: 'usa', label: 'USA' },
+      // { value: 'dubai', label: 'Dubai' },
+      ...LocationOptions
     ],
     employmentType: [
       { value: '', label: 'Select Employment Type' },

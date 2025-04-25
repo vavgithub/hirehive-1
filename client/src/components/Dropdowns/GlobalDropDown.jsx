@@ -4,7 +4,7 @@ import {
     Popover,
     TextField
   } from '@mui/material';
-  import React, { useRef, useState } from 'react';
+  import React, { useEffect, useRef, useState } from 'react';
   
   function GlobalDropDown({
     onChange,
@@ -12,6 +12,7 @@ import {
     label,
     error,
     errorMessage,
+    defaultValue = '',
     value,
     extraStylesForLabel,
     required,
@@ -29,6 +30,12 @@ import {
     const handleClose = () => {
       setAnchorEl(null);
     };
+
+    useEffect(()=>{
+        if(defaultValue){
+            onChange(options?.find(option => option?.value?.toLowerCase() === defaultValue?.toLowerCase())?.value)
+        }
+    },[defaultValue])
   
     const filteredOptions = searchEnabled
       ? options.filter(opt =>
