@@ -97,7 +97,7 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
   };
   // Filtered reviewers based on search term
   const filteredReviewers = reviewers?.length  > 0 ? reviewers.filter(reviewer =>
-    reviewer.name.toLowerCase().includes(searchTerm.toLowerCase())
+    `${reviewer.firstName + " " + reviewer?.lastName}`.toLowerCase().includes(searchTerm.toLowerCase())
   ) : [];
 
   // Render for 'icon' mode
@@ -107,7 +107,7 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
         <IconButton sx={{padding : "0 8px"}} onClick={handleClick} size="small" disabled={disabled}>
           {selectedReviewer ? (
             <Avatar src={selectedReviewer.profilePicture} sx={{ width: 32, height: 32 }}>
-              {selectedReviewer.name[0].toUpperCase()}
+              {selectedReviewer.firstName[0].toUpperCase()}
             </Avatar>
           ) : (
             <div className={'rounded-full bg-background-70 ' + (!disabled && 'hover:bg-background-60')}>
@@ -193,7 +193,7 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
                   <Avatar src={reviewer.profilePicture} 
                   // sx={{ width: 32, height: 32 }}
                   >
-                    {reviewer.name[0].toUpperCase()}
+                    {reviewer.firstName[0].toUpperCase()}
                   </Avatar>
                 </ListItemAvatar>
                 <ListItemText
@@ -205,7 +205,7 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
                 //     fontFamily: "Outfit", // Apply the custom font explicitly to the Typography
                 //   },
                 // }}
-                primary={reviewer.name} />
+                primary={reviewer?.firstName + " " + reviewer?.lastName} />
               </MenuItem>
             ))
           ) : (
@@ -314,7 +314,7 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
                   <Avatar src={reviewer.profilePicture} 
                   // sx={{ width: 32, height: 32 }}
                   >
-                    {reviewer.name[0].toUpperCase()}
+                    {reviewer.firstName[0].toUpperCase()}
                   </Avatar>
                 </ListItemAvatar>
                 <ListItemText
@@ -326,7 +326,7 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
                 //     fontFamily: "Outfit", // Apply the custom font explicitly to the Typography
                 //   },
                 // }}
-                primary={reviewer.name} />
+                primary={reviewer?.firstName + " " + reviewer?.lastName} />
               </MenuItem>
             ))
           ) : (
@@ -341,7 +341,7 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
   return (
     <Autocomplete
       options={reviewers}
-      getOptionLabel={(option) => option.name || ''}
+      getOptionLabel={(option) => option.firstName + " " + option.lastName || ''}
       loading={isLoading}
       value={selectedReviewer}
       onChange={(event, newValue) => handleSelect(newValue)}
@@ -463,7 +463,7 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
             <Avatar src={option?.profilePicture} 
             // sx={{ width: 32, height: 32 }}
             >
-              {option.name[0].toUpperCase()}
+              {option.firstName[0].toUpperCase()}
             </Avatar>
           </ListItemAvatar>
           <ListItemText
@@ -472,7 +472,7 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
             //     fontFamily: "Outfit", // Apply the custom font explicitly to the Typography
             //   },
             // }}
-          primary={option.name} />
+          primary={option?.firstName + " " + option?.lastName} />
         </MenuItem>
       )}
     />

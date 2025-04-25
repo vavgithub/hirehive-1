@@ -214,11 +214,11 @@ function AdminDashboard() {
         </StyledCard>
         <StyledCard padding={2} extraStyles={' w-[30%] flex flex-col items-center gap-6'}>
             <div  className=" w-[8rem]  aspect-square overflow-hidden rounded-full">
-                <img src={dashboardDetails?.companyDetails?.logoUrl ?? UNKNOWN_PROFILE_PICTURE_URL} alt="" className="object-cover w-full" />
+                <img src={dashboardDetails?.companyDetails?.logoUrl ? dashboardDetails?.companyDetails?.logoUrl : `${UNKNOWN_PROFILE_PICTURE_URL}`} alt="LOGO" className="object-cover w-full" />
                 <input accept="image/*"  type="file" className="hidden"  />
             </div>
             <div>
-                <h2 className='typography-h2'>{dashboardDetails?.companyDetails?.name}</h2>
+                <h2 className='typography-h2 text-center'>{dashboardDetails?.companyDetails?.name}</h2>
                 <p className='text-font-gray typography-small-p flex gap-2 items-center justify-center'>{LocationOptions.find(data=>data.value === dashboardDetails?.companyDetails?.location)?.label} <span className='w-1 h-1 bg-font-gray rounded-full'></span>{industryTypeOptions.find(data=>data.value === dashboardDetails?.companyDetails?.industryType)?.label} </p>
             </div>
             <div className='w-full flex flex-col gap-2'>
@@ -254,7 +254,7 @@ function AdminDashboard() {
                         <p className='typography-large-p text-font-gray'>Candidate</p>
                       </div>
                       <div className=' w-[50%]'>
-                        <p className='typography-h3 text-end whitespace-nowrap text-ellipsis overflow-hidden'>{interview?.assignee?.name}</p>
+                        <p className='typography-h3 text-end whitespace-nowrap text-ellipsis overflow-hidden'>{interview?.assignee?.firstName + " " + interview?.assignee?.lastName}</p>
                         <p className='typography-large-p text-font-gray text-end'>{interview?.assignee?.role ?? "Design Reviewer"}</p>
                       </div>
                     </div>

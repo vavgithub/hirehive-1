@@ -27,7 +27,9 @@ const companyschema = new mongoose.Schema({
     },
     invited_team_members : [{
         id : String,
-        name : String,
+        // name : String,
+        firstName : String,
+        lastName : String,
         email : String,
         role : {
           type : String,

@@ -64,11 +64,8 @@ function AddMembers({currentStep,setCurrentStep}) {
 
     useEffect(()=>{
         if(onboardData){
-            const [firstName,lastName] = onboardData?.name?.split(" ");
             setMembers(prev=>[...prev,{
                 ...onboardData,
-                firstName : firstName,
-                lastName : lastName ?? "",
                 noAction : true
             }])
         }

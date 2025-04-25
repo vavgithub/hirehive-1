@@ -416,7 +416,7 @@ const ViewCandidateProfile = () => {
     const handleWhatsappOpen = (candidateName, phone) => {
         const text = `Hi ${candidateName},\n\n` +
             `Hope you're doing well.\n\n` +
-            `I'm ${user.name} from the Value at Void team.\n\n` +
+            `I'm ${user?.firstName + " " + user?.lastName} from the Value at Void team.\n\n` +
             `Best regards,\nTeam VAV\n\n` +
             `For more information, log on to: https://hire.atvoid.com`
         const message = encodeURIComponent(text);
@@ -430,7 +430,7 @@ const ViewCandidateProfile = () => {
         const body = encodeURIComponent(
             `Hi ${candidateName},\n\n` +
             `Hope you're doing well.\n\n` +
-            `I'm ${user.name} from the Value at Void team. We’ve received your application for the ${designation} role and were really impressed with the portfolio and profile you shared.\n\n` +
+            `I'm ${user?.firstName + " " + user?.lastName} from the Value at Void team. We’ve received your application for the ${designation} role and were really impressed with the portfolio and profile you shared.\n\n` +
             `Best regards,\nTeam VAV\n\n` +
             `For more information, log on to: https://hire.atvoid.com`
         );
@@ -443,6 +443,22 @@ const ViewCandidateProfile = () => {
         setOpenNotes(true)
         e.stopPropagation();
     }
+
+const currentAssignedId = data?.jobApplication?.stageStatuses[data?.jobApplication?.currentStage]?.assignedTo;
+
+const currentReviewer = designReviewers?.data?.find(dr => dr?._id === currentAssignedId);
+const isAdminReviewer = designReviewers?.admin?._id === currentAssignedId;
+const fallbackReviewer = isAdminReviewer ? designReviewers?.admin : null;
+
+const reviewerName = currentReviewer
+  ? `${currentReviewer.firstName ?? ""} ${currentReviewer.lastName ?? ""}`.trim()
+  : fallbackReviewer
+    ? `${fallbackReviewer.firstName ?? ""} ${fallbackReviewer.lastName ?? ""}`.trim()
+    : "";
+
+const reviewerProfilePic = currentReviewer?.profilePicture
+  ?? fallbackReviewer?.profilePicture
+  ?? UNKNOWN_PROFILE_PICTURE_URL;
 
 
     return (
@@ -551,10 +567,10 @@ const ViewCandidateProfile = () => {
                                     <div className='absolute bottom-4 right-4 flex gap-2'>
                                         <div className='flex flex-col items-end'>
                                             <p className='typography-small-p text-font-gray'>Current reviewer </p>
-                                            <p className='typography-small-p '>{designReviewers?.data?.find(dr => dr?._id === data?.jobApplication?.stageStatuses[data?.jobApplication?.currentStage]?.assignedTo)?.name ?? ((designReviewers?.admin?._id === data?.jobApplication?.stageStatuses[data?.jobApplication?.currentStage]?.assignedTo) ? designReviewers?.admin?.name : "")}</p>
+                                            <p className='typography-small-p '>{reviewerName}</p>
                                         </div>
                                         <div className='w-8 h-8 overflow-hidden rounded-full'>
-                                            <img src={(designReviewers?.data?.find(dr => dr?._id === data?.jobApplication?.stageStatuses[data?.jobApplication?.currentStage]?.assignedTo)?.profilePicture ?? ((designReviewers?.admin?._id === data?.jobApplication?.stageStatuses[data?.jobApplication?.currentStage]?.assignedTo) ? designReviewers?.admin?.profilePicture : UNKNOWN_PROFILE_PICTURE_URL)) ?? UNKNOWN_PROFILE_PICTURE_URL} alt="" className='object-cover w-full overflow-hidden' />
+                                            <img src={reviewerProfilePic} alt="" className='object-cover w-full overflow-hidden' />
                                         </div>
                                     </div>}
                             </div>

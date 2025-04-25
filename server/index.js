@@ -136,6 +136,106 @@ async function makeJobPublic(){
 //     console.timeEnd("Execution Time"); // End measuring time and log it
 // }
 
+const userFirstLast = async () => {
+    console.time("Execution Time"); // Start measuring time
+  await User.updateMany(
+    {
+      name: { $exists: true },
+      firstName: { $exists: false },
+      lastName: { $exists: false }
+    },
+    [
+      {
+        $set: {
+          firstName: { $arrayElemAt: [{ $split: ["$name", " "] }, 0] },
+          lastName: {
+            $cond: [
+              { $gt: [{ $size: { $split: ["$name", " "] } }, 1] },
+              {
+                $trim: {
+                  input: {
+                    $reduce: {
+                      input: { $slice: [{ $split: ["$name", " "] }, 1, 10] },
+                      initialValue: "",
+                      in: { $concat: ["$$value", " ", "$$this"] }
+                    }
+                  }
+                }
+              },
+              ""
+            ]
+          }
+        }
+      }
+    ]
+  );  
+    console.timeEnd("Execution Time"); // End measuring time and log it
+    //207.44ms
+}
+
+const companyMembersFirstLast = async () => {
+  await Company.updateMany(
+    {
+      "invited_team_members.name": { $exists: true },
+      "invited_team_members.firstName": { $exists: false },
+      "invited_team_members.lastName": { $exists: false },
+    },
+    [
+      {
+        $set: {
+          invited_team_members: {
+            $map: {
+              input: "$invited_team_members",
+              as: "member",
+              in: {
+                $mergeObjects: [
+                  "$$member",
+                  {
+                    firstName: {
+                      $arrayElemAt: [
+                        { $split: ["$$member.name", " "] },
+                        0
+                      ]
+                    },
+                    lastName: {
+                      $cond: [
+                        {
+                          $gt: [
+                            { $size: { $split: ["$$member.name", " "] } },
+                            1
+                          ]
+                        },
+                        {
+                          $trim: {
+                            input: {
+                              $reduce: {
+                                input: {
+                                  $slice: [
+                                    { $split: ["$$member.name", " "] },
+                                    1,
+                                    10 // again, arbitrary max
+                                  ]
+                                },
+                                initialValue: "",
+                                in: { $concat: ["$$value", " ", "$$this"] }
+                              }
+                            }
+                          }
+                        },
+                        ""
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    ]
+  );  
+}
+
 //For JobType based filters
 const dbUpdater = async () =>{
   const candidatesData = await candidates.find();
@@ -251,6 +351,8 @@ connectDB()
     // inviteToRequestUpdaterMember() //Second
     // removeInvitedKey() //Third
     // makeJobPublic()
+    // userFirstLast()
+    // companyMembersFirstLast()
 
     app.on("error", (error) => {
       console.log("Error in starting server", error);

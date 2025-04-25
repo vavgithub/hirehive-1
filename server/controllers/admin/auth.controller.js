@@ -122,7 +122,8 @@ export const authUser = asyncHandler(async (req, res) => {
 
         res.json({
             _id: user._id,
-            name: user.name,
+            firstName: user.firstName,
+            lastName: user.lastName,
             email: user.email,
             role: user.role,
         });
@@ -148,7 +149,8 @@ export const getUserProfile = asyncHandler(async (req, res) => {
   if (user) {
       res.json({
           _id: user._id,
-          name: user.name,
+          firstName: user.firstName,
+          lastName: user.lastName,
           email: user.email,
           phone: user.phone,
           jobTitle: user.jobTitle,
@@ -177,13 +179,13 @@ export const getAvailableDesignReviewers = async (req, res) => {
         role: 'Design Reviewer',
         company_id : company_id,
         isAvailable : true
-      }).select('_id name email isAvailable profilePicture'); // Include _id and isAvailable
+      }).select('_id firstName lastName email isAvailable profilePicture'); // Include _id and isAvailable
   
       const admin = await User.findOne({ 
         role: 'Admin',
         company_id : company_id,
         isAvailable : true
-      }).select('_id name email isAvailable profilePicture'); 
+      }).select('_id firstName lastName email isAvailable profilePicture'); 
 
       res.status(200).json({ 
         success: true, 
@@ -299,9 +301,9 @@ export const resetPassword = asyncHandler(async (req, res) => {
 //here are the v2 controllers for onboarding hiring manager : 
 // Initialize registration
 export const initializeRegistration = asyncHandler(async (req, res) => {
-  const { email, fullName } = req.body;
+  const { email, firstName , lastName} = req.body;
 
-  if(!email?.trim() || !fullName?.trim()){
+  if(!email?.trim() || !firstName?.trim() || !lastName?.trim() ){
     return res.status(400).json({
       status: 'error',
       message: 'Incomplete registration data'
@@ -338,7 +340,8 @@ export const initializeRegistration = asyncHandler(async (req, res) => {
     
     // Store OTP with user details
     otpStore.set(email, {
-      fullName,
+      firstName,
+      lastName,
       otp,
       timestamp: Date.now(),
       registrationStep: 'OTP_PENDING'
@@ -348,7 +351,7 @@ export const initializeRegistration = asyncHandler(async (req, res) => {
     await sendEmail(
       email,
       'Welcome to HireHive - Verify Your Email',
-      getSignupEmailContent(fullName, otp)
+      getSignupEmailContent(firstName + " " + lastName, otp)
     );
 
     res.status(200).json({
@@ -377,7 +380,7 @@ export const sendInviteOTP = asyncHandler(async (req,res) => {
       });
     }
 
-    const { email , name , role , company_id } = decoded;
+    const { email , firstName , lastName , role , company_id } = decoded;
 
     const existingUser = await User.findOne({ email });
 
@@ -400,7 +403,8 @@ export const sendInviteOTP = asyncHandler(async (req,res) => {
 
     // Store OTP with user details
     otpStore.set(email, {
-      fullName : name,
+      firstName , 
+      lastName,
       otp,
       role,
       company_id,
@@ -412,7 +416,7 @@ export const sendInviteOTP = asyncHandler(async (req,res) => {
     await sendEmail(
       email,
       'Welcome to HireHive - Verify Your Email',
-      getSignupEmailContent(name, otp)
+      getSignupEmailContent(firstName + " " + lastName, otp)
     );
 
     req.session.isInvited = email;
@@ -436,7 +440,6 @@ export const verifyOTPforAdmin = asyncHandler(async (req, res) => {
       message: 'Invalid OTP'
     });
   }
-
   // Check OTP expiration (10 minutes)
   const tenMinutes = 10 * 60 * 1000;
   if (Date.now() - userData.timestamp > tenMinutes) {
@@ -452,7 +455,8 @@ export const verifyOTPforAdmin = asyncHandler(async (req, res) => {
   // otpStore.set(email, userData);
 
   const saveUser = await User.create({
-    name : userData?.fullName,
+    firstName : userData?.firstName,
+    lastName : userData?.lastName,
     email,
     role : userData?.role ?? "Admin",
     ...(userData?.company_id ? {company_id : userData?.company_id} : {}),
@@ -594,8 +598,9 @@ export const sendMemberRequest = asyncHandler(async (req, res) => {
     }
 
   const memberData = {
-    id : userData?.name?.split(" ")[0] + Date.now(),
-    name : userData.name,
+    id : userData?.firstName + Date.now(),
+    firstName : userData.firstName,
+    lastName : userData.lastName,
     email : userData.email,
     role : "Hiring Manager",
     status : "REQUESTED",
@@ -672,7 +677,7 @@ export const completeHiringManagerRegistration = asyncHandler(async (req, res) =
     size: companyDetails.companySize,
     registeredBy : {
       user_id : userData?._id,
-      name : userData?.name,
+      name : userData?.firstName + " " + userData?.lastName,
       email : userData?.email
     }
   });
@@ -752,7 +757,8 @@ export const addTeamMembers = asyncHandler(async (req,res) => {
   for(let member of teamMembers){
     const customMember = {
       id : member.id,
-      name : member.firstName + " " + member.lastName,
+      firstName : member.firstName,
+      lastName : member.lastName,
       email : member.email,
       role : member.role,
       status : "ADDED",
@@ -769,7 +775,7 @@ export const addTeamMembers = asyncHandler(async (req,res) => {
     //Sending invites to members
     // Generate invitation token
     const inviteToken = jwt.sign(
-      { email : customMember.email , name : customMember.name, role: customMember.role , company_id : userData?.company_id },
+      { email : customMember.email , firstName : customMember.firstName, lastName : customMember.lastName, role: customMember.role , company_id : userData?.company_id },
       process.env.JWT_SECRET,
       { expiresIn: '7d' }
     );
@@ -780,7 +786,7 @@ export const addTeamMembers = asyncHandler(async (req,res) => {
     await sendEmail(
       customMember.email,
       `Join HireHive as ${customMember.role}`,
-      getInvitationContent(customMember.name,customMember.role,updatedCompany?.name,inviteUrl) // You might want to create a specific template for invitations
+      getInvitationContent(customMember.firstName + " " + customMember.lastName,customMember.role,updatedCompany?.name,inviteUrl) // You might want to create a specific template for invitations
     );
 
     // Update the invited field directly in MongoDB
@@ -889,7 +895,8 @@ export const completeDesignReviewerRegistration = asyncHandler(async (req, res) 
     
     // Create new user
     const user = await User.create({
-      name: decoded.name,
+      firstName: decoded.firstName,
+      lastName: decoded.lastName,
       email: decoded.email,
       password,
       role: 'Design Reviewer'
@@ -907,7 +914,8 @@ export const completeDesignReviewerRegistration = asyncHandler(async (req, res) 
       data: {
         user: {
           id: user._id,
-          name: user.name,
+          firstName: user.firstName,
+          lastName: user.lastName,
           email: user.email,
           role: user.role
         },
@@ -936,13 +944,14 @@ export const editUserProfile = asyncHandler(async (req, res) => {
     } = req.body;
 
     // Combine first and last name
-    const name = `${firstName} ${lastName}`.trim();
+    // const name = `${firstName} ${lastName}`.trim();
 
     // Find and update the user
     const updatedUser = await User.findByIdAndUpdate(
       userId,
       {
-        name,
+        firstName,
+        lastName,
         phone,
         jobTitle,
         experience,

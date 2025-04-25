@@ -44,7 +44,8 @@ export const addTeamMember = asyncHandler(async (req,res) => {
     //Add members to Company database + send invites
       const customMember = {
         id : teamMember.id,
-        name : teamMember.firstName + " " + teamMember.lastName,
+        firstName : teamMember.firstName,
+        lastName: teamMember.lastName,
         email : teamMember.email,
         role : teamMember.role,
         status : "ADDED",
@@ -61,7 +62,7 @@ export const addTeamMember = asyncHandler(async (req,res) => {
       //Sending invites to members
       // Generate invitation token
       const inviteToken = jwt.sign(
-        { email : customMember.email , name : customMember.name, role: customMember.role , company_id : userData?.company_id },
+        { email : customMember.email , firstName : customMember.firstName, lastName : customMember.lastName, role: customMember.role , company_id : userData?.company_id },
         process.env.JWT_SECRET,
         { expiresIn: '7d' }
       );
@@ -72,7 +73,7 @@ export const addTeamMember = asyncHandler(async (req,res) => {
       await sendEmail(
         customMember.email,
         `Join HireHive as ${customMember.role}`,
-        getInvitationContent(customMember.name,customMember.role,updatedCompany?.name,inviteUrl) // You might want to create a specific template for invitations
+        getInvitationContent(customMember.firstName + " " + customMember.lastName,customMember.role,updatedCompany?.name,inviteUrl) // You might want to create a specific template for invitations
       );
   
       // Update the invited field directly in MongoDB
@@ -117,7 +118,7 @@ export const addTeamMember = asyncHandler(async (req,res) => {
     //Sending invites to members
     // Generate invitation token
     const inviteToken = jwt.sign(
-      { email : isMemberExistWithCompany?.invited_team_members[0]?.email , name : isMemberExistWithCompany?.invited_team_members[0]?.name, role: isMemberExistWithCompany?.invited_team_members[0]?.role , company_id : userData?.company_id },
+      { email : isMemberExistWithCompany?.invited_team_members[0]?.email , firstName : isMemberExistWithCompany?.invited_team_members[0]?.firstName , lastName : isMemberExistWithCompany?.invited_team_members[0]?.lastName, role: isMemberExistWithCompany?.invited_team_members[0]?.role , company_id : userData?.company_id },
       process.env.JWT_SECRET,
       { expiresIn: '7d' }
     );
@@ -128,7 +129,7 @@ export const addTeamMember = asyncHandler(async (req,res) => {
     await sendEmail(
       isMemberExistWithCompany?.invited_team_members[0]?.email,
       `Join HireHive as ${isMemberExistWithCompany?.invited_team_members[0]?.role}`,
-      getInvitationContent(isMemberExistWithCompany?.invited_team_members[0]?.name,isMemberExistWithCompany?.invited_team_members[0]?.role,isExisitngCompany?.name,inviteUrl) // You might want to create a specific template for invitations
+      getInvitationContent(isMemberExistWithCompany?.invited_team_members[0]?.firstName + " " + isMemberExistWithCompany?.invited_team_members[0]?.lastName ,isMemberExistWithCompany?.invited_team_members[0]?.role,isExisitngCompany?.name,inviteUrl) // You might want to create a specific template for invitations
     );
 
     // Update the invited field directly in MongoDB
@@ -211,7 +212,8 @@ export const addTeamMember = asyncHandler(async (req,res) => {
   
     //Add members to Company database + send invites
       const customMember = {
-        name : teamMember.firstName + " " + teamMember.lastName,
+        firstName : teamMember.firstName ,
+        lastName :  teamMember.lastName,
         email : teamMember.email,
         role : teamMember.role,
       }
@@ -220,7 +222,8 @@ export const addTeamMember = asyncHandler(async (req,res) => {
           "invited_team_members._id" : memberId
         } , 
         { $set : {
-            "invited_team_members.$.name" : customMember?.name,
+            "invited_team_members.$.firstName" : customMember?.firstName,
+            "invited_team_members.$.lastName" : customMember?.lastName,
             "invited_team_members.$.email" : customMember?.email,
             "invited_team_members.$.role" : customMember?.role,
           }
@@ -450,7 +453,8 @@ export const getDetailsForDashboard = asyncHandler(async (req,res) => {
                 scheduledTime: 1,
                 assignee: {
                     _id: "$assigneeDetails._id",
-                    name: "$assigneeDetails.name",
+                    firstName: "$assigneeDetails.firstName",
+                    lastName: "$assigneeDetails.lastName",
                     email: "$assigneeDetails.email",
                     role : "$assigneeDetails.role",
                     profilePicture: "$assigneeDetails.profilePicture"

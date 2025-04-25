@@ -130,16 +130,16 @@ const AdminLayout = () => {
 
         return (
             <>
-                <div className={`flex items-center px-2 py-1  rounded-xl justify-start hover:bg-background-60 ${location.pathname === profilePath ? "bg-background-60" : ""}`}>
+                <div className={`flex items-center px-2 py-1 relative  rounded-xl justify-start hover:bg-background-60 ${location.pathname === profilePath ? "bg-background-60" : ""}`}>
                     <IconButton
                         onClick={handleMenuClick}
                         className={`flex gap-2  ${location.pathname === profilePath ? "text-font-accent  " : ""}`}
                     >
-                        <Avatar alt={user?.name} sx={{ width: "32px", height: "32px" }}
+                        <Avatar alt={user?.firstName + " " + user?.lastName} sx={{ width: "32px", height: "32px" }}
                             src={user?.profilePicture || UNKNOWN_PROFILE_PICTURE_URL } />
-                        <span className={`typography-body  ${location.pathname === profilePath ? "text-font-accent" : "text-white"} `}>{user?.name}</span>
+                        <span className={`typography-body  ${location.pathname === profilePath ? "text-font-accent" : "text-white"} `}>{user?.firstName + " " + user?.lastName}</span>
                     </IconButton>
-                    <div className={`absolute right-2 w-1 h-6 rounded-tl-xl rounded-bl-xl ${location.pathname === profilePath ? "bg-teal-400" : "bg-transparent"}`} />
+                    <div className={`absolute right-0 w-1 h-6 rounded-tl-xl rounded-bl-xl ${location.pathname === profilePath ? "bg-teal-400" : "bg-transparent"}`} />
                 </div>
                 <StyledMenu anchorEl={anchorEl} handleMenuClose={handleMenuClose} itemComponents={itemComponents} />
                 
@@ -197,7 +197,7 @@ const AdminLayout = () => {
                     </div>
                     {renderMenuItems()}
                 </div> 
-                <div className='flex flex-col gap-2 px-4'>
+                <div className='flex flex-col gap-2 mx-4'>
                     {user && renderProfileMenu()}
                 </div>
             </div>

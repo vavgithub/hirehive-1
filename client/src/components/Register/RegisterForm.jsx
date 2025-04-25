@@ -19,8 +19,8 @@ import ForgotPassword from '../../pages/Admin/ForgotPassword';
 
 export const emailPattern = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i
 
-const registerAdmin = async ({fullName, email}) => {
-    const response = await axios.post('/auth/register/init',{fullName, email});
+const registerAdmin = async ({firstName, lastName, email}) => {
+    const response = await axios.post('/auth/register/init',{firstName, lastName, email});
     return response.data
 }
 
@@ -38,7 +38,8 @@ const statsOne = [
 
 function RegisterForm({setCurrentStep}) {
     const [email, setEmail] = useState('');
-    const [name, setName] = useState('');
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
     const [error, setError] = useState('');
 
     const [loading, setLoading] = useState(false);
@@ -72,7 +73,8 @@ function RegisterForm({setCurrentStep}) {
           setOnboardData(data?.userData)
         }else{
           setOnboardData({
-            name ,
+            firstName ,
+            lastName,
             email
           })
         }
@@ -104,7 +106,7 @@ function RegisterForm({setCurrentStep}) {
 
     const handleFormSubmit =  (e) =>{
         e.preventDefault()
-        if(!email && !name){
+        if(!email && !firstName && !lastName){
           setError('Please fill all the details')
           return
         }else if (!email){
@@ -113,12 +115,15 @@ function RegisterForm({setCurrentStep}) {
         }else if(!emailPattern.test(email)){
           setError('Invalid email format')
           return
-        }else if(!name.trim()){
-          setError('Please fill the full name')
+        }else if(!firstName.trim()){
+          setError('Please fill the first name')
+          return
+        }else if(!lastName.trim()){
+          setError('Please fill the last name')
           return
         }else{
           setError("")
-          registerAdminMutation.mutate({fullName : name, email})
+          registerAdminMutation.mutate({firstName , lastName, email})
         }
     }
   
@@ -188,8 +193,12 @@ function RegisterForm({setCurrentStep}) {
                   </div>  */}
               <form onSubmit={handleFormSubmit}>
                 <div className="mb-4">
-                  <label htmlFor="fullname" className="block mb-2 font-bricolage">Full Name</label>
-                  <input type="text" id="fullname" placeholder="Enter your full name" value={name} onChange={(e) => setName(e.target.value)} className="w-full p-2 rounded-lg bg-black text-white focus:outline-teal-400" />
+                  <label htmlFor="firstname" className="block mb-2 font-bricolage">First Name</label>
+                  <input type="text" id="firstname" placeholder="Enter your Firstname" value={firstName} onChange={(e) => setFirstName(e.target.value)} className="w-full p-2 rounded-lg bg-black text-white focus:outline-teal-400" />
+                </div>
+                <div className="mb-4">
+                  <label htmlFor="lastname" className="block mb-2 font-bricolage">Last Name</label>
+                  <input type="text" id="lastname" placeholder="Enter your Lastname" value={lastName} onChange={(e) => setLastName(e.target.value)} className="w-full p-2 rounded-lg bg-black text-white focus:outline-teal-400" />
                 </div>
                 <div className="mb-1">
                   <label htmlFor="email" className="block mb-2 font-bricolage">Work Email</label>

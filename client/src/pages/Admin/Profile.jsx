@@ -44,7 +44,7 @@ const PersonalDetails = ({ userData, isEditing, control }) => {
               <p className="text-font-gray whitespace-nowrap">Email</p>
             </div>
             <div className="flex flex-col gap-6 typography-body">
-              <p className="whitespace-nowrap overflow-hidden text-ellipsis">{userData.name?.split(' ')[0] ?? '-'}</p>
+              <p className="whitespace-nowrap overflow-hidden text-ellipsis">{userData?.firstName ?? '-'}</p>
               <p className="whitespace-nowrap overflow-hidden text-ellipsis">{userData.email}</p>
             </div>
           </div>
@@ -54,7 +54,7 @@ const PersonalDetails = ({ userData, isEditing, control }) => {
               <p className="text-font-gray whitespace-nowrap">Phone Number</p>
             </div>
             <div className="flex flex-col gap-6 typography-body">
-              <p className="whitespace-nowrap overflow-hidden text-ellipsis ">{userData.name?.split(' ')[1] ?? '-'}</p>
+              <p className="whitespace-nowrap overflow-hidden text-ellipsis ">{userData?.lastName ?? '-'}</p>
               <p>{userData.phone}</p>
             </div>
           </div>
@@ -64,7 +64,7 @@ const PersonalDetails = ({ userData, isEditing, control }) => {
           <Controller
             name="firstName"
             control={control}
-            defaultValue={userData.name?.split(' ')[0]}
+            defaultValue={userData.firstName}
             rules={{ required: 'First name is required' }}
             render={({ field, fieldState: { error } }) => (
               <InputField
@@ -83,7 +83,7 @@ const PersonalDetails = ({ userData, isEditing, control }) => {
           <Controller
             name="lastName"
             control={control}
-            defaultValue={userData.name?.split(' ')[1]}
+            defaultValue={userData.lastName}
             rules={{ required: 'Last name is required' }}
             render={({ field, fieldState: { error } }) => (
               <InputField
@@ -152,8 +152,8 @@ function Profile() {
 
   const { control, handleSubmit, reset } = useForm({
     defaultValues: {
-      firstName: user?.name?.split(' ')[0] || '',
-      lastName: user?.name?.split(' ')[1] || '',
+      firstName: user?.firstName || '',
+      lastName: user?.lastName || '',
       email: user?.email || '',
       phone: user?.phone || '',
       jobTitle: user?.jobTitle || '',
@@ -399,7 +399,7 @@ function Profile() {
                   )}
                 </div>
                 <h1 className="typography-h1 whitespace-nowrap overflow-hidden w-full text-ellipsis text-center">
-                  {user?.name}
+                  {user?.firstName + " " + user?.lastName}
                 </h1>
               </StyledCard>
 

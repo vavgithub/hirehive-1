@@ -46,7 +46,7 @@ function PersonalDetails({ memberData, isEditing, control }) {
               <p className="text-font-gray whitespace-nowrap">Email</p>
             </div>
             <div className="flex flex-col gap-6 typography-body">
-              <p className="whitespace-nowrap overflow-hidden text-ellipsis">{memberData?.name?.split(' ')[0]}</p>
+              <p className="whitespace-nowrap overflow-hidden text-ellipsis">{memberData?.firstName}</p>
               <p className="whitespace-nowrap overflow-hidden text-ellipsis">{memberData?.email}</p>
             </div>
           </div>
@@ -56,7 +56,7 @@ function PersonalDetails({ memberData, isEditing, control }) {
               <p className="text-font-gray whitespace-nowrap">Phone Number</p>
             </div>
             <div className="flex flex-col gap-6 typography-body">
-              <p className="whitespace-nowrap overflow-hidden text-ellipsis">{memberData?.name?.split(' ')[1]}</p>
+              <p className="whitespace-nowrap overflow-hidden text-ellipsis">{memberData?.lastName}</p>
               <p>{memberData?.phone ?? "NA"}</p>
             </div>
           </div>
@@ -66,7 +66,7 @@ function PersonalDetails({ memberData, isEditing, control }) {
           <Controller
             name="firstName"
             control={control}
-            defaultValue={memberData?.name?.split(' ')[0]}
+            defaultValue={memberData?.firstName}
             rules={{ required: 'First name is required' }}
             render={({ field, fieldState: { error } }) => (
               <InputField
@@ -85,7 +85,7 @@ function PersonalDetails({ memberData, isEditing, control }) {
           <Controller
             name="lastName"
             control={control}
-            defaultValue={memberData?.name?.split(' ')[1]}
+            defaultValue={memberData?.lastName}
             rules={{ required: 'Last name is required' }}
             render={({ field, fieldState: { error } }) => (
               <InputField
@@ -208,8 +208,8 @@ function TeamsProfile() {
   useEffect(() => {
     if (member) {
       reset({
-        firstName: member?.name?.split(' ')[0] || '',
-        lastName: member?.name?.split(' ')[1] || '',
+        firstName: member?.firstName || '',
+        lastName: member?.lastName || '',
         email: member?.email || '',
         role: member?.role || ''
       });
@@ -261,8 +261,8 @@ function TeamsProfile() {
   const handleCancel = () => {
     setIsEditing(false)
     reset({
-      firstName: member?.name?.split(' ')[0] || '',
-      lastName: member?.name?.split(' ')[1] || '',
+      firstName: member?.firstName || '',
+      lastName: member?.lastName || '',
       email: member?.email || '',
       role: member?.role || ''
     });
@@ -305,7 +305,7 @@ function TeamsProfile() {
                   <img src={member?.profilePicture ? member?.profilePicture : UNKNOWN_PROFILE_PICTURE_URL} alt="" className="object-cover w-full" />
                 </div>
               </div>
-              <h1 className="typography-h1 whitespace-nowrap overflow-hidden w-full text-ellipsis text-center">{member?.name}</h1>
+              <h1 className="typography-h1 whitespace-nowrap overflow-hidden w-full text-ellipsis text-center">{member?.firstName + " " + member?.lastName}</h1>
               <div className='w-full'>
                 {isEditing ?
                   <Controller
