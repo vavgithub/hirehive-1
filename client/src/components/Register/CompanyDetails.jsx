@@ -17,10 +17,63 @@ import { useNavigate } from 'react-router-dom';
 import GlobalDropDown from '../Dropdowns/GlobalDropDown';
 
 export const LocationOptions = [
-  { value: 'india', label: 'India' },
-  { value: 'usa', label: 'USA' },
+  { value: 'afghanistan', label: 'Afghanistan' },
+  { value: 'argentina', label: 'Argentina' },
+  { value: 'australia', label: 'Australia' },
+  { value: 'austria', label: 'Austria' },
+  { value: 'bangladesh', label: 'Bangladesh' },
+  { value: 'belgium', label: 'Belgium' },
+  { value: 'brazil', label: 'Brazil' },
+  { value: 'canada', label: 'Canada' },
+  { value: 'china', label: 'China' },
+  { value: 'colombia', label: 'Colombia' },
+  { value: 'denmark', label: 'Denmark' },
   { value: 'dubai', label: 'Dubai' },
-]
+  { value: 'egypt', label: 'Egypt' },
+  { value: 'finland', label: 'Finland' },
+  { value: 'france', label: 'France' },
+  { value: 'germany', label: 'Germany' },
+  { value: 'greece', label: 'Greece' },
+  { value: 'hong-kong', label: 'Hong Kong' },
+  { value: 'hungary', label: 'Hungary' },
+  { value: 'iceland', label: 'Iceland' },
+  { value: 'india', label: 'India' },
+  { value: 'indonesia', label: 'Indonesia' },
+  { value: 'ireland', label: 'Ireland' },
+  { value: 'israel', label: 'Israel' },
+  { value: 'italy', label: 'Italy' },
+  { value: 'japan', label: 'Japan' },
+  { value: 'kenya', label: 'Kenya' },
+  { value: 'malaysia', label: 'Malaysia' },
+  { value: 'mexico', label: 'Mexico' },
+  { value: 'netherlands', label: 'Netherlands' },
+  { value: 'new-zealand', label: 'New Zealand' },
+  { value: 'nigeria', label: 'Nigeria' },
+  { value: 'norway', label: 'Norway' },
+  { value: 'pakistan', label: 'Pakistan' },
+  { value: 'philippines', label: 'Philippines' },
+  { value: 'poland', label: 'Poland' },
+  { value: 'portugal', label: 'Portugal' },
+  { value: 'qatar', label: 'Qatar' },
+  { value: 'romania', label: 'Romania' },
+  { value: 'russia', label: 'Russia' },
+  { value: 'saudi-arabia', label: 'Saudi Arabia' },
+  { value: 'singapore', label: 'Singapore' },
+  { value: 'south-africa', label: 'South Africa' },
+  { value: 'south-korea', label: 'South Korea' },
+  { value: 'spain', label: 'Spain' },
+  { value: 'sri-lanka', label: 'Sri Lanka' },
+  { value: 'sweden', label: 'Sweden' },
+  { value: 'switzerland', label: 'Switzerland' },
+  { value: 'thailand', label: 'Thailand' },
+  { value: 'turkey', label: 'Turkey' },
+  { value: 'uae', label: 'UAE' },
+  { value: 'uk', label: 'UK' },
+  { value: 'ukraine', label: 'Ukraine' },
+  { value: 'usa', label: 'USA' },
+  { value: 'vietnam', label: 'Vietnam' },
+];
+
 
 export const companySizeOptions = [
   { value: '1-10', label: '1-10 Employees' },
@@ -288,6 +341,7 @@ function CompanyDetails({currentStep,setCurrentStep}) {
                 error={locationError ? {message : locationError} : null}
                 onChange={setLocation}
                 options={LocationOptions}
+                searchEnabled
                 />
                 <GlobalDropDown
                 label="Industry" 

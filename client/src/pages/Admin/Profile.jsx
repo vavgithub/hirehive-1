@@ -402,7 +402,7 @@ function Profile() {
                   {user?.name}
                 </h1>
               </StyledCard>
-              {console.log(user)}
+
               <StyledCard backgroundColor="bg-background-30" extraStyles="flex flex-col items-center relative mt-4">
               <div className="relative w-[8rem] min-h-[5rem]">
                   <div className="absolute w-[8rem] left-0 -top-14 aspect-square overflow-hidden rounded-full">
