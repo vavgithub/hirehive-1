@@ -81,8 +81,8 @@ const QuestionSidebar = ({ questions, currentQuestion, answeredCount, onQuestion
   const [ min ,sec ] = useMemo(()=> formatTime(timeRemaining).split(":") ,[timeRemaining]) 
   
   return (
-    <div className="w-[15%] bg-background-30 fixed h-screen overflow-y-auto  custom-scrollbar ">
-      <div className='flex items-center justify-start py-6 px-4 '>
+    <div className="w-[15rem] bg-background-30 fixed  overflow-y-auto  custom-scrollbar m-4 h-[calc(100vh-2rem)]  rounded-xl">
+      <div className='flex items-center justify-start pt-8 pb-6 px-4 '>
 
         <img className='h-11' src={LightLogo} />
       </div>
@@ -159,8 +159,8 @@ const QuestionDisplay = ({
   const [showImage,setShowImage] = useState(false);
 
   return(
-  <div className="flex-grow p-6 pl-[212px]">
-    <div className="mb-8">
+  <div className="flex-grow p-6 mx-auto container  w-full">
+    <div className="mb-8 max-w-[80%] mx-auto">
       <StyledCard backgroundColor={"bg-background-70"} padding={3} extraStyles={"flex flex-col gap-4"} >
         <h1 className="typography-h1 ">{`Question ${questionNumber + 1}: ${question.text}`}</h1>
         {question.questionType === 'image' && question.imageUrl && (
@@ -847,7 +847,7 @@ const Assessment = () => {
           isRecording={isRecording}
 
         />
-        <div className="flex-grow flex flex-col container mx-auto relative">
+        <div className="flex-grow flex flex-col ml-[16rem] relative">
           {/* <div className="bg-background-90 pl-[212px] p-4 flex gap-8 justify-between items-center">
             <div className='typography-body text-font-gray'>
               {`${answeredCount}/${questions.length} Answered`}

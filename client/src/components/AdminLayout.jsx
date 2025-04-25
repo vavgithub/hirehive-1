@@ -11,6 +11,19 @@ import { Briefcase, FileText, LayoutGrid, LogOut, MonitorDot, Star, User, Users 
 import { UNKNOWN_PROFILE_PICTURE_URL } from '../utility/config';
 import { useSelector } from 'react-redux';
 
+//Screen URLs with BG for All Admin personas
+const ADMIN_BG_SCREENS = [
+    '/admin/profile',
+    '/admin/create-job',
+    '/admin/edit-job',
+    '/admin/jobs/edit-candidate',
+    '/hiring-manager/create-job',
+    '/hiring-manager/edit-job',
+    '/hiring-manager/profile',
+    '/hiring-manager/jobs/edit-candidate',
+    '/design-reviewer/profile',
+]
+
 const AdminLayout = () => {
     const navigate = useNavigate();
     const location = useLocation();  // Get current route
@@ -172,8 +185,11 @@ const AdminLayout = () => {
         return null;
     };
 
+    //To get the exact path
+    const { pathname } = useLocation()
+
     return (
-        <div id='adminContainer' className='flex bg-main-bg bg-cover bg-top h-full overflow-x-hidden '>
+        <div id='adminContainer' className={`flex ${ADMIN_BG_SCREENS.some(path => pathname.startsWith(path)) ? ' bg-background-80 ' :' bg-main-bg '} bg-cover bg-top h-full overflow-x-hidden `}>
             <div className="fixed flex  w-[15rem] h-[calc(100vh-2rem)] m-4 rounded-xl flex-col  bg-background-100 text-font-gray typography-large-p justify-between py-4 ">
                 <div className='flex flex-col gap-5 typography-body px-4'>
                     <div className=' pl-2 pt-4 flex '>

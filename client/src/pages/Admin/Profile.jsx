@@ -284,9 +284,10 @@ function Profile() {
               </StyledCard>
 
               {/* Skills & Expertise Section */}
+              {((!isEditing && (user?.tools_used?.length > 0 || user?.skills?.length > 0)) || isEditing) &&
               <StyledCard backgroundColor="bg-background-30">
                 <h2 className="typography-h2 mb-6">Skills & Expertise</h2>
-                {!isEditing ? (
+                {!isEditing ?  (
                   <div className="flex flex-col gap-6 typography-body">
                     <div>
                       <p className="text-font-gray mb-2">Primary Skills</p>
@@ -310,11 +311,11 @@ function Profile() {
                     <Controller
                       name="skills"
                       control={control}
-                      rules={{
-                        required: 'Skills are required',
-                        validate: (value) =>
-                          Array.isArray(value) && value.length > 0 ? true : 'Please add at least one skill',
-                      }}
+                      // rules={{
+                      //   required: 'Skills are required',
+                      //   validate: (value) =>
+                      //     Array.isArray(value) && value.length > 0 ? true : 'Please add at least one skill',
+                      // }}
                       render={({ field, fieldState: { error } }) => (
                         <div className="w-full">
                           <label htmlFor="skills" className="text-font-gray typography-body">
@@ -333,11 +334,11 @@ function Profile() {
                     <Controller
                       name="tools_used"
                       control={control}
-                      rules={{
-                        required: 'Tools are required',
-                        validate: (value) =>
-                          Array.isArray(value) && value.length > 0 ? true : 'Please add at least one tool',
-                      }}
+                      // rules={{
+                      //   required: 'Tools are required',
+                      //   validate: (value) =>
+                      //     Array.isArray(value) && value.length > 0 ? true : 'Please add at least one tool',
+                      // }}
                       render={({ field, fieldState: { error } }) => (
                         <div className="w-full">
                           <label htmlFor="tools" className="text-font-gray typography-body">
@@ -355,7 +356,7 @@ function Profile() {
                     />
                   </div>
                 )}
-              </StyledCard>
+              </StyledCard>}
             </div>
             <div className="w-[100%] sm:w-[50%] mx-auto lg:w-[30%]">
               <StyledCard backgroundColor="bg-background-30" extraStyles="flex flex-col items-center relative">
