@@ -19,7 +19,7 @@ function ScoreFilter({handleScoreChange}) {
     }
 
   return (
-    <StyledCard padding={2} extraStyles={"font-outfit absolute left-[18.5rem] w-[250px] flex gap-4"}>
+    <StyledCard padding={2} extraStyles={"absolute left-[18.5rem] w-[250px] flex gap-4"}>
       <div className='flex flex-col gap-2'>
         <label htmlFor="min-score" className='typography-large-p'>Min Score</label>
         <div className='relative'>

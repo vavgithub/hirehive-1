@@ -339,10 +339,12 @@ function AddMembers({currentStep,setCurrentStep}) {
                 rows={members}
                 columns={columns}
                 getRowId={(row) => `${row.id}`} // Create a unique ID for each row
+
                 getRowClassName={(params) =>
                     params.indexRelativeToCurrentPage % 2 === 0 ? 'first-row' : 'second-row'
                 }
-                localeText={{ noRowsLabel: <p style={{fontFamily:"Outfit"}}>No Candidates</p> }}
+                localeText={{ noRowsLabel: <p className='typography-body'>No Candidates</p> }}
+
                 hideFooterPagination
                 hideFooterSelectedRowCount 
                 />

@@ -226,7 +226,7 @@ const ViewJobs = () => {
                     <div className='flex justify-between mt-4' >
                         <div className='w-4/5   '>
                             <h2 className="typography-h4 mb-2">Job Description</h2>
-                            <div className='text-font-gray font-outfit' dangerouslySetInnerHTML={{ __html: formData.jobDescription ? formatDescription(formData.jobDescription) : '' }}></div>
+                            <div className='text-font-gray typography-body' dangerouslySetInnerHTML={{ __html: formData.jobDescription ? formatDescription(formData.jobDescription) : '' }}></div>
                             <h3 className="typography-h3 mt-4 mb-2">Skills</h3>
                             <div className='flex flex-wrap gap-2'>
                                 {formData.skills && formData.skills.map((skill, index) => (

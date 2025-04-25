@@ -58,7 +58,7 @@ function RatingSelector({anchorEl,setAnchorEl,onSelectRating}) {
             >
             <div className="flex items-center gap-5">
                 {getRatingIcon(rating)}
-                <span className='font-outfit'>{rating}</span>
+                <span className='typography-body'>{rating}</span>
             </div>
             </MenuItem>
         ))}

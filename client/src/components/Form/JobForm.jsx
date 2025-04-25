@@ -228,13 +228,6 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
             <div className='w-full relative'>
               <label htmlFor="jobDescription" className="typography-body block mb-2">Job Description{<span className="text-red-100">*</span>}</label>
               <TextEditor htmlData={field?.value} loaded={isEditing} errors={error} placeholder={"Write a Job Description"} setEditorContent={(data)=>setValue('jobDescription',data)} />
-              {/* <textarea
-                {...field}
-                id="jobDescription"
-                placeholder="Write a Job Description"
-                className={`${error ? '!border !border-red-500' : 'border border-transparent'}  w-full rounded-xl px-3 py-2 bg-background-40 font-outfit hover:bg-background-60 outline-none focus:outline-teal-300 resize-none`}
-                rows="10"
-              /> */}
               {error && <p className="text-red-500 absolute typography-small-p top-[18rem]">{error.message}</p>}
             </div>
           )}

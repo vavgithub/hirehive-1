@@ -24,7 +24,7 @@ function Pagination({currentPage, pageLimit , totalItems ,setCurrentPage}) {
   },[numberOfPages,currentPage])
 
   return totalItems ? (
-    <div className='font-outfit flex justify-between'>
+    <div className=' flex justify-between'>
       <div>
       <p className='typography-body text-font-gray flex gap-2'>Showing <span className='text-white'>{resultValue} {resultValue > 1 ? " results" : " result"}</span> of <span className='text-white'>{totalItems}</span></p>
       </div>

@@ -46,7 +46,7 @@ export function SubmissionForm({candidateId,jobId,stageData}){
     };
 
     return (
-        <div className="flex flex-col gap-4 mt-4 font-outfit">
+        <div className="flex flex-col gap-4 mt-4">
             <div className='flex justify-between mb-4'>
                 <div className='w-[80%]'>
                     <h4 className='mb-2 typography-large-p text-font-gray'>Task Description</h4>

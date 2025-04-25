@@ -7,9 +7,6 @@ function ApplicationChart({type,dataArray}) {
 
   const options = useMemo(()=>(
     {
-        textStyle: {
-          fontFamily: "Outfit, sans-serif"  // Apply Outfit font globally
-        },
         grid: {
           left: "8%",
           right: "2.5%",
@@ -22,14 +19,7 @@ function ApplicationChart({type,dataArray}) {
           nameLocation: "middle",
           nameGap: 30,
           data: xData,
-          axisLabel: {
-            fontFamily: "Outfit, sans-serif",  // Font for x-axis labels
-            fontSize: 12
-          },
-          nameTextStyle: {
-            fontFamily: "Outfit, sans-serif", // Font for x-axis name
-            fontSize: 14
-          }
+         
         },
         yAxis: {
           type: "value",
@@ -41,14 +31,6 @@ function ApplicationChart({type,dataArray}) {
               color: "#aaa",
               type: "none"
             }
-          },
-          axisLabel: {
-            fontFamily: "Outfit, sans-serif",  // Font for y-axis labels
-            fontSize: 12
-          },
-          nameTextStyle: {
-            fontFamily: "Outfit, sans-serif", // Font for y-axis name
-            fontSize: 14
           }
         },
         tooltip: {
@@ -61,11 +43,7 @@ function ApplicationChart({type,dataArray}) {
           axisPointer: {
             type: "none",
           },
-          textStyle: {
-            fontFamily: "Outfit, sans-serif", // Font for tooltip
-            fontSize: 12,
-            color : "white"
-          },
+      
           extraCssText: "min-width: 100px;"
         },
         series: [

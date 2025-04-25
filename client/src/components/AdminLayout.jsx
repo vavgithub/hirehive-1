@@ -109,7 +109,7 @@ const AdminLayout = () => {
                     `w-full flex items-center ${isActive ? "text-font-accent" : ""}  hover:bg-background-60 hover:text-font-accent px-4 py-2 rounded-xl `}
                 >
                     <IconWrapper inheritColor={true} size={0} customIconSize={5}  icon={User} />
-                    <span className='typography-body  ml-2 font-outfit'>
+                    <span className='typography-body  ml-2 '>
                         Profile
                     </span>
                 </NavLink>
@@ -120,7 +120,7 @@ const AdminLayout = () => {
               content : () => (
                 <div className='flex items-center hover:bg-background-60 hover:text-accent-100 px-4 py-2 w-full rounded-xl'>
                     <IconWrapper inheritColor={true} size={0} customIconSize={5}  icon={LogOut} />
-                    <span className='typography-body  ml-2 font-outfit'>
+                    <span className='typography-body  ml-2'>
                         Logout
                     </span>
                 </div>

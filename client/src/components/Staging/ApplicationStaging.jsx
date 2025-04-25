@@ -23,7 +23,6 @@ const AccordionSection = ({ title, isOpen, onToggle, children, badge }) => (
             backgroundColor: "rgba(22, 23, 24, 1)",
             borderRadius: "12px",
             color: "white",
-            fontFamily: 'Outfit, sans-serif',
             marginTop: "12px"
         }}
     >

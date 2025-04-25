@@ -8,6 +8,11 @@ html{
   @apply bg-background-80 ;
 }
 
+@font-face {
+  font-family: 'Gilroy';
+  src: url('/src/fonts/Gilroy.otf') format('opentype');
+}
+
 @layer utilities {
   .scrollbar-hide {
     -ms-overflow-style: none;  /* Internet Explorer 10+ */
@@ -137,7 +142,7 @@ input.no-spinner[class*="border-red-500"] {
 
 /* TextEditor classes */
 .editor-paragraph {
-  font-family: "Outfit", sans-serif !important;
+  font-family: "Gilroy", sans-serif !important;
 }
 
 
@@ -216,35 +221,31 @@ input[type='number'] {
   @apply bg-background-40 hover:bg-background-60 cursor-pointer h-[44px] px-4 rounded-xl placeholder:text-font-gray placeholder:font-body  focus:ring-teal-400 focus:outline-teal-500 outline-none typography-body w-full;  /* Replace bg-gray-200 with your desired background color class */
 }
 
-h2{
-  @apply font-bricolage text-h2 font-h2;
-}
-
 @layer components {
   .typography-h1 {
-    @apply font-bricolage text-h1 font-bold;
+    @apply font-gilroy text-h1 font-bold;
   }
   .typography-h2 {
-    @apply font-bricolage text-h2 font-h2;
+    @apply font-gilroy text-h2 font-h2;
   }
   .typography-h3 {
-    @apply font-bricolage text-h3 font-semibold;
+    @apply font-gilroy text-h3 font-semibold;
   }
   .typography-body {
-    @apply font-outfit text-body font-light;
+    @apply font-gilroy text-body font-light;
   }
   .display-d2{
-    @apply font-bricolage text-display-d2 font-semibold;
+    @apply font-gilroy text-display-d2 font-semibold;
   }
   .typography-small-p {
-    @apply font-outfit text-small-p font-normal;
+    @apply font-gilroy text-small-p font-normal;
   }
   .marks {
-    @apply font-outfit text-marks font-semibold
+    @apply font-gilroy text-marks font-semibold
   }
 
   .typography-large-p {
-    @apply font-outfit text-large-p font-normal;
+    @apply font-gilroy text-large-p font-normal;
   }
   .btn-blue {
     @apply bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded;

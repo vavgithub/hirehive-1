@@ -30,7 +30,7 @@ function ScreeningReview({ candidate, onSubmit ,rounded = "bottom"}){
     };
   
     return (
-      <StyledCard padding={2} borderRadius={roundedClass} extraStyles=' grid grid-cols-2 gap-4  font-outfit'>
+      <StyledCard padding={2} borderRadius={roundedClass} extraStyles=' grid grid-cols-2 gap-4 '>
         {Object.entries(ratings).map(([category, value]) => (
           <div key={category} className='flex gap-4 items-center'>
             <span className='w-32'>{category}</span>

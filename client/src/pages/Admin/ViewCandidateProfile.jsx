@@ -578,7 +578,7 @@ const reviewerProfilePic = currentReviewer?.profilePicture
                                 <StyledCard onClick={() => setOpenNotesView(true)} padding={2} backgroundColor={"bg-background-80"} extraStyles={'w-[30%] h-fit max-h-36 cursor-pointer max  relative overflow-hidden'}>
                                     <div className=' flex justify-between items-center  ' >
 
-                                        <h3 className='typography-body font-semibold font-bricolage'>Notes</h3>
+                                        <h3 className='typography-body'>Notes</h3>
                                         <div onClick={handleOpenNotes} className={'hover:bg-accent-300  bg-background-70  rounded-xl' + (candidateData?.jobApplication?.notes?.content ? " top-8 right-8 " : " top-4 right-4")}>
                                             <CustomToolTip title={candidateData?.jobApplication?.notes?.content ? "Edit notes" : "Add a note"} arrowed>
                                                 {
@@ -588,7 +588,7 @@ const reviewerProfilePic = currentReviewer?.profilePicture
                                         </div>
                                     </div>
 
-                                    <div className='overflow-hidden font-outfit text-font-gray ' dangerouslySetInnerHTML={{ __html: truncatedText(candidateData?.jobApplication?.notes?.content, 55) }}></div>
+                                    <div className='overflow-hidden text-font-gray ' dangerouslySetInnerHTML={{ __html: truncatedText(candidateData?.jobApplication?.notes?.content, 55) }}></div>
 
                                 </StyledCard> :
                                 <div onClick={handleOpenNotes} className={'hover:bg-accent-300  bg-background-70  h-fit rounded-xl' + (candidateData?.jobApplication?.notes?.content ? " top-8 right-8 " : " top-4 right-4")}>

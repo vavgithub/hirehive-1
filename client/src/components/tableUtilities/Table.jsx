@@ -566,7 +566,7 @@ const Table = ({
         getRowClassName={(params) =>
           params.indexRelativeToCurrentPage % 2 === 0 ? 'first-row' : 'second-row'
         }
-        localeText={{ noRowsLabel: <p style={{ fontFamily: "Outfit" }}>No Candidates</p> }}
+        localeText={{ noRowsLabel: <p className='typography-body'>No Candidates</p> }}
 
         pageSizeOptions={[10, 20, 30, 40, 50]}
         checkboxSelection

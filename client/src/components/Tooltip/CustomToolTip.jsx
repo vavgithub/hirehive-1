@@ -20,7 +20,6 @@ const CustomStyledTooltip = styled(({ className, size, ...props }) => (
     backgroundColor: "rgba(7,7,8,1)", // Custom background color
     color: "white", // Custom text color
     fontSize: sizes[size].fontSize, // Custom font size
-    fontFamily: "'Outfit', sans-serif", // Apply the Outfit font
     letterSpacing: "0.5px",
     padding: sizes[size].padding, // Add padding around the tooltip text
     borderRadius: "10px", // Add border radius to tooltip

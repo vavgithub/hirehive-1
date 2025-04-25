@@ -28,11 +28,11 @@ const getCommonColumns = (handleDocumentClick) => [
     },
     renderCell: (params) => (
       <div className="name-cell flex items-center gap-2 h-12">
-        <Avatar src={params?.value?.profilePictureUrl || UNKNOWN_PROFILE_PICTURE_URL } sx={{ width: 32, height: 32 }} />
+        <Avatar src={params?.value?.profilePictureUrl || UNKNOWN_PROFILE_PICTURE_URL} sx={{ width: 32, height: 32 }} />
         <p className='flex items-center gap-2'>{params.value.name}
           {params.value.hasGivenAssessment &&
             <span>
-                <IconWrapper size={3} customIconSize={1} icon={ClipboardCheck} />
+              <IconWrapper size={3} customIconSize={1} icon={ClipboardCheck} />
             </span>}
         </p>
         <div className="hover-icons h-full flex items-center"
@@ -41,21 +41,21 @@ const getCommonColumns = (handleDocumentClick) => [
           {params.row.portfolio && (
             <a href={ensureAbsoluteUrl(params.row.portfolio)} target="_blank" rel="noopener noreferrer" className="icon-link">
               <CustomToolTip title={'Portfolio'} arrowed>
-              <IconWrapper hasBg size={3} icon={FolderOpen} />
+                <IconWrapper hasBg size={3} icon={FolderOpen} />
               </CustomToolTip>
             </a>
           )}
           {params.row.website && (
             <a href={ensureAbsoluteUrl(params.row.website)} target="_blank" rel="noopener noreferrer" className="icon-link ">
               <CustomToolTip title={'Website'} arrowed>
-              <IconWrapper hasBg size={3} icon={Globe} />
+                <IconWrapper hasBg size={3} icon={Globe} />
               </CustomToolTip>
             </a>
           )}
           {params.row.resumeUrl && (
             <button onClick={() => handleDocumentClick(params.row.resumeUrl)} className="icon-link">
               <CustomToolTip title='Resume' arrowed>
-                  <IconWrapper hasBg size={3} icon={FileUser} />
+                <IconWrapper hasBg size={3} icon={FileUser} />
               </CustomToolTip>
             </button>
           )}
@@ -78,7 +78,7 @@ const getCommonColumns = (handleDocumentClick) => [
   },
 ];
 
-const getExpAndCtcColumns = (role,disableCTC = false,disableHourly = false) => [
+const getExpAndCtcColumns = (role, disableCTC = false, disableHourly = false) => [
   ...(role === 'Hiring Manager' ? [
     ...(disableHourly ? [] : [{
       field: 'hourlyRate',
@@ -89,7 +89,7 @@ const getExpAndCtcColumns = (role,disableCTC = false,disableHourly = false) => [
       disableColumnMenu: true,
       renderCell: (params) => (
         <span className='h-full flex items-center justify-center'>
-         {(params.value === undefined || params.value === 0) ? "-" : params.value}
+          {(params.value === undefined || params.value === 0) ? "-" : params.value}
 
         </span>
       )
@@ -139,9 +139,11 @@ const getInfoColumns = () => [
     sortable: false,
     disableColumnMenu: true,
     renderCell: (params) => (
-      <CustomToolTip title={params.value} arrowed size={2}>
-        <p className='w-full font-outfit text-white overflow-hidden text-start whitespace-nowrap text-ellipsis'>{params.value}</p>
-      </CustomToolTip>
+      <div className="h-full flex items-center justify-start">
+        <CustomToolTip title={params.value} arrowed size={2}>
+          <p className='w-full typography-body overflow-hidden text-start whitespace-nowrap text-ellipsis'>{params.value}</p>
+        </CustomToolTip>
+      </div>
     )
   },
 
@@ -154,7 +156,7 @@ const getInfoColumns = () => [
   },
 ]
 
-export const getReadOnlyColumns = (role, handleDocumentClick,disableCTC) => {
+export const getReadOnlyColumns = (role, handleDocumentClick, disableCTC) => {
 
   return ([
     ...getCommonColumns(handleDocumentClick),
@@ -171,7 +173,7 @@ export const getReadOnlyColumns = (role, handleDocumentClick,disableCTC) => {
         </div>
       ),
     },
-    ...getExpAndCtcColumns(role,disableCTC),
+    ...getExpAndCtcColumns(role, disableCTC),
     {
       field: 'jobTitle',
       headerName: 'Applied For',
@@ -187,7 +189,7 @@ export const getReadOnlyColumns = (role, handleDocumentClick,disableCTC) => {
   ])
 };
 
-export const getDefaultColumns = (role, canMove, canReject, handleAssigneeChange, handleMoveClick, handleRejectClick, handleRatingClick, handleDocumentClick , isClosed) => [
+export const getDefaultColumns = (role, canMove, canReject, handleAssigneeChange, handleMoveClick, handleRejectClick, handleRatingClick, handleDocumentClick, isClosed) => [
   ...getCommonColumns(handleDocumentClick),
   {
     field: 'status',
@@ -280,25 +282,25 @@ export const getDefaultColumns = (role, canMove, canReject, handleAssigneeChange
       <div className='flex h-full items-center gap-2'
         onClick={(event) => event.stopPropagation()}
       >
-          <button
-            onClick={() => handleMoveClick(params.row)}
-            disabled={(params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Reviewed" && params?.row?.stageStatuses[params?.row?.currentStage]?.scheduledDate) || !canMove(params.row) || isClosed}
-          >
-            {!(params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Reviewed" && params?.row?.stageStatuses[params?.row?.currentStage]?.scheduledDate) && canMove(params.row) && !isClosed ? 
+        <button
+          onClick={() => handleMoveClick(params.row)}
+          disabled={(params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Reviewed" && params?.row?.stageStatuses[params?.row?.currentStage]?.scheduledDate) || !canMove(params.row) || isClosed}
+        >
+          {!(params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Reviewed" && params?.row?.stageStatuses[params?.row?.currentStage]?.scheduledDate) && canMove(params.row) && !isClosed ?
             <IconWrapper icon={CircleCheck} size={0} customIconSize={5} />
             : <IconWrapper icon={CircleCheck} isInActiveIcon customIconSize={5} size={0} />}
-          </button>
-          <button
-            onClick={() => handleRejectClick(params.row)}
-            disabled={(params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Reviewed" && params?.row?.stageStatuses[params?.row?.currentStage]?.scheduledDate) || !canReject(params.row) || isClosed}
-          >
-            {!(params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Reviewed" && params?.row?.stageStatuses[params?.row?.currentStage]?.scheduledDate) && canReject(params.row) && !isClosed ? 
+        </button>
+        <button
+          onClick={() => handleRejectClick(params.row)}
+          disabled={(params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Reviewed" && params?.row?.stageStatuses[params?.row?.currentStage]?.scheduledDate) || !canReject(params.row) || isClosed}
+        >
+          {!(params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Reviewed" && params?.row?.stageStatuses[params?.row?.currentStage]?.scheduledDate) && canReject(params.row) && !isClosed ?
             <IconWrapper icon={CircleX} size={0} customIconSize={5} />
             : <IconWrapper icon={CircleX} isInActiveIcon customIconSize={5} size={0} />}
-          </button>
-          <button className={((params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Reviewed" && params?.row?.stageStatuses[params?.row?.currentStage]?.scheduledDate) || params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Rejected" || isClosed) ? "text-font-gray" : "text-white"} disabled={(params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Reviewed" && params?.row?.stageStatuses[params?.row?.currentStage]?.scheduledDate) || params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Rejected" || isClosed} onClick={(e) => handleRatingClick(e, params.row)}>
-            {getRatingIcon(params.row.rating)}
-          </button>
+        </button>
+        <button className={((params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Reviewed" && params?.row?.stageStatuses[params?.row?.currentStage]?.scheduledDate) || params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Rejected" || isClosed) ? "text-font-gray" : "text-white"} disabled={(params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Reviewed" && params?.row?.stageStatuses[params?.row?.currentStage]?.scheduledDate) || params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Rejected" || isClosed} onClick={(e) => handleRatingClick(e, params.row)}>
+          {getRatingIcon(params.row.rating)}
+        </button>
       </div>
     )
   },

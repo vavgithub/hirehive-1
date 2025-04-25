@@ -17,9 +17,8 @@ function ScoreChart({scoreData}) {
             borderRadius: 12,
             padding : [8 , 16, 8 , 16],
             textStyle: {
-              color: "#ffffff", // Text color
-              fontSize: 14,
-              fontFamily: "Outfit",
+    
+      
               fontWeight : 300,
             },
             formatter: (params) => {
@@ -68,7 +67,7 @@ function ScoreChart({scoreData}) {
       <>
           <ReactECharts option={options} onEvents={eventHandlers.current} style={{ height: 140, width: "100%" }} />
           {(hoveredSegment === "Screening" && hasScreening) &&
-          <StyledCard padding={2} extraStyles={`absolute left-0 -bottom-32 font-outfit w-full transition-opacity duration-200 ${hoveredSegment === "Screening" && hasScreening ? "opacity-100" : "opacity-0"}`}>
+          <StyledCard padding={2} extraStyles={`absolute left-0 -bottom-32 w-full transition-opacity duration-200 ${hoveredSegment === "Screening" && hasScreening ? "opacity-100" : "opacity-0"}`}>
               <ScreeningChart scoreData={hasScreening?.scoreObj} />
           </StyledCard>}
       </>

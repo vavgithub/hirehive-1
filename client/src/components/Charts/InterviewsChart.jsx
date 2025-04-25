@@ -11,9 +11,7 @@ function InterviewsChart({dataSet}) {
     },[dataSet])
 
     const options = {
-        textStyle: {
-            fontFamily: "Outfit, sans-serif"  // Apply Outfit font globally
-          },
+
         tooltip: {
           trigger: 'item',
           backgroundColor: "rgba(32, 33, 34, 1)", // Teal with transparency
@@ -24,11 +22,7 @@ function InterviewsChart({dataSet}) {
           axisPointer: {
             type: "none",
           },
-          textStyle: {
-            fontFamily: "Outfit, sans-serif", // Font for tooltip
-            fontSize: 12,
-            color : "white"
-          },
+          
           extraCssText: "min-width: 100px;"
         },
         legend: {

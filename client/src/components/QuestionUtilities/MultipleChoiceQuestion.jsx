@@ -109,7 +109,7 @@ const MultipleChoiceQuestion = ({ question, onUpdate, onDelete, onCopy, initialE
         </div>
       ))}
       <div className="flex justify-between items-center mt-2">
-        <div onClick={addOption} className='text-font-primary cursor-pointer typography-large-p font-outfit'>
+        <div onClick={addOption} className='text-font-primary cursor-pointer typography-large-p'>
           + Add Option
         </div>
       </div>

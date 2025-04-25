@@ -251,8 +251,8 @@ const Reviews = () => {
             })}
           </div>
         )) :
-        <div className='my-4 font-outfit flex flex-col items-center justify-center'>
-          <h2 className='font-bricolage typography-h2'>No Candidates</h2>
+        <div className='my-4 flex flex-col items-center justify-center'>
+          <h2 className='typography-h2'>No Candidates</h2>
           <p className='typography-small-p text-font-gray'>No candidate assigned for review</p>
         </div>
         }

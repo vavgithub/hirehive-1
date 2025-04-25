@@ -101,16 +101,16 @@ const ViewJob = () => {
                         <div className="md:w-3/4">
                             <h3 className='typography-h3'>Job Description</h3>
                             <div
-                                className="text-font-gray font-outfit"
+                                className="text-font-gray typography-body"
                                 dangerouslySetInnerHTML={{ __html: formatDescription(formData.jobDescription) }}
                             ></div>
 
                             {/* Skills section */}
                             <div>
-                                <h4 className="typography-h4 font-bold font-outfit mt-6 mb-3">Skills</h4>
+                                <h4 className="typography-h4 font-bold  mt-6 mb-3">Skills</h4>
                                 <div className="flex flex-wrap gap-3 mb-6">
                                     {formData.skills && formData.skills.map((skill, index) => (
-                                        <span key={index} className="flex font-outfit justify-center w-fit bg-background-70 px-6 py-2 rounded-full">
+                                        <span key={index} className="flex typography-body justify-center w-fit bg-background-70 px-6 py-2 rounded-full">
                                             {skill}
                                         </span>
                                     ))}

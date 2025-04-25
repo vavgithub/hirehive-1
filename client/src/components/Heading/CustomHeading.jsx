@@ -14,8 +14,8 @@ function CustomHeading({fontValue,fontSize,color,label,extraStyles = ""}) {
   }  
 
   const fonts = {
-    1 : "outfit",
-    2 : 'bricolage'
+    1 : "Gilroy",
+    2 : 'Gilroy'
   }
 
   const styles = `

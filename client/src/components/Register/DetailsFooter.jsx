@@ -16,7 +16,7 @@ function DetailsFooter({skipType,skipTitle,skipMessage,submissionError,isNextDis
             <Button disabled={isNextDisabled} type="button" variant="primary" onClick={nextFunction}>
                 Next
             </Button>
-            {submissionError && <span className='absolute left-0 -top-4 text-red-100 text-[10px] font-outfit whitespace-nowrap'>{submissionError}</span>}
+            {submissionError && <span className='absolute left-0 -top-4 text-red-100  typography-small-p whitespace-nowrap'>{submissionError}</span>}
             </div>
         }
         <Modal

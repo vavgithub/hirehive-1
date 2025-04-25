@@ -15,14 +15,12 @@ import { ClickableLinkPlugin } from '@lexical/react/LexicalClickableLinkPlugin'
 import { LinkPlugin as LexicalLinkPlugin } from '@lexical/react/LexicalLinkPlugin'
 
 const theme = {
-    paragraph: 'font-outfit',
     text : {
         underline : 'underline',
-        bold : 'font-bricolage text-white',
     },
     list : {
-        ol : 'ml-5 list-decimal font-outfit',
-        ul : "ml-5 list-disc font-outfit"
+        ol : 'ml-5 list-decimal ',
+        ul : "ml-5 list-disc "
     },
     link: 'text-blue-500 underline cursor-pointer hover:text-blue-700',
 }
@@ -65,7 +63,7 @@ function TextEditor({htmlData,loaded,errors,placeholder,setEditorContent}) {
 
     const CustomPlaceholder = useMemo(() => {
         return (
-            <div className='absolute top-[4rem] left-4 text-font-gray font-outfit '>
+            <div className='absolute top-[4rem] left-4 text-font-gray'>
                 {placeholder || "Enter some text..."} 
             </div>
         )
