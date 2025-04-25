@@ -333,7 +333,7 @@ function AddMembers({currentStep,setCurrentStep}) {
                 getRowClassName={(params) =>
                     params.indexRelativeToCurrentPage % 2 === 0 ? 'first-row' : 'second-row'
                 }
-                localeText={{ noRowsLabel: <p style={{fontFamily:"Gilroy"}}>No Candidates</p> }}
+                localeText={{ noRowsLabel: <p className='typography-body'>No Candidates</p> }}
 
                 hideFooterPagination
                 hideFooterSelectedRowCount 

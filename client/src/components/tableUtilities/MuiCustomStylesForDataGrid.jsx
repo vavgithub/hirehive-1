@@ -13,7 +13,6 @@ function MuiCustomStylesForDataGrid() {
                 .MuiDataGrid-root {
                     outline: none !important;                      
                     border: none !important;                
-                    font-style:"Gilroy" !important
                 }
             .MuiDataGrid-row {
                     border-radius : 0px !important;
@@ -24,7 +23,7 @@ function MuiCustomStylesForDataGrid() {
             }
             
             .MuiDataGrid-columnHeaderRow {
-                font-style:"Gilroy"
+        
                 color:"red",
             }    
             .MuiDataGrid-row .MuiDataGrid-checkboxInput {

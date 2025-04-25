@@ -360,7 +360,6 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
           sx={{
             backgroundColor: 'black', // Set the background color of each option
             color: 'white',           // Set the text color of each option
-            fontFamily: 'Gilroy',
             margin : "4px 0px",
            
           }}
