@@ -97,8 +97,8 @@ const ThreeDots = ({ job, handleAction, page, orgId, isPinned, role }) => {
 
   return (
     <div className="relative" ref={menuRef}>
-      <button onClick={toggleMenu} className="focus:outline-none flex items-center">
-        <IconWrapper icon={EllipsisVertical} customIconSize={7} customStrokeWidth={7} />
+      <button onClick={toggleMenu} className="focus:outline-none flex items-center ">
+        <IconWrapper hasBg customBgHover={'hover:bg-background-80'} icon={EllipsisVertical} customIconSize={7} customStrokeWidth={7} />
       </button>
       {isOpen && (
         <div className="absolute right-0 mt-2 w-48 bg-background-100 shadow-lg cursor-pointer z-50 rounded-xl  ">
