@@ -57,7 +57,7 @@ const BudgetFilter = ({ onApply, shouldReset }) => {
               placeholder="0"
               className="w-16 p-2 bg-background-40 text-left no-spinner rounded-xl"
             />
-            <span className="text-font-gray pr-2">LPA</span>
+            <span className="text-font-gray typography-body pr-2">LPA</span>
           </div>
         </div>
         <div className='flex flex-col'>
@@ -70,7 +70,7 @@ const BudgetFilter = ({ onApply, shouldReset }) => {
               placeholder="0"
               className="w-16 p-2 bg-background-40 text-left no-spinner rounded-xl"
             />
-            <span className="text-font-gray pr-2">LPA</span>
+            <span className="text-font-gray typography-body pr-2">LPA</span>
           </div>
         </div>
       </div>

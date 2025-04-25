@@ -11,7 +11,7 @@ export const ExperienceField = React.forwardRef(({ value, onChange ,required ,er
           label={label.charAt(0).toUpperCase() + label.slice(1)}
           value={value[label]}
           onChange={(newValue) => onChange({ ...value, [label]: newValue })}
-          unit="Yrs"
+          unit="yrs"
           ref={ref}
           required
         />

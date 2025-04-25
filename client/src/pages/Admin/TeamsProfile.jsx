@@ -141,7 +141,7 @@ function ProfessionalDetails({ memberData }) {
           </div>
           <div className="flex flex-col gap-6 typography-body">
             <p className="whitespace-nowrap overflow-hidden text-ellipsis">{memberData?.role}</p>
-            <p className="whitespace-nowrap overflow-hidden text-ellipsis">{memberData?.experience ?? 0} Yrs</p>
+            <p className="whitespace-nowrap overflow-hidden text-ellipsis">{memberData?.experience ?? 0} Years</p>
           </div>
         </div>
       </div>
