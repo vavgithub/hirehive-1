@@ -1,45 +1,8 @@
 // ApplyJob.jsx this is the component of every form field in the apply job page
 import React from 'react';
-import { Controller } from 'react-hook-form';
 import { validationRules } from '../../utility/validationRules';
 import { ProfilePictureUpload } from '../FormUtilities/ProfilePictureUpload';
-import { InputField } from '../Inputs/InputField';
-
-// Reusable form field component
-export const FormField = ({ 
-    name,
-    control,
-    rules,
-    label,
-    type = "text",
-    required = false,
-    extraClass = "",
-    ...props 
-  }) => {
-    // Add no-spinner class automatically for number inputs
-    const combinedExtraClass = `${type === 'number' ? 'no-spinner' : ''} ${extraClass}`.trim();
-
-    return (
-      <Controller
-        name={name}
-        control={control}
-        rules={rules}
-        render={({ field, fieldState: { error } }) => (
-          <InputField
-            id={name}
-            type={type}
-            label={label}
-            required={required}
-            error={error}
-            errorMessage={error?.message}
-            extraClass={combinedExtraClass}
-            {...field}
-            {...props}
-          />
-        )}
-      />
-    );
-  };
+import { FormField } from './FormField';
 
   export const ResumePortfolioSection = ({ control , isAuthenticated }) => {
     return (
