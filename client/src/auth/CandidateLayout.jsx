@@ -136,7 +136,7 @@ const CandidateLayout = () => {
             `w-full flex items-center ${isActive ? "text-font-accent" : ""} hover:bg-background-60 hover:text-font-accent px-4 py-2 rounded-xl `}
           >
             <IconWrapper inheritColor={true} size={0} customIconSize={5}  icon={User} />
-            <span className='typography-large ml-2'>
+            <span className='typography-large-p ml-2'>
               Profile
             </span>
           </NavLink>
@@ -147,7 +147,7 @@ const CandidateLayout = () => {
         content: () => (
           <div className='flex items-center hover:bg-background-60 hover:text-font-accent px-4 py-2 w-full rounded-xl'>
             <IconWrapper inheritColor={true} size={0} customIconSize={5}  icon={LogOut} />
-            <span className='typography-large ml-2'>
+            <span className='typography-large-p ml-2'>
               Logout
             </span>
           </div>
@@ -157,14 +157,14 @@ const CandidateLayout = () => {
 
     return (
       <>
-        <div className={`flex items-center px-2 mx-4 py-1 justify-start hover:bg-background-60 rounded-xl ${location.pathname === profilePath ? "bg-background-60" : ""}`}>
+        <div className={`flex items-center px-2 relative mx-4 py-1 justify-start hover:bg-background-60 rounded-xl ${location.pathname === profilePath ? "bg-background-60" : ""}`}>
           <IconButton onClick={handleMenuClick} className={`flex gap-2 ${location.pathname === profilePath ? "text-font-accent"
             : ""}`}>
             <Avatar alt={candidateData?.firstName} sx={{ width: "32px", height: "32px" }} src={candidateData?.profilePictureUrl || UNKNOWN_PROFILE_PICTURE_URL} />
             <span className={`typography-body  ${location.pathname === profilePath ? "text-font-accent"
               : "text-white"}`}>{candidateData?.firstName}</span>
           </IconButton>
-          <div className={`absolute right-2 w-1 h-6 rounded-tl-xl rounded-bl-xl ${location.pathname === profilePath
+          <div className={`absolute right-0 w-1 h-6 rounded-tl-xl rounded-bl-xl ${location.pathname === profilePath
             ? "bg-teal-400" : "bg-transparent"}`} />
         </div>
 
