@@ -257,7 +257,7 @@ const HomePage = () => {
                         </div>
                     </div>
                     {/* DummyDiv for pagination adjust based on ContactUs */}
-                    <div className='lg:w-full lg:h-20'></div>
+                    <div className='w-full lg:h-20 h-4'></div>
                     <ContactUs />
             </Container>
             //     </div>

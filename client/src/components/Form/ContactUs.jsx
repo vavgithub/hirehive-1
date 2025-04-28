@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import axios from 'axios';
 import { useForm } from 'react-hook-form';
@@ -10,6 +10,7 @@ import IconWrapper from '../Cards/IconWrapper';
 import { ChevronRight, Headset, Phone } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setCollapseContactUs } from '../../redux/candidateSlice';
+import { useMediaQuery } from 'react-responsive';
 
 
 const CLOUDINARY_URL_SS = import.meta.env.VITE_CLOUDINARY_URL_SS;
@@ -26,7 +27,18 @@ const ContactUs = () => {
 
   const collapse = useSelector(state => state.candidate.collapseContactUs);
   const dispatch = useDispatch();
-  
+
+  // Find if it is mobile-screen
+  const isSmallLayout = useMediaQuery({
+    query: '(max-width: 1024px)'
+  })
+
+  useEffect(()=>{
+    if(isSmallLayout){
+      dispatch(setCollapseContactUs(false))
+    }
+  },[isSmallLayout])
+
   // React Hook Form setup
   const {
     register,
@@ -338,7 +350,7 @@ const ContactUs = () => {
         extraStyles={`lg:fixed bottom-6 right-6 lg:bottom-6 lg:right-0  w-full lg:w-fit cursor-pointer hover:bg-background-60 shadow-[0px_0px_20px_rgba(100,100,100,0.1)] `}
         padding={2}
         style={{
-          maxWidth : collapse ? '5rem' : '20rem',
+          maxWidth : collapse ? '5rem' : '100%',
           transition: 'max-width 1s ease',
         }}
         borderRadius={'rounded-xl lg:rounded-l-xl   lg:rounded-r-none  '}
@@ -349,7 +361,7 @@ const ContactUs = () => {
         </>
         :
           <div className='flex items-center gap-2'>
-            <IconWrapper onClick={(e)=>{e.stopPropagation(); dispatch(setCollapseContactUs(true))}} size={0} customIconSize={7} icon={ChevronRight} />
+            <span className='hidden lg:inline-block'><IconWrapper onClick={(e)=>{e.stopPropagation(); dispatch(setCollapseContactUs(true))}} size={0} customIconSize={7} icon={ChevronRight} /></span>
             <div>
               <p className='typography-body mb-2  whitespace-nowrap'>Need Help?</p>
               <div className='flex items-center gap-2 text-primary-100'>
