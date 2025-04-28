@@ -160,7 +160,7 @@ const JobCard = ({
         {(job.status !== "deleted" && job.status !== "closed") &&
           <CustomBadge label={job?.jobProfile} paddingX={2} />}
         {withKebab && (
-          <ThreeDots job={job} handleAction={handleAction} page={page} isPinned={pinnedJobs?.includes(job?._id)} role={role} />
+          <ThreeDots job={job} handleAction={handleAction} extraStyles={'z-10'} page={page} isPinned={pinnedJobs?.includes(job?._id)} role={role} />
         )}
       </div>
     </div>
@@ -224,7 +224,7 @@ const JobCard = ({
           <p className="typography-body text-font-gray mr-2 whitespace-nowrap">
             This job post has been closed 
           </p>
-          <div className='absolute top-0 z-30 right-0'>
+          <div className='absolute top-0 z-0 right-0'>
             <ClosedBadge />
           </div>
         </div>

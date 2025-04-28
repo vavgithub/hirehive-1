@@ -39,7 +39,7 @@ const MenuItems = {
   ]
 };
 
-const ThreeDots = ({ job, handleAction, page, orgId, isPinned, role }) => {
+const ThreeDots = ({ job, handleAction, page, orgId, isPinned, role , extraStyles}) => {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef(null);
 
@@ -96,7 +96,7 @@ const ThreeDots = ({ job, handleAction, page, orgId, isPinned, role }) => {
   };
 
   return (
-    <div className="relative" ref={menuRef}>
+    <div className={" relative " + extraStyles} ref={menuRef}>
       <button onClick={toggleMenu} className="focus:outline-none flex items-center ">
         <IconWrapper hasBg customBgHover={'hover:bg-background-80'} icon={EllipsisVertical} customIconSize={7} customStrokeWidth={7} />
       </button>
