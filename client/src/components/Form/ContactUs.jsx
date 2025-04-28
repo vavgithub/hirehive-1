@@ -6,6 +6,10 @@ import { Button } from '../Buttons/Button';
 import StyledCard from '../Cards/StyledCard';
 import Loader from '../Loaders/Loader';
 import Modal from '../Modals/Modal';
+import IconWrapper from '../Cards/IconWrapper';
+import { ChevronRight, Headset, Phone } from 'lucide-react';
+import { useDispatch, useSelector } from 'react-redux';
+import { setCollapseContactUs } from '../../redux/candidateSlice';
 
 
 const CLOUDINARY_URL_SS = import.meta.env.VITE_CLOUDINARY_URL_SS;
@@ -20,6 +24,9 @@ const ContactUs = () => {
   const [showLoader, setShowLoader] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
+  const collapse = useSelector(state => state.candidate.collapseContactUs);
+  const dispatch = useDispatch();
+  
   // React Hook Form setup
   const {
     register,
@@ -327,25 +334,31 @@ const ContactUs = () => {
 
 
       <StyledCard
-        onClick={toggleModal}
-        extraStyles={`lg:fixed bottom-6 right-6 lg:bottom-0 lg:right-0  w-full lg:w-fit cursor-pointer hover:bg-background-60`}
+        onClick={collapse ? null : toggleModal}
+        extraStyles={`lg:fixed bottom-6 right-6 lg:bottom-6 lg:right-0  w-full lg:w-fit cursor-pointer hover:bg-background-60 shadow-[0px_0px_20px_rgba(100,100,100,0.1)] `}
         padding={2}
-        borderRadius={'rounded-xl lg:rounded-tl-xl  lg:rounded-bl-none lg:rounded-r-none  '}
+        style={{
+          maxWidth : collapse ? '5rem' : '20rem',
+          transition: 'max-width 1s ease',
+        }}
+        borderRadius={'rounded-xl lg:rounded-l-xl   lg:rounded-r-none  '}
       >
-        <p className='typography-body mb-2  '>Need Help?</p>
-        <div className='flex items-center gap-2'>
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <g clip-path="url(#clip0_6602_234551)">
-              <path d="M14.6689 11.2827V13.2827C14.6697 13.4683 14.6316 13.6521 14.5572 13.8222C14.4829 13.9924 14.3738 14.1451 14.237 14.2706C14.1001 14.3961 13.9386 14.4917 13.7627 14.5511C13.5869 14.6106 13.4005 14.6327 13.2156 14.616C11.1641 14.3931 9.19357 13.6921 7.46223 12.5693C5.85145 11.5458 4.48579 10.1801 3.46223 8.56934C2.33555 6.83014 1.6344 4.85 1.41557 2.78934C1.39891 2.60498 1.42082 2.41918 1.4799 2.24375C1.53898 2.06833 1.63395 1.90713 1.75874 1.77042C1.88354 1.6337 2.03544 1.52448 2.20476 1.44968C2.37409 1.37489 2.55713 1.33618 2.74223 1.336H4.74223C5.06577 1.33282 5.37943 1.44739 5.62474 1.65836C5.87006 1.86933 6.03029 2.1623 6.07557 2.48267C6.15998 3.12271 6.31653 3.75115 6.54223 4.356C6.63193 4.59462 6.65134 4.85395 6.59817 5.10326C6.545 5.35257 6.42148 5.58141 6.24223 5.76267L5.39557 6.60934C6.3446 8.27837 7.72654 9.6603 9.39557 10.6093L10.2422 9.76267C10.4235 9.58343 10.6523 9.4599 10.9016 9.40673C11.151 9.35356 11.4103 9.37297 11.6489 9.46267C12.2537 9.68837 12.8822 9.84492 13.5222 9.92934C13.8461 9.97502 14.1418 10.1381 14.3533 10.3877C14.5647 10.6372 14.677 10.9557 14.6689 11.2827Z" stroke="#045FFD" strokeLinecap="round" strokeLinejoin="round" />
-            </g>
-            <defs>
-              <clipPath id="clip0_6602_234551">
-                <rect width="16" height="16" fill="white" />
-              </clipPath>
-            </defs>
-          </svg>
-          <p className='typography-small-p text-primary-100' >Connect with support team</p>
-        </div>
+        { collapse ?
+        <>
+          <IconWrapper onClick={(e)=>{e.stopPropagation(); dispatch(setCollapseContactUs(false))}} icon={Headset} />
+        </>
+        :
+          <div className='flex items-center gap-2'>
+            <IconWrapper onClick={(e)=>{e.stopPropagation(); dispatch(setCollapseContactUs(true))}} size={0} customIconSize={7} icon={ChevronRight} />
+            <div>
+              <p className='typography-body mb-2  whitespace-nowrap'>Need Help?</p>
+              <div className='flex items-center gap-2 text-primary-100'>
+                <IconWrapper  size={0} inheritColor customIconSize={2} icon={Phone} />
+                <p className='typography-small-p  whitespace-nowrap' >Connect with support team</p>
+              </div>
+            </div>
+          </div>
+        }
       </StyledCard>
 
 

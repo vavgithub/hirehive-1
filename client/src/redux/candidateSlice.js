@@ -3,6 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   candidateData: null,
+  collapseContactUs : false,
   loading: false,
   error: null,
 };
@@ -23,8 +24,11 @@ const candidateSlice = createSlice({
       state.error = action.payload;
       state.loading = false;
     },
+    setCollapseContactUs : (state,action) => {
+      state.collapseContactUs = action.payload
+    }
   },
 });
 
-export const { setCandidateData, setLoading, setError } = candidateSlice.actions;
+export const { setCandidateData, setLoading, setError , setCollapseContactUs } = candidateSlice.actions;
 export default candidateSlice.reducer;
