@@ -11,6 +11,7 @@ import {
   submitQuestionnaireAttempt,
   toggleShortlistCandidate,
   updateCandidateProfessionalDetails,
+  updateCandidateProfile,
   updateStatusAndStage,
   uploadAssessmentRecording,
 } from "../../controllers/admin/candidate.controller.js";
@@ -35,6 +36,7 @@ router.patch("/update-candidate/:id/:jobId",protect, roleProtect(["Hiring Manage
 router.get("/:candidateId/jobs",protect, roleProtect(["Admin","Hiring Manager"]), getCandidateJobs);
 
 router.patch("/update/:id", updateStatusAndStage);
+router.patch("/update-candidate-profile/:id" , protect, roleProtect(["Hiring Manager","Admin"]), updateCandidateProfile);
 
 router.get("/questions/random", getRandomQuestions);
 

@@ -666,7 +666,7 @@ function Profile() {
             </div>
           </div>
           {isEditing &&
-            <div className="place-self-end flex gap-4 mt-4">
+            <div className="place-self-end flex gap-4 mt-4 lg:mb-20">
               <Button onClick={() => setIsEditing(false)} type="button" variant="secondary" >Cancel</Button>
               <Button
                 type="Submit"

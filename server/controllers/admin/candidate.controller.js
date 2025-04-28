@@ -9,6 +9,7 @@ import path from "path";
 import { sanitizeLexicalHtml } from "../../utils/sanitize-html.js";
 import { getPreviousMonthRange, getPreviousWeekRange, getYesterdayTodayRange } from "../../utils/dateRanges.js";
 import mongoose from "mongoose";
+import { EMAIL_REGEX } from "../../utils/validator.js";
 
 // controllers/candidate.controller.js
 
@@ -257,6 +258,71 @@ export const updateCandidateProfessionalDetails = async (req, res) => {
     );
 
     res.status(200).json({ message: "Candidate details updated successfully" });
+  } catch (error) {
+    res
+      .status(400)
+      .json({ message: "Error updating candidate", error: error.message });
+  }
+};
+
+export const updateCandidateProfile = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { 
+      firstName,
+      lastName , 
+      email , 
+      phone, 
+      portfolio, 
+      website , 
+      experience , 
+      currentCTC ,
+      expectedCTC , 
+      noticePeriod } = req.body;
+
+    // Validate mandatory text fields
+    if (
+      !firstName?.trim() ||
+      !lastName?.trim() ||
+      !email?.trim() || 
+      !EMAIL_REGEX.test(email) || 
+      !phone?.trim() ||
+      !portfolio?.trim()
+    ) {
+      return res.status(400).json({ message: "All required fields must be provided and not empty" });
+    }
+
+    // Validate numeric fields
+    if (
+      isNaN(Number(experience)) ||
+      isNaN(Number(currentCTC)) ||
+      isNaN(Number(expectedCTC)) ||
+      isNaN(Number(noticePeriod))
+    ) {
+      return res.status(400).json({ message: "Numeric fields must be valid numbers" });
+    }
+
+    const updatedCandidate = await candidates.findByIdAndUpdate(id, 
+      {
+          firstName,
+          lastName,
+          email,
+          phone,
+          portfolio,
+          website,
+          experience,
+          currentCTC,
+          expectedCTC,
+          noticePeriod
+      }, {
+      new: true,
+    });
+
+    if (!updatedCandidate) {
+      return res.status(404).json({ message: "Candidate not found" });
+    }
+
+    res.status(200).json(updatedCandidate);
   } catch (error) {
     res
       .status(400)

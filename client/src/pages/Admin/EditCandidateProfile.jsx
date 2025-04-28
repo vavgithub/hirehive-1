@@ -28,7 +28,7 @@ const EditCandidateProfile = () => {
   });
 
   const updateCandidateMutation = useMutation({
-    mutationFn: (updatedData) => axios.patch(`/admin/candidate/update/${mainId}`, updatedData),
+    mutationFn: (updatedData) => axios.patch(`/admin/candidate/update-candidate-profile/${mainId}`, updatedData),
     onSuccess: () => {
       queryClient.invalidateQueries(['candidate', mainId]);
       showSuccessToast(`Data Updated Successfully`)

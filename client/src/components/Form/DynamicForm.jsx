@@ -40,8 +40,22 @@ const DynamicForm = ({
   });
 
   useEffect(() => {
-    reset(initialData);
-  }, [initialData, reset]);
+    // Build a list of allowed field names from formSections
+    const allowedFields = formSections.flatMap(section =>
+      section.fields.map(field => field.name)
+    );
+  
+    // Filter initialData to only include allowed fields
+    const filteredData = {};
+    allowedFields.forEach((fieldName) => {
+      if (initialData.hasOwnProperty(fieldName)) {
+        filteredData[fieldName] = initialData[fieldName];
+      }
+    });
+  
+    reset(filteredData);
+  }, [initialData, reset, formSections]);
+  
 
   const handleFormSubmit = async () => {
     const isValid = await trigger(); // validate all fields
