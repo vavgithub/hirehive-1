@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react'
 import IconWrapper from '../Cards/IconWrapper';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { scrollToTop } from '../../utility/scrollUtilities';
 
 function Pagination({currentPage, pageLimit , totalItems ,setCurrentPage}) {
   const numberOfPages = Math.ceil(totalItems/pageLimit);
@@ -23,21 +24,37 @@ function Pagination({currentPage, pageLimit , totalItems ,setCurrentPage}) {
     return pages
   },[numberOfPages,currentPage])
 
+  const handlePrev = () => {
+    scrollToTop()
+    setCurrentPage(prev => prev - 1)
+  }
+  
+  const handleNext = () => {
+    scrollToTop()
+    setCurrentPage(prev => prev + 1)
+  }
+  
+  const handleItemClick = (item) => {
+    scrollToTop()
+    setCurrentPage(item)
+  }
+  
+
   return totalItems ? (
     <div className=' flex justify-between'>
       <div>
       <p className='typography-body text-font-gray flex gap-2'>Showing <span className='text-white'>{resultValue} {resultValue > 1 ? " results" : " result"}</span> of <span className='text-white'>{totalItems}</span></p>
       </div>
       <div className='flex items-center gap-4'>
-          <div onClick={currentPage > 1 ? ()=> setCurrentPage(prev => prev - 1) : null} className={currentPage > 1 ? "text-white cursor-pointer" : "text-font-gray"}>
+          <div onClick={currentPage > 1 ? handlePrev : null} className={currentPage > 1 ? "text-white cursor-pointer" : "text-font-gray"}>
             <IconWrapper icon={ChevronLeft} size={0} customIconSize={5} customStrokeWidth={5} />
           </div>
             {
               getVisibilePageNumbers?.map(item =>{
-                return <p key={item} onClick={()=>setCurrentPage(item)} className={currentPage === item ? "text-white cursor-pointer" : "text-font-gray cursor-pointer"}>{item}</p>
+                return <p key={item} onClick={() => handleItemClick(item)} className={currentPage === item ? "text-white cursor-pointer" : "text-font-gray cursor-pointer"}>{item}</p>
               })
             }
-          <div onClick={currentPage !== numberOfPages ? ()=>setCurrentPage(prev => prev + 1) : null} className={currentPage === numberOfPages ? "text-font-gray" : "text-white cursor-pointer"}>
+          <div onClick={currentPage !== numberOfPages ? handleNext : null} className={currentPage === numberOfPages ? "text-font-gray" : "text-white cursor-pointer"}>
             <IconWrapper icon={ChevronRight} size={0} customIconSize={5} customStrokeWidth={5} />
           </div>
       </div>

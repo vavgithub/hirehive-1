@@ -50,7 +50,7 @@ const AllJobs = () => {
     }, []);
 
     const [page, setPage] = useState(1);
-    const PAGE_LIMIT = 3;
+    const PAGE_LIMIT = 5;
 
     const [searchQuery, setSearchQuery] = useState('');
     const [filters, setFilters] = useState({
@@ -242,6 +242,8 @@ const AllJobs = () => {
                                 (debouncedQuery.length > 0 || isFiltered) ? filteredData?.filteredSearchJobsCount : jobData?.totalOpenJobs
                             }
                         />
+                        {/* DummyDiv for pagination adjust based on ContactUs */}
+                        <div className='lg:w-full lg:h-12'></div>
                         <ContactUs />
                     </div>
                 </StyledCard>

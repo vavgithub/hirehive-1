@@ -47,7 +47,7 @@ const Jobs = () => {
     const queryClient = useQueryClient();
 
     const [page, setPage] = useState(1);
-    const PAGE_LIMIT = 3;
+    const PAGE_LIMIT = 5;
 
     const [debouncedQuery] = useDebounce(searchQuery);
     

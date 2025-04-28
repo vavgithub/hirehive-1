@@ -50,7 +50,7 @@ const CompanyHome = () => {
     });
 
     const [page,setPage] = useState(1);
-    const PAGE_LIMIT = 3;
+    const PAGE_LIMIT = 5;
 
     const [debouncedQuery] = useDebounce(searchQuery);
 
@@ -255,6 +255,8 @@ const CompanyHome = () => {
                             />
                         </div>
                     </div>
+                    {/* DummyDiv for pagination adjust based on ContactUs */}
+                    <div className='lg:w-full lg:h-20'></div>
                     <ContactUs />
             </Container>
             //     </div>

@@ -722,7 +722,7 @@ const getJobs = async (req, res) => {
   try {
     const { page, status , pinned } = req.query;
     const pageNumber = page ? parseInt(page) : 1;
-    const LIMIT = 3;
+    const LIMIT = 5;
 
     let pinnedIds = pinned ? JSON.parse(pinned) : [];
     let closedPins = []
@@ -1264,7 +1264,7 @@ const filterSearchJobs = asyncHandler(async (req, res) => {
     const query = { createdBy: { $in: userIds }  };
     const { page, status } = req.body;
     const pageNumber = page ? parseInt(page) : 1;
-    const LIMIT = 3;
+    const LIMIT = 5;
 
     const searchTerm = req.body?.query ?? "";
     query.jobTitle = { $regex: searchTerm, $options: "i" };

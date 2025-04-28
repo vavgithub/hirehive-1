@@ -22,7 +22,7 @@ const fetchAppliedJobs = async (page) => {
 const MyJobs = () => {
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
-  const PAGE_LIMIT = 3;
+  const PAGE_LIMIT = 5;
 
   // Replace useAuthCandidate with Redux selector
   const { candidateAuthData } = useSelector((state) => state.candidateAuth);

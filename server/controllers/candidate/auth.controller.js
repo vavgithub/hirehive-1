@@ -879,7 +879,7 @@ export const getCandidateAppliedJobs = async (req, res) => {
     // });
     const { page } = req.query;
     const pageNumber = page ? parseInt(page) : 1;
-    const LIMIT = 3;
+    const LIMIT = 5;
 
     const candidate = await Candidate.aggregate([
       // Match the candidate by ID

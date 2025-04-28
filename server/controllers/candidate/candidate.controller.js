@@ -149,7 +149,7 @@ const fetchActiveJobs = async (req, res) => {
   try {
     const { page ,companyId } = req.query;
     const pageNumber = page ? parseInt(page) : 1;
-    const LIMIT = 3;
+    const LIMIT = 5;
 
     let userIds = [];
     let companyDetails = {};
@@ -565,7 +565,7 @@ const filterSearchJobs = asyncHandler(async (req, res) => {
 
   const { page , companyId } = req.body;
   const pageNumber = page ? parseInt(page) : 1;
-  const LIMIT = 3;
+  const LIMIT = 5;
 
   //Search
   const searchTerm = req.body?.query ?? "";
