@@ -1,3 +1,4 @@
+import moment from "moment-timezone";
 import { jobStagesStatuses } from "../../config/jobStagesStatuses.js";
 import { jobs } from "../../models/admin/jobs.model.js";
 import { User } from "../../models/admin/user.model.js";
@@ -1122,9 +1123,25 @@ export const sendDesignTask = async (req, res) => {
       return res.status(404).json({ message: "Job application not found" });
     }
     if(scheduledDate && scheduledTime){
-      const [hour,minutes] = scheduledTime?.split(":");
-      const mailScheduledDate = new Date(scheduledDate);
-      mailScheduledDate.setHours(hour,minutes,0,0);
+      // const [hour,minutes] = scheduledTime?.split(":");
+      // const mailScheduledDate = new Date(scheduledDate);
+      // mailScheduledDate.setHours(hour,minutes,0,0);
+      // console.log(scheduledDate, scheduledTime);
+
+      // Step 1: Parse the scheduledDate in UTC
+      const parsedScheduledDate = moment.utc(scheduledDate);
+      
+      // Step 2: Extract the hour and minute from scheduledTime (e.g., "13:30" means 1:30 PM IST)
+      const [hour, minute] = scheduledTime.split(':').map(Number);
+      
+      // Step 3: Set the scheduled time as **IST** (Indian Standard Time)
+      const localTimeInIST = parsedScheduledDate
+        .set({ hour, minute, second: 0, millisecond: 0 })
+        .tz('Asia/Kolkata', true);  // Use timezone conversion to IST (Asia/Kolkata)
+      
+      // Step 4: Convert to UTC (which adjusts for the offset)
+      const mailScheduledDate = localTimeInIST.utc().toDate();
+
 
       // Update the Design Task stage status
       jobApplication.stageStatuses.set("Design Task", {
