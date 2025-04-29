@@ -10,7 +10,7 @@ html{
 
 @font-face {
   font-family: 'Gilroy';
-  src: url('/src/fonts/Gilroy.otf') format('opentype');
+  src: url('/src/fonts/Gilroy.ttf') format('opentype');
 }
 
 @layer utilities {
