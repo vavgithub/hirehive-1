@@ -44,7 +44,7 @@ const Header = ({
                             <BackButton />
                         </div>
                     )}
-                    <h1 className="typography-h2 md:typography-h1 w-full overflow-hidden whitespace-nowrap text-ellipsis">
+                    <h1 className="typography-h1 md:typography-h1 w-full overflow-hidden whitespace-nowrap text-ellipsis">
                         {HeaderText}
                     </h1>
                 </div>

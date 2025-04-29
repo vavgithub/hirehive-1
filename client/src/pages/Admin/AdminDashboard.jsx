@@ -219,9 +219,9 @@ function AdminDashboard() {
             </div>
             <div>
                 <h2 className='typography-h2 text-center'>{dashboardDetails?.companyDetails?.name}</h2>
-                <p className='text-font-gray typography-small-p flex gap-2 items-center justify-center'>{LocationOptions.find(data=>data.value === dashboardDetails?.companyDetails?.location)?.label} <span className='w-1 h-1 bg-font-gray rounded-full'></span>{industryTypeOptions.find(data=>data.value === dashboardDetails?.companyDetails?.industryType)?.label} </p>
+                <p className='text-font-gray typography-large-p flex gap-2 items-center justify-center'>{LocationOptions.find(data=>data.value === dashboardDetails?.companyDetails?.location)?.label} <span className='w-1 h-1 bg-font-gray rounded-full'></span>{industryTypeOptions.find(data=>data.value === dashboardDetails?.companyDetails?.industryType)?.label} </p>
             </div>
-            <div className='typography-small-p w-full flex flex-col gap-2'>
+            <div className='typography-large-p w-full flex flex-col gap-2'>
                 <p className='flex justify-between w-full'><span className='text-font-gray'>Employees</span> <span>{dashboardDetails?.members?.length ?? 0}</span></p>
                 <p className='flex justify-between w-full'><span className='text-font-gray'>Active Jobs</span> <span>{dashboardDetails?.activeJobs ?? 0}</span></p>
                 <p className='flex justify-between w-full'><span className='text-font-gray'>Applications Recieved</span> <span>{dashboardDetails?.applications?.totalApplicationsCount ?? 0}</span></p>

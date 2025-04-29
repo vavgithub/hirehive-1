@@ -5,7 +5,7 @@ function StyledCard({children,onClick,extraStyles,padding,rounded,backgroundColo
   let valueSteps = {
     0 : "0",
     1 : "2",
-    2 : "4",
+    2 : "8",
     3 : "6",
     4 : "8"
   }

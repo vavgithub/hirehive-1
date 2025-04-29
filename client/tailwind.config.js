@@ -144,7 +144,7 @@ export default {
         // outfit: ["Outfit", "sans-serif"],
       },
       fontSize: {
-        h1: ["2rem", { lineHeight: "54px" }],
+        h1: ["2rem", { lineHeight: "1" }],
         h2: ["1.5rem", { lineHeight: "1" }],
         h3: ["1.25rem", { lineHeight: "1.5" }],
         body: ["0.875rem", { lineHeight: "1.5" }],
