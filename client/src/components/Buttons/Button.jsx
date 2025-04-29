@@ -21,7 +21,7 @@ const Button = React.forwardRef(({
 }, ref) => {
   const Comp = asChild ? React.Fragment : "button";
 
-  const baseStyles = "inline-flex items-center justify-center gap-2 rounded-xl font-medium typography-body  transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background";
+  const baseStyles = "inline-flex items-center justify-center gap-2 rounded-xl typography-body  transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background";
 
   const variants = {
     primary: "bg-blue-100 text-white typography-body hover:bg-blue-200",
