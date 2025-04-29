@@ -144,7 +144,7 @@ export default {
         h1: ["36px", { lineHeight: "54px" }],
         h2: ["24px", { lineHeight: "36px" }],
         h3: ["20px", { lineHeight: "150%" }],
-        body: ["16px", { lineHeight: "150%" }],
+        body: ["14px", { lineHeight: "150%" }],
         marks: ["80px", { lineHeight: "150%" }],
         "display-d2": ["42px", { lineHeight: "110%" }],
         "small-p": ["12px", { lineHeight: "150%" }],
