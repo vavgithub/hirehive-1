@@ -79,7 +79,7 @@ const AdminLayout = () => {
                 {({ isActive, isPending }) => (
                     <div className='flex items-center'>
                         {isActive || isPending ? <ActiveIcon count={iconData} /> : <Icon count={iconData} />}
-                        <span>{children}</span>
+                        <span className= 'typography-body'>{children}</span>
                     </div>
                 )}
             </NavLink>
@@ -151,25 +151,19 @@ const AdminLayout = () => {
         if (user?.role === 'Hiring Manager') {
             return (
                 <>
-                    {/* <NavItem to="/admin/dashboard" icon={DashboardIcon} activeIcon={DashboardIconActive}>Dashboard</NavItem> */}
-                    <NavItem to="/hiring-manager/jobs" icon={() => <IconWrapper isInActiveIcon icon={Briefcase} />} activeIcon={() => <IconWrapper isActiveIcon icon={Briefcase} />}><span> Jobs </span> </NavItem>
+                    <NavItem to="/hiring-manager/jobs" icon={() => <IconWrapper isInActiveIcon icon={Briefcase} />} activeIcon={() => <IconWrapper isActiveIcon icon={Briefcase} />}> Jobs </NavItem>
                     <NavItem to="/hiring-manager/candidates" icon={() => <IconWrapper isInActiveIcon icon={Users} />} activeIcon={() => <IconWrapper isActiveIcon icon={Users} />}>Candidates</NavItem>
-                    {/* <NavItem to="/admin/reviews" icon={ReviewsIcon} activeIcon={ReviewsIconActive}>Reviews</NavItem>
-                    <NavItem to="/admin/reports" icon={ReportsIcon} activeIcon={ReportsIconActive}>Reports</NavItem> */}
                 </>
             );
         }
         if (user?.role === 'Admin') {
             return (
                 <>
-                    <NavItem to="/admin/dashboard" icon={() => <IconWrapper isInActiveIcon icon={LayoutGrid} />} activeIcon={() => <IconWrapper isActiveIcon icon={LayoutGrid} />}> <span className='typography-body'>Dashboard </span> </NavItem>
+                    <NavItem to="/admin/dashboard" icon={() => <IconWrapper isInActiveIcon icon={LayoutGrid} />} activeIcon={() => <IconWrapper isActiveIcon icon={LayoutGrid} />}> Dashboard </NavItem>
                     <NavItem to="/admin/jobs" icon={() => <IconWrapper isInActiveIcon icon={Briefcase} />} activeIcon={() => <IconWrapper isActiveIcon icon={Briefcase} />}>Jobs</NavItem>
                     <NavItem to="/admin/candidates" icon={() => <IconWrapper isInActiveIcon icon={Users} />} activeIcon={() => <IconWrapper isActiveIcon icon={Users} />}>All Candidates</NavItem>
                     <NavItem to="/admin/shortlisted" icon={() => <IconWrapper isInActiveIcon icon={MonitorDot} />} activeIcon={() => <IconWrapper isActiveIcon icon={MonitorDot} />}>Future Gems</NavItem>
                     <NavItem to="/admin/teams" hasHighlighter={newMembersCount > 0} icon={() => <IconWrapper isInActiveIcon icon={FileText} />} activeIcon={() => <IconWrapper isActiveIcon icon={FileText} />}>Teams</NavItem>
-                    {/* <NavItem to="/admin/reviews" icon={ReviewsIcon} activeIcon={ReviewsIconActive}>Reviews</NavItem> */}
-                    {/* <NavItem to="/admin/reviews" icon={ReviewsIcon} activeIcon={ReviewsIconActive}>Reviews</NavItem>
-                    <NavItem to="/admin/reports" icon={ReportsIcon} activeIcon={ReportsIconActive}>Reports</NavItem> */}
                 </>
             );
         }
