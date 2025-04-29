@@ -16,6 +16,7 @@ import {NotificationIcon, NotificationIconActive} from '../svg/Staging/Notificat
 import {SettingsIcon, SettingsIconActive} from '../svg/Staging/SettingsIcon';
 import StyledMenu from './ui/StyledMenu';
 import { BookmarkFilledIcon, BookmarkIcon } from '../svg/Checkboxes/BookmarkIcons';
+import HotjarPageTracker from '../utility/HotjarPageTracker';
 
 const Navbar = () => {
     const navigate = useNavigate();
@@ -188,7 +189,7 @@ const Navbar = () => {
                     {user && renderProfileMenu()}
                 </div>
             </div>
-
+                <HotjarPageTracker/>
             <div className='ml-[16rem] w-[calc(100vw-16rem)] flex justify-center min-h-screen'>
                 <Outlet />
             </div>

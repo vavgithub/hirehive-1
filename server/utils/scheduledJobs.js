@@ -10,7 +10,7 @@ const updateCallStatuses = async () => {
   const now = new Date();
   const stages = ['Screening', 'Round 1', 'Round 2'];
 
-  console.log(`Job running at server time: ${now.toISOString()}`);
+  console.log(`Job running at server time: ${now}`);
 
   try {
     for (const stage of stages) {
