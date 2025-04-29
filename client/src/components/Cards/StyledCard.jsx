@@ -11,7 +11,7 @@ function StyledCard({children,onClick,extraStyles,padding,rounded,backgroundColo
   }
 
   const styles = 
-  ` ${padding?.toString() ? `p-${valueSteps[padding]}` : 'p-6'} ${backgroundColor ? backgroundColor : 'bg-background-90'} ${borderRadius ? borderRadius : "rounded-xl"} 
+  ` ${padding?.toString() ? `p-${valueSteps[padding]}` : 'p-8'} ${backgroundColor ? backgroundColor : 'bg-background-90'} ${borderRadius ? borderRadius : "rounded-xl"} 
   `
 
   return (

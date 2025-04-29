@@ -223,10 +223,10 @@ input[type='number'] {
 
 @layer components {
   .typography-h1 {
-    @apply font-gilroy text-h1 font-bold;
+    @apply font-gilroy text-h1 font-bold uppercase tracking-0.5rem;;
   }
   .typography-h2 {
-    @apply font-gilroy text-h2 font-h2;
+    @apply font-gilroy text-h2 font-h2 pb-4;
   }
   .typography-h3 {
     @apply font-gilroy text-h3 font-semibold;

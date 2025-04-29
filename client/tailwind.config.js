@@ -15,6 +15,9 @@ export default {
       },
     },
     extend: {
+      letterSpacing: {
+        '0.5rem': '0.5rem', // Add this line
+      },
       animation: {
         "bounce-5": "bounce 0.5s infinite",
       },
@@ -141,14 +144,14 @@ export default {
         // outfit: ["Outfit", "sans-serif"],
       },
       fontSize: {
-        h1: ["36px", { lineHeight: "54px" }],
-        h2: ["24px", { lineHeight: "36px" }],
-        h3: ["20px", { lineHeight: "150%" }],
-        body: ["14px", { lineHeight: "150%" }],
-        marks: ["80px", { lineHeight: "150%" }],
-        "display-d2": ["42px", { lineHeight: "110%" }],
-        "small-p": ["12px", { lineHeight: "150%" }],
-        "large-p": ["14px", { lineHeight: "20.3px" }],
+        h1: ["2rem", { lineHeight: "54px" }],
+        h2: ["1.5rem", { lineHeight: "1" }],
+        h3: ["1.25rem", { lineHeight: "1.5" }],
+        body: ["0.875rem", { lineHeight: "1.5" }],
+        marks: ["5rem", { lineHeight: "1.5" }],
+        "display-d2": ["2.625rem", { lineHeight: "1.1" }],
+        "small-p": ["0.75rem", { lineHeight: "1.5" }],
+        "large-p": ["0.875rem", { lineHeight: "1" }],
       },
       fontWeight: {
         h1: "700",
