@@ -129,7 +129,8 @@ const Table = ({
     if (searchTerm) {
       result = result.filter(row =>
         `${row.firstName} ${row.lastName}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        row.email.toLowerCase().includes(searchTerm.toLowerCase())
+        row.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        row.phone.toLowerCase().includes(searchTerm.toLowerCase()) 
       );
     }
 
@@ -502,7 +503,7 @@ const Table = ({
         <div className='flex gap-4 items-center'>
           <input
             type="text"
-            placeholder="Search by name or email"
+            placeholder="Search by name or email or phone"
             className='min-w-[300px]'
             value={searchTerm}
             onChange={handleSearch}
