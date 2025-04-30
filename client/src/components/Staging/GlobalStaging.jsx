@@ -33,6 +33,7 @@ import { useNavigate } from 'react-router-dom';
 import IconWrapper from '../Cards/IconWrapper.jsx';
 import { Calendar, Clock, Copy, DatabaseZap, Link } from 'lucide-react';
 import useAuth from '../../hooks/useAuth.jsx';
+import { formatUTCToLocalTimeAuto, UTCToDateFormatted } from '../../utility/timezoneConverter.js';
 
 const submitReview = async ({ candidateId, reviewData }) => {
     const response = await axios.post('dr/submit-score-review', {
@@ -345,7 +346,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
                 <div className={(isRescheduled && "text-font-gray ") + ' flex items-center gap-2'}>
                     <IconWrapper icon={Calendar} size={0} customIconSize={5} isInActiveIcon={true} customStrokeWidth={4} />
                     <h2 className={isRescheduled && 'typography-body'}>
-                        {new Date(call?.scheduledDate).toLocaleDateString('en-gb', { timeZone: 'UTC' })}
+                        {UTCToDateFormatted(call.scheduledDate)}
                     </h2>
                 </div>
             </div>
@@ -355,7 +356,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
                 <div className={(isRescheduled && "text-font-gray ") + ' flex items-center gap-2'}>
                     <IconWrapper icon={Clock} size={0} customIconSize={5} isInActiveIcon={true} customStrokeWidth={4} />
                     <h2 className={isRescheduled && 'typography-body'}>
-                        {formatTime(call?.scheduledTime)}
+                        {formatUTCToLocalTimeAuto(call.scheduledDate)}
                     </h2>
                 </div>
             </div>
@@ -479,14 +480,14 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
         {
             (stageBasedConfig?.hasScheduledLabel && stageData?.scheduledDate && stageTitle === "Design Task" && currentStatus === "Pending") &&
             <div className='mt-4'>
-            <Label icon={WarningIcon} text={`Design Task mail is Scheduled for ${formatIntoLocaleString(stageData?.scheduledDate)}`}/>
+            <Label icon={WarningIcon} text={`Design Task mail is Scheduled for ${UTCToDateFormatted(stageData.scheduledDate)} ${formatUTCToLocalTimeAuto(stageData.scheduledDate)}`}/>
             <TaskDetails stageData={stageData} />
             </div>
         }
         {
             (stageBasedConfig?.hasScheduledLabel && stageData?.scheduledDate && stageTitle === "Design Task" && currentStatus === "Sent") &&
             <div className='mt-4'>
-            <Label icon={WarningIcon} text={`Rejection mail is Scheduled for ${formatIntoLocaleString(stageData?.scheduledDate)}`}/>
+            <Label icon={WarningIcon} text={`Rejection mail is Scheduled for ${UTCToDateFormatted(stageData.scheduledDate)} ${formatUTCToLocalTimeAuto(stageData.scheduledDate)}`}/>
             <TaskDetails stageData={stageData} />
             </div>
         }
@@ -607,11 +608,11 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
       </div>
     }
     {
-        (stageBasedConfig?.hasScheduledLabel && (currentStatus === "Reviewed" || stageTitle === "Portfolio") && stageData?.scheduledDate) &&
-        <div className='mt-4'><Label icon={WarningIcon} text={`Rejection mail is Scheduled for ${formatIntoLocaleString(stageData?.scheduledDate)}`}/></div>
+        (stageBasedConfig?.hasScheduledLabel && (currentStatus === "Reviewed" || stageTitle === "Portfolio" || currentStatus === "No Show") && stageData?.scheduledDate) &&
+        <div className='mt-4'><Label icon={WarningIcon} text={`Rejection mail is Scheduled for ${UTCToDateFormatted(stageData.scheduledDate)} ${formatUTCToLocalTimeAuto(stageData.scheduledDate)}`}/></div>
     }
       {/* Action Section */}
-      {stageBasedConfig?.actions && !((currentStatus === "Reviewed" || stageTitle === "Portfolio" || stageTitle === "Design Task")&& stageData?.scheduledDate) &&
+      {stageBasedConfig?.actions && !((currentStatus === "Reviewed" || stageTitle === "Portfolio" || stageTitle === "Design Task" || currentStatus === "No Show")&& stageData?.scheduledDate) &&
       <div className='w-full flex justify-end mt-4'>
           <div className='flex items-center gap-4'>
               {(stageBasedConfig.actions?.hasRejectAction && !isRescheduling) && 

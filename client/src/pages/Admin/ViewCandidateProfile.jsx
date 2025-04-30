@@ -31,6 +31,7 @@ import { truncatedText } from '../../utility/truncatedHTML';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 import { formatTime } from '../../utility/formatTime';
 import { showErrorToast, showSuccessToast } from '../../components/ui/Toast';
+import { UTCToDateFormatted } from '../../utility/timezoneConverter';
 
 export const VAVScoreCard = ({ score, stage, scoreStages }) => {
     const [showBreakDown, setShowBreakDown] = useState(false);
@@ -642,11 +643,7 @@ const reviewerProfilePic = currentReviewer?.profilePicture
                     <div className='mb-4 bg-background-40 p-4 rounded-xl'>
                         <div className='flex justify-between items-center '>
                             <h3 className='typography-body font-regular'>{candidateData?.jobApplication?.jobApplied}</h3>
-                            <p className='text-font-gray typography-large-p '>{new Date(candidateData?.jobApplication?.notes?.addedDate).toLocaleDateString("en-GB", {
-                                day: "2-digit",
-                                month: "long",
-                                year: "numeric",
-                            })}</p>
+                            <p className='text-font-gray typography-large-p '>{UTCToDateFormatted(candidateData?.jobApplication?.notes?.addedDate)}</p>
                         </div>
                         <div className='text-font-gray p-1 w-full overflow-x-hidden overflow-y-scroll scrollbar-hide text-ellipsis whitespace-normal break-words' dangerouslySetInnerHTML={{ __html: candidateData?.jobApplication?.notes?.content }}></div>
                     </div>

@@ -39,7 +39,7 @@ const updateCallStatuses = async () => {
             .utc()
             .toDate();
 
-          if (callDateTime < now) {
+          if (scheduledDate < now) {
             const jobId = typeof jobApp.jobId === 'string'
               ? new mongoose.Types.ObjectId(jobApp.jobId)
               : jobApp.jobId;

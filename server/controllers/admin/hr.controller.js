@@ -86,7 +86,7 @@ export const rejectCandidate = async (req, res) => {
       if (jobApplication.stageStatuses.has(currentStage)) {
         const stageStatus = jobApplication.stageStatuses.get(currentStage);
         stageStatus.rejectionReason = rejectionReason;
-        stageStatus.scheduledDate = mailScheduledDate;
+        stageStatus.scheduledDate = scheduledDate;
         jobApplication.stageStatuses.set(currentStage, stageStatus);
       } else {
         // If for some reason the current stage doesn't exist in stageStatuses, create it
@@ -94,7 +94,7 @@ export const rejectCandidate = async (req, res) => {
           rejectionReason: rejectionReason,
           assignedTo: null,
           score: {},
-          scheduledDate : mailScheduledDate,
+          scheduledDate : scheduledDate,
           currentCall: null,
           callHistory: [],
         });
@@ -195,7 +195,7 @@ export const rejectMultipleCandidates = async (req, res) => {
         if (jobApplication.stageStatuses.has(currentStage)) {
           const stageStatus = jobApplication.stageStatuses.get(currentStage);
           stageStatus.rejectionReason = eachCandidate?.rejectionReason;
-          stageStatus.scheduledDate = mailScheduledDate;
+          stageStatus.scheduledDate = scheduledDate;
           jobApplication.stageStatuses.set(currentStage, stageStatus);
         } else {
           // If for some reason the current stage doesn't exist in stageStatuses, create it
@@ -203,7 +203,7 @@ export const rejectMultipleCandidates = async (req, res) => {
             rejectionReason: eachCandidate?.rejectionReason,
             assignedTo: null,
             score: {},
-            scheduledDate : mailScheduledDate,
+            scheduledDate : scheduledDate,
             currentCall: null,
             callHistory: [],
           });
@@ -936,7 +936,7 @@ export const rescheduleCall = async (req, res) => {
 
     // Update current call with new details
     stageStatus.currentCall = {
-      scheduledDate: updateDateWithTime(date,time),
+      scheduledDate: date,
       scheduledTime: time,
       meetingLink: meetingLink,
     };
@@ -1137,7 +1137,7 @@ export const sendDesignTask = async (req, res) => {
           meetingLink: "", // You can leave this empty or use it for a submission link if needed
         },
         taskDescription: sanitizedDescription,
-        scheduledDate : mailScheduledDate
+        scheduledDate : scheduledDate
       });
 
       await candidate.save();

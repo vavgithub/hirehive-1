@@ -16,6 +16,7 @@ import { DataGrid } from '@mui/x-data-grid'
 import { Avatar } from '@mui/material'
 import { UNKNOWN_PROFILE_PICTURE_URL } from '../../utility/config'
 import { formatIntoDateString } from '../../utility/formatTime'
+import { formatUTCToLocalTimeAuto, UTCToDateFormatted } from '../../utility/timezoneConverter'
 
 function AdminDashboard() {
   
@@ -239,14 +240,7 @@ function AdminDashboard() {
                 <StyledCard onClick={()=>navigate(`/admin/candidates/view-candidate/${interview?._id}/${interview?.jobApplications?.jobId}`)} key={interview?._id} padding={2} backgroundColor={'bg-background-30'} extraStyles={'mt-4 relative cursor-pointer hover:bg-background-60'}>
                     <p className='typography-h3  flex items-center justify-between gap-2 w-full ' >
                       <StageBadge stage={interview?.jobApplications?.currentStage} customWidth={'w-fit'} />
-                      <span className='typography-large-p h-full text-font-gray flex gap-2 items-center'><IconWrapper isInActiveIcon size={0} icon={CalendarDays} />{new Date(interview?.interviewDate).toLocaleString('en-GB', { 
-                        day: '2-digit', 
-                        month: 'long', 
-                        year: 'numeric', 
-                        hour: '2-digit', 
-                        minute: '2-digit', 
-                        hour12: true 
-                    })}</span>
+                      <span className='typography-large-p h-full text-font-gray flex gap-2 items-center'><IconWrapper isInActiveIcon size={0} icon={CalendarDays} />{UTCToDateFormatted(interview?.interviewDate)} at {formatUTCToLocalTimeAuto(interview?.interviewDate)}</span>
                     </p>
                     <div className='mt-2 flex max-w-full'>
                       <div className='border-r border-font-gray w-[50%] overflow-hidden'>

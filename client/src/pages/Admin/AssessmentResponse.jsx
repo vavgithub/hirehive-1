@@ -13,6 +13,7 @@ import { VideoModal } from '../../components/Modals/VideoModal';
 import Container from '../../components/Cards/Container';
 import { UNKNOWN_PROFILE_PICTURE_URL } from '../../utility/config';
 import IconWrapper from '../../components/Cards/IconWrapper';
+import { UTCToDateFormatted } from '../../utility/timezoneConverter';
 
 // Fetch function
 const fetchAssessmentDetails = async (candidateId) => {
@@ -120,11 +121,7 @@ const AssessmentResponse = () => {
                                                 Finished on
                                             </p>
                                             <p className='typography-large-p'>
-                                                {new Date(assessmentData?.candidateInfo?.attemptDate).toLocaleDateString('en-US', {
-                                                    year: 'numeric',
-                                                    month: 'short',
-                                                    day: '2-digit',
-                                                })}
+                                                {UTCToDateFormatted(assessmentData?.candidateInfo?.attemptDate)}
                                             </p>
                                         </div>
 
