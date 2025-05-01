@@ -76,7 +76,7 @@ const Candidates = () => {
             <div className="absolute right-0 z-10 h-full w-28 bg-gradient-to-tr from-background via-background-green to-transparent pointer-events-none" />
             <StatsGrid stats={statsOne} />
           </div>
-          <div className='mr-4'>
+          <div >
             <Table readOnly={true} readOnlyData={data?.candidates || []} />
           </div>
         </StyledCard>
