@@ -16,7 +16,7 @@ import { DataGrid } from '@mui/x-data-grid'
 import { Avatar } from '@mui/material'
 import { UNKNOWN_PROFILE_PICTURE_URL } from '../../utility/config'
 import { formatIntoDateString } from '../../utility/formatTime'
-import { formatUTCToLocalTimeAuto, UTCToDateFormatted } from '../../utility/timezoneConverter'
+import { formatUTCToLocalTimeAuto, timezone, UTCToDateFormatted } from '../../utility/timezoneConverter'
 
 function AdminDashboard() {
   
@@ -30,7 +30,7 @@ function AdminDashboard() {
 
   const { data : dashboardDetails , isLoading : isDetailsLoading } = useQuery({
       queryKey: ['admin_dashboard'],
-      queryFn: () => axios.get('/admin/dashboard').then(res => res.data),
+      queryFn: () => axios.get(`/admin/dashboard?tz=${timezone}`).then(res => res.data),
       enabled : true
   })
 

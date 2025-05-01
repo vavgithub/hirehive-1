@@ -1,12 +1,17 @@
 import React, { useMemo } from "react";
 import ReactECharts from "echarts-for-react";
+import { formatUTCToLocalTimeAuto, UTCToShortDate, UTCToShortMonth } from "../../utility/timezoneConverter";
 
 function ApplicationChart({type,dataArray}) {
-    const xData = dataArray?.map(data => type === "weekly" ? data?.week : type === "daily" ? data?.day : type === "yesterday" ? data?.hour : data?.month);
+    const xData = dataArray?.map(data => type === "weekly" ? `${UTCToShortDate(data?.week?.start)} - ${UTCToShortDate(data?.week?.end)}` : type === "daily" ? `${UTCToShortMonth(data?.day)}` : type === "yesterday" ? formatUTCToLocalTimeAuto(data?.hour) : data?.month);
     const values = dataArray?.map(data => data?.totalCount ?? 0);
-
+    console.log(dataArray)
+    
   const options = useMemo(()=>(
     {
+        textStyle: {
+          fontFamily: 'Gilroy, sans-serif'
+        },
         grid: {
           left: "8%",
           right: "2.5%",
@@ -17,7 +22,7 @@ function ApplicationChart({type,dataArray}) {
           type: "category",
           name: type === "daily" ? "Days" : type === "weekly" ? "Weeks" : "Months",
           nameLocation: "middle",
-          nameGap: 30,
+          nameGap: 28,
           data: xData,
          
         },

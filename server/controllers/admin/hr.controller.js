@@ -77,6 +77,7 @@ export const rejectCandidate = async (req, res) => {
     // Get the current stage
     const currentStage = jobApplication.currentStage;
 
+    //Accept & store UTC dates only
     if(scheduledDate && scheduledTime){
       const [hour,minutes] = scheduledTime?.split(":");
       const mailScheduledDate = new Date(scheduledDate);
@@ -185,6 +186,7 @@ export const rejectMultipleCandidates = async (req, res) => {
 
       const { scheduledDate, scheduledTime } = eachCandidate;
 
+    //Accept & store UTC dates only
       if(scheduledDate && scheduledTime){
         
         const [hour,minutes] = scheduledTime?.split(":");
@@ -834,6 +836,7 @@ export const scheduleScreening = async (req, res) => {
 
 export const scheduleCall = async (req, res) => {
   try {
+    //Accept & store UTC dates only
     const { candidateId, jobId, stage, date, time, assigneeId, meetingLink } =
       req.body;
 
@@ -887,6 +890,7 @@ export const scheduleCall = async (req, res) => {
 
 export const rescheduleCall = async (req, res) => {
   try {
+    //Accept & store UTC dates only
     const { candidateId, jobId, stage, date, time, assigneeId, meetingLink } =
       req.body;
 
@@ -1123,6 +1127,8 @@ export const sendDesignTask = async (req, res) => {
     if (!jobApplication) {
       return res.status(404).json({ message: "Job application not found" });
     }
+    
+    //Accept & store UTC dates only
     if(scheduledDate && scheduledTime){
       const [hour,minutes] = scheduledTime?.split(":");
       const mailScheduledDate = new Date(scheduledDate);

@@ -11,7 +11,9 @@ function InterviewsChart({dataSet}) {
     },[dataSet])
 
     const options = {
-
+        textStyle: {
+          fontFamily: 'Gilroy, sans-serif'
+        },
         tooltip: {
           trigger: 'item',
           backgroundColor: "rgba(32, 33, 34, 1)", // Teal with transparency

@@ -175,7 +175,7 @@ function Teams() {
                     <p className="typography-body font-bricolage font-medium text-center ">Add Team Member</p>
                 </div>
                 <div className="w-full flex  items-center justify-center">
-                    <Button type="button" onClick={()=>setShowAddmodal(true)} className="w-full">Add Member</Button>
+                    <Button type="button" onClick={()=>setShowAddmodal(true)} className="w-full whitespace-nowrap">Add Member</Button>
                 </div>
             </StyledCard>
 

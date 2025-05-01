@@ -3,7 +3,7 @@ import { jobs } from "../../models/admin/jobs.model.js";
 import { User } from "../../models/admin/user.model.js";
 import { candidates } from "../../models/candidate/candidate.model.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
-import { formatDateRange, get24HoursOfYesterday, getLast12Months, getLast4Weeks, getLast7Days } from "../../utils/dateUtilities.js";
+import { get24HoursOfYesterday, getLast12Months, getLast4Weeks, getLast7Days } from "../../utils/dateUtilities.js";
 import { getInvitationContent } from "../../utils/emailTemplates.js";
 import { updateDateWithTime } from "../../utils/formatter.js";
 import { sendEmail } from "../../utils/sentEmail.js";
@@ -269,6 +269,8 @@ export const getAllTeamMember = asyncHandler(async (req,res) => {
 
 export const getDetailsForDashboard = asyncHandler(async (req,res) => {
 
+  const { tz } = req.query;
+
   //Company Details
   const company = await Company.findById({_id : req.user?.company_id});
 
@@ -298,10 +300,10 @@ export const getDetailsForDashboard = asyncHandler(async (req,res) => {
   userIds = usersInCompany.map(user => user._id);
 
   //Monthly Applications
-  const monthData = getLast12Months();
-  const weekData = getLast4Weeks();
-  const dailyData = getLast7Days();
-  const yesterdaysData = get24HoursOfYesterday();
+  const monthData = getLast12Months(tz);
+  const weekData = getLast4Weeks(tz);
+  const dailyData = getLast7Days(tz);
+  const yesterdaysData = get24HoursOfYesterday(tz);
 
   const companyJobs = await jobs.find({company_id : req.user?.company_id });
   const companyJobIds = companyJobs?.map(job => job._id);
@@ -365,7 +367,10 @@ export const getDetailsForDashboard = asyncHandler(async (req,res) => {
   for(let weekObj of weekData){
     const count = await getApplicationCount(weekObj.startDate,weekObj.endDate);
     weeklyApplications.push({
-      week : formatDateRange(weekObj.startDate, weekObj.endDate),
+      week : {
+        start : weekObj.startDate, 
+        end : weekObj.endDate
+      },
       totalCount : count
     })
   }
@@ -684,8 +689,8 @@ export const getDetailsForDashboard = asyncHandler(async (req,res) => {
       companyDetails : company,
       applications : {
         totalApplicationsCount,
-        monthlyApplications : monthlyApplications.reverse(),
-        weeklyApplications : weeklyApplications.reverse(),
+        monthlyApplications : monthlyApplications,
+        weeklyApplications : weeklyApplications,
         dailyApplications : dailyApplications,
         yesterdaysApplications : yesterdaysApplications,
       },

@@ -1,5 +1,8 @@
 import { DateTime } from "luxon";
 
+//Get user's timezone
+export const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
 export function formatUTCForLocalDisplay(utcString) {
   return DateTime.fromISO(utcString, { zone: "utc" })
     .setZone(Intl.DateTimeFormat().resolvedOptions().timeZone)
@@ -23,6 +26,19 @@ export function UTCToDateFormatted(utcString) {
     .setZone(Intl.DateTimeFormat().resolvedOptions().timeZone)
     .toFormat('dd LLLL yyyy'); // e.g., "26 May 2025"
 }
+
+export function UTCToShortDate(utcString) {
+  return DateTime.fromISO(utcString, { zone: 'utc' })
+    .setZone(Intl.DateTimeFormat().resolvedOptions().timeZone)
+    .toFormat('dd LLL yy'); // e.g., "20 Apr 25"
+}
+
+export function UTCToShortMonth(utcString) {
+  return DateTime.fromISO(utcString, { zone: 'utc' })
+    .setZone(Intl.DateTimeFormat().resolvedOptions().timeZone)
+    .toFormat('dd LLL'); // e.g., "20 Apr"
+}
+
 
 export function formatUTCToTimein24Hour(utcString) {
   return DateTime.fromISO(utcString, { zone: "utc" })
