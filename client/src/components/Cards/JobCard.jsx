@@ -133,81 +133,83 @@ const JobCard = ({
   return (
     <StyledCard
     padding={0}
-    extraStyles={(onClick ? 'cursor-pointer' : '' ) + `  hover:bg-background-60 transition-colors duration-200 shadow rounded-xl  group relative`}
+    extraStyles={(onClick ? 'cursor-pointer' : '' ) + `   rounded-xl  group relative`}
     onClick={onClick ? handleCardClick : undefined}
   >
-    <div className={(isApplied && "flex-col md:flex-row" ) +" flex items-start justify-between pt-4 px-4  gap-3"}>
-      <h3 className={(isApplied ? "w-full md:w-[50%] xl:w-[70%]" : "w-[70%]") + " typography-h3 group-hover:text-font-accent  text-ellipsis overflow-hidden whitespace-nowrap "}>{job.jobTitle}</h3>
-      <div className={"flex items-center gap-3 " + (isApplied ? " mb-2 md:mb-0 " : "")}>
-        {isApplied &&         
-        <span className="bg-blue-300 text-blue-100 typography-body px-4 py-2 rounded-xl">
-          Applied
-        </span>}
-        {(role === "Admin" || role === "Hiring Manager") && job?.status === 'open' && 
-        <div className='flex items-center gap-4'>
-          {
-            pinnedJobs?.includes(job?._id) && 
-            <div className='rotate-45'>
-              <IconWrapper icon={Pin} size={0} isInActiveIcon />
-            </div>
-          }
-          <CustomToolTip arrowed title={"Copy link"}>
-            <div onClick={(e) => handleCopyLink(e,job?._id , job?.company_id)} className='cursor-pointer p-2 h-10 flex justify-center items-center bg-background-70 hover:bg-background-80 rounded-xl'>
-              <Copy size={20} strokeWidth={1} color='#808389'/>            
-            </div>
-          </CustomToolTip>
-        </div>}
-        {(job.status !== "deleted" && job.status !== "closed") &&
-          <CustomBadge label={job?.jobProfile} paddingX={2} />}
-        {withKebab && (
-          <ThreeDots job={job} handleAction={handleAction} extraStyles={'z-10'} page={page} isPinned={pinnedJobs?.includes(job?._id)} role={role} />
-        )}
-      </div>
-    </div>
-    {job.status !== "deleted" ?
-    <>
-    <div className="flex px-4 flex-row items-start flex-wrap gap-x-8 gap-y-5">
-      <JobDetailItem icon={() => <IconWrapper size={1} icon={ClockArrowUp}  isInActiveIcon />} text={job.employmentType} />
-      {((job.budgetTo > 1) || (job.budgetFrom > 0)) && 
-      <JobDetailItem
-        icon={() => <IconWrapper size={1} icon={DatabaseZap}  isInActiveIcon />}
-        text={`${job.budgetFrom} - ${job.budgetTo} ${payUnit}`}
-      />}
-      <JobDetailItem
-        icon={() => <IconWrapper size={1} icon={SignalHigh}  isInActiveIcon />}
-        text={`${job.experienceFrom} - ${job.experienceTo} Year`}
-      />
-      {(role !== "Admin" && role !== "Hiring Manager" && role !== "Design Reviewer") && (job?.companyDetails?.name || job?.company_id?.name ) && <JobDetailItem
-      icon={() => <IconWrapper size={1} icon={Building2}  isInActiveIcon />}
-      text={job?.companyDetails?.name || job?.company_id?.name }
-      />}
-      {(role === "Admin" || role === "Hiring Manager" ) && (job?.isPublic ) && <JobDetailItem
-      icon={() => <IconWrapper size={1} icon={Rss}  isInActiveIcon />}
-      text={"Open to All"}
-      />}
-    </div>
-    <div className=" p-4 ">
-        <p className="typography-body text-font-gray h-12 overflow-hidden" dangerouslySetInnerHTML={{__html : truncatedDescription}}>
-        </p>
-      </div>
-    </> :
-    <div className=" p-4 ">
-    <p className="typography-body text-font-gray h-12 overflow-hidden" dangerouslySetInnerHTML={{__html : truncatedDescription}}>
-    </p>
-  </div>
-      }
-  {(job.status === 'closed' || job.status === 'deleted' ) && (
-        <div className="flex px-4 pb-4 w-fit">
-          <p className="typography-body text-font-gray mr-2 whitespace-nowrap">
-            Closure Reason :
-          </p>
-          <p className="typography-body">{job.closingReason || 'N/A'}</p>
+    <StyledCard padding={2} borderRadius={'  rounded-t-xl '} extraStyles={'hover:bg-background-60 transition-colors pb-0 duration-200 shadow'}>
+      <div className={(isApplied && "flex-col md:flex-row" ) +" flex items-start justify-between   gap-3"}>
+        <h3 className={(isApplied ? "w-full md:w-[50%] xl:w-[70%]" : "w-[70%]") + " typography-h3 group-hover:text-font-accent  text-ellipsis overflow-hidden whitespace-nowrap "}>{job.jobTitle}</h3>
+        <div className={"flex items-center gap-3 " + (isApplied ? " mb-2 md:mb-0 " : "")}>
+          {isApplied &&         
+          <span className="bg-blue-300 text-blue-100 typography-body px-4 py-2 rounded-xl">
+            Applied
+          </span>}
+          {(role === "Admin" || role === "Hiring Manager") && job?.status === 'open' && 
+          <div className='flex items-center gap-4'>
+            {
+              pinnedJobs?.includes(job?._id) && 
+              <div className='rotate-45'>
+                <IconWrapper icon={Pin} size={0} isInActiveIcon />
+              </div>
+            }
+            <CustomToolTip arrowed title={"Copy link"}>
+              <div onClick={(e) => handleCopyLink(e,job?._id , job?.company_id)} className='cursor-pointer p-2 h-10 flex justify-center items-center bg-background-70 hover:bg-background-80 rounded-xl'>
+                <Copy size={20} strokeWidth={1} color='#808389'/>            
+              </div>
+            </CustomToolTip>
+          </div>}
+          {(job.status !== "deleted" && job.status !== "closed") &&
+            <CustomBadge label={job?.jobProfile} paddingX={2} />}
+          {withKebab && (
+            <ThreeDots job={job} handleAction={handleAction} extraStyles={'z-10'} page={page} isPinned={pinnedJobs?.includes(job?._id)} role={role} />
+          )}
         </div>
-        )}
+      </div>
+      {job.status !== "deleted" ?
+      <>
+      <div className="flex flex-row items-start flex-wrap gap-x-8 gap-y-5">
+        <JobDetailItem icon={() => <IconWrapper size={1} icon={ClockArrowUp}  isInActiveIcon />} text={job.employmentType} />
+        {((job.budgetTo > 1) || (job.budgetFrom > 0)) && 
+        <JobDetailItem
+          icon={() => <IconWrapper size={1} icon={DatabaseZap}  isInActiveIcon />}
+          text={`${job.budgetFrom} - ${job.budgetTo} ${payUnit}`}
+        />}
+        <JobDetailItem
+          icon={() => <IconWrapper size={1} icon={SignalHigh}  isInActiveIcon />}
+          text={`${job.experienceFrom} - ${job.experienceTo} Year`}
+        />
+        {(role !== "Admin" && role !== "Hiring Manager" && role !== "Design Reviewer") && (job?.companyDetails?.name || job?.company_id?.name ) && <JobDetailItem
+        icon={() => <IconWrapper size={1} icon={Building2}  isInActiveIcon />}
+        text={job?.companyDetails?.name || job?.company_id?.name }
+        />}
+        {(role === "Admin" || role === "Hiring Manager" ) && (job?.isPublic ) && <JobDetailItem
+        icon={() => <IconWrapper size={1} icon={Rss}  isInActiveIcon />}
+        text={"Open to All"}
+        />}
+      </div>
+      <div className=" py-4 ">
+          <p className="typography-body text-font-gray h-12 overflow-hidden" dangerouslySetInnerHTML={{__html : truncatedDescription}}>
+          </p>
+        </div>
+      </> :
+      <div className=" py-4 ">
+      <p className="typography-body text-font-gray h-12 overflow-hidden" dangerouslySetInnerHTML={{__html : truncatedDescription}}>
+      </p>
+    </div>
+        }
+    {(job.status === 'closed' || job.status === 'deleted' ) && (
+    <div className="flex  pb-4 w-fit">
+      <p className="typography-body text-font-gray mr-2 whitespace-nowrap">
+        Closure Reason :
+      </p>
+      <p className="typography-body">{job.closingReason || 'N/A'}</p>
+    </div>
+    )}
+    </StyledCard>
     
   
     {(isAdmin || isCandidate) && (
-      <div className="flex items-center justify-between bg-background-40 p-4 rounded-b-xl">
+      <StyledCard padding={2} borderRadius={' rounded-b-xl'} backgroundColor={'bg-background-40'} extraStyles="flex items-center justify-between pt-4 ">
         <div className="flex justify-between w-full md:justify-start gap-3 md:gap-8">
           {(isAdmin ? adminFooterItems : candidateFooterItems).map(
             (item, index) => (
@@ -229,7 +231,7 @@ const JobCard = ({
           </div>
         </div>
         )}
-      </div>
+      </StyledCard>
     )}
   </StyledCard>
   
