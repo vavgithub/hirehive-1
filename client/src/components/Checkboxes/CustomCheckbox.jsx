@@ -5,7 +5,7 @@ export const CustomCheckbox = ({ label, icon: Icon, isChecked, onChange, count }
         onClick={onChange}
     >
         <Icon />
-        <span className={` mt-2 typography-large-p ${isChecked ? 'text-font-accent' : 'text-font-gray'}`}>
+        <span className={` mt-2 whitespace-nowrap overflow-hidden text-ellipsis typography-large-p ${isChecked ? 'text-font-accent' : 'text-font-gray'}`}>
             {label}
         </span>
     </div>

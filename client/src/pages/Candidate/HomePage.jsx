@@ -209,7 +209,7 @@ const HomePage = () => {
         
                     <div className='flex flex-col md:flex-row gap-4 mt-4'>
                         {/* Filters */}
-                        <div className={`${isFilterVisible ? 'block' : 'hidden'} md:block`}>
+                        <div className={`${isFilterVisible ? 'block' : 'hidden'} md:block md:w-[100%] lg:w-[60%] xl:w-[35%]`}>
                             <Filters
                                 filters={filters}
                                 handleCheckboxChange={handleCheckboxChange}

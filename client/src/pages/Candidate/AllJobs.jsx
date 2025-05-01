@@ -187,7 +187,7 @@ const AllJobs = () => {
 
                 <StyledCard padding={2} backgroundColor={"bg-background-30 "} extraStyles={'flex flex-col md:flex-row gap-4 lg:pb-8 '}>
                     {/* Search and Filters */}
-                    <div className={`${isFilterVisible ? 'block' : 'hidden'} md:block`}>
+                    <div className={`${isFilterVisible ? 'block' : 'hidden'} md:block md:w-[55%] xl:w-[40%]`}>
                         <div className='hidden md:block  mb-4 relative '>
                             <div className='absolute top-[10px] left-4'>
                                 <IconWrapper icon={Search} size={0} customIconSize={3} isInActiveIcon />

@@ -376,7 +376,7 @@ const Jobs = () => {
                 </div>
 
                 <div className='flex mt-4'>
-                    <div>
+                    <div className='w-[40%]'>
                         <div className='mb-4 relative '>
                             <div className='absolute top-[12px] left-4'>
                                 <IconWrapper icon={Search} size={0} customIconSize={3} isInActiveIcon />
