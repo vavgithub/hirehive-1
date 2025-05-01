@@ -1,6 +1,7 @@
 import { ChevronDown } from 'lucide-react';
 import React, { useRef, useEffect, useState } from 'react';
 import StyledMenu from '../MUIUtilities/StyledMenu';
+import StyledCard from '../Cards/StyledCard';
 
 // StatCard component (unchanged)
 const StatCard = ({ title, value, icon: Icon, statistics }) => {
@@ -57,8 +58,8 @@ const StatCard = ({ title, value, icon: Icon, statistics }) => {
   ]
 
   return (
-    <div className="flex flex-shrink-0 overflow-hidden justify-between relative items-center bg-card-pattern w-[240px] rounded-md shadow h-[6.5rem] min-h-fit">
-      <div className="ml-[15px] w-full ">
+    <StyledCard padding={2} extraStyles="flex  overflow-hidden justify-between relative items-center bg-card-pattern w-[15rem] shadow h-[6.5rem] min-h-fit">
+      <div className=" w-full ">
         <p className="typography-small-p text-font-gray w-max">{title}</p>
         <p className="typography-h2">{value ?? 0}</p>
         {<p key={currentStatistics} onClick={currentStatistics ? handleDropDown : undefined} className={`typography-small-p min-h-[18px] text-font-gray  flex items-center gap-1  ${currentStatistics ? "cursor-pointer" : ""}`}>
@@ -74,7 +75,7 @@ const StatCard = ({ title, value, icon: Icon, statistics }) => {
         <Icon />
       </div>
       <StyledMenu itemComponents={dropdownComponents} anchorEl={show} handleMenuClose={() => setShow(null)} />
-    </div>
+    </StyledCard>
   )
 };
 
