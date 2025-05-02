@@ -5,7 +5,9 @@ import {
   getAllCandidatesWithStats,
   getCandidateById,
   getCandidateJobs,
+  getJobBasedQuestionnaireDetails,
   getQuestionnaireDetails,
+  getRandomAssessmentQuestions,
   getRandomQuestions,
   shortlistCandidate,
   submitQuestionnaireAttempt,
@@ -39,6 +41,7 @@ router.patch("/update/:id", updateStatusAndStage);
 router.patch("/update-candidate-profile/:id" , protect, roleProtect(["Hiring Manager","Admin"]), updateCandidateProfile);
 
 router.get("/questions/random", getRandomQuestions);
+router.get("/assessment-questions/random", getRandomAssessmentQuestions);
 
 router.post("/questionnaire/:candidateId/", submitQuestionnaireAttempt);
 
@@ -50,5 +53,6 @@ router.post(
   );
 
 router.get("/assessment/:candidateId", getQuestionnaireDetails);
+router.get("/get-assessment/:candidateId/:jobId", getJobBasedQuestionnaireDetails);
 
 export default router;

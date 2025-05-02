@@ -10,6 +10,7 @@ import { sanitizeLexicalHtml } from "../../utils/sanitize-html.js";
 import { getPreviousMonthRange, getPreviousWeekRange, getYesterdayTodayRange } from "../../utils/dateRanges.js";
 import mongoose from "mongoose";
 import { EMAIL_REGEX } from "../../utils/validator.js";
+import { Assessment } from "../../models/admin/assessment.model.js";
 
 // controllers/candidate.controller.js
 
@@ -472,6 +473,8 @@ export const getCandidateById = async (req, res) => {
         notes: jobApplication.notes,
         jobType: job ? job.employmentType : "NA",
         applicationDate: jobApplication.applicationDate,
+        assessment_id: jobApplication.assessment_id,
+        assessmentResponse: jobApplication.assessmentResponse,
         shortlisted: jobApplication.shortlisted,
         rating: jobApplication.rating,
         currentStage: jobApplication.currentStage,
@@ -883,14 +886,71 @@ export const getRandomQuestions = async (req, res) => {
   }
 };
 
+
+export const getRandomAssessmentQuestions = async (req, res) => {
+  try {
+    const  { assessmentId } = req.query;
+    
+    if(!assessmentId){
+      return res.status(400).json({
+        message : "No Assessment Id Found"
+      })
+    }
+    const assessmentObjectId = new mongoose.Types.ObjectId(assessmentId);
+
+    const result = await Assessment.aggregate([
+      { $match: { _id: assessmentObjectId } },
+      { $project: { questions: 1 } },
+      { $unwind: "$questions" },
+      { $sample: { size: 10 } },
+      {
+        $addFields: {
+          "questions.options": {
+            $map: {
+              input: "$questions.options",
+              as: "opt",
+              in: {
+                text: "$$opt.text",
+                imageUrl: "$$opt.imageUrl"
+                // 'isCorrect' is intentionally omitted
+              }
+            }
+          }
+        }
+      },
+      {
+        $group: {
+          _id: "$_id",
+          questions: { $push: "$questions" }
+        }
+      }
+    ]);  
+
+    console.log(`Found ${result[0]?.questions?.length} questions`);
+    console.log(result)
+    res.status(200).json({
+      success: true,
+      questions : result[0]?.questions,
+    });
+  } catch (error) {
+    console.error("Error in getRandomQuestions:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error fetching questions",
+      error: error.message,
+    });
+  }
+};
+
 export const submitQuestionnaireAttempt = async (req, res) => {
   try {
     const { candidateId } = req.params;
-    const { answers, totalTimeInSeconds, recordingUrl } = req.body;
+    const { assessmentId, answers, totalTimeInSeconds, recordingUrl } = req.body;
 
     // Get questions to check correct answers
     const questionIds = Object.keys(answers);
-    const questions = await Question.find({ _id: { $in: questionIds } });
+    const assessment = await Assessment.findById({ _id: assessmentId });
+    const questions = assessment.questions.filter(question => questionIds.includes(question._id.toString()));
 
     let responses = [];
     let score = 0;
@@ -920,26 +980,32 @@ export const submitQuestionnaireAttempt = async (req, res) => {
       responses,
       recordingUrl, // Add this field
     };
-
+    
     // Update candidate
-    const updatedCandidate = await candidates.findByIdAndUpdate(
-      candidateId,
-      {
-        questionnaireAttempts: [attemptData],
-        hasGivenAssessment: true,
-      },
-      { new: true }
+    const candidate = await candidates.findById(
+      {_id : candidateId}
     );
+
+    let hasPendingAssessment = false;
+
+    console.log(attemptData)
+    for(let application of candidate.jobApplications){
+      console.log(application.assessment_id,assessmentId)
+      if(application?.assessment_id?.toString() === assessmentId){
+        application.assessmentResponse = attemptData
+      }else if(application?.assessment_id && !application.assessmentResponse){
+        hasPendingAssessment = true
+      }
+    }
+
+    if(!hasPendingAssessment){
+      candidate.hasGivenAssessment = true
+    }
+    await candidate.save();
 
     res.status(200).json({
       success: true,
       message: "Assessment completed successfully",
-      data: {
-        score,
-        totalTimeInSeconds,
-        correctAnswers,
-        totalQuestions: questions.length,
-      },
     });
   } catch (error) {
     console.error("Error in submitQuestionnaireAttempt:", error);
@@ -987,6 +1053,115 @@ export const getQuestionnaireDetails = async (req, res) => {
       (response) => response.questionId
     );
     const questions = await Question.find({ _id: { $in: questionIds } }).lean();
+
+    // Create a map for quick question lookup
+    const questionMap = questions.reduce((acc, question) => {
+      acc[question._id.toString()] = question;
+      return acc;
+    }, {});
+
+    // Calculate statistics
+    const totalQuestions = latestAttempt.responses.length;
+    const correctAnswers = latestAttempt.responses.filter(
+      (response) => response.isCorrect
+    ).length;
+    const incorrectAnswers = totalQuestions - correctAnswers;
+
+    // Format time
+    const timeInMinutes = Math.floor(latestAttempt.totalTimeInSeconds / 60);
+    const timeInSeconds = latestAttempt.totalTimeInSeconds % 60;
+    const formattedTime = `${timeInMinutes}mins ${timeInSeconds}seconds`;
+
+    // Enhanced response with question details
+    const response = {
+      success: true,
+      data: {
+        candidateInfo: {
+          name: `${candidate.firstName} ${candidate.lastName}`,
+          email: candidate.email,
+          phone: candidate.phone,
+          score: latestAttempt.score,
+          profilePictureUrl: candidate?.profilePictureUrl,
+          recordingUrl: latestAttempt.recordingUrl,
+          totalTimeSpent: formattedTime,
+          attemptDate: latestAttempt.attemptDate,
+        },
+        assessmentStats: {
+          totalQuestions,
+          correctAnswers,
+          incorrectAnswers,
+          scoreOutOf100: latestAttempt.score,
+        },
+        questionResponses: latestAttempt.responses.map((response, index) => {
+          const question = questionMap[response.questionId.toString()];
+          return {
+            questionNumber: index + 1,
+            questionId: response.questionId,
+            questionDetails: {
+              text: question.text,
+              type: question.questionType,
+              category: question.category,
+              difficulty: question.difficulty,
+              imageUrl: question.imageUrl,
+              options: question.options.map((opt) => ({
+                text: opt.text,
+                imageUrl: opt.imageUrl,
+                isCorrect: opt.isCorrect,
+              })),
+            },
+            selectedAnswer: response.selectedAnswer,
+            isCorrect: response.isCorrect,
+          };
+        }),
+      },
+    };
+
+    return res.status(200).json(response);
+  } catch (error) {
+    console.error("Error in getQuestionnaireDetails:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+};
+
+export const getJobBasedQuestionnaireDetails = async (req, res) => {
+  try {
+    const { candidateId , jobId} = req.params;
+
+    const candidate = await candidates
+      .findById(candidateId)
+      .select(
+        " firstName lastName phone email profilePictureUrl jobApplications"
+      )
+      .lean();
+
+    if (!candidate) {
+      return res.status(404).json({
+        success: false,
+        message: "Candidate not found",
+      });
+    }
+
+    const application = candidate.jobApplications.find(app => app.jobId?.toString() === jobId);
+
+    // Get the latest attempt
+    const latestAttempt = application?.assessmentResponse;
+
+    if (!latestAttempt) {
+      return res.status(404).json({
+        success: false,
+        message: "No questionnaire attempts found for this candidate",
+      });
+    }
+    // Get all question details in one query
+    const questionIds = latestAttempt.responses.map(
+      (response) => response.questionId.toString()
+    );
+    const assessment = await Assessment.findById({ _id: application?.assessment_id });
+    const questions = assessment.questions.filter(question => questionIds.includes(question._id.toString()));
 
     // Create a map for quick question lookup
     const questionMap = questions.reduce((acc, question) => {

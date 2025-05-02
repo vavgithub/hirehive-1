@@ -1,7 +1,8 @@
 import express from 'express';
 import { archiveJob , closeJob, createJob, deleteJob, draftJob, editJob, filterJobs, filterSearchJobs, 
+     getAssessmentTemplates, 
      getJobById, getJobs, getTotalJobCount , reOpenJob, searchJobs, StatisticsController, unarchiveJob, updateJob } from '../../controllers/admin/jobs.controller.js';
-import { protect } from '../../middlewares/authMiddleware.js';
+import { protect, roleProtect } from '../../middlewares/authMiddleware.js';
 
 const router = express.Router();
 
@@ -11,7 +12,7 @@ router.get('/jobs',protect, getJobs);
 router.get('/stats/overall',protect, StatisticsController.getOverallStats);
 router.get('/stats/job/:jobId',protect, StatisticsController.getJobStats);
 
-
+router.get('/get-assessment-templates',protect,roleProtect(['Admin','Hiring Manager']), getAssessmentTemplates);
 router.post('/createJobs',protect, createJob);
 router.post('/filterJobs', protect,filterJobs);
 router.post('/filterSearchJobs', protect,filterSearchJobs);

@@ -223,7 +223,8 @@ export const registerCandidate = async (req, res) => {
         jobApplications: [
           {          
             jobId,
-            jobApplied, 
+            jobApplied,
+            assessment_id : job?.assessment_id ?? null, 
             jobType : job.employmentType,
             questionResponses,
             applicationDate: new Date(),
@@ -264,6 +265,7 @@ export const registerCandidate = async (req, res) => {
         const newJobApplication = {          
           jobId,
           jobApplied,
+          assessment_id : job?.assessment_id ?? null, 
           questionResponses,
           applicationDate: new Date(),
           currentStage: jobStages[0]?.name || "",
@@ -272,6 +274,7 @@ export const registerCandidate = async (req, res) => {
           professionalInfo
         }
 
+        existingEmail.hasGivenAssessment = false
         existingEmail.jobApplications = [newJobApplication]
       }
 
@@ -555,6 +558,7 @@ export const applyToJob = async (req, res) => {
       jobId,
       jobApplied,
       jobProfile,
+      assessment_id : job?.assessment_id ?? null, 
       jobType : job.employmentType,
       questionResponses,
       applicationDate: new Date(),
@@ -573,7 +577,23 @@ export const applyToJob = async (req, res) => {
       } // Include professional info in the job application
     };
 
+    
+    const assessmentCompletedApplications = candidate.jobApplications
+      .filter(app => app.assessment_id && app.assessmentResponse);
+    
+    const completedAssessmentIds = assessmentCompletedApplications.map(app => app.assessment_id?.toString());
+
+    if(job.assessment_id && !completedAssessmentIds.includes(job.assessment_id?.toString())){
+      candidate.hasGivenAssessment = false;
+    }else if(job.assessment_id && completedAssessmentIds.includes(job.assessment_id?.toString())){
+      const matchedResponse = assessmentCompletedApplications.find(app => app?.assessment_id?.toString() === job.assessment_id?.toString())?.assessmentResponse;
+      if(matchedResponse){
+        newApplication.assessmentResponse = matchedResponse
+      }
+    }
+
     candidate.jobApplications.push(newApplication);
+
     await candidate.save();
 
     res.status(200).json({ 
@@ -626,6 +646,8 @@ export const getCandidateDashboard = async (req, res) => {
           location:1,
           hasGivenAssessment: 1,
           "jobApplications.applicationDate": 1,
+          "jobApplications.assessment_id": 1,
+          "jobApplications.assessmentResponse": 1,
           "jobApplications.currentStage": 1,
           "jobApplications.stageStatuses": 1,
           "jobApplications.jobApplied": 1,
@@ -634,6 +656,7 @@ export const getCandidateDashboard = async (req, res) => {
           "jobDetails": {
             _id: 1,
             jobTitle: 1,
+            assessment_id: 1,
             status: 1,
           },
         },
@@ -650,6 +673,7 @@ export const getCandidateDashboard = async (req, res) => {
       return ({
         jobId: isValid?._id || app.jobId,
         jobTitle:isValid?.jobTitle || app.jobApplied,
+        assessment_id:isValid?.assessment_id || app?.assessment_id || null,
         jobStatus: isValid?.status || 'deleted',
         applicationDate: app.applicationDate,
         currentStage: app.currentStage,
@@ -660,6 +684,9 @@ export const getCandidateDashboard = async (req, res) => {
 
     const latestResume = formattedApplications?.length > 0 ? 
       formattedApplications.sort((a,b)=>b.applicationDate - a.applicationDate )[0].resumeUrl : "";
+
+      console.log(candidate[0].jobApplications)
+    const pendingAssessments = candidate[0].jobApplications.filter(app => app?.assessment_id && !app?.assessmentResponse)
 
     res.status(200).json({
       candidate: {
@@ -682,6 +709,7 @@ export const getCandidateDashboard = async (req, res) => {
         hasGivenAssessment:candidate[0].hasGivenAssessment,
         jobApplications: formattedApplications, // Include jobApplications in the candidate object
         location: candidate[0].location,
+        pendingAssessments
         // Include other relevant candidate fields
       },
     });
