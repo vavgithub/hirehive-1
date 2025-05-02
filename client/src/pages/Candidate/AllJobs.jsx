@@ -164,7 +164,7 @@ const AllJobs = () => {
     return (
         <Container>
             <div className='flex items-center justify-between'>
-                <h1 className='typography-h1'>All Jobs</h1>
+                <h1 className='typography-h1 mb-4'>All Jobs</h1>
             </div>
             {isAssessmentBannerVisible &&  <AssessmentBanner />}
                <div className='md:hidden flex items-center justify-between mt-1 mb-4'>

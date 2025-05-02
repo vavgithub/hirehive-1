@@ -82,7 +82,7 @@ const MyJobs = () => {
     // console.error('Error fetching applied jobs:', error);
     return (
       <div className="m-2 pt-4">
-        <h1 className="typography-h1">My Jobs</h1>
+        <h1 className="typography-h1 mb-4">My Jobs</h1>
         <div className="p-4 bg-background-30 rounded-xl">
           Error fetching applied jobs. Please try again later.
         </div>
@@ -92,7 +92,7 @@ const MyJobs = () => {
 
   return (
     <Container>
-        <h1 className="typography-h1">My Jobs</h1>
+        <h1 className="typography-h1 mb-4">My Jobs</h1>
         {isAssessmentBannerVisible && <AssessmentBanner />}
         <StyledCard padding={2} backgroundColor={"bg-background-30 lg:pb-16 "}>
           {appliedJobs?.jobApplications?.length > 0 ? (
