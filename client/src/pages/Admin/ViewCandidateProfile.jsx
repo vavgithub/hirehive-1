@@ -17,7 +17,7 @@ import ResumeViewer from '../../components/utility/ResumeViewer';
 import CustomToolTip from '../../components/Tooltip/CustomToolTip';
 import StyledCard from '../../components/Cards/StyledCard';
 import ScoreChart from '../../components/Charts/ScoreChart';
-import { getStageColor, maxScoreOfEachStage } from '../../components/Staging/staging.config';
+import {  getStageColorForChart, maxScoreOfEachStage } from '../../components/Staging/staging.config';
 import { CustomDropdown } from '../../components/Dropdowns/CustomDropdown';
 import Container from '../../components/Cards/Container';
 import IconWrapper from '../../components/Cards/IconWrapper';
@@ -53,7 +53,7 @@ export const VAVScoreCard = ({ score, stage, scoreStages }) => {
                     value: stageData?.score ? parseInt(stageData?.score) : 0,
                     maxScore: maxScoreOfEachStage(stage),
                     itemStyle: {
-                        color: getStageColor(stage)
+                        color: getStageColorForChart(stage)
                     }
                 }
             } else {
@@ -63,7 +63,7 @@ export const VAVScoreCard = ({ score, stage, scoreStages }) => {
                     scoreObj: stageData?.score,
                     maxScore: maxScoreOfEachStage(stage),
                     itemStyle: {
-                        color: getStageColor(stage)
+                        color: getStageColorForChart(stage)
                     }
                 }
             }

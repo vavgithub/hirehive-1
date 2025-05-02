@@ -4,14 +4,17 @@ import ReactECharts from "echarts-for-react";
 function InterviewsChart({dataSet}) {
     const formattedDataSet = useMemo(()=>{
         if(dataSet){
-            return Object.entries(dataSet).map(([key,value])=>({name : key,value}));
+            return Object.entries(dataSet).map(([key,value])=>({name : key === "Screening" ? key + ' Round' : key + ' Interview',value}));
         }else{
            return []
         }
     },[dataSet])
 
     const options = {
-
+        textStyle: {
+          fontFamily: "'Gilroy', sans-serif",
+        },
+        color: ['rgba(2, 75, 202, 1)', 'rgba(27, 110, 253, 1)', 'rgba(108, 161, 254, 1)'],
         tooltip: {
           trigger: 'item',
           backgroundColor: "rgba(32, 33, 34, 1)", // Teal with transparency
@@ -19,6 +22,9 @@ function InterviewsChart({dataSet}) {
           borderWidth: 0,
           borderRadius: 12,
           padding: 10,
+          textStyle: {
+            color: "#fff",
+          },
           axisPointer: {
             type: "none",
           },
@@ -26,19 +32,22 @@ function InterviewsChart({dataSet}) {
           extraCssText: "min-width: 100px;"
         },
         legend: {
-          top: '6%',
-          left: 'center',
+          orient: 'vertical',     // Stack items vertically
+          right: 32,
+          itemGap: 32,
+          top: 'center',          // Vertically center the legend
           textStyle: {
-            color: "#fff",  // Legend text color
-           }
+            color: "#fff",
+            padding: [0, 0, 0, 12]
+          }
         },
         series: [
           {
-            name: 'Interviews',
+            name: '',
             type: 'pie',
             radius: ['50%', '75%'],
             avoidLabelOverlap: false,
-            center: ['50%', '60%'],
+            center: ['32%', '60%'],
             label: {
               show: false,
               position: 'center'

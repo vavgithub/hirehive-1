@@ -35,7 +35,7 @@ function ScoreChart({scoreData}) {
           {
             name: "Score",
             type: "pie",
-            radius: ["55%", "70%"], // Creates the doughnut effect
+            radius: ["70%", "100%"], // Creates the doughnut effect
             avoidLabelOverlap: false,
             label: {
               show: false,

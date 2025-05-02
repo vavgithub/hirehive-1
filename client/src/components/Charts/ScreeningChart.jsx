@@ -28,7 +28,8 @@ export function ScreeningChart({scoreData}){
             type: 'bar',
             data: Object.values(scoreData),
             itemStyle: {
-              color: '#5470C6',
+              color: 'rgba(4, 95, 253, 1)',
+              borderRadius: [6, 6, 0, 0],
             },
           },
         ],

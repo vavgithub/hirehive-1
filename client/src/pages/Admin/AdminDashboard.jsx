@@ -231,7 +231,7 @@ function AdminDashboard() {
       </div>
 
       <div className='flex gap-4 w-full mt-4'>
-        <StyledCard padding={2} extraStyles={'overflow-hidden w-[40%]'}>
+        <StyledCard padding={2} extraStyles={'overflow-hidden w-[50%]'}>
           <h2 className='typography-h2'>Upcoming Interviews</h2>
           {
             dashboardDetails?.interviews?.upcomingInterviews?.length > 0 ? dashboardDetails.interviews.upcomingInterviews.map(interview =>{
@@ -264,8 +264,8 @@ function AdminDashboard() {
           }
 
         </StyledCard>
-        <StyledCard padding={2} extraStyles={'w-[60%]'}>
-          <h2 className='typography-h2'>Scheduled Interviews</h2>
+        <StyledCard padding={2} extraStyles={'w-[50%]'}>
+          <h2 className='typography-h2'>Interviews</h2>
           <InterviewsChart dataSet={dashboardDetails?.interviews?.stageBasedInterviewsCount} />    
         </StyledCard>
       </div>

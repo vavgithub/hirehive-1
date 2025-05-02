@@ -2263,6 +2263,23 @@ export const getStageColor = (stage) => {
         return 'rgb(255, 255, 255)';
     }
 };
+//Blue shade of colors for Doughnut charts
+export const getStageColorForChart = (stage) => {
+    switch (stage.toLowerCase()) {
+        case 'portfolio':
+          return 'rgba(2, 75, 202, 1)';
+        case 'screening':
+          return 'rgba(27, 110, 253, 1)';
+        case 'design task':
+          return 'rgba(56, 151, 244, 1)';
+        case 'round 1':
+          return 'rgba(108, 161, 254, 1)';
+        case 'round 2':
+          return 'rgba(128, 194, 244, 1)';
+        default:
+          return 'rgb(255, 255, 255)';
+      }
+}
 
   export const maxScoreOfEachStage = (stageTitle) => {
     let totalScore = 0;
