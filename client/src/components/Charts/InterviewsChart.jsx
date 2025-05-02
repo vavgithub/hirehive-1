@@ -47,7 +47,7 @@ function InterviewsChart({dataSet}) {
             type: 'pie',
             radius: ['50%', '75%'],
             avoidLabelOverlap: false,
-            center: ['32%', '60%'],
+            center: ['32%', '50%'],
             label: {
               show: false,
               position: 'center'
