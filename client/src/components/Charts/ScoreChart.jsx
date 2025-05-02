@@ -10,6 +10,9 @@ function ScoreChart({scoreData}) {
 
     const options = useMemo(()=>{
       return {
+        textStyle: {
+          fontFamily: "'Gilroy', sans-serif",
+        },
         tooltip: {
             trigger: "item",
             backgroundColor: "#232425", // Custom background color

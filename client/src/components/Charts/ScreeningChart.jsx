@@ -3,6 +3,9 @@ import ReactECharts from "echarts-for-react";
 
 export function ScreeningChart({scoreData}){
     const option = {
+        textStyle: {
+          fontFamily: "'Gilroy', sans-serif",
+        },
         grid: {
             top: 10,    // Adjust the top margin
             bottom: 20, // Adjust the bottom margin
