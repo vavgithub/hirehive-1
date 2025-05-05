@@ -241,7 +241,7 @@ const ViewJobs = () => {
 
                     <StyledCard padding={2} extraStyles='mt-12'>
                         <h3 className='typography-h3 mb-4'>Additional Questions</h3>
-                        {questions.map((question, index) => (
+                        {questions?.length > 0 ? questions.map((question, index) => (
                             <div key={question._id} className="mb-4">
                                 <label className="typography-body">
                                     Q{index + 1}. {question.text}
@@ -258,7 +258,7 @@ const ViewJobs = () => {
                                     ))
                                 )}
                             </div>
-                        ))}
+                        )) : <p className='typography-body text-font-gray'>No Questions Available</p>}
                     </StyledCard>
                 </StyledCard>
             )}
