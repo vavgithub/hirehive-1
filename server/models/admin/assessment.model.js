@@ -41,6 +41,11 @@ const assessmentSchema = new mongoose.Schema({
     required : true
   },
   questions : [questionSchema],
+  isAvailable : {
+    type : Boolean,
+    required : true,
+    default : true
+  },
   category: {
     type: String,
     enum: ['UI/UX', 'Frontend', 'Design Theory', 'Tools', 'General'],

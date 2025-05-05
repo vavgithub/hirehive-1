@@ -405,7 +405,7 @@ const ViewCandidateProfile = () => {
 
     const handleAssignmentNavigation = () => {
 
-        navigate(`/${role === "Admin" ? 'admin' : 'hiring-manager'}/assessment/${candidateId}`)
+        navigate(`/${role === "Admin" ? 'admin' : 'hiring-manager'}/assessment/${candidateId}/${jobId}`)
 
     }
 
@@ -543,7 +543,7 @@ const reviewerProfilePic = currentReviewer?.profilePicture
                                         {resumeOpen && <ResumeViewer documentUrl={data.resumeUrl} onClose={() => setResumeOpen(false)} />}
 
                                         {
-                                            (data.hasGivenAssessment && (role === "Hiring Manager" || role === "Admin")) && <div className='cursor-pointer' onClick={handleAssignmentNavigation}>
+                                            ((data.hasGivenAssessment && data.jobApplication?.assessmentResponse) && (role === "Hiring Manager" || role === "Admin")) && <div className='cursor-pointer' onClick={handleAssignmentNavigation}>
                                                 <CustomToolTip title={'Assessment'} arrowed size={2}>
                                                     <IconWrapper hasBg icon={ClipboardCheck} />
                                                 </CustomToolTip>

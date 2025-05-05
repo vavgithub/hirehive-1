@@ -12,9 +12,17 @@ import { CustomDropdown } from '../Dropdowns/CustomDropdown';
 import IconWrapper from '../Cards/IconWrapper';
 import { Bookmark, CirclePlus } from 'lucide-react';
 import TickCheckbox from '../Checkboxes/TickCheckbox';
+import CustomPill from '../Badge/CustomPill';
+import { useQuery } from '@tanstack/react-query';
+import axios from '../../api/axios';
 
 function hasDuplicates(arr) {
   return new Set(arr).size !== arr.length;
+}
+
+const fetchAssessmentTemplates = async() => {
+    const response = await axios.get(`/jobs/get-assessment-templates`, { withCredentials: true });
+    return response.data;
 }
 
 const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions }) => {
@@ -31,6 +39,7 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
       budgetFrom: 0,
       budgetTo: 1,
       jobDescription: '',
+      assessment_id : '',
       skills: [],
       ...initialData
     },
@@ -39,12 +48,18 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
 
   const watchedFields = watch();
 
+  const { data: assessmentTemplates, isassessmentLoading } = useQuery({
+    queryKey: ['getAllAssessmentTemplates'],
+    queryFn: () => fetchAssessmentTemplates(),
+  });
+
   let areAllFieldsFilled = isValid &&
     watchedFields.jobTitle &&
     watchedFields.workplaceType &&
     watchedFields.employeeLocation &&
     watchedFields.employmentType &&
     watchedFields.jobProfile &&
+    watchedFields.assessment_id &&
     watchedFields.jobDescription &&
     watchedFields.skills &&
     watchedFields.skills.length > 0 &&
@@ -200,25 +215,25 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
           )}
         />
 
-<Controller
-  name="budgetFrom"
-  control={control}
-  // rules={{ required: true }}
-  render={({ field: { value, onChange } }) => (
-    <BudgetField
-      value={{
-        from: value,
-        to: watchedFields.budgetTo
-      }}
-      onChange={(newValue) => {
-        onChange(newValue.from);
-        setValue('budgetTo', newValue.to);
-      }}
-      errors={errors}
-      employmentType={watchedFields.employmentType}
-    />
-  )}
-/>
+        <Controller
+          name="budgetFrom"
+          control={control}
+          // rules={{ required: true }}
+          render={({ field: { value, onChange } }) => (
+            <BudgetField
+              value={{
+                from: value,
+                to: watchedFields.budgetTo
+              }}
+              onChange={(newValue) => {
+                onChange(newValue.from);
+                setValue('budgetTo', newValue.to);
+              }}
+              errors={errors}
+              employmentType={watchedFields.employmentType}
+            />
+          )}
+        />
 
         <Controller
           name="jobDescription"
@@ -252,11 +267,32 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
                 allSkills={dummySkills}
                 error={error}
               />
-              {error && <p className="text-red-500 absolute typography-small-p top-[75px]">{error.message}</p>}
+              {error && <p className="text-red-500 absolute typography-small-p top-[78px]">{error.message}</p>}
             </div>
           )}
         />
       </div>
+      {/* Assessment Selection */}
+      <Controller
+          name="assessment"
+          control={control}
+          rules={{
+            required: 'Assessment is required',
+          }}
+          render={({ field: { onChange, value } , fieldState: { error }  })=>(
+            <div className='mt-6 relative'>
+            <label htmlFor="assessment" className="typography-body block mb-2">Assessment{<span className="text-red-100">*</span>}</label>
+                <div className='flex flex-wrap gap-4'>
+                  {
+                    assessmentTemplates?.map(template => (
+                      <CustomPill error={error} key={template?._id} label={template?.title} selected={value === template?._id} onClick={()=>onChange(value === template?._id ? '' :template?._id)} />
+                    ))
+                  }
+                </div>
+                {error && <p className="text-red-500 absolute typography-small-p top-[72px]">{error.message}</p>}
+            </div>
+          )}
+          />
       <Controller
         name="questions"
         control={control}

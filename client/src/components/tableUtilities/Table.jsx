@@ -164,9 +164,9 @@ const Table = ({
       if (isCompleted && isNotCompleted) {
         result = result
       } else if (isCompleted) {
-        result = result.filter(row => row.hasGivenAssessment === true);
+        result = result.filter(row => row.hasGivenAssessment === true && row.assessmentResponse );
       } else if (isNotCompleted) {
-        result = result.filter(row => row.hasGivenAssessment === false);
+        result = result.filter(row => row.hasGivenAssessment === false && !row.assessmentResponse );
       }
 
       // Ensure unique results by _id

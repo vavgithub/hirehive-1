@@ -1057,7 +1057,7 @@ const getJobs = async (req, res) => {
 
 const getAssessmentTemplates = async (req,res) => {
   try {
-    const existingAssessmentTemplates = await Assessment.find().select('-questions')
+    const existingAssessmentTemplates = await Assessment.find({ isAvailable : true }).select('-questions')
     res.status(200).json(existingAssessmentTemplates)
   } catch (error) {
     console.log("Error getting Assessment templates : ", error)
@@ -1081,7 +1081,7 @@ const createJob = async (req, res) => {
       experienceTo,
       budgetFrom,
       budgetTo,
-      assessmentId,
+      assessment_id,
       skills,
       isPublic,
       jobDescription,
@@ -1089,12 +1089,14 @@ const createJob = async (req, res) => {
       questions,
     } = req.body;
 
-    const isExisitngAssessment = await Assessment.findById(assessmentId);
-    if(!isExisitngAssessment){
-      res.status(400).json({
-        message: `Selected Assessment is invalid.`,
-      });
-      return
+    if(assessment_id){
+      const isExisitngAssessment = await Assessment.findById(assessment_id);
+      if(!isExisitngAssessment){
+        res.status(400).json({
+          message: `Selected Assessment is invalid.`,
+        });
+        return
+      }
     }
 
     const sanitizedDescription = sanitizeLexicalHtml(jobDescription); 
@@ -1108,7 +1110,7 @@ const createJob = async (req, res) => {
       isPublic,
       experienceFrom,
       experienceTo,
-      assessment_id : assessmentId,
+      ...(assessment_id ? {assessment_id} : {}),
       budgetFrom,
       budgetTo,
       skills,

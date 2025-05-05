@@ -72,6 +72,11 @@ export const getAllCandidatesForJob = async (req, res) => {
         skills: candidate.skills,
       };
 
+      const assessmentDetails = {
+        assessment_id : jobApplication.assessment_id,
+        assessmentResponse : jobApplication.assessmentResponse
+      }
+
       return {
         // Personal info (remains constant)
         _id: candidate._id,
@@ -98,6 +103,9 @@ export const getAllCandidatesForJob = async (req, res) => {
         applicationDate: jobApplication.applicationDate,
         stageStatuses: stageStatuses,
         questionResponses: jobApplication.questionResponses,
+
+        //Assessment Details
+        ...assessmentDetails
       };
     });
 
@@ -660,6 +668,19 @@ export const getAllCandidatesWithStats = async (req, res) => {
           jobType: {
             $ifNull: ['$jobDetail.employmentType', '$jobApplications.jobType']
           },
+          assessment_id : "$jobApplications.assessment_id",
+          assessmentResponse : {
+            $cond: {
+              if: {
+                $and: [
+                  { $ne: ["$jobApplications.assessmentResponse", null] },
+                  { $ne: [{ $type: "$jobApplications.assessmentResponse" }, "missing"] }
+                ]
+              },
+              then: true,
+              else: false
+            }
+          },
           jobId: "$jobApplications.jobId",
           rating: "$jobApplications.rating",
           resumeUrl: "$jobApplications.resumeUrl",
@@ -710,6 +731,8 @@ export const getAllCandidatesWithStats = async (req, res) => {
           rating: 1,
           resumeUrl: 1,
           applicationDate: 1,
+          assessment_id : 1,
+          assessmentResponse : 1,
           status: '$currentStageStatus.v.status'
         }
       },
@@ -945,11 +968,10 @@ export const getRandomAssessmentQuestions = async (req, res) => {
 export const submitQuestionnaireAttempt = async (req, res) => {
   try {
     const { candidateId } = req.params;
-    const { assessmentId, answers, totalTimeInSeconds, recordingUrl } = req.body;
-
+    const { assessment_id, answers, totalTimeInSeconds, recordingUrl } = req.body;
     // Get questions to check correct answers
     const questionIds = Object.keys(answers);
-    const assessment = await Assessment.findById({ _id: assessmentId });
+    const assessment = await Assessment.findById({ _id: assessment_id });
     const questions = assessment.questions.filter(question => questionIds.includes(question._id.toString()));
 
     let responses = [];
@@ -975,6 +997,7 @@ export const submitQuestionnaireAttempt = async (req, res) => {
 
     // Create attempt data
     const attemptData = {
+      title : assessment?.title,
       totalTimeInSeconds,
       score,
       responses,
@@ -988,10 +1011,8 @@ export const submitQuestionnaireAttempt = async (req, res) => {
 
     let hasPendingAssessment = false;
 
-    console.log(attemptData)
     for(let application of candidate.jobApplications){
-      console.log(application.assessment_id,assessmentId)
-      if(application?.assessment_id?.toString() === assessmentId){
+      if(application?.assessment_id?.toString() === assessment_id){
         application.assessmentResponse = attemptData
       }else if(application?.assessment_id && !application.assessmentResponse){
         hasPendingAssessment = true
@@ -1200,6 +1221,10 @@ export const getJobBasedQuestionnaireDetails = async (req, res) => {
           correctAnswers,
           incorrectAnswers,
           scoreOutOf100: latestAttempt.score,
+        },
+        assessment : {
+          _id:assessment._id,
+          title : assessment.title ?? latestAttempt?.title,
         },
         questionResponses: latestAttempt.responses.map((response, index) => {
           const question = questionMap[response.questionId.toString()];

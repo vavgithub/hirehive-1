@@ -144,6 +144,9 @@ const assessmentResponseSchema = new mongoose.Schema({
 });
 
 const assessmentAttemptSchema = new mongoose.Schema({
+  title :{
+    type: String,
+  },
   totalTimeInSeconds: {
     type: Number,
     required: true,

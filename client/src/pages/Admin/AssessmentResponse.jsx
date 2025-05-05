@@ -15,8 +15,8 @@ import { UNKNOWN_PROFILE_PICTURE_URL } from '../../utility/config';
 import IconWrapper from '../../components/Cards/IconWrapper';
 
 // Fetch function
-const fetchAssessmentDetails = async (candidateId) => {
-    const { data } = await axios.get(`admin/candidate/assessment/${candidateId}`);
+const fetchAssessmentDetails = async (candidateId,jobId) => {
+    const { data } = await axios.get(`admin/candidate/get-assessment/${candidateId}/${jobId}`);
     return data;
 };
 
@@ -25,11 +25,11 @@ const AssessmentResponse = () => {
     // Add state for modal
     const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
 
-    const { id: candidateId } = useParams();
+    const { id: candidateId , jobId } = useParams();
 
     const { data, isLoading, isError } = useQuery({
-        queryKey: ['assessmentDetails', candidateId],
-        queryFn: () => fetchAssessmentDetails(candidateId),
+        queryKey: ['assessmentDetails', candidateId,jobId],
+        queryFn: () => fetchAssessmentDetails(candidateId,jobId),
     });
 
     if (isLoading) {
@@ -85,7 +85,7 @@ const AssessmentResponse = () => {
 
 
                                 <div className="flex items-center gap-2 my-2">
-                                    <span className="text-white text-xl font-semibold">UX Design Level 1: Figma Skill</span>
+                                    <span className="text-white text-xl font-semibold">{assessmentData?.assessment?.title}</span>
                                     <Circle className="w-1 h-1 text-font-gray" />
                                 </div>
 

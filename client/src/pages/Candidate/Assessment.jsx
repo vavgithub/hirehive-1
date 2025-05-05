@@ -25,11 +25,11 @@ const formatTime = (time) => {
 };
 
 // Hook for fetching assessment questions
-export const useAssessmentQuestions = () => {
+export const useAssessmentQuestions = (assessment_id) => {
   return useQuery({
     queryKey: ['assessment-questions'],
     queryFn: async () => {
-      const response = await axios.get('/admin/candidate/questions/random');
+      const response = await axios.get(`/admin/candidate/assessment-questions/random?assessmentId=${assessment_id}`);
       return response.data.questions;
     },
     staleTime: Infinity,
@@ -286,7 +286,7 @@ const UploadProgressOverlay = ({ uploadProgress }) => (
 );
 
 // Main Assessment Component
-const Assessment = () => {
+const Assessment = ({assessment_id}) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [startTime] = useState(Date.now());
@@ -329,7 +329,7 @@ const Assessment = () => {
     isLoading,
     isError,
     error
-  } = useAssessmentQuestions();
+  } = useAssessmentQuestions(assessment_id);
 
   // Calculate states
   const answeredCount = Object.keys(answers).length;
@@ -785,6 +785,7 @@ const Assessment = () => {
     try {
       const totalTimeInSeconds = Math.floor((Date.now() - startTime) / 1000);
       await submitAssessmentMutation.mutateAsync({
+        assessment_id,
         answers,
         totalTimeInSeconds
       });

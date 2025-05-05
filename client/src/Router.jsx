@@ -208,7 +208,7 @@ export const router = createBrowserRouter([
         element: <Shortlisted />
       },
       {
-        path: "assessment/:id",
+        path: "assessment/:id/:jobId",
         element: <AssessmentResponse />
       },
       {
