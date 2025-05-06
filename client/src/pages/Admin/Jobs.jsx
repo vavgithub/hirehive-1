@@ -408,7 +408,7 @@ const Jobs = () => {
                             )
                         }
                         {isLoadingResults  ? (
-                            <div className="flex justify-center items-center min-h-full">
+                            <div className="flex justify-center items-center h-full">
                                 <Loader />
                             </div>
                         ) : (displayJobs.length === 0 || displayJobs.filter(job => job.status === activeTab).length === 0) ? (
