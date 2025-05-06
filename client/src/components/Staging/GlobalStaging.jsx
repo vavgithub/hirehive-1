@@ -445,7 +445,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
       </div>
       {/* Body Section */}
       {
-        isLoading ? 
+        (isLoading || updateAssigneeMutation.isPending || submitReviewMutation.isPending || submitBudgetScoreMutation.isPending ) ? 
             <div className='flex justify-center items-center w-full'>
                 <Loader />
             </div>
@@ -501,7 +501,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
         }
         {
             stageBasedConfig?.hasSubmissionForm && 
-            <SubmissionForm candidateId={candidateId} jobId={jobId} stageData={stageData} />
+            <SubmissionForm candidateId={candidateId} jobId={jobId} stageData={stageData} setIsLoading={setIsLoading} />
         }
         {
           stageBasedConfig?.hasRatingComponent && <StageRating candidateId={candidateId} jobId={jobId} name={stageConfig?.name} candidate={candidateData} onSubmit={handleReviewSubmit} stageConfig={stageConfig} />
@@ -585,7 +585,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
         />
       }
 
-    {(stageBasedConfig?.hasCallHistory ) && 
+    {(stageBasedConfig?.hasCallHistory && (currentStatus !== "Cleared" ? stageData?.callHistory?.length > 0  : true)) && 
       <div className='mt-4 relative w-[50%]'>
           <h3 className='typography-small-p text-font-gray mt-1'>{currentStatus !== "Cleared" ? "Reschedules" : "Calls"}</h3>
           {currentStatus !== "Cleared" ? ( stageData?.callHistory?.length > 0 && stageData.callHistory.filter((call,index) => index === 0).map((call, index) => (

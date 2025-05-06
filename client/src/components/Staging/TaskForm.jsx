@@ -12,7 +12,7 @@ import SchedulerButton from '../ui/SchedulerButton';
 import { InputField } from '../Inputs/InputField';
 import { combineDateWithTime, convertLocalToUTC, formatUTCToLocalTimeAuto, UTCToDateFormatted } from '../../utility/timezoneConverter';
 
-export function SubmissionForm({candidateId,jobId,stageData}){
+export function SubmissionForm({candidateId,jobId,stageData,setIsLoading}){
     const [taskLink, setTaskLink] = useState('');
     const [comment, setComment] = useState('');
 
@@ -21,6 +21,9 @@ export function SubmissionForm({candidateId,jobId,stageData}){
 
     const submitTaskMutation = useMutation({
         mutationFn: (taskData) => axios.post('candidates/submit-design-task', taskData),
+        onMutate: () => {
+            setIsLoading(true); // Set loading to true when mutation starts
+        },
         onSuccess: (data) => {
             dispatch(updateStageStatus({
                 stage: 'Design Task',
@@ -28,9 +31,11 @@ export function SubmissionForm({candidateId,jobId,stageData}){
                 data: data.updatedStageStatus
             }));
             queryClient.invalidateQueries(['candidate', candidateId, jobId]);
+            setIsLoading(false);
         },
         onError: (error) => {
             console.error('Error submitting design task:', error);
+            setIsLoading(false);
             // Handle error (e.g., show error message to user)
         }
     });
