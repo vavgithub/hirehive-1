@@ -280,7 +280,7 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
       </div>
       {/* Assessment Selection */}
       <Controller
-          name="assessment"
+          name="assessment_id"
           control={control}
           rules={{
             required: 'Assessment is required',

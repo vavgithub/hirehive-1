@@ -177,7 +177,7 @@ const ContactUs = () => {
         timestamp: new Date().toISOString()
       };
       
-      console.log("Submitting form data:", contactFormData);
+      // console.log("Submitting form data:", contactFormData);
       
       // Submit to Google Sheets
       await submitToGoogleSheets(contactFormData);
