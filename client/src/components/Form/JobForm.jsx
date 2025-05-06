@@ -8,10 +8,10 @@ import TextEditor from '../utility/TextEditor';
 import { InputField } from '../Inputs/InputField';
 import { ExperienceField } from '../FormUtilities/ExperienceField';
 import { BudgetField } from '../FormUtilities/BudgetField';
-import { CustomDropdown } from '../Dropdowns/CustomDropdown';
 import IconWrapper from '../Cards/IconWrapper';
 import { Bookmark, CirclePlus } from 'lucide-react';
 import TickCheckbox from '../Checkboxes/TickCheckbox';
+import GlobalDropDown from '../Dropdowns/GlobalDropDown';
 
 function hasDuplicates(arr) {
   return new Set(arr).size !== arr.length;
@@ -161,10 +161,9 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
             control={control}
             rules={{ required: `${field.charAt(0).toUpperCase() + field.slice(1).replace(/([A-Z])/g, ' $1')} is required` }}
             render={({ field: { onChange, value } ,fieldState : { error }}) => (
-              <CustomDropdown
-                field={field}
-                label={field.charAt(0).toUpperCase() + field.slice(1).replace(/([A-Z])/g, ' $1')}
-                options={dropdownOptions[field]}
+              <GlobalDropDown 
+              label={field.charAt(0).toUpperCase() + field.slice(1).replace(/([A-Z])/g, ' $1')}
+              options={dropdownOptions[field]}
                 searchEnabled={field === "employeeLocation"}
                 value={value}
                 required

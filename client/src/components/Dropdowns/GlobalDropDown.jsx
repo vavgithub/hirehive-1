@@ -68,6 +68,7 @@ import {
         )}
   
         <Popover
+          disableScrollLock
           anchorEl={anchorEl}
           open={Boolean(anchorEl)}
           onClose={handleClose}

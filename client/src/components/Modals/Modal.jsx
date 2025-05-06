@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMediaQuery } from 'react-responsive';
 import Label from '../ui/Label';
-import { CustomDropdown } from '../Dropdowns/CustomDropdown';
 import StyledCard from '../Cards/StyledCard';
 import { Button } from '../Buttons/Button';
 import WarningIcon from '../../svg/Staging/WarningIcon';
@@ -290,24 +289,13 @@ const Modal = ({
               {/* <label htmlFor="rejectionReason" className="block typography-body">
                 Please provide the reason for rejecting this candidate
               </label> */}
-              <CustomDropdown 
-              extraStylesForLabel="font-bricolage font-semibold" 
+              <GlobalDropDown
               label={'Please provide the reason for rejecting this candidate'} 
+              extraStylesForLabel="font-bricolage font-semibold"
               options={REJECTION_REASONS} 
               value={rejectionReason}
-              onChange={handleReasonSelect}
+              onChange={handleReasonSelect}           
               />
-              {/* <select
-                id="rejectionReason"
-                value={rejectionReason}
-                onChange={(e) => handleReasonSelect(e.target.value)}
-                className="mt-1 block w-full pl-3 pr-10 py-2 text-base bg-background-100 border-gray-300 focus:outline-none focus:ring-teal-400 focus:border-indigo-500 sm:text-sm rounded-md"
-              >
-                <option value="">Select reason for rejection</option>
-                {REJECTION_REASONS.map((reason, index) => (
-                  <option key={index} value={reason}>{reason}</option>
-                ))}
-              </select> */}
             </div>
           {(showEmailPreview && REJECTION_REASONS.find(reason => reason.value === rejectionReason)?.email )&& (
             <>

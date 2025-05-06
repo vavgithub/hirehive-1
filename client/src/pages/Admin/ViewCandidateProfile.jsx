@@ -18,7 +18,6 @@ import CustomToolTip from '../../components/Tooltip/CustomToolTip';
 import StyledCard from '../../components/Cards/StyledCard';
 import ScoreChart from '../../components/Charts/ScoreChart';
 import {  getStageColorForChart, maxScoreOfEachStage } from '../../components/Staging/staging.config';
-import { CustomDropdown } from '../../components/Dropdowns/CustomDropdown';
 import Container from '../../components/Cards/Container';
 import IconWrapper from '../../components/Cards/IconWrapper';
 import { ArrowLeftRight, ClipboardCheck, FileText, FileUser, FolderOpen, Globe, Mail, MonitorDot, Notebook, NotebookPen, Phone, Users } from 'lucide-react';
@@ -32,6 +31,7 @@ import { ChevronDown, ChevronRight } from 'lucide-react';
 import { formatTime } from '../../utility/formatTime';
 import { showErrorToast, showSuccessToast } from '../../components/ui/Toast';
 import { UTCToDateFormatted } from '../../utility/timezoneConverter';
+import GlobalDropDown from '../../components/Dropdowns/GlobalDropDown';
 
 export const VAVScoreCard = ({ score, stage, scoreStages }) => {
     const [showBreakDown, setShowBreakDown] = useState(false);
@@ -475,11 +475,11 @@ const reviewerProfilePic = currentReviewer?.profilePicture
                 onBack={handleBack} // Pass custom back handler
                 rightContent={(role === "Admin" || role === "Hiring Manager") &&
                     <div className='flex items-center h-full w-72 z-10'>
-                        <CustomDropdown
-                            value={selectedJob}
-                            onChange={setSelectedJob}
-                            options={formattedAppliedJobs}
-                            ref={switchJobRef}
+                        <GlobalDropDown
+                        extraStylesForLabel=" hidden "
+                        value={selectedJob}
+                        onChange={setSelectedJob}
+                        options={formattedAppliedJobs}
                         />
                     </div>
                 }
