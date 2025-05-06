@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { ACTION_TYPES } from '../../utility/ActionTypes';
 import IconWrapper from '../Cards/IconWrapper';
 import { Archive, CircleCheck, CircleX, EllipsisVertical, SquarePen, Share2, Trash, Pin, PinOff } from 'lucide-react';
+import { ListItemText, MenuItem, Popover, TextField } from '@mui/material';
 
 const pinUnpinMenuItems = {
   pin: { action: ACTION_TYPES.PIN, icon: () => <IconWrapper size={0} customIconSize={5} icon={Pin} />, label: 'Pin' },
@@ -14,13 +15,13 @@ const MenuItems = {
       { action: ACTION_TYPES.EDIT, icon: () => <IconWrapper size={0} customIconSize={5} icon={SquarePen} />, label: 'Edit' },
       { action: ACTION_TYPES.DRAFT, icon: () => <IconWrapper size={0} customIconSize={5} icon={Archive} />, label: 'Move To Draft' },
       { action: ACTION_TYPES.CLOSE, icon: () => <IconWrapper size={0} customIconSize={5} icon={CircleX} />, label: 'Close job' },
-      { action: ACTION_TYPES.DELETE, icon: () => <IconWrapper size={0} customIconSize={5} isErrorIcon icon={Trash} />, label: 'Delete', className: 'text-red-100' },
+      { action: ACTION_TYPES.DELETE, icon: () => <IconWrapper size={0} customIconSize={5} isErrorIcon icon={Trash} />, label: 'Delete', className: 'text-red-100' ,style : { color :'red' }  },
     ],
     closed: [
       { action: ACTION_TYPES.REOPEN, icon: () => <IconWrapper size={0} customIconSize={5} icon={CircleCheck} />, label: 'Re-open' },
       { action: ACTION_TYPES.EDIT, icon: () => <IconWrapper size={0} customIconSize={5} icon={SquarePen} />, label: 'Edit' },
       { action: ACTION_TYPES.DRAFT, icon: () => <IconWrapper size={0} customIconSize={5} icon={Archive} />, label: 'Move To Draft' },
-      { action: ACTION_TYPES.DELETE, icon: () => <IconWrapper size={0} customIconSize={5} isErrorIcon icon={Trash} />, label: 'Delete', className: 'text-red-100' },
+      { action: ACTION_TYPES.DELETE, icon: () => <IconWrapper size={0} customIconSize={5} isErrorIcon icon={Trash} />, label: 'Delete', className: 'text-red-100',style : { color :'red' } },
     ],
     draft: [
       { action: ACTION_TYPES.EDIT, icon: () => <IconWrapper size={0} customIconSize={5} icon={SquarePen} />, label: 'Edit' },
@@ -44,23 +45,9 @@ const ThreeDots = ({ job, handleAction, page, orgId, isPinned, role , extraStyle
   const menuRef = useRef(null);
 
   const toggleMenu = (e) => {
-    console.log("TO")
     e.stopPropagation();
     setIsOpen(!isOpen);
   };
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
-        setIsOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
 
   const getMenuItems = () => {
     if (job && job.status) {
@@ -100,41 +87,119 @@ const ThreeDots = ({ job, handleAction, page, orgId, isPinned, role , extraStyle
       <button onClick={toggleMenu} className="focus:outline-none flex items-center ">
         <IconWrapper hasBg customBgHover={'hover:bg-background-80'} icon={EllipsisVertical} customIconSize={7} customStrokeWidth={7} />
       </button>
-      {isOpen && (
-        <div className="absolute right-0 mt-2 w-48 bg-background-100 shadow-lg cursor-pointer z-50 rounded-xl  ">
-          <ul className="py-1">
-            {(job?.status === 'open' && (role === "Admin" || role === "Hiring Manager")) &&
-              <li
-                key={pinUnpinMenuItems[isPinned ? 'unpin' : 'pin']?.action}
-                className={` typography-body mx-2 my-2 p-2 flex items-center gap-2 typography-body hover:bg-background-60 rounded-xl  ${pinUnpinMenuItems[isPinned ? 'unpin' : 'pin']?.className || ''}`}
-                onClick={(e) => handleMenuItemClick(pinUnpinMenuItems[isPinned ? 'unpin' : 'pin']?.action, job ? job._id : null, e)}
-              >
-                <button className="text-black rounded m-1">
-                  {
-                    (() => {
-                      const DynamicIcon = pinUnpinMenuItems[isPinned ? 'unpin' : 'pin']?.icon;
-                      return DynamicIcon ? <DynamicIcon /> : null;
-                    })()
-                  }
-                </button>
-                {pinUnpinMenuItems[isPinned ? 'unpin' : 'pin']?.label}
-              </li>
+        <Popover
+          disableScrollLock
+          anchorEl={menuRef.current}
+          open={Boolean(isOpen)}
+          onClose={toggleMenu}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'right',
+          }}
+          transformOrigin={{
+            vertical: 'top', // aligns the top of the Popover with the top of the anchorEl
+            horizontal: 'right', // aligns the right side of the Popover with the right side of the anchorEl
+          }}
+          PaperProps={{
+            style: {
+              maxHeight: 300,
+              width: '12rem',
+              borderRadius: '12px',
+              padding: '8px',
+              backgroundColor: 'rgba(22, 23, 24, 1)',
+              marginTop: '12px',
+            },
+          }}
+        >
+          <div className="flex flex-col gap-2 px-1 py-2 w-full text-white">
+          {(job?.status === 'open' && (role === "Admin" || role === "Hiring Manager")) &&
+          <MenuItem
+              key={pinUnpinMenuItems[isPinned ? 'unpin' : 'pin']?.action}
+          sx={{
+            padding: '8px 16px',
+            borderRadius: '12px',
+            backgroundColor: 'rgba(22, 23, 24, 1)',
+            display: 'flex',
+            fontSize: '14px',
+            alignItems: 'center',
+            gap: '12px',
+            color: 'rgba(255, 255, 255, 1)', // default color
+            '&:hover': {
+              backgroundColor: 'rgba(35, 36, 37, 1)',
+              color: 'rgba(255, 255, 255, 1)', // custom white color
+              '& .MuiTypography-root': {
+                color: pinUnpinMenuItems[isPinned ? 'unpin' : 'pin']?.style?.color ?? 'rgba(255, 255, 255, 1) !important', // force Typography to be white
+              },
+            },
+            ...pinUnpinMenuItems[isPinned ? 'unpin' : 'pin']?.style,
+          }}
+          onClick={(e) => handleMenuItemClick(pinUnpinMenuItems[isPinned ? 'unpin' : 'pin']?.action, job ? job._id : null, e)}
+        >
+            {
+              (() => {
+                const DynamicIcon = pinUnpinMenuItems[isPinned ? 'unpin' : 'pin']?.icon;
+                return DynamicIcon ? <DynamicIcon /> : null;
+              })()
             }
-            {menuItems.map(({ action, icon: Icon, label, className }) => (
-              <li
-                key={action}
-                className={`m-2 p-2 flex items-center gap-2 typography-body hover:bg-background-60 rounded-xl ${className || ''}`}
-                onClick={(e) => handleMenuItemClick(action, job ? job._id : null, e)}
-              >
-                <button className="text-black rounded m-1">
-                  <Icon />
-                </button>
-                {label}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+          <ListItemText
+            primaryTypographyProps={{
+              component: 'span',
+              sx: {
+                fontWeight: 300,
+                fontSize: '14px',
+                color: 'inherit', // critical: let it inherit from MenuItem
+              },
+            }}
+            primary={pinUnpinMenuItems[isPinned ? 'unpin' : 'pin']?.label}
+          />
+        </MenuItem>
+          }
+            {menuItems.length > 0 ? (
+              menuItems.map(({ action, icon: Icon, label, className, style }) => (
+                <MenuItem
+                      key={action}
+                      sx={{
+                        padding: '8px 16px',
+                        borderRadius: '12px',
+                        backgroundColor: 'rgba(22, 23, 24, 1)',
+                        display: 'flex',
+                        fontSize: '14px',
+                        alignItems: 'center',
+                        gap: '12px',
+                        color: 'rgba(255, 255, 255, 1)', // default color
+                        '&:hover': {
+                          backgroundColor: 'rgba(35, 36, 37, 1)',
+                          color: 'rgba(255, 255, 255, 1)', // custom white color
+                          '& .MuiTypography-root': {
+                            color: style?.color ?? 'rgba(255, 255, 255, 1) !important', // force Typography to be white
+                          },
+                        },
+                        ...style,
+                      }}
+                      onClick={(e) => {
+                        handleMenuItemClick(action, job ? job._id : null, e)
+                      }}
+                    >
+                      <Icon />
+                      <ListItemText
+                        primaryTypographyProps={{
+                          component: 'span',
+                          sx: {
+                            fontWeight: 300,
+                            fontSize: '14px',
+                            color: 'inherit', // critical: let it inherit from MenuItem
+                          },
+                        }}
+                        primary={label}
+                      />
+                    </MenuItem>
+
+              ))
+            ) : (
+              <MenuItem disabled>No options found</MenuItem>
+            )}
+          </div>
+        </Popover>
     </div>
   );
 };
