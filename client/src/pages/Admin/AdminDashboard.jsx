@@ -24,6 +24,9 @@ function AdminDashboard() {
   const [currentPage, setCurrentPage] = useState(0);
   const [pageSize, setPageSize] = useState(5);
 
+  const [currentLeaderboardPage, setCurrentLeaderboardPage] = useState(0);
+  const [leaderboardPageSize, setLeaderboardPageSize] = useState(5);
+
   const [selectedChartFilter,setSelectedChartFilter] = useState('monthly');
 
   const navigate = useNavigate();
@@ -297,11 +300,11 @@ function AdminDashboard() {
             rows={dashboardDetails?.leaderBoard?.candidates ?? []}
             columns={columns}
             autoHeight
-            paginationModel={{ page: currentPage, pageSize: pageSize }}
+            paginationModel={{ page: currentLeaderboardPage, pageSize: leaderboardPageSize }}
             onPaginationModelChange={(paginationModel) => {
               const { page, pageSize } = paginationModel;
-              setCurrentPage(page); // Update your state or perform actions for page change
-              setPageSize(pageSize); // Update your state or perform actions for page size change
+              setCurrentLeaderboardPage(page); // Update your state or perform actions for page change
+              setLeaderboardPageSize(pageSize); // Update your state or perform actions for page size change
             }}
             getRowId={(row) => `${row._id}`} // Create a unique ID for each row
             getRowClassName={(params) =>
