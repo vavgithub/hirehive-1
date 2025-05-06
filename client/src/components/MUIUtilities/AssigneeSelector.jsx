@@ -224,6 +224,11 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
           anchorEl={selectedAnchor}
           open={Boolean(selectedAnchor)}
           onClose={handleClose}
+          PaperProps={{
+            style: { maxHeight: 300, width: '250px' ,boxShadow: '3px 5px 50px rgba(25, 25, 25, 0.75)', borderRadius : "12px",padding : "8px",backgroundColor: 'black',
+
+            },
+          }}
          
         >
           <Box sx={{ position:"relative"}}>
@@ -234,7 +239,36 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
               fullWidth
               variant="outlined"
               size="small"
-             
+              sx={{
+                boxSizing:"border-box",
+                '& .MuiOutlinedInput-input' : {
+                  height : "44px !important",
+                  padding : "0px 40px"
+                },
+                '& .css-1n4twyu-MuiInputBase-input-MuiOutlinedInput-input' :{
+                  height : "44px !important",
+                  padding : "0px 40px"
+                },
+                '& .css-1ua80n0-MuiInputBase-input-MuiOutlinedInput-input' : {
+                  height : "44px !important",
+                  padding : "0px 40px"
+                },
+                '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                  borderColor: 'rgba(24, 233, 208, 1) !important', // Change the outline color on focus
+                },
+              }}
+              InputProps={{
+                // startAdornment: (
+                //   <InputAdornment style={{background : "transparent"}} position="start">
+                //     <SearchIcon />
+                //   </InputAdornment>
+                // ),
+                style : {
+                  color : "white",
+                  height : "44px",
+                  borderRadius : "12px",
+                }
+              }}
             />
             <div className='absolute top-[0.6rem] left-2'>
               <IconWrapper icon={Search} size={0} customIconSize={3} isInActiveIcon />
@@ -248,26 +282,11 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
             filteredReviewers.map((reviewer) => (
               <MenuItem
                 selected={reviewer?._id === selectedReviewer?._id}
-                // sx={{
-                //   margin : "8px 0px !important",
-                //   padding :"8px 16px",
-                //   borderRadius : "12px",
-                //   ':hover' :{
-                //     background :"rgba(35,36,37,1)"
-                //   },
-                //   ':hover .MuiTypography-root' :{
-                //     color :"rgba(24,233,208,1)"
-                //   },
-                //   '&.Mui-selected': {
-                //     background: "rgba(24,233,208,0.1) !important", // Red background for selected item
-                //   },
-                //   '&.Mui-selected:hover' : {
-                //     background :"rgba(35,36,37,1) !important"
-                //   },
-                //   '&.Mui-selected span': {
-                //     color: "rgba(24,233,208,1) !important", // Slightly darker red on hover
-                //   },
-                // }}
+                sx={{
+                  margin : "8px 0px !important",
+                  padding :"6px 16px", 
+                  borderRadius : "12px",
+                }}
                 key={reviewer._id}
                 onClick={() => handleSelect(reviewer)}
               >
@@ -282,11 +301,6 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
                 primaryTypographyProps={{
                   component : 'span'
                 }}
-                // sx={{
-                //   "& .MuiTypography-root": {
-                //     fontFamily: "Outfit", // Apply the custom font explicitly to the Typography
-                //   },
-                // }}
                 primary={reviewer?.firstName + " " + reviewer?.lastName} />
               </MenuItem>
             ))
