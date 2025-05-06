@@ -5,7 +5,6 @@ import { formatUTCToLocalTimeAuto, UTCToShortDate, UTCToShortMonth } from "../..
 function ApplicationChart({type,dataArray}) {
     const xData = dataArray?.map(data => type === "weekly" ? `${UTCToShortDate(data?.week?.start)} - ${UTCToShortDate(data?.week?.end)}` : type === "daily" ? `${UTCToShortMonth(data?.day)}` : type === "yesterday" ? formatUTCToLocalTimeAuto(data?.hour) : data?.month);
     const values = dataArray?.map(data => data?.totalCount ?? 0);
-    console.log(dataArray)
     
   const options = useMemo(()=>(
     {

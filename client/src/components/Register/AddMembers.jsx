@@ -226,7 +226,6 @@ function AddMembers({currentStep,setCurrentStep}) {
     const confirmEditMember = (id) => {
         setMembers(prev =>  prev.map(member => {
                 if(member.id === id){
-                    console.log(member)
                     return {
                         id,
                         firstName,
