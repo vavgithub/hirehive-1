@@ -12,6 +12,7 @@ import IconWrapper from '../Cards/IconWrapper';
 import { X } from 'lucide-react';
 import { ACTION_TYPES } from '../../utility/ActionTypes';
 import GlobalDropDown from '../Dropdowns/GlobalDropDown';
+import { combineDateWithTime, convertLocalToUTC } from '../../utility/timezoneConverter';
 
 // const ACTION_TYPES = {
 //   DELETE: 'DELETE',
@@ -219,7 +220,7 @@ const Modal = ({
             return;
         }
         if(scheduledDate && scheduledTime){
-          onConfirm(item, rejectionReason , scheduledDate?.toISOString(), scheduledTime?.format('HH:mm'));
+          onConfirm(item, rejectionReason , convertLocalToUTC(combineDateWithTime(new Date(scheduledDate.toISOString()),scheduledTime.format('HH:mm'))), scheduledTime?.format('HH:mm'));
         }else{
           onConfirm(item, rejectionReason);
         }

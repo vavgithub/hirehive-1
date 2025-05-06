@@ -10,6 +10,7 @@ import { formatTime } from '../../utility/formatTime';
 import TextEditor from '../utility/TextEditor';
 import SchedulerButton from '../ui/SchedulerButton';
 import { InputField } from '../Inputs/InputField';
+import { combineDateWithTime, convertLocalToUTC, formatUTCToLocalTimeAuto, UTCToDateFormatted } from '../../utility/timezoneConverter';
 
 export function SubmissionForm({candidateId,jobId,stageData}){
     const [taskLink, setTaskLink] = useState('');
@@ -54,7 +55,7 @@ export function SubmissionForm({candidateId,jobId,stageData}){
                 </div>
                 <div>
                     <p className='text-font-gray typography-large-p'>Due on</p>
-                    <p>{new Date(stageData?.currentCall?.scheduledDate).toLocaleDateString('en-gb', { timeZone: 'UTC' ,day : "2-digit", month : "long" , year : "numeric"})} - {formatTime(stageData?.currentCall?.scheduledTime)}</p>
+                    <p>{UTCToDateFormatted(stageData?.currentCall?.scheduledDate)} - {formatUTCToLocalTimeAuto(stageData?.currentCall?.scheduledDate)}</p>
                 </div>
             </div>
 
@@ -153,10 +154,10 @@ function TaskForm({candidateId,candidateEmail,jobId,setIsLoading}) {
                 candidateId,
                 jobId,
                 taskDescription,
-                dueDate: dueDate.toISOString(),
+                dueDate: convertLocalToUTC(combineDateWithTime(new Date(dueDate.toISOString()),dueTime.format('HH:mm'))),
                 dueTime: dueTime.format('HH:mm'),
                 candidateEmail,
-                ...(scheduledDate ? {scheduledDate : scheduledDate?.toISOString()} : {}),
+                ...(scheduledDate ? {scheduledDate : convertLocalToUTC(combineDateWithTime(new Date(scheduledDate.toISOString()),scheduledTime.format('HH:mm')))} : {}),
                 ...(scheduledTime ? {scheduledTime : scheduledTime?.format('HH:mm')} : {}),
             });
         }

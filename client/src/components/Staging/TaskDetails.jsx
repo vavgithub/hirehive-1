@@ -9,6 +9,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { showErrorToast, showSuccessToast } from '../ui/Toast'
 import IconWrapper from '../Cards/IconWrapper'
 import { Calendar , Clock, Link, PencilLine } from 'lucide-react'
+import { formatUTCToLocalTimeAuto, UTCToDateFormatted } from '../../utility/timezoneConverter'
 
 const updateDesignTask = async ({taskLink,comment,jobId}) => {
     const response = await axios.post('/auth/candidate//update-design-task',{taskLink,comment,jobId});
@@ -101,7 +102,7 @@ function TaskDetails({stageData}) {
                     <div className='flex items-center gap-2'>
                         <IconWrapper icon={Calendar} size={0} customIconSize={5} customStrokeWidth={5} />
                         <h2>
-                            {new Date(stageData?.currentCall?.scheduledDate).toLocaleDateString('en-gb', { timeZone: 'UTC' })}
+                            {UTCToDateFormatted(stageData?.currentCall?.scheduledDate)}
                         </h2>
                     </div>
                 </div>
@@ -110,7 +111,7 @@ function TaskDetails({stageData}) {
                     <div className='flex items-center gap-2'>
                         <IconWrapper icon={Clock} size={0} customIconSize={5} customStrokeWidth={5} />
                         <h2>
-                            {formatTime(stageData?.currentCall?.scheduledTime)}
+                            {formatUTCToLocalTimeAuto(stageData?.currentCall?.scheduledDate)}
                         </h2>
                     </div>
                 </div>

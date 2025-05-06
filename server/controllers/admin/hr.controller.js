@@ -77,6 +77,7 @@ export const rejectCandidate = async (req, res) => {
     // Get the current stage
     const currentStage = jobApplication.currentStage;
 
+    //Accept & store UTC dates only
     if(scheduledDate && scheduledTime){
       const [hour,minutes] = scheduledTime?.split(":");
       const mailScheduledDate = new Date(scheduledDate);
@@ -86,7 +87,7 @@ export const rejectCandidate = async (req, res) => {
       if (jobApplication.stageStatuses.has(currentStage)) {
         const stageStatus = jobApplication.stageStatuses.get(currentStage);
         stageStatus.rejectionReason = rejectionReason;
-        stageStatus.scheduledDate = mailScheduledDate;
+        stageStatus.scheduledDate = scheduledDate;
         jobApplication.stageStatuses.set(currentStage, stageStatus);
       } else {
         // If for some reason the current stage doesn't exist in stageStatuses, create it
@@ -94,7 +95,7 @@ export const rejectCandidate = async (req, res) => {
           rejectionReason: rejectionReason,
           assignedTo: null,
           score: {},
-          scheduledDate : mailScheduledDate,
+          scheduledDate : scheduledDate,
           currentCall: null,
           callHistory: [],
         });
@@ -185,6 +186,7 @@ export const rejectMultipleCandidates = async (req, res) => {
 
       const { scheduledDate, scheduledTime } = eachCandidate;
 
+    //Accept & store UTC dates only
       if(scheduledDate && scheduledTime){
         
         const [hour,minutes] = scheduledTime?.split(":");
@@ -195,7 +197,7 @@ export const rejectMultipleCandidates = async (req, res) => {
         if (jobApplication.stageStatuses.has(currentStage)) {
           const stageStatus = jobApplication.stageStatuses.get(currentStage);
           stageStatus.rejectionReason = eachCandidate?.rejectionReason;
-          stageStatus.scheduledDate = mailScheduledDate;
+          stageStatus.scheduledDate = scheduledDate;
           jobApplication.stageStatuses.set(currentStage, stageStatus);
         } else {
           // If for some reason the current stage doesn't exist in stageStatuses, create it
@@ -203,7 +205,7 @@ export const rejectMultipleCandidates = async (req, res) => {
             rejectionReason: eachCandidate?.rejectionReason,
             assignedTo: null,
             score: {},
-            scheduledDate : mailScheduledDate,
+            scheduledDate : scheduledDate,
             currentCall: null,
             callHistory: [],
           });
@@ -834,6 +836,7 @@ export const scheduleScreening = async (req, res) => {
 
 export const scheduleCall = async (req, res) => {
   try {
+    //Accept & store UTC dates only
     const { candidateId, jobId, stage, date, time, assigneeId, meetingLink } =
       req.body;
 
@@ -887,6 +890,7 @@ export const scheduleCall = async (req, res) => {
 
 export const rescheduleCall = async (req, res) => {
   try {
+    //Accept & store UTC dates only
     const { candidateId, jobId, stage, date, time, assigneeId, meetingLink } =
       req.body;
 
@@ -936,7 +940,7 @@ export const rescheduleCall = async (req, res) => {
 
     // Update current call with new details
     stageStatus.currentCall = {
-      scheduledDate: updateDateWithTime(date,time),
+      scheduledDate: date,
       scheduledTime: time,
       meetingLink: meetingLink,
     };
@@ -1123,6 +1127,8 @@ export const sendDesignTask = async (req, res) => {
     if (!jobApplication) {
       return res.status(404).json({ message: "Job application not found" });
     }
+    
+    //Accept & store UTC dates only
     if(scheduledDate && scheduledTime){
       const [hour,minutes] = scheduledTime?.split(":");
       const mailScheduledDate = new Date(scheduledDate);
@@ -1137,7 +1143,7 @@ export const sendDesignTask = async (req, res) => {
           meetingLink: "", // You can leave this empty or use it for a submission link if needed
         },
         taskDescription: sanitizedDescription,
-        scheduledDate : mailScheduledDate
+        scheduledDate : scheduledDate
       });
 
       await candidate.save();

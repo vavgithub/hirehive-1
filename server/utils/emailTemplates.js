@@ -1,3 +1,5 @@
+import { formatUtcReadable } from "./formatter.js"
+
 //emailTemplates.js
 export const getSignupEmailContent = (candidateName,otp) =>{
     return `
@@ -279,8 +281,8 @@ export const getDesignTaskContent = (candidateName,jobTitle,taskDescription,dueD
 
                     <h4 style="margin-top: 16px; margin-bottom: 16px;">Timeline</h4>
                     <ul style="margin-top: 16px; margin-bottom: 16px; padding:0;">
-                        <li style="transform: translateX(20px);"> Start : ${new Date().toLocaleDateString()} </li>
-                        <li style="transform: translateX(20px);"> Due : ${formattedDueDateWithTime(dueDate,dueTime)}</li>
+                        <li style="transform: translateX(20px);"> Start : ${formatUtcReadable(new Date())}</li>
+                        <li style="transform: translateX(20px);"> Due : ${formatUtcReadable(dueDate)}</li>
                     </ul>
 
                     <h4 style="margin-top: 16px; margin-bottom: 16px;">Important Note</h4>

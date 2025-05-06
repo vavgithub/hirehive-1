@@ -23,6 +23,10 @@ export const stagingConfig = {
                         hasLabel : {
                             content : "Candidate's portfolio has not yet been assigned to a reviewer.",
                             icon : WarningIcon
+                        },
+                        hasScheduledLabel : true,
+                        actions : {
+                            hasRejectAction : true,
                         }
                     },
                     "Hiring Manager" : {
@@ -125,6 +129,7 @@ export const stagingConfig = {
                         hasLabel : false,
                         hasRemarks : true,
                         hasScoreCard : true,
+                        hasScheduledLabel : true,
                         actions : {
                             hasRejectAction : true,
                             hasMoveToNextRoundAction : true
@@ -416,6 +421,7 @@ export const stagingConfig = {
                         hasCallDetails : false,
                         hasCallHistory : false,
                         hasScheduledForm : false,
+                        hasScheduledLabel : true,
                         actions : {
                             hasRescheduleAction : true,
                             hasRejectAction : true,
@@ -435,6 +441,7 @@ export const stagingConfig = {
                         hasCallDetails : false,
                         hasCallHistory : false,
                         hasScheduledForm : false,
+                        hasScheduledLabel : true,
                         actions : {
                             hasRescheduleAction : true,
                             hasRejectAction : true,
@@ -551,6 +558,7 @@ export const stagingConfig = {
                         hasCallDetails : false,
                         hasCallHistory : false,
                         hasScheduledForm : false,
+                        hasScheduledLabel : true,
                         actions : {
                             hasRejectAction : true,
                             hasMoveToNextRoundAction : true
@@ -799,7 +807,10 @@ export const stagingConfig = {
                         },
                         hasRemarks : false,
                         hasScoreCard : false,
-                        actions : false,
+                        actions : {
+                            hasRejectAction : true,
+                        },
+                        hasScheduledLabel : true,
                         hasTaskDetails : true
                     },
                     "Hiring Manager" : {
@@ -816,8 +827,8 @@ export const stagingConfig = {
                         actions : {
                             hasRejectAction : true,
                         },
+                        hasScheduledLabel : true,
                         hasTaskDetails : true,
-                        hasScheduledLabel : true
                     },
                     "Design Reviewer" : {
                         hasAssigneeSelectorIcon : false,
@@ -957,6 +968,7 @@ export const stagingConfig = {
                         hasLabel : false,
                         hasRemarks : true,
                         hasScoreCard : true,
+                        hasScheduledLabel : true,
                         actions : {
                             hasRejectAction : true,
                             hasMoveToNextRoundAction : true
@@ -972,6 +984,7 @@ export const stagingConfig = {
                         hasScoreCard : true,
                         hasScheduledLabel : true,
                         hasSubmissionDetails : true,
+                        hasScheduledLabel : true,
                         actions : {
                             hasRejectAction : true,
                             hasMoveToNextRoundAction : true
@@ -1274,6 +1287,7 @@ export const stagingConfig = {
                         hasCallDetails : false,
                         hasCallHistory : false,
                         hasScheduledForm : false,
+                        hasScheduledLabel : true,
                         actions : {
                             hasRescheduleAction : true,
                             hasRejectAction : true,
@@ -1293,6 +1307,7 @@ export const stagingConfig = {
                         hasCallDetails : false,
                         hasCallHistory : false,
                         hasScheduledForm : false,
+                        hasScheduledLabel : true,
                         actions : {
                             hasRescheduleAction : true,
                             hasRejectAction : true,
@@ -1407,6 +1422,7 @@ export const stagingConfig = {
                         hasCallDetails : false,
                         hasCallHistory : false,
                         hasScheduledForm : false,
+                        hasScheduledLabel : true,
                         actions : {
                             hasRejectAction : true,
                             hasMoveToNextRoundAction : true
@@ -1713,6 +1729,7 @@ export const stagingConfig = {
                         hasCallDetails : false,
                         hasCallHistory : false,
                         hasScheduledForm : false,
+                        hasScheduledLabel : true,
                         actions : {
                             hasRescheduleAction : true,
                             hasRejectAction : true,
@@ -1732,6 +1749,7 @@ export const stagingConfig = {
                         hasCallDetails : false,
                         hasCallHistory : false,
                         hasScheduledForm : false,
+                        hasScheduledLabel : true,
                         actions : {
                             hasRescheduleAction : true,
                             hasRejectAction : true,
@@ -1838,6 +1856,7 @@ export const stagingConfig = {
                         hasCallDetails : false,
                         hasCallHistory : false,
                         hasScheduledForm : false,
+                        hasScheduledLabel : true,
                         actions : {
                             hasRejectAction : true,
                             hasMoveToNextRoundAction : true

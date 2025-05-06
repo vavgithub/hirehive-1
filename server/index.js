@@ -94,6 +94,110 @@ async function makeJobPublic(){
   )
 }
 
+async function updateScheduledDatesToUTC() {
+  console.time("Execution Time"); // Start measuring time
+
+  const allCandidates = await candidates.find({});
+  let countOfCallHistory = 0;
+  let updatedCallHistoryCount = 0; // Counter for updated scheduledDates in callHistory
+
+  for (const candidate of allCandidates) {
+    for (const app of candidate.jobApplications) {
+      for (const [stage, status] of app.stageStatuses.entries()) {
+        if (
+          status.currentCall.scheduledDate &&
+          status.currentCall.scheduledTime &&
+          typeof status.currentCall.scheduledTime === 'string'
+        ) {
+          // Split scheduledTime like "13:30"
+          const [hours, minutes] = status.currentCall.scheduledTime.split(':').map(Number);
+
+          if (!isNaN(hours) && !isNaN(minutes)) {
+            // Create a new Date using the scheduledDate's date
+            const localDate = new Date(status.currentCall.scheduledDate);
+
+            localDate.setUTCHours(0, 0, 0, 0); // Reset time to midnight UTC
+
+            // Add IST time (hours/minutes)
+            localDate.setHours(hours);
+            localDate.setMinutes(minutes);
+
+            // Convert IST datetime to UTC
+            const utcDate = new Date(localDate);
+
+            // Save back
+            status.currentCall.scheduledDate = utcDate;
+          }
+        }
+
+        if (status.callHistory?.length > 0) {
+          countOfCallHistory++; // Increment count for non-empty callHistory arrays
+
+          // Split scheduledTime like "13:30"
+          let newCallHistory = [];
+
+          for (let call of status.callHistory) {
+            if (call.scheduledTime) {
+              const [hours, minutes] = call?.scheduledTime.split(':').map(Number);
+
+              if (!isNaN(hours) && !isNaN(minutes)) {
+                // Create a new Date using the scheduledDate's date
+                const localDate = new Date(call.scheduledDate);
+
+                localDate.setUTCHours(0, 0, 0, 0); // Reset time to midnight UTC
+
+                // Add IST time (hours/minutes)
+                localDate.setHours(hours);
+                localDate.setMinutes(minutes);
+
+                // Convert IST datetime to UTC
+                const utcDate = new Date(localDate);
+
+                // Save back
+                call.scheduledDate = utcDate;
+
+              }
+              newCallHistory.push(call);
+            } else {
+              newCallHistory.push(call);
+            }
+          }
+          status.callHistory = newCallHistory;
+        }
+      }
+    }
+    candidate.jobApplications.map(app => {
+      Array.from(app.stageStatuses.entries()).map(statusObj => {
+        if(statusObj[1]?.callHistory?.length > 0){
+          console.log(statusObj[1]?.callHistory)
+          updatedCallHistoryCount++; // Increment for updated scheduledDate
+        }
+      })
+    })
+    // console.log(
+    //   JSON.stringify(
+    //     candidate.jobApplications.map(app => ({
+    //       stageStatuses: Array.from(app.stageStatuses.entries()).map(([stage, status]) => ({
+    //         stage,
+    //         ...status.toObject()
+    //       })),
+    //     })),
+    //     null,
+    //     2
+    //   )
+    // );
+
+  }
+
+  console.log("Count of non-empty callHistories:", countOfCallHistory);
+  console.log("Count of updated scheduledDates in callHistories:", updatedCallHistoryCount);
+
+  console.log("✅ scheduledDate updated in UTC for all candidates");
+  console.timeEnd("Execution Time"); // End measuring time and log it
+}
+
+
+
 // async function updationForCompany(){
 
 //     let jobsArr = await jobs.find()
@@ -353,6 +457,7 @@ connectDB()
     // makeJobPublic()
     // userFirstLast()
     // companyMembersFirstLast()
+    // updateScheduledDatesToUTC()
 
     app.on("error", (error) => {
       console.log("Error in starting server", error);

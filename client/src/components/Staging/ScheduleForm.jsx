@@ -5,6 +5,7 @@ import Timepicker from '../MUIUtilities/Timepicker'
 import { Button } from '../Buttons/Button';
 import { InputField } from '../Inputs/InputField';
 import { getStages } from './staging.config';
+import { combineDateWithTime, convertLocalToUTC } from '../../utility/timezoneConverter';
 
 
 export const ScheduleForm = ({ candidateData, onSubmit, isRescheduling, initialData, onCancel ,isDisabled}) => {
@@ -40,7 +41,7 @@ export const ScheduleForm = ({ candidateData, onSubmit, isRescheduling, initialD
         validateErrors()        
         if (isFormValid) {
             onSubmit({
-                date: date.toISOString(),
+                date: convertLocalToUTC(combineDateWithTime(new Date(date.toISOString()),time.format('HH:mm'))),
                 time: time.format('HH:mm'),
                 assigneeId: assignee._id,
                 meetingLink

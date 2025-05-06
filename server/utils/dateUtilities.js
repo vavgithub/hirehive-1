@@ -1,113 +1,93 @@
-export function getLast12Months() {
-    const result = [];
-    const today = new Date();
-    const monthNames = [
-        "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-        "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"
-    ];
+import { DateTime } from 'luxon';
 
-    for (let i = 0; i < 12; i++) {
-        const date = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth() - i, 1));
-        const year = date.getUTCFullYear();
-        const month = date.getUTCMonth();
-        
-        const firstDay = new Date(Date.UTC(year, month, 1));
-        const lastDay = new Date(Date.UTC(year, month + 1, 0, 23, 59, 59, 999)); // End of the month
+export function getLast12Months(userTimeZone) {
+  const result = [];
 
-        result.push({
-            monthName: monthNames[month], 
-            year: year, 
-            startDate: firstDay, 
-            endDate: lastDay
-        });
-    }
+  const now = DateTime.now().setZone(userTimeZone);
 
-    return result;
+  for (let i = 0; i < 12; i++) {
+    const monthDate = now.minus({ months: i }).startOf('month');
+
+    const startDate = monthDate.startOf('month');
+    const endDate = monthDate.endOf('month');
+
+    result.push({
+      monthName: startDate.toFormat('LLL'), // e.g., 'Apr'
+      year: startDate.year,
+      startDate: startDate.toUTC().toJSDate(),
+      endDate: endDate.toUTC().toJSDate()
+    });
+  }
+
+  return result.reverse(); // Oldest first
 }
 
-export function getLast4Weeks() {
-    const result = [];
-    const today = new Date();
+export function getLast4Weeks(userTimeZone) {
+  const result = [];
 
-    // Start of the current week (Sunday)
-    const currentWeekStart = new Date(today);
-    currentWeekStart.setDate(today.getDate() - today.getDay()); // Move to Sunday
-    currentWeekStart.setHours(0, 0, 0, 0);
+  // Get start of current week (Sunday) in user's timezone
+  const now = DateTime.now().setZone(userTimeZone);
+  const currentWeekStart = now.startOf('week'); // Sunday as start of week
 
-    for (let i = 0; i < 4; i++) {
-        const weekStart = new Date(currentWeekStart);
-        weekStart.setDate(currentWeekStart.getDate() - (7 * i));
-        
-        const weekEnd = new Date(weekStart);
-        weekEnd.setDate(weekStart.getDate() + 7); // Next Sunday
-        weekEnd.setHours(0, 0, 0, 0);
+  for (let i = 0; i < 4; i++) {
+    const weekStart = currentWeekStart.minus({ weeks: i });
+    const weekEnd = weekStart.plus({ days: 7 }); // exclusive end
 
-        result.push({
-            weekLabel: `Week ${4 - i}`, // Optional label like Week 1 to Week 4
-            startDate: weekStart,
-            endDate: weekEnd
-        });
-    }
+    result.push({
+      weekLabel: `Week ${4 - i}`,
+      startDate: weekStart.toUTC().toJSDate(),   // For DB queries
+      endDate: weekEnd.toUTC().toJSDate(),       // For DB queries
+      displayLabel: `${weekStart.toFormat('dd LLL')} - ${weekEnd.minus({ days: 1 }).toFormat('dd LLL')}` // For UI
+    });
+  }
 
-    return result;
+  return result.reverse(); // Oldest week first
 }
 
-export function getLast7Days() {
-    const result = [];
-    const today = new Date();
+export function getLast7Days(userTimeZone) {
+  const result = [];
 
-    for (let i = 0; i < 7; i++) {
-        const date = new Date(today);
-        date.setDate(today.getDate() - i);
+  // Current date in user's timezone
+  const today = DateTime.now().setZone(userTimeZone).startOf('day');
 
-        const startDate = new Date(date);
-        startDate.setHours(0, 0, 0, 0); // 12:00 AM
+  for (let i = 0; i < 7; i++) {
+    const date = today.minus({ days: i });
 
-        const endDate = new Date(date);
-        endDate.setHours(23, 58, 0, 0); // 11:58 PM
+    const startDateUTC = date.startOf('day').toUTC().toJSDate();
+    const endDateUTC = date.endOf('day').toUTC().toJSDate();
 
-        result.push({
-            dayLabel: startDate.toLocaleDateString('en-GB', {
-                day: '2-digit',
-                month: 'short'
-            }), // e.g., "10 Apr"
-            startDate,
-            endDate
-        });
-    }
+    result.push({
+      dayLabel: startDateUTC, // For display
+      startDate: startDateUTC,               // For DB queries
+      endDate: endDateUTC
+    });
+  }
 
-    return result.reverse(); // Oldest first, today last
+  return result.reverse(); // Oldest first
 }
 
-export function get24HoursOfYesterday() {
-    const result = [];
-    const today = new Date();
+export function get24HoursOfYesterday(userTimeZone) {
+  const result = [];
 
-    // Move to yesterday and set to midnight
-    today.setDate(today.getDate() - 1);
-    today.setHours(0, 0, 0, 0); // 12:00 AM of yesterday
+  // Get yesterday in user's timezone, at 00:00
+  const yesterdayStart = DateTime.now()
+    .setZone(userTimeZone)
+    .minus({ days: 1 })
+    .startOf('day');
 
-    for (let i = 0; i < 24; i++) {
-        const startDate = new Date(today);
-        startDate.setHours(i, 0, 0, 0); // Start of the hour
+  for (let i = 0; i < 24; i++) {
+    const hourStart = yesterdayStart.plus({ hours: i });
+    const hourEnd = hourStart.endOf('hour');
 
-        const endDate = new Date(startDate);
-        endDate.setMinutes(59, 59, 999); // End of the hour
+    result.push({
+      hourLabel: hourStart, // e.g., "1 AM"
+      startDate: hourStart.toUTC().toJSDate(), // For MongoDB query
+      endDate: hourEnd.toUTC().toJSDate()
+    });
+  }
 
-        result.push({
-            hourLabel: startDate.toLocaleTimeString('en-US', {
-                hour: 'numeric',
-                minute: '2-digit',
-                hour12: true
-            }), // e.g., "10:00 AM"
-            startDate,
-            endDate
-        });
-    }
-
-    return result;
+  return result;
 }
-
 
 export function formatDateRange(startDate, endDate) {
     const format = new Intl.DateTimeFormat('en-GB', {
