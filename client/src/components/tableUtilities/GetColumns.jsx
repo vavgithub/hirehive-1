@@ -8,6 +8,7 @@ import { ensureAbsoluteUrl } from "../../utility/ensureAbsoluteUrl";
 import IconWrapper from "../Cards/IconWrapper";
 import { CircleCheck, CircleX, ClipboardCheck, FileUser, FolderOpen, Globe } from "lucide-react";
 import { UNKNOWN_PROFILE_PICTURE_URL } from "../../utility/config";
+import { formatPhoneNumber } from "../Form/PhoneInputField";
 
 const getCommonColumns = (handleDocumentClick) => [
   {
@@ -153,6 +154,7 @@ const getInfoColumns = () => [
     sortable: false,
     width: 130,
     disableColumnMenu: true,
+    renderCell: (params) => ( <>{formatPhoneNumber(params.value)}</> )
   },
 ]
 

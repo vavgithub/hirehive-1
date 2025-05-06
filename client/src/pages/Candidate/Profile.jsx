@@ -21,6 +21,7 @@ import { UNKNOWN_PROFILE_PICTURE_URL } from "../../utility/config";
 import ContactUs from "../../components/Form/ContactUs";
 import IconWrapper from "../../components/Cards/IconWrapper";
 import { Pencil, PencilLine, Upload } from "lucide-react";
+import { formatPhoneNumber, PhoneInputField } from "../../components/Form/PhoneInputField";
 
 const PersonalDetails = ({ candidateData, isEditing, control }) => {
   return (
@@ -45,7 +46,7 @@ const PersonalDetails = ({ candidateData, isEditing, control }) => {
             </div>
             <div className="flex flex-col gap-6 typography-body">
               <p className="whitespace-nowrap overflow-hidden text-ellipsis">{candidateData.lastName ?? '-'}</p>
-              <p>{candidateData.phone}</p>
+              <p>{formatPhoneNumber(candidateData.phone)}</p>
             </div>
           </div>
         </div>
@@ -108,7 +109,7 @@ const PersonalDetails = ({ candidateData, isEditing, control }) => {
               />
             )}
           />
-          <Controller
+          {/* <Controller
             name="phone"
             control={control}
             defaultValue={""}
@@ -127,6 +128,13 @@ const PersonalDetails = ({ candidateData, isEditing, control }) => {
                 errorMessage={error?.message}
               />
             )}
+          /> */}
+          <PhoneInputField
+            name="phone"
+            rules={validationRules?.phoneNumber}
+            control={control}
+            rowWise
+            label="Phone Number"
           />
         </div>
       }

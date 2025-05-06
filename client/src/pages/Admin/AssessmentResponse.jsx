@@ -14,6 +14,7 @@ import Container from '../../components/Cards/Container';
 import { UNKNOWN_PROFILE_PICTURE_URL } from '../../utility/config';
 import IconWrapper from '../../components/Cards/IconWrapper';
 import { UTCToDateFormatted } from '../../utility/timezoneConverter';
+import { formatPhoneNumber } from '../../components/Form/PhoneInputField';
 
 // Fetch function
 const fetchAssessmentDetails = async (candidateId) => {
@@ -95,7 +96,7 @@ const AssessmentResponse = () => {
                                 <div className="flex mb-3 gap-5">
                                     <div className="flex items-center gap-2">
                                         <IconWrapper size={0} customIconSize={1} icon={Phone} />
-                                        <span className="text-font-gray typography-large-p">{assessmentData?.candidateInfo?.phone}</span>
+                                        <span className="text-font-gray typography-large-p">{formatPhoneNumber(assessmentData?.candidateInfo?.phone)}</span>
                                     </div>
                                     <div className="flex items-center gap-2">
                                         <IconWrapper size={0} customIconSize={1} icon={Mail} />

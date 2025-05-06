@@ -17,6 +17,7 @@ import { Avatar } from '@mui/material'
 import { UNKNOWN_PROFILE_PICTURE_URL } from '../../utility/config'
 import { formatIntoDateString } from '../../utility/formatTime'
 import { formatUTCToLocalTimeAuto, timezone, UTCToDateFormatted } from '../../utility/timezoneConverter'
+import { formatPhoneNumber } from '../../components/Form/PhoneInputField'
 
 function AdminDashboard() {
   
@@ -74,6 +75,7 @@ function AdminDashboard() {
           sortable: false,
           width: 150,
           disableColumnMenu: true,
+          renderCell: (params) => ( <>{formatPhoneNumber(params.value)}</> )
         },
         {
           field: 'score',

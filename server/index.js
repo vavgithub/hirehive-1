@@ -87,6 +87,30 @@ const PORT = envConfig.PORT;
 
 app.use(handleUploadError)
 
+async function addPhPrefix(){
+  await candidates.updateMany(
+    { phone: { $type: "string", $regex: /^\d{10}$/ } },
+    [
+      {
+        $set: {
+          phone: { $concat: ["91", "$phone"] }
+        }
+      }
+    ]
+  );  
+  
+  await User.updateMany(
+    { phone: { $type: "string", $regex: /^\d{10}$/ } },
+    [
+      {
+        $set: {
+          phone: { $concat: ["91", "$phone"] }
+        }
+      }
+    ]
+  );  
+}
+
 async function makeJobPublic(){
   await jobs.updateMany(
     {isPublic : { $exists : false }},
@@ -458,6 +482,7 @@ connectDB()
     // userFirstLast()
     // companyMembersFirstLast()
     // updateScheduledDatesToUTC()
+    // addPhPrefix()
 
     app.on("error", (error) => {
       console.log("Error in starting server", error);

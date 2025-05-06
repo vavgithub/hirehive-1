@@ -2,7 +2,44 @@
 import React from 'react';
 import { validationRules } from '../../utility/validationRules';
 import { ProfilePictureUpload } from '../FormUtilities/ProfilePictureUpload';
-import { FormField } from './FormField';
+import { PhoneInputField } from './PhoneInputField';
+import { InputField } from '../Inputs/InputField';
+
+// Reusable form field component
+export const FormField = ({ 
+    name,
+    control,
+    rules,
+    label,
+    type = "text",
+    required = false,
+    extraClass = "",
+    ...props 
+  }) => {
+    // Add no-spinner class automatically for number inputs
+    const combinedExtraClass = `${type === 'number' ? 'no-spinner' : ''} ${extraClass}`.trim();
+
+    return (
+      <Controller
+        name={name}
+        control={control}
+        rules={rules}
+        render={({ field, fieldState: { error } }) => (
+          <InputField
+            id={name}
+            type={type}
+            label={label}
+            required={required}
+            error={error}
+            errorMessage={error?.message}
+            extraClass={combinedExtraClass}
+            {...field}
+            {...props}
+          />
+        )}
+      />
+    );
+  };
 
   export const ResumePortfolioSection = ({ control , isAuthenticated }) => {
     return (
@@ -143,14 +180,14 @@ import { FormField } from './FormField';
             required={true}
           />
           
-          <FormField
-            name="phoneNumber"
-            control={control}
-            rules={validationRules.phoneNumber}
-            label="Phone Number"
-            type="number"
-            required={true}
-          />
+          {/* Replace your normal phone number FormField with the new PhoneInputField */}
+        <PhoneInputField
+          name="phoneNumber"
+          rules={validationRules?.phoneNumber}
+          control={control}
+          label="Phone Number"
+          required
+        />
         </div>
       </div>
     );
