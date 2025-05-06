@@ -52,6 +52,12 @@ html{
 
 }
 
+
+.react-tel-input .form-control {
+  background-color: transparent !important;
+  border: none !important; 
+}
+
 .no-spinner {
   @apply appearance-none outline-none border-none;
   /* Hide the spinner for Chrome, Safari, Edge, Opera */
