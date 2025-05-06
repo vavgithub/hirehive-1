@@ -162,8 +162,9 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
             rules={{ required: `${field.charAt(0).toUpperCase() + field.slice(1).replace(/([A-Z])/g, ' $1')} is required` }}
             render={({ field: { onChange, value } ,fieldState : { error }}) => (
               <GlobalDropDown 
-              label={field.charAt(0).toUpperCase() + field.slice(1).replace(/([A-Z])/g, ' $1')}
-              options={dropdownOptions[field]}
+                label={field.charAt(0).toUpperCase() + field.slice(1).replace(/([A-Z])/g, ' $1')}
+                options={dropdownOptions[field].filter(opt => opt.value !== '')}
+                customPlaceholder={dropdownOptions[field].find(opt => opt.value === '')?.label}
                 searchEnabled={field === "employeeLocation"}
                 value={value}
                 required
@@ -199,25 +200,25 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
           )}
         />
 
-<Controller
-  name="budgetFrom"
-  control={control}
-  // rules={{ required: true }}
-  render={({ field: { value, onChange } }) => (
-    <BudgetField
-      value={{
-        from: value,
-        to: watchedFields.budgetTo
-      }}
-      onChange={(newValue) => {
-        onChange(newValue.from);
-        setValue('budgetTo', newValue.to);
-      }}
-      errors={errors}
-      employmentType={watchedFields.employmentType}
-    />
-  )}
-/>
+        <Controller
+          name="budgetFrom"
+          control={control}
+          // rules={{ required: true }}
+          render={({ field: { value, onChange } }) => (
+            <BudgetField
+              value={{
+                from: value,
+                to: watchedFields.budgetTo
+              }}
+              onChange={(newValue) => {
+                onChange(newValue.from);
+                setValue('budgetTo', newValue.to);
+              }}
+              errors={errors}
+              employmentType={watchedFields.employmentType}
+            />
+          )}
+        />
 
         <Controller
           name="jobDescription"
