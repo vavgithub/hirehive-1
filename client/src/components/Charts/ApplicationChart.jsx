@@ -19,7 +19,7 @@ function ApplicationChart({type,dataArray}) {
         },
         xAxis: {
           type: "category",
-          name: type === "daily" ? "Days" : type === "weekly" ? "Weeks" : "Months",
+          name: type === "daily" ? "Days" : type === "weekly" ? "Weeks" : type === "yesterday" ? 'Hours' : "Months",
           nameLocation: "middle",
           nameGap: 28,
           data: xData,

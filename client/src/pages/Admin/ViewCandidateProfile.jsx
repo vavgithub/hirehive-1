@@ -20,14 +20,13 @@ import ScoreChart from '../../components/Charts/ScoreChart';
 import {  getStageColorForChart, maxScoreOfEachStage } from '../../components/Staging/staging.config';
 import Container from '../../components/Cards/Container';
 import IconWrapper from '../../components/Cards/IconWrapper';
-import { ArrowLeftRight, ClipboardCheck, FileText, FileUser, FolderOpen, Globe, Mail, MonitorDot, Notebook, NotebookPen, Phone, Users } from 'lucide-react';
+import { ArrowLeftRight, ChevronUp, ChevronRight, ClipboardCheck, FileText, FileUser, FolderOpen, Globe, Mail, MonitorDot, Notebook, NotebookPen, Phone, Users } from 'lucide-react';
 import { UNKNOWN_PROFILE_PICTURE_URL } from '../../utility/config';
 import RatingSelector, { getRatingIcon } from '../../components/MUIUtilities/RatingSelector';
 import Modal from '../../components/Modals/Modal';
 import TextEditor from '../../components/utility/TextEditor';
 import LoaderModal from '../../components/Loaders/LoaderModal';
 import { truncatedText } from '../../utility/truncatedHTML';
-import { ChevronDown, ChevronRight } from 'lucide-react';
 import { formatTime } from '../../utility/formatTime';
 import { showErrorToast, showSuccessToast } from '../../components/ui/Toast';
 import { UTCToDateFormatted } from '../../utility/timezoneConverter';
@@ -664,7 +663,7 @@ const reviewerProfilePic = currentReviewer?.profilePicture
                             )
                         })
                     }
-                    {candidateData?.applications?.filter(app => (app?.notes?.content !== "" && app?.notes?.content !== undefined && app?.notes?.content !== null && app.jobId !== jobId))?.length > 0 && <p onClick={() => setShowMore(!showMore)} className='cursor-pointer typography-body text-font-gray text-start flex gap-1 items-center'>{showMore ? <> <ChevronDown /> Hide </> : <> <ChevronRight /> Show more </>}</p>}
+                    {candidateData?.applications?.filter(app => (app?.notes?.content !== "" && app?.notes?.content !== undefined && app?.notes?.content !== null && app.jobId !== jobId))?.length > 0 && <p onClick={() => setShowMore(!showMore)} className='cursor-pointer typography-body text-font-gray text-start flex gap-1 items-center'>{showMore ? <> <ChevronUp /> Hide </> : <> <ChevronRight /> Show more </>}</p>}
                 </div>
             </Modal>
             {/* Conditional rendering of tabs for "Hiring Manager" */}
