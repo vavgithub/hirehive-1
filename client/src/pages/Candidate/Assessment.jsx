@@ -27,7 +27,7 @@ const formatTime = (time) => {
 // Hook for fetching assessment questions
 export const useAssessmentQuestions = (assessment_id) => {
   return useQuery({
-    queryKey: ['assessment-questions'],
+    queryKey: ['random-assessment-questions',assessment_id],
     queryFn: async () => {
       const response = await axios.get(`/admin/candidate/assessment-questions/random?assessmentId=${assessment_id}`);
       return response.data.questions;

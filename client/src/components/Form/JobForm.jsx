@@ -15,6 +15,7 @@ import TickCheckbox from '../Checkboxes/TickCheckbox';
 import CustomPill from '../Badge/CustomPill';
 import { useQuery } from '@tanstack/react-query';
 import axios from '../../api/axios';
+import TemplateModal from '../Modals/TemplateModal';
 
 function hasDuplicates(arr) {
   return new Set(arr).size !== arr.length;
@@ -51,7 +52,11 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
   const { data: assessmentTemplates, isassessmentLoading } = useQuery({
     queryKey: ['getAllAssessmentTemplates'],
     queryFn: () => fetchAssessmentTemplates(),
+    staleTime : Infinity,
+    retry : false
   });
+
+  const [previewAssessment,setPreviewAssessment] = useState(false);
 
   let areAllFieldsFilled = isValid &&
     watchedFields.jobTitle &&
@@ -149,6 +154,7 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
   }
 
   return (
+    <>
     <form onSubmit={handleSubmit(handleFormSubmit)} className='container-form mx-auto'>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
         <Controller
@@ -285,7 +291,7 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
                 <div className='flex flex-wrap gap-4'>
                   {
                     assessmentTemplates?.map(template => (
-                      <CustomPill error={error} key={template?._id} label={template?.title} selected={value === template?._id} onClick={()=>onChange(value === template?._id ? '' :template?._id)} />
+                      <CustomPill hasShowButton showButtonClick={(label)=>setPreviewAssessment(template)} error={error} key={template?._id} label={template?.title} selected={value === template?._id} onClick={()=>onChange(value === template?._id ? '' :template?._id)} />
                     ))
                   }
                 </div>
@@ -375,6 +381,10 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
         )}
       </div>
     </form>
+
+    {/* Template display Modal */}
+    <TemplateModal open={previewAssessment} assessment={previewAssessment} onClose={()=>setPreviewAssessment(false)}  />
+    </>
   );
 };
 

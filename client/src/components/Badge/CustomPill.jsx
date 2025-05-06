@@ -1,6 +1,8 @@
 import React from 'react'
+import IconWrapper from '../Cards/IconWrapper'
+import { ChevronRight } from 'lucide-react'
 
-function CustomPill({error,selected,selectionBorder,selectionHover,pointer,children,extraStyles,paddingX,paddingY,label,backgroundColor,hoverColor,noHover,borderRadius,...props}) {
+function CustomPill({hasShowButton,showButtonClick,error,selected,selectionBorder,selectionHover,pointer,children,extraStyles,paddingX,paddingY,label,backgroundColor,hoverColor,noHover,borderRadius,...props}) {
     let valueSteps = {
     0 : "0",
     1 : "2",
@@ -24,7 +26,7 @@ function CustomPill({error,selected,selectionBorder,selectionHover,pointer,child
     }
 
     const styles = 
-    `inline-block ${pointer ? "cursor-pointer" : "cursor-default"}  
+    `inline-block flex items-center gap-4  ${pointer ? "cursor-pointer" : "cursor-default"}  
     ${paddingY?.toString() ? `py-${valueSteps[paddingY]}` : 'py-2'}  
     ${paddingX?.toString() ? `px-${valueSteps[paddingX]}` : 'px-6'} 
     ${backgroundColor ? backgroundColor : 'bg-background-40'} 
@@ -35,9 +37,10 @@ function CustomPill({error,selected,selectionBorder,selectionHover,pointer,child
     `
 
   return (
-    <span {...props} className={styles + "  " + extraStyles}>
+    <p {...props} className={styles + "  " + extraStyles}>
       {label}
-    </span>
+      {hasShowButton && <span><IconWrapper size={2} onClick={(e)=>{e.stopPropagation(); showButtonClick(label)}} hasBg customIconSize={4} icon={ChevronRight}/></span>}
+    </p>
   )
 }
 

@@ -909,6 +909,60 @@ export const getRandomQuestions = async (req, res) => {
   }
 };
 
+export const getAssessmentQuestionsById = async (req, res) => {
+  try {
+    const  { assessmentId } = req.query;
+    
+    if(!assessmentId){
+      return res.status(400).json({
+        message : "No Assessment Id Found"
+      })
+    }
+    const assessmentObjectId = new mongoose.Types.ObjectId(assessmentId);
+
+    const result = await Assessment.aggregate([
+      { $match: { _id: assessmentObjectId } },
+      { $project: { questions: 1 } },
+      { $unwind: "$questions" },
+      {
+        $addFields: {
+          "questions.options": {
+            $map: {
+              input: "$questions.options",
+              as: "opt",
+              in: {
+                text: "$$opt.text",
+                imageUrl: "$$opt.imageUrl"
+                // 'isCorrect' is intentionally omitted
+              }
+            }
+          }
+        }
+      },
+      {
+        $group: {
+          _id: "$_id",
+          questions: { $push: "$questions" }
+        }
+      }
+    ]);  
+
+    console.log(`Found ${result[0]?.questions?.length} questions`);
+
+    res.status(200).json({
+      success: true,
+      questions : result[0]?.questions,
+    });
+  } catch (error) {
+    console.error("Error in getRandomQuestions:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error fetching questions",
+      error: error.message,
+    });
+  }
+};
+
 
 export const getRandomAssessmentQuestions = async (req, res) => {
   try {
@@ -950,7 +1004,7 @@ export const getRandomAssessmentQuestions = async (req, res) => {
     ]);  
 
     console.log(`Found ${result[0]?.questions?.length} questions`);
-    console.log(result)
+
     res.status(200).json({
       success: true,
       questions : result[0]?.questions,
