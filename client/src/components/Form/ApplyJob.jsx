@@ -4,6 +4,7 @@ import { validationRules } from '../../utility/validationRules';
 import { ProfilePictureUpload } from '../FormUtilities/ProfilePictureUpload';
 import { PhoneInputField } from './PhoneInputField';
 import { InputField } from '../Inputs/InputField';
+import { Controller } from 'react-hook-form';
 
 // Reusable form field component
 export const FormField = ({ 
