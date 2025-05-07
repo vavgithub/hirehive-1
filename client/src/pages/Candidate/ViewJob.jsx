@@ -64,7 +64,7 @@ const ViewJob = () => {
     return (
         // <div className='min-h-screen flex justify-center bg-main-bg bg-cover w-full p-4'>      
         //     <div className=" flex container flex-col items-center  ">
-            <Container hasBgImage extraContainerStyles="flex flex-col items-center">
+            <Container hasBgColor extraContainerStyles="flex flex-col items-center">
                 <div className='flex  w-full mt-2 mb-6 justify-between'>
                     <img className='h-12' src={Logo} />
                     {!isAuthenticated && <Button variant="secondary" onClick={() => navigate("/login")}>Login</Button>}

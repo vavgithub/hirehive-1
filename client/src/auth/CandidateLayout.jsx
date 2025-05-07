@@ -184,7 +184,7 @@ const CandidateLayout = () => {
   const darkBgPaths = ["/candidate/profile"]
 
   return (
-    <div className={`flex flex-col md:flex-row ${darkBgPaths.some(path => location?.pathname.startsWith(path)) ? ' bg-background-80 ' :' bg-main-bg '} bg-cover bg-top h-full overflow-x-hidden`}>
+    <div className={`flex flex-col md:flex-row ${darkBgPaths.some(path => location?.pathname.startsWith(path)) ? ' bg-background-80 ' :' bg-background-80 '} bg-cover bg-top h-full overflow-x-hidden`}>
       {/* Mobile Menu Button */}
       <div className={'min-h-[4rem] w-full md:hidden z-30 fixed ' + (darkBgPaths.includes(location.pathname) ? "bg-background-80" : "")}>
         <div className='flex m-4 z-30'>
