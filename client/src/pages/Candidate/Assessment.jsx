@@ -162,7 +162,7 @@ const QuestionDisplay = ({
   <div className="flex-grow p-6 mx-auto container  w-full">
     <div className="mb-8 max-w-[80%] mx-auto">
       <StyledCard backgroundColor={"bg-background-70"} padding={3} extraStyles={"flex flex-col gap-4"} >
-        <h1 className="typography-h1 ">{`Question ${questionNumber + 1}: ${question.text}`}</h1>
+        <h2 className="typography-h2 ">{`Question ${questionNumber + 1}: ${question.text}`}</h2>
         {question.questionType === 'image' && question.imageUrl && (
           <div className="relative w-fit">
             <img
@@ -182,16 +182,16 @@ const QuestionDisplay = ({
         }}>
           {question.options.map((option, index) => (
             <div key={index} className="flex items-center bg-background-80  rounded-xl  h-full">
-              <label className="flex items-center space-x-3 p-4 w-full">
+              <label className="flex cursor-pointer items-center space-x-3 p-4 w-full">
                 <input
                   type="radio"
                   name={`question-${question._id}`}
                   value={option.text}
                   checked={currentAnswer === option.text}
                   onChange={() => onAnswer(question._id, option.text)}
-                  className="appearance-none border-2 rounded-full form-radio h-5 aspect-square max-h-5  max-w-5 checked:ring-offset-[5px] checked:ring-offset-black-100 checked:bg-teal-100 checked:ml-[4px] checked:mr-[4px] checked:ring-[2px] checked:w-3 checked:h-3 checked:border-0 checked:ring-teal-100"
+                  className="appearance-none border-2 rounded-full form-radio h-5 aspect-square max-h-5  max-w-5 checked:ring-offset-[5px] checked:ring-offset-black-100 checked:bg-teal-100 checked:ml-[4px] checked:mr-[4px] checked:ring-[2px] checked:w-3 checked:h-3 checked:border-0 checked:ring-teal-100 "
                 /> 
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-2 cursor-pointer">
                   <span className='typography-body'>{option.text}</span>
                   {option.imageUrl && (
                     <img
@@ -873,7 +873,7 @@ const Assessment = ({assessment_id}) => {
             renderFinishButton={renderFinishButton}
           />
           </div>
-        <ContactUs/>
+        {/* <ContactUs/> */}
       </div>
     </>
   );

@@ -11,6 +11,7 @@ import ContactUs from '../../components/Form/ContactUs';
 import Container from '../../components/Cards/Container';
 import IconWrapper from '../../components/Cards/IconWrapper';
 import useCandidateAuth from '../../hooks/useCandidateAuth';
+import Header from '../../components/utility/Header';
 
 const PreAssessment = () => {
     const [isOverviewOpen, setIsOverviewOpen] = useState(true);
@@ -100,14 +101,13 @@ const PreAssessment = () => {
     }
 
     return (
-        // <div className='bg-background-90 p-4 min-h-screen '>
-        //     <div className=" container ">
         <Container hasBgColor="bg-background-90">
                 <div className='flex  w-full mt-2 mb-10 '>
                     <img className='h-12' src={Logo} />
                 </div>
                 <div>
-                    <h1 className="typography-h1 mb-6">Value at Void design assessment</h1>
+                    <Header withBack={"true"} HeaderText="Value at Void design assessment" />
+                    <h1 className="typography-h1 mb-6"></h1>
                     <h2 className="typography-h2 mb-4">Design Questionnaire</h2>
                     <p className="typography-body text-font-gray mb-8">
                         Complete this questionnaire to assess your knowledge and skills as a UI/UX designer
