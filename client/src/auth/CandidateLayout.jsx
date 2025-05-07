@@ -92,7 +92,7 @@ const CandidateLayout = () => {
         to={to}
         end={to === '/candidate/dashboard'}
         className={({ isActive, isPending }) =>
-          `w-full flex items-center min-h-11 gap-2  py-2 rounded-xl ${isActive || isPending ? 'text-font-accent bg-background-60  ' : ''}`
+          `w-full flex items-center min-h-11 gap-2 pl-2 py-2 rounded-xl ${isActive || isPending ? 'text-font-accent bg-background-60  ' : ''}`
         }
         onClick={onClick}
       >
@@ -219,8 +219,8 @@ const CandidateLayout = () => {
         `}
         style={{ position: 'fixed' }}
       >
-        <div className="flex flex-col gap-5 typography-body ">
-          <div className='px-6 pt-2  flex '>
+        <div className="flex flex-col gap-6 typography-body ">
+          <div className='px-6 pt-2 pb-4  flex '>
 
             <img className='h-11' src={LightLogo} />
           </div>
@@ -258,14 +258,8 @@ const CandidateLayout = () => {
 
       {/* Main Content */}
       <div className="mt-[4.6rem] md:mt-0 md:ml-[16rem] md:w-[calc(100vw-16rem)] flex flex-col items-center min-h-screen ">
-        {/* {isAssessmentBannerVisible &&  <AssessmentBanner />} */}
         <Outlet />
-        {/* <ContactUs /> */}
       </div>
-      {/* <div className="md:ml-[192px] flex-1 p-4 md:p-6">
-
-<Outlet />
-</div> */}
 
       {/* Overlay for mobile */}
       {isMenuOpen && (

@@ -77,7 +77,7 @@ const AdminLayout = () => {
                 }
             >
                 {({ isActive, isPending }) => (
-                    <div className='flex items-center'>
+                    <div className='flex items-center gap-2'>
                         {isActive || isPending ? <ActiveIcon count={iconData} /> : <Icon count={iconData} />}
                         <span className= 'typography-body'>{children}</span>
                     </div>
@@ -184,9 +184,9 @@ const AdminLayout = () => {
 
     return (
         <div id='adminContainer' className={`flex ${ADMIN_BG_SCREENS.some(path => pathname.startsWith(path)) ? ' bg-background-80 ' : ' bg-background-80 '} bg-cover bg-top h-full overflow-x-hidden `}>
-            <div className="fixed flex  w-[15rem] h-[calc(100vh-2rem)] m-4 rounded-xl flex-col  bg-background-100 text-font-gray typography-large-p justify-between py-4 ">
-                <div className='flex flex-col gap-5 typography-body px-4'>
-                    <div className=' pl-2 pt-4 pb-4 flex '>
+            <div className="fixed flex  w-[15rem] h-[calc(100vh-2rem)] m-4 rounded-xl flex-col  bg-background-100 text-font-gray typography-large-p justify-between py-6 ">
+                <div className='flex flex-col gap-6 typography-body px-4'>
+                    <div className=' pl-2 pt-2 pb-4 flex '>
                         <img className='h-11' src={LightLogo} />
                     </div>
                     {renderMenuItems()}
