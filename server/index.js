@@ -38,6 +38,7 @@ import { User } from "./models/admin/user.model.js";
 import { candidates } from "./models/candidate/candidate.model.js";
 import { jobs } from "./models/admin/jobs.model.js";
 import { Company } from "./models/admin/company.model.js";
+import { seedTemplates } from "./models/admin/assessment.model.js";
 
 const app = express();
 await initializeUploadDir(envConfig.UPLOAD_DIR);
@@ -472,8 +473,13 @@ connectDB()
       )
     );
     // dbUpdater()
+
     // Start the scheduled jobs
     startScheduledJobs();
+
+    //Seeding Assessment Templates
+    seedTemplates()
+
     // updationForCompany()
     // inviteToRequestUpdater() //First
     // inviteToRequestUpdaterMember() //Second

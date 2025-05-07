@@ -480,7 +480,7 @@ function Profile() {
   // Update visibility states when component mounts and when candidateData updates
   useEffect(() => {
     if (isDone && candidateData) {
-      setIsAssessmentBannerVisible(!hasGivenAssessment);
+      setIsAssessmentBannerVisible(!hasGivenAssessment && candidateData?.pendingAssessments?.length !== 0);
     }
   }, [hasGivenAssessment, isDone]);
 

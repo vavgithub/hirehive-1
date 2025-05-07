@@ -8,6 +8,7 @@ import { candidates } from "../../models/candidate/candidate.model.js";
 import { sanitizeLexicalHtml } from "../../utils/sanitize-html.js";
 import { getPreviousMonthRange, getPreviousWeekRange, getYesterdayTodayRange } from "../../utils/dateRanges.js";
 import { User } from "../../models/admin/user.model.js";
+import { Assessment } from "../../models/admin/assessment.model.js";
 // Controller function to create a new job
 
 export const StatisticsController = {
@@ -1054,6 +1055,20 @@ const getJobs = async (req, res) => {
   }
 };
 
+const getAssessmentTemplates = async (req,res) => {
+  try {
+    const existingAssessmentTemplates = await Assessment.find({ isAvailable : true }).select('-questions')
+    res.status(200).json(existingAssessmentTemplates)
+  } catch (error) {
+    console.log("Error getting Assessment templates : ", error)
+    res.status(500).json({
+      success: false,
+      message: "Error accessing assessment details",
+      error: error.message,
+    });
+  }
+}
+
 const createJob = async (req, res) => {
   try {
     const {
@@ -1066,6 +1081,7 @@ const createJob = async (req, res) => {
       experienceTo,
       budgetFrom,
       budgetTo,
+      assessment_id,
       skills,
       isPublic,
       jobDescription,
@@ -1073,7 +1089,17 @@ const createJob = async (req, res) => {
       questions,
     } = req.body;
 
-    const sanitizedDescription = sanitizeLexicalHtml(jobDescription);
+    if(assessment_id){
+      const isExisitngAssessment = await Assessment.findById(assessment_id);
+      if(!isExisitngAssessment){
+        res.status(400).json({
+          message: `Selected Assessment is invalid.`,
+        });
+        return
+      }
+    }
+
+    const sanitizedDescription = sanitizeLexicalHtml(jobDescription); 
 
     const newJob = new jobs({
       jobTitle,
@@ -1084,6 +1110,7 @@ const createJob = async (req, res) => {
       isPublic,
       experienceFrom,
       experienceTo,
+      ...(assessment_id ? {assessment_id} : {}),
       budgetFrom,
       budgetTo,
       skills,
@@ -1538,6 +1565,7 @@ const getJobById = async (req, res) => {
 export {
   createJob,
   getJobs,
+  getAssessmentTemplates,
   getTotalJobCount,
   searchJobs,
   filterJobs,

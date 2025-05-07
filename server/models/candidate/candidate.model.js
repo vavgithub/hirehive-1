@@ -126,6 +126,46 @@ const professionalInfoSchema = new mongoose.Schema(
   { _id: false }
 );
 
+// In your candidate model, add this schema
+const assessmentResponseSchema = new mongoose.Schema({
+  questionId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Assessment',
+    required: true,
+  },
+  selectedAnswer: {
+    type: String,
+    required: true,
+  },
+  isCorrect: {
+    type: Boolean,
+    required: true,
+  }
+});
+
+const assessmentAttemptSchema = new mongoose.Schema({
+  title :{
+    type: String,
+  },
+  totalTimeInSeconds: {
+    type: Number,
+    required: true,
+  },
+  score: {
+    type: Number,
+    required: true,
+  },
+  responses: [assessmentResponseSchema],
+  attemptDate: {
+    type: Date,
+    default: Date.now,
+  },
+   // Add recording URL field
+   recordingUrl: {
+    type: String,
+  }
+});
+
 // Schema for individual job applications within a candidate
 const jobApplicationSchema = new mongoose.Schema(
   {
@@ -148,6 +188,10 @@ const jobApplicationSchema = new mongoose.Schema(
     jobType: {
       type: String,
     },
+    assessment_id : {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Assessment',
+    },
     notes : {
       content : {
         type : String,
@@ -159,6 +203,7 @@ const jobApplicationSchema = new mongoose.Schema(
       }
     },
     questionResponses: [answerSchema],
+    assessmentResponse : assessmentAttemptSchema,
     applicationDate: {
       type: Date,
       default: Date.now,

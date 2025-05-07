@@ -11,10 +11,18 @@ import { BudgetField } from '../FormUtilities/BudgetField';
 import IconWrapper from '../Cards/IconWrapper';
 import { Bookmark, CirclePlus } from 'lucide-react';
 import TickCheckbox from '../Checkboxes/TickCheckbox';
-import GlobalDropDown from '../Dropdowns/GlobalDropDown';
+import CustomPill from '../Badge/CustomPill';
+import { useQuery } from '@tanstack/react-query';
+import axios from '../../api/axios';
+import TemplateModal from '../Modals/TemplateModal';
 
 function hasDuplicates(arr) {
   return new Set(arr).size !== arr.length;
+}
+
+const fetchAssessmentTemplates = async() => {
+    const response = await axios.get(`/jobs/get-assessment-templates`, { withCredentials: true });
+    return response.data;
 }
 
 const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions }) => {
@@ -31,6 +39,7 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
       budgetFrom: 0,
       budgetTo: 1,
       jobDescription: '',
+      assessment_id : '',
       skills: [],
       ...initialData
     },
@@ -39,12 +48,22 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
 
   const watchedFields = watch();
 
+  const { data: assessmentTemplates, isassessmentLoading } = useQuery({
+    queryKey: ['getAllAssessmentTemplates'],
+    queryFn: () => fetchAssessmentTemplates(),
+    staleTime : Infinity,
+    retry : false
+  });
+
+  const [previewAssessment,setPreviewAssessment] = useState(false);
+
   let areAllFieldsFilled = isValid &&
     watchedFields.jobTitle &&
     watchedFields.workplaceType &&
     watchedFields.employeeLocation &&
     watchedFields.employmentType &&
     watchedFields.jobProfile &&
+    watchedFields.assessment_id &&
     watchedFields.jobDescription &&
     watchedFields.skills &&
     watchedFields.skills.length > 0 &&
@@ -134,6 +153,7 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
   }
 
   return (
+    <>
     <form onSubmit={handleSubmit(handleFormSubmit)} className='container-form mx-auto'>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
         <Controller
@@ -253,11 +273,32 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
                 allSkills={dummySkills}
                 error={error}
               />
-              {error && <p className="text-red-500 absolute typography-small-p top-[75px]">{error.message}</p>}
+              {error && <p className="text-red-500 absolute typography-small-p top-[78px]">{error.message}</p>}
             </div>
           )}
         />
       </div>
+      {/* Assessment Selection */}
+      <Controller
+          name="assessment_id"
+          control={control}
+          rules={{
+            required: 'Assessment is required',
+          }}
+          render={({ field: { onChange, value } , fieldState: { error }  })=>(
+            <div className='mt-6 relative'>
+            <label htmlFor="assessment" className="typography-body block mb-2">Assessment{<span className="text-red-100">*</span>}</label>
+                <div className='flex flex-wrap gap-4'>
+                  {
+                    assessmentTemplates?.map(template => (
+                      <CustomPill hasShowButton showButtonClick={(label)=>setPreviewAssessment(template)} error={error} key={template?._id} label={template?.title} selected={value === template?._id} onClick={()=>onChange(value === template?._id ? '' :template?._id)} />
+                    ))
+                  }
+                </div>
+                {error && <p className="text-red-500 absolute typography-small-p top-[72px]">{error.message}</p>}
+            </div>
+          )}
+          />
       <Controller
         name="questions"
         control={control}
@@ -340,6 +381,10 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
         )}
       </div>
     </form>
+
+    {/* Template display Modal */}
+    <TemplateModal open={previewAssessment} assessment={previewAssessment} onClose={()=>setPreviewAssessment(false)}  />
+    </>
   );
 };
 

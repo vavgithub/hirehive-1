@@ -223,7 +223,8 @@ export const registerCandidate = async (req, res) => {
         jobApplications: [
           {          
             jobId,
-            jobApplied, 
+            jobApplied,
+            assessment_id : job?.assessment_id ?? null, 
             jobType : job.employmentType,
             questionResponses,
             applicationDate: new Date(),
@@ -264,6 +265,7 @@ export const registerCandidate = async (req, res) => {
         const newJobApplication = {          
           jobId,
           jobApplied,
+          assessment_id : job?.assessment_id ?? null, 
           questionResponses,
           applicationDate: new Date(),
           currentStage: jobStages[0]?.name || "",
@@ -272,6 +274,7 @@ export const registerCandidate = async (req, res) => {
           professionalInfo
         }
 
+        existingEmail.hasGivenAssessment = false
         existingEmail.jobApplications = [newJobApplication]
       }
 
@@ -555,6 +558,7 @@ export const applyToJob = async (req, res) => {
       jobId,
       jobApplied,
       jobProfile,
+      assessment_id : job?.assessment_id ?? null, 
       jobType : job.employmentType,
       questionResponses,
       applicationDate: new Date(),
@@ -573,7 +577,23 @@ export const applyToJob = async (req, res) => {
       } // Include professional info in the job application
     };
 
+    
+    const assessmentCompletedApplications = candidate.jobApplications
+      .filter(app => app.assessment_id && app.assessmentResponse);
+    
+    const completedAssessmentIds = assessmentCompletedApplications.map(app => app.assessment_id?.toString());
+
+    if(job.assessment_id && !completedAssessmentIds.includes(job.assessment_id?.toString())){
+      candidate.hasGivenAssessment = false;
+    }else if(job.assessment_id && completedAssessmentIds.includes(job.assessment_id?.toString())){
+      const matchedResponse = assessmentCompletedApplications.find(app => app?.assessment_id?.toString() === job.assessment_id?.toString())?.assessmentResponse;
+      if(matchedResponse){
+        newApplication.assessmentResponse = matchedResponse
+      }
+    }
+
     candidate.jobApplications.push(newApplication);
+
     await candidate.save();
 
     res.status(200).json({ 
@@ -592,53 +612,72 @@ export const applyToJob = async (req, res) => {
 // Modifications to getCandidateDashboard function
 export const getCandidateDashboard = async (req, res) => {
   try {
-       const candidate = await Candidate.aggregate([
-      // Match the candidate by ID
+    const candidate = await Candidate.aggregate([
+      // Step 1: Match the candidate by ID
       {
         $match: { _id: req.candidate._id },
       },
-      // Perform a lookup to populate jobApplications.jobId
+    
+      // Step 2: Lookup job details
       {
         $lookup: {
-          from: "jobs", // The collection to join
-          localField: "jobApplications.jobId", // The field in Candidate
-          foreignField: "_id", // The field in Jobs
-          as: "jobDetails", // The resulting array of matching documents
+          from: "jobs",
+          localField: "jobApplications.jobId",
+          foreignField: "_id",
+          as: "jobDetails",
         },
       },
-      // Project to include only necessary fields and format the output
+    
+      // Step 3: Unwind jobDetails to populate assessment_id
       {
-        $project: {
-          firstName: 1,
-          lastName: 1,
-          profilePictureUrl:1,
-          email: 1,
-          phone: 1,
-          expectedCTC: 1,
-          hourlyRate: 1,
-          portfolio: 1,
-          website: 1,
-          noticePeriod: 1,
-          currentCTC: 1,
-          experience: 1,
-          skills: 1,
-          resumeUrl : 1,
-          location:1,
-          hasGivenAssessment: 1,
-          "jobApplications.applicationDate": 1,
-          "jobApplications.currentStage": 1,
-          "jobApplications.stageStatuses": 1,
-          "jobApplications.jobApplied": 1,
-          "jobApplications.jobId": 1,
-          "jobApplications.resumeUrl": 1,
-          "jobDetails": {
-            _id: 1,
-            jobTitle: 1,
-            status: 1,
-          },
+        $unwind: {
+          path: "$jobApplications",
+          preserveNullAndEmptyArrays: true,
         },
       },
-    ])
+    
+      // Step 4: Lookup assessment document using jobApplications.assessment_id
+      {
+        $lookup: {
+          from: "assessments",
+          localField: "jobApplications.assessment_id",
+          foreignField: "_id",
+          as: "jobApplications.assessment",
+        },
+      },
+    
+      // Step 5: Flatten the assessment array (only one expected)
+      {
+        $addFields: {
+          "jobApplications.assessment": { $arrayElemAt: ["$jobApplications.assessment", 0] },
+        },
+      },
+    
+      // Step 6: Group back the jobDetails into an array (if needed)
+      {
+        $group: {
+          _id: "$_id",
+          firstName: { $first: "$firstName" },
+          lastName: { $first: "$lastName" },
+          profilePictureUrl: { $first: "$profilePictureUrl" },
+          email: { $first: "$email" },
+          phone: { $first: "$phone" },
+          expectedCTC: { $first: "$expectedCTC" },
+          hourlyRate: { $first: "$hourlyRate" },
+          portfolio: { $first: "$portfolio" },
+          website: { $first: "$website" },
+          noticePeriod: { $first: "$noticePeriod" },
+          currentCTC: { $first: "$currentCTC" },
+          experience: { $first: "$experience" },
+          skills: { $first: "$skills" },
+          resumeUrl: { $first: "$resumeUrl" },
+          location: { $first: "$location" },
+          hasGivenAssessment: { $first: "$hasGivenAssessment" },
+          jobApplications: { $push: "$jobApplications" },
+          jobDetails: { $first: "$jobDetails" },
+        },
+      },
+    ]);    
     
     if (candidate.length === 0) {
       return res.status(404).json({ message: "Candidate not found" });
@@ -647,9 +686,16 @@ export const getCandidateDashboard = async (req, res) => {
     // Format the response to include relevant job application details
     const formattedApplications = candidate[0].jobApplications.map((app,index) => {
       const isValid = candidate[0].jobDetails.find(currentJob=>currentJob._id.toString() === app.jobId.toString());
+      let filteredAssessment = {};
+      if(app?.assessment_id && app?.assessment){
+        let { questions, ...rest } = app?.assessment;
+        filteredAssessment = rest
+      }
       return ({
         jobId: isValid?._id || app.jobId,
         jobTitle:isValid?.jobTitle || app.jobApplied,
+        assessment_id:app?.assessment_id ? filteredAssessment :  null,
+        assessmentResponse: app?.assessmentResponse ? true : null,
         jobStatus: isValid?.status || 'deleted',
         applicationDate: app.applicationDate,
         currentStage: app.currentStage,
@@ -660,6 +706,8 @@ export const getCandidateDashboard = async (req, res) => {
 
     const latestResume = formattedApplications?.length > 0 ? 
       formattedApplications.sort((a,b)=>b.applicationDate - a.applicationDate )[0].resumeUrl : "";
+
+    const pendingAssessments = formattedApplications.filter(app => app?.assessment_id && !app?.assessmentResponse)
 
     res.status(200).json({
       candidate: {
@@ -682,6 +730,7 @@ export const getCandidateDashboard = async (req, res) => {
         hasGivenAssessment:candidate[0].hasGivenAssessment,
         jobApplications: formattedApplications, // Include jobApplications in the candidate object
         location: candidate[0].location,
+        pendingAssessments
         // Include other relevant candidate fields
       },
     });

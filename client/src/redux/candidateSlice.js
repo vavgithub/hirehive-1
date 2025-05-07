@@ -3,7 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   candidateData: null,
-  collapseContactUs : false,
+  collapseContactUs : true,
   loading: false,
   error: null,
 };

@@ -19,7 +19,7 @@ const getCommonColumns = (handleDocumentClick) => [
     disableColumnMenu: true,
     valueGetter: (params, row) => {
       const name = `${row?.firstName || ''} ${row?.lastName || ''}`
-      const hasGivenAssessment = row.hasGivenAssessment;
+      const hasGivenAssessment = row.assessmentResponse;
       const profilePictureUrl = row?.profilePictureUrl ?? "";
       return {
         name,

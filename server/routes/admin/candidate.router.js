@@ -3,9 +3,12 @@ import {
   addNotes,
   getAllCandidatesForJob,
   getAllCandidatesWithStats,
+  getAssessmentQuestionsById,
   getCandidateById,
   getCandidateJobs,
+  getJobBasedQuestionnaireDetails,
   getQuestionnaireDetails,
+  getRandomAssessmentQuestions,
   getRandomQuestions,
   shortlistCandidate,
   submitQuestionnaireAttempt,
@@ -23,7 +26,6 @@ const router = express.Router();
 router.get('/shortlisted/:company_id',shortlistCandidate);
 router.get("/getData/data/allCandidatesWithStats",protect, getAllCandidatesWithStats);
 
-router.get("/:jobId", getAllCandidatesForJob);
 
 router.get("/:candidateId/job/:jobId", getCandidateById);
 
@@ -39,6 +41,8 @@ router.patch("/update/:id", updateStatusAndStage);
 router.patch("/update-candidate-profile/:id" , protect, roleProtect(["Hiring Manager","Admin"]), updateCandidateProfile);
 
 router.get("/questions/random", getRandomQuestions);
+router.get("/assessment-questions/random", getRandomAssessmentQuestions);
+router.get("/assessment-questions", getAssessmentQuestionsById);
 
 router.post("/questionnaire/:candidateId/", submitQuestionnaireAttempt);
 
@@ -50,5 +54,8 @@ router.post(
   );
 
 router.get("/assessment/:candidateId", getQuestionnaireDetails);
+router.get("/get-assessment/:candidateId/:jobId", getJobBasedQuestionnaireDetails);
+
+router.get("/:jobId", getAllCandidatesForJob);
 
 export default router;

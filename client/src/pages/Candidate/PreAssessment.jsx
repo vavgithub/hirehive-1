@@ -10,6 +10,8 @@ import { AccordionItem } from '../../components/Accordion/AccordionItem';
 import ContactUs from '../../components/Form/ContactUs';
 import Container from '../../components/Cards/Container';
 import IconWrapper from '../../components/Cards/IconWrapper';
+import useCandidateAuth from '../../hooks/useCandidateAuth';
+import Header from '../../components/utility/Header';
 
 const PreAssessment = () => {
     const [isOverviewOpen, setIsOverviewOpen] = useState(true);
@@ -24,6 +26,8 @@ const PreAssessment = () => {
     const [showMediaErrorModal,setShowMediaErrorModal] = useState(false);
 
     const [isMediaRecorderOk,setIsMediaRecorderOk] = useState(true);
+
+    const { candidateData, isAuthenticated, isDone } = useCandidateAuth();
 
     //Check the status of microphone access
     const checkAudioStatus = async ()=> {
@@ -43,7 +47,7 @@ const PreAssessment = () => {
         setIsMicEnabled(!isMicEnabled)
     };
 
-    const handleStartAssessment = async () => {
+    const handleStartAssessment = async (assessment_id) => {
         if(!isCameraEnabled && !isMicEnabled){
             setPingCamera(true);
             setTimeout(()=>setPingMic(true),100);
@@ -72,7 +76,7 @@ const PreAssessment = () => {
             return
         }
 
-        setStartAssessment(true)
+        setStartAssessment(assessment_id)
     }
 
     const handleCameraEnabled = ()=>{
@@ -93,18 +97,17 @@ const PreAssessment = () => {
     },[])
 
     if (startAssessment) {
-        return <Assessment />;
+        return <Assessment assessment_id={startAssessment} />;
     }
 
     return (
-        // <div className='bg-background-90 p-4 min-h-screen '>
-        //     <div className=" container ">
         <Container hasBgColor="bg-background-90">
                 <div className='flex  w-full mt-2 mb-10 '>
                     <img className='h-12' src={Logo} />
                 </div>
                 <div>
-                    <h1 className="typography-h1 mb-6">Value at Void design assessment</h1>
+                    <Header withBack={"true"} HeaderText="Value at Void design assessment" />
+                    <h1 className="typography-h1 mb-6"></h1>
                     <h2 className="typography-h2 mb-4">Design Questionnaire</h2>
                     <p className="typography-body text-font-gray mb-8">
                         Complete this questionnaire to assess your knowledge and skills as a UI/UX designer
@@ -199,14 +202,35 @@ const PreAssessment = () => {
                     open={showMediaErrorModal} 
                     cancelLabel='OK' cancelVariant='primary' />
 
-                    <div className='mt-8 mb-4 w-full flex justify-end'>                            
+                    {/* <div className='mt-8 mb-4 w-full flex justify-end'>                            
                             <Button
                                 onClick={handleStartAssessment}
                                 disabled={!isMediaRecorderOk}
                             >
                                 Start Assessment
                             </Button>
-                    </div>
+                    </div> */}
+                    
+                    {/* Assessment Options */}
+                    {candidateData?.pendingAssessments?.length > 0 && 
+                    <div className='flex flex-col gap-4 mt-6'>
+                    {candidateData?.pendingAssessments?.map(assessment => 
+                    (<StyledCard
+                    backgroundColor={'bg-background-80 '}
+                    extraStyles={' flex justify-between items-center'}
+                    >
+                        <div>
+                        <h3 className='typography-h3'>{assessment?.jobTitle}</h3>
+                        <p className='text-font-gray typography-body'>{assessment?.assessment_id?.title}</p>
+                        </div>
+                        <Button
+                            onClick={()=>handleStartAssessment(assessment?.assessment_id?._id)}
+                            disabled={!isMediaRecorderOk}
+                        >
+                            Start Assessment
+                        </Button>
+                    </StyledCard>))}
+                    </div>}
                 </div>
                 <ContactUs/>
             </Container>

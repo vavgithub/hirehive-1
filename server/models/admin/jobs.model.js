@@ -98,6 +98,10 @@ const jobSchema = new mongoose.Schema(
       ],
       default: "",
     },
+    assessment_id : {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Assessment',
+    },
     applyClickCount: {
       type: Number,
       default: 0,

@@ -25,11 +25,11 @@ const formatTime = (time) => {
 };
 
 // Hook for fetching assessment questions
-export const useAssessmentQuestions = () => {
+export const useAssessmentQuestions = (assessment_id) => {
   return useQuery({
-    queryKey: ['assessment-questions'],
+    queryKey: ['random-assessment-questions',assessment_id],
     queryFn: async () => {
-      const response = await axios.get('/admin/candidate/questions/random');
+      const response = await axios.get(`/admin/candidate/assessment-questions/random?assessmentId=${assessment_id}`);
       return response.data.questions;
     },
     staleTime: Infinity,
@@ -162,7 +162,7 @@ const QuestionDisplay = ({
   <div className="flex-grow p-6 mx-auto container  w-full">
     <div className="mb-8 max-w-[80%] mx-auto">
       <StyledCard backgroundColor={"bg-background-70"} padding={3} extraStyles={"flex flex-col gap-4"} >
-        <h1 className="typography-h1 ">{`Question ${questionNumber + 1}: ${question.text}`}</h1>
+        <h2 className="typography-h2 ">{`Question ${questionNumber + 1}: ${question.text}`}</h2>
         {question.questionType === 'image' && question.imageUrl && (
           <div className="relative w-fit">
             <img
@@ -182,7 +182,7 @@ const QuestionDisplay = ({
         }}>
           {question.options.map((option, index) => (
             <div key={index} className="flex items-center bg-background-80  rounded-xl  h-full">
-              <label className="flex items-center space-x-3 p-4 w-full">
+              <label className="flex cursor-pointer items-center space-x-3 p-4 w-full">
                 <input
                   type="radio"
                   name={`question-${question._id}`}
@@ -191,7 +191,7 @@ const QuestionDisplay = ({
                   onChange={() => onAnswer(question._id, option.text)}
                   className="appearance-none border-2 rounded-full form-radio h-5 aspect-square max-h-5  max-w-5 checked:ring-offset-[5px] checked:ring-offset-black-100 checked:bg-teal-100 checked:ml-[0.25rem] checked:mr-[0.25rem] checked:ring-[2px] checked:w-3 checked:h-3 checked:border-0 checked:ring-teal-100"
                 /> 
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-2 cursor-pointer">
                   <span className='typography-body'>{option.text}</span>
                   {option.imageUrl && (
                     <img
@@ -286,7 +286,7 @@ const UploadProgressOverlay = ({ uploadProgress }) => (
 );
 
 // Main Assessment Component
-const Assessment = () => {
+const Assessment = ({assessment_id}) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [startTime] = useState(Date.now());
@@ -329,7 +329,7 @@ const Assessment = () => {
     isLoading,
     isError,
     error
-  } = useAssessmentQuestions();
+  } = useAssessmentQuestions(assessment_id);
 
   // Calculate states
   const answeredCount = Object.keys(answers).length;
@@ -785,6 +785,7 @@ const Assessment = () => {
     try {
       const totalTimeInSeconds = Math.floor((Date.now() - startTime) / 1000);
       await submitAssessmentMutation.mutateAsync({
+        assessment_id,
         answers,
         totalTimeInSeconds
       });
@@ -872,7 +873,7 @@ const Assessment = () => {
             renderFinishButton={renderFinishButton}
           />
           </div>
-        <ContactUs/>
+        {/* <ContactUs/> */}
       </div>
     </>
   );

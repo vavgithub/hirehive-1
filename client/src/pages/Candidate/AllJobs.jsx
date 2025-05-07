@@ -15,6 +15,7 @@ import StyledCard from '../../components/Cards/StyledCard';
 import Container from '../../components/Cards/Container';
 import IconWrapper from '../../components/Cards/IconWrapper';
 import { Search, SlidersHorizontal } from 'lucide-react';
+import Header from '../../components/utility/Header';
 
 const fetchOpenJobs = (page) => axios.get(`/candidates/jobs/open?page=${page}`).then(res => res.data);
 const searchJobs = (query, page) => axios.get(`/candidates/jobs/searchJobs?jobTitle=${encodeURIComponent(query)}&page=${page}`).then(res => res.data);
@@ -38,7 +39,7 @@ const AllJobs = () => {
     // Update visibility states when component mounts and when candidateData updates
     useEffect(() => {
         if (isDone && candidateData) {
-            setIsAssessmentBannerVisible(!hasGivenAssessment);
+            setIsAssessmentBannerVisible(!hasGivenAssessment && candidateData?.pendingAssessments?.length !== 0);
         }
     }, [hasGivenAssessment, isDone]);
 
@@ -132,7 +133,7 @@ const AllJobs = () => {
         return
     };
 
-    const handleViewJob = (jobId,companyId) => {
+    const handleViewJob = (jobId, companyId) => {
         navigate(`/org/${companyId}/view-job/${jobId}`)
     };
 
@@ -163,26 +164,24 @@ const AllJobs = () => {
 
     return (
         <Container>
-            <div className='flex items-center justify-between'>
-                <h1 className='typography-h1 mb-4'>All Jobs</h1>
-            </div>
-            {isAssessmentBannerVisible &&  <AssessmentBanner />}
-               <div className='md:hidden flex items-center justify-between mt-1 mb-4'>
-               <div className='relative w-[86%] sm:w-[90%]'>
-                        <div className='absolute top-[0.625rem] left-4'>
-                            <IconWrapper icon={Search} size={0} customIconSize={3} isInActiveIcon />
-                        </div>
-                        <input style={{ paddingLeft: "3rem" }} type='text' placeholder="Enter job title" value={searchQuery}
-                            onChange={handleSearch} />
+            <Header HeaderText={"All Jobs"}></Header>
+            {isAssessmentBannerVisible && <AssessmentBanner />}
+            <div className='md:hidden flex items-center justify-between mt-1 mb-4'>
+                <div className='relative w-[86%] sm:w-[90%]'>
+                    <div className='absolute top-[10px] left-4'>
+                        <IconWrapper icon={Search} size={0} customIconSize={3} isInActiveIcon />
                     </div>
-                    <div
-                        className={`md:hidden ${isFilterVisible ? "bg-background-100" : "bg-background-40"} transition-colors duration-200 flex items-center gap-2 p-2 rounded-xl`}
-                        onClick={toggleFilters}
-                    >
-
-                    <IconWrapper isInActiveIcon size={0} customIconSize={4} customStrokeWidth={5}  icon={SlidersHorizontal} />
-                    </div>
+                    <input style={{ paddingLeft: "48px" }} type='text' placeholder="Enter job title" value={searchQuery}
+                        onChange={handleSearch} />
                 </div>
+                <div
+                    className={`md:hidden ${isFilterVisible ? "bg-background-100" : "bg-background-40"} transition-colors duration-200 flex items-center gap-2 p-2 rounded-xl`}
+                    onClick={toggleFilters}
+                >
+
+                    <IconWrapper isInActiveIcon size={0} customIconSize={4} customStrokeWidth={5} icon={SlidersHorizontal} />
+                </div>
+            </div>
 
 
                 <StyledCard padding={2} backgroundColor={"bg-background-30 "} extraStyles={'flex flex-col md:flex-row gap-4 lg:pb-8 '}>
@@ -204,50 +203,50 @@ const AllJobs = () => {
                         />
                     </div>
 
-                    {/* Job listings */}
-                    <div className='flex flex-col gap-4 w-full md:w-fill-available'>
-                        {isLoadingResults ? (
-                            <div className="flex justify-center items-center min-h-full">
-                                <Loader />
-                            </div>
-                        ) :
-                            displayJobs?.length === 0 ?
-                                <div className='bg-background-80 h-full flex flex-col p-40 justify-center items-center rounded-xl'>
-                                    <img src={NoJobs} alt="No jobs found" />
-                                    <span className='typography-body m-6'>
-                                        No Jobs available
-                                    </span>
-                                </div> :
-                                displayJobs?.map((job) => {
-                                    return (
-                                        <JobCard
-                                            isCandidate={true}
-                                            key={job._id}
-                                            job={job}
-                                            status={open}
-                                            isApplied={candidateData?.jobApplications.some(app => app.jobId === job._id)}
-                                            withKebab={false}
-                                            handleAction={handleAction}
-                                            onClick={() => handleViewJob(job._id,job?.companyDetails?._id ?? job?.company_id?._id)}
-                                        />
-                                    )
-                                })}
-                        <Pagination
-                            currentPage={page}
-                            setCurrentPage={setPage}
-                            pageLimit={PAGE_LIMIT}
-                            totalItems={
-                                // debouncedQuery.length > 0 ? searchResults?.searchJobsCount :
-                                // isFiltered ? filteredData?.filteredJobsCount : jobData?.totalOpenJobs
-                                (debouncedQuery.length > 0 || isFiltered) ? filteredData?.filteredSearchJobsCount : jobData?.totalOpenJobs
-                            }
-                        />
-                        {/* DummyDiv for pagination adjust based on ContactUs */}
-                        <div className='lg:w-full lg:h-12'></div>
-                        <ContactUs />
-                    </div>
-                </StyledCard>
-            </Container>
+                {/* Job listings */}
+                <div className='flex flex-col gap-4 w-full md:w-fill-available'>
+                    {isLoadingResults ? (
+                        <div className="flex justify-center items-center min-h-full">
+                            <Loader />
+                        </div>
+                    ) :
+                        displayJobs?.length === 0 ?
+                            <div className='bg-background-80 h-full flex flex-col p-40 justify-center items-center rounded-xl'>
+                                <img src={NoJobs} alt="No jobs found" />
+                                <span className='typography-body m-6'>
+                                    No Jobs available
+                                </span>
+                            </div> :
+                            displayJobs?.map((job) => {
+                                return (
+                                    <JobCard
+                                        isCandidate={true}
+                                        key={job._id}
+                                        job={job}
+                                        status={open}
+                                        isApplied={candidateData?.jobApplications.some(app => app.jobId === job._id)}
+                                        withKebab={false}
+                                        handleAction={handleAction}
+                                        onClick={() => handleViewJob(job._id, job?.companyDetails?._id ?? job?.company_id?._id)}
+                                    />
+                                )
+                            })}
+                    <Pagination
+                        currentPage={page}
+                        setCurrentPage={setPage}
+                        pageLimit={PAGE_LIMIT}
+                        totalItems={
+                            // debouncedQuery.length > 0 ? searchResults?.searchJobsCount :
+                            // isFiltered ? filteredData?.filteredJobsCount : jobData?.totalOpenJobs
+                            (debouncedQuery.length > 0 || isFiltered) ? filteredData?.filteredSearchJobsCount : jobData?.totalOpenJobs
+                        }
+                    />
+                    {/* DummyDiv for pagination adjust based on ContactUs */}
+                    <div className='lg:w-full lg:h-12'></div>
+                    <ContactUs />
+                </div>
+            </StyledCard>
+        </Container>
     )
 }
 
