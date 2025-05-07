@@ -9,14 +9,18 @@ import Loader from '../../components/Loaders/Loader';
 import IconWrapper from '../../components/Cards/IconWrapper';
 import { CircleX } from 'lucide-react';
 import Container from '../../components/Cards/Container';
+import { useAuthContext } from '../../context/AuthProvider';
 
 const Shortlisted = () => {
+    const { user } = useAuthContext();
+    
     const queryClient = useQueryClient();
 
     // Fetch shortlisted candidates
     const { data, isLoading, isError, error } = useQuery({
         queryKey: ['shortlistedCandidates'],
-        queryFn: () => axios.get('admin/candidate/shortlisted').then(res => res.data),
+        queryFn: () => axios.get(`admin/candidate/shortlisted/${user?.companyDetails?._id}`).then(res => res.data),
+        enabled : !!user?.companyDetails
     });
 
     const shortlistMutation = useMutation({

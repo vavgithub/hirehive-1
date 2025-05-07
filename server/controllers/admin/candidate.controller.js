@@ -1186,9 +1186,17 @@ export const toggleShortlistCandidate = async (req, res) => {
 
 export const shortlistCandidate = async (req, res) => {
   try {
+
+    const { company_id } = req.params;
+
     // Find all candidates with at least one shortlisted job application
     const shortlistedCandidates = await candidates.find({
-      "jobApplications.shortlisted": true,
+      jobApplications: {
+        $elemMatch: {
+          shortlisted: true,
+          "companyDetails._id": company_id
+        }
+      }
     });
 
     // Format response to include only relevant information
