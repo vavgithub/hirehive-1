@@ -579,7 +579,7 @@ function Profile() {
                       To ensure security, please enter the OTP (One-Time Password) to
                       verify your account. A code has been sent to
                     </p>
-                    <h2 className='typography-h3 sm:typograhpy-h2 mt-3 md:mt-6 text-font-gray mx-auto w-[240px] min-[420px]:w-full whitespace-nowrap text-ellipsis overflow-hidden'>
+                    <h2 className='typography-h3 sm:typograhpy-h2 mt-3 md:mt-6 text-font-gray mx-auto w-[15rem] min-[26.25rem]:w-full whitespace-nowrap text-ellipsis overflow-hidden'>
                       {email}
                     </h2>
                     <div className="flex justify-center  space-x-2 mt-4 ">

@@ -416,7 +416,7 @@ function Profile() {
                 </h1>
                 <div className="w-full flex justify-center items-center gap-2">
                     <p className=" text-font-gray gap-2 typography-small-p   ">{LocationOptions?.find(loc => loc.value === user?.companyDetails?.location)?.label}</p>
-                    <span className='w-[6px] h-[6px] bg-font-gray rounded-full'></span>
+                    <span className='w-[0.375rem] h-[0.375rem] bg-font-gray rounded-full'></span>
                     <p className=" text-font-gray gap-2 typography-small-p   ">{industryTypeOptions?.find(loc => loc.value === user?.companyDetails?.industryType)?.label}</p>
                 </div>
                 <p className='typography-large-p flex justify-between w-full mt-4'><span className='text-font-gray'>Size</span> <span>{companySizeOptions?.find(loc => loc.value === user?.companyDetails?.size)?.label}</span></p>

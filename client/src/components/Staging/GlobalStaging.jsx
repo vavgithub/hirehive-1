@@ -519,7 +519,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
                 stageBasedConfig?.hasScoreBoard && 
                 <div className=' flex flex-col'>
                     <p className='typography-small-p text-font-gray mb-4'>Score</p>                   
-                    <div className='p-4 rounded-xl bg-background-60 flex min-h-[115px] '>
+                    <div className='p-4 rounded-xl bg-background-60 flex min-h-[7.2rem] '>
                         {renderScoreCategories()}
                     </div>
                 </div>

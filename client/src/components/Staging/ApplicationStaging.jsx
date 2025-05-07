@@ -21,9 +21,9 @@ const AccordionSection = ({ title, isOpen, onToggle, children, badge }) => (
     <Card
         sx={{
             backgroundColor: "rgba(22, 23, 24, 1)",
-            borderRadius: "12px",
+            borderRadius: "0.75rem",
             color: "white",
-            marginTop: "12px"
+            marginTop: "0.75rem"
         }}
     >
         <div className="w-full">

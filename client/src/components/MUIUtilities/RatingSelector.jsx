@@ -28,17 +28,17 @@ function RatingSelector({anchorEl,setAnchorEl,onSelectRating}) {
             color: "white",
             display :"flex",
             flexDirection : "column",
-            gap: "4px",
+            gap: "0.25rem",
             padding : "0px !important"
         },
         }}
         slotProps={{
             paper: {
               sx: {
-                boxShadow: '0px 4px 20px rgba(35, 35, 35, 0.8)', // Red drop shadow
-                borderRadius: '12px', // Optional: Customize the border radius
+                boxShadow: '0px 0.25rem 1.25rem rgba(35, 35, 35, 0.8)', // Red drop shadow
+                borderRadius: '0.75rem', // Optional: Customize the border radius
                 minWidth : "210px",
-                padding : "8px !important",
+                padding : "0.5rem !important",
                 backgroundColor: 'rgba(12, 13, 13, 1)',
 
               },
@@ -47,9 +47,9 @@ function RatingSelector({anchorEl,setAnchorEl,onSelectRating}) {
         >
         {['Good Fit', 'Not A Good Fit', 'May Be'].map((rating) => (
             <MenuItem sx={{
-                height : "44px",
+                height : "2.75rem",
                 backgroundColor: 'rgba(12, 13, 13, 1)',
-                borderRadius: '12px', // Optional: Customize the border radius
+                borderRadius: '0.75rem', // Optional: Customize the border radius
                 // ':hover' :{
                 //     background :"rgba(35,36,37,1)"
                 //   },

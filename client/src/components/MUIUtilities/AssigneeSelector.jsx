@@ -104,7 +104,7 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
   if (mode === 'icon') {
     return (
       <>
-        <IconButton sx={{padding : "0 8px"}} onClick={handleClick} size="small" disabled={disabled}>
+        <IconButton sx={{padding : "0 0.5rem"}} onClick={handleClick} size="small" disabled={disabled}>
           {selectedReviewer ? (
             <Avatar src={selectedReviewer.profilePicture} sx={{ width: 32, height: 32 }}>
               {selectedReviewer.firstName[0].toUpperCase()}
@@ -120,7 +120,7 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
           open={Boolean(anchorEl)}
           onClose={handleClose}
           PaperProps={{
-            style: { maxHeight: 300, width: '250px' ,boxShadow: '3px 5px 50px rgba(25, 25, 25, 0.75)', borderRadius : "12px",padding : "8px",backgroundColor: 'black',
+            style: { maxHeight: 300, width: '15.6rem' ,boxShadow: '3px 5px 50px rgba(25, 25, 25, 0.75)', borderRadius : "0.75rem",padding : "0.5rem",backgroundColor: 'black',
 
             },
           }}
@@ -141,16 +141,16 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
               sx={{
                 boxSizing:"border-box",
                 '& .MuiOutlinedInput-input' : {
-                  height : "44px !important",
-                  padding : "0px 40px"
+                  height : "2.75rem !important",
+                  padding : "0px 2.5rem"
                 },
                 '& .css-1n4twyu-MuiInputBase-input-MuiOutlinedInput-input' :{
-                  height : "44px !important",
-                  padding : "0px 40px"
+                  height : "2.75rem !important",
+                  padding : "0px 2.5rem"
                 },
                 '& .css-1ua80n0-MuiInputBase-input-MuiOutlinedInput-input' : {
-                  height : "44px !important",
-                  padding : "0px 40px"
+                  height : "2.75rem !important",
+                  padding : "0px 2.5rem"
                 },
                 '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
                   borderColor: 'rgba(24, 233, 208, 1) !important', // Change the outline color on focus
@@ -164,8 +164,8 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
                 // ),
                 style : {
                   color : "white",
-                  height : "44px",
-                  borderRadius : "12px",
+                  height : "2.75rem",
+                  borderRadius : "0.75rem",
                 }
               }}
             />
@@ -182,9 +182,9 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
               <MenuItem
                 selected={reviewer?._id === selectedReviewer?._id}
                 sx={{
-                  margin : "8px 0px !important",
-                  padding :"6px 16px", 
-                  borderRadius : "12px",
+                  margin : "0.5rem 0px !important",
+                  padding :"0.375rem 1rem", 
+                  borderRadius : "0.75rem",
                 }}
                 key={reviewer._id}
                 onClick={() => handleSelect(reviewer)}
@@ -225,7 +225,7 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
           open={Boolean(selectedAnchor)}
           onClose={handleClose}
           PaperProps={{
-            style: { maxHeight: 300, width: '250px' ,boxShadow: '3px 5px 50px rgba(25, 25, 25, 0.75)', borderRadius : "12px",padding : "8px",backgroundColor: 'black',
+            style: { maxHeight: 300, width: '250px' ,boxShadow: '3px 5px 50px rgba(25, 25, 25, 0.75)', borderRadius : "0.75rem",padding : "0.5rem",backgroundColor: 'black',
 
             },
           }}
@@ -242,16 +242,16 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
               sx={{
                 boxSizing:"border-box",
                 '& .MuiOutlinedInput-input' : {
-                  height : "44px !important",
-                  padding : "0px 40px"
+                  height : "2.75rem !important",
+                  padding : "0px 2.5rem"
                 },
                 '& .css-1n4twyu-MuiInputBase-input-MuiOutlinedInput-input' :{
-                  height : "44px !important",
-                  padding : "0px 40px"
+                  height : "2.75rem !important",
+                  padding : "0px 2.5rem"
                 },
                 '& .css-1ua80n0-MuiInputBase-input-MuiOutlinedInput-input' : {
-                  height : "44px !important",
-                  padding : "0px 40px"
+                  height : "2.75rem !important",
+                  padding : "0px 2.5rem"
                 },
                 '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
                   borderColor: 'rgba(24, 233, 208, 1) !important', // Change the outline color on focus
@@ -265,8 +265,8 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
                 // ),
                 style : {
                   color : "white",
-                  height : "44px",
-                  borderRadius : "12px",
+                  height : "2.75rem",
+                  borderRadius : "0.75rem",
                 }
               }}
             />
@@ -283,9 +283,9 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
               <MenuItem
                 selected={reviewer?._id === selectedReviewer?._id}
                 sx={{
-                  margin : "8px 0px !important",
-                  padding :"6px 16px", 
-                  borderRadius : "12px",
+                  margin : "0.5rem 0px !important",
+                  padding :"0.375rem 1rem", 
+                  borderRadius : "0.75rem",
                 }}
                 key={reviewer._id}
                 onClick={() => handleSelect(reviewer)}
@@ -382,7 +382,7 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
           sx={{
             backgroundColor: 'black', // Set the background color of each option
             color: 'white',           // Set the text color of each option
-            margin : "4px 0px",
+            margin : "0.25rem 0px",
            
           }}
         >

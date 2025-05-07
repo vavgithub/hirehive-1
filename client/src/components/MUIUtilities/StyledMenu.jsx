@@ -16,15 +16,15 @@ function StyledMenu({handleMenuClose,anchorEl,itemComponents}) {
         horizontal: "center",
       }}
       sx={{
-        top : "-44px",
-        left : "30px",
-        borderRadius : "12px",
+        top : "-2.75rem",
+        left : "1.875rem",
+        borderRadius : "0.75rem",
         "& .MuiList-root": {
           backgroundColor: "rgba(12, 13, 13, 1)",
           borderColor: "rgba(12, 13, 13, 1)",
           color: "white",
-          width : "200px",
-          padding : "8px",
+          width : "12.5rem",
+          padding : "0.5rem",
         },
       }}
     >
@@ -32,7 +32,7 @@ function StyledMenu({handleMenuClose,anchorEl,itemComponents}) {
             itemComponents.map((item,i)=>{
                 return (      
                 <MenuItem key={i} sx={{
-                    height : "44px",
+                    height : "2.75rem",
                     padding : "0px",
                     backgroundColor: "rgba(12, 13, 13, 1)",
                 }} onClick={item.onClick}>

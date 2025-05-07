@@ -55,7 +55,7 @@ export const InputField = React.forwardRef(({
         />
       )}
       {error && errorMessage && (
-        <span className={"text-red-500 typography-small-p  absolute " + (rowWise ? "top-[44px] left-[30%]" : "top-[5rem]")}>{errorMessage}</span>
+        <span className={"text-red-500 typography-small-p  absolute " + (rowWise ? "top-[2.75rem] left-[30%]" : "top-[5rem]")}>{errorMessage}</span>
       )}
     </div>
   );
@@ -93,7 +93,7 @@ export const CustomDropdown = React.forwardRef(({ field, label, options, value, 
         <button
           type="button"
           onClick={toggleDropdown}
-          className={`${value ? "text-white" : "text-font-gray"} ${error ? '!border !border-red-500' : 'border border-transparent'}  typography-body mt-1 h-[44px] flex items-center justify-between bg-background-40 hover:bg-background-60 w-full outline-none rounded-xl shadow-sm focus:ring-teal-300 focus:border-teal-300 text-left px-4`}
+          className={`${value ? "text-white" : "text-font-gray"} ${error ? '!border !border-red-500' : 'border border-transparent'}  typography-body mt-1 h-[2.75rem] flex items-center justify-between bg-background-40 hover:bg-background-60 w-full outline-none rounded-xl shadow-sm focus:ring-teal-300 focus:border-teal-300 text-left px-4`}
           ref={ref}
         >
           {options.find(opt => opt.value === value)?.label || options.find(opt => opt === value) || '-Select-'}
@@ -136,7 +136,7 @@ export const ExperienceField = React.forwardRef(({ value, onChange ,required ,er
         />
       ))}
     </div>
-    {errors?.experienceTo?.message && <p className="text-red-500 absolute typography-small-p top-[92px]">{errors?.experienceTo?.message}</p>}
+    {errors?.experienceTo?.message && <p className="text-red-500 absolute typography-small-p top-[5.75rem]">{errors?.experienceTo?.message}</p>}
   </div>
 ));
 
@@ -167,7 +167,7 @@ export const BudgetField = React.forwardRef(({ value, onChange, required, errors
           />
         ))}
       </div>
-      {errors?.budgetTo?.message && <p className="text-red-100 absolute typography-small-p top-[92px]">{errors?.budgetTo?.message}</p>}
+      {errors?.budgetTo?.message && <p className="text-red-100 absolute typography-small-p top-[5.75rem]">{errors?.budgetTo?.message}</p>}
     </div>
   );
 });

@@ -4,13 +4,13 @@ function CustomHeading({fontValue,fontSize,color,label,extraStyles = ""}) {
 
   const fontSteps = {
     0 : "[0px]",
-    1 : "[10px]",
-    2 : "[12px]",
-    3 : "[14px]",
-    4 : "[16px]",
-    5 : "[20px]",
-    6 : "[24px]",
-    7 : "[32px]",
+    1 : "[0.625rem]",
+    2 : "[0.75rem]",
+    3 : "[0.875rem]",
+    4 : "[1rem]",
+    5 : "[1.25rem]",
+    6 : "[1.5rem]",
+    7 : "[2rem]",
   }  
 
   const fonts = {

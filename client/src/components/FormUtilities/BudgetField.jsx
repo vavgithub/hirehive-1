@@ -28,7 +28,7 @@ export const BudgetField = React.forwardRef(({ value, onChange, required, errors
           />
         ))}
       </div>
-      {errors?.budgetTo?.message && <p className="text-red-100 absolute typography-small-p top-[92px]">{errors?.budgetTo?.message}</p>}
+      {errors?.budgetTo?.message && <p className="text-red-100 absolute typography-small-p top-[5.75rem]">{errors?.budgetTo?.message}</p>}
     </div>
   );
 });

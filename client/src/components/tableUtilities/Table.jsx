@@ -500,7 +500,7 @@ const Table = ({
           <input
             type="text"
             placeholder="Search by name or email"
-            className='min-w-[300px]'
+            className='min-w-[18.75rem]'
             value={searchTerm}
             onChange={handleSearch}
           />

@@ -22,8 +22,8 @@ const theme = createTheme({
           '& .MuiInputBase-root': {
             backgroundColor: 'black',
             color: 'white',
-            borderRadius:"12px",
-            height: "44px", // Add this line
+            borderRadius:"0.75rem",
+            height: "2.75rem", // Add this line
           },
           // '& .MuiOutlinedInput-notchedOutline': {
           //   borderColor: 'teal',
@@ -37,7 +37,7 @@ const theme = createTheme({
     MuiPaper: {
       styleOverrides: {
         root: {
-          borderRadius:"12px",
+          borderRadius:"0.75rem",
           backgroundColor: 'black',
           color: 'white',
         },
@@ -47,7 +47,7 @@ const theme = createTheme({
       styleOverrides:{
         root:{
           maxHeight: "18rem",
-          padding: "24px"
+          padding: "1.5rem"
         }
       }
     },
@@ -74,7 +74,7 @@ const theme = createTheme({
           color: 'rgba(128, 131, 137, 1)',
           maxHeight :"11rem",
           '& .MuiList-root':{
-            width:"75px",
+            width:"4.5rem",
             border: "0",
             scrollbarWidth: "none", // For Firefox
             '-ms-overflow-style': "none", // For IE and Edge
@@ -85,7 +85,7 @@ const theme = createTheme({
           '& .MuiButtonBase-root':{
             'margin-left': "0",
             'margin-right': "0",
-            padding: "16px 24px",
+            padding: "1rem 1.5rem",
             width : "100%"
           },
           '& .Mui-selected':{
@@ -116,7 +116,7 @@ export default function Timepicker({ onChange, value ,error}) {
           onChange={(newValue) => onChange(newValue)}
           // sx={{
           //   '& .MuiInputBase-root': {
-          //     height: '44px',
+          //     height: '2.75rem',
           //     backgroundColor: "rgba(12,13,13,1)",
           //     ...(error ? {border : "1px solid red"} : {})
           //   },

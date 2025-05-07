@@ -27,10 +27,10 @@ const theme = createTheme({
     MuiButton: {
       styleOverrides: {
         root: {
-          height: "44px",
-          borderRadius: "12px",
+          height: "2.75rem",
+          borderRadius: "0.75rem",
           textTransform: "none",
-          padding: "8px 16px",
+          padding: "0.5rem 1rem",
         },
       },
     },
@@ -38,7 +38,7 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           "& .MuiOutlinedInput-root": {
-            borderRadius: "12px",
+            borderRadius: "0.75rem",
             color: "white",
             "& fieldset": {
               borderColor: "rgba(24, 233, 208, 0.5)",
@@ -61,7 +61,7 @@ const theme = createTheme({
         paper: {
           backgroundColor: "rgba(12, 13, 13, 1)",
           boxShadow: "3px 5px 50px rgba(25, 25, 25, 0.75)",
-          borderRadius: "12px",
+          borderRadius: "0.75rem",
         },
       },
     },
@@ -71,7 +71,7 @@ const theme = createTheme({
           backgroundColor: "black", // Background color of each option
           color: "white", // Text color of each option
           fontFamily: "Gilroy",
-          borderRadius: "12px",
+          borderRadius: "0.75rem",
           "&:hover": {
             background: "rgba(35,36,37,1) !important",
           },
@@ -111,7 +111,7 @@ const theme = createTheme({
     MuiOutlinedInput: {
       styleOverrides: {
         root: {
-          height: "44px",
+          height: "2.75rem",
           backgroundColor: "rgba(12,13,13,1)",
           borderRadius: "0.75rem !important",
           "& fieldset": {
@@ -125,7 +125,7 @@ const theme = createTheme({
           },
         },
         input: {
-          padding: "0px 10px",
+          padding: "0px 0.625rem",
           backgroundColor: "transparent !important",
         },
       },
@@ -190,7 +190,7 @@ const theme = createTheme({
           "&::-webkit-scrollbar": {
             display: "none", // For Chrome, Safari, and Edge
           },
-          padding: "16px",
+          padding: "1rem",
         },
       },
     },
@@ -228,7 +228,7 @@ const theme = createTheme({
           "& .MuiButtonBase-root": {
             marginLeft: "0",
             marginRight: "0",
-            padding: "16px 24px",
+            padding: "1rem 1.5rem",
             width: "100%",
             borderRadius: "0px",
           },
@@ -244,7 +244,7 @@ const theme = createTheme({
         root: {
           backgroundColor: "black",
           color: "white",
-          borderRadius: "20px",
+          borderRadius: "1.25rem",
           overflowY: "auto", // Ensures scrolling
           scrollbarWidth: "none !important", // Hide scrollbar for Firefox
           "&::-webkit-scrollbar": { display: "none" }, // Hide scrollbar in Chrome/Safari
@@ -255,11 +255,11 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           "& .MuiInputBase-root": {
-            height: "44px",
+            height: "2.75rem",
             backgroundColor: "rgba(12,13,13,1)",
           },
           "& .MuiOutlinedInput-input": {
-            padding: "0px 10px",
+            padding: "0px 0.625rem",
           },
           "& .MuiOutlinedInput-root": {
             "& fieldset": {
@@ -279,8 +279,8 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           "& .MuiInputBase-input": {
-            height: "44px",
-            maxHeight: "44px !important",
+            height: "2.75rem",
+            maxHeight: "2.75rem !important",
             color: "white",
             boxSizing: "border-box",
           },
@@ -290,7 +290,7 @@ const theme = createTheme({
               border: "none",
             },
             "& .MuiAutocomplete-input": {
-              padding: "8px 16px !important",
+              padding: "0.5rem 1rem !important",
             },
           },
           "& .Mui-focused": {
@@ -302,7 +302,7 @@ const theme = createTheme({
         },
         paper: {
           backgroundColor: "black", // Background color of the list
-          padding: "8px !important",
+          padding: "0.5rem !important",
         },
         inputRoot: {
           padding: "0px !important", // Override the default padding
@@ -331,7 +331,7 @@ const theme = createTheme({
     MuiDataGrid: {
       styleOverrides: {
         root: {
-          borderRadius: "12px",
+          borderRadius: "0.75rem",
           backgroundColor: "black",
           "& .MuiDataGrid-columnHeaders": {
             borderTop: "none",
@@ -360,7 +360,7 @@ const theme = createTheme({
           },
           "& .MuiDataGrid-virtualScroller": {
             backgroundColor: "transparent",
-            borderRadius: "12px 12px 0px 0px !important",
+            borderRadius: "0.75rem 0.75rem 0px 0px !important",
           },
           "& .MuiDataGrid-overlayWrapper": {
             height: "3rem",

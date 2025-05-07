@@ -113,7 +113,7 @@ const PortfolioStage = ({ stageData, onAssign, onViewPortfolio, onReject, onMove
         <Card
             sx={{
                 backgroundColor: "rgba(22, 23, 24, 1)",
-                borderRadius: "12px",
+                borderRadius: "0.75rem",
             }}
         >
             <CardContent>

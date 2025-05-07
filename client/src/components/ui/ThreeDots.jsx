@@ -104,10 +104,10 @@ const ThreeDots = ({ job, handleAction, page, orgId, isPinned, role , extraStyle
             style: {
               maxHeight: 300,
               width: '12rem',
-              borderRadius: '12px',
-              padding: '8px',
+              borderRadius: '0.75rem',
+              padding: '0.5rem',
               backgroundColor: 'rgba(22, 23, 24, 1)',
-              marginTop: '12px',
+              marginTop: '0.75rem',
             },
           }}
         >
@@ -116,13 +116,13 @@ const ThreeDots = ({ job, handleAction, page, orgId, isPinned, role , extraStyle
           <MenuItem
               key={pinUnpinMenuItems[isPinned ? 'unpin' : 'pin']?.action}
           sx={{
-            padding: '8px 16px',
-            borderRadius: '12px',
+            padding: '0.5rem 1rem',
+            borderRadius: '0.75rem',
             backgroundColor: 'rgba(22, 23, 24, 1)',
             display: 'flex',
-            fontSize: '14px',
+            fontSize: '0.875rem',
             alignItems: 'center',
-            gap: '12px',
+            gap: '0.75rem',
             color: 'rgba(255, 255, 255, 1)', // default color
             '&:hover': {
               backgroundColor: 'rgba(35, 36, 37, 1)',
@@ -146,7 +146,7 @@ const ThreeDots = ({ job, handleAction, page, orgId, isPinned, role , extraStyle
               component: 'span',
               sx: {
                 fontWeight: 300,
-                fontSize: '14px',
+                fontSize: '0.875rem',
                 color: 'inherit', // critical: let it inherit from MenuItem
               },
             }}
@@ -159,13 +159,13 @@ const ThreeDots = ({ job, handleAction, page, orgId, isPinned, role , extraStyle
                 <MenuItem
                       key={action}
                       sx={{
-                        padding: '8px 16px',
-                        borderRadius: '12px',
+                        padding: '0.5rem 1rem',
+                        borderRadius: '0.75rem',
                         backgroundColor: 'rgba(22, 23, 24, 1)',
                         display: 'flex',
-                        fontSize: '14px',
+                        fontSize: '0.875rem',
                         alignItems: 'center',
-                        gap: '12px',
+                        gap: '0.75rem',
                         color: 'rgba(255, 255, 255, 1)', // default color
                         '&:hover': {
                           backgroundColor: 'rgba(35, 36, 37, 1)',
@@ -186,7 +186,7 @@ const ThreeDots = ({ job, handleAction, page, orgId, isPinned, role , extraStyle
                           component: 'span',
                           sx: {
                             fontWeight: 300,
-                            fontSize: '14px',
+                            fontSize: '0.875rem',
                             color: 'inherit', // critical: let it inherit from MenuItem
                           },
                         }}

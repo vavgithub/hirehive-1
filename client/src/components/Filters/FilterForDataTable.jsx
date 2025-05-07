@@ -253,7 +253,7 @@ const FilterForDataTable = ({ onApplyFilters, readOnly, preservedFilters }) => {
                     <ScoreFilter handleScoreChange={handleScoreChange} />
                   ) :
                     (
-                      <div className="p-2 rounded-xl absolute typography-body left-[18.5rem] min-w-[250px] bg-background-40 w-max flex gap-2 flex-col " style={{ boxShadow: "5px 5px 50px rgba(0,0,0,0.9)" }}>
+                      <div className="p-2 rounded-xl absolute typography-body left-[18.5rem] min-w-[15.625rem] bg-background-40 w-max flex gap-2 flex-col " style={{ boxShadow: "5px 5px 50px rgba(0,0,0,0.9)" }}>
                         {categories[category].map((item) => (
                           <label key={category === 'assignee' ? item._id : item} className={"group relative flex items-center p-4 h-10 hover:bg-background-60 cursor-pointer hover:text-accent-100 rounded-xl " + (category === 'assignee' ? selectedFilters[category].find(each => each.name === item.name) ? "bg-accent-300 text-accent-100 " : "" : selectedFilters[category].includes(item) ? "bg-accent-300 text-accent-100 " : "text-white")}>
                             <TickCheckbox

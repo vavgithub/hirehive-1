@@ -313,7 +313,7 @@ const ContactUs = () => {
                 </div>
                 <p className="mb-2 hidden typography-body text-font-gray md:flex">Drag and drop your screenshot here</p>
                 <p className='text-font-gray typography-small-p hidden md:flex mb-2'>OR</p>
-                <div className='md:w-[276px]'>
+                <div className='md:w-[17.25]'>
                   <Button variant="secondary" type="button">Browse files</Button>
                 </div>
               </div>

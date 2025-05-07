@@ -23,7 +23,7 @@ const TickCheckbox = ({
                 />
                 {/* <span className="absolute hidden top-0 h-4 w-4 items-center justify-center text-white peer-checked:flex">✔</span> */}
 
-                <div className="hidden peer-checked:block absolute top-[-1px] left-[-2px] w-[20px] scale-90 h-[20px] text-black-100 pointer-events-none">
+                <div className="hidden peer-checked:block absolute top-[-1px] left-[-2px] w-[1.25rem] scale-90 h-[1.25rem] text-black-100 pointer-events-none">
                     <span className='text-black-100'><IconWrapper customStrokeWidth={4} customIconSize={3} icon={Check} inheritColor size={0} /></span>
 
                 </div>

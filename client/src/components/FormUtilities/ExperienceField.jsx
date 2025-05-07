@@ -17,6 +17,6 @@ export const ExperienceField = React.forwardRef(({ value, onChange ,required ,er
         />
       ))}
     </div>
-    {errors?.experienceTo?.message && <p className="text-red-500 absolute typography-small-p top-[92px]">{errors?.experienceTo?.message}</p>}
+    {errors?.experienceTo?.message && <p className="text-red-500 absolute typography-small-p top-[5.75rem]">{errors?.experienceTo?.message}</p>}
   </div>
 ));

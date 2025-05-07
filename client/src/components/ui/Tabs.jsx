@@ -20,7 +20,7 @@ const Tabs = ({ tabs, activeTab, handleTabClick }) => {
                         <span className='ml-2'>{tab.label}</span>
                     </div>
                     {activeTab === tab.name && (
-                        <div className="absolute bottom-[0px] h-[6px] w-8 bg-accent-100 rounded-tr-xl rounded-tl-xl" />
+                        <div className="absolute bottom-[0px] h-[0.375rem] w-8 bg-accent-100 rounded-tr-xl rounded-tl-xl" />
                     )}
                 </div>
             ))}

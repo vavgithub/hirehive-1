@@ -4,12 +4,12 @@ import { styled } from "@mui/material/styles";
 
 let sizes = {
     1: {
-        padding: "6px 12px",
-        fontSize: "12px",
+        padding: "0.375rem 0.75rem",
+        fontSize: "0.75rem",
     },
     2: {
-        padding: "8px 20px",
-        fontSize: "12px",
+        padding: "0.5rem 1.25rem",
+        fontSize: "0.75rem",
     },
 };
 
@@ -22,7 +22,7 @@ const CustomStyledTooltip = styled(({ className, size, ...props }) => (
     fontSize: sizes[size].fontSize, // Custom font size
     letterSpacing: "0.5px",
     padding: sizes[size].padding, // Add padding around the tooltip text
-    borderRadius: "10px", // Add border radius to tooltip
+    borderRadius: "0.625rem", // Add border radius to tooltip
   },
   [`& .${tooltipClasses.arrow}`]: {
     color: "rgba(7,7,8,1)", // Arrow color matching background

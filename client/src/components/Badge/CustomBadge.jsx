@@ -10,16 +10,16 @@ function CustomBadge({pointer,children,extraStyles,paddingX,paddingY,label,backg
     }
 
     let borderSteps = {
-    0 : "[0px]",
-    1 : "[4px]",
-    2 : "[8px]",
-    3 : "[12px]",
-    4 : "[16px]",
-    5 : "[20px]",
-    6 : "[24px]",
-    7 : "[28px]",
-    8 : "[32px]",
-    9 : "[36px]",
+    0 : "[0rem]",
+    1 : "[0.25rem]",
+    2 : "[0.5rem]",
+    3 : "[0.75rem]",
+    4 : "[1rem]",
+    5 : "[1.25rem]",
+    6 : "[1.5rem]",
+    7 : "[1.75rem]",
+    8 : "[2rem]",
+    9 : "[2.25rem]",
     10 : "full",
     }
 

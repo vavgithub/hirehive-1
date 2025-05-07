@@ -10,7 +10,7 @@ function RejectionSelector({selectedAnchor,handleClose,handleReasonSelect}) {
             open={Boolean(selectedAnchor)}
             onClose={handleClose}
             PaperProps={{
-              style: { maxHeight: 300,  width: selectedAnchor?.getBoundingClientRect()?.width , borderRadius : "12px",padding : "8px",backgroundColor: 'rgba(12, 13, 13, 1)'},
+              style: { maxHeight: 300,  width: selectedAnchor?.getBoundingClientRect()?.width , borderRadius : "0.75rem",padding : "0.5rem",backgroundColor: 'rgba(12, 13, 13, 1)'},
             }}
             sx={{
               "& .MuiList-root": {
@@ -19,11 +19,11 @@ function RejectionSelector({selectedAnchor,handleClose,handleReasonSelect}) {
                 padding : "0px "
               },
               "& .MuiMenu-paper": {
-                maxHeight: "300px",
+                maxHeight: "18.75rem",
                 overflow: "hidden", // Hide outer scrollbar
               },
               "& .MuiMenu-list": {
-                maxHeight: "300px",
+                maxHeight: "18.75rem",
                 overflowY: "auto", // Keep scrolling enabled
                 scrollbarWidth: "none", // Hide scrollbar in Firefox
                 msOverflowStyle: "none", // Hide scrollbar in IE/Edge
@@ -32,11 +32,11 @@ function RejectionSelector({selectedAnchor,handleClose,handleReasonSelect}) {
                 },
               },
               "& .MuiMenu-paper": {
-                maxHeight: "300px",
+                maxHeight: "18.75rem",
                 overflow: "hidden", // Hide outer scrollbar
               },
               "& .MuiMenu-list": {
-                maxHeight: "300px",
+                maxHeight: "18.75rem",
                 overflowY: "auto", // Keep scrolling enabled
                 scrollbarWidth: "none", // Hide scrollbar in Firefox
                 msOverflowStyle: "none", // Hide scrollbar in IE/Edge
@@ -51,8 +51,8 @@ function RejectionSelector({selectedAnchor,handleClose,handleReasonSelect}) {
               REJECTION_REASONS.map((reason) => (
                 <MenuItem
                   sx={{
-                    margin : "8px 0px !important",
-                    padding :"8px 16px",
+                    margin : "0.5rem 0px !important",
+                    padding :"0.5rem 1rem",
                     backgroundColor: 'rgba(12, 13, 13, 1)',
                     ':hover' :{
                       background :"rgba(35,36,37,1)"

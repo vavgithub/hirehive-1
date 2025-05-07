@@ -19,14 +19,14 @@ function ScoreFilter({handleScoreChange}) {
     }
 
   return (
-    <StyledCard padding={2} extraStyles={"absolute left-[18.5rem] w-[250px] flex gap-4"}>
+    <StyledCard padding={2} extraStyles={"absolute left-[18.5rem] w-[15.625rem] flex gap-4"}>
       <div className='flex flex-col gap-2'>
         <label htmlFor="min-score" className='typography-large-p'>Min Score</label>
         <div className='relative'>
         <input type="number" id='min-score' className='no-spinner' value={min} onChange={handleMinChange} style={{
             background : "rgba(35,36,37,1)"
         }} />
-        <span className='font-light text-font-gray absolute right-2 top-[10px]'>PT</span>
+        <span className='font-light text-font-gray absolute right-2 top-[0.625rem]'>PT</span>
         </div>
       </div>
       <div className='flex flex-col gap-2'>
@@ -35,7 +35,7 @@ function ScoreFilter({handleScoreChange}) {
         <input type="number" id='max-score' value={max} onChange={handleMaxChange} className='no-spinner' style={{
             background : "rgba(35,36,37,1)"
         }} />
-        <span className='font-light text-font-gray absolute right-2 top-[10px]'>PT</span>
+        <span className='font-light text-font-gray absolute right-2 top-[0.625rem]'>PT</span>
         </div>
       </div>
     </StyledCard>

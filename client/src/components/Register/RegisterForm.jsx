@@ -166,7 +166,7 @@ function RegisterForm({setCurrentStep}) {
             {(registerAdminMutation?.isPending || loading) && <LoaderModal/>}
             {/* Left section with background image */}
             <div className="hidden lg:flex lg:w-3/5 bg-login-screen backdrop-blur-lg bg-cover p-12 flex-col justify-between relative">
-              <div className='p-[45px]'>
+              <div className='p-[2.75rem]'>
                 <img className='h-12' src={Logo} />
                 <h1 className="typography-h1 font-normal mt-8">VAV - Hire Designers</h1>
                 <p className="display-d2 max-w-xl mt-7 mb-4">Discover, hire, and explore top talent with HireHive</p>

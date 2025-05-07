@@ -188,12 +188,12 @@ const JobCard = ({
         />}
       </div>
       <div className=" py-4 ">
-          <p className="typography-body text-font-gray h-[45px] overflow-hidden" dangerouslySetInnerHTML={{__html : truncatedDescription}}>
+          <p className="typography-body text-font-gray h-[2.8rem] overflow-hidden" dangerouslySetInnerHTML={{__html : truncatedDescription}}>
           </p>
         </div>
       </> :
       <div className=" py-4 ">
-      <p className="typography-body text-font-gray h-[45px] overflow-hidden" dangerouslySetInnerHTML={{__html : truncatedDescription}}>
+      <p className="typography-body text-font-gray h-[2.8rem] overflow-hidden" dangerouslySetInnerHTML={{__html : truncatedDescription}}>
       </p>
     </div>
         }

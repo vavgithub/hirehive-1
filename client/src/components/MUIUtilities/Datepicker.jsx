@@ -19,8 +19,8 @@ const theme = createTheme({
           '& .MuiInputBase-root': {
             backgroundColor: 'black',
             color: 'white',
-            borderRadius:"12px",
-            height: "44px", // Add this line
+            borderRadius:"0.75rem",
+            height: "2.75rem", // Add this line
           },
           //  '& .MuiOutlinedInput-notchedOutline': {
           //  borderColor: 'teal',
@@ -108,7 +108,7 @@ export default function Datepicker({ onChange, value ,error }) {
           onChange={(newValue) => onChange(newValue)}
           // sx={{
           //   '& .MuiInputBase-root': {
-          //     height: '44px',
+          //     height: '2.75rem',
           //     backgroundColor: "rgba(12,13,13,1)",
           //     ...(error ? {border : "1px solid red"} : {})
           //   },
