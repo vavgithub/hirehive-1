@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import Modal from '../Modals/Modal'
+import Modal, { REJECTION_REASONS } from '../Modals/Modal'
 import axios from '../../api/axios'
 import { showErrorToast, showSuccessToast } from '../ui/Toast'
 import { useQueryClient } from '@tanstack/react-query'
@@ -197,9 +197,9 @@ function MultiSelectBar({selectedData,jobId,clearSelection}) {
         selectedData?.map(candidate => {
             if(action?.validStatus.includes(candidate.stageStatuses[candidate.currentStage].status)){
                 if(filteredCandidatesObj[candidate.currentStage]){
-                    filteredCandidatesObj[candidate.currentStage].push({candidate,checked:true})
+                    filteredCandidatesObj[candidate.currentStage].push({candidate,checked:true,rejectionReason : REJECTION_REASONS[0]?.value})
                 }else{
-                    filteredCandidatesObj[candidate.currentStage] = [{candidate,checked:true}]
+                    filteredCandidatesObj[candidate.currentStage] = [{candidate,checked:true,rejectionReason : REJECTION_REASONS[0]?.value}]
                 }
             }
         })
