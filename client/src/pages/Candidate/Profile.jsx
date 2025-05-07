@@ -164,7 +164,7 @@ const ResumeAndPortfolioDetails = ({ candidateData, isEditing, control, resumeFi
             </div>
             <div className="flex flex-col gap-6 typography-body">
               <p className="w-fit whitespace-nowrap overflow-hidden text-ellipsis"><a href={candidateData.resumeUrl} target="_blank" rel="noopener noreferrer" className="underline text-blue-100">{candidateData?.firstName + "'s Resume"}</a></p>
-              <p className="w-fit whitespace-nowrap overflow-hidden text-ellipsis"><a href={ensureAbsoluteUrl(candidateData.website)} target="_blank" rel="noopener noreferrer" className="underline text-blue-100">{candidateData?.website}</a></p>
+              <p className="w-fit whitespace-nowrap overflow-hidden text-ellipsis">{candidateData?.website ? <a href={ensureAbsoluteUrl(candidateData.website)} target="_blank" rel="noopener noreferrer" className="underline text-blue-100">{candidateData?.website}</a> : <span>N / A</span>}</p>
             </div>
           </div>
           <div className="grid grid-cols-2 sm:w-[45%] gap-[10%] justify-between">

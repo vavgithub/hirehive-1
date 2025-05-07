@@ -15,6 +15,7 @@ import CustomPill from '../Badge/CustomPill';
 import { useQuery } from '@tanstack/react-query';
 import axios from '../../api/axios';
 import TemplateModal from '../Modals/TemplateModal';
+import GlobalDropDown from '../Dropdowns/GlobalDropDown';
 
 function hasDuplicates(arr) {
   return new Set(arr).size !== arr.length;
