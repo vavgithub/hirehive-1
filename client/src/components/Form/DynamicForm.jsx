@@ -5,12 +5,25 @@ import { useForm } from 'react-hook-form';
 import { validationRules } from '../../utility/validationRules';
 import { showErrorToast } from '../ui/Toast';
 import { FormField } from './FormField';
+import { PhoneInputField } from './PhoneInputField';
 
 const FormSection = ({ title, fields, control }) => (
   <StyledCard backgroundColor="bg-background-30" extraStyles="mb-4">
     <h2 className="typography-h2">{title}</h2>
     <div className="grid gap-4">
-      {fields.map((field) => (
+      {fields.map((field) => {
+        if(field.name === 'phone'){
+          return( 
+          <PhoneInputField 
+          key={field.name}
+          control={control}
+          label={field.label}
+          rules={validationRules[field.name]}
+          name={field.name}
+          rowWise
+          />)
+        }
+        return(
         <FormField
           key={field.name}
           name={field.name}
@@ -20,7 +33,7 @@ const FormSection = ({ title, fields, control }) => (
           label={field.label}
           rowWise
         />
-      ))}
+      )})}
     </div>
   </StyledCard>
 );

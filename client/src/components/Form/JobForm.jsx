@@ -169,6 +169,7 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
                 value={value}
                 required
                 error={error}
+                errorMessage={error?.message}
                 onChange={onChange}
               />
             )}
