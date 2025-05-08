@@ -325,10 +325,10 @@ body {
   @apply text-white;
 }
 input[type="text"] {
-  @apply bg-background-40 hover:bg-background-60 cursor-pointer h-[2.75rem] px-4 rounded-xl placeholder:text-font-gray placeholder:font-body  focus:ring-teal-400 focus:outline-teal-500 outline-none typography-body w-full;  /* Replace bg-gray-200 with your desired background color class */
+  @apply bg-background-80 hover:bg-background-60 cursor-pointer h-[2.75rem] px-4 rounded-xl placeholder:text-font-gray placeholder:font-body  focus:ring-teal-400 focus:outline-teal-500 outline-none typography-body w-full;  /* Replace bg-gray-200 with your desired background color class */
 }
 input[type="search"] {
-  @apply bg-background-40 hover:bg-background-60 cursor-pointer h-[2.25rem] px-4 rounded-xl placeholder:text-font-gray placeholder:font-body  focus:ring-teal-400 focus:outline-teal-500 outline-none typography-body ;  /* Replace bg-gray-200 with your desired background color class */
+  @apply bg-background-80 hover:bg-background-60 cursor-pointer h-[2.25rem] px-4 rounded-xl placeholder:text-font-gray placeholder:font-body  focus:ring-teal-400 focus:outline-teal-500 outline-none typography-body ;  /* Replace bg-gray-200 with your desired background color class */
 }
 input[type="email"] {
   @apply bg-background-40 hover:bg-background-60 cursor-pointer h-[2.75rem] px-4 rounded-xl placeholder:text-font-gray placeholder:font-body  focus:ring-teal-400 focus:outline-teal-500 outline-none typography-body w-full;  /* Replace bg-gray-200 with your desired background color class */
@@ -429,12 +429,12 @@ input[type='number'] {
     --color-accent-300: rgba(24, 233, 208, 0.1);
     /* ... */
 
-    --color-background-100:rgba(22, 23, 24, 1);
+    --color-background-100:rgba(12, 13, 13, 1);
     --color-background-90:rgba(18, 19, 20, 1);
     --color-background-80:rgba(27, 28, 29, 1);
     --color-background-70:rgba(32, 33, 34, 1);    
     --color-background-60:rgba(35, 36, 37, 1);
-    --color-background-40:rgba(12, 13, 13, 1);
+    --color-background-40:rgba(22, 23, 24, 1);
     --color-background-30:rgba(22, 23, 24, 1);
 
 

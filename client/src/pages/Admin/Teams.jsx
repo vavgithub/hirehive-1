@@ -15,6 +15,7 @@ import Container from "../../components/Cards/Container";
 import { UNKNOWN_PROFILE_PICTURE_URL } from "../../utility/config";
 import { useDispatch } from "react-redux";
 import { setMembersCount } from "../../redux/AdminSlice";
+import Header from "../../components/utility/Header";
 
 const addMember = async ({teamMember}) => {
     const response = await axios.post('/admin/add-member',{teamMember});
@@ -159,12 +160,15 @@ function Teams() {
 
     <Container>
         <div className="flex flex-row justify-between mb-4">
-            <h1 className="typography-h1">Teams</h1>
+            
+            <Header HeaderText={'Teams'}></Header>
             {(addMemberMutation?.isPending || rejectRequestMutation?.isPending || approveRequestMutation?.isPending || isTeamMembersLoading) && <LoaderModal />}
         </div>
+        <StyledCard padding={2} extraStyles={'flex flex-col items-center justify-between gap-4 mb-4'}>
+
         <div className="grid gap-4 grid-cols-5 ">
             {/* Add Card */}
-            <StyledCard padding={2} extraStyles={'flex flex-col items-center justify-between gap-4 '}>
+            <StyledCard padding={2} backgroundColor={'bg-background-70'} extraStyles={'flex flex-col items-center justify-between gap-4 '}>
                 {/* Member Profile Picture */}
                 <div className="relative w-full aspect-square rounded-xl overflow-hidden">
                     <img src={ UNKNOWN_PROFILE_PICTURE_URL } alt="" className='object-cover w-full overflow-hidden' />
@@ -181,7 +185,7 @@ function Teams() {
 
             {teamMembers?.members?.filter(member => member?.status !== "REQUESTED").map(member => {
                 return (
-                    <StyledCard key={member?.member_id ? member?.member_id : member?._id} onClick={()=>navigate(`/admin/teams/profile/${member?.member_id ? member?.member_id : member?._id}`)} padding={2} extraStyles={'flex flex-col items-center cursor-pointer justify-between gap-4 '}>
+                    <StyledCard key={member?.member_id ? member?.member_id : member?._id} backgroundColor={'bg-background-70'} onClick={()=>navigate(`/admin/teams/profile/${member?.member_id ? member?.member_id : member?._id}`)} padding={2} extraStyles={'flex flex-col items-center cursor-pointer justify-between gap-4 '}>
                         {/* Member Profile Picture */}
                         <div className="w-full aspect-square rounded-xl overflow-hidden relative">
                             <img src={member?.profilePicture || UNKNOWN_PROFILE_PICTURE_URL } alt="" className='object-cover w-full overflow-hidden' />
@@ -207,6 +211,7 @@ function Teams() {
             }) }
 
         </div>
+        </StyledCard>
         {teamMembers?.members?.filter(member => member?.status === "REQUESTED")?.length > 0 && 
         <div className="w-full">
             <h2 className="typography-h2 mt-6 mb-4">New Member Request</h2>

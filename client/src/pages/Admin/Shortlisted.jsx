@@ -122,7 +122,7 @@ const Shortlisted = () => {
     return (
         <Container>
             <Header HeaderText={"Future Gems"} />
-            <StyledCard padding={2} backgroundColor={"bg-background-100"}>
+            <StyledCard padding={2} >
                 {tableData.length > 0 ? (
                     <Table
                         readOnly={true}

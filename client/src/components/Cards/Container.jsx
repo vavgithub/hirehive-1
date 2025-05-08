@@ -16,10 +16,10 @@ const  Container = forwardRef(({
   const basicMainStyles = ` w-full ${customPadding ? customPadding?.toString() : 'p-4'} min-h-screen `;
   const basicContainerStyles = " container ";
 
-  const bgImageStyles = ` ${(typeof hasBgImage === 'string' && hasBgImage.trim() !== 'bg-main-bg') ? hasBgImage : " bg-main-bg " }  bg-cover `;
+  const bgImageStyles = ` ${(typeof hasBgImage === 'string' && hasBgImage.trim() !== 'bg-main-bg') ? hasBgImage : "bg-main-bg" }  bg-cover `;
   const bgColorStyles = ` ${hasBgColor ? 
-    (typeof hasBgColor === 'string' && hasBgColor.trim() !== 'bg-background-80') ? hasBgColor : " bg-background-80 " 
-    : " bg-background-80 "} `;
+    (typeof hasBgColor === 'string' && hasBgColor.trim() !== 'bg-background-100') ? hasBgColor : 'bg-background-100' 
+    : 'bg-background-100'} `;
 
     return (
     <div

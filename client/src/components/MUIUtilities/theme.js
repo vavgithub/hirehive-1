@@ -173,7 +173,7 @@ const theme = createTheme({
             color: "rgba(128, 131, 137, 1);",
           },
         },
-      
+
         switchViewButton: {
           color: "rgba(128, 131, 137, 1);",
         },
@@ -337,13 +337,18 @@ const theme = createTheme({
             borderTop: "none",
             borderBottom: "none",
             color: "gray",
-            backgroundColor: "black !important",
+            backgroundColor: "var(--color-background-70) !important",
           },
           "& .MuiDataGrid-columnHeader": {
-            backgroundColor: "black !important",
+            backgroundColor: "var(--color-background-70) !important",
           },
           "& .MuiDataGrid-columnHeaderTitle": {
             color: "gray",
+          },
+          "&  .MuiDataGrid-footerContainer": {
+            backgroundColor: "var(--color-background-70) !important",
+            borderBottomLeftRadius: "0.75rem",
+            borderBottomRightRadius: "0.75rem",
           },
           "& .MuiDataGrid-cell": {
             color: "white",
@@ -383,7 +388,7 @@ const theme = createTheme({
             },
           },
           "& .MuiDataGrid-filler": {
-            backgroundColor: "black",
+            backgroundColor: "var(--color-background-70) !important",
           },
           "& .MuiDataGrid-scrollbar": {
             display: "none",

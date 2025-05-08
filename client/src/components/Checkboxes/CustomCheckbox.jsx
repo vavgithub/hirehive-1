@@ -1,6 +1,6 @@
 export const CustomCheckbox = ({ label, icon: Icon, isChecked, onChange, count }) => (
     <div
-        className={`flex flex-col w-[5.3125rem] justify-center p-3 rounded-xl cursor-pointer hover:bg-background-60 ${isChecked ? 'bg-accent-300' : 'bg-background-40'
+        className={`flex flex-col w-[5.3125rem] justify-center p-3 rounded-xl cursor-pointer hover:bg-background-60 ${isChecked ? 'bg-accent-300' : 'bg-background-70'
             }`}
         onClick={onChange}
     >

@@ -14,7 +14,7 @@ import { Briefcase, Folder, MonitorDot, PenTool, Users } from 'lucide-react';
 
 
 const Candidates = () => {
-  
+
   const { data, isLoading, isError } = useQuery({
     queryKey: ['candidates'],
     queryFn: () => axios.get('/admin/candidate/getData/data/allCandidatesWithStats').then(res => res.data),
@@ -43,13 +43,13 @@ const Candidates = () => {
   }, [isLoading, isError]);
 
   const candidateStats = {
-    monthly : `${data?.stats?.statistics?.total?.monthly ?? 0}% since last month`,
-    weekly : `${data?.stats?.statistics?.total?.weekly ?? 0}% since last week`,
-    daily : `${data?.stats?.statistics?.total?.daily ?? 0}% since yesterday`,
-}
+    monthly: `${data?.stats?.statistics?.total?.monthly ?? 0}% since last month`,
+    weekly: `${data?.stats?.statistics?.total?.weekly ?? 0}% since last week`,
+    daily: `${data?.stats?.statistics?.total?.daily ?? 0}% since yesterday`,
+  }
 
   const statsOne = [
-    { title: 'Total', value: data?.stats?.Total || 0, icon:  () => <IconWrapper size={10} isInActiveIcon icon={Users} /> , statistics : candidateStats},
+    { title: 'Total', value: data?.stats?.Total || 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={Users} />, statistics: candidateStats },
     { title: 'Portfolio', value: data?.stats?.Portfolio || 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={Folder} /> },
     { title: 'Screening', value: data?.stats?.Screening || 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={MonitorDot} /> },
     { title: 'Design Task', value: data?.stats?.['Design Task'] || 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={PenTool} /> },
@@ -70,16 +70,16 @@ const Candidates = () => {
 
   return (
     <Container >
-        <Header HeaderText="Candidates" />
-        <StyledCard backgroundColor={"bg-background-100 "}>
-          <div className="w-full max-w-7xl relative mb-4">
-            <div className="absolute right-0 z-10 h-full w-28 bg-gradient-to-tr from-background via-background-green to-transparent pointer-events-none" />
-            <StatsGrid stats={statsOne} />
-          </div>
-          <div >
-            <Table readOnly={true} readOnlyData={data?.candidates || []} />
-          </div>
-        </StyledCard>
+      <Header HeaderText="Candidates" />
+      <StyledCard >
+        <div className="w-full max-w-7xl relative mb-4">
+          <div className="absolute right-0 z-10 h-full w-28 bg-gradient-to-tr from-background via-background-green to-transparent pointer-events-none" />
+          <StatsGrid stats={statsOne} />
+        </div>
+        <div >
+          <Table readOnly={true} readOnlyData={data?.candidates || []} />
+        </div>
+      </StyledCard>
     </Container>
   );
 };

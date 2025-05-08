@@ -370,7 +370,7 @@ const Jobs = () => {
                 </div> */}
 
             {(isStatsLoading  || isJobsLoading) && <LoaderModal />}
-            <StyledCard padding={2} backgroundColor={"bg-background-100"}>
+            <StyledCard padding={2}>
 
                 <div className='flex gap-3'>
                     <StatsGrid stats={JobsStats} />

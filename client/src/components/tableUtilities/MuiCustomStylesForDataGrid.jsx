@@ -3,7 +3,14 @@ import React from 'react'
 function MuiCustomStylesForDataGrid() {
     return (
         <style>
-                {`
+            {`
+                 /* ——— Make header and footer red ——— */
+      .MuiDataGrid-root .MuiDataGrid-columnHeaders {
+        background-color: red !important;
+       }
+       .MuiDataGrid-root .MuiDataGrid-footerContainer {
+         background-color: red !important;
+       }
             .MuiDataGrid-root .MuiDataGrid-columnHeader:focus,
             .MuiDataGrid-root .MuiDataGrid-cell:focus {
                 outline: none !important;                      
@@ -120,8 +127,8 @@ function MuiCustomStylesForDataGrid() {
                 }
 
             `}
-      </style>
-  )
+        </style>
+    )
 }
 
 export default MuiCustomStylesForDataGrid
