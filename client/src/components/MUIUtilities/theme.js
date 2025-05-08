@@ -382,7 +382,7 @@ const theme = createTheme({
           },
           "& .first-row": {
             borderRadius: 2,
-            backgroundColor: "rgba(18, 19, 20, 1)",
+            backgroundColor: "var(--color-background-30)",
             "&:hover": {
               backgroundColor: "#232425",
             },
@@ -396,7 +396,7 @@ const theme = createTheme({
           },
           "& .second-row": {
             borderRadius: 2,
-            backgroundColor: "rgba(12, 13, 13, 1)",
+            backgroundColor: "var(--color-background-80)",
             "&:hover": {
               backgroundColor: "#232425",
             },

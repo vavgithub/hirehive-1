@@ -159,7 +159,7 @@ function Teams() {
   return (
 
     <Container>
-        <div className="flex flex-row justify-between mb-4">
+        <div className="flex flex-row justify-between">
             
             <Header HeaderText={'Teams'}></Header>
             {(addMemberMutation?.isPending || rejectRequestMutation?.isPending || approveRequestMutation?.isPending || isTeamMembersLoading) && <LoaderModal />}
