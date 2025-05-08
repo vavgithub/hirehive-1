@@ -497,7 +497,7 @@ const reviewerProfilePic = currentReviewer?.profilePicture
                                             {getRatingIcon(data?.jobApplication?.rating)}
                                         </span>}
                                 </div>
-                                <div className='flex flex-col gap-2 max-w-[60%]'>
+                                <div className={`flex flex-col gap-2 ${candidateData?.jobApplication?.notes?.content ? ' max-w-[60%] ' : ''}`}>
                                     <h1 className="typography-h2">
                                         {data.firstName} {data.lastName}
                                     </h1>
