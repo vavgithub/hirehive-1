@@ -741,78 +741,134 @@ export const getAllCandidatesWithStats = async (req, res) => {
       }
     ]);
 
-    //MONTHLY
     const { firstDayPreviousMonth, lastDayPreviousMonth, firstDayCurrentMonth } = getPreviousMonthRange();
     const { firstDayPreviousWeek, lastDayPreviousWeek, firstDayCurrentWeek } = getPreviousWeekRange();
     const { startOfYesterday, endOfYesterday, startOfToday } = getYesterdayTodayRange();
-
-    // Query to count jobs created in the current month
-    const currentMonthJobs = await candidates.countDocuments({
-      isVerified: true,
-      'jobApplications.companyDetails._id' : req.user.company_id ,
-      createdAt: { $gte: firstDayCurrentMonth }
-    });
-
-    // Query to count candidates created in the previous month
-    const previousMonthJobs = await candidates.countDocuments({
-      isVerified: true,
-      'jobApplications.companyDetails._id' : req.user.company_id ,  
-      createdAt: { $gte: firstDayPreviousMonth, $lte: lastDayPreviousMonth }
-    });
-
-    // Calculate the percentage change
+    
+    const getCandidateCounts = async (companyId, firstDayPreviousMonth, lastDayPreviousMonth, firstDayCurrentMonth, firstDayPreviousWeek, lastDayPreviousWeek, firstDayCurrentWeek, startOfYesterday, endOfYesterday, startOfToday) => {
+      const pipeline = [
+        { $unwind: "$jobApplications" }, // Flatten jobApplications array
+        {
+          $match: {
+            isVerified: true,
+            "jobApplications.companyDetails._id": companyId,
+            createdAt: { $gte: firstDayPreviousMonth } // Broad filter covering all periods
+          }
+        },
+        {
+          $facet: {
+            previousMonth: [
+              {
+                $match: {
+                  createdAt: { $gte: firstDayPreviousMonth, $lte: lastDayPreviousMonth }
+                }
+              },
+              { $count: "totalJobs" }
+            ],
+            currentMonth: [
+              {
+                $match: {
+                  createdAt: { $gte: firstDayCurrentMonth }
+                }
+              },
+              { $count: "totalJobs" }
+            ],
+            previousWeek: [
+              {
+                $match: {
+                  createdAt: { $gte: firstDayPreviousWeek, $lte: lastDayPreviousWeek }
+                }
+              },
+              { $count: "totalJobs" }
+            ],
+            currentWeek: [
+              {
+                $match: {
+                  createdAt: { $gte: firstDayCurrentWeek }
+                }
+              },
+              { $count: "totalJobs" }
+            ],
+            yesterday: [
+              {
+                $match: {
+                  createdAt: { $gte: startOfYesterday, $lte: endOfYesterday }
+                }
+              },
+              { $count: "totalJobs" }
+            ],
+            today: [
+              {
+                $match: {
+                  createdAt: { $gte: startOfToday }
+                }
+              },
+              { $count: "totalJobs" }
+            ]
+          }
+        },
+        {
+          $project: {
+            previousMonthJobs: { $arrayElemAt: ["$previousMonth.totalJobs", 0] },
+            currentMonthJobs: { $arrayElemAt: ["$currentMonth.totalJobs", 0] },
+            previousWeekJobs: { $arrayElemAt: ["$previousWeek.totalJobs", 0] },
+            currentWeekJobs: { $arrayElemAt: ["$currentWeek.totalJobs", 0] },
+            yesterdayJobs: { $arrayElemAt: ["$yesterday.totalJobs", 0] },
+            todayJobs: { $arrayElemAt: ["$today.totalJobs", 0] }
+          }
+        }
+      ];
+    
+      const result = await candidates.aggregate(pipeline);
+      return {
+        previousMonthJobs: result[0]?.previousMonthJobs || 0,
+        currentMonthJobs: result[0]?.currentMonthJobs || 0,
+        previousWeekJobs: result[0]?.previousWeekJobs || 0,
+        currentWeekJobs: result[0]?.currentWeekJobs || 0,
+        yesterdayJobs: result[0]?.yesterdayJobs || 0,
+        todayJobs: result[0]?.todayJobs || 0
+      };
+    };
+    
+    // Execute query
+    const {
+      previousMonthJobs,
+      currentMonthJobs,
+      previousWeekJobs,
+      currentWeekJobs,
+      yesterdayJobs,
+      todayJobs
+    } = await getCandidateCounts(
+      req.user.company_id,
+      firstDayPreviousMonth,
+      lastDayPreviousMonth,
+      firstDayCurrentMonth,
+      firstDayPreviousWeek,
+      lastDayPreviousWeek,
+      firstDayCurrentWeek,
+      startOfYesterday,
+      endOfYesterday,
+      startOfToday
+    );
+    
+    // Calculate percentage changes (unchanged)
     let monthlyPercentageChange = 0;
-    // Monthly Percentage Change
     if (previousMonthJobs === 0) {
       monthlyPercentageChange = currentMonthJobs * 100;
     } else {
       monthlyPercentageChange = ((currentMonthJobs - previousMonthJobs) / previousMonthJobs) * 100;
     }
-
-    //WEEKLY
-    // Query to count candidates created in the current week
-    const currentWeekJobs = await candidates.countDocuments({
-      isVerified: true,
-      'jobApplications.companyDetails._id' : req.user.company_id ,  
-      createdAt: { $gte: firstDayCurrentWeek }
-    });
-
-    // Query to count candidates created in the previous week
-    const previousWeekJobs = await candidates.countDocuments({
-      isVerified: true,
-      'jobApplications.companyDetails._id' : req.user.company_id ,  
-      createdAt: { $gte: firstDayPreviousWeek, $lte: lastDayPreviousWeek }
-    });
-
-    // Calculate the percentage change
+    
     let weeklyPercentageChange = 0;
-    // Weekly Percentage Change
     if (previousWeekJobs === 0) {
       weeklyPercentageChange = currentWeekJobs * 100;
     } else {
       weeklyPercentageChange = ((currentWeekJobs - previousWeekJobs) / previousWeekJobs) * 100;
     }
-
-    //YESTERDAYS
-    // Query to count candidates created today
-    const todayJobs = await candidates.countDocuments({
-      isVerified: true,
-      'jobApplications.companyDetails._id' : req.user.company_id ,  
-      createdAt: { $gte: startOfToday }
-    });
-
-    // Query to count candidates created yesterday
-    const yesterdayJobs = await candidates.countDocuments({
-      isVerified: true,
-      'jobApplications.companyDetails._id' : req.user.company_id ,  
-      createdAt: { $gte: startOfYesterday, $lte: endOfYesterday }
-    });
-
-    // Calculate the percentage change
+    
     let dailyPercentageChange = 0;
-    // Daily Percentage Change
     if (yesterdayJobs === 0) {
-      dailyPercentageChange = todayJobs * 100; // Treat as a full increase
+      dailyPercentageChange = todayJobs * 100;
     } else {
       dailyPercentageChange = ((todayJobs - yesterdayJobs) / yesterdayJobs) * 100;
     }

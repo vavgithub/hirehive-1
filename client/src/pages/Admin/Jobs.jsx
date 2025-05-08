@@ -91,7 +91,8 @@ const Jobs = () => {
         },
         isLoading: isStatsLoading } = useQuery({
             queryKey: ['overallStats'],
-            queryFn: fetchOverallStats
+            queryFn: fetchOverallStats,
+            refetchOnWindowFocus : false
         });
 
     const handleAction = (action, jobId) => {

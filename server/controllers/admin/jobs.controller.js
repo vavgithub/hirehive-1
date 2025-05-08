@@ -30,399 +30,554 @@ export const StatisticsController = {
       // ------------------------
       // JOB STATISTICS (Filter by jobs created by this admin)
       // ------------------------
-      const totalJobs = await jobs.countDocuments({ createdBy: { $in: userIds }  });
-      
-      const totalOpenJobs = await jobs.countDocuments({ 
-        createdBy: { $in: userIds } ,
-        status: { $in: ["", "open"] }
-      });
-      
-      const totalClosedJobs = await jobs.countDocuments({ 
-        createdBy: { $in: userIds } ,
-        status: "closed" 
-      });
-      
-      const totalDraftedJobs = await jobs.countDocuments({ 
-        createdBy: { $in: userIds } ,
-        status: "draft" 
-      });
-      
-      // ------------------------
-      // CANDIDATE STATISTICS (Filter applications for jobs created by this admin)
-      // ------------------------
-      // Count total applications for jobs created by the admin
-      const totalApplicationsResult = await candidates.aggregate([
-        // Unwind the jobApplications array to get a document per application
-        { $unwind: "$jobApplications" },
-        // Join the jobs collection to fetch details of each job
-        {
-          $lookup: {
-            from: "jobs",
-            localField: "jobApplications.jobId",
-            foreignField: "_id",
-            as: "jobDetails"
+      // JOB STATISTICS: Combine 4 countDocuments calls into 1 aggregation
+      const getJobStatistics = async () => {
+        const pipeline = [
+          {
+            $match: {
+              createdBy: { $in: userIds }
+            }
+          },
+          {
+            $facet: {
+              totalJobs: [{ $count: "totalJobs" }],
+              openJobs: [
+                {
+                  $match: {
+                    status: { $in: ["", "open"] }
+                  }
+                },
+                { $count: "totalJobs" }
+              ],
+              closedJobs: [
+                {
+                  $match: {
+                    status: "closed"
+                  }
+                },
+                { $count: "totalJobs" }
+              ],
+              draftedJobs: [
+                {
+                  $match: {
+                    status: "draft"
+                  }
+                },
+                { $count: "totalJobs" }
+              ]
+            }
+          },
+          {
+            $project: {
+              totalJobs: { $arrayElemAt: ["$totalJobs.totalJobs", 0] },
+              totalOpenJobs: { $arrayElemAt: ["$openJobs.totalJobs", 0] },
+              totalClosedJobs: { $arrayElemAt: ["$closedJobs.totalJobs", 0] },
+              totalDraftedJobs: { $arrayElemAt: ["$draftedJobs.totalJobs", 0] }
+            }
           }
-        },
-        // Unwind the jobDetails array
-        { $unwind: "$jobDetails" },
-        // Match only those applications where the job was created by the admin
-        {
-          $match: {
-            "jobDetails.createdBy": { $in: userIds } 
-          }
-        },
-        // Count the total number of matching applications
-        { $count: "totalApplications" }
-      ]);
-      const totalApplications = totalApplicationsResult[0]?.totalApplications || 0;
-      
-      // Count total hired candidates for jobs created by the admin
-      const hiredCandidatesCount = await candidates.aggregate([
-        { $unwind: "$jobApplications" },
-        {
-          $lookup: {
-            from: "jobs",
-            localField: "jobApplications.jobId",
-            foreignField: "_id",
-            as: "jobDetails"
-          }
-        },
-        { $unwind: "$jobDetails" },
-        {
-          $match: {
-            "jobDetails.createdBy": { $in: userIds } ,
-            "jobApplications.currentStage": "Hired",
-            "jobApplications.stageStatuses.Hired.status": "Accepted"
-          }
-        },
-        // Group by candidate to avoid counting a candidate more than once if they have multiple hired applications
-        { $group: { _id: "$_id" } },
-        { $count: "totalHired" }
-      ]);
-      const totalHired = hiredCandidatesCount[0]?.totalHired || 0;
+        ];
 
-      //Jobs Created
-      //MONTHLY
+        const result = await jobs.aggregate(pipeline);
+        return {
+          totalJobs: result[0]?.totalJobs || 0,
+          totalOpenJobs: result[0]?.totalOpenJobs || 0,
+          totalClosedJobs: result[0]?.totalClosedJobs || 0,
+          totalDraftedJobs: result[0]?.totalDraftedJobs || 0
+        };
+      };
+
+      // CANDIDATE STATISTICS: Combine 2 aggregations into 1
+      const getCandidateStatistics = async () => {
+        const pipeline = [
+          { $unwind: "$jobApplications" },
+          {
+            $lookup: {
+              from: "jobs",
+              localField: "jobApplications.jobId",
+              foreignField: "_id",
+              as: "jobDetails"
+            }
+          },
+          { $unwind: "$jobDetails" },
+          {
+            $match: {
+              "jobDetails.createdBy": { $in: userIds }
+            }
+          },
+          {
+            $facet: {
+              totalApplications: [{ $count: "totalApplications" }],
+              totalHired: [
+                {
+                  $match: {
+                    "jobApplications.currentStage": "Hired",
+                    "jobApplications.stageStatuses.Hired.status": "Accepted"
+                  }
+                },
+                { $group: { _id: "$_id" } }, // Group by candidate to avoid double-counting
+                { $count: "totalHired" }
+              ]
+            }
+          },
+          {
+            $project: {
+              totalApplications: { $arrayElemAt: ["$totalApplications.totalApplications", 0] },
+              totalHired: { $arrayElemAt: ["$totalHired.totalHired", 0] }
+            }
+          }
+        ];
+
+        const result = await candidates.aggregate(pipeline);
+        return {
+          totalApplications: result[0]?.totalApplications || 0,
+          totalHired: result[0]?.totalHired || 0
+        };
+      };
+
+      // Execute queries
+      const { totalJobs, totalOpenJobs, totalClosedJobs, totalDraftedJobs } = await getJobStatistics();
+      const { totalApplications, totalHired } = await getCandidateStatistics();
+
+      // Utility functions (assumed to exist and unchanged)
       const { firstDayPreviousMonth, lastDayPreviousMonth, firstDayCurrentMonth } = getPreviousMonthRange();
       const { firstDayPreviousWeek, lastDayPreviousWeek, firstDayCurrentWeek } = getPreviousWeekRange();
       const { startOfYesterday, endOfYesterday, startOfToday } = getYesterdayTodayRange();
 
-      // Query to count jobs created in the current month
-      const currentMonthJobs = await jobs.countDocuments({
-        createdAt: { $gte: firstDayCurrentMonth },
-        createdBy : { $in : userIds }
-      });
+      // JOBS CREATED: Combine all 6 calls into 1 aggregation
+      const getJobsCreated = async () => {
+        const pipeline = [
+          {
+            $match: {
+              createdBy: { $in: userIds },
+              createdAt: { $gte: firstDayPreviousMonth } // Broad filter to include all relevant periods
+            }
+          },
+          {
+            $facet: {
+              previousMonth: [
+                {
+                  $match: {
+                    createdAt: { $gte: firstDayPreviousMonth, $lte: lastDayPreviousMonth }
+                  }
+                },
+                { $count: "totalJobs" }
+              ],
+              currentMonth: [
+                {
+                  $match: {
+                    createdAt: { $gte: firstDayCurrentMonth }
+                  }
+                },
+                { $count: "totalJobs" }
+              ],
+              previousWeek: [
+                {
+                  $match: {
+                    createdAt: { $gte: firstDayPreviousWeek, $lte: lastDayPreviousWeek }
+                  }
+                },
+                { $count: "totalJobs" }
+              ],
+              currentWeek: [
+                {
+                  $match: {
+                    createdAt: { $gte: firstDayCurrentWeek }
+                  }
+                },
+                { $count: "totalJobs" }
+              ],
+              yesterday: [
+                {
+                  $match: {
+                    createdAt: { $gte: startOfYesterday, $lte: endOfYesterday }
+                  }
+                },
+                { $count: "totalJobs" }
+              ],
+              today: [
+                {
+                  $match: {
+                    createdAt: { $gte: startOfToday }
+                  }
+                },
+                { $count: "totalJobs" }
+              ]
+            }
+          },
+          {
+            $project: {
+              previousMonthJobs: { $arrayElemAt: ["$previousMonth.totalJobs", 0] },
+              currentMonthJobs: { $arrayElemAt: ["$currentMonth.totalJobs", 0] },
+              previousWeekJobs: { $arrayElemAt: ["$previousWeek.totalJobs", 0] },
+              currentWeekJobs: { $arrayElemAt: ["$currentWeek.totalJobs", 0] },
+              yesterdayJobs: { $arrayElemAt: ["$yesterday.totalJobs", 0] },
+              todayJobs: { $arrayElemAt: ["$today.totalJobs", 0] }
+            }
+          }
+        ];
 
-      // Query to count jobs created in the previous month
-      const previousMonthJobs = await jobs.countDocuments({
-        createdAt: { $gte: firstDayPreviousMonth, $lte: lastDayPreviousMonth },
-        createdBy : { $in : userIds }
-      });
+        const result = await jobs.aggregate(pipeline);
+        return {
+          previousMonthJobs: result[0]?.previousMonthJobs || 0,
+          currentMonthJobs: result[0]?.currentMonthJobs || 0,
+          previousWeekJobs: result[0]?.previousWeekJobs || 0,
+          currentWeekJobs: result[0]?.currentWeekJobs || 0,
+          yesterdayJobs: result[0]?.yesterdayJobs || 0,
+          todayJobs: result[0]?.todayJobs || 0
+        };
+      };
 
-      // Calculate the percentage change
+      // Execute Jobs Created query
+      const {
+        previousMonthJobs,
+        currentMonthJobs,
+        previousWeekJobs,
+        currentWeekJobs,
+        yesterdayJobs,
+        todayJobs
+      } = await getJobsCreated();
+
+      // Calculate percentage changes (unchanged)
       let monthlyPercentageChange = 0;
-      // Monthly Percentage Change
       if (previousMonthJobs === 0) {
         monthlyPercentageChange = currentMonthJobs * 100;
       } else {
         monthlyPercentageChange = ((currentMonthJobs - previousMonthJobs) / previousMonthJobs) * 100;
       }
 
-      //WEEKLY
-      // Query to count jobs created in the current week
-      const currentWeekJobs = await jobs.countDocuments({
-        createdAt: { $gte: firstDayCurrentWeek },
-        createdBy : { $in : userIds }
-      });
-
-      // Query to count jobs created in the previous week
-      const previousWeekJobs = await jobs.countDocuments({
-        createdAt: { $gte: firstDayPreviousWeek, $lte: lastDayPreviousWeek },
-        createdBy : { $in : userIds }
-      });
-
-      // Calculate the percentage change
       let weeklyPercentageChange = 0;
-      // Weekly Percentage Change
       if (previousWeekJobs === 0) {
         weeklyPercentageChange = currentWeekJobs * 100;
       } else {
         weeklyPercentageChange = ((currentWeekJobs - previousWeekJobs) / previousWeekJobs) * 100;
       }
 
-      //YESTERDAYS
-      // Query to count jobs created today
-      const todayJobs = await jobs.countDocuments({
-        createdAt: { $gte: startOfToday },
-        createdBy : { $in : userIds }
-      });
-
-      // Query to count jobs created yesterday
-      const yesterdayJobs = await jobs.countDocuments({
-        createdAt: { $gte: startOfYesterday, $lte: endOfYesterday },
-        createdBy : { $in : userIds }
-      });
-
-      // Calculate the percentage change
       let dailyPercentageChange = 0;
-      // Daily Percentage Change
       if (yesterdayJobs === 0) {
-        dailyPercentageChange = todayJobs * 100; // Treat as a full increase
+        dailyPercentageChange = todayJobs * 100;
       } else {
         dailyPercentageChange = ((todayJobs - yesterdayJobs) / yesterdayJobs) * 100;
       }
 
-
-      //Recieved Applications
-      //MONTHLY
+      // RECEIVED APPLICATIONS
+      // Monthly: Keep as is (already 1 DB call)
       const monthlyPipeline = [
-        { $unwind: "$jobApplications" }, // Flatten jobApplications array
-
-        { 
-          $match: { 
-            isVerified : true,
-            "jobApplications.companyDetails._id" : req.user.company_id,
+        { $unwind: "$jobApplications" },
+        {
+          $match: {
+            isVerified: true,
+            "jobApplications.companyDetails._id": req.user.company_id,
             "jobApplications.applicationDate": { $gte: firstDayPreviousMonth }
-          } 
+          }
         },
-
-        { 
-          $group: { 
-            _id: { 
+        {
+          $group: {
+            _id: {
               month: { $month: "$jobApplications.applicationDate" },
               year: { $year: "$jobApplications.applicationDate" }
             },
             totalApplications: { $sum: 1 }
-          } 
+          }
         },
-
-        { 
-          $sort: { "_id.year": 1, "_id.month": 1 } 
-        }
+        { $sort: { "_id.year": 1, "_id.month": 1 } }
       ];
 
       const monthlyResult = await candidates.aggregate(monthlyPipeline);
 
-      const previousMonthApplications = monthlyResult.find(entry => 
+      const previousMonthApplications = monthlyResult.find(entry =>
         entry._id.month === firstDayPreviousMonth.getMonth() + 1 &&
         entry._id.year === firstDayPreviousMonth.getFullYear()
       )?.totalApplications || 0;
 
-      const currentMonthApplications = monthlyResult.find(entry => 
+      const currentMonthApplications = monthlyResult.find(entry =>
         entry._id.month === firstDayCurrentMonth.getMonth() + 1 &&
         entry._id.year === firstDayCurrentMonth.getFullYear()
       )?.totalApplications || 0;
 
-      // Calculate percentage change
       let monthlyApplicationsPercentageChange = 0;
       if (previousMonthApplications === 0) {
-        monthlyApplicationsPercentageChange = currentMonthApplications * 100; // Treat as full increase
+        monthlyApplicationsPercentageChange = currentMonthApplications * 100;
       } else {
         monthlyApplicationsPercentageChange = ((currentMonthApplications - previousMonthApplications) / previousMonthApplications) * 100;
       }
-      
-      //WEEKLY
-      const getWeeklyApplications = async (startDate, endDate) => {
+
+      // Weekly: Keep as is (already optimized with 1 DB call)
+      const getWeeklyApplications = async (firstDayPreviousWeek, lastDayPreviousWeek, firstDayCurrentWeek, endDate) => {
         const pipeline = [
-          { $unwind: "$jobApplications" }, // Flatten jobApplications array
-          { 
-            $match: { 
-              isVerified : true,
-              "jobApplications.companyDetails._id" : req.user.company_id,
-              "jobApplications.applicationDate": { 
-                $gte: startDate, 
-                $lte: endDate 
-              } 
-            } 
+          { $unwind: "$jobApplications" },
+          {
+            $match: {
+              isVerified: true,
+              "jobApplications.companyDetails._id": req.user.company_id,
+              "jobApplications.applicationDate": {
+                $gte: firstDayPreviousWeek,
+                $lte: endDate
+              }
+            }
           },
-          { 
-            $group: { 
-              _id: null, // We just need total count, no grouping by week needed
-              totalApplications: { $sum: 1 } 
-            } 
+          {
+            $facet: {
+              previousWeek: [
+                {
+                  $match: {
+                    "jobApplications.applicationDate": {
+                      $gte: firstDayPreviousWeek,
+                      $lte: lastDayPreviousWeek
+                    }
+                  }
+                },
+                { $group: { _id: null, totalApplications: { $sum: 1 } } }
+              ],
+              currentWeek: [
+                {
+                  $match: {
+                    "jobApplications.applicationDate": {
+                      $gte: firstDayCurrentWeek,
+                      $lte: endDate
+                    }
+                  }
+                },
+                { $group: { _id: null, totalApplications: { $sum: 1 } } }
+              ]
+            }
+          },
+          {
+            $project: {
+              previousWeekApplications: { $arrayElemAt: ["$previousWeek.totalApplications", 0] },
+              currentWeekApplications: { $arrayElemAt: ["$currentWeek.totalApplications", 0] }
+            }
           }
         ];
-      
+
         const result = await candidates.aggregate(pipeline);
-        return result.length > 0 ? result[0].totalApplications : 0;
+        return {
+          previousWeekApplications: result[0]?.previousWeekApplications || 0,
+          currentWeekApplications: result[0]?.currentWeekApplications || 0
+        };
       };
-      
-      const previousWeekApplications = await getWeeklyApplications(firstDayPreviousWeek, lastDayPreviousWeek);
-      const currentWeekApplications = await getWeeklyApplications(firstDayCurrentWeek, new Date());
-      
-      // Calculate percentage change
+
+      const { previousWeekApplications, currentWeekApplications } = await getWeeklyApplications(
+        firstDayPreviousWeek,
+        lastDayPreviousWeek,
+        firstDayCurrentWeek,
+        new Date()
+      );
+
       let weeklyApplicationsPercentageChange = 0;
       if (previousWeekApplications === 0) {
-        weeklyApplicationsPercentageChange = currentWeekApplications * 100; // Treat as full increase
+        weeklyApplicationsPercentageChange = currentWeekApplications * 100;
       } else {
         weeklyApplicationsPercentageChange = ((currentWeekApplications - previousWeekApplications) / previousWeekApplications) * 100;
       }
-      
-    //YESTERDAYS
-    const getDailyApplications = async (startDate, endDate) => {
-      const pipeline = [
-        { $unwind: "$jobApplications" }, // Flatten jobApplications array
-        { 
-          $match: { 
-            isVerified : true,
-            "jobApplications.companyDetails._id" : req.user.company_id,
-            "jobApplications.applicationDate": { 
-              $gte: startDate, 
-              $lte: endDate 
-            } 
-          } 
-        },
-        { 
-          $group: { 
-            _id: null, // We just need total count, no grouping by week needed
-            totalApplications: { $sum: 1 } 
-          } 
-        }
-      ];
-    
-      const result = await candidates.aggregate(pipeline);
-      return result.length > 0 ? result[0].totalApplications : 0;
-    };
-    
-    const previousDayApplications = await getDailyApplications(startOfYesterday, endOfYesterday);
-    const todayApplications = await getDailyApplications(startOfToday, new Date());
-    
-    // Calculate percentage change
-    let dailyApplicationsPercentageChange = 0;
 
-    if (previousDayApplications === 0) {
-      dailyApplicationsPercentageChange = todayApplications * 100; // Continue calculation
-    } else {
-      dailyApplicationsPercentageChange = ((todayApplications - previousDayApplications) / previousDayApplications) * 100;
-    }
-    
-    //Hired
-    //MONTHLY
-    const monthlyHiredPipeline = [
-      { $unwind: "$jobApplications" }, // Flatten jobApplications array
-
-      { 
-        $match: { 
-          isVerified : true,
-          updatedAt: { $gte: firstDayPreviousMonth },
-          "jobApplications.stageStatuses.Hired.status": "Accepted",
-          "jobApplications.companyDetails._id" : req.user.company_id
-        } 
-      },
-
-      { 
-        $group: { 
-          _id: { 
-            month: { $month: "$updatedAt" },
-            year: { $year: "$updatedAt" }
+      // Daily: Combine 2 calls into 1 aggregation
+      const getDailyApplications = async (startOfYesterday, endOfYesterday, startOfToday, endDate) => {
+        const pipeline = [
+          { $unwind: "$jobApplications" },
+          {
+            $match: {
+              isVerified: true,
+              "jobApplications.companyDetails._id": req.user.company_id,
+              "jobApplications.applicationDate": {
+                $gte: startOfYesterday,
+                $lte: endDate
+              }
+            }
           },
-          totalApplications: { $sum: 1 }
-        } 
-      },
+          {
+            $facet: {
+              yesterday: [
+                {
+                  $match: {
+                    "jobApplications.applicationDate": {
+                      $gte: startOfYesterday,
+                      $lte: endOfYesterday
+                    }
+                  }
+                },
+                { $group: { _id: null, totalApplications: { $sum: 1 } } }
+              ],
+              today: [
+                {
+                  $match: {
+                    "jobApplications.applicationDate": {
+                      $gte: startOfToday,
+                      $lte: endDate
+                    }
+                  }
+                },
+                { $group: { _id: null, totalApplications: { $sum: 1 } } }
+              ]
+            }
+          },
+          {
+            $project: {
+              previousDayApplications: { $arrayElemAt: ["$yesterday.totalApplications", 0] },
+              todayApplications: { $arrayElemAt: ["$today.totalApplications", 0] }
+            }
+          }
+        ];
 
-      { 
-        $sort: { "_id.year": 1, "_id.month": 1 } 
+        const result = await candidates.aggregate(pipeline);
+        return {
+          previousDayApplications: result[0]?.previousDayApplications || 0,
+          todayApplications: result[0]?.todayApplications || 0
+        };
+      };
+
+      const { previousDayApplications, todayApplications } = await getDailyApplications(
+        startOfYesterday,
+        endOfYesterday,
+        startOfToday,
+        new Date()
+      );
+
+      let dailyApplicationsPercentageChange = 0;
+      if (previousDayApplications === 0) {
+        dailyApplicationsPercentageChange = todayApplications * 100;
+      } else {
+        dailyApplicationsPercentageChange = ((todayApplications - previousDayApplications) / previousDayApplications) * 100;
       }
-    ];
 
-    const monthlyHiredResult = await candidates.aggregate(monthlyHiredPipeline);
-
-    const previousMonthHires = monthlyHiredResult.find(entry => 
-      entry._id.month === firstDayPreviousMonth.getMonth() + 1 &&
-      entry._id.year === firstDayPreviousMonth.getFullYear()
-    )?.totalApplications || 0;
-
-    const currentMonthHires = monthlyHiredResult.find(entry => 
-      entry._id.month === firstDayCurrentMonth.getMonth() + 1 &&
-      entry._id.year === firstDayCurrentMonth.getFullYear()
-    )?.totalApplications || 0;
-
-
-    // Calculate percentage change
-    let monthlyHiresPercentageChange = 0;
-    if (previousMonthHires === 0) {
-      monthlyHiresPercentageChange = currentMonthHires * 100; // Treat as full increase
-    } else {
-      monthlyHiresPercentageChange = ((currentMonthHires - previousMonthHires) / previousMonthHires) * 100;
-    }
-    
-    //WEEKLY
-    const getWeeklyHires = async (startDate, endDate) => {
-      const pipeline = [
-        { $unwind: "$jobApplications" }, // Flatten jobApplications array
-        { 
-          $match: { 
-            isVerified : true,
-            "jobApplications.companyDetails._id" : req.user.company_id,
-            updatedAt: { 
-              $gte: startDate, 
-              $lte: endDate 
-            },
-            "jobApplications.stageStatuses.Hired.status": "Accepted"
-          } 
+      // HIRED
+      // Monthly: Keep as is (already 1 DB call)
+      const monthlyHiredPipeline = [
+        { $unwind: "$jobApplications" },
+        {
+          $match: {
+            isVerified: true,
+            updatedAt: { $gte: firstDayPreviousMonth },
+            "jobApplications.stageStatuses.Hired.status": "Accepted",
+            "jobApplications.companyDetails._id": req.user.company_id
+          }
         },
-        { 
-          $group: { 
-            _id: null, // We just need total count, no grouping by week needed
-            totalApplications: { $sum: 1 } 
-          } 
-        }
-      ];
-    
-      const result = await candidates.aggregate(pipeline);
-      return result.length > 0 ? result[0].totalApplications : 0;
-    };
-    
-    const previousWeekHires = await getWeeklyHires(firstDayPreviousWeek, lastDayPreviousWeek);
-    const currentWeekHires = await getWeeklyHires(firstDayCurrentWeek, new Date());
-    
-    // Calculate percentage change
-    let weeklyHiresPercentageChange = 0;
-    if (previousWeekHires === 0) {
-      weeklyHiresPercentageChange = currentWeekHires * 100; // Treat as full increase
-    } else {
-      weeklyHiresPercentageChange = ((currentWeekHires - previousWeekHires) / previousWeekHires) * 100;
-    }
-      
-    //YESTERDAYS
-    const getDailyHires = async (startDate, endDate) => {
-      const pipeline = [
-        { $unwind: "$jobApplications" }, // Flatten jobApplications array
-        { 
-          $match: { 
-            isVerified : true,
-            "jobApplications.companyDetails._id" : req.user.company_id,
-            updatedAt: { 
-              $gte: startDate, 
-              $lte: endDate 
+        {
+          $group: {
+            _id: {
+              month: { $month: "$updatedAt" },
+              year: { $year: "$updatedAt" }
             },
-            "jobApplications.stageStatuses.Hired.status": "Accepted"
-          } 
+            totalApplications: { $sum: 1 }
+          }
         },
-        { 
-          $group: { 
-            _id: null, // We just need total count, no grouping by week needed
-            totalApplications: { $sum: 1 } 
-          } 
-        }
+        { $sort: { "_id.year": 1, "_id.month": 1 } }
       ];
-    
-      const result = await candidates.aggregate(pipeline);
-      return result.length > 0 ? result[0].totalApplications : 0;
-    };
-    
-    const previousDayHires = await getDailyHires(startOfYesterday, endOfYesterday);
-    const todayHires = await getDailyHires(startOfToday, new Date());
 
-    
-    // Calculate percentage change
-    let dailyHiresPercentageChange = 0;
+      const monthlyHiredResult = await candidates.aggregate(monthlyHiredPipeline);
 
-    if (previousDayHires === 0) {
-      dailyHiresPercentageChange = todayHires * 100; // Continue calculation
-    } else {
-      dailyHiresPercentageChange = ((todayHires - previousDayHires) / previousDayHires) * 100;
-    }
+      const previousMonthHires = monthlyHiredResult.find(entry =>
+        entry._id.month === firstDayPreviousMonth.getMonth() + 1 &&
+        entry._id.year === firstDayPreviousMonth.getFullYear()
+      )?.totalApplications || 0;
+
+      const currentMonthHires = monthlyHiredResult.find(entry =>
+        entry._id.month === firstDayCurrentMonth.getMonth() + 1 &&
+        entry._id.year === firstDayCurrentMonth.getFullYear()
+      )?.totalApplications || 0;
+
+      let monthlyHiresPercentageChange = 0;
+      if (previousMonthHires === 0) {
+        monthlyHiresPercentageChange = currentMonthHires * 100;
+      } else {
+        monthlyHiresPercentageChange = ((currentMonthHires - previousMonthHires) / previousMonthHires) * 100;
+      }
+
+      // Weekly and Daily: Combine 4 calls into 1 aggregation
+      const getWeeklyAndDailyHires = async (firstDayPreviousWeek, lastDayPreviousWeek, firstDayCurrentWeek, startOfYesterday, endOfYesterday, startOfToday, endDate) => {
+        const pipeline = [
+          { $unwind: "$jobApplications" },
+          {
+            $match: {
+              isVerified: true,
+              "jobApplications.companyDetails._id": req.user.company_id,
+              "jobApplications.stageStatuses.Hired.status": "Accepted",
+              updatedAt: { $gte: firstDayPreviousWeek, $lte: endDate }
+            }
+          },
+          {
+            $facet: {
+              previousWeek: [
+                {
+                  $match: {
+                    updatedAt: { $gte: firstDayPreviousWeek, $lte: lastDayPreviousWeek }
+                  }
+                },
+                { $group: { _id: null, totalApplications: { $sum: 1 } } }
+              ],
+              currentWeek: [
+                {
+                  $match: {
+                    updatedAt: { $gte: firstDayCurrentWeek, $lte: endDate }
+                  }
+                },
+                { $group: { _id: null, totalApplications: { $sum: 1 } } }
+              ],
+              yesterday: [
+                {
+                  $match: {
+                    updatedAt: { $gte: startOfYesterday, $lte: endOfYesterday }
+                  }
+                },
+                { $group: { _id: null, totalApplications: { $sum: 1 } } }
+              ],
+              today: [
+                {
+                  $match: {
+                    updatedAt: { $gte: startOfToday, $lte: endDate }
+                  }
+                },
+                { $group: { _id: null, totalApplications: { $sum: 1 } } }
+              ]
+            }
+          },
+          {
+            $project: {
+              previousWeekHires: { $arrayElemAt: ["$previousWeek.totalApplications", 0] },
+              currentWeekHires: { $arrayElemAt: ["$currentWeek.totalApplications", 0] },
+              previousDayHires: { $arrayElemAt: ["$yesterday.totalApplications", 0] },
+              todayHires: { $arrayElemAt: ["$today.totalApplications", 0] }
+            }
+          }
+        ];
+
+        const result = await candidates.aggregate(pipeline);
+        return {
+          previousWeekHires: result[0]?.previousWeekHires || 0,
+          currentWeekHires: result[0]?.currentWeekHires || 0,
+          previousDayHires: result[0]?.previousDayHires || 0,
+          todayHires: result[0]?.todayHires || 0
+        };
+      };
+
+      const {
+        previousWeekHires,
+        currentWeekHires,
+        previousDayHires,
+        todayHires
+      } = await getWeeklyAndDailyHires(
+        firstDayPreviousWeek,
+        lastDayPreviousWeek,
+        firstDayCurrentWeek,
+        startOfYesterday,
+        endOfYesterday,
+        startOfToday,
+        new Date()
+      );
+
+      let weeklyHiresPercentageChange = 0;
+      if (previousWeekHires === 0) {
+        weeklyHiresPercentageChange = currentWeekHires * 100;
+      } else {
+        weeklyHiresPercentageChange = ((currentWeekHires - previousWeekHires) / previousWeekHires) * 100;
+      }
+
+      let dailyHiresPercentageChange = 0;
+      if (previousDayHires === 0) {
+        dailyHiresPercentageChange = todayHires * 100;
+      } else {
+        dailyHiresPercentageChange = ((todayHires - previousDayHires) / previousDayHires) * 100;
+      }
+
 
       // Return the statistics
       return res.status(200).json({
@@ -557,132 +712,157 @@ export const StatisticsController = {
       }, {});
 
 
-      //Application Monthly Count
       const { firstDayPreviousMonth, lastDayPreviousMonth, firstDayCurrentMonth } = getPreviousMonthRange();
       const { firstDayPreviousWeek, lastDayPreviousWeek, firstDayCurrentWeek } = getPreviousWeekRange();
       const { startOfYesterday, endOfYesterday, startOfToday } = getYesterdayTodayRange();
 
-      //MONTHLY
-      const monthlyPipeline = [
-        { $unwind: "$jobApplications" }, // Flatten jobApplications array
+      const getApplicationCounts = async (jobId, firstDayPreviousMonth, firstDayCurrentMonth, firstDayPreviousWeek, lastDayPreviousWeek, firstDayCurrentWeek, startOfYesterday, endOfYesterday, startOfToday, endDate) => {
+        const pipeline = [
+          { $unwind: "$jobApplications" },
+          {
+            $match: {
+              isVerified: true,
+              "jobApplications.jobId": new mongoose.Types.ObjectId(jobId),
+              "jobApplications.applicationDate": { $gte: firstDayPreviousMonth, $lte: endDate }
+            }
+          },
+          {
+            $facet: {
+              monthly: [
+                {
+                  $group: {
+                    _id: {
+                      month: { $month: "$jobApplications.applicationDate" },
+                      year: { $year: "$jobApplications.applicationDate" }
+                    },
+                    totalApplications: { $sum: 1 }
+                  }
+                },
+                { $sort: { "_id.year": 1, "_id.month": 1 } }
+              ],
+              previousWeek: [
+                {
+                  $match: {
+                    "jobApplications.applicationDate": {
+                      $gte: firstDayPreviousWeek,
+                      $lte: lastDayPreviousWeek
+                    }
+                  }
+                },
+                { $group: { _id: null, totalApplications: { $sum: 1 } } }
+              ],
+              currentWeek: [
+                {
+                  $match: {
+                    "jobApplications.applicationDate": {
+                      $gte: firstDayCurrentWeek,
+                      $lte: endDate
+                    }
+                  }
+                },
+                { $group: { _id: null, totalApplications: { $sum: 1 } } }
+              ],
+              yesterday: [
+                {
+                  $match: {
+                    "jobApplications.applicationDate": {
+                      $gte: startOfYesterday,
+                      $lte: endOfYesterday
+                    }
+                  }
+                },
+                { $group: { _id: null, totalApplications: { $sum: 1 } } }
+              ],
+              today: [
+                {
+                  $match: {
+                    "jobApplications.applicationDate": {
+                      $gte: startOfToday,
+                      $lte: endDate
+                    }
+                  }
+                },
+                { $group: { _id: null, totalApplications: { $sum: 1 } } }
+              ]
+            }
+          },
+          {
+            $project: {
+              monthly: 1,
+              previousWeekApplications: { $arrayElemAt: ["$previousWeek.totalApplications", 0] },
+              currentWeekApplications: { $arrayElemAt: ["$currentWeek.totalApplications", 0] },
+              previousDayApplications: { $arrayElemAt: ["$yesterday.totalApplications", 0] },
+              todayApplications: { $arrayElemAt: ["$today.totalApplications", 0] }
+            }
+          }
+        ];
 
-        { 
-          $match: { 
-            isVerified : true,
-            "jobApplications.jobId" : new mongoose.Types.ObjectId(jobId),
-            "jobApplications.applicationDate": { $gte: firstDayPreviousMonth }
-          } 
-        },
+        const result = await candidates.aggregate(pipeline);
+        const monthlyResult = result[0]?.monthly || [];
 
-        { 
-          $group: { 
-            _id: { 
-              month: { $month: "$jobApplications.applicationDate" },
-              year: { $year: "$jobApplications.applicationDate" }
-            },
-            totalApplications: { $sum: 1 }
-          } 
-        },
+        // Extract monthly counts
+        const previousMonthApplications = monthlyResult.find(entry =>
+          entry._id.month === firstDayPreviousMonth.getMonth() + 1 &&
+          entry._id.year === firstDayPreviousMonth.getFullYear()
+        )?.totalApplications || 0;
 
-        { 
-          $sort: { "_id.year": 1, "_id.month": 1 } 
-        }
-      ];
+        const currentMonthApplications = monthlyResult.find(entry =>
+          entry._id.month === firstDayCurrentMonth.getMonth() + 1 &&
+          entry._id.year === firstDayCurrentMonth.getFullYear()
+        )?.totalApplications || 0;
 
-      const monthlyResult = await candidates.aggregate(monthlyPipeline);
+        return {
+          previousMonthApplications,
+          currentMonthApplications,
+          previousWeekApplications: result[0]?.previousWeekApplications || 0,
+          currentWeekApplications: result[0]?.currentWeekApplications || 0,
+          previousDayApplications: result[0]?.previousDayApplications || 0,
+          todayApplications: result[0]?.todayApplications || 0
+        };
+      };
 
-      const previousMonthApplications = monthlyResult.find(entry => 
-        entry._id.month === firstDayPreviousMonth.getMonth() + 1 &&
-        entry._id.year === firstDayPreviousMonth.getFullYear()
-      )?.totalApplications || 0;
+      // Execute query
+      const {
+        previousMonthApplications,
+        currentMonthApplications,
+        previousWeekApplications,
+        currentWeekApplications,
+        previousDayApplications,
+        todayApplications
+      } = await getApplicationCounts(
+        jobId,
+        firstDayPreviousMonth,
+        firstDayCurrentMonth,
+        firstDayPreviousWeek,
+        lastDayPreviousWeek,
+        firstDayCurrentWeek,
+        startOfYesterday,
+        endOfYesterday,
+        startOfToday,
+        new Date()
+      );
 
-      const currentMonthApplications = monthlyResult.find(entry => 
-        entry._id.month === firstDayCurrentMonth.getMonth() + 1 &&
-        entry._id.year === firstDayCurrentMonth.getFullYear()
-      )?.totalApplications || 0;
-
-      // Calculate percentage change
+      // Calculate percentage changes (unchanged)
       let monthlyApplicationsPercentageChange = 0;
       if (previousMonthApplications === 0) {
-        monthlyApplicationsPercentageChange = currentMonthApplications * 100; // Treat as full increase
+        monthlyApplicationsPercentageChange = currentMonthApplications * 100;
       } else {
         monthlyApplicationsPercentageChange = ((currentMonthApplications - previousMonthApplications) / previousMonthApplications) * 100;
       }
 
-      //WEEKLY
-      const getWeeklyApplications = async (startDate, endDate) => {
-        const pipeline = [
-          { $unwind: "$jobApplications" }, // Flatten jobApplications array
-          { 
-            $match: { 
-              isVerified : true,
-              "jobApplications.jobId" : new mongoose.Types.ObjectId(jobId),
-              "jobApplications.applicationDate": { 
-                $gte: startDate, 
-                $lte: endDate 
-              } 
-            } 
-          },
-          { 
-            $group: { 
-              _id: null, // We just need total count, no grouping by week needed
-              totalApplications: { $sum: 1 } 
-            } 
-          }
-        ];
-      
-        const result = await candidates.aggregate(pipeline);
-        return result.length > 0 ? result[0].totalApplications : 0;
-      };
-      
-      const previousWeekApplications = await getWeeklyApplications(firstDayPreviousWeek, lastDayPreviousWeek);
-      const currentWeekApplications = await getWeeklyApplications(firstDayCurrentWeek, new Date());
-      
-      // Calculate percentage change
       let weeklyApplicationsPercentageChange = 0;
       if (previousWeekApplications === 0) {
-        weeklyApplicationsPercentageChange = currentWeekApplications * 100; // Treat as full increase
+        weeklyApplicationsPercentageChange = currentWeekApplications * 100;
       } else {
         weeklyApplicationsPercentageChange = ((currentWeekApplications - previousWeekApplications) / previousWeekApplications) * 100;
       }
-      
-    //YESTERDAYS
-    const getDailyApplications = async (startDate, endDate) => {
-      const pipeline = [
-        { $unwind: "$jobApplications" }, // Flatten jobApplications array
-        { 
-          $match: { 
-            isVerified : true,
-            "jobApplications.jobId" : new mongoose.Types.ObjectId(jobId),
-            "jobApplications.applicationDate": { 
-              $gte: startDate, 
-              $lte: endDate 
-            } 
-          } 
-        },
-        { 
-          $group: { 
-            _id: null, // We just need total count, no grouping by week needed
-            totalApplications: { $sum: 1 } 
-          } 
-        }
-      ];
-    
-      const result = await candidates.aggregate(pipeline);
-      return result.length > 0 ? result[0].totalApplications : 0;
-    };
-    
-    const previousDayApplications = await getDailyApplications(startOfYesterday, endOfYesterday);
-    const todayApplications = await getDailyApplications(startOfToday, new Date());
-    
-    // Calculate percentage change
-    let dailyApplicationsPercentageChange = 0;
 
-    if (previousDayApplications === 0) {
-      dailyApplicationsPercentageChange = todayApplications * 100; // Continue calculation
-    } else {
-      dailyApplicationsPercentageChange = ((todayApplications - previousDayApplications) / previousDayApplications) * 100;
-    }
+      let dailyApplicationsPercentageChange = 0;
+      if (previousDayApplications === 0) {
+        dailyApplicationsPercentageChange = todayApplications * 100;
+      } else {
+        dailyApplicationsPercentageChange = ((todayApplications - previousDayApplications) / previousDayApplications) * 100;
+      }
 
       const response = {
         totalCount: stats.totalCount,

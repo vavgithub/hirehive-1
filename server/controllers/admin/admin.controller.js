@@ -1,3 +1,4 @@
+import { DateTime } from "luxon";
 import { Company } from "../../models/admin/company.model.js";
 import { jobs } from "../../models/admin/jobs.model.js";
 import { User } from "../../models/admin/user.model.js";
@@ -299,99 +300,154 @@ export const getDetailsForDashboard = asyncHandler(async (req,res) => {
   // Extract user _id values into an array
   userIds = usersInCompany.map(user => user._id);
 
-  //Monthly Applications
-  const monthData = getLast12Months(tz);
-  const weekData = getLast4Weeks(tz);
-  const dailyData = getLast7Days(tz);
-  const yesterdaysData = get24HoursOfYesterday(tz);
+  // Helper functions return arrays of objects with startDate, endDate, and labels
+  const monthData = getLast12Months(tz); // [{startDate, endDate, monthName}, ...]
+  const weekData = getLast4Weeks(tz); // [{startDate, endDate}, ...]
+  const dailyData = getLast7Days(tz); // [{startDate, endDate, dayLabel}, ...]
+  const yesterdaysData = get24HoursOfYesterday(tz); // [{startDate, endDate, hourLabel}, ...]
 
-  const companyJobs = await jobs.find({company_id : req.user?.company_id });
+  // Ensure boundaries are sorted and unique
+  const monthBoundaries = [...new Set(monthData.map(m => m.startDate).concat([monthData[monthData.length - 1].endDate]))].sort((a, b) => a - b);
+  const weekBoundaries = [...new Set(weekData.map(w => w.startDate).concat([weekData[weekData.length - 1].endDate]))].sort((a, b) => a - b);
+  const dailyBoundaries = [...new Set(dailyData.map(d => d.startDate).concat([dailyData[dailyData.length - 1].endDate]))].sort((a, b) => a - b);
+  const hourlyBoundaries = [...new Set(yesterdaysData.map(h => h.startDate).concat([yesterdaysData[yesterdaysData.length - 1].endDate]))].sort((a, b) => a - b);
+
+  const companyJobs = await jobs.find({ company_id: req.user?.company_id });
   const companyJobIds = companyJobs?.map(job => job._id);
 
-  // Function to get application count within a date range
-  const getApplicationCount = async (startDate, endDate) => {
-    const pipeline = [
-      { $unwind: "$jobApplications" }, // Flatten jobApplications array
-      { 
-        $match: { 
-          "jobApplications.jobId" : {$in : companyJobIds},
-          "jobApplications.applicationDate": { 
-            $gte: startDate, 
-            $lte: endDate 
-          } 
-        } 
-      },
-      { 
-        $group: { 
-          _id: null, // We just need total count
-          totalApplications: { $sum: 1 } 
-        } 
+  const pipeline = [
+    { $unwind: "$jobApplications" },
+    { 
+      $match: { 
+        "jobApplications.jobId": { $in: companyJobIds },
+        "jobApplications.applicationDate": { 
+          $gte: monthBoundaries[0], // Earliest date (12 months ago)
+          $lte: hourlyBoundaries[hourlyBoundaries.length - 1], // Latest date
+          $type: "date" // Ensure applicationDate is a valid date
+        }
       }
-    ];
-
-    const result = await candidates.aggregate(pipeline);
-    return result.length > 0 ? result[0].totalApplications : 0;
-  };
-
-  const getTotalApplicationCount = async () => {
-    const pipeline = [
-      { $unwind: "$jobApplications" }, // Flatten jobApplications array
-      { 
-        $match: { 
-          "jobApplications.jobId" : {$in : companyJobIds},
-        } 
-      },
-      { 
-        $group: { 
-          _id: null, // We just need total count
-          totalApplications: { $sum: 1 } 
-        } 
+    },
+    {
+      $facet: {
+        totalApplications: [
+          { 
+            $group: { 
+              _id: null, 
+              totalApplications: { $sum: 1 } 
+            }
+          }
+        ],
+        monthlyApplications: [
+          {
+            $group: {
+              _id: {
+                $dateToString: { 
+                  format: "%Y-%m", 
+                  date: "$jobApplications.applicationDate",
+                  timezone: tz
+                }
+              },
+              totalCount: { $sum: 1 }
+            }
+          },
+          { $sort: { "_id": 1 } }
+        ],
+        weeklyApplications: [
+          {
+            $group: {
+              _id: {
+                $dateToString: { 
+                  format: "%Y-%U", 
+                  date: "$jobApplications.applicationDate",
+                  timezone: tz
+                }
+              },
+              totalCount: { $sum: 1 }
+            }
+          },
+          { $sort: { "_id": 1 } }
+        ],
+        dailyApplications: [
+          {
+            $group: {
+              _id: {
+                $dateToString: { 
+                  format: "%Y-%m-%d", 
+                  date: "$jobApplications.applicationDate",
+                  timezone: tz
+                }
+              },
+              totalCount: { $sum: 1 }
+            }
+          },
+          { $sort: { "_id": 1 } }
+        ],
+        yesterdaysApplications: [
+          {
+            $group: {
+              _id: {
+                $dateToString: { 
+                  format: "%Y-%m-%d %H", 
+                  date: "$jobApplications.applicationDate",
+                  timezone: tz
+                }
+              },
+              totalCount: { $sum: 1 }
+            }
+          },
+          { $sort: { "_id": 1 } }
+        ]
       }
-    ];
+    }
+  ];
 
-    const result = await candidates.aggregate(pipeline);
-    return result.length > 0 ? result[0].totalApplications : 0;
-  };
+  const result = await candidates.aggregate(pipeline);
 
-  const totalApplicationsCount = await getTotalApplicationCount();
-  const monthlyApplications = [];
-  for(let monthObj of monthData){
-    const count = await getApplicationCount(monthObj.startDate,monthObj.endDate);
-    monthlyApplications.push({
-      month : monthObj.monthName,
-      totalCount : count
-    })
-  }
+  // Process results
+  const totalApplicationsCount = result[0].totalApplications[0]?.totalApplications || 0;
 
-  const weeklyApplications = [];
-  for(let weekObj of weekData){
-    const count = await getApplicationCount(weekObj.startDate,weekObj.endDate);
-    weeklyApplications.push({
-      week : {
-        start : weekObj.startDate, 
-        end : weekObj.endDate
+  // Map monthly applications
+  const monthlyApplications = monthData.map(monthObj => {
+    const monthKey = DateTime.fromJSDate(monthObj.startDate, { zone: tz }).toFormat('yyyy-MM');
+    const match = result[0].monthlyApplications.find(m => m._id === monthKey);
+    return {
+      month: monthObj.monthName,
+      totalCount: match?.totalCount || 0
+    };
+  });
+
+  // Map weekly applications
+  const weeklyApplications = weekData.map(weekObj => {
+    const weekKey = DateTime.fromJSDate(weekObj.startDate, { zone: tz }).toFormat('yyyy-WW');
+    const match = result[0].weeklyApplications.find(w => w._id === weekKey);
+    return {
+      week: {
+        start: weekObj.startDate,
+        end: weekObj.endDate
       },
-      totalCount : count
-    })
-  }
+      totalCount: match?.totalCount || 0
+    };
+  });
 
-  const dailyApplications = [];
-  for(let dailyObj of dailyData){
-    const count = await getApplicationCount(dailyObj.startDate,dailyObj.endDate);
-    dailyApplications.push({
-      day : dailyObj.dayLabel,
-      totalCount : count
-    })
-  }
+  // Map daily applications
+  const dailyApplications = dailyData.map(dailyObj => {
+    const dayKey = DateTime.fromJSDate(dailyObj.startDate, { zone: tz }).toFormat('yyyy-MM-dd');
+    const match = result[0].dailyApplications.find(d => d._id === dayKey);
+    return {
+      day: dailyObj.dayLabel,
+      totalCount: match?.totalCount || 0
+    };
+  });
 
-  const yesterdaysApplications = [];
-  for(let hourObj of yesterdaysData){
-    const count = await getApplicationCount(hourObj.startDate,hourObj.endDate);
-    yesterdaysApplications.push({
-      hour : hourObj.hourLabel,
-      totalCount : count
-    })
-  }
+  // Map yesterday's hourly applications
+  const yesterdaysApplications = yesterdaysData.map(hourObj => {
+    const hourKey = DateTime.fromJSDate(hourObj.startDate, { zone: tz }).toFormat('yyyy-MM-dd HH');
+    const match = result[0].yesterdaysApplications.find(h => h._id === hourKey);
+    return {
+      hour: hourObj.hourLabel,
+      totalCount: match?.totalCount || 0
+    };
+  });
 
 
   //Scheduled Interviews

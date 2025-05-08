@@ -35,6 +35,7 @@ function AdminDashboard() {
   const { data : dashboardDetails , isLoading : isDetailsLoading } = useQuery({
       queryKey: ['admin_dashboard'],
       queryFn: () => axios.get(`/admin/dashboard?tz=${timezone}`).then(res => res.data),
+      refetchOnWindowFocus : false,
       enabled : true
   })
 
