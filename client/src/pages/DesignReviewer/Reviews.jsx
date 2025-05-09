@@ -221,9 +221,7 @@ const Reviews = () => {
                       <div key={`${candidate._id}-${candidate.currentApplication.jobId}`} className="mb-4 flex flex-col bg-background-80 rounded-xl ">
                         <div className='flex items-center p-4  justify-between cursor-pointer ' onClick={()=> handleNavigate(candidate)}>
                           <div className='flex items-center gap-4 p-4'>
-
-
-                            <Avatar alt={candidate?.firstName} sx={{ width: "32px", height: "32px" }} src={candidate.profilePictureUrl} />
+                            <Avatar alt={candidate?.firstName} src={candidate.profilePictureUrl} />
                             <span className="typography-body ">
                               {candidate.firstName} {candidate.lastName}
 
@@ -235,7 +233,7 @@ const Reviews = () => {
                             </a>
                           </div>
 
-                          <div className="bg-background-80 p-2 px-4 typography-body  rounded-xl">
+                          <div className="bg-background-70 p-2 px-4 typography-body  rounded-xl">
                             {candidate.currentApplication.jobProfile}
                           </div>
 
