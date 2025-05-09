@@ -12,7 +12,7 @@ const Scorer = ({ value, onChange }) => {
           <div
             key={scoreValue}
             className={`w-11 h-11 rounded-xl cursor-pointer flex items-center justify-center typography-body 
-              ${value == scoreValue ? 'bg-background-green text-font-accent' : 'bg-background-70 hover:bg-background-green'}`}
+              ${value == scoreValue ? 'bg-background-green text-font-accent' : 'bg-background-60 hover:bg-background-green'}`}
             onClick={() => handleScoreClick(scoreValue)}
           >
             {scoreValue}

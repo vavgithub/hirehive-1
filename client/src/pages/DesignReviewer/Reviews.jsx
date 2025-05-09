@@ -216,11 +216,11 @@ const Reviews = () => {
               if (stages[stage] && stages[stage].length > 0) {
                 return (
                   <div key={stage} className="mb-6 ">
-                    <h2 className="typography-h2 mb-3">{stage}</h2>
+                    <h3 className="typography-h3 mb-4">{stage}</h3>
                     {stages[stage].map(candidate => (
-                      <div key={`${candidate._id}-${candidate.currentApplication.jobId}`} className="mb-4 flex flex-col bg-background-60 rounded-xl ">
+                      <div key={`${candidate._id}-${candidate.currentApplication.jobId}`} className="mb-4 flex flex-col bg-background-80 rounded-xl ">
                         <div className='flex items-center p-4  justify-between cursor-pointer ' onClick={()=> handleNavigate(candidate)}>
-                          <div className='flex items-center gap-4'>
+                          <div className='flex items-center gap-4 p-4'>
 
 
                             <Avatar alt={candidate?.firstName} sx={{ width: "32px", height: "32px" }} src={candidate.profilePictureUrl} />
