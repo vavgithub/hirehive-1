@@ -26,7 +26,7 @@ import parsePhoneNumberFromString from "libphonenumber-js";
 
 const PersonalDetails = ({ candidateData, isEditing, control }) => {
   return (
-    <StyledCard backgroundColor={"bg-background-30"}>
+    <StyledCard backgroundColor={"bg-background-90"}>
       <h2 className="typography-h2 mb-6">Personal Details</h2>
       {!isEditing ?
         <div className="flex justify-between flex-col gap-6 sm:flex-row">
@@ -153,7 +153,7 @@ const ResumeAndPortfolioDetails = ({ candidateData, isEditing, control, resumeFi
   }
 
   return (
-    <StyledCard backgroundColor={"bg-background-30"}>
+    <StyledCard backgroundColor={"bg-background-90"}>
       <h2 className="typography-h2 mb-6">Resume and Portfolio</h2>
       {!isEditing ?
         <div className="flex justify-between flex-col gap-6 sm:flex-row">
@@ -185,7 +185,7 @@ const ResumeAndPortfolioDetails = ({ candidateData, isEditing, control, resumeFi
             render={({ field, fieldState: { error } }) => (
               <div className="h-11 w-full flex items-center typography-body justify-between gap-2">
                 <p className="min-w-[25%] max-w-[25%] text-font-gray ">Resume</p>
-                <div className="w-full bg-background-40 h-11 rounded-xl flex justify-between">
+                <div className="w-full bg-background-80 hover:bg-background-60 h-11 rounded-xl flex justify-between">
                   <p className="px-4 py-2 whitespace-nowrap overflow-hidden text-ellipsis">{fileName ? fileName : candidateData?.firstName + "'s Resume"}</p>
                   <span className="hidden md:block">
                     <Button icon={()=><IconWrapper icon={Upload} inheritColor size={0} customIconSize={4} customStrokeWidth={7} />} variant="secondary" type="button" onClick={() => resumeRef.current.click()}>{resumeFile ? "Edit" : "Choose"}</Button>
@@ -252,7 +252,7 @@ const ProfessionalDetails = ({ candidateData, isEditing, control }) => {
   const hasHourlyRate = candidateData.hourlyRate > 0;
 
   return (
-    <StyledCard backgroundColor={"bg-background-30"}>
+    <StyledCard backgroundColor={"bg-background-90"}>
       <h2 className="typography-h2 mb-6">Professional Details</h2>
       {!isEditing ? (
         <div className="flex flex-col gap-6">
@@ -621,7 +621,7 @@ function Profile() {
               <ProfessionalDetails candidateData={candidateData} isEditing={isEditing} control={control} />
             </div>
             <div className="w-[100%] sm:w-[50%] mx-auto lg:w-[30%] ">
-                <StyledCard backgroundColor={"bg-background-30"} extraStyles=" flex flex-col items-center relative">
+                <StyledCard backgroundColor={"bg-background-90"} extraStyles=" flex flex-col items-center relative">
                   {isEditing || <button type="button" onClick={()=>setIsEditing(true)} className="absolute top-6 right-6 border rounded-xl  border-font-gray hover:bg-background-70">
                     <CustomToolTip title={"Edit Profile"} arrowed>
                       <IconWrapper icon={Pencil}  />

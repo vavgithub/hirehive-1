@@ -68,12 +68,12 @@ const AdminLayout = () => {
     };
 
     const NavItem = ({ to, icon: Icon, activeIcon: ActiveIcon, iconData, children, hasHighlighter }) => (
-        <div className="relative flex flex-row items-center justify-between hover:bg-background-60 rounded-xl ">
+        <div className="relative flex flex-row items-center justify-between  rounded-xl ">
             <NavLink
                 to={to}
                 end={to === "/admin/dashboard" || to === "/design-reviewer/dashboard"}
                 className={({ isActive, isPending }) =>
-                    `w-full flex items-center min-h-11 gap-2 pl-2 py-2 rounded-xl ${isActive || isPending ? "text-font-accent bg-background-60" : ""}`
+                    `w-full flex items-center min-h-11 gap-2 pl-2 py-2 rounded-xl hover:bg-background-60 ${isActive || isPending ? " selection-primary " : ""}`
                 }
             >
                 {({ isActive, isPending }) => (
@@ -130,7 +130,7 @@ const AdminLayout = () => {
 
         return (
             <>
-                <div className={`flex items-center px-2 py-1 relative  rounded-xl justify-start hover:bg-background-60 ${location.pathname === profilePath ? "bg-background-60" : ""}`}>
+                <div className={`flex items-center px-2 py-1 relative  rounded-xl justify-start hover:bg-background-60 ${location.pathname === profilePath ? "selection-primary" : ""}`}>
                     <IconButton
                         onClick={handleMenuClick}
                         className={`flex gap-2  ${location.pathname === profilePath ? "text-font-accent  " : ""}`}

@@ -49,26 +49,26 @@ const BudgetFilter = ({ onApply, shouldReset }) => {
       <div className="flex space-x-4 mb-4">
         <div className='flex flex-col'>
           <label className="typography-small-p text-font-gray">Min Budget</label>
-          <div className='flex items-center bg-background-40 rounded-xl rounded-br-xl mt-1'>
+          <div className='flex items-center bg-background-60 rounded-xl rounded-br-xl mt-1'>
             <input
               type="text"
               value={minBudget}
               onChange={handleMinBudgetChange}
               placeholder="0"
-              className="w-16 p-2 bg-background-40 text-left no-spinner rounded-xl"
+              className="w-16 p-2 custom-input text-left no-spinner rounded-xl"
             />
             <span className="text-font-gray typography-body pr-2">LPA</span>
           </div>
         </div>
         <div className='flex flex-col'>
           <label className="typography-small-p text-font-gray">Max Budget</label>
-          <div className='flex items-center bg-background-40 rounded-xl rounded-br-xl mt-1'>
+          <div className='flex items-center bg-background-60 rounded-xl rounded-br-xl mt-1'>
             <input
               type="text"
               value={maxBudget}
               onChange={handleMaxBudgetChange}
               placeholder="0"
-              className="w-16 p-2 bg-background-40 text-left no-spinner rounded-xl"
+              className="w-16 p-2 custom-input text-left no-spinner rounded-xl"
             />
             <span className="text-font-gray typography-body pr-2">LPA</span>
           </div>

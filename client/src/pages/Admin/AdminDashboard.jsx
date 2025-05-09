@@ -299,7 +299,7 @@ function AdminDashboard() {
           />
         </StyledCard>
         {/* LeaderBoard */}
-        <StyledCard padding={2} extraStyles={'mt-4'}>
+        <StyledCard padding={2} extraStyles={'mt-4'} backgroundColor={'bg-background-80'}>
           <h2 className='typography-h2 mb-2'>Leaderboard</h2>
           <StatsGrid stats={leaderBoardStats} />
 

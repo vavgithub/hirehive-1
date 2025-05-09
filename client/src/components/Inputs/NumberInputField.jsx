@@ -9,7 +9,7 @@ export const NumberInputField = React.forwardRef(({ label, value, onChange, unit
   return (
     <div className='w-1/2'>
       <span className='typography-small-p  text-font-gray'>{label}</span>
-      <div className='items-center gap-2 flex bg-background-40 rounded-xl'>
+      <div className='items-center gap-2 flex bg-background-80 rounded-xl'>
         <input
           type="number"
           placeholder='-Select-'

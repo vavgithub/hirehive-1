@@ -64,13 +64,13 @@ const AssessmentResponse = () => {
 
     return (
         <Container>
-            <div >
                 <Header withBack={"true"} HeaderText="Assessment details" />
 
+            <StyledCard >
                 {/* Top Section with Candidate Info and Score */}
                 <div className="flex gap-4 mb-6">
                     {/* Candidate Info Card */}
-                    <StyledCard padding={2} extraStyles="flex-grow">
+                    <StyledCard padding={2} backgroundColor={'bg-background-80'} extraStyles="flex-grow">
                         <div className="flex gap-4 h-full">
                             <div className="to-background-100 min-w-[20%] max-w-[12.5rem] aspect-square max-h-[12.5rem]  rounded-xl overflow-hidden">
                                 <img
@@ -148,7 +148,7 @@ const AssessmentResponse = () => {
                         </div>
                     </StyledCard>
 
-                    <StyledCard padding={3} extraStyles="flex bg-stars flex-col items-center w-[35%] max-w-[15rem] bg-cover ">
+                    <StyledCard padding={3}  extraStyles="flex bg-stars flex-col items-center w-[35%] max-w-[15rem] bg-cover ">
                         <div className="relative typography-h3  w-full flex justify-center ">
                             <div className='absolute left-0'>
 
@@ -182,12 +182,12 @@ const AssessmentResponse = () => {
 
                 {/* Question Progress Indicators */}
                 {assessmentData?.questionResponses?.length > 0 &&
-                    <StyledCard padding={2} extraStyles=" mb-6">
+                    <StyledCard  backgroundColor={'bg-background-80'} padding={2}  extraStyles=" mb-6">
                         <div className="grid grid-cols-10 justify-between gap-4">
                             {assessmentData?.questionResponses.map((response, index) => (
                                 <div
                                     key={response.questionId}
-                                    className={`p-8 typography-h3 relative  h-8 rounded-md flex bg-background-80 items-center justify-center ${response.isCorrect ? 'bg-background-80' : 'bg-background-80'
+                                    className={`p-8 typography-h3 relative  h-8 rounded-md flex bg-background-70 items-center justify-center ${response.isCorrect ? 'bg-background-70' : 'bg-background-70'
                                         } text-white`}
                                 >
                                     <div className={`absolute right-1 top-1 w-4 h-4  flex bg-background-80 items-center justify-center text-white`}>
@@ -204,11 +204,11 @@ const AssessmentResponse = () => {
                     </StyledCard>}
 
                 <h2 className='typography-h2'>Questions</h2>
-                <StyledCard padding={0} backgroundColor={"bg-background-90"} >
+                <StyledCard padding={0} backgroundColor={"bg-transparent"} >
                     {/* Questions List */}
-                    {assessmentData?.questionResponses?.length > 0 ? <div className="space-y-4 bg-background-80">
+                    {assessmentData?.questionResponses?.length > 0 ? <div className="space-y-4 ">
                         {assessmentData?.questionResponses.map((response, index) => (
-                            <StyledCard padding={2} backgroundColor={"bg-background-90"} key={response.questionId}>
+                            <StyledCard padding={2} backgroundColor={"bg-background-80"} key={response.questionId}>
 
                                 <div >
                                     <h3 className="typography-h3 mb-4">
@@ -240,7 +240,7 @@ const AssessmentResponse = () => {
                         <div className='px-6 pb-6 '>
                             <p className='typography-body'>No questions are answered by the candidate.</p></div>}
                 </StyledCard>
-            </div>
+            </StyledCard>
 
             <VideoModal
                 isOpen={isVideoModalOpen}

@@ -125,6 +125,7 @@ const Shortlisted = () => {
             <StyledCard padding={2} >
                 {tableData.length > 0 ? (
                     <Table
+                        hasCheckBox={false}
                         readOnly={true}
                         readOnlyData={tableData}
                         additionalColumns={getShortlistColumn()}

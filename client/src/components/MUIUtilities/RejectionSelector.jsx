@@ -10,11 +10,11 @@ function RejectionSelector({selectedAnchor,handleClose,handleReasonSelect}) {
             open={Boolean(selectedAnchor)}
             onClose={handleClose}
             PaperProps={{
-              style: { maxHeight: 300,  width: selectedAnchor?.getBoundingClientRect()?.width , borderRadius : "0.75rem",padding : "0.5rem",backgroundColor: 'rgba(12, 13, 13, 1)'},
+              style: { maxHeight: 300,  width: selectedAnchor?.getBoundingClientRect()?.width , borderRadius : "0.75rem",padding : "0.5rem",backgroundColor: 'var(--color-background-70)',},
             }}
             sx={{
               "& .MuiList-root": {
-                backgroundColor: 'rgba(12, 13, 13, 1)',
+                backgroundColor: 'var(--color-background-70) !important',
                 color: "white",
                 padding : "0px "
               },
@@ -53,7 +53,7 @@ function RejectionSelector({selectedAnchor,handleClose,handleReasonSelect}) {
                   sx={{
                     margin : "0.5rem 0px !important",
                     padding :"0.5rem 1rem",
-                    backgroundColor: 'rgba(12, 13, 13, 1)',
+                    backgroundColor: 'var(--color-background-70)',
                     ':hover' :{
                       background :"rgba(35,36,37,1)"
                     },

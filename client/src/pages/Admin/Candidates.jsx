@@ -77,7 +77,7 @@ const Candidates = () => {
           <StatsGrid stats={statsOne} />
         </div>
         <div >
-          <Table readOnly={true} readOnlyData={data?.candidates || []} />
+          <Table readOnly={true} hasCheckBox={false} readOnlyData={data?.candidates || []} />
         </div>
       </StyledCard>
     </Container>

@@ -37,7 +37,7 @@ const changeMemberStatus = async ({ memberId }) => {
 
 function PersonalDetails({ memberData, isEditing, control }) {
   return (
-    <StyledCard padding={2} backgroundColor="bg-background-30">
+    <StyledCard padding={2} backgroundColor="bg-background-90">
       <h2 className="typography-h2 mb-4">Personal Details</h2>
       {!isEditing ? (
         <div className="flex justify-between flex-col gap-6 sm:flex-row">
@@ -131,7 +131,7 @@ function PersonalDetails({ memberData, isEditing, control }) {
 
 function ProfessionalDetails({ memberData }) {
   return (
-    <StyledCard padding={2} backgroundColor="bg-background-30">
+    <StyledCard padding={2} backgroundColor="bg-background-90">
       <h2 className="typography-h2 mb-4">Professional Details</h2>
       <div className="flex justify-between flex-col gap-6 sm:flex-row">
 
@@ -152,7 +152,7 @@ function ProfessionalDetails({ memberData }) {
 
 function SkillsExpertiseSection({ memberData }) {
   return (
-    <StyledCard padding={2} backgroundColor="bg-background-30">
+    <StyledCard padding={2} backgroundColor="bg-background-90">
       <h2 className="typography-h2 mb-4">Skills & Expertise</h2>
       <div className="flex flex-col gap-6 typography-body">
         <div>
@@ -295,7 +295,7 @@ function TeamsProfile() {
             <SkillsExpertiseSection memberData={member} />
           </div>
           <div className="w-[100%] sm:w-[50%] mx-auto lg:w-[30%] ">
-            <StyledCard backgroundColor={"bg-background-30"} extraStyles=" flex flex-col items-center relative">
+            <StyledCard backgroundColor={"bg-background-90"} extraStyles=" flex flex-col items-center relative">
               {!member?.member_id && <button type="button" onClick={() => setIsEditing(!isEditing)} className="absolute top-6 right-6 border rounded-xl p-2 border-font-gray hover:bg-background-70">
                 <CustomToolTip title={"Edit Profile"} arrowed>
                   <IconWrapper size={2} customIconSize={3} icon={PencilLine} />

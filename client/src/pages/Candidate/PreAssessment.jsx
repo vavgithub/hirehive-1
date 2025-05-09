@@ -216,6 +216,7 @@ const PreAssessment = () => {
                     <div className='flex flex-col gap-4 mt-6'>
                     {candidateData?.pendingAssessments?.map(assessment => 
                     (<StyledCard
+                    key={assessment?.jobId + assessment?.assessment_id?._id}
                     backgroundColor={'bg-background-80 '}
                     extraStyles={' flex justify-between items-center'}
                     >

@@ -19,9 +19,6 @@ export const InputField = React.forwardRef(({
   // Use higher specificity for error border
   const inputClasses = `
     w-full 
-    p-2 
-    bg-background-40 
-    rounded 
     outline-none 
     focus:outline-teal-300
     ${error ? '!border !border-red-500' : 'border border-transparent'} 

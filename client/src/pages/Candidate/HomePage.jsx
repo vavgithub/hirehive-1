@@ -168,7 +168,7 @@ const HomePage = () => {
         return (
             // <div className='w-full  p-4 '>
             //     <div className='container'>
-            <Container extraStyles=" bg-background-80 ">
+            <Container hasBgColor>
                     <div className=' flex justify-between items-center mt-2 mb-4'>
                         <div className='flex items-center justify-center gap-8'>
 

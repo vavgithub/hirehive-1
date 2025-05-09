@@ -36,7 +36,7 @@ const dummyTools = [
 
 const PersonalDetails = ({ userData, isEditing, control }) => {
   return (
-    <StyledCard backgroundColor="bg-background-30">
+    <StyledCard backgroundColor="bg-background-90">
       <h2 className="typography-h2 mb-6">Personal Details</h2>
       {!isEditing ? (
         <div className="flex justify-between flex-col gap-6 sm:flex-row">
@@ -222,7 +222,7 @@ function Profile() {
               <PersonalDetails userData={user} isEditing={isEditing} control={control} />
 
               {/* Professional Details Section */}
-              <StyledCard backgroundColor="bg-background-30">
+              <StyledCard backgroundColor="bg-background-90">
                 <h2 className="typography-h2 mb-6">Professional Details</h2>
                 {!isEditing ? (
                   <div className="flex justify-between flex-col gap-6 sm:flex-row">
@@ -283,7 +283,7 @@ function Profile() {
 
               {/* Skills & Expertise Section */}
               {((!isEditing && (user?.tools_used?.length > 0 || user?.skills?.length > 0)) || isEditing) &&
-              <StyledCard backgroundColor="bg-background-30">
+              <StyledCard backgroundColor="bg-background-90">
                 <h2 className="typography-h2 mb-6">Skills & Expertise</h2>
                 {!isEditing ?  (
                   <div className="flex flex-col gap-6 typography-body">
@@ -357,7 +357,7 @@ function Profile() {
               </StyledCard>}
             </div>
             <div className="w-[100%] sm:w-[50%] mx-auto lg:w-[30%]">
-              <StyledCard backgroundColor="bg-background-30" extraStyles="flex flex-col items-center relative">
+              <StyledCard backgroundColor="bg-background-90" extraStyles="flex flex-col items-center relative">
                 {!isEditing && (
                   <button
                     type="button"
@@ -401,7 +401,7 @@ function Profile() {
                 </h1>
               </StyledCard>
 
-              <StyledCard backgroundColor="bg-background-30" extraStyles="flex flex-col items-center relative mt-4">
+              <StyledCard backgroundColor="bg-background-90" extraStyles="flex flex-col items-center relative mt-4">
               <div className="relative w-[8rem] min-h-[5rem]">
                   <div className="absolute w-[8rem] left-0 -top-14 aspect-square overflow-hidden rounded-full">
                     <img

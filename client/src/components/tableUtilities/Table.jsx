@@ -32,7 +32,8 @@ const Table = ({
   readOnly = false,
   readOnlyData = [],
   additionalColumns = [], // New prop for custom columns
-  customNavigationPath = null // New prop for custom navigation path
+  customNavigationPath = null, // New prop for custom navigation path
+  hasCheckBox = true
 }) => {
 
   //For getting routes
@@ -569,7 +570,7 @@ const Table = ({
         localeText={{ noRowsLabel: <p className='typography-body'>No Candidates</p> }}
 
         pageSizeOptions={[10, 20, 30, 40, 50]}
-        checkboxSelection
+        checkboxSelection={hasCheckBox}
         onRowSelectionModelChange={(newSelection) => handleSelectionChange(newSelection)} // Updates on selection change
         rowSelectionModel={rowSelectionModel}
         onRowClick={(params) => handleRowClick(params)}

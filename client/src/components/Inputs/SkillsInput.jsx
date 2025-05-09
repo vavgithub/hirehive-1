@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 
-const SkillsInput = ({ value = [], onChange, allSkills = [] ,error}) => {
+const SkillsInput = ({ value = [], onChange, allSkills = [] ,error }) => {
   const [inputValue, setInputValue] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
 

@@ -262,7 +262,7 @@ const ContactUs = () => {
             id="message"
             rows={4}
             placeholder="How can we help you?"
-            className={` px-4 pt-2 bg-background-40  hover:bg-background-60 cursor-pointer  rounded-xl placeholder:text-font-gray placeholder:font-body  focus:ring-teal-400 focus:outline-teal-500 outline-none typography-body w-full ${errors.message ? '!border !border-red-500' : 'border border-transparent'
+            className={` px-4 pt-2 bg-background-40 resize-none hover:bg-background-60 cursor-pointer  rounded-xl placeholder:text-font-gray placeholder:font-body  focus:ring-teal-400 focus:outline-teal-500 outline-none typography-body w-full ${errors.message ? '!border !border-red-500' : 'border border-transparent'
               }`}
             {...register("message", {
               required: "Message is required",
@@ -353,6 +353,7 @@ const ContactUs = () => {
           maxWidth : collapse ? '5rem' : '100%',
           transition: 'max-width 1s ease',
         }}
+        backgroundColor={'bg-background-80'}
         borderRadius={'rounded-xl lg:rounded-l-xl   lg:rounded-r-none  '}
       >
         { collapse ?

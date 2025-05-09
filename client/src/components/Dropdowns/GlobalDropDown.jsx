@@ -55,7 +55,7 @@ import {
         <button
           type="button"
           onClick={handleOpen}
-          className={`${value ? "text-white" : "text-font-gray"} ${error ? '!border !border-red-500' : 'border border-transparent'}  typography-body ${label ? " mt-3 " : " mt-0 "} h-[2.75rem] flex items-center justify-between bg-background-40 hover:bg-background-60 w-full outline-none rounded-xl shadow-sm focus:ring-teal-300 focus:border-teal-300 text-left px-4`}
+          className={`${value ? "text-white" : "text-font-gray"} ${error ? '!border !border-red-500' : 'border border-transparent'}  typography-body ${label ? " mt-3 " : " mt-0 "} h-[2.75rem] flex items-center justify-between bg-background-80 hover:bg-background-60 w-full outline-none rounded-xl shadow-sm focus:ring-teal-300 focus:border-teal-300 text-left px-4`}
         >
           {options.find(opt => opt.value === value)?.label || options.find(opt => opt === value) || customPlaceholder ||  '-Select-'}
           <svg width="18" height="9" viewBox="0 0 18 9" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -83,7 +83,7 @@ import {
               width: anchorEl?.getBoundingClientRect()?.width,
               borderRadius: "0.75rem",
               padding: "0.5rem",
-              backgroundColor: 'rgba(12, 13, 13, 1)'
+              backgroundColor: 'var(--color-background-90)'
             }
           }}
         >
@@ -123,7 +123,7 @@ import {
                     margin: "0px !important",
                     padding: "0.5rem 1rem",
                     borderRadius: "0.75rem",
-                    backgroundColor: 'rgba(12, 13, 13, 1)',
+                    backgroundColor: 'var(--color-background-90)',
                   }}
                   key={optionObj?.value}
                   onClick={() => {

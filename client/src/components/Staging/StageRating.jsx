@@ -90,7 +90,7 @@ function StageRating({candidateId,jobId,name,candidate,onSubmit,stageConfig}) {
       )
     }else{
       return (
-        <div className='bg-background-90 flex typography-body gap-4 justify-between rounded-xl mt-4 items-center p-4'>
+        <div className='bg-background-80 flex typography-body gap-4 justify-between rounded-xl mt-4 items-center p-4'>
           {stageConfig?.hasSplitScoring ? 
           <>
           <div className='grid grid-cols-2 w-full gap-4'>
@@ -106,7 +106,7 @@ function StageRating({candidateId,jobId,name,candidate,onSubmit,stageConfig}) {
             <div className='flex gap-4'>
               <input
                 type="text"
-                className='w-full bg-background-80 text-white p-2 rounded'
+                className='w-full '
                 placeholder='Enter Your Feedback'
                 value={feedback}
                 onChange={(e) => setFeedback(e.target.value)}
