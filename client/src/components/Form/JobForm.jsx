@@ -292,7 +292,7 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
                 <div className='flex flex-wrap gap-4'>
                   {
                     assessmentTemplates?.map(template => (
-                      <CustomPill hasShowButton showButtonClick={(label)=>setPreviewAssessment(template)} error={error} key={template?._id} label={template?.title} selected={value === template?._id} onClick={()=>onChange(value === template?._id ? '' :template?._id)} />
+                      <CustomPill variant="selective" data={template} value={value} hasInfoButton infoButtonClick={(label)=>setPreviewAssessment(template)} error={error} key={template?._id}  selected={value === template?._id} onChange={onChange} />
                     ))
                   }
                 </div>

@@ -189,7 +189,7 @@ const QuestionDisplay = ({
                   value={option.text}
                   checked={currentAnswer === option.text}
                   onChange={() => onAnswer(question._id, option.text)}
-                  className="appearance-none border-2 rounded-full form-radio h-5 aspect-square max-h-5  max-w-5 checked:ring-offset-[5px] checked:ring-offset-black-100 checked:bg-teal-100 checked:ml-[0.25rem] checked:mr-[0.25rem] checked:ring-[2px] checked:w-3 checked:h-3 checked:border-0 checked:ring-teal-100"
+                  className=" custom-radio "
                 /> 
                 <div className="flex flex-col gap-2 cursor-pointer">
                   <span className='typography-body'>{option.text}</span>
