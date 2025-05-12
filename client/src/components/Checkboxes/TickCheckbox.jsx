@@ -9,10 +9,10 @@ const TickCheckbox = ({
     onChange,
     label,
     className = "",
-    labelClassName = "typography-body hover:text-accent-100 whitespace-nowrap text-font-gray cursor-pointer"
+    labelClassName = "typography-body hover:text-accent-100 whitespace-nowrap  cursor-pointer"
 }) => {
     return (
-        <div className={`flex items-center gap-2 ${className}`}>
+        <div className={`flex items-center gap-2 ${className} ${checked ? 'selection-primary' : ''}`}>
             <div className="relative  flex items-center justify-center">
                 <input
                     type="checkbox"
@@ -31,7 +31,7 @@ const TickCheckbox = ({
 
             </div>
             {label && (
-                <label htmlFor={id} className={labelClassName}>
+                <label htmlFor={id} className={labelClassName + (checked ? ' ' : ' text-font-gray ')}>
                     {label}
                 </label>
             )}

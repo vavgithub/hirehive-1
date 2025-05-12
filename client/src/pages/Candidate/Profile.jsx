@@ -186,18 +186,18 @@ const ResumeAndPortfolioDetails = ({ candidateData, isEditing, control, resumeFi
               <div className="h-11 w-full flex items-center typography-body justify-between gap-2">
                 <p className="min-w-[25%] max-w-[25%] text-font-gray ">Resume</p>
                 <div className="w-full bg-background-80 hover:bg-background-60 h-11 rounded-xl flex justify-between">
-                  <p className="px-4 py-2 whitespace-nowrap overflow-hidden text-ellipsis">{fileName ? fileName : candidateData?.firstName + "'s Resume"}</p>
+                  <p className="pl-4 py-2 whitespace-nowrap overflow-hidden text-ellipsis w-[45%]  md:w-[60%]">{fileName ? fileName : candidateData?.firstName + "'s Resume"}</p>
                   <span className="hidden md:block">
                     <Button icon={()=><IconWrapper icon={Upload} inheritColor size={0} customIconSize={4} customStrokeWidth={7} />} variant="secondary" type="button" onClick={() => resumeRef.current.click()}>{resumeFile ? "Edit" : "Choose"}</Button>
                   </span>
-                  <span className="block md:hidden">
-                    <Button icon={()=><IconWrapper icon={Upload} inheritColor size={0} customIconSize={4} customStrokeWidth={7} />} variant="iconSec" type="button" onClick={() => resumeRef.current.click()} />
+                  <span className="inline md:hidden ">
+                    <Button className={'px-10'} icon={()=><IconWrapper icon={Upload} inheritColor size={0} customIconSize={4} customStrokeWidth={7} />} variant="iconSec" type="button" onClick={() => resumeRef.current.click()} />
                   </span>
-                </div>
                 <input onChange={handleResume}
                   accept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                   ref={resumeRef} type="file"
                   className="hidden w-0 h-0" />
+                </div>
               </div>
             )}
           />
@@ -675,7 +675,7 @@ function Profile() {
             </div>
           </div>
           {isEditing &&
-            <div className="place-self-end flex gap-4 mt-4 lg:mb-20">
+            <div className="place-content-between sm:place-self-end flex gap-4 mt-4 lg:mb-20">
               <Button onClick={() => setIsEditing(false)} type="button" variant="secondary" >Cancel</Button>
               <Button
                 type="Submit"

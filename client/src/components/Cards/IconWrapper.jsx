@@ -1,7 +1,8 @@
 import React from 'react';
 
 function IconWrapper({ icon  : Icon, isActiveIcon, inheritColor , isInActiveIcon, isErrorIcon, customIconSize, customStrokeWidth, children , hasBg , customBgHover ,size, ...props }) {  // Accept props explicitly
-    const bgStyles = hasBg ? (typeof hasBg === "string" && hasBg?.trim() !== 'bg-background-70') ? hasBg : ` bg-background-70 ${customBgHover ? customBgHover : "hover:bg-accent-300"} ` : "";
+    const bgStyles = hasBg ? (typeof hasBg === "string" && hasBg?.trim() !== 'bg-background-70') ? hasBg : ` bg-background-70` : '';
+    const hoverStyles = ` ${hasBg ? customBgHover ? customBgHover : "hover:bg-accent-300" : ''} `;
     
     const sizeOptions = {
         0 : 'w-fit h-fit',
@@ -49,7 +50,7 @@ function IconWrapper({ icon  : Icon, isActiveIcon, inheritColor , isInActiveIcon
     const sizeStyles = ` ${(typeof size === 'number') ? sizeOptions[size] : sizeOptions[4]} `
 
   return (
-    <div {...props} className={` ${bgStyles}  ${sizeStyles}  h-11 w-11 flex justify-center items-center rounded-xl `}>
+    <div {...props} className={` ${bgStyles} ${hoverStyles}  ${sizeStyles}  h-11 w-11 flex justify-center items-center rounded-xl `}>
       {Icon ? 
       <Icon 
       size={(typeof customIconSize === 'number') ? iconSizeOptions[customIconSize] : (typeof size === 'number') ?  iconSizeOptions[size] : 24} 

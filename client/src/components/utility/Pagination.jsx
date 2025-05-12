@@ -43,7 +43,7 @@ function Pagination({currentPage, pageLimit , totalItems ,setCurrentPage}) {
   return totalItems ? (
     <div className=' flex justify-between'>
       <div>
-      <p className='typography-body text-font-gray flex gap-2'>Showing <span className='text-white'>{resultValue} {resultValue > 1 ? " results" : " result"}</span> of <span className='text-white'>{totalItems}</span></p>
+      <p className='typography-body text-font-gray flex gap-2'>Showing <span className='text-white'>{resultValue}</span><span className='hidden sm:inline-block'> {resultValue > 1 ? " results" : " result"}</span> of <span className='text-white'>{totalItems}</span></p>
       </div>
       <div className='flex items-center gap-4'>
           <div onClick={currentPage > 1 ? handlePrev : null} className={currentPage > 1 ? "text-white cursor-pointer" : "text-font-gray"}>

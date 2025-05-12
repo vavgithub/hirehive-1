@@ -550,7 +550,7 @@ const ApplyJob = () => {
               )}
             </div>
 
-            <div className="flex mt-6 justify-end gap-4 mb-6">
+            <div className="flex mt-6 justify-between sm:justify-end gap-4 mb-6">
               <Button
                 type="button"
                 onClick={() => navigate(-1)}

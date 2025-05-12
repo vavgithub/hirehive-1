@@ -137,7 +137,7 @@ const JobCard = ({
     onClick={onClick ? handleCardClick : undefined}
   >
     <StyledCard padding={2} backgroundColor={'bg-background-80'} borderRadius={'  rounded-t-xl '} extraStyles={'hover:bg-background-60 transition-colors pb-0 duration-200 shadow'}>
-      <div className={(isApplied && "flex-col md:flex-row" ) +" flex items-start justify-between   gap-3"}>
+      <div className={(isApplied && "flex-col md:flex-row" ) +" flex items-start justify-between   gap-4"}>
         <h3 className={(isApplied ? "w-full md:w-[50%] xl:w-[70%]" : "w-[70%]") + " typography-h3 group-hover:text-font-accent  text-ellipsis overflow-hidden whitespace-nowrap "}>{job.jobTitle}</h3>
         <div className={"flex items-center gap-3 " + (isApplied ? " mb-2 md:mb-0 " : "")}>
           {isApplied &&         
@@ -159,15 +159,15 @@ const JobCard = ({
             </CustomToolTip>
           </div>}
           {(job.status !== "deleted" && job.status !== "closed") &&
-            <CustomBadge label={job?.jobProfile} paddingX={2} />}
+            <CustomBadge extraStyles={'whitespace-nowrap md:whitespace-normal'} label={job?.jobProfile} paddingX={2} />}
           {withKebab && (
-            <ThreeDots job={job} handleAction={handleAction} extraStyles={'z-10'} page={page} isPinned={pinnedJobs?.includes(job?._id)} role={role} />
+            <ThreeDots job={job} customBgColor={'bg-background-70'} customBgHover={'hover:bg-background-80'} handleAction={handleAction} extraStyles={'z-10'} page={page} isPinned={pinnedJobs?.includes(job?._id)} role={role} />
           )}
         </div>
       </div>
       {job.status !== "deleted" ?
       <>
-      <div className="flex flex-row items-start flex-wrap gap-x-8 gap-y-5">
+      <div className="flex flex-row items-start flex-wrap gap-4 mt-2">
         <JobDetailItem icon={() => <IconWrapper size={1} icon={ClockArrowUp}  isInActiveIcon />} text={job.employmentType} />
         {((job.budgetTo > 1) || (job.budgetFrom > 0)) && 
         <JobDetailItem

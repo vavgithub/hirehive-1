@@ -38,6 +38,7 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           "& .MuiOutlinedInput-root": {
+            backgroundColor: "var(--color-background-70) !important",
             borderRadius: "0.75rem",
             color: "white",
             "& fieldset": {
@@ -47,7 +48,7 @@ const theme = createTheme({
               borderColor: "rgba(24, 233, 208, 0.8)",
             },
             "&.Mui-focused fieldset": {
-              borderColor: "rgba(24, 233, 208, 1)",
+              borderColor: "var(--color-font-accent-100)",
             },
           },
         },
@@ -59,7 +60,7 @@ const theme = createTheme({
           overflow: "auto",
         },
         paper: {
-          backgroundColor: "rgba(12, 13, 13, 1)",
+          backgroundColor: "var(--color-background-80) !important",
           boxShadow: "3px 5px 50px rgba(25, 25, 25, 0.75)",
           borderRadius: "0.75rem",
         },
@@ -68,27 +69,28 @@ const theme = createTheme({
     MuiMenuItem: {
       styleOverrides: {
         root: {
-          backgroundColor: "black", // Background color of each option
+          backgroundColor: "var(--color-background-80) !important", // Background color of each option
           color: "white", // Text color of each option
           fontFamily: "Gilroy",
           borderRadius: "0.75rem",
           "&:hover": {
-            background: "rgba(35,36,37,1) !important",
+            background: "var(--color-background-60) !important",
           },
           "&:hover .MuiTypography-root": {
-            color: "rgba(24,233,208,1)",
+            color: "var(--color-font-accent-100)",
           },
           ":hover span": {
-            color: "rgba(24,233,208,1)",
+            color: "var(--color-font-accent-100)",
           },
           "&.Mui-selected": {
-            background: "rgba(24,233,208,0.1) !important",
+            background: "var(--color-accent-300) !important",
+            color: "var(--color-font-accent-100) !important",
           },
           "&.Mui-selected:hover": {
-            background: "rgba(35,36,37,1) !important",
+            background: "var(--color-background-60) !important",
           },
           "&.Mui-selected span": {
-            color: "rgba(24,233,208,1) !important",
+            color: "var(--color-font-accent-100) !important",
           },
         },
       },
@@ -112,16 +114,16 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           height: "2.75rem",
-          backgroundColor: "rgba(12,13,13,1)",
+          backgroundColor: "var(--color-background-100)",
           borderRadius: "0.75rem !important",
           "& fieldset": {
             border: "none",
           },
           "&:hover": {
-            backgroundColor: "rgba(35, 36, 37, 1)",
+            backgroundColor: "var(--color-background-60)",
           },
           "&.Mui-focused fieldset": {
-            border: "1px solid rgb(24, 233, 208) !important",
+            border: "1px solid -var(-color-accent-100) !important",
           },
         },
         input: {
@@ -133,17 +135,17 @@ const theme = createTheme({
     MuiPickersDay: {
       styleOverrides: {
         root: {
-          color: "rgba(128, 131, 137, 1);",
+          color: "var(--color-font-gray-90)",
           "&.Mui-selected": {
-            color: "rgb(24, 233, 208)",
+            color: "var(--color-accent-100)",
             backgroundColor: "rgba(24, 233, 208, 0.2) !important",
           },
           "&.Mui-selected:hover": {
-            color: "rgb(24, 233, 208)",
+            color: "var(--color-accent-100)",
             backgroundColor: "rgba(24, 233, 208, 0.3) !important",
           },
           "&:hover": {
-            backgroundColor: "rgba(35, 36, 37, 1)",
+            backgroundColor: "var(--color-background-60)",
           },
           "&.Mui-disabled": {
             color: "rgba(128, 131, 137, 0.5) !important",
@@ -160,7 +162,7 @@ const theme = createTheme({
           justifyContent: "space-between",
         },
         weekDayLabel: {
-          color: "rgba(128, 131, 137, 1)",
+          color: "var(--color-font-gray-90)",
         },
       },
     },
@@ -170,12 +172,12 @@ const theme = createTheme({
           marginTop: "0px",
           padding: "0px",
           "& .MuiPickersArrowSwitcher-button": {
-            color: "rgba(128, 131, 137, 1);",
+            color: "var(--color-font-gray-90);",
           },
         },
 
         switchViewButton: {
-          color: "rgba(128, 131, 137, 1);",
+          color: "var(--color-font-gray-90);",
         },
       },
     },
@@ -202,10 +204,10 @@ const theme = createTheme({
           "& .MuiButton-root": {
             color: "#ffffff",
             width: "100%",
-            backgroundColor: "rgba(4, 95, 253, 1)",
+            backgroundColor: "var(--color-primary-100)",
           },
           "& .MuiButton-root:hover": {
-            backgroundColor: "rgba(4, 95, 253, 1) !important",
+            backgroundColor: "var(--color-primary-100) !important",
           },
         },
       },
@@ -214,11 +216,13 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           backgroundColor: "black",
-          color: "rgba(128, 131, 137, 1)",
+          color: "var(--color-font-gray-90) !important",
+          borderBottom:"0px !important",
           maxHeight: "11rem",
           "& .MuiList-root": {
             width: "75px",
             border: "0",
+            gap: "0px !important",
             scrollbarWidth: "none", // For Firefox
             "-ms-overflow-style": "none", // For IE and Edge
             "&::-webkit-scrollbar": {
@@ -233,8 +237,8 @@ const theme = createTheme({
             borderRadius: "0px",
           },
           "& .Mui-selected": {
-            backgroundColor: "rgba(24, 233, 208, 0.1) !important",
-            color: "rgb(24, 233, 208) !important",
+            backgroundColor: "var(--color-accent-300) !important",
+            color: "var(--color-accent-100) !important",
           },
         },
       },
@@ -242,7 +246,7 @@ const theme = createTheme({
     MuiPaper: {
       styleOverrides: {
         root: {
-          backgroundColor: "black",
+          backgroundColor: "var(--color-background-80) !important",
           color: "white",
           borderRadius: "1.25rem",
           overflowY: "auto", // Ensures scrolling
@@ -256,7 +260,7 @@ const theme = createTheme({
         root: {
           "& .MuiInputBase-root": {
             height: "2.75rem",
-            backgroundColor: "rgba(12,13,13,1)",
+            backgroundColor: "var(--color-background-100)",
           },
           "& .MuiOutlinedInput-input": {
             padding: "0px 0.625rem",
@@ -268,7 +272,7 @@ const theme = createTheme({
           },
           "& .Mui-focused": {
             "& fieldset": {
-              border: "1px solid rgb(24, 233, 208) !important",
+              border: "1px solid -var(-color-accent-100) !important",
               borderRadius: "0.75rem !important",
             },
           },
@@ -295,13 +299,13 @@ const theme = createTheme({
           },
           "& .Mui-focused": {
             "& fieldset": {
-              border: "1px solid rgb(24, 233, 208) !important",
+              border: "1px solid -var(-color-accent-100) !important",
               borderRadius: "0.75rem !important",
             },
           },
         },
         paper: {
-          backgroundColor: "black", // Background color of the list
+          backgroundColor: "var(--color-background-80) !important", // Background color of the list
           padding: "0.5rem !important",
         },
         inputRoot: {
@@ -309,7 +313,7 @@ const theme = createTheme({
         },
         listbox: {
           padding: "0px !important", // Apply padding override
-          backgroundColor: "black", // Set the background color of the list
+          backgroundColor: "var(--color-background-80) !important", // Set the background color of the list
           "& .MuiInputBase-root": {
             padding: "0px !important", // Override default padding for the input base
           },
@@ -319,9 +323,12 @@ const theme = createTheme({
     MuiList: {
       styleOverrides: {
         root: {
-          backgroundColor: "black",
+          backgroundColor: "var(--color-background-80) !important",
           color: "white",
-          padding: "0px",
+          padding: "0.5rem",
+          display :"flex",
+          flexDirection : "column",
+          gap: "0.5rem",
           scrollbarWidth: "none", // Hide scrollbar in Firefox
           "&::-webkit-scrollbar": { display: "none" }, // Hide scrollbar in Chrome/Safari
         },
@@ -372,13 +379,13 @@ const theme = createTheme({
           },
           "& .MuiDataGrid-overlay": {
             color: "white",
-            backgroundColor: "rgba(12, 13, 13, 1)",
+            backgroundColor: "var(--color-background-100)",
           },
           "& .MuiDataGrid-selectedRowCount": {
             opacity: 0,
           },
           "& .Mui-selected .MuiSvgIcon-root": {
-            color: "rgb(24, 233, 208)",
+            color: "var(--color-accent-100)",
           },
           "& .first-row": {
             borderRadius: 2,
@@ -420,6 +427,13 @@ const theme = createTheme({
         },
         selectIcon: {
           color: "white",
+        },
+        select: {
+          color: "white",
+          borderRadius: "0.75rem",
+          "&:hover": {
+            backgroundColor: "var(--color-background-60) !important",
+          },
         },
       },
     },

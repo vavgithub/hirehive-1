@@ -120,7 +120,7 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
           open={Boolean(anchorEl)}
           onClose={handleClose}
           PaperProps={{
-            style: { maxHeight: 300, width: '15.6rem' ,boxShadow: '3px 5px 50px rgba(25, 25, 25, 0.75)', borderRadius : "0.75rem",padding : "0.5rem",backgroundColor: 'black',
+            style: { maxHeight: 300, width: '15.6rem' ,boxShadow: '3px 5px 50px rgba(25, 25, 25, 0.75)', borderRadius : "0.75rem",
 
             },
           }}
@@ -182,7 +182,6 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
               <MenuItem
                 selected={reviewer?._id === selectedReviewer?._id}
                 sx={{
-                  margin : "0.5rem 0px !important",
                   padding :"0.375rem 1rem", 
                   borderRadius : "0.75rem",
                 }}
@@ -225,7 +224,7 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
           open={Boolean(selectedAnchor)}
           onClose={handleClose}
           PaperProps={{
-            style: { maxHeight: 300, width: '250px' ,boxShadow: '3px 5px 50px rgba(25, 25, 25, 0.75)', borderRadius : "0.75rem",padding : "0.5rem",backgroundColor: 'black',
+            style: { maxHeight: 300, width: '250px' ,boxShadow: '3px 5px 50px rgba(25, 25, 25, 0.75)', borderRadius : "0.75rem",padding : "0.5rem",
 
             },
           }}
@@ -320,26 +319,6 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
       loading={isLoading}
       value={selectedReviewer}
       onChange={(event, newValue) => handleSelect(newValue)}
-      // ListboxProps={{
-      //   sx: {
-      //     padding : "0px !important",
-      //     backgroundColor: 'black', // Set the background color of the list
-      //     "& .MuiInputBase-root": {
-      //         padding: "0px !important", // Override the default padding
-      //       },
-      //   },
-      // }}
-       // Override the default noOptionsText with a styled MenuItem
-       // 1) Override Paper to ensure a black background
-      //  componentsProps={{
-      //   paper: {
-      //     sx: {
-      //       backgroundColor: 'black',
-      //       color: 'white',
-      //     },
-      //   },
-      // }}
-      // 2) Customize the "no options" text
       noOptionsText={
         <MenuItem
         >
@@ -380,10 +359,8 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
           key={option._id}
           selected={option?._id === selectedReviewer?._id}
           sx={{
-            backgroundColor: 'black', // Set the background color of each option
             color: 'white',           // Set the text color of each option
             margin : "0.25rem 0px",
-           
           }}
         >
           <ListItemAvatar>
@@ -394,11 +371,6 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
             </Avatar>
           </ListItemAvatar>
           <ListItemText
-            // sx={{
-            //   "& .MuiTypography-root": {
-            //     fontFamily: "Outfit", // Apply the custom font explicitly to the Typography
-            //   },
-            // }}
           primary={option?.firstName + " " + option?.lastName} />
         </MenuItem>
       )}

@@ -40,7 +40,7 @@ const MenuItems = {
   ]
 };
 
-const ThreeDots = ({ job, handleAction, page, orgId, isPinned, role , extraStyles}) => {
+const ThreeDots = ({ job, handleAction, page, orgId, isPinned, role , extraStyles , customBgColor , customBgHover}) => {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef(null);
 
@@ -85,7 +85,7 @@ const ThreeDots = ({ job, handleAction, page, orgId, isPinned, role , extraStyle
   return (
     <div className={" relative " + extraStyles} ref={menuRef}>
       <button onClick={toggleMenu} className="focus:outline-none flex items-center ">
-        <IconWrapper hasBg customBgHover={'hover:bg-background-80'} icon={EllipsisVertical} customIconSize={7} customStrokeWidth={7} />
+        <IconWrapper hasBg={customBgColor ? customBgColor : 'bg-background-90'} customBgHover={customBgHover ? customBgHover : 'hover:bg-background-60'} icon={EllipsisVertical} customIconSize={7} customStrokeWidth={7} />
       </button>
         <Popover
           disableScrollLock
@@ -106,26 +106,25 @@ const ThreeDots = ({ job, handleAction, page, orgId, isPinned, role , extraStyle
               width: '12rem',
               borderRadius: '0.75rem',
               padding: '0.5rem',
-              backgroundColor: 'rgba(22, 23, 24, 1)',
               marginTop: '0.75rem',
             },
           }}
         >
-          <div className="flex flex-col gap-2 px-1 py-2 w-full text-white">
+          <div className="flex flex-col gap-2  w-full text-white">
           {(job?.status === 'open' && (role === "Admin" || role === "Hiring Manager")) &&
           <MenuItem
               key={pinUnpinMenuItems[isPinned ? 'unpin' : 'pin']?.action}
           sx={{
             padding: '0.5rem 1rem',
             borderRadius: '0.75rem',
-            backgroundColor: 'rgba(22, 23, 24, 1)',
+            backgroundColor: 'var(--color-background-80)',
             display: 'flex',
             fontSize: '0.875rem',
             alignItems: 'center',
             gap: '0.75rem',
             color: 'rgba(255, 255, 255, 1)', // default color
             '&:hover': {
-              backgroundColor: 'rgba(35, 36, 37, 1)',
+              backgroundColor: 'var(--color-background-60)',
               color: 'rgba(255, 255, 255, 1)', // custom white color
               '& .MuiTypography-root': {
                 color: pinUnpinMenuItems[isPinned ? 'unpin' : 'pin']?.style?.color ?? 'rgba(255, 255, 255, 1) !important', // force Typography to be white
@@ -161,14 +160,14 @@ const ThreeDots = ({ job, handleAction, page, orgId, isPinned, role , extraStyle
                       sx={{
                         padding: '0.5rem 1rem',
                         borderRadius: '0.75rem',
-                        backgroundColor: 'rgba(22, 23, 24, 1)',
+                        backgroundColor: 'var(--color-background-80)',
                         display: 'flex',
                         fontSize: '0.875rem',
                         alignItems: 'center',
                         gap: '0.75rem',
                         color: 'rgba(255, 255, 255, 1)', // default color
                         '&:hover': {
-                          backgroundColor: 'rgba(35, 36, 37, 1)',
+                          backgroundColor: 'var(--color-background-60)',
                           color: 'rgba(255, 255, 255, 1)', // custom white color
                           '& .MuiTypography-root': {
                             color: style?.color ?? 'rgba(255, 255, 255, 1) !important', // force Typography to be white
