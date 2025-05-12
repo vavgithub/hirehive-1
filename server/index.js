@@ -89,6 +89,8 @@ const PORT = envConfig.PORT;
 app.use(handleUploadError)
 
 async function addPhPrefix(){
+      console.time("Execution Time"); // Start measuring time
+
   await candidates.updateMany(
     { phone: { $type: "string", $regex: /^\d{10}$/ } },
     [
@@ -110,13 +112,17 @@ async function addPhPrefix(){
       }
     ]
   );  
+      console.timeEnd("Execution Time"); // End measuring time and log it
 }
 
 async function makeJobPublic(){
+  console.time("Execution Time"); // Start measuring time
+
   await jobs.updateMany(
     {isPublic : { $exists : false }},
     {$set : {isPublic : true}}
   )
+  console.timeEnd("Execution Time"); // End measuring time and log it
 }
 
 async function updateScheduledDatesToUTC() {
@@ -211,7 +217,7 @@ async function updateScheduledDatesToUTC() {
     //     2
     //   )
     // );
-
+    await candidate.save()
   }
 
   console.log("Count of non-empty callHistories:", countOfCallHistory);
@@ -223,47 +229,47 @@ async function updateScheduledDatesToUTC() {
 
 
 
-// async function updationForCompany(){
+async function updationForCompany(){
 
-//     let jobsArr = await jobs.find()
-//     jobsArr.forEach(async(job) => {
-//       // Find the user associated with the job
-//       const user = await User.findOne({ _id: job.createdBy });
+    let jobsArr = await jobs.find()
+    jobsArr.forEach(async(job) => {
+      // Find the user associated with the job
+      const user = await User.findOne({ _id: job.createdBy });
 
-//       // If user exists, update the job with company_id from user
-//       if (user && user.company_id) {
-//         await jobs.updateOne(
-//           { _id: job._id }, // Find the specific job document
-//           { $set: { company_id: user.company_id } } // Only update company_id
-//         );
-//       }
-//     });
+      // If user exists, update the job with company_id from user
+      if (user && user.company_id) {
+        await jobs.updateOne(
+          { _id: job._id }, // Find the specific job document
+          { $set: { company_id: user.company_id } } // Only update company_id
+        );
+      }
+    });
 
-//     console.time("Execution Time"); // Start measuring time
-//     const users = await candidates.find();
-//     for(let user of users){
-//       for(let app of user?.jobApplications){
-//         const job = await jobs.findById({_id : app.jobId}).populate('company_id');
+    console.time("Execution Time"); // Start measuring time
+    const users = await candidates.find();
+    for(let user of users){
+      for(let app of user?.jobApplications){
+        const job = await jobs.findById({_id : app.jobId}).populate('company_id');
 
-//         const companyDetails = {
-//           _id : job?.company_id?._id,
-//           name :job?.company_id?.name
-//         }
+        const companyDetails = {
+          _id : job?.company_id?._id,
+          name :job?.company_id?.name
+        }
 
-//         if(job?.company_id?._id && job?.company_id?.name && app?.jobId){
-//           const userWithApplication = await candidates.findOneAndUpdate({
-//             _id: user?._id,
-//             "jobApplications.jobId" : app.jobId
-//           },{
-//             $set : {
-//               "jobApplications.$.companyDetails" : companyDetails
-//             }
-//           })
-//         }
-//       }
-//     }
-//     console.timeEnd("Execution Time"); // End measuring time and log it
-// }
+        if(job?.company_id?._id && job?.company_id?.name && app?.jobId){
+          const userWithApplication = await candidates.findOneAndUpdate({
+            _id: user?._id,
+            "jobApplications.jobId" : app.jobId
+          },{
+            $set : {
+              "jobApplications.$.companyDetails" : companyDetails
+            }
+          })
+        }
+      }
+    }
+    console.timeEnd("Execution Time"); // End measuring time and log it
+}
 
 const userFirstLast = async () => {
     console.time("Execution Time"); // Start measuring time
@@ -303,6 +309,7 @@ const userFirstLast = async () => {
 }
 
 const companyMembersFirstLast = async () => {
+    console.time("Execution Time"); // Start measuring time
   await Company.updateMany(
     {
       "invited_team_members.name": { $exists: true },
@@ -363,6 +370,7 @@ const companyMembersFirstLast = async () => {
       }
     ]
   );  
+    console.timeEnd("Execution Time"); // End measuring time and log it
 }
 
 //For JobType based filters
@@ -472,14 +480,14 @@ connectDB()
         `Server running in ${environment} mode on port ${PORT}`
       )
     );
-    // dbUpdater()
 
     // Start the scheduled jobs
     startScheduledJobs();
-
+    
     //Seeding Assessment Templates
     seedTemplates()
-
+    
+    // dbUpdater()
     // updationForCompany()
     // inviteToRequestUpdater() //First
     // inviteToRequestUpdaterMember() //Second

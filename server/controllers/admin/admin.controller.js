@@ -316,6 +316,11 @@ export const getDetailsForDashboard = asyncHandler(async (req,res) => {
   const companyJobIds = companyJobs?.map(job => job._id);
 
   const pipeline = [
+    {
+      $match: {
+        isVerified : true
+      }
+    },
     { $unwind: "$jobApplications" },
     { 
       $match: { 
@@ -564,10 +569,16 @@ export const getDetailsForDashboard = asyncHandler(async (req,res) => {
   //Top Applicants with Higher Assessment Score
   const getTopCandidates = async () => {
     const pipeline = [
+      {
+        $match: {
+          isVerified : true
+        }
+      },
       { $unwind: "$jobApplications" },
       { 
         $match: { 
           "jobApplications.jobId": { $in: companyJobIds },
+          "jobApplications.assessment_id": { $exists : true },
           hasGivenAssessment: true
         }
       },
@@ -589,7 +600,7 @@ export const getDetailsForDashboard = asyncHandler(async (req,res) => {
           portfolio: "$portfolio",
           noticePeriod:  "$noticePeriod",
           skills:  "$skills",
-          assessmentScore: { $arrayElemAt: ["$questionnaireAttempts.score", 0] }
+          assessmentScore: "$jobApplications.assessmentResponse.score" 
         }
       },
       {
@@ -625,6 +636,11 @@ export const getDetailsForDashboard = asyncHandler(async (req,res) => {
 
   const topCandidates = await getTopCandidates();
   const getAllCandidates = await candidates.aggregate([
+    {
+      $match: {
+        isVerified : true
+      }
+    },
     { $unwind: "$jobApplications" }, // Flatten jobApplications array
     { 
         $match: { 

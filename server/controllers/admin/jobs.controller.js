@@ -89,6 +89,11 @@ export const StatisticsController = {
       // CANDIDATE STATISTICS: Combine 2 aggregations into 1
       const getCandidateStatistics = async () => {
         const pipeline = [
+          {
+            $match: {
+              isVerified : true
+            }
+          },
           { $unwind: "$jobApplications" },
           {
             $lookup: {

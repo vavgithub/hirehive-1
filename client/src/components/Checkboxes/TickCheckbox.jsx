@@ -12,7 +12,7 @@ const TickCheckbox = ({
     labelClassName = "typography-body hover:text-accent-100 whitespace-nowrap  cursor-pointer"
 }) => {
     return (
-        <div className={`flex items-center gap-2 ${className} ${checked ? 'selection-primary' : ''}`}>
+        <div className={`flex items-center gap-2 ${className} ${(checked && label) ? 'selection-primary' : ''}`}>
             <div className="relative  flex items-center justify-center">
                 <input
                     type="checkbox"
