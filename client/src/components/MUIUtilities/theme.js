@@ -339,7 +339,7 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           borderRadius: "0.75rem",
-          backgroundColor: "black",
+          // backgroundColor: "black",
           "& .MuiDataGrid-columnHeaders": {
             borderTop: "none",
             borderBottom: "none",
@@ -386,6 +386,10 @@ const theme = createTheme({
           },
           "& .Mui-selected .MuiSvgIcon-root": {
             color: "var(--color-accent-100)",
+          },
+          "& .MuiDataGrid-row.Mui-selected": {
+            color: "var(--color-accent-100) !important",
+            backgroundColor: "var(--color-accent-300) !important",
           },
           "& .first-row": {
             borderRadius: 2,
