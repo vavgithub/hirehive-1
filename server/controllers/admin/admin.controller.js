@@ -544,11 +544,7 @@ export const getDetailsForDashboard = asyncHandler(async (req,res) => {
 
   //Top 3 Interviews
   const sortedInterviews = interviews
-  .map(interview => ({
-      ...interview,
-      interviewDate: updateDateWithTime(interview.scheduledDate, interview.scheduledTime)
-  }))
-  .sort((a, b) => a.interviewDate - b.interviewDate)
+  .sort((a, b) => a.scheduledDate - b.scheduledDate)
   .filter((_,i) => i < 3);
 
   //Interviews based on Stages
