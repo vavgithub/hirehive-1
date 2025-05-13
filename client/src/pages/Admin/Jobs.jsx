@@ -22,6 +22,7 @@ import { Archive, Briefcase, CircleCheck, CircleCheckBig, CirclePlus, CircleX, F
 import Header from '../../components/utility/Header';
 import LoaderModal from '../../components/Loaders/LoaderModal';
 import usePinnedJobs from '../../hooks/usePinnedJobs';
+import { getRoute, ROUTE_KEY } from '../../config/permissions.config';
 
 
 const fetchJobs = (page, status,pinned) => axios.get(`/jobs/jobs?page=${page}&status=${status}&pinned=${JSON.stringify(pinned)}`).then(res => res.data);
@@ -219,7 +220,7 @@ const Jobs = () => {
                 reOpenMutation.mutate(job._id)
                 break;
             case ACTION_TYPES.EDIT:
-                navigate(`/${role === 'Admin' ? 'admin' : 'hiring-manager'}/edit-job/${job._id}`);
+                navigate(`${getRoute(role,ROUTE_KEY.EDIT_JOB)}/${job._id}`);
                 setModalOpen(false);
                 break;
             default:
@@ -262,21 +263,11 @@ const Jobs = () => {
     };
 
     const handleViewJob = (jobId) => {
-        if (role === "Admin") {
-            navigate(`/admin/jobs/view-job/${jobId}`);
-        }
-        if (role === "Hiring Manager") {
-            navigate(`/hiring-manager/jobs/view-job/${jobId}`);
-        }
+        navigate(`${getRoute(role,ROUTE_KEY.JOBS_VIEW_JOB)}/${jobId}`);
     };
 
     const handleCreateJob = () => {
-        if (role === "Admin") {
-            navigate("/admin/create-job");
-        }
-        if (role === "Hiring Manager") {
-            navigate("/hiring-manager/create-job");
-        }
+        navigate(getRoute(role,ROUTE_KEY.CREATE_JOB));
     }
 
 
@@ -347,7 +338,7 @@ const Jobs = () => {
     return (
         <Container >
            <Header
-            withKebab="true"
+            withKebab={true}
             page={currentPage}
             HeaderText="Jobs"
             handleAction={handleAction}

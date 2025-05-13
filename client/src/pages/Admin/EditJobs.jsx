@@ -8,6 +8,7 @@ import { showErrorToast, showSuccessToast } from '../../components/ui/Toast';
 import Loader from '../../components/Loaders/Loader';
 import { useAuthContext } from '../../context/AuthProvider';
 import Container from '../../components/Cards/Container';
+import { getRoute, ROUTE_KEY } from '../../config/permissions.config';
 
 const EditJobs = () => {
   const { id } = useParams();
@@ -25,7 +26,7 @@ const EditJobs = () => {
     onSuccess: (data) => {
       showSuccessToast('Job Updated', `"${data.data.job.jobTitle}" updated successfully`);
       setTimeout(() => {
-        navigate(role === "Admin" ? '/admin/jobs' : '/hiring-manager/jobs');  
+        navigate(getRoute(role,ROUTE_KEY.JOBS));  
       }, 1000);
     },
     onError: (error) => {

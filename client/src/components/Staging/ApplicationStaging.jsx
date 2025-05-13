@@ -9,6 +9,7 @@ import { ensureAbsoluteUrl } from '../../utility/ensureAbsoluteUrl';
 import LinkView from '../ui/LinkView';
 import IconWrapper from '../Cards/IconWrapper';
 import { Check, ChevronDown, X } from 'lucide-react';
+import { hasPermission, PERMISSIONS } from '../../config/permissions.config';
 // const stageComponents = {
 //     Portfolio,
 //     Screening,
@@ -191,7 +192,6 @@ const ApplicationStaging = ({ candidateId, jobId ,jobStatus}) => {
 
             {/* Stage Content */}
             <div className="stages-content mt-4">
-                {/* {selectedStage && renderStageComponent(selectedStage)} */}
                 <GlobalStaging 
                 role={role} 
                 selectedStage={selectedStage} 
@@ -204,7 +204,7 @@ const ApplicationStaging = ({ candidateId, jobId ,jobStatus}) => {
             {/* Question Responses Accordion */}
 
             {
-                (role === "Hiring Manager" || role === "Admin") && (
+                hasPermission(role,PERMISSIONS.SHOW_ADDITIONAL_QUESTIONS) && (
 
                     <AccordionSection
                         title="Additional Questions"

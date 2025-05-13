@@ -136,7 +136,7 @@ export const router = createBrowserRouter([
         element: <Jobs />
       },
       {
-        path: "assessment/:id",
+        path: "assessment/:id/:jobId",
         element: <AssessmentResponse />
       },
       {

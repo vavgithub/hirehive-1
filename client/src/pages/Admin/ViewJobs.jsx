@@ -205,7 +205,7 @@ const ViewJobs = () => {
         <Container>
             <Header
                 HeaderText={formData?.jobTitle}
-                withKebab="true"
+                withKebab={true}
                 withBack="true"
                 onBack={() => navigate(-1)}
                 job={formData}

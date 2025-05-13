@@ -11,6 +11,7 @@ import { useLocation } from 'react-router-dom';
 import { showSuccessToast } from '../ui/Toast';
 import IconWrapper from './IconWrapper';
 import { ClockArrowUp, DatabaseZap, SignalHigh } from 'lucide-react';
+import { hasPermission, PERMISSIONS } from '../../config/permissions.config';
 
 // Helper function to truncate text to specific number of words
 const truncateWords = (text, wordLimit) => {
@@ -47,7 +48,7 @@ const JobCard = ({
   isCandidate,
   isAuthenticatedCandidate,
   application, // Receive the application prop
-  role, 
+  role = "Candidate", 
   pinnedJobs = []
 }) => {
   const formattedCreatedAt = getTimeAgo(job.createdAt);
@@ -144,7 +145,7 @@ const JobCard = ({
           <span className="bg-blue-300 text-blue-100 typography-body px-4 py-2 rounded-xl">
             Applied
           </span>}
-          {(role === "Admin" || role === "Hiring Manager") && job?.status === 'open' && 
+          {hasPermission(role,PERMISSIONS.SHOW_JOBCARD_MANAGEMENT_OPTION) && job?.status === 'open' && 
           <div className='flex items-center gap-4'>
             {
               pinnedJobs?.includes(job?._id) && 
@@ -178,11 +179,11 @@ const JobCard = ({
           icon={() => <IconWrapper size={1} icon={SignalHigh}  isInActiveIcon />}
           text={`${job.experienceFrom} - ${job.experienceTo} Year`}
         />
-        {(role !== "Admin" && role !== "Hiring Manager" && role !== "Design Reviewer") && (job?.companyDetails?.name || job?.company_id?.name ) && <JobDetailItem
+        {hasPermission(role,PERMISSIONS.SHOW_JOBCARD_COMPANY_NAME) && (job?.companyDetails?.name || job?.company_id?.name ) && <JobDetailItem
         icon={() => <IconWrapper size={1} icon={Building2}  isInActiveIcon />}
         text={job?.companyDetails?.name || job?.company_id?.name }
         />}
-        {(role === "Admin" || role === "Hiring Manager" ) && (job?.isPublic ) && <JobDetailItem
+        {hasPermission(role,PERMISSIONS.SHOW_JOBCARD_JOB_IS_PUBLIC) && (job?.isPublic ) && <JobDetailItem
         icon={() => <IconWrapper size={1} icon={Rss}  isInActiveIcon />}
         text={"Open to All"}
         />}

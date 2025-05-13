@@ -11,6 +11,7 @@ import Logo from '../../svg/Logo/lightLogo.svg'
 import { InputField } from '../../components/Inputs/InputField';
 import IconWrapper from '../../components/Cards/IconWrapper';
 import { Briefcase, FileText } from 'lucide-react';
+import { getRoute, ROUTE_KEY } from '../../config/permissions.config';
 
 const statsOne = [
     { title: 'Jobs Posted', value: 100, icon: () => <IconWrapper size={10} isInActiveIcon icon={Briefcase} /> },
@@ -29,15 +30,8 @@ const Login = () => {
     const { data: authData, isLoading: authLoading, refetch: refetchAuth } = useAuth();
 
     useEffect(() => {
-        if (authData) {
-            if (authData.role === 'Hiring Manager') {
-                navigate('/hiring-manager/dashboard');
-            }else if(authData.role === 'Admin') {
-                navigate('/admin/dashboard');
-            }
-             else if (authData.role === 'Design Reviewer') {
-                navigate('/design-reviewer/dashboard');
-            }
+        if (authData?.role) {
+          navigate(getRoute(authData.role,ROUTE_KEY.DASHBOARD));
         }
     }, [authData, navigate]);
 

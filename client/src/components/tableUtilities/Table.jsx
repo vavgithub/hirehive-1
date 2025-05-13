@@ -26,6 +26,7 @@ import MuiCustomStylesForDataGrid from './MuiCustomStylesForDataGrid';
 import IconWrapper from '../Cards/IconWrapper';
 import { Download } from 'lucide-react';
 import TickCheckbox from '../Checkboxes/TickCheckbox';
+import { getRoute, ROUTE_KEY } from '../../config/permissions.config';
 
 const Table = ({
   jobId, jobData,
@@ -412,16 +413,8 @@ const Table = ({
     }
 
     // Default navigation logic
-    if (role === "Hiring Manager") {
-
-      const baseUrl = readOnly
-        ? "/hiring-manager/candidates/view-candidate"
-        : "/hiring-manager/jobs/view-candidate";
-      navigate(`${baseUrl}/${params?.row?._id}/${readOnly ? params.row.jobId : jobId}`);
-    } else if (role === "Admin") {
-      const baseUrl = readOnly
-        ? "/admin/candidates/view-candidate"
-        : "/admin/jobs/view-candidate";
+    if (role === "Hiring Manager" || role === "Admin") {
+      const baseUrl = readOnly ? getRoute(role,ROUTE_KEY.CANDIDATES_VIEW_CANDIDATE) : getRoute(role,ROUTE_KEY.JOBS_VIEW_CANDIDATE)
       navigate(`${baseUrl}/${params?.row?._id}/${readOnly ? params.row.jobId : jobId}`);
     } else {
       navigate(`view-candidate/${params.row._id}/${readOnly ? params.row.jobId : jobId}`, { replace: true });

@@ -9,6 +9,7 @@ import IconWrapper from "../Cards/IconWrapper";
 import { CircleCheck, CircleX, ClipboardCheck, FileUser, FolderOpen, Globe } from "lucide-react";
 import { UNKNOWN_PROFILE_PICTURE_URL } from "../../utility/config";
 import { formatPhoneNumber } from "../Form/PhoneInputField";
+import { hasPermission, PERMISSIONS } from "../../config/permissions.config";
 
 const getCommonColumns = (handleDocumentClick) => [
   {
@@ -80,7 +81,7 @@ const getCommonColumns = (handleDocumentClick) => [
 ];
 
 const getExpAndCtcColumns = (role, disableCTC = false, disableHourly = false) => [
-  ...(role === 'Hiring Manager' ? [
+  ...(hasPermission(role,PERMISSIONS.SHOW_TABLE_BUDGET_DETAILS) ? [
     ...(disableHourly ? [] : [{
       field: 'hourlyRate',
       headerName: 'Hourly Rate',

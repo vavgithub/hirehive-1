@@ -11,6 +11,7 @@ import { GridRow } from '../Grid/GridRow';
 import { Button } from '../Buttons/Button';
 import IconWrapper from '../Cards/IconWrapper';
 import { Pencil } from 'lucide-react';
+import { hasPermission, PERMISSIONS } from '../../config/permissions.config';
 
 const updateProfessionalDetails = async ({experience, noticePeriod, currentCTC, expectedCTC, hourlyRate , id, jobId}) => {
     const response = await axios.patch(`/admin/candidate/update-candidate/${id}/${jobId}`,{experience, noticePeriod, currentCTC, expectedCTC, hourlyRate });
@@ -120,7 +121,7 @@ const Experience = ({ company, position, startDate, endDate, index }) => (
                   {data.professionalDetails.map((detail, index) => (
                       <DetailRow key={index} label={detail.label} value={detail.value} />
                   ))}
-                  {(job?.jobStatus === "open" && (role === "Admin" || role === "Hiring Manager")) && 
+                  {(job?.jobStatus === "open" && hasPermission(role,PERMISSIONS.SHOW_CANDIDATE_TAB_DETAIL_EDIT)) && 
                   <div onClick={()=>setIsEditing(!isEditing)} className='absolute right-4 bottom-4 p-2 bg-background-70 hover:bg-background-60 rounded-xl cursor-pointer'>
                       <IconWrapper  icon={Pencil} size={0} />
                   </div>}

@@ -6,6 +6,7 @@ import { useAuthContext } from '../../context/AuthProvider';
 import { CheckboxGroup } from '../Checkboxes/CheckboxGroup';
 import IconWrapper from '../Cards/IconWrapper';
 import { CircleSlash2, ClockArrowUp, ClockFading, GraduationCap, Handshake, Hourglass } from 'lucide-react';
+import { hasPermission, PERMISSIONS } from '../../config/permissions.config';
 
 const Filters = ({ filters = {}, handleCheckboxChange, activeTab, handleExperienceFilter, handleBudgetFilter, clearAllFilters }) => {
     const isDisabled = activeTab === 'draft';
@@ -40,7 +41,7 @@ const Filters = ({ filters = {}, handleCheckboxChange, activeTab, handleExperien
                 inactive: () => <IconWrapper size={0} icon={GraduationCap} customIconSize={6} isInActiveIcon />
             }
         },
-        ...((role === "Hiring Manager" || role === "Admin")? [{
+        ...(hasPermission(role,PERMISSIONS.SHOW_FILTER_PART_TIME) ? [{
             value: 'Part Time',
             label: 'Part-time',
             icon: {

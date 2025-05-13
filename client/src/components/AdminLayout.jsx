@@ -10,6 +10,7 @@ import IconWrapper from './Cards/IconWrapper';
 import { Briefcase, FileText, LayoutGrid, LogOut, MonitorDot, Star, User, Users } from 'lucide-react';
 import { UNKNOWN_PROFILE_PICTURE_URL } from '../utility/config';
 import { useSelector } from 'react-redux';
+import { getRoute, hasRoutePermission, ROUTE_KEY } from '../config/permissions.config';
 
 //Screen URLs with BG for All Admin personas
 const ADMIN_BG_SCREENS = [
@@ -36,14 +37,7 @@ const AdminLayout = () => {
 
     // Get profile path based on user role
     const getProfilePath = () => {
-        if (user?.role === 'Hiring Manager') {
-            return '/hiring-manager/profile';
-        } if (user?.role === 'Admin') {
-            return '/admin/profile';
-        }
-        else if (user?.role === 'Design Reviewer') {
-            return '/design-reviewer/profile';
-        }
+        return getRoute(user?.role,ROUTE_KEY.PROFILE);
     };
 
 
@@ -148,35 +142,22 @@ const AdminLayout = () => {
     };
 
     const renderMenuItems = () => {
-        if (user?.role === 'Hiring Manager') {
-            return (
-                <>
-                    <NavItem to="/hiring-manager/jobs" icon={() => <IconWrapper isInActiveIcon icon={Briefcase} />} activeIcon={() => <IconWrapper isActiveIcon icon={Briefcase} />}> Jobs </NavItem>
-                    <NavItem to="/hiring-manager/candidates" icon={() => <IconWrapper isInActiveIcon icon={Users} />} activeIcon={() => <IconWrapper isActiveIcon icon={Users} />}>Candidates</NavItem>
-                </>
-            );
-        }
+        return(
+            <>
+                {user?.role === "Admin" && <NavItem to={getRoute(user.role,ROUTE_KEY.DASHBOARD)} icon={() => <IconWrapper isInActiveIcon icon={LayoutGrid} />} activeIcon={() => <IconWrapper isActiveIcon icon={LayoutGrid} />}> Dashboard </NavItem>}
+                {hasRoutePermission(user?.role,ROUTE_KEY.JOBS) && <NavItem to={getRoute(user.role,ROUTE_KEY.JOBS)} icon={() => <IconWrapper isInActiveIcon icon={Briefcase} />} activeIcon={() => <IconWrapper isActiveIcon icon={Briefcase} />}> Jobs </NavItem>}
+                {hasRoutePermission(user?.role,ROUTE_KEY.CANDIDATES) && <NavItem to={getRoute(user.role,ROUTE_KEY.CANDIDATES)} icon={() => <IconWrapper isInActiveIcon icon={Users} />} activeIcon={() => <IconWrapper isActiveIcon icon={Users} />}>Candidates</NavItem>}
+                {hasRoutePermission(user?.role,ROUTE_KEY.REVIEWS) && <NavItem to={getRoute(user.role,ROUTE_KEY.REVIEWS)} icon={() => <IconWrapper isInActiveIcon icon={Star} />} activeIcon={() => <IconWrapper isActiveIcon icon={Star} />}>Reviews</NavItem>}
+                {hasRoutePermission(user?.role,ROUTE_KEY.SHORTLISTED) && <NavItem to={getRoute(user.role,ROUTE_KEY.SHORTLISTED)} icon={() => <IconWrapper isInActiveIcon icon={MonitorDot} />} activeIcon={() => <IconWrapper isActiveIcon icon={MonitorDot} />}>Future Gems</NavItem>}
+                {hasRoutePermission(user?.role,ROUTE_KEY.TEAMS) && <NavItem to={getRoute(user.role,ROUTE_KEY.TEAMS)} hasHighlighter={newMembersCount > 0} icon={() => <IconWrapper isInActiveIcon icon={FileText} />} activeIcon={() => <IconWrapper isActiveIcon icon={FileText} />}>Teams</NavItem>}
+            </>
+        )
         if (user?.role === 'Admin') {
             return (
                 <>
-                    <NavItem to="/admin/dashboard" icon={() => <IconWrapper isInActiveIcon icon={LayoutGrid} />} activeIcon={() => <IconWrapper isActiveIcon icon={LayoutGrid} />}> Dashboard </NavItem>
-                    <NavItem to="/admin/jobs" icon={() => <IconWrapper isInActiveIcon icon={Briefcase} />} activeIcon={() => <IconWrapper isActiveIcon icon={Briefcase} />}>Jobs</NavItem>
-                    <NavItem to="/admin/candidates" icon={() => <IconWrapper isInActiveIcon icon={Users} />} activeIcon={() => <IconWrapper isActiveIcon icon={Users} />}>All Candidates</NavItem>
-                    <NavItem to="/admin/shortlisted" icon={() => <IconWrapper isInActiveIcon icon={MonitorDot} />} activeIcon={() => <IconWrapper isActiveIcon icon={MonitorDot} />}>Future Gems</NavItem>
-                    <NavItem to="/admin/teams" hasHighlighter={newMembersCount > 0} icon={() => <IconWrapper isInActiveIcon icon={FileText} />} activeIcon={() => <IconWrapper isActiveIcon icon={FileText} />}>Teams</NavItem>
                 </>
             );
         }
-        else if (user?.role === 'Design Reviewer') {
-            return (
-                <>
-                    {/* <NavItem to="/design-reviewer/dashboard" icon={DashboardIcon} activeIcon={DashboardIconActive}>Dashboard</NavItem> */}
-                    <NavItem to="/design-reviewer/candidates" icon={() => <IconWrapper isInActiveIcon icon={Users} />} activeIcon={() => <IconWrapper isActiveIcon icon={Users} />}>Candidates</NavItem>
-                    <NavItem to="/design-reviewer/reviews" icon={() => <IconWrapper isInActiveIcon icon={Star} />} activeIcon={() => <IconWrapper isActiveIcon icon={Star} />}>Reviews</NavItem>
-                </>
-            );
-        }
-        return null;
     };
 
     //To get the exact path

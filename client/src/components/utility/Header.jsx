@@ -12,7 +12,7 @@ export const BackButton = () => {
 
 const Header = ({ 
     HeaderText, 
-    withKebab, 
+    withKebab = false, 
     withBack, 
     job, 
     handleAction, 
@@ -52,7 +52,7 @@ const Header = ({
                 {/* Right section with kebab menu and/or custom content */}
                 <div className="flex items-center gap-4">
                     {rightContent}
-                    {withKebab === "true" && (
+                    {withKebab && (
                         <ThreeDots 
                             job={job} 
                             handleAction={handleAction} 

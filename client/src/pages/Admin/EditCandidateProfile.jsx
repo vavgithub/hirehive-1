@@ -91,7 +91,7 @@ const EditCandidateProfile = () => {
   }else{
     return (
           <Container hasBgColor >
-            <Header HeaderText="Edit Candidate Profile" withKebab='false' withBack="true" />
+            <Header HeaderText="Edit Candidate Profile" withBack="true" />
             <div className='flex gap-6 mt-5'>
               <StyledCard backgroundColor={"bg-background-30"} padding={2} extraStyles=' w-96 h-96  flex flex-col items-center'>
                 <div className='to-background-100 w-64 rounded-xl overflow-hidden'>
