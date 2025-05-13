@@ -221,11 +221,11 @@ const ViewJobs = () => {
 
 
             {activeTab === 'jobDetails' && (
-                <StyledCard padding={2} backgroundColor={"bg-background-30"}>
+                <StyledCard padding={2}>
                     <StatsGrid stats={jobsDetailStats} />
                     <div className='flex justify-between mt-4' >
                         <div className='w-4/5   '>
-                            <h2 className="typography-h4 mb-2">Job Description</h2>
+                            <h3 className="typography-h3 mb-2">Job Description</h3>
                             <div className='text-font-gray typography-body' dangerouslySetInnerHTML={{ __html: formData.jobDescription ? formatDescription(formData.jobDescription) : '' }}></div>
                             <h3 className="typography-h3 mt-4 mb-2">Skills</h3>
                             <div className='flex flex-wrap gap-2'>
@@ -239,7 +239,7 @@ const ViewJobs = () => {
                         </div>
                     </div>
 
-                    <StyledCard padding={2} extraStyles='mt-12'>
+                    <StyledCard padding={2} backgroundColor={'bg-background-80'} extraStyles='mt-12'>
                         <h3 className='typography-h3 mb-4'>Additional Questions</h3>
                         {questions?.length > 0 ? questions.map((question, index) => (
                             <div key={question._id} className="mb-4">
@@ -264,7 +264,7 @@ const ViewJobs = () => {
             )}
 
             {activeTab === 'candidate' && (
-                <StyledCard backgroundColor={"bg-background-30"} >
+                <StyledCard >
                     <div className="mb-4">
                         <StatsGrid stats={candidateStats} />
                     </div>
