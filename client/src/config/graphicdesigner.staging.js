@@ -269,9 +269,9 @@ export const graphicDesignerConfig = [
             ],
             score : {
                 Attitude : 5,
-                UI : 5,
-                UX : 5,
-                Tech : 5,
+                Aesthetics : 5,
+                Creativity : 5,
+                Layout : 5,
                 Communication : 5,
                 Budget : 5,
             },

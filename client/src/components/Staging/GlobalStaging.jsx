@@ -55,7 +55,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
     const { stageTitle, stageConfig, stageBasedConfig , candidateId, jobId} = useMemo(()=>{
       const isValidstage =  stagingConfig[jobProfile]?.filter(stage=> stage?.name === selectedStage);
       const stageTitle = isValidstage?.length > 0 ? isValidstage[0]?.name : "";
-        
+        console.log(jobProfile,isValidstage)
       const stageConfig = isValidstage[0];
       const stageBasedConfig = isValidstage[0]?.contentConfig[currentStatus][role];
       const candidateId = candidateData?._id;
@@ -377,8 +377,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
     const renderScoreCategories = () => {
         const scoreCategories = []
         if(typeof stageConfig?.score === "object"){
-            console.log(Object.keys(stageConfig.score))
-            Object.keys(stageConfig.score).map(scoreLabel => {
+            Object.keys(stageData.score).map(scoreLabel => {
                 if(scoreLabel === "Budget"){
                     if(isBudgetScoreSubmitted){
                         scoreCategories.push(
@@ -398,14 +397,6 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
                 }
             })
         }
-        const categories = [
-            { label: 'Attitude', value: stageData?.score?.Attitude },
-            { label: 'UX', value: stageData?.score?.UX },
-            { label: 'Tech', value: stageData?.score?.Tech },
-            { label: 'Communication', value: stageData?.score?.Communication },
-            { label: 'UI', value: stageData?.score?.UI },
-            ...(isBudgetScoreSubmitted ? [{ label: 'Budget', value: stageData?.score?.Budget }] : []),
-        ];
 
         return (<div className='grid grid-cols-3 gap-3 w-full '>
             {scoreCategories.map((category, index) => (

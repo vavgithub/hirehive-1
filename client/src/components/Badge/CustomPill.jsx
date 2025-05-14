@@ -74,8 +74,8 @@ function CustomPill({
         : "rounded-xl"
     } 
     `;
-  console.log(data, value);
-  if (variant === "selective") {
+
+    if (variant === "selective") {
     return (
       <label {...props} className={styles + "  " + extraStyles} htmlFor={name}>
         <input

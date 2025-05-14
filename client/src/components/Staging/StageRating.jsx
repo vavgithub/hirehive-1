@@ -43,7 +43,7 @@ function StageRating({candidateId,jobId,name,candidate,onSubmit,stageConfig}) {
 
     const handleSubmit = () => {
       if(stageConfig?.hasSplitScoring){
-        if(rating.Attitude < 1 || rating.Communication < 1 || rating.UX < 1 || rating.UI < 1 || rating.Tech < 1){
+        if(Object.entries(rating).filter(([key,value]) => key !== "Budget" && value === 0)?.length > 0){
             showErrorToast("Oopss","Please rate the candidate")
             return
         }

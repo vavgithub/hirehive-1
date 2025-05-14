@@ -269,9 +269,9 @@ export const brandDesignerConfig = [
             ],
             score : {
                 Attitude : 5,
-                UI : 5,
-                UX : 5,
-                Tech : 5,
+                Identity : 5,
+                Consistency : 5,
+                Narrative : 5,
                 Communication : 5,
                 Budget : 5,
             },

@@ -515,8 +515,6 @@ export const applyToJob = async (req, res) => {
       (application) => application.jobId.toString() === jobId
     );
 
-    //Added to avoid breaking with JobProfile for existing jobs and candidates
-    candidate.jobApplications.forEach(app=>app.jobProfile = jobProfile)
 
     if (hasApplied) {
       return res.status(400).json({ message: "You have already applied to this job." });

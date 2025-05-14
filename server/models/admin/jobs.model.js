@@ -1,4 +1,8 @@
 import mongoose from "mongoose";
+import { JOB_PROFILES } from "../../config/jobStagesStatuses.js";
+
+//Fetching allowed job profiles from config file
+const allowedJobProfiles = Object.values(JOB_PROFILES);
 
 // Schema for additional questions in a job
 const questionSchema = new mongoose.Schema({
@@ -48,17 +52,10 @@ const jobSchema = new mongoose.Schema(
       type: String,
       enum: [
         "",
-        "Frontend Developer",
-        "UI UX",
-        "Motion Graphic",
-        "Video Editor",
-        "Digital Marketing Executive",
-        "Project Manager",
-        "Art Director",
-        "3D",
+      ...allowedJobProfiles
         // Add more job profiles as needed
       ],
-      default: "Frontend Developer",
+      default: "UI UX",
     },
     isPublic : {
       type : Boolean,

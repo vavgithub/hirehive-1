@@ -101,6 +101,13 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
       }
     }, [watchedFields.budgetFrom, watchedFields.budgetTo, setError]);
 
+    useEffect(()=>{
+      if(watchedFields.jobProfile !== "" && assessmentTemplates?.length > 0){
+        const profileBasedTemplate = assessmentTemplates.find(template => template.category === watchedFields.jobProfile)
+        setValue("assessment_id",profileBasedTemplate?._id)
+      }
+    },[watchedFields.jobProfile,assessmentTemplates])
+
     if(watchedFields.budgetFrom > 0){
       if(watchedFields.budgetTo < watchedFields.budgetFrom){
         areAllFieldsFilled = false

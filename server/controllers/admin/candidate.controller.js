@@ -476,7 +476,7 @@ export const getCandidateById = async (req, res) => {
       jobApplication: {
         jobId: jobApplication.jobId,
         jobApplied: jobApplication.jobApplied,
-        jobProfile: jobApplication?.jobProfile || "UI UX",
+        jobProfile: jobApplication?.jobProfile || "UI UX", //Dont remove this fallback value
         jobStatus: job ? job.status : "deleted",
         notes: jobApplication.notes,
         jobType: job ? job.employmentType : "NA",

@@ -269,9 +269,9 @@ export const motionDesignerConfig = [
             ],
             score : {
                 Attitude : 5,
-                UI : 5,
-                UX : 5,
-                Tech : 5,
+                Animation : 5,
+                Narrative : 5,
+                Tooling : 5,
                 Communication : 5,
                 Budget : 5,
             },

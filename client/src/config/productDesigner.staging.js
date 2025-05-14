@@ -269,9 +269,9 @@ export const productDesignerConfig = [
             ],
             score : {
                 Attitude : 5,
-                UI : 5,
+                'Core Thinking' : 5,
                 UX : 5,
-                Tech : 5,
+                Consistency : 5,
                 Communication : 5,
                 Budget : 5,
             },

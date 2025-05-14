@@ -269,9 +269,9 @@ export const socialMediaDesignerConfig = [
             ],
             score : {
                 Attitude : 5,
-                UI : 5,
-                UX : 5,
-                Tech : 5,
+                Engagement : 5,
+                Adaptability : 5,
+                Branding : 5,
                 Communication : 5,
                 Budget : 5,
             },
