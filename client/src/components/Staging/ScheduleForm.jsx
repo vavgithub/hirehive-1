@@ -4,7 +4,7 @@ import Datepicker from '../MUIUtilities/Datepicker'
 import Timepicker from '../MUIUtilities/Timepicker'
 import { Button } from '../Buttons/Button';
 import { InputField } from '../Inputs/InputField';
-import { getStages } from './staging.config';
+import { getStages } from '../../config/staging.config';
 import { combineDateWithTime, convertLocalToUTC } from '../../utility/timezoneConverter';
 
 

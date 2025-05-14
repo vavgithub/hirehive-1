@@ -17,7 +17,7 @@ import ResumeViewer from '../../components/utility/ResumeViewer';
 import CustomToolTip from '../../components/Tooltip/CustomToolTip';
 import StyledCard from '../../components/Cards/StyledCard';
 import ScoreChart from '../../components/Charts/ScoreChart';
-import {  getStageColorForChart, maxScoreOfEachStage } from '../../components/Staging/staging.config';
+import {  getStageColorForChart, maxScoreOfEachStage } from '../../config/staging.config';
 import Container from '../../components/Cards/Container';
 import IconWrapper from '../../components/Cards/IconWrapper';
 import { ArrowLeftRight, ChevronUp, ChevronRight, ClipboardCheck, FileText, FileUser, FolderOpen, Globe, Mail, MonitorDot, Notebook, NotebookPen, Phone, Users } from 'lucide-react';

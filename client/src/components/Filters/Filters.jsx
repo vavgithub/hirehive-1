@@ -7,6 +7,7 @@ import { CheckboxGroup } from '../Checkboxes/CheckboxGroup';
 import IconWrapper from '../Cards/IconWrapper';
 import { CircleSlash2, ClockArrowUp, ClockFading, GraduationCap, Handshake, Hourglass } from 'lucide-react';
 import { hasPermission, PERMISSIONS } from '../../config/permissions.config';
+import { getJobProfileAsOptions } from '../../config/jobprofile.config';
 
 const Filters = ({ filters = {}, handleCheckboxChange, activeTab, handleExperienceFilter, handleBudgetFilter, clearAllFilters }) => {
     const isDisabled = activeTab === 'draft';
@@ -51,16 +52,7 @@ const Filters = ({ filters = {}, handleCheckboxChange, activeTab, handleExperien
         }] : []),
     ];
 
-    const jobProfileOptions = [
-        { value: 'UI UX', label: 'UI UX' },
-        { value: 'Motion Graphic', label: 'Motion Graphic' },
-        { value: 'Video Editor', label: 'Video Editor' },
-        { value: '3D', label: '3D' },
-        { value: 'Digital Marketing Executive', label: 'Digital Marketing Executive' },
-        { value: 'Project Manager', label: 'Project Manager' },
-        { value: 'Art Director', label: 'Art Director' },
-        { value: 'Frontend Developer', label: 'Frontend Developer' }
-    ];
+    const jobProfileOptions = getJobProfileAsOptions();
 
     const closedOptions = [
         {

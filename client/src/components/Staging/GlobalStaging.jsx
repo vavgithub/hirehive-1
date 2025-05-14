@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import StyledCard from '../Cards/StyledCard.jsx'
 import StatusBadge from '../ui/StatusBadge'
-import { stagingConfig } from './staging.config.js';   
+import { stagingConfig } from '../../config/staging.config.js';   
 import ClosedBadge from '../../svg/Icons/ClosedBadge.jsx';
 import AssigneeSelector from '../MUIUtilities/AssigneeSelector.jsx';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -374,8 +374,30 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
         </div>
     )
 
-
     const renderScoreCategories = () => {
+        const scoreCategories = []
+        if(typeof stageConfig?.score === "object"){
+            console.log(Object.keys(stageConfig.score))
+            Object.keys(stageConfig.score).map(scoreLabel => {
+                if(scoreLabel === "Budget"){
+                    if(isBudgetScoreSubmitted){
+                        scoreCategories.push(
+                            {
+                                label : scoreLabel,
+                                value :  stageData?.score[scoreLabel]
+                            }
+                        )
+                    }
+                }else{
+                    scoreCategories.push(
+                        {
+                            label : scoreLabel,
+                            value :  stageData?.score[scoreLabel]
+                        }
+                    )
+                }
+            })
+        }
         const categories = [
             { label: 'Attitude', value: stageData?.score?.Attitude },
             { label: 'UX', value: stageData?.score?.UX },
@@ -386,7 +408,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
         ];
 
         return (<div className='grid grid-cols-3 gap-3 w-full '>
-            {categories.map((category, index) => (
+            {scoreCategories.map((category, index) => (
                 <div key={index} className='grid grid-cols-[1fr,1fr] w-full gap-4 items-center'>
                     <span className='typography-body text-font-gray '>{category.label}</span>
                     <BulletMarks marks={category.value} />
