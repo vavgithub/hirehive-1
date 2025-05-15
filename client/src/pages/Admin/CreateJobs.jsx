@@ -19,7 +19,7 @@ const CreateJobs = () => {
     onSuccess: (data) => {
       const action = data.data.status === 'draft' ? 'saved as draft' : 'created';
       showSuccessToast('Job Action', `"${data.data.jobTitle}" ${action} successfully`);
-      navigate(getRoute(role,ROUTE_KEY.JOBS));  
+      navigate(getRoute(role,ROUTE_KEY.ALLJOBS));  
     },
     onError: (error) => {
       // console.error('Error with job action:', error);

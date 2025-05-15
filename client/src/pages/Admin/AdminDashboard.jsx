@@ -20,9 +20,12 @@ import { formatUTCToLocalTimeAuto, timezone, UTCToDateFormatted } from '../../ut
 import { formatPhoneNumber } from '../../components/Form/PhoneInputField'
 import Container from '../../components/Cards/Container'
 import Header from '../../components/utility/Header'
+import { getRoute, ROUTE_KEY } from '../../config/permissions.config'
+import { useAuthContext } from '../../context/AuthProvider'
 
 function AdminDashboard() {
 
+  const { user } = useAuthContext();
   const [viewMore, setViewMore] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
   const [pageSize, setPageSize] = useState(5);
@@ -195,11 +198,11 @@ function AdminDashboard() {
   ]
 
   const handleLeaderBoardRowClick = (params) => {
-    navigate(`/admin/candidates/view-candidate/${params?.row?._id}/${params?.row?.jobApplications?.jobId}`)
+    navigate(`${getRoute(user?.role,ROUTE_KEY.CANDIDATES_VIEW_CANDIDATE)}/${params?.row?._id}/${params?.row?.jobApplications?.jobId}`)
   }
 
   const handleJobRowClick = (params) => {
-    navigate(`/admin/jobs/view-job/${params?.row?._id}`)
+    navigate(`${getRoute(user?.role,ROUTE_KEY.JOBS_VIEW_JOB)}/${params?.row?._id}`)
   }
 
   return (
@@ -249,7 +252,7 @@ function AdminDashboard() {
             {
               dashboardDetails?.interviews?.upcomingInterviews?.length > 0 ? dashboardDetails.interviews.upcomingInterviews.map(interview => {
                 return (
-                  <StyledCard onClick={() => navigate(`/admin/candidates/view-candidate/${interview?._id}/${interview?.jobApplications?.jobId}`)} key={interview?._id} padding={2} backgroundColor={'bg-background-70'}  extraStyles={'mt-4 relative cursor-pointer '}>
+                  <StyledCard onClick={() => navigate(`${getRoute(user?.role,ROUTE_KEY.CANDIDATES_VIEW_CANDIDATE)}/${interview?._id}/${interview?.jobApplications?.jobId}`)} key={interview?._id} padding={2} backgroundColor={'bg-background-70'}  extraStyles={'mt-4 relative cursor-pointer '}>
                     <p className='typography-h3  flex items-center justify-between gap-2 w-full ' >
                       <StageBadge customBg={'bg-background-60'} stage={interview?.jobApplications?.currentStage} customWidth={'w-fit'} />
                       <span className='typography-large-p h-full text-font-gray flex gap-2 items-center'><IconWrapper isInActiveIcon size={0} icon={CalendarDays} />{UTCToDateFormatted(interview?.scheduledDate)} at {formatUTCToLocalTimeAuto(interview?.scheduledDate)}</span>

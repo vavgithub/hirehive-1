@@ -7,7 +7,7 @@ import { useAuthContext } from '../context/AuthProvider';
 import LightLogo from "../svg/Logo/lightLogo.svg"
 import StyledMenu from './MUIUtilities/StyledMenu';
 import IconWrapper from './Cards/IconWrapper';
-import { Briefcase, FileText, LayoutGrid, LogOut, MonitorDot, Star, User, Users } from 'lucide-react';
+import { Briefcase, ChevronDown, ChevronUp, ClipboardCheck, FileText, LayoutGrid, LogOut, MonitorDot, Star, User, Users } from 'lucide-react';
 import { UNKNOWN_PROFILE_PICTURE_URL } from '../utility/config';
 import { useSelector } from 'react-redux';
 import { getRoute, hasRoutePermission, ROUTE_KEY } from '../config/permissions.config';
@@ -88,6 +88,69 @@ const AdminLayout = () => {
         </div>
     );
 
+    const DropDownNavItem = ({
+    to,
+    icon: Icon,
+    activeIcon: ActiveIcon,
+    iconData,
+    children,
+    hasHighlighter,
+    submenu = []
+    }) => {
+    const { pathname } = useLocation();
+    const isActive = pathname.startsWith(to);
+    const [isOpen, setIsOpen] = useState(isActive);
+
+    const toggleDropdown = () => setIsOpen(!isOpen);
+
+    return (
+        <div className="relative flex flex-col rounded-xl">
+        {/* Parent menu item */}
+        <div
+            onClick={toggleDropdown}
+            className={`cursor-pointer w-full flex items-center justify-between min-h-11 gap-2 pl-2 pr-3 py-2 rounded-xl hover:bg-background-60 ${isActive ? 'selection-primary' : ''}`}
+        >
+            <div className="flex items-center gap-2">
+            {isActive ? <ActiveIcon count={iconData} /> : <Icon count={iconData} />}
+            <span className="typography-body">{children}</span>
+            </div>
+            {isOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+        </div>
+
+        {hasHighlighter && (
+            <p className="w-2 absolute right-4 h-2 rounded-full bg-blue-100"></p>
+        )}
+        <div
+            className={`absolute top-[18px] right-0 w-1 h-6 rounded-tl-xl rounded-bl-xl ${isActive ? 'bg-teal-400' : 'bg-transparent'}`}
+        />
+
+        {/* Submenu items */}
+        {isOpen && (
+        <div className={"relative ml-6 mt-2 flex flex-col gap-2 vertical-dashed-line " + (isActive && 'line-open')}>
+            {submenu.map((item) => (
+            <NavLink
+                key={item.to}
+                to={item.to}
+                className={({ isActive }) =>
+                `flex items-center gap-2 py-2 px-2 rounded-xl hover:bg-background-60 typography-body ${
+                    isActive ? 'text-font-accent selection-primary' : ''
+                }`
+                }
+            >
+                {({ isActive, isPending }) => (
+                <>
+                    {(isActive && item.activeIcon) ? <item.activeIcon /> : <item.icon />}
+                    {item.label}
+                </>
+                )}
+            </NavLink>
+            ))}
+        </div>
+        )}
+        </div>
+    );
+    };
+
 
     // Adding Profile and Logout dropdown logic
     const renderProfileMenu = () => {
@@ -142,22 +205,49 @@ const AdminLayout = () => {
     };
 
     const renderMenuItems = () => {
+        const jobsSubMenu = [
+            {
+                to : getRoute(user.role,ROUTE_KEY.ALLJOBS),
+                label : 'All Jobs',
+                icon : () => <IconWrapper isInActiveIcon icon={Briefcase} />,
+                activeIcon : () => <IconWrapper isActiveIcon icon={Briefcase}/>
+            },
+            {
+                to : getRoute(user.role,ROUTE_KEY.ASSESSMENTS),
+                label : 'Assessments',
+                icon : () => <IconWrapper isInActiveIcon icon={ClipboardCheck} />,
+                activeIcon : () => <IconWrapper isActiveIcon icon={ClipboardCheck}/>
+            }
+        ]
+
+        const candidatesSubMenu = [
+            {
+                to : getRoute(user.role,ROUTE_KEY.ALL_CANDIDATES),
+                label : 'All Candidates',
+                icon : () => <IconWrapper isInActiveIcon icon={Users} />,
+                activeIcon : () => <IconWrapper isActiveIcon icon={Users}/>
+            },
+            {
+                to : getRoute(user.role,ROUTE_KEY.SHORTLISTED),
+                label : 'Future Gems',
+                icon : () => <IconWrapper isInActiveIcon icon={MonitorDot} />,
+                activeIcon : () => <IconWrapper isActiveIcon icon={MonitorDot}/>
+            }
+        ]
+
         return(
             <>
                 {user?.role === "Admin" && <NavItem to={getRoute(user.role,ROUTE_KEY.DASHBOARD)} icon={() => <IconWrapper isInActiveIcon icon={LayoutGrid} />} activeIcon={() => <IconWrapper isActiveIcon icon={LayoutGrid} />}> Dashboard </NavItem>}
-                {hasRoutePermission(user?.role,ROUTE_KEY.JOBS) && <NavItem to={getRoute(user.role,ROUTE_KEY.JOBS)} icon={() => <IconWrapper isInActiveIcon icon={Briefcase} />} activeIcon={() => <IconWrapper isActiveIcon icon={Briefcase} />}> Jobs </NavItem>}
-                {hasRoutePermission(user?.role,ROUTE_KEY.CANDIDATES) && <NavItem to={getRoute(user.role,ROUTE_KEY.CANDIDATES)} icon={() => <IconWrapper isInActiveIcon icon={Users} />} activeIcon={() => <IconWrapper isActiveIcon icon={Users} />}>Candidates</NavItem>}
+                {/* {hasRoutePermission(user?.role,ROUTE_KEY.JOBS) && <NavItem to={getRoute(user.role,ROUTE_KEY.JOBS)} icon={() => <IconWrapper isInActiveIcon icon={Briefcase} />} activeIcon={() => <IconWrapper isActiveIcon icon={Briefcase} />}> Jobs </NavItem>} */}
+                {hasRoutePermission(user?.role,ROUTE_KEY.JOBS) && <DropDownNavItem to={getRoute(user.role,ROUTE_KEY.JOBS)} submenu={jobsSubMenu} icon={() => <IconWrapper isInActiveIcon icon={Briefcase} />} activeIcon={() => <IconWrapper isActiveIcon icon={Briefcase} />}> Jobs </DropDownNavItem>}
+                {hasRoutePermission(user?.role,ROUTE_KEY.CANDIDATES) && (hasRoutePermission(user?.role,ROUTE_KEY.ALL_CANDIDATES) && hasRoutePermission(user?.role,ROUTE_KEY.SHORTLISTED)) ?
+                 <DropDownNavItem to={getRoute(user.role,ROUTE_KEY.CANDIDATES)} submenu={candidatesSubMenu} icon={() => <IconWrapper isInActiveIcon icon={Users} />} activeIcon={() => <IconWrapper isActiveIcon icon={Users} />}>Candidates</DropDownNavItem> 
+                 :<NavItem to={getRoute(user.role,ROUTE_KEY.CANDIDATES)} icon={() => <IconWrapper isInActiveIcon icon={Users} />} activeIcon={() => <IconWrapper isActiveIcon icon={Users} />}> Candidates </NavItem>}
                 {hasRoutePermission(user?.role,ROUTE_KEY.REVIEWS) && <NavItem to={getRoute(user.role,ROUTE_KEY.REVIEWS)} icon={() => <IconWrapper isInActiveIcon icon={Star} />} activeIcon={() => <IconWrapper isActiveIcon icon={Star} />}>Reviews</NavItem>}
-                {hasRoutePermission(user?.role,ROUTE_KEY.SHORTLISTED) && <NavItem to={getRoute(user.role,ROUTE_KEY.SHORTLISTED)} icon={() => <IconWrapper isInActiveIcon icon={MonitorDot} />} activeIcon={() => <IconWrapper isActiveIcon icon={MonitorDot} />}>Future Gems</NavItem>}
+                {/* {hasRoutePermission(user?.role,ROUTE_KEY.SHORTLISTED) && <NavItem to={getRoute(user.role,ROUTE_KEY.SHORTLISTED)} icon={() => <IconWrapper isInActiveIcon icon={MonitorDot} />} activeIcon={() => <IconWrapper isActiveIcon icon={MonitorDot} />}>Future Gems</NavItem>} */}
                 {hasRoutePermission(user?.role,ROUTE_KEY.TEAMS) && <NavItem to={getRoute(user.role,ROUTE_KEY.TEAMS)} hasHighlighter={newMembersCount > 0} icon={() => <IconWrapper isInActiveIcon icon={FileText} />} activeIcon={() => <IconWrapper isActiveIcon icon={FileText} />}>Teams</NavItem>}
             </>
         )
-        if (user?.role === 'Admin') {
-            return (
-                <>
-                </>
-            );
-        }
     };
 
     //To get the exact path

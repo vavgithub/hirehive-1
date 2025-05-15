@@ -19,6 +19,7 @@ import { useAuthContext } from '../../context/AuthProvider';
 import Container from '../../components/Cards/Container';
 import IconWrapper from '../../components/Cards/IconWrapper';
 import { Briefcase, Check, Eye, File, FileText, Folder, MonitorDot, MousePointer2, PenTool, Users } from 'lucide-react';
+import { getRoute, ROUTE_KEY } from '../../config/permissions.config';
 
 
 const ViewJobs = () => {
@@ -74,7 +75,7 @@ const ViewJobs = () => {
                 reOpenMutation.mutate(job?._id ?? mainId)
                 break;
             case ACTION_TYPES.EDIT:
-                navigate(role === "Admin" ? `/admin/edit-job/${mainId}` : `/hiring-manager/edit-job/${mainId}`);
+                navigate(`${getRoute(role,ROUTE_KEY.EDIT_JOB)}/${mainId}`);
                 setModalOpen(false);
                 break;
             default:

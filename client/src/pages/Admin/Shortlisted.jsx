@@ -10,14 +10,16 @@ import IconWrapper from '../../components/Cards/IconWrapper';
 import { CircleX } from 'lucide-react';
 import Container from '../../components/Cards/Container';
 import { useAuthContext } from '../../context/AuthProvider';
+import { getRoute, ROUTE_KEY } from '../../config/permissions.config';
+import LoaderModal from '../../components/Loaders/LoaderModal';
 
 const Shortlisted = () => {
-    const { user } = useAuthContext();
+    const { user , isLoading } = useAuthContext();
     
     const queryClient = useQueryClient();
 
     // Fetch shortlisted candidates
-    const { data, isLoading, isError, error } = useQuery({
+    const { data, isLoading : isCandidatesLoading , isError, error } = useQuery({
         queryKey: ['shortlistedCandidates'],
         queryFn: () => axios.get(`admin/candidate/shortlisted/${user?.companyDetails?._id}`).then(res => res.data),
         enabled : !!user?.companyDetails
@@ -109,7 +111,6 @@ const Shortlisted = () => {
         }
     ];
 
-    if (isLoading) return <div className="flex justify-center items-center min-h-screen"><Loader /></div>;
     if (isError) return <div>Error: {error.message}</div>;
 
     const tableData = formatCandidatesForTable();
@@ -121,6 +122,7 @@ const Shortlisted = () => {
 
     return (
         <Container>
+            {(isLoading || isCandidatesLoading) && <LoaderModal />}
             <Header HeaderText={"Future Gems"} />
             <StyledCard padding={2} >
                 {tableData.length > 0 ? (
@@ -130,7 +132,7 @@ const Shortlisted = () => {
                         readOnlyData={tableData}
                         additionalColumns={getShortlistColumn()}
                         jobData={jobData} // Pass job data for employment type filtering
-                        customNavigationPath="/admin/shortlisted/view-candidate" // Custom navigation path for shortlisted view
+                        customNavigationPath={getRoute(user?.role,ROUTE_KEY.SHORTLISTED_VIEW_CANDIDATE)}// Custom navigation path for shortlisted view
                     />
                 ) : (
                     <div className="text-center py-8 bg-background-80 rounded-xl p-6">

@@ -32,7 +32,7 @@ import { showErrorToast, showSuccessToast } from '../../components/ui/Toast';
 import { formatPhoneNumber } from '../../components/Form/PhoneInputField';
 import { UTCToDateFormatted } from '../../utility/timezoneConverter';
 import GlobalDropDown from '../../components/Dropdowns/GlobalDropDown';
-import { getRoute, hasPermission, PERMISSIONS, ROUTE_KEY } from '../../config/permissions.config';
+import { getRoute, hasPermission, hasRoutePermission, PERMISSIONS, ROUTE_KEY } from '../../config/permissions.config';
 
 export const VAVScoreCard = ({ score, stage, scoreStages }) => {
     const [showBreakDown, setShowBreakDown] = useState(false);
@@ -206,20 +206,16 @@ const ViewCandidateProfile = () => {
     }
 
     const [originalPath] = useState(() => {
-        const isJobPath = location.pathname.includes('/admin/jobs/');
-        const isJobPathHR = location.pathname.includes('/hiring-manager/jobs/');
-        const isShortlistedPath = location.pathname.includes('/admin/shortlisted/');
+        const isJobPath = location.pathname.includes('/jobs/');
+        const isShortlistedPath = location.pathname.includes('/shortlisted');
 
         if (isShortlistedPath) {
-            return '/admin/shortlisted';
+            return getRoute(role,ROUTE_KEY.SHORTLISTED);
         } else if (isJobPath) {
-            return `/admin/jobs/view-job/${jobId}`;
-        }
-        if (isJobPathHR) {
-            return `/hiring-manager/jobs/view-job/${jobId}`;
+            return `${getRoute(role,ROUTE_KEY.JOBS_VIEW_JOB)}/${jobId}`;
         }
 
-        return role === "Hiring Manager" ? `/hiring-manager/candidates` : role === "Admin" ? `/admin/candidates` : `/design-reviewer/candidates`;
+        return hasRoutePermission(role,ROUTE_KEY.ALL_CANDIDATES) ? getRoute(role,ROUTE_KEY.ALL_CANDIDATES) : getRoute(role,ROUTE_KEY.CANDIDATES);
     });
 
     // Effect for job switching
@@ -240,10 +236,10 @@ const ViewCandidateProfile = () => {
             navigate(-1);
         } else {
             // Check if we're on a shortlisted candidate view
-            const isShortlistedPath = location.pathname.includes('/admin/shortlisted/');
+            const isShortlistedPath = location.pathname.includes('/shortlisted/');
 
             if (isShortlistedPath) {
-                navigate('/admin/shortlisted');
+                navigate(getRoute(role,ROUTE_KEY.SHORTLISTED));
             } else {
                 navigate(originalPath);
             }
@@ -363,7 +359,13 @@ const ViewCandidateProfile = () => {
     const handleAction = (action) => {
         switch (action) {
             case ACTION_TYPES.EDIT:
-                navigate(`${getRoute(role,ROUTE_KEY.EDIT_CANDIDATE_PROFILE)}/${candidateId}`);
+                navigate(`${getRoute(role,
+                    location.pathname.includes('/candidates/all-candidates') 
+                    ? ROUTE_KEY.CANDIDATES_EDIT_CANDIDATE_PROFILE 
+                    : 
+                    location.pathname.includes('/candidates/shortlisted') 
+                    ? ROUTE_KEY.SHORTLISTED_EDIT_CANDIDATE_PROFILE
+                    : ROUTE_KEY.JOBS_EDIT_CANDIDATE_PROFILE)}/${candidateId}`);
                 break;
             case 'ACTION_2':
                 navigate('/some-other-page');
@@ -403,7 +405,12 @@ const ViewCandidateProfile = () => {
 
     const handleAssignmentNavigation = () => {
 
-        navigate(`${getRoute(role,ROUTE_KEY.ASSESSMENT_RESPONSE)}/${candidateId}/${jobId}`)
+        navigate(`${getRoute(role,
+            location.pathname.includes('/jobs/all-jobs') 
+            ? ROUTE_KEY.JOBS_ASSESSMENT_RESPONSE 
+            : location.pathname.includes('/candidates/shortlisted') 
+            ? ROUTE_KEY.SHORTLISTED_ASSESSMENT_RESPONSE 
+            : ROUTE_KEY.CANDIDATES_ASSESSMENT_RESPONSE)}/${candidateId}/${jobId}`)
 
     }
 

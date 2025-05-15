@@ -431,6 +431,32 @@ input[type='number'] {
 
 
 @layer utilities {
+  .vertical-dashed-line {
+    position: relative;
+  }
+
+  .vertical-dashed-line::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 4px;
+    left: -16px; /* Adjust this to match your margin (e.g., ml-6) */
+    width: 1px;
+    background-image: repeating-linear-gradient(
+      to bottom,
+      var(--color-font-gray-90) 0 4px,     /* dash length */
+      transparent 8px 14px  /* gap length */
+    );
+  }
+
+  .vertical-dashed-line.line-open::before {
+    background-image: repeating-linear-gradient(
+      to bottom,
+      var(--color-accent-100) 0 4px,
+      transparent 8px 14px
+    );
+  }
+
   .bg-custom-complex-gradient {
     background-image: linear-gradient(to left, #045FFD 0%, #0942A3 5%, #0C3273 11%, #0D306E 19%, #111721 39%, #11161E 42%, #121314 47%, #121314 100%);
   }

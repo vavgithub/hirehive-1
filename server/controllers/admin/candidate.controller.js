@@ -978,7 +978,7 @@ export const getAssessmentQuestionsById = async (req, res) => {
 
     const result = await Assessment.aggregate([
       { $match: { _id: assessmentObjectId } },
-      { $project: { questions: 1 } },
+      { $project: { questions: 1 ,title : 1 , category : 1} },
       { $unwind: "$questions" },
       {
         $addFields: {
@@ -998,6 +998,8 @@ export const getAssessmentQuestionsById = async (req, res) => {
       {
         $group: {
           _id: "$_id",
+          title : { $first : '$title'},
+          category : { $first : '$category'},
           questions: { $push: "$questions" }
         }
       }
@@ -1007,6 +1009,8 @@ export const getAssessmentQuestionsById = async (req, res) => {
 
     res.status(200).json({
       success: true,
+      title : result[0]?.title,
+      category : result[0]?.category,
       questions : result[0]?.questions,
     });
   } catch (error) {

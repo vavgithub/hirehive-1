@@ -26,7 +26,7 @@ const EditJobs = () => {
     onSuccess: (data) => {
       showSuccessToast('Job Updated', `"${data.data.job.jobTitle}" updated successfully`);
       setTimeout(() => {
-        navigate(getRoute(role,ROUTE_KEY.JOBS));  
+        navigate(getRoute(role,ROUTE_KEY.ALLJOBS));  
       }, 1000);
     },
     onError: (error) => {
