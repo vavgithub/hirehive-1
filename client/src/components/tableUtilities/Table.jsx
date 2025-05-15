@@ -374,11 +374,12 @@ const Table = ({
 
   //getting column configurations
   // Update the columns generation
+  console.log(jobData)
   const columns = (() => {
     let baseColumns = readOnly ?
       getReadOnlyColumns(role, handleDocumentClick) :
       getDefaultColumns(role, canMove, canReject, handleAssigneeChange,
-        handleMoveClick, handleRejectClick, handleRatingClick, handleDocumentClick , jobData?.status === "closed");
+        handleMoveClick, handleRejectClick, handleRatingClick, handleDocumentClick , jobData?.status === "closed",jobData?.employmentType === 'Contract',jobData?.employmentType !== 'Contract');
 
     // Insert additional columns after the first column
     if (additionalColumns.length > 0) {

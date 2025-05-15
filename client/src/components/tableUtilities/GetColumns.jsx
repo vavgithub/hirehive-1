@@ -158,7 +158,7 @@ const getInfoColumns = () => [
   },
 ]
 
-export const getReadOnlyColumns = (role, handleDocumentClick, disableCTC) => {
+export const getReadOnlyColumns = (role, handleDocumentClick, disableCTC,disableHourly) => {
 
   return ([
     ...getCommonColumns(handleDocumentClick),
@@ -175,7 +175,7 @@ export const getReadOnlyColumns = (role, handleDocumentClick, disableCTC) => {
         </div>
       ),
     },
-    ...getExpAndCtcColumns(role, disableCTC),
+    ...getExpAndCtcColumns(role, disableCTC,disableHourly),
     {
       field: 'jobTitle',
       headerName: 'Applied For',
@@ -191,7 +191,7 @@ export const getReadOnlyColumns = (role, handleDocumentClick, disableCTC) => {
   ])
 };
 
-export const getDefaultColumns = (role, canMove, canReject, handleAssigneeChange, handleMoveClick, handleRejectClick, handleRatingClick, handleDocumentClick, isClosed) => [
+export const getDefaultColumns = (role, canMove, canReject, handleAssigneeChange, handleMoveClick, handleRejectClick, handleRatingClick, handleDocumentClick, isClosed,disableCTC,disableHourly) => [
   ...getCommonColumns(handleDocumentClick),
   {
     field: 'status',
@@ -212,38 +212,7 @@ export const getDefaultColumns = (role, canMove, canReject, handleAssigneeChange
       );
     },
   },
-  {
-    field: 'score',
-    headerName: 'Score',
-    headerAlign: "center",
-    width: 120,
-    disableColumnMenu: true,
-    valueGetter: (value, row) => {
-      const currentStage = row.currentStage;
-      let score = 0;
-      if (currentStage === "Screening") {
-        let attitudeScore = parseInt(row.stageStatuses[currentStage]?.score?.Attitude ?? 0);
-        let communicationScore = parseInt(row.stageStatuses[currentStage]?.score?.Communication ?? 0);
-        let uxScore = parseInt(row.stageStatuses[currentStage]?.score?.UX ?? 0);
-        let uiScore = parseInt(row.stageStatuses[currentStage]?.score?.UI ?? 0);
-        let techScore = parseInt(row.stageStatuses[currentStage]?.score?.Tech ?? 0);
-        let budgetScore = parseInt(row.stageStatuses[currentStage]?.score?.Budget ?? 0);
-        score = attitudeScore + communicationScore + uiScore + uxScore + techScore + budgetScore;
-      } else {
-        score = row.stageStatuses[currentStage]?.score || 0;
-      }
-
-      return score;
-    },
-    renderCell: (params) => {
-      const score = params.value
-      return (
-        <p className='text-center'>
-          {score}
-        </p>
-      );
-    },
-  },
+  ...getExpAndCtcColumns(role,disableCTC,disableHourly),
   {
     field: 'assignee',
     headerName: 'Assignee',
@@ -306,6 +275,37 @@ export const getDefaultColumns = (role, canMove, canReject, handleAssigneeChange
       </div>
     )
   },
-  ...getExpAndCtcColumns(role),
+  {
+    field: 'score',
+    headerName: 'Score',
+    headerAlign: "center",
+    width: 120,
+    disableColumnMenu: true,
+    valueGetter: (value, row) => {
+      const currentStage = row.currentStage;
+      let score = 0;
+      if (currentStage === "Screening") {
+        let attitudeScore = parseInt(row.stageStatuses[currentStage]?.score?.Attitude ?? 0);
+        let communicationScore = parseInt(row.stageStatuses[currentStage]?.score?.Communication ?? 0);
+        let uxScore = parseInt(row.stageStatuses[currentStage]?.score?.UX ?? 0);
+        let uiScore = parseInt(row.stageStatuses[currentStage]?.score?.UI ?? 0);
+        let techScore = parseInt(row.stageStatuses[currentStage]?.score?.Tech ?? 0);
+        let budgetScore = parseInt(row.stageStatuses[currentStage]?.score?.Budget ?? 0);
+        score = attitudeScore + communicationScore + uiScore + uxScore + techScore + budgetScore;
+      } else {
+        score = row.stageStatuses[currentStage]?.score || 0;
+      }
+
+      return score;
+    },
+    renderCell: (params) => {
+      const score = params.value
+      return (
+        <p className='text-center'>
+          {score}
+        </p>
+      );
+    },
+  },
   ...getInfoColumns()
 ];
