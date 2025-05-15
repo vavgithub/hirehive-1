@@ -80,7 +80,7 @@ const getCommonColumns = (handleDocumentClick) => [
 ];
 
 const getExpAndCtcColumns = (role, disableCTC = false, disableHourly = false) => [
-  ...(role === 'Hiring Manager' ? [
+  ...((role === 'Hiring Manager' || role === 'Admin') ? [
     ...(disableHourly ? [] : [{
       field: 'hourlyRate',
       headerName: 'Hourly Rate',
