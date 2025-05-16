@@ -37,7 +37,7 @@ const dummyTools = [
 const PersonalDetails = ({ userData, isEditing, control }) => {
   return (
     <div>
-      <h2 className="typography-h2 mb-6">Personal Details</h2>
+      <h2 className="typography-h3 mb-6">Personal Details</h2>
       {!isEditing ? (
         <div className="flex justify-between flex-col gap-6 sm:flex-row">
           <div className="grid grid-cols-2 sm:w-[45%] gap-[10%]">
@@ -262,7 +262,7 @@ function Profile() {
                     )}
                   </div>
                   <div className='max-w-[60%] overflow-hidden py-1 text-ellipsis'>
-                    <h1 className="typography-h1 whitespace-nowrap overflow-hidden w-full text-ellipsis ">
+                    <h1 className="typography-h2 whitespace-nowrap overflow-hidden w-full text-ellipsis ">
                       {user?.firstName + " " + user?.lastName}
                     </h1>
                     <p className='flex items-center gap-4 typography-large-p text-font-gray mt-4'>{user?.role}<span className='w-[6px] h-[6px] bg-font-gray inline-block rounded-full'></span>{user?.location ?? "-"}</p>
@@ -273,7 +273,7 @@ function Profile() {
 
                 {/* Professional Details Section */}
                 <div>
-                  <h2 className="typography-h2 mb-6">Professional Details</h2>
+                  <h2 className="typography-h3 mb-6">Professional Details</h2>
                   {!isEditing ? (
                     <div className="flex justify-between flex-col gap-6 sm:flex-row">
 
@@ -339,7 +339,7 @@ function Profile() {
                 {/* Skills & Expertise Section */}
                 {((!isEditing && (user?.tools_used?.length > 0 || user?.skills?.length > 0)) || isEditing) &&
                 <div>
-                  <h2 className="typography-h2 mb-6">Skills & Expertise</h2>
+                  <h2 className="typography-h3 mb-6">Skills & Expertise</h2>
                   {!isEditing ?  (
                     <div className="flex justify-between flex-col gap-6 sm:flex-row typography-body">
                       <div className="flex flex-col gap-2 sm:w-[45%] ">
@@ -432,7 +432,7 @@ function Profile() {
                       />
                     </div>
                   </div>
-                  <h1 className="typography-h1 whitespace-nowrap overflow-hidden w-full text-ellipsis text-center">
+                  <h1 className="typography-h2 whitespace-nowrap overflow-hidden w-full text-ellipsis text-center">
                     {user?.companyDetails?.name}
                   </h1>
                   <div className="w-full flex justify-center items-center gap-2">
