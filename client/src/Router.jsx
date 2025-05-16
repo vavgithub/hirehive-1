@@ -39,6 +39,7 @@ import AdminDashboard from './pages/Admin/AdminDashboard.jsx';
 import CompanyHome from './pages/Candidate/CompanyHome.jsx';
 import ViewAssessments from './pages/Admin/ViewAssessments.jsx';
 import ViewQuestions from './pages/Admin/ViewQuestions.jsx';
+import Guide from './pages/DesignReviewer/Guide.jsx';
 
 export const router = createBrowserRouter([
   {
@@ -385,7 +386,6 @@ export const router = createBrowserRouter([
       {
         path: "dashboard",
         element: <Candidates />
-        // element: <DesignReviewerDashboard />,
       },
       {
         path: "profile",
@@ -399,6 +399,11 @@ export const router = createBrowserRouter([
         path: "reviews",
         element:
           <Reviews />
+      },
+      {
+        path: "guide",
+        element:
+          <Guide />
       },
       {
         path: "candidates/view-candidate/:candidateId/:jobId",

@@ -47,6 +47,7 @@ export const ROUTE_KEY = {
   PROFILE: "profile",
   REVIEWS: "reviews",
   TEAMS: "teams",
+  GUIDE : "guide",
   SHORTLISTED: "shortlisted",
   SHORTLISTED_VIEW_CANDIDATE: "shortlisted_view_candidate",
   CANDIDATES: "candidates",
@@ -152,6 +153,7 @@ export const ROLE_CONFIG = {
     routes: {
       [ROUTE_KEY.DASHBOARD]: "/design-reviewer/dashboard",
       [ROUTE_KEY.PROFILE]: "/design-reviewer/profile",
+      [ROUTE_KEY.GUIDE]: "/design-reviewer/guide",
       [ROUTE_KEY.REVIEWS]: "/design-reviewer/reviews",
       [ROUTE_KEY.CANDIDATES]: "/design-reviewer/candidates",
     },

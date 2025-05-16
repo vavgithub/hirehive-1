@@ -449,6 +449,24 @@ input[type='number'] {
     );
   }
 
+  .guide-dashed-line {
+    position: relative;
+  }
+
+  .guide-dashed-line::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 4px;
+    left: -24px; /* Adjust this to match your margin (e.g., ml-6) */
+    width: 1px;
+    background-image: repeating-linear-gradient(
+      to bottom,
+      var(--color-font-gray-90) 0 24px,     /* dash length */
+      transparent 8px 40px  /* gap length */
+    );
+  }
+
   .vertical-dashed-line.line-open::before {
     background-image: repeating-linear-gradient(
       to bottom,
