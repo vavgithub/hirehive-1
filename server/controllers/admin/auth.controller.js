@@ -9,6 +9,7 @@ import { getInvitationContent, getPasswordResetContent, getResetSuccessfulConten
 import { Company } from '../../models/admin/company.model.js';
 import jwt from 'jsonwebtoken'
 import { verifyToken } from '../../middlewares/authMiddleware.js';
+import { getCountryNameFromPhoneNumber } from '../../utils/countryUtils.js';
 
 
 
@@ -955,6 +956,7 @@ export const editUserProfile = asyncHandler(async (req, res) => {
         phone,
         jobTitle,
         experience,
+        ...(phone ? {location : getCountryNameFromPhoneNumber('+'+phone) ?? ''} : {}),
         skills,
         tools_used
       },
