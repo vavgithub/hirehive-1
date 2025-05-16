@@ -417,7 +417,7 @@ const Table = ({
       const baseUrl = readOnly ? getRoute(role,ROUTE_KEY.CANDIDATES_VIEW_CANDIDATE) : getRoute(role,ROUTE_KEY.JOBS_VIEW_CANDIDATE)
       navigate(`${baseUrl}/${params?.row?._id}/${readOnly ? params.row.jobId : jobId}`);
     } else {
-      navigate(`view-candidate/${params.row._id}/${readOnly ? params.row.jobId : jobId}`, { replace: true });
+      navigate(`view/${params.row._id}/${readOnly ? params.row.jobId : jobId}`, { replace: true });
     }
   };
 

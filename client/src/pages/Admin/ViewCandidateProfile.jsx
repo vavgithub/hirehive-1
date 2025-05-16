@@ -360,7 +360,7 @@ const ViewCandidateProfile = () => {
         switch (action) {
             case ACTION_TYPES.EDIT:
                 navigate(`${getRoute(role,
-                    location.pathname.includes('/candidates/all-candidates') 
+                    location.pathname.includes('/candidates/all') 
                     ? ROUTE_KEY.CANDIDATES_EDIT_CANDIDATE_PROFILE 
                     : 
                     location.pathname.includes('/candidates/shortlisted') 
@@ -406,7 +406,7 @@ const ViewCandidateProfile = () => {
     const handleAssignmentNavigation = () => {
 
         navigate(`${getRoute(role,
-            location.pathname.includes('/jobs/all-jobs') 
+            location.pathname.includes('/jobs/all') 
             ? ROUTE_KEY.JOBS_ASSESSMENT_RESPONSE 
             : location.pathname.includes('/candidates/shortlisted') 
             ? ROUTE_KEY.SHORTLISTED_ASSESSMENT_RESPONSE 
