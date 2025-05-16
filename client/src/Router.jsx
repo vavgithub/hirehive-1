@@ -278,18 +278,18 @@ export const router = createBrowserRouter([
                 element: <Jobs />
               },
               {
-                path: "create-job",
+                path: "create",
                 element:
                 
                 <CreateJobs />
               },
               {
-                path: "edit-job/:id",
+                path: "edit/:id",
                 element:
                 <EditJobs />
               },
               {
-                path: "view-job/:id",
+                path: "view/:id",
                 element:
                 <ViewJobs />
               },
@@ -335,12 +335,12 @@ export const router = createBrowserRouter([
                 element: <Shortlisted />
               },
               {
-                path: "view-candidate/:candidateId/:jobId",
+                path: "view/:candidateId/:jobId",
                 element:
                   <ViewCandidateProfile />
               },
               {
-                path: "edit-candidate/:id",
+                path: "edit/:id",
                 element:
                   <EditCandidateProfile />
               },
@@ -359,12 +359,12 @@ export const router = createBrowserRouter([
                 <Candidates />
               },
               {
-                path: "view-candidate/:candidateId/:jobId",
+                path: "view/:candidateId/:jobId",
                 element:
                   <ViewCandidateProfile />
               },
               {
-                path: "edit-candidate/:id",
+                path: "edit/:id",
                 element:
                   <EditCandidateProfile />
               },

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import Header from '../../components/utility/Header'
 import Container from '../../components/Cards/Container'
 import StyledCard from '../../components/Cards/StyledCard'
@@ -10,6 +10,7 @@ import { ClipboardCheck } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { getRoute, ROUTE_KEY } from '../../config/permissions.config';
 import { useAuthContext } from '../../context/AuthProvider';
+import FillLoader from '../../components/Loaders/FillLoader';
 
 const fetchAssessmentTemplates = async() => {
     const response = await axios.get(`/jobs/get-assessment-templates`, { withCredentials: true });
@@ -27,29 +28,49 @@ function ViewAssessments() {
 
     const navigate = useNavigate();
 
+    const categorizedTemplates = useMemo(()=>{
+        let result = {}
+        if(assessmentTemplates?.length > 0){
+            assessmentTemplates.map(template => {
+                if(result[template.category]){
+                    result[template.category].push(template)
+                }else{
+                    result[template.category] = [template]
+                }
+            })
+        }
+        return result
+    },[assessmentTemplates])
+
   return (
     <Container >
-        {(isassessmentLoading || isLoading) && <LoaderModal/>}
         <Header
         withKebab={true}
         HeaderText="Assessments"
         withBack="false"
         >
         </Header>
-        <StyledCard>
-            <div className='grid grid-cols-3 gap-6'>
-                {
-                    assessmentTemplates?.length > 0 && assessmentTemplates.map(assessment => (
-                        <StyledCard onClick={()=>navigate(`${getRoute(user?.role,ROUTE_KEY.VIEW_ASSESSMENTS_QUESTIONS)}/${assessment?._id}`)} backgroundColor={'bg-background-80'} extraStyles={'cursor-pointer hover:bg-background-60 relative overflow-hidden'}>
-                            <h3 className='typography-h3 w-full whitespace-nowrap text-ellipsis overflow-hidden'>{assessment?.title}</h3>
-                            <p className='typography-body text-font-gray'>Category : {assessment?.category}</p>
-                            <div className='text-font-gray opacity-40 -rotate-12 absolute -bottom-6 -right-6'>
-                                <IconWrapper icon={ClipboardCheck} size={0} customIconSize={10} customStrokeWidth={10} inheritColor />
+        <StyledCard extraStyles={'flex flex-col gap-6 '}>
+                {(isassessmentLoading || isLoading) ? <FillLoader/> :
+                    categorizedTemplates && Object.entries(categorizedTemplates).map(([category,assessments]) => (
+                        <div key={category} >
+                            <h2 className='typography-h2'>{category}</h2>
+                            <div className='grid grid-cols-3 gap-6'>
+                                {
+                                    assessments?.map(assessment =>(
+                                        <StyledCard key={assessment?._id} onClick={()=>navigate(`${getRoute(user?.role,ROUTE_KEY.VIEW_ASSESSMENTS_QUESTIONS)}/${assessment?._id}`)} backgroundColor={'bg-background-80'} extraStyles={'cursor-pointer hover:bg-background-60 relative overflow-hidden'}>
+                                            <h3 className='typography-h3 w-full whitespace-nowrap text-ellipsis overflow-hidden'>{assessment?.title}</h3>
+                                            <p className='typography-body text-font-gray'>Category : {assessment?.category}</p>
+                                            <div className='text-font-gray opacity-40 -rotate-12 absolute -bottom-6 -right-6'>
+                                                <IconWrapper icon={ClipboardCheck} size={0} customIconSize={10} customStrokeWidth={10} inheritColor />
+                                            </div>
+                                        </StyledCard>
+                                    ))
+                                }
                             </div>
-                        </StyledCard>
+                        </div>
                     ))
                 }
-            </div>
         </StyledCard>
     </Container>
   )

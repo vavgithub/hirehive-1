@@ -38,7 +38,7 @@ function ViewQuestions() {
     {data?.questions?.length > 0 && 
         <div className="space-y-4  scrollbar-hide">
             {data?.questions.map((qstn, index) => (
-                <div key={qstn.questionId} className=" rounded-xl pb-4">
+                <div key={qstn._id} className=" rounded-xl pb-4">
                     <h3 className="typography-h3 mb-4">
                         Q{index + 1}. {qstn.text}
                     </h3>

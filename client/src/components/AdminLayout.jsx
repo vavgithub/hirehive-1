@@ -10,7 +10,7 @@ import IconWrapper from './Cards/IconWrapper';
 import { Briefcase, ChevronDown, ChevronUp, ClipboardCheck, FileText, LayoutGrid, LogOut, MonitorDot, Star, User, Users } from 'lucide-react';
 import { UNKNOWN_PROFILE_PICTURE_URL } from '../utility/config';
 import { useSelector } from 'react-redux';
-import { getRoute, hasRoutePermission, ROUTE_KEY } from '../config/permissions.config';
+import { getRoute, hasRoutePermission, ROLES, ROUTE_KEY } from '../config/permissions.config';
 
 //Screen URLs with BG for All Admin personas
 const ADMIN_BG_SCREENS = [
@@ -206,42 +206,44 @@ const AdminLayout = () => {
 
     const renderMenuItems = () => {
         const jobsSubMenu = [
-            {
+            ...(hasRoutePermission(user.role,ROUTE_KEY.ALLJOBS) ? [{
                 to : getRoute(user.role,ROUTE_KEY.ALLJOBS),
                 label : 'All Jobs',
                 icon : () => <IconWrapper isInActiveIcon icon={Briefcase} />,
                 activeIcon : () => <IconWrapper isActiveIcon icon={Briefcase}/>
-            },
-            {
+            }] : []),
+            ...(hasRoutePermission(user.role,ROUTE_KEY.ASSESSMENTS) ? [{
                 to : getRoute(user.role,ROUTE_KEY.ASSESSMENTS),
                 label : 'Assessments',
                 icon : () => <IconWrapper isInActiveIcon icon={ClipboardCheck} />,
                 activeIcon : () => <IconWrapper isActiveIcon icon={ClipboardCheck}/>
-            }
+            }] : [])
         ]
 
         const candidatesSubMenu = [
-            {
+            ...(hasRoutePermission(user.role,ROUTE_KEY.ALL_CANDIDATES) ? [{
                 to : getRoute(user.role,ROUTE_KEY.ALL_CANDIDATES),
-                label : 'All Candidates',
+                label : user?.role === ROLES.DESIGN_REVIEWER ? 'Candidates' : 'All Candidates',
                 icon : () => <IconWrapper isInActiveIcon icon={Users} />,
                 activeIcon : () => <IconWrapper isActiveIcon icon={Users}/>
-            },
-            {
+            }] : []),
+            ...(hasRoutePermission(user.role,ROUTE_KEY.SHORTLISTED) ? [{
                 to : getRoute(user.role,ROUTE_KEY.SHORTLISTED),
                 label : 'Future Gems',
                 icon : () => <IconWrapper isInActiveIcon icon={MonitorDot} />,
                 activeIcon : () => <IconWrapper isActiveIcon icon={MonitorDot}/>
-            }
+            }] : [])
         ]
 
         return(
             <>
                 {user?.role === "Admin" && <NavItem to={getRoute(user.role,ROUTE_KEY.DASHBOARD)} icon={() => <IconWrapper isInActiveIcon icon={LayoutGrid} />} activeIcon={() => <IconWrapper isActiveIcon icon={LayoutGrid} />}> Dashboard </NavItem>}
-                {hasRoutePermission(user?.role,ROUTE_KEY.JOBS) && <DropDownNavItem to={getRoute(user.role,ROUTE_KEY.JOBS)} submenu={jobsSubMenu} icon={() => <IconWrapper isInActiveIcon icon={Briefcase} />} activeIcon={() => <IconWrapper isActiveIcon icon={Briefcase} />}> Jobs </DropDownNavItem>}
-                {hasRoutePermission(user?.role,ROUTE_KEY.CANDIDATES) && (hasRoutePermission(user?.role,ROUTE_KEY.ALL_CANDIDATES) && hasRoutePermission(user?.role,ROUTE_KEY.SHORTLISTED)) ?
+                {hasRoutePermission(user?.role,ROUTE_KEY.JOBS) && ((jobsSubMenu?.length  > 1 ) 
+                ? <DropDownNavItem to={getRoute(user.role,ROUTE_KEY.JOBS)} submenu={jobsSubMenu} icon={() => <IconWrapper isInActiveIcon icon={Briefcase} />} activeIcon={() => <IconWrapper isActiveIcon icon={Briefcase} />}> Jobs </DropDownNavItem> 
+                :<NavItem to={jobsSubMenu[0]?.to} icon={jobsSubMenu[0]?.icon} activeIcon={jobsSubMenu[0]?.activeIcon}> {jobsSubMenu[0]?.label} </NavItem>)}
+                {hasRoutePermission(user?.role,ROUTE_KEY.CANDIDATES) && (candidatesSubMenu?.length > 1) ?
                  <DropDownNavItem to={getRoute(user.role,ROUTE_KEY.CANDIDATES)} submenu={candidatesSubMenu} icon={() => <IconWrapper isInActiveIcon icon={Users} />} activeIcon={() => <IconWrapper isActiveIcon icon={Users} />}>Candidates</DropDownNavItem> 
-                 :<NavItem to={getRoute(user.role,ROUTE_KEY.CANDIDATES)} icon={() => <IconWrapper isInActiveIcon icon={Users} />} activeIcon={() => <IconWrapper isActiveIcon icon={Users} />}> Candidates </NavItem>}
+                 :<NavItem to={candidatesSubMenu[0]?.to} icon={candidatesSubMenu[0]?.icon} activeIcon={candidatesSubMenu[0]?.activeIcon}> {candidatesSubMenu[0]?.label}</NavItem>}
                 {hasRoutePermission(user?.role,ROUTE_KEY.REVIEWS) && <NavItem to={getRoute(user.role,ROUTE_KEY.REVIEWS)} icon={() => <IconWrapper isInActiveIcon icon={Star} />} activeIcon={() => <IconWrapper isActiveIcon icon={Star} />}>Reviews</NavItem>}
                 {hasRoutePermission(user?.role,ROUTE_KEY.TEAMS) && <NavItem to={getRoute(user.role,ROUTE_KEY.TEAMS)} hasHighlighter={newMembersCount > 0} icon={() => <IconWrapper isInActiveIcon icon={FileText} />} activeIcon={() => <IconWrapper isActiveIcon icon={FileText} />}>Teams</NavItem>}
                 {hasRoutePermission(user?.role,ROUTE_KEY.GUIDE) && <NavItem to={getRoute(user.role,ROUTE_KEY.GUIDE)} hasHighlighter={newMembersCount > 0} icon={() => <IconWrapper isInActiveIcon icon={FileText} />} activeIcon={() => <IconWrapper isActiveIcon icon={FileText} />}>Guide</NavItem>}

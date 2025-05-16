@@ -156,6 +156,7 @@ export const ROLE_CONFIG = {
       [ROUTE_KEY.GUIDE]: "/design-reviewer/guide",
       [ROUTE_KEY.REVIEWS]: "/design-reviewer/reviews",
       [ROUTE_KEY.CANDIDATES]: "/design-reviewer/candidates",
+      [ROUTE_KEY.ALL_CANDIDATES]: "/design-reviewer/candidates",
     },
   },
   [ROLES.CANDIDATE]: {
