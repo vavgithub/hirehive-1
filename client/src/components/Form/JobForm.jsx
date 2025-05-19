@@ -191,6 +191,8 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
             render={({ field: { onChange, value } ,fieldState : { error }}) => (
               <GlobalDropDown 
                 label={field.charAt(0).toUpperCase() + field.slice(1).replace(/([A-Z])/g, ' $1')}
+                hasInfoIcon={field === "jobProfile"}
+                infoText={field === "jobProfile" ? 'Checkout "Guide tab" to get profile based staging and scoring details.' :''}
                 options={dropdownOptions[field].filter(opt => opt.value !== '')}
                 customPlaceholder={dropdownOptions[field].find(opt => opt.value === '')?.label}
                 searchEnabled={field === "employeeLocation"}

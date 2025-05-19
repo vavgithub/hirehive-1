@@ -5,12 +5,17 @@ import {
     TextField
   } from '@mui/material';
   import React, { useEffect, useRef, useState } from 'react';
+import IconWrapper from '../Cards/IconWrapper';
+import { Info } from 'lucide-react';
+import CustomToolTip from '../Tooltip/CustomToolTip';
   
   function GlobalDropDown({
     onChange,
     options,
     label,
     error,
+    hasInfoIcon,
+    infoText = "",
     errorMessage,
     defaultValue = '',
     value,
@@ -46,6 +51,12 @@ import {
   
     return (
       <div ref={dropdownRef} className="w-full relative">
+        { hasInfoIcon && 
+        <div className='absolute top-1 right-0'>
+          <CustomToolTip title={infoText} arrowed>
+            <IconWrapper size={0} customIconSize={2} customStrokeWidth={5} icon={Info} />
+          </CustomToolTip>
+        </div>}
         {label && (
           <label className={"typography-body " + extraStylesForLabel}>
             {label}

@@ -30,7 +30,6 @@ function ViewQuestions() {
     <Container>
       {isLoading && <LoaderModal/>}
       <Header
-        withKebab={true}
         HeaderText={data?.title}
         withBack="false"
       ></Header>

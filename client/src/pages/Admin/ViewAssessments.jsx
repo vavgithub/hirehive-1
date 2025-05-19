@@ -45,7 +45,6 @@ function ViewAssessments() {
   return (
     <Container >
         <Header
-        withKebab={true}
         HeaderText="Assessments"
         withBack="false"
         >
