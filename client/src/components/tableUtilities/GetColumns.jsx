@@ -222,16 +222,16 @@ export const getDefaultColumns = (role, canMove, canReject, handleAssigneeChange
     valueGetter: (value, row) => {
       const currentStage = row.currentStage;
       let score = 0;
-      if (currentStage === "Screening") {
-        let attitudeScore = parseInt(row.stageStatuses[currentStage]?.score?.Attitude ?? 0);
-        let communicationScore = parseInt(row.stageStatuses[currentStage]?.score?.Communication ?? 0);
-        let uxScore = parseInt(row.stageStatuses[currentStage]?.score?.UX ?? 0);
-        let uiScore = parseInt(row.stageStatuses[currentStage]?.score?.UI ?? 0);
-        let techScore = parseInt(row.stageStatuses[currentStage]?.score?.Tech ?? 0);
-        let budgetScore = parseInt(row.stageStatuses[currentStage]?.score?.Budget ?? 0);
-        score = attitudeScore + communicationScore + uiScore + uxScore + techScore + budgetScore;
+
+      const stageScore = row.stageStatuses?.[currentStage]?.score;
+
+      if (currentStage === "Screening" && typeof stageScore === "object") {
+        score = Object.values(stageScore).reduce(
+          (sum, val) => sum + parseInt(val ?? 0),
+          0
+        );
       } else {
-        score = row.stageStatuses[currentStage]?.score || 0;
+        score = parseInt(stageScore ?? 0);
       }
 
       return score;

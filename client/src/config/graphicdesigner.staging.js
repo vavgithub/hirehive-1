@@ -275,6 +275,29 @@ export const graphicDesignerConfig = [
                 Communication : 5,
                 Budget : 5,
             },
+            scoreDetails : {
+                Attitude : {
+                    description : ""
+                },
+                Aesthetics : {
+                    description : "",
+                    isEditable : true
+                },
+                Creativity : {
+                    description : "",
+                    isEditable : true
+                },
+                Layout : {
+                    description : "",
+                    isEditable : true
+                },
+                Communication : {
+                    description : ""
+                },
+                Budget : {
+                    description : ""
+                },
+            },
             totalScore : 30,
             hasSplitScoring : true,
             extraHeaderContent : false,

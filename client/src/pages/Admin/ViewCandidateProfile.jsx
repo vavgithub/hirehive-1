@@ -37,16 +37,12 @@ import { getRoute, hasPermission, hasRoutePermission, PERMISSIONS, ROUTE_KEY } f
 export const VAVScoreCard = ({ score, stage, scoreStages }) => {
     const [showBreakDown, setShowBreakDown] = useState(false);
 
-    const getScreeningTotalScore = (scoreObj) => {
-        const Attitude = scoreObj?.Attitude ?? 0;
-        const Communication = scoreObj?.Communication ?? 0;
-        const Tech = scoreObj?.Tech ?? 0;
-        const UI = scoreObj?.UI ?? 0;
-        const UX = scoreObj?.UX ?? 0;
-        const Budget = scoreObj?.Budget ?? 0;
-        return 0 + Attitude + Communication + Tech + UI + UX + Budget
-    }
-
+    const getScreeningTotalScore = (scoreObj = {}) => {
+    return Object.values(scoreObj).reduce((total, score) => {
+        return total + parseInt(score ?? 0);
+    }, 0);
+    };
+    
     const scoreData = useMemo(() => {
         const mappedData = Object.entries(scoreStages)?.map(([stage, stageData]) => {
             if (stage !== "Screening") {

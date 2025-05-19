@@ -28,6 +28,7 @@ export const PERMISSIONS = {
   SHOW_TABLE_BUDGET_DETAILS: "show_table_budget_details",
   SHOW_CANDIDATE_TAB_DETAIL_EDIT: "show_candidate_tab_detail_edit",
   SHOW_PIN_UNPIN_OPTION: "show_pin_unpin_option",
+  SHOW_EDIT_SCORING : 'show_edit_scoring'
 };
 
 export const ROUTE_KEY = {
@@ -76,7 +77,8 @@ export const ROLE_CONFIG = {
       PERMISSIONS.SHOW_ADDITIONAL_QUESTIONS,
       PERMISSIONS.SHOW_TABLE_BUDGET_DETAILS,
       PERMISSIONS.SHOW_CANDIDATE_TAB_DETAIL_EDIT,
-      PERMISSIONS.SHOW_PIN_UNPIN_OPTION
+      PERMISSIONS.SHOW_PIN_UNPIN_OPTION,
+      PERMISSIONS.SHOW_EDIT_SCORING
     ],
     routes: {
       [ROUTE_KEY.CANDIDATES_ASSESSMENT_RESPONSE]: "/admin/candidates/all/assessment",
@@ -101,6 +103,7 @@ export const ROLE_CONFIG = {
       [ROUTE_KEY.EDIT_JOB]: "/admin/jobs/all/edit",
       [ROUTE_KEY.CREATE_JOB]: "/admin/jobs/all/create",
       [ROUTE_KEY.JOBS_VIEW_JOB]: "/admin/jobs/all/view",
+      [ROUTE_KEY.GUIDE]: "/admin/guide",
     },
   },
   [ROLES.HIRING_MANAGER]: {
@@ -146,6 +149,7 @@ export const ROLE_CONFIG = {
       [ROUTE_KEY.EDIT_JOB]: "/hiring-manager/jobs/all/edit",
       [ROUTE_KEY.CREATE_JOB]: "/hiring-manager/jobs/all/create",
       [ROUTE_KEY.JOBS_VIEW_JOB]: "/hiring-manager/jobs/all/view",
+      [ROUTE_KEY.GUIDE]: "/hiring-manager/guide",
     },
   },
   [ROLES.DESIGN_REVIEWER]: {

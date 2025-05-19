@@ -182,17 +182,19 @@ const Table = ({
         let totalScore = 0;
         Object.entries(row?.stageStatuses).forEach(([stage, stageData]) => {
           if (stage === "Screening") {
-            totalScore += !stageData?.score ? 0 : ((stageData?.score?.Attitude ?? 0) +
-              (stageData?.score?.Tech ?? 0) +
-              (stageData?.score?.Communication ?? 0) +
-              (stageData?.score?.UI ?? 0) +
-              (stageData?.score?.UX ?? 0) +
-              (stageData?.score?.Budget ?? 0)
-            )
+            const screeningScore = stageData?.score;
+            if (screeningScore && typeof screeningScore === "object") {
+              totalScore += Object.values(screeningScore).reduce(
+                (sum, val) => sum + parseInt(val ?? 0),
+                0
+              );
+            } else {
+              totalScore += 0;
+            }
           } else {
-            totalScore += stageData?.score ?? 0
+            totalScore += parseInt(stageData?.score ?? 0);
           }
-        })
+        });
         return (totalScore < parseInt(max) && totalScore > parseInt(min))
       })
     }

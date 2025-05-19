@@ -11,17 +11,13 @@ import { getMaxScoreForStage } from '../../pages/Admin/ViewCandidateProfile';
 export const getCandidateScore = (stageStatuses) => {
     let totalScore = 0;
     let stages = stageStatuses;
-    const getScreeningScore = (scoreObj) =>{
-        let totalScreeningScore = 0;
-        totalScreeningScore += 
-        parseInt(scoreObj.Attitude ?? 0) +
-        parseInt(scoreObj.Tech ?? 0) +
-        parseInt(scoreObj.Communication ?? 0) +
-        parseInt(scoreObj.UI ?? 0) +
-        parseInt(scoreObj.UX ?? 0) +
-        parseInt(scoreObj.Budget ?? 0) 
-        return totalScreeningScore;
-    }
+    
+    const getScreeningScore = (scoreObj = {}) => {
+    return Object.values(scoreObj).reduce((total, score) => {
+        return total + parseInt(score ?? 0);
+    }, 0);
+    };
+
     if(stages){
         Object.values(stages).forEach(stage=>
             stage.score ? typeof stage.score !== "object" ? totalScore += parseInt(stage.score) : totalScore += getScreeningScore(stage.score) : totalScore += 0

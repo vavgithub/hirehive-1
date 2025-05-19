@@ -275,6 +275,29 @@ export const creativeDirectorConfig = [
                 Communication : 5,
                 Budget : 5,
             },
+            scoreDetails : {
+                Attitude : {
+                    description : ""
+                },
+                Vision : {
+                    description : "",
+                    isEditable : true
+                },
+                Leadership : {
+                    description : "",
+                    isEditable : true
+                },
+                Strategy : {
+                    description : "",
+                    isEditable : true
+                },
+                Communication : {
+                    description : ""
+                },
+                Budget : {
+                    description : ""
+                },
+            },
             totalScore : 30,
             hasSplitScoring : true,
             extraHeaderContent : false,

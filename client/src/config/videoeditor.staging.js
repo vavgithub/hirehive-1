@@ -275,6 +275,29 @@ export const videoEditorConfig = [
                 Communication : 5,
                 Budget : 5,
             },
+            scoreDetails : {
+                Attitude : {
+                    description : ""
+                },
+                Editing : {
+                    description : "",
+                    isEditable : true
+                },
+                Timing : {
+                    description : "",
+                    isEditable : true
+                },
+                Composition : {
+                    description : "",
+                    isEditable : true
+                },
+                Communication : {
+                    description : ""
+                },
+                Budget : {
+                    description : ""
+                },
+            },
             totalScore : 30,
             hasSplitScoring : true,
             extraHeaderContent : false,

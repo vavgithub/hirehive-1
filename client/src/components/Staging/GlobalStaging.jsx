@@ -29,7 +29,6 @@ import HiredStamp from "../../svg/Background/HiredStamp.svg"
 import Loader from '../Loaders/Loader.jsx';
 import WarningIcon from '../../svg/Staging/WarningIcon.jsx';
 import { ChevronDown, ChevronUp } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 import IconWrapper from '../Cards/IconWrapper.jsx';
 import { Calendar, Clock, Copy, DatabaseZap, Link } from 'lucide-react';
 import useAuth from '../../hooks/useAuth.jsx';
@@ -47,7 +46,6 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
     const stageData = stageStatuses[selectedStage];
     const currentStatus = stageData?.status;
     const candidateData = useSelector(state => state.candidate.candidateData);
-    const navigate = useNavigate();
     
     //To get admin Data for companyDetails
     const { data : adminData } = useAuth();
@@ -55,7 +53,6 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
     const { stageTitle, stageConfig, stageBasedConfig , candidateId, jobId} = useMemo(()=>{
       const isValidstage =  stagingConfig[jobProfile]?.filter(stage=> stage?.name === selectedStage);
       const stageTitle = isValidstage?.length > 0 ? isValidstage[0]?.name : "";
-        console.log(jobProfile,isValidstage)
       const stageConfig = isValidstage[0];
       const stageBasedConfig = isValidstage[0]?.contentConfig[currentStatus][role];
       const candidateId = candidateData?._id;
@@ -260,15 +257,9 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
     };
 
     //Scoring functions
-    const getTotalScore = ()=>{
-        let score = 0;    
-        return score + (stageData?.score?.Attitude ?? 0) +
-        (stageData?.score?.UX ?? 0) +
-        (stageData?.score?.Tech ?? 0) +
-        (stageData?.score?.Communication ?? 0) +
-        (stageData?.score?.UI ?? 0) +
-        (stageData?.score?.Budget ?? 0)
-    }
+    const getTotalScore = () => {
+    return Object.values(stageData?.score || {}).reduce((acc, val) => acc + (val ?? 0), 0);
+    };
 
     const submitBudgetScoreMutation = useMutation({
         mutationFn: (score) => axios.post('hr/submit-budget-score', { candidateId, jobId, stage: 'Screening', score }),
@@ -517,7 +508,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
             <SubmissionForm candidateId={candidateId} jobId={jobId} stageData={stageData} setIsLoading={setIsLoading} />
         }
         {
-          stageBasedConfig?.hasRatingComponent && <StageRating candidateId={candidateId} jobId={jobId} name={stageConfig?.name} candidate={candidateData} onSubmit={handleReviewSubmit} stageConfig={stageConfig} />
+          stageBasedConfig?.hasRatingComponent && <StageRating  customSchema={adminData?.companyDetails?.customScreeningParam ? adminData?.companyDetails?.customScreeningParam[jobProfile] : null} candidateId={candidateId} jobId={jobId} name={stageConfig?.name} candidate={candidateData} onSubmit={handleReviewSubmit} stageConfig={stageConfig} />
         }
         <div className='flex gap-4 w-full '>
             {(stageBasedConfig?.hasRemarks || stageBasedConfig?.hasRejectionReason || stageBasedConfig?.hasScoreBoard) && 

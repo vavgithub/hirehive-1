@@ -1,5 +1,19 @@
 import mongoose from 'mongoose';
 
+const customScreeningSchema = new mongoose.Schema(
+    {
+        defaultKey : {
+            type : String
+        },
+        customKey : {
+            type : String
+        },
+        description : {
+            type : String
+        }
+    }
+)
+
 const companyschema = new mongoose.Schema({
     name : {
         type: String,
@@ -59,6 +73,11 @@ const companyschema = new mongoose.Schema({
             type: String,
             required: true,
         }
+    },
+    customScreeningParam : {
+        type : Map,
+        of : [customScreeningSchema],
+        default : {}
     }
 }, { timestamps: true })
 

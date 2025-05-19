@@ -135,12 +135,12 @@ const Reviews = () => {
     submitReviewMutation.mutate({ candidateId, reviewData });
   };
 
-  const renderReviewComponent = (candidate) => {
+  const renderReviewComponent = (candidate,jobProfile) => {
     switch (candidate.currentApplication.currentStage) {
       case 'Portfolio':
         return <PortfolioReview candidate={candidate} onSubmit={handleReviewSubmit} />;
       case 'Screening':
-        return <ScreeningReview candidate={candidate} onSubmit={handleReviewSubmit} />;
+        return <ScreeningReview jobProfile={jobProfile} candidate={candidate} onSubmit={handleReviewSubmit} />;
       case 'Design Task':
         return <DesignTaskReview candidate={candidate} onSubmit={handleReviewSubmit} />;
       case 'Round 1':
@@ -239,7 +239,7 @@ const Reviews = () => {
 
 
                         </div>
-                        {renderReviewComponent(candidate)}
+                        {renderReviewComponent(candidate,candidate.currentApplication.jobProfile)}
                       </div>
                     ))}
                   </div>

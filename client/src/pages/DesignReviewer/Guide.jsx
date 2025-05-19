@@ -1,15 +1,33 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import Container from "../../components/Cards/Container";
 import Header from "../../components/utility/Header";
 import StyledCard from "../../components/Cards/StyledCard";
 import { getStageColor, stagingConfig } from "../../config/staging.config";
 import { JOB_PROFILES } from "../../config/jobprofile.config";
 import IconWrapper from "../../components/Cards/IconWrapper";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown, ChevronUp, Pencil } from "lucide-react";
 import StyledTabs from "../../components/ui/StyledTabs";
+import { InputField } from "../../components/Inputs/InputField";
+import { Button } from "../../components/Buttons/Button";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import axios from "../../api/axios";
+import { useAuthContext } from "../../context/AuthProvider";
+import { hasPermission, PERMISSIONS } from "../../config/permissions.config";
+import { showSuccessToast } from "../../components/ui/Toast";
+
+const updateScreeningParam = async ({title, description, oldKey, jobProfile }) => {
+    const response = await axios.post('/admin/update-screening-param',{description, oldKey, jobProfile, title });
+    return response.data
+}
+
+const getScreeningStage = (profile) => 
+  stagingConfig[profile]?.find(
+  (stage) => stage.name === "Screening"
+)
 
 const guideConfig = 
       Object.values(JOB_PROFILES).map((profile) => {
+        const screeningStage = getScreeningStage(profile)
         return {
           key: profile,
           title: profile,
@@ -31,13 +49,12 @@ const guideConfig =
               scoreConfig: {
                 total: 30,
                 ...Object.entries(
-                  stagingConfig[profile]?.find(
-                    (stage) => stage.name === "Screening"
-                  ).score
+                  screeningStage.score
                 ).reduce((acc, [key, value]) => {
                   acc[key] = {
                     score: value,
                     description: "Description for " + key,
+                    isEditable : !!screeningStage?.scoreDetails[key]?.isEditable 
                   };
                   return acc;
                 }, {}),
@@ -68,7 +85,66 @@ const guideConfig =
         };
       })
 
-const MapperComponent = ({ config, level }) => {
+const ScoringInput = ({scoring,title,setTitle,description,setDescription, handleCancel, handleSave }) => (
+  <div className="flex flex-col gap-4">
+    <p className="typography-body flex justify-between">
+      {scoring}
+    </p>
+    <InputField value={title} onChange={(e) => setTitle(e.target.value)} type="text" placeholder="Enter Title" />
+    <textarea placeholder="Enter Description" value={description} onChange={(e) => setDescription(e.target.value)} className="custom-textarea" rows={4} />
+    <div className="place-self-end flex gap-4">
+      <Button onClick={handleCancel} variant="secondary">Cancel</Button>
+      <Button onClick={handleSave} variant="primary" >Save</Button>
+    </div>
+  </div>
+)
+
+const MapperComponent = ({ role, customSchema, config, parent, level , scoringState, setScoringState}) => {
+  const [title,setTitle] = useState("");
+  const [description,setDescription] = useState("");
+
+  const queryClient = useQueryClient();
+
+  const jobBasedScoringSchema = useMemo(()=>{
+    if(parent?.title && customSchema){
+      return customSchema[parent.title]
+    }
+    return []
+  },[parent,customSchema]);
+
+  const handleEditScoring = (scoring) => {
+    const selectedScoring = config.find(stage => stage.title === "Screening")?.scoreConfig[scoring];
+    const customScoreParam = jobBasedScoringSchema?.find(score => score.defaultKey === scoring)
+    setTitle(customScoreParam?.customKey ? customScoreParam?.customKey : scoring)
+    setDescription(customScoreParam?.description ? customScoreParam?.description : selectedScoring?.description)
+    setScoringState(prev => ({...prev,[`${parent?.title}-${scoring}`] : true}));
+  }
+
+  const updateParamMutation = useMutation({
+    mutationFn : updateScreeningParam,
+    onSuccess : (response) => {
+      queryClient.invalidateQueries('auth')
+      showSuccessToast("Success",response?.message ?? "Updated Scoring Param Successfully.")
+    },
+    onError: (error) => {
+      console.error("Mutation error", error);
+    }
+  })
+
+  const handleCancel = (scoring) => {
+    setScoringState(prev => ({...prev,[`${parent?.title}-${scoring}`] : false}));
+  }
+
+  const handleSave = (scoring) => {
+    setScoringState(prev => ({...prev,[`${parent?.title}-${scoring}`] : false}));
+
+    updateParamMutation.mutate({
+      description,
+      title,
+      oldKey : scoring , 
+      jobProfile : parent?.title
+    })
+  }
 
   return (
     config?.length > 0 &&
@@ -119,20 +195,35 @@ const MapperComponent = ({ config, level }) => {
                       .filter((scoring) => scoring !== "total")
                       .map((scoring,index) => (
                         <div key={`scoring-${index+1}`}>
-                          <p className="typography-body flex justify-between">
-                            {scoring}{" "}
-                            <span>{stage.scoreConfig[scoring].score}</span>
-                          </p>
-                          <p className="typography-body text-font-gray">
-                            {stage.scoreConfig[scoring].description}
-                          </p>
+                          {(stage.scoreConfig[scoring]?.isEditable && scoringState[`${parent?.title}-${scoring}`]) ? 
+                          <ScoringInput 
+                          scoring={scoring} 
+                          title={title} 
+                          setTitle={setTitle} 
+                          description={description} 
+                          setDescription={setDescription} 
+                          handleCancel={() => handleCancel(scoring)} 
+                          handleSave={() => handleSave(scoring)} 
+                          />
+                          : <>
+                            <p className="typography-body flex justify-between">
+                              {jobBasedScoringSchema?.find(score => score.defaultKey === scoring)?.customKey || scoring}
+                              <span>{stage.scoreConfig[scoring].score}</span>
+                            </p>
+                            <div className="flex justify-between items-center mt-2">
+                              <p className="typography-body text-font-gray ">
+                                {jobBasedScoringSchema?.find(score => score.defaultKey === scoring)?.description || stage.scoreConfig[scoring].description}
+                              </p>
+                              {(hasPermission(role,PERMISSIONS.SHOW_EDIT_SCORING) && stage.scoreConfig[scoring]?.isEditable) && <button onClick={() => handleEditScoring(scoring)} type="button"><IconWrapper size={0} customIconSize={1} icon={Pencil} /></button>}
+                            </div>
+                          </>}
                         </div>
                       ))}
                   </StyledCard>
                 </div>
               ))}
             {stage?.children?.length > 0 && (
-              <MapperComponent config={stage?.children} level={level + 1} />
+              <MapperComponent role={role} customSchema={customSchema} config={stage?.children} parent={stage ?? null} level={level + 1} scoringState={scoringState} setScoringState={setScoringState} />
             )}
           </>
       </div>
@@ -173,6 +264,14 @@ function getTabsConfig(){
 function Guide() {
   const mainTabs = getTabsConfig();
   const [activeProfile,setActiveProfile] = useState(Object.values(JOB_PROFILES)[0]);
+  const [editableScoring,setEditableScoring] = useState(Object.values(JOB_PROFILES)?.map(profile =>{ 
+    const hasScoring = stagingConfig[profile]?.find(stage => stage.hasSplitScoring)
+    return Object.entries(hasScoring.scoreDetails).filter(([key,param]) => param.isEditable ).map(([key,param]) =>({
+      [`${profile}-${key}`] : false
+    }))
+  }).flat(Infinity))
+
+  const { user } = useAuthContext();
 
   const handleActiveProfile = (profile) => {
     setActiveProfile(profile)
@@ -197,7 +296,7 @@ function Guide() {
                 />
             ))}
         </div>
-        {<MapperComponent config={[guideConfig.find(profile => activeProfile === profile.key)]} level={0} />}
+        {<MapperComponent role={user?.role} customSchema={user?.companyDetails?.customScreeningParam ?? null} config={[guideConfig.find(profile => activeProfile === profile.key)]} level={0} scoringState={editableScoring} setScoringState={setEditableScoring} />}
       </StyledCard>
     </Container>
   );

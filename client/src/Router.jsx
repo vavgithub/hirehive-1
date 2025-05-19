@@ -143,6 +143,10 @@ export const router = createBrowserRouter([
         element: <Profile />
       },
       {
+        path: "guide",
+        element: <Guide />
+      },
+      {
         path: "jobs",
         children: [
           {
@@ -253,6 +257,11 @@ export const router = createBrowserRouter([
       {
         path: "profile",
         element: <Profile />
+      },
+      {
+        path: "guide",
+        element:
+          <Guide />
       },
       {
         path: "teams",

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Scorer from '../ui/Scorer';
 import { Button } from '../Buttons/Button';
 import { showErrorToast } from '../ui/Toast';
@@ -7,7 +7,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { updateStageStatus } from '../../redux/applicationStageSlice';
 import { useDispatch } from 'react-redux';
 
-function StageRating({candidateId,jobId,name,candidate,onSubmit,stageConfig}) {
+function StageRating({customSchema,candidateId,jobId,name,candidate,onSubmit,stageConfig}) {
     const [rating, setRating] = useState(stageConfig?.hasSplitScoring ? Object.fromEntries(Object.entries(stageConfig?.score)?.map(([key,value])=>[key,0])) : 0);
     const [feedback, setFeedback] = useState('');
   
@@ -16,6 +16,19 @@ function StageRating({candidateId,jobId,name,candidate,onSubmit,stageConfig}) {
 
     const dispatch = useDispatch();
     const queryClient = useQueryClient();
+
+    useEffect(() => {
+      if(stageConfig?.hasSplitScoring && customSchema){
+        let newRating = {...rating}
+        customSchema?.map(schema => {
+          if(rating.hasOwnProperty(schema?.defaultKey)){
+            newRating[schema.customKey] = 0
+            delete newRating[schema?.defaultKey]
+          } 
+        })
+        setRating(newRating)
+      }
+    },[stageConfig?.hasSplitScoring,customSchema])
 
     const scoreRoundTwoMutation = useMutation({
       mutationFn: (scoreData) => axios.post('hr/score-round-two', scoreData),

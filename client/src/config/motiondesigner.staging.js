@@ -275,6 +275,29 @@ export const motionDesignerConfig = [
                 Communication : 5,
                 Budget : 5,
             },
+            scoreDetails : {
+                Attitude : {
+                    description : ""
+                },
+                Narrative : {
+                    description : "",
+                    isEditable : true
+                },
+                Animation : {
+                    description : "",
+                    isEditable : true
+                },
+                Tooling : {
+                    description : "",
+                    isEditable : true
+                },
+                Communication : {
+                    description : ""
+                },
+                Budget : {
+                    description : ""
+                },
+            },
             totalScore : 30,
             hasSplitScoring : true,
             extraHeaderContent : false,

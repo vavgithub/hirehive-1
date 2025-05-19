@@ -275,6 +275,29 @@ export const threeDDesignerConfig = [
                 Communication : 5,
                 Budget : 5,
             },
+            scoreDetails : {
+                Attitude : {
+                    description : ""
+                },
+                Modelling : {
+                    description : "",
+                    isEditable : true
+                },
+                Rendering : {
+                    description : "",
+                    isEditable : true
+                },
+                Creativity : {
+                    description : "",
+                    isEditable : true
+                },
+                Communication : {
+                    description : ""
+                },
+                Budget : {
+                    description : ""
+                },
+            },
             totalScore : 30,
             hasSplitScoring : true,
             extraHeaderContent : false,

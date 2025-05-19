@@ -455,16 +455,17 @@ function MultiSelectBar({selectedData,jobId,clearSelection}) {
                             <div className='gap-4 grid grid-cols-2  bg-background-70 rounded-xl p-4'>
                                 {
                                     candidateData?.map(({candidate,checked,rejectionReason})=>{
-                                        let score =  0;
-                                        if(stage === "Screening"){
-                                            score = (candidate.stageStatuses[stage].score.Attitude ? candidate.stageStatuses[stage].score.Attitude : 0) + 
-                                            (candidate.stageStatuses[stage].score.UI ? candidate.stageStatuses[stage].score.UI : 0 )+ 
-                                            (candidate.stageStatuses[stage].score.UX ? candidate.stageStatuses[stage].score.UX : 0) + 
-                                            (candidate.stageStatuses[stage].score.Communication ? candidate.stageStatuses[stage].score.Communication : 0) + 
-                                            (candidate.stageStatuses[stage].score.Tech ? candidate.stageStatuses[stage].score.Tech : 0) + 
-                                            (candidate.stageStatuses[stage].score.Budget ? candidate.stageStatuses[stage].score.Budget : 0 )
-                                        }else{
-                                            score = candidate.stageStatuses[stage].score 
+                                        let score = 0;
+                                        if (stage === "Screening") {
+                                        const screeningScore = candidate.stageStatuses[stage]?.score;
+                                        if (screeningScore && typeof screeningScore === "object") {
+                                            score = Object.values(screeningScore).reduce(
+                                            (sum, val) => sum + parseInt(val ?? 0),
+                                            0
+                                            );
+                                        }
+                                        } else {
+                                        score = parseInt(candidate.stageStatuses[stage]?.score ?? 0);
                                         }
                                         return (
                                             <div key={candidate?._id} className='bg-background-80  p-4 rounded-xl relative flex flex-col typography-body  items-center min-h-11'>

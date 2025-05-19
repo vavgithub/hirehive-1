@@ -275,6 +275,29 @@ export const brandDesignerConfig = [
                 Communication : 5,
                 Budget : 5,
             },
+            scoreDetails : {
+                Attitude : {
+                    description : ""
+                },
+                Identity : {
+                    description : "",
+                    isEditable : true
+                },
+                Consistency : {
+                    description : "",
+                    isEditable : true
+                },
+                Narrative : {
+                    description : "",
+                    isEditable : true
+                },
+                Communication : {
+                    description : ""
+                },
+                Budget : {
+                    description : ""
+                },
+            },
             totalScore : 30,
             hasSplitScoring : true,
             extraHeaderContent : false,

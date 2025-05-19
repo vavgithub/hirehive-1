@@ -275,6 +275,29 @@ export const socialMediaDesignerConfig = [
                 Communication : 5,
                 Budget : 5,
             },
+            scoreDetails : {
+                Attitude : {
+                    description : ""
+                },
+                Engagement : {
+                    description : "",
+                    isEditable : true
+                },
+                Adaptability : {
+                    description : "",
+                    isEditable : true
+                },
+                Branding : {
+                    description : "",
+                    isEditable : true
+                },
+                Communication : {
+                    description : ""
+                },
+                Budget : {
+                    description : ""
+                },
+            },
             totalScore : 30,
             hasSplitScoring : true,
             extraHeaderContent : false,

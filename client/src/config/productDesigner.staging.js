@@ -275,6 +275,29 @@ export const productDesignerConfig = [
                 Communication : 5,
                 Budget : 5,
             },
+            scoreDetails : {
+                Attitude : {
+                    description : ""
+                },
+                'Core Thinking' : {
+                    description : "",
+                    isEditable : true
+                },
+                Consistency : {
+                    description : "",
+                    isEditable : true
+                },
+                UX : {
+                    description : "",
+                    isEditable : true
+                },
+                Communication : {
+                    description : ""
+                },
+                Budget : {
+                    description : ""
+                },
+            },
             totalScore : 30,
             hasSplitScoring : true,
             extraHeaderContent : false,

@@ -275,6 +275,29 @@ export const UIUXConfig = [
                 Communication : 5,
                 Budget : 5,
             },
+            scoreDetails : {
+                Attitude : {
+                    description : ""
+                },
+                Narrative : {
+                    description : "",
+                    isEditable : true
+                },
+                'UI/UX' : {
+                    description : "",
+                    isEditable : true
+                },
+                HTML : {
+                    description : "",
+                    isEditable : true
+                },
+                Communication : {
+                    description : ""
+                },
+                Budget : {
+                    description : ""
+                },
+            },
             totalScore : 30,
             hasSplitScoring : true,
             extraHeaderContent : false,
