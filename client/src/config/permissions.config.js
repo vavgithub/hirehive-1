@@ -28,7 +28,7 @@ export const PERMISSIONS = {
   SHOW_TABLE_BUDGET_DETAILS: "show_table_budget_details",
   SHOW_CANDIDATE_TAB_DETAIL_EDIT: "show_candidate_tab_detail_edit",
   SHOW_PIN_UNPIN_OPTION: "show_pin_unpin_option",
-  SHOW_EDIT_SCORING : 'show_edit_scoring'
+  SHOW_EDIT_SCORING: "show_edit_scoring",
 };
 
 export const ROUTE_KEY = {
@@ -48,7 +48,7 @@ export const ROUTE_KEY = {
   PROFILE: "profile",
   REVIEWS: "reviews",
   TEAMS: "teams",
-  GUIDE : "guide",
+  GUIDE: "guide",
   SHORTLISTED: "shortlisted",
   SHORTLISTED_VIEW_CANDIDATE: "shortlisted_view_candidate",
   CANDIDATES: "candidates",
@@ -78,15 +78,19 @@ export const ROLE_CONFIG = {
       PERMISSIONS.SHOW_TABLE_BUDGET_DETAILS,
       PERMISSIONS.SHOW_CANDIDATE_TAB_DETAIL_EDIT,
       PERMISSIONS.SHOW_PIN_UNPIN_OPTION,
-      PERMISSIONS.SHOW_EDIT_SCORING
+      PERMISSIONS.SHOW_EDIT_SCORING,
     ],
     routes: {
-      [ROUTE_KEY.CANDIDATES_ASSESSMENT_RESPONSE]: "/admin/candidates/all/assessment",
+      [ROUTE_KEY.CANDIDATES_ASSESSMENT_RESPONSE]:
+        "/admin/candidates/all/assessment",
       [ROUTE_KEY.JOBS_ASSESSMENT_RESPONSE]: "/admin/jobs/all/assessment",
-      [ROUTE_KEY.SHORTLISTED_ASSESSMENT_RESPONSE]: "/admin/candidates/shortlisted/assessment",
+      [ROUTE_KEY.SHORTLISTED_ASSESSMENT_RESPONSE]:
+        "/admin/candidates/shortlisted/assessment",
       [ROUTE_KEY.JOBS_EDIT_CANDIDATE_PROFILE]: "/admin/jobs/all/edit-candidate",
-      [ROUTE_KEY.CANDIDATES_EDIT_CANDIDATE_PROFILE]: "/admin/candidates/all/edit",
-      [ROUTE_KEY.SHORTLISTED_EDIT_CANDIDATE_PROFILE]: "/admin/candidates/shortlisted/edit",
+      [ROUTE_KEY.CANDIDATES_EDIT_CANDIDATE_PROFILE]:
+        "/admin/candidates/all/edit",
+      [ROUTE_KEY.SHORTLISTED_EDIT_CANDIDATE_PROFILE]:
+        "/admin/candidates/shortlisted/edit",
       [ROUTE_KEY.JOBS_VIEW_CANDIDATE]: "/admin/jobs/all/view-candidate",
       [ROUTE_KEY.CANDIDATES_VIEW_CANDIDATE]: "/admin/candidates/all/view",
       [ROUTE_KEY.DASHBOARD]: "/admin/dashboard",
@@ -96,7 +100,8 @@ export const ROLE_CONFIG = {
       [ROUTE_KEY.VIEW_ASSESSMENTS_QUESTIONS]: "/admin/jobs/assessments",
       [ROUTE_KEY.TEAMS]: "/admin/teams",
       [ROUTE_KEY.SHORTLISTED]: "/admin/candidates/shortlisted",
-      [ROUTE_KEY.SHORTLISTED_VIEW_CANDIDATE]: "/admin/candidates/shortlisted/view",
+      [ROUTE_KEY.SHORTLISTED_VIEW_CANDIDATE]:
+        "/admin/candidates/shortlisted/view",
       [ROUTE_KEY.CANDIDATES]: "/admin/candidates",
       [ROUTE_KEY.ALL_CANDIDATES]: "/admin/candidates/all",
       [ROUTE_KEY.PROFILE]: "/admin/profile",
@@ -124,26 +129,35 @@ export const ROLE_CONFIG = {
       PERMISSIONS.SHOW_ADDITIONAL_QUESTIONS,
       PERMISSIONS.SHOW_TABLE_BUDGET_DETAILS,
       PERMISSIONS.SHOW_CANDIDATE_TAB_DETAIL_EDIT,
-      PERMISSIONS.SHOW_PIN_UNPIN_OPTION
+      PERMISSIONS.SHOW_PIN_UNPIN_OPTION,
     ],
     routes: {
-      [ROUTE_KEY.CANDIDATES_ASSESSMENT_RESPONSE]: "/hiring-manager/candidates/all/assessment",
-      [ROUTE_KEY.JOBS_ASSESSMENT_RESPONSE]: "/hiring-manager/jobs/all/assessment",
-      [ROUTE_KEY.SHORTLISTED_ASSESSMENT_RESPONSE]: "/hiring-manager/candidates/shortlisted/assessment",
-      [ROUTE_KEY.JOBS_EDIT_CANDIDATE_PROFILE]: "/hiring-manager/jobs/all/edit-candidate",
-      [ROUTE_KEY.CANDIDATES_EDIT_CANDIDATE_PROFILE]: "/hiring-manager/candidates/all/edit",
-      [ROUTE_KEY.SHORTLISTED_EDIT_CANDIDATE_PROFILE]: "/hiring-manager/candidates/shortlisted/edit",
-      [ROUTE_KEY.JOBS_VIEW_CANDIDATE]: "/hiring-manager/jobs/all/view-candidate",
+      [ROUTE_KEY.CANDIDATES_ASSESSMENT_RESPONSE]:
+        "/hiring-manager/candidates/all/assessment",
+      [ROUTE_KEY.JOBS_ASSESSMENT_RESPONSE]:
+        "/hiring-manager/jobs/all/assessment",
+      [ROUTE_KEY.SHORTLISTED_ASSESSMENT_RESPONSE]:
+        "/hiring-manager/candidates/shortlisted/assessment",
+      [ROUTE_KEY.JOBS_EDIT_CANDIDATE_PROFILE]:
+        "/hiring-manager/jobs/all/edit-candidate",
+      [ROUTE_KEY.CANDIDATES_EDIT_CANDIDATE_PROFILE]:
+        "/hiring-manager/candidates/all/edit",
+      [ROUTE_KEY.SHORTLISTED_EDIT_CANDIDATE_PROFILE]:
+        "/hiring-manager/candidates/shortlisted/edit",
+      [ROUTE_KEY.JOBS_VIEW_CANDIDATE]:
+        "/hiring-manager/jobs/all/view-candidate",
       [ROUTE_KEY.CANDIDATES_VIEW_CANDIDATE]:
         "/hiring-manager/candidates/all/view",
       [ROUTE_KEY.DASHBOARD]: "/hiring-manager/dashboard",
       [ROUTE_KEY.JOBS]: "/hiring-manager/jobs",
       [ROUTE_KEY.ALLJOBS]: "/hiring-manager/jobs/all",
       [ROUTE_KEY.ASSESSMENTS]: "/hiring-manager/jobs/assessments",
-      [ROUTE_KEY.VIEW_ASSESSMENTS_QUESTIONS]: "/hiring-manager/jobs/assessments",
+      [ROUTE_KEY.VIEW_ASSESSMENTS_QUESTIONS]:
+        "/hiring-manager/jobs/assessments",
       [ROUTE_KEY.PROFILE]: "/hiring-manager/profile",
       [ROUTE_KEY.SHORTLISTED]: "/hiring-manager/candidates/shortlisted",
-      [ROUTE_KEY.SHORTLISTED_VIEW_CANDIDATE]: "/hiring-manager/candidates/shortlisted/view",
+      [ROUTE_KEY.SHORTLISTED_VIEW_CANDIDATE]:
+        "/hiring-manager/candidates/shortlisted/view",
       [ROUTE_KEY.CANDIDATES]: "/hiring-manager/candidates",
       [ROUTE_KEY.ALL_CANDIDATES]: "/hiring-manager/candidates/all",
       [ROUTE_KEY.EDIT_JOB]: "/hiring-manager/jobs/all/edit",
@@ -168,6 +182,7 @@ export const ROLE_CONFIG = {
       PERMISSIONS.SHOW_TAB_CANDIDATE_DETAIL,
       PERMISSIONS.SHOW_JOBCARD_COMPANY_NAME,
     ],
+    routes: {},
   },
 };
 

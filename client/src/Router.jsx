@@ -81,7 +81,7 @@ export const router = createBrowserRouter([
         element: <AllJobs />, // Protected HomePage with sidebar
       },
       {
-        path: 'viewJob/:candidateId/:jobId',
+        path: 'my-jobs/viewJob/:candidateId/:jobId',
         element: <ViewCandidateProfile />
       },
       {

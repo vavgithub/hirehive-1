@@ -50,7 +50,7 @@ const MyJobs = () => {
   // Navigation handler with mobile check
   const handleClick = (jobId) => {
     if (!isMobile) {
-      navigate(`/candidate/viewJob/${candidateId}/${jobId}`);
+      navigate(`/candidate/my-jobs/viewJob/${candidateId}/${jobId}`);
     }
   };
 
