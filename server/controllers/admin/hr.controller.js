@@ -6,6 +6,7 @@ import { getDesignTaskContent, getRejectionEmailContent } from "../../utils/emai
 import { updateDateWithTime } from "../../utils/formatter.js";
 import { sanitizeLexicalHtml } from "../../utils/sanitize-html.js";
 import { sendEmail } from "../../utils/sentEmail.js";
+import { createMeeting } from "../../utils/zoom.js";
 
 const RATINGS = ['Good Fit', 'Not A Good Fit', 'May Be'];
 
@@ -862,6 +863,15 @@ export const scheduleCall = async (req, res) => {
     if (!validStages.includes(stage)) {
       return res.status(400).json({ message: "Invalid stage" });
     }
+
+    const assignee = await User.findById(assigneeId);
+    console.log(assignee,candidate)
+
+    // const invitedMembers = [candidate.email,]
+
+    const { start_url , join_url } = await createMeeting(date,stage,["kiran4devv@gmail.com"]);
+    console.log("Meeting Url : ",start_url,join_url)
+
     // Update the stage status
     jobApplication.stageStatuses.set(stage, {
       status: "Call Scheduled",
@@ -911,6 +921,26 @@ export const rescheduleCall = async (req, res) => {
     if (!validStages.includes(stage)) {
       return res.status(400).json({ message: "Invalid stage" });
     }
+
+    //Zoom Integration for Meeting Links
+    const invitedMembers = [{
+      firstName : candidate?.firstName ?? "",
+      lastName : candidate?.lastName ?? "",
+      email : candidate?.email,
+      phone : candidate?.phone ?? 0,
+    }];
+
+    const assignee = await User.findById(assigneeId);
+
+    invitedMembers.push({
+      firstName : assignee?.firstName ?? "",
+      lastName : assignee?.lastName ?? "",
+      email : assignee?.email,
+      phone : assignee?.phone ?? 0,
+    })
+
+    const { start_url , join_url } = await createMeeting(date,stage,invitedMembers);
+    console.log("Meeting Url : ",start_url,join_url)
 
     // Get the stage status
     let stageStatus = jobApplication.stageStatuses.get(stage);
