@@ -80,6 +80,7 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
+  notificationTokens : [String],
   assignedCandidates: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'candidates'

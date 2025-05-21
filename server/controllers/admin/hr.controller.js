@@ -1275,3 +1275,20 @@ export const changeApplicationStatus = async (req, res) => {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
+
+export const registerFCMTokenForUser = async (req,res) => {
+  try {
+    const user = req.user;
+    const { token } = req.body;
+    console.log(token,user);
+    res.status(200).json({
+      success : true,
+      message : "Registered Token for Notifications Successfully."
+    })
+  } catch (error) {
+    console.error("Error registering FCM :", error);
+    res
+    .status(500)
+    .json({ message: "Error registering FCM ", error: error.message });
+  }
+}

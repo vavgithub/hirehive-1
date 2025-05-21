@@ -162,7 +162,6 @@ connectDB()
     
     //Seeding Assessment Templates
     seedTemplates()
-    
     // renameTechToHTML()
 
     app.on("error", (error) => {

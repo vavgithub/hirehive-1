@@ -163,7 +163,8 @@ export const getUserProfile = asyncHandler(async (req, res) => {
           tasks_pending: user.tasks_pending,
           role: user.role,
           profilePicture: user.profilePicture,
-          companyDetails : user?.company_id
+          companyDetails : user?.company_id,
+          notificationTokens : user?.notificationTokens ?? []
       });
   } else {
       res.status(404);

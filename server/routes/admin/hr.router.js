@@ -1,5 +1,6 @@
 import express from "express"
-import { changeApplicationStatus, getCandidateScores, moveCandidate, moveMultipleCandidates, noShow, rateMultipleCandidates, rejectCandidate, rejectMultipleCandidates, rescheduleCall, rescheduleScreening, scheduleCall, scheduleScreening, scoreRoundTwo, sendDesignTask, submitBudgetScore, updateAssigneeForMultipleCandidates, updateCandidateRating } from "../../controllers/admin/hr.controller.js";
+import { changeApplicationStatus, getCandidateScores, moveCandidate, moveMultipleCandidates, noShow, rateMultipleCandidates, registerFCMTokenForUser, rejectCandidate, rejectMultipleCandidates, rescheduleCall, rescheduleScreening, scheduleCall, scheduleScreening, scoreRoundTwo, sendDesignTask, submitBudgetScore, updateAssigneeForMultipleCandidates, updateCandidateRating } from "../../controllers/admin/hr.controller.js";
+import { protect, roleProtect } from "../../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
@@ -8,6 +9,8 @@ router.post('/reject-candidate', rejectCandidate);
 router.post('/reject-multiple-candidates', rejectMultipleCandidates);
 
 router.post('/move-candidate', moveCandidate);
+
+router.post('/register-fcm-token', protect, registerFCMTokenForUser);
 
 router.post('/move-multiple-candidates', moveMultipleCandidates);
 

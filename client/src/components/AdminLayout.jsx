@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom'; // Added useLocation
 import { Menu, MenuItem, IconButton, Avatar } from '@mui/material';
 import { logout } from '../api/authApi';
@@ -11,6 +11,7 @@ import { Briefcase, ChevronDown, ChevronUp, ClipboardCheck, FileText, IdCard, La
 import { UNKNOWN_PROFILE_PICTURE_URL } from '../utility/config';
 import { useSelector } from 'react-redux';
 import { getRoute, hasRoutePermission, ROLES, ROUTE_KEY } from '../config/permissions.config';
+import { requestNotificationPermission } from '../config/firebase/requestPermission';
 
 //Screen URLs with BG for All Admin personas
 const ADMIN_BG_SCREENS = [
@@ -28,10 +29,16 @@ const ADMIN_BG_SCREENS = [
 const AdminLayout = () => {
     const navigate = useNavigate();
     const location = useLocation();  // Get current route
-    const { user } = useAuthContext(); // Get user data from the context
+    const { user , isLoading } = useAuthContext(); // Get user data from the context
 
     const [anchorEl, setAnchorEl] = useState(null); // State to control dropdown menu
     const { refetch } = useAuth();
+
+    useEffect(()=>{
+        if(user && !isLoading){
+            requestNotificationPermission(user?.notificationTokens)
+        }
+    },[user, isLoading])
 
     const { newMembersCount } = useSelector(state => state.admin)
 
