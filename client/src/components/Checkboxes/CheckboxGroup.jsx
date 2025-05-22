@@ -5,7 +5,7 @@ export const CheckboxGroup = ({ title, options, filters, handleCheckboxChange, i
     if (useCustomIconCheckbox) {
         return (
             <div className="mb-4">
-                <h3 className="typography-body text-gray-200 mb-2">{title}</h3>
+                <span className="typography-body text-font-main font-semibold mb-2">{title}</span>
                 <div className="grid grid-cols-3 gap-2 w-fit">
                     {options.map(({ value, label, statKey, icon }) => (
                         <CustomCheckbox
@@ -24,7 +24,7 @@ export const CheckboxGroup = ({ title, options, filters, handleCheckboxChange, i
     // Original checkbox group for other filter types
     return (
         <div className="mb-4">
-            <h3 className="typography-body font-bricolage text-gray-200 font-semibold mb-2">{title}</h3>
+            <span className="typography-body  text-font-main font-semibold mb-2">{title}</span>
             <div className="flex flex-wrap gap-2">
                 {options.map(({ value, label }) => (
                     <ButtonCheckbox

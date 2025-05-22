@@ -39,7 +39,7 @@ function InterviewsChart({dataSet}) {
           itemGap: 32,
           top: 'center',          // Vertically center the legend
           textStyle: {
-            color: "#fff",
+            color: "var(--color-font-main)",
             padding: [0, 0, 0, 12]
           }
         },

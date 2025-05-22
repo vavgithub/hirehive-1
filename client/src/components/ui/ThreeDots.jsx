@@ -187,7 +187,7 @@ const ThreeDots = ({ job, handleAction, page, orgId, isPinned, role , extraStyle
                         sx: {
                           fontWeight: 300,
                           fontSize: '0.875rem',
-                          color: 'inherit', // critical: let it inherit from MenuItem
+                          color: 'var(--color-font-main)', // critical: let it inherit from MenuItem
                         },
                       }}
                       primary={label}

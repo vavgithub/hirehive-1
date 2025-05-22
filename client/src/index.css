@@ -515,9 +515,44 @@ input[type='number'] {
     --color-yellow-100:rgba(237, 189, 20, 1);
     --color-green-100:rgba(18, 211, 130, 1);
     --color-red-100:rgba(255, 56, 92, 1);
+    
+      --color-font-main: rgb(225,255,255);
 
   }
+ /* Light theme */
+  [data-theme="light"] {
+    --color-primary-100: rgb(4, 95, 253);
+    --color-primary-200: rgb(2, 84, 228);
+    --color-primary-300: rgba(4, 95, 253, 0.15);
+    --color-primary-400: rgba(4, 95, 253, 0.2);
+    
+    --color-accent-100: rgb(0, 184, 163);
+    --color-accent-200: rgba(0, 184, 163, 0.3);
+    --color-accent-300: rgba(0, 184, 163, 0.1);
+    
+    --color-background-100: rgba(248, 249, 250, 1);
+    --color-background-90: rgba(240, 242, 245, 1);
+    --color-background-80: rgba(233, 236, 239, 1);
+    --color-background-70: rgba(222, 226, 230, 1);    
+    --color-background-60: rgba(206, 212, 218, 1);
+    --color-background-40: rgba(248, 249, 250, 0.9);
+    --color-background-30: rgba(248, 249, 250, 0.8);
+    
+    --color-font-accent-100: rgba(0, 184, 163, 1);
+    --color-font-gray-90: rgb(108, 117, 125);
+    --color-font-secondary: rgb(73, 80, 87);
+    --color-redbg: rgba(255, 56, 92, 0.1);
+    --color-yellow-100: rgba(237, 189, 20, 1);
+    --color-green-100: rgba(18, 211, 130, 1);
+    --color-red-100: rgba(255, 56, 92, 1);
 
+  --color-font-main: rgb(0,0,0);
+
+  }
   
 }
 
+
+[data-theme="light"] body {
+  @apply text-black-100;
+}

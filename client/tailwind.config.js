@@ -135,6 +135,7 @@ export default {
           gray: "var(--color-font-gray-90)",
           red: "var(--color-red-100)",
           yellow: "var(--color-yellow-100)",
+          main:"var(--color-font-main)"
         },
       },
 

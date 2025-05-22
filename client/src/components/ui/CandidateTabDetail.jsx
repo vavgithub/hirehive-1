@@ -244,7 +244,7 @@ const Experience = ({ company, position, startDate, endDate, index }) => (
           </form>
 
           <StyledCard padding={2}>
-            <CustomHeading  label={"Skill Set"} />
+            <h2 className='typography-h2 text-font-main'>Skill Set</h2>
             <div className="flex flex-wrap gap-2">
                   {data.skillSet.map((skill, index) => (
                       <span key={index} className="bg-background-70 rounded-full typography-body py-3 px-4">

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom'; // Added useLocation
+import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { Menu, MenuItem, IconButton, Avatar } from '@mui/material';
 import { logout } from '../api/authApi';
 import useAuth from '../hooks/useAuth';
@@ -11,6 +11,8 @@ import { Briefcase, ChevronDown, ChevronUp, ClipboardCheck, FileText, IdCard, La
 import { UNKNOWN_PROFILE_PICTURE_URL } from '../utility/config';
 import { useSelector } from 'react-redux';
 import { getRoute, hasRoutePermission, ROLES, ROUTE_KEY } from '../config/permissions.config';
+import ThemeToggle from './ui/ThemeToggle';
+// import ThemeToggle from './ThemeToggle'; // Import ThemeToggle component
 
 //Screen URLs with BG for All Admin personas
 const ADMIN_BG_SCREENS = [
@@ -27,19 +29,18 @@ const ADMIN_BG_SCREENS = [
 
 const AdminLayout = () => {
     const navigate = useNavigate();
-    const location = useLocation();  // Get current route
-    const { user } = useAuthContext(); // Get user data from the context
+    const location = useLocation();
+    const { user } = useAuthContext();
 
-    const [anchorEl, setAnchorEl] = useState(null); // State to control dropdown menu
+    const [anchorEl, setAnchorEl] = useState(null);
     const { refetch } = useAuth();
 
     const { newMembersCount } = useSelector(state => state.admin)
 
     // Get profile path based on user role
     const getProfilePath = () => {
-        return getRoute(user?.role,ROUTE_KEY.PROFILE);
+        return getRoute(user?.role, ROUTE_KEY.PROFILE);
     };
-
 
     const handleLogout = async () => {
         try {
@@ -53,16 +54,16 @@ const AdminLayout = () => {
 
     // Function to handle dropdown menu opening
     const handleMenuClick = (event) => {
-        setAnchorEl(event.currentTarget); // Set the element that opens the menu
+        setAnchorEl(event.currentTarget);
     };
 
     // Function to handle dropdown menu closing
     const handleMenuClose = () => {
-        setAnchorEl(null); // Close the menu
+        setAnchorEl(null);
     };
 
     const NavItem = ({ to, icon: Icon, activeIcon: ActiveIcon, iconData, children, hasHighlighter }) => (
-        <div className="relative flex flex-row items-center justify-between  rounded-xl ">
+        <div className="relative flex flex-row items-center justify-between rounded-xl">
             <NavLink
                 to={to}
                 end={to === "/admin/dashboard" || to === "/design-reviewer/dashboard"}
@@ -73,7 +74,7 @@ const AdminLayout = () => {
                 {({ isActive, isPending }) => (
                     <div className='flex items-center gap-2'>
                         {isActive || isPending ? <ActiveIcon count={iconData} /> : <Icon count={iconData} />}
-                        <span className= 'typography-body'>{children}</span>
+                        <span className='typography-body'>{children}</span>
                     </div>
                 )}
             </NavLink>
@@ -89,66 +90,65 @@ const AdminLayout = () => {
     );
 
     const DropDownNavItem = ({
-    to,
-    icon: Icon,
-    activeIcon: ActiveIcon,
-    iconData,
-    children,
-    hasHighlighter,
-    submenu = []
+        to,
+        icon: Icon,
+        activeIcon: ActiveIcon,
+        iconData,
+        children,
+        hasHighlighter,
+        submenu = []
     }) => {
-    const { pathname } = useLocation();
-    const isActive = pathname.startsWith(to);
-    const [isOpen, setIsOpen] = useState(isActive);
+        const { pathname } = useLocation();
+        const isActive = pathname.startsWith(to);
+        const [isOpen, setIsOpen] = useState(isActive);
 
-    const toggleDropdown = () => setIsOpen(!isOpen);
+        const toggleDropdown = () => setIsOpen(!isOpen);
 
-    return (
-        <div className="relative flex flex-col rounded-xl">
-        {/* Parent menu item */}
-        <div
-            onClick={toggleDropdown}
-            className={`cursor-pointer w-full flex items-center justify-between min-h-11 gap-2 pl-2 pr-3 py-2 rounded-xl hover:bg-background-60 ${isActive ? 'selection-primary' : ''}`}
-        >
-            <div className="flex items-center gap-2">
-            {isActive ? <ActiveIcon count={iconData} /> : <Icon count={iconData} />}
-            <span className="typography-body">{children}</span>
-            </div>
-            {isOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-        </div>
+        return (
+            <div className="relative flex flex-col rounded-xl">
+                {/* Parent menu item */}
+                <div
+                    onClick={toggleDropdown}
+                    className={`cursor-pointer w-full flex items-center justify-between min-h-11 gap-2 pl-2 pr-3 py-2 rounded-xl hover:bg-background-60 ${isActive ? 'selection-primary' : ''}`}
+                >
+                    <div className="flex items-center gap-2">
+                        {isActive ? <ActiveIcon count={iconData} /> : <Icon count={iconData} />}
+                        <span className="typography-body">{children}</span>
+                    </div>
+                    {isOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                </div>
 
-        {hasHighlighter && (
-            <p className="w-2 absolute right-4 h-2 rounded-full bg-blue-100"></p>
-        )}
-        <div
-            className={`absolute top-[18px] right-0 w-1 h-6 rounded-tl-xl rounded-bl-xl ${isActive ? 'bg-teal-400' : 'bg-transparent'}`}
-        />
-
-        {/* Submenu items */}
-        {isOpen && (
-        <div className={"relative ml-6 mt-2 flex flex-col gap-2 vertical-dashed-line " + (isActive && 'line-open')}>
-            {submenu.map((item) => (
-            <NavLink
-                key={item.to}
-                to={item.to}
-                className={({ isActive }) =>
-                `flex items-center gap-2 py-2 px-2 rounded-xl hover:bg-background-60 typography-body ${
-                    isActive ? 'text-font-accent selection-primary' : ''
-                }`
-                }
-            >
-                {({ isActive, isPending }) => (
-                <>
-                    {(isActive && item.activeIcon) ? <item.activeIcon /> : <item.icon />}
-                    {item.label}
-                </>
+                {hasHighlighter && (
+                    <p className="w-2 absolute right-4 h-2 rounded-full bg-blue-100"></p>
                 )}
-            </NavLink>
-            ))}
-        </div>
-        )}
-        </div>
-    );
+                <div
+                    className={`absolute top-[18px] right-0 w-1 h-6 rounded-tl-xl rounded-bl-xl ${isActive ? 'bg-teal-400' : 'bg-transparent'}`}
+                />
+
+                {/* Submenu items */}
+                {isOpen && (
+                    <div className={"relative ml-6 mt-2 flex flex-col gap-2 vertical-dashed-line " + (isActive && 'line-open')}>
+                        {submenu.map((item) => (
+                            <NavLink
+                                key={item.to}
+                                to={item.to}
+                                className={({ isActive }) =>
+                                    `flex items-center gap-2 py-2 px-2 rounded-xl hover:bg-background-60 typography-body ${isActive ? 'text-font-accent selection-primary' : ''
+                                    }`
+                                }
+                            >
+                                {({ isActive, isPending }) => (
+                                    <>
+                                        {(isActive && item.activeIcon) ? <item.activeIcon /> : <item.icon />}
+                                        {item.label}
+                                    </>
+                                )}
+                            </NavLink>
+                        ))}
+                    </div>
+                )}
+            </div>
+        );
     };
 
 
@@ -192,61 +192,60 @@ const AdminLayout = () => {
                         onClick={handleMenuClick}
                         className={`flex gap-2  ${location.pathname === profilePath ? "text-font-accent  " : ""}`}
                     >
-                        <Avatar alt={user?.firstName + " " + user?.lastName} sx={{ width: "32px", height: "32px" }}
+                        <Avatar alt={user?.firstName + " " + user?.lastName}
                             src={user?.profilePicture || UNKNOWN_PROFILE_PICTURE_URL} />
-                        <span className={`typography-body  ${location.pathname === profilePath ? "text-font-accent" : "text-white"} `}>{user?.firstName + " " + user?.lastName}</span>
+                        <span className={`typography-body  ${location.pathname === profilePath ? "text-font-accent" : "text-font-main"} `}>{user?.firstName + " " + user?.lastName}</span>
                     </IconButton>
                     <div className={`absolute right-0 w-1 h-6 rounded-tl-xl rounded-bl-xl ${location.pathname === profilePath ? "bg-teal-400" : "bg-transparent"}`} />
                 </div>
                 <StyledMenu anchorEl={anchorEl} handleMenuClose={handleMenuClose} itemComponents={itemComponents} />
-
             </>
         );
     };
 
     const renderMenuItems = () => {
         const jobsSubMenu = [
-            ...(hasRoutePermission(user.role,ROUTE_KEY.ALLJOBS) ? [{
-                to : getRoute(user.role,ROUTE_KEY.ALLJOBS),
-                label : 'All Jobs',
-                icon : () => <IconWrapper isInActiveIcon icon={Briefcase} />,
-                activeIcon : () => <IconWrapper isActiveIcon icon={Briefcase}/>
+            ...(hasRoutePermission(user.role, ROUTE_KEY.ALLJOBS) ? [{
+                to: getRoute(user.role, ROUTE_KEY.ALLJOBS),
+                label: 'All Jobs',
+                icon: () => <IconWrapper isInActiveIcon icon={Briefcase} />,
+                activeIcon: () => <IconWrapper isActiveIcon icon={Briefcase} />
             }] : []),
-            ...(hasRoutePermission(user.role,ROUTE_KEY.ASSESSMENTS) ? [{
-                to : getRoute(user.role,ROUTE_KEY.ASSESSMENTS),
-                label : 'Assessments',
-                icon : () => <IconWrapper isInActiveIcon icon={ClipboardCheck} />,
-                activeIcon : () => <IconWrapper isActiveIcon icon={ClipboardCheck}/>
+            ...(hasRoutePermission(user.role, ROUTE_KEY.ASSESSMENTS) ? [{
+                to: getRoute(user.role, ROUTE_KEY.ASSESSMENTS),
+                label: 'Assessments',
+                icon: () => <IconWrapper isInActiveIcon icon={ClipboardCheck} />,
+                activeIcon: () => <IconWrapper isActiveIcon icon={ClipboardCheck} />
             }] : [])
         ]
 
         const candidatesSubMenu = [
-            ...(hasRoutePermission(user.role,ROUTE_KEY.ALL_CANDIDATES) ? [{
-                to : getRoute(user.role,ROUTE_KEY.ALL_CANDIDATES),
-                label : user?.role === ROLES.DESIGN_REVIEWER ? 'Candidates' : 'All Candidates',
-                icon : () => <IconWrapper isInActiveIcon icon={Users} />,
-                activeIcon : () => <IconWrapper isActiveIcon icon={Users}/>
+            ...(hasRoutePermission(user.role, ROUTE_KEY.ALL_CANDIDATES) ? [{
+                to: getRoute(user.role, ROUTE_KEY.ALL_CANDIDATES),
+                label: user?.role === ROLES.DESIGN_REVIEWER ? 'Candidates' : 'All Candidates',
+                icon: () => <IconWrapper isInActiveIcon icon={Users} />,
+                activeIcon: () => <IconWrapper isActiveIcon icon={Users} />
             }] : []),
-            ...(hasRoutePermission(user.role,ROUTE_KEY.SHORTLISTED) ? [{
-                to : getRoute(user.role,ROUTE_KEY.SHORTLISTED),
-                label : 'Future Gems',
-                icon : () => <IconWrapper isInActiveIcon icon={MonitorDot} />,
-                activeIcon : () => <IconWrapper isActiveIcon icon={MonitorDot}/>
+            ...(hasRoutePermission(user.role, ROUTE_KEY.SHORTLISTED) ? [{
+                to: getRoute(user.role, ROUTE_KEY.SHORTLISTED),
+                label: 'Future Gems',
+                icon: () => <IconWrapper isInActiveIcon icon={MonitorDot} />,
+                activeIcon: () => <IconWrapper isActiveIcon icon={MonitorDot} />
             }] : [])
         ]
 
-        return(
+        return (
             <>
-                {user?.role === "Admin" && <NavItem to={getRoute(user.role,ROUTE_KEY.DASHBOARD)} icon={() => <IconWrapper isInActiveIcon icon={LayoutGrid} />} activeIcon={() => <IconWrapper isActiveIcon icon={LayoutGrid} />}> Dashboard </NavItem>}
-                {hasRoutePermission(user?.role,ROUTE_KEY.JOBS) && ((jobsSubMenu?.length  > 1 ) 
-                ? <DropDownNavItem to={getRoute(user.role,ROUTE_KEY.JOBS)} submenu={jobsSubMenu} icon={() => <IconWrapper isInActiveIcon icon={Briefcase} />} activeIcon={() => <IconWrapper isActiveIcon icon={Briefcase} />}> Jobs </DropDownNavItem> 
-                :<NavItem to={jobsSubMenu[0]?.to} icon={jobsSubMenu[0]?.icon} activeIcon={jobsSubMenu[0]?.activeIcon}> {jobsSubMenu[0]?.label} </NavItem>)}
-                {hasRoutePermission(user?.role,ROUTE_KEY.CANDIDATES) && (candidatesSubMenu?.length > 1) ?
-                 <DropDownNavItem to={getRoute(user.role,ROUTE_KEY.CANDIDATES)} submenu={candidatesSubMenu} icon={() => <IconWrapper isInActiveIcon icon={Users} />} activeIcon={() => <IconWrapper isActiveIcon icon={Users} />}>Candidates</DropDownNavItem> 
-                 :<NavItem to={candidatesSubMenu[0]?.to} icon={candidatesSubMenu[0]?.icon} activeIcon={candidatesSubMenu[0]?.activeIcon}> {candidatesSubMenu[0]?.label}</NavItem>}
-                {hasRoutePermission(user?.role,ROUTE_KEY.REVIEWS) && <NavItem to={getRoute(user.role,ROUTE_KEY.REVIEWS)} icon={() => <IconWrapper isInActiveIcon icon={Star} />} activeIcon={() => <IconWrapper isActiveIcon icon={Star} />}>Reviews</NavItem>}
-                {hasRoutePermission(user?.role,ROUTE_KEY.TEAMS) && <NavItem to={getRoute(user.role,ROUTE_KEY.TEAMS)} hasHighlighter={newMembersCount > 0} icon={() => <IconWrapper isInActiveIcon icon={IdCard} />} activeIcon={() => <IconWrapper isActiveIcon icon={IdCard} />}>Teams</NavItem>}
-                {hasRoutePermission(user?.role,ROUTE_KEY.GUIDE) && <NavItem to={getRoute(user.role,ROUTE_KEY.GUIDE)} hasHighlighter={newMembersCount > 0} icon={() => <IconWrapper isInActiveIcon icon={FileText} />} activeIcon={() => <IconWrapper isActiveIcon icon={FileText} />}>Guide</NavItem>}
+                {user?.role === "Admin" && <NavItem to={getRoute(user.role, ROUTE_KEY.DASHBOARD)} icon={() => <IconWrapper isInActiveIcon icon={LayoutGrid} />} activeIcon={() => <IconWrapper isActiveIcon icon={LayoutGrid} />}> Dashboard </NavItem>}
+                {hasRoutePermission(user?.role, ROUTE_KEY.JOBS) && ((jobsSubMenu?.length > 1)
+                    ? <DropDownNavItem to={getRoute(user.role, ROUTE_KEY.JOBS)} submenu={jobsSubMenu} icon={() => <IconWrapper isInActiveIcon icon={Briefcase} />} activeIcon={() => <IconWrapper isActiveIcon icon={Briefcase} />}> Jobs </DropDownNavItem>
+                    : <NavItem to={jobsSubMenu[0]?.to} icon={jobsSubMenu[0]?.icon} activeIcon={jobsSubMenu[0]?.activeIcon}> {jobsSubMenu[0]?.label} </NavItem>)}
+                {hasRoutePermission(user?.role, ROUTE_KEY.CANDIDATES) && (candidatesSubMenu?.length > 1) ?
+                    <DropDownNavItem to={getRoute(user.role, ROUTE_KEY.CANDIDATES)} submenu={candidatesSubMenu} icon={() => <IconWrapper isInActiveIcon icon={Users} />} activeIcon={() => <IconWrapper isActiveIcon icon={Users} />}>Candidates</DropDownNavItem>
+                    : <NavItem to={candidatesSubMenu[0]?.to} icon={candidatesSubMenu[0]?.icon} activeIcon={candidatesSubMenu[0]?.activeIcon}> {candidatesSubMenu[0]?.label}</NavItem>}
+                {hasRoutePermission(user?.role, ROUTE_KEY.REVIEWS) && <NavItem to={getRoute(user.role, ROUTE_KEY.REVIEWS)} icon={() => <IconWrapper isInActiveIcon icon={Star} />} activeIcon={() => <IconWrapper isActiveIcon icon={Star} />}>Reviews</NavItem>}
+                {hasRoutePermission(user?.role, ROUTE_KEY.TEAMS) && <NavItem to={getRoute(user.role, ROUTE_KEY.TEAMS)} hasHighlighter={newMembersCount > 0} icon={() => <IconWrapper isInActiveIcon icon={IdCard} />} activeIcon={() => <IconWrapper isActiveIcon icon={IdCard} />}>Teams</NavItem>}
+                {hasRoutePermission(user?.role, ROUTE_KEY.GUIDE) && <NavItem to={getRoute(user.role, ROUTE_KEY.GUIDE)} hasHighlighter={newMembersCount > 0} icon={() => <IconWrapper isInActiveIcon icon={FileText} />} activeIcon={() => <IconWrapper isActiveIcon icon={FileText} />}>Guide</NavItem>}
             </>
         )
     };
@@ -256,10 +255,11 @@ const AdminLayout = () => {
 
     return (
         <div id='adminContainer' className={`flex ${ADMIN_BG_SCREENS.some(path => pathname.startsWith(path)) ? ' bg-background-100 ' : ' bg-background-100 '} bg-cover bg-top h-full overflow-x-hidden `}>
-            <div className="fixed flex  w-[15rem] h-[calc(100vh-2rem)] m-4 rounded-xl flex-col  bg-background-90 text-font-gray typography-large-p justify-between py-6 ">
+            <div className="fixed flex w-[15rem] h-[calc(100vh-2rem)] m-4 rounded-xl flex-col bg-background-90 text-font-gray typography-large-p justify-between py-6 ">
                 <div className='flex flex-col gap-6 typography-body px-4'>
-                    <div className=' pl-2 pt-2 pb-4 flex '>
-                        <img className='h-11' src={LightLogo} />
+                    <div className='pl-2 pt-2 pb-4 flex items-center justify-between'>
+                        <img className='h-11' src={LightLogo} alt="Logo" />
+                        <ThemeToggle /> {/* Add ThemeToggle here */}
                     </div>
                     {renderMenuItems()}
                 </div>

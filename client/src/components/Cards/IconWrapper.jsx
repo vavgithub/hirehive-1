@@ -44,7 +44,7 @@ function IconWrapper({ icon  : Icon, isActiveIcon, inheritColor , isInActiveIcon
       "secondary" : "#808389",
       "error" : "#FF385C",
       "white" : "#ffffff",
-    
+      "var(--color-font-main)" : "var(--color-font-main)",    
     }
 
     const sizeStyles = ` ${(typeof size === 'number') ? sizeOptions[size] : sizeOptions[4]} `
@@ -54,7 +54,7 @@ function IconWrapper({ icon  : Icon, isActiveIcon, inheritColor , isInActiveIcon
       {Icon ? 
       <Icon 
       size={(typeof customIconSize === 'number') ? iconSizeOptions[customIconSize] : (typeof size === 'number') ?  iconSizeOptions[size] : 24} 
-      color={inheritColor ? "currentColor" : isActiveIcon ? colors["primary"] : isInActiveIcon ? colors["secondary"] : isErrorIcon ? colors['error'] : colors["white"]} 
+      color={inheritColor ? "currentColor" : isActiveIcon ? colors["primary"] : isInActiveIcon ? colors["secondary"] : isErrorIcon ? colors['error'] : colors["var(--color-font-main)"]} 
       strokeWidth={(typeof customStrokeWidth === 'number') ? strokeWidthOptions[customStrokeWidth] : (typeof size === 'number') ?  strokeWidthOptions[size] : 1.5} 
       /> 
       : children}

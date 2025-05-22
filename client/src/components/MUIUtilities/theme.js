@@ -70,7 +70,7 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           backgroundColor: "var(--color-background-80) !important", // Background color of each option
-          color: "white", // Text color of each option
+          color: "var(--color-font-main)", // Text color of each option
           fontFamily: "Gilroy",
           borderRadius: "0.75rem",
           "&:hover": {
@@ -358,7 +358,7 @@ const theme = createTheme({
             borderBottomRightRadius: "0.75rem",
           },
           "& .MuiDataGrid-cell": {
-            color: "white",
+            color: "var(--color-font-main)",
             borderBottom: "none",
             borderTop: "none",
           },
@@ -395,7 +395,7 @@ const theme = createTheme({
             borderRadius: 2,
             backgroundColor: "var(--color-background-30)",
             "&:hover": {
-              backgroundColor: "#232425",
+              backgroundColor: "var(--color-background-60)",
             },
           },
           "& .MuiDataGrid-filler": {
@@ -409,7 +409,7 @@ const theme = createTheme({
             borderRadius: 2,
             backgroundColor: "var(--color-background-80)",
             "&:hover": {
-              backgroundColor: "#232425",
+              backgroundColor: "var(--color-background-60)",
             },
           },
           "& .MuiSvgIcon-root": {

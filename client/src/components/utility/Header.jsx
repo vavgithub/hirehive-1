@@ -1,6 +1,8 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import ThreeDots from '../ui/ThreeDots'
+import IconWrapper from '../Cards/IconWrapper'
+import { ArrowLeft } from 'lucide-react'
 
 export const BackButton = () => {
     return (
@@ -41,7 +43,8 @@ const Header = ({
                 <div className={"flex items-center gap-4 w-full " + (rightContent && "lg:w-[65%]")}>
                     {withBack === "true" && (
                         <div className="cursor-pointer" onClick={handleBackClick}>
-                            <BackButton />
+                            {/* <BackButton /> */}
+                            <IconWrapper icon={ArrowLeft}/>
                         </div>
                     )}
                     <h1 className="typography-h1 md:typography-h1 w-full overflow-hidden whitespace-nowrap text-ellipsis">

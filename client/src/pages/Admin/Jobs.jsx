@@ -394,7 +394,7 @@ const Jobs = () => {
                             activeTab == "open" && displayJobs.length != 0 && displayJobs.filter(job => job.status === "open").length !== 0 && (
                                 <div className='flex justify-end '>
                                     <div >
-                                        <Button id="createJobBtn" variant="primary" icon={() => <IconWrapper icon={CirclePlus} size={0} customIconSize={5} customStrokeWidth={5} />} iconPosition="left" onClick={handleCreateJob}>Create A Job Listing</Button>
+                                        <Button id="createJobBtn" variant="primary" icon={() => <IconWrapper inheritColor icon={CirclePlus} size={0} customIconSize={5} customStrokeWidth={5} />} iconPosition="left" onClick={handleCreateJob}>Create A Job Listing</Button>
                                     </div>
                                 </div>
                             )

@@ -87,7 +87,7 @@ const Filters = ({ filters = {}, handleCheckboxChange, activeTab, handleExperien
 
     return (
             <StyledCard padding={2} backgroundColor={'bg-background-80'} extraStyles={"relative md:w-full"}>
-                <h3 className='text-gray-200 typography-h3  mb-2  tracking-wide' >Filter</h3>
+                <h3 className='text-font-main typography-h3  mb-2  tracking-wide' >Filter</h3>
                 <div className='flex flex-row-reverse absolute top-5 right-5'>
                     <button
                         onClick={handleClearAll}
@@ -125,7 +125,7 @@ const Filters = ({ filters = {}, handleCheckboxChange, activeTab, handleExperien
                 />
 
                 <div className="mb-4">
-                <h3 className="typography-body font-bricolage text-gray-200 font-semibold mb-2">Experience Filter</h3>
+                <h3 className="typography-body  text-font-main font-semibold mb-2">Experience Filter</h3>
                     <ExperienceFilter
                         onApply={handleExperienceApply}
                         shouldReset={shouldResetExperience}
@@ -133,7 +133,7 @@ const Filters = ({ filters = {}, handleCheckboxChange, activeTab, handleExperien
                 </div>
 
                 <div className="mb-4">
-                    <h3 className="typography-body font-bricolage text-gray-200 font-semibold mb-2">Budget Filter</h3>
+                    <h3 className="typography-body text-font-main font-semibold mb-2">Budget Filter</h3>
                     <BudgetFilter 
                         onApply={handleBudgetApply}
                         shouldReset={shouldResetBudget}
