@@ -80,7 +80,7 @@ const Reviews = () => {
 
   const groupCandidatesByJobAndStage = (candidates) => {
     return candidates.reduce((jobAcc, candidate) => {
-      candidate?.jobApplications.forEach(application => {
+      candidate?.jobApplications.filter(app => app.currentStage !== "Hired").forEach(application => {
         if (!jobAcc[application.jobTitle]) {
           jobAcc[application.jobTitle] = {};
         }
@@ -254,14 +254,13 @@ const Reviews = () => {
           <StatsGrid stats={updatedStatsOne} />
         </div>
         
-        <div className='flex gap-4 items-center mt-4 w-full'>
+        <div className='flex gap-4 items-center mt-4 w-full mb-8 '>
           <div className='w-[20%]'>
             <input
               type="text"
               placeholder="Search by name or email"
               value={searchTerm}
               onChange={handleSearch}
-              className="w-full p-2 rounded-lg bg-background-60 text-white border border-background-70 focus:outline-none focus:border-accent-100"
             />
           </div>
           
@@ -271,14 +270,13 @@ const Reviews = () => {
             candidates={candidates || []}
           />
         </div>
-
         {groupedEntries?.length > 0 ? groupedEntries.map(([jobTitle, stages, jobProfile]) => (
           <div key={jobTitle} className="mb-8">
-            <h2 className="typography-h2 my-4">{jobTitle}</h2>
+            <h2 className="typography-h2 mt-4">{jobTitle}</h2>
             {stageOrder.map(stage => {
               if (stages[stage] && stages[stage].length > 0) {
                 return (
-                  <div key={stage} className="mb-6">
+                  <div key={stage} >
                     <h3 className="typography-h3 mb-4">{stage}</h3>
                     {stages[stage].map(candidate => (
                       <div key={`${candidate._id}-${candidate.currentApplication.jobId}`} className="mb-4 flex flex-col bg-background-80 rounded-xl">

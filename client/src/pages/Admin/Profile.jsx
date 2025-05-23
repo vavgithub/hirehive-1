@@ -284,7 +284,7 @@ function Profile() {
                           <p className="text-font-gray whitespace-nowrap">Job Title</p>
                         </div>
                         <div className="flex flex-col gap-6 typography-body">
-                          <p className="whitespace-nowrap overflow-hidden text-ellipsis">{user?.role}</p>
+                          <p className="whitespace-nowrap overflow-hidden text-ellipsis">{user?.jobTitle}</p>
                         </div>
                       </div>
 
@@ -300,13 +300,13 @@ function Profile() {
                   ) : (
                     <div className="grid grid-cols-2 gap-4">
                       <Controller
-                        name="role"
+                        name="jobTitle"
                         control={control}
-                        defaultValue={user?.role}
+                        defaultValue={user?.jobTitle}
                         render={({ field, fieldState: { error } }) => (
                           <InputField
                             type="text"
-                            id="role"
+                            id="jobTitle"
                             label="Job Title"
                             labelStyles="text-font-gray"
                             value={field.value}

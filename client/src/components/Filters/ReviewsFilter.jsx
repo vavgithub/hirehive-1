@@ -40,7 +40,7 @@ const ReviewsFilter = ({ onApplyFilters, candidates = [] }) => {
   const getUniqueJobNames = () => {
     const jobNames = new Set();
     candidates.forEach(candidate => {
-      candidate.jobApplications?.forEach(application => {
+      candidate.jobApplications?.filter(app => app.currentStage !== "Hired").forEach(application => {
         if (application.jobTitle) {
           jobNames.add(application.jobTitle);
         }
