@@ -94,7 +94,7 @@ const PreAssessment = () => {
         setIsMediaRecorderOk(false)
       }
         //Redirecting to refresh the page, to turn of the Camera and Microphone Permissions
-        // return () => window.location.href = "/candidate/my-jobs"
+        return () => window.location.href = "/candidate/my-jobs"
     },[])
 
     if (startAssessment) {
