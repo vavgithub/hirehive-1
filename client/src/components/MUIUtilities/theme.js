@@ -360,6 +360,9 @@ const theme = createTheme({
             display : "none"
           },
           "& .MuiDataGrid-scrollbar--horizontal" :{
+              '&::-webkit-scrollbar': {
+                height: '8px !important', // Increase this value to make the scrollbar thicker
+              },
             display : "block !important",
             // Thumb (draggable part of scrollbar)
             '&::-webkit-scrollbar-thumb': {

@@ -251,7 +251,7 @@ function RegisterForm({setCurrentStep}) {
             customTitle={"Reset Your Password"}
             customMessage={"Please reset your password to continue"}
             customConfirmLabel={'Send OTP'}
-            onConfirm={()=>console.log("HI")}
+            onConfirm={()=>console.log("")}
             noCancel
             noConfirm
             >

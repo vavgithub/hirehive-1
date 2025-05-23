@@ -118,7 +118,6 @@ const MapperComponent = ({ role, customSchema, config, activeProfile, level , sc
   },[activeProfile ,customSchema]);
 
   const handleEditScoring = (scoringTitle) => {
-    console.log(config)
     const selectedScoring = config.find(stage => stage.title === activeProfile)?.scoring?.find(score => score.title === "Screening")?.scoreConfig[scoringTitle];
     const customScoreParam = jobBasedScoringSchema?.find(score => score.defaultKey === scoringTitle)
     setTitle(customScoreParam?.customKey ? customScoreParam?.customKey : scoringTitle)
