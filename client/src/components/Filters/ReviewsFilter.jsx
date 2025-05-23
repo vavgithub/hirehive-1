@@ -48,7 +48,7 @@ const ReviewsFilter = ({ onApplyFilters, candidates = [] }) => {
     const stages = new Set();
     candidates.forEach(candidate => {
       candidate.jobApplications?.forEach(application => {
-        if (application.currentStage) {
+        if (application.currentStage && application.currentStage !== "Hired") {
           stages.add(application.currentStage);
         }
       });
