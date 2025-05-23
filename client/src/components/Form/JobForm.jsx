@@ -16,6 +16,7 @@ import { useQuery } from '@tanstack/react-query';
 import axios from '../../api/axios';
 import TemplateModal from '../Modals/TemplateModal';
 import GlobalDropDown from '../Dropdowns/GlobalDropDown';
+import StyledCard from '../Cards/StyledCard';
 
 function hasDuplicates(arr) {
   return new Set(arr).size !== arr.length;
@@ -161,9 +162,9 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
   }
 
   return (
-    <>
-    <form onSubmit={handleSubmit(handleFormSubmit)} className='container-form mx-auto'>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+    <StyledCard extraStyles={'container-form mx-auto mt-6'}>
+    <form onSubmit={handleSubmit(handleFormSubmit)} className=''>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 ">
         <Controller
           name="jobTitle"
           control={control}
@@ -394,7 +395,7 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
 
     {/* Template display Modal */}
     <TemplateModal open={previewAssessment} assessment={previewAssessment} onClose={()=>setPreviewAssessment(false)}  />
-    </>
+    </StyledCard>
   );
 };
 

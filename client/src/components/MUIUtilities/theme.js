@@ -391,11 +391,11 @@ const theme = createTheme({
             color: "white",
           },
           "& .MuiDataGrid-virtualScroller": {
-            backgroundColor: "transparent",
+            backgroundColor: "var(--color-background-100)",
             borderRadius: "0.75rem 0.75rem 0px 0px !important",
           },
           "& .MuiDataGrid-overlayWrapper": {
-            height: "3rem",
+            height: "4rem",
           },
           "& .MuiDataGrid-overlay": {
             color: "white",
@@ -423,7 +423,7 @@ const theme = createTheme({
           },
           "& .MuiDataGrid-scrollbar": {
             display: "none",
-            background: "transparent",
+            height : "8px"
           },
           "& .second-row": {
             borderRadius: 2,

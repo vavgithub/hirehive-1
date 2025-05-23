@@ -68,6 +68,7 @@ const EditCandidateProfile = () => {
         { name: 'experience', label: 'Experience', type: 'number' , placeholder: 'Enter Experience (In Years)' },
         { name: 'currentCTC', label: 'Current CTC', type: 'number', placeholder: 'Enter Current CTC (In LPA)' },
         { name: 'expectedCTC', label: 'Expected CTC', type: 'number', placeholder: 'Enter Expected CTC (In LPA)' },
+        { name: 'hourlyRate', label: 'Hourly Rate', type: 'number', placeholder: 'Enter Hourly Rate (In INR/Hr)' },
         { name: 'noticePeriod', label: 'Notice Period', type: 'number', placeholder: 'Enter Notice Period (In Days)' }
       ],
     },

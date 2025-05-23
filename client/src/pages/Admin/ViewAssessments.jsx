@@ -46,7 +46,7 @@ function ViewAssessments() {
     <Container >
         <Header
         HeaderText="Assessments"
-        withBack="false"
+        withBack="true"
         >
         </Header>
         <StyledCard extraStyles={'flex flex-col gap-8 '}>
