@@ -34,7 +34,6 @@ const Round2Review = (props) => <RoundReview roundNumber={2} {...props} />;
 // API functions
 const fetchCandidates = async () => {
   const response = await axios.get('dr/assigned-candidates');
-  console.log(response.data);
   return response.data;
 };
 
@@ -60,7 +59,9 @@ const Reviews = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [appliedFilters, setAppliedFilters] = useState({
     jobName: [],
-    stage: []
+    stage: [],
+    'job Type' : [],
+    'job Profile' : [],
   });
 
   // Fetch candidates
@@ -126,6 +127,24 @@ const Reviews = () => {
       filtered = filtered.filter(candidate => {
         return candidate.jobApplications?.some(application => 
           filters.stage.includes(application.currentStage)
+        );
+      });
+    }
+
+    // Apply job Type filter
+    if (filters['job Type'] && filters['job Type'].length > 0) {
+      filtered = filtered.filter(candidate => {
+        return candidate.jobApplications?.some(application => 
+          filters['job Type'].includes(application.jobType)
+        );
+      });
+    }
+
+    // Apply job Profile filter
+    if (filters['job Profile'] && filters['job Profile'].length > 0) {
+      filtered = filtered.filter(candidate => {
+        return candidate.jobApplications?.some(application => 
+          filters['job Profile'].includes(application.jobProfile)
         );
       });
     }

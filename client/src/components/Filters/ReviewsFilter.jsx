@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import IconWrapper from '../Cards/IconWrapper';
 import { SlidersHorizontal, Trash } from 'lucide-react';
 import TickCheckbox from '../Checkboxes/TickCheckbox';
+import { JOB_PROFILES } from '../../config/jobprofile.config';
 
 const ArrowIcon = ({ isOpen }) => (
   <svg
@@ -23,12 +24,16 @@ const ReviewsFilter = ({ onApplyFilters, candidates = [] }) => {
 
   const [selectedFilters, setSelectedFilters] = useState({
     jobName: [],
-    stage: []
+    stage: [],
+    "job Type": [],
+    "job Profile": [],
   });
 
   const [showDropdown, setShowDropdown] = useState({
     jobName: false,
-    stage: false
+    stage: false,
+    "job Type": false,
+    "job Profile": false,
   });
 
   // Extract unique job names and stages from candidates data
@@ -95,6 +100,8 @@ const ReviewsFilter = ({ onApplyFilters, candidates = [] }) => {
     setShowDropdown({
       jobName: false,
       stage: false,
+      "job Type": false,
+      "job Profile": false,
       [category]: !showDropdown[category],
     });
   };
@@ -104,14 +111,18 @@ const ReviewsFilter = ({ onApplyFilters, candidates = [] }) => {
     setIsOpen(!isOpen);
     setShowDropdown({
       jobName: false,
-      stage: false
+      stage: false,
+      "job Type": false,
+      "job Profile": false,
     });
   };
 
   const handleClearAll = () => {
     setSelectedFilters({
       jobName: [],
-      stage: []
+      stage: [],
+      "job Type": [],
+      "job Profile": []
     });
   };
 
@@ -130,7 +141,9 @@ const ReviewsFilter = ({ onApplyFilters, candidates = [] }) => {
 
   const categories = {
     jobName: getUniqueJobNames(),
-    stage: getUniqueStages()
+    stage: getUniqueStages(),
+    "job Type" : ["Full Time", "Part Time", "Contract", "Internship"],
+    "job Profile": Object.values(JOB_PROFILES)
   };
 
   // Apply filters whenever selectedFilters changes
@@ -177,7 +190,7 @@ const ReviewsFilter = ({ onApplyFilters, candidates = [] }) => {
                 onClick={() => handleDropdown(category)}
               >
                 <div className="flex gap-2 w-[90%]">
-                  <span className="typography-body capitalize">
+                  <span className="typography-body capitalize whitespace-nowrap">
                     {category === 'jobName' ? 'Job Name' : category}:
                   </span>
                   <span className={formatSelectedValues(category, selectedFilters[category]).className}>
