@@ -82,7 +82,7 @@ const Login = () => {
                     <ForgotPassword onBack={() => setShowForgotPassword(false)} />
                 ) : (
                     <>
-                        <h2 className="typography-h1 mb-2 text-center font-semibold w-full">Welcome Back</h2>
+                        <h1 className="typography-h1 mb-2 text-center font-semibold w-full">Welcome Back</h1>
                         <p className="typography-body mb-10 text-center font-normal w-full">
                             Login to your account below
                         </p>

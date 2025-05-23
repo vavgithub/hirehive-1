@@ -8,7 +8,7 @@ import GlobalStaging from './GlobalStaging';
 import { ensureAbsoluteUrl } from '../../utility/ensureAbsoluteUrl';
 import LinkView from '../ui/LinkView';
 import IconWrapper from '../Cards/IconWrapper';
-import { Check, ChevronDown, X } from 'lucide-react';
+import { Check, ChevronDown, ChevronUp, X } from 'lucide-react';
 import { hasPermission, PERMISSIONS } from '../../config/permissions.config';
 // const stageComponents = {
 //     Portfolio,
@@ -21,7 +21,7 @@ import { hasPermission, PERMISSIONS } from '../../config/permissions.config';
 const AccordionSection = ({ title, isOpen, onToggle, children, badge }) => (
     <Card
         sx={{
-            backgroundColor: "rgba(22, 23, 24, 1)",
+            backgroundColor: "var(22, 23, 24, 1)",
             borderRadius: "0.75rem",
             color: "white",
             marginTop: "0.75rem"
@@ -30,13 +30,13 @@ const AccordionSection = ({ title, isOpen, onToggle, children, badge }) => (
         <div className="w-full">
             <button
                 onClick={onToggle}
-                className="w-full px-6 py-4 flex justify-between bg-background-90 items-center border-b border-background-80"
+                className="w-full px-6 py-4 flex justify-between bg-background-80 items-center border-b border-background-80"
             >
                 <div className="flex items-center gap-4 ">
                     <h3 className="typography-h3">{title}</h3>
                     {badge}
                 </div>
-                <IconWrapper icon={ChevronDown} size={0} customStrokeWidth={5} customIconSize={5}  />
+                <IconWrapper icon={isOpen ? ChevronUp :ChevronDown} size={0} customStrokeWidth={5} customIconSize={5}  />
             </button>
 
             {isOpen && (
@@ -160,7 +160,7 @@ const ApplicationStaging = ({ candidateId, jobId ,jobStatus}) => {
 
     return (
         <div className="application-staging">
-            <h2 className="mb-4">Application Stages</h2>
+            <h4 className="typography-h4 mb-4">Application Stages</h4>
 
             {/* Stage Progress Section */}
             <div className="stages-progress flex">

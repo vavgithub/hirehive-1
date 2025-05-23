@@ -3,7 +3,7 @@ import Container from "../../components/Cards/Container";
 import Header from "../../components/utility/Header";
 import StyledCard from "../../components/Cards/StyledCard";
 import { getStageColor, stagingConfig } from "../../config/staging.config";
-import { JOB_PROFILES } from "../../config/jobprofile.config";
+import { JOB_PROFILES, JOB_PROFILES_DETAILS } from "../../config/jobprofile.config";
 import IconWrapper from "../../components/Cards/IconWrapper";
 import { ChevronDown, ChevronUp, Pencil } from "lucide-react";
 import StyledTabs from "../../components/ui/StyledTabs";
@@ -20,31 +20,36 @@ const updateScreeningParam = async ({title, description, oldKey, jobProfile }) =
     return response.data
 }
 
-const getScreeningStage = (profile) => 
+const getStage = (profile,title) => 
   stagingConfig[profile]?.find(
-  (stage) => stage.name === "Screening"
+  (stage) => stage.name === title
 )
 
 const guideConfig = 
       Object.values(JOB_PROFILES).map((profile) => {
-        const screeningStage = getScreeningStage(profile)
+        const portfolioStage = getStage(profile,"Portfolio")
+        const screeningStage = getStage(profile,"Screening")
+        const designTaskStage = getStage(profile,"Design Task")
+        const round1Stage = getStage(profile,"Round 1")
+        const round2Stage = getStage(profile,"Round 2")
+
         return {
           key: profile,
           title: profile,
-          description: `${profile} based jobs follow this pattern of stages`,
+          description: JOB_PROFILES_DETAILS[profile]?.description,
           isExpandable: true,
-          children: [
+          scoring: [
             {
               title: "Portfolio",
               description:
-                "Portfolio round in which the portfolios of the candidates are reviewed",
+               portfolioStage?.description,
               color: getStageColor("Portfolio"),
               scoreConfig: 5,
             },
             {
               title: "Screening",
               description:
-                "Screening round in which the first interviews are conducted with candidate to review the basic requirements for the job role.",
+               screeningStage?.description,
               color: getStageColor("Screening"),
               scoreConfig: {
                 total: 30,
@@ -53,7 +58,7 @@ const guideConfig =
                 ).reduce((acc, [key, value]) => {
                   acc[key] = {
                     score: value,
-                    description: "Description for " + key,
+                    description: screeningStage?.scoreDetails[key]?.description,
                     isEditable : !!screeningStage?.scoreDetails[key]?.isEditable 
                   };
                   return acc;
@@ -63,21 +68,21 @@ const guideConfig =
             {
               title: "Design Task",
               description:
-                "Design Task round in which the candidates are assigned with design task and are reviewed",
+              designTaskStage?.description,
               color: getStageColor("Design Task"),
               scoreConfig: 5,
             },
             {
               title: "Round 1",
               description:
-                "Round 1 is the second round of interview after design task to analyze candidates skills based on task submitted",
+              round1Stage?.description,
               color: getStageColor("Round 1"),
               scoreConfig: 5,
             },
             {
               title: "Round 2",
               description:
-                "Round 2 is the final round of interview after all analysis and grading in which final decision is made.",
+              round2Stage?.description,
               color: getStageColor("Round 2"),
               scoreConfig: 5,
             },
@@ -99,25 +104,26 @@ const ScoringInput = ({scoring,title,setTitle,description,setDescription, handle
   </div>
 )
 
-const MapperComponent = ({ role, customSchema, config, parent, level , scoringState, setScoringState}) => {
+const MapperComponent = ({ role, customSchema, config, activeProfile, level , scoringState, setScoringState}) => {
   const [title,setTitle] = useState("");
   const [description,setDescription] = useState("");
 
   const queryClient = useQueryClient();
 
   const jobBasedScoringSchema = useMemo(()=>{
-    if(parent?.title && customSchema){
-      return customSchema[parent.title]
+    if(activeProfile && customSchema){
+      return customSchema[activeProfile]
     }
     return []
-  },[parent,customSchema]);
+  },[activeProfile ,customSchema]);
 
-  const handleEditScoring = (scoring) => {
-    const selectedScoring = config.find(stage => stage.title === "Screening")?.scoreConfig[scoring];
-    const customScoreParam = jobBasedScoringSchema?.find(score => score.defaultKey === scoring)
-    setTitle(customScoreParam?.customKey ? customScoreParam?.customKey : scoring)
+  const handleEditScoring = (scoringTitle) => {
+    console.log(config)
+    const selectedScoring = config.find(stage => stage.title === activeProfile)?.scoring?.find(score => score.title === "Screening")?.scoreConfig[scoringTitle];
+    const customScoreParam = jobBasedScoringSchema?.find(score => score.defaultKey === scoringTitle)
+    setTitle(customScoreParam?.customKey ? customScoreParam?.customKey : scoringTitle)
     setDescription(customScoreParam?.description ? customScoreParam?.description : selectedScoring?.description)
-    setScoringState(prev => ({...prev,[`${parent?.title}-${scoring}`] : true}));
+    setScoringState(prev => ({...prev,[`${parent?.title}-${scoringTitle}`] : true}));
   }
 
   const updateParamMutation = useMutation({
@@ -142,7 +148,7 @@ const MapperComponent = ({ role, customSchema, config, parent, level , scoringSt
       description,
       title,
       oldKey : scoring , 
-      jobProfile : parent?.title
+      jobProfile : activeProfile
     })
   }
 
@@ -151,81 +157,91 @@ const MapperComponent = ({ role, customSchema, config, parent, level , scoringSt
     config.map((stage, index) => (
       <div
         key={level + index}
-        className={`relative ${level === 1 && "mb-16"} ${
-          level > 0 ? "guide-dashed-line ml-8 " : ""
-        }`}
+        className={`relative `}
       >
-        <h2
-          className={`typography-${
-            level === 0 ? "h3 mb-2 " : level === 1 ? "body" : "large-p"
-          }  ${
-            stage.color
-              ? " bg-background-80 w-fit px-6 py-2 rounded-xl flex mb-2 items-center"
-              : ""
-          } `}
-        >
-          {stage.color && (
-            <span
-              className={"inline-block w-4 h-4 mr-4 rounded-full"}
-              style={{
-                backgroundColor: stage.color,
-              }}
-            ></span>
-          )}
+        <h2 className="typography-h2 pb-2">
           {stage?.title}
         </h2>
-        <p className="typography-body text-font-gray  mb-4">
+        <p className="typography-body text-font-gray ">
           {stage?.description}
         </p>
-          <>
-            {stage?.scoreConfig &&
-              (typeof stage?.scoreConfig !== "object" ? (
-                <h3 className="typography-h3 mb-6">
-                  Score : {stage?.scoreConfig}
-                </h3>
-              ) : (
+        {
+          stage?.scoring?.length > 0 && 
+          <div className="flex flex-col gap-8 mt-8">
+            {stage?.scoring?.map(scoringStage => (
+              <StyledCard
+                backgroundColor={"bg-background-80"}
+                key={'scoring' + level + index}
+                extraStyles={`relative grid grid-cols-2 gap-8 `}
+              >
                 <div>
-                  <h3 className="typography-h3 mb-4">Scoring</h3>
-                  <StyledCard
-                    padding={3}
-                    backgroundColor={"bg-background-70"}
-                    extraStyles="flex flex-col gap-4 w-full md:w-[50%] mb-6"
-                  >
-                    {Object.keys(stage.scoreConfig)
-                      .filter((scoring) => scoring !== "total")
-                      .map((scoring,index) => (
-                        <div key={`scoring-${index+1}`}>
-                          {(stage.scoreConfig[scoring]?.isEditable && scoringState[`${parent?.title}-${scoring}`]) ? 
-                          <ScoringInput 
-                          scoring={scoring} 
-                          title={title} 
-                          setTitle={setTitle} 
-                          description={description} 
-                          setDescription={setDescription} 
-                          handleCancel={() => handleCancel(scoring)} 
-                          handleSave={() => handleSave(scoring)} 
-                          />
-                          : <>
-                            <p className="typography-body flex justify-between">
-                              {jobBasedScoringSchema?.find(score => score.defaultKey === scoring)?.customKey || scoring}
-                              <span>{stage.scoreConfig[scoring].score}</span>
-                            </p>
-                            <div className="flex justify-between items-center mt-2">
-                              <p className="typography-body text-font-gray ">
-                                {jobBasedScoringSchema?.find(score => score.defaultKey === scoring)?.description || stage.scoreConfig[scoring].description}
-                              </p>
-                              {(hasPermission(role,PERMISSIONS.SHOW_EDIT_SCORING) && stage.scoreConfig[scoring]?.isEditable) && <button onClick={() => handleEditScoring(scoring)} type="button"><IconWrapper size={0} customIconSize={1} icon={Pencil} /></button>}
-                            </div>
-                          </>}
-                        </div>
-                      ))}
-                  </StyledCard>
+                  <p className="typography-body mb-2 flex items-center px-6 py-2 bg-background-70 w-fit rounded-xl">
+                    {scoringStage.color && (
+                      <span
+                        className={"inline-block w-4 h-4 mr-4 rounded-full"}
+                        style={{
+                          backgroundColor: scoringStage.color,
+                        }}
+                      ></span>
+                    )}
+                    {scoringStage?.title}
+                  </p>
+                  <p className="typography-body  text-font-gray ">
+                    {scoringStage?.description}
+                  </p>
                 </div>
-              ))}
-            {stage?.children?.length > 0 && (
-              <MapperComponent role={role} customSchema={customSchema} config={stage?.children} parent={stage ?? null} level={level + 1} scoringState={scoringState} setScoringState={setScoringState} />
-            )}
-          </>
+                <div className="flex justify-end">
+                  {scoringStage?.scoreConfig &&
+                    (typeof scoringStage?.scoreConfig !== "object" ? (
+                      <h4 className="typography-body py-2">
+                        Score : {scoringStage?.scoreConfig}
+                      </h4>
+                    ) : (
+                      <div className="w-full place-items-end">
+                        <h4 className="typography-body mb-4">Total Score : 30</h4>
+                        <StyledCard
+                          padding={3}
+                          backgroundColor={"bg-background-70"}
+                          extraStyles="flex flex-col gap-4 w-full md:w-[75%] "
+                        >
+                          {Object.keys(scoringStage.scoreConfig)
+                            .filter((scoring) => scoring !== "total")
+                            .map((scoring,index) => (
+                              <div key={`scoring-${index+1} `}>
+                                {(scoringStage.scoreConfig[scoring]?.isEditable && scoringState[`${parent?.title}-${scoring}`]) ? 
+                                <ScoringInput 
+                                scoring={scoring} 
+                                title={title} 
+                                setTitle={setTitle} 
+                                description={description} 
+                                setDescription={setDescription} 
+                                handleCancel={() => handleCancel(scoring)} 
+                                handleSave={() => handleSave(scoring)} 
+                                />
+                                : <>
+                                  <p className="typography-body flex justify-between">
+                                    <span className="flex gap-2">
+                                    {jobBasedScoringSchema?.find(score => score.defaultKey === scoring)?.customKey || scoring}
+                                    {(hasPermission(role,PERMISSIONS.SHOW_EDIT_SCORING) && scoringStage.scoreConfig[scoring]?.isEditable) && <button onClick={() => handleEditScoring(scoring)} type="button"><IconWrapper size={0} customIconSize={1} icon={Pencil} /></button>}
+                                    </span>
+                                    <span>{scoringStage.scoreConfig[scoring].score}</span> 
+                                  </p>
+                                  <div className="flex justify-between items-center mt-2">
+                                    <p className="typography-body text-font-gray w-[90%]">
+                                      {jobBasedScoringSchema?.find(score => score.defaultKey === scoring)?.description || scoringStage.scoreConfig[scoring].description}
+                                    </p>
+                                  </div>
+                                </>}
+                              </div>
+                            ))}
+                        </StyledCard>
+                      </div>
+                    ))}
+                </div>
+              </StyledCard>
+            ))}
+          </div>
+        }
       </div>
     ))
   );
@@ -281,11 +297,8 @@ function Guide() {
     <Container>
       <Header HeaderText="Guide" />
       <StyledCard>
-        <h2 className="typography-h2">Job Profiles</h2>
-        <p className="typography-body text-font-gray mt-2 mb-4">
-          The available job profiles throughout the application
-        </p>
-        <div className="flex flex-col gap-4 mb-6">
+
+        <div className="flex flex-col gap-2 mb-6">
             {mainTabs?.map((tabs,index) => (
                 <StyledTabs
                     key={`main-Profile-${index+1}`}
@@ -296,10 +309,15 @@ function Guide() {
                 />
             ))}
         </div>
-        {<MapperComponent role={user?.role} customSchema={user?.companyDetails?.customScreeningParam ?? null} config={[guideConfig.find(profile => activeProfile === profile.key)]} level={0} scoringState={editableScoring} setScoringState={setEditableScoring} />}
+        {<MapperComponent role={user?.role} customSchema={user?.companyDetails?.customScreeningParam ?? null} activeProfile={activeProfile} config={[guideConfig.find(profile => activeProfile === profile.key)]} level={0} scoringState={editableScoring} setScoringState={setEditableScoring} />}
       </StyledCard>
     </Container>
   );
 }
 
 export default Guide;
+
+
+
+
+

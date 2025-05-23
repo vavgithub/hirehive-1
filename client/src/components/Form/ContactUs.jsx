@@ -213,7 +213,7 @@ const ContactUs = () => {
   const renderContent = () => {
 
     return (
-      <form onSubmit={handleFormSubmit(onSubmit)} className="space-y-4 mt-4 max-h-[50vh] p-1 overflow-y-scroll scrollbar-hide">
+      <form onSubmit={handleFormSubmit(onSubmit)} className="space-y-4 mt-4 max-h-[50vh] overflow-y-scroll scrollbar-hide">
         <div className="flex flex-col gap-2">
           <label htmlFor="name" className="typography-body">
             Name <span className="text-red-100">*</span>
@@ -347,8 +347,8 @@ const ContactUs = () => {
 
       <StyledCard
         onClick={collapse ? null : toggleModal}
-        extraStyles={`lg:fixed bottom-6 right-6 lg:bottom-6 lg:right-0  w-full lg:w-fit cursor-pointer hover:bg-background-60 shadow-[0px_0px_20px_rgba(100,100,100,0.1)] `}
-        padding={2}
+        extraStyles={`lg:fixed bottom-6 right-6 lg:bottom-24 lg:right-0  w-full lg:w-fit cursor-pointer hover:bg-background-60  `}
+        padding={5}
         style={{
           maxWidth : collapse ? '5rem' : '100%',
           transition: 'max-width 1s ease',

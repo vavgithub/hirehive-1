@@ -369,8 +369,9 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
               </Button>
             )}
             <Button
-              variant="primary"
-              type="submit"
+              variant={(isEditing && watchedFields.status === 'draft') ? "secondary" :"primary"}
+              type={(isEditing && watchedFields.status === 'draft') ? "button" :"submit"}
+              onClick={(isEditing && watchedFields.status === 'draft') ? handleSaveForLater : null}
               icon={()=><IconWrapper icon={CirclePlus} inheritColor size={0} customIconSize={5} customStrokeWidth={5} />}
               iconPosition="left"
               disabled={isLoading}
@@ -378,17 +379,16 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
               {isEditing ? isLoading ? 'Saving...' : 'Save' : isLoading ? 'Creating...' :'Create A Job Listing'}
 
             </Button>
+          {isEditing && watchedFields.status === 'draft' && (
+            <Button
+              type="button"
+              onClick={handleSubmit((data) => onSubmit(data, false))}
+            >
+              Make It Active
+            </Button>
+          )}
         </div>
 
-        {isEditing && watchedFields.status === 'draft' && (
-          <button
-            type="button"
-            onClick={handleSubmit((data) => onSubmit(data, false))}
-            className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
-          >
-            Make It Active
-          </button>
-        )}
       </div>
     </form>
 

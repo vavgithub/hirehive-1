@@ -11,6 +11,7 @@ import { Briefcase, ChevronDown, ChevronUp, ClipboardCheck, FileText, IdCard, La
 import { UNKNOWN_PROFILE_PICTURE_URL } from '../utility/config';
 import { useSelector } from 'react-redux';
 import { getRoute, hasRoutePermission, ROLES, ROUTE_KEY } from '../config/permissions.config';
+import Footer from './Footer/Footer';
 
 //Screen URLs with BG for All Admin personas
 const ADMIN_BG_SCREENS = [
@@ -112,7 +113,7 @@ const AdminLayout = () => {
         >
             <div className="flex items-center gap-2">
             {isActive ? <ActiveIcon count={iconData} /> : <Icon count={iconData} />}
-            <span className="typography-body">{children}</span>
+            <span className="typography-body ">{children}</span>
             </div>
             {isOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
         </div>
@@ -126,13 +127,13 @@ const AdminLayout = () => {
 
         {/* Submenu items */}
         {isOpen && (
-        <div className={"relative ml-6 mt-2 flex flex-col gap-2 vertical-dashed-line " + (isActive && 'line-open')}>
+        <div className={"relative ml-10 mt-2 flex flex-col gap-2 vertical-dashed-line " + (isActive && 'line-open')}>
             {submenu.map((item) => (
             <NavLink
                 key={item.to}
                 to={item.to}
                 className={({ isActive }) =>
-                `flex items-center gap-2 py-2 px-2 rounded-xl hover:bg-background-60 typography-body ${
+                `flex items-center gap-2 py-2 px-2 rounded-xl hover:bg-background-60 typography-body  ${
                     isActive ? 'text-font-accent selection-primary' : ''
                 }`
                 }
@@ -255,11 +256,11 @@ const AdminLayout = () => {
     const { pathname } = useLocation()
 
     return (
-        <div id='adminContainer' className={`flex ${ADMIN_BG_SCREENS.some(path => pathname.startsWith(path)) ? ' bg-background-100 ' : ' bg-background-100 '} bg-cover bg-top h-full overflow-x-hidden `}>
-            <div className="fixed flex  w-[15rem] h-[calc(100vh-2rem)] m-4 rounded-xl flex-col  bg-background-90 text-font-gray typography-large-p justify-between py-6 ">
+        <div id='adminContainer' className={`flex ${ADMIN_BG_SCREENS.some(path => pathname.startsWith(path)) ? ' bg-background-100 ' : ' bg-background-100 '} bg-cover bg-top h-full overflow-x-hidden flex flex-col`}>
+            <div className="fixed flex  w-[16rem] h-[calc(100vh-2rem)] m-4 rounded-xl flex-col  bg-background-90 text-font-gray typography-large-p justify-between py-6 ">
                 <div className='flex flex-col gap-6 typography-body px-4'>
                     <div className=' pl-2 pt-2 pb-4 flex '>
-                        <img className='h-11' src={LightLogo} />
+                        <img className='h-11 cursor-pointer ' onClick={() => navigate('/admin')} src={LightLogo} />
                     </div>
                     {renderMenuItems()}
                 </div>
@@ -268,9 +269,10 @@ const AdminLayout = () => {
                 </div>
             </div>
 
-            <div className='ml-[16rem] w-[calc(100%-16rem)] flex justify-center min-h-screen'>
+            <div className='ml-[17rem] w-[calc(100%-17rem)] flex justify-center min-h-[calc(100vh-5rem)]'>
                 <Outlet />
             </div>
+            <Footer variant='sidebar' />
         </div>
     );
 };

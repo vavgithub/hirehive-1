@@ -241,8 +241,6 @@ const AllJobs = () => {
                             (debouncedQuery.length > 0 || isFiltered) ? filteredData?.filteredSearchJobsCount : jobData?.totalOpenJobs
                         }
                     />
-                    {/* DummyDiv for pagination adjust based on ContactUs */}
-                    <div className='lg:w-full lg:h-12'></div>
                     <ContactUs />
                 </div>
             </StyledCard>

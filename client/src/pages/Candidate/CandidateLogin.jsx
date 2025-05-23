@@ -111,7 +111,7 @@ const CandidateLogin = () => {
                   ) : (
                     <>
 
-          <h2 className="typography-h1 mb-2 text-center font-semibold">Welcome Back</h2>
+          <h1 className="typography-h1 mb-2 text-center font-semibold">Welcome Back</h1>
           <p className="typography-body mb-10 text-center font-normal">Login to your account below</p>
           {/* <button className="bg-blue-600 text-white py-2 px-4 rounded-lg mb-5 flex items-center justify-center">
                   Continue with Google

@@ -225,7 +225,7 @@ const ViewJobs = () => {
                 <StyledCard padding={2}>
                     <StatsGrid stats={jobsDetailStats} />
                     <div className='flex justify-between mt-4' >
-                        <div className='w-4/5   '>
+                        <div className='w-2/3   '>
                             <h3 className="typography-h3 mb-2">Job Description</h3>
                             <div className='text-font-gray typography-body' dangerouslySetInnerHTML={{ __html: formData.jobDescription ? formatDescription(formData.jobDescription) : '' }}></div>
                             <h3 className="typography-h3 mt-4 mb-2">Skills</h3>

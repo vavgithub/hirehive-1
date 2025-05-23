@@ -47,7 +47,7 @@ function Pagination({currentPage, pageLimit , totalItems ,setCurrentPage}) {
       </div>
       <div className='flex items-center gap-4'>
           <div onClick={currentPage > 1 ? handlePrev : null} className={currentPage > 1 ? "text-white cursor-pointer" : "text-font-gray"}>
-            <IconWrapper icon={ChevronLeft} size={0} customIconSize={5} customStrokeWidth={5} />
+            <IconWrapper inheritColor icon={ChevronLeft} size={0} customIconSize={5} customStrokeWidth={5} />
           </div>
             {
               getVisibilePageNumbers?.map(item =>{
@@ -55,7 +55,7 @@ function Pagination({currentPage, pageLimit , totalItems ,setCurrentPage}) {
               })
             }
           <div onClick={currentPage !== numberOfPages ? handleNext : null} className={currentPage === numberOfPages ? "text-font-gray" : "text-white cursor-pointer"}>
-            <IconWrapper icon={ChevronRight} size={0} customIconSize={5} customStrokeWidth={5} />
+            <IconWrapper inheritColor icon={ChevronRight} size={0} customIconSize={5} customStrokeWidth={5} />
           </div>
       </div>
     </div>

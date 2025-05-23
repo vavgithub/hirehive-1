@@ -3,14 +3,13 @@ import React from 'react'
 function CustomHeading({fontValue,fontSize,color,label,extraStyles = ""}) {
 
   const fontSteps = {
-    0 : "[0px]",
-    1 : "[0.625rem]",
-    2 : "[0.75rem]",
-    3 : "[0.875rem]",
-    4 : "[1rem]",
-    5 : "[1.25rem]",
-    6 : "[1.5rem]",
-    7 : "[2rem]",
+    0 : "typography-small-p",
+    1 : "typography-large-p",
+    2 : "typography-body",
+    3 : "typography-h4",
+    4 : "typography-h3",
+    5 : "typography-h2",
+    6 : "typography-h1",
   }  
 
   const fonts = {
@@ -21,8 +20,8 @@ function CustomHeading({fontValue,fontSize,color,label,extraStyles = ""}) {
   const styles = `
   font-semibold mb-4 
   ${color?.toString() ? color : "text-white"} 
-  ${fontValue?.toString() ? fonts[fontValue] : "font-bricolage"} 
-  ${fontSize?.toString() ? `text-${fontSteps[fontSize]}` : 'text-[20px]'}
+  ${fontValue?.toString() ? fonts[fontValue] : "font-gilroy"} 
+  ${fontSize?.toString() ? `${fontSteps[fontSize]}` : 'typography-body'}
   `
 
   return (

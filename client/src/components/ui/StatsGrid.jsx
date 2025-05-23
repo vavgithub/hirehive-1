@@ -61,7 +61,7 @@ const StatCard = ({ title, value, icon: Icon, statistics }) => {
     <StyledCard padding={2} extraStyles="flex  overflow-hidden justify-between relative items-center bg-card-pattern bg-cover shadow min-w-[15rem] max-w-[15rem]">
       <div className=" w-full ">
         <p className="typography-small-p text-font-gray w-max">{title}</p>
-        <p className="typography-h2">{value ?? 0}</p>
+        <h2 className="typography-h2">{value ?? 0}</h2>
         {<p key={currentStatistics} onClick={currentStatistics ? handleDropDown : undefined} className={`typography-small-p min-h-[18px] text-font-gray  flex items-center gap-1  ${currentStatistics ? "cursor-pointer" : ""}`}>
           <span className={/\-/.test(currentStatistics?.split(' ')[0]) ? 'text-red-40' : 'text-green-70'}>{currentStatistics && (/\-/.test(currentStatistics?.split(' ')[0]) || '+')}{currentStatistics?.split(' ')[0]}</span> {currentStatistics?.split(' ').slice(1).join(' ')}
           {

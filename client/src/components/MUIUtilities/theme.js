@@ -1,4 +1,5 @@
 import { createTheme } from "@mui/material/styles";
+import { color } from "echarts";
 
 const theme = createTheme({
   palette: {
@@ -346,8 +347,24 @@ const theme = createTheme({
             color: "gray",
             backgroundColor: "var(--color-background-70) !important",
           },
+          '& .MuiDataGrid-columnHeaders div' : {
+            backgroundColor: "var(--color-background-70) !important",
+          },
           "& .MuiDataGrid-columnHeader": {
             backgroundColor: "var(--color-background-70) !important",
+          },
+          "& .MuiDataGrid-scrollbarFiller--header" :{
+              background: "var(--color-background-70) !important",
+          },
+          "& .MuiDataGrid-scrollbarFiller--borderTop" : {
+            display : "none"
+          },
+          "& .MuiDataGrid-scrollbar--horizontal" :{
+            display : "block !important",
+            // Thumb (draggable part of scrollbar)
+            '&::-webkit-scrollbar-thumb': {
+              backgroundColor: 'var(--color-font-gray-80) !important', // Customize this
+            },
           },
           "& .MuiDataGrid-columnHeaderTitle": {
             color: "gray",
@@ -439,6 +456,15 @@ const theme = createTheme({
             backgroundColor: "var(--color-background-60) !important",
           },
         },
+        actions : {
+      "& button:not(.Mui-disabled)": {
+        cursor: "pointer !important",
+      },
+
+      "& button.Mui-disabled .MuiSvgIcon-root": {
+        color: "var(--color-font-gray-90) !important",
+      },
+        }
       },
     },
   },

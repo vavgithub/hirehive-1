@@ -172,7 +172,7 @@ function Teams() {
                 {/* Member Profile Picture */}
                 <div className="relative w-full aspect-square rounded-xl overflow-hidden">
                     <img src={ UNKNOWN_PROFILE_PICTURE_URL } alt="" className='object-cover w-full overflow-hidden' />
-                    <span className="absolute top-7 right-12 font-bold text-[#3d3c3c] scale-[3.4]">+</span>
+                    <span className="absolute top-5 right-10 font-bold text-[#3d3c3c] scale-[3.4]">+</span>
                 </div>
                 {/* Memeber Details */}
                 <div className="flex flex-col ">

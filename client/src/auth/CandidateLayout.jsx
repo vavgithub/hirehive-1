@@ -15,6 +15,7 @@ import ContactUs from '../components/Form/ContactUs';
 import IconWrapper from '../components/Cards/IconWrapper';
 import { Briefcase, BriefcaseBusiness, LogOut, User } from 'lucide-react';
 import { UNKNOWN_PROFILE_PICTURE_URL } from '../utility/config';
+import Footer from '../components/Footer/Footer';
 
 const CandidateLayout = () => {
   const navigate = useNavigate();
@@ -182,7 +183,7 @@ const CandidateLayout = () => {
   const darkBgPaths = ["/candidate/profile"]
 
   return (
-    <div className={`flex flex-col md:flex-row ${darkBgPaths.some(path => location?.pathname.startsWith(path)) ? ' bg-background-100 ' :' bg-background-100 '} bg-cover bg-top h-full overflow-x-hidden`}>
+    <div className={`flex flex-col  ${darkBgPaths.some(path => location?.pathname.startsWith(path)) ? ' bg-background-100 ' :' bg-background-100 '} bg-cover bg-top h-full overflow-x-hidden `}>
       {/* Mobile Menu Button */}
       <div className={'min-h-[4rem] w-full md:hidden z-30 fixed ' + (darkBgPaths.includes(location.pathname) ? "bg-background-100" : "")}>
         <div className='flex m-4 z-30'>
@@ -211,7 +212,7 @@ const CandidateLayout = () => {
           fixed md:relative z-40
           ${isMenuOpen ? 'translate-x-0' : '-translate-x-[110%] md:translate-x-0'}
           transition-transform duration-300 ease-in-out
-          w-60 h-[calc(100vh-2rem)] m-4 rounded-xl
+          w-[16rem] h-[calc(100vh-2rem)] m-4 rounded-xl
           bg-background-90 text-font-gray
           flex flex-col justify-between py-6
         `}
@@ -220,7 +221,7 @@ const CandidateLayout = () => {
         <div className="flex flex-col gap-6 typography-body ">
           <div className='px-6 pt-2 pb-4  flex '>
 
-            <img className='h-11' src={LightLogo} />
+            <img className='h-11 cursor-pointer ' onClick={() => navigate('/')} src={LightLogo} />
           </div>
           {menuItems.map((item) => (
             <NavItem
@@ -255,7 +256,7 @@ const CandidateLayout = () => {
       />
 
       {/* Main Content */}
-      <div className="mt-[4.6rem] md:mt-0 md:ml-[16rem] md:w-[calc(100vw-16rem)] flex flex-col items-center min-h-screen ">
+      <div className="mt-[4.6rem] md:mt-0 md:ml-[17rem] md:w-[calc(100vw-17rem)] flex flex-col items-center min-h-[calc(100vh-5rem)] ">
         <Outlet />
       </div>
 
@@ -266,7 +267,7 @@ const CandidateLayout = () => {
           onClick={() => setIsMenuOpen(false)}
         ></div>
       )}
-
+      <Footer variant='sidebar' />
     </div>
   );
 };

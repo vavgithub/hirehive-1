@@ -32,7 +32,7 @@ const JobDetailItem = ({ icon: Icon, text }) => (
 
 const JobFooterItem = ({ label, value }) => (
   <div className="flex flex-col ">
-    <span className="typography-small-p text-font-gray">{label}</span>
+    <span className="typography-small-p text-font-gray mb-[2px]">{label}</span>
     <span className="typography-body">{value}</span>
   </div>
 );
@@ -134,7 +134,7 @@ const JobCard = ({
   return (
     <StyledCard
     padding={0}
-    extraStyles={(onClick ? 'cursor-pointer' : '' ) + `rounded-xl  group relative`}
+    extraStyles={(onClick ? 'cursor-pointer' : '' ) + `   group relative`}
     onClick={onClick ? handleCardClick : undefined}
   >
     <StyledCard padding={2} backgroundColor={'bg-background-80'} borderRadius={'  rounded-t-xl '} extraStyles={'hover:bg-background-60 transition-colors pb-0 duration-200 shadow'}>
@@ -189,12 +189,12 @@ const JobCard = ({
         />}
       </div>
       <div className=" py-4 ">
-          <p className="typography-body text-font-gray h-[2.8rem] overflow-hidden" dangerouslySetInnerHTML={{__html : truncatedDescription}}>
+          <p className="typography-body text-font-gray h-[2.25rem] overflow-hidden" dangerouslySetInnerHTML={{__html : truncatedDescription}}>
           </p>
         </div>
       </> :
       <div className=" py-4 ">
-      <p className="typography-body text-font-gray h-[2.8rem] overflow-hidden" dangerouslySetInnerHTML={{__html : truncatedDescription}}>
+      <p className="typography-body text-font-gray h-[2.25rem] overflow-hidden" dangerouslySetInnerHTML={{__html : truncatedDescription}}>
       </p>
     </div>
         }

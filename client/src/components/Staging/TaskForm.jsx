@@ -68,6 +68,7 @@ export function SubmissionForm({candidateId,jobId,stageData,setIsLoading}){
                 id="taskLink"
                 type="text"
                 label="Task Link"
+                extraClass={'custom-input'}
                 required
                 value={taskLink}
                 onChange={(e) => setTaskLink(e.target.value)}
@@ -76,6 +77,7 @@ export function SubmissionForm({candidateId,jobId,stageData,setIsLoading}){
                 id="comment"
                 type="text"
                 label="Comment (Optional)"
+                extraClass={'custom-input'}
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
             />

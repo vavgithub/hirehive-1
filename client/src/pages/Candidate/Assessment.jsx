@@ -181,7 +181,7 @@ const QuestionDisplay = ({
           gridAutoRows: "1fr", // Ensures all rows are consistent based on tallest item
         }}>
           {question.options.map((option, index) => (
-            <div key={index} className="flex items-center bg-background-80  rounded-xl  h-full">
+            <div key={index} className={"flex items-center hover:bg-background-60 rounded-xl  h-full " + (currentAnswer === option.text ? ' selection-primary ' : ' bg-background-80')}>
               <label className="flex cursor-pointer items-center space-x-3 p-4 w-full">
                 <input
                   type="radio"
@@ -469,184 +469,6 @@ const Assessment = ({assessment_id}) => {
     });
   };
 
-
-//   const startRecording = async () => {
-//     try {
-//         const stream = await navigator.mediaDevices.getUserMedia({
-//             video: true,
-//             audio: false // Focus on video only
-//         });
-
-//         // Attach the stream to the video element for live preview
-//         webcamRef.current.video.srcObject = stream;
-
-//         // Create canvas for extracting frames
-//         const videoElement = document.createElement('video');
-//         videoElement.srcObject = stream;
-//         const canvas = document.createElement('canvas');
-//         const ctx = canvas.getContext('2d');
-
-//         // Array to store video frames as blobs
-//         const videoChunks = [];
-
-//         // Set up interval for extracting frames at 1 FPS
-//         const extractFramesInterval = setInterval(() => {
-//             // Ensure the canvas matches the video dimensions
-//             if (!canvas.width || !canvas.height) {
-//                 canvas.width = videoElement.videoWidth;
-//                 canvas.height = videoElement.videoHeight;
-//             }
-
-//             // Draw the current video frame on the canvas
-//             ctx.drawImage(videoElement, 0, 0);
-
-//             // Convert the canvas content to a Blob and store it
-//             canvas.toBlob((blob) => {
-//               if (blob) {
-//                   // Ensure each chunk is of type video/webm
-//                   videoChunks.push(blob);
-//                   console.log('Frame captured:', blob.size,blob.type);
-//               }
-//           }, 'video/webm');
-          
-//         }, 1000); // 1 FPS
-
-//         setIsRecording(true);
-//         console.log('Recording started');
-
-//         const stopRecording = () => {
-//           return new Promise((resolve) => {
-//               clearInterval(extractFramesInterval); // Stop frame extraction
-//               videoElement.srcObject = null;
-      
-//               // Create a final video Blob from captured frames
-//               const finalBlob = new Blob(videoChunks, { type: 'video/webm' });
-//               console.log('Recording stopped. Final blob size:', finalBlob.size , finalBlob.type);
-      
-//               setRecordedBlob(finalBlob);  // Update state with the final blob
-
-//               // Resolve the promise with the final blob
-//               resolve(finalBlob);
-//           });
-//       };
-
-//         // Attach stopRecording to a reference for external control
-//         mediaRecorderRef.current = { stop : stopRecording };
-//     } catch (error) {
-//         console.error('Error starting recording:', error);
-//         showErrorToast('Error', 'Failed to start recording. Please ensure camera access is granted.');
-//         // setTimeout(() => window.location.reload(), 1000);
-//     }
-// };
-
-
-
-  //   const uploadVideo = async (videoBlob) => {
-  //     if (!videoBlob) {
-  //       throw new Error('No recording available');
-  //     }
-
-  //     try {
-  //       // Create a proper File object
-  //       const videoFile = new File(
-  //         [videoBlob], 
-  //         'assessment-recording.webm',
-  //         { 
-  //           type: 'video/webm',
-  //           lastModified: Date.now()
-  //         }
-  //       );
-
-  //       // Log the file to verify it's created correctly
-  //       console.log('Video file created:', videoFile);
-
-  //       const formData = new FormData();
-  //       // Use the same field name as expected by multer
-  //       formData.append('video', videoFile);
-
-  //       // Log FormData contents
-  //       console.log('FormData entries:');
-  //       for (let pair of formData.entries()) {
-  //         console.log(pair[0], pair[1]);
-  //       }
-
-  //       const response = await axios.post('/admin/candidate/upload-recording', formData, {
-  //         headers: {
-  //           'Content-Type': 'multipart/form-data',
-  //         },
-  //         onUploadProgress: (progressEvent) => {
-  //           const progress = Math.round(
-  //             (progressEvent.loaded * 100) / progressEvent.total
-  //           );
-  //           setUploadProgress(progress);
-  //         },
-  //       });
-
-  //       return response.data.videoUrl;
-  //     } catch (error) {
-  //       console.error('Upload error:', error);
-  //       if (error.response) {
-  //         console.error('Response data:', error.response.data);
-  //         console.error('Response status:', error.response.status);
-  //       }
-  //       throw error;
-  //     }
-  //   };
-
-
-  // // Modified submit mutation
-  // const submitAssessmentMutation = useMutation({
-  //   mutationFn: async (assessmentData) => {
-  //     try {
-  //       setIsUploading(true);
-
-  //       // Stop recording and get the blob
-  //       const videoBlob = await stopRecording();
-
-  //       if (!videoBlob) {
-  //         throw new Error('No recording available');
-  //       }
-
-  //       // Upload video and get URL
-  //       const videoUrl = await uploadVideo(videoBlob);
-
-  //       if (!videoUrl) {
-  //         throw new Error('Failed to get video URL');
-  //       }
-
-
-  //       // Then submit assessment with video URL
-  //       const response = await axios.post(
-  //         `/admin/candidate/questionnaire/${candidateAuthData._id}`,
-  //         {
-  //           ...assessmentData,
-  //           recordingUrl: uploadResponse.data.videoUrl
-  //         }
-  //       );
-  //       return response.data;
-  //     } catch (error) {
-  //       console.error('Submit error:', error);
-  //       throw error;
-  //     }
-  //   },
-  //   onSuccess: (data) => {
-  //     showSuccessToast('Success', 'Assessment submitted successfully');
-  //     navigate('/candidate/my-jobs');
-  //   },
-  //   onError: (error) => {
-  //     showErrorToast(
-  //       'Error',
-  //       error.message || 'Failed to submit assessment'
-  //     );
-  //     setIsUploading(false);
-  //   },
-  //   onSettled: () => {
-  //     setIsUploading(false);
-  //     setUploadProgress(0);
-  //   }
-  // });
-
-
   const uploadVideo = async (videoBlob) => {
     if (!videoBlob) {
       throw new Error('No recording available');
@@ -834,7 +656,7 @@ const Assessment = ({assessment_id}) => {
   return (
     <>
       {isUploading && <UploadProgressOverlay uploadProgress={uploadProgress} />}
-      <div className="no-selection flex min-h-screen bg-background-90 ">
+      <div className="no-selection flex min-h-screen bg-background-100 ">
         <QuestionSidebar
           questions={questions}
           currentQuestion={currentQuestion}

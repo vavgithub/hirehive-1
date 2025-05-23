@@ -14,6 +14,8 @@ import ContactUs from '../../components/Form/ContactUs';
 import Container from '../../components/Cards/Container';
 import IconWrapper from '../../components/Cards/IconWrapper';
 import { ArrowRight } from 'lucide-react';
+import Footer from '../../components/Footer/Footer';
+import LogoWrapper from '../../components/Logo/LogoWrapper';
 
 // Function to fetch the job data by ID
 const getJobById = async (id) => {
@@ -64,11 +66,9 @@ const ViewJob = () => {
     return (
         // <div className='min-h-screen flex justify-center bg-main-bg bg-cover w-full p-4'>      
         //     <div className=" flex container flex-col items-center  ">
+            <>
             <Container hasBgColor extraContainerStyles="flex flex-col items-center">
-                <div className='flex  w-full mt-2 mb-6 justify-between'>
-                    <img className='h-12' src={Logo} />
-                    {!isAuthenticated && <Button variant="secondary" onClick={() => navigate("/login")}>Login</Button>}
-                </div>
+                <LogoWrapper isAuthenticated={isAuthenticated} />
                 <StyledCard padding={3} backgroundColor={"bg-background-30"} extraStyles={" w-full"}>
                     {/* Flex container for both desktop and mobile */}
                     <div className="flex flex-col lg:flex-row justify-between w-full">
@@ -90,7 +90,6 @@ const ViewJob = () => {
                                     }
                                 </div>}
                         />
-                        {/* <h1 className="typography-h1"></h1> */}
                         {/* Button only visible on large screens */}
 
                     </div>
@@ -138,6 +137,8 @@ const ViewJob = () => {
                     <ContactUs/>
                 </div>
             </Container>
+            <Footer />
+            </>
     );
 };
 

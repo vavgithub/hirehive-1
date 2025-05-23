@@ -4,7 +4,7 @@ import { Controller } from 'react-hook-form';
 function AdditionalQuestions({jobDetails, control ,errors}) {
   return (
     <>
-        <h2 className="typography-h3 mb-4">Additional Questions</h2>
+        <h3 className="typography-h3 mb-4">Additional Questions</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {jobDetails?.questions.map((question, index) => (
             <div key={question?._id} className="bg-background-30 rounded-xl p-4">
@@ -35,7 +35,7 @@ function AdditionalQuestions({jobDetails, control ,errors}) {
                         return (
                             <div
                             key={optionIndex}
-                            className="px-4 py-2 min-h-11 rounded-xl flex bg-background-60 items-center cursor-pointer hover:bg-background-70"
+                            className={"px-4 py-2 min-h-11 rounded-xl flex  items-center cursor-pointer hover:bg-background-70 " + (field.value === option ? 'selection-primary' : "bg-background-60")}
                             onClick={() => {
                                 field.onChange(option);
                                 document.getElementById(inputId).focus();

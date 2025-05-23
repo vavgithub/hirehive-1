@@ -68,7 +68,7 @@ export const PhoneInputField = ({
             {label && (
               <label
                 htmlFor={name}
-                className={"typography-body mb-2 w-fit sm:whitespace-nowrap " + (rowWise ? " min-w-[25%] max-w-[25%] text-font-gray" : "")}
+                className={"typography-body mb-2 w-fit sm:whitespace-nowrap " + (rowWise ? " min-w-[25%] max-w-[25%] " : "")}
               >
                 {label}
                 {required && <span className="text-red-100">*</span>}

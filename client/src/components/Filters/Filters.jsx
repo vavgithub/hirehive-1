@@ -125,7 +125,7 @@ const Filters = ({ filters = {}, handleCheckboxChange, activeTab, handleExperien
                 />
 
                 <div className="mb-4">
-                <h3 className="typography-body font-bricolage text-gray-200 font-semibold mb-2">Experience Filter</h3>
+                <p className="typography-body  text-gray-200  mb-2">Experience Filter</p>
                     <ExperienceFilter
                         onApply={handleExperienceApply}
                         shouldReset={shouldResetExperience}
@@ -133,7 +133,7 @@ const Filters = ({ filters = {}, handleCheckboxChange, activeTab, handleExperien
                 </div>
 
                 <div className="mb-4">
-                    <h3 className="typography-body font-bricolage text-gray-200 font-semibold mb-2">Budget Filter</h3>
+                    <p className="typography-body  text-gray-200  mb-2">Budget Filter</p>
                     <BudgetFilter 
                         onApply={handleBudgetApply}
                         shouldReset={shouldResetBudget}

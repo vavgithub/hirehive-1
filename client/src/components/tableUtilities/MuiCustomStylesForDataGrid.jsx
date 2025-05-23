@@ -116,6 +116,9 @@ function MuiCustomStylesForDataGrid() {
                 .MuiDataGrid-scrollbar.MuiDataGrid-scrollbar--horizontal.css-1rtad1::-webkit-scrollbar-thumb:hover {
                     background: #fff; 
                 }
+                .MuiDataGrid-filler{
+                    display: none;
+                }
                 .css-1oudwrl::after {
                     display: none;
                 }

@@ -35,8 +35,8 @@ const Header = ({
     };
 
     return (
-        <div className="w-full">
-            <div className="flex items-center justify-between mb-4">
+        <div className={"w-full mb-4"}>
+            <div className="flex items-center justify-between ">
                 {/* Left section with back button and title */}
                 <div className={"flex items-center gap-4 w-full " + (rightContent && "lg:w-[65%]")}>
                     {withBack === "true" && (
@@ -44,7 +44,9 @@ const Header = ({
                             <BackButton />
                         </div>
                     )}
-                    <h1 className="typography-h1 md:typography-h1 w-full overflow-hidden whitespace-nowrap text-ellipsis">
+                    <h1 className={"typography-h1 md:typography-h1 w-full overflow-hidden whitespace-nowrap text-ellipsis "} style={{
+                        paddingBottom : '0rem' 
+                    }}>
                         {HeaderText}
                     </h1>
                 </div>

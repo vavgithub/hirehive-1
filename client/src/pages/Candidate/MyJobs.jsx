@@ -95,7 +95,7 @@ const MyJobs = () => {
     <Container>
       <Header HeaderText={"My Jobs"}></Header>
         {isAssessmentBannerVisible && <AssessmentBanner />}
-        <StyledCard padding={2} backgroundColor={"bg-background-30 lg:pb-16 "}>
+        <StyledCard padding={2} backgroundColor={"bg-background-30  "}>
           {appliedJobs?.jobApplications?.length > 0 ? (
             <ul className='flex flex-col gap-4'>
               {appliedJobs?.jobApplications?.map((application, index) => (
@@ -117,7 +117,7 @@ const MyJobs = () => {
             </div>
           )}
 
-          <div className='my-4'>
+          <div className='mt-4'>
             <Pagination
               currentPage={page}
               setCurrentPage={setPage}

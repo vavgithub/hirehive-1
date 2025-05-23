@@ -17,6 +17,7 @@ import ContactUs from '../../components/Form/ContactUs';
 import Container from '../../components/Cards/Container';
 import IconWrapper from '../../components/Cards/IconWrapper';
 import { SlidersHorizontal } from 'lucide-react';
+import LogoWrapper from '../../components/Logo/LogoWrapper';
 
 const fetchOpenJobs = (page,companyId) => axios.get(`/candidates/jobs/open?page=${page}&companyId=${companyId}`).then(res => res.data);
 const filterSearchJobs = (query,filters,page,companyId) => axios.post('/candidates/filterSearchJobs', { filters , page , query , companyId }).then(res => res.data);
@@ -168,19 +169,12 @@ const CompanyHome = () => {
             // <div className='w-full  p-4 '>
             //     <div className='container'>
             <Container hasBgColor>
-                    <div className=' flex justify-between items-center mt-2 mb-4'>
-                        <div className='flex items-center justify-center gap-8'>
-
-                        <img className='h-12' src={Logo}/>
-                        <h1 className='display-d2  hidden md:block'>{jobData?.companyDetails?.name} Jobs</h1>
-                        </div>
-                        <Button variant="primary" onClick={() => navigate("/login")}>Login</Button>
-                    </div>
-                    <h1 className='md:hidden display-d2 py-4'>Jobs</h1>
+                    <LogoWrapper buttonVariant={"primary"} isAuthenticated={false} headerText={jobData?.companyDetails?.name + ' Jobs'} />
+                    <h1 className='md:hidden display-d2 py-4'>{jobData?.companyDetails?.name + ' Jobs'}</h1>
                         
                     <div className=' py-8 bg-home-bg bg-cover flex flex-col items-center rounded-xl justify-center'>
-                        <h1 className='typography-h1 sm:display-d2 px-6 sm:px-0 max-w-96 text-center'>Unlock Your Career Potential</h1>
-                        <div className='flex justify-evenly gap-2 px-4 w-full md:w-3/5 mt-6 md:mt-9'>
+                         <h2 className='typography-h2 px-6 sm:px-0 w-full md:w-3/5 text-center'>Unlock Your Career Potential</h2>
+                        <div className='flex justify-evenly gap-2 px-4 w-full md:w-3/5 '>
                             <input
                                 type='text'
                                 className="w-full p-2 "

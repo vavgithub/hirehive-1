@@ -394,7 +394,7 @@ export const router = createBrowserRouter([
     children: [
       {
         path: "dashboard",
-        element: <Candidates />
+        element: <Navigate to={'/design-reviewer/candidates'} />
       },
       {
         path: "profile",

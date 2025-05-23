@@ -19,8 +19,8 @@ const updateProfessionalDetails = async ({experience, noticePeriod, currentCTC, 
 }
 
 const Card = ({ title, children, gridLayout = false , extraClass }) => (
-  <div className={`bg-background-90 p-8 rounded-xl mb-4 ${extraClass}`} >
-    <h2 className="typography-h3 mb-5">{title}</h2>
+  <div className={`bg-background-80 p-8 rounded-xl mb-4 ${extraClass}`} >
+    <h3 className="typography-h3 mb-5">{title}</h3>
     <div className={gridLayout ? "grid grid-cols-2 gap-4" : ""}>{children}</div>
   </div>
 );
@@ -138,7 +138,7 @@ const Experience = ({ company, position, startDate, endDate, index }) => (
                       id="experience"
                       label="Experience"
                       labelStyles="text-font-gray"
-                      extraClass="no-spinner"
+                      extraClass="no-spinner custom-input"
                       rowWise
                       value={field.value ?? 0}
                       onChange={field.onChange}
@@ -158,7 +158,7 @@ const Experience = ({ company, position, startDate, endDate, index }) => (
                         id="noticePeriod"
                         label="Notice Period"
                         labelStyles="text-font-gray"
-                        extraClass="no-spinner"
+                        extraClass="no-spinner custom-input"
                         rowWise
                         value={field.value ?? 0}
                         onChange={field.onChange}
@@ -181,7 +181,7 @@ const Experience = ({ company, position, startDate, endDate, index }) => (
                             id="currentCTC"
                             label="Current CTC"
                             labelStyles="text-font-gray"
-                            extraClass="no-spinner"
+                            extraClass="no-spinner custom-input"
                             rowWise
                             value={field.value ?? 0}
                             onChange={field.onChange}
@@ -201,7 +201,7 @@ const Experience = ({ company, position, startDate, endDate, index }) => (
                             id="expectedCTC"
                             label="Expected CTC"
                             labelStyles="text-font-gray"
-                            extraClass="no-spinner"
+                            extraClass="no-spinner custom-input"
                             rowWise
                             value={field.value ?? 0}
                             onChange={field.onChange}
@@ -223,7 +223,7 @@ const Experience = ({ company, position, startDate, endDate, index }) => (
                         id="hourlyRate"
                         label="Hourly Rate"
                         labelStyles="text-font-gray"
-                        extraClass="no-spinner"
+                        extraClass="no-spinner custom-input"
                         rowWise
                         value={field.value ?? 0}
                         onChange={field.onChange}
@@ -243,8 +243,8 @@ const Experience = ({ company, position, startDate, endDate, index }) => (
             </Card>
           </form>
 
-          <StyledCard padding={2}>
-            <CustomHeading  label={"Skill Set"} />
+          <StyledCard backgroundColor={'bg-background-80'} padding={2}>
+            <CustomHeading fontSize={4}  label={"Skill Set"} />
             <div className="flex flex-wrap gap-2">
                   {data.skillSet.map((skill, index) => (
                       <span key={index} className="bg-background-70 rounded-full typography-body py-3 px-4">
