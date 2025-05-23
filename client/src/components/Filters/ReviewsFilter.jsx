@@ -163,7 +163,7 @@ const ReviewsFilter = ({ onApplyFilters, candidates = [] }) => {
   return (
     <div className="relative" ref={menuRef}>
       <div 
-        className={"cursor-pointer gap-2 flex typography-body hover:bg-background-60 hover:text-accent-100 rounded-xl p-2 text-font-gray"} 
+        className={"cursor-pointer gap-2 flex items-center typography-body hover:bg-background-60 hover:text-accent-100 rounded-xl p-2 text-font-gray"} 
         onClick={(e) => toggleMenu(e)}
       >
         <IconWrapper inheritColor={true} size={0} customIconSize={4} customStrokeWidth={5} icon={SlidersHorizontal} />
