@@ -7,9 +7,9 @@ import StageBadge from "../ui/StageBadge";
 import { ensureAbsoluteUrl } from "../../utility/ensureAbsoluteUrl";
 import IconWrapper from "../Cards/IconWrapper";
 import { CircleCheck, CircleX, ClipboardCheck, FileUser, FolderOpen, Globe } from "lucide-react";
-import { UNKNOWN_PROFILE_PICTURE_URL } from "../../utility/config";
 import { formatPhoneNumber } from "../Form/PhoneInputField";
 import { hasPermission, PERMISSIONS } from "../../config/permissions.config";
+import { useUnknownProfilePicture } from "../../context/ThemeContext";
 
 const getCommonColumns = (handleDocumentClick) => [
   {
@@ -28,7 +28,9 @@ const getCommonColumns = (handleDocumentClick) => [
         profilePictureUrl
       }
     },
-    renderCell: (params) => (
+    renderCell: (params) => {
+      const UNKNOWN_PROFILE_PICTURE_URL = useUnknownProfilePicture()
+      return(
       <div className="name-cell flex items-center gap-2 h-12">
         <Avatar src={params?.value?.profilePictureUrl || UNKNOWN_PROFILE_PICTURE_URL} sx={{ width: 32, height: 32 }} />
         <p className='flex items-center gap-2'>{params.value.name}
@@ -63,7 +65,7 @@ const getCommonColumns = (handleDocumentClick) => [
           )}
         </div>
       </div>
-    ),
+    )},
   },
   {
     field: 'currentStage',

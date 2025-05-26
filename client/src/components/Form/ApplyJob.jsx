@@ -144,7 +144,7 @@ export const FormField = ({
   export const PersonalDetailsSection = ({ control, onProfilePictureSelect, profilePicturePreview }) => {
     return (
       <div>
-        <h3 className="typography-h3 mb-4">Personal Details</h3>
+        <h3 className="typography-h3 mt-12 mb-4">Personal Details</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <ProfilePictureUpload 
           control={control} 

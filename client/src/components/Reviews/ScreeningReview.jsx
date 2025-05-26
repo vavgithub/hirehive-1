@@ -60,7 +60,7 @@ function ScreeningReview({ jobProfile, candidate, onSubmit ,rounded = "bottom"})
   
           <input
             type="text"
-            className='w-full bg-background-80 text-white p-2 rounded'
+            className='w-full bg-background-80  p-2 rounded'
             placeholder='Enter Your Feedback'
             value={feedback}
             onChange={(e) => setFeedback(e.target.value)}

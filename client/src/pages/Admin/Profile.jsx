@@ -15,10 +15,10 @@ import { InputField } from '../../components/Inputs/InputField';
 import Container from '../../components/Cards/Container';
 import { PencilLine } from 'lucide-react';
 import IconWrapper from '../../components/Cards/IconWrapper';
-import { UNKNOWN_PROFILE_PICTURE_URL } from '../../utility/config';
 import { companySizeOptions, industryTypeOptions, LocationOptions } from '../../components/Register/CompanyDetails';
 import { formatPhoneNumber, PhoneInputField } from '../../components/Form/PhoneInputField';
 import { validationRules } from '../../utility/validationRules';
+import { useUnknownProfilePicture } from '../../context/ThemeContext';
 
 
 
@@ -37,7 +37,7 @@ const dummyTools = [
 const PersonalDetails = ({ userData, isEditing, control }) => {
   return (
     <div>
-      <h2 className="typography-h3 mb-6">Personal Details</h2>
+      <h3 className="typography-h3 mb-6">Personal Details</h3>
       {!isEditing ? (
         <div className="flex justify-between flex-col gap-6 sm:flex-row">
           <div className="grid grid-cols-2 sm:w-[45%] gap-[10%]">
@@ -123,12 +123,14 @@ const PersonalDetails = ({ userData, isEditing, control }) => {
 
             )}
           /> */}
+          <div className='text-font-gray'>
           <PhoneInputField
             name="phone"
             rules={validationRules?.phoneNumber}
             control={control}
             label="Phone Number"
-          />
+            />
+          </div>
         </div>
       )}
     </div>
@@ -143,6 +145,8 @@ function Profile() {
   const [profileFile, setProfileFile] = useState(null);
   const { mutate: uploadPicture, isLoading: uploading } = useProfilePicture();
   const queryClient = useQueryClient();
+  const UNKNOWN_PROFILE_PICTURE_URL = useUnknownProfilePicture()
+
 
   const { control, handleSubmit, reset } = useForm({
     defaultValues: {
@@ -262,9 +266,9 @@ function Profile() {
                     )}
                   </div>
                   <div className='max-w-[60%] overflow-hidden py-1 text-ellipsis'>
-                    <h1 className="typography-h2 whitespace-nowrap overflow-hidden w-full text-ellipsis ">
+                    <h2 className="typography-h2 whitespace-nowrap overflow-hidden w-full text-ellipsis ">
                       {user?.firstName + " " + user?.lastName}
-                    </h1>
+                    </h2>
                     <p className='flex items-center gap-4 typography-large-p text-font-gray mt-4'>{user?.role}<span className='w-[6px] h-[6px] bg-font-gray inline-block rounded-full'></span>{user?.location ?? "-"}</p>
                   </div>
                 </div>
@@ -273,7 +277,7 @@ function Profile() {
 
                 {/* Professional Details Section */}
                 <div>
-                  <h2 className="typography-h3 mb-6">Professional Details</h2>
+                  <h3 className="typography-h3 mb-6">Professional Details</h3>
                   {!isEditing ? (
                     <div className="flex justify-between flex-col gap-6 sm:flex-row">
 
@@ -282,7 +286,7 @@ function Profile() {
                           <p className="text-font-gray whitespace-nowrap">Job Title</p>
                         </div>
                         <div className="flex flex-col gap-6 typography-body">
-                          <p className="whitespace-nowrap overflow-hidden text-ellipsis">{user?.role}</p>
+                          <p className="whitespace-nowrap overflow-hidden text-ellipsis">{user?.jobTitle}</p>
                         </div>
                       </div>
 
@@ -298,13 +302,13 @@ function Profile() {
                   ) : (
                     <div className="grid grid-cols-2 gap-4">
                       <Controller
-                        name="role"
+                        name="jobTitle"
                         control={control}
-                        defaultValue={user?.role}
+                        defaultValue={user?.jobTitle}
                         render={({ field, fieldState: { error } }) => (
                           <InputField
                             type="text"
-                            id="role"
+                            id="jobTitle"
                             label="Job Title"
                             labelStyles="text-font-gray"
                             value={field.value}
@@ -339,7 +343,7 @@ function Profile() {
                 {/* Skills & Expertise Section */}
                 {((!isEditing && (user?.tools_used?.length > 0 || user?.skills?.length > 0)) || isEditing) &&
                 <div>
-                  <h2 className="typography-h3 mb-6">Skills & Expertise</h2>
+                  <h3 className="typography-h3 mb-6">Skills & Expertise</h3>
                   {!isEditing ?  (
                     <div className="flex justify-between flex-col gap-6 sm:flex-row typography-body">
                       <div className="flex flex-col gap-2 sm:w-[45%] ">
@@ -360,7 +364,7 @@ function Profile() {
                           <p className="text-font-gray whitespace-nowrap">Tools Proficiency</p>
                         </div>
                         <div className="flex flex-col gap-6 typography-body">
-                          <p className="whitespace-nowrap overflow-hidden text-ellipsis flex gap-2 ">
+                          <p className="whitespace-nowrap overflow-hidden text-ellipsis flex gap-2 flex-wrap">
                           {(user?.tools_used).map((tool, index) => (
                             <span key={index} className="flex justify-center  w-fit bg-background-70 m px-6 py-2 rounded-full">{tool}</span>
                           ))}

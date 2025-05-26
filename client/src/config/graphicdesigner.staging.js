@@ -9,6 +9,7 @@ export const graphicDesignerConfig = [
             statuses : [
                 'Not Assigned', 'Under Review', 'Reviewed', 'Cleared', 'Rejected'
             ],
+            description: "Candidates submit their previous works and portfolios. Evaluated based on creativity, relevance, and execution. Scored out of 5.",
             score : 5,
             totalScore : 5,
             extraHeaderContent : PortfolioHeader,
@@ -267,35 +268,36 @@ export const graphicDesignerConfig = [
             statuses : [
                 'Pending', 'Call Scheduled', 'Under Review', 'Reviewed', 'Cleared', 'No Show', 'Rejected'
             ],
+            description : "Interview to assess the candidate's skills, creativity, and communication relevant to the role.",
             score : {
                 Attitude : 5,
+                Communication : 5,
+                Budget : 5,
                 Aesthetics : 5,
                 Creativity : 5,
                 Layout : 5,
-                Communication : 5,
-                Budget : 5,
             },
             scoreDetails : {
                 Attitude : {
-                    description : ""
+                    description : "Evaluates adaptability and understanding of trends."
                 },
                 Aesthetics : {
-                    description : "",
+                    description : "Judges design appeal and principles like balance, contrast.",
                     isEditable : true
                 },
                 Creativity : {
-                    description : "",
+                    description : "Assesses originality and idea generation.",
                     isEditable : true
                 },
                 Layout : {
-                    description : "",
+                    description : "Evaluates visual structure, hierarchy, and spacing.",
                     isEditable : true
                 },
                 Communication : {
-                    description : ""
+                    description : "Assesses brief understanding and visual messaging."
                 },
                 Budget : {
-                    description : ""
+                    description : "Judges efficiency in creating high-output assets."
                 },
             },
             totalScore : 30,
@@ -757,6 +759,7 @@ export const graphicDesignerConfig = [
             statuses : [
                 'Pending','Not Assigned', 'Sent', 'Under Review', 'Reviewed', 'Cleared', 'Rejected', 'Not Submitted'
             ],
+            description: "Candidates are given a task to complete within a deadline and submit a link and explanation. Scored out of 5.",
             score : 5,
             totalScore : 5,
             extraHeaderContent : false,
@@ -1168,6 +1171,7 @@ export const graphicDesignerConfig = [
             statuses : [
                 'Pending', 'Call Scheduled', 'Not Assigned', 'Reviewed', 'Cleared', 'No Show', 'Rejected'
             ],
+            description : "Interview to discuss the design task and practical aspects of the role. Scored out of 5.",
             score : 5,
             totalScore : 5,
             extraHeaderContent : false,
@@ -1612,6 +1616,7 @@ export const graphicDesignerConfig = [
             statuses : [
                 'Pending', 'Call Scheduled', 'Not Assigned', 'Reviewed', 'Cleared', 'No Show', 'Rejected'
             ],
+            description : "Interview with leadership to assess role alignment and company fit. Scored out of 5.",
             score : 5,
             totalScore : 5,
             extraHeaderContent : false,

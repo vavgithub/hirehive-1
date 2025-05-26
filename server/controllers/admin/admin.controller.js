@@ -859,8 +859,8 @@ export const rejectRequest = asyncHandler(async (req, res) => {
 export const updateScreeningParam = asyncHandler(async (req,res) => {
   const { title , description , oldKey, jobProfile } = req.body;
   const { company_id } = req.user
-  console.log(req.body,company_id);
-  if(!title.trim() || !description.trim() || !oldKey.trim() || !jobProfile.trim()){
+
+  if(!title?.trim() || !description?.trim() || !oldKey?.trim() || !jobProfile?.trim()){
       return res.status(400).json({
         status: 'error',
         message: 'Invalid data for screening parameter updation.'

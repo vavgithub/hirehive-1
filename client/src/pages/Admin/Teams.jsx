@@ -12,10 +12,10 @@ import { showErrorToast, showSuccessToast } from "../../components/ui/Toast";
 import LoaderModal from "../../components/Loaders/LoaderModal";
 import { useNavigate } from "react-router-dom";
 import Container from "../../components/Cards/Container";
-import { UNKNOWN_PROFILE_PICTURE_URL } from "../../utility/config";
 import { useDispatch } from "react-redux";
 import { setMembersCount } from "../../redux/AdminSlice";
 import Header from "../../components/utility/Header";
+import { useUnknownProfilePicture } from "../../context/ThemeContext";
 
 const addMember = async ({teamMember}) => {
     const response = await axios.post('/admin/add-member',{teamMember});
@@ -49,6 +49,8 @@ function Teams() {
     const queryClient = useQueryClient();
     const navigate = useNavigate();
     const dispatch = useDispatch();
+
+    const UNKNOWN_PROFILE_PICTURE_URL = useUnknownProfilePicture()
 
     const { data : teamMembers , isLoading : isTeamMembersLoading } = useQuery({
         queryKey: ['team_members'],
@@ -172,7 +174,7 @@ function Teams() {
                 {/* Member Profile Picture */}
                 <div className="relative w-full aspect-square rounded-xl overflow-hidden">
                     <img src={ UNKNOWN_PROFILE_PICTURE_URL } alt="" className='object-cover w-full overflow-hidden' />
-                    <span className="absolute top-7 right-12 font-bold text-[#3d3c3c] scale-[3.4]">+</span>
+                    <span className="absolute top-5 right-10 font-bold text-background-20 scale-[3.4]">+</span>
                 </div>
                 {/* Memeber Details */}
                 <div className="flex flex-col ">
@@ -211,11 +213,10 @@ function Teams() {
             }) }
 
         </div>
-        </StyledCard>
         {teamMembers?.members?.filter(member => member?.status === "REQUESTED")?.length > 0 && 
         <div className="w-full">
             <h2 className="typography-h2 mt-6 mb-4">New Member Request</h2>
-            <StyledCard  extraStyles="grid gap-4 grid-cols-5 ">
+            <StyledCard padding={0}  extraStyles="grid gap-4 grid-cols-5 ">
             {teamMembers?.members?.filter(member => member?.status === "REQUESTED").map(member => {
                 return (
                     <StyledCard key={member?.member_id ? member?.member_id : member?._id} backgroundColor={'bg-background-80'} onClick={()=>navigate(`/admin/teams/profile/${member?.member_id ? member?.member_id : member?._id}`)} padding={2} extraStyles={'flex flex-col items-center cursor-pointer justify-between gap-4 '}>
@@ -231,7 +232,7 @@ function Teams() {
                         <div className="w-full flex justify-center">
                             {
                                 member?.status === "REQUESTED" ? 
-                                <div className="flex justify-between w-full">
+                                <div className="flex justify-between w-full gap-2">
                                     <button type="button" onClick={(event) =>handleApprove(event,member?.email)}  className="text-sm font-bricolage font-medium px-4 py-1 border-2 rounded-xl border-green-700 text-green-500 hover:bg-green-90">Approve</button>
                                     <button type="button" onClick={(event) =>handleReject(event,member?.email)}  className="text-sm font-bricolage font-medium px-4 py-1 border-2 rounded-xl border-red-90 text-red-500 hover:bg-red-60">Reject</button>
                                 </div>
@@ -244,6 +245,7 @@ function Teams() {
             }) }
             </StyledCard>
         </div>}
+        </StyledCard>
         <Modal
         open={showAddModal || showEditModal}
         onClose={showAddModal ? ()=>setShowAddmodal(false) : ()=>setShowEditmodal(false)}

@@ -8,6 +8,7 @@ import { useMutation } from '@tanstack/react-query';
 import { useOnboardingContext } from '../../context/OnboardingProvider';
 import { showErrorToast, showSuccessToast } from '../ui/Toast';
 import useAuth from '../../hooks/useAuth';
+import Footer from '../Footer/Footer';
 
 const setPassword = async ({password, email}) => {
     const response = await axios.post('/auth/register/set-password',{password, email});
@@ -113,7 +114,8 @@ function PasswordForm({setCurrentStep}) {
       }
   return (
     <div>
-      <PasswordComponent watch={watch} cardbg='bg-card-bg bg-cover bg-center bg-no-repeat' handlePasswordSubmit={handlePasswordSubmit} control={control} passwordError={passwordError} />
+      <PasswordComponent hasFooter watch={watch} cardbg='bg-card-bg bg-cover bg-center bg-no-repeat' handlePasswordSubmit={handlePasswordSubmit} control={control} passwordError={passwordError} />
+      <Footer />
     </div>
   )
 }

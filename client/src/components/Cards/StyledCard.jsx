@@ -7,7 +7,8 @@ function StyledCard({children,onClick,extraStyles,padding,rounded,backgroundColo
     1 : "2",
     2 : "8",
     3 : "6",
-    4 : "8"
+    4 : "8",
+    5 : '4'
   }
 
   const styles = 

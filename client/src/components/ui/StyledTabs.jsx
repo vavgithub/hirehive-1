@@ -6,11 +6,11 @@ const StyledTabs = ({ customSelectionClass = "selection-primary", customBgColor 
             {tabs.map((tab) => (
                 <div
                     key={tab.name}
-                    className="relative cursor-pointer flex flex-col items-center w-fit h-full "
+                    className="relative cursor-pointer  flex flex-col items-center w-fit h-full "
                     onClick={() => handleTabClick(tab.name)}
                 >
                     <div
-                        className={` typography-body rounded-xl flex justify-center py-4 px-12 items-center ${
+                        className={` typography-body hover:bg-background-60 rounded-xl flex justify-center py-4 px-12 items-center ${
                             activeTab === tab.name ? customSelectionClass ? customSelectionClass : 'text-accent-100' : ''
                         }`}
                     >

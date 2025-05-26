@@ -1,4 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import LightLogo from "../svg/Logo/lightLogo.svg";
+import DarkLogo from "../svg/Logo/dark_logo.png";
+
 const ThemeContext = createContext();
 
 export const ThemesProvider = ({ children }) => {
@@ -35,5 +38,15 @@ export const useTheme = () => {
     }
     return context;
 };
+
+export const useUnknownProfilePicture = () => {
+    const context = useContext(ThemeContext);
+    return context?.theme === 'light' ? 'https://res.cloudinary.com/djuwzdbwy/image/upload/v1748257206/Light-Mode-Dummy-DP-Trim_sx1l86.png' : 'https://res.cloudinary.com/djuwzdbwy/image/upload/v1743743999/Unknown_image_DARK_MODE_izdmv9.png'
+}
+
+export const useLogo = () => {
+    const context = useContext(ThemeContext);
+    return context?.theme === 'dark' ? LightLogo : DarkLogo
+}
 
 export default ThemeContext;

@@ -286,7 +286,8 @@ export const updateCandidateProfile = async (req, res) => {
       website , 
       experience , 
       currentCTC ,
-      expectedCTC , 
+      expectedCTC ,
+      hourlyRate , 
       noticePeriod } = req.body;
 
     // Validate mandatory text fields
@@ -306,6 +307,7 @@ export const updateCandidateProfile = async (req, res) => {
       isNaN(Number(experience)) ||
       isNaN(Number(currentCTC)) ||
       isNaN(Number(expectedCTC)) ||
+      isNaN(Number(hourlyRate)) ||
       isNaN(Number(noticePeriod))
     ) {
       return res.status(400).json({ message: "Numeric fields must be valid numbers" });
@@ -322,6 +324,7 @@ export const updateCandidateProfile = async (req, res) => {
           experience,
           currentCTC,
           expectedCTC,
+          hourlyRate,
           noticePeriod
       }, {
       new: true,

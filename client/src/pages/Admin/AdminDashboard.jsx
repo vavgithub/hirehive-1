@@ -14,7 +14,6 @@ import { CalendarDays, ChevronDown, ChevronUp, ClipboardCheck, Users } from 'luc
 import StatsGrid from '../../components/ui/StatsGrid'
 import { DataGrid } from '@mui/x-data-grid'
 import { Avatar } from '@mui/material'
-import { UNKNOWN_PROFILE_PICTURE_URL } from '../../utility/config'
 import { formatIntoDateString } from '../../utility/formatTime'
 import { formatUTCToLocalTimeAuto, timezone, UTCToDateFormatted } from '../../utility/timezoneConverter'
 import { formatPhoneNumber } from '../../components/Form/PhoneInputField'
@@ -22,6 +21,7 @@ import Container from '../../components/Cards/Container'
 import Header from '../../components/utility/Header'
 import { getRoute, ROUTE_KEY } from '../../config/permissions.config'
 import { useAuthContext } from '../../context/AuthProvider'
+import { useUnknownProfilePicture } from '../../context/ThemeContext'
 
 function AdminDashboard() {
 
@@ -36,6 +36,7 @@ function AdminDashboard() {
   const [selectedChartFilter, setSelectedChartFilter] = useState('monthly');
 
   const navigate = useNavigate();
+  const UNKNOWN_PROFILE_PICTURE_URL = useUnknownProfilePicture()
 
   const { data: dashboardDetails, isLoading: isDetailsLoading } = useQuery({
     queryKey: ['admin_dashboard'],
@@ -228,7 +229,7 @@ function AdminDashboard() {
             </div>
             <ApplicationChart type={selectedChartFilter} dataArray={selectedChartFilter === "weekly" ? dashboardDetails?.applications?.weeklyApplications : selectedChartFilter === 'daily' ? dashboardDetails?.applications?.dailyApplications : selectedChartFilter === 'yesterday' ? dashboardDetails?.applications?.yesterdaysApplications : dashboardDetails?.applications?.monthlyApplications} />
           </StyledCard>
-          <StyledCard backgroundColor={'bg-background-80'} padding={2} extraStyles={' w-[30%] flex flex-col items-center gap-6'}>
+          <StyledCard backgroundColor={'bg-background-80'} padding={2} extraStyles={' w-[30%] flex flex-col items-center justify-between gap-6'}>
             <div className=" w-[8rem]  aspect-square overflow-hidden rounded-full">
               <img src={dashboardDetails?.companyDetails?.logoUrl ? dashboardDetails?.companyDetails?.logoUrl : `${UNKNOWN_PROFILE_PICTURE_URL}`} alt="LOGO" className="object-cover w-full" />
               <input accept="image/*" type="file" className="hidden" />
@@ -237,7 +238,7 @@ function AdminDashboard() {
               <h2 className='typography-h2 text-center'>{dashboardDetails?.companyDetails?.name}</h2>
               <p className='text-font-gray typography-large-p flex gap-2 items-center justify-center'>{LocationOptions.find(data => data.value === dashboardDetails?.companyDetails?.location)?.label} <span className='w-1 h-1 bg-font-gray rounded-full'></span>{industryTypeOptions.find(data => data.value === dashboardDetails?.companyDetails?.industryType)?.label} </p>
             </div>
-            <div className='typography-large-p w-full flex flex-col gap-2'>
+            <div className='typography-large-p w-full flex flex-col gap-6'>
               <p className='flex justify-between w-full'><span className='text-font-gray'>Employees</span> <span>{dashboardDetails?.members?.length ?? 0}</span></p>
               <p className='flex justify-between w-full'><span className='text-font-gray'>Active Jobs</span> <span>{dashboardDetails?.activeJobs ?? 0}</span></p>
               <p className='flex justify-between w-full'><span className='text-font-gray'>Applications Recieved</span> <span>{dashboardDetails?.applications?.totalApplicationsCount ?? 0}</span></p>

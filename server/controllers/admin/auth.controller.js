@@ -460,6 +460,7 @@ export const verifyOTPforAdmin = asyncHandler(async (req, res) => {
     lastName : userData?.lastName,
     email,
     role : userData?.role ?? "Admin",
+    jobTitle : userData?.role ?? "Admin",
     ...(userData?.company_id ? {company_id : userData?.company_id} : {}),
     verificationStage : "OTP"
   })

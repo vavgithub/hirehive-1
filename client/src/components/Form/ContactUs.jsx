@@ -7,7 +7,7 @@ import StyledCard from '../Cards/StyledCard';
 import Loader from '../Loaders/Loader';
 import Modal from '../Modals/Modal';
 import IconWrapper from '../Cards/IconWrapper';
-import { ChevronRight, Headset, Phone } from 'lucide-react';
+import { ChevronRight, Headset, Phone, Upload, X } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setCollapseContactUs } from '../../redux/candidateSlice';
 import { useMediaQuery } from 'react-responsive';
@@ -213,7 +213,7 @@ const ContactUs = () => {
   const renderContent = () => {
 
     return (
-      <form onSubmit={handleFormSubmit(onSubmit)} className="space-y-4 mt-4 max-h-[50vh] p-1 overflow-y-scroll scrollbar-hide">
+      <form onSubmit={handleFormSubmit(onSubmit)} className="space-y-4 mt-4 max-h-[50vh] overflow-y-scroll scrollbar-hide">
         <div className="flex flex-col gap-2">
           <label htmlFor="name" className="typography-body">
             Name <span className="text-red-100">*</span>
@@ -222,7 +222,7 @@ const ContactUs = () => {
             id="name"
             type="text"
             placeholder="Enter your name"
-            className={`w-full p-2 bg-background-40 rounded outline-none focus:outline-teal-300 ${errors.name ? '!border !border-red-500' : 'border border-transparent'
+            className={`w-full p-2 bg-background-80 rounded outline-none focus:outline-teal-300 ${errors.name ? '!border !border-red-500' : 'border border-transparent'
               }`}
             {...register("name", { required: "Name is required" })}
           />
@@ -239,7 +239,7 @@ const ContactUs = () => {
             id="email"
             type="email"
             placeholder="Enter your email"
-            className={`w-full p-2 bg-background-40 rounded outline-none focus:outline-teal-300 ${errors.email ? '!border !border-red-500' : 'border border-transparent'
+            className={`w-full p-2 bg-background-80 rounded outline-none focus:outline-teal-300 ${errors.email ? '!border !border-red-500' : 'border border-transparent'
               }`}
             {...register("email", {
               required: "Email is required",
@@ -262,7 +262,7 @@ const ContactUs = () => {
             id="message"
             rows={4}
             placeholder="How can we help you?"
-            className={` px-4 pt-2 bg-background-40 resize-none hover:bg-background-60 cursor-pointer  rounded-xl placeholder:text-font-gray placeholder:font-body  focus:ring-teal-400 focus:outline-teal-500 outline-none typography-body w-full ${errors.message ? '!border !border-red-500' : 'border border-transparent'
+            className={` px-4 pt-2 bg-background-80 resize-none hover:bg-background-60 cursor-pointer  rounded-xl placeholder:text-font-gray placeholder:font-body  focus:ring-teal-400 focus:outline-teal-500 outline-none typography-body w-full ${errors.message ? '!border !border-red-500' : 'border border-transparent'
               }`}
             {...register("message", {
               required: "Message is required",
@@ -282,7 +282,7 @@ const ContactUs = () => {
           <label className="typography-body">Screenshot (Optional)</label>
           <div
             {...getRootProps({
-              className: `bg-background-40 hover:bg-background-60 rounded-xl mt-4 p-4 text-center cursor-pointer 
+              className: `bg-background-80 hover:bg-background-60 rounded-xl mt-4 p-4 text-center cursor-pointer 
                 ${isDragActive ? 'border border-teal-500 bg-background-60' : ''}`,
             })}
           >
@@ -299,17 +299,13 @@ const ContactUs = () => {
                   className="ml-2"
                   type="button"
                 >
-                  <svg width="10" height="9" viewBox="0 0 10 9" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M9 0.5L1 8.5M1 0.5L9 8.5" stroke="white" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
+                  <IconWrapper icon={X} inheritColor size={0} customIconSize={4} customStrokeWidth={7} />
                 </button>
               </div>
             ) : (
               <div className='flex items-center flex-col'>
-                <div className='hidden md:flex'>
-                  <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M24.999 16.9999V22.3333C24.999 23.0405 24.7181 23.7188 24.218 24.2189C23.7179 24.719 23.0396 24.9999 22.3324 24.9999H3.66569C2.95845 24.9999 2.28017 24.719 1.78007 24.2189C1.27997 23.7188 0.999023 23.0405 0.999023 22.3333V16.9999M19.6657 7.66661L12.999 0.999939M12.999 0.999939L6.33236 7.66661M12.999 0.999939V16.9999" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
+                <div className='hidden md:flex text-font-gray '>
+                  <IconWrapper icon={Upload} inheritColor size={0} customIconSize={4} customStrokeWidth={7} />
                 </div>
                 <p className="mb-2 hidden typography-body text-font-gray md:flex">Drag and drop your screenshot here</p>
                 <p className='text-font-gray typography-small-p hidden md:flex mb-2'>OR</p>
@@ -347,8 +343,8 @@ const ContactUs = () => {
 
       <StyledCard
         onClick={collapse ? null : toggleModal}
-        extraStyles={`lg:fixed bottom-6 right-6 lg:bottom-6 lg:right-0  w-full lg:w-fit cursor-pointer hover:bg-background-60 shadow-[0px_0px_20px_rgba(100,100,100,0.1)] `}
-        padding={2}
+        extraStyles={`lg:fixed bottom-6 right-6 lg:bottom-[40%] lg:right-0  w-full lg:w-fit cursor-pointer hover:bg-background-60  `}
+        padding={5}
         style={{
           maxWidth : collapse ? '5rem' : '100%',
           transition: 'max-width 1s ease',

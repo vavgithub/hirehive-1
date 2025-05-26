@@ -6,9 +6,7 @@ import { ArrowLeft } from 'lucide-react'
 
 export const BackButton = () => {
     return (
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-            <path d="M22 12L2 12M2 12L12 22M2 12L12 2" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
+            <IconWrapper size={0} customIconSize={6} customStrokeWidth={6} inheritColor icon={ArrowLeft}/>
     )
 }
 
@@ -37,17 +35,19 @@ const Header = ({
     };
 
     return (
-        <div className="w-full">
-            <div className="flex items-center justify-between mb-4">
+        <div className={"w-full mb-4"}>
+            <div className="flex items-center justify-between ">
                 {/* Left section with back button and title */}
                 <div className={"flex items-center gap-4 w-full " + (rightContent && "lg:w-[65%]")}>
                     {withBack === "true" && (
-                        <div className="cursor-pointer" onClick={handleBackClick}>
+                        <div className="cursor-pointer text-font-main " onClick={handleBackClick}>
                             {/* <BackButton /> */}
-                            <IconWrapper icon={ArrowLeft}/>
+                            <IconWrapper inheritColor icon={ArrowLeft}/>
                         </div>
                     )}
-                    <h1 className="typography-h1 md:typography-h1 w-full overflow-hidden whitespace-nowrap text-ellipsis">
+                    <h1 className={"typography-h1 md:typography-h1 w-full overflow-hidden whitespace-nowrap text-ellipsis "} style={{
+                        paddingBottom : '0rem' 
+                    }}>
                         {HeaderText}
                     </h1>
                 </div>

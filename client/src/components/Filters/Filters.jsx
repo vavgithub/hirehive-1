@@ -91,7 +91,7 @@ const Filters = ({ filters = {}, handleCheckboxChange, activeTab, handleExperien
                 <div className='flex flex-row-reverse absolute top-5 right-5'>
                     <button
                         onClick={handleClearAll}
-                        className="text-font-gray typography-small-p hover:text-blue-800 font-semibold"
+                        className="text-font-gray typography-small-p hover:text-font-accent "
                     >
                         Clear All
                     </button>
@@ -125,7 +125,7 @@ const Filters = ({ filters = {}, handleCheckboxChange, activeTab, handleExperien
                 />
 
                 <div className="mb-4">
-                <h3 className="typography-body  text-font-main font-semibold mb-2">Experience Filter</h3>
+                <p className="typography-body  text-font-main mb-2">Experience Filter</p>
                     <ExperienceFilter
                         onApply={handleExperienceApply}
                         shouldReset={shouldResetExperience}
@@ -133,7 +133,7 @@ const Filters = ({ filters = {}, handleCheckboxChange, activeTab, handleExperien
                 </div>
 
                 <div className="mb-4">
-                    <h3 className="typography-body text-font-main font-semibold mb-2">Budget Filter</h3>
+                    <p className="typography-body text-font-main  mb-2">Budget Filter</p>
                     <BudgetFilter 
                         onApply={handleBudgetApply}
                         shouldReset={shouldResetBudget}

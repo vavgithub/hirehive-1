@@ -8,7 +8,7 @@ import { showSuccessToast } from '../../components/ui/Toast';
 import Loader from '../../components/Loaders/Loader';
 import StyledCard from '../../components/Cards/StyledCard';
 import Container from '../../components/Cards/Container';
-import { UNKNOWN_PROFILE_PICTURE_URL } from '../../utility/config';
+import { useUnknownProfilePicture } from '../../context/ThemeContext';
 
 
 const fetchCandidate = async ({ queryKey }) => {
@@ -21,6 +21,8 @@ const EditCandidateProfile = () => {
   const { id: mainId } = useParams();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const UNKNOWN_PROFILE_PICTURE_URL = useUnknownProfilePicture();
+
 
   const { data, error, isLoading } = useQuery({
     queryKey: ['candidate', mainId],
@@ -68,6 +70,7 @@ const EditCandidateProfile = () => {
         { name: 'experience', label: 'Experience', type: 'number' , placeholder: 'Enter Experience (In Years)' },
         { name: 'currentCTC', label: 'Current CTC', type: 'number', placeholder: 'Enter Current CTC (In LPA)' },
         { name: 'expectedCTC', label: 'Expected CTC', type: 'number', placeholder: 'Enter Expected CTC (In LPA)' },
+        { name: 'hourlyRate', label: 'Hourly Rate', type: 'number', placeholder: 'Enter Hourly Rate (In INR/Hr)' },
         { name: 'noticePeriod', label: 'Notice Period', type: 'number', placeholder: 'Enter Notice Period (In Days)' }
       ],
     },
@@ -93,7 +96,7 @@ const EditCandidateProfile = () => {
           <Container hasBgColor >
             <Header HeaderText="Edit Candidate Profile" withBack="true" />
             <div className='flex gap-6 mt-5'>
-              <StyledCard backgroundColor={"bg-background-30"} padding={2} extraStyles=' w-96 h-96  flex flex-col items-center'>
+              <StyledCard backgroundColor={"bg-background-90"} padding={2} extraStyles=' w-96 h-96  flex flex-col items-center'>
                 <div className='to-background-100 w-64 rounded-xl overflow-hidden'>
                   <img src={data.profilePictureUrl || UNKNOWN_PROFILE_PICTURE_URL} alt="" className='object-cover h-full' />
                 </div>

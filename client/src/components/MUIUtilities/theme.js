@@ -40,15 +40,15 @@ const theme = createTheme({
           "& .MuiOutlinedInput-root": {
             backgroundColor: "var(--color-background-70) !important",
             borderRadius: "0.75rem",
-            color: "white",
+            color: "var(--color-font-main)",
             "& fieldset": {
-              borderColor: "rgba(24, 233, 208, 0.5)",
+              borderColor: "var(--color-font-accent-200)",
             },
             "&:hover fieldset": {
-              borderColor: "rgba(24, 233, 208, 0.8)",
+              borderColor: "var(--color-font-accent-300)",
             },
             "&.Mui-focused fieldset": {
-              borderColor: "var(--color-font-accent-100)",
+              borderColor: "var(--color-font-accent-100) !important",
             },
           },
         },
@@ -95,6 +95,15 @@ const theme = createTheme({
         },
       },
     },
+    MuiIconButton : {
+      styleOverrides : {
+        root : {
+          "&:hover": {
+            background: "transparent !important",
+          },
+        }
+      }
+    },
     MuiAvatar: {
       styleOverrides: {
         root: {
@@ -138,17 +147,17 @@ const theme = createTheme({
           color: "var(--color-font-gray-90)",
           "&.Mui-selected": {
             color: "var(--color-accent-100)",
-            backgroundColor: "rgba(24, 233, 208, 0.2) !important",
+            backgroundColor: "var(--color-accent-300) !important",
           },
           "&.Mui-selected:hover": {
             color: "var(--color-accent-100)",
-            backgroundColor: "rgba(24, 233, 208, 0.3) !important",
+            backgroundColor: "var(--color-background-60) !important",
           },
           "&:hover": {
             backgroundColor: "var(--color-background-60)",
           },
           "&.Mui-disabled": {
-            color: "rgba(128, 131, 137, 0.5) !important",
+            color: "var(--color-font-gray-80) !important",
           },
         },
       },
@@ -247,7 +256,7 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           backgroundColor: "var(--color-background-80) !important",
-          color: "white",
+          color: "var(--color-font-main)",
           borderRadius: "1.25rem",
           overflowY: "auto", // Ensures scrolling
           scrollbarWidth: "none !important", // Hide scrollbar for Firefox
@@ -285,7 +294,7 @@ const theme = createTheme({
           "& .MuiInputBase-input": {
             height: "2.75rem",
             maxHeight: "2.75rem !important",
-            color: "white",
+            color: "var(--color-font-main)",
             boxSizing: "border-box",
           },
           "& .MuiOutlinedInput-root": {
@@ -324,7 +333,7 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           backgroundColor: "var(--color-background-80) !important",
-          color: "white",
+          color: "var(--color-font-main)",
           padding: "0.5rem",
           display :"flex",
           flexDirection : "column",
@@ -339,18 +348,40 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           borderRadius: "0.75rem",
-          // backgroundColor: "black",
           "& .MuiDataGrid-columnHeaders": {
             borderTop: "none",
             borderBottom: "none",
-            color: "gray",
+            color: "var(--color-font-gray-90)",
+            backgroundColor: "var(--color-background-70) !important",
+          },
+          '& .MuiDataGrid-columnHeaders div' : {
             backgroundColor: "var(--color-background-70) !important",
           },
           "& .MuiDataGrid-columnHeader": {
             backgroundColor: "var(--color-background-70) !important",
           },
+          "& .MuiDataGrid-scrollbarFiller--header" :{
+              background: "var(--color-background-70) !important",
+          },
+          "& .MuiDataGrid-scrollbarFiller--borderTop" : {
+            display : "none"
+          },
+          "& .MuiDataGrid-scrollbar--horizontal" :{
+              '&::-webkit-scrollbar': {
+                height: '8px !important', // Increase this value to make the scrollbar thicker
+              },
+            display : "block !important",
+            // Scrollbar track (scrollable background area)
+            '&::-webkit-scrollbar-track': {
+              backgroundColor: 'var(--color-background-80) !important', // Your desired track color
+            },
+            // Thumb (draggable part of scrollbar)
+            '&::-webkit-scrollbar-thumb': {
+              backgroundColor: 'var(--color-background-40) !important', // Customize this
+            },
+          },
           "& .MuiDataGrid-columnHeaderTitle": {
-            color: "gray",
+            color: "var(--color-font-gray-90)",
           },
           "&  .MuiDataGrid-footerContainer": {
             backgroundColor: "var(--color-background-70) !important",
@@ -368,17 +399,17 @@ const theme = createTheme({
           },
           "& .MuiDataGrid-footerContainer": {
             borderTop: "none",
-            color: "white",
+            color: "var(--color-font-main)",
           },
           "& .MuiDataGrid-virtualScroller": {
-            backgroundColor: "transparent",
+            backgroundColor: "var(--color-background-100)",
             borderRadius: "0.75rem 0.75rem 0px 0px !important",
           },
           "& .MuiDataGrid-overlayWrapper": {
-            height: "3rem",
+            height: "4rem",
           },
           "& .MuiDataGrid-overlay": {
-            color: "white",
+            color: "var(--color-font-main)",
             backgroundColor: "var(--color-background-100)",
           },
           "& .MuiDataGrid-selectedRowCount": {
@@ -393,7 +424,7 @@ const theme = createTheme({
           },
           "& .first-row": {
             borderRadius: 2,
-            backgroundColor: "var(--color-background-30)",
+            backgroundColor: "var(--color-background-90)",
             "&:hover": {
               backgroundColor: "var(--color-background-60)",
             },
@@ -403,7 +434,7 @@ const theme = createTheme({
           },
           "& .MuiDataGrid-scrollbar": {
             display: "none",
-            background: "transparent",
+            height : "8px"
           },
           "& .second-row": {
             borderRadius: 2,
@@ -413,7 +444,7 @@ const theme = createTheme({
             },
           },
           "& .MuiSvgIcon-root": {
-            color: "white",
+            color: "var(--color-font-main)",
           },
           "& .MuiDataGrid-columnSeparator": {
             display: "none !important", // Hide column resizing separator
@@ -424,21 +455,30 @@ const theme = createTheme({
     MuiTablePagination: {
       styleOverrides: {
         root: {
-          color: "white",
+          color: "var(--color-font-main)",
         },
         toolbar: {
-          color: "white",
+          color: "var(--color-font-main)",
         },
         selectIcon: {
-          color: "white",
+          color: "var(--color-font-main)",
         },
         select: {
-          color: "white",
+          color: "var(--color-font-main)",
           borderRadius: "0.75rem",
           "&:hover": {
             backgroundColor: "var(--color-background-60) !important",
           },
         },
+        actions : {
+      "& button:not(.Mui-disabled)": {
+        cursor: "pointer !important",
+      },
+
+      "& button.Mui-disabled .MuiSvgIcon-root": {
+        color: "var(--color-font-gray-90) !important",
+      },
+        }
       },
     },
   },

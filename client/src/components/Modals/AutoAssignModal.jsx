@@ -4,7 +4,7 @@ import Modal from './Modal';
 import axios from '../../api/axios';
 import IconWrapper from '../Cards/IconWrapper';
 import { User, X } from 'lucide-react';
-import { UNKNOWN_PROFILE_PICTURE_URL } from '../../utility/config';
+import { useUnknownProfilePicture } from '../../context/ThemeContext';
 
 const AutoAssignModal = ({ open, onClose, onAssign, jobId, budgetFilter }) => {
     const [reviewers, setReviewers] = useState([]);
@@ -68,6 +68,7 @@ const AutoAssignModal = ({ open, onClose, onAssign, jobId, budgetFilter }) => {
     const handleAssign = () => {
       onAssign(selectedReviewers);
     };
+  const UNKNOWN_PROFILE_PICTURE_URL = useUnknownProfilePicture()
 
     // const handleAssign = async () => {
     //   try {
@@ -92,15 +93,15 @@ const AutoAssignModal = ({ open, onClose, onAssign, jobId, budgetFilter }) => {
       <div className="relative mt-4" ref={dropdownRef}>
         <h3 className='typography-h3 mb-2'>Select reviewers</h3>
         <div 
-          className={"w-full bg-black-100 h-11 flex items-center cursor-pointer rounded-xl hover:bg-background-90 overflow-hidden " + (isDropdownOpen ? "border border-teal-100" : "")}
+          className={"w-full bg-background-80 h-11 flex items-center cursor-pointer rounded-xl hover:bg-background-60 overflow-hidden " + (isDropdownOpen ? "border border-teal-100" : "")}
           onClick={() => setIsDropdownOpen(!isDropdownOpen)}
         >
-          <div className="flex-grow flex flex-wrap gap-2 h-full px-4 py-1 items-center  text-font-gray hover:bg-background-90">
+          <div className="flex-grow flex flex-wrap gap-2 h-full px-4 py-1 items-center  text-font-gray hover:bg-background-60">
           <IconWrapper icon={User} size={0} customIconSize={5} inheritColor />
 
             {selectedReviewers.map(reviewer => (
-              <div key={reviewer._id} className="bg-background-70 px-4 py-1 rounded-xl flex items-center text-white">
-                <span className='typography-body'>{reviewer.name}</span>
+              <div key={reviewer._id} className="bg-background-70 px-4 py-1 rounded-xl flex items-center text-font-main">
+                <span className='typography-body'>{reviewer?.firstName + " " + reviewer?.lastName}</span>
                 <button 
                   onClick={(e) => {
                     e.stopPropagation();
@@ -119,7 +120,7 @@ const AutoAssignModal = ({ open, onClose, onAssign, jobId, budgetFilter }) => {
           </svg>
         </div>
         {isDropdownOpen && (
-          <div className="absolute z-10 w-full mt-1 bg-black-100 shadow-lg max-h-60 overflow-y-auto typography-body rounded-xl">
+          <div className="absolute z-10 w-full mt-1 bg-background-70 shadow-lg max-h-60 overflow-y-auto typography-body rounded-xl">
             {isLoading ? (
               <p className="px-4 py-2">Loading reviewers...</p>
             ) : error ? (
@@ -133,19 +134,19 @@ const AutoAssignModal = ({ open, onClose, onAssign, jobId, budgetFilter }) => {
                   {selectedReviewers.length === reviewers.length ? '-Deselect All-' : '-Select All-'}
                 </button>
                 {reviewers.map(reviewer => (
-                  <label  htmlFor={`reviewer-${reviewer._id}`} key={reviewer._id} className="flex items-center px-4 py-2 hover:bg-background-70 h-11">
+                  <label  htmlFor={`reviewer-${reviewer._id}`} key={reviewer._id} className={"flex items-center px-4 py-2 hover:bg-background-60 h-11 cursor-pointer " + (selectedReviewers.some(r => r._id === reviewer._id) ? 'selection-primary' : '')}>
                     <input
                       type="checkbox"
                       id={`reviewer-${reviewer._id}`}
                       checked={selectedReviewers.some(r => r._id === reviewer._id)}
                       onChange={() => handleReviewerToggle(reviewer)}
-                      className="appearance-none border border-background-80  h-4 w-4 text-black-100 rounded-md bg-background-80 hover:border-grey-100 checked:bg-accent-100 checked:border-accent-100 peer"
+                      className="appearance-none border border-background-80  h-4 w-4 text-background-100 rounded-md bg-background-80  checked:bg-accent-100 checked:border-accent-100 peer"
                     />
-                    <span className="absolute hidden left-4 h-4 w-4 text-black-100 items-center justify-center text-black peer-checked:flex ">✔</span>
+                    <span className="absolute hidden left-4 h-4 w-4 text-background-100 items-center justify-center text-black peer-checked:flex ">✔</span>
                     <span className='w-8 h-8 rounded-full overflow-hidden mx-4'>
                       <img src={reviewer.profilePicture || UNKNOWN_PROFILE_PICTURE_URL } alt="" />
                     </span>
-                    <span>{reviewer.name}</span>
+                    <span>{reviewer?.firstName + " " + reviewer?.lastName}</span>
                   </label>
                 ))}
               </>

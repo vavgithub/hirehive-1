@@ -8,10 +8,11 @@ import LightLogo from "../svg/Logo/lightLogo.svg"
 import StyledMenu from './MUIUtilities/StyledMenu';
 import IconWrapper from './Cards/IconWrapper';
 import { Briefcase, ChevronDown, ChevronUp, ClipboardCheck, FileText, IdCard, LayoutGrid, LogOut, MonitorDot, Star, User, Users } from 'lucide-react';
-import { UNKNOWN_PROFILE_PICTURE_URL } from '../utility/config';
 import { useSelector } from 'react-redux';
 import { getRoute, hasRoutePermission, ROLES, ROUTE_KEY } from '../config/permissions.config';
+import Footer from './Footer/Footer';
 import ThemeToggle from './ui/ThemeToggle';
+import { useLogo, useUnknownProfilePicture } from '../context/ThemeContext';
 // import ThemeToggle from './ThemeToggle'; // Import ThemeToggle component
 
 //Screen URLs with BG for All Admin personas
@@ -51,6 +52,7 @@ const AdminLayout = () => {
             // console.error('Logout failed:', error);
         }
     };
+    const UNKNOWN_PROFILE_PICTURE_URL = useUnknownProfilePicture();
 
     // Function to handle dropdown menu opening
     const handleMenuClick = (event) => {
@@ -113,7 +115,7 @@ const AdminLayout = () => {
                 >
                     <div className="flex items-center gap-2">
                         {isActive ? <ActiveIcon count={iconData} /> : <Icon count={iconData} />}
-                        <span className="typography-body">{children}</span>
+                        <span className="typography-body ">{children}</span>
                     </div>
                     {isOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
                 </div>
@@ -127,13 +129,13 @@ const AdminLayout = () => {
 
                 {/* Submenu items */}
                 {isOpen && (
-                    <div className={"relative ml-6 mt-2 flex flex-col gap-2 vertical-dashed-line " + (isActive && 'line-open')}>
+                    <div className={"relative ml-10 mt-2 flex flex-col gap-2 vertical-dashed-line " + (isActive && 'line-open')}>
                         {submenu.map((item) => (
                             <NavLink
                                 key={item.to}
                                 to={item.to}
                                 className={({ isActive }) =>
-                                    `flex items-center gap-2 py-2 px-2 rounded-xl hover:bg-background-60 typography-body ${isActive ? 'text-font-accent selection-primary' : ''
+                                    `flex items-center gap-2 py-2 px-2 rounded-xl hover:bg-background-60 typography-body  ${isActive ? 'text-font-accent selection-primary' : ''
                                     }`
                                 }
                             >
@@ -208,14 +210,14 @@ const AdminLayout = () => {
             ...(hasRoutePermission(user.role, ROUTE_KEY.ALLJOBS) ? [{
                 to: getRoute(user.role, ROUTE_KEY.ALLJOBS),
                 label: 'All Jobs',
-                icon: () => <IconWrapper isInActiveIcon icon={Briefcase} />,
-                activeIcon: () => <IconWrapper isActiveIcon icon={Briefcase} />
+                icon: () => <IconWrapper inheritColor icon={Briefcase} />,
+                activeIcon: () => <IconWrapper inheritColor icon={Briefcase} />
             }] : []),
             ...(hasRoutePermission(user.role, ROUTE_KEY.ASSESSMENTS) ? [{
                 to: getRoute(user.role, ROUTE_KEY.ASSESSMENTS),
                 label: 'Assessments',
-                icon: () => <IconWrapper isInActiveIcon icon={ClipboardCheck} />,
-                activeIcon: () => <IconWrapper isActiveIcon icon={ClipboardCheck} />
+                icon: () => <IconWrapper inheritColor icon={ClipboardCheck} />,
+                activeIcon: () => <IconWrapper inheritColor icon={ClipboardCheck} />
             }] : [])
         ]
 
@@ -223,42 +225,43 @@ const AdminLayout = () => {
             ...(hasRoutePermission(user.role, ROUTE_KEY.ALL_CANDIDATES) ? [{
                 to: getRoute(user.role, ROUTE_KEY.ALL_CANDIDATES),
                 label: user?.role === ROLES.DESIGN_REVIEWER ? 'Candidates' : 'All Candidates',
-                icon: () => <IconWrapper isInActiveIcon icon={Users} />,
-                activeIcon: () => <IconWrapper isActiveIcon icon={Users} />
+                icon: () => <IconWrapper inheritColor icon={Users} />,
+                activeIcon: () => <IconWrapper inheritColor icon={Users} />
             }] : []),
             ...(hasRoutePermission(user.role, ROUTE_KEY.SHORTLISTED) ? [{
                 to: getRoute(user.role, ROUTE_KEY.SHORTLISTED),
                 label: 'Future Gems',
-                icon: () => <IconWrapper isInActiveIcon icon={MonitorDot} />,
-                activeIcon: () => <IconWrapper isActiveIcon icon={MonitorDot} />
+                icon: () => <IconWrapper inheritColor icon={MonitorDot} />,
+                activeIcon: () => <IconWrapper inheritColor icon={MonitorDot} />
             }] : [])
         ]
 
         return (
             <>
-                {user?.role === "Admin" && <NavItem to={getRoute(user.role, ROUTE_KEY.DASHBOARD)} icon={() => <IconWrapper isInActiveIcon icon={LayoutGrid} />} activeIcon={() => <IconWrapper isActiveIcon icon={LayoutGrid} />}> Dashboard </NavItem>}
+                {user?.role === "Admin" && <NavItem to={getRoute(user.role, ROUTE_KEY.DASHBOARD)} icon={() => <IconWrapper inheritColor icon={LayoutGrid} />} activeIcon={() => <IconWrapper inheritColor icon={LayoutGrid} />}> Dashboard </NavItem>}
                 {hasRoutePermission(user?.role, ROUTE_KEY.JOBS) && ((jobsSubMenu?.length > 1)
-                    ? <DropDownNavItem to={getRoute(user.role, ROUTE_KEY.JOBS)} submenu={jobsSubMenu} icon={() => <IconWrapper isInActiveIcon icon={Briefcase} />} activeIcon={() => <IconWrapper isActiveIcon icon={Briefcase} />}> Jobs </DropDownNavItem>
+                    ? <DropDownNavItem to={getRoute(user.role, ROUTE_KEY.JOBS)} submenu={jobsSubMenu} icon={() => <IconWrapper inheritColor icon={Briefcase} />} activeIcon={() => <IconWrapper inheritColor icon={Briefcase} />}> Jobs </DropDownNavItem>
                     : <NavItem to={jobsSubMenu[0]?.to} icon={jobsSubMenu[0]?.icon} activeIcon={jobsSubMenu[0]?.activeIcon}> {jobsSubMenu[0]?.label} </NavItem>)}
                 {hasRoutePermission(user?.role, ROUTE_KEY.CANDIDATES) && (candidatesSubMenu?.length > 1) ?
-                    <DropDownNavItem to={getRoute(user.role, ROUTE_KEY.CANDIDATES)} submenu={candidatesSubMenu} icon={() => <IconWrapper isInActiveIcon icon={Users} />} activeIcon={() => <IconWrapper isActiveIcon icon={Users} />}>Candidates</DropDownNavItem>
+                    <DropDownNavItem to={getRoute(user.role, ROUTE_KEY.CANDIDATES)} submenu={candidatesSubMenu} icon={() => <IconWrapper inheritColor icon={Users} />} activeIcon={() => <IconWrapper inheritColor icon={Users} />}>Candidates</DropDownNavItem>
                     : <NavItem to={candidatesSubMenu[0]?.to} icon={candidatesSubMenu[0]?.icon} activeIcon={candidatesSubMenu[0]?.activeIcon}> {candidatesSubMenu[0]?.label}</NavItem>}
-                {hasRoutePermission(user?.role, ROUTE_KEY.REVIEWS) && <NavItem to={getRoute(user.role, ROUTE_KEY.REVIEWS)} icon={() => <IconWrapper isInActiveIcon icon={Star} />} activeIcon={() => <IconWrapper isActiveIcon icon={Star} />}>Reviews</NavItem>}
-                {hasRoutePermission(user?.role, ROUTE_KEY.TEAMS) && <NavItem to={getRoute(user.role, ROUTE_KEY.TEAMS)} hasHighlighter={newMembersCount > 0} icon={() => <IconWrapper isInActiveIcon icon={IdCard} />} activeIcon={() => <IconWrapper isActiveIcon icon={IdCard} />}>Teams</NavItem>}
-                {hasRoutePermission(user?.role, ROUTE_KEY.GUIDE) && <NavItem to={getRoute(user.role, ROUTE_KEY.GUIDE)} hasHighlighter={newMembersCount > 0} icon={() => <IconWrapper isInActiveIcon icon={FileText} />} activeIcon={() => <IconWrapper isActiveIcon icon={FileText} />}>Guide</NavItem>}
+                {hasRoutePermission(user?.role, ROUTE_KEY.REVIEWS) && <NavItem to={getRoute(user.role, ROUTE_KEY.REVIEWS)} icon={() => <IconWrapper inheritColor icon={Star} />} activeIcon={() => <IconWrapper inheritColor icon={Star} />}>Reviews</NavItem>}
+                {hasRoutePermission(user?.role, ROUTE_KEY.TEAMS) && <NavItem to={getRoute(user.role, ROUTE_KEY.TEAMS)} hasHighlighter={newMembersCount > 0} icon={() => <IconWrapper inheritColor icon={IdCard} />} activeIcon={() => <IconWrapper inheritColor icon={IdCard} />}>Teams</NavItem>}
+                {hasRoutePermission(user?.role, ROUTE_KEY.GUIDE) && <NavItem to={getRoute(user.role, ROUTE_KEY.GUIDE)} icon={() => <IconWrapper inheritColor icon={FileText} />} activeIcon={() => <IconWrapper inheritColor icon={FileText} />}>Guide</NavItem>}
             </>
         )
     };
 
     //To get the exact path
     const { pathname } = useLocation()
+    const Logo = useLogo();
 
     return (
-        <div id='adminContainer' className={`flex ${ADMIN_BG_SCREENS.some(path => pathname.startsWith(path)) ? ' bg-background-100 ' : ' bg-background-100 '} bg-cover bg-top h-full overflow-x-hidden `}>
-            <div className="fixed flex w-[15rem] h-[calc(100vh-2rem)] m-4 rounded-xl flex-col bg-background-90 text-font-gray typography-large-p justify-between py-6 ">
+        <div id='adminContainer' className={`flex ${ADMIN_BG_SCREENS.some(path => pathname.startsWith(path)) ? ' bg-background-100 ' : ' bg-background-100 '} bg-cover bg-top h-full overflow-x-hidden flex flex-col`}>
+            <div className="fixed flex w-[16rem] h-[calc(100vh-2rem)] m-4 rounded-xl flex-col bg-background-90 text-font-gray typography-large-p justify-between py-6 ">
                 <div className='flex flex-col gap-6 typography-body px-4'>
                     <div className='pl-2 pt-2 pb-4 flex items-center justify-between'>
-                        <img className='h-11' src={LightLogo} alt="Logo" />
+                        <img className='h-11 cursor-pointer ' onClick={() => navigate('/admin')} src={Logo} alt="Logo" />
                         <ThemeToggle /> {/* Add ThemeToggle here */}
                     </div>
                     {renderMenuItems()}
@@ -268,9 +271,10 @@ const AdminLayout = () => {
                 </div>
             </div>
 
-            <div className='ml-[16rem] w-[calc(100%-16rem)] flex justify-center min-h-screen'>
+            <div className='ml-[17rem] w-[calc(100%-17rem)] flex justify-center min-h-[calc(100vh-5rem)]'>
                 <Outlet />
             </div>
+            <Footer variant='sidebar' />
         </div>
     );
 };

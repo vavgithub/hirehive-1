@@ -8,7 +8,7 @@ import GlobalStaging from './GlobalStaging';
 import { ensureAbsoluteUrl } from '../../utility/ensureAbsoluteUrl';
 import LinkView from '../ui/LinkView';
 import IconWrapper from '../Cards/IconWrapper';
-import { Check, ChevronDown, X } from 'lucide-react';
+import { Check, ChevronDown, ChevronUp, X } from 'lucide-react';
 import { hasPermission, PERMISSIONS } from '../../config/permissions.config';
 // const stageComponents = {
 //     Portfolio,
@@ -29,13 +29,13 @@ const AccordionSection = ({ title, isOpen, onToggle, children, badge }) => (
         <div className="w-full">
             <button
                 onClick={onToggle}
-                className="w-full px-6 py-4 flex justify-between bg-background-90 items-center border-b border-background-80"
+                className="w-full px-6 py-4 flex justify-between bg-background-80 items-center border-b border-background-80"
             >
                 <div className="flex items-center gap-4 ">
                     <h3 className="text-font-main typography-h3">{title}</h3>
                     {badge}
                 </div>
-                <IconWrapper icon={ChevronDown} size={0} customStrokeWidth={5} customIconSize={5}  />
+                <IconWrapper icon={isOpen ? ChevronUp :ChevronDown} size={0} customStrokeWidth={5} customIconSize={5}  />
             </button>
 
             {isOpen && (
@@ -86,12 +86,12 @@ const ApplicationStaging = ({ candidateId, jobId ,jobStatus}) => {
     const getStageIcon = (stage, index) => {
         const status = stageStatuses[stage]?.status;
         if (status === 'Cleared') {
-            return <div className='bg-green-100 rounded-full p-1'><IconWrapper icon={Check}  size={0} customStrokeWidth={7} customIconSize={1}  /></div> ;
+            return <div className='bg-green-100 rounded-full text-white p-1'><IconWrapper inheritColor icon={Check}  size={0} customStrokeWidth={7} customIconSize={1}  /></div> ;
         } else if (status === 'Rejected') {
-            return <div className='bg-red-300 rounded-full p-1'><IconWrapper icon={X}  size={0} customStrokeWidth={7} customIconSize={1}  /></div> ;
+            return <div className='bg-red-300 rounded-full text-white p-1'><IconWrapper inheritColor icon={X}  size={0} customStrokeWidth={7} customIconSize={1}  /></div> ;
         } else {
             return (
-                <div className={`w-6 h-6 flex items-center justify-center rounded-full border  ${stage === currentStage ? 'border-teal-400 text-font-accent' : ''}`}>
+                <div className={`w-6 h-6 flex items-center justify-center rounded-full border  ${stage === currentStage ? 'border-teal-400 text-font-accent' : ' border-font-gray'}`}>
                     {index + 1}
                 </div>
             );
@@ -131,7 +131,7 @@ const ApplicationStaging = ({ candidateId, jobId ,jobStatus}) => {
                                         <span className="ml-1 text-red-500">*</span>
                                     )}
                                 </div>
-                                <div className="typography-body text-white">
+                                <div className="typography-body text-font-main">
                                     {response.question.type === 'multiple' ? (
                                         <div className="flex gap-2">
                                             <span className="px-3 py-1 ">
@@ -159,7 +159,7 @@ const ApplicationStaging = ({ candidateId, jobId ,jobStatus}) => {
 
     return (
         <div className="application-staging">
-            <h2 className="mb-4">Application Stages</h2>
+            <h4 className="typography-h4 mb-4">Application Stages</h4>
 
             {/* Stage Progress Section */}
             <div className="stages-progress flex">

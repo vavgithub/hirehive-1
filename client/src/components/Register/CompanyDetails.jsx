@@ -12,9 +12,9 @@ import StyledCard from '../Cards/StyledCard';
 import { Button } from '../Buttons/Button';
 import { validateProfileImages } from '../../utility/validationRules';
 import { InputField } from '../Inputs/InputField';
-import { UNKNOWN_PROFILE_PICTURE_URL } from '../../utility/config';
 import { useNavigate } from 'react-router-dom';
 import GlobalDropDown from '../Dropdowns/GlobalDropDown';
+import { useUnknownProfilePicture } from '../../context/ThemeContext';
 
 export const LocationOptions = [
   { value: 'afghanistan', label: 'Afghanistan' },
@@ -137,6 +137,7 @@ function CompanyDetails({currentStep,setCurrentStep}) {
     const isFirstRender = useRef(true);
 
     const navigate = useNavigate();
+    const UNKNOWN_PROFILE_PICTURE_URL = useUnknownProfilePicture()
 
     const handleFileSelect = (event) => {
       const file = event.target.files[0];
@@ -284,7 +285,7 @@ function CompanyDetails({currentStep,setCurrentStep}) {
                   <label className="typography-body font-bricolage font-semibold">Company Logo</label> 
                   <StyledCard 
                     padding={2}
-                    backgroundColor={"bg-background-40"}
+                    backgroundColor={"bg-background-80"}
                     extraStyles=" hover:bg-background-60 cursor-pointer  mt-2 flex flex-col items-center justify-center"
                     onClick={() => fileInputRef.current?.click()}
                   >

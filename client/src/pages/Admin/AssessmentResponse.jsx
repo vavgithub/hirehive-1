@@ -11,10 +11,10 @@ import StyledCard from '../../components/Cards/StyledCard';
 import CustomToolTip from '../../components/Tooltip/CustomToolTip';
 import { VideoModal } from '../../components/Modals/VideoModal';
 import Container from '../../components/Cards/Container';
-import { UNKNOWN_PROFILE_PICTURE_URL } from '../../utility/config';
 import IconWrapper from '../../components/Cards/IconWrapper';
 import { UTCToDateFormatted } from '../../utility/timezoneConverter';
 import { formatPhoneNumber } from '../../components/Form/PhoneInputField';
+import { useUnknownProfilePicture } from '../../context/ThemeContext';
 
 // Fetch function
 const fetchAssessmentDetails = async (candidateId, jobId) => {
@@ -28,6 +28,7 @@ const AssessmentResponse = () => {
     const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
 
     const { id: candidateId, jobId } = useParams();
+    const UNKNOWN_PROFILE_PICTURE_URL = useUnknownProfilePicture()
 
     const { data, isLoading, isError } = useQuery({
         queryKey: ['assessmentDetails', candidateId, jobId],
@@ -87,7 +88,7 @@ const AssessmentResponse = () => {
 
 
                                 <div className="flex items-center gap-2 my-2">
-                                    <span className="text-white text-xl font-semibold">{assessmentData?.assessment?.title}</span>
+                                    <span className="text-font-main text-xl font-semibold">{assessmentData?.assessment?.title}</span>
                                     <Circle className="w-1 h-1 text-font-gray" />
                                 </div>
 
@@ -188,9 +189,9 @@ const AssessmentResponse = () => {
                                 <div
                                     key={response.questionId}
                                     className={`p-8 typography-h3 relative  h-8 rounded-md flex bg-background-70 items-center justify-center ${response.isCorrect ? 'bg-background-70' : 'bg-background-70'
-                                        } text-white`}
+                                        } text-font-main`}
                                 >
-                                    <div className={`absolute right-1 top-1 w-4 h-4  flex bg-background-80 items-center justify-center text-white`}>
+                                    <div className={`absolute right-1 top-1 w-4 h-4  flex bg-background-80 items-center justify-center text-font-main`}>
                                         {
                                             response.isCorrect ?
                                                 <div className='bg-green-100 rounded-sm  text-black-100'><IconWrapper inheritColor icon={Check} size={0} customStrokeWidth={11} customIconSize={1} /></div>

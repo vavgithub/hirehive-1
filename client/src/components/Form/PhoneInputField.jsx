@@ -68,7 +68,7 @@ export const PhoneInputField = ({
             {label && (
               <label
                 htmlFor={name}
-                className={"typography-body mb-2 w-fit sm:whitespace-nowrap " + (rowWise ? " min-w-[25%] max-w-[25%] text-font-gray" : "")}
+                className={"typography-body mb-2 w-fit sm:whitespace-nowrap " + (rowWise ? " min-w-[25%] max-w-[25%] " : "")}
               >
                 {label}
                 {required && <span className="text-red-100">*</span>}
@@ -81,7 +81,7 @@ export const PhoneInputField = ({
               placeholder={'Enter Phone Number'}
               containerClass={"rounded-xl  " + (rowWise ? "min-w-[60%] w-[100%] " : "") + ((error || isInvalid) && "border border-red-500")}
               dropdownClass="scrollbar-hide w-[100%]"
-              inputClass="typography-body text-white w-[100%]"
+              inputClass="typography-body text-font-main w-[100%]"
               searchPlaceholder="Search"
               enableSearch={true}
               // Helpful for user feedback during typing, but doesn't replace our validation

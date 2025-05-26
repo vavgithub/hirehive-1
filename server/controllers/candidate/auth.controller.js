@@ -430,7 +430,7 @@ export const loginCandidate = async (req, res) => {
     if(candidate?.currentStage !== "DONE"){
       return res
         .status(401)
-        .json({ message: "Please complete your registration" });
+        .json({ message: "Please complete your application process" });
     }
 
     // Check if candidate is verified

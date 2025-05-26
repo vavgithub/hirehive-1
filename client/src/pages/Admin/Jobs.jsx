@@ -275,16 +275,16 @@ const Jobs = () => {
         {
             name: 'open',
             label: 'Open',
-            icon: <IconWrapper size={0} customIconSize={5} customStrokeWidth={4} isInActiveIcon icon={CircleCheck} />,
-            activeIcon: <IconWrapper size={0} customIconSize={5} customStrokeWidth={4} isActiveIcon icon={CircleCheck} />,
+            icon: <IconWrapper size={0} customIconSize={5} customStrokeWidth={4} inheritColor icon={CircleCheck} />,
+            activeIcon: <IconWrapper size={0} customIconSize={5} customStrokeWidth={4} inheritColor icon={CircleCheck} />,
         },
         {
-            name: 'closed', label: 'Closed', icon: <IconWrapper size={0} customIconSize={5} customStrokeWidth={4} isInActiveIcon icon={CircleX} />,
-            activeIcon: <IconWrapper size={0} customIconSize={5} customStrokeWidth={4} isActiveIcon icon={CircleX} />,
+            name: 'closed', label: 'Closed', icon: <IconWrapper size={0} customIconSize={5} customStrokeWidth={4} inheritColor icon={CircleX} />,
+            activeIcon: <IconWrapper size={0} customIconSize={5} customStrokeWidth={4} inheritColor icon={CircleX} />,
         },
         {
-            name: 'draft', label: 'Draft', icon: <IconWrapper size={0} customIconSize={5} customStrokeWidth={4} isInActiveIcon icon={Archive} />,
-            activeIcon: <IconWrapper size={0} customIconSize={5} customStrokeWidth={4} isActiveIcon icon={Archive} />,
+            name: 'draft', label: 'Draft', icon: <IconWrapper size={0} customIconSize={5} customStrokeWidth={4} inheritColor icon={Archive} />,
+            activeIcon: <IconWrapper size={0} customIconSize={5} customStrokeWidth={4} inheritColor icon={Archive} />,
         },
     ];
 
@@ -354,7 +354,7 @@ const Jobs = () => {
         >
         </Header>
             {/* <h1 className='typography-h1'>Jobs</h1> */}
-            {/* <Link to="/admin/create-job" className="bg-black text-white px-4 py-2 rounded">Create job listing</Link> */}
+            {/* <Link to="/admin/create-job" className="bg-black text-font-main px-4 py-2 rounded">Create job listing</Link> */}
 
             {/* <div className='flex justify-center items-center'>
                     <Tabs tabs={tabs} activeTab={activeTab} handleTabClick={handleTabClick} />

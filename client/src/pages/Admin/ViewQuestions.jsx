@@ -31,7 +31,7 @@ function ViewQuestions() {
       {isLoading && <LoaderModal/>}
       <Header
         HeaderText={data?.title}
-        withBack="false"
+        withBack="true"
       ></Header>
       <StyledCard>
     {data?.questions?.length > 0 && 

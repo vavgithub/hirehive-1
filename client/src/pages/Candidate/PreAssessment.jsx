@@ -12,6 +12,7 @@ import Container from '../../components/Cards/Container';
 import IconWrapper from '../../components/Cards/IconWrapper';
 import useCandidateAuth from '../../hooks/useCandidateAuth';
 import Header from '../../components/utility/Header';
+import LogoWrapper from '../../components/Logo/LogoWrapper';
 
 const PreAssessment = () => {
     const [isOverviewOpen, setIsOverviewOpen] = useState(true);
@@ -101,14 +102,11 @@ const PreAssessment = () => {
     }
 
     return (
-        <Container hasBgColor="bg-background-90">
-                <div className='flex  w-full mt-2 mb-10 '>
-                    <img className='h-12' src={Logo} />
-                </div>
-                <div>
-                    <Header withBack={"true"} HeaderText="Value at Void design assessment" />
-                    <h1 className="typography-h1 mb-6"></h1>
-                    <h2 className="typography-h2 mb-4">Design Questionnaire</h2>
+        <Container hasBgColor="bg-background-100">
+                <LogoWrapper/>
+                <Header withBack={"true"} HeaderText="Value at Void design assessment" />
+                <StyledCard>
+                    <h2 className="typography-h2  mb-4">Design Questionnaire</h2>
                     <p className="typography-body text-font-gray mb-8">
                         Complete this questionnaire to assess your knowledge and skills as a UI/UX designer
                     </p>
@@ -120,7 +118,7 @@ const PreAssessment = () => {
                                 title="Assessment Overview"
                                 isOpen={isOverviewOpen}
                                 toggleOpen={() => setIsOverviewOpen(!isOverviewOpen)}
-                                preIcon={<IconWrapper isInActiveIcon size={4} hasBg="bg-background-30" icon={BookText} />}
+                                preIcon={<IconWrapper isInActiveIcon size={4} hasBg="bg-background-90" icon={BookText} />}
                                 content={
                                     <ul className="list-disc pl-12">
                                         <li className='pb-2'>This assessment consists of 10 questions.</li>        
@@ -135,7 +133,7 @@ const PreAssessment = () => {
                                 title="Estimated 5 Minutes"
                                 isOpen={isTimeOpen}
                                 toggleOpen={() => setIsTimeOpen(!isTimeOpen)}
-                                preIcon={<IconWrapper isInActiveIcon size={4} hasBg="bg-background-30" icon={Timer} />}
+                                preIcon={<IconWrapper isInActiveIcon size={4} hasBg="bg-background-90" icon={Timer} />}
                                 content={
                                     <ul className="list-disc pl-12">
                                         <li className='pb-2'>The estimated time for this assessment is 5 minutes.</li>
@@ -232,7 +230,7 @@ const PreAssessment = () => {
                         </Button>
                     </StyledCard>))}
                     </div>}
-                </div>
+                </StyledCard>
                 <ContactUs/>
             </Container>
     );

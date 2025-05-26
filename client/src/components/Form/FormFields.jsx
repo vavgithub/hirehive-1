@@ -20,7 +20,7 @@ export const InputField = React.forwardRef(({
   const inputClasses = `
     w-full 
     p-2 
-    bg-background-40 
+    bg-background-80 
     rounded 
     outline-none 
     focus:outline-teal-300
@@ -93,7 +93,7 @@ export const CustomDropdown = React.forwardRef(({ field, label, options, value, 
         <button
           type="button"
           onClick={toggleDropdown}
-          className={`${value ? "text-white" : "text-font-gray"} ${error ? '!border !border-red-500' : 'border border-transparent'}  typography-body mt-1 h-[2.75rem] flex items-center justify-between bg-background-40 hover:bg-background-60 w-full outline-none rounded-xl shadow-sm focus:ring-teal-300 focus:border-teal-300 text-left px-4`}
+          className={`${value ? "text-font-main" : "text-font-gray"} ${error ? '!border !border-red-500' : 'border border-transparent'}  typography-body mt-1 h-[2.75rem] flex items-center justify-between bg-background-80 hover:bg-background-60 w-full outline-none rounded-xl shadow-sm focus:ring-teal-300 focus:border-teal-300 text-left px-4`}
           ref={ref}
         >
           {options.find(opt => opt.value === value)?.label || options.find(opt => opt === value) || '-Select-'}
@@ -102,7 +102,7 @@ export const CustomDropdown = React.forwardRef(({ field, label, options, value, 
           </svg>
         </button>
         {isOpen && (
-          <ul className="absolute mt-1 bg-background-40 rounded-xl shadow-lg w-full space-y-2 z-[100]">
+          <ul className="absolute mt-1 bg-background-80 rounded-xl shadow-lg w-full space-y-2 z-[100]">
             {options.map((option) => (
               <li
                 key={option?.value || option}
@@ -179,7 +179,7 @@ export const NumberInputField = React.forwardRef(({ label , value, onChange, uni
   return (
     <div className='w-1/2'>
       <span className='typography-small-p  text-font-gray'>{label}</span>
-      <div className='items-center gap-2 flex bg-background-40 rounded-xl'>
+      <div className='items-center gap-2 flex bg-background-80 rounded-xl'>
         <input
           type="number"
           placeholder='-Select-'

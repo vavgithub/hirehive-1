@@ -7,11 +7,11 @@ import useAuth from '../../hooks/useAuth';
 import ForgotPassword from './ForgotPassword';
 import { showErrorToast } from '../../components/ui/Toast';
 import Loader from '../../components/Loaders/Loader';
-import Logo from '../../svg/Logo/lightLogo.svg'
 import { InputField } from '../../components/Inputs/InputField';
 import IconWrapper from '../../components/Cards/IconWrapper';
 import { Briefcase, FileText } from 'lucide-react';
 import { getRoute, ROUTE_KEY } from '../../config/permissions.config';
+import { useLogo } from '../../context/ThemeContext';
 
 const statsOne = [
     { title: 'Jobs Posted', value: 100, icon: () => <IconWrapper size={10} isInActiveIcon icon={Briefcase} /> },
@@ -28,6 +28,7 @@ const Login = () => {
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
     const { data: authData, isLoading: authLoading, refetch: refetchAuth } = useAuth();
+    const Logo = useLogo();
 
     useEffect(() => {
         if (authData?.role) {
@@ -77,12 +78,12 @@ const Login = () => {
             </div>
 
             {/* Right section with login form */}
-            <div className="w-full lg:w-2/5  p-28 flex flex-col justify-center items-start ">
+            <div className="w-full lg:w-2/5 bg-background-100 p-28 flex flex-col justify-center items-start ">
                 {showForgotPassword ? (
                     <ForgotPassword onBack={() => setShowForgotPassword(false)} />
                 ) : (
                     <>
-                        <h2 className="typography-h1 mb-2 text-center font-semibold w-full">Welcome Back</h2>
+                        <h1 className="typography-h1 mb-2 text-center font-semibold w-full">Welcome Back</h1>
                         <p className="typography-body mb-10 text-center font-normal w-full">
                             Login to your account below
                         </p>

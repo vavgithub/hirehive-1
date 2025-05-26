@@ -81,7 +81,7 @@ function StageRating({customSchema,candidateId,jobId,name,candidate,onSubmit,sta
                     <span>Feedback:</span>
 
                     <textarea
-                        className="w-full rounded-xl px-3 py-2 bg-background-40  outline-none focus:outline-teal-300 resize-none"
+                        className="w-full rounded-xl px-3 py-2 bg-background-80  outline-none focus:outline-teal-300 resize-none"
                         placeholder="Enter your feedback"
                         value={feedback}
                         onChange={(e) => setFeedback(e.target.value)}
@@ -119,7 +119,7 @@ function StageRating({customSchema,candidateId,jobId,name,candidate,onSubmit,sta
             <div className='flex gap-4'>
               <input
                 type="text"
-                className='w-full bg-background-80 text-white p-2 rounded'
+                className='w-full bg-background-80  p-2 rounded'
                 placeholder='Enter Your Feedback'
                 value={feedback}
                 onChange={(e) => setFeedback(e.target.value)}
@@ -135,7 +135,7 @@ function StageRating({customSchema,candidateId,jobId,name,candidate,onSubmit,sta
           <Scorer value={rating} onChange={setRating} />
             <input
               type="text"
-              className='w-full bg-background-80 text-white p-2 rounded'
+              className='w-full bg-background-80  p-2 rounded'
               placeholder='Enter Your Feedback'
               value={feedback}
               onChange={(e) => setFeedback(e.target.value)}

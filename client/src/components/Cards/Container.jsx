@@ -13,7 +13,7 @@ const  Container = forwardRef(({
   customPadding = ""
 },ref) => {
     
-  const basicMainStyles = ` w-full ${customPadding ? customPadding?.toString() : 'p-4'} min-h-screen `;
+  const basicMainStyles = ` w-full ${customPadding ? customPadding?.toString() : 'px-4 py-8'} min-h-[calc(100vh-5rem)] `;
   const basicContainerStyles = " container ";
 
   const bgImageStyles = ` ${(typeof hasBgImage === 'string' && hasBgImage.trim() !== 'bg-main-bg') ? hasBgImage : "bg-main-bg" }  bg-cover `;

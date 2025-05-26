@@ -106,6 +106,7 @@ export const ScheduleForm = ({ candidateData, onSubmit, isRescheduling, initialD
                 label="Meeting Link"
                 required
                 value={meetingLink}
+                extraClass={'custom-input'}
                 onChange={(e) => setMeetingLink(e.target.value)}
                 error={linkError}
                 errorMessage="Meeting link is required"

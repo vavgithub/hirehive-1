@@ -21,7 +21,6 @@ import {  getStageColorForChart, maxScoreOfEachStage } from '../../config/stagin
 import Container from '../../components/Cards/Container';
 import IconWrapper from '../../components/Cards/IconWrapper';
 import { ArrowLeftRight, ChevronUp, ChevronRight, ClipboardCheck, FileText, FileUser, FolderOpen, Globe, Mail, MonitorDot, Notebook, NotebookPen, Phone, Users } from 'lucide-react';
-import { UNKNOWN_PROFILE_PICTURE_URL } from '../../utility/config';
 import RatingSelector, { getRatingIcon } from '../../components/MUIUtilities/RatingSelector';
 import Modal from '../../components/Modals/Modal';
 import TextEditor from '../../components/utility/TextEditor';
@@ -33,6 +32,7 @@ import { formatPhoneNumber } from '../../components/Form/PhoneInputField';
 import { UTCToDateFormatted } from '../../utility/timezoneConverter';
 import GlobalDropDown from '../../components/Dropdowns/GlobalDropDown';
 import { getRoute, hasPermission, hasRoutePermission, PERMISSIONS, ROUTE_KEY } from '../../config/permissions.config';
+import { useUnknownProfilePicture } from '../../context/ThemeContext';
 
 export const VAVScoreCard = ({ score, stage, scoreStages }) => {
     const [showBreakDown, setShowBreakDown] = useState(false);
@@ -73,8 +73,10 @@ export const VAVScoreCard = ({ score, stage, scoreStages }) => {
         return (
             <StyledCard extraStyles="flex bg-stars  flex-col items-center sm:w-[55%] lg:w-[35%]  max-w-[27rem] bg-cover relative">
                 <h2 className="typography-h2 text-font-main">VAV SCORE</h2>
-                <button onClick={() => setShowBreakDown(true)} className='absolute top-8 right-8 hover:text-font-gray'>
-                    <IconWrapper icon={ArrowLeftRight} size={0} customStrokeWidth={7} inheritColor />
+                <button onClick={() => setShowBreakDown(true)} className='absolute top-4 right-4 hover:text-font-gray'>
+                    <CustomToolTip title={'View Score Breakdown'}>
+                        <IconWrapper icon={ArrowLeftRight} size={0} customStrokeWidth={7} inheritColor />
+                    </CustomToolTip>
                 </button>
                 <span className="marks text-font-primary">{score}</span>
                 <p className="typography-large-p">Out of {getMaxScoreForStage(stage)}</p>
@@ -82,9 +84,11 @@ export const VAVScoreCard = ({ score, stage, scoreStages }) => {
         )
     } else {
         return (<StyledCard extraStyles="flex bg-stars  flex-col items-center sm:w-[55%] lg:w-[35%]  max-w-[27rem] bg-cover relative">
-            <h3 className="typography-h2">Score Breakdown</h3>
-            <button onClick={() => setShowBreakDown(false)} className='absolute top-8 right-8 hover:text-font-gray'>
-                <IconWrapper icon={ArrowLeftRight} size={0} customStrokeWidth={7} inheritColor />
+            <h2 className="typography-h2">Score Breakdown</h2>
+            <button onClick={() => setShowBreakDown(false)} className='absolute top-4 right-4 hover:text-font-gray'>
+                <CustomToolTip title={'View VAV Score'}>
+                    <IconWrapper icon={ArrowLeftRight} size={0} customStrokeWidth={7} inheritColor />
+                </CustomToolTip>
             </button>
             <ScoreChart scoreData={scoreData} />
         </StyledCard>)
@@ -230,11 +234,13 @@ const ViewCandidateProfile = () => {
     const handleBack = () => {
         if (role === "Candidate") {
             navigate(-1);
-        } else {
+        }else {
             // Check if we're on a shortlisted candidate view
             const isShortlistedPath = location.pathname.includes('/shortlisted/');
-
-            if (isShortlistedPath) {
+            const isReviewsPath = location.pathname.includes('/reviews/');
+            if(isReviewsPath && role === "Design Reviewer"){
+                navigate(getRoute(role,ROUTE_KEY.REVIEWS));
+            }else if (isShortlistedPath) {
                 navigate(getRoute(role,ROUTE_KEY.SHORTLISTED));
             } else {
                 navigate(originalPath);
@@ -296,15 +302,15 @@ const ViewCandidateProfile = () => {
         {
             name: 'application',
             label: 'Application',
-            icon: <IconWrapper icon={Users} size={0} isInActiveIcon={true} customIconSize={4} />,
-            activeIcon: <IconWrapper icon={Users} isActiveIcon={true} size={0} customIconSize={4} />,
+            icon: <IconWrapper icon={Users} size={0} inheritColor={true} customIconSize={4} />,
+            activeIcon: <IconWrapper icon={Users} inheritColor={true} size={0} customIconSize={4} />,
         },
         ...(hasPermission(role,PERMISSIONS.SHOW_TAB_CANDIDATE_DETAIL) ? [
             {
                 name: 'candidateDetails',
                 label: 'Candidate Details',
-                icon: <IconWrapper icon={FileText} size={0} isInActiveIcon={true} customIconSize={4} />,
-                activeIcon: <IconWrapper isActiveIcon={true} icon={FileText} size={0} customIconSize={4} />,
+                icon: <IconWrapper icon={FileText} size={0} inheritColor={true} customIconSize={4} />,
+                activeIcon: <IconWrapper inheritColor={true} icon={FileText} size={0} customIconSize={4} />,
             }
         ] : []),
     ];
@@ -399,6 +405,8 @@ const ViewCandidateProfile = () => {
 
     const transformedData = transformCandidateData(data);
 
+    const UNKNOWN_PROFILE_PICTURE_URL = useUnknownProfilePicture()
+
     const handleAssignmentNavigation = () => {
 
         navigate(`${getRoute(role,
@@ -484,12 +492,13 @@ const reviewerProfilePic = currentReviewer?.profilePicture
                     </div>
                 }
             />
+            <StyledCard >
             {/* Candidate Profile Card */}
             {
                 hasPermission(role,PERMISSIONS.SHOW_CANDIDATE_PROFILE_CARD) && (
                     <div className="flex gap-3">
-                        <StyledCard padding={2} extraStyles="w-full flex gap-4 relative justify-between relative">
-                            <div className='flex gap-4'>
+                        <StyledCard padding={2} backgroundColor={'bg-background-80'} extraStyles="w-full flex gap-4 relative justify-between relative">
+                            <div className='flex gap-4 '>
                                 <div className="relative to-background-100 w-[200px] min-h-auto max-h-[200px] rounded-xl overflow-hidden">
                                     <img src={data.profilePictureUrl || UNKNOWN_PROFILE_PICTURE_URL} alt="" className='object-cover w-full overflow-hidden' />
                                     {hasPermission(role,PERMISSIONS.SHOW_CANDIDATE_PROFILE_RATING) &&
@@ -498,9 +507,9 @@ const reviewerProfilePic = currentReviewer?.profilePicture
                                         </span>}
                                 </div>
                                 <div className={`flex flex-col gap-2 ${candidateData?.jobApplication?.notes?.content ? ' max-w-[60%] ' : ''}`}>
-                                    <h1 className="typography-h2">
+                                    <h2 className="typography-h2">
                                         {data.firstName} {data.lastName}
-                                    </h1>
+                                    </h2>
                                     <div className="flex items-center gap-2 mb-3 mt-2">
                                         <span className="typography-small-p text-font-gray">{data.jobApplication.jobApplied}</span>
                                         <svg xmlns="http://www.w3.org/2000/svg" width="4" height="4" viewBox="0 0 4 4" fill="none">
@@ -576,10 +585,10 @@ const reviewerProfilePic = currentReviewer?.profilePicture
                                     </div>}
                             </div>
                             {hasPermission(role,PERMISSIONS.SHOW_CANDIDATE_PROFILE_NOTES_SECTION) && (candidateData?.jobApplication?.notes?.content ?
-                                <StyledCard onClick={() => setOpenNotesView(true)} padding={2} backgroundColor={"bg-background-80"} extraStyles={'w-[30%] h-fit max-h-36 cursor-pointer max  relative overflow-hidden'}>
+                                <StyledCard  onClick={() => setOpenNotesView(true)} padding={3} backgroundColor={"bg-background-70"} extraStyles={'w-[30%] h-fit max-h-36 cursor-pointer max  relative overflow-hidden'}>
                                     <div className=' flex justify-between items-center  ' >
 
-                                        <h3 className='typography-body'>Notes</h3>
+                                        <p className='typography-body'>Notes</p>
                                         <div onClick={handleOpenNotes} className={'hover:bg-accent-300  bg-background-70  rounded-xl' + (candidateData?.jobApplication?.notes?.content ? " top-8 right-8 " : " top-4 right-4")}>
                                             <CustomToolTip title={candidateData?.jobApplication?.notes?.content ? "Edit notes" : "Add a note"} arrowed>
                                                 {
@@ -589,7 +598,7 @@ const reviewerProfilePic = currentReviewer?.profilePicture
                                         </div>
                                     </div>
 
-                                    <div className='overflow-hidden text-font-gray ' dangerouslySetInnerHTML={{ __html: truncatedText(candidateData?.jobApplication?.notes?.content, 55) }}></div>
+                                    <div className='overflow-hidden text-font-gray typography-body ' dangerouslySetInnerHTML={{ __html: truncatedText(candidateData?.jobApplication?.notes?.content, 50) }}></div>
 
                                 </StyledCard> :
                                 <div onClick={handleOpenNotes} className={'hover:bg-accent-300  bg-background-70  h-fit rounded-xl' + (candidateData?.jobApplication?.notes?.content ? " top-8 right-8 " : " top-4 right-4")}>
@@ -640,9 +649,9 @@ const reviewerProfilePic = currentReviewer?.profilePicture
                 customConfirmLabel={"OK"}
             >
                 <div className='mt-4  overflow-y-scroll scrollbar-hide text-ellipsis max-h-[50vh] w-full'>
-                    <div className='mb-4 bg-background-40 p-4 rounded-xl'>
+                    <div className='mb-4 bg-background-80 p-4 rounded-xl'>
                         <div className='flex justify-between items-center '>
-                            <h3 className='typography-body font-regular'>{candidateData?.jobApplication?.jobApplied}</h3>
+                            <p className='typography-body font-regular'>{candidateData?.jobApplication?.jobApplied}</p>
                             <p className='text-font-gray typography-large-p '>{UTCToDateFormatted(candidateData?.jobApplication?.notes?.addedDate)}</p>
                         </div>
                         <div className='text-font-gray p-1 w-full overflow-x-hidden overflow-y-scroll scrollbar-hide text-ellipsis whitespace-normal break-words' dangerouslySetInnerHTML={{ __html: candidateData?.jobApplication?.notes?.content }}></div>
@@ -650,9 +659,9 @@ const reviewerProfilePic = currentReviewer?.profilePicture
                     {
                         showMore && candidateData?.applications?.filter(app => (app?.notes?.content !== "" && app?.notes?.content !== undefined && app?.notes?.content !== null && app.jobId !== jobId))?.map(app => {
                             return (
-                                <div className='mb-4 bg-background-40 p-4 rounded-xl'>
+                                <div className='mb-4 bg-background-80 p-4 rounded-xl'>
                                     <div className='flex justify-between items-center '>
-                                        <h3 className='typography-body'>{app?.jobApplied}</h3>
+                                        <p className='typography-body'>{app?.jobApplied}</p>
                                         <p className='text-font-gray typography-large-p '>{new Date(app.notes?.addedDate).toLocaleDateString("en-GB", {
                                             day: "2-digit",
                                             month: "long",
@@ -669,7 +678,7 @@ const reviewerProfilePic = currentReviewer?.profilePicture
             </Modal>
             {/* Conditional rendering of tabs for "Hiring Manager" */}
 
-            <div className="flex my-4">
+            <div className={`flex ${role === 'Candidate' ? 'mb-4' : 'my-4'}`}>
                 <Tabs tabs={tabs} activeTab={activeTab} handleTabClick={handleTabClick} />
             </div>
 
@@ -687,6 +696,7 @@ const reviewerProfilePic = currentReviewer?.profilePicture
             {activeTab === 'candidateDetails' && (
                 <CandidateTabDetail data={transformedData} job={data?.jobApplication} candidateId={data?._id} role={role} />
             )}
+        </StyledCard>
         </Container>
     );
 };

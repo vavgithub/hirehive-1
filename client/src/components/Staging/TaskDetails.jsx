@@ -44,7 +44,7 @@ export function SubmissionDetails({stageData,candidateData, isEditable}){
     }
 
     return (
-        <div className='mt-4 bg-background-80 p-4 rounded-xl relative'>
+        <div className='mt-4 bg-background-70 p-4 rounded-xl relative'>
             <div className='grid grid-cols-2 gap-4   '>
                 <div>
                     <p className='typography-small-p text-font-gray'> Task</p>
@@ -95,24 +95,24 @@ function TaskDetails({stageData}) {
     const [showMore, setShowMore] = useState(false);
   return (
     <div className='flex flex-col gap-4 mt-4'>
-        <div className='bg-background-80 rounded-xl p-4'>
+        <div className='bg-background-70 rounded-xl p-4'>
             <div className='grid grid-cols-2 gap-4 mb-4'>
                 <div className='flex flex-col'>
-                    <span className='typography-small-p text-font-gray'>Due Date</span>
+                    <span className='typography-small-p text-font-gray mb-2'>Due Date</span>
                     <div className='flex items-center gap-2'>
                         <IconWrapper icon={Calendar} size={0} customIconSize={5} customStrokeWidth={5} />
-                        <h2>
+                        <p>
                             {UTCToDateFormatted(stageData?.currentCall?.scheduledDate)}
-                        </h2>
+                        </p>
                     </div>
                 </div>
                 <div className='flex flex-col'>
-                    <span className='typography-small-p text-font-gray'>Due Time</span>
+                    <span className='typography-small-p text-font-gray mb-2'>Due Time</span>
                     <div className='flex items-center gap-2'>
                         <IconWrapper icon={Clock} size={0} customIconSize={5} customStrokeWidth={5} />
-                        <h2>
+                        <p>
                             {formatUTCToLocalTimeAuto(stageData?.currentCall?.scheduledDate)}
-                        </h2>
+                        </p>
                     </div>
                 </div>
             </div>

@@ -394,7 +394,7 @@ export const router = createBrowserRouter([
     children: [
       {
         path: "dashboard",
-        element: <Candidates />
+        element: <Navigate to={'/design-reviewer/candidates'} />
       },
       {
         path: "profile",
@@ -416,6 +416,11 @@ export const router = createBrowserRouter([
       },
       {
         path: "candidates/view/:candidateId/:jobId",
+        element:
+          <ViewCandidateProfile />
+      },
+      {
+        path: "reviews/view-candidate/:candidateId/:jobId",
         element:
           <ViewCandidateProfile />
       },

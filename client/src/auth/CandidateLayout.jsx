@@ -13,8 +13,11 @@ import StyledMenu from '../components/MUIUtilities/StyledMenu';
 import Modal from '../components/Modals/Modal';
 import ContactUs from '../components/Form/ContactUs';
 import IconWrapper from '../components/Cards/IconWrapper';
-import { Briefcase, BriefcaseBusiness, LogOut, User } from 'lucide-react';
-import { UNKNOWN_PROFILE_PICTURE_URL } from '../utility/config';
+import { Briefcase, BriefcaseBusiness, LogOut, MenuIcon, User } from 'lucide-react';
+import Footer from '../components/Footer/Footer';
+import ThemeToggle from '../components/ui/ThemeToggle';
+import { use } from 'react';
+import { useLogo, useUnknownProfilePicture } from '../context/ThemeContext';
 
 const CandidateLayout = () => {
   const navigate = useNavigate();
@@ -43,6 +46,9 @@ const CandidateLayout = () => {
       setIsAssessmentBannerVisible(false);
     };
   }, []);
+
+  const UNKNOWN_PROFILE_PICTURE_URL = useUnknownProfilePicture();
+  const Logo = useLogo();
 
   const handleLogout = async () => {
     try {
@@ -157,10 +163,10 @@ const CandidateLayout = () => {
 
     return (
       <>
-        <div className={`flex items-center px-2 relative mx-4 py-1 justify-start hover:bg-background-60 rounded-xl ${location.pathname === profilePath ? "selection-primary" : " text-white "}`}>
+        <div className={`flex items-center px-2 relative mx-4 py-1 justify-start hover:bg-background-60 rounded-xl ${location.pathname === profilePath ? "selection-primary" : " text-font-main "}`}>
           <IconButton onClick={handleMenuClick} className={`flex gap-2 `}>
             <Avatar alt={candidateData?.firstName} sx={{ width: "32px", height: "32px" }} src={candidateData?.profilePictureUrl || UNKNOWN_PROFILE_PICTURE_URL} />
-            <span className={`typography-body ${location.pathname === profilePath ? "text-font-accent" : "text-white"} `}>{candidateData?.firstName}</span>
+            <span className={`typography-body ${location.pathname === profilePath ? "text-font-accent" : "text-font-main"} `}>{candidateData?.firstName}</span>
           </IconButton>
           <div className={`absolute right-0 w-1 h-6 rounded-tl-xl rounded-bl-xl ${location.pathname === profilePath
             ? "bg-teal-400" : "bg-transparent"}`} />
@@ -182,19 +188,17 @@ const CandidateLayout = () => {
   const darkBgPaths = ["/candidate/profile"]
 
   return (
-    <div className={`flex flex-col md:flex-row ${darkBgPaths.some(path => location?.pathname.startsWith(path)) ? ' bg-background-100 ' :' bg-background-100 '} bg-cover bg-top h-full overflow-x-hidden`}>
+    <div className={`flex flex-col  ${darkBgPaths.some(path => location?.pathname.startsWith(path)) ? ' bg-background-100 ' :' bg-background-100 '} bg-cover bg-top h-full overflow-x-hidden `}>
       {/* Mobile Menu Button */}
       <div className={'min-h-[4rem] w-full md:hidden z-30 fixed ' + (darkBgPaths.includes(location.pathname) ? "bg-background-100" : "")}>
-        <div className='flex m-4 z-30'>
-          <img className='h-11 z-30' src={LightLogo} />
+        <div className='flex m-4 z-30 '>
+          <img className='h-11 z-30' src={Logo} />
         </div>
         <div
-          className="md:hidden absolute top-4 right-4 z-50 p-2 rounded-full shadow-lg"
+          className="md:hidden absolute top-4 right-4 z-50 p-2 rounded-full  "
           onClick={() => setIsMenuOpen(!isMenuOpen)}
         >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" />
-          </svg>
+          <IconWrapper icon={MenuIcon}  size={0} customIconSize={7} customStrokeWidth={5} />
         </div>
         <div
           className="z-20 bg-gradient-to-b from-black-100 via-black-100 to-transparent w-full top-0 absolute"
@@ -211,16 +215,17 @@ const CandidateLayout = () => {
           fixed md:relative z-40
           ${isMenuOpen ? 'translate-x-0' : '-translate-x-[110%] md:translate-x-0'}
           transition-transform duration-300 ease-in-out
-          w-60 h-[calc(100vh-2rem)] m-4 rounded-xl
+          w-[16rem] h-[calc(100vh-2rem)] m-4 rounded-xl
           bg-background-90 text-font-gray
           flex flex-col justify-between py-6
         `}
         style={{ position: 'fixed' }}
       >
         <div className="flex flex-col gap-6 typography-body ">
-          <div className='px-6 pt-2 pb-4  flex '>
+          <div className='px-6 pt-2 pb-4  flex justify-between'>
 
-            <img className='h-11' src={LightLogo} />
+            <img className='h-11 cursor-pointer ' onClick={() => navigate('/')} src={Logo} />
+          <ThemeToggle /> {/* Add ThemeToggle here */}
           </div>
           {menuItems.map((item) => (
             <NavItem
@@ -255,7 +260,7 @@ const CandidateLayout = () => {
       />
 
       {/* Main Content */}
-      <div className="mt-[4.6rem] md:mt-0 md:ml-[16rem] md:w-[calc(100vw-16rem)] flex flex-col items-center min-h-screen ">
+      <div className="mt-[4.6rem] md:mt-0 md:ml-[17rem] md:w-[calc(100vw-17rem)] flex flex-col items-center min-h-[calc(100vh-5rem)] ">
         <Outlet />
       </div>
 
@@ -266,7 +271,7 @@ const CandidateLayout = () => {
           onClick={() => setIsMenuOpen(false)}
         ></div>
       )}
-
+      <Footer variant='sidebar' />
     </div>
   );
 };

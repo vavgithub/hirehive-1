@@ -136,8 +136,8 @@ const Shortlisted = () => {
                     />
                 ) : (
                     <div className="text-center py-8 bg-background-80 rounded-xl p-6">
-                        <p className="typography-h2 text-font-gray">No shortlisted candidates found.</p>
-                        <p className="typography-large-p mt-2">
+                        <p className="typography-h2 text-font-gray cursor-default">No shortlisted candidates found.</p>
+                        <p className="typography-large-p mt-2 cursor-default">
                             Start shortlisting candidates to see them here.
                         </p>
                     </div>

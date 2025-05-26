@@ -269,7 +269,7 @@ const Modal = ({
               }}
             />
           </div>
-          <h1 className={(isMobile  ?  "typography-h3" : "typography-h1") + " mb-2"}>{isMobile  ? action.mobTitle :title}</h1>
+          <h1 className={(isMobile  ?  "typography-h3" : "typography-h1") + " "}>{isMobile  ? action.mobTitle :title}</h1>
           <p className={(isMobile ? "typography-large-p" :  "typography-body mb-6") +" text-font-gray typography-body "}>{isMobile  ? action.mobMessage :message}</p>
         </div>
       );
@@ -278,7 +278,7 @@ const Modal = ({
     if (actionType === ACTION_TYPES.REJECT) {
       return (
         <>
-          <h1 className="typography-h1">{title}</h1>
+          <h1 className="typography-h1 ">{title}</h1>
           <p className="text-font-gray typography-body mb-4">
             Are you sure you want to reject "{candidateName}"?
           </p>
@@ -301,15 +301,15 @@ const Modal = ({
             <>
               <p className="text-gray-300 mt-4 mb-2">This rejection email will be sent to the candidate</p>
               <div className="bg-background-100 p-4 rounded mb-4 typography-body ">
-                <p className="text-white">Dear {candidateName},</p>
-                <p className="text-white mt-2">
+                <p className="text-font-main">Dear {candidateName},</p>
+                <p className="text-font-main mt-2">
                   Thank you for applying for the {jobTitle} position at {companyName}.
                   After careful review, we have decided to move forward with other candidates.
                 </p>
-                <p className="text-white mt-2">
+                <p className="text-font-main mt-2">
                   We appreciate your interest in our company and wish you all the best in your job search.
                 </p>
-                <p className="text-white mt-2">
+                <p className="text-font-main mt-2">
                   Best regards,<br />
                   HR Manager<br />
                   {companyName}
@@ -324,7 +324,7 @@ const Modal = ({
     if (actionType === ACTION_TYPES.CLOSE && action.requiresReason) {
       return (
         <>
-          <h1 className="typography-h1">{title}</h1>
+          <h1 className="typography-h1 ">{title}</h1>
           <p className="text-font-gray typography-body">{message}</p>
           <div className="mt-4">
             <label htmlFor="closeReason" className="block typography-body mb-2">
@@ -356,7 +356,7 @@ const Modal = ({
 
     return (
       <>
-        <h1 className="typography-h1">{title}</h1>
+        <h1 className="typography-h1 ">{title}</h1>
         <p className="text-font-gray typography-body">{message}</p>
       </>
     );
@@ -370,10 +370,10 @@ const Modal = ({
       <StyledCard
         onClick={(e) => e.stopPropagation()}
         backgroundColor={"bg-background-90 "}
-        padding={0}
+        padding={2}
         extraStyles={"shadow w-full  mx-4 transform transition-transform duration-200 ease-out " + (specifiedWidth ? specifiedWidth : actionType === ACTION_TYPES.BUDGET ? "max-w-xl" : "max-w-lg")}
       >
-        <div className="p-6">
+        <div >
           {renderModalContent()}
           {children}
           <div className="flex justify-end gap-4 mt-4">
