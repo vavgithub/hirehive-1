@@ -234,11 +234,13 @@ const ViewCandidateProfile = () => {
     const handleBack = () => {
         if (role === "Candidate") {
             navigate(-1);
-        } else {
+        }else {
             // Check if we're on a shortlisted candidate view
             const isShortlistedPath = location.pathname.includes('/shortlisted/');
-
-            if (isShortlistedPath) {
+            const isReviewsPath = location.pathname.includes('/reviews/');
+            if(isReviewsPath && role === "Design Reviewer"){
+                navigate(getRoute(role,ROUTE_KEY.REVIEWS));
+            }else if (isShortlistedPath) {
                 navigate(getRoute(role,ROUTE_KEY.SHORTLISTED));
             } else {
                 navigate(originalPath);
@@ -645,7 +647,7 @@ const reviewerProfilePic = currentReviewer?.profilePicture
                 customConfirmLabel={"OK"}
             >
                 <div className='mt-4  overflow-y-scroll scrollbar-hide text-ellipsis max-h-[50vh] w-full'>
-                    <div className='mb-4 bg-background-40 p-4 rounded-xl'>
+                    <div className='mb-4 bg-background-80 p-4 rounded-xl'>
                         <div className='flex justify-between items-center '>
                             <p className='typography-body font-regular'>{candidateData?.jobApplication?.jobApplied}</p>
                             <p className='text-font-gray typography-large-p '>{UTCToDateFormatted(candidateData?.jobApplication?.notes?.addedDate)}</p>
@@ -655,7 +657,7 @@ const reviewerProfilePic = currentReviewer?.profilePicture
                     {
                         showMore && candidateData?.applications?.filter(app => (app?.notes?.content !== "" && app?.notes?.content !== undefined && app?.notes?.content !== null && app.jobId !== jobId))?.map(app => {
                             return (
-                                <div className='mb-4 bg-background-40 p-4 rounded-xl'>
+                                <div className='mb-4 bg-background-80 p-4 rounded-xl'>
                                     <div className='flex justify-between items-center '>
                                         <p className='typography-body'>{app?.jobApplied}</p>
                                         <p className='text-font-gray typography-large-p '>{new Date(app.notes?.addedDate).toLocaleDateString("en-GB", {

@@ -69,7 +69,7 @@ const ViewJob = () => {
             <>
             <Container hasBgColor extraContainerStyles="flex flex-col items-center">
                 <LogoWrapper isAuthenticated={isAuthenticated} />
-                <StyledCard padding={3} backgroundColor={"bg-background-30"} extraStyles={" w-full"}>
+                <StyledCard padding={3} backgroundColor={"bg-background-90"} extraStyles={" w-full"}>
                     {/* Flex container for both desktop and mobile */}
                     <div className="flex flex-col lg:flex-row justify-between w-full">
                         {/* Job Title */}

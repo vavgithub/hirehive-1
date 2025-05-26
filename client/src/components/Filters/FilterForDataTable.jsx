@@ -228,7 +228,7 @@ const FilterForDataTable = ({ onApplyFilters, readOnly, preservedFilters }) => {
         Filter {Object.values(selectedFilters).map((filter) => Array.isArray(filter) ? filter : !filter ? [] : [filter]).flat()?.length > 0 && <span className='w-2 h-2 rounded-full my-auto bg-red-40'></span>}
       </div>
       {isOpen && (
-        <div className="absolute z-10 mt-2 p-2 w-[18rem] max-w-[19rem] bg-background-40 rounded-xl flex flex-col gap-2 shadow-[5px_5px_50px_rgba(0,0,0,0.9)]">
+        <div className="absolute z-10 mt-2 p-2 w-[18rem] max-w-[19rem] bg-background-80 rounded-xl flex flex-col gap-2 shadow-[5px_5px_50px_rgba(0,0,0,0.9)]">
           {Object.values(selectedFilters).map((filter) => Array.isArray(filter) ? filter : !filter ? [] : [filter]).flat()?.length > 0 && <p onClick={handleClearAll} className='cursor-pointer flex gap-2 items-center text-accent-red justify-end w-full typography-body pr-4 pt-2'><IconWrapper icon={Trash} size={0} inheritColor></IconWrapper> Clear All</p>}
           {Object.keys(categories).map((category) => (
             <div key={category} className="w-full">
@@ -253,7 +253,7 @@ const FilterForDataTable = ({ onApplyFilters, readOnly, preservedFilters }) => {
                     <ScoreFilter handleScoreChange={handleScoreChange} />
                   ) :
                     (
-                      <div className="p-2 rounded-xl absolute typography-body left-[18.5rem] min-w-[15.625rem] bg-background-40 w-max flex gap-2 flex-col " style={{ boxShadow: "5px 5px 50px rgba(0,0,0,0.9)" }}>
+                      <div className="p-2 rounded-xl absolute typography-body left-[18.5rem] min-w-[15.625rem] bg-background-80 w-max flex gap-2 flex-col " style={{ boxShadow: "5px 5px 50px rgba(0,0,0,0.9)" }}>
                         {categories[category].map((item) => (
                           <label key={category === 'assignee' ? item._id : item} className={"group relative flex items-center p-4 h-10 hover:bg-background-60 cursor-pointer hover:text-accent-100 rounded-xl " + (category === 'assignee' ? selectedFilters[category].find(each => each.name === item.name) ? "bg-accent-300 text-accent-100 " : "" : selectedFilters[category].includes(item) ? "bg-accent-300 text-accent-100 " : "text-white")}>
                             <TickCheckbox

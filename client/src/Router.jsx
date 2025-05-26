@@ -419,6 +419,11 @@ export const router = createBrowserRouter([
         element:
           <ViewCandidateProfile />
       },
+      {
+        path: "reviews/view-candidate/:candidateId/:jobId",
+        element:
+          <ViewCandidateProfile />
+      },
 
       // Add more Design Reviewer routes here
     ]

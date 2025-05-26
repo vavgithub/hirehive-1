@@ -175,7 +175,7 @@ const AllJobs = () => {
                         onChange={handleSearch} />
                 </div>
                 <div
-                    className={`md:hidden ${isFilterVisible ? "bg-background-100" : "bg-background-40"} transition-colors duration-200 flex items-center gap-2 p-2 rounded-xl`}
+                    className={`md:hidden ${isFilterVisible ? "bg-background-100" : "bg-background-80"} transition-colors duration-200 flex items-center gap-2 p-2 rounded-xl`}
                     onClick={toggleFilters}
                 >
 
@@ -184,7 +184,7 @@ const AllJobs = () => {
             </div>
 
 
-                <StyledCard padding={2} backgroundColor={"bg-background-30 "} extraStyles={'flex flex-col md:flex-row gap-4 lg:pb-8 '}>
+                <StyledCard padding={2} backgroundColor={"bg-background-90 "} extraStyles={'flex flex-col md:flex-row gap-4 lg:pb-8 '}>
                     {/* Search and Filters */}
                     <div className={`${isFilterVisible ? 'block' : 'hidden'} md:block md:w-[55%] xl:w-[40%]`}>
                         <div className='hidden md:block  mb-4 relative '>

@@ -181,7 +181,7 @@ function TaskForm({candidateId,candidateEmail,jobId,setIsLoading}) {
                 type="text"
                 label="Task Description"
                 required
-                className={(descriptionError ? '!border !border-red-500 ' : 'border border-transparent ') + "w-full rounded-xl px-3 py-2 bg-background-40 resize-none outline-none focus:outline-teal-300"}
+                className={(descriptionError ? '!border !border-red-500 ' : 'border border-transparent ') + "w-full rounded-xl px-3 py-2 bg-background-80 resize-none outline-none focus:outline-teal-300"}
                 rows="10"
                 value={taskDescription}
                 onChange={(e) => setTaskDescription(e.target.value)}

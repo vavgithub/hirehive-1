@@ -222,7 +222,7 @@ const ContactUs = () => {
             id="name"
             type="text"
             placeholder="Enter your name"
-            className={`w-full p-2 bg-background-40 rounded outline-none focus:outline-teal-300 ${errors.name ? '!border !border-red-500' : 'border border-transparent'
+            className={`w-full p-2 bg-background-80 rounded outline-none focus:outline-teal-300 ${errors.name ? '!border !border-red-500' : 'border border-transparent'
               }`}
             {...register("name", { required: "Name is required" })}
           />
@@ -239,7 +239,7 @@ const ContactUs = () => {
             id="email"
             type="email"
             placeholder="Enter your email"
-            className={`w-full p-2 bg-background-40 rounded outline-none focus:outline-teal-300 ${errors.email ? '!border !border-red-500' : 'border border-transparent'
+            className={`w-full p-2 bg-background-80 rounded outline-none focus:outline-teal-300 ${errors.email ? '!border !border-red-500' : 'border border-transparent'
               }`}
             {...register("email", {
               required: "Email is required",
@@ -262,7 +262,7 @@ const ContactUs = () => {
             id="message"
             rows={4}
             placeholder="How can we help you?"
-            className={` px-4 pt-2 bg-background-40 resize-none hover:bg-background-60 cursor-pointer  rounded-xl placeholder:text-font-gray placeholder:font-body  focus:ring-teal-400 focus:outline-teal-500 outline-none typography-body w-full ${errors.message ? '!border !border-red-500' : 'border border-transparent'
+            className={` px-4 pt-2 bg-background-80 resize-none hover:bg-background-60 cursor-pointer  rounded-xl placeholder:text-font-gray placeholder:font-body  focus:ring-teal-400 focus:outline-teal-500 outline-none typography-body w-full ${errors.message ? '!border !border-red-500' : 'border border-transparent'
               }`}
             {...register("message", {
               required: "Message is required",
@@ -282,7 +282,7 @@ const ContactUs = () => {
           <label className="typography-body">Screenshot (Optional)</label>
           <div
             {...getRootProps({
-              className: `bg-background-40 hover:bg-background-60 rounded-xl mt-4 p-4 text-center cursor-pointer 
+              className: `bg-background-80 hover:bg-background-60 rounded-xl mt-4 p-4 text-center cursor-pointer 
                 ${isDragActive ? 'border border-teal-500 bg-background-60' : ''}`,
             })}
           >

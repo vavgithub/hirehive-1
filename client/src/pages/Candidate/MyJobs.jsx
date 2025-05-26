@@ -84,7 +84,7 @@ const MyJobs = () => {
     return (
       <div className="m-2 pt-4">
         <h1 className="typography-h1 mb-4">My Jobs</h1>
-        <div className="p-4 bg-background-30 rounded-xl">
+        <div className="p-4 bg-background-90 rounded-xl">
           Error fetching applied jobs. Please try again later.
         </div>
       </div>
@@ -95,7 +95,7 @@ const MyJobs = () => {
     <Container>
       <Header HeaderText={"My Jobs"}></Header>
         {isAssessmentBannerVisible && <AssessmentBanner />}
-        <StyledCard padding={2} backgroundColor={"bg-background-30  "}>
+        <StyledCard padding={2} backgroundColor={"bg-background-90  "}>
           {appliedJobs?.jobApplications?.length > 0 ? (
             <ul className='flex flex-col gap-4'>
               {appliedJobs?.jobApplications?.map((application, index) => (

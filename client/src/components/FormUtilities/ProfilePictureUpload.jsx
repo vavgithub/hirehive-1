@@ -22,7 +22,7 @@ export const ProfilePictureUpload = ({
       <label className="typography-body">Profile Picture</label>
       <StyledCard 
         padding={2}
-        backgroundColor={"bg-background-40"}
+        backgroundColor={"bg-background-80"}
         extraStyles=" hover:bg-background-60 cursor-pointer  mt-2 flex flex-col items-center justify-center"
         onClick={() => fileInputRef.current?.click()}
       >

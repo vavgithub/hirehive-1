@@ -7,7 +7,7 @@ function AdditionalQuestions({jobDetails, control ,errors}) {
         <h3 className="typography-h3 mb-4">Additional Questions</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {jobDetails?.questions.map((question, index) => (
-            <div key={question?._id} className="bg-background-30 rounded-xl p-4">
+            <div key={question?._id} className="bg-background-90 rounded-xl p-4">
             <Controller
                 key={question._id}
                 name={`question-${question._id}`}
@@ -66,7 +66,7 @@ function AdditionalQuestions({jobDetails, control ,errors}) {
                             type={question.answerType === "number" ? "number" : "text"}
                             {...field}
                             onWheel={(event) => event.currentTarget.blur()}
-                            className="w-full p-2 bg-background-40 rounded outline-none focus:outline-teal-300 no-spinner"
+                            className="w-full p-2 bg-background-80 rounded outline-none focus:outline-teal-300 no-spinner"
                             placeholder="Enter your answer"
                         />
                         </div>

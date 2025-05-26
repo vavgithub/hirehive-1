@@ -105,7 +105,7 @@ const CandidateLogin = () => {
           <img src={sundarKanya} alt="Sundar Kanya" className="absolute bottom-0 right-0 h-[70%]" />
         </div>
         {/* Right section with login form */}
-        <div className="w-full lg:w-2/5 bg-background-30 p-4 md:p-28   flex flex-col justify-center">
+        <div className="w-full lg:w-2/5 bg-background-90 p-4 md:p-28   flex flex-col justify-center">
         {showForgotPassword ? (
                       <ForgotPassword role="Candidate" onBack={() => setShowForgotPassword(false)} />
                   ) : (

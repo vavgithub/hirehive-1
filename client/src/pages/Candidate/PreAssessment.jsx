@@ -118,7 +118,7 @@ const PreAssessment = () => {
                                 title="Assessment Overview"
                                 isOpen={isOverviewOpen}
                                 toggleOpen={() => setIsOverviewOpen(!isOverviewOpen)}
-                                preIcon={<IconWrapper isInActiveIcon size={4} hasBg="bg-background-30" icon={BookText} />}
+                                preIcon={<IconWrapper isInActiveIcon size={4} hasBg="bg-background-90" icon={BookText} />}
                                 content={
                                     <ul className="list-disc pl-12">
                                         <li className='pb-2'>This assessment consists of 10 questions.</li>        
@@ -133,7 +133,7 @@ const PreAssessment = () => {
                                 title="Estimated 5 Minutes"
                                 isOpen={isTimeOpen}
                                 toggleOpen={() => setIsTimeOpen(!isTimeOpen)}
-                                preIcon={<IconWrapper isInActiveIcon size={4} hasBg="bg-background-30" icon={Timer} />}
+                                preIcon={<IconWrapper isInActiveIcon size={4} hasBg="bg-background-90" icon={Timer} />}
                                 content={
                                     <ul className="list-disc pl-12">
                                         <li className='pb-2'>The estimated time for this assessment is 5 minutes.</li>

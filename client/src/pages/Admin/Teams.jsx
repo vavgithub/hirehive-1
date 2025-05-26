@@ -211,11 +211,10 @@ function Teams() {
             }) }
 
         </div>
-        </StyledCard>
         {teamMembers?.members?.filter(member => member?.status === "REQUESTED")?.length > 0 && 
         <div className="w-full">
             <h2 className="typography-h2 mt-6 mb-4">New Member Request</h2>
-            <StyledCard  extraStyles="grid gap-4 grid-cols-5 ">
+            <StyledCard padding={0}  extraStyles="grid gap-4 grid-cols-5 ">
             {teamMembers?.members?.filter(member => member?.status === "REQUESTED").map(member => {
                 return (
                     <StyledCard key={member?.member_id ? member?.member_id : member?._id} backgroundColor={'bg-background-80'} onClick={()=>navigate(`/admin/teams/profile/${member?.member_id ? member?.member_id : member?._id}`)} padding={2} extraStyles={'flex flex-col items-center cursor-pointer justify-between gap-4 '}>
@@ -231,7 +230,7 @@ function Teams() {
                         <div className="w-full flex justify-center">
                             {
                                 member?.status === "REQUESTED" ? 
-                                <div className="flex justify-between w-full">
+                                <div className="flex justify-between w-full gap-2">
                                     <button type="button" onClick={(event) =>handleApprove(event,member?.email)}  className="text-sm font-bricolage font-medium px-4 py-1 border-2 rounded-xl border-green-700 text-green-500 hover:bg-green-90">Approve</button>
                                     <button type="button" onClick={(event) =>handleReject(event,member?.email)}  className="text-sm font-bricolage font-medium px-4 py-1 border-2 rounded-xl border-red-90 text-red-500 hover:bg-red-60">Reject</button>
                                 </div>
@@ -244,6 +243,7 @@ function Teams() {
             }) }
             </StyledCard>
         </div>}
+        </StyledCard>
         <Modal
         open={showAddModal || showEditModal}
         onClose={showAddModal ? ()=>setShowAddmodal(false) : ()=>setShowEditmodal(false)}

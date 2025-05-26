@@ -46,7 +46,7 @@ const TextQuestion = ({ question, onUpdate, onDelete, onCopy, initialEditMode = 
   if (!isEditing) {
     return (
       <div 
-        className="bg-background-30 w-full rounded-xl mb-4 p-4 cursor-pointer hover:bg-background-40 transition-colors"
+        className="bg-background-90 w-full rounded-xl mb-4 p-4 cursor-pointer hover:bg-background-80 transition-colors"
         onClick={handleEnterEditMode}
       >
         <h3 className="font-bold mb-2">
@@ -63,7 +63,7 @@ const TextQuestion = ({ question, onUpdate, onDelete, onCopy, initialEditMode = 
 
 
   return (
-    <div className="bg-background-30 p-4 w-full rounded-xl mb-4">
+    <div className="bg-background-90 p-4 w-full rounded-xl mb-4">
        <div className="flex items-center mb-2">
         <span className="mr-2 font-bold">Q{questionNumber}.</span>
         <input
@@ -71,7 +71,7 @@ const TextQuestion = ({ question, onUpdate, onDelete, onCopy, initialEditMode = 
           value={localQuestion}
           onChange={(e) => setLocalQuestion(e.target.value)}
           placeholder="Question"
-          className="flex-grow p-2 bg-background-40 rounded-xl"
+          className="flex-grow p-2 bg-background-80 rounded-xl"
         />
       </div>
       <div className="mb-4">
@@ -101,7 +101,7 @@ const TextQuestion = ({ question, onUpdate, onDelete, onCopy, initialEditMode = 
       
       </div>
       <div className='flex justify-end'>
-        <div className="flex justify-end w-fit mt-2 p-4 items-center bg-background-40 rounded-xl space-x-4">
+        <div className="flex justify-end w-fit mt-2 p-4 items-center bg-background-80 rounded-xl space-x-4">
           <ToggleSwitch checkValue={localRequired} setCheckValue={setLocalRequired} label={"Required"} />
           <div onClick={(e) => { e.stopPropagation(); onCopy(); }} className='bg-blue-200 w-11 h-11  rounded-xl flex items-center justify-center cursor-pointer'>
             <IconWrapper icon={Copy} customStrokeWidth={7} />

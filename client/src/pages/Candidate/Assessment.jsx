@@ -81,7 +81,7 @@ const QuestionSidebar = ({ questions, currentQuestion, answeredCount, onQuestion
   const [ min ,sec ] = useMemo(()=> formatTime(timeRemaining).split(":") ,[timeRemaining]) 
   
   return (
-    <div className="w-[15rem] bg-background-30 fixed  overflow-y-auto  custom-scrollbar m-4 h-[calc(100vh-2rem)]  rounded-xl">
+    <div className="w-[15rem] bg-background-90 fixed  overflow-y-auto  custom-scrollbar m-4 h-[calc(100vh-2rem)]  rounded-xl">
       <div className='flex items-center justify-start pt-8 pb-6 px-4 '>
 
         <img className='h-11' src={LightLogo} />
@@ -176,7 +176,7 @@ const QuestionDisplay = ({
           </div>
         )}
       </StyledCard>
-      <StyledCard backgroundColor={"bg-background-30"} borderRadius={" rounded-br-xl rounded-bl-xl "} extraStyles={"w-[95%] mx-auto"}>
+      <StyledCard backgroundColor={"bg-background-90"} borderRadius={" rounded-br-xl rounded-bl-xl "} extraStyles={"w-[95%] mx-auto"}>
         <div className='grid grid-cols-2 gap-4 items-center h-max' style={{
           gridAutoRows: "1fr", // Ensures all rows are consistent based on tallest item
         }}>

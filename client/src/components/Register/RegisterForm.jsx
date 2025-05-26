@@ -180,7 +180,7 @@ function RegisterForm({setCurrentStep}) {
               <img src={sundarKanya} alt="Sundar Kanya" className="absolute bottom-0 right-0 h-[70%]" />
             </div>
             {/* Right section with login form */}
-            <div className="w-full lg:w-2/5 bg-background-30 p-4 md:p-28   flex flex-col justify-center">
+            <div className="w-full lg:w-2/5 bg-background-90 p-4 md:p-28   flex flex-col justify-center">
               <h1 className="typography-h1 text-center  font-semibold">Sign Up</h1>
               <p className="typography-body mb-8 text-center text-font-gray font-normal">Create an account</p>
                     {/* <Button type="button" variant="secondary" icon={GoogleIcon} className="w-full" >

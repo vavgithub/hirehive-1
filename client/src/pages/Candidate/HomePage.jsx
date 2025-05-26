@@ -184,7 +184,7 @@ const HomePage = () => {
                                 onChange={handleSearch}
                             />
                         <div
-                            className={`md:hidden ${isFilterVisible ? "bg-background-100" : "bg-background-40"} transition-colors duration-200 flex items-center gap-2 p-2 rounded-xl`}
+                            className={`md:hidden ${isFilterVisible ? "bg-background-100" : "bg-background-80"} transition-colors duration-200 flex items-center gap-2 p-2 rounded-xl`}
                             onClick={toggleFilters}
                         >
                         <IconWrapper isInActiveIcon size={0} customIconSize={4} customStrokeWidth={5}  icon={SlidersHorizontal} />

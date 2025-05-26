@@ -17,6 +17,8 @@ import Container from '../../components/Cards/Container';
 import IconWrapper from '../../components/Cards/IconWrapper';
 import { Briefcase, Folder, FolderOpen, MonitorDot, PenTool, Users } from 'lucide-react';
 import ReviewsFilter from '../../components/Filters/ReviewsFilter'; // Import the new filter
+import { getRoute, ROUTE_KEY } from '../../config/permissions.config';
+import { useAuthContext } from '../../context/AuthProvider';
 
 const statsOne = [
   { title: 'Total', value: 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={Users} /> },
@@ -54,6 +56,7 @@ const submitReview = async ({ candidateId, reviewData }) => {
 const Reviews = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const { user } = useAuthContext();
   const [groupedCandidates, setGroupedCandidates] = useState({});
   const [filteredCandidates, setFilteredCandidates] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -241,7 +244,7 @@ const Reviews = () => {
   };
 
   const handleNavigate = (candidate) => {
-    navigate(`/design-reviewer/candidates/view-candidate/${candidate._id}/${candidate.currentApplication.jobId}`);
+    navigate(`${getRoute(user?.role,ROUTE_KEY.REVIEWS_VIEW_CANDIDATE)}/${candidate._id}/${candidate.currentApplication.jobId}`);
   }
 
   const groupedEntries = filteredCandidates?.length > 0 ? Object.entries(groupedCandidates) : [];
@@ -249,7 +252,7 @@ const Reviews = () => {
   return (
     <Container>
       <Header HeaderText="Reviews" />
-      <StyledCard backgroundColor={"bg-background-30"} padding={2}>
+      <StyledCard backgroundColor={"bg-background-90"} padding={2}>
         <div className="w-full">
           <StatsGrid stats={updatedStatsOne} />
         </div>

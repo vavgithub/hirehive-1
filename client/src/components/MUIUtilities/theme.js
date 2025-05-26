@@ -1,5 +1,4 @@
 import { createTheme } from "@mui/material/styles";
-import { color } from "echarts";
 
 const theme = createTheme({
   palette: {
@@ -43,13 +42,13 @@ const theme = createTheme({
             borderRadius: "0.75rem",
             color: "white",
             "& fieldset": {
-              borderColor: "rgba(24, 233, 208, 0.5)",
+              borderColor: "var(--color-font-accent-200)",
             },
             "&:hover fieldset": {
-              borderColor: "rgba(24, 233, 208, 0.8)",
+              borderColor: "var(--color-font-accent-300)",
             },
             "&.Mui-focused fieldset": {
-              borderColor: "var(--color-font-accent-100)",
+              borderColor: "var(--color-font-accent-100) !important",
             },
           },
         },
@@ -139,17 +138,17 @@ const theme = createTheme({
           color: "var(--color-font-gray-90)",
           "&.Mui-selected": {
             color: "var(--color-accent-100)",
-            backgroundColor: "rgba(24, 233, 208, 0.2) !important",
+            backgroundColor: "var(--color-accent-300) !important",
           },
           "&.Mui-selected:hover": {
             color: "var(--color-accent-100)",
-            backgroundColor: "rgba(24, 233, 208, 0.3) !important",
+            backgroundColor: "var(--color-background-60) !important",
           },
           "&:hover": {
             backgroundColor: "var(--color-background-60)",
           },
           "&.Mui-disabled": {
-            color: "rgba(128, 131, 137, 0.5) !important",
+            color: "var(--color-font-gray-80) !important",
           },
         },
       },
@@ -340,11 +339,10 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           borderRadius: "0.75rem",
-          // backgroundColor: "black",
           "& .MuiDataGrid-columnHeaders": {
             borderTop: "none",
             borderBottom: "none",
-            color: "gray",
+            color: "var(--color-font-gray-90)",
             backgroundColor: "var(--color-background-70) !important",
           },
           '& .MuiDataGrid-columnHeaders div' : {
@@ -370,7 +368,7 @@ const theme = createTheme({
             },
           },
           "& .MuiDataGrid-columnHeaderTitle": {
-            color: "gray",
+            color: "var(--color-font-gray-90)",
           },
           "&  .MuiDataGrid-footerContainer": {
             backgroundColor: "var(--color-background-70) !important",
@@ -413,9 +411,9 @@ const theme = createTheme({
           },
           "& .first-row": {
             borderRadius: 2,
-            backgroundColor: "var(--color-background-30)",
+            backgroundColor: "var(--color-background-90)",
             "&:hover": {
-              backgroundColor: "#232425",
+              backgroundColor: "var(--color-background-60)",
             },
           },
           "& .MuiDataGrid-filler": {
@@ -429,7 +427,7 @@ const theme = createTheme({
             borderRadius: 2,
             backgroundColor: "var(--color-background-80)",
             "&:hover": {
-              backgroundColor: "#232425",
+              backgroundColor: "var(--color-background-60)",
             },
           },
           "& .MuiSvgIcon-root": {

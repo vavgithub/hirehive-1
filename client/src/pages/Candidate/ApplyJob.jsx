@@ -473,7 +473,7 @@ const ApplyJob = () => {
                 </label>
                 <div
                   {...getRootProps({
-                    className: `bg-background-40 hover:bg-background-60 rounded-xl mt-4 p-4 text-center cursor-pointer 
+                    className: `bg-background-80 hover:bg-background-60 rounded-xl mt-4 p-4 text-center cursor-pointer 
                       ${isDragActive ? 'border border-teal-500 bg-background-60' : ''} 
                       ${errors.resumeFile ? '!border !border-red-500' : ''}`,
                   })}

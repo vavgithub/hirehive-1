@@ -171,7 +171,7 @@ const ReviewsFilter = ({ onApplyFilters, candidates = [] }) => {
       </div>
       
       {isOpen && (
-        <div className="absolute z-10 mt-2 p-2 w-[18rem] max-w-[19rem] bg-background-40 rounded-xl flex flex-col gap-2 shadow-[5px_5px_50px_rgba(0,0,0,0.9)]">
+        <div className="absolute z-10 mt-2 p-2 w-[18rem] max-w-[19rem] bg-background-80 rounded-xl flex flex-col gap-2 shadow-[5px_5px_50px_rgba(0,0,0,0.9)]">
           {hasActiveFilters && (
             <p 
               onClick={handleClearAll} 
@@ -203,7 +203,7 @@ const ReviewsFilter = ({ onApplyFilters, candidates = [] }) => {
               </div>
               
               {showDropdown[category] && (
-                <div className="p-2 rounded-xl absolute typography-body left-[18.5rem] min-w-[15.625rem] bg-background-40 w-max flex gap-2 flex-col" 
+                <div className="p-2 rounded-xl absolute typography-body left-[18.5rem] min-w-[15.625rem] bg-background-80 w-max flex gap-2 flex-col" 
                      style={{ boxShadow: "5px 5px 50px rgba(0,0,0,0.9)" }}>
                   {categories[category].map((item) => (
                     <label 

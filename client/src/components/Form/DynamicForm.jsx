@@ -8,7 +8,7 @@ import { FormField } from './FormField';
 import { PhoneInputField } from './PhoneInputField';
 
 const FormSection = ({ title, fields, control }) => (
-  <StyledCard backgroundColor="bg-background-30" extraStyles="mb-4">
+  <StyledCard backgroundColor="bg-background-90" extraStyles="mb-4">
     <h2 className="typography-h2">{title}</h2>
     <div className="grid gap-4">
       {fields.map((field) => {

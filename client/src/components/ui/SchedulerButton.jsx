@@ -80,7 +80,7 @@ function SchedulerButton({buttonText,buttonVariant,extraClasses,modalTitle,modal
             <ChevronDown />}
             </span>
         {isOpen && 
-        <span className='typography-body bg-background-40 rounded-xl p-2   absolute -top-16 right-0 '>
+        <span className='typography-body bg-background-80 rounded-xl p-2   absolute -top-16 right-0 '>
             <p onClick={()=>setScheduleModal(true)} className='hover:bg-background-60 w-full whitespace-nowrap py-2 px-8 rounded-xl hover:text-accent-100'>Scheduled Send</p>
         </span>}
     </button>

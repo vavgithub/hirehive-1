@@ -70,7 +70,7 @@ function TextEditor({htmlData,loaded,errors,placeholder,setEditorContent}) {
     }, []);
     
       return (
-        <div className='w-full relative bg-background-40 rounded-xl  '>
+        <div className='w-full relative bg-background-80 rounded-xl  '>
             <LexicalComposer initialConfig={initialConfig}>
                 <ToolbarPlugin errors={errors} />
                 <ListPlugin />

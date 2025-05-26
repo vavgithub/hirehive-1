@@ -63,7 +63,7 @@ const Que = ({ onQuestionsChange, initialQuestions = [] , error}) => {
         <div className=" ">
             <div className='pt-6 flex flex-col justify-between h-full '>
                 <span className='typography-body mb-2'>Additional Questions </span>
-                <div className={'bg-background-30 rounded-xl h-full  flex flex-col items-center justify-start border border-dashed ' + (error ? "border-red-100" : "border-gray-500")}>
+                <div className={'bg-background-90 rounded-xl h-full  flex flex-col items-center justify-start border border-dashed ' + (error ? "border-red-100" : "border-gray-500")}>
                     {questions.length === 0 ? (
                         <>
                             <p className='typography-body text-font-gray p-8'>

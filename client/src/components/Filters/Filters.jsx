@@ -91,7 +91,7 @@ const Filters = ({ filters = {}, handleCheckboxChange, activeTab, handleExperien
                 <div className='flex flex-row-reverse absolute top-5 right-5'>
                     <button
                         onClick={handleClearAll}
-                        className="text-font-gray typography-small-p hover:text-blue-800 font-semibold"
+                        className="text-font-gray typography-small-p hover:text-font-accent font-semibold"
                     >
                         Clear All
                     </button>

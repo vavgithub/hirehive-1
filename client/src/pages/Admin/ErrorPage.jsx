@@ -9,7 +9,7 @@ export default function ErrorPage() {
   return (
     <>
       <div className="flex items-center justify-center h-screen">
-        <div className="bg-background-30 p-4 rounded-xl">
+        <div className="bg-background-90 p-4 rounded-xl">
           <div className="flex flex-col items-center">
             <h1 className="font-bold typography-h1 text-blue-600 lg:text-6xl">
               404

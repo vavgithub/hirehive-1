@@ -166,7 +166,7 @@ export default function ToolbarPlugin({errors}) {
   }, [editor, $updateToolbar]);
 
   return (
-    <div className={"absolute top-0 left-0 min-h-14 z-20 flex items-center bg-background-40 rounded-t-xl   " + (errors ? "w-[calc(100%-2px)] ml-[1px] mt-[1px]" : "w-full")} ref={toolbarRef}>
+    <div className={"absolute top-0 left-0 min-h-14 z-20 flex items-center bg-background-80 rounded-t-xl   " + (errors ? "w-[calc(100%-2px)] ml-[1px] mt-[1px]" : "w-full")} ref={toolbarRef}>
       {/* <button
         type='button'
         disabled={!canUndo}

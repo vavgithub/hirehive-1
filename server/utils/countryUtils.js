@@ -14,6 +14,7 @@ export function getCountryNameFromPhoneNumber(phoneNumber) {
 
     return countryName || 'Country name not found'
   } catch (error) {
-    return `Error: ${error.message}`
+    console.error(`Error: ${error.message}`);
+    return false
   }
 }

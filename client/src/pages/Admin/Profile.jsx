@@ -362,7 +362,7 @@ function Profile() {
                           <p className="text-font-gray whitespace-nowrap">Tools Proficiency</p>
                         </div>
                         <div className="flex flex-col gap-6 typography-body">
-                          <p className="whitespace-nowrap overflow-hidden text-ellipsis flex gap-2 ">
+                          <p className="whitespace-nowrap overflow-hidden text-ellipsis flex gap-2 flex-wrap">
                           {(user?.tools_used).map((tool, index) => (
                             <span key={index} className="flex justify-center  w-fit bg-background-70 m px-6 py-2 rounded-full">{tool}</span>
                           ))}

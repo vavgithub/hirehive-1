@@ -51,7 +51,7 @@ function CustomPill({
     ${paddingY?.toString() ? `py-${valueSteps[paddingY]}` : "py-2"}  
     ${paddingX?.toString() ? `px-${valueSteps[paddingX]}` : "px-6"} 
     ${
-      !selected ? (backgroundColor ? backgroundColor : "bg-background-40") : ""
+      !selected ? (backgroundColor ? backgroundColor : "bg-background-80") : ""
     } 
     ' border ' 
     ${
