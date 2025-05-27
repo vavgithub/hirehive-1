@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Container from "../../components/Cards/Container";
 import LoaderModal from "../../components/Loaders/LoaderModal";
 import Header from "../../components/utility/Header";
@@ -30,7 +30,7 @@ function ViewQuestions() {
     <Container>
       {isLoading && <LoaderModal/>}
       <Header
-        HeaderText={data?.title}
+        HeaderText={data?.category + " : " + data?.title}
         withBack="true"
       ></Header>
       <StyledCard>
@@ -41,7 +41,15 @@ function ViewQuestions() {
                     <h3 className="typography-h3 mb-4">
                         Q{index + 1}. {qstn.text}
                     </h3>
-
+                    {qstn.questionType === 'image' && qstn.imageUrl && (
+                      <div className="relative w-fit mb-6 ">
+                        <img
+                          src={qstn.imageUrl}
+                          alt="Question visual"
+                          className="max-w-md rounded-xl"
+                        />
+                      </div>
+                    )}
                     <div className="grid grid-cols-2 gap-4">
                         {qstn.options.map((option, optIndex) => (
                             <div

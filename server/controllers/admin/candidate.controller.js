@@ -1115,6 +1115,7 @@ export const submitQuestionnaireAttempt = async (req, res) => {
     // Create attempt data
     const attemptData = {
       title : assessment?.title,
+      category : assessment?.category,
       totalTimeInSeconds,
       score,
       responses,
@@ -1342,6 +1343,7 @@ export const getJobBasedQuestionnaireDetails = async (req, res) => {
         assessment : {
           _id:assessment._id,
           title : assessment.title ?? latestAttempt?.title,
+          category : assessment.category ?? latestAttempt?.category,
         },
         questionResponses: latestAttempt.responses.map((response, index) => {
           const question = questionMap[response.questionId.toString()];

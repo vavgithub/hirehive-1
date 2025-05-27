@@ -87,7 +87,7 @@ const AssessmentResponse = () => {
 
 
                                 <div className="flex items-center gap-2 my-2">
-                                    <span className="text-white text-xl font-semibold">{assessmentData?.assessment?.title}</span>
+                                    <span className="text-white text-xl font-semibold">{assessmentData?.assessment?.category + " : " +assessmentData?.assessment?.title}</span>
                                     <Circle className="w-1 h-1 text-font-gray" />
                                 </div>
 
@@ -214,7 +214,15 @@ const AssessmentResponse = () => {
                                     <h3 className="typography-h3 mb-4">
                                         Q{index + 1}. {response.questionDetails.text}
                                     </h3>
-
+                                    {response.questionDetails.type === 'image' && response.questionDetails.imageUrl && (
+                                    <div className="relative w-fit mb-6 ">
+                                        <img
+                                        src={response.questionDetails.imageUrl}
+                                        alt="Question visual"
+                                        className="max-w-md rounded-xl"
+                                        />
+                                    </div>
+                                    )}
                                     <div className="grid grid-cols-2 gap-4">
                                         {response.questionDetails.options.map((option, optIndex) => (
                                             <div

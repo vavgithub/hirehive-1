@@ -298,11 +298,11 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
           }}
           render={({ field: { onChange, value } , fieldState: { error }  })=>(
             <div className='mt-6 relative'>
-            <label htmlFor="assessment" className="typography-body block mb-2">Assessment{<span className="text-red-100">*</span>}</label>
+            <label htmlFor="assessment" className="typography-body block mb-2">{`${watchedFields.jobProfile ? watchedFields.jobProfile : ''} Assessment`}{<span className="text-red-100">*</span>}</label>
                 <div className='flex flex-wrap gap-4'>
                   {
-                    assessmentTemplates?.map(template => (
-                      <CustomPill variant="selective" data={template} value={value} hasInfoButton infoButtonClick={(label)=>setPreviewAssessment(template)} error={error} key={template?._id}  selected={value === template?._id} onChange={onChange} />
+                    assessmentTemplates?.filter(assessment => watchedFields.jobProfile ? assessment.category === watchedFields.jobProfile : true)?.map(template => (
+                      <CustomPill  variant="selective" data={template} value={value} hasInfoButton infoButtonClick={(label)=>setPreviewAssessment(template)} error={error} key={template?._id}  selected={value === template?._id} onChange={onChange} />
                     ))
                   }
                 </div>

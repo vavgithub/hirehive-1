@@ -26,7 +26,7 @@ function TemplateModal({open,onClose,assessment}) {
     <Modal
     open={open}
     onClose={onClose}
-    customTitle={assessment?.title}
+    customTitle={assessment?.category + ' : ' +assessment?.title}
     customMessage={"This set of questions will be used to assess the candidate's suitability and qualifications for the role."}
     noCancel
     customConfirmLabel={'OK'}
@@ -39,6 +39,16 @@ function TemplateModal({open,onClose,assessment}) {
                     <h3 className="typography-h3 mb-4">
                         Q{index + 1}. {qstn.text}
                     </h3>
+
+                    {qstn.questionType === 'image' && qstn.imageUrl && (
+                      <div className="relative w-fit mb-6 ">
+                        <img
+                          src={qstn.imageUrl}
+                          alt="Question visual"
+                          className="max-w-md rounded-xl"
+                        />
+                      </div>
+                    )}
 
                     <div className="grid grid-cols-2 gap-4">
                         {qstn.options.map((option, optIndex) => (
