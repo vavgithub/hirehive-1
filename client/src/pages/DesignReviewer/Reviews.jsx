@@ -275,12 +275,12 @@ const Reviews = () => {
         </div>
         {groupedEntries?.length > 0 ? groupedEntries.map(([jobTitle, stages, jobProfile]) => (
           <div key={jobTitle} className="mb-8">
-            <h2 className="typography-h2 mt-4">{jobTitle}</h2>
+            <h2 className="mt-4">{jobTitle}</h2>
             {stageOrder.map(stage => {
               if (stages[stage] && stages[stage].length > 0) {
                 return (
                   <div key={stage} >
-                    <h3 className="typography-h3 mb-4">{stage}</h3>
+                    <h3 className="mb-4">{stage}</h3>
                     {stages[stage].map(candidate => (
                       <div key={`${candidate._id}-${candidate.currentApplication.jobId}`} className="mb-4 flex flex-col bg-background-80 rounded-xl">
                         <div className='flex items-center p-4 justify-between cursor-pointer' onClick={() => handleNavigate(candidate)}>
@@ -311,7 +311,7 @@ const Reviews = () => {
           </div>
         )) :
           <div className='my-4 flex flex-col items-center justify-center'>
-            <h2 className='typography-h2'>No Candidates</h2>
+            <h2>No Candidates</h2>
             <p className='typography-small-p text-font-gray'>
               {(appliedFilters.jobName?.length > 0 || appliedFilters.stage?.length > 0 || searchTerm) 
                 ? 'No candidates match the selected filters' 

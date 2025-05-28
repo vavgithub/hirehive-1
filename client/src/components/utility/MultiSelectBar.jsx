@@ -490,7 +490,7 @@ function MultiSelectBar({selectedData,jobId,clearSelection}) {
                                                 </label>
                                                 {action?.name === "REJECT" && 
                                                 <div className='mt-2 w-full '>
-                                                    <p className='typography-h3 text-sm font-bricolage my-4'>Please provide the reason for rejecting this candidate</p>
+                                                    <h3 className='my-4'>Please provide the reason for rejecting this candidate</h3>
                                                     <div 
                                                     onClick={(e)=>{setAnchorEl(!anchorEl ? e.currentTarget : null); setChosenCandidate(chosenCandidate ? null : candidate?._id); setChosenStage(chosenStage ? null : stage);}}
                                                     className={`${rejectionReason ? "text-white" : "text-font-gray"}   typography-body mt-1 h-[2.75rem] flex items-center justify-between bg-background-80 hover:bg-background-60 w-full outline-none rounded-xl shadow-sm focus:ring-teal-300 focus:border-teal-300 text-left px-4`}

@@ -37,7 +37,7 @@ const dummyTools = [
 const PersonalDetails = ({ userData, isEditing, control }) => {
   return (
     <div>
-      <h3 className="typography-h3 mb-6">Personal Details</h3>
+      <h3 className="mb-6">Personal Details</h3>
       {!isEditing ? (
         <div className="flex justify-between flex-col gap-6 sm:flex-row">
           <div className="grid grid-cols-2 sm:w-[45%] gap-[10%]">
@@ -264,7 +264,7 @@ function Profile() {
                     )}
                   </div>
                   <div className='max-w-[60%] overflow-hidden py-1 text-ellipsis'>
-                    <h2 className="typography-h2 whitespace-nowrap overflow-hidden w-full text-ellipsis ">
+                    <h2 className="whitespace-nowrap overflow-hidden w-full text-ellipsis ">
                       {user?.firstName + " " + user?.lastName}
                     </h2>
                     <p className='flex items-center gap-4 typography-large-p text-font-gray mt-4'>{user?.role}<span className='w-[6px] h-[6px] bg-font-gray inline-block rounded-full'></span>{user?.location ?? "-"}</p>
@@ -275,7 +275,7 @@ function Profile() {
 
                 {/* Professional Details Section */}
                 <div>
-                  <h3 className="typography-h3 mb-6">Professional Details</h3>
+                  <h3 className="mb-6">Professional Details</h3>
                   {!isEditing ? (
                     <div className="flex justify-between flex-col gap-6 sm:flex-row">
 
@@ -341,7 +341,7 @@ function Profile() {
                 {/* Skills & Expertise Section */}
                 {((!isEditing && (user?.tools_used?.length > 0 || user?.skills?.length > 0)) || isEditing) &&
                 <div>
-                  <h3 className="typography-h3 mb-6">Skills & Expertise</h3>
+                  <h3 className="mb-6">Skills & Expertise</h3>
                   {!isEditing ?  (
                     <div className="flex justify-between flex-col gap-6 sm:flex-row typography-body">
                       <div className="flex flex-col gap-2 sm:w-[45%] ">
@@ -422,28 +422,6 @@ function Profile() {
                   )}
                 </div>}
               </div>
-                
-
-                {/* <StyledCard backgroundColor="bg-background-90" extraStyles="flex flex-col items-center relative mt-4">
-                <div className="relative w-[8rem] min-h-[5rem]">
-                    <div className="absolute w-[8rem] left-0 -top-14 aspect-square overflow-hidden rounded-full">
-                      <img
-                        src={ user?.companyDetails?.logoUrl || UNKNOWN_PROFILE_PICTURE_URL }
-                        alt=""
-                        className="object-cover w-full h-full"
-                      />
-                    </div>
-                  </div>
-                  <h1 className="typography-h2 whitespace-nowrap overflow-hidden w-full text-ellipsis text-center">
-                    {user?.companyDetails?.name}
-                  </h1>
-                  <div className="w-full flex justify-center items-center gap-2">
-                      <p className=" text-font-gray gap-2 typography-small-p   ">{LocationOptions?.find(loc => loc.value === user?.companyDetails?.location)?.label}</p>
-                      <span className='w-[0.375rem] h-[0.375rem] bg-font-gray rounded-full'></span>
-                      <p className=" text-font-gray gap-2 typography-small-p   ">{industryTypeOptions?.find(loc => loc.value === user?.companyDetails?.industryType)?.label}</p>
-                  </div>
-                  <p className='typography-large-p flex justify-between w-full mt-4'><span className='text-font-gray'>Size</span> <span>{companySizeOptions?.find(loc => loc.value === user?.companyDetails?.size)?.label}</span></p>
-                </StyledCard> */}
             {isEditing && (
               <div className="absolute top-0 right-0 flex gap-4 ">
                 <Button

@@ -174,7 +174,7 @@ const HomePage = () => {
                     <h1 className='md:hidden display-d2 py-4'>Jobs</h1>
                         
                     <div className=' py-12 bg-home-bg bg-cover flex flex-col items-center gap-4 rounded-xl justify-center'>
-                        <h1 className='typography-h1 sm:display-d2 px-6 sm:px-0 w-full md:w-3/5 text-center'>Unlock Your Career Potential</h1>
+                        <h1 className='sm:display-d2 px-6 sm:px-0 w-full md:w-3/5 text-center'>Unlock Your Career Potential</h1>
                         <div className='flex justify-evenly gap-2 px-4 w-full md:w-3/5 '>
                             <input
                                 type='text'

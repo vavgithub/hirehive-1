@@ -27,7 +27,7 @@ import parsePhoneNumberFromString from "libphonenumber-js";
 const PersonalDetails = ({ candidateData, isEditing, control }) => {
   return (
     <StyledCard backgroundColor={"bg-background-80"}>
-      <h2 className="typography-h2 mb-6">Personal Details</h2>
+      <h2 className="mb-6">Personal Details</h2>
       {!isEditing ?
         <div className="flex justify-between flex-col gap-6 sm:flex-row">
           <div className="grid grid-cols-2 sm:w-[45%] gap-[10%] ">
@@ -156,7 +156,7 @@ const ResumeAndPortfolioDetails = ({ candidateData, isEditing, control, resumeFi
 
   return (
     <StyledCard backgroundColor={"bg-background-80"}>
-      <h2 className="typography-h2 mb-6">Resume and Portfolio</h2>
+      <h2 className="mb-6">Resume and Portfolio</h2>
       {!isEditing ?
         <div className="flex justify-between flex-col gap-6 sm:flex-row">
           <div className="grid grid-cols-2 sm:w-[45%] gap-[10%] justify-between">
@@ -255,7 +255,7 @@ const ProfessionalDetails = ({ candidateData, isEditing, control }) => {
 
   return (
     <StyledCard backgroundColor={"bg-background-80"}>
-      <h2 className="typography-h2 mb-6">Professional Details</h2>
+      <h2 className="mb-6">Professional Details</h2>
       {!isEditing ? (
         <div className="flex flex-col gap-6">
           <div className="flex justify-between flex-col gap-6 sm:flex-row">
@@ -577,12 +577,12 @@ function Profile() {
               <div className="flex items-center h-screen w-screen justify-center fixed bg-background-overlay z-50 top-0 left-0">
                 <div className="w-full mx-8 md:mx-0 max-w-lg space-y-8 bg-background-80 rounded-lg shadow-xl  bg-opacity-15 ">
                   <form onSubmit={handleOtpSubmit} className="px-8 sm:px-16 text-center md:mb-20">
-                    <h1 className="typography-h2 sm:typography-h1 mt-8 md:mt-20 mb-4 ">OTP Verification</h1>
+                    <h1 className="mt-8 md:mt-20 mb-4 ">OTP Verification</h1>
                     <p className="text-font-gray text-center typography-large-p">
                       To ensure security, please enter the OTP (One-Time Password) to
                       verify your account. A code has been sent to
                     </p>
-                    <h2 className='typography-h3 sm:typograhpy-h2 mt-3 md:mt-6 text-font-gray mx-auto w-[15rem] min-[26.25rem]:w-full whitespace-nowrap text-ellipsis overflow-hidden'>
+                    <h2 className='mt-3 md:mt-6 text-font-gray mx-auto w-[15rem] min-[26.25rem]:w-full whitespace-nowrap text-ellipsis overflow-hidden'>
                       {email}
                     </h2>
                     <div className="flex justify-center  space-x-2 mt-4 ">
@@ -640,7 +640,7 @@ function Profile() {
                           <IconWrapper icon={PencilLine} size={3} hasBg customBgHover={'hover:bg-background-60'}  />
                       </button>}
                   </div>
-                  <h2 className="typography-h2 whitespace-nowrap overflow-hidden w-full text-ellipsis text-center">{candidateData?.firstName + " " + candidateData?.lastName}</h2>
+                  <h2 className="whitespace-nowrap overflow-hidden w-full text-ellipsis text-center">{candidateData?.firstName + " " + candidateData?.lastName}</h2>
                   {!isEditing ? <>
                     <div className="w-full flex justify-center items-center gap-2">
                       <p className=" text-font-gray gap-2 typography-small-p">{candidateData?.location}</p>

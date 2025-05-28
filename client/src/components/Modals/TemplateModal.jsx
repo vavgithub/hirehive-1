@@ -37,7 +37,7 @@ function TemplateModal({open,onClose,assessment}) {
         <div className="space-y-6 mt-4  max-h-[55vh] overflow-y-scroll scrollbar-hide">
             {questions.map((qstn, index) => (
                 <StyledCard key={qstn.questionId} backgroundColor={'bg-background-80'}>
-                    <h3 className="typography-h3 mb-4">
+                    <h3 className="mb-4">
                         Q{index + 1}. {qstn.text}
                     </h3>
 

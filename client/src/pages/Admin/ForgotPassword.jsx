@@ -9,7 +9,7 @@ import { digitsRegex, lowerCaseRegex, specialCharRegex, upperCaseRegex } from '.
 import LoaderModal from '../../components/Loaders/LoaderModal';
 import { InputField } from '../../components/Inputs/InputField';
 
-const ForgotPassword = ({ onBack ,role , isModal = false , setIsLoading = () => {} }) => {
+const ForgotPassword = ({ onBack, role, isModal = false, setIsLoading = () => { } }) => {
   const [step, setStep] = useState('email');
   const [email, setEmail] = useState('');
   const [otp, setOtp] = useState('');
@@ -19,10 +19,10 @@ const ForgotPassword = ({ onBack ,role , isModal = false , setIsLoading = () => 
   // Request OTP mutation
   const requestOtpMutation = useMutation({
     mutationFn: async (email) => {
-      const response = await axios.post(role === "Candidate"  ? '/auth/candidate/forgot-password' :'/auth/forgot-password', { email });
+      const response = await axios.post(role === "Candidate" ? '/auth/candidate/forgot-password' : '/auth/forgot-password', { email });
       return response.data;
     },
-    onMutate : () =>{
+    onMutate: () => {
       isModal && setIsLoading(true)
     },
     onSuccess: (data) => {
@@ -39,10 +39,10 @@ const ForgotPassword = ({ onBack ,role , isModal = false , setIsLoading = () => 
   // Verify OTP mutation
   const verifyOtpMutation = useMutation({
     mutationFn: async () => {
-      const response = await axios.post(role === "Candidate"  ? '/auth/candidate/verify-otp-pass' :'/auth/verify-otp', { email, otp });
+      const response = await axios.post(role === "Candidate" ? '/auth/candidate/verify-otp-pass' : '/auth/verify-otp', { email, otp });
       return response.data;
     },
-    onMutate : () =>{
+    onMutate: () => {
       isModal && setIsLoading(true)
     },
     onSuccess: (data) => {
@@ -59,14 +59,14 @@ const ForgotPassword = ({ onBack ,role , isModal = false , setIsLoading = () => 
   // Reset password mutation
   const resetPasswordMutation = useMutation({
     mutationFn: async () => {
-      const response = await axios.post(role === "Candidate"  ? '/auth/candidate/reset-password' :'/auth/reset-password', {
+      const response = await axios.post(role === "Candidate" ? '/auth/candidate/reset-password' : '/auth/reset-password', {
         email,
         otp,
         password
       });
       return response.data;
     },
-    onMutate : () =>{
+    onMutate: () => {
       isModal && setIsLoading(true)
     },
     onSuccess: (data) => {
@@ -139,17 +139,16 @@ const ForgotPassword = ({ onBack ,role , isModal = false , setIsLoading = () => 
     <div className="w-full">
       {((requestOtpMutation.isPending || verifyOtpMutation.isPending || resetPasswordMutation.isPending) && !isModal) && <LoaderModal />}
       {!isModal && <div className='flex cursor-pointer gap-4 my-4 items-center'
-      onClick={onBack}>
-        <BackButton/>
-        <p className='typography-h3'>
-
-      Back to Login
+        onClick={onBack}>
+        <BackButton />
+        <p className='typography-body'>
+          Back to Login
         </p>
       </div>}
-      
-      
 
-      {!isModal && <h2 className="typography-h2 mb-6">Reset Password</h2>}
+
+
+      {!isModal && <h2 className="mb-6">Reset Password</h2>}
 
       {step === 'email' && (
         <form onSubmit={handleEmailSubmit}>

@@ -355,6 +355,18 @@ input[type='number'] {
   .typography-h6 {
     @apply font-gilroy text-h6 font-medium ;
   }
+   h1 {
+    @apply font-gilroy text-h1 font-bold pb-4;
+  }
+  h2 {
+    @apply font-gilroy text-h2 font-h2 pb-4;
+  }
+  h3 {
+    @apply font-gilroy text-h3 font-semibold;
+  }
+  h4 {
+    @apply font-gilroy text-h4 font-medium;
+  }
   .typography-body {
     @apply font-gilroy text-body font-light ;
   }
