@@ -62,19 +62,19 @@ const AdminLayout = () => {
         setAnchorEl(null); // Close the menu
     };
 
-    const NavItem = ({ to, icon: Icon, activeIcon: ActiveIcon, iconData, children, hasHighlighter }) => (
+    const NavItem = ({ to, icon: Icon, activeIcon: ActiveIcon, iconData, children, hasHighlighter , isBold  = false, isPrimaryColor = false}) => (
         <div className="relative flex flex-row items-center justify-between  rounded-xl ">
             <NavLink
                 to={to}
                 end={to === "/admin/dashboard" || to === "/design-reviewer/dashboard"}
                 className={({ isActive, isPending }) =>
-                    `w-full flex items-center min-h-11 gap-2 pl-2 py-2 rounded-xl hover:bg-background-60 ${isActive || isPending ? " selection-primary " : ""}`
+                    `w-full flex items-center min-h-11 gap-2 pl-2 py-2 rounded-xl hover:bg-background-60 ${isActive || isPending ? ` selection-primary ` : isPrimaryColor ? 'text-white' : ""}`
                 }
             >
                 {({ isActive, isPending }) => (
                     <div className='flex items-center gap-2'>
                         {isActive || isPending ? <ActiveIcon count={iconData} /> : <Icon count={iconData} />}
-                        <span className= 'typography-body'>{children}</span>
+                        <span className= {(isBold ? 'font-semibold typography-h6' : ' typography-body ') +' '}>{children}</span>
                     </div>
                 )}
             </NavLink>
@@ -152,6 +152,7 @@ const AdminLayout = () => {
     );
     };
 
+    const GreenDot = () => <div className='bg-teal-100 w-6 h-6 rounded-full m-[10px]'></div>
 
     // Adding Profile and Logout dropdown logic
     const renderProfileMenu = () => {
@@ -238,6 +239,7 @@ const AdminLayout = () => {
 
         return(
             <>
+                {hasRoutePermission(user?.role,ROUTE_KEY.COMPANY_PROFILE_VIEW) && <NavItem isBold isPrimaryColor to={getRoute(user.role,ROUTE_KEY.COMPANY_PROFILE_VIEW)} icon={GreenDot} activeIcon={GreenDot}>{user?.companyDetails?.name}</NavItem>}
                 {user?.role === "Admin" && <NavItem to={getRoute(user.role,ROUTE_KEY.DASHBOARD)} icon={() => <IconWrapper isInActiveIcon icon={LayoutGrid} />} activeIcon={() => <IconWrapper isActiveIcon icon={LayoutGrid} />}> Dashboard </NavItem>}
                 {hasRoutePermission(user?.role,ROUTE_KEY.JOBS) && ((jobsSubMenu?.length  > 1 ) 
                 ? <DropDownNavItem to={getRoute(user.role,ROUTE_KEY.JOBS)} submenu={jobsSubMenu} icon={() => <IconWrapper isInActiveIcon icon={Briefcase} />} activeIcon={() => <IconWrapper isActiveIcon icon={Briefcase} />}> Jobs </DropDownNavItem> 

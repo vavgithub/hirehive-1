@@ -39,6 +39,19 @@ const companyschema = new mongoose.Schema({
         required: true,
         trim: true,
     },
+    about : {
+        type: String,
+        trim: true,
+    },
+    website : {
+        type: String,
+        trim: true,
+    },
+    founded : {
+        type: String,
+        trim: true,
+    },
+    focusAreas : [String],
     invited_team_members : [{
         id : String,
         // name : String,

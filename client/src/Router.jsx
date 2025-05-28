@@ -40,6 +40,7 @@ import CompanyHome from './pages/Candidate/CompanyHome.jsx';
 import ViewAssessments from './pages/Admin/ViewAssessments.jsx';
 import ViewQuestions from './pages/Admin/ViewQuestions.jsx';
 import Guide from './pages/DesignReviewer/Guide.jsx';
+import CompanyProfile from './pages/Admin/CompanyProfile.jsx';
 
 export const router = createBrowserRouter([
   {
@@ -141,6 +142,10 @@ export const router = createBrowserRouter([
       {
         path: "profile",
         element: <Profile />
+      },
+      {
+        path: "company",
+        element: <CompanyProfile />
       },
       {
         path: "guide",
@@ -257,6 +262,10 @@ export const router = createBrowserRouter([
       {
         path: "profile",
         element: <Profile />
+      },
+      {
+        path: "company",
+        element: <CompanyProfile />
       },
       {
         path: "guide",
@@ -399,6 +408,10 @@ export const router = createBrowserRouter([
       {
         path: "profile",
         element: <Profile />
+      },
+      {
+        path: "company",
+        element: <CompanyProfile />
       },
       {
         path: "candidates",

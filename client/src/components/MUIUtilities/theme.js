@@ -137,7 +137,7 @@ const theme = createTheme({
         root: {
           color: "var(--color-font-gray-90)",
           "&.Mui-selected": {
-            color: "var(--color-accent-100)",
+            color: "var(--color-accent-100) !important",
             backgroundColor: "var(--color-accent-300) !important",
           },
           "&.Mui-selected:hover": {
@@ -193,7 +193,26 @@ const theme = createTheme({
             display: "none", // For Chrome, Safari, and Edge
           },
           padding: "1rem",
+          '& .MuiYearCalendar-root' : {
+            color: "var(--color-font-gray-90)",
+            '& .MuiPickersYear-root .Mui-selected' : {
+              color : "var(--color-font-accent-100)",
+              backgroundColor : "var(--color-accent-300)",
+            },
+            '& .MuiPickersYear-root button': {
+              '&:hover': {
+                backgroundColor: 'var(--color-background-60)',
+              }
+            },
+            '&::-webkit-scrollbar': {
+              backgroundColor: 'var(--color-font-gray-80) !important',
+              borderRadius: '10px !important', // 👈 Add this
+              width: '8px !important',
+              height: '8px !important',
+            },
+          }
         },
+        
       },
     },
     MuiDialogActions: {

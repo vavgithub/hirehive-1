@@ -30,6 +30,15 @@ export const uploadProfilePicture = async (formData) => {
   return response.data;
 };
 
+export const uploadCompanyLogo = async (formData) => {
+  const response = await axios.post(`${API_URL}/company-logo`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  return response.data;
+};
+
 export const fetchAvailableDesignReviewers = async () => {
     try {
       const response = await axios.get(`${API_URL}/design-reviewers`, { withCredentials: true });

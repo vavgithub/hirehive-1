@@ -174,7 +174,7 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
               type="text"
               id="jobTitle"
               label="Job Title"
-              extraClass={"mt-1"}
+              // extraClass={"mt-1"}
               required
               {...field}
               error={error}
@@ -257,8 +257,8 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
           control={control}
           rules={{ required: "Job description is required" ,validate : customDescriptionValidation}}
           render={({ field , fieldState : {error} }) => (
-            <div className='w-full relative'>
-              <label htmlFor="jobDescription" className="typography-body block mb-2">Job Description{<span className="text-red-100">*</span>}</label>
+            <div className='w-full relative flex flex-col gap-2'>
+              <label htmlFor="jobDescription" className="typography-body  mb-2">Job Description{<span className="text-red-100">*</span>}</label>
               <TextEditor htmlData={field?.value} loaded={isEditing} errors={error} placeholder={"Write a Job Description"} setEditorContent={(data)=>setValue('jobDescription',data)} />
               {error && <p className="text-red-500 absolute typography-small-p top-[18rem]">{error.message}</p>}
             </div>
