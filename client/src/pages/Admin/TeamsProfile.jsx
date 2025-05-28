@@ -57,7 +57,7 @@ function PersonalDetails({ memberData, isEditing, control }) {
               <p className="text-font-gray whitespace-nowrap">Phone Number</p>
             </div>
             <div className="flex flex-col gap-6 typography-body">
-              <p className="whitespace-nowrap overflow-hidden text-ellipsis">{memberData?.lastName?.length ? memberData?.name?.split(' ')[1] : "-"}</p>
+              <p className="whitespace-nowrap overflow-hidden text-ellipsis">{memberData?.lastName ?? '-'}</p>
               <p>{formatPhoneNumber(memberData?.phone) ?? "NA"}</p>
             </div>
           </div>
