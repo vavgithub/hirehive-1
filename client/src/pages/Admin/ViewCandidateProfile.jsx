@@ -446,6 +446,34 @@ const ViewCandidateProfile = () => {
         window.open(mailtoLink, "_blank");
     };
 
+    const handlePhoneCopy = (phone) => {
+    if (!phone) return;
+
+        navigator.clipboard.writeText(phone)
+        .then(() => {
+            showSuccessToast('Success','Phone Number copied to clipboard');
+            // Optionally show a success message/toast here
+        })
+        .catch((err) => {
+            console.error('Failed to copy phone number:', err);
+            // Optionally show an error message/toast
+        });
+    };
+
+    const handleEmailCopy = (email) => {
+    if (!email) return;
+
+        navigator.clipboard.writeText(email)
+        .then(() => {
+            showSuccessToast('Success','Email copied to clipboard');
+            // Optionally show a success message/toast here
+        })
+        .catch((err) => {
+            console.error('Failed to copy email:', err);
+            // Optionally show an error message/toast
+        });
+    };
+
     const handleOpenNotes = (e) => {
         setOpenNotes(true)
         e.stopPropagation();
@@ -517,16 +545,12 @@ const reviewerProfilePic = currentReviewer?.profilePicture
                                     </div>
                                     {hasPermission(role,PERMISSIONS.SHOW_CANDIDATE_PROFILE_PERSONAL_DETAILS) &&
                                         <div className="flex mb-3 gap-5">
-                                            <div className="flex items-center gap-2">
-                                                <div className='cursor-pointer' onClick={() => handleWhatsappOpen(data.firstName + " " + data.lastName, data.phone)}>
+                                            <div className="flex items-center gap-2 cursor-pointer" onClick={()=>handlePhoneCopy(data?.phone)}>
                                                     <IconWrapper size={0} customIconSize={2} icon={Phone} />
-                                                </div>
                                                 <span className="typography-large-p">{data.phone}</span>
                                             </div>
-                                            <div className="flex items-center gap-2 overflow-hidden">
-                                                <div className='cursor-pointer' onClick={() => handleEmailOpen(data?.firstName + " " + data?.lastName, data?.email, data?.jobApplication?.jobApplied, new Date(data?.jobApplication?.stageStatuses['Screening']?.currentCall?.scheduledDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) + " " + formatTime(data?.jobApplication?.stageStatuses['Screening']?.currentCall?.scheduledTime))}>
+                                            <div className="flex items-center gap-2 overflow-hidden cursor-pointer" onClick={() => handleEmailCopy(data?.email)}>
                                                     <IconWrapper size={0} customIconSize={2} icon={Mail} />
-                                                </div>
                                                 <span className="typography-large-p whitespace-nowrap text-ellipsis overflow-hidden ">{data.email}</span>
                                             </div>
                                         </div>}
