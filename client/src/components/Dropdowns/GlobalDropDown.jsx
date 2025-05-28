@@ -52,7 +52,7 @@ import CustomToolTip from '../Tooltip/CustomToolTip';
     return (
       <div ref={dropdownRef} className="w-full relative flex flex-col gap-2">
         { hasInfoIcon && 
-        <div className='absolute top-1 right-0'>
+        <div className='absolute top-0 right-0'>
           <CustomToolTip title={infoText} arrowed>
             <IconWrapper size={0} customIconSize={2} customStrokeWidth={5} icon={Info} />
           </CustomToolTip>

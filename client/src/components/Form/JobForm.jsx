@@ -297,8 +297,8 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
             required: 'Assessment is required',
           }}
           render={({ field: { onChange, value } , fieldState: { error }  })=>(
-            <div className='mt-6 relative'>
-            <label htmlFor="assessment" className="typography-body block mb-2">{`${watchedFields.jobProfile ? watchedFields.jobProfile : ''} Assessment`}{<span className="text-red-100">*</span>}</label>
+            watchedFields?.jobProfile ? <div className='mt-6 relative'>
+            <label htmlFor="assessment" className="typography-body block mb-2">{`Job Level`}{<span className="text-red-100">*</span>}</label>
                 <div className='flex flex-wrap gap-4'>
                   {
                     assessmentTemplates?.filter(assessment => watchedFields.jobProfile ? assessment.category === watchedFields.jobProfile : true)?.map(template => (
@@ -307,7 +307,7 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
                   }
                 </div>
                 {error && <p className="text-red-500 absolute typography-small-p top-[72px]">{error.message}</p>}
-            </div>
+            </div> : <></>
           )}
           />
       <Controller
