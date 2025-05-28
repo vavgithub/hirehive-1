@@ -35,33 +35,35 @@ function ViewQuestions() {
       ></Header>
       <StyledCard>
     {data?.questions?.length > 0 && 
-        <div className="space-y-4  scrollbar-hide">
+        <div className="space-y-6  scrollbar-hide">
             {data?.questions.map((qstn, index) => (
-                <div key={qstn._id} className=" rounded-xl pb-4">
+                <StyledCard backgroundColor={'bg-background-80'} key={qstn._id} className=" rounded-xl pb-4">
                     <h3 className="typography-h3 mb-4">
                         Q{index + 1}. {qstn.text}
                     </h3>
-                    {qstn.questionType === 'image' && qstn.imageUrl && (
-                      <div className="relative w-fit mb-6 ">
-                        <img
-                          src={qstn.imageUrl}
-                          alt="Question visual"
-                          className="max-w-md rounded-xl"
-                        />
-                      </div>
-                    )}
-                    <div className="grid grid-cols-2 gap-4">
-                        {qstn.options.map((option, optIndex) => (
+                    <div className={` flex  ${qstn.questionType === 'image' ? 'flex-row gap-2 justify-between' : 'flex-col'}`}>
+                      <div className={"grid grid-cols-2 gap-4 h-fit " + (qstn.questionType === 'image' ? 'w-[70%]' : 'w-full')}>
+                          {qstn.options.map((option, optIndex) => (
                             <div
-                                key={optIndex}
-                                className={`p-4 rounded-lg typography-body bg-background-60  border-gray-200`}
+                            key={optIndex}
+                            className={`p-4  rounded-lg typography-body bg-background-60  border-gray-200`}
                             >
-                                {option.text}
+                                  {option.text}
+                              </div>
+                          ))}
+                      </div>
+                          {qstn.questionType === 'image' && qstn.imageUrl && (
+                            <div className="relative w-[30%] mb-6 flex justify-end">
+                              <img
+                                src={qstn.imageUrl}
+                                alt="Question visual"
+                                className="max-w-[80%] max-h-[20rem] rounded-xl"
+                              />
                             </div>
-                        ))}
+                          )}
                     </div>
 
-                </div>
+                </StyledCard>
             ))}
         </div>}
       </StyledCard>
