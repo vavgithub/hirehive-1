@@ -158,7 +158,7 @@ const MapperComponent = ({ role, customSchema, config, activeProfile, level , sc
         key={level + index}
         className={`relative `}
       >
-        <h2 className="typography-h2 pb-2">
+        <h2 className="pb-2">
           {stage?.title}
         </h2>
         <p className="typography-body text-font-gray ">

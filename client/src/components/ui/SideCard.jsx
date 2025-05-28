@@ -9,7 +9,7 @@ const SideCard = ({ formData }) => {
     return (
 
         <StyledCard padding={2} backgroundColor={'bg-background-80'}>
-            <h3 className='typography-h3 mr-8 mb-4'>Job Overview</h3>
+            <h3 className='mr-8 mb-4'>Job Overview</h3>
             <div className="grid grid-cols-2 gap-3 w-full  md:flex md:flex-col md:gap-6  " >
                 <div className="flex items-center w-full typography-body ">
                     <IconWrapper size={0} customIconSize={5} customStrokeWidth={1} isInActiveIcon icon={FileText} />

@@ -53,12 +53,12 @@ function ViewAssessments() {
                 {(isassessmentLoading || isLoading) ? <FillLoader/> :
                     categorizedTemplates && Object.entries(categorizedTemplates).map(([category,assessments]) => (
                         <div key={category} >
-                            <h2 className='typography-h2'>{category}</h2>
+                            <h2>{category}</h2>
                             <div className='grid grid-cols-3 gap-4'>
                                 {
                                     assessments?.map(assessment =>(
                                         <StyledCard key={assessment?._id} onClick={()=>navigate(`${getRoute(user?.role,ROUTE_KEY.VIEW_ASSESSMENTS_QUESTIONS)}/${assessment?._id}`)} backgroundColor={'bg-background-80'} extraStyles={'cursor-pointer hover:bg-background-60 relative overflow-hidden'}>
-                                            <h3 className='typography-h3 w-full whitespace-nowrap text-ellipsis overflow-hidden'>{assessment?.title}</h3>
+                                            <h3 className='w-full whitespace-nowrap text-ellipsis overflow-hidden'>{assessment?.title}</h3>
                                             <div className='text-font-gray opacity-25 -rotate-12 absolute -bottom-6 -right-6'>
                                                 <IconWrapper icon={ClipboardCheck} size={0} customIconSize={10} customStrokeWidth={10} inheritColor />
                                             </div>

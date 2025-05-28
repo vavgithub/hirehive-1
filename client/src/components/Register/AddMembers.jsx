@@ -315,7 +315,7 @@ function AddMembers({currentStep,setCurrentStep}) {
     <>
         {(skipAddMembersMutation?.isPending || addMembersMutation?.isPending) && <LoaderModal />}
         <div className='w-full px-8  pt-6 pb-12 flex flex-col justify-center items-center'>
-            <h1 className='typography-h1'>Add Your Team Members</h1>
+            <h1>Add Your Team Members</h1>
             <p className='typography-large-p text-font-gray font-light mt-2'>Add key team members and assign their roles for the hiring process.</p>
         </div>
 

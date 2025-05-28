@@ -72,7 +72,7 @@ export const VAVScoreCard = ({ score, stage, scoreStages }) => {
     if (!showBreakDown) {
         return (
             <StyledCard extraStyles="flex bg-stars  flex-col items-center sm:w-[55%] lg:w-[35%]  max-w-[27rem] bg-cover relative">
-                <h2 className="typography-h2">VAV SCORE</h2>
+                <h2>VAV SCORE</h2>
                 <button onClick={() => setShowBreakDown(true)} className='absolute top-4 right-4 hover:text-font-gray'>
                     <CustomToolTip title={'View Score Breakdown'}>
                         <IconWrapper icon={ArrowLeftRight} size={0} customStrokeWidth={7} inheritColor />
@@ -84,7 +84,7 @@ export const VAVScoreCard = ({ score, stage, scoreStages }) => {
         )
     } else {
         return (<StyledCard extraStyles="flex bg-stars  flex-col items-center sm:w-[55%] lg:w-[35%]  max-w-[27rem] bg-cover relative">
-            <h2 className="typography-h2">Score Breakdown</h2>
+            <h2>Score Breakdown</h2>
             <button onClick={() => setShowBreakDown(false)} className='absolute top-4 right-4 hover:text-font-gray'>
                 <CustomToolTip title={'View VAV Score'}>
                     <IconWrapper icon={ArrowLeftRight} size={0} customStrokeWidth={7} inheritColor />
@@ -505,7 +505,7 @@ const reviewerProfilePic = currentReviewer?.profilePicture
                                         </span>}
                                 </div>
                                 <div className={`flex flex-col gap-2 ${candidateData?.jobApplication?.notes?.content ? ' max-w-[60%] ' : ''}`}>
-                                    <h2 className="typography-h2">
+                                    <h2>
                                         {data.firstName} {data.lastName}
                                     </h2>
                                     <div className="flex items-center gap-2 mb-3 mt-2">

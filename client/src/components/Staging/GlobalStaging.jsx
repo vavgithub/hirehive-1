@@ -416,7 +416,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
       {/* Header Part */}
       <div className='flex justify-between items-center'>
         <div className='flex items-center gap-4'>
-            <h2 className='typography-h2'>{stageTitle}</h2>
+            <h2>{stageTitle}</h2>
             {stageConfig?.extraHeaderContent && stageConfig?.extraHeaderContent({portfolio : candidateData.jobApplication.professionalInfo.portfolio})}
         </div>
         <div className='flex items-center w-[40%] justify-end'>
@@ -564,7 +564,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
       
       {stageBasedConfig?.hasCallDetails && 
         <div className='my-4'>
-          <h3 className='typography-h3 mb-2'>Call Details</h3>
+          <h3 className='mb-2'>Call Details</h3>
           <p className='typography-small-p text-font-gray my-2'>Active Schedule</p>
           {renderCallData(stageData?.currentCall)}
         </div>

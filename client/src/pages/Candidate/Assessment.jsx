@@ -90,15 +90,15 @@ const QuestionSidebar = ({ questions, currentQuestion, answeredCount, onQuestion
         <div className=" flex flex-col items-center ">
           <div className='w-full flex items-center gap-2'>
           {/* <TimerIconSmall /> */}
-          <p className=' text-white font-bricolage'>Time remaining</p>
+          <p className='typography-body'>Time remaining</p>
           </div>
           <div className='mt-3 w-full flex items-center justify-around gap-3'>
-          <span className={(timeRemaining <= ONE_MINUTE && "bg-red-200 text-red-300 ") +" bg-background-70 typography-h3 flex items-center justify-center w-16 h-16 rounded-xl"}>
+          <h3 className={(timeRemaining <= ONE_MINUTE && "bg-red-200 text-red-300 ") +" bg-background-70  flex items-center justify-center w-16 h-16 rounded-xl"}>
             {min}
-          </span> : 
-          <span className={(timeRemaining <= ONE_MINUTE && "bg-red-200 text-red-300 ") +" bg-background-70 typography-h3 flex items-center justify-center w-16 h-16 rounded-xl"}>
+          </h3> : 
+          <h3 className={(timeRemaining <= ONE_MINUTE && "bg-red-200 text-red-300 ") +" bg-background-70 flex items-center justify-center w-16 h-16 rounded-xl"}>
             {sec}
-          </span>
+          </h3>
           </div>
         </div>
       </div>
@@ -106,7 +106,6 @@ const QuestionSidebar = ({ questions, currentQuestion, answeredCount, onQuestion
         <span className='font-bricolage mb-2 inline-block'>{(answeredCount/questions.length) * 100}% Completed</span>
       <ProgressBar answeredCount={answeredCount} total={questions.length} />
       </div>
-      {/* <h2 className="typography-h3 text-font-gray p-4">Questions</h2> */}
       <div className='grid grid-cols-5 gap-2  py-8 px-4 border-b border-background-60'>
       {questions.map((q, index) => (
         <div
@@ -162,7 +161,7 @@ const QuestionDisplay = ({
   <div className="flex-grow p-6 mx-auto container  w-full">
     <div className="mb-8 max-w-[80%] mx-auto">
       <StyledCard backgroundColor={"bg-background-70"} padding={3} extraStyles={"flex flex-col gap-4"} >
-        <h2 className="typography-h2 ">{`Question ${questionNumber + 1}: ${question.text}`}</h2>
+        <h2 >{`Question ${questionNumber + 1}: ${question.text}`}</h2>
         {question.questionType === 'image' && question.imageUrl && (
           <div className="relative w-fit">
             <img
@@ -273,7 +272,7 @@ const UploadProgressOverlay = ({ uploadProgress }) => (
   <div className="fixed inset-0 bg-background-overlay flex items-center justify-center z-50">
     <div className=" p-8 rounded-xl flex flex-col items-center space-y-4">
       <Loader />
-      <h3 className="typography-h3 text-font-gray">Uploading Assessment</h3>
+      <h3 className="text-font-gray">Uploading Assessment</h3>
       <div className="w-full max-w-md bg-background-70 rounded-full h-4 overflow-hidden">
         <div
           className="bg-teal-400 h-full transition-all duration-300 ease-out"
@@ -628,7 +627,7 @@ const Assessment = ({assessment_id}) => {
     return (
       <div className="flex h-screen items-center justify-center bg-background-90">
         <div className="flex flex-col items-center gap-4">
-          <div className="typography-h2 text-red-500">Error loading questions</div>
+          <div className="text-red-500">Error loading questions</div>
           <div className="typography-body text-font-gray">{error.message}</div>
         </div>
       </div>
@@ -638,7 +637,7 @@ const Assessment = ({assessment_id}) => {
   if (!questions?.length) {
     return (
       <div className="flex h-screen items-center justify-center bg-background-90">
-        <div className="typography-h2 text-font-gray">No questions available</div>
+        <div className="text-font-gray">No questions available</div>
       </div>
     );
   }

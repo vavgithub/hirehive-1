@@ -83,7 +83,7 @@ const MyJobs = () => {
     // console.error('Error fetching applied jobs:', error);
     return (
       <div className="m-2 pt-4">
-        <h1 className="typography-h1 mb-4">My Jobs</h1>
+        <h1 className="mb-4">My Jobs</h1>
         <div className="p-4 bg-background-90 rounded-xl">
           Error fetching applied jobs. Please try again later.
         </div>
@@ -112,7 +112,7 @@ const MyJobs = () => {
             </ul>
           ) : (
             <div className='flex flex-col justify-center items-center'>
-              <h2 className='typography-h2'>No Applied Jobs</h2>
+              <h2>No Applied Jobs</h2>
               <p className='typography-small-p text-font-gray'>You have not applied to any jobs yet.</p>
             </div>
           )}

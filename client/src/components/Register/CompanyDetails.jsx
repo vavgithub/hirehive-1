@@ -275,7 +275,7 @@ function CompanyDetails({currentStep,setCurrentStep}) {
     <>
     {(saveCompanyDetailsMutation.isPending || sendJoinRequestMutation.isPending ) && <LoaderModal />}
     <div className='w-full px-8  pt-6 pb-12 flex flex-col justify-center items-center'>
-                <h1 className='typography-h1'>Tell us about your company</h1>
+                <h1>Tell us about your company</h1>
                 <p className='typography-large-p text-font-gray font-light mt-2'>Provide your company details to help us match you with the right candidates.</p>
             </div>
             

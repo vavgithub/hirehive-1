@@ -87,7 +87,7 @@ const Filters = ({ filters = {}, handleCheckboxChange, activeTab, handleExperien
 
     return (
             <StyledCard padding={2} backgroundColor={'bg-background-80'} extraStyles={"relative md:w-full"}>
-                <h3 className='text-gray-200 typography-h3  mb-2  tracking-wide' >Filter</h3>
+                <h3 className='text-gray-200 mb-2 tracking-wide' >Filter</h3>
                 <div className='flex flex-row-reverse absolute top-5 right-5'>
                     <button
                         onClick={handleClearAll}

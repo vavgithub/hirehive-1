@@ -33,7 +33,7 @@ const AccordionSection = ({ title, isOpen, onToggle, children, badge }) => (
                 className="w-full px-6 py-4 flex justify-between bg-background-80 items-center border-b border-background-80"
             >
                 <div className="flex items-center gap-4 ">
-                    <h3 className="typography-h3">{title}</h3>
+                    <h3>{title}</h3>
                     {badge}
                 </div>
                 <IconWrapper icon={isOpen ? ChevronUp :ChevronDown} size={0} customStrokeWidth={5} customIconSize={5}  />
@@ -160,7 +160,7 @@ const ApplicationStaging = ({ candidateId, jobId ,jobStatus}) => {
 
     return (
         <div className="application-staging">
-            <h4 className="typography-h4 mb-4">Application Stages</h4>
+            <h4 className="mb-4">Application Stages</h4>
 
             {/* Stage Progress Section */}
             <div className="stages-progress flex">

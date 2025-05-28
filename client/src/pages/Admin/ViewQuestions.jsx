@@ -38,7 +38,7 @@ function ViewQuestions() {
         <div className="space-y-4  scrollbar-hide">
             {data?.questions.map((qstn, index) => (
                 <div key={qstn._id} className=" rounded-xl pb-4">
-                    <h3 className="typography-h3 mb-4">
+                    <h3 className="mb-4">
                         Q{index + 1}. {qstn.text}
                     </h3>
                     {qstn.questionType === 'image' && qstn.imageUrl && (

@@ -36,7 +36,7 @@ function TemplateModal({open,onClose,assessment}) {
         <div className="space-y-4 mt-4  max-h-[55vh] overflow-y-scroll scrollbar-hide">
             {questions.map((qstn, index) => (
                 <div key={qstn.questionId} className=" rounded-xl pb-4">
-                    <h3 className="typography-h3 mb-4">
+                    <h3 className="mb-4">
                         Q{index + 1}. {qstn.text}
                     </h3>
 

@@ -14,7 +14,7 @@ const QuestionResponses = ({ responses }) => {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
-        <h3 className="typography-h3">Application Questions</h3>
+        <h3>Application Questions</h3>
         <span className="typography-small-p text-font-gray">
           {responses.length} Questions
         </span>
