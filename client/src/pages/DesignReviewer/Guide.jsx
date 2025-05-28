@@ -259,7 +259,7 @@ function getTabsConfig(){
             });
             mainTabs.push(tempArr);
             tempArr = [];
-        } else if (tempArr.length < 4) {
+        } else if (tempArr.length < 3) {
             tempArr.push({
                 name: profile,
                 label: profile.toUpperCase(),
