@@ -2,7 +2,7 @@
 //It will create unwanted duplicate entries.(Unique Title-basad seeding of questions)
 const newUiUxTemplates = [
   {
-    title : 'Level 1',
+    title : 'Junior',
     questions : [
       {
         "questionType": "text",
@@ -514,7 +514,7 @@ const newUiUxTemplates = [
     category : 'UI UX'
   },
   {
-    title : 'Level 2',
+    title : 'Mid-Level',
     questions : [
       {
         "questionType": "text",
@@ -1026,7 +1026,7 @@ const newUiUxTemplates = [
     category : "UI UX"
   },
   {
-    title : 'Level 3',
+    title : 'Senior',
     questions : [
       {
         "questionType": "text",
@@ -1529,7 +1529,7 @@ const newUiUxTemplates = [
 
 const newMotionDesTemplates = [
   {
-    title : 'Level 1',
+    title : 'Junior',
     questions : [
       {
         "questionType": "text",
@@ -2041,7 +2041,7 @@ const newMotionDesTemplates = [
     category : 'Motion Designer'
   },
   {
-    title : 'Level 2',
+    title : 'Mid-Level',
     questions : [
       {
         "questionType": "text",
@@ -2553,7 +2553,7 @@ const newMotionDesTemplates = [
     category : 'Motion Designer'
   },
   {
-    title : 'Level 3',
+    title : 'Senior',
     questions : [
       {
         "questionType": "text",
@@ -3068,7 +3068,7 @@ const newMotionDesTemplates = [
 
 const newProductDesTemplates = [
   {
-    title : 'Level 1',
+    title : 'Junior',
     questions : [
       {
         "questionType": "text",
@@ -3580,7 +3580,7 @@ const newProductDesTemplates = [
     category : 'Product Designer'
   },
   {
-    title : 'Level 2',
+    title : 'Mid-Level',
     questions : [
       {
         "questionType": "text",
@@ -4103,7 +4103,7 @@ const newProductDesTemplates = [
     category : 'Product Designer'
   },
   {
-    title : 'Level 3',
+    title : 'Senior',
     questions : [
       {
         "questionType": "text",
@@ -4441,7 +4441,7 @@ const newProductDesTemplates = [
 
 const newBrandDesTemplates = [
   {
-    title : 'Level 1',
+    title : 'Junior',
     questions : [
       {
         "questionType": "text",
@@ -4929,7 +4929,7 @@ const newBrandDesTemplates = [
     category : 'Brand Designer'
   },
   {
-    title : 'Level 2',
+    title : 'Mid-Level',
     questions : [
       {
         "questionType": "text",
@@ -5417,7 +5417,7 @@ const newBrandDesTemplates = [
     category : 'Brand Designer'
   },
   {
-    title : 'Level 3',
+    title : 'Senior',
     questions : [
       {
         "questionType": "text",
@@ -5933,7 +5933,7 @@ const newBrandDesTemplates = [
 
 const newVideoEditorTemplates = [
   {
-    title : 'Level 1',
+    title : 'Junior',
     questions : [
       {
         "questionType": "text",
@@ -6445,7 +6445,7 @@ const newVideoEditorTemplates = [
     category : 'Video Editor'
   },
   {
-    title : 'Level 2',
+    title : 'Mid-Level',
     questions : [
       {
         "questionType": "text",
@@ -6957,7 +6957,7 @@ const newVideoEditorTemplates = [
     category : 'Video Editor'
   },
   {
-    title : "Level 3",
+    title : "Senior",
     questions : [
       {
         "questionType": "text",
@@ -7400,7 +7400,7 @@ const newVideoEditorTemplates = [
 
 const newGraphicDesTemplates = [
   {
-    title : 'Level 1',
+    title : 'Junior',
     questions : [
       {
         "questionType": "text",
@@ -7900,7 +7900,7 @@ const newGraphicDesTemplates = [
     category : 'Graphic Designer'
   },
   {
-    title : 'Level 2',
+    title : 'Mid-Level',
     questions : [
       {
         "questionType": "text",
@@ -8412,7 +8412,7 @@ const newGraphicDesTemplates = [
     category : 'Graphic Designer'
   },
   {
-    title : 'Level 3',
+    title : 'Senior',
     questions : [
       {
         "questionType": "text",
@@ -8927,7 +8927,7 @@ const newGraphicDesTemplates = [
 
 const newCreativeDirTemplates = [
   {
-    title : 'Level 1',
+    title : 'Junior',
     questions : [
       {
         "questionType": "text",
@@ -9439,7 +9439,7 @@ const newCreativeDirTemplates = [
     category : 'Creative Director'
   },
   {
-    title : 'Level 2',
+    title : 'Mid-Level',
     questions : [
       {
         "questionType": "text",
@@ -9963,7 +9963,7 @@ const newCreativeDirTemplates = [
     category : 'Creative Director'
   },
   {
-    title : 'Level 3',
+    title : 'Senior',
     questions : [
       {
         "questionType": "text",
@@ -10478,7 +10478,7 @@ const newCreativeDirTemplates = [
 
 const new3dDestemplates = [
   {
-    title : 'Level 1',
+    title : 'Junior',
     questions : [
       {
         "questionType": "text",
@@ -10942,7 +10942,7 @@ const new3dDestemplates = [
     category : '3D Designer'
   },
   {
-    title : 'Level 2',
+    title : 'Mid-Level',
     questions : [
       {
         "questionType": "text",
@@ -11442,7 +11442,7 @@ const new3dDestemplates = [
     category : '3D Designer'
   },
   {
-    title : 'Level 3',
+    title : 'Senior',
     questions : [
       {
         "questionType": "text",
