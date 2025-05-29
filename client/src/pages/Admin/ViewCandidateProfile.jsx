@@ -575,7 +575,7 @@ const reviewerProfilePic = currentReviewer?.profilePicture
                                         {resumeOpen && <ResumeViewer documentUrl={data.resumeUrl} onClose={() => setResumeOpen(false)} />}
 
                                         {
-                                            ((data.hasGivenAssessment && data.jobApplication?.assessmentResponse) && hasPermission(role,PERMISSIONS.SHOW_CANDIDATE_PROFILE_ASSESSMENT_RESPONSE)) && <div className='cursor-pointer' onClick={handleAssignmentNavigation}>
+                                            ((data.jobApplication?.assessmentResponse) && hasPermission(role,PERMISSIONS.SHOW_CANDIDATE_PROFILE_ASSESSMENT_RESPONSE)) && <div className='cursor-pointer' onClick={handleAssignmentNavigation}>
                                                 <CustomToolTip title={'Assessment'} arrowed size={2}>
                                                     <IconWrapper hasBg icon={ClipboardCheck} />
                                                 </CustomToolTip>

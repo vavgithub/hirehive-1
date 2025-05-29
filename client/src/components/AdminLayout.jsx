@@ -12,6 +12,7 @@ import { UNKNOWN_PROFILE_PICTURE_URL } from '../utility/config';
 import { useSelector } from 'react-redux';
 import { getRoute, hasRoutePermission, ROLES, ROUTE_KEY } from '../config/permissions.config';
 import Footer from './Footer/Footer';
+import { useQueryClient } from '@tanstack/react-query';
 
 //Screen URLs with BG for All Admin personas
 const ADMIN_BG_SCREENS = [
@@ -33,6 +34,7 @@ const AdminLayout = () => {
 
     const [anchorEl, setAnchorEl] = useState(null); // State to control dropdown menu
     const { refetch } = useAuth();
+    const queryClient = useQueryClient();
 
     const { newMembersCount } = useSelector(state => state.admin)
 
@@ -41,22 +43,23 @@ const AdminLayout = () => {
         return getRoute(user?.role,ROUTE_KEY.PROFILE);
     };
 
-    useEffect(() => {
-    const handleChange = () => {
-        console.log("DPR changed:", window.devicePixelRatio);
-    };
-    console.log("DPR :", window.devicePixelRatio);
+    // useEffect(() => {
+    // const handleChange = () => {
+    //     console.log("DPR changed:", window.devicePixelRatio);
+    // };
+    // console.log("DPR :", window.devicePixelRatio);
 
-    const mq = window.matchMedia(`(resolution: ${window.devicePixelRatio}dppx)`);
-    mq.addEventListener("change", handleChange);
+    // const mq = window.matchMedia(`(resolution: ${window.devicePixelRatio}dppx)`);
+    // mq.addEventListener("change", handleChange);
 
-    return () => mq.removeEventListener("change", handleChange);
-    }, []);
+    // return () => mq.removeEventListener("change", handleChange);
+    // }, []);
 
     const handleLogout = async () => {
         try {
             await logout();
             refetch();
+            queryClient.clear()
             navigate('/admin/login');
         } catch (error) {
             // console.error('Logout failed:', error);
@@ -127,10 +130,10 @@ const AdminLayout = () => {
         }
         };
 
-        document.getElementById('adminSidebar').addEventListener("mousedown", handleClickOutside);
+        document.getElementById('adminSidebar')?.addEventListener("mousedown", handleClickOutside);
 
         return () => {
-        document.getElementById('adminSidebar').removeEventListener("mousedown", handleClickOutside);
+        document.getElementById('adminSidebar')?.removeEventListener("mousedown", handleClickOutside);
         };
     }, []);
 

@@ -11,6 +11,7 @@ import { getPreviousMonthRange, getPreviousWeekRange, getYesterdayTodayRange } f
 import mongoose from "mongoose";
 import { EMAIL_REGEX } from "../../utils/validator.js";
 import { Assessment } from "../../models/admin/assessment.model.js";
+import { Company } from "../../models/admin/company.model.js";
 
 // controllers/candidate.controller.js
 
@@ -977,45 +978,69 @@ export const getAssessmentQuestionsById = async (req, res) => {
         message : "No Assessment Id Found"
       })
     }
-    const assessmentObjectId = new mongoose.Types.ObjectId(assessmentId);
 
-    const result = await Assessment.aggregate([
-      { $match: { _id: assessmentObjectId } },
-      { $project: { questions: 1 ,title : 1 , category : 1} },
-      { $unwind: "$questions" },
-      {
-        $addFields: {
-          "questions.options": {
-            $map: {
-              input: "$questions.options",
-              as: "opt",
-              in: {
-                text: "$$opt.text",
-                imageUrl: "$$opt.imageUrl"
-                // 'isCorrect' is intentionally omitted
+    const company_id = req.user.company_id;
+    let hasAccess = false;
+    if(company_id){
+      const company = await Company.findById({_id : company_id});
+
+      //Criteria to Allow Users to Assessment Questions is Team member to be 3 or above
+      if(company.assessmentAccess){
+        if(company.assessmentAccess === "ALLOWED"){
+          hasAccess = true
+        }
+      }else if(company?.invited_team_members?.filter(member => member?.status === "JOINED")?.length >= 3){
+        hasAccess = true
+      }
+    }
+
+    if(!hasAccess){
+      res.status(405).json({
+        error: 'No Access for Assessment',
+        hasAccess
+      });
+    }else{
+
+      const assessmentObjectId = new mongoose.Types.ObjectId(assessmentId);
+  
+      const result =  await Assessment.aggregate([
+        { $match: { _id: assessmentObjectId } },
+        { $project: { questions: 1 ,title : 1 , category : 1} },
+        { $unwind: "$questions" },
+        {
+          $addFields: {
+            "questions.options": {
+              $map: {
+                input: "$questions.options",
+                as: "opt",
+                in: {
+                  text: "$$opt.text",
+                  imageUrl: "$$opt.imageUrl"
+                  // 'isCorrect' is intentionally omitted
+                }
               }
             }
           }
+        },
+        {
+          $group: {
+            _id: "$_id",
+            title : { $first : '$title'},
+            category : { $first : '$category'},
+            questions: { $push: "$questions" }
+          }
         }
-      },
-      {
-        $group: {
-          _id: "$_id",
-          title : { $first : '$title'},
-          category : { $first : '$category'},
-          questions: { $push: "$questions" }
-        }
-      }
-    ]);  
-
-    console.log(`Found ${result[0]?.questions?.length} questions`);
-
-    res.status(200).json({
-      success: true,
-      title : result[0]?.title,
-      category : result[0]?.category,
-      questions : result[0]?.questions,
-    });
+      ]);  
+  
+      console.log(`Found ${result[0]?.questions?.length} questions`);
+  
+      res.status(200).json({
+        success: true,
+        title : result[0]?.title,
+        category : result[0]?.category,
+        questions : result[0]?.questions,
+      });
+    }
   } catch (error) {
     console.error("Error in getRandomQuestions:", error);
     res.status(500).json({

@@ -9,6 +9,7 @@ import { sanitizeLexicalHtml } from "../../utils/sanitize-html.js";
 import { getPreviousMonthRange, getPreviousWeekRange, getYesterdayTodayRange } from "../../utils/dateRanges.js";
 import { User } from "../../models/admin/user.model.js";
 import { Assessment } from "../../models/admin/assessment.model.js";
+import { Company } from "../../models/admin/company.model.js";
 // Controller function to create a new job
 
 export const StatisticsController = {
@@ -1242,8 +1243,22 @@ const getJobs = async (req, res) => {
 
 const getAssessmentTemplates = async (req,res) => {
   try {
+    const company_id = req.user.company_id;
+    let hasAccess = false;
+    if(company_id){
+      const company = await Company.findById({_id : company_id});
+
+      //Criteria to Allow Users to Assessment Questions is Team member to be 3 or above
+      if(company.assessmentAccess){
+        if(company.assessmentAccess === "ALLOWED"){
+          hasAccess = true
+        }
+      }else if(company?.invited_team_members?.filter(member => member?.status === "JOINED")?.length >= 3){
+        hasAccess = true
+      }
+    }
     const existingAssessmentTemplates = await Assessment.find({ isAvailable : true }).select('-questions')
-    res.status(200).json(existingAssessmentTemplates)
+    res.status(200).json({templates : existingAssessmentTemplates , hasAccess})
   } catch (error) {
     console.log("Error getting Assessment templates : ", error)
     res.status(500).json({

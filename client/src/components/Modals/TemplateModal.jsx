@@ -1,9 +1,11 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import Modal from './Modal'
 import { useQuery } from '@tanstack/react-query';
 import axios from '../../api/axios';
 import Loader from '../Loaders/Loader';
 import StyledCard from '../Cards/StyledCard';
+import { ShieldBan } from 'lucide-react';
+import IconWrapper from '../Cards/IconWrapper';
 
 function TemplateModal({open,onClose,assessment}) {
     const {
@@ -22,18 +24,33 @@ function TemplateModal({open,onClose,assessment}) {
         retry: false,
         enabled: !!assessment?._id
       });
-      
+
+      const noAccess = useMemo(()=> (error?.response?.data?.hasAccess === false), [error,questions]);
+
   return (
     <Modal
     open={open}
     onClose={onClose}
     customTitle={assessment?.category + ' : ' +assessment?.title}
-    customMessage={"This set of questions will be used to assess the candidate's suitability and qualifications for the role."}
+    customMessage={noAccess ? " " :"This set of questions will be used to assess the candidate's suitability and qualifications for the role."}
     noCancel
     customConfirmLabel={'OK'}
     specifiedWidth={'max-w-[70vw]'}
     >
-        {isLoading ? <div className='w-full min-h-[55vh] flex justify-center items-center'><Loader /></div> : questions?.length > 0 && 
+        {isLoading ? <div className='w-full min-h-[55vh] flex justify-center items-center'><Loader /></div> : 
+        noAccess ?
+        <StyledCard backgroundColor={'bg-background-80'}>
+            <div className='w-full flex flex-col justify-center items-center'>
+                <StyledCard backgroundColor={'bg-background-70'} extraStyles={'flex flex-col justify-center items-center mb-6'}>
+                    <IconWrapper icon={ShieldBan} isErrorIcon customStrokeWidth={5} size={0} customIconSize={10} />
+                    <h2 className='mt-4 pb-0'>Access Denied</h2>
+                </StyledCard>
+                <p className='typography-body text-font-gray'>Your access to assessment questions is denied.</p>
+                <p className='typography-body text-font-gray'>Please check the Assessment tab to get more details.</p>
+            </div>
+        </StyledCard>
+        :
+        questions?.length > 0 && 
         <div className="space-y-6 mt-4  max-h-[55vh] overflow-y-scroll scrollbar-hide">
             {questions.map((qstn, index) => (
                 <StyledCard key={qstn.questionId} backgroundColor={'bg-background-80'}>

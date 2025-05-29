@@ -50,7 +50,7 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
 
   const watchedFields = watch();
 
-  const { data: assessmentTemplates, isassessmentLoading } = useQuery({
+  const { data: assessmentData, isassessmentLoading } = useQuery({
     queryKey: ['getAllAssessmentTemplates'],
     queryFn: () => fetchAssessmentTemplates(),
     staleTime : Infinity,
@@ -103,11 +103,11 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
     }, [watchedFields.budgetFrom, watchedFields.budgetTo, setError]);
 
     useEffect(()=>{
-      if(watchedFields.jobProfile !== "" && assessmentTemplates?.length > 0){
-        const profileBasedTemplate = assessmentTemplates.find(template => template.category === watchedFields.jobProfile)
+      if(watchedFields.jobProfile !== "" && assessmentData?.templates?.length > 0){
+        const profileBasedTemplate = assessmentData?.templates?.find(template => template.category === watchedFields.jobProfile)
         setValue("assessment_id",profileBasedTemplate?._id)
       }
-    },[watchedFields.jobProfile,assessmentTemplates])
+    },[watchedFields.jobProfile,assessmentData])
 
     if(watchedFields.budgetFrom > 0){
       if(watchedFields.budgetTo < watchedFields.budgetFrom){
@@ -301,7 +301,7 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
             <label htmlFor="assessment" className="typography-body block mb-2">{`Job Level`}{<span className="text-red-100">*</span>}</label>
                 <div className='flex flex-wrap gap-4'>
                   {
-                    assessmentTemplates?.filter(assessment => watchedFields.jobProfile ? assessment.category === watchedFields.jobProfile : true)?.map(template => (
+                    assessmentData?.templates?.filter(assessment => watchedFields.jobProfile ? assessment.category === watchedFields.jobProfile : true)?.map(template => (
                       <CustomPill  variant="selective" data={template} value={value} hasInfoButton infoButtonClick={(label)=>setPreviewAssessment(template)} error={error} key={template?._id}  selected={value === template?._id} onChange={onChange} />
                     ))
                   }

@@ -51,6 +51,10 @@ const companyschema = new mongoose.Schema({
         type: String,
         trim: true,
     },
+    assessmentAccess : {
+        type : String,
+        enum : ['ALLOWED','DENIED']
+    },
     focusAreas : [String],
     invited_team_members : [{
         id : String,

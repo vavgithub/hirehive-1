@@ -24,9 +24,9 @@ const truncateWords = (text, wordLimit) => {
 };
 
 const JobDetailItem = ({ icon: Icon, text }) => (
-  <div className="flex gap-2 items-center w-fit">
+  <div className="flex gap-2 items-center w-fit md:max-w-[15%]">
     <Icon />
-    <p className="typography-body">{text}</p>
+    <p className="typography-body w-full max-w-[8rem] whitespace-nowrap text-ellipsis overflow-hidden">{text}</p>
   </div>
 );
 

@@ -1,14 +1,19 @@
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Container from "../../components/Cards/Container";
 import LoaderModal from "../../components/Loaders/LoaderModal";
 import Header from "../../components/utility/Header";
 import StyledCard from "../../components/Cards/StyledCard";
 import { useQuery } from "@tanstack/react-query";
 import axios from "../../api/axios";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { getRoute, ROUTE_KEY } from "../../config/permissions.config";
+import { useAuthContext } from "../../context/AuthProvider";
 
 function ViewQuestions() {
-    const { assessment_id } = useParams()
+    const { assessment_id } = useParams();
+    const { user } = useAuthContext();
+    const navigate = useNavigate();
+    
         const {
         data,
         isLoading,
@@ -25,12 +30,20 @@ function ViewQuestions() {
         retry: false,
         enabled: !!assessment_id
       });
+
+      const noAccess = useMemo(()=> (error?.response?.data?.hasAccess === false), [error,data]);
+
+      useEffect(()=>{
+        if(noAccess){
+          navigate(getRoute(user?.role,ROUTE_KEY.ASSESSMENTS))
+        }
+      },[noAccess])
       
   return (
     <Container>
       {isLoading && <LoaderModal/>}
       <Header
-        HeaderText={data?.category + " : " + data?.title}
+        HeaderText={(!isLoading && !noAccess) ? (data?.category + " : " + data?.title) : ''}
         withBack="true"
       ></Header>
       <StyledCard>

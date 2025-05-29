@@ -40,11 +40,11 @@ router.get("/:candidateId/jobs",protect, roleProtect(["Admin","Hiring Manager"])
 router.patch("/update/:id", updateStatusAndStage);
 router.patch("/update-candidate-profile/:id" , protect, roleProtect(["Hiring Manager","Admin"]), updateCandidateProfile);
 
-router.get("/questions/random", getRandomQuestions);
-router.get("/assessment-questions/random", getRandomAssessmentQuestions);
-router.get("/assessment-questions", getAssessmentQuestionsById);
+// router.get("/questions/random", getRandomQuestions);
+router.get("/assessment-questions/random", protectCandidate, getRandomAssessmentQuestions);
+router.get("/assessment-questions",protect,roleProtect(['Admin','Hiring Manager']), getAssessmentQuestionsById);
 
-router.post("/questionnaire/:candidateId/", submitQuestionnaireAttempt);
+router.post("/questionnaire/:candidateId/",protectCandidate, submitQuestionnaireAttempt);
 
 router.post(
     '/upload-recording',
@@ -53,8 +53,8 @@ router.post(
     uploadAssessmentRecording
   );
 
-router.get("/assessment/:candidateId", getQuestionnaireDetails);
-router.get("/get-assessment/:candidateId/:jobId", getJobBasedQuestionnaireDetails);
+// router.get("/assessment/:candidateId", getQuestionnaireDetails);
+router.get("/get-assessment/:candidateId/:jobId", protect, roleProtect(['Admin','Hiring Manager']), getJobBasedQuestionnaireDetails);
 
 router.get("/:jobId", getAllCandidatesForJob);
 

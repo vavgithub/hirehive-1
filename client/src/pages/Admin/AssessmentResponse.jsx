@@ -152,7 +152,7 @@ const AssessmentResponse = () => {
                         <div className="relative w-full flex justify-center ">
                             <div className='absolute left-0'>
 
-                                <CustomToolTip title={'A Correct Answer Equals Ten Score'} arrowed size={2}>
+                                <CustomToolTip title={'A correct answer equals ten score'} arrowed size={2}>
                                     <Info className="w-4 h-4 text-font-gray" />
                                 </CustomToolTip>
                             </div>
