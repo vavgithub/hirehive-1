@@ -397,6 +397,17 @@ input[type='number'] {
     background-color: var(--color-background-60) !important;
   }
 
+  .statscard-bg {
+    background-image: linear-gradient(to top right, var(--color-background-70) 0%, var(--color-background-70) 60%, var(--color-background-50) 100%);
+  }
+
+  /* 1dppx = 96dpi = devicePixelRatio: 1 */
+  /* @media (min-resolution: 97dpi) {
+    html {
+      font-size: 14px !important;
+    }
+  } */
+
   .container-form {
     width: 100%; /* Default style */
     max-width: 640px; /* Default max width */

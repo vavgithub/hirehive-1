@@ -60,7 +60,7 @@ const TermsAndCondition = () => {
                     <p>
                         HireHive does not sell or rent your personal data to third parties. We only use your data for recruitment purposes or as required by law.
                     </p>
-
+                    <br/>
                     <h3>Your Data Rights</h3>
                     <p>
                         Under GDPR and CCPA/CPRA, you have rights to access, correct, delete, restrict processing, and receive a copy of your personal data. To exercise these rights, please contact us. We will verify your identity and respond in accordance with applicable law.

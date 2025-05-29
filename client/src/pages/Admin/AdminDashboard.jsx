@@ -233,8 +233,8 @@ function AdminDashboard() {
               <img src={dashboardDetails?.companyDetails?.logoUrl ? dashboardDetails?.companyDetails?.logoUrl : `${UNKNOWN_PROFILE_PICTURE_URL}`} alt="LOGO" className="object-cover w-full" />
               <input accept="image/*" type="file" className="hidden" />
             </div>
-            <div>
-              <h2 className='text-center'>{dashboardDetails?.companyDetails?.name}</h2>
+            <div className='w-full flex flex-col justify-center items-center'>
+              <h2 className='text-center w-[90%] text-ellipsis overflow-hidden'>{dashboardDetails?.companyDetails?.name}</h2>
               <p className='text-font-gray typography-large-p flex gap-2 items-center justify-center'>{LocationOptions.find(data => data.value === dashboardDetails?.companyDetails?.location)?.label} <span className='w-1 h-1 bg-font-gray rounded-full'></span>{industryTypeOptions.find(data => data.value === dashboardDetails?.companyDetails?.industryType)?.label} </p>
             </div>
             <div className='typography-large-p w-full flex flex-col gap-6'>

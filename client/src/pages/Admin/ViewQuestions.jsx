@@ -35,14 +35,14 @@ function ViewQuestions() {
       ></Header>
       <StyledCard>
     {data?.questions?.length > 0 && 
-        <div className="space-y-6  scrollbar-hide">
+        <div className="scrollbar-hide grid grid-cols-2 gap-6">
             {data?.questions.map((qstn, index) => (
-                <StyledCard backgroundColor={'bg-background-80'} key={qstn._id} className=" rounded-xl pb-4">
+                <StyledCard backgroundColor={'bg-background-80'} key={qstn._id} extraStyles={qstn.questionType === 'image' ? 'col-span-2' : ''}>
                     <h3 className="mb-4">
                         Q{index + 1}. {qstn.text}
                     </h3>
                     <div className={` flex  ${qstn.questionType === 'image' ? 'flex-row gap-2 justify-between' : 'flex-col'}`}>
-                      <div className={"grid grid-cols-2 gap-4 h-fit " + (qstn.questionType === 'image' ? 'w-[70%]' : 'w-full')}>
+                      <div className={"grid  gap-4 h-fit " + (qstn.questionType === 'image' ? 'w-[70%] grid-cols-1' : 'w-full grid-cols-2')}>
                           {qstn.options.map((option, optIndex) => (
                             <div
                             key={optIndex}
@@ -53,11 +53,11 @@ function ViewQuestions() {
                           ))}
                       </div>
                           {qstn.questionType === 'image' && qstn.imageUrl && (
-                            <div className="relative w-[30%] mb-6 flex justify-end">
+                            <div className="relative w-[30%]  flex justify-end">
                               <img
                                 src={qstn.imageUrl}
                                 alt="Question visual"
-                                className="max-w-[80%] max-h-[20rem] rounded-xl"
+                                className="max-w-[80%] max-h-[16rem] rounded-xl"
                               />
                             </div>
                           )}

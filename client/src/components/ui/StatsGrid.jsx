@@ -58,7 +58,7 @@ const StatCard = ({ title, value, icon: Icon, statistics }) => {
   ]
 
   return (
-    <StyledCard padding={2} extraStyles="flex  overflow-hidden justify-between relative items-center bg-card-pattern bg-cover shadow min-w-[15rem] max-w-[15rem]">
+    <StyledCard padding={2} extraStyles="flex  overflow-hidden justify-between relative items-center statscard-bg shadow min-w-[15rem] max-w-[15rem]">
       <div className=" w-full ">
         <p className="typography-small-p text-font-gray w-max mb-2">{title}</p>
         <h2 className="pb-2">{value ?? 0}</h2>

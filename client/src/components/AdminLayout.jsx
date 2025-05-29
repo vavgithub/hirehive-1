@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom'; // Added useLocation
 import { Menu, MenuItem, IconButton, Avatar } from '@mui/material';
 import { logout } from '../api/authApi';
@@ -41,6 +41,17 @@ const AdminLayout = () => {
         return getRoute(user?.role,ROUTE_KEY.PROFILE);
     };
 
+    useEffect(() => {
+    const handleChange = () => {
+        console.log("DPR changed:", window.devicePixelRatio);
+    };
+    console.log("DPR :", window.devicePixelRatio);
+
+    const mq = window.matchMedia(`(resolution: ${window.devicePixelRatio}dppx)`);
+    mq.addEventListener("change", handleChange);
+
+    return () => mq.removeEventListener("change", handleChange);
+    }, []);
 
     const handleLogout = async () => {
         try {
@@ -101,11 +112,30 @@ const AdminLayout = () => {
     const { pathname } = useLocation();
     const isActive = pathname.startsWith(to);
     const [isOpen, setIsOpen] = useState(isActive);
+    const dropdownRef = useRef(null); // 👉 create ref for the wrapper
 
     const toggleDropdown = () => setIsOpen(!isOpen);
 
+    // ✅ useEffect to close dropdown on outside click
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+        if (
+            dropdownRef.current &&
+            !dropdownRef.current.contains(event.target)
+        ) {
+            setIsOpen(false);
+        }
+        };
+
+        document.getElementById('adminSidebar').addEventListener("mousedown", handleClickOutside);
+
+        return () => {
+        document.getElementById('adminSidebar').removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
+
     return (
-        <div className="relative flex flex-col rounded-xl">
+        <div ref={dropdownRef} className="relative flex flex-col rounded-xl">
         {/* Parent menu item */}
         <div
             onClick={toggleDropdown}
@@ -159,13 +189,28 @@ const AdminLayout = () => {
         const profilePath = getProfilePath();
 
         const itemComponents = [
+            ...(hasRoutePermission(user?.role,ROUTE_KEY.COMPANY_PROFILE_VIEW) ? [{
+                onClick : () => navigate(getRoute(user.role,ROUTE_KEY.COMPANY_PROFILE_VIEW)),
+                content : () => (
+                    <NavLink
+                        to={getRoute(user.role,ROUTE_KEY.COMPANY_PROFILE_VIEW)}
+                        className={({ isActive }) =>
+                            `w-full flex items-center ${isActive ? " selection-primary " : ""}  hover:bg-background-60 hover:text-font-accent px-4 py-2 rounded-xl `}
+                    >
+                        <Avatar alt={user?.companyDetails?.name} sx={{ width: "32px", height: "32px" }}
+                            src={user?.companyDetails?.logoUrl || UNKNOWN_PROFILE_PICTURE_URL} />
+                        <span className='typography-h4  ml-2 overflow-hidden whitespace-nowrap text-ellipsis'>
+                            {user?.companyDetails?.name}
+                        </span>
+                    </NavLink>)
+            }] : {}),
             {
                 onClick: handleMenuClose,
                 content: () => (
                     <NavLink
                         to={profilePath}
                         className={({ isActive }) =>
-                            `w-full flex items-center ${isActive ? "text-font-accent" : ""}  hover:bg-background-60 hover:text-font-accent px-4 py-2 rounded-xl `}
+                            `w-full flex items-center ${isActive ? " selection-primary " : ""}  hover:bg-background-60 hover:text-font-accent px-4 py-2 rounded-xl `}
                     >
                         <IconWrapper inheritColor={true} size={0} customIconSize={5} icon={User} />
                         <span className='typography-body  ml-2 '>
@@ -239,7 +284,6 @@ const AdminLayout = () => {
 
         return(
             <>
-                {hasRoutePermission(user?.role,ROUTE_KEY.COMPANY_PROFILE_VIEW) && <NavItem isBold isPrimaryColor to={getRoute(user.role,ROUTE_KEY.COMPANY_PROFILE_VIEW)} icon={GreenDot} activeIcon={GreenDot}>{user?.companyDetails?.name}</NavItem>}
                 {user?.role === "Admin" && <NavItem to={getRoute(user.role,ROUTE_KEY.DASHBOARD)} icon={() => <IconWrapper isInActiveIcon icon={LayoutGrid} />} activeIcon={() => <IconWrapper isActiveIcon icon={LayoutGrid} />}> Dashboard </NavItem>}
                 {hasRoutePermission(user?.role,ROUTE_KEY.JOBS) && ((jobsSubMenu?.length  > 1 ) 
                 ? <DropDownNavItem to={getRoute(user.role,ROUTE_KEY.JOBS)} submenu={jobsSubMenu} icon={() => <IconWrapper isInActiveIcon icon={Briefcase} />} activeIcon={() => <IconWrapper isActiveIcon icon={Briefcase} />}> Jobs </DropDownNavItem> 
@@ -259,8 +303,8 @@ const AdminLayout = () => {
 
     return (
         <div id='adminContainer' className={`flex ${ADMIN_BG_SCREENS.some(path => pathname.startsWith(path)) ? ' bg-background-100 ' : ' bg-background-100 '} bg-cover bg-top h-full overflow-x-hidden flex flex-col`}>
-            <div className="fixed flex  w-[16rem] h-[calc(100vh-2rem)] m-4 rounded-xl flex-col  bg-background-90 text-font-gray typography-large-p justify-between py-6 ">
-                <div className='flex flex-col gap-6 typography-body px-4'>
+            <div id='adminSidebar' className="fixed flex  w-[16rem] h-[calc(100vh-2rem)] m-4 rounded-xl flex-col  bg-background-90 text-font-gray typography-large-p justify-between py-6 ">
+                <div className='flex flex-col gap-4 typography-body px-4'>
                     <div className=' pl-2 pt-2 pb-4 flex '>
                         <img className='h-11 cursor-pointer ' onClick={() => navigate('/admin')} src={LightLogo} />
                     </div>

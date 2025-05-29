@@ -430,9 +430,9 @@ const theme = createTheme({
           },
           "& .first-row": {
             borderRadius: 2,
-            backgroundColor: "var(--color-background-90)",
+            backgroundColor: "var(--color-background-60)",
             "&:hover": {
-              backgroundColor: "var(--color-background-60)",
+              backgroundColor: "var(--color-background-40)",
             },
           },
           "& .MuiDataGrid-filler": {
@@ -444,9 +444,9 @@ const theme = createTheme({
           },
           "& .second-row": {
             borderRadius: 2,
-            backgroundColor: "var(--color-background-80)",
+            backgroundColor: "var(--color-background-50)",
             "&:hover": {
-              backgroundColor: "var(--color-background-60)",
+              backgroundColor: "var(--color-background-40)",
             },
           },
           "& .MuiSvgIcon-root": {
