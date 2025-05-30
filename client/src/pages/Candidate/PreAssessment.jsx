@@ -110,6 +110,9 @@ const PreAssessment = () => {
     const handleTnCredirect = () => {
         window.open("/terms-and-conditions", "_blank");
     }
+    const handlepPredirect = () => {
+        window.open("/privacy-policy", "_blank");
+    }
 
     return (
         <Container hasBgColor="bg-background-100">
@@ -203,7 +206,7 @@ const PreAssessment = () => {
                                 checked={isConsentChecked}
                                 onChange={(e) => setIsConsentChecked(e.target.checked)}
                             />
-                            <span>By proceeding, I hereby give my consent to the <strong className='cursor-pointer underline underline-offset-2' onClick={handleTnCredirect}>Terms & Conditions</strong> and <strong onClick={handleTnCredirect} className='cursor-pointer underline underline-offset-2'>Privacy Policy</strong> of this platform.</span>
+                            <span>By proceeding, I hereby give my consent to the <strong className='cursor-pointer underline underline-offset-2' onClick={handleTnCredirect}>Terms & Conditions</strong> and <strong onClick={handlepPredirect} className='cursor-pointer underline underline-offset-2'>Privacy Policy</strong> of this platform.</span>
 
                         </p>
 

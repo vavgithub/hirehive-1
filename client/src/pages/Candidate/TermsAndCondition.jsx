@@ -9,7 +9,7 @@ const TermsAndCondition = () => {
 
             <StyledCard>
                 <Header
-                    HeaderText={"Terms and Conditions & Privacy Policy"}
+                    HeaderText={"Terms and Conditions"}
                 />
                 <article>
 

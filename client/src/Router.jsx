@@ -42,6 +42,7 @@ import ViewQuestions from './pages/Admin/ViewQuestions.jsx';
 import Guide from './pages/DesignReviewer/Guide.jsx';
 import CompanyProfile from './pages/Admin/CompanyProfile.jsx';
 import TermsAndCondition from './pages/Candidate/TermsAndCondition.jsx';
+import PrivacyPolicy from './pages/Candidate/PrivacyPolicy.jsx';
 
 export const router = createBrowserRouter([
   {
@@ -51,6 +52,10 @@ export const router = createBrowserRouter([
   {
     path: "/terms-and-conditions",  
     element: <TermsAndCondition />,
+  },
+  {
+    path:"/privacy-policy",
+    element:<PrivacyPolicy/>
   },
   {
     path: "/org/:companyId",

@@ -4,13 +4,19 @@ import { FaXTwitter } from 'react-icons/fa6'
 import IconWrapper from '../Cards/IconWrapper'
 
 function Footer({variant = ''}) {
+    const handleTnCredirect = () => {
+        window.open("/terms-and-conditions", "_blank");
+    }
+    const handlepPredirect = () => {
+        window.open("/privacy-policy", "_blank");
+    }
   return (
     <div className={(variant==='sidebar' ? " md:pl-[17rem] w-screen" : "") + " bg-background-90 "}>
         <div className='px-4'>
           <div className="container  flex items-center justify-between  min-h-[5rem] ">
               <p className="typography-body text-font-gray">&copy; {new Date().getFullYear()} Copyrighted Value at Void™</p>
-              {/* <div className='flex gap-4 text-font-gray'>
-                <a href="https://www.facebook.com/atvoid" target="_blank" rel="noopener noreferrer">
+              <div className='flex gap-4 text-font-gray'>
+                {/* <a href="https://www.facebook.com/atvoid" target="_blank" rel="noopener noreferrer">
                   <IconWrapper inheritColor size={0} customIconSize={5} icon={FaFacebook} />
                 </a>
                 <a href="https://linkedin.com/company/atvoid/" target="_blank" rel="noopener noreferrer">
@@ -28,7 +34,12 @@ function Footer({variant = ''}) {
                 <a href="https://x.com/valueatvoid" target="_blank" rel="noopener noreferrer">
                   <IconWrapper inheritColor size={0} customIconSize={5} icon={FaXTwitter} />   
                 </a>
-              </div> */}
+                <a href="/pri" target="_blank" rel="noopener noreferrer">
+                  <IconWrapper inheritColor size={0} customIconSize={5} icon={FaXTwitter} />   
+                </a> */}
+                <span><strong className='cursor-pointer underline underline-offset-2' onClick={handleTnCredirect}>Terms & Conditions</strong>  </span>
+              <span> <strong onClick={handlepPredirect} className='cursor-pointer underline underline-offset-2'>Privacy Policy</strong> </span>
+              </div>
           </div>
         </div>
     </div>
