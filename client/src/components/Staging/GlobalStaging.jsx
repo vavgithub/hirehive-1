@@ -333,8 +333,8 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
     const renderCallData = (call,isRescheduled) => (
       <div className={' bg-background-70 flex justify-between items-center rounded-xl p-4'}>
             <div className='flex flex-col'>
-                {!isRescheduled && <span className='typography-small-p text-font-gray'>Date</span>}
-                <div className={(isRescheduled && "text-font-gray ") + ' flex items-center gap-2'}>
+                {!isRescheduled && <span className='typography-small-p text-font-gray '>Date</span>}
+                <div className={(isRescheduled && "text-font-gray ") + ' flex items-center gap-2 h-11'}>
                     <IconWrapper icon={Calendar} size={0} customIconSize={5} isInActiveIcon={true} customStrokeWidth={4} />
                     <p className={isRescheduled && 'typography-body'}>
                         {UTCToDateFormatted(call.scheduledDate)}
@@ -343,8 +343,8 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
             </div>
             {isRescheduled && <div className='w-1 h-1 border-font-gray bg-font-gray border-[1px] rounded-full '></div>}
             <div className='flex flex-col'>
-                {!isRescheduled && <span className='typography-small-p text-font-gray'>Time</span>}
-                <div className={(isRescheduled && "text-font-gray ") + ' flex items-center gap-2'}>
+                {!isRescheduled && <span className='typography-small-p text-font-gray '>Time</span>}
+                <div className={(isRescheduled && "text-font-gray ") + ' flex items-center gap-2 h-11'}>
                     <IconWrapper icon={Clock} size={0} customIconSize={5} isInActiveIcon={true} customStrokeWidth={4} />
                     <p className={isRescheduled && 'typography-body'}>
                         {formatUTCToLocalTimeAuto(call.scheduledDate)}
@@ -353,7 +353,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
             </div>
             {isRescheduled && <div className='w-1 h-1 border-font-gray bg-font-gray border-[1px] rounded-full '></div>}
             <div className='flex flex-col '>
-                {!isRescheduled && <span className='typography-small-p text-font-gray'>Meeting Link</span>}
+                {!isRescheduled && <span className='typography-small-p text-font-gray '>Meeting Link</span>}
                 <div className={(isRescheduled && "text-font-gray ") + ' flex items-center gap-2'}>
                     <IconWrapper icon={Link} size={0} customIconSize={5} isInActiveIcon={true} customStrokeWidth={4} />
                     <p className={(isRescheduled ? "text-font-gray typography-body " : "text-font-primary") + ' mr-2 '}>screening_meeting_link</p>
@@ -475,6 +475,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
         {
             (stageBasedConfig?.hasTaskForm && !stageData?.scheduledDate) && 
             <TaskForm
+            jobProfile={jobProfile}
             candidateId={candidateId}
             jobId={jobId}
             candidateEmail={candidateData?.email}
