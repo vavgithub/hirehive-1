@@ -11,7 +11,7 @@ function Footer({variant = ''}) {
         window.open("/privacy-policy", "_blank");
     }
   return (
-    <div className={(variant==='sidebar' ? " md:pl-[17rem] w-screen" : "") + " bg-background-90 "}>
+    <div className={(variant==='sidebar' ? " md:pl-[17rem] w-screen" : "") + " bg-transparent "}>
         <div className='px-4'>
           <div className="container  flex items-center justify-between  min-h-[5rem] ">
               <p className="typography-body text-font-gray">&copy; {new Date().getFullYear()} Copyrighted Value at Void™</p>
@@ -37,8 +37,8 @@ function Footer({variant = ''}) {
                 <a href="/pri" target="_blank" rel="noopener noreferrer">
                   <IconWrapper inheritColor size={0} customIconSize={5} icon={FaXTwitter} />   
                 </a> */}
-                <span><strong className='cursor-pointer underline underline-offset-2' onClick={handleTnCredirect}>Terms & Conditions</strong>  </span>
-              <span> <strong onClick={handlepPredirect} className='cursor-pointer underline underline-offset-2'>Privacy Policy</strong> </span>
+                <span className='cursor-pointer typography-body underline underline-offset-2' onClick={handleTnCredirect}>Terms & Conditions  </span>
+              <span onClick={handlepPredirect} className='cursor-pointer typography-body underline underline-offset-2'>Privacy Policy </span>
               </div>
           </div>
         </div>

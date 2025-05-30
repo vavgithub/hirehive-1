@@ -54,7 +54,7 @@ function ViewAssessments() {
         </Header>
         <StyledCard extraStyles={'flex flex-col gap-8 '}>
                 {(isassessmentLoading || isLoading) ? <FillLoader/> : (assessmentData?.hasAccess === false) ?
-                    <StyledCard backgroundColor={'bg-background-80'}>
+                    <div>
                         <div className='w-full flex flex-col justify-center items-center'>
                             <StyledCard backgroundColor={'bg-background-70'} extraStyles={'flex flex-col justify-center items-center mb-6'}>
                                 <IconWrapper icon={ShieldBan} isErrorIcon customStrokeWidth={5} size={0} customIconSize={10} />
@@ -63,7 +63,7 @@ function ViewAssessments() {
                             <p className='typography-body text-font-gray'>To get access to this feature, complete building your team.</p>
                             <p className='typography-body text-font-gray'>If you have any further concerns or queries, Reach out to us on submitting this <span onClick={()=>setShowContactUs(true)} className='underline hover:text-font-accent cursor-pointer'>Contact Us</span>  Form.</p>
                         </div>
-                    </StyledCard>
+                    </div>
                 :
                     categorizedTemplates && Object.entries(categorizedTemplates).map(([category,assessments]) => (
                         <StyledCard backgroundColor={'bg-background-80'} key={category} >

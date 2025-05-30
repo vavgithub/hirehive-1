@@ -39,16 +39,16 @@ function TemplateModal({open,onClose,assessment}) {
     >
         {isLoading ? <div className='w-full min-h-[55vh] flex justify-center items-center'><Loader /></div> : 
         noAccess ?
-        <StyledCard backgroundColor={'bg-background-80'}>
+        <div>
             <div className='w-full flex flex-col justify-center items-center'>
-                <StyledCard backgroundColor={'bg-background-70'} extraStyles={'flex flex-col justify-center items-center mb-6'}>
+                <StyledCard backgroundColor={'bg-background-70'} extraStyles={'flex flex-col justify-center items-center mb-4'}>
                     <IconWrapper icon={ShieldBan} isErrorIcon customStrokeWidth={5} size={0} customIconSize={10} />
                     <h2 className='mt-4 pb-0'>Access Denied</h2>
                 </StyledCard>
                 <p className='typography-body text-font-gray'>Your access to assessment questions is denied.</p>
                 <p className='typography-body text-font-gray'>Please check the Assessment tab to get more details.</p>
             </div>
-        </StyledCard>
+        </div>
         :
         questions?.length > 0 && 
         <div className="space-y-6 mt-4  max-h-[55vh] overflow-y-scroll scrollbar-hide">

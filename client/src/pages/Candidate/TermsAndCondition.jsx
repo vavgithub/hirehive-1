@@ -2,15 +2,16 @@ import React from 'react'
 import Header from '../../components/utility/Header'
 import StyledCard from '../../components/Cards/StyledCard'
 import Container from '../../components/Cards/Container'
+import LogoWrapper from '../../components/Logo/LogoWrapper'
+import Footer from '../../components/Footer/Footer'
 
 const TermsAndCondition = () => {
     return (
+        <>
         <Container>
 
+            <LogoWrapper headerText='Terms and Conditions' />
             <StyledCard>
-                <Header
-                    HeaderText={"Terms and Conditions"}
-                />
                 <article>
 
 
@@ -132,6 +133,8 @@ const TermsAndCondition = () => {
 
             </StyledCard>
         </Container>
+        <Footer/>
+        </>
     )
 }
 
