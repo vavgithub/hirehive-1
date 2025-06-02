@@ -41,7 +41,7 @@ router.patch("/update/:id", updateStatusAndStage);
 router.patch("/update-candidate-profile/:id" , protect, roleProtect(["Hiring Manager","Admin"]), updateCandidateProfile);
 
 // router.get("/questions/random", getRandomQuestions);
-router.get("/assessment-questions/random", protectCandidate, getRandomAssessmentQuestions);
+router.post("/assessment-questions/random", protectCandidate, getRandomAssessmentQuestions);
 router.get("/assessment-questions",protect,roleProtect(['Admin','Hiring Manager']), getAssessmentQuestionsById);
 
 router.post("/questionnaire/:candidateId/",protectCandidate, submitQuestionnaireAttempt);

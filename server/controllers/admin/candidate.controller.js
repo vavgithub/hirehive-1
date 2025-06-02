@@ -204,13 +204,16 @@ export const updateCandidateProfessionalDetails = async (req, res) => {
       req.body;
 
     // Fetch candidate
-    const candidate = await candidates.findById(id);
+    const [candidate, job] = await Promise.all([
+      candidates.findById(id),
+      jobs.findById(jobId)
+    ]);
+
     if (!candidate) {
       return res.status(400).json({ message: "Invalid Candidate Data" });
     }
 
     // Fetch job
-    const job = await jobs.findById(jobId);
     if (!job) {
       return res.status(400).json({ message: "Invalid Job Data" });
     }

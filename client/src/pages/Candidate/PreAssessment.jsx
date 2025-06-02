@@ -245,7 +245,7 @@ const PreAssessment = () => {
                         >
                             <div>
                                 <h3>{assessment?.jobTitle}</h3>
-                                <p className='text-font-gray typography-body'>{assessment?.assessment_id?.title}</p>
+                                <p className='text-font-gray typography-body'>{assessment?.assessment_id?.title} - {assessment?.assessment_id?.category}</p>
                             </div>
                             <Button
                                 onClick={() => handleStartAssessment(assessment?.assessment_id?._id)}

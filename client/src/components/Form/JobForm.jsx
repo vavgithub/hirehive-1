@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import SkillsInput from '../Inputs/SkillsInput';
 import { dropdownOptions, dummySkills } from '../Dropdowns/dropdownOptions';
@@ -49,6 +49,7 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
   });
 
   const watchedFields = watch();
+  const isFirstRender = useRef(true);
 
   const { data: assessmentData, isassessmentLoading } = useQuery({
     queryKey: ['getAllAssessmentTemplates'],
@@ -105,9 +106,13 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
     useEffect(()=>{
       if(watchedFields.jobProfile !== "" && assessmentData?.templates?.length > 0){
         const profileBasedTemplate = assessmentData?.templates?.find(template => template.category === watchedFields.jobProfile)
-        setValue("assessment_id",profileBasedTemplate?._id)
+        if(isFirstRender.current && isEditing){
+          isFirstRender.current = false
+        }else{
+          setValue("assessment_id",profileBasedTemplate?._id)
+        }
       }
-    },[watchedFields.jobProfile,assessmentData])
+    },[watchedFields.jobProfile,assessmentData,isEditing,isFirstRender])
 
     if(watchedFields.budgetFrom > 0){
       if(watchedFields.budgetTo < watchedFields.budgetFrom){

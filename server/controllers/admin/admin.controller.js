@@ -90,7 +90,7 @@ export const addTeamMember = asyncHandler(async (req,res) => {
     })
   })
 
-  export const reInviteMember = asyncHandler(async (req,res) => {
+export const reInviteMember = asyncHandler(async (req,res) => {
     const { memberId } = req.body;
 
     const userData = req.user;
@@ -146,12 +146,15 @@ export const addTeamMember = asyncHandler(async (req,res) => {
     })
   })
 
-  export const changeMemberStatus = asyncHandler(async (req,res) => {
+export const changeMemberStatus = asyncHandler(async (req,res) => {
     const { memberId } = req.body;
 
     const userData = req.user;
 
-    const isExisitngCompany = await Company.findById({_id : userData?.company_id})
+    const [isExisitngCompany, isMemberExist] = await Promise.all([
+      Company.findById(userData?.company_id),
+      User.findById(memberId)
+    ]);
 
     if(!isExisitngCompany){
         return res.status(400).json({
@@ -160,8 +163,6 @@ export const addTeamMember = asyncHandler(async (req,res) => {
           });
     }
   
-    const isMemberExist = await User.findById(
-      { _id : memberId })
 
     if(!isMemberExist){
         return res.status(400).json({

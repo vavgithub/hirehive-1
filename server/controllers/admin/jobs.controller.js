@@ -1539,11 +1539,11 @@ const filterSearchJobs = asyncHandler(async (req, res) => {
       query.status = status;
     }
 
-    const filteredSearchJobs = await jobs
-      .find(query)
-      .skip((pageNumber - 1) * LIMIT)
-      .limit(LIMIT);
-    const filteredSearchCount = await jobs.countDocuments(query);
+    // Parallel execution of query and count
+    const [filteredSearchJobs, filteredSearchCount] = await Promise.all([
+      jobs.find(query).skip((pageNumber - 1) * LIMIT).limit(LIMIT),
+      jobs.countDocuments(query)
+    ]);
 
     res.status(200).json({ filteredSearchJobs, filteredSearchCount });
   } catch (error) {

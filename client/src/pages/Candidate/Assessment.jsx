@@ -29,7 +29,7 @@ export const useAssessmentQuestions = (assessment_id) => {
   return useQuery({
     queryKey: ['random-assessment-questions',assessment_id],
     queryFn: async () => {
-      const response = await axios.get(`/admin/candidate/assessment-questions/random?assessmentId=${assessment_id}`);
+      const response = await axios.post(`/admin/candidate/assessment-questions/random?assessmentId=${assessment_id}`);
       return response.data.questions;
     },
     staleTime: Infinity,

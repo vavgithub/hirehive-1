@@ -499,14 +499,17 @@ export const applyToJob = async (req, res) => {
       resumeUrl,
     } = req.body;
 
-    const job = await jobs.findById(jobId).populate('company_id');
+    const [job, candidate] = await Promise.all([
+      jobs.findById(jobId).populate('company_id'),
+      Candidate.findById(candidateId)
+    ]);
+
     if (!job) {
       return res.status(404).json({ message: "Job not found" });
     }
     const jobApplied = job.jobTitle;
     const jobProfile = job.jobProfile;
 
-    const candidate = await Candidate.findById(candidateId);
     if (!candidate) {
       return res.status(404).json({ message: "Candidate not found" });
     }

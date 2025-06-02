@@ -601,12 +601,14 @@ const filterSearchJobs = asyncHandler(async (req, res) => {
     }
   }
 
-  const filteredSearchJobs = await jobs.find(query).populate('company_id')
-  .sort({ createdAt: -1 })
-  .skip((pageNumber - 1) * LIMIT)
-  .limit(LIMIT); // Fetch jobs with the new query including status: 'open'
-
-  const filteredSearchJobsCount = await jobs.countDocuments(query);
+  const [filteredSearchJobs, filteredSearchJobsCount] = await Promise.all([
+    jobs.find(query)
+        .populate('company_id')
+        .sort({ createdAt: -1 })
+        .skip((pageNumber - 1) * LIMIT)
+        .limit(LIMIT),
+    jobs.countDocuments(query)
+  ]);
 
   res.status(200).json({filteredSearchJobs,filteredSearchJobsCount});
 });
