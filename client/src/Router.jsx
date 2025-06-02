@@ -80,6 +80,14 @@ export const router = createBrowserRouter([
         element: <CandidateDashboard />,
       },
       {
+        path: "terms-and-conditions",
+        element: <TermsAndCondition />,
+      },
+      {
+        path: "privacy-policy",
+        element: <PrivacyPolicy />
+      },
+      {
         path: 'profile',
         element: <CandidateProfilePage />,
       },
@@ -148,6 +156,14 @@ export const router = createBrowserRouter([
       {
         path: "dashboard",
         element: <Jobs />
+      },
+      {
+        path: "terms-and-conditions",
+        element: <TermsAndCondition />,
+      },
+      {
+        path: "privacy-policy",
+        element: <PrivacyPolicy />
       },
       {
         path: "profile",
@@ -422,6 +438,14 @@ export const router = createBrowserRouter([
       {
         path: "dashboard",
         element: <Navigate to={'/design-reviewer/candidates'} />
+      },
+      {
+        path: "terms-and-conditions",
+        element: <TermsAndCondition />,
+      },
+      {
+        path: "privacy-policy",
+        element: <PrivacyPolicy />
       },
       {
         path: "profile",

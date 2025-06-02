@@ -3,15 +3,20 @@ import { FaFacebook, FaInstagram, FaLinkedin, FaPinterest, FaYoutube } from 'rea
 import { FaXTwitter } from 'react-icons/fa6'
 import IconWrapper from '../Cards/IconWrapper'
 import { useNavigate } from 'react-router-dom';
+import useCandidateAuth from '../../hooks/useCandidateAuth';
+import { useAuthContext } from '../../context/AuthProvider';
 
 function Footer({ variant = '' }) {
   const navigate = useNavigate();
+  const { user } = useAuthContext();
+  const { candidateData } = useCandidateAuth();
+
   const handleTnCredirect = () => {
-    navigate('terms-and-conditions');
+    navigate((user || candidateData) ? 'terms-and-conditions' : '/terms-and-conditions');
     // window.open("/terms-and-conditions", "_blank");
   }
   const handlepPredirect = () => {
-    navigate('privacy-policy');
+    navigate((user || candidateData) ? 'privacy-policy' : '/privacy-policy');
     // window.open("/privacy-policy", "_blank");
   }
   return (

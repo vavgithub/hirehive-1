@@ -4,12 +4,17 @@ import StyledCard from "../../components/Cards/StyledCard";
 import Header from "../../components/utility/Header";
 import LogoWrapper from "../../components/Logo/LogoWrapper";
 import Footer from "../../components/Footer/Footer";
+import { useAuthContext } from "../../context/AuthProvider";
+import useCandidateAuth from "../../hooks/useCandidateAuth";
 
 const PrivacyPolicy = () => {
+  const { user } = useAuthContext();
+  const { candidateData } = useCandidateAuth();
   return (
     <>
       <Container>
-        <Header withBack={"true"} HeaderText="Privacy Policy" />
+        {(!user && !candidateData) && <LogoWrapper headerText="Privacy Policy" />}
+        {(user || candidateData) && <Header withBack={(user || candidateData) ? "true" : false} HeaderText="Privacy Policy" />}
         <StyledCard>
           <article>
             <h3>Information We Collect</h3>
@@ -86,7 +91,7 @@ const PrivacyPolicy = () => {
           </article>
         </StyledCard>
       </Container>
-      {/* <Footer /> */}
+      {(!user && !candidateData) && <Footer />}
     </>
   );
 };

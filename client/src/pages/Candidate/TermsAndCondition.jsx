@@ -4,14 +4,18 @@ import StyledCard from '../../components/Cards/StyledCard'
 import Container from '../../components/Cards/Container'
 import LogoWrapper from '../../components/Logo/LogoWrapper'
 import Footer from '../../components/Footer/Footer'
+import { useAuthContext } from '../../context/AuthProvider'
+import useCandidateAuth from '../../hooks/useCandidateAuth'
 
 const TermsAndCondition = () => {
+    const { user } = useAuthContext();
+    const { candidateData } = useCandidateAuth();
+
     return (
         <>
             <Container>
-
-                {/* <LogoWrapper headerText='Terms and Conditions' /> */}
-                <Header withBack={"true"} HeaderText='Terms and Conditions' />
+                {(!user && !candidateData) && <LogoWrapper headerText="Terms and Conditions" />}
+                {(user || candidateData) && <Header withBack={(user || candidateData) ? "true" : false} HeaderText="Terms and Conditions" />}
                 <StyledCard>
                     <article>
 
@@ -89,7 +93,7 @@ const TermsAndCondition = () => {
 
                 </StyledCard>
             </Container>
-            {/* <Footer/> */}
+            {(!user && !candidateData) && <Footer />}
         </>
     )
 }
