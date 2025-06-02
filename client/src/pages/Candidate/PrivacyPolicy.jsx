@@ -77,12 +77,11 @@ const PrivacyPolicy = () => {
             <h3>Contact Information</h3>
             <p>
               If you have questions or wish to exercise your rights, contact us
-              at <strong>privacy@hirehive.com</strong> or write to:
+              at <strong>helloatvav@gmail.com</strong> or write to:
               <br />
               <strong>
-                HireHive Inc., 1234 Elm Street, Metropolis, NY, USA
+                1021 E Lincolnway Suite #8086, Cheyenne, Wyoming 82001, United States
               </strong>
-              .
             </p>
           </article>
         </StyledCard>
