@@ -4,12 +4,17 @@ import StyledCard from "../../components/Cards/StyledCard";
 import Header from "../../components/utility/Header";
 import LogoWrapper from "../../components/Logo/LogoWrapper";
 import Footer from "../../components/Footer/Footer";
+import { useAuthContext } from "../../context/AuthProvider";
+import useCandidateAuth from "../../hooks/useCandidateAuth";
 
 const PrivacyPolicy = () => {
+  const { user } = useAuthContext();
+  const { candidateData } = useCandidateAuth();
   return (
     <>
       <Container>
-        <LogoWrapper headerText="Privacy Policy" />
+        {(!user && !candidateData) && <LogoWrapper headerText="Privacy Policy" />}
+        {(user || candidateData) && <Header withBack={(user || candidateData) ? "true" : false} HeaderText="Privacy Policy" />}
         <StyledCard>
           <article>
             <h3>Information We Collect</h3>
@@ -77,17 +82,16 @@ const PrivacyPolicy = () => {
             <h3>Contact Information</h3>
             <p>
               If you have questions or wish to exercise your rights, contact us
-              at <strong>privacy@hirehive.com</strong> or write to:
+              at <strong>helloatvav@gmail.com</strong> or write to:
               <br />
               <strong>
-                HireHive Inc., 1234 Elm Street, Metropolis, NY, USA
+                1021 E Lincolnway Suite #8086, Cheyenne, Wyoming 82001, United States
               </strong>
-              .
             </p>
           </article>
         </StyledCard>
       </Container>
-      <Footer />
+      {(!user && !candidateData) && <Footer />}
     </>
   );
 };

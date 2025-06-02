@@ -50,12 +50,12 @@ export const router = createBrowserRouter([
     element: <HomePage />,
   },
   {
-    path: "/terms-and-conditions",  
+    path: "/terms-and-conditions",
     element: <TermsAndCondition />,
   },
   {
-    path:"/privacy-policy",
-    element:<PrivacyPolicy/>
+    path: "/privacy-policy",
+    element: <PrivacyPolicy />
   },
   {
     path: "/org/:companyId",
@@ -78,6 +78,14 @@ export const router = createBrowserRouter([
       {
         path: 'dashboard',
         element: <CandidateDashboard />,
+      },
+      {
+        path: "terms-and-conditions",
+        element: <TermsAndCondition />,
+      },
+      {
+        path: "privacy-policy",
+        element: <PrivacyPolicy />
       },
       {
         path: 'profile',
@@ -148,6 +156,14 @@ export const router = createBrowserRouter([
       {
         path: "dashboard",
         element: <Jobs />
+      },
+      {
+        path: "terms-and-conditions",
+        element: <TermsAndCondition />,
+      },
+      {
+        path: "privacy-policy",
+        element: <PrivacyPolicy />
       },
       {
         path: "profile",
@@ -266,6 +282,14 @@ export const router = createBrowserRouter([
     element: <ProtectedRoute allowedRoles={['Admin']}><AdminLayout /></ProtectedRoute>,
     children: [
       {
+        path: "terms-and-conditions",
+        element: <TermsAndCondition />,
+      },
+      {
+        path: "privacy-policy",
+        element: <PrivacyPolicy />
+      },
+      {
         path: "dashboard",
         element: <AdminDashboard />
       },
@@ -284,23 +308,23 @@ export const router = createBrowserRouter([
       },
       {
         path: "teams",
-        children : [
+        children: [
           {
             path: "",
             element: <Teams />,
           },
           {
             path: "profile/:id",
-            element: <TeamsProfile />    
+            element: <TeamsProfile />
           },
         ]
       },
       {
         path: "jobs",
-        children : [
+        children: [
           {
             path: "all",
-            children : [
+            children: [
               {
                 path: "",
                 element: <Jobs />
@@ -308,18 +332,18 @@ export const router = createBrowserRouter([
               {
                 path: "create",
                 element:
-                
-                <CreateJobs />
+
+                  <CreateJobs />
               },
               {
                 path: "edit/:id",
                 element:
-                <EditJobs />
+                  <EditJobs />
               },
               {
                 path: "view/:id",
                 element:
-                <ViewJobs />
+                  <ViewJobs />
               },
               {
                 path: "edit-candidate/:id",
@@ -333,20 +357,20 @@ export const router = createBrowserRouter([
               {
                 path: "view-candidate/:candidateId/:jobId",
                 element:
-                <ViewCandidateProfile />
+                  <ViewCandidateProfile />
               },
             ]
           },
           {
             path: "assessments",
-            children : [
+            children: [
               {
                 path: "",
-                element: <ViewAssessments/>
+                element: <ViewAssessments />
               },
               {
                 path: ":assessment_id",
-                element: <ViewQuestions/>
+                element: <ViewQuestions />
               },
             ]
           },
@@ -354,10 +378,10 @@ export const router = createBrowserRouter([
       },
       {
         path: "candidates",
-        children : [
+        children: [
           {
             path: "shortlisted",
-            children : [
+            children: [
               {
                 path: "",
                 element: <Shortlisted />
@@ -380,11 +404,11 @@ export const router = createBrowserRouter([
           },
           {
             path: "all",
-            children : [
+            children: [
               {
                 path: "",
                 element:
-                <Candidates />
+                  <Candidates />
               },
               {
                 path: "view/:candidateId/:jobId",
@@ -403,7 +427,7 @@ export const router = createBrowserRouter([
             ]
           },
         ]
-      },      
+      },
     ]
   },
 
@@ -414,6 +438,14 @@ export const router = createBrowserRouter([
       {
         path: "dashboard",
         element: <Navigate to={'/design-reviewer/candidates'} />
+      },
+      {
+        path: "terms-and-conditions",
+        element: <TermsAndCondition />,
+      },
+      {
+        path: "privacy-policy",
+        element: <PrivacyPolicy />
       },
       {
         path: "profile",
