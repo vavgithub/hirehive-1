@@ -171,71 +171,111 @@ const MapperComponent = ({ role, customSchema, config, activeProfile, level , sc
               <StyledCard
                 backgroundColor={"bg-background-80"}
                 key={'scoring' + level + index}
-                extraStyles={`relative grid grid-cols-2 gap-8 `}
+                extraStyles={`relative  `}
               >
-                <div>
-                  <p className="typography-body mb-2 flex items-center px-6 py-2 bg-background-70 w-fit rounded-xl">
-                    {scoringStage.color && (
-                      <span
-                        className={"inline-block w-4 h-4 mr-4 rounded-full"}
-                        style={{
-                          backgroundColor: scoringStage.color,
-                        }}
-                      ></span>
-                    )}
-                    {scoringStage?.title}
-                  </p>
-                  <p className="typography-body  text-font-gray ">
-                    {scoringStage?.description}
-                  </p>
-                </div>
-                <div className="flex justify-end">
-                  {scoringStage?.scoreConfig &&
-                    (typeof scoringStage?.scoreConfig !== "object" ? (
+                <div className="flex justify-between gap-8">
+                  <div>
+                    <p className="typography-body mb-2 flex items-center px-6 py-2 bg-background-70 w-fit rounded-xl">
+                      {scoringStage.color && (
+                        <span
+                          className={"inline-block w-4 h-4 mr-4 rounded-full"}
+                          style={{
+                            backgroundColor: scoringStage.color,
+                          }}
+                        ></span>
+                      )}
+                      {scoringStage?.title}
+                    </p>
+                    <p className="typography-body  text-font-gray ">
+                      {scoringStage?.description}
+                    </p>
+                  </div>
+                  {scoringStage?.scoreConfig && (typeof scoringStage?.scoreConfig !== "object") ? (
                       <h4 className="typography-body py-2">
                         Score : {scoringStage?.scoreConfig}
-                      </h4>
-                    ) : (
+                      </h4>)
+                      :  <h4 className="typography-body mb-4">Total Score : 30</h4>
+                      }
+                </div>
+                <div className="flex justify-end">
+                  {(scoringStage?.scoreConfig && typeof scoringStage?.scoreConfig === "object") && (
                       <div className="w-full place-items-end">
-                        <h4 className="typography-body mb-4">Total Score : 30</h4>
-                        <StyledCard
-                          padding={3}
-                          backgroundColor={"bg-background-70"}
-                          extraStyles="flex flex-col gap-4 w-full md:w-[75%] "
+                        <div
+                          className="flex flex-col gap-4 w-full mt-4"
                         >
-                          {Object.keys(scoringStage.scoreConfig)
-                            .filter((scoring) => scoring !== "total")
-                            .map((scoring,index) => (
-                              <div key={`scoring-${index+1} `}>
-                                {(scoringStage.scoreConfig[scoring]?.isEditable && scoringState[`${parent?.title}-${scoring}`]) ? 
-                                <ScoringInput 
-                                scoring={scoring} 
-                                title={title} 
-                                setTitle={setTitle} 
-                                description={description} 
-                                setDescription={setDescription} 
-                                handleCancel={() => handleCancel(scoring)} 
-                                handleSave={() => handleSave(scoring)} 
-                                />
-                                : <>
-                                  <p className="typography-body flex justify-between">
-                                    <span className="flex gap-2">
-                                    {jobBasedScoringSchema?.find(score => score.defaultKey === scoring)?.customKey || scoring}
-                                    {(hasPermission(role,PERMISSIONS.SHOW_EDIT_SCORING) && scoringStage.scoreConfig[scoring]?.isEditable) && <button onClick={() => handleEditScoring(scoring)} type="button"><IconWrapper size={0} customIconSize={1} icon={Pencil} /></button>}
-                                    </span>
-                                    <span>{scoringStage.scoreConfig[scoring].score}</span> 
-                                  </p>
-                                  <div className="flex justify-between items-center mt-2">
-                                    <p className="typography-body text-font-gray w-[90%]">
-                                      {jobBasedScoringSchema?.find(score => score.defaultKey === scoring)?.description || scoringStage.scoreConfig[scoring].description}
-                                    </p>
+                          <div className="grid grid-cols-2 gap-4">
+                          {/* Non Editable Params */}
+                          <div>
+                            <p className="typography-body mb-2">Fixed scoring criteria</p>
+                             <StyledCard
+                            backgroundColor={'bg-background-70 '}
+                            extraStyles={'flex flex-col gap-4'}
+                            >
+                                {Object.keys(scoringStage.scoreConfig)
+                                .filter((scoring) => (scoring !== "total" && (!scoringStage.scoreConfig[scoring]?.isEditable)))
+                                .map((scoring,index) => (
+                                  <div key={`scoring-${index+1} `}>
+                                      <p className="typography-body flex justify-between">
+                                        <span className="flex gap-2">
+                                        {jobBasedScoringSchema?.find(score => score.defaultKey === scoring)?.customKey || scoring}
+                                        </span>
+                                        <span>{scoringStage.scoreConfig[scoring].score}</span> 
+                                      </p>
+                                      <div className="flex justify-between items-center mt-2">
+                                        <p className="typography-body text-font-gray w-[90%]">
+                                          {jobBasedScoringSchema?.find(score => score.defaultKey === scoring)?.description || scoringStage.scoreConfig[scoring].description}
+                                        </p>
+                                      </div>
                                   </div>
-                                </>}
-                              </div>
-                            ))}
-                        </StyledCard>
+                                ))}
+                            </StyledCard>
+                          </div>
+
+                            {/* Editable Params */}
+                            <div>
+                            <p className="typography-body mb-2">Dynamic scoring criteria</p>
+                            <StyledCard 
+                            backgroundColor={'bg-background-70 '}
+                            extraStyles={'flex flex-col gap-4'}
+                            >
+                            {Object.keys(scoringStage.scoreConfig)
+                              .filter((scoring) => (scoring !== "total" && scoringStage.scoreConfig[scoring]?.isEditable))
+                              .map((scoring,index) => (
+                                <div key={`scoring-${index+1} `}>
+                                  {(scoringStage.scoreConfig[scoring]?.isEditable && scoringState[`${parent?.title}-${scoring}`]) ? 
+                                  <ScoringInput 
+                                  scoring={scoring} 
+                                  title={title} 
+                                  setTitle={setTitle} 
+                                  description={description} 
+                                  setDescription={setDescription} 
+                                  handleCancel={() => handleCancel(scoring)} 
+                                  handleSave={() => handleSave(scoring)} 
+                                  />
+                                  : <>
+                                    <p className="typography-body flex justify-between">
+                                      <span className="flex gap-2">
+                                      {jobBasedScoringSchema?.find(score => score.defaultKey === scoring)?.customKey || scoring}
+                                      {(hasPermission(role,PERMISSIONS.SHOW_EDIT_SCORING) && scoringStage.scoreConfig[scoring]?.isEditable) && 
+                                      <button onClick={() => handleEditScoring(scoring)} type="button"><IconWrapper size={0} customIconSize={1} icon={Pencil} /></button>}
+                                      </span>
+                                      <span>{scoringStage.scoreConfig[scoring].score}</span> 
+                                    </p>
+                                    <div className="flex justify-between items-center mt-2">
+                                      <p className="typography-body text-font-gray w-[90%]">
+                                        {jobBasedScoringSchema?.find(score => score.defaultKey === scoring)?.description || scoringStage.scoreConfig[scoring].description}
+                                      </p>
+                                    </div>
+                                  </>}
+                                </div>
+                              ))}
+                            </StyledCard>
+                            </div>
+                          </div>
+
+                        </div>
                       </div>
-                    ))}
+                    )}
                 </div>
               </StyledCard>
             ))}
