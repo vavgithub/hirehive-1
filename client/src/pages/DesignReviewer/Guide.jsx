@@ -256,11 +256,11 @@ const MapperComponent = ({ role, customSchema, config, activeProfile, level , sc
                           <div className="grid grid-cols-2 gap-4 items-stretch">
                             {/* Fixed Scoring */}
                             <div className="h-full flex flex-col">
+                              <p className="typography-body mb-2">Fixed scoring criteria</p>
                               <StyledCard
                                 backgroundColor={'bg-background-70'}
                                 extraStyles={'flex flex-col gap-4 h-full'}
                               >
-                                <p className="typography-body mb-2">Fixed scoring criteria</p>
                                 {Object.keys(scoringStage.scoreConfig)
                                   .filter(scoring => scoring !== "total" && !scoringStage.scoreConfig[scoring]?.isEditable)
                                   .map((scoring, index) => (
@@ -289,11 +289,11 @@ const MapperComponent = ({ role, customSchema, config, activeProfile, level , sc
 
                             {/* Dynamic Scoring */}
                             <div className="h-full flex flex-col">
+                              <p className="typography-body mb-2">Dynamic scoring criteria</p>
                               <StyledCard
                                 backgroundColor={'bg-background-70'}
                                 extraStyles={'flex flex-col gap-4 h-full'}
                               >
-                                <p className="typography-body mb-2">Dynamic scoring criteria</p>
                                 {Object.keys(scoringStage.scoreConfig)
                                   .filter(scoring => scoring !== "total" && scoringStage.scoreConfig[scoring]?.isEditable)
                                   .map((scoring, index) => (
