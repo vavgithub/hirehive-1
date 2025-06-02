@@ -10,7 +10,8 @@ const TermsAndCondition = () => {
         <>
         <Container>
 
-            <LogoWrapper headerText='Terms and Conditions' />
+            {/* <LogoWrapper headerText='Terms and Conditions' /> */}
+            <Header withBack={"true"} HeaderText='Terms and Conditions' />
             <StyledCard>
                 <article>
 
@@ -133,7 +134,7 @@ const TermsAndCondition = () => {
 
             </StyledCard>
         </Container>
-        <Footer/>
+        {/* <Footer/> */}
         </>
     )
 }

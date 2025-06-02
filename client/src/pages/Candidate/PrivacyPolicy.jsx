@@ -9,7 +9,7 @@ const PrivacyPolicy = () => {
   return (
     <>
       <Container>
-        <LogoWrapper headerText="Privacy Policy" />
+        <Header withBack={"true"} HeaderText="Privacy Policy" />
         <StyledCard>
           <article>
             <h3>Information We Collect</h3>
@@ -87,7 +87,7 @@ const PrivacyPolicy = () => {
           </article>
         </StyledCard>
       </Container>
-      <Footer />
+      {/* <Footer /> */}
     </>
   );
 };
