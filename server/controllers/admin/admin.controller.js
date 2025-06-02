@@ -908,3 +908,33 @@ export const updateScreeningParam = asyncHandler(async (req,res) => {
     message: 'Updated Screening parameters successfully.',
   });
 })
+
+export const resetScreeningParam = asyncHandler(async (req,res) => {
+  const { paramId, jobProfile } = req.body;
+  const { company_id } = req.user
+
+  if(!paramId?.trim() || !jobProfile?.trim()){
+      return res.status(400).json({
+        status: 'error',
+        message: 'Invalid data for screening parameter reset.'
+      });
+  }
+
+  const updatedParam = await Company.findById({_id: company_id});
+  if(updatedParam.customScreeningParam.has(jobProfile)){
+    let newCustomObj = []
+    for(let customParam of updatedParam.customScreeningParam.get(jobProfile)){
+      if(customParam?._id?.toString() !== paramId){
+        newCustomObj.push(customParam)
+      }
+    }
+    updatedParam.customScreeningParam.set(jobProfile,newCustomObj)
+  }
+
+  await updatedParam.save()
+
+  res.status(200).json({
+    status: 'success',
+    message: 'Screening parameter reset successfully.',
+  });
+})
