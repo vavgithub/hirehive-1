@@ -146,5 +146,5 @@ const uiuxTemplates = [
 ]
 
 export const taskTemplates = [
-    ...uiuxTemplates
+    // ...uiuxTemplates
 ]
