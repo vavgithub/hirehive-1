@@ -110,9 +110,13 @@ export const router = createBrowserRouter([
     ],
   },
   {
-    path: "/:id",
-    element: <ViewJob />
+    path: "/org",
+    element: <Navigate to={'/'} />
   },
+  // {
+  //   path: "/:id",
+  //   element: <ViewJob />
+  // },
   {
     path: "/org/:companyId/view-job/:id",
     element: <ViewJob />
@@ -181,6 +185,10 @@ export const router = createBrowserRouter([
         path: "jobs",
         children: [
           {
+            path: "",
+            element: <Navigate to="all" replace />,
+          },
+          {
             path: "all",
             children: [
               {
@@ -231,6 +239,10 @@ export const router = createBrowserRouter([
       {
         path: "candidates",
         children: [
+          {
+            path: "",
+            element: <Navigate to="all" replace />,
+          },
           {
             path: "shortlisted",
             children: [
@@ -323,6 +335,10 @@ export const router = createBrowserRouter([
         path: "jobs",
         children: [
           {
+            path: "",
+            element: <Navigate to="all" replace />,
+          },
+          {
             path: "all",
             children: [
               {
@@ -379,6 +395,10 @@ export const router = createBrowserRouter([
       {
         path: "candidates",
         children: [
+          {
+            path: "",
+            element: <Navigate to="all" replace />,
+          },
           {
             path: "shortlisted",
             children: [
@@ -487,8 +507,8 @@ export const router = createBrowserRouter([
     path: "*",
     element: <ErrorPage />
   },
-  {
-    path: "/test",
-    element: <Text />
-  }
+  // {
+  //   path: "/test",
+  //   element: <Text />
+  // }
 ]);

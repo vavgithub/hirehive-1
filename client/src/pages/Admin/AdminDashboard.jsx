@@ -252,7 +252,7 @@ function AdminDashboard() {
             {
               dashboardDetails?.interviews?.upcomingInterviews?.length > 0 ? dashboardDetails.interviews.upcomingInterviews.map(interview => {
                 return (
-                  <StyledCard onClick={() => navigate(`${getRoute(user?.role,ROUTE_KEY.CANDIDATES_VIEW_CANDIDATE)}/${interview?._id}/${interview?.jobApplications?.jobId}`)} key={interview?._id} padding={2} backgroundColor={'bg-background-70'}  extraStyles={'mt-4 relative cursor-pointer '}>
+                  <StyledCard onClick={() => navigate(`${getRoute(user?.role,ROUTE_KEY.CANDIDATES_VIEW_CANDIDATE)}/${interview?._id}/${interview?.jobApplications?.jobId}`)} key={interview?._id} padding={2} backgroundColor={'bg-background-70'}  extraStyles={'mt-4 relative cursor-pointer hover:bg-background-60 '}>
                     <p className='flex items-center justify-between gap-2 w-full ' >
                       <StageBadge customBg={'bg-background-60'} stage={interview?.jobApplications?.currentStage} customWidth={'w-fit'} />
                       <span className='typography-large-p h-full text-font-gray flex gap-2 items-center'><IconWrapper isInActiveIcon size={0} icon={CalendarDays} />{UTCToDateFormatted(interview?.scheduledDate)} at {formatUTCToLocalTimeAuto(interview?.scheduledDate)}</span>
