@@ -333,7 +333,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
     const renderCallData = (call,isRescheduled) => (
       <div className={' bg-background-70 flex justify-between items-center rounded-xl p-4'}>
             <div className='flex flex-col'>
-                {!isRescheduled && <span className='typography-small-p text-font-gray'>Date</span>}
+                {!isRescheduled && <span className='typography-small-p text-font-gray mb-2'>Date</span>}
                 <div className={(isRescheduled && "text-font-gray ") + ' flex items-center gap-2'}>
                     <IconWrapper icon={Calendar} size={0} customIconSize={5} isInActiveIcon={true} customStrokeWidth={4} />
                     <p className={isRescheduled && 'typography-body'}>
@@ -343,7 +343,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
             </div>
             {isRescheduled && <div className='w-1 h-1 border-font-gray bg-font-gray border-[1px] rounded-full '></div>}
             <div className='flex flex-col'>
-                {!isRescheduled && <span className='typography-small-p text-font-gray'>Time</span>}
+                {!isRescheduled && <span className='typography-small-p text-font-gray mb-2'>Time</span>}
                 <div className={(isRescheduled && "text-font-gray ") + ' flex items-center gap-2'}>
                     <IconWrapper icon={Clock} size={0} customIconSize={5} isInActiveIcon={true} customStrokeWidth={4} />
                     <p className={isRescheduled && 'typography-body'}>
