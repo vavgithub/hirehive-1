@@ -4,9 +4,9 @@ import { autoAssignPortfolios, getAssignedCandidates, getUnderReviewStats, submi
 
 const router = express.Router();
 
-router.put('/update-assignee', updateCandidateAssignee);
+router.put('/update-assignee', protect, updateCandidateAssignee);
 
-router.post('/auto-assign-portfolios', autoAssignPortfolios)
+router.post('/auto-assign-portfolios',protect, autoAssignPortfolios)
 
 router.get('/assigned-candidates', protect , roleProtect("Design Reviewer") , getAssignedCandidates);
 

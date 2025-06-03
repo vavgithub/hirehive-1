@@ -224,7 +224,7 @@ function TaskForm({jobProfile,candidateId,candidateEmail,jobId,setIsLoading}) {
                 <span className="text-red-100">*</span>
             </div>
 
-            <TextEditor clearPreset={setSelectedTaskPreset} hasClearOption presetLoaded={presetLoaded} presetTemplate={selectedTaskPreset} htmlData={taskDescription} loaded={false} errors={descriptionError} placeholder={"Write a Task Description"} setEditorContent={(data)=>setTaskDescription(data)} />
+            <TextEditor clearPreset={setSelectedTaskPreset} hasClearOption presetLoaded={presetLoaded} presetTemplate={selectedTaskPreset} htmlData={taskDescription} loaded={false} errors={descriptionError} placeholder={"Write a Task Description"} setEditorContent={(data)=>setTaskDescription(data)} customBg={' custom-input '} />
 
             {descriptionError && <p className="text-red-500 absolute typography-small-p top-[23rem]">Task Description is required</p>}
 

@@ -236,15 +236,6 @@ const getCandidate = async (req, res) => {
   }
 };
 
-const createCandidate = async (req, res) => {
-  try {
-    const candidate = new candidates(req.body);
-    await candidate.save();
-    res.status(201).send(candidate);
-  } catch (error) {
-    res.status(400).send(error);
-  }
-};
 
 const getCandidateById = async (req, res) => {
   try {
@@ -601,12 +592,14 @@ const filterSearchJobs = asyncHandler(async (req, res) => {
     }
   }
 
-  const filteredSearchJobs = await jobs.find(query).populate('company_id')
-  .sort({ createdAt: -1 })
-  .skip((pageNumber - 1) * LIMIT)
-  .limit(LIMIT); // Fetch jobs with the new query including status: 'open'
-
-  const filteredSearchJobsCount = await jobs.countDocuments(query);
+  const [filteredSearchJobs, filteredSearchJobsCount] = await Promise.all([
+    jobs.find(query)
+        .populate('company_id')
+        .sort({ createdAt: -1 })
+        .skip((pageNumber - 1) * LIMIT)
+        .limit(LIMIT),
+    jobs.countDocuments(query)
+  ]);
 
   res.status(200).json({filteredSearchJobs,filteredSearchJobsCount});
 });
@@ -707,7 +700,6 @@ export {
   submitApplication,
   updateCandidateStatusById,
   getCandidate,
-  createCandidate,
   getCandidateById,
   updateStatusAndStage,
   updateAssignee,

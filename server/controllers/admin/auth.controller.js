@@ -208,34 +208,32 @@ export const getUserProfile = asyncHandler(async (req, res) => {
 
 //Getting Design Reviewers + Admin of one company
 export const getAvailableDesignReviewers = async (req, res) => {
-    try {
-      const company_id = req.user?.company_id;
+  try {
+    const company_id = req.user?.company_id;
 
-      const allReviewers = await User.find({ 
-        role: 'Design Reviewer',
-        company_id : company_id,
-        isAvailable : true
-      }).select('_id firstName lastName email isAvailable profilePicture'); // Include _id and isAvailable
-  
-      const admin = await User.findOne({ 
-        role: 'Admin',
-        company_id : company_id,
-        isAvailable : true
-      }).select('_id firstName lastName email isAvailable profilePicture'); 
+    const users = await User.find({
+      company_id,
+      isAvailable: true,
+      role: { $in: ['Design Reviewer', 'Admin'] }
+    }).select('_id firstName lastName email isAvailable profilePicture role');
 
-      res.status(200).json({ 
-        success: true, 
-        data: allReviewers,
-        admin 
-      });
-    } catch (error) {
-      res.status(500).json({ 
-        success: false, 
-        message: 'Error fetching design reviewers', 
-        error: error.message 
-      });
-    }
-  };
+    const allReviewers = users.filter(user => user.role === 'Design Reviewer');
+    const admin = users.find(user => user.role === 'Admin') || null;
+
+    res.status(200).json({
+      success: true,
+      data: allReviewers,
+      admin
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching design reviewers',
+      error: error.message
+    });
+  }
+};
+
 
 // Request Password Reset / Send OTP
 export const forgotPassword = asyncHandler(async (req, res) => {

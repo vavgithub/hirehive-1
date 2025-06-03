@@ -23,15 +23,15 @@ import { uploadVideo  } from "../../middlewares/uploadMiddleware.js";
 
 const router = express.Router();
 
-router.get('/shortlisted/:company_id',shortlistCandidate);
+router.get('/shortlisted/:company_id',protect, shortlistCandidate);
 router.get("/getData/data/allCandidatesWithStats",protect, getAllCandidatesWithStats);
 
 
 router.get("/:candidateId/job/:jobId", getCandidateById);
 
-router.post('/:candidateId/job/:jobId/shortlist',toggleShortlistCandidate);
+router.post('/:candidateId/job/:jobId/shortlist',protect, toggleShortlistCandidate);
 
-router.post("/:candidateId/:jobId/addNotes", addNotes);
+router.post("/:candidateId/:jobId/addNotes", protect, addNotes);
 
 router.patch("/update-candidate/:id/:jobId",protect, roleProtect(["Hiring Manager","Admin"]), updateCandidateProfessionalDetails);
 
@@ -41,7 +41,7 @@ router.patch("/update/:id", updateStatusAndStage);
 router.patch("/update-candidate-profile/:id" , protect, roleProtect(["Hiring Manager","Admin"]), updateCandidateProfile);
 
 // router.get("/questions/random", getRandomQuestions);
-router.get("/assessment-questions/random", protectCandidate, getRandomAssessmentQuestions);
+router.post("/assessment-questions/random", protectCandidate, getRandomAssessmentQuestions);
 router.get("/assessment-questions",protect,roleProtect(['Admin','Hiring Manager']), getAssessmentQuestionsById);
 
 router.post("/questionnaire/:candidateId/",protectCandidate, submitQuestionnaireAttempt);

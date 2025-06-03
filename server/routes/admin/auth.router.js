@@ -8,9 +8,6 @@ import { fileURLToPath } from 'url';
 import { initializeUploadDir, uploadsDir } from '../../config/paths.js';
 
 const router = express.Router();
-// const __filename = fileURLToPath(import.meta.url);
-// const __dirname = path.dirname(__filename);
-// const uploadsDir = path.join(__dirname, '..', 'uploads');
 
 // Initialize the uploads directory
 await initializeUploadDir();

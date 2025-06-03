@@ -90,7 +90,7 @@ export const addTeamMember = asyncHandler(async (req,res) => {
     })
   })
 
-  export const reInviteMember = asyncHandler(async (req,res) => {
+export const reInviteMember = asyncHandler(async (req,res) => {
     const { memberId } = req.body;
 
     const userData = req.user;
@@ -146,12 +146,15 @@ export const addTeamMember = asyncHandler(async (req,res) => {
     })
   })
 
-  export const changeMemberStatus = asyncHandler(async (req,res) => {
+export const changeMemberStatus = asyncHandler(async (req,res) => {
     const { memberId } = req.body;
 
     const userData = req.user;
 
-    const isExisitngCompany = await Company.findById({_id : userData?.company_id})
+    const [isExisitngCompany, isMemberExist] = await Promise.all([
+      Company.findById(userData?.company_id),
+      User.findById(memberId)
+    ]);
 
     if(!isExisitngCompany){
         return res.status(400).json({
@@ -160,8 +163,6 @@ export const addTeamMember = asyncHandler(async (req,res) => {
           });
     }
   
-    const isMemberExist = await User.findById(
-      { _id : memberId })
 
     if(!isMemberExist){
         return res.status(400).json({
@@ -906,5 +907,35 @@ export const updateScreeningParam = asyncHandler(async (req,res) => {
   res.status(200).json({
     status: 'success',
     message: 'Updated Screening parameters successfully.',
+  });
+})
+
+export const resetScreeningParam = asyncHandler(async (req,res) => {
+  const { paramId, jobProfile } = req.body;
+  const { company_id } = req.user
+
+  if(!paramId?.trim() || !jobProfile?.trim()){
+      return res.status(400).json({
+        status: 'error',
+        message: 'Invalid data for screening parameter reset.'
+      });
+  }
+
+  const updatedParam = await Company.findById({_id: company_id});
+  if(updatedParam.customScreeningParam.has(jobProfile)){
+    let newCustomObj = []
+    for(let customParam of updatedParam.customScreeningParam.get(jobProfile)){
+      if(customParam?._id?.toString() !== paramId){
+        newCustomObj.push(customParam)
+      }
+    }
+    updatedParam.customScreeningParam.set(jobProfile,newCustomObj)
+  }
+
+  await updatedParam.save()
+
+  res.status(200).json({
+    status: 'success',
+    message: 'Screening parameter reset successfully.',
   });
 })

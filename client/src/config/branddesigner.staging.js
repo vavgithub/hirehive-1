@@ -275,7 +275,7 @@ export const brandDesignerConfig = [
                 Budget : 5,
                 Identity : 5,
                 Consistency : 5,
-                Narrative : 5,
+                "Narrative Thinking" : 5,
             },
             scoreDetails : {
                 Attitude : {
@@ -289,7 +289,7 @@ export const brandDesignerConfig = [
                     description : "Judges harmony in visual system across outputs.",
                     isEditable : true
                 },
-                Narrative : {
+                "Narrative Thinking" : {
                     description : "Evaluates story alignment across brand touchpoints.",
                     isEditable : true
                 },

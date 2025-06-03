@@ -391,7 +391,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
 
         return (<div className='grid grid-cols-3 gap-8 w-full '>
             {scoreCategories.map((category, index) => (
-                <div key={index} className='grid grid-cols-[1fr,1fr] w-full gap-4 items-center'>
+                <div key={index} className='grid grid-cols-[2fr,1fr] w-full gap-4 items-center'>
                     <span className='typography-body text-font-gray '>{category.label}</span>
                     <BulletMarks marks={category.value} />
                 </div>

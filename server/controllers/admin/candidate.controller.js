@@ -39,6 +39,7 @@ export const getAllCandidatesForJob = async (req, res) => {
         "jobApplications.jobId": jobId,
         isVerified: true,
       })
+      .select('-password')
       .sort({ "jobApplications.applicationDate": -1 });
 
     // Process and format the candidate data
@@ -204,13 +205,16 @@ export const updateCandidateProfessionalDetails = async (req, res) => {
       req.body;
 
     // Fetch candidate
-    const candidate = await candidates.findById(id);
+    const [candidate, job] = await Promise.all([
+      candidates.findById(id),
+      jobs.findById(jobId)
+    ]);
+
     if (!candidate) {
       return res.status(400).json({ message: "Invalid Candidate Data" });
     }
 
     // Fetch job
-    const job = await jobs.findById(jobId);
     if (!job) {
       return res.status(400).json({ message: "Invalid Job Data" });
     }
@@ -556,6 +560,7 @@ export const addNotes = async (req, res) => {
 export const getCandidateJobs = async (req, res) => {
   try {
     const { candidateId } = req.params;
+    const { company_id } = req.user;
 
     // Find the candidate
     const candidate = await candidates
@@ -566,9 +571,13 @@ export const getCandidateJobs = async (req, res) => {
       return res.status(404).send({ message: "Candidate not found" });
     }
 
+    let companyFilteredApplications = []
+    if(candidate?.jobApplications.length > 0){
+      companyFilteredApplications = candidate.jobApplications?.filter(app => app.companyDetails?._id?.toString() === company_id?.toString())
+    }
+
     res.status(200).json({
-      jobs:
-        candidate?.jobApplications.length > 0 ? candidate.jobApplications : [],
+      jobs: companyFilteredApplications,
     });
   } catch (error) {
     console.error("Error in getCandidateJobs:", error);

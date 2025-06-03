@@ -273,7 +273,7 @@ export const UIUXConfig = [
                 Attitude : 5,
                 Communication : 5,
                 Budget : 5,
-                Narrative : 5,
+                "Narrative Thinking" : 5,
                 'UI/UX' : 5,
                 HTML : 5,
 
@@ -282,7 +282,7 @@ export const UIUXConfig = [
                 Attitude : {
                     description : "Evaluates adaptability and understanding of trends."
                 },
-                Narrative : {
+                "Narrative Thinking" : {
                     description : "Assesses storytelling ability in design projects and case studies.",
                     isEditable : true
                 },

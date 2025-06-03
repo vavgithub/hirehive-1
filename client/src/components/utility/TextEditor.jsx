@@ -47,6 +47,7 @@ function TextEditor({ hasClearOption, customBg, htmlData, loaded, errors, placeh
       };
       
 
+
     const handleOnChange = (editorState, editor)=>{
         editor.update(()=>{
             const htmlString = $generateHtmlFromNodes(editor)
@@ -56,7 +57,7 @@ function TextEditor({ hasClearOption, customBg, htmlData, loaded, errors, placeh
 
     const CustomContent = useMemo(() => {
         return (
-            <ContentEditable className={`editor-editable ${customBg}  scrollbar-hide ${errors ? "border border-red-500" : ""}`} />
+            <ContentEditable className={`editor-editable ${customBg} scrollbar-hide ${errors ? "border border-red-500" : ""}`} />
         )
     }, [errors]);
 

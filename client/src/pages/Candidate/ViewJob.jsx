@@ -27,7 +27,7 @@ const ViewJob = () => {
     const { id: mainId } = useParams();
     const navigate = useNavigate();
 
-    const { isAuthenticated, isLoading, candidateData } = useCandidateAuth()
+    const { isAuthenticated, candidateData } = useCandidateAuth()
 
     const {
         data: formData,
@@ -40,7 +40,7 @@ const ViewJob = () => {
         enabled: !!mainId,
     });
 
-    if (isApiLoading || isLoading) {
+    if (isApiLoading) {
         return (
             <div className="flex justify-center items-center min-h-screen">
                 <Loader />

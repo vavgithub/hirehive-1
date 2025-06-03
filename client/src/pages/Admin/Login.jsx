@@ -41,7 +41,7 @@ const Login = () => {
             await refetchAuth();
         },
         onError: (error) => {
-            showErrorToast('Invalid credentials' , error?.response?.data?.error || "Server error");
+            showErrorToast('Error' , error?.response?.data?.error || "Server error");
         },
     });
 

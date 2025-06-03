@@ -9,6 +9,7 @@ export const PhoneInputField = ({
   control,
   rules,
   label,
+  customBgClass,
   rowWise = false,
   required = false,
   ...props
@@ -80,8 +81,9 @@ export const PhoneInputField = ({
               onChange={handlePhoneChange}
               placeholder={'Enter Phone Number'}
               containerClass={"rounded-xl  " + (rowWise ? "min-w-[60%] w-[100%] " : "") + ((error || isInvalid) && "border border-red-500")}
-              dropdownClass="scrollbar-hide w-[100%]"
-              inputClass="typography-body text-white w-[100%]"
+              dropdownClass="scrollbar-hide w-[100%] "
+              inputClass="typography-body text-white w-[100%] "
+              buttonClass={customBgClass}
               searchPlaceholder="Search"
               enableSearch={true}
               // Helpful for user feedback during typing, but doesn't replace our validation
