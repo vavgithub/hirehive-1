@@ -142,7 +142,7 @@ const updateMailSendAndStatuses = async () => {
 
 const startScheduledJobs = () => {
   // Run every 30 seconds
-  cron.schedule('*/5 * * * *', () => {
+  cron.schedule('*/1 * * * *', () => {
     console.log(`[${new Date().toISOString()}] Running scheduled job to update call statuses`);
     updateCallStatuses();
     updateMailSendAndStatuses()
