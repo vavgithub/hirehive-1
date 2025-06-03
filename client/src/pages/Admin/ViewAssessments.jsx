@@ -6,7 +6,7 @@ import { useQuery } from '@tanstack/react-query';
 import axios from '../../api/axios';
 import LoaderModal from '../../components/Loaders/LoaderModal';
 import IconWrapper from '../../components/Cards/IconWrapper';
-import { ClipboardCheck, ShieldBan } from 'lucide-react';
+import { ClipboardCheck, Headset, ShieldBan } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { getRoute, ROUTE_KEY } from '../../config/permissions.config';
 import { useAuthContext } from '../../context/AuthProvider';
@@ -57,11 +57,12 @@ function ViewAssessments() {
                     <div>
                         <div className='w-full flex flex-col justify-center items-center'>
                             <StyledCard backgroundColor={'bg-background-70'} extraStyles={'flex flex-col justify-center items-center mb-6'}>
-                                <IconWrapper icon={ShieldBan} isErrorIcon customStrokeWidth={5} size={0} customIconSize={10} />
-                                <h2 className='mt-4 pb-0'>Access Denied</h2>
+                                <div className='text-primary-100'>
+                                    <IconWrapper icon={Headset} inheritColor customStrokeWidth={5} size={0} customIconSize={10} />
+                                </div>
+                                <h2 className='mt-4 pb-0'>Contact Support</h2>
                             </StyledCard>
-                            <p className='typography-body text-font-gray'>To get access to this feature, complete building your team.</p>
-                            <p className='typography-body text-font-gray'>If you have any further concerns or queries, Reach out to us on submitting this <span onClick={()=>setShowContactUs(true)} className='underline hover:text-font-accent cursor-pointer'>Contact Us</span>  Form.</p>
+                            <p className='typography-body text-font-gray'>To get access to this feature, reach out to us on submitting this <span onClick={()=>setShowContactUs(true)} className='underline hover:text-font-accent cursor-pointer'>Contact Us</span>  Form.</p>
                         </div>
                     </div>
                 :
