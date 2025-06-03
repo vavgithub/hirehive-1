@@ -33,7 +33,7 @@ function onError(error) {
     // console.error("Lexical Editor Error:", error);
 }
 
-function TextEditor({htmlData,loaded,errors,placeholder,setEditorContent}) {
+function TextEditor({htmlData,loaded,errors,placeholder,setEditorContent,customBg}) {
 
     const initialConfig = {
         namespace: 'MyEditor',
@@ -57,7 +57,7 @@ function TextEditor({htmlData,loaded,errors,placeholder,setEditorContent}) {
 
     const CustomContent = useMemo(() => {
         return (
-            <ContentEditable className={`editor-editable scrollbar-hide ${errors ? "border border-red-500" : ""}`} />
+            <ContentEditable className={`editor-editable ${customBg} scrollbar-hide ${errors ? "border border-red-500" : ""}`} />
         )
     }, [errors]);
 

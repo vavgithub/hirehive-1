@@ -186,7 +186,7 @@ function TaskForm({candidateId,candidateEmail,jobId,setIsLoading}) {
                 value={taskDescription}
                 onChange={(e) => setTaskDescription(e.target.value)}
             /> */}
-            <TextEditor htmlData={taskDescription} loaded={false} errors={descriptionError} placeholder={"Write a Task Description"} setEditorContent={(data)=>setTaskDescription(data)} />
+            <TextEditor htmlData={taskDescription} loaded={false} errors={descriptionError} placeholder={"Write a Task Description"} setEditorContent={(data)=>setTaskDescription(data)} customBg={' custom-input '} />
 
             {descriptionError && <p className="text-red-500 absolute typography-small-p top-[23rem]">Task Description is required</p>}
             <div className='flex justify-normal gap-4'>
