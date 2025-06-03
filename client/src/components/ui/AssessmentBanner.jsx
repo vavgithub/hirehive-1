@@ -20,7 +20,7 @@ const AssessmentBanner = () => {
 
                 <div className='flex-col'>
 
-                    <h2 className='hidden md:flex typography-h2 '>
+                    <h2 className='hidden md:flex pb-2'>
                         Accelerate
                     </h2>
                     <p className='md:hidden typograhpy-body '>Please Logged into Desktop Version to submit your assessment for high priority selection</p>

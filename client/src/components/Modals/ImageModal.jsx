@@ -18,10 +18,6 @@ function ImageModal({isOpen, onClose, imageUrl}) {
         <StyledCard backgroundColor={"bg-transparent"} extraStyles="relative w-[80%] max-w-4xl z-10 overfflow-hidden">
             {/* Close button */}
 
-
-            {/* Video title */}
-            {/* <h2 className="typography-h2 mb-4">Assessment Recording</h2> */}
-
             {/* Video container with loader */}
             <div className="relative  w-full  rounded-lg ">
                 <div className='h-full w-fit relative mx-auto'>

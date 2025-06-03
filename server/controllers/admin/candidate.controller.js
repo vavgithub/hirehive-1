@@ -11,6 +11,7 @@ import { getPreviousMonthRange, getPreviousWeekRange, getYesterdayTodayRange } f
 import mongoose from "mongoose";
 import { EMAIL_REGEX } from "../../utils/validator.js";
 import { Assessment } from "../../models/admin/assessment.model.js";
+import { Company } from "../../models/admin/company.model.js";
 
 // controllers/candidate.controller.js
 
@@ -38,6 +39,7 @@ export const getAllCandidatesForJob = async (req, res) => {
         "jobApplications.jobId": jobId,
         isVerified: true,
       })
+      .select('-password')
       .sort({ "jobApplications.applicationDate": -1 });
 
     // Process and format the candidate data
@@ -203,13 +205,16 @@ export const updateCandidateProfessionalDetails = async (req, res) => {
       req.body;
 
     // Fetch candidate
-    const candidate = await candidates.findById(id);
+    const [candidate, job] = await Promise.all([
+      candidates.findById(id),
+      jobs.findById(jobId)
+    ]);
+
     if (!candidate) {
       return res.status(400).json({ message: "Invalid Candidate Data" });
     }
 
     // Fetch job
-    const job = await jobs.findById(jobId);
     if (!job) {
       return res.status(400).json({ message: "Invalid Job Data" });
     }
@@ -286,7 +291,8 @@ export const updateCandidateProfile = async (req, res) => {
       website , 
       experience , 
       currentCTC ,
-      expectedCTC , 
+      expectedCTC ,
+      hourlyRate , 
       noticePeriod } = req.body;
 
     // Validate mandatory text fields
@@ -306,6 +312,7 @@ export const updateCandidateProfile = async (req, res) => {
       isNaN(Number(experience)) ||
       isNaN(Number(currentCTC)) ||
       isNaN(Number(expectedCTC)) ||
+      isNaN(Number(hourlyRate)) ||
       isNaN(Number(noticePeriod))
     ) {
       return res.status(400).json({ message: "Numeric fields must be valid numbers" });
@@ -322,6 +329,7 @@ export const updateCandidateProfile = async (req, res) => {
           experience,
           currentCTC,
           expectedCTC,
+          hourlyRate,
           noticePeriod
       }, {
       new: true,
@@ -476,7 +484,7 @@ export const getCandidateById = async (req, res) => {
       jobApplication: {
         jobId: jobApplication.jobId,
         jobApplied: jobApplication.jobApplied,
-        jobProfile: jobApplication?.jobProfile || "UI UX",
+        jobProfile: jobApplication?.jobProfile || "UI UX", //Dont remove this fallback value
         jobStatus: job ? job.status : "deleted",
         notes: jobApplication.notes,
         jobType: job ? job.employmentType : "NA",
@@ -552,6 +560,7 @@ export const addNotes = async (req, res) => {
 export const getCandidateJobs = async (req, res) => {
   try {
     const { candidateId } = req.params;
+    const { company_id } = req.user;
 
     // Find the candidate
     const candidate = await candidates
@@ -562,9 +571,13 @@ export const getCandidateJobs = async (req, res) => {
       return res.status(404).send({ message: "Candidate not found" });
     }
 
+    let companyFilteredApplications = []
+    if(candidate?.jobApplications.length > 0){
+      companyFilteredApplications = candidate.jobApplications?.filter(app => app.companyDetails?._id?.toString() === company_id?.toString())
+    }
+
     res.status(200).json({
-      jobs:
-        candidate?.jobApplications.length > 0 ? candidate.jobApplications : [],
+      jobs: companyFilteredApplications,
     });
   } catch (error) {
     console.error("Error in getCandidateJobs:", error);
@@ -974,41 +987,75 @@ export const getAssessmentQuestionsById = async (req, res) => {
         message : "No Assessment Id Found"
       })
     }
-    const assessmentObjectId = new mongoose.Types.ObjectId(assessmentId);
 
-    const result = await Assessment.aggregate([
-      { $match: { _id: assessmentObjectId } },
-      { $project: { questions: 1 } },
-      { $unwind: "$questions" },
-      {
-        $addFields: {
-          "questions.options": {
-            $map: {
-              input: "$questions.options",
-              as: "opt",
-              in: {
-                text: "$$opt.text",
-                imageUrl: "$$opt.imageUrl"
-                // 'isCorrect' is intentionally omitted
+    const company_id = req.user.company_id;
+    let hasAccess = false;
+    if(company_id){
+      const company = await Company.findById({_id : company_id});
+
+      //Criteria to Allow Users to Assessment Questions is Team member to be 3 or above
+      if(company.assessmentAccess){
+        if(company.assessmentAccess === "ALLOWED"){
+          hasAccess = true
+        }
+      }else if(company?.invited_team_members?.filter(member => member?.status === "JOINED")?.length >= 3){
+        hasAccess = true
+      }
+    }
+
+    if(!hasAccess){
+      res.status(405).json({
+        error: 'No Access for Assessment',
+        hasAccess
+      });
+    }else{
+
+      const assessmentObjectId = new mongoose.Types.ObjectId(assessmentId);
+  
+      const result =  await Assessment.aggregate([
+        { $match: { _id: assessmentObjectId } },
+        { $project: { questions: 1 ,title : 1 , category : 1} },
+        { $unwind: "$questions" },
+        { $match: {
+            $or: [
+              { "questions.inActive": { $exists: false } },
+              { "questions.inActive": false }
+            ]
+        } },
+        {
+          $addFields: {
+            "questions.options": {
+              $map: {
+                input: "$questions.options",
+                as: "opt",
+                in: {
+                  text: "$$opt.text",
+                  imageUrl: "$$opt.imageUrl"
+                  // 'isCorrect' is intentionally omitted
+                }
               }
             }
           }
+        },
+        {
+          $group: {
+            _id: "$_id",
+            title : { $first : '$title'},
+            category : { $first : '$category'},
+            questions: { $push: "$questions" }
+          }
         }
-      },
-      {
-        $group: {
-          _id: "$_id",
-          questions: { $push: "$questions" }
-        }
-      }
-    ]);  
-
-    console.log(`Found ${result[0]?.questions?.length} questions`);
-
-    res.status(200).json({
-      success: true,
-      questions : result[0]?.questions,
-    });
+      ]);  
+  
+      console.log(`Found ${result[0]?.questions?.length} questions`);
+  
+      res.status(200).json({
+        success: true,
+        title : result[0]?.title,
+        category : result[0]?.category,
+        questions : result[0]?.questions,
+      });
+    }
   } catch (error) {
     console.error("Error in getRandomQuestions:", error);
     res.status(500).json({
@@ -1035,6 +1082,12 @@ export const getRandomAssessmentQuestions = async (req, res) => {
       { $match: { _id: assessmentObjectId } },
       { $project: { questions: 1 } },
       { $unwind: "$questions" },
+      { $match: {
+          $or: [
+            { "questions.inActive": { $exists: false } },
+            { "questions.inActive": false }
+          ]
+      } },
       { $sample: { size: 10 } },
       {
         $addFields: {
@@ -1108,6 +1161,7 @@ export const submitQuestionnaireAttempt = async (req, res) => {
     // Create attempt data
     const attemptData = {
       title : assessment?.title,
+      category : assessment?.category,
       totalTimeInSeconds,
       score,
       responses,
@@ -1335,6 +1389,7 @@ export const getJobBasedQuestionnaireDetails = async (req, res) => {
         assessment : {
           _id:assessment._id,
           title : assessment.title ?? latestAttempt?.title,
+          category : assessment.category ?? latestAttempt?.category,
         },
         questionResponses: latestAttempt.responses.map((response, index) => {
           const question = questionMap[response.questionId.toString()];

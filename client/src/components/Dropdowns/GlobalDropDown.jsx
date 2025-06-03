@@ -5,12 +5,17 @@ import {
     TextField
   } from '@mui/material';
   import React, { useEffect, useRef, useState } from 'react';
+import IconWrapper from '../Cards/IconWrapper';
+import { Info } from 'lucide-react';
+import CustomToolTip from '../Tooltip/CustomToolTip';
   
   function GlobalDropDown({
     onChange,
     options,
     label,
     error,
+    hasInfoIcon,
+    infoText = "",
     errorMessage,
     defaultValue = '',
     value,
@@ -45,7 +50,13 @@ import {
       : options;
   
     return (
-      <div ref={dropdownRef} className="w-full relative">
+      <div ref={dropdownRef} className="w-full relative flex flex-col gap-2">
+        { hasInfoIcon && 
+        <div className='absolute top-0 right-0'>
+          <CustomToolTip title={infoText} arrowed>
+            <IconWrapper size={0} customIconSize={2} customStrokeWidth={5} icon={Info} />
+          </CustomToolTip>
+        </div>}
         {label && (
           <label className={"typography-body " + extraStylesForLabel}>
             {label}
@@ -55,7 +66,7 @@ import {
         <button
           type="button"
           onClick={handleOpen}
-          className={`${value ? "text-white" : "text-font-gray"} ${error ? '!border !border-red-500' : 'border border-transparent'}  typography-body ${label ? " mt-3 " : " mt-0 "} h-[2.75rem] flex items-center justify-between bg-background-80 hover:bg-background-60 w-full outline-none rounded-xl shadow-sm focus:ring-teal-300 focus:border-teal-300 text-left px-4`}
+          className={`${value ? "text-white" : "text-font-gray"} ${error ? '!border !border-red-500' : 'border border-transparent'}  typography-body ${label ? " mt-0 " : " mt-0 "} h-[2.75rem] flex items-center justify-between bg-background-80 hover:bg-background-60 w-full outline-none rounded-xl shadow-sm focus:ring-teal-300 focus:border-teal-300 text-left px-4`}
         >
           {options.find(opt => opt.value === value)?.label || options.find(opt => opt === value) || customPlaceholder ||  '-Select-'}
           <svg width="18" height="9" viewBox="0 0 18 9" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -63,7 +74,7 @@ import {
           </svg>
         </button>
         {error && errorMessage && (
-          <span className="text-red-500 typography-small-p absolute top-[5rem]">
+          <span className="text-red-500 typography-small-p absolute top-[4.5rem]">
             {errorMessage}
           </span>
         )}

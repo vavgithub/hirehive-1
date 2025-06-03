@@ -93,7 +93,7 @@ const CandidateLogin = () => {
         <div className="hidden lg:flex lg:w-3/5 bg-login-screen backdrop-blur-lg bg-cover p-12 flex-col justify-between relative">
           <div className='p-[2.75rem]'>
             <img className='h-12' src={Logo} />
-            <h1 className="typography-h1 font-normal mt-8">VAV - Hire Designers</h1>
+            <h1 className="mt-8">VAV - Hire Designers</h1>
             <p className="display-d2 max-w-xl mt-7 mb-4">Discover, hire, and explore top talent with HireHive</p>
             <p className='typography-body max-w-96'>Our advanced tools simplify job posting, application review, and career opportunities, ensuring you find the best candidates or land your next role effortlessly.</p>
             <p className="mb-8"></p>
@@ -105,13 +105,13 @@ const CandidateLogin = () => {
           <img src={sundarKanya} alt="Sundar Kanya" className="absolute bottom-0 right-0 h-[70%]" />
         </div>
         {/* Right section with login form */}
-        <div className="w-full lg:w-2/5 bg-background-30 p-4 md:p-28   flex flex-col justify-center">
+        <div className="w-full lg:w-2/5 bg-background-90 p-4 md:p-28   flex flex-col justify-center">
         {showForgotPassword ? (
                       <ForgotPassword role="Candidate" onBack={() => setShowForgotPassword(false)} />
                   ) : (
                     <>
 
-          <h2 className="typography-h1 mb-2 text-center font-semibold">Welcome Back</h2>
+          <h1 className="mb-2 text-center font-semibold">Welcome Back</h1>
           <p className="typography-body mb-10 text-center font-normal">Login to your account below</p>
           {/* <button className="bg-blue-600 text-white py-2 px-4 rounded-lg mb-5 flex items-center justify-center">
                   Continue with Google

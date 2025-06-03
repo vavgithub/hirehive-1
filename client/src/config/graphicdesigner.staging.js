@@ -1,15 +1,15 @@
-import RejectCrossIcon from "../../svg/Staging/RejectCrossIcon";
-import RightTick from "../../svg/Staging/RightTick";
-import WarningIcon from "../../svg/Staging/WarningIcon";
-import PortfolioHeader from "./PortfolioHeader";
+import PortfolioHeader from "../components/Staging/PortfolioHeader";
+import RejectCrossIcon from "../svg/Staging/RejectCrossIcon";
+import RightTick from "../svg/Staging/RightTick";
+import WarningIcon from "../svg/Staging/WarningIcon";
 
-export const stagingConfig = {
-    'UI UX' : [
+export const graphicDesignerConfig = [
         {
             name : "Portfolio",
             statuses : [
                 'Not Assigned', 'Under Review', 'Reviewed', 'Cleared', 'Rejected'
             ],
+            description: "Candidates submit their previous works and portfolios. Evaluated based on creativity, relevance, and execution. Scored out of 5.",
             score : 5,
             totalScore : 5,
             extraHeaderContent : PortfolioHeader,
@@ -268,13 +268,37 @@ export const stagingConfig = {
             statuses : [
                 'Pending', 'Call Scheduled', 'Under Review', 'Reviewed', 'Cleared', 'No Show', 'Rejected'
             ],
+            description : "Interview to assess the candidate's skills, creativity, and communication relevant to the role.",
             score : {
                 Attitude : 5,
-                UI : 5,
-                UX : 5,
-                Tech : 5,
                 Communication : 5,
                 Budget : 5,
+                Aesthetics : 5,
+                Creativity : 5,
+                Layout : 5,
+            },
+            scoreDetails : {
+                Attitude : {
+                    description : "Evaluates adaptability and understanding of trends."
+                },
+                Aesthetics : {
+                    description : "Judges design appeal and principles like balance, contrast.",
+                    isEditable : true
+                },
+                Creativity : {
+                    description : "Assesses originality and idea generation.",
+                    isEditable : true
+                },
+                Layout : {
+                    description : "Evaluates visual structure, hierarchy, and spacing.",
+                    isEditable : true
+                },
+                Communication : {
+                    description : "Assesses brief understanding and visual messaging."
+                },
+                Budget : {
+                    description : "Judges efficiency in creating high-output assets."
+                },
             },
             totalScore : 30,
             hasSplitScoring : true,
@@ -735,6 +759,7 @@ export const stagingConfig = {
             statuses : [
                 'Pending','Not Assigned', 'Sent', 'Under Review', 'Reviewed', 'Cleared', 'Rejected', 'Not Submitted'
             ],
+            description: "Candidates are given a task to complete within a deadline and submit a link and explanation. Scored out of 5.",
             score : 5,
             totalScore : 5,
             extraHeaderContent : false,
@@ -1146,6 +1171,7 @@ export const stagingConfig = {
             statuses : [
                 'Pending', 'Call Scheduled', 'Not Assigned', 'Reviewed', 'Cleared', 'No Show', 'Rejected'
             ],
+            description : "Interview to discuss the design task and practical aspects of the role. Scored out of 5.",
             score : 5,
             totalScore : 5,
             extraHeaderContent : false,
@@ -1590,6 +1616,7 @@ export const stagingConfig = {
             statuses : [
                 'Pending', 'Call Scheduled', 'Not Assigned', 'Reviewed', 'Cleared', 'No Show', 'Rejected'
             ],
+            description : "Interview with leadership to assess role alignment and company fit. Scored out of 5.",
             score : 5,
             totalScore : 5,
             extraHeaderContent : false,
@@ -2208,104 +2235,4 @@ export const stagingConfig = {
                 },
             }
         }
-    ]
-}
-
-export const getStages = (jobProfile) => {
-    return stagingConfig[jobProfile]?.map(stage => stage?.name)
-}
-
-export const statusConfig = {
-    "Accepted": { 
-        bgColor: "#411a22", 
-        color: "#FF385C" 
-    },
-    "Call Scheduled": { 
-        bgColor: "#3e3514", 
-        color: "#EDBD14" 
-    },
-    "Cleared": { 
-        bgColor: "#123c22", 
-        color: "#12D382" 
-    },
-    "No Show": { 
-        bgColor: "#232425", 
-        color: "#FFFFFF" 
-    },
-    "Not Assigned": { 
-        bgColor: "#411a22", 
-        color: "#FF385C" 
-    },
-    "Not Submitted": { 
-        bgColor: "#411a22", 
-        color: "#FF385C" 
-    },
-    "Offer Sent": { 
-        bgColor: "#123c22", 
-        color: "#12D382" 
-    },
-    "Pending": { 
-        bgColor: "#411a22", 
-        color: "#FF385C" 
-    },
-    "Rejected": { 
-        bgColor: "#411a22", 
-        color: "#FF385C" 
-    },
-    "Reviewed": { 
-        bgColor: "#123c22", 
-        color: "#12D382" 
-    },
-    "Sent": { 
-        bgColor: "#123c22", 
-        color: "#12D382" 
-    },
-    "Under Review": { 
-        bgColor: "#3e3514", 
-        color: "#EDBD14" 
-    }
-  };
-
-export const getStageColor = (stage) => {
-    switch (stage.toLowerCase()) {
-      case 'portfolio':
-        return 'rgb(59, 130, 246)';
-      case 'screening':
-        return 'rgb(234, 179, 8)';
-      case 'design task':
-        return 'rgb(168, 85, 247)';
-      case 'round 1':
-        return 'rgb(34, 197, 94)';
-      case 'round 2':
-        return 'rgb(249, 115, 22)';
-      default:
-        return 'rgb(255, 255, 255)';
-    }
-};
-//Blue shade of colors for Doughnut charts
-export const getStageColorForChart = (stage) => {
-    switch (stage.toLowerCase()) {
-        case 'portfolio':
-          return 'rgba(2, 75, 202, 1)';
-        case 'screening':
-          return 'rgba(27, 110, 253, 1)';
-        case 'design task':
-          return 'rgba(56, 151, 244, 1)';
-        case 'round 1':
-          return 'rgba(108, 161, 254, 1)';
-        case 'round 2':
-          return 'rgba(128, 194, 244, 1)';
-        default:
-          return 'rgb(255, 255, 255)';
-      }
-}
-
-  export const maxScoreOfEachStage = (stageTitle) => {
-    let totalScore = 0;
-    stagingConfig["UI UX"].map(eachStage => {
-        if(eachStage?.name === stageTitle){
-            totalScore = eachStage?.totalScore;
-        }
-    })
-    return totalScore
-  }
+    ] 

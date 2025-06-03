@@ -50,7 +50,7 @@ const MyJobs = () => {
   // Navigation handler with mobile check
   const handleClick = (jobId) => {
     if (!isMobile) {
-      navigate(`/candidate/viewJob/${candidateId}/${jobId}`);
+      navigate(`/candidate/my-jobs/viewJob/${candidateId}/${jobId}`);
     }
   };
 
@@ -83,8 +83,8 @@ const MyJobs = () => {
     // console.error('Error fetching applied jobs:', error);
     return (
       <div className="m-2 pt-4">
-        <h1 className="typography-h1 mb-4">My Jobs</h1>
-        <div className="p-4 bg-background-30 rounded-xl">
+        <h1 className="mb-4">My Jobs</h1>
+        <div className="p-4 bg-background-90 rounded-xl">
           Error fetching applied jobs. Please try again later.
         </div>
       </div>
@@ -95,7 +95,7 @@ const MyJobs = () => {
     <Container>
       <Header HeaderText={"My Jobs"}></Header>
         {isAssessmentBannerVisible && <AssessmentBanner />}
-        <StyledCard padding={2} backgroundColor={"bg-background-30 lg:pb-16 "}>
+        <StyledCard padding={2} backgroundColor={"bg-background-90  "}>
           {appliedJobs?.jobApplications?.length > 0 ? (
             <ul className='flex flex-col gap-4'>
               {appliedJobs?.jobApplications?.map((application, index) => (
@@ -112,12 +112,12 @@ const MyJobs = () => {
             </ul>
           ) : (
             <div className='flex flex-col justify-center items-center'>
-              <h2 className='typography-h2'>No Applied Jobs</h2>
+              <h2>No Applied Jobs</h2>
               <p className='typography-small-p text-font-gray'>You have not applied to any jobs yet.</p>
             </div>
           )}
 
-          <div className='my-4'>
+          <div className='mt-4'>
             <Pagination
               currentPage={page}
               setCurrentPage={setPage}

@@ -6,6 +6,8 @@ import { useAuthContext } from '../../context/AuthProvider';
 import { CheckboxGroup } from '../Checkboxes/CheckboxGroup';
 import IconWrapper from '../Cards/IconWrapper';
 import { CircleSlash2, ClockArrowUp, ClockFading, GraduationCap, Handshake, Hourglass } from 'lucide-react';
+import { hasPermission, PERMISSIONS } from '../../config/permissions.config';
+import { getJobProfileAsOptions } from '../../config/jobprofile.config';
 
 const Filters = ({ filters = {}, handleCheckboxChange, activeTab, handleExperienceFilter, handleBudgetFilter, clearAllFilters }) => {
     const isDisabled = activeTab === 'draft';
@@ -40,7 +42,7 @@ const Filters = ({ filters = {}, handleCheckboxChange, activeTab, handleExperien
                 inactive: () => <IconWrapper size={0} icon={GraduationCap} customIconSize={6} isInActiveIcon />
             }
         },
-        ...((role === "Hiring Manager" || role === "Admin")? [{
+        ...(hasPermission(role,PERMISSIONS.SHOW_FILTER_PART_TIME) ? [{
             value: 'Part Time',
             label: 'Part-time',
             icon: {
@@ -50,16 +52,7 @@ const Filters = ({ filters = {}, handleCheckboxChange, activeTab, handleExperien
         }] : []),
     ];
 
-    const jobProfileOptions = [
-        { value: 'UI UX', label: 'UI UX' },
-        { value: 'Motion Graphic', label: 'Motion Graphic' },
-        { value: 'Video Editor', label: 'Video Editor' },
-        { value: '3D', label: '3D' },
-        { value: 'Digital Marketing Executive', label: 'Digital Marketing Executive' },
-        { value: 'Project Manager', label: 'Project Manager' },
-        { value: 'Art Director', label: 'Art Director' },
-        { value: 'Frontend Developer', label: 'Frontend Developer' }
-    ];
+    const jobProfileOptions = getJobProfileAsOptions();
 
     const closedOptions = [
         {
@@ -94,11 +87,11 @@ const Filters = ({ filters = {}, handleCheckboxChange, activeTab, handleExperien
 
     return (
             <StyledCard padding={2} backgroundColor={'bg-background-80'} extraStyles={"relative md:w-full"}>
-                <h3 className='text-gray-200 typography-h3  mb-2  tracking-wide' >Filter</h3>
+                <h3 className='text-gray-200 mb-2 tracking-wide' >Filter</h3>
                 <div className='flex flex-row-reverse absolute top-5 right-5'>
                     <button
                         onClick={handleClearAll}
-                        className="text-font-gray typography-small-p hover:text-blue-800 font-semibold"
+                        className="text-font-gray typography-small-p hover:text-font-accent font-semibold"
                     >
                         Clear All
                     </button>
@@ -132,7 +125,7 @@ const Filters = ({ filters = {}, handleCheckboxChange, activeTab, handleExperien
                 />
 
                 <div className="mb-4">
-                <h3 className="typography-body font-bricolage text-gray-200 font-semibold mb-2">Experience Filter</h3>
+                <p className="typography-body  text-gray-200  mb-2">Experience Filter</p>
                     <ExperienceFilter
                         onApply={handleExperienceApply}
                         shouldReset={shouldResetExperience}
@@ -140,7 +133,7 @@ const Filters = ({ filters = {}, handleCheckboxChange, activeTab, handleExperien
                 </div>
 
                 <div className="mb-4">
-                    <h3 className="typography-body font-bricolage text-gray-200 font-semibold mb-2">Budget Filter</h3>
+                    <p className="typography-body  text-gray-200  mb-2">Budget Filter</p>
                     <BudgetFilter 
                         onApply={handleBudgetApply}
                         shouldReset={shouldResetBudget}

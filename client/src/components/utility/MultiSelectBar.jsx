@@ -455,16 +455,17 @@ function MultiSelectBar({selectedData,jobId,clearSelection}) {
                             <div className='gap-4 grid grid-cols-2  bg-background-70 rounded-xl p-4'>
                                 {
                                     candidateData?.map(({candidate,checked,rejectionReason})=>{
-                                        let score =  0;
-                                        if(stage === "Screening"){
-                                            score = (candidate.stageStatuses[stage].score.Attitude ? candidate.stageStatuses[stage].score.Attitude : 0) + 
-                                            (candidate.stageStatuses[stage].score.UI ? candidate.stageStatuses[stage].score.UI : 0 )+ 
-                                            (candidate.stageStatuses[stage].score.UX ? candidate.stageStatuses[stage].score.UX : 0) + 
-                                            (candidate.stageStatuses[stage].score.Communication ? candidate.stageStatuses[stage].score.Communication : 0) + 
-                                            (candidate.stageStatuses[stage].score.Tech ? candidate.stageStatuses[stage].score.Tech : 0) + 
-                                            (candidate.stageStatuses[stage].score.Budget ? candidate.stageStatuses[stage].score.Budget : 0 )
-                                        }else{
-                                            score = candidate.stageStatuses[stage].score 
+                                        let score = 0;
+                                        if (stage === "Screening") {
+                                        const screeningScore = candidate.stageStatuses[stage]?.score;
+                                        if (screeningScore && typeof screeningScore === "object") {
+                                            score = Object.values(screeningScore).reduce(
+                                            (sum, val) => sum + parseInt(val ?? 0),
+                                            0
+                                            );
+                                        }
+                                        } else {
+                                        score = parseInt(candidate.stageStatuses[stage]?.score ?? 0);
                                         }
                                         return (
                                             <div key={candidate?._id} className='bg-background-80  p-4 rounded-xl relative flex flex-col typography-body  items-center min-h-11'>
@@ -489,10 +490,10 @@ function MultiSelectBar({selectedData,jobId,clearSelection}) {
                                                 </label>
                                                 {action?.name === "REJECT" && 
                                                 <div className='mt-2 w-full '>
-                                                    <p className='typography-h3 text-sm font-bricolage my-4'>Please provide the reason for rejecting this candidate</p>
+                                                    <h3 className='my-4'>Please provide the reason for rejecting this candidate</h3>
                                                     <div 
                                                     onClick={(e)=>{setAnchorEl(!anchorEl ? e.currentTarget : null); setChosenCandidate(chosenCandidate ? null : candidate?._id); setChosenStage(chosenStage ? null : stage);}}
-                                                    className={`${rejectionReason ? "text-white" : "text-font-gray"}   typography-body mt-1 h-[2.75rem] flex items-center justify-between bg-background-40 hover:bg-background-60 w-full outline-none rounded-xl shadow-sm focus:ring-teal-300 focus:border-teal-300 text-left px-4`}
+                                                    className={`${rejectionReason ? "text-white" : "text-font-gray"}   typography-body mt-1 h-[2.75rem] flex items-center justify-between bg-background-80 hover:bg-background-60 w-full outline-none rounded-xl shadow-sm focus:ring-teal-300 focus:border-teal-300 text-left px-4`}
                                                     >
                                                     <p  className='whitespace-nowrap text-ellipsis overflow-hidden'>{rejectionReason ? rejectionReason : "-Select-"}</p>
                                                     

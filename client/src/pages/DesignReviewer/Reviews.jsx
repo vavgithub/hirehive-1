@@ -16,10 +16,12 @@ import StyledCard from '../../components/Cards/StyledCard';
 import Container from '../../components/Cards/Container';
 import IconWrapper from '../../components/Cards/IconWrapper';
 import { Briefcase, Folder, FolderOpen, MonitorDot, PenTool, Users } from 'lucide-react';
-
+import ReviewsFilter from '../../components/Filters/ReviewsFilter'; // Import the new filter
+import { getRoute, ROUTE_KEY } from '../../config/permissions.config';
+import { useAuthContext } from '../../context/AuthProvider';
 
 const statsOne = [
-  { title: 'Total', value: 0, icon:  () => <IconWrapper size={10} isInActiveIcon icon={Users} /> },
+  { title: 'Total', value: 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={Users} /> },
   { title: 'Portfolio', value: 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={Folder} /> },
   { title: 'Screening', value: 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={MonitorDot} /> },
   { title: 'Design Task', value: 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={PenTool} /> },
@@ -27,7 +29,6 @@ const statsOne = [
   { title: 'Round 2', value: 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={Briefcase} /> },
   { title: 'Offer Sent', value: 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={PenTool} /> },
 ]
-
 
 const Round1Review = (props) => <RoundReview roundNumber={1} {...props} />;
 const Round2Review = (props) => <RoundReview roundNumber={2} {...props} />;
@@ -44,7 +45,6 @@ const fetchUnderReviewStats = async () => {
   return response.data.stats;
 };
 
-
 const submitReview = async ({ candidateId, reviewData }) => {
   const response = await axios.post('dr/submit-score-review', {
     candidateId,
@@ -53,29 +53,37 @@ const submitReview = async ({ candidateId, reviewData }) => {
   return response.data;
 };
 
-
 const Reviews = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const [groupedCandidates,setGroupedCandidates] = useState({});
+  const { user } = useAuthContext();
+  const [groupedCandidates, setGroupedCandidates] = useState({});
+  const [filteredCandidates, setFilteredCandidates] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [appliedFilters, setAppliedFilters] = useState({
+    jobName: [],
+    stage: [],
+    'job Type' : [],
+    'job Profile' : [],
+  });
 
   // Fetch candidates
   const { data: candidates, isLoading, isError, error } = useQuery({
     queryKey: ['assignedCandidates'],
     queryFn: fetchCandidates,
-    refetchOnWindowFocus : false
+    refetchOnWindowFocus: false
   });
 
   // Fetch stats
   const { data: statsData, isLoading: isStatsLoading, isError: isStatsError, error: statsError } = useQuery({
     queryKey: ['underReviewStats'],
     queryFn: fetchUnderReviewStats,
-    refetchOnWindowFocus : false
+    refetchOnWindowFocus: false
   });
 
   const groupCandidatesByJobAndStage = (candidates) => {
     return candidates.reduce((jobAcc, candidate) => {
-      candidate?.jobApplications.forEach(application => {
+      candidate?.jobApplications.filter(app => app.currentStage !== "Hired").forEach(application => {
         if (!jobAcc[application.jobTitle]) {
           jobAcc[application.jobTitle] = {};
         }
@@ -85,7 +93,7 @@ const Reviews = () => {
         jobAcc[application.jobTitle][application.currentStage].push({ ...candidate, currentApplication: application });
       });
 
-      //Sorting data based on JobTitle
+      // Sorting data based on JobTitle
       const sortedJobAcc = Object.fromEntries(
         Object.keys(jobAcc).sort().map(key => [key, jobAcc[key]])
       );
@@ -94,36 +102,91 @@ const Reviews = () => {
     }, {});
   };
 
-  useEffect(()=>{
-    if(candidates?.length > 0 && !isLoading){
-      setGroupedCandidates(groupCandidatesByJobAndStage(candidates))
-    }
-  },[candidates])
+  // Apply filters function
+  const applyFilters = (candidates, filters, searchTerm) => {
+    let filtered = candidates || [];
 
-  const [searchTerm,setSearchTerm] = useState("");
-
-  useEffect(()=>{
-    if(candidates?.length > 0){
+    // Apply search filter
+    if (searchTerm) {
       let regex = new RegExp(searchTerm, "i");
-      const filteredCandidates = candidates?.filter(candidate =>{
-        if(regex.test(candidate.firstName) || regex.test(candidate.lastName) || regex.test(candidate.email)){
-          return candidate
-        }
-      })
-      setGroupedCandidates(groupCandidatesByJobAndStage(filteredCandidates))
+      filtered = filtered.filter(candidate => {
+        return regex.test(candidate.firstName) || 
+               regex.test(candidate.lastName) || 
+               regex.test(candidate.email);
+      });
     }
-  },[searchTerm,candidates])
 
+    // Apply job name filter
+    if (filters.jobName && filters.jobName.length > 0) {
+      filtered = filtered.filter(candidate => {
+        return candidate.jobApplications?.some(application => 
+          filters.jobName.includes(application.jobTitle)
+        );
+      });
+    }
+
+    // Apply stage filter
+    if (filters.stage && filters.stage.length > 0) {
+      filtered = filtered.filter(candidate => {
+        return candidate.jobApplications?.some(application => 
+          filters.stage.includes(application.currentStage)
+        );
+      });
+    }
+
+    // Apply job Type filter
+    if (filters['job Type'] && filters['job Type'].length > 0) {
+      filtered = filtered.filter(candidate => {
+        return candidate.jobApplications?.some(application => 
+          filters['job Type'].includes(application.jobType)
+        );
+      });
+    }
+
+    // Apply job Profile filter
+    if (filters['job Profile'] && filters['job Profile'].length > 0) {
+      filtered = filtered.filter(candidate => {
+        return candidate.jobApplications?.some(application => 
+          filters['job Profile'].includes(application.jobProfile)
+        );
+      });
+    }
+
+    return filtered;
+  };
+
+  // Handle filter changes
+  const handleFilterChange = (newFilters) => {
+    setAppliedFilters(newFilters);
+  };
+
+  // Handle search changes
   const handleSearch = (e) => {
-    setSearchTerm(e.target.value)
-  }
+    setSearchTerm(e.target.value);
+  };
 
+  // Update filtered candidates when filters or search term changes
+  useEffect(() => {
+    if (candidates?.length > 0) {
+      const filtered = applyFilters(candidates, appliedFilters, searchTerm);
+      setFilteredCandidates(filtered);
+      setGroupedCandidates(groupCandidatesByJobAndStage(filtered));
+    }
+  }, [candidates, appliedFilters, searchTerm]);
+
+  // Initial setup when candidates are loaded
+  useEffect(() => {
+    if (candidates?.length > 0 && !isLoading) {
+      setFilteredCandidates(candidates);
+      setGroupedCandidates(groupCandidatesByJobAndStage(candidates));
+    }
+  }, [candidates, isLoading]);
 
   const submitReviewMutation = useMutation({
     mutationFn: submitReview,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['assignedCandidates'] });
-      queryClient.invalidateQueries({ queryKey: ['underReviewStats'] }); // Invalidate stats on success
+      queryClient.invalidateQueries({ queryKey: ['underReviewStats'] });
       showSuccessToast('Review Submitted', 'Your review has been successfully submitted.');
     },
     onError: (error) => {
@@ -135,12 +198,12 @@ const Reviews = () => {
     submitReviewMutation.mutate({ candidateId, reviewData });
   };
 
-  const renderReviewComponent = (candidate) => {
+  const renderReviewComponent = (candidate, jobProfile) => {
     switch (candidate.currentApplication.currentStage) {
       case 'Portfolio':
         return <PortfolioReview candidate={candidate} onSubmit={handleReviewSubmit} />;
       case 'Screening':
-        return <ScreeningReview candidate={candidate} onSubmit={handleReviewSubmit} />;
+        return <ScreeningReview jobProfile={jobProfile} candidate={candidate} onSubmit={handleReviewSubmit} />;
       case 'Design Task':
         return <DesignTaskReview candidate={candidate} onSubmit={handleReviewSubmit} />;
       case 'Round 1':
@@ -163,8 +226,6 @@ const Reviews = () => {
 
   if (isError) return <div>Error: {error.message}</div>;
 
-
-
   // Prepare statsOne object with real data
   const updatedStatsOne = statsOne.map((stat) => {
     const foundStat = statsData?.find(s => s.stage === stat.title);
@@ -174,72 +235,72 @@ const Reviews = () => {
   // Define the order of stages
   const stageOrder = ['Portfolio', 'Design Task', 'Screening', 'Round 1'];
 
-  //this is for opening the portfolios in different tab
+  // This is for opening the portfolios in different tab
   const ensureAbsoluteUrl = (url) => {
     if (url && !url.startsWith('http://') && !url.startsWith('https://')) {
       return `https://${url}`;
     }
     return url;
   };
-  
-  const handleNavigate = ( candidate) =>{
-   
-    navigate(`/design-reviewer/candidates/view-candidate/${candidate._id}/${candidate.currentApplication.jobId}`)
+
+  const handleNavigate = (candidate) => {
+    navigate(`${getRoute(user?.role,ROUTE_KEY.REVIEWS_VIEW_CANDIDATE)}/${candidate._id}/${candidate.currentApplication.jobId}`);
   }
 
-  const groupedEntries = candidates?.length > 0 ? Object.entries(groupedCandidates) : [];
+  const groupedEntries = filteredCandidates?.length > 0 ? Object.entries(groupedCandidates) : [];
 
   return (
-    // <div className='w-full p-4'>
-    //   <div className='container'>
     <Container>
       <Header HeaderText="Reviews" />
-      <StyledCard backgroundColor={"bg-background-30"} padding={2}>
+      <StyledCard backgroundColor={"bg-background-90"} padding={2}>
         <div className="w-full">
-
           <StatsGrid stats={updatedStatsOne} />
         </div>
-        <div className='flex gap-4 items-center mt-4 w-full'>
+        
+        <div className='flex gap-4 items-center mt-4 w-full mb-8 '>
           <div className='w-[20%]'>
-          <input
-            type="text"
-            placeholder="Search by name or email"
-            value={searchTerm}
-            onChange={handleSearch}
-          />
+            <input
+              type="text"
+              placeholder="Search by name or email"
+              value={searchTerm}
+              onChange={handleSearch}
+            />
           </div>
+          
+          {/* Add the ReviewsFilter component */}
+          <ReviewsFilter 
+            onApplyFilters={handleFilterChange}
+            candidates={candidates || []}
+          />
         </div>
         {groupedEntries?.length > 0 ? groupedEntries.map(([jobTitle, stages, jobProfile]) => (
           <div key={jobTitle} className="mb-8">
-            <h2 className="typography-h2 my-4">{jobTitle}</h2>
+            <h2 className="mt-4">{jobTitle}</h2>
             {stageOrder.map(stage => {
               if (stages[stage] && stages[stage].length > 0) {
                 return (
-                  <div key={stage} className="mb-6 ">
-                    <h3 className="typography-h3 mb-4">{stage}</h3>
+                  <div key={stage} >
+                    <h3 className="mb-4">{stage}</h3>
                     {stages[stage].map(candidate => (
-                      <div key={`${candidate._id}-${candidate.currentApplication.jobId}`} className="mb-4 flex flex-col bg-background-80 rounded-xl ">
-                        <div className='flex items-center p-4  justify-between cursor-pointer ' onClick={()=> handleNavigate(candidate)}>
+                      <div key={`${candidate._id}-${candidate.currentApplication.jobId}`} className="mb-4 flex flex-col bg-background-80 rounded-xl">
+                        <div className='flex items-center p-4 justify-between cursor-pointer' onClick={() => handleNavigate(candidate)}>
                           <div className='flex items-center gap-4 p-4'>
                             <Avatar alt={candidate?.firstName} src={candidate.profilePictureUrl} />
-                            <span className="typography-body ">
+                            <span className="typography-body">
                               {candidate.firstName} {candidate.lastName}
-
                             </span>
                             <a href={ensureAbsoluteUrl(candidate.portfolio)} target="_blank" rel="noopener noreferrer">
-                              <div onClick={(e)=>e.stopPropagation()}>
-                              <IconWrapper hasBg={true} icon={FolderOpen} />
+                              <div onClick={(e) => e.stopPropagation()}>
+                                <IconWrapper hasBg={true} icon={FolderOpen} />
                               </div>
                             </a>
                           </div>
 
-                          <div className="bg-background-70 p-2 px-4 typography-body  rounded-xl">
+                          <div className="bg-background-70 p-2 px-4 typography-body rounded-xl">
                             {candidate.currentApplication.jobProfile}
                           </div>
-
-
                         </div>
-                        {renderReviewComponent(candidate)}
+                        {renderReviewComponent(candidate, candidate.currentApplication.jobProfile)}
                       </div>
                     ))}
                   </div>
@@ -249,15 +310,17 @@ const Reviews = () => {
             })}
           </div>
         )) :
-        <div className='my-4 flex flex-col items-center justify-center'>
-          <h2 className='typography-h2'>No Candidates</h2>
-          <p className='typography-small-p text-font-gray'>No candidate assigned for review</p>
-        </div>
+          <div className='my-4 flex flex-col items-center justify-center'>
+            <h2>No Candidates</h2>
+            <p className='typography-small-p text-font-gray'>
+              {(appliedFilters.jobName?.length > 0 || appliedFilters.stage?.length > 0 || searchTerm) 
+                ? 'No candidates match the selected filters' 
+                : 'No candidate assigned for review'}
+            </p>
+          </div>
         }
       </StyledCard>
     </Container>
-    // </div>
-    // </div>
   );
 };
 

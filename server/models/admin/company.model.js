@@ -1,5 +1,19 @@
 import mongoose from 'mongoose';
 
+const customScreeningSchema = new mongoose.Schema(
+    {
+        defaultKey : {
+            type : String
+        },
+        customKey : {
+            type : String
+        },
+        description : {
+            type : String
+        }
+    }
+)
+
 const companyschema = new mongoose.Schema({
     name : {
         type: String,
@@ -25,6 +39,23 @@ const companyschema = new mongoose.Schema({
         required: true,
         trim: true,
     },
+    about : {
+        type: String,
+        trim: true,
+    },
+    website : {
+        type: String,
+        trim: true,
+    },
+    founded : {
+        type: String,
+        trim: true,
+    },
+    assessmentAccess : {
+        type : String,
+        enum : ['ALLOWED','DENIED']
+    },
+    focusAreas : [String],
     invited_team_members : [{
         id : String,
         // name : String,
@@ -59,6 +90,11 @@ const companyschema = new mongoose.Schema({
             type: String,
             required: true,
         }
+    },
+    customScreeningParam : {
+        type : Map,
+        of : [customScreeningSchema],
+        default : {}
     }
 }, { timestamps: true })
 

@@ -33,7 +33,7 @@ function onError(error) {
     // console.error("Lexical Editor Error:", error);
 }
 
-function TextEditor({htmlData,loaded,errors,placeholder,setEditorContent}) {
+function TextEditor({ hasClearOption, customBg, htmlData, loaded, errors, placeholder, setEditorContent , clearPreset, presetLoaded, presetTemplate = false}) {
 
     const initialConfig = {
         namespace: 'MyEditor',
@@ -57,7 +57,7 @@ function TextEditor({htmlData,loaded,errors,placeholder,setEditorContent}) {
 
     const CustomContent = useMemo(() => {
         return (
-            <ContentEditable className={`editor-editable scrollbar-hide ${errors ? "border border-red-500" : ""}`} />
+            <ContentEditable className={`editor-editable ${customBg} scrollbar-hide ${errors ? "border border-red-500" : ""}`} />
         )
     }, [errors]);
 
@@ -70,13 +70,13 @@ function TextEditor({htmlData,loaded,errors,placeholder,setEditorContent}) {
     }, []);
     
       return (
-        <div className='w-full relative bg-background-40 rounded-xl  '>
+        <div className='w-full relative bg-background-80 rounded-xl  '>
             <LexicalComposer initialConfig={initialConfig}>
-                <ToolbarPlugin errors={errors} />
+                <ToolbarPlugin hasClearOption={hasClearOption} clearPreset={clearPreset} errors={errors} />
                 <ListPlugin />
                 <LexicalLinkPlugin />
                 <ClickableLinkPlugin />
-                <LoadDataPlugin htmlData={htmlData} loaded />
+                <LoadDataPlugin htmlData={htmlData} loaded presetLoaded={presetLoaded} preset={presetTemplate} />
                 <RichTextPlugin contentEditable={CustomContent} placeholder={CustomPlaceholder}
                     ErrorBoundary={LexicalErrorBoundary} />
                 <HistoryPlugin />

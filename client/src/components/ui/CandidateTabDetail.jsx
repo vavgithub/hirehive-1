@@ -11,6 +11,7 @@ import { GridRow } from '../Grid/GridRow';
 import { Button } from '../Buttons/Button';
 import IconWrapper from '../Cards/IconWrapper';
 import { Pencil } from 'lucide-react';
+import { hasPermission, PERMISSIONS } from '../../config/permissions.config';
 
 const updateProfessionalDetails = async ({experience, noticePeriod, currentCTC, expectedCTC, hourlyRate , id, jobId}) => {
     const response = await axios.patch(`/admin/candidate/update-candidate/${id}/${jobId}`,{experience, noticePeriod, currentCTC, expectedCTC, hourlyRate });
@@ -18,8 +19,8 @@ const updateProfessionalDetails = async ({experience, noticePeriod, currentCTC, 
 }
 
 const Card = ({ title, children, gridLayout = false , extraClass }) => (
-  <div className={`bg-background-90 p-8 rounded-xl mb-4 ${extraClass}`} >
-    <h2 className="typography-h3 mb-5">{title}</h2>
+  <div className={`bg-background-80 p-8 rounded-xl mb-4 ${extraClass}`} >
+    <h3 className="mb-5">{title}</h3>
     <div className={gridLayout ? "grid grid-cols-2 gap-4" : ""}>{children}</div>
   </div>
 );
@@ -120,7 +121,7 @@ const Experience = ({ company, position, startDate, endDate, index }) => (
                   {data.professionalDetails.map((detail, index) => (
                       <DetailRow key={index} label={detail.label} value={detail.value} />
                   ))}
-                  {(job?.jobStatus === "open" && (role === "Admin" || role === "Hiring Manager")) && 
+                  {(job?.jobStatus === "open" && hasPermission(role,PERMISSIONS.SHOW_CANDIDATE_TAB_DETAIL_EDIT)) && 
                   <div onClick={()=>setIsEditing(!isEditing)} className='absolute right-4 bottom-4 p-2 bg-background-70 hover:bg-background-60 rounded-xl cursor-pointer'>
                       <IconWrapper  icon={Pencil} size={0} />
                   </div>}
@@ -137,7 +138,7 @@ const Experience = ({ company, position, startDate, endDate, index }) => (
                       id="experience"
                       label="Experience"
                       labelStyles="text-font-gray"
-                      extraClass="no-spinner"
+                      extraClass="no-spinner custom-input"
                       rowWise
                       value={field.value ?? 0}
                       onChange={field.onChange}
@@ -157,7 +158,7 @@ const Experience = ({ company, position, startDate, endDate, index }) => (
                         id="noticePeriod"
                         label="Notice Period"
                         labelStyles="text-font-gray"
-                        extraClass="no-spinner"
+                        extraClass="no-spinner custom-input"
                         rowWise
                         value={field.value ?? 0}
                         onChange={field.onChange}
@@ -180,7 +181,7 @@ const Experience = ({ company, position, startDate, endDate, index }) => (
                             id="currentCTC"
                             label="Current CTC"
                             labelStyles="text-font-gray"
-                            extraClass="no-spinner"
+                            extraClass="no-spinner custom-input"
                             rowWise
                             value={field.value ?? 0}
                             onChange={field.onChange}
@@ -200,7 +201,7 @@ const Experience = ({ company, position, startDate, endDate, index }) => (
                             id="expectedCTC"
                             label="Expected CTC"
                             labelStyles="text-font-gray"
-                            extraClass="no-spinner"
+                            extraClass="no-spinner custom-input"
                             rowWise
                             value={field.value ?? 0}
                             onChange={field.onChange}
@@ -222,7 +223,7 @@ const Experience = ({ company, position, startDate, endDate, index }) => (
                         id="hourlyRate"
                         label="Hourly Rate"
                         labelStyles="text-font-gray"
-                        extraClass="no-spinner"
+                        extraClass="no-spinner custom-input"
                         rowWise
                         value={field.value ?? 0}
                         onChange={field.onChange}
@@ -242,8 +243,8 @@ const Experience = ({ company, position, startDate, endDate, index }) => (
             </Card>
           </form>
 
-          <StyledCard padding={2}>
-            <CustomHeading  label={"Skill Set"} />
+          <StyledCard backgroundColor={'bg-background-80'} padding={2}>
+            <CustomHeading fontSize={4}  label={"Skill Set"} />
             <div className="flex flex-wrap gap-2">
                   {data.skillSet.map((skill, index) => (
                       <span key={index} className="bg-background-70 rounded-full typography-body py-3 px-4">

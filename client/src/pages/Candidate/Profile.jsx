@@ -26,8 +26,8 @@ import parsePhoneNumberFromString from "libphonenumber-js";
 
 const PersonalDetails = ({ candidateData, isEditing, control }) => {
   return (
-    <StyledCard backgroundColor={"bg-background-90"}>
-      <h2 className="typography-h2 mb-6">Personal Details</h2>
+    <StyledCard backgroundColor={"bg-background-80"}>
+      <h2 className="mb-6">Personal Details</h2>
       {!isEditing ?
         <div className="flex justify-between flex-col gap-6 sm:flex-row">
           <div className="grid grid-cols-2 sm:w-[45%] gap-[10%] ">
@@ -52,7 +52,7 @@ const PersonalDetails = ({ candidateData, isEditing, control }) => {
           </div>
         </div>
         :
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 ">
           <Controller
             name="firstName"
             control={control}
@@ -64,6 +64,7 @@ const PersonalDetails = ({ candidateData, isEditing, control }) => {
                 id="firstName"
                 label="First Name"
                 labelStyles="text-font-gray"
+                extraClass={'custom-input'}
                 rowWise
                 value={field.value ?? ""}
                 onChange={field.onChange}
@@ -83,6 +84,7 @@ const PersonalDetails = ({ candidateData, isEditing, control }) => {
                 id="lastName"
                 label="Last Name"
                 labelStyles="text-font-gray"
+                extraClass={'custom-input'}
                 rowWise
                 value={field.value ?? ""}
                 onChange={field.onChange}
@@ -102,6 +104,7 @@ const PersonalDetails = ({ candidateData, isEditing, control }) => {
                 id="email"
                 label="Email"
                 labelStyles="text-font-gray"
+                extraClass={'custom-input'}
                 rowWise
                 value={field.value ?? ""}
                 onChange={field.onChange}
@@ -130,13 +133,16 @@ const PersonalDetails = ({ candidateData, isEditing, control }) => {
               />
             )}
           /> */}
+          <div className="text-font-gray">
           <PhoneInputField
             name="phone"
             rules={validationRules?.phoneNumber}
             control={control}
+            customBgClass={'!bg-background-70'}
             rowWise
             label="Phone Number"
           />
+          </div>
         </div>
       }
     </StyledCard>
@@ -153,8 +159,8 @@ const ResumeAndPortfolioDetails = ({ candidateData, isEditing, control, resumeFi
   }
 
   return (
-    <StyledCard backgroundColor={"bg-background-90"}>
-      <h2 className="typography-h2 mb-6">Resume and Portfolio</h2>
+    <StyledCard backgroundColor={"bg-background-80"}>
+      <h2 className="mb-6">Resume and Portfolio</h2>
       {!isEditing ?
         <div className="flex justify-between flex-col gap-6 sm:flex-row">
           <div className="grid grid-cols-2 sm:w-[45%] gap-[10%] justify-between">
@@ -185,7 +191,7 @@ const ResumeAndPortfolioDetails = ({ candidateData, isEditing, control, resumeFi
             render={({ field, fieldState: { error } }) => (
               <div className="h-11 w-full flex items-center typography-body justify-between gap-2">
                 <p className="min-w-[25%] max-w-[25%] text-font-gray ">Resume</p>
-                <div className="w-full bg-background-80 hover:bg-background-60 h-11 rounded-xl flex justify-between">
+                <div className="w-full bg-background-70 hover:bg-background-60 h-11 rounded-xl flex justify-between">
                   <p className="pl-4 py-2 whitespace-nowrap overflow-hidden text-ellipsis w-[45%]  md:w-[60%]">{fileName ? fileName : candidateData?.firstName + "'s Resume"}</p>
                   <span className="hidden md:block">
                     <Button icon={()=><IconWrapper icon={Upload} inheritColor size={0} customIconSize={4} customStrokeWidth={7} />} variant="secondary" type="button" onClick={() => resumeRef.current.click()}>{resumeFile ? "Edit" : "Choose"}</Button>
@@ -211,6 +217,7 @@ const ResumeAndPortfolioDetails = ({ candidateData, isEditing, control, resumeFi
                 id="website"
                 label="Website"
                 labelStyles="text-font-gray"
+                extraClass={'custom-input'}
                 rowWise
                 value={field.value ?? ""}
                 onChange={field.onChange}
@@ -230,6 +237,7 @@ const ResumeAndPortfolioDetails = ({ candidateData, isEditing, control, resumeFi
                 id="portfolio"
                 label="Portfolio"
                 labelStyles="text-font-gray"
+                extraClass={'custom-input'}
                 rowWise
                 value={field.value ?? ""}
                 onChange={field.onChange}
@@ -252,8 +260,8 @@ const ProfessionalDetails = ({ candidateData, isEditing, control }) => {
   const hasHourlyRate = candidateData.hourlyRate > 0;
 
   return (
-    <StyledCard backgroundColor={"bg-background-90"}>
-      <h2 className="typography-h2 mb-6">Professional Details</h2>
+    <StyledCard backgroundColor={"bg-background-80"}>
+      <h2 className="mb-6">Professional Details</h2>
       {!isEditing ? (
         <div className="flex flex-col gap-6">
           <div className="flex justify-between flex-col gap-6 sm:flex-row">
@@ -310,7 +318,7 @@ const ProfessionalDetails = ({ candidateData, isEditing, control }) => {
                 id="experience"
                 label="Experience"
                 labelStyles="text-font-gray"
-                extraClass="no-spinner"
+                extraClass="no-spinner custom-input"
                 rowWise
                 value={field.value ?? 0}
                 onChange={field.onChange}
@@ -330,7 +338,7 @@ const ProfessionalDetails = ({ candidateData, isEditing, control }) => {
                 id="noticePeriod"
                 label="Notice Period"
                 labelStyles="text-font-gray"
-                extraClass="no-spinner"
+                extraClass="no-spinner custom-input"
                 rowWise
                 value={field.value ?? 0}
                 onChange={field.onChange}
@@ -353,7 +361,7 @@ const ProfessionalDetails = ({ candidateData, isEditing, control }) => {
                     id="currentCTC"
                     label="Current CTC"
                     labelStyles="text-font-gray"
-                    extraClass="no-spinner"
+                    extraClass="no-spinner custom-input"
                     rowWise
                     value={field.value ?? 0}
                     onChange={field.onChange}
@@ -373,7 +381,7 @@ const ProfessionalDetails = ({ candidateData, isEditing, control }) => {
                     id="expectedCTC"
                     label="Expected CTC"
                     labelStyles="text-font-gray"
-                    extraClass="no-spinner"
+                    extraClass="no-spinner custom-input"
                     rowWise
                     value={field.value ?? 0}
                     onChange={field.onChange}
@@ -396,7 +404,7 @@ const ProfessionalDetails = ({ candidateData, isEditing, control }) => {
                   id="hourlyRate"
                   label="Hourly Rate"
                   labelStyles="text-font-gray"
-                  extraClass="no-spinner"
+                  extraClass="no-spinner custom-input"
                   rowWise
                   value={field.value ?? 0}
                   onChange={field.onChange}
@@ -573,14 +581,14 @@ function Profile() {
       {isLoading && <LoaderModal/>}
       {showOTPModal && isEditing && 
               <div className="flex items-center h-screen w-screen justify-center fixed bg-background-overlay z-50 top-0 left-0">
-                <div className="w-full mx-8 md:mx-0 max-w-lg space-y-8 bg-background-90 rounded-lg shadow-xl  bg-opacity-15 ">
+                <div className="w-full mx-8 md:mx-0 max-w-lg space-y-8 bg-background-80 rounded-lg shadow-xl  bg-opacity-15 ">
                   <form onSubmit={handleOtpSubmit} className="px-8 sm:px-16 text-center md:mb-20">
-                    <h1 className="typography-h2 sm:typography-h1 mt-8 md:mt-20 mb-4 ">OTP Verification</h1>
+                    <h1 className="mt-8 md:mt-20 mb-4 ">OTP Verification</h1>
                     <p className="text-font-gray text-center typography-large-p">
                       To ensure security, please enter the OTP (One-Time Password) to
                       verify your account. A code has been sent to
                     </p>
-                    <h2 className='typography-h3 sm:typograhpy-h2 mt-3 md:mt-6 text-font-gray mx-auto w-[15rem] min-[26.25rem]:w-full whitespace-nowrap text-ellipsis overflow-hidden'>
+                    <h2 className='mt-3 md:mt-6 text-font-gray mx-auto w-[15rem] min-[26.25rem]:w-full whitespace-nowrap text-ellipsis overflow-hidden'>
                       {email}
                     </h2>
                     <div className="flex justify-center  space-x-2 mt-4 ">
@@ -613,76 +621,79 @@ function Profile() {
             }
         <Header HeaderText={"My Profile"}  />
       {isAssessmentBannerVisible &&  <AssessmentBanner />}
-        <form onSubmit={handleSubmit(handleEditProfile)}>
-          <div className="flex w-full gap-4 flex-col-reverse lg:flex-row mt-8 lg:mt-0 ">
-            <div className="lg:w-[70%] flex flex-col gap-4">
-              <PersonalDetails candidateData={candidateData} isEditing={isEditing} control={control} />
-              <ResumeAndPortfolioDetails candidateData={candidateData} isEditing={isEditing} control={control} resumeFile={resumeFile} setResumeFile={setResumeFile} />
-              <ProfessionalDetails candidateData={candidateData} isEditing={isEditing} control={control} />
-            </div>
-            <div className="w-[100%] sm:w-[50%] mx-auto lg:w-[30%] ">
-                <StyledCard backgroundColor={"bg-background-90"} extraStyles=" flex flex-col items-center relative">
-                  {isEditing || <button type="button" onClick={()=>setIsEditing(true)} className="absolute top-6 right-6 border rounded-xl  border-font-gray hover:bg-background-70">
-                    <CustomToolTip title={"Edit Profile"} arrowed>
-                      <IconWrapper icon={Pencil}  />
-                    </CustomToolTip>
-                  </button>}
-                  <div className="relative w-[8rem] min-h-[5rem] ">
-                    <div  className="absolute w-[8rem] left-0  -top-14 aspect-square overflow-hidden rounded-full">
-                      <img src={profileFile ? URL.createObjectURL(profileFile) : candidateData?.profilePictureUrl ? candidateData?.profilePictureUrl : UNKNOWN_PROFILE_PICTURE_URL } alt="" className="object-cover w-full" />
-                      <input accept="image/*" onChange={(e)=>setProfileFile(e.target.files[0])} type="file" className="hidden" ref={profileImageRef} />
-                    </div>
-                    {isEditing && 
-                    <button type="button" onClick={()=>profileImageRef.current.click()} className="absolute bottom-1 -right-1  rounded-xl">
-                        <IconWrapper icon={PencilLine} size={3} hasBg customBgHover={'hover:bg-background-60'}  />
+        <StyledCard>
+          <form onSubmit={handleSubmit(handleEditProfile)}>
+            <div className="flex w-full gap-4 flex-col-reverse lg:flex-row mt-8 lg:mt-0 ">
+              <div className="lg:w-[70%] flex flex-col gap-4">
+                <PersonalDetails candidateData={candidateData} isEditing={isEditing} control={control} />
+                <ResumeAndPortfolioDetails candidateData={candidateData} isEditing={isEditing} control={control} resumeFile={resumeFile} setResumeFile={setResumeFile} />
+                <ProfessionalDetails candidateData={candidateData} isEditing={isEditing} control={control} />
+              </div>
+              <div className="w-[100%] sm:w-[50%] mx-auto lg:w-[30%] ">
+                  <StyledCard backgroundColor={"bg-background-80"} extraStyles=" flex flex-col items-center relative">
+                    {isEditing || <button type="button" onClick={()=>setIsEditing(true)} className="absolute top-6 right-6 border rounded-xl  border-font-gray hover:bg-background-70">
+                      <CustomToolTip title={"Edit Profile"} arrowed>
+                        <IconWrapper icon={Pencil}  />
+                      </CustomToolTip>
                     </button>}
-                </div>
-                <h1 className="typography-h1 whitespace-nowrap overflow-hidden w-full text-ellipsis text-center">{candidateData?.firstName + " " + candidateData?.lastName}</h1>
-                {!isEditing ? <>
-                  <div className="w-full flex justify-center items-center gap-2">
-                    <p className=" text-font-gray gap-2 typography-small-p">{candidateData?.location}</p>
+                    <div className="relative w-[8rem] min-h-[5rem] ">
+                      <div  className="absolute w-[8rem] left-0  -top-14 aspect-square overflow-hidden rounded-full">
+                        <img src={profileFile ? URL.createObjectURL(profileFile) : candidateData?.profilePictureUrl ? candidateData?.profilePictureUrl : UNKNOWN_PROFILE_PICTURE_URL } alt="" className="object-cover w-full" />
+                        <input accept="image/*" onChange={(e)=>setProfileFile(e.target.files[0])} type="file" className="hidden" ref={profileImageRef} />
+                      </div>
+                      {isEditing && 
+                      <button type="button" onClick={()=>profileImageRef.current.click()} className="absolute bottom-1 -right-1  rounded-xl">
+                          <IconWrapper icon={PencilLine} size={3} hasBg customBgHover={'hover:bg-background-60'}  />
+                      </button>}
                   </div>
-                  <div className="mt-6 w-full flex justify-between">
-                    <p className="typography-body">Jobs Applied</p>
-                    <p>{candidateData?.jobApplications?.length || 0}</p>
-                  </div>
-                </> :
-                  <div className="flex flex-col mt-2 gap-4  w-full">
-                    {/* <InputField type="text" label="Role"  rowWise={true} /> */}
-                    <Controller
-                      name="location"
-                      control={control}
-                      defaultValue={""}
-                      rules={validationRules.location}
-                      render={({ field, fieldState: { error } }) => (
-                        <InputField
-                          type="text"
-                          id="location"
-                          label="Location"
-                          labelStyles="text-font-gray"
-                          value={field.value ?? ""}
-                          onChange={field.onChange}
-                          error={error}
-                          rowWise={true}
-                          errorMessage={error?.message}
-                        />
-                      )}
-                    />
+                  <h2 className="whitespace-nowrap overflow-hidden w-full text-ellipsis text-center">{candidateData?.firstName + " " + candidateData?.lastName}</h2>
+                  {!isEditing ? <>
+                    <div className="w-full flex justify-center items-center gap-2">
+                      <p className=" text-font-gray gap-2 typography-small-p">{candidateData?.location}</p>
+                    </div>
+                    <div className="mt-6 w-full flex justify-between">
+                      <p className="typography-body">Jobs Applied</p>
+                      <p>{candidateData?.jobApplications?.length || 0}</p>
+                    </div>
+                  </> :
+                    <div className="flex flex-col mt-2 gap-4  w-full">
+                      {/* <InputField type="text" label="Role"  rowWise={true} /> */}
+                      <Controller
+                        name="location"
+                        control={control}
+                        defaultValue={""}
+                        rules={validationRules.location}
+                        render={({ field, fieldState: { error } }) => (
+                          <InputField
+                            type="text"
+                            id="location"
+                            label="Location"
+                            labelStyles="text-font-gray"
+                            extraClass={'custom-input'}
+                            value={field.value ?? ""}
+                            onChange={field.onChange}
+                            error={error}
+                            rowWise={true}
+                            errorMessage={error?.message}
+                          />
+                        )}
+                      />
 
-                  </div>
-                }
-              </StyledCard>
+                    </div>
+                  }
+                </StyledCard>
+              </div>
             </div>
-          </div>
-          {isEditing &&
-            <div className="place-content-between sm:place-self-end flex gap-4 mt-4 lg:mb-20">
-              <Button onClick={() => setIsEditing(false)} type="button" variant="secondary" >Cancel</Button>
-              <Button
-                type="Submit"
-                disabled={isLoading}
-              >Save</Button>
-            </div>}
-        </form>
+            {isEditing &&
+              <div className="place-content-between sm:place-self-end flex gap-4 mt-4 lg:mb-20">
+                <Button onClick={() => setIsEditing(false)} type="button" variant="secondary" >Cancel</Button>
+                <Button
+                  type="Submit"
+                  disabled={isLoading}
+                >Save</Button>
+              </div>}
+          </form>
+        </StyledCard>
         <div className="my-4">
           <ContactUs />
 

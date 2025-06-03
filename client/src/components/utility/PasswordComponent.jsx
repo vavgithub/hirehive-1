@@ -6,15 +6,15 @@ import { Button } from '../Buttons/Button'
 import PasswordRuleValidator from './PasswordRuleValidator'
 
 
-function PasswordComponent({ handlePasswordSubmit, watch, control, passwordError, isSubmitting, cardbg = "" }) {
+function PasswordComponent({hasFooter = false, handlePasswordSubmit, watch, control, passwordError, isSubmitting, cardbg = "" }) {
     const password = watch("password");
     return (
-        <div className="flex items-center w-screen justify-center min-h-screen bg-cover bg-verification">
+        <div className={ "flex items-center w-screen justify-center bg-cover bg-verification " + (hasFooter ? 'min-h-[calc(100vh-5rem)]' : ' min-h-screen')}>
             <StyledCard padding={0} extraStyles={"w-full mx-8 md:mx-0 max-w-lg space-y-8 shadow-xl " + cardbg}>
-                <form onSubmit={handlePasswordSubmit} className="mx-8 sm:mx-16 md:mb-20">
-                    <h3 className="typography-h2 text-center sm:typography-h1 mt-5 sm:mt-8 md:mt-20 ">
+                <form onSubmit={handlePasswordSubmit} className="mx-8 sm:mx-16 md:mb-16">
+                    <h1 className="mt-5 sm:mt-8 md:mt-16 ">
                         Create Password
-                    </h3>
+                    </h1>
                     <p className="typography-large-p py-4 text-font-gray text-center">
                         Create a password to secure your account. Make sure it’s strong
                         and easy to remember.

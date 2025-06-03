@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import SkillsInput from '../Inputs/SkillsInput';
 import { dropdownOptions, dummySkills } from '../Dropdowns/dropdownOptions';
@@ -16,6 +16,7 @@ import { useQuery } from '@tanstack/react-query';
 import axios from '../../api/axios';
 import TemplateModal from '../Modals/TemplateModal';
 import GlobalDropDown from '../Dropdowns/GlobalDropDown';
+import StyledCard from '../Cards/StyledCard';
 
 function hasDuplicates(arr) {
   return new Set(arr).size !== arr.length;
@@ -48,8 +49,9 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
   });
 
   const watchedFields = watch();
+  const isFirstRender = useRef(true);
 
-  const { data: assessmentTemplates, isassessmentLoading } = useQuery({
+  const { data: assessmentData, isassessmentLoading } = useQuery({
     queryKey: ['getAllAssessmentTemplates'],
     queryFn: () => fetchAssessmentTemplates(),
     staleTime : Infinity,
@@ -100,6 +102,17 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
         clearErrors('budgetTo');
       }
     }, [watchedFields.budgetFrom, watchedFields.budgetTo, setError]);
+
+    useEffect(()=>{
+      if(watchedFields.jobProfile !== "" && assessmentData?.templates?.length > 0){
+        const profileBasedTemplate = assessmentData?.templates?.find(template => template.category === watchedFields.jobProfile)
+        if(isFirstRender.current && isEditing){
+          isFirstRender.current = false
+        }else{
+          setValue("assessment_id",profileBasedTemplate?._id)
+        }
+      }
+    },[watchedFields.jobProfile,assessmentData,isEditing,isFirstRender])
 
     if(watchedFields.budgetFrom > 0){
       if(watchedFields.budgetTo < watchedFields.budgetFrom){
@@ -154,9 +167,9 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
   }
 
   return (
-    <>
-    <form onSubmit={handleSubmit(handleFormSubmit)} className='container-form mx-auto'>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+    <StyledCard extraStyles={'container-form mx-auto mt-6'}>
+    <form onSubmit={handleSubmit(handleFormSubmit)} className=''>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 ">
         <Controller
           name="jobTitle"
           control={control}
@@ -166,7 +179,7 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
               type="text"
               id="jobTitle"
               label="Job Title"
-              extraClass={"mt-1"}
+              // extraClass={"mt-1"}
               required
               {...field}
               error={error}
@@ -184,6 +197,8 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
             render={({ field: { onChange, value } ,fieldState : { error }}) => (
               <GlobalDropDown 
                 label={field.charAt(0).toUpperCase() + field.slice(1).replace(/([A-Z])/g, ' $1')}
+                hasInfoIcon={field === "jobProfile"}
+                infoText={field === "jobProfile" ? 'Checkout "Guide tab" to get profile based staging and scoring details.' :''}
                 options={dropdownOptions[field].filter(opt => opt.value !== '')}
                 customPlaceholder={dropdownOptions[field].find(opt => opt.value === '')?.label}
                 searchEnabled={field === "employeeLocation"}
@@ -247,8 +262,8 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
           control={control}
           rules={{ required: "Job description is required" ,validate : customDescriptionValidation}}
           render={({ field , fieldState : {error} }) => (
-            <div className='w-full relative'>
-              <label htmlFor="jobDescription" className="typography-body block mb-2">Job Description{<span className="text-red-100">*</span>}</label>
+            <div className='w-full relative flex flex-col gap-2'>
+              <label htmlFor="jobDescription" className="typography-body  mb-2">Job Description{<span className="text-red-100">*</span>}</label>
               <TextEditor htmlData={field?.value} loaded={isEditing} errors={error} placeholder={"Write a Job Description"} setEditorContent={(data)=>setValue('jobDescription',data)} />
               {error && <p className="text-red-500 absolute typography-small-p top-[18rem]">{error.message}</p>}
             </div>
@@ -287,17 +302,17 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
             required: 'Assessment is required',
           }}
           render={({ field: { onChange, value } , fieldState: { error }  })=>(
-            <div className='mt-6 relative'>
-            <label htmlFor="assessment" className="typography-body block mb-2">Assessment{<span className="text-red-100">*</span>}</label>
+            watchedFields?.jobProfile ? <div className='mt-6 relative'>
+            <label htmlFor="assessment" className="typography-body block mb-2">{`Job Level`}{<span className="text-red-100">*</span>}</label>
                 <div className='flex flex-wrap gap-4'>
                   {
-                    assessmentTemplates?.map(template => (
-                      <CustomPill variant="selective" data={template} value={value} hasInfoButton infoButtonClick={(label)=>setPreviewAssessment(template)} error={error} key={template?._id}  selected={value === template?._id} onChange={onChange} />
+                    assessmentData?.templates?.filter(assessment => watchedFields.jobProfile ? assessment.category === watchedFields.jobProfile : true)?.map(template => (
+                      <CustomPill  variant="selective" data={template} value={value} hasInfoButton infoButtonClick={(label)=>setPreviewAssessment(template)} error={error} key={template?._id}  selected={value === template?._id} onChange={onChange} />
                     ))
                   }
                 </div>
                 {error && <p className="text-red-500 absolute typography-small-p top-[72px]">{error.message}</p>}
-            </div>
+            </div> : <></>
           )}
           />
       <Controller
@@ -360,8 +375,9 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
               </Button>
             )}
             <Button
-              variant="primary"
-              type="submit"
+              variant={(isEditing && watchedFields.status === 'draft') ? "secondary" :"primary"}
+              type={(isEditing && watchedFields.status === 'draft') ? "button" :"submit"}
+              onClick={(isEditing && watchedFields.status === 'draft') ? handleSaveForLater : null}
               icon={()=><IconWrapper icon={CirclePlus} inheritColor size={0} customIconSize={5} customStrokeWidth={5} />}
               iconPosition="left"
               disabled={isLoading}
@@ -369,23 +385,22 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
               {isEditing ? isLoading ? 'Saving...' : 'Save' : isLoading ? 'Creating...' :'Create A Job Listing'}
 
             </Button>
+          {isEditing && watchedFields.status === 'draft' && (
+            <Button
+              type="button"
+              onClick={handleSubmit((data) => onSubmit({...data,status : 'open'}, false))}
+            >
+              Make It Active
+            </Button>
+          )}
         </div>
 
-        {isEditing && watchedFields.status === 'draft' && (
-          <button
-            type="button"
-            onClick={handleSubmit((data) => onSubmit(data, false))}
-            className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
-          >
-            Make It Active
-          </button>
-        )}
       </div>
     </form>
 
     {/* Template display Modal */}
     <TemplateModal open={previewAssessment} assessment={previewAssessment} onClose={()=>setPreviewAssessment(false)}  />
-    </>
+    </StyledCard>
   );
 };
 

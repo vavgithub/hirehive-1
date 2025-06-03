@@ -38,7 +38,7 @@ const changeMemberStatus = async ({ memberId }) => {
 function PersonalDetails({ memberData, isEditing, control }) {
   return (
     <StyledCard padding={2} backgroundColor="bg-background-90">
-      <h2 className="typography-h2 mb-4">Personal Details</h2>
+      <h2 className="mb-4">Personal Details</h2>
       {!isEditing ? (
         <div className="flex justify-between flex-col gap-6 sm:flex-row">
           <div className="grid grid-cols-2 sm:w-[45%] gap-[10%]">
@@ -57,7 +57,7 @@ function PersonalDetails({ memberData, isEditing, control }) {
               <p className="text-font-gray whitespace-nowrap">Phone Number</p>
             </div>
             <div className="flex flex-col gap-6 typography-body">
-              <p className="whitespace-nowrap overflow-hidden text-ellipsis">{memberData?.lastName?.length ? memberData?.name?.split(' ')[1] : "-"}</p>
+              <p className="whitespace-nowrap overflow-hidden text-ellipsis">{memberData?.lastName ?? '-'}</p>
               <p>{formatPhoneNumber(memberData?.phone) ?? "NA"}</p>
             </div>
           </div>
@@ -132,7 +132,7 @@ function PersonalDetails({ memberData, isEditing, control }) {
 function ProfessionalDetails({ memberData }) {
   return (
     <StyledCard padding={2} backgroundColor="bg-background-90">
-      <h2 className="typography-h2 mb-4">Professional Details</h2>
+      <h2 className="mb-4">Professional Details</h2>
       <div className="flex justify-between flex-col gap-6 sm:flex-row">
 
         <div className="grid grid-cols-2 sm:w-[45%] gap-[10%]">
@@ -153,7 +153,7 @@ function ProfessionalDetails({ memberData }) {
 function SkillsExpertiseSection({ memberData }) {
   return (
     <StyledCard padding={2} backgroundColor="bg-background-90">
-      <h2 className="typography-h2 mb-4">Skills & Expertise</h2>
+      <h2 className="mb-4">Skills & Expertise</h2>
       <div className="flex flex-col gap-6 typography-body">
         <div>
           <p className="text-font-gray mb-2">Primary Skills</p>
@@ -306,7 +306,7 @@ function TeamsProfile() {
                   <img src={member?.profilePicture ? member?.profilePicture : UNKNOWN_PROFILE_PICTURE_URL} alt="" className="object-cover w-full" />
                 </div>
               </div>
-              <h1 className="typography-h1 whitespace-nowrap overflow-hidden w-full text-ellipsis text-center">{member?.firstName + " " + member?.lastName}</h1>
+              <h1 className="whitespace-nowrap overflow-hidden w-full text-ellipsis text-center">{member?.firstName + " " + member?.lastName}</h1>
               <div className='w-full'>
                 {isEditing ?
                   <Controller

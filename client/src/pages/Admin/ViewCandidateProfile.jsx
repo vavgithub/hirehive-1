@@ -17,7 +17,7 @@ import ResumeViewer from '../../components/utility/ResumeViewer';
 import CustomToolTip from '../../components/Tooltip/CustomToolTip';
 import StyledCard from '../../components/Cards/StyledCard';
 import ScoreChart from '../../components/Charts/ScoreChart';
-import {  getStageColorForChart, maxScoreOfEachStage } from '../../components/Staging/staging.config';
+import {  getStageColorForChart, maxScoreOfEachStage } from '../../config/staging.config';
 import Container from '../../components/Cards/Container';
 import IconWrapper from '../../components/Cards/IconWrapper';
 import { ArrowLeftRight, ChevronUp, ChevronRight, ClipboardCheck, FileText, FileUser, FolderOpen, Globe, Mail, MonitorDot, Notebook, NotebookPen, Phone, Users } from 'lucide-react';
@@ -32,20 +32,17 @@ import { showErrorToast, showSuccessToast } from '../../components/ui/Toast';
 import { formatPhoneNumber } from '../../components/Form/PhoneInputField';
 import { UTCToDateFormatted } from '../../utility/timezoneConverter';
 import GlobalDropDown from '../../components/Dropdowns/GlobalDropDown';
+import { getRoute, hasPermission, hasRoutePermission, PERMISSIONS, ROUTE_KEY } from '../../config/permissions.config';
 
 export const VAVScoreCard = ({ score, stage, scoreStages }) => {
     const [showBreakDown, setShowBreakDown] = useState(false);
 
-    const getScreeningTotalScore = (scoreObj) => {
-        const Attitude = scoreObj?.Attitude ?? 0;
-        const Communication = scoreObj?.Communication ?? 0;
-        const Tech = scoreObj?.Tech ?? 0;
-        const UI = scoreObj?.UI ?? 0;
-        const UX = scoreObj?.UX ?? 0;
-        const Budget = scoreObj?.Budget ?? 0;
-        return 0 + Attitude + Communication + Tech + UI + UX + Budget
-    }
-
+    const getScreeningTotalScore = (scoreObj = {}) => {
+    return Object.values(scoreObj).reduce((total, score) => {
+        return total + parseInt(score ?? 0);
+    }, 0);
+    };
+    
     const scoreData = useMemo(() => {
         const mappedData = Object.entries(scoreStages)?.map(([stage, stageData]) => {
             if (stage !== "Screening") {
@@ -75,9 +72,11 @@ export const VAVScoreCard = ({ score, stage, scoreStages }) => {
     if (!showBreakDown) {
         return (
             <StyledCard extraStyles="flex bg-stars  flex-col items-center sm:w-[55%] lg:w-[35%]  max-w-[27rem] bg-cover relative">
-                <h3 className="typography-h2">VAV SCORE</h3>
-                <button onClick={() => setShowBreakDown(true)} className='absolute top-8 right-8 hover:text-font-gray'>
-                    <IconWrapper icon={ArrowLeftRight} size={0} customStrokeWidth={7} inheritColor />
+                <h2>VAV SCORE</h2>
+                <button onClick={() => setShowBreakDown(true)} className='absolute top-4 right-4 hover:text-font-gray'>
+                    <CustomToolTip title={'View Score Breakdown'}>
+                        <IconWrapper icon={ArrowLeftRight} size={0} customStrokeWidth={7} inheritColor />
+                    </CustomToolTip>
                 </button>
                 <span className="marks text-font-primary">{score}</span>
                 <p className="typography-large-p">Out of {getMaxScoreForStage(stage)}</p>
@@ -85,9 +84,11 @@ export const VAVScoreCard = ({ score, stage, scoreStages }) => {
         )
     } else {
         return (<StyledCard extraStyles="flex bg-stars  flex-col items-center sm:w-[55%] lg:w-[35%]  max-w-[27rem] bg-cover relative">
-            <h3 className="typography-h2">Score Breakdown</h3>
-            <button onClick={() => setShowBreakDown(false)} className='absolute top-8 right-8 hover:text-font-gray'>
-                <IconWrapper icon={ArrowLeftRight} size={0} customStrokeWidth={7} inheritColor />
+            <h2>Score Breakdown</h2>
+            <button onClick={() => setShowBreakDown(false)} className='absolute top-4 right-4 hover:text-font-gray'>
+                <CustomToolTip title={'View VAV Score'}>
+                    <IconWrapper icon={ArrowLeftRight} size={0} customStrokeWidth={7} inheritColor />
+                </CustomToolTip>
             </button>
             <ScoreChart scoreData={scoreData} />
         </StyledCard>)
@@ -205,32 +206,24 @@ const ViewCandidateProfile = () => {
     }
 
     const [originalPath] = useState(() => {
-        const isJobPath = location.pathname.includes('/admin/jobs/');
-        const isJobPathHR = location.pathname.includes('/hiring-manager/jobs/');
-        const isShortlistedPath = location.pathname.includes('/admin/shortlisted/');
+        const isJobPath = location.pathname.includes('/jobs/');
+        const isShortlistedPath = location.pathname.includes('/shortlisted');
 
         if (isShortlistedPath) {
-            return '/admin/shortlisted';
+            return getRoute(role,ROUTE_KEY.SHORTLISTED);
         } else if (isJobPath) {
-            return `/admin/jobs/view-job/${jobId}`;
-        }
-        if (isJobPathHR) {
-            return `/hiring-manager/jobs/view-job/${jobId}`;
+            return `${getRoute(role,ROUTE_KEY.JOBS_VIEW_JOB)}/${jobId}`;
         }
 
-        return role === "Hiring Manager" ? `/hiring-manager/candidates` : role === "Admin" ? `/admin/candidates` : `/design-reviewer/candidates`;
+        return hasRoutePermission(role,ROUTE_KEY.ALL_CANDIDATES) ? getRoute(role,ROUTE_KEY.ALL_CANDIDATES) : getRoute(role,ROUTE_KEY.CANDIDATES);
     });
 
     // Effect for job switching
     useEffect(() => {
-        if (selectedJob && (role === "Hiring Manager" || role === "Admin") && selectedJob !== jobId) {
-            const isJobsPath = originalPath.includes('/admin/jobs/');
-            const isJobsPathHR = originalPath.includes('/hiring-manager/jobs/');
+        if (selectedJob && hasPermission(role,PERMISSIONS.SHOW_JOB_SWITCH) && selectedJob !== jobId) {
+            const isJobsPath = originalPath.includes('/jobs/');
 
-            const basePath = (role === "Admin" && isJobsPath) ? '/admin/jobs' : '/admin/candidates';
-            const basePathHR = (role === "Hiring Manager" && isJobsPathHR) ? '/hiring-manager/jobs' : '/hiring-manager/candidates';
-
-            navigate(`${role === "Admin" ? basePath : basePathHR}/view-candidate/${candidateId}/${selectedJob}`, {
+            navigate(`${getRoute(role,isJobsPath ? ROUTE_KEY.JOBS_VIEW_CANDIDATE : ROUTE_KEY.CANDIDATES_VIEW_CANDIDATE)}/${candidateId}/${selectedJob}`, {
                 replace: true,
                 state: { from: originalPath }
             });
@@ -241,12 +234,14 @@ const ViewCandidateProfile = () => {
     const handleBack = () => {
         if (role === "Candidate") {
             navigate(-1);
-        } else {
+        }else {
             // Check if we're on a shortlisted candidate view
-            const isShortlistedPath = location.pathname.includes('/admin/shortlisted/');
-
-            if (isShortlistedPath) {
-                navigate('/admin/shortlisted');
+            const isShortlistedPath = location.pathname.includes('/shortlisted/');
+            const isReviewsPath = location.pathname.includes('/reviews/');
+            if(isReviewsPath && role === "Design Reviewer"){
+                navigate(getRoute(role,ROUTE_KEY.REVIEWS));
+            }else if (isShortlistedPath) {
+                navigate(getRoute(role,ROUTE_KEY.SHORTLISTED));
             } else {
                 navigate(originalPath);
             }
@@ -310,7 +305,7 @@ const ViewCandidateProfile = () => {
             icon: <IconWrapper icon={Users} size={0} isInActiveIcon={true} customIconSize={4} />,
             activeIcon: <IconWrapper icon={Users} isActiveIcon={true} size={0} customIconSize={4} />,
         },
-        ...(role !== "Design Reviewer" ? [
+        ...(hasPermission(role,PERMISSIONS.SHOW_TAB_CANDIDATE_DETAIL) ? [
             {
                 name: 'candidateDetails',
                 label: 'Candidate Details',
@@ -366,7 +361,13 @@ const ViewCandidateProfile = () => {
     const handleAction = (action) => {
         switch (action) {
             case ACTION_TYPES.EDIT:
-                navigate(`/${role === "Admin" ? 'admin' : "hiring-manager"}/jobs/edit-candidate/${candidateId}`);
+                navigate(`${getRoute(role,
+                    location.pathname.includes('/candidates/all') 
+                    ? ROUTE_KEY.CANDIDATES_EDIT_CANDIDATE_PROFILE 
+                    : 
+                    location.pathname.includes('/candidates/shortlisted') 
+                    ? ROUTE_KEY.SHORTLISTED_EDIT_CANDIDATE_PROFILE
+                    : ROUTE_KEY.JOBS_EDIT_CANDIDATE_PROFILE)}/${candidateId}`);
                 break;
             case 'ACTION_2':
                 navigate('/some-other-page');
@@ -406,7 +407,12 @@ const ViewCandidateProfile = () => {
 
     const handleAssignmentNavigation = () => {
 
-        navigate(`/${role === "Admin" ? 'admin' : 'hiring-manager'}/assessment/${candidateId}/${jobId}`)
+        navigate(`${getRoute(role,
+            location.pathname.includes('/jobs/all') 
+            ? ROUTE_KEY.JOBS_ASSESSMENT_RESPONSE 
+            : location.pathname.includes('/candidates/shortlisted') 
+            ? ROUTE_KEY.SHORTLISTED_ASSESSMENT_RESPONSE 
+            : ROUTE_KEY.CANDIDATES_ASSESSMENT_RESPONSE)}/${candidateId}/${jobId}`)
 
     }
 
@@ -440,6 +446,34 @@ const ViewCandidateProfile = () => {
         window.open(mailtoLink, "_blank");
     };
 
+    const handlePhoneCopy = (phone) => {
+    if (!phone) return;
+
+        navigator.clipboard.writeText(phone)
+        .then(() => {
+            showSuccessToast('Success','Phone Number copied to clipboard');
+            // Optionally show a success message/toast here
+        })
+        .catch((err) => {
+            console.error('Failed to copy phone number:', err);
+            // Optionally show an error message/toast
+        });
+    };
+
+    const handleEmailCopy = (email) => {
+    if (!email) return;
+
+        navigator.clipboard.writeText(email)
+        .then(() => {
+            showSuccessToast('Success','Email copied to clipboard');
+            // Optionally show a success message/toast here
+        })
+        .catch((err) => {
+            console.error('Failed to copy email:', err);
+            // Optionally show an error message/toast
+        });
+    };
+
     const handleOpenNotes = (e) => {
         setOpenNotes(true)
         e.stopPropagation();
@@ -468,12 +502,12 @@ const reviewerProfilePic = currentReviewer?.profilePicture
             {/* Page header */}
             <Header
                 HeaderText="Candidate Profile"
-                withKebab={(role === "Hiring Manager" || role === "Admin") ? "true" : "false"}
+                withKebab={hasPermission(role,PERMISSIONS.SHOW_KEBAB)}
                 withBack="true"
                 page="page1"
                 handleAction={handleAction}
                 onBack={handleBack} // Pass custom back handler
-                rightContent={(role === "Admin" || role === "Hiring Manager") &&
+                rightContent={hasPermission(role,PERMISSIONS.SHOW_JOB_SWITCH) &&
                     <div className='flex items-center h-full w-72 z-10'>
                         <GlobalDropDown
                         extraStylesForLabel=" hidden "
@@ -484,23 +518,24 @@ const reviewerProfilePic = currentReviewer?.profilePicture
                     </div>
                 }
             />
+            <StyledCard >
             {/* Candidate Profile Card */}
             {
-                (role === "Admin" || role === "Hiring Manager" || role === "Design Reviewer") && (
+                hasPermission(role,PERMISSIONS.SHOW_CANDIDATE_PROFILE_CARD) && (
                     <div className="flex gap-3">
-                        <StyledCard padding={2} extraStyles="w-full flex gap-4 relative justify-between relative">
-                            <div className='flex gap-4'>
+                        <StyledCard padding={2} backgroundColor={'bg-background-80'} extraStyles="w-full flex gap-4 relative justify-between relative">
+                            <div className='flex gap-4 '>
                                 <div className="relative to-background-100 w-[200px] min-h-auto max-h-[200px] rounded-xl overflow-hidden">
                                     <img src={data.profilePictureUrl || UNKNOWN_PROFILE_PICTURE_URL} alt="" className='object-cover w-full overflow-hidden' />
-                                    {(role === "Hiring Manager" || role === "Admin") &&
+                                    {hasPermission(role,PERMISSIONS.SHOW_CANDIDATE_PROFILE_RATING) &&
                                         <span onClick={(e) => setRatingAnchor(e.currentTarget)} className='absolute cursor-pointer bg-[#2d2d2eae] min-w-10 min-h-10 top-2 right-2 rounded-full flex justify-center items-center'>
                                             {getRatingIcon(data?.jobApplication?.rating)}
                                         </span>}
                                 </div>
                                 <div className={`flex flex-col gap-2 ${candidateData?.jobApplication?.notes?.content ? ' max-w-[60%] ' : ''}`}>
-                                    <h1 className="typography-h2">
+                                    <h2>
                                         {data.firstName} {data.lastName}
-                                    </h1>
+                                    </h2>
                                     <div className="flex items-center gap-2 mb-3 mt-2">
                                         <span className="typography-small-p text-font-gray">{data.jobApplication.jobApplied}</span>
                                         <svg xmlns="http://www.w3.org/2000/svg" width="4" height="4" viewBox="0 0 4 4" fill="none">
@@ -508,18 +543,14 @@ const reviewerProfilePic = currentReviewer?.profilePicture
                                         </svg>
                                         <span className="typography-small-p text-font-gray">{data.location}</span>
                                     </div>
-                                    {role !== "Design Reviewer" &&
+                                    {hasPermission(role,PERMISSIONS.SHOW_CANDIDATE_PROFILE_PERSONAL_DETAILS) &&
                                         <div className="flex mb-3 gap-5">
-                                            <div className="flex items-center gap-2">
-                                                <div className='cursor-pointer' onClick={() => handleWhatsappOpen(data.firstName + " " + data.lastName, data.phone)}>
+                                            <div className="flex items-center gap-2 cursor-pointer" onClick={()=>handlePhoneCopy(data?.phone)}>
                                                     <IconWrapper size={0} customIconSize={2} icon={Phone} />
-                                                </div>
                                                 <span className="typography-large-p">{data.phone}</span>
                                             </div>
-                                            <div className="flex items-center gap-2 overflow-hidden">
-                                                <div className='cursor-pointer' onClick={() => handleEmailOpen(data?.firstName + " " + data?.lastName, data?.email, data?.jobApplication?.jobApplied, new Date(data?.jobApplication?.stageStatuses['Screening']?.currentCall?.scheduledDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) + " " + formatTime(data?.jobApplication?.stageStatuses['Screening']?.currentCall?.scheduledTime))}>
+                                            <div className="flex items-center gap-2 overflow-hidden cursor-pointer" onClick={() => handleEmailCopy(data?.email)}>
                                                     <IconWrapper size={0} customIconSize={2} icon={Mail} />
-                                                </div>
                                                 <span className="typography-large-p whitespace-nowrap text-ellipsis overflow-hidden ">{data.email}</span>
                                             </div>
                                         </div>}
@@ -544,7 +575,7 @@ const reviewerProfilePic = currentReviewer?.profilePicture
                                         {resumeOpen && <ResumeViewer documentUrl={data.resumeUrl} onClose={() => setResumeOpen(false)} />}
 
                                         {
-                                            ((data.hasGivenAssessment && data.jobApplication?.assessmentResponse) && (role === "Hiring Manager" || role === "Admin")) && <div className='cursor-pointer' onClick={handleAssignmentNavigation}>
+                                            ((data.jobApplication?.assessmentResponse) && hasPermission(role,PERMISSIONS.SHOW_CANDIDATE_PROFILE_ASSESSMENT_RESPONSE)) && <div className='cursor-pointer' onClick={handleAssignmentNavigation}>
                                                 <CustomToolTip title={'Assessment'} arrowed size={2}>
                                                     <IconWrapper hasBg icon={ClipboardCheck} />
                                                 </CustomToolTip>
@@ -552,7 +583,7 @@ const reviewerProfilePic = currentReviewer?.profilePicture
                                         }
 
                                         {/* Add Shortlist Button/Icon */}
-                                        {(role === "Hiring Manager" || role === "Admin") &&
+                                        {hasPermission(role,PERMISSIONS.SHOW_CANDIDATE_PROFILE_SHORTLIST_BUTTON) &&
                                             <div className='cursor-pointer bg-background-70 hover:bg-accent-300 rounded-xl w-11 h-11 flex justify-center items-center' onClick={handleToggleShortlist}>
                                                 <CustomToolTip title={data?.jobApplication?.shortlisted ? 'Remove from Future Gems' : 'Add to Future Gems'} arrowed size={2}>
                                                     {data?.jobApplication?.shortlisted ? <IconWrapper hasBg icon={MonitorDot} /> : <IconWrapper isInActiveIcon hasBg icon={MonitorDot} />}
@@ -564,8 +595,8 @@ const reviewerProfilePic = currentReviewer?.profilePicture
                                 </div>
 
                                 {/* ready only current reviewer */}
-                                {data?.jobApplication?.stageStatuses[data?.jobApplication?.currentStage]?.assignedTo && (role === "Hiring Manager" || role === "Admin") &&
-                                    <div className='absolute bottom-4 right-4 flex gap-2'>
+                                {data?.jobApplication?.stageStatuses[data?.jobApplication?.currentStage]?.assignedTo && hasPermission(role,PERMISSIONS.SHOW_CANDIDATE_PROFILE_CURRENT_REVIEWER) &&
+                                    <div className='absolute bottom-8 right-8 flex gap-2'>
                                         <div className='flex flex-col items-end'>
                                             <p className='typography-small-p text-font-gray'>Current reviewer </p>
                                             <p className='typography-small-p '>{reviewerName}</p>
@@ -575,11 +606,11 @@ const reviewerProfilePic = currentReviewer?.profilePicture
                                         </div>
                                     </div>}
                             </div>
-                            {(role === "Hiring Manager" || role === "Admin") && candidateData?.jobApplication?.notes?.content ?
-                                <StyledCard onClick={() => setOpenNotesView(true)} padding={2} backgroundColor={"bg-background-80"} extraStyles={'w-[30%] h-fit max-h-36 cursor-pointer max  relative overflow-hidden'}>
+                            {hasPermission(role,PERMISSIONS.SHOW_CANDIDATE_PROFILE_NOTES_SECTION) && (candidateData?.jobApplication?.notes?.content ?
+                                <StyledCard  onClick={() => setOpenNotesView(true)} padding={3} backgroundColor={"bg-background-70"} extraStyles={'w-[30%] h-fit max-h-36 cursor-pointer max  relative overflow-hidden'}>
                                     <div className=' flex justify-between items-center  ' >
 
-                                        <h3 className='typography-body'>Notes</h3>
+                                        <p className='typography-body'>Notes</p>
                                         <div onClick={handleOpenNotes} className={'hover:bg-accent-300  bg-background-70  rounded-xl' + (candidateData?.jobApplication?.notes?.content ? " top-8 right-8 " : " top-4 right-4")}>
                                             <CustomToolTip title={candidateData?.jobApplication?.notes?.content ? "Edit notes" : "Add a note"} arrowed>
                                                 {
@@ -589,7 +620,7 @@ const reviewerProfilePic = currentReviewer?.profilePicture
                                         </div>
                                     </div>
 
-                                    <div className='overflow-hidden text-font-gray ' dangerouslySetInnerHTML={{ __html: truncatedText(candidateData?.jobApplication?.notes?.content, 55) }}></div>
+                                    <div className='overflow-hidden text-font-gray typography-body ' dangerouslySetInnerHTML={{ __html: truncatedText(candidateData?.jobApplication?.notes?.content, 50) }}></div>
 
                                 </StyledCard> :
                                 <div onClick={handleOpenNotes} className={'hover:bg-accent-300  bg-background-70  h-fit rounded-xl' + (candidateData?.jobApplication?.notes?.content ? " top-8 right-8 " : " top-4 right-4")}>
@@ -598,7 +629,7 @@ const reviewerProfilePic = currentReviewer?.profilePicture
                                             candidateData?.jobApplication?.notes?.content ? <IconWrapper icon={NotebookPen} /> : <IconWrapper icon={Notebook} />
                                         }
                                     </CustomToolTip>
-                                </div>
+                                </div>)
                             }
 
                         </StyledCard>
@@ -640,9 +671,9 @@ const reviewerProfilePic = currentReviewer?.profilePicture
                 customConfirmLabel={"OK"}
             >
                 <div className='mt-4  overflow-y-scroll scrollbar-hide text-ellipsis max-h-[50vh] w-full'>
-                    <div className='mb-4 bg-background-40 p-4 rounded-xl'>
+                    <div className='mb-4 bg-background-80 p-4 rounded-xl'>
                         <div className='flex justify-between items-center '>
-                            <h3 className='typography-body font-regular'>{candidateData?.jobApplication?.jobApplied}</h3>
+                            <p className='typography-body font-regular'>{candidateData?.jobApplication?.jobApplied}</p>
                             <p className='text-font-gray typography-large-p '>{UTCToDateFormatted(candidateData?.jobApplication?.notes?.addedDate)}</p>
                         </div>
                         <div className='text-font-gray p-1 w-full overflow-x-hidden overflow-y-scroll scrollbar-hide text-ellipsis whitespace-normal break-words' dangerouslySetInnerHTML={{ __html: candidateData?.jobApplication?.notes?.content }}></div>
@@ -650,9 +681,9 @@ const reviewerProfilePic = currentReviewer?.profilePicture
                     {
                         showMore && candidateData?.applications?.filter(app => (app?.notes?.content !== "" && app?.notes?.content !== undefined && app?.notes?.content !== null && app.jobId !== jobId))?.map(app => {
                             return (
-                                <div className='mb-4 bg-background-40 p-4 rounded-xl'>
+                                <div className='mb-4 bg-background-80 p-4 rounded-xl'>
                                     <div className='flex justify-between items-center '>
-                                        <h3 className='typography-body'>{app?.jobApplied}</h3>
+                                        <p className='typography-body'>{app?.jobApplied}</p>
                                         <p className='text-font-gray typography-large-p '>{new Date(app.notes?.addedDate).toLocaleDateString("en-GB", {
                                             day: "2-digit",
                                             month: "long",
@@ -669,7 +700,7 @@ const reviewerProfilePic = currentReviewer?.profilePicture
             </Modal>
             {/* Conditional rendering of tabs for "Hiring Manager" */}
 
-            <div className="flex my-4">
+            <div className={`flex ${role === 'Candidate' ? 'mb-4' : 'my-4'}`}>
                 <Tabs tabs={tabs} activeTab={activeTab} handleTabClick={handleTabClick} />
             </div>
 
@@ -687,6 +718,7 @@ const reviewerProfilePic = currentReviewer?.profilePicture
             {activeTab === 'candidateDetails' && (
                 <CandidateTabDetail data={transformedData} job={data?.jobApplication} candidateId={data?._id} role={role} />
             )}
+        </StyledCard>
         </Container>
     );
 };

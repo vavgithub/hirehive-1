@@ -14,6 +14,8 @@ import ContactUs from '../../components/Form/ContactUs';
 import Container from '../../components/Cards/Container';
 import IconWrapper from '../../components/Cards/IconWrapper';
 import { ArrowRight } from 'lucide-react';
+import Footer from '../../components/Footer/Footer';
+import LogoWrapper from '../../components/Logo/LogoWrapper';
 
 // Function to fetch the job data by ID
 const getJobById = async (id) => {
@@ -25,7 +27,7 @@ const ViewJob = () => {
     const { id: mainId } = useParams();
     const navigate = useNavigate();
 
-    const { isAuthenticated, isLoading, candidateData } = useCandidateAuth()
+    const { isAuthenticated, candidateData } = useCandidateAuth()
 
     const {
         data: formData,
@@ -38,7 +40,7 @@ const ViewJob = () => {
         enabled: !!mainId,
     });
 
-    if (isApiLoading || isLoading) {
+    if (isApiLoading) {
         return (
             <div className="flex justify-center items-center min-h-screen">
                 <Loader />
@@ -64,12 +66,10 @@ const ViewJob = () => {
     return (
         // <div className='min-h-screen flex justify-center bg-main-bg bg-cover w-full p-4'>      
         //     <div className=" flex container flex-col items-center  ">
+            <>
             <Container hasBgColor extraContainerStyles="flex flex-col items-center">
-                <div className='flex  w-full mt-2 mb-6 justify-between'>
-                    <img className='h-12' src={Logo} />
-                    {!isAuthenticated && <Button variant="secondary" onClick={() => navigate("/login")}>Login</Button>}
-                </div>
-                <StyledCard padding={3} backgroundColor={"bg-background-30"} extraStyles={" w-full"}>
+                <LogoWrapper isAuthenticated={isAuthenticated} />
+                <StyledCard  backgroundColor={"bg-background-90"} extraStyles={" w-full"}>
                     {/* Flex container for both desktop and mobile */}
                     <div className="flex flex-col lg:flex-row justify-between w-full">
                         {/* Job Title */}
@@ -90,7 +90,6 @@ const ViewJob = () => {
                                     }
                                 </div>}
                         />
-                        {/* <h1 className="typography-h1"></h1> */}
                         {/* Button only visible on large screens */}
 
                     </div>
@@ -99,7 +98,7 @@ const ViewJob = () => {
                     <div className="flex flex-col-reverse md:flex md:flex-row md:justify-between mt-4">
                         {/* Left section: Job description and skills */}
                         <div className="md:w-3/4">
-                            <h3 className='typography-h3'>Job Description</h3>
+                            <h3>Job Description</h3>
                             <div
                                 className="text-font-gray typography-body"
                                 dangerouslySetInnerHTML={{ __html: formatDescription(formData.jobDescription) }}
@@ -107,7 +106,7 @@ const ViewJob = () => {
 
                             {/* Skills section */}
                             <div>
-                                <h4 className="typography-h4 font-bold  mt-6 mb-3">Skills</h4>
+                                <h4 className="mt-6 mb-3">Skills</h4>
                                 <div className="flex flex-wrap gap-3 mb-6">
                                     {formData.skills && formData.skills.map((skill, index) => (
                                         <span key={index} className="flex typography-body justify-center w-fit bg-background-70 px-6 py-2 rounded-full">
@@ -138,6 +137,8 @@ const ViewJob = () => {
                     <ContactUs/>
                 </div>
             </Container>
+            <Footer />
+            </>
     );
 };
 

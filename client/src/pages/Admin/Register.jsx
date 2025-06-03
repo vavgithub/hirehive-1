@@ -6,6 +6,7 @@ import DetailsForm from '../../components/Register/DetailsForm';
 import useAuth from '../../hooks/useAuth';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import Loader from '../../components/Loaders/Loader';
+import { getRoute, ROUTE_KEY } from '../../config/permissions.config';
 
 export const steps = [
     { id: "REGISTER", label: "Register" },
@@ -31,14 +32,8 @@ const Register = () => {
     },[searchParams])
 
     useEffect(() => {
-        if (authData) {
-            if (authData.role === 'Admin') {
-                navigate('/admin/dashboard');
-            } else if (authData.role === 'Hiring Manager') {
-                navigate('/hiring-manager/dashboard');
-            } else if (authData.role === 'Design Reviewer') {
-                navigate('/design-reviewer/dashboard');
-            }
+        if (authData?.role) {
+          navigate(getRoute(authData.role,ROUTE_KEY.DASHBOARD));
         }
     }, [authData, navigate]);
 

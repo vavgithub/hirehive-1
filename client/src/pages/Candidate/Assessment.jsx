@@ -29,7 +29,7 @@ export const useAssessmentQuestions = (assessment_id) => {
   return useQuery({
     queryKey: ['random-assessment-questions',assessment_id],
     queryFn: async () => {
-      const response = await axios.get(`/admin/candidate/assessment-questions/random?assessmentId=${assessment_id}`);
+      const response = await axios.post(`/admin/candidate/assessment-questions/random?assessmentId=${assessment_id}`);
       return response.data.questions;
     },
     staleTime: Infinity,
@@ -81,7 +81,7 @@ const QuestionSidebar = ({ questions, currentQuestion, answeredCount, onQuestion
   const [ min ,sec ] = useMemo(()=> formatTime(timeRemaining).split(":") ,[timeRemaining]) 
   
   return (
-    <div className="w-[15rem] bg-background-30 fixed  overflow-y-auto  custom-scrollbar m-4 h-[calc(100vh-2rem)]  rounded-xl">
+    <div className="w-[15rem] bg-background-90 fixed  overflow-y-auto  custom-scrollbar m-4 h-[calc(100vh-2rem)]  rounded-xl">
       <div className='flex items-center justify-start pt-8 pb-6 px-4 '>
 
         <img className='h-11' src={LightLogo} />
@@ -90,15 +90,15 @@ const QuestionSidebar = ({ questions, currentQuestion, answeredCount, onQuestion
         <div className=" flex flex-col items-center ">
           <div className='w-full flex items-center gap-2'>
           {/* <TimerIconSmall /> */}
-          <p className=' text-white font-bricolage'>Time remaining</p>
+          <p className='typography-body'>Time remaining</p>
           </div>
           <div className='mt-3 w-full flex items-center justify-around gap-3'>
-          <span className={(timeRemaining <= ONE_MINUTE && "bg-red-200 text-red-300 ") +" bg-background-70 typography-h3 flex items-center justify-center w-16 h-16 rounded-xl"}>
+          <h3 className={(timeRemaining <= ONE_MINUTE && "bg-red-200 text-red-300 ") +" bg-background-70  flex items-center justify-center w-16 h-16 rounded-xl"}>
             {min}
-          </span> : 
-          <span className={(timeRemaining <= ONE_MINUTE && "bg-red-200 text-red-300 ") +" bg-background-70 typography-h3 flex items-center justify-center w-16 h-16 rounded-xl"}>
+          </h3> : 
+          <h3 className={(timeRemaining <= ONE_MINUTE && "bg-red-200 text-red-300 ") +" bg-background-70 flex items-center justify-center w-16 h-16 rounded-xl"}>
             {sec}
-          </span>
+          </h3>
           </div>
         </div>
       </div>
@@ -106,7 +106,6 @@ const QuestionSidebar = ({ questions, currentQuestion, answeredCount, onQuestion
         <span className='font-bricolage mb-2 inline-block'>{(answeredCount/questions.length) * 100}% Completed</span>
       <ProgressBar answeredCount={answeredCount} total={questions.length} />
       </div>
-      {/* <h2 className="typography-h3 text-font-gray p-4">Questions</h2> */}
       <div className='grid grid-cols-5 gap-2  py-8 px-4 border-b border-background-60'>
       {questions.map((q, index) => (
         <div
@@ -162,7 +161,7 @@ const QuestionDisplay = ({
   <div className="flex-grow p-6 mx-auto container  w-full">
     <div className="mb-8 max-w-[80%] mx-auto">
       <StyledCard backgroundColor={"bg-background-70"} padding={3} extraStyles={"flex flex-col gap-4"} >
-        <h2 className="typography-h2 ">{`Question ${questionNumber + 1}: ${question.text}`}</h2>
+        <h2 >{`Question ${questionNumber + 1}: ${question.text}`}</h2>
         {question.questionType === 'image' && question.imageUrl && (
           <div className="relative w-fit">
             <img
@@ -176,12 +175,12 @@ const QuestionDisplay = ({
           </div>
         )}
       </StyledCard>
-      <StyledCard backgroundColor={"bg-background-30"} borderRadius={" rounded-br-xl rounded-bl-xl "} extraStyles={"w-[95%] mx-auto"}>
+      <StyledCard backgroundColor={"bg-background-90"} borderRadius={" rounded-br-xl rounded-bl-xl "} extraStyles={"w-[95%] mx-auto"}>
         <div className='grid grid-cols-2 gap-4 items-center h-max' style={{
           gridAutoRows: "1fr", // Ensures all rows are consistent based on tallest item
         }}>
           {question.options.map((option, index) => (
-            <div key={index} className="flex items-center bg-background-80  rounded-xl  h-full">
+            <div key={index} className={"flex items-center hover:bg-background-60 rounded-xl  h-full " + (currentAnswer === option.text ? ' selection-primary ' : ' bg-background-80')}>
               <label className="flex cursor-pointer items-center space-x-3 p-4 w-full">
                 <input
                   type="radio"
@@ -273,7 +272,7 @@ const UploadProgressOverlay = ({ uploadProgress }) => (
   <div className="fixed inset-0 bg-background-overlay flex items-center justify-center z-50">
     <div className=" p-8 rounded-xl flex flex-col items-center space-y-4">
       <Loader />
-      <h3 className="typography-h3 text-font-gray">Uploading Assessment</h3>
+      <h3 className="text-font-gray">Uploading Assessment</h3>
       <div className="w-full max-w-md bg-background-70 rounded-full h-4 overflow-hidden">
         <div
           className="bg-teal-400 h-full transition-all duration-300 ease-out"
@@ -469,184 +468,6 @@ const Assessment = ({assessment_id}) => {
     });
   };
 
-
-//   const startRecording = async () => {
-//     try {
-//         const stream = await navigator.mediaDevices.getUserMedia({
-//             video: true,
-//             audio: false // Focus on video only
-//         });
-
-//         // Attach the stream to the video element for live preview
-//         webcamRef.current.video.srcObject = stream;
-
-//         // Create canvas for extracting frames
-//         const videoElement = document.createElement('video');
-//         videoElement.srcObject = stream;
-//         const canvas = document.createElement('canvas');
-//         const ctx = canvas.getContext('2d');
-
-//         // Array to store video frames as blobs
-//         const videoChunks = [];
-
-//         // Set up interval for extracting frames at 1 FPS
-//         const extractFramesInterval = setInterval(() => {
-//             // Ensure the canvas matches the video dimensions
-//             if (!canvas.width || !canvas.height) {
-//                 canvas.width = videoElement.videoWidth;
-//                 canvas.height = videoElement.videoHeight;
-//             }
-
-//             // Draw the current video frame on the canvas
-//             ctx.drawImage(videoElement, 0, 0);
-
-//             // Convert the canvas content to a Blob and store it
-//             canvas.toBlob((blob) => {
-//               if (blob) {
-//                   // Ensure each chunk is of type video/webm
-//                   videoChunks.push(blob);
-//                   console.log('Frame captured:', blob.size,blob.type);
-//               }
-//           }, 'video/webm');
-          
-//         }, 1000); // 1 FPS
-
-//         setIsRecording(true);
-//         console.log('Recording started');
-
-//         const stopRecording = () => {
-//           return new Promise((resolve) => {
-//               clearInterval(extractFramesInterval); // Stop frame extraction
-//               videoElement.srcObject = null;
-      
-//               // Create a final video Blob from captured frames
-//               const finalBlob = new Blob(videoChunks, { type: 'video/webm' });
-//               console.log('Recording stopped. Final blob size:', finalBlob.size , finalBlob.type);
-      
-//               setRecordedBlob(finalBlob);  // Update state with the final blob
-
-//               // Resolve the promise with the final blob
-//               resolve(finalBlob);
-//           });
-//       };
-
-//         // Attach stopRecording to a reference for external control
-//         mediaRecorderRef.current = { stop : stopRecording };
-//     } catch (error) {
-//         console.error('Error starting recording:', error);
-//         showErrorToast('Error', 'Failed to start recording. Please ensure camera access is granted.');
-//         // setTimeout(() => window.location.reload(), 1000);
-//     }
-// };
-
-
-
-  //   const uploadVideo = async (videoBlob) => {
-  //     if (!videoBlob) {
-  //       throw new Error('No recording available');
-  //     }
-
-  //     try {
-  //       // Create a proper File object
-  //       const videoFile = new File(
-  //         [videoBlob], 
-  //         'assessment-recording.webm',
-  //         { 
-  //           type: 'video/webm',
-  //           lastModified: Date.now()
-  //         }
-  //       );
-
-  //       // Log the file to verify it's created correctly
-  //       console.log('Video file created:', videoFile);
-
-  //       const formData = new FormData();
-  //       // Use the same field name as expected by multer
-  //       formData.append('video', videoFile);
-
-  //       // Log FormData contents
-  //       console.log('FormData entries:');
-  //       for (let pair of formData.entries()) {
-  //         console.log(pair[0], pair[1]);
-  //       }
-
-  //       const response = await axios.post('/admin/candidate/upload-recording', formData, {
-  //         headers: {
-  //           'Content-Type': 'multipart/form-data',
-  //         },
-  //         onUploadProgress: (progressEvent) => {
-  //           const progress = Math.round(
-  //             (progressEvent.loaded * 100) / progressEvent.total
-  //           );
-  //           setUploadProgress(progress);
-  //         },
-  //       });
-
-  //       return response.data.videoUrl;
-  //     } catch (error) {
-  //       console.error('Upload error:', error);
-  //       if (error.response) {
-  //         console.error('Response data:', error.response.data);
-  //         console.error('Response status:', error.response.status);
-  //       }
-  //       throw error;
-  //     }
-  //   };
-
-
-  // // Modified submit mutation
-  // const submitAssessmentMutation = useMutation({
-  //   mutationFn: async (assessmentData) => {
-  //     try {
-  //       setIsUploading(true);
-
-  //       // Stop recording and get the blob
-  //       const videoBlob = await stopRecording();
-
-  //       if (!videoBlob) {
-  //         throw new Error('No recording available');
-  //       }
-
-  //       // Upload video and get URL
-  //       const videoUrl = await uploadVideo(videoBlob);
-
-  //       if (!videoUrl) {
-  //         throw new Error('Failed to get video URL');
-  //       }
-
-
-  //       // Then submit assessment with video URL
-  //       const response = await axios.post(
-  //         `/admin/candidate/questionnaire/${candidateAuthData._id}`,
-  //         {
-  //           ...assessmentData,
-  //           recordingUrl: uploadResponse.data.videoUrl
-  //         }
-  //       );
-  //       return response.data;
-  //     } catch (error) {
-  //       console.error('Submit error:', error);
-  //       throw error;
-  //     }
-  //   },
-  //   onSuccess: (data) => {
-  //     showSuccessToast('Success', 'Assessment submitted successfully');
-  //     navigate('/candidate/my-jobs');
-  //   },
-  //   onError: (error) => {
-  //     showErrorToast(
-  //       'Error',
-  //       error.message || 'Failed to submit assessment'
-  //     );
-  //     setIsUploading(false);
-  //   },
-  //   onSettled: () => {
-  //     setIsUploading(false);
-  //     setUploadProgress(0);
-  //   }
-  // });
-
-
   const uploadVideo = async (videoBlob) => {
     if (!videoBlob) {
       throw new Error('No recording available');
@@ -806,7 +627,7 @@ const Assessment = ({assessment_id}) => {
     return (
       <div className="flex h-screen items-center justify-center bg-background-90">
         <div className="flex flex-col items-center gap-4">
-          <div className="typography-h2 text-red-500">Error loading questions</div>
+          <div className="text-red-500">Error loading questions</div>
           <div className="typography-body text-font-gray">{error.message}</div>
         </div>
       </div>
@@ -816,7 +637,7 @@ const Assessment = ({assessment_id}) => {
   if (!questions?.length) {
     return (
       <div className="flex h-screen items-center justify-center bg-background-90">
-        <div className="typography-h2 text-font-gray">No questions available</div>
+        <div className="text-font-gray">No questions available</div>
       </div>
     );
   }
@@ -834,7 +655,7 @@ const Assessment = ({assessment_id}) => {
   return (
     <>
       {isUploading && <UploadProgressOverlay uploadProgress={uploadProgress} />}
-      <div className="no-selection flex min-h-screen bg-background-90 ">
+      <div className="no-selection flex min-h-screen bg-background-100 ">
         <QuestionSidebar
           questions={questions}
           currentQuestion={currentQuestion}

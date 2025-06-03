@@ -68,6 +68,7 @@ const EditCandidateProfile = () => {
         { name: 'experience', label: 'Experience', type: 'number' , placeholder: 'Enter Experience (In Years)' },
         { name: 'currentCTC', label: 'Current CTC', type: 'number', placeholder: 'Enter Current CTC (In LPA)' },
         { name: 'expectedCTC', label: 'Expected CTC', type: 'number', placeholder: 'Enter Expected CTC (In LPA)' },
+        { name: 'hourlyRate', label: 'Hourly Rate', type: 'number', placeholder: 'Enter Hourly Rate (In INR/Hr)' },
         { name: 'noticePeriod', label: 'Notice Period', type: 'number', placeholder: 'Enter Notice Period (In Days)' }
       ],
     },
@@ -91,13 +92,13 @@ const EditCandidateProfile = () => {
   }else{
     return (
           <Container hasBgColor >
-            <Header HeaderText="Edit Candidate Profile" withKebab='false' withBack="true" />
+            <Header HeaderText="Edit Candidate Profile" withBack="true" />
             <div className='flex gap-6 mt-5'>
-              <StyledCard backgroundColor={"bg-background-30"} padding={2} extraStyles=' w-96 h-96  flex flex-col items-center'>
+              <StyledCard backgroundColor={"bg-background-90"} padding={2} extraStyles=' w-96 h-96  flex flex-col items-center'>
                 <div className='to-background-100 w-64 rounded-xl overflow-hidden'>
                   <img src={data.profilePictureUrl || UNKNOWN_PROFILE_PICTURE_URL} alt="" className='object-cover h-full' />
                 </div>
-                <h2 className='typography-h2 mt-4'>
+                <h2 className='mt-4'>
                   {data.firstName} {data.lastName}
                 </h2>
               </StyledCard>

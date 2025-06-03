@@ -121,7 +121,7 @@ const PortfolioStage = ({ stageData, onAssign, onViewPortfolio, onReject, onMove
                     {/* <Typography variant="h6"></Typography> */}
                     <div className='flex '>
 
-                        <h3 className='typography-h3 mr-10'>Portfolio</h3>
+                        <h3 className='mr-10'>Portfolio</h3>
 
                         <div className='flex gap-4 items-center'>
 

@@ -90,7 +90,7 @@ const AutoAssignModal = ({ open, onClose, onAssign, jobId, budgetFilter }) => {
   
     const customContent = (
       <div className="relative mt-4" ref={dropdownRef}>
-        <h3 className='typography-h3 mb-2'>Select reviewers</h3>
+        <h3 className='mb-2'>Select reviewers</h3>
         <div 
           className={"w-full bg-black-100 h-11 flex items-center cursor-pointer rounded-xl hover:bg-background-90 overflow-hidden " + (isDropdownOpen ? "border border-teal-100" : "")}
           onClick={() => setIsDropdownOpen(!isDropdownOpen)}
@@ -100,7 +100,7 @@ const AutoAssignModal = ({ open, onClose, onAssign, jobId, budgetFilter }) => {
 
             {selectedReviewers.map(reviewer => (
               <div key={reviewer._id} className="bg-background-70 px-4 py-1 rounded-xl flex items-center text-white">
-                <span className='typography-body'>{reviewer.name}</span>
+                <span className='typography-body'>{reviewer?.firstName + " " + reviewer?.lastName}</span>
                 <button 
                   onClick={(e) => {
                     e.stopPropagation();
@@ -145,7 +145,7 @@ const AutoAssignModal = ({ open, onClose, onAssign, jobId, budgetFilter }) => {
                     <span className='w-8 h-8 rounded-full overflow-hidden mx-4'>
                       <img src={reviewer.profilePicture || UNKNOWN_PROFILE_PICTURE_URL } alt="" />
                     </span>
-                    <span>{reviewer.name}</span>
+                    <span>{reviewer?.firstName + " " + reviewer?.lastName}</span>
                   </label>
                 ))}
               </>

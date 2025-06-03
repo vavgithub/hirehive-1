@@ -90,7 +90,7 @@ export const addTeamMember = asyncHandler(async (req,res) => {
     })
   })
 
-  export const reInviteMember = asyncHandler(async (req,res) => {
+export const reInviteMember = asyncHandler(async (req,res) => {
     const { memberId } = req.body;
 
     const userData = req.user;
@@ -146,12 +146,15 @@ export const addTeamMember = asyncHandler(async (req,res) => {
     })
   })
 
-  export const changeMemberStatus = asyncHandler(async (req,res) => {
+export const changeMemberStatus = asyncHandler(async (req,res) => {
     const { memberId } = req.body;
 
     const userData = req.user;
 
-    const isExisitngCompany = await Company.findById({_id : userData?.company_id})
+    const [isExisitngCompany, isMemberExist] = await Promise.all([
+      Company.findById(userData?.company_id),
+      User.findById(memberId)
+    ]);
 
     if(!isExisitngCompany){
         return res.status(400).json({
@@ -160,8 +163,6 @@ export const addTeamMember = asyncHandler(async (req,res) => {
           });
     }
   
-    const isMemberExist = await User.findById(
-      { _id : memberId })
 
     if(!isMemberExist){
         return res.status(400).json({
@@ -855,3 +856,86 @@ export const rejectRequest = asyncHandler(async (req, res) => {
     message: 'Request rejected successfully.',
   });
 });
+
+export const updateScreeningParam = asyncHandler(async (req,res) => {
+  const { title , description , oldKey, jobProfile } = req.body;
+  const { company_id } = req.user
+
+  if(!title?.trim() || !description?.trim() || !oldKey?.trim() || !jobProfile?.trim()){
+      return res.status(400).json({
+        status: 'error',
+        message: 'Invalid data for screening parameter updation.'
+      });
+  }
+
+  const updatedParam = await Company.findById({_id: company_id});
+  if(updatedParam.customScreeningParam.has(jobProfile)){
+    let newCustomObj = []
+    let wasFound = false
+    for(let customParam of updatedParam.customScreeningParam.get(jobProfile)){
+      let newCustom = {};
+      if(customParam?.defaultKey === oldKey){
+        wasFound = true
+        newCustom.defaultKey = oldKey
+        newCustom.customKey = title
+        newCustom.description = description
+      }else{
+        newCustom = customParam
+      }
+      newCustomObj.push(newCustom)
+    }
+    if(!wasFound){
+      newCustomObj.push({
+        defaultKey : oldKey,
+        customKey : title,
+        description
+      })
+    }
+    updatedParam.customScreeningParam.set(jobProfile,newCustomObj)
+  }else{
+    updatedParam.customScreeningParam.set(jobProfile,[
+      {
+        defaultKey : oldKey,
+        customKey : title,
+        description
+      }
+    ])
+  }
+
+  await updatedParam.save()
+
+  res.status(200).json({
+    status: 'success',
+    message: 'Updated Screening parameters successfully.',
+  });
+})
+
+export const resetScreeningParam = asyncHandler(async (req,res) => {
+  const { paramId, jobProfile } = req.body;
+  const { company_id } = req.user
+
+  if(!paramId?.trim() || !jobProfile?.trim()){
+      return res.status(400).json({
+        status: 'error',
+        message: 'Invalid data for screening parameter reset.'
+      });
+  }
+
+  const updatedParam = await Company.findById({_id: company_id});
+  if(updatedParam.customScreeningParam.has(jobProfile)){
+    let newCustomObj = []
+    for(let customParam of updatedParam.customScreeningParam.get(jobProfile)){
+      if(customParam?._id?.toString() !== paramId){
+        newCustomObj.push(customParam)
+      }
+    }
+    updatedParam.customScreeningParam.set(jobProfile,newCustomObj)
+  }
+
+  await updatedParam.save()
+
+  res.status(200).json({
+    status: 'success',
+    message: 'Screening parameter reset successfully.',
+  });
+})

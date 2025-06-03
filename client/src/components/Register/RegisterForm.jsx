@@ -168,7 +168,7 @@ function RegisterForm({setCurrentStep}) {
             <div className="hidden lg:flex lg:w-3/5 bg-login-screen backdrop-blur-lg bg-cover p-12 flex-col justify-between relative">
               <div className='p-[2.75rem]'>
                 <img className='h-12' src={Logo} />
-                <h1 className="typography-h1 font-normal mt-8">VAV - Hire Designers</h1>
+                <h1 className="mt-8">VAV - Hire Designers</h1>
                 <p className="display-d2 max-w-xl mt-7 mb-4">Discover, hire, and explore top talent with HireHive</p>
                 <p className='typography-body max-w-96'>Our advanced tools simplify job posting, application review, and career opportunities, ensuring you find the best candidates or land your next role effortlessly.</p>
                 <p className="mb-8"></p>
@@ -180,8 +180,8 @@ function RegisterForm({setCurrentStep}) {
               <img src={sundarKanya} alt="Sundar Kanya" className="absolute bottom-0 right-0 h-[70%]" />
             </div>
             {/* Right section with login form */}
-            <div className="w-full lg:w-2/5 bg-background-30 p-4 md:p-28   flex flex-col justify-center">
-              <h2 className="typography-h1 text-center  font-semibold">Sign Up</h2>
+            <div className="w-full lg:w-2/5 bg-background-90 p-4 md:p-28   flex flex-col justify-center">
+              <h1 className="text-center">Sign Up</h1>
               <p className="typography-body mb-8 text-center text-font-gray font-normal">Create an account</p>
                     {/* <Button type="button" variant="secondary" icon={GoogleIcon} className="w-full" >
                         Continue With Google
@@ -230,7 +230,7 @@ function RegisterForm({setCurrentStep}) {
             >
               <div>
                 <div>
-                  <label htmlFor="password" className="block mt-4 mb-2 typography-h3">Password</label>
+                  <label htmlFor="password" className="block mt-4 mb-2">Password</label>
                   <TogglePassword typeState={passwordType} setTypeState={setPasswordType}>
                     <input type={passwordType} id="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter your password" className={(password && "tracking-widest") +" w-full focus:outline-teal-400 p-2 rounded-lg bg-black text-white"} />
                   </TogglePassword>
@@ -251,7 +251,7 @@ function RegisterForm({setCurrentStep}) {
             customTitle={"Reset Your Password"}
             customMessage={"Please reset your password to continue"}
             customConfirmLabel={'Send OTP'}
-            onConfirm={()=>console.log("HI")}
+            onConfirm={()=>console.log("")}
             noCancel
             noConfirm
             >

@@ -37,11 +37,25 @@ import TeamsProfile from './pages/Admin/TeamsProfile.jsx';
 import Jobs from './pages/Admin/Jobs.jsx';
 import AdminDashboard from './pages/Admin/AdminDashboard.jsx';
 import CompanyHome from './pages/Candidate/CompanyHome.jsx';
+import ViewAssessments from './pages/Admin/ViewAssessments.jsx';
+import ViewQuestions from './pages/Admin/ViewQuestions.jsx';
+import Guide from './pages/DesignReviewer/Guide.jsx';
+import CompanyProfile from './pages/Admin/CompanyProfile.jsx';
+import TermsAndCondition from './pages/Candidate/TermsAndCondition.jsx';
+import PrivacyPolicy from './pages/Candidate/PrivacyPolicy.jsx';
 
 export const router = createBrowserRouter([
   {
     path: "/",
     element: <HomePage />,
+  },
+  {
+    path: "/terms-and-conditions",
+    element: <TermsAndCondition />,
+  },
+  {
+    path: "/privacy-policy",
+    element: <PrivacyPolicy />
   },
   {
     path: "/org/:companyId",
@@ -66,6 +80,14 @@ export const router = createBrowserRouter([
         element: <CandidateDashboard />,
       },
       {
+        path: "terms-and-conditions",
+        element: <TermsAndCondition />,
+      },
+      {
+        path: "privacy-policy",
+        element: <PrivacyPolicy />
+      },
+      {
         path: 'profile',
         element: <CandidateProfilePage />,
       },
@@ -78,7 +100,7 @@ export const router = createBrowserRouter([
         element: <AllJobs />, // Protected HomePage with sidebar
       },
       {
-        path: 'viewJob/:candidateId/:jobId',
+        path: 'my-jobs/viewJob/:candidateId/:jobId',
         element: <ViewCandidateProfile />
       },
       {
@@ -88,9 +110,13 @@ export const router = createBrowserRouter([
     ],
   },
   {
-    path: "/:id",
-    element: <ViewJob />
+    path: "/org",
+    element: <Navigate to={'/'} />
   },
+  // {
+  //   path: "/:id",
+  //   element: <ViewJob />
+  // },
   {
     path: "/org/:companyId/view-job/:id",
     element: <ViewJob />
@@ -136,208 +162,292 @@ export const router = createBrowserRouter([
         element: <Jobs />
       },
       {
-        path: "assessment/:id",
-        element: <AssessmentResponse />
+        path: "terms-and-conditions",
+        element: <TermsAndCondition />,
+      },
+      {
+        path: "privacy-policy",
+        element: <PrivacyPolicy />
       },
       {
         path: "profile",
         element: <Profile />
       },
       {
+        path: "company",
+        element: <CompanyProfile />
+      },
+      {
+        path: "guide",
+        element: <Guide />
+      },
+      {
         path: "jobs",
-        element:
-          <Jobs />
+        children: [
+          {
+            path: "",
+            element: <Navigate to="all" replace />,
+          },
+          {
+            path: "all",
+            children: [
+              {
+                path: "",
+                element: <Jobs />
+              },
+              {
+                path: "create",
+                element: <CreateJobs />
+              },
+              {
+                path: "edit/:id",
+                element: <EditJobs />
+              },
+              {
+                path: "view/:id",
+                element: <ViewJobs />
+              },
+              {
+                path: "edit-candidate/:id",
+                element: <EditCandidateProfile />
+              },
+              {
+                path: "view-candidate/:candidateId/:jobId",
+                element: <ViewCandidateProfile />
+              },
+              {
+                path: "assessment/:id/:jobId",
+                element: <AssessmentResponse />
+              },
+            ]
+          },
+          {
+            path: "assessments",
+            children: [
+              {
+                path: "",
+                element: <ViewAssessments />
+              },
+              {
+                path: ":assessment_id",
+                element: <ViewQuestions />
+              }
+            ]
+          }
+        ]
       },
       {
         path: "candidates",
-        element:
-          <Candidates />
-      },
-      {
-        path: "create-job",
-        element:
-
-          <CreateJobs />
-      },
-      {
-        path: "edit-job/:id",
-        element:
-          <EditJobs />
-      },
-      {
-        path: "jobs/view-job/:id",
-        element:
-          <ViewJobs />
-      },
-      {
-        path: "jobs/view-candidate/:candidateId/:jobId",
-        element:
-          <ViewCandidateProfile />
-      },
-      {
-        path: "candidates/view-candidate/:candidateId/:jobId",
-        element:
-          <ViewCandidateProfile />
-      },
-      {
-        path: "jobs/edit-candidate/:id",
-        element:
-          <EditCandidateProfile />
+        children: [
+          {
+            path: "",
+            element: <Navigate to="all" replace />,
+          },
+          {
+            path: "shortlisted",
+            children: [
+              {
+                path: "",
+                element: <Shortlisted />
+              },
+              {
+                path: "view/:candidateId/:jobId",
+                element: <ViewCandidateProfile />
+              },
+              {
+                path: "edit/:id",
+                element: <EditCandidateProfile />
+              },
+              {
+                path: "assessment/:id/:jobId",
+                element: <AssessmentResponse />
+              },
+            ]
+          },
+          {
+            path: "all",
+            children: [
+              {
+                path: "",
+                element: <Candidates />
+              },
+              {
+                path: "view/:candidateId/:jobId",
+                element: <ViewCandidateProfile />
+              },
+              {
+                path: "edit/:id",
+                element: <EditCandidateProfile />
+              },
+              {
+                path: "assessment/:id/:jobId",
+                element: <AssessmentResponse />
+              }
+            ]
+          }
+        ]
       }
     ]
   },
-
   {
     path: "/admin",
     element: <ProtectedRoute allowedRoles={['Admin']}><AdminLayout /></ProtectedRoute>,
     children: [
       {
+        path: "terms-and-conditions",
+        element: <TermsAndCondition />,
+      },
+      {
+        path: "privacy-policy",
+        element: <PrivacyPolicy />
+      },
+      {
         path: "dashboard",
         element: <AdminDashboard />
-      },
-      {
-        path: "teams",
-        element: <Teams />    
-      },
-      {
-        path: "teams/profile/:id",
-        element: <TeamsProfile />    
-      },
-      {
-        path: "shortlisted",
-        element: <Shortlisted />
-      },
-      {
-        path: "assessment/:id/:jobId",
-        element: <AssessmentResponse />
       },
       {
         path: "profile",
         element: <Profile />
       },
       {
-        path: "jobs",
-        element:
-          <Jobs />
+        path: "company",
+        element: <CompanyProfile />
       },
       {
-        path: "candidates",
+        path: "guide",
         element:
-          <Candidates />
-      },
-      {
-        path: "create-job",
-        element:
-
-          <CreateJobs />
-      },
-      {
-        path: "edit-job/:id",
-        element:
-          <EditJobs />
-      },
-      {
-        path: "jobs/view-job/:id",
-        element:
-          <ViewJobs />
-      },
-      {
-        path: "jobs/view-candidate/:candidateId/:jobId",
-        element:
-          <ViewCandidateProfile />
-      },
-      {
-        path: "candidates/view-candidate/:candidateId/:jobId",
-        element:
-          <ViewCandidateProfile />
-      },
-      {
-        path: "shortlisted/view-candidate/:candidateId/:jobId",
-        element:
-          <ViewCandidateProfile />
-      },
-      {
-        path: "jobs/edit-candidate/:id",
-        element:
-          <EditCandidateProfile />
-      }
-    ]
-  },
-
-  {
-    path: "/admin",
-    element: <ProtectedRoute allowedRoles={['Admin']}><AdminLayout /></ProtectedRoute>,
-    children: [
-      {
-        path: "dashboard",
-        element: <AdminDashboard />
+          <Guide />
       },
       {
         path: "teams",
-        element: <Teams />    
-      },
-      {
-        path: "teams/profile/:id",
-        element: <TeamsProfile />    
-      },
-      {
-        path: "shortlisted",
-        element: <Shortlisted />
-      },
-      {
-        path: "assessment/:id",
-        element: <AssessmentResponse />
-      },
-      {
-        path: "profile",
-        element: <Profile />
+        children: [
+          {
+            path: "",
+            element: <Teams />,
+          },
+          {
+            path: "profile/:id",
+            element: <TeamsProfile />
+          },
+        ]
       },
       {
         path: "jobs",
-        element:
-          <Jobs />
+        children: [
+          {
+            path: "",
+            element: <Navigate to="all" replace />,
+          },
+          {
+            path: "all",
+            children: [
+              {
+                path: "",
+                element: <Jobs />
+              },
+              {
+                path: "create",
+                element:
+
+                  <CreateJobs />
+              },
+              {
+                path: "edit/:id",
+                element:
+                  <EditJobs />
+              },
+              {
+                path: "view/:id",
+                element:
+                  <ViewJobs />
+              },
+              {
+                path: "edit-candidate/:id",
+                element:
+                  <EditCandidateProfile />
+              },
+              {
+                path: "assessment/:id/:jobId",
+                element: <AssessmentResponse />
+              },
+              {
+                path: "view-candidate/:candidateId/:jobId",
+                element:
+                  <ViewCandidateProfile />
+              },
+            ]
+          },
+          {
+            path: "assessments",
+            children: [
+              {
+                path: "",
+                element: <ViewAssessments />
+              },
+              {
+                path: ":assessment_id",
+                element: <ViewQuestions />
+              },
+            ]
+          },
+        ]
       },
       {
         path: "candidates",
-        element:
-          <Candidates />
+        children: [
+          {
+            path: "",
+            element: <Navigate to="all" replace />,
+          },
+          {
+            path: "shortlisted",
+            children: [
+              {
+                path: "",
+                element: <Shortlisted />
+              },
+              {
+                path: "view/:candidateId/:jobId",
+                element:
+                  <ViewCandidateProfile />
+              },
+              {
+                path: "edit/:id",
+                element:
+                  <EditCandidateProfile />
+              },
+              {
+                path: "assessment/:id/:jobId",
+                element: <AssessmentResponse />
+              },
+            ]
+          },
+          {
+            path: "all",
+            children: [
+              {
+                path: "",
+                element:
+                  <Candidates />
+              },
+              {
+                path: "view/:candidateId/:jobId",
+                element:
+                  <ViewCandidateProfile />
+              },
+              {
+                path: "edit/:id",
+                element:
+                  <EditCandidateProfile />
+              },
+              {
+                path: "assessment/:id/:jobId",
+                element: <AssessmentResponse />
+              },
+            ]
+          },
+        ]
       },
-      {
-        path: "create-job",
-        element:
-
-          <CreateJobs />
-      },
-      {
-        path: "edit-job/:id",
-        element:
-          <EditJobs />
-      },
-      {
-        path: "jobs/view-job/:id",
-        element:
-          <ViewJobs />
-      },
-      {
-        path: "jobs/view-candidate/:candidateId/:jobId",
-        element:
-          <ViewCandidateProfile />
-      },
-      {
-        path: "candidates/view-candidate/:candidateId/:jobId",
-        element:
-          <ViewCandidateProfile />
-      },
-      {
-        path: "shortlisted/view-candidate/:candidateId/:jobId",
-        element:
-          <ViewCandidateProfile />
-      },
-      {
-        path: "jobs/edit-candidate/:id",
-        element:
-          <EditCandidateProfile />
-      }
     ]
   },
 
@@ -347,12 +457,23 @@ export const router = createBrowserRouter([
     children: [
       {
         path: "dashboard",
-        element: <Candidates />
-        // element: <DesignReviewerDashboard />,
+        element: <Navigate to={'/design-reviewer/candidates'} />
+      },
+      {
+        path: "terms-and-conditions",
+        element: <TermsAndCondition />,
+      },
+      {
+        path: "privacy-policy",
+        element: <PrivacyPolicy />
       },
       {
         path: "profile",
         element: <Profile />
+      },
+      {
+        path: "company",
+        element: <CompanyProfile />
       },
       {
         path: "candidates",
@@ -364,7 +485,17 @@ export const router = createBrowserRouter([
           <Reviews />
       },
       {
-        path: "candidates/view-candidate/:candidateId/:jobId",
+        path: "guide",
+        element:
+          <Guide />
+      },
+      {
+        path: "candidates/view/:candidateId/:jobId",
+        element:
+          <ViewCandidateProfile />
+      },
+      {
+        path: "reviews/view-candidate/:candidateId/:jobId",
         element:
           <ViewCandidateProfile />
       },
@@ -376,8 +507,8 @@ export const router = createBrowserRouter([
     path: "*",
     element: <ErrorPage />
   },
-  {
-    path: "/test",
-    element: <Text />
-  }
+  // {
+  //   path: "/test",
+  //   element: <Text />
+  // }
 ]);

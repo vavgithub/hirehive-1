@@ -11,6 +11,7 @@ import Logo from '../../svg/Logo/lightLogo.svg'
 import { InputField } from '../../components/Inputs/InputField';
 import IconWrapper from '../../components/Cards/IconWrapper';
 import { Briefcase, FileText } from 'lucide-react';
+import { getRoute, ROUTE_KEY } from '../../config/permissions.config';
 
 const statsOne = [
     { title: 'Jobs Posted', value: 100, icon: () => <IconWrapper size={10} isInActiveIcon icon={Briefcase} /> },
@@ -29,15 +30,8 @@ const Login = () => {
     const { data: authData, isLoading: authLoading, refetch: refetchAuth } = useAuth();
 
     useEffect(() => {
-        if (authData) {
-            if (authData.role === 'Hiring Manager') {
-                navigate('/hiring-manager/dashboard');
-            }else if(authData.role === 'Admin') {
-                navigate('/admin/dashboard');
-            }
-             else if (authData.role === 'Design Reviewer') {
-                navigate('/design-reviewer/dashboard');
-            }
+        if (authData?.role) {
+          navigate(getRoute(authData.role,ROUTE_KEY.DASHBOARD));
         }
     }, [authData, navigate]);
 
@@ -47,7 +41,7 @@ const Login = () => {
             await refetchAuth();
         },
         onError: (error) => {
-            showErrorToast('Invalid credentials' , error?.response?.data?.error || "Server error");
+            showErrorToast('Error' , error?.response?.data?.error || "Server error");
         },
     });
 
@@ -70,7 +64,7 @@ const Login = () => {
             <div className="hidden lg:flex m-4 lg:w-3/5 bg-admin-login-fg backdrop-blur-lg bg-cover p-4 flex-col justify-end relative">
                 <div>
                     <img className='h-12' src={Logo} />
-                    <h1 className="typography-h1 mt-8">VAV - Hire Designers</h1>
+                    <h1 className="mt-8">VAV - Hire Designers</h1>
                     <p className="display-d2 max-w-xl mt-4 mb-4">Discover, hire, and explore top talent with HireHive</p>
                     <p className='typography-body max-w-96'>Our advanced tools simplify job posting, application review, and career opportunities, ensuring you find the best candidates or land your next role effortlessly.</p>
                     <p className="mb-8"></p>
@@ -88,7 +82,7 @@ const Login = () => {
                     <ForgotPassword onBack={() => setShowForgotPassword(false)} />
                 ) : (
                     <>
-                        <h2 className="typography-h1 mb-2 text-center font-semibold w-full">Welcome Back</h2>
+                        <h1 className="mb-2 text-center font-semibold w-full">Welcome Back</h1>
                         <p className="typography-body mb-10 text-center font-normal w-full">
                             Login to your account below
                         </p>

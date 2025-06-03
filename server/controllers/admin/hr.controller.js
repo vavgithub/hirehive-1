@@ -1,5 +1,6 @@
 import { jobStagesStatuses } from "../../config/jobStagesStatuses.js";
 import { jobs } from "../../models/admin/jobs.model.js";
+import { Task } from "../../models/admin/task.model.js";
 import { User } from "../../models/admin/user.model.js";
 import { candidates } from "../../models/candidate/candidate.model.js";
 import { getDesignTaskContent, getRejectionEmailContent } from "../../utils/emailTemplates.js";
@@ -53,8 +54,10 @@ export const rejectCandidate = async (req, res) => {
     const { candidateId, jobId, rejectionReason , scheduledDate , scheduledTime } = req.body;
 
     // Find the candidate and job
-    const candidate = await candidates.findById(candidateId);
-    const job = await jobs.findById(jobId);
+    const [candidate, job] = await Promise.all([
+      candidates.findById(candidateId),
+      jobs.findById(jobId),
+    ]);
 
     if (!candidate || !job) {
       return res.status(404).json({ message: "Candidate or Job not found" });
@@ -268,8 +271,10 @@ export const noShow = async (req, res) => {
     const { candidateId, jobId, currentStage } = req.body;
     
     // Find the candidate and job
-    const candidate = await candidates.findById(candidateId);
-    const job = await jobs.findById(jobId);
+    const [candidate, job] = await Promise.all([
+      candidates.findById(candidateId),
+      jobs.findById(jobId),
+    ]);
 
     if (!candidate || !job) {
       return res.status(404).json({ message: "Candidate or Job not found" });
@@ -357,8 +362,10 @@ export const moveCandidate = async (req, res) => {
     const { candidateId, jobId, currentStage } = req.body;
 
     // Find the candidate and job
-    const candidate = await candidates.findById(candidateId);
-    const job = await jobs.findById(jobId);
+    const [candidate, job] = await Promise.all([
+      candidates.findById(candidateId),
+      jobs.findById(jobId),
+    ]);
 
     if (!candidate || !job) {
       return res.status(404).json({ message: "Candidate or Job not found" });
@@ -472,8 +479,10 @@ export const moveMultipleCandidates = async (req, res) => {
             throw new Error("Invalid Candidates Data")
         }
         // Find the candidate and job
-        const candidate = await candidates.findById(eachCandidate.candidateId);
-        const job = await jobs.findById(eachCandidate.jobId);
+        const [candidate, job] = await Promise.all([
+          candidates.findById(eachCandidate.candidateId),
+          jobs.findById(eachCandidate.jobId)
+        ]);
 
         if (!candidate || !job) {
           return res.status(404).json({ message: "Candidate or Job not found" });
@@ -840,11 +849,17 @@ export const scheduleCall = async (req, res) => {
     const { candidateId, jobId, stage, date, time, assigneeId, meetingLink } =
       req.body;
 
-    const candidate = await candidates.findById(candidateId);
+    const [candidate, job] = await Promise.all([
+      candidates.findById(candidateId),
+      jobs.findById(jobId),
+    ]);
+
     if (!candidate) {
       return res.status(404).json({ message: "Candidate not found" });
     }
-    const job = await jobs.findById(jobId);
+    if (!job) {
+      return res.status(404).json({ message: "Job not found" });
+    }
 
     const jobApplication = candidate.jobApplications.find(
       (app) => app.jobId.toString() === jobId
@@ -1275,3 +1290,18 @@ export const changeApplicationStatus = async (req, res) => {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
+
+export const getTaskTemplates = async ( req, res) => {
+  try {
+    const { jobProfile } = req.body;
+    const savedTemplates = await Task.find({category : jobProfile});
+    res.status(200).json({
+      success : true,
+      data : savedTemplates,
+      message: "Task templates fetched Successfully.",
+    });
+  } catch (error) {
+    console.error("Error updating status:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+}

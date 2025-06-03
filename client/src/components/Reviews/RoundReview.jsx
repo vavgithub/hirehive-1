@@ -26,7 +26,7 @@ function RoundReview({ roundNumber, candidate, onSubmit ,rounded = "bottom"}) {
   
   
     return (
-      <StyledCard padding={2} borderRadius={roundedClass} extraStyles=' flex gap-4 justify-between  items-center'>
+      <StyledCard padding={2} backgroundColor={'bg-background-70'} borderRadius={roundedClass} extraStyles=' flex gap-4 justify-between  items-center'>
         <span className='flex-shrink-0'>{`Round ${roundNumber} ratings`}</span>
         <Scorer value={rating} onChange={setRating} />
   

@@ -28,7 +28,7 @@ export const VideoModal = ({ isOpen, onClose, videoUrl }) => {
                 </button>
 
                 {/* Video title */}
-                <h2 className="typography-h2 mb-4">Assessment Recording</h2>
+                <h2>Assessment Recording</h2>
 
                 {/* Video container with loader */}
                 <div className="relative aspect-video w-full bg-background-80 rounded-lg overflow-hidden">

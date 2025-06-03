@@ -9,6 +9,7 @@ import IconWrapper from "../Cards/IconWrapper";
 import { CircleCheck, CircleX, ClipboardCheck, FileUser, FolderOpen, Globe } from "lucide-react";
 import { UNKNOWN_PROFILE_PICTURE_URL } from "../../utility/config";
 import { formatPhoneNumber } from "../Form/PhoneInputField";
+import { hasPermission, PERMISSIONS } from "../../config/permissions.config";
 
 const getCommonColumns = (handleDocumentClick) => [
   {
@@ -79,8 +80,19 @@ const getCommonColumns = (handleDocumentClick) => [
   },
 ];
 
-const getExpAndCtcColumns = (role, disableCTC = false, disableHourly = false) => [
-  ...((role === 'Hiring Manager' || role === 'Admin') ? [
+const getExpCols = () => [
+    {
+    field: 'experience',
+    headerName: "Experience",
+    width: 130,
+    align: 'center',
+    headerAlign: 'center',
+    disableColumnMenu: true,
+  },
+]
+
+const getCtcColumns = (role, disableCTC = false, disableHourly = false) => [
+  ...(hasPermission(role,PERMISSIONS.SHOW_TABLE_BUDGET_DETAILS) ? [
     ...(disableHourly ? [] : [{
       field: 'hourlyRate',
       headerName: 'Hourly Rate',
@@ -122,14 +134,6 @@ const getExpAndCtcColumns = (role, disableCTC = false, disableHourly = false) =>
       )
     }]),
   ] : []),
-  {
-    field: 'experience',
-    headerName: "Experience",
-    width: 130,
-    align: 'center',
-    headerAlign: 'center',
-    disableColumnMenu: true,
-  },
 ]
 
 const getInfoColumns = () => [
@@ -175,7 +179,8 @@ export const getReadOnlyColumns = (role, handleDocumentClick, disableCTC,disable
         </div>
       ),
     },
-    ...getExpAndCtcColumns(role, disableCTC,disableHourly),
+    ...getCtcColumns(role, disableCTC),
+    ...getExpCols(),
     {
       field: 'jobTitle',
       headerName: 'Applied For',
@@ -212,7 +217,7 @@ export const getDefaultColumns = (role, canMove, canReject, handleAssigneeChange
       );
     },
   },
-  ...getExpAndCtcColumns(role,disableCTC,disableHourly),
+  ...getExpCols(),
   {
     field: 'assignee',
     headerName: 'Assignee',
@@ -275,6 +280,7 @@ export const getDefaultColumns = (role, canMove, canReject, handleAssigneeChange
       </div>
     )
   },
+  ...getCtcColumns(role),
   {
     field: 'score',
     headerName: 'Score',
@@ -284,16 +290,16 @@ export const getDefaultColumns = (role, canMove, canReject, handleAssigneeChange
     valueGetter: (value, row) => {
       const currentStage = row.currentStage;
       let score = 0;
-      if (currentStage === "Screening") {
-        let attitudeScore = parseInt(row.stageStatuses[currentStage]?.score?.Attitude ?? 0);
-        let communicationScore = parseInt(row.stageStatuses[currentStage]?.score?.Communication ?? 0);
-        let uxScore = parseInt(row.stageStatuses[currentStage]?.score?.UX ?? 0);
-        let uiScore = parseInt(row.stageStatuses[currentStage]?.score?.UI ?? 0);
-        let techScore = parseInt(row.stageStatuses[currentStage]?.score?.Tech ?? 0);
-        let budgetScore = parseInt(row.stageStatuses[currentStage]?.score?.Budget ?? 0);
-        score = attitudeScore + communicationScore + uiScore + uxScore + techScore + budgetScore;
+
+      const stageScore = row.stageStatuses?.[currentStage]?.score;
+
+      if (currentStage === "Screening" && typeof stageScore === "object") {
+        score = Object.values(stageScore).reduce(
+          (sum, val) => sum + parseInt(val ?? 0),
+          0
+        );
       } else {
-        score = row.stageStatuses[currentStage]?.score || 0;
+        score = parseInt(stageScore ?? 0);
       }
 
       return score;

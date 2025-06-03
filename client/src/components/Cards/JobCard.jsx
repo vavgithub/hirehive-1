@@ -11,6 +11,7 @@ import { useLocation } from 'react-router-dom';
 import { showSuccessToast } from '../ui/Toast';
 import IconWrapper from './IconWrapper';
 import { ClockArrowUp, DatabaseZap, SignalHigh } from 'lucide-react';
+import { hasPermission, PERMISSIONS } from '../../config/permissions.config';
 
 // Helper function to truncate text to specific number of words
 const truncateWords = (text, wordLimit) => {
@@ -23,15 +24,15 @@ const truncateWords = (text, wordLimit) => {
 };
 
 const JobDetailItem = ({ icon: Icon, text }) => (
-  <div className="flex gap-2 items-center w-fit">
+  <div className="flex gap-2 items-center w-fit md:max-w-[15%]">
     <Icon />
-    <p className="typography-body">{text}</p>
+    <p className="typography-body w-full max-w-[8rem] whitespace-nowrap text-ellipsis overflow-hidden">{text}</p>
   </div>
 );
 
 const JobFooterItem = ({ label, value }) => (
   <div className="flex flex-col ">
-    <span className="typography-small-p text-font-gray">{label}</span>
+    <span className="typography-small-p text-font-gray mb-[2px]">{label}</span>
     <span className="typography-body">{value}</span>
   </div>
 );
@@ -47,7 +48,7 @@ const JobCard = ({
   isCandidate,
   isAuthenticatedCandidate,
   application, // Receive the application prop
-  role, 
+  role = "Candidate", 
   pinnedJobs = []
 }) => {
   const formattedCreatedAt = getTimeAgo(job.createdAt);
@@ -133,18 +134,18 @@ const JobCard = ({
   return (
     <StyledCard
     padding={0}
-    extraStyles={(onClick ? 'cursor-pointer' : '' ) + `rounded-xl  group relative`}
+    extraStyles={(onClick ? 'cursor-pointer' : '' ) + `   group relative`}
     onClick={onClick ? handleCardClick : undefined}
   >
     <StyledCard padding={2} backgroundColor={'bg-background-80'} borderRadius={'  rounded-t-xl '} extraStyles={'hover:bg-background-60 transition-colors pb-0 duration-200 shadow'}>
       <div className={(isApplied && "flex-col md:flex-row" ) +" flex items-start justify-between   gap-4"}>
-        <h3 className={(isApplied ? "w-full md:w-[50%] xl:w-[70%]" : "w-[70%]") + " typography-h3 group-hover:text-font-accent  text-ellipsis overflow-hidden whitespace-nowrap "}>{job.jobTitle}</h3>
+        <h3 className={(isApplied ? "w-full md:w-[50%] xl:w-[60%]" : "w-[60%]") + "group-hover:text-font-accent  text-ellipsis overflow-hidden whitespace-nowrap "}>{job.jobTitle}</h3>
         <div className={"flex items-center gap-3 " + (isApplied ? " mb-2 md:mb-0 " : "")}>
           {isApplied &&         
           <span className="bg-blue-300 text-blue-100 typography-body px-4 py-2 rounded-xl">
             Applied
           </span>}
-          {(role === "Admin" || role === "Hiring Manager") && job?.status === 'open' && 
+          {hasPermission(role,PERMISSIONS.SHOW_JOBCARD_MANAGEMENT_OPTION) && job?.status === 'open' && 
           <div className='flex items-center gap-4'>
             {
               pinnedJobs?.includes(job?._id) && 
@@ -178,22 +179,22 @@ const JobCard = ({
           icon={() => <IconWrapper size={1} icon={SignalHigh}  isInActiveIcon />}
           text={`${job.experienceFrom} - ${job.experienceTo} Year`}
         />
-        {(role !== "Admin" && role !== "Hiring Manager" && role !== "Design Reviewer") && (job?.companyDetails?.name || job?.company_id?.name ) && <JobDetailItem
+        {hasPermission(role,PERMISSIONS.SHOW_JOBCARD_COMPANY_NAME) && (job?.companyDetails?.name || job?.company_id?.name ) && <JobDetailItem
         icon={() => <IconWrapper size={1} icon={Building2}  isInActiveIcon />}
         text={job?.companyDetails?.name || job?.company_id?.name }
         />}
-        {(role === "Admin" || role === "Hiring Manager" ) && (job?.isPublic ) && <JobDetailItem
+        {hasPermission(role,PERMISSIONS.SHOW_JOBCARD_JOB_IS_PUBLIC) && (job?.isPublic ) && <JobDetailItem
         icon={() => <IconWrapper size={1} icon={Rss}  isInActiveIcon />}
         text={"Open to All"}
         />}
       </div>
       <div className=" py-4 ">
-          <p className="typography-body text-font-gray h-[2.8rem] overflow-hidden" dangerouslySetInnerHTML={{__html : truncatedDescription}}>
+          <p className="typography-body text-font-gray h-[2.25rem] overflow-hidden" dangerouslySetInnerHTML={{__html : truncatedDescription}}>
           </p>
         </div>
       </> :
       <div className=" py-4 ">
-      <p className="typography-body text-font-gray h-[2.8rem] overflow-hidden" dangerouslySetInnerHTML={{__html : truncatedDescription}}>
+      <p className="typography-body text-font-gray h-[2.25rem] overflow-hidden" dangerouslySetInnerHTML={{__html : truncatedDescription}}>
       </p>
     </div>
         }

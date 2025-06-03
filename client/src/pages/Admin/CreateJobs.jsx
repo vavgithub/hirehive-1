@@ -7,6 +7,7 @@ import Header from '../../components/utility/Header';
 import { showErrorToast, showSuccessToast } from '../../components/ui/Toast';
 import { useAuthContext } from '../../context/AuthProvider';
 import Container from '../../components/Cards/Container';
+import { getRoute, ROUTE_KEY } from '../../config/permissions.config';
 
 const CreateJobs = () => {
   const navigate = useNavigate();
@@ -18,7 +19,7 @@ const CreateJobs = () => {
     onSuccess: (data) => {
       const action = data.data.status === 'draft' ? 'saved as draft' : 'created';
       showSuccessToast('Job Action', `"${data.data.jobTitle}" ${action} successfully`);
-      navigate(role === "Admin" ? '/admin/jobs' : '/hiring-manager/jobs');  
+      navigate(getRoute(role,ROUTE_KEY.ALLJOBS));  
     },
     onError: (error) => {
       // console.error('Error with job action:', error);

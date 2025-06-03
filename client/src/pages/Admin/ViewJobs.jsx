@@ -19,6 +19,7 @@ import { useAuthContext } from '../../context/AuthProvider';
 import Container from '../../components/Cards/Container';
 import IconWrapper from '../../components/Cards/IconWrapper';
 import { Briefcase, Check, Eye, File, FileText, Folder, MonitorDot, MousePointer2, PenTool, Users } from 'lucide-react';
+import { getRoute, ROUTE_KEY } from '../../config/permissions.config';
 
 
 const ViewJobs = () => {
@@ -74,7 +75,7 @@ const ViewJobs = () => {
                 reOpenMutation.mutate(job?._id ?? mainId)
                 break;
             case ACTION_TYPES.EDIT:
-                navigate(role === "Admin" ? `/admin/edit-job/${mainId}` : `/hiring-manager/edit-job/${mainId}`);
+                navigate(`${getRoute(role,ROUTE_KEY.EDIT_JOB)}/${mainId}`);
                 setModalOpen(false);
                 break;
             default:
@@ -205,7 +206,7 @@ const ViewJobs = () => {
         <Container>
             <Header
                 HeaderText={formData?.jobTitle}
-                withKebab="true"
+                withKebab={true}
                 withBack="true"
                 onBack={() => navigate(-1)}
                 job={formData}
@@ -224,10 +225,10 @@ const ViewJobs = () => {
                 <StyledCard padding={2}>
                     <StatsGrid stats={jobsDetailStats} />
                     <div className='flex justify-between mt-4' >
-                        <div className='w-4/5   '>
-                            <h3 className="typography-h3 mb-2">Job Description</h3>
+                        <div className='w-2/3   '>
+                            <h3 className="mb-2">Job Description</h3>
                             <div className='text-font-gray typography-body' dangerouslySetInnerHTML={{ __html: formData.jobDescription ? formatDescription(formData.jobDescription) : '' }}></div>
-                            <h3 className="typography-h3 mt-4 mb-2">Skills</h3>
+                            <h3 className="mt-4 mb-2">Skills</h3>
                             <div className='flex flex-wrap gap-2'>
                                 {formData.skills && formData.skills.map((skill, index) => (
                                     <CustomBadge key={index} label={skill} borderRadius={10} />
@@ -240,7 +241,7 @@ const ViewJobs = () => {
                     </div>
 
                     <StyledCard padding={2} backgroundColor={'bg-background-80'} extraStyles='mt-12'>
-                        <h3 className='typography-h3 mb-4'>Additional Questions</h3>
+                        <h3 className='mb-4'>Additional Questions</h3>
                         {questions?.length > 0 ? questions.map((question, index) => (
                             <div key={question._id} className="mb-4">
                                 <label className="typography-body">

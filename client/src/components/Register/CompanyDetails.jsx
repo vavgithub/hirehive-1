@@ -275,7 +275,7 @@ function CompanyDetails({currentStep,setCurrentStep}) {
     <>
     {(saveCompanyDetailsMutation.isPending || sendJoinRequestMutation.isPending ) && <LoaderModal />}
     <div className='w-full px-8  pt-6 pb-12 flex flex-col justify-center items-center'>
-                <h1 className='typography-h1'>Tell us about your company</h1>
+                <h1>Tell us about your company</h1>
                 <p className='typography-large-p text-font-gray font-light mt-2'>Provide your company details to help us match you with the right candidates.</p>
             </div>
             
@@ -284,7 +284,7 @@ function CompanyDetails({currentStep,setCurrentStep}) {
                   <label className="typography-body font-bricolage font-semibold">Company Logo</label> 
                   <StyledCard 
                     padding={2}
-                    backgroundColor={"bg-background-40"}
+                    backgroundColor={"bg-background-80"}
                     extraStyles=" hover:bg-background-60 cursor-pointer  mt-2 flex flex-col items-center justify-center"
                     onClick={() => fileInputRef.current?.click()}
                   >

@@ -3,7 +3,7 @@
 import mongoose from "mongoose";
 import { jobs } from "../../models/admin/jobs.model.js";
 import { candidates } from "../../models/candidate/candidate.model.js";
-import { jobStagesStatuses } from "../../config/jobStagesStatuses.js";
+import { JOB_PROFILES, jobStagesStatuses } from "../../config/jobStagesStatuses.js";
 
 // export const updateAssignee = async (req, res) => {
 //   try {
@@ -437,6 +437,12 @@ export const autoAssignPortfolios = async (req, res) => {
      
      // Update score and feedback
      if(stage === "Screening"){
+      // const jobBasedScoring = jobStagesStatuses[jobApplication.jobProfile ?? JOB_PROFILES.UIUX].find(stage => stage.name === "Screening").scoreConfig;
+      // const mandatoryFields = Object.keys(jobBasedScoring).filter(key => key !== "Budget");
+      // const missingFields = mandatoryFields.filter(key => !(key in ratings));
+      // if (missingFields.length > 0) {
+      //   return res.status(400).json({ message: `Ratings has some missing fields such as ${missingFields?.join(', ')}` });
+      // }
       stageStatus.score = { ...ratings, Budget : stageStatus?.score?.Budget}; // Can be a number or an object with multiple ratings
      }else{
        stageStatus.score = ratings; // Can be a number or an object with multiple ratings

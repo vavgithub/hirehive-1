@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Scorer from '../ui/Scorer';
 import { Button } from '../Buttons/Button';
 import { showErrorToast } from '../ui/Toast';
@@ -7,7 +7,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { updateStageStatus } from '../../redux/applicationStageSlice';
 import { useDispatch } from 'react-redux';
 
-function StageRating({candidateId,jobId,name,candidate,onSubmit,stageConfig}) {
+function StageRating({customSchema,candidateId,jobId,name,candidate,onSubmit,stageConfig}) {
     const [rating, setRating] = useState(stageConfig?.hasSplitScoring ? Object.fromEntries(Object.entries(stageConfig?.score)?.map(([key,value])=>[key,0])) : 0);
     const [feedback, setFeedback] = useState('');
   
@@ -16,6 +16,19 @@ function StageRating({candidateId,jobId,name,candidate,onSubmit,stageConfig}) {
 
     const dispatch = useDispatch();
     const queryClient = useQueryClient();
+
+    useEffect(() => {
+      if(stageConfig?.hasSplitScoring && customSchema){
+        let newRating = {...rating}
+        customSchema?.map(schema => {
+          if(rating.hasOwnProperty(schema?.defaultKey)){
+            newRating[schema.customKey] = 0
+            delete newRating[schema?.defaultKey]
+          } 
+        })
+        setRating(newRating)
+      }
+    },[stageConfig?.hasSplitScoring,customSchema])
 
     const scoreRoundTwoMutation = useMutation({
       mutationFn: (scoreData) => axios.post('hr/score-round-two', scoreData),
@@ -43,7 +56,7 @@ function StageRating({candidateId,jobId,name,candidate,onSubmit,stageConfig}) {
 
     const handleSubmit = () => {
       if(stageConfig?.hasSplitScoring){
-        if(rating.Attitude < 1 || rating.Communication < 1 || rating.UX < 1 || rating.UI < 1 || rating.Tech < 1){
+        if(Object.entries(rating).filter(([key,value]) => key !== "Budget" && value === 0)?.length > 0){
             showErrorToast("Oopss","Please rate the candidate")
             return
         }
@@ -68,7 +81,7 @@ function StageRating({candidateId,jobId,name,candidate,onSubmit,stageConfig}) {
                     <span>Feedback:</span>
 
                     <textarea
-                        className="w-full rounded-xl px-3 py-2 bg-background-40  outline-none focus:outline-teal-300 resize-none"
+                        className="w-full rounded-xl px-3 py-2 bg-background-80  outline-none focus:outline-teal-300 resize-none"
                         placeholder="Enter your feedback"
                         value={feedback}
                         onChange={(e) => setFeedback(e.target.value)}
@@ -98,7 +111,7 @@ function StageRating({candidateId,jobId,name,candidate,onSubmit,stageConfig}) {
               if(category !== "Budget")
               return (
               <div key={category} className='flex gap-4 items-center'>
-                <span className='w-32 '>{category}</span>
+                <span className=' w-[35%] '>{category}</span>
                 <Scorer value={rating[category]} onChange={(v) => handleRatingChange(category, v)} />
       
               </div>

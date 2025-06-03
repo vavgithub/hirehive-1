@@ -1,5 +1,5 @@
 import express from 'express';
-import { registerUser, authUser, logoutUser, getUserProfile, getAvailableDesignReviewers, uploadProfilePicture, resetPassword, verifyOTP, forgotPassword, initializeRegistration, verifyOTPforAdmin, setPassword, completeHiringManagerRegistration, completeDesignReviewerRegistration, addTeamMembers, skipAddMember, editUserProfile, sendInviteOTP, verifyPassword, sendMemberRequest } from '../../controllers/admin/auth.controller.js';
+import { registerUser, authUser, logoutUser, getUserProfile, getAvailableDesignReviewers, uploadProfilePicture, resetPassword, verifyOTP, forgotPassword, initializeRegistration, verifyOTPforAdmin, setPassword, completeHiringManagerRegistration, completeDesignReviewerRegistration, addTeamMembers, skipAddMember, editUserProfile, sendInviteOTP, verifyPassword, sendMemberRequest, uploadCompanyLogo, editCompanyProfile } from '../../controllers/admin/auth.controller.js';
 import { protect, protectWithoutVerification, roleProtect } from '../../middlewares/authMiddleware.js';
 import multer from 'multer';
 import { promises as fs } from 'fs';
@@ -8,9 +8,6 @@ import { fileURLToPath } from 'url';
 import { initializeUploadDir, uploadsDir } from '../../config/paths.js';
 
 const router = express.Router();
-// const __filename = fileURLToPath(import.meta.url);
-// const __dirname = path.dirname(__filename);
-// const uploadsDir = path.join(__dirname, '..', 'uploads');
 
 // Initialize the uploads directory
 await initializeUploadDir();
@@ -76,6 +73,15 @@ router.post(
     uploadProfilePicture
   );
 
+router.post(
+    '/company-logo',
+    protect,
+    upload.single('companyLogo'),
+    handleMulterError,
+    uploadCompanyLogo
+  );
+
+router.put('/edit-company-profile', protect, roleProtect(["Admin"]), editCompanyProfile);
 
 // Registration flow routes
 router.put('/register/edit-profile', protect, editUserProfile);

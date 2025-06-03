@@ -26,6 +26,7 @@ import MuiCustomStylesForDataGrid from './MuiCustomStylesForDataGrid';
 import IconWrapper from '../Cards/IconWrapper';
 import { Download } from 'lucide-react';
 import TickCheckbox from '../Checkboxes/TickCheckbox';
+import { getRoute, ROUTE_KEY } from '../../config/permissions.config';
 
 const Table = ({
   jobId, jobData,
@@ -131,7 +132,8 @@ const Table = ({
     if (searchTerm) {
       result = result.filter(row =>
         `${row.firstName} ${row.lastName}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        row.email.toLowerCase().includes(searchTerm.toLowerCase())
+        row.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        row.phone.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
@@ -181,17 +183,19 @@ const Table = ({
         let totalScore = 0;
         Object.entries(row?.stageStatuses).forEach(([stage, stageData]) => {
           if (stage === "Screening") {
-            totalScore += !stageData?.score ? 0 : ((stageData?.score?.Attitude ?? 0) +
-              (stageData?.score?.Tech ?? 0) +
-              (stageData?.score?.Communication ?? 0) +
-              (stageData?.score?.UI ?? 0) +
-              (stageData?.score?.UX ?? 0) +
-              (stageData?.score?.Budget ?? 0)
-            )
+            const screeningScore = stageData?.score;
+            if (screeningScore && typeof screeningScore === "object") {
+              totalScore += Object.values(screeningScore).reduce(
+                (sum, val) => sum + parseInt(val ?? 0),
+                0
+              );
+            } else {
+              totalScore += 0;
+            }
           } else {
-            totalScore += stageData?.score ?? 0
+            totalScore += parseInt(stageData?.score ?? 0);
           }
-        })
+        });
         return (totalScore < parseInt(max) && totalScore > parseInt(min))
       })
     }
@@ -413,19 +417,11 @@ const Table = ({
     }
 
     // Default navigation logic
-    if (role === "Hiring Manager") {
-
-      const baseUrl = readOnly
-        ? "/hiring-manager/candidates/view-candidate"
-        : "/hiring-manager/jobs/view-candidate";
-      navigate(`${baseUrl}/${params?.row?._id}/${readOnly ? params.row.jobId : jobId}`);
-    } else if (role === "Admin") {
-      const baseUrl = readOnly
-        ? "/admin/candidates/view-candidate"
-        : "/admin/jobs/view-candidate";
+    if (role === "Hiring Manager" || role === "Admin") {
+      const baseUrl = readOnly ? getRoute(role,ROUTE_KEY.CANDIDATES_VIEW_CANDIDATE) : getRoute(role,ROUTE_KEY.JOBS_VIEW_CANDIDATE)
       navigate(`${baseUrl}/${params?.row?._id}/${readOnly ? params.row.jobId : jobId}`);
     } else {
-      navigate(`view-candidate/${params.row._id}/${readOnly ? params.row.jobId : jobId}`, { replace: true });
+      navigate(`view/${params.row._id}/${readOnly ? params.row.jobId : jobId}`, { replace: true });
     }
   };
 
@@ -501,7 +497,7 @@ const Table = ({
         <div className='flex gap-4 items-center'>
           <input
             type="text"
-            placeholder="Search by name or email"
+            placeholder="Search by name or email or phone"
             className='min-w-[18.75rem]'
             value={searchTerm}
             onChange={handleSearch}
@@ -568,7 +564,7 @@ const Table = ({
         getRowClassName={(params) =>
           params.indexRelativeToCurrentPage % 2 === 0 ? 'first-row' : 'second-row'
         }
-        localeText={{ noRowsLabel: <p className='typography-body'>No Candidates</p> }}
+        localeText={{ noRowsLabel: <p className='typography-body '>No Candidates</p> }}
 
         pageSizeOptions={[10, 20, 30, 40, 50]}
         checkboxSelection={hasCheckBox}

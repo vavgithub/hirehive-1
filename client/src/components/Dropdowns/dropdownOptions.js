@@ -1,3 +1,4 @@
+import { getJobProfileAsOptions } from "../../config/jobprofile.config";
 import { LocationOptions } from "../Register/CompanyDetails";
 
 export const dropdownOptions = {
@@ -17,14 +18,7 @@ export const dropdownOptions = {
     ],
     jobProfile: [
         { value: '', label: 'Select Job Profile' },
-        { value: 'Frontend Developer', label: 'Frontend Developer' },
-        { value: 'UI UX', label: 'UI UX' },
-        { value: 'Motion Graphic', label: 'Motion Graphic' },
-        { value: '3D', label: '3D' },
-        { value: 'Video Editor', label: 'Video Editor' },
-        { value: 'Digital Marketing Executive', label: 'Digital Marketing Executive' },
-        { value: 'Project Manager', label: 'Project Manager' },
-        { value: 'Art Director', label: 'Art Director' },
+        ...getJobProfileAsOptions()
     ],
     workplaceType: [
       { value: '', label: 'Select Workplace Type' },

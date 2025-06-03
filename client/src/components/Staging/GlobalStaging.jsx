@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import StyledCard from '../Cards/StyledCard.jsx'
 import StatusBadge from '../ui/StatusBadge'
-import { stagingConfig } from './staging.config.js';   
+import { stagingConfig } from '../../config/staging.config.js';   
 import ClosedBadge from '../../svg/Icons/ClosedBadge.jsx';
 import AssigneeSelector from '../MUIUtilities/AssigneeSelector.jsx';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -29,7 +29,6 @@ import HiredStamp from "../../svg/Background/HiredStamp.svg"
 import Loader from '../Loaders/Loader.jsx';
 import WarningIcon from '../../svg/Staging/WarningIcon.jsx';
 import { ChevronDown, ChevronUp } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 import IconWrapper from '../Cards/IconWrapper.jsx';
 import { Calendar, Clock, Copy, DatabaseZap, Link } from 'lucide-react';
 import useAuth from '../../hooks/useAuth.jsx';
@@ -47,7 +46,6 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
     const stageData = stageStatuses[selectedStage];
     const currentStatus = stageData?.status;
     const candidateData = useSelector(state => state.candidate.candidateData);
-    const navigate = useNavigate();
     
     //To get admin Data for companyDetails
     const { data : adminData } = useAuth();
@@ -55,7 +53,6 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
     const { stageTitle, stageConfig, stageBasedConfig , candidateId, jobId} = useMemo(()=>{
       const isValidstage =  stagingConfig[jobProfile]?.filter(stage=> stage?.name === selectedStage);
       const stageTitle = isValidstage?.length > 0 ? isValidstage[0]?.name : "";
-        
       const stageConfig = isValidstage[0];
       const stageBasedConfig = isValidstage[0]?.contentConfig[currentStatus][role];
       const candidateId = candidateData?._id;
@@ -260,15 +257,9 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
     };
 
     //Scoring functions
-    const getTotalScore = ()=>{
-        let score = 0;    
-        return score + (stageData?.score?.Attitude ?? 0) +
-        (stageData?.score?.UX ?? 0) +
-        (stageData?.score?.Tech ?? 0) +
-        (stageData?.score?.Communication ?? 0) +
-        (stageData?.score?.UI ?? 0) +
-        (stageData?.score?.Budget ?? 0)
-    }
+    const getTotalScore = () => {
+    return Object.values(stageData?.score || {}).reduce((acc, val) => acc + (val ?? 0), 0);
+    };
 
     const submitBudgetScoreMutation = useMutation({
         mutationFn: (score) => axios.post('hr/submit-budget-score', { candidateId, jobId, stage: 'Screening', score }),
@@ -340,32 +331,32 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
     },[stagingConfig,jobProfile,stageStatuses,stageTitle]);
 
     const renderCallData = (call,isRescheduled) => (
-      <div className={' bg-background-80 flex justify-between items-center rounded-xl p-4'}>
+      <div className={' bg-background-70 flex justify-between items-center rounded-xl p-4'}>
             <div className='flex flex-col'>
-                {!isRescheduled && <span className='typography-small-p text-font-gray'>Date</span>}
-                <div className={(isRescheduled && "text-font-gray ") + ' flex items-center gap-2'}>
+                {!isRescheduled && <span className='typography-small-p text-font-gray '>Date</span>}
+                <div className={(isRescheduled && "text-font-gray ") + ' flex items-center gap-2 h-11'}>
                     <IconWrapper icon={Calendar} size={0} customIconSize={5} isInActiveIcon={true} customStrokeWidth={4} />
-                    <h2 className={isRescheduled && 'typography-body'}>
+                    <p className={isRescheduled && 'typography-body'}>
                         {UTCToDateFormatted(call.scheduledDate)}
-                    </h2>
+                    </p>
                 </div>
             </div>
             {isRescheduled && <div className='w-1 h-1 border-font-gray bg-font-gray border-[1px] rounded-full '></div>}
             <div className='flex flex-col'>
-                {!isRescheduled && <span className='typography-small-p text-font-gray'>Time</span>}
-                <div className={(isRescheduled && "text-font-gray ") + ' flex items-center gap-2'}>
+                {!isRescheduled && <span className='typography-small-p text-font-gray '>Time</span>}
+                <div className={(isRescheduled && "text-font-gray ") + ' flex items-center gap-2 h-11'}>
                     <IconWrapper icon={Clock} size={0} customIconSize={5} isInActiveIcon={true} customStrokeWidth={4} />
-                    <h2 className={isRescheduled && 'typography-body'}>
+                    <p className={isRescheduled && 'typography-body'}>
                         {formatUTCToLocalTimeAuto(call.scheduledDate)}
-                    </h2>
+                    </p>
                 </div>
             </div>
             {isRescheduled && <div className='w-1 h-1 border-font-gray bg-font-gray border-[1px] rounded-full '></div>}
             <div className='flex flex-col '>
-                {!isRescheduled && <span className='typography-small-p text-font-gray'>Meeting Link</span>}
+                {!isRescheduled && <span className='typography-small-p text-font-gray '>Meeting Link</span>}
                 <div className={(isRescheduled && "text-font-gray ") + ' flex items-center gap-2'}>
                     <IconWrapper icon={Link} size={0} customIconSize={5} isInActiveIcon={true} customStrokeWidth={4} />
-                    <h2 className={(isRescheduled ? "text-font-gray typography-body " : "text-font-primary") + ' mr-2 '}>screening_meeting_link</h2>
+                    <p className={(isRescheduled ? "text-font-gray typography-body " : "text-font-primary") + ' mr-2 '}>screening_meeting_link</p>
                     {!isRescheduled && <CopyToClipboard text={call?.meetingLink}>
                         <IconWrapper hasBg icon={Copy} size={4} customIconSize={5}  customStrokeWidth={4} />
                     </CopyToClipboard>}
@@ -374,20 +365,33 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
         </div>
     )
 
-
     const renderScoreCategories = () => {
-        const categories = [
-            { label: 'Attitude', value: stageData?.score?.Attitude },
-            { label: 'UX', value: stageData?.score?.UX },
-            { label: 'Tech', value: stageData?.score?.Tech },
-            { label: 'Communication', value: stageData?.score?.Communication },
-            { label: 'UI', value: stageData?.score?.UI },
-            ...(isBudgetScoreSubmitted ? [{ label: 'Budget', value: stageData?.score?.Budget }] : []),
-        ];
+        const scoreCategories = []
+        if(typeof stageConfig?.score === "object"){
+            Object.keys(stageData.score).map(scoreLabel => {
+                if(scoreLabel === "Budget"){
+                    if(isBudgetScoreSubmitted){
+                        scoreCategories.push(
+                            {
+                                label : scoreLabel,
+                                value :  stageData?.score[scoreLabel]
+                            }
+                        )
+                    }
+                }else{
+                    scoreCategories.push(
+                        {
+                            label : scoreLabel,
+                            value :  stageData?.score[scoreLabel]
+                        }
+                    )
+                }
+            })
+        }
 
-        return (<div className='grid grid-cols-3 gap-3 w-full '>
-            {categories.map((category, index) => (
-                <div key={index} className='grid grid-cols-[1fr,1fr] w-full gap-4 items-center'>
+        return (<div className='grid grid-cols-3 gap-8 w-full '>
+            {scoreCategories.map((category, index) => (
+                <div key={index} className='grid grid-cols-[2fr,1fr] w-full gap-4 items-center'>
                     <span className='typography-body text-font-gray '>{category.label}</span>
                     <BulletMarks marks={category.value} />
                 </div>
@@ -397,7 +401,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
 
     return (
     <StyledCard  
-    backgroundColor={"bg-background-90"}
+    backgroundColor={"bg-background-80"}
     extraStyles={"relative min-h-[12rem] overflow-hidden"}
     >
         {
@@ -412,7 +416,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
       {/* Header Part */}
       <div className='flex justify-between items-center'>
         <div className='flex items-center gap-4'>
-            <h2 className='typography-h2'>{stageTitle}</h2>
+            <h2>{stageTitle}</h2>
             {stageConfig?.extraHeaderContent && stageConfig?.extraHeaderContent({portfolio : candidateData.jobApplication.professionalInfo.portfolio})}
         </div>
         <div className='flex items-center w-[40%] justify-end'>
@@ -436,7 +440,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
                 <>
                     <div className='h-8 w-1 rounded bg-background-70 mx-2'></div>
 
-                    <div className='w-8 h-8 rounded-full bg-background-80 flex items-center justify-center mr-2'>
+                    <div className='w-8 h-8 rounded-full bg-background-70 flex items-center justify-center mr-2'>
                         <IconWrapper icon={DatabaseZap} customIconSize={0} />
                     </div>
                     <span className='typograhpy-body'>{candidateData?.jobApplication?.professionalInfo?.expectedCTC ? `${candidateData?.jobApplication?.professionalInfo?.expectedCTC} LPA` : candidateData?.jobApplication?.professionalInfo?.hourlyRate ? `${candidateData?.jobApplication?.professionalInfo?.hourlyRate} INR/hr` : '-'}</span>
@@ -471,6 +475,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
         {
             (stageBasedConfig?.hasTaskForm && !stageData?.scheduledDate) && 
             <TaskForm
+            jobProfile={jobProfile}
             candidateId={candidateId}
             jobId={jobId}
             candidateEmail={candidateData?.email}
@@ -504,7 +509,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
             <SubmissionForm candidateId={candidateId} jobId={jobId} stageData={stageData} setIsLoading={setIsLoading} />
         }
         {
-          stageBasedConfig?.hasRatingComponent && <StageRating candidateId={candidateId} jobId={jobId} name={stageConfig?.name} candidate={candidateData} onSubmit={handleReviewSubmit} stageConfig={stageConfig} />
+          stageBasedConfig?.hasRatingComponent && <StageRating  customSchema={adminData?.companyDetails?.customScreeningParam ? adminData?.companyDetails?.customScreeningParam[jobProfile] : null} candidateId={candidateId} jobId={jobId} name={stageConfig?.name} candidate={candidateData} onSubmit={handleReviewSubmit} stageConfig={stageConfig} />
         }
         <div className='flex gap-4 w-full '>
             {(stageBasedConfig?.hasRemarks || stageBasedConfig?.hasRejectionReason || stageBasedConfig?.hasScoreBoard) && 
@@ -519,7 +524,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
                 stageBasedConfig?.hasScoreBoard && 
                 <div className=' flex flex-col'>
                     <p className='typography-small-p text-font-gray mb-4'>Score</p>                   
-                    <div className='p-4 rounded-xl bg-background-60 flex min-h-[7.2rem] '>
+                    <div className='p-8 rounded-xl bg-background-60 flex  '>
                         {renderScoreCategories()}
                     </div>
                 </div>
@@ -560,8 +565,8 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
       
       {stageBasedConfig?.hasCallDetails && 
         <div className='my-4'>
-          <h3 className='typography-h3 mb-2'>Call Details</h3>
-          <h3 className='typography-small-p text-font-gray my-2'>Active Schedule</h3>
+          <h3 className='mb-2'>Call Details</h3>
+          <p className='typography-small-p text-font-gray my-2'>Active Schedule</p>
           {renderCallData(stageData?.currentCall)}
         </div>
         }
@@ -587,7 +592,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
 
     {(stageBasedConfig?.hasCallHistory && (currentStatus !== "Cleared" ? stageData?.callHistory?.length > 0  : true)) && 
       <div className='mt-4 relative w-[50%]'>
-          <h3 className='typography-small-p text-font-gray mt-1'>{currentStatus !== "Cleared" ? "Reschedules" : "Calls"}</h3>
+          <p className='typography-small-p text-font-gray mt-1'>{currentStatus !== "Cleared" ? "Reschedules" : "Calls"}</p>
           {currentStatus !== "Cleared" ? ( stageData?.callHistory?.length > 0 && stageData.callHistory.filter((call,index) => index === 0).map((call, index) => (
               <div key={index} className='mt-2 '>
                   {renderCallData(call, true)}

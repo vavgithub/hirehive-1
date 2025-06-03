@@ -4,7 +4,7 @@ import Datepicker from '../MUIUtilities/Datepicker'
 import Timepicker from '../MUIUtilities/Timepicker'
 import { Button } from '../Buttons/Button';
 import { InputField } from '../Inputs/InputField';
-import { getStages } from './staging.config';
+import { getStages } from '../../config/staging.config';
 import { combineDateWithTime, convertLocalToUTC } from '../../utility/timezoneConverter';
 
 
@@ -106,6 +106,7 @@ export const ScheduleForm = ({ candidateData, onSubmit, isRescheduling, initialD
                 label="Meeting Link"
                 required
                 value={meetingLink}
+                extraClass={'custom-input'}
                 onChange={(e) => setMeetingLink(e.target.value)}
                 error={linkError}
                 errorMessage="Meeting link is required"

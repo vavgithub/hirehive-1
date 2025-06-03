@@ -42,13 +42,13 @@ const theme = createTheme({
             borderRadius: "0.75rem",
             color: "white",
             "& fieldset": {
-              borderColor: "rgba(24, 233, 208, 0.5)",
+              borderColor: "var(--color-font-accent-200)",
             },
             "&:hover fieldset": {
-              borderColor: "rgba(24, 233, 208, 0.8)",
+              borderColor: "var(--color-font-accent-300)",
             },
             "&.Mui-focused fieldset": {
-              borderColor: "var(--color-font-accent-100)",
+              borderColor: "var(--color-font-accent-100) !important",
             },
           },
         },
@@ -137,18 +137,18 @@ const theme = createTheme({
         root: {
           color: "var(--color-font-gray-90)",
           "&.Mui-selected": {
-            color: "var(--color-accent-100)",
-            backgroundColor: "rgba(24, 233, 208, 0.2) !important",
+            color: "var(--color-accent-100) !important",
+            backgroundColor: "var(--color-accent-300) !important",
           },
           "&.Mui-selected:hover": {
             color: "var(--color-accent-100)",
-            backgroundColor: "rgba(24, 233, 208, 0.3) !important",
+            backgroundColor: "var(--color-background-60) !important",
           },
           "&:hover": {
             backgroundColor: "var(--color-background-60)",
           },
           "&.Mui-disabled": {
-            color: "rgba(128, 131, 137, 0.5) !important",
+            color: "var(--color-font-gray-80) !important",
           },
         },
       },
@@ -193,7 +193,26 @@ const theme = createTheme({
             display: "none", // For Chrome, Safari, and Edge
           },
           padding: "1rem",
+          '& .MuiYearCalendar-root' : {
+            color: "var(--color-font-gray-90)",
+            '& .MuiPickersYear-root .Mui-selected' : {
+              color : "var(--color-font-accent-100)",
+              backgroundColor : "var(--color-accent-300)",
+            },
+            '& .MuiPickersYear-root button': {
+              '&:hover': {
+                backgroundColor: 'var(--color-background-60)',
+              }
+            },
+            '&::-webkit-scrollbar': {
+              backgroundColor: 'var(--color-font-gray-80) !important',
+              borderRadius: '10px !important', // 👈 Add this
+              width: '8px !important',
+              height: '8px !important',
+            },
+          }
         },
+        
       },
     },
     MuiDialogActions: {
@@ -339,18 +358,36 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           borderRadius: "0.75rem",
-          // backgroundColor: "black",
           "& .MuiDataGrid-columnHeaders": {
             borderTop: "none",
             borderBottom: "none",
-            color: "gray",
+            color: "var(--color-font-gray-90)",
+            backgroundColor: "var(--color-background-70) !important",
+          },
+          '& .MuiDataGrid-columnHeaders div' : {
             backgroundColor: "var(--color-background-70) !important",
           },
           "& .MuiDataGrid-columnHeader": {
             backgroundColor: "var(--color-background-70) !important",
           },
+          "& .MuiDataGrid-scrollbarFiller--header" :{
+              background: "var(--color-background-70) !important",
+          },
+          "& .MuiDataGrid-scrollbarFiller--borderTop" : {
+            display : "none"
+          },
+          "& .MuiDataGrid-scrollbar--horizontal" :{
+              '&::-webkit-scrollbar': {
+                height: '8px !important', // Increase this value to make the scrollbar thicker
+              },
+            display : "block !important",
+            // Thumb (draggable part of scrollbar)
+            '&::-webkit-scrollbar-thumb': {
+              backgroundColor: 'var(--color-font-gray-80) !important', // Customize this
+            },
+          },
           "& .MuiDataGrid-columnHeaderTitle": {
-            color: "gray",
+            color: "var(--color-font-gray-90)",
           },
           "&  .MuiDataGrid-footerContainer": {
             backgroundColor: "var(--color-background-70) !important",
@@ -371,11 +408,11 @@ const theme = createTheme({
             color: "white",
           },
           "& .MuiDataGrid-virtualScroller": {
-            backgroundColor: "transparent",
+            backgroundColor: "var(--color-background-100)",
             borderRadius: "0.75rem 0.75rem 0px 0px !important",
           },
           "& .MuiDataGrid-overlayWrapper": {
-            height: "3rem",
+            height: "4rem",
           },
           "& .MuiDataGrid-overlay": {
             color: "white",
@@ -393,9 +430,9 @@ const theme = createTheme({
           },
           "& .first-row": {
             borderRadius: 2,
-            backgroundColor: "var(--color-background-30)",
+            backgroundColor: "var(--color-background-60)",
             "&:hover": {
-              backgroundColor: "#232425",
+              backgroundColor: "var(--color-background-40)",
             },
           },
           "& .MuiDataGrid-filler": {
@@ -403,13 +440,13 @@ const theme = createTheme({
           },
           "& .MuiDataGrid-scrollbar": {
             display: "none",
-            background: "transparent",
+            height : "8px"
           },
           "& .second-row": {
             borderRadius: 2,
-            backgroundColor: "var(--color-background-80)",
+            backgroundColor: "var(--color-background-50)",
             "&:hover": {
-              backgroundColor: "#232425",
+              backgroundColor: "var(--color-background-40)",
             },
           },
           "& .MuiSvgIcon-root": {
@@ -439,6 +476,15 @@ const theme = createTheme({
             backgroundColor: "var(--color-background-60) !important",
           },
         },
+        actions : {
+      "& button:not(.Mui-disabled)": {
+        cursor: "pointer !important",
+      },
+
+      "& button.Mui-disabled .MuiSvgIcon-root": {
+        color: "var(--color-font-gray-90) !important",
+      },
+        }
       },
     },
   },

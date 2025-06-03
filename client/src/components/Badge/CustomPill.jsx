@@ -7,6 +7,7 @@ function CustomPill({
   name,
   value,
   hasInfoButton = false,
+  customTitle = null,
   infoButtonClick,
   error,
   selected,
@@ -51,7 +52,7 @@ function CustomPill({
     ${paddingY?.toString() ? `py-${valueSteps[paddingY]}` : "py-2"}  
     ${paddingX?.toString() ? `px-${valueSteps[paddingX]}` : "px-6"} 
     ${
-      !selected ? (backgroundColor ? backgroundColor : "bg-background-40") : ""
+      !selected ? (backgroundColor ? backgroundColor : "bg-background-80") : ""
     } 
     ' border ' 
     ${
@@ -74,8 +75,8 @@ function CustomPill({
         : "rounded-xl"
     } 
     `;
-  console.log(data, value);
-  if (variant === "selective") {
+
+    if (variant === "selective") {
     return (
       <label {...props} className={styles + "  " + extraStyles} htmlFor={name}>
         <input
@@ -86,7 +87,7 @@ function CustomPill({
           onChange={onChange}
           className=" custom-radio "
         />
-        {data?.title}
+        {customTitle ?? data?.title}
         {hasInfoButton && (
           <span>
             <IconWrapper

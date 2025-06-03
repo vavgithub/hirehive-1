@@ -430,7 +430,7 @@ export const loginCandidate = async (req, res) => {
     if(candidate?.currentStage !== "DONE"){
       return res
         .status(401)
-        .json({ message: "Please complete your registration" });
+        .json({ message: "Please complete your application process" });
     }
 
     // Check if candidate is verified
@@ -499,14 +499,17 @@ export const applyToJob = async (req, res) => {
       resumeUrl,
     } = req.body;
 
-    const job = await jobs.findById(jobId).populate('company_id');
+    const [job, candidate] = await Promise.all([
+      jobs.findById(jobId).populate('company_id'),
+      Candidate.findById(candidateId)
+    ]);
+
     if (!job) {
       return res.status(404).json({ message: "Job not found" });
     }
     const jobApplied = job.jobTitle;
     const jobProfile = job.jobProfile;
 
-    const candidate = await Candidate.findById(candidateId);
     if (!candidate) {
       return res.status(404).json({ message: "Candidate not found" });
     }
@@ -515,8 +518,6 @@ export const applyToJob = async (req, res) => {
       (application) => application.jobId.toString() === jobId
     );
 
-    //Added to avoid breaking with JobProfile for existing jobs and candidates
-    candidate.jobApplications.forEach(app=>app.jobProfile = jobProfile)
 
     if (hasApplied) {
       return res.status(400).json({ message: "You have already applied to this job." });

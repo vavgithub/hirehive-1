@@ -20,9 +20,12 @@ import { formatUTCToLocalTimeAuto, timezone, UTCToDateFormatted } from '../../ut
 import { formatPhoneNumber } from '../../components/Form/PhoneInputField'
 import Container from '../../components/Cards/Container'
 import Header from '../../components/utility/Header'
+import { getRoute, ROUTE_KEY } from '../../config/permissions.config'
+import { useAuthContext } from '../../context/AuthProvider'
 
 function AdminDashboard() {
 
+  const { user } = useAuthContext();
   const [viewMore, setViewMore] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
   const [pageSize, setPageSize] = useState(5);
@@ -195,11 +198,11 @@ function AdminDashboard() {
   ]
 
   const handleLeaderBoardRowClick = (params) => {
-    navigate(`/admin/candidates/view-candidate/${params?.row?._id}/${params?.row?.jobApplications?.jobId}`)
+    navigate(`${getRoute(user?.role,ROUTE_KEY.CANDIDATES_VIEW_CANDIDATE)}/${params?.row?._id}/${params?.row?.jobApplications?.jobId}`)
   }
 
   const handleJobRowClick = (params) => {
-    navigate(`/admin/jobs/view-job/${params?.row?._id}`)
+    navigate(`${getRoute(user?.role,ROUTE_KEY.JOBS_VIEW_JOB)}/${params?.row?._id}`)
   }
 
   return (
@@ -216,7 +219,7 @@ function AdminDashboard() {
         {/* Chart + Company Details Section */}
         <div className='flex gap-4'>
           <StyledCard backgroundColor={'bg-background-80'} extraStyles={'w-[70%]'}>
-            <h2 className='typography-h2'>Application Trends</h2>
+            <h2>Application Trends</h2>
             <div className='flex my-2 gap-2'>
               <p onClick={() => setSelectedChartFilter('monthly')} className={(selectedChartFilter === 'monthly' ? 'bg-accent-300 text-accent-100' : 'bg-background-60 text-font-gray ') + ' px-6 py-2 typography-large-p rounded-xl cursor-pointer'}>Monthly</p>
               <p onClick={() => setSelectedChartFilter('weekly')} className={(selectedChartFilter === 'weekly' ? 'bg-accent-300 text-accent-100' : 'bg-background-60 text-font-gray ') + ' px-6 py-2 typography-large-p rounded-xl cursor-pointer'}>Weekly</p>
@@ -225,16 +228,16 @@ function AdminDashboard() {
             </div>
             <ApplicationChart type={selectedChartFilter} dataArray={selectedChartFilter === "weekly" ? dashboardDetails?.applications?.weeklyApplications : selectedChartFilter === 'daily' ? dashboardDetails?.applications?.dailyApplications : selectedChartFilter === 'yesterday' ? dashboardDetails?.applications?.yesterdaysApplications : dashboardDetails?.applications?.monthlyApplications} />
           </StyledCard>
-          <StyledCard backgroundColor={'bg-background-80'} padding={2} extraStyles={' w-[30%] flex flex-col items-center gap-6'}>
+          <StyledCard backgroundColor={'bg-background-80'} padding={2} extraStyles={' w-[30%] flex flex-col items-center justify-between gap-6'}>
             <div className=" w-[8rem]  aspect-square overflow-hidden rounded-full">
               <img src={dashboardDetails?.companyDetails?.logoUrl ? dashboardDetails?.companyDetails?.logoUrl : `${UNKNOWN_PROFILE_PICTURE_URL}`} alt="LOGO" className="object-cover w-full" />
               <input accept="image/*" type="file" className="hidden" />
             </div>
-            <div>
-              <h2 className='typography-h2 text-center'>{dashboardDetails?.companyDetails?.name}</h2>
+            <div className='w-full flex flex-col justify-center items-center'>
+              <h2 className='text-center w-[90%] text-ellipsis overflow-hidden'>{dashboardDetails?.companyDetails?.name}</h2>
               <p className='text-font-gray typography-large-p flex gap-2 items-center justify-center'>{LocationOptions.find(data => data.value === dashboardDetails?.companyDetails?.location)?.label} <span className='w-1 h-1 bg-font-gray rounded-full'></span>{industryTypeOptions.find(data => data.value === dashboardDetails?.companyDetails?.industryType)?.label} </p>
             </div>
-            <div className='typography-large-p w-full flex flex-col gap-2'>
+            <div className='typography-large-p w-full flex flex-col gap-6'>
               <p className='flex justify-between w-full'><span className='text-font-gray'>Employees</span> <span>{dashboardDetails?.members?.length ?? 0}</span></p>
               <p className='flex justify-between w-full'><span className='text-font-gray'>Active Jobs</span> <span>{dashboardDetails?.activeJobs ?? 0}</span></p>
               <p className='flex justify-between w-full'><span className='text-font-gray'>Applications Recieved</span> <span>{dashboardDetails?.applications?.totalApplicationsCount ?? 0}</span></p>
@@ -245,22 +248,22 @@ function AdminDashboard() {
 
         <div className='flex gap-4 w-full mt-4'>
           <StyledCard backgroundColor={'bg-background-80'} extraStyles={'overflow-hidden w-[45%]'}>
-            <h2 className='typography-h2'>Upcoming Interviews</h2>
+            <h2>Upcoming Interviews</h2>
             {
               dashboardDetails?.interviews?.upcomingInterviews?.length > 0 ? dashboardDetails.interviews.upcomingInterviews.map(interview => {
                 return (
-                  <StyledCard onClick={() => navigate(`/admin/candidates/view-candidate/${interview?._id}/${interview?.jobApplications?.jobId}`)} key={interview?._id} padding={2} backgroundColor={'bg-background-70'}  extraStyles={'mt-4 relative cursor-pointer '}>
-                    <p className='typography-h3  flex items-center justify-between gap-2 w-full ' >
+                  <StyledCard onClick={() => navigate(`${getRoute(user?.role,ROUTE_KEY.CANDIDATES_VIEW_CANDIDATE)}/${interview?._id}/${interview?.jobApplications?.jobId}`)} key={interview?._id} padding={2} backgroundColor={'bg-background-70'}  extraStyles={'mt-4 relative cursor-pointer hover:bg-background-60 '}>
+                    <p className='flex items-center justify-between gap-2 w-full ' >
                       <StageBadge customBg={'bg-background-60'} stage={interview?.jobApplications?.currentStage} customWidth={'w-fit'} />
                       <span className='typography-large-p h-full text-font-gray flex gap-2 items-center'><IconWrapper isInActiveIcon size={0} icon={CalendarDays} />{UTCToDateFormatted(interview?.scheduledDate)} at {formatUTCToLocalTimeAuto(interview?.scheduledDate)}</span>
                     </p>
                     <div className='mt-2 flex max-w-full'>
                       <div className='border-r border-font-gray w-[50%] overflow-hidden'>
-                        <p className='typography-h3 whitespace-nowrap text-ellipsis overflow-hidden'>{interview?.firstName + " " + interview?.lastName}</p>
+                        <p className='whitespace-nowrap text-ellipsis overflow-hidden'>{interview?.firstName + " " + interview?.lastName}</p>
                         <p className='typography-large-p text-font-gray'>Candidate</p>
                       </div>
                       <div className=' w-[50%]'>
-                        <p className='typography-h3 text-end whitespace-nowrap text-ellipsis overflow-hidden'>{interview?.assignee?.firstName + " " + interview?.assignee?.lastName}</p>
+                        <p className='text-end whitespace-nowrap text-ellipsis overflow-hidden'>{interview?.assignee?.firstName + " " + interview?.assignee?.lastName}</p>
                         <p className='typography-large-p text-font-gray text-end'>{interview?.assignee?.role ?? "Design Reviewer"}</p>
                       </div>
                     </div>
@@ -271,14 +274,14 @@ function AdminDashboard() {
 
           </StyledCard>
           <StyledCard backgroundColor={'bg-background-80'} extraStyles={'w-[55%]'}>
-            <h2 className='typography-h2'>Interviews</h2>
+            <h2>Interviews</h2>
             <InterviewsChart dataSet={dashboardDetails?.interviews?.stageBasedInterviewsCount} />
           </StyledCard>
         </div>
 
         {/* Top Performing Jobs */}
         <StyledCard backgroundColor={'bg-background-80'} extraStyles={'mt-4 max-w-full '}>
-          <h2 className='typography-h2 mb-2 whitespace-nowrap'>Top Performing Jobs </h2>
+          <h2 className='mb-2 whitespace-nowrap'>Top Performing Jobs </h2>
           <DataGrid
             rows={dashboardDetails?.jobsWithStats ?? []}
             columns={jobColumns}
@@ -300,7 +303,7 @@ function AdminDashboard() {
         </StyledCard>
         {/* LeaderBoard */}
         <StyledCard padding={2} extraStyles={'mt-4'} backgroundColor={'bg-background-80'}>
-          <h2 className='typography-h2 mb-2'>Leaderboard</h2>
+          <h2 className='mb-2'>Leaderboard</h2>
           <StatsGrid stats={leaderBoardStats} />
 
           {/* Table for LeaderBoard */}

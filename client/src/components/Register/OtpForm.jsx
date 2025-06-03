@@ -7,6 +7,7 @@ import { useMutation } from '@tanstack/react-query';
 import LoaderModal from '../Loaders/LoaderModal';
 import axios from '../../api/axios';
 import { useSearchParams } from 'react-router-dom';
+import Footer from '../Footer/Footer';
 
 const verifyOnboardOTP = async ({otp, email}) => {
     const response = await axios.post('/auth/register/verify-otp-for-admin',{otp, email});
@@ -99,7 +100,8 @@ function OtpForm({setCurrentStep}) {
   return (
     <div>
       {(verifyOnboardOTPMutation?.isPending || sendInviteOTPMutation?.isPending) && <LoaderModal />}
-      <OtpComponent inviteMail={inviteMail} showSendOTP={onboardData?.email ? false : token} handleSendOtp={handleSendOtp} isSubmitting={verifyOnboardOTPMutation?.isPending} cardbg='bg-card-bg bg-cover bg-center bg-no-repeat' handleOtpSubmit={handleOtpSubmit} otpError={otpError} email={onboardData?.email} otp={otp} setOtp={setOtp}/>
+      <OtpComponent hasFooter inviteMail={inviteMail} showSendOTP={onboardData?.email ? false : token} handleSendOtp={handleSendOtp} isSubmitting={verifyOnboardOTPMutation?.isPending} cardbg='bg-card-bg bg-cover bg-center bg-no-repeat' handleOtpSubmit={handleOtpSubmit} otpError={otpError} email={onboardData?.email} otp={otp} setOtp={setOtp}/>
+      <Footer />
     </div>
   )
 }

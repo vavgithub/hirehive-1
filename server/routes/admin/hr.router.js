@@ -1,40 +1,43 @@
 import express from "express"
-import { changeApplicationStatus, getCandidateScores, moveCandidate, moveMultipleCandidates, noShow, rateMultipleCandidates, rejectCandidate, rejectMultipleCandidates, rescheduleCall, rescheduleScreening, scheduleCall, scheduleScreening, scoreRoundTwo, sendDesignTask, submitBudgetScore, updateAssigneeForMultipleCandidates, updateCandidateRating } from "../../controllers/admin/hr.controller.js";
+import { changeApplicationStatus, getCandidateScores, getTaskTemplates, moveCandidate, moveMultipleCandidates, noShow, rateMultipleCandidates, rejectCandidate, rejectMultipleCandidates, rescheduleCall, rescheduleScreening, scheduleCall, scheduleScreening, scoreRoundTwo, sendDesignTask, submitBudgetScore, updateAssigneeForMultipleCandidates, updateCandidateRating } from "../../controllers/admin/hr.controller.js";
+import { protect, roleProtect } from "../../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
-router.post('/reject-candidate', rejectCandidate);
+router.post('/reject-candidate', protect, rejectCandidate);
 
-router.post('/reject-multiple-candidates', rejectMultipleCandidates);
+router.post('/reject-multiple-candidates', protect, rejectMultipleCandidates);
 
-router.post('/move-candidate', moveCandidate);
+router.post('/move-candidate', protect, moveCandidate);
 
-router.post('/move-multiple-candidates', moveMultipleCandidates);
+router.post('/move-multiple-candidates', protect, moveMultipleCandidates);
 
-router.post('/update-assignee-multiple-candidates', updateAssigneeForMultipleCandidates);
+router.post('/update-assignee-multiple-candidates', protect, updateAssigneeForMultipleCandidates);
 
-router.post('/no-show', noShow);
+router.post('/no-show', protect, noShow);
 
-router.post('/update-candidate-rating', updateCandidateRating);
+router.post('/update-candidate-rating', protect, updateCandidateRating);
 
-router.post('/rate-multiple-candidates', rateMultipleCandidates);
+router.post('/rate-multiple-candidates', protect, rateMultipleCandidates);
 
-router.get('/candidate/:candidateId/job/:jobId/scores', getCandidateScores);
+router.get('/candidate/:candidateId/job/:jobId/scores', protect, getCandidateScores);
 
-// router.post('/schedule-screening',scheduleScreening)
-router.post('/schedule-call' , scheduleCall)
+// router.post('/schedule-screening', protect,scheduleScreening)
+router.post('/schedule-call' , protect , scheduleCall)
 
-router.post('/reschedule-call' , rescheduleCall);
+router.post('/reschedule-call' , protect , rescheduleCall);
 
-router.post('/reschedule-screening' , rescheduleScreening);
+router.post('/reschedule-screening' , protect , rescheduleScreening);
 
-router.post('/submit-budget-score' ,submitBudgetScore);
+router.post('/submit-budget-score' , protect ,submitBudgetScore);
 
-router.post('/score-round-two', scoreRoundTwo);
+router.post('/score-round-two', protect, scoreRoundTwo);
 
-router.post('/send-design-task',sendDesignTask)
+router.post('/send-design-task', protect,sendDesignTask)
 
-router.post('/change-status/:candidateId/:jobId',changeApplicationStatus)
+router.post('/change-status/:candidateId/:jobId', protect,changeApplicationStatus)
+
+router.post('/get-task-presets', protect, roleProtect(['Admin','Hiring Manager']), getTaskTemplates)
 
 
 export default router;                                                                               

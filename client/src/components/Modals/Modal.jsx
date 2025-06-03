@@ -269,7 +269,7 @@ const Modal = ({
               }}
             />
           </div>
-          <h1 className={(isMobile  ?  "typography-h3" : "typography-h1") + " mb-2"}>{isMobile  ? action.mobTitle :title}</h1>
+          <span className={(isMobile  ?  "typography-h3" : "typography-h1") + " "}>{isMobile  ? action.mobTitle :title}</span>
           <p className={(isMobile ? "typography-large-p" :  "typography-body mb-6") +" text-font-gray typography-body "}>{isMobile  ? action.mobMessage :message}</p>
         </div>
       );
@@ -278,7 +278,7 @@ const Modal = ({
     if (actionType === ACTION_TYPES.REJECT) {
       return (
         <>
-          <h1 className="typography-h1">{title}</h1>
+          <h1>{title}</h1>
           <p className="text-font-gray typography-body mb-4">
             Are you sure you want to reject "{candidateName}"?
           </p>
@@ -324,7 +324,7 @@ const Modal = ({
     if (actionType === ACTION_TYPES.CLOSE && action.requiresReason) {
       return (
         <>
-          <h1 className="typography-h1">{title}</h1>
+          <h1>{title}</h1>
           <p className="text-font-gray typography-body">{message}</p>
           <div className="mt-4">
             <label htmlFor="closeReason" className="block typography-body mb-2">
@@ -356,7 +356,7 @@ const Modal = ({
 
     return (
       <>
-        <h1 className="typography-h1">{title}</h1>
+        <h1>{title}</h1>
         <p className="text-font-gray typography-body">{message}</p>
       </>
     );
@@ -370,10 +370,10 @@ const Modal = ({
       <StyledCard
         onClick={(e) => e.stopPropagation()}
         backgroundColor={"bg-background-90 "}
-        padding={0}
+        padding={2}
         extraStyles={"shadow w-full  mx-4 transform transition-transform duration-200 ease-out " + (specifiedWidth ? specifiedWidth : actionType === ACTION_TYPES.BUDGET ? "max-w-xl" : "max-w-lg")}
       >
-        <div className="p-6">
+        <div >
           {renderModalContent()}
           {children}
           <div className="flex justify-end gap-4 mt-4">

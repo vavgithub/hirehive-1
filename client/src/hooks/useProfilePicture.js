@@ -1,6 +1,6 @@
 // hooks/useProfilePicture.js
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { uploadProfilePicture } from '../api/authApi';
+import { uploadCompanyLogo, uploadProfilePicture } from '../api/authApi';
 
 export const useProfilePicture = () => {
   const queryClient = useQueryClient();
@@ -17,6 +17,22 @@ export const useProfilePicture = () => {
         ...oldData,
         profilePicture: data.profilePictureUrl,
       }));
+    },
+  });
+};
+
+export const useCompanyLogo = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (file) => {
+      const formData = new FormData();
+      formData.append('companyLogo', file);
+      return uploadCompanyLogo(formData);
+    },
+    onSuccess: (data) => {
+      // Update the auth query cache with the new profile picture URL
+      queryClient.invalidateQueries(['auth']);
     },
   });
 };
