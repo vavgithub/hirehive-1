@@ -111,7 +111,7 @@ function StageRating({customSchema,candidateId,jobId,name,candidate,onSubmit,sta
               if(category !== "Budget")
               return (
               <div key={category} className='flex gap-4 items-center'>
-                <span className='w-32 '>{category}</span>
+                <span className=' w-[35%] '>{category}</span>
                 <Scorer value={rating[category]} onChange={(v) => handleRatingChange(category, v)} />
       
               </div>
