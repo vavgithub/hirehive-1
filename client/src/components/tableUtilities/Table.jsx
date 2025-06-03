@@ -378,7 +378,6 @@ const Table = ({
 
   //getting column configurations
   // Update the columns generation
-  console.log(jobData)
   const columns = (() => {
     let baseColumns = readOnly ?
       getReadOnlyColumns(role, handleDocumentClick) :
