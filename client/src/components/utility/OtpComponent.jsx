@@ -22,14 +22,14 @@ function OtpComponent({hasFooter = false,showSendOTP, inviteMail , handleSendOtp
         <div className={"flex items-center  w-screen justify-center  bg-cover bg-verification " + (hasFooter ? 'h-[calc(100vh-5rem)]' : 'h-screen')}>
           <StyledCard padding={0}  extraStyles={"w-full mx-8 md:mx-0 max-w-lg space-y-8  shadow-xl " + cardbg}>
             <form onSubmit={handleOtpSubmit} className="px-8 sm:px-16 text-center md:mb-20">
-              <h1 className="typography-h2 sm:typography-h1 mt-8 md:mt-20 mb-4 ">OTP Verification</h1>
+              <h1 className="mt-8 md:mt-20 mb-4 ">OTP Verification</h1>
               <p className="text-font-gray text-center typography-large-p">
                 {showSendOTP ?
                 "To ensure security, we need  to verify your account. So, please click on send OTP."
                 :
                 "To ensure security, please enter the OTP (One-Time Password) to verify your account. A code has been sent to"}
               </p>
-              <h2 className='typography-h3 sm:typograhpy-h2 mt-3 md:mt-6 text-font-gray mx-auto w-[90%] sm:w-[75%] whitespace-nowrap text-ellipsis overflow-hidden'>
+              <h2 className='mt-3 md:mt-6 text-font-gray mx-auto w-[90%] sm:w-[75%] whitespace-nowrap text-ellipsis overflow-hidden'>
                 {showSendOTP ? inviteMail :email}
               </h2>
               {showSendOTP ? 

@@ -274,14 +274,14 @@ export const motionDesignerConfig = [
                 Communication : 5,
                 Budget : 5,
                 Animation : 5,
-                Narrative : 5,
+                "Narrative Thinking" : 5,
                 Tooling : 5,
             },
             scoreDetails : {
                 Attitude : {
                     description : "Evaluates adaptability and understanding of trends."
                 },
-                Narrative : {
+                "Narrative Thinking" : {
                     description : "Assesses ability to communicate a story through motion.",
                     isEditable : true
                 },

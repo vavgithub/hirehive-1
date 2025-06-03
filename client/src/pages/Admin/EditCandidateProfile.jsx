@@ -100,7 +100,7 @@ const EditCandidateProfile = () => {
                 <div className='to-background-100 w-64 rounded-xl overflow-hidden'>
                   <img src={data.profilePictureUrl || UNKNOWN_PROFILE_PICTURE_URL} alt="" className='object-cover h-full' />
                 </div>
-                <h2 className='typography-h2 mt-4'>
+                <h2 className='mt-4'>
                   {data.firstName} {data.lastName}
                 </h2>
               </StyledCard>

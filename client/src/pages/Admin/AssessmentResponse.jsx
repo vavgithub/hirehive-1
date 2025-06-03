@@ -45,7 +45,7 @@ const AssessmentResponse = () => {
     if (isError) {
         return (
             <div className="p-7 flex justify-center items-center">
-                <div className="typography-h3 text-red-500">Error loading assessment details</div>
+                <h3 className=" text-red-500">Error loading assessment details</h3>
             </div>
         );
     }
@@ -82,7 +82,7 @@ const AssessmentResponse = () => {
                             </div>
 
                             <div className="flex flex-col justify-between w-full">
-                                <h2 className="typography-h2">
+                                <h2>
                                     {assessmentData?.candidateInfo?.name}
                                 </h2>
 
@@ -150,14 +150,14 @@ const AssessmentResponse = () => {
                     </StyledCard>
 
                     <StyledCard padding={3}  extraStyles="flex bg-stars flex-col items-center w-[35%] max-w-[15rem] bg-cover ">
-                        <div className="relative typography-h3  w-full flex justify-center ">
+                        <div className="relative w-full flex justify-center ">
                             <div className='absolute left-0'>
 
-                                <CustomToolTip title={'A Correct Answer Equals Ten Score'} arrowed size={2}>
+                                <CustomToolTip title={'A correct answer equals ten score'} arrowed size={2}>
                                     <Info className="w-4 h-4 text-font-gray" />
                                 </CustomToolTip>
                             </div>
-                            <h3 className="typography-h3" >SCORE</h3>
+                            <h3>SCORE</h3>
                         </div>
                         <div>
 
@@ -167,18 +167,7 @@ const AssessmentResponse = () => {
                         <p className="typography-large-p">Out of 100</p>
                     </StyledCard>
 
-                    {/* Score Card */}
-                    {/* <div className="bg-background-90 rounded-xl p-6 w-80 flex flex-col items-center justify-center">
-                        <h3 className="typography-h3 mb-2">Score</h3>
-                        <div className="relative w-32 h-32">
-                            <div className="w-full h-full rounded-full border-8 border-blue-500 flex items-center justify-center">
-                                <span className="typography-h1 text-font-primary">
-                                    {assessmentData?.assessmentStats?.scoreOutOf100}
-                                </span>
-                            </div>
-                        </div>
-                        <p className="mt-2 text-font-gray">Out of 100</p>
-                    </div> */}
+                   
                 </div>
 
                 {/* Question Progress Indicators */}
@@ -204,7 +193,7 @@ const AssessmentResponse = () => {
                         </div>
                     </StyledCard>}
 
-                <h2 className='typography-h2'>Questions</h2>
+                <h2>Questions</h2>
                 <StyledCard padding={0} backgroundColor={"bg-transparent"} >
                     {/* Questions List */}
                     {assessmentData?.questionResponses?.length > 0 ? <div className="space-y-4 ">
@@ -212,10 +201,18 @@ const AssessmentResponse = () => {
                             <StyledCard padding={2} backgroundColor={"bg-background-80"} key={response.questionId}>
 
                                 <div >
-                                    <h3 className="typography-h3 mb-4">
+                                    <h3 className="mb-4">
                                         Q{index + 1}. {response.questionDetails.text}
                                     </h3>
-
+                                    {response.questionDetails.type === 'image' && response.questionDetails.imageUrl && (
+                                    <div className="relative w-fit mb-6 ">
+                                        <img
+                                        src={response.questionDetails.imageUrl}
+                                        alt="Question visual"
+                                        className="max-w-md rounded-xl"
+                                        />
+                                    </div>
+                                    )}
                                     <div className="grid grid-cols-2 gap-4">
                                         {response.questionDetails.options.map((option, optIndex) => (
                                             <div

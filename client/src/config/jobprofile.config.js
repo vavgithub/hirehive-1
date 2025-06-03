@@ -8,7 +8,7 @@ export const JOB_PROFILES = {
     "BRAND_DESIGNER" : 'Brand Designer',
     "VIDEO_EDITOR" : 'Video Editor',
     "GRAPHIC_DESIGNER" : "Graphic Designer",
-    "SOCIAL_MEDIA_ASSETS_DESIGNER" : 'Social Media Assets Designer'
+    // "SOCIAL_MEDIA_ASSETS_DESIGNER" : 'Social Media Assets Designer'
 }
 
 export const JOB_PROFILES_DETAILS = {
@@ -36,9 +36,9 @@ export const JOB_PROFILES_DETAILS = {
   [JOB_PROFILES.GRAPHIC_DESIGNER]: {
     description: "The Graphic Designer is responsible for delivering aesthetic and impactful visual content. Assessments include portfolio analysis, an interview focusing on layout and creativity, a practical design task, and follow-up interviews. Screening evaluates aesthetic sense, layout skills, and creativity."
   },
-  [JOB_PROFILES.SOCIAL_MEDIA_ASSETS_DESIGNER]: {
-    description: "The Social Media Assets Designer develops engaging content tailored for social platforms. Evaluation involves a portfolio check, a skills-based screening, a creative design task, and interviews. Screening focuses on branding, adaptability, and audience engagement."
-  }
+  // [JOB_PROFILES.SOCIAL_MEDIA_ASSETS_DESIGNER]: {
+  //   description: "The Social Media Assets Designer develops engaging content tailored for social platforms. Evaluation involves a portfolio check, a skills-based screening, a creative design task, and interviews. Screening focuses on branding, adaptability, and audience engagement."
+  // }
 };
 
 

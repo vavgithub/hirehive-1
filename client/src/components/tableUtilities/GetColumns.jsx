@@ -82,7 +82,18 @@ const getCommonColumns = (handleDocumentClick) => [
   },
 ];
 
-const getExpAndCtcColumns = (role, disableCTC = false, disableHourly = false) => [
+const getExpCols = () => [
+    {
+    field: 'experience',
+    headerName: "Experience",
+    width: 130,
+    align: 'center',
+    headerAlign: 'center',
+    disableColumnMenu: true,
+  },
+]
+
+const getCtcColumns = (role, disableCTC = false, disableHourly = false) => [
   ...(hasPermission(role,PERMISSIONS.SHOW_TABLE_BUDGET_DETAILS) ? [
     ...(disableHourly ? [] : [{
       field: 'hourlyRate',
@@ -125,14 +136,6 @@ const getExpAndCtcColumns = (role, disableCTC = false, disableHourly = false) =>
       )
     }]),
   ] : []),
-  {
-    field: 'experience',
-    headerName: "Experience",
-    width: 130,
-    align: 'center',
-    headerAlign: 'center',
-    disableColumnMenu: true,
-  },
 ]
 
 const getInfoColumns = () => [
@@ -178,7 +181,8 @@ export const getReadOnlyColumns = (role, handleDocumentClick, disableCTC) => {
         </div>
       ),
     },
-    ...getExpAndCtcColumns(role, disableCTC),
+    ...getCtcColumns(role, disableCTC),
+    ...getExpCols(),
     {
       field: 'jobTitle',
       headerName: 'Applied For',
@@ -215,38 +219,7 @@ export const getDefaultColumns = (role, canMove, canReject, handleAssigneeChange
       );
     },
   },
-  {
-    field: 'score',
-    headerName: 'Score',
-    headerAlign: "center",
-    width: 120,
-    disableColumnMenu: true,
-    valueGetter: (value, row) => {
-      const currentStage = row.currentStage;
-      let score = 0;
-
-      const stageScore = row.stageStatuses?.[currentStage]?.score;
-
-      if (currentStage === "Screening" && typeof stageScore === "object") {
-        score = Object.values(stageScore).reduce(
-          (sum, val) => sum + parseInt(val ?? 0),
-          0
-        );
-      } else {
-        score = parseInt(stageScore ?? 0);
-      }
-
-      return score;
-    },
-    renderCell: (params) => {
-      const score = params.value
-      return (
-        <p className='text-center'>
-          {score}
-        </p>
-      );
-    },
-  },
+  ...getExpCols(),
   {
     field: 'assignee',
     headerName: 'Assignee',
@@ -309,6 +282,38 @@ export const getDefaultColumns = (role, canMove, canReject, handleAssigneeChange
       </div>
     )
   },
-  ...getExpAndCtcColumns(role),
+  ...getCtcColumns(role),
+  {
+    field: 'score',
+    headerName: 'Score',
+    headerAlign: "center",
+    width: 120,
+    disableColumnMenu: true,
+    valueGetter: (value, row) => {
+      const currentStage = row.currentStage;
+      let score = 0;
+
+      const stageScore = row.stageStatuses?.[currentStage]?.score;
+
+      if (currentStage === "Screening" && typeof stageScore === "object") {
+        score = Object.values(stageScore).reduce(
+          (sum, val) => sum + parseInt(val ?? 0),
+          0
+        );
+      } else {
+        score = parseInt(stageScore ?? 0);
+      }
+
+      return score;
+    },
+    renderCell: (params) => {
+      const score = params.value
+      return (
+        <p className='text-center'>
+          {score}
+        </p>
+      );
+    },
+  },
   ...getInfoColumns()
 ];

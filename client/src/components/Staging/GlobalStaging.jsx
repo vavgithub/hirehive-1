@@ -333,8 +333,8 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
     const renderCallData = (call,isRescheduled) => (
       <div className={' bg-background-70 flex justify-between items-center rounded-xl p-4'}>
             <div className='flex flex-col'>
-                {!isRescheduled && <span className='typography-small-p text-font-gray'>Date</span>}
-                <div className={(isRescheduled && "text-font-gray ") + ' flex items-center gap-2'}>
+                {!isRescheduled && <span className='typography-small-p text-font-gray '>Date</span>}
+                <div className={(isRescheduled && "text-font-gray ") + ' flex items-center gap-2 h-11'}>
                     <IconWrapper icon={Calendar} size={0} customIconSize={5} isInActiveIcon={true} customStrokeWidth={4} />
                     <p className={isRescheduled && 'typography-body'}>
                         {UTCToDateFormatted(call.scheduledDate)}
@@ -343,8 +343,8 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
             </div>
             {isRescheduled && <div className='w-1 h-1 border-font-gray bg-font-gray border-[1px] rounded-full '></div>}
             <div className='flex flex-col'>
-                {!isRescheduled && <span className='typography-small-p text-font-gray'>Time</span>}
-                <div className={(isRescheduled && "text-font-gray ") + ' flex items-center gap-2'}>
+                {!isRescheduled && <span className='typography-small-p text-font-gray '>Time</span>}
+                <div className={(isRescheduled && "text-font-gray ") + ' flex items-center gap-2 h-11'}>
                     <IconWrapper icon={Clock} size={0} customIconSize={5} isInActiveIcon={true} customStrokeWidth={4} />
                     <p className={isRescheduled && 'typography-body'}>
                         {formatUTCToLocalTimeAuto(call.scheduledDate)}
@@ -391,7 +391,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
 
         return (<div className='grid grid-cols-3 gap-8 w-full '>
             {scoreCategories.map((category, index) => (
-                <div key={index} className='grid grid-cols-[1fr,1fr] w-full gap-4 items-center'>
+                <div key={index} className='grid grid-cols-[2fr,1fr] w-full gap-4 items-center'>
                     <span className='typography-body text-font-gray '>{category.label}</span>
                     <BulletMarks marks={category.value} />
                 </div>
@@ -416,7 +416,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
       {/* Header Part */}
       <div className='flex justify-between items-center'>
         <div className='flex items-center gap-4'>
-            <h2 className='typography-h2'>{stageTitle}</h2>
+            <h2>{stageTitle}</h2>
             {stageConfig?.extraHeaderContent && stageConfig?.extraHeaderContent({portfolio : candidateData.jobApplication.professionalInfo.portfolio})}
         </div>
         <div className='flex items-center w-[40%] justify-end'>
@@ -564,7 +564,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
       
       {stageBasedConfig?.hasCallDetails && 
         <div className='my-4'>
-          <h3 className='typography-h3 mb-2'>Call Details</h3>
+          <h3 className='mb-2'>Call Details</h3>
           <p className='typography-small-p text-font-gray my-2'>Active Schedule</p>
           {renderCallData(stageData?.currentCall)}
         </div>

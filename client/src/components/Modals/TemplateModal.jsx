@@ -1,8 +1,11 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import Modal from './Modal'
 import { useQuery } from '@tanstack/react-query';
 import axios from '../../api/axios';
 import Loader from '../Loaders/Loader';
+import StyledCard from '../Cards/StyledCard';
+import { Headset, ShieldBan } from 'lucide-react';
+import IconWrapper from '../Cards/IconWrapper';
 
 function TemplateModal({open,onClose,assessment}) {
     const {
@@ -21,37 +24,64 @@ function TemplateModal({open,onClose,assessment}) {
         retry: false,
         enabled: !!assessment?._id
       });
-      
+
+      const noAccess = useMemo(()=> (error?.response?.data?.hasAccess === false), [error,questions]);
+
   return (
     <Modal
     open={open}
     onClose={onClose}
-    customTitle={assessment?.title}
-    customMessage={"This set of questions will be used to assess the candidate's suitability and qualifications for the role."}
+    customTitle={assessment?.category + ' : ' +assessment?.title}
+    customMessage={noAccess ? " " :"This set of questions will be used to assess the candidate's suitability and qualifications for the role."}
     noCancel
     customConfirmLabel={'OK'}
     specifiedWidth={'max-w-[70vw]'}
     >
-        {isLoading ? <div className='w-full min-h-[55vh] flex justify-center items-center'><Loader /></div> : questions?.length > 0 && 
-        <div className="space-y-4 mt-4  max-h-[55vh] overflow-y-scroll scrollbar-hide">
+        {isLoading ? <div className='w-full min-h-[55vh] flex justify-center items-center'><Loader /></div> : 
+        noAccess ?
+        <div>
+            <div className='w-full flex flex-col justify-center items-center'>
+              <StyledCard backgroundColor={'bg-background-70'} extraStyles={'flex flex-col justify-center items-center mb-6'}>
+                <div className='text-primary-100'>
+                    <IconWrapper icon={Headset} inheritColor customStrokeWidth={5} size={0} customIconSize={10} />
+                </div>
+                <h2 className='mt-4 pb-0'>Contact Support</h2>
+            </StyledCard>
+            <p className='typography-body text-font-gray'>To access this feature, Please check the Assessment tab and submit the Contact Support form.</p>
+            </div>
+        </div>
+        :
+        questions?.length > 0 && 
+        <div className="space-y-6 mt-4  max-h-[55vh] overflow-y-scroll scrollbar-hide">
             {questions.map((qstn, index) => (
-                <div key={qstn.questionId} className=" rounded-xl pb-4">
-                    <h3 className="typography-h3 mb-4">
+                <StyledCard key={qstn.questionId} backgroundColor={'bg-background-80'}>
+                    <h3 className="mb-4">
                         Q{index + 1}. {qstn.text}
                     </h3>
 
-                    <div className="grid grid-cols-2 gap-4">
-                        {qstn.options.map((option, optIndex) => (
+                    <div className={` flex  ${qstn.questionType === 'image' ? 'flex-row gap-2 justify-between' : 'flex-col'}`}>
+                      <div className={"grid grid-cols-2 gap-4 h-fit " + (qstn.questionType === 'image' ? 'w-[70%]' : 'w-full')}>
+                          {qstn.options.map((option, optIndex) => (
                             <div
-                                key={optIndex}
-                                className={`p-4 rounded-lg typography-body bg-background-60  border-gray-200`}
+                            key={optIndex}
+                            className={`p-4  rounded-lg typography-body bg-background-60  border-gray-200`}
                             >
-                                {option.text}
+                                  {option.text}
+                              </div>
+                          ))}
+                      </div>
+                          {qstn.questionType === 'image' && qstn.imageUrl && (
+                            <div className="relative w-[30%] mb-6 flex justify-end">
+                              <img
+                                src={qstn.imageUrl}
+                                alt="Question visual"
+                                className="max-w-[80%] max-h-[20rem] rounded-xl"
+                              />
                             </div>
-                        ))}
+                          )}
                     </div>
 
-                </div>
+                </StyledCard>
             ))}
         </div>}
     </Modal>

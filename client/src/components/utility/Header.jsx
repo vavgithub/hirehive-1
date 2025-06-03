@@ -45,7 +45,7 @@ const Header = ({
                             <IconWrapper inheritColor icon={ArrowLeft}/>
                         </div>
                     )}
-                    <h1 className={"typography-h1 md:typography-h1 w-full overflow-hidden whitespace-nowrap text-ellipsis "} style={{
+                    <h1 className={"w-full overflow-hidden whitespace-nowrap text-ellipsis "} style={{
                         paddingBottom : '0rem' 
                     }}>
                         {HeaderText}

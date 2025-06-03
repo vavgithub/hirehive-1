@@ -7,6 +7,7 @@ function CustomPill({
   name,
   value,
   hasInfoButton = false,
+  customTitle = null,
   infoButtonClick,
   error,
   selected,
@@ -86,7 +87,7 @@ function CustomPill({
           onChange={onChange}
           className=" custom-radio "
         />
-        {data?.title}
+        {customTitle ?? data?.title}
         {hasInfoButton && (
           <span>
             <IconWrapper

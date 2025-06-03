@@ -147,6 +147,9 @@ const assessmentAttemptSchema = new mongoose.Schema({
   title :{
     type: String,
   },
+  category :{
+    type: String,
+  },
   totalTimeInSeconds: {
     type: Number,
     required: true,

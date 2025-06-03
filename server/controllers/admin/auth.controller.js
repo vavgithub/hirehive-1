@@ -56,6 +56,41 @@ export const uploadProfilePicture = async (req, res) => {
     }
   };
 
+export const uploadCompanyLogo = async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ message: 'No file uploaded' });
+  }
+
+  try {
+    const userId = req.user._id;
+    const companyId = req.user.company_id;
+    
+    // Pass just the filename instead of full path
+    const companyLogoUrl = await uploadToCloudinary(
+      req.file.filename,
+      'company-logo'
+    );
+
+    // Update user profile with the new picture URL
+    const updatedUser = await Company.findByIdAndUpdate(
+      companyId, 
+      { logoUrl: companyLogoUrl },
+      { new: true }
+    );
+
+    res.status(200).json({ 
+      message: 'Company Logo updated successfully',
+    });
+    
+  } catch (error) {
+    console.error('Error uploading profile picture:', error);
+    res.status(500).json({ 
+      message: 'Error uploading profile picture',
+      error: error.message 
+    });
+  }
+};
+
 // Register User
 export const registerUser = asyncHandler(async (req, res) => {
     const { name, email, password, role } = req.body;
@@ -173,34 +208,32 @@ export const getUserProfile = asyncHandler(async (req, res) => {
 
 //Getting Design Reviewers + Admin of one company
 export const getAvailableDesignReviewers = async (req, res) => {
-    try {
-      const company_id = req.user?.company_id;
+  try {
+    const company_id = req.user?.company_id;
 
-      const allReviewers = await User.find({ 
-        role: 'Design Reviewer',
-        company_id : company_id,
-        isAvailable : true
-      }).select('_id firstName lastName email isAvailable profilePicture'); // Include _id and isAvailable
-  
-      const admin = await User.findOne({ 
-        role: 'Admin',
-        company_id : company_id,
-        isAvailable : true
-      }).select('_id firstName lastName email isAvailable profilePicture'); 
+    const users = await User.find({
+      company_id,
+      isAvailable: true,
+      role: { $in: ['Design Reviewer', 'Admin'] }
+    }).select('_id firstName lastName email isAvailable profilePicture role');
 
-      res.status(200).json({ 
-        success: true, 
-        data: allReviewers,
-        admin 
-      });
-    } catch (error) {
-      res.status(500).json({ 
-        success: false, 
-        message: 'Error fetching design reviewers', 
-        error: error.message 
-      });
-    }
-  };
+    const allReviewers = users.filter(user => user.role === 'Design Reviewer');
+    const admin = users.find(user => user.role === 'Admin') || null;
+
+    res.status(200).json({
+      success: true,
+      data: allReviewers,
+      admin
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching design reviewers',
+      error: error.message
+    });
+  }
+};
+
 
 // Request Password Reset / Send OTP
 export const forgotPassword = asyncHandler(async (req, res) => {
@@ -978,6 +1011,79 @@ export const editUserProfile = asyncHandler(async (req, res) => {
       status: 'success',
       message: 'Profile updated successfully',
       user: updatedUser
+    });
+
+  } catch (error) {
+    res.status(400).json({
+      status: 'error',
+      message: error.message || 'Error updating profile',
+      error: process.env.NODE_ENV === 'development' ? error : undefined
+    });
+  }
+});
+
+
+export const editCompanyProfile = asyncHandler(async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const companyId = req.user.company_id;
+    const {
+      name,
+      location,
+      industryType,
+      size,
+      about,
+      website,
+      founded,
+      focusAreas
+    } = req.body;
+
+      const allCompanies = await Company.find({
+        _id: { $ne: companyId }
+      });
+
+      const normalizedName = name.replace(/\s+/g, '').toLowerCase();
+
+      const isExistingCompany = allCompanies.filter(company =>
+        company.name.replace(/\s+/g, '').toLowerCase() === normalizedName
+      );
+      if(isExistingCompany?.length > 0){
+        return res.status(400).json({
+          status: 'error',
+          message: 'Company Name is already taken.'
+        });
+      }
+
+    // Find and update the user
+    const updatedCompany = await Company.findByIdAndUpdate(
+      companyId,
+      {
+        name,
+        location,
+        industryType,
+        size,
+        about,
+        website,
+        founded,
+        focusAreas
+      },
+      { 
+        new: true,
+        runValidators: true
+      }
+    );
+
+    if (!updatedCompany) {
+      return res.status(404).json({
+        status: 'error',
+        message: 'Company not found'
+      });
+    }
+
+    res.status(200).json({
+      status: 'success',
+      message: 'Profile updated successfully',
+      data : updatedCompany
     });
 
   } catch (error) {

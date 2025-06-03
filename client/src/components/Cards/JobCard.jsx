@@ -24,9 +24,9 @@ const truncateWords = (text, wordLimit) => {
 };
 
 const JobDetailItem = ({ icon: Icon, text }) => (
-  <div className="flex gap-2 items-center w-fit">
+  <div className="flex gap-2 items-center w-fit md:max-w-[15%]">
     <Icon />
-    <p className="typography-body">{text}</p>
+    <p className="typography-body w-full max-w-[8rem] whitespace-nowrap text-ellipsis overflow-hidden">{text}</p>
   </div>
 );
 
@@ -139,7 +139,7 @@ const JobCard = ({
   >
     <StyledCard padding={2} backgroundColor={'bg-background-80'} borderRadius={'  rounded-t-xl '} extraStyles={'hover:bg-background-60 transition-colors pb-0 duration-200 shadow'}>
       <div className={(isApplied && "flex-col md:flex-row" ) +" flex items-start justify-between   gap-4"}>
-        <h3 className={(isApplied ? "w-full md:w-[50%] xl:w-[60%]" : "w-[60%]") + " typography-h3 group-hover:text-font-accent  text-ellipsis overflow-hidden whitespace-nowrap "}>{job.jobTitle}</h3>
+        <h3 className={(isApplied ? "w-full md:w-[50%] xl:w-[60%]" : "w-[60%]") + "group-hover:text-font-accent  text-ellipsis overflow-hidden whitespace-nowrap "}>{job.jobTitle}</h3>
         <div className={"flex items-center gap-3 " + (isApplied ? " mb-2 md:mb-0 " : "")}>
           {isApplied &&         
           <span className="bg-blue-300 text-blue-100 typography-body px-4 py-2 rounded-xl">

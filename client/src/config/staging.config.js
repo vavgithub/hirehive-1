@@ -18,7 +18,7 @@ export const stagingConfig = {
     [JOB_PROFILES.GRAPHIC_DESIGNER] : graphicDesignerConfig,
     [JOB_PROFILES.PRODUCT_DESIGNER] : productDesignerConfig,
     [JOB_PROFILES.VIDEO_EDITOR] : videoEditorConfig,
-    [JOB_PROFILES.SOCIAL_MEDIA_ASSETS_DESIGNER] : socialMediaDesignerConfig,
+    // [JOB_PROFILES.SOCIAL_MEDIA_ASSETS_DESIGNER] : socialMediaDesignerConfig,
 }
 
 export const getStages = (jobProfile) => {

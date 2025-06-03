@@ -20,7 +20,7 @@ const updateProfessionalDetails = async ({experience, noticePeriod, currentCTC, 
 
 const Card = ({ title, children, gridLayout = false , extraClass }) => (
   <div className={`bg-background-80 p-8 rounded-xl mb-4 ${extraClass}`} >
-    <h3 className="typography-h3 mb-5">{title}</h3>
+    <h3 className="mb-5">{title}</h3>
     <div className={gridLayout ? "grid grid-cols-2 gap-4" : ""}>{children}</div>
   </div>
 );

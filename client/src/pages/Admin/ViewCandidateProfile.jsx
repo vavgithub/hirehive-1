@@ -72,7 +72,7 @@ export const VAVScoreCard = ({ score, stage, scoreStages }) => {
     if (!showBreakDown) {
         return (
             <StyledCard extraStyles="flex bg-stars  flex-col items-center sm:w-[55%] lg:w-[35%]  max-w-[27rem] bg-cover relative">
-                <h2 className="typography-h2 text-font-main">VAV SCORE</h2>
+                <h2 className="text-font-main">VAV SCORE</h2>
                 <button onClick={() => setShowBreakDown(true)} className='absolute top-4 right-4 hover:text-font-gray'>
                     <CustomToolTip title={'View Score Breakdown'}>
                         <IconWrapper icon={ArrowLeftRight} size={0} customStrokeWidth={7} inheritColor />
@@ -84,7 +84,7 @@ export const VAVScoreCard = ({ score, stage, scoreStages }) => {
         )
     } else {
         return (<StyledCard extraStyles="flex bg-stars  flex-col items-center sm:w-[55%] lg:w-[35%]  max-w-[27rem] bg-cover relative">
-            <h2 className="typography-h2">Score Breakdown</h2>
+            <h2>Score Breakdown</h2>
             <button onClick={() => setShowBreakDown(false)} className='absolute top-4 right-4 hover:text-font-gray'>
                 <CustomToolTip title={'View VAV Score'}>
                     <IconWrapper icon={ArrowLeftRight} size={0} customStrokeWidth={7} inheritColor />
@@ -448,6 +448,34 @@ const ViewCandidateProfile = () => {
         window.open(mailtoLink, "_blank");
     };
 
+    const handlePhoneCopy = (phone) => {
+    if (!phone) return;
+
+        navigator.clipboard.writeText(phone)
+        .then(() => {
+            showSuccessToast('Success','Phone Number copied to clipboard');
+            // Optionally show a success message/toast here
+        })
+        .catch((err) => {
+            console.error('Failed to copy phone number:', err);
+            // Optionally show an error message/toast
+        });
+    };
+
+    const handleEmailCopy = (email) => {
+    if (!email) return;
+
+        navigator.clipboard.writeText(email)
+        .then(() => {
+            showSuccessToast('Success','Email copied to clipboard');
+            // Optionally show a success message/toast here
+        })
+        .catch((err) => {
+            console.error('Failed to copy email:', err);
+            // Optionally show an error message/toast
+        });
+    };
+
     const handleOpenNotes = (e) => {
         setOpenNotes(true)
         e.stopPropagation();
@@ -507,7 +535,7 @@ const reviewerProfilePic = currentReviewer?.profilePicture
                                         </span>}
                                 </div>
                                 <div className={`flex flex-col gap-2 ${candidateData?.jobApplication?.notes?.content ? ' max-w-[60%] ' : ''}`}>
-                                    <h2 className="typography-h2">
+                                    <h2>
                                         {data.firstName} {data.lastName}
                                     </h2>
                                     <div className="flex items-center gap-2 mb-3 mt-2">
@@ -519,16 +547,12 @@ const reviewerProfilePic = currentReviewer?.profilePicture
                                     </div>
                                     {hasPermission(role,PERMISSIONS.SHOW_CANDIDATE_PROFILE_PERSONAL_DETAILS) &&
                                         <div className="flex mb-3 gap-5">
-                                            <div className="flex items-center gap-2">
-                                                <div className='cursor-pointer' onClick={() => handleWhatsappOpen(data.firstName + " " + data.lastName, data.phone)}>
+                                            <div className="flex items-center gap-2 cursor-pointer" onClick={()=>handlePhoneCopy(data?.phone)}>
                                                     <IconWrapper size={0} customIconSize={2} icon={Phone} />
-                                                </div>
                                                 <span className="typography-large-p">{data.phone}</span>
                                             </div>
-                                            <div className="flex items-center gap-2 overflow-hidden">
-                                                <div className='cursor-pointer' onClick={() => handleEmailOpen(data?.firstName + " " + data?.lastName, data?.email, data?.jobApplication?.jobApplied, new Date(data?.jobApplication?.stageStatuses['Screening']?.currentCall?.scheduledDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) + " " + formatTime(data?.jobApplication?.stageStatuses['Screening']?.currentCall?.scheduledTime))}>
+                                            <div className="flex items-center gap-2 overflow-hidden cursor-pointer" onClick={() => handleEmailCopy(data?.email)}>
                                                     <IconWrapper size={0} customIconSize={2} icon={Mail} />
-                                                </div>
                                                 <span className="typography-large-p whitespace-nowrap text-ellipsis overflow-hidden ">{data.email}</span>
                                             </div>
                                         </div>}
@@ -553,7 +577,7 @@ const reviewerProfilePic = currentReviewer?.profilePicture
                                         {resumeOpen && <ResumeViewer documentUrl={data.resumeUrl} onClose={() => setResumeOpen(false)} />}
 
                                         {
-                                            ((data.hasGivenAssessment && data.jobApplication?.assessmentResponse) && hasPermission(role,PERMISSIONS.SHOW_CANDIDATE_PROFILE_ASSESSMENT_RESPONSE)) && <div className='cursor-pointer' onClick={handleAssignmentNavigation}>
+                                            ((data.jobApplication?.assessmentResponse) && hasPermission(role,PERMISSIONS.SHOW_CANDIDATE_PROFILE_ASSESSMENT_RESPONSE)) && <div className='cursor-pointer' onClick={handleAssignmentNavigation}>
                                                 <CustomToolTip title={'Assessment'} arrowed size={2}>
                                                     <IconWrapper hasBg icon={ClipboardCheck} />
                                                 </CustomToolTip>
@@ -574,7 +598,7 @@ const reviewerProfilePic = currentReviewer?.profilePicture
 
                                 {/* ready only current reviewer */}
                                 {data?.jobApplication?.stageStatuses[data?.jobApplication?.currentStage]?.assignedTo && hasPermission(role,PERMISSIONS.SHOW_CANDIDATE_PROFILE_CURRENT_REVIEWER) &&
-                                    <div className='absolute bottom-4 right-4 flex gap-2'>
+                                    <div className='absolute bottom-8 right-8 flex gap-2'>
                                         <div className='flex flex-col items-end'>
                                             <p className='typography-small-p text-font-gray'>Current reviewer </p>
                                             <p className='typography-small-p '>{reviewerName}</p>

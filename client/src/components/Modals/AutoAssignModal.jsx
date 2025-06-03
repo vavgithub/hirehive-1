@@ -91,7 +91,7 @@ const AutoAssignModal = ({ open, onClose, onAssign, jobId, budgetFilter }) => {
   
     const customContent = (
       <div className="relative mt-4" ref={dropdownRef}>
-        <h3 className='typography-h3 mb-2'>Select reviewers</h3>
+        <h3 className='mb-2'>Select reviewers</h3>
         <div 
           className={"w-full bg-background-80 h-11 flex items-center cursor-pointer rounded-xl hover:bg-background-60 overflow-hidden " + (isDropdownOpen ? "border border-teal-100" : "")}
           onClick={() => setIsDropdownOpen(!isDropdownOpen)}

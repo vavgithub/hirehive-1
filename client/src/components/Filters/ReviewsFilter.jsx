@@ -140,10 +140,10 @@ const ReviewsFilter = ({ onApplyFilters, candidates = [] }) => {
   }, []);
 
   const categories = {
+    "job Profile": Object.values(JOB_PROFILES),
     jobName: getUniqueJobNames(),
     stage: getUniqueStages(),
     "job Type" : ["Full Time", "Part Time", "Contract", "Internship"],
-    "job Profile": Object.values(JOB_PROFILES)
   };
 
   // Apply filters whenever selectedFilters changes

@@ -161,7 +161,7 @@ connectDB()
     startScheduledJobs();
     
     //Seeding Assessment Templates
-    seedTemplates()
+    // seedTemplates()
     
     // renameTechToHTML()
 

@@ -6,7 +6,7 @@ export const AccordionItem = ({ title, content, isOpen, toggleOpen , preIcon}) =
         <div className='flex items-center gap-3'>
             {preIcon}
             <button
-                className="w-full  text-left typography-h3 flex justify-between items-center"
+                className="w-full  text-left flex justify-between items-center"
                 onClick={toggleOpen}
             >
                 {title}

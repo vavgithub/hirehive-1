@@ -194,7 +194,7 @@ function Teams() {
                         </div>
                         {/* Memeber Details */}
                         <div className="flex flex-col w-full">
-                            <h3 className="typography-h3 text-center">{member?.firstName + " " + member?.lastName}</h3>
+                            <h3 className="text-center">{member?.firstName + " " + member?.lastName}</h3>
                             <p className="typography-small-p text-center text-font-gray">{member?.role}</p>
                         </div>
                         <div className="w-full flex justify-center">
@@ -215,7 +215,7 @@ function Teams() {
         </div>
         {teamMembers?.members?.filter(member => member?.status === "REQUESTED")?.length > 0 && 
         <div className="w-full">
-            <h2 className="typography-h2 mt-6 mb-4">New Member Request</h2>
+            <h2 className="mt-6 mb-4">New Member Request</h2>
             <StyledCard padding={0}  extraStyles="grid gap-4 grid-cols-5 ">
             {teamMembers?.members?.filter(member => member?.status === "REQUESTED").map(member => {
                 return (
@@ -226,7 +226,7 @@ function Teams() {
                         </div>
                         {/* Memeber Details */}
                         <div className="flex flex-col w-full">
-                            <h3 className="typography-h3 text-center">{member?.firstName + " " + member?.lastName}</h3>
+                            <h3 className="text-center">{member?.firstName + " " + member?.lastName}</h3>
                             <p className="typography-small-p text-center text-font-gray">{member?.role}</p>
                         </div>
                         <div className="w-full flex justify-center">

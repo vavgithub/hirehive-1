@@ -19,7 +19,7 @@ const CustomToast = ({ title, message, variant }) => (
       )}
     </div>
     <div className="ml-3 flex-1">
-      <h3 className="typography-h3">{title}</h3>
+      <h3>{title}</h3>
       <p className="typography-large-p text-font-gray">{message}</p>
     </div>
   </div>

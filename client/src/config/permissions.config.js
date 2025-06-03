@@ -29,6 +29,8 @@ export const PERMISSIONS = {
   SHOW_CANDIDATE_TAB_DETAIL_EDIT: "show_candidate_tab_detail_edit",
   SHOW_PIN_UNPIN_OPTION: "show_pin_unpin_option",
   SHOW_EDIT_SCORING: "show_edit_scoring",
+  SHOW_COMPANY_PROFILE : 'show_company_profile',
+  EDIT_COMPANY_PROFILE : 'edit_company_profile'
 };
 
 export const ROUTE_KEY = {
@@ -57,6 +59,7 @@ export const ROUTE_KEY = {
   EDIT_JOB: "edit_job",
   CREATE_JOB: "create_job",
   JOBS_VIEW_JOB: "jobs_view_job",
+  COMPANY_PROFILE_VIEW : 'company_profile_view'
 };
 
 export const ROLE_CONFIG = {
@@ -80,6 +83,8 @@ export const ROLE_CONFIG = {
       PERMISSIONS.SHOW_CANDIDATE_TAB_DETAIL_EDIT,
       PERMISSIONS.SHOW_PIN_UNPIN_OPTION,
       PERMISSIONS.SHOW_EDIT_SCORING,
+      PERMISSIONS.SHOW_COMPANY_PROFILE,
+      PERMISSIONS.EDIT_COMPANY_PROFILE,
     ],
     routes: {
       [ROUTE_KEY.CANDIDATES_ASSESSMENT_RESPONSE]:
@@ -110,6 +115,7 @@ export const ROLE_CONFIG = {
       [ROUTE_KEY.CREATE_JOB]: "/admin/jobs/all/create",
       [ROUTE_KEY.JOBS_VIEW_JOB]: "/admin/jobs/all/view",
       [ROUTE_KEY.GUIDE]: "/admin/guide",
+      [ROUTE_KEY.COMPANY_PROFILE_VIEW] : '/admin/company'
     },
   },
   [ROLES.HIRING_MANAGER]: {
@@ -131,6 +137,7 @@ export const ROLE_CONFIG = {
       PERMISSIONS.SHOW_TABLE_BUDGET_DETAILS,
       PERMISSIONS.SHOW_CANDIDATE_TAB_DETAIL_EDIT,
       PERMISSIONS.SHOW_PIN_UNPIN_OPTION,
+      PERMISSIONS.SHOW_COMPANY_PROFILE,
     ],
     routes: {
       [ROUTE_KEY.CANDIDATES_ASSESSMENT_RESPONSE]:
@@ -165,10 +172,14 @@ export const ROLE_CONFIG = {
       [ROUTE_KEY.CREATE_JOB]: "/hiring-manager/jobs/all/create",
       [ROUTE_KEY.JOBS_VIEW_JOB]: "/hiring-manager/jobs/all/view",
       [ROUTE_KEY.GUIDE]: "/hiring-manager/guide",
+      [ROUTE_KEY.COMPANY_PROFILE_VIEW] : '/hiring-manager/company'
     },
   },
   [ROLES.DESIGN_REVIEWER]: {
-    permissions: [PERMISSIONS.SHOW_CANDIDATE_PROFILE_CARD],
+    permissions: [
+      PERMISSIONS.SHOW_CANDIDATE_PROFILE_CARD,
+      PERMISSIONS.SHOW_COMPANY_PROFILE,
+    ],
     routes: {
       [ROUTE_KEY.DASHBOARD]: "/design-reviewer/dashboard",
       [ROUTE_KEY.PROFILE]: "/design-reviewer/profile",
@@ -178,6 +189,7 @@ export const ROLE_CONFIG = {
       [ROUTE_KEY.CANDIDATES_VIEW_CANDIDATE]: "/design-reviewer/candidates/view",
       [ROUTE_KEY.REVIEWS_VIEW_CANDIDATE]: "/design-reviewer/reviews/view-candidate",
       [ROUTE_KEY.ALL_CANDIDATES]: "/design-reviewer/candidates",
+      [ROUTE_KEY.COMPANY_PROFILE_VIEW] : '/design-reviewer/company'
     },
   },
   [ROLES.CANDIDATE]: {

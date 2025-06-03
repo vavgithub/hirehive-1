@@ -4,7 +4,7 @@ import { Controller } from 'react-hook-form';
 function AdditionalQuestions({jobDetails, control ,errors}) {
   return (
     <>
-        <h3 className="typography-h3 mb-4">Additional Questions</h3>
+        <h3 className="mb-4">Additional Questions</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {jobDetails?.questions.map((question, index) => (
             <div key={question?._id} className="bg-background-90 rounded-xl p-4">

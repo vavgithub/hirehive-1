@@ -81,10 +81,10 @@ export const seedTemplates = async () => {
     const savedAssessmentTemplates = await Assessment.find();
     if (savedAssessmentTemplates?.length > 0) {
       const titlesSet = new Set(
-        savedAssessmentTemplates.map((item) => item?.title)
+        savedAssessmentTemplates.map((item) => `${item?.title}-${item.category}`)
       );
       const filtered = assessmentTemplates.filter(
-        (item) => !titlesSet.has(item.title)
+        (item) => !titlesSet.has(`${item?.title}-${item.category}`)
       );
       if (filtered?.length > 0) {
         for (let assessment of filtered) {
@@ -94,18 +94,18 @@ export const seedTemplates = async () => {
       }
       // Create a map of templates for faster lookup
       const templateMap = new Map(
-        assessmentTemplates.map(template => [template.title, template])
+        assessmentTemplates.map(template => [`${template.title}-${template.category}`, template])
       );
 
       for (let saved of savedAssessmentTemplates) {
-        const matchingTemplate = templateMap.get(saved.title);
+        const matchingTemplate = templateMap.get(`${saved.title}-${saved.category}`);
 
         if (matchingTemplate && matchingTemplate.questions?.length > saved.questions.length) {
           const existingTexts = new Set(saved.questions.map(q => q.text));
           const newQuestions = matchingTemplate.questions.filter(q => !existingTexts.has(q.text));
 
           if (newQuestions.length > 0) {
-            console.log(newQuestions.length , " new Questions added on ", matchingTemplate.title)
+            console.log(newQuestions.length , " new Questions added on ", matchingTemplate.title ,' - ' , matchingTemplate.category)
             saved.questions.push(...newQuestions);
             await saved.save(); // Only save if something changed
           }

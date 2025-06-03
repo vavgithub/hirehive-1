@@ -170,10 +170,10 @@ const CompanyHome = () => {
             //     <div className='container'>
             <Container hasBgColor>
                     <LogoWrapper buttonVariant={"primary"} isAuthenticated={false} headerText={jobData?.companyDetails?.name + ' Jobs'} />
-                    <h1 className='md:hidden display-d2 py-4'>{jobData?.companyDetails?.name + ' Jobs'}</h1>
+                    <h1 className='md:hidden py-4'>{jobData?.companyDetails?.name + ' Jobs'}</h1>
                         
                     <div className=' py-8 bg-home-bg bg-cover flex flex-col items-center rounded-xl justify-center'>
-                         <h2 className='typography-h2 px-6 sm:px-0 w-full md:w-3/5 text-center'>Unlock Your Career Potential</h2>
+                         <h2 className='px-6 sm:px-0 w-full md:w-3/5 text-center'>Unlock Your Career Potential</h2>
                         <div className='flex justify-evenly gap-2 px-4 w-full md:w-3/5 '>
                             <input
                                 type='text'

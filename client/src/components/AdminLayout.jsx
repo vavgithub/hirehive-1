@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { Menu, MenuItem, IconButton, Avatar } from '@mui/material';
 import { logout } from '../api/authApi';
@@ -14,6 +14,7 @@ import Footer from './Footer/Footer';
 import ThemeToggle from './ui/ThemeToggle';
 import { useLogo, useUnknownProfilePicture } from '../context/ThemeContext';
 // import ThemeToggle from './ThemeToggle'; // Import ThemeToggle component
+import { useQueryClient } from '@tanstack/react-query';
 
 //Screen URLs with BG for All Admin personas
 const ADMIN_BG_SCREENS = [
@@ -35,6 +36,7 @@ const AdminLayout = () => {
 
     const [anchorEl, setAnchorEl] = useState(null);
     const { refetch } = useAuth();
+    const queryClient = useQueryClient();
 
     const { newMembersCount } = useSelector(state => state.admin)
 
@@ -47,6 +49,7 @@ const AdminLayout = () => {
         try {
             await logout();
             refetch();
+            queryClient.clear()
             navigate('/admin/login');
         } catch (error) {
             // console.error('Logout failed:', error);
@@ -64,19 +67,19 @@ const AdminLayout = () => {
         setAnchorEl(null);
     };
 
-    const NavItem = ({ to, icon: Icon, activeIcon: ActiveIcon, iconData, children, hasHighlighter }) => (
-        <div className="relative flex flex-row items-center justify-between rounded-xl">
+    const NavItem = ({ to, icon: Icon, activeIcon: ActiveIcon, iconData, children, hasHighlighter , isBold  = false, isPrimaryColor = false}) => (
+        <div className="relative flex flex-row items-center justify-between  rounded-xl ">
             <NavLink
                 to={to}
                 end={to === "/admin/dashboard" || to === "/design-reviewer/dashboard"}
                 className={({ isActive, isPending }) =>
-                    `w-full flex items-center min-h-11 gap-2 pl-2 py-2 rounded-xl hover:bg-background-60 ${isActive || isPending ? " selection-primary " : ""}`
+                    `w-full flex items-center min-h-11 gap-2 pl-2 py-2 rounded-xl hover:bg-background-60 ${isActive || isPending ? ` selection-primary ` : isPrimaryColor ? 'text-white' : ""}`
                 }
             >
                 {({ isActive, isPending }) => (
                     <div className='flex items-center gap-2'>
                         {isActive || isPending ? <ActiveIcon count={iconData} /> : <Icon count={iconData} />}
-                        <span className='typography-body'>{children}</span>
+                        <span className= {(isBold ? 'font-semibold typography-h6' : ' typography-body ') +' '}>{children}</span>
                     </div>
                 )}
             </NavLink>
@@ -100,14 +103,33 @@ const AdminLayout = () => {
         hasHighlighter,
         submenu = []
     }) => {
-        const { pathname } = useLocation();
-        const isActive = pathname.startsWith(to);
-        const [isOpen, setIsOpen] = useState(isActive);
+    const { pathname } = useLocation();
+    const isActive = pathname.startsWith(to);
+    const [isOpen, setIsOpen] = useState(isActive);
+    const dropdownRef = useRef(null); // 👉 create ref for the wrapper
 
-        const toggleDropdown = () => setIsOpen(!isOpen);
+    const toggleDropdown = () => setIsOpen(!isOpen);
+
+    // ✅ useEffect to close dropdown on outside click
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+        if (
+            dropdownRef.current &&
+            !dropdownRef.current.contains(event.target)
+        ) {
+            setIsOpen(false);
+        }
+        };
+
+        document.getElementById('adminSidebar')?.addEventListener("mousedown", handleClickOutside);
+
+        return () => {
+        document.getElementById('adminSidebar')?.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
 
         return (
-            <div className="relative flex flex-col rounded-xl">
+            <div ref={dropdownRef} className="relative flex flex-col rounded-xl">
                 {/* Parent menu item */}
                 <div
                     onClick={toggleDropdown}
@@ -153,19 +175,35 @@ const AdminLayout = () => {
         );
     };
 
+    const GreenDot = () => <div className='bg-teal-100 w-6 h-6 rounded-full m-[10px]'></div>
 
     // Adding Profile and Logout dropdown logic
     const renderProfileMenu = () => {
         const profilePath = getProfilePath();
 
         const itemComponents = [
+            ...(hasRoutePermission(user?.role,ROUTE_KEY.COMPANY_PROFILE_VIEW) ? [{
+                onClick : () => navigate(getRoute(user.role,ROUTE_KEY.COMPANY_PROFILE_VIEW)),
+                content : () => (
+                    <NavLink
+                        to={getRoute(user.role,ROUTE_KEY.COMPANY_PROFILE_VIEW)}
+                        className={({ isActive }) =>
+                            `w-full flex items-center ${isActive ? " selection-primary " : ""}  hover:bg-background-60 hover:text-font-accent px-4 py-2 rounded-xl `}
+                    >
+                        <Avatar alt={user?.companyDetails?.name} sx={{ width: "32px", height: "32px" }}
+                            src={user?.companyDetails?.logoUrl || UNKNOWN_PROFILE_PICTURE_URL} />
+                        <span className='typography-h4  ml-2 overflow-hidden whitespace-nowrap text-ellipsis'>
+                            {user?.companyDetails?.name}
+                        </span>
+                    </NavLink>)
+            }] : {}),
             {
                 onClick: handleMenuClose,
                 content: () => (
                     <NavLink
                         to={profilePath}
                         className={({ isActive }) =>
-                            `w-full flex items-center ${isActive ? "text-font-accent" : ""}  hover:bg-background-60 hover:text-font-accent px-4 py-2 rounded-xl `}
+                            `w-full flex items-center ${isActive ? " selection-primary " : ""}  hover:bg-background-60 hover:text-font-accent px-4 py-2 rounded-xl `}
                     >
                         <IconWrapper inheritColor={true} size={0} customIconSize={5} icon={User} />
                         <span className='typography-body  ml-2 '>
@@ -258,8 +296,8 @@ const AdminLayout = () => {
 
     return (
         <div id='adminContainer' className={`flex ${ADMIN_BG_SCREENS.some(path => pathname.startsWith(path)) ? ' bg-background-100 ' : ' bg-background-100 '} bg-cover bg-top h-full overflow-x-hidden flex flex-col`}>
-            <div className="fixed flex w-[16rem] h-[calc(100vh-2rem)] m-4 rounded-xl flex-col bg-background-90 text-font-gray typography-large-p justify-between py-6 ">
-                <div className='flex flex-col gap-6 typography-body px-4'>
+            <div id='adminSidebar' className="fixed flex w-[16rem] h-[calc(100vh-2rem)] m-4 rounded-xl flex-col bg-background-90 text-font-gray typography-large-p justify-between py-6 ">
+                <div className='flex flex-col gap-2 typography-body px-4'>
                     <div className='pl-2 pt-2 pb-4 flex items-center justify-between'>
                         <img className='h-11 cursor-pointer ' onClick={() => navigate('/admin')} src={Logo} alt="Logo" />
                         <ThemeToggle /> {/* Add ThemeToggle here */}
