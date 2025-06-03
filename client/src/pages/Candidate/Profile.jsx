@@ -64,6 +64,7 @@ const PersonalDetails = ({ candidateData, isEditing, control }) => {
                 id="firstName"
                 label="First Name"
                 labelStyles="text-font-gray"
+                extraClass={'custom-input'}
                 rowWise
                 value={field.value ?? ""}
                 onChange={field.onChange}
@@ -83,6 +84,7 @@ const PersonalDetails = ({ candidateData, isEditing, control }) => {
                 id="lastName"
                 label="Last Name"
                 labelStyles="text-font-gray"
+                extraClass={'custom-input'}
                 rowWise
                 value={field.value ?? ""}
                 onChange={field.onChange}
@@ -102,6 +104,7 @@ const PersonalDetails = ({ candidateData, isEditing, control }) => {
                 id="email"
                 label="Email"
                 labelStyles="text-font-gray"
+                extraClass={'custom-input'}
                 rowWise
                 value={field.value ?? ""}
                 onChange={field.onChange}
@@ -135,6 +138,7 @@ const PersonalDetails = ({ candidateData, isEditing, control }) => {
             name="phone"
             rules={validationRules?.phoneNumber}
             control={control}
+            customBgClass={'!bg-background-70'}
             rowWise
             label="Phone Number"
           />
@@ -187,7 +191,7 @@ const ResumeAndPortfolioDetails = ({ candidateData, isEditing, control, resumeFi
             render={({ field, fieldState: { error } }) => (
               <div className="h-11 w-full flex items-center typography-body justify-between gap-2">
                 <p className="min-w-[25%] max-w-[25%] text-font-gray ">Resume</p>
-                <div className="w-full bg-background-80 hover:bg-background-60 h-11 rounded-xl flex justify-between">
+                <div className="w-full bg-background-70 hover:bg-background-60 h-11 rounded-xl flex justify-between">
                   <p className="pl-4 py-2 whitespace-nowrap overflow-hidden text-ellipsis w-[45%]  md:w-[60%]">{fileName ? fileName : candidateData?.firstName + "'s Resume"}</p>
                   <span className="hidden md:block">
                     <Button icon={()=><IconWrapper icon={Upload} inheritColor size={0} customIconSize={4} customStrokeWidth={7} />} variant="secondary" type="button" onClick={() => resumeRef.current.click()}>{resumeFile ? "Edit" : "Choose"}</Button>
@@ -213,6 +217,7 @@ const ResumeAndPortfolioDetails = ({ candidateData, isEditing, control, resumeFi
                 id="website"
                 label="Website"
                 labelStyles="text-font-gray"
+                extraClass={'custom-input'}
                 rowWise
                 value={field.value ?? ""}
                 onChange={field.onChange}
@@ -232,6 +237,7 @@ const ResumeAndPortfolioDetails = ({ candidateData, isEditing, control, resumeFi
                 id="portfolio"
                 label="Portfolio"
                 labelStyles="text-font-gray"
+                extraClass={'custom-input'}
                 rowWise
                 value={field.value ?? ""}
                 onChange={field.onChange}
@@ -312,7 +318,7 @@ const ProfessionalDetails = ({ candidateData, isEditing, control }) => {
                 id="experience"
                 label="Experience"
                 labelStyles="text-font-gray"
-                extraClass="no-spinner"
+                extraClass="no-spinner custom-input"
                 rowWise
                 value={field.value ?? 0}
                 onChange={field.onChange}
@@ -332,7 +338,7 @@ const ProfessionalDetails = ({ candidateData, isEditing, control }) => {
                 id="noticePeriod"
                 label="Notice Period"
                 labelStyles="text-font-gray"
-                extraClass="no-spinner"
+                extraClass="no-spinner custom-input"
                 rowWise
                 value={field.value ?? 0}
                 onChange={field.onChange}
@@ -355,7 +361,7 @@ const ProfessionalDetails = ({ candidateData, isEditing, control }) => {
                     id="currentCTC"
                     label="Current CTC"
                     labelStyles="text-font-gray"
-                    extraClass="no-spinner"
+                    extraClass="no-spinner custom-input"
                     rowWise
                     value={field.value ?? 0}
                     onChange={field.onChange}
@@ -375,7 +381,7 @@ const ProfessionalDetails = ({ candidateData, isEditing, control }) => {
                     id="expectedCTC"
                     label="Expected CTC"
                     labelStyles="text-font-gray"
-                    extraClass="no-spinner"
+                    extraClass="no-spinner custom-input"
                     rowWise
                     value={field.value ?? 0}
                     onChange={field.onChange}
@@ -398,7 +404,7 @@ const ProfessionalDetails = ({ candidateData, isEditing, control }) => {
                   id="hourlyRate"
                   label="Hourly Rate"
                   labelStyles="text-font-gray"
-                  extraClass="no-spinner"
+                  extraClass="no-spinner custom-input"
                   rowWise
                   value={field.value ?? 0}
                   onChange={field.onChange}
@@ -663,6 +669,7 @@ function Profile() {
                             id="location"
                             label="Location"
                             labelStyles="text-font-gray"
+                            extraClass={'custom-input'}
                             value={field.value ?? ""}
                             onChange={field.onChange}
                             error={error}
