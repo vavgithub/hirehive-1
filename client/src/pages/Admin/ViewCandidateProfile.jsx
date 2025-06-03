@@ -596,7 +596,7 @@ const reviewerProfilePic = currentReviewer?.profilePicture
 
                                 {/* ready only current reviewer */}
                                 {data?.jobApplication?.stageStatuses[data?.jobApplication?.currentStage]?.assignedTo && hasPermission(role,PERMISSIONS.SHOW_CANDIDATE_PROFILE_CURRENT_REVIEWER) &&
-                                    <div className='absolute bottom-4 right-4 flex gap-2'>
+                                    <div className='absolute bottom-8 right-8 flex gap-2'>
                                         <div className='flex flex-col items-end'>
                                             <p className='typography-small-p text-font-gray'>Current reviewer </p>
                                             <p className='typography-small-p '>{reviewerName}</p>

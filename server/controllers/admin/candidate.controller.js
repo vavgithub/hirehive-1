@@ -559,6 +559,7 @@ export const addNotes = async (req, res) => {
 export const getCandidateJobs = async (req, res) => {
   try {
     const { candidateId } = req.params;
+    const { company_id } = req.user;
 
     // Find the candidate
     const candidate = await candidates
@@ -569,9 +570,13 @@ export const getCandidateJobs = async (req, res) => {
       return res.status(404).send({ message: "Candidate not found" });
     }
 
+    let companyFilteredApplications = []
+    if(candidate?.jobApplications.length > 0){
+      companyFilteredApplications = candidate.jobApplications?.filter(app => app.companyDetails?._id?.toString() === company_id?.toString())
+    }
+
     res.status(200).json({
-      jobs:
-        candidate?.jobApplications.length > 0 ? candidate.jobApplications : [],
+      jobs: companyFilteredApplications,
     });
   } catch (error) {
     console.error("Error in getCandidateJobs:", error);
