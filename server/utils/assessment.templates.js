@@ -72,17 +72,6 @@ const newUiUxTemplates = [
       },
       {
         "questionType": "text",
-        "text": "In many interfaces, a magnifying glass icon is commonly used to represent:",
-        "options": [
-          { "text": "Search functionality.", "isCorrect": true },
-          { "text": "Zooming out of an image or map.", "isCorrect": false },
-          { "text": "A settings or configuration menu.", "isCorrect": false },
-          { "text": "A save or download action.", "isCorrect": false }
-        ],
-        "difficulty": "easy"
-      },
-      {
-        "questionType": "text",
         "text": "Which of the following is a popular tool used for creating UI designs and prototypes?",
         "options": [
           { "text": "Microsoft Excel.", "isCorrect": false },
@@ -320,17 +309,6 @@ const newUiUxTemplates = [
           { "text": "Shaking the device three times.", "isCorrect": false },
           { "text": "Long-pressing on the home button.", "isCorrect": false },
           { "text": "Pulling down on the screen and releasing (pull-to-refresh).", "isCorrect": true },
-        ],
-        "difficulty": "easy"
-      },
-      {
-        "questionType": "text",
-        "text": "Which UI navigation pattern is commonly used in mobile apps to switch between different main sections (typically 3 to 5 sections)?",
-        "options": [
-          { "text": "A floating drop-down list of sections that appears on tap.", "isCorrect": false },
-          { "text": "A bottom navigation bar (tab bar) with icons for each section.", "isCorrect": true },
-          { "text": "A permanently visible sidebar menu on the left.", "isCorrect": false },
-          { "text": "Multiple home screens that the user cycles through automatically.", "isCorrect": false }
         ],
         "difficulty": "easy"
       },

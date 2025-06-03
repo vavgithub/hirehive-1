@@ -1016,6 +1016,12 @@ export const getAssessmentQuestionsById = async (req, res) => {
         { $match: { _id: assessmentObjectId } },
         { $project: { questions: 1 ,title : 1 , category : 1} },
         { $unwind: "$questions" },
+        { $match: {
+            $or: [
+              { "questions.inActive": { $exists: false } },
+              { "questions.inActive": false }
+            ]
+        } },
         {
           $addFields: {
             "questions.options": {
@@ -1076,6 +1082,12 @@ export const getRandomAssessmentQuestions = async (req, res) => {
       { $match: { _id: assessmentObjectId } },
       { $project: { questions: 1 } },
       { $unwind: "$questions" },
+      { $match: {
+          $or: [
+            { "questions.inActive": { $exists: false } },
+            { "questions.inActive": false }
+          ]
+      } },
       { $sample: { size: 10 } },
       {
         $addFields: {
