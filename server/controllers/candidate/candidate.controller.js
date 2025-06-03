@@ -236,15 +236,6 @@ const getCandidate = async (req, res) => {
   }
 };
 
-const createCandidate = async (req, res) => {
-  try {
-    const candidate = new candidates(req.body);
-    await candidate.save();
-    res.status(201).send(candidate);
-  } catch (error) {
-    res.status(400).send(error);
-  }
-};
 
 const getCandidateById = async (req, res) => {
   try {
@@ -709,7 +700,6 @@ export {
   submitApplication,
   updateCandidateStatusById,
   getCandidate,
-  createCandidate,
   getCandidateById,
   updateStatusAndStage,
   updateAssignee,

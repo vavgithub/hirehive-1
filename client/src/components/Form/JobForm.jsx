@@ -388,7 +388,7 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
           {isEditing && watchedFields.status === 'draft' && (
             <Button
               type="button"
-              onClick={handleSubmit((data) => onSubmit(data, false))}
+              onClick={handleSubmit((data) => onSubmit({...data,status : 'open'}, false))}
             >
               Make It Active
             </Button>

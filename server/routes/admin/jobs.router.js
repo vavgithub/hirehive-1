@@ -17,18 +17,16 @@ router.post('/createJobs',protect, createJob);
 router.post('/filterJobs', protect,filterJobs);
 router.post('/filterSearchJobs', protect,filterSearchJobs);
 
-router.put('/updateJob/:id', updateJob);
-router.put('/archiveJob/:id', archiveJob);
-router.delete('/deleteJob/:id', deleteJob);
-router.put('/updateJob/:id', updateJob);
-router.put('/archiveJob/:id/', archiveJob);
-router.put('/closeJob/:id/', closeJob);
+router.put('/updateJob/:id',protect,roleProtect(['Admin','Hiring Manager']), updateJob);
+router.put('/archiveJob/:id',protect,roleProtect(['Admin','Hiring Manager']), archiveJob);
+router.delete('/deleteJob/:id',protect,roleProtect(['Admin','Hiring Manager']), deleteJob);
+router.put('/closeJob/:id/',protect,roleProtect(['Admin','Hiring Manager']), closeJob);
 
-router.put('/unarchiveJob/:id/', unarchiveJob);
-router.put('/reOpen/:id/', reOpenJob);
-router.put('/draftJob/:id',draftJob);
+router.put('/unarchiveJob/:id/',protect,roleProtect(['Admin','Hiring Manager']), unarchiveJob);
+router.put('/reOpen/:id/',protect,roleProtect(['Admin','Hiring Manager']), reOpenJob);
+router.put('/draftJob/:id',protect,roleProtect(['Admin','Hiring Manager']),draftJob);
 
-router.put('/editJob/:id', editJob);
+router.put('/editJob/:id',protect,roleProtect(['Admin','Hiring Manager']), editJob);
 router.get('/getJobById/:id' , getJobById);
 
 export default router;

@@ -39,6 +39,7 @@ export const getAllCandidatesForJob = async (req, res) => {
         "jobApplications.jobId": jobId,
         isVerified: true,
       })
+      .select('-password')
       .sort({ "jobApplications.applicationDate": -1 });
 
     // Process and format the candidate data
