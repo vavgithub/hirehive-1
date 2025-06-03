@@ -347,8 +347,7 @@ const ContactUs = () => {
 
       <StyledCard
         onClick={collapse ? null : toggleModal}
-        extraStyles={`lg:fixed bottom-6 right-6 lg:bottom-[40%] lg:right-0  w-full lg:w-fit cursor-pointer hover:bg-background-60  `}
-        padding={5}
+        extraStyles={`md:p-4  lg:fixed bottom-6 right-6 lg:bottom-[40%] lg:right-0  w-full lg:w-fit cursor-pointer hover:bg-background-60  `}
         style={{
           maxWidth : collapse ? '5rem' : '100%',
           transition: 'max-width 1s ease',
