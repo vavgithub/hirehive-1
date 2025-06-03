@@ -1,6 +1,7 @@
 import {useLexicalComposerContext} from '@lexical/react/LexicalComposerContext';
 import {mergeRegister} from '@lexical/utils';
 import {
+  $getRoot,
   $getSelection,
   $isRangeSelection,
   CAN_REDO_COMMAND,
@@ -24,7 +25,7 @@ import {
 import {useCallback, useEffect, useRef, useState} from 'react';
 import EmojiPlugin from './EmojiPlugin';
 import IconWrapper from '../../Cards/IconWrapper';
-import { AlignCenter, AlignLeft, AlignRight, Bold, Italic, List, ListOrdered, Underline } from 'lucide-react';
+import { AlignCenter, AlignLeft, AlignRight, Bold, Eraser, Italic, List, ListOrdered, Underline } from 'lucide-react';
 import LinkPlugin from './LinkPlugin';
 import { $isLinkNode } from '@lexical/link';
 
@@ -83,7 +84,7 @@ function Divider() {
   return <div className='w-[1px]  min-h-[70%] bg-divider-100' />;
 }
 
-export default function ToolbarPlugin({errors}) {
+export default function ToolbarPlugin({ hasClearOption, clearPreset, errors}) {
   const [editor] = useLexicalComposerContext();
   const toolbarRef = useRef(null);
   const [canUndo, setCanUndo] = useState(false);
@@ -101,6 +102,14 @@ export default function ToolbarPlugin({errors}) {
   const [isNumberedList, setIsNumberedList] = useState(false);
 
   const [isLink, setIsLink] = useState(false);
+
+  const handleClearEditor = () => {
+      editor.update(() => {
+      const root = $getRoot();
+      root.clear(); // Clear all content
+      });
+      clearPreset(false)
+  };
   
   const $updateToolbar = useCallback(() => {
     const selection = $getSelection();
@@ -204,6 +213,10 @@ export default function ToolbarPlugin({errors}) {
       <EmojiPlugin/>
       <Divider />
       <LinkPlugin isActive={isLink}  />
+      {hasClearOption && 
+      <div className='absolute top-4 right-4 z-20 cursor-pointer' onClick={handleClearEditor}>
+          <IconWrapper icon={Eraser} customIconSize={2} customStrokeWidth={4} size={0} />
+      </div>}
     </div>
   );
 }

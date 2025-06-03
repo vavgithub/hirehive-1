@@ -3,7 +3,7 @@ import { $generateNodesFromDOM } from '@lexical/html';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
 import { $createParagraphNode, $getRoot } from 'lexical';
 
-function LoadDataPlugin({htmlData,loaded}) {
+function LoadDataPlugin({htmlData,loaded,preset = false,presetLoaded = true}) {
     const [editor] = useLexicalComposerContext();
     const firstRender = useRef(true);
 
@@ -24,7 +24,22 @@ function LoadDataPlugin({htmlData,loaded}) {
                 nodes.forEach((node) => root.append(node));
             });
         }
-    },[htmlData , loaded , firstRender.current])
+        if(preset && !presetLoaded){
+            editor.update(() => {
+                const parser = new DOMParser();
+                const dom = parser.parseFromString(preset, "text/html");
+                const nodes = $generateNodesFromDOM(editor, dom);
+                // Get the root node of the editor
+                const root = $getRoot();
+
+                // Clear the root (optional if you want to replace existing content)
+                root.clear();
+
+                // Append the generated nodes to the root
+                nodes.forEach((node) => root.append(node));
+            });
+        }
+    },[htmlData , loaded , firstRender.current,preset])
 
   return null
 }

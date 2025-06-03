@@ -144,7 +144,7 @@ input.no-spinner[class*="border-red-500"] {
 
 .editor-editable{
   position: relative;
-  background: var(--color-background-80);
+  background: var(--color-background-70);
   border-radius: 0.75rem;
   max-width: 100%;
   min-height : 16rem;

@@ -39,6 +39,7 @@ import { candidates } from "./models/candidate/candidate.model.js";
 import { jobs } from "./models/admin/jobs.model.js";
 import { Company } from "./models/admin/company.model.js";
 import { seedTemplates } from "./models/admin/assessment.model.js";
+import { seedTasks } from "./models/admin/task.model.js";
 
 const app = express();
 await initializeUploadDir(envConfig.UPLOAD_DIR);
@@ -162,6 +163,7 @@ connectDB()
     
     //Seeding Assessment Templates
     // seedTemplates()
+    // seedTasks()
     
     // renameTechToHTML()
 

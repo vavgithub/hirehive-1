@@ -1,5 +1,6 @@
 import { jobStagesStatuses } from "../../config/jobStagesStatuses.js";
 import { jobs } from "../../models/admin/jobs.model.js";
+import { Task } from "../../models/admin/task.model.js";
 import { User } from "../../models/admin/user.model.js";
 import { candidates } from "../../models/candidate/candidate.model.js";
 import { getDesignTaskContent, getRejectionEmailContent } from "../../utils/emailTemplates.js";
@@ -1289,3 +1290,18 @@ export const changeApplicationStatus = async (req, res) => {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
+
+export const getTaskTemplates = async ( req, res) => {
+  try {
+    const { jobProfile } = req.body;
+    const savedTemplates = await Task.find({category : jobProfile});
+    res.status(200).json({
+      success : true,
+      data : savedTemplates,
+      message: "Task templates fetched Successfully.",
+    });
+  } catch (error) {
+    console.error("Error updating status:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+}
