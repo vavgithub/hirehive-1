@@ -23,12 +23,12 @@ export const getMaxScoreEachStage = (currentStage) =>{
 }
 
 const moveMultipleCandidates = async (candidateData) => {
-    const response = await axios.post(`/hr//move-multiple-candidates`,{candidateData})
+    const response = await axios.post(`/hr/move-multiple-candidates`,{candidateData})
     return response.data;
 } 
 
 const rejectMultipleCandidates = async (candidateData) => {
-    const response = await axios.post(`/hr//reject-multiple-candidates`,{candidateData})
+    const response = await axios.post(`/hr/reject-multiple-candidates`,{candidateData})
     return response.data;
 } 
 
