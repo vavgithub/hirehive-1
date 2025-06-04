@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom'; // Added useLocation
 import { Menu, MenuItem, IconButton, Avatar } from '@mui/material';
-import { logout } from '../api/authApi';
+import { logout } from '../services/auth.service';
 import useAuth from '../hooks/useAuth';
 import { useAuthContext } from '../context/AuthProvider';
 import LightLogo from "../svg/Logo/lightLogo.svg"

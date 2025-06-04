@@ -8,7 +8,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import Label from '../ui/Label.jsx';
 import { setCurrentStage, updateStageStatus } from '../../redux/applicationStageSlice.js';
-import axios from '../../api/axios.js';
+import axios from '../../services/axios.js';
 import StageRating from './StageRating.jsx';
 import { showErrorToast, showSuccessToast } from '../ui/Toast.jsx';
 import { Button, DefaultIcon } from '../Buttons/Button.jsx';
@@ -33,14 +33,8 @@ import IconWrapper from '../Cards/IconWrapper.jsx';
 import { Calendar, Clock, Copy, DatabaseZap, Link } from 'lucide-react';
 import useAuth from '../../hooks/useAuth.jsx';
 import { formatUTCToLocalTimeAuto, UTCToDateFormatted } from '../../utility/timezoneConverter.js';
-
-const submitReview = async ({ candidateId, reviewData }) => {
-    const response = await axios.post('dr/submit-score-review', {
-        candidateId,
-        ...reviewData,
-    });
-    return response.data;
-};
+import { moveCandidate, rejectCandidate, rescheduleCall, scheduleCall, submitBudgetScore } from '../../services/hr.service.js';
+import { submitReview, updateAssignee } from '../../services/dr.service.js';
 
 function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
     const stageData = stageStatuses[selectedStage];
@@ -86,12 +80,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
 
     //Assignee Updation
     const updateAssigneeMutation = useMutation({
-      mutationFn: (newAssignee) => axios.put('dr/update-assignee', {
-          candidateId,
-          jobId,
-          stage: stageTitle,
-          assigneeId: newAssignee._id
-      }),
+      mutationFn: (newAssignee) => updateAssignee(candidateId,jobId,stageTitle,newAssignee?._id),
       onSuccess: (response) => {
          
           const { updatedStageStatus, currentStage } = response.data;
@@ -140,8 +129,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
 
   //Actions API
   const rejectCandidateMutation = useMutation({
-      mutationFn: ({ candidateId, jobId, rejectionReason, scheduledDate , scheduledTime }) => 
-          axios.post('/hr/reject-candidate', { candidateId, jobId, rejectionReason, scheduledDate , scheduledTime }),
+      mutationFn: rejectCandidate,
       onMutate: () => {
           setIsLoading(true); // Set loading to true when mutation starts
       },
@@ -165,11 +153,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
   });
   
     const moveToNextRoundMutation = useMutation({
-        mutationFn: () => axios.post('/hr/move-candidate', {
-            candidateId,
-            jobId,
-            currentStage : stageTitle
-        }),
+        mutationFn: moveCandidate,
         onMutate: () => {
             setIsLoading(true); // Set loading to true when mutation starts
         },
@@ -195,15 +179,16 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
     };
 
     const handleMoveToNextRound = () => {
-        moveToNextRoundMutation.mutate();
+        moveToNextRoundMutation.mutate({
+            candidateId,
+            jobId,
+            currentStage : stageTitle
+        });
     };
 
     //Schedule actions
     const scheduleMutation = useMutation({
-        mutationFn: (scheduleData) => axios.post('hr/schedule-call', {
-            ...scheduleData,
-            stage: stageTitle
-        }),
+        mutationFn: scheduleCall,
         onMutate: () => {
             setIsLoading(true); // Set loading to true when mutation starts
         },
@@ -224,10 +209,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
     });
 
     const rescheduleMutation = useMutation({
-        mutationFn: (rescheduleData) => axios.post('hr/reschedule-call', {
-            ...rescheduleData,
-            stage: stageTitle
-        }),
+        mutationFn: rescheduleCall,
         onMutate: () => {
             setIsLoading(true); // Set loading to true when mutation starts
         },
@@ -249,11 +231,11 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
     });
 
     const handleSchedule = (scheduleData) => {
-        scheduleMutation.mutate({ candidateId, jobId, ...scheduleData });
+        scheduleMutation.mutate({ candidateId, jobId, stage : stageTitle, ...scheduleData });
     };
 
     const handleReschedule = (rescheduleData) => {
-        rescheduleMutation.mutate({ candidateId, jobId, ...rescheduleData });
+        rescheduleMutation.mutate({ candidateId, jobId, stage: stageTitle, ...rescheduleData });
     };
 
     //Scoring functions
@@ -262,7 +244,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
     };
 
     const submitBudgetScoreMutation = useMutation({
-        mutationFn: (score) => axios.post('hr/submit-budget-score', { candidateId, jobId, stage: 'Screening', score }),
+        mutationFn: submitBudgetScore,
         onSuccess: (data) => {
 
             dispatch(updateStageStatus({
@@ -290,7 +272,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
     const handleBudgetScoreSubmit = () => {
         if (budgetScore > 0) {
 
-            submitBudgetScoreMutation.mutate(budgetScore);
+            submitBudgetScoreMutation.mutate({ candidateId, jobId, stage: 'Screening', score : budgetScore});
         }
     };
 

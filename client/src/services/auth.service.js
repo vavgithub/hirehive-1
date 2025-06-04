@@ -78,6 +78,63 @@ export const fetchAllDesignReviewers = async () => {
 }
 
 export const candidateLogout = async ()=>{
-    const response = await axios.post("/auth/candidate/logout",{ withCredentials: true })
+    const response = await axios.post(`${API_URL}/candidate/logout`,{ withCredentials: true })
     return response.data;
 }
+
+export const forgotPassword = (email) => axios.post(API_URL + '/forgot-password' , { email })
+
+export const verifyPassOTP = (email,otp) => axios.post(API_URL + '/verify-otp', { email, otp })
+
+export const resetPassword = (email, otp, password) => axios.post(API_URL + '/reset-password' , { email, otp, password})
+
+export const addTeamMembers = async ({teamMembers, email }) => {
+    const response = await axios.post(API_URL + '/register/add-team-member',{email, teamMembers });
+    return response.data
+}
+
+export const skipAddMembers = async () => {
+    const response = await axios.post(API_URL + '/register/skip-add-member');
+    return response.data
+}
+
+export const saveCompanyDetails = async (formData) => {
+    const response = await axios.post(API_URL + '/register/complete-hiring-manager',formData);
+    return response.data
+}
+
+export const sendJoinRequest = async ({email,companyId}) => {
+  const response = await axios.post(API_URL + '/register/send-join-request',{email, companyId });
+  return response.data
+}
+
+export const verifyOnboardOTP = async ({otp, email}) => {
+    const response = await axios.post(API_URL + '/register/verify-otp-for-admin',{otp, email});
+    return response.data
+}
+
+export const sendInviteOTP = async ({token}) => {
+  const response = await axios.post(API_URL + '/register/send-invite-otp',{token});
+  return response.data
+}
+
+export const setPassword = async ({password, email}) => {
+  const response = await axios.post(API_URL + '/register/set-password',{password, email});
+  return response.data
+}
+
+export const registerAdmin = async ({firstName, lastName, email}) => {
+    const response = await axios.post(API_URL + '/register/init',{firstName, lastName, email});
+    return response.data
+}
+
+export const verifyPassword = async ({ email , password }) => {
+  const response = await axios.post(API_URL + '/register/verify-password',{email, password});
+  return response.data
+}
+
+export const editUserProfile = ({ firstName, lastName, phone, jobTitle, experience, skills, tools_used }) => 
+  axios.put(API_URL + '/register/edit-profile', { firstName, lastName, phone, jobTitle, experience, skills,tools_used })
+
+export const editCompanyProfile = ({ name, size, location, industryType, about, website, founded, focusAreas, keyContacts }) => 
+  axios.put(API_URL + '/edit-company-profile', { name, size, location, industryType, about, website, founded, focusAreas, keyContacts})

@@ -1,12 +1,13 @@
 // candidateAuthSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import axios from '../api/axios';
+import axios from '../services/axios';
+import { getCandidateDashboard } from '../services/auth.candidate.service';
 
 export const fetchCandidateAuthData = createAsyncThunk(
   'candidateAuth/fetchData',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get('/auth/candidate/dashboard');
+      const response = await getCandidateDashboard();
       return response.data.candidate;
     } catch (error) {
       return rejectWithValue(error.response?.data.message || 'Failed to fetch candidate data');

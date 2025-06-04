@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { useMediaQuery } from 'react-responsive';
-import axios from '../../api/axios';
+import axios from '../../services/axios';
 import Loader from '../../components/Loaders/Loader';
 import AssessmentBanner from '../../components/ui/AssessmentBanner';
 import StyledCard from '../../components/Cards/StyledCard';
@@ -13,12 +13,7 @@ import ContactUs from '../../components/Form/ContactUs';
 import useCandidateAuth from '../../hooks/useCandidateAuth';
 import Container from '../../components/Cards/Container';
 import Header from '../../components/utility/Header';
-
-// Keep the fetchAppliedJobs function separate for better organization
-const fetchAppliedJobs = async (page) => {
-  const response = await axios.get(`/auth/candidate/applied-jobs?page=${page}`);
-  return response.data;
-};
+import { fetchAppliedJobs } from '../../services/auth.candidate.service';
 
 const MyJobs = () => {
   const navigate = useNavigate();

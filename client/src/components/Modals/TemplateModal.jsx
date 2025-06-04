@@ -1,11 +1,12 @@
 import React, { useMemo } from 'react'
 import Modal from './Modal'
 import { useQuery } from '@tanstack/react-query';
-import axios from '../../api/axios';
+import axios from '../../services/axios';
 import Loader from '../Loaders/Loader';
 import StyledCard from '../Cards/StyledCard';
 import { Headset, ShieldBan } from 'lucide-react';
 import IconWrapper from '../Cards/IconWrapper';
+import { getAssessmentQuestionsById } from '../../services/admin.candidate.service';
 
 function TemplateModal({open,onClose,assessment}) {
     const {
@@ -14,10 +15,7 @@ function TemplateModal({open,onClose,assessment}) {
         error
       } = useQuery({
         queryKey: ['assessment-questions', assessment?._id],
-        queryFn: async () => {
-          const response = await axios.get(`/admin/candidate/assessment-questions?assessmentId=${assessment?._id}`);
-          return response.data.questions;
-        },
+        queryFn: () => getAssessmentQuestionsById(assessment?._id),
         staleTime: Infinity,
         cacheTime: 0,
         refetchOnWindowFocus: false,

@@ -3,8 +3,6 @@ import Header from '../../components/utility/Header'
 import Container from '../../components/Cards/Container'
 import StyledCard from '../../components/Cards/StyledCard'
 import { useQuery } from '@tanstack/react-query';
-import axios from '../../api/axios';
-import LoaderModal from '../../components/Loaders/LoaderModal';
 import IconWrapper from '../../components/Cards/IconWrapper';
 import { ClipboardCheck, Headset, ShieldBan } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -12,11 +10,7 @@ import { getRoute, ROUTE_KEY } from '../../config/permissions.config';
 import { useAuthContext } from '../../context/AuthProvider';
 import FillLoader from '../../components/Loaders/FillLoader';
 import ContactUsForm from '../../components/Form/ContactUsForm';
-
-const fetchAssessmentTemplates = async() => {
-    const response = await axios.get(`/jobs/get-assessment-templates`, { withCredentials: true });
-    return response.data;
-}
+import { fetchAssessmentTemplates } from '../../services/jobs.service';
 
 function ViewAssessments() {
     const { user , isLoading } = useAuthContext();

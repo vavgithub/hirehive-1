@@ -1,4 +1,4 @@
-import { getProfile } from '../api/authApi';
+import { getProfile } from '../services/auth.service';
 import { useQuery } from '@tanstack/react-query';
 
 const useAuth = () => {

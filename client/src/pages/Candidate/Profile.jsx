@@ -7,8 +7,7 @@ import { ensureAbsoluteUrl } from "../../utility/ensureAbsoluteUrl";
 import { Controller, useForm } from "react-hook-form";
 import { Button } from "../../components/Buttons/Button";
 import { validationRules } from "../../utility/validationRules";
-import { uploadProfilePicture, uploadResume } from "./ApplyJob";
-import axios from "../../api/axios";
+import axios from "../../services/axios";
 import { showErrorToast, showSuccessToast } from "../../components/ui/Toast";
 import { useDispatch } from "react-redux";
 import { updateWithoutAssessment } from "../../redux/candidateAuthSlice";
@@ -23,6 +22,7 @@ import IconWrapper from "../../components/Cards/IconWrapper";
 import { Pencil, PencilLine, Upload } from "lucide-react";
 import { formatPhoneNumber, PhoneInputField } from "../../components/Form/PhoneInputField";
 import parsePhoneNumberFromString from "libphonenumber-js";
+import { editCandidateProfile, getCandidateDashboard, uploadCandidateProfilePicture, uploadResume, verifyEmailOtpCandidate } from "../../services/auth.candidate.service";
 
 const PersonalDetails = ({ candidateData, isEditing, control }) => {
   return (
@@ -476,7 +476,7 @@ function Profile() {
 
   const fetchAndUpdateCandidate = async () => {
     try {
-      const response = await axios.get('/auth/candidate/dashboard');
+      const response = await getCandidateDashboard();
       if (response.data?.candidate) {
         dispatch(updateWithoutAssessment(response.data.candidate))
       }
@@ -514,10 +514,10 @@ function Profile() {
         data.resume = await uploadResume(resumeFile, () => { })
       }
       if (profileFile) {
-        data.profilePictureUrl = await uploadProfilePicture(profileFile)
+        data.profilePictureUrl = await uploadCandidateProfilePicture(profileFile)
       }
 
-      const response = await axios.post("/auth/candidate/edit-profile", data)
+      const response = await editCandidateProfile(data)
       if (response?.data?.stage === "OTP") {
         setIsLoading(false);
         setEmail(response?.data?.email)
@@ -545,7 +545,7 @@ function Profile() {
 
     setIsLoading(true);
     try {
-      await axios.post('/auth/candidate/verify-email-otp', { email, otp: enteredOtp });
+      await verifyEmailOtpCandidate(email,enteredOtp);
       setShowOTPModal(false);
       await fetchAndUpdateCandidate()
       showSuccessToast("Success", "Profile updated Successfully")
@@ -581,7 +581,7 @@ function Profile() {
       {isLoading && <LoaderModal/>}
       {showOTPModal && isEditing && 
               <div className="flex items-center h-screen w-screen justify-center fixed bg-background-overlay z-50 top-0 left-0">
-                <div className="w-full mx-8 md:mx-0 max-w-lg space-y-8 bg-background-80 rounded-lg shadow-xl  bg-opacity-15 ">
+                <div className="w-full mx-8 md:mx-0 max-w-lg space-y-8 bg-background-90 rounded-lg shadow-xl  bg-opacity-15 ">
                   <form onSubmit={handleOtpSubmit} className="px-8 sm:px-16 text-center md:mb-20">
                     <h1 className="mt-8 md:mt-20 mb-4 ">OTP Verification</h1>
                     <p className="text-font-gray text-center typography-large-p">

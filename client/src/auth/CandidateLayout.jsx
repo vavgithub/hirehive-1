@@ -1,17 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Outlet, useNavigate, NavLink, useLocation } from 'react-router-dom';
-import { candidateLogout } from '../api/authApi';
 import LightLogo from "../svg/Logo/lightLogo.svg"
 import useCandidateAuth from '../hooks/useCandidateAuth';
-import AssessmentBanner from '../components/ui/AssessmentBanner';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { logoutCandidateAuth } from '../redux/candidateAuthSlice';
 import { showErrorToast, showSuccessToast } from '../components/ui/Toast';
 import useScroll from '../hooks/useScroll';
 import { Avatar, IconButton, Menu, MenuItem } from '@mui/material';
 import StyledMenu from '../components/MUIUtilities/StyledMenu';
 import Modal from '../components/Modals/Modal';
-import ContactUs from '../components/Form/ContactUs';
 import IconWrapper from '../components/Cards/IconWrapper';
 import { Briefcase, BriefcaseBusiness, LogOut, User } from 'lucide-react';
 import { UNKNOWN_PROFILE_PICTURE_URL } from '../utility/config';

@@ -2,12 +2,12 @@ import React from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import JobForm from '../../components/Form/JobForm';
-import axios from '../../api/axios';
 import Header from '../../components/utility/Header';
 import { showErrorToast, showSuccessToast } from '../../components/ui/Toast';
 import { useAuthContext } from '../../context/AuthProvider';
 import Container from '../../components/Cards/Container';
 import { getRoute, ROUTE_KEY } from '../../config/permissions.config';
+import { createJob } from '../../services/jobs.service';
 
 const CreateJobs = () => {
   const navigate = useNavigate();
@@ -15,10 +15,10 @@ const CreateJobs = () => {
   const role = user?.role || 'Admin';
 
   const createJobMutation = useMutation({
-    mutationFn: (jobData) => axios.post('/jobs/createJobs', jobData),
+    mutationFn: createJob,
     onSuccess: (data) => {
-      const action = data.data.status === 'draft' ? 'saved as draft' : 'created';
-      showSuccessToast('Job Action', `"${data.data.jobTitle}" ${action} successfully`);
+      const action = data.status === 'draft' ? 'saved as draft' : 'created';
+      showSuccessToast('Job Action', `"${data.jobTitle}" ${action} successfully`);
       navigate(getRoute(role,ROUTE_KEY.ALLJOBS));  
     },
     onError: (error) => {

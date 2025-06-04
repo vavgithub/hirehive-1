@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import Modal, { REJECTION_REASONS } from '../Modals/Modal'
-import axios from '../../api/axios'
+import axios from '../../services/axios'
 import { showErrorToast, showSuccessToast } from '../ui/Toast'
 import { useQueryClient } from '@tanstack/react-query'
 import LoaderModal from '../Loaders/LoaderModal'
@@ -10,6 +10,7 @@ import RejectionSelector from '../MUIUtilities/RejectionSelector'
 import IconWrapper from '../Cards/IconWrapper'
 import { ArrowRight, Calendar, Ellipsis, Star, User, X } from 'lucide-react'
 import { UNKNOWN_PROFILE_PICTURE_URL } from '../../utility/config'
+import { assignReviewerForCandidates, moveMultipleCandidates, rateMultipleCandidates, rejectMultipleCandidates } from '../../services/hr.service'
 
 export const getMaxScoreEachStage = (currentStage) =>{
     let stageScores = {
@@ -21,26 +22,6 @@ export const getMaxScoreEachStage = (currentStage) =>{
     }
     return stageScores[currentStage] || 5;
 }
-
-const moveMultipleCandidates = async (candidateData) => {
-    const response = await axios.post(`/hr//move-multiple-candidates`,{candidateData})
-    return response.data;
-} 
-
-const rejectMultipleCandidates = async (candidateData) => {
-    const response = await axios.post(`/hr//reject-multiple-candidates`,{candidateData})
-    return response.data;
-} 
-
-const assignReviewerForCandidates = async (candidateData,assigneeId) => {
-    const response = await axios.post(`/hr/update-assignee-multiple-candidates`,{candidateData,assigneeId})
-    return response.data;
-} 
-
-const rateMultipleCandidates = async (candidateData,rating) => {
-    const response = await axios.post(`/hr/rate-multiple-candidates`,{candidateData,rating})
-    return response.data;
-} 
 
 const globalStages = ['Portfolio','Screening','Design Task','Round 1','Round 2', 'Hired']
 

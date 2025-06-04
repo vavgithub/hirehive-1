@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react'
 import StyledCard from '../../components/Cards/StyledCard'
 import ApplicationChart from '../../components/Charts/ApplicationChart'
 import MuiCustomStylesForDataGrid from '../../components/tableUtilities/MuiCustomStylesForDataGrid'
-import axios from '../../api/axios'
+import axios from '../../services/axios'
 import { useQuery } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import { industryTypeOptions, LocationOptions } from '../../components/Register/CompanyDetails'
@@ -22,6 +22,7 @@ import Container from '../../components/Cards/Container'
 import Header from '../../components/utility/Header'
 import { getRoute, ROUTE_KEY } from '../../config/permissions.config'
 import { useAuthContext } from '../../context/AuthProvider'
+import { getAdminDashboard } from '../../services/admin.service'
 
 function AdminDashboard() {
 
@@ -39,7 +40,7 @@ function AdminDashboard() {
 
   const { data: dashboardDetails, isLoading: isDetailsLoading } = useQuery({
     queryKey: ['admin_dashboard'],
-    queryFn: () => axios.get(`/admin/dashboard?tz=${timezone}`).then(res => res.data),
+    queryFn: () => getAdminDashboard(timezone),
     refetchOnWindowFocus: false,
     enabled: true
   })

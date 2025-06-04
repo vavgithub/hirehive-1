@@ -1,6 +1,6 @@
 // hooks/useProfilePicture.js
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { uploadCompanyLogo, uploadProfilePicture } from '../api/authApi';
+import { uploadCompanyLogo, uploadProfilePicture } from '../services/auth.service';
 
 export const useProfilePicture = () => {
   const queryClient = useQueryClient();

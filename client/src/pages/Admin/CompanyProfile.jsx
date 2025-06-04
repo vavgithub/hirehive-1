@@ -19,8 +19,9 @@ import { useCompanyLogo } from '../../hooks/useProfilePicture';
 import YearPicker from '../../components/MUIUtilities/YearPicker';
 import { showErrorToast, showSuccessToast } from '../../components/ui/Toast';
 import { useQueryClient } from '@tanstack/react-query';
-import axios from '../../api/axios';
+import axios from '../../services/axios';
 import { hasPermission, PERMISSIONS } from '../../config/permissions.config';
+import { editCompanyProfile } from '../../services/auth.service';
 
 const CompanyOverview = ({ companyDetails, isEditing, control }) => {
   return (
@@ -287,7 +288,7 @@ function CompanyProfile() {
     const handleEditProfile = async (data) => {
         try{
             setIsLoading(true);
-            const response = await axios.put('/auth/edit-company-profile', {
+            const response = await editCompanyProfile({
                 name: data?.name ,
                 size: data?.size ,
                 location: data?.location ,

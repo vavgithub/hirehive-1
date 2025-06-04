@@ -5,7 +5,7 @@ import { Button } from '../Buttons/Button';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { updateStageStatus } from '../../redux/applicationStageSlice';
 import { useDispatch } from 'react-redux';
-import axios from '../../api/axios';
+import axios from '../../services/axios';
 import { formatTime } from '../../utility/formatTime';
 import TextEditor from '../utility/TextEditor';
 import SchedulerButton from '../ui/SchedulerButton';
@@ -15,6 +15,8 @@ import StyledCard from '../Cards/StyledCard';
 import Modal from '../Modals/Modal';
 import IconWrapper from '../Cards/IconWrapper';
 import { ChartNoAxesGantt, ChevronDown, ChevronUp } from 'lucide-react';
+import { fetchTaskPresets, sendDesignTask } from '../../services/hr.service';
+import { submitDesignTask } from '../../services/candidates.service';
 
 export function SubmissionForm({candidateId,jobId,stageData,setIsLoading}){
     const [taskLink, setTaskLink] = useState('');
@@ -24,7 +26,7 @@ export function SubmissionForm({candidateId,jobId,stageData,setIsLoading}){
     const queryClient = useQueryClient();
 
     const submitTaskMutation = useMutation({
-        mutationFn: (taskData) => axios.post('candidates/submit-design-task', taskData),
+        mutationFn: submitDesignTask,
         onMutate: () => {
             setIsLoading(true); // Set loading to true when mutation starts
         },
@@ -97,11 +99,6 @@ export function SubmissionForm({candidateId,jobId,stageData,setIsLoading}){
     )
 }
 
-const fetchTaskPresets = async (jobProfile) => {
-    const response = await axios.post(`/hr/get-task-presets`,{ jobProfile }, { withCredentials: true });
-    return response.data;
-}
-
 function TaskForm({jobProfile,candidateId,candidateEmail,jobId,setIsLoading}) {
     //To detect if its a first render or not
     const isFirstRender = useRef(true);
@@ -157,7 +154,7 @@ function TaskForm({jobProfile,candidateId,candidateEmail,jobId,setIsLoading}) {
     },[taskDescription,dueDate,dueTime,isFirstRender])
 
     const sendTaskMutation = useMutation({
-        mutationFn: (taskData) => axios.post('hr/send-design-task', taskData),
+        mutationFn: sendDesignTask,
         onMutate: () => {
             setIsLoading(true); // Set loading to true when mutation starts
         },

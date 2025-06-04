@@ -6,7 +6,7 @@ import { ChevronUp, ChevronDown, Camera, Mic, Eye, VideoOff } from 'lucide-react
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { Button } from '../../components/Buttons/Button';
 import Loader from '../../components/Loaders/Loader';
-import axios from "../../api/axios";
+import axios from "../../services/axios";
 import { showSuccessToast, showErrorToast } from '../../components/ui/Toast';
 import LightLogo from "../../svg/Logo/lightLogo.svg"
 import { fetchCandidateAuthData, updateAssessmentStatus } from '../../redux/candidateAuthSlice';
@@ -15,6 +15,7 @@ import StyledCard from '../../components/Cards/StyledCard';
 import ImageModal from '../../components/Modals/ImageModal';
 import ContactUs from '../../components/Form/ContactUs';
 import IconWrapper from '../../components/Cards/IconWrapper';
+import { getRandomAssessmentQuestions, submitAssessment } from '../../services/admin.candidate.service';
 const ONE_MINUTE = 60;
 
 // Utility function to format time
@@ -28,10 +29,7 @@ const formatTime = (time) => {
 export const useAssessmentQuestions = (assessment_id) => {
   return useQuery({
     queryKey: ['random-assessment-questions',assessment_id],
-    queryFn: async () => {
-      const response = await axios.post(`/admin/candidate/assessment-questions/random?assessmentId=${assessment_id}`);
-      return response.data.questions;
-    },
+    queryFn: () => getRandomAssessmentQuestions(assessment_id),
     staleTime: Infinity,
     cacheTime: 0,
     refetchOnWindowFocus: false,
@@ -549,13 +547,7 @@ const Assessment = ({assessment_id}) => {
         const recordingUrl = await uploadVideo(videoBlob);
 
         // Submit assessment with video URL
-        const response = await axios.post(
-          `/admin/candidate/questionnaire/${candidateAuthData._id}`,
-          {
-            ...assessmentData,
-            recordingUrl // Use the URL returned from uploadVideo
-          }
-        );
+        const response = await submitAssessment({candidate_id : candidateAuthData?._id , assessmentData , recordingUrl});
         return response.data;
       } catch (error) {
         // console.error('Submit error:', error);

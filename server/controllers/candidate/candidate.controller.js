@@ -154,7 +154,7 @@ const fetchActiveJobs = async (req, res) => {
     let userIds = [];
     let companyDetails = {};
 
-    if(companyId){
+    if(companyId && companyId !== 'undefined'){
       companyDetails = await Company.findById({_id : companyId});
       // Find all users in the same company
       const usersInCompany = await User.find({ company_id : companyId }, '_id'); // Get only _id fields

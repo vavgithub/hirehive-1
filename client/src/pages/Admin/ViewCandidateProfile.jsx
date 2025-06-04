@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Tabs from '../../components/ui/Tabs';
 import Header from '../../components/utility/Header';
-import axios from '../../api/axios';
+import axios from '../../services/axios';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ACTION_TYPES } from '../../utility/ActionTypes';
 import CandidateTabDetail from '../../components/ui/CandidateTabDetail';
@@ -33,6 +33,9 @@ import { formatPhoneNumber } from '../../components/Form/PhoneInputField';
 import { UTCToDateFormatted } from '../../utility/timezoneConverter';
 import GlobalDropDown from '../../components/Dropdowns/GlobalDropDown';
 import { getRoute, hasPermission, hasRoutePermission, PERMISSIONS, ROUTE_KEY } from '../../config/permissions.config';
+import { fetchTotalScore, updateCandidateRating } from '../../services/hr.service';
+import { addNotes, fetchCandidateData, fetchCandidateJobs, toggleShortlistStatus } from '../../services/admin.candidate.service';
+import { fetchAllDesignReviewers } from '../../services/auth.service';
 
 export const VAVScoreCard = ({ score, stage, scoreStages }) => {
     const [showBreakDown, setShowBreakDown] = useState(false);
@@ -94,30 +97,6 @@ export const VAVScoreCard = ({ score, stage, scoreStages }) => {
         </StyledCard>)
     }
 }
-
-const fetchCandidateData = async (candidateId, jobId) => {
-    const { data } = await axios.get(`admin/candidate/${candidateId}/job/${jobId}`);
-    return data;
-};
-const fetchTotalScore = async (candidateId, jobId) => {
-    const { data } = await axios.get(`hr/candidate/${candidateId}/job/${jobId}/scores`);
-    return data;
-}
-
-const fetchCandidateJobs = async (candidateId) => {
-    const { data } = await axios.get(`admin/candidate/${candidateId}/jobs`);
-    return data;
-};
-
-const addNotes = async ({ candidateId, jobId, notesData }) => {
-    const response = await axios.post(`admin/candidate/${candidateId}/${jobId}/addNotes`, notesData);
-    return response?.data;
-};
-
-const toggleShortlistStatus = async ({ candidateId, jobId, shortlisted }) => {
-    const response = await axios.post(`/admin/candidate/${candidateId}/job/${jobId}/shortlist`, { shortlisted });
-    return response?.data;
-};
 
 // Update the transformCandidateData function
 const transformCandidateData = (data) => {
@@ -193,8 +172,7 @@ const ViewCandidateProfile = () => {
     });
 
     const updateCandidateRatingMutation = useMutation({
-        mutationFn: ({ candidateId, jobId, rating }) =>
-            axios.post('/hr/update-candidate-rating', { candidateId, jobId, rating }),
+        mutationFn: updateCandidateRating,
         onSuccess: () => {
             setRatingAnchor(null)
             queryClient.invalidateQueries(['candidate', candidateId, jobId]);

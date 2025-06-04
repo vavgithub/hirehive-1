@@ -2,7 +2,7 @@ import React, { useEffect, useLayoutEffect, useState } from 'react'
 import { DataGrid } from '@mui/x-data-grid';
 
 import { useLocation, useNavigate } from 'react-router-dom';
-import axios from '../../api/axios';
+import axios from '../../services/axios';
 import AutoAssignModal from '../Modals/AutoAssignModal';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import Modal from '../Modals/Modal';
@@ -27,6 +27,8 @@ import IconWrapper from '../Cards/IconWrapper';
 import { Download } from 'lucide-react';
 import TickCheckbox from '../Checkboxes/TickCheckbox';
 import { getRoute, ROUTE_KEY } from '../../config/permissions.config';
+import { moveCandidate, rejectCandidate, updateCandidateRating } from '../../services/hr.service';
+import { autoAssignPortfolio, updateAssignee } from '../../services/dr.service';
 
 const Table = ({
   jobId, jobData,
@@ -212,8 +214,7 @@ const Table = ({
   }, [filteredRowsData, searchTerm, filters, showContractors]);
 
   const autoAssignMutation = useMutation({
-    mutationFn: ({ jobId, reviewerIds, budgetMin, budgetMax }) =>
-      axios.post('dr/auto-assign-portfolios', { jobId, reviewerIds, budgetMin, budgetMax }),
+    mutationFn: autoAssignPortfolio,
     onSuccess: async (data) => {
       // Invalidate and refetch
       queryClient.invalidateQueries(['candidates', jobId]);
@@ -231,7 +232,7 @@ const Table = ({
   // Update assignee mutation
   const updateAssigneeMutation = useMutation({
     mutationFn: ({ candidateId, jobId, stage, assigneeId }) =>
-      axios.put('dr/update-assignee', { candidateId, jobId, stage, assigneeId }),
+      updateAssignee(candidateId,jobId, stage, assigneeId),
     onSuccess: () => {
       queryClient.invalidateQueries(['candidates', jobId]);
     },
@@ -239,8 +240,7 @@ const Table = ({
 
   // Reject candidate mutation
   const rejectCandidateMutation = useMutation({
-    mutationFn: ({ candidateId, jobId, rejectionReason, scheduledDate, scheduledTime }) =>
-      axios.post('/hr/reject-candidate', { candidateId, jobId, rejectionReason, scheduledDate, scheduledTime }),
+    mutationFn: rejectCandidate,
     onSuccess: () => {
       queryClient.invalidateQueries(['candidates', jobId]);
       setIsRejectModalOpen(false);
@@ -250,8 +250,7 @@ const Table = ({
 
   // Move candidate mutation
   const moveCandidateMutation = useMutation({
-    mutationFn: ({ candidateId, jobId, currentStage }) =>
-      axios.post('/hr/move-candidate', { candidateId, jobId, currentStage }),
+    mutationFn: moveCandidate,
     onSuccess: () => {
       queryClient.invalidateQueries(['candidates', jobId]);
       setIsMoveModalOpen(false);
@@ -261,8 +260,7 @@ const Table = ({
 
   // Update candidate rating mutation
   const updateCandidateRatingMutation = useMutation({
-    mutationFn: ({ candidateId, jobId, rating }) =>
-      axios.post('/hr/update-candidate-rating', { candidateId, jobId, rating }),
+    mutationFn: updateCandidateRating,
     onSuccess: () => {
       queryClient.invalidateQueries(['candidates', jobId]);
       handleRatingClose();

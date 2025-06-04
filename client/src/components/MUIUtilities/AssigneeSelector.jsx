@@ -12,7 +12,7 @@ import {
   Box,
   Autocomplete,
 } from '@mui/material';
-import { fetchAllDesignReviewers, fetchAvailableDesignReviewers } from '../../api/authApi';
+import { fetchAllDesignReviewers, fetchAvailableDesignReviewers } from '../../services/auth.service';
 import { useQuery } from '@tanstack/react-query';
 import IconWrapper from '../Cards/IconWrapper';
 import { Search, UserRoundPlus } from 'lucide-react';

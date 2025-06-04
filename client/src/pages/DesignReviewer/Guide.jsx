@@ -10,22 +10,13 @@ import StyledTabs from "../../components/ui/StyledTabs";
 import { InputField } from "../../components/Inputs/InputField";
 import { Button } from "../../components/Buttons/Button";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import axios from "../../api/axios";
+import axios from "../../services/axios";
 import { useAuthContext } from "../../context/AuthProvider";
 import { hasPermission, PERMISSIONS } from "../../config/permissions.config";
 import { showErrorToast, showSuccessToast } from "../../components/ui/Toast";
 import CustomToolTip from "../../components/Tooltip/CustomToolTip";
 import LoaderModal from "../../components/Loaders/LoaderModal";
-
-const updateScreeningParam = async ({title, description, oldKey, jobProfile }) => {
-    const response = await axios.post('/admin/update-screening-param',{description, oldKey, jobProfile, title });
-    return response.data
-}
-
-const resetScreeningParam = async ({paramId, jobProfile }) => {
-    const response = await axios.post('/admin/reset-screening-param',{jobProfile, paramId });
-    return response.data
-}
+import { resetScreeningParam, updateScreeningParam } from "../../services/admin.service";
 
 const getStage = (profile,title) => 
   stagingConfig[profile]?.find(

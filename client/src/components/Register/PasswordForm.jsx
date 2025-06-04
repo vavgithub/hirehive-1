@@ -3,17 +3,13 @@ import PasswordComponent from '../utility/PasswordComponent'
 import { useForm } from 'react-hook-form';
 import { steps } from '../../pages/Admin/Register';
 import { digitsRegex, lowerCaseRegex, specialCharRegex, upperCaseRegex } from '../../utility/regex';
-import axios from '../../api/axios';
+import axios from '../../services/axios';
 import { useMutation } from '@tanstack/react-query';
 import { useOnboardingContext } from '../../context/OnboardingProvider';
 import { showErrorToast, showSuccessToast } from '../ui/Toast';
 import useAuth from '../../hooks/useAuth';
 import Footer from '../Footer/Footer';
-
-const setPassword = async ({password, email}) => {
-    const response = await axios.post('/auth/register/set-password',{password, email});
-    return response.data
-}
+import { setPassword } from '../../services/auth.service';
 
 function PasswordForm({setCurrentStep}) {
     const [passwordError,setPasswordError] = useState("");

@@ -2,13 +2,14 @@ import React from 'react';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { useParams, useNavigate } from 'react-router-dom';
 import JobForm from '../../components/Form/JobForm';
-import axios from '../../api/axios';
+import axios from '../../services/axios';
 import Header from '../../components/utility/Header';
 import { showErrorToast, showSuccessToast } from '../../components/ui/Toast';
 import Loader from '../../components/Loaders/Loader';
 import { useAuthContext } from '../../context/AuthProvider';
 import Container from '../../components/Cards/Container';
 import { getRoute, ROUTE_KEY } from '../../config/permissions.config';
+import { fetchjobsById, updateJob } from '../../services/jobs.service';
 
 const EditJobs = () => {
   const { id } = useParams();
@@ -18,13 +19,13 @@ const EditJobs = () => {
 
   const { isLoading, error, data } = useQuery({
     queryKey: ['job', id],
-    queryFn: () => axios.get(`/jobs/getJobById/${id}`),
+    queryFn: () => fetchjobsById(id),
   });
 
   const updateJobMutation = useMutation({
-    mutationFn: (updatedJob) => axios.put(`/jobs/editJob/${id}`, updatedJob),
+    mutationFn: updateJob,
     onSuccess: (data) => {
-      showSuccessToast('Job Updated', `"${data.data.job.jobTitle}" updated successfully`);
+      showSuccessToast('Job Updated', `"${data.job.jobTitle}" updated successfully`);
       setTimeout(() => {
         navigate(getRoute(role,ROUTE_KEY.ALLJOBS));  
       }, 1000);
@@ -36,7 +37,7 @@ const EditJobs = () => {
   });
 
   const handleSubmit = (formData) => {
-    updateJobMutation.mutate(formData);
+    updateJobMutation.mutate({id,updatedJob :formData});
   };
 
   if (isLoading) {
@@ -51,13 +52,13 @@ const EditJobs = () => {
   return (
     <Container hasBgColor>
         <Header HeaderText="Edit Job Listing" withBack={"true"} />
-        {data?.data && (
+        {data && (
           <JobForm
-            initialData={data.data}
+            initialData={data}
             onSubmit={handleSubmit}
             isLoading={updateJobMutation.isPending}
             isEditing={true}
-            initialQuestions={data.data.questions || []}
+            initialQuestions={data?.questions || []}
           />
         )}
     </Container>

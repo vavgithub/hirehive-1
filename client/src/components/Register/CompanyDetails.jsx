@@ -4,7 +4,7 @@ import { showErrorToast, showSuccessToast } from '../ui/Toast';
 import { useMutation } from '@tanstack/react-query';
 import LoaderModal from '../Loaders/LoaderModal';
 import { useOnboardingContext } from '../../context/OnboardingProvider';
-import axios from '../../api/axios';
+import axios from '../../services/axios';
 import { steps } from '../../pages/Admin/Register';
 import Modal from '../Modals/Modal';
 import { ACTION_TYPES } from '../../utility/ActionTypes';
@@ -15,6 +15,7 @@ import { InputField } from '../Inputs/InputField';
 import { UNKNOWN_PROFILE_PICTURE_URL } from '../../utility/config';
 import { useNavigate } from 'react-router-dom';
 import GlobalDropDown from '../Dropdowns/GlobalDropDown';
+import { saveCompanyDetails, sendJoinRequest } from '../../services/auth.service';
 
 export const LocationOptions = [
   { value: 'afghanistan', label: 'Afghanistan' },
@@ -104,16 +105,6 @@ export const industryTypeOptions = [
   { value: 'government', label: 'Government & Public Services' },
   { value: 'agriculture', label: 'Agriculture & Farming' }
 ]
-
-const saveCompanyDetails = async (formData) => {
-    const response = await axios.post('/auth/register/complete-hiring-manager',formData);
-    return response.data
-}
-
-const sendJoinRequest = async ({email,companyId}) => {
-  const response = await axios.post('/auth/register/send-join-request',{email, companyId });
-  return response.data
-}
 
 function CompanyDetails({currentStep,setCurrentStep}) {
     const [companyName,setCompanyName] = useState('');

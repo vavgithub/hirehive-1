@@ -1,6 +1,6 @@
 import React from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import axios from '../../api/axios';
+import axios from '../../services/axios';
 import { showSuccessToast, showErrorToast } from '../../components/ui/Toast';
 import Table from '../../components/tableUtilities/Table';
 import Header from '../../components/utility/Header';
@@ -12,6 +12,7 @@ import Container from '../../components/Cards/Container';
 import { useAuthContext } from '../../context/AuthProvider';
 import { getRoute, ROUTE_KEY } from '../../config/permissions.config';
 import LoaderModal from '../../components/Loaders/LoaderModal';
+import { getShortlistedCandidates } from '../../services/admin.candidate.service';
 
 const Shortlisted = () => {
     const { user , isLoading } = useAuthContext();
@@ -21,7 +22,7 @@ const Shortlisted = () => {
     // Fetch shortlisted candidates
     const { data, isLoading : isCandidatesLoading , isError, error } = useQuery({
         queryKey: ['shortlistedCandidates'],
-        queryFn: () => axios.get(`admin/candidate/shortlisted/${user?.companyDetails?._id}`).then(res => res.data),
+        queryFn: () => getShortlistedCandidates(user?.companyDetails?._id),
         enabled : !!user?.companyDetails
     });
 
