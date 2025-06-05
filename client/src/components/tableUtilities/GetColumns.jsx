@@ -280,7 +280,7 @@ export const getDefaultColumns = (role, canMove, canReject, handleAssigneeChange
       </div>
     )
   },
-  ...getCtcColumns(role),
+  ...getCtcColumns(role,disableCTC,disableHourly),
   {
     field: 'score',
     headerName: 'Score',
