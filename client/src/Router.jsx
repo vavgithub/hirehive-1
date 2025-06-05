@@ -43,6 +43,7 @@ import Guide from './pages/DesignReviewer/Guide.jsx';
 import CompanyProfile from './pages/Admin/CompanyProfile.jsx';
 import TermsAndCondition from './pages/Candidate/TermsAndCondition.jsx';
 import PrivacyPolicy from './pages/Candidate/PrivacyPolicy.jsx';
+import Settings from './pages/Admin/Settings.jsx';
 
 export const router = createBrowserRouter([
   {
@@ -300,6 +301,10 @@ export const router = createBrowserRouter([
       {
         path: "privacy-policy",
         element: <PrivacyPolicy />
+      },
+      {
+        path: "settings",
+        element: <Settings />
       },
       {
         path: "dashboard",

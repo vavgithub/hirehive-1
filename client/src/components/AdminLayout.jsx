@@ -7,7 +7,7 @@ import { useAuthContext } from '../context/AuthProvider';
 import LightLogo from "../svg/Logo/lightLogo.svg"
 import StyledMenu from './MUIUtilities/StyledMenu';
 import IconWrapper from './Cards/IconWrapper';
-import { Briefcase, ChevronDown, ChevronUp, ClipboardCheck, FileText, IdCard, LayoutGrid, LogOut, MonitorDot, Star, User, Users } from 'lucide-react';
+import { Briefcase, ChevronDown, ChevronUp, ClipboardCheck, FileText, IdCard, LayoutGrid, LogOut, MonitorDot, Settings, Star, User, Users } from 'lucide-react';
 import { UNKNOWN_PROFILE_PICTURE_URL } from '../utility/config';
 import { useSelector } from 'react-redux';
 import { getRoute, hasRoutePermission, ROLES, ROUTE_KEY } from '../config/permissions.config';
@@ -254,6 +254,14 @@ const AdminLayout = () => {
         );
     };
 
+    const renderBottomMenu = () => {
+        return (
+            <>
+                {user?.role === "Admin" && <NavItem to={getRoute(user.role,ROUTE_KEY.SETTINGS)} icon={() => <IconWrapper isInActiveIcon icon={Settings} />} activeIcon={() => <IconWrapper isActiveIcon icon={Settings} />}> Settings </NavItem>}
+            </>
+        )
+    }
+
     const renderMenuItems = () => {
         const jobsSubMenu = [
             ...(hasRoutePermission(user.role,ROUTE_KEY.ALLJOBS) ? [{
@@ -314,6 +322,7 @@ const AdminLayout = () => {
                     {renderMenuItems()}
                 </div>
                 <div className='flex flex-col gap-2 mx-4'>
+                    {renderBottomMenu()}
                     {user && renderProfileMenu()}
                 </div>
             </div>

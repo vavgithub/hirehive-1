@@ -80,6 +80,11 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
+  integrations : {
+    google : {
+      token : String
+    }
+  },
   assignedCandidates: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'candidates'

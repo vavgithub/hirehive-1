@@ -138,3 +138,8 @@ export const editUserProfile = ({ firstName, lastName, phone, jobTitle, experien
 
 export const editCompanyProfile = ({ name, size, location, industryType, about, website, founded, focusAreas, keyContacts }) => 
   axios.put(API_URL + '/edit-company-profile', { name, size, location, industryType, about, website, founded, focusAreas, keyContacts})
+
+export const googleAuthorize = async () => {
+  const response = await axios.post(`${API_URL}/google-authorize`);
+  return response.data
+}

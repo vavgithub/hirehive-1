@@ -10,6 +10,8 @@ import { Company } from '../../models/admin/company.model.js';
 import jwt from 'jsonwebtoken'
 import { verifyToken } from '../../middlewares/authMiddleware.js';
 import { getCountryNameFromPhoneNumber } from '../../utils/countryUtils.js';
+import { getAuthorizationUrl, getOAuthTokens } from '../../utils/integrations/google.js';
+import { randomBytes } from 'crypto';
 
 
 
@@ -1094,3 +1096,59 @@ export const editCompanyProfile = asyncHandler(async (req, res) => {
     });
   }
 });
+
+export const authorizeGoogleWorkspace = asyncHandler(async (req,res) => {
+  try {
+    // Generate a secure random state value.
+    const state = randomBytes(32).toString('hex');
+
+    // Store state in the session
+    req.session.state = state;
+    req.session.userRole = req.user?.role
+
+    const { authorizationUrl } = await getAuthorizationUrl(state)
+
+    res.status(200).json({
+      status : 'success',
+      authorizationUrl,
+      message : "Processing Authorization Successfully"
+    })
+  } catch (error) {
+    console.log(error)
+      res.status(400).json({
+        status: 'error',
+        message: error.message || 'Error updating profile',
+        error: process.env.NODE_ENV === 'development' ? error : undefined
+    });
+  }
+})
+
+export const redirectForGoogleToken = asyncHandler(async (req,res) => {
+  try {
+    const query = req.query;
+    const authState = query?.state ?? null;
+    if(authState && req.session?.state && authState === req.session.state){
+      //Authorized requests
+      const code = query?.code;
+      const tokens = await getOAuthTokens(code);
+      console.log(tokens)
+      //Check authorized  scopes by user
+      if(tokens?.scope){
+
+      }
+      
+      const routeKey = ( req.session?.userRole === 'Admin' ? 'admin' : req.session?.userRole === 'Hiring Manager' ? 'hiring-manager' : 'design-reviewer' )
+      return res.redirect(`${process.env.FRONTEND_URL}/${routeKey}/settings`)
+    }else{
+    //Requests from unauthorized server
+      throw new Error('Request from Unauthorized Source')
+    }
+  } catch (error) {
+    console.log(error)
+      res.status(400).json({
+        status: 'error',
+        message: error.message || 'Error updating profile',
+        error: process.env.NODE_ENV === 'development' ? error : undefined
+    });
+  }
+})

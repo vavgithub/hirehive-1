@@ -1,5 +1,5 @@
 import express from 'express';
-import { registerUser, authUser, logoutUser, getUserProfile, getAvailableDesignReviewers, uploadProfilePicture, resetPassword, verifyOTP, forgotPassword, initializeRegistration, verifyOTPforAdmin, setPassword, completeHiringManagerRegistration, completeDesignReviewerRegistration, addTeamMembers, skipAddMember, editUserProfile, sendInviteOTP, verifyPassword, sendMemberRequest, uploadCompanyLogo, editCompanyProfile } from '../../controllers/admin/auth.controller.js';
+import { registerUser, authUser, logoutUser, getUserProfile, getAvailableDesignReviewers, uploadProfilePicture, resetPassword, verifyOTP, forgotPassword, initializeRegistration, verifyOTPforAdmin, setPassword, completeHiringManagerRegistration, completeDesignReviewerRegistration, addTeamMembers, skipAddMember, editUserProfile, sendInviteOTP, verifyPassword, sendMemberRequest, uploadCompanyLogo, editCompanyProfile, authorizeGoogleWorkspace, redirectForGoogleToken } from '../../controllers/admin/auth.controller.js';
 import { protect, protectWithoutVerification, roleProtect } from '../../middlewares/authMiddleware.js';
 import multer from 'multer';
 import { promises as fs } from 'fs';
@@ -97,6 +97,10 @@ router.post('/register/send-invite-otp', sendInviteOTP);
 // Team member invitation routes
 router.post('/register/add-team-member', protectWithoutVerification , addTeamMembers);
 router.post('/register/complete-design-reviewer', completeDesignReviewerRegistration);
+
+//Integrations
+router.post('/google-authorize',protect,authorizeGoogleWorkspace)
+router.get('/google/redirect',redirectForGoogleToken)
 
   
 export default router;
