@@ -78,3 +78,18 @@ export const uploadToCloudinary = async (inputPath, folder) => {
 export const getUploadPath = (filename) => {
   return path.join(rootDir, 'uploads', filename);
 };
+
+export const uploadGoogleImagesToCloudinary = async (path,folder) => {
+  try {
+    const result = await cloudinary.uploader.upload(path, {
+      folder: folder,
+      resource_type: 'image',
+      use_filename: true,
+      unique_filename: true
+    });
+    return result.secure_url;
+  } catch (error) {
+    console.error('Error in uploadGoogleImagesToCloudinary:', error);
+    throw new Error(error?.message || 'Upload error')
+  }
+}

@@ -5,6 +5,7 @@ import { asyncHandler } from '../utils/asyncHandler.js';
 import { User } from '../models/admin/user.model.js';
 import { candidates as Candidate } from '../models/candidate/candidate.model.js';
 import { getEnvironmentConfig } from '../config/environments.js';
+import { decrypt } from "../utils/crypto.js";
 
 // Load environment-specific configuration
 const environment = process.env.NODE_ENV || "development";
@@ -131,6 +132,59 @@ const protectWithoutVerification = asyncHandler(async (req, res, next) => {
   }
 });
 
+const protectTokenWithoutVerification = asyncHandler(async (req, res, next) => {
+  try {
+  const token = getTokenFromRequest(req);
+
+  const { error } = req.query;
+
+  if(error){
+    const error_text = decrypt(error)
+    return res.status(400).json({ 
+      status: 'error',
+      message: error_text
+    });
+  }
+
+  if (!token) {
+    return res.status(401).json({ 
+      status: 'error',
+      message: 'Not authorized, no token provided'
+    });
+  }
+
+    const decoded = verifyToken(token, process.env.JWT_SECRET);
+    
+    if (!decoded) {
+      return res.status(401).json({ 
+        status: 'error',
+        message: 'Invalid or expired token'
+      });
+    }
+
+    // Get user and exclude password
+    const user = await User.findById(decoded.id).select('-password');
+    
+    if (!user) {
+      return res.status(401).json({ 
+        status: 'error',
+        message: 'User not found'
+      });
+    }
+
+    // Attach user to request object
+    req.user = user;
+    next();
+  } catch (error) {
+    console.error('Authentication error:', error);
+    res.status(401).json({ 
+      status: 'error',
+      message: 'Authentication failed',
+      error: environment === 'development' ? error.message : undefined
+    });
+  }
+});
+
 const roleProtect = (roles) => {
   return asyncHandler(async (req, res, next) => {
     if (!req.user) {
@@ -199,6 +253,7 @@ const protectCandidate = asyncHandler(async (req, res, next) => {
 export { 
   protect, 
   protectWithoutVerification,
+  protectTokenWithoutVerification,
   roleProtect, 
   protectCandidate,
 };

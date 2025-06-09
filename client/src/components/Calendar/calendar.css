@@ -1,0 +1,35 @@
+/* calendar.css */
+.fc {
+  @apply bg-background-90 rounded-lg shadow-md p-8;
+}
+
+.fc-toolbar-title {
+  @apply text-xl font-bold text-slate-800;
+}
+.fc-icon {
+    @apply !w-[24px] !h-[24px] flex items-center justify-center
+}
+
+.fc-toolbar {
+  @apply mb-4;
+}
+
+.fc-button {
+  @apply !h-11 !px-12 !rounded-xl;
+}
+
+.fc-prev-button {
+    @apply h-11 !px-3 flex justify-center items-center
+}
+
+.fc-next-button {
+    @apply h-11 !px-3 flex justify-center items-center
+}
+
+
+
+.fc-button:hover {
+  @apply bg-blue-700;
+}
+
+

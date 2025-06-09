@@ -30,6 +30,11 @@ export const fetchAssessmentDetails = async (candidateId, jobId) => {
     return data;
 };
 
+export const fetchCalendarDetails = async () => {
+    const { data } = await axios.get(`/admin/candidate/get-calendar-details`);
+    return data;
+};
+
 //POST
 export const addNotes = async ({ candidateId, jobId, notesData }) => {
     const response = await axios.post(`/admin/candidate/${candidateId}/${jobId}/addNotes`, notesData);

@@ -16,7 +16,7 @@ import Modal from '../Modals/Modal';
 import TogglePassword from '../utility/TogglePassword';
 import { digitsRegex, lowerCaseRegex, passwordRegex, specialCharRegex, upperCaseRegex } from '../../utility/regex';
 import ForgotPassword from '../../pages/Admin/ForgotPassword';
-import { registerAdmin, verifyPassword } from '../../services/auth.service';
+import { googleLogin, registerAdmin, verifyPassword } from '../../services/auth.service';
 
 export const emailPattern = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i
 
@@ -94,6 +94,17 @@ function RegisterForm({setCurrentStep}) {
         showErrorToast("Error",error?.response?.data?.message || "Unexpected Registration Error. Try again")
       }
     })
+
+    const registerGoogle = async () => {
+        try {
+          const result = await googleLogin()
+          if(result?.authorizationUrl){
+            window.location.href = result.authorizationUrl;
+          }
+        } catch (error) {
+          showErrorToast('Error',error?.message)
+        }
+    }
 
     const handleFormSubmit =  (e) =>{
         e.preventDefault()
@@ -174,14 +185,14 @@ function RegisterForm({setCurrentStep}) {
             <div className="w-full lg:w-2/5 bg-background-90 p-4 md:p-28   flex flex-col justify-center">
               <h1 className="text-center">Sign Up</h1>
               <p className="typography-body mb-8 text-center text-font-gray font-normal">Create an account</p>
-                    {/* <Button type="button" variant="secondary" icon={GoogleIcon} className="w-full" >
+                    <Button type="button" onClick={registerGoogle} variant="secondary" icon={GoogleIcon} className="w-full" >
                         Continue With Google
-                    </Button> */}
-                  {/* <div className="flex items-center my-4">
+                    </Button> 
+                   <div className="flex items-center my-4">
                       <hr className="flex-grow border-grey-100" />
                       <span className="px-3 text-grey-100">OR</span>
                       <hr className="flex-grow border-grey-100" />
-                  </div>  */}
+                  </div> 
               <form onSubmit={handleFormSubmit}>
                 <div className="mb-4">
                   <label htmlFor="firstname" className="block mb-2 font-bricolage">First Name</label>

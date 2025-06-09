@@ -143,3 +143,13 @@ export const googleAuthorize = async () => {
   const response = await axios.post(`${API_URL}/google-authorize`);
   return response.data
 }
+
+export const checkUserAuthStatus = async (errorToken) => {
+  const response = await axios.post(`${API_URL}/register/check-auth-status${errorToken ? `?error=${errorToken}` : ''}`);
+  return response.data
+}
+
+export const googleLogin = async () => {
+  const response = await axios.post(`${API_URL}/google-login`);
+  return response.data
+}

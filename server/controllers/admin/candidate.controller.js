@@ -12,6 +12,8 @@ import mongoose from "mongoose";
 import { EMAIL_REGEX } from "../../utils/validator.js";
 import { Assessment } from "../../models/admin/assessment.model.js";
 import { Company } from "../../models/admin/company.model.js";
+import { getAuthorizedOauthClient, getCalendarClient, SCOPE_KEYS } from "../../utils/integrations/google.js";
+import { decrypt } from "../../utils/crypto.js";
 
 // controllers/candidate.controller.js
 
@@ -1621,3 +1623,45 @@ export const shortlistCandidate = async (req, res) => {
       .json({ message: "Server error", error: error.message });
   }
 };
+
+
+export const getCalendarDetails = async ( req, res ) => {
+  try {
+    const user_id = req.user.id;
+    const user = await User.findById({_id : user_id}).select('+integrations');
+    if(user){
+      const hasRequiredScopes = [SCOPE_KEYS.VIEW_CALENDAR, SCOPE_KEYS.VIEW_EVENTS].every(scope =>
+        user?.integrations?.google?.scopes.includes(scope)
+      );
+      if(hasRequiredScopes){
+
+        const oauth2Client = await getAuthorizedOauthClient(decrypt(user.integrations.google.token));
+        const calendarclient = await getCalendarClient(oauth2Client);
+        const response = await calendarclient.events.list({
+          calendarId: 'primary',
+          timeMin: (new Date()).toISOString(), // Events starting from now
+          maxResults: 10,                      // You can change this
+          singleEvents: true,                  // Expand recurring events
+          orderBy: 'startTime',                // Sort by start time
+        });
+        console.log(response.data)
+      }else{
+        return res.status(400).json({ 
+          error : true,
+          message : 'Please authorize Google Workspace to sync calendar.' 
+        });        
+      }
+    }else{
+      return res.status(400).json({ 
+        error : true,
+        message : 'User not Found.' 
+      });
+    }
+    return res.status(200).json({ success : true, message : 'Fetched Calendar Details successfully.' });
+  } catch (error) {
+    console.log(error)
+    res
+    .status(400)
+    .json({ message: "Error updating candidate", error: error.message });
+  }
+}

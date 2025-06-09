@@ -4,6 +4,7 @@ import {
   getAllCandidatesForJob,
   getAllCandidatesWithStats,
   getAssessmentQuestionsById,
+  getCalendarDetails,
   getCandidateById,
   getCandidateJobs,
   getJobBasedQuestionnaireDetails,
@@ -54,6 +55,8 @@ router.post(
 
 // router.get("/assessment/:candidateId", getQuestionnaireDetails);
 router.get("/get-assessment/:candidateId/:jobId", protect, roleProtect(['Admin','Hiring Manager']), getJobBasedQuestionnaireDetails);
+
+router.get('/get-calendar-details',protect,getCalendarDetails)
 
 router.get("/:jobId", getAllCandidatesForJob);
 

@@ -1,7 +1,7 @@
 import { asyncHandler } from '../../utils/asyncHandler.js';
 import {User} from '../../models/admin/user.model.js';
 import generateToken from '../../utils/generateToken.js';
-import { getUploadPath, uploadToCloudinary } from '../../utils/cloudinary.js';
+import { getUploadPath, uploadGoogleImagesToCloudinary, uploadToCloudinary } from '../../utils/cloudinary.js';
 import path from 'path';
 import { sendEmail } from '../../utils/sentEmail.js';
 import { generateOTP, otpStore } from '../../utils/otp.js';
@@ -10,8 +10,9 @@ import { Company } from '../../models/admin/company.model.js';
 import jwt from 'jsonwebtoken'
 import { verifyToken } from '../../middlewares/authMiddleware.js';
 import { getCountryNameFromPhoneNumber } from '../../utils/countryUtils.js';
-import { getAuthorizationUrl, getOAuthTokens } from '../../utils/integrations/google.js';
+import { checkScopes, getAccessOauthClient, getAuthorizationUrl, getOAuthTokens, getRoleBasedScopes, getUserInfo, SCOPE_KEYS, SCOPES, USE_TYPES } from '../../utils/integrations/google.js';
 import { randomBytes } from 'crypto';
+import { decrypt, encrypt } from '../../utils/crypto.js';
 
 
 
@@ -182,7 +183,7 @@ export const logoutUser = asyncHandler(async (req, res) => {
 
 // Get User Profile
 export const getUserProfile = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.user._id).populate('company_id');
+  const user = await User.findById(req.user._id).select('+integrations').populate('company_id');
 
   if (user) {
       res.json({
@@ -200,7 +201,13 @@ export const getUserProfile = asyncHandler(async (req, res) => {
           tasks_pending: user.tasks_pending,
           role: user.role,
           profilePicture: user.profilePicture,
-          companyDetails : user?.company_id
+          companyDetails : user?.company_id,
+          hasAuth : {
+            view_calendar : user?.integrations?.google?.scopes?.includes(SCOPE_KEYS.VIEW_CALENDAR),
+            edit_calendar : user?.integrations?.google?.scopes?.includes(SCOPE_KEYS.EDIT_CALENDAR),
+            view_events : user?.integrations?.google?.scopes?.includes(SCOPE_KEYS.VIEW_EVENTS),
+            edit_events : user?.integrations?.google?.scopes?.includes(SCOPE_KEYS.EDIT_EVENTS),
+          }
       });
   } else {
       res.status(404);
@@ -1097,6 +1104,33 @@ export const editCompanyProfile = asyncHandler(async (req, res) => {
   }
 });
 
+//GOOGLE AUTH INTEGRATIONS
+export const authorizeWithGoogle = asyncHandler(async (req,res) => {
+  try {
+    // Generate a secure random state value.
+    const state = randomBytes(32).toString('hex');
+
+    // Store state in the session
+    req.session.state = state;
+    req.session.useType = USE_TYPES['LOGIN/REGISTER']
+
+    const { authorizationUrl } = await getAuthorizationUrl(state,SCOPES.AUTH)
+
+    res.status(200).json({
+      status : 'success',
+      authorizationUrl,
+      message : "Processing Authorization Successfully"
+    })
+  } catch (error) {
+    console.log(error)
+      res.status(400).json({
+        status: 'error',
+        message: error.message || 'Error updating profile',
+        error: process.env.NODE_ENV === 'development' ? error : undefined
+    });
+  }
+})
+
 export const authorizeGoogleWorkspace = asyncHandler(async (req,res) => {
   try {
     // Generate a secure random state value.
@@ -1104,9 +1138,10 @@ export const authorizeGoogleWorkspace = asyncHandler(async (req,res) => {
 
     // Store state in the session
     req.session.state = state;
+    req.session.useType = USE_TYPES.WORKSPACE
+    req.session.userEmail = req.user?.email
     req.session.userRole = req.user?.role
-
-    const { authorizationUrl } = await getAuthorizationUrl(state)
+    const { authorizationUrl } = await getAuthorizationUrl(state,getRoleBasedScopes(req.user.role))
 
     res.status(200).json({
       status : 'success',
@@ -1131,23 +1166,137 @@ export const redirectForGoogleToken = asyncHandler(async (req,res) => {
       //Authorized requests
       const code = query?.code;
       const tokens = await getOAuthTokens(code);
-      console.log(tokens)
+
+      let encryptedToken = null;
+      let scopes = null;
+      let currentUserStage = null;
+      if(tokens?.refresh_token){
+        encryptedToken = encrypt(tokens?.refresh_token);
+        console.log('ENCRYPTED : ',encryptedToken)
+      }
       //Check authorized  scopes by user
       if(tokens?.scope){
+        console.log('SCOPES : ',tokens.scope.split(' '))
+        scopes = tokens.scope.split(' ')
+      }
 
+      if(scopes?.length > 0){
+        const scopeKeys = checkScopes(scopes);
+        console.log('TYPE',scopeKeys,req.session?.useType)
+        //GOOGLE_AUTH_FUNCTIONALITIES
+        if(req.session?.useType === USE_TYPES['LOGIN/REGISTER'] && scopeKeys.includes('AUTH') && tokens?.access_token){
+          const oauth2Client = await getAccessOauthClient(tokens?.access_token)
+          const userInfo = await getUserInfo(oauth2Client)
+          console.log("INFO",userInfo)
+          if(userInfo && userInfo?.email && userInfo?.verified_email){
+              const isExisting = await User.findOne({email : userInfo?.email}).select('+integrations')
+              if(isExisting){
+                if(isExisting?.auth_type === 'GOOGLE'){
+                  // Generate JWT
+                  if(isExisting?.integrations?.google?.scopes?.length > 0){
+                    const unExisitngScopes = scopeKeys.filter(key => !isExisting.integrations.google.scopes.includes(key));
+                    isExisting.integrations.google.scopes.push(...unExisitngScopes)
+                  }
+                  currentUserStage = isExisting.verificationStage
+                  await isExisting.save()
+                  const token = generateToken(isExisting._id)
+                  res.cookie('jwt', token, cookieOptions);
+                }else{
+                  //EMAIL LOGGED IN USER
+                  const encryptedError = encrypt('Invalid Credentials')
+                  return res.redirect(`${process.env.FRONTEND_URL}/admin/register?error=${encryptedError}`)
+                }
+              }else{
+                const [firstName, ...lastName] = userInfo?.name?.split(' ');
+                let profilePictureUrl = ''
+                if(userInfo?.picture){
+                  profilePictureUrl = await uploadGoogleImagesToCloudinary(
+                  userInfo.picture,
+                  'profile-pictures'
+                );
+                }
+                const createUser = await User.create({
+                  firstName ,
+                  lastName : lastName.join(' '),
+                  email : userInfo.email,
+                  verificationStage : 'PASSWORD',
+                  role : "Admin",
+                  auth_type : 'GOOGLE',
+                  profilePicture : profilePictureUrl,
+                  integrations : {
+                    google : {
+                      scopes : scopeKeys
+                    }
+                  }
+                })
+                currentUserStage = createUser.verificationStage
+                //Id only token
+                const token = generateToken(createUser._id)
+                res.cookie('jwt', token, cookieOptions);
+              }
+          }else{
+            return res.redirect(`${process.env.FRONTEND_URL}/admin/register?error=Invalid_Creds`)
+          }
+        }else if(req.session?.useType === USE_TYPES.WORKSPACE && scopeKeys.some(key => key !== "AUTH" && key in SCOPES) && tokens?.refresh_token){
+          
+          if(req.session.userEmail){
+            const isExisting = await User.findOne({ email : req.session.userEmail }).select('+integrations');
+            if(!isExisting?.integrations?.google?.token){
+              isExisting.integrations.google.token = encryptedToken
+            }
+            if(isExisting?.integrations?.google?.scopes?.length > 0){
+              const unExisitngScopes = scopeKeys.filter(key => !isExisting.integrations.google.scopes.includes(key));
+              isExisting.integrations.google.scopes.push(...unExisitngScopes)
+            }
+            await isExisting.save()
+          }
+          console.log('GOt the client for Calendar')
+        }
       }
       
-      const routeKey = ( req.session?.userRole === 'Admin' ? 'admin' : req.session?.userRole === 'Hiring Manager' ? 'hiring-manager' : 'design-reviewer' )
-      return res.redirect(`${process.env.FRONTEND_URL}/${routeKey}/settings`)
+      console.log("ROLE", req.session.userRole)
+      const userRoleSession = req.session?.userRole;
+      const routeKey = ( userRoleSession === 'Admin' ? 'admin' : userRoleSession === 'Hiring Manager' ? 'hiring-manager' : 'design-reviewer' )
+      req.session = null
+      return res.redirect(userRoleSession ? `${process.env.FRONTEND_URL}/${routeKey}/settings` : `${process.env.FRONTEND_URL}/admin/register?currentStage=${currentUserStage}`)
     }else{
-    //Requests from unauthorized server
-      throw new Error('Request from Unauthorized Source')
+      //Requests from unauthorized server
+      return res.redirect(`${process.env.FRONTEND_URL}/admin/register?error=Invalid_Creds`)
     }
   } catch (error) {
     console.log(error)
-      res.status(400).json({
+    //Handle no invalid_grant error
+    const userRoleSession = req.session?.userRole;
+    req.session = null
+    return res.redirect(userRoleSession ? `${process.env.FRONTEND_URL}/${routeKey}/settings` : `${process.env.FRONTEND_URL}/admin/register?error=Invalid_Creds`)
+  }
+})
+
+export const checkAuthStatus = asyncHandler(async (req, res) => {
+  try {
+    const id = req.user._id;
+    const user = await User.findById({_id : id})
+    if(user?.verificationStage === 'DONE'){
+      return res.status(200).json({
+        message: 'Please login to continue',
+      });
+    }
+    if(['REGISTER','OTP'].includes(user?.verificationStage)){
+      throw new Error('Invalid registration. Please try again.')
+    }
+    if(user.auth_type === 'EMAIL'){
+      throw new Error('Invalid Credentials.')
+    }
+    return res.status(200).json({
+      message: 'Registration needs to be completed',
+      userData : user,
+      currentStage : user?.verificationStage
+    });
+  } catch (error) {
+    console.log(error)
+    res.status(400).json({
         status: 'error',
-        message: error.message || 'Error updating profile',
+        message: error.message || 'Error checking user status',
         error: process.env.NODE_ENV === 'development' ? error : undefined
     });
   }

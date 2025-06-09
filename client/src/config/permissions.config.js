@@ -60,7 +60,8 @@ export const ROUTE_KEY = {
   CREATE_JOB: "create_job",
   JOBS_VIEW_JOB: "jobs_view_job",
   COMPANY_PROFILE_VIEW : 'company_profile_view',
-  SETTINGS : 'settings'
+  SETTINGS : 'settings',
+  INTERVIEWS : 'interviews',
 };
 
 export const ROLE_CONFIG = {
@@ -118,6 +119,7 @@ export const ROLE_CONFIG = {
       [ROUTE_KEY.GUIDE]: "/admin/guide",
       [ROUTE_KEY.COMPANY_PROFILE_VIEW] : '/admin/company',
       [ROUTE_KEY.SETTINGS] : '/admin/settings',
+      [ROUTE_KEY.INTERVIEWS] : '/admin/interviews',
     },
   },
   [ROLES.HIRING_MANAGER]: {
