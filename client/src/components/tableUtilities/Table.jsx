@@ -221,6 +221,7 @@ const Table = ({
       await refetch();
       // You might want to show a success message to the user here
       showSuccessToast("Auto Assign Portfolio Done")
+    setIsAutoAssignModalOpen(false);
     },
     onError: (error) => {
       // console.error('Auto-assign error:', error);
@@ -268,13 +269,12 @@ const Table = ({
   });
 
   const handleAutoAssign = async (selectedReviewers) => {
-    await autoAssignMutation.mutateAsync({
+    autoAssignMutation.mutate({
       jobId,
       reviewerIds: selectedReviewers.map(reviewer => reviewer._id),
       budgetMin: parseFloat(budgetFilter.from) || 0,
       budgetMax: parseFloat(budgetFilter.to) || Infinity
     })
-    setIsAutoAssignModalOpen(false);
   };
 
   const handleAssigneeChange = (candidateId, stage, newAssignee) => {
@@ -481,9 +481,9 @@ const Table = ({
   return (
     <div className='w-full'>
 
-      {autoAssignMutation.isPending ||
+      {(autoAssignMutation.isPending ||
         rejectCandidateMutation.isPending ||
-        moveCandidateMutation.isPending || isLoading && <LoaderModal />}
+        moveCandidateMutation.isPending || isLoading) && <LoaderModal />}
 
       <MuiCustomStylesForDataGrid />
 
