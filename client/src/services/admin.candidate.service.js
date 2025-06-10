@@ -30,8 +30,8 @@ export const fetchAssessmentDetails = async (candidateId, jobId) => {
     return data;
 };
 
-export const fetchCalendarDetails = async () => {
-    const { data } = await axios.get(`/admin/candidate/get-calendar-details`);
+export const fetchCalendarDetails = async (startDate,endDate,calendarType) => {
+    const { data } = await axios.get(`/admin/candidate/get-calendar-details?startDate=${startDate}&endDate=${endDate}&calendarType=${calendarType}`);
     return data;
 };
 

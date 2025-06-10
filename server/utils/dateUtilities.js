@@ -101,3 +101,14 @@ export function formatDateRange(startDate, endDate) {
 
     return `${start} - ${end}`;
 }
+
+export const getUTCBasedonTZ = (timeZone,date) => {
+  const luxonDateTime = DateTime.fromISO(date, {
+    zone: timeZone // This is important for clarity and robustness
+  });
+
+  // 2. Convert this Luxon DateTime object to UTC.
+  //    Luxon will automatically adjust the time to its UTC equivalent.
+  const utcDateTime = luxonDateTime.toUTC();
+  return utcDateTime
+}

@@ -1,10 +1,10 @@
 /* calendar.css */
 .fc {
-  @apply bg-background-90 rounded-lg shadow-md p-8;
+  @apply bg-transparent rounded-xl p-0;
 }
 
 .fc-toolbar-title {
-  @apply text-xl font-bold text-slate-800;
+  @apply text-xl ;
 }
 .fc-icon {
     @apply !w-[24px] !h-[24px] flex items-center justify-center
@@ -15,7 +15,12 @@
 }
 
 .fc-button {
-  @apply !h-11 !px-12 !rounded-xl;
+  @apply !h-11 !px-12 !rounded-xl !bg-background-80 !text-white !border-none ;
+}
+
+
+.fc-button:hover {
+  @apply !bg-background-60 ;
 }
 
 .fc-prev-button {
@@ -27,9 +32,98 @@
 }
 
 
+.fc-button-primary:focus {
+  @apply !shadow-none
+}
 
-.fc-button:hover {
-  @apply bg-blue-700;
+.fc-theme-standard {
+  @apply !border-none 
+}
+.fc-theme-standard th {
+  @apply !border-none
+}
+.fc-theme-standard td {
+  @apply !border-none
+}
+ .fc-list {
+  @apply !border-none 
+ }
+.fc-list-table tbody {
+  @apply !bg-transparent
+}
+
+.fc-list-table td {
+  @apply  !bg-transparent;
+}
+
+.fc-list-event td,
+.fc-list-day td {
+  @apply  !bg-transparent;
+}
+
+.fc-list-day th {
+  @apply !bg-transparent;
+}
+
+.fc-list-day {
+  @apply  px-4 py-2 !rounded-t-xl  text-gray-700 ;
+}
+
+.fc-list-day-cushion {
+  @apply !bg-background-80 !px-8 !pt-8 !pb-2 !rounded-t-xl  text-gray-700 ;
+}
+
+.fc-list-table td {
+  @apply !p-0
+}
+
+.fc-list-event-time {
+  @apply hidden
+}
+
+.fc-list-event-graphic {
+  @apply hidden
+}
+
+.fc-theme-standard .fc-list-day-cushion {
+  @apply !flex text-white typography-h3 
 }
 
 
+.fc-scrollgrid {
+  @apply  !border !border-font-gray
+}
+
+.fc-scrollgrid tr {
+  @apply  !border !border-font-gray
+}
+
+.fc-scrollgrid  .fc-daygrid-day-frame {
+  @apply  !border-r !border-font-gray overflow-hidden
+}
+
+.fc .fc-scrollgrid-section-sticky th {
+  @apply !bg-transparent
+}
+
+.fc-scrollgrid-sync-table .fc-day-past, .fc-scrollgrid-sync-table .fc-day-other {
+  @apply !bg-background-80 !text-font-gray
+}
+
+.fc-scrollgrid-sync-table .fc-day-future {
+  @apply bg-background-70
+}
+
+.fc-scrollgrid-sync-table .fc-day-today {
+  @apply !bg-accent-300
+}
+.fc-col-header .fc-scrollgrid-sync-inner {
+  @apply !border-r border-font-gray
+}
+
+.fc-daygrid-day-events {
+  @apply flex flex-col gap-2 px-2
+}
+.fc-col-header-cell .fc-scrollgrid-sync-inner {
+  @apply !bg-background-80
+}
