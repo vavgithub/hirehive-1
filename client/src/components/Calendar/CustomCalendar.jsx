@@ -37,6 +37,17 @@ function CustomCalendar() {
 
   const events = useMemo(() => data?.calendarEvents ?? [], [data]);
   const [eventMap, setEventMap] = useState({});
+  const lastEventOfDay = useMemo(() => {
+    const allEvents = Object.values(eventMap).flat();
+
+    if (allEvents.length === 0) return null;
+
+    const sortedEvents = allEvents.sort((a, b) => new Date(a.start) - new Date(b.start));
+    
+    return sortedEvents[sortedEvents.length - 1]; // last event chronologically
+  }, [eventMap]);
+
+
   const calendarRef = useRef();
 
 
@@ -241,13 +252,15 @@ function CustomCalendar() {
       
       const isPast = start < now;
       const isHappening = start <= now && (!end || end > now);
+      console.log(lastEventOfDay)
+      const isFinalEventOfWeek = (lastEventOfDay?.id + lastEventOfDay?.title + new Date(lastEventOfDay.start).toISOString()) === currentEventKey;
 
       const timeText = end
         ? `${formatTime(start, true)} – ${formatTime(end)}`
         : formatTime(start);
 
       return (
-        <div className={`px-8 typography-body bg-background-80 ${isLast ? 'rounded-b-xl mb-6 pb-8' : ''}`}>
+        <div className={`px-8 typography-body bg-background-80 ${isLast ?  `rounded-b-xl ${isFinalEventOfWeek ? '' : 'mb-6'}  pb-8` : ''}`}>
           <div className={(isPast ? 'opacity-60' : '') + ' bg-background-70 flex justify-between rounded-xl p-4'}>
             <div className={(isPast ? 'text-font-gray' : '') + ' flex items-center gap-4'}>
               <p>{timeText}</p>

@@ -13,6 +13,7 @@ import IconWrapper from '../../components/Cards/IconWrapper';
 import { Briefcase, FileText } from 'lucide-react';
 import { getRoute, ROUTE_KEY } from '../../config/permissions.config';
 import GoogleIcon from '../../svg/Icons/GoogleIcon';
+import { FcGoogle } from 'react-icons/fc';
 
 const statsOne = [
     { title: 'Jobs Posted', value: 100, icon: () => <IconWrapper size={10} isInActiveIcon icon={Briefcase} /> },
@@ -98,9 +99,10 @@ const Login = () => {
                         <p className="typography-body mb-10 text-center font-normal w-full">
                             Login to your account below
                         </p>
-                        <Button type="button" onClick={registerGoogle} variant="secondary" icon={GoogleIcon} className='mx-auto'>
+                        <button type="button" onClick={registerGoogle} variant="secondary"  className='mx-auto flex gap-4 bg-white text-black-100 py-2 px-12 rounded-full'>
+                            <IconWrapper icon={FcGoogle} size={0} customStrokeWidth={0} customIconSize={5} />
                             Continue With Google
-                        </Button> 
+                        </button> 
                         <div className="flex items-center my-4 w-full">
                             <hr className="flex-grow border-grey-100" />
                             <span className="px-3 text-grey-100">OR</span>
