@@ -6,6 +6,11 @@ export const getAdminDashboard = (timezone) => axios.get(`${ADMIN_BASE_URL}/dash
 
 export const getAllTeamMembers = () => axios.get(ADMIN_BASE_URL + '/get-all-members').then(res => res.data)
 
+export const fetchCalendarDetails = async (startDate,endDate,calendarType) => {
+    const { data } = await axios.get(`/admin/get-calendar-details?startDate=${startDate}&endDate=${endDate}&calendarType=${calendarType}`);
+    return data;
+};
+
 //POST
 export const addMember = async ({teamMember}) => {
     const response = await axios.post(ADMIN_BASE_URL + '/add-member',{teamMember});

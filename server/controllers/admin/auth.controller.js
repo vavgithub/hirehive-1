@@ -1247,6 +1247,8 @@ export const redirectForGoogleToken = asyncHandler(async (req,res) => {
             if(isExisting?.integrations?.google?.scopes?.length > 0){
               const unExisitngScopes = scopeKeys.filter(key => !isExisting.integrations.google.scopes.includes(key));
               isExisting.integrations.google.scopes.push(...unExisitngScopes)
+            }else{
+              isExisting.integrations.google.scopes.push(...scopeKeys)
             }
             await isExisting.save()
           }
@@ -1268,6 +1270,7 @@ export const redirectForGoogleToken = asyncHandler(async (req,res) => {
     //Handle no invalid_grant error
     const userRoleSession = req.session?.userRole;
     req.session = null
+    const routeKey = ( userRoleSession === 'Admin' ? 'admin' : userRoleSession === 'Hiring Manager' ? 'hiring-manager' : 'design-reviewer' )
     return res.redirect(userRoleSession ? `${process.env.FRONTEND_URL}/${routeKey}/settings` : `${process.env.FRONTEND_URL}/admin/register?error=Invalid_Creds`)
   }
 })

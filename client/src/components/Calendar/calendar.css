@@ -32,17 +32,22 @@
 }
 
 
+.fc-list-table   th {
+  @apply !border-none
+}
+.fc-list-table   td {
+  @apply !border-none
+}
+
 .fc-button-primary:focus {
   @apply !shadow-none
 }
 
-.fc-theme-standard {
-  @apply !border-none 
-}
-.fc-theme-standard th {
+
+.fc-daygrid   th {
   @apply !border-none
 }
-.fc-theme-standard td {
+.fc-daygrid  td {
   @apply !border-none
 }
  .fc-list {
@@ -91,22 +96,22 @@
 .fc-scrollgrid .fc-daygrid-day-events {
   @apply max-h-[10rem]
 }
-.fc-daygrid-dot-event:hover {
-  @apply !bg-none
+.fc-daygrid-day-events .fc-daygrid-dot-event:hover {
+  @apply !bg-transparent
 }
 .fc-scrollgrid {
-  @apply  !border !border-font-gray rounded-xl overflow-hidden
+  @apply  !border !border-background-30 rounded-xl overflow-hidden
 }
 
 .fc-scrollgrid .fc-daygrid-day-top {
   @apply flex-row
 }
 .fc-scrollgrid tr {
-  @apply  !border !border-font-gray
+  @apply  !border !border-background-30
 }
 
 .fc-scrollgrid  .fc-daygrid-day-frame {
-  @apply  !border-r !border-font-gray overflow-hidden
+  @apply  !border-r !border-background-30 overflow-hidden
 }
 
 .fc .fc-scrollgrid-section-sticky th {
@@ -121,11 +126,24 @@
   @apply bg-background-70
 }
 
-.fc-scrollgrid-sync-table .fc-day-today {
-  @apply !bg-accent-300
+.fc-scrollgrid-sync-table .fc-daygrid-day-top{
+  @apply pl-2 pt-2
 }
+
+.fc-scrollgrid-sync-table .fc-daygrid-day-top a{
+  @apply p-0
+}
+
+.fc-scrollgrid-sync-table .fc-day-today {
+  @apply !bg-accent-300 
+}
+
+.fc-scrollgrid-sync-table .fc-day-today .fc-daygrid-day-frame {
+  @apply border !border-accent-100 
+}
+
 .fc-col-header .fc-scrollgrid-sync-inner {
-  @apply !border-r border-font-gray
+  @apply !border-r border-background-40 !text-font-gray
 }
 
 .fc-daygrid-day-events {
@@ -133,4 +151,88 @@
 }
 .fc-col-header-cell .fc-scrollgrid-sync-inner {
   @apply !bg-background-80
+}
+
+/* WEEK view specific styles */
+.fc-timegrid {
+  @apply !bg-background-80
+}
+.fc-timegrid  th {
+  @apply !border !border-b-0 border-background-40
+}
+
+.fc-timegrid  tr {
+  @apply !border-none
+}
+
+.fc-timegrid .fc-col-header .fc-scrollgrid-sync-inner {
+  @apply !border-none
+}
+.fc-timegrid  td {
+  @apply !border border-background-40
+}
+
+.fc-timegrid .fc-daygrid-day-events {
+  @apply px-3 py-2 gap-3 ; /* Increased padding and gap for event items */
+}
+
+.fc-timegrid .fc-daygrid-day-frame {
+  @apply min-h-[6rem] p-2; /* Minimum height for day cells with padding */
+}
+
+
+.fc-timegrid .fc-timegrid-axis {
+  @apply !bg-background-80 text-white; /* Consistent background for time axis */
+}
+
+.fc-timegrid .fc-timegrid-slot-label {
+  @apply text-font-gray py-1; /* Spacing and color for time labels */
+}
+
+.fc-timegrid .fc-timegrid-slot {
+  @apply h-11; /* Consistent height for time slots */
+}
+
+
+.fc-timegrid .fc-timegrid-event {
+  @apply  rounded-xl border-none !shadow-none; /* Margin and rounded corners for events */
+}
+
+.fc-timegrid .fc-timegrid-event .fc-event-main {
+  @apply p-0; /* Padding inside event content */
+}
+
+.fc-timegrid .fc-v-event {
+  @apply p-0  !border-none bg-transparent whitespace-nowrap text-ellipsis !overflow-hidden
+}
+
+.fc-timegrid .fc-timegrid-axis {
+  @apply px-8 ; /* Adds 2rem padding (8 = 2rem in Tailwind default config) on left and right */
+}
+
+.fc-timegrid .fc-timegrid-slot-label {
+  @apply px-8 !border-r !border-background-40; /* Ensures time labels have 2rem padding on left and right */
+}
+
+.fc-timegrid-col.fc-day-today {
+  @apply !bg-accent-300
+}
+
+/* WEEK view current time indicator styles */
+.fc-timegrid .fc-timegrid-now-indicator-line {
+  @apply bg-accent-100 h-px w-full !border-none z-[100]; /* High z-index to bring to front */
+}
+
+.fc-timegrid .fc-timegrid-now-indicator-arrow {
+  @apply hidden; /* High z-index for arrow */
+}
+
+
+.fc-timegrid .fc-day-today .fc-timegrid-col-frame {
+  @apply border !border-accent-100 
+}
+
+
+.fc-list-empty {
+  @apply rounded-xl !bg-background-80
 }

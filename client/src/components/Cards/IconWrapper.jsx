@@ -16,7 +16,7 @@ function IconWrapper({ icon  : Icon, isActiveIcon, inheritColor , isInActiveIcon
     }
 
     const strokeWidthOptions = {
-      0 : 1,
+      0 : 0,
       1 : 1,
       2 : 1,
       3 : 1, 
@@ -55,7 +55,7 @@ function IconWrapper({ icon  : Icon, isActiveIcon, inheritColor , isInActiveIcon
       <Icon 
       size={(typeof customIconSize === 'number') ? iconSizeOptions[customIconSize] : (typeof size === 'number') ?  iconSizeOptions[size] : 24} 
       color={inheritColor ? "currentColor" : isActiveIcon ? colors["primary"] : isInActiveIcon ? colors["secondary"] : isErrorIcon ? colors['error'] : colors["white"]} 
-      strokeWidth={(typeof customStrokeWidth === 'number') ? strokeWidthOptions[customStrokeWidth] : (typeof size === 'number') ?  strokeWidthOptions[size] : 1.5} 
+      strokeWidth={(typeof customStrokeWidth === 'number') ? strokeWidthOptions[customStrokeWidth] : (typeof size === 'number') ?  strokeWidthOptions[size ? size : 1] : 1.5} 
       /> 
       : children}
     </div>

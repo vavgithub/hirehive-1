@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState, useRef, useMemo, useCallback } from 'react';
 import { useQuery } from "@tanstack/react-query";
 import FullCalendar from '@fullcalendar/react';
@@ -5,7 +6,6 @@ import listPlugin from '@fullcalendar/list';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import { formatDate } from '@fullcalendar/core';
-import { fetchCalendarDetails } from '../../services/admin.candidate.service';
 import './calendar.css';
 import { Button } from '../Buttons/Button';
 import IconWrapper from '../Cards/IconWrapper';
@@ -13,36 +13,32 @@ import { ChevronLeft, ChevronRight, SquareArrowOutUpRight } from 'lucide-react';
 import { DateTime } from 'luxon';
 import LoaderModal from '../Loaders/LoaderModal';
 import StyledMenu from '../MUIUtilities/StyledMenu';
+import Tabs from '../ui/Tabs';
+import Modal from '../Modals/Modal';
+import { showErrorToast } from '../ui/Toast';
+import { fetchCalendarDetails } from '../../services/admin.service';
 
-function CustomCalendar({ calendarType }) {
+function CustomCalendar() {
   const currentDate = useMemo(() => DateTime.local(), []);
-  const [startDate, setStartDate] = useState(currentDate.startOf('day').toUTC());
-  const [endDate, setEndDate] = useState(currentDate.endOf('week').toUTC());
+  const [eventsDate,setEventsDate] = useState({
+    startDate : currentDate.startOf('day').toUTC(),
+    endDate : currentDate.endOf('week').toUTC(),
+    calendarType : 'LIST'
+  })
   const [anchor, setAnchor] = useState(null);
   const [currentItemComponents, setCurrentItemComponents] = useState([]);
+  const [selectedEvent, setSelectedEvent] = useState(null);
 
   const { data, isLoading } = useQuery({
-    queryKey: ['interview-details', startDate, endDate, calendarType],
-    queryFn: () => fetchCalendarDetails(startDate, endDate, calendarType),
-    enabled: !!startDate && !!endDate && !!calendarType
+    queryKey: ['interview-details', eventsDate?.startDate, eventsDate?.endDate, eventsDate?.calendarType],
+    queryFn: () => fetchCalendarDetails(eventsDate?.startDate, eventsDate?.endDate, eventsDate?.calendarType),
+    enabled: !!eventsDate?.startDate && !!eventsDate?.endDate && !!eventsDate?.calendarType
   });
 
   const events = useMemo(() => data?.calendarEvents ?? [], [data]);
   const [eventMap, setEventMap] = useState({});
   const calendarRef = useRef();
 
-  useEffect(() => {
-    if (calendarType === 'WEEK') {
-      setStartDate(currentDate.startOf('week').toUTC());
-      setEndDate(currentDate.endOf('week').toUTC());
-    } else if (calendarType === 'MONTH') {
-      setStartDate(currentDate.startOf('month').toUTC());
-      setEndDate(currentDate.endOf('month').toUTC());
-    } else {
-      setStartDate(currentDate.startOf('day').toUTC());
-      setEndDate(currentDate.endOf('week').toUTC());
-    }
-  }, [calendarType, currentDate]);
 
   useEffect(() => {
     const map = {};
@@ -61,34 +57,66 @@ function CustomCalendar({ calendarType }) {
 
   const handlePrev = useCallback(() => {
     const calendarApi = calendarRef.current?.getApi();
-    const newStartDate = DateTime.fromJSDate(startDate.toJSDate()).minus({ weeks: 1 }).startOf('week').toUTC();
-    const newEndDate = DateTime.fromJSDate(startDate.toJSDate()).minus({ weeks: 1 }).endOf('week').toUTC();
+    const newStartDate = DateTime.fromJSDate(eventsDate?.startDate.toJSDate()).minus({ weeks: 1 }).startOf(eventsDate?.calendarType === 'MONTH' ? 'month' :'week').toUTC();
+    const newEndDate = DateTime.fromJSDate(eventsDate?.startDate.toJSDate()).minus({ weeks: 1 }).endOf(eventsDate?.calendarType === 'MONTH' ? 'month' :'week').toUTC();
 
-    setStartDate(newStartDate);
-    setEndDate(newEndDate);
+    setEventsDate((prev) => ({
+      ...prev,
+      startDate : newStartDate,
+      endDate : newEndDate
+    }))
     calendarApi?.prev();
-  }, [startDate]);
+  }, [eventsDate?.startDate]);
 
   const handleToday = () => {
     const calendarApi = calendarRef.current?.getApi();
     const today = DateTime.local();
-    const newStartDate = today.startOf('day').toUTC();
-    const newEndDate = today.endOf('week').toUTC();
+    const newStartDate = today.startOf(eventsDate?.calendarType === 'MONTH' ? 'month' : eventsDate?.calendarType === 'WEEK' ? 'week' : 'day').toUTC();
+    const newEndDate = today.endOf(eventsDate?.calendarType === 'MONTH' ? 'month' :'week' ).toUTC();
 
-    setStartDate(newStartDate);
-    setEndDate(newEndDate);
+    setEventsDate((prev) => ({
+      ...prev,
+      startDate : newStartDate,
+      endDate : newEndDate
+    }))
     calendarApi?.today();
   };
 
   const handleNext = useCallback(() => {
     const calendarApi = calendarRef.current?.getApi();
-    const newStartDate = DateTime.fromJSDate(startDate.toJSDate()).plus({ weeks: 1 }).startOf('week').toUTC();
-    const newEndDate = DateTime.fromJSDate(startDate.toJSDate()).plus({ weeks: 1 }).endOf('week').toUTC();
+    const newStartDate = DateTime.fromJSDate(eventsDate?.startDate.toJSDate()).plus({ weeks: 1 }).startOf(eventsDate?.calendarType === 'MONTH' ? 'month' :'week' ).toUTC();
+    const newEndDate = DateTime.fromJSDate(eventsDate?.startDate.toJSDate()).plus({ weeks: 1 }).endOf(eventsDate?.calendarType === 'MONTH' ? 'month' :'week' ).toUTC();
 
-    setStartDate(newStartDate);
-    setEndDate(newEndDate);
+    setEventsDate((prev) => ({
+      ...prev,
+      startDate : newStartDate,
+      endDate : newEndDate
+    }))
     calendarApi?.next();
-  }, [startDate]);
+  }, [eventsDate?.startDate]);
+
+  const handleEventClick = (info) => {
+    if (eventsDate?.calendarType === 'MONTH' || eventsDate?.calendarType === 'WEEK') {
+      setSelectedEvent({
+        title: info.event.title,
+        ...(eventInfo.event.extendedProps || {}),
+        start: info.event.start,
+        end: info.event.end
+      });
+    }
+  };
+
+  const handleModalClose = () => {
+    setSelectedEvent(null);
+  };
+
+  const formatTime = (date, omitPeriod = false) => {
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    const formatted = `${(hours % 12) || 12}:${minutes.toString().padStart(2, '0')}`;
+    if (omitPeriod) return formatted;
+    return `${formatted}${hours >= 12 ? 'pm' : 'am'}`;
+  };
 
   const renderEventContent = (eventInfo) => {
     const dateKey = eventInfo.event.start?.toDateString?.();
@@ -105,77 +133,114 @@ function CustomCalendar({ calendarType }) {
       return null;
     }
 
-    if (calendarType === 'MONTH') {
+    const formatTime = (date, omitPeriod = false) => {
+      const hours = date.getHours();
+      const minutes = date.getMinutes();
+      const formatted = `${(hours % 12) || 12}:${minutes.toString().padStart(2, '0')}`;
+      if (omitPeriod) return formatted;
+      return `${formatted}${hours >= 12 ? 'pm' : 'am'}`;
+    };
+
+    if (eventsDate?.calendarType === 'MONTH') {
       // Limit to 2 events in Month view
       const eventIndex = eventList.findIndex(
         (e) => e.title + new Date(e.start).toISOString() === eventInfo.event.title + eventInfo.event.start.toISOString()
       );
 
       if (eventIndex > 2) {
-  return null;
-}
+        return null;
+      }
 
-if (eventIndex === 2 && eventList.length > 3) {
-  const moreCount = eventList.length - 2;
-  return (
-    <div
-      className="bg-background-50 max-w-full text-ellipsis overflow-hidden p-2 rounded-xl px-4 cursor-pointer hover:bg-background-40"
-      onClick={(e) => {
-        setAnchor(e.currentTarget);
-        const additionalEvents = eventList.slice(2).map((event, idx) => ({
-          onClick: null,
-          content: () => (
-            <div key={idx} className="max-w-full text-ellipsis overflow-hidden p-2 rounded-xl px-4">
-              {new Date(event.start) <= now && (!event.end || new Date(event.end) > now) && (
-                <span className="w-2 h-2 bg-accent-100 rounded-full mr-2 inline-block"></span>
-              )}
-              {event.title}
-            </div>
-          )
-        }));
-        setCurrentItemComponents(additionalEvents);
-      }}
-    >
-      {moreCount} more
-    </div>
-  );
-}
+      if (eventIndex === 2 && eventList.length > 3) {
+        const moreCount = eventList.length - 2;
+        return (
+          <div
+            className="bg-background-50 max-w-full text-ellipsis overflow-hidden p-2 rounded-xl px-4 cursor-pointer hover:bg-background-40"
+            onClick={(e) => {
+              e.stopPropagation();       // ✅ Prevents bubbling to FullCalendar
+              e.preventDefault();        // ✅ Prevents default behavior (important)
+              setAnchor(e.currentTarget);
 
+              const additionalEvents = eventList.slice(2).map((event, idx) => ({
+                onClick: () => {
+                  // Open event modal or take any action
+                  setSelectedEvent({
+                    title: event.title,
+                    ...(event || {}),
+                    start: new Date(event.start),
+                    end: new Date(event.end),
+                  });
+                  setAnchor(null); // close the popup
+                },
+                content: () => (
+                  <div key={idx} className="max-w-full text-ellipsis overflow-hidden p-2 rounded-xl px-4">
+                    {new Date(event.start) <= now && (!event.end || new Date(event.end) > now) && (
+                      <span className="w-2 h-2 bg-accent-100 rounded-full mr-2 inline-block"></span>
+                    )}
+                    {event.title}
+                  </div>
+                ),
+              }));
+
+              setCurrentItemComponents(additionalEvents);
+            }}
+          >
+            {moreCount} more
+          </div>
+        );
+      }
 
       const isPast = start < now;
       const isHappening = start <= now && (!end || end > now);
 
       return (
-        <div className={(isPast ? 'bg-background-70' : 'bg-background-50') + ' max-w-full text-ellipsis overflow-hidden p-2 rounded-xl px-4'}>
+        <div 
+        onClick={isPast ?null : () => {
+          setSelectedEvent({
+            title: eventInfo.event.title,
+            ...(eventInfo.event.extendedProps || {}),
+            start: eventInfo.event.start,
+            end: eventInfo.event.end
+          });
+        }}
+        className={(isPast ? 'bg-background-70' : 'bg-background-50 cursor-pointer ') + ' max-w-full text-ellipsis overflow-hidden p-2 rounded-xl px-4'}>
           {isHappening && <span className='w-2 h-2 bg-accent-100 rounded-full mr-2 inline-block'></span>}
           {eventInfo.event.title}
         </div>
       );
-    } else if (calendarType === 'WEEK') {
+    } else if (eventsDate?.calendarType === 'WEEK') {
       const isPast = start < now;
       const isHappening = start <= now && (!end || end > now);
+      const timeText = end
+        ? `${formatTime(start, true)} - ${formatTime(end)}`
+        : formatTime(start);
 
       return (
-        <div className={(isPast ? 'bg-background-70' : 'bg-background-50') + ' max-w-full text-ellipsis overflow-hidden p-2 rounded-xl px-4'}>
-          {isHappening && <span className='w-2 h-2 bg-accent-100 rounded-full mr-2 inline-block'></span>}
-          {eventInfo.event.title}
+        <div 
+        onClick={isPast ?null : () => {
+        setSelectedEvent({
+          title : eventInfo.event.title,
+          ...(eventInfo.event.extendedProps || {}),
+          start: eventInfo.event.start,
+          end: eventInfo.event.end
+        });
+        }} 
+        className={(isPast ? ' bg-background-70' : 'bg-background-60 cursor-pointer ') + '  p-2 h-full  max-w-full whitespace-nowrap text-ellipsis overflow-hidden '}>
+          <div className={"flex items-center gap-2 " + (isPast ? 'opacity-35' : '')}>
+            {isHappening && <span className="w-2 h-2 bg-accent-100 rounded-full inline-block"></span>}
+            <span>{eventInfo.event.title}</span>
+          </div>
+          <p className="text-font-gray text-sm">{timeText}</p>
         </div>
       );
     } else {
-      const currentEventKey = eventInfo.event.title + eventInfo.event.start.toISOString();
+      const currentEventKey = eventInfo.event.id + eventInfo.event.title + eventInfo.event.start.toISOString();
       const lastEvent = eventList[eventList.length - 1];
-      const lastEventKey = lastEvent?.title + new Date(lastEvent.start).toISOString();
+      const lastEventKey = lastEvent?.id + lastEvent?.title + new Date(lastEvent.start).toISOString();
       const isLast = currentEventKey === lastEventKey;
+      
       const isPast = start < now;
       const isHappening = start <= now && (!end || end > now);
-
-      const formatTime = (date, omitPeriod = false) => {
-        const hours = date.getHours();
-        const minutes = date.getMinutes();
-        const formatted = `${(hours % 12) || 12}:${minutes.toString().padStart(2, '0')}`;
-        if (omitPeriod) return formatted;
-        return `${formatted}${hours >= 12 ? 'pm' : 'am'}`;
-      };
 
       const timeText = end
         ? `${formatTime(start, true)} – ${formatTime(end)}`
@@ -201,31 +266,104 @@ if (eventIndex === 2 && eventList.length > 3) {
     }
   };
 
+  const tabs = [
+    {
+      name: 'list',
+      label: 'List',
+    },
+    {
+      name: 'week',
+      label: 'Week',
+    },
+    {
+      name: 'month',
+      label: 'Month',
+    },
+  ];
+
+  const handleTabClick = (tab) => {
+        if (tab.toUpperCase() === 'WEEK') {
+      setEventsDate({
+        calendarType : tab.toUpperCase(),
+        startDate : currentDate.startOf('week').toUTC(),
+        endDate : currentDate.endOf('week').toUTC()
+      })
+    } else if (tab.toUpperCase() === 'MONTH') {
+      setEventsDate({
+        calendarType : tab.toUpperCase(),
+        startDate : currentDate.startOf('month').toUTC(),
+        endDate : currentDate.endOf('month').toUTC()
+      })
+    } else {
+      setEventsDate({
+        calendarType : tab.toUpperCase(),
+        startDate : currentDate.startOf('day').toUTC(),
+        endDate : currentDate.endOf('week').toUTC()
+      })
+    }
+  };
+
+  const onModalConfirm = () => {
+    let redirectLink = ''
+    if(selectedEvent?.joiningLink){
+        redirectLink = selectedEvent.joiningLink
+    }else if(selectedEvent?.htmlLink){
+        redirectLink = selectedEvent.htmlLink
+    }
+    if(redirectLink){
+      window.open(redirectLink)
+    }else{
+      showErrorToast('Error','No Meeting Links available.')
+    }
+    setSelectedEvent(null)
+  }
+
+  const modalTimeText = selectedEvent
+    ? selectedEvent.end
+      ? `${formatTime(selectedEvent.start, true)} - ${formatTime(selectedEvent.end)}`
+      : formatTime(selectedEvent.start)
+    : '';
+
   return (
     <div>
       {isLoading && <LoaderModal />}
-      <div className='flex mb-4 gap-4'>
-        <button onClick={handlePrev} className='bg-background-80 hover:bg-background-60 rounded-xl h-11 aspect-square flex justify-center items-center'>
-          <IconWrapper icon={ChevronLeft} size={0} customIconSize={5} />
-        </button>
-        <button onClick={handleToday} className='bg-background-80 hover:bg-background-60 rounded-xl h-11 aspect-square flex justify-center items-center px-12'>
-          {calendarType === 'LIST' ? 'Today' : currentDate.monthShort}
-        </button>
-        <button onClick={handleNext} className='bg-background-80 hover:bg-background-60 rounded-xl h-11 aspect-square flex justify-center items-center'>
-          <IconWrapper icon={ChevronRight} size={0} customIconSize={5} />
-        </button>
+      <div className='flex justify-between mb-4'>
+        <div className='flex gap-4'>
+          <button onClick={handlePrev} className='bg-background-80 hover:bg-background-60 rounded-xl h-11 aspect-square flex justify-center items-center'>
+            <IconWrapper icon={ChevronLeft} size={0} customIconSize={5} />
+          </button>
+          <button onClick={handleToday} className='bg-background-80 hover:bg-background-60 rounded-xl h-11 flex justify-center items-center px-12'>
+            {eventsDate?.calendarType === 'LIST' ? 'Today' : eventsDate?.calendarType === 'WEEK' ? 'This Week' : currentDate.monthShort}
+          </button>
+          <button onClick={handleNext} className='bg-background-80 hover:bg-background-60 rounded-xl h-11 aspect-square flex justify-center items-center'>
+            <IconWrapper icon={ChevronRight} size={0} customIconSize={5} />
+          </button>
+        </div>
+        <Tabs tabs={tabs} activeTab={eventsDate?.calendarType.toLowerCase()} handleTabClick={handleTabClick} />
       </div>
       <FullCalendar
-        key={calendarType}
+        key={eventsDate?.calendarType}
         ref={calendarRef}
         plugins={[listPlugin, dayGridPlugin, timeGridPlugin]}
-        initialView={calendarType === 'MONTH' ? 'dayGridMonth' : calendarType === 'WEEK' ? 'timeGridWeek' : 'listWeek'}
+        initialView={eventsDate?.calendarType === 'MONTH' ? 'dayGridMonth' : eventsDate?.calendarType === 'WEEK' ? 'timeGridWeek' : 'listWeek'}
         headerToolbar={false}
+        noEventsContent={() => (
+          <div className="text-center py-8 text-font-gray">
+            <h3>No Events Available.</h3>
+            <p className='text-white typography-body'>No events scheduled for this period.</p>
+          </div>
+        )}
         events={events}
         eventContent={renderEventContent}
+        allDaySlot={false}
+        views={{
+          timeGridWeek: {
+            nowIndicator: true // Enable current time indicator for WEEK view
+          }
+        }}
         height="auto"
         dayHeaderContent={(arg) => {
-          if (calendarType === 'LIST') {
+          if (eventsDate?.calendarType === 'LIST') {
             if (arg.isToday) {
               return (
                 <div className="fc-list-day-text-today mb-4">
@@ -239,23 +377,32 @@ if (eventIndex === 2 && eventList.length > 3) {
                 </div>
               );
             }
-          } else if (calendarType === 'MONTH') {
+          } else if (eventsDate?.calendarType === 'MONTH') {
             return (
               <div className="fc-list-day-text my-2">
                 {arg.text}
               </div>
             );
-          } else if (calendarType === 'WEEK') {
+          } else if (eventsDate?.calendarType === 'WEEK') {
             return (
               <div className="fc-list-day-text my-2">
-                {formatDate(arg.date, { weekday: 'long', day: 'numeric', month: 'short' })}
+                {formatDate(arg.date, { weekday: 'short', day: 'numeric', month: 'short' })}
               </div>
             );
           }
         }}
-        listDayFormat={calendarType === 'LIST' ? false : true}
+        listDayFormat={eventsDate?.calendarType === 'LIST' ? false : true}
       />
       <StyledMenu anchorEl={anchor} handleMenuClose={() => setAnchor(null)} itemComponents={currentItemComponents} />
+      <Modal
+        open={!!selectedEvent}
+        onClose={handleModalClose}
+        onConfirm={onModalConfirm}
+        customTitle={selectedEvent?.title || ''}
+        customMessage={`${selectedEvent?.title} will happen from ${modalTimeText}.`}
+        customConfirmLabel={selectedEvent?.joiningLink ? 'Join' : 'Join from Calendar'}
+        isReadyToClose={false}
+      />
     </div>
   );
 }
