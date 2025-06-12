@@ -88,12 +88,19 @@
 .fc-theme-standard .fc-list-day-cushion {
   @apply !flex text-white typography-h3 
 }
-
-
+.fc-scrollgrid .fc-daygrid-day-events {
+  @apply max-h-[10rem]
+}
+.fc-daygrid-dot-event:hover {
+  @apply !bg-none
+}
 .fc-scrollgrid {
-  @apply  !border !border-font-gray
+  @apply  !border !border-font-gray rounded-xl overflow-hidden
 }
 
+.fc-scrollgrid .fc-daygrid-day-top {
+  @apply flex-row
+}
 .fc-scrollgrid tr {
   @apply  !border !border-font-gray
 }
@@ -107,7 +114,7 @@
 }
 
 .fc-scrollgrid-sync-table .fc-day-past, .fc-scrollgrid-sync-table .fc-day-other {
-  @apply !bg-background-80 !text-font-gray
+  @apply !bg-background-80 !text-font-gray !opacity-50
 }
 
 .fc-scrollgrid-sync-table .fc-day-future {
