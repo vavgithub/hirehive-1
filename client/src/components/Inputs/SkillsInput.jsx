@@ -91,8 +91,8 @@ const SkillsInput = ({ value = [], onChange, allSkills = [] ,error }) => {
             aria-controls="skills-suggestions"
             aria-expanded={showSuggestions}
           /> 
-          <div className='absolute top-[50%] -translate-y-[50%] right-3 cursor-pointer' onClick={handleAddSkill}>
-            <IconWrapper icon={Plus} size={0} customIconSize={5} customStrokeWidth={5} />
+          <div className='absolute text-primary-100 hover:text-primary-200 top-[50%] -translate-y-[50%] right-3 cursor-pointer' onClick={handleAddSkill}>
+            <IconWrapper icon={Plus} size={0} inheritColor customIconSize={5} customStrokeWidth={5} />
           </div>
         </div>
       </div>
