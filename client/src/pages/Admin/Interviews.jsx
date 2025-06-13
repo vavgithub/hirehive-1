@@ -30,7 +30,12 @@ function Interviews() {
               <IconWrapper icon={FcGoogle} inheritColor customStrokeWidth={0} size={0} customIconSize={10} />
               <h3>Authorize Google Calendar</h3>
             </StyledCard>
-            <p className="text-center mb-6 typography-body text-font-gray">Authorize Google calendar to sync your Meetings and Events with HireHive.</p>
+            <p className="text-center typography-body text-font-gray">
+              Connect your Google Calendar to sync events.
+            </p>
+            <p className="text-center mb-4 typography-body text-font-gray">
+              Click "Authorize Google" to continue with HireHive.
+            </p>
           <div className="flex justify-center ">
             <Button className="" onClick={handleGoogleAuthorization} >Authorize Google</Button>
           </div>          

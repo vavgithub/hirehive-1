@@ -2,6 +2,9 @@ import React from 'react'
 import { Button } from '../Buttons/Button'
 import StyledCard from '../Cards/StyledCard';
 import OTPInput from '../Inputs/OTPInput';
+import { FcGoogle } from 'react-icons/fc';
+import { googleLogin } from '../../services/auth.service';
+import IconWrapper from '../Cards/IconWrapper';
 
 function OtpComponent({hasFooter = false,showSendOTP, inviteMail , handleSendOtp, handleOtpSubmit , email , otp , isSubmitting , otpError , setOtp, cardbg = ""}) {
    
@@ -18,6 +21,17 @@ function OtpComponent({hasFooter = false,showSendOTP, inviteMail , handleSendOtp
     }
   };
 
+  const registerGoogle = async () => {
+      try {
+        const result = await googleLogin()
+        if(result?.authorizationUrl){
+          window.location.href = result.authorizationUrl;
+        }
+      } catch (error) {
+        showErrorToast('Error',error?.message)
+      }
+  }
+
   return (
         <div className={"flex items-center  w-screen justify-center  bg-cover bg-verification " + (hasFooter ? 'h-[calc(100vh-5rem)]' : 'h-screen')}>
           <StyledCard padding={0}  extraStyles={"w-full mx-8 md:mx-0 max-w-lg space-y-8  shadow-xl " + cardbg}>
@@ -33,29 +47,27 @@ function OtpComponent({hasFooter = false,showSendOTP, inviteMail , handleSendOtp
                 {showSendOTP ? inviteMail :email}
               </h2>
               {showSendOTP ? 
-                <Button
-                variant="primary"
-                className="w-full mt-6"
-                type="button"
-                onClick={handleSendOtp}
-                >
-                  Send OTP
-                </Button>
+                <div>
+                  <Button
+                  variant="primary"
+                  className="w-full mt-6"
+                  type="button"
+                  onClick={handleSendOtp}
+                  >
+                    Send OTP
+                  </Button>
+                  <div className="flex items-center my-4">
+                      <hr className="flex-grow border-grey-100" />
+                      <span className="px-3 text-grey-100">OR</span>
+                      <hr className="flex-grow border-grey-100" />
+                  </div> 
+                  <button type="button" onClick={registerGoogle} variant="secondary"  className='mx-auto flex gap-4 bg-white text-black-100 py-2 px-12 rounded-full'>
+                      <IconWrapper icon={FcGoogle} size={0} customStrokeWidth={0} customIconSize={5} />
+                      Continue With Google
+                  </button>
+                </div>
                 :
               <>
-              {/* <div className="flex justify-center  space-x-2 mt-4 ">
-                {otp?.map((data, index) => (
-                  <input
-                    key={index}
-                    id={`otp-input-${index}`}
-                    type="number"
-                    maxLength="1"
-                    className="no-spinner otp-input"
-                    value={data}
-                    onChange={(e) => handleOtpChange(e.target, index)}
-                  />
-                ))}
-              </div> */}
               <div className='mt-4'>
                 <OTPInput 
                 length={6}

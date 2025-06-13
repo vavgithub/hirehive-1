@@ -252,7 +252,7 @@ function CustomCalendar() {
       
       const isPast = start < now;
       const isHappening = start <= now && (!end || end > now);
-      console.log(lastEventOfDay)
+
       const isFinalEventOfWeek = (lastEventOfDay?.id + lastEventOfDay?.title + new Date(lastEventOfDay.start).toISOString()) === currentEventKey;
 
       const timeText = end
