@@ -1,4 +1,6 @@
 import { useState, useMemo } from 'react';
+import IconWrapper from '../Cards/IconWrapper';
+import { Plus } from 'lucide-react';
 
 const SkillsInput = ({ value = [], onChange, allSkills = [] ,error }) => {
   const [inputValue, setInputValue] = useState('');
@@ -27,6 +29,11 @@ const SkillsInput = ({ value = [], onChange, allSkills = [] ,error }) => {
       setShowSuggestions(false);
     }
   };
+
+  const handleAddSkill = () => {
+      const trimmedSkill = inputValue.trim();
+      addSkill(trimmedSkill);
+  }
 
   const handleKeyDown = (event) => {
     if (['Enter', ','].includes(event.key)) {
@@ -72,17 +79,22 @@ const SkillsInput = ({ value = [], onChange, allSkills = [] ,error }) => {
             </button>
           </div>
         ))}
-        <input
-          type="text"
-          value={inputValue}
-          onChange={handleInputChange}
-          onKeyDown={handleKeyDown}
-          placeholder="Add Skills"
-          className={(error && '!border !border-red-500' )}
-          aria-autocomplete="list"
-          aria-controls="skills-suggestions"
-          aria-expanded={showSuggestions}
-        />
+        <div className='w-full relative'>
+          <input
+            type="text"
+            value={inputValue}
+            onChange={handleInputChange}
+            onKeyDown={handleKeyDown}
+            placeholder="Add Skills"
+            className={(error && '!border !border-red-500' )}
+            aria-autocomplete="list"
+            aria-controls="skills-suggestions"
+            aria-expanded={showSuggestions}
+          /> 
+          <div className='absolute top-[50%] -translate-y-[50%] right-3 cursor-pointer' onClick={handleAddSkill}>
+            <IconWrapper icon={Plus} size={0} customIconSize={5} customStrokeWidth={5} />
+          </div>
+        </div>
       </div>
       {showSuggestions && suggestions.length > 0 && (
         <div
