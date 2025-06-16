@@ -1131,6 +1131,69 @@ export const authorizeWithGoogle = asyncHandler(async (req,res) => {
   }
 })
 
+export const authorizeInvitedUsersWithGoogle = asyncHandler(async (req,res) => {
+  try {
+    const { token } = req.body;
+    if(!token){
+      return res.status(400).json({
+        status: 'error',
+        message: 'Invalid Registration token'
+      });
+    }
+
+    const decoded = verifyToken(token,process.env.JWT_SECRET);
+    if (!decoded) {
+      return res.status(401).json({ 
+        status: 'error',
+        message: 'Invalid or expired token'
+      });
+    }
+
+    const { email , firstName , lastName , role , company_id } = decoded;
+
+    const existingUser = await User.findOne({ email });
+
+    if(existingUser){
+      const company = await Company.findById({_id : company_id});
+      if(company 
+        && company?.invited_team_members?.find(member=>((member?.email === email) && (member?.status === "INVITED"))) 
+        && existingUser.verificationStage === "PASSWORD"){
+        //Managing requested user
+        await User.deleteOne({ email })
+      }else{
+        return res.status(401).json({ 
+          status: 'error',
+          message: 'Account already registered'
+        });
+      }
+    }
+    // Generate a secure random state value.
+    const state = randomBytes(32).toString('hex');
+
+    // Store state in the session
+    req.session.state = state;
+    req.session.useType = USE_TYPES['LOGIN/REGISTER']
+    if(token && email){
+      req.session.invited = {email , company_id}
+    }
+
+    const { authorizationUrl } = await getAuthorizationUrl(state,SCOPES.AUTH)
+
+    res.status(200).json({
+      status : 'success',
+      authorizationUrl,
+      message : "Processing Authorization Successfully"
+    })
+  } catch (error) {
+    console.log(error)
+      res.status(400).json({
+        status: 'error',
+        message: error.message || 'Error updating profile',
+        error: process.env.NODE_ENV === 'development' ? error : undefined
+    });
+  }
+})
+
 export const authorizeGoogleWorkspace = asyncHandler(async (req,res) => {
   try {
     // Generate a secure random state value.
@@ -1172,7 +1235,6 @@ export const redirectForGoogleToken = asyncHandler(async (req,res) => {
       let currentUserStage = null;
       if(tokens?.refresh_token){
         encryptedToken = encrypt(tokens?.refresh_token);
-        console.log('ENCRYPTED : ',encryptedToken)
       }
       //Check authorized  scopes by user
       if(tokens?.scope){
@@ -1229,6 +1291,31 @@ export const redirectForGoogleToken = asyncHandler(async (req,res) => {
                     }
                   }
                 })
+
+                //Invitees management
+                if(req.session?.invited?.email === createUser.email){
+                  const company = await Company.findOne({
+                    _id: req.session?.invited?.company_id,
+                    "invited_team_members.email": createUser.email
+                  });
+                  
+                  if (!company) {
+                    console.error("No matching document found!");
+                  } else {
+                    // Find the specific team member and update the `member_id`
+                    company?.invited_team_members.forEach(member => {
+                      if (member.email === createUser.email) {
+                        member.member_id = createUser._id;  // Update member_id
+                        member.status = "JOINED"
+                      }
+                    });
+
+                    // Save the updated document
+                    await company.save();
+                  }
+                  delete req.session.invited
+                }
+
                 currentUserStage = createUser.verificationStage
                 //Id only token
                 const token = generateToken(createUser._id)
