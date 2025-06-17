@@ -10,9 +10,10 @@ import { Company } from '../../models/admin/company.model.js';
 import jwt from 'jsonwebtoken'
 import { verifyToken } from '../../middlewares/authMiddleware.js';
 import { getCountryNameFromPhoneNumber } from '../../utils/countryUtils.js';
-import { checkScopes, getAccessOauthClient, getAuthorizationUrl, getOAuthTokens, getRoleBasedScopes, getUserInfo, SCOPE_KEYS, SCOPES, USE_TYPES } from '../../utils/integrations/google.js';
+import { checkScopes, getAccessOauthClient, getAuthorizationUrl, getOAuthTokens, getRoleBasedScopes, getUserInfo, revokeOauthClient, SCOPE_KEYS, SCOPES, USE_TYPES, WORKSPACE_KEYS } from '../../utils/integrations/google.js';
 import { randomBytes } from 'crypto';
 import { decrypt, encrypt } from '../../utils/crypto.js';
+import { error } from 'console';
 
 
 
@@ -1131,6 +1132,45 @@ export const authorizeWithGoogle = asyncHandler(async (req,res) => {
   }
 })
 
+export const unAuthorizeWithGoogle = asyncHandler(async (req,res) => {
+  try {    
+    const userId = req.user.id
+
+    if(!userId){
+      return res.status(400).json({
+        error : true,
+        message : 'Invalid permission for processing request.'
+      })
+    }
+
+    const user = await User.findById({_id : userId}).select('+integrations');
+    if(!user){
+      return res.status(400).json({
+        error : true,
+        message : 'Invalid request processing data.'
+      })
+    }
+    user.integrations.google.scopes = user.integrations.google.scopes?.includes('AUTH') ?  ['AUTH'] : []
+    const isRevoked = await revokeOauthClient(decrypt(user.integrations.google.token))
+    user.integrations.google.token = null
+    if(isRevoked){
+      await user.save()
+    }
+
+    res.status(200).json({
+      status : 'success',
+      message : "Revoked Authorization Successfully"
+    })
+  } catch (error) {
+    console.log(error)
+      res.status(400).json({
+        status: 'error',
+        message: error.message || 'Error revoking google creds',
+        error: process.env.NODE_ENV === 'development' ? error : undefined
+    });
+  }
+})
+
 export const authorizeInvitedUsersWithGoogle = asyncHandler(async (req,res) => {
   try {
     const { token } = req.body;
@@ -1225,6 +1265,8 @@ export const redirectForGoogleToken = asyncHandler(async (req,res) => {
   try {
     const query = req.query;
     const authState = query?.state ?? null;
+    const userRoleSession = req.session?.userRole;
+    const routeKey = (userRoleSession === 'Hiring Manager' ? 'hiring-manager' : userRoleSession === 'Design Reviewer' ?  'design-reviewer' : 'admin' )
     if(authState && req.session?.state && authState === req.session.state){
       //Authorized requests
       const code = query?.code;
@@ -1238,7 +1280,6 @@ export const redirectForGoogleToken = asyncHandler(async (req,res) => {
       }
       //Check authorized  scopes by user
       if(tokens?.scope){
-        console.log('SCOPES : ',tokens.scope.split(' '))
         scopes = tokens.scope.split(' ')
       }
 
@@ -1247,9 +1288,9 @@ export const redirectForGoogleToken = asyncHandler(async (req,res) => {
         console.log('TYPE',scopeKeys,req.session?.useType)
         //GOOGLE_AUTH_FUNCTIONALITIES
         if(req.session?.useType === USE_TYPES['LOGIN/REGISTER'] && scopeKeys.includes('AUTH') && tokens?.access_token){
+          //LOGIN/REGISTER MANAGEMENT
           const oauth2Client = await getAccessOauthClient(tokens?.access_token)
           const userInfo = await getUserInfo(oauth2Client)
-          console.log("INFO",userInfo)
           if(userInfo && userInfo?.email && userInfo?.verified_email){
               const isExisting = await User.findOne({email : userInfo?.email}).select('+integrations')
               if(isExisting){
@@ -1287,7 +1328,7 @@ export const redirectForGoogleToken = asyncHandler(async (req,res) => {
                   profilePicture : profilePictureUrl,
                   integrations : {
                     google : {
-                      scopes : scopeKeys
+                      scopes : scopeKeys.filter(scope => scope === SCOPE_KEYS.AUTH)
                     }
                   }
                 })
@@ -1307,11 +1348,15 @@ export const redirectForGoogleToken = asyncHandler(async (req,res) => {
                       if (member.email === createUser.email) {
                         member.member_id = createUser._id;  // Update member_id
                         member.status = "JOINED"
+                        createUser.role = member.role
                       }
                     });
 
                     // Save the updated document
                     await company.save();
+                    createUser.company_id = req.session?.invited?.company_id
+                    createUser.verificationStage = 'DONE'
+                    await createUser.save(); 
                   }
                   delete req.session.invited
                 }
@@ -1322,12 +1367,21 @@ export const redirectForGoogleToken = asyncHandler(async (req,res) => {
                 res.cookie('jwt', token, cookieOptions);
               }
           }else{
-            return res.redirect(`${process.env.FRONTEND_URL}/admin/register?error=Invalid_Creds`)
+            const encryptedError = encrypt('Invalid Credentials')
+            return res.redirect(`${process.env.FRONTEND_URL}/admin/register?error=${encryptedError}`)
           }
         }else if(req.session?.useType === USE_TYPES.WORKSPACE && scopeKeys.some(key => key !== "AUTH" && key in SCOPES) && tokens?.refresh_token){
-          
+          //WORKSPACE SCOPE MANAGEMENT
           if(req.session.userEmail){
             const isExisting = await User.findOne({ email : req.session.userEmail }).select('+integrations');
+            //Checks if access given to all scopes based on user role.
+            const hasAllExceptAuth = WORKSPACE_KEYS(isExisting.role)
+            .every(key => scopeKeys.includes(key));
+            if(!hasAllExceptAuth){
+              //Returns to user
+                return res.redirect(`${process.env.FRONTEND_URL}/${routeKey}/settings?error=ALLOW_ACCESS`)
+            }
+
             if(!isExisting?.integrations?.google?.token){
               isExisting.integrations.google.token = encryptedToken
             }
@@ -1343,9 +1397,7 @@ export const redirectForGoogleToken = asyncHandler(async (req,res) => {
         }
       }
       
-      console.log("ROLE", req.session.userRole)
-      const userRoleSession = req.session?.userRole;
-      const routeKey = ( userRoleSession === 'Admin' ? 'admin' : userRoleSession === 'Hiring Manager' ? 'hiring-manager' : 'design-reviewer' )
+      
       req.session = null
       return res.redirect(userRoleSession ? `${process.env.FRONTEND_URL}/${routeKey}/settings` : `${process.env.FRONTEND_URL}/admin/register?currentStage=${currentUserStage}`)
     }else{
@@ -1354,7 +1406,7 @@ export const redirectForGoogleToken = asyncHandler(async (req,res) => {
     }
   } catch (error) {
     console.log(error)
-    //Handle no invalid_grant error
+    //Handle invalid_grant error
     const userRoleSession = req.session?.userRole;
     req.session = null
     const routeKey = ( userRoleSession === 'Admin' ? 'admin' : userRoleSession === 'Hiring Manager' ? 'hiring-manager' : 'design-reviewer' )

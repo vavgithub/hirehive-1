@@ -3,10 +3,11 @@ import { Button } from '../Buttons/Button'
 import StyledCard from '../Cards/StyledCard';
 import OTPInput from '../Inputs/OTPInput';
 import { FcGoogle } from 'react-icons/fc';
-import { googleLogin } from '../../services/auth.service';
+import { googleInvitedLogin, googleLogin } from '../../services/auth.service';
 import IconWrapper from '../Cards/IconWrapper';
+import { showErrorToast } from '../ui/Toast';
 
-function OtpComponent({hasFooter = false,showSendOTP, inviteMail , handleSendOtp, handleOtpSubmit , email , otp , isSubmitting , otpError , setOtp, cardbg = ""}) {
+function OtpComponent({hasFooter = false,token,showSendOTP, inviteMail , handleSendOtp, handleOtpSubmit , email , otp , isSubmitting , otpError , setOtp, cardbg = ""}) {
    
 
     // Handler for OTP input change
@@ -23,7 +24,10 @@ function OtpComponent({hasFooter = false,showSendOTP, inviteMail , handleSendOtp
 
   const registerGoogle = async () => {
       try {
-        const result = await googleLogin()
+        if(!token){
+          return showErrorToast('Error','Invalid Login Request.')
+        }
+        const result = await googleInvitedLogin(token)
         if(result?.authorizationUrl){
           window.location.href = result.authorizationUrl;
         }

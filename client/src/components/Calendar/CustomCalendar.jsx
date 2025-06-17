@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState, useRef, useMemo, useCallback } from 'react';
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import FullCalendar from '@fullcalendar/react';
 import listPlugin from '@fullcalendar/list';
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -28,12 +28,24 @@ function CustomCalendar() {
   const [anchor, setAnchor] = useState(null);
   const [currentItemComponents, setCurrentItemComponents] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const queryClient = useQueryClient();
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading , error } = useQuery({
     queryKey: ['interview-details', eventsDate?.startDate, eventsDate?.endDate, eventsDate?.calendarType],
     queryFn: () => fetchCalendarDetails(eventsDate?.startDate, eventsDate?.endDate, eventsDate?.calendarType),
-    enabled: !!eventsDate?.startDate && !!eventsDate?.endDate && !!eventsDate?.calendarType
+    enabled: !!eventsDate?.startDate && !!eventsDate?.endDate && !!eventsDate?.calendarType,
+    retry: (failureCount, error) => {
+      if (error?.response?.status === 401) return false; // don't retry on unauthorized
+      return failureCount < 2; // otherwise allow 2 retries (or customize as needed)
+    }
   });
+
+  useEffect(()=> {
+    if(error?.response?.status === 401){
+      showErrorToast("Error",error.response.data.message || 'Please authorize google again to continue.')
+      queryClient.invalidateQueries(['auth'])
+    }
+  },[error])
 
   const events = useMemo(() => data?.calendarEvents ?? [], [data]);
   const [eventMap, setEventMap] = useState({});
@@ -68,8 +80,8 @@ function CustomCalendar() {
 
   const handlePrev = useCallback(() => {
     const calendarApi = calendarRef.current?.getApi();
-    const newStartDate = DateTime.fromJSDate(eventsDate?.startDate.toJSDate()).minus({ weeks: 1 }).startOf(eventsDate?.calendarType === 'MONTH' ? 'month' :'week').toUTC();
-    const newEndDate = DateTime.fromJSDate(eventsDate?.startDate.toJSDate()).minus({ weeks: 1 }).endOf(eventsDate?.calendarType === 'MONTH' ? 'month' :'week').toUTC();
+    const newStartDate = DateTime.fromJSDate(eventsDate?.startDate.toJSDate()).minus(eventsDate?.calendarType === 'MONTH'  ? { months: 1 } :{ weeks: 1 }).startOf(eventsDate?.calendarType === 'MONTH' ? 'month' :'week').toUTC();
+    const newEndDate = DateTime.fromJSDate(eventsDate?.startDate.toJSDate()).minus(eventsDate?.calendarType === 'MONTH'  ? { months: 1 } :{ weeks: 1 }).endOf(eventsDate?.calendarType === 'MONTH' ? 'month' :'week').toUTC();
 
     setEventsDate((prev) => ({
       ...prev,
@@ -95,8 +107,8 @@ function CustomCalendar() {
 
   const handleNext = useCallback(() => {
     const calendarApi = calendarRef.current?.getApi();
-    const newStartDate = DateTime.fromJSDate(eventsDate?.startDate.toJSDate()).plus({ weeks: 1 }).startOf(eventsDate?.calendarType === 'MONTH' ? 'month' :'week' ).toUTC();
-    const newEndDate = DateTime.fromJSDate(eventsDate?.startDate.toJSDate()).plus({ weeks: 1 }).endOf(eventsDate?.calendarType === 'MONTH' ? 'month' :'week' ).toUTC();
+    const newStartDate = DateTime.fromJSDate(eventsDate?.startDate.toJSDate()).plus(eventsDate?.calendarType === 'MONTH'  ? { months: 1 } :{ weeks: 1 }).startOf(eventsDate?.calendarType === 'MONTH' ? 'month' :'week' ).toUTC();
+    const newEndDate = DateTime.fromJSDate(eventsDate?.startDate.toJSDate()).plus(eventsDate?.calendarType === 'MONTH'  ? { months: 1 } :{ weeks: 1 }).endOf(eventsDate?.calendarType === 'MONTH' ? 'month' :'week' ).toUTC();
 
     setEventsDate((prev) => ({
       ...prev,
@@ -105,17 +117,6 @@ function CustomCalendar() {
     }))
     calendarApi?.next();
   }, [eventsDate?.startDate]);
-
-  const handleEventClick = (info) => {
-    if (eventsDate?.calendarType === 'MONTH' || eventsDate?.calendarType === 'WEEK') {
-      setSelectedEvent({
-        title: info.event.title,
-        ...(eventInfo.event.extendedProps || {}),
-        start: info.event.start,
-        end: info.event.end
-      });
-    }
-  };
 
   const handleModalClose = () => {
     setSelectedEvent(null);
@@ -164,10 +165,11 @@ function CustomCalendar() {
 
       if (eventIndex === 2 && eventList.length > 3) {
         const moreCount = eventList.length - 2;
+        const isPast = start < now; 
         return (
           <div
-            className="bg-background-50 max-w-full text-ellipsis overflow-hidden p-2 rounded-xl px-4 cursor-pointer hover:bg-background-40"
-            onClick={(e) => {
+            className={" max-w-full text-ellipsis overflow-hidden p-2 rounded-xl px-4  " + (isPast ? 'bg-background-70 ' : 'bg-background-50 hover:bg-background-40 cursor-pointer')}
+            onClick={ isPast ? null : (e) => {
               e.stopPropagation();       // ✅ Prevents bubbling to FullCalendar
               e.preventDefault();        // ✅ Prevents default behavior (important)
               setAnchor(e.currentTarget);
@@ -214,7 +216,7 @@ function CustomCalendar() {
             end: eventInfo.event.end
           });
         }}
-        className={(isPast ? 'bg-background-70' : 'bg-background-50 cursor-pointer ') + ' max-w-full text-ellipsis overflow-hidden p-2 rounded-xl px-4'}>
+        className={(isPast ? 'bg-background-70 text-font-gray ' : 'bg-background-50 cursor-pointer ') + ' max-w-full text-ellipsis overflow-hidden p-2 rounded-xl px-4'}>
           {isHappening && <span className='w-2 h-2 bg-accent-100 rounded-full mr-2 inline-block'></span>}
           {eventInfo.event.title}
         </div>

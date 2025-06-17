@@ -960,7 +960,7 @@ export const getCalendarDetails = async ( req, res ) => {
       const hasRequiredScopes = [SCOPE_KEYS.VIEW_CALENDAR, SCOPE_KEYS.VIEW_EVENTS].every(scope =>
         user?.integrations?.google?.scopes.includes(scope)
       );
-      if(hasRequiredScopes){
+      if(hasRequiredScopes && user.integrations.google.token){
 
         const oauth2Client = await getAuthorizedOauthClient(decrypt(user.integrations.google.token));
         const calendarclient = await getCalendarClient(oauth2Client);
@@ -1031,6 +1031,20 @@ export const getCalendarDetails = async ( req, res ) => {
     return res.status(200).json({ success : true, calendarEvents : formattedEvents, message : 'Fetched Calendar Details successfully.' });
   } catch (error) {
     console.log(error)
+    const isInvalidGrant = error?.response?.data?.error === 'invalid_grant' || error?.message?.includes('invalid_grant');
+    if (isInvalidGrant) {
+      const user_id = req.user.id;
+      const user = await User.findById({_id : user_id}).select('+integrations');
+      if(user){
+        user.integrations.google.token = null;
+        user.integrations.google.scopes = user.integrations.google.scopes?.includes('AUTH') ?  ['AUTH'] : []
+        await user.save()
+      }
+      return res.status(401).json({
+        error: true,
+        message: 'Your Google account authorization has expired or been revoked. Please reconnect your Google account.'
+      });
+    }
     res
     .status(400)
     .json({ message: "Error updating candidate", error: error.message });

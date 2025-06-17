@@ -164,6 +164,14 @@ export const router = createBrowserRouter([
         element: <Jobs />
       },
       {
+        path: "calendar",
+        element: <Interviews />
+      },
+      {
+        path: "settings",
+        element: <Settings />
+      },
+      {
         path: "terms-and-conditions",
         element: <TermsAndCondition />,
       },
@@ -308,7 +316,7 @@ export const router = createBrowserRouter([
         element: <Settings />
       },
       {
-        path: "interviews",
+        path: "calendar",
         element: <Interviews />
       },
       {
@@ -468,6 +476,14 @@ export const router = createBrowserRouter([
       {
         path: "dashboard",
         element: <Navigate to={'/design-reviewer/candidates'} />
+      },
+      {
+        path: "settings",
+        element: <Settings />
+      },
+      {
+        path: "calendar",
+        element: <Interviews />
       },
       {
         path: "terms-and-conditions",

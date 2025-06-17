@@ -1,5 +1,5 @@
 import express from 'express';
-import { registerUser, authUser, logoutUser, getUserProfile, getAvailableDesignReviewers, uploadProfilePicture, resetPassword, verifyOTP, forgotPassword, initializeRegistration, verifyOTPforAdmin, setPassword, completeHiringManagerRegistration, completeDesignReviewerRegistration, addTeamMembers, skipAddMember, editUserProfile, sendInviteOTP, verifyPassword, sendMemberRequest, uploadCompanyLogo, editCompanyProfile, authorizeGoogleWorkspace, redirectForGoogleToken, authorizeWithGoogle, checkAuthStatus } from '../../controllers/admin/auth.controller.js';
+import { registerUser, authUser, logoutUser, getUserProfile, getAvailableDesignReviewers, uploadProfilePicture, resetPassword, verifyOTP, forgotPassword, initializeRegistration, verifyOTPforAdmin, setPassword, completeHiringManagerRegistration, completeDesignReviewerRegistration, addTeamMembers, skipAddMember, editUserProfile, sendInviteOTP, verifyPassword, sendMemberRequest, uploadCompanyLogo, editCompanyProfile, authorizeGoogleWorkspace, redirectForGoogleToken, authorizeWithGoogle, checkAuthStatus, authorizeInvitedUsersWithGoogle, unAuthorizeWithGoogle } from '../../controllers/admin/auth.controller.js';
 import { protect, protectTokenWithoutVerification, protectWithoutVerification, roleProtect } from '../../middlewares/authMiddleware.js';
 import multer from 'multer';
 import { promises as fs } from 'fs';
@@ -100,9 +100,11 @@ router.post('/register/complete-design-reviewer', completeDesignReviewerRegistra
 
 //Integrations
 router.post('/google-login',authorizeWithGoogle)
+router.post('/google-login/invited',authorizeInvitedUsersWithGoogle)
 router.post('/register/check-auth-status', protectTokenWithoutVerification , checkAuthStatus);
 
 router.post('/google-authorize',protect,authorizeGoogleWorkspace)
+router.post('/google-unauthorize',protect,unAuthorizeWithGoogle)
 router.get('/google/redirect',redirectForGoogleToken)
 
   

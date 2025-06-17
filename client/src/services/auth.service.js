@@ -144,6 +144,11 @@ export const googleAuthorize = async () => {
   return response.data
 }
 
+export const googleUnAuthorize = async () => {
+  const response = await axios.post(`${API_URL}/google-unauthorize`);
+  return response.data
+}
+
 export const checkUserAuthStatus = async (errorToken) => {
   const response = await axios.post(`${API_URL}/register/check-auth-status${errorToken ? `?error=${errorToken}` : ''}`);
   return response.data
@@ -151,5 +156,10 @@ export const checkUserAuthStatus = async (errorToken) => {
 
 export const googleLogin = async () => {
   const response = await axios.post(`${API_URL}/google-login`);
+  return response.data
+}
+
+export const googleInvitedLogin = async (token) => {
+  const response = await axios.post(`${API_URL}/google-login/invited`,{token : token});
   return response.data
 }

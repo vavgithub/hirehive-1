@@ -91,7 +91,7 @@ function OtpForm({setCurrentStep}) {
   return (
     <div>
       {(verifyOnboardOTPMutation?.isPending || sendInviteOTPMutation?.isPending) && <LoaderModal />}
-      <OtpComponent hasFooter inviteMail={inviteMail} showSendOTP={onboardData?.email ? false : token} handleSendOtp={handleSendOtp} isSubmitting={verifyOnboardOTPMutation?.isPending} cardbg='bg-card-bg bg-cover bg-center bg-no-repeat' handleOtpSubmit={handleOtpSubmit} otpError={otpError} email={onboardData?.email} otp={otp} setOtp={setOtp}/>
+      <OtpComponent hasFooter inviteMail={inviteMail} token={token} showSendOTP={onboardData?.email ? false : token} handleSendOtp={handleSendOtp} isSubmitting={verifyOnboardOTPMutation?.isPending} cardbg='bg-card-bg bg-cover bg-center bg-no-repeat' handleOtpSubmit={handleOtpSubmit} otpError={otpError} email={onboardData?.email} otp={otp} setOtp={setOtp}/>
       <Footer />
     </div>
   )

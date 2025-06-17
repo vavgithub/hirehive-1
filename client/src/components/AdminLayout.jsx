@@ -257,7 +257,7 @@ const AdminLayout = () => {
     const renderBottomMenu = () => {
         return (
             <>
-                {user?.role === "Admin" && <NavItem to={getRoute(user.role,ROUTE_KEY.SETTINGS)} icon={() => <IconWrapper isInActiveIcon icon={Settings} />} activeIcon={() => <IconWrapper isActiveIcon icon={Settings} />}> Settings </NavItem>}
+                {hasRoutePermission(user.role,ROUTE_KEY.SETTINGS) && <NavItem to={getRoute(user.role,ROUTE_KEY.SETTINGS)} icon={() => <IconWrapper isInActiveIcon icon={Settings} />} activeIcon={() => <IconWrapper isActiveIcon icon={Settings} />}> Settings </NavItem>}
             </>
         )
     }
@@ -303,7 +303,7 @@ const AdminLayout = () => {
                  <DropDownNavItem to={getRoute(user.role,ROUTE_KEY.CANDIDATES)} submenu={candidatesSubMenu} icon={() => <IconWrapper isInActiveIcon icon={Users} />} activeIcon={() => <IconWrapper isActiveIcon icon={Users} />}>Candidates</DropDownNavItem> 
                  :<NavItem to={candidatesSubMenu[0]?.to} icon={candidatesSubMenu[0]?.icon} activeIcon={candidatesSubMenu[0]?.activeIcon}> {candidatesSubMenu[0]?.label}</NavItem>}
                 {hasRoutePermission(user?.role,ROUTE_KEY.REVIEWS) && <NavItem to={getRoute(user.role,ROUTE_KEY.REVIEWS)} icon={() => <IconWrapper isInActiveIcon icon={Star} />} activeIcon={() => <IconWrapper isActiveIcon icon={Star} />}>Reviews</NavItem>}
-                {hasRoutePermission(user?.role,ROUTE_KEY.INTERVIEWS) && <NavItem to={getRoute(user.role,ROUTE_KEY.INTERVIEWS)} icon={() => <IconWrapper isInActiveIcon icon={CalendarDays} />} activeIcon={() => <IconWrapper isActiveIcon icon={CalendarDays} />}>Calendar</NavItem>}
+                {hasRoutePermission(user?.role,ROUTE_KEY.CALENDAR) && <NavItem to={getRoute(user.role,ROUTE_KEY.CALENDAR)} icon={() => <IconWrapper isInActiveIcon icon={CalendarDays} />} activeIcon={() => <IconWrapper isActiveIcon icon={CalendarDays} />}>Calendar</NavItem>}
                 {hasRoutePermission(user?.role,ROUTE_KEY.TEAMS) && <NavItem to={getRoute(user.role,ROUTE_KEY.TEAMS)} hasHighlighter={newMembersCount > 0} icon={() => <IconWrapper isInActiveIcon icon={IdCard} />} activeIcon={() => <IconWrapper isActiveIcon icon={IdCard} />}>Teams</NavItem>}
                 {hasRoutePermission(user?.role,ROUTE_KEY.GUIDE) && <NavItem to={getRoute(user.role,ROUTE_KEY.GUIDE)} icon={() => <IconWrapper isInActiveIcon icon={FileText} />} activeIcon={() => <IconWrapper isActiveIcon icon={FileText} />}>Guide</NavItem>}
             </>

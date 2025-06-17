@@ -61,7 +61,7 @@ export const ROUTE_KEY = {
   JOBS_VIEW_JOB: "jobs_view_job",
   COMPANY_PROFILE_VIEW : 'company_profile_view',
   SETTINGS : 'settings',
-  INTERVIEWS : 'interviews',
+  CALENDAR : 'calendar',
 };
 
 export const ROLE_CONFIG = {
@@ -119,7 +119,7 @@ export const ROLE_CONFIG = {
       [ROUTE_KEY.GUIDE]: "/admin/guide",
       [ROUTE_KEY.COMPANY_PROFILE_VIEW] : '/admin/company',
       [ROUTE_KEY.SETTINGS] : '/admin/settings',
-      [ROUTE_KEY.INTERVIEWS] : '/admin/interviews',
+      [ROUTE_KEY.CALENDAR] : '/admin/calendar',
     },
   },
   [ROLES.HIRING_MANAGER]: {
@@ -176,7 +176,9 @@ export const ROLE_CONFIG = {
       [ROUTE_KEY.CREATE_JOB]: "/hiring-manager/jobs/all/create",
       [ROUTE_KEY.JOBS_VIEW_JOB]: "/hiring-manager/jobs/all/view",
       [ROUTE_KEY.GUIDE]: "/hiring-manager/guide",
-      [ROUTE_KEY.COMPANY_PROFILE_VIEW] : '/hiring-manager/company'
+      [ROUTE_KEY.COMPANY_PROFILE_VIEW] : '/hiring-manager/company',
+      [ROUTE_KEY.CALENDAR] : '/hiring-manager/calendar',
+      [ROUTE_KEY.SETTINGS] : '/hiring-manager/settings',
     },
   },
   [ROLES.DESIGN_REVIEWER]: {
@@ -193,7 +195,9 @@ export const ROLE_CONFIG = {
       [ROUTE_KEY.CANDIDATES_VIEW_CANDIDATE]: "/design-reviewer/candidates/view",
       [ROUTE_KEY.REVIEWS_VIEW_CANDIDATE]: "/design-reviewer/reviews/view-candidate",
       [ROUTE_KEY.ALL_CANDIDATES]: "/design-reviewer/candidates",
-      [ROUTE_KEY.COMPANY_PROFILE_VIEW] : '/design-reviewer/company'
+      [ROUTE_KEY.COMPANY_PROFILE_VIEW] : '/design-reviewer/company',
+      [ROUTE_KEY.CALENDAR] : '/design-reviewer/calendar',
+      [ROUTE_KEY.SETTINGS] : '/design-reviewer/settings',
     },
   },
   [ROLES.CANDIDATE]: {

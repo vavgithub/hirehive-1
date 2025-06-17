@@ -11,7 +11,7 @@ import { googleAuthorize } from "../../services/auth.service";
 
 function Interviews() {
   const { user } = useAuthContext();
-  console.log(user.hasAuth)
+
   const handleGoogleAuthorization = async () => {
       const response = await googleAuthorize();
       if(response?.authorizationUrl){

@@ -1,4 +1,5 @@
 import { google } from 'googleapis';
+import axios from 'axios';
 
 export const USE_TYPES = {
     'LOGIN/REGISTER' : 'LOGIN/REGISTER',
@@ -31,6 +32,19 @@ export const SCOPES = {
     "https://www.googleapis.com/auth/calendar.events"
   ]
 };
+
+export const WORKSPACE_KEYS = (role) => {
+    switch (role) {
+        case 'Admin':
+            return [SCOPE_KEYS.EDIT_CALENDAR,SCOPE_KEYS.VIEW_CALENDAR,SCOPE_KEYS.EDIT_EVENTS,SCOPE_KEYS.VIEW_EVENTS]    
+        case 'Hiring Manger':
+            return [SCOPE_KEYS.EDIT_CALENDAR,SCOPE_KEYS.VIEW_CALENDAR,SCOPE_KEYS.EDIT_EVENTS,SCOPE_KEYS.VIEW_EVENTS]  
+        case 'Design Reviewer':
+            return [SCOPE_KEYS.VIEW_CALENDAR,SCOPE_KEYS.VIEW_EVENTS]    
+        default:
+            break;
+    }
+}
 
 export const getRoleBasedScopes = (role) => {
     switch (role) {
@@ -129,6 +143,33 @@ export const getAuthorizedOauthClient = async (token,saveTokenCallback) => {
 
     return oauth2Client
 }
+
+export const revokeOauthClient = async (refreshToken) => {
+  try {
+    const params = new URLSearchParams();
+    params.append('token', refreshToken);
+
+    const result = await axios.post(
+      'https://oauth2.googleapis.com/revoke',
+      params.toString(),
+      {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      }
+    );
+
+    if (result.status === 200) {
+      return true;
+    } else {
+      console.error('Unexpected status:', result.status);
+      return false;
+    }
+  } catch (err) {
+    console.error('Token revocation failed:', err.response?.data || err.message);
+    return false;
+  }
+};
 
 export const getUserInfoClient = async (oauth2Client) => {
     // Now use oauth2Client to fetch user info
