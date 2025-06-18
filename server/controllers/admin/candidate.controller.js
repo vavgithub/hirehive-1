@@ -1426,6 +1426,7 @@ export const getJobBasedQuestionnaireDetails = async (req, res) => {
   }
 };
 
+//NOT USING -( ASSESSMENT RECORDING UPLOADED VIA FRONTEND) 
 export const uploadAssessmentRecording = async (req, res) => {
   try {
     console.log("Upload request received:", {
@@ -1440,11 +1441,11 @@ export const uploadAssessmentRecording = async (req, res) => {
       });
     }
 
-    // Pass the full file path directly
-    const videoUrl = await uploadToCloudinary(
-      req.file.path,
-      "assessment-recordings"
-    );
+    // // Pass the full file path directly
+    // const videoUrl = await uploadToCloudinary(
+    //   req.file.path,
+    //   "assessment-recordings"
+    // );
 
     return res.status(200).json({
       success: true,

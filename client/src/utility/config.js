@@ -1,1 +1,1 @@
-export const UNKNOWN_PROFILE_PICTURE_URL = 'https://res.cloudinary.com/djuwzdbwy/image/upload/v1743743999/Unknown_image_DARK_MODE_izdmv9.png'
+export const UNKNOWN_PROFILE_PICTURE_URL = 'https://d2zc0gy08nitgj.cloudfront.net/uploads/Unknown_image_DARK_MODE.png'
