@@ -1,5 +1,6 @@
 // utils/s3Uploader.js
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { promises as fs } from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -68,4 +69,16 @@ const getMimeType = (filePath) => {
 // 📁 Path Helper
 export const getUploadPath = (filename) => {
   return path.join(rootDir, 'uploads', filename);
+};
+
+
+export const generatePresignedUrl = async (key, contentType) => {
+  const command = new PutObjectCommand({
+    Bucket: process.env.AWS_S3_BUCKET_NAME,
+    Key: key,
+    ContentType: contentType,
+  });
+
+  const url = await getSignedUrl(s3Client, command, { expiresIn: 60 * 5 }); // 5 min expiry
+  return url;
 };

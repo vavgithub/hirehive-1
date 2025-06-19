@@ -5,6 +5,7 @@ import Modal from '../Modals/Modal';
 import { Button } from '../Buttons/Button';
 import axios from 'axios';
 import { showErrorToast, showSuccessToast } from '../ui/Toast';
+import { uploadScreenshotToS3 } from '../../utility/s3upload';
 
 const CLOUDINARY_URL_SS = import.meta.env.VITE_CLOUDINARY_URL_SS;
 const CLOUDINARY_SCREENSHOT_UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_SCREENSHOT_UPLOAD_PRESET;
@@ -70,41 +71,6 @@ function ContactUsForm({isOpen,setIsOpen}) {
     maxFiles: 1
   });
 
-  // Upload screenshot to Cloudinary
-  const uploadScreenshot = async (file) => {
-    try {
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('upload_preset', CLOUDINARY_SCREENSHOT_UPLOAD_PRESET);
-      formData.append('resource_type', 'auto');
-
-      const response = await axios.post(
-        CLOUDINARY_URL_SS,
-        formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-          onUploadProgress: (progressEvent) => {
-            const progress = Math.round(
-              (progressEvent.loaded * 100) / progressEvent.total
-            );
-            setUploadProgress(progress);
-          },
-        }
-      );
-
-      if (response.data.secure_url) {
-        return response.data.secure_url;
-      } else {
-        throw new Error("Cloudinary: Can't generate URL");
-      }
-    } catch (error) {
-      console.error("Cloudinary upload error:", error);
-      throw new Error(error.message || "Error uploading to Cloudinary");
-    }
-  };
-
   // Submit form data to Google Sheets
   const submitToGoogleSheets = async (data) => {
     try {
@@ -141,7 +107,8 @@ function ContactUsForm({isOpen,setIsOpen}) {
 
       // Upload screenshot to Cloudinary if a file was selected
       if (screenshotFile) {
-        screenshotUrl = await uploadScreenshot(screenshotFile);
+        // screenshotUrl = await uploadScreenshot(screenshotFile);
+        screenshotUrl = await uploadScreenshotToS3(screenshotFile,()=>{});
       }
 
       // Prepare data for Google Sheets
