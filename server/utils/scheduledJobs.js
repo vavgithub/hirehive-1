@@ -5,6 +5,7 @@ import moment from 'moment-timezone';
 import { getDesignTaskContent, getRejectionEmailContent } from './emailTemplates.js';
 import { sendEmail } from './sentEmail.js';
 import { REJECTION_REASON } from '../controllers/admin/hr.controller.js';
+import { removeEmojis } from './emojiRemover.js';
 
 const updateCallStatuses = async () => {
   const now = new Date();
@@ -106,8 +107,9 @@ const updateMailSendAndStatuses = async () => {
         const currentStageStatus = candidate?.jobApplications[0]?.stageStatuses.get(stage)?.status;
         if(candidate?.jobApplications[0]?.currentStage === "Design Task" && candidate?.jobApplications[0]?.stageStatuses.get("Design Task")?.status === "Pending"){
           // Send design email to candidate
+          const removedDescription = removeEmojis(candidate?.jobApplications[0]?.stageStatuses.get(stage)?.taskDescription)
           const emailSubject = `Value At Void : ${candidate?.jobApplications[0]?.jobApplied} | Design Task for ${candidate.firstName} (3 days)`;
-          const emailContent = getDesignTaskContent(candidate.firstName + " " + candidate.lastName,candidate?.jobApplications[0]?.jobApplied,candidate?.jobApplications[0]?.stageStatuses.get(stage)?.taskDescription,candidate?.jobApplications[0]?.stageStatuses.get(stage)?.currentCall?.scheduledDate,candidate?.jobApplications[0]?.stageStatuses.get(stage)?.currentCall?.scheduledTime)
+          const emailContent = getDesignTaskContent(candidate.firstName + " " + candidate.lastName,candidate?.jobApplications[0]?.jobApplied,removedDescription,candidate?.jobApplications[0]?.stageStatuses.get(stage)?.currentCall?.scheduledDate,candidate?.jobApplications[0]?.stageStatuses.get(stage)?.currentCall?.scheduledTime)
   
           await sendEmail(candidate?.email, emailSubject, emailContent,"Design Task");
         }else{
