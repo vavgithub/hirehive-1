@@ -21,7 +21,7 @@ function App() {
             <StatePreserver>
               <RouterProvider router={router} />
               <StyledToastContainer />
-            </StatePreserver>
+            </StatePreserver> 
           </AuthProvider>
         </Provider>
       </ThemeProvider>
