@@ -40,7 +40,7 @@ jobs:
 
       - name: Sync build to S3 /frontend folder (excluding index.html)
         run: |
-          aws s3 sync build/ s3://$S3_BUCKET_NAME/frontend \
+          aws s3 sync dist/ s3://$S3_BUCKET_NAME/frontend \
             --delete \
             --exclude "index.html" \
             --cache-control "max-age=31536000,public"
@@ -49,7 +49,7 @@ jobs:
 
       - name: Upload index.html with no-cache
         run: |
-          aws s3 cp build/index.html s3://$S3_BUCKET_NAME/frontend/index.html \
+          aws s3 cp dist/index.html s3://$S3_BUCKET_NAME/frontend/index.html \
             --cache-control "no-cache, no-store, must-revalidate" \
             --content-type "text/html"
         env:
