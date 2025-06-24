@@ -149,10 +149,11 @@ async function renameTechToHTML() {
   }
 }
 
+let server;
 
 connectDB()
   .then(() => {
-    app.listen(PORT, () =>
+    server = app.listen(PORT, () =>
       console.log(
         `Server running in ${environment} mode on port ${PORT}`
       )
@@ -174,6 +175,34 @@ connectDB()
   .catch((error) => {
     console.log(error);
   });
+
+const shutdown = async () => {
+  console.log("\n🧹 Gracefully shutting down...");
+
+  try {
+    if (server) {
+      await new Promise((resolve, reject) => {
+        server.close((err) => {
+          if (err) return reject(err);
+          console.log("🛑 Closed HTTP server");
+          resolve();
+        });
+      });
+    }
+
+    await mongoose.connection.close();
+    console.log("🔌 MongoDB connection closed");
+
+    process.exit(0);
+  } catch (err) {
+    console.error("❌ Error during shutdown", err);
+    process.exit(1);
+  }
+};
+
+// ✅ Listen for shutdown signals at root level
+process.on("SIGINT", shutdown);
+process.on("SIGTERM", shutdown);
 
 app.get("/", (req, res) => {
   res.send("Welcome to HireHive Job Portal API");
