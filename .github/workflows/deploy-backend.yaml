@@ -1,0 +1,36 @@
+name: Deploy Backend with CodeDeploy
+
+on:
+  push:
+    branches:
+      - prod-main
+    paths:
+      - 'server/**'
+      - 'scripts/**'
+      - 'appspec.yml'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Get latest commit SHA
+        id: vars
+        run: echo "commit_id=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Trigger CodeDeploy deployment
+        run: |
+          aws deploy create-deployment \
+            --application-name ${{ secrets.CODEDEPLOY_APP_NAME }} \
+            --deployment-group-name ${{ secrets.CODEDEPLOY_GROUP_NAME }} \
+            --github-location repository=${{ secrets.REPO_NAME }},commitId=${{ steps.vars.outputs.commit_id }} \
+            --deployment-config-name CodeDeployDefault.AllAtOnce
