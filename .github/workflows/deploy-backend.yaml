@@ -30,7 +30,7 @@ jobs:
             --document-name "AWS-RunShellScript" \
             --comment "CI/CD: Deploy server via GitHub Actions" \
             --instance-ids "$INSTANCE_ID" \
-            --parameters 'commands=[
+            --parameters commands='[
               "cd /home/ubuntu/hirehive-1",
               "sudo apt-get update && sudo apt-get install unzip -y",
               "cp server/.env.staging .env.staging.bak || true",
@@ -45,7 +45,7 @@ jobs:
               "mv .env.staging.bak server/.env.staging || true",
               "cd server",
               "sudo chown -R ubuntu:ubuntu /home/ubuntu/.pm2",
-              "PID=$(lsof -t -i:8008) && if [ -n \"$PID\" ]; then kill -9 $PID; fi",
+              "PID=$(lsof -t -i:8008) && if [ -n \\"$PID\\" ]; then kill -9 $PID; fi",
               "sudo -i -u ubuntu bash -c 'cd /home/ubuntu/hirehive-1/server && npm ci'",
               "sudo -i -u ubuntu bash -c 'export HOME=/home/ubuntu && pm2 delete hhv-staging || true'",
               "sudo -i -u ubuntu bash -c 'export HOME=/home/ubuntu && pm2 start npm --name hhv-staging --cwd /home/ubuntu/hirehive-1/server -- run staging'",
