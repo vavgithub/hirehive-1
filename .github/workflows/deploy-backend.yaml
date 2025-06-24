@@ -15,49 +15,53 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Deploy to EC2 via SSM
+      - name: Upload and deploy to EC2
         env:
           INSTANCE_ID: ${{ secrets.EC2_INSTANCE_ID }}
           REGION: ${{ secrets.AWS_REGION }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
+          export AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID"
+          export AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY"
           export AWS_DEFAULT_REGION="$REGION"
-
-          SCRIPT=$(cat <<'EOF'
-          sudo apt-get update && sudo apt-get install unzip -y
-          sudo npm install pm2 -g
-
-          # Prepare deploy folder
-          cd /home/ubuntu/hirehive-1 || exit 1
-          cp server/.env.staging server/.env.staging.bak || true
-          rm -rf server/*
-          mkdir -p /tmp/server-deploy
-          curl -L -o /tmp/server-deploy/source.zip https://github.com/${{ github.repository }}/archive/${{ github.sha }}.zip
-          unzip -o /tmp/server-deploy/source.zip -d /tmp/server-deploy/
-          EXTRACTED_PATH=$(find /tmp/server-deploy -maxdepth 1 -type d -name 'hirehive-1-*' | head -n 1)
-          cp -r "$EXTRACTED_PATH/server/." /home/ubuntu/hirehive-1/server/
-          mv server/.env.staging.bak server/.env.staging || true
-
-          # Run as ubuntu user
-          sudo -u ubuntu bash -lc '
-            cd /home/ubuntu/hirehive-1/server
-            npm ci
-            pm2 stop hhv-staging || true
-            pm2 delete hhv-staging || true
-            pm2 start npm --name hhv-staging -- run staging
-            pm2 save
-          '
-
-          rm -rf /tmp/server-deploy
-          EOF
-          )
 
           aws ssm send-command \
             --region "$REGION" \
             --document-name "AWS-RunShellScript" \
             --comment "CI/CD: Deploy server via GitHub Actions" \
             --instance-ids "$INSTANCE_ID" \
-            --parameters "commands=[\"$SCRIPT\"]" \
+            --parameters 'commands=[
+              "sudo -u ubuntu bash -c '\''
+
+                cd /home/ubuntu/hirehive-1 || exit 1
+
+                sudo apt-get update && sudo apt-get install unzip -y
+
+                cp server/.env.staging .env.staging.bak || true
+                rm -rf server/*
+                mkdir -p /tmp/server-deploy
+
+                curl -L -o /tmp/server-deploy/source.zip https://github.com/${{ github.repository }}/archive/${{ github.sha }}.zip
+                unzip -o /tmp/server-deploy/source.zip -d /tmp/server-deploy/
+
+                EXTRACTED=$(find /tmp/server-deploy -maxdepth 1 -type d -name \"hirehive-1-*\")
+                cp -r \"$EXTRACTED/server/.\" /home/ubuntu/hirehive-1/server/
+
+                cd /home/ubuntu/hirehive-1
+                mv server/.env.staging.bak server/.env.staging || true
+
+                cd server
+                npm ci
+
+                pm2 stop hhv-staging || true
+                pm2 delete hhv-staging || true
+                pm2 start npm --name hhv-staging -- run staging
+                pm2 save
+
+                rm -rf /tmp/server-deploy
+
+              '\'"
+            ]' \
             --timeout-seconds 600 \
             --output text
