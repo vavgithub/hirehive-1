@@ -15,6 +15,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Zip server folder
+        run: zip -r server.zip server
+
       - name: Upload and deploy to EC2
         env:
           INSTANCE_ID: ${{ secrets.EC2_INSTANCE_ID }}
@@ -22,46 +25,30 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
-          export AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID"
-          export AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY"
-          export AWS_DEFAULT_REGION="$REGION"
-
           aws ssm send-command \
             --region "$REGION" \
             --document-name "AWS-RunShellScript" \
             --comment "CI/CD: Deploy server via GitHub Actions" \
             --instance-ids "$INSTANCE_ID" \
             --parameters 'commands=[
-              "sudo -u ubuntu bash -c '\''
-
-                cd /home/ubuntu/hirehive-1 || exit 1
-
-                sudo apt-get update && sudo apt-get install unzip -y
-
-                cp server/.env.staging .env.staging.bak || true
-                rm -rf server/*
-                mkdir -p /tmp/server-deploy
-
-                curl -L -o /tmp/server-deploy/source.zip https://github.com/${{ github.repository }}/archive/${{ github.sha }}.zip
-                unzip -o /tmp/server-deploy/source.zip -d /tmp/server-deploy/
-
-                EXTRACTED=$(find /tmp/server-deploy -maxdepth 1 -type d -name \"hirehive-1-*\")
-                cp -r \"$EXTRACTED/server/.\" /home/ubuntu/hirehive-1/server/
-
-                cd /home/ubuntu/hirehive-1
-                mv server/.env.staging.bak server/.env.staging || true
-
-                cd server
-                npm ci
-
-                pm2 stop hhv-staging || true
-                pm2 delete hhv-staging || true
-                pm2 start npm --name hhv-staging -- run staging
-                pm2 save
-
-                rm -rf /tmp/server-deploy
-
-              '\'"
+              "cd /home/ubuntu/hirehive-1",
+              "sudo apt-get update && sudo apt-get install unzip -y",
+              "cp server/.env.staging .env.staging.bak || true",
+              "rm -rf server/*",
+              "mkdir -p /tmp/server-deploy",
+              "curl -L -o /tmp/server-deploy/source.zip https://github.com/${{ github.repository }}/archive/${{ github.sha }}.zip",
+              "unzip -o /tmp/server-deploy/source.zip -d /tmp/server-deploy/",
+              "cd /tmp/server-deploy",
+              "FOLDER=$(find . -maxdepth 1 -type d -name '\''hirehive-1-*'\'')",
+              "cp -r $FOLDER/server/* /home/ubuntu/hirehive-1/server/",
+              "cd /home/ubuntu/hirehive-1",
+              "mv .env.staging.bak server/.env.staging || true",
+              "cd server",
+              "npm ci",
+              "export HOME=/home/ubuntu && pm2 delete hhv-staging || true",
+              "export HOME=/home/ubuntu && pm2 start npm --name 'hhv-staging' -- run staging",
+              "export HOME=/home/ubuntu && pm2 save",
+              "rm -rf /tmp/server-deploy"
             ]' \
             --timeout-seconds 600 \
             --output text
