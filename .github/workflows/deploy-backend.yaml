@@ -32,16 +32,21 @@ jobs:
             --instance-ids "$INSTANCE_ID" \
             --parameters 'commands=[
               "cd /home/ubuntu/hirehive-1",
+              "sudo apt-get update && sudo apt-get install unzip -y",
               "cp server/.env.staging .env.staging.bak || true",
               "rm -rf server/*",
-              "mkdir -p tmp-server-deploy",
-              "curl -L -o tmp-server-deploy/source.zip https://github.com/${{ github.repository }}/archive/${{ github.sha }}.zip",
-              "unzip -o tmp-server-deploy/source.zip -d tmp-server-deploy/",
-              "cp -r tmp-server-deploy/${{ github.repository }}*/server/* server/",
+              "mkdir -p /tmp/server-deploy",
+              "curl -L -o /tmp/server-deploy/source.zip https://github.com/${{ github.repository }}/archive/${{ github.sha }}.zip",
+              "unzip -o /tmp/server-deploy/source.zip -d /tmp/server-deploy/",
+              "cd /tmp/server-deploy",
+              "FOLDER=$(find . -maxdepth 1 -type d -name '\''hirehive-1-*'\'')",
+              "cp -r $FOLDER/server/* /home/ubuntu/hirehive-1/server/",
+              "cd /home/ubuntu/hirehive-1",
               "mv .env.staging.bak server/.env.staging || true",
               "cd server",
               "npm ci",
-              "pm2 reload hhv-staging"
+              "pm2 reload hhv-staging",
+              "rm -rf /tmp/server-deploy"
             ]' \
             --timeout-seconds 600 \
             --output text

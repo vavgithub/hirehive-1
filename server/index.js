@@ -54,7 +54,7 @@ app.use(
     maxAge: 24 * 60 * 60 * 1000, // Cookie expiration time (1 day in milliseconds)
   })
 );
- 
+
 // Middleware setup
 app.use(express.json({ limit: "30mb", extended: true }));
 app.use(express.urlencoded({ limit: "30mb", extended: true }));
