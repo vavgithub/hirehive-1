@@ -45,8 +45,8 @@ jobs:
               "mv .env.staging.bak server/.env.staging || true",
               "cd server",
               "npm ci",
-              "pm2 restart hhv-staging || pm2 start npm --name 'hhv-staging' -- run staging",
-              "pm2 save",
+              "export HOME=/home/ubuntu && pm2 restart hhv-staging || pm2 start npm --name '\''hhv-staging'\'' -- run staging",
+              "export HOME=/home/ubuntu && pm2 save",
               "rm -rf /tmp/server-deploy"
             ]' \
             --timeout-seconds 600 \
