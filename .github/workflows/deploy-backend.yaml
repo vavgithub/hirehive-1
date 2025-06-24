@@ -43,11 +43,7 @@ jobs:
               "cp -r $FOLDER/server/* /home/ubuntu/hirehive-1/server/",
               "cd /home/ubuntu/hirehive-1",
               "mv .env.staging.bak server/.env.staging || true",
-              "cd server",
-              "npm ci",
-              "export HOME=/home/ubuntu && pm2 delete hhv-staging || true",
-              "export HOME=/home/ubuntu && pm2 start npm --name 'hhv-staging' -- run staging",
-              "export HOME=/home/ubuntu && pm2 save",
+              "sudo -u ubuntu bash -lc 'cd /home/ubuntu/hirehive-1/server && npm ci && pm2 delete hhv-staging || true && pm2 start npm --name hhv-staging -- run staging && pm2 save'",
               "rm -rf /tmp/server-deploy"
             ]' \
             --timeout-seconds 600 \
