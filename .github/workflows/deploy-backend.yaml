@@ -45,12 +45,10 @@ jobs:
               "mv .env.staging.bak server/.env.staging || true",
               "cd server",
               "npm ci",
-
               "PID=$(lsof -t -i:8008) && if [ -n \"$PID\" ]; then kill -9 $PID; fi",
-              "sudo -i -u ubuntu bash -c 'export HOME=/home/ubuntu && pm2 delete hhv-staging || true'",
-              "sudo -i -u ubuntu bash -c 'export HOME=/home/ubuntu && pm2 start npm --name \"hhv-staging\" --cwd /home/ubuntu/hirehive-1/server -- run staging'",
-              "sudo -i -u ubuntu bash -c 'export HOME=/home/ubuntu && pm2 save'",
-
+              "sudo -i -u ubuntu bash -c '\''export HOME=/home/ubuntu && pm2 delete hhv-staging || true'\''",
+              "sudo -i -u ubuntu bash -c '\''export HOME=/home/ubuntu && pm2 start npm --name \"hhv-staging\" --cwd /home/ubuntu/hirehive-1/server -- run staging'\''",
+              "sudo -i -u ubuntu bash -c '\''export HOME=/home/ubuntu && pm2 save'\''",
               "rm -rf /tmp/server-deploy"
             ]' \
             --timeout-seconds 600 \
