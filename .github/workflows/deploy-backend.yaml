@@ -45,9 +45,11 @@ jobs:
               "mv .env.staging.bak server/.env.staging || true",
               "cd server",
               "npm ci",
-              "export HOME=/home/ubuntu && pm2 delete hhv-staging || true",
-              "export HOME=/home/ubuntu && pm2 start npm --name 'hhv-staging' -- run staging",
-              "export HOME=/home/ubuntu && pm2 save",
+
+              "sudo -u ubuntu -i bash -c '\''export HOME=/home/ubuntu && pm2 delete hhv-staging || true'\''",
+              "sudo -u ubuntu -i bash -c '\''export HOME=/home/ubuntu && pm2 start npm --name \"hhv-staging\" -- run staging'\''",
+              "sudo -u ubuntu -i bash -c '\''export HOME=/home/ubuntu && pm2 save'\''",
+
               "rm -rf /tmp/server-deploy"
             ]' \
             --timeout-seconds 600 \
