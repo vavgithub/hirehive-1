@@ -41,7 +41,7 @@ import { Company } from "./models/admin/company.model.js";
 import { seedTemplates } from "./models/admin/assessment.model.js";
 import { seedTasks } from "./models/admin/task.model.js";
 
-const app = express();
+const app = express(); 
 await initializeUploadDir(envConfig.UPLOAD_DIR);
 
 // Apply CORS configuration
