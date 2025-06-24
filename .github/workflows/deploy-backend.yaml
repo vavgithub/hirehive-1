@@ -46,10 +46,10 @@ jobs:
               "cd server",
               "npm ci",
               "sudo chown -R ubuntu:ubuntu /home/ubuntu/hirehive-1 /home/ubuntu/.pm2",
-              "sudo -u ubuntu bash -lc \\\"cd /home/ubuntu/hirehive-1/server && npm ci\\\"",
-              "sudo -u ubuntu bash -lc \\\"pm2 delete hhv-staging || true\\\"",
-              "sudo -u ubuntu bash -lc \\\"pm2 start npm --name hhv-staging -- run staging\\\"",
-              "sudo -u ubuntu bash -lc \\\"pm2 save\\\"",
+              "sudo -u ubuntu bash -lc \"cd /home/ubuntu/hirehive-1/server && npm ci\"",
+              "sudo -u ubuntu bash -lc \"pm2 delete hhv-staging || true\"",
+              "sudo -u ubuntu bash -lc \"pm2 start npm --name hhv-staging -- run staging\"",
+              "sudo -u ubuntu bash -lc \"pm2 save\"",
               "rm -rf /tmp/server-deploy"
             ]' \
             --timeout-seconds 600 \
