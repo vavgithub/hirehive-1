@@ -45,7 +45,7 @@ jobs:
               "mv .env.staging.bak server/.env.staging || true",
               "cd server",
               "npm ci",
-              "pm2 reload hhv-staging",
+              "pm2 restart hhv-staging",
               "rm -rf /tmp/server-deploy"
             ]' \
             --timeout-seconds 600 \
