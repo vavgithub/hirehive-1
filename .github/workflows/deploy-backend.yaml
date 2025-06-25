@@ -14,6 +14,9 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
+      - name: Clean node_modules if exists
+        run: rm -rf server/node_modules
+
       - name: Zip the server folder
         run: |
           cd server
