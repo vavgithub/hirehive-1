@@ -16,7 +16,7 @@ jobs:
       - name: Install Dependencies & Build (CI on GitHub)
         run: |
           cd server
-          npm ci
+          npm install
           cd ..
 
       - name: Zip the built server
