@@ -625,8 +625,16 @@ export const updateAssigneeForMultipleCandidates = async (req,res) => {
       stageStatus.assignedTo = assigneeId;
 
       // Update the status based on the stage
-      if (['Portfolio', 'Design Task'].includes(eachCandidate?.stage)) {
+      if (eachCandidate?.stage === 'Portfolio') {
         stageStatus.status = assigneeId ? 'Under Review' : 'Not Assigned';
+      }
+
+      if (eachCandidate?.stage === 'Design Task') {
+        if (stageStatus?.submittedTaskLink && stageStatus?.submittedComment) {
+          stageStatus.status = assigneeId ? 'Under Review' : stageStatus.status;
+        }else{
+          stageStatus.assignedTo = null;
+        }
       }
       // Add more stage-specific logic here as needed
 
