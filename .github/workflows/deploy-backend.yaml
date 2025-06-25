@@ -2,7 +2,8 @@ name: Deploy Backend via CodeDeploy
 
 on:
   push:
-    branches: [prod-main]
+    branches: 
+      - prod-main
     paths:
       - 'server/**'
 
@@ -13,9 +14,10 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Zip the built server
+      - name: Zip the server folder
         run: |
-          zip -r backend.zip server
+          cd server
+          zip -r ../backend.zip .
 
       - name: Upload to S3
         env:
@@ -25,7 +27,7 @@ jobs:
         run: |
           aws s3 cp backend.zip s3://hirehive/deployments/backend.zip
 
-      - name: Create CodeDeploy Deployment
+      - name: Create Deployment
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -37,14 +39,17 @@ jobs:
             --s3-location bucket=hirehive,bundleType=zip,key=deployments/backend.zip \
             --file-exists-behavior OVERWRITE > deploy.json
 
-      - name: Wait for Deployment
+      - name: Wait for deployment to complete
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
         run: |
           DEPLOY_ID=$(jq -r '.deploymentId' deploy.json)
+          echo "Waiting for deployment $DEPLOY_ID..."
           aws deploy wait deployment-successful --deployment-id $DEPLOY_ID
+          echo "Deployment succeeded."
+
 
       - name: Cleanup S3
         if: success()
