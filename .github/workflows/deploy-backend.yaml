@@ -1,50 +1,52 @@
-name: Deploy Backend Server to EC2 (Production)
+name: Deploy Backend via CodeDeploy
 
 on:
   push:
-    branches: [prod-main]
+    branches: 
+      - prod-main
     paths:
       - 'server/**'
 
 jobs:
   deploy:
-    name: Deploy Server via SSM
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
+      - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Zip server folder
-        run: zip -r server.zip server
+      - name: Zip the server folder
+        run: |
+          cd server
+          zip -r ../backend.zip .
 
-      - name: Upload and deploy to EC2
+      - name: Upload to S3
         env:
-          INSTANCE_ID: ${{ secrets.EC2_INSTANCE_ID }}
-          REGION: ${{ secrets.AWS_REGION }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
         run: |
-          aws ssm send-command \
-            --region "$REGION" \
-            --document-name "AWS-RunShellScript" \
-            --comment "CI/CD: Deploy server via GitHub Actions" \
-            --instance-ids "$INSTANCE_ID" \
-            --parameters 'commands=[
-              "cd /home/ubuntu/hirehive-1",
-              "sudo apt-get update && sudo apt-get install unzip -y",
-              "cp server/.env.staging .env.staging.bak || true",
-              "rm -rf server/*",
-              "mkdir -p /tmp/server-deploy",
-              "curl -L -o /tmp/server-deploy/source.zip https://github.com/${{ github.repository }}/archive/${{ github.sha }}.zip",
-              "unzip -o /tmp/server-deploy/source.zip -d /tmp/server-deploy/",
-              "cd /tmp/server-deploy",
-              "FOLDER=$(find . -maxdepth 1 -type d -name '\''hirehive-1-*'\'')",
-              "cp -r $FOLDER/server/* /home/ubuntu/hirehive-1/server/",
-              "cd /home/ubuntu/hirehive-1",
-              "mv .env.staging.bak server/.env.staging || true",
-              "sudo -u ubuntu bash -lc 'cd /home/ubuntu/hirehive-1/server && npm ci && pm2 delete hhv-staging || true && pm2 start npm --name hhv-staging -- run staging && pm2 save'",
-              "rm -rf /tmp/server-deploy"
-            ]' \
-            --timeout-seconds 600 \
-            --output text
+          aws s3 cp backend.zip s3://hirehive/deployments/backend.zip
+
+      - name: Create Deployment
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+        run: |
+          aws deploy create-deployment \
+            --application-name hhv_backend_cicd \
+            --deployment-group-name hhv_backend_server \
+            --s3-location bucket=hirehive,bundleType=zip,key=deployments/backend.zip \
+            --file-exists-behavior OVERWRITE > deploy.json
+
+      - name: Wait for deployment to complete
+        run: |
+          DEPLOY_ID=$(jq -r '.deploymentId' deploy.json)
+          echo "Waiting for deployment $DEPLOY_ID..."
+          aws deploy wait deployment-successful --deployment-id $DEPLOY_ID
+          echo "Deployment succeeded."
+
+      - name: Cleanup S3
+        if: success()
+        run: |
+          aws s3 rm s3://hirehive/deployments/backend.zip
