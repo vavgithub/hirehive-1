@@ -1,9 +1,7 @@
 #!/bin/bash
 
-cd /home/ubuntu/hirehive-1/server
+echo "Restoring .env.staging"
+mv /home/ubuntu/hirehive-1/.env.staging.bak /home/ubuntu/hirehive-1/server/.env.staging || true
 
-# Fix permissions
+echo "Fixing ownership"
 chown -R ubuntu:ubuntu /home/ubuntu/hirehive-1
-
-# Run npm install & pm2 under ubuntu's login shell
-sudo -u ubuntu bash -lc "cd /home/ubuntu/hirehive-1/server && npm ci && pm2 delete hhv-staging || true && pm2 start npm --name hhv-staging -- run staging && pm2 save"
