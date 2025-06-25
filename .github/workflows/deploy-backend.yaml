@@ -40,13 +40,22 @@ jobs:
             --file-exists-behavior OVERWRITE > deploy.json
 
       - name: Wait for deployment to complete
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
         run: |
           DEPLOY_ID=$(jq -r '.deploymentId' deploy.json)
           echo "Waiting for deployment $DEPLOY_ID..."
           aws deploy wait deployment-successful --deployment-id $DEPLOY_ID
           echo "Deployment succeeded."
 
+
       - name: Cleanup S3
         if: success()
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
         run: |
           aws s3 rm s3://hirehive/deployments/backend.zip
