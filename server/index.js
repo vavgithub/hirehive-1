@@ -175,5 +175,5 @@ connectDB()
   });
 
 app.get("/", (req, res) => {
-  res.send("Welcome to HireHive Job Portal API Test");
+  res.send("Welcome to HireHive Job Portal API");
 });
