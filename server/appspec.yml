@@ -1,20 +1,23 @@
 version: 0.0
 os: linux
 files:
-  - source: /
+  - source: server
     destination: /home/ubuntu/hirehive-1/server
-    overwrite: yes
+  - source: scripts
+    destination: /home/ubuntu/hirehive-1/scripts
 
 hooks:
   BeforeInstall:
     - location: scripts/before_install.sh
-      timeout: 60
+      timeout: 300
       runas: ubuntu
+
   AfterInstall:
     - location: scripts/after_install.sh
       timeout: 300
       runas: ubuntu
+
   ApplicationStart:
     - location: scripts/start_server.sh
-      timeout: 60
+      timeout: 300
       runas: ubuntu
