@@ -149,7 +149,7 @@ async function renameTechToHTML() {
   }
 }
 
-connectDB()
+connectDB()  
   .then(() => {
     app.listen(PORT, () =>
       console.log(
