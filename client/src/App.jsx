@@ -11,7 +11,7 @@ import theme from './components/MUIUtilities/theme';
 
 const queryClient = new QueryClient();
 
-function App() {
+function App() { 
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider theme={theme} >
