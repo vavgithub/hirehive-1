@@ -9,6 +9,7 @@ on:
 
 jobs:
   deploy:
+    name: Deploy NodeJS Backend
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
