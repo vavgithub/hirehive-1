@@ -41,7 +41,7 @@ jobs:
           echo "VITE_CONTACT_FORM_SCRIPT_URL=${{ secrets.VITE_CONTACT_FORM_SCRIPT_URL }}" >> .env
 
       - name: Build the React app
-        run: npm run build:staging
+        run: npm run build:prod
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
