@@ -108,7 +108,7 @@ const updateMailSendAndStatuses = async () => {
         if(candidate?.jobApplications[0]?.currentStage === "Design Task" && candidate?.jobApplications[0]?.stageStatuses.get("Design Task")?.status === "Pending"){
           // Send design email to candidate
           const removedDescription = removeEmojis(candidate?.jobApplications[0]?.stageStatuses.get(stage)?.taskDescription)
-          const emailSubject = `Value At Void : ${candidate?.jobApplications[0]?.jobApplied} | Design Task for ${candidate.firstName} (3 days)`;
+          const emailSubject = `Value At Void : ${candidate?.jobApplications[0]?.jobApplied} | Design Task for ${candidate.firstName}`;
           const emailContent = getDesignTaskContent(candidate.firstName + " " + candidate.lastName,candidate?.jobApplications[0]?.jobApplied,removedDescription,candidate?.jobApplications[0]?.stageStatuses.get(stage)?.currentCall?.scheduledDate,candidate?.jobApplications[0]?.stageStatuses.get(stage)?.currentCall?.scheduledTime)
   
           await sendEmail(candidate?.email, emailSubject, emailContent,"Design Task");

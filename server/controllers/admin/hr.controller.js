@@ -1182,7 +1182,7 @@ export const sendDesignTask = async (req, res) => {
       });
   
       // Send email to candidate
-      const emailSubject = `Value At Void : ${jobApplication.jobApplied} | Design Task for ${candidate.firstName} (8 Hrs)`;
+      const emailSubject = `Value At Void : ${jobApplication.jobApplied} | Design Task for ${candidate.firstName}`;
       const emailContent = getDesignTaskContent(candidate.firstName + " " + candidate.lastName,jobApplication.jobApplied,removeEmojis(sanitizedDescription),dueDate,dueTime)
       
       await sendEmail(candidateEmail, emailSubject, emailContent,"Design Task");
