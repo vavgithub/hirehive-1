@@ -16,8 +16,8 @@ kill_root_on_8008() {
   fi
 }
 
-echo "[start_server] Killing rogue root process on port 8008 BEFORE PM2..."
-kill_root_on_8008
+#echo "[start_server] Killing rogue root process on port 8008 BEFORE PM2..."
+#kill_root_on_8008
 
 echo "[start_server] Starting app with PM2 as ubuntu user..."
 sudo -u ubuntu bash -lc "
@@ -27,8 +27,8 @@ sudo -u ubuntu bash -lc "
   pm2 save
 "
 
-echo "[start_server] Waiting 3s in case any rogue process respawned..."
-sleep 3
+#echo "[start_server] Waiting 3s in case any rogue process respawned..."
+#sleep 3
 
-echo "[start_server] Killing rogue root process on port 8008 AFTER PM2 start..."
-kill_root_on_8008
+#echo "[start_server] Killing rogue root process on port 8008 AFTER PM2 start..."
+#kill_root_on_8008
