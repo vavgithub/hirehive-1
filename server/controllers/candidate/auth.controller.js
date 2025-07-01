@@ -16,6 +16,7 @@ import { asyncHandler } from "../../utils/asyncHandler.js";
 import { generateOTP, otpStore } from "../../utils/otp.js";
 import { sendEmail } from "../../utils/sentEmail.js";
 import { getEditProfileContent, getPasswordResetContent, getResetSuccessfulContent, getSignupEmailContent } from "../../utils/emailTemplates.js";
+import { generatePresignedUrl, uploadToS3 } from "../../utils/s3utility.js";
 
 // Secret key for JWT (store this in environment variables)
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -59,7 +60,12 @@ export const uploadResumeController = async (req, res) => {
   }
 
   try {
-    const cloudinaryUrl = await uploadToCloudinary(
+    // const cloudinaryUrl = await uploadToCloudinary(
+    //   req.file.path, // Pass the complete path instead of just filename
+    //   "resumes"
+    // );
+    
+    const cloudinaryUrl = await uploadToS3(
       req.file.path, // Pass the complete path instead of just filename
       "resumes"
     );
@@ -77,7 +83,12 @@ export const uploadProfilePictureController = async (req, res) => {
   }
 
   try {
-    const cloudinaryUrl = await uploadToCloudinary(
+    // const cloudinaryUrl = await uploadToCloudinary(
+    //   req.file.path, // Pass the complete path instead of just filename
+    //   "candidate-profile-pictures"
+    // );
+
+    const cloudinaryUrl = await uploadToS3(
       req.file.path, // Pass the complete path instead of just filename
       "candidate-profile-pictures"
     );
@@ -1178,4 +1189,46 @@ export const resetPassword = asyncHandler(async (req, res) => {
   );
 
   res.json({ message: 'Password reset successful' });
+});
+
+export const getS3AssessmentUploadUrl = asyncHandler(async (req, res) => {
+  try {
+    const { fileName, fileType } = req.body;
+
+    const allowedTypes = ["video/webm"];
+    if (!allowedTypes.includes(fileType)) {
+      return res.status(400).json({ error: "Unsupported video format" });
+    }
+
+    const envFolder = process.env.AWS_ENV_FOLDER;
+    const key = `uploads/${envFolder}/assessments/${Date.now()}_${fileName}`;
+    const url = await generatePresignedUrl(key, fileType);
+
+    const publicUrl = `${process.env.AWS_CLOUDFRONT_DOMAIN}/${key}`;
+    res.json({ uploadUrl: url, publicUrl });
+  } catch (err) {
+    console.error("Error generating presigned URL:", err);
+    res.status(500).json({ error: "Failed to generate upload URL" });
+  }
+});
+
+export const getS3ScreenshotUploadUrl = asyncHandler(async (req, res) => {
+  try {
+    const { fileName, fileType } = req.body;
+
+    // ✅ Allow all image types
+    if (!fileType || !fileType.startsWith("image/")) {
+      return res.status(400).json({ error: "Only image files are allowed" });
+    }
+
+    const envFolder = process.env.AWS_ENV_FOLDER;
+    const key = `uploads/${envFolder}/screenshots/${Date.now()}_${fileName}`;
+    const url = await generatePresignedUrl(key, fileType);
+
+    const publicUrl = `${process.env.AWS_CLOUDFRONT_DOMAIN}/${key}`;
+    res.json({ uploadUrl: url, publicUrl });
+  } catch (err) {
+    console.error("Error generating presigned URL:", err);
+    res.status(500).json({ error: "Failed to generate upload URL" });
+  }
 });

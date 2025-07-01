@@ -22,7 +22,7 @@ function App() {
               <RouterProvider router={router} />
               <StyledToastContainer />
             </StatePreserver>
-          </AuthProvider>
+          </AuthProvider> 
         </Provider>
       </ThemeProvider>
     </QueryClientProvider>

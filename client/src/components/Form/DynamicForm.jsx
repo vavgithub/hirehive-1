@@ -29,7 +29,7 @@ const FormSection = ({ title, fields, control }) => (
           name={field.name}
           type={field.type}
           control={control}
-          rules={validationRules[field.name]}
+          rules={['hourlyRate','expectedCTC','currentCTC'].includes(field.name) ? { required : validationRules[field.name]?.required } :validationRules[field.name]}
           label={field.label}
           rowWise
         />

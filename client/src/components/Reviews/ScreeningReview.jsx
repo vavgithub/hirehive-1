@@ -14,7 +14,7 @@ function ScreeningReview({ jobProfile, candidate, onSubmit ,rounded = "bottom"})
 
   const [ratings, setRatings] = useState( Object.fromEntries(Object.entries(scoringConfig?.score)?.filter(([key,value]) => key !== "Budget")?.map(([key,value])=>[key,0])));
 
-  const customSchema = useMemo(()=> user?.companyDetails?.customScreeningParam[jobProfile] ?? [] , [user?.companyDetails?.customScreeningParam,jobProfile])
+  const customSchema = useMemo(() => user?.companyDetails?.customScreeningParam[jobProfile] ?? [] , [user?.companyDetails?.customScreeningParam,jobProfile])
 
   useEffect(() => {
     if(scoringConfig?.hasSplitScoring && customSchema){

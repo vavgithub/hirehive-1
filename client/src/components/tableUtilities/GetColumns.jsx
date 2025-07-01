@@ -162,7 +162,7 @@ const getInfoColumns = () => [
   },
 ]
 
-export const getReadOnlyColumns = (role, handleDocumentClick, disableCTC) => {
+export const getReadOnlyColumns = (role, handleDocumentClick, disableCTC,disableHourly) => {
 
   return ([
     ...getCommonColumns(handleDocumentClick),
@@ -196,7 +196,7 @@ export const getReadOnlyColumns = (role, handleDocumentClick, disableCTC) => {
   ])
 };
 
-export const getDefaultColumns = (role, canMove, canReject, handleAssigneeChange, handleMoveClick, handleRejectClick, handleRatingClick, handleDocumentClick, isClosed) => [
+export const getDefaultColumns = (role, canMove, canReject, handleAssigneeChange, handleMoveClick, handleRejectClick, handleRatingClick, handleDocumentClick, isClosed,disableCTC,disableHourly) => [
   ...getCommonColumns(handleDocumentClick),
   {
     field: 'status',
@@ -280,7 +280,7 @@ export const getDefaultColumns = (role, canMove, canReject, handleAssigneeChange
       </div>
     )
   },
-  ...getCtcColumns(role),
+  ...getCtcColumns(role,disableCTC,disableHourly),
   {
     field: 'score',
     headerName: 'Score',

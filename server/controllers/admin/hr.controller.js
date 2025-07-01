@@ -4,6 +4,7 @@ import { Task } from "../../models/admin/task.model.js";
 import { User } from "../../models/admin/user.model.js";
 import { candidates } from "../../models/candidate/candidate.model.js";
 import { getDesignTaskContent, getRejectionEmailContent } from "../../utils/emailTemplates.js";
+import { removeEmojis } from "../../utils/emojiRemover.js";
 import { updateDateWithTime } from "../../utils/formatter.js";
 import { sanitizeLexicalHtml } from "../../utils/sanitize-html.js";
 import { sendEmail } from "../../utils/sentEmail.js";
@@ -624,8 +625,16 @@ export const updateAssigneeForMultipleCandidates = async (req,res) => {
       stageStatus.assignedTo = assigneeId;
 
       // Update the status based on the stage
-      if (['Portfolio', 'Design Task'].includes(eachCandidate?.stage)) {
+      if (eachCandidate?.stage === 'Portfolio') {
         stageStatus.status = assigneeId ? 'Under Review' : 'Not Assigned';
+      }
+
+      if (eachCandidate?.stage === 'Design Task') {
+        if (stageStatus?.submittedTaskLink && stageStatus?.submittedComment) {
+          stageStatus.status = assigneeId ? 'Under Review' : stageStatus.status;
+        }else{
+          stageStatus.assignedTo = null;
+        }
       }
       // Add more stage-specific logic here as needed
 
@@ -1181,8 +1190,8 @@ export const sendDesignTask = async (req, res) => {
       });
   
       // Send email to candidate
-      const emailSubject = `Value At Void : ${jobApplication.jobApplied} | Design Task for ${candidate.firstName} (8 Hrs)`;
-      const emailContent = getDesignTaskContent(candidate.firstName + " " + candidate.lastName,jobApplication.jobApplied,sanitizedDescription,dueDate,dueTime)
+      const emailSubject = `Value At Void : ${jobApplication.jobApplied} | Design Task for ${candidate.firstName}`;
+      const emailContent = getDesignTaskContent(candidate.firstName + " " + candidate.lastName,jobApplication.jobApplied,removeEmojis(sanitizedDescription),dueDate,dueTime)
       
       await sendEmail(candidateEmail, emailSubject, emailContent,"Design Task");
   

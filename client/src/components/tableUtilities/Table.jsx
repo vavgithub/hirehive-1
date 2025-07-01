@@ -221,7 +221,7 @@ const Table = ({
       await refetch();
       // You might want to show a success message to the user here
       showSuccessToast("Auto Assign Portfolio Done")
-    setIsAutoAssignModalOpen(false);
+      setIsAutoAssignModalOpen(false);
     },
     onError: (error) => {
       // console.error('Auto-assign error:', error);
@@ -269,7 +269,7 @@ const Table = ({
   });
 
   const handleAutoAssign = async (selectedReviewers) => {
-    autoAssignMutation.mutate({
+     autoAssignMutation.mutate({
       jobId,
       reviewerIds: selectedReviewers.map(reviewer => reviewer._id),
       budgetMin: parseFloat(budgetFilter.from) || 0,
@@ -380,7 +380,7 @@ const Table = ({
     let baseColumns = readOnly ?
       getReadOnlyColumns(role, handleDocumentClick) :
       getDefaultColumns(role, canMove, canReject, handleAssigneeChange,
-        handleMoveClick, handleRejectClick, handleRatingClick, handleDocumentClick , jobData?.status === "closed");
+        handleMoveClick, handleRejectClick, handleRatingClick, handleDocumentClick , jobData?.status === "closed",jobData?.employmentType === 'Contract',jobData?.employmentType !== 'Contract');
 
     // Insert additional columns after the first column
     if (additionalColumns.length > 0) {

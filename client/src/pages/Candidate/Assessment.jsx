@@ -16,6 +16,7 @@ import ImageModal from '../../components/Modals/ImageModal';
 import ContactUs from '../../components/Form/ContactUs';
 import IconWrapper from '../../components/Cards/IconWrapper';
 import { getRandomAssessmentQuestions, submitAssessment } from '../../services/admin.candidate.service';
+import { uploadAssessmentToS3 } from '../../utility/s3upload';
 const ONE_MINUTE = 60;
 
 // Utility function to format time
@@ -486,7 +487,8 @@ const Assessment = ({assessment_id}) => {
       // Log the file to verify it's created correctly
       // console.log('Video file created:', videoFile);
 
-      const recordingUrl = await uploadAssessment(videoFile,setUploadProgress);
+      // const recordingUrl = await uploadAssessment(videoFile,setUploadProgress);
+      const recordingUrl = await uploadAssessmentToS3(videoFile,setUploadProgress);
 
       // const formData = new FormData();
       // formData.append('video', videoFile);
