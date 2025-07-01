@@ -99,7 +99,7 @@ export const updateCandidateAssignee = async (req, res) => {
     }
 
     if (stage === 'Design Task') {
-      if (stageStatus?.submittedTaskLink && stageStatus?.submittedComment) {
+      if (stageStatus?.submittedTaskLink) {
         stageStatus.status = assigneeId ? 'Under Review' : stageStatus.status;
       }else{
         stageStatus.assignedTo = null;

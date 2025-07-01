@@ -630,7 +630,7 @@ export const updateAssigneeForMultipleCandidates = async (req,res) => {
       }
 
       if (eachCandidate?.stage === 'Design Task') {
-        if (stageStatus?.submittedTaskLink && stageStatus?.submittedComment) {
+        if (stageStatus?.submittedTaskLink) {
           stageStatus.status = assigneeId ? 'Under Review' : stageStatus.status;
         }else{
           stageStatus.assignedTo = null;
