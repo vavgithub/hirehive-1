@@ -12,7 +12,7 @@ import theme from './components/MUIUtilities/theme';
 const queryClient = new QueryClient();
 
 function App() {
-  return (
+  return ( 
     <QueryClientProvider client={queryClient}>
       <ThemeProvider theme={theme} >
         <CssBaseline />
