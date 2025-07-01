@@ -1,5 +1,5 @@
 import axios from "axios";
-import axiosInstance from "../api/axios";
+import axiosInstance from "../services/axios";
 
 export const uploadAssessmentToS3 = async (file, setUploadProgress) => {
   try {

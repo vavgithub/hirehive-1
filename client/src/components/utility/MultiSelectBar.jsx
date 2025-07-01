@@ -23,26 +23,6 @@ export const getMaxScoreEachStage = (currentStage) =>{
     return stageScores[currentStage] || 5;
 }
 
-const moveMultipleCandidates = async (candidateData) => {
-    const response = await axios.post(`/hr/move-multiple-candidates`,{candidateData})
-    return response.data;
-} 
-
-const rejectMultipleCandidates = async (candidateData) => {
-    const response = await axios.post(`/hr/reject-multiple-candidates`,{candidateData})
-    return response.data;
-} 
-
-const assignReviewerForCandidates = async (candidateData,assigneeId) => {
-    const response = await axios.post(`/hr/update-assignee-multiple-candidates`,{candidateData,assigneeId})
-    return response.data;
-} 
-
-const rateMultipleCandidates = async (candidateData,rating) => {
-    const response = await axios.post(`/hr/rate-multiple-candidates`,{candidateData,rating})
-    return response.data;
-} 
-
 const globalStages = ['Portfolio','Screening','Design Task','Round 1','Round 2', 'Hired']
 
 const multiSelectConfig = [
