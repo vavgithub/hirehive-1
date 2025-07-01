@@ -445,3 +445,584 @@
 //     throw error;
 //   }
 // }
+
+
+
+// const migrateProfilePicture = async (url) => {
+//   try {
+//     const response = await axios.get(url, { responseType: 'arraybuffer' });
+//     const contentType = response.headers['content-type'];
+//     const fileName = getFileNameFromUrl(url);
+//     const buffer = response.data;
+
+//     const s3Url = await uploadBufferToS3(buffer, fileName, contentType, 'candidate-profile-pictures');
+//     return s3Url;
+//   } catch (error) {
+//     console.error(`❌ Failed to migrate profile picture: ${url}`, error.message);
+//     return null;
+//   }
+// };
+
+// export const migrateBatchProfilePictures = async () => {
+//   const users = await candidates
+//     .find({
+//       profilePictureUrl: {
+//         $exists: true,
+//         $ne: '',
+//         $regex: /^https:\/\/res\.cloudinary\.com\//,
+//       },
+//     })
+//     .sort({ createdAt: 1 })
+//     .limit(50);
+
+//   console.log(`📦 Migrating ${users.length} candidate profile pictures`);
+
+//   for (const user of users) {
+//     try {
+//         let oldUrl = user.profilePictureUrl
+//       const s3Url = await migrateProfilePicture(user.profilePictureUrl);
+//       if (s3Url) {
+//         user.profilePictureUrl = s3Url;
+//         await user.save();
+//         await deleteFromCloudinary(oldUrl);
+//         console.log(`✅ Updated: ${user.email}`);
+//       }
+//       await sleep(2000); // 2s pause
+//     } catch (err) {
+//       console.error(`❌ Error for ${user.email}:`, err.message);
+//     }
+//   }
+
+//   console.log('🎉 Batch migration complete');
+// };
+
+
+// //USERS
+// const migrateProfilePictureUsers = async (url) => {
+//   try {
+//     const response = await axios.get(url, { responseType: 'arraybuffer' });
+//     const contentType = response.headers['content-type'];
+//     const fileName = getFileNameFromUrl(url);
+//     const buffer = response.data;
+
+//     const s3Url = await uploadBufferToS3(buffer, fileName, contentType, 'profile-pictures');
+//     return s3Url;
+//   } catch (error) {
+//     console.error(`❌ Failed to migrate profile picture: ${url}`, error.message);
+//     return null;
+//   }
+// };
+
+// export const migrateBatchProfilePicturesUsers = async () => {
+//   const users = await User
+//     .find({
+//       profilePicture: {
+//         $exists: true,
+//         $ne: '',
+//         $regex: /^https:\/\/res\.cloudinary\.com\//,
+//       },
+//     })
+//     .sort({ createdAt: 1 })
+//     // .limit(2);
+
+//   console.log(`📦 Migrating ${users.length} profile pictures`);
+
+//   for (const user of users) {
+//     try {
+//         let oldUrl = user.profilePicture
+//       const s3Url = await migrateProfilePictureUsers(user.profilePicture);
+//       if (s3Url) {
+//         user.profilePicture = s3Url;
+//         await user.save();
+//         await deleteFromCloudinary(oldUrl);
+//         console.log(`✅ Updated: ${user.email}`);
+//       }
+//       await sleep(2000); // 2s pause
+//     } catch (err) {
+//       console.error(`❌ Error for ${user.email}:`, err.message);
+//     }
+//   }
+
+//   console.log('🎉 Batch migration complete');
+// };
+
+
+// const migrateResumeFile = async (url) => {
+//   try {
+//     const response = await axios.get(url, { responseType: 'arraybuffer' });
+//     const contentType = response.headers['content-type'];
+//     const fileName = getFileNameFromUrl(url); // .pdf or .docx supported
+//     const buffer = response.data;
+
+//     const s3Url = await uploadBufferToS3(buffer, fileName, contentType, 'resumes');
+//     return s3Url;
+//   } catch (error) {
+//     console.error(`❌ Failed to migrate resume: ${url}`, error.message);
+//     return null;
+//   }
+// };
+
+// export const migrateCandidateResumes = async () => {
+//   const candidatesToMigrate = await candidates
+//     .find({
+//       $or: [
+//         { resumeUrl: { $regex: /^https:\/\/res\.cloudinary\.com\// } },
+//         { 'jobApplications.resumeUrl': { $regex: /^https:\/\/res\.cloudinary\.com\// } },
+//       ],
+//     })
+//     .sort({ createdAt: 1 })
+//     .limit(10);
+
+//   console.log(`📦 Processing ${candidatesToMigrate.length} candidates...`);
+
+//   for (const candidate of candidatesToMigrate) {
+//     try {
+//       const uploadedUrlsMap = new Map(); // key: cloudinary url, value: s3 url
+//       const cloudinaryUrls = new Set();
+
+//       // 1️⃣ Check and prepare resume URLs (global + jobApplications)
+//       if (isCloudinaryUrl(candidate.resumeUrl)) {
+//         cloudinaryUrls.add(candidate.resumeUrl);
+//       }
+
+//       for (const app of candidate.jobApplications || []) {
+//         if (isCloudinaryUrl(app.resumeUrl)) {
+//           cloudinaryUrls.add(app.resumeUrl);
+//         }
+//       }
+
+//       // 2️⃣ Upload all unique resume URLs to S3
+//       for (const url of cloudinaryUrls) {
+//         const s3Url = await migrateResumeFile(url);
+//         if (s3Url) {
+//           uploadedUrlsMap.set(url, s3Url);
+//         } else {
+//             console.error(`❌ Failed to migrate resume for ${candidate.email}: ${url}`);
+//         }
+//       }
+
+//       if (uploadedUrlsMap.size === 0) continue; // nothing to update
+
+//       // 3️⃣ Replace resume URLs in candidate doc
+//       if (uploadedUrlsMap.has(candidate.resumeUrl)) {
+//         candidate.resumeUrl = uploadedUrlsMap.get(candidate.resumeUrl);
+//       }
+
+//       for (const app of candidate.jobApplications || []) {
+//         if (uploadedUrlsMap.has(app.resumeUrl)) {
+//           app.resumeUrl = uploadedUrlsMap.get(app.resumeUrl);
+//         }
+//       }
+
+//       // 4️⃣ Save and delete from Cloudinary
+//       await candidate.save();
+//       console.log(`✅ Updated resumes for: ${candidate.email}`);
+
+//       for (const oldUrl of uploadedUrlsMap.keys()) {
+//         await deleteFromCloudinary(oldUrl);
+//       }
+
+//       await sleep(2000); // wait before next candidate
+//     } catch (err) {
+//       console.error(`❌ Error for ${candidate.email}:`, err.message);
+//     }
+//   }
+
+//   console.log('🎉 Resume migration complete.');
+// };
+
+// 🟡 Upload one video and return both S3 URL and original Cloudinary URL
+// const migrateRecordingUrl = async (url,email) => {
+//   try {
+//     const response = await axios.get(url, { responseType: 'arraybuffer' });
+//     const contentType = response.headers['content-type'];
+//     const fileName = getFileNameFromUrl(url);
+//     const buffer = response.data;
+
+//     const s3Url = await uploadBufferToS3(buffer, fileName, contentType, 'assessments');
+//     return { s3Url, originalUrl: url };
+//   } catch (error) {
+//     console.error(`❌ Failed to migrate video: ${url}`, error.message,email);
+//     return null;
+//   }
+// };
+
+// // 🟢 Batch migration for 100 candidates by earliest attemptDate
+// export const migrateRecordingUrlsBatch = async () => {
+//   const candidatesToProcess = await candidates
+//     .find({
+//       questionnaireAttempts: {
+//         $elemMatch: {
+//           recordingUrl: {
+//             $exists: true,
+//             $ne: null,
+//             $regex: /^https:\/\/res\.cloudinary\.com\//,
+//           },
+//         },
+//       },
+//     })
+//     .sort({ 'questionnaireAttempts.attemptDate': 1 })
+//     .limit(54);
+
+//   console.log(`📦 Processing ${candidatesToProcess.length} candidates...`);
+
+//   for (const candidate of candidatesToProcess) {
+//     let hasChanges = false;
+//     const urlsToDelete = [];
+//     for (const attempt of candidate.questionnaireAttempts) {
+//       if (isCloudinaryUrl(attempt.recordingUrl)) {
+//         const result = await migrateRecordingUrl(attempt.recordingUrl,candidate.email);
+//         if (result?.s3Url) {
+//           attempt.recordingUrl = result.s3Url;
+//           urlsToDelete.push(result.originalUrl);
+//           hasChanges = true;
+//         }
+//       }
+//     }
+
+//     if (hasChanges) {
+//       await candidate.save();
+//       console.log(`✅ Migrated recordings for: ${candidate.email}`);
+
+//       // Safe deletion after save
+//       for (const url of urlsToDelete) {
+//         try {
+//           const res = await deleteFromCloudinary(url);
+//           console.log(`🗑️ Deleted from Cloudinary: `, res);
+//         } catch (err) {
+//           console.error(`❌ Failed to delete ${publicId}`, err.message);
+//         }
+//       }
+
+//       await sleep(2000); // 2-second pause
+//     }
+//   }
+
+//   console.log('🎉 Batch migration complete.');
+// };
+
+
+// export const migrateRecordingUrl = async (url) => {
+//   try {
+//     const response = await axios.get(url, { responseType: 'arraybuffer' });
+
+//     const buffer = response.data;
+//     const contentType = response.headers['content-type'];
+//     const fileName = getFileNameFromUrl(url); // e.g. video-1234567890_abcd.webm
+
+//     const s3Url = await uploadBufferToS3(buffer, fileName, contentType, 'assessments');
+
+//     return s3Url;
+//   } catch (error) {
+//     if (error.response?.status === 404) {
+//       console.warn(`⚠️ Cloudinary URL not found (404): ${url}`);
+//     } else {
+//       console.error(`❌ Failed to migrate recording: ${url}`, error.message);
+//     }
+//     return null;
+//   }
+// };
+
+
+// export const migrateJobApplicationRecordings = async () => {
+//   const candidatesToMigrate = await candidates
+//     .find({
+//       'jobApplications.assessmentResponse.recordingUrl': {
+//         $regex: /^https:\/\/res\.cloudinary\.com\//,
+//       },
+//     })
+//     .sort({ createdAt: 1 })
+//     .limit(50);
+
+//   console.log(`📦 Processing ${candidatesToMigrate.length} candidates with job app recordings...`);
+
+//   // To avoid duplicate uploads/deletions
+//   const uploadCache = new Map(); // cloudinaryUrl => s3Url
+//   const urlsToDelete = new Set();
+
+//   for (const candidate of candidatesToMigrate) {
+//     let hasChanges = false;
+
+//     for (const app of candidate.jobApplications || []) {
+//       const url = app?.assessmentResponse?.recordingUrl;
+
+//       if (url && /^https:\/\/res\.cloudinary\.com\//.test(url)) {
+//         if (uploadCache.has(url)) {
+//           // Already uploaded — reuse S3 URL
+//           app.assessmentResponse.recordingUrl = uploadCache.get(url);
+//           hasChanges = true;
+//         } else {
+//           try {
+//             const s3Url = await migrateRecordingUrl(url); // upload + get S3 URL
+//             if (s3Url) {
+//               app.assessmentResponse.recordingUrl = s3Url;
+//               uploadCache.set(url, s3Url);
+//               urlsToDelete.add(url);
+//               hasChanges = true;
+//             }
+//           } catch (err) {
+//             console.error(`❌ Failed to migrate URL for ${candidate.email}:`, err.message);
+//           }
+//         }
+//       }
+//     }
+
+//     if (hasChanges) {
+//       try {
+//         await candidate.save();
+//         console.log(`✅ Updated: ${candidate.email}`);
+//         await sleep(2000);
+//       } catch (err) {
+//         console.error(`❌ Save failed for ${candidate.email}:`, err.message);
+//       }
+//     }
+//   }
+
+//   // Delete all unique Cloudinary URLs used
+//   for (const url of urlsToDelete) {
+//     try {
+//       const res = await deleteFromCloudinary(url, 'video');
+//       console.log(`🗑️ Deleted: ${url}`, res);
+//     } catch (err) {
+//       console.error(`❌ Deletion failed for ${url}:`, err.message);
+//     }
+//   }
+
+//   console.log('🎉 Job application recording migration complete.');
+// };
+
+// export const migrateAssessmentImageUrl = async (url) => {
+//   try {
+//     const response = await axios.get(url, { responseType: 'arraybuffer' });
+//     const contentType = response.headers['content-type'];
+//     const fileName = getFileNameFromUrl(url);
+//     const buffer = response.data;
+
+//     const s3Url = await uploadBufferToS3(buffer, fileName, contentType, 'assessment-question-images');
+//     return s3Url;
+//   } catch (error) {
+//     console.error(`❌ Failed to migrate image: ${url}`, error.message);
+//     return null;
+//   }
+// };
+
+// export const migrateAssessmentImages = async () => {
+//   const assessments = await Assessment
+//     .find({
+//       $or: [
+//         { 'questions.imageUrl': { $regex: '^https://res\\.cloudinary\\.com/' } },
+//         { 'questions.options.imageUrl': { $regex: '^https://res\\.cloudinary\\.com/' } }
+//       ]
+//     })
+//     .sort({ createdAt: 1 })
+//   .limit(30);
+
+//   console.log(`📦 Processing ${assessments.length} assessments...`);
+
+//   const urlsToDelete = new Set(); // to avoid duplicate deletions
+//   const uploadCache = new Map();  // avoid re-uploading same image
+
+//   for (const assessment of assessments) {
+//     let hasChanges = false;
+
+//     for (const question of assessment.questions) {
+//       // Migrate question.imageUrl
+//       const qUrl = question.imageUrl;
+//       if (isCloudinaryUrl(qUrl)) {
+//         if (uploadCache.has(qUrl)) {
+//           question.imageUrl = uploadCache.get(qUrl);
+//           hasChanges = true;
+//         } else {
+//           const newUrl = await migrateAssessmentImageUrl(qUrl);
+//           if (newUrl) {
+//             question.imageUrl = newUrl;
+//             uploadCache.set(qUrl, newUrl);
+//             urlsToDelete.add(qUrl);
+//             hasChanges = true;
+//           }
+//         }
+//       }
+
+//       // Migrate each option.imageUrl
+//       for (const option of question.options || []) {
+//         const oUrl = option.imageUrl;
+//         if (isCloudinaryUrl(oUrl)) {
+//           if (uploadCache.has(oUrl)) {
+//             option.imageUrl = uploadCache.get(oUrl);
+//             hasChanges = true;
+//           } else {
+//             const newUrl = await migrateAssessmentImageUrl(oUrl);
+//             if (newUrl) {
+//               option.imageUrl = newUrl;
+//               uploadCache.set(oUrl, newUrl);
+//               urlsToDelete.add(oUrl);
+//               hasChanges = true;
+//             }
+//           }
+//         }
+//       }
+//     }
+
+//     if (hasChanges) {
+//       await assessment.save();
+//       console.log(`✅ Updated: ${assessment.title} - ${assessment.category}`);
+//       await sleep(2000);
+//     }
+//   }
+
+//   // // ✅ After saving all, delete from Cloudinary
+//   // for (const url of urlsToDelete) {
+//   //   try {
+//   //     const res = await deleteFromCloudinary(url, 'image');
+//   //     console.log(`🗑️ Deleted from Cloudinary: ${url}`, res);
+//   //   } catch (err) {
+//   //     console.error(`❌ Failed to delete ${url}`, err.message);
+//   //   }
+//   // }
+
+//   console.log('🎉 Assessment image migration complete.');
+// };
+
+
+// const sleep = (ms) => new Promise((res) => setTimeout(res, ms));
+
+// const getFileNameFromUrl = (url) => {
+//   const parts = url.split('/');
+//   return parts[parts.length - 1].split('?')[0];
+// };
+
+// export const isCloudinaryUrl = (url) => {
+//   if (!url || typeof url !== 'string') return false;
+//   return /^https:\/\/res\.cloudinary\.com\//.test(url);
+// };
+
+
+// const migrateQuestionImageUrl = async (url) => {
+//   try {
+//     const response = await axios.get(url, { responseType: 'arraybuffer' });
+//     const contentType = response.headers['content-type'];
+//     const buffer = response.data;
+//     const fileName = getFileNameFromUrl(url);
+
+//     const s3Url = await uploadBufferToS3(buffer, fileName, contentType, 'assessment-question-images');
+//     return s3Url;
+//   } catch (error) {
+//     console.error(`❌ Failed to migrate image: ${url}`, error.message);
+//     return null;
+//   }
+// };
+
+// export const migrateQuestionModelImages = async () => {
+//   const questions = await Question
+//     .find({
+//       $or: [
+//         { imageUrl: { $regex: '^https://res\\.cloudinary\\.com/' } },
+//         { 'options.imageUrl': { $regex: '^https://res\\.cloudinary\\.com/' } }
+//       ]
+//     })
+//     .sort({ createdAt: 1 })
+//     .limit(5); // Adjust as needed
+
+//   console.log(`📦 Found ${questions.length} questions to migrate...`);
+
+//   for (const question of questions) {
+//     let hasChanges = false;
+//     const urlsToDelete = [];
+
+//     // Migrate main question image
+//     if (isCloudinaryUrl(question.imageUrl)) {
+//       const s3Url = await migrateQuestionImageUrl(question.imageUrl);
+//       if (s3Url) {
+//         urlsToDelete.push(question.imageUrl);
+//         question.imageUrl = s3Url;
+//         hasChanges = true;
+//       }
+//     }
+
+//     // Migrate options imageUrls
+//     for (const option of question.options || []) {
+//       if (isCloudinaryUrl(option.imageUrl)) {
+//         const s3Url = await migrateQuestionImageUrl(option.imageUrl);
+//         if (s3Url) {
+//           urlsToDelete.push(option.imageUrl);
+//           option.imageUrl = s3Url;
+//           hasChanges = true;
+//         }
+//       }
+//     }
+
+//     if (hasChanges) {
+//       await question.save();
+//       console.log(`✅ Migrated question ID: ${question._id}`);
+
+//       // // Optional: Delete Cloudinary files
+//       // for (const url of urlsToDelete) {
+//       //   try {
+//       //     const res = await deleteFromCloudinary(url, 'image');
+//       //     console.log(`🗑️ Deleted: ${url}`, res);
+//       //   } catch (err) {
+//       //     console.error(`❌ Deletion failed for ${url}:`, err.message);
+//       //   }
+//       // }
+
+//       await sleep(2000); // Delay between updates
+//     }
+//   }
+
+//   console.log('🎉 Question image migration complete.');
+// };
+
+
+
+
+// export const uploadBufferToS3 = async (fileBuffer, fileName, contentType, folder) => {
+//   try {
+//     const envFolder = process.env.AWS_ENV_FOLDER;
+//     const s3Key = `uploads/${envFolder}/${folder}/${Date.now()}-${fileName}`;
+
+//     const command = new PutObjectCommand({
+//       Bucket: process.env.AWS_S3_BUCKET_NAME,
+//       Key: s3Key,
+//       Body: fileBuffer,
+//       ContentType: contentType,
+//       ACL: 'private',
+//     });
+
+//     await s3Client.send(command);
+
+//     const cloudfrontDomain = process.env.AWS_CLOUDFRONT_DOMAIN;
+//     return `${cloudfrontDomain}/${s3Key}`;
+//   } catch (error) {
+//     console.error('❌ Error uploading to S3:', error.message);
+//     throw error;
+//   }
+// };
+
+
+// export const extractPublicId = (url) => {
+//   const match = url.match(/\/upload\/(?:v\d+\/)?([^?#]+)/);
+//   if (!match || !match[1]) {
+//     throw new Error(`Invalid Cloudinary URL: ${url}`);
+//   }
+
+//   const fullPath = match[1];
+//   return fullPath.replace(/\.[^/.]+$/, ''); // remove extension (e.g., .mp4, .webm)
+// };
+
+
+
+
+// // export const deleteFromCloudinary = async (url) => {
+// //   const publicId = extractPublicId(url);
+// //   await cloudinary.uploader.destroy(publicId, { resource_type: 'image' });
+// // };
+
+// //For RESUMES
+// export const deleteFromCloudinary = async (url) => {
+//   const publicId = extractPublicId(url);
+//   const result = await cloudinary.uploader.destroy(publicId, {
+//     resource_type: 'video',
+//   });
+//   return result;
+// };
+

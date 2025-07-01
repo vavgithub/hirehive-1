@@ -34,10 +34,6 @@ import { initializeUploadDir } from "./config/paths.js";
 import corsConfig from "./config/cors.config.js";
 import cookieSession from "cookie-session";
 import { handleUploadError } from "./middlewares/uploadMiddleware.js";
-import { User } from "./models/admin/user.model.js";
-import { candidates } from "./models/candidate/candidate.model.js";
-import { jobs } from "./models/admin/jobs.model.js";
-import { Company } from "./models/admin/company.model.js";
 import { seedTemplates } from "./models/admin/assessment.model.js";
 import { seedTasks } from "./models/admin/task.model.js";
 
