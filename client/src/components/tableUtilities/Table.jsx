@@ -411,7 +411,7 @@ const Table = ({
     // Use custom navigation path if provided
     if (customNavigationPath) {
       const targetJobId = readOnly ? params.row.jobId : jobId;
-      navigate(`${customNavigationPath}/${params.row._id}/${targetJobId}`, { replace: true });
+      navigate(`${customNavigationPath}/${params.row._id}/${targetJobId}`);
       return;
     }
 
@@ -420,7 +420,7 @@ const Table = ({
       const baseUrl = readOnly ? getRoute(role,ROUTE_KEY.CANDIDATES_VIEW_CANDIDATE) : getRoute(role,ROUTE_KEY.JOBS_VIEW_CANDIDATE)
       navigate(`${baseUrl}/${params?.row?._id}/${readOnly ? params.row.jobId : jobId}`);
     } else {
-      navigate(`view/${params.row._id}/${readOnly ? params.row.jobId : jobId}`, { replace: true });
+      navigate(`view/${params.row._id}/${readOnly ? params.row.jobId : jobId}`);
     }
   };
 

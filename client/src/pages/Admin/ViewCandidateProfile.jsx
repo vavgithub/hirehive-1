@@ -243,7 +243,7 @@ const ViewCandidateProfile = () => {
             }else if (isShortlistedPath) {
                 navigate(getRoute(role,ROUTE_KEY.SHORTLISTED));
             } else {
-                navigate(originalPath);
+                navigate(-1);
             }
         }
     };
