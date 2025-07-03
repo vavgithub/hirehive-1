@@ -64,7 +64,6 @@ export const jobStagesStatuses = {
       statuses: [
         "Pending",
         "Call Scheduled",
-        "Not Assigned",
         "Reviewed",
         "Cleared",
         "No Show",
@@ -77,7 +76,6 @@ export const jobStagesStatuses = {
       statuses: [
         "Pending",
         "Call Scheduled",
-        "Not Assigned",
         "Reviewed",
         "Cleared",
         "No Show",
@@ -143,7 +141,6 @@ export const jobStagesStatuses = {
       statuses: [
         "Pending",
         "Call Scheduled",
-        "Not Assigned",
         "Reviewed",
         "Cleared",
         "No Show",
@@ -156,7 +153,6 @@ export const jobStagesStatuses = {
       statuses: [
         "Pending",
         "Call Scheduled",
-        "Not Assigned",
         "Reviewed",
         "Cleared",
         "No Show",
@@ -222,7 +218,6 @@ export const jobStagesStatuses = {
       statuses: [
         "Pending",
         "Call Scheduled",
-        "Not Assigned",
         "Reviewed",
         "Cleared",
         "No Show",
@@ -235,7 +230,6 @@ export const jobStagesStatuses = {
       statuses: [
         "Pending",
         "Call Scheduled",
-        "Not Assigned",
         "Reviewed",
         "Cleared",
         "No Show",
@@ -301,7 +295,6 @@ export const jobStagesStatuses = {
       statuses: [
         "Pending",
         "Call Scheduled",
-        "Not Assigned",
         "Reviewed",
         "Cleared",
         "No Show",
@@ -314,7 +307,6 @@ export const jobStagesStatuses = {
       statuses: [
         "Pending",
         "Call Scheduled",
-        "Not Assigned",
         "Reviewed",
         "Cleared",
         "No Show",
@@ -380,7 +372,6 @@ export const jobStagesStatuses = {
       statuses: [
         "Pending",
         "Call Scheduled",
-        "Not Assigned",
         "Reviewed",
         "Cleared",
         "No Show",
@@ -393,7 +384,6 @@ export const jobStagesStatuses = {
       statuses: [
         "Pending",
         "Call Scheduled",
-        "Not Assigned",
         "Reviewed",
         "Cleared",
         "No Show",
@@ -459,7 +449,6 @@ export const jobStagesStatuses = {
       statuses: [
         "Pending",
         "Call Scheduled",
-        "Not Assigned",
         "Reviewed",
         "Cleared",
         "No Show",
@@ -472,7 +461,6 @@ export const jobStagesStatuses = {
       statuses: [
         "Pending",
         "Call Scheduled",
-        "Not Assigned",
         "Reviewed",
         "Cleared",
         "No Show",
@@ -538,7 +526,6 @@ export const jobStagesStatuses = {
       statuses: [
         "Pending",
         "Call Scheduled",
-        "Not Assigned",
         "Reviewed",
         "Cleared",
         "No Show",
@@ -551,7 +538,6 @@ export const jobStagesStatuses = {
       statuses: [
         "Pending",
         "Call Scheduled",
-        "Not Assigned",
         "Reviewed",
         "Cleared",
         "No Show",
@@ -617,7 +603,6 @@ export const jobStagesStatuses = {
       statuses: [
         "Pending",
         "Call Scheduled",
-        "Not Assigned",
         "Reviewed",
         "Cleared",
         "No Show",
@@ -630,7 +615,6 @@ export const jobStagesStatuses = {
       statuses: [
         "Pending",
         "Call Scheduled",
-        "Not Assigned",
         "Reviewed",
         "Cleared",
         "No Show",
@@ -696,7 +680,6 @@ export const jobStagesStatuses = {
   //     statuses: [
   //       "Pending",
   //       "Call Scheduled",
-  //       "Not Assigned",
   //       "Reviewed",
   //       "Cleared",
   //       "No Show",
@@ -709,7 +692,6 @@ export const jobStagesStatuses = {
   //     statuses: [
   //       "Pending",
   //       "Call Scheduled",
-  //       "Not Assigned",
   //       "Reviewed",
   //       "Cleared",
   //       "No Show",

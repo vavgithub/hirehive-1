@@ -23,8 +23,8 @@ function StageRating({customSchema,candidateId,jobId,name,candidate,onSubmit,sta
         let newRating = {...rating}
         customSchema?.map(schema => {
           if(rating.hasOwnProperty(schema?.defaultKey)){
-            newRating[schema.customKey] = 0
             delete newRating[schema?.defaultKey]
+            newRating[schema.customKey] = 0
           } 
         })
         setRating(newRating)
