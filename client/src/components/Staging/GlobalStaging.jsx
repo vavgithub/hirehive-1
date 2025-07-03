@@ -54,7 +54,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
       const isValidstage =  stagingConfig[jobProfile]?.filter(stage=> stage?.name === selectedStage);
       const stageTitle = isValidstage?.length > 0 ? isValidstage[0]?.name : "";
       const stageConfig = isValidstage[0];
-      const stageBasedConfig = isValidstage[0]?.contentConfig[currentStatus][role];
+      const stageBasedConfig = isValidstage[0]?.contentConfig[currentStatus] ? isValidstage[0]?.contentConfig[currentStatus][role] : isValidstage[0]?.contentConfig ? Object.values(isValidstage[0]?.contentConfig)[0][role] : {};
       const candidateId = candidateData?._id;
       const jobId = candidateData?.jobApplication?.jobId;
 
