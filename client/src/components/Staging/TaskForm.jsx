@@ -4,7 +4,7 @@ import Timepicker from '../MUIUtilities/Timepicker';
 import { Button } from '../Buttons/Button';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { updateStageStatus } from '../../redux/applicationStageSlice';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import axios from '../../services/axios';
 import { formatTime } from '../../utility/formatTime';
 import TextEditor from '../utility/TextEditor';
@@ -17,6 +17,7 @@ import IconWrapper from '../Cards/IconWrapper';
 import { ChartNoAxesGantt, ChevronDown, ChevronUp } from 'lucide-react';
 import { fetchTaskPresets, sendDesignTask } from '../../services/hr.service';
 import { submitDesignTask } from '../../services/candidates.service';
+import { setDesignTaskContent } from '../../redux/AdminSlice';
 
 export function SubmissionForm({candidateId,jobId,stageData,setIsLoading}){
     const [taskLink, setTaskLink] = useState('');
@@ -120,6 +121,8 @@ function TaskForm({jobProfile,candidateId,candidateEmail,jobId,setIsLoading}) {
 
     const [showMore,setShowMore] = useState(false);
 
+    const { designTaskContent } = useSelector(state => state.admin);
+
     const { data: taskData, isTaskDataLoading } = useQuery({
         queryKey: ['getAllTaskPresets',jobProfile],
         queryFn: () => fetchTaskPresets(jobProfile),
@@ -176,6 +179,7 @@ function TaskForm({jobProfile,candidateId,candidateEmail,jobId,setIsLoading}) {
     const handleSendTask = (scheduledDate,scheduledTime) => {
         isFirstRender.current = false;
         validateErrors()
+        dispatch(setDesignTaskContent(''))
         // console.log(taskDescription)
         if (taskDescription.trim() && dueDate && dueTime) {
             sendTaskMutation.mutate({
@@ -199,6 +203,13 @@ function TaskForm({jobProfile,candidateId,candidateEmail,jobId,setIsLoading}) {
         setPresetLoaded(false);
         setSelectedTaskPreset(template?.htmlString);
     }
+
+    useEffect(() => {
+        if(designTaskContent){
+            setSelectedTaskPreset(designTaskContent)
+        }
+    },[])
+
     useEffect(()=>{
         if(selectedTaskPreset){
             setPresetLoaded(true)
@@ -212,6 +223,7 @@ function TaskForm({jobProfile,candidateId,candidateEmail,jobId,setIsLoading}) {
             setSelectedTaskPreset(false)
             setPresetLoaded(false)
         }
+        dispatch(setDesignTaskContent(taskDescription))
     },[taskDescription])
 
   return (
