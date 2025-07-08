@@ -1083,6 +1083,7 @@ export const creativeDirectorConfig = [
                         hasLabel : false,
                         hasRejectionReason : true,
                         hasScoreCard : true,
+                        hasSubmissionDetails : true
                     },
                     "Hiring Manager" : {
                         hasAssigneeSelectorIcon : false,
