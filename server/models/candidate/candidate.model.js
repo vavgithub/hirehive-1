@@ -36,6 +36,30 @@ const stageStatusSchema = new mongoose.Schema(
       ],
       default: "Not Assigned",
     },
+    logs : [{
+      status : {
+        type : String, 
+        enum : [
+        "Not Assigned",
+        "Under Review",
+        "Reviewed",
+        "Cleared",
+        "Rejected",
+        "Pending",
+        "Call Scheduled",
+        "Rescheduled",
+        "No Show",
+        "Accepted",
+        "Sent",
+        "Not Submitted",
+      ],
+        required : true
+      },
+      date : {
+        type : Date,
+        required : true
+      }
+    }],
     rejectionReason: {
       type: String,
       default: "N/A",

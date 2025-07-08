@@ -56,6 +56,40 @@ const updateCallStatuses = async () => {
                   update: { $set: { [`jobApplications.${jobIndex}.stageStatuses.${stage}.status`]: 'Under Review' } }
                 }
               });
+
+              // Then upsert/update the logs
+              const logsPath = `jobApplications.${jobIndex}.stageStatuses.${stage}.logs`;
+              const logs = jobApp.stageStatuses[stage].logs || [];
+              const existingLogIndex = logs.findIndex(log => log.status === 'Under Review');
+
+              if (existingLogIndex !== -1) {
+                // Overwrite date of existing log entry
+                bulkOps.push({
+                  updateOne: {
+                    filter: { _id: candidate._id },
+                    update: {
+                      $set: {
+                        [`${logsPath}.${existingLogIndex}.date`]: new Date()
+                      }
+                    }
+                  }
+                });
+              } else {
+                // Push new log entry
+                bulkOps.push({
+                  updateOne: {
+                    filter: { _id: candidate._id },
+                    update: {
+                      $push: {
+                        [logsPath]: {
+                          status: 'Under Review',
+                          date: new Date()
+                        }
+                      }
+                    }
+                  }
+                });
+              }
             }
           }
         }
@@ -105,12 +139,27 @@ const updateMailSendAndStatuses = async () => {
       
       for(let candidate of result){
         const currentStageStatus = candidate?.jobApplications[0]?.stageStatuses.get(stage)?.status;
+        const logs = candidate?.jobApplications[0]?.stageStatuses.get(stage)?.logs ?? [];
+
         if(candidate?.jobApplications[0]?.currentStage === "Design Task" && candidate?.jobApplications[0]?.stageStatuses.get("Design Task")?.status === "Pending"){
           // Send design email to candidate
           const removedDescription = removeEmojis(candidate?.jobApplications[0]?.stageStatuses.get(stage)?.taskDescription)
           const emailSubject = `Value At Void : ${candidate?.jobApplications[0]?.jobApplied} | Design Task for ${candidate.firstName}`;
           const emailContent = getDesignTaskContent(candidate.firstName + " " + candidate.lastName,candidate?.jobApplications[0]?.jobApplied,removedDescription,candidate?.jobApplications[0]?.stageStatuses.get(stage)?.currentCall?.scheduledDate,candidate?.jobApplications[0]?.stageStatuses.get(stage)?.currentCall?.scheduledTime)
-  
+          
+          //write Logs
+          let hasUpdated = false;
+          if(logs?.length > 0){
+            for(let log of logs){
+              if(log.status === 'Sent'){
+                log.date = new Date()
+                hasUpdated = true
+              }
+            }
+          }
+          if(!hasUpdated){
+            logs.push({status: "Sent", date : new Date()})
+          }
           await sendEmail(candidate?.email, emailSubject, emailContent,"Design Task");
         }else{
           //Selective Email sending
@@ -118,7 +167,19 @@ const updateMailSendAndStatuses = async () => {
           if(canSendEmail){
             // Send rejection email
             const emailContent = getRejectionEmailContent(candidate.firstName + " " + candidate.lastName,candidate?.jobApplications[0]?.jobApplied);
-  
+            //write Logs
+            let hasUpdated = false;
+            if(logs?.length > 0){
+              for(let log of logs){
+                if(log.status === 'Rejected'){
+                  log.date = new Date()
+                  hasUpdated = true
+                }
+              }
+            }
+            if(!hasUpdated){
+              logs.push({status: "Rejected", date : new Date()})
+            }
             await sendEmail(candidate.email, "Application Status Update", emailContent);
           }
         }
@@ -131,7 +192,8 @@ const updateMailSendAndStatuses = async () => {
           {
             $set: {
               [`jobApplications.$.stageStatuses.${stage}.status`]: (stage === "Design Task" && currentStageStatus === "Pending" ) ? "Sent" :"Rejected",
-              [`jobApplications.$.stageStatuses.${stage}.scheduledDate`] : null
+              [`jobApplications.$.stageStatuses.${stage}.scheduledDate`] : null,
+              [`jobApplications.$.stageStatuses.${stage}.logs`] : logs,
             }
           }
         );

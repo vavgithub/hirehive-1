@@ -4,11 +4,11 @@ import Datepicker from '../MUIUtilities/Datepicker'
 import Timepicker from '../MUIUtilities/Timepicker'
 import { Button } from '../Buttons/Button';
 import { InputField } from '../Inputs/InputField';
-import { getStages } from '../../config/staging.config';
-import { combineDateWithTime, convertLocalToUTC } from '../../utility/timezoneConverter';
+import { getStages, logConfig } from '../../config/staging.config';
+import { combineDateWithTime, convertLocalToUTC, UTCToDateFormatted } from '../../utility/timezoneConverter';
 
 
-export const ScheduleForm = ({ candidateData, onSubmit, isRescheduling, initialData, onCancel ,isDisabled}) => {
+export const ScheduleForm = ({ candidateData, onSubmit, isRescheduling, initialData, onCancel ,isDisabled , log = null }) => {
     const [date, setDate] = useState(isRescheduling ? null : (initialData ? new Date(initialData.scheduledDate) : null));
     const [time, setTime] = useState(isRescheduling ? null : (initialData ? initialData.scheduledTime : null));
     const [assignee, setAssignee] = useState(isRescheduling ? null : (initialData ? initialData.assignedTo : null));
@@ -112,8 +112,16 @@ export const ScheduleForm = ({ candidateData, onSubmit, isRescheduling, initialD
                 errorMessage="Meeting link is required"
             />
             <div className='flex gap-4'>
+                <div className={'flex gap-4 w-full ' + (log ? 'justify-between' : 'justify-end')}>
+                    {
+                        log && 
+                        <div >
+                            <p className='typography-small-p text-font-gray'>{log && candidateData?.jobApplication?.currentStage && logConfig[candidateData?.jobApplication?.currentStage][log?.status]}</p>
+                            <p>{UTCToDateFormatted(log?.date)}</p>
+                        </div>
+                    }
                 {isRescheduling ? (
-                    <div className='flex gap-4 w-full justify-end'>
+                    <div className='flex gap-4'>
                             <Button
                                 variant="secondary"
                                 onClick={onCancel}
@@ -127,10 +135,7 @@ export const ScheduleForm = ({ candidateData, onSubmit, isRescheduling, initialD
                                 Save Changes
                             </Button>
                     </div>
-                ) : (
-                    <div className='flex w-full justify-end'>
-
-
+                    ) : (
                             <Button
                                 variant="primary"
                                 disabled={isDisabled}
@@ -138,8 +143,8 @@ export const ScheduleForm = ({ candidateData, onSubmit, isRescheduling, initialD
                             >
                                 Schedule Call
                             </Button>
-                    </div>
                 )}
+                </div>
             </div>
         </div>
     );

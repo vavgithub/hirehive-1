@@ -74,13 +74,14 @@ function SchedulerButton({buttonText,buttonVariant,extraClasses,modalTitle,modal
         {buttonText}
         </span>
             <span onClick={(e)=>{e.stopPropagation(); setIsOpen(!isOpen)}} className={variants[buttonVariant] + ' rounded-e-xl flex h-full items-center pl-4 pr-4'}>
-            {isOpen ? 
-            <ChevronUp  />
-            :
-            <ChevronDown />}
+                <ChevronDown
+                    className={`transition-transform duration-300 ${
+                    isOpen ? '-rotate-180' : 'rotate-0'
+                    }`}
+                />
             </span>
         {isOpen && 
-        <span className='typography-body bg-background-80 rounded-xl p-2   absolute -top-16 right-0 '>
+        <span className='typography-body bg-background-70 rounded-xl p-2   absolute -top-16 right-0 '>
             <p onClick={()=>setScheduleModal(true)} className='hover:bg-background-60 w-full whitespace-nowrap py-2 px-8 rounded-xl hover:text-accent-100'>Scheduled Send</p>
         </span>}
     </button>

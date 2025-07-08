@@ -14,7 +14,7 @@ function RejectionSelector({selectedAnchor,handleClose,handleReasonSelect}) {
             }}
             sx={{
               "& .MuiList-root": {
-                backgroundColor: 'var(--color-background-70) !important',
+                backgroundColor: 'var(--color-background-80) !important',
                 color: "white",
                 padding : "0px "
               },
