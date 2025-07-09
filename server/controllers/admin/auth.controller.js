@@ -10,7 +10,7 @@ import { Company } from '../../models/admin/company.model.js';
 import jwt from 'jsonwebtoken'
 import { verifyToken } from '../../middlewares/authMiddleware.js';
 import { getCountryNameFromPhoneNumber } from '../../utils/countryUtils.js';
-import { uploadToS3 } from '../../utils/s3utility.js';
+import { uploadGoogleImageToS3, uploadToS3 } from '../../utils/s3utility.js';
 import { checkScopes, getAccessOauthClient, getAuthorizationUrl, getOAuthTokens, getRoleBasedScopes, getUserInfo, revokeOauthClient, SCOPE_KEYS, SCOPES, USE_TYPES, WORKSPACE_KEYS } from '../../utils/integrations/google.js';
 import { randomBytes } from 'crypto';
 import { decrypt, encrypt } from '../../utils/crypto.js';
@@ -1329,10 +1329,14 @@ export const redirectForGoogleToken = asyncHandler(async (req,res) => {
                 const [firstName, ...lastName] = userInfo?.name?.split(' ');
                 let profilePictureUrl = ''
                 if(userInfo?.picture){
-                  profilePictureUrl = await uploadGoogleImagesToCloudinary(
-                  userInfo.picture,
-                  'profile-pictures'
-                );
+                  // profilePictureUrl = await uploadGoogleImagesToCloudinary(
+                  //   userInfo.picture,
+                  //   'profile-pictures'
+                  // );
+                  profilePictureUrl = await uploadGoogleImageToS3(
+                    userInfo.picture,
+                    'profile-pictures'
+                  );
                 }
                 const createUser = await User.create({
                   firstName ,
