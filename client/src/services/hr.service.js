@@ -87,3 +87,8 @@ export const updateStatus = async (candidateId,jobId,status) => {
         return false
     }
 };
+
+export const undoStageActions = async ({candidateId,jobId}) => {
+    const response = await axios.post(HR_BASE_URL + '/undo-action', { candidateId, jobId})
+    return response.data
+}

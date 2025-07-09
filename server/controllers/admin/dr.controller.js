@@ -94,14 +94,39 @@ export const updateCandidateAssignee = async (req, res) => {
     stageStatus.assignedTo = assigneeId;
 
     // Update the status based on the stage
-    if (['Portfolio', 'Design Task'].includes(stage)) {
+    if (stage === 'Portfolio') {
       stageStatus.status = assigneeId ? 'Under Review' : 'Not Assigned';
     }
+
+    if (stage === 'Design Task') {
+      if (stageStatus?.submittedTaskLink) {
+        stageStatus.status = assigneeId ? 'Under Review' : stageStatus.status;
+      }else{
+        stageStatus.assignedTo = null;
+      }
+    }
+
     // Add more stage-specific logic here as needed
 
     // If this is the first stage and an assignee is added, update the current stage
     if (['Portfolio', 'Design Task'].includes(stage) && assigneeId && !jobApplication.currentStage) {
       jobApplication.currentStage = stage;
+    }
+
+    if(stageStatus.assignedTo){
+      let existUpdated = false
+      for(let log of stageStatus.logs){
+        if(log.status === stageStatus.status){
+          log.date = new Date()
+          existUpdated = true
+        }
+      }
+      if(!existUpdated){
+        stageStatus.logs.push({
+          status : stageStatus.status,
+          date : new Date()
+        })
+      }
     }
 
     // Save the changes
@@ -406,6 +431,7 @@ export const autoAssignPortfolios = async (req, res) => {
   }
 };
 
+
  export  const submitScoreReview = async (req, res) => {
    try {
      const { candidateId, jobId, stage, ratings, feedback } = req.body;
@@ -462,7 +488,23 @@ export const autoAssignPortfolios = async (req, res) => {
        // Optionally handle cases where status is not 'Under Review'
        return res.status(400).json({ message: `Cannot review a stage with status '${stageStatus.status}'` });
      }
- 
+
+     //Writing Logs
+     if(stageStatus.score){
+      let existUpdated = false
+      for(let log of stageStatus.logs){
+        if(log.status === stageStatus.status){
+          log.date = new Date()
+          existUpdated = true
+        }
+      }
+      if(!existUpdated){
+        stageStatus.logs.push({
+          status : stageStatus.status,
+          date : new Date()
+        })
+      }
+    }
      // Save the updated candidate document
      await candidate.save();
  

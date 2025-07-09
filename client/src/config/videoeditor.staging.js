@@ -16,6 +16,7 @@ export const videoEditorConfig = [
             contentConfig : {
                 "Not Assigned" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : true,
@@ -25,11 +26,14 @@ export const videoEditorConfig = [
                             icon : WarningIcon
                         },
                         hasScheduledLabel : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         actions : {
                             hasRejectAction : true,
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : true,
@@ -39,11 +43,14 @@ export const videoEditorConfig = [
                             icon : WarningIcon
                         },
                         hasScheduledLabel : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         actions : {
                             hasRejectAction : true,
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -66,6 +73,7 @@ export const videoEditorConfig = [
                 },
                 "Under Review" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -76,10 +84,13 @@ export const videoEditorConfig = [
                         },
                         hasRemarks : false,
                         hasRatingComponent : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScoreCard : false,
                         actions : false
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -89,10 +100,13 @@ export const videoEditorConfig = [
                             icon : WarningIcon
                         },
                         hasRemarks : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScoreCard : false,
                         actions : false
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -122,6 +136,7 @@ export const videoEditorConfig = [
                 },
                 "Reviewed" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -129,6 +144,8 @@ export const videoEditorConfig = [
                         hasLabel : false,
                         hasRemarks : true,
                         hasScoreCard : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScheduledLabel : true,
                         actions : {
                             hasRejectAction : true,
@@ -136,6 +153,7 @@ export const videoEditorConfig = [
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -143,6 +161,8 @@ export const videoEditorConfig = [
                         hasLabel : false,
                         hasRemarks : true,
                         hasScoreCard : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScheduledLabel : true,
                         actions : {
                             hasRejectAction : true,
@@ -150,6 +170,7 @@ export const videoEditorConfig = [
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -175,28 +196,35 @@ export const videoEditorConfig = [
                 },
                 "Rejected" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
                         hasBudgetLabel : false,
                         hasLabel : false,
                         hasRemarks : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasRejectionReason : true,
                         hasScoreCard : true,
                         actions : false
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
                         hasBudgetLabel : false,
                         hasLabel : false,
                         hasRemarks : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasRejectionReason : true,
                         hasScoreCard : true,
                         actions : false
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -220,6 +248,7 @@ export const videoEditorConfig = [
                 },
                 "Cleared" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -230,6 +259,7 @@ export const videoEditorConfig = [
                         actions : false
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -240,6 +270,7 @@ export const videoEditorConfig = [
                         actions : false
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -306,6 +337,7 @@ export const videoEditorConfig = [
             contentConfig : {
                 "Pending" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -317,11 +349,14 @@ export const videoEditorConfig = [
                         hasRemarks : false,
                         hasScoreCard : false,
                         hasBudgetScoring : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         actions : false,
                         hasCallHistory : false,
                         hasScheduledForm : true
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -333,11 +368,14 @@ export const videoEditorConfig = [
                         hasRemarks : false,
                         hasScoreCard : false,
                         hasBudgetScoring : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         actions : false,
                         hasCallHistory : false,
                         hasScheduledForm : true
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -364,6 +402,7 @@ export const videoEditorConfig = [
                 },
                 "Call Scheduled" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -377,12 +416,15 @@ export const videoEditorConfig = [
                         hasCallDetails : true,
                         hasCallHistory : true,
                         hasScheduledForm : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         actions : {
                             hasRescheduleAction : true,
                             hasNoShowAction : true,
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -395,6 +437,8 @@ export const videoEditorConfig = [
                         hasScoreCard : false,
                         hasCallDetails : true,
                         hasCallHistory : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasScheduledForm : false,
                         actions : {
                             hasRescheduleAction : true,
@@ -402,6 +446,7 @@ export const videoEditorConfig = [
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -432,6 +477,7 @@ export const videoEditorConfig = [
                 },
                 "No Show" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -442,6 +488,8 @@ export const videoEditorConfig = [
                         },
                         hasRemarks : false,
                         hasScoreCard : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasCallDetails : false,
                         hasCallHistory : false,
                         hasScheduledForm : false,
@@ -452,6 +500,7 @@ export const videoEditorConfig = [
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -464,6 +513,8 @@ export const videoEditorConfig = [
                         hasScoreCard : false,
                         hasCallDetails : false,
                         hasCallHistory : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScheduledForm : false,
                         hasScheduledLabel : true,
                         actions : {
@@ -472,6 +523,7 @@ export const videoEditorConfig = [
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -502,6 +554,7 @@ export const videoEditorConfig = [
                 },
                 "Under Review" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -515,12 +568,15 @@ export const videoEditorConfig = [
                         hasRemarks : false,
                         hasScoreCard : false,
                         hasCallDetails : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasCallHistory : false,
                         actions : {
                             hasNoShowAction : true,
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -533,12 +589,15 @@ export const videoEditorConfig = [
                         hasScoreCard : false,
                         hasCallDetails : false,
                         hasCallHistory : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasScheduledForm : false,
                         actions : {
                             hasNoShowAction : true,
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -570,6 +629,7 @@ export const videoEditorConfig = [
                 },
                 "Reviewed" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -579,6 +639,8 @@ export const videoEditorConfig = [
                         hasScoreBoard : true,
                         hasScoreCard : true,
                         hasBudgetScoring : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasCallDetails : false,
                         hasCallHistory : false,
                         hasScheduledForm : false,
@@ -589,6 +651,7 @@ export const videoEditorConfig = [
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -596,6 +659,8 @@ export const videoEditorConfig = [
                         hasLabel : false,
                         hasRemarks : true,
                         hasScoreBoard : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScoreCard : true,
                         hasBudgetScoring : true,
                         hasCallDetails : false,
@@ -608,6 +673,7 @@ export const videoEditorConfig = [
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -637,6 +703,7 @@ export const videoEditorConfig = [
                 },
                 "Cleared" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -651,6 +718,7 @@ export const videoEditorConfig = [
                         actions : false
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -665,6 +733,7 @@ export const videoEditorConfig = [
                         actions : false
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -694,6 +763,7 @@ export const videoEditorConfig = [
                 },
                 "Rejected" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -702,6 +772,8 @@ export const videoEditorConfig = [
                         hasRemarks : false,
                         hasRejectionReason : true,
                         hasScoreBoard : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasScoreCard : true,
                         hasCallDetails : false,
                         hasCallHistory : false,
@@ -709,6 +781,7 @@ export const videoEditorConfig = [
                         actions : false
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -717,6 +790,8 @@ export const videoEditorConfig = [
                         hasRemarks : false,
                         hasRejectionReason : true,
                         hasScoreBoard : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasScoreCard : true,
                         hasCallDetails : false,
                         hasCallHistory : false,
@@ -724,6 +799,7 @@ export const videoEditorConfig = [
                         actions : false
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -766,6 +842,7 @@ export const videoEditorConfig = [
             contentConfig : {
                 "Pending" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -776,11 +853,14 @@ export const videoEditorConfig = [
                         },
                         hasScheduledLabel : true,
                         hasRemarks : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScoreCard : false,
                         actions : false,
                         hasTaskForm : true
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -792,10 +872,13 @@ export const videoEditorConfig = [
                         hasRemarks : false,
                         hasScoreCard : false,
                         actions : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasTaskForm : true,
                         hasScheduledLabel : true
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -822,6 +905,7 @@ export const videoEditorConfig = [
                 },
                 "Sent" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -832,6 +916,8 @@ export const videoEditorConfig = [
                         },
                         hasRemarks : false,
                         hasScoreCard : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         actions : {
                             hasRejectAction : true,
                         },
@@ -839,6 +925,7 @@ export const videoEditorConfig = [
                         hasTaskDetails : true
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -849,6 +936,8 @@ export const videoEditorConfig = [
                         },
                         hasRemarks : false,
                         hasScoreCard : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         actions : {
                             hasRejectAction : true,
                         },
@@ -856,6 +945,7 @@ export const videoEditorConfig = [
                         hasTaskDetails : true,
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -881,6 +971,7 @@ export const videoEditorConfig = [
                 },
                 "Not Assigned" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : true,
@@ -891,10 +982,13 @@ export const videoEditorConfig = [
                         },
                         hasRemarks : false,
                         hasScoreCard : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         actions : false,
                         hasSubmissionDetails : true
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : true,
@@ -905,10 +999,13 @@ export const videoEditorConfig = [
                         },
                         hasRemarks : false,
                         hasScoreCard : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         actions : false,
                         hasSubmissionDetails : true
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -933,6 +1030,7 @@ export const videoEditorConfig = [
                 },
                 "Under Review" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -943,11 +1041,14 @@ export const videoEditorConfig = [
                         },
                         hasRemarks : false,
                         hasScoreCard : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasSubmissionDetails : true,
                         hasRatingComponent : true,
                         actions : false,
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -957,11 +1058,14 @@ export const videoEditorConfig = [
                             icon : WarningIcon
                         },
                         hasRemarks : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScoreCard : false,
                         hasSubmissionDetails : true,
                         actions : false,
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -986,6 +1090,7 @@ export const videoEditorConfig = [
                 },
                 "Reviewed" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -993,6 +1098,8 @@ export const videoEditorConfig = [
                         hasLabel : false,
                         hasRemarks : true,
                         hasScoreCard : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScheduledLabel : true,
                         actions : {
                             hasRejectAction : true,
@@ -1000,6 +1107,7 @@ export const videoEditorConfig = [
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1008,6 +1116,8 @@ export const videoEditorConfig = [
                         hasRemarks : true,
                         hasScoreCard : true,
                         hasScheduledLabel : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasSubmissionDetails : true,
                         hasScheduledLabel : true,
                         actions : {
@@ -1016,6 +1126,7 @@ export const videoEditorConfig = [
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1035,6 +1146,7 @@ export const videoEditorConfig = [
                 },
                 "Cleared" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1045,6 +1157,7 @@ export const videoEditorConfig = [
                         hasSubmissionDetails : true
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1055,6 +1168,7 @@ export const videoEditorConfig = [
                         hasSubmissionDetails : true
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1076,25 +1190,33 @@ export const videoEditorConfig = [
                 },
                 "Rejected" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
                         hasBudgetLabel : false,
                         hasLabel : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasRejectionReason : true,
                         hasScoreCard : true,
+                        hasSubmissionDetails : true
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
                         hasBudgetLabel : false,
                         hasLabel : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasRejectionReason : true,
                         hasScoreCard : true,
                         hasSubmissionDetails : true
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1113,6 +1235,7 @@ export const videoEditorConfig = [
                 },
                 "Not Submitted" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1127,6 +1250,7 @@ export const videoEditorConfig = [
                         hasTaskDetails : true
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1141,6 +1265,7 @@ export const videoEditorConfig = [
                         hasTaskDetails : true
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1178,6 +1303,7 @@ export const videoEditorConfig = [
             contentConfig : {
                 "Pending" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1187,11 +1313,14 @@ export const videoEditorConfig = [
                             icon : WarningIcon
                         },
                         hasRemarks : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScoreCard : false,
                         actions : false,
                         hasScheduledForm : true
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1201,11 +1330,14 @@ export const videoEditorConfig = [
                             icon : WarningIcon
                         },
                         hasRemarks : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScoreCard : false,
                         actions : false,
                         hasScheduledForm : true
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1232,6 +1364,7 @@ export const videoEditorConfig = [
                 },
                 "Call Scheduled" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1242,6 +1375,8 @@ export const videoEditorConfig = [
                         },
                         hasRemarks : false,
                         hasScoreCard : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasCallDetails : true,
                         hasCallHistory : true,
                         hasScheduledForm : false,
@@ -1251,6 +1386,7 @@ export const videoEditorConfig = [
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1261,6 +1397,8 @@ export const videoEditorConfig = [
                         },
                         hasRemarks : false,
                         hasScoreCard : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasCallDetails : true,
                         hasCallHistory : true,
                         hasScheduledForm : false,
@@ -1270,6 +1408,7 @@ export const videoEditorConfig = [
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1300,6 +1439,7 @@ export const videoEditorConfig = [
                 },
                 "No Show" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1312,6 +1452,8 @@ export const videoEditorConfig = [
                         hasScoreCard : false,
                         hasCallDetails : false,
                         hasCallHistory : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScheduledForm : false,
                         hasScheduledLabel : true,
                         actions : {
@@ -1320,6 +1462,7 @@ export const videoEditorConfig = [
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1332,6 +1475,8 @@ export const videoEditorConfig = [
                         hasScoreCard : false,
                         hasCallDetails : false,
                         hasCallHistory : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScheduledForm : false,
                         hasScheduledLabel : true,
                         actions : {
@@ -1340,6 +1485,7 @@ export const videoEditorConfig = [
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1370,6 +1516,7 @@ export const videoEditorConfig = [
                 },
                 "Under Review" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1381,6 +1528,8 @@ export const videoEditorConfig = [
                         hasRemarks : false,
                         hasScoreCard : false,
                         hasCallDetails : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasCallHistory : false,
                         hasScheduledForm : false,
                         hasRatingComponent : true,
@@ -1389,6 +1538,7 @@ export const videoEditorConfig = [
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1401,12 +1551,15 @@ export const videoEditorConfig = [
                         hasScoreCard : false,
                         hasCallDetails : false,
                         hasCallHistory : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasScheduledForm : false,
                         actions : {
                             hasNoShowAction : true,
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1438,6 +1591,7 @@ export const videoEditorConfig = [
                 },
                 "Reviewed" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1445,6 +1599,8 @@ export const videoEditorConfig = [
                         hasLabel : false,
                         hasRemarks : true,
                         hasScoreCard : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasCallDetails : false,
                         hasCallHistory : false,
                         hasScheduledForm : false,
@@ -1455,6 +1611,7 @@ export const videoEditorConfig = [
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1463,6 +1620,8 @@ export const videoEditorConfig = [
                         hasRemarks : true,
                         hasScoreCard : true,
                         hasCallDetails : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasCallHistory : false,
                         hasScheduledForm : false,
                         hasScheduledLabel : true,
@@ -1472,6 +1631,7 @@ export const videoEditorConfig = [
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1500,6 +1660,7 @@ export const videoEditorConfig = [
                 },
                 "Cleared" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1513,6 +1674,7 @@ export const videoEditorConfig = [
                         actions : false
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1526,6 +1688,7 @@ export const videoEditorConfig = [
                         actions : false
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1554,12 +1717,15 @@ export const videoEditorConfig = [
                 },
                 "Rejected" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
                         hasBudgetLabel : false,
                         hasLabel : false,
                         hasRemarks : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasRejectionReason : true,
                         hasScoreCard : true,
                         hasCallDetails : false,
@@ -1568,6 +1734,7 @@ export const videoEditorConfig = [
                         actions : false
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1576,12 +1743,15 @@ export const videoEditorConfig = [
                         hasRemarks : false,
                         hasRejectionReason : true,
                         hasScoreCard : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasCallDetails : false,
                         hasCallHistory : false,
                         hasScheduledForm : false,
                         actions : false
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1623,6 +1793,7 @@ export const videoEditorConfig = [
             contentConfig : {
                 "Pending" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1632,11 +1803,14 @@ export const videoEditorConfig = [
                             icon : WarningIcon
                         },
                         hasRemarks : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScoreCard : false,
                         actions : false,
                         hasScheduledForm : true
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1646,11 +1820,14 @@ export const videoEditorConfig = [
                             icon : WarningIcon
                         },
                         hasRemarks : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScoreCard : false,
                         actions : false,
                         hasScheduledForm : true
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1677,6 +1854,7 @@ export const videoEditorConfig = [
                 },
                 "Call Scheduled" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1687,6 +1865,8 @@ export const videoEditorConfig = [
                         },
                         hasRemarks : false,
                         hasScoreCard : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasCallDetails : true,
                         hasCallHistory : true,
                         hasScheduledForm : false,
@@ -1696,6 +1876,7 @@ export const videoEditorConfig = [
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1705,6 +1886,8 @@ export const videoEditorConfig = [
                             icon : WarningIcon
                         },
                         hasRemarks : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasScoreCard : false,
                         hasCallDetails : true,
                         hasCallHistory : true,
@@ -1715,6 +1898,7 @@ export const videoEditorConfig = [
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1743,6 +1927,7 @@ export const videoEditorConfig = [
                 },
                 "No Show" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1755,6 +1940,8 @@ export const videoEditorConfig = [
                         hasScoreCard : false,
                         hasCallDetails : false,
                         hasCallHistory : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScheduledForm : false,
                         hasScheduledLabel : true,
                         actions : {
@@ -1763,6 +1950,7 @@ export const videoEditorConfig = [
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1775,6 +1963,8 @@ export const videoEditorConfig = [
                         hasScoreCard : false,
                         hasCallDetails : false,
                         hasCallHistory : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScheduledForm : false,
                         hasScheduledLabel : true,
                         actions : {
@@ -1783,6 +1973,7 @@ export const videoEditorConfig = [
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1813,6 +2004,7 @@ export const videoEditorConfig = [
                 },
                 "Under Review" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1823,11 +2015,14 @@ export const videoEditorConfig = [
                         },
                         hasRemarks : false,
                         hasScoreCard : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasCallDetails : false,
                         hasCallHistory : false,
                         hasRatingComponent : true,
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1838,11 +2033,14 @@ export const videoEditorConfig = [
                         },
                         hasRemarks : false,
                         hasScoreCard : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasCallDetails : false,
                         hasCallHistory : false,
                         hasRatingComponent : true,
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1873,6 +2071,7 @@ export const videoEditorConfig = [
                 },
                 "Reviewed" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1882,6 +2081,8 @@ export const videoEditorConfig = [
                         hasScoreCard : true,
                         hasCallDetails : false,
                         hasCallHistory : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScheduledForm : false,
                         hasScheduledLabel : true,
                         actions : {
@@ -1890,6 +2091,7 @@ export const videoEditorConfig = [
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1899,6 +2101,8 @@ export const videoEditorConfig = [
                         hasScoreCard : true,
                         hasCallDetails : false,
                         hasCallHistory : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScheduledForm : false,
                         hasScheduledLabel : true,
                         actions : {
@@ -1907,6 +2111,7 @@ export const videoEditorConfig = [
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1935,6 +2140,7 @@ export const videoEditorConfig = [
                 },
                 "Cleared" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1948,6 +2154,7 @@ export const videoEditorConfig = [
                         actions : false
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1961,6 +2168,7 @@ export const videoEditorConfig = [
                         actions : false
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1989,6 +2197,7 @@ export const videoEditorConfig = [
                 },
                 "Rejected" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1997,12 +2206,15 @@ export const videoEditorConfig = [
                         hasRemarks : false,
                         hasRejectionReason : true,
                         hasScoreCard : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasCallDetails : false,
                         hasCallHistory : false,
                         hasScheduledForm : false,
                         actions : false
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -2011,12 +2223,15 @@ export const videoEditorConfig = [
                         hasRemarks : false,
                         hasRejectionReason : true,
                         hasScoreCard : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasCallDetails : false,
                         hasCallHistory : false,
                         hasScheduledForm : false,
                         actions : false
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -2058,6 +2273,7 @@ export const videoEditorConfig = [
             contentConfig : {
                 "Under Review" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -2067,6 +2283,9 @@ export const videoEditorConfig = [
                             icon : WarningIcon
                         },
                         hasRemarks : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
+                        hasScheduledLabel : true,
                         hasScoreCard : true,
                         hasCallDetails : false,
                         hasCallHistory : false,
@@ -2076,6 +2295,7 @@ export const videoEditorConfig = [
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -2086,7 +2306,10 @@ export const videoEditorConfig = [
                         },
                         hasRemarks : false,
                         hasScoreCard : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasCallDetails : false,
+                        hasScheduledLabel : true,
                         hasCallHistory : false,
                         actions : {
                             hasRejectAction : true,
@@ -2094,6 +2317,7 @@ export const videoEditorConfig = [
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -2103,6 +2327,7 @@ export const videoEditorConfig = [
                             icon : WarningIcon
                         },
                         hasRemarks : false,
+                        hasScheduledLabel : true,
                         hasScoreCard : false,
                         hasCallDetails : false,
                         hasCallHistory : false,
@@ -2124,6 +2349,7 @@ export const videoEditorConfig = [
                 },
                 "Accepted" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -2139,6 +2365,7 @@ export const videoEditorConfig = [
                         hasCallHistory : false,
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -2154,6 +2381,7 @@ export const videoEditorConfig = [
                         hasCallHistory : false,
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -2188,6 +2416,7 @@ export const videoEditorConfig = [
                 },
                 "Rejected" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -2198,6 +2427,7 @@ export const videoEditorConfig = [
                         hasCallHistory : false,
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -2208,6 +2438,7 @@ export const videoEditorConfig = [
                         hasCallHistory : false,
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,

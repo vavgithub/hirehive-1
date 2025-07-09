@@ -29,7 +29,7 @@ const CustomStyledTooltip = styled(({ className, size, ...props }) => (
   },
 }));
 
-function CustomToolTip({ title, children, size, arrowed = false }) {
+function CustomToolTip({ title, disabled, children, size, arrowed = false }) {
   return (
     <CustomStyledTooltip
       title={title}
@@ -55,7 +55,7 @@ function CustomToolTip({ title, children, size, arrowed = false }) {
           minWidth: 0, // Remove minimum width
           padding: 0, // Remove padding
           textTransform: "none", // Prevent automatic capitalization
-          cursor: "pointer", // Add pointer cursor for better UX
+          ...(disabled ? { cursor:"default" }  : { cursor:"pointer" }), // Add pointer cursor for better UX
         }}
       >
         {children}

@@ -1,9 +1,11 @@
 import { jobStagesStatuses } from "../../config/jobStagesStatuses.js";
+import { undoConfig } from "../../config/undoConfig.js";
 import { jobs } from "../../models/admin/jobs.model.js";
 import { Task } from "../../models/admin/task.model.js";
 import { User } from "../../models/admin/user.model.js";
 import { candidates } from "../../models/candidate/candidate.model.js";
 import { getDesignTaskContent, getRejectionEmailContent } from "../../utils/emailTemplates.js";
+import { removeEmojis } from "../../utils/emojiRemover.js";
 import { updateDateWithTime } from "../../utils/formatter.js";
 import { sanitizeLexicalHtml } from "../../utils/sanitize-html.js";
 import { sendEmail } from "../../utils/sentEmail.js";
@@ -104,6 +106,25 @@ export const rejectCandidate = async (req, res) => {
         });
       }
 
+        
+      const stageStatus = jobApplication.stageStatuses.get(currentStage)
+      //Writing Logs
+      if(stageStatus.status){
+        let existUpdated = false
+        for(let log of stageStatus.logs){
+          if(log.status === stageStatus.status){
+            log.date = new Date()
+            existUpdated = true
+          }
+        }
+        if(!existUpdated){
+          stageStatus.logs.push({
+            status : stageStatus.status,
+            date : new Date()
+          })
+        }
+      }
+
       // Save the updated candidate document
       await candidate.save();
 
@@ -128,6 +149,24 @@ export const rejectCandidate = async (req, res) => {
         });
       }
   
+      const stageStatus = jobApplication.stageStatuses.get(currentStage)
+      //Writing Logs
+      if(stageStatus.status === 'Rejected'){
+        let existUpdated = false
+        for(let log of stageStatus.logs){
+          if(log.status === stageStatus.status){
+            log.date = new Date()
+            existUpdated = true
+          }
+        }
+        if(!existUpdated){
+          stageStatus.logs.push({
+            status : stageStatus.status,
+            date : new Date()
+          })
+        }
+      }
+
       // Save the updated candidate document
       await candidate.save();
       
@@ -213,7 +252,25 @@ export const rejectMultipleCandidates = async (req, res) => {
             callHistory: [],
           });
         }
-  
+
+        const stageStatus = jobApplication.stageStatuses.get(currentStage)
+        //Writing Logs
+        if(stageStatus.status){
+          let existUpdated = false
+          for(let log of stageStatus.logs){
+            if(log.status === stageStatus.status){
+              log.date = new Date()
+              existUpdated = true
+            }
+          }
+          if(!existUpdated){
+            stageStatus.logs.push({
+              status : stageStatus.status,
+              date : new Date()
+            })
+          }
+        }
+
         // Save the updated candidate document
         await candidate.save();
 
@@ -237,6 +294,24 @@ export const rejectMultipleCandidates = async (req, res) => {
             currentCall: null,
             callHistory: [],
           });
+        }
+
+        const stageStatus = jobApplication.stageStatuses.get(currentStage)
+        //Writing Logs
+        if(stageStatus.status === 'Rejected'){
+          let existUpdated = false
+          for(let log of stageStatus.logs){
+            if(log.status === stageStatus.status){
+              log.date = new Date()
+              existUpdated = true
+            }
+          }
+          if(!existUpdated){
+            stageStatus.logs.push({
+              status : stageStatus.status,
+              date : new Date()
+            })
+          }
         }
     
         // Save the updated candidate document
@@ -330,7 +405,7 @@ export const noShow = async (req, res) => {
 
     // Store the current call info in call history before updating
     if (stageStatus.currentCall) {
-      stageStatus.callHistory.push({
+      stageStatus.callHistory.unshift({
         ...stageStatus.currentCall,
         status: 'No Show'
       });
@@ -339,6 +414,23 @@ export const noShow = async (req, res) => {
     // Update the status
     stageStatus.status = 'No Show';
     stageStatus.currentCall = null; // Clear current call data
+
+    //Writing Logs
+    if(stageStatus.status === 'No Show'){
+      let existUpdated = false
+      for(let log of stageStatus.logs){
+        if(log.status === stageStatus.status){
+          log.date = new Date()
+          existUpdated = true
+        }
+      }
+      if(!existUpdated){
+        stageStatus.logs.push({
+          status : stageStatus.status,
+          date : new Date()
+        })
+      }
+    }
 
     // Save the updated candidate document
     await candidate.save();
@@ -414,6 +506,24 @@ export const moveCandidate = async (req, res) => {
       // You might want to add an additional field to indicate the candidate is hired
       jobApplication.hired = true;
       jobApplication.hireDate = new Date();
+
+      const stageStatus = jobApplication.stageStatuses.get(currentStage)
+      //Writing Logs
+      if(stageStatus.status === 'Accepted'){
+        let existUpdated = false
+        for(let log of stageStatus.logs){
+          if(log.status === stageStatus.status){
+            log.date = new Date()
+            existUpdated = true
+          }
+        }
+        if(!existUpdated){
+          stageStatus.logs.push({
+            status : stageStatus.status,
+            date : new Date()
+          })
+        }
+      }
     } else {
       // Existing logic for moving to the next stage
       const nextStageConfig = stages[currentStageIndex + 1];
@@ -421,6 +531,24 @@ export const moveCandidate = async (req, res) => {
 
       // Update the current (previous) stage status to 'Cleared'
       jobApplication.stageStatuses.get(currentStage).status = "Cleared";
+
+      const stageStatus = jobApplication.stageStatuses.get(currentStage)
+      //Writing Logs
+      if(stageStatus.status === 'Cleared'){
+        let existUpdated = false
+        for(let log of stageStatus.logs){
+          if(log.status === stageStatus.status){
+            log.date = new Date()
+            existUpdated = true
+          }
+        }
+        if(!existUpdated){
+          stageStatus.logs.push({
+            status : stageStatus.status,
+            date : new Date()
+          })
+        }
+      }
 
       // Initialize or update the next stage
       // Check if the next stage is "Hired" stage
@@ -528,6 +656,24 @@ export const moveMultipleCandidates = async (req, res) => {
           // You might want to add an additional field to indicate the candidate is hired
           jobApplication.hired = true;
           jobApplication.hireDate = new Date();
+
+          const stageStatus = jobApplication.stageStatuses.get(currentStage)
+          //Writing Logs
+          if(stageStatus.status === 'Accepted'){
+            let existUpdated = false
+            for(let log of stageStatus.logs){
+              if(log.status === stageStatus.status){
+                log.date = new Date()
+                existUpdated = true
+              }
+            }
+            if(!existUpdated){
+              stageStatus.logs.push({
+                status : stageStatus.status,
+                date : new Date()
+              })
+            }
+          }
         } else {
           // Existing logic for moving to the next stage
           const nextStageConfig = stages[currentStageIndex + 1];
@@ -535,6 +681,24 @@ export const moveMultipleCandidates = async (req, res) => {
     
           // Update the current (previous) stage status to 'Cleared'
           jobApplication.stageStatuses.get(eachCandidate.stage).status = "Cleared";
+       
+          const stageStatus = jobApplication.stageStatuses.get(eachCandidate.stage)
+          //Writing Logs
+          if(stageStatus.status === 'Cleared'){
+            let existUpdated = false
+            for(let log of stageStatus.logs){
+              if(log.status === stageStatus.status){
+                log.date = new Date()
+                existUpdated = true
+              }
+            }
+            if(!existUpdated){
+              stageStatus.logs.push({
+                status : stageStatus.status,
+                date : new Date()
+              })
+            }
+          }
     
           // Initialize or update the next stage
           // Check if the next stage is "Hired" stage
@@ -624,14 +788,38 @@ export const updateAssigneeForMultipleCandidates = async (req,res) => {
       stageStatus.assignedTo = assigneeId;
 
       // Update the status based on the stage
-      if (['Portfolio', 'Design Task'].includes(eachCandidate?.stage)) {
+      if (eachCandidate?.stage === 'Portfolio') {
         stageStatus.status = assigneeId ? 'Under Review' : 'Not Assigned';
+      }
+
+      if (eachCandidate?.stage === 'Design Task') {
+        if (stageStatus?.submittedTaskLink) {
+          stageStatus.status = assigneeId ? 'Under Review' : stageStatus.status;
+        }else{
+          stageStatus.assignedTo = null;
+        }
       }
       // Add more stage-specific logic here as needed
 
       // If this is the first stage and an assignee is added, update the current stage
       if (['Portfolio', 'Design Task'].includes(eachCandidate?.stage) && assigneeId && !jobApplication.currentStage) {
         jobApplication.currentStage = eachCandidate?.stage;
+      }
+
+      if(stageStatus.assignedTo){
+        let existUpdated = false
+        for(let log of stageStatus.logs){
+          if(log.status === stageStatus.status){
+            log.date = new Date()
+            existUpdated = true
+          }
+        }
+        if(!existUpdated){
+          stageStatus.logs.push({
+            status : stageStatus.status,
+            date : new Date()
+          })
+        }
       }
 
       // Save the changes
@@ -886,9 +1074,29 @@ export const scheduleCall = async (req, res) => {
         scheduledTime: time,
         meetingLink: meetingLink,
       },
+      //Populating logs
+      ...(jobApplication.stageStatuses.get(stage)?.logs?.length > 0 ? {logs : jobApplication.stageStatuses.get(stage)?.logs} : {}),
       //Populating score to get the score given before calls (Budget)
     ...(jobApplication.stageStatuses.get(stage)?.score ? {score :  jobApplication.stageStatuses.get(stage)?.score} : {})
     });
+
+    const stageStatus = jobApplication.stageStatuses.get(stage)
+    //Writing Logs
+    if(stageStatus.currentCall.meetingLink){
+      let existUpdated = false
+      for(let log of stageStatus.logs){
+        if(log.status === stageStatus.status){
+          log.date = new Date()
+          existUpdated = true
+        }
+      }
+      if(!existUpdated){
+        stageStatus.logs.push({
+          status : stageStatus.status,
+          date : new Date()
+        })
+      }
+    }
 
     // Save the changes
     await candidate.save();
@@ -945,10 +1153,12 @@ export const rescheduleCall = async (req, res) => {
       if (!stageStatus.callHistory) {
         stageStatus.callHistory = [];
       }
-      stageStatus.callHistory.unshift({
-        ...stageStatus.currentCall,
-        status: "Rescheduled",
-      });
+      if(stageStatus.status !== 'No Show'){
+        stageStatus.callHistory.unshift({
+          ...stageStatus.currentCall,
+          status: "Rescheduled",
+        });
+      }
     } else {
       console.log("No current call to move to history");
     }
@@ -961,6 +1171,24 @@ export const rescheduleCall = async (req, res) => {
     };
     stageStatus.assignedTo = assigneeId;
     stageStatus.status = "Call Scheduled";
+
+    
+    //Writing Logs
+    if(stageStatus.currentCall.meetingLink){
+      let existUpdated = false
+      for(let log of stageStatus.logs){
+        if(log.status === stageStatus.status){
+          log.date = new Date()
+          existUpdated = true
+        }
+      }
+      if(!existUpdated){
+        stageStatus.logs.push({
+          status : stageStatus.status,
+          date : new Date()
+        })
+      }
+    }
 
     // Update the stage status in the stageStatuses Map
     jobApplication.stageStatuses.set(stage, stageStatus);
@@ -1095,6 +1323,23 @@ export const submitBudgetScore = async (req, res) => {
     // Add or update the Budget score
     stageStatus.score.Budget = score;
 
+    //Writing Logs
+    if(stageStatus.score.Budget){
+      let existUpdated = false
+      for(let log of stageStatus.logs){
+        if(log.status === stageStatus.status){
+          log.date = new Date()
+          existUpdated = true
+        }
+      }
+      if(!existUpdated){
+        stageStatus.logs.push({
+          status : stageStatus.status,
+          date : new Date()
+        })
+      }
+    }
+
     // Mark the nested fields as modified
     candidate.markModified(`jobApplications`);
 
@@ -1157,9 +1402,25 @@ export const sendDesignTask = async (req, res) => {
           scheduledTime: dueTime,
           meetingLink: "", // You can leave this empty or use it for a submission link if needed
         },
+        logs : jobApplication.stageStatuses.get('Design Task').logs ?? [] ,
         taskDescription: sanitizedDescription,
         scheduledDate : scheduledDate
       });
+
+      //write Logs
+      const logs = jobApplication.stageStatuses.get('Design Task').logs ?? [];
+      let hasUpdated = false;
+      if(logs?.length > 0){
+        for(let log of logs){
+          if(log.status === 'Pending'){
+            log.date = new Date()
+            hasUpdated = true
+          }
+        }
+      }
+      if(!hasUpdated){
+        logs.push({status: "Pending", date : new Date()})
+      }
 
       await candidate.save();
 
@@ -1169,6 +1430,20 @@ export const sendDesignTask = async (req, res) => {
       });
     }else{
 
+      //write Logs
+      const logs = jobApplication.stageStatuses.get('Design Task').logs ?? [];
+      let hasUpdated = false;
+      if(logs?.length > 0){
+        for(let log of logs){
+          if(log.status === 'Sent'){
+            log.date = new Date()
+            hasUpdated = true
+          }
+        }
+      }
+      if(!hasUpdated){
+        logs.push({status: "Sent", date : new Date()})
+      }
       // Update the Design Task stage status
       jobApplication.stageStatuses.set("Design Task", {
         status: "Sent",
@@ -1177,12 +1452,13 @@ export const sendDesignTask = async (req, res) => {
           scheduledTime: dueTime,
           meetingLink: "", // You can leave this empty or use it for a submission link if needed
         },
+        logs : logs,
         taskDescription: sanitizedDescription,
       });
   
       // Send email to candidate
-      const emailSubject = `Value At Void : ${jobApplication.jobApplied} | Design Task for ${candidate.firstName} (8 Hrs)`;
-      const emailContent = getDesignTaskContent(candidate.firstName + " " + candidate.lastName,jobApplication.jobApplied,sanitizedDescription,dueDate,dueTime)
+      const emailSubject = `Value At Void : ${jobApplication.jobApplied} | Design Task for ${candidate.firstName}`;
+      const emailContent = getDesignTaskContent(candidate.firstName + " " + candidate.lastName,jobApplication.jobApplied,removeEmojis(sanitizedDescription),dueDate,dueTime)
       
       await sendEmail(candidateEmail, emailSubject, emailContent,"Design Task");
   
@@ -1224,6 +1500,23 @@ export const scoreRoundTwo = async (req, res) => {
     roundTwoStatus.status = "Reviewed";
     roundTwoStatus.score = score;
     roundTwoStatus.feedback = feedback;
+    
+        //Writing Logs
+    if(roundTwoStatus.status === 'Reviewed'){
+      let existUpdated = false
+      for(let log of roundTwoStatus.logs){
+        if(log.status === roundTwoStatus.status){
+          log.date = new Date()
+          existUpdated = true
+        }
+      }
+      if(!existUpdated){
+        roundTwoStatus.logs.push({
+          status : roundTwoStatus.status,
+          date : new Date()
+        })
+      }
+    }
 
     jobApplication.stageStatuses.set("Round 2", roundTwoStatus);
 
@@ -1302,6 +1595,156 @@ export const getTaskTemplates = async ( req, res) => {
     });
   } catch (error) {
     console.error("Error updating status:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+}
+
+export const undoAction = async (req,res) => {
+  try {
+    const { candidateId, jobId } = req.body;
+
+    if (!candidateId || !jobId ) {
+      return res.status(400).json({ message: "Invalid Input Data" });
+    }
+
+    // Find the candidate
+    const candidate = await candidates.findOne({
+      _id: candidateId,
+      "jobApplications.jobId": jobId,
+    });
+
+    if (!candidate) {
+      return res.status(404).json({ message: "Candidate not found" });
+    }
+
+    // Locate the relevant job application
+    const jobApplication = candidate.jobApplications.find(
+      (app) => app.jobId.toString() === jobId
+    );
+
+    if (!jobApplication) {
+      return res.status(404).json({ message: "Job application not found" });
+    }
+
+    const currentStage = jobApplication.currentStage;
+    if (!jobApplication.stageStatuses.has(currentStage)) {
+      return res.status(400).json({ message: "Current stage not found" });
+    }
+
+    function setNestedValue(obj, path, value) {
+      if (!path.includes('.')) {
+        obj[path] = value;
+        return;
+      }
+      const keys = path.split('.');
+      let current = obj;
+      for (let i = 0; i < keys.length - 1; i++) {
+        const key = keys[i];
+        if (typeof current[key] !== 'object' || current[key] === null) {
+          current[key] = {};
+        }
+        current = current[key];
+      }
+      current[keys.at(-1)] = value;
+    }
+
+
+    // Update the status in the Map
+    const stageStatus = jobApplication.stageStatuses.get(currentStage);
+    const currentStatus = stageStatus.status;
+    const currentConfig = undoConfig[currentStage][currentStatus];
+    const timeout = 5;
+
+    if(stageStatus?.logs?.length > 0){
+      const sortedLogs = stageStatus.logs.sort((a,b) => new Date(b.date) - new Date(a.date))
+      const currentDate = new Date();
+      const logDate = new Date(sortedLogs[0].date);
+
+      const timeDifferenceInMs = Math.abs(currentDate - logDate); // in milliseconds
+      const timeDifferenceInMinutes = timeDifferenceInMs / (1000 * 60);
+      
+      const isScheduled = stageStatus.scheduledDate;
+
+      if (timeDifferenceInMinutes > timeout && !stageStatus.scheduledDate) {
+        return res.status(400).json({
+            error : true , 
+            message : "This action crossed 5 minutes and can't be undone."
+        })
+      }
+
+      if(currentConfig){
+          if(currentConfig?.revert?.length > 0 && !currentConfig.condition?.includes('check_rejection_scheduled')){
+            if(currentConfig.condition?.includes('remove_except_budget')){
+                currentConfig.revert.forEach(option => {
+                  if(option.field !== 'score'){
+                    setNestedValue(stageStatus, option.field, option.value);
+                  }
+                });
+                stageStatus.score = {Budget : stageStatus.score.Budget}
+            }else{
+              currentConfig.revert.forEach(option => {
+                setNestedValue(stageStatus, option.field, option.value);
+              });
+            }
+          }
+          let isRejectionScheduled = false
+          if(currentConfig.condition?.includes('check_rejection_scheduled')){
+              if(stageStatus?.scheduledDate && stageStatus?.rejectionReason){
+                stageStatus.scheduledDate = null
+                stageStatus.rejectionReason = 'N/A'
+                isRejectionScheduled = true
+              }else if(currentConfig?.revert?.length > 0){
+                if(currentConfig.condition?.includes('remove_except_budget')){
+                    currentConfig.revert.forEach(option => {
+                      if(option.field !== 'score'){
+                        setNestedValue(stageStatus, option.field, option.value);
+                      }
+                    });
+                    stageStatus.score = {Budget : stageStatus.score.Budget}
+                }else{
+                  currentConfig.revert.forEach(option => {
+                    setNestedValue(stageStatus, option.field, option.value);
+                  });
+                }
+              }else{
+                return res.status(400).json({
+                  error : true , 
+                  message : 'This action cannot be undone.'
+                })
+              }
+          }else if(!currentConfig.revertTo){
+              return res.status(400).json({
+                error : true , 
+                message : 'This action cannot be undone.'
+              })
+            }
+          
+          if(!isScheduled || (isScheduled && currentStage === 'Hired')){
+            //Removing current log
+            stageStatus.logs = stageStatus.logs.filter(log => log.status !== (sortedLogs[0]?.status ?? stageStatus.status))
+          }
+
+          if(currentConfig?.revertTo && stageStatus.status !== currentConfig.revertTo && !isRejectionScheduled){
+            //Reverting to previous status
+            stageStatus.status = sortedLogs[1]?.status ?? currentConfig.revertTo
+          }
+        }
+    }else{
+      return res.status(400).json({
+        error : true , 
+        message : 'This action cannot be undone.'
+      })
+    }
+
+    candidate.markModified('jobApplications')
+    await candidate.save();
+
+    res.status(200).json({
+      success : true ,
+      message : 'Action reverted successfully'
+    })
+  } catch (error) {
+    console.error("Error in undo action:", error);
     res.status(500).json({ message: "Server error", error: error.message });
   }
 }

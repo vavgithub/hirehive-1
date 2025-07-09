@@ -34,14 +34,10 @@ import { initializeUploadDir } from "./config/paths.js";
 import corsConfig from "./config/cors.config.js";
 import cookieSession from "cookie-session";
 import { handleUploadError } from "./middlewares/uploadMiddleware.js";
-import { User } from "./models/admin/user.model.js";
-import { candidates } from "./models/candidate/candidate.model.js";
-import { jobs } from "./models/admin/jobs.model.js";
-import { Company } from "./models/admin/company.model.js";
 import { seedTemplates } from "./models/admin/assessment.model.js";
 import { seedTasks } from "./models/admin/task.model.js";
 
-const app = express();
+const app = express(); 
 await initializeUploadDir(envConfig.UPLOAD_DIR);
 
 // Apply CORS configuration
@@ -89,68 +85,7 @@ const PORT = envConfig.PORT;
 
 app.use(handleUploadError)
 
-async function renameTechToHTML() {
-  try {
-    const applied = await candidates.find({
-      jobApplications: {
-        $elemMatch: {
-          jobProfile: "UI UX",
-          "stageStatuses.Screening.score": { $exists: true }
-        }
-      }
-    });
-
-    let updatedCount = 0;
-
-    for (let candidate of applied) {
-      let modified = false;
-
-      for (let app of candidate.jobApplications) {
-        let stageStatuses = app.stageStatuses;
-
-        // Convert Map to plain object if it's a Map
-        if (stageStatuses instanceof Map) {
-          stageStatuses = Object.fromEntries(stageStatuses);
-        }
-
-        if (
-          app.jobProfile === "UI UX" &&
-          stageStatuses.Screening &&
-          stageStatuses.Screening.score &&
-          stageStatuses.Screening.score.Tech !== undefined
-        ) {
-          // Modify the score
-          const score = stageStatuses.Screening.score;
-          score.HTML = score.Tech;
-          delete score.Tech;
-
-          // Assign the modified score back
-          stageStatuses.Screening.score = score;
-
-          // Convert back to Map and assign
-          app.stageStatuses = new Map(Object.entries(stageStatuses));
-          console.log(app.stageStatuses)
-          modified = true;
-        }
-      }
-
-      if (modified) {
-        candidate.markModified("jobApplications");
-        await candidate.save();
-        updatedCount++;
-      }
-    }
-
-    console.log(`✅ Updated ${updatedCount} candidate documents.`);
-    return updatedCount;
-  } catch (error) {
-    console.error("❌ Error updating records:", error);
-    throw error;
-  }
-}
-
-
-connectDB()
+connectDB() 
   .then(() => {
     app.listen(PORT, () =>
       console.log(
@@ -164,8 +99,6 @@ connectDB()
     //Seeding Assessment Templates
     // seedTemplates()
     // seedTasks()
-    
-    // renameTechToHTML()
 
     app.on("error", (error) => {
       console.log("Error in starting server", error);

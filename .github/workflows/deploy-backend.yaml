@@ -1,0 +1,65 @@
+name: Deploy Backend via CodeDeploy
+
+on:
+  push:
+    branches: 
+      - prod-main
+    paths:
+      - 'server/**'
+
+jobs:
+  deploy:
+    name: Deploy NodeJS Backend
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Clean node_modules if exists
+        run: rm -rf server/node_modules
+
+      - name: Zip the server folder
+        run: |
+          cd server
+          zip -r ../backend.zip .
+
+      - name: Upload to S3
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+        run: |
+          aws s3 cp backend.zip s3://hirehive/deployments/backend.zip
+
+      - name: Create Deployment
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+        run: |
+          aws deploy create-deployment \
+            --application-name hhv_backend_cicd \
+            --deployment-group-name hhv_backend_server \
+            --s3-location bucket=hirehive,bundleType=zip,key=deployments/backend.zip \
+            --file-exists-behavior OVERWRITE > deploy.json
+
+      - name: Wait for deployment to complete
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+        run: |
+          DEPLOY_ID=$(jq -r '.deploymentId' deploy.json)
+          echo "Waiting for deployment $DEPLOY_ID..."
+          aws deploy wait deployment-successful --deployment-id $DEPLOY_ID
+          echo "Deployment succeeded."
+
+
+      - name: Cleanup S3
+        if: success()
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+        run: |
+          aws s3 rm s3://hirehive/deployments/backend.zip

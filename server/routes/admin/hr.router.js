@@ -1,5 +1,5 @@
 import express from "express"
-import { changeApplicationStatus, getCandidateScores, getTaskTemplates, moveCandidate, moveMultipleCandidates, noShow, rateMultipleCandidates, rejectCandidate, rejectMultipleCandidates, rescheduleCall, rescheduleScreening, scheduleCall, scheduleScreening, scoreRoundTwo, sendDesignTask, submitBudgetScore, updateAssigneeForMultipleCandidates, updateCandidateRating } from "../../controllers/admin/hr.controller.js";
+import { changeApplicationStatus, getCandidateScores, getTaskTemplates, moveCandidate, moveMultipleCandidates, noShow, rateMultipleCandidates, rejectCandidate, rejectMultipleCandidates, rescheduleCall, rescheduleScreening, scheduleCall, scoreRoundTwo, sendDesignTask, submitBudgetScore, undoAction, updateAssigneeForMultipleCandidates, updateCandidateRating } from "../../controllers/admin/hr.controller.js";
 import { protect, roleProtect } from "../../middlewares/authMiddleware.js";
 
 const router = express.Router();
@@ -22,7 +22,6 @@ router.post('/rate-multiple-candidates', protect, rateMultipleCandidates);
 
 router.get('/candidate/:candidateId/job/:jobId/scores', protect, getCandidateScores);
 
-// router.post('/schedule-screening', protect,scheduleScreening)
 router.post('/schedule-call' , protect , scheduleCall)
 
 router.post('/reschedule-call' , protect , rescheduleCall);
@@ -39,5 +38,6 @@ router.post('/change-status/:candidateId/:jobId', protect,changeApplicationStatu
 
 router.post('/get-task-presets', protect, roleProtect(['Admin','Hiring Manager']), getTaskTemplates)
 
+router.post('/undo-action', protect, roleProtect(['Admin','Hiring Manager']), undoAction)
 
 export default router;                                                                               

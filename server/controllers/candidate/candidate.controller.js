@@ -34,6 +34,23 @@ export const submitDesignTask = async (req, res) => {
       designTaskStatus.submittedTaskLink = taskLink;
       designTaskStatus.submittedComment = comment;
       designTaskStatus.submissionDate = new Date();
+      designTaskStatus.logs = designTaskStatus?.logs?.length > 0 ? designTaskStatus.logs : [] 
+
+      if(designTaskStatus.status === 'Not Assigned' && designTaskStatus.submittedTaskLink){
+        let existUpdated = false
+        for(let log of designTaskStatus.logs){
+          if(log.status === designTaskStatus.status){
+            log.date = new Date()
+            existUpdated =   true
+          } 
+        }
+        if(!existUpdated){
+          designTaskStatus.logs.push({
+            status : designTaskStatus.status,
+            date : new Date()
+          })
+        }
+      }
 
       jobApplication.stageStatuses.set('Design Task', designTaskStatus);
 

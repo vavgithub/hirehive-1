@@ -119,3 +119,53 @@ export const getStageColorForChart = (stage) => {
     })
     return totalScore
   }
+
+  export const logConfig = {
+    'Portfolio' : {
+        'Under Review' : 'Assigned On',
+        'Reviewed' : 'Reviewed On',
+        'Cleared' : 'Cleared On',
+        'Rejected' : 'Rejected On'
+    },
+    "Screening" : {
+        'Pending' : 'Updated On',
+        'Call Scheduled' : 'Scheduled On',
+        'No Show' : 'Updated On',        
+        'Under Review' : 'Call Done On',
+        'Reviewed' : 'Reviewed On',
+        'Cleared' : 'Cleared On',
+        'Rejected' : 'Rejected On'
+    },
+    "Design Task" : {
+        'Pending' : 'Task Scheduled On',
+        'Sent' : 'Sent On',
+        'Not Assigned' : 'Submitted On',        
+        'Under Review' : 'Assigned On',
+        'Reviewed' : 'Reviewed On',
+        'Cleared' : 'Cleared On',
+        'Rejected' : 'Rejected On'
+    },
+    "Round 1" : {
+        'Pending' : 'Assigned On',
+        'Call Scheduled' : 'Scheduled On',
+        'No Show' : 'Updated On',        
+        'Under Review' : 'Call Done On',
+        'Reviewed' : 'Reviewed On',
+        'Cleared' : 'Cleared On',
+        'Rejected' : 'Rejected On'
+    },
+    "Round 2" : {
+        'Pending' : 'Assigned On',
+        'Call Scheduled' : 'Scheduled On',
+        'No Show' : 'Updated On',        
+        'Under Review' : 'Call Done On',
+        'Reviewed' : 'Reviewed On',
+        'Cleared' : 'Cleared On',
+        'Rejected' : 'Rejected On'
+    },
+    "Hired" : {
+        'Under Review' : 'Rejection Scheduled On',
+        'Accepted' : 'Hired On',
+        'Rejected' : 'Rejected On'
+    },
+  }

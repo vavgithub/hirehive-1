@@ -10,6 +10,7 @@ import { Company } from '../../models/admin/company.model.js';
 import jwt from 'jsonwebtoken'
 import { verifyToken } from '../../middlewares/authMiddleware.js';
 import { getCountryNameFromPhoneNumber } from '../../utils/countryUtils.js';
+import { uploadToS3 } from '../../utils/s3utility.js';
 import { checkScopes, getAccessOauthClient, getAuthorizationUrl, getOAuthTokens, getRoleBasedScopes, getUserInfo, revokeOauthClient, SCOPE_KEYS, SCOPES, USE_TYPES, WORKSPACE_KEYS } from '../../utils/integrations/google.js';
 import { randomBytes } from 'crypto';
 import { decrypt, encrypt } from '../../utils/crypto.js';
@@ -33,7 +34,12 @@ export const uploadProfilePicture = async (req, res) => {
       const userId = req.user._id;
       
       // Pass just the filename instead of full path
-      const profilePictureUrl = await uploadToCloudinary(
+      // const profilePictureUrl = await uploadToCloudinary(
+      //   req.file.filename,
+      //   'profile-pictures'
+      // );
+
+      const profilePictureUrl = await uploadToS3(
         req.file.filename,
         'profile-pictures'
       );
@@ -70,7 +76,12 @@ export const uploadCompanyLogo = async (req, res) => {
     const companyId = req.user.company_id;
     
     // Pass just the filename instead of full path
-    const companyLogoUrl = await uploadToCloudinary(
+    // const companyLogoUrl = await uploadToCloudinary(
+    //   req.file.filename,
+    //   'company-logo'
+    // );
+
+    const companyLogoUrl = await uploadToS3(
       req.file.filename,
       'company-logo'
     );
@@ -707,7 +718,12 @@ export const completeHiringManagerRegistration = asyncHandler(async (req, res) =
   let companyLogoUrl = "";
   if(req.file){
       // Pass just the filename instead of full path
-      companyLogoUrl = await uploadToCloudinary(
+      // companyLogoUrl = await uploadToCloudinary(
+      //   req.file.filename,
+      //   'company-logo'
+      // );
+
+      companyLogoUrl = await uploadToS3(
         req.file.filename,
         'company-logo'
       );

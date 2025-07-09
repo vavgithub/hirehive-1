@@ -16,10 +16,13 @@ export const brandDesignerConfig = [
             contentConfig : {
                 "Not Assigned" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : true,
                         hasBudgetLabel : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasLabel : {
                             content : "Candidate's portfolio has not yet been assigned to a reviewer.",
                             icon : WarningIcon
@@ -30,6 +33,7 @@ export const brandDesignerConfig = [
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : true,
@@ -39,11 +43,14 @@ export const brandDesignerConfig = [
                             icon : WarningIcon
                         },
                         hasScheduledLabel : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         actions : {
                             hasRejectAction : true,
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -66,6 +73,7 @@ export const brandDesignerConfig = [
                 },
                 "Under Review" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -76,10 +84,13 @@ export const brandDesignerConfig = [
                         },
                         hasRemarks : false,
                         hasRatingComponent : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScoreCard : false,
                         actions : false
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -89,10 +100,13 @@ export const brandDesignerConfig = [
                             icon : WarningIcon
                         },
                         hasRemarks : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScoreCard : false,
                         actions : false
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -122,6 +136,7 @@ export const brandDesignerConfig = [
                 },
                 "Reviewed" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -129,6 +144,8 @@ export const brandDesignerConfig = [
                         hasLabel : false,
                         hasRemarks : true,
                         hasScoreCard : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScheduledLabel : true,
                         actions : {
                             hasRejectAction : true,
@@ -136,6 +153,7 @@ export const brandDesignerConfig = [
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -143,6 +161,8 @@ export const brandDesignerConfig = [
                         hasLabel : false,
                         hasRemarks : true,
                         hasScoreCard : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScheduledLabel : true,
                         actions : {
                             hasRejectAction : true,
@@ -150,6 +170,7 @@ export const brandDesignerConfig = [
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -175,6 +196,7 @@ export const brandDesignerConfig = [
                 },
                 "Rejected" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -182,10 +204,13 @@ export const brandDesignerConfig = [
                         hasLabel : false,
                         hasRemarks : false,
                         hasRejectionReason : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasScoreCard : true,
                         actions : false
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -193,10 +218,13 @@ export const brandDesignerConfig = [
                         hasLabel : false,
                         hasRemarks : false,
                         hasRejectionReason : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasScoreCard : true,
                         actions : false
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -220,6 +248,7 @@ export const brandDesignerConfig = [
                 },
                 "Cleared" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -230,6 +259,7 @@ export const brandDesignerConfig = [
                         actions : false
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -240,6 +270,7 @@ export const brandDesignerConfig = [
                         actions : false
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -306,6 +337,7 @@ export const brandDesignerConfig = [
             contentConfig : {
                 "Pending" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -317,11 +349,14 @@ export const brandDesignerConfig = [
                         hasRemarks : false,
                         hasScoreCard : false,
                         hasBudgetScoring : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         actions : false,
                         hasCallHistory : false,
                         hasScheduledForm : true
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -333,11 +368,14 @@ export const brandDesignerConfig = [
                         hasRemarks : false,
                         hasScoreCard : false,
                         hasBudgetScoring : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         actions : false,
                         hasCallHistory : false,
                         hasScheduledForm : true
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -364,6 +402,7 @@ export const brandDesignerConfig = [
                 },
                 "Call Scheduled" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -375,6 +414,8 @@ export const brandDesignerConfig = [
                         hasRemarks : false,
                         hasScoreCard : false,
                         hasCallDetails : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasCallHistory : true,
                         hasScheduledForm : false,
                         actions : {
@@ -383,6 +424,7 @@ export const brandDesignerConfig = [
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -394,6 +436,8 @@ export const brandDesignerConfig = [
                         hasRemarks : false,
                         hasScoreCard : false,
                         hasCallDetails : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasCallHistory : true,
                         hasScheduledForm : false,
                         actions : {
@@ -402,6 +446,7 @@ export const brandDesignerConfig = [
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -432,6 +477,7 @@ export const brandDesignerConfig = [
                 },
                 "No Show" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -442,6 +488,8 @@ export const brandDesignerConfig = [
                         },
                         hasRemarks : false,
                         hasScoreCard : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasCallDetails : false,
                         hasCallHistory : false,
                         hasScheduledForm : false,
@@ -452,6 +500,7 @@ export const brandDesignerConfig = [
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -464,6 +513,8 @@ export const brandDesignerConfig = [
                         hasScoreCard : false,
                         hasCallDetails : false,
                         hasCallHistory : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScheduledForm : false,
                         hasScheduledLabel : true,
                         actions : {
@@ -472,6 +523,7 @@ export const brandDesignerConfig = [
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -502,6 +554,7 @@ export const brandDesignerConfig = [
                 },
                 "Under Review" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -512,6 +565,8 @@ export const brandDesignerConfig = [
                         },
                         hasScheduledForm : false,
                         hasRatingComponent : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasRemarks : false,
                         hasScoreCard : false,
                         hasCallDetails : false,
@@ -521,6 +576,7 @@ export const brandDesignerConfig = [
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -531,6 +587,8 @@ export const brandDesignerConfig = [
                         },
                         hasRemarks : false,
                         hasScoreCard : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasCallDetails : false,
                         hasCallHistory : false,
                         hasScheduledForm : false,
@@ -539,6 +597,7 @@ export const brandDesignerConfig = [
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -570,6 +629,7 @@ export const brandDesignerConfig = [
                 },
                 "Reviewed" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -578,6 +638,8 @@ export const brandDesignerConfig = [
                         hasRemarks : true,
                         hasScoreBoard : true,
                         hasScoreCard : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasBudgetScoring : true,
                         hasCallDetails : false,
                         hasCallHistory : false,
@@ -589,6 +651,7 @@ export const brandDesignerConfig = [
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -597,6 +660,8 @@ export const brandDesignerConfig = [
                         hasRemarks : true,
                         hasScoreBoard : true,
                         hasScoreCard : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasBudgetScoring : true,
                         hasCallDetails : false,
                         hasCallHistory : false,
@@ -608,6 +673,7 @@ export const brandDesignerConfig = [
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -637,6 +703,7 @@ export const brandDesignerConfig = [
                 },
                 "Cleared" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -651,6 +718,7 @@ export const brandDesignerConfig = [
                         actions : false
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -665,6 +733,7 @@ export const brandDesignerConfig = [
                         actions : false
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -694,6 +763,7 @@ export const brandDesignerConfig = [
                 },
                 "Rejected" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -703,12 +773,15 @@ export const brandDesignerConfig = [
                         hasRejectionReason : true,
                         hasScoreBoard : true,
                         hasScoreCard : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasCallDetails : false,
                         hasCallHistory : false,
                         hasScheduledForm : false,
                         actions : false
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -718,12 +791,15 @@ export const brandDesignerConfig = [
                         hasRejectionReason : true,
                         hasScoreBoard : true,
                         hasScoreCard : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasCallDetails : false,
                         hasCallHistory : false,
                         hasScheduledForm : false,
                         actions : false
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -766,6 +842,7 @@ export const brandDesignerConfig = [
             contentConfig : {
                 "Pending" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -776,11 +853,14 @@ export const brandDesignerConfig = [
                         },
                         hasScheduledLabel : true,
                         hasRemarks : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScoreCard : false,
                         actions : false,
                         hasTaskForm : true
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -792,10 +872,13 @@ export const brandDesignerConfig = [
                         hasRemarks : false,
                         hasScoreCard : false,
                         actions : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasTaskForm : true,
                         hasScheduledLabel : true
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -822,6 +905,7 @@ export const brandDesignerConfig = [
                 },
                 "Sent" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -832,6 +916,8 @@ export const brandDesignerConfig = [
                         },
                         hasRemarks : false,
                         hasScoreCard : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         actions : {
                             hasRejectAction : true,
                         },
@@ -839,6 +925,7 @@ export const brandDesignerConfig = [
                         hasTaskDetails : true
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -849,6 +936,8 @@ export const brandDesignerConfig = [
                         },
                         hasRemarks : false,
                         hasScoreCard : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         actions : {
                             hasRejectAction : true,
                         },
@@ -856,6 +945,7 @@ export const brandDesignerConfig = [
                         hasTaskDetails : true,
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -881,6 +971,7 @@ export const brandDesignerConfig = [
                 },
                 "Not Assigned" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : true,
@@ -891,10 +982,13 @@ export const brandDesignerConfig = [
                         },
                         hasRemarks : false,
                         hasScoreCard : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         actions : false,
                         hasSubmissionDetails : true
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : true,
@@ -904,11 +998,14 @@ export const brandDesignerConfig = [
                             icon : WarningIcon
                         },
                         hasRemarks : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasScoreCard : false,
                         actions : false,
                         hasSubmissionDetails : true
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -933,6 +1030,7 @@ export const brandDesignerConfig = [
                 },
                 "Under Review" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -942,12 +1040,15 @@ export const brandDesignerConfig = [
                             icon : WarningIcon
                         },
                         hasRemarks : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScoreCard : false,
                         hasSubmissionDetails : true,
                         hasRatingComponent : true,
                         actions : false,
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -957,11 +1058,14 @@ export const brandDesignerConfig = [
                             icon : WarningIcon
                         },
                         hasRemarks : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScoreCard : false,
                         hasSubmissionDetails : true,
                         actions : false,
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -986,6 +1090,7 @@ export const brandDesignerConfig = [
                 },
                 "Reviewed" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -993,6 +1098,8 @@ export const brandDesignerConfig = [
                         hasLabel : false,
                         hasRemarks : true,
                         hasScoreCard : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScheduledLabel : true,
                         actions : {
                             hasRejectAction : true,
@@ -1000,6 +1107,7 @@ export const brandDesignerConfig = [
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1007,6 +1115,8 @@ export const brandDesignerConfig = [
                         hasLabel : false,
                         hasRemarks : true,
                         hasScoreCard : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScheduledLabel : true,
                         hasSubmissionDetails : true,
                         hasScheduledLabel : true,
@@ -1016,6 +1126,7 @@ export const brandDesignerConfig = [
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1035,6 +1146,7 @@ export const brandDesignerConfig = [
                 },
                 "Cleared" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1045,6 +1157,7 @@ export const brandDesignerConfig = [
                         hasSubmissionDetails : true
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1055,6 +1168,7 @@ export const brandDesignerConfig = [
                         hasSubmissionDetails : true
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1076,25 +1190,33 @@ export const brandDesignerConfig = [
                 },
                 "Rejected" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
                         hasBudgetLabel : false,
                         hasLabel : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasRejectionReason : true,
                         hasScoreCard : true,
+                        hasSubmissionDetails : true
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
                         hasBudgetLabel : false,
                         hasLabel : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasRejectionReason : true,
                         hasScoreCard : true,
                         hasSubmissionDetails : true
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1113,6 +1235,7 @@ export const brandDesignerConfig = [
                 },
                 "Not Submitted" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1127,6 +1250,7 @@ export const brandDesignerConfig = [
                         hasTaskDetails : true
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1141,6 +1265,7 @@ export const brandDesignerConfig = [
                         hasTaskDetails : true
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1178,6 +1303,7 @@ export const brandDesignerConfig = [
             contentConfig : {
                 "Pending" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1187,11 +1313,14 @@ export const brandDesignerConfig = [
                             icon : WarningIcon
                         },
                         hasRemarks : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScoreCard : false,
                         actions : false,
                         hasScheduledForm : true
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1202,10 +1331,13 @@ export const brandDesignerConfig = [
                         },
                         hasRemarks : false,
                         hasScoreCard : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         actions : false,
                         hasScheduledForm : true
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1232,6 +1364,7 @@ export const brandDesignerConfig = [
                 },
                 "Call Scheduled" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1243,6 +1376,8 @@ export const brandDesignerConfig = [
                         hasRemarks : false,
                         hasScoreCard : false,
                         hasCallDetails : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasCallHistory : true,
                         hasScheduledForm : false,
                         actions : {
@@ -1251,6 +1386,7 @@ export const brandDesignerConfig = [
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1262,6 +1398,8 @@ export const brandDesignerConfig = [
                         hasRemarks : false,
                         hasScoreCard : false,
                         hasCallDetails : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasCallHistory : true,
                         hasScheduledForm : false,
                         actions : {
@@ -1270,6 +1408,7 @@ export const brandDesignerConfig = [
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1300,6 +1439,7 @@ export const brandDesignerConfig = [
                 },
                 "No Show" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1311,6 +1451,8 @@ export const brandDesignerConfig = [
                         hasRemarks : false,
                         hasScoreCard : false,
                         hasCallDetails : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasCallHistory : false,
                         hasScheduledForm : false,
                         hasScheduledLabel : true,
@@ -1320,6 +1462,7 @@ export const brandDesignerConfig = [
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1332,6 +1475,8 @@ export const brandDesignerConfig = [
                         hasScoreCard : false,
                         hasCallDetails : false,
                         hasCallHistory : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScheduledForm : false,
                         hasScheduledLabel : true,
                         actions : {
@@ -1340,6 +1485,7 @@ export const brandDesignerConfig = [
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1370,6 +1516,7 @@ export const brandDesignerConfig = [
                 },
                 "Under Review" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1380,6 +1527,8 @@ export const brandDesignerConfig = [
                         },
                         hasRemarks : false,
                         hasScoreCard : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasCallDetails : false,
                         hasCallHistory : false,
                         hasScheduledForm : false,
@@ -1389,6 +1538,7 @@ export const brandDesignerConfig = [
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1401,12 +1551,15 @@ export const brandDesignerConfig = [
                         hasScoreCard : false,
                         hasCallDetails : false,
                         hasCallHistory : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasScheduledForm : false,
                         actions : {
                             hasNoShowAction : true,
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1438,6 +1591,7 @@ export const brandDesignerConfig = [
                 },
                 "Reviewed" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1445,6 +1599,8 @@ export const brandDesignerConfig = [
                         hasLabel : false,
                         hasRemarks : true,
                         hasScoreCard : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasCallDetails : false,
                         hasCallHistory : false,
                         hasScheduledForm : false,
@@ -1455,6 +1611,7 @@ export const brandDesignerConfig = [
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1462,6 +1619,8 @@ export const brandDesignerConfig = [
                         hasLabel : false,
                         hasRemarks : true,
                         hasScoreCard : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasCallDetails : false,
                         hasCallHistory : false,
                         hasScheduledForm : false,
@@ -1472,6 +1631,7 @@ export const brandDesignerConfig = [
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1500,6 +1660,7 @@ export const brandDesignerConfig = [
                 },
                 "Cleared" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1513,6 +1674,7 @@ export const brandDesignerConfig = [
                         actions : false
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1526,6 +1688,7 @@ export const brandDesignerConfig = [
                         actions : false
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1554,12 +1717,15 @@ export const brandDesignerConfig = [
                 },
                 "Rejected" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
                         hasBudgetLabel : false,
                         hasLabel : false,
                         hasRemarks : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasRejectionReason : true,
                         hasScoreCard : true,
                         hasCallDetails : false,
@@ -1568,12 +1734,15 @@ export const brandDesignerConfig = [
                         actions : false
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
                         hasBudgetLabel : false,
                         hasLabel : false,
                         hasRemarks : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasRejectionReason : true,
                         hasScoreCard : true,
                         hasCallDetails : false,
@@ -1582,6 +1751,7 @@ export const brandDesignerConfig = [
                         actions : false
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1623,6 +1793,7 @@ export const brandDesignerConfig = [
             contentConfig : {
                 "Pending" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1632,11 +1803,14 @@ export const brandDesignerConfig = [
                             icon : WarningIcon
                         },
                         hasRemarks : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScoreCard : false,
                         actions : false,
                         hasScheduledForm : true
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1647,10 +1821,13 @@ export const brandDesignerConfig = [
                         },
                         hasRemarks : false,
                         hasScoreCard : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         actions : false,
                         hasScheduledForm : true
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1677,6 +1854,7 @@ export const brandDesignerConfig = [
                 },
                 "Call Scheduled" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1688,6 +1866,8 @@ export const brandDesignerConfig = [
                         hasRemarks : false,
                         hasScoreCard : false,
                         hasCallDetails : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasCallHistory : true,
                         hasScheduledForm : false,
                         actions : {
@@ -1696,6 +1876,7 @@ export const brandDesignerConfig = [
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1707,6 +1888,8 @@ export const brandDesignerConfig = [
                         hasRemarks : false,
                         hasScoreCard : false,
                         hasCallDetails : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasCallHistory : true,
                         hasScheduledForm : false,
                         actions : {
@@ -1715,6 +1898,7 @@ export const brandDesignerConfig = [
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1743,6 +1927,7 @@ export const brandDesignerConfig = [
                 },
                 "No Show" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1755,6 +1940,8 @@ export const brandDesignerConfig = [
                         hasScoreCard : false,
                         hasCallDetails : false,
                         hasCallHistory : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScheduledForm : false,
                         hasScheduledLabel : true,
                         actions : {
@@ -1763,6 +1950,7 @@ export const brandDesignerConfig = [
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1774,6 +1962,8 @@ export const brandDesignerConfig = [
                         hasRemarks : false,
                         hasScoreCard : false,
                         hasCallDetails : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasCallHistory : false,
                         hasScheduledForm : false,
                         hasScheduledLabel : true,
@@ -1783,6 +1973,7 @@ export const brandDesignerConfig = [
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1813,6 +2004,7 @@ export const brandDesignerConfig = [
                 },
                 "Under Review" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1823,11 +2015,14 @@ export const brandDesignerConfig = [
                         },
                         hasRemarks : false,
                         hasScoreCard : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasCallDetails : false,
                         hasCallHistory : false,
                         hasRatingComponent : true,
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1839,10 +2034,13 @@ export const brandDesignerConfig = [
                         hasRemarks : false,
                         hasScoreCard : false,
                         hasCallDetails : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasCallHistory : false,
                         hasRatingComponent : true,
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1873,6 +2071,7 @@ export const brandDesignerConfig = [
                 },
                 "Reviewed" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1882,6 +2081,8 @@ export const brandDesignerConfig = [
                         hasScoreCard : true,
                         hasCallDetails : false,
                         hasCallHistory : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScheduledForm : false,
                         hasScheduledLabel : true,
                         actions : {
@@ -1890,6 +2091,7 @@ export const brandDesignerConfig = [
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1899,6 +2101,8 @@ export const brandDesignerConfig = [
                         hasScoreCard : true,
                         hasCallDetails : false,
                         hasCallHistory : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScheduledForm : false,
                         hasScheduledLabel : true,
                         actions : {
@@ -1907,6 +2111,7 @@ export const brandDesignerConfig = [
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1935,6 +2140,7 @@ export const brandDesignerConfig = [
                 },
                 "Cleared" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1948,6 +2154,7 @@ export const brandDesignerConfig = [
                         actions : false
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1961,6 +2168,7 @@ export const brandDesignerConfig = [
                         actions : false
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1989,6 +2197,7 @@ export const brandDesignerConfig = [
                 },
                 "Rejected" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1998,11 +2207,14 @@ export const brandDesignerConfig = [
                         hasRejectionReason : true,
                         hasScoreCard : true,
                         hasCallDetails : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasCallHistory : false,
                         hasScheduledForm : false,
                         actions : false
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -2012,11 +2224,14 @@ export const brandDesignerConfig = [
                         hasRejectionReason : true,
                         hasScoreCard : true,
                         hasCallDetails : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasCallHistory : false,
                         hasScheduledForm : false,
                         actions : false
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -2058,6 +2273,7 @@ export const brandDesignerConfig = [
             contentConfig : {
                 "Under Review" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -2069,6 +2285,9 @@ export const brandDesignerConfig = [
                         hasRemarks : false,
                         hasScoreCard : true,
                         hasCallDetails : false,
+                        hasScheduledLabel : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasCallHistory : false,
                         actions : {
                             hasRejectAction : true,
@@ -2076,6 +2295,7 @@ export const brandDesignerConfig = [
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -2087,6 +2307,9 @@ export const brandDesignerConfig = [
                         hasRemarks : false,
                         hasScoreCard : true,
                         hasCallDetails : false,
+                        hasScheduledLabel : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasCallHistory : false,
                         actions : {
                             hasRejectAction : true,
@@ -2094,6 +2317,7 @@ export const brandDesignerConfig = [
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -2104,6 +2328,7 @@ export const brandDesignerConfig = [
                         },
                         hasRemarks : false,
                         hasScoreCard : false,
+                        hasScheduledLabel : true,
                         hasCallDetails : false,
                         hasCallHistory : false,
                     },
@@ -2124,6 +2349,7 @@ export const brandDesignerConfig = [
                 },
                 "Accepted" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -2139,6 +2365,7 @@ export const brandDesignerConfig = [
                         hasCallHistory : false,
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -2154,6 +2381,7 @@ export const brandDesignerConfig = [
                         hasCallHistory : false,
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -2188,6 +2416,7 @@ export const brandDesignerConfig = [
                 },
                 "Rejected" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -2198,6 +2427,7 @@ export const brandDesignerConfig = [
                         hasCallHistory : false,
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -2208,6 +2438,7 @@ export const brandDesignerConfig = [
                         hasCallHistory : false,
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
