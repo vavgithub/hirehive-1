@@ -1333,6 +1333,14 @@ export const redirectForGoogleToken = asyncHandler(async (req,res) => {
                     'profile-pictures'
                   );
                 }
+
+                //Revoking unmatched email which is invited
+                if(req.session?.invited?.email && (req.session?.invited?.email !== userInfo.email)){
+                  //EMAIL LOGGED IN USER
+                  const encryptedError = encrypt('Unmatched email with the join invitation.')
+                  return res.redirect(`${process.env.FRONTEND_URL}/admin/register?error=${encryptedError}`)
+                }
+
                 const createUser = await User.create({
                   firstName ,
                   lastName : lastName.join(' '),
