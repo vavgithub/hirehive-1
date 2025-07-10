@@ -236,3 +236,72 @@ export const getUserInfo = async (googleClient) => {
         throw new Error(error.message)
     }
 }
+
+export async function createMeetEvent(calendar, eventDetails) {
+  if (!calendar) {
+    throw new Error('No Google Calendar client found.');
+  }
+
+  try {
+    const event = {
+      summary: eventDetails.summary,
+      description: eventDetails.description,
+      start: {
+        dateTime: eventDetails.startDateTime, // ISO string
+        timeZone: eventDetails.timeZone,
+      },
+      end: {
+        dateTime: eventDetails.endDateTime,
+        timeZone: eventDetails.timeZone,
+      },
+      attendees: eventDetails.attendees.map(email => ({ email })),
+      conferenceData: {
+        createRequest: {
+          requestId: 'meet-' + Date.now(), // Must be unique
+          conferenceSolutionKey: {
+            type: 'hangoutsMeet',
+          },
+        },
+      },
+    };
+
+    const response = await calendar.events.insert({
+      calendarId: 'primary',
+      resource: event,
+      conferenceDataVersion: 1,
+      sendUpdates: 'all', // Sends email invites to attendees
+    });
+
+    const createdEvent = response.data;
+    const meetLink = createdEvent.conferenceData?.entryPoints?.find(
+      (entry) => entry.entryPointType === 'video'
+    )?.uri;
+
+    return {
+      eventId : createdEvent.id,
+      joinLink: meetLink,              // Google Meet joining link
+    };
+  } catch (error) {
+    console.error('Failed to create Meet event:', error.message);
+    throw new Error('Unable to create Google Meet event. Please try again later.');
+  }
+}
+
+
+export async function cancelMeetEvent(calendar, eventId) {
+  if (!calendar) {
+    throw new Error('No Google Calendar client found.');
+  }
+  try {
+    await calendar.events.delete({
+      calendarId: 'primary', // or the specific calendar ID
+      eventId: eventId,
+      sendUpdates: 'all' // optionally notify attendees
+    });
+
+    console.log('Event successfully canceled.');
+  } catch (error) {
+    console.error('Failed to cancel event:', error.response?.data || error.message);
+    throw new Error('Could not cancel the event.');
+  }
+}

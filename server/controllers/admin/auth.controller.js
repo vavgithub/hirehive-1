@@ -1301,7 +1301,6 @@ export const redirectForGoogleToken = asyncHandler(async (req,res) => {
 
       if(scopes?.length > 0){
         const scopeKeys = checkScopes(scopes);
-        console.log('TYPE',scopeKeys,req.session?.useType)
         //GOOGLE_AUTH_FUNCTIONALITIES
         if(req.session?.useType === USE_TYPES['LOGIN/REGISTER'] && scopeKeys.includes('AUTH') && tokens?.access_token){
           //LOGIN/REGISTER MANAGEMENT
@@ -1329,10 +1328,6 @@ export const redirectForGoogleToken = asyncHandler(async (req,res) => {
                 const [firstName, ...lastName] = userInfo?.name?.split(' ');
                 let profilePictureUrl = ''
                 if(userInfo?.picture){
-                  // profilePictureUrl = await uploadGoogleImagesToCloudinary(
-                  //   userInfo.picture,
-                  //   'profile-pictures'
-                  // );
                   profilePictureUrl = await uploadGoogleImageToS3(
                     userInfo.picture,
                     'profile-pictures'
