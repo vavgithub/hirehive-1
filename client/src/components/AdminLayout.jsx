@@ -32,7 +32,7 @@ const ADMIN_BG_SCREENS = [
 const AdminLayout = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const { user } = useAuthContext();
+    const { user, setHasUser } = useAuthContext();
 
     const [anchorEl, setAnchorEl] = useState(null);
     const { refetch } = useAuth();
@@ -49,6 +49,7 @@ const AdminLayout = () => {
         try {
             await logout();
             refetch();
+            setHasUser(false);
             queryClient.clear()
             navigate('/admin/login');
         } catch (error) {

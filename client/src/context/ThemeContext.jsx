@@ -1,24 +1,45 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import LightLogo from "../svg/Logo/lightLogo.svg";
 import DarkLogo from "../svg/Logo/dark_logo.png";
+import useCandidateAuth from '../hooks/useCandidateAuth';
+import { useAuthContext } from './AuthProvider';
 
 const ThemeContext = createContext();
 
 export const ThemesProvider = ({ children }) => {
+    const { candidateData } = useCandidateAuth();
+    const { hasUser } = useAuthContext();
+    const [canSave,setCanSave] = useState(false);
+
     // Check if theme exists in localStorage, default to 'dark'
     const [theme, setTheme] = useState(() => {
         const savedTheme = localStorage.getItem('theme');
-        return savedTheme || 'dark';
+        return (candidateData || hasUser) ? (savedTheme || 'dark') : 'dark';
     });
+
+    useEffect(()=>{
+        const savedTheme = localStorage.getItem('theme');
+        if(candidateData || hasUser){
+            setTheme(savedTheme || 'dark')
+        }else{
+            if(savedTheme){
+                setCanSave(false)
+            }
+            setTheme('dark')
+        }
+    },[candidateData,hasUser])
 
     // Update theme in localStorage and apply CSS class when theme changes
     useEffect(() => {
-        localStorage.setItem('theme', theme);
+        if(canSave){
+            localStorage.setItem('theme', theme);
+        }
         document.documentElement.setAttribute('data-theme', theme);
-    }, [theme]);
+    }, [theme,canSave]);
 
     // Toggle between light and dark themes
     const toggleTheme = () => {
+        setCanSave(true)
         setTheme((prevTheme) => (prevTheme === 'dark' ? 'light' : 'dark'));
     };
 

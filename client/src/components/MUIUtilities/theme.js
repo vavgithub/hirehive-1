@@ -421,7 +421,7 @@ const theme = createTheme({
             color: "var(--color-font-main)",
           },
           "& .MuiDataGrid-virtualScroller": {
-            backgroundColor: "var(--color-background-100)",
+            backgroundColor: "var(--color-background-60)",
             borderRadius: "0.75rem 0.75rem 0px 0px !important",
           },
           "& .MuiDataGrid-overlayWrapper": {
@@ -429,7 +429,7 @@ const theme = createTheme({
           },
           "& .MuiDataGrid-overlay": {
             color: "var(--color-font-main)",
-            backgroundColor: "var(--color-background-100)",
+            backgroundColor: "var(--color-background-60)",
           },
           "& .MuiDataGrid-selectedRowCount": {
             opacity: 0,

@@ -15,6 +15,7 @@ import StyledCard from '../../components/Cards/StyledCard';
 import ImageModal from '../../components/Modals/ImageModal';
 import ContactUs from '../../components/Form/ContactUs';
 import IconWrapper from '../../components/Cards/IconWrapper';
+import { useLogo } from '../../context/ThemeContext';
 const ONE_MINUTE = 60;
 
 // Utility function to format time
@@ -56,6 +57,7 @@ const ProgressBar = ({ answeredCount, total }) => {
 const QuestionSidebar = ({ questions, currentQuestion, answeredCount, onQuestionSelect, answers , submitTest, isUploading, isRecording,webcamRef,handleUserMedia}) => {
   const [timeRemaining, setTimeRemaining] = useState(5 * 60);
   const [timerRef,setTimerRef] = useState(null);
+  const Logo = useLogo();
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -84,7 +86,7 @@ const QuestionSidebar = ({ questions, currentQuestion, answeredCount, onQuestion
     <div className="w-[15rem] bg-background-90 fixed  overflow-y-auto  custom-scrollbar m-4 h-[calc(100vh-2rem)]  rounded-xl">
       <div className='flex items-center justify-start pt-8 pb-6 px-4 '>
 
-        <img className='h-11' src={LightLogo} />
+        <img className='h-11' src={Logo} />
       </div>
       <div className="py-8 px-4 border-b border-t border-background-60 w-full">
         <div className=" flex flex-col items-center ">
