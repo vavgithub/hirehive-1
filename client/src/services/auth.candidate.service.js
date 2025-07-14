@@ -23,6 +23,8 @@ export const verifyPassOTPCandidate = (email,otp) => axios.post('/auth/candidate
 
 export const resetPasswordCandidate = (email, otp, password) => axios.post('/auth/candidate/reset-password' , { email, otp, password})
 
+export const getLocationSuggestions = (text,sessionId) => axios.post('/auth/candidate/autocomplete-places' , { text , sessionId})
+
 export const updateDesignTask = async ({taskLink,comment,jobId}) => {
     const response = await axios.post('/auth/candidate/update-design-task',{taskLink,comment,jobId});
     return response.data

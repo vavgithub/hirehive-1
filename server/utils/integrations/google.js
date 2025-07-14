@@ -1,4 +1,5 @@
 import { google } from 'googleapis';
+import { PlacesClient } from '@googlemaps/places';
 import axios from 'axios';
 
 export const USE_TYPES = {
@@ -304,4 +305,33 @@ export async function cancelMeetEvent(calendar, eventId) {
     console.error('Failed to cancel event:', error.response?.data || error.message);
     throw new Error('Could not cancel the event.');
   }
+}
+
+
+export async function autocompleteLocation(input, sessionToken) {
+  
+  const client = new PlacesClient({ apiKey: process.env.GOOGLE_API_KEY });
+
+  const [res] = await client.autocompletePlaces({input,sessionToken});
+  return res.suggestions.filter(s => s.placePrediction?.text?.text && s.placePrediction.placeId ).map(s => ({
+    placeName: s.placePrediction?.text?.text,
+    placeId: s.placePrediction.placeId
+  }));
+}
+
+export async function getPlaceDetails(placeId, sessionToken) {
+  const client = new PlacesClient({ apiKey: process.env.GOOGLE_API_KEY });
+
+  const [place] = await client.getPlace({ name: `places/${placeId}`, sessionToken },{
+      otherArgs: {
+        headers: {
+          'X-Goog-FieldMask': 'formattedAddress,location'
+        }
+      }
+    }
+  );
+  return {
+    name: place.formattedAddress,
+    latlng : place.location
+  };
 }

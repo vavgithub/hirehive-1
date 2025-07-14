@@ -85,6 +85,10 @@ const ApplyJob = () => {
     expectedCTC: "",
     hourlyRate: "",
     resumeFile: null,
+    location : '',
+    locationId : '',
+    sessionId : '',
+    dob : null,
     skills: [] // default empty array for skills
   };
 
@@ -145,6 +149,10 @@ const ApplyJob = () => {
         }),
         resumeFile: resumeFile,
         skills: candidateData.skills || [],
+        location : candidateData.location || '',
+        locationId : '',
+        sessionId : '',
+        dob : candidateData.dob || null,
       });
     }
   }, [isAuthenticated, candidateData, jobDetails, reset, resumeFile]);
@@ -243,6 +251,10 @@ const ApplyJob = () => {
           currentCTC: data.currentCTC,
           expectedCTC: data.expectedCTC,
           experience: data.experience,
+          dob : data.dob,
+          location : data.location,
+          locationId : data.locationId,
+          sessionId : data.sessionId,
           skills: data.skills,
           questionResponses,
           resumeUrl,
@@ -416,6 +428,7 @@ const ApplyJob = () => {
                     control={control}
                     onProfilePictureSelect={handleProfilePictureSelect}
                     profilePicturePreview={profilePicturePreview}
+                    setValue={setValue}
                   />
                 </div>
               )}

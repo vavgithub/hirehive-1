@@ -136,8 +136,8 @@ export const verifyPassword = async ({ email , password }) => {
 export const editUserProfile = ({ firstName, lastName, phone, jobTitle, experience, skills, tools_used }) => 
   axios.put(API_URL + '/register/edit-profile', { firstName, lastName, phone, jobTitle, experience, skills,tools_used })
 
-export const editCompanyProfile = ({ name, size, location, industryType, about, website, founded, focusAreas, keyContacts }) => 
-  axios.put(API_URL + '/edit-company-profile', { name, size, location, industryType, about, website, founded, focusAreas, keyContacts})
+export const editCompanyProfile = ({ name, size, location, locationId, sessionId, industryType, about, website, founded, focusAreas, keyContacts }) => 
+  axios.put(API_URL + '/edit-company-profile', { name, size, location, locationId, sessionId, industryType, about, website, founded, focusAreas, keyContacts})
 
 export const googleAuthorize = async () => {
   const response = await axios.post(`${API_URL}/google-authorize`);

@@ -11,7 +11,7 @@ import jwt from 'jsonwebtoken'
 import { verifyToken } from '../../middlewares/authMiddleware.js';
 import { getCountryNameFromPhoneNumber } from '../../utils/countryUtils.js';
 import { uploadGoogleImageToS3, uploadToS3 } from '../../utils/s3utility.js';
-import { checkScopes, getAccessOauthClient, getAuthorizationUrl, getOAuthTokens, getRoleBasedScopes, getUserInfo, revokeOauthClient, SCOPE_KEYS, SCOPES, USE_TYPES, WORKSPACE_KEYS } from '../../utils/integrations/google.js';
+import { checkScopes, getAccessOauthClient, getAuthorizationUrl, getOAuthTokens, getPlaceDetails, getRoleBasedScopes, getUserInfo, revokeOauthClient, SCOPE_KEYS, SCOPES, USE_TYPES, WORKSPACE_KEYS } from '../../utils/integrations/google.js';
 import { randomBytes } from 'crypto';
 import { decrypt, encrypt } from '../../utils/crypto.js';
 import { error } from 'console';
@@ -729,6 +729,18 @@ export const completeHiringManagerRegistration = asyncHandler(async (req, res) =
       );
   }
 
+  let geoLocation = null;
+  if(companyDetails?.locationId && companyDetails?.sessionId ){
+      const { locationId , sessionId } = companyDetails
+      const result = await getPlaceDetails(locationId,sessionId);
+      if(result.latlng?.longitude && result.latlng?.latitude){
+        geoLocation = {
+            type : 'Point',
+            coordinates : [result.latlng.longitude , result.latlng.latitude]
+        }
+      }
+  }
+
   // Create new user
   const company = await Company.create({
     name: companyDetails.companyName,
@@ -736,6 +748,7 @@ export const completeHiringManagerRegistration = asyncHandler(async (req, res) =
     industryType: companyDetails.industry,
     location: companyDetails.location,
     size: companyDetails.companySize,
+    ...(geoLocation ? {geoLocation} : {}),
     registeredBy : {
       user_id : userData?._id,
       name : userData?.firstName + " " + userData?.lastName,
@@ -1056,6 +1069,8 @@ export const editCompanyProfile = asyncHandler(async (req, res) => {
     const {
       name,
       location,
+      locationId,
+      sessionId,
       industryType,
       size,
       about,
@@ -1079,6 +1094,17 @@ export const editCompanyProfile = asyncHandler(async (req, res) => {
           message: 'Company Name is already taken.'
         });
       }
+    
+    let geoLocation = null;
+    if(locationId && sessionId ){
+        const result = await getPlaceDetails(locationId,sessionId);
+        if(result.latlng?.longitude && result.latlng?.latitude){
+          geoLocation = {
+              type : 'Point',
+              coordinates : [result.latlng.longitude , result.latlng.latitude]
+          }
+        }
+    }
 
     // Find and update the user
     const updatedCompany = await Company.findByIdAndUpdate(
@@ -1087,6 +1113,7 @@ export const editCompanyProfile = asyncHandler(async (req, res) => {
         name,
         location,
         industryType,
+        ...(geoLocation ? {geoLocation} : {}),
         size,
         about,
         website,

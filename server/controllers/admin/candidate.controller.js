@@ -463,6 +463,7 @@ export const getCandidateById = async (req, res) => {
       lastName: candidate.lastName,
       email: candidate.email,
       phone: candidate.phone,
+      dob: candidate.dob,
       profilePictureUrl: candidate.profilePictureUrl,
       hasGivenAssessment: candidate.hasGivenAssessment,
 

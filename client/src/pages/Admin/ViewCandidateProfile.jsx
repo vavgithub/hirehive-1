@@ -20,7 +20,7 @@ import ScoreChart from '../../components/Charts/ScoreChart';
 import {  getStageColorForChart, maxScoreOfEachStage } from '../../config/staging.config';
 import Container from '../../components/Cards/Container';
 import IconWrapper from '../../components/Cards/IconWrapper';
-import { ArrowLeftRight, ChevronUp, ChevronRight, ClipboardCheck, FileText, FileUser, FolderOpen, Globe, Mail, MonitorDot, Notebook, NotebookPen, Phone, Users } from 'lucide-react';
+import { ArrowLeftRight, ChevronUp, ChevronRight, ClipboardCheck, FileText, FileUser, FolderOpen, Globe, Mail, MonitorDot, Notebook, NotebookPen, Phone, Users, Calendar1 } from 'lucide-react';
 import { UNKNOWN_PROFILE_PICTURE_URL } from '../../utility/config';
 import RatingSelector, { getRatingIcon } from '../../components/MUIUtilities/RatingSelector';
 import Modal from '../../components/Modals/Modal';
@@ -503,7 +503,7 @@ const reviewerProfilePic = currentReviewer?.profilePicture
                     <div className="flex gap-3">
                         <StyledCard padding={2} backgroundColor={'bg-background-80'} extraStyles="w-full flex gap-4 relative justify-between relative">
                             <div className='flex gap-4 '>
-                                <div className="relative to-background-100 w-[200px] min-h-auto max-h-[200px] rounded-xl overflow-hidden">
+                                <div className="relative to-background-100 w-[210px] min-h-auto max-h-[210px] rounded-xl overflow-hidden">
                                     <img src={data.profilePictureUrl || UNKNOWN_PROFILE_PICTURE_URL} alt="" className='object-cover w-full overflow-hidden' />
                                     {hasPermission(role,PERMISSIONS.SHOW_CANDIDATE_PROFILE_RATING) &&
                                         <span onClick={(e) => setRatingAnchor(e.currentTarget)} className='absolute cursor-pointer bg-[#2d2d2eae] min-w-10 min-h-10 top-2 right-2 rounded-full flex justify-center items-center'>
@@ -522,7 +522,8 @@ const reviewerProfilePic = currentReviewer?.profilePicture
                                         <span className="typography-small-p text-font-gray">{data.location}</span>
                                     </div>
                                     {hasPermission(role,PERMISSIONS.SHOW_CANDIDATE_PROFILE_PERSONAL_DETAILS) &&
-                                        <div className="flex mb-3 gap-5">
+                                        <div className=' mb-3 '>
+                                        <div className="flex gap-5">
                                             <div className="flex items-center gap-2 cursor-pointer" onClick={()=>handlePhoneCopy(data?.phone)}>
                                                     <IconWrapper size={0} customIconSize={2} icon={Phone} />
                                                 <span className="typography-large-p">{data.phone}</span>
@@ -531,7 +532,13 @@ const reviewerProfilePic = currentReviewer?.profilePicture
                                                     <IconWrapper size={0} customIconSize={2} icon={Mail} />
                                                 <span className="typography-large-p whitespace-nowrap text-ellipsis overflow-hidden ">{data.email}</span>
                                             </div>
+                                        </div>
+                                        {data?.dob && <div className="flex items-center gap-2 overflow-hidden cursor-pointer mt-4 " onClick={() => handleEmailCopy(data?.email)}>
+                                                <IconWrapper size={0} customIconSize={2} icon={Calendar1} />
+                                            <span className="typography-large-p whitespace-nowrap text-ellipsis overflow-hidden ">{UTCToDateFormatted(data.dob)}</span>
                                         </div>}
+                                        </div>
+                                        }
                                     <div className="flex gap-2 items-center ">
                                         <a href={ensureAbsoluteUrl(data.portfolio)} target="_blank" rel="noopener noreferrer" className="icon-link">
                                             <CustomToolTip title={'Portfolio'} arrowed size={2}>

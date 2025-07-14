@@ -347,6 +347,9 @@ const candidateSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    dob : {
+      type : Date,
+    },
     website: {
       type: String,
     },
@@ -384,10 +387,20 @@ const candidateSchema = new mongoose.Schema(
     jobApplications: [jobApplicationSchema], // Contains multiple job applications
     questionnaireAttempts: [questionnaireAttemptSchema],
     location: String,
-
+    geoLocation : {
+      type : {
+        type : String,
+      },
+      coordinates : {
+        type : [Number],
+      },
+    }
     // Removed 'stage', 'status', and 'stageStatus' from the root level
   },
   { timestamps: true }
 );
+
+// Create geospatial index
+candidateSchema.index({ geoLocation: '2dsphere' });
 
 export const candidates = mongoose.model("candidates", candidateSchema);

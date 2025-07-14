@@ -16,6 +16,7 @@ import { UNKNOWN_PROFILE_PICTURE_URL } from '../../utility/config';
 import { useNavigate } from 'react-router-dom';
 import GlobalDropDown from '../Dropdowns/GlobalDropDown';
 import { saveCompanyDetails, sendJoinRequest } from '../../services/auth.service';
+import { LocationInputField } from '../Inputs/LocationInputField';
 
 export const LocationOptions = [
   { value: 'afghanistan', label: 'Afghanistan' },
@@ -111,6 +112,9 @@ function CompanyDetails({currentStep,setCurrentStep}) {
     const [companySize,setCompanySize] = useState('');
     const [location,setLocation] = useState('');
     const [industry,setIndustry] = useState('');
+
+    const [locationId,setLocationId] = useState('');
+    const [sessionId,setSessionId] = useState('');
 
     const [companyNameError,setCompanyNameError] = useState('');
     const [companySizeError,setCompanySizeError] = useState('');
@@ -237,6 +241,8 @@ function CompanyDetails({currentStep,setCurrentStep}) {
           companyName,
           companySize,
           location,
+          locationId,
+          sessionId,
           industry,
         }))
         formData.append("email",onboardData.email);
@@ -325,7 +331,7 @@ function CompanyDetails({currentStep,setCurrentStep}) {
                 onChange={setCompanySize}
                 options={companySizeOptions}
                 />
-                <GlobalDropDown
+                {/* <GlobalDropDown
                 label="Location" 
                 required
                 extraStylesForLabel="font-bricolage font-medium"
@@ -334,6 +340,18 @@ function CompanyDetails({currentStep,setCurrentStep}) {
                 onChange={setLocation}
                 options={LocationOptions}
                 searchEnabled
+                /> */}
+                <LocationInputField   
+                  type="text"
+                  id="location"
+                  label="Company Location"
+                  labelStyles="text-font-gray"
+                  value={location ?? ""}
+                  onChange={(e) => setLocation(e.target.value)}
+                  setLocationId={(id) => setLocationId(id)}
+                  setSessionId={(id) => setSessionId(id)}
+                  error={locationError}
+                  errorMessage={locationError}
                 />
                 <GlobalDropDown
                 label="Industry" 

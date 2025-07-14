@@ -168,7 +168,7 @@ export const ScheduleForm = ({ candidateData, onSubmit, isRescheduling, initialD
                 <h3 className='mb-4'>Choose Your Meeting Type</h3>
                 <div className='flex w-full justify-between'>
                 <StyledCard onClick={handleMeetLinkClick} backgroundColor={!autoLink ? 'selection-primary' :'bg-background-60'} extraStyles={'hover:bg-background-50 w-[50%]'}>
-                    <h4 className='typography-h4 mb-2'>Share Your Meeting Link</h4>
+                    <h4 className=' mb-2'>Share Your Meeting Link</h4>
                     <InputField
                         id="meetingLink"
                         type="text"
