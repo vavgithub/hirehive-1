@@ -59,6 +59,47 @@ const PrivacyPolicy = () => {
               agreements.
             </p>
             <br />
+            {/*  Google Sign‑In & Calendar Access */}
+            <h3>Google Sign‑In & Calendar Data</h3>
+            <p className="typography-body text-font-gray mt-2">
+              We offer Google Sign‑In to authenticate users and sync calendar events. In this process, we request:
+              <ul className="list-disc list-inside">
+                <li><strong>profile</strong> – name and profile photo;</li>
+                <li><strong>email</strong> – user’s email address;</li>
+                <li><strong>https://www.googleapis.com/auth/calendar.events</strong> – view and manage your calendar events;</li>
+                <li><strong>https://www.googleapis.com/auth/calendar</strong> – read and modify calendars as needed.</li>
+              </ul>
+              These permissions are used solely for login and syncing meetings between your Google Calendar and our app.
+            </p>
+        <br/>      
+            {/*  Limited Use Compliance */}
+            <h3>Limited Use Compliance</h3>
+            <p className="typography-body text-font-gray mt-2">
+              “Value at Void’s use and transfer of information received from Google APIs will adhere to Google API Services User Data Policy, including the Limited Use requirements.”  
+              This means we only store and use Google data as described above, and we do not sell it or use it for advertising. 
+            </p>
+            <br/>
+            {/*  Calendar Data Storage & Sharing */}
+            <h3>Calendar Data Storage & Sharing</h3>
+            <p className="typography-body text-font-gray mt-2">
+              Calendar data is encrypted in transit and at rest. We store it securely and access it only as needed to sync meetings. We do not share your calendar information with third parties except:
+              <ul className="list-disc list-inside">
+                <li>to comply with legal obligations, or</li>
+                <li>if necessary to maintain operation per Google’s Limited Use policy.</li>
+              </ul>
+            </p>
+            <br/>
+            {/*  Data Retention & Deletion */}
+            <h3>Calendar Data Retention & Deletion</h3>
+            <p className="typography-body text-font-gray mt-2">
+              Calendar information is retained only as long as you keep your account active or for up to 1 year after account deletion. You may request deletion of your calendar data at any time by unauthorize option.
+            </p>
+            <br/>
+            {/*  Scope Justification for Google */}
+            <h3>Scope Justification</h3>
+            <p className="typography-body text-font-gray mt-2">
+              We request calendar access so users can view, create, update, and delete meetings from within our app—providing full two-way synchronization with Google Calendar.
+            </p>
             <h3>Data Retention and Deletion</h3>
             <p className="typography-body text-font-gray mt-2">
               Data is retained only as long as necessary. If not hired, your
