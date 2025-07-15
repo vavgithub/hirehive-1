@@ -13,7 +13,7 @@ import { ThemesProvider } from './context/ThemeContext';
 const queryClient = new QueryClient();
 
 function App() {
-  return (
+  return ( 
     <QueryClientProvider client={queryClient}>
       <ThemeProvider theme={theme} >
         <CssBaseline />
@@ -25,7 +25,7 @@ function App() {
               </ThemesProvider>
               <StyledToastContainer />
             </StatePreserver>
-          </AuthProvider>
+          </AuthProvider> 
         </Provider>
       </ThemeProvider>
     </QueryClientProvider>

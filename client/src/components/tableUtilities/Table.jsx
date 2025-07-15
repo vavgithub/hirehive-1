@@ -2,7 +2,7 @@ import React, { useEffect, useLayoutEffect, useState } from 'react'
 import { DataGrid } from '@mui/x-data-grid';
 
 import { useLocation, useNavigate } from 'react-router-dom';
-import axios from '../../api/axios';
+import axios from '../../services/axios';
 import AutoAssignModal from '../Modals/AutoAssignModal';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import Modal from '../Modals/Modal';
@@ -27,6 +27,8 @@ import IconWrapper from '../Cards/IconWrapper';
 import { Download } from 'lucide-react';
 import TickCheckbox from '../Checkboxes/TickCheckbox';
 import { getRoute, ROUTE_KEY } from '../../config/permissions.config';
+import { moveCandidate, rejectCandidate, updateCandidateRating } from '../../services/hr.service';
+import { autoAssignPortfolio, updateAssignee } from '../../services/dr.service';
 
 const Table = ({
   jobId, jobData,
@@ -132,7 +134,8 @@ const Table = ({
     if (searchTerm) {
       result = result.filter(row =>
         `${row.firstName} ${row.lastName}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        row.email.toLowerCase().includes(searchTerm.toLowerCase())
+        row.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        row.phone.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
@@ -211,14 +214,14 @@ const Table = ({
   }, [filteredRowsData, searchTerm, filters, showContractors]);
 
   const autoAssignMutation = useMutation({
-    mutationFn: ({ jobId, reviewerIds, budgetMin, budgetMax }) =>
-      axios.post('dr/auto-assign-portfolios', { jobId, reviewerIds, budgetMin, budgetMax }),
+    mutationFn: autoAssignPortfolio,
     onSuccess: async (data) => {
       // Invalidate and refetch
       queryClient.invalidateQueries(['candidates', jobId]);
       await refetch();
       // You might want to show a success message to the user here
       showSuccessToast("Auto Assign Portfolio Done")
+      setIsAutoAssignModalOpen(false);
     },
     onError: (error) => {
       // console.error('Auto-assign error:', error);
@@ -230,7 +233,7 @@ const Table = ({
   // Update assignee mutation
   const updateAssigneeMutation = useMutation({
     mutationFn: ({ candidateId, jobId, stage, assigneeId }) =>
-      axios.put('dr/update-assignee', { candidateId, jobId, stage, assigneeId }),
+      updateAssignee(candidateId,jobId, stage, assigneeId),
     onSuccess: () => {
       queryClient.invalidateQueries(['candidates', jobId]);
     },
@@ -238,8 +241,7 @@ const Table = ({
 
   // Reject candidate mutation
   const rejectCandidateMutation = useMutation({
-    mutationFn: ({ candidateId, jobId, rejectionReason, scheduledDate, scheduledTime }) =>
-      axios.post('/hr/reject-candidate', { candidateId, jobId, rejectionReason, scheduledDate, scheduledTime }),
+    mutationFn: rejectCandidate,
     onSuccess: () => {
       queryClient.invalidateQueries(['candidates', jobId]);
       setIsRejectModalOpen(false);
@@ -249,8 +251,7 @@ const Table = ({
 
   // Move candidate mutation
   const moveCandidateMutation = useMutation({
-    mutationFn: ({ candidateId, jobId, currentStage }) =>
-      axios.post('/hr/move-candidate', { candidateId, jobId, currentStage }),
+    mutationFn: moveCandidate,
     onSuccess: () => {
       queryClient.invalidateQueries(['candidates', jobId]);
       setIsMoveModalOpen(false);
@@ -260,8 +261,7 @@ const Table = ({
 
   // Update candidate rating mutation
   const updateCandidateRatingMutation = useMutation({
-    mutationFn: ({ candidateId, jobId, rating }) =>
-      axios.post('/hr/update-candidate-rating', { candidateId, jobId, rating }),
+    mutationFn: updateCandidateRating,
     onSuccess: () => {
       queryClient.invalidateQueries(['candidates', jobId]);
       handleRatingClose();
@@ -269,13 +269,12 @@ const Table = ({
   });
 
   const handleAutoAssign = async (selectedReviewers) => {
-    await autoAssignMutation.mutateAsync({
+     autoAssignMutation.mutate({
       jobId,
       reviewerIds: selectedReviewers.map(reviewer => reviewer._id),
       budgetMin: parseFloat(budgetFilter.from) || 0,
       budgetMax: parseFloat(budgetFilter.to) || Infinity
     })
-    setIsAutoAssignModalOpen(false);
   };
 
   const handleAssigneeChange = (candidateId, stage, newAssignee) => {
@@ -381,7 +380,7 @@ const Table = ({
     let baseColumns = readOnly ?
       getReadOnlyColumns(role, handleDocumentClick) :
       getDefaultColumns(role, canMove, canReject, handleAssigneeChange,
-        handleMoveClick, handleRejectClick, handleRatingClick, handleDocumentClick , jobData?.status === "closed");
+        handleMoveClick, handleRejectClick, handleRatingClick, handleDocumentClick , jobData?.status === "closed",jobData?.employmentType === 'Contract',jobData?.employmentType !== 'Contract');
 
     // Insert additional columns after the first column
     if (additionalColumns.length > 0) {
@@ -410,7 +409,7 @@ const Table = ({
     // Use custom navigation path if provided
     if (customNavigationPath) {
       const targetJobId = readOnly ? params.row.jobId : jobId;
-      navigate(`${customNavigationPath}/${params.row._id}/${targetJobId}`, { replace: true });
+      navigate(`${customNavigationPath}/${params.row._id}/${targetJobId}`);
       return;
     }
 
@@ -419,7 +418,7 @@ const Table = ({
       const baseUrl = readOnly ? getRoute(role,ROUTE_KEY.CANDIDATES_VIEW_CANDIDATE) : getRoute(role,ROUTE_KEY.JOBS_VIEW_CANDIDATE)
       navigate(`${baseUrl}/${params?.row?._id}/${readOnly ? params.row.jobId : jobId}`);
     } else {
-      navigate(`view/${params.row._id}/${readOnly ? params.row.jobId : jobId}`, { replace: true });
+      navigate(`view/${params.row._id}/${readOnly ? params.row.jobId : jobId}`);
     }
   };
 
@@ -482,9 +481,9 @@ const Table = ({
   return (
     <div className='w-full'>
 
-      {autoAssignMutation.isPending ||
+      {(autoAssignMutation.isPending ||
         rejectCandidateMutation.isPending ||
-        moveCandidateMutation.isPending || isLoading && <LoaderModal />}
+        moveCandidateMutation.isPending || isLoading) && <LoaderModal />}
 
       <MuiCustomStylesForDataGrid />
 
@@ -495,7 +494,7 @@ const Table = ({
         <div className='flex gap-4 items-center'>
           <input
             type="text"
-            placeholder="Search by name or email"
+            placeholder="Search by name or email or phone"
             className='min-w-[18.75rem]'
             value={searchTerm}
             onChange={handleSearch}

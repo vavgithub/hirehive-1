@@ -3,7 +3,7 @@ import Header from '../../components/utility/Header'
 import StyledCard from '../../components/Cards/StyledCard'
 import CustomToolTip from '../../components/Tooltip/CustomToolTip'
 import { useParams, useSearchParams } from 'react-router-dom'
-import axios from '../../api/axios'
+import axios from '../../services/axios'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import ToggleSwitch from '../../components/ui/ToggleSwitch'
 import { Button } from '../../components/Buttons/Button'
@@ -19,21 +19,7 @@ import IconWrapper from '../../components/Cards/IconWrapper'
 import { PencilLine } from 'lucide-react'
 import { formatPhoneNumber } from '../../components/Form/PhoneInputField'
 import { useUnknownProfilePicture } from '../../context/ThemeContext'
-
-const editMember = async ({ teamMember, memberId }) => {
-  const response = await axios.patch('/admin/edit-member', { teamMember, memberId });
-  return response?.data
-}
-
-const reInviteMember = async ({ memberId }) => {
-  const response = await axios.post('/admin/re-invite-member', { memberId });
-  return response?.data
-}
-
-const changeMemberStatus = async ({ memberId }) => {
-  const response = await axios.post('/admin/change-member-status', { memberId });
-  return response?.data
-}
+import { changeMemberStatus, editMember, getAllTeamMembers, reInviteMember } from '../../services/admin.service'
 
 function PersonalDetails({ memberData, isEditing, control }) {
   return (
@@ -188,7 +174,7 @@ function TeamsProfile() {
 
   const { data: teamMembers, isLoading: isTeamMembersLoading } = useQuery({
     queryKey: ['team_members'],
-    queryFn: () => axios.get('/admin/get-all-members').then(res => res.data),
+    queryFn: getAllTeamMembers,
   })
 
   const member = useMemo(() => {

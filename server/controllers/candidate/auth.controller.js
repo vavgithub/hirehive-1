@@ -16,6 +16,8 @@ import { asyncHandler } from "../../utils/asyncHandler.js";
 import { generateOTP, otpStore } from "../../utils/otp.js";
 import { sendEmail } from "../../utils/sentEmail.js";
 import { getEditProfileContent, getPasswordResetContent, getResetSuccessfulContent, getSignupEmailContent } from "../../utils/emailTemplates.js";
+import { generatePresignedUrl, uploadToS3 } from "../../utils/s3utility.js";
+import { autocompleteLocation, getPlaceDetails } from "../../utils/integrations/google.js";
 
 // Secret key for JWT (store this in environment variables)
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -59,7 +61,12 @@ export const uploadResumeController = async (req, res) => {
   }
 
   try {
-    const cloudinaryUrl = await uploadToCloudinary(
+    // const cloudinaryUrl = await uploadToCloudinary(
+    //   req.file.path, // Pass the complete path instead of just filename
+    //   "resumes"
+    // );
+    
+    const cloudinaryUrl = await uploadToS3(
       req.file.path, // Pass the complete path instead of just filename
       "resumes"
     );
@@ -77,7 +84,12 @@ export const uploadProfilePictureController = async (req, res) => {
   }
 
   try {
-    const cloudinaryUrl = await uploadToCloudinary(
+    // const cloudinaryUrl = await uploadToCloudinary(
+    //   req.file.path, // Pass the complete path instead of just filename
+    //   "candidate-profile-pictures"
+    // );
+
+    const cloudinaryUrl = await uploadToS3(
       req.file.path, // Pass the complete path instead of just filename
       "candidate-profile-pictures"
     );
@@ -108,6 +120,10 @@ export const registerCandidate = async (req, res) => {
       skills,
       questionResponses,
       resumeUrl,
+      location,
+      locationId,
+      sessionId,
+      dob,
       profilePictureUrl, // Add this new field
     } = req.body;
 
@@ -208,13 +224,27 @@ export const registerCandidate = async (req, res) => {
     }
 
     if(!existingEmail){
-  
+      let geoLocation = null;
+
+      if(locationId && sessionId){
+          const result = await getPlaceDetails(locationId,sessionId);
+          if(result.latlng?.longitude && result.latlng?.latitude){
+            geoLocation = {
+               type : 'Point',
+               coordinates : [result.latlng.longitude , result.latlng.latitude]
+            }
+          }
+      }
+      console.log(location,locationId,sessionId,dob)
       // Create new candidate with job application data
       const newCandidate = new Candidate({
         firstName,
         lastName,
         email,
         phone,
+        dob,
+        location,
+        ...(geoLocation ? {geoLocation} : {}),
         ...professionalInfo,
         otp: hashedOtp,
         profilePictureUrl, // Add the profile picture URL
@@ -663,6 +693,7 @@ export const getCandidateDashboard = async (req, res) => {
           profilePictureUrl: { $first: "$profilePictureUrl" },
           email: { $first: "$email" },
           phone: { $first: "$phone" },
+          dob: { $first: "$dob" },
           expectedCTC: { $first: "$expectedCTC" },
           hourlyRate: { $first: "$hourlyRate" },
           portfolio: { $first: "$portfolio" },
@@ -718,6 +749,7 @@ export const getCandidateDashboard = async (req, res) => {
         profilePictureUrl : candidate[0].profilePictureUrl,
         email: candidate[0].email,
         phone: candidate[0].phone,
+        dob: candidate[0].dob,
         expectedCTC: candidate[0].expectedCTC,
         portfolio: candidate[0].portfolio,
         website: candidate[0].website,
@@ -758,7 +790,10 @@ export const editCandidateProfile = async (req, res) => {
         expectedCTC ,
         hourlyRate,
         profilePictureUrl,
+        dob,
         location,
+        locationId,
+        sessionId
       } = req.body;
 
       const OTP_STAGE = "OTP";
@@ -828,6 +863,7 @@ export const editCandidateProfile = async (req, res) => {
 
         return res.status(200).json({success:true,stage:OTP_STAGE,email})
       }else{
+
         candidateData.firstName = firstName;
         candidateData.lastName = lastName;
         candidateData.phone = phone;
@@ -840,9 +876,21 @@ export const editCandidateProfile = async (req, res) => {
         candidateData.expectedCTC = expectedCTC;
         candidateData.hourlyRate = hourlyRate;
         candidateData.location = location; 
+        candidateData.dob = dob;
         if(profilePictureUrl){
           candidateData.profilePictureUrl = profilePictureUrl;
         }
+        //Storing Location coordinates
+        if(locationId && sessionId){
+          const result = await getPlaceDetails(locationId,sessionId);
+          if(result.latlng?.longitude && result.latlng?.latitude){
+            candidateData.geoLocation = {
+               type : 'Point',
+               coordinates : [result.latlng.longitude , result.latlng.latitude]
+            }
+          }
+        }
+
         await candidateData.save()
         return res.status(200).json({success:true,stage:DONE_STAGE})
       }
@@ -889,8 +937,12 @@ export const verifyOTPEmail = asyncHandler(async (req, res) => {
       noticePeriod ,
       currentCTC ,
       expectedCTC ,
-      profilePictureUrl
-    } = req.session?.userEditedData;
+      profilePictureUrl,
+      dob,
+      location,
+      locationId,
+      sessionId
+    } = req.session.userEditedData;
 
     const candidateData = await Candidate.findById({_id:req.candidate?._id});
     candidateData.firstName = firstName;
@@ -904,6 +956,21 @@ export const verifyOTPEmail = asyncHandler(async (req, res) => {
     candidateData.noticePeriod = noticePeriod; 
     candidateData.currentCTC = currentCTC; 
     candidateData.expectedCTC = expectedCTC; 
+    if(location){
+      candidateData.location = location
+    }
+    if(dob){
+      candidateData.dob = dob
+    }
+    if(locationId && sessionId){
+      const result = await getPlaceDetails(locationId,sessionId);
+      if(result.latlng?.longitude && result.latlng?.latitude){
+        candidateData.geoLocation = {
+            type : 'Point',
+            coordinates : [result.latlng.longitude , result.latlng.latitude]
+        }
+      }
+    }
     if(profilePictureUrl){
       candidateData.profilePictureUrl = profilePictureUrl;
     }
@@ -1179,3 +1246,59 @@ export const resetPassword = asyncHandler(async (req, res) => {
 
   res.json({ message: 'Password reset successful' });
 });
+
+export const getS3AssessmentUploadUrl = asyncHandler(async (req, res) => {
+  try {
+    const { fileName, fileType } = req.body;
+
+    const allowedTypes = ["video/webm"];
+    if (!allowedTypes.includes(fileType)) {
+      return res.status(400).json({ error: "Unsupported video format" });
+    }
+
+    const envFolder = process.env.AWS_ENV_FOLDER;
+    const key = `uploads/${envFolder}/assessments/${Date.now()}_${fileName}`;
+    const url = await generatePresignedUrl(key, fileType);
+
+    const publicUrl = `${process.env.AWS_CLOUDFRONT_DOMAIN}/${key}`;
+    res.json({ uploadUrl: url, publicUrl });
+  } catch (err) {
+    console.error("Error generating presigned URL:", err);
+    res.status(500).json({ error: "Failed to generate upload URL" });
+  }
+});
+
+export const getS3ScreenshotUploadUrl = asyncHandler(async (req, res) => {
+  try {
+    const { fileName, fileType } = req.body;
+
+    // ✅ Allow all image types
+    if (!fileType || !fileType.startsWith("image/")) {
+      return res.status(400).json({ error: "Only image files are allowed" });
+    }
+
+    const envFolder = process.env.AWS_ENV_FOLDER;
+    const key = `uploads/${envFolder}/screenshots/${Date.now()}_${fileName}`;
+    const url = await generatePresignedUrl(key, fileType);
+
+    const publicUrl = `${process.env.AWS_CLOUDFRONT_DOMAIN}/${key}`;
+    res.json({ uploadUrl: url, publicUrl });
+  } catch (err) {
+    console.error("Error generating presigned URL:", err);
+    res.status(500).json({ error: "Failed to generate upload URL" });
+  }
+});
+
+export const getSuggestedPlaces = asyncHandler(async (req,res) => {
+  try {
+    const  { text , sessionId } = req.body;
+    if(!text || !sessionId){
+      return res.status(400).json({ error: "Input Text and sessionId missing" });
+    }
+    const suggestions = await autocompleteLocation(text,sessionId);
+    res.status(200).json(suggestions)
+  } catch (error) {
+      console.error("Error getting suggested locations:", error);
+      res.status(500).json({ error: "Failed to generate suggested locations" });
+  }
+})

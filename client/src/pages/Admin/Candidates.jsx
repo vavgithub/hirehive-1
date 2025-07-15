@@ -3,7 +3,7 @@
 import React, { useEffect, useRef } from 'react'
 import Header from '../../components/utility/Header'
 import StatsGrid from '../../components/ui/StatsGrid'
-import axios from "../../api/axios"
+import axios from "../../services/axios"
 import { useQuery } from '@tanstack/react-query';
 import Loader from '../../components/Loaders/Loader';
 import StyledCard from '../../components/Cards/StyledCard';
@@ -11,13 +11,14 @@ import Table from '../../components/tableUtilities/Table';
 import Container from '../../components/Cards/Container';
 import IconWrapper from '../../components/Cards/IconWrapper';
 import { Briefcase, Folder, MonitorDot, PenTool, Users } from 'lucide-react';
+import { getAllCandidatesAndStats } from '../../services/admin.candidate.service';
 
 
 const Candidates = () => {
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ['candidates'],
-    queryFn: () => axios.get('/admin/candidate/getData/data/allCandidatesWithStats').then(res => res.data),
+    queryFn: getAllCandidatesAndStats,
   });
 
   // console.log("what is this ?" , data);

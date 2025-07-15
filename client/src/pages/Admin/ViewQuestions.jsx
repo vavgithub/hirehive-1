@@ -4,10 +4,11 @@ import LoaderModal from "../../components/Loaders/LoaderModal";
 import Header from "../../components/utility/Header";
 import StyledCard from "../../components/Cards/StyledCard";
 import { useQuery } from "@tanstack/react-query";
-import axios from "../../api/axios";
+import axios from "../../services/axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { getRoute, ROUTE_KEY } from "../../config/permissions.config";
 import { useAuthContext } from "../../context/AuthProvider";
+import { getAssessmentQuestionsById } from "../../services/admin.candidate.service";
 
 function ViewQuestions() {
     const { assessment_id } = useParams();
@@ -20,10 +21,7 @@ function ViewQuestions() {
         error
       } = useQuery({
         queryKey: ['assessment-questions', assessment_id],
-        queryFn: async () => {
-          const response = await axios.get(`/admin/candidate/assessment-questions?assessmentId=${assessment_id}`);
-          return response.data;
-        },
+        queryFn: () => getAssessmentQuestionsById(assessment_id),
         staleTime: Infinity,
         cacheTime: 0,
         refetchOnWindowFocus: false,

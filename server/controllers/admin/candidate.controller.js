@@ -463,6 +463,7 @@ export const getCandidateById = async (req, res) => {
       lastName: candidate.lastName,
       email: candidate.email,
       phone: candidate.phone,
+      dob: candidate.dob,
       profilePictureUrl: candidate.profilePictureUrl,
       hasGivenAssessment: candidate.hasGivenAssessment,
 
@@ -1016,6 +1017,12 @@ export const getAssessmentQuestionsById = async (req, res) => {
         { $match: { _id: assessmentObjectId } },
         { $project: { questions: 1 ,title : 1 , category : 1} },
         { $unwind: "$questions" },
+        { $match: {
+            $or: [
+              { "questions.inActive": { $exists: false } },
+              { "questions.inActive": false }
+            ]
+        } },
         {
           $addFields: {
             "questions.options": {
@@ -1076,6 +1083,12 @@ export const getRandomAssessmentQuestions = async (req, res) => {
       { $match: { _id: assessmentObjectId } },
       { $project: { questions: 1 } },
       { $unwind: "$questions" },
+      { $match: {
+          $or: [
+            { "questions.inActive": { $exists: false } },
+            { "questions.inActive": false }
+          ]
+      } },
       { $sample: { size: 10 } },
       {
         $addFields: {
@@ -1414,6 +1427,7 @@ export const getJobBasedQuestionnaireDetails = async (req, res) => {
   }
 };
 
+//NOT USING -( ASSESSMENT RECORDING UPLOADED VIA FRONTEND) 
 export const uploadAssessmentRecording = async (req, res) => {
   try {
     console.log("Upload request received:", {
@@ -1428,11 +1442,11 @@ export const uploadAssessmentRecording = async (req, res) => {
       });
     }
 
-    // Pass the full file path directly
-    const videoUrl = await uploadToCloudinary(
-      req.file.path,
-      "assessment-recordings"
-    );
+    // // Pass the full file path directly
+    // const videoUrl = await uploadToCloudinary(
+    //   req.file.path,
+    //   "assessment-recordings"
+    // );
 
     return res.status(200).json({
       success: true,
@@ -1609,3 +1623,5 @@ export const shortlistCandidate = async (req, res) => {
       .json({ message: "Server error", error: error.message });
   }
 };
+
+

@@ -8,7 +8,7 @@ import CustomToolTip from '../../components/Tooltip/CustomToolTip';
 import { useProfilePicture } from '../../hooks/useProfilePicture';
 import SkillsInput from '../../components/Inputs/SkillsInput';
 import { showSuccessToast, showErrorToast } from '../../components/ui/Toast';
-import axios from '../../api/axios';
+import axios from '../../services/axios';
 import LoaderModal from '../../components/Loaders/LoaderModal';
 import {  useQueryClient } from '@tanstack/react-query';
 import { InputField } from '../../components/Inputs/InputField';
@@ -18,6 +18,7 @@ import IconWrapper from '../../components/Cards/IconWrapper';
 import { companySizeOptions, industryTypeOptions, LocationOptions } from '../../components/Register/CompanyDetails';
 import { formatPhoneNumber, PhoneInputField } from '../../components/Form/PhoneInputField';
 import { validationRules } from '../../utility/validationRules';
+import { editUserProfile } from '../../services/auth.service';
 import { useUnknownProfilePicture } from '../../context/ThemeContext';
 
 
@@ -172,7 +173,7 @@ function Profile() {
   const handleEditProfile = async (data) => {
     try {
       setIsLoading(true);
-      const response = await axios.put('/auth/register/edit-profile', {
+      const response = await editUserProfile({
         firstName: data.firstName,
         lastName: data.lastName,
         phone: data.phone,

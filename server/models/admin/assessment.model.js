@@ -8,6 +8,10 @@ const questionSchema = new mongoose.Schema(
       enum: ["text", "image"],
       required: true,
     },
+    inActive : {
+      type : Boolean,
+      default : false
+    },
     text: {
       type: String,
       required: true,

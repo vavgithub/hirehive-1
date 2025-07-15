@@ -6,7 +6,7 @@ import { ChevronUp, ChevronDown, Camera, Mic, Eye, VideoOff } from 'lucide-react
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { Button } from '../../components/Buttons/Button';
 import Loader from '../../components/Loaders/Loader';
-import axios from "../../api/axios";
+import axios from "../../services/axios";
 import { showSuccessToast, showErrorToast } from '../../components/ui/Toast';
 import LightLogo from "../../svg/Logo/lightLogo.svg"
 import { fetchCandidateAuthData, updateAssessmentStatus } from '../../redux/candidateAuthSlice';
@@ -15,6 +15,8 @@ import StyledCard from '../../components/Cards/StyledCard';
 import ImageModal from '../../components/Modals/ImageModal';
 import ContactUs from '../../components/Form/ContactUs';
 import IconWrapper from '../../components/Cards/IconWrapper';
+import { getRandomAssessmentQuestions, submitAssessment } from '../../services/admin.candidate.service';
+import { uploadAssessmentToS3 } from '../../utility/s3upload';
 import { useLogo } from '../../context/ThemeContext';
 const ONE_MINUTE = 60;
 
@@ -29,10 +31,7 @@ const formatTime = (time) => {
 export const useAssessmentQuestions = (assessment_id) => {
   return useQuery({
     queryKey: ['random-assessment-questions',assessment_id],
-    queryFn: async () => {
-      const response = await axios.post(`/admin/candidate/assessment-questions/random?assessmentId=${assessment_id}`);
-      return response.data.questions;
-    },
+    queryFn: () => getRandomAssessmentQuestions(assessment_id),
     staleTime: Infinity,
     cacheTime: 0,
     refetchOnWindowFocus: false,
@@ -490,7 +489,8 @@ const Assessment = ({assessment_id}) => {
       // Log the file to verify it's created correctly
       // console.log('Video file created:', videoFile);
 
-      const recordingUrl = await uploadAssessment(videoFile,setUploadProgress);
+      // const recordingUrl = await uploadAssessment(videoFile,setUploadProgress);
+      const recordingUrl = await uploadAssessmentToS3(videoFile,setUploadProgress);
 
       // const formData = new FormData();
       // formData.append('video', videoFile);
@@ -551,13 +551,7 @@ const Assessment = ({assessment_id}) => {
         const recordingUrl = await uploadVideo(videoBlob);
 
         // Submit assessment with video URL
-        const response = await axios.post(
-          `/admin/candidate/questionnaire/${candidateAuthData._id}`,
-          {
-            ...assessmentData,
-            recordingUrl // Use the URL returned from uploadVideo
-          }
-        );
+        const response = await submitAssessment({candidate_id : candidateAuthData?._id , assessmentData , recordingUrl});
         return response.data;
       } catch (error) {
         // console.error('Submit error:', error);

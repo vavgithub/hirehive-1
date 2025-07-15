@@ -13,18 +13,14 @@ import { Bookmark, CirclePlus } from 'lucide-react';
 import TickCheckbox from '../Checkboxes/TickCheckbox';
 import CustomPill from '../Badge/CustomPill';
 import { useQuery } from '@tanstack/react-query';
-import axios from '../../api/axios';
+import axios from '../../services/axios';
 import TemplateModal from '../Modals/TemplateModal';
 import GlobalDropDown from '../Dropdowns/GlobalDropDown';
 import StyledCard from '../Cards/StyledCard';
+import { fetchAssessmentTemplates } from '../../services/jobs.service';
 
 function hasDuplicates(arr) {
   return new Set(arr).size !== arr.length;
-}
-
-const fetchAssessmentTemplates = async() => {
-    const response = await axios.get(`/jobs/get-assessment-templates`, { withCredentials: true });
-    return response.data;
 }
 
 const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions }) => {

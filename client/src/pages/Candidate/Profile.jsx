@@ -7,8 +7,7 @@ import { ensureAbsoluteUrl } from "../../utility/ensureAbsoluteUrl";
 import { Controller, useForm } from "react-hook-form";
 import { Button } from "../../components/Buttons/Button";
 import { validationRules } from "../../utility/validationRules";
-import { uploadProfilePicture, uploadResume } from "./ApplyJob";
-import axios from "../../api/axios";
+import axios from "../../services/axios";
 import { showErrorToast, showSuccessToast } from "../../components/ui/Toast";
 import { useDispatch } from "react-redux";
 import { updateWithoutAssessment } from "../../redux/candidateAuthSlice";
@@ -22,6 +21,10 @@ import IconWrapper from "../../components/Cards/IconWrapper";
 import { Pencil, PencilLine, Upload } from "lucide-react";
 import { formatPhoneNumber, PhoneInputField } from "../../components/Form/PhoneInputField";
 import parsePhoneNumberFromString from "libphonenumber-js";
+import { editCandidateProfile, getCandidateDashboard, uploadCandidateProfilePicture, uploadResume, verifyEmailOtpCandidate } from "../../services/auth.candidate.service";
+import { LocationInputField } from "../../components/Inputs/LocationInputField";
+import { UTCToDateFormatted } from "../../utility/timezoneConverter";
+import Datepicker from "../../components/MUIUtilities/Datepicker";
 import { useUnknownProfilePicture } from "../../context/ThemeContext";
 
 const PersonalDetails = ({ candidateData, isEditing, control }) => {
@@ -34,10 +37,12 @@ const PersonalDetails = ({ candidateData, isEditing, control }) => {
             <div className="flex flex-col gap-6 typography-body">
               <p className="text-font-gray whitespace-nowrap">First Name</p>
               <p className="text-font-gray whitespace-nowrap">Email</p>
+              {candidateData?.dob && <p className="text-font-gray whitespace-nowrap">Date of Birth</p>}
             </div>
             <div className="flex flex-col gap-6 typography-body">
               <p className="whitespace-nowrap overflow-hidden text-ellipsis">{candidateData.firstName ?? '-'}</p>
               <p className="whitespace-nowrap overflow-hidden text-ellipsis">{candidateData.email}</p>
+              {candidateData?.dob && <p className="whitespace-nowrap overflow-hidden text-ellipsis">{UTCToDateFormatted(candidateData.dob)}</p>}
             </div>
           </div>
           <div className="grid grid-cols-2 sm:w-[45%] gap-[10%] justify-between">
@@ -143,6 +148,20 @@ const PersonalDetails = ({ candidateData, isEditing, control }) => {
             label="Phone Number"
           />
           </div>
+          <Controller
+            name={'dob'}
+            control={control}
+            rules={validationRules.dob}
+            render={({ field, fieldState: { error } }) => (
+              <div className='flex  gap-2 relative '>
+                  <div className="min-w-[25%] text-font-gray">
+                      <label className="typography-body ">Date Of Birth</label>
+                  </div>
+                  <Datepicker disableDate='after' onChange={field.onChange} hasDefault={false} value={field.value} error={error?.message} />
+                  {error?.message && <p className='absolute text-red-100 typography-small-p left-[27%] top-[3rem]'>{error?.message}</p>}
+              </div>
+            )}
+          />
         </div>
       }
     </StyledCard>
@@ -471,14 +490,17 @@ function Profile() {
       currentCTC: candidateData?.currentCTC ? candidateData.currentCTC : 0,
       expectedCTC: candidateData?.expectedCTC ? candidateData.expectedCTC : 0,
       ...(candidateData?.hourlyRate ? { hourlyRate: candidateData.hourlyRate } : {}),
+      dob : candidateData?.dob ? candidateData.dob : null,
       location: candidateData?.location ? candidateData.location : "",
+      locationId : '',
+      sessionId : ""
     },
     mode: 'onChange'
   });
 
   const fetchAndUpdateCandidate = async () => {
     try {
-      const response = await axios.get('/auth/candidate/dashboard');
+      const response = await getCandidateDashboard();
       if (response.data?.candidate) {
         dispatch(updateWithoutAssessment(response.data.candidate))
       }
@@ -504,6 +526,7 @@ function Profile() {
         throw new Error("Valid email is required.");
       if (!data.phone?.trim())
         throw new Error("Valid 10-digit phone number is required.");
+      if (!data.dob) throw new Error("Date of Birth is required.");
       if (!data.location?.trim()) throw new Error("Location is required.");
       if (data.currentCTC < 0) throw new Error("Current CTC cannot be negative.");
       if (data.expectedCTC < data.currentCTC)
@@ -516,10 +539,10 @@ function Profile() {
         data.resume = await uploadResume(resumeFile, () => { })
       }
       if (profileFile) {
-        data.profilePictureUrl = await uploadProfilePicture(profileFile)
+        data.profilePictureUrl = await uploadCandidateProfilePicture(profileFile)
       }
 
-      const response = await axios.post("/auth/candidate/edit-profile", data)
+      const response = await editCandidateProfile(data)
       if (response?.data?.stage === "OTP") {
         setIsLoading(false);
         setEmail(response?.data?.email)
@@ -547,7 +570,7 @@ function Profile() {
 
     setIsLoading(true);
     try {
-      await axios.post('/auth/candidate/verify-email-otp', { email, otp: enteredOtp });
+      await verifyEmailOtpCandidate(email,enteredOtp);
       setShowOTPModal(false);
       await fetchAndUpdateCandidate()
       showSuccessToast("Success", "Profile updated Successfully")
@@ -583,7 +606,7 @@ function Profile() {
       {isLoading && <LoaderModal/>}
       {showOTPModal && isEditing && 
               <div className="flex items-center h-screen w-screen justify-center fixed bg-background-overlay z-50 top-0 left-0">
-                <div className="w-full mx-8 md:mx-0 max-w-lg space-y-8 bg-background-80 rounded-lg shadow-xl  bg-opacity-15 ">
+                <div className="w-full mx-8 md:mx-0 max-w-lg space-y-8 bg-background-90 rounded-lg shadow-xl  bg-opacity-15 ">
                   <form onSubmit={handleOtpSubmit} className="px-8 sm:px-16 text-center md:mb-20">
                     <h1 className="mt-8 md:mt-20 mb-4 ">OTP Verification</h1>
                     <p className="text-font-gray text-center typography-large-p">
@@ -659,14 +682,13 @@ function Profile() {
                     </div>
                   </> :
                     <div className="flex flex-col mt-2 gap-4  w-full">
-                      {/* <InputField type="text" label="Role"  rowWise={true} /> */}
                       <Controller
                         name="location"
                         control={control}
                         defaultValue={""}
                         rules={validationRules.location}
                         render={({ field, fieldState: { error } }) => (
-                          <InputField
+                          <LocationInputField   
                             type="text"
                             id="location"
                             label="Location"
@@ -674,6 +696,8 @@ function Profile() {
                             extraClass={'custom-input'}
                             value={field.value ?? ""}
                             onChange={field.onChange}
+                            setLocationId={(id) => setValue('locationId',id)}
+                            setSessionId={(id) => setValue('sessionId',id)}
                             error={error}
                             rowWise={true}
                             errorMessage={error?.message}

@@ -1,16 +1,23 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import Datepicker from '../MUIUtilities/Datepicker';
 import Timepicker from '../MUIUtilities/Timepicker';
 import { Button } from '../Buttons/Button';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { updateStageStatus } from '../../redux/applicationStageSlice';
-import { useDispatch } from 'react-redux';
-import axios from '../../api/axios';
+import { useDispatch, useSelector } from 'react-redux';
+import axios from '../../services/axios';
 import { formatTime } from '../../utility/formatTime';
 import TextEditor from '../utility/TextEditor';
 import SchedulerButton from '../ui/SchedulerButton';
 import { InputField } from '../Inputs/InputField';
 import { combineDateWithTime, convertLocalToUTC, formatUTCToLocalTimeAuto, UTCToDateFormatted } from '../../utility/timezoneConverter';
+import StyledCard from '../Cards/StyledCard';
+import Modal from '../Modals/Modal';
+import IconWrapper from '../Cards/IconWrapper';
+import { ChartNoAxesGantt, ChevronDown, ChevronUp } from 'lucide-react';
+import { fetchTaskPresets, sendDesignTask } from '../../services/hr.service';
+import { submitDesignTask } from '../../services/candidates.service';
+import { setDesignTaskContent } from '../../redux/AdminSlice';
 
 export function SubmissionForm({candidateId,jobId,stageData,setIsLoading}){
     const [taskLink, setTaskLink] = useState('');
@@ -20,7 +27,7 @@ export function SubmissionForm({candidateId,jobId,stageData,setIsLoading}){
     const queryClient = useQueryClient();
 
     const submitTaskMutation = useMutation({
-        mutationFn: (taskData) => axios.post('candidates/submit-design-task', taskData),
+        mutationFn: submitDesignTask,
         onMutate: () => {
             setIsLoading(true); // Set loading to true when mutation starts
         },
@@ -93,20 +100,36 @@ export function SubmissionForm({candidateId,jobId,stageData,setIsLoading}){
     )
 }
 
-function TaskForm({candidateId,candidateEmail,jobId,setIsLoading}) {
+function TaskForm({jobProfile,candidateId,candidateEmail,jobId,setIsLoading}) {
     //To detect if its a first render or not
     const isFirstRender = useRef(true);
 
     const [taskDescription, setTaskDescription] = useState('');
     const [dueDate, setDueDate] = useState(null);
     const [dueTime, setDueTime] = useState(null);
-
+    
     const [descriptionError, setDescriptionError] = useState(false);
     const [dueDateError, setDueDateError] = useState(false);
     const [dueTimeError, setDueTimeError] = useState(false);
-
+    
     const dispatch = useDispatch();
     const queryClient = useQueryClient();
+    
+    const [showTaskContent,setShowTaskContent] = useState(false);
+    const [selectedTaskPreset, setSelectedTaskPreset] = useState('');
+    const [presetLoaded, setPresetLoaded] = useState(false);
+
+    const [showMore,setShowMore] = useState(false);
+
+    const { designTaskContent } = useSelector(state => state.admin);
+
+    const { data: taskData, isTaskDataLoading } = useQuery({
+        queryKey: ['getAllTaskPresets',jobProfile],
+        queryFn: () => fetchTaskPresets(jobProfile),
+        enabled : !!jobProfile
+    });
+    
+    const taskPresets = useMemo(() => taskData?.data || [] ,[taskData]) 
 
     const validateErrors = ()=> {
         if(!taskDescription.trim()){
@@ -134,7 +157,7 @@ function TaskForm({candidateId,candidateEmail,jobId,setIsLoading}) {
     },[taskDescription,dueDate,dueTime,isFirstRender])
 
     const sendTaskMutation = useMutation({
-        mutationFn: (taskData) => axios.post('hr/send-design-task', taskData),
+        mutationFn: sendDesignTask,
         onMutate: () => {
             setIsLoading(true); // Set loading to true when mutation starts
         },
@@ -156,6 +179,8 @@ function TaskForm({candidateId,candidateEmail,jobId,setIsLoading}) {
     const handleSendTask = (scheduledDate,scheduledTime) => {
         isFirstRender.current = false;
         validateErrors()
+        dispatch(setDesignTaskContent(''))
+        // console.log(taskDescription)
         if (taskDescription.trim() && dueDate && dueTime) {
             sendTaskMutation.mutate({
                 candidateId,
@@ -169,26 +194,80 @@ function TaskForm({candidateId,candidateEmail,jobId,setIsLoading}) {
             });
         }
     };
+
+    const handleViewPreset = (template) => {
+        setShowTaskContent(template)
+    }
+
+    const handleSetTemplateToEditor = (template) => {
+        setPresetLoaded(false);
+        setSelectedTaskPreset(template?.htmlString);
+    }
+
+    useEffect(() => {
+        if(designTaskContent){
+            setSelectedTaskPreset(designTaskContent)
+        }
+    },[])
+
+    useEffect(()=>{
+        if(selectedTaskPreset){
+            setPresetLoaded(true)
+        }else{
+            setPresetLoaded(false)
+        }
+    },[selectedTaskPreset])
+
+    useEffect(() => {
+        if(taskDescription === '<p><br></p>'){
+            setSelectedTaskPreset(false)
+            setPresetLoaded(false)
+        }
+        dispatch(setDesignTaskContent(taskDescription))
+    },[taskDescription])
+
   return (
         <div className="flex flex-col gap-4 relative mt-4">
             <div >
-                <label className="typography-body ">Design task details </label>
+                <label className="typography-body ">Draft your design task </label>
                 <span className="text-red-100">*</span>
             </div>
-            {/* <textarea
-                id="taskDescription"
-                placeholder='Task Description'
-                type="text"
-                label="Task Description"
-                required
-                className={(descriptionError ? '!border !border-red-500 ' : 'border border-transparent ') + "w-full rounded-xl px-3 py-2 bg-background-80 resize-none outline-none focus:outline-teal-300"}
-                rows="10"
-                value={taskDescription}
-                onChange={(e) => setTaskDescription(e.target.value)}
-            /> */}
-            <TextEditor htmlData={taskDescription} loaded={false} errors={descriptionError} placeholder={"Write a Task Description"} setEditorContent={(data)=>setTaskDescription(data)} customBg={' custom-input '} />
+
+            <TextEditor clearPreset={setSelectedTaskPreset} hasClearOption presetLoaded={presetLoaded} presetTemplate={selectedTaskPreset} htmlData={taskDescription} loaded={false} errors={descriptionError} placeholder={"Write a Task Description"} setEditorContent={(data)=>setTaskDescription(data)} customBg={' custom-input '} />
 
             {descriptionError && <p className="text-red-500 absolute typography-small-p top-[23rem]">Task Description is required</p>}
+
+            {/* Preset Section */}
+            {taskPresets?.length > 0 && 
+            <>
+            <div className='flex items-center gap-6 relative'>
+                <div className='h-[1px] w-[50%] bg-font-gray'></div>
+                <p className='typography-body text-font-gray'>OR</p>
+                <div className='h-[1px] w-[50%] bg-font-gray'></div>
+            </div>
+            <div className='relative'>
+                <label htmlFor="preset" className='typography-body mb-4 block'>Choose Design Task from  Presets</label>
+                <div className='grid grid-cols-2 gap-6'>
+                {
+                    taskPresets?.filter((task,index) => showMore ? true : index < 2).map(task => (
+                    <StyledCard  key={task?._id} onClick={() => handleViewPreset(task)} backgroundColor={'bg-background-70 hover:bg-background-60 cursor-pointer flex flex-col gap-2 relative '}>
+                        <h4 className='whitespace-nowrap overflow-hidden text-ellipsis'>{task?.title}</h4>
+                        <p className='typography-body text-font-gray whitespace-nowrap overflow-hidden text-ellipsis w-[50%]'>{task?.level}-{task?.category}</p>
+                    </StyledCard>
+                    ))
+                }
+                </div>
+                <div className='typography-small-p text-font-gray'>
+                    {
+                        showMore 
+                        ? <p className='flex gap-1 mt-2 place-self-end cursor-pointer' onClick={()=>setShowMore(!showMore)}>Hide <IconWrapper inheritColor customIconSize={2} customStrokeWidth={4} size={0} icon={ChevronUp} /></p>
+                        : <p className='flex gap-1 mt-2 place-self-end cursor-pointer' onClick={()=>setShowMore(!showMore)}>Show More <IconWrapper inheritColor customIconSize={2} customStrokeWidth={4} size={0} icon={ChevronDown} /></p>
+                    }
+                </div>
+            </div>
+            </>
+            }
+
             <div className='flex justify-normal gap-4'>
                 <div className='w-full relative'>
                     <div className='pb-4' >
@@ -222,6 +301,21 @@ function TaskForm({candidateId,candidateEmail,jobId,setIsLoading}) {
                     </Button> */}
                     <SchedulerButton buttonText={"Send Email"} onConfirm={handleSendTask} modalTitle={"Schedule Email"} modalMessage={"Schedule design task email with specified date and time"} buttonVariant={"primary"}/>
             </div>
+            <Modal
+            open={showTaskContent}
+            item={showTaskContent}
+            customTitle={showTaskContent?.title}
+            customMessage={`Sample Design Task Template for ${showTaskContent?.level} ${showTaskContent?.category} ${showTaskContent?.category === 'UI UX' ? 'Designer' : ''}`}
+            specifiedWidth={'max-w-4xl'}
+            onClose={() => setShowTaskContent(false)}
+            customConfirmLabel={'Insert'}
+            onConfirm={handleSetTemplateToEditor}
+            >
+                {showTaskContent?.htmlString && 
+                <div className='max-h-[50vh] overflow-y-scroll scrollbar-hide mt-5' dangerouslySetInnerHTML={{ __html : showTaskContent?.htmlString}}>
+
+                </div>}
+            </Modal>
         </div>
   )
 }

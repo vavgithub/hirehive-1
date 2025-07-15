@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react'
 import StyledCard from '../../components/Cards/StyledCard'
 import ApplicationChart from '../../components/Charts/ApplicationChart'
 import MuiCustomStylesForDataGrid from '../../components/tableUtilities/MuiCustomStylesForDataGrid'
-import axios from '../../api/axios'
+import axios from '../../services/axios'
 import { useQuery } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import { industryTypeOptions, LocationOptions } from '../../components/Register/CompanyDetails'
@@ -21,6 +21,7 @@ import Container from '../../components/Cards/Container'
 import Header from '../../components/utility/Header'
 import { getRoute, ROUTE_KEY } from '../../config/permissions.config'
 import { useAuthContext } from '../../context/AuthProvider'
+import { getAdminDashboard } from '../../services/admin.service'
 import { useUnknownProfilePicture } from '../../context/ThemeContext'
 
 function AdminDashboard() {
@@ -40,7 +41,7 @@ function AdminDashboard() {
 
   const { data: dashboardDetails, isLoading: isDetailsLoading } = useQuery({
     queryKey: ['admin_dashboard'],
-    queryFn: () => axios.get(`/admin/dashboard?tz=${timezone}`).then(res => res.data),
+    queryFn: () => getAdminDashboard(timezone),
     refetchOnWindowFocus: false,
     enabled: true
   })
@@ -236,7 +237,7 @@ function AdminDashboard() {
             </div>
             <div className='w-full flex flex-col justify-center items-center'>
               <h2 className='text-center w-[90%] text-ellipsis overflow-hidden'>{dashboardDetails?.companyDetails?.name}</h2>
-              <p className='text-font-gray typography-large-p flex gap-2 items-center justify-center'>{LocationOptions.find(data => data.value === dashboardDetails?.companyDetails?.location)?.label} <span className='w-1 h-1 bg-font-gray rounded-full'></span>{industryTypeOptions.find(data => data.value === dashboardDetails?.companyDetails?.industryType)?.label} </p>
+              <p className='text-font-gray w-[90%] typography-large-p flex gap-2 items-center justify-center'><p className='max-w-[50%] whitespace-nowrap overflow-hidden text-ellipsis'>{(dashboardDetails?.companyDetails?.location && dashboardDetails?.companyDetails?.geoLocation) ? dashboardDetails?.companyDetails?.location : LocationOptions.find(data => data.value === dashboardDetails?.companyDetails?.location)?.label}</p><span className='w-1 h-1 bg-font-gray rounded-full'></span><p className='max-w-[50%] whitespace-nowrap overflow-hidden text-ellipsis'>{industryTypeOptions.find(data => data.value === dashboardDetails?.companyDetails?.industryType)?.label}</p> </p>
             </div>
             <div className='typography-large-p w-full flex flex-col gap-6'>
               <p className='flex justify-between w-full'><span className='text-font-gray'>Employees</span> <span>{dashboardDetails?.members?.length ?? 0}</span></p>

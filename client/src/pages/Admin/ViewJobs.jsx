@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import axios from '../../api/axios';
+import axios from '../../services/axios';
 import Tabs from '../../components/ui/Tabs';
 import StatsGrid from '../../components/ui/StatsGrid';
 import { formatDescription } from '../../utility/formatDescription';
@@ -20,6 +20,7 @@ import Container from '../../components/Cards/Container';
 import IconWrapper from '../../components/Cards/IconWrapper';
 import { Briefcase, Check, Eye, File, FileText, Folder, MonitorDot, MousePointer2, PenTool, Users } from 'lucide-react';
 import { getRoute, ROUTE_KEY } from '../../config/permissions.config';
+import { closeJob, deleteJob, draftJob, fetchjobsById, fetchOverallJobStats, reOpenJob } from '../../services/jobs.service';
 
 
 const ViewJobs = () => {
@@ -69,7 +70,7 @@ const ViewJobs = () => {
                 draftMutation.mutate(mainId);
                 break;
             case ACTION_TYPES.CLOSE:
-                closeMutation.mutate({ jobId: mainId, closeReason });
+                closeMutation.mutate({ jobId: mainId, reason : closeReason });
                 break;
             case ACTION_TYPES.REOPEN:
                 reOpenMutation.mutate(job?._id ?? mainId)
@@ -87,7 +88,7 @@ const ViewJobs = () => {
     // Fetch job data
     const { data: formData, isLoading: isJobLoading } = useQuery({
         queryKey: ['job', mainId],
-        queryFn: () => axios.get(`/jobs/getJobById/${mainId}`).then(res => res.data),
+        queryFn: () => fetchjobsById(mainId),
     });
 
 
@@ -103,13 +104,13 @@ const ViewJobs = () => {
         isLoading: isStatsLoading
     } = useQuery({
         queryKey: ['jobStats', mainId],
-        queryFn: () => axios.get(`jobs/stats/job/${mainId}`).then(res => res.data),
+        queryFn: () => fetchOverallJobStats(mainId),
     });
 
 
     // Mutations
     const deleteMutation = useMutation({
-        mutationFn: (mainId) => axios.delete(`/jobs/deleteJob/${mainId}`),
+        mutationFn: deleteJob,
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['job'] });
             setModalOpen(false);
@@ -118,7 +119,7 @@ const ViewJobs = () => {
     });
 
     const draftMutation = useMutation({
-        mutationFn: (jobId) => axios.put(`/jobs/draftJob/${jobId}`),
+        mutationFn: draftJob,
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['jobs'] });
             setModalOpen(false);
@@ -127,7 +128,7 @@ const ViewJobs = () => {
     });
 
     const closeMutation = useMutation({
-        mutationFn: ({ jobId, reason }) => axios.put(`/jobs/closeJob/${jobId}`, { reason }),
+        mutationFn: closeJob,
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['jobs'] });
             setModalOpen(false);
@@ -136,7 +137,7 @@ const ViewJobs = () => {
     });
 
     const reOpenMutation = useMutation({
-        mutationFn: (jobId) => axios.put(`/jobs/reOpen/${jobId}`),
+        mutationFn: reOpenJob,
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['jobs'] });
             setModalOpen(false);

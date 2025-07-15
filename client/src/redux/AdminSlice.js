@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
+    designTaskContent : '',
     newMembersCount : 0,
     loading : false,
     error : ""
@@ -10,6 +11,9 @@ const adminSlice = createSlice({
     name : "Admin",
     initialState,
     reducers : {
+        setDesignTaskContent : (state,action) => {
+            state.designTaskContent = action.payload
+        },
         setMembersCount : (state,action) => {
             state.newMembersCount = action.payload
             state.loading = false
@@ -25,5 +29,5 @@ const adminSlice = createSlice({
     }
 }) 
 
-export const { setMembersCount , setLoading , setError } = adminSlice.actions;
+export const { setDesignTaskContent , setMembersCount , setLoading , setError } = adminSlice.actions;
 export const adminReducer = adminSlice.reducer;

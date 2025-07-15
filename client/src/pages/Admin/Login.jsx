@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Button } from '../../components/Buttons/Button';
 import { useNavigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
-import { login } from '../../api/authApi';
+import { googleLogin, login } from '../../services/auth.service';
 import useAuth from '../../hooks/useAuth';
 import ForgotPassword from './ForgotPassword';
 import { showErrorToast } from '../../components/ui/Toast';
@@ -11,6 +11,8 @@ import { InputField } from '../../components/Inputs/InputField';
 import IconWrapper from '../../components/Cards/IconWrapper';
 import { Briefcase, FileText } from 'lucide-react';
 import { getRoute, ROUTE_KEY } from '../../config/permissions.config';
+import GoogleIcon from '../../svg/Icons/GoogleIcon';
+import { FcGoogle } from 'react-icons/fc';
 import { useLogo } from '../../context/ThemeContext';
 
 const statsOne = [
@@ -51,6 +53,17 @@ const Login = () => {
         mutation.mutate({ email, password });
     };
 
+    const registerGoogle = async () => {
+        try {
+          const result = await googleLogin()
+          if(result?.authorizationUrl){
+            window.location.href = result.authorizationUrl;
+          }
+        } catch (error) {
+          showErrorToast('Error',error?.message)
+        }
+    }
+
     if (authLoading) {
         return (
             <div className="flex justify-center items-center min-h-screen">
@@ -84,10 +97,18 @@ const Login = () => {
                 ) : (
                     <>
                         <h1 className="mb-2 text-center font-semibold w-full">Welcome Back</h1>
-                        <p className="typography-body mb-10 text-center font-normal w-full">
+                        <p className="typography-body mb-12 text-center font-normal w-full">
                             Login to your account below
                         </p>
-
+                        <button type="button" onClick={registerGoogle} variant="secondary"  className='mx-auto flex gap-4 items-center bg-white text-black-100 py-2 px-6 h-11 rounded-full'>
+                            <IconWrapper icon={FcGoogle} size={0} customStrokeWidth={0} customIconSize={5} />
+                            Continue With Google
+                        </button> 
+                        <div className="flex items-center my-8 w-full">
+                            <hr className="flex-grow border-grey-100" />
+                            <span className="px-3 text-grey-100">OR</span>
+                            <hr className="flex-grow border-grey-100" />
+                        </div> 
                         <form onSubmit={handleSubmit} className='w-full'>
                             <div className="space-y-4">
                                 <InputField

@@ -5,19 +5,10 @@ import { useOnboardingContext } from '../../context/OnboardingProvider';
 import { showErrorToast, showSuccessToast } from '../ui/Toast';
 import { useMutation } from '@tanstack/react-query';
 import LoaderModal from '../Loaders/LoaderModal';
-import axios from '../../api/axios';
+import axios from '../../services/axios';
 import { useSearchParams } from 'react-router-dom';
 import Footer from '../Footer/Footer';
-
-const verifyOnboardOTP = async ({otp, email}) => {
-    const response = await axios.post('/auth/register/verify-otp-for-admin',{otp, email});
-    return response.data
-}
-
-const sendOTP = async ({token}) => {
-  const response = await axios.post('/auth/register/send-invite-otp',{token});
-  return response.data
-}
+import { sendInviteOTP, verifyOnboardOTP } from '../../services/auth.service';
 
 function OtpForm({setCurrentStep}) {
     const [otp, setOtp] = useState("");
@@ -73,7 +64,7 @@ function OtpForm({setCurrentStep}) {
     }
   
     const sendInviteOTPMutation = useMutation({
-      mutationFn : sendOTP,
+      mutationFn : sendInviteOTP,
       onSuccess : (data) => {
         if(data?.message){
           showSuccessToast("Success",data?.message)
@@ -100,7 +91,7 @@ function OtpForm({setCurrentStep}) {
   return (
     <div>
       {(verifyOnboardOTPMutation?.isPending || sendInviteOTPMutation?.isPending) && <LoaderModal />}
-      <OtpComponent hasFooter inviteMail={inviteMail} showSendOTP={onboardData?.email ? false : token} handleSendOtp={handleSendOtp} isSubmitting={verifyOnboardOTPMutation?.isPending} cardbg='bg-card-bg bg-cover bg-center bg-no-repeat' handleOtpSubmit={handleOtpSubmit} otpError={otpError} email={onboardData?.email} otp={otp} setOtp={setOtp}/>
+      <OtpComponent hasFooter inviteMail={inviteMail} token={token} showSendOTP={onboardData?.email ? false : token} handleSendOtp={handleSendOtp} isSubmitting={verifyOnboardOTPMutation?.isPending} cardbg='bg-card-bg bg-cover bg-center bg-no-repeat' handleOtpSubmit={handleOtpSubmit} otpError={otpError} email={onboardData?.email} otp={otp} setOtp={setOtp}/>
       <Footer />
     </div>
   )

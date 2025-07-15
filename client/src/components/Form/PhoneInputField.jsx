@@ -65,7 +65,7 @@ export const PhoneInputField = ({
         };
 
         return (
-          <div className={"flex relative max-h-[44px] " + (rowWise ? "flex-row justify-between items-center gap-2" : "flex-col")}>
+          <div className={"flex relative  " + (rowWise ? "flex-row max-h-[44px] justify-between items-center gap-2" : "flex-col")}>
             {label && (
               <label
                 htmlFor={name}
@@ -100,7 +100,7 @@ export const PhoneInputField = ({
               }}
             />
             {(error || isInvalid) && (
-              <p className={`text-red-500 text-xs font-outfit absolute ${rowWise ? 'top-[2.85rem] left-[27%] ' : ' top-[4.9rem] '}`}>
+              <p className={`text-red-500 text-xs font-outfit absolute ${rowWise ? 'top-[2.85rem] left-[27%] ' : ' top-[4.5rem] '}`}>
                 {error?.message || "Invalid phone number format or length"}
               </p>
             )}

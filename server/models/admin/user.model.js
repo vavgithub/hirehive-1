@@ -19,6 +19,11 @@ const userSchema = new mongoose.Schema({
     required: true,
     trim: true,
   },
+  auth_type : {
+    type: String,
+    enum : ['GOOGLE','EMAIL'],
+    default : 'EMAIL'
+  },
   email: {
     type: String,
     required: true,
@@ -79,6 +84,21 @@ const userSchema = new mongoose.Schema({
   isAvailable: {
     type: Boolean,
     default: true,
+  },
+  integrations : {
+    google : {
+      token : String,
+      scopes : [{
+        type : String,
+        enum : [
+          "AUTH",
+          "VIEW_CALENDAR",
+          "EDIT_CALENDAR",
+          "VIEW_EVENTS",
+          "EDIT_EVENTS"
+        ]
+      }]
+    }
   },
   assignedCandidates: [{
     type: mongoose.Schema.Types.ObjectId,

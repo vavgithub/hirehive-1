@@ -2,10 +2,11 @@ import React, { useEffect, useState } from 'react'
 import Scorer from '../ui/Scorer';
 import { Button } from '../Buttons/Button';
 import { showErrorToast } from '../ui/Toast';
-import axios from '../../api/axios';
+import axios from '../../services/axios';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { updateStageStatus } from '../../redux/applicationStageSlice';
 import { useDispatch } from 'react-redux';
+import { scoreRoundTwo } from '../../services/hr.service';
 
 function StageRating({customSchema,candidateId,jobId,name,candidate,onSubmit,stageConfig}) {
     const [rating, setRating] = useState(stageConfig?.hasSplitScoring ? Object.fromEntries(Object.entries(stageConfig?.score)?.map(([key,value])=>[key,0])) : 0);
@@ -22,8 +23,8 @@ function StageRating({customSchema,candidateId,jobId,name,candidate,onSubmit,sta
         let newRating = {...rating}
         customSchema?.map(schema => {
           if(rating.hasOwnProperty(schema?.defaultKey)){
-            newRating[schema.customKey] = 0
             delete newRating[schema?.defaultKey]
+            newRating[schema.customKey] = 0
           } 
         })
         setRating(newRating)
@@ -31,7 +32,7 @@ function StageRating({customSchema,candidateId,jobId,name,candidate,onSubmit,sta
     },[stageConfig?.hasSplitScoring,customSchema])
 
     const scoreRoundTwoMutation = useMutation({
-      mutationFn: (scoreData) => axios.post('hr/score-round-two', scoreData),
+      mutationFn: scoreRoundTwo,
       onSuccess: (data) => {
           dispatch(updateStageStatus({
               stage: 'Round 2',
@@ -81,7 +82,7 @@ function StageRating({customSchema,candidateId,jobId,name,candidate,onSubmit,sta
                     <span>Feedback:</span>
 
                     <textarea
-                        className="w-full rounded-xl px-3 py-2 bg-background-80  outline-none focus:outline-teal-300 resize-none"
+                        className="w-full rounded-xl px-3 py-2 bg-background-70 hover:bg-background-60  outline-none focus:outline-teal-300 resize-none"
                         placeholder="Enter your feedback"
                         value={feedback}
                         onChange={(e) => setFeedback(e.target.value)}

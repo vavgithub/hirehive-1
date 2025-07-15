@@ -11,6 +11,7 @@ import { ChevronRight, Headset, Phone, Upload, X } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setCollapseContactUs } from '../../redux/candidateSlice';
 import { useMediaQuery } from 'react-responsive';
+import { uploadScreenshotToS3 } from '../../utility/s3upload';
 
 
 const CLOUDINARY_URL_SS = import.meta.env.VITE_CLOUDINARY_URL_SS;
@@ -94,41 +95,6 @@ const ContactUs = () => {
     maxFiles: 1
   });
 
-  // Upload screenshot to Cloudinary
-  const uploadScreenshot = async (file) => {
-    try {
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('upload_preset', CLOUDINARY_SCREENSHOT_UPLOAD_PRESET);
-      formData.append('resource_type', 'auto');
-
-      const response = await axios.post(
-        CLOUDINARY_URL_SS,
-        formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-          onUploadProgress: (progressEvent) => {
-            const progress = Math.round(
-              (progressEvent.loaded * 100) / progressEvent.total
-            );
-            setUploadProgress(progress);
-          },
-        }
-      );
-
-      if (response.data.secure_url) {
-        return response.data.secure_url;
-      } else {
-        throw new Error("Cloudinary: Can't generate URL");
-      }
-    } catch (error) {
-      console.error("Cloudinary upload error:", error);
-      throw new Error(error.message || "Error uploading to Cloudinary");
-    }
-  };
-
   // Submit form data to Google Sheets
   const submitToGoogleSheets = async (data) => {
     try {
@@ -165,7 +131,8 @@ const ContactUs = () => {
 
       // Upload screenshot to Cloudinary if a file was selected
       if (screenshotFile) {
-        screenshotUrl = await uploadScreenshot(screenshotFile);
+        // screenshotUrl = await uploadScreenshot(screenshotFile);
+        screenshotUrl = await uploadScreenshotToS3(screenshotFile,()=>{});
       }
 
       // Prepare data for Google Sheets
@@ -343,8 +310,7 @@ const ContactUs = () => {
 
       <StyledCard
         onClick={collapse ? null : toggleModal}
-        extraStyles={`lg:fixed bottom-6 right-6 lg:bottom-[40%] lg:right-0  w-full lg:w-fit cursor-pointer hover:bg-background-60  `}
-        padding={5}
+        extraStyles={`!p-4 !md:p-4  lg:fixed bottom-6 right-6 lg:bottom-[40%] lg:right-0  w-full lg:w-fit cursor-pointer hover:bg-background-60  `}
         style={{
           maxWidth : collapse ? '5rem' : '100%',
           transition: 'max-width 1s ease',

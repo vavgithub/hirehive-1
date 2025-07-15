@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Header from '../../components/utility/Header';
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
-import axios from '../../api/axios';
+import axios from '../../services/axios';
 import { Phone, Mail, Circle, X, Info, Check } from 'lucide-react';
 import { Button } from '../../components/Buttons/Button';
 import { showErrorToast } from '../../components/ui/Toast';
@@ -15,12 +15,7 @@ import IconWrapper from '../../components/Cards/IconWrapper';
 import { UTCToDateFormatted } from '../../utility/timezoneConverter';
 import { formatPhoneNumber } from '../../components/Form/PhoneInputField';
 import { useUnknownProfilePicture } from '../../context/ThemeContext';
-
-// Fetch function
-const fetchAssessmentDetails = async (candidateId, jobId) => {
-    const { data } = await axios.get(`admin/candidate/get-assessment/${candidateId}/${jobId}`);
-    return data;
-};
+import { fetchAssessmentDetails } from '../../services/admin.candidate.service';
 
 const AssessmentResponse = () => {
 

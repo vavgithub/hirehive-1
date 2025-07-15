@@ -34,6 +34,23 @@ export const submitDesignTask = async (req, res) => {
       designTaskStatus.submittedTaskLink = taskLink;
       designTaskStatus.submittedComment = comment;
       designTaskStatus.submissionDate = new Date();
+      designTaskStatus.logs = designTaskStatus?.logs?.length > 0 ? designTaskStatus.logs : [] 
+
+      if(designTaskStatus.status === 'Not Assigned' && designTaskStatus.submittedTaskLink){
+        let existUpdated = false
+        for(let log of designTaskStatus.logs){
+          if(log.status === designTaskStatus.status){
+            log.date = new Date()
+            existUpdated =   true
+          } 
+        }
+        if(!existUpdated){
+          designTaskStatus.logs.push({
+            status : designTaskStatus.status,
+            date : new Date()
+          })
+        }
+      }
 
       jobApplication.stageStatuses.set('Design Task', designTaskStatus);
 
@@ -154,7 +171,7 @@ const fetchActiveJobs = async (req, res) => {
     let userIds = [];
     let companyDetails = {};
 
-    if(companyId){
+    if(companyId && companyId !== 'undefined'){
       companyDetails = await Company.findById({_id : companyId});
       // Find all users in the same company
       const usersInCompany = await User.find({ company_id : companyId }, '_id'); // Get only _id fields

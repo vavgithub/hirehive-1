@@ -1,7 +1,7 @@
 import { asyncHandler } from '../../utils/asyncHandler.js';
 import {User} from '../../models/admin/user.model.js';
 import generateToken from '../../utils/generateToken.js';
-import { getUploadPath, uploadToCloudinary } from '../../utils/cloudinary.js';
+import { getUploadPath, uploadGoogleImagesToCloudinary, uploadToCloudinary } from '../../utils/cloudinary.js';
 import path from 'path';
 import { sendEmail } from '../../utils/sentEmail.js';
 import { generateOTP, otpStore } from '../../utils/otp.js';
@@ -10,6 +10,11 @@ import { Company } from '../../models/admin/company.model.js';
 import jwt from 'jsonwebtoken'
 import { verifyToken } from '../../middlewares/authMiddleware.js';
 import { getCountryNameFromPhoneNumber } from '../../utils/countryUtils.js';
+import { uploadGoogleImageToS3, uploadToS3 } from '../../utils/s3utility.js';
+import { checkScopes, getAccessOauthClient, getAuthorizationUrl, getOAuthTokens, getPlaceDetails, getRoleBasedScopes, getUserInfo, revokeOauthClient, SCOPE_KEYS, SCOPES, USE_TYPES, WORKSPACE_KEYS } from '../../utils/integrations/google.js';
+import { randomBytes } from 'crypto';
+import { decrypt, encrypt } from '../../utils/crypto.js';
+import { error } from 'console';
 
 
 
@@ -29,7 +34,12 @@ export const uploadProfilePicture = async (req, res) => {
       const userId = req.user._id;
       
       // Pass just the filename instead of full path
-      const profilePictureUrl = await uploadToCloudinary(
+      // const profilePictureUrl = await uploadToCloudinary(
+      //   req.file.filename,
+      //   'profile-pictures'
+      // );
+
+      const profilePictureUrl = await uploadToS3(
         req.file.filename,
         'profile-pictures'
       );
@@ -66,7 +76,12 @@ export const uploadCompanyLogo = async (req, res) => {
     const companyId = req.user.company_id;
     
     // Pass just the filename instead of full path
-    const companyLogoUrl = await uploadToCloudinary(
+    // const companyLogoUrl = await uploadToCloudinary(
+    //   req.file.filename,
+    //   'company-logo'
+    // );
+
+    const companyLogoUrl = await uploadToS3(
       req.file.filename,
       'company-logo'
     );
@@ -180,7 +195,7 @@ export const logoutUser = asyncHandler(async (req, res) => {
 
 // Get User Profile
 export const getUserProfile = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.user._id).populate('company_id');
+  const user = await User.findById(req.user._id).select('+integrations').populate('company_id');
 
   if (user) {
       res.json({
@@ -198,7 +213,13 @@ export const getUserProfile = asyncHandler(async (req, res) => {
           tasks_pending: user.tasks_pending,
           role: user.role,
           profilePicture: user.profilePicture,
-          companyDetails : user?.company_id
+          companyDetails : user?.company_id,
+          hasAuth : {
+            view_calendar : user?.integrations?.google?.scopes?.includes(SCOPE_KEYS.VIEW_CALENDAR),
+            edit_calendar : user?.integrations?.google?.scopes?.includes(SCOPE_KEYS.EDIT_CALENDAR),
+            view_events : user?.integrations?.google?.scopes?.includes(SCOPE_KEYS.VIEW_EVENTS),
+            edit_events : user?.integrations?.google?.scopes?.includes(SCOPE_KEYS.EDIT_EVENTS),
+          }
       });
   } else {
       res.status(404);
@@ -697,10 +718,27 @@ export const completeHiringManagerRegistration = asyncHandler(async (req, res) =
   let companyLogoUrl = "";
   if(req.file){
       // Pass just the filename instead of full path
-      companyLogoUrl = await uploadToCloudinary(
+      // companyLogoUrl = await uploadToCloudinary(
+      //   req.file.filename,
+      //   'company-logo'
+      // );
+
+      companyLogoUrl = await uploadToS3(
         req.file.filename,
         'company-logo'
       );
+  }
+
+  let geoLocation = null;
+  if(companyDetails?.locationId && companyDetails?.sessionId ){
+      const { locationId , sessionId } = companyDetails
+      const result = await getPlaceDetails(locationId,sessionId);
+      if(result.latlng?.longitude && result.latlng?.latitude){
+        geoLocation = {
+            type : 'Point',
+            coordinates : [result.latlng.longitude , result.latlng.latitude]
+        }
+      }
   }
 
   // Create new user
@@ -710,6 +748,7 @@ export const completeHiringManagerRegistration = asyncHandler(async (req, res) =
     industryType: companyDetails.industry,
     location: companyDetails.location,
     size: companyDetails.companySize,
+    ...(geoLocation ? {geoLocation} : {}),
     registeredBy : {
       user_id : userData?._id,
       name : userData?.firstName + " " + userData?.lastName,
@@ -1030,6 +1069,8 @@ export const editCompanyProfile = asyncHandler(async (req, res) => {
     const {
       name,
       location,
+      locationId,
+      sessionId,
       industryType,
       size,
       about,
@@ -1053,6 +1094,17 @@ export const editCompanyProfile = asyncHandler(async (req, res) => {
           message: 'Company Name is already taken.'
         });
       }
+    
+    let geoLocation = null;
+    if(locationId && sessionId ){
+        const result = await getPlaceDetails(locationId,sessionId);
+        if(result.latlng?.longitude && result.latlng?.latitude){
+          geoLocation = {
+              type : 'Point',
+              coordinates : [result.latlng.longitude , result.latlng.latitude]
+          }
+        }
+    }
 
     // Find and update the user
     const updatedCompany = await Company.findByIdAndUpdate(
@@ -1061,6 +1113,7 @@ export const editCompanyProfile = asyncHandler(async (req, res) => {
         name,
         location,
         industryType,
+        ...(geoLocation ? {geoLocation} : {}),
         size,
         about,
         website,
@@ -1094,3 +1147,349 @@ export const editCompanyProfile = asyncHandler(async (req, res) => {
     });
   }
 });
+
+//GOOGLE AUTH INTEGRATIONS
+export const authorizeWithGoogle = asyncHandler(async (req,res) => {
+  try {
+    // Generate a secure random state value.
+    const state = randomBytes(32).toString('hex');
+
+    // Store state in the session
+    req.session.state = state;
+    req.session.useType = USE_TYPES['LOGIN/REGISTER']
+
+    const { authorizationUrl } = await getAuthorizationUrl(state,SCOPES.AUTH)
+
+    res.status(200).json({
+      status : 'success',
+      authorizationUrl,
+      message : "Processing Authorization Successfully"
+    })
+  } catch (error) {
+    console.log(error)
+      res.status(400).json({
+        status: 'error',
+        message: error.message || 'Error updating profile',
+        error: process.env.NODE_ENV === 'development' ? error : undefined
+    });
+  }
+})
+
+export const unAuthorizeWithGoogle = asyncHandler(async (req,res) => {
+  try {    
+    const userId = req.user.id
+
+    if(!userId){
+      return res.status(400).json({
+        error : true,
+        message : 'Invalid permission for processing request.'
+      })
+    }
+
+    const user = await User.findById({_id : userId}).select('+integrations');
+    if(!user){
+      return res.status(400).json({
+        error : true,
+        message : 'Invalid request processing data.'
+      })
+    }
+    user.integrations.google.scopes = user.integrations.google.scopes?.includes('AUTH') ?  ['AUTH'] : []
+    const isRevoked = await revokeOauthClient(decrypt(user.integrations.google.token))
+    user.integrations.google.token = null
+    if(isRevoked){
+      await user.save()
+    }
+
+    res.status(200).json({
+      status : 'success',
+      message : "Revoked Authorization Successfully"
+    })
+  } catch (error) {
+    console.log(error)
+      res.status(400).json({
+        status: 'error',
+        message: error.message || 'Error revoking google creds',
+        error: process.env.NODE_ENV === 'development' ? error : undefined
+    });
+  }
+})
+
+export const authorizeInvitedUsersWithGoogle = asyncHandler(async (req,res) => {
+  try {
+    const { token } = req.body;
+    if(!token){
+      return res.status(400).json({
+        status: 'error',
+        message: 'Invalid Registration token'
+      });
+    }
+
+    const decoded = verifyToken(token,process.env.JWT_SECRET);
+    if (!decoded) {
+      return res.status(401).json({ 
+        status: 'error',
+        message: 'Invalid or expired token'
+      });
+    }
+
+    const { email , firstName , lastName , role , company_id } = decoded;
+
+    const existingUser = await User.findOne({ email });
+
+    if(existingUser){
+      const company = await Company.findById({_id : company_id});
+      if(company 
+        && company?.invited_team_members?.find(member=>((member?.email === email) && (member?.status === "INVITED"))) 
+        && existingUser.verificationStage === "PASSWORD"){
+        //Managing requested user
+        await User.deleteOne({ email })
+      }else{
+        return res.status(401).json({ 
+          status: 'error',
+          message: 'Account already registered'
+        });
+      }
+    }
+    // Generate a secure random state value.
+    const state = randomBytes(32).toString('hex');
+
+    // Store state in the session
+    req.session.state = state;
+    req.session.useType = USE_TYPES['LOGIN/REGISTER']
+    if(token && email){
+      req.session.invited = {email , company_id}
+    }
+
+    const { authorizationUrl } = await getAuthorizationUrl(state,SCOPES.AUTH)
+
+    res.status(200).json({
+      status : 'success',
+      authorizationUrl,
+      message : "Processing Authorization Successfully"
+    })
+  } catch (error) {
+    console.log(error)
+      res.status(400).json({
+        status: 'error',
+        message: error.message || 'Error updating profile',
+        error: process.env.NODE_ENV === 'development' ? error : undefined
+    });
+  }
+})
+
+export const authorizeGoogleWorkspace = asyncHandler(async (req,res) => {
+  try {
+    // Generate a secure random state value.
+    const state = randomBytes(32).toString('hex');
+
+    // Store state in the session
+    req.session.state = state;
+    req.session.useType = USE_TYPES.WORKSPACE
+    req.session.userEmail = req.user?.email
+    req.session.userRole = req.user?.role
+    const { authorizationUrl } = await getAuthorizationUrl(state,getRoleBasedScopes(req.user.role))
+
+    res.status(200).json({
+      status : 'success',
+      authorizationUrl,
+      message : "Processing Authorization Successfully"
+    })
+  } catch (error) {
+    console.log(error)
+      res.status(400).json({
+        status: 'error',
+        message: error.message || 'Error updating profile',
+        error: process.env.NODE_ENV === 'development' ? error : undefined
+    });
+  }
+})
+
+export const redirectForGoogleToken = asyncHandler(async (req,res) => {
+  try {
+    const query = req.query;
+    const authState = query?.state ?? null;
+    const userRoleSession = req.session?.userRole;
+    const routeKey = (userRoleSession === 'Hiring Manager' ? 'hiring-manager' : userRoleSession === 'Design Reviewer' ?  'design-reviewer' : 'admin' )
+    if(authState && req.session?.state && authState === req.session.state){
+      //Authorized requests
+      const code = query?.code;
+      const tokens = await getOAuthTokens(code);
+
+      let encryptedToken = null;
+      let scopes = null;
+      let currentUserStage = null;
+      if(tokens?.refresh_token){
+        encryptedToken = encrypt(tokens?.refresh_token);
+      }
+      //Check authorized  scopes by user
+      if(tokens?.scope){
+        scopes = tokens.scope.split(' ')
+      }
+
+      if(scopes?.length > 0){
+        const scopeKeys = checkScopes(scopes);
+        //GOOGLE_AUTH_FUNCTIONALITIES
+        if(req.session?.useType === USE_TYPES['LOGIN/REGISTER'] && scopeKeys.includes('AUTH') && tokens?.access_token){
+          //LOGIN/REGISTER MANAGEMENT
+          const oauth2Client = await getAccessOauthClient(tokens?.access_token)
+          const userInfo = await getUserInfo(oauth2Client)
+          if(userInfo && userInfo?.email && userInfo?.verified_email){
+              const isExisting = await User.findOne({email : userInfo?.email}).select('+integrations')
+              if(isExisting){
+                if(isExisting?.auth_type === 'GOOGLE'){
+                  // Generate JWT
+                  if(isExisting?.integrations?.google?.scopes?.length > 0){
+                    const unExisitngScopes = scopeKeys.filter(key => !isExisting.integrations.google.scopes.includes(key));
+                    isExisting.integrations.google.scopes.push(...unExisitngScopes)
+                  }
+                  currentUserStage = isExisting.verificationStage
+                  await isExisting.save()
+                  const token = generateToken(isExisting._id)
+                  res.cookie('jwt', token, cookieOptions);
+                }else{
+                  //EMAIL LOGGED IN USER
+                  const encryptedError = encrypt('Invalid Credentials')
+                  return res.redirect(`${process.env.FRONTEND_URL}/admin/register?error=${encryptedError}`)
+                }
+              }else{
+                const [firstName, ...lastName] = userInfo?.name?.split(' ');
+                let profilePictureUrl = ''
+                if(userInfo?.picture){
+                  profilePictureUrl = await uploadGoogleImageToS3(
+                    userInfo.picture,
+                    'profile-pictures'
+                  );
+                }
+
+                //Revoking unmatched email which is invited
+                if(req.session?.invited?.email && (req.session?.invited?.email !== userInfo.email)){
+                  //EMAIL LOGGED IN USER
+                  const encryptedError = encrypt('Unmatched email with the join invitation.')
+                  return res.redirect(`${process.env.FRONTEND_URL}/admin/register?error=${encryptedError}`)
+                }
+
+                const createUser = await User.create({
+                  firstName ,
+                  lastName : lastName.join(' '),
+                  email : userInfo.email,
+                  verificationStage : 'PASSWORD',
+                  role : "Admin",
+                  auth_type : 'GOOGLE',
+                  profilePicture : profilePictureUrl,
+                  integrations : {
+                    google : {
+                      scopes : scopeKeys.filter(scope => scope === SCOPE_KEYS.AUTH)
+                    }
+                  }
+                })
+
+                //Invitees management
+                if(req.session?.invited?.email === createUser.email){
+                  const company = await Company.findOne({
+                    _id: req.session?.invited?.company_id,
+                    "invited_team_members.email": createUser.email
+                  });
+                  
+                  if (!company) {
+                    console.error("No matching document found!");
+                  } else {
+                    // Find the specific team member and update the `member_id`
+                    company?.invited_team_members.forEach(member => {
+                      if (member.email === createUser.email) {
+                        member.member_id = createUser._id;  // Update member_id
+                        member.status = "JOINED"
+                        createUser.role = member.role
+                      }
+                    });
+
+                    // Save the updated document
+                    await company.save();
+                    createUser.company_id = req.session?.invited?.company_id
+                    createUser.verificationStage = 'DONE'
+                    await createUser.save(); 
+                  }
+                  delete req.session.invited
+                }
+
+                currentUserStage = createUser.verificationStage
+                //Id only token
+                const token = generateToken(createUser._id)
+                res.cookie('jwt', token, cookieOptions);
+              }
+          }else{
+            const encryptedError = encrypt('Invalid Credentials')
+            return res.redirect(`${process.env.FRONTEND_URL}/admin/register?error=${encryptedError}`)
+          }
+        }else if(req.session?.useType === USE_TYPES.WORKSPACE && scopeKeys.some(key => key !== "AUTH" && key in SCOPES) && tokens?.refresh_token){
+          //WORKSPACE SCOPE MANAGEMENT
+          if(req.session.userEmail){
+            const isExisting = await User.findOne({ email : req.session.userEmail }).select('+integrations');
+            //Checks if access given to all scopes based on user role.
+            const hasAllExceptAuth = WORKSPACE_KEYS(isExisting.role)
+            .every(key => scopeKeys.includes(key));
+            if(!hasAllExceptAuth){
+              //Returns to user
+                return res.redirect(`${process.env.FRONTEND_URL}/${routeKey}/settings?error=ALLOW_ACCESS`)
+            }
+
+            if(!isExisting?.integrations?.google?.token){
+              isExisting.integrations.google.token = encryptedToken
+            }
+            if(isExisting?.integrations?.google?.scopes?.length > 0){
+              const unExisitngScopes = scopeKeys.filter(key => !isExisting.integrations.google.scopes.includes(key));
+              isExisting.integrations.google.scopes.push(...unExisitngScopes)
+            }else{
+              isExisting.integrations.google.scopes.push(...scopeKeys)
+            }
+            await isExisting.save()
+          }
+          console.log('GOt the client for Calendar')
+        }
+      }
+      
+      
+      req.session = null
+      return res.redirect(userRoleSession ? `${process.env.FRONTEND_URL}/${routeKey}/settings` : `${process.env.FRONTEND_URL}/admin/register?currentStage=${currentUserStage}`)
+    }else{
+      //Requests from unauthorized server
+      return res.redirect(`${process.env.FRONTEND_URL}/admin/register?error=Invalid_Creds`)
+    }
+  } catch (error) {
+    console.log(error)
+    //Handle invalid_grant error
+    const userRoleSession = req.session?.userRole;
+    req.session = null
+    const routeKey = ( userRoleSession === 'Admin' ? 'admin' : userRoleSession === 'Hiring Manager' ? 'hiring-manager' : 'design-reviewer' )
+    return res.redirect(userRoleSession ? `${process.env.FRONTEND_URL}/${routeKey}/settings` : `${process.env.FRONTEND_URL}/admin/register?error=Invalid_Creds`)
+  }
+})
+
+export const checkAuthStatus = asyncHandler(async (req, res) => {
+  try {
+    const id = req.user._id;
+    const user = await User.findById({_id : id})
+    if(user?.verificationStage === 'DONE'){
+      return res.status(200).json({
+        message: 'Please login to continue',
+      });
+    }
+    if(['REGISTER','OTP'].includes(user?.verificationStage)){
+      throw new Error('Invalid registration. Please try again.')
+    }
+    if(user.auth_type === 'EMAIL'){
+      throw new Error('Invalid Credentials.')
+    }
+    return res.status(200).json({
+      message: 'Registration needs to be completed',
+      userData : user,
+      currentStage : user?.verificationStage
+    });
+  } catch (error) {
+    console.log(error)
+    res.status(400).json({
+        status: 'error',
+        message: error.message || 'Error checking user status',
+        error: process.env.NODE_ENV === 'development' ? error : undefined
+    });
+  }
+})

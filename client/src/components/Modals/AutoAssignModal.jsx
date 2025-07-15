@@ -1,7 +1,7 @@
 import React, { useState, useEffect ,useRef } from 'react';
-import { fetchAvailableDesignReviewers } from '../../api/authApi';
+import { fetchAvailableDesignReviewers } from '../../services/auth.service';
 import Modal from './Modal';
-import axios from '../../api/axios';
+import axios from '../../services/axios';
 import IconWrapper from '../Cards/IconWrapper';
 import { User, X } from 'lucide-react';
 import { useUnknownProfilePicture } from '../../context/ThemeContext';
@@ -69,29 +69,12 @@ const AutoAssignModal = ({ open, onClose, onAssign, jobId, budgetFilter }) => {
       onAssign(selectedReviewers);
     };
   const UNKNOWN_PROFILE_PICTURE_URL = useUnknownProfilePicture()
-
-    // const handleAssign = async () => {
-    //   try {
-    //     const response = await axios.post('/dr/auto-assign-portfolios', {
-    //       jobId,
-    //       reviewerIds: selectedReviewers.map(reviewer => reviewer._id)
-    //     });
-        
-    //     if (response.status === 200) {
-    //       onAssign(response.data);
-    //     } else {
-    //       setError('Failed to assign portfolios. Please try again.');
-    //     }
-    //   } catch (error) {
-    //     console.error('Error in auto-assigning portfolios:', error);
-    //     setError('An error occurred while assigning portfolios.');
-    //   }
-    // };
   
   
     const customContent = (
-      <div className="relative mt-4" ref={dropdownRef}>
+      <div className="relative mt-4" >
         <h3 className='mb-2'>Select reviewers</h3>
+        <div ref={dropdownRef}>
         <div 
           className={"w-full bg-background-80 h-11 flex items-center cursor-pointer rounded-xl hover:bg-background-60 overflow-hidden " + (isDropdownOpen ? "border border-teal-100" : "")}
           onClick={() => setIsDropdownOpen(!isDropdownOpen)}
@@ -100,8 +83,8 @@ const AutoAssignModal = ({ open, onClose, onAssign, jobId, budgetFilter }) => {
           <IconWrapper icon={User} size={0} customIconSize={5} inheritColor />
 
             {selectedReviewers.map(reviewer => (
-              <div key={reviewer._id} className="bg-background-70 px-4 py-1 rounded-xl flex items-center text-font-main">
-                <span className='typography-body'>{reviewer?.firstName + " " + reviewer?.lastName}</span>
+              <div key={reviewer._id} className="bg-background-70 px-4 py-1 rounded-xl flex items-center text-font-main max-w-[10rem] overflow-hidden ">
+                <span className='typography-body whitespace-nowrap text-ellipsis overflow-hidden'>{reviewer?.firstName + " " + reviewer?.lastName}</span>
                 <button 
                   onClick={(e) => {
                     e.stopPropagation();
@@ -153,6 +136,7 @@ const AutoAssignModal = ({ open, onClose, onAssign, jobId, budgetFilter }) => {
             )}
           </div>
         )}
+        </div>
       </div>
     );
   

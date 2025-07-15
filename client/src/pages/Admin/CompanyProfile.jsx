@@ -6,7 +6,6 @@ import CustomToolTip from '../../components/Tooltip/CustomToolTip';
 import IconWrapper from '../../components/Cards/IconWrapper';
 import { PencilLine } from 'lucide-react';
 import StyledCard from '../../components/Cards/StyledCard';
-import { UNKNOWN_PROFILE_PICTURE_URL } from '../../utility/config';
 import { useAuthContext } from '../../context/AuthProvider';
 import { Controller, useForm } from 'react-hook-form';
 import { InputField } from '../../components/Inputs/InputField';
@@ -19,10 +18,14 @@ import { useCompanyLogo } from '../../hooks/useProfilePicture';
 import YearPicker from '../../components/MUIUtilities/YearPicker';
 import { showErrorToast, showSuccessToast } from '../../components/ui/Toast';
 import { useQueryClient } from '@tanstack/react-query';
-import axios from '../../api/axios';
+import axios from '../../services/axios';
 import { hasPermission, PERMISSIONS } from '../../config/permissions.config';
+import { editCompanyProfile } from '../../services/auth.service';
+import { LocationInputField } from '../../components/Inputs/LocationInputField';
+import { validationRules } from '../../utility/validationRules';
+import { useUnknownProfilePicture } from '../../context/ThemeContext';
 
-const CompanyOverview = ({ companyDetails, isEditing, control }) => {
+const CompanyOverview = ({ companyDetails, isEditing, control ,setValue }) => {
   return (
     <div>
       <h3 className="typography-h3 mb-6">Company Overview</h3>
@@ -35,7 +38,7 @@ const CompanyOverview = ({ companyDetails, isEditing, control }) => {
             </div>
             <div className="flex flex-col gap-6 typography-body">
               <p className="whitespace-nowrap overflow-hidden text-ellipsis">{companyDetails?.name ?? '-'}</p>
-              <p className="whitespace-nowrap overflow-hidden text-ellipsis">{LocationOptions.find(loc => loc.value === companyDetails.location)?.label ?? '-'}</p>
+              <p className="whitespace-nowrap overflow-hidden text-ellipsis">{(companyDetails.geoLocation && companyDetails?.location) ? companyDetails?.location : LocationOptions.find(loc => loc.value === companyDetails.location)?.label ?? '-'}</p>
             </div>
           </div>
           <div className="grid grid-cols-2 sm:w-[45%] gap-[10%] justify-between">
@@ -89,17 +92,22 @@ const CompanyOverview = ({ companyDetails, isEditing, control }) => {
           <Controller
             name="location"
             control={control}
-            defaultValue={companyDetails?.location}
-            render={({ field , fieldState: { error }}) => (
-                <GlobalDropDown    
-                label="Company Location" 
-                extraStylesForLabel={'text-font-gray'}
-                value={field.value}
+            defaultValue={""}
+            rules={validationRules.location}
+            render={({ field, fieldState: { error } }) => (
+              <LocationInputField   
+                type="text"
+                id="location"
+                label="Location"
+                labelStyles="text-font-gray"
+                extraClass={'custom-input'}
+                value={field.value ?? ""}
+                onChange={field.onChange}
+                setLocationId={(id) => setValue('locationId',id)}
+                setSessionId={(id) => setValue('sessionId',id)}
                 error={error}
                 errorMessage={error?.message}
-                onChange={field.onChange}
-                options={LocationOptions}
-                />
+              />
             )}
           />
           <Controller
@@ -256,7 +264,7 @@ function CompanyProfile() {
     const [profileFile, setProfileFile] = useState(null);
     const { mutate: uploadPicture, isLoading: uploading } = useCompanyLogo();
 
-    const { control, handleSubmit, reset } = useForm({
+    const { control, handleSubmit, reset , setValue } = useForm({
     defaultValues: {
         name: companyDetails?.name || '',
         size: companyDetails?.size || '',
@@ -267,9 +275,11 @@ function CompanyProfile() {
         founded: companyDetails?.founded || '',
         focusAreas: companyDetails?.focusAreas || [],
         keyContacts: companyDetails?.keyContacts || [],
+        locationId : '',
+        sessionId : ''
     },
     });
-
+    const UNKNOWN_PROFILE_PICTURE_URL = useUnknownProfilePicture();
     const handleProfilePictureUpload = (event) => {
         const file = event.target.files[0];
         if (!file) return;
@@ -287,10 +297,12 @@ function CompanyProfile() {
     const handleEditProfile = async (data) => {
         try{
             setIsLoading(true);
-            const response = await axios.put('/auth/edit-company-profile', {
+            const response = await editCompanyProfile({
                 name: data?.name ,
                 size: data?.size ,
                 location: data?.location ,
+                locationId : data?.locationId,
+                sessionId : data?.sessionId,
                 industryType: data?.industryType ,
                 about: data?.about ,
                 website: data?.website ,
@@ -383,7 +395,7 @@ function CompanyProfile() {
                   </div>
                 </div>
 
-                <CompanyOverview companyDetails={companyDetails} control={control} isEditing={isEditing} />
+                <CompanyOverview companyDetails={companyDetails} control={control} isEditing={isEditing} setValue={setValue} />
                 <ProfessionalDetails companyDetails={companyDetails} control={control} isEditing={isEditing} />
                 {isEditing && (
                 <div className="absolute top-0 right-0 flex gap-4 ">

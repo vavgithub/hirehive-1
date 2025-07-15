@@ -1,6 +1,6 @@
 import express from "express"
 import { protect, roleProtect } from "../../middlewares/authMiddleware.js";
-import { addTeamMember, approveRequest, changeMemberStatus, editTeamMember, getAllTeamMember, getDetailsForDashboard, reInviteMember, rejectRequest, resetScreeningParam, updateScreeningParam } from "../../controllers/admin/admin.controller.js";
+import { addTeamMember, approveRequest, changeMemberStatus, editTeamMember, getAllTeamMember, getCalendarDetails, getDetailsForDashboard, reInviteMember, rejectRequest, resetScreeningParam, updateScreeningParam } from "../../controllers/admin/admin.controller.js";
 
 const router = express.Router();
 
@@ -26,5 +26,6 @@ router.post('/update-screening-param',protect,roleProtect("Admin"), updateScreen
 
 router.post('/reset-screening-param',protect,roleProtect("Admin"), resetScreeningParam);
 
+router.get('/get-calendar-details',protect,getCalendarDetails)
 
 export default router;                                                                               

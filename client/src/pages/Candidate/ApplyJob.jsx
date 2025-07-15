@@ -6,7 +6,7 @@ import { useDropzone } from 'react-dropzone';
 import { useForm, Controller } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import axios from '../../api/axios';
+import axios from '../../services/axios';
 import SkillsInput from '../../components/Inputs/SkillsInput';
 import { Button } from '../../components/Buttons/Button';
 import { dummySkills } from '../../components/Dropdowns/dropdownOptions';
@@ -33,53 +33,8 @@ import TogglePassword from '../../components/utility/TogglePassword';
 import ForgotPassword from '../Admin/ForgotPassword';
 import Footer from '../../components/Footer/Footer';
 import LogoWrapper from '../../components/Logo/LogoWrapper';
-
-const fetchJobDetails = async (id) => {
-  const response = await axios.get(`/jobs/getJobById/${id}`);
-  return response.data;
-};
-
-export const uploadProfilePicture = async (file) => {
-  if (!file) throw new Error("No file selected.");
-  validateProfileImages(file);
-  const formData = new FormData();
-  formData.append('profilePicture', file);
-  try {
-    const response = await axios.post('/auth/candidate/upload-profile-picture', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    });
-    return response.data.profilePictureUrl;
-  } catch (error) {
-    throw error;
-  }
-};
-
-export const uploadResume = async (file, setUploadProgress) => {
-  if (!file) throw new Error("No file selected.");
-  validateResume(file);
-  const formData = new FormData();
-  formData.append('resume', file);
-
-  try {
-    const response = await axios.post('/auth/candidate/upload-resume', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-      onUploadProgress: (progressEvent) => {
-        const percentCompleted = Math.round(
-          (progressEvent.loaded * 100) / progressEvent.total
-        );
-        setUploadProgress(percentCompleted);
-      },
-    });
-    return response.data.resumeUrl;
-  } catch (error) {
-    throw error;
-  }
-};
-
-const updateEmail = ({ email, userId }) => {
-  const response = axios.post('/auth/candidate/update-email', { email, userId });
-  return response?.data;
-};
+import { fetchjobsById } from '../../services/jobs.service';
+import { applyToJob, createPassword, registerCandidate, updateEmail, uploadCandidateProfilePicture, uploadResume, verifyOtpCandidate } from '../../services/auth.candidate.service';
 
 const ApplyJob = () => {
   const dispatch = useDispatch();
@@ -130,6 +85,10 @@ const ApplyJob = () => {
     expectedCTC: "",
     hourlyRate: "",
     resumeFile: null,
+    location : '',
+    locationId : '',
+    sessionId : '',
+    dob : null,
     skills: [] // default empty array for skills
   };
 
@@ -167,7 +126,7 @@ const ApplyJob = () => {
 
   const { data: jobDetails, isLoading } = useQuery({
     queryKey: ['jobDetails', jobId],
-    queryFn: () => fetchJobDetails(jobId),
+    queryFn: () => fetchjobsById(jobId),
   });
 
   // Pre-fill form with candidate data when authenticated
@@ -190,6 +149,10 @@ const ApplyJob = () => {
         }),
         resumeFile: resumeFile,
         skills: candidateData.skills || [],
+        location : candidateData.location || '',
+        locationId : '',
+        sessionId : '',
+        dob : candidateData.dob || null,
       });
     }
   }, [isAuthenticated, candidateData, jobDetails, reset, resumeFile]);
@@ -244,7 +207,7 @@ const ApplyJob = () => {
 
       let profilePictureUrl;
       if (profilePictureFile) {
-        profilePictureUrl = await uploadProfilePicture(profilePictureFile);
+        profilePictureUrl = await uploadCandidateProfilePicture(profilePictureFile);
       }
 
       const resumeUrl = await uploadResume(resumeFile, setUploadProgress);
@@ -271,7 +234,7 @@ const ApplyJob = () => {
           ...compensationData,
         };
 
-        await axios.post('/auth/candidate/apply-job', applicationData);
+        await applyToJob(applicationData);
         await dispatch(fetchCandidateAuthData()).unwrap();
         showSuccessToast('Success', 'Successfully applied to the job');
         navigate('/candidate/my-jobs');
@@ -288,6 +251,10 @@ const ApplyJob = () => {
           currentCTC: data.currentCTC,
           expectedCTC: data.expectedCTC,
           experience: data.experience,
+          dob : data.dob,
+          location : data.location,
+          locationId : data.locationId,
+          sessionId : data.sessionId,
           skills: data.skills,
           questionResponses,
           resumeUrl,
@@ -295,7 +262,7 @@ const ApplyJob = () => {
           ...compensationData,
         };
 
-        const response = await axios.post('/auth/candidate/register', registrationData);
+        const response = await registerCandidate(registrationData);
         if (response?.data?.currentStage === 'MODAL') {
           setValue("email", response.data?.email);
           IdRef.current = response.data?.userId;
@@ -349,7 +316,7 @@ const ApplyJob = () => {
 
     setIsSubmitting(true);
     try {
-      await axios.post('/auth/candidate/verify-otp', { email, otp: enteredOtp });
+      await verifyOtpCandidate(email,enteredOtp);
       showSuccessToast('OTP Verified', 'Please create your password to continue.');
       setCurrentStep(3);
     } catch (error) {
@@ -408,7 +375,7 @@ const ApplyJob = () => {
 
     setIsSubmitting(true);
     try {
-      await axios.post('/auth/candidate/create-password', { email, password });
+      await createPassword(email, password);
       await dispatch(fetchCandidateAuthData()).unwrap();
       showSuccessToast('Success', 'Account created successfully!');
       navigate('/candidate/my-jobs');
@@ -461,6 +428,7 @@ const ApplyJob = () => {
                     control={control}
                     onProfilePictureSelect={handleProfilePictureSelect}
                     profilePicturePreview={profilePicturePreview}
+                    setValue={setValue}
                   />
                 </div>
               )}

@@ -7,7 +7,6 @@ import JobCard from '../../components/Cards/JobCard';
 import Tabs from '../../components/ui/Tabs';
 import StatsGrid from '../../components/ui/StatsGrid';
 import { Button } from '../../components/Buttons/Button';
-import axios from "../../api/axios"
 import { ACTION_TYPES, getModalMessage } from '../../utility/ActionTypes';
 import NoJobs from "../../svg/Background/NoJobs.svg"
 import { showErrorToast, showSuccessToast } from '../../components/ui/Toast';
@@ -23,11 +22,8 @@ import Header from '../../components/utility/Header';
 import LoaderModal from '../../components/Loaders/LoaderModal';
 import usePinnedJobs from '../../hooks/usePinnedJobs';
 import { getRoute, ROUTE_KEY } from '../../config/permissions.config';
+import { closeJob, deleteJob, draftJob, fetchJobs, fetchOverallStats, filterSearchJobs, reOpenJob, unArchiveJob } from '../../services/jobs.service';
 
-
-const fetchJobs = (page, status,pinned) => axios.get(`/jobs/jobs?page=${page}&status=${status}&pinned=${JSON.stringify(pinned)}`).then(res => res.data);
-const fetchOverallStats = () => axios.get('/jobs/stats/overall').then(res => res.data.data);
-const filterSearchJobs = (query, filters, page, status) => axios.post('/jobs/filterSearchJobs', { filters, page, status, query }).then(res => res.data);
 
 const Jobs = () => {
     const [searchQuery, setSearchQuery] = useState('');
@@ -132,7 +128,7 @@ const Jobs = () => {
 
 
     const deleteMutation = useMutation({
-        mutationFn: (jobId) => axios.delete(`/jobs/deleteJob/${jobId}`),
+        mutationFn: deleteJob,
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['jobs'] });
             queryClient.invalidateQueries({ queryKey: ['jobCount'] });
@@ -142,7 +138,7 @@ const Jobs = () => {
     });
 
     const draftMutation = useMutation({
-        mutationFn: (jobId) => axios.put(`/jobs/draftJob/${jobId}`),
+        mutationFn: draftJob,
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['jobs'] });
             setModalOpen(false);
@@ -150,7 +146,7 @@ const Jobs = () => {
     });
 
     const reOpenMutation = useMutation({
-        mutationFn: (jobId) => axios.put(`/jobs/reOpen/${jobId}`),
+        mutationFn: reOpenJob,
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['jobs'] });
             setModalOpen(false);
@@ -159,7 +155,7 @@ const Jobs = () => {
     })
 
     const unarchiveMutation = useMutation({
-        mutationFn: (jobId) => axios.put(`/jobs/unarchiveJob/${jobId}`),
+        mutationFn: unArchiveJob,
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['jobs'] });
             setModalOpen(false);
@@ -167,8 +163,7 @@ const Jobs = () => {
     });
 
     const closeMutation = useMutation({
-        mutationFn: ({ jobId, reason }) =>
-            axios.put(`/jobs/closeJob/${jobId}`, { reason }), // Add reason to request body
+        mutationFn: closeJob, // Add reason to request body
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['jobs'] });
             setModalOpen(false);

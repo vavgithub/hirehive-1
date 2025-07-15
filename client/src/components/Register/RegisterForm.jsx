@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import axios from '../../api/axios';
+import axios from '../../services/axios';
 import sundarKanya from "../../svg/Background/sundar-kanya.png"
 import { Button } from '../Buttons/Button';
 import StatsGrid from '../../components/ui/StatsGrid';
@@ -15,19 +15,11 @@ import Modal from '../Modals/Modal';
 import TogglePassword from '../utility/TogglePassword';
 import { digitsRegex, lowerCaseRegex, passwordRegex, specialCharRegex, upperCaseRegex } from '../../utility/regex';
 import ForgotPassword from '../../pages/Admin/ForgotPassword';
+import { googleLogin, registerAdmin, verifyPassword } from '../../services/auth.service';
+import { FcGoogle } from 'react-icons/fc';
 import { useLogo } from '../../context/ThemeContext';
 
 export const emailPattern = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i
-
-const registerAdmin = async ({firstName, lastName, email}) => {
-    const response = await axios.post('/auth/register/init',{firstName, lastName, email});
-    return response.data
-}
-
-const verifyPassword = async ({ email , password }) => {
-  const response = await axios.post('/auth/register/verify-password',{email, password});
-  return response.data
-}
 
 const statsOne = [
     { title: 'Jobs Posted', value: 100, icon: () => <IconWrapper size={10} isInActiveIcon icon={Briefcase} /> },
@@ -104,6 +96,17 @@ function RegisterForm({setCurrentStep}) {
         showErrorToast("Error",error?.response?.data?.message || "Unexpected Registration Error. Try again")
       }
     })
+
+    const registerGoogle = async () => {
+        try {
+          const result = await googleLogin()
+          if(result?.authorizationUrl){
+            window.location.href = result.authorizationUrl;
+          }
+        } catch (error) {
+          showErrorToast('Error',error?.message)
+        }
+    }
 
     const handleFormSubmit =  (e) =>{
         e.preventDefault()
@@ -184,14 +187,15 @@ function RegisterForm({setCurrentStep}) {
             <div className="w-full lg:w-2/5 bg-background-90 p-4 md:p-28   flex flex-col justify-center">
               <h1 className="text-center">Sign Up</h1>
               <p className="typography-body mb-8 text-center text-font-gray font-normal">Create an account</p>
-                    {/* <Button type="button" variant="secondary" icon={GoogleIcon} className="w-full" >
+                    <button type="button" onClick={registerGoogle} variant="secondary"  className='mx-auto flex gap-4 items-center bg-white text-black-100 py-2 px-6 h-11 rounded-full'>
+                        <IconWrapper icon={FcGoogle} size={0} customStrokeWidth={0} customIconSize={5} />
                         Continue With Google
-                    </Button> */}
-                  {/* <div className="flex items-center my-4">
+                    </button> 
+                   <div className="flex items-center my-4">
                       <hr className="flex-grow border-grey-100" />
                       <span className="px-3 text-grey-100">OR</span>
                       <hr className="flex-grow border-grey-100" />
-                  </div>  */}
+                  </div> 
               <form onSubmit={handleFormSubmit}>
                 <div className="mb-4">
                   <label htmlFor="firstname" className="block mb-2 ">First Name</label>

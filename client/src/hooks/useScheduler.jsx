@@ -1,21 +1,12 @@
 import React, { useEffect, useState } from "react";
-import axios from "../api/axios";
+import axios from "../services/axios";
+import { updateStatus } from "../services/hr.service";
 
 const getHoursAndMinutes = (time) => {
   let [hour, minutes] = time.split(":");
   return { hour: parseInt(hour), minutes: parseInt(minutes) };
 };
 const TWELVEHOURS = 12 * 60 * 60 * 1000;
-
-const updateStatus = async (candidateId,jobId,status) => {
-    try {       
-        const response = await axios.post(`/hr/change-status/${candidateId}/${jobId}`,{status})
-        return response.data
-    } catch (error) {
-        // console.log("Error in status update",error.response.data);
-        return false
-    }
-};
 
 function useScheduler(candidateData, stageData,status) {
   const [data, setData] = useState(null);

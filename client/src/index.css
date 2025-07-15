@@ -144,7 +144,7 @@ input.no-spinner[class*="border-red-500"] {
 
 .editor-editable{
   position: relative;
-  background: var(--color-background-80);
+  background: var(--color-background-70);
   border-radius: 0.75rem;
   max-width: 100%;
   min-height : 16rem;
@@ -535,14 +535,14 @@ input[type='number'] {
     --color-background-5: rgba(152, 154, 159, 1);
     
     --color-font-accent-100: rgba(0, 184, 163, 1);
-    --color-font-gray-90: rgb(108, 117, 125);
+    --color-font-gray-90:rgb(128, 131, 137);
     --color-font-secondary: rgb(73, 80, 87);
     --color-redbg: rgba(255, 56, 92, 0.1);
     --color-yellow-100: rgba(237, 189, 20, 1);
     --color-green-100: rgba(18, 211, 130, 1);
     --color-red-100: rgba(255, 56, 92, 1);
 
-  --color-font-main: rgb(0,0,0);
+    --color-font-main: rgb(0,0,0);
 
   }
   

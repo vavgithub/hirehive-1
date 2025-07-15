@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import { Button } from '../../components/Buttons/Button';
 import { useMutation } from '@tanstack/react-query';
 import { showErrorToast, showSuccessToast } from '../../components/ui/Toast';
-import axios from '../../api/axios';
+import axios from '../../services/axios';
 import OTPInput from '../../components/Inputs/OTPInput';
 import { BackButton } from '../../components/utility/Header';
 import { digitsRegex, lowerCaseRegex, specialCharRegex, upperCaseRegex } from '../../utility/regex';
 import LoaderModal from '../../components/Loaders/LoaderModal';
 import { InputField } from '../../components/Inputs/InputField';
+import { forgotPasswordCandidate, resetPasswordCandidate, verifyPassOTPCandidate } from '../../services/auth.candidate.service';
+import { forgotPassword, resetPassword, verifyPassOTP } from '../../services/auth.service';
 
 const ForgotPassword = ({ onBack, role, isModal = false, setIsLoading = () => { } }) => {
   const [step, setStep] = useState('email');
@@ -19,7 +21,7 @@ const ForgotPassword = ({ onBack, role, isModal = false, setIsLoading = () => { 
   // Request OTP mutation
   const requestOtpMutation = useMutation({
     mutationFn: async (email) => {
-      const response = await axios.post(role === "Candidate" ? '/auth/candidate/forgot-password' : '/auth/forgot-password', { email });
+      const response = await (role === "Candidate" ? forgotPasswordCandidate(email) : forgotPassword(email));
       return response.data;
     },
     onMutate: () => {
@@ -39,7 +41,7 @@ const ForgotPassword = ({ onBack, role, isModal = false, setIsLoading = () => { 
   // Verify OTP mutation
   const verifyOtpMutation = useMutation({
     mutationFn: async () => {
-      const response = await axios.post(role === "Candidate" ? '/auth/candidate/verify-otp-pass' : '/auth/verify-otp', { email, otp });
+      const response = await (role === "Candidate" ? verifyPassOTPCandidate(email,otp) : verifyPassOTP(email, otp));
       return response.data;
     },
     onMutate: () => {
@@ -59,11 +61,7 @@ const ForgotPassword = ({ onBack, role, isModal = false, setIsLoading = () => { 
   // Reset password mutation
   const resetPasswordMutation = useMutation({
     mutationFn: async () => {
-      const response = await axios.post(role === "Candidate" ? '/auth/candidate/reset-password' : '/auth/reset-password', {
-        email,
-        otp,
-        password
-      });
+      const response = await (role === "Candidate" ? resetPasswordCandidate(email,otp,password) : resetPassword(email,otp,password)) ;
       return response.data;
     },
     onMutate: () => {

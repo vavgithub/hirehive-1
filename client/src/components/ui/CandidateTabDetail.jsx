@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { InputField } from '../Form/FormFields';
 import { validationRules } from '../../utility/validationRules';
-import axios from '../../api/axios';
+import axios from '../../services/axios';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { showErrorToast, showSuccessToast } from './Toast';
 import StyledCard from '../Cards/StyledCard';
@@ -12,11 +12,7 @@ import { Button } from '../Buttons/Button';
 import IconWrapper from '../Cards/IconWrapper';
 import { Pencil } from 'lucide-react';
 import { hasPermission, PERMISSIONS } from '../../config/permissions.config';
-
-const updateProfessionalDetails = async ({experience, noticePeriod, currentCTC, expectedCTC, hourlyRate , id, jobId}) => {
-    const response = await axios.patch(`/admin/candidate/update-candidate/${id}/${jobId}`,{experience, noticePeriod, currentCTC, expectedCTC, hourlyRate });
-    return response?.data
-}
+import { updateProfessionalDetails } from '../../services/admin.candidate.service';
 
 const Card = ({ title, children, gridLayout = false , extraClass }) => (
   <div className={`bg-background-80 p-8 rounded-xl mb-4 ${extraClass}`} >

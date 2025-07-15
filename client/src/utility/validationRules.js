@@ -15,6 +15,12 @@ export const validationRules = {
       message: "Please enter a valid email address",
     },
   },
+  dob : {
+    required: "Date of birth is required",
+  },
+  location : {
+    required: "Location is required",
+  },
   phoneNumber: {
     required: "Phone number is required",
     // pattern: {

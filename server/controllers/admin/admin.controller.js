@@ -9,6 +9,9 @@ import { getInvitationContent } from "../../utils/emailTemplates.js";
 import { updateDateWithTime } from "../../utils/formatter.js";
 import { sendEmail } from "../../utils/sentEmail.js";
 import jwt from "jsonwebtoken";
+import { getAuthorizedOauthClient, getCalendarClient, SCOPE_KEYS } from "../../utils/integrations/google.js";
+import { decrypt } from "../../utils/crypto.js";
+import { getUTCBasedonTZ } from "../../utils/dateUtilities.js";
 
 //add Team members controller
 export const addTeamMember = asyncHandler(async (req,res) => {
@@ -939,3 +942,111 @@ export const resetScreeningParam = asyncHandler(async (req,res) => {
     message: 'Screening parameter reset successfully.',
   });
 })
+
+export const getCalendarDetails = async ( req, res ) => {
+  try {
+    const user_id = req.user.id;
+    const { calendarType , startDate, endDate } = req.query;
+    if(!calendarType || !['LIST','WEEK','MONTH'].includes(calendarType) || !startDate || !endDate){
+        return res.status(400).json({ 
+          error : true,
+          message : 'Please provide valid calendarType, startDate and endDate.' 
+        });  
+    }
+    const formattedEvents = [];
+
+    const user = await User.findById({_id : user_id}).select('+integrations');
+    if(user){
+      const hasRequiredScopes = [SCOPE_KEYS.VIEW_CALENDAR, SCOPE_KEYS.VIEW_EVENTS].every(scope =>
+        user?.integrations?.google?.scopes.includes(scope)
+      );
+      if(hasRequiredScopes && user.integrations.google.token){
+
+        const oauth2Client = await getAuthorizedOauthClient(decrypt(user.integrations.google.token));
+        const calendarclient = await getCalendarClient(oauth2Client);
+        const response = await calendarclient.events.list({
+          calendarId: 'primary',
+          timeMin: startDate, 
+          timeMax: endDate , 
+          singleEvents: true,  
+          orderBy: 'startTime', 
+          conferenceDataVersion: 1, 
+        });
+        
+
+        if(response.data?.items?.length > 0){
+          for (let event of response.data.items) {
+            let joiningLink = null; // This will hold the final, best link
+
+            // 1. Try conferenceData (Highest Priority)
+            if (event.conferenceData && event.conferenceData.entryPoints && event.conferenceData.entryPoints.length > 0) {
+              // Prioritize 'video' entry points first
+              const videoEntryPoint = event.conferenceData.entryPoints.find(ep => ep.entryPointType === 'video');
+              if (videoEntryPoint && videoEntryPoint.uri) {
+                joiningLink = videoEntryPoint.uri;
+              } else {
+                // Fallback to the first available entry point's URI
+                const firstEntryPoint = event.conferenceData.entryPoints[0];
+                if (firstEntryPoint.uri) {
+                  joiningLink = firstEntryPoint.uri;
+                }
+              }
+            }
+
+            // 2. Fallback to legacy hangoutLink (Second Priority)
+            // Only check this if a link hasn't been found yet
+            if (joiningLink === null && event.hangoutLink) {
+              joiningLink = event.hangoutLink;
+            }
+
+            if (joiningLink === null && event?.location) {
+              
+              joiningLink = event.location; // Take the first URL found
+
+            }
+
+            // Now, push the formatted event with the determined link
+            formattedEvents.push({
+              id: event.id,
+              title: event.summary,
+              start: getUTCBasedonTZ(event.start.timeZone,event.start.dateTime),
+              end: getUTCBasedonTZ(event.end.timeZone,event.end.dateTime),
+              joiningLink: joiningLink, // This will be null if no link was found by any method
+              htmlLink : event.htmlLink
+            });
+          }
+        }
+      }else{
+        return res.status(403).json({ 
+          error : true,
+          message : 'Please authorize Google Workspace to sync calendar.' 
+        });        
+      }
+    }else{
+      return res.status(400).json({ 
+        error : true,
+        message : 'User not Found.' 
+      });
+    }
+    return res.status(200).json({ success : true, calendarEvents : formattedEvents, message : 'Fetched Calendar Details successfully.' });
+  } catch (error) {
+    console.log(error)
+    const isInvalidGrant = error?.response?.data?.error === 'invalid_grant' || error?.message?.includes('invalid_grant');
+    if (isInvalidGrant) {
+      const user_id = req.user.id;
+      const user = await User.findById({_id : user_id}).select('+integrations');
+      if(user){
+        user.integrations.google.token = null;
+        user.integrations.google.scopes = user.integrations.google.scopes?.includes('AUTH') ?  ['AUTH'] : []
+        await user.save()
+      }
+      return res.status(401).json({
+        error: true,
+        message: 'Your Google account authorization has expired or been revoked. Please reconnect your Google account.'
+      });
+    }
+    res
+    .status(400)
+    .json({ message: "Error updating candidate", error: error.message });
+  }
+}

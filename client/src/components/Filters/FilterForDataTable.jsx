@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import ExperienceFilter from './ExperienceFilter';
-import { fetchAllDesignReviewers, fetchAvailableDesignReviewers } from '../../api/authApi';
+import { fetchAllDesignReviewers, fetchAvailableDesignReviewers } from '../../services/auth.service';
 import { useQuery } from '@tanstack/react-query';
 import ScoreFilter, { MAX_SCORE, MIN_SCORE } from './ScoreFilter';
 import IconWrapper from '../Cards/IconWrapper';
