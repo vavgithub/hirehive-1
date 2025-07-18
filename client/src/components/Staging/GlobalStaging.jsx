@@ -409,7 +409,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
 
     //Logs
     const hasLog = (stageTitle && currentStatus) && stageData?.logs?.find(log => log.status === currentStatus)
-    console.log('HAS',hasLog)
+
     return (
     <StyledCard  
     backgroundColor={"bg-background-80"}

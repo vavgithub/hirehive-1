@@ -235,7 +235,7 @@ export const registerCandidate = async (req, res) => {
             }
           }
       }
-      console.log(location,locationId,sessionId,dob)
+
       // Create new candidate with job application data
       const newCandidate = new Candidate({
         firstName,

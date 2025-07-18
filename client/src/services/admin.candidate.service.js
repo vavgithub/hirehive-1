@@ -1,9 +1,9 @@
 import axios from "./axios";
 
 //GET
-export const getShortlistedCandidates = (companyId) => axios.get(`/admin/candidate/shortlisted/${companyId}`).then(res => res.data)
+export const getShortlistedCandidates = ({companyId,location , locationId , sessionId }) => axios.post(`/admin/candidate/shortlisted/${companyId}`,{location , locationId, sessionId }).then(res => res.data)
 
-export const getAllCandidatesAndStats = () => axios.get('/admin/candidate/getData/data/allCandidatesWithStats').then(res => res.data)
+export const getAllCandidatesAndStats = ({location , locationId, sessionId }) => axios.post('/admin/candidate/getData/data/allCandidatesWithStats' , {location , locationId, sessionId }).then(res => res.data)
 
 export const fetchCandidateData = async (candidateId, jobId) => {
     const { data } = await axios.get(`/admin/candidate/${candidateId}/job/${jobId}`);

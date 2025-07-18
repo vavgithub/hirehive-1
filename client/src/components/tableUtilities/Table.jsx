@@ -33,10 +33,12 @@ import { autoAssignPortfolio, updateAssignee } from '../../services/dr.service';
 const Table = ({
   jobId, jobData,
   readOnly = false,
+  isShortlisted = false,
   readOnlyData = [],
   additionalColumns = [], // New prop for custom columns
   customNavigationPath = null, // New prop for custom navigation path
-  hasCheckBox = true
+  hasCheckBox = true,
+  addLocationFilter
 }) => {
 
   //For getting routes
@@ -73,6 +75,9 @@ const Table = ({
   const [budgetMenuAnchorEl, setBudgetMenuAnchorEl] = useState(null);
 
   const [showContractors, setShowContractors] = useState(false);
+  const [isLocationFiltered,setIsLocationFiltered] = useState(false);
+
+  const [locationObj,setLocationObj] = useState(null);
 
   const {
     query,
@@ -83,7 +88,7 @@ const Table = ({
     setCurrentPage: setPreservedCurrentPage,
     pageSize: preservedPageSize,
     setPageSize: setPreservedPageSize,
-  } = usePreserver(jobId || 'Candidates');
+  } = usePreserver(jobId ? jobId : isShortlisted ? 'Shortlisted' : 'Candidates');
 
   useLayoutEffect(() => {
     setSearchTerm(query)
@@ -103,19 +108,49 @@ const Table = ({
     setPreservedFilters(newFilters)
   };
 
+  const handleLocationFilters = (location) => {
+    setFilters({...filters, location : location});
+    setPreservedFilters({...filters, location : location});
+  }
+
   const handleDocumentClick = (documentUrl) => {
     setSelectedDocumentUrl(documentUrl);
     setIsDocumentViewerOpen(true);
   };
 
   const { data: apiResponse, isLoading, isError, refetch } = useQuery({
-    queryKey: ['candidates', jobId],
-    queryFn: () => axios.get(`/admin/candidate/${jobId}`).then(res => res.data),
+    queryKey: ['candidates', jobId,locationObj],
+    queryFn: () => axios.post(`/admin/candidate/${jobId}`,{...(locationObj ? locationObj : {} )}).then(res => res.data),
     enabled: !readOnly, // Only fetch data if not in readOnly mode
   });
 
   // Use readOnlyData if in readOnly mode, otherwise use data from API
   const rowsData = readOnly ? readOnlyData : (apiResponse?.candidates || []);
+
+  useEffect(()=>{
+    if(filters?.location?.length > 0 && filters?.location[0]?.location){
+      if(readOnly){
+        addLocationFilter(filters.location[0])
+        setIsLocationFiltered(true);
+      }else{
+        setLocationObj(filters.location[0])
+      }
+    }
+    if(isLocationFiltered && filters?.location?.length === 0){
+      if(readOnly){
+        setIsLocationFiltered(false)
+        addLocationFilter(null)
+      }
+        setLocationObj(null)
+    }
+    if(!filters?.location){
+      if(readOnly){
+        setIsLocationFiltered(false)
+        addLocationFilter(null)
+      }
+        setLocationObj(null)
+    }
+  },[filters?.location])
 
   // Apply budget filter
   const filteredRowsData = React.useMemo(() => {
@@ -400,7 +435,7 @@ const Table = ({
 
   const handleRowClick = (params) => {
     // Save the current window scroll position before navigation
-    if (location.pathname === '/admin/candidates' || location.pathname === '/hiring-manager/candidates') {
+    if (location.pathname?.startsWith('/admin/candidates') || location.pathname?.startsWith('/hiring-manager/candidates')) {
       sessionStorage.setItem('candidates_scroll_position', window.scrollY);
     } else {
       sessionStorage.setItem('job_candidates_scroll_position', document.getElementById('adminContainer')?.scrollTop || 0);
@@ -499,7 +534,7 @@ const Table = ({
             value={searchTerm}
             onChange={handleSearch}
           />
-          <FilterForDataTable onApplyFilters={handleApplyFilters} readOnly={readOnly} preservedFilters={preservedFilters} />
+          <FilterForDataTable applyLocationFilter={handleLocationFilters} onApplyFilters={handleApplyFilters} readOnly={readOnly} preservedFilters={preservedFilters} />
           <div className="cursor-pointer gap-2 flex  items-center typography-body hover:bg-background-60 hover:text-accent-100 rounded-xl p-2 text-font-gray" onClick={() => handleExport()}>
             <IconWrapper inheritColor={true} icon={Download} size={0} customIconSize={4} customStrokeWidth={5} />
             Export

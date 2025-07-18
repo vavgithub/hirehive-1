@@ -1,12 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
-import IconWrapper from '../Cards/IconWrapper';
-import { Search } from 'lucide-react';
-import StyledCard from '../Cards/StyledCard';
 import { useMutation } from '@tanstack/react-query';
 import { getLocationSuggestions } from '../../services/auth.candidate.service';
 import { v4 as uuidv4 } from 'uuid';
 import { Menu, Popover } from '@mui/material';
 import { SpinnerCircular } from 'spinners-react/lib/esm/SpinnerCircular';
+import StyledCard from '../Cards/StyledCard';
 
 export const LocationInputField = React.forwardRef(({
   id,
@@ -15,6 +13,7 @@ export const LocationInputField = React.forwardRef(({
   required,
   extraClass,
   labelStyles,
+  noPopover = false,
   placeholder,
   setLocationId,
   setSessionId,
@@ -114,7 +113,22 @@ export const LocationInputField = React.forwardRef(({
           <SpinnerCircular  size={26} color='white' secondaryColor='gray' />
         </div>}
         {suggestions?.length > 0 && (
-          <Popover
+          noPopover ? 
+            <StyledCard
+            padding={5}
+            extraStyles={'absolute z-10 w-full overflow-hidden flex flex-col gap-4'}
+          >
+            {suggestions.map((suggestion, idx) => (
+              <p
+                key={idx}
+                className='overflow-hidden text-ellipsis  bg-background-60 hover:bg-background-50 px-4 py-2 rounded-xl scrollbar-hide whitespace-nowrap cursor-pointer'
+                onClick={() => handleSuggestionClick(suggestion)}
+              >
+                {suggestion.placeName}
+              </p>
+            ))}
+          </StyledCard>
+            :<Popover
             anchorEl={inputRef.current}
             open={Boolean(suggestions?.length)}
             onClose={()=>setSuggestions([])}
