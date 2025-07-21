@@ -12,6 +12,7 @@ import mongoose from "mongoose";
 import { EMAIL_REGEX } from "../../utils/validator.js";
 import { Assessment } from "../../models/admin/assessment.model.js";
 import { Company } from "../../models/admin/company.model.js";
+import { getPlaceDetails } from "../../utils/integrations/google.js";
 
 // controllers/candidate.controller.js
 
@@ -33,11 +34,45 @@ export const getAllCandidatesForJob = async (req, res) => {
     // Get the stages for this job profile
     const stages = jobStagesStatuses[job.jobProfile] || [];
 
+    const { location, locationId, sessionId } = req.body;
+
+    let geoFilter = null;
+    if (locationId && sessionId) {
+      const result = await getPlaceDetails(locationId, sessionId);
+      if (result.latlng?.longitude && result.latlng?.latitude) {
+        geoFilter = {
+          coordinates: [
+            parseFloat(result.latlng.longitude),
+            parseFloat(result.latlng.latitude)
+          ]
+        };
+      }
+    }
+
+    // Build location filters
+    const locationConditions = [];
+    if (location) {
+      locationConditions.push({ location: { $regex: location, $options: 'i' } });
+    }
+    if (geoFilter?.coordinates) {
+      locationConditions.push({
+        geoLocation: {
+          $geoWithin: {
+            $centerSphere: [
+              [geoFilter.coordinates[0], geoFilter.coordinates[1]],
+              100000 / 6371000 // ~100km radius in radians
+            ]
+          }
+        }
+      });
+    }
+
     // Fetch candidates who have applied for this job
     const candidatesData = await candidates
       .find({
         "jobApplications.jobId": jobId,
         isVerified: true,
+      ...(locationConditions.length > 0 ? { $or: locationConditions } : {})
       })
       .select('-password')
       .sort({ "jobApplications.applicationDate": -1 });
@@ -591,12 +626,60 @@ export const getAllCandidatesWithStats = async (req, res) => {
     const adminId = req.user._id; // Extract the admin's _id from the authenticated user
     const company_id = req.user.company_id;
     
+    const { location , locationId, sessionId } = req.body;
+
+    let geoFilter = null;
+    if(locationId && sessionId){
+        const result = await getPlaceDetails(locationId,sessionId);
+        if(result.latlng?.longitude && result.latlng?.latitude){
+          geoFilter = {
+              coordinates : [parseFloat(result.latlng.longitude) , parseFloat(result.latlng.latitude)]
+          }
+        }
+    }
     // Find all users in the same company
     const usersInCompany = await User.find({ company_id }, '_id'); // Get only _id fields
     // Extract user _id values into an array
     const userIds = usersInCompany.map(user => user._id);
 
     const allCandidates = await candidates.aggregate([
+        // First branch: regex match
+      ...(location
+        ? [{ $match: { location: { $regex: location, $options: 'i' } } }]
+        : []
+      ),
+
+      // Union with second branch: geolocation match
+      ...(geoFilter?.coordinates
+        ? [{
+            $unionWith: {
+              coll: candidates.collection.name,
+              pipeline: [{
+                $match: {
+                  geoLocation: {
+                    $geoWithin: {
+                      $centerSphere: [
+                        [ geoFilter.coordinates[0], geoFilter.coordinates[1] ],
+                        100000 / 6371000
+                      ]
+                    }
+                  }
+                }
+              }]
+            }
+          }]
+        : []
+      ),
+      // Now dedupe by candidate _id
+      {
+        $group: {
+          _id: "$_id",
+          doc: { $first: "$$ROOT" }
+        }
+      },
+      {
+        $replaceRoot: { newRoot: "$doc" }
+      },
       {
         $match: { isVerified: true }, // Filter only verified candidates
       },
@@ -1556,14 +1639,48 @@ export const shortlistCandidate = async (req, res) => {
 
     const { company_id } = req.params;
 
-    // Find all candidates with at least one shortlisted job application
+    const { location, locationId, sessionId } = req.body;
+
+    let geoFilter = null;
+    if (locationId && sessionId) {
+      const result = await getPlaceDetails(locationId, sessionId);
+      if (result.latlng?.longitude && result.latlng?.latitude) {
+        geoFilter = {
+          coordinates: [
+            parseFloat(result.latlng.longitude),
+            parseFloat(result.latlng.latitude)
+          ]
+        };
+      }
+    }
+
+    // Build location filters
+    const locationConditions = [];
+    if (location) {
+      locationConditions.push({ location: { $regex: location, $options: 'i' } });
+    }
+    if (geoFilter?.coordinates) {
+      locationConditions.push({
+        geoLocation: {
+          $geoWithin: {
+            $centerSphere: [
+              [geoFilter.coordinates[0], geoFilter.coordinates[1]],
+              100000 / 6371000 // ~100km radius in radians
+            ]
+          }
+        }
+      });
+    }
+
+    // Final query
     const shortlistedCandidates = await candidates.find({
       jobApplications: {
         $elemMatch: {
           shortlisted: true,
           "companyDetails._id": company_id
         }
-      }
+      },
+      ...(locationConditions.length > 0 ? { $or: locationConditions } : {})
     });
 
     // Format response to include only relevant information

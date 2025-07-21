@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from '../../services/axios';
 import { showSuccessToast, showErrorToast } from '../../components/ui/Toast';
@@ -16,13 +16,14 @@ import { getShortlistedCandidates } from '../../services/admin.candidate.service
 
 const Shortlisted = () => {
     const { user , isLoading } = useAuthContext();
+    const [location,setLocation] = useState(null);
     
     const queryClient = useQueryClient();
 
     // Fetch shortlisted candidates
     const { data, isLoading : isCandidatesLoading , isError, error } = useQuery({
-        queryKey: ['shortlistedCandidates'],
-        queryFn: () => getShortlistedCandidates(user?.companyDetails?._id),
+        queryKey: ['shortlistedCandidates',location],
+        queryFn: () => getShortlistedCandidates({companyId : user?.companyDetails?._id,...(location ? location : {})}),
         enabled : !!user?.companyDetails
     });
 
@@ -130,6 +131,8 @@ const Shortlisted = () => {
                     <Table
                         hasCheckBox={false}
                         readOnly={true}
+                        isShortlisted
+                        addLocationFilter={setLocation}
                         readOnlyData={tableData}
                         additionalColumns={getShortlistColumn()}
                         jobData={jobData} // Pass job data for employment type filtering

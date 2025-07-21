@@ -23,8 +23,8 @@ import { uploadVideo  } from "../../middlewares/uploadMiddleware.js";
 
 const router = express.Router();
 
-router.get('/shortlisted/:company_id',protect, shortlistCandidate);
-router.get("/getData/data/allCandidatesWithStats",protect, getAllCandidatesWithStats);
+router.post('/shortlisted/:company_id',protect, shortlistCandidate);
+router.post("/getData/data/allCandidatesWithStats",protect, getAllCandidatesWithStats);
 router.get("/:candidateId/job/:jobId", getCandidateById);
 
 router.post('/:candidateId/job/:jobId/shortlist',protect, toggleShortlistCandidate);
@@ -55,6 +55,6 @@ router.post(
 // router.get("/assessment/:candidateId", getQuestionnaireDetails);
 router.get("/get-assessment/:candidateId/:jobId", protect, roleProtect(['Admin','Hiring Manager']), getJobBasedQuestionnaireDetails);
 
-router.get("/:jobId", getAllCandidatesForJob);
+router.post("/:jobId", getAllCandidatesForJob);
 
 export default router;

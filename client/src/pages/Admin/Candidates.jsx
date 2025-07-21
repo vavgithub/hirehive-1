@@ -12,13 +12,15 @@ import Container from '../../components/Cards/Container';
 import IconWrapper from '../../components/Cards/IconWrapper';
 import { Briefcase, Folder, MonitorDot, PenTool, Users } from 'lucide-react';
 import { getAllCandidatesAndStats } from '../../services/admin.candidate.service';
+import { useState } from 'react';
 
 
 const Candidates = () => {
+  const [location,setLocation] = useState(null);
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ['candidates'],
-    queryFn: getAllCandidatesAndStats,
+    queryKey: ['candidates',location],
+    queryFn: () => getAllCandidatesAndStats(location ? location : {}),
   });
 
   // console.log("what is this ?" , data);
@@ -78,7 +80,7 @@ const Candidates = () => {
           <StatsGrid stats={statsOne} />
         </div>
         <div >
-          <Table readOnly={true} hasCheckBox={false} readOnlyData={data?.candidates || []} />
+          <Table addLocationFilter={setLocation} readOnly={true} hasCheckBox={false} readOnlyData={data?.candidates || []} />
         </div>
       </StyledCard>
     </Container>
