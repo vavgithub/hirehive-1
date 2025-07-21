@@ -1690,13 +1690,61 @@ export const changeApplicationStatus = async (req, res) => {
   }
 };
 
+export const saveTaskTemplates = async ( req, res) => {
+  try {
+    const { title, level, jobProfile, htmlString } = req.body;
+
+    if(!title || !level || !jobProfile || !htmlString){
+      return res.status(400).json({
+        error : true,
+        message : 'Please provide title, job level, job profile and task description.'
+      })
+    }
+    const sanitizedString = sanitizeLexicalHtml(htmlString);
+
+    const existingTasks = await Task.find({
+      title : { $regex: title, $options: "i" },
+      company_id : req.user.company_id,
+      category : jobProfile
+    })
+
+    if(existingTasks?.length > 0){
+      return res.status(400).json({
+        error : true,
+        message : 'This task title already exists.'
+      })
+    }
+
+    const newTask = await Task.create({
+      title,
+      level,
+      category : jobProfile,
+      htmlString : sanitizedString,
+      company_id : req.user?.company_id ?? null
+    })
+
+
+    res.status(200).json({
+      success : true,
+      data : newTask,
+      message: "Task template created Successfully.",
+    });
+  } catch (error) {
+    console.error("Error updating status:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+}
+
 export const getTaskTemplates = async ( req, res) => {
   try {
     const { jobProfile } = req.body;
-    const savedTemplates = await Task.find({category : jobProfile});
+    const savedTemplates = await Task.find({category : jobProfile, company_id : null});
+
+    const companySavedTemplates = await Task.find({category : jobProfile , company_id : req.user?.company_id});
+
     res.status(200).json({
       success : true,
-      data : savedTemplates,
+      data : [...savedTemplates, ...companySavedTemplates],
       message: "Task templates fetched Successfully.",
     });
   } catch (error) {

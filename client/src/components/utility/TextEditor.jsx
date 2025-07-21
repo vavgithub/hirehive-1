@@ -33,7 +33,7 @@ function onError(error) {
     // console.error("Lexical Editor Error:", error);
 }
 
-function TextEditor({ hasClearOption, customBg, htmlData, loaded, errors, placeholder, setEditorContent , clearPreset, presetLoaded, presetTemplate = false}) {
+function TextEditor({ hasClearOption, onSaveTask, hasSaveOption = false, customBg, htmlData, loaded, errors, placeholder, setEditorContent , clearPreset, presetLoaded, presetTemplate = false}) {
 
     const initialConfig = {
         namespace: 'MyEditor',
@@ -72,7 +72,7 @@ function TextEditor({ hasClearOption, customBg, htmlData, loaded, errors, placeh
       return (
         <div className='w-full relative bg-background-80 rounded-xl  '>
             <LexicalComposer initialConfig={initialConfig}>
-                <ToolbarPlugin hasClearOption={hasClearOption} clearPreset={clearPreset} errors={errors} />
+                <ToolbarPlugin hasSaveOption={hasSaveOption} onSaveTask={onSaveTask} hasClearOption={hasClearOption} clearPreset={clearPreset} errors={errors} />
                 <ListPlugin />
                 <LexicalLinkPlugin />
                 <ClickableLinkPlugin />

@@ -25,9 +25,14 @@ import {
 import {useCallback, useEffect, useRef, useState} from 'react';
 import EmojiPlugin from './EmojiPlugin';
 import IconWrapper from '../../Cards/IconWrapper';
-import { AlignCenter, AlignLeft, AlignRight, Bold, Eraser, Italic, List, ListOrdered, Underline } from 'lucide-react';
+import { AlignCenter, AlignLeft, AlignRight, Bold, Eraser, Italic, List, ListOrdered, Plus, Underline } from 'lucide-react';
 import LinkPlugin from './LinkPlugin';
 import { $isLinkNode } from '@lexical/link';
+import CustomToolTip from '../../Tooltip/CustomToolTip';
+import Modal from '../../Modals/Modal';
+import { InputField } from '../../Inputs/InputField';
+import GlobalDropDown from '../../Dropdowns/GlobalDropDown';
+import { showErrorToast } from '../../ui/Toast';
 
 const LowPriority = 1;
 
@@ -84,7 +89,7 @@ function Divider() {
   return <div className='w-[1px]  min-h-[70%] bg-divider-100' />;
 }
 
-export default function ToolbarPlugin({ hasClearOption, clearPreset, errors}) {
+export default function ToolbarPlugin({ hasClearOption,onSaveTask, hasSaveOption, clearPreset, errors}) {
   const [editor] = useLexicalComposerContext();
   const toolbarRef = useRef(null);
   const [canUndo, setCanUndo] = useState(false);
@@ -102,6 +107,11 @@ export default function ToolbarPlugin({ hasClearOption, clearPreset, errors}) {
   const [isNumberedList, setIsNumberedList] = useState(false);
 
   const [isLink, setIsLink] = useState(false);
+
+  const [formOpen,setFormOpen] = useState(false);
+  const [title,setTitle] = useState("");
+  const [level,setLevel] = useState("");
+
 
   const handleClearEditor = () => {
       editor.update(() => {
@@ -174,6 +184,15 @@ export default function ToolbarPlugin({ hasClearOption, clearPreset, errors}) {
     );
   }, [editor, $updateToolbar]);
 
+  const handleSaveTask = () => {
+    if(!level || !title){
+      showErrorToast("Error",'Please enter a valid title and job level to create a task template.')
+      return
+    }
+    setFormOpen(false)
+    onSaveTask(title,level)
+  }
+
   return (
     <div className={"absolute top-0 left-0 min-h-14 z-20 flex items-center bg-background-80 rounded-t-xl   " + (errors ? "w-[calc(100%-2px)] ml-[1px] mt-[1px]" : "w-full")} ref={toolbarRef}>
       {/* <button
@@ -213,10 +232,43 @@ export default function ToolbarPlugin({ hasClearOption, clearPreset, errors}) {
       <EmojiPlugin/>
       <Divider />
       <LinkPlugin isActive={isLink}  />
+      {hasSaveOption && <div className='absolute top-4 right-16 z-20 cursor-pointer' onClick={() => setFormOpen(true)}>
+          <CustomToolTip arrowed title={'Save as Preset'}>
+              <IconWrapper icon={Plus} customIconSize={2} customStrokeWidth={5} size={0} />
+          </CustomToolTip>
+      </div>}
       {hasClearOption && 
       <div className='absolute top-4 right-4 z-20 cursor-pointer' onClick={handleClearEditor}>
           <IconWrapper icon={Eraser} customIconSize={2} customStrokeWidth={4} size={0} />
       </div>}
+      <Modal 
+      open={formOpen}
+      isReadyToClose={false}
+      onClose={() => setFormOpen(false)}
+      onConfirm={handleSaveTask}
+      customMessage={'Save your drafted Design Task as a template for future use.'}
+      customTitle={'Save Task as Template'}
+      customConfirmLabel={'Save'}
+      >
+        <div className='mt-6 flex flex-col gap-4' action="">
+              <InputField
+                type="text"
+                id="title"
+                label="Title"
+                value={title ?? ""}
+                onChange={(e) => setTitle(e.target.value)}
+                // error={error}
+                // errorMessage={error?.message}
+              />
+              <GlobalDropDown
+              label="Level" 
+              value={level}
+              // error={industryError ? {message : industryError} : null}
+              onChange={setLevel}
+              options={[{label : 'Junior' , value : 'Junior'},{label : 'Mid-Level' , value : 'Mid-Level'},{label : 'Senior' , value : 'Senior'}]}
+              />
+        </div>
+      </Modal>
     </div>
   );
 }
