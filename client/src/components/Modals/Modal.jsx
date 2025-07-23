@@ -5,13 +5,13 @@ import Label from '../ui/Label';
 import StyledCard from '../Cards/StyledCard';
 import { Button } from '../Buttons/Button';
 import WarningIcon from '../../svg/Staging/WarningIcon';
-import AssessmentPopup from '../../svg/Background/AssessmentPopup.svg';
 import SchedulerButton from '../ui/SchedulerButton';
 import IconWrapper from '../Cards/IconWrapper';
 import { X } from 'lucide-react';
 import { ACTION_TYPES } from '../../utility/ActionTypes';
 import GlobalDropDown from '../Dropdowns/GlobalDropDown';
 import { combineDateWithTime, convertLocalToUTC } from '../../utility/timezoneConverter';
+import { useAssessmentPopupBg } from '../../context/ThemeContext';
 
 // const ACTION_TYPES = {
 //   DELETE: 'DELETE',
@@ -254,6 +254,7 @@ const Modal = ({
 
   const renderModalContent = () => {
     if (actionType === ACTION_TYPES.ASSESSMENT) {
+      const AssessmentPopup = useAssessmentPopupBg()
       return (
         <div className="flex flex-col items-center relative">
           <div onClick={onClose} className=' cursor-pointer md:hidden absolute -top-14 -right-14 bg-background-60 p-1 rounded-xl'>

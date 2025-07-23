@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTheme } from '../../context/ThemeContext';
 
 
 const getStatusColor = (status) => {
@@ -6,21 +7,21 @@ const getStatusColor = (status) => {
 
   switch (normalizedStatus) {
     case 'not assigned':
-      return 'bg-red-80 text-red-90';
+      return 'bg-status-bgred text-status-textred border-status-borderred';
     case 'rejected':
-      return 'bg-red-200 text-red-100';
+      return 'bg-status-bgred text-status-textred border-status-borderred';
     case 'pending':
-      return 'bg-red-80 text-red-90';
+      return 'bg-status-bgred text-status-textred border-status-borderred';
     case 'under review':
-        return 'bg-yellow-90 text-yellow-100';
+        return 'bg-status-bgyellow text-status-textyellow border-status-borderyellow';
     case 'call scheduled':
-      return 'bg-yellow-90 text-yellow-100';
+      return 'bg-status-bgyellow text-status-textyellow border-status-borderyellow';
     case 'reviewed':
     case 'cleared':
     case 'sent':
-      return 'bg-green-900 text-green-300';
+      return 'bg-status-bggreen text-status-textgreen border-status-bordergreen';
     default:
-      return 'bg-gray-700 text-gray-300';
+      return 'bg-status-bggray text-status-textgray border-status-bordergray';
   }
 };
 
@@ -29,10 +30,11 @@ const StatusBadge = ({ status ,customWidth}) => {
 
   // If status is not a string, display a fallback message
   const displayStatus = typeof status === 'string' ? status : 'Unknown Status';
+  const themeContext = useTheme();
 
   return (
-    <div className={`flex items-center rounded-xl justify-center ${customWidth ? customWidth : " w-[85%] "} px-4 py-2 h-8 ${colorClasses}`}>
-      <span className="typography-body">{displayStatus}</span>
+    <div style={{...(themeContext?.theme === 'light' ? {borderWidth : '1px'} : {borderWidth : '0px'})}} className={`flex items-center rounded-xl justify-center ${customWidth ? customWidth : " w-[85%] "} px-4 py-2 h-8 ${colorClasses}`}>
+      <span className="typography-body ">{displayStatus}</span>
     </div>
   );
 };

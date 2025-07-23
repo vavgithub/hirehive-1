@@ -35,7 +35,7 @@ import { getRoute, hasPermission, hasRoutePermission, PERMISSIONS, ROUTE_KEY } f
 import { fetchTotalScore, updateCandidateRating } from '../../services/hr.service';
 import { addNotes, fetchCandidateData, fetchCandidateJobs, toggleShortlistStatus } from '../../services/admin.candidate.service';
 import { fetchAllDesignReviewers } from '../../services/auth.service';
-import { useUnknownProfilePicture } from '../../context/ThemeContext';
+import { useScoreBg, useUnknownProfilePicture } from '../../context/ThemeContext';
 
 export const VAVScoreCard = ({ score, stage, scoreStages }) => {
     const [showBreakDown, setShowBreakDown] = useState(false);
@@ -72,9 +72,11 @@ export const VAVScoreCard = ({ score, stage, scoreStages }) => {
         return mappedData.filter(data => data?.name !== "Hired");
     }, [scoreStages])
 
+    const stars = useScoreBg()
+
     if (!showBreakDown) {
         return (
-            <StyledCard extraStyles="flex bg-stars  flex-col items-center sm:w-[55%] lg:w-[35%]  max-w-[27rem] bg-cover relative">
+            <StyledCard style={{backgroundImage : `url(${stars})`}} extraStyles="flex   flex-col items-center sm:w-[55%] lg:w-[35%]  max-w-[27rem] bg-cover relative">
                 <h2 className="text-font-main">VAV SCORE</h2>
                 <button onClick={() => setShowBreakDown(true)} className='absolute top-4 right-4 hover:text-font-gray'>
                     <CustomToolTip title={'View Score Breakdown'}>
@@ -86,7 +88,7 @@ export const VAVScoreCard = ({ score, stage, scoreStages }) => {
             </StyledCard>
         )
     } else {
-        return (<StyledCard extraStyles="flex bg-stars  flex-col items-center sm:w-[55%] lg:w-[35%]  max-w-[27rem] bg-cover relative">
+        return (<StyledCard style={{backgroundImage : `url(${stars})`}} extraStyles="flex   flex-col items-center sm:w-[55%] lg:w-[35%]  max-w-[27rem] bg-cover relative">
             <h2>Score Breakdown</h2>
             <button onClick={() => setShowBreakDown(false)} className='absolute top-4 right-4 hover:text-font-gray'>
                 <CustomToolTip title={'View VAV Score'}>

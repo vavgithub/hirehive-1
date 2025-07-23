@@ -2,6 +2,12 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import LightLogo from "../svg/Logo/lightLogo.svg";
 import DarkLogo from "../svg/Logo/dark_logo.png";
 import useCandidateAuth from '../hooks/useCandidateAuth';
+import LightStars from "../svg/Background/Stars_light.png";
+import DarkStars from "../svg/Background/Stars.svg";
+import LightBanner from "../svg/Background/AssessmentBanner_light.png";
+import DarkBanner from "../svg/Background/AssessmentBanner.svg";
+import LightPopup from "../svg/Background/AssessmentPopup_light.png";
+import DarkPopup from "../svg/Background/AssessmentPopup.svg";
 import { useAuthContext } from './AuthProvider';
 
 const ThemeContext = createContext();
@@ -19,6 +25,7 @@ export const ThemesProvider = ({ children }) => {
 
     useEffect(()=>{
         const savedTheme = localStorage.getItem('theme');
+        //authenticated pages has theme
         if(candidateData || hasUser){
             setTheme(savedTheme || 'dark')
         }else{
@@ -68,6 +75,21 @@ export const useUnknownProfilePicture = () => {
 export const useLogo = () => {
     const context = useContext(ThemeContext);
     return context?.theme === 'dark' ? LightLogo : DarkLogo
+}
+
+export const useScoreBg = () => {
+    const context = useContext(ThemeContext);
+    return context?.theme === 'dark' ? DarkStars :  LightStars 
+}
+
+export const useAssessmentBannerBg = () => {
+    const context = useContext(ThemeContext);
+    return context?.theme === 'dark' ? DarkBanner :  LightBanner 
+}
+
+export const useAssessmentPopupBg = () => {
+    const context = useContext(ThemeContext);
+    return context?.theme === 'dark' ? DarkPopup :  LightPopup 
 }
 
 export default ThemeContext;

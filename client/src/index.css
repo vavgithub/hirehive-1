@@ -507,8 +507,24 @@ input[type='number'] {
     --color-yellow-100:rgba(237, 189, 20, 1);
     --color-green-100:rgba(18, 211, 130, 1);
     --color-red-100:rgba(255, 56, 92, 1);
+
+    --color-font-main: rgb(255,255,255);
     
-      --color-font-main: rgb(255,255,255);
+    /* StatusBadge Colors */
+    --color-status-red : rgba(255, 56, 92, 0.2);
+    --color-status-yellow : rgba(237, 189, 20, 0.2);
+    --color-status-green : rgba(20,83,45, 1);
+    --color-status-gray : rgba(55,65,81, 1);
+
+    --color-border-red : rgba(255, 56, 92, 0.2);
+    --color-border-yellow : rgba(237, 189, 20, 0.2);
+    --color-border-green : rgba(20,83,45, 1);
+    --color-border-gray : rgba(55,65,81, 1);
+
+    --color-text-gray : rgba(209,213,219, 1);
+    --color-text-green : rgba(134,239,172, 1);
+    --color-text-yellow : rgba(237, 189, 20, 1);
+    --color-text-red : rgba(255, 56, 92, 1);
 
   }
  /* Light theme */
@@ -543,6 +559,22 @@ input[type='number'] {
     --color-red-100: rgba(255, 56, 92, 1);
 
     --color-font-main: rgb(0,0,0);
+
+    /* StatusBadge Colors */
+    --color-status-red : rgba(255, 56, 92, 0.2);
+    --color-status-yellow : rgba(237, 189, 20, 0.2);
+    --color-status-green : rgba(20, 225, 89, 0.2);
+    --color-status-gray : rgba(18, 19, 20, 0.2);
+
+    --color-border-red : rgba(255, 56, 92, 1);
+    --color-border-yellow : rgba(237, 189, 20, 1);
+    --color-border-green : rgba(18, 211, 130, 1);
+    --color-border-gray : rgba(32, 33, 34, 1);
+
+    --color-text-gray : rgba(7, 7, 8, 1);
+    --color-text-green : rgba(7, 7, 8, 1);
+    --color-text-yellow : rgba(7, 7, 8, 1);
+    --color-text-red : rgba(7, 7, 8, 1);
 
   }
   

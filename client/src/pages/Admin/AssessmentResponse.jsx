@@ -14,7 +14,7 @@ import Container from '../../components/Cards/Container';
 import IconWrapper from '../../components/Cards/IconWrapper';
 import { UTCToDateFormatted } from '../../utility/timezoneConverter';
 import { formatPhoneNumber } from '../../components/Form/PhoneInputField';
-import { useUnknownProfilePicture } from '../../context/ThemeContext';
+import { useScoreBg, useUnknownProfilePicture } from '../../context/ThemeContext';
 import { fetchAssessmentDetails } from '../../services/admin.candidate.service';
 
 const AssessmentResponse = () => {
@@ -57,6 +57,7 @@ const AssessmentResponse = () => {
         }
     };
 
+    const stars = useScoreBg()
 
     return (
         <Container>
@@ -144,7 +145,7 @@ const AssessmentResponse = () => {
                         </div>
                     </StyledCard>
 
-                    <StyledCard padding={3}  extraStyles="flex bg-stars flex-col items-center w-[35%] max-w-[15rem] bg-cover ">
+                    <StyledCard padding={3} style={{backgroundImage : `url(${stars})`}} extraStyles="flex  flex-col items-center w-[35%] max-w-[15rem] bg-cover ">
                         <div className="relative w-full flex justify-center ">
                             <div className='absolute left-0'>
 
