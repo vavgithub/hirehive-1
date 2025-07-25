@@ -6,6 +6,7 @@ import { getDesignTaskContent, getRejectionEmailContent } from './emailTemplates
 import { sendEmail } from './sentEmail.js';
 import { REJECTION_REASON } from '../controllers/admin/hr.controller.js';
 import { removeEmojis } from './emojiRemover.js';
+import { sendUpdatesToTelegram } from '../controllers/candidate/bot.controller.js';
 
 const updateCallStatuses = async () => {
   const now = new Date();
@@ -133,7 +134,8 @@ const updateMailSendAndStatuses = async () => {
           "firstName": 1,
           "lastName": 1,
           "email": 1,
-          "jobApplications.$": 1
+          "jobApplications.$": 1,
+          "integrations" : 1
         }
       );
       
@@ -161,6 +163,10 @@ const updateMailSendAndStatuses = async () => {
             logs.push({status: "Sent", date : new Date()})
           }
           await sendEmail(candidate?.email, emailSubject, emailContent,"Design Task");
+          if(candidate.integrations?.telegram?.user_id && candidate.integrations?.telegram?.status === 'CONNECTED'){
+            const updateType = `${candidate?.jobApplications[0].currentStage.toUpperCase()}_SENT`;
+            sendUpdatesToTelegram(candidate,candidate?.jobApplications[0],candidate.integrations?.telegram?.user_id,updateType,candidate?.jobApplications[0].stageStatuses.get(stage).currentCall.scheduledDate)
+          }
         }else{
           //Selective Email sending
           const canSendEmail = !!REJECTION_REASON.find(reasonObj =>(reasonObj?.reason === candidate?.jobApplications[0]?.stageStatuses.get(stage)?.rejectionReason?.trim() && reasonObj?.email))

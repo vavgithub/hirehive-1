@@ -18,6 +18,7 @@ import { sendEmail } from "../../utils/sentEmail.js";
 import { getEditProfileContent, getPasswordResetContent, getResetSuccessfulContent, getSignupEmailContent } from "../../utils/emailTemplates.js";
 import { generatePresignedUrl, uploadToS3 } from "../../utils/s3utility.js";
 import { autocompleteLocation, getPlaceDetails } from "../../utils/integrations/google.js";
+import { encrypt } from "../../utils/crypto.js";
 
 // Secret key for JWT (store this in environment variables)
 const JWT_SECRET = process.env.JWT_SECRET;

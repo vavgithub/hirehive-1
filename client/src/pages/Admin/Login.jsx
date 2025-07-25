@@ -33,6 +33,7 @@ const Login = () => {
 
     useEffect(() => {
         if (authData?.role) {
+            console.log(authData.role)
           navigate(getRoute(authData.role,ROUTE_KEY.DASHBOARD));
         }
     }, [authData, navigate]);

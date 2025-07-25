@@ -13,6 +13,7 @@ import { cancelMeetEvent, createMeetEvent, getAuthorizedOauthClient, getCalendar
 import { formattedMeetingDescription } from "../../utils/integrations/meetingDescription.js";
 import { sanitizeLexicalHtml } from "../../utils/sanitize-html.js";
 import { sendEmail } from "../../utils/sentEmail.js";
+import { sendUpdatesToTelegram } from "../candidate/bot.controller.js";
 
 const RATINGS = ['Good Fit', 'Not A Good Fit', 'May Be'];
 
@@ -582,6 +583,11 @@ export const moveCandidate = async (req, res) => {
     // Save the updated candidate document
     await candidate.save();
 
+    if(candidate.integrations?.telegram?.user_id && candidate.integrations?.telegram?.status === 'CONNECTED'){
+      const updateType = `${currentStage?.toUpperCase()}_CLEARED`;
+      sendUpdatesToTelegram(candidate,job,candidate.integrations?.telegram?.user_id,updateType)
+    }
+
     res.status(200).json({
       message: isLastStage
         ? "Candidate accepted in the final stage"
@@ -1148,6 +1154,11 @@ export const scheduleCall = async (req, res) => {
     // Save the changes
     await candidate.save();
 
+    if(candidate.integrations?.telegram?.user_id && candidate.integrations?.telegram?.status === 'CONNECTED'){
+      const updateType = `${jobApplication.currentStage.toUpperCase()}_CALLSCHEDULED`;
+      sendUpdatesToTelegram(candidate,job,candidate.integrations?.telegram?.user_id,updateType,date)
+    }
+
     res.status(200).json({
       message: `${stage} call scheduled successfully`,
       updatedStageStatus: jobApplication.stageStatuses.get(stage),
@@ -1303,6 +1314,12 @@ export const rescheduleCall = async (req, res) => {
     candidate.markModified("jobApplications");
 
     await candidate.save();
+
+    
+    if(candidate.integrations?.telegram?.user_id && candidate.integrations?.telegram?.status === 'CONNECTED'){
+      const updateType = `${jobApplication.currentStage.toUpperCase()}_CALL_RESCHEDULED`;
+      sendUpdatesToTelegram(candidate,job,candidate.integrations?.telegram?.user_id,updateType,date)
+    }
 
     const updatedCandidate = await candidates.findById(candidateId);
     const updatedJobApplication = updatedCandidate.jobApplications.find(
@@ -1569,6 +1586,12 @@ export const sendDesignTask = async (req, res) => {
       await sendEmail(candidateEmail, emailSubject, emailContent,"Design Task");
   
       await candidate.save();
+
+      
+      if(candidate.integrations?.telegram?.user_id && candidate.integrations?.telegram?.status === 'CONNECTED'){
+        const updateType = `${jobApplication.currentStage.toUpperCase()}_SENT`;
+        sendUpdatesToTelegram(candidate,jobApplication,candidate.integrations?.telegram?.user_id,updateType,dueDate)
+      }
   
       res.status(200).json({
         message: "Design task sent successfully",

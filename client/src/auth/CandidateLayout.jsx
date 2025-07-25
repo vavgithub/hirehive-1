@@ -13,6 +13,8 @@ import IconWrapper from '../components/Cards/IconWrapper';
 import { Briefcase, BriefcaseBusiness, LogOut, User } from 'lucide-react';
 import { UNKNOWN_PROFILE_PICTURE_URL } from '../utility/config';
 import Footer from '../components/Footer/Footer';
+import { FaTelegramPlane } from 'react-icons/fa';
+import { ACTION_TYPES } from '../utility/ActionTypes';
 
 const CandidateLayout = () => {
   const navigate = useNavigate();
@@ -41,6 +43,12 @@ const CandidateLayout = () => {
       setIsAssessmentBannerVisible(false);
     };
   }, []);
+
+  const [showTelegramModal,setShowTelegramModal] = useState(false);
+
+  const handleConnectTelegram = async () => {
+    window.open(`https://t.me/hirehive_bot?start=${candidateData?._id}`, '_blank');
+  }
 
   const handleLogout = async () => {
     try {
@@ -234,8 +242,13 @@ const CandidateLayout = () => {
         </div>
         <div >
           {candidateData &&
-
-            <ProfileComponent />
+            <>
+              <div onClick={()=>setShowTelegramModal(true)} className='flex text-font-gray items-center gap-2 rounded-xl hover:bg-background-60 cursor-pointer px-2 py-2 m-4'>
+                <IconWrapper icon={FaTelegramPlane} inheritColor />
+                <p className='typography-body  whitespace-nowrap overflow-hidden text-ellipsis'>Connect Telegram</p>
+              </div>
+              <ProfileComponent />
+            </>
           }
         </div>
       </div>
@@ -251,6 +264,14 @@ const CandidateLayout = () => {
           setIsAssessmentModalVisible(false);
         }}
       />
+
+      <Modal
+        actionType={ACTION_TYPES.TELEGRAM}
+        open={showTelegramModal}
+        onClose={()=>setShowTelegramModal(false)}
+        isReadyToClose={false}
+        onConfirm={handleConnectTelegram}
+      ></Modal>
 
       {/* Main Content */}
       <div className="mt-[4.6rem] md:mt-0 md:ml-[17rem] md:w-[calc(100vw-17rem)] flex flex-col items-center min-h-[calc(100vh-5rem)] ">
