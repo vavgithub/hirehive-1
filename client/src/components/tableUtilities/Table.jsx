@@ -150,6 +150,9 @@ const Table = ({
       }
         setLocationObj(null)
     }
+    if(!readOnly && filters?.location?.length === 0){
+        setLocationObj(null)
+    }
   },[filters?.location])
 
   // Apply budget filter
