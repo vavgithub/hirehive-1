@@ -708,6 +708,7 @@ export const getCandidateDashboard = async (req, res) => {
           hasGivenAssessment: { $first: "$hasGivenAssessment" },
           jobApplications: { $push: "$jobApplications" },
           jobDetails: { $first: "$jobDetails" },
+          integrations : { $first : "$integrations"}
         },
       },
     ]);    
@@ -764,6 +765,7 @@ export const getCandidateDashboard = async (req, res) => {
         hasGivenAssessment:candidate[0].hasGivenAssessment,
         jobApplications: formattedApplications, // Include jobApplications in the candidate object
         location: candidate[0].location,
+        isTelegramConnected : (candidate[0].integrations?.telegram?.user_id && candidate[0].integrations?.telegram?.status === "CONNECTED") || false,
         pendingAssessments
         // Include other relevant candidate fields
       },

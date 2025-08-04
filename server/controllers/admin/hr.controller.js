@@ -174,6 +174,11 @@ export const rejectCandidate = async (req, res) => {
 
       // Save the updated candidate document
       await candidate.save();
+
+      if(candidate.integrations?.telegram?.user_id && candidate.integrations?.telegram?.status === 'CONNECTED'){
+        const updateType = `${currentStage?.toUpperCase()}_REJECTED`;
+        sendUpdatesToTelegram(candidate,job,candidate.integrations?.telegram?.user_id,updateType)
+      }
       
     //Selective Email sending
     const canSendEmail = !!REJECTION_REASON.find(reasonObj =>(reasonObj?.reason === rejectionReason?.trim() && reasonObj?.email))
@@ -321,6 +326,11 @@ export const rejectMultipleCandidates = async (req, res) => {
     
         // Save the updated candidate document
         await candidate.save();
+
+        if(candidate.integrations?.telegram?.user_id && candidate.integrations?.telegram?.status === 'CONNECTED'){
+          const updateType = `${currentStage?.toUpperCase()}_REJECTED`;
+          sendUpdatesToTelegram(candidate,job,candidate.integrations.telegram.user_id,updateType)
+        }
     
         //Selective Email sending
         const canSendEmail = !!REJECTION_REASON.find(reasonObj =>(reasonObj?.reason === eachCandidate?.rejectionReason?.trim() && reasonObj?.email))
@@ -737,6 +747,11 @@ export const moveMultipleCandidates = async (req, res) => {
         
         // Save the updated candidate document
         await candidate.save();
+
+        if(candidate.integrations?.telegram?.user_id && candidate.integrations?.telegram?.status === 'CONNECTED'){
+          const updateType = `${eachCandidate.stage?.toUpperCase()}_CLEARED`;
+          sendUpdatesToTelegram(candidate,job,candidate.integrations?.telegram?.user_id,updateType)
+        }
     };
     
     res.status(200).json({message:"Selected candidates are moved to respective stages successfully."})

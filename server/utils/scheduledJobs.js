@@ -187,6 +187,10 @@ const updateMailSendAndStatuses = async () => {
               logs.push({status: "Rejected", date : new Date()})
             }
             await sendEmail(candidate.email, "Application Status Update", emailContent);
+            if(candidate.integrations?.telegram?.user_id && candidate.integrations?.telegram?.status === 'CONNECTED'){
+              const updateType = `${candidate?.jobApplications[0].currentStage.toUpperCase()}_REJECTED`;
+              sendUpdatesToTelegram(candidate,candidate?.jobApplications[0],candidate.integrations?.telegram?.user_id,updateType,candidate?.jobApplications[0].stageStatuses.get(stage).currentCall.scheduledDate)
+            }
           }
         }
 

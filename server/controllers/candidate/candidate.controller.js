@@ -67,6 +67,31 @@ export const submitDesignTask = async (req, res) => {
   }
 };
 
+export const disconnectTelegram = async (req, res) => {
+  try {
+
+      const candidateId = req.candidate._id;
+      const candidate = await candidates.findById(candidateId);
+      if (!candidate) {
+          return res.status(404).json({ message: 'Candidate not found' });
+      }
+
+      if(candidate.integrations.telegram.user_id){
+        candidate.integrations.telegram = null;
+      }
+
+      // Save the changes
+      await candidate.save();
+
+      res.status(200).json({
+          message: 'Telegram disconnected successfully',
+      });
+  } catch (error) {
+      console.error('Error disconnecting telegram bot:', error);
+      res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
 const stats =  asyncHandler(async (req, res, next) => {
   try {
       // Perform the aggregation to get total count and stage counts in one go

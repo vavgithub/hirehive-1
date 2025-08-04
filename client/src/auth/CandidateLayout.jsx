@@ -10,11 +10,12 @@ import { Avatar, IconButton, Menu, MenuItem } from '@mui/material';
 import StyledMenu from '../components/MUIUtilities/StyledMenu';
 import Modal from '../components/Modals/Modal';
 import IconWrapper from '../components/Cards/IconWrapper';
-import { Briefcase, BriefcaseBusiness, LogOut, User } from 'lucide-react';
+import { Briefcase, BriefcaseBusiness, LogOut, Send, Settings, User } from 'lucide-react';
 import { UNKNOWN_PROFILE_PICTURE_URL } from '../utility/config';
 import Footer from '../components/Footer/Footer';
-import { FaTelegramPlane } from 'react-icons/fa';
-import { ACTION_TYPES } from '../utility/ActionTypes';
+import TelegramBanner from "../svg/Banners/telegramBanner.png"
+import TelegramBannerIcon from "../svg/Banners/telegramBannerIcon.png"
+import { Button } from '../components/Buttons/Button';
 
 const CandidateLayout = () => {
   const navigate = useNavigate();
@@ -43,8 +44,6 @@ const CandidateLayout = () => {
       setIsAssessmentBannerVisible(false);
     };
   }, []);
-
-  const [showTelegramModal,setShowTelegramModal] = useState(false);
 
   const handleConnectTelegram = async () => {
     window.open(`https://t.me/hirehive_bot?start=${candidateData?._id}`, '_blank');
@@ -243,9 +242,24 @@ const CandidateLayout = () => {
         <div >
           {candidateData &&
             <>
-              <div onClick={()=>setShowTelegramModal(true)} className='flex text-font-gray items-center gap-2 rounded-xl hover:bg-background-60 cursor-pointer px-2 py-2 m-4'>
-                <IconWrapper icon={FaTelegramPlane} inheritColor />
-                <p className='typography-body  whitespace-nowrap overflow-hidden text-ellipsis'>Connect Telegram</p>
+              {!candidateData?.isTelegramConnected && <div className='max-w-full mx-4 my-4 relative '>
+                <img src={TelegramBannerIcon} className='absolute max-w-[46px] -top-[24px] -right-[10px]' />
+                <img src={TelegramBanner} className='max-w-full ' />
+                <div className='absolute top-[6%] left-4 max-w-[90%]'>
+                  <h4 className=' text-white  font-semibold mb-1'>Connect Telegram</h4>
+                  <p className=' text-white typography-body mb-4'>Get instant job updates. <br/> Stay ahead always.</p>
+                  <Button  onClick={handleConnectTelegram} className='!px-4 w-full' variant='primary' icon={() => <IconWrapper size={0} customIconSize={5} customStrokeWidth={5} icon={Send}/>}>Connect Now</Button>
+                </div>
+              </div>}
+              <div className='my-4'>
+                <NavItem               
+                key={'settings'}
+                to={'/candidate/settings'}
+                icon={()=><IconWrapper isInActiveIcon icon={Settings} />}
+                activeIcon={()=><IconWrapper isActiveIcon icon={Settings}
+                />}>
+                Settings
+               </NavItem>
               </div>
               <ProfileComponent />
             </>
@@ -264,14 +278,6 @@ const CandidateLayout = () => {
           setIsAssessmentModalVisible(false);
         }}
       />
-
-      <Modal
-        actionType={ACTION_TYPES.TELEGRAM}
-        open={showTelegramModal}
-        onClose={()=>setShowTelegramModal(false)}
-        isReadyToClose={false}
-        onConfirm={handleConnectTelegram}
-      ></Modal>
 
       {/* Main Content */}
       <div className="mt-[4.6rem] md:mt-0 md:ml-[17rem] md:w-[calc(100vw-17rem)] flex flex-col items-center min-h-[calc(100vh-5rem)] ">

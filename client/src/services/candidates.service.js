@@ -5,6 +5,8 @@ export const fetchOpenJobs = (page,companyId) => axios.get(`/candidates/jobs/ope
 
 export const searchJobs = (query, page) => axios.get(`/candidates/jobs/searchJobs?jobTitle=${encodeURIComponent(query)}&page=${page}`).then(res => res.data);
 
+export const disconnectTelegram = () => axios.post(`/candidates/disconnect-telegram`);
+
 //POST
 export const filterJobs = (filters, page) => axios.post('/candidates/filterJobs', { filters, page }).then(res => res.data);
 
