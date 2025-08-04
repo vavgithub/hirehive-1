@@ -1086,7 +1086,7 @@ export const scheduleCall = async (req, res) => {
       const company = await Company.findById({_id : user?.company_id});
   
       const eventDetails = {
-        summary: `${stage} - Interview with ${candidate?.firstName + ' ' + candidate?.lastName} `,
+        summary: `${stage} - Interview with ${candidate?.firstName + ' ' + candidate?.lastName} (${job.jobProfile} - ${job.employmentType})`,
         description: formattedMeetingDescription(company?.name,company?.about , company?.website , job.employeeLocation , job.employmentType , job.experienceFrom, job.jobDescription) ,
         startDateTime: date, // already in ISO UTC
         endDateTime: new Date(new Date(date).getTime() + 60 * 60 * 1000).toISOString(),
@@ -1241,7 +1241,7 @@ export const rescheduleCall = async (req, res) => {
       }
   
       const eventDetails = {
-        summary: `${stage} - Interview with ${candidate?.firstName + ' ' + candidate?.lastName} `,
+        summary: `${stage} - Interview with ${candidate?.firstName + ' ' + candidate?.lastName} (${job.jobProfile} - ${job.employmentType})`,
         description: formattedMeetingDescription(company?.name,company?.about , company?.website , job.employeeLocation , job.employmentType , job.experienceFrom, job.jobDescription) ,
         startDateTime: date, // already in ISO UTC
         endDateTime: new Date(new Date(date).getTime() + 60 * 60 * 1000).toISOString(),

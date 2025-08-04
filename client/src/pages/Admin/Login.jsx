@@ -14,6 +14,7 @@ import { Briefcase, FileText } from 'lucide-react';
 import { getRoute, ROUTE_KEY } from '../../config/permissions.config';
 import GoogleIcon from '../../svg/Icons/GoogleIcon';
 import { FcGoogle } from 'react-icons/fc';
+import { useAuthContext } from '../../context/AuthProvider';
 
 const statsOne = [
     { title: 'Jobs Posted', value: 100, icon: () => <IconWrapper size={10} isInActiveIcon icon={Briefcase} /> },
@@ -30,10 +31,12 @@ const Login = () => {
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
     const { data: authData, isLoading: authLoading, refetch: refetchAuth } = useAuth();
+    const { setUser } = useAuthContext();
 
     useEffect(() => {
         if (authData?.role) {
-          navigate(getRoute(authData.role,ROUTE_KEY.DASHBOARD));
+            setUser(authData);
+            navigate(getRoute(authData.role,ROUTE_KEY.DASHBOARD));
         }
     }, [authData, navigate]);
 
