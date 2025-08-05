@@ -10,6 +10,7 @@ import { getRoute, ROUTE_KEY } from '../../config/permissions.config';
 import { showErrorToast, showSuccessToast } from '../../components/ui/Toast';
 import { useOnboardingContext } from '../../context/OnboardingProvider';
 import { checkUserAuthStatus } from '../../services/auth.service';
+import { useAuthContext } from '../../context/AuthProvider';
 
 export const steps = [
     { id: "REGISTER", label: "Register" },
@@ -23,6 +24,7 @@ const Register = () => {
     const [currentStep,setCurrentStep] = useState(steps[0]?.id);
     const navigate = useNavigate();    
     const { data: authData, isLoading: authLoading, refetch: refetchAuth } = useAuth();
+    const { setUser } = useAuthContext();
 
     const [searchParams] = useSearchParams();
     const onboardContext = useOnboardingContext();
@@ -67,6 +69,7 @@ const Register = () => {
 
     useEffect(() => {
         if (authData?.role) {
+            setUser(authData)
           navigate(getRoute(authData.role,ROUTE_KEY.DASHBOARD));
         }
     }, [authData, navigate]);

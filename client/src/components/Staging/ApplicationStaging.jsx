@@ -30,7 +30,7 @@ const AccordionSection = ({ title, isOpen, onToggle, children, badge }) => (
         <div className="w-full">
             <button
                 onClick={onToggle}
-                className="w-full px-6 py-4 flex justify-between bg-background-80 items-center border-b border-background-80"
+                className="w-full px-8 py-8 flex justify-between bg-background-80 items-center border-b border-background-80"
             >
                 <div className="flex items-center gap-4 ">
                     <h3>{title}</h3>
@@ -40,7 +40,7 @@ const AccordionSection = ({ title, isOpen, onToggle, children, badge }) => (
             </button>
 
             {isOpen && (
-                <div className="p-6">
+                <div className="px-8 pb-8">
                     {children}
                 </div>
             )}
@@ -119,7 +119,7 @@ const ApplicationStaging = ({ candidateId, jobId ,jobStatus}) => {
                 {responses.map((response, index) => (
                     <div
                         key={response.questionId}
-                        className="  rounded-lg pb-6"
+                        className={`  rounded-lg ${index !== (responses?.length - 1) ? 'pb-6' : ''}`} 
                     >
                         <div className="flex items-start gap-4">
                             <div className="flex-shrink-0  h-6  flex items-center justify-center">
@@ -138,6 +138,14 @@ const ApplicationStaging = ({ candidateId, jobId ,jobStatus}) => {
                                             <span className="px-3 py-1 ">
                                                 {response.answer}
                                             </span>
+                                        </div>
+                                    ) : response.question.type === 'multi-select' ? (
+                                        <div className="flex gap-2">
+                                            <ul className="px-3  list-disc flex flex-col gap-2 ">
+                                                {
+                                                    response.answer?.length > 0 && response.answer.map(ans =><li>{ans}</li>)
+                                                }
+                                            </ul>
                                         </div>
                                     ) : (
                                         <div className="bg-background-80 p-3 rounded-lg">

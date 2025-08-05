@@ -203,7 +203,8 @@ const ApplyJob = () => {
         .map((key) => ({
           questionId: key.replace('question-', ''),
           answer: data[key],
-        }));
+        }))
+        .filter(res => res.answer !== "");//Removing empty responses
 
       let profilePictureUrl;
       if (profilePictureFile) {

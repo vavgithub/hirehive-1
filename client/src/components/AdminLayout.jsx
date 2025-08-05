@@ -30,7 +30,7 @@ const ADMIN_BG_SCREENS = [
 const AdminLayout = () => {
     const navigate = useNavigate();
     const location = useLocation();  // Get current route
-    const { user } = useAuthContext(); // Get user data from the context
+    const { user , setUser } = useAuthContext(); // Get user data from the context
 
     const [anchorEl, setAnchorEl] = useState(null); // State to control dropdown menu
     const { refetch } = useAuth();
@@ -58,6 +58,7 @@ const AdminLayout = () => {
     const handleLogout = async () => {
         try {
             await logout();
+            setUser(null)
             refetch();
             queryClient.clear()
             navigate('/admin/login');
