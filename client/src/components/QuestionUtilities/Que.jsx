@@ -24,7 +24,7 @@ const Que = ({ onQuestionsChange, initialQuestions = [] , error}) => {
             text: '',
             options: type === 'multiple' ? [''] : [],
             required: false,
-            answerType: type === 'text' ? 'text' : undefined,
+            answerType: type === 'text' ? 'text' : type === 'multi-select' ? 'array' : undefined,
         }
         setQuestions(prev=>[...prev, newQuestion])
         setOpen(false)
@@ -83,7 +83,20 @@ const Que = ({ onQuestionsChange, initialQuestions = [] , error}) => {
                                     onValidityChange={index === questions.length - 1 ? handleQuestionValidityChange : undefined}
                                     questionNumber={index + 1}
                                   />
-                                : <TextQuestion 
+                                : 
+                                question.type === 'multi-select' 
+                                ? <MultipleChoiceQuestion 
+                                    key={question?.id ? question.id : question._id} 
+                                    question={question}
+                                    onUpdate={updateQuestion}
+                                    onDelete={() => deleteQuestion(question?.id ? question.id : question._id)}
+                                    onCopy={() => copyQuestion(question)}
+                                    initialEditMode={index === questions.length - 1}
+                                    onValidityChange={index === questions.length - 1 ? handleQuestionValidityChange : undefined}
+                                    questionNumber={index + 1}
+                                  />
+                                : 
+                                <TextQuestion 
                                     key={question?.id ? question.id : question._id} 
                                     question={question}
                                     onUpdate={updateQuestion}
@@ -111,6 +124,7 @@ const Que = ({ onQuestionsChange, initialQuestions = [] , error}) => {
                             <StyledCard padding={1} backgroundColor={"bg-background-80"} extraStyles=' mt-2 absolute bottom-6 min-w-fit'>
                                 <ul className='flex flex-col gap-2 typography-body '>
                                     <li className=' cursor-pointer hover:bg-background-60 rounded-xl px-4 py-2 whitespace-nowrap' onClick={() => addQuestion('multiple')}>Multiple Choice</li>
+                                    <li className=' cursor-pointer hover:bg-background-60 rounded-xl px-4 py-2 whitespace-nowrap' onClick={() => addQuestion('multi-select')}>Multiple Select</li>
                                     <li className=' cursor-pointer hover:bg-background-60 rounded-xl px-4 py-2 whitespace-nowrap' onClick={() => addQuestion('text')}>Text</li>
                                 </ul>
                             </StyledCard>
