@@ -167,7 +167,7 @@ export const ScheduleForm = ({ candidateData, onSubmit, isRescheduling, initialD
             <StyledCard backgroundColor={'bg-background-70'} >
                 <h3 className='mb-4'>Choose Your Meeting Type</h3>
                 <div className='flex w-full justify-between'>
-                <StyledCard onClick={handleMeetLinkClick} backgroundColor={!autoLink ? 'selection-primary' :'bg-background-60'} extraStyles={'hover:bg-background-50 w-[50%]'}>
+                <StyledCard onClick={handleMeetLinkClick} backgroundColor={!autoLink ? 'selection-primary border border-accent-100 ' :'bg-background-60'} extraStyles={'hover:bg-background-50 w-[50%]'}>
                     <h4 className=' mb-2'>Share Your Meeting Link</h4>
                     <InputField
                         id="meetingLink"
@@ -185,7 +185,7 @@ export const ScheduleForm = ({ candidateData, onSubmit, isRescheduling, initialD
                 <div className=" flex items-center">
                     <span className="px-6 text-grey-100">OR</span>
                 </div> 
-                <StyledCard onClick={handleAutoLinkClick} backgroundColor={autoLink ? 'selection-primary' : 'bg-background-60'} extraStyles={'flex items-center w-[50%] hover:bg-background-50 cursor-pointer'} >
+                <StyledCard onClick={handleAutoLinkClick} backgroundColor={autoLink ? 'selection-primary border border-accent-100 ' : 'bg-background-60'} extraStyles={'flex items-center w-[50%] hover:bg-background-50 cursor-pointer'} >
                     <div className='flex justify-between flex-col gap-4 w-full '>
                         <div>
                             <h4 className='typography-h4 '>Smart Google Meet Generator</h4>
@@ -193,7 +193,7 @@ export const ScheduleForm = ({ candidateData, onSubmit, isRescheduling, initialD
                             {console.log(assignee)}
                             {autoLink && <p className='typography-body text-font-gray mt-2'>Participants : {candidateData?.firstName + ' ' + candidateData?.lastName }{assignee && (', ' + assignee?.firstName + ' ' + assignee?.lastName)}{addedInvitees?.length > 0 &&  addedInvitees.map(invitee => ', ' + invitee )}</p>}
                         </div>
-                        <Button variant='secondary' type='button' onClick={()=>setOpenInviteesModal(true)} >Add More Invitees</Button>
+                        <Button variant='white' type='button' onClick={()=>setOpenInviteesModal(true)} >Add More Invitees</Button>
                     </div>
                 </StyledCard>
                 </div>
