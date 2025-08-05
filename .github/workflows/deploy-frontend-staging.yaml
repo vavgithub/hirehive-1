@@ -39,6 +39,7 @@ jobs:
           echo "VITE_CLOUDINARY_SCREENSHOT_UPLOAD_PRESET=${{ secrets.VITE_CLOUDINARY_SCREENSHOT_UPLOAD_PRESET }}" >> .env
           echo "VITE_CLOUDINARY_URL_SS=${{ secrets.VITE_CLOUDINARY_URL_SS_STAGING }}" >> .env
           echo "VITE_CONTACT_FORM_SCRIPT_URL=${{ secrets.VITE_CONTACT_FORM_SCRIPT_URL_STAGING }}" >> .env
+          echo "VITE_TELEGRAM_BOT_USERNAME=${{ secrets.VITE_TELEGRAM_BOT_USERNAME_STAGING }}" >> .env
 
       - name: Build the React app
         run: npm run build:staging

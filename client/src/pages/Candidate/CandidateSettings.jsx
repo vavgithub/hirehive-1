@@ -11,13 +11,15 @@ import { disconnectTelegram } from '../../services/candidates.service'
 import { fetchCandidateAuthData } from '../../redux/candidateAuthSlice'
 import { useDispatch } from 'react-redux'
 
+const TELEGRAM_BOT_USERNAME = import.meta.env.VITE_TELEGRAM_BOT_USERNAME;
+
 function CandidateSettings() {
     const [loading,setLoading] = useState(false);
     const { candidateData } = useCandidateAuth();
     const dispatch = useDispatch();
 
     const handleTelegramConnect = async () => {
-        window.open(`https://t.me/hirehive_bot?start=${candidateData?._id}`, '_blank');
+        window.open(`https://t.me/${TELEGRAM_BOT_USERNAME}?start=${candidateData?._id}`, '_blank');
     }
 
 
