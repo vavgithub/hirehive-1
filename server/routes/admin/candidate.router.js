@@ -1,6 +1,7 @@
 import express from "express";
 import {
   addNotes,
+  getAllCandidates,
   getAllCandidatesForJob,
   getAllCandidatesWithStats,
   getAssessmentQuestionsById,
@@ -24,7 +25,11 @@ import { uploadVideo  } from "../../middlewares/uploadMiddleware.js";
 const router = express.Router();
 
 router.post('/shortlisted/:company_id',protect, shortlistCandidate);
+
 router.post("/getData/data/allCandidatesWithStats",protect, getAllCandidatesWithStats);
+
+router.post("/getData/data/allCandidatesWithFilters",protect, getAllCandidates);
+
 router.get("/:candidateId/job/:jobId", getCandidateById);
 
 router.post('/:candidateId/job/:jobId/shortlist',protect, toggleShortlistCandidate);

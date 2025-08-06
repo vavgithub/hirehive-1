@@ -11,16 +11,41 @@ import Table from '../../components/tableUtilities/Table';
 import Container from '../../components/Cards/Container';
 import IconWrapper from '../../components/Cards/IconWrapper';
 import { Briefcase, Folder, MonitorDot, PenTool, Users } from 'lucide-react';
-import { getAllCandidatesAndStats } from '../../services/admin.candidate.service';
+import { getAllCandidatesAndStats, getAllCandidatesWithFilters } from '../../services/admin.candidate.service';
 import { useState } from 'react';
+import { useMemo } from 'react';
+import useDebounce from '../../hooks/useDebounce';
 
 
 const Candidates = () => {
+  //Table filters variables for fetching data
   const [location,setLocation] = useState(null);
+  const [filters,setFilters] = useState({});
+  const [page,setPage] = useState(1);
+  const [pageSize,setPageSize] = useState(10);
+  const [pageCount,setPageCount] = useState(1);
+  const [filterObj,setFilterObj] = useState({});
+  const [search,setSearch] = useState("");
+  const [showContractors, setShowContractors] = useState(false);
 
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ['candidates',location],
-    queryFn: () => getAllCandidatesAndStats(location ? location : {}),
+  const [debouncedQuery] = useDebounce(search,400);
+
+  useEffect(()=>{
+    //removing non-populated filters
+    setFilterObj({...Object.fromEntries(Object.entries(filters).filter(([Key,value]) =>!!(Array.isArray(value) ? value?.length : value))),showContractors})
+  },[filters])
+
+  const { data, isStatsLoading, isStatsError } = useQuery({
+    queryKey: ['candidatesStats'],
+    queryFn: () => getAllCandidatesAndStats(),
+    refetchOnMount : true
+  });
+
+  console.log("page",filterObj)
+
+  const { data : candidates , isLoading, isError } = useQuery({
+    queryKey: ['candidates',location,page,pageSize,filterObj,debouncedQuery],
+    queryFn: () => getAllCandidatesWithFilters({...(location ? location : {}) , page : page + 1 , pageLimit : pageSize , filter : filterObj ,search : debouncedQuery}),
   });
 
   // console.log("what is this ?" , data);
@@ -80,7 +105,23 @@ const Candidates = () => {
           <StatsGrid stats={statsOne} />
         </div>
         <div >
-          <Table addLocationFilter={setLocation} readOnly={true} hasCheckBox={false} readOnlyData={data?.candidates || []} />
+          <Table 
+          currentPage={page} 
+          setCurrentPage={setPage}
+          pageSize={pageSize} 
+          setPageSize={setPageSize}
+          filters={filters}
+          setFilters={setFilters}
+          searchTerm={search}
+          setSearchTerm={setSearch}
+          showContractors={showContractors}
+          setShowContractors={setShowContractors}
+          addLocationFilter={setLocation} 
+          readOnly={true} 
+          hasCheckBox={false} 
+          totalCount={candidates?.totalCandidates || 0} 
+          readOnlyData={candidates?.allCandidates || []} 
+          />
         </div>
       </StyledCard>
     </Container>

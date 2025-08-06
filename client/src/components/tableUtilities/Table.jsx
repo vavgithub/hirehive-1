@@ -38,6 +38,17 @@ const Table = ({
   additionalColumns = [], // New prop for custom columns
   customNavigationPath = null, // New prop for custom navigation path
   hasCheckBox = true,
+  currentPage = 1,
+  setCurrentPage,
+  pageSize = 10,
+  setPageSize,
+  filters = {},
+  setFilters,
+  searchTerm = '',
+  setSearchTerm,
+  showContractors = false,
+  setShowContractors,
+  totalCount = 0,
   addLocationFilter
 }) => {
 
@@ -67,14 +78,13 @@ const Table = ({
   const [selectedDocumentUrl, setSelectedDocumentUrl] = useState('');
 
   // ..this are the table filters 
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filters, setFilters] = useState({});
-  const [currentPage, setCurrentPage] = useState(0);
-  const [pageSize, setPageSize] = useState(10);
+  // const [searchTerm, setSearchTerm] = useState('');
+  // const [filters, setFilters] = useState({});
+  // const [currentPage, setCurrentPage] = useState(0);
+  // const [pageSize, setPageSize] = useState(10);
 
   const [budgetMenuAnchorEl, setBudgetMenuAnchorEl] = useState(null);
 
-  const [showContractors, setShowContractors] = useState(false);
   const [isLocationFiltered,setIsLocationFiltered] = useState(false);
 
   const [locationObj,setLocationObj] = useState(null);
@@ -435,7 +445,6 @@ const Table = ({
 
   const navigate = useNavigate();
 
-
   const handleRowClick = (params) => {
     // Save the current window scroll position before navigation
     if (location.pathname?.startsWith('/admin/candidates') || location.pathname?.startsWith('/hiring-manager/candidates')) {
@@ -584,8 +593,9 @@ const Table = ({
       {(!readOnly && selectedRows?.length > 0 && jobData?.status !== "closed" ) && <MultiSelectBar selectedData={selectedRows} clearSelection={() => { setSelectedRows([]); setRowSelectionModel([]) }} jobId={jobId} />}
 
       <DataGrid
-        rows={filteredAndSearchedRowsData}
+        rows={rowsData}
         columns={columns}
+        paginationMode="server"
         getRowId={(row) => `${row._id}_${row.jobId ?? jobId}`} // Create a unique ID for each row
         paginationModel={{ page: currentPage, pageSize: pageSize }}
         onPaginationModelChange={(paginationModel) => {
@@ -606,6 +616,7 @@ const Table = ({
         onRowSelectionModelChange={(newSelection) => handleSelectionChange(newSelection)} // Updates on selection change
         rowSelectionModel={rowSelectionModel}
         onRowClick={(params) => handleRowClick(params)}
+        rowCount={totalCount}
       />
 
       {isDocumentViewerOpen && (

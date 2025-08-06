@@ -621,6 +621,327 @@ export const getCandidateJobs = async (req, res) => {
   }
 };
 
+export const getAllCandidates = async (req,res) => {
+  try {
+    const company_id = req.user.company_id;
+    
+    const { location , locationId, sessionId , page , pageLimit, search, filter } = req.body;
+
+    //Pagintation management
+    const LIMIT = pageLimit || 10;
+    const pageCount = page || null;
+    let paginationFilter = [];
+
+    if(pageCount){
+      const skipCount = (pageCount - 1) * LIMIT
+      paginationFilter = [
+        {
+          $skip : skipCount
+        },
+        {
+          $limit : LIMIT
+        }
+      ]
+    }
+    
+    //Search filtering
+    let searchQuery = [];
+    if (search !== "") {
+      searchQuery = [{
+        $match: {
+          $or: [
+            { firstName: { $regex: new RegExp(search, 'i') } },
+            { email: { $regex: new RegExp(search, 'i') } },
+            { lastName: { $regex: new RegExp(search, 'i') } },
+            // add more fields as needed
+          ]
+        }
+      }];
+    }
+
+    //Data filtering
+    const filterArray = Object.entries(filter)
+    let filterQuery = []
+
+    if(filterArray?.length !== 0){
+      let encodedFilters = {}
+      filterArray.map(([key,value]) => {
+        if(key === 'status'){
+          encodedFilters.status = {$in : value}
+        }
+        if(key === 'stage'){
+          encodedFilters.currentStage = {$in : value}
+        }
+        if(key === 'assessment'){
+          let isCompleted = false;
+          let isNotCompleted = false;
+          value.map(state => {
+            state === "Completed" && (isCompleted = true)
+            state === "Not Completed" && (isNotCompleted = true)
+          })
+          if (isCompleted && !isNotCompleted) {
+            encodedFilters.hasGivenAssessment = true
+            encodedFilters.assessmentResponse = { $ne : false }
+          } else if (!isCompleted && isNotCompleted) {
+            encodedFilters.hasGivenAssessment = false
+            encodedFilters.assessmentResponse = false
+          }
+        }
+        if(key === 'rating'){
+          encodedFilters.rating = { $in : value }
+        }
+        if(key === 'job Type'){
+          encodedFilters.jobType = { $in : value }
+        }
+      })
+
+      filterQuery = [
+        {
+          $match : encodedFilters
+        }
+      ]
+    }
+
+    //Location filter management
+    let geoFilter = null;
+    if(locationId && sessionId){
+        const result = await getPlaceDetails(locationId,sessionId);
+        if(result.latlng?.longitude && result.latlng?.latitude){
+          geoFilter = {
+              coordinates : [parseFloat(result.latlng.longitude) , parseFloat(result.latlng.latitude)]
+          }
+        }
+    }
+    // Find all users in the same company
+    const usersInCompany = await User.find({ company_id }, '_id'); // Get only _id fields
+    // Extract user _id values into an array
+    const userIds = usersInCompany.map(user => user._id);
+
+    const allCandidates = await candidates.aggregate([
+        // First branch: regex match
+      ...(location
+        ? [{ $match: { location: { $regex: location, $options: 'i' } } }]
+        : []
+      ),
+
+      // Union with second branch: geolocation match
+      ...(geoFilter?.coordinates
+        ? [{
+            $unionWith: {
+              coll: candidates.collection.name,
+              pipeline: [{
+                $match: {
+                  geoLocation: {
+                    $geoWithin: {
+                      $centerSphere: [
+                        [ geoFilter.coordinates[0], geoFilter.coordinates[1] ],
+                        100000 / 6371000
+                      ]
+                    }
+                  }
+                }
+              }]
+            }
+          }]
+        : []
+      ),
+      // Now dedupe by candidate _id
+      {
+        $group: {
+          _id: "$_id",
+          doc: { $first: "$$ROOT" }
+        }
+      },
+      {
+        $replaceRoot: { newRoot: "$doc" }
+      },
+      {
+        $match: { isVerified: true }, // Filter only verified candidates
+      },
+      ...searchQuery,
+      {
+        $unwind: "$jobApplications",
+      },
+      {
+        $lookup: {
+          from: "jobs",
+          localField: "jobApplications.jobId",
+          foreignField: "_id",
+          as: "jobDetails",
+        },
+      },
+      {
+        $addFields: {
+          jobDetail: { $arrayElemAt: ["$jobDetails", 0] },
+        },
+      },
+      // Filter only those applications for jobs created by the logged-in admin
+      {
+        $match: {
+          "jobDetail.createdBy": { $in: userIds } 
+        }
+      },
+      // Project the required fields
+      {
+        $project: {
+          _id: 1,
+          firstName: 1,
+          lastName: 1,
+          email: 1,
+          phone: 1,
+          profilePictureUrl: 1,
+          hasGivenAssessment: 1,
+          experience: {
+            $ifNull: [
+              "$jobApplications.professionalInfo.experience",
+              "$experience",
+            ],
+          },
+          expectedCTC: {
+            $ifNull: [
+              "$jobApplications.professionalInfo.expectedCTC",
+              "$expectedCTC",
+            ],
+          },
+          currentCTC: {
+            $ifNull: [
+              "$jobApplications.professionalInfo.currentCTC",
+              "$currentCTC",
+            ],
+          },
+          hourlyRate: {
+            $ifNull: [
+              "$jobApplications.professionalInfo.hourlyRate",
+              "$hourlyRate",
+            ],
+          },
+          website: {
+            $ifNull: ["$jobApplications.professionalInfo.website", "$website"],
+          },
+          portfolio: {
+            $ifNull: [
+              "$jobApplications.professionalInfo.portfolio",
+              "$portfolio",
+            ],
+          },
+          noticePeriod: {
+            $ifNull: [
+              "$jobApplications.professionalInfo.noticePeriod",
+              "$noticePeriod",
+            ],
+          },
+          skills: {
+            $ifNull: ["$jobApplications.professionalInfo.skills", "$skills"],
+          },
+          currentStage: "$jobApplications.currentStage",
+          stageStatuses: "$jobApplications.stageStatuses",
+          jobTitle: {
+            $ifNull: ["$jobDetail.jobTitle", "$jobApplications.jobApplied"],
+          },
+          jobType: {
+            $ifNull: ['$jobDetail.employmentType', '$jobApplications.jobType']
+          },
+          assessment_id : "$jobApplications.assessment_id",
+          assessmentResponse : {
+            $cond: {
+              if: {
+                $and: [
+                  { $ne: ["$jobApplications.assessmentResponse", null] },
+                  { $ne: [{ $type: "$jobApplications.assessmentResponse" }, "missing"] }
+                ]
+              },
+              then: true,
+              else: false
+            }
+          },
+          jobId: "$jobApplications.jobId",
+          rating: "$jobApplications.rating",
+          resumeUrl: "$jobApplications.resumeUrl",
+          applicationDate: "$jobApplications.applicationDate",
+        },
+      },
+      {
+        $addFields: {
+          stageStatusesArray: { $objectToArray: "$stageStatuses" },
+        },
+      },
+      {
+        $addFields: {
+          currentStageStatus: {
+            $arrayElemAt: [
+              {
+                $filter: {
+                  input: "$stageStatusesArray",
+                  cond: { $eq: ["$$this.k", "$currentStage"] },
+                },
+              },
+              0
+            ]
+          }
+        }
+      },
+      {
+        $project: {
+          _id: 1,
+          firstName: 1,
+          lastName: 1,
+          email: 1,
+          phone: 1,
+          profilePictureUrl: 1,
+          hasGivenAssessment: 1,
+          experience: 1,
+          expectedCTC: 1,
+          currentCTC: 1,
+          hourlyRate: 1,
+          website: 1,
+          portfolio: 1,
+          noticePeriod: 1,
+          skills: 1,
+          currentStage: 1,
+          jobTitle: 1,
+          jobType: 1,
+          jobId: 1,
+          rating: 1,
+          resumeUrl: 1,
+          applicationDate: 1,
+          assessment_id : 1,
+          assessmentResponse : 1,
+          status: '$currentStageStatus.v.status'
+        }
+      },
+      ...filterQuery,
+      {
+        $sort: { applicationDate: -1 }
+      },
+      {
+        $facet: {
+          totalCount: [
+            { $count: "count" }
+          ],
+          candidates: [
+            ...paginationFilter
+          ]
+        }
+      },
+      {
+        $project: {
+          totalCount: { $ifNull: [{ $arrayElemAt: ["$totalCount.count", 0] }, 0] },
+          candidates: 1
+        }
+      }
+    ]);
+
+    console.log(allCandidates[0].candidates?.length,allCandidates[0].totalCount)
+    return res.status(200).json({allCandidates : allCandidates[0].candidates,totalCandidates :  allCandidates[0].totalCount});
+  } catch (error) {
+      console.error('Error fetching candidates:', error);
+      res.status(500).json({
+        message: 'Internal server error',
+        error: error.message
+      });
+  }
+}
+
 export const getAllCandidatesWithStats = async (req, res) => {
   try {
     const adminId = req.user._id; // Extract the admin's _id from the authenticated user
