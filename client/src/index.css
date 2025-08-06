@@ -534,24 +534,24 @@ input[type='number'] {
     --color-primary-300: rgba(4, 95, 253, 0.15);
     --color-primary-400: rgba(4, 95, 253, 0.2);
     
-    --color-accent-100: rgb(0, 184, 163);
+    --color-accent-100: rgb(0, 127, 112);
     --color-accent-200: rgba(0, 184, 163, 0.3);
-    --color-accent-300: rgba(0, 184, 163, 0.1);
+    --color-accent-300: rgba(230, 243, 241,1);
     
-    --color-background-100:rgba(241, 245, 255, 1);
-    --color-background-90: rgba(255, 255, 255, 1);
-    --color-background-80: rgba(248, 250, 255, 1);
-    --color-background-70: rgba(242, 245, 255, 1);    
-    --color-background-60: rgba(227, 235, 255, 1);
-    --color-background-50: rgba(224, 235, 255, 1);
-    --color-background-40: rgba(186, 211, 255, 1);
+    --color-background-100:rgba(255,255, 255, 1);
+    --color-background-90: rgba(241, 246, 255, 1);
+    --color-background-80: rgba(220, 232, 255, 1);
+    --color-background-70: rgba(199, 219, 255, 1);    
+    --color-background-60: rgba(175, 204, 255, 1);
+    --color-background-50: rgba(144, 184, 255, 1);
+    --color-background-40: rgba(113, 163, 255, 1);
     --color-background-30: rgba(128, 131, 137, 1);
     --color-background-20: rgba(88, 91, 95, 1);
     --color-background-10: rgba(18, 19, 20, 1);
     --color-background-5: rgba(7, 7, 8, 1);
     
-    --color-font-accent-100: rgba(0, 184, 163, 1);
-    --color-font-gray-90:rgb(128, 131, 137);
+    --color-font-accent-100: rgb(0, 127, 112);
+    --color-font-gray-90:rgb(7, 7, 8);
     --color-font-secondary: rgb(73, 80, 87);
     --color-redbg: rgba(255, 56, 92, 0.1);
     --color-yellow-100: rgba(237, 189, 20, 1);

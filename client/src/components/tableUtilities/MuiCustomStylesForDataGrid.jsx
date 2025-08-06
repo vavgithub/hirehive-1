@@ -53,14 +53,14 @@ function MuiCustomStylesForDataGrid() {
                 margin-left: auto;
             }
             .Mui-selected .name-cell p{
-                color:rgb(24, 233, 208);
+                color:var(--color-font-accent-100);
             }
             .name-cell:hover  p{
                 width:20%;
                 white-space:nowrap;
                 overflow:hidden !important;
                 text-overflow:ellipsis !important;
-                color:rgb(24, 233, 208);
+                color:var(--color-font-accent-100);
             }
             .name-cell:hover .hover-icons {
                 width:80%;
