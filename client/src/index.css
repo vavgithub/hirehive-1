@@ -538,17 +538,17 @@ input[type='number'] {
     --color-accent-200: rgba(0, 184, 163, 0.3);
     --color-accent-300: rgba(0, 184, 163, 0.1);
     
-    --color-background-100:rgba(250, 250, 250, 1);
-    --color-background-90: rgba(244, 245, 245, 1);
-    --color-background-80: rgba(237, 237, 238, 1);
-    --color-background-70: rgba(226, 227, 228, 1);    
-    --color-background-60: rgba(215, 216, 218, 1);
-    --color-background-50: rgba(202, 203, 206, 1);
-    --color-background-40: rgba(189, 190, 194, 1);
-    --color-background-30: rgba(178, 180, 184, 1);
-    --color-background-20: rgba(170, 172, 176, 1);
-    --color-background-10: rgba(160, 162, 166, 1);
-    --color-background-5: rgba(152, 154, 159, 1);
+    --color-background-100:rgba(255, 255, 255, 1);
+    --color-background-90: rgba(248, 250, 255, 1);
+    --color-background-80: rgba(242, 245, 255, 1);
+    --color-background-70: rgba(241, 245, 255, 1);    
+    --color-background-60: rgba(227, 235, 255, 1);
+    --color-background-50: rgba(224, 235, 255, 1);
+    --color-background-40: rgba(186, 211, 255, 1);
+    --color-background-30: rgba(128, 131, 137, 1);
+    --color-background-20: rgba(88, 91, 95, 1);
+    --color-background-10: rgba(18, 19, 20, 1);
+    --color-background-5: rgba(7, 7, 8, 1);
     
     --color-font-accent-100: rgba(0, 184, 163, 1);
     --color-font-gray-90:rgb(128, 131, 137);
