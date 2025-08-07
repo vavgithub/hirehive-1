@@ -24,7 +24,7 @@ const Button = React.forwardRef(({
   const baseStyles = "inline-flex items-center justify-center gap-2 rounded-xl typography-body  transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background";
 
   const variants = {
-    primary: "bg-blue-100 text-white typography-body hover:bg-blue-200",
+    primary: "bg-blue-100 text-font-main typography-body hover:bg-blue-200",
     secondary: "bg-blue-300 text-blue-100 typography-body hover:bg-blue-400",
     tertiary: "text-blue-600 typography-body hover:bg-blue-400",
     white : 'bg-button-white text-black-100 hover:bg-button-whiteHover',

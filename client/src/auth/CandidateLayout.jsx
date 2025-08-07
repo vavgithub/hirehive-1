@@ -250,8 +250,8 @@ const CandidateLayout = () => {
                 <img src={TelegramBannerIcon} className='absolute max-w-[46px] -top-[24px] -right-[10px]' />
                 <img src={TelegramBanner} className='max-w-full ' />
                 <div className='absolute top-[6%] left-4 max-w-[90%]'>
-                  <h4 className=' text-white  font-semibold mb-1'>Connect Telegram</h4>
-                  <p className=' text-white typography-body mb-4'>Get instant job updates. <br/> Stay ahead always.</p>
+                  <h4 className=' text-font-main  font-semibold mb-1'>Connect Telegram</h4>
+                  <p className=' text-font-main typography-body mb-4'>Get instant job updates. <br/> Stay ahead always.</p>
                   <Button  onClick={handleConnectTelegram} className='!px-4 w-full' variant='primary' icon={() => <IconWrapper size={0} customIconSize={5} customStrokeWidth={5} icon={Send}/>}>Connect Now</Button>
                 </div>
               </div>}

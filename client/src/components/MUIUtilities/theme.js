@@ -61,7 +61,7 @@ const theme = createTheme({
         },
         paper: {
           backgroundColor: "var(--color-background-80) !important",
-          boxShadow: "3px 5px 50px rgba(25, 25, 25, 0.75)",
+          // boxShadow: "3px 5px 50px rgba(25, 25, 25, 0.75)",
           borderRadius: "0.75rem",
         },
       },

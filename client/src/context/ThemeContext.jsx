@@ -14,19 +14,19 @@ const ThemeContext = createContext();
 
 export const ThemesProvider = ({ children }) => {
     const { candidateData } = useCandidateAuth();
-    const { hasUser } = useAuthContext();
+    const { user } = useAuthContext();
     const [canSave,setCanSave] = useState(false);
 
     // Check if theme exists in localStorage, default to 'dark'
     const [theme, setTheme] = useState(() => {
         const savedTheme = localStorage.getItem('theme');
-        return (candidateData || hasUser) ? (savedTheme || 'dark') : 'dark';
+        return (candidateData || user) ? (savedTheme || 'dark') : 'dark';
     });
 
     useEffect(()=>{
         const savedTheme = localStorage.getItem('theme');
         //authenticated pages has theme
-        if(candidateData || hasUser){
+        if(candidateData || user){
             setTheme(savedTheme || 'dark')
         }else{
             if(savedTheme){
@@ -34,7 +34,7 @@ export const ThemesProvider = ({ children }) => {
             }
             setTheme('dark')
         }
-    },[candidateData,hasUser])
+    },[candidateData,user])
 
     // Update theme in localStorage and apply CSS class when theme changes
     useEffect(() => {
