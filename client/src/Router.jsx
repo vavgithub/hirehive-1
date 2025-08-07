@@ -47,6 +47,7 @@ import PrivacyPolicy from './pages/Candidate/PrivacyPolicy.jsx';
 import GlobalErrorHandler from './components/Error/GlobalErrorHandler.jsx';
 import Settings from './pages/Admin/Settings.jsx';
 import Interviews from './pages/Admin/Interviews.jsx';
+import CandidateSettings from './pages/Candidate/CandidateSettings.jsx';
 
 export const router = createBrowserRouter([
   {
@@ -107,6 +108,10 @@ export const router = createBrowserRouter([
           {
             path: 'all-jobs',
             element: <AllJobs />, // Protected HomePage with sidebar
+          },
+          {
+            path: 'settings',
+            element: <CandidateSettings />, // Settings page
           },
           {
             path: 'my-jobs/viewJob/:candidateId/:jobId',

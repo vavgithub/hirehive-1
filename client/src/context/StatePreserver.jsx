@@ -29,6 +29,7 @@ function StatePreserver({ children }) {
     budget: [],
     rating: [],
     score : "",
+    location : [],
     assignee: [],
     "job Type" : []
   });
@@ -46,6 +47,7 @@ function StatePreserver({ children }) {
       rating: [],
       assessment : [],
       score : "",
+      location : [],
       assignee: [],
       "job Type" : []
     });

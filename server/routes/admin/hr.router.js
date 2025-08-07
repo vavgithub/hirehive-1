@@ -1,5 +1,5 @@
 import express from "express"
-import { changeApplicationStatus, getCandidateScores, getTaskTemplates, moveCandidate, moveMultipleCandidates, noShow, rateMultipleCandidates, rejectCandidate, rejectMultipleCandidates, rescheduleCall, rescheduleScreening, scheduleCall, scoreRoundTwo, sendDesignTask, submitBudgetScore, undoAction, updateAssigneeForMultipleCandidates, updateCandidateRating } from "../../controllers/admin/hr.controller.js";
+import { changeApplicationStatus, getCandidateScores, getTaskTemplates, moveCandidate, moveMultipleCandidates, noShow, rateMultipleCandidates, rejectCandidate, rejectMultipleCandidates, rescheduleCall, rescheduleScreening, saveTaskTemplates, scheduleCall, scoreRoundTwo, sendDesignTask, submitBudgetScore, undoAction, updateAssigneeForMultipleCandidates, updateCandidateRating } from "../../controllers/admin/hr.controller.js";
 import { protect, roleProtect } from "../../middlewares/authMiddleware.js";
 
 const router = express.Router();
@@ -35,6 +35,8 @@ router.post('/score-round-two', protect, scoreRoundTwo);
 router.post('/send-design-task', protect,sendDesignTask)
 
 router.post('/change-status/:candidateId/:jobId', protect,changeApplicationStatus)
+
+router.post('/save-custom-task-presets', protect, roleProtect(['Admin','Hiring Manager']), saveTaskTemplates)
 
 router.post('/get-task-presets', protect, roleProtect(['Admin','Hiring Manager']), getTaskTemplates)
 

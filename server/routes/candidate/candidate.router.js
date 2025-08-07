@@ -1,6 +1,7 @@
 import express from 'express';
 import { 
   allCandidate,  
+  disconnectTelegram,  
   fetchActiveJobs,    
   filterJobs, 
   filterSearchJobs, 
@@ -31,15 +32,16 @@ router.get('/stats', stats);
 router.post('/apply/:jobId', submitApplication);
 router.post('/:jobId/increment-apply-click', incrementApplyClickCount);
 
+
+router.post('/submit-design-task', protectCandidate, submitDesignTask);
+
+router.post('/disconnect-telegram', protectCandidate, disconnectTelegram);
+
 // === Parameterized Routes ===
 
 // Routes that contain dynamic parameters
 router.get('/:jobId/candidates', getCandidate);
 router.get('/:jobId/stats', jobSpecificStats);
 router.get('/:id', getCandidateById);
-
-router.post('/submit-design-task', protectCandidate, submitDesignTask);
-
-
 
 export default router;

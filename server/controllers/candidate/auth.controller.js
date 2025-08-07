@@ -18,6 +18,7 @@ import { sendEmail } from "../../utils/sentEmail.js";
 import { getEditProfileContent, getPasswordResetContent, getResetSuccessfulContent, getSignupEmailContent } from "../../utils/emailTemplates.js";
 import { generatePresignedUrl, uploadToS3 } from "../../utils/s3utility.js";
 import { autocompleteLocation, getPlaceDetails } from "../../utils/integrations/google.js";
+import { encrypt } from "../../utils/crypto.js";
 
 // Secret key for JWT (store this in environment variables)
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -235,7 +236,7 @@ export const registerCandidate = async (req, res) => {
             }
           }
       }
-      console.log(location,locationId,sessionId,dob)
+
       // Create new candidate with job application data
       const newCandidate = new Candidate({
         firstName,
@@ -707,6 +708,7 @@ export const getCandidateDashboard = async (req, res) => {
           hasGivenAssessment: { $first: "$hasGivenAssessment" },
           jobApplications: { $push: "$jobApplications" },
           jobDetails: { $first: "$jobDetails" },
+          integrations : { $first : "$integrations"}
         },
       },
     ]);    
@@ -763,6 +765,7 @@ export const getCandidateDashboard = async (req, res) => {
         hasGivenAssessment:candidate[0].hasGivenAssessment,
         jobApplications: formattedApplications, // Include jobApplications in the candidate object
         location: candidate[0].location,
+        isTelegramConnected : (candidate[0].integrations?.telegram?.user_id && candidate[0].integrations?.telegram?.status === "CONNECTED") || false,
         pendingAssessments
         // Include other relevant candidate fields
       },

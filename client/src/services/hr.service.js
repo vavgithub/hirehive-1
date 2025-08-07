@@ -13,6 +13,10 @@ export const fetchTaskPresets = async (jobProfile) => {
 }
 
 //POST
+export const saveTaskPresets = async ({title,level,jobProfile,htmlString}) => {
+    const response = await axios.post(`${HR_BASE_URL}/save-custom-task-presets`,{ title,level,jobProfile,htmlString }, { withCredentials: true });
+    return response.data;
+}
 export const rejectCandidate  = async ({ candidateId, jobId, rejectionReason, scheduledDate , scheduledTime }) => {
     const response = await axios.post(HR_BASE_URL + '/reject-candidate', { candidateId, jobId, rejectionReason, scheduledDate , scheduledTime })
     return response.data;

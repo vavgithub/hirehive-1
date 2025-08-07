@@ -10,8 +10,11 @@ import { Avatar, IconButton, Menu, MenuItem } from '@mui/material';
 import StyledMenu from '../components/MUIUtilities/StyledMenu';
 import Modal from '../components/Modals/Modal';
 import IconWrapper from '../components/Cards/IconWrapper';
-import { Briefcase, BriefcaseBusiness, LogOut, MenuIcon, User } from 'lucide-react';
+import { Briefcase, BriefcaseBusiness, LogOut, Send, Settings, MenuIcon, User } from 'lucide-react';
 import Footer from '../components/Footer/Footer';
+import TelegramBanner from "../svg/Banners/telegramBanner.png"
+import TelegramBannerIcon from "../svg/Banners/telegramBannerIcon.png"
+import { Button } from '../components/Buttons/Button';
 import ThemeToggle from '../components/ui/ThemeToggle';
 import { use } from 'react';
 import { useLogo, useUnknownProfilePicture } from '../context/ThemeContext';
@@ -43,6 +46,10 @@ const CandidateLayout = () => {
       setIsAssessmentBannerVisible(false);
     };
   }, []);
+
+  const handleConnectTelegram = async () => {
+    window.open(`https://t.me/hirehive_bot?start=${candidateData?._id}`, '_blank');
+  }
 
   const UNKNOWN_PROFILE_PICTURE_URL = useUnknownProfilePicture();
   const Logo = useLogo();
@@ -238,8 +245,28 @@ const CandidateLayout = () => {
         </div>
         <div >
           {candidateData &&
-
-            <ProfileComponent />
+            <>
+              {!candidateData?.isTelegramConnected && <div className='max-w-full mx-4 my-4 relative '>
+                <img src={TelegramBannerIcon} className='absolute max-w-[46px] -top-[24px] -right-[10px]' />
+                <img src={TelegramBanner} className='max-w-full ' />
+                <div className='absolute top-[6%] left-4 max-w-[90%]'>
+                  <h4 className=' text-white  font-semibold mb-1'>Connect Telegram</h4>
+                  <p className=' text-white typography-body mb-4'>Get instant job updates. <br/> Stay ahead always.</p>
+                  <Button  onClick={handleConnectTelegram} className='!px-4 w-full' variant='primary' icon={() => <IconWrapper size={0} customIconSize={5} customStrokeWidth={5} icon={Send}/>}>Connect Now</Button>
+                </div>
+              </div>}
+              <div className='my-4'>
+                <NavItem               
+                key={'settings'}
+                to={'/candidate/settings'}
+                icon={()=><IconWrapper isInActiveIcon icon={Settings} />}
+                activeIcon={()=><IconWrapper isActiveIcon icon={Settings}
+                />}>
+                Settings
+               </NavItem>
+              </div>
+              <ProfileComponent />
+            </>
           }
         </div>
       </div>

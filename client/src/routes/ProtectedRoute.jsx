@@ -6,10 +6,10 @@ import { useAuthContext } from '../context/AuthProvider';
 import Loader from '../components/Loaders/Loader';
 
 const ProtectedRoute = ({ allowedRoles, children }) => {
-  const { user, isLoading, error } = useAuthContext();
+  const { user, isLoading, error , isDone} = useAuthContext();
 
 
-  if (isLoading) {
+  if (isLoading || !isDone) {
     return (
       <div className="flex justify-center items-center min-h-screen min-w-screen">
       <Loader />
@@ -17,11 +17,11 @@ const ProtectedRoute = ({ allowedRoles, children }) => {
     );
   }
 
-  if (error || !user) {
+  if (error || (!user && !isLoading && isDone)) {
     return <Navigate to="/admin/login" replace />;
   }
 
-  if (!allowedRoles.includes(user.role)) {
+  if (!isLoading && isDone && !allowedRoles.includes(user?.role)) {
     return <Navigate to="/unauthorized" replace />;
   }
 

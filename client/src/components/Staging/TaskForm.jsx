@@ -15,9 +15,10 @@ import StyledCard from '../Cards/StyledCard';
 import Modal from '../Modals/Modal';
 import IconWrapper from '../Cards/IconWrapper';
 import { ChartNoAxesGantt, ChevronDown, ChevronUp } from 'lucide-react';
-import { fetchTaskPresets, sendDesignTask } from '../../services/hr.service';
+import { fetchTaskPresets, saveTaskPresets, sendDesignTask } from '../../services/hr.service';
 import { submitDesignTask } from '../../services/candidates.service';
 import { setDesignTaskContent } from '../../redux/AdminSlice';
+import { showErrorToast, showSuccessToast } from '../ui/Toast';
 
 export function SubmissionForm({candidateId,jobId,stageData,setIsLoading}){
     const [taskLink, setTaskLink] = useState('');
@@ -176,6 +177,46 @@ function TaskForm({jobProfile,candidateId,candidateEmail,jobId,setIsLoading}) {
         }
     });
 
+    const saveTaskMutation = useMutation({
+        mutationFn: saveTaskPresets,
+        onMutate: () => {
+            setIsLoading(true); // Set loading to true when mutation starts
+        },
+        onSuccess: (data) => {
+            showSuccessToast('Success', data?.message || "Task created successfully.")
+            setIsLoading(false); // Stop loading when task is successfully sent
+        },
+        onError: (error) => {
+            console.error('Error saving design task:', error);
+            setIsLoading(false); // Stop loading in case of an error
+        }
+    });
+
+    const handleSaveTask = (title, level) =>{
+        if(title?.trim() === ''){
+            showErrorToast('Error','Please enter a valid title to save the task.')    
+            return
+        }
+        if(level?.trim() === ''){
+            showErrorToast('Error','Please select a Job Level to save the task.')    
+            return
+        }
+        if(taskDescription?.trim() === ''){
+            showErrorToast('Error','Please enter a valid task description to save the task.')    
+            return
+        }
+        if(jobProfile){
+            saveTaskMutation.mutate({
+                title,
+                level,
+                jobProfile,
+                htmlString : taskDescription
+            })
+        }else{
+            window.location.reload()
+        }
+    }
+
     const handleSendTask = (scheduledDate,scheduledTime) => {
         isFirstRender.current = false;
         validateErrors()
@@ -233,7 +274,7 @@ function TaskForm({jobProfile,candidateId,candidateEmail,jobId,setIsLoading}) {
                 <span className="text-red-100">*</span>
             </div>
 
-            <TextEditor clearPreset={setSelectedTaskPreset} hasClearOption presetLoaded={presetLoaded} presetTemplate={selectedTaskPreset} htmlData={taskDescription} loaded={false} errors={descriptionError} placeholder={"Write a Task Description"} setEditorContent={(data)=>setTaskDescription(data)} customBg={' custom-input '} />
+            <TextEditor onSaveTask={handleSaveTask} clearPreset={setSelectedTaskPreset} hasSaveOption={taskDescription && taskDescription !== '<p><br></p>'} hasClearOption presetLoaded={presetLoaded} presetTemplate={selectedTaskPreset} htmlData={taskDescription} loaded={false} errors={descriptionError} placeholder={"Write a Task Description"} setEditorContent={(data)=>setTaskDescription(data)} customBg={' custom-input '} />
 
             {descriptionError && <p className="text-red-500 absolute typography-small-p top-[23rem]">Task Description is required</p>}
 

@@ -92,12 +92,12 @@ const ViewJobs = () => {
     });
 
 
-    //fetch all candidate data for the respective job we have
-    const { data: candidatesData, isLoading: isCandidatesLoading } = useQuery({
-        queryKey: ['candidates', mainId],
-        queryFn: () => axios.get(`/admin/candidate/${mainId}`).then(res => res.data),
-    });
-    // console.log("this tabel data", candidatesData);
+    // //fetch all candidate data for the respective job we have
+    // const { data: candidatesData, isLoading: isCandidatesLoading } = useQuery({
+    //     queryKey: ['candidates', mainId],
+    //     queryFn: () => axios.post(`/admin/candidate/${mainId}`).then(res => res.data),
+    // });
+    // // console.log("this tabel data", candidatesData);
 
     // Add new query for job statistics
     const { data: jobStats = { data: { totalCount: 0, stageStats: {}, jobDetails: {} } },
@@ -148,7 +148,7 @@ const ViewJobs = () => {
     //scroll preserve for table
     // 2. Restore scroll position after data is loaded
     useEffect(() => {
-        if (!isCandidatesLoading && activeTab === "candidate") {
+        if ( activeTab === "candidate") {
             const savedScrollY = sessionStorage.getItem('job_candidates_scroll_position');
             if (savedScrollY) {
                 requestAnimationFrame(() => {
@@ -156,11 +156,11 @@ const ViewJobs = () => {
                 });
             }
         }
-    }, [isCandidatesLoading, activeTab]);
+    }, [ activeTab]);
 
     // Show loader if data is loading
     // Show loader if any data is loading
-    if (isJobLoading || isCandidatesLoading || isStatsLoading) {
+    if (isJobLoading || isStatsLoading) {
         return (
             <div className="flex justify-center items-center min-h-screen">
                 <Loader />

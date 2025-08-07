@@ -44,6 +44,10 @@ export default {
         green: {
           100: "rgba(20, 225, 89, 0.2)",
         },
+        button: {
+          white: "var(--color-white-100)",
+          whiteHover: "var(--color-white-200)",
+        },
         teal: {
           100: "rgba(24, 233, 208, 1)",
           10: "rgba(24, 233, 208, 0.1)",

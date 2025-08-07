@@ -7,6 +7,7 @@ import IconWrapper from '../Cards/IconWrapper';
 import { SlidersHorizontal, Trash } from 'lucide-react';
 import TickCheckbox from '../Checkboxes/TickCheckbox';
 import { allStatuses, stageStatusMap } from './config.filter';
+import LocationFilter from './LocationFilter';
 
 const ArrowIcon = ({ isOpen }) => (
   <svg
@@ -22,7 +23,7 @@ const ArrowIcon = ({ isOpen }) => (
 );
 
 
-const FilterForDataTable = ({ onApplyFilters, readOnly, preservedFilters }) => {
+const FilterForDataTable = ({ applyLocationFilter, onApplyFilters, readOnly, preservedFilters }) => {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef(null);
 
@@ -35,6 +36,7 @@ const FilterForDataTable = ({ onApplyFilters, readOnly, preservedFilters }) => {
     rating: [],
     assessment: [],
     score: "",
+    location : [],
     assignee: [],
     "job Type": []
   });
@@ -47,6 +49,7 @@ const FilterForDataTable = ({ onApplyFilters, readOnly, preservedFilters }) => {
     rating: false,
     assessment: false,
     score: false,
+    location : false,
     assignee: false,
     "job Type": false
   });
@@ -77,6 +80,13 @@ const FilterForDataTable = ({ onApplyFilters, readOnly, preservedFilters }) => {
       return {
         value: !values ? "All" : `${values}`,
         className: 'text-font-main typography-body group-hover:text-accent-100' // lighter gray for 'All'
+      };
+    }
+
+    if (category === 'location' && values) {
+      return {
+        value: values?.length > 0 ? `${values[0]?.location}` :"All",
+        className: 'text-white typography-body group-hover:text-accent-100 whitespace-nowrap overflow-hidden text-ellipsis' // lighter gray for 'All'
       };
     }
 
@@ -156,6 +166,7 @@ const FilterForDataTable = ({ onApplyFilters, readOnly, preservedFilters }) => {
       rating: false,
       assignee: false,
       assessment: false,
+      location : false,
       "job Type": false,
       score: false,
       [category]: !showDropdown[category],
@@ -173,6 +184,7 @@ const FilterForDataTable = ({ onApplyFilters, readOnly, preservedFilters }) => {
       rating: false,
       assignee: false,
       assessment: false,
+      location : false,
       score: false,
       "job Type": false
     });
@@ -186,6 +198,7 @@ const FilterForDataTable = ({ onApplyFilters, readOnly, preservedFilters }) => {
       rating: [],
       assessment: [],
       score: "",
+      location : [],
       assignee: [],
       "job Type": []
     })
@@ -211,6 +224,7 @@ const FilterForDataTable = ({ onApplyFilters, readOnly, preservedFilters }) => {
     ...(readOnly && { "job Type": ["Full Time", "Part Time", "Contract", "Internship"] }),
     assessment: ["Completed", "Not Completed"],
     ...(!readOnly && { assignee: designReviewers.map(reviewer => reviewer) }),
+    location : ['location'],
   };
 
   useEffect(() => {
@@ -225,7 +239,7 @@ const FilterForDataTable = ({ onApplyFilters, readOnly, preservedFilters }) => {
     <div className="relative" ref={menuRef}>
       <div className={"cursor-pointer gap-2 flex items-center typography-body hover:bg-background-60 hover:text-accent-100 rounded-xl p-2 text-font-gray"} onClick={(e) => toggleMenu(e)}>
         <IconWrapper inheritColor={true} size={0} customIconSize={4} customStrokeWidth={5} icon={SlidersHorizontal} />
-        Filter {Object.values(selectedFilters).map((filter) => Array.isArray(filter) ? filter : !filter ? [] : [filter]).flat()?.length > 0 && <span className='w-2 h-2 rounded-full my-auto bg-red-40'></span>}
+        Filter {Object.values(selectedFilters).map((filter) => filter?.location ? [filter?.location] : Array.isArray(filter) ? filter : !filter ? [] : [filter]).flat()?.length > 0 && <span className='w-2 h-2 rounded-full my-auto bg-red-40'></span>}
       </div>
       {isOpen && (
         <div className="absolute z-10 mt-2 p-2 w-[18rem] max-w-[19rem] bg-background-80 rounded-xl flex flex-col gap-2 shadow-[5px_5px_50px_rgba(0,0,0,0.9)]">
@@ -238,7 +252,7 @@ const FilterForDataTable = ({ onApplyFilters, readOnly, preservedFilters }) => {
                     {category}:
                   </span>
                   <span className={formatSelectedValues(category, selectedFilters[category]).className}>
-                    {formatSelectedValues(category, category === 'assignee' ? selectedFilters[category].map(each => each.name) : category === "score" ? selectedFilters[category] : selectedFilters[category]).value}
+                    {formatSelectedValues(category, category === 'location' ? selectedFilters[category]  :category === 'assignee' ? selectedFilters[category].map(each => each.name) : category === "score" ? selectedFilters[category] : selectedFilters[category]).value}
                   </span>
                 </div>
                 <div className='group-hover:text-accent-100'>
@@ -252,7 +266,10 @@ const FilterForDataTable = ({ onApplyFilters, readOnly, preservedFilters }) => {
                   category === 'score' ? (
                     <ScoreFilter handleScoreChange={handleScoreChange} />
                   ) :
-                    (
+                  category === 'location' ? ( 
+                      <LocationFilter closeDropDown={() => setShowDropdown(prev => ({...prev ,location : false}))} handleLocation={applyLocationFilter} />
+                    )
+                  : (
                       <div className="p-2 rounded-xl absolute typography-body left-[18.5rem] min-w-[15.625rem] bg-background-80 w-max flex gap-2 flex-col " style={{ boxShadow: "5px 5px 50px rgba(0,0,0,0.9)" }}>
                         {categories[category].map((item) => (
                           <label key={category === 'assignee' ? item._id : item} className={"group relative flex items-center p-4 h-10 hover:bg-background-60 cursor-pointer hover:text-accent-100 rounded-xl " + (category === 'assignee' ? selectedFilters[category].find(each => each.name === item.name) ? "bg-accent-300 text-accent-100 " : "" : selectedFilters[category].includes(item) ? "bg-accent-300 text-accent-100 " : "text-font-main")}>
@@ -264,7 +281,7 @@ const FilterForDataTable = ({ onApplyFilters, readOnly, preservedFilters }) => {
                               onChange={() => category === 'stage' ? handleStageSelect(item) : handleSelect(category, item)}
                               labelClassName=""
                             />
-                            <span className="ml-2">{category === 'assignee' ? item.name : item}</span>
+                            <span className="ml-2">{category === 'assignee' ? `${item?.firstName} ${item?.lastName}` : item}</span>
                           </label>
                         ))}
                       </div>

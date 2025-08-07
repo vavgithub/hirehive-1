@@ -112,3 +112,9 @@ export const getUTCBasedonTZ = (timeZone,date) => {
   const utcDateTime = luxonDateTime.toUTC();
   return utcDateTime
 }
+
+export const formatDateForUser = (utcDate, timezone) => {
+  return DateTime.fromISO(new Date(utcDate).toISOString(), { zone: 'utc' })
+    .setZone(timezone)
+    .toFormat("dd LLLL yyyy, hh:mm a"); // e.g., 09 July 2025, 05:00 PM
+};

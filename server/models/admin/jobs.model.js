@@ -8,7 +8,7 @@ const allowedJobProfiles = Object.values(JOB_PROFILES);
 const questionSchema = new mongoose.Schema({
   type: {
     type: String,
-    enum: ['multiple', 'text'],
+    enum: ['multiple', 'text', 'multi-select'],
     required: true,
   },
   text: {
@@ -22,7 +22,7 @@ const questionSchema = new mongoose.Schema({
   },
   answerType: {
     type: String,
-    enum: ['text', 'number' , 'link'],
+    enum: ['array', 'text', 'number' , 'link'],
     default: 'text',
   },
 });

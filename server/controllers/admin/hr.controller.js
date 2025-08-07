@@ -13,6 +13,7 @@ import { cancelMeetEvent, createMeetEvent, getAuthorizedOauthClient, getCalendar
 import { formattedMeetingDescription } from "../../utils/integrations/meetingDescription.js";
 import { sanitizeLexicalHtml } from "../../utils/sanitize-html.js";
 import { sendEmail } from "../../utils/sentEmail.js";
+import { sendUpdatesToTelegram } from "../candidate/bot.controller.js";
 
 const RATINGS = ['Good Fit', 'Not A Good Fit', 'May Be'];
 
@@ -173,6 +174,11 @@ export const rejectCandidate = async (req, res) => {
 
       // Save the updated candidate document
       await candidate.save();
+
+      if(candidate.integrations?.telegram?.user_id && candidate.integrations?.telegram?.status === 'CONNECTED'){
+        const updateType = `${currentStage?.toUpperCase()}_REJECTED`;
+        sendUpdatesToTelegram(candidate,job,candidate.integrations?.telegram?.user_id,updateType)
+      }
       
     //Selective Email sending
     const canSendEmail = !!REJECTION_REASON.find(reasonObj =>(reasonObj?.reason === rejectionReason?.trim() && reasonObj?.email))
@@ -320,6 +326,11 @@ export const rejectMultipleCandidates = async (req, res) => {
     
         // Save the updated candidate document
         await candidate.save();
+
+        if(candidate.integrations?.telegram?.user_id && candidate.integrations?.telegram?.status === 'CONNECTED'){
+          const updateType = `${currentStage?.toUpperCase()}_REJECTED`;
+          sendUpdatesToTelegram(candidate,job,candidate.integrations.telegram.user_id,updateType)
+        }
     
         //Selective Email sending
         const canSendEmail = !!REJECTION_REASON.find(reasonObj =>(reasonObj?.reason === eachCandidate?.rejectionReason?.trim() && reasonObj?.email))
@@ -582,6 +593,11 @@ export const moveCandidate = async (req, res) => {
     // Save the updated candidate document
     await candidate.save();
 
+    if(candidate.integrations?.telegram?.user_id && candidate.integrations?.telegram?.status === 'CONNECTED'){
+      const updateType = `${currentStage?.toUpperCase()}_CLEARED`;
+      sendUpdatesToTelegram(candidate,job,candidate.integrations?.telegram?.user_id,updateType)
+    }
+
     res.status(200).json({
       message: isLastStage
         ? "Candidate accepted in the final stage"
@@ -731,6 +747,11 @@ export const moveMultipleCandidates = async (req, res) => {
         
         // Save the updated candidate document
         await candidate.save();
+
+        if(candidate.integrations?.telegram?.user_id && candidate.integrations?.telegram?.status === 'CONNECTED'){
+          const updateType = `${eachCandidate.stage?.toUpperCase()}_CLEARED`;
+          sendUpdatesToTelegram(candidate,job,candidate.integrations?.telegram?.user_id,updateType)
+        }
     };
     
     res.status(200).json({message:"Selected candidates are moved to respective stages successfully."})
@@ -1086,7 +1107,7 @@ export const scheduleCall = async (req, res) => {
       const company = await Company.findById({_id : user?.company_id});
   
       const eventDetails = {
-        summary: `${stage} - Interview with ${candidate?.firstName + ' ' + candidate?.lastName} `,
+        summary: `${stage} - Interview with ${candidate?.firstName + ' ' + candidate?.lastName} (${job.jobProfile} - ${job.employmentType})`,
         description: formattedMeetingDescription(company?.name,company?.about , company?.website , job.employeeLocation , job.employmentType , job.experienceFrom, job.jobDescription) ,
         startDateTime: date, // already in ISO UTC
         endDateTime: new Date(new Date(date).getTime() + 60 * 60 * 1000).toISOString(),
@@ -1147,6 +1168,11 @@ export const scheduleCall = async (req, res) => {
 
     // Save the changes
     await candidate.save();
+
+    if(candidate.integrations?.telegram?.user_id && candidate.integrations?.telegram?.status === 'CONNECTED'){
+      const updateType = `${jobApplication.currentStage.toUpperCase()}_CALLSCHEDULED`;
+      sendUpdatesToTelegram(candidate,job,candidate.integrations?.telegram?.user_id,updateType,date)
+    }
 
     res.status(200).json({
       message: `${stage} call scheduled successfully`,
@@ -1241,7 +1267,7 @@ export const rescheduleCall = async (req, res) => {
       }
   
       const eventDetails = {
-        summary: `${stage} - Interview with ${candidate?.firstName + ' ' + candidate?.lastName} `,
+        summary: `${stage} - Interview with ${candidate?.firstName + ' ' + candidate?.lastName} (${job.jobProfile} - ${job.employmentType})`,
         description: formattedMeetingDescription(company?.name,company?.about , company?.website , job.employeeLocation , job.employmentType , job.experienceFrom, job.jobDescription) ,
         startDateTime: date, // already in ISO UTC
         endDateTime: new Date(new Date(date).getTime() + 60 * 60 * 1000).toISOString(),
@@ -1303,6 +1329,12 @@ export const rescheduleCall = async (req, res) => {
     candidate.markModified("jobApplications");
 
     await candidate.save();
+
+    
+    if(candidate.integrations?.telegram?.user_id && candidate.integrations?.telegram?.status === 'CONNECTED'){
+      const updateType = `${jobApplication.currentStage.toUpperCase()}_CALL_RESCHEDULED`;
+      sendUpdatesToTelegram(candidate,job,candidate.integrations?.telegram?.user_id,updateType,date)
+    }
 
     const updatedCandidate = await candidates.findById(candidateId);
     const updatedJobApplication = updatedCandidate.jobApplications.find(
@@ -1569,6 +1601,12 @@ export const sendDesignTask = async (req, res) => {
       await sendEmail(candidateEmail, emailSubject, emailContent,"Design Task");
   
       await candidate.save();
+
+      
+      if(candidate.integrations?.telegram?.user_id && candidate.integrations?.telegram?.status === 'CONNECTED'){
+        const updateType = `${jobApplication.currentStage.toUpperCase()}_SENT`;
+        sendUpdatesToTelegram(candidate,jobApplication,candidate.integrations?.telegram?.user_id,updateType,dueDate)
+      }
   
       res.status(200).json({
         message: "Design task sent successfully",
@@ -1690,13 +1728,61 @@ export const changeApplicationStatus = async (req, res) => {
   }
 };
 
+export const saveTaskTemplates = async ( req, res) => {
+  try {
+    const { title, level, jobProfile, htmlString } = req.body;
+
+    if(!title || !level || !jobProfile || !htmlString){
+      return res.status(400).json({
+        error : true,
+        message : 'Please provide title, job level, job profile and task description.'
+      })
+    }
+    const sanitizedString = sanitizeLexicalHtml(htmlString);
+
+    const existingTasks = await Task.find({
+      title : { $regex: title, $options: "i" },
+      company_id : req.user.company_id,
+      category : jobProfile
+    })
+
+    if(existingTasks?.length > 0){
+      return res.status(400).json({
+        error : true,
+        message : 'This task title already exists.'
+      })
+    }
+
+    const newTask = await Task.create({
+      title,
+      level,
+      category : jobProfile,
+      htmlString : sanitizedString,
+      company_id : req.user?.company_id ?? null
+    })
+
+
+    res.status(200).json({
+      success : true,
+      data : newTask,
+      message: "Task template created Successfully.",
+    });
+  } catch (error) {
+    console.error("Error updating status:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+}
+
 export const getTaskTemplates = async ( req, res) => {
   try {
     const { jobProfile } = req.body;
-    const savedTemplates = await Task.find({category : jobProfile});
+    const savedTemplates = await Task.find({category : jobProfile, company_id : null});
+
+    const companySavedTemplates = await Task.find({category : jobProfile , company_id : req.user?.company_id});
+
     res.status(200).json({
       success : true,
-      data : savedTemplates,
+      data : [...savedTemplates, ...companySavedTemplates],
       message: "Task templates fetched Successfully.",
     });
   } catch (error) {

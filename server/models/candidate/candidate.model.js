@@ -394,7 +394,17 @@ const candidateSchema = new mongoose.Schema(
       coordinates : {
         type : [Number],
       },
-    }
+    },
+    integrations : {
+      telegram : {
+        user_id : Number,
+        status : {
+          type : String,
+          enum : ['IDLE','EMAIL','OTP','CONNECTED'],
+          default : 'IDLE'
+        },
+      }
+    },
     // Removed 'stage', 'status', and 'stageStatus' from the root level
   },
   { timestamps: true }
