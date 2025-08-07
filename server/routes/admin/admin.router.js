@@ -1,10 +1,12 @@
 import express from "express"
 import { protect, roleProtect } from "../../middlewares/authMiddleware.js";
-import { addTeamMember, approveRequest, changeMemberStatus, editTeamMember, getAllTeamMember, getCalendarDetails, getDetailsForDashboard, reInviteMember, rejectRequest, resetScreeningParam, updateScreeningParam } from "../../controllers/admin/admin.controller.js";
+import { addTeamMember, approveRequest, changeMemberStatus, editTeamMember, getAllTeamMember, getCalendarDetails, getDashboardDetailsSecondary, getDetailsForDashboard, reInviteMember, rejectRequest, resetScreeningParam, updateScreeningParam } from "../../controllers/admin/admin.controller.js";
 
 const router = express.Router();
 
 router.get('/dashboard',protect,roleProtect("Admin"), getDetailsForDashboard);
+
+router.get('/dashboard-secondary',protect,roleProtect("Admin"), getDashboardDetailsSecondary);
 
 router.post('/add-member',protect,roleProtect("Admin"), addTeamMember);
 

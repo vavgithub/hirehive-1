@@ -1387,60 +1387,13 @@ export const getAllCandidatesWithStats = async (req, res) => {
     const adminId = req.user._id; // Extract the admin's _id from the authenticated user
     const company_id = req.user.company_id;
     
-    const { location , locationId, sessionId } = req.body;
-
-    let geoFilter = null;
-    if(locationId && sessionId){
-        const result = await getPlaceDetails(locationId,sessionId);
-        if(result.latlng?.longitude && result.latlng?.latitude){
-          geoFilter = {
-              coordinates : [parseFloat(result.latlng.longitude) , parseFloat(result.latlng.latitude)]
-          }
-        }
-    }
     // Find all users in the same company
     const usersInCompany = await User.find({ company_id }, '_id'); // Get only _id fields
     // Extract user _id values into an array
     const userIds = usersInCompany.map(user => user._id);
 
     const allCandidates = await candidates.aggregate([
-        // First branch: regex match
-      ...(location
-        ? [{ $match: { location: { $regex: location, $options: 'i' } } }]
-        : []
-      ),
 
-      // Union with second branch: geolocation match
-      ...(geoFilter?.coordinates
-        ? [{
-            $unionWith: {
-              coll: candidates.collection.name,
-              pipeline: [{
-                $match: {
-                  geoLocation: {
-                    $geoWithin: {
-                      $centerSphere: [
-                        [ geoFilter.coordinates[0], geoFilter.coordinates[1] ],
-                        100000 / 6371000
-                      ]
-                    }
-                  }
-                }
-              }]
-            }
-          }]
-        : []
-      ),
-      // Now dedupe by candidate _id
-      {
-        $group: {
-          _id: "$_id",
-          doc: { $first: "$$ROOT" }
-        }
-      },
-      {
-        $replaceRoot: { newRoot: "$doc" }
-      },
       {
         $match: { isVerified: true }, // Filter only verified candidates
       },
@@ -1594,9 +1547,6 @@ export const getAllCandidatesWithStats = async (req, res) => {
           status: '$currentStageStatus.v.status'
         }
       },
-      {
-        $sort: { applicationDate: -1 }
-      }
     ]);
 
     const { firstDayPreviousMonth, lastDayPreviousMonth, firstDayCurrentMonth } = getPreviousMonthRange();
