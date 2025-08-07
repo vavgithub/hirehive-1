@@ -281,7 +281,7 @@ const FilterForDataTable = ({ applyLocationFilter, onApplyFilters, readOnly, pre
                               onChange={() => category === 'stage' ? handleStageSelect(item) : handleSelect(category, item)}
                               labelClassName=""
                             />
-                            <span className="ml-2">{category === 'assignee' ? item.name : item}</span>
+                            <span className="ml-2">{category === 'assignee' ? `${item?.firstName} ${item?.lastName}` : item}</span>
                           </label>
                         ))}
                       </div>
