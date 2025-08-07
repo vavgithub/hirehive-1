@@ -70,6 +70,7 @@ const getCommonColumns = (handleDocumentClick) => [
     headerName: 'Stage',
     width: 200,
     align: 'left',
+    sortable: false,
     headerAlign: 'left',
     disableColumnMenu: true,
     renderCell: (params) => (
@@ -171,6 +172,7 @@ export const getReadOnlyColumns = (role, handleDocumentClick, disableCTC,disable
       headerName: 'Status',
       width: 200,
       align: 'center',
+      sortable: false,
       headerAlign: 'left',
       disableColumnMenu: true,
       renderCell: (params) => (
@@ -186,6 +188,7 @@ export const getReadOnlyColumns = (role, handleDocumentClick, disableCTC,disable
       headerName: 'Applied For',
       width: 200,
       align: 'center',
+      sortable: false,
       headerAlign: 'center',
       disableColumnMenu: true,
       renderCell: (params) => (
@@ -202,6 +205,7 @@ export const getDefaultColumns = (role, canMove, canReject, handleAssigneeChange
     field: 'status',
     headerName: 'Status',
     width: 180,
+    sortable: false,
     disableColumnMenu: true,
     valueGetter: (value, row) => {
       const currentStage = row.currentStage;
@@ -221,6 +225,7 @@ export const getDefaultColumns = (role, canMove, canReject, handleAssigneeChange
   {
     field: 'assignee',
     headerName: 'Assignee',
+    sortable: false,
     width: 100,
     disableColumnMenu: true,
     valueGetter: (value, row) => {

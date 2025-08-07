@@ -1,11 +1,11 @@
 import axios from "./axios";
 
 //GET
-export const getShortlistedCandidates = ({companyId,location , locationId , sessionId }) => axios.post(`/admin/candidate/shortlisted/${companyId}`,{location , locationId, sessionId }).then(res => res.data)
+export const getShortlistedCandidates = ({companyId,location , locationId , sessionId , page, pageLimit, filter, search, sortFilters}) => axios.post(`/admin/candidate/shortlisted/${companyId}`,{location , locationId, sessionId, page, pageLimit, filter, search, sortFilters }).then(res => res.data)
 
 export const getAllCandidatesAndStats = () => axios.post('/admin/candidate/getData/data/allCandidatesWithStats').then(res => res.data)
 
-export const getAllCandidatesWithFilters = ({location ,locationId ,sessionId ,page ,pageLimit ,search ,filter }) => axios.post('/admin/candidate/getData/data/allCandidatesWithFilters' , {location , locationId, sessionId , page, pageLimit, search , filter}).then(res => res.data)
+export const getAllCandidatesWithFilters = ({location ,locationId ,sessionId ,page ,pageLimit ,search ,filter ,sortFilters}) => axios.post('/admin/candidate/getData/data/allCandidatesWithFilters' , {location , locationId, sessionId , page, pageLimit, search , filter, sortFilters}).then(res => res.data)
 
 export const fetchCandidateData = async (candidateId, jobId) => {
     const { data } = await axios.get(`/admin/candidate/${candidateId}/job/${jobId}`);

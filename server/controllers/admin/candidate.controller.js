@@ -34,7 +34,353 @@ export const getAllCandidatesForJob = async (req, res) => {
     // Get the stages for this job profile
     const stages = jobStagesStatuses[job.jobProfile] || [];
 
-    const { location, locationId, sessionId } = req.body;
+    const { location, locationId, sessionId, page, pageLimit, search, filter, sortFilters } = req.body;
+
+    //Pagintation management
+    const LIMIT = pageLimit || 10;
+    const pageCount = page || null;
+    let paginationFilter = [];
+
+    if(pageCount){
+      const skipCount = (pageCount - 1) * LIMIT
+      paginationFilter = [
+        {
+          $skip : skipCount
+        },
+        {
+          $limit : LIMIT
+        }
+      ]
+    }
+    
+    //Search filtering
+    let searchQuery = [];
+    if (search !== "") {
+      searchQuery = [{
+        $match: {
+          $or: [
+            { firstName: { $regex: new RegExp(search, 'i') } },
+            { email: { $regex: new RegExp(search, 'i') } },
+            { lastName: { $regex: new RegExp(search, 'i') } },
+            // add more fields as needed
+          ]
+        }
+      }];
+    }
+
+    const sortArray = Object.entries(sortFilters || {});
+    let sortQuery = []
+
+    if(sortArray?.length !== 0){
+      sortArray.map(([key,value]) => {
+        if(value === 'asc'){
+            if(key === 'hourlyRate'){
+              sortQuery = [
+                {
+                  $sort : {"jobApplications.professionalInfo.hourlyRate" : 1}
+                }
+              ]
+            }else if(key === 'currentCTC'){
+              sortQuery = [
+                {
+                  $sort : {"jobApplications.professionalInfo.currentCTC" : 1}
+                }
+              ]
+            }else if(key === 'expectedCTC'){
+              sortQuery = [
+                {
+                  $sort : {"jobApplications.professionalInfo.expectedCTC" : 1}
+                }
+              ]
+            }else if(key === 'experience'){
+              sortQuery = [
+                {
+                  $sort : {"jobApplications.professionalInfo.experience" : 1}
+                }
+              ]
+            }else if(key === 'score'){
+              sortQuery = [
+                {
+                  $addFields: {
+                    stageScore: {
+                      $let: {
+                        vars: {
+                          current: "$jobApplications.currentStage",
+                          stageStatusesArr: { $objectToArray: "$jobApplications.stageStatuses" }
+                        },
+                        in: {
+                          $first: {
+                            $map: {
+                              input: {
+                                $filter: {
+                                  input: "$$stageStatusesArr",
+                                  as: "item",
+                                  cond: { $eq: ["$$item.k", "$$current"] }
+                                }
+                              },
+                              as: "match",
+                              in: "$$match.v.score"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                {
+                  $addFields: {
+                    totalScore: {
+                      $cond: [
+                        { $isNumber: "$stageScore" },
+                        "$stageScore",
+                        {
+                          $cond: [
+                            { $eq: [{ $type: "$stageScore" }, "object"] },
+                            {
+                              $sum: {
+                                $map: {
+                                  input: { $objectToArray: "$stageScore" },
+                                  as: "item",
+                                  in: "$$item.v"
+                                }
+                              }
+                            },
+                            0
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                },
+                { $sort: { totalScore: 1 } },
+              ]
+            }
+          }else if(value === 'desc'){
+            if(key === 'hourlyRate'){
+              sortQuery = [
+                {
+                  $sort : {"jobApplications.professionalInfo.hourlyRate" : -1}
+                }
+              ]
+            }else if(key === 'currentCTC'){
+              sortQuery = [
+                {
+                  $sort : {"jobApplications.professionalInfo.currentCTC" : -1}
+                }
+              ]
+            }else if(key === 'expectedCTC'){
+              sortQuery = [
+                {
+                  $sort : {"jobApplications.professionalInfo.expectedCTC" : -1}
+                }
+              ]
+            }else if(key === 'experience'){
+              sortQuery = [
+                {
+                  $sort : {"jobApplications.professionalInfo.experience" : -1}
+                }
+              ]
+            }else if(key === 'score'){
+              sortQuery = [
+                {
+                  $addFields: {
+                    stageScore: {
+                      $let: {
+                        vars: {
+                          current: "$jobApplications.currentStage",
+                          stageStatusesArr: { $objectToArray: "$jobApplications.stageStatuses" }
+                        },
+                        in: {
+                          $first: {
+                            $map: {
+                              input: {
+                                $filter: {
+                                  input: "$$stageStatusesArr",
+                                  as: "item",
+                                  cond: { $eq: ["$$item.k", "$$current"] }
+                                }
+                              },
+                              as: "match",
+                              in: "$$match.v.score"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                {
+                  $addFields: {
+                    totalScore: {
+                      $cond: [
+                        { $isNumber: "$stageScore" },
+                        "$stageScore",
+                        {
+                          $cond: [
+                            { $eq: [{ $type: "$stageScore" }, "object"] },
+                            {
+                              $sum: {
+                                $map: {
+                                  input: { $objectToArray: "$stageScore" },
+                                  as: "item",
+                                  in: "$$item.v"
+                                }
+                              }
+                            },
+                            0
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                },
+                { $sort: { totalScore: -1 } },
+              ]
+            }
+          }
+      })
+    }
+
+    //Data filtering
+    const filterArray = Object.entries(filter || {})
+    let statusFilter = []
+    let stageFilter = []
+    let assessmentFilter = []
+    let ratingFilter = []
+    let assigneeFilter = []
+    let budgetFilter = []
+
+    if(filterArray?.length !== 0){
+      filterArray.map(([key,value]) => {
+        if(key === 'status'){
+          if(Array.isArray(value)){
+            statusFilter = [
+              {
+                $match: {
+                  $expr: {
+                    $in: [
+                      {
+                        $getField: {
+                          field: "status",
+                          input: {
+                            $getField: {
+                              field: "$jobApplications.currentStage",
+                              input: "$jobApplications.stageStatuses"
+                            }
+                          }
+                        }
+                      },
+                      value  // <-- list all allowed statuses here
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        }
+        if(key === 'stage'){
+          if(Array.isArray(value)){
+            stageFilter = [
+               {
+                  $match: {
+                    "jobApplications.currentStage": {
+                      $in: value
+                    }
+                  }
+                },
+            ]
+          }
+        }
+        if(key === 'assessment'){
+          let isCompleted = false;
+          let isNotCompleted = false;
+          value.map(state => {
+            state === "Completed" && (isCompleted = true)
+            state === "Not Completed" && (isNotCompleted = true)
+          })
+          if (isCompleted && !isNotCompleted) {
+            assessmentFilter = [
+              {
+                $match: {
+                  "jobApplications.assessmentResponse": { $type: "object" }
+                }
+              },
+            ]
+          } else if (!isCompleted && isNotCompleted) {
+            assessmentFilter = [
+              {
+                $match: {
+                  "jobApplications.assessmentResponse": { $exists: false }
+                }
+              },
+            ]
+          }
+        }
+        if(key === 'rating'){
+          ratingFilter = [
+            {
+              $match : {
+                "jobApplications.rating" : { $in : value}
+              }
+            }
+          ]
+        }
+        if(key === 'assignee' && value){
+          if(Array.isArray(value)){
+            const selectedAssigneeIds = value.map(assignee => new mongoose.Types.ObjectId(assignee._id));
+            assigneeFilter = [
+              {
+                $match: {
+                  $expr: {
+                    $in: [
+                      {
+                        $getField: {
+                          field: "assignedTo",
+                          input: {
+                            $getField: {
+                              field: "$jobApplications.currentStage",
+                              input: "$jobApplications.stageStatuses"
+                            }
+                          }
+                        }
+                      },
+                      selectedAssigneeIds // array of ObjectIds
+                    ]
+                  }
+                }
+              }
+
+            ]
+          }
+        }
+        if(key === 'budget'){
+          if (value?.from != null || value?.to != null) {
+            const rangeQuery = {};
+
+            if (value.from != null) {
+              rangeQuery.$gte = Number(value?.from || 0);
+            }
+            if (value.to != null) {
+              rangeQuery.$lte = Number(value?.to || Infinity);
+            }
+            if(job.employmentType === "Part Time" || job.employmentType === "Contract"){
+              budgetFilter.push({
+                $match: {
+                  "jobApplications.professionalInfo.hourlyRate": rangeQuery
+                }
+              });
+            }else{
+              budgetFilter.push({
+                $match: {
+                  "jobApplications.professionalInfo.expectedCTC": rangeQuery
+                }
+              });
+            }
+          }
+        }
+      })
+
+    }
 
     let geoFilter = null;
     if (locationId && sessionId) {
@@ -67,26 +413,56 @@ export const getAllCandidatesForJob = async (req, res) => {
       });
     }
 
-    // Fetch candidates who have applied for this job
-    const candidatesData = await candidates
-      .find({
-        "jobApplications.jobId": jobId,
-        isVerified: true,
-      ...(locationConditions.length > 0 ? { $or: locationConditions } : {})
-      })
-      .select('-password')
-      .sort({ "jobApplications.applicationDate": -1 });
+    const pipeline = [
+      { $match: { isVerified: true } },
+      ...searchQuery,
+      { $unwind: "$jobApplications" },
+      { $match: { "jobApplications.jobId": new mongoose.Types.ObjectId(jobId) } },
+
+      // ✅ Filter based on different criteria
+      ...budgetFilter,
+      ...stageFilter,
+      ...statusFilter,
+      ...assigneeFilter,
+      ...ratingFilter,
+      ...assessmentFilter,
+      ...(locationConditions.length > 0 ? [{ $match: { $or: locationConditions } }] : []),
+
+      { $sort: { "jobApplications.applicationDate": -1 } },
+      ...sortQuery,
+
+      // ✅ Use $facet to split pipeline into 2 branches
+      {
+        $facet: {
+          candidates: [
+            { $project: { password: 0 } },
+            ...paginationFilter // include skip & limit here
+          ],
+          totalCount: [
+            { $count: "count" }
+          ]
+        }
+      },
+      // ✅ Format the totalCount as number (0 if empty)
+      {
+        $addFields: {
+          totalCount: {
+            $ifNull: [{ $arrayElemAt: ["$totalCount.count", 0] }, 0]
+          }
+        }
+      }
+    ];
+
+    const candidatesData = await candidates.aggregate(pipeline);
+
 
     // Process and format the candidate data
-    const formattedCandidates = candidatesData.map((candidate) => {
-      const jobApplication = candidate.jobApplications.find(
-        (app) => app.jobId.toString() === jobId
-      );
-
+    const formattedCandidates = candidatesData[0].candidates.map((candidate) => {
+      const jobApplication = candidate.jobApplications
       // Initialize stage statuses
       const stageStatuses = {};
       stages.forEach((stage) => {
-        const stageStatus = jobApplication.stageStatuses.get(stage.name) || {
+        const stageStatus = jobApplication.stageStatuses[stage.name] || {
           status: "Not Assigned",
           rejectionReason: "N/A",
           assignedTo: null,
@@ -149,6 +525,7 @@ export const getAllCandidatesForJob = async (req, res) => {
 
     res.status(200).json({
       candidates: formattedCandidates,
+      totalCount : candidatesData[0]?.totalCount || 0,
       stages: stages.map((stage) => stage.name),
     });
   } catch (error) {
@@ -625,7 +1002,7 @@ export const getAllCandidates = async (req,res) => {
   try {
     const company_id = req.user.company_id;
     
-    const { location , locationId, sessionId , page , pageLimit, search, filter } = req.body;
+    const { location , locationId, sessionId , page , pageLimit, search, filter ,sortFilters } = req.body;
 
     //Pagintation management
     const LIMIT = pageLimit || 10;
@@ -659,6 +1036,67 @@ export const getAllCandidates = async (req,res) => {
       }];
     }
 
+    const sortArray = Object.entries(sortFilters);
+    let sortQuery = []
+    
+    if(sortArray?.length !== 0){
+      sortArray.map(([key,value]) => {
+        if(value === 'asc'){
+            if(key === 'hourlyRate'){
+              sortQuery = [
+                {
+                  $sort : {hourlyRate : 1}
+                }
+              ]
+            }else if(key === 'currentCTC'){
+              sortQuery = [
+                {
+                  $sort : {currentCTC : 1}
+                }
+              ]
+            }else if(key === 'expectedCTC'){
+              sortQuery = [
+                {
+                  $sort : {expectedCTC : 1}
+                }
+              ]
+            }else if(key === 'experience'){
+              sortQuery = [
+                {
+                  $sort : {experience : 1}
+                }
+              ]
+            }
+          }else if(value === 'desc'){
+            if(key === 'hourlyRate'){
+              sortQuery = [
+                {
+                  $sort : {hourlyRate : -1}
+                }
+              ]
+            }else if(key === 'currentCTC'){
+              sortQuery = [
+                {
+                  $sort : {currentCTC : -1}
+                }
+              ]
+            }else if(key === 'expectedCTC'){
+              sortQuery = [
+                {
+                  $sort : {expectedCTC : -1}
+                }
+              ]
+            }else if(key === 'experience'){
+              sortQuery = [
+                {
+                  $sort : {experience : -1}
+                }
+              ]
+            }
+          }
+      })
+    }
+
     //Data filtering
     const filterArray = Object.entries(filter)
     let filterQuery = []
@@ -690,7 +1128,9 @@ export const getAllCandidates = async (req,res) => {
         if(key === 'rating'){
           encodedFilters.rating = { $in : value }
         }
-        if(key === 'job Type'){
+        if(key === 'showContractors' && value){
+          encodedFilters.jobType = "Contract"
+        }else if(key === 'job Type'){
           encodedFilters.jobType = { $in : value }
         }
       })
@@ -913,6 +1353,7 @@ export const getAllCandidates = async (req,res) => {
       {
         $sort: { applicationDate: -1 }
       },
+      ...sortQuery,
       {
         $facet: {
           totalCount: [
@@ -931,7 +1372,6 @@ export const getAllCandidates = async (req,res) => {
       }
     ]);
 
-    console.log(allCandidates[0].candidates?.length,allCandidates[0].totalCount)
     return res.status(200).json({allCandidates : allCandidates[0].candidates,totalCandidates :  allCandidates[0].totalCount});
   } catch (error) {
       console.error('Error fetching candidates:', error);
@@ -1960,7 +2400,209 @@ export const shortlistCandidate = async (req, res) => {
 
     const { company_id } = req.params;
 
-    const { location, locationId, sessionId } = req.body;
+    const { location, locationId, sessionId , page, pageLimit, search, filter, sortFilters } = req.body;
+
+    //Pagintation management
+    const LIMIT = pageLimit || 10;
+    const pageCount = page || null;
+    let paginationFilter = [];
+
+    if(pageCount){
+      const skipCount = (pageCount - 1) * LIMIT
+      paginationFilter = [
+        {
+          $skip : skipCount
+        },
+        {
+          $limit : LIMIT
+        }
+      ]
+    }
+    
+    //Search filtering
+    let searchQuery = [];
+    if (search !== "") {
+      searchQuery = [{
+        $match: {
+          $or: [
+            { firstName: { $regex: new RegExp(search, 'i') } },
+            { email: { $regex: new RegExp(search, 'i') } },
+            { lastName: { $regex: new RegExp(search, 'i') } },
+            // add more fields as needed
+          ]
+        }
+      }];
+    }
+
+    const sortArray = Object.entries(sortFilters || {});
+    let sortQuery = []
+
+    if(sortArray?.length !== 0){
+      sortArray.map(([key,value]) => {
+        if(value === 'asc'){
+            if(key === 'hourlyRate'){
+              sortQuery = [
+                {
+                  $sort : {"jobApplications.professionalInfo.hourlyRate" : 1 , _id : 1}
+                }
+              ]
+            }else if(key === 'currentCTC'){
+              sortQuery = [
+                {
+                  $sort : {"jobApplications.professionalInfo.currentCTC" : 1 , _id : 1}
+                }
+              ]
+            }else if(key === 'expectedCTC'){
+              sortQuery = [
+                {
+                  $sort : {"jobApplications.professionalInfo.expectedCTC" : 1 , _id : 1}
+                }
+              ]
+            }else if(key === 'experience'){
+              sortQuery = [
+                {
+                  $sort : {"jobApplications.professionalInfo.experience" : 1 , _id : 1}
+                }
+              ]
+            }
+          }else if(value === 'desc'){
+            if(key === 'hourlyRate'){
+              sortQuery = [
+                {
+                  $sort : {"jobApplications.professionalInfo.hourlyRate" : -1 , _id : 1}
+                }
+              ]
+            }else if(key === 'currentCTC'){
+              sortQuery = [
+                {
+                  $sort : {"jobApplications.professionalInfo.currentCTC" : -1 , _id : 1}
+                }
+              ]
+            }else if(key === 'expectedCTC'){
+              sortQuery = [
+                {
+                  $sort : {"jobApplications.professionalInfo.expectedCTC" : -1 , _id : 1}
+                }
+              ]
+            }else if(key === 'experience'){
+              sortQuery = [
+                {
+                  $sort : {"jobApplications.professionalInfo.experience" : -1 , _id : 1}
+                }
+              ]
+            }
+          }
+      })
+    }
+
+
+    //Data filtering
+    const filterArray = Object.entries(filter || {})
+    let statusFilter = []
+    let stageFilter = []
+    let assessmentFilter = []
+    let ratingFilter = []
+    let jobTypeFilter = []
+
+    if(filterArray?.length !== 0){
+      filterArray.map(([key,value]) => {
+        if(key === 'status'){
+          if(Array.isArray(value)){
+            statusFilter = [
+              {
+                $match: {
+                  $expr: {
+                    $in: [
+                      {
+                        $getField: {
+                          field: "status",
+                          input: {
+                            $getField: {
+                              field: "$jobApplications.currentStage",
+                              input: "$jobApplications.stageStatuses"
+                            }
+                          }
+                        }
+                      },
+                      value  // <-- list all allowed statuses here
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        }
+        if(key === 'stage'){
+          if(Array.isArray(value)){
+            stageFilter = [
+               {
+                  $match: {
+                    "jobApplications.currentStage": {
+                      $in: value
+                    }
+                  }
+                },
+            ]
+          }
+        }
+        if(key === 'assessment'){
+          let isCompleted = false;
+          let isNotCompleted = false;
+          value.map(state => {
+            state === "Completed" && (isCompleted = true)
+            state === "Not Completed" && (isNotCompleted = true)
+          })
+          if (isCompleted && !isNotCompleted) {
+            assessmentFilter = [
+              {
+                $match: {
+                  "jobApplications.assessmentResponse": { $type: "object" }
+                }
+              },
+            ]
+          } else if (!isCompleted && isNotCompleted) {
+            assessmentFilter = [
+              {
+                $match: {
+                  "jobApplications.assessmentResponse": { $exists: false }
+                }
+              },
+            ]
+          }
+        }
+        if(key === 'rating'){
+          if(Array.isArray(value)){
+            ratingFilter = [
+              {
+                $match : {
+                  "jobApplications.rating" : { $in : value}
+                }
+              }
+            ]
+          }
+        }
+        if(key === 'showContractors' && value){
+          jobTypeFilter = [
+            {
+              $match : {
+                "jobApplications.jobType" : { $in : ["Part Time" , "Contract"] }
+              }
+            }
+          ]
+        }else if(key === 'job Type'){
+          if(Array.isArray(value)){
+            jobTypeFilter = [
+              {
+                $match : {
+                  "jobApplications.jobType" : { $in : value }
+                }
+              }
+            ]
+          }
+        }
+      })
+
+    }
 
     let geoFilter = null;
     if (locationId && sessionId) {
@@ -1992,20 +2634,75 @@ export const shortlistCandidate = async (req, res) => {
         }
       });
     }
+    
+    const pipeline = [
+      // Optional: Location filter
+      ...searchQuery,
+      ...(locationConditions.length > 0 ? [{ $match: { $or: locationConditions } }] : []),
+      // Unwind jobApplications to filter individual ones
+      { $unwind: "$jobApplications" },
 
-    // Final query
-    const shortlistedCandidates = await candidates.find({
-      jobApplications: {
-        $elemMatch: {
-          shortlisted: true,
-          "companyDetails._id": company_id
+      // Filter for shortlisted jobApplications for this company
+      {
+        $match: {
+          "jobApplications.shortlisted": true,
+          "jobApplications.companyDetails._id": new mongoose.Types.ObjectId(company_id)
         }
       },
-      ...(locationConditions.length > 0 ? { $or: locationConditions } : {})
-    });
+
+      ...stageFilter,
+      ...statusFilter,
+      ...assessmentFilter,
+      ...jobTypeFilter,
+      ...ratingFilter,
+
+      // Group back by candidate _id, collecting only shortlisted jobApplications
+      {
+        $group: {
+          _id: "$_id",
+          jobApplications: { $push: "$jobApplications" },
+          candidate: { $first: "$$ROOT" }  // preserve other candidate fields
+        }
+      },
+
+      // Rebuild candidate document with filtered jobApplications
+      {
+        $addFields: {
+          "candidate.jobApplications": "$jobApplications"
+        }
+      },
+
+      {
+        $replaceRoot: {
+          newRoot: "$candidate"
+        }
+      },
+
+      {
+        $sort : { "jobApplications.applicationDate" : -1}
+      },
+      ...sortQuery,
+
+        // 👇 Facet to get both paginated results & total count
+      {
+        $facet: {
+          candidates: [...paginationFilter], // your pagination (e.g., $skip, $limit)
+          totalCount: [{ $count: "count" }]
+        }
+      },
+      // 👇 Optional: format output as a single object
+      {
+        $addFields: {
+          totalCount: { $ifNull: [{ $arrayElemAt: ["$totalCount.count", 0] }, 0] }
+        }
+      }
+    ];
+
+    const shortlistedCandidates = await candidates.aggregate(pipeline);
+
 
     // Format response to include only relevant information
-    const formattedCandidates = shortlistedCandidates.map((candidate) => {
+    const formattedCandidates = shortlistedCandidates[0]?.candidates.map((candidate) => {
       // Filter only shortlisted job applications
       const shortlistedApplications = candidate.jobApplications.filter(
         (app) => app.shortlisted
@@ -2033,7 +2730,7 @@ export const shortlistCandidate = async (req, res) => {
           }
           
           // Get the current stage status
-          const currentStageStatus = app.stageStatuses && app.stageStatuses.get(app.currentStage);
+          const currentStageStatus = app.stageStatuses && app.stageStatuses[app.currentStage];
           
           return {
             jobId: app.jobId,
@@ -2053,7 +2750,7 @@ export const shortlistCandidate = async (req, res) => {
       };
     });
     
-    return res.status(200).json({ candidates: formattedCandidates });
+    return res.status(200).json({ candidates: formattedCandidates , totalCount : shortlistedCandidates[0]?.totalCount || 0});
   } catch (error) {
     console.error("Error fetching shortlisted candidates:", error);
     return res

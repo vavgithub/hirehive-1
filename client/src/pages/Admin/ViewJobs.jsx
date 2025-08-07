@@ -21,6 +21,7 @@ import IconWrapper from '../../components/Cards/IconWrapper';
 import { Briefcase, Check, Eye, File, FileText, Folder, MonitorDot, MousePointer2, PenTool, Users } from 'lucide-react';
 import { getRoute, ROUTE_KEY } from '../../config/permissions.config';
 import { closeJob, deleteJob, draftJob, fetchjobsById, fetchOverallJobStats, reOpenJob } from '../../services/jobs.service';
+import useDebounce from '../../hooks/useDebounce';
 
 
 const ViewJobs = () => {
@@ -37,6 +38,37 @@ const ViewJobs = () => {
     const [modalOpen, setModalOpen] = useState(false);
     const [modalAction, setModalAction] = useState('');
     const [selectedJob, setSelectedJob] = useState(null);
+
+    const [location,setLocation] = useState(null);
+    const [filters,setFilters] = useState({});
+    const [page,setPage] = useState(1);
+    const [pageSize,setPageSize] = useState(10);
+    const [filterObj,setFilterObj] = useState({});
+    const [sortFilterObj,setSortFilterObj] = useState({});
+    const [sortModel,setSortModel] = useState([])
+    const [search,setSearch] = useState("");
+
+    const [budgetFilter, setBudgetFilter] = useState(() => {
+        const savedFilter = localStorage.getItem(`budgetFilter_${mainId}`);
+        return savedFilter ? JSON.parse(savedFilter) : { from: '', to: '' };
+    });
+
+    const [debouncedQuery] = useDebounce(search,400);
+
+    //Server-side sort management for tables
+    useEffect(() => {
+        const selectedSort = {}
+        sortModel.map(model => {
+        selectedSort[model.field] = model.sort
+        })
+        setSortFilterObj(selectedSort);
+    }, [sortModel]);
+
+    useEffect(()=>{
+        //removing non-populated filters
+        setFilterObj({...Object.fromEntries(Object.entries(filters).filter(([Key,value]) =>!!(Array.isArray(value) ? value?.length : value))), ...((budgetFilter?.from || budgetFilter?.to) ? {'budget' : budgetFilter} : {} )})
+    },[filters,budgetFilter])
+
 
     const handleTabClick = (tab) => {
         setActiveTab(tab);
@@ -91,13 +123,11 @@ const ViewJobs = () => {
         queryFn: () => fetchjobsById(mainId),
     });
 
-
-    // //fetch all candidate data for the respective job we have
-    // const { data: candidatesData, isLoading: isCandidatesLoading } = useQuery({
-    //     queryKey: ['candidates', mainId],
-    //     queryFn: () => axios.post(`/admin/candidate/${mainId}`).then(res => res.data),
-    // });
-    // // console.log("this tabel data", candidatesData);
+    const { data: apiResponse, isLoading, isError, refetch } = useQuery({
+        queryKey: ['candidates', mainId,location,page,pageSize,filterObj,debouncedQuery,sortFilterObj],
+        queryFn: () => axios.post(`/admin/candidate/${mainId}`,{...(location ? location : {} ) ,page : page + 1 ,pageLimit : pageSize ,filter : filterObj ,search : debouncedQuery, sortFilters : sortFilterObj}).then(res => res.data),
+        enabled: activeTab === 'candidate', // Only fetch data if not in readOnly mode
+    });
 
     // Add new query for job statistics
     const { data: jobStats = { data: { totalCount: 0, stageStats: {}, jobDetails: {} } },
@@ -274,6 +304,22 @@ const ViewJobs = () => {
                         <Table
                             jobId={mainId} // Pass jobId to Table component
                             jobData={formData}
+                            currentPage={page} 
+                            setCurrentPage={setPage}
+                            pageSize={pageSize} 
+                            setPageSize={setPageSize}
+                            filters={filters}
+                            setFilters={setFilters}
+                            searchTerm={search}
+                            setSearchTerm={setSearch}
+                            sortModel={sortModel}
+                            setSortModel={setSortModel}
+                            budgetFilter={budgetFilter}
+                            setBudgetFilter={setBudgetFilter}
+                            addLocationFilter={setLocation} 
+                            tableData={apiResponse?.candidates || []}
+                            totalCount={apiResponse?.totalCount || 0}
+                            isTableDataLoading={isLoading}
                         >
                         </Table>
                     </div>

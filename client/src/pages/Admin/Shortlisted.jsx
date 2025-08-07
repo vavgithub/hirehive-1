@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from '../../services/axios';
 import { showSuccessToast, showErrorToast } from '../../components/ui/Toast';
@@ -13,17 +13,60 @@ import { useAuthContext } from '../../context/AuthProvider';
 import { getRoute, ROUTE_KEY } from '../../config/permissions.config';
 import LoaderModal from '../../components/Loaders/LoaderModal';
 import { getShortlistedCandidates } from '../../services/admin.candidate.service';
+import useDebounce from '../../hooks/useDebounce';
 
 const Shortlisted = () => {
     const { user , isLoading } = useAuthContext();
     const [location,setLocation] = useState(null);
+    const [filters,setFilters] = useState({});
+    const [page,setPage] = useState(1);
+    const [pageSize,setPageSize] = useState(10);
+    const [filterObj,setFilterObj] = useState({});
+    const [sortFilterObj,setSortFilterObj] = useState({});
+    const [sortModel,setSortModel] = useState([])
+    const [search,setSearch] = useState("");
+    const [showContractors, setShowContractors] = useState(false);
+
+    const [debouncedQuery] = useDebounce(search,400);
+
+    const [isFiltered, setIsFiltered] = useState(false);
+
+    useEffect(() => {
+    const cleanedFilters = Object.fromEntries(
+        Object.entries(filters).filter(([key, value]) =>
+        Array.isArray(value) ? value.length > 0 : !!value
+        )
+    );
+
+    setFilterObj({ ...cleanedFilters, showContractors });
+
+    // Check if any filter field is populated
+    const hasFiltersApplied = Object.values(cleanedFilters).some(value =>
+        Array.isArray(value) ? value.length > 0 : !!value
+    );
+
+    setIsFiltered(hasFiltersApplied || showContractors);
+    }, [filters, showContractors]);
+
+    useEffect(()=>{
+        setIsFiltered(prev => prev ? prev : debouncedQuery)
+    },[debouncedQuery])
+
+    //Server-side sort management for tables
+    useEffect(() => {
+        const selectedSort = {}
+        sortModel.map(model => {
+            selectedSort[model.field] = model.sort
+        })
+        setSortFilterObj(selectedSort);
+    }, [sortModel]);
     
     const queryClient = useQueryClient();
 
     // Fetch shortlisted candidates
     const { data, isLoading : isCandidatesLoading , isError, error } = useQuery({
-        queryKey: ['shortlistedCandidates',location],
-        queryFn: () => getShortlistedCandidates({companyId : user?.companyDetails?._id,...(location ? location : {})}),
+        queryKey: ['shortlistedCandidates',location,,page,pageSize,filterObj,debouncedQuery,sortFilterObj],
+        queryFn: () => getShortlistedCandidates({companyId : user?.companyDetails?._id,...(location ? location : {}),page : page + 1 ,pageLimit : pageSize ,filter : filterObj ,search : debouncedQuery, sortFilters : sortFilterObj}),
         enabled : !!user?.companyDetails
     });
 
@@ -92,6 +135,7 @@ const Shortlisted = () => {
             field: 'shortlistAction',
             headerName: 'Action',
             width: 120,
+            sortable: false,
             align: 'center',
             headerAlign: 'center',
             disableColumnMenu: true,
@@ -127,24 +171,39 @@ const Shortlisted = () => {
             {(isLoading || isCandidatesLoading) && <LoaderModal />}
             <Header HeaderText={"Future Gems"} />
             <StyledCard padding={2} >
-                {tableData.length > 0 ? (
-                    <Table
-                        hasCheckBox={false}
-                        readOnly={true}
-                        isShortlisted
-                        addLocationFilter={setLocation}
-                        readOnlyData={tableData}
-                        additionalColumns={getShortlistColumn()}
-                        jobData={jobData} // Pass job data for employment type filtering
-                        customNavigationPath={getRoute(user?.role,ROUTE_KEY.SHORTLISTED_VIEW_CANDIDATE)}// Custom navigation path for shortlisted view
-                    />
-                ) : (
+                {((data?.totalCount || 0) === 0 && !isFiltered) ? 
+                (
                     <div className="text-center py-8 bg-background-80 rounded-xl p-6">
                         <h2 className="text-font-gray cursor-default">No shortlisted candidates found.</h2>
                         <p className="typography-large-p mt-2 cursor-default">
                             Start shortlisting candidates to see them here.
                         </p>
                     </div>
+                )
+                : (
+                    <Table
+                        hasCheckBox={false}
+                        readOnly={true}
+                        isShortlisted
+                        addLocationFilter={setLocation}
+                        currentPage={page} 
+                        setCurrentPage={setPage}
+                        pageSize={pageSize} 
+                        setPageSize={setPageSize}
+                        filters={filters}
+                        setFilters={setFilters}
+                        sortModel={sortModel}
+                        setSortModel={setSortModel}
+                        searchTerm={search}
+                        setSearchTerm={setSearch}
+                        showContractors={showContractors}
+                        setShowContractors={setShowContractors}
+                        readOnlyData={tableData}
+                        additionalColumns={getShortlistColumn()}
+                        totalCount={data?.totalCount}
+                        jobData={jobData} // Pass job data for employment type filtering
+                        customNavigationPath={getRoute(user?.role,ROUTE_KEY.SHORTLISTED_VIEW_CANDIDATE)}// Custom navigation path for shortlisted view
+                    />
                 )}
             </StyledCard>
         </Container>

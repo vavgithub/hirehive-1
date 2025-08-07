@@ -23,8 +23,9 @@ const Candidates = () => {
   const [filters,setFilters] = useState({});
   const [page,setPage] = useState(1);
   const [pageSize,setPageSize] = useState(10);
-  const [pageCount,setPageCount] = useState(1);
   const [filterObj,setFilterObj] = useState({});
+  const [sortFilterObj,setSortFilterObj] = useState({});
+  const [sortModel,setSortModel] = useState([])
   const [search,setSearch] = useState("");
   const [showContractors, setShowContractors] = useState(false);
 
@@ -33,7 +34,16 @@ const Candidates = () => {
   useEffect(()=>{
     //removing non-populated filters
     setFilterObj({...Object.fromEntries(Object.entries(filters).filter(([Key,value]) =>!!(Array.isArray(value) ? value?.length : value))),showContractors})
-  },[filters])
+  },[filters,showContractors])
+
+    //Server-side sort management for tables
+  useEffect(() => {
+    const selectedSort = {}
+    sortModel.map(model => {
+      selectedSort[model.field] = model.sort
+    })
+    setSortFilterObj(selectedSort);
+  }, [sortModel]);
 
   const { data, isStatsLoading, isStatsError } = useQuery({
     queryKey: ['candidatesStats'],
@@ -41,14 +51,10 @@ const Candidates = () => {
     refetchOnMount : true
   });
 
-  console.log("page",filterObj)
-
   const { data : candidates , isLoading, isError } = useQuery({
-    queryKey: ['candidates',location,page,pageSize,filterObj,debouncedQuery],
-    queryFn: () => getAllCandidatesWithFilters({...(location ? location : {}) , page : page + 1 , pageLimit : pageSize , filter : filterObj ,search : debouncedQuery}),
+    queryKey: ['candidates',location,page,pageSize,filterObj,debouncedQuery,sortFilterObj],
+    queryFn: () => getAllCandidatesWithFilters({...(location ? location : {}) , page : page + 1 , pageLimit : pageSize , filter : filterObj ,search : debouncedQuery, sortFilters : sortFilterObj}),
   });
-
-  // console.log("what is this ?" , data);
 
   // 1. Disable browser auto scroll restoration
   useEffect(() => {
@@ -112,6 +118,8 @@ const Candidates = () => {
           setPageSize={setPageSize}
           filters={filters}
           setFilters={setFilters}
+          sortModel={sortModel}
+          setSortModel={setSortModel}
           searchTerm={search}
           setSearchTerm={setSearch}
           showContractors={showContractors}

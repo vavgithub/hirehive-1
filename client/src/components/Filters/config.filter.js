@@ -6,6 +6,7 @@ export const stageStatusMap = {
     'Design Task': ['Sent', 'Not Assigned', 'Under Review', 'Reviewed', 'Completed', 'Rejected', 'Not Submitted'],
     'Round 1': ['Pending', 'Call Scheduled', 'Not Assigned', 'Reviewed', 'Completed', 'No Show', 'Rejected'],
     'Round 2': ['Pending', 'Call Scheduled', 'Not Assigned', 'Reviewed', 'Completed', 'No Show', 'Rejected'],
+    'Hired': ['Under Review', 'Accepted', 'Rejected'],
   };
   
 export const allStatuses = [
