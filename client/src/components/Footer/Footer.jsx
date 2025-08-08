@@ -20,7 +20,7 @@ function Footer({ variant = '' }) {
     // window.open("/privacy-policy", "_blank");
   }
   return (
-    <div className={(variant === 'sidebar' ? " md:pl-[17rem] min-w-screen" : "") + " bg-transparent "}>
+    <div className={(variant === 'sidebar' ? " md:pl-[17rem] min-w-screen" : "") + " bg-background-100 "}>
       <div className='px-4'>
         <div className="container  flex flex-col sm:flex-row sm:items-center justify-around sm:justify-between  min-h-[5rem] ">
           <p className="typography-body text-font-gray">&copy; {new Date().getFullYear()} Copyrighted Value at Void™</p>

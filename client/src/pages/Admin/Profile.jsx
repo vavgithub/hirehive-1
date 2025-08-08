@@ -15,11 +15,11 @@ import { InputField } from '../../components/Inputs/InputField';
 import Container from '../../components/Cards/Container';
 import { PencilLine } from 'lucide-react';
 import IconWrapper from '../../components/Cards/IconWrapper';
-import { UNKNOWN_PROFILE_PICTURE_URL } from '../../utility/config';
 import { companySizeOptions, industryTypeOptions, LocationOptions } from '../../components/Register/CompanyDetails';
 import { formatPhoneNumber, PhoneInputField } from '../../components/Form/PhoneInputField';
 import { validationRules } from '../../utility/validationRules';
 import { editUserProfile } from '../../services/auth.service';
+import { useUnknownProfilePicture } from '../../context/ThemeContext';
 
 
 
@@ -146,6 +146,8 @@ function Profile() {
   const [profileFile, setProfileFile] = useState(null);
   const { mutate: uploadPicture, isLoading: uploading } = useProfilePicture();
   const queryClient = useQueryClient();
+  const UNKNOWN_PROFILE_PICTURE_URL = useUnknownProfilePicture()
+
 
   const { control, handleSubmit, reset } = useForm({
     defaultValues: {
@@ -194,7 +196,7 @@ function Profile() {
           });
         }
         // Invalidate the query to refetch user data
-        queryClient.invalidateQueries('user');
+        queryClient.invalidateQueries('auth');
         showSuccessToast('Success', 'Profile updated successfully');
         setIsEditing(false);
       }

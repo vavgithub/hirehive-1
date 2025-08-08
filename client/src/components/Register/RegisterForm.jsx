@@ -3,7 +3,6 @@ import axios from '../../services/axios';
 import sundarKanya from "../../svg/Background/sundar-kanya.png"
 import { Button } from '../Buttons/Button';
 import StatsGrid from '../../components/ui/StatsGrid';
-import Logo from '../../svg/Logo/lightLogo.svg'
 import LoaderModal from '../Loaders/LoaderModal';
 import GoogleIcon from '../../svg/Icons/GoogleIcon';
 import { steps } from '../../pages/Admin/Register';
@@ -18,6 +17,7 @@ import { digitsRegex, lowerCaseRegex, passwordRegex, specialCharRegex, upperCase
 import ForgotPassword from '../../pages/Admin/ForgotPassword';
 import { googleLogin, registerAdmin, verifyPassword } from '../../services/auth.service';
 import { FcGoogle } from 'react-icons/fc';
+import { useLogo } from '../../context/ThemeContext';
 
 export const emailPattern = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i
 
@@ -37,6 +37,7 @@ function RegisterForm({setCurrentStep}) {
     const [loading, setLoading] = useState(false);
 
     const { onboardData, setOnboardData } = useOnboardingContext();
+    const Logo = useLogo();
 
     const [showPasswordPopup,setShowPasswordPopup] = useState(false);
     const [passwordType, setPasswordType] = useState('password');
@@ -197,16 +198,16 @@ function RegisterForm({setCurrentStep}) {
                   </div> 
               <form onSubmit={handleFormSubmit}>
                 <div className="mb-4">
-                  <label htmlFor="firstname" className="block mb-2 font-bricolage">First Name</label>
-                  <input type="text" id="firstname" placeholder="Enter your Firstname" value={firstName} onChange={(e) => setFirstName(e.target.value)} className="w-full p-2 rounded-lg bg-black text-white focus:outline-teal-400" />
+                  <label htmlFor="firstname" className="block mb-2 ">First Name</label>
+                  <input type="text" id="firstname" placeholder="Enter your Firstname" value={firstName} onChange={(e) => setFirstName(e.target.value)} className="w-full p-2 rounded-lg   focus:outline-teal-400" />
                 </div>
                 <div className="mb-4">
-                  <label htmlFor="lastname" className="block mb-2 font-bricolage">Last Name</label>
-                  <input type="text" id="lastname" placeholder="Enter your Lastname" value={lastName} onChange={(e) => setLastName(e.target.value)} className="w-full p-2 rounded-lg bg-black text-white focus:outline-teal-400" />
+                  <label htmlFor="lastname" className="block mb-2 ">Last Name</label>
+                  <input type="text" id="lastname" placeholder="Enter your Lastname" value={lastName} onChange={(e) => setLastName(e.target.value)} className="w-full p-2 rounded-lg   focus:outline-teal-400" />
                 </div>
                 <div className="mb-1">
-                  <label htmlFor="email" className="block mb-2 font-bricolage">Work Email</label>
-                  <input type="email" id="email" placeholder="Enter your work email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full p-2 rounded-lg bg-black text-white focus:outline-teal-400" />
+                  <label htmlFor="email" className="block mb-2 ">Work Email</label>
+                  <input type="email" id="email" placeholder="Enter your work email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full p-2 rounded-lg   focus:outline-teal-400" />
                 </div>
                   
                 {error && <p className="text-red-500 typography-small-p mb-4">{error}</p>}
@@ -236,7 +237,7 @@ function RegisterForm({setCurrentStep}) {
                 <div>
                   <label htmlFor="password" className="block mt-4 mb-2">Password</label>
                   <TogglePassword typeState={passwordType} setTypeState={setPasswordType}>
-                    <input type={passwordType} id="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter your password" className={(password && "tracking-widest") +" w-full focus:outline-teal-400 p-2 rounded-lg bg-black text-white"} />
+                    <input type={passwordType} id="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter your password" className={(password && "tracking-widest") +" w-full focus:outline-teal-400 p-2 rounded-lg bg-black text-font-main"} />
                   </TogglePassword>
                 </div>
                 <div className='flex justify-end'>

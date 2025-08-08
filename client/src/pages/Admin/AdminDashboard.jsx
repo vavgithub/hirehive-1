@@ -14,7 +14,6 @@ import { CalendarDays, ChevronDown, ChevronUp, ClipboardCheck, Users } from 'luc
 import StatsGrid from '../../components/ui/StatsGrid'
 import { DataGrid } from '@mui/x-data-grid'
 import { Avatar } from '@mui/material'
-import { UNKNOWN_PROFILE_PICTURE_URL } from '../../utility/config'
 import { formatIntoDateString } from '../../utility/formatTime'
 import { formatUTCToLocalTimeAuto, timezone, UTCToDateFormatted } from '../../utility/timezoneConverter'
 import { formatPhoneNumber } from '../../components/Form/PhoneInputField'
@@ -23,6 +22,7 @@ import Header from '../../components/utility/Header'
 import { getRoute, ROUTE_KEY } from '../../config/permissions.config'
 import { useAuthContext } from '../../context/AuthProvider'
 import { getAdminDashboard } from '../../services/admin.service'
+import { useUnknownProfilePicture } from '../../context/ThemeContext'
 
 function AdminDashboard() {
 
@@ -37,6 +37,7 @@ function AdminDashboard() {
   const [selectedChartFilter, setSelectedChartFilter] = useState('monthly');
 
   const navigate = useNavigate();
+  const UNKNOWN_PROFILE_PICTURE_URL = useUnknownProfilePicture()
 
   const { data: dashboardDetails, isLoading: isDetailsLoading } = useQuery({
     queryKey: ['admin_dashboard'],

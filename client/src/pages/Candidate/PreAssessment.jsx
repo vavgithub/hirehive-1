@@ -173,7 +173,7 @@ const PreAssessment = () => {
                                         <Webcam audio={false} onUserMedia={handleCameraEnabled} onUserMediaError={handleCameraError} />
                                     </div>
                                 ) : (
-                                    <div className="absolute left-0 flex items-center justify-center h-full w-full bg-black-100 rounded-xl">
+                                    <div className="absolute left-0 flex items-center justify-center h-full w-full bg-background-70 rounded-xl">
                                         <div className='p-6 rounded-full bg-background-80'>
                                             <IconWrapper isInActiveIcon size={6} icon={User} />
                                         </div>

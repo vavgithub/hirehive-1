@@ -1,8 +1,5 @@
-import { createContext, useContext } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import useAuth from "../hooks/useAuth";
-import { useState } from "react";
-import { useEffect } from "react";
-
 
 const AuthContext = createContext(null);
 
@@ -16,7 +13,7 @@ export const AuthProvider = ({ children }) => {
       setUser(data)
       setIsDone(true)
     }
-  },[user,isLoading])
+  },[data,isLoading])
 
   return (
     <AuthContext.Provider value={{ user, isLoading, error , isDone, setUser }}>

@@ -31,7 +31,7 @@ const DetailRow = ({ label, value }) => (
 
 const Experience = ({ company, position, startDate, endDate, index }) => (
     <div className="mb-4">
-      <h3 className="text-lg font-semibold text-white mb-2">Experience {index + 1}</h3>
+      <h3 className="text-lg font-semibold text-font-main mb-2">Experience {index + 1}</h3>
       <div className="grid grid-cols-2 gap-x-4 gap-y-1">
         <GridRow label="Company Name" value={company} />
         <GridRow label="Position" value={position} />

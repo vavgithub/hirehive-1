@@ -104,7 +104,7 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
   if (mode === 'icon') {
     return (
       <>
-        <IconButton sx={{padding : "0 0.5rem"}} onClick={handleClick} size="small" disabled={disabled}>
+        <IconButton sx={{margin: "0 0.5rem ",padding : "0 0 0 0"}} onClick={handleClick} size="small" disabled={disabled}>
           {selectedReviewer ? (
             <Avatar src={selectedReviewer.profilePicture} sx={{ width: 32, height: 32 }}>
               {selectedReviewer.firstName[0].toUpperCase()}
@@ -163,7 +163,7 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
                 //   </InputAdornment>
                 // ),
                 style : {
-                  color : "white",
+                  color : "var(--color-font-main)",
                   height : "2.75rem",
                   borderRadius : "0.75rem",
                 }
@@ -263,7 +263,7 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
                 //   </InputAdornment>
                 // ),
                 style : {
-                  color : "white",
+                  color : "var(--color-font-main)",
                   height : "2.75rem",
                   borderRadius : "0.75rem",
                 }
@@ -359,7 +359,7 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
           key={option._id}
           selected={option?._id === selectedReviewer?._id}
           sx={{
-            color: 'white',           // Set the text color of each option
+            color: 'var(--color-font-main)',           // Set the text color of each option
             margin : "0.25rem 0px",
           }}
         >

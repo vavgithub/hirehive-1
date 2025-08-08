@@ -17,6 +17,7 @@ import { LinkPlugin as LexicalLinkPlugin } from '@lexical/react/LexicalLinkPlugi
 const theme = {
     text : {
         underline : 'underline',
+        strong : 'text-font-main'
     },
     list : {
         ol : 'ml-5 list-decimal ',

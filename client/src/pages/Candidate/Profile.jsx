@@ -16,7 +16,6 @@ import CustomToolTip from "../../components/Tooltip/CustomToolTip";
 import { InputField } from "../../components/Inputs/InputField";
 import { emailRegex, mobileRegex } from "../../utility/regex";
 import Container from "../../components/Cards/Container";
-import { UNKNOWN_PROFILE_PICTURE_URL } from "../../utility/config";
 import ContactUs from "../../components/Form/ContactUs";
 import IconWrapper from "../../components/Cards/IconWrapper";
 import { Pencil, PencilLine, Upload } from "lucide-react";
@@ -26,6 +25,7 @@ import { editCandidateProfile, getCandidateDashboard, uploadCandidateProfilePict
 import { LocationInputField } from "../../components/Inputs/LocationInputField";
 import { UTCToDateFormatted } from "../../utility/timezoneConverter";
 import Datepicker from "../../components/MUIUtilities/Datepicker";
+import { useUnknownProfilePicture } from "../../context/ThemeContext";
 
 const PersonalDetails = ({ candidateData, isEditing, control }) => {
   return (
@@ -459,6 +459,8 @@ function Profile() {
   const [isLoading, setIsLoading] = useState(false);
 
   const dispatch = useDispatch();
+
+  const UNKNOWN_PROFILE_PICTURE_URL = useUnknownProfilePicture()
 
   useEffect(() => {
     if (stage === "DONE") {

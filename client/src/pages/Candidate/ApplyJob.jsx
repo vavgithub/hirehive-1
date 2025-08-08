@@ -595,12 +595,12 @@ const ApplyJob = () => {
                 <div className='mt-4'>
                   <div className="mb-4">
                     <label htmlFor="loginemail" className="block mb-2 font-bricolage">Email</label>
-                    <input type="email" id="loginemail" placeholder="Enter your email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full p-2 rounded-lg bg-black text-white focus:outline-teal-400" />
+                    <input type="email" id="loginemail" placeholder="Enter your email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full p-2 rounded-lg bg-black  focus:outline-teal-400" />
                   </div>
                   <div>
                     <label htmlFor="password" className="block mb-2 font-bricolage">Password</label>
                     <TogglePassword typeState={passwordType} setTypeState={setPasswordType}>
-                      <input type={passwordType} id="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter your password" className={(password && "tracking-widest") + " w-full focus:outline-teal-400 p-2 rounded-lg bg-black text-white"} />
+                      <input type={passwordType} id="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter your password" className={(password && "tracking-widest") + " w-full focus:outline-teal-400 p-2 rounded-lg bg-black "} />
                     </TogglePassword>
                   </div>
                   <div className='flex justify-end'>

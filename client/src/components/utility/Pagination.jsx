@@ -43,18 +43,18 @@ function Pagination({currentPage, pageLimit , totalItems ,setCurrentPage}) {
   return totalItems ? (
     <div className=' flex justify-between'>
       <div>
-      <p className='typography-body text-font-gray flex gap-2'>Showing <span className='text-white'>{resultValue}</span><span className='hidden sm:inline-block'> {resultValue > 1 ? " results" : " result"}</span> of <span className='text-white'>{totalItems}</span></p>
+      <p className='typography-body text-font-gray flex gap-2'>Showing <span className='text-font-main'>{resultValue}</span><span className='hidden sm:inline-block'> {resultValue > 1 ? " results" : " result"}</span> of <span className='text-font-main'>{totalItems}</span></p>
       </div>
       <div className='flex items-center gap-4'>
-          <div onClick={currentPage > 1 ? handlePrev : null} className={currentPage > 1 ? "text-white cursor-pointer" : "text-font-gray"}>
+          <div onClick={currentPage > 1 ? handlePrev : null} className={currentPage > 1 ? "text-font-main cursor-pointer" : "text-font-gray"}>
             <IconWrapper inheritColor icon={ChevronLeft} size={0} customIconSize={5} customStrokeWidth={5} />
           </div>
             {
               getVisibilePageNumbers?.map(item =>{
-                return <p key={item} onClick={() => handleItemClick(item)} className={currentPage === item ? "text-white cursor-pointer" : "text-font-gray cursor-pointer"}>{item}</p>
+                return <p key={item} onClick={() => handleItemClick(item)} className={currentPage === item ? "text-font-main cursor-pointer" : "text-font-gray cursor-pointer"}>{item}</p>
               })
             }
-          <div onClick={currentPage !== numberOfPages ? handleNext : null} className={currentPage === numberOfPages ? "text-font-gray" : "text-white cursor-pointer"}>
+          <div onClick={currentPage !== numberOfPages ? handleNext : null} className={currentPage === numberOfPages ? "text-font-gray" : "text-font-main cursor-pointer"}>
             <IconWrapper inheritColor icon={ChevronRight} size={0} customIconSize={5} customStrokeWidth={5} />
           </div>
       </div>

@@ -17,6 +17,7 @@ import ContactUs from '../../components/Form/ContactUs';
 import IconWrapper from '../../components/Cards/IconWrapper';
 import { getRandomAssessmentQuestions, submitAssessment } from '../../services/admin.candidate.service';
 import { uploadAssessmentToS3 } from '../../utility/s3upload';
+import { useLogo } from '../../context/ThemeContext';
 const ONE_MINUTE = 60;
 
 // Utility function to format time
@@ -55,6 +56,7 @@ const ProgressBar = ({ answeredCount, total }) => {
 const QuestionSidebar = ({ questions, currentQuestion, answeredCount, onQuestionSelect, answers , submitTest, isUploading, isRecording,webcamRef,handleUserMedia}) => {
   const [timeRemaining, setTimeRemaining] = useState(5 * 60);
   const [timerRef,setTimerRef] = useState(null);
+  const Logo = useLogo();
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -83,13 +85,13 @@ const QuestionSidebar = ({ questions, currentQuestion, answeredCount, onQuestion
     <div className="w-[15rem] bg-background-90 fixed  overflow-y-auto  custom-scrollbar m-4 h-[calc(100vh-2rem)]  rounded-xl">
       <div className='flex items-center justify-start pt-8 pb-6 px-4 '>
 
-        <img className='h-11' src={LightLogo} />
+        <img className='h-11' src={Logo} />
       </div>
       <div className="py-8 px-4 border-b border-t border-background-60 w-full">
         <div className=" flex flex-col items-center ">
           <div className='w-full flex items-center gap-2'>
           {/* <TimerIconSmall /> */}
-          <p className='typography-body'>Time remaining</p>
+          <p className=' text-font-main typography-body'>Time remaining</p>
           </div>
           <div className='mt-3 w-full flex items-center justify-around gap-3'>
           <h3 className={(timeRemaining <= ONE_MINUTE && "bg-red-200 text-red-300 ") +" bg-background-70  flex items-center justify-center w-16 h-16 rounded-xl"}>
@@ -168,7 +170,7 @@ const QuestionDisplay = ({
               alt="Question visual"
               className="max-w-md rounded-xl"
             />
-            <div onClick={()=>setShowImage(question.imageUrl)} className={`absolute bottom-2 cursor-pointer right-2 p-2 rounded-xl bg-gray-800`}>
+            <div onClick={()=>setShowImage(question.imageUrl)} className={`absolute bottom-2 cursor-pointer right-2 p-2 rounded-xl bg-background-80`}>
               <IconWrapper icon={Eye} size={0} customIconSize={3} hasBg customBgHover={"NA"} />
             </div>
           </div>

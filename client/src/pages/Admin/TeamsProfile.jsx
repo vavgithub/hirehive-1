@@ -17,8 +17,8 @@ import LoaderModal from '../../components/Loaders/LoaderModal'
 import Container from '../../components/Cards/Container'
 import IconWrapper from '../../components/Cards/IconWrapper'
 import { PencilLine } from 'lucide-react'
-import { UNKNOWN_PROFILE_PICTURE_URL } from '../../utility/config'
 import { formatPhoneNumber } from '../../components/Form/PhoneInputField'
+import { useUnknownProfilePicture } from '../../context/ThemeContext'
 import { changeMemberStatus, editMember, getAllTeamMembers, reInviteMember } from '../../services/admin.service'
 
 function PersonalDetails({ memberData, isEditing, control }) {
@@ -170,6 +170,7 @@ function TeamsProfile() {
   const { id: memberId } = useParams();
 
   const queryClient = useQueryClient();
+  const UNKNOWN_PROFILE_PICTURE_URL = useUnknownProfilePicture()
 
   const { data: teamMembers, isLoading: isTeamMembersLoading } = useQuery({
     queryKey: ['team_members'],

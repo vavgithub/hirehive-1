@@ -241,7 +241,7 @@ function CustomCalendar() {
         className={(isPast ? ' bg-background-70' : 'bg-background-60 cursor-pointer ') + '  p-2 h-full  max-w-full whitespace-nowrap text-ellipsis overflow-hidden '}>
           <div className={"flex items-center gap-2 " + (isPast ? 'opacity-35' : '')}>
             {isHappening && <span className="w-2 h-2 bg-accent-100 rounded-full inline-block"></span>}
-            <span>{eventInfo.event.title}</span>
+            <span className='text-font-main'>{eventInfo.event.title}</span>
           </div>
           <p className="text-font-gray text-sm">{timeText}</p>
         </div>
@@ -365,7 +365,7 @@ function CustomCalendar() {
         noEventsContent={() => (
           <div className="text-center py-8 text-font-gray">
             <h3>No Events Available.</h3>
-            <p className='text-white typography-body'>No events scheduled for this period.</p>
+            <p className='text-font-main typography-body'>No events scheduled for this period.</p>
           </div>
         )}
         events={events}

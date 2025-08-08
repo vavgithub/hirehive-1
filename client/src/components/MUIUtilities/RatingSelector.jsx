@@ -12,7 +12,7 @@ export const getRatingIcon = (rating) => {
         case 'May Be':
         return <div className='text-[#EDBD14]'><IconWrapper inheritColor icon={Star} size={0} customIconSize={5} /></div>;
         default:
-        return <IconWrapper inheritColor icon={Star} size={0} isInActiveIcon customIconSize={5} />;
+        return <div className='text-font-main'><IconWrapper inheritColor icon={Star} size={0} customIconSize={5} /></div>;
     }
 };
 

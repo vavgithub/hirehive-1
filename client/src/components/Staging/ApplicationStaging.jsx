@@ -21,9 +21,8 @@ import { hasPermission, PERMISSIONS } from '../../config/permissions.config';
 const AccordionSection = ({ title, isOpen, onToggle, children, badge }) => (
     <Card
         sx={{
-            backgroundColor: "var(22, 23, 24, 1)",
+            backgroundColor: "var(--color-background-90)",
             borderRadius: "0.75rem",
-            color: "white",
             marginTop: "0.75rem"
         }}
     >
@@ -33,7 +32,7 @@ const AccordionSection = ({ title, isOpen, onToggle, children, badge }) => (
                 className="w-full px-8 py-8 flex justify-between bg-background-80 items-center border-b border-background-80"
             >
                 <div className="flex items-center gap-4 ">
-                    <h3>{title}</h3>
+                    <h3 className="text-font-main ">{title}</h3>
                     {badge}
                 </div>
                 <IconWrapper icon={isOpen ? ChevronUp :ChevronDown} size={0} customStrokeWidth={5} customIconSize={5}  />
@@ -87,12 +86,12 @@ const ApplicationStaging = ({ candidateId, jobId ,jobStatus}) => {
     const getStageIcon = (stage, index) => {
         const status = stageStatuses[stage]?.status;
         if (status === 'Cleared') {
-            return <div className='bg-green-100 rounded-full p-1'><IconWrapper icon={Check}  size={0} customStrokeWidth={7} customIconSize={1}  /></div> ;
+            return <div className='bg-green-100 rounded-full text-white p-1'><IconWrapper inheritColor icon={Check}  size={0} customStrokeWidth={7} customIconSize={1}  /></div> ;
         } else if (status === 'Rejected') {
-            return <div className='bg-red-300 rounded-full p-1'><IconWrapper icon={X}  size={0} customStrokeWidth={7} customIconSize={1}  /></div> ;
+            return <div className='bg-red-300 rounded-full text-white p-1'><IconWrapper inheritColor icon={X}  size={0} customStrokeWidth={7} customIconSize={1}  /></div> ;
         } else {
             return (
-                <div className={`w-6 h-6 flex items-center justify-center rounded-full border  ${stage === currentStage ? 'border-teal-400 text-font-accent' : ''}`}>
+                <div className={`w-6 h-6 flex items-center justify-center rounded-full border  ${stage === currentStage ? 'border-teal-400 text-font-accent' : ' border-font-gray'}`}>
                     {index + 1}
                 </div>
             );
@@ -132,7 +131,7 @@ const ApplicationStaging = ({ candidateId, jobId ,jobStatus}) => {
                                         <span className="ml-1 text-red-500">*</span>
                                     )}
                                 </div>
-                                <div className="typography-body text-white">
+                                <div className="typography-body text-font-main">
                                     {response.question.type === 'multiple' ? (
                                         <div className="flex gap-2">
                                             <span className="px-3 py-1 ">
@@ -181,7 +180,7 @@ const ApplicationStaging = ({ candidateId, jobId ,jobStatus}) => {
                             <div className="stage-icon">
                                 {getStageIcon(stage, index)}
                             </div>
-                            <div className={`stage-name mb-2 typography-body ${stage === currentStage ? "text-font-accent cursor-pointer " : "text-white "}  `}>
+                            <div className={`stage-name mb-2 typography-body ${stage === currentStage ? "text-font-accent cursor-pointer " : "text-font-main "}  `}>
                                 {stage}
                             </div>
                         </div>

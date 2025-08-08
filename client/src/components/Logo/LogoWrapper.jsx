@@ -1,11 +1,12 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import Logo from '../../svg/Logo/lightLogo.svg';
 import { Button } from '../Buttons/Button';
+import { useLogo } from '../../context/ThemeContext';
 
 
 function LogoWrapper({redirectLink = '/', isAuthenticated = true,headerText = '',buttonVariant = 'secondary'}) {
     const navigate = useNavigate();
-    const location = useLocation()
+    const location = useLocation();
+    const Logo = useLogo();
 
   return (
     <div className=' mt-2  mb-4 flex justify-between w-full'>

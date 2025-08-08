@@ -6,7 +6,6 @@ import CustomToolTip from '../../components/Tooltip/CustomToolTip';
 import IconWrapper from '../../components/Cards/IconWrapper';
 import { PencilLine } from 'lucide-react';
 import StyledCard from '../../components/Cards/StyledCard';
-import { UNKNOWN_PROFILE_PICTURE_URL } from '../../utility/config';
 import { useAuthContext } from '../../context/AuthProvider';
 import { Controller, useForm } from 'react-hook-form';
 import { InputField } from '../../components/Inputs/InputField';
@@ -24,6 +23,7 @@ import { hasPermission, PERMISSIONS } from '../../config/permissions.config';
 import { editCompanyProfile } from '../../services/auth.service';
 import { LocationInputField } from '../../components/Inputs/LocationInputField';
 import { validationRules } from '../../utility/validationRules';
+import { useUnknownProfilePicture } from '../../context/ThemeContext';
 
 const CompanyOverview = ({ companyDetails, isEditing, control ,setValue }) => {
   return (
@@ -279,7 +279,7 @@ function CompanyProfile() {
         sessionId : ''
     },
     });
-
+    const UNKNOWN_PROFILE_PICTURE_URL = useUnknownProfilePicture();
     const handleProfilePictureUpload = (event) => {
         const file = event.target.files[0];
         if (!file) return;

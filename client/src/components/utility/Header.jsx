@@ -1,12 +1,12 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import ThreeDots from '../ui/ThreeDots'
+import IconWrapper from '../Cards/IconWrapper'
+import { ArrowLeft } from 'lucide-react'
 
 export const BackButton = () => {
     return (
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-            <path d="M22 12L2 12M2 12L12 22M2 12L12 2" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
+            <IconWrapper size={0} customIconSize={6} customStrokeWidth={6} inheritColor icon={ArrowLeft}/>
     )
 }
 
@@ -40,8 +40,9 @@ const Header = ({
                 {/* Left section with back button and title */}
                 <div className={"flex items-center gap-4 w-full " + (rightContent && "lg:w-[65%]")}>
                     {withBack === "true" && (
-                        <div className="cursor-pointer" onClick={handleBackClick}>
-                            <BackButton />
+                        <div className="cursor-pointer text-font-main " onClick={handleBackClick}>
+                            {/* <BackButton /> */}
+                            <IconWrapper inheritColor icon={ArrowLeft}/>
                         </div>
                     )}
                     <h1 className={"w-full overflow-hidden whitespace-nowrap text-ellipsis "} style={{

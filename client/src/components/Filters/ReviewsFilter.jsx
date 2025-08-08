@@ -66,7 +66,7 @@ const ReviewsFilter = ({ onApplyFilters, candidates = [] }) => {
     if (!values || values.length === 0) {
       return {
         value: 'All',
-        className: 'text-white typography-body group-hover:text-accent-100'
+        className: 'text-font-main typography-body group-hover:text-accent-100'
       };
     }
 
@@ -209,7 +209,7 @@ const ReviewsFilter = ({ onApplyFilters, candidates = [] }) => {
                     <label 
                       key={item} 
                       className={"group relative flex items-center p-4 h-10 hover:bg-background-60 cursor-pointer hover:text-accent-100 rounded-xl " + 
-                        (selectedFilters[category].includes(item) ? "bg-accent-300 text-accent-100 " : "text-white")}
+                        (selectedFilters[category].includes(item) ? "bg-accent-300 text-accent-100 " : "text-font-main")}
                     >
                       <TickCheckbox
                         id={`${category}-${item}`}

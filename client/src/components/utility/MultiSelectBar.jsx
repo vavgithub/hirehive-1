@@ -9,7 +9,7 @@ import RatingSelector from '../MUIUtilities/RatingSelector'
 import RejectionSelector from '../MUIUtilities/RejectionSelector'
 import IconWrapper from '../Cards/IconWrapper'
 import { ArrowRight, Calendar, Ellipsis, Star, User, X } from 'lucide-react'
-import { UNKNOWN_PROFILE_PICTURE_URL } from '../../utility/config'
+import { useUnknownProfilePicture } from '../../context/ThemeContext'
 import { assignReviewerForCandidates, moveMultipleCandidates, rateMultipleCandidates, rejectMultipleCandidates } from '../../services/hr.service'
 
 export const getMaxScoreEachStage = (currentStage) =>{
@@ -146,6 +146,8 @@ function MultiSelectBar({selectedData,jobId,clearSelection}) {
   const [selectedAnchor,setSelectedAnchor] = useState(null);
 
   const [isValid,setIsValid] = useState(false);
+
+  const UNKNOWN_PROFILE_PICTURE_URL = useUnknownProfilePicture()
 
   useEffect(()=>{
     if(action?.name === "REJECT"){
@@ -349,7 +351,7 @@ function MultiSelectBar({selectedData,jobId,clearSelection}) {
   }
 
   return (
-    <div className='bg-black-100  p-4 rounded-xl mb-4 flex justify-between items-center h-14 relative'>
+    <div className='bg-background-80  p-4 rounded-xl mb-4 flex justify-between items-center h-14 relative'>
         {isLoading && <LoaderModal/>}
         <div>
             <p className='text-teal-100 typography-body'>{selectedData?.length ?? 0} Items Selected</p>
@@ -474,7 +476,7 @@ function MultiSelectBar({selectedData,jobId,clearSelection}) {
                                                     <p className='my-4 font-semibold'>Please provide the reason for rejecting this candidate</p>
                                                     <div 
                                                     onClick={(e)=>{setAnchorEl(!anchorEl ? e.currentTarget : null); setChosenCandidate(chosenCandidate ? null : candidate?._id); setChosenStage(chosenStage ? null : stage);}}
-                                                    className={`${rejectionReason ? "text-white" : "text-font-gray"}   typography-body mt-1 h-[2.75rem] flex items-center justify-between bg-background-70 hover:bg-background-60 w-full outline-none rounded-xl shadow-sm focus:ring-teal-300 focus:border-teal-300 text-left px-4`}
+                                                    className={`${rejectionReason ? "text-font-main" : "text-font-gray"}   typography-body mt-1 h-[2.75rem] flex items-center justify-between bg-background-70 hover:bg-background-60 w-full outline-none rounded-xl shadow-sm focus:ring-teal-300 focus:border-teal-300 text-left px-4`}
                                                     >
                                                     <p  className='whitespace-nowrap text-ellipsis overflow-hidden'>{rejectionReason ? rejectionReason : "-Select-"}</p>
                                                     

@@ -69,7 +69,7 @@ const QuestionResponses = ({ responses }) => {
                           key={option}
                           className={`px-3 py-1 rounded-full ${
                             option === response.answer 
-                              ? 'bg-primary text-white' 
+                              ? 'bg-primary text-font-main' 
                               : 'bg-background-80 text-font-gray'
                           }`}
                         >
@@ -78,7 +78,7 @@ const QuestionResponses = ({ responses }) => {
                       ))}
                     </div>
                   ) : (
-                    <div className="bg-background-80 p-3 rounded-lg typography-body text-white">
+                    <div className="bg-background-80 p-3 rounded-lg typography-body text-font-main">
                       {response.answer}
                     </div>
                   )}

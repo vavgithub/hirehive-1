@@ -65,7 +65,7 @@ const FilterForDataTable = ({ applyLocationFilter, onApplyFilters, readOnly, pre
     if (!values || values.length === 0) {
       return {
         value: 'All',
-        className: 'text-white typography-body group-hover:text-accent-100' // lighter gray for 'All'
+        className: 'text-font-main typography-body group-hover:text-accent-100' // lighter gray for 'All'
       };
     }
 
@@ -79,14 +79,14 @@ const FilterForDataTable = ({ applyLocationFilter, onApplyFilters, readOnly, pre
     if (category === 'score' && values) {
       return {
         value: !values ? "All" : `${values}`,
-        className: 'text-white typography-body group-hover:text-accent-100' // lighter gray for 'All'
+        className: 'text-font-main typography-body group-hover:text-accent-100' // lighter gray for 'All'
       };
     }
 
     if (category === 'location' && values) {
       return {
         value: values?.length > 0 ? `${values[0]?.location}` :"All",
-        className: 'text-white typography-body group-hover:text-accent-100 whitespace-nowrap overflow-hidden text-ellipsis' // lighter gray for 'All'
+        className: 'text-font-main typography-body group-hover:text-accent-100 whitespace-nowrap overflow-hidden text-ellipsis' // lighter gray for 'All'
       };
     }
 
@@ -272,7 +272,7 @@ const FilterForDataTable = ({ applyLocationFilter, onApplyFilters, readOnly, pre
                   : (
                       <div className="p-2 rounded-xl absolute typography-body left-[18.5rem] min-w-[15.625rem] bg-background-80 w-max flex gap-2 flex-col " style={{ boxShadow: "5px 5px 50px rgba(0,0,0,0.9)" }}>
                         {categories[category].map((item) => (
-                          <label key={category === 'assignee' ? item._id : item} className={"group relative flex items-center p-4 h-10 hover:bg-background-60 cursor-pointer hover:text-accent-100 rounded-xl " + (category === 'assignee' ? selectedFilters[category].find(each => each.name === item.name) ? "bg-accent-300 text-accent-100 " : "" : selectedFilters[category].includes(item) ? "bg-accent-300 text-accent-100 " : "text-white")}>
+                          <label key={category === 'assignee' ? item._id : item} className={"group relative flex items-center p-4 h-10 hover:bg-background-60 cursor-pointer hover:text-accent-100 rounded-xl " + (category === 'assignee' ? selectedFilters[category].find(each => each.name === item.name) ? "bg-accent-300 text-accent-100 " : "" : selectedFilters[category].includes(item) ? "bg-accent-300 text-accent-100 " : "text-font-main")}>
                             <TickCheckbox
                               id={`${category}-${category === 'assignee' ? item._id : item}`}
                               checked={category === 'assignee' ? 

@@ -136,6 +136,20 @@ export default {
           green: "rgba(24, 233, 208, 0.3)",
           overlay: "rgba(0, 0, 0, 0.80)",
         },
+        status : {
+          bgyellow : 'var(--color-status-yellow)',
+          bgred : 'var(--color-status-red)',
+          bggreen : 'var(--color-status-green)',
+          bggray : 'var(--color-status-gray)',
+          textgray : 'var(--color-text-gray)',
+          textred : 'var(--color-text-red)',
+          textyellow : 'var(--color-text-yellow)',
+          textgreen : 'var(--color-text-green)',
+          bordergray : 'var(--color-border-gray)',
+          borderred : 'var(--color-border-red)',
+          borderyellow : 'var(--color-border-yellow)',
+          bordergreen : 'var(--color-border-green)',
+        },
         font: {
           primary: "var(--color-primary-100)",
           secondary: "var(--color-font-secondary)",
@@ -143,6 +157,8 @@ export default {
           gray: "var(--color-font-gray-90)",
           red: "var(--color-red-100)",
           yellow: "var(--color-yellow-100)",
+          main:"var(--color-font-main)",
+          invert:"var(--color-font-main-invert)"
         },
       },
 

@@ -2,7 +2,7 @@
 import React, { useRef } from 'react';
 import { Button } from '../Buttons/Button';
 import StyledCard from '../Cards/StyledCard';
-import { UNKNOWN_PROFILE_PICTURE_URL } from '../../utility/config';
+import { useUnknownProfilePicture } from '../../context/ThemeContext';
 
 export const ProfilePictureUpload = ({ 
   previewUrl,
@@ -10,6 +10,8 @@ export const ProfilePictureUpload = ({
   error
 }) => {
   const fileInputRef = useRef(null);
+
+  const UNKNOWN_PROFILE_PICTURE_URL = useUnknownProfilePicture()
 
   const handleFileSelect = (event) => {
     const file = event.target.files[0];

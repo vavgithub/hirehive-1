@@ -36,6 +36,7 @@ import { formatUTCToLocalTimeAuto, UTCToDateFormatted } from '../../utility/time
 import { moveCandidate, rejectCandidate, rescheduleCall, scheduleCall, submitBudgetScore, undoStageActions } from '../../services/hr.service.js';
 import { submitReview, updateAssignee } from '../../services/dr.service.js';
 import CustomToolTip from '../Tooltip/CustomToolTip.jsx';
+import { useScoreBg } from '../../context/ThemeContext.jsx';
 
 function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
     const stageData = stageStatuses[selectedStage];
@@ -409,6 +410,8 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
 
     //Logs
     const hasLog = (stageTitle && currentStatus) && stageData?.logs?.find(log => log.status === currentStatus)
+    
+    const stars = useScoreBg()
 
     return (
     <StyledCard  
@@ -543,7 +546,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
             </div>}
             <div className={(stageTitle === "Hired" ? 'w-[100%]' : 'w-[35%]') + ' flex flex-col '}>
             {stageBasedConfig?.hasScoreCard && 
-            <div className={`bg-stars bg-cover rounded-xl ${stageTitle === "Hired" ? 'w-[35%] lg:w-[25%] xl:w-[15%]' : 'w-[90%] lg:w-[55%] xl:w-[40%]' } h-fit my-4 self-end`}>
+            <div style={{backgroundImage : `url(${stars})`}} className={` bg-cover rounded-xl ${stageTitle === "Hired" ? 'w-[35%] lg:w-[25%] xl:w-[15%]' : 'w-[90%] lg:w-[55%] xl:w-[40%]' } h-fit my-4 self-end`}>
                 <div className='p-4 flex flex-col items-center'>
                     <p className='typography-small-p text-font-gray'>Total Score:</p>
                     <div className='flex flex-col items-center text-font-accent'>
@@ -555,7 +558,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
             {
                 (stageBasedConfig?.hasBudgetScoring && !isBudgetScoreSubmitted) && 
                 <div>
-                    <p className={currentStatus === "Reviewed" ? "typography-small-p text-font-gray mb-2" :'typography-body text-white mb-4'}>Score Budget</p>
+                    <p className={currentStatus === "Reviewed" ? "typography-small-p text-font-gray mb-2" :'typography-body text-font-main mb-4'}>Score Budget</p>
                     <div className='flex gap-4'>
                         <Scorer value={budgetScore} onChange={setBudgetScore} />
                         <Button 

@@ -111,7 +111,7 @@ const ThreeDots = ({ job, handleAction, page, orgId, isPinned, role , extraStyle
             },
           }}
         >
-          <div className="flex flex-col gap-2  w-full text-white">
+          <div className="flex flex-col gap-2  w-full text-font-main">
           {(job?.status === 'open' && hasPermission(role,PERMISSIONS.SHOW_PIN_UNPIN_OPTION)) &&
           <MenuItem
             key={pinUnpinMenuItems[isPinned ? 'unpin' : 'pin']?.action}
@@ -123,12 +123,12 @@ const ThreeDots = ({ job, handleAction, page, orgId, isPinned, role , extraStyle
               fontSize: '0.875rem',
               alignItems: 'center',
               gap: '0.75rem',
-              color: 'rgba(255, 255, 255, 1)', // default color
+              color: 'var(--color-font-main)', // default color
               '&:hover': {
                 backgroundColor: 'var(--color-background-60)',
-                color: 'rgba(255, 255, 255, 1)', // custom white color
+                color: 'var(--color-font-main)', // custom white color
                 '& .MuiTypography-root': {
-                  color: pinUnpinMenuItems[isPinned ? 'unpin' : 'pin']?.style?.color ?? 'rgba(255, 255, 255, 1) !important', // force Typography to be white
+                  color: pinUnpinMenuItems[isPinned ? 'unpin' : 'pin']?.style?.color ?? 'var(--color-font-main) !important', // force Typography to be white
                 },
               },
               ...pinUnpinMenuItems[isPinned ? 'unpin' : 'pin']?.style,
@@ -166,12 +166,12 @@ const ThreeDots = ({ job, handleAction, page, orgId, isPinned, role , extraStyle
                       fontSize: '0.875rem',
                       alignItems: 'center',
                       gap: '0.75rem',
-                      color: 'rgba(255, 255, 255, 1)', // default color
+                      color: 'var(--color-font-main)', // default color
                       '&:hover': {
                         backgroundColor: 'var(--color-background-60)',
-                        color: 'rgba(255, 255, 255, 1)', // custom white color
+                        color: 'var(--color-font-main)', // custom white color
                         '& .MuiTypography-root': {
-                          color: style?.color ?? 'rgba(255, 255, 255, 1) !important', // force Typography to be white
+                          color: style?.color ?? 'var(--color-font-main) !important', // force Typography to be white
                         },
                       },
                       ...style,
@@ -187,7 +187,7 @@ const ThreeDots = ({ job, handleAction, page, orgId, isPinned, role , extraStyle
                         sx: {
                           fontWeight: 300,
                           fontSize: '0.875rem',
-                          color: 'inherit', // critical: let it inherit from MenuItem
+                          color: 'var(--color-font-main)', // critical: let it inherit from MenuItem
                         },
                       }}
                       primary={label}

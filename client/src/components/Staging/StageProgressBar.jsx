@@ -1,8 +1,6 @@
 import React from 'react';
 import { LinearProgress, Typography, Box } from '@mui/material';
-import { CircleAlertIcon, UnlockIcon } from 'lucide-react';
-// import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-// import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
+
 const StageProgressBar = ({ stage, status, isActive }) => {
     const getProgressValue = (status) => {
         switch (status) {
@@ -55,7 +53,7 @@ const StageProgressBar = ({ stage, status, isActive }) => {
                     width: '100%',
                     height: 4,
                     borderRadius: 4,
-                    backgroundColor: 'rgba(44, 45, 47, 1)',
+                    backgroundColor: 'var(--color-font-gray-90)',
                     '& .MuiLinearProgress-bar': {
                         backgroundColor: isActive ? 'primary.main' : 'rgba(18, 211, 130, 1)',
                     },

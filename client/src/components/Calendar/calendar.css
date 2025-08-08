@@ -15,7 +15,7 @@
 }
 
 .fc-button {
-  @apply !h-11 !px-12 !rounded-xl !bg-background-80 !text-white !border-none ;
+  @apply !h-11 !px-12 !rounded-xl !bg-background-80 !text-font-main !border-none ;
 }
 
 
@@ -91,7 +91,7 @@
 }
 
 .fc-theme-standard .fc-list-day-cushion {
-  @apply !flex text-white typography-h3 
+  @apply !flex text-font-main typography-h3 
 }
 .fc-scrollgrid .fc-daygrid-day-events {
   @apply max-h-[10rem]
@@ -182,7 +182,7 @@
 
 
 .fc-timegrid .fc-timegrid-axis {
-  @apply !bg-background-80 text-white; /* Consistent background for time axis */
+  @apply !bg-background-80 text-font-main; /* Consistent background for time axis */
 }
 
 .fc-timegrid .fc-timegrid-slot-label {

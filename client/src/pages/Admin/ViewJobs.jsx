@@ -44,12 +44,12 @@ const ViewJobs = () => {
 
     const tabs = [
         {
-            name: 'jobDetails', label: 'Job Details', icon: <IconWrapper icon={FileText} size={0} isInActiveIcon={true} customIconSize={4} />,
-            activeIcon: <IconWrapper icon={FileText} size={0} isActiveIcon={true} customIconSize={4} />,
+            name: 'jobDetails', label: 'Job Details', icon: <IconWrapper icon={FileText} size={0} inheritColor={true} customIconSize={4} />,
+            activeIcon: <IconWrapper icon={FileText} size={0} inheritColor={true} customIconSize={4} />,
         },
         {
-            name: 'candidate', label: 'Candidates', icon: <IconWrapper icon={Users} size={0} isInActiveIcon={true} customIconSize={4} />,
-            activeIcon: <IconWrapper icon={Users} size={0} isActiveIcon={true} customIconSize={4} />,
+            name: 'candidate', label: 'Candidates', icon: <IconWrapper icon={Users} size={0} inheritColor={true} customIconSize={4} />,
+            activeIcon: <IconWrapper icon={Users} size={0} inheritColor={true} customIconSize={4} />,
         }
     ];
 

@@ -7,7 +7,6 @@ import useAuth from '../../hooks/useAuth';
 import ForgotPassword from './ForgotPassword';
 import { showErrorToast } from '../../components/ui/Toast';
 import Loader from '../../components/Loaders/Loader';
-import Logo from '../../svg/Logo/lightLogo.svg'
 import { InputField } from '../../components/Inputs/InputField';
 import IconWrapper from '../../components/Cards/IconWrapper';
 import { Briefcase, FileText } from 'lucide-react';
@@ -15,6 +14,7 @@ import { getRoute, ROUTE_KEY } from '../../config/permissions.config';
 import GoogleIcon from '../../svg/Icons/GoogleIcon';
 import { FcGoogle } from 'react-icons/fc';
 import { useAuthContext } from '../../context/AuthProvider';
+import { useLogo } from '../../context/ThemeContext';
 
 const statsOne = [
     { title: 'Jobs Posted', value: 100, icon: () => <IconWrapper size={10} isInActiveIcon icon={Briefcase} /> },
@@ -32,6 +32,7 @@ const Login = () => {
     const navigate = useNavigate();
     const { data: authData, isLoading: authLoading, refetch: refetchAuth } = useAuth();
     const { setUser } = useAuthContext();
+    const Logo = useLogo();
 
     useEffect(() => {
         if (authData?.role) {
@@ -93,7 +94,7 @@ const Login = () => {
             </div>
 
             {/* Right section with login form */}
-            <div className="w-full lg:w-2/5  p-28 flex flex-col justify-center items-start ">
+            <div className="w-full lg:w-2/5 bg-background-100 p-28 flex flex-col justify-center items-start ">
                 {showForgotPassword ? (
                     <ForgotPassword onBack={() => setShowForgotPassword(false)} />
                 ) : (

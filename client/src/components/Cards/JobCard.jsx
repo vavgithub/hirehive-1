@@ -1,7 +1,6 @@
 import React from 'react';
 import ThreeDots from '../ui/ThreeDots';
 import { getTimeAgo } from '../../utility/getTimeAgo';
-import ClosedBadge from '../../svg/Icons/ClosedBadge';
 import StyledCard from './StyledCard';
 import CustomBadge from '../Badge/CustomBadge';
 import { Building, Building2, Copy, Pin, Rss } from 'lucide-react';
@@ -12,6 +11,7 @@ import { showSuccessToast } from '../ui/Toast';
 import IconWrapper from './IconWrapper';
 import { ClockArrowUp, DatabaseZap, SignalHigh } from 'lucide-react';
 import { hasPermission, PERMISSIONS } from '../../config/permissions.config';
+import { useClosedBadge } from '../../context/ThemeContext';
 
 // Helper function to truncate text to specific number of words
 const truncateWords = (text, wordLimit) => {
@@ -130,6 +130,7 @@ const JobCard = ({
     showSuccessToast("Success","Job link copied successfuully")
   }
 
+  const ClosedBadgeComponent = useClosedBadge()
 
   return (
     <StyledCard
@@ -228,7 +229,7 @@ const JobCard = ({
             This job post has been closed 
           </p>
           <div className='absolute top-0 z-0 right-0'>
-            <ClosedBadge />
+            <ClosedBadgeComponent />
           </div>
         </div>
         )}

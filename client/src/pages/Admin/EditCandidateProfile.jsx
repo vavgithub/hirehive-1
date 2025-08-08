@@ -8,7 +8,7 @@ import { showSuccessToast } from '../../components/ui/Toast';
 import Loader from '../../components/Loaders/Loader';
 import StyledCard from '../../components/Cards/StyledCard';
 import Container from '../../components/Cards/Container';
-import { UNKNOWN_PROFILE_PICTURE_URL } from '../../utility/config';
+import { useUnknownProfilePicture } from '../../context/ThemeContext';
 import { updateCandidateProfile } from '../../services/admin.candidate.service';
 
 
@@ -22,6 +22,8 @@ const EditCandidateProfile = () => {
   const { id: mainId } = useParams();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const UNKNOWN_PROFILE_PICTURE_URL = useUnknownProfilePicture();
+
 
   const { data, error, isLoading } = useQuery({
     queryKey: ['candidate', mainId],

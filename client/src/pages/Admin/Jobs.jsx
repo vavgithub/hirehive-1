@@ -270,16 +270,16 @@ const Jobs = () => {
         {
             name: 'open',
             label: 'Open',
-            icon: <IconWrapper size={0} customIconSize={5} customStrokeWidth={4} isInActiveIcon icon={CircleCheck} />,
-            activeIcon: <IconWrapper size={0} customIconSize={5} customStrokeWidth={4} isActiveIcon icon={CircleCheck} />,
+            icon: <IconWrapper size={0} customIconSize={5} customStrokeWidth={4} inheritColor icon={CircleCheck} />,
+            activeIcon: <IconWrapper size={0} customIconSize={5} customStrokeWidth={4} inheritColor icon={CircleCheck} />,
         },
         {
-            name: 'closed', label: 'Closed', icon: <IconWrapper size={0} customIconSize={5} customStrokeWidth={4} isInActiveIcon icon={CircleX} />,
-            activeIcon: <IconWrapper size={0} customIconSize={5} customStrokeWidth={4} isActiveIcon icon={CircleX} />,
+            name: 'closed', label: 'Closed', icon: <IconWrapper size={0} customIconSize={5} customStrokeWidth={4} inheritColor icon={CircleX} />,
+            activeIcon: <IconWrapper size={0} customIconSize={5} customStrokeWidth={4} inheritColor icon={CircleX} />,
         },
         {
-            name: 'draft', label: 'Draft', icon: <IconWrapper size={0} customIconSize={5} customStrokeWidth={4} isInActiveIcon icon={Archive} />,
-            activeIcon: <IconWrapper size={0} customIconSize={5} customStrokeWidth={4} isActiveIcon icon={Archive} />,
+            name: 'draft', label: 'Draft', icon: <IconWrapper size={0} customIconSize={5} customStrokeWidth={4} inheritColor icon={Archive} />,
+            activeIcon: <IconWrapper size={0} customIconSize={5} customStrokeWidth={4} inheritColor icon={Archive} />,
         },
     ];
 
@@ -383,7 +383,7 @@ const Jobs = () => {
                             activeTab == "open" && displayJobs.length != 0 && displayJobs.filter(job => job.status === "open").length !== 0 && (
                                 <div className='flex justify-end '>
                                     <div >
-                                        <Button id="createJobBtn" variant="primary" icon={() => <IconWrapper icon={CirclePlus} size={0} customIconSize={5} customStrokeWidth={5} />} iconPosition="left" onClick={handleCreateJob}>Create A Job Listing</Button>
+                                        <Button id="createJobBtn" variant="primary" icon={() => <IconWrapper inheritColor icon={CirclePlus} size={0} customIconSize={5} customStrokeWidth={5} />} iconPosition="left" onClick={handleCreateJob}>Create A Job Listing</Button>
                                     </div>
                                 </div>
                             )
@@ -393,14 +393,14 @@ const Jobs = () => {
                                 <Loader />
                             </div>
                         ) : (displayJobs.length === 0 || displayJobs.filter(job => job.status === activeTab).length === 0) ? (
-                            <div className='bg-background-80 h-full flex flex-col p-40 justify-center items-center rounded-xl'>
+                            <div className='bg-background-80 h-full flex flex-col p-36 justify-center items-center rounded-xl'>
                                 <img src={NoJobs} alt="No jobs found" />
                                 <span className='typography-body m-6'>
                                     Create a job post to attract top talent and build your dream team
                                 </span>
                                     <Button
                                         variant="primary"
-                                        icon={() => <IconWrapper icon={CirclePlus} size={0} customIconSize={5} customStrokeWidth={5} />}
+                                        icon={() => <IconWrapper inheritColor icon={CirclePlus} size={0} customIconSize={5} customStrokeWidth={5} />}
                                         iconPosition="left"
                                         onClick={handleCreateJob}
                                     >

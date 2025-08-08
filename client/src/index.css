@@ -386,7 +386,7 @@ input[type='number'] {
   }
 
   .custom-radio{
-    @apply mr-2 cursor-pointer appearance-none border-2 rounded-full  h-5 aspect-square max-h-5 w-5 max-w-5 checked:ring-offset-[5px] checked:ring-offset-black-100 checked:bg-teal-100 checked:ml-[0.25rem] checked:mr-[0.75rem] checked:ring-[2px] checked:w-3 checked:h-3 checked:border-0 checked:ring-teal-100
+    @apply mr-2 cursor-pointer appearance-none border-2  rounded-full border-font-main  h-5 aspect-square max-h-5 w-5 max-w-5 checked:ring-offset-[5px] checked:ring-offset-background-100 checked:bg-teal-100 checked:ml-[0.25rem] checked:mr-[0.75rem] checked:ring-[2px] checked:w-3 checked:h-3 checked:border-0 checked:ring-teal-100
   }
 
   .custom-input{
@@ -505,13 +505,86 @@ input[type='number'] {
     --color-font-accent-100:rgba(24, 233, 208, 1);
     --color-font-gray-90:rgb(128, 131, 137);
     --color-font-gray-80:rgb(73, 73, 75);
-    --color-redbg:rgba(255, 56, 92, 0.2)
+    --color-redbg:rgba(255, 56, 92, 0.2);
     --color-yellow-100:rgba(237, 189, 20, 1);
     --color-green-100:rgba(18, 211, 130, 1);
     --color-red-100:rgba(255, 56, 92, 1);
 
-  }
+    --color-font-main: rgb(255,255,255);
+    --color-font-main-invert: rgb(0, 0, 0);
 
+    /* StatusBadge Colors */
+    --color-status-red : rgba(255, 56, 92, 0.2);
+    --color-status-yellow : rgba(237, 189, 20, 0.2);
+    --color-status-green : rgba(20,83,45, 1);
+    --color-status-gray : rgba(55,65,81, 1);
+
+    --color-border-red : rgba(255, 56, 92, 0.2);
+    --color-border-yellow : rgba(237, 189, 20, 0.2);
+    --color-border-green : rgba(20,83,45, 1);
+    --color-border-gray : rgba(55,65,81, 1);
+
+    --color-text-gray : rgba(209,213,219, 1);
+    --color-text-green : rgba(134,239,172, 1);
+    --color-text-yellow : rgba(237, 189, 20, 1);
+    --color-text-red : rgba(255, 56, 92, 1);
+
+  }
+ /* Light theme */
+  [data-theme="light"] {
+    --color-primary-100: rgb(4, 95, 253);
+    --color-primary-200: rgb(2, 84, 228);
+    --color-primary-300: rgba(4, 95, 253, 0.15);
+    --color-primary-400: rgba(4, 95, 253, 0.2);
+    
+    --color-accent-100: rgb(0, 127, 112);
+    --color-accent-200: rgba(0, 184, 163, 0.3);
+    --color-accent-300: rgba(204, 221, 227,1);
+    
+    --color-background-100:rgba(255,255, 255, 1);
+    --color-background-90: rgba(241, 246, 255, 1);
+    --color-background-80: rgba(227, 230, 240, 1);
+    --color-background-70: rgba(206, 213, 226, 1);    
+    --color-background-60: rgba(222, 224, 235, 1);
+    --color-background-50: rgba(250, 250, 250, 1);
+    --color-background-40: rgba(209, 217, 235, 1);
+    --color-background-30: rgba(178, 180, 184, 1);
+    --color-background-20: rgba(170, 172, 176, 1);
+    --color-background-10: rgba(160, 162, 166, 1);
+    --color-background-5: rgba(81, 81, 81, 1);
+    
+    --color-font-accent-100: rgb(0, 127, 112);
+    --color-font-gray-90:rgb(53, 53, 53);
+    --color-font-secondary: rgb(73, 80, 87);
+    --color-redbg: rgba(255, 56, 92, 0.1);
+    --color-yellow-100: rgba(237, 189, 20, 1);
+    --color-green-100: rgba(18, 211, 130, 1);
+    --color-red-100: rgba(255, 56, 92, 1);
+
+    --color-font-main: rgb(0,0,0);
+    --color-font-main-invert: rgb(255, 255, 255);
+
+    /* StatusBadge Colors */
+    --color-status-red : rgba(255, 56, 92, 0.2);
+    --color-status-yellow : rgba(237, 189, 20, 0.2);
+    --color-status-green : rgba(20, 225, 89, 0.2);
+    --color-status-gray : rgba(18, 19, 20, 0.2);
+
+    --color-border-red : rgba(255, 56, 92, 1);
+    --color-border-yellow : rgba(237, 189, 20, 1);
+    --color-border-green : rgba(18, 211, 130, 1);
+    --color-border-gray : rgba(32, 33, 34, 1);
+
+    --color-text-gray : rgba(7, 7, 8, 1);
+    --color-text-green : rgba(7, 7, 8, 1);
+    --color-text-yellow : rgba(7, 7, 8, 1);
+    --color-text-red : rgba(7, 7, 8, 1);
+
+  }
   
 }
 
+
+[data-theme="light"] body {
+  @apply text-black-100;
+}

@@ -93,7 +93,7 @@ export const CustomDropdown = React.forwardRef(({ field, label, options, value, 
         <button
           type="button"
           onClick={toggleDropdown}
-          className={`${value ? "text-white" : "text-font-gray"} ${error ? '!border !border-red-500' : 'border border-transparent'}  typography-body mt-1 h-[2.75rem] flex items-center justify-between bg-background-80 hover:bg-background-60 w-full outline-none rounded-xl shadow-sm focus:ring-teal-300 focus:border-teal-300 text-left px-4`}
+          className={`${value ? "text-font-main" : "text-font-gray"} ${error ? '!border !border-red-500' : 'border border-transparent'}  typography-body mt-1 h-[2.75rem] flex items-center justify-between bg-background-80 hover:bg-background-60 w-full outline-none rounded-xl shadow-sm focus:ring-teal-300 focus:border-teal-300 text-left px-4`}
           ref={ref}
         >
           {options.find(opt => opt.value === value)?.label || options.find(opt => opt === value) || '-Select-'}

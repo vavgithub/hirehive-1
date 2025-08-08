@@ -21,7 +21,6 @@ import {  getStageColorForChart, maxScoreOfEachStage } from '../../config/stagin
 import Container from '../../components/Cards/Container';
 import IconWrapper from '../../components/Cards/IconWrapper';
 import { ArrowLeftRight, ChevronUp, ChevronRight, ClipboardCheck, FileText, FileUser, FolderOpen, Globe, Mail, MonitorDot, Notebook, NotebookPen, Phone, Users, Calendar1 } from 'lucide-react';
-import { UNKNOWN_PROFILE_PICTURE_URL } from '../../utility/config';
 import RatingSelector, { getRatingIcon } from '../../components/MUIUtilities/RatingSelector';
 import Modal from '../../components/Modals/Modal';
 import TextEditor from '../../components/utility/TextEditor';
@@ -36,6 +35,7 @@ import { getRoute, hasPermission, hasRoutePermission, PERMISSIONS, ROUTE_KEY } f
 import { fetchTotalScore, updateCandidateRating } from '../../services/hr.service';
 import { addNotes, fetchCandidateData, fetchCandidateJobs, toggleShortlistStatus } from '../../services/admin.candidate.service';
 import { fetchAllDesignReviewers } from '../../services/auth.service';
+import { useScoreBg, useUnknownProfilePicture } from '../../context/ThemeContext';
 
 export const VAVScoreCard = ({ score, stage, scoreStages }) => {
     const [showBreakDown, setShowBreakDown] = useState(false);
@@ -72,10 +72,12 @@ export const VAVScoreCard = ({ score, stage, scoreStages }) => {
         return mappedData.filter(data => data?.name !== "Hired");
     }, [scoreStages])
 
+    const stars = useScoreBg()
+
     if (!showBreakDown) {
         return (
-            <StyledCard extraStyles="flex bg-stars  flex-col items-center sm:w-[55%] lg:w-[35%]  max-w-[27rem] bg-cover relative">
-                <h2>VAV SCORE</h2>
+            <StyledCard style={{backgroundImage : `url(${stars})`}} extraStyles="flex   flex-col items-center sm:w-[55%] lg:w-[35%]  max-w-[27rem] bg-cover relative">
+                <h2 className="text-font-main">VAV SCORE</h2>
                 <button onClick={() => setShowBreakDown(true)} className='absolute top-4 right-4 hover:text-font-gray'>
                     <CustomToolTip title={'View Score Breakdown'}>
                         <IconWrapper icon={ArrowLeftRight} size={0} customStrokeWidth={7} inheritColor />
@@ -86,7 +88,7 @@ export const VAVScoreCard = ({ score, stage, scoreStages }) => {
             </StyledCard>
         )
     } else {
-        return (<StyledCard extraStyles="flex bg-stars  flex-col items-center sm:w-[55%] lg:w-[35%]  max-w-[27rem] bg-cover relative">
+        return (<StyledCard style={{backgroundImage : `url(${stars})`}} extraStyles="flex   flex-col items-center sm:w-[55%] lg:w-[35%]  max-w-[27rem] bg-cover relative">
             <h2>Score Breakdown</h2>
             <button onClick={() => setShowBreakDown(false)} className='absolute top-4 right-4 hover:text-font-gray'>
                 <CustomToolTip title={'View VAV Score'}>
@@ -280,15 +282,15 @@ const ViewCandidateProfile = () => {
         {
             name: 'application',
             label: 'Application',
-            icon: <IconWrapper icon={Users} size={0} isInActiveIcon={true} customIconSize={4} />,
-            activeIcon: <IconWrapper icon={Users} isActiveIcon={true} size={0} customIconSize={4} />,
+            icon: <IconWrapper icon={Users} size={0} inheritColor={true} customIconSize={4} />,
+            activeIcon: <IconWrapper icon={Users} inheritColor={true} size={0} customIconSize={4} />,
         },
         ...(hasPermission(role,PERMISSIONS.SHOW_TAB_CANDIDATE_DETAIL) ? [
             {
                 name: 'candidateDetails',
                 label: 'Candidate Details',
-                icon: <IconWrapper icon={FileText} size={0} isInActiveIcon={true} customIconSize={4} />,
-                activeIcon: <IconWrapper isActiveIcon={true} icon={FileText} size={0} customIconSize={4} />,
+                icon: <IconWrapper icon={FileText} size={0} inheritColor={true} customIconSize={4} />,
+                activeIcon: <IconWrapper inheritColor={true} icon={FileText} size={0} customIconSize={4} />,
             }
         ] : []),
     ];
@@ -382,6 +384,8 @@ const ViewCandidateProfile = () => {
     }
 
     const transformedData = transformCandidateData(data);
+
+    const UNKNOWN_PROFILE_PICTURE_URL = useUnknownProfilePicture()
 
     const handleAssignmentNavigation = () => {
 
@@ -506,7 +510,7 @@ const reviewerProfilePic = currentReviewer?.profilePicture
                                 <div className="relative to-background-100 w-[210px] min-h-auto max-h-[210px] rounded-xl overflow-hidden">
                                     <img src={data.profilePictureUrl || UNKNOWN_PROFILE_PICTURE_URL} alt="" className='object-cover w-full overflow-hidden' />
                                     {hasPermission(role,PERMISSIONS.SHOW_CANDIDATE_PROFILE_RATING) &&
-                                        <span onClick={(e) => setRatingAnchor(e.currentTarget)} className='absolute cursor-pointer bg-[#2d2d2eae] min-w-10 min-h-10 top-2 right-2 rounded-full flex justify-center items-center'>
+                                        <span onClick={(e) => setRatingAnchor(e.currentTarget)} className='absolute cursor-pointer bg-background-60 min-w-10 min-h-10 top-2 right-2 rounded-full flex justify-center items-center'>
                                             {getRatingIcon(data?.jobApplication?.rating)}
                                         </span>}
                                 </div>

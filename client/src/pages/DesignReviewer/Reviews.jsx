@@ -53,14 +53,14 @@ const Reviews = () => {
   const { data: candidates, isLoading, isError, error } = useQuery({
     queryKey: ['assignedCandidates'],
     queryFn: fetchAssignedCandidates,
-    refetchOnWindowFocus: false
+    refetchOnWindowFocus: true
   });
 
   // Fetch stats
   const { data: statsData, isLoading: isStatsLoading, isError: isStatsError, error: statsError } = useQuery({
     queryKey: ['underReviewStats'],
     queryFn: fetchUnderReviewStats,
-    refetchOnWindowFocus: false
+    refetchOnWindowFocus: true
   });
 
   const groupCandidatesByJobAndStage = (candidates) => {
@@ -229,7 +229,7 @@ const Reviews = () => {
     navigate(`${getRoute(user?.role,ROUTE_KEY.REVIEWS_VIEW_CANDIDATE)}/${candidate._id}/${candidate.currentApplication.jobId}`);
   }
 
-  const groupedEntries = filteredCandidates?.length > 0 ? Object.entries(groupedCandidates) : [];
+  const groupedEntries = candidates?.length === 0 ? [] : filteredCandidates?.length > 0 ? Object.entries(groupedCandidates) : [];
 
   return (
     <Container>
