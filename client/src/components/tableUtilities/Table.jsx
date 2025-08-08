@@ -32,12 +32,29 @@ import { autoAssignPortfolio, updateAssignee } from '../../services/dr.service';
 
 const Table = ({
   jobId, jobData,
+  tableData,
+  isTableDataLoading,
   readOnly = false,
   isShortlisted = false,
   readOnlyData = [],
   additionalColumns = [], // New prop for custom columns
   customNavigationPath = null, // New prop for custom navigation path
   hasCheckBox = true,
+  currentPage = 1,
+  setCurrentPage,
+  pageSize = 10,
+  setPageSize,
+  filters = {},
+  setFilters,
+  sortModel = [],
+  setSortModel,
+  searchTerm = '',
+  setSearchTerm,
+  budgetFilter = { from : '' , to : ''},
+  setBudgetFilter,
+  showContractors = false,
+  setShowContractors,
+  totalCount = 0,
   addLocationFilter
 }) => {
 
@@ -50,10 +67,7 @@ const Table = ({
   const queryClient = useQueryClient();
   const [isAutoAssignModalOpen, setIsAutoAssignModalOpen] = useState(false);
   const [isBudgetModalOpen, setIsBudgetModalOpen] = useState(false);
-  const [budgetFilter, setBudgetFilter] = useState(() => {
-    const savedFilter = localStorage.getItem(`budgetFilter_${jobId}`);
-    return savedFilter ? JSON.parse(savedFilter) : { from: '', to: '' };
-  });
+
   const [tempBudgetFilter, setTempBudgetFilter] = useState(budgetFilter);
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedRow, setSelectedRow] = useState(null);
@@ -67,14 +81,13 @@ const Table = ({
   const [selectedDocumentUrl, setSelectedDocumentUrl] = useState('');
 
   // ..this are the table filters 
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filters, setFilters] = useState({});
-  const [currentPage, setCurrentPage] = useState(0);
-  const [pageSize, setPageSize] = useState(10);
+  // const [searchTerm, setSearchTerm] = useState('');
+  // const [filters, setFilters] = useState({});
+  // const [currentPage, setCurrentPage] = useState(0);
+  // const [pageSize, setPageSize] = useState(10);
 
   const [budgetMenuAnchorEl, setBudgetMenuAnchorEl] = useState(null);
 
-  const [showContractors, setShowContractors] = useState(false);
   const [isLocationFiltered,setIsLocationFiltered] = useState(false);
 
   const [locationObj,setLocationObj] = useState(null);
@@ -118,14 +131,8 @@ const Table = ({
     setIsDocumentViewerOpen(true);
   };
 
-  const { data: apiResponse, isLoading, isError, refetch } = useQuery({
-    queryKey: ['candidates', jobId,locationObj],
-    queryFn: () => axios.post(`/admin/candidate/${jobId}`,{...(locationObj ? locationObj : {} )}).then(res => res.data),
-    enabled: !readOnly, // Only fetch data if not in readOnly mode
-  });
-
   // Use readOnlyData if in readOnly mode, otherwise use data from API
-  const rowsData = readOnly ? readOnlyData : (apiResponse?.candidates || []);
+  const rowsData = readOnly ? readOnlyData : tableData || [];
 
   useEffect(()=>{
     if(filters?.location?.length > 0 && filters?.location[0]?.location){
@@ -155,101 +162,101 @@ const Table = ({
     }
   },[filters?.location])
 
-  // Apply budget filter
-  const filteredRowsData = React.useMemo(() => {
-    if (!rowsData) return [];
-    if (budgetFilter.from === '' || budgetFilter.to === '') return rowsData;
-    return rowsData?.filter(row => {
-      const budgetValue = parseFloat((jobData?.employmentType === "Contract") ? (row.hourlyRate ?? 0) : row.expectedCTC);
-      return budgetValue >= parseFloat(budgetFilter.from) && budgetValue <= parseFloat(budgetFilter.to);
-    });
-  }, [rowsData, budgetFilter]);
+  // // Apply budget filter
+  // const filteredRowsData = React.useMemo(() => {
+  //   if (!rowsData) return [];
+  //   if (budgetFilter.from === '' || budgetFilter.to === '') return rowsData;
+  //   return rowsData?.filter(row => {
+  //     const budgetValue = parseFloat((jobData?.employmentType === "Contract") ? (row.hourlyRate ?? 0) : row.expectedCTC);
+  //     return budgetValue >= parseFloat(budgetFilter.from) && budgetValue <= parseFloat(budgetFilter.to);
+  //   });
+  // }, [rowsData, budgetFilter]);
 
-  const filteredAndSearchedRowsData = React.useMemo(() => {
-    let result = filteredRowsData;
+  // const filteredAndSearchedRowsData = React.useMemo(() => {
+  //   let result = filteredRowsData;
 
-    // Apply search
-    if (searchTerm) {
-      result = result.filter(row =>
-        `${row.firstName} ${row.lastName}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        row.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        row.phone.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
+  //   // Apply search
+  //   if (searchTerm) {
+  //     result = result.filter(row =>
+  //       `${row.firstName} ${row.lastName}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //       row.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //       row.phone.toLowerCase().includes(searchTerm.toLowerCase())
+  //     );
+  //   }
 
-    // Apply filters
-    if (filters.stage && filters.stage.length > 0) {
-      result = result.filter(row => filters.stage.includes(row.currentStage));
-    }
-    if (filters.status && filters.status.length > 0) {
-      result = result.filter(row => filters.status.includes(readOnly ? row?.status : row.stageStatuses[row.currentStage]?.status));
-    }
-    if (filters.experience) {
-      const [min, max] = filters.experience.split('-').map(num => parseInt(num));
-      result = result.filter(row => {
-        const exp = parseInt(row.experience);
-        return exp >= min && exp <= max;
-      });
-    }
-    if (filters.rating && filters.rating.length > 0) {
-      result = result.filter(row => filters.rating.includes(row.rating));
-    }
-    if (!readOnly && filters.assignee && filters.assignee.length > 0) {
-      result = result.filter(row => filters.assignee.find(each => each._id === row.stageStatuses[row.currentStage]?.assignedTo));
-    }
-    if (filters?.assessment && filters.assessment?.length > 0) {
-      let isCompleted = false;
-      let isNotCompleted = false;
-      filters.assessment.map(state => {
-        state === "Completed" && (isCompleted = true)
-        state === "Not Completed" && (isNotCompleted = true)
-      })
-      if (isCompleted && isNotCompleted) {
-        result = result
-      } else if (isCompleted) {
-        result = result.filter(row => row.hasGivenAssessment === true && row.assessmentResponse );
-      } else if (isNotCompleted) {
-        result = result.filter(row => row.hasGivenAssessment === false && !row.assessmentResponse );
-      }
+  //   // Apply filters
+  //   if (filters.stage && filters.stage.length > 0) {
+  //     result = result.filter(row => filters.stage.includes(row.currentStage));
+  //   }
+  //   if (filters.status && filters.status.length > 0) {
+  //     result = result.filter(row => filters.status.includes(readOnly ? row?.status : row.stageStatuses[row.currentStage]?.status));
+  //   }
+  //   if (filters.experience) {
+  //     const [min, max] = filters.experience.split('-').map(num => parseInt(num));
+  //     result = result.filter(row => {
+  //       const exp = parseInt(row.experience);
+  //       return exp >= min && exp <= max;
+  //     });
+  //   }
+  //   if (filters.rating && filters.rating.length > 0) {
+  //     result = result.filter(row => filters.rating.includes(row.rating));
+  //   }
+  //   if (!readOnly && filters.assignee && filters.assignee.length > 0) {
+  //     result = result.filter(row => filters.assignee.find(each => each._id === row.stageStatuses[row.currentStage]?.assignedTo));
+  //   }
+  //   if (filters?.assessment && filters.assessment?.length > 0) {
+  //     let isCompleted = false;
+  //     let isNotCompleted = false;
+  //     filters.assessment.map(state => {
+  //       state === "Completed" && (isCompleted = true)
+  //       state === "Not Completed" && (isNotCompleted = true)
+  //     })
+  //     if (isCompleted && isNotCompleted) {
+  //       result = result
+  //     } else if (isCompleted) {
+  //       result = result.filter(row => row.hasGivenAssessment === true && row.assessmentResponse );
+  //     } else if (isNotCompleted) {
+  //       result = result.filter(row => row.hasGivenAssessment === false && !row.assessmentResponse );
+  //     }
 
-      // Ensure unique results by _id
-      const uniqueResults = new Map();
-      result.forEach(row => uniqueResults.set(row._id, row));
-      result = Array.from(uniqueResults.values());
-    }
-    if (filters?.score) {
-      const [min, max] = filters?.score?.split(" - ");
-      result = result?.filter((row, i) => {
-        let totalScore = 0;
-        Object.entries(row?.stageStatuses).forEach(([stage, stageData]) => {
-          if (stage === "Screening") {
-            const screeningScore = stageData?.score;
-            if (screeningScore && typeof screeningScore === "object") {
-              totalScore += Object.values(screeningScore).reduce(
-                (sum, val) => sum + parseInt(val ?? 0),
-                0
-              );
-            } else {
-              totalScore += 0;
-            }
-          } else {
-            totalScore += parseInt(stageData?.score ?? 0);
-          }
-        });
-        return (totalScore < parseInt(max) && totalScore > parseInt(min))
-      })
-    }
+  //     // Ensure unique results by _id
+  //     const uniqueResults = new Map();
+  //     result.forEach(row => uniqueResults.set(row._id, row));
+  //     result = Array.from(uniqueResults.values());
+  //   }
+  //   if (filters?.score) {
+  //     const [min, max] = filters?.score?.split(" - ");
+  //     result = result?.filter((row, i) => {
+  //       let totalScore = 0;
+  //       Object.entries(row?.stageStatuses).forEach(([stage, stageData]) => {
+  //         if (stage === "Screening") {
+  //           const screeningScore = stageData?.score;
+  //           if (screeningScore && typeof screeningScore === "object") {
+  //             totalScore += Object.values(screeningScore).reduce(
+  //               (sum, val) => sum + parseInt(val ?? 0),
+  //               0
+  //             );
+  //           } else {
+  //             totalScore += 0;
+  //           }
+  //         } else {
+  //           totalScore += parseInt(stageData?.score ?? 0);
+  //         }
+  //       });
+  //       return (totalScore < parseInt(max) && totalScore > parseInt(min))
+  //     })
+  //   }
 
-    if (filters?.["job Type"]?.length > 0) {
-      result = result.filter(row => filters?.["job Type"].includes(row.jobType));
-    }
+  //   if (filters?.["job Type"]?.length > 0) {
+  //     result = result.filter(row => filters?.["job Type"].includes(row.jobType));
+  //   }
 
-    if (showContractors) {
-      result = result?.filter(row => row.jobType === "Contract")
-    }
+  //   if (showContractors) {
+  //     result = result?.filter(row => row.jobType === "Contract")
+  //   }
 
-    return result;
-  }, [filteredRowsData, searchTerm, filters, showContractors]);
+  //   return result;
+  // }, [filteredRowsData, searchTerm, filters, showContractors]);
 
   const autoAssignMutation = useMutation({
     mutationFn: autoAssignPortfolio,
@@ -418,7 +425,7 @@ const Table = ({
     let baseColumns = readOnly ?
       getReadOnlyColumns(role, handleDocumentClick) :
       getDefaultColumns(role, canMove, canReject, handleAssigneeChange,
-        handleMoveClick, handleRejectClick, handleRatingClick, handleDocumentClick , jobData?.status === "closed",jobData?.employmentType === 'Contract' || jobData?.employmentType === 'Part Time',jobData?.employmentType !== 'Contract' && jobData?.employmentType !== 'Part Time');
+        handleMoveClick, handleRejectClick, handleRatingClick, handleDocumentClick , jobData?.status === "closed",jobData?.employmentType === 'Contract' || jobData?.employmentType === 'Part Time',jobData?.employmentType !== 'Contract' &&  jobData?.employmentType !== 'Part Time');
 
     // Insert additional columns after the first column
     if (additionalColumns.length > 0) {
@@ -434,7 +441,6 @@ const Table = ({
   })();
 
   const navigate = useNavigate();
-
 
   const handleRowClick = (params) => {
     // Save the current window scroll position before navigation
@@ -515,13 +521,12 @@ const Table = ({
   };
 
 
-
   return (
     <div className='w-full'>
 
       {(autoAssignMutation.isPending ||
         rejectCandidateMutation.isPending ||
-        moveCandidateMutation.isPending || isLoading) && <LoaderModal />}
+        moveCandidateMutation.isPending || isTableDataLoading) && <LoaderModal />}
 
       <MuiCustomStylesForDataGrid />
 
@@ -584,8 +589,12 @@ const Table = ({
       {(!readOnly && selectedRows?.length > 0 && jobData?.status !== "closed" ) && <MultiSelectBar selectedData={selectedRows} clearSelection={() => { setSelectedRows([]); setRowSelectionModel([]) }} jobId={jobId} />}
 
       <DataGrid
-        rows={filteredAndSearchedRowsData}
+        rows={rowsData}
         columns={columns}
+        paginationMode="server"
+        sortingMode='server'
+        onSortModelChange={(model) => setSortModel(model)}
+        sortModel={sortModel}
         getRowId={(row) => `${row._id}_${row.jobId ?? jobId}`} // Create a unique ID for each row
         paginationModel={{ page: currentPage, pageSize: pageSize }}
         onPaginationModelChange={(paginationModel) => {
@@ -606,6 +615,7 @@ const Table = ({
         onRowSelectionModelChange={(newSelection) => handleSelectionChange(newSelection)} // Updates on selection change
         rowSelectionModel={rowSelectionModel}
         onRowClick={(params) => handleRowClick(params)}
+        rowCount={totalCount}
       />
 
       {isDocumentViewerOpen && (

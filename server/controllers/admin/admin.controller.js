@@ -565,6 +565,45 @@ export const getDetailsForDashboard = asyncHandler(async (req,res) => {
     }
   }
 
+
+  return res.status(200).json({
+      status: 'success',
+      message : "Fetched Details successfully",
+      members : membersData,
+      companyDetails : company,
+      applications : {
+        totalApplicationsCount,
+        monthlyApplications : monthlyApplications,
+        weeklyApplications : weeklyApplications,
+        dailyApplications : dailyApplications,
+        yesterdaysApplications : yesterdaysApplications,
+      },
+      activeJobs : companyJobs?.length,
+      interviews : {
+        totalCount : totalInterviews,
+        upcomingInterviews : sortedInterviews,
+        stageBasedInterviewsCount
+      },
+    })
+})
+
+export const getDashboardDetailsSecondary = asyncHandler(async (req, res) => {
+
+  const usersInCompany = await User.find({ company_id : req.user?.company_id }, '_id'); // Get only _id fields
+
+  if(usersInCompany?.length === 0){
+    return res.status(400).json({
+          status: 'error',
+          message: `No matching users found.`
+    })
+  }
+
+  // Extract user _id values into an array
+  const userIds = usersInCompany.map(user => user._id); 
+
+  const companyJobs = await jobs.find({ company_id: req.user?.company_id });
+  const companyJobIds = companyJobs?.map(job => job._id);
+  
   //Leaderboard 
   //Top Applicants with Higher Assessment Score
   const getTopCandidates = async () => {
@@ -754,31 +793,16 @@ export const getDetailsForDashboard = asyncHandler(async (req,res) => {
           }
         ]);
 
-  return res.status(200).json({
-      status: 'success',
-      message : "Fetched Details successfully",
-      members : membersData,
-      companyDetails : company,
-      applications : {
-        totalApplicationsCount,
-        monthlyApplications : monthlyApplications,
-        weeklyApplications : weeklyApplications,
-        dailyApplications : dailyApplications,
-        yesterdaysApplications : yesterdaysApplications,
-      },
-      jobsWithStats,
-      activeJobs : companyJobs?.length,
-      interviews : {
-        totalCount : totalInterviews,
-        upcomingInterviews : sortedInterviews,
-        stageBasedInterviewsCount
-      },
-      leaderBoard : {
-        candidates : topCandidates,
-        totalUniqueCandidatesCount : getAllCandidates[0]?.totalUniqueCandidatesCount,
-        totalAssessmentsDone : topCandidates?.length ?? 0
-      }
-    })
+        return res.status(200).json({
+            status: 'success',
+            message : "Fetched Details successfully",
+            jobsWithStats,
+            leaderBoard : {
+              candidates : topCandidates,
+              totalUniqueCandidatesCount : getAllCandidates[0]?.totalUniqueCandidatesCount,
+              totalAssessmentsDone : topCandidates?.length ?? 0
+            }
+        })
 })
 
 

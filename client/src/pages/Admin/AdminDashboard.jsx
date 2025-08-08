@@ -21,7 +21,8 @@ import Container from '../../components/Cards/Container'
 import Header from '../../components/utility/Header'
 import { getRoute, ROUTE_KEY } from '../../config/permissions.config'
 import { useAuthContext } from '../../context/AuthProvider'
-import { getAdminDashboard } from '../../services/admin.service'
+import { getAdminDashboard, getAdminDashboardSecondary } from '../../services/admin.service'
+import FillLoader from '../../components/Loaders/FillLoader'
 import { useUnknownProfilePicture } from '../../context/ThemeContext'
 
 function AdminDashboard() {
@@ -46,9 +47,16 @@ function AdminDashboard() {
     enabled: true
   })
 
+  const { data: dashboardSecondaryDetails, isLoading: isSecondaryDetailsLoading } = useQuery({
+    queryKey: ['admin_dashboard_secondary'],
+    queryFn: () => getAdminDashboardSecondary(),
+    refetchOnWindowFocus: false,
+    enabled: true
+  })
+
   const leaderBoardStats = [
-    { title: 'Unique Candidates', value: dashboardDetails?.leaderBoard?.totalUniqueCandidatesCount || 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={Users} /> },
-    { title: 'Assessments', value: dashboardDetails?.leaderBoard?.totalAssessmentsDone || 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={ClipboardCheck} /> },
+    { title: 'Unique Candidates', value: dashboardSecondaryDetails?.leaderBoard?.totalUniqueCandidatesCount || 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={Users} /> },
+    { title: 'Assessments', value: dashboardSecondaryDetails?.leaderBoard?.totalAssessmentsDone || 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={ClipboardCheck} /> },
   ];
 
   const columns = [
@@ -284,8 +292,10 @@ function AdminDashboard() {
         {/* Top Performing Jobs */}
         <StyledCard backgroundColor={'bg-background-80'} extraStyles={'mt-4 max-w-full '}>
           <h2 className='mb-2 whitespace-nowrap'>Top Performing Jobs </h2>
-          <DataGrid
-            rows={dashboardDetails?.jobsWithStats ?? []}
+          {isSecondaryDetailsLoading ? 
+            <FillLoader />
+          : <DataGrid
+            rows={dashboardSecondaryDetails?.jobsWithStats ?? []}
             columns={jobColumns}
             autoHeight
             paginationModel={{ page: currentPage, pageSize: pageSize }}
@@ -301,17 +311,19 @@ function AdminDashboard() {
             localeText={{ noRowsLabel: <p className='typography-body'>No Candidates</p> }}
             pageSizeOptions={[5, 10, 20, 30, 40, 50]}
             onRowClick={(params) => handleJobRowClick(params)}
-          />
+          />}
         </StyledCard>
         {/* LeaderBoard */}
         <StyledCard padding={2} extraStyles={'mt-4'} backgroundColor={'bg-background-80'}>
           <h2 className='mb-2'>Leaderboard</h2>
+          {isSecondaryDetailsLoading ? <FillLoader/> :
+          <>
           <StatsGrid stats={leaderBoardStats} />
 
           {/* Table for LeaderBoard */}
           <div className='mt-4'>
             <DataGrid
-              rows={dashboardDetails?.leaderBoard?.candidates ?? []}
+              rows={dashboardSecondaryDetails?.leaderBoard?.candidates ?? []}
               columns={columns}
               autoHeight
               paginationModel={{ page: currentLeaderboardPage, pageSize: leaderboardPageSize }}
@@ -329,6 +341,8 @@ function AdminDashboard() {
               onRowClick={(params) => handleLeaderBoardRowClick(params)}
             />
           </div>
+          </>
+          }
         </StyledCard>
       </StyledCard>
     </Container>

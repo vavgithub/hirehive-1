@@ -4,6 +4,8 @@ const ADMIN_BASE_URL = '/admin'
 //GET
 export const getAdminDashboard = (timezone) => axios.get(`${ADMIN_BASE_URL}/dashboard?tz=${timezone}`).then(res => res.data)
 
+export const getAdminDashboardSecondary = () => axios.get(`${ADMIN_BASE_URL}/dashboard-secondary`).then(res => res.data)
+
 export const getAllTeamMembers = () => axios.get(ADMIN_BASE_URL + '/get-all-members').then(res => res.data)
 
 export const fetchCalendarDetails = async (startDate,endDate,calendarType) => {
