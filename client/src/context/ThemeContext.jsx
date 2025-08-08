@@ -1,13 +1,13 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import LightLogo from "../svg/Logo/lightLogo.svg";
+import LightLogo from "../svg/Logo/lightLogo.png";
 import DarkLogo from "../svg/Logo/dark_logo.png";
 import useCandidateAuth from '../hooks/useCandidateAuth';
 import LightStars from "../svg/Background/Stars_light.png";
-import DarkStars from "../svg/Background/Stars.svg";
+import DarkStars from "../svg/Background/Stars_dark.png";
 import LightBanner from "../svg/Background/AssessmentBanner_light.png";
-import DarkBanner from "../svg/Background/AssessmentBanner.svg";
+import DarkBanner from "../svg/Background/AssessmentBanner_dark.png";
 import LightPopup from "../svg/Background/AssessmentPopup_light.png";
-import DarkPopup from "../svg/Background/AssessmentPopup.svg";
+import DarkPopup from "../svg/Background/AssessmentPopup_dark.png";
 import LightClosedBadge from "../svg/Icons/LightClosedBadge";
 import DarkClosedBadge from "../svg/Icons/ClosedBadge";
 import LightTelegramBanner from "../svg/Banners/lightTelegramBanner.png";
