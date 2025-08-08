@@ -8,7 +8,7 @@ import SideCard from '../../components/ui/SideCard';
 import useAuthCandidate, { useCandidateAuth } from '../../hooks/useCandidateAuth'; // Import the authentication hook
 import Header from '../../components/utility/Header';
 import Loader from '../../components/Loaders/Loader';
-import Logo from '../../svg/Logo/lightLogo.svg'
+import Logo from '../../svg/Logo/lightLogo.png'
 import StyledCard from '../../components/Cards/StyledCard';
 import ContactUs from '../../components/Form/ContactUs';
 import Container from '../../components/Cards/Container';

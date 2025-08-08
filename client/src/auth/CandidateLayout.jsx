@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Outlet, useNavigate, NavLink, useLocation } from 'react-router-dom';
-import LightLogo from "../svg/Logo/lightLogo.svg"
+import LightLogo from "../svg/Logo/lightLogo.png"
 import useCandidateAuth from '../hooks/useCandidateAuth';
 import { useDispatch } from 'react-redux';
 import { logoutCandidateAuth } from '../redux/candidateAuthSlice';

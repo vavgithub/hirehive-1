@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import axios from '../../services/axios';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../../components/Buttons/Button';
-import Logo from '../../svg/Logo/lightLogo.svg'
+import Logo from '../../svg/Logo/lightLogo.png'
 import { clearAuthError, fetchCandidateAuthData } from '../../redux/candidateAuthSlice';
 import { useDispatch } from 'react-redux';
 import useCandidateAuth from '../../hooks/useCandidateAuth';

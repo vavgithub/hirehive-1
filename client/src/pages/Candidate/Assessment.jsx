@@ -8,7 +8,7 @@ import { Button } from '../../components/Buttons/Button';
 import Loader from '../../components/Loaders/Loader';
 import axios from "../../services/axios";
 import { showSuccessToast, showErrorToast } from '../../components/ui/Toast';
-import LightLogo from "../../svg/Logo/lightLogo.svg"
+import LightLogo from "../../svg/Logo/lightLogo.png"
 import { fetchCandidateAuthData, updateAssessmentStatus } from '../../redux/candidateAuthSlice';
 import { uploadAssessment } from '../../utility/cloudinary';
 import StyledCard from '../../components/Cards/StyledCard';

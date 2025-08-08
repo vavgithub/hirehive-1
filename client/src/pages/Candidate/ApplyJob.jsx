@@ -11,7 +11,7 @@ import SkillsInput from '../../components/Inputs/SkillsInput';
 import { Button } from '../../components/Buttons/Button';
 import { dummySkills } from '../../components/Dropdowns/dropdownOptions';
 import { showErrorToast, showSuccessToast } from '../../components/ui/Toast';
-import Logo from '../../svg/Logo/lightLogo.svg';
+import Logo from '../../svg/Logo/lightLogo.png';
 import { fetchCandidateAuthData, loginCandidateAuth } from '../../redux/candidateAuthSlice';
 import useCandidateAuth from '../../hooks/useCandidateAuth';
 import { digitsRegex, emailRegex, lowerCaseRegex, specialCharRegex, upperCaseRegex } from '../../utility/regex';

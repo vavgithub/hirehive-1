@@ -4,7 +4,7 @@ import { Menu, MenuItem, IconButton, Avatar } from '@mui/material';
 import { logout } from '../services/auth.service';
 import useAuth from '../hooks/useAuth';
 import { useAuthContext } from '../context/AuthProvider';
-import LightLogo from "../svg/Logo/lightLogo.svg"
+import LightLogo from "../svg/Logo/lightLogo.png"
 import StyledMenu from './MUIUtilities/StyledMenu';
 import IconWrapper from './Cards/IconWrapper';
 import { Briefcase, CalendarDays, ChevronDown, ChevronUp, ClipboardCheck, FileText, IdCard, LayoutGrid, LogOut, MonitorDot, Settings, Star, User, UserCheck, Users } from 'lucide-react';

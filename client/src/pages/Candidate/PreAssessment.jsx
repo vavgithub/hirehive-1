@@ -3,7 +3,7 @@ import { BookText, ChevronDown, ChevronUp, Timer, TimerIcon, Mic, MicOff, User, 
 import Webcam from 'react-webcam';
 import Assessment from './Assessment'; // Import your existing Assessment component
 import { Button } from '../../components/Buttons/Button';
-import Logo from '../../svg/Logo/lightLogo.svg'
+import Logo from '../../svg/Logo/lightLogo.png'
 import StyledCard from '../../components/Cards/StyledCard';
 import Modal from '../../components/Modals/Modal';
 import { AccordionItem } from '../../components/Accordion/AccordionItem';
