@@ -318,8 +318,10 @@ function TaskForm({jobProfile,candidateId,candidateEmail,jobId,setIsLoading}) {
                     </div>
 
 
-                    <Datepicker error={dueDateError} onChange={setDueDate} value={dueDate} />
-                    {dueDateError && <p className='absolute text-red-100 typography-small-p top-[5.2rem]'>Date is required</p>}
+                    <div className='w-fit'>
+                        <Datepicker error={dueDateError} onChange={setDueDate} value={dueDate} />
+                        {dueDateError && <p className='absolute text-red-100 typography-small-p top-[5.2rem]'>Date is required</p>}
+                    </div>
                 </div>
                 <div className='w-full relative'>
                     <div className='pb-4'>

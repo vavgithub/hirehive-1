@@ -41,6 +41,9 @@ function ApplicationChart({type,dataArray}) {
           trigger: "axis",
           backgroundColor: "var(--color-background-70)", // Teal with transparency
           borderColor: "#fff",
+          textStyle: {
+            color: "var(--color-font-main)",
+          },
           borderWidth: 0,
           borderRadius: 8,
           padding: 10,

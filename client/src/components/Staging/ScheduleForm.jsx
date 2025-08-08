@@ -173,10 +173,10 @@ export const ScheduleForm = ({ candidateData, onSubmit, isRescheduling, initialD
                         id="meetingLink"
                         type="text"
                         label={"Meeting Link"}
-                        labelStyles={`${!autoLink ? 'text-white' : 'text-font-gray'}`}
+                        labelStyles={`${!autoLink ? 'text-font-main' : 'text-font-gray'}`}
                         // required
                         value={meetingLink}
-                        extraClass={'custom-input text-white'}
+                        extraClass={'custom-input text-font-main'}
                         onChange={(e) => setMeetingLink(e.target.value)}
                         error={linkError}
                         errorMessage="Meeting link is required"
@@ -189,9 +189,9 @@ export const ScheduleForm = ({ candidateData, onSubmit, isRescheduling, initialD
                     <div className='flex justify-between flex-col gap-4 w-full '>
                         <div>
                             <h4 className='typography-h4 '>Smart Google Meet Generator</h4>
-                            <p className={`${autoLink ? 'text-white' : 'text-font-gray'} typography-large-p `}>Choose this option to automatically create Google Meet with invitees as Candidate and Reviewer</p>
+                            <p className={`${autoLink ? 'text-font-main' : 'text-font-gray'} typography-large-p `}>Choose this option to automatically create Google Meet with invitees as Candidate and Reviewer</p>
                             {console.log(assignee)}
-                            {autoLink && <p className={`typography-body  mt-2 ${autoLink ? 'text-white' : 'text-font-gray'}`}>Participants : {candidateData?.firstName + ' ' + candidateData?.lastName }{assignee && (', ' + assignee?.firstName + ' ' + assignee?.lastName)}{addedInvitees?.length > 0 &&  addedInvitees.map(invitee => ', ' + invitee )}</p>}
+                            {autoLink && <p className={`typography-body  mt-2 ${autoLink ? 'text-font-main' : 'text-font-gray'}`}>Participants : {candidateData?.firstName + ' ' + candidateData?.lastName }{assignee && (', ' + assignee?.firstName + ' ' + assignee?.lastName)}{addedInvitees?.length > 0 &&  addedInvitees.map(invitee => ', ' + invitee )}</p>}
                         </div>
                         <Button variant='white' type='button' onClick={()=>setOpenInviteesModal(true)} >Add More Invitees</Button>
                     </div>

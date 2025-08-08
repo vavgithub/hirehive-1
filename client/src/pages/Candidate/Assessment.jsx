@@ -271,7 +271,7 @@ const WebcamView = React.memo(({ isMinimized, toggleMinimize, isRecording, webca
 // Upload Progress Overlay Component
 const UploadProgressOverlay = ({ uploadProgress }) => (
   <div className="fixed inset-0 bg-background-overlay flex items-center justify-center z-50">
-    <div className=" p-8 rounded-xl flex flex-col items-center space-y-4">
+    <div className="px-16 overflow-hidden py-8 rounded-xl flex flex-col bg-background-90 items-center space-y-4">
       <Loader />
       <h3 className="text-font-gray">Uploading Assessment</h3>
       <div className="w-full max-w-md bg-background-70 rounded-full h-4 overflow-hidden">

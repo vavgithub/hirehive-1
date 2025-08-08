@@ -434,7 +434,14 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
             {stageConfig?.extraHeaderContent && stageConfig?.extraHeaderContent({portfolio : candidateData.jobApplication.professionalInfo.portfolio})}
         </div>
         <div className='flex items-center w-[40%] justify-end'>
-            {stageBasedConfig?.hasUndoButton && <button type='button' disabled={stageBasedConfig?.hasUndoButtonDisabled} onClick={handleUndoAction} ><CustomToolTip disabled={stageBasedConfig.hasUndoButtonDisabled} arrowed title={'Undo'}><IconWrapper customIconSize={4} isInActiveIcon={stageBasedConfig?.hasUndoButtonDisabled} icon={RotateCcw} /></CustomToolTip></button>}
+            {stageBasedConfig?.hasUndoButton && <button type='button' className={stageBasedConfig?.hasUndoButtonDisabled ? "opacity-40" : ""} disabled={stageBasedConfig?.hasUndoButtonDisabled} onClick={handleUndoAction} >
+                {
+                    stageBasedConfig?.hasUndoButtonDisabled ? 
+                    <IconWrapper customIconSize={4} isInActiveIcon={stageBasedConfig?.hasUndoButtonDisabled} icon={RotateCcw} />
+                    : <CustomToolTip disabled={stageBasedConfig.hasUndoButtonDisabled} arrowed title={'Undo'}><IconWrapper customIconSize={4} isInActiveIcon={stageBasedConfig?.hasUndoButtonDisabled} icon={RotateCcw} /></CustomToolTip>
+                }
+                
+                </button>}
             {isClosed || <StatusBadge customWidth={'w-fit'} status={currentStatus} />}
             {
                 stageBasedConfig?.hasAssigneeSelectorIcon && (

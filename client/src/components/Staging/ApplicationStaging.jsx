@@ -86,12 +86,12 @@ const ApplicationStaging = ({ candidateId, jobId ,jobStatus}) => {
     const getStageIcon = (stage, index) => {
         const status = stageStatuses[stage]?.status;
         if (status === 'Cleared') {
-            return <div className='bg-green-100 rounded-full text-white p-1'><IconWrapper inheritColor icon={Check}  size={0} customStrokeWidth={7} customIconSize={1}  /></div> ;
+            return <div className='bg-accent-100 rounded-full text-white p-1'><IconWrapper inheritColor icon={Check}  size={0} customStrokeWidth={7} customIconSize={1}  /></div> ;
         } else if (status === 'Rejected') {
             return <div className='bg-red-300 rounded-full text-white p-1'><IconWrapper inheritColor icon={X}  size={0} customStrokeWidth={7} customIconSize={1}  /></div> ;
         } else {
             return (
-                <div className={`w-6 h-6 flex items-center justify-center rounded-full border  ${stage === currentStage ? 'border-teal-400 text-font-accent' : ' border-font-gray'}`}>
+                <div className={`w-6 h-6 flex items-center justify-center rounded-full border  ${stage === currentStage ? 'border-accent-100 text-font-accent' : ' border-font-gray'}`}>
                     {index + 1}
                 </div>
             );

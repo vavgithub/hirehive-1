@@ -181,7 +181,7 @@ const PreAssessment = () => {
                                 )}
                                 <div className="absolute bottom-4 w-full flex justify-center space-x-4 z-10 ">
                                     <button
-                                        className={`p-3 h-fit rounded-xl bg-background-70  ${pingCamera && " animate-bounce-5 "} `}
+                                        className={`p-3 h-fit rounded-xl bg-background-50  ${pingCamera && " animate-bounce-5 "} `}
                                         onClick={toggleCamera}
                                     >
                                         {
@@ -190,7 +190,7 @@ const PreAssessment = () => {
 
                                     </button>
                                     <button
-                                        className={`p-3 h-fit rounded-xl bg-background-70   ${pingMic && " animate-bounce-5 "} `}
+                                        className={`p-3 h-fit rounded-xl bg-background-50   ${pingMic && " animate-bounce-5 "} `}
                                         onClick={toggleMic}
                                     >
                                         {

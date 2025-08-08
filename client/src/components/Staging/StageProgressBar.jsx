@@ -53,9 +53,9 @@ const StageProgressBar = ({ stage, status, isActive }) => {
                     width: '100%',
                     height: 4,
                     borderRadius: 4,
-                    backgroundColor: 'var(--color-font-gray-90)',
+                    backgroundColor: 'var(--color-background-40)',
                     '& .MuiLinearProgress-bar': {
-                        backgroundColor: isActive ? 'primary.main' : 'rgba(18, 211, 130, 1)',
+                        backgroundColor: isActive ? 'var(--color-accent-100)' : 'var(--color-accent-100)',
                     },
                 }}
             />
