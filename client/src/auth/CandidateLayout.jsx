@@ -12,12 +12,11 @@ import Modal from '../components/Modals/Modal';
 import IconWrapper from '../components/Cards/IconWrapper';
 import { Briefcase, BriefcaseBusiness, LogOut, Send, Settings, MenuIcon, User } from 'lucide-react';
 import Footer from '../components/Footer/Footer';
-import TelegramBanner from "../svg/Banners/telegramBanner.png"
 import TelegramBannerIcon from "../svg/Banners/telegramBannerIcon.png"
 import { Button } from '../components/Buttons/Button';
 import ThemeToggle from '../components/ui/ThemeToggle';
 import { use } from 'react';
-import { useLogo, useUnknownProfilePicture } from '../context/ThemeContext';
+import { useLogo, useTelegramBanner, useUnknownProfilePicture } from '../context/ThemeContext';
 
 const CandidateLayout = () => {
   const navigate = useNavigate();
@@ -188,6 +187,7 @@ const CandidateLayout = () => {
   }
 
   const location = useLocation();
+  const TelegramBanner = useTelegramBanner()
 
   const darkBgPaths = ["/candidate/profile"]
 
@@ -252,7 +252,7 @@ const CandidateLayout = () => {
                 <div className='absolute top-[6%] left-4 max-w-[90%]'>
                   <h4 className=' text-font-main  font-semibold mb-1'>Connect Telegram</h4>
                   <p className=' text-font-main typography-body mb-4'>Get instant job updates. <br/> Stay ahead always.</p>
-                  <Button  onClick={handleConnectTelegram} className='!px-4 w-full' variant='primary' icon={() => <IconWrapper size={0} customIconSize={5} customStrokeWidth={5} icon={Send}/>}>Connect Now</Button>
+                  <Button  onClick={handleConnectTelegram} className='!px-4 w-full' variant='primary' icon={() => <IconWrapper size={0} inheritColor customIconSize={5} customStrokeWidth={5} icon={Send}/>}>Connect Now</Button>
                 </div>
               </div>}
               <div className='my-4'>

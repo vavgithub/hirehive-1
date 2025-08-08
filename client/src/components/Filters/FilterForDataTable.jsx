@@ -86,7 +86,7 @@ const FilterForDataTable = ({ applyLocationFilter, onApplyFilters, readOnly, pre
     if (category === 'location' && values) {
       return {
         value: values?.length > 0 ? `${values[0]?.location}` :"All",
-        className: 'text-white typography-body group-hover:text-accent-100 whitespace-nowrap overflow-hidden text-ellipsis' // lighter gray for 'All'
+        className: 'text-font-main typography-body group-hover:text-accent-100 whitespace-nowrap overflow-hidden text-ellipsis' // lighter gray for 'All'
       };
     }
 

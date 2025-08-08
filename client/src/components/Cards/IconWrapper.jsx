@@ -40,8 +40,8 @@ function IconWrapper({ icon  : Icon, isActiveIcon, inheritColor , isInActiveIcon
     }
 
     const colors = {
-      "primary" : "#18e9d0",
-      "secondary" : "#808389",
+      "primary" : "var(--color-font-accent-100)",
+      "secondary" : "var(--color-font-gray-90)",
       "error" : "#FF385C",
       "white" : "#ffffff",
       "var(--color-font-main)" : "var(--color-font-main)",    

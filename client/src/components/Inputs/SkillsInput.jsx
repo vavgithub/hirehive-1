@@ -71,7 +71,7 @@ const SkillsInput = ({ value = [], onChange, allSkills = [] ,error }) => {
               >
                 <path
                   d="M9 0.5L1 8.5M1 0.5L9 8.5"
-                  stroke="white"
+                  stroke="var(--color-font-main)"
                   strokeLinecap="round"
                   strokeLinejoin="round"
                 />

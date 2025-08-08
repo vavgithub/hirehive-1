@@ -196,7 +196,7 @@ function Profile() {
           });
         }
         // Invalidate the query to refetch user data
-        queryClient.invalidateQueries('user');
+        queryClient.invalidateQueries('auth');
         showSuccessToast('Success', 'Profile updated successfully');
         setIsEditing(false);
       }

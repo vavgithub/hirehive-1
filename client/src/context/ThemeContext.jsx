@@ -8,6 +8,10 @@ import LightBanner from "../svg/Background/AssessmentBanner_light.png";
 import DarkBanner from "../svg/Background/AssessmentBanner.svg";
 import LightPopup from "../svg/Background/AssessmentPopup_light.png";
 import DarkPopup from "../svg/Background/AssessmentPopup.svg";
+import LightClosedBadge from "../svg/Icons/LightClosedBadge";
+import DarkClosedBadge from "../svg/Icons/ClosedBadge";
+import LightTelegramBanner from "../svg/Banners/lightTelegramBanner.png";
+import DarkTelegramBanner from "../svg/Banners/telegramBanner.png";
 import { useAuthContext } from './AuthProvider';
 
 const ThemeContext = createContext();
@@ -90,6 +94,16 @@ export const useAssessmentBannerBg = () => {
 export const useAssessmentPopupBg = () => {
     const context = useContext(ThemeContext);
     return context?.theme === 'dark' ? DarkPopup :  LightPopup 
+}
+
+export const useClosedBadge = () => {
+    const context = useContext(ThemeContext);
+    return context?.theme === 'dark' ? DarkClosedBadge :  LightClosedBadge 
+}
+
+export const useTelegramBanner = () => {
+    const context = useContext(ThemeContext);
+    return context?.theme === 'dark' ? DarkTelegramBanner :  LightTelegramBanner 
 }
 
 export default ThemeContext;

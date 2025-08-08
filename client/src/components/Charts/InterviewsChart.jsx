@@ -19,13 +19,13 @@ function InterviewsChart({dataSet}) {
         },
         tooltip: {
           trigger: 'item',
-          backgroundColor: "rgba(32, 33, 34, 1)", // Teal with transparency
+          backgroundColor: "var(--color-background-70)", // Teal with transparency
           borderColor: "#fff",
           borderWidth: 0,
           borderRadius: 12,
           padding: 10,
           textStyle: {
-            color: "#fff",
+            color: "var(--color-font-main)",
           },
           axisPointer: {
             type: "none",

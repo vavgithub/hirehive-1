@@ -39,7 +39,7 @@ function ApplicationChart({type,dataArray}) {
         },
         tooltip: {
           trigger: "axis",
-          backgroundColor: "rgba(32, 33, 34, 1)", // Teal with transparency
+          backgroundColor: "var(--color-background-70)", // Teal with transparency
           borderColor: "#fff",
           borderWidth: 0,
           borderRadius: 8,

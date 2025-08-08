@@ -170,7 +170,7 @@ const QuestionDisplay = ({
               alt="Question visual"
               className="max-w-md rounded-xl"
             />
-            <div onClick={()=>setShowImage(question.imageUrl)} className={`absolute bottom-2 cursor-pointer right-2 p-2 rounded-xl bg-gray-800`}>
+            <div onClick={()=>setShowImage(question.imageUrl)} className={`absolute bottom-2 cursor-pointer right-2 p-2 rounded-xl bg-background-80`}>
               <IconWrapper icon={Eye} size={0} customIconSize={3} hasBg customBgHover={"NA"} />
             </div>
           </div>
