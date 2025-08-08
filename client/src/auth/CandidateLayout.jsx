@@ -17,6 +17,8 @@ import TelegramBanner from "../svg/Banners/telegramBanner.png"
 import TelegramBannerIcon from "../svg/Banners/telegramBannerIcon.png"
 import { Button } from '../components/Buttons/Button';
 
+const TELEGRAM_BOT_USERNAME = import.meta.env.VITE_TELEGRAM_BOT_USERNAME;
+
 const CandidateLayout = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -46,7 +48,7 @@ const CandidateLayout = () => {
   }, []);
 
   const handleConnectTelegram = async () => {
-    window.open(`https://t.me/hirehive_bot?start=${candidateData?._id}`, '_blank');
+        window.open(`https://t.me/${TELEGRAM_BOT_USERNAME}?start=${candidateData?._id}`, '_blank');
   }
 
   const handleLogout = async () => {
