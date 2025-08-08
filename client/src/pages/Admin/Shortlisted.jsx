@@ -90,10 +90,10 @@ const Shortlisted = () => {
     });
 
     // Format data for the table
-    const formatCandidatesForTable = () => {
-        if (!data?.candidates) return [];
+    const formatCandidatesForTable = (candidates) => {
+        if (!candidates) return [];
 
-        return data.candidates.flatMap(candidate =>
+        return candidates.flatMap(candidate =>
             candidate.applications.map(application => ({
                 _id: candidate._id,
                 jobId: application.jobId,
@@ -159,7 +159,16 @@ const Shortlisted = () => {
 
     if (isError) return <div>Error: {error.message}</div>;
 
-    const tableData = formatCandidatesForTable();
+    const tableData = formatCandidatesForTable(data?.candidates);
+
+    const getShortlistedCandidatesExportData = async () => {
+        try {
+            const response = await getShortlistedCandidates({companyId : user?.companyDetails?._id,...(location ? location : {}),filter : filterObj ,search : debouncedQuery, sortFilters : sortFilterObj});
+            return formatCandidatesForTable(response?.candidates)
+        } catch (error) {
+            console.log("Export data error :",error)
+        }
+    }
 
     // Create dummy jobData to help with budget filtering for contractors
     const jobData = {
@@ -199,6 +208,7 @@ const Shortlisted = () => {
                         showContractors={showContractors}
                         setShowContractors={setShowContractors}
                         readOnlyData={tableData}
+                        getExportData={getShortlistedCandidatesExportData}
                         additionalColumns={getShortlistColumn()}
                         totalCount={data?.totalCount}
                         jobData={jobData} // Pass job data for employment type filtering

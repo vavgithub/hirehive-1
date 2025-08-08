@@ -416,6 +416,7 @@ export const getAllCandidatesForJob = async (req, res) => {
     const pipeline = [
       { $match: { isVerified: true } },
       ...searchQuery,
+      ...(locationConditions.length > 0 ? [{ $match: { $or: locationConditions } }] : []),
       { $unwind: "$jobApplications" },
       { $match: { "jobApplications.jobId": new mongoose.Types.ObjectId(jobId) } },
 
@@ -426,7 +427,6 @@ export const getAllCandidatesForJob = async (req, res) => {
       ...assigneeFilter,
       ...ratingFilter,
       ...assessmentFilter,
-      ...(locationConditions.length > 0 ? [{ $match: { $or: locationConditions } }] : []),
 
       { $sort: { "jobApplications.applicationDate": -1 } },
       ...sortQuery,

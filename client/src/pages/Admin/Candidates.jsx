@@ -56,6 +56,15 @@ const Candidates = () => {
     queryFn: () => getAllCandidatesWithFilters({...(location ? location : {}) , page : page + 1 , pageLimit : pageSize , filter : filterObj ,search : debouncedQuery, sortFilters : sortFilterObj}),
   });
 
+  const getCandidatesExportData = async () => {
+    try {
+      const response = await getAllCandidatesWithFilters({...(location ? location : {}) , filter : filterObj ,search : debouncedQuery, sortFilters : sortFilterObj});
+      return response.data?.allCandidates || []
+    } catch (error) {
+      console.log("Export data error :",error)
+    }
+  }
+
   // 1. Disable browser auto scroll restoration
   useEffect(() => {
     window.history.scrollRestoration = 'manual';
@@ -128,6 +137,7 @@ const Candidates = () => {
           readOnly={true} 
           hasCheckBox={false} 
           totalCount={candidates?.totalCandidates || 0} 
+          getExportData={getCandidatesExportData}
           readOnlyData={candidates?.allCandidates || []} 
           />
         </div>

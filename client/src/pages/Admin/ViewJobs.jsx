@@ -129,6 +129,15 @@ const ViewJobs = () => {
         enabled: activeTab === 'candidate', // Only fetch data if not in readOnly mode
     });
 
+    const getCandidatesExportData = async () => {
+        try {
+          const response = await axios.post(`/admin/candidate/${mainId}`,{...(location ? location : {} ) ,filter : filterObj ,search : debouncedQuery, sortFilters : sortFilterObj}).then(res => res.data);
+          return response?.candidates || []
+        } catch (error) {
+          console.log("Export data error :",error)
+        }
+    }
+
     // Add new query for job statistics
     const { data: jobStats = { data: { totalCount: 0, stageStats: {}, jobDetails: {} } },
         isLoading: isStatsLoading
@@ -319,6 +328,7 @@ const ViewJobs = () => {
                             addLocationFilter={setLocation} 
                             tableData={apiResponse?.candidates || []}
                             totalCount={apiResponse?.totalCount || 0}
+                            getExportData={getCandidatesExportData}
                             isTableDataLoading={isLoading}
                         >
                         </Table>

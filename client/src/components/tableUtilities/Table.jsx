@@ -55,6 +55,7 @@ const Table = ({
   showContractors = false,
   setShowContractors,
   totalCount = 0,
+  getExportData,
   addLocationFilter
 }) => {
 
@@ -88,9 +89,6 @@ const Table = ({
 
   const [budgetMenuAnchorEl, setBudgetMenuAnchorEl] = useState(null);
 
-  const [isLocationFiltered,setIsLocationFiltered] = useState(false);
-
-  const [locationObj,setLocationObj] = useState(null);
 
   const {
     query,
@@ -136,29 +134,13 @@ const Table = ({
 
   useEffect(()=>{
     if(filters?.location?.length > 0 && filters?.location[0]?.location){
-      if(readOnly){
         addLocationFilter(filters.location[0])
-        setIsLocationFiltered(true);
-      }else{
-        setLocationObj(filters.location[0])
-      }
     }
-    if(isLocationFiltered && filters?.location?.length === 0){
-      if(readOnly){
-        setIsLocationFiltered(false)
+    if(filters?.location?.length === 0){
         addLocationFilter(null)
-      }
-        setLocationObj(null)
     }
     if(!filters?.location){
-      if(readOnly){
-        setIsLocationFiltered(false)
         addLocationFilter(null)
-      }
-        setLocationObj(null)
-    }
-    if(!readOnly && filters?.location?.length === 0){
-        setLocationObj(null)
     }
   },[filters?.location])
 
@@ -466,18 +448,24 @@ const Table = ({
     }
   };
 
-  const handleExport = () => {
-    // Get today's date in DD-MM-YYYY format
-    const date = new Date();
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const year = date.getFullYear();
-    const today = `${day}-${month}-${year}`;
+  const handleExport = async () => {
+    try {
+      // Get today's date in DD-MM-YYYY format
+      const date = new Date();
+      const day = String(date.getDate()).padStart(2, '0');
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const year = date.getFullYear();
+      const today = `${day}-${month}-${year}`;
 
-    // Create filename: JobName_Date_data.xlsx
-    const fileName = `${today}_datasheet`;
-
-    exportToExcel(filteredAndSearchedRowsData, fileName);
+      // Create filename: JobName_Date_data.xlsx
+      const fileName = `${today}_datasheet`;
+      const exportData = await getExportData()
+      exportToExcel(exportData, fileName);
+      showSuccessToast("Success","Data exported successfully")
+    } catch (error) {
+      console.error("Export data error:", error.message)
+      showErrorToast("Error","Data export failed")
+    }
   };
   const handleBudgetButtonClick = (event) => {
     if (budgetFilter.from || budgetFilter.to) {
