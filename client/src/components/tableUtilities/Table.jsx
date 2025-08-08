@@ -55,7 +55,7 @@ const Table = ({
   showContractors = false,
   setShowContractors,
   totalCount = 0,
-  getExportData,
+  getDataWithoutPagination,
   addLocationFilter
 }) => {
 
@@ -459,7 +459,7 @@ const Table = ({
 
       // Create filename: JobName_Date_data.xlsx
       const fileName = `${today}_datasheet`;
-      const exportData = await getExportData()
+      const exportData = await getDataWithoutPagination()
       exportToExcel(exportData, fileName);
       showSuccessToast("Success","Data exported successfully")
     } catch (error) {
@@ -479,7 +479,7 @@ const Table = ({
   const [selectedRows, setSelectedRows] = useState([]);
   const [rowSelectionModel, setRowSelectionModel] = useState([]);
 
-  const handleSelectionChange = (selectionModel) => {
+  const handleSelectionChange = async (selectionModel) => {
 
     const candidateIds = [];
     const jobIds = [];
@@ -489,7 +489,7 @@ const Table = ({
       candidateIds.push(candidateId);
       jobIds.push(jobId);
     })
-    const selectedData = filteredAndSearchedRowsData.filter((row) => candidateIds.includes(row._id) && (row.jobId ? jobIds.includes(row.jobId) : true));
+    const selectedData = tableData?.filter((row) => candidateIds.includes(row._id) && (row.jobId ? jobIds.includes(row.jobId) : true));
     setSelectedRows(selectedData)
   }
 

@@ -328,7 +328,7 @@ const ViewJobs = () => {
                             addLocationFilter={setLocation} 
                             tableData={apiResponse?.candidates || []}
                             totalCount={apiResponse?.totalCount || 0}
-                            getExportData={getCandidatesExportData}
+                            getDataWithoutPagination={getCandidatesExportData}
                             isTableDataLoading={isLoading}
                         >
                         </Table>

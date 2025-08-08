@@ -59,7 +59,7 @@ const Candidates = () => {
   const getCandidatesExportData = async () => {
     try {
       const response = await getAllCandidatesWithFilters({...(location ? location : {}) , filter : filterObj ,search : debouncedQuery, sortFilters : sortFilterObj});
-      return response.data?.allCandidates || []
+      return response?.allCandidates || []
     } catch (error) {
       console.log("Export data error :",error)
     }
@@ -137,7 +137,7 @@ const Candidates = () => {
           readOnly={true} 
           hasCheckBox={false} 
           totalCount={candidates?.totalCandidates || 0} 
-          getExportData={getCandidatesExportData}
+          getDataWithoutPagination={getCandidatesExportData}
           readOnlyData={candidates?.allCandidates || []} 
           />
         </div>

@@ -208,7 +208,7 @@ const Shortlisted = () => {
                         showContractors={showContractors}
                         setShowContractors={setShowContractors}
                         readOnlyData={tableData}
-                        getExportData={getShortlistedCandidatesExportData}
+                        getDataWithoutPagination={getShortlistedCandidatesExportData}
                         additionalColumns={getShortlistColumn()}
                         totalCount={data?.totalCount}
                         jobData={jobData} // Pass job data for employment type filtering
