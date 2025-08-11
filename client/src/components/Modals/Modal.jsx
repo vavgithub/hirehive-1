@@ -256,12 +256,12 @@ const Modal = ({
   }
 }, [open]);
 
+const AssessmentPopup = useAssessmentPopupBg()
 
   if (!open) return null;
 
   const renderModalContent = () => {
     if (actionType === ACTION_TYPES.ASSESSMENT) {
-      const AssessmentPopup = useAssessmentPopupBg()
       return (
         <div className="flex flex-col items-center relative">
           <div onClick={onClose} className=' cursor-pointer md:hidden absolute -top-14 -right-14 bg-background-60 p-1 rounded-xl'>

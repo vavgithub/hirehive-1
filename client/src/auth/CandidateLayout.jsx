@@ -207,7 +207,7 @@ const CandidateLayout = () => {
           <IconWrapper icon={MenuIcon}  size={0} customIconSize={7} customStrokeWidth={5} />
         </div>
         <div
-          className="z-20 bg-gradient-to-b from-black-100 via-black-100 to-transparent w-full top-0 absolute"
+          className="z-20 bg-gradient-to-b from-background-100 via-background-100 to-transparent w-full top-0 absolute"
           style={{
             transition: 'all 0.1s ease-in',
             minHeight: scrollPosition > 30 ? '6rem' : '0rem', // Apply conditional minHeight
