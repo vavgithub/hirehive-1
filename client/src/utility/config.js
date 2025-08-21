@@ -1,1 +1,2 @@
-export const UNKNOWN_PROFILE_PICTURE_URL = 'https://d2zc0gy08nitgj.cloudfront.net/uploads/Unknown_image_DARK_MODE.png'
+export const UNKNOWN_PROFILE_PICTURE_URL_DARK = 'https://d2zc0gy08nitgj.cloudfront.net/uploads/Unknown_image_DARK_MODE.png'
+export const UNKNOWN_PROFILE_PICTURE_URL_LIGHT = 'https://d2zc0gy08nitgj.cloudfront.net/uploads/Light_Mode_UKNOWN.png'

@@ -7,21 +7,21 @@ const getStatusColor = (status) => {
 
   switch (normalizedStatus) {
     case 'not assigned':
-      return 'bg-status-bgred text-status-textred border-status-borderred';
+      return 'bg-status-bgred text-status-textred ';
     case 'rejected':
-      return 'bg-status-bgred text-status-textred border-status-borderred';
+      return 'bg-status-bgred text-status-textred ';
     case 'pending':
-      return 'bg-status-bgred text-status-textred border-status-borderred';
+      return 'bg-status-bgred text-status-textred ';
     case 'under review':
-        return 'bg-status-bgyellow text-status-textyellow border-status-borderyellow';
+        return 'bg-status-bgyellow text-status-textyellow ';
     case 'call scheduled':
-      return 'bg-status-bgyellow text-status-textyellow border-status-borderyellow';
+      return 'bg-status-bgyellow text-status-textyellow ';
     case 'reviewed':
     case 'cleared':
     case 'sent':
-      return 'bg-status-bggreen text-status-textgreen border-status-bordergreen';
+      return 'bg-status-bggreen text-status-textgreen ';
     default:
-      return 'bg-status-bggray text-status-textgray border-status-bordergray';
+      return 'bg-status-bggray text-status-textgray ';
   }
 };
 

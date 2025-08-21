@@ -318,7 +318,7 @@ function AdminDashboard() {
           <h2 className='mb-2'>Leaderboard</h2>
           {isSecondaryDetailsLoading ? <FillLoader/> :
           <>
-          <StatsGrid stats={leaderBoardStats} />
+          <StatsGrid cardBg={'secondary'} stats={leaderBoardStats} />
 
           {/* Table for LeaderBoard */}
           <div className='mt-4'>

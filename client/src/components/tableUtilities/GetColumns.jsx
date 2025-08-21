@@ -77,7 +77,7 @@ const getCommonColumns = (handleDocumentClick) => [
     disableColumnMenu: true,
     renderCell: (params) => (
       <div className='h-full flex items-center justify-start'>
-        <StageBadge stage={params.value} />
+        <StageBadge withBg={false} stage={params.value} />
       </div>
     )
   },

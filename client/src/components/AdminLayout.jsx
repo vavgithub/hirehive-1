@@ -89,7 +89,7 @@ const AdminLayout = () => {
                 to={to}
                 end={to === "/admin/dashboard" || to === "/design-reviewer/dashboard"}
                 className={({ isActive, isPending }) =>
-                    `absolute right-0 w-1 h-6 rounded-tl-xl rounded-bl-xl ${isActive || isPending ? "bg-teal-400" : "bg-transparent"}`
+                    `absolute right-0 w-1 h-6 rounded-tl-xl rounded-bl-xl ${isActive || isPending ? "bg-accent-100" : "bg-transparent"}`
                 }
             />
         </div>
@@ -147,7 +147,7 @@ const AdminLayout = () => {
                     <p className="w-2 absolute right-4 h-2 rounded-full bg-blue-100"></p>
                 )}
                 <div
-                    className={`absolute top-[18px] right-0 w-1 h-6 rounded-tl-xl rounded-bl-xl ${isActive ? 'bg-teal-400' : 'bg-transparent'}`}
+                    className={`absolute top-[18px] right-0 w-1 h-6 rounded-tl-xl rounded-bl-xl ${isActive ? 'bg-accent-100' : 'bg-transparent'}`}
                 />
 
                 {/* Submenu items */}
@@ -237,7 +237,7 @@ const AdminLayout = () => {
                             src={user?.profilePicture || UNKNOWN_PROFILE_PICTURE_URL} />
                         <span className={`typography-body  ${location.pathname === profilePath ? "text-font-accent" : "text-font-main"} `}>{user?.firstName + " " + user?.lastName}</span>
                     </IconButton>
-                    <div className={`absolute right-0 w-1 h-6 rounded-tl-xl rounded-bl-xl ${location.pathname === profilePath ? "bg-teal-400" : "bg-transparent"}`} />
+                    <div className={`absolute right-0 w-1 h-6 rounded-tl-xl rounded-bl-xl ${location.pathname === profilePath ? "bg-accent-100" : "bg-transparent"}`} />
                 </div>
                 <StyledMenu anchorEl={anchorEl} handleMenuClose={handleMenuClose} itemComponents={itemComponents} />
             </>
@@ -306,7 +306,7 @@ const AdminLayout = () => {
 
     return (
         <div id='adminContainer' className={`flex ${ADMIN_BG_SCREENS.some(path => pathname.startsWith(path)) ? ' bg-background-100 ' : ' bg-background-100 '} bg-cover bg-top h-full overflow-x-hidden flex flex-col`}>
-            <div id='adminSidebar' className="fixed flex w-[16rem] h-[calc(100vh-2rem)] m-4 rounded-xl flex-col bg-background-90 text-font-gray typography-large-p justify-between py-6 ">
+            <div id='adminSidebar' className="fixed flex w-[16rem] h-[calc(100vh-2rem)] m-4 rounded-xl flex-col bg-background-100 text-font-gray typography-large-p justify-between py-6 ">
                 <div className='flex flex-col gap-2 typography-body px-4'>
                     <div className='pl-2 pt-2 pb-4 flex items-center justify-between'>
                         <img className='h-11 cursor-pointer ' onClick={() => navigate('/admin')} src={Logo} alt="Logo" />

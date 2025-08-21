@@ -392,18 +392,18 @@ const theme = createTheme({
             display : "block !important",
             // Scrollbar track (scrollable background area)
             '&::-webkit-scrollbar-track': {
-              backgroundColor: 'var(--color-background-80) !important', // Your desired track color
+              backgroundColor: 'var(--color-background-50) !important', // Your desired track color
             },
             // Thumb (draggable part of scrollbar)
             '&::-webkit-scrollbar-thumb': {
-              backgroundColor: 'var(--color-background-40) !important', // Customize this
+              backgroundColor: 'var(--color-background-60) !important', // Customize this
             },
           },
           "& .MuiDataGrid-columnHeaderTitle": {
             color: "var(--color-font-gray-90)",
           },
           "&  .MuiDataGrid-footerContainer": {
-            backgroundColor: "var(--color-background-70) !important",
+            backgroundColor: "var(--color-background-40) !important",
             borderBottomLeftRadius: "0.75rem",
             borderBottomRightRadius: "0.75rem",
           },
@@ -443,9 +443,9 @@ const theme = createTheme({
           },
           "& .first-row": {
             borderRadius: 2,
-            backgroundColor: "var(--color-background-60)",
+            backgroundColor: "var(--color-background-50)",
             "&:hover": {
-              backgroundColor: "var(--color-background-40)",
+              backgroundColor: "var(--color-background-60)",
             },
           },
           "& .MuiDataGrid-filler": {
@@ -457,9 +457,9 @@ const theme = createTheme({
           },
           "& .second-row": {
             borderRadius: 2,
-            backgroundColor: "var(--color-background-50)",
+            backgroundColor: "var(--color-background-40)",
             "&:hover": {
-              backgroundColor: "var(--color-background-40)",
+              backgroundColor: "var(--color-background-60)",
             },
           },
           "& .MuiSvgIcon-root": {

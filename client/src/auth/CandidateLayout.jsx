@@ -118,7 +118,7 @@ const CandidateLayout = () => {
         to={to}
         end={to === '/candidate/dashboard'}
         className={({ isActive, isPending }) =>
-          `absolute right-0 w-1 h-6 rounded-tl-xl rounded-bl-xl ${isActive || isPending ? 'bg-teal-400' : 'bg-transparent'
+          `absolute right-0 w-1 h-6 rounded-tl-xl rounded-bl-xl ${isActive || isPending ? 'bg-accent-100' : 'bg-transparent'
           }`
         }
       />
@@ -174,7 +174,7 @@ const CandidateLayout = () => {
             <span className={`typography-body ${location.pathname === profilePath ? "text-font-accent" : "text-font-main"} `}>{candidateData?.firstName}</span>
           </IconButton>
           <div className={`absolute right-0 w-1 h-6 rounded-tl-xl rounded-bl-xl ${location.pathname === profilePath
-            ? "bg-teal-400" : "bg-transparent"}`} />
+            ? "bg-accent-100" : "bg-transparent"}`} />
         </div>
 
         <StyledMenu anchorEl={anchorEl} handleMenuClose={handleMenuClose} itemComponents={itemComponents} />
@@ -222,7 +222,7 @@ const CandidateLayout = () => {
           ${isMenuOpen ? 'translate-x-0' : '-translate-x-[110%] md:translate-x-0'}
           transition-transform duration-300 ease-in-out
           w-[16rem] h-[calc(100vh-2rem)] m-4 rounded-xl
-          bg-background-90 text-font-gray
+          bg-background-100 text-font-gray
           flex flex-col justify-between py-6
         `}
         style={{ position: 'fixed' }}

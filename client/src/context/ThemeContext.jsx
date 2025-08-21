@@ -13,6 +13,7 @@ import DarkClosedBadge from "../svg/Icons/ClosedBadge";
 import LightTelegramBanner from "../svg/Banners/lightTelegramBanner.png";
 import DarkTelegramBanner from "../svg/Banners/telegramBanner.png";
 import { useAuthContext } from './AuthProvider';
+import { UNKNOWN_PROFILE_PICTURE_URL_DARK, UNKNOWN_PROFILE_PICTURE_URL_LIGHT } from '../utility/config';
 
 const ThemeContext = createContext();
 
@@ -73,7 +74,7 @@ export const useTheme = () => {
 
 export const useUnknownProfilePicture = () => {
     const context = useContext(ThemeContext);
-    return context?.theme === 'light' ? 'https://res.cloudinary.com/djuwzdbwy/image/upload/v1748257206/Light-Mode-Dummy-DP-Trim_sx1l86.png' : 'https://res.cloudinary.com/djuwzdbwy/image/upload/v1743743999/Unknown_image_DARK_MODE_izdmv9.png'
+    return context?.theme === 'light' ? UNKNOWN_PROFILE_PICTURE_URL_LIGHT : UNKNOWN_PROFILE_PICTURE_URL_DARK
 }
 
 export const useLogo = () => {

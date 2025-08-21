@@ -386,7 +386,7 @@ input[type='number'] {
   }
 
   .custom-radio{
-    @apply mr-2 cursor-pointer appearance-none border-2  rounded-full border-font-main  h-5 aspect-square max-h-5 w-5 max-w-5 checked:ring-offset-[5px] checked:ring-offset-background-100 checked:bg-teal-100 checked:ml-[0.25rem] checked:mr-[0.75rem] checked:ring-[2px] checked:w-3 checked:h-3 checked:border-0 checked:ring-teal-100
+    @apply mr-2 cursor-pointer appearance-none border-2  rounded-full border-font-main  h-5 aspect-square max-h-5 w-5 max-w-5 checked:ring-offset-[5px] checked:ring-offset-background-100 checked:bg-accent-100 checked:ml-[0.25rem] checked:mr-[0.75rem] checked:ring-[2px] checked:w-3 checked:h-3 checked:border-0 checked:ring-accent-100
   }
 
   .custom-input{
@@ -490,6 +490,9 @@ input[type='number'] {
     --color-accent-300: rgba(24, 233, 208, 0.1);
     /* ... */
 
+    --color-statscard-primary : rgba(32, 33, 34, 1);
+    --color-statscard-secondary : rgba(32, 33, 34, 1);
+
     --color-background-100:rgba(12, 13, 13, 1);
     --color-background-90:rgba(18, 19, 20, 1);
     --color-background-80:rgba(27, 28, 29, 1);
@@ -539,16 +542,19 @@ input[type='number'] {
     
     --color-accent-100: rgb(0, 127, 112);
     --color-accent-200: rgba(0, 184, 163, 0.3);
-    --color-accent-300: rgba(204, 221, 227,1);
+    --color-accent-300: rgba(204, 247, 241, 1);
+
+    --color-statscard-primary : rgba(255, 255, 255, 1);
+    --color-statscard-secondary : rgb(240, 245, 255); 
     
-    --color-background-100:rgba(255,255, 255, 1);
-    --color-background-90: rgba(241, 246, 255, 1);
-    --color-background-80: rgba(227, 230, 240, 1);
-    --color-background-70: rgba(206, 213, 226, 1);    
-    --color-background-60: rgba(222, 224, 235, 1);
-    --color-background-50: rgba(250, 250, 250, 1);
-    --color-background-40: rgba(209, 217, 235, 1);
-    --color-background-30: rgba(178, 180, 184, 1);
+    --color-background-100:rgba(248, 249, 255, 1);
+    --color-background-90: rgb(243, 243, 246);
+    --color-background-80: rgba(255, 255, 255, 1);
+    --color-background-70: rgb(240, 245, 255);   
+    --color-background-60: rgb(227, 227, 227);
+    --color-background-50: rgba(246, 246, 246, 1);;
+    --color-background-40: rgb(235, 236, 237);
+    --color-background-30: rgba(255, 255, 255, 1);
     --color-background-20: rgba(170, 172, 176, 1);
     --color-background-10: rgba(160, 162, 166, 1);
     --color-background-5: rgba(81, 81, 81, 1);

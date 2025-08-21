@@ -150,6 +150,10 @@ export default {
           borderyellow : 'var(--color-border-yellow)',
           bordergreen : 'var(--color-border-green)',
         },
+        statscard : {
+          primary : 'var(--color-statscard-primary)',
+          secondary : 'var(--color-statscard-secondary)',
+        },
         font: {
           primary: "var(--color-primary-100)",
           secondary: "var(--color-font-secondary)",

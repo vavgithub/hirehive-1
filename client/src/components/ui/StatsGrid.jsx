@@ -4,7 +4,7 @@ import StyledMenu from '../MUIUtilities/StyledMenu';
 import StyledCard from '../Cards/StyledCard';
 
 // StatCard component (unchanged)
-const StatCard = ({ title, value, icon: Icon, statistics }) => {
+const StatCard = ({ cardBg = 'primary', title, value, icon: Icon, statistics }) => {
   const [currentStatistics, setCurrentStatistics] = useState('');
   const [index, setIndex] = useState(0);
   const [show, setShow] = useState(false);
@@ -58,7 +58,7 @@ const StatCard = ({ title, value, icon: Icon, statistics }) => {
   ]
 
   return (
-    <StyledCard padding={2} extraStyles="flex  overflow-hidden justify-between relative items-center statscard-bg shadow min-w-[15rem] max-w-[15rem]">
+    <StyledCard backgroundColor={cardBg === 'secondary' ? 'bg-statscard-secondary' : 'bg-statscard-primary'} padding={2} extraStyles="flex  overflow-hidden justify-between relative items-center  shadow min-w-[15rem] max-w-[15rem]">
       <div className=" w-full ">
         <p className="typography-small-p text-font-gray w-max mb-2">{title}</p>
         <h2 className="pb-2">{value ?? 0}</h2>
@@ -80,7 +80,7 @@ const StatCard = ({ title, value, icon: Icon, statistics }) => {
 };
 
 // Updated StatsGrid component with horizontal mouse wheel scroll
-const StatsGrid = ({ stats }) => {
+const StatsGrid = ({ cardBg , stats }) => {
   const scrollContainerRef = useRef(null);
 
   useEffect(() => {
@@ -113,7 +113,7 @@ const StatsGrid = ({ stats }) => {
       }}
     >
       {stats.map((stat, index) => (
-        <StatCard key={index} title={stat.title} value={stat.value} icon={stat.icon} statistics={stat.statistics} />
+        <StatCard cardBg={cardBg} key={index} title={stat.title} value={stat.value} icon={stat.icon} statistics={stat.statistics} />
       ))}
     </div>
   );
