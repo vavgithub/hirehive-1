@@ -10,7 +10,7 @@ import { getAssessmentQuestionsById } from '../../services/admin.candidate.servi
 
 function TemplateModal({open,onClose,assessment}) {
     const {
-        data: questions,
+        data,
         isLoading,
         error
       } = useQuery({
@@ -23,8 +23,9 @@ function TemplateModal({open,onClose,assessment}) {
         enabled: !!assessment?._id
       });
 
-      const noAccess = useMemo(()=> (error?.response?.data?.hasAccess === false), [error,questions]);
-
+      const noAccess = useMemo(()=> (error?.response?.data?.hasAccess === false), [error,data]);
+      const questions = useMemo(()=>data?.questions || [],[data]);
+      
   return (
     <Modal
     open={open}

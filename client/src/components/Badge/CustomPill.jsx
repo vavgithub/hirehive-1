@@ -97,7 +97,7 @@ function CustomPill({
                 e.stopPropagation();
                 infoButtonClick(data?.title);
               }}
-              hasBg
+              hasBg={false}
               customIconSize={5}
               customStrokeWidth={4}
               customBgHover={" bg-background-60 "}
