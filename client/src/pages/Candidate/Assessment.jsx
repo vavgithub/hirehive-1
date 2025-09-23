@@ -117,7 +117,7 @@ const QuestionSidebar = ({ questions, currentQuestion, answeredCount, onQuestion
               ? 'text-green-100'
               : (index < currentQuestion ) ? 
               'text-font-gray'
-              :'text-font-gray hover:bg-background-60'
+              :'text-font-gray hover-outline'
             }`}
           onClick={() => onQuestionSelect(index)}
         >
@@ -181,7 +181,7 @@ const QuestionDisplay = ({
           gridAutoRows: "1fr", // Ensures all rows are consistent based on tallest item
         }}>
           {question.options.map((option, index) => (
-            <div key={index} className={"flex items-center hover:bg-background-60 rounded-xl  h-full " + (currentAnswer === option.text ? ' selection-primary ' : ' bg-background-80')}>
+            <div key={index} className={"flex items-center hover-outline rounded-xl  h-full " + (currentAnswer === option.text ? ' selection-primary ' : ' bg-background-80')}>
               <label className="flex cursor-pointer items-center space-x-3 p-4 w-full">
                 <input
                   type="radio"

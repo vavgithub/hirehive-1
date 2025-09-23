@@ -116,7 +116,7 @@ export const ScheduleForm = ({ candidateData, onSubmit, isRescheduling, initialD
                         <label className="typography-body ">Date</label>
                         <span className="text-red-100">*</span>
                     </div>
-                    <Datepicker onChange={setDate} value={date} error={dateError} />
+                    <Datepicker customBg={'var(--color-background-80)'} onChange={setDate} value={date} error={dateError} />
                     {dateError && <p className='absolute text-red-100 typography-small-p top-[5.2rem]'>Date is required</p>}
                 </div>
 
@@ -127,7 +127,7 @@ export const ScheduleForm = ({ candidateData, onSubmit, isRescheduling, initialD
                         <label className="typography-body ">Time</label>
                         <span className="text-red-100">*</span>
                     </div>
-                    <Timepicker onChange={setTime} value={time} error={timeError} />
+                    <Timepicker customBg={'var(--color-background-80)'} onChange={setTime} value={time} error={timeError} />
                     {timeError && <p className='absolute text-red-100 typography-small-p top-[5.2rem]'>Time is required</p>}
                 </div>
 
@@ -164,10 +164,10 @@ export const ScheduleForm = ({ candidateData, onSubmit, isRescheduling, initialD
             />
             }
             {user?.hasAuth?.edit_events && 
-            <StyledCard backgroundColor={'bg-background-70'} >
+            <StyledCard backgroundColor={'bg-transparent'} padding={0} >
                 <h3 className='mb-4'>Choose Your Meeting Type</h3>
                 <div className='flex w-full justify-between'>
-                <StyledCard onClick={handleMeetLinkClick} backgroundColor={!autoLink ? 'selection-primary border border-accent-100 ' :'bg-background-60'} extraStyles={'hover:bg-background-50 w-[50%]'}>
+                <StyledCard onClick={handleMeetLinkClick} backgroundColor={!autoLink ? 'selection-primary border border-accent-100 ' :'bg-background-70'} extraStyles={'hover:outline-accent-100 hover:outline hover:outline-2 w-[50%]'}>
                     <h4 className=' mb-2'>Share Your Meeting Link</h4>
                     <InputField
                         id="meetingLink"
@@ -176,7 +176,7 @@ export const ScheduleForm = ({ candidateData, onSubmit, isRescheduling, initialD
                         labelStyles={`${!autoLink ? 'text-font-main' : 'text-font-gray'}`}
                         // required
                         value={meetingLink}
-                        extraClass={'custom-input text-font-main'}
+                        extraClass={' text-font-main'}
                         onChange={(e) => setMeetingLink(e.target.value)}
                         error={linkError}
                         errorMessage="Meeting link is required"
@@ -185,7 +185,7 @@ export const ScheduleForm = ({ candidateData, onSubmit, isRescheduling, initialD
                 <div className=" flex items-center">
                     <span className="px-6 text-grey-100">OR</span>
                 </div> 
-                <StyledCard onClick={handleAutoLinkClick} backgroundColor={autoLink ? 'selection-primary border border-accent-100 ' : 'bg-background-60'} extraStyles={'flex items-center w-[50%] hover:bg-background-50 cursor-pointer'} >
+                <StyledCard onClick={handleAutoLinkClick} backgroundColor={autoLink ? 'selection-primary border border-accent-100 ' : 'bg-background-70'} extraStyles={'flex items-center w-[50%] hover:outline-accent-100 hover:outline hover:outline-2 cursor-pointer'} >
                     <div className='flex justify-between flex-col gap-4 w-full '>
                         <div>
                             <h4 className='typography-h4 '>Smart Google Meet Generator</h4>

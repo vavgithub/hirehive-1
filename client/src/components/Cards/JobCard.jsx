@@ -135,10 +135,10 @@ const JobCard = ({
   return (
     <StyledCard
     padding={0}
-    extraStyles={(onClick ? 'cursor-pointer' : '' ) + `   group relative`}
+    extraStyles={(onClick ? 'cursor-pointer' : '' ) + ` hover:outline-accent-100 hover:outline hover:outline-2  group relative`}
     onClick={onClick ? handleCardClick : undefined}
   >
-    <StyledCard padding={2} backgroundColor={'bg-background-80'} borderRadius={'  rounded-t-xl '} extraStyles={'hover:bg-background-60 transition-colors !pb-0 duration-200 shadow'}>
+    <StyledCard padding={2} backgroundColor={'bg-background-100'} borderRadius={'  rounded-t-xl '} extraStyles={' transition-colors !pb-0 duration-200 shadow'}>
       <div className={(isApplied && "flex-col md:flex-row" ) +" flex items-start justify-between   gap-4"}>
         <h3 className={(isApplied ? "w-full md:w-[50%] xl:w-[60%]" : "w-[60%]") + "group-hover:text-font-accent  text-ellipsis overflow-hidden whitespace-nowrap "}>{job.jobTitle}</h3>
         <div className={"flex items-center gap-3 " + (isApplied ? " mb-2 md:mb-0 " : "")}>
@@ -155,7 +155,7 @@ const JobCard = ({
               </div>
             }
             <CustomToolTip arrowed title={"Copy link"}>
-              <div onClick={(e) => handleCopyLink(e,job?._id , job?.company_id)} className='cursor-pointer p-2 h-10 flex justify-center items-center bg-background-70 hover:bg-background-80 rounded-xl'>
+              <div onClick={(e) => handleCopyLink(e,job?._id , job?.company_id)} className='cursor-pointer p-2 h-10 flex justify-center items-center bg-background-80 hover:bg-background-70 rounded-xl'>
                 <Copy size={20} strokeWidth={1} color='#808389'/>            
               </div>
             </CustomToolTip>
@@ -163,7 +163,7 @@ const JobCard = ({
           {(job.status !== "deleted" && job.status !== "closed") &&
             <CustomBadge extraStyles={'whitespace-nowrap md:whitespace-normal'} label={job?.jobProfile} paddingX={2} />}
           {withKebab && (
-            <ThreeDots job={job} customBgColor={'bg-background-70'} customBgHover={'hover:bg-background-80'} handleAction={handleAction} extraStyles={'z-10'} page={page} isPinned={pinnedJobs?.includes(job?._id)} role={role} />
+            <ThreeDots job={job} customBgColor={'bg-background-80'}  handleAction={handleAction} extraStyles={'z-10'} page={page} isPinned={pinnedJobs?.includes(job?._id)} role={role} />
           )}
         </div>
       </div>
@@ -211,7 +211,7 @@ const JobCard = ({
     
   
     {(isAdmin || isCandidate) && (
-      <StyledCard padding={2} borderRadius={' rounded-b-xl'} backgroundColor={'bg-background-70'} extraStyles="flex items-center justify-between !pt-4 ">
+      <StyledCard padding={2} borderRadius={' rounded-b-xl'} backgroundColor={'bg-background-60'} extraStyles="flex items-center justify-between !pt-4 ">
         <div className="flex justify-between w-full md:justify-start gap-3 md:gap-8">
           {(isAdmin ? adminFooterItems : candidateFooterItems).map(
             (item, index) => (
@@ -228,7 +228,7 @@ const JobCard = ({
           <p className="typography-body text-font-gray mr-2 whitespace-nowrap">
             This job post has been closed 
           </p>
-          <div className='absolute top-0 z-0 right-0'>
+          <div className='absolute top-10 z-0 right-10'>
             <ClosedBadgeComponent />
           </div>
         </div>

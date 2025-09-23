@@ -22,13 +22,13 @@ import { useAuthContext } from '../../context/AuthProvider';
 import { fetchAssignedCandidates, fetchUnderReviewStats, submitReview } from '../../services/dr.service';
 
 const statsOne = [
-  { title: 'Total', value: 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={Users} /> },
-  { title: 'Portfolio', value: 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={Folder} /> },
-  { title: 'Screening', value: 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={MonitorDot} /> },
-  { title: 'Design Task', value: 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={PenTool} /> },
-  { title: 'Round 1', value: 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={Briefcase} /> },
-  { title: 'Round 2', value: 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={Briefcase} /> },
-  { title: 'Offer Sent', value: 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={PenTool} /> },
+  { title: 'Total', value: 0, icon: () => <IconWrapper size={10} isTeritiaryIcon icon={Users} /> },
+  { title: 'Portfolio', value: 0, icon: () => <IconWrapper size={10} isTeritiaryIcon icon={Folder} /> },
+  { title: 'Screening', value: 0, icon: () => <IconWrapper size={10} isTeritiaryIcon icon={MonitorDot} /> },
+  { title: 'Design Task', value: 0, icon: () => <IconWrapper size={10} isTeritiaryIcon icon={PenTool} /> },
+  { title: 'Round 1', value: 0, icon: () => <IconWrapper size={10} isTeritiaryIcon icon={Briefcase} /> },
+  { title: 'Round 2', value: 0, icon: () => <IconWrapper size={10} isTeritiaryIcon icon={Briefcase} /> },
+  { title: 'Offer Sent', value: 0, icon: () => <IconWrapper size={10} isTeritiaryIcon icon={PenTool} /> },
 ]
 
 const Round1Review = (props) => <RoundReview roundNumber={1} {...props} />;
@@ -264,7 +264,7 @@ const Reviews = () => {
                   <div key={stage} >
                     <h3 className="mb-4">{stage}</h3>
                     {stages[stage].map(candidate => (
-                      <div key={`${candidate._id}-${candidate.currentApplication.jobId}`} className="mb-4 flex flex-col bg-background-80 rounded-xl">
+                      <div key={`${candidate._id}-${candidate.currentApplication.jobId}`} className="mb-4 flex flex-col bg-background-100 rounded-xl">
                         <div className='flex items-center p-4 justify-between cursor-pointer' onClick={() => handleNavigate(candidate)}>
                           <div className='flex items-center gap-4 p-4'>
                             <Avatar alt={candidate?.firstName} src={candidate.profilePictureUrl} />
@@ -278,7 +278,7 @@ const Reviews = () => {
                             </a>
                           </div>
 
-                          <div className="bg-background-70 p-2 px-4 typography-body rounded-xl">
+                          <div className="bg-background-80 p-2 px-4 typography-body rounded-xl">
                             {candidate.currentApplication.jobProfile}
                           </div>
                         </div>

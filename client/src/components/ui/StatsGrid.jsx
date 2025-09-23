@@ -30,7 +30,7 @@ const StatCard = ({ cardBg = 'primary', title, value, icon: Icon, statistics }) 
       onClick: () => handleSwitch("monthly"),
       content: () => {
         return (
-          <p className='typography-large-p hover:bg-background-60 w-full h-full rounded-xl flex items-center px-2'>
+          <p className='typography-large-p  w-full h-full rounded-xl flex items-center px-2'>
             Last Month
           </p>
         )
@@ -40,7 +40,7 @@ const StatCard = ({ cardBg = 'primary', title, value, icon: Icon, statistics }) 
       onClick: () => handleSwitch("weekly"),
       content: () => {
         return (
-          <p className='typography-large-p hover:bg-background-60 w-full h-full rounded-xl flex items-center px-2'>
+          <p className='typography-large-p  w-full h-full rounded-xl flex items-center px-2'>
             Last Week
           </p>)
       }
@@ -49,7 +49,7 @@ const StatCard = ({ cardBg = 'primary', title, value, icon: Icon, statistics }) 
       onClick: () => handleSwitch("daily"),
       content: () => {
         return (
-          <p className='typography-large-p hover:bg-background-60 w-full h-full rounded-xl flex items-center px-2'>
+          <p className='typography-large-p  w-full h-full rounded-xl flex items-center px-2'>
             Last Day
           </p>
         )
@@ -58,11 +58,11 @@ const StatCard = ({ cardBg = 'primary', title, value, icon: Icon, statistics }) 
   ]
 
   return (
-    <StyledCard backgroundColor={cardBg === 'secondary' ? 'bg-statscard-secondary' : 'bg-statscard-primary'} padding={2} extraStyles="flex  overflow-hidden justify-between relative items-center  shadow min-w-[15rem] max-w-[15rem]">
+    <StyledCard backgroundColor={cardBg === 'secondary' ? 'bg-background-80' : 'bg-background-100'} padding={2} extraStyles="flex  overflow-hidden justify-between relative items-center   min-w-[15rem] max-w-[15rem]">
       <div className=" w-full ">
-        <p className="typography-small-p text-font-gray w-max mb-2">{title}</p>
+        <p className="typography-small-p text-font-teritiary w-max mb-2">{title}</p>
         <h2 className="pb-2">{value ?? 0}</h2>
-        {<p key={currentStatistics} onClick={currentStatistics ? handleDropDown : undefined} className={`typography-small-p min-h-[18px] text-font-gray  flex items-center gap-1  ${currentStatistics ? "cursor-pointer" : ""}`}>
+        {<p key={currentStatistics} onClick={currentStatistics ? handleDropDown : undefined} className={`typography-small-p min-h-[18px] relative z-[1] text-font-teritiary  flex items-center gap-1  ${currentStatistics ? "cursor-pointer" : ""}`}>
           <span className={/\-/.test(currentStatistics?.split(' ')[0]) ? 'text-red-40' : 'text-green-70'}>{currentStatistics && (/\-/.test(currentStatistics?.split(' ')[0]) || '+')}{currentStatistics?.split(' ')[0]}</span> {currentStatistics?.split(' ').slice(1).join(' ')}
           {
             currentStatistics &&
@@ -71,7 +71,7 @@ const StatCard = ({ cardBg = 'primary', title, value, icon: Icon, statistics }) 
 
         </p>}
       </div>
-      <div  className='absolute -right-5 -bottom-4 opacity-10'>
+      <div  className='absolute z-0 -right-5 -bottom-4'>
         <Icon />
       </div>
       <StyledMenu itemComponents={dropdownComponents} anchorEl={show} handleMenuClose={() => setShow(null)} />

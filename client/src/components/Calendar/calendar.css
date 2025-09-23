@@ -15,7 +15,7 @@
 }
 
 .fc-button {
-  @apply !h-11 !px-12 !rounded-xl !bg-background-80 !text-font-main !border-none ;
+  @apply !h-11 !px-12 !rounded-xl !bg-background-100 !text-font-main !border-none ;
 }
 
 
@@ -75,7 +75,7 @@
 }
 
 .fc-list-day-cushion {
-  @apply !bg-background-80 !px-8 !pt-8 !pb-2 !rounded-t-xl  text-gray-700 ;
+  @apply !bg-background-100 !px-8 !pt-8 !pb-2 !rounded-t-xl  text-gray-700 ;
 }
 
 .fc-list-table td {
@@ -100,18 +100,18 @@
   @apply !bg-transparent
 }
 .fc-scrollgrid {
-  @apply  !border !border-background-30 rounded-xl overflow-hidden
+  @apply  !border !border-background-40 rounded-xl overflow-hidden
 }
 
 .fc-scrollgrid .fc-daygrid-day-top {
   @apply flex-row
 }
 .fc-scrollgrid tr {
-  @apply  !border !border-background-30
+  @apply  !border !border-background-40
 }
 
 .fc-scrollgrid  .fc-daygrid-day-frame {
-  @apply  !border-r !border-background-30 overflow-hidden
+  @apply  !border-r !border-background-40 overflow-hidden
 }
 
 .fc .fc-scrollgrid-section-sticky th {
@@ -119,7 +119,7 @@
 }
 
 .fc-scrollgrid-sync-table .fc-day-past, .fc-scrollgrid-sync-table .fc-day-other {
-  @apply !bg-background-80 !text-font-gray !opacity-50
+  @apply !bg-background-100 !text-font-gray !opacity-50
 }
 
 .fc-scrollgrid-sync-table .fc-day-future {
@@ -150,12 +150,12 @@
   @apply flex flex-col gap-2 px-2
 }
 .fc-col-header-cell .fc-scrollgrid-sync-inner {
-  @apply !bg-background-80
+  @apply !bg-background-100
 }
 
 /* WEEK view specific styles */
 .fc-timegrid {
-  @apply !bg-background-80
+  @apply !bg-background-100
 }
 .fc-timegrid  th {
   @apply !border !border-b-0 border-background-40
@@ -182,7 +182,7 @@
 
 
 .fc-timegrid .fc-timegrid-axis {
-  @apply !bg-background-80 text-font-main; /* Consistent background for time axis */
+  @apply !bg-background-100 text-font-main; /* Consistent background for time axis */
 }
 
 .fc-timegrid .fc-timegrid-slot-label {
@@ -234,5 +234,5 @@
 
 
 .fc-list-empty {
-  @apply rounded-xl !bg-background-80
+  @apply rounded-xl !bg-background-100
 }

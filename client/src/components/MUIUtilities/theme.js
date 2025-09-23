@@ -38,7 +38,7 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           "& .MuiOutlinedInput-root": {
-            backgroundColor: "var(--color-background-70) !important",
+            // backgroundColor: "var(--color-background-70) !important",
             borderRadius: "0.75rem",
             color: "var(--color-font-main)",
             "& fieldset": {
@@ -58,6 +58,7 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           overflow: "auto",
+          boxSizing : "border-box"
         },
         paper: {
           backgroundColor: "var(--color-background-80) !important",
@@ -74,7 +75,8 @@ const theme = createTheme({
           fontFamily: "Gilroy",
           borderRadius: "0.75rem",
           "&:hover": {
-            background: "var(--color-background-60) !important",
+            outline: "2px solid var(--color-accent-100) !important",
+            outlineOffset: '-2px',
           },
           "&:hover .MuiTypography-root": {
             color: "var(--color-font-accent-100)",
@@ -129,7 +131,7 @@ const theme = createTheme({
             border: "none",
           },
           "&:hover": {
-            backgroundColor: "var(--color-background-60)",
+            // backgroundColor: "var(--color-background-60)",
           },
           "&.Mui-focused fieldset": {
             border: "1px solid -var(-color-accent-100) !important",
@@ -274,7 +276,7 @@ const theme = createTheme({
     MuiPaper: {
       styleOverrides: {
         root: {
-          backgroundColor: "var(--color-background-80) !important",
+          backgroundColor: "var(--color-background-100) !important",
           color: "var(--color-font-main)",
           borderRadius: "1.25rem",
           overflowY: "auto", // Ensures scrolling
@@ -374,7 +376,7 @@ const theme = createTheme({
             backgroundColor: "var(--color-background-70) !important",
           },
           '& .MuiDataGrid-columnHeaders div' : {
-            backgroundColor: "var(--color-background-70) !important",
+            backgroundColor: "var(--color-background-70) !important", 
           },
           "& .MuiDataGrid-columnHeader": {
             backgroundColor: "var(--color-background-70) !important",
@@ -400,10 +402,10 @@ const theme = createTheme({
             },
           },
           "& .MuiDataGrid-columnHeaderTitle": {
-            color: "var(--color-font-gray-90)",
+            color: "var(--color-font-teritiary)",
           },
           "&  .MuiDataGrid-footerContainer": {
-            backgroundColor: "var(--color-background-40) !important",
+            backgroundColor: "var(--color-background-70) !important",
             borderBottomLeftRadius: "0.75rem",
             borderBottomRightRadius: "0.75rem",
           },
@@ -421,15 +423,15 @@ const theme = createTheme({
             color: "var(--color-font-main)",
           },
           "& .MuiDataGrid-virtualScroller": {
-            backgroundColor: "var(--color-background-60)",
             borderRadius: "0.75rem 0.75rem 0px 0px !important",
+            backgroundColor: "var(--color-background-100)",
           },
           "& .MuiDataGrid-overlayWrapper": {
             height: "4rem",
           },
           "& .MuiDataGrid-overlay": {
             color: "var(--color-font-main)",
-            backgroundColor: "var(--color-background-60)",
+            backgroundColor: "var(--color-background-100)",
           },
           "& .MuiDataGrid-selectedRowCount": {
             opacity: 0,
@@ -443,9 +445,11 @@ const theme = createTheme({
           },
           "& .first-row": {
             borderRadius: 2,
-            backgroundColor: "var(--color-background-50)",
+            backgroundColor: "var(--color-background-100)",
             "&:hover": {
-              backgroundColor: "var(--color-background-60)",
+              backgroundColor: "var(--color-background-100)",
+              outline: "2px solid var(--color-accent-100)",
+              outlineOffset: '-2px',
             },
           },
           "& .MuiDataGrid-filler": {
@@ -457,9 +461,11 @@ const theme = createTheme({
           },
           "& .second-row": {
             borderRadius: 2,
-            backgroundColor: "var(--color-background-40)",
+            backgroundColor: "var(--color-background-80)",
             "&:hover": {
-              backgroundColor: "var(--color-background-60)",
+              backgroundColor: "var(--color-background-80)",
+              outline: "2px solid var(--color-accent-100)",
+              outlineOffset: '-2px',
             },
           },
           "& .MuiSvgIcon-root": {
@@ -486,7 +492,7 @@ const theme = createTheme({
           color: "var(--color-font-main)",
           borderRadius: "0.75rem",
           "&:hover": {
-            backgroundColor: "var(--color-background-60) !important",
+            outline: "2px solid var(--color-accent-100) !important",
           },
         },
         actions : {

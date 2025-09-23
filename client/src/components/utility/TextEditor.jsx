@@ -71,7 +71,7 @@ function TextEditor({ hasClearOption, onSaveTask, hasSaveOption = false, customB
     }, []);
     
       return (
-        <div className='w-full relative bg-background-80 rounded-xl  '>
+        <div className='w-full relative bg-background-100 rounded-xl  '>
             <LexicalComposer initialConfig={initialConfig}>
                 <ToolbarPlugin hasSaveOption={hasSaveOption} onSaveTask={onSaveTask} hasClearOption={hasClearOption} clearPreset={clearPreset} errors={errors} />
                 <ListPlugin />

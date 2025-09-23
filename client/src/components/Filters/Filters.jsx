@@ -22,32 +22,32 @@ const Filters = ({ filters = {}, handleCheckboxChange, activeTab, handleExperien
             value: 'Full Time',
             label: 'Full-time',
             icon: {
-                active: () => <IconWrapper size={0} icon={ClockArrowUp} customIconSize={6} isActiveIcon />,
-                inactive: () => <IconWrapper size={0} icon={ClockArrowUp} customIconSize={6} isInActiveIcon />
+                active: () => <IconWrapper size={0} inheritColor  icon={ClockArrowUp} customIconSize={6} isActiveIcon />,
+                inactive: () => <IconWrapper size={0} inheritColor icon={ClockArrowUp} customIconSize={6} isInActiveIcon />
             }
         },
         {
             value: 'Contract',
             label: 'Contract',
             icon: {
-                active: () => <IconWrapper size={0} icon={Hourglass} customIconSize={6} isActiveIcon />,
-                inactive: () => <IconWrapper size={0} icon={Hourglass} customIconSize={6} isInActiveIcon />
+                active: () => <IconWrapper size={0} inheritColor icon={Hourglass} customIconSize={6} isActiveIcon />,
+                inactive: () => <IconWrapper size={0} inheritColor icon={Hourglass} customIconSize={6} isInActiveIcon />
             }
         },
         {
             value: 'Internship',
             label: 'Intern',
             icon: {
-                active: () => <IconWrapper size={0} icon={GraduationCap} customIconSize={6} isActiveIcon />,
-                inactive: () => <IconWrapper size={0} icon={GraduationCap} customIconSize={6} isInActiveIcon />
+                active: () => <IconWrapper size={0} inheritColor icon={GraduationCap} customIconSize={6} isActiveIcon />,
+                inactive: () => <IconWrapper size={0} inheritColor icon={GraduationCap} customIconSize={6} isInActiveIcon />
             }
         },
         ...(hasPermission(role,PERMISSIONS.SHOW_FILTER_PART_TIME) ? [{
             value: 'Part Time',
             label: 'Part-time',
             icon: {
-                active: () => <IconWrapper size={0} icon={ClockFading} customIconSize={6} isActiveIcon />,
-                inactive: () => <IconWrapper size={0} icon={ClockFading} customIconSize={6} isInActiveIcon />
+                active: () => <IconWrapper size={0} inheritColor icon={ClockFading} customIconSize={6} isActiveIcon />,
+                inactive: () => <IconWrapper size={0} inheritColor icon={ClockFading} customIconSize={6} isInActiveIcon />
             }
         }] : []),
     ];
@@ -57,14 +57,14 @@ const Filters = ({ filters = {}, handleCheckboxChange, activeTab, handleExperien
     const closedOptions = [
         {
             value: 'Hired', label: 'Hired', icon: {
-                active: () => <IconWrapper size={0} icon={Handshake} customIconSize={6} isActiveIcon />,
-                inactive: () => <IconWrapper size={0} icon={Handshake} customIconSize={6} isInActiveIcon />
+                active: () => <IconWrapper size={0} inheritColor icon={Handshake} customIconSize={6} isActiveIcon />,
+                inactive: () => <IconWrapper size={0} inheritColor icon={Handshake} customIconSize={6} isInActiveIcon />
             }
         },
         {
             value: 'NotHired', label: 'Not Hired', icon: {
-                active: () => <IconWrapper size={0} icon={CircleSlash2} customIconSize={6} isActiveIcon />,
-                inactive: () => <IconWrapper size={0} icon={CircleSlash2} customIconSize={6} isInActiveIcon />
+                active: () => <IconWrapper size={0} inheritColor icon={CircleSlash2} customIconSize={6} isActiveIcon />,
+                inactive: () => <IconWrapper size={0} inheritColor icon={CircleSlash2} customIconSize={6} isInActiveIcon />
             }
         }
     ];
@@ -86,12 +86,12 @@ const Filters = ({ filters = {}, handleCheckboxChange, activeTab, handleExperien
 
 
     return (
-            <StyledCard padding={2} backgroundColor={'bg-background-80'} extraStyles={"relative md:w-full"}>
+            <StyledCard padding={2} backgroundColor={'bg-background-100'} extraStyles={"relative md:w-full"}>
                 <h3 className='text-font-main   mb-2  tracking-wide' >Filter</h3>
                 <div className='flex flex-row-reverse absolute top-5 right-5'>
                     <button
                         onClick={handleClearAll}
-                        className="text-font-gray typography-small-p hover:text-font-accent "
+                        className="text-font-teritiary typography-small-p hover:text-font-accent "
                     >
                         Clear All
                     </button>

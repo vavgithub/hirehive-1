@@ -123,6 +123,7 @@ const Login = () => {
                                         id="login-email"
                                         type="email"
                                         label="Email"
+                                        extraClass="custom-input"
                                         required
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
@@ -132,6 +133,7 @@ const Login = () => {
                                         id="login-password"
                                         type="password"
                                         label="Password"
+                                        extraClass="custom-input"
                                         required
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}

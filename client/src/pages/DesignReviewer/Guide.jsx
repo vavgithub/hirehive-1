@@ -100,7 +100,7 @@ const ScoringInput = ({scoring,title,setTitle,description,setDescription, handle
       </span>}
     </p>
     <InputField value={title} onChange={(e) => setTitle(e.target.value)} type="text" placeholder="Enter Title" />
-    <textarea placeholder="Enter Description" value={description} onChange={(e) => setDescription(e.target.value)} className="custom-textarea" rows={4} />
+    <textarea placeholder="Enter Description" value={description} onChange={(e) => setDescription(e.target.value)} className="custom-textarea " rows={4} />
     <div className="place-self-end flex gap-4">
       <Button onClick={handleCancel} variant="secondary">Cancel</Button>
       <Button onClick={handleSave} variant="primary" >Save</Button>
@@ -212,7 +212,7 @@ const MapperComponent = ({ role, customSchema, config, activeProfile, level , sc
           <div className="flex flex-col gap-8 mt-8">
             {stage?.scoring?.map(scoringStage => (
               <StyledCard
-                backgroundColor={"bg-background-80"}
+                backgroundColor={"bg-background-100"}
                 key={'basic-scoring' + level + index + scoringStage?.title}
                 extraStyles={`relative  `}
               >
@@ -396,7 +396,7 @@ function Guide() {
                 <StyledTabs
                     key={`main-Profile-${index+1}`}
                     handleTabClick={handleActiveProfile}
-                    customBgColor="bg-background-80"
+                    customBgColor="bg-background-100"
                     tabs={tabs}
                     activeTab={activeProfile}
                 />

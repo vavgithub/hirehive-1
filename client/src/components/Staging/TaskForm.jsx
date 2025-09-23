@@ -291,7 +291,7 @@ function TaskForm({jobProfile,candidateId,candidateEmail,jobId,setIsLoading}) {
                 <div className='grid grid-cols-2 gap-6'>
                 {
                     taskPresets?.filter((task,index) => showMore ? true : index < 2).map(task => (
-                    <StyledCard  key={task?._id} onClick={() => handleViewPreset(task)} backgroundColor={'bg-background-70 hover:bg-background-60 cursor-pointer flex flex-col gap-2 relative '}>
+                    <StyledCard  key={task?._id} onClick={() => handleViewPreset(task)} backgroundColor={'bg-background-70 hover-outline cursor-pointer flex flex-col gap-2 relative '}>
                         <h4 className='whitespace-nowrap overflow-hidden text-ellipsis'>{task?.title}</h4>
                         <p className='typography-body text-font-gray whitespace-nowrap overflow-hidden text-ellipsis w-[50%]'>{task?.level}-{task?.category}</p>
                     </StyledCard>

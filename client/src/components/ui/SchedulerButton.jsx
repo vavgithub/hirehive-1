@@ -82,7 +82,7 @@ function SchedulerButton({buttonText,buttonVariant,extraClasses,modalTitle,modal
             </span>
         {isOpen && 
         <span className='typography-body bg-background-70 rounded-xl p-2   absolute -top-16 right-0 '>
-            <p onClick={()=>setScheduleModal(true)} className='hover:bg-background-60 w-full whitespace-nowrap py-2 px-8 rounded-xl hover:text-accent-100'>Scheduled Send</p>
+            <p onClick={()=>setScheduleModal(true)} className='hover-outline w-full whitespace-nowrap py-2 px-8 rounded-xl hover:text-accent-100'>Scheduled Send</p>
         </span>}
     </button>
     <Modal

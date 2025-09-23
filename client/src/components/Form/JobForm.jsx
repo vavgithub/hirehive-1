@@ -354,7 +354,7 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
               checked={value}
               onChange={(e) => onChange(e.target.checked)}
               label="Show on Homepage"
-              className="flex items-center gap-2 hover:bg-background-60 hover:text-accent-100 p-2 rounded-xl"
+              className="flex items-center gap-2 hover-outline hover:text-accent-100 p-2 rounded-xl"
             />
             )}
           />

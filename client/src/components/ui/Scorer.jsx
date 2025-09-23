@@ -11,8 +11,8 @@ const Scorer = ({ value, onChange }) => {
         {[1, 2, 3, 4, 5].map((scoreValue) => (
           <div
             key={scoreValue}
-            className={`w-11 h-11 rounded-xl cursor-pointer flex items-center justify-center typography-body 
-              ${value == scoreValue ? ' selection-primary ' : 'bg-background-60 hover:bg-background-50'}`}
+            className={`w-11 h-11 rounded-xl cursor-pointer flex items-center justify-center hover-outline typography-body 
+              ${value == scoreValue ? ' selection-primary ' : 'bg-background-90  '}`}
             onClick={() => handleScoreClick(scoreValue)}
           >
             {scoreValue}

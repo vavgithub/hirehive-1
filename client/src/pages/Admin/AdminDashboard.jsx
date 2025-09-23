@@ -55,8 +55,8 @@ function AdminDashboard() {
   })
 
   const leaderBoardStats = [
-    { title: 'Unique Candidates', value: dashboardSecondaryDetails?.leaderBoard?.totalUniqueCandidatesCount || 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={Users} /> },
-    { title: 'Assessments', value: dashboardSecondaryDetails?.leaderBoard?.totalAssessmentsDone || 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={ClipboardCheck} /> },
+    { title: 'Unique Candidates', value: dashboardSecondaryDetails?.leaderBoard?.totalUniqueCandidatesCount || 0, icon: () => <IconWrapper size={10} isTeritiaryIcon icon={Users} /> },
+    { title: 'Assessments', value: dashboardSecondaryDetails?.leaderBoard?.totalAssessmentsDone || 0, icon: () => <IconWrapper size={10} isTeritiaryIcon icon={ClipboardCheck} /> },
   ];
 
   const columns = [
@@ -218,7 +218,7 @@ function AdminDashboard() {
   return (
     <Container>
       <Header HeaderText="Dashboard" />
-      <StyledCard padding={2} extraStyles={'w-full'}>
+      {/* <StyledCard padding={2} extraStyles={'w-full'}> */}
 
 
         <div className="">
@@ -228,17 +228,17 @@ function AdminDashboard() {
         <MuiCustomStylesForDataGrid />
         {/* Chart + Company Details Section */}
         <div className='flex gap-4'>
-          <StyledCard backgroundColor={'bg-background-80'} extraStyles={'w-[70%]'}>
+          <StyledCard backgroundColor={'bg-background-90'} extraStyles={'w-[70%]'}>
             <h2>Application Trends</h2>
             <div className='flex my-2 gap-2'>
-              <p onClick={() => setSelectedChartFilter('monthly')} className={(selectedChartFilter === 'monthly' ? 'bg-accent-300 text-accent-100' : 'bg-background-60 text-font-gray ') + ' px-6 py-2 typography-large-p rounded-xl cursor-pointer'}>Monthly</p>
-              <p onClick={() => setSelectedChartFilter('weekly')} className={(selectedChartFilter === 'weekly' ? 'bg-accent-300 text-accent-100' : 'bg-background-60 text-font-gray ') + ' px-6 py-2 typography-large-p rounded-xl cursor-pointer'}>Weekly</p>
-              <p onClick={() => setSelectedChartFilter('daily')} className={(selectedChartFilter === 'daily' ? 'bg-accent-300 text-accent-100' : 'bg-background-60 text-font-gray ') + ' px-6 py-2 typography-large-p rounded-xl cursor-pointer'}>Daily</p>
-              <p onClick={() => setSelectedChartFilter('yesterday')} className={(selectedChartFilter === 'yesterday' ? 'bg-accent-300 text-accent-100' : 'bg-background-60 text-font-gray ') + ' px-6 py-2 typography-large-p rounded-xl cursor-pointer'}>Yesterday</p>
+              <p onClick={() => setSelectedChartFilter('monthly')} className={(selectedChartFilter === 'monthly' ? 'bg-accent-300 text-accent-100' : 'bg-background-80 text-font-gray ') + ' px-6 py-2 typography-large-p rounded-xl cursor-pointer'}>Monthly</p>
+              <p onClick={() => setSelectedChartFilter('weekly')} className={(selectedChartFilter === 'weekly' ? 'bg-accent-300 text-accent-100' : 'bg-background-80 text-font-gray ') + ' px-6 py-2 typography-large-p rounded-xl cursor-pointer'}>Weekly</p>
+              <p onClick={() => setSelectedChartFilter('daily')} className={(selectedChartFilter === 'daily' ? 'bg-accent-300 text-accent-100' : 'bg-background-80 text-font-gray ') + ' px-6 py-2 typography-large-p rounded-xl cursor-pointer'}>Daily</p>
+              <p onClick={() => setSelectedChartFilter('yesterday')} className={(selectedChartFilter === 'yesterday' ? 'bg-accent-300 text-accent-100' : 'bg-background-80 text-font-gray ') + ' px-6 py-2 typography-large-p rounded-xl cursor-pointer'}>Yesterday</p>
             </div>
             <ApplicationChart type={selectedChartFilter} dataArray={selectedChartFilter === "weekly" ? dashboardDetails?.applications?.weeklyApplications : selectedChartFilter === 'daily' ? dashboardDetails?.applications?.dailyApplications : selectedChartFilter === 'yesterday' ? dashboardDetails?.applications?.yesterdaysApplications : dashboardDetails?.applications?.monthlyApplications} />
           </StyledCard>
-          <StyledCard backgroundColor={'bg-background-80'} padding={2} extraStyles={' w-[30%] flex flex-col items-center justify-between gap-6'}>
+          <StyledCard backgroundColor={'bg-background-90'} padding={2} extraStyles={' w-[30%] flex flex-col items-center justify-between gap-6'}>
             <div className=" w-[8rem]  aspect-square overflow-hidden rounded-full">
               <img src={dashboardDetails?.companyDetails?.logoUrl ? dashboardDetails?.companyDetails?.logoUrl : `${UNKNOWN_PROFILE_PICTURE_URL}`} alt="LOGO" className="object-cover w-full" />
               <input accept="image/*" type="file" className="hidden" />
@@ -257,12 +257,12 @@ function AdminDashboard() {
         </div>
 
         <div className='flex gap-4 w-full mt-4'>
-          <StyledCard backgroundColor={'bg-background-80'} extraStyles={'overflow-hidden w-[45%]'}>
+          <StyledCard backgroundColor={'bg-background-90'} extraStyles={'overflow-hidden w-[45%]'}>
             <h2>Upcoming Interviews</h2>
             {
               dashboardDetails?.interviews?.upcomingInterviews?.length > 0 ? dashboardDetails.interviews.upcomingInterviews.map(interview => {
                 return (
-                  <StyledCard onClick={() => navigate(`${getRoute(user?.role,ROUTE_KEY.CANDIDATES_VIEW_CANDIDATE)}/${interview?._id}/${interview?.jobApplications?.jobId}`)} key={interview?._id} padding={2} backgroundColor={'bg-background-70'}  extraStyles={'mt-4 relative cursor-pointer hover:bg-background-60 '}>
+                  <StyledCard onClick={() => navigate(`${getRoute(user?.role,ROUTE_KEY.CANDIDATES_VIEW_CANDIDATE)}/${interview?._id}/${interview?.jobApplications?.jobId}`)} key={interview?._id} padding={2} backgroundColor={'bg-background-70'}  extraStyles={'mt-4 relative cursor-pointer hover-outline '}>
                     <p className='flex items-center justify-between gap-2 w-full ' >
                       <StageBadge customBg={'bg-background-60'} stage={interview?.jobApplications?.currentStage} customWidth={'w-fit'} />
                       <span className='typography-large-p h-full text-font-gray flex gap-2 items-center'><IconWrapper isInActiveIcon size={0} icon={CalendarDays} />{UTCToDateFormatted(interview?.scheduledDate)} at {formatUTCToLocalTimeAuto(interview?.scheduledDate)}</span>
@@ -283,14 +283,14 @@ function AdminDashboard() {
             }
 
           </StyledCard>
-          <StyledCard backgroundColor={'bg-background-80'} extraStyles={'w-[55%]'}>
+          <StyledCard backgroundColor={'bg-background-90'} extraStyles={'w-[55%]'}>
             <h2>Interviews</h2>
             <InterviewsChart dataSet={dashboardDetails?.interviews?.stageBasedInterviewsCount} />
           </StyledCard>
         </div>
 
         {/* Top Performing Jobs */}
-        <StyledCard backgroundColor={'bg-background-80'} extraStyles={'mt-4 max-w-full '}>
+        <StyledCard backgroundColor={'bg-background-90'} extraStyles={'mt-4 max-w-full '}>
           <h2 className='mb-2 whitespace-nowrap'>Top Performing Jobs </h2>
           {isSecondaryDetailsLoading ? 
             <FillLoader />
@@ -314,11 +314,11 @@ function AdminDashboard() {
           />}
         </StyledCard>
         {/* LeaderBoard */}
-        <StyledCard padding={2} extraStyles={'mt-4'} backgroundColor={'bg-background-80'}>
+        <StyledCard padding={2} extraStyles={'mt-4'} backgroundColor={'bg-background-90'}>
           <h2 className='mb-2'>Leaderboard</h2>
           {isSecondaryDetailsLoading ? <FillLoader/> :
           <>
-          <StatsGrid cardBg={'secondary'} stats={leaderBoardStats} />
+          <StatsGrid  stats={leaderBoardStats} />
 
           {/* Table for LeaderBoard */}
           <div className='mt-4'>
@@ -344,7 +344,7 @@ function AdminDashboard() {
           </>
           }
         </StyledCard>
-      </StyledCard>
+      {/* </StyledCard> */}
     </Container>
   )
 }

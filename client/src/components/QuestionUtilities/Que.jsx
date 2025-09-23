@@ -123,9 +123,9 @@ const Que = ({ onQuestionsChange, initialQuestions = [] , error}) => {
                         {open && (
                             <StyledCard padding={1} backgroundColor={"bg-background-80"} extraStyles=' mt-2 absolute bottom-6 min-w-fit'>
                                 <ul className='flex flex-col gap-2 typography-body '>
-                                    <li className=' cursor-pointer hover:bg-background-60 rounded-xl px-4 py-2 whitespace-nowrap' onClick={() => addQuestion('multiple')}>Multiple Choice</li>
-                                    <li className=' cursor-pointer hover:bg-background-60 rounded-xl px-4 py-2 whitespace-nowrap' onClick={() => addQuestion('multi-select')}>Multiple Select</li>
-                                    <li className=' cursor-pointer hover:bg-background-60 rounded-xl px-4 py-2 whitespace-nowrap' onClick={() => addQuestion('text')}>Text</li>
+                                    <li className=' cursor-pointer hover-outline rounded-xl px-4 py-2 whitespace-nowrap' onClick={() => addQuestion('multiple')}>Multiple Choice</li>
+                                    <li className=' cursor-pointer hover-outline rounded-xl px-4 py-2 whitespace-nowrap' onClick={() => addQuestion('multi-select')}>Multiple Select</li>
+                                    <li className=' cursor-pointer hover-outline rounded-xl px-4 py-2 whitespace-nowrap' onClick={() => addQuestion('text')}>Text</li>
                                 </ul>
                             </StyledCard>
                         )}

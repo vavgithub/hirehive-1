@@ -1,6 +1,6 @@
 import React from 'react';
 
-function IconWrapper({ icon  : Icon, isActiveIcon, inheritColor , isInActiveIcon, isErrorIcon, customIconSize, customStrokeWidth, children , hasBg , customBgHover ,size, ...props }) {  // Accept props explicitly
+function IconWrapper({ icon  : Icon, isActiveIcon, inheritColor , isTeritiaryIcon, isInActiveIcon, isErrorIcon, customIconSize, customStrokeWidth, children , hasBg , customBgHover ,size, ...props }) {  // Accept props explicitly
     const bgStyles = hasBg ? (typeof hasBg === "string" && hasBg?.trim() !== 'bg-background-70') ? hasBg : ` bg-background-70` : '';
     const hoverStyles = ` ${hasBg ? customBgHover ? customBgHover : "hover:bg-accent-300" : ''} `;
     
@@ -42,6 +42,7 @@ function IconWrapper({ icon  : Icon, isActiveIcon, inheritColor , isInActiveIcon
     const colors = {
       "primary" : "var(--color-font-accent-100)",
       "secondary" : "var(--color-font-gray-90)",
+      "teritiary" : "var(--color-background-70)",
       "error" : "#FF385C",
       "white" : "#ffffff",
       "var(--color-font-main)" : "var(--color-font-main)",    
@@ -54,7 +55,7 @@ function IconWrapper({ icon  : Icon, isActiveIcon, inheritColor , isInActiveIcon
       {Icon ? 
       <Icon 
       size={(typeof customIconSize === 'number') ? iconSizeOptions[customIconSize] : (typeof size === 'number') ?  iconSizeOptions[size] : 24} 
-      color={inheritColor ? "currentColor" : isActiveIcon ? colors["primary"] : isInActiveIcon ? colors["secondary"] : isErrorIcon ? colors['error'] : colors["var(--color-font-main)"]} 
+      color={inheritColor ? "currentColor" : isActiveIcon ? colors["primary"] : isInActiveIcon ? colors["secondary"] : isTeritiaryIcon ? colors["teritiary"] : isErrorIcon ? colors['error'] : colors["var(--color-font-main)"]} 
       strokeWidth={(typeof customStrokeWidth === 'number') ? strokeWidthOptions[customStrokeWidth] : (typeof size === 'number') ?  strokeWidthOptions[size ? size : 1] : 1.5} 
       /> 
       : children}

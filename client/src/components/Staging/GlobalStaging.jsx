@@ -415,7 +415,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
 
     return (
     <StyledCard  
-    backgroundColor={"bg-background-80"}
+    backgroundColor={"bg-background-100"}
     extraStyles={"relative min-h-[12rem] overflow-hidden"}
     >
         {

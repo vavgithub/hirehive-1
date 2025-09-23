@@ -442,7 +442,7 @@ const ApplyJob = () => {
                 </label>
                 <div
                   {...getRootProps({
-                    className: `bg-background-80 hover:bg-background-60 rounded-xl mt-4 p-4 text-center cursor-pointer 
+                    className: `bg-background-100 hover-outline rounded-xl mt-4 p-4 text-center cursor-pointer 
                       ${isDragActive ? 'border border-teal-500 bg-background-60' : ''} 
                       ${errors.resumeFile ? '!border !border-red-500' : ''}`,
                   })}
@@ -566,7 +566,7 @@ const ApplyJob = () => {
                       <p className='w-full'>{getValues("email")}</p>
                     ) : (
                       <div className='w-full'>
-                        <InputField extraClass={'custom-input'} type="text" placeholder="Enter your email" value={watch("email")} onChange={(e) => setValue("email", e.target.value)} />
+                        <InputField type="text" placeholder="Enter your email" value={watch("email")} onChange={(e) => setValue("email", e.target.value)} />
                       </div>
                     )}
                     <button type='button' onClick={() => setEditEmail(!editEmail)}>
@@ -632,7 +632,7 @@ const ApplyJob = () => {
             <div className='mt-2 '>
               <ForgotPassword role={"Candidate"} onBack={() => { setShowForgotPassword(false); }} isModal setIsLoading={setLoading} />
               <div onClick={() => setShowForgotPassword(false)} className='absolute -top-4 -right-4 cursor-pointer'>
-                <IconWrapper icon={X} hasBg customBgHover={"hover:bg-background-60"} />
+                <IconWrapper icon={X} hasBg customBgHover={"hover-outline"} />
               </div>
             </div>
           </Modal>

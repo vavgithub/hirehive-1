@@ -78,7 +78,7 @@ function LinkPlugin({isActive}) {
         <>
         <button 
             type="button"
-            className={"m-2 p-3 hover:bg-background-60 rounded-xl " + (isActive ? 'bg-accent-300' : '')}
+            className={"m-2 p-3 hover-outline rounded-xl " + (isActive ? 'bg-accent-300' : '')}
             onClick={isActive ? handleRemoveLink :handlePopup}
         >
             <Link size={16} />

@@ -29,7 +29,7 @@ import { useUnknownProfilePicture } from "../../context/ThemeContext";
 
 const PersonalDetails = ({ candidateData, isEditing, control }) => {
   return (
-    <StyledCard backgroundColor={"bg-background-80"}>
+    <StyledCard backgroundColor={"bg-background-100"}>
       <h2 className="mb-6">Personal Details</h2>
       {!isEditing ?
         <div className="flex justify-between flex-col gap-6 sm:flex-row">
@@ -157,7 +157,7 @@ const PersonalDetails = ({ candidateData, isEditing, control }) => {
                   <div className="min-w-[25%] text-font-gray">
                       <label className="typography-body ">Date Of Birth</label>
                   </div>
-                  <Datepicker disableDate='after' onChange={field.onChange} hasDefault={false} value={field.value} error={error?.message} />
+                  <Datepicker customBg={'var(--color-background-70)'} disableDate='after' onChange={field.onChange} hasDefault={false} value={field.value} error={error?.message} />
                   {error?.message && <p className='absolute text-red-100 typography-small-p left-[27%] top-[3rem]'>{error?.message}</p>}
               </div>
             )}
@@ -178,7 +178,7 @@ const ResumeAndPortfolioDetails = ({ candidateData, isEditing, control, resumeFi
   }
 
   return (
-    <StyledCard backgroundColor={"bg-background-80"}>
+    <StyledCard backgroundColor={"bg-background-100"}>
       <h2 className="mb-6">Resume and Portfolio</h2>
       {!isEditing ?
         <div className="flex justify-between flex-col gap-6 sm:flex-row">
@@ -210,7 +210,7 @@ const ResumeAndPortfolioDetails = ({ candidateData, isEditing, control, resumeFi
             render={({ field, fieldState: { error } }) => (
               <div className="h-11 w-full flex items-center typography-body justify-between gap-2">
                 <p className="min-w-[25%] max-w-[25%] text-font-gray ">Resume</p>
-                <div className="w-full bg-background-70 hover:bg-background-60 h-11 rounded-xl flex justify-between">
+                <div className="w-full bg-background-70 hover-outline h-11 rounded-xl flex justify-between">
                   <p className="pl-4 py-2 whitespace-nowrap overflow-hidden text-ellipsis w-[45%]  md:w-[60%]">{fileName ? fileName : candidateData?.firstName + "'s Resume"}</p>
                   <span className="hidden md:block">
                     <Button icon={()=><IconWrapper icon={Upload} inheritColor size={0} customIconSize={4} customStrokeWidth={7} />} variant="secondary" type="button" onClick={() => resumeRef.current.click()}>{resumeFile ? "Edit" : "Choose"}</Button>
@@ -279,7 +279,7 @@ const ProfessionalDetails = ({ candidateData, isEditing, control }) => {
   const hasHourlyRate = candidateData.hourlyRate > 0;
 
   return (
-    <StyledCard backgroundColor={"bg-background-80"}>
+    <StyledCard backgroundColor={"bg-background-100"}>
       <h2 className="mb-6">Professional Details</h2>
       {!isEditing ? (
         <div className="flex flex-col gap-6">
@@ -655,7 +655,7 @@ function Profile() {
                 <ProfessionalDetails candidateData={candidateData} isEditing={isEditing} control={control} />
               </div>
               <div className="w-[100%] sm:w-[50%] mx-auto lg:w-[30%] ">
-                  <StyledCard backgroundColor={"bg-background-80"} extraStyles=" flex flex-col items-center relative">
+                  <StyledCard backgroundColor={"bg-background-100"} extraStyles=" flex flex-col items-center relative">
                     {isEditing || <button type="button" onClick={()=>setIsEditing(true)} className="absolute top-6 right-6 border rounded-xl  border-font-gray hover:bg-background-70">
                       <CustomToolTip title={"Edit Profile"} arrowed>
                         <IconWrapper icon={Pencil}  />
@@ -668,7 +668,7 @@ function Profile() {
                       </div>
                       {isEditing && 
                       <button type="button" onClick={()=>profileImageRef.current.click()} className="absolute bottom-1 -right-1  rounded-xl">
-                          <IconWrapper icon={PencilLine} size={3} hasBg customBgHover={'hover:bg-background-60'}  />
+                          <IconWrapper icon={PencilLine} size={3} hasBg customBgHover={'hover-outline '}  />
                       </button>}
                   </div>
                   <h2 className="whitespace-nowrap overflow-hidden w-full text-ellipsis text-center">{candidateData?.firstName + " " + candidateData?.lastName}</h2>

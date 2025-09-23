@@ -100,7 +100,6 @@ const CompanyOverview = ({ companyDetails, isEditing, control ,setValue }) => {
                 id="location"
                 label="Location"
                 labelStyles="text-font-gray"
-                extraClass={'custom-input'}
                 value={field.value ?? ""}
                 onChange={field.onChange}
                 setLocationId={(id) => setValue('locationId',id)}
@@ -383,7 +382,7 @@ function CompanyProfile() {
                         className="absolute bottom-1 -right-1 rounded-xl"
                         disabled={uploading}
                       >
-                        <IconWrapper hasBg={true} customBgHover={'hover:bg-background-60'} size={3} customIconSize={3}  icon={PencilLine} />
+                        <IconWrapper hasBg={true} customBgHover={'hover-outline'} size={3} customIconSize={3}  icon={PencilLine} />
                       </button>
                     )}
                   </div>

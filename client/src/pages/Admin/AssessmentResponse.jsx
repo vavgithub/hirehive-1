@@ -67,7 +67,7 @@ const AssessmentResponse = () => {
                 {/* Top Section with Candidate Info and Score */}
                 <div className="flex gap-4 mb-6">
                     {/* Candidate Info Card */}
-                    <StyledCard padding={2} backgroundColor={'bg-background-80'} extraStyles="flex-grow">
+                    <StyledCard padding={2} backgroundColor={'bg-background-100'} extraStyles="flex-grow">
                         <div className="flex gap-4 h-full">
                             <div className="to-background-100 min-w-[20%] max-w-[12.5rem] aspect-square max-h-[12.5rem]  rounded-xl overflow-hidden">
                                 <img
@@ -168,7 +168,7 @@ const AssessmentResponse = () => {
 
                 {/* Question Progress Indicators */}
                 {assessmentData?.questionResponses?.length > 0 &&
-                    <StyledCard  backgroundColor={'bg-background-80'} padding={2}  extraStyles=" mb-6">
+                    <StyledCard  backgroundColor={'bg-background-100'} padding={2}  extraStyles=" mb-6">
                         <div className="grid grid-cols-10 justify-between gap-4">
                             {assessmentData?.questionResponses.map((response, index) => (
                                 <div
@@ -194,7 +194,7 @@ const AssessmentResponse = () => {
                     {/* Questions List */}
                     {assessmentData?.questionResponses?.length > 0 ? <div className="space-y-4 ">
                         {assessmentData?.questionResponses.map((response, index) => (
-                            <StyledCard padding={2} backgroundColor={"bg-background-80"} key={response.questionId}>
+                            <StyledCard padding={2} backgroundColor={"bg-background-100"} key={response.questionId}>
 
                                 <div >
                                     <h3 className="mb-4">
@@ -213,7 +213,7 @@ const AssessmentResponse = () => {
                                         {response.questionDetails.options.map((option, optIndex) => (
                                             <div
                                                 key={optIndex}
-                                                className={`p-4 rounded-lg typography-body bg-background-60 ${response.selectedAnswer === option.text
+                                                className={`p-4 rounded-lg typography-body bg-background-70 ${response.selectedAnswer === option.text
                                                     ? option.isCorrect
                                                         ? 'border border-green-70 '
                                                         : 'border border-red-40'

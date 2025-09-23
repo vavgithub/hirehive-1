@@ -263,7 +263,7 @@ function RegisterForm({setCurrentStep}) {
               <div className='mt-2 '>
               <ForgotPassword onBack={()=>{setShowForgotPassword(false); }} isModal setIsLoading={setLoading} />
                 <div onClick={()=>setShowForgotPassword(false)} className='absolute -top-4 -right-4 cursor-pointer'>
-                  <IconWrapper icon={X} hasBg customBgHover={"hover:bg-background-60"} />
+                  <IconWrapper icon={X} hasBg customBgHover={"hover-outline"} />
                 </div>
               </div>
             </Modal>

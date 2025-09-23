@@ -53,7 +53,7 @@ function Settings() {
       <Header HeaderText="Settings" />
       {loading && <LoaderModal />}
       <StyledCard padding={2} extraStyles={'w-full'}>
-            <StyledCard backgroundColor={'bg-background-80'} extraStyles={'flex justify-between items-center'}>
+            <StyledCard backgroundColor={'bg-background-100'} extraStyles={'flex justify-between items-center'}>
                 <div className='flex items-center gap-4'>
                         <GoogleIcon/>
                     <h3>Google Workspace</h3>                    

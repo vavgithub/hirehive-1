@@ -1,8 +1,8 @@
 import React from 'react';
 
-const Tabs = ({ tabs, activeTab, handleTabClick }) => {
+const Tabs = ({ bgVariant = "primary", tabs, activeTab, handleTabClick }) => {
     return (
-        <div className={ ' flex gap-8 bg-background-80  rounded-xl items-center px-8 '}>
+        <div className={ (bgVariant === "secondary" ? "bg-background-80" : "bg-background-100" )+ ' flex gap-8   rounded-xl items-center px-8 '}>
             {tabs.map((tab) => (
                 <div
                     key={tab.name}

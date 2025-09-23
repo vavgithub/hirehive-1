@@ -25,7 +25,7 @@ function DesignTaskReview({ candidate, onSubmit ,rounded = "bottom"}) {
     };
   
     return (
-      <StyledCard padding={2} backgroundColor={'bg-background-70'} borderRadius={roundedClass} extraStyles=' flex gap-4 justify-between  items-center '>
+      <StyledCard padding={2} backgroundColor={'bg-background-80'} borderRadius={roundedClass} extraStyles=' flex gap-4 justify-between  items-center '>
         <span className='flex-shrink-0 typogaphy-body'>Design Task Ratings</span>
         <Scorer value={rating} onChange={setRating} />
   

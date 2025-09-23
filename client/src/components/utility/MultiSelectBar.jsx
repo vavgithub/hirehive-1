@@ -476,7 +476,7 @@ function MultiSelectBar({selectedData,jobId,clearSelection}) {
                                                     <p className='my-4 font-semibold'>Please provide the reason for rejecting this candidate</p>
                                                     <div 
                                                     onClick={(e)=>{setAnchorEl(!anchorEl ? e.currentTarget : null); setChosenCandidate(chosenCandidate ? null : candidate?._id); setChosenStage(chosenStage ? null : stage);}}
-                                                    className={`${rejectionReason ? "text-font-main" : "text-font-gray"}   typography-body mt-1 h-[2.75rem] flex items-center justify-between bg-background-70 hover:bg-background-60 w-full outline-none rounded-xl shadow-sm focus:ring-teal-300 focus:border-teal-300 text-left px-4`}
+                                                    className={`${rejectionReason ? "text-font-main" : "text-font-gray"}   typography-body mt-1 h-[2.75rem] flex items-center justify-between bg-background-70 hover-outline w-full outline-none rounded-xl shadow-sm focus:ring-teal-300 focus:border-teal-300 text-left px-4`}
                                                     >
                                                     <p  className='whitespace-nowrap text-ellipsis overflow-hidden'>{rejectionReason ? rejectionReason : "-Select-"}</p>
                                                     

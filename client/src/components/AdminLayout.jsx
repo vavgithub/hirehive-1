@@ -74,7 +74,7 @@ const AdminLayout = () => {
                 to={to}
                 end={to === "/admin/dashboard" || to === "/design-reviewer/dashboard"}
                 className={({ isActive, isPending }) =>
-                    `w-full flex items-center min-h-11 gap-2 pl-2 py-2 rounded-xl hover:bg-background-60 ${isActive || isPending ? ` selection-primary ` : isPrimaryColor ? 'text-white' : ""}`
+                    `w-full flex items-center min-h-11 gap-2 pl-2 py-2 rounded-xl hover:outline-accent-100 hover:outline hover:outline-2  ${isActive || isPending ? ` selection-primary ` : isPrimaryColor ? 'text-white' : ""}`
                 }
             >
                 {({ isActive, isPending }) => (
@@ -134,7 +134,7 @@ const AdminLayout = () => {
                 {/* Parent menu item */}
                 <div
                     onClick={toggleDropdown}
-                    className={`cursor-pointer w-full flex items-center justify-between min-h-11 gap-2 pl-2 pr-3 py-2 rounded-xl hover:bg-background-60 ${isActive ? 'selection-primary' : ''}`}
+                    className={`cursor-pointer w-full flex items-center justify-between min-h-11 gap-2 pl-2 pr-3 py-2 rounded-xl hover:outline-accent-100 hover:outline hover:outline-2  ${isActive ? 'selection-primary' : ''}`}
                 >
                     <div className="flex items-center gap-2">
                         {isActive ? <ActiveIcon count={iconData} /> : <Icon count={iconData} />}
@@ -158,7 +158,7 @@ const AdminLayout = () => {
                                 key={item.to}
                                 to={item.to}
                                 className={({ isActive }) =>
-                                    `flex items-center gap-2 py-2 px-2 rounded-xl hover:bg-background-60 typography-body  ${isActive ? 'text-font-accent selection-primary' : ''
+                                    `flex items-center gap-2 py-2 px-2 rounded-xl hover:outline-accent-100 hover:outline hover:outline-2  typography-body  ${isActive ? 'text-font-accent selection-primary' : ''
                                     }`
                                 }
                             >
@@ -189,7 +189,7 @@ const AdminLayout = () => {
                     <NavLink
                         to={getRoute(user.role,ROUTE_KEY.COMPANY_PROFILE_VIEW)}
                         className={({ isActive }) =>
-                            `w-full flex items-center ${isActive ? " selection-primary " : ""}  hover:bg-background-60 hover:text-font-accent px-4 py-2 rounded-xl `}
+                            `w-full flex items-center ${isActive ? " selection-primary " : ""}    hover:text-font-accent px-4 py-2 rounded-xl `}
                     >
                         <Avatar alt={user?.companyDetails?.name} sx={{ width: "32px", height: "32px" }}
                             src={user?.companyDetails?.logoUrl || UNKNOWN_PROFILE_PICTURE_URL} />
@@ -204,7 +204,7 @@ const AdminLayout = () => {
                     <NavLink
                         to={profilePath}
                         className={({ isActive }) =>
-                            `w-full flex items-center ${isActive ? " selection-primary " : ""}  hover:bg-background-60 hover:text-font-accent px-4 py-2 rounded-xl `}
+                            `w-full flex items-center ${isActive ? " selection-primary " : ""}    hover:text-font-accent px-4 py-2 rounded-xl `}
                     >
                         <IconWrapper inheritColor={true} size={0} customIconSize={5} icon={User} />
                         <span className='typography-body  ml-2 '>
@@ -216,7 +216,7 @@ const AdminLayout = () => {
             {
                 onClick: handleLogout,
                 content: () => (
-                    <div className='flex items-center hover:bg-background-60 hover:text-accent-100 px-4 py-2 w-full rounded-xl'>
+                    <div className='flex items-center   hover:text-accent-100 px-4 py-2 w-full rounded-xl'>
                         <IconWrapper inheritColor={true} size={0} customIconSize={5} icon={LogOut} />
                         <span className='typography-body  ml-2'>
                             Logout
@@ -228,7 +228,7 @@ const AdminLayout = () => {
 
         return (
             <>
-                <div className={`flex items-center px-2 py-1 relative  rounded-xl justify-start hover:bg-background-60 ${location.pathname === profilePath ? "selection-primary" : ""}`}>
+                <div className={`flex items-center px-2 py-1 relative  rounded-xl justify-start hover:outline-accent-100 hover:outline hover:outline-2  ${location.pathname === profilePath ? "selection-primary" : ""}`}>
                     <IconButton
                         onClick={handleMenuClick}
                         className={`flex gap-2  ${location.pathname === profilePath ? "text-font-accent  " : ""}`}

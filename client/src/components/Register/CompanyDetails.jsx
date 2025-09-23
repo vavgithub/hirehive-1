@@ -282,8 +282,8 @@ function CompanyDetails({currentStep,setCurrentStep}) {
                   <label className="typography-body font-bricolage font-semibold">Company Logo</label> 
                   <StyledCard 
                     padding={2}
-                    backgroundColor={"bg-background-80"}
-                    extraStyles=" hover:bg-background-60 cursor-pointer  mt-2 flex flex-col items-center justify-center"
+                    backgroundColor={"bg-background-100"}
+                    extraStyles=" hover-outline cursor-pointer  mt-2 flex flex-col items-center justify-center"
                     onClick={() => fileInputRef.current?.click()}
                   >
                       <div className='flex justify-start w-full gap-4'>

@@ -5,9 +5,9 @@ function MuiCustomStylesForDataGrid() {
         <style>
             {`
                  /* ——— Make header and footer red ——— */
-      .MuiDataGrid-root .MuiDataGrid-columnHeaders {
-        background-color: red !important;
-       }
+            .MuiDataGrid-root .MuiDataGrid-columnHeaders {
+                background-color: var(--color-background-70) !important;
+            }
             .MuiDataGrid-root .MuiDataGrid-columnHeader:focus,
             .MuiDataGrid-root .MuiDataGrid-cell:focus {
                 outline: none !important;                      

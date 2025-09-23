@@ -110,7 +110,7 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
               {selectedReviewer.firstName[0].toUpperCase()}
             </Avatar>
           ) : (
-            <div className={'rounded-full bg-background-70 ' + (!disabled && 'hover:bg-background-60')}>
+            <div className={'rounded-full bg-background-70 ' + (!disabled && 'hover-outline')}>
               <IconWrapper icon={UserRoundPlus} customIconSize={2}  size={3} />
             </div>
           )}
@@ -325,12 +325,16 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
           No reviewers found
         </MenuItem>
       }
-     
       renderInput={(params) => (
         <TextField
           {...params}
           placeholder='Select Reviewer'
           variant="outlined" // Keep the variant as 'outlined' if you prefer
+          sx={{
+              '& .MuiOutlinedInput-input' : {
+                  backgroundColor : 'var(--color-background-80) !important',
+              },
+          }}
           InputLabelProps={{
             shrink: false, // Prevent the label from shrinking
             style: { display: 'none' }, // Hide the label visually

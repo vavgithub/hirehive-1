@@ -76,10 +76,10 @@ const AutoAssignModal = ({ open, onClose, onAssign, jobId, budgetFilter }) => {
         <h3 className='mb-2'>Select reviewers</h3>
         <div ref={dropdownRef}>
         <div 
-          className={"w-full bg-background-80 h-11 flex items-center cursor-pointer rounded-xl hover:bg-background-60 overflow-hidden " + (isDropdownOpen ? "border border-teal-100" : "")}
+          className={"w-full bg-background-80 h-11 flex items-center cursor-pointer rounded-xl hover-outline overflow-hidden " + (isDropdownOpen ? "border border-teal-100" : "")}
           onClick={() => setIsDropdownOpen(!isDropdownOpen)}
         >
-          <div className="flex-grow flex flex-wrap gap-2 h-full px-4 py-1 items-center  text-font-gray hover:bg-background-60">
+          <div className="flex-grow flex flex-wrap gap-2 h-full px-4 py-1 items-center  text-font-gray hover-outline">
           <IconWrapper icon={User} size={0} customIconSize={5} inheritColor />
 
             {selectedReviewers.map(reviewer => (
@@ -117,7 +117,7 @@ const AutoAssignModal = ({ open, onClose, onAssign, jobId, budgetFilter }) => {
                   {selectedReviewers.length === reviewers.length ? '-Deselect All-' : '-Select All-'}
                 </button>
                 {reviewers.map(reviewer => (
-                  <label  htmlFor={`reviewer-${reviewer._id}`} key={reviewer._id} className={"flex items-center px-4 py-2 hover:bg-background-60 h-11 cursor-pointer " + (selectedReviewers.some(r => r._id === reviewer._id) ? 'selection-primary' : '')}>
+                  <label  htmlFor={`reviewer-${reviewer._id}`} key={reviewer._id} className={"flex items-center px-4 py-2 hover-outline h-11 cursor-pointer " + (selectedReviewers.some(r => r._id === reviewer._id) ? 'selection-primary' : '')}>
                     <input
                       type="checkbox"
                       id={`reviewer-${reviewer._id}`}

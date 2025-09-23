@@ -105,7 +105,7 @@ const SkillsInput = ({ value = [], onChange, allSkills = [] ,error }) => {
             <div
               key={index}
               onClick={() => handleSuggestionClick(suggestion)}
-              className="cursor-pointer p-2 hover:bg-background-60"
+              className="cursor-pointer p-2 hover-outline"
             >
               {suggestion}
             </div>

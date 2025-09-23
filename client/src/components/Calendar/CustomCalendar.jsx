@@ -168,7 +168,7 @@ function CustomCalendar() {
         const isPast = start < now; 
         return (
           <div
-            className={" max-w-full text-ellipsis overflow-hidden p-2 rounded-xl px-4  " + (isPast ? 'bg-background-70 ' : 'bg-background-50 hover:bg-background-40 cursor-pointer')}
+            className={" max-w-full text-ellipsis overflow-hidden p-2 rounded-xl px-4  " + (isPast ? 'bg-background-50  ' : 'bg-background-50 hover-outline cursor-pointer')}
             onClick={ isPast ? null : (e) => {
               e.stopPropagation();       // ✅ Prevents bubbling to FullCalendar
               e.preventDefault();        // ✅ Prevents default behavior (important)
@@ -216,7 +216,7 @@ function CustomCalendar() {
             end: eventInfo.event.end
           });
         }}
-        className={(isPast ? 'bg-background-70 text-font-gray ' : 'bg-background-50 cursor-pointer ') + ' max-w-full text-ellipsis overflow-hidden p-2 rounded-xl px-4'}>
+        className={(isPast ? 'bg-background-50  text-font-gray ' : 'bg-background-50 cursor-pointer ') + ' max-w-full text-ellipsis overflow-hidden p-2 rounded-xl px-4'}>
           {isHappening && <span className='w-2 h-2 bg-accent-100 rounded-full mr-2 inline-block'></span>}
           {eventInfo.event.title}
         </div>
@@ -262,7 +262,7 @@ function CustomCalendar() {
         : formatTime(start);
 
       return (
-        <div className={`px-8 typography-body bg-background-80 ${isLast ?  `rounded-b-xl ${isFinalEventOfWeek ? '' : 'mb-6'}  pb-8` : ''}`}>
+        <div className={`px-8 typography-body bg-background-100 ${isLast ?  `rounded-b-xl ${isFinalEventOfWeek ? '' : 'mb-6'}  pb-8` : ''}`}>
           <div className={(isPast ? 'opacity-60' : '') + ' bg-background-70 flex justify-between rounded-xl p-4'}>
             <div className={(isPast ? 'text-font-gray' : '') + ' flex items-center gap-4'}>
               <p>{timeText}</p>
@@ -271,11 +271,11 @@ function CustomCalendar() {
             {!isPast && (eventInfo.event.extendedProps?.joiningLink
               ? <Button variant='secondary' onClick={() => window.open(eventInfo.event.extendedProps.joiningLink)}>Join Now</Button>
               : <div className='cursor-pointer' onClick={() => window.open(eventInfo.event.extendedProps.htmlLink)}>
-                  <IconWrapper hasBg='bg-background-60' customBgHover={'hover:bg-background-50'} icon={SquareArrowOutUpRight} />
+                  <IconWrapper hasBg='bg-background-100' customBgHover={'hover-outline'} icon={SquareArrowOutUpRight} />
                 </div>)
             }
           </div>
-          {!isLast && <div className='w-full h-4 bg-background-80'></div>}
+          {!isLast && <div className='w-full h-4 bg-background-100'></div>}
         </div>
       );
     }
@@ -344,13 +344,13 @@ function CustomCalendar() {
       {isLoading && <LoaderModal />}
       <div className='flex justify-between mb-4'>
         <div className='flex gap-4'>
-          <button onClick={handlePrev} className='bg-background-80 hover:bg-background-60 rounded-xl h-11 aspect-square flex justify-center items-center'>
+          <button onClick={handlePrev} className='bg-background-100 hover-outline rounded-xl h-11 aspect-square flex justify-center items-center'>
             <IconWrapper icon={ChevronLeft} size={0} customIconSize={5} />
           </button>
-          <button onClick={handleToday} className='bg-background-80 hover:bg-background-60 rounded-xl h-11 flex justify-center items-center px-12'>
+          <button onClick={handleToday} className='bg-background-100 hover-outline rounded-xl h-11 flex justify-center items-center px-12'>
             {eventsDate?.calendarType === 'LIST' ? 'Today' : eventsDate?.calendarType === 'WEEK' ? 'This Week' : currentDate.monthShort}
           </button>
-          <button onClick={handleNext} className='bg-background-80 hover:bg-background-60 rounded-xl h-11 aspect-square flex justify-center items-center'>
+          <button onClick={handleNext} className='bg-background-100 hover-outline rounded-xl h-11 aspect-square flex justify-center items-center'>
             <IconWrapper icon={ChevronRight} size={0} customIconSize={5} />
           </button>
         </div>

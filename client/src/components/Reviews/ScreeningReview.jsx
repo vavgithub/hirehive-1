@@ -48,7 +48,7 @@ function ScreeningReview({ jobProfile, candidate, onSubmit ,rounded = "bottom"})
   };
   
     return (
-      <StyledCard padding={2} backgroundColor={'bg-background-70'} borderRadius={roundedClass} extraStyles=' grid grid-cols-2 gap-4 '>
+      <StyledCard padding={2} backgroundColor={'bg-background-80'} borderRadius={roundedClass} extraStyles=' grid grid-cols-2 gap-4 '>
         {Object.entries(ratings).map(([category, value]) => (
           <div key={category} className='flex gap-4 items-center'>
             <span className='w-[35%]'>{category}</span>

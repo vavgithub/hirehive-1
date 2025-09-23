@@ -145,7 +145,7 @@ const HomePage = () => {
     }else{
         return (
             <>
-             <Container hasBgColor>
+             <Container extraStyles="bg-background-90">
                     <LogoWrapper buttonVariant='primary' isAuthenticated={false} headerText='Jobs' />
                     <h1 className='md:hidden py-4'>Jobs</h1>
                         

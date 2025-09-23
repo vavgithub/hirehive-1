@@ -85,14 +85,14 @@ const CandidateLayout = () => {
     {
       name: 'All Jobs',
       path: '/candidate/all-jobs',
-      icon: ()=><IconWrapper isInActiveIcon icon={Briefcase} />,
-      activeIcon: ()=><IconWrapper isActiveIcon icon={Briefcase} />,
+      icon: ()=><IconWrapper inheritColor icon={Briefcase} />,
+      activeIcon: ()=><IconWrapper inheritColor icon={Briefcase} />,
     },
     {
       name: 'My Jobs',
       path: '/candidate/my-jobs',
-      icon: ()=><IconWrapper isInActiveIcon icon={BriefcaseBusiness} />,
-      activeIcon: ()=><IconWrapper isActiveIcon icon={BriefcaseBusiness} />,
+      icon: ()=><IconWrapper inheritColor icon={BriefcaseBusiness} />,
+      activeIcon: ()=><IconWrapper inheritColor icon={BriefcaseBusiness} />,
     },
   ];
 
@@ -103,7 +103,7 @@ const CandidateLayout = () => {
         to={to}
         end={to === '/candidate/dashboard'}
         className={({ isActive, isPending }) =>
-          `w-full flex items-center min-h-11 gap-2 pl-2 py-2 rounded-xl hover:bg-background-60 ${isActive || isPending ? 'selection-primary  ' : ''}`
+          `w-full flex items-center min-h-11 gap-2 pl-2 py-2 rounded-xl hover-outline ${isActive || isPending ? 'selection-primary  ' : 'text-font-gray'}`
         }
         onClick={onClick}
       >
@@ -144,7 +144,7 @@ const CandidateLayout = () => {
         onClick: handleMenuClose,
         content: () => (
           <NavLink to={profilePath} className={({ isActive }) =>
-            `w-full flex items-center ${isActive ? "text-font-accent" : ""} hover:bg-background-60 hover:text-font-accent px-4 py-2 rounded-xl `}
+            `w-full flex items-center ${isActive ? "text-font-accent" : ""}  hover:text-font-accent px-4 py-2 rounded-xl `}
           >
             <IconWrapper inheritColor={true} size={0} customIconSize={5}  icon={User} />
             <span className='typography-large-p ml-2'>
@@ -156,7 +156,7 @@ const CandidateLayout = () => {
       {
         onClick: handleLogout,
         content: () => (
-          <div className='flex items-center hover:bg-background-60 hover:text-font-accent px-4 py-2 w-full rounded-xl'>
+          <div className='flex items-center  hover:text-font-accent px-4 py-2 w-full rounded-xl'>
             <IconWrapper inheritColor={true} size={0} customIconSize={5}  icon={LogOut} />
             <span className='typography-large-p ml-2'>
               Logout
@@ -168,7 +168,7 @@ const CandidateLayout = () => {
 
     return (
       <>
-        <div className={`flex items-center px-2 relative mx-4 py-1 justify-start hover:bg-background-60 rounded-xl ${location.pathname === profilePath ? "selection-primary" : " text-font-main "}`}>
+        <div className={`flex items-center px-2 relative mx-4 py-1 justify-start hover-outline rounded-xl ${location.pathname === profilePath ? "selection-primary" : " text-font-main "}`}>
           <IconButton onClick={handleMenuClick} className={`flex gap-2 `}>
             <Avatar alt={candidateData?.firstName} sx={{ width: "32px", height: "32px" }} src={candidateData?.profilePictureUrl || UNKNOWN_PROFILE_PICTURE_URL} />
             <span className={`typography-body ${location.pathname === profilePath ? "text-font-accent" : "text-font-main"} `}>{candidateData?.firstName}</span>
@@ -261,8 +261,8 @@ const CandidateLayout = () => {
                 <NavItem               
                 key={'settings'}
                 to={'/candidate/settings'}
-                icon={()=><IconWrapper isInActiveIcon icon={Settings} />}
-                activeIcon={()=><IconWrapper isActiveIcon icon={Settings}
+                icon={()=><IconWrapper inheritColor icon={Settings} />}
+                activeIcon={()=><IconWrapper inheritColor icon={Settings}
                 />}>
                 Settings
                </NavItem>
@@ -286,7 +286,7 @@ const CandidateLayout = () => {
       />
 
       {/* Main Content */}
-      <div className="mt-[4.6rem] md:mt-0 md:ml-[17rem] md:w-[calc(100vw-17rem)] flex flex-col items-center min-h-[calc(100vh-5rem)] ">
+      <div className="mt-[4.6rem] md:mt-0 md:ml-[17rem] md:w-[calc(100%-17rem)] flex flex-col items-center min-h-[calc(100vh-5rem)] ">
         <Outlet />
       </div>
 

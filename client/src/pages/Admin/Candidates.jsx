@@ -92,13 +92,13 @@ const Candidates = () => {
   }
 
   const statsOne = [
-    { title: 'Total', value: data?.stats?.Total || 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={Users} />, statistics: candidateStats },
-    { title: 'Portfolio', value: data?.stats?.Portfolio || 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={Folder} /> },
-    { title: 'Screening', value: data?.stats?.Screening || 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={MonitorDot} /> },
-    { title: 'Design Task', value: data?.stats?.['Design Task'] || 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={PenTool} /> },
-    { title: 'Round 1', value: data?.stats?.['Round 1'] || 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={Briefcase} /> },
-    { title: 'Round 2', value: data?.stats?.['Round 2'] || 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={Briefcase} /> },
-    { title: 'Hired', value: data?.stats?.Hired || 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={PenTool} /> },
+    { title: 'Total', value: data?.stats?.Total || 0, icon: () => <IconWrapper size={10} isTeritiaryIcon icon={Users} />, statistics: candidateStats },
+    { title: 'Portfolio', value: data?.stats?.Portfolio || 0, icon: () => <IconWrapper size={10} isTeritiaryIcon icon={Folder} /> },
+    { title: 'Screening', value: data?.stats?.Screening || 0, icon: () => <IconWrapper size={10} isTeritiaryIcon icon={MonitorDot} /> },
+    { title: 'Design Task', value: data?.stats?.['Design Task'] || 0, icon: () => <IconWrapper size={10} isTeritiaryIcon icon={PenTool} /> },
+    { title: 'Round 1', value: data?.stats?.['Round 1'] || 0, icon: () => <IconWrapper size={10} isTeritiaryIcon icon={Briefcase} /> },
+    { title: 'Round 2', value: data?.stats?.['Round 2'] || 0, icon: () => <IconWrapper size={10} isTeritiaryIcon icon={Briefcase} /> },
+    { title: 'Hired', value: data?.stats?.Hired || 0, icon: () => <IconWrapper size={10} isTeritiaryIcon icon={PenTool} /> },
   ];
 
   if (isLoading) {

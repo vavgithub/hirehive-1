@@ -26,7 +26,7 @@ function Interviews() {
         {(user?.hasAuth?.view_calendar && user?.hasAuth?.view_events) ? 
         <CustomCalendar  /> : 
           <div className="w-full">
-            <StyledCard backgroundColor={'bg-background-70'} extraStyles="flex w-fit mx-auto flex-col items-center mb-4 gap-4 ">
+            <StyledCard backgroundColor={'bg-background-100'} extraStyles="flex w-fit mx-auto flex-col items-center mb-4 gap-4 ">
               <IconWrapper icon={FcGoogle} inheritColor customStrokeWidth={0} size={0} customIconSize={10} />
               <h3>Authorize Google Calendar</h3>
             </StyledCard>

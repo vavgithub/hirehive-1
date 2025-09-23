@@ -45,7 +45,7 @@ function ToolButton({Icon,command,commandType,isActive}){
         onClick={() => {
           editor.dispatchCommand(command, commandType);
         }}
-        className={'m-1 hover:bg-background-60 rounded-xl ' + (isActive ? 'bg-accent-300' : '')}
+        className={'m-1 hover-outline rounded-xl ' + (isActive ? 'bg-accent-300' : '')}
         aria-label="Format Bold">
             {Icon()}
       </button>
@@ -78,7 +78,7 @@ function ListToolButton({Icon,isActive,isNumberedList}){
       <button
           type='button'
           onClick={isActive ? handleRemoveList : handleMakeList}
-          className={'m-2 hover:bg-background-60 rounded-xl ' + (isActive ? 'bg-accent-300' : '')}
+          className={'m-2 hover-outline rounded-xl ' + (isActive ? 'bg-accent-300' : '')}
           aria-label="Format Bold">
               {Icon()}
         </button>

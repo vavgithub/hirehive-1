@@ -82,7 +82,7 @@ function StageRating({customSchema,candidateId,jobId,name,candidate,onSubmit,sta
                     <span>Feedback:</span>
 
                     <textarea
-                        className="w-full rounded-xl px-3 py-2 bg-background-70 hover:bg-background-60  outline-none focus:outline-teal-300 resize-none"
+                        className="w-full rounded-xl px-3 py-2 bg-background-70 hover-outline  outline-none focus:outline-teal-300 resize-none"
                         placeholder="Enter your feedback"
                         value={feedback}
                         onChange={(e) => setFeedback(e.target.value)}

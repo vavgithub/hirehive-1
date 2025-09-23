@@ -492,6 +492,7 @@ const reviewerProfilePic = currentReviewer?.profilePicture
                 rightContent={hasPermission(role,PERMISSIONS.SHOW_JOB_SWITCH) &&
                     <div className='flex items-center h-full w-72 z-10'>
                         <GlobalDropDown
+                        bgColor='bg-background-80'
                         extraStylesForLabel=" hidden "
                         value={selectedJob}
                         onChange={setSelectedJob}
@@ -505,7 +506,7 @@ const reviewerProfilePic = currentReviewer?.profilePicture
             {
                 hasPermission(role,PERMISSIONS.SHOW_CANDIDATE_PROFILE_CARD) && (
                     <div className="flex gap-3">
-                        <StyledCard padding={2} backgroundColor={'bg-background-80'} extraStyles="w-full flex gap-4 relative justify-between relative">
+                        <StyledCard padding={2} backgroundColor={'bg-background-100'} extraStyles="w-full flex gap-4 relative justify-between relative">
                             <div className='flex gap-4 '>
                                 <div className="relative to-background-100 w-[210px] min-h-auto max-h-[210px] rounded-xl overflow-hidden">
                                     <img src={data.profilePictureUrl || UNKNOWN_PROFILE_PICTURE_URL} alt="" className='object-cover w-full overflow-hidden' />

@@ -50,7 +50,7 @@ function ViewAssessments() {
                 {(isassessmentLoading || isLoading) ? <FillLoader/> : (assessmentData?.hasAccess === false) ?
                     <div>
                         <div className='w-full flex flex-col justify-center items-center'>
-                            <StyledCard backgroundColor={'bg-background-70'} extraStyles={'flex flex-col justify-center items-center mb-6'}>
+                            <StyledCard backgroundColor={'bg-background-100'} extraStyles={'flex flex-col justify-center items-center mb-6'}>
                                 <div className='text-primary-100'>
                                     <IconWrapper icon={Headset} inheritColor customStrokeWidth={5} size={0} customIconSize={10} />
                                 </div>
@@ -61,12 +61,12 @@ function ViewAssessments() {
                     </div>
                 :
                     categorizedTemplates && Object.entries(categorizedTemplates).map(([category,assessments]) => (
-                        <StyledCard backgroundColor={'bg-background-80'} key={category} >
+                        <StyledCard backgroundColor={'bg-background-100'} key={category} >
                             <h2>{category}</h2>
                             <div className='grid grid-cols-3 gap-4'>
                                 {
                                     assessments?.map(assessment =>(
-                                        <StyledCard key={assessment?._id} onClick={()=>navigate(`${getRoute(user?.role,ROUTE_KEY.VIEW_ASSESSMENTS_QUESTIONS)}/${assessment?._id}`)} backgroundColor={'bg-background-70'} extraStyles={'cursor-pointer hover:bg-background-60 relative overflow-hidden'}>
+                                        <StyledCard key={assessment?._id} onClick={()=>navigate(`${getRoute(user?.role,ROUTE_KEY.VIEW_ASSESSMENTS_QUESTIONS)}/${assessment?._id}`)} backgroundColor={'bg-background-70'} extraStyles={'cursor-pointer hover-outline relative overflow-hidden'}>
                                             <h4 className='w-full whitespace-nowrap text-ellipsis overflow-hidden'>{assessment?.title}</h4>
                                             <div className='text-font-gray opacity-25 -rotate-12 absolute -bottom-6 -right-6'>
                                                 <IconWrapper icon={ClipboardCheck} size={0} customIconSize={10} customStrokeWidth={10} inheritColor />

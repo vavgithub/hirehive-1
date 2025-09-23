@@ -86,7 +86,7 @@ const ThreeDots = ({ job, handleAction, page, orgId, isPinned, role , extraStyle
   return (
     <div className={" relative " + extraStyles} ref={menuRef}>
       <button onClick={toggleMenu} className="focus:outline-none flex items-center ">
-        <IconWrapper hasBg={customBgColor ? customBgColor : 'bg-background-80'} customBgHover={customBgHover ? customBgHover : 'hover:bg-background-60'} icon={EllipsisVertical} customIconSize={7} customStrokeWidth={7} />
+        <IconWrapper hasBg={customBgColor ? customBgColor : 'bg-background-80'} customBgHover={customBgHover ? customBgHover : 'hover-outline'} icon={EllipsisVertical} customIconSize={7} customStrokeWidth={7} />
       </button>
         <Popover
           disableScrollLock
@@ -108,6 +108,7 @@ const ThreeDots = ({ job, handleAction, page, orgId, isPinned, role , extraStyle
               borderRadius: '0.75rem',
               padding: '0.5rem',
               marginTop: '0.75rem',
+              backgroundColor : "var(--color-background-90) !important"
             },
           }}
         >

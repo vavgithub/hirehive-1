@@ -45,7 +45,7 @@ function CandidateSettings() {
       <Header HeaderText="Settings" />
       {loading && <LoaderModal />}
       <StyledCard padding={2} extraStyles={'w-full'}>
-            <StyledCard backgroundColor={'bg-background-80'} extraStyles={'flex justify-between md:items-center flex-col gap-4 md:flex-row'}>
+            <StyledCard backgroundColor={'bg-background-100'} extraStyles={'flex justify-between md:items-center flex-col gap-4 md:flex-row'}>
                 <div className='flex items-center gap-4'>
                         <TelegramIcon/>
                     <h3>Telegram Bot</h3>                    

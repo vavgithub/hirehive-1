@@ -218,7 +218,6 @@ export const FormField = ({
               id="location"
               label="Location"
               required
-              extraClass={'custom-input'}
               value={field.value ?? ""}
               onChange={field.onChange}
               setLocationId={(id) => setValue('locationId',id)}

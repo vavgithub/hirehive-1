@@ -262,7 +262,7 @@ function Profile() {
                         className="absolute bottom-1 -right-1 rounded-xl"
                         disabled={uploading}
                       >
-                        <IconWrapper hasBg={true} customBgHover={'hover:bg-background-60'} size={3} customIconSize={3}  icon={PencilLine} />
+                        <IconWrapper hasBg={true} customBgHover={'hover-outline'} size={3} customIconSize={3}  icon={PencilLine} />
                       </button>
                     )}
                   </div>

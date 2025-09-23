@@ -24,7 +24,6 @@ function LocationFilter({ handleLocation , closeDropDown}) {
             type="text"
             id="location"
             label="Location"
-            extraClass={'custom-input'}
             noPopover
             value={location}
             onChange={(e) => setLocation(e.target.value)}

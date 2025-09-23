@@ -157,8 +157,9 @@ export default {
         font: {
           primary: "var(--color-primary-100)",
           secondary: "var(--color-font-secondary)",
+          teritiary: "var(--color-font-teritiary)",
           accent: "var(--color-font-accent-100)",
-          gray: "var(--color-font-gray-90)",
+          gray: "var(--color-font-secondary)",
           red: "var(--color-red-100)",
           yellow: "var(--color-yellow-100)",
           main:"var(--color-font-main)",

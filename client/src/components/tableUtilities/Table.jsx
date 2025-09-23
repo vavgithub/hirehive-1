@@ -531,7 +531,7 @@ const Table = ({
             onChange={handleSearch}
           />
           <FilterForDataTable applyLocationFilter={handleLocationFilters} onApplyFilters={handleApplyFilters} readOnly={readOnly} preservedFilters={preservedFilters} />
-          <div className="cursor-pointer gap-2 flex  items-center typography-body hover:bg-background-60 hover:text-accent-100 rounded-xl p-2 text-font-gray" onClick={() => handleExport()}>
+          <div className="cursor-pointer gap-2 flex  items-center typography-body hover-outline hover:text-accent-100 rounded-xl p-2 text-font-gray" onClick={() => handleExport()}>
             <IconWrapper inheritColor={true} icon={Download} size={0} customIconSize={4} customStrokeWidth={5} />
             Export
           </div>
@@ -559,7 +559,7 @@ const Table = ({
               checked={showContractors}
               onChange={(e) => setShowContractors(e.target.checked)}
               label="Show Contractors Only"
-              className="flex items-center gap-2 hover:bg-background-60 hover:text-accent-100 p-2 rounded-xl"
+              className="flex items-center gap-2 hover-outline hover:text-accent-100 p-2 rounded-xl"
             />
           )}
 

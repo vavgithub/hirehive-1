@@ -33,7 +33,7 @@ const StatusBadge = ({ status ,customWidth}) => {
   const themeContext = useTheme();
 
   return (
-    <div style={{...(themeContext?.theme === 'light' ? {borderWidth : '1px'} : {borderWidth : '0px'})}} className={`flex items-center rounded-xl justify-center ${customWidth ? customWidth : " w-[85%] "} px-4 py-2 h-8 ${colorClasses}`}>
+    <div  className={`flex items-center rounded-xl justify-center ${customWidth ? customWidth : " w-[85%] "} px-4 py-2 h-8 ${colorClasses}`}>
       <span className="typography-body ">{displayStatus}</span>
     </div>
   );

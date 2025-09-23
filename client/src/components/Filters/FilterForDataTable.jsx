@@ -237,7 +237,7 @@ const FilterForDataTable = ({ applyLocationFilter, onApplyFilters, readOnly, pre
 
   return (
     <div className="relative" ref={menuRef}>
-      <div className={"cursor-pointer gap-2 flex items-center typography-body hover:bg-background-60 hover:text-accent-100 rounded-xl p-2 text-font-gray"} onClick={(e) => toggleMenu(e)}>
+      <div className={"cursor-pointer gap-2 flex items-center typography-body hover-outline hover:text-accent-100 rounded-xl p-2 text-font-gray"} onClick={(e) => toggleMenu(e)}>
         <IconWrapper inheritColor={true} size={0} customIconSize={4} customStrokeWidth={5} icon={SlidersHorizontal} />
         Filter {Object.values(selectedFilters).map((filter) => filter?.location ? [filter?.location] : Array.isArray(filter) ? filter : !filter ? [] : [filter]).flat()?.length > 0 && <span className='w-2 h-2 rounded-full my-auto bg-red-40'></span>}
       </div>
@@ -246,7 +246,7 @@ const FilterForDataTable = ({ applyLocationFilter, onApplyFilters, readOnly, pre
           {Object.values(selectedFilters).map((filter) => Array.isArray(filter) ? filter : !filter ? [] : [filter]).flat()?.length > 0 && <p onClick={handleClearAll} className='cursor-pointer flex gap-2 items-center text-accent-red justify-end w-full typography-body pr-4 pt-2'><IconWrapper icon={Trash} size={0} inheritColor></IconWrapper> Clear All</p>}
           {Object.keys(categories).map((category) => (
             <div key={category} className="w-full">
-              <div className={"flex justify-between group h-10 hover:bg-background-60 p-4 rounded-xl items-center cursor-pointer " + (selectedFilters[category]?.length > 0 ? "text-accent-100 bg-accent-300 " : "text-font-gray")} onClick={() => handleDropdown(category)}>
+              <div className={"flex justify-between group h-10 hover-outline p-4 rounded-xl items-center cursor-pointer " + (selectedFilters[category]?.length > 0 ? "text-accent-100 bg-accent-300 " : "text-font-gray")} onClick={() => handleDropdown(category)}>
                 <div className="flex gap-2 w-[90%] ">
                   <span className="typography-body capitalize">
                     {category}:
@@ -272,7 +272,7 @@ const FilterForDataTable = ({ applyLocationFilter, onApplyFilters, readOnly, pre
                   : (
                       <div className="p-2 rounded-xl absolute typography-body left-[18.5rem] min-w-[15.625rem] bg-background-80 w-max flex gap-2 flex-col " style={{ boxShadow: "5px 5px 50px rgba(0,0,0,0.9)" }}>
                         {categories[category].map((item) => (
-                          <label key={category === 'assignee' ? item._id : item} className={"group relative flex items-center p-4 h-10 hover:bg-background-60 cursor-pointer hover:text-accent-100 rounded-xl " + (category === 'assignee' ? selectedFilters[category].find(each => each.name === item.name) ? "bg-accent-300 text-accent-100 " : "" : selectedFilters[category].includes(item) ? "bg-accent-300 text-accent-100 " : "text-font-main")}>
+                          <label key={category === 'assignee' ? item._id : item} className={"group relative flex items-center p-4 h-10 hover-outline cursor-pointer hover:text-accent-100 rounded-xl " + (category === 'assignee' ? selectedFilters[category].find(each => each.name === item.name) ? "bg-accent-300 text-accent-100 " : "" : selectedFilters[category].includes(item) ? "bg-accent-300 text-accent-100 " : "text-font-main")}>
                             <TickCheckbox
                               id={`${category}-${category === 'assignee' ? item._id : item}`}
                               checked={category === 'assignee' ? 

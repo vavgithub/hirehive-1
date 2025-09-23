@@ -48,7 +48,7 @@ function ViewQuestions() {
     {data?.questions?.length > 0 && 
         <div className="scrollbar-hide grid grid-cols-2 gap-6">
             {data?.questions.map((qstn, index) => (
-                <StyledCard backgroundColor={'bg-background-80'} key={qstn._id} extraStyles={qstn.questionType === 'image' ? 'col-span-2' : ''}>
+                <StyledCard backgroundColor={'bg-background-100'} key={qstn._id} extraStyles={qstn.questionType === 'image' ? 'col-span-2' : ''}>
                     <h3 className="mb-4">
                         Q{index + 1}. {qstn.text}
                     </h3>
@@ -57,7 +57,7 @@ function ViewQuestions() {
                           {qstn.options.map((option, optIndex) => (
                             <div
                             key={optIndex}
-                            className={`p-4  rounded-lg typography-body bg-background-60  border-gray-200`}
+                            className={`p-4  rounded-lg typography-body bg-background-80  border-gray-200`}
                             >
                                   {option.text}
                               </div>

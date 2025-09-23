@@ -67,7 +67,7 @@ function CustomPill({
         ? ""
         : hoverColor && typeof hoverColor === "string" && !selected
         ? `hover:${hoverColor}`
-        : "hover:bg-background-60"
+        : "hover-outline"
     } 
     ${
       borderRadius?.toString()

@@ -21,7 +21,7 @@ import { hasPermission, PERMISSIONS } from '../../config/permissions.config';
 const AccordionSection = ({ title, isOpen, onToggle, children, badge }) => (
     <Card
         sx={{
-            backgroundColor: "var(--color-background-90)",
+            backgroundColor: "var(--color-background-100)",
             borderRadius: "0.75rem",
             marginTop: "0.75rem"
         }}
@@ -29,7 +29,7 @@ const AccordionSection = ({ title, isOpen, onToggle, children, badge }) => (
         <div className="w-full">
             <button
                 onClick={onToggle}
-                className="w-full px-8 py-8 flex justify-between bg-background-80 items-center border-b border-background-80"
+                className="w-full px-8 py-8 flex justify-between bg-background-100 items-center border-b border-background-100"
             >
                 <div className="flex items-center gap-4 ">
                     <h3 className="text-font-main ">{title}</h3>

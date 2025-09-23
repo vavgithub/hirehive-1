@@ -118,7 +118,7 @@ const Experience = ({ company, position, startDate, endDate, index }) => (
                       <DetailRow key={index} label={detail.label} value={detail.value} />
                   ))}
                   {(job?.jobStatus === "open" && hasPermission(role,PERMISSIONS.SHOW_CANDIDATE_TAB_DETAIL_EDIT)) && 
-                  <div onClick={()=>setIsEditing(!isEditing)} className='absolute right-4 bottom-4 p-2 bg-background-70 hover:bg-background-60 rounded-xl cursor-pointer'>
+                  <div onClick={()=>setIsEditing(!isEditing)} className='absolute right-4 bottom-4 p-2 bg-background-70 hover-outline rounded-xl cursor-pointer'>
                       <IconWrapper  icon={Pencil} size={0} />
                   </div>}
                 </> : 

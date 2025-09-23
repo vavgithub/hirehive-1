@@ -181,7 +181,7 @@ const ContactUs = () => {
   const renderContent = () => {
 
     return (
-      <form onSubmit={handleFormSubmit(onSubmit)} className="space-y-4 mt-4 max-h-[50vh] overflow-y-scroll scrollbar-hide">
+      <form onSubmit={handleFormSubmit(onSubmit)} className="space-y-4 w-full mt-4 max-h-[50vh] overflow-y-scroll scrollbar-hide">
         <div className="flex flex-col gap-2">
           <label htmlFor="name" className="typography-body">
             Name <span className="text-red-100">*</span>
@@ -190,7 +190,7 @@ const ContactUs = () => {
             id="name"
             type="text"
             placeholder="Enter your name"
-            className={`w-full p-2 bg-background-80 rounded outline-none focus:outline-teal-300 ${errors.name ? '!border !border-red-500' : 'border border-transparent'
+            className={`w-full p-2 bg-background-80 rounded outline-none hover:-outline-offset-2 focus:-outline-offset-2 focus:outline-teal-300 ${errors.name ? '!border !border-red-500' : 'border border-transparent'
               }`}
             {...register("name", { required: "Name is required" })}
           />
@@ -207,7 +207,7 @@ const ContactUs = () => {
             id="email"
             type="email"
             placeholder="Enter your email"
-            className={`w-full p-2 bg-background-80 rounded outline-none focus:outline-teal-300 ${errors.email ? '!border !border-red-500' : 'border border-transparent'
+            className={`w-full p-2 bg-background-80 rounded outline-none hover:-outline-offset-2 focus:-outline-offset-2 focus:outline-teal-300 ${errors.email ? '!border !border-red-500' : 'border border-transparent'
               }`}
             {...register("email", {
               required: "Email is required",
@@ -230,7 +230,7 @@ const ContactUs = () => {
             id="message"
             rows={4}
             placeholder="How can we help you?"
-            className={` px-4 pt-2 bg-background-80 resize-none hover:bg-background-60 cursor-pointer  rounded-xl placeholder:text-font-gray placeholder:font-body  focus:ring-teal-400 focus:outline-teal-500 outline-none typography-body w-full ${errors.message ? '!border !border-red-500' : 'border border-transparent'
+            className={` px-4 pt-2 bg-background-100 resize-none hover-outline hover:-outline-offset-2 focus:-outline-offset-2 cursor-pointer  rounded-xl placeholder:text-font-gray placeholder:font-body  focus:ring-teal-400 focus:outline-teal-500 outline-none typography-body w-full ${errors.message ? '!border !border-red-500' : 'border border-transparent'
               }`}
             {...register("message", {
               required: "Message is required",
@@ -250,7 +250,7 @@ const ContactUs = () => {
           <label className="typography-body">Screenshot (Optional)</label>
           <div
             {...getRootProps({
-              className: `bg-background-80 hover:bg-background-60 rounded-xl mt-4 p-4 text-center cursor-pointer 
+              className: `bg-background-100 hover-outline hover:-outline-offset-2 rounded-xl mt-4 p-4 text-center cursor-pointer 
                 ${isDragActive ? 'border border-teal-500 bg-background-60' : ''}`,
             })}
           >
@@ -311,7 +311,7 @@ const ContactUs = () => {
 
       <StyledCard
         onClick={collapse ? null : toggleModal}
-        extraStyles={`!p-4 !md:p-4  lg:fixed bottom-6 right-6 lg:bottom-[40%] lg:right-0  w-full lg:w-fit cursor-pointer hover:bg-background-60  `}
+        extraStyles={`!p-4 !md:p-4  lg:fixed bottom-6 right-6 lg:bottom-[40%] lg:right-0  w-full lg:w-fit cursor-pointer hover-outline  `}
         style={{
           maxWidth : collapse ? '5rem' : '100%',
           transition: 'max-width 1s ease',

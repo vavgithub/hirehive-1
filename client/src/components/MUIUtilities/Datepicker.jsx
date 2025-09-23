@@ -8,7 +8,7 @@ import 'dayjs/locale/en-gb';
 import IconWrapper from '../Cards/IconWrapper';
 import { Calendar, ChevronDown } from 'lucide-react';
 
-export default function Datepicker({ onChange, disableDate =  'before', value ,error ,hasDefault = true}) {
+export default function Datepicker({ onChange, customBg, disableDate =  'before', value ,error ,hasDefault = true}) {
 
   useEffect(()=>{
     if(hasDefault){
@@ -24,7 +24,18 @@ export default function Datepicker({ onChange, disableDate =  'before', value ,e
           defaultValue={dayjs()}  //
           shouldDisableDate={(date) => disableDate === 'after' ? date.isAfter(dayjs(), 'day') : date.isBefore(dayjs(), 'day')}
           sx={{
-            width : '100%'
+            width : '100%',
+            '& .MuiOutlinedInput-root:hover' : {
+              outline: '2px solid var(--color-accent-100)' , // remove inner border
+            },
+            '& .MuiOutlinedInput-input': {
+              outline: 'none !important' , // remove inner border
+            },
+            ...(customBg ? {
+              '& .MuiOutlinedInput-root' : {
+              backgroundColor : customBg
+            }
+            } : {} )
           }}
           slots={{
             openPickerIcon :()=> <IconWrapper icon={ChevronDown} size={0} customIconSize={5} isInActiveIcon />

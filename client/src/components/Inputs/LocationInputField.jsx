@@ -121,7 +121,7 @@ export const LocationInputField = React.forwardRef(({
             {suggestions.map((suggestion, idx) => (
               <p
                 key={idx}
-                className='overflow-hidden text-ellipsis  bg-background-60 hover:bg-background-50 px-4 py-2 rounded-xl scrollbar-hide whitespace-nowrap cursor-pointer'
+                className='overflow-hidden text-ellipsis  bg-background-60 hover-outline px-4 py-2 rounded-xl scrollbar-hide whitespace-nowrap cursor-pointer'
                 onClick={() => handleSuggestionClick(suggestion)}
               >
                 {suggestion.placeName}
@@ -152,7 +152,7 @@ export const LocationInputField = React.forwardRef(({
             {suggestions.map((suggestion, idx) => (
               <p
                 key={idx}
-                className='overflow-x-scroll bg-background-60 hover:bg-background-50 px-4 py-2 rounded-xl scrollbar-hide whitespace-nowrap cursor-pointer'
+                className='overflow-x-scroll bg-background-60 hover-outline px-4 py-2 rounded-xl scrollbar-hide whitespace-nowrap cursor-pointer'
                 onClick={() => handleSuggestionClick(suggestion)}
               >
                 {suggestion.placeName}
