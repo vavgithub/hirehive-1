@@ -14,6 +14,7 @@ import LightTelegramBanner from "../svg/Banners/lightTelegramBanner.png";
 import DarkTelegramBanner from "../svg/Banners/telegramBanner.png";
 import { useAuthContext } from './AuthProvider';
 import { UNKNOWN_PROFILE_PICTURE_URL_DARK, UNKNOWN_PROFILE_PICTURE_URL_LIGHT } from '../utility/config';
+import { useLocation } from 'react-router-dom';
 
 const ThemeContext = createContext();
 
@@ -28,10 +29,14 @@ export const ThemesProvider = ({ children }) => {
         return (candidateData || user) ? (savedTheme || 'dark') : 'dark';
     });
 
+        // ✅ Use native pathname (safe outside Router)
+    const pathname = window.location.pathname;
+    const isAdminRoute = /admin|hiring-manager|design-reviewer/i.test(pathname); 
+
     useEffect(()=>{
         const savedTheme = localStorage.getItem('theme');
         //authenticated pages has theme
-        if(candidateData || user){
+        if((!isAdminRoute && candidateData) || (isAdminRoute && user)){
             setTheme(savedTheme || 'dark')
         }else{
             if(savedTheme){
