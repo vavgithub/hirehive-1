@@ -134,7 +134,7 @@ const Experience = ({ company, position, startDate, endDate, index }) => (
                       id="experience"
                       label="Experience"
                       labelStyles="text-font-gray"
-                      extraClass="no-spinner custom-input"
+                      extraClass="no-spinner"
                       rowWise
                       value={field.value ?? 0}
                       onChange={field.onChange}
@@ -154,7 +154,7 @@ const Experience = ({ company, position, startDate, endDate, index }) => (
                         id="noticePeriod"
                         label="Notice Period"
                         labelStyles="text-font-gray"
-                        extraClass="no-spinner custom-input"
+                        extraClass="no-spinner"
                         rowWise
                         value={field.value ?? 0}
                         onChange={field.onChange}
@@ -177,7 +177,7 @@ const Experience = ({ company, position, startDate, endDate, index }) => (
                             id="currentCTC"
                             label="Current CTC"
                             labelStyles="text-font-gray"
-                            extraClass="no-spinner custom-input"
+                            extraClass="no-spinner"
                             rowWise
                             value={field.value ?? 0}
                             onChange={field.onChange}
@@ -197,7 +197,7 @@ const Experience = ({ company, position, startDate, endDate, index }) => (
                             id="expectedCTC"
                             label="Expected CTC"
                             labelStyles="text-font-gray"
-                            extraClass="no-spinner custom-input"
+                            extraClass="no-spinner"
                             rowWise
                             value={field.value ?? 0}
                             onChange={field.onChange}
@@ -219,7 +219,7 @@ const Experience = ({ company, position, startDate, endDate, index }) => (
                         id="hourlyRate"
                         label="Hourly Rate"
                         labelStyles="text-font-gray"
-                        extraClass="no-spinner custom-input"
+                        extraClass="no-spinner"
                         rowWise
                         value={field.value ?? 0}
                         onChange={field.onChange}

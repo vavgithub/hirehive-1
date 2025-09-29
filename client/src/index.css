@@ -528,19 +528,20 @@ input[type='number'] {
     --color-font-secondary: rgba(185, 194, 210, 1);
     --color-font-teritiary: rgba(107, 116, 133, 1);
 
+    --color-profile-plus: rgb(44, 58, 83);
 
     /* StatusBadge Colors */
     --color-status-red : rgba(234, 55, 91, 0.15);
     --color-status-yellow : rgba(209, 166, 14, 0.15);
     --color-status-green : rgba(24, 189, 120, 0.15);
-    --color-status-gray : rgba(18, 19, 20, 0.2);
+    --color-status-gray : rgba(145, 156, 176, 0.15);
 
     --color-border-red : rgba(234, 55, 91, 1);
     --color-border-yellow : rgba(209, 166, 14, 1);
     --color-border-green : rgba(24, 189, 120, 1);
-    --color-border-gray : rgba(32, 33, 34, 1);
+    --color-border-gray : rgba(145, 156, 176, 1);
 
-    --color-text-gray : rgba(7, 7, 8, 1);
+    --color-text-gray : rgba(145, 156, 176, 1);
     --color-text-green : rgba(24, 189, 120, 1);
     --color-text-yellow : rgba(209, 166, 14, 1);
     --color-text-red : rgba(234, 55, 91, 1);
@@ -589,18 +590,20 @@ input[type='number'] {
     --color-font-secondary: rgba(58, 77, 111, 1);
     --color-font-teritiary: rgba(137, 149, 169, 1);
 
+    --color-profile-plus: rgb(214, 226, 245);
+
     /* StatusBadge Colors */
     --color-status-red : rgba(234, 55, 91, 0.15);
     --color-status-yellow : rgba(209, 166, 14, 0.15);
     --color-status-green : rgba(24, 189, 120, 0.15);
-    --color-status-gray : rgba(18, 19, 20, 0.2);
+    --color-status-gray : rgba(145, 156, 176, 0.15);
 
     --color-border-red : rgba(234, 55, 91, 1);
     --color-border-yellow : rgba(209, 166, 14, 1);
     --color-border-green : rgba(24, 189, 120, 1);
-    --color-border-gray : rgba(32, 33, 34, 1);
+    --color-border-gray : rgba(145, 156, 176, 1);
 
-    --color-text-gray : rgba(7, 7, 8, 1);
+    --color-text-gray : rgba(145, 156, 176, 1);
     --color-text-green : rgba(24, 189, 120, 1);
     --color-text-yellow : rgba(209, 166, 14, 1);
     --color-text-red : rgba(234, 55, 91, 1);

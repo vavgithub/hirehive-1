@@ -425,6 +425,7 @@ const theme = createTheme({
           "& .MuiDataGrid-virtualScroller": {
             borderRadius: "0.75rem 0.75rem 0px 0px !important",
             backgroundColor: "var(--color-background-100)",
+            marginBottom : "8px",
           },
           "& .MuiDataGrid-overlayWrapper": {
             height: "4rem",

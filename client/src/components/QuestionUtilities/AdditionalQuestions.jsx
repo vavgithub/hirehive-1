@@ -37,7 +37,7 @@ function AdditionalQuestions({jobDetails, control ,errors}) {
                         return (
                             <div
                             key={optionIndex}
-                            className={"px-4 py-2 min-h-11 rounded-xl flex  items-center cursor-pointer hover:bg-background-70 " + (field.value === option ? 'selection-primary' : "bg-background-60")}
+                            className={"px-4 py-2 min-h-11 rounded-xl flex  items-center cursor-pointer hover-outline " + (field.value === option ? 'selection-primary' : "bg-background-80")}
                             onClick={() => {
                                 field.onChange(option);
                                 document.getElementById(inputId).focus();
@@ -74,7 +74,7 @@ function AdditionalQuestions({jobDetails, control ,errors}) {
                         return (
                             <div
                             key={optionIndex}
-                            className={"px-4 py-2 min-h-11 rounded-xl flex  items-center cursor-pointer hover:bg-background-70 " + (field.value?.includes(option) ? 'selection-primary' : "bg-background-60")}
+                            className={"px-4 py-2 min-h-11 rounded-xl flex  items-center cursor-pointer hover-outline " + (field.value?.includes(option) ? 'selection-primary' : "bg-background-80")}
                             onClick={() => {
                                 handleMultiSelectClick(field.onChange,field.value,option)
                                 document.getElementById(inputId).focus();

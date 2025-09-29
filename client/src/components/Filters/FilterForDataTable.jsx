@@ -237,7 +237,7 @@ const FilterForDataTable = ({ applyLocationFilter, onApplyFilters, readOnly, pre
 
   return (
     <div className="relative" ref={menuRef}>
-      <div className={"cursor-pointer gap-2 flex items-center typography-body hover-outline hover:text-accent-100 rounded-xl p-2 text-font-gray"} onClick={(e) => toggleMenu(e)}>
+      <div className={"cursor-pointer gap-2 flex items-center typography-body hover-outline h-11 hover:text-accent-100 rounded-xl p-2 text-font-gray"} onClick={(e) => toggleMenu(e)}>
         <IconWrapper inheritColor={true} size={0} customIconSize={4} customStrokeWidth={5} icon={SlidersHorizontal} />
         Filter {Object.values(selectedFilters).map((filter) => filter?.location ? [filter?.location] : Array.isArray(filter) ? filter : !filter ? [] : [filter]).flat()?.length > 0 && <span className='w-2 h-2 rounded-full my-auto bg-red-40'></span>}
       </div>

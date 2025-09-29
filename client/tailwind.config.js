@@ -52,6 +52,9 @@ export default {
           100: "rgba(24, 233, 208, 1)",
           10: "rgba(24, 233, 208, 0.1)",
         },
+        profile : {
+          "plus" : "var(--color-profile-plus)",
+        },
         red: {
           100: "rgba(255, 31, 71, 1)",
           90: "rgba(255, 56, 92, 1)",

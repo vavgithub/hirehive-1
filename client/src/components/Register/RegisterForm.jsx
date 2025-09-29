@@ -22,10 +22,10 @@ import { useLogo } from '../../context/ThemeContext';
 export const emailPattern = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i
 
 const statsOne = [
-    { title: 'Jobs Posted', value: 100, icon: () => <IconWrapper size={10} isInActiveIcon icon={Briefcase} /> },
+    { title: 'Jobs Posted', value: 100, icon: () => <IconWrapper size={10} isTeritiaryIcon icon={Briefcase} /> },
   ]
   const statsTwo = [
-    { title: 'Application Received', value: 10, icon: () => <IconWrapper size={10} isInActiveIcon icon={FileText} /> },
+    { title: 'Application Received', value: 10, icon: () => <IconWrapper size={10} isTeritiaryIcon icon={FileText} /> },
   ]
 
 function RegisterForm({setCurrentStep}) {
