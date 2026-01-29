@@ -341,7 +341,7 @@ export const motionDesignerConfig = [
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
-                        hasBudgetLabel : true,
+                        hasBudgetLabel : false,
                         hasLabel : {
                             content : "The screening call has not yet been scheduled. Please check back later for updates.",
                             icon : false
@@ -405,7 +405,7 @@ export const motionDesignerConfig = [
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
-                        hasBudgetLabel : true,
+                        hasBudgetLabel : false,
                         hasLabel : {
                             content : "The screening call has been scheduled.",
                             icon : WarningIcon
@@ -475,7 +475,7 @@ export const motionDesignerConfig = [
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
-                        hasBudgetLabel : true,
+                        hasBudgetLabel : false,
                         hasLabel : {
                             content : "Waiting for the screening call to be scheduled.",
                             icon : WarningIcon
@@ -542,7 +542,7 @@ export const motionDesignerConfig = [
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
-                        hasBudgetLabel : true,
+                        hasBudgetLabel : false,
                         hasLabel : {
                             content : "Please review the candidate's performance and provide scores.",
                             icon : WarningIcon
@@ -611,7 +611,7 @@ export const motionDesignerConfig = [
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
-                        hasBudgetLabel : true,
+                        hasBudgetLabel : false,
                         hasLabel : false,
                         hasRatingComponent : false,
                         hasScoreBoard : true,
@@ -668,7 +668,7 @@ export const motionDesignerConfig = [
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
-                        hasBudgetLabel : true,
+                        hasBudgetLabel : false,
                         hasLabel : false,
                         hasRatingComponent : false,
                         hasScoreBoard : true,
@@ -727,7 +727,7 @@ export const motionDesignerConfig = [
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
-                        hasBudgetLabel : true,
+                        hasBudgetLabel : false,
                         hasLabel : false,
                         hasRatingComponent : false,
                         hasScoreBoard : true,
