@@ -117,7 +117,7 @@ const PreAssessment = () => {
     return (
         <Container hasBgColor="bg-background-100">
             <LogoWrapper />
-            <Header withBack={"true"} HeaderText="Value at Void design assessment" />
+            <Header withBack={"true"} HeaderText="Geode design assessment" />
             <StyledCard>
                 <h2 className="mb-4">Design Questionnaire</h2>
                 <p className="typography-body text-font-gray mb-8">

@@ -77,7 +77,7 @@ export const VAVScoreCard = ({ score, stage, scoreStages }) => {
     if (!showBreakDown) {
         return (
             <StyledCard backgroundColor={"bg-background-100"}  extraStyles="flex flex-col items-center sm:w-[55%] lg:w-[35%]  max-w-[27rem]  relative">
-                <h2 className="text-font-main">VAV SCORE</h2>
+                <h2 className="text-font-main">GEODE SCORE</h2>
                 <button onClick={() => setShowBreakDown(true)} className='absolute top-4 right-4 hover:text-font-gray'>
                     <CustomToolTip title={'View Score Breakdown'}>
                         <IconWrapper icon={ArrowLeftRight} size={0} customStrokeWidth={7} inheritColor />
@@ -91,7 +91,7 @@ export const VAVScoreCard = ({ score, stage, scoreStages }) => {
         return (<StyledCard backgroundColor={"bg-background-100"} extraStyles="flex   flex-col items-center sm:w-[55%] lg:w-[35%]  max-w-[27rem] bg-cover relative">
             <h2>Score Breakdown</h2>
             <button onClick={() => setShowBreakDown(false)} className='absolute top-4 right-4 hover:text-font-gray'>
-                <CustomToolTip title={'View VAV Score'}>
+                <CustomToolTip title={'View GEODE Score'}>
                     <IconWrapper icon={ArrowLeftRight} size={0} customStrokeWidth={7} inheritColor />
                 </CustomToolTip>
             </button>

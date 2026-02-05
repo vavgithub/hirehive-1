@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import LightLogo from "../svg/Logo/lightLogo.png";
-import DarkLogo from "../svg/Logo/dark_logo.png";
+// import LightLogo from "../svg/Logo/lightLogo.png";
+// import DarkLogo from "../svg/Logo/dark_logo.png";
+import LightLogo from "../svg/Logo/Geode_light.png";
+import DarkLogo from "../svg/Logo/Geode_dark.png";
 import useCandidateAuth from '../hooks/useCandidateAuth';
 import LightStars from "../svg/Background/Score_Light.png";
 import DarkStars from "../svg/Background/Score_Dark.png";
@@ -84,7 +86,7 @@ export const useUnknownProfilePicture = () => {
 
 export const useLogo = () => {
     const context = useContext(ThemeContext);
-    return context?.theme === 'dark' ? LightLogo : DarkLogo
+    return context?.theme === 'dark' ? DarkLogo : LightLogo
 }
 
 export const useScoreBg = () => {

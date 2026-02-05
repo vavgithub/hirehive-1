@@ -230,7 +230,7 @@ const CandidateLayout = () => {
         <div className="flex flex-col gap-6 typography-body ">
           <div className='px-6 pt-2 pb-4  flex justify-between'>
 
-            <img className='h-11 cursor-pointer ' onClick={() => navigate('/')} src={Logo} />
+            <img className='h-9 cursor-pointer ' onClick={() => navigate('/')} src={Logo} />
           <ThemeToggle /> {/* Add ThemeToggle here */}
           </div>
           {menuItems.map((item) => (

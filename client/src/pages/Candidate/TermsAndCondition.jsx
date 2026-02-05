@@ -22,7 +22,7 @@ const TermsAndCondition = () => {
 
                         <h3>Description of Platform and Use</h3>
                         <p className='typography-body text-font-gray mt-2'>
-                            HireHive is a global online platform that connects creative professionals (e.g., UI/UX designers, motion designers, 3D artists, etc.) with organizations posting job opportunities. These Terms govern your use of HireHive as a candidate. By registering an account and applying through HireHive, you agree to these Terms. HireHive facilitates the application process but does not guarantee any employment or particular outcome.
+                            Geode is a global online platform that connects creative professionals (e.g., UI/UX designers, motion designers, 3D artists, etc.) with organizations posting job opportunities. These Terms govern your use of Geode as a candidate. By registering an account and applying through Geode, you agree to these Terms. Geode facilitates the application process but does not guarantee any employment or particular outcome.
                         </p>
                         <br />
 
@@ -30,7 +30,7 @@ const TermsAndCondition = () => {
                         <ul className='typography-body text-font-gray list-disc list-inside mt-2'>
                             <li>Provide accurate and complete personal and professional information (contact details, education, work history, portfolios, etc.).</li>
                             <li>Keep your account credentials secure and immediately report any suspected unauthorized access.</li>
-                            <li>Use HireHive solely to apply for jobs in good faith. Do not copy, sell, transfer, or exploit the service in unauthorized ways.</li>
+                            <li>Use Geode solely to apply for jobs in good faith. Do not copy, sell, transfer, or exploit the service in unauthorized ways.</li>
                             <li>Comply with all applicable laws when using the platform. Do not post malicious code or unsolicited communications through the system.</li>
                         </ul>
 
@@ -51,20 +51,20 @@ const TermsAndCondition = () => {
                         <br />
                         <h3>Webcam Recording and Consent</h3>
                         <p className='typography-body text-font-gray mt-2'>
-                            Some assignments require recording a video of you performing the task. Before any webcam is activated, HireHive will explicitly notify you that recording will occur and will obtain your active consent (via a checkbox). You may withdraw your consent at any time, and before consenting, you will be informed exactly how the recorded video will be used.
+                            Some assignments require recording a video of you performing the task. Before any webcam is activated, Geode will explicitly notify you that recording will occur and will obtain your active consent (via a checkbox). You may withdraw your consent at any time, and before consenting, you will be informed exactly how the recorded video will be used.
                         </p>
                         <p className='typography-body text-font-gray mt-2'>
-                            The recorded video is securely stored (e.g., using Cloudinary) and is only accessible to authorized HireHive personnel and the hiring organization for evaluation of your assignment.
+                            The recorded video is securely stored (e.g., using Cloudinary) and is only accessible to authorized Geode personnel and the hiring organization for evaluation of your assignment.
                         </p>
                         <br />
                         <h3>Data Security</h3>
                         <p className='typography-body text-font-gray mt-2'>
-                            We use industry-standard safeguards to protect your personal data. All data – including videos – is encrypted during transmission and at rest and stored on secure servers. Access is limited to authorized HireHive staff and hiring reviewers. Third-party service providers are bound by confidentiality obligations.
+                            We use industry-standard safeguards to protect your personal data. All data – including videos – is encrypted during transmission and at rest and stored on secure servers. Access is limited to authorized Geode staff and hiring reviewers. Third-party service providers are bound by confidentiality obligations.
                         </p>
                         <br />
                         <h3>No Sale or Misuse of Data</h3>
                         <p className='typography-body text-font-gray mt-2'>
-                            HireHive does not sell or rent your personal data to third parties. We only use your data for recruitment purposes or as required by law.
+                            Geode does not sell or rent your personal data to third parties. We only use your data for recruitment purposes or as required by law.
                         </p>
                         <br />
                         <h3>Your Data Rights</h3>
@@ -79,12 +79,12 @@ const TermsAndCondition = () => {
                         <br />
                         <h3>Limitation of Liability</h3>
                         <p className='typography-body text-font-gray mt-2'>
-                            HireHive is provided “as is” without warranties. We are not liable for indirect or incidental damages arising from use of the platform. Liability is limited to fees paid (if any).
+                            Geode is provided “as is” without warranties. We are not liable for indirect or incidental damages arising from use of the platform. Liability is limited to fees paid (if any).
                         </p>
                         <br />
                         <h3>Governing Law and Dispute Resolution</h3>
                         <p className='typography-body text-font-gray mt-2'>
-                            These Terms are governed by the laws of [Jurisdiction]. Disputes will be resolved via arbitration or courts in [Jurisdiction], as chosen by HireHive. You waive any right to a jury trial or class-action participation.
+                            These Terms are governed by the laws of [Jurisdiction]. Disputes will be resolved via arbitration or courts in [Jurisdiction], as chosen by Geode. You waive any right to a jury trial or class-action participation.
                         </p>
                         <br />
 

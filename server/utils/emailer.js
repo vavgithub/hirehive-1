@@ -24,7 +24,7 @@ export const transporter = nodemailer.createTransport({
 });
 
 export const assets = {
-  vavLogo: await readFile(path.join(__dirname,"email_assets/vavLogo.png"), "base64"),
+  vavLogo: await readFile(path.join(__dirname,"email_assets/geodeLogo.png"), "base64"),
   instaLogo: await readFile(path.join(__dirname,"email_assets/instaLogo.png"), "base64"),
   ytLogo: await readFile(path.join(__dirname,"email_assets/ytLogo.png"), "base64"),
   linkedinLogo: await readFile(path.join(__dirname,"email_assets/linkedinLogo.png"), "base64"),

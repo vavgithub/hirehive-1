@@ -309,7 +309,7 @@ const AdminLayout = () => {
             <div id='adminSidebar' className="fixed flex w-[16rem] h-[calc(100vh-2rem)] m-4 rounded-xl flex-col bg-background-100 text-font-gray typography-large-p justify-between py-6 ">
                 <div className='flex flex-col gap-2 typography-body px-4'>
                     <div className='pl-2 pt-2 pb-4 flex items-center justify-between'>
-                        <img className='h-11 cursor-pointer ' onClick={() => navigate('/admin')} src={Logo} alt="Logo" />
+                        <img className='h-9 cursor-pointer ' onClick={() => navigate('/admin')} src={Logo} alt="Logo" />
                         <ThemeToggle /> {/* Add ThemeToggle here */}
                     </div>
                     {renderMenuItems()}
