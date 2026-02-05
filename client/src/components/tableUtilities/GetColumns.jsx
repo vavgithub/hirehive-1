@@ -16,6 +16,8 @@ const getCommonColumns = (handleDocumentClick) => [
     field: 'fullName',
     headerName: 'Full Name',
     width: 250,
+    cellClassName : 'padded-col',
+    headerClassName : 'padded-col',
     sortable: false,
     disableColumnMenu: true,
     valueGetter: (params, row) => {

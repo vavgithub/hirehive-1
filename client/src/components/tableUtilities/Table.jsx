@@ -577,6 +577,12 @@ const Table = ({
       {(!readOnly && selectedRows?.length > 0 && jobData?.status !== "closed" ) && <MultiSelectBar selectedData={selectedRows} clearSelection={() => { setSelectedRows([]); setRowSelectionModel([]) }} jobId={jobId} />}
 
       <DataGrid
+        sx={{
+          '& .padded-col': {
+            paddingLeft: '24px',
+            paddingRight: '24px',
+          },
+        }}
         rows={rowsData}
         columns={columns}
         paginationMode="server"

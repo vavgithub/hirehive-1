@@ -137,7 +137,7 @@ export default {
           10: `var(--color-background-10)`,
           5: `var(--color-background-5)`,
           green: "rgba(24, 233, 208, 0.3)",
-          overlay: "rgba(0, 0, 0, 0.80)",
+          overlay: "var(--color-bg-overlay)",
         },
         status : {
           bgyellow : 'var(--color-status-yellow)',

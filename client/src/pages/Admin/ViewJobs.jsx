@@ -253,6 +253,7 @@ const ViewJobs = () => {
                 handleAction={handleAction}
                 rightContent={
                     <Tabs
+                        bgVariant='secondary'
                         tabs={tabs}
                         activeTab={activeTab}
                         handleTabClick={handleTabClick}

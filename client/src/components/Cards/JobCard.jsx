@@ -138,7 +138,7 @@ const JobCard = ({
     extraStyles={(onClick ? 'cursor-pointer' : '' ) + ` hover:outline-accent-100 hover:outline hover:outline-2  group relative`}
     onClick={onClick ? handleCardClick : undefined}
   >
-    <StyledCard padding={2} backgroundColor={'bg-background-100'} borderRadius={'  rounded-t-xl '} extraStyles={' transition-colors !pb-0 duration-200 shadow'}>
+    <StyledCard padding={2} backgroundColor={'bg-background-100'} borderRadius={'  rounded-t-xl '} extraStyles={' transition-colors !pb-0 duration-200 '}>
       <div className={(isApplied && "flex-col md:flex-row" ) +" flex items-start justify-between   gap-4"}>
         <h3 className={(isApplied ? "w-full md:w-[50%] xl:w-[60%]" : "w-[60%]") + "group-hover:text-font-accent  text-ellipsis overflow-hidden whitespace-nowrap "}>{job.jobTitle}</h3>
         <div className={"flex items-center gap-3 " + (isApplied ? " mb-2 md:mb-0 " : "")}>
@@ -211,7 +211,7 @@ const JobCard = ({
     
   
     {(isAdmin || isCandidate) && (
-      <StyledCard padding={2} borderRadius={' rounded-b-xl'} backgroundColor={'bg-background-60'} extraStyles="flex items-center justify-between !pt-4 ">
+      <StyledCard padding={2} borderRadius={' rounded-b-xl'} backgroundColor={'bg-background-60'} extraStyles="flex items-center justify-between !pt-4 !pb-4">
         <div className="flex justify-between w-full md:justify-start gap-3 md:gap-8">
           {(isAdmin ? adminFooterItems : candidateFooterItems).map(
             (item, index) => (

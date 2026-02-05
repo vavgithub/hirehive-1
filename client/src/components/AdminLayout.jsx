@@ -134,7 +134,7 @@ const AdminLayout = () => {
                 {/* Parent menu item */}
                 <div
                     onClick={toggleDropdown}
-                    className={`cursor-pointer w-full flex items-center justify-between min-h-11 gap-2 pl-2 pr-3 py-2 rounded-xl hover:outline-accent-100 hover:outline hover:outline-2  ${isActive ? 'selection-primary' : ''}`}
+                    className={`cursor-pointer w-full flex items-center justify-between min-h-11 gap-2 pl-2 pr-3 py-2 rounded-xl hover:outline-accent-100 hover:outline hover:outline-2  ${isActive ? 'selection-primary bg-transparent' : ''}`}
                 >
                     <div className="flex items-center gap-2">
                         {isActive ? <ActiveIcon count={iconData} /> : <Icon count={iconData} />}
@@ -146,19 +146,16 @@ const AdminLayout = () => {
                 {hasHighlighter && (
                     <p className="w-2 absolute right-4 h-2 rounded-full bg-blue-100"></p>
                 )}
-                <div
-                    className={`absolute top-[18px] right-0 w-1 h-6 rounded-tl-xl rounded-bl-xl ${isActive ? 'bg-accent-100' : 'bg-transparent'}`}
-                />
 
                 {/* Submenu items */}
                 {isOpen && (
-                    <div className={"relative ml-10 mt-2 flex flex-col gap-2 vertical-dashed-line " + (isActive && 'line-open')}>
+                    <div className={"relative ml-10 mt-2 flex flex-col gap-2  " + (isActive && 'line-open')}>
                         {submenu.map((item) => (
                             <NavLink
                                 key={item.to}
                                 to={item.to}
                                 className={({ isActive }) =>
-                                    `flex items-center gap-2 py-2 px-2 rounded-xl hover:outline-accent-100 hover:outline hover:outline-2  typography-body  ${isActive ? 'text-font-accent selection-primary' : ''
+                                    `flex items-center gap-2 py-2 px-2 relative rounded-xl hover:outline-accent-100 hover:outline hover:outline-2  typography-body  ${isActive ? 'text-font-accent selection-primary' : ''
                                     }`
                                 }
                             >
@@ -166,6 +163,9 @@ const AdminLayout = () => {
                                     <>
                                         {(isActive && item.activeIcon) ? <item.activeIcon /> : <item.icon />}
                                         {item.label}
+                                        {isActive && <div
+                                            className={`absolute top-[18px] right-0 w-1 h-6 rounded-tl-xl rounded-bl-xl ${isActive ? 'bg-accent-100' : 'bg-transparent'}`}
+                                        />}
                                     </>
                                 )}
                             </NavLink>

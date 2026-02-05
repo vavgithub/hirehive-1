@@ -66,6 +66,8 @@ function AdminDashboard() {
       width: 230,
       align: 'left',
       headerAlign: 'left',
+      cellClassName : 'padded-col',
+      headerClassName : 'padded-col',
       disableColumnMenu: true,
       renderCell: (params) => (
         <div className=" flex items-center gap-2 h-12 pl-1">
@@ -155,6 +157,8 @@ function AdminDashboard() {
       width: 230,
       align: 'left',
       headerAlign: 'left',
+      cellClassName : 'padded-col',
+      headerClassName : 'padded-col',
       disableColumnMenu: true,
     },
     {
@@ -297,6 +301,12 @@ function AdminDashboard() {
           : <DataGrid
             rows={dashboardSecondaryDetails?.jobsWithStats ?? []}
             columns={jobColumns}
+            sx={{
+              '& .padded-col': {
+                paddingLeft: '24px',
+                paddingRight: '24px',
+              },
+            }}
             autoHeight
             paginationModel={{ page: currentPage, pageSize: pageSize }}
             onPaginationModelChange={(paginationModel) => {
@@ -323,6 +333,12 @@ function AdminDashboard() {
           {/* Table for LeaderBoard */}
           <div className='mt-4'>
             <DataGrid
+              sx={{
+                '& .padded-col': {
+                  paddingLeft: '24px',
+                  paddingRight: '24px',
+                },
+              }}
               rows={dashboardSecondaryDetails?.leaderBoard?.candidates ?? []}
               columns={columns}
               autoHeight

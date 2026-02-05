@@ -124,7 +124,7 @@ const Filters = ({ filters = {}, handleCheckboxChange, activeTab, handleExperien
                     isDisabled={isDisabled}
                 />
 
-                <div className="mb-4">
+                <div className="mb-6">
                 <p className="typography-body  text-font-main mb-2">Experience Filter</p>
                     <ExperienceFilter
                         onApply={handleExperienceApply}
@@ -132,7 +132,7 @@ const Filters = ({ filters = {}, handleCheckboxChange, activeTab, handleExperien
                     />
                 </div>
 
-                <div className="mb-4">
+                <div>
                     <p className="typography-body text-font-main  mb-2">Budget Filter</p>
                     <BudgetFilter 
                         onApply={handleBudgetApply}

@@ -4,8 +4,8 @@
 @tailwind components;
 @tailwind utilities;
 
-html{
-  @apply bg-background-80 ;
+html, body {
+  @apply bg-background-100 ;
 }
 
 @font-face {
@@ -503,7 +503,7 @@ input[type='number'] {
     --color-background-90:rgba(19, 24, 32, 1);
     --color-background-80:rgba(24, 31, 42, 1);
     --color-background-70:rgba(23, 30, 43, 1);    
-    --color-background-60:rgba(4, 95, 253, 0.14);
+    --color-background-60:rgb(7, 9, 14);
 
     --color-background-50:rgba(14, 15, 17, 1);
 
@@ -545,7 +545,7 @@ input[type='number'] {
     --color-text-green : rgba(24, 189, 120, 1);
     --color-text-yellow : rgba(209, 166, 14, 1);
     --color-text-red : rgba(234, 55, 91, 1);
-
+    --color-bg-overlay : rgba(0,0,0,0.8);
   }
  /* Light theme */
   [data-theme="light"] {
@@ -565,7 +565,7 @@ input[type='number'] {
     --color-background-90: rgba(247, 249, 253, 1);
     --color-background-80: rgba(239, 244, 251, 1);
     --color-background-70: rgba(235, 241, 250, 1);   
-    --color-background-60: rgba(4, 95, 253, 0.14);
+    --color-background-60: rgb(239, 244, 251);
 
     --color-background-50: rgba(231, 236, 244, 1);
     
@@ -607,6 +607,7 @@ input[type='number'] {
     --color-text-green : rgba(24, 189, 120, 1);
     --color-text-yellow : rgba(209, 166, 14, 1);
     --color-text-red : rgba(234, 55, 91, 1);
+    --color-bg-overlay : rgba(255,255,255,0.8);
 
   }
   

@@ -6,7 +6,7 @@ import { submitToGoogleSheets } from '../submitSupport.js';
 
 let bot = null;
 
-const initializeBot = (app) => {
+const initializeBot = async (app) => {
     try {
         const env = process.env.NODE_ENV || 'development';
         const token = process.env.TELEGRAM_BOT_TOKEN;
@@ -26,7 +26,7 @@ const initializeBot = (app) => {
             const route = `/telegram-webhook/${token}`;
             const webhookUrl = `${domain}${route}`;
 
-            bot.setWebHook(webhookUrl);
+            await bot.setWebHook(webhookUrl);
             console.log(`Telegram bot webhook set to ${webhookUrl}`);
         
             // Add express route to receive webhook updates
@@ -121,7 +121,7 @@ const registerBotHandlers = (botInstance) => {
                 }
             }
         }catch(error){
-            console.error('Upload error:', err);
+            console.error('Upload error:', error);
             bot.sendMessage(chatId, `❌ Failed to upload your photo. Please try again.`);
         }
     })
