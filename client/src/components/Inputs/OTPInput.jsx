@@ -61,7 +61,7 @@ const OTPInput = ({ length = 6, value, onChange }) => {
           onChange={e => handleChange(e, index)}
           onKeyDown={e => handleKeyDown(e, index)}
           onPaste={handlePaste}
-          className="text-center text-xl rounded-lg bg-black text-white focus:outline-teal-400 "
+          className="text-center !bg-background-80 text-xl rounded-lg bg-black  focus:outline-teal-400 "
           maxLength={1}
         />
       ))}

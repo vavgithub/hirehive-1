@@ -5,6 +5,8 @@ import { ProfilePictureUpload } from '../FormUtilities/ProfilePictureUpload';
 import { PhoneInputField } from './PhoneInputField';
 import { InputField } from '../Inputs/InputField';
 import { Controller } from 'react-hook-form';
+import Datepicker from '../MUIUtilities/Datepicker';
+import { LocationInputField } from '../Inputs/LocationInputField';
 
 // Reusable form field component
 export const FormField = ({ 
@@ -141,7 +143,7 @@ export const FormField = ({
   };
   
   // And similarly for personal details:
-  export const PersonalDetailsSection = ({ control, onProfilePictureSelect, profilePicturePreview }) => {
+  export const PersonalDetailsSection = ({ control, onProfilePictureSelect, profilePicturePreview ,setValue }) => {
     return (
       <div>
         <h3 className="typography-h3 mt-12 mb-4">Personal Details</h3>
@@ -188,6 +190,42 @@ export const FormField = ({
           control={control}
           label="Phone Number"
           required
+        />
+
+        <Controller
+          name={'dob'}
+          control={control}
+          rules={validationRules.dob}
+          render={({ field, fieldState: { error } }) => (
+            <div className='flex flex-col gap-2 relative'>
+                <div>
+                    <label className="typography-body ">Date Of Birth</label>
+                    <span className="text-red-100">*</span>
+                </div>
+                <Datepicker disableDate='after' onChange={field.onChange} hasDefault={false} value={field.value} error={error?.message} />
+                {error?.message && <p className='absolute text-red-100 typography-small-p top-[5.2rem]'>{error?.message}</p>}
+            </div>
+          )}
+        />
+
+        <Controller
+          name={'location'}
+          control={control}
+          rules={validationRules.location}
+          render={({ field, fieldState: { error } }) => (
+            <LocationInputField   
+              type="text"
+              id="location"
+              label="Location"
+              required
+              value={field.value ?? ""}
+              onChange={field.onChange}
+              setLocationId={(id) => setValue('locationId',id)}
+              setSessionId={(id) => setValue('sessionId',id)}
+              error={error}
+              errorMessage={error?.message}
+            />
+          )}
         />
         </div>
       </div>

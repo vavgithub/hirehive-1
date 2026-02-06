@@ -2,7 +2,7 @@ import React, { useEffect, useLayoutEffect, useState } from 'react'
 import { DataGrid } from '@mui/x-data-grid';
 
 import { useLocation, useNavigate } from 'react-router-dom';
-import axios from '../../api/axios';
+import axios from '../../services/axios';
 import AutoAssignModal from '../Modals/AutoAssignModal';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import Modal from '../Modals/Modal';
@@ -27,14 +27,36 @@ import IconWrapper from '../Cards/IconWrapper';
 import { Download } from 'lucide-react';
 import TickCheckbox from '../Checkboxes/TickCheckbox';
 import { getRoute, ROUTE_KEY } from '../../config/permissions.config';
+import { moveCandidate, rejectCandidate, updateCandidateRating } from '../../services/hr.service';
+import { autoAssignPortfolio, updateAssignee } from '../../services/dr.service';
 
 const Table = ({
   jobId, jobData,
+  tableData,
+  isTableDataLoading,
   readOnly = false,
+  isShortlisted = false,
   readOnlyData = [],
   additionalColumns = [], // New prop for custom columns
   customNavigationPath = null, // New prop for custom navigation path
-  hasCheckBox = true
+  hasCheckBox = true,
+  currentPage = 1,
+  setCurrentPage,
+  pageSize = 10,
+  setPageSize,
+  filters = {},
+  setFilters,
+  sortModel = [],
+  setSortModel,
+  searchTerm = '',
+  setSearchTerm,
+  budgetFilter = { from : '' , to : ''},
+  setBudgetFilter,
+  showContractors = false,
+  setShowContractors,
+  totalCount = 0,
+  getDataWithoutPagination,
+  addLocationFilter
 }) => {
 
   //For getting routes
@@ -46,10 +68,7 @@ const Table = ({
   const queryClient = useQueryClient();
   const [isAutoAssignModalOpen, setIsAutoAssignModalOpen] = useState(false);
   const [isBudgetModalOpen, setIsBudgetModalOpen] = useState(false);
-  const [budgetFilter, setBudgetFilter] = useState(() => {
-    const savedFilter = localStorage.getItem(`budgetFilter_${jobId}`);
-    return savedFilter ? JSON.parse(savedFilter) : { from: '', to: '' };
-  });
+
   const [tempBudgetFilter, setTempBudgetFilter] = useState(budgetFilter);
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedRow, setSelectedRow] = useState(null);
@@ -63,14 +82,13 @@ const Table = ({
   const [selectedDocumentUrl, setSelectedDocumentUrl] = useState('');
 
   // ..this are the table filters 
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filters, setFilters] = useState({});
-  const [currentPage, setCurrentPage] = useState(0);
-  const [pageSize, setPageSize] = useState(10);
+  // const [searchTerm, setSearchTerm] = useState('');
+  // const [filters, setFilters] = useState({});
+  // const [currentPage, setCurrentPage] = useState(0);
+  // const [pageSize, setPageSize] = useState(10);
 
   const [budgetMenuAnchorEl, setBudgetMenuAnchorEl] = useState(null);
 
-  const [showContractors, setShowContractors] = useState(false);
 
   const {
     query,
@@ -81,7 +99,7 @@ const Table = ({
     setCurrentPage: setPreservedCurrentPage,
     pageSize: preservedPageSize,
     setPageSize: setPreservedPageSize,
-  } = usePreserver(jobId || 'Candidates');
+  } = usePreserver(jobId ? jobId : isShortlisted ? 'Shortlisted' : 'Candidates');
 
   useLayoutEffect(() => {
     setSearchTerm(query)
@@ -101,119 +119,129 @@ const Table = ({
     setPreservedFilters(newFilters)
   };
 
+  const handleLocationFilters = (location) => {
+    setFilters({...filters, location : location});
+    setPreservedFilters({...filters, location : location});
+  }
+
   const handleDocumentClick = (documentUrl) => {
     setSelectedDocumentUrl(documentUrl);
     setIsDocumentViewerOpen(true);
   };
 
-  const { data: apiResponse, isLoading, isError, refetch } = useQuery({
-    queryKey: ['candidates', jobId],
-    queryFn: () => axios.get(`/admin/candidate/${jobId}`).then(res => res.data),
-    enabled: !readOnly, // Only fetch data if not in readOnly mode
-  });
-
   // Use readOnlyData if in readOnly mode, otherwise use data from API
-  const rowsData = readOnly ? readOnlyData : (apiResponse?.candidates || []);
+  const rowsData = readOnly ? readOnlyData : tableData || [];
 
-  // Apply budget filter
-  const filteredRowsData = React.useMemo(() => {
-    if (!rowsData) return [];
-    if (budgetFilter.from === '' || budgetFilter.to === '') return rowsData;
-    return rowsData?.filter(row => {
-      const budgetValue = parseFloat((jobData?.employmentType === "Contract") ? (row.hourlyRate ?? 0) : row.expectedCTC);
-      return budgetValue >= parseFloat(budgetFilter.from) && budgetValue <= parseFloat(budgetFilter.to);
-    });
-  }, [rowsData, budgetFilter]);
+  useEffect(()=>{
+    if(filters?.location?.length > 0 && filters?.location[0]?.location){
+        addLocationFilter(filters.location[0])
+    }
+    if(filters?.location?.length === 0){
+        addLocationFilter(null)
+    }
+    if(!filters?.location){
+        addLocationFilter(null)
+    }
+  },[filters?.location])
 
-  const filteredAndSearchedRowsData = React.useMemo(() => {
-    let result = filteredRowsData;
+  // // Apply budget filter
+  // const filteredRowsData = React.useMemo(() => {
+  //   if (!rowsData) return [];
+  //   if (budgetFilter.from === '' || budgetFilter.to === '') return rowsData;
+  //   return rowsData?.filter(row => {
+  //     const budgetValue = parseFloat((jobData?.employmentType === "Contract") ? (row.hourlyRate ?? 0) : row.expectedCTC);
+  //     return budgetValue >= parseFloat(budgetFilter.from) && budgetValue <= parseFloat(budgetFilter.to);
+  //   });
+  // }, [rowsData, budgetFilter]);
 
-    // Apply search
-    if (searchTerm) {
-      result = result.filter(row =>
-        `${row.firstName} ${row.lastName}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        row.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        row.phone.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
+  // const filteredAndSearchedRowsData = React.useMemo(() => {
+  //   let result = filteredRowsData;
 
-    // Apply filters
-    if (filters.stage && filters.stage.length > 0) {
-      result = result.filter(row => filters.stage.includes(row.currentStage));
-    }
-    if (filters.status && filters.status.length > 0) {
-      result = result.filter(row => filters.status.includes(readOnly ? row?.status : row.stageStatuses[row.currentStage]?.status));
-    }
-    if (filters.experience) {
-      const [min, max] = filters.experience.split('-').map(num => parseInt(num));
-      result = result.filter(row => {
-        const exp = parseInt(row.experience);
-        return exp >= min && exp <= max;
-      });
-    }
-    if (filters.rating && filters.rating.length > 0) {
-      result = result.filter(row => filters.rating.includes(row.rating));
-    }
-    if (!readOnly && filters.assignee && filters.assignee.length > 0) {
-      result = result.filter(row => filters.assignee.find(each => each._id === row.stageStatuses[row.currentStage]?.assignedTo));
-    }
-    if (filters?.assessment && filters.assessment?.length > 0) {
-      let isCompleted = false;
-      let isNotCompleted = false;
-      filters.assessment.map(state => {
-        state === "Completed" && (isCompleted = true)
-        state === "Not Completed" && (isNotCompleted = true)
-      })
-      if (isCompleted && isNotCompleted) {
-        result = result
-      } else if (isCompleted) {
-        result = result.filter(row => row.hasGivenAssessment === true && row.assessmentResponse );
-      } else if (isNotCompleted) {
-        result = result.filter(row => row.hasGivenAssessment === false && !row.assessmentResponse );
-      }
+  //   // Apply search
+  //   if (searchTerm) {
+  //     result = result.filter(row =>
+  //       `${row.firstName} ${row.lastName}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //       row.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //       row.phone.toLowerCase().includes(searchTerm.toLowerCase())
+  //     );
+  //   }
 
-      // Ensure unique results by _id
-      const uniqueResults = new Map();
-      result.forEach(row => uniqueResults.set(row._id, row));
-      result = Array.from(uniqueResults.values());
-    }
-    if (filters?.score) {
-      const [min, max] = filters?.score?.split(" - ");
-      result = result?.filter((row, i) => {
-        let totalScore = 0;
-        Object.entries(row?.stageStatuses).forEach(([stage, stageData]) => {
-          if (stage === "Screening") {
-            const screeningScore = stageData?.score;
-            if (screeningScore && typeof screeningScore === "object") {
-              totalScore += Object.values(screeningScore).reduce(
-                (sum, val) => sum + parseInt(val ?? 0),
-                0
-              );
-            } else {
-              totalScore += 0;
-            }
-          } else {
-            totalScore += parseInt(stageData?.score ?? 0);
-          }
-        });
-        return (totalScore < parseInt(max) && totalScore > parseInt(min))
-      })
-    }
+  //   // Apply filters
+  //   if (filters.stage && filters.stage.length > 0) {
+  //     result = result.filter(row => filters.stage.includes(row.currentStage));
+  //   }
+  //   if (filters.status && filters.status.length > 0) {
+  //     result = result.filter(row => filters.status.includes(readOnly ? row?.status : row.stageStatuses[row.currentStage]?.status));
+  //   }
+  //   if (filters.experience) {
+  //     const [min, max] = filters.experience.split('-').map(num => parseInt(num));
+  //     result = result.filter(row => {
+  //       const exp = parseInt(row.experience);
+  //       return exp >= min && exp <= max;
+  //     });
+  //   }
+  //   if (filters.rating && filters.rating.length > 0) {
+  //     result = result.filter(row => filters.rating.includes(row.rating));
+  //   }
+  //   if (!readOnly && filters.assignee && filters.assignee.length > 0) {
+  //     result = result.filter(row => filters.assignee.find(each => each._id === row.stageStatuses[row.currentStage]?.assignedTo));
+  //   }
+  //   if (filters?.assessment && filters.assessment?.length > 0) {
+  //     let isCompleted = false;
+  //     let isNotCompleted = false;
+  //     filters.assessment.map(state => {
+  //       state === "Completed" && (isCompleted = true)
+  //       state === "Not Completed" && (isNotCompleted = true)
+  //     })
+  //     if (isCompleted && isNotCompleted) {
+  //       result = result
+  //     } else if (isCompleted) {
+  //       result = result.filter(row => row.hasGivenAssessment === true && row.assessmentResponse );
+  //     } else if (isNotCompleted) {
+  //       result = result.filter(row => row.hasGivenAssessment === false && !row.assessmentResponse );
+  //     }
 
-    if (filters?.["job Type"]?.length > 0) {
-      result = result.filter(row => filters?.["job Type"].includes(row.jobType));
-    }
+  //     // Ensure unique results by _id
+  //     const uniqueResults = new Map();
+  //     result.forEach(row => uniqueResults.set(row._id, row));
+  //     result = Array.from(uniqueResults.values());
+  //   }
+  //   if (filters?.score) {
+  //     const [min, max] = filters?.score?.split(" - ");
+  //     result = result?.filter((row, i) => {
+  //       let totalScore = 0;
+  //       Object.entries(row?.stageStatuses).forEach(([stage, stageData]) => {
+  //         if (stage === "Screening") {
+  //           const screeningScore = stageData?.score;
+  //           if (screeningScore && typeof screeningScore === "object") {
+  //             totalScore += Object.values(screeningScore).reduce(
+  //               (sum, val) => sum + parseInt(val ?? 0),
+  //               0
+  //             );
+  //           } else {
+  //             totalScore += 0;
+  //           }
+  //         } else {
+  //           totalScore += parseInt(stageData?.score ?? 0);
+  //         }
+  //       });
+  //       return (totalScore < parseInt(max) && totalScore > parseInt(min))
+  //     })
+  //   }
 
-    if (showContractors) {
-      result = result?.filter(row => row.jobType === "Contract")
-    }
+  //   if (filters?.["job Type"]?.length > 0) {
+  //     result = result.filter(row => filters?.["job Type"].includes(row.jobType));
+  //   }
 
-    return result;
-  }, [filteredRowsData, searchTerm, filters, showContractors]);
+  //   if (showContractors) {
+  //     result = result?.filter(row => row.jobType === "Contract")
+  //   }
+
+  //   return result;
+  // }, [filteredRowsData, searchTerm, filters, showContractors]);
 
   const autoAssignMutation = useMutation({
-    mutationFn: ({ jobId, reviewerIds, budgetMin, budgetMax }) =>
-      axios.post('dr/auto-assign-portfolios', { jobId, reviewerIds, budgetMin, budgetMax }),
+    mutationFn: autoAssignPortfolio,
     onSuccess: async (data) => {
       // Invalidate and refetch
       queryClient.invalidateQueries(['candidates', jobId]);
@@ -232,7 +260,7 @@ const Table = ({
   // Update assignee mutation
   const updateAssigneeMutation = useMutation({
     mutationFn: ({ candidateId, jobId, stage, assigneeId }) =>
-      axios.put('dr/update-assignee', { candidateId, jobId, stage, assigneeId }),
+      updateAssignee(candidateId,jobId, stage, assigneeId),
     onSuccess: () => {
       queryClient.invalidateQueries(['candidates', jobId]);
     },
@@ -240,8 +268,7 @@ const Table = ({
 
   // Reject candidate mutation
   const rejectCandidateMutation = useMutation({
-    mutationFn: ({ candidateId, jobId, rejectionReason, scheduledDate, scheduledTime }) =>
-      axios.post('/hr/reject-candidate', { candidateId, jobId, rejectionReason, scheduledDate, scheduledTime }),
+    mutationFn: rejectCandidate,
     onSuccess: () => {
       queryClient.invalidateQueries(['candidates', jobId]);
       setIsRejectModalOpen(false);
@@ -251,8 +278,7 @@ const Table = ({
 
   // Move candidate mutation
   const moveCandidateMutation = useMutation({
-    mutationFn: ({ candidateId, jobId, currentStage }) =>
-      axios.post('/hr/move-candidate', { candidateId, jobId, currentStage }),
+    mutationFn: moveCandidate,
     onSuccess: () => {
       queryClient.invalidateQueries(['candidates', jobId]);
       setIsMoveModalOpen(false);
@@ -262,8 +288,7 @@ const Table = ({
 
   // Update candidate rating mutation
   const updateCandidateRatingMutation = useMutation({
-    mutationFn: ({ candidateId, jobId, rating }) =>
-      axios.post('/hr/update-candidate-rating', { candidateId, jobId, rating }),
+    mutationFn: updateCandidateRating,
     onSuccess: () => {
       queryClient.invalidateQueries(['candidates', jobId]);
       handleRatingClose();
@@ -382,7 +407,7 @@ const Table = ({
     let baseColumns = readOnly ?
       getReadOnlyColumns(role, handleDocumentClick) :
       getDefaultColumns(role, canMove, canReject, handleAssigneeChange,
-        handleMoveClick, handleRejectClick, handleRatingClick, handleDocumentClick , jobData?.status === "closed",jobData?.employmentType === 'Contract',jobData?.employmentType !== 'Contract');
+        handleMoveClick, handleRejectClick, handleRatingClick, handleDocumentClick , jobData?.status === "closed",jobData?.employmentType === 'Contract' || jobData?.employmentType === 'Part Time',jobData?.employmentType !== 'Contract' &&  jobData?.employmentType !== 'Part Time');
 
     // Insert additional columns after the first column
     if (additionalColumns.length > 0) {
@@ -399,10 +424,9 @@ const Table = ({
 
   const navigate = useNavigate();
 
-
   const handleRowClick = (params) => {
     // Save the current window scroll position before navigation
-    if (location.pathname === '/admin/candidates' || location.pathname === '/hiring-manager/candidates') {
+    if (location.pathname?.startsWith('/admin/candidates') || location.pathname?.startsWith('/hiring-manager/candidates')) {
       sessionStorage.setItem('candidates_scroll_position', window.scrollY);
     } else {
       sessionStorage.setItem('job_candidates_scroll_position', document.getElementById('adminContainer')?.scrollTop || 0);
@@ -424,18 +448,24 @@ const Table = ({
     }
   };
 
-  const handleExport = () => {
-    // Get today's date in DD-MM-YYYY format
-    const date = new Date();
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const year = date.getFullYear();
-    const today = `${day}-${month}-${year}`;
+  const handleExport = async () => {
+    try {
+      // Get today's date in DD-MM-YYYY format
+      const date = new Date();
+      const day = String(date.getDate()).padStart(2, '0');
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const year = date.getFullYear();
+      const today = `${day}-${month}-${year}`;
 
-    // Create filename: JobName_Date_data.xlsx
-    const fileName = `${today}_datasheet`;
-
-    exportToExcel(filteredAndSearchedRowsData, fileName);
+      // Create filename: JobName_Date_data.xlsx
+      const fileName = `${today}_datasheet`;
+      const exportData = await getDataWithoutPagination()
+      exportToExcel(exportData, fileName);
+      showSuccessToast("Success","Data exported successfully")
+    } catch (error) {
+      console.error("Export data error:", error.message)
+      showErrorToast("Error","Data export failed")
+    }
   };
   const handleBudgetButtonClick = (event) => {
     if (budgetFilter.from || budgetFilter.to) {
@@ -449,7 +479,7 @@ const Table = ({
   const [selectedRows, setSelectedRows] = useState([]);
   const [rowSelectionModel, setRowSelectionModel] = useState([]);
 
-  const handleSelectionChange = (selectionModel) => {
+  const handleSelectionChange = async (selectionModel) => {
 
     const candidateIds = [];
     const jobIds = [];
@@ -459,7 +489,7 @@ const Table = ({
       candidateIds.push(candidateId);
       jobIds.push(jobId);
     })
-    const selectedData = filteredAndSearchedRowsData.filter((row) => candidateIds.includes(row._id) && (row.jobId ? jobIds.includes(row.jobId) : true));
+    const selectedData = tableData?.filter((row) => candidateIds.includes(row._id) && (row.jobId ? jobIds.includes(row.jobId) : true));
     setSelectedRows(selectedData)
   }
 
@@ -479,13 +509,12 @@ const Table = ({
   };
 
 
-
   return (
     <div className='w-full'>
 
       {(autoAssignMutation.isPending ||
         rejectCandidateMutation.isPending ||
-        moveCandidateMutation.isPending || isLoading) && <LoaderModal />}
+        moveCandidateMutation.isPending || isTableDataLoading) && <LoaderModal />}
 
       <MuiCustomStylesForDataGrid />
 
@@ -501,8 +530,8 @@ const Table = ({
             value={searchTerm}
             onChange={handleSearch}
           />
-          <FilterForDataTable onApplyFilters={handleApplyFilters} readOnly={readOnly} preservedFilters={preservedFilters} />
-          <div className="cursor-pointer gap-2 flex  items-center typography-body hover:bg-background-60 hover:text-accent-100 rounded-xl p-2 text-font-gray" onClick={() => handleExport()}>
+          <FilterForDataTable applyLocationFilter={handleLocationFilters} onApplyFilters={handleApplyFilters} readOnly={readOnly} preservedFilters={preservedFilters} />
+          <div className="cursor-pointer gap-2 flex  items-center typography-body hover-outline hover:text-accent-100 rounded-xl h-11 p-2 text-font-gray" onClick={() => handleExport()}>
             <IconWrapper inheritColor={true} icon={Download} size={0} customIconSize={4} customStrokeWidth={5} />
             Export
           </div>
@@ -530,7 +559,7 @@ const Table = ({
               checked={showContractors}
               onChange={(e) => setShowContractors(e.target.checked)}
               label="Show Contractors Only"
-              className="flex items-center gap-2 hover:bg-background-60 hover:text-accent-100 p-2 rounded-xl"
+              className="flex items-center gap-2 hover-outline h-11 hover:text-accent-100 p-2 rounded-xl"
             />
           )}
 
@@ -548,8 +577,18 @@ const Table = ({
       {(!readOnly && selectedRows?.length > 0 && jobData?.status !== "closed" ) && <MultiSelectBar selectedData={selectedRows} clearSelection={() => { setSelectedRows([]); setRowSelectionModel([]) }} jobId={jobId} />}
 
       <DataGrid
-        rows={filteredAndSearchedRowsData}
+        sx={{
+          '& .padded-col': {
+            paddingLeft: '24px',
+            paddingRight: '24px',
+          },
+        }}
+        rows={rowsData}
         columns={columns}
+        paginationMode="server"
+        sortingMode='server'
+        onSortModelChange={(model) => setSortModel(model)}
+        sortModel={sortModel}
         getRowId={(row) => `${row._id}_${row.jobId ?? jobId}`} // Create a unique ID for each row
         paginationModel={{ page: currentPage, pageSize: pageSize }}
         onPaginationModelChange={(paginationModel) => {
@@ -570,6 +609,7 @@ const Table = ({
         onRowSelectionModelChange={(newSelection) => handleSelectionChange(newSelection)} // Updates on selection change
         rowSelectionModel={rowSelectionModel}
         onRowClick={(params) => handleRowClick(params)}
+        rowCount={totalCount}
       />
 
       {isDocumentViewerOpen && (

@@ -1,7 +1,3 @@
-import React from 'react'
-import { FaFacebook, FaInstagram, FaLinkedin, FaPinterest, FaYoutube } from 'react-icons/fa'
-import { FaXTwitter } from 'react-icons/fa6'
-import IconWrapper from '../Cards/IconWrapper'
 import { useNavigate } from 'react-router-dom';
 import useCandidateAuth from '../../hooks/useCandidateAuth';
 import { useAuthContext } from '../../context/AuthProvider';
@@ -20,11 +16,11 @@ function Footer({ variant = '' }) {
     // window.open("/privacy-policy", "_blank");
   }
   return (
-    <div className={(variant === 'sidebar' ? " md:pl-[17rem] min-w-screen" : "") + " bg-transparent "}>
+    <div className={(variant === 'sidebar' ? " md:pl-[17rem] min-w-screen" : "") + " bg-background-100 "}>
       <div className='px-4'>
         <div className="container  flex flex-col sm:flex-row sm:items-center justify-around sm:justify-between  min-h-[5rem] ">
-          <p className="typography-body text-font-gray">&copy; {new Date().getFullYear()} Copyrighted Value at Void™</p>
-          <div className='flex gap-8 sm:gap-4 text-font-gray'>
+          <p className="typography-body text-font-teritiary">&copy; {new Date().getFullYear()} Copyrighted Geode™</p>
+          <div className='flex gap-8 sm:gap-4 text-font-teritiary'>
             {/* <a href="https://www.facebook.com/atvoid" target="_blank" rel="noopener noreferrer">
                   <IconWrapper inheritColor size={0} customIconSize={5} icon={FaFacebook} />
                 </a>

@@ -1,6 +1,6 @@
 //useAuthCandidate.jsx
 import { useQuery } from '@tanstack/react-query';
-import axios from '../api/axios';
+import axios from '../services/axios';
 import { fetchCandidateAuthData } from '../redux/candidateAuthSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Header from '../../components/utility/Header';
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
-import axios from '../../api/axios';
+import axios from '../../services/axios';
 import { Phone, Mail, Circle, X, Info, Check } from 'lucide-react';
 import { Button } from '../../components/Buttons/Button';
 import { showErrorToast } from '../../components/ui/Toast';
@@ -11,16 +11,11 @@ import StyledCard from '../../components/Cards/StyledCard';
 import CustomToolTip from '../../components/Tooltip/CustomToolTip';
 import { VideoModal } from '../../components/Modals/VideoModal';
 import Container from '../../components/Cards/Container';
-import { UNKNOWN_PROFILE_PICTURE_URL } from '../../utility/config';
 import IconWrapper from '../../components/Cards/IconWrapper';
 import { UTCToDateFormatted } from '../../utility/timezoneConverter';
 import { formatPhoneNumber } from '../../components/Form/PhoneInputField';
-
-// Fetch function
-const fetchAssessmentDetails = async (candidateId, jobId) => {
-    const { data } = await axios.get(`admin/candidate/get-assessment/${candidateId}/${jobId}`);
-    return data;
-};
+import { useScoreBg, useUnknownProfilePicture } from '../../context/ThemeContext';
+import { fetchAssessmentDetails } from '../../services/admin.candidate.service';
 
 const AssessmentResponse = () => {
 
@@ -28,6 +23,7 @@ const AssessmentResponse = () => {
     const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
 
     const { id: candidateId, jobId } = useParams();
+    const UNKNOWN_PROFILE_PICTURE_URL = useUnknownProfilePicture()
 
     const { data, isLoading, isError } = useQuery({
         queryKey: ['assessmentDetails', candidateId, jobId],
@@ -61,6 +57,7 @@ const AssessmentResponse = () => {
         }
     };
 
+    const stars = useScoreBg()
 
     return (
         <Container>
@@ -70,7 +67,7 @@ const AssessmentResponse = () => {
                 {/* Top Section with Candidate Info and Score */}
                 <div className="flex gap-4 mb-6">
                     {/* Candidate Info Card */}
-                    <StyledCard padding={2} backgroundColor={'bg-background-80'} extraStyles="flex-grow">
+                    <StyledCard padding={2} backgroundColor={'bg-background-100'} extraStyles="flex-grow">
                         <div className="flex gap-4 h-full">
                             <div className="to-background-100 min-w-[20%] max-w-[12.5rem] aspect-square max-h-[12.5rem]  rounded-xl overflow-hidden">
                                 <img
@@ -87,7 +84,7 @@ const AssessmentResponse = () => {
 
 
                                 <div className="flex items-center gap-2 my-2">
-                                    <span className="text-white text-xl font-semibold">{assessmentData?.assessment?.category + " : " +assessmentData?.assessment?.title}</span>
+                                    <span className="text-font-main text-xl font-semibold">{assessmentData?.assessment?.title}</span>
                                     <Circle className="w-1 h-1 text-font-gray" />
                                 </div>
 
@@ -148,7 +145,7 @@ const AssessmentResponse = () => {
                         </div>
                     </StyledCard>
 
-                    <StyledCard padding={3}  extraStyles="flex bg-stars flex-col items-center w-[35%] max-w-[15rem] bg-cover ">
+                    <StyledCard padding={3} backgroundColor={'bg-background-100'} extraStyles="flex  flex-col items-center w-[35%] max-w-[15rem] bg-cover ">
                         <div className="relative w-full flex justify-center ">
                             <div className='absolute left-0'>
 
@@ -171,15 +168,15 @@ const AssessmentResponse = () => {
 
                 {/* Question Progress Indicators */}
                 {assessmentData?.questionResponses?.length > 0 &&
-                    <StyledCard  backgroundColor={'bg-background-80'} padding={2}  extraStyles=" mb-6">
+                    <StyledCard  backgroundColor={'bg-background-100'} padding={2}  extraStyles=" mb-6">
                         <div className="grid grid-cols-10 justify-between gap-4">
                             {assessmentData?.questionResponses.map((response, index) => (
                                 <div
                                     key={response.questionId}
-                                    className={`p-8 relative  h-8 rounded-md flex bg-background-70 items-center justify-center ${response.isCorrect ? 'bg-background-70' : 'bg-background-70'
-                                        }`}
+                                    className={`p-8 typography-h3 relative  h-8 rounded-md flex bg-background-70 items-center justify-center ${response.isCorrect ? 'bg-background-70' : 'bg-background-70'
+                                        } text-font-main`}
                                 >
-                                    <div className={`absolute right-1 top-1 w-4 h-4  flex bg-background-80 items-center justify-center text-white`}>
+                                    <div className={`absolute right-1 top-1 w-4 h-4  flex bg-background-80 items-center justify-center text-font-main`}>
                                         {
                                             response.isCorrect ?
                                                 <div className='bg-green-100 rounded-sm  text-black-100'><IconWrapper inheritColor icon={Check} size={0} customStrokeWidth={11} customIconSize={1} /></div>
@@ -197,7 +194,7 @@ const AssessmentResponse = () => {
                     {/* Questions List */}
                     {assessmentData?.questionResponses?.length > 0 ? <div className="space-y-4 ">
                         {assessmentData?.questionResponses.map((response, index) => (
-                            <StyledCard padding={2} backgroundColor={"bg-background-80"} key={response.questionId}>
+                            <StyledCard padding={2} backgroundColor={"bg-background-100"} key={response.questionId}>
 
                                 <div >
                                     <h3 className="mb-4">
@@ -216,7 +213,7 @@ const AssessmentResponse = () => {
                                         {response.questionDetails.options.map((option, optIndex) => (
                                             <div
                                                 key={optIndex}
-                                                className={`p-4 rounded-lg typography-body bg-background-60 ${response.selectedAnswer === option.text
+                                                className={`p-4 rounded-lg typography-body bg-background-70 ${response.selectedAnswer === option.text
                                                     ? option.isCorrect
                                                         ? 'border border-green-70 '
                                                         : 'border border-red-40'

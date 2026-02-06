@@ -65,7 +65,7 @@ export const PhoneInputField = ({
         };
 
         return (
-          <div className={"flex relative max-h-[44px] " + (rowWise ? "flex-row justify-between items-center gap-2" : "flex-col")}>
+          <div className={"flex relative  " + (rowWise ? "flex-row max-h-[44px] justify-between items-center gap-2" : "flex-col")}>
             {label && (
               <label
                 htmlFor={name}
@@ -82,7 +82,7 @@ export const PhoneInputField = ({
               placeholder={'Enter Phone Number'}
               containerClass={"rounded-xl  " + (rowWise ? "min-w-[60%] w-[100%] " : "") + ((error || isInvalid) && "border border-red-500")}
               dropdownClass="scrollbar-hide w-[100%] "
-              inputClass="typography-body text-white w-[100%] "
+              inputClass="typography-body text-font-main w-[100%] "
               buttonClass={customBgClass}
               searchPlaceholder="Search"
               enableSearch={true}
@@ -100,7 +100,7 @@ export const PhoneInputField = ({
               }}
             />
             {(error || isInvalid) && (
-              <p className={`text-red-500 text-xs font-outfit absolute ${rowWise ? 'top-[2.85rem] left-[27%] ' : ' top-[4.9rem] '}`}>
+              <p className={`text-red-500 text-xs font-outfit absolute ${rowWise ? 'top-[2.85rem] left-[27%] ' : ' top-[4.5rem] '}`}>
                 {error?.message || "Invalid phone number format or length"}
               </p>
             )}

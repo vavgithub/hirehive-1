@@ -51,6 +51,14 @@ const companyschema = new mongoose.Schema({
         type: String,
         trim: true,
     },
+    geoLocation : {
+      type : {
+        type : String,
+      },
+      coordinates : {
+        type : [Number],
+      },
+    },
     assessmentAccess : {
         type : String,
         enum : ['ALLOWED','DENIED']
@@ -97,5 +105,8 @@ const companyschema = new mongoose.Schema({
         default : {}
     }
 }, { timestamps: true })
+
+// Create geospatial index
+companyschema.index({ geoLocation: '2dsphere' });
 
 export const Company = mongoose.model('Company', companyschema);

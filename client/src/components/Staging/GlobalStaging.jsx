@@ -1,14 +1,14 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import StyledCard from '../Cards/StyledCard.jsx'
 import StatusBadge from '../ui/StatusBadge'
-import { stagingConfig } from '../../config/staging.config.js';   
+import { logConfig, stagingConfig } from '../../config/staging.config.js';   
 import ClosedBadge from '../../svg/Icons/ClosedBadge.jsx';
 import AssigneeSelector from '../MUIUtilities/AssigneeSelector.jsx';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import Label from '../ui/Label.jsx';
 import { setCurrentStage, updateStageStatus } from '../../redux/applicationStageSlice.js';
-import axios from '../../api/axios.js';
+import axios from '../../services/axios.js';
 import StageRating from './StageRating.jsx';
 import { showErrorToast, showSuccessToast } from '../ui/Toast.jsx';
 import { Button, DefaultIcon } from '../Buttons/Button.jsx';
@@ -28,19 +28,15 @@ import TaskDetails, { SubmissionDetails } from './TaskDetails.jsx';
 import HiredStamp from "../../svg/Background/HiredStamp.svg"
 import Loader from '../Loaders/Loader.jsx';
 import WarningIcon from '../../svg/Staging/WarningIcon.jsx';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { ChevronDown, ChevronUp, RotateCcw } from 'lucide-react';
 import IconWrapper from '../Cards/IconWrapper.jsx';
 import { Calendar, Clock, Copy, DatabaseZap, Link } from 'lucide-react';
 import useAuth from '../../hooks/useAuth.jsx';
 import { formatUTCToLocalTimeAuto, UTCToDateFormatted } from '../../utility/timezoneConverter.js';
-
-const submitReview = async ({ candidateId, reviewData }) => {
-    const response = await axios.post('dr/submit-score-review', {
-        candidateId,
-        ...reviewData,
-    });
-    return response.data;
-};
+import { moveCandidate, rejectCandidate, rescheduleCall, scheduleCall, submitBudgetScore, undoStageActions } from '../../services/hr.service.js';
+import { submitReview, updateAssignee } from '../../services/dr.service.js';
+import CustomToolTip from '../Tooltip/CustomToolTip.jsx';
+import { useScoreBg } from '../../context/ThemeContext.jsx';
 
 function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
     const stageData = stageStatuses[selectedStage];
@@ -80,18 +76,16 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
       if(stageTitle === "Screening"){
         if(stageData?.score?.Budget){
           setIsBudgetScoreSubmitted(true)
+        }else{
+            setBudgetScore(0)
+          setIsBudgetScoreSubmitted(false)
         }
       }
-    },[stageTitle])
+    },[stageTitle,stageData])
 
     //Assignee Updation
     const updateAssigneeMutation = useMutation({
-      mutationFn: (newAssignee) => axios.put('dr/update-assignee', {
-          candidateId,
-          jobId,
-          stage: stageTitle,
-          assigneeId: newAssignee._id
-      }),
+      mutationFn: (newAssignee) => updateAssignee(candidateId,jobId,stageTitle,newAssignee?._id),
       onSuccess: (response) => {
          
           const { updatedStageStatus, currentStage } = response.data;
@@ -140,8 +134,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
 
   //Actions API
   const rejectCandidateMutation = useMutation({
-      mutationFn: ({ candidateId, jobId, rejectionReason, scheduledDate , scheduledTime }) => 
-          axios.post('/hr/reject-candidate', { candidateId, jobId, rejectionReason, scheduledDate , scheduledTime }),
+      mutationFn: rejectCandidate,
       onMutate: () => {
           setIsLoading(true); // Set loading to true when mutation starts
       },
@@ -165,11 +158,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
   });
   
     const moveToNextRoundMutation = useMutation({
-        mutationFn: () => axios.post('/hr/move-candidate', {
-            candidateId,
-            jobId,
-            currentStage : stageTitle
-        }),
+        mutationFn: moveCandidate,
         onMutate: () => {
             setIsLoading(true); // Set loading to true when mutation starts
         },
@@ -195,15 +184,16 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
     };
 
     const handleMoveToNextRound = () => {
-        moveToNextRoundMutation.mutate();
+        moveToNextRoundMutation.mutate({
+            candidateId,
+            jobId,
+            currentStage : stageTitle
+        });
     };
 
     //Schedule actions
     const scheduleMutation = useMutation({
-        mutationFn: (scheduleData) => axios.post('hr/schedule-call', {
-            ...scheduleData,
-            stage: stageTitle
-        }),
+        mutationFn: scheduleCall,
         onMutate: () => {
             setIsLoading(true); // Set loading to true when mutation starts
         },
@@ -224,10 +214,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
     });
 
     const rescheduleMutation = useMutation({
-        mutationFn: (rescheduleData) => axios.post('hr/reschedule-call', {
-            ...rescheduleData,
-            stage: stageTitle
-        }),
+        mutationFn: rescheduleCall,
         onMutate: () => {
             setIsLoading(true); // Set loading to true when mutation starts
         },
@@ -248,12 +235,30 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
         }
     });
 
+    const undoActionMutation = useMutation({
+        mutationFn: undoStageActions,
+        onMutate: () => {
+            setIsLoading(true); // Set loading to true when mutation starts
+        },
+        onSuccess: (data) => {
+            showSuccessToast('Success',data?.message || 'Action Undone Successfully')
+            queryClient.invalidateQueries(['candidate', candidateId, jobId]);
+            setIsLoading(false); // Stop loading when task is successfully sent
+        },
+        onError: (error) => {
+            showErrorToast("Error",error?.response?.data?.message || 'Error occured in undo actions')
+            console.error("Error undo action:", error);
+            // Handle error (e.g., show error message to user)
+            setIsLoading(false); // Stop loading in case of an error
+        }
+    });
+
     const handleSchedule = (scheduleData) => {
-        scheduleMutation.mutate({ candidateId, jobId, ...scheduleData });
+        scheduleMutation.mutate({ candidateId, jobId, stage : stageTitle, ...scheduleData });
     };
 
     const handleReschedule = (rescheduleData) => {
-        rescheduleMutation.mutate({ candidateId, jobId, ...rescheduleData });
+        rescheduleMutation.mutate({ candidateId, jobId, stage: stageTitle, ...rescheduleData });
     };
 
     //Scoring functions
@@ -262,7 +267,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
     };
 
     const submitBudgetScoreMutation = useMutation({
-        mutationFn: (score) => axios.post('hr/submit-budget-score', { candidateId, jobId, stage: 'Screening', score }),
+        mutationFn: submitBudgetScore,
         onSuccess: (data) => {
 
             dispatch(updateStageStatus({
@@ -290,9 +295,13 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
     const handleBudgetScoreSubmit = () => {
         if (budgetScore > 0) {
 
-            submitBudgetScoreMutation.mutate(budgetScore);
+            submitBudgetScoreMutation.mutate({ candidateId, jobId, stage: 'Screening', score : budgetScore});
         }
     };
+
+    const handleUndoAction = () => {
+        undoActionMutation.mutate({candidateId , jobId })
+    }
 
     const { totalSum , grandSum } = useMemo(() => {
         let totalSum = 0;
@@ -356,7 +365,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
                 {!isRescheduled && <span className='typography-small-p text-font-gray '>Meeting Link</span>}
                 <div className={(isRescheduled && "text-font-gray ") + ' flex items-center gap-2'}>
                     <IconWrapper icon={Link} size={0} customIconSize={5} isInActiveIcon={true} customStrokeWidth={4} />
-                    <p className={(isRescheduled ? "text-font-gray typography-body " : "text-font-primary") + ' mr-2 '}>screening_meeting_link</p>
+                    <a target='_blank'  rel="noopener noreferrer" href={call?.meetingLink} className={(isRescheduled ? "text-font-gray typography-body " : "text-font-primary") + ' mr-2 '}>screening_meeting_link</a>
                     {!isRescheduled && <CopyToClipboard text={call?.meetingLink}>
                         <IconWrapper hasBg icon={Copy} size={4} customIconSize={5}  customStrokeWidth={4} />
                     </CopyToClipboard>}
@@ -399,9 +408,14 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
         </div>)
     };
 
+    //Logs
+    const hasLog = (stageTitle && currentStatus) && stageData?.logs?.find(log => log.status === currentStatus)
+    
+    const stars = useScoreBg()
+
     return (
     <StyledCard  
-    backgroundColor={"bg-background-80"}
+    backgroundColor={"bg-background-100"}
     extraStyles={"relative min-h-[12rem] overflow-hidden"}
     >
         {
@@ -420,7 +434,14 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
             {stageConfig?.extraHeaderContent && stageConfig?.extraHeaderContent({portfolio : candidateData.jobApplication.professionalInfo.portfolio})}
         </div>
         <div className='flex items-center w-[40%] justify-end'>
-
+            {stageBasedConfig?.hasUndoButton && <button type='button' className={stageBasedConfig?.hasUndoButtonDisabled ? "opacity-40" : ""} disabled={stageBasedConfig?.hasUndoButtonDisabled} onClick={handleUndoAction} >
+                {
+                    stageBasedConfig?.hasUndoButtonDisabled ? 
+                    <IconWrapper customIconSize={4} isInActiveIcon={stageBasedConfig?.hasUndoButtonDisabled} icon={RotateCcw} />
+                    : <CustomToolTip disabled={stageBasedConfig.hasUndoButtonDisabled} arrowed title={'Undo'}><IconWrapper customIconSize={4} isInActiveIcon={stageBasedConfig?.hasUndoButtonDisabled} icon={RotateCcw} /></CustomToolTip>
+                }
+                
+                </button>}
             {isClosed || <StatusBadge customWidth={'w-fit'} status={currentStatus} />}
             {
                 stageBasedConfig?.hasAssigneeSelectorIcon && (
@@ -429,7 +450,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
                         mode="icon"
                         value={stageData?.assignedTo}
                         onChange={handleAssigneeChange}
-                        onSelect={handleAssigneeChange}
+                        // onSelect={handleAssigneeChange}
                         disabled={!stageBasedConfig?.hasAssigneeSelectorEnabled} // Disable only if status is 'Rejected' or 'Cleared'
                     />
 
@@ -468,7 +489,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
                   mode="default"
                   value={stageData?.assignedTo}
                   onChange={handleAssigneeChange}
-                  onSelect={handleAssigneeChange}
+                //   onSelect={handleAssigneeChange}
               />
           </div>
         }
@@ -532,7 +553,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
             </div>}
             <div className={(stageTitle === "Hired" ? 'w-[100%]' : 'w-[35%]') + ' flex flex-col '}>
             {stageBasedConfig?.hasScoreCard && 
-            <div className={`bg-stars bg-cover rounded-xl ${stageTitle === "Hired" ? 'w-[35%] lg:w-[25%] xl:w-[15%]' : 'w-[90%] lg:w-[55%] xl:w-[40%]' } h-fit my-4 self-end`}>
+            <div className={` bg-background-80 rounded-xl ${stageTitle === "Hired" ? 'w-[35%] lg:w-[25%] xl:w-[15%]' : 'w-[90%] lg:w-[55%] xl:w-[40%]' } h-fit my-4 self-end`}>
                 <div className='p-4 flex flex-col items-center'>
                     <p className='typography-small-p text-font-gray'>Total Score:</p>
                     <div className='flex flex-col items-center text-font-accent'>
@@ -544,7 +565,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
             {
                 (stageBasedConfig?.hasBudgetScoring && !isBudgetScoreSubmitted) && 
                 <div>
-                    <p className={currentStatus === "Reviewed" ? "typography-small-p text-font-gray mb-2" :'typography-body text-white mb-4'}>Score Budget</p>
+                    <p className={currentStatus === "Reviewed" ? "typography-small-p text-font-gray mb-2" :'typography-body text-font-main mb-4'}>Score Budget</p>
                     <div className='flex gap-4'>
                         <Scorer value={budgetScore} onChange={setBudgetScore} />
                         <Button 
@@ -573,6 +594,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
       {stageBasedConfig?.hasScheduledForm && 
         <div className='w-full mt-4'>
           <ScheduleForm
+            log={stageBasedConfig?.hasLog ? hasLog : null}
             isDisabled={!isBudgetScoreSubmitted && stageTitle === "Screening"}
             candidateData={candidateData}
             onSubmit={handleSchedule}
@@ -581,6 +603,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
       {
         isRescheduling && 
         <ScheduleForm
+            log={stageBasedConfig?.hasLog ? hasLog : null}
             isDisabled={!isBudgetScoreSubmitted && stageTitle === "Screening"}
             candidateData={candidateData}
             onSubmit={handleReschedule}
@@ -613,12 +636,22 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
       </div>
     }
     {
-        (stageBasedConfig?.hasScheduledLabel && (currentStatus === "Reviewed" || stageTitle === "Portfolio" || currentStatus === "No Show") && stageData?.scheduledDate) &&
+        (stageBasedConfig?.hasScheduledLabel && (currentStatus === "Reviewed" || stageTitle === "Portfolio" || currentStatus === "No Show" || stageTitle === 'Hired') && stageData?.scheduledDate) &&
         <div className='mt-4'><Label icon={WarningIcon} text={`Rejection mail is Scheduled for ${UTCToDateFormatted(stageData.scheduledDate)} ${formatUTCToLocalTimeAuto(stageData.scheduledDate)}`}/></div>
     }
+
+    {!stageBasedConfig?.actions && !stageBasedConfig?.hasScheduledForm && !isRescheduling && stageBasedConfig?.hasLog &&  hasLog && <div className='mt-6 '>
+        <p className='typography-small-p text-font-gray'>{logConfig[stageTitle][hasLog?.status]}</p>
+        <p>{UTCToDateFormatted(hasLog?.date)}</p>
+    </div>}
+
       {/* Action Section */}
-      {stageBasedConfig?.actions && !((currentStatus === "Reviewed" || stageTitle === "Portfolio" || stageTitle === "Design Task" || currentStatus === "No Show")&& stageData?.scheduledDate) &&
-      <div className='w-full flex justify-end mt-4'>
+      {stageBasedConfig?.actions && !isRescheduling && !((currentStatus === "Reviewed" || stageTitle === "Portfolio" || stageTitle === "Design Task" || currentStatus === "No Show" || stageTitle === 'Hired') && stageData?.scheduledDate) &&
+      <div className={'w-full flex  mt-4 ' + ((stageBasedConfig?.hasLog && hasLog ) ? 'justify-between' : 'justify-end')}>
+          {(stageBasedConfig?.hasLog && hasLog)  && <div className=''>
+                <p className='typography-small-p text-font-gray'>{logConfig[stageTitle][hasLog?.status]}</p>
+                <p>{UTCToDateFormatted(hasLog?.date)}</p>
+            </div>}
           <div className='flex items-center gap-4'>
               {(stageBasedConfig.actions?.hasRejectAction && !isRescheduling) && 
                   <Button

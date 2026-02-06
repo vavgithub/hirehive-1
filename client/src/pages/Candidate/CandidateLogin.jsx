@@ -1,6 +1,6 @@
 // CandidateLogin.jsx
 import React, { useEffect, useLayoutEffect, useState } from 'react';
-import axios from '../../api/axios';
+import axios from '../../services/axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import sundarKanya from "../../svg/Background/sundar-kanya.png"
@@ -11,10 +11,10 @@ import { loginCandidateAuth } from '../../redux/candidateAuthSlice';
 import useCandidateAuth from '../../hooks/useCandidateAuth';
 import Loader from '../../components/Loaders/Loader';
 import TogglePassword from '../../components/utility/TogglePassword';
-import Logo from '../../svg/Logo/lightLogo.svg'
 import LoaderModal from '../../components/Loaders/LoaderModal';
 import IconWrapper from '../../components/Cards/IconWrapper';
 import { Briefcase, FileText } from 'lucide-react';
+import { useLogo } from '../../context/ThemeContext';
 
 const statsOne = [
   { title: 'Jobs Posted', value: 100, icon: () => <IconWrapper size={10} isInActiveIcon icon={Briefcase} /> },
@@ -34,6 +34,7 @@ const CandidateLogin = () => {
   const [loading,setLoading] = useState(true);
   const navigate = useNavigate();
   const { isAuthenticated ,isLoading ,isDone} = useCandidateAuth();
+  const Logo = useLogo();
 
   const [passwordType,setPasswordType] = useState('password');
 
@@ -93,7 +94,7 @@ const CandidateLogin = () => {
         <div className="hidden lg:flex lg:w-3/5 bg-login-screen backdrop-blur-lg bg-cover p-12 flex-col justify-between relative">
           <div className='p-[2.75rem]'>
             <img className='h-12' src={Logo} />
-            <h1 className="mt-8">VAV - Hire Designers</h1>
+            <h1 className="mt-8">GEODE - Hire Designers</h1>
             <p className="display-d2 max-w-xl mt-7 mb-4">Discover, hire, and explore top talent with HireHive</p>
             <p className='typography-body max-w-96'>Our advanced tools simplify job posting, application review, and career opportunities, ensuring you find the best candidates or land your next role effortlessly.</p>
             <p className="mb-8"></p>
@@ -113,7 +114,7 @@ const CandidateLogin = () => {
 
           <h1 className="mb-2 text-center font-semibold">Welcome Back</h1>
           <p className="typography-body mb-10 text-center font-normal">Login to your account below</p>
-          {/* <button className="bg-blue-600 text-white py-2 px-4 rounded-lg mb-5 flex items-center justify-center">
+          {/* <button className="bg-blue-600 text-font-main py-2 px-4 rounded-lg mb-5 flex items-center justify-center">
                   Continue with Google
               </button>
               <div className="flex items-center mb-4">
@@ -124,12 +125,12 @@ const CandidateLogin = () => {
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
               <label htmlFor="email" className="block mb-2 font-bricolage">Email</label>
-              <input type="email" id="email" placeholder="Enter your email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full p-2 rounded-lg bg-black text-white focus:outline-teal-400" />
+              <input type="email" id="email" placeholder="Enter your email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full p-2 rounded-lg bg-black text-font-main focus:outline-teal-400" />
             </div>
               <div>
                 <label htmlFor="password" className="block mb-2 font-bricolage">Password</label>
               <TogglePassword typeState={passwordType} setTypeState={setPasswordType}>
-                <input type={passwordType} id="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter your password" className={(password && "tracking-widest") +" w-full focus:outline-teal-400 p-2 rounded-lg bg-black text-white"} />
+                <input type={passwordType} id="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter your password" className={(password && "tracking-widest") +" w-full focus:outline-teal-400 p-2 rounded-lg bg-black text-font-main"} />
               </TogglePassword>
               </div>
             {error && <p className="text-red-500 typography-small-p mb-4">{error}</p>}

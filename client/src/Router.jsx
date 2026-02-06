@@ -45,6 +45,9 @@ import CompanyProfile from './pages/Admin/CompanyProfile.jsx';
 import TermsAndCondition from './pages/Candidate/TermsAndCondition.jsx';
 import PrivacyPolicy from './pages/Candidate/PrivacyPolicy.jsx';
 import GlobalErrorHandler from './components/Error/GlobalErrorHandler.jsx';
+import Settings from './pages/Admin/Settings.jsx';
+import Interviews from './pages/Admin/Interviews.jsx';
+import CandidateSettings from './pages/Candidate/CandidateSettings.jsx';
 
 export const router = createBrowserRouter([
   {
@@ -105,6 +108,10 @@ export const router = createBrowserRouter([
           {
             path: 'all-jobs',
             element: <AllJobs />, // Protected HomePage with sidebar
+          },
+          {
+            path: 'settings',
+            element: <CandidateSettings />, // Settings page
           },
           {
             path: 'my-jobs/viewJob/:candidateId/:jobId',
@@ -169,6 +176,14 @@ export const router = createBrowserRouter([
             element: <Jobs />
           },
           {
+        path: "calendar",
+        element: <Interviews />
+      },
+      {
+        path: "settings",
+        element: <Settings />
+      },
+      {
             path: "terms-and-conditions",
             element: <TermsAndCondition />,
           },
@@ -309,6 +324,14 @@ export const router = createBrowserRouter([
             element: <PrivacyPolicy />
           },
           {
+        path: "settings",
+        element: <Settings />
+      },
+      {
+        path: "calendar",
+        element: <Interviews />
+      },
+      {
             path: "dashboard",
             element: <AdminDashboard />
           },
@@ -467,6 +490,14 @@ export const router = createBrowserRouter([
             element: <Navigate to={'/design-reviewer/candidates'} />
           },
           {
+        path: "settings",
+        element: <Settings />
+      },
+      {
+        path: "calendar",
+        element: <Interviews />
+      },
+      {
             path: "terms-and-conditions",
             element: <TermsAndCondition />,
           },

@@ -4,17 +4,13 @@ import { ensureAbsoluteUrl } from '../../utility/ensureAbsoluteUrl'
 import { isTruncationNeeded, truncatedText } from '../../utility/truncatedHTML'
 import { ChevronDown, ChevronUp } from 'lucide-react'
 import { Button } from '../Buttons/Button'
-import axios from '../../api/axios'
+import axios from '../../services/axios'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { showErrorToast, showSuccessToast } from '../ui/Toast'
 import IconWrapper from '../Cards/IconWrapper'
 import { Calendar , Clock, Link, PencilLine } from 'lucide-react'
 import { formatUTCToLocalTimeAuto, UTCToDateFormatted } from '../../utility/timezoneConverter'
-
-const updateDesignTask = async ({taskLink,comment,jobId}) => {
-    const response = await axios.post('/auth/candidate//update-design-task',{taskLink,comment,jobId});
-    return response.data
-}
+import { updateDesignTask } from '../../services/auth.candidate.service'
 
 export function SubmissionDetails({stageData,candidateData, isEditable}){
     const [isEditing,setIsEditing] = useState(false);

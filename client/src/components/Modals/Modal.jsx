@@ -5,13 +5,13 @@ import Label from '../ui/Label';
 import StyledCard from '../Cards/StyledCard';
 import { Button } from '../Buttons/Button';
 import WarningIcon from '../../svg/Staging/WarningIcon';
-import AssessmentPopup from '../../svg/Background/AssessmentPopup.svg';
 import SchedulerButton from '../ui/SchedulerButton';
 import IconWrapper from '../Cards/IconWrapper';
 import { X } from 'lucide-react';
 import { ACTION_TYPES } from '../../utility/ActionTypes';
 import GlobalDropDown from '../Dropdowns/GlobalDropDown';
 import { combineDateWithTime, convertLocalToUTC } from '../../utility/timezoneConverter';
+import { useAssessmentPopupBg } from '../../context/ThemeContext';
 
 // const ACTION_TYPES = {
 //   DELETE: 'DELETE',
@@ -90,6 +90,13 @@ const ACTION_PROPERTIES = {
   },
   [ACTION_TYPES.COMPANYEXIST]: {
     title: 'This Company Already Exists',
+  },
+  [ACTION_TYPES.TELEGRAM]: {
+    title: 'Connect on Telegram',
+    confirmLabel: 'Connect',
+    confirmVariant: 'primary',
+    cancelLabel: 'Cancel',
+    message: 'Connect with us on Telegram and get notified about your job applications and updates.',
   },
 };
 
@@ -249,6 +256,7 @@ const Modal = ({
   }
 }, [open]);
 
+const AssessmentPopup = useAssessmentPopupBg()
 
   if (!open) return null;
 
@@ -271,6 +279,28 @@ const Modal = ({
           </div>
           <span className={(isMobile  ?  "typography-h3" : "typography-h1") + " "}>{isMobile  ? action.mobTitle :title}</span>
           <p className={(isMobile ? "typography-large-p" :  "typography-body mb-6") +" text-font-gray typography-body "}>{isMobile  ? action.mobMessage :message}</p>
+        </div>
+      );
+    }
+
+    if (actionType === ACTION_TYPES.TELEGRAM) {
+      return (
+        <div className="flex flex-col items-center relative">
+          <div onClick={onClose} className=' cursor-pointer md:hidden absolute -top-14 -right-14 bg-background-60 p-1 rounded-xl'>
+            <IconWrapper icon={X} size={0} customIconSize={5} />
+          </div>
+          <div className="mb-4">
+            <img
+              src={AssessmentPopup}
+              alt="Telegram"
+              className="h-auto"
+              onError={(e) => {
+                e.target.src = '/api/placeholder/256/256';
+              }}
+            />
+          </div>
+          <span className={(isMobile  ?  "typography-h3" : "typography-h1") + " "}>{title}</span>
+          <p className={(isMobile ? "typography-large-p" :  "typography-body mb-6") +" text-font-gray typography-body "}>{message}</p>
         </div>
       );
     }
@@ -301,15 +331,15 @@ const Modal = ({
             <>
               <p className="text-gray-300 mt-4 mb-2">This rejection email will be sent to the candidate</p>
               <div className="bg-background-100 p-4 rounded mb-4 typography-body ">
-                <p className="text-white">Dear {candidateName},</p>
-                <p className="text-white mt-2">
+                <p className="text-font-main">Dear {candidateName},</p>
+                <p className="text-font-main mt-2">
                   Thank you for applying for the {jobTitle} position at {companyName}.
                   After careful review, we have decided to move forward with other candidates.
                 </p>
-                <p className="text-white mt-2">
+                <p className="text-font-main mt-2">
                   We appreciate your interest in our company and wish you all the best in your job search.
                 </p>
-                <p className="text-white mt-2">
+                <p className="text-font-main mt-2">
                   Best regards,<br />
                   HR Manager<br />
                   {companyName}

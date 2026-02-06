@@ -2,7 +2,7 @@
 import React, { useRef } from 'react';
 import { Button } from '../Buttons/Button';
 import StyledCard from '../Cards/StyledCard';
-import { UNKNOWN_PROFILE_PICTURE_URL } from '../../utility/config';
+import { useUnknownProfilePicture } from '../../context/ThemeContext';
 
 export const ProfilePictureUpload = ({ 
   previewUrl,
@@ -10,6 +10,8 @@ export const ProfilePictureUpload = ({
   error
 }) => {
   const fileInputRef = useRef(null);
+
+  const UNKNOWN_PROFILE_PICTURE_URL = useUnknownProfilePicture()
 
   const handleFileSelect = (event) => {
     const file = event.target.files[0];
@@ -22,8 +24,8 @@ export const ProfilePictureUpload = ({
       <label className="typography-body">Profile Picture</label>
       <StyledCard 
         padding={2}
-        backgroundColor={"bg-background-80"}
-        extraStyles=" hover:bg-background-60 cursor-pointer  mt-2 flex flex-col items-center justify-center"
+        backgroundColor={"bg-background-100"}
+        extraStyles=" hover-outline cursor-pointer  mt-2 flex flex-col items-center justify-center"
         onClick={() => fileInputRef.current?.click()}
       >
           <div className='flex justify-start w-full gap-4'>

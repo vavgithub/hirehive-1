@@ -16,6 +16,7 @@ export const socialMediaDesignerConfig = [
             contentConfig : {
                 "Not Assigned" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : true,
@@ -25,11 +26,14 @@ export const socialMediaDesignerConfig = [
                             icon : WarningIcon
                         },
                         hasScheduledLabel : true,
+                        hasUndoButton : false,
+                        hasUndoButtonDisabled : false,
                         actions : {
                             hasRejectAction : true,
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : true,
@@ -39,11 +43,14 @@ export const socialMediaDesignerConfig = [
                             icon : WarningIcon
                         },
                         hasScheduledLabel : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         actions : {
                             hasRejectAction : true,
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -66,6 +73,7 @@ export const socialMediaDesignerConfig = [
                 },
                 "Under Review" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -76,10 +84,13 @@ export const socialMediaDesignerConfig = [
                         },
                         hasRemarks : false,
                         hasRatingComponent : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScoreCard : false,
                         actions : false
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -90,9 +101,12 @@ export const socialMediaDesignerConfig = [
                         },
                         hasRemarks : false,
                         hasScoreCard : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         actions : false
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -122,6 +136,7 @@ export const socialMediaDesignerConfig = [
                 },
                 "Reviewed" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -129,6 +144,8 @@ export const socialMediaDesignerConfig = [
                         hasLabel : false,
                         hasRemarks : true,
                         hasScoreCard : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScheduledLabel : true,
                         actions : {
                             hasRejectAction : true,
@@ -136,6 +153,7 @@ export const socialMediaDesignerConfig = [
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -143,6 +161,8 @@ export const socialMediaDesignerConfig = [
                         hasLabel : false,
                         hasRemarks : true,
                         hasScoreCard : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScheduledLabel : true,
                         actions : {
                             hasRejectAction : true,
@@ -150,6 +170,7 @@ export const socialMediaDesignerConfig = [
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -175,6 +196,7 @@ export const socialMediaDesignerConfig = [
                 },
                 "Rejected" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -182,10 +204,13 @@ export const socialMediaDesignerConfig = [
                         hasLabel : false,
                         hasRemarks : false,
                         hasRejectionReason : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasScoreCard : true,
                         actions : false
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -193,10 +218,13 @@ export const socialMediaDesignerConfig = [
                         hasLabel : false,
                         hasRemarks : false,
                         hasRejectionReason : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasScoreCard : true,
                         actions : false
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -220,6 +248,7 @@ export const socialMediaDesignerConfig = [
                 },
                 "Cleared" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -230,6 +259,7 @@ export const socialMediaDesignerConfig = [
                         actions : false
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -240,6 +270,7 @@ export const socialMediaDesignerConfig = [
                         actions : false
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -306,6 +337,7 @@ export const socialMediaDesignerConfig = [
             contentConfig : {
                 "Pending" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -317,11 +349,14 @@ export const socialMediaDesignerConfig = [
                         hasRemarks : false,
                         hasScoreCard : false,
                         hasBudgetScoring : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         actions : false,
                         hasCallHistory : false,
                         hasScheduledForm : true
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -333,11 +368,14 @@ export const socialMediaDesignerConfig = [
                         hasRemarks : false,
                         hasScoreCard : false,
                         hasBudgetScoring : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         actions : false,
                         hasCallHistory : false,
                         hasScheduledForm : true
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -364,6 +402,7 @@ export const socialMediaDesignerConfig = [
                 },
                 "Call Scheduled" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -376,6 +415,8 @@ export const socialMediaDesignerConfig = [
                         hasScoreCard : false,
                         hasCallDetails : true,
                         hasCallHistory : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasScheduledForm : false,
                         actions : {
                             hasRescheduleAction : true,
@@ -383,6 +424,7 @@ export const socialMediaDesignerConfig = [
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -395,6 +437,8 @@ export const socialMediaDesignerConfig = [
                         hasScoreCard : false,
                         hasCallDetails : true,
                         hasCallHistory : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasScheduledForm : false,
                         actions : {
                             hasRescheduleAction : true,
@@ -402,6 +446,7 @@ export const socialMediaDesignerConfig = [
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -432,6 +477,7 @@ export const socialMediaDesignerConfig = [
                 },
                 "No Show" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -444,6 +490,8 @@ export const socialMediaDesignerConfig = [
                         hasScoreCard : false,
                         hasCallDetails : false,
                         hasCallHistory : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScheduledForm : false,
                         hasScheduledLabel : true,
                         actions : {
@@ -452,6 +500,7 @@ export const socialMediaDesignerConfig = [
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -464,6 +513,8 @@ export const socialMediaDesignerConfig = [
                         hasScoreCard : false,
                         hasCallDetails : false,
                         hasCallHistory : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScheduledForm : false,
                         hasScheduledLabel : true,
                         actions : {
@@ -472,6 +523,7 @@ export const socialMediaDesignerConfig = [
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -502,6 +554,7 @@ export const socialMediaDesignerConfig = [
                 },
                 "Under Review" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -513,6 +566,8 @@ export const socialMediaDesignerConfig = [
                         hasScheduledForm : false,
                         hasRatingComponent : true,
                         hasRemarks : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasScoreCard : false,
                         hasCallDetails : false,
                         hasCallHistory : false,
@@ -521,6 +576,7 @@ export const socialMediaDesignerConfig = [
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -533,12 +589,15 @@ export const socialMediaDesignerConfig = [
                         hasScoreCard : false,
                         hasCallDetails : false,
                         hasCallHistory : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasScheduledForm : false,
                         actions : {
                             hasNoShowAction : true,
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -570,6 +629,7 @@ export const socialMediaDesignerConfig = [
                 },
                 "Reviewed" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -579,6 +639,8 @@ export const socialMediaDesignerConfig = [
                         hasScoreBoard : true,
                         hasScoreCard : true,
                         hasBudgetScoring : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasCallDetails : false,
                         hasCallHistory : false,
                         hasScheduledForm : false,
@@ -589,6 +651,7 @@ export const socialMediaDesignerConfig = [
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -597,6 +660,8 @@ export const socialMediaDesignerConfig = [
                         hasRemarks : true,
                         hasScoreBoard : true,
                         hasScoreCard : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasBudgetScoring : true,
                         hasCallDetails : false,
                         hasCallHistory : false,
@@ -608,6 +673,7 @@ export const socialMediaDesignerConfig = [
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -637,6 +703,7 @@ export const socialMediaDesignerConfig = [
                 },
                 "Cleared" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -651,6 +718,7 @@ export const socialMediaDesignerConfig = [
                         actions : false
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -665,6 +733,7 @@ export const socialMediaDesignerConfig = [
                         actions : false
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -694,6 +763,7 @@ export const socialMediaDesignerConfig = [
                 },
                 "Rejected" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -703,12 +773,15 @@ export const socialMediaDesignerConfig = [
                         hasRejectionReason : true,
                         hasScoreBoard : true,
                         hasScoreCard : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasCallDetails : false,
                         hasCallHistory : false,
                         hasScheduledForm : false,
                         actions : false
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -718,12 +791,15 @@ export const socialMediaDesignerConfig = [
                         hasRejectionReason : true,
                         hasScoreBoard : true,
                         hasScoreCard : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasCallDetails : false,
                         hasCallHistory : false,
                         hasScheduledForm : false,
                         actions : false
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -766,6 +842,7 @@ export const socialMediaDesignerConfig = [
             contentConfig : {
                 "Pending" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -776,11 +853,14 @@ export const socialMediaDesignerConfig = [
                         },
                         hasScheduledLabel : true,
                         hasRemarks : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScoreCard : false,
                         actions : false,
                         hasTaskForm : true
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -792,10 +872,13 @@ export const socialMediaDesignerConfig = [
                         hasRemarks : false,
                         hasScoreCard : false,
                         actions : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasTaskForm : true,
                         hasScheduledLabel : true
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -822,6 +905,7 @@ export const socialMediaDesignerConfig = [
                 },
                 "Sent" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -832,6 +916,8 @@ export const socialMediaDesignerConfig = [
                         },
                         hasRemarks : false,
                         hasScoreCard : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         actions : {
                             hasRejectAction : true,
                         },
@@ -839,6 +925,7 @@ export const socialMediaDesignerConfig = [
                         hasTaskDetails : true
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -849,6 +936,8 @@ export const socialMediaDesignerConfig = [
                         },
                         hasRemarks : false,
                         hasScoreCard : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         actions : {
                             hasRejectAction : true,
                         },
@@ -856,6 +945,7 @@ export const socialMediaDesignerConfig = [
                         hasTaskDetails : true,
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -881,6 +971,7 @@ export const socialMediaDesignerConfig = [
                 },
                 "Not Assigned" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : true,
@@ -890,11 +981,14 @@ export const socialMediaDesignerConfig = [
                             icon : WarningIcon
                         },
                         hasRemarks : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasScoreCard : false,
                         actions : false,
                         hasSubmissionDetails : true
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : true,
@@ -905,10 +999,13 @@ export const socialMediaDesignerConfig = [
                         },
                         hasRemarks : false,
                         hasScoreCard : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         actions : false,
                         hasSubmissionDetails : true
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -933,6 +1030,7 @@ export const socialMediaDesignerConfig = [
                 },
                 "Under Review" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -943,11 +1041,14 @@ export const socialMediaDesignerConfig = [
                         },
                         hasRemarks : false,
                         hasScoreCard : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasSubmissionDetails : true,
                         hasRatingComponent : true,
                         actions : false,
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -957,11 +1058,14 @@ export const socialMediaDesignerConfig = [
                             icon : WarningIcon
                         },
                         hasRemarks : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScoreCard : false,
                         hasSubmissionDetails : true,
                         actions : false,
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -986,12 +1090,15 @@ export const socialMediaDesignerConfig = [
                 },
                 "Reviewed" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
                         hasBudgetLabel : false,
                         hasLabel : false,
                         hasRemarks : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScoreCard : true,
                         hasScheduledLabel : true,
                         actions : {
@@ -1000,6 +1107,7 @@ export const socialMediaDesignerConfig = [
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1007,6 +1115,8 @@ export const socialMediaDesignerConfig = [
                         hasLabel : false,
                         hasRemarks : true,
                         hasScoreCard : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScheduledLabel : true,
                         hasSubmissionDetails : true,
                         hasScheduledLabel : true,
@@ -1016,6 +1126,7 @@ export const socialMediaDesignerConfig = [
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1035,6 +1146,7 @@ export const socialMediaDesignerConfig = [
                 },
                 "Cleared" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1045,6 +1157,7 @@ export const socialMediaDesignerConfig = [
                         hasSubmissionDetails : true
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1055,6 +1168,7 @@ export const socialMediaDesignerConfig = [
                         hasSubmissionDetails : true
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1076,26 +1190,33 @@ export const socialMediaDesignerConfig = [
                 },
                 "Rejected" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
                         hasBudgetLabel : false,
                         hasLabel : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasRejectionReason : true,
                         hasScoreCard : true,
                         hasSubmissionDetails : true
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
                         hasBudgetLabel : false,
                         hasLabel : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasRejectionReason : true,
                         hasScoreCard : true,
                         hasSubmissionDetails : true
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1114,6 +1235,7 @@ export const socialMediaDesignerConfig = [
                 },
                 "Not Submitted" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1128,6 +1250,7 @@ export const socialMediaDesignerConfig = [
                         hasTaskDetails : true
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1142,6 +1265,7 @@ export const socialMediaDesignerConfig = [
                         hasTaskDetails : true
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1179,6 +1303,7 @@ export const socialMediaDesignerConfig = [
             contentConfig : {
                 "Pending" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1188,11 +1313,14 @@ export const socialMediaDesignerConfig = [
                             icon : WarningIcon
                         },
                         hasRemarks : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScoreCard : false,
                         actions : false,
                         hasScheduledForm : true
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1203,10 +1331,13 @@ export const socialMediaDesignerConfig = [
                         },
                         hasRemarks : false,
                         hasScoreCard : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         actions : false,
                         hasScheduledForm : true
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1233,6 +1364,7 @@ export const socialMediaDesignerConfig = [
                 },
                 "Call Scheduled" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1244,6 +1376,8 @@ export const socialMediaDesignerConfig = [
                         hasRemarks : false,
                         hasScoreCard : false,
                         hasCallDetails : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasCallHistory : true,
                         hasScheduledForm : false,
                         actions : {
@@ -1252,6 +1386,7 @@ export const socialMediaDesignerConfig = [
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1262,6 +1397,8 @@ export const socialMediaDesignerConfig = [
                         },
                         hasRemarks : false,
                         hasScoreCard : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasCallDetails : true,
                         hasCallHistory : true,
                         hasScheduledForm : false,
@@ -1271,6 +1408,7 @@ export const socialMediaDesignerConfig = [
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1301,6 +1439,7 @@ export const socialMediaDesignerConfig = [
                 },
                 "No Show" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1313,6 +1452,8 @@ export const socialMediaDesignerConfig = [
                         hasScoreCard : false,
                         hasCallDetails : false,
                         hasCallHistory : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScheduledForm : false,
                         hasScheduledLabel : true,
                         actions : {
@@ -1321,6 +1462,7 @@ export const socialMediaDesignerConfig = [
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1333,6 +1475,8 @@ export const socialMediaDesignerConfig = [
                         hasScoreCard : false,
                         hasCallDetails : false,
                         hasCallHistory : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScheduledForm : false,
                         hasScheduledLabel : true,
                         actions : {
@@ -1341,6 +1485,7 @@ export const socialMediaDesignerConfig = [
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1371,6 +1516,7 @@ export const socialMediaDesignerConfig = [
                 },
                 "Under Review" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1382,6 +1528,8 @@ export const socialMediaDesignerConfig = [
                         hasRemarks : false,
                         hasScoreCard : false,
                         hasCallDetails : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasCallHistory : false,
                         hasScheduledForm : false,
                         hasRatingComponent : true,
@@ -1390,6 +1538,7 @@ export const socialMediaDesignerConfig = [
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1401,6 +1550,8 @@ export const socialMediaDesignerConfig = [
                         hasRemarks : false,
                         hasScoreCard : false,
                         hasCallDetails : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasCallHistory : false,
                         hasScheduledForm : false,
                         actions : {
@@ -1408,6 +1559,7 @@ export const socialMediaDesignerConfig = [
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1439,6 +1591,7 @@ export const socialMediaDesignerConfig = [
                 },
                 "Reviewed" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1446,6 +1599,8 @@ export const socialMediaDesignerConfig = [
                         hasLabel : false,
                         hasRemarks : true,
                         hasScoreCard : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasCallDetails : false,
                         hasCallHistory : false,
                         hasScheduledForm : false,
@@ -1456,6 +1611,7 @@ export const socialMediaDesignerConfig = [
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1465,6 +1621,8 @@ export const socialMediaDesignerConfig = [
                         hasScoreCard : true,
                         hasCallDetails : false,
                         hasCallHistory : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScheduledForm : false,
                         hasScheduledLabel : true,
                         actions : {
@@ -1473,6 +1631,7 @@ export const socialMediaDesignerConfig = [
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1501,6 +1660,7 @@ export const socialMediaDesignerConfig = [
                 },
                 "Cleared" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1514,6 +1674,7 @@ export const socialMediaDesignerConfig = [
                         actions : false
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1527,6 +1688,7 @@ export const socialMediaDesignerConfig = [
                         actions : false
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1555,6 +1717,7 @@ export const socialMediaDesignerConfig = [
                 },
                 "Rejected" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1563,12 +1726,15 @@ export const socialMediaDesignerConfig = [
                         hasRemarks : false,
                         hasRejectionReason : true,
                         hasScoreCard : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasCallDetails : false,
                         hasCallHistory : false,
                         hasScheduledForm : false,
                         actions : false
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1577,12 +1743,15 @@ export const socialMediaDesignerConfig = [
                         hasRemarks : false,
                         hasRejectionReason : true,
                         hasScoreCard : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasCallDetails : false,
                         hasCallHistory : false,
                         hasScheduledForm : false,
                         actions : false
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1624,6 +1793,7 @@ export const socialMediaDesignerConfig = [
             contentConfig : {
                 "Pending" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1633,11 +1803,14 @@ export const socialMediaDesignerConfig = [
                             icon : WarningIcon
                         },
                         hasRemarks : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScoreCard : false,
                         actions : false,
                         hasScheduledForm : true
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1647,11 +1820,14 @@ export const socialMediaDesignerConfig = [
                             icon : WarningIcon
                         },
                         hasRemarks : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScoreCard : false,
                         actions : false,
                         hasScheduledForm : true
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1678,6 +1854,7 @@ export const socialMediaDesignerConfig = [
                 },
                 "Call Scheduled" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1688,6 +1865,8 @@ export const socialMediaDesignerConfig = [
                         },
                         hasRemarks : false,
                         hasScoreCard : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasCallDetails : true,
                         hasCallHistory : true,
                         hasScheduledForm : false,
@@ -1697,6 +1876,7 @@ export const socialMediaDesignerConfig = [
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1708,6 +1888,8 @@ export const socialMediaDesignerConfig = [
                         hasRemarks : false,
                         hasScoreCard : false,
                         hasCallDetails : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasCallHistory : true,
                         hasScheduledForm : false,
                         actions : {
@@ -1716,6 +1898,7 @@ export const socialMediaDesignerConfig = [
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1744,6 +1927,7 @@ export const socialMediaDesignerConfig = [
                 },
                 "No Show" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1757,6 +1941,8 @@ export const socialMediaDesignerConfig = [
                         hasCallDetails : false,
                         hasCallHistory : false,
                         hasScheduledForm : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScheduledLabel : true,
                         actions : {
                             hasRescheduleAction : true,
@@ -1764,6 +1950,7 @@ export const socialMediaDesignerConfig = [
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1776,6 +1963,8 @@ export const socialMediaDesignerConfig = [
                         hasScoreCard : false,
                         hasCallDetails : false,
                         hasCallHistory : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScheduledForm : false,
                         hasScheduledLabel : true,
                         actions : {
@@ -1784,6 +1973,7 @@ export const socialMediaDesignerConfig = [
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1814,6 +2004,7 @@ export const socialMediaDesignerConfig = [
                 },
                 "Under Review" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1823,12 +2014,15 @@ export const socialMediaDesignerConfig = [
                             icon : WarningIcon
                         },
                         hasRemarks : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasScoreCard : false,
                         hasCallDetails : false,
                         hasCallHistory : false,
                         hasRatingComponent : true,
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1839,11 +2033,14 @@ export const socialMediaDesignerConfig = [
                         },
                         hasRemarks : false,
                         hasScoreCard : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasCallDetails : false,
                         hasCallHistory : false,
                         hasRatingComponent : true,
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1874,6 +2071,7 @@ export const socialMediaDesignerConfig = [
                 },
                 "Reviewed" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1881,6 +2079,8 @@ export const socialMediaDesignerConfig = [
                         hasLabel : false,
                         hasRemarks : true,
                         hasScoreCard : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasCallDetails : false,
                         hasCallHistory : false,
                         hasScheduledForm : false,
@@ -1891,6 +2091,7 @@ export const socialMediaDesignerConfig = [
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1898,6 +2099,8 @@ export const socialMediaDesignerConfig = [
                         hasLabel : false,
                         hasRemarks : true,
                         hasScoreCard : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasCallDetails : false,
                         hasCallHistory : false,
                         hasScheduledForm : false,
@@ -1908,6 +2111,7 @@ export const socialMediaDesignerConfig = [
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1936,6 +2140,7 @@ export const socialMediaDesignerConfig = [
                 },
                 "Cleared" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1949,6 +2154,7 @@ export const socialMediaDesignerConfig = [
                         actions : false
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1962,6 +2168,7 @@ export const socialMediaDesignerConfig = [
                         actions : false
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1990,6 +2197,7 @@ export const socialMediaDesignerConfig = [
                 },
                 "Rejected" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1998,12 +2206,15 @@ export const socialMediaDesignerConfig = [
                         hasRemarks : false,
                         hasRejectionReason : true,
                         hasScoreCard : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasCallDetails : false,
                         hasCallHistory : false,
                         hasScheduledForm : false,
                         actions : false
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -2012,12 +2223,15 @@ export const socialMediaDesignerConfig = [
                         hasRemarks : false,
                         hasRejectionReason : true,
                         hasScoreCard : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasCallDetails : false,
                         hasCallHistory : false,
                         hasScheduledForm : false,
                         actions : false
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -2059,6 +2273,7 @@ export const socialMediaDesignerConfig = [
             contentConfig : {
                 "Under Review" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -2069,14 +2284,18 @@ export const socialMediaDesignerConfig = [
                         },
                         hasRemarks : false,
                         hasScoreCard : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasCallDetails : false,
                         hasCallHistory : false,
+                        hasScheduledLabel : true,
                         actions : {
                             hasRejectAction : true,
                             hasHiredAction : true
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -2088,13 +2307,17 @@ export const socialMediaDesignerConfig = [
                         hasRemarks : false,
                         hasScoreCard : true,
                         hasCallDetails : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasCallHistory : false,
+                        hasScheduledLabel : true,
                         actions : {
                             hasRejectAction : true,
                             hasHiredAction : true
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -2105,6 +2328,7 @@ export const socialMediaDesignerConfig = [
                         },
                         hasRemarks : false,
                         hasScoreCard : false,
+                        hasScheduledLabel : true,
                         hasCallDetails : false,
                         hasCallHistory : false,
                     },
@@ -2125,6 +2349,7 @@ export const socialMediaDesignerConfig = [
                 },
                 "Accepted" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -2140,6 +2365,7 @@ export const socialMediaDesignerConfig = [
                         hasCallHistory : false,
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -2155,6 +2381,7 @@ export const socialMediaDesignerConfig = [
                         hasCallHistory : false,
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -2189,6 +2416,7 @@ export const socialMediaDesignerConfig = [
                 },
                 "Rejected" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -2199,6 +2427,7 @@ export const socialMediaDesignerConfig = [
                         hasCallHistory : false,
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -2209,6 +2438,7 @@ export const socialMediaDesignerConfig = [
                         hasCallHistory : false,
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,

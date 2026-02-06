@@ -34,6 +34,23 @@ export const submitDesignTask = async (req, res) => {
       designTaskStatus.submittedTaskLink = taskLink;
       designTaskStatus.submittedComment = comment;
       designTaskStatus.submissionDate = new Date();
+      designTaskStatus.logs = designTaskStatus?.logs?.length > 0 ? designTaskStatus.logs : [] 
+
+      if(designTaskStatus.status === 'Not Assigned' && designTaskStatus.submittedTaskLink){
+        let existUpdated = false
+        for(let log of designTaskStatus.logs){
+          if(log.status === designTaskStatus.status){
+            log.date = new Date()
+            existUpdated =   true
+          } 
+        }
+        if(!existUpdated){
+          designTaskStatus.logs.push({
+            status : designTaskStatus.status,
+            date : new Date()
+          })
+        }
+      }
 
       jobApplication.stageStatuses.set('Design Task', designTaskStatus);
 
@@ -46,6 +63,31 @@ export const submitDesignTask = async (req, res) => {
       });
   } catch (error) {
       console.error('Error submitting Design Task:', error);
+      res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+export const disconnectTelegram = async (req, res) => {
+  try {
+
+      const candidateId = req.candidate._id;
+      const candidate = await candidates.findById(candidateId);
+      if (!candidate) {
+          return res.status(404).json({ message: 'Candidate not found' });
+      }
+
+      if(candidate.integrations.telegram.user_id){
+        candidate.integrations.telegram = null;
+      }
+
+      // Save the changes
+      await candidate.save();
+
+      res.status(200).json({
+          message: 'Telegram disconnected successfully',
+      });
+  } catch (error) {
+      console.error('Error disconnecting telegram bot:', error);
       res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
@@ -154,7 +196,7 @@ const fetchActiveJobs = async (req, res) => {
     let userIds = [];
     let companyDetails = {};
 
-    if(companyId){
+    if(companyId && companyId !== 'undefined'){
       companyDetails = await Company.findById({_id : companyId});
       // Find all users in the same company
       const usersInCompany = await User.find({ company_id : companyId }, '_id'); // Get only _id fields

@@ -36,6 +36,7 @@ import cookieSession from "cookie-session";
 import { handleUploadError } from "./middlewares/uploadMiddleware.js";
 import { seedTemplates } from "./models/admin/assessment.model.js";
 import { seedTasks } from "./models/admin/task.model.js";
+import { initializeBot } from "./utils/integrations/telegram.js";
 
 const app = express(); 
 await initializeUploadDir(envConfig.UPLOAD_DIR);
@@ -87,10 +88,12 @@ app.use(handleUploadError)
 
 connectDB() 
   .then(() => {
-    app.listen(PORT, () =>
+    app.listen(PORT, () =>{
+      //HireHive Telegram Bot BootUp
+      initializeBot(app);
       console.log(
         `Server running in ${environment} mode on port ${PORT}`
-      )
+      )}
     );
 
     // Start the scheduled jobs

@@ -1,23 +1,21 @@
 import React, { useMemo } from 'react'
 import Modal from './Modal'
 import { useQuery } from '@tanstack/react-query';
-import axios from '../../api/axios';
+import axios from '../../services/axios';
 import Loader from '../Loaders/Loader';
 import StyledCard from '../Cards/StyledCard';
 import { Headset, ShieldBan } from 'lucide-react';
 import IconWrapper from '../Cards/IconWrapper';
+import { getAssessmentQuestionsById } from '../../services/admin.candidate.service';
 
 function TemplateModal({open,onClose,assessment}) {
     const {
-        data: questions,
+        data,
         isLoading,
         error
       } = useQuery({
         queryKey: ['assessment-questions', assessment?._id],
-        queryFn: async () => {
-          const response = await axios.get(`/admin/candidate/assessment-questions?assessmentId=${assessment?._id}`);
-          return response.data.questions;
-        },
+        queryFn: () => getAssessmentQuestionsById(assessment?._id),
         staleTime: Infinity,
         cacheTime: 0,
         refetchOnWindowFocus: false,
@@ -25,8 +23,9 @@ function TemplateModal({open,onClose,assessment}) {
         enabled: !!assessment?._id
       });
 
-      const noAccess = useMemo(()=> (error?.response?.data?.hasAccess === false), [error,questions]);
-
+      const noAccess = useMemo(()=> (error?.response?.data?.hasAccess === false), [error,data]);
+      const questions = useMemo(()=>data?.questions || [],[data]);
+      
   return (
     <Modal
     open={open}

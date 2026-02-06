@@ -6,16 +6,18 @@ import { ChevronUp, ChevronDown, Camera, Mic, Eye, VideoOff } from 'lucide-react
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { Button } from '../../components/Buttons/Button';
 import Loader from '../../components/Loaders/Loader';
-import axios from "../../api/axios";
+import axios from "../../services/axios";
 import { showSuccessToast, showErrorToast } from '../../components/ui/Toast';
-import LightLogo from "../../svg/Logo/lightLogo.svg"
+import LightLogo from "../../svg/Logo/lightLogo.png"
 import { fetchCandidateAuthData, updateAssessmentStatus } from '../../redux/candidateAuthSlice';
 import { uploadAssessment } from '../../utility/cloudinary';
 import StyledCard from '../../components/Cards/StyledCard';
 import ImageModal from '../../components/Modals/ImageModal';
 import ContactUs from '../../components/Form/ContactUs';
 import IconWrapper from '../../components/Cards/IconWrapper';
+import { getRandomAssessmentQuestions, submitAssessment } from '../../services/admin.candidate.service';
 import { uploadAssessmentToS3 } from '../../utility/s3upload';
+import { useLogo } from '../../context/ThemeContext';
 const ONE_MINUTE = 60;
 
 // Utility function to format time
@@ -29,10 +31,7 @@ const formatTime = (time) => {
 export const useAssessmentQuestions = (assessment_id) => {
   return useQuery({
     queryKey: ['random-assessment-questions',assessment_id],
-    queryFn: async () => {
-      const response = await axios.post(`/admin/candidate/assessment-questions/random?assessmentId=${assessment_id}`);
-      return response.data.questions;
-    },
+    queryFn: () => getRandomAssessmentQuestions(assessment_id),
     staleTime: Infinity,
     cacheTime: 0,
     refetchOnWindowFocus: false,
@@ -57,6 +56,7 @@ const ProgressBar = ({ answeredCount, total }) => {
 const QuestionSidebar = ({ questions, currentQuestion, answeredCount, onQuestionSelect, answers , submitTest, isUploading, isRecording,webcamRef,handleUserMedia}) => {
   const [timeRemaining, setTimeRemaining] = useState(5 * 60);
   const [timerRef,setTimerRef] = useState(null);
+  const Logo = useLogo();
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -85,13 +85,13 @@ const QuestionSidebar = ({ questions, currentQuestion, answeredCount, onQuestion
     <div className="w-[15rem] bg-background-90 fixed  overflow-y-auto  custom-scrollbar m-4 h-[calc(100vh-2rem)]  rounded-xl">
       <div className='flex items-center justify-start pt-8 pb-6 px-4 '>
 
-        <img className='h-11' src={LightLogo} />
+        <img className='h-11' src={Logo} />
       </div>
       <div className="py-8 px-4 border-b border-t border-background-60 w-full">
         <div className=" flex flex-col items-center ">
           <div className='w-full flex items-center gap-2'>
           {/* <TimerIconSmall /> */}
-          <p className='typography-body'>Time remaining</p>
+          <p className=' text-font-main typography-body'>Time remaining</p>
           </div>
           <div className='mt-3 w-full flex items-center justify-around gap-3'>
           <h3 className={(timeRemaining <= ONE_MINUTE && "bg-red-200 text-red-300 ") +" bg-background-70  flex items-center justify-center w-16 h-16 rounded-xl"}>
@@ -117,7 +117,7 @@ const QuestionSidebar = ({ questions, currentQuestion, answeredCount, onQuestion
               ? 'text-green-100'
               : (index < currentQuestion ) ? 
               'text-font-gray'
-              :'text-font-gray hover:bg-background-60'
+              :'text-font-gray hover-outline'
             }`}
           onClick={() => onQuestionSelect(index)}
         >
@@ -170,7 +170,7 @@ const QuestionDisplay = ({
               alt="Question visual"
               className="max-w-md rounded-xl"
             />
-            <div onClick={()=>setShowImage(question.imageUrl)} className={`absolute bottom-2 cursor-pointer right-2 p-2 rounded-xl bg-gray-800`}>
+            <div onClick={()=>setShowImage(question.imageUrl)} className={`absolute bottom-2 cursor-pointer right-2 p-2 rounded-xl bg-background-80`}>
               <IconWrapper icon={Eye} size={0} customIconSize={3} hasBg customBgHover={"NA"} />
             </div>
           </div>
@@ -181,7 +181,7 @@ const QuestionDisplay = ({
           gridAutoRows: "1fr", // Ensures all rows are consistent based on tallest item
         }}>
           {question.options.map((option, index) => (
-            <div key={index} className={"flex items-center hover:bg-background-60 rounded-xl  h-full " + (currentAnswer === option.text ? ' selection-primary ' : ' bg-background-80')}>
+            <div key={index} className={"flex items-center hover-outline rounded-xl  h-full " + (currentAnswer === option.text ? ' selection-primary ' : ' bg-background-80')}>
               <label className="flex cursor-pointer items-center space-x-3 p-4 w-full">
                 <input
                   type="radio"
@@ -271,7 +271,7 @@ const WebcamView = React.memo(({ isMinimized, toggleMinimize, isRecording, webca
 // Upload Progress Overlay Component
 const UploadProgressOverlay = ({ uploadProgress }) => (
   <div className="fixed inset-0 bg-background-overlay flex items-center justify-center z-50">
-    <div className=" p-8 rounded-xl flex flex-col items-center space-y-4">
+    <div className="px-16 overflow-hidden py-8 rounded-xl flex flex-col bg-background-90 items-center space-y-4">
       <Loader />
       <h3 className="text-font-gray">Uploading Assessment</h3>
       <div className="w-full max-w-md bg-background-70 rounded-full h-4 overflow-hidden">
@@ -551,13 +551,7 @@ const Assessment = ({assessment_id}) => {
         const recordingUrl = await uploadVideo(videoBlob);
 
         // Submit assessment with video URL
-        const response = await axios.post(
-          `/admin/candidate/questionnaire/${candidateAuthData._id}`,
-          {
-            ...assessmentData,
-            recordingUrl // Use the URL returned from uploadVideo
-          }
-        );
+        const response = await submitAssessment({candidate_id : candidateAuthData?._id , assessmentData , recordingUrl});
         return response.data;
       } catch (error) {
         // console.error('Submit error:', error);

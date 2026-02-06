@@ -21,6 +21,11 @@ const taskSchema = new mongoose.Schema({
     htmlString : { 
         type : String,
         required : true
+    },
+    company_id : {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Company',
+        default : null
     }
 })
 

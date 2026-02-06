@@ -5,6 +5,7 @@ import { promises as fs } from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { uploadsDir } from '../config/paths.js';
+import axios from 'axios';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -52,6 +53,44 @@ export const uploadToS3 = async (inputPath, folder) => {
   } catch (error) {
     console.error('Error uploading to S3 (v3):', error);
     throw error;
+  }
+};
+
+export const uploadGoogleImageToS3 = async (imageUrl, folder) => {
+  try {
+    // Step 1: Download image as buffer
+    const response = await axios.get(imageUrl, {
+      responseType: 'arraybuffer',
+    });
+
+    const buffer = Buffer.from(response.data, 'binary');
+    const contentType = response.headers['content-type'];
+
+    // Step 2: Generate file name using Date.now()
+    const extension = path.extname(new URL(imageUrl).pathname) || '';
+    const baseName = path.basename(new URL(imageUrl).pathname, extension);
+    const fileName = `${Date.now()}-${baseName}${extension}`;
+
+    const envFolder = process.env.AWS_ENV_FOLDER;
+    const s3Key = `uploads/${envFolder}/${folder}/${fileName}`;
+
+    // Step 3: Upload to S3
+    const command = new PutObjectCommand({
+      Bucket: process.env.AWS_S3_BUCKET_NAME,
+      Key: s3Key,
+      Body: buffer,
+      ContentType: contentType,
+      ACL: 'private',
+    });
+
+    await s3Client.send(command);
+
+    // Step 4: Return CloudFront URL
+    const cloudfrontDomain = process.env.AWS_CLOUDFRONT_DOMAIN;
+    return `${cloudfrontDomain}/${s3Key}`;
+  } catch (error) {
+    console.error('Error uploading Google image to S3:', error);
+    throw new Error(error?.message || 'Failed to upload image from URL to S3');
   }
 };
 

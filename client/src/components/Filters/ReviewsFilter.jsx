@@ -66,7 +66,7 @@ const ReviewsFilter = ({ onApplyFilters, candidates = [] }) => {
     if (!values || values.length === 0) {
       return {
         value: 'All',
-        className: 'text-white typography-body group-hover:text-accent-100'
+        className: 'text-font-main typography-body group-hover:text-accent-100'
       };
     }
 
@@ -163,7 +163,7 @@ const ReviewsFilter = ({ onApplyFilters, candidates = [] }) => {
   return (
     <div className="relative" ref={menuRef}>
       <div 
-        className={"cursor-pointer gap-2 flex items-center typography-body hover:bg-background-60 hover:text-accent-100 rounded-xl p-2 text-font-gray"} 
+        className={"cursor-pointer gap-2 flex items-center typography-body hover-outline hover:text-accent-100 rounded-xl p-2 text-font-gray"} 
         onClick={(e) => toggleMenu(e)}
       >
         <IconWrapper inheritColor={true} size={0} customIconSize={4} customStrokeWidth={5} icon={SlidersHorizontal} />
@@ -185,7 +185,7 @@ const ReviewsFilter = ({ onApplyFilters, candidates = [] }) => {
           {Object.keys(categories).map((category) => (
             <div key={category} className="w-full">
               <div 
-                className={"flex justify-between group h-10 hover:bg-background-60 p-4 rounded-xl items-center cursor-pointer " + 
+                className={"flex justify-between group h-10 hover-outline p-4 rounded-xl items-center cursor-pointer " + 
                   (selectedFilters[category]?.length > 0 ? "text-accent-100 bg-accent-300 " : "text-font-gray")} 
                 onClick={() => handleDropdown(category)}
               >
@@ -208,8 +208,8 @@ const ReviewsFilter = ({ onApplyFilters, candidates = [] }) => {
                   {categories[category].map((item) => (
                     <label 
                       key={item} 
-                      className={"group relative flex items-center p-4 h-10 hover:bg-background-60 cursor-pointer hover:text-accent-100 rounded-xl " + 
-                        (selectedFilters[category].includes(item) ? "bg-accent-300 text-accent-100 " : "text-white")}
+                      className={"group relative flex items-center p-4 h-10 hover-outline cursor-pointer hover:text-accent-100 rounded-xl " + 
+                        (selectedFilters[category].includes(item) ? "bg-accent-300 text-accent-100 " : "text-font-main")}
                     >
                       <TickCheckbox
                         id={`${category}-${item}`}

@@ -16,9 +16,12 @@ export const threeDDesignerConfig = [
             contentConfig : {
                 "Not Assigned" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : true,
+                        hasUndoButton : false,
+                        hasUndoButtonDisabled : false,
                         hasBudgetLabel : false,
                         hasLabel : {
                             content : "Candidate's portfolio has not yet been assigned to a reviewer.",
@@ -30,6 +33,7 @@ export const threeDDesignerConfig = [
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : true,
@@ -39,11 +43,14 @@ export const threeDDesignerConfig = [
                             icon : WarningIcon
                         },
                         hasScheduledLabel : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         actions : {
                             hasRejectAction : true,
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -66,6 +73,7 @@ export const threeDDesignerConfig = [
                 },
                 "Under Review" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -76,10 +84,13 @@ export const threeDDesignerConfig = [
                         },
                         hasRemarks : false,
                         hasRatingComponent : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScoreCard : false,
                         actions : false
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -90,9 +101,12 @@ export const threeDDesignerConfig = [
                         },
                         hasRemarks : false,
                         hasScoreCard : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         actions : false
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -122,6 +136,7 @@ export const threeDDesignerConfig = [
                 },
                 "Reviewed" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -129,6 +144,8 @@ export const threeDDesignerConfig = [
                         hasLabel : false,
                         hasRemarks : true,
                         hasScoreCard : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScheduledLabel : true,
                         actions : {
                             hasRejectAction : true,
@@ -136,6 +153,7 @@ export const threeDDesignerConfig = [
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -143,6 +161,8 @@ export const threeDDesignerConfig = [
                         hasLabel : false,
                         hasRemarks : true,
                         hasScoreCard : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScheduledLabel : true,
                         actions : {
                             hasRejectAction : true,
@@ -150,6 +170,7 @@ export const threeDDesignerConfig = [
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -175,6 +196,7 @@ export const threeDDesignerConfig = [
                 },
                 "Rejected" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -182,10 +204,13 @@ export const threeDDesignerConfig = [
                         hasLabel : false,
                         hasRemarks : false,
                         hasRejectionReason : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasScoreCard : true,
                         actions : false
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -193,10 +218,13 @@ export const threeDDesignerConfig = [
                         hasLabel : false,
                         hasRemarks : false,
                         hasRejectionReason : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasScoreCard : true,
                         actions : false
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -220,6 +248,7 @@ export const threeDDesignerConfig = [
                 },
                 "Cleared" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -230,6 +259,7 @@ export const threeDDesignerConfig = [
                         actions : false
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -240,6 +270,7 @@ export const threeDDesignerConfig = [
                         actions : false
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -306,6 +337,7 @@ export const threeDDesignerConfig = [
             contentConfig : {
                 "Pending" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -316,12 +348,15 @@ export const threeDDesignerConfig = [
                         },
                         hasRemarks : false,
                         hasScoreCard : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasBudgetScoring : true,
                         actions : false,
                         hasCallHistory : false,
                         hasScheduledForm : true
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -333,11 +368,14 @@ export const threeDDesignerConfig = [
                         hasRemarks : false,
                         hasScoreCard : false,
                         hasBudgetScoring : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         actions : false,
                         hasCallHistory : false,
                         hasScheduledForm : true
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -364,6 +402,7 @@ export const threeDDesignerConfig = [
                 },
                 "Call Scheduled" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -375,6 +414,8 @@ export const threeDDesignerConfig = [
                         hasRemarks : false,
                         hasScoreCard : false,
                         hasCallDetails : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasCallHistory : true,
                         hasScheduledForm : false,
                         actions : {
@@ -383,6 +424,7 @@ export const threeDDesignerConfig = [
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -394,6 +436,8 @@ export const threeDDesignerConfig = [
                         hasRemarks : false,
                         hasScoreCard : false,
                         hasCallDetails : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasCallHistory : true,
                         hasScheduledForm : false,
                         actions : {
@@ -402,6 +446,7 @@ export const threeDDesignerConfig = [
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -432,6 +477,7 @@ export const threeDDesignerConfig = [
                 },
                 "No Show" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -444,6 +490,8 @@ export const threeDDesignerConfig = [
                         hasScoreCard : false,
                         hasCallDetails : false,
                         hasCallHistory : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScheduledForm : false,
                         hasScheduledLabel : true,
                         actions : {
@@ -452,6 +500,7 @@ export const threeDDesignerConfig = [
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -465,6 +514,8 @@ export const threeDDesignerConfig = [
                         hasCallDetails : false,
                         hasCallHistory : false,
                         hasScheduledForm : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScheduledLabel : true,
                         actions : {
                             hasRescheduleAction : true,
@@ -472,6 +523,7 @@ export const threeDDesignerConfig = [
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -502,6 +554,7 @@ export const threeDDesignerConfig = [
                 },
                 "Under Review" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -512,6 +565,8 @@ export const threeDDesignerConfig = [
                         },
                         hasScheduledForm : false,
                         hasRatingComponent : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasRemarks : false,
                         hasScoreCard : false,
                         hasCallDetails : false,
@@ -521,6 +576,7 @@ export const threeDDesignerConfig = [
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -531,6 +587,8 @@ export const threeDDesignerConfig = [
                         },
                         hasRemarks : false,
                         hasScoreCard : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasCallDetails : false,
                         hasCallHistory : false,
                         hasScheduledForm : false,
@@ -539,6 +597,7 @@ export const threeDDesignerConfig = [
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -570,6 +629,7 @@ export const threeDDesignerConfig = [
                 },
                 "Reviewed" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -579,6 +639,8 @@ export const threeDDesignerConfig = [
                         hasScoreBoard : true,
                         hasScoreCard : true,
                         hasBudgetScoring : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasCallDetails : false,
                         hasCallHistory : false,
                         hasScheduledForm : false,
@@ -589,6 +651,7 @@ export const threeDDesignerConfig = [
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -597,6 +660,8 @@ export const threeDDesignerConfig = [
                         hasRemarks : true,
                         hasScoreBoard : true,
                         hasScoreCard : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasBudgetScoring : true,
                         hasCallDetails : false,
                         hasCallHistory : false,
@@ -608,6 +673,7 @@ export const threeDDesignerConfig = [
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -637,6 +703,7 @@ export const threeDDesignerConfig = [
                 },
                 "Cleared" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -651,6 +718,7 @@ export const threeDDesignerConfig = [
                         actions : false
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -665,6 +733,7 @@ export const threeDDesignerConfig = [
                         actions : false
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -694,6 +763,7 @@ export const threeDDesignerConfig = [
                 },
                 "Rejected" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -703,12 +773,15 @@ export const threeDDesignerConfig = [
                         hasRejectionReason : true,
                         hasScoreBoard : true,
                         hasScoreCard : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasCallDetails : false,
                         hasCallHistory : false,
                         hasScheduledForm : false,
                         actions : false
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -718,12 +791,15 @@ export const threeDDesignerConfig = [
                         hasRejectionReason : true,
                         hasScoreBoard : true,
                         hasScoreCard : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasCallDetails : false,
                         hasCallHistory : false,
                         hasScheduledForm : false,
                         actions : false
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -766,6 +842,7 @@ export const threeDDesignerConfig = [
             contentConfig : {
                 "Pending" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -776,11 +853,14 @@ export const threeDDesignerConfig = [
                         },
                         hasScheduledLabel : true,
                         hasRemarks : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScoreCard : false,
                         actions : false,
                         hasTaskForm : true
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -790,12 +870,15 @@ export const threeDDesignerConfig = [
                             icon : WarningIcon
                         },
                         hasRemarks : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScoreCard : false,
                         actions : false,
                         hasTaskForm : true,
                         hasScheduledLabel : true
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -822,10 +905,13 @@ export const threeDDesignerConfig = [
                 },
                 "Sent" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
                         hasBudgetLabel : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasLabel : {
                             content : "The design task has been sent to the candidate.",
                             icon : WarningIcon
@@ -839,10 +925,13 @@ export const threeDDesignerConfig = [
                         hasTaskDetails : true
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
                         hasBudgetLabel : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasLabel : {
                             content : "The design task has been sent to the candidate.",
                             icon : WarningIcon
@@ -856,6 +945,7 @@ export const threeDDesignerConfig = [
                         hasTaskDetails : true,
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -881,6 +971,7 @@ export const threeDDesignerConfig = [
                 },
                 "Not Assigned" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : true,
@@ -890,11 +981,14 @@ export const threeDDesignerConfig = [
                             icon : WarningIcon
                         },
                         hasRemarks : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasScoreCard : false,
                         actions : false,
                         hasSubmissionDetails : true
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : true,
@@ -904,11 +998,14 @@ export const threeDDesignerConfig = [
                             icon : WarningIcon
                         },
                         hasRemarks : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasScoreCard : false,
                         actions : false,
                         hasSubmissionDetails : true
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -933,6 +1030,7 @@ export const threeDDesignerConfig = [
                 },
                 "Under Review" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -942,12 +1040,15 @@ export const threeDDesignerConfig = [
                             icon : WarningIcon
                         },
                         hasRemarks : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScoreCard : false,
                         hasSubmissionDetails : true,
                         hasRatingComponent : true,
                         actions : false,
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -958,10 +1059,13 @@ export const threeDDesignerConfig = [
                         },
                         hasRemarks : false,
                         hasScoreCard : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasSubmissionDetails : true,
                         actions : false,
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -986,6 +1090,7 @@ export const threeDDesignerConfig = [
                 },
                 "Reviewed" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -993,6 +1098,8 @@ export const threeDDesignerConfig = [
                         hasLabel : false,
                         hasRemarks : true,
                         hasScoreCard : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScheduledLabel : true,
                         actions : {
                             hasRejectAction : true,
@@ -1000,6 +1107,7 @@ export const threeDDesignerConfig = [
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1008,6 +1116,8 @@ export const threeDDesignerConfig = [
                         hasRemarks : true,
                         hasScoreCard : true,
                         hasScheduledLabel : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasSubmissionDetails : true,
                         hasScheduledLabel : true,
                         actions : {
@@ -1016,6 +1126,7 @@ export const threeDDesignerConfig = [
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1035,6 +1146,7 @@ export const threeDDesignerConfig = [
                 },
                 "Cleared" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1045,6 +1157,7 @@ export const threeDDesignerConfig = [
                         hasSubmissionDetails : true
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1055,6 +1168,7 @@ export const threeDDesignerConfig = [
                         hasSubmissionDetails : true
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1076,26 +1190,33 @@ export const threeDDesignerConfig = [
                 },
                 "Rejected" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
                         hasBudgetLabel : false,
                         hasLabel : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasRejectionReason : true,
                         hasScoreCard : true,
                         hasSubmissionDetails : true
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
                         hasBudgetLabel : false,
                         hasLabel : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasRejectionReason : true,
                         hasScoreCard : true,
                         hasSubmissionDetails : true
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1114,6 +1235,7 @@ export const threeDDesignerConfig = [
                 },
                 "Not Submitted" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1128,6 +1250,7 @@ export const threeDDesignerConfig = [
                         hasTaskDetails : true
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1142,6 +1265,7 @@ export const threeDDesignerConfig = [
                         hasTaskDetails : true
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1179,6 +1303,7 @@ export const threeDDesignerConfig = [
             contentConfig : {
                 "Pending" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1188,11 +1313,14 @@ export const threeDDesignerConfig = [
                             icon : WarningIcon
                         },
                         hasRemarks : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScoreCard : false,
                         actions : false,
                         hasScheduledForm : true
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1203,10 +1331,13 @@ export const threeDDesignerConfig = [
                         },
                         hasRemarks : false,
                         hasScoreCard : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         actions : false,
                         hasScheduledForm : true
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1233,6 +1364,7 @@ export const threeDDesignerConfig = [
                 },
                 "Call Scheduled" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1243,6 +1375,8 @@ export const threeDDesignerConfig = [
                         },
                         hasRemarks : false,
                         hasScoreCard : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasCallDetails : true,
                         hasCallHistory : true,
                         hasScheduledForm : false,
@@ -1252,6 +1386,7 @@ export const threeDDesignerConfig = [
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1261,6 +1396,8 @@ export const threeDDesignerConfig = [
                             icon : WarningIcon
                         },
                         hasRemarks : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasScoreCard : false,
                         hasCallDetails : true,
                         hasCallHistory : true,
@@ -1271,6 +1408,7 @@ export const threeDDesignerConfig = [
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1301,6 +1439,7 @@ export const threeDDesignerConfig = [
                 },
                 "No Show" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1312,6 +1451,8 @@ export const threeDDesignerConfig = [
                         hasRemarks : false,
                         hasScoreCard : false,
                         hasCallDetails : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasCallHistory : false,
                         hasScheduledForm : false,
                         hasScheduledLabel : true,
@@ -1321,6 +1462,7 @@ export const threeDDesignerConfig = [
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1333,6 +1475,8 @@ export const threeDDesignerConfig = [
                         hasScoreCard : false,
                         hasCallDetails : false,
                         hasCallHistory : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScheduledForm : false,
                         hasScheduledLabel : true,
                         actions : {
@@ -1341,6 +1485,7 @@ export const threeDDesignerConfig = [
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1371,6 +1516,7 @@ export const threeDDesignerConfig = [
                 },
                 "Under Review" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1383,6 +1529,8 @@ export const threeDDesignerConfig = [
                         hasScoreCard : false,
                         hasCallDetails : false,
                         hasCallHistory : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasScheduledForm : false,
                         hasRatingComponent : true,
                         actions : {
@@ -1390,6 +1538,7 @@ export const threeDDesignerConfig = [
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1402,12 +1551,15 @@ export const threeDDesignerConfig = [
                         hasScoreCard : false,
                         hasCallDetails : false,
                         hasCallHistory : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasScheduledForm : false,
                         actions : {
                             hasNoShowAction : true,
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1439,6 +1591,7 @@ export const threeDDesignerConfig = [
                 },
                 "Reviewed" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1448,6 +1601,8 @@ export const threeDDesignerConfig = [
                         hasScoreCard : true,
                         hasCallDetails : false,
                         hasCallHistory : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScheduledForm : false,
                         hasScheduledLabel : true,
                         actions : {
@@ -1456,6 +1611,7 @@ export const threeDDesignerConfig = [
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1463,6 +1619,8 @@ export const threeDDesignerConfig = [
                         hasLabel : false,
                         hasRemarks : true,
                         hasScoreCard : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasCallDetails : false,
                         hasCallHistory : false,
                         hasScheduledForm : false,
@@ -1473,6 +1631,7 @@ export const threeDDesignerConfig = [
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1501,6 +1660,7 @@ export const threeDDesignerConfig = [
                 },
                 "Cleared" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1514,6 +1674,7 @@ export const threeDDesignerConfig = [
                         actions : false
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1527,6 +1688,7 @@ export const threeDDesignerConfig = [
                         actions : false
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1555,6 +1717,7 @@ export const threeDDesignerConfig = [
                 },
                 "Rejected" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1563,12 +1726,15 @@ export const threeDDesignerConfig = [
                         hasRemarks : false,
                         hasRejectionReason : true,
                         hasScoreCard : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasCallDetails : false,
                         hasCallHistory : false,
                         hasScheduledForm : false,
                         actions : false
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1577,12 +1743,15 @@ export const threeDDesignerConfig = [
                         hasRemarks : false,
                         hasRejectionReason : true,
                         hasScoreCard : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasCallDetails : false,
                         hasCallHistory : false,
                         hasScheduledForm : false,
                         actions : false
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1624,6 +1793,7 @@ export const threeDDesignerConfig = [
             contentConfig : {
                 "Pending" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1633,11 +1803,14 @@ export const threeDDesignerConfig = [
                             icon : WarningIcon
                         },
                         hasRemarks : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScoreCard : false,
                         actions : false,
                         hasScheduledForm : true
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1647,11 +1820,14 @@ export const threeDDesignerConfig = [
                             icon : WarningIcon
                         },
                         hasRemarks : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScoreCard : false,
                         actions : false,
                         hasScheduledForm : true
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1678,6 +1854,7 @@ export const threeDDesignerConfig = [
                 },
                 "Call Scheduled" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1690,6 +1867,8 @@ export const threeDDesignerConfig = [
                         hasScoreCard : false,
                         hasCallDetails : true,
                         hasCallHistory : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasScheduledForm : false,
                         actions : {
                             hasRescheduleAction : true,
@@ -1697,6 +1876,7 @@ export const threeDDesignerConfig = [
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1709,6 +1889,8 @@ export const threeDDesignerConfig = [
                         hasScoreCard : false,
                         hasCallDetails : true,
                         hasCallHistory : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasScheduledForm : false,
                         actions : {
                             hasRescheduleAction : true,
@@ -1716,6 +1898,7 @@ export const threeDDesignerConfig = [
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1744,6 +1927,7 @@ export const threeDDesignerConfig = [
                 },
                 "No Show" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1756,6 +1940,8 @@ export const threeDDesignerConfig = [
                         hasScoreCard : false,
                         hasCallDetails : false,
                         hasCallHistory : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScheduledForm : false,
                         hasScheduledLabel : true,
                         actions : {
@@ -1764,6 +1950,7 @@ export const threeDDesignerConfig = [
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1777,6 +1964,8 @@ export const threeDDesignerConfig = [
                         hasCallDetails : false,
                         hasCallHistory : false,
                         hasScheduledForm : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScheduledLabel : true,
                         actions : {
                             hasRescheduleAction : true,
@@ -1784,6 +1973,7 @@ export const threeDDesignerConfig = [
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1814,6 +2004,7 @@ export const threeDDesignerConfig = [
                 },
                 "Under Review" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1824,11 +2015,14 @@ export const threeDDesignerConfig = [
                         },
                         hasRemarks : false,
                         hasScoreCard : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasCallDetails : false,
                         hasCallHistory : false,
                         hasRatingComponent : true,
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1839,11 +2033,14 @@ export const threeDDesignerConfig = [
                         },
                         hasRemarks : false,
                         hasScoreCard : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasCallDetails : false,
                         hasCallHistory : false,
                         hasRatingComponent : true,
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1874,6 +2071,7 @@ export const threeDDesignerConfig = [
                 },
                 "Reviewed" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1883,6 +2081,8 @@ export const threeDDesignerConfig = [
                         hasScoreCard : true,
                         hasCallDetails : false,
                         hasCallHistory : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScheduledForm : false,
                         hasScheduledLabel : true,
                         actions : {
@@ -1891,6 +2091,7 @@ export const threeDDesignerConfig = [
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1900,6 +2101,8 @@ export const threeDDesignerConfig = [
                         hasScoreCard : true,
                         hasCallDetails : false,
                         hasCallHistory : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScheduledForm : false,
                         hasScheduledLabel : true,
                         actions : {
@@ -1908,6 +2111,7 @@ export const threeDDesignerConfig = [
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1936,6 +2140,7 @@ export const threeDDesignerConfig = [
                 },
                 "Cleared" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1949,6 +2154,7 @@ export const threeDDesignerConfig = [
                         actions : false
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1962,6 +2168,7 @@ export const threeDDesignerConfig = [
                         actions : false
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1990,12 +2197,15 @@ export const threeDDesignerConfig = [
                 },
                 "Rejected" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
                         hasBudgetLabel : false,
                         hasLabel : false,
                         hasRemarks : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasRejectionReason : true,
                         hasScoreCard : true,
                         hasCallDetails : false,
@@ -2004,6 +2214,7 @@ export const threeDDesignerConfig = [
                         actions : false
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -2012,12 +2223,15 @@ export const threeDDesignerConfig = [
                         hasRemarks : false,
                         hasRejectionReason : true,
                         hasScoreCard : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasCallDetails : false,
                         hasCallHistory : false,
                         hasScheduledForm : false,
                         actions : false
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -2059,6 +2273,7 @@ export const threeDDesignerConfig = [
             contentConfig : {
                 "Under Review" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -2070,6 +2285,9 @@ export const threeDDesignerConfig = [
                         hasRemarks : false,
                         hasScoreCard : true,
                         hasCallDetails : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
+                        hasScheduledLabel : true,
                         hasCallHistory : false,
                         actions : {
                             hasRejectAction : true,
@@ -2077,6 +2295,7 @@ export const threeDDesignerConfig = [
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -2088,6 +2307,9 @@ export const threeDDesignerConfig = [
                         hasRemarks : false,
                         hasScoreCard : true,
                         hasCallDetails : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
+                        hasScheduledLabel : true,
                         hasCallHistory : false,
                         actions : {
                             hasRejectAction : true,
@@ -2095,6 +2317,7 @@ export const threeDDesignerConfig = [
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -2105,6 +2328,7 @@ export const threeDDesignerConfig = [
                         },
                         hasRemarks : false,
                         hasScoreCard : false,
+                        hasScheduledLabel : true,
                         hasCallDetails : false,
                         hasCallHistory : false,
                     },
@@ -2125,6 +2349,7 @@ export const threeDDesignerConfig = [
                 },
                 "Accepted" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -2140,6 +2365,7 @@ export const threeDDesignerConfig = [
                         hasCallHistory : false,
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -2155,6 +2381,7 @@ export const threeDDesignerConfig = [
                         hasCallHistory : false,
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -2189,6 +2416,7 @@ export const threeDDesignerConfig = [
                 },
                 "Rejected" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -2199,6 +2427,7 @@ export const threeDDesignerConfig = [
                         hasCallHistory : false,
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -2209,6 +2438,7 @@ export const threeDDesignerConfig = [
                         hasCallHistory : false,
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,

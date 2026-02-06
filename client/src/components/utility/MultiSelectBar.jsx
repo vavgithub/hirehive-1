@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import Modal, { REJECTION_REASONS } from '../Modals/Modal'
-import axios from '../../api/axios'
+import axios from '../../services/axios'
 import { showErrorToast, showSuccessToast } from '../ui/Toast'
 import { useQueryClient } from '@tanstack/react-query'
 import LoaderModal from '../Loaders/LoaderModal'
@@ -9,7 +9,8 @@ import RatingSelector from '../MUIUtilities/RatingSelector'
 import RejectionSelector from '../MUIUtilities/RejectionSelector'
 import IconWrapper from '../Cards/IconWrapper'
 import { ArrowRight, Calendar, Ellipsis, Star, User, X } from 'lucide-react'
-import { UNKNOWN_PROFILE_PICTURE_URL } from '../../utility/config'
+import { useUnknownProfilePicture } from '../../context/ThemeContext'
+import { assignReviewerForCandidates, moveMultipleCandidates, rateMultipleCandidates, rejectMultipleCandidates } from '../../services/hr.service'
 
 export const getMaxScoreEachStage = (currentStage) =>{
     let stageScores = {
@@ -21,26 +22,6 @@ export const getMaxScoreEachStage = (currentStage) =>{
     }
     return stageScores[currentStage] || 5;
 }
-
-const moveMultipleCandidates = async (candidateData) => {
-    const response = await axios.post(`/hr/move-multiple-candidates`,{candidateData})
-    return response.data;
-} 
-
-const rejectMultipleCandidates = async (candidateData) => {
-    const response = await axios.post(`/hr/reject-multiple-candidates`,{candidateData})
-    return response.data;
-} 
-
-const assignReviewerForCandidates = async (candidateData,assigneeId) => {
-    const response = await axios.post(`/hr/update-assignee-multiple-candidates`,{candidateData,assigneeId})
-    return response.data;
-} 
-
-const rateMultipleCandidates = async (candidateData,rating) => {
-    const response = await axios.post(`/hr/rate-multiple-candidates`,{candidateData,rating})
-    return response.data;
-} 
 
 const globalStages = ['Portfolio','Screening','Design Task','Round 1','Round 2', 'Hired']
 
@@ -165,6 +146,8 @@ function MultiSelectBar({selectedData,jobId,clearSelection}) {
   const [selectedAnchor,setSelectedAnchor] = useState(null);
 
   const [isValid,setIsValid] = useState(false);
+
+  const UNKNOWN_PROFILE_PICTURE_URL = useUnknownProfilePicture()
 
   useEffect(()=>{
     if(action?.name === "REJECT"){
@@ -368,10 +351,10 @@ function MultiSelectBar({selectedData,jobId,clearSelection}) {
   }
 
   return (
-    <div className='bg-black-100  p-4 rounded-xl mb-4 flex justify-between items-center h-14 relative'>
+    <div className='bg-background-80  p-4 rounded-xl mb-4 flex justify-between items-center h-14 relative'>
         {isLoading && <LoaderModal/>}
         <div>
-            <p className='text-teal-100 typography-body'>{selectedData?.length ?? 0} Items Selected</p>
+            <p className='text-accent-100 typography-body'>{selectedData?.length ?? 0} Items Selected</p>
         </div>
         <div className='flex justify-between items-center gap-4 '>
             {
@@ -490,10 +473,10 @@ function MultiSelectBar({selectedData,jobId,clearSelection}) {
                                                 </label>
                                                 {action?.name === "REJECT" && 
                                                 <div className='mt-2 w-full '>
-                                                    <h3 className='my-4'>Please provide the reason for rejecting this candidate</h3>
+                                                    <p className='my-4 font-semibold'>Please provide the reason for rejecting this candidate</p>
                                                     <div 
                                                     onClick={(e)=>{setAnchorEl(!anchorEl ? e.currentTarget : null); setChosenCandidate(chosenCandidate ? null : candidate?._id); setChosenStage(chosenStage ? null : stage);}}
-                                                    className={`${rejectionReason ? "text-white" : "text-font-gray"}   typography-body mt-1 h-[2.75rem] flex items-center justify-between bg-background-80 hover:bg-background-60 w-full outline-none rounded-xl shadow-sm focus:ring-teal-300 focus:border-teal-300 text-left px-4`}
+                                                    className={`${rejectionReason ? "text-font-main" : "text-font-gray"}   typography-body mt-1 h-[2.75rem] flex items-center justify-between bg-background-70 hover-outline w-full outline-none rounded-xl shadow-sm focus:ring-teal-300 focus:border-teal-300 text-left px-4`}
                                                     >
                                                     <p  className='whitespace-nowrap text-ellipsis overflow-hidden'>{rejectionReason ? rejectionReason : "-Select-"}</p>
                                                     

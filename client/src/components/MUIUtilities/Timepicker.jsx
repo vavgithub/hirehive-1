@@ -98,7 +98,7 @@ const theme = createTheme({
   },
 });
 
-export default function Timepicker({ onChange, value ,error}) {
+export default function Timepicker({ customBg, onChange, value ,error}) {
   return (
     // <ThemeProvider theme={theme}>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -108,11 +108,25 @@ export default function Timepicker({ onChange, value ,error}) {
           }}
           slotProps={{
             textField: {
+              placeholder: "03:30 PM",
               InputProps: { startAdornment: <IconWrapper icon={Clock} size={0} isInActiveIcon={true} /> }   
             }
           }}
+          sx={{
+            '& .MuiOutlinedInput-root:hover' : {
+              outline: '2px solid var(--color-accent-100)' , // remove inner border
+            },
+            '& .MuiOutlinedInput-input': {
+              outline: 'none !important' , // remove inner border
+            },
+            ...(customBg ? {
+              '& .MuiOutlinedInput-root' : {
+              backgroundColor : customBg
+            }
+            } : {} )
+          }}
           value={value ? dayjs(`${value}`) : null}
-          defaultValue={dayjs('2022-04-17T15:30')}
+          // defaultValue={dayjs('2022-04-17T15:30')}
           onChange={(newValue) => onChange(newValue)}
           // sx={{
           //   '& .MuiInputBase-root': {

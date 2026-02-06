@@ -113,6 +113,22 @@ export const updateCandidateAssignee = async (req, res) => {
       jobApplication.currentStage = stage;
     }
 
+    if(stageStatus.assignedTo){
+      let existUpdated = false
+      for(let log of stageStatus.logs){
+        if(log.status === stageStatus.status){
+          log.date = new Date()
+          existUpdated = true
+        }
+      }
+      if(!existUpdated){
+        stageStatus.logs.push({
+          status : stageStatus.status,
+          date : new Date()
+        })
+      }
+    }
+
     // Save the changes
     await candidate.save();
 
@@ -472,7 +488,23 @@ export const autoAssignPortfolios = async (req, res) => {
        // Optionally handle cases where status is not 'Under Review'
        return res.status(400).json({ message: `Cannot review a stage with status '${stageStatus.status}'` });
      }
- 
+
+     //Writing Logs
+     if(stageStatus.score){
+      let existUpdated = false
+      for(let log of stageStatus.logs){
+        if(log.status === stageStatus.status){
+          log.date = new Date()
+          existUpdated = true
+        }
+      }
+      if(!existUpdated){
+        stageStatus.logs.push({
+          status : stageStatus.status,
+          date : new Date()
+        })
+      }
+    }
      // Save the updated candidate document
      await candidate.save();
  

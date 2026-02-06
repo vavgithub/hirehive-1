@@ -71,7 +71,7 @@ const SkillsInput = ({ value = [], onChange, allSkills = [] ,error }) => {
               >
                 <path
                   d="M9 0.5L1 8.5M1 0.5L9 8.5"
-                  stroke="white"
+                  stroke="var(--color-font-main)"
                   strokeLinecap="round"
                   strokeLinejoin="round"
                 />
@@ -105,7 +105,7 @@ const SkillsInput = ({ value = [], onChange, allSkills = [] ,error }) => {
             <div
               key={index}
               onClick={() => handleSuggestionClick(suggestion)}
-              className="cursor-pointer p-2 hover:bg-background-60"
+              className="cursor-pointer p-2 hover-outline"
             >
               {suggestion}
             </div>

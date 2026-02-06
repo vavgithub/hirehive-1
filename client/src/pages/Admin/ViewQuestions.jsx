@@ -4,10 +4,11 @@ import LoaderModal from "../../components/Loaders/LoaderModal";
 import Header from "../../components/utility/Header";
 import StyledCard from "../../components/Cards/StyledCard";
 import { useQuery } from "@tanstack/react-query";
-import axios from "../../api/axios";
+import axios from "../../services/axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { getRoute, ROUTE_KEY } from "../../config/permissions.config";
 import { useAuthContext } from "../../context/AuthProvider";
+import { getAssessmentQuestionsById } from "../../services/admin.candidate.service";
 
 function ViewQuestions() {
     const { assessment_id } = useParams();
@@ -20,10 +21,7 @@ function ViewQuestions() {
         error
       } = useQuery({
         queryKey: ['assessment-questions', assessment_id],
-        queryFn: async () => {
-          const response = await axios.get(`/admin/candidate/assessment-questions?assessmentId=${assessment_id}`);
-          return response.data;
-        },
+        queryFn: () => getAssessmentQuestionsById(assessment_id),
         staleTime: Infinity,
         cacheTime: 0,
         refetchOnWindowFocus: false,
@@ -50,7 +48,7 @@ function ViewQuestions() {
     {data?.questions?.length > 0 && 
         <div className="scrollbar-hide grid grid-cols-2 gap-6">
             {data?.questions.map((qstn, index) => (
-                <StyledCard backgroundColor={'bg-background-80'} key={qstn._id} extraStyles={qstn.questionType === 'image' ? 'col-span-2' : ''}>
+                <StyledCard backgroundColor={'bg-background-100'} key={qstn._id} extraStyles={qstn.questionType === 'image' ? 'col-span-2' : ''}>
                     <h3 className="mb-4">
                         Q{index + 1}. {qstn.text}
                     </h3>
@@ -59,7 +57,7 @@ function ViewQuestions() {
                           {qstn.options.map((option, optIndex) => (
                             <div
                             key={optIndex}
-                            className={`p-4  rounded-lg typography-body bg-background-60  border-gray-200`}
+                            className={`p-4  rounded-lg typography-body bg-background-80  border-gray-200`}
                             >
                                   {option.text}
                               </div>

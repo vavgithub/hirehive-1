@@ -36,6 +36,30 @@ const stageStatusSchema = new mongoose.Schema(
       ],
       default: "Not Assigned",
     },
+    logs : [{
+      status : {
+        type : String, 
+        enum : [
+        "Not Assigned",
+        "Under Review",
+        "Reviewed",
+        "Cleared",
+        "Rejected",
+        "Pending",
+        "Call Scheduled",
+        "Rescheduled",
+        "No Show",
+        "Accepted",
+        "Sent",
+        "Not Submitted",
+      ],
+        required : true
+      },
+      date : {
+        type : Date,
+        required : true
+      }
+    }],
     rejectionReason: {
       type: String,
       default: "N/A",
@@ -61,12 +85,14 @@ const stageStatusSchema = new mongoose.Schema(
       scheduledDate: Date,
       scheduledTime: String,
       meetingLink: String,
+      eventId : String
     },
     callHistory: [
       {
         scheduledDate: Date,
         scheduledTime: String,
         meetingLink: String,
+        eventId : String,
         status: String, // e.g., 'Scheduled', 'Completed', 'Rescheduled', 'No Show', 'Cancelled'
       },
     ],
@@ -321,6 +347,9 @@ const candidateSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    dob : {
+      type : Date,
+    },
     website: {
       type: String,
     },
@@ -358,10 +387,30 @@ const candidateSchema = new mongoose.Schema(
     jobApplications: [jobApplicationSchema], // Contains multiple job applications
     questionnaireAttempts: [questionnaireAttemptSchema],
     location: String,
-
+    geoLocation : {
+      type : {
+        type : String,
+      },
+      coordinates : {
+        type : [Number],
+      },
+    },
+    integrations : {
+      telegram : {
+        user_id : Number,
+        status : {
+          type : String,
+          enum : ['IDLE','EMAIL','OTP','CONNECTED'],
+          default : 'IDLE'
+        },
+      }
+    },
     // Removed 'stage', 'status', and 'stageStatus' from the root level
   },
   { timestamps: true }
 );
+
+// Create geospatial index
+candidateSchema.index({ geoLocation: '2dsphere' });
 
 export const candidates = mongoose.model("candidates", candidateSchema);

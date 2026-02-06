@@ -6,12 +6,12 @@ import { useDropzone } from 'react-dropzone';
 import { useForm, Controller } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import axios from '../../api/axios';
+import axios from '../../services/axios';
 import SkillsInput from '../../components/Inputs/SkillsInput';
 import { Button } from '../../components/Buttons/Button';
 import { dummySkills } from '../../components/Dropdowns/dropdownOptions';
 import { showErrorToast, showSuccessToast } from '../../components/ui/Toast';
-import Logo from '../../svg/Logo/lightLogo.svg';
+import Logo from '../../svg/Logo/lightLogo.png';
 import { fetchCandidateAuthData, loginCandidateAuth } from '../../redux/candidateAuthSlice';
 import useCandidateAuth from '../../hooks/useCandidateAuth';
 import { digitsRegex, emailRegex, lowerCaseRegex, specialCharRegex, upperCaseRegex } from '../../utility/regex';
@@ -33,53 +33,8 @@ import TogglePassword from '../../components/utility/TogglePassword';
 import ForgotPassword from '../Admin/ForgotPassword';
 import Footer from '../../components/Footer/Footer';
 import LogoWrapper from '../../components/Logo/LogoWrapper';
-
-const fetchJobDetails = async (id) => {
-  const response = await axios.get(`/jobs/getJobById/${id}`);
-  return response.data;
-};
-
-export const uploadProfilePicture = async (file) => {
-  if (!file) throw new Error("No file selected.");
-  validateProfileImages(file);
-  const formData = new FormData();
-  formData.append('profilePicture', file);
-  try {
-    const response = await axios.post('/auth/candidate/upload-profile-picture', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    });
-    return response.data.profilePictureUrl;
-  } catch (error) {
-    throw error;
-  }
-};
-
-export const uploadResume = async (file, setUploadProgress) => {
-  if (!file) throw new Error("No file selected.");
-  validateResume(file);
-  const formData = new FormData();
-  formData.append('resume', file);
-
-  try {
-    const response = await axios.post('/auth/candidate/upload-resume', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-      onUploadProgress: (progressEvent) => {
-        const percentCompleted = Math.round(
-          (progressEvent.loaded * 100) / progressEvent.total
-        );
-        setUploadProgress(percentCompleted);
-      },
-    });
-    return response.data.resumeUrl;
-  } catch (error) {
-    throw error;
-  }
-};
-
-const updateEmail = ({ email, userId }) => {
-  const response = axios.post('/auth/candidate/update-email', { email, userId });
-  return response?.data;
-};
+import { fetchjobsById } from '../../services/jobs.service';
+import { applyToJob, createPassword, registerCandidate, updateEmail, uploadCandidateProfilePicture, uploadResume, verifyOtpCandidate } from '../../services/auth.candidate.service';
 
 const ApplyJob = () => {
   const dispatch = useDispatch();
@@ -130,6 +85,10 @@ const ApplyJob = () => {
     expectedCTC: "",
     hourlyRate: "",
     resumeFile: null,
+    location : '',
+    locationId : '',
+    sessionId : '',
+    dob : null,
     skills: [] // default empty array for skills
   };
 
@@ -167,7 +126,7 @@ const ApplyJob = () => {
 
   const { data: jobDetails, isLoading } = useQuery({
     queryKey: ['jobDetails', jobId],
-    queryFn: () => fetchJobDetails(jobId),
+    queryFn: () => fetchjobsById(jobId),
   });
 
   // Pre-fill form with candidate data when authenticated
@@ -190,6 +149,10 @@ const ApplyJob = () => {
         }),
         resumeFile: resumeFile,
         skills: candidateData.skills || [],
+        location : candidateData.location || '',
+        locationId : '',
+        sessionId : '',
+        dob : candidateData.dob || null,
       });
     }
   }, [isAuthenticated, candidateData, jobDetails, reset, resumeFile]);
@@ -240,11 +203,12 @@ const ApplyJob = () => {
         .map((key) => ({
           questionId: key.replace('question-', ''),
           answer: data[key],
-        }));
+        }))
+        .filter(res => res.answer !== "");//Removing empty responses
 
       let profilePictureUrl;
       if (profilePictureFile) {
-        profilePictureUrl = await uploadProfilePicture(profilePictureFile);
+        profilePictureUrl = await uploadCandidateProfilePicture(profilePictureFile);
       }
 
       const resumeUrl = await uploadResume(resumeFile, setUploadProgress);
@@ -271,7 +235,7 @@ const ApplyJob = () => {
           ...compensationData,
         };
 
-        await axios.post('/auth/candidate/apply-job', applicationData);
+        await applyToJob(applicationData);
         await dispatch(fetchCandidateAuthData()).unwrap();
         showSuccessToast('Success', 'Successfully applied to the job');
         navigate('/candidate/my-jobs');
@@ -288,6 +252,10 @@ const ApplyJob = () => {
           currentCTC: data.currentCTC,
           expectedCTC: data.expectedCTC,
           experience: data.experience,
+          dob : data.dob,
+          location : data.location,
+          locationId : data.locationId,
+          sessionId : data.sessionId,
           skills: data.skills,
           questionResponses,
           resumeUrl,
@@ -295,7 +263,7 @@ const ApplyJob = () => {
           ...compensationData,
         };
 
-        const response = await axios.post('/auth/candidate/register', registrationData);
+        const response = await registerCandidate(registrationData);
         if (response?.data?.currentStage === 'MODAL') {
           setValue("email", response.data?.email);
           IdRef.current = response.data?.userId;
@@ -349,7 +317,7 @@ const ApplyJob = () => {
 
     setIsSubmitting(true);
     try {
-      await axios.post('/auth/candidate/verify-otp', { email, otp: enteredOtp });
+      await verifyOtpCandidate(email,enteredOtp);
       showSuccessToast('OTP Verified', 'Please create your password to continue.');
       setCurrentStep(3);
     } catch (error) {
@@ -408,7 +376,7 @@ const ApplyJob = () => {
 
     setIsSubmitting(true);
     try {
-      await axios.post('/auth/candidate/create-password', { email, password });
+      await createPassword(email, password);
       await dispatch(fetchCandidateAuthData()).unwrap();
       showSuccessToast('Success', 'Account created successfully!');
       navigate('/candidate/my-jobs');
@@ -461,6 +429,7 @@ const ApplyJob = () => {
                     control={control}
                     onProfilePictureSelect={handleProfilePictureSelect}
                     profilePicturePreview={profilePicturePreview}
+                    setValue={setValue}
                   />
                 </div>
               )}
@@ -473,7 +442,7 @@ const ApplyJob = () => {
                 </label>
                 <div
                   {...getRootProps({
-                    className: `bg-background-80 hover:bg-background-60 rounded-xl mt-4 p-4 text-center cursor-pointer 
+                    className: `bg-background-100 hover-outline rounded-xl mt-4 p-4 text-center cursor-pointer 
                       ${isDragActive ? 'border border-teal-500 bg-background-60' : ''} 
                       ${errors.resumeFile ? '!border !border-red-500' : ''}`,
                   })}
@@ -597,7 +566,7 @@ const ApplyJob = () => {
                       <p className='w-full'>{getValues("email")}</p>
                     ) : (
                       <div className='w-full'>
-                        <InputField extraClass={'custom-input'} type="text" placeholder="Enter your email" value={watch("email")} onChange={(e) => setValue("email", e.target.value)} />
+                        <InputField type="text" placeholder="Enter your email" value={watch("email")} onChange={(e) => setValue("email", e.target.value)} />
                       </div>
                     )}
                     <button type='button' onClick={() => setEditEmail(!editEmail)}>
@@ -626,12 +595,12 @@ const ApplyJob = () => {
                 <div className='mt-4'>
                   <div className="mb-4">
                     <label htmlFor="loginemail" className="block mb-2 font-bricolage">Email</label>
-                    <input type="email" id="loginemail" placeholder="Enter your email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full p-2 rounded-lg bg-black text-white focus:outline-teal-400" />
+                    <input type="email" id="loginemail" placeholder="Enter your email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full p-2 rounded-lg bg-black  focus:outline-teal-400" />
                   </div>
                   <div>
                     <label htmlFor="password" className="block mb-2 font-bricolage">Password</label>
                     <TogglePassword typeState={passwordType} setTypeState={setPasswordType}>
-                      <input type={passwordType} id="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter your password" className={(password && "tracking-widest") + " w-full focus:outline-teal-400 p-2 rounded-lg bg-black text-white"} />
+                      <input type={passwordType} id="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter your password" className={(password && "tracking-widest") + " w-full focus:outline-teal-400 p-2 rounded-lg bg-black "} />
                     </TogglePassword>
                   </div>
                   <div className='flex justify-end'>
@@ -663,7 +632,7 @@ const ApplyJob = () => {
             <div className='mt-2 '>
               <ForgotPassword role={"Candidate"} onBack={() => { setShowForgotPassword(false); }} isModal setIsLoading={setLoading} />
               <div onClick={() => setShowForgotPassword(false)} className='absolute -top-4 -right-4 cursor-pointer'>
-                <IconWrapper icon={X} hasBg customBgHover={"hover:bg-background-60"} />
+                <IconWrapper icon={X} hasBg customBgHover={"hover-outline"} />
               </div>
             </div>
           </Modal>

@@ -20,10 +20,10 @@ export const NumberInputField = React.forwardRef(({ label, value, onChange, unit
           ref={ref}
         />
         <div className='flex '>
-          <div className='typography-body text-font-gray flex items-center border-r-[1px] border-grey-70 pr-3'>
+          <div className='typography-body text-font-gray flex items-center border-r-[1px] border-background-50 pr-3'>
             {unit}
           </div>
-          <button type="button" onClick={handleDecrement} className="border-r-[1px] border-grey-70 text-gray-500">
+          <button type="button" onClick={handleDecrement} className="border-r-[1px] border-background-50 text-gray-500">
             <IconWrapper icon={Minus} inheritColor />
 
           </button>

@@ -1,21 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import { Outlet, useNavigate, NavLink, useLocation } from 'react-router-dom';
-import { candidateLogout } from '../api/authApi';
-import LightLogo from "../svg/Logo/lightLogo.svg"
+import LightLogo from "../svg/Logo/lightLogo.png"
 import useCandidateAuth from '../hooks/useCandidateAuth';
-import AssessmentBanner from '../components/ui/AssessmentBanner';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { logoutCandidateAuth } from '../redux/candidateAuthSlice';
 import { showErrorToast, showSuccessToast } from '../components/ui/Toast';
 import useScroll from '../hooks/useScroll';
 import { Avatar, IconButton, Menu, MenuItem } from '@mui/material';
 import StyledMenu from '../components/MUIUtilities/StyledMenu';
 import Modal from '../components/Modals/Modal';
-import ContactUs from '../components/Form/ContactUs';
 import IconWrapper from '../components/Cards/IconWrapper';
-import { Briefcase, BriefcaseBusiness, LogOut, User } from 'lucide-react';
-import { UNKNOWN_PROFILE_PICTURE_URL } from '../utility/config';
+import { Briefcase, BriefcaseBusiness, LogOut, Send, Settings, MenuIcon, User } from 'lucide-react';
 import Footer from '../components/Footer/Footer';
+import TelegramBannerIcon from "../svg/Banners/telegramBannerIcon.png"
+import { Button } from '../components/Buttons/Button';
+import ThemeToggle from '../components/ui/ThemeToggle';
+import { use } from 'react';
+import { useLogo, useTelegramBanner, useUnknownProfilePicture } from '../context/ThemeContext';
+
+const TELEGRAM_BOT_USERNAME = import.meta.env.VITE_TELEGRAM_BOT_USERNAME;
 
 const CandidateLayout = () => {
   const navigate = useNavigate();
@@ -44,6 +47,13 @@ const CandidateLayout = () => {
       setIsAssessmentBannerVisible(false);
     };
   }, []);
+
+  const handleConnectTelegram = async () => {
+        window.open(`https://t.me/${TELEGRAM_BOT_USERNAME}?start=${candidateData?._id}`, '_blank');
+  }
+
+  const UNKNOWN_PROFILE_PICTURE_URL = useUnknownProfilePicture();
+  const Logo = useLogo();
 
   const handleLogout = async () => {
     try {
@@ -75,14 +85,14 @@ const CandidateLayout = () => {
     {
       name: 'All Jobs',
       path: '/candidate/all-jobs',
-      icon: ()=><IconWrapper isInActiveIcon icon={Briefcase} />,
-      activeIcon: ()=><IconWrapper isActiveIcon icon={Briefcase} />,
+      icon: ()=><IconWrapper inheritColor icon={Briefcase} />,
+      activeIcon: ()=><IconWrapper inheritColor icon={Briefcase} />,
     },
     {
       name: 'My Jobs',
       path: '/candidate/my-jobs',
-      icon: ()=><IconWrapper isInActiveIcon icon={BriefcaseBusiness} />,
-      activeIcon: ()=><IconWrapper isActiveIcon icon={BriefcaseBusiness} />,
+      icon: ()=><IconWrapper inheritColor icon={BriefcaseBusiness} />,
+      activeIcon: ()=><IconWrapper inheritColor icon={BriefcaseBusiness} />,
     },
   ];
 
@@ -93,7 +103,7 @@ const CandidateLayout = () => {
         to={to}
         end={to === '/candidate/dashboard'}
         className={({ isActive, isPending }) =>
-          `w-full flex items-center min-h-11 gap-2 pl-2 py-2 rounded-xl hover:bg-background-60 ${isActive || isPending ? 'selection-primary  ' : ''}`
+          `w-full flex items-center min-h-11 gap-2 pl-2 py-2 rounded-xl hover-outline ${isActive || isPending ? 'selection-primary  ' : 'text-font-gray'}`
         }
         onClick={onClick}
       >
@@ -108,7 +118,7 @@ const CandidateLayout = () => {
         to={to}
         end={to === '/candidate/dashboard'}
         className={({ isActive, isPending }) =>
-          `absolute right-0 w-1 h-6 rounded-tl-xl rounded-bl-xl ${isActive || isPending ? 'bg-teal-400' : 'bg-transparent'
+          `absolute right-0 w-1 h-6 rounded-tl-xl rounded-bl-xl ${isActive || isPending ? 'bg-accent-100' : 'bg-transparent'
           }`
         }
       />
@@ -134,7 +144,7 @@ const CandidateLayout = () => {
         onClick: handleMenuClose,
         content: () => (
           <NavLink to={profilePath} className={({ isActive }) =>
-            `w-full flex items-center ${isActive ? "text-font-accent" : ""} hover:bg-background-60 hover:text-font-accent px-4 py-2 rounded-xl `}
+            `w-full flex items-center ${isActive ? "text-font-accent" : ""}  hover:text-font-accent px-4 py-2 rounded-xl `}
           >
             <IconWrapper inheritColor={true} size={0} customIconSize={5}  icon={User} />
             <span className='typography-large-p ml-2'>
@@ -146,7 +156,7 @@ const CandidateLayout = () => {
       {
         onClick: handleLogout,
         content: () => (
-          <div className='flex items-center hover:bg-background-60 hover:text-font-accent px-4 py-2 w-full rounded-xl'>
+          <div className='flex items-center  hover:text-font-accent px-4 py-2 w-full rounded-xl'>
             <IconWrapper inheritColor={true} size={0} customIconSize={5}  icon={LogOut} />
             <span className='typography-large-p ml-2'>
               Logout
@@ -158,13 +168,13 @@ const CandidateLayout = () => {
 
     return (
       <>
-        <div className={`flex items-center px-2 relative mx-4 py-1 justify-start hover:bg-background-60 rounded-xl ${location.pathname === profilePath ? "selection-primary" : " text-white "}`}>
+        <div className={`flex items-center px-2 relative mx-4 py-1 justify-start hover-outline rounded-xl ${location.pathname === profilePath ? "selection-primary" : " text-font-main "}`}>
           <IconButton onClick={handleMenuClick} className={`flex gap-2 `}>
             <Avatar alt={candidateData?.firstName} sx={{ width: "32px", height: "32px" }} src={candidateData?.profilePictureUrl || UNKNOWN_PROFILE_PICTURE_URL} />
-            <span className={`typography-body ${location.pathname === profilePath ? "text-font-accent" : "text-white"} `}>{candidateData?.firstName}</span>
+            <span className={`typography-body ${location.pathname === profilePath ? "text-font-accent" : "text-font-main"} `}>{candidateData?.firstName}</span>
           </IconButton>
           <div className={`absolute right-0 w-1 h-6 rounded-tl-xl rounded-bl-xl ${location.pathname === profilePath
-            ? "bg-teal-400" : "bg-transparent"}`} />
+            ? "bg-accent-100" : "bg-transparent"}`} />
         </div>
 
         <StyledMenu anchorEl={anchorEl} handleMenuClose={handleMenuClose} itemComponents={itemComponents} />
@@ -179,6 +189,7 @@ const CandidateLayout = () => {
   }
 
   const location = useLocation();
+  const TelegramBanner = useTelegramBanner()
 
   const darkBgPaths = ["/candidate/profile"]
 
@@ -186,19 +197,17 @@ const CandidateLayout = () => {
     <div className={`flex flex-col  ${darkBgPaths.some(path => location?.pathname.startsWith(path)) ? ' bg-background-100 ' :' bg-background-100 '} bg-cover bg-top h-full overflow-x-hidden `}>
       {/* Mobile Menu Button */}
       <div className={'min-h-[4rem] w-full md:hidden z-30 fixed ' + (darkBgPaths.includes(location.pathname) ? "bg-background-100" : "")}>
-        <div className='flex m-4 z-30'>
-          <img className='h-11 z-30' src={LightLogo} />
+        <div className='flex m-4 z-30 '>
+          <img className='h-11 z-30' src={Logo} />
         </div>
         <div
-          className="md:hidden absolute top-4 right-4 z-50 p-2 rounded-full shadow-lg"
+          className="md:hidden absolute top-4 right-4 z-50 p-2 rounded-full  "
           onClick={() => setIsMenuOpen(!isMenuOpen)}
         >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" />
-          </svg>
+          <IconWrapper icon={MenuIcon}  size={0} customIconSize={7} customStrokeWidth={5} />
         </div>
         <div
-          className="z-20 bg-gradient-to-b from-black-100 via-black-100 to-transparent w-full top-0 absolute"
+          className="z-20 bg-gradient-to-b from-background-100 via-background-100 to-transparent w-full top-0 absolute"
           style={{
             transition: 'all 0.1s ease-in',
             minHeight: scrollPosition > 30 ? '6rem' : '0rem', // Apply conditional minHeight
@@ -213,15 +222,16 @@ const CandidateLayout = () => {
           ${isMenuOpen ? 'translate-x-0' : '-translate-x-[110%] md:translate-x-0'}
           transition-transform duration-300 ease-in-out
           w-[16rem] h-[calc(100vh-2rem)] m-4 rounded-xl
-          bg-background-90 text-font-gray
+          bg-background-100 text-font-gray
           flex flex-col justify-between py-6
         `}
         style={{ position: 'fixed' }}
       >
         <div className="flex flex-col gap-6 typography-body ">
-          <div className='px-6 pt-2 pb-4  flex '>
+          <div className='px-6 pt-2 pb-4  flex justify-between'>
 
-            <img className='h-11 cursor-pointer ' onClick={() => navigate('/')} src={LightLogo} />
+            <img className='h-9 cursor-pointer ' onClick={() => navigate('/')} src={Logo} />
+          <ThemeToggle /> {/* Add ThemeToggle here */}
           </div>
           {menuItems.map((item) => (
             <NavItem
@@ -237,8 +247,28 @@ const CandidateLayout = () => {
         </div>
         <div >
           {candidateData &&
-
-            <ProfileComponent />
+            <>
+              {!candidateData?.isTelegramConnected && <div className='max-w-full mx-4 my-4 relative '>
+                <img src={TelegramBannerIcon} className='absolute max-w-[46px] -top-[24px] -right-[10px]' />
+                <img src={TelegramBanner} className='max-w-full ' />
+                <div className='absolute top-[6%] left-4 max-w-[90%]'>
+                  <h4 className=' text-font-main  font-semibold mb-1'>Connect Telegram</h4>
+                  <p className=' text-font-main typography-body mb-4'>Get instant job updates. <br/> Stay ahead always.</p>
+                  <Button  onClick={handleConnectTelegram} className='!px-4 w-full' variant='primary' icon={() => <IconWrapper size={0} inheritColor customIconSize={5} customStrokeWidth={5} icon={Send}/>}>Connect Now</Button>
+                </div>
+              </div>}
+              <div className='my-4'>
+                <NavItem               
+                key={'settings'}
+                to={'/candidate/settings'}
+                icon={()=><IconWrapper inheritColor icon={Settings} />}
+                activeIcon={()=><IconWrapper inheritColor icon={Settings}
+                />}>
+                Settings
+               </NavItem>
+              </div>
+              <ProfileComponent />
+            </>
           }
         </div>
       </div>
@@ -256,7 +286,7 @@ const CandidateLayout = () => {
       />
 
       {/* Main Content */}
-      <div className="mt-[4.6rem] md:mt-0 md:ml-[17rem] md:w-[calc(100vw-17rem)] flex flex-col items-center min-h-[calc(100vh-5rem)] ">
+      <div className="mt-[4.6rem] md:mt-0 md:ml-[17rem] md:w-[calc(100%-17rem)] flex flex-col items-center min-h-[calc(100vh-5rem)] ">
         <Outlet />
       </div>
 

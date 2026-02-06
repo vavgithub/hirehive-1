@@ -3,7 +3,7 @@ import { BookText, ChevronDown, ChevronUp, Timer, TimerIcon, Mic, MicOff, User, 
 import Webcam from 'react-webcam';
 import Assessment from './Assessment'; // Import your existing Assessment component
 import { Button } from '../../components/Buttons/Button';
-import Logo from '../../svg/Logo/lightLogo.svg'
+import Logo from '../../svg/Logo/lightLogo.png'
 import StyledCard from '../../components/Cards/StyledCard';
 import Modal from '../../components/Modals/Modal';
 import { AccordionItem } from '../../components/Accordion/AccordionItem';
@@ -117,7 +117,7 @@ const PreAssessment = () => {
     return (
         <Container hasBgColor="bg-background-100">
             <LogoWrapper />
-            <Header withBack={"true"} HeaderText="Value at Void design assessment" />
+            <Header withBack={"true"} HeaderText="Geode design assessment" />
             <StyledCard>
                 <h2 className="mb-4">Design Questionnaire</h2>
                 <p className="typography-body text-font-gray mb-8">
@@ -128,6 +128,7 @@ const PreAssessment = () => {
                     {/* Left Column */}
                     <div className="w-1/2">
                         <AccordionItem
+                            bgVariant='secondary'
                             title="Assessment Overview"
                             isOpen={isOverviewOpen}
                             toggleOpen={() => setIsOverviewOpen(!isOverviewOpen)}
@@ -143,6 +144,7 @@ const PreAssessment = () => {
                         />
 
                         <AccordionItem
+                            bgVariant='secondary'
                             title="Estimated 5 Minutes"
                             isOpen={isTimeOpen}
                             toggleOpen={() => setIsTimeOpen(!isTimeOpen)}
@@ -157,7 +159,7 @@ const PreAssessment = () => {
 
 
                         />
-                        <p className='typography-large-p mt-4 p-8 rounded-xl bg-background-80'>
+                        <p className='typography-large-p mt-4 p-8 rounded-xl bg-background-100'>
                             <span className='bg-blue-200 h-2 w-2 rounded-full inline-block mr-4' ></span>
                             For the best experience, use the latest version of <strong>Google Chrome</strong> for recording.
                         </p>
@@ -165,15 +167,15 @@ const PreAssessment = () => {
 
                     {/* Right Column */}
                     <div className="w-1/2">
-                        <StyledCard backgroundColor={"bg-background-80"} extraStyles=" flex flex-col">
+                        <StyledCard backgroundColor={"bg-background-100"} extraStyles=" flex flex-col">
                             <h3 className=" mb-6">Check your webcam</h3>
-                            <div className="relative aspect-video bg-black rounded-xl bg-background-80 flex overflow-hidden min-w-full">
+                            <div className="relative aspect-video bg-black rounded-xl bg-background-90 flex overflow-hidden min-w-full">
                                 {isCameraEnabled ? (
                                     <div className='flex justify-center items-center' >
                                         <Webcam audio={false} onUserMedia={handleCameraEnabled} onUserMediaError={handleCameraError} />
                                     </div>
                                 ) : (
-                                    <div className="absolute left-0 flex items-center justify-center h-full w-full bg-black-100 rounded-xl">
+                                    <div className="absolute left-0 flex items-center justify-center h-full w-full bg-background-70 rounded-xl">
                                         <div className='p-6 rounded-full bg-background-80'>
                                             <IconWrapper isInActiveIcon size={6} icon={User} />
                                         </div>
@@ -181,7 +183,7 @@ const PreAssessment = () => {
                                 )}
                                 <div className="absolute bottom-4 w-full flex justify-center space-x-4 z-10 ">
                                     <button
-                                        className={`p-3 h-fit rounded-xl bg-background-70  ${pingCamera && " animate-bounce-5 "} `}
+                                        className={`p-3 h-fit rounded-xl bg-background-50  ${pingCamera && " animate-bounce-5 "} `}
                                         onClick={toggleCamera}
                                     >
                                         {
@@ -190,7 +192,7 @@ const PreAssessment = () => {
 
                                     </button>
                                     <button
-                                        className={`p-3 h-fit rounded-xl bg-background-70   ${pingMic && " animate-bounce-5 "} `}
+                                        className={`p-3 h-fit rounded-xl bg-background-50   ${pingMic && " animate-bounce-5 "} `}
                                         onClick={toggleMic}
                                     >
                                         {
@@ -201,7 +203,7 @@ const PreAssessment = () => {
                             </div>
                         </StyledCard>
 
-                        <p className='typography-large-p mt-4 p-8 rounded-xl bg-background-80 flex gap-4 items-center'>
+                        <p className='typography-large-p mt-4 p-8 rounded-xl bg-background-100 flex gap-4 items-center'>
                             <TickCheckbox
                                 checked={isConsentChecked}
                                 onChange={(e) => setIsConsentChecked(e.target.checked)}
@@ -211,7 +213,7 @@ const PreAssessment = () => {
                         </p>
 
                         {!isMediaRecorderOk &&
-                            <p className='typography-large-p mt-4 p-4 rounded-xl bg-background-80'>
+                            <p className='typography-large-p mt-4 p-4 rounded-xl bg-background-100'>
                                 <span className='bg-red-40 h-2 w-2 rounded-full inline-block mr-4' ></span>
                                 Your system does not support recording. Try with alternative browsers.
                             </p>}
@@ -240,7 +242,7 @@ const PreAssessment = () => {
                         {candidateData?.pendingAssessments?.map(assessment =>
                         (<StyledCard
                             key={assessment?.jobId + assessment?.assessment_id?._id}
-                            backgroundColor={'bg-background-80 '}
+                            backgroundColor={'bg-background-100 '}
                             extraStyles={' flex justify-between items-center'}
                         >
                             <div>

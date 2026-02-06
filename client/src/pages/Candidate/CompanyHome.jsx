@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import Filters from '../../components/Filters/Filters'
 import { useQuery } from '@tanstack/react-query';
-import axios from '../../api/axios';
+import axios from '../../services/axios';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from '../../components/Buttons/Button';
-import Logo from '../../svg/Logo/lightLogo.svg'
+import Logo from '../../svg/Logo/lightLogo.png'
 import { clearAuthError, fetchCandidateAuthData } from '../../redux/candidateAuthSlice';
 import { useDispatch } from 'react-redux';
 import useCandidateAuth from '../../hooks/useCandidateAuth';
@@ -18,9 +18,8 @@ import Container from '../../components/Cards/Container';
 import IconWrapper from '../../components/Cards/IconWrapper';
 import { SlidersHorizontal } from 'lucide-react';
 import LogoWrapper from '../../components/Logo/LogoWrapper';
+import { fetchOpenJobs, filterSearchJobsCM } from '../../services/candidates.service';
 
-const fetchOpenJobs = (page,companyId) => axios.get(`/candidates/jobs/open?page=${page}&companyId=${companyId}`).then(res => res.data);
-const filterSearchJobs = (query,filters,page,companyId) => axios.post('/candidates/filterSearchJobs', { filters , page , query , companyId }).then(res => res.data);
 
 const CompanyHome = () => {
     const navigate = useNavigate();
@@ -80,7 +79,7 @@ const CompanyHome = () => {
 
     const { data: filteredData , isLoading: isFilteredJobsLoading} = useQuery({
         queryKey: ['filteredSearchJobs',debouncedQuery, filters,page],
-        queryFn: () => filterSearchJobs(debouncedQuery,filters,page,companyId),
+        queryFn: () => filterSearchJobsCM(debouncedQuery,filters,page,companyId),
         enabled: Object.values(filters).some(filter =>
             Array.isArray(filter) ? filter.length > 0 : Object.values(filter).some(val => val !== '') || debouncedQuery !== ''
         ),

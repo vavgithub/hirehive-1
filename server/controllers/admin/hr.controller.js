@@ -1,13 +1,19 @@
 import { jobStagesStatuses } from "../../config/jobStagesStatuses.js";
+import { undoConfig } from "../../config/undoConfig.js";
+import { Company } from "../../models/admin/company.model.js";
 import { jobs } from "../../models/admin/jobs.model.js";
 import { Task } from "../../models/admin/task.model.js";
 import { User } from "../../models/admin/user.model.js";
 import { candidates } from "../../models/candidate/candidate.model.js";
+import { decrypt } from "../../utils/crypto.js";
 import { getDesignTaskContent, getRejectionEmailContent } from "../../utils/emailTemplates.js";
 import { removeEmojis } from "../../utils/emojiRemover.js";
 import { updateDateWithTime } from "../../utils/formatter.js";
+import { cancelMeetEvent, createMeetEvent, getAuthorizedOauthClient, getCalendarClient, SCOPE_KEYS } from "../../utils/integrations/google.js";
+import { formattedMeetingDescription } from "../../utils/integrations/meetingDescription.js";
 import { sanitizeLexicalHtml } from "../../utils/sanitize-html.js";
 import { sendEmail } from "../../utils/sentEmail.js";
+import { sendUpdatesToTelegram } from "../candidate/bot.controller.js";
 
 const RATINGS = ['Good Fit', 'Not A Good Fit', 'May Be'];
 
@@ -105,6 +111,25 @@ export const rejectCandidate = async (req, res) => {
         });
       }
 
+        
+      const stageStatus = jobApplication.stageStatuses.get(currentStage)
+      //Writing Logs
+      if(stageStatus.status){
+        let existUpdated = false
+        for(let log of stageStatus.logs){
+          if(log.status === stageStatus.status){
+            log.date = new Date()
+            existUpdated = true
+          }
+        }
+        if(!existUpdated){
+          stageStatus.logs.push({
+            status : stageStatus.status,
+            date : new Date()
+          })
+        }
+      }
+
       // Save the updated candidate document
       await candidate.save();
 
@@ -129,8 +154,31 @@ export const rejectCandidate = async (req, res) => {
         });
       }
   
+      const stageStatus = jobApplication.stageStatuses.get(currentStage)
+      //Writing Logs
+      if(stageStatus.status === 'Rejected'){
+        let existUpdated = false
+        for(let log of stageStatus.logs){
+          if(log.status === stageStatus.status){
+            log.date = new Date()
+            existUpdated = true
+          }
+        }
+        if(!existUpdated){
+          stageStatus.logs.push({
+            status : stageStatus.status,
+            date : new Date()
+          })
+        }
+      }
+
       // Save the updated candidate document
       await candidate.save();
+
+      if(candidate.integrations?.telegram?.user_id && candidate.integrations?.telegram?.status === 'CONNECTED'){
+        const updateType = `${currentStage?.toUpperCase()}_REJECTED`;
+        sendUpdatesToTelegram(candidate,job,candidate.integrations?.telegram?.user_id,updateType)
+      }
       
     //Selective Email sending
     const canSendEmail = !!REJECTION_REASON.find(reasonObj =>(reasonObj?.reason === rejectionReason?.trim() && reasonObj?.email))
@@ -214,7 +262,25 @@ export const rejectMultipleCandidates = async (req, res) => {
             callHistory: [],
           });
         }
-  
+
+        const stageStatus = jobApplication.stageStatuses.get(currentStage)
+        //Writing Logs
+        if(stageStatus.status){
+          let existUpdated = false
+          for(let log of stageStatus.logs){
+            if(log.status === stageStatus.status){
+              log.date = new Date()
+              existUpdated = true
+            }
+          }
+          if(!existUpdated){
+            stageStatus.logs.push({
+              status : stageStatus.status,
+              date : new Date()
+            })
+          }
+        }
+
         // Save the updated candidate document
         await candidate.save();
 
@@ -239,9 +305,32 @@ export const rejectMultipleCandidates = async (req, res) => {
             callHistory: [],
           });
         }
+
+        const stageStatus = jobApplication.stageStatuses.get(currentStage)
+        //Writing Logs
+        if(stageStatus.status === 'Rejected'){
+          let existUpdated = false
+          for(let log of stageStatus.logs){
+            if(log.status === stageStatus.status){
+              log.date = new Date()
+              existUpdated = true
+            }
+          }
+          if(!existUpdated){
+            stageStatus.logs.push({
+              status : stageStatus.status,
+              date : new Date()
+            })
+          }
+        }
     
         // Save the updated candidate document
         await candidate.save();
+
+        if(candidate.integrations?.telegram?.user_id && candidate.integrations?.telegram?.status === 'CONNECTED'){
+          const updateType = `${currentStage?.toUpperCase()}_REJECTED`;
+          sendUpdatesToTelegram(candidate,job,candidate.integrations.telegram.user_id,updateType)
+        }
     
         //Selective Email sending
         const canSendEmail = !!REJECTION_REASON.find(reasonObj =>(reasonObj?.reason === eachCandidate?.rejectionReason?.trim() && reasonObj?.email))
@@ -331,7 +420,7 @@ export const noShow = async (req, res) => {
 
     // Store the current call info in call history before updating
     if (stageStatus.currentCall) {
-      stageStatus.callHistory.push({
+      stageStatus.callHistory.unshift({
         ...stageStatus.currentCall,
         status: 'No Show'
       });
@@ -340,6 +429,23 @@ export const noShow = async (req, res) => {
     // Update the status
     stageStatus.status = 'No Show';
     stageStatus.currentCall = null; // Clear current call data
+
+    //Writing Logs
+    if(stageStatus.status === 'No Show'){
+      let existUpdated = false
+      for(let log of stageStatus.logs){
+        if(log.status === stageStatus.status){
+          log.date = new Date()
+          existUpdated = true
+        }
+      }
+      if(!existUpdated){
+        stageStatus.logs.push({
+          status : stageStatus.status,
+          date : new Date()
+        })
+      }
+    }
 
     // Save the updated candidate document
     await candidate.save();
@@ -415,6 +521,24 @@ export const moveCandidate = async (req, res) => {
       // You might want to add an additional field to indicate the candidate is hired
       jobApplication.hired = true;
       jobApplication.hireDate = new Date();
+
+      const stageStatus = jobApplication.stageStatuses.get(currentStage)
+      //Writing Logs
+      if(stageStatus.status === 'Accepted'){
+        let existUpdated = false
+        for(let log of stageStatus.logs){
+          if(log.status === stageStatus.status){
+            log.date = new Date()
+            existUpdated = true
+          }
+        }
+        if(!existUpdated){
+          stageStatus.logs.push({
+            status : stageStatus.status,
+            date : new Date()
+          })
+        }
+      }
     } else {
       // Existing logic for moving to the next stage
       const nextStageConfig = stages[currentStageIndex + 1];
@@ -422,6 +546,24 @@ export const moveCandidate = async (req, res) => {
 
       // Update the current (previous) stage status to 'Cleared'
       jobApplication.stageStatuses.get(currentStage).status = "Cleared";
+
+      const stageStatus = jobApplication.stageStatuses.get(currentStage)
+      //Writing Logs
+      if(stageStatus.status === 'Cleared'){
+        let existUpdated = false
+        for(let log of stageStatus.logs){
+          if(log.status === stageStatus.status){
+            log.date = new Date()
+            existUpdated = true
+          }
+        }
+        if(!existUpdated){
+          stageStatus.logs.push({
+            status : stageStatus.status,
+            date : new Date()
+          })
+        }
+      }
 
       // Initialize or update the next stage
       // Check if the next stage is "Hired" stage
@@ -450,6 +592,11 @@ export const moveCandidate = async (req, res) => {
 
     // Save the updated candidate document
     await candidate.save();
+
+    if(candidate.integrations?.telegram?.user_id && candidate.integrations?.telegram?.status === 'CONNECTED'){
+      const updateType = `${currentStage?.toUpperCase()}_CLEARED`;
+      sendUpdatesToTelegram(candidate,job,candidate.integrations?.telegram?.user_id,updateType)
+    }
 
     res.status(200).json({
       message: isLastStage
@@ -529,6 +676,24 @@ export const moveMultipleCandidates = async (req, res) => {
           // You might want to add an additional field to indicate the candidate is hired
           jobApplication.hired = true;
           jobApplication.hireDate = new Date();
+
+          const stageStatus = jobApplication.stageStatuses.get(currentStage)
+          //Writing Logs
+          if(stageStatus.status === 'Accepted'){
+            let existUpdated = false
+            for(let log of stageStatus.logs){
+              if(log.status === stageStatus.status){
+                log.date = new Date()
+                existUpdated = true
+              }
+            }
+            if(!existUpdated){
+              stageStatus.logs.push({
+                status : stageStatus.status,
+                date : new Date()
+              })
+            }
+          }
         } else {
           // Existing logic for moving to the next stage
           const nextStageConfig = stages[currentStageIndex + 1];
@@ -536,6 +701,24 @@ export const moveMultipleCandidates = async (req, res) => {
     
           // Update the current (previous) stage status to 'Cleared'
           jobApplication.stageStatuses.get(eachCandidate.stage).status = "Cleared";
+       
+          const stageStatus = jobApplication.stageStatuses.get(eachCandidate.stage)
+          //Writing Logs
+          if(stageStatus.status === 'Cleared'){
+            let existUpdated = false
+            for(let log of stageStatus.logs){
+              if(log.status === stageStatus.status){
+                log.date = new Date()
+                existUpdated = true
+              }
+            }
+            if(!existUpdated){
+              stageStatus.logs.push({
+                status : stageStatus.status,
+                date : new Date()
+              })
+            }
+          }
     
           // Initialize or update the next stage
           // Check if the next stage is "Hired" stage
@@ -564,6 +747,11 @@ export const moveMultipleCandidates = async (req, res) => {
         
         // Save the updated candidate document
         await candidate.save();
+
+        if(candidate.integrations?.telegram?.user_id && candidate.integrations?.telegram?.status === 'CONNECTED'){
+          const updateType = `${eachCandidate.stage?.toUpperCase()}_CLEARED`;
+          sendUpdatesToTelegram(candidate,job,candidate.integrations?.telegram?.user_id,updateType)
+        }
     };
     
     res.status(200).json({message:"Selected candidates are moved to respective stages successfully."})
@@ -641,6 +829,22 @@ export const updateAssigneeForMultipleCandidates = async (req,res) => {
       // If this is the first stage and an assignee is added, update the current stage
       if (['Portfolio', 'Design Task'].includes(eachCandidate?.stage) && assigneeId && !jobApplication.currentStage) {
         jobApplication.currentStage = eachCandidate?.stage;
+      }
+
+      if(stageStatus.assignedTo){
+        let existUpdated = false
+        for(let log of stageStatus.logs){
+          if(log.status === stageStatus.status){
+            log.date = new Date()
+            existUpdated = true
+          }
+        }
+        if(!existUpdated){
+          stageStatus.logs.push({
+            status : stageStatus.status,
+            date : new Date()
+          })
+        }
       }
 
       // Save the changes
@@ -855,7 +1059,7 @@ export const scheduleScreening = async (req, res) => {
 export const scheduleCall = async (req, res) => {
   try {
     //Accept & store UTC dates only
-    const { candidateId, jobId, stage, date, time, assigneeId, meetingLink } =
+    const { candidateId, jobId, stage, date, time, assigneeId, meetingLink , automaticLink , addedInvitees } =
       req.body;
 
     const [candidate, job] = await Promise.all([
@@ -886,6 +1090,48 @@ export const scheduleCall = async (req, res) => {
     if (!validStages.includes(stage)) {
       return res.status(400).json({ message: "Invalid stage" });
     }
+
+    let autoGeneratedLink = null
+    let autoGeneratedEventId = null
+
+    if(automaticLink && !meetingLink){
+
+      let assigneeEmail = ''
+      if(assigneeId){
+        const assignee = await User.findById({_id: assigneeId})
+        assigneeEmail = assignee?.email ?? ''
+      }
+  
+      const userId = req.user._id
+      const user = await User.findById({_id : userId});
+      const company = await Company.findById({_id : user?.company_id});
+  
+      const eventDetails = {
+        summary: `${stage} - Interview with ${candidate?.firstName + ' ' + candidate?.lastName} (${job.jobProfile} - ${job.employmentType})`,
+        description: formattedMeetingDescription(company?.name,company?.about , company?.website , job.employeeLocation , job.employmentType , job.experienceFrom, job.jobDescription) ,
+        startDateTime: date, // already in ISO UTC
+        endDateTime: new Date(new Date(date).getTime() + 60 * 60 * 1000).toISOString(),
+        attendees: [candidate?.email, ...(assigneeEmail ? [assigneeEmail] : []),...(addedInvitees?.length ? addedInvitees : [])],
+        timeZone: 'UTC'
+      };
+  
+      //Automatic Google Meet Link Generation
+      if(user?.integrations?.google?.token && user.integrations?.google?.scopes?.includes(SCOPE_KEYS?.EDIT_EVENTS)){
+        const oauth2Client = await getAuthorizedOauthClient(decrypt(user.integrations.google.token))
+        const calendar = await getCalendarClient(oauth2Client);
+        const result = await createMeetEvent(calendar,eventDetails);
+        if(result){
+          autoGeneratedEventId = result.eventId
+          autoGeneratedLink = result.joinLink
+        }
+      }else{
+        return res.status(400).json({
+          error : true,
+          message : 'Please authorize Google Workspace to create meetings.' 
+        })
+      }
+    }
+
     // Update the stage status
     jobApplication.stageStatuses.set(stage, {
       status: "Call Scheduled",
@@ -893,14 +1139,40 @@ export const scheduleCall = async (req, res) => {
       currentCall: {
         scheduledDate: date,
         scheduledTime: time,
-        meetingLink: meetingLink,
+        meetingLink: autoGeneratedLink ?? meetingLink,
+        eventId : autoGeneratedEventId ?? null
       },
+      //Populating logs
+      ...(jobApplication.stageStatuses.get(stage)?.logs?.length > 0 ? {logs : jobApplication.stageStatuses.get(stage)?.logs} : {}),
       //Populating score to get the score given before calls (Budget)
     ...(jobApplication.stageStatuses.get(stage)?.score ? {score :  jobApplication.stageStatuses.get(stage)?.score} : {})
     });
 
+    const stageStatus = jobApplication.stageStatuses.get(stage)
+    //Writing Logs
+    if(stageStatus.currentCall.meetingLink){
+      let existUpdated = false
+      for(let log of stageStatus.logs){
+        if(log.status === stageStatus.status){
+          log.date = new Date()
+          existUpdated = true
+        }
+      }
+      if(!existUpdated){
+        stageStatus.logs.push({
+          status : stageStatus.status,
+          date : new Date()
+        })
+      }
+    }
+
     // Save the changes
     await candidate.save();
+
+    if(candidate.integrations?.telegram?.user_id && candidate.integrations?.telegram?.status === 'CONNECTED'){
+      const updateType = `${jobApplication.currentStage.toUpperCase()}_CALLSCHEDULED`;
+      sendUpdatesToTelegram(candidate,job,candidate.integrations?.telegram?.user_id,updateType,date)
+    }
 
     res.status(200).json({
       message: `${stage} call scheduled successfully`,
@@ -915,10 +1187,14 @@ export const scheduleCall = async (req, res) => {
 export const rescheduleCall = async (req, res) => {
   try {
     //Accept & store UTC dates only
-    const { candidateId, jobId, stage, date, time, assigneeId, meetingLink } =
+    const { candidateId, jobId, stage, date, time, assigneeId, meetingLink ,automaticLink , addedInvitees } =
       req.body;
 
-    const candidate = await candidates.findById(candidateId);
+    const [candidate, job] = await Promise.all([
+      candidates.findById(candidateId),
+      jobs.findById(jobId),
+    ]);
+
     if (!candidate) {
       return res.status(404).json({ message: "Candidate not found" });
     }
@@ -949,27 +1225,102 @@ export const rescheduleCall = async (req, res) => {
       };
     }
 
+      const userId = req.user._id
+      const user = await User.findById({_id : userId});
+      const company = await Company.findById({_id : user?.company_id});
+
     // Move current call to call history if it exists
     if (stageStatus.currentCall.toObject()) {
       if (!stageStatus.callHistory) {
         stageStatus.callHistory = [];
       }
-      stageStatus.callHistory.unshift({
-        ...stageStatus.currentCall,
-        status: "Rescheduled",
-      });
+
+      //Cancel previously scheduled call
+      if(stageStatus.currentCall?.eventId){
+        if(user?.integrations?.google?.token && user.integrations?.google?.scopes?.includes(SCOPE_KEYS?.EDIT_EVENTS)){
+          const oauth2Client = await getAuthorizedOauthClient(decrypt(user.integrations.google.token))
+          const calendar = await getCalendarClient(oauth2Client);
+          await cancelMeetEvent(calendar,stageStatus.currentCall?.eventId);
+        }
+      }
+
+      if(stageStatus.status !== 'No Show'){
+        stageStatus.callHistory.unshift({
+          ...stageStatus.currentCall,
+          status: "Rescheduled",
+        });
+      }
     } else {
       console.log("No current call to move to history");
     }
+
+    
+    let autoGeneratedLink = null
+    let autoGeneratedEventId = null
+
+    if(automaticLink && !meetingLink){
+
+      let assigneeEmail = ''
+      if(assigneeId){
+        const assignee = await User.findById({_id: assigneeId})
+        assigneeEmail = assignee?.email ?? ''
+      }
+  
+      const eventDetails = {
+        summary: `${stage} - Interview with ${candidate?.firstName + ' ' + candidate?.lastName} (${job.jobProfile} - ${job.employmentType})`,
+        description: formattedMeetingDescription(company?.name,company?.about , company?.website , job.employeeLocation , job.employmentType , job.experienceFrom, job.jobDescription) ,
+        startDateTime: date, // already in ISO UTC
+        endDateTime: new Date(new Date(date).getTime() + 60 * 60 * 1000).toISOString(),
+        attendees: [candidate?.email, ...(assigneeEmail ? [assigneeEmail] : []),...(addedInvitees?.length ? addedInvitees : [])],
+        timeZone: 'UTC'
+      };
+      
+  
+      //Automatic Google Meet Link Generation
+      if(user?.integrations?.google?.token && user.integrations?.google?.scopes?.includes(SCOPE_KEYS?.EDIT_EVENTS)){
+        const oauth2Client = await getAuthorizedOauthClient(decrypt(user.integrations.google.token))
+        const calendar = await getCalendarClient(oauth2Client);
+        const result = await createMeetEvent(calendar,eventDetails);
+        if(result){
+          autoGeneratedEventId = result.eventId
+          autoGeneratedLink = result.joinLink
+        }
+      }else{
+        return res.status(400).json({
+          error : true,
+          message : 'Please authorize Google Workspace to create meetings.' 
+        })
+      }
+    }
+
 
     // Update current call with new details
     stageStatus.currentCall = {
       scheduledDate: date,
       scheduledTime: time,
-      meetingLink: meetingLink,
+      meetingLink: autoGeneratedLink ?? meetingLink,
+      eventId : autoGeneratedEventId ?? null
     };
     stageStatus.assignedTo = assigneeId;
     stageStatus.status = "Call Scheduled";
+
+    
+    //Writing Logs
+    if(stageStatus.currentCall.meetingLink){
+      let existUpdated = false
+      for(let log of stageStatus.logs){
+        if(log.status === stageStatus.status){
+          log.date = new Date()
+          existUpdated = true
+        }
+      }
+      if(!existUpdated){
+        stageStatus.logs.push({
+          status : stageStatus.status,
+          date : new Date()
+        })
+      }
+    }
 
     // Update the stage status in the stageStatuses Map
     jobApplication.stageStatuses.set(stage, stageStatus);
@@ -978,6 +1329,12 @@ export const rescheduleCall = async (req, res) => {
     candidate.markModified("jobApplications");
 
     await candidate.save();
+
+    
+    if(candidate.integrations?.telegram?.user_id && candidate.integrations?.telegram?.status === 'CONNECTED'){
+      const updateType = `${jobApplication.currentStage.toUpperCase()}_CALL_RESCHEDULED`;
+      sendUpdatesToTelegram(candidate,job,candidate.integrations?.telegram?.user_id,updateType,date)
+    }
 
     const updatedCandidate = await candidates.findById(candidateId);
     const updatedJobApplication = updatedCandidate.jobApplications.find(
@@ -1104,6 +1461,23 @@ export const submitBudgetScore = async (req, res) => {
     // Add or update the Budget score
     stageStatus.score.Budget = score;
 
+    //Writing Logs
+    if(stageStatus.score.Budget){
+      let existUpdated = false
+      for(let log of stageStatus.logs){
+        if(log.status === stageStatus.status){
+          log.date = new Date()
+          existUpdated = true
+        }
+      }
+      if(!existUpdated){
+        stageStatus.logs.push({
+          status : stageStatus.status,
+          date : new Date()
+        })
+      }
+    }
+
     // Mark the nested fields as modified
     candidate.markModified(`jobApplications`);
 
@@ -1166,9 +1540,25 @@ export const sendDesignTask = async (req, res) => {
           scheduledTime: dueTime,
           meetingLink: "", // You can leave this empty or use it for a submission link if needed
         },
+        logs : jobApplication.stageStatuses.get('Design Task').logs ?? [] ,
         taskDescription: sanitizedDescription,
         scheduledDate : scheduledDate
       });
+
+      //write Logs
+      const logs = jobApplication.stageStatuses.get('Design Task').logs ?? [];
+      let hasUpdated = false;
+      if(logs?.length > 0){
+        for(let log of logs){
+          if(log.status === 'Pending'){
+            log.date = new Date()
+            hasUpdated = true
+          }
+        }
+      }
+      if(!hasUpdated){
+        logs.push({status: "Pending", date : new Date()})
+      }
 
       await candidate.save();
 
@@ -1178,6 +1568,20 @@ export const sendDesignTask = async (req, res) => {
       });
     }else{
 
+      //write Logs
+      const logs = jobApplication.stageStatuses.get('Design Task').logs ?? [];
+      let hasUpdated = false;
+      if(logs?.length > 0){
+        for(let log of logs){
+          if(log.status === 'Sent'){
+            log.date = new Date()
+            hasUpdated = true
+          }
+        }
+      }
+      if(!hasUpdated){
+        logs.push({status: "Sent", date : new Date()})
+      }
       // Update the Design Task stage status
       jobApplication.stageStatuses.set("Design Task", {
         status: "Sent",
@@ -1186,6 +1590,7 @@ export const sendDesignTask = async (req, res) => {
           scheduledTime: dueTime,
           meetingLink: "", // You can leave this empty or use it for a submission link if needed
         },
+        logs : logs,
         taskDescription: sanitizedDescription,
       });
   
@@ -1196,6 +1601,12 @@ export const sendDesignTask = async (req, res) => {
       await sendEmail(candidateEmail, emailSubject, emailContent,"Design Task");
   
       await candidate.save();
+
+      
+      if(candidate.integrations?.telegram?.user_id && candidate.integrations?.telegram?.status === 'CONNECTED'){
+        const updateType = `${jobApplication.currentStage.toUpperCase()}_SENT`;
+        sendUpdatesToTelegram(candidate,jobApplication,candidate.integrations?.telegram?.user_id,updateType,dueDate)
+      }
   
       res.status(200).json({
         message: "Design task sent successfully",
@@ -1233,6 +1644,23 @@ export const scoreRoundTwo = async (req, res) => {
     roundTwoStatus.status = "Reviewed";
     roundTwoStatus.score = score;
     roundTwoStatus.feedback = feedback;
+    
+        //Writing Logs
+    if(roundTwoStatus.status === 'Reviewed'){
+      let existUpdated = false
+      for(let log of roundTwoStatus.logs){
+        if(log.status === roundTwoStatus.status){
+          log.date = new Date()
+          existUpdated = true
+        }
+      }
+      if(!existUpdated){
+        roundTwoStatus.logs.push({
+          status : roundTwoStatus.status,
+          date : new Date()
+        })
+      }
+    }
 
     jobApplication.stageStatuses.set("Round 2", roundTwoStatus);
 
@@ -1300,17 +1728,215 @@ export const changeApplicationStatus = async (req, res) => {
   }
 };
 
+export const saveTaskTemplates = async ( req, res) => {
+  try {
+    const { title, level, jobProfile, htmlString } = req.body;
+
+    if(!title || !level || !jobProfile || !htmlString){
+      return res.status(400).json({
+        error : true,
+        message : 'Please provide title, job level, job profile and task description.'
+      })
+    }
+    const sanitizedString = sanitizeLexicalHtml(htmlString);
+
+    const existingTasks = await Task.find({
+      title : { $regex: title, $options: "i" },
+      company_id : req.user.company_id,
+      category : jobProfile
+    })
+
+    if(existingTasks?.length > 0){
+      return res.status(400).json({
+        error : true,
+        message : 'This task title already exists.'
+      })
+    }
+
+    const newTask = await Task.create({
+      title,
+      level,
+      category : jobProfile,
+      htmlString : sanitizedString,
+      company_id : req.user?.company_id ?? null
+    })
+
+
+    res.status(200).json({
+      success : true,
+      data : newTask,
+      message: "Task template created Successfully.",
+    });
+  } catch (error) {
+    console.error("Error updating status:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+}
+
 export const getTaskTemplates = async ( req, res) => {
   try {
     const { jobProfile } = req.body;
-    const savedTemplates = await Task.find({category : jobProfile});
+    const savedTemplates = await Task.find({category : jobProfile, company_id : null});
+
+    const companySavedTemplates = await Task.find({category : jobProfile , company_id : req.user?.company_id});
+
     res.status(200).json({
       success : true,
-      data : savedTemplates,
+      data : [...savedTemplates, ...companySavedTemplates],
       message: "Task templates fetched Successfully.",
     });
   } catch (error) {
     console.error("Error updating status:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+}
+
+export const undoAction = async (req,res) => {
+  try {
+    const { candidateId, jobId } = req.body;
+
+    if (!candidateId || !jobId ) {
+      return res.status(400).json({ message: "Invalid Input Data" });
+    }
+
+    // Find the candidate
+    const candidate = await candidates.findOne({
+      _id: candidateId,
+      "jobApplications.jobId": jobId,
+    });
+
+    if (!candidate) {
+      return res.status(404).json({ message: "Candidate not found" });
+    }
+
+    // Locate the relevant job application
+    const jobApplication = candidate.jobApplications.find(
+      (app) => app.jobId.toString() === jobId
+    );
+
+    if (!jobApplication) {
+      return res.status(404).json({ message: "Job application not found" });
+    }
+
+    const currentStage = jobApplication.currentStage;
+    if (!jobApplication.stageStatuses.has(currentStage)) {
+      return res.status(400).json({ message: "Current stage not found" });
+    }
+
+    function setNestedValue(obj, path, value) {
+      if (!path.includes('.')) {
+        obj[path] = value;
+        return;
+      }
+      const keys = path.split('.');
+      let current = obj;
+      for (let i = 0; i < keys.length - 1; i++) {
+        const key = keys[i];
+        if (typeof current[key] !== 'object' || current[key] === null) {
+          current[key] = {};
+        }
+        current = current[key];
+      }
+      current[keys.at(-1)] = value;
+    }
+
+
+    // Update the status in the Map
+    const stageStatus = jobApplication.stageStatuses.get(currentStage);
+    const currentStatus = stageStatus.status;
+    const currentConfig = undoConfig[currentStage][currentStatus];
+    const timeout = 5;
+
+    if(stageStatus?.logs?.length > 0){
+      const sortedLogs = stageStatus.logs.sort((a,b) => new Date(b.date) - new Date(a.date))
+      const currentDate = new Date();
+      const logDate = new Date(sortedLogs[0].date);
+
+      const timeDifferenceInMs = Math.abs(currentDate - logDate); // in milliseconds
+      const timeDifferenceInMinutes = timeDifferenceInMs / (1000 * 60);
+      
+      const isScheduled = stageStatus.scheduledDate;
+
+      if (timeDifferenceInMinutes > timeout && !stageStatus.scheduledDate) {
+        return res.status(400).json({
+            error : true , 
+            message : "This action crossed 5 minutes and can't be undone."
+        })
+      }
+
+      if(currentConfig){
+          if(currentConfig?.revert?.length > 0 && !currentConfig.condition?.includes('check_rejection_scheduled')){
+            if(currentConfig.condition?.includes('remove_except_budget')){
+                currentConfig.revert.forEach(option => {
+                  if(option.field !== 'score'){
+                    setNestedValue(stageStatus, option.field, option.value);
+                  }
+                });
+                stageStatus.score = {Budget : stageStatus.score.Budget}
+            }else{
+              currentConfig.revert.forEach(option => {
+                setNestedValue(stageStatus, option.field, option.value);
+              });
+            }
+          }
+          let isRejectionScheduled = false
+          if(currentConfig.condition?.includes('check_rejection_scheduled')){
+              if(stageStatus?.scheduledDate && stageStatus?.rejectionReason){
+                stageStatus.scheduledDate = null
+                stageStatus.rejectionReason = 'N/A'
+                isRejectionScheduled = true
+              }else if(currentConfig?.revert?.length > 0){
+                if(currentConfig.condition?.includes('remove_except_budget')){
+                    currentConfig.revert.forEach(option => {
+                      if(option.field !== 'score'){
+                        setNestedValue(stageStatus, option.field, option.value);
+                      }
+                    });
+                    stageStatus.score = {Budget : stageStatus.score.Budget}
+                }else{
+                  currentConfig.revert.forEach(option => {
+                    setNestedValue(stageStatus, option.field, option.value);
+                  });
+                }
+              }else{
+                return res.status(400).json({
+                  error : true , 
+                  message : 'This action cannot be undone.'
+                })
+              }
+          }else if(!currentConfig.revertTo){
+              return res.status(400).json({
+                error : true , 
+                message : 'This action cannot be undone.'
+              })
+            }
+          
+          if(!isScheduled || (isScheduled && currentStage === 'Hired')){
+            //Removing current log
+            stageStatus.logs = stageStatus.logs.filter(log => log.status !== (sortedLogs[0]?.status ?? stageStatus.status))
+          }
+
+          if(currentConfig?.revertTo && stageStatus.status !== currentConfig.revertTo && !isRejectionScheduled){
+            //Reverting to previous status
+            stageStatus.status = sortedLogs[1]?.status ?? currentConfig.revertTo
+          }
+        }
+    }else{
+      return res.status(400).json({
+        error : true , 
+        message : 'This action cannot be undone.'
+      })
+    }
+
+    candidate.markModified('jobApplications')
+    await candidate.save();
+
+    res.status(200).json({
+      success : true ,
+      message : 'Action reverted successfully'
+    })
+  } catch (error) {
+    console.error("Error in undo action:", error);
     res.status(500).json({ message: "Server error", error: error.message });
   }
 }

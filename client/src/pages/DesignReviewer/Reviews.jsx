@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import axios from '../../api/axios';
+import axios from '../../services/axios';
 import Header from '../../components/utility/Header';
 import StatsGrid from '../../components/ui/StatsGrid';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -19,39 +19,21 @@ import { Briefcase, Folder, FolderOpen, MonitorDot, PenTool, Users } from 'lucid
 import ReviewsFilter from '../../components/Filters/ReviewsFilter'; // Import the new filter
 import { getRoute, ROUTE_KEY } from '../../config/permissions.config';
 import { useAuthContext } from '../../context/AuthProvider';
+import { fetchAssignedCandidates, fetchUnderReviewStats, submitReview } from '../../services/dr.service';
 
 const statsOne = [
-  { title: 'Total', value: 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={Users} /> },
-  { title: 'Portfolio', value: 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={Folder} /> },
-  { title: 'Screening', value: 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={MonitorDot} /> },
-  { title: 'Design Task', value: 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={PenTool} /> },
-  { title: 'Round 1', value: 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={Briefcase} /> },
-  { title: 'Round 2', value: 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={Briefcase} /> },
-  { title: 'Offer Sent', value: 0, icon: () => <IconWrapper size={10} isInActiveIcon icon={PenTool} /> },
+  { title: 'Total', value: 0, icon: () => <IconWrapper size={10} isTeritiaryIcon icon={Users} /> },
+  { title: 'Portfolio', value: 0, icon: () => <IconWrapper size={10} isTeritiaryIcon icon={Folder} /> },
+  { title: 'Screening', value: 0, icon: () => <IconWrapper size={10} isTeritiaryIcon icon={MonitorDot} /> },
+  { title: 'Design Task', value: 0, icon: () => <IconWrapper size={10} isTeritiaryIcon icon={PenTool} /> },
+  { title: 'Round 1', value: 0, icon: () => <IconWrapper size={10} isTeritiaryIcon icon={Briefcase} /> },
+  { title: 'Round 2', value: 0, icon: () => <IconWrapper size={10} isTeritiaryIcon icon={Briefcase} /> },
+  { title: 'Offer Sent', value: 0, icon: () => <IconWrapper size={10} isTeritiaryIcon icon={PenTool} /> },
 ]
 
 const Round1Review = (props) => <RoundReview roundNumber={1} {...props} />;
 const Round2Review = (props) => <RoundReview roundNumber={2} {...props} />;
 
-// API functions
-const fetchCandidates = async () => {
-  const response = await axios.get('dr/assigned-candidates');
-  return response.data;
-};
-
-// API function to fetch stats
-const fetchUnderReviewStats = async () => {
-  const response = await axios.get('dr/under-review-stats');
-  return response.data.stats;
-};
-
-const submitReview = async ({ candidateId, reviewData }) => {
-  const response = await axios.post('dr/submit-score-review', {
-    candidateId,
-    ...reviewData,
-  });
-  return response.data;
-};
 
 const Reviews = () => {
   const queryClient = useQueryClient();
@@ -70,15 +52,15 @@ const Reviews = () => {
   // Fetch candidates
   const { data: candidates, isLoading, isError, error } = useQuery({
     queryKey: ['assignedCandidates'],
-    queryFn: fetchCandidates,
-    refetchOnWindowFocus: false
+    queryFn: fetchAssignedCandidates,
+    refetchOnWindowFocus: true
   });
 
   // Fetch stats
   const { data: statsData, isLoading: isStatsLoading, isError: isStatsError, error: statsError } = useQuery({
     queryKey: ['underReviewStats'],
     queryFn: fetchUnderReviewStats,
-    refetchOnWindowFocus: false
+    refetchOnWindowFocus: true
   });
 
   const groupCandidatesByJobAndStage = (candidates) => {
@@ -247,7 +229,7 @@ const Reviews = () => {
     navigate(`${getRoute(user?.role,ROUTE_KEY.REVIEWS_VIEW_CANDIDATE)}/${candidate._id}/${candidate.currentApplication.jobId}`);
   }
 
-  const groupedEntries = filteredCandidates?.length > 0 ? Object.entries(groupedCandidates) : [];
+  const groupedEntries = candidates?.length === 0 ? [] : filteredCandidates?.length > 0 ? Object.entries(groupedCandidates) : [];
 
   return (
     <Container>
@@ -282,7 +264,7 @@ const Reviews = () => {
                   <div key={stage} >
                     <h3 className="mb-4">{stage}</h3>
                     {stages[stage].map(candidate => (
-                      <div key={`${candidate._id}-${candidate.currentApplication.jobId}`} className="mb-4 flex flex-col bg-background-80 rounded-xl">
+                      <div key={`${candidate._id}-${candidate.currentApplication.jobId}`} className="mb-4 flex flex-col bg-background-100 rounded-xl">
                         <div className='flex items-center p-4 justify-between cursor-pointer' onClick={() => handleNavigate(candidate)}>
                           <div className='flex items-center gap-4 p-4'>
                             <Avatar alt={candidate?.firstName} src={candidate.profilePictureUrl} />
@@ -296,7 +278,7 @@ const Reviews = () => {
                             </a>
                           </div>
 
-                          <div className="bg-background-70 p-2 px-4 typography-body rounded-xl">
+                          <div className="bg-background-80 p-2 px-4 typography-body rounded-xl">
                             {candidate.currentApplication.jobProfile}
                           </div>
                         </div>

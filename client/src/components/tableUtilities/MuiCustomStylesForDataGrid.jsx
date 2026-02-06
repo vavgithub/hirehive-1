@@ -5,9 +5,9 @@ function MuiCustomStylesForDataGrid() {
         <style>
             {`
                  /* ——— Make header and footer red ——— */
-      .MuiDataGrid-root .MuiDataGrid-columnHeaders {
-        background-color: red !important;
-       }
+            .MuiDataGrid-root .MuiDataGrid-columnHeaders {
+                background-color: var(--color-background-70) !important;
+            }
             .MuiDataGrid-root .MuiDataGrid-columnHeader:focus,
             .MuiDataGrid-root .MuiDataGrid-cell:focus {
                 outline: none !important;                      
@@ -53,14 +53,14 @@ function MuiCustomStylesForDataGrid() {
                 margin-left: auto;
             }
             .Mui-selected .name-cell p{
-                color:rgb(24, 233, 208);
+                color:var(--color-font-accent-100);
             }
             .name-cell:hover  p{
                 width:20%;
                 white-space:nowrap;
                 overflow:hidden !important;
                 text-overflow:ellipsis !important;
-                color:rgb(24, 233, 208);
+                color:var(--color-font-accent-100);
             }
             .name-cell:hover .hover-icons {
                 width:80%;

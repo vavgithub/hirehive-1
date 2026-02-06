@@ -4,7 +4,7 @@ import { showErrorToast, showSuccessToast } from '../ui/Toast';
 import { useMutation } from '@tanstack/react-query';
 import LoaderModal from '../Loaders/LoaderModal';
 import { useOnboardingContext } from '../../context/OnboardingProvider';
-import axios from '../../api/axios';
+import axios from '../../services/axios';
 import { steps } from '../../pages/Admin/Register';
 import Modal from '../Modals/Modal';
 import { ACTION_TYPES } from '../../utility/ActionTypes';
@@ -12,9 +12,11 @@ import StyledCard from '../Cards/StyledCard';
 import { Button } from '../Buttons/Button';
 import { validateProfileImages } from '../../utility/validationRules';
 import { InputField } from '../Inputs/InputField';
-import { UNKNOWN_PROFILE_PICTURE_URL } from '../../utility/config';
 import { useNavigate } from 'react-router-dom';
 import GlobalDropDown from '../Dropdowns/GlobalDropDown';
+import { saveCompanyDetails, sendJoinRequest } from '../../services/auth.service';
+import { LocationInputField } from '../Inputs/LocationInputField';
+import { useUnknownProfilePicture } from '../../context/ThemeContext';
 
 export const LocationOptions = [
   { value: 'afghanistan', label: 'Afghanistan' },
@@ -105,21 +107,14 @@ export const industryTypeOptions = [
   { value: 'agriculture', label: 'Agriculture & Farming' }
 ]
 
-const saveCompanyDetails = async (formData) => {
-    const response = await axios.post('/auth/register/complete-hiring-manager',formData);
-    return response.data
-}
-
-const sendJoinRequest = async ({email,companyId}) => {
-  const response = await axios.post('/auth/register/send-join-request',{email, companyId });
-  return response.data
-}
-
 function CompanyDetails({currentStep,setCurrentStep}) {
     const [companyName,setCompanyName] = useState('');
     const [companySize,setCompanySize] = useState('');
     const [location,setLocation] = useState('');
     const [industry,setIndustry] = useState('');
+
+    const [locationId,setLocationId] = useState('');
+    const [sessionId,setSessionId] = useState('');
 
     const [companyNameError,setCompanyNameError] = useState('');
     const [companySizeError,setCompanySizeError] = useState('');
@@ -137,6 +132,7 @@ function CompanyDetails({currentStep,setCurrentStep}) {
     const isFirstRender = useRef(true);
 
     const navigate = useNavigate();
+    const UNKNOWN_PROFILE_PICTURE_URL = useUnknownProfilePicture()
 
     const handleFileSelect = (event) => {
       const file = event.target.files[0];
@@ -246,6 +242,8 @@ function CompanyDetails({currentStep,setCurrentStep}) {
           companyName,
           companySize,
           location,
+          locationId,
+          sessionId,
           industry,
         }))
         formData.append("email",onboardData.email);
@@ -284,8 +282,8 @@ function CompanyDetails({currentStep,setCurrentStep}) {
                   <label className="typography-body font-bricolage font-semibold">Company Logo</label> 
                   <StyledCard 
                     padding={2}
-                    backgroundColor={"bg-background-80"}
-                    extraStyles=" hover:bg-background-60 cursor-pointer  mt-2 flex flex-col items-center justify-center"
+                    backgroundColor={"bg-background-100"}
+                    extraStyles=" hover-outline cursor-pointer  mt-2 flex flex-col items-center justify-center"
                     onClick={() => fileInputRef.current?.click()}
                   >
                       <div className='flex justify-start w-full gap-4'>
@@ -334,7 +332,7 @@ function CompanyDetails({currentStep,setCurrentStep}) {
                 onChange={setCompanySize}
                 options={companySizeOptions}
                 />
-                <GlobalDropDown
+                {/* <GlobalDropDown
                 label="Location" 
                 required
                 extraStylesForLabel="font-bricolage font-medium"
@@ -343,6 +341,18 @@ function CompanyDetails({currentStep,setCurrentStep}) {
                 onChange={setLocation}
                 options={LocationOptions}
                 searchEnabled
+                /> */}
+                <LocationInputField   
+                  type="text"
+                  id="location"
+                  label="Company Location"
+                  labelStyles="text-font-gray"
+                  value={location ?? ""}
+                  onChange={(e) => setLocation(e.target.value)}
+                  setLocationId={(id) => setLocationId(id)}
+                  setSessionId={(id) => setSessionId(id)}
+                  error={locationError}
+                  errorMessage={locationError}
                 />
                 <GlobalDropDown
                 label="Industry" 

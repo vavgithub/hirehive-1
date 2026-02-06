@@ -12,7 +12,7 @@ import {
   Box,
   Autocomplete,
 } from '@mui/material';
-import { fetchAllDesignReviewers, fetchAvailableDesignReviewers } from '../../api/authApi';
+import { fetchAllDesignReviewers, fetchAvailableDesignReviewers } from '../../services/auth.service';
 import { useQuery } from '@tanstack/react-query';
 import IconWrapper from '../Cards/IconWrapper';
 import { Search, UserRoundPlus } from 'lucide-react';
@@ -104,13 +104,13 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
   if (mode === 'icon') {
     return (
       <>
-        <IconButton sx={{padding : "0 0.5rem"}} onClick={handleClick} size="small" disabled={disabled}>
+        <IconButton sx={{margin: "0 0.5rem ",padding : "0 0 0 0"}} onClick={handleClick} size="small" disabled={disabled}>
           {selectedReviewer ? (
             <Avatar src={selectedReviewer.profilePicture} sx={{ width: 32, height: 32 }}>
               {selectedReviewer.firstName[0].toUpperCase()}
             </Avatar>
           ) : (
-            <div className={'rounded-full bg-background-70 ' + (!disabled && 'hover:bg-background-60')}>
+            <div className={'rounded-full bg-background-70 ' + (!disabled && 'hover-outline')}>
               <IconWrapper icon={UserRoundPlus} customIconSize={2}  size={3} />
             </div>
           )}
@@ -163,7 +163,7 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
                 //   </InputAdornment>
                 // ),
                 style : {
-                  color : "white",
+                  color : "var(--color-font-main)",
                   height : "2.75rem",
                   borderRadius : "0.75rem",
                 }
@@ -263,7 +263,7 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
                 //   </InputAdornment>
                 // ),
                 style : {
-                  color : "white",
+                  color : "var(--color-font-main)",
                   height : "2.75rem",
                   borderRadius : "0.75rem",
                 }
@@ -325,12 +325,16 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
           No reviewers found
         </MenuItem>
       }
-     
       renderInput={(params) => (
         <TextField
           {...params}
           placeholder='Select Reviewer'
           variant="outlined" // Keep the variant as 'outlined' if you prefer
+          sx={{
+              '& .MuiOutlinedInput-input' : {
+                  backgroundColor : 'var(--color-background-80) !important',
+              },
+          }}
           InputLabelProps={{
             shrink: false, // Prevent the label from shrinking
             style: { display: 'none' }, // Hide the label visually
@@ -359,7 +363,7 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
           key={option._id}
           selected={option?._id === selectedReviewer?._id}
           sx={{
-            color: 'white',           // Set the text color of each option
+            color: 'var(--color-font-main)',           // Set the text color of each option
             margin : "0.25rem 0px",
           }}
         >

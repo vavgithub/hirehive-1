@@ -8,7 +8,7 @@ function AutoAssignWithBudget({ handleBudgetButtonClick, budgetFilter, autoAssig
         <div className='flex gap-4'>
             <div className={`${budgetFilter.from || budgetFilter.to ? "" : "hidden"}`}>
                 <Button
-                    icon={() => <IconWrapper icon={FolderSync} size={0} customIconSize={5} customStrokeWidth={5} />}
+                    icon={() => <IconWrapper inheritColor icon={FolderSync} size={0} customIconSize={5} customStrokeWidth={5} />}
 
                     variant="primary"
                     onClick={() => setIsAutoAssignModalOpen(true)}
@@ -21,7 +21,7 @@ function AutoAssignWithBudget({ handleBudgetButtonClick, budgetFilter, autoAssig
 
                 <Button
                     variant={budgetFilter.from || budgetFilter.to ? "iconSec" : "primary"}
-                    icon={() => <IconWrapper icon={Banknote} size={0} customIconSize={5} customStrokeWidth={5} />}
+                    icon={() => <IconWrapper inheritColor icon={Banknote} size={0} customIconSize={5} customStrokeWidth={5} />}
                     onClick={handleBudgetButtonClick}
                 >
                     {budgetFilter.from || budgetFilter.to ? '' : 'Screen With Budget'}

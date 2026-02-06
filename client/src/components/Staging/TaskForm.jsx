@@ -4,8 +4,8 @@ import Timepicker from '../MUIUtilities/Timepicker';
 import { Button } from '../Buttons/Button';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { updateStageStatus } from '../../redux/applicationStageSlice';
-import { useDispatch } from 'react-redux';
-import axios from '../../api/axios';
+import { useDispatch, useSelector } from 'react-redux';
+import axios from '../../services/axios';
 import { formatTime } from '../../utility/formatTime';
 import TextEditor from '../utility/TextEditor';
 import SchedulerButton from '../ui/SchedulerButton';
@@ -15,6 +15,10 @@ import StyledCard from '../Cards/StyledCard';
 import Modal from '../Modals/Modal';
 import IconWrapper from '../Cards/IconWrapper';
 import { ChartNoAxesGantt, ChevronDown, ChevronUp } from 'lucide-react';
+import { fetchTaskPresets, saveTaskPresets, sendDesignTask } from '../../services/hr.service';
+import { submitDesignTask } from '../../services/candidates.service';
+import { setDesignTaskContent } from '../../redux/AdminSlice';
+import { showErrorToast, showSuccessToast } from '../ui/Toast';
 
 export function SubmissionForm({candidateId,jobId,stageData,setIsLoading}){
     const [taskLink, setTaskLink] = useState('');
@@ -24,7 +28,7 @@ export function SubmissionForm({candidateId,jobId,stageData,setIsLoading}){
     const queryClient = useQueryClient();
 
     const submitTaskMutation = useMutation({
-        mutationFn: (taskData) => axios.post('candidates/submit-design-task', taskData),
+        mutationFn: submitDesignTask,
         onMutate: () => {
             setIsLoading(true); // Set loading to true when mutation starts
         },
@@ -97,11 +101,6 @@ export function SubmissionForm({candidateId,jobId,stageData,setIsLoading}){
     )
 }
 
-const fetchTaskPresets = async (jobProfile) => {
-    const response = await axios.post(`/hr/get-task-presets`,{ jobProfile }, { withCredentials: true });
-    return response.data;
-}
-
 function TaskForm({jobProfile,candidateId,candidateEmail,jobId,setIsLoading}) {
     //To detect if its a first render or not
     const isFirstRender = useRef(true);
@@ -122,6 +121,8 @@ function TaskForm({jobProfile,candidateId,candidateEmail,jobId,setIsLoading}) {
     const [presetLoaded, setPresetLoaded] = useState(false);
 
     const [showMore,setShowMore] = useState(false);
+
+    const { designTaskContent } = useSelector(state => state.admin);
 
     const { data: taskData, isTaskDataLoading } = useQuery({
         queryKey: ['getAllTaskPresets',jobProfile],
@@ -157,7 +158,7 @@ function TaskForm({jobProfile,candidateId,candidateEmail,jobId,setIsLoading}) {
     },[taskDescription,dueDate,dueTime,isFirstRender])
 
     const sendTaskMutation = useMutation({
-        mutationFn: (taskData) => axios.post('hr/send-design-task', taskData),
+        mutationFn: sendDesignTask,
         onMutate: () => {
             setIsLoading(true); // Set loading to true when mutation starts
         },
@@ -176,9 +177,50 @@ function TaskForm({jobProfile,candidateId,candidateEmail,jobId,setIsLoading}) {
         }
     });
 
+    const saveTaskMutation = useMutation({
+        mutationFn: saveTaskPresets,
+        onMutate: () => {
+            setIsLoading(true); // Set loading to true when mutation starts
+        },
+        onSuccess: (data) => {
+            showSuccessToast('Success', data?.message || "Task created successfully.")
+            setIsLoading(false); // Stop loading when task is successfully sent
+        },
+        onError: (error) => {
+            console.error('Error saving design task:', error);
+            setIsLoading(false); // Stop loading in case of an error
+        }
+    });
+
+    const handleSaveTask = (title, level) =>{
+        if(title?.trim() === ''){
+            showErrorToast('Error','Please enter a valid title to save the task.')    
+            return
+        }
+        if(level?.trim() === ''){
+            showErrorToast('Error','Please select a Job Level to save the task.')    
+            return
+        }
+        if(taskDescription?.trim() === ''){
+            showErrorToast('Error','Please enter a valid task description to save the task.')    
+            return
+        }
+        if(jobProfile){
+            saveTaskMutation.mutate({
+                title,
+                level,
+                jobProfile,
+                htmlString : taskDescription
+            })
+        }else{
+            window.location.reload()
+        }
+    }
+
     const handleSendTask = (scheduledDate,scheduledTime) => {
         isFirstRender.current = false;
         validateErrors()
+        dispatch(setDesignTaskContent(''))
         // console.log(taskDescription)
         if (taskDescription.trim() && dueDate && dueTime) {
             sendTaskMutation.mutate({
@@ -202,6 +244,13 @@ function TaskForm({jobProfile,candidateId,candidateEmail,jobId,setIsLoading}) {
         setPresetLoaded(false);
         setSelectedTaskPreset(template?.htmlString);
     }
+
+    useEffect(() => {
+        if(designTaskContent){
+            setSelectedTaskPreset(designTaskContent)
+        }
+    },[])
+
     useEffect(()=>{
         if(selectedTaskPreset){
             setPresetLoaded(true)
@@ -215,6 +264,7 @@ function TaskForm({jobProfile,candidateId,candidateEmail,jobId,setIsLoading}) {
             setSelectedTaskPreset(false)
             setPresetLoaded(false)
         }
+        dispatch(setDesignTaskContent(taskDescription))
     },[taskDescription])
 
   return (
@@ -224,7 +274,7 @@ function TaskForm({jobProfile,candidateId,candidateEmail,jobId,setIsLoading}) {
                 <span className="text-red-100">*</span>
             </div>
 
-            <TextEditor clearPreset={setSelectedTaskPreset} hasClearOption presetLoaded={presetLoaded} presetTemplate={selectedTaskPreset} htmlData={taskDescription} loaded={false} errors={descriptionError} placeholder={"Write a Task Description"} setEditorContent={(data)=>setTaskDescription(data)} customBg={' custom-input '} />
+            <TextEditor onSaveTask={handleSaveTask} clearPreset={setSelectedTaskPreset} hasSaveOption={taskDescription && taskDescription !== '<p><br></p>'} hasClearOption presetLoaded={presetLoaded} presetTemplate={selectedTaskPreset} htmlData={taskDescription} loaded={false} errors={descriptionError} placeholder={"Write a Task Description"} setEditorContent={(data)=>setTaskDescription(data)} customBg={' custom-input '} />
 
             {descriptionError && <p className="text-red-500 absolute typography-small-p top-[23rem]">Task Description is required</p>}
 
@@ -241,7 +291,7 @@ function TaskForm({jobProfile,candidateId,candidateEmail,jobId,setIsLoading}) {
                 <div className='grid grid-cols-2 gap-6'>
                 {
                     taskPresets?.filter((task,index) => showMore ? true : index < 2).map(task => (
-                    <StyledCard  key={task?._id} onClick={() => handleViewPreset(task)} backgroundColor={'bg-background-70 hover:bg-background-60 cursor-pointer flex flex-col gap-2 relative '}>
+                    <StyledCard  key={task?._id} onClick={() => handleViewPreset(task)} backgroundColor={'bg-background-70 hover-outline cursor-pointer flex flex-col gap-2 relative '}>
                         <h4 className='whitespace-nowrap overflow-hidden text-ellipsis'>{task?.title}</h4>
                         <p className='typography-body text-font-gray whitespace-nowrap overflow-hidden text-ellipsis w-[50%]'>{task?.level}-{task?.category}</p>
                     </StyledCard>
@@ -268,8 +318,10 @@ function TaskForm({jobProfile,candidateId,candidateEmail,jobId,setIsLoading}) {
                     </div>
 
 
-                    <Datepicker error={dueDateError} onChange={setDueDate} value={dueDate} />
-                    {dueDateError && <p className='absolute text-red-100 typography-small-p top-[5.2rem]'>Date is required</p>}
+                    <div className='w-fit'>
+                        <Datepicker error={dueDateError} onChange={setDueDate} value={dueDate} />
+                        {dueDateError && <p className='absolute text-red-100 typography-small-p top-[5.2rem]'>Date is required</p>}
+                    </div>
                 </div>
                 <div className='w-full relative'>
                     <div className='pb-4'>

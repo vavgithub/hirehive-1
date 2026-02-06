@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from 'react-router-dom';
-import axios from '../../api/axios';
+import axios from '../../services/axios';
 import { useSelector } from 'react-redux';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '../../components/Buttons/Button';
@@ -8,7 +8,7 @@ import SideCard from '../../components/ui/SideCard';
 import useAuthCandidate, { useCandidateAuth } from '../../hooks/useCandidateAuth'; // Import the authentication hook
 import Header from '../../components/utility/Header';
 import Loader from '../../components/Loaders/Loader';
-import Logo from '../../svg/Logo/lightLogo.svg'
+import Logo from '../../svg/Logo/lightLogo.png'
 import StyledCard from '../../components/Cards/StyledCard';
 import ContactUs from '../../components/Form/ContactUs';
 import Container from '../../components/Cards/Container';
@@ -16,6 +16,7 @@ import IconWrapper from '../../components/Cards/IconWrapper';
 import { ArrowRight } from 'lucide-react';
 import Footer from '../../components/Footer/Footer';
 import LogoWrapper from '../../components/Logo/LogoWrapper';
+import { incrementApplyClick } from '../../services/candidates.service';
 
 // Function to fetch the job data by ID
 const getJobById = async (id) => {
@@ -56,7 +57,7 @@ const ViewJob = () => {
 
     const handleApplyClick = async () => {
         try {
-            await axios.post(`/candidates/${mainId}/increment-apply-click`);
+            await incrementApplyClick(mainId);
             navigate(`/apply-job/${mainId}`);
         } catch (error) {
             // console.error('Error incrementing apply click count:', error);

@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Tabs from '../../components/ui/Tabs';
 import Header from '../../components/utility/Header';
-import axios from '../../api/axios';
+import axios from '../../services/axios';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ACTION_TYPES } from '../../utility/ActionTypes';
 import CandidateTabDetail from '../../components/ui/CandidateTabDetail';
@@ -20,8 +20,7 @@ import ScoreChart from '../../components/Charts/ScoreChart';
 import {  getStageColorForChart, maxScoreOfEachStage } from '../../config/staging.config';
 import Container from '../../components/Cards/Container';
 import IconWrapper from '../../components/Cards/IconWrapper';
-import { ArrowLeftRight, ChevronUp, ChevronRight, ClipboardCheck, FileText, FileUser, FolderOpen, Globe, Mail, MonitorDot, Notebook, NotebookPen, Phone, Users } from 'lucide-react';
-import { UNKNOWN_PROFILE_PICTURE_URL } from '../../utility/config';
+import { ArrowLeftRight, ChevronUp, ChevronRight, ClipboardCheck, FileText, FileUser, FolderOpen, Globe, Mail, MonitorDot, Notebook, NotebookPen, Phone, Users, Calendar1 } from 'lucide-react';
 import RatingSelector, { getRatingIcon } from '../../components/MUIUtilities/RatingSelector';
 import Modal from '../../components/Modals/Modal';
 import TextEditor from '../../components/utility/TextEditor';
@@ -33,6 +32,10 @@ import { formatPhoneNumber } from '../../components/Form/PhoneInputField';
 import { UTCToDateFormatted } from '../../utility/timezoneConverter';
 import GlobalDropDown from '../../components/Dropdowns/GlobalDropDown';
 import { getRoute, hasPermission, hasRoutePermission, PERMISSIONS, ROUTE_KEY } from '../../config/permissions.config';
+import { fetchTotalScore, updateCandidateRating } from '../../services/hr.service';
+import { addNotes, fetchCandidateData, fetchCandidateJobs, toggleShortlistStatus } from '../../services/admin.candidate.service';
+import { fetchAllDesignReviewers } from '../../services/auth.service';
+import { useScoreBg, useUnknownProfilePicture } from '../../context/ThemeContext';
 
 export const VAVScoreCard = ({ score, stage, scoreStages }) => {
     const [showBreakDown, setShowBreakDown] = useState(false);
@@ -69,10 +72,12 @@ export const VAVScoreCard = ({ score, stage, scoreStages }) => {
         return mappedData.filter(data => data?.name !== "Hired");
     }, [scoreStages])
 
+    const stars = useScoreBg()
+
     if (!showBreakDown) {
         return (
-            <StyledCard extraStyles="flex bg-stars  flex-col items-center sm:w-[55%] lg:w-[35%]  max-w-[27rem] bg-cover relative">
-                <h2>VAV SCORE</h2>
+            <StyledCard backgroundColor={"bg-background-100"}  extraStyles="flex flex-col items-center sm:w-[55%] lg:w-[35%]  max-w-[27rem]  relative">
+                <h2 className="text-font-main">GEODE SCORE</h2>
                 <button onClick={() => setShowBreakDown(true)} className='absolute top-4 right-4 hover:text-font-gray'>
                     <CustomToolTip title={'View Score Breakdown'}>
                         <IconWrapper icon={ArrowLeftRight} size={0} customStrokeWidth={7} inheritColor />
@@ -83,10 +88,10 @@ export const VAVScoreCard = ({ score, stage, scoreStages }) => {
             </StyledCard>
         )
     } else {
-        return (<StyledCard extraStyles="flex bg-stars  flex-col items-center sm:w-[55%] lg:w-[35%]  max-w-[27rem] bg-cover relative">
+        return (<StyledCard backgroundColor={"bg-background-100"} extraStyles="flex   flex-col items-center sm:w-[55%] lg:w-[35%]  max-w-[27rem] bg-cover relative">
             <h2>Score Breakdown</h2>
             <button onClick={() => setShowBreakDown(false)} className='absolute top-4 right-4 hover:text-font-gray'>
-                <CustomToolTip title={'View VAV Score'}>
+                <CustomToolTip title={'View GEODE Score'}>
                     <IconWrapper icon={ArrowLeftRight} size={0} customStrokeWidth={7} inheritColor />
                 </CustomToolTip>
             </button>
@@ -94,30 +99,6 @@ export const VAVScoreCard = ({ score, stage, scoreStages }) => {
         </StyledCard>)
     }
 }
-
-const fetchCandidateData = async (candidateId, jobId) => {
-    const { data } = await axios.get(`admin/candidate/${candidateId}/job/${jobId}`);
-    return data;
-};
-const fetchTotalScore = async (candidateId, jobId) => {
-    const { data } = await axios.get(`hr/candidate/${candidateId}/job/${jobId}/scores`);
-    return data;
-}
-
-const fetchCandidateJobs = async (candidateId) => {
-    const { data } = await axios.get(`admin/candidate/${candidateId}/jobs`);
-    return data;
-};
-
-const addNotes = async ({ candidateId, jobId, notesData }) => {
-    const response = await axios.post(`admin/candidate/${candidateId}/${jobId}/addNotes`, notesData);
-    return response?.data;
-};
-
-const toggleShortlistStatus = async ({ candidateId, jobId, shortlisted }) => {
-    const response = await axios.post(`/admin/candidate/${candidateId}/job/${jobId}/shortlist`, { shortlisted });
-    return response?.data;
-};
 
 // Update the transformCandidateData function
 const transformCandidateData = (data) => {
@@ -193,8 +174,7 @@ const ViewCandidateProfile = () => {
     });
 
     const updateCandidateRatingMutation = useMutation({
-        mutationFn: ({ candidateId, jobId, rating }) =>
-            axios.post('/hr/update-candidate-rating', { candidateId, jobId, rating }),
+        mutationFn: updateCandidateRating,
         onSuccess: () => {
             setRatingAnchor(null)
             queryClient.invalidateQueries(['candidate', candidateId, jobId]);
@@ -302,15 +282,15 @@ const ViewCandidateProfile = () => {
         {
             name: 'application',
             label: 'Application',
-            icon: <IconWrapper icon={Users} size={0} isInActiveIcon={true} customIconSize={4} />,
-            activeIcon: <IconWrapper icon={Users} isActiveIcon={true} size={0} customIconSize={4} />,
+            icon: <IconWrapper icon={Users} size={0} inheritColor={true} customIconSize={4} />,
+            activeIcon: <IconWrapper icon={Users} inheritColor={true} size={0} customIconSize={4} />,
         },
         ...(hasPermission(role,PERMISSIONS.SHOW_TAB_CANDIDATE_DETAIL) ? [
             {
                 name: 'candidateDetails',
                 label: 'Candidate Details',
-                icon: <IconWrapper icon={FileText} size={0} isInActiveIcon={true} customIconSize={4} />,
-                activeIcon: <IconWrapper isActiveIcon={true} icon={FileText} size={0} customIconSize={4} />,
+                icon: <IconWrapper icon={FileText} size={0} inheritColor={true} customIconSize={4} />,
+                activeIcon: <IconWrapper inheritColor={true} icon={FileText} size={0} customIconSize={4} />,
             }
         ] : []),
     ];
@@ -404,6 +384,8 @@ const ViewCandidateProfile = () => {
     }
 
     const transformedData = transformCandidateData(data);
+
+    const UNKNOWN_PROFILE_PICTURE_URL = useUnknownProfilePicture()
 
     const handleAssignmentNavigation = () => {
 
@@ -510,6 +492,7 @@ const reviewerProfilePic = currentReviewer?.profilePicture
                 rightContent={hasPermission(role,PERMISSIONS.SHOW_JOB_SWITCH) &&
                     <div className='flex items-center h-full w-72 z-10'>
                         <GlobalDropDown
+                        bgColor='bg-background-80'
                         extraStylesForLabel=" hidden "
                         value={selectedJob}
                         onChange={setSelectedJob}
@@ -523,12 +506,12 @@ const reviewerProfilePic = currentReviewer?.profilePicture
             {
                 hasPermission(role,PERMISSIONS.SHOW_CANDIDATE_PROFILE_CARD) && (
                     <div className="flex gap-3">
-                        <StyledCard padding={2} backgroundColor={'bg-background-80'} extraStyles="w-full flex gap-4 relative justify-between relative">
-                            <div className='flex gap-4 '>
-                                <div className="relative to-background-100 w-[200px] min-h-auto max-h-[200px] rounded-xl overflow-hidden">
+                        <StyledCard padding={2} backgroundColor={'bg-background-100'} extraStyles="w-full flex gap-4 relative justify-between relative">
+                            <div className='flex gap-4 items-end'>
+                                <div className="relative to-background-100 w-[210px] min-h-auto max-h-[210px] rounded-xl overflow-hidden">
                                     <img src={data.profilePictureUrl || UNKNOWN_PROFILE_PICTURE_URL} alt="" className='object-cover w-full overflow-hidden' />
                                     {hasPermission(role,PERMISSIONS.SHOW_CANDIDATE_PROFILE_RATING) &&
-                                        <span onClick={(e) => setRatingAnchor(e.currentTarget)} className='absolute cursor-pointer bg-[#2d2d2eae] min-w-10 min-h-10 top-2 right-2 rounded-full flex justify-center items-center'>
+                                        <span onClick={(e) => setRatingAnchor(e.currentTarget)} className='absolute cursor-pointer bg-background-60 min-w-10 min-h-10 top-2 right-2 rounded-full flex justify-center items-center'>
                                             {getRatingIcon(data?.jobApplication?.rating)}
                                         </span>}
                                 </div>
@@ -544,7 +527,8 @@ const reviewerProfilePic = currentReviewer?.profilePicture
                                         <span className="typography-small-p text-font-gray">{data.location}</span>
                                     </div>
                                     {hasPermission(role,PERMISSIONS.SHOW_CANDIDATE_PROFILE_PERSONAL_DETAILS) &&
-                                        <div className="flex mb-3 gap-5">
+                                        <div className=' mb-3 '>
+                                        <div className="flex gap-5">
                                             <div className="flex items-center gap-2 cursor-pointer" onClick={()=>handlePhoneCopy(data?.phone)}>
                                                     <IconWrapper size={0} customIconSize={2} icon={Phone} />
                                                 <span className="typography-large-p">{data.phone}</span>
@@ -553,7 +537,13 @@ const reviewerProfilePic = currentReviewer?.profilePicture
                                                     <IconWrapper size={0} customIconSize={2} icon={Mail} />
                                                 <span className="typography-large-p whitespace-nowrap text-ellipsis overflow-hidden ">{data.email}</span>
                                             </div>
+                                        </div>
+                                        {data?.dob && <div className="flex items-center gap-2 overflow-hidden cursor-pointer mt-4 " onClick={() => handleEmailCopy(data?.email)}>
+                                                <IconWrapper size={0} customIconSize={2} icon={Calendar1} />
+                                            <span className="typography-large-p whitespace-nowrap text-ellipsis overflow-hidden ">{UTCToDateFormatted(data.dob)}</span>
                                         </div>}
+                                        </div>
+                                        }
                                     <div className="flex gap-2 items-center ">
                                         <a href={ensureAbsoluteUrl(data.portfolio)} target="_blank" rel="noopener noreferrer" className="icon-link">
                                             <CustomToolTip title={'Portfolio'} arrowed size={2}>

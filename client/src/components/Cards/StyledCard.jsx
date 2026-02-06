@@ -3,16 +3,17 @@ import React from 'react'
 function StyledCard({children,onClick,extraStyles,padding,rounded,backgroundColor,borderRadius,...props}) {
 
   let valueSteps = {
-    0 : "0",
-    1 : "2",
-    2 : "8",
-    3 : "6",
-    4 : "8",
-    5 : '4'
+    0 : "p-0",
+    1 : "md:p-2 p-1",
+    2 : "md:p-8 p-4",
+    3 : "md:p-6 p-3",
+    4 : "md:p-8 p-4",
+    5 : 'md:p-4 p-2'
   }
 
+  const paddingString = padding?.toString() ? valueSteps[padding] : 'p-4 md:p-8'
   const styles = 
-  ` ${padding?.toString() ? `md:p-${valueSteps[padding]} p-${valueSteps[padding]/2}` : 'p-4 md:p-8'} ${backgroundColor ? backgroundColor : 'bg-background-90'} ${borderRadius ? borderRadius : "rounded-xl"} 
+  ` ${paddingString} ${backgroundColor ? backgroundColor : 'bg-background-90'} ${borderRadius ? borderRadius : "rounded-xl"} 
   `
 
   return (

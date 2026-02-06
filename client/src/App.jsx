@@ -8,18 +8,21 @@ import { store } from './redux/store';
 import StatePreserver from './context/StatePreserver';
 import { CssBaseline, ThemeProvider } from '@mui/material';
 import theme from './components/MUIUtilities/theme';
+import { ThemesProvider } from './context/ThemeContext';
 
 const queryClient = new QueryClient();
 
 function App() {
-  return (
+  return ( 
     <QueryClientProvider client={queryClient}>
       <ThemeProvider theme={theme} >
         <CssBaseline />
         <Provider store={store}>
           <AuthProvider>
             <StatePreserver>
-              <RouterProvider router={router} />
+              <ThemesProvider>
+                <RouterProvider router={router} />
+              </ThemesProvider>
               <StyledToastContainer />
             </StatePreserver>
           </AuthProvider> 

@@ -15,21 +15,21 @@ function ImageModal({isOpen, onClose, imageUrl}) {
         />
 
         {/* Modal content */}
-        <StyledCard backgroundColor={"bg-transparent"} extraStyles="relative w-[80%] max-w-4xl z-10 overfflow-hidden">
+        <StyledCard backgroundColor={"bg-background-80"} extraStyles="relative w-[80%] max-w-4xl z-10 max-h-[80vh] overflow-hidden">
             {/* Close button */}
 
             {/* Video container with loader */}
-            <div className="relative  w-full  rounded-lg ">
-                <div className='h-full w-fit relative mx-auto'>
+            <div className="relative  overflow-hidden h-full   rounded-lg ">
+                <div className='h-full  w-auto relative mx-auto'>
                     <button
                         onClick={onClose}
-                        className="absolute -top-2 -right-2 p-2 bg-background-90 hover:bg-background-80 rounded-full transition-colors z-20"
+                        className="absolute -top-2 -right-2 p-2  hover:bg-background-80 rounded-full transition-colors z-20"
                     >
                         <X className="w-6 h-6 text-font-gray" />
                     </button>
                     <img
                         src={imageUrl}
-                        className="h-full mx-auto rounded-lg"
+                        className="h-full max-h-[70vh] mx-auto rounded-lg aspect-square"
                     />
                 </div>
             </div>

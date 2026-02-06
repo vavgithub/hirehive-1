@@ -1,50 +1,30 @@
-import nodemailer from "nodemailer";
-import { readFile } from "fs/promises"; 
-import { fileURLToPath } from "url";
-import path from "path";
-
-// Define __dirname for ES modules
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+import { assets, transporter } from "./emailer.js";
 
 export const sendEmail = async (to, subject, content,type = "", extraAttachments = []) => {
   try {
-    let transporter = nodemailer.createTransport({
-      service: process.env.EMAIL_SERVICE,
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-    });
-
-    // Use the promise-based readFile to read images
-    const vavLogo = await readFile(path.join(__dirname, "/email_assets/vavLogo.png"), { encoding: "base64" });
-    const instaLogo = await readFile(path.join(__dirname, "/email_assets/instaLogo.png"), { encoding: "base64" });
-    const ytLogo = await readFile(path.join(__dirname, "/email_assets/ytLogo.png"), { encoding: "base64" });
-    const linkedinLogo = await readFile(path.join(__dirname, "/email_assets/linkedinLogo.png"), { encoding: "base64" });
 
     let attachmentsArray = [
       {
         filename: "vavlogo.png",
-        content: vavLogo,
+        content: assets.vavLogo,
         encoding: "base64",
         cid: "vavLogo",
       },
       {
         filename: "instaLogo.png",
-        content: instaLogo,
+        content: assets.instaLogo,
         encoding: "base64",
         cid: "instaLogo",
       },
       {
         filename: "ytLogo.png",
-        content: ytLogo,
+        content: assets.ytLogo,
         encoding: "base64",
         cid: "ytLogo",
       },
       {
         filename: "linkedinLogo.png",
-        content: linkedinLogo,
+        content: assets.linkedinLogo,
         encoding: "base64",
         cid: "linkedinLogo",
       },

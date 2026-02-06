@@ -19,7 +19,7 @@ function CustomHeading({fontValue,fontSize,color,label,extraStyles = ""}) {
 
   const styles = `
   font-semibold mb-4 
-  ${color?.toString() ? color : "text-white"} 
+  ${color?.toString() ? color : "text-font-main"} 
   ${fontValue?.toString() ? fonts[fontValue] : "font-gilroy"} 
   ${fontSize?.toString() ? `${fontSteps[fontSize]}` : 'typography-body'}
   `

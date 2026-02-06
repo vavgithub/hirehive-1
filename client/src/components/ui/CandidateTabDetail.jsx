@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { InputField } from '../Form/FormFields';
 import { validationRules } from '../../utility/validationRules';
-import axios from '../../api/axios';
+import axios from '../../services/axios';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { showErrorToast, showSuccessToast } from './Toast';
 import StyledCard from '../Cards/StyledCard';
@@ -12,11 +12,7 @@ import { Button } from '../Buttons/Button';
 import IconWrapper from '../Cards/IconWrapper';
 import { Pencil } from 'lucide-react';
 import { hasPermission, PERMISSIONS } from '../../config/permissions.config';
-
-const updateProfessionalDetails = async ({experience, noticePeriod, currentCTC, expectedCTC, hourlyRate , id, jobId}) => {
-    const response = await axios.patch(`/admin/candidate/update-candidate/${id}/${jobId}`,{experience, noticePeriod, currentCTC, expectedCTC, hourlyRate });
-    return response?.data
-}
+import { updateProfessionalDetails } from '../../services/admin.candidate.service';
 
 const Card = ({ title, children, gridLayout = false , extraClass }) => (
   <div className={`bg-background-80 p-8 rounded-xl mb-4 ${extraClass}`} >
@@ -35,7 +31,7 @@ const DetailRow = ({ label, value }) => (
 
 const Experience = ({ company, position, startDate, endDate, index }) => (
     <div className="mb-4">
-      <h3 className="text-lg font-semibold text-white mb-2">Experience {index + 1}</h3>
+      <h3 className="text-lg font-semibold text-font-main mb-2">Experience {index + 1}</h3>
       <div className="grid grid-cols-2 gap-x-4 gap-y-1">
         <GridRow label="Company Name" value={company} />
         <GridRow label="Position" value={position} />
@@ -122,7 +118,7 @@ const Experience = ({ company, position, startDate, endDate, index }) => (
                       <DetailRow key={index} label={detail.label} value={detail.value} />
                   ))}
                   {(job?.jobStatus === "open" && hasPermission(role,PERMISSIONS.SHOW_CANDIDATE_TAB_DETAIL_EDIT)) && 
-                  <div onClick={()=>setIsEditing(!isEditing)} className='absolute right-4 bottom-4 p-2 bg-background-70 hover:bg-background-60 rounded-xl cursor-pointer'>
+                  <div onClick={()=>setIsEditing(!isEditing)} className='absolute right-4 bottom-4 p-2 bg-background-70 hover-outline rounded-xl cursor-pointer'>
                       <IconWrapper  icon={Pencil} size={0} />
                   </div>}
                 </> : 
@@ -138,7 +134,7 @@ const Experience = ({ company, position, startDate, endDate, index }) => (
                       id="experience"
                       label="Experience"
                       labelStyles="text-font-gray"
-                      extraClass="no-spinner custom-input"
+                      extraClass="no-spinner"
                       rowWise
                       value={field.value ?? 0}
                       onChange={field.onChange}
@@ -158,7 +154,7 @@ const Experience = ({ company, position, startDate, endDate, index }) => (
                         id="noticePeriod"
                         label="Notice Period"
                         labelStyles="text-font-gray"
-                        extraClass="no-spinner custom-input"
+                        extraClass="no-spinner"
                         rowWise
                         value={field.value ?? 0}
                         onChange={field.onChange}
@@ -181,7 +177,7 @@ const Experience = ({ company, position, startDate, endDate, index }) => (
                             id="currentCTC"
                             label="Current CTC"
                             labelStyles="text-font-gray"
-                            extraClass="no-spinner custom-input"
+                            extraClass="no-spinner"
                             rowWise
                             value={field.value ?? 0}
                             onChange={field.onChange}
@@ -201,7 +197,7 @@ const Experience = ({ company, position, startDate, endDate, index }) => (
                             id="expectedCTC"
                             label="Expected CTC"
                             labelStyles="text-font-gray"
-                            extraClass="no-spinner custom-input"
+                            extraClass="no-spinner"
                             rowWise
                             value={field.value ?? 0}
                             onChange={field.onChange}
@@ -223,7 +219,7 @@ const Experience = ({ company, position, startDate, endDate, index }) => (
                         id="hourlyRate"
                         label="Hourly Rate"
                         labelStyles="text-font-gray"
-                        extraClass="no-spinner custom-input"
+                        extraClass="no-spinner"
                         rowWise
                         value={field.value ?? 0}
                         onChange={field.onChange}

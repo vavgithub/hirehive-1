@@ -49,7 +49,7 @@ const ExperienceFilter = ({ onApply, shouldReset }) => {
       <div className="flex space-x-4 mb-4">
         <div className='flex flex-col'>
           <label className="typography-small-p text-font-gray">Min Experience</label>
-          <div className='flex items-center bg-background-60 rounded-xl rounded-br-xl mt-1'>
+          <div className='flex items-center bg-background-90 rounded-xl rounded-br-xl mt-1'>
             <input
               type="text"
               value={minExperience}
@@ -62,7 +62,7 @@ const ExperienceFilter = ({ onApply, shouldReset }) => {
         </div>
         <div className='flex flex-col'>
           <label className="typography-small-p text-font-gray">Max Experience</label>
-          <div className='flex items-center bg-background-60 rounded-xl rounded-br-xl mt-1'>
+          <div className='flex items-center bg-background-90 rounded-xl rounded-br-xl mt-1'>
             <input
               type="text"
               value={maxExperience}

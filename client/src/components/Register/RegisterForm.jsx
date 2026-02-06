@@ -1,9 +1,8 @@
 import React, { useState } from 'react'
-import axios from '../../api/axios';
+import axios from '../../services/axios';
 import sundarKanya from "../../svg/Background/sundar-kanya.png"
 import { Button } from '../Buttons/Button';
 import StatsGrid from '../../components/ui/StatsGrid';
-import Logo from '../../svg/Logo/lightLogo.svg'
 import LoaderModal from '../Loaders/LoaderModal';
 import GoogleIcon from '../../svg/Icons/GoogleIcon';
 import { steps } from '../../pages/Admin/Register';
@@ -16,24 +15,17 @@ import Modal from '../Modals/Modal';
 import TogglePassword from '../utility/TogglePassword';
 import { digitsRegex, lowerCaseRegex, passwordRegex, specialCharRegex, upperCaseRegex } from '../../utility/regex';
 import ForgotPassword from '../../pages/Admin/ForgotPassword';
+import { googleLogin, registerAdmin, verifyPassword } from '../../services/auth.service';
+import { FcGoogle } from 'react-icons/fc';
+import { useLogo } from '../../context/ThemeContext';
 
 export const emailPattern = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i
 
-const registerAdmin = async ({firstName, lastName, email}) => {
-    const response = await axios.post('/auth/register/init',{firstName, lastName, email});
-    return response.data
-}
-
-const verifyPassword = async ({ email , password }) => {
-  const response = await axios.post('/auth/register/verify-password',{email, password});
-  return response.data
-}
-
 const statsOne = [
-    { title: 'Jobs Posted', value: 100, icon: () => <IconWrapper size={10} isInActiveIcon icon={Briefcase} /> },
+    { title: 'Jobs Posted', value: 100, icon: () => <IconWrapper size={10} isTeritiaryIcon icon={Briefcase} /> },
   ]
   const statsTwo = [
-    { title: 'Application Received', value: 10, icon: () => <IconWrapper size={10} isInActiveIcon icon={FileText} /> },
+    { title: 'Application Received', value: 10, icon: () => <IconWrapper size={10} isTeritiaryIcon icon={FileText} /> },
   ]
 
 function RegisterForm({setCurrentStep}) {
@@ -45,6 +37,7 @@ function RegisterForm({setCurrentStep}) {
     const [loading, setLoading] = useState(false);
 
     const { onboardData, setOnboardData } = useOnboardingContext();
+    const Logo = useLogo();
 
     const [showPasswordPopup,setShowPasswordPopup] = useState(false);
     const [passwordType, setPasswordType] = useState('password');
@@ -103,6 +96,17 @@ function RegisterForm({setCurrentStep}) {
         showErrorToast("Error",error?.response?.data?.message || "Unexpected Registration Error. Try again")
       }
     })
+
+    const registerGoogle = async () => {
+        try {
+          const result = await googleLogin()
+          if(result?.authorizationUrl){
+            window.location.href = result.authorizationUrl;
+          }
+        } catch (error) {
+          showErrorToast('Error',error?.message)
+        }
+    }
 
     const handleFormSubmit =  (e) =>{
         e.preventDefault()
@@ -168,7 +172,7 @@ function RegisterForm({setCurrentStep}) {
             <div className="hidden lg:flex lg:w-3/5 bg-login-screen backdrop-blur-lg bg-cover p-12 flex-col justify-between relative">
               <div className='p-[2.75rem]'>
                 <img className='h-12' src={Logo} />
-                <h1 className="mt-8">VAV - Hire Designers</h1>
+                <h1 className="mt-8">GEODE - Hire Designers</h1>
                 <p className="display-d2 max-w-xl mt-7 mb-4">Discover, hire, and explore top talent with HireHive</p>
                 <p className='typography-body max-w-96'>Our advanced tools simplify job posting, application review, and career opportunities, ensuring you find the best candidates or land your next role effortlessly.</p>
                 <p className="mb-8"></p>
@@ -183,26 +187,27 @@ function RegisterForm({setCurrentStep}) {
             <div className="w-full lg:w-2/5 bg-background-90 p-4 md:p-28   flex flex-col justify-center">
               <h1 className="text-center">Sign Up</h1>
               <p className="typography-body mb-8 text-center text-font-gray font-normal">Create an account</p>
-                    {/* <Button type="button" variant="secondary" icon={GoogleIcon} className="w-full" >
+                    <button type="button" onClick={registerGoogle} variant="secondary"  className='mx-auto flex gap-4 items-center bg-white text-black-100 py-2 px-6 h-11 rounded-full'>
+                        <IconWrapper icon={FcGoogle} size={0} customStrokeWidth={0} customIconSize={5} />
                         Continue With Google
-                    </Button> */}
-                  {/* <div className="flex items-center my-4">
+                    </button> 
+                   <div className="flex items-center my-4">
                       <hr className="flex-grow border-grey-100" />
                       <span className="px-3 text-grey-100">OR</span>
                       <hr className="flex-grow border-grey-100" />
-                  </div>  */}
+                  </div> 
               <form onSubmit={handleFormSubmit}>
                 <div className="mb-4">
-                  <label htmlFor="firstname" className="block mb-2 font-bricolage">First Name</label>
-                  <input type="text" id="firstname" placeholder="Enter your Firstname" value={firstName} onChange={(e) => setFirstName(e.target.value)} className="w-full p-2 rounded-lg bg-black text-white focus:outline-teal-400" />
+                  <label htmlFor="firstname" className="block mb-2 ">First Name</label>
+                  <input type="text" id="firstname" placeholder="Enter your Firstname" value={firstName} onChange={(e) => setFirstName(e.target.value)} className="w-full p-2 rounded-lg   focus:outline-teal-400" />
                 </div>
                 <div className="mb-4">
-                  <label htmlFor="lastname" className="block mb-2 font-bricolage">Last Name</label>
-                  <input type="text" id="lastname" placeholder="Enter your Lastname" value={lastName} onChange={(e) => setLastName(e.target.value)} className="w-full p-2 rounded-lg bg-black text-white focus:outline-teal-400" />
+                  <label htmlFor="lastname" className="block mb-2 ">Last Name</label>
+                  <input type="text" id="lastname" placeholder="Enter your Lastname" value={lastName} onChange={(e) => setLastName(e.target.value)} className="w-full p-2 rounded-lg   focus:outline-teal-400" />
                 </div>
                 <div className="mb-1">
-                  <label htmlFor="email" className="block mb-2 font-bricolage">Work Email</label>
-                  <input type="email" id="email" placeholder="Enter your work email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full p-2 rounded-lg bg-black text-white focus:outline-teal-400" />
+                  <label htmlFor="email" className="block mb-2 ">Work Email</label>
+                  <input type="email" id="email" placeholder="Enter your work email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full p-2 rounded-lg   focus:outline-teal-400" />
                 </div>
                   
                 {error && <p className="text-red-500 typography-small-p mb-4">{error}</p>}
@@ -232,7 +237,7 @@ function RegisterForm({setCurrentStep}) {
                 <div>
                   <label htmlFor="password" className="block mt-4 mb-2">Password</label>
                   <TogglePassword typeState={passwordType} setTypeState={setPasswordType}>
-                    <input type={passwordType} id="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter your password" className={(password && "tracking-widest") +" w-full focus:outline-teal-400 p-2 rounded-lg bg-black text-white"} />
+                    <input type={passwordType} id="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter your password" className={(password && "tracking-widest") +" w-full focus:outline-teal-400 p-2 rounded-lg bg-black text-font-main"} />
                   </TogglePassword>
                 </div>
                 <div className='flex justify-end'>
@@ -258,7 +263,7 @@ function RegisterForm({setCurrentStep}) {
               <div className='mt-2 '>
               <ForgotPassword onBack={()=>{setShowForgotPassword(false); }} isModal setIsLoading={setLoading} />
                 <div onClick={()=>setShowForgotPassword(false)} className='absolute -top-4 -right-4 cursor-pointer'>
-                  <IconWrapper icon={X} hasBg customBgHover={"hover:bg-background-60"} />
+                  <IconWrapper icon={X} hasBg customBgHover={"hover-outline"} />
                 </div>
               </div>
             </Modal>

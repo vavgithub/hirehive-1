@@ -10,7 +10,7 @@ const StyledTabs = ({ customSelectionClass = "selection-primary", customBgColor 
                     onClick={() => handleTabClick(tab.name)}
                 >
                     <div
-                        className={` typography-body hover:bg-background-60 rounded-xl flex justify-center py-4 px-12 items-center ${
+                        className={` typography-body hover-outline rounded-xl flex justify-center py-4 px-12 items-center ${
                             activeTab === tab.name ? customSelectionClass ? customSelectionClass : 'text-accent-100' : ''
                         }`}
                     >

@@ -44,9 +44,16 @@ export default {
         green: {
           100: "rgba(20, 225, 89, 0.2)",
         },
+        button: {
+          white: "var(--color-white-100)",
+          whiteHover: "var(--color-white-200)",
+        },
         teal: {
           100: "rgba(24, 233, 208, 1)",
           10: "rgba(24, 233, 208, 0.1)",
+        },
+        profile : {
+          "plus" : "var(--color-profile-plus)",
         },
         red: {
           100: "rgba(255, 31, 71, 1)",
@@ -130,15 +137,36 @@ export default {
           10: `var(--color-background-10)`,
           5: `var(--color-background-5)`,
           green: "rgba(24, 233, 208, 0.3)",
-          overlay: "rgba(0, 0, 0, 0.80)",
+          overlay: "var(--color-bg-overlay)",
+        },
+        status : {
+          bgyellow : 'var(--color-status-yellow)',
+          bgred : 'var(--color-status-red)',
+          bggreen : 'var(--color-status-green)',
+          bggray : 'var(--color-status-gray)',
+          textgray : 'var(--color-text-gray)',
+          textred : 'var(--color-text-red)',
+          textyellow : 'var(--color-text-yellow)',
+          textgreen : 'var(--color-text-green)',
+          bordergray : 'var(--color-border-gray)',
+          borderred : 'var(--color-border-red)',
+          borderyellow : 'var(--color-border-yellow)',
+          bordergreen : 'var(--color-border-green)',
+        },
+        statscard : {
+          primary : 'var(--color-statscard-primary)',
+          secondary : 'var(--color-statscard-secondary)',
         },
         font: {
           primary: "var(--color-primary-100)",
           secondary: "var(--color-font-secondary)",
+          teritiary: "var(--color-font-teritiary)",
           accent: "var(--color-font-accent-100)",
-          gray: "var(--color-font-gray-90)",
+          gray: "var(--color-font-secondary)",
           red: "var(--color-red-100)",
           yellow: "var(--color-yellow-100)",
+          main:"var(--color-font-main)",
+          invert:"var(--color-font-main-invert)"
         },
       },
 
@@ -153,7 +181,7 @@ export default {
         h3: ["1.5rem", { lineHeight: "1.25" ,letterSpacing : "1px"}],
         h4: ["1.25rem", { lineHeight: "1.5" ,letterSpacing : "1px"}],
         h5: ["1rem", { lineHeight: "1.5" ,letterSpacing : "1px"}],
-        body: ["0.875rem", { lineHeight: "1.25" ,letterSpacing : "0.65px"}],
+        body: ["0.875rem", { lineHeight: "1.45" ,letterSpacing : "0.65px"}],
         marks: ["5rem", { lineHeight: "1.5" ,letterSpacing : "1px"}],
         "display-d2": ["2.625rem", { lineHeight: "1.1" ,letterSpacing : "1px"}],
         "small-p": ["0.75rem", { lineHeight: "1.25" }],

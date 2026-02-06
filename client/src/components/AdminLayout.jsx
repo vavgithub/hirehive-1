@@ -1,17 +1,19 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom'; // Added useLocation
+import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { Menu, MenuItem, IconButton, Avatar } from '@mui/material';
-import { logout } from '../api/authApi';
+import { logout } from '../services/auth.service';
 import useAuth from '../hooks/useAuth';
 import { useAuthContext } from '../context/AuthProvider';
-import LightLogo from "../svg/Logo/lightLogo.svg"
+import LightLogo from "../svg/Logo/lightLogo.png"
 import StyledMenu from './MUIUtilities/StyledMenu';
 import IconWrapper from './Cards/IconWrapper';
-import { Briefcase, ChevronDown, ChevronUp, ClipboardCheck, FileText, IdCard, LayoutGrid, LogOut, MonitorDot, Star, User, Users } from 'lucide-react';
-import { UNKNOWN_PROFILE_PICTURE_URL } from '../utility/config';
+import { Briefcase, CalendarDays, ChevronDown, ChevronUp, ClipboardCheck, FileText, IdCard, LayoutGrid, LogOut, MonitorDot, Settings, Star, User, UserCheck, Users } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import { getRoute, hasRoutePermission, ROLES, ROUTE_KEY } from '../config/permissions.config';
 import Footer from './Footer/Footer';
+import ThemeToggle from './ui/ThemeToggle';
+import { useLogo, useUnknownProfilePicture } from '../context/ThemeContext';
+// import ThemeToggle from './ThemeToggle'; // Import ThemeToggle component
 import { useQueryClient } from '@tanstack/react-query';
 
 //Screen URLs with BG for All Admin personas
@@ -30,9 +32,9 @@ const ADMIN_BG_SCREENS = [
 const AdminLayout = () => {
     const navigate = useNavigate();
     const location = useLocation();  // Get current route
-    const { user } = useAuthContext(); // Get user data from the context
+    const { user , setUser } = useAuthContext(); // Get user data from the context
 
-    const [anchorEl, setAnchorEl] = useState(null); // State to control dropdown menu
+    const [anchorEl, setAnchorEl] = useState(null);
     const { refetch } = useAuth();
     const queryClient = useQueryClient();
 
@@ -40,24 +42,13 @@ const AdminLayout = () => {
 
     // Get profile path based on user role
     const getProfilePath = () => {
-        return getRoute(user?.role,ROUTE_KEY.PROFILE);
+        return getRoute(user?.role, ROUTE_KEY.PROFILE);
     };
-
-    // useEffect(() => {
-    // const handleChange = () => {
-    //     console.log("DPR changed:", window.devicePixelRatio);
-    // };
-    // console.log("DPR :", window.devicePixelRatio);
-
-    // const mq = window.matchMedia(`(resolution: ${window.devicePixelRatio}dppx)`);
-    // mq.addEventListener("change", handleChange);
-
-    // return () => mq.removeEventListener("change", handleChange);
-    // }, []);
 
     const handleLogout = async () => {
         try {
             await logout();
+            setUser(null)
             refetch();
             queryClient.clear()
             navigate('/admin/login');
@@ -65,15 +56,16 @@ const AdminLayout = () => {
             // console.error('Logout failed:', error);
         }
     };
+    const UNKNOWN_PROFILE_PICTURE_URL = useUnknownProfilePicture();
 
     // Function to handle dropdown menu opening
     const handleMenuClick = (event) => {
-        setAnchorEl(event.currentTarget); // Set the element that opens the menu
+        setAnchorEl(event.currentTarget);
     };
 
     // Function to handle dropdown menu closing
     const handleMenuClose = () => {
-        setAnchorEl(null); // Close the menu
+        setAnchorEl(null);
     };
 
     const NavItem = ({ to, icon: Icon, activeIcon: ActiveIcon, iconData, children, hasHighlighter , isBold  = false, isPrimaryColor = false}) => (
@@ -82,7 +74,7 @@ const AdminLayout = () => {
                 to={to}
                 end={to === "/admin/dashboard" || to === "/design-reviewer/dashboard"}
                 className={({ isActive, isPending }) =>
-                    `w-full flex items-center min-h-11 gap-2 pl-2 py-2 rounded-xl hover:bg-background-60 ${isActive || isPending ? ` selection-primary ` : isPrimaryColor ? 'text-white' : ""}`
+                    `w-full flex items-center min-h-11 gap-2 pl-2 py-2 rounded-xl hover:outline-accent-100 hover:outline hover:outline-2  ${isActive || isPending ? ` selection-primary ` : isPrimaryColor ? 'text-white' : ""}`
                 }
             >
                 {({ isActive, isPending }) => (
@@ -97,20 +89,20 @@ const AdminLayout = () => {
                 to={to}
                 end={to === "/admin/dashboard" || to === "/design-reviewer/dashboard"}
                 className={({ isActive, isPending }) =>
-                    `absolute right-0 w-1 h-6 rounded-tl-xl rounded-bl-xl ${isActive || isPending ? "bg-teal-400" : "bg-transparent"}`
+                    `absolute right-0 w-1 h-6 rounded-tl-xl rounded-bl-xl ${isActive || isPending ? "bg-accent-100" : "bg-transparent"}`
                 }
             />
         </div>
     );
 
     const DropDownNavItem = ({
-    to,
-    icon: Icon,
-    activeIcon: ActiveIcon,
-    iconData,
-    children,
-    hasHighlighter,
-    submenu = []
+        to,
+        icon: Icon,
+        activeIcon: ActiveIcon,
+        iconData,
+        children,
+        hasHighlighter,
+        submenu = []
     }) => {
     const { pathname } = useLocation();
     const isActive = pathname.startsWith(to);
@@ -137,52 +129,51 @@ const AdminLayout = () => {
         };
     }, []);
 
-    return (
-        <div ref={dropdownRef} className="relative flex flex-col rounded-xl">
-        {/* Parent menu item */}
-        <div
-            onClick={toggleDropdown}
-            className={`cursor-pointer w-full flex items-center justify-between min-h-11 gap-2 pl-2 pr-3 py-2 rounded-xl hover:bg-background-60 ${isActive ? 'selection-primary' : ''}`}
-        >
-            <div className="flex items-center gap-2">
-            {isActive ? <ActiveIcon count={iconData} /> : <Icon count={iconData} />}
-            <span className="typography-body ">{children}</span>
-            </div>
-            {isOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-        </div>
+        return (
+            <div ref={dropdownRef} className="relative flex flex-col rounded-xl">
+                {/* Parent menu item */}
+                <div
+                    onClick={toggleDropdown}
+                    className={`cursor-pointer w-full flex items-center justify-between min-h-11 gap-2 pl-2 pr-3 py-2 rounded-xl hover:outline-accent-100 hover:outline hover:outline-2  ${isActive ? 'selection-primary bg-transparent' : ''}`}
+                >
+                    <div className="flex items-center gap-2">
+                        {isActive ? <ActiveIcon count={iconData} /> : <Icon count={iconData} />}
+                        <span className="typography-body ">{children}</span>
+                    </div>
+                    {isOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                </div>
 
-        {hasHighlighter && (
-            <p className="w-2 absolute right-4 h-2 rounded-full bg-blue-100"></p>
-        )}
-        <div
-            className={`absolute top-[18px] right-0 w-1 h-6 rounded-tl-xl rounded-bl-xl ${isActive ? 'bg-teal-400' : 'bg-transparent'}`}
-        />
-
-        {/* Submenu items */}
-        {isOpen && (
-        <div className={"relative ml-10 mt-2 flex flex-col gap-2 vertical-dashed-line " + (isActive && 'line-open')}>
-            {submenu.map((item) => (
-            <NavLink
-                key={item.to}
-                to={item.to}
-                className={({ isActive }) =>
-                `flex items-center gap-2 py-2 px-2 rounded-xl hover:bg-background-60 typography-body  ${
-                    isActive ? 'text-font-accent selection-primary' : ''
-                }`
-                }
-            >
-                {({ isActive, isPending }) => (
-                <>
-                    {(isActive && item.activeIcon) ? <item.activeIcon /> : <item.icon />}
-                    {item.label}
-                </>
+                {hasHighlighter && (
+                    <p className="w-2 absolute right-4 h-2 rounded-full bg-blue-100"></p>
                 )}
-            </NavLink>
-            ))}
-        </div>
-        )}
-        </div>
-    );
+
+                {/* Submenu items */}
+                {isOpen && (
+                    <div className={"relative ml-10 mt-2 flex flex-col gap-2  " + (isActive && 'line-open')}>
+                        {submenu.map((item) => (
+                            <NavLink
+                                key={item.to}
+                                to={item.to}
+                                className={({ isActive }) =>
+                                    `flex items-center gap-2 py-2 px-2 relative rounded-xl hover:outline-accent-100 hover:outline hover:outline-2  typography-body  ${isActive ? 'text-font-accent selection-primary' : ''
+                                    }`
+                                }
+                            >
+                                {({ isActive, isPending }) => (
+                                    <>
+                                        {(isActive && item.activeIcon) ? <item.activeIcon /> : <item.icon />}
+                                        {item.label}
+                                        {isActive && <div
+                                            className={`absolute top-[18px] right-0 w-1 h-6 rounded-tl-xl rounded-bl-xl ${isActive ? 'bg-accent-100' : 'bg-transparent'}`}
+                                        />}
+                                    </>
+                                )}
+                            </NavLink>
+                        ))}
+                    </div>
+                )}
+            </div>
+        );
     };
 
     const GreenDot = () => <div className='bg-teal-100 w-6 h-6 rounded-full m-[10px]'></div>
@@ -198,7 +189,7 @@ const AdminLayout = () => {
                     <NavLink
                         to={getRoute(user.role,ROUTE_KEY.COMPANY_PROFILE_VIEW)}
                         className={({ isActive }) =>
-                            `w-full flex items-center ${isActive ? " selection-primary " : ""}  hover:bg-background-60 hover:text-font-accent px-4 py-2 rounded-xl `}
+                            `w-full flex items-center ${isActive ? " selection-primary " : ""}    hover:text-font-accent px-4 py-2 rounded-xl `}
                     >
                         <Avatar alt={user?.companyDetails?.name} sx={{ width: "32px", height: "32px" }}
                             src={user?.companyDetails?.logoUrl || UNKNOWN_PROFILE_PICTURE_URL} />
@@ -213,7 +204,7 @@ const AdminLayout = () => {
                     <NavLink
                         to={profilePath}
                         className={({ isActive }) =>
-                            `w-full flex items-center ${isActive ? " selection-primary " : ""}  hover:bg-background-60 hover:text-font-accent px-4 py-2 rounded-xl `}
+                            `w-full flex items-center ${isActive ? " selection-primary " : ""}    hover:text-font-accent px-4 py-2 rounded-xl `}
                     >
                         <IconWrapper inheritColor={true} size={0} customIconSize={5} icon={User} />
                         <span className='typography-body  ml-2 '>
@@ -225,7 +216,7 @@ const AdminLayout = () => {
             {
                 onClick: handleLogout,
                 content: () => (
-                    <div className='flex items-center hover:bg-background-60 hover:text-accent-100 px-4 py-2 w-full rounded-xl'>
+                    <div className='flex items-center   hover:text-accent-100 px-4 py-2 w-full rounded-xl'>
                         <IconWrapper inheritColor={true} size={0} customIconSize={5} icon={LogOut} />
                         <span className='typography-body  ml-2'>
                             Logout
@@ -237,83 +228,94 @@ const AdminLayout = () => {
 
         return (
             <>
-                <div className={`flex items-center px-2 py-1 relative  rounded-xl justify-start hover:bg-background-60 ${location.pathname === profilePath ? "selection-primary" : ""}`}>
+                <div className={`flex items-center px-2 py-1 relative  rounded-xl justify-start hover:outline-accent-100 hover:outline hover:outline-2  ${location.pathname === profilePath ? "selection-primary" : ""}`}>
                     <IconButton
                         onClick={handleMenuClick}
                         className={`flex gap-2  ${location.pathname === profilePath ? "text-font-accent  " : ""}`}
                     >
-                        <Avatar alt={user?.firstName + " " + user?.lastName} sx={{ width: "32px", height: "32px" }}
+                        <Avatar alt={user?.firstName + " " + user?.lastName}
                             src={user?.profilePicture || UNKNOWN_PROFILE_PICTURE_URL} />
-                        <span className={`typography-body  ${location.pathname === profilePath ? "text-font-accent" : "text-white"} `}>{user?.firstName + " " + user?.lastName}</span>
+                        <span className={`typography-body  ${location.pathname === profilePath ? "text-font-accent" : "text-font-main"} `}>{user?.firstName + " " + user?.lastName}</span>
                     </IconButton>
-                    <div className={`absolute right-0 w-1 h-6 rounded-tl-xl rounded-bl-xl ${location.pathname === profilePath ? "bg-teal-400" : "bg-transparent"}`} />
+                    <div className={`absolute right-0 w-1 h-6 rounded-tl-xl rounded-bl-xl ${location.pathname === profilePath ? "bg-accent-100" : "bg-transparent"}`} />
                 </div>
                 <StyledMenu anchorEl={anchorEl} handleMenuClose={handleMenuClose} itemComponents={itemComponents} />
-
             </>
         );
     };
 
+    const renderBottomMenu = () => {
+        return (
+            <>
+                {hasRoutePermission(user.role,ROUTE_KEY.SETTINGS) && <NavItem to={getRoute(user.role,ROUTE_KEY.SETTINGS)} icon={() => <IconWrapper inheritColor icon={Settings} />} activeIcon={() => <IconWrapper inheritColor icon={Settings} />}> Settings </NavItem>}
+            </>
+        )
+    }
+
     const renderMenuItems = () => {
         const jobsSubMenu = [
-            ...(hasRoutePermission(user.role,ROUTE_KEY.ALLJOBS) ? [{
-                to : getRoute(user.role,ROUTE_KEY.ALLJOBS),
-                label : 'All Jobs',
-                icon : () => <IconWrapper isInActiveIcon icon={Briefcase} />,
-                activeIcon : () => <IconWrapper isActiveIcon icon={Briefcase}/>
+            ...(hasRoutePermission(user.role, ROUTE_KEY.ALLJOBS) ? [{
+                to: getRoute(user.role, ROUTE_KEY.ALLJOBS),
+                label: 'All Jobs',
+                icon: () => <IconWrapper inheritColor icon={Briefcase} />,
+                activeIcon: () => <IconWrapper inheritColor icon={Briefcase} />
             }] : []),
-            ...(hasRoutePermission(user.role,ROUTE_KEY.ASSESSMENTS) ? [{
-                to : getRoute(user.role,ROUTE_KEY.ASSESSMENTS),
-                label : 'Assessments',
-                icon : () => <IconWrapper isInActiveIcon icon={ClipboardCheck} />,
-                activeIcon : () => <IconWrapper isActiveIcon icon={ClipboardCheck}/>
+            ...(hasRoutePermission(user.role, ROUTE_KEY.ASSESSMENTS) ? [{
+                to: getRoute(user.role, ROUTE_KEY.ASSESSMENTS),
+                label: 'Assessments',
+                icon: () => <IconWrapper inheritColor icon={ClipboardCheck} />,
+                activeIcon: () => <IconWrapper inheritColor icon={ClipboardCheck} />
             }] : [])
         ]
 
         const candidatesSubMenu = [
-            ...(hasRoutePermission(user.role,ROUTE_KEY.ALL_CANDIDATES) ? [{
-                to : getRoute(user.role,ROUTE_KEY.ALL_CANDIDATES),
-                label : user?.role === ROLES.DESIGN_REVIEWER ? 'Candidates' : 'All Candidates',
-                icon : () => <IconWrapper isInActiveIcon icon={Users} />,
-                activeIcon : () => <IconWrapper isActiveIcon icon={Users}/>
+            ...(hasRoutePermission(user.role, ROUTE_KEY.ALL_CANDIDATES) ? [{
+                to: getRoute(user.role, ROUTE_KEY.ALL_CANDIDATES),
+                label: user?.role === ROLES.DESIGN_REVIEWER ? 'Candidates' : 'All Candidates',
+                icon: () => <IconWrapper inheritColor icon={Users} />,
+                activeIcon: () => <IconWrapper inheritColor icon={Users} />
             }] : []),
-            ...(hasRoutePermission(user.role,ROUTE_KEY.SHORTLISTED) ? [{
-                to : getRoute(user.role,ROUTE_KEY.SHORTLISTED),
-                label : 'Future Gems',
-                icon : () => <IconWrapper isInActiveIcon icon={MonitorDot} />,
-                activeIcon : () => <IconWrapper isActiveIcon icon={MonitorDot}/>
+            ...(hasRoutePermission(user.role, ROUTE_KEY.SHORTLISTED) ? [{
+                to: getRoute(user.role, ROUTE_KEY.SHORTLISTED),
+                label: 'Future Gems',
+                icon: () => <IconWrapper inheritColor icon={UserCheck} />,
+                activeIcon: () => <IconWrapper inheritColor icon={UserCheck} />
             }] : [])
         ]
 
-        return(
+        return (
             <>
-                {user?.role === "Admin" && <NavItem to={getRoute(user.role,ROUTE_KEY.DASHBOARD)} icon={() => <IconWrapper isInActiveIcon icon={LayoutGrid} />} activeIcon={() => <IconWrapper isActiveIcon icon={LayoutGrid} />}> Dashboard </NavItem>}
-                {hasRoutePermission(user?.role,ROUTE_KEY.JOBS) && ((jobsSubMenu?.length  > 1 ) 
-                ? <DropDownNavItem to={getRoute(user.role,ROUTE_KEY.JOBS)} submenu={jobsSubMenu} icon={() => <IconWrapper isInActiveIcon icon={Briefcase} />} activeIcon={() => <IconWrapper isActiveIcon icon={Briefcase} />}> Jobs </DropDownNavItem> 
-                :<NavItem to={jobsSubMenu[0]?.to} icon={jobsSubMenu[0]?.icon} activeIcon={jobsSubMenu[0]?.activeIcon}> {jobsSubMenu[0]?.label} </NavItem>)}
-                {hasRoutePermission(user?.role,ROUTE_KEY.CANDIDATES) && (candidatesSubMenu?.length > 1) ?
-                 <DropDownNavItem to={getRoute(user.role,ROUTE_KEY.CANDIDATES)} submenu={candidatesSubMenu} icon={() => <IconWrapper isInActiveIcon icon={Users} />} activeIcon={() => <IconWrapper isActiveIcon icon={Users} />}>Candidates</DropDownNavItem> 
-                 :<NavItem to={candidatesSubMenu[0]?.to} icon={candidatesSubMenu[0]?.icon} activeIcon={candidatesSubMenu[0]?.activeIcon}> {candidatesSubMenu[0]?.label}</NavItem>}
-                {hasRoutePermission(user?.role,ROUTE_KEY.REVIEWS) && <NavItem to={getRoute(user.role,ROUTE_KEY.REVIEWS)} icon={() => <IconWrapper isInActiveIcon icon={Star} />} activeIcon={() => <IconWrapper isActiveIcon icon={Star} />}>Reviews</NavItem>}
-                {hasRoutePermission(user?.role,ROUTE_KEY.TEAMS) && <NavItem to={getRoute(user.role,ROUTE_KEY.TEAMS)} hasHighlighter={newMembersCount > 0} icon={() => <IconWrapper isInActiveIcon icon={IdCard} />} activeIcon={() => <IconWrapper isActiveIcon icon={IdCard} />}>Teams</NavItem>}
-                {hasRoutePermission(user?.role,ROUTE_KEY.GUIDE) && <NavItem to={getRoute(user.role,ROUTE_KEY.GUIDE)} icon={() => <IconWrapper isInActiveIcon icon={FileText} />} activeIcon={() => <IconWrapper isActiveIcon icon={FileText} />}>Guide</NavItem>}
+                {user?.role === "Admin" && <NavItem to={getRoute(user.role, ROUTE_KEY.DASHBOARD)} icon={() => <IconWrapper inheritColor icon={LayoutGrid} />} activeIcon={() => <IconWrapper inheritColor icon={LayoutGrid} />}> Dashboard </NavItem>}
+                {hasRoutePermission(user?.role, ROUTE_KEY.JOBS) && ((jobsSubMenu?.length > 1)
+                    ? <DropDownNavItem to={getRoute(user.role, ROUTE_KEY.JOBS)} submenu={jobsSubMenu} icon={() => <IconWrapper inheritColor icon={Briefcase} />} activeIcon={() => <IconWrapper inheritColor icon={Briefcase} />}> Jobs </DropDownNavItem>
+                    : <NavItem to={jobsSubMenu[0]?.to} icon={jobsSubMenu[0]?.icon} activeIcon={jobsSubMenu[0]?.activeIcon}> {jobsSubMenu[0]?.label} </NavItem>)}
+                {hasRoutePermission(user?.role, ROUTE_KEY.CANDIDATES) && (candidatesSubMenu?.length > 1) ?
+                    <DropDownNavItem to={getRoute(user.role, ROUTE_KEY.CANDIDATES)} submenu={candidatesSubMenu} icon={() => <IconWrapper inheritColor icon={Users} />} activeIcon={() => <IconWrapper inheritColor icon={Users} />}>Candidates</DropDownNavItem>
+                    : <NavItem to={candidatesSubMenu[0]?.to} icon={candidatesSubMenu[0]?.icon} activeIcon={candidatesSubMenu[0]?.activeIcon}> {candidatesSubMenu[0]?.label}</NavItem>}
+                {hasRoutePermission(user?.role, ROUTE_KEY.REVIEWS) && <NavItem to={getRoute(user.role, ROUTE_KEY.REVIEWS)} icon={() => <IconWrapper inheritColor icon={Star} />} activeIcon={() => <IconWrapper inheritColor icon={Star} />}>Reviews</NavItem>}
+                {hasRoutePermission(user?.role,ROUTE_KEY.CALENDAR) && <NavItem to={getRoute(user.role,ROUTE_KEY.CALENDAR)} icon={() => <IconWrapper inheritColor icon={CalendarDays} />} activeIcon={() => <IconWrapper inheritColor icon={CalendarDays} />}>Calendar</NavItem>}
+                {hasRoutePermission(user?.role, ROUTE_KEY.TEAMS) && <NavItem to={getRoute(user.role, ROUTE_KEY.TEAMS)} hasHighlighter={newMembersCount > 0} icon={() => <IconWrapper inheritColor icon={IdCard} />} activeIcon={() => <IconWrapper inheritColor icon={IdCard} />}>Teams</NavItem>}
+                {hasRoutePermission(user?.role, ROUTE_KEY.GUIDE) && <NavItem to={getRoute(user.role, ROUTE_KEY.GUIDE)} icon={() => <IconWrapper inheritColor icon={FileText} />} activeIcon={() => <IconWrapper inheritColor icon={FileText} />}>Guide</NavItem>}
             </>
         )
     };
 
     //To get the exact path
     const { pathname } = useLocation()
+    const Logo = useLogo();
 
     return (
         <div id='adminContainer' className={`flex ${ADMIN_BG_SCREENS.some(path => pathname.startsWith(path)) ? ' bg-background-100 ' : ' bg-background-100 '} bg-cover bg-top h-full overflow-x-hidden flex flex-col`}>
-            <div id='adminSidebar' className="fixed flex  w-[16rem] h-[calc(100vh-2rem)] m-4 rounded-xl flex-col  bg-background-90 text-font-gray typography-large-p justify-between py-6 ">
+            <div id='adminSidebar' className="fixed flex w-[16rem] h-[calc(100vh-2rem)] m-4 rounded-xl flex-col bg-background-100 text-font-gray typography-large-p justify-between py-6 ">
                 <div className='flex flex-col gap-2 typography-body px-4'>
-                    <div className=' pl-2 pt-2 pb-4 flex '>
-                        <img className='h-11 cursor-pointer ' onClick={() => navigate('/admin')} src={LightLogo} />
+                    <div className='pl-2 pt-2 pb-4 flex items-center justify-between'>
+                        <img className='h-9 cursor-pointer ' onClick={() => navigate('/admin')} src={Logo} alt="Logo" />
+                        <ThemeToggle /> {/* Add ThemeToggle here */}
                     </div>
                     {renderMenuItems()}
                 </div>
                 <div className='flex flex-col gap-2 mx-4'>
+                    {renderBottomMenu()}
                     {user && renderProfileMenu()}
                 </div>
             </div>

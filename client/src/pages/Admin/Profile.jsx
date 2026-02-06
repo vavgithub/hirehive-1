@@ -8,17 +8,18 @@ import CustomToolTip from '../../components/Tooltip/CustomToolTip';
 import { useProfilePicture } from '../../hooks/useProfilePicture';
 import SkillsInput from '../../components/Inputs/SkillsInput';
 import { showSuccessToast, showErrorToast } from '../../components/ui/Toast';
-import axios from '../../api/axios';
+import axios from '../../services/axios';
 import LoaderModal from '../../components/Loaders/LoaderModal';
 import {  useQueryClient } from '@tanstack/react-query';
 import { InputField } from '../../components/Inputs/InputField';
 import Container from '../../components/Cards/Container';
 import { PencilLine } from 'lucide-react';
 import IconWrapper from '../../components/Cards/IconWrapper';
-import { UNKNOWN_PROFILE_PICTURE_URL } from '../../utility/config';
 import { companySizeOptions, industryTypeOptions, LocationOptions } from '../../components/Register/CompanyDetails';
 import { formatPhoneNumber, PhoneInputField } from '../../components/Form/PhoneInputField';
 import { validationRules } from '../../utility/validationRules';
+import { editUserProfile } from '../../services/auth.service';
+import { useUnknownProfilePicture } from '../../context/ThemeContext';
 
 
 
@@ -145,6 +146,8 @@ function Profile() {
   const [profileFile, setProfileFile] = useState(null);
   const { mutate: uploadPicture, isLoading: uploading } = useProfilePicture();
   const queryClient = useQueryClient();
+  const UNKNOWN_PROFILE_PICTURE_URL = useUnknownProfilePicture()
+
 
   const { control, handleSubmit, reset } = useForm({
     defaultValues: {
@@ -170,7 +173,7 @@ function Profile() {
   const handleEditProfile = async (data) => {
     try {
       setIsLoading(true);
-      const response = await axios.put('/auth/register/edit-profile', {
+      const response = await editUserProfile({
         firstName: data.firstName,
         lastName: data.lastName,
         phone: data.phone,
@@ -193,7 +196,7 @@ function Profile() {
           });
         }
         // Invalidate the query to refetch user data
-        queryClient.invalidateQueries('user');
+        queryClient.invalidateQueries('auth');
         showSuccessToast('Success', 'Profile updated successfully');
         setIsEditing(false);
       }
@@ -259,7 +262,7 @@ function Profile() {
                         className="absolute bottom-1 -right-1 rounded-xl"
                         disabled={uploading}
                       >
-                        <IconWrapper hasBg={true} customBgHover={'hover:bg-background-60'} size={3} customIconSize={3}  icon={PencilLine} />
+                        <IconWrapper hasBg={true} customBgHover={'hover-outline'} size={3} customIconSize={3}  icon={PencilLine} />
                       </button>
                     )}
                   </div>

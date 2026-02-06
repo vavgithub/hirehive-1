@@ -1,14 +1,22 @@
-import { createContext, useContext } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import useAuth from "../hooks/useAuth";
-
 
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  const { data: user, isLoading, error } = useAuth();
+  const { data, isLoading, error } = useAuth();
+  const [user,setUser] = useState(null);
+  const [isDone,setIsDone] = useState(false);
+
+  useEffect(()=>{
+    if(!isLoading){
+      setUser(data)
+      setIsDone(true)
+    }
+  },[data,isLoading])
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, error }}>
+    <AuthContext.Provider value={{ user, isLoading, error , isDone, setUser }}>
       {children}
     </AuthContext.Provider>
   );

@@ -7,30 +7,16 @@ import GlobalDropDown from "../../components/Dropdowns/GlobalDropDown";
 import { emailPattern } from "../../components/Register/RegisterForm";
 import { roleOptions } from "../../components/Register/AddMembers";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import axios from "../../api/axios";
+import axios from "../../services/axios";
 import { showErrorToast, showSuccessToast } from "../../components/ui/Toast";
 import LoaderModal from "../../components/Loaders/LoaderModal";
 import { useNavigate } from "react-router-dom";
 import Container from "../../components/Cards/Container";
-import { UNKNOWN_PROFILE_PICTURE_URL } from "../../utility/config";
 import { useDispatch } from "react-redux";
 import { setMembersCount } from "../../redux/AdminSlice";
 import Header from "../../components/utility/Header";
-
-const addMember = async ({teamMember}) => {
-    const response = await axios.post('/admin/add-member',{teamMember});
-    return response?.data
-}
-
-const approveRequest = async ({ email }) => {
-    const response = await axios.post('/admin/register/approve-request', { email });
-    return response?.data
-}
-
-const rejectRequest = async ({ email }) => {
-    const response = await axios.post('/admin/register/reject-request', { email });
-    return response?.data
-}
+import { useUnknownProfilePicture } from "../../context/ThemeContext";
+import { addMember, approveRequest, getAllTeamMembers, rejectRequest } from "../../services/admin.service";
 
 function Teams() {
     const [firstName, setFirstName] = useState("");
@@ -50,9 +36,11 @@ function Teams() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
+    const UNKNOWN_PROFILE_PICTURE_URL = useUnknownProfilePicture()
+
     const { data : teamMembers , isLoading : isTeamMembersLoading } = useQuery({
         queryKey: ['team_members'],
-        queryFn: () => axios.get('/admin/get-all-members').then(res => res.data),
+        queryFn: getAllTeamMembers,
     })
 
     useEffect(()=>{
@@ -168,11 +156,11 @@ function Teams() {
 
         <div className="grid gap-4 grid-cols-5 ">
             {/* Add Card */}
-            <StyledCard padding={2} backgroundColor={'bg-background-80'} extraStyles={'flex flex-col items-center justify-between gap-4 '}>
+            <StyledCard padding={2} backgroundColor={'bg-background-100'} extraStyles={'flex flex-col items-center justify-between gap-4 '}>
                 {/* Member Profile Picture */}
                 <div className="relative w-full aspect-square rounded-xl overflow-hidden">
                     <img src={ UNKNOWN_PROFILE_PICTURE_URL } alt="" className='object-cover w-full overflow-hidden' />
-                    <span className="absolute top-5 right-10 font-bold text-[#3d3c3c] scale-[3.4]">+</span>
+                    <span className="absolute top-[60px] right-7 font-bold text-profile-plus scale-[3.4]">+</span>
                 </div>
                 {/* Memeber Details */}
                 <div className="flex flex-col ">
@@ -185,7 +173,7 @@ function Teams() {
 
             {teamMembers?.members?.filter(member => member?.status !== "REQUESTED").map(member => {
                 return (
-                    <StyledCard key={member?.member_id ? member?.member_id : member?._id} backgroundColor={'bg-background-80'} onClick={()=>navigate(`/admin/teams/profile/${member?.member_id ? member?.member_id : member?._id}`)} padding={2} extraStyles={'flex flex-col items-center cursor-pointer justify-between gap-4 '}>
+                    <StyledCard key={member?.member_id ? member?.member_id : member?._id} backgroundColor={'bg-background-100'} onClick={()=>navigate(`/admin/teams/profile/${member?.member_id ? member?.member_id : member?._id}`)} padding={2} extraStyles={'flex flex-col items-center cursor-pointer justify-between gap-4 '}>
                         {/* Member Profile Picture */}
                         <div className="w-full aspect-square rounded-xl overflow-hidden relative">
                             <img src={member?.profilePicture || UNKNOWN_PROFILE_PICTURE_URL } alt="" className='object-cover w-full overflow-hidden' />

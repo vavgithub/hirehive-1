@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import Header from '../../components/utility/Header'
 import { useNavigate, useParams } from 'react-router-dom';
-import axios from '../../api/axios';
+import axios from '../../services/axios';
 import { QueryClient, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import DynamicForm from '../../components/Form/DynamicForm';
 import { showSuccessToast } from '../../components/ui/Toast';
 import Loader from '../../components/Loaders/Loader';
 import StyledCard from '../../components/Cards/StyledCard';
 import Container from '../../components/Cards/Container';
-import { UNKNOWN_PROFILE_PICTURE_URL } from '../../utility/config';
+import { useUnknownProfilePicture } from '../../context/ThemeContext';
+import { updateCandidateProfile } from '../../services/admin.candidate.service';
 
 
 const fetchCandidate = async ({ queryKey }) => {
@@ -21,6 +22,8 @@ const EditCandidateProfile = () => {
   const { id: mainId } = useParams();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const UNKNOWN_PROFILE_PICTURE_URL = useUnknownProfilePicture();
+
 
   const { data, error, isLoading } = useQuery({
     queryKey: ['candidate', mainId],
@@ -28,7 +31,7 @@ const EditCandidateProfile = () => {
   });
 
   const updateCandidateMutation = useMutation({
-    mutationFn: (updatedData) => axios.patch(`/admin/candidate/update-candidate-profile/${mainId}`, updatedData),
+    mutationFn: updateCandidateProfile,
     onSuccess: () => {
       queryClient.invalidateQueries(['candidate', mainId]);
       showSuccessToast(`Data Updated Successfully`)
@@ -76,7 +79,7 @@ const EditCandidateProfile = () => {
   ];
 
   const handleSave = (formData) => {
-    updateCandidateMutation.mutate(formData);
+    updateCandidateMutation.mutate({mainId,updatedData : formData});
   };
   const handleCancel = (formData) => {
     // Handle cancellation

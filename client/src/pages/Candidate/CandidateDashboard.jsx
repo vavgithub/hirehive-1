@@ -1,7 +1,7 @@
 // CandidateDashboard.jsx
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from '../../api/axios';
+import { getCandidateDashboard } from '../../services/auth.candidate.service';
 
 const CandidateDashboard = () => {
   const [candidateData, setCandidateData] = useState(null);
@@ -10,7 +10,7 @@ const CandidateDashboard = () => {
   useEffect(() => {
     const fetchCandidateData = async () => {
       try {
-        const response = await axios.get('/auth/candidate/dashboard');
+        const response = await getCandidateDashboard();
         setCandidateData(response.data.candidate);
       } catch (error) {
         console.error('Error fetching candidate data:', error);

@@ -67,7 +67,7 @@ function CustomPill({
         ? ""
         : hoverColor && typeof hoverColor === "string" && !selected
         ? `hover:${hoverColor}`
-        : "hover:bg-background-60"
+        : "hover-outline"
     } 
     ${
       borderRadius?.toString()
@@ -97,7 +97,7 @@ function CustomPill({
                 e.stopPropagation();
                 infoButtonClick(data?.title);
               }}
-              hasBg
+              hasBg={false}
               customIconSize={5}
               customStrokeWidth={4}
               customBgHover={" bg-background-60 "}

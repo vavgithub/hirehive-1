@@ -7,15 +7,17 @@ import StageBadge from "../ui/StageBadge";
 import { ensureAbsoluteUrl } from "../../utility/ensureAbsoluteUrl";
 import IconWrapper from "../Cards/IconWrapper";
 import { CircleCheck, CircleX, ClipboardCheck, FileUser, FolderOpen, Globe } from "lucide-react";
-import { UNKNOWN_PROFILE_PICTURE_URL } from "../../utility/config";
 import { formatPhoneNumber } from "../Form/PhoneInputField";
 import { hasPermission, PERMISSIONS } from "../../config/permissions.config";
+import { useUnknownProfilePicture } from "../../context/ThemeContext";
 
 const getCommonColumns = (handleDocumentClick) => [
   {
     field: 'fullName',
     headerName: 'Full Name',
     width: 250,
+    cellClassName : 'padded-col',
+    headerClassName : 'padded-col',
     sortable: false,
     disableColumnMenu: true,
     valueGetter: (params, row) => {
@@ -28,7 +30,9 @@ const getCommonColumns = (handleDocumentClick) => [
         profilePictureUrl
       }
     },
-    renderCell: (params) => (
+    renderCell: (params) => {
+      const UNKNOWN_PROFILE_PICTURE_URL = useUnknownProfilePicture()
+      return(
       <div className="name-cell flex items-center gap-2 h-12">
         <Avatar src={params?.value?.profilePictureUrl || UNKNOWN_PROFILE_PICTURE_URL} sx={{ width: 32, height: 32 }} />
         <p className='flex items-center gap-2'>{params.value.name}
@@ -63,18 +67,19 @@ const getCommonColumns = (handleDocumentClick) => [
           )}
         </div>
       </div>
-    ),
+    )},
   },
   {
     field: 'currentStage',
     headerName: 'Stage',
     width: 200,
     align: 'left',
+    sortable: false,
     headerAlign: 'left',
     disableColumnMenu: true,
     renderCell: (params) => (
       <div className='h-full flex items-center justify-start'>
-        <StageBadge stage={params.value} />
+        <StageBadge withBg={false} stage={params.value} />
       </div>
     )
   },
@@ -171,6 +176,7 @@ export const getReadOnlyColumns = (role, handleDocumentClick, disableCTC,disable
       headerName: 'Status',
       width: 200,
       align: 'center',
+      sortable: false,
       headerAlign: 'left',
       disableColumnMenu: true,
       renderCell: (params) => (
@@ -186,6 +192,7 @@ export const getReadOnlyColumns = (role, handleDocumentClick, disableCTC,disable
       headerName: 'Applied For',
       width: 200,
       align: 'center',
+      sortable: false,
       headerAlign: 'center',
       disableColumnMenu: true,
       renderCell: (params) => (
@@ -202,6 +209,7 @@ export const getDefaultColumns = (role, canMove, canReject, handleAssigneeChange
     field: 'status',
     headerName: 'Status',
     width: 180,
+    sortable: false,
     disableColumnMenu: true,
     valueGetter: (value, row) => {
       const currentStage = row.currentStage;
@@ -221,6 +229,7 @@ export const getDefaultColumns = (role, canMove, canReject, handleAssigneeChange
   {
     field: 'assignee',
     headerName: 'Assignee',
+    sortable: false,
     width: 100,
     disableColumnMenu: true,
     valueGetter: (value, row) => {

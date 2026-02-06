@@ -8,7 +8,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import LoaderModal from '../Loaders/LoaderModal';
-import axios from '../../api/axios';
+import axios from '../../services/axios';
 import { showErrorToast, showSuccessToast } from '../ui/Toast';
 import useAuth from '../../hooks/useAuth';
 import { emailPattern } from './RegisterForm';
@@ -18,6 +18,7 @@ import MuiCustomStylesForDataGrid from '../tableUtilities/MuiCustomStylesForData
 import IconWrapper from '../Cards/IconWrapper';
 import { Pencil, Trash } from 'lucide-react';
 import { getRoute, ROLES, ROUTE_KEY } from '../../config/permissions.config';
+import { addTeamMembers, skipAddMembers } from '../../services/auth.service';
 
 export const roleOptions = [
     {
@@ -29,17 +30,6 @@ export const roleOptions = [
         value : "Design Reviewer"
     },
 ]
-
-const addTeamMembers = async ({teamMembers, email }) => {
-    const response = await axios.post('/auth/register/add-team-member',{email, teamMembers });
-    return response.data
-}
-
-const skipAddMembers = async () => {
-    const response = await axios.post('/auth/register/skip-add-member');
-    return response.data
-}
-
 
 function AddMembers({currentStep,setCurrentStep}) {
     const [members,setMembers] = useState([]);

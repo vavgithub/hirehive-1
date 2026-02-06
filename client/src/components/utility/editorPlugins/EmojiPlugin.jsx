@@ -18,7 +18,7 @@ function EmojiPickerButton({emoji,setShowPicker}){
     }
 
     return(
-        <button onClick={handleEmojiAddition} className='emoji-button aspect-square hover:bg-background-60 rounded-xl ' type='button'>
+        <button onClick={handleEmojiAddition} className='emoji-button aspect-square hover-outline rounded-xl ' type='button'>
             {emoji?.unicode}
         </button>
     )
@@ -40,7 +40,7 @@ function EmojiPlugin() {
     }, []);
 
   return (
-    <div ref={emojiRef} onClick={()=>setShowEmojiPicker(!showEmojiPicker)} className={'relative cursor-pointer  p-3 w-10 h-10  rounded-xl ' + (showEmojiPicker ? "bg-accent-300" : "hover:bg-background-60")}>
+    <div ref={emojiRef} onClick={()=>setShowEmojiPicker(!showEmojiPicker)} className={'relative cursor-pointer  p-3 w-10 h-10  rounded-xl ' + (showEmojiPicker ? "bg-accent-300" : "hover-outline")}>
         <p className='scale-[1.5] pb-7'>{"\u263A"}</p>
         {
             showEmojiPicker && 

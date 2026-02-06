@@ -19,8 +19,6 @@ function BudgetMenu({budgetMenuAnchorEl , handleBudgetMenuClose , handleBudgetEd
           }}
         sx={{
           "& .MuiList-root": {
-            backgroundColor: 'rgba(12, 13, 13, 1)',
-            color: "white",
             padding : "8px",
             display : "flex",
             flexDirection : "column",
@@ -37,7 +35,7 @@ function BudgetMenu({budgetMenuAnchorEl , handleBudgetMenuClose , handleBudgetEd
           sx={{
             width : "100%",
             display : "flex",
-            gap: "4px"
+            gap: "8px"
           }}
           onClick={handleBudgetEdit}>
           <IconWrapper icon={SquarePen} size={0} customIconSize={4} />
@@ -49,7 +47,7 @@ function BudgetMenu({budgetMenuAnchorEl , handleBudgetMenuClose , handleBudgetEd
           sx={{
             width : "100%",
             display : "flex",
-            gap: "4px"
+            gap: "8px",
           }}
           onClick={handleBudgetClear}>
           <IconWrapper icon={Trash} isErrorIcon size={0} customIconSize={4} />

@@ -1,4 +1,4 @@
-import React, { useEffect, useState , useMemo } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import Scorer from '../ui/Scorer';
 import { Button } from '../Buttons/Button';
 import { showErrorToast } from '../ui/Toast';
@@ -48,7 +48,7 @@ function ScreeningReview({ jobProfile, candidate, onSubmit ,rounded = "bottom"})
   };
   
     return (
-      <StyledCard padding={2} backgroundColor={'bg-background-70'} borderRadius={roundedClass} extraStyles=' grid grid-cols-2 gap-4 '>
+      <StyledCard padding={2} backgroundColor={'bg-background-80'} borderRadius={roundedClass} extraStyles=' grid grid-cols-2 gap-4 '>
         {Object.entries(ratings).map(([category, value]) => (
           <div key={category} className='flex gap-4 items-center'>
             <span className='w-[35%]'>{category}</span>
@@ -60,7 +60,7 @@ function ScreeningReview({ jobProfile, candidate, onSubmit ,rounded = "bottom"})
   
           <input
             type="text"
-            className='w-full bg-background-80 text-white p-2 rounded'
+            className='w-full bg-background-80  p-2 rounded'
             placeholder='Enter Your Feedback'
             value={feedback}
             onChange={(e) => setFeedback(e.target.value)}

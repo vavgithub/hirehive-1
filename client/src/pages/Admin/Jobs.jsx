@@ -7,7 +7,6 @@ import JobCard from '../../components/Cards/JobCard';
 import Tabs from '../../components/ui/Tabs';
 import StatsGrid from '../../components/ui/StatsGrid';
 import { Button } from '../../components/Buttons/Button';
-import axios from "../../api/axios"
 import { ACTION_TYPES, getModalMessage } from '../../utility/ActionTypes';
 import NoJobs from "../../svg/Background/NoJobs.svg"
 import { showErrorToast, showSuccessToast } from '../../components/ui/Toast';
@@ -23,11 +22,8 @@ import Header from '../../components/utility/Header';
 import LoaderModal from '../../components/Loaders/LoaderModal';
 import usePinnedJobs from '../../hooks/usePinnedJobs';
 import { getRoute, ROUTE_KEY } from '../../config/permissions.config';
+import { closeJob, deleteJob, draftJob, fetchJobs, fetchOverallStats, filterSearchJobs, reOpenJob, unArchiveJob } from '../../services/jobs.service';
 
-
-const fetchJobs = (page, status,pinned) => axios.get(`/jobs/jobs?page=${page}&status=${status}&pinned=${JSON.stringify(pinned)}`).then(res => res.data);
-const fetchOverallStats = () => axios.get('/jobs/stats/overall').then(res => res.data.data);
-const filterSearchJobs = (query, filters, page, status) => axios.post('/jobs/filterSearchJobs', { filters, page, status, query }).then(res => res.data);
 
 const Jobs = () => {
     const [searchQuery, setSearchQuery] = useState('');
@@ -132,7 +128,7 @@ const Jobs = () => {
 
 
     const deleteMutation = useMutation({
-        mutationFn: (jobId) => axios.delete(`/jobs/deleteJob/${jobId}`),
+        mutationFn: deleteJob,
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['jobs'] });
             queryClient.invalidateQueries({ queryKey: ['jobCount'] });
@@ -142,7 +138,7 @@ const Jobs = () => {
     });
 
     const draftMutation = useMutation({
-        mutationFn: (jobId) => axios.put(`/jobs/draftJob/${jobId}`),
+        mutationFn: draftJob,
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['jobs'] });
             setModalOpen(false);
@@ -150,7 +146,7 @@ const Jobs = () => {
     });
 
     const reOpenMutation = useMutation({
-        mutationFn: (jobId) => axios.put(`/jobs/reOpen/${jobId}`),
+        mutationFn: reOpenJob,
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['jobs'] });
             setModalOpen(false);
@@ -159,7 +155,7 @@ const Jobs = () => {
     })
 
     const unarchiveMutation = useMutation({
-        mutationFn: (jobId) => axios.put(`/jobs/unarchiveJob/${jobId}`),
+        mutationFn: unArchiveJob,
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['jobs'] });
             setModalOpen(false);
@@ -167,8 +163,7 @@ const Jobs = () => {
     });
 
     const closeMutation = useMutation({
-        mutationFn: ({ jobId, reason }) =>
-            axios.put(`/jobs/closeJob/${jobId}`, { reason }), // Add reason to request body
+        mutationFn: closeJob, // Add reason to request body
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['jobs'] });
             setModalOpen(false);
@@ -275,16 +270,16 @@ const Jobs = () => {
         {
             name: 'open',
             label: 'Open',
-            icon: <IconWrapper size={0} customIconSize={5} customStrokeWidth={4} isInActiveIcon icon={CircleCheck} />,
-            activeIcon: <IconWrapper size={0} customIconSize={5} customStrokeWidth={4} isActiveIcon icon={CircleCheck} />,
+            icon: <IconWrapper size={0} customIconSize={5} customStrokeWidth={4} inheritColor icon={CircleCheck} />,
+            activeIcon: <IconWrapper size={0} customIconSize={5} customStrokeWidth={4} inheritColor icon={CircleCheck} />,
         },
         {
-            name: 'closed', label: 'Closed', icon: <IconWrapper size={0} customIconSize={5} customStrokeWidth={4} isInActiveIcon icon={CircleX} />,
-            activeIcon: <IconWrapper size={0} customIconSize={5} customStrokeWidth={4} isActiveIcon icon={CircleX} />,
+            name: 'closed', label: 'Closed', icon: <IconWrapper size={0} customIconSize={5} customStrokeWidth={4} inheritColor icon={CircleX} />,
+            activeIcon: <IconWrapper size={0} customIconSize={5} customStrokeWidth={4} inheritColor icon={CircleX} />,
         },
         {
-            name: 'draft', label: 'Draft', icon: <IconWrapper size={0} customIconSize={5} customStrokeWidth={4} isInActiveIcon icon={Archive} />,
-            activeIcon: <IconWrapper size={0} customIconSize={5} customStrokeWidth={4} isActiveIcon icon={Archive} />,
+            name: 'draft', label: 'Draft', icon: <IconWrapper size={0} customIconSize={5} customStrokeWidth={4} inheritColor icon={Archive} />,
+            activeIcon: <IconWrapper size={0} customIconSize={5} customStrokeWidth={4} inheritColor icon={Archive} />,
         },
     ];
 
@@ -292,7 +287,7 @@ const Jobs = () => {
         {
             title: 'Jobs Posted',
             value: overallStats.totalJobs,
-            icon: () => <IconWrapper size={10} isInActiveIcon icon={Briefcase} />,
+            icon: () => <IconWrapper size={10} isTeritiaryIcon icon={Briefcase} />,
             statistics: {
                 monthly: `${overallStats?.jobStatistics?.monthly ?? 0}% since last month`,
                 weekly: `${overallStats?.jobStatistics?.weekly ?? 0}% since last week`,
@@ -302,7 +297,7 @@ const Jobs = () => {
         {
             title: 'Applications Received',  // This label is now more accurate
             value: overallStats.totalApplications, // This now shows total applications
-            icon: () => <IconWrapper size={10} isInActiveIcon icon={FileText} />,
+            icon: () => <IconWrapper size={10} isTeritiaryIcon icon={FileText} />,
             statistics: {
                 monthly: `${overallStats?.applicationStatistics?.monthly ?? 0}% since last month`,
                 weekly: `${overallStats?.applicationStatistics?.weekly ?? 0}% since last week`,
@@ -312,7 +307,7 @@ const Jobs = () => {
         {
             title: 'Hired',
             value: overallStats.totalHired,
-            icon: () => <IconWrapper size={10} isInActiveIcon icon={CircleCheckBig} />,
+            icon: () => <IconWrapper size={10} isTeritiaryIcon icon={CircleCheckBig} />,
             statistics: {
                 monthly: `${overallStats?.hiredStatistics?.monthly ?? 0}% since last month`,
                 weekly: `${overallStats?.hiredStatistics?.weekly ?? 0}% since last week`,
@@ -346,6 +341,7 @@ const Jobs = () => {
             orgId={orgId} // Pass the organization ID to Header
             rightContent={
                 <Tabs
+                    bgVariant='secondary'
                     tabs={tabs}
                     activeTab={activeTab}
                     handleTabClick={handleTabClick}
@@ -388,7 +384,7 @@ const Jobs = () => {
                             activeTab == "open" && displayJobs.length != 0 && displayJobs.filter(job => job.status === "open").length !== 0 && (
                                 <div className='flex justify-end '>
                                     <div >
-                                        <Button id="createJobBtn" variant="primary" icon={() => <IconWrapper icon={CirclePlus} size={0} customIconSize={5} customStrokeWidth={5} />} iconPosition="left" onClick={handleCreateJob}>Create A Job Listing</Button>
+                                        <Button id="createJobBtn" variant="primary" icon={() => <IconWrapper inheritColor icon={CirclePlus} size={0} customIconSize={5} customStrokeWidth={5} />} iconPosition="left" onClick={handleCreateJob}>Create A Job Listing</Button>
                                     </div>
                                 </div>
                             )
@@ -398,14 +394,14 @@ const Jobs = () => {
                                 <Loader />
                             </div>
                         ) : (displayJobs.length === 0 || displayJobs.filter(job => job.status === activeTab).length === 0) ? (
-                            <div className='bg-background-80 h-full flex flex-col p-40 justify-center items-center rounded-xl'>
+                            <div className='bg-background-100 h-full flex flex-col p-36 justify-center items-center rounded-xl'>
                                 <img src={NoJobs} alt="No jobs found" />
                                 <span className='typography-body m-6'>
                                     Create a job post to attract top talent and build your dream team
                                 </span>
                                     <Button
                                         variant="primary"
-                                        icon={() => <IconWrapper icon={CirclePlus} size={0} customIconSize={5} customStrokeWidth={5} />}
+                                        icon={() => <IconWrapper inheritColor icon={CirclePlus} size={0} customIconSize={5} customStrokeWidth={5} />}
                                         iconPosition="left"
                                         onClick={handleCreateJob}
                                     >

@@ -16,6 +16,7 @@ export const UIUXConfig = [
             contentConfig : {
                 "Not Assigned" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : true,
@@ -25,11 +26,14 @@ export const UIUXConfig = [
                             icon : WarningIcon
                         },
                         hasScheduledLabel : true,
+                        hasUndoButton : false,
+                        hasUndoButtonDisabled : false,
                         actions : {
                             hasRejectAction : true,
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : true,
@@ -39,11 +43,14 @@ export const UIUXConfig = [
                             icon : WarningIcon
                         },
                         hasScheduledLabel : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         actions : {
                             hasRejectAction : true,
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -66,6 +73,7 @@ export const UIUXConfig = [
                 },
                 "Under Review" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -75,11 +83,14 @@ export const UIUXConfig = [
                             icon : WarningIcon
                         },
                         hasRemarks : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasRatingComponent : true,
                         hasScoreCard : false,
                         actions : false
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -89,10 +100,13 @@ export const UIUXConfig = [
                             icon : WarningIcon
                         },
                         hasRemarks : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScoreCard : false,
                         actions : false
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -122,6 +136,7 @@ export const UIUXConfig = [
                 },
                 "Reviewed" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -129,6 +144,8 @@ export const UIUXConfig = [
                         hasLabel : false,
                         hasRemarks : true,
                         hasScoreCard : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScheduledLabel : true,
                         actions : {
                             hasRejectAction : true,
@@ -136,6 +153,7 @@ export const UIUXConfig = [
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -143,6 +161,8 @@ export const UIUXConfig = [
                         hasLabel : false,
                         hasRemarks : true,
                         hasScoreCard : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScheduledLabel : true,
                         actions : {
                             hasRejectAction : true,
@@ -150,6 +170,7 @@ export const UIUXConfig = [
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -175,28 +196,35 @@ export const UIUXConfig = [
                 },
                 "Rejected" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
                         hasBudgetLabel : false,
                         hasLabel : false,
                         hasRemarks : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasRejectionReason : true,
                         hasScoreCard : true,
                         actions : false
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
                         hasBudgetLabel : false,
                         hasLabel : false,
                         hasRemarks : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasRejectionReason : true,
                         hasScoreCard : true,
                         actions : false
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -220,6 +248,7 @@ export const UIUXConfig = [
                 },
                 "Cleared" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -230,6 +259,7 @@ export const UIUXConfig = [
                         actions : false
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -240,6 +270,7 @@ export const UIUXConfig = [
                         actions : false
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -307,6 +338,7 @@ export const UIUXConfig = [
             contentConfig : {
                 "Pending" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -318,11 +350,14 @@ export const UIUXConfig = [
                         hasRemarks : false,
                         hasScoreCard : false,
                         hasBudgetScoring : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         actions : false,
                         hasCallHistory : false,
                         hasScheduledForm : true
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -332,6 +367,8 @@ export const UIUXConfig = [
                             icon : WarningIcon
                         },
                         hasRemarks : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScoreCard : false,
                         hasBudgetScoring : true,
                         actions : false,
@@ -339,6 +376,7 @@ export const UIUXConfig = [
                         hasScheduledForm : true
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -365,6 +403,7 @@ export const UIUXConfig = [
                 },
                 "Call Scheduled" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -376,6 +415,8 @@ export const UIUXConfig = [
                         hasRemarks : false,
                         hasScoreCard : false,
                         hasCallDetails : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasCallHistory : true,
                         hasScheduledForm : false,
                         actions : {
@@ -384,6 +425,7 @@ export const UIUXConfig = [
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -394,6 +436,8 @@ export const UIUXConfig = [
                         },
                         hasRemarks : false,
                         hasScoreCard : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasCallDetails : true,
                         hasCallHistory : true,
                         hasScheduledForm : false,
@@ -403,6 +447,7 @@ export const UIUXConfig = [
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -433,6 +478,7 @@ export const UIUXConfig = [
                 },
                 "No Show" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -444,6 +490,8 @@ export const UIUXConfig = [
                         hasRemarks : false,
                         hasScoreCard : false,
                         hasCallDetails : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasCallHistory : false,
                         hasScheduledForm : false,
                         hasScheduledLabel : true,
@@ -453,6 +501,7 @@ export const UIUXConfig = [
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -464,6 +513,8 @@ export const UIUXConfig = [
                         hasRemarks : false,
                         hasScoreCard : false,
                         hasCallDetails : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasCallHistory : false,
                         hasScheduledForm : false,
                         hasScheduledLabel : true,
@@ -473,6 +524,7 @@ export const UIUXConfig = [
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -503,6 +555,7 @@ export const UIUXConfig = [
                 },
                 "Under Review" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -514,6 +567,8 @@ export const UIUXConfig = [
                         hasScheduledForm : false,
                         hasRatingComponent : true,
                         hasRemarks : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasScoreCard : false,
                         hasCallDetails : false,
                         hasCallHistory : false,
@@ -522,6 +577,7 @@ export const UIUXConfig = [
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -534,12 +590,15 @@ export const UIUXConfig = [
                         hasScoreCard : false,
                         hasCallDetails : false,
                         hasCallHistory : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasScheduledForm : false,
                         actions : {
                             hasNoShowAction : true,
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -571,6 +630,7 @@ export const UIUXConfig = [
                 },
                 "Reviewed" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -580,6 +640,8 @@ export const UIUXConfig = [
                         hasScoreBoard : true,
                         hasScoreCard : true,
                         hasBudgetScoring : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasCallDetails : false,
                         hasCallHistory : false,
                         hasScheduledForm : false,
@@ -590,6 +652,7 @@ export const UIUXConfig = [
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -600,6 +663,8 @@ export const UIUXConfig = [
                         hasScoreCard : true,
                         hasBudgetScoring : true,
                         hasCallDetails : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasCallHistory : false,
                         hasScheduledForm : false,
                         hasScheduledLabel : true,
@@ -609,6 +674,7 @@ export const UIUXConfig = [
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -638,6 +704,7 @@ export const UIUXConfig = [
                 },
                 "Cleared" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -652,6 +719,7 @@ export const UIUXConfig = [
                         actions : false
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -666,6 +734,7 @@ export const UIUXConfig = [
                         actions : false
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -695,6 +764,7 @@ export const UIUXConfig = [
                 },
                 "Rejected" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -702,6 +772,8 @@ export const UIUXConfig = [
                         hasLabel : false,
                         hasRemarks : false,
                         hasRejectionReason : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasScoreBoard : true,
                         hasScoreCard : true,
                         hasCallDetails : false,
@@ -710,6 +782,7 @@ export const UIUXConfig = [
                         actions : false
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -719,12 +792,15 @@ export const UIUXConfig = [
                         hasRejectionReason : true,
                         hasScoreBoard : true,
                         hasScoreCard : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasCallDetails : false,
                         hasCallHistory : false,
                         hasScheduledForm : false,
                         actions : false
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -767,6 +843,7 @@ export const UIUXConfig = [
             contentConfig : {
                 "Pending" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -778,10 +855,13 @@ export const UIUXConfig = [
                         hasScheduledLabel : true,
                         hasRemarks : false,
                         hasScoreCard : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         actions : false,
                         hasTaskForm : true
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -793,10 +873,13 @@ export const UIUXConfig = [
                         hasRemarks : false,
                         hasScoreCard : false,
                         actions : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasTaskForm : true,
                         hasScheduledLabel : true
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -823,6 +906,7 @@ export const UIUXConfig = [
                 },
                 "Sent" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -833,6 +917,8 @@ export const UIUXConfig = [
                         },
                         hasRemarks : false,
                         hasScoreCard : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         actions : {
                             hasRejectAction : true,
                         },
@@ -840,6 +926,7 @@ export const UIUXConfig = [
                         hasTaskDetails : true
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -850,6 +937,8 @@ export const UIUXConfig = [
                         },
                         hasRemarks : false,
                         hasScoreCard : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         actions : {
                             hasRejectAction : true,
                         },
@@ -857,6 +946,7 @@ export const UIUXConfig = [
                         hasTaskDetails : true,
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -882,6 +972,7 @@ export const UIUXConfig = [
                 },
                 "Not Assigned" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : true,
@@ -892,10 +983,13 @@ export const UIUXConfig = [
                         },
                         hasRemarks : false,
                         hasScoreCard : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         actions : false,
                         hasSubmissionDetails : true
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : true,
@@ -906,10 +1000,13 @@ export const UIUXConfig = [
                         },
                         hasRemarks : false,
                         hasScoreCard : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         actions : false,
                         hasSubmissionDetails : true
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -934,6 +1031,7 @@ export const UIUXConfig = [
                 },
                 "Under Review" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -943,12 +1041,15 @@ export const UIUXConfig = [
                             icon : WarningIcon
                         },
                         hasRemarks : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScoreCard : false,
                         hasSubmissionDetails : true,
                         hasRatingComponent : true,
                         actions : false,
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -958,11 +1059,14 @@ export const UIUXConfig = [
                             icon : WarningIcon
                         },
                         hasRemarks : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScoreCard : false,
                         hasSubmissionDetails : true,
                         actions : false,
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -987,6 +1091,7 @@ export const UIUXConfig = [
                 },
                 "Reviewed" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -994,6 +1099,8 @@ export const UIUXConfig = [
                         hasLabel : false,
                         hasRemarks : true,
                         hasScoreCard : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScheduledLabel : true,
                         actions : {
                             hasRejectAction : true,
@@ -1001,6 +1108,7 @@ export const UIUXConfig = [
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1010,6 +1118,8 @@ export const UIUXConfig = [
                         hasScoreCard : true,
                         hasScheduledLabel : true,
                         hasSubmissionDetails : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScheduledLabel : true,
                         actions : {
                             hasRejectAction : true,
@@ -1017,6 +1127,7 @@ export const UIUXConfig = [
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1036,6 +1147,7 @@ export const UIUXConfig = [
                 },
                 "Cleared" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1046,6 +1158,7 @@ export const UIUXConfig = [
                         hasSubmissionDetails : true
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1056,6 +1169,7 @@ export const UIUXConfig = [
                         hasSubmissionDetails : true
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1077,26 +1191,33 @@ export const UIUXConfig = [
                 },
                 "Rejected" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
                         hasBudgetLabel : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasLabel : false,
                         hasRejectionReason : true,
                         hasScoreCard : true,
                         hasSubmissionDetails : true
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
                         hasBudgetLabel : false,
                         hasLabel : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasRejectionReason : true,
                         hasScoreCard : true,
                         hasSubmissionDetails : true
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1115,6 +1236,7 @@ export const UIUXConfig = [
                 },
                 "Not Submitted" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1129,6 +1251,7 @@ export const UIUXConfig = [
                         hasTaskDetails : true
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1143,6 +1266,7 @@ export const UIUXConfig = [
                         hasTaskDetails : true
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1180,6 +1304,7 @@ export const UIUXConfig = [
             contentConfig : {
                 "Pending" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1189,11 +1314,14 @@ export const UIUXConfig = [
                             icon : WarningIcon
                         },
                         hasRemarks : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScoreCard : false,
                         actions : false,
                         hasScheduledForm : true
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1203,11 +1331,14 @@ export const UIUXConfig = [
                             icon : WarningIcon
                         },
                         hasRemarks : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScoreCard : false,
                         actions : false,
                         hasScheduledForm : true
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1234,6 +1365,7 @@ export const UIUXConfig = [
                 },
                 "Call Scheduled" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1243,6 +1375,8 @@ export const UIUXConfig = [
                             icon : WarningIcon
                         },
                         hasRemarks : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasScoreCard : false,
                         hasCallDetails : true,
                         hasCallHistory : true,
@@ -1253,6 +1387,7 @@ export const UIUXConfig = [
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1264,6 +1399,8 @@ export const UIUXConfig = [
                         hasRemarks : false,
                         hasScoreCard : false,
                         hasCallDetails : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasCallHistory : true,
                         hasScheduledForm : false,
                         actions : {
@@ -1272,6 +1409,7 @@ export const UIUXConfig = [
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1302,6 +1440,7 @@ export const UIUXConfig = [
                 },
                 "No Show" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1314,6 +1453,8 @@ export const UIUXConfig = [
                         hasScoreCard : false,
                         hasCallDetails : false,
                         hasCallHistory : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScheduledForm : false,
                         hasScheduledLabel : true,
                         actions : {
@@ -1322,6 +1463,7 @@ export const UIUXConfig = [
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1334,6 +1476,8 @@ export const UIUXConfig = [
                         hasScoreCard : false,
                         hasCallDetails : false,
                         hasCallHistory : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScheduledForm : false,
                         hasScheduledLabel : true,
                         actions : {
@@ -1342,6 +1486,7 @@ export const UIUXConfig = [
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1372,6 +1517,7 @@ export const UIUXConfig = [
                 },
                 "Under Review" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1382,6 +1528,8 @@ export const UIUXConfig = [
                         },
                         hasRemarks : false,
                         hasScoreCard : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasCallDetails : false,
                         hasCallHistory : false,
                         hasScheduledForm : false,
@@ -1391,6 +1539,7 @@ export const UIUXConfig = [
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1403,12 +1552,15 @@ export const UIUXConfig = [
                         hasScoreCard : false,
                         hasCallDetails : false,
                         hasCallHistory : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasScheduledForm : false,
                         actions : {
                             hasNoShowAction : true,
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1440,6 +1592,7 @@ export const UIUXConfig = [
                 },
                 "Reviewed" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1448,6 +1601,8 @@ export const UIUXConfig = [
                         hasRemarks : true,
                         hasScoreCard : true,
                         hasCallDetails : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasCallHistory : false,
                         hasScheduledForm : false,
                         hasScheduledLabel : true,
@@ -1457,6 +1612,7 @@ export const UIUXConfig = [
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1465,6 +1621,8 @@ export const UIUXConfig = [
                         hasRemarks : true,
                         hasScoreCard : true,
                         hasCallDetails : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasCallHistory : false,
                         hasScheduledForm : false,
                         hasScheduledLabel : true,
@@ -1474,6 +1632,7 @@ export const UIUXConfig = [
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1502,6 +1661,7 @@ export const UIUXConfig = [
                 },
                 "Cleared" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1515,6 +1675,7 @@ export const UIUXConfig = [
                         actions : false
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1528,6 +1689,7 @@ export const UIUXConfig = [
                         actions : false
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1556,6 +1718,7 @@ export const UIUXConfig = [
                 },
                 "Rejected" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1563,6 +1726,8 @@ export const UIUXConfig = [
                         hasLabel : false,
                         hasRemarks : false,
                         hasRejectionReason : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasScoreCard : true,
                         hasCallDetails : false,
                         hasCallHistory : false,
@@ -1570,6 +1735,7 @@ export const UIUXConfig = [
                         actions : false
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1579,11 +1745,14 @@ export const UIUXConfig = [
                         hasRejectionReason : true,
                         hasScoreCard : true,
                         hasCallDetails : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasCallHistory : false,
                         hasScheduledForm : false,
                         actions : false
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1625,6 +1794,7 @@ export const UIUXConfig = [
             contentConfig : {
                 "Pending" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1634,11 +1804,14 @@ export const UIUXConfig = [
                             icon : WarningIcon
                         },
                         hasRemarks : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScoreCard : false,
                         actions : false,
                         hasScheduledForm : true
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1648,11 +1821,14 @@ export const UIUXConfig = [
                             icon : WarningIcon
                         },
                         hasRemarks : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScoreCard : false,
                         actions : false,
                         hasScheduledForm : true
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1679,6 +1855,7 @@ export const UIUXConfig = [
                 },
                 "Call Scheduled" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1691,6 +1868,8 @@ export const UIUXConfig = [
                         hasScoreCard : false,
                         hasCallDetails : true,
                         hasCallHistory : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasScheduledForm : false,
                         actions : {
                             hasRescheduleAction : true,
@@ -1698,6 +1877,7 @@ export const UIUXConfig = [
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1708,6 +1888,8 @@ export const UIUXConfig = [
                         },
                         hasRemarks : false,
                         hasScoreCard : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasCallDetails : true,
                         hasCallHistory : true,
                         hasScheduledForm : false,
@@ -1717,6 +1899,7 @@ export const UIUXConfig = [
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1745,6 +1928,7 @@ export const UIUXConfig = [
                 },
                 "No Show" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1758,6 +1942,8 @@ export const UIUXConfig = [
                         hasCallDetails : false,
                         hasCallHistory : false,
                         hasScheduledForm : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScheduledLabel : true,
                         actions : {
                             hasRescheduleAction : true,
@@ -1765,6 +1951,7 @@ export const UIUXConfig = [
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1777,6 +1964,8 @@ export const UIUXConfig = [
                         hasScoreCard : false,
                         hasCallDetails : false,
                         hasCallHistory : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScheduledForm : false,
                         hasScheduledLabel : true,
                         actions : {
@@ -1785,6 +1974,7 @@ export const UIUXConfig = [
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1815,6 +2005,7 @@ export const UIUXConfig = [
                 },
                 "Under Review" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1826,10 +2017,13 @@ export const UIUXConfig = [
                         hasRemarks : false,
                         hasScoreCard : false,
                         hasCallDetails : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasCallHistory : false,
                         hasRatingComponent : true,
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : false,
@@ -1841,10 +2035,13 @@ export const UIUXConfig = [
                         hasRemarks : false,
                         hasScoreCard : false,
                         hasCallDetails : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasCallHistory : false,
                         hasRatingComponent : true,
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1875,6 +2072,7 @@ export const UIUXConfig = [
                 },
                 "Reviewed" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1884,6 +2082,8 @@ export const UIUXConfig = [
                         hasScoreCard : true,
                         hasCallDetails : false,
                         hasCallHistory : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScheduledForm : false,
                         hasScheduledLabel : true,
                         actions : {
@@ -1892,6 +2092,7 @@ export const UIUXConfig = [
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1901,6 +2102,8 @@ export const UIUXConfig = [
                         hasScoreCard : true,
                         hasCallDetails : false,
                         hasCallHistory : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasScheduledForm : false,
                         hasScheduledLabel : true,
                         actions : {
@@ -1909,6 +2112,7 @@ export const UIUXConfig = [
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1937,6 +2141,7 @@ export const UIUXConfig = [
                 },
                 "Cleared" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1950,6 +2155,7 @@ export const UIUXConfig = [
                         actions : false
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1963,6 +2169,7 @@ export const UIUXConfig = [
                         actions : false
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1991,6 +2198,7 @@ export const UIUXConfig = [
                 },
                 "Rejected" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -1998,6 +2206,8 @@ export const UIUXConfig = [
                         hasLabel : false,
                         hasRemarks : false,
                         hasRejectionReason : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasScoreCard : true,
                         hasCallDetails : false,
                         hasCallHistory : false,
@@ -2005,6 +2215,7 @@ export const UIUXConfig = [
                         actions : false
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -2012,6 +2223,8 @@ export const UIUXConfig = [
                         hasLabel : false,
                         hasRemarks : false,
                         hasRejectionReason : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : true,
                         hasScoreCard : true,
                         hasCallDetails : false,
                         hasCallHistory : false,
@@ -2019,6 +2232,7 @@ export const UIUXConfig = [
                         actions : false
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -2060,6 +2274,7 @@ export const UIUXConfig = [
             contentConfig : {
                 "Under Review" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -2070,14 +2285,20 @@ export const UIUXConfig = [
                         },
                         hasRemarks : false,
                         hasScoreCard : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasCallDetails : false,
                         hasCallHistory : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
+                        hasScheduledLabel : true,
                         actions : {
                             hasRejectAction : true,
                             hasHiredAction : true
                         }
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -2088,14 +2309,20 @@ export const UIUXConfig = [
                         },
                         hasRemarks : false,
                         hasScoreCard : true,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasCallDetails : false,
+                        hasUndoButton : true,
+                        hasUndoButtonDisabled : false,
                         hasCallHistory : false,
+                        hasScheduledLabel : true,
                         actions : {
                             hasRejectAction : true,
                             hasHiredAction : true
                         }
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -2106,6 +2333,7 @@ export const UIUXConfig = [
                         },
                         hasRemarks : false,
                         hasScoreCard : false,
+                        hasScheduledLabel : true,
                         hasCallDetails : false,
                         hasCallHistory : false,
                     },
@@ -2126,6 +2354,7 @@ export const UIUXConfig = [
                 },
                 "Accepted" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -2141,6 +2370,7 @@ export const UIUXConfig = [
                         hasCallHistory : false,
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -2156,6 +2386,7 @@ export const UIUXConfig = [
                         hasCallHistory : false,
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -2190,6 +2421,7 @@ export const UIUXConfig = [
                 },
                 "Rejected" : {
                     "Admin" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -2200,6 +2432,7 @@ export const UIUXConfig = [
                         hasCallHistory : false,
                     },
                     "Hiring Manager" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
@@ -2210,6 +2443,7 @@ export const UIUXConfig = [
                         hasCallHistory : false,
                     },
                     "Design Reviewer" : {
+                        hasLog : true,
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,

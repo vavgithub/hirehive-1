@@ -1,8 +1,8 @@
 import React from 'react';
 
-const Tabs = ({ tabs, activeTab, handleTabClick }) => {
+const Tabs = ({ bgVariant = "primary", tabs, activeTab, handleTabClick }) => {
     return (
-        <div className={ ' flex gap-8 bg-background-80  rounded-xl items-center px-8 '}>
+        <div className={ (bgVariant === "secondary" ? "bg-background-80" : "bg-background-100" )+ ' flex gap-8   rounded-xl items-center px-8 '}>
             {tabs.map((tab) => (
                 <div
                     key={tab.name}
@@ -11,13 +11,13 @@ const Tabs = ({ tabs, activeTab, handleTabClick }) => {
                 >
                     <div
                         className={` typography-body rounded-xl flex justify-center items-center ${
-                            activeTab === tab.name ? 'text-accent-100' : ''
+                            activeTab === tab.name ? 'text-accent-100' : 'text-font-gray'
                         }`}
                     >
                         <span className="flex-shrink-0">
                             {activeTab === tab.name ? tab.activeIcon : tab.icon}
                         </span>
-                        <span className='ml-2'>{tab.label}</span>
+                        <span className={(tab.activeIcon || tab.icon) ? 'ml-2' : ''}>{tab.label}</span>
                     </div>
                     {activeTab === tab.name && (
                         <div className="absolute bottom-[0px] h-[0.375rem] w-8 bg-accent-100 rounded-tr-xl rounded-tl-xl" />
