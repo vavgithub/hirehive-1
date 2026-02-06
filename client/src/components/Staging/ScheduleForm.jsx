@@ -167,7 +167,7 @@ export const ScheduleForm = ({ candidateData, onSubmit, isRescheduling, initialD
             <StyledCard backgroundColor={'bg-transparent'} padding={0} >
                 <h3 className='mb-4'>Choose Your Meeting Type</h3>
                 <div className='flex w-full justify-between'>
-                <StyledCard onClick={handleMeetLinkClick} backgroundColor={!autoLink ? 'selection-primary border border-accent-100 ' :'bg-background-70'} extraStyles={'hover:outline-accent-100 hover:outline hover:outline-2 w-[50%]'}>
+                <StyledCard onClick={handleMeetLinkClick} backgroundColor={!autoLink ? 'selection-primary border border-accent-100 ' :'bg-background-70'} extraStyles={'hover:outline-accent-100 hover:outline cursor-pointer hover:outline-2 w-[50%]'}>
                     <h4 className=' mb-2'>Share Your Meeting Link</h4>
                     <InputField
                         id="meetingLink"

@@ -6,7 +6,7 @@ import { CircleCheckBig, Trash, X } from 'lucide-react';
 
 // Custom toast component
 const CustomToast = ({ title, message, variant }) => (
-  <div className={`flex items-start  ${variant === 'success' ? 'text-green-500' : 'text-red-500'}`}>
+  <div className={`flex items-start  ${variant === 'success' ? 'text-green-500' : 'text-red-500'} `}>
     <div className="flex-shrink-0 mt-1">
       {variant === 'success' ? (
         <div className='bg-background-80 w-11 h-11 flex items-center justify-center rounded-xl'>
@@ -50,8 +50,8 @@ export const StyledToastContainer = () => (
     icon={false} // This removes the default icons
     toastClassName={(context) =>
       context?.type === 'success'
-        ? 'rounded-xl bg-gradient-to-r bg-background-100 from-[rgba(20,225,89,0.20)] to-[rgba(20,225,89,0.00)] p-4 border-green-500'
-        : 'rounded-xl bg-gradient-to-r bg-background-100 from-[rgba(255,56,92,0.20)] to-[rgba(255,56,92,0.00)] p-4 border-red-500'
+        ? 'mb-4 rounded-xl bg-gradient-to-r bg-background-100 from-[rgba(20,225,89,0.20)] to-[rgba(20,225,89,0.00)] p-4 border-green-500'
+        : 'mb-4 rounded-xl bg-gradient-to-r bg-background-100 from-[rgba(255,56,92,0.20)] to-[rgba(255,56,92,0.00)] p-4 border-red-500'
     }
   />
 );

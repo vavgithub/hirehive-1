@@ -83,7 +83,7 @@ const Login = () => {
         return (
             <div className="flex h-screen bg-admin-login-bg bg-cover">
                 {/* Left section with background image */}
-                <div className="hidden lg:flex m-4 lg:w-3/5 bg-admin-login-fg backdrop-blur-lg bg-cover p-4 flex-col justify-end relative">
+                <div className="hidden lg:flex  lg:w-3/5 bg-admin-login-fg backdrop-blur-lg bg-cover p-12 flex-col justify-end relative">
                     <div>
                         <img className='h-12' src={Logo} />
                         <h1 className="mt-8">GEODE - Hire Designers</h1>

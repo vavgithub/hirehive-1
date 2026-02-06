@@ -20,7 +20,7 @@ export const threeDDesignerConfig = [
                         hasAssigneeSelectorIcon : true,
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : true,
-                        hasUndoButton : true,
+                        hasUndoButton : false,
                         hasUndoButtonDisabled : false,
                         hasBudgetLabel : false,
                         hasLabel : {

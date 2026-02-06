@@ -276,6 +276,7 @@ const theme = createTheme({
     MuiPaper: {
       styleOverrides: {
         root: {
+          boxShadow : "none !important",
           backgroundColor: "var(--color-background-100) !important",
           color: "var(--color-font-main)",
           borderRadius: "1.25rem",

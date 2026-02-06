@@ -70,7 +70,7 @@ function ScoreChart({scoreData}) {
       <>
           <ReactECharts option={options} onEvents={eventHandlers.current} style={{ height: 140, width: "100%" }} />
           {(hoveredSegment === "Screening" && hasScreening) &&
-          <StyledCard padding={2} extraStyles={`absolute left-0 -bottom-32 w-full transition-opacity duration-200 ${hoveredSegment === "Screening" && hasScreening ? "opacity-100" : "opacity-0"}`}>
+          <StyledCard padding={2} backgroundColor={'bg-background-80'} extraStyles={`absolute left-0 -bottom-32 w-full z-10 transition-opacity duration-200 ${hoveredSegment === "Screening" && hasScreening ? "opacity-100" : "opacity-0"}`}>
               <ScreeningChart scoreData={hasScreening?.scoreObj} />
           </StyledCard>}
       </>

@@ -365,7 +365,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
                 {!isRescheduled && <span className='typography-small-p text-font-gray '>Meeting Link</span>}
                 <div className={(isRescheduled && "text-font-gray ") + ' flex items-center gap-2'}>
                     <IconWrapper icon={Link} size={0} customIconSize={5} isInActiveIcon={true} customStrokeWidth={4} />
-                    <p className={(isRescheduled ? "text-font-gray typography-body " : "text-font-primary") + ' mr-2 '}>screening_meeting_link</p>
+                    <a target='_blank'  rel="noopener noreferrer" href={call?.meetingLink} className={(isRescheduled ? "text-font-gray typography-body " : "text-font-primary") + ' mr-2 '}>screening_meeting_link</a>
                     {!isRescheduled && <CopyToClipboard text={call?.meetingLink}>
                         <IconWrapper hasBg icon={Copy} size={4} customIconSize={5}  customStrokeWidth={4} />
                     </CopyToClipboard>}
@@ -553,7 +553,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
             </div>}
             <div className={(stageTitle === "Hired" ? 'w-[100%]' : 'w-[35%]') + ' flex flex-col '}>
             {stageBasedConfig?.hasScoreCard && 
-            <div style={{backgroundImage : `url(${stars})`}} className={` bg-cover rounded-xl ${stageTitle === "Hired" ? 'w-[35%] lg:w-[25%] xl:w-[15%]' : 'w-[90%] lg:w-[55%] xl:w-[40%]' } h-fit my-4 self-end`}>
+            <div className={` bg-background-80 rounded-xl ${stageTitle === "Hired" ? 'w-[35%] lg:w-[25%] xl:w-[15%]' : 'w-[90%] lg:w-[55%] xl:w-[40%]' } h-fit my-4 self-end`}>
                 <div className='p-4 flex flex-col items-center'>
                     <p className='typography-small-p text-font-gray'>Total Score:</p>
                     <div className='flex flex-col items-center text-font-accent'>

@@ -108,6 +108,7 @@ export default function Timepicker({ customBg, onChange, value ,error}) {
           }}
           slotProps={{
             textField: {
+              placeholder: "03:30 PM",
               InputProps: { startAdornment: <IconWrapper icon={Clock} size={0} isInActiveIcon={true} /> }   
             }
           }}
@@ -125,7 +126,7 @@ export default function Timepicker({ customBg, onChange, value ,error}) {
             } : {} )
           }}
           value={value ? dayjs(`${value}`) : null}
-          defaultValue={dayjs('2022-04-17T15:30')}
+          // defaultValue={dayjs('2022-04-17T15:30')}
           onChange={(newValue) => onChange(newValue)}
           // sx={{
           //   '& .MuiInputBase-root': {

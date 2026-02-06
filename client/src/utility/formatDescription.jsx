@@ -15,6 +15,6 @@ export const formatDescription = (description) => {
     
     // Replace keywords with <h1> tags and add line breaks
     return description
-        .replace(regex, '<h1 class="typography-h4 font-bold text-white my-5 ">$1</h1>')
+        .replace(regex, '<h1 class="typography-h4 font-bold my-5 ">$1</h1>')
         // .replace(/\n/g, '<br>'); // Replace newlines with <br> tags
 };

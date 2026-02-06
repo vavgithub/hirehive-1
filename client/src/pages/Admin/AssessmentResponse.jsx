@@ -145,7 +145,7 @@ const AssessmentResponse = () => {
                         </div>
                     </StyledCard>
 
-                    <StyledCard padding={3} style={{backgroundImage : `url(${stars})`}} extraStyles="flex  flex-col items-center w-[35%] max-w-[15rem] bg-cover ">
+                    <StyledCard padding={3} backgroundColor={'bg-background-100'} extraStyles="flex  flex-col items-center w-[35%] max-w-[15rem] bg-cover ">
                         <div className="relative w-full flex justify-center ">
                             <div className='absolute left-0'>
 

@@ -21,7 +21,7 @@ export const brandDesignerConfig = [
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : true,
                         hasBudgetLabel : false,
-                        hasUndoButton : true,
+                        hasUndoButton : false,
                         hasUndoButtonDisabled : false,
                         hasLabel : {
                             content : "Candidate's portfolio has not yet been assigned to a reviewer.",

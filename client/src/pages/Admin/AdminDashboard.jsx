@@ -243,7 +243,7 @@ function AdminDashboard() {
             <ApplicationChart type={selectedChartFilter} dataArray={selectedChartFilter === "weekly" ? dashboardDetails?.applications?.weeklyApplications : selectedChartFilter === 'daily' ? dashboardDetails?.applications?.dailyApplications : selectedChartFilter === 'yesterday' ? dashboardDetails?.applications?.yesterdaysApplications : dashboardDetails?.applications?.monthlyApplications} />
           </StyledCard>
           <StyledCard backgroundColor={'bg-background-90'} padding={2} extraStyles={' w-[30%] flex flex-col items-center justify-between gap-6'}>
-            <div className=" w-[8rem]  aspect-square overflow-hidden rounded-full">
+            <div className=" w-[8rem]  aspect-square overflow-hidden rounded-full bg-background-70 border border-font-secondary">
               <img src={dashboardDetails?.companyDetails?.logoUrl ? dashboardDetails?.companyDetails?.logoUrl : `${UNKNOWN_PROFILE_PICTURE_URL}`} alt="LOGO" className="object-cover w-full" />
               <input accept="image/*" type="file" className="hidden" />
             </div>

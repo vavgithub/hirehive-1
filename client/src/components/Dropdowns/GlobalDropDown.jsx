@@ -67,7 +67,7 @@ import CustomToolTip from '../Tooltip/CustomToolTip';
         <button
           type="button"
           onClick={handleOpen}
-          className={`${value ? "text-font-main" : "text-font-gray"} ${error ? '!border !border-red-500' : 'border border-transparent'}  typography-body ${label ? " mt-0 " : " mt-0 "} h-[2.75rem] flex items-center justify-between ${bgColor} hover:outline-accent-100 hover:outline hover:outline-2 w-full  rounded-xl shadow-sm focus:outline-teal-300  text-left px-4`}
+          className={`${value ? "text-font-main" : "text-font-gray"} ${error ? '!border !border-red-500' : 'border border-transparent'}  typography-body ${label ? " mt-0 " : " mt-0 "} h-[2.75rem] flex items-center justify-between ${bgColor} hover:outline-accent-100 hover:outline hover:outline-2 w-full  rounded-xl  focus:outline-teal-300  text-left px-4`}
         >
           {options.find(opt => opt.value === value)?.label || options.find(opt => opt === value) || customPlaceholder ||  '-Select-'}
           <svg width="18" height="9" viewBox="0 0 18 9" fill="none" xmlns="http://www.w3.org/2000/svg">

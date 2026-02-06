@@ -181,7 +181,7 @@ export default {
         h3: ["1.5rem", { lineHeight: "1.25" ,letterSpacing : "1px"}],
         h4: ["1.25rem", { lineHeight: "1.5" ,letterSpacing : "1px"}],
         h5: ["1rem", { lineHeight: "1.5" ,letterSpacing : "1px"}],
-        body: ["0.875rem", { lineHeight: "1.25" ,letterSpacing : "0.65px"}],
+        body: ["0.875rem", { lineHeight: "1.45" ,letterSpacing : "0.65px"}],
         marks: ["5rem", { lineHeight: "1.5" ,letterSpacing : "1px"}],
         "display-d2": ["2.625rem", { lineHeight: "1.1" ,letterSpacing : "1px"}],
         "small-p": ["0.75rem", { lineHeight: "1.25" }],

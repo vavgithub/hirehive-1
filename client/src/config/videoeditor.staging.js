@@ -26,7 +26,7 @@ export const videoEditorConfig = [
                             icon : WarningIcon
                         },
                         hasScheduledLabel : true,
-                        hasUndoButton : true,
+                        hasUndoButton : false,
                         hasUndoButtonDisabled : false,
                         actions : {
                             hasRejectAction : true,
