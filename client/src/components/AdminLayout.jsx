@@ -107,30 +107,11 @@ const AdminLayout = () => {
     const { pathname } = useLocation();
     const isActive = pathname.startsWith(to);
     const [isOpen, setIsOpen] = useState(isActive);
-    const dropdownRef = useRef(null); // 👉 create ref for the wrapper
 
     const toggleDropdown = () => setIsOpen(!isOpen);
 
-    // ✅ useEffect to close dropdown on outside click
-    useEffect(() => {
-        const handleClickOutside = (event) => {
-        if (
-            dropdownRef.current &&
-            !dropdownRef.current.contains(event.target)
-        ) {
-            setIsOpen(false);
-        }
-        };
-
-        document.getElementById('adminSidebar')?.addEventListener("mousedown", handleClickOutside);
-
-        return () => {
-        document.getElementById('adminSidebar')?.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, []);
-
         return (
-            <div ref={dropdownRef} className="relative flex flex-col rounded-xl">
+            <div className="relative flex flex-col rounded-xl">
                 {/* Parent menu item */}
                 <div
                     onClick={toggleDropdown}

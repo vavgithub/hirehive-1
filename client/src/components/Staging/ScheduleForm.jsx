@@ -242,6 +242,7 @@ export const ScheduleForm = ({ candidateData, onSubmit, isRescheduling, initialD
                 customMessage={'Add people you’d like to invite to this meeting. They will receive a calendar invite with the Google Meet link.'}
                 customConfirmLabel={'Add'}
                 specifiedWidth={'max-w-xl'}
+                isconfirmButtonDisabled={invitees.length === 0}
             >
                 <div className='mt-4 flex flex-col'>
                     <label className='typography-body mb-2' htmlFor="">Added Participants</label>
