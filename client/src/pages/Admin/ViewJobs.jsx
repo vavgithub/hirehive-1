@@ -265,8 +265,8 @@ const ViewJobs = () => {
             {activeTab === 'jobDetails' && (
                 <StyledCard padding={2}>
                     <StatsGrid stats={jobsDetailStats} />
-                    <div className='flex justify-between mt-4' >
-                        <div className='w-2/3   '>
+                    <div className='flex justify-between mt-4 gap-4'>
+                        <StyledCard padding={2} backgroundColor={'bg-background-80'} extraStyles='w-[45%] h-fit'>
                             <h3 className="mb-2">Job Description</h3>
                             <div className='text-font-gray typography-body' dangerouslySetInnerHTML={{ __html: formData.jobDescription ? formatDescription(formData.jobDescription) : '' }}></div>
                             <h3 className="mt-4 mb-2">Skills</h3>
@@ -275,33 +275,30 @@ const ViewJobs = () => {
                                     <CustomBadge key={index} label={skill} borderRadius={10} />
                                 ))}
                             </div>
-                        </div>
-                        <div className='pb-2 '>
+                        </StyledCard>
+                        <StyledCard padding={2} backgroundColor={'bg-background-80'} extraStyles='w-[45%] h-fit'>
+                            <h3 className='mb-4'>Additional Questions</h3>
+                            {questions?.length > 0 ? questions.map((question, index) => (
+                                <div key={question._id} className="mb-4">
+                                    <label className="typography-body">
+                                        Q{index + 1}. {question.text}
+                                        {question.required && <span className="text-red-500 ml-1">*</span>}
+                                    </label>
+                                    {(
+                                        question.options.map((option, optionIndex) => (
+                                            <div key={optionIndex} className="my-2 typography-body flex justify-start items-center gap-3">
+                                                <div className='typography-small-p text-font-gray'>Option {optionIndex + 1}  </div>
+                                                <label htmlFor={`question-${question._id}-option-${optionIndex}`}>{option}</label>
+                                            </div>
+                                        ))
+                                    )}
+                                </div>
+                            )) : <p className='typography-body text-font-gray'>No Questions Available</p>}
+                        </StyledCard>
+                        <div className='pb-2'>
                             <SideCard formData={formData} />
                         </div>
                     </div>
-
-                    <StyledCard padding={2} backgroundColor={'bg-background-80'} extraStyles='mt-12'>
-                        <h3 className='mb-4'>Additional Questions</h3>
-                        {questions?.length > 0 ? questions.map((question, index) => (
-                            <div key={question._id} className="mb-4">
-                                <label className="typography-body">
-                                    Q{index + 1}. {question.text}
-                                    {question.required && <span className="text-red-500 ml-1">*</span>}
-                                </label>
-                                {(
-                                    question.options.map((option, optionIndex) => (
-                                        <div key={optionIndex} className="my-2 typography-body flex justify-start items-center gap-3">
-                                            <div className='typography-small-p text-font-gray'>Option {optionIndex + 1}  </div>
-                                            {/* <div className='w-4'>
-                                                </div> */}
-                                            <label htmlFor={`question-${question._id}-option-${optionIndex}`}>{option}</label>
-                                        </div>
-                                    ))
-                                )}
-                            </div>
-                        )) : <p className='typography-body text-font-gray'>No Questions Available</p>}
-                    </StyledCard>
                 </StyledCard>
             )}
 
