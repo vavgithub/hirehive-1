@@ -1,5 +1,5 @@
 /** @type {import('tailwindcss').Config} */
-const colors = require("tailwindcss/colors");
+// const colors = require("tailwindcss/colors");
 
 export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
@@ -41,9 +41,6 @@ export default {
         "custom-gradient": "linear-gradient(180deg, var(--tw-gradient-stops))",
       },
       colors: {
-        green: {
-          100: "rgba(20, 225, 89, 0.2)",
-        },
         button: {
           white: "var(--color-white-100)",
           whiteHover: "var(--color-white-200)",
@@ -171,7 +168,7 @@ export default {
       },
 
       fontFamily: {
-        gilroy: ["Gilroy", "sans-serif"],
+        gilroy: ["Fellix", "sans-serif"],
         // bricolage: ['"Bricolage Grotesque"', "sans-serif"],
         // outfit: ["Outfit", "sans-serif"],
       },

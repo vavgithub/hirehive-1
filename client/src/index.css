@@ -5,12 +5,109 @@
 @tailwind utilities;
 
 html, body {
-  @apply bg-background-100 ;
+  @apply bg-background-100 font-gilroy;
 }
 
 @font-face {
   font-family: 'Gilroy';
   src: url('/src/fonts/Gilroy.ttf') format('opentype');
+}
+
+@font-face {
+  font-family: 'Fellix';
+  font-weight: 100;
+  font-style: normal;
+  src: url('/src/fonts/fellix/Fellix-TRIAL-Thin.otf') format('opentype');
+}
+@font-face {
+  font-family: 'Fellix';
+  font-weight: 100;
+  font-style: italic;
+  src: url('/src/fonts/fellix/Fellix-TRIAL-ThinItalic.otf') format('opentype');
+}
+@font-face {
+  font-family: 'Fellix';
+  font-weight: 300;
+  font-style: normal;
+  src: url('/src/fonts/fellix/Fellix-TRIAL-Light.otf') format('opentype');
+}
+@font-face {
+  font-family: 'Fellix';
+  font-weight: 300;
+  font-style: italic;
+  src: url('/src/fonts/fellix/Fellix-TRIAL-LightItalic.otf') format('opentype');
+}
+@font-face {
+  font-family: 'Fellix';
+  font-weight: 400;
+  font-style: normal;
+  src: url('/src/fonts/fellix/Fellix-TRIAL-Regular.otf') format('opentype');
+}
+@font-face {
+  font-family: 'Fellix';
+  font-weight: 400;
+  font-style: italic;
+  src: url('/src/fonts/fellix/Fellix-TRIAL-RegularItalic.otf') format('opentype');
+}
+@font-face {
+  font-family: 'Fellix';
+  font-weight: 500;
+  font-style: normal;
+  src: url('/src/fonts/fellix/Fellix-TRIAL-Medium.otf') format('opentype');
+}
+@font-face {
+  font-family: 'Fellix';
+  font-weight: 500;
+  font-style: italic;
+  src: url('/src/fonts/fellix/Fellix-TRIAL-MediumItalic.otf') format('opentype');
+}
+@font-face {
+  font-family: 'Fellix';
+  font-weight: 600;
+  font-style: normal;
+  src: url('/src/fonts/fellix/Fellix-TRIAL-SemiBold.otf') format('opentype');
+}
+@font-face {
+  font-family: 'Fellix';
+  font-weight: 600;
+  font-style: italic;
+  src: url('/src/fonts/fellix/Fellix-TRIAL-SemiBoldItalic.otf') format('opentype');
+}
+@font-face {
+  font-family: 'Fellix';
+  font-weight: 700;
+  font-style: normal;
+  src: url('/src/fonts/fellix/Fellix-TRIAL-Bold.otf') format('opentype');
+}
+@font-face {
+  font-family: 'Fellix';
+  font-weight: 700;
+  font-style: italic;
+  src: url('/src/fonts/fellix/Fellix-TRIAL-BoldItalic.otf') format('opentype');
+}
+@font-face {
+  font-family: 'Fellix';
+  font-weight: 800;
+  font-style: normal;
+  src: url('/src/fonts/fellix/Fellix-TRIAL-ExtraBold.otf') format('opentype');
+}
+@font-face {
+  font-family: 'Fellix';
+  font-weight: 800;
+  font-style: italic;
+  src: url('/src/fonts/fellix/Fellix-TRIAL-ExtraBoldItalic.otf') format('opentype');
+}
+@font-face {
+  font-family: 'Fellix';
+  font-weight: 900;
+  font-style: normal;
+  src: url('/src/fonts/fellix/Fellix-TRIAL-Black.otf') format('opentype');
+}
+@font-face {
+  font-family: 'Fellix';
+  font-weight: 900;
+  font-style: italic;
+  src: url('/src/fonts/fellix/Fellix-TRIAL-BlackItalic.otf') format('opentype');
 }
 
 @layer utilities {
