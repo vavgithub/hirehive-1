@@ -21,6 +21,7 @@ export const UIUXConfig = [
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : true,
                         hasBudgetLabel : false,
+                        hasMultipleReviewers : true,
                         hasLabel : {
                             content : "Candidate's portfolio has not yet been assigned to a reviewer.",
                             icon : WarningIcon
@@ -145,6 +146,7 @@ export const UIUXConfig = [
                         hasRemarks : true,
                         hasScoreCard : true,
                         hasUndoButton : true,
+                        showMultipleReviewersScore : true,
                         hasUndoButtonDisabled : false,
                         hasScheduledLabel : true,
                         actions : {

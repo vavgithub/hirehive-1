@@ -95,7 +95,7 @@ export const updateCandidateAssignee = async (req, res) => {
 
     // Update the status based on the stage
     if (stage === 'Portfolio') {
-      stageStatus.status = assigneeId ? 'Under Review' : 'Not Assigned';
+      stageStatus.status = (stageStatus?.additionalReviewers?.length > 1 && assigneeId) ? 'Under Review' : 'Not Assigned';
     }
 
     if (stage === 'Design Task') {
@@ -143,6 +143,95 @@ export const updateCandidateAssignee = async (req, res) => {
   }
 };
 
+export const updateCandidateMultipleAssignee = async (req, res) => {
+  try {
+    const { candidateId, jobId, stage, assigneeId } = req.body;
+
+    // Find the candidate
+    const candidate = await candidates.findById(candidateId);
+    if (!candidate) {
+      return res.status(404).json({ message: 'Candidate not found' });
+    }
+
+    // Find the specific job application
+    const jobApplication = candidate.jobApplications.find(
+      (app) => app.jobId.toString() === jobId
+    );
+    if (!jobApplication) {
+      return res.status(404).json({ message: 'Job application not found' });
+    }
+
+    // Initialize the stage status if it doesn't exist
+    if (!jobApplication.stageStatuses.has(stage)) {
+      jobApplication.stageStatuses.set(stage, {
+        status: 'Not Assigned',
+        assignedTo: null,
+        rejectionReason: 'N/A',
+        score: {},
+        currentCall: null,
+        callHistory: []
+      });
+    }
+
+    const stageStatus = jobApplication.stageStatuses.get(stage);
+
+    // Update the assignees
+    const updatedAssignees = [
+      ...stageStatus.additionalReviewers,
+      { assigneeId },
+    ];
+    stageStatus.additionalReviewers = updatedAssignees;
+
+    // Update the status based on the stage
+    if (stage === 'Portfolio') {
+      stageStatus.status = (updatedAssignees?.length > 1 && assigneeId) ? 'Under Review' : 'Not Assigned';
+    }
+
+    if (stage === 'Design Task') {
+      if (stageStatus?.submittedTaskLink) {
+        stageStatus.status = assigneeId ? 'Under Review' : stageStatus.status;
+      }else{
+        stageStatus.assignedTo = null;
+      }
+    }
+
+    // Add more stage-specific logic here as needed
+
+    // If this is the first stage and an assignee is added, update the current stage
+    if (['Portfolio', 'Design Task'].includes(stage) && assigneeId && !jobApplication.currentStage) {
+      jobApplication.currentStage = stage;
+    }
+
+    if(stageStatus.assignedTo){
+      let existUpdated = false
+      for(let log of stageStatus.logs){
+        if(log.status === stageStatus.status){
+          log.date = new Date()
+          existUpdated = true
+        }
+      }
+      if(!existUpdated){
+        stageStatus.logs.push({
+          status : stageStatus.status,
+          date : new Date()
+        })
+      }
+    }
+
+    // Save the changes
+    await candidate.save();
+
+    res.status(200).json({ 
+      message: 'Additional Assignee added successfully',
+      updatedStageStatus: stageStatus,
+      currentStage: jobApplication.currentStage
+    });
+  } catch (error) {
+    console.error('Error updating assignee:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
 
 export const getAssignedCandidates = async (req, res) => {
   try {
@@ -150,24 +239,64 @@ export const getAssignedCandidates = async (req, res) => {
 
     const assignedCandidates = await candidates.aggregate([
       // Unwind jobApplications to process each one individually
-      { $unwind: '$jobApplications' },
+      { $unwind: "$jobApplications" },
       // Convert stageStatuses map to an array
       {
         $addFields: {
-          'jobApplications.stageStatusesArray': { $objectToArray: '$jobApplications.stageStatuses' },
+          "jobApplications.stageStatusesArray": {
+            $objectToArray: "$jobApplications.stageStatuses",
+          },
         },
       },
       // Filter stageStatusesArray for stages assigned to the reviewer and 'Under Review'
       {
         $addFields: {
-          'jobApplications.filteredStageStatusesArray': {
+          "jobApplications.filteredStageStatusesArray": {
             $filter: {
-              input: '$jobApplications.stageStatusesArray',
-              as: 'stageStatus',
+              input: "$jobApplications.stageStatusesArray",
+              as: "stageStatus",
               cond: {
                 $and: [
-                  { $eq: ['$$stageStatus.v.assignedTo', designReviewerId] },
-                  { $eq: ['$$stageStatus.v.status', 'Under Review'] },
+                  { $eq: ["$$stageStatus.v.status", "Under Review"] },
+                  {
+                    $or: [
+                      { $eq: ["$$stageStatus.v.assignedTo", designReviewerId] },
+                      {
+                        $gt: [
+                          {
+                            $size: {
+                              $filter: {
+                                input: {
+                                  $ifNull: [
+                                    "$$stageStatus.v.additionalReviewers",
+                                    [],
+                                  ],
+                                },
+                                as: "review",
+                                cond: {
+                                  $and: [
+                                    {
+                                      $eq: [
+                                        "$$review.assigneeId",
+                                        designReviewerId,
+                                      ],
+                                    },
+                                    {
+                                      $or: [
+                                        { $eq: ["$$review.score", null] },
+                                        { $not: ["$$review.score"] },
+                                      ],
+                                    },
+                                  ],
+                                },
+                              },
+                            },
+                          },
+                          0,
+                        ],
+                      },
+                    ],
+                  },
                 ],
               },
             },
@@ -177,51 +306,51 @@ export const getAssignedCandidates = async (req, res) => {
       // Match only job applications that have relevant stages
       {
         $match: {
-          'jobApplications.filteredStageStatusesArray': { $ne: [] },
+          "jobApplications.filteredStageStatusesArray": { $ne: [] },
         },
       },
       // Add currentStage field from the filtered stages
       {
         $addFields: {
-          'jobApplications.currentStage': {
-            $arrayElemAt: ['$jobApplications.filteredStageStatusesArray.k', 0],
+          "jobApplications.currentStage": {
+            $arrayElemAt: ["$jobApplications.filteredStageStatusesArray.k", 0],
           },
         },
       },
       // Reconstruct the stageStatuses map from the filtered array
       {
         $addFields: {
-          'jobApplications.stageStatuses': {
-            $arrayToObject: '$jobApplications.filteredStageStatusesArray',
+          "jobApplications.stageStatuses": {
+            $arrayToObject: "$jobApplications.filteredStageStatusesArray",
           },
         },
       },
       // Remove temporary fields
       {
         $project: {
-          'jobApplications.stageStatusesArray': 0,
-          'jobApplications.filteredStageStatusesArray': 0,
+          "jobApplications.stageStatusesArray": 0,
+          "jobApplications.filteredStageStatusesArray": 0,
         },
       },
       // Group back by candidate
       {
         $group: {
-          _id: '$_id',
-          firstName: { $first: '$firstName' },
-          lastName: { $first: '$lastName' },
-          email: { $first: '$email' },
-          phone: { $first: '$phone' },
-          profilePictureUrl: { $first: '$profilePictureUrl' },
-          jobApplications: { $push: '$jobApplications' },
-          portfolio: { $first: '$portfolio' }, // Adding portfolio here
+          _id: "$_id",
+          firstName: { $first: "$firstName" },
+          lastName: { $first: "$lastName" },
+          email: { $first: "$email" },
+          phone: { $first: "$phone" },
+          profilePictureUrl: { $first: "$profilePictureUrl" },
+          jobApplications: { $push: "$jobApplications" },
+          portfolio: { $first: "$portfolio" }, // Adding portfolio here
         },
       },
       //Sorted with Firstname
       {
-        $sort : {
-          firstName : 1
-        }
-      }
+        $sort: {
+          firstName: 1,
+        },
+      },
     ]);
 
     // Fetch job details as before
@@ -463,8 +592,23 @@ export const autoAssignPortfolios = async (req, res) => {
      // Update the stage status
      const stageStatus = jobApplication.stageStatuses.get(stage);
      
+     let isAdditionalReviewer = false
      // Update score and feedback
-     if(stage === "Screening"){
+    if(stage === "Portfolio" && stageStatus.additionalReviewers?.length > 0){
+      stageStatus.additionalReviewers?.map(rev => {
+        console.log("TEST",rev.assigneeId, req.user._id)
+        if(rev.assigneeId?.toString() === req.user._id?.toString()){
+        console.log("IS MATCH")
+          isAdditionalReviewer = true
+          rev.score = ratings
+          rev.feedback = feedback
+        }
+      })
+      if(!isAdditionalReviewer){
+        stageStatus.score = ratings; // Can be a number or an object with multiple ratings
+        stageStatus.feedback = feedback;
+      }
+    }else if(stage === "Screening"){
       // const jobBasedScoring = jobStagesStatuses[jobApplication.jobProfile ?? JOB_PROFILES.UIUX].find(stage => stage.name === "Screening").scoreConfig;
       // const mandatoryFields = Object.keys(jobBasedScoring).filter(key => key !== "Budget");
       // const missingFields = mandatoryFields.filter(key => !(key in ratings));
@@ -472,18 +616,27 @@ export const autoAssignPortfolios = async (req, res) => {
       //   return res.status(400).json({ message: `Ratings has some missing fields such as ${missingFields?.join(', ')}` });
       // }
       stageStatus.score = { ...ratings, Budget : stageStatus?.score?.Budget}; // Can be a number or an object with multiple ratings
-     }else{
+      stageStatus.feedback = feedback; 
+    }else{
        stageStatus.score = ratings; // Can be a number or an object with multiple ratings
+       stageStatus.feedback = feedback;
      }
-     stageStatus.feedback = feedback;
 
      if(req.user.role === "Admin"){
       stageStatus.assignedTo = req.user._id
      }
  
      // Update the status from 'Under Review' to 'Reviewed'
-     if (stageStatus.status === 'Under Review') {
-       stageStatus.status = 'Reviewed';
+     if (stageStatus.status === 'Under Review' ) {
+      if(stage === "Portfolio" ){
+        const hasScores = stageStatus.additionalReviewers?.every(rev => (rev.score !== undefined && rev.score !== null));
+        if(hasScores && (stageStatus.score && stageStatus.feedback)){
+          stageStatus.overallScore = Math.round((stageStatus.additionalReviewers?.reduce((acc,curr)=>(acc + curr.score),0) + stageStatus.score)/(stageStatus.additionalReviewers?.length + 1));
+          stageStatus.status = 'Reviewed';
+        }
+      }else{
+        stageStatus.status = 'Reviewed';
+      }
      } else {
        // Optionally handle cases where status is not 'Under Review'
        return res.status(400).json({ message: `Cannot review a stage with status '${stageStatus.status}'` });

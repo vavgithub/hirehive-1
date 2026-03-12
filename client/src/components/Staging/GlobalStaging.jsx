@@ -34,7 +34,7 @@ import { Calendar, Clock, Copy, DatabaseZap, Link } from 'lucide-react';
 import useAuth from '../../hooks/useAuth.jsx';
 import { formatUTCToLocalTimeAuto, UTCToDateFormatted } from '../../utility/timezoneConverter.js';
 import { moveCandidate, rejectCandidate, rescheduleCall, scheduleCall, submitBudgetScore, undoStageActions } from '../../services/hr.service.js';
-import { submitReview, updateAssignee } from '../../services/dr.service.js';
+import { submitReview, updateAssignee, updateMultipleAssignee } from '../../services/dr.service.js';
 import CustomToolTip from '../Tooltip/CustomToolTip.jsx';
 import { useScoreBg } from '../../context/ThemeContext.jsx';
 
@@ -110,8 +110,38 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
       }
   });
 
+  const updateMultiAssigneeMutation = useMutation({
+      mutationFn: (newAssignee) => updateMultipleAssignee(candidateId,jobId,stageTitle,newAssignee?._id),
+      onSuccess: (response) => {
+         
+          const { updatedStageStatus, currentStage } = response.data;
+
+          dispatch(updateStageStatus({
+              stage: stageTitle,
+              status: updatedStageStatus.status,
+              data: {
+                  ...stageData,
+                  ...updatedStageStatus,
+              }
+          }));
+
+          if (currentStage) {
+              dispatch(setCurrentStage(currentStage));
+          }
+
+          queryClient.invalidateQueries(['candidate', candidateId, jobId]);
+      },
+      onError: (error) => {
+          console.error("Assignee update error:", error);
+      }
+  });
+
   const handleAssigneeChange = (newAssignee) => {
       updateAssigneeMutation.mutate(newAssignee);
+  };
+
+  const handleMultiAssigneeChange = (newAssignee) => {
+      updateMultiAssigneeMutation.mutate(newAssignee);
   };
 
 
@@ -411,7 +441,31 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
     //Logs
     const hasLog = (stageTitle && currentStatus) && stageData?.logs?.find(log => log.status === currentStatus)
     
-    const stars = useScoreBg()
+    // const stars = useScoreBg()
+
+
+    const multipleReviewersData = useMemo(() => {
+        const data = []
+        if(stageData?.additionalReviewers?.length > 0){
+            stageData?.additionalReviewers?.map(reviewer => {
+                data.push({
+                    reviewer : reviewer.assigneeId,
+                    score : reviewer.score,
+                    feedback : reviewer.feedback
+                })
+            })
+            data.push({
+                reviewer : stageData?.assignedTo,
+                score : stageData?.score,
+                feedback : stageData?.feedback
+            })
+        }
+        return data;
+    },[stageBasedConfig, stageData])
+
+    const currentAdditionalReviewer = useMemo(() => {
+        return multipleReviewersData?.find(reviewer => reviewer.reviewer === adminData?._id)
+    },[multipleReviewersData, adminData?._id])
 
     return (
     <StyledCard  
@@ -477,20 +531,37 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
         :
         <>
         <div >
-        {(!stageData?.scheduledDate && stageBasedConfig?.hasLabel) && <div className='my-4'><Label icon={stageBasedConfig?.hasLabel?.icon} text={stageBasedConfig?.hasLabel?.hasCustomContent ? (stageBasedConfig?.hasLabel?.content + candidateData?.jobApplication?.jobApplied) : stageBasedConfig?.hasLabel?.content} /></div>}
+        {(!stageData?.scheduledDate && stageBasedConfig?.hasLabel) && <div className='my-4'><Label icon={stageBasedConfig?.hasLabel?.icon} text={stageBasedConfig?.showOwnReview && currentAdditionalReviewer?.feedback !== undefined && currentAdditionalReviewer?.feedback !== null ? "Your review is done. Please wait for others to review" : stageBasedConfig?.hasLabel?.hasCustomContent ? (stageBasedConfig?.hasLabel?.content + candidateData?.jobApplication?.jobApplied) : stageBasedConfig?.hasLabel?.content} /></div>}
         {
             stageBasedConfig?.hasSubmissionDetails  && 
             <SubmissionDetails isEditable={stageBasedConfig?.isSubmissionEditable} candidateData={candidateData} stageData={stageData} />
         }
+        {console.log("CONFIG",role,jobProfile,stageBasedConfig, stageData)}
         {(!stageData?.scheduledDate && stageBasedConfig?.hasAssigneeSelector) && 
           <div className='w-2/5'>
-              <h4 className='typography-body my-4 '>Select Reviewer</h4>
+              <h4 className='typography-body my-4 '>Select Reviewer{stageBasedConfig?.hasMultipleReviewers ? 's' : ''}</h4>
               <AssigneeSelector
                   mode="default"
                   value={stageData?.assignedTo}
                   onChange={handleAssigneeChange}
                 //   onSelect={handleAssigneeChange}
               />
+            {stageBasedConfig?.hasMultipleReviewers && (
+                <div className='flex flex-col gap-4 mt-4'>
+                <AssigneeSelector
+                    mode="default"
+                    value={stageData?.additionalReviewers[0]?.assigneeId}   
+                    onChange={handleMultiAssigneeChange}
+                    //   onSelect={handleAssigneeChange}
+                />
+                <AssigneeSelector
+                    mode="default"
+                    value={stageData?.additionalReviewers[1]?.assigneeId}
+                    onChange={handleMultiAssigneeChange}
+                    //   onSelect={handleAssigneeChange}
+                />
+                </div>
+            )}
           </div>
         }
         {
@@ -530,17 +601,41 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
             <SubmissionForm candidateId={candidateId} jobId={jobId} stageData={stageData} setIsLoading={setIsLoading} />
         }
         {
-          stageBasedConfig?.hasRatingComponent && <StageRating  customSchema={adminData?.companyDetails?.customScreeningParam ? adminData?.companyDetails?.customScreeningParam[jobProfile] : null} candidateId={candidateId} jobId={jobId} name={stageConfig?.name} candidate={candidateData} onSubmit={handleReviewSubmit} stageConfig={stageConfig} />
+          (stageBasedConfig?.hasRatingComponent && !(stageBasedConfig?.showOwnReview && currentAdditionalReviewer?.score !== undefined && currentAdditionalReviewer?.score !== null)) && <StageRating  customSchema={adminData?.companyDetails?.customScreeningParam ? adminData?.companyDetails?.customScreeningParam[jobProfile] : null} candidateId={candidateId} jobId={jobId} name={stageConfig?.name} candidate={candidateData} onSubmit={handleReviewSubmit} stageConfig={stageConfig} />
         }
         <div className='flex gap-4 w-full '>
-            {(stageBasedConfig?.hasRemarks || stageBasedConfig?.hasRejectionReason || stageBasedConfig?.hasScoreBoard) && 
+            {(stageBasedConfig?.hasRemarks || stageBasedConfig?.hasRejectionReason || stageBasedConfig?.hasScoreBoard || (stageBasedConfig?.showOwnReview && currentAdditionalReviewer?.feedback !== undefined && currentAdditionalReviewer?.feedback !== null)) && 
             <div className='w-[75%] flex flex-col justify-between gap-4 '>
-            {(stageBasedConfig?.hasRemarks || stageBasedConfig?.hasRejectionReason) && 
+            {(!(stageBasedConfig?.showMultipleReviewersScore &&
+                multipleReviewersData) || stageBasedConfig?.showOwnReview ) && (stageBasedConfig?.hasRemarks || stageBasedConfig?.hasRejectionReason || stageBasedConfig?.showOwnReview) && 
                 <div className='mt-4'>
                     <p className='typography-small-p text-font-gray'>{currentStatus === 'Rejected' ? "Rejection Reason" : "Remarks"}</p>
-                    <p className='typography-body '>{currentStatus === 'Rejected' ? stageData?.rejectionReason : stageData?.feedback ? stageData?.feedback : 'No feedbacks'}</p>
+                    <p className='typography-body '>{currentStatus === 'Rejected' ? stageData?.rejectionReason : stageBasedConfig?.showOwnReview && currentAdditionalReviewer?.feedback !== undefined && currentAdditionalReviewer?.feedback !== null ? currentAdditionalReviewer?.feedback : stageData?.feedback ? stageData?.feedback : 'No feedbacks'}</p>
                 </div>
             }
+            {stageBasedConfig?.showMultipleReviewersScore &&
+                multipleReviewersData && (
+                <div className="mt-4">
+                    <p className="typography-small-p text-font-gray mb-2">
+                    Remarks
+                    </p>
+                    <div className="typography-body grid grid-cols-3 gap-4 ">
+                    {multipleReviewersData?.map((reviewer, index) => (
+                        <StyledCard   key={reviewer.reviewer} extraStyles='flex flex-col gap-1 '>
+                            <p className="typography-small-p text-font-gray">
+                                Reviewer: {index + 1}
+                            </p>
+                            <p className="typography-body ">
+                                Score : {reviewer.score}
+                            </p>
+                            <p className="typography-body ">
+                                Feedback : {reviewer.feedback}
+                            </p>
+                        </StyledCard>
+                    ))}
+                    </div>
+                </div>
+            )}
             {
                 stageBasedConfig?.hasScoreBoard && 
                 <div className=' flex flex-col'>
@@ -552,12 +647,12 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
             }
             </div>}
             <div className={(stageTitle === "Hired" ? 'w-[100%]' : 'w-[35%]') + ' flex flex-col '}>
-            {stageBasedConfig?.hasScoreCard && 
+            {(stageBasedConfig?.hasScoreCard || (stageBasedConfig?.showOwnReview && currentAdditionalReviewer?.score !== undefined && currentAdditionalReviewer?.score !== null)) && 
             <div className={` bg-background-80 rounded-xl ${stageTitle === "Hired" ? 'w-[35%] lg:w-[25%] xl:w-[15%]' : 'w-[90%] lg:w-[55%] xl:w-[40%]' } h-fit my-4 self-end`}>
                 <div className='p-4 flex flex-col items-center'>
                     <p className='typography-small-p text-font-gray'>Total Score:</p>
                     <div className='flex flex-col items-center text-font-accent'>
-                        <p className='display-d2 font-bold'>{stageConfig?.showGrandTotal ? totalSum : stageConfig?.hasSplitScoring ? getTotalScore() : stageData?.score || 0}</p>
+                        <p className='display-d2 font-bold'>{(stageBasedConfig?.showOwnReview && currentAdditionalReviewer?.score !== undefined && currentAdditionalReviewer?.score !== null) ? currentAdditionalReviewer?.score : stageBasedConfig?.showMultipleReviewersScore ? Math.round(multipleReviewersData?.reduce((acc,curr)=>(acc + curr.score),0)/multipleReviewersData?.length) : stageConfig?.showGrandTotal ? totalSum : stageConfig?.hasSplitScoring ? getTotalScore() : stageData?.score || 0}</p>
                         <p className='typography-small-p text-font-gray'>Out Of {stageConfig?.showGrandTotal ? grandSum :stageConfig?.hasSplitScoring ? Object.values(stageConfig?.score).reduce((acc,curr)=>(acc + curr),0) : stageConfig?.score}</p>
                     </div>
                 </div>
