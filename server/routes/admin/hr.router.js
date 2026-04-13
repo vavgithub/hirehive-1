@@ -1,5 +1,5 @@
 import express from "express"
-import { changeApplicationStatus, getCandidateScores, getTaskTemplates, moveCandidate, moveMultipleCandidates, noShow, rateMultipleCandidates, rejectCandidate, rejectMultipleCandidates, rescheduleCall, rescheduleScreening, saveTaskTemplates, scheduleCall, scoreRoundTwo, sendDesignTask, submitBudgetScore, undoAction, updateAssigneeForMultipleCandidates, updateCandidateRating } from "../../controllers/admin/hr.controller.js";
+import { changeApplicationStatus, getAiScoreStatus, getCandidateScores, getTaskTemplates, moveCandidate, moveMultipleCandidates, noShow, rateMultipleCandidates, rejectCandidate, rejectMultipleCandidates, rescheduleCall, rescheduleScreening, saveAiScore, saveTaskTemplates, scheduleCall, scoreRoundTwo, sendDesignTask, submitBudgetScore, triggerAiScore, undoAction, updateAssigneeForMultipleCandidates, updateCandidateRating } from "../../controllers/admin/hr.controller.js";
 import { protect, roleProtect } from "../../middlewares/authMiddleware.js";
 
 const router = express.Router();
@@ -41,5 +41,10 @@ router.post('/save-custom-task-presets', protect, roleProtect(['Admin','Hiring M
 router.post('/get-task-presets', protect, roleProtect(['Admin','Hiring Manager']), getTaskTemplates)
 
 router.post('/undo-action', protect, roleProtect(['Admin','Hiring Manager']), undoAction)
+
+router.post('/ai-score', protect, triggerAiScore);
+router.get('/ai-score-status/:candidateId', protect, getAiScoreStatus);
+
+router.post('/save-ai-score', saveAiScore);
 
 export default router;                                                                               
