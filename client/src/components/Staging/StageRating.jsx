@@ -56,6 +56,9 @@ function StageRating({customSchema,candidateId,jobId,name,candidate,onSubmit,sta
     };
 
     const handleSubmit = () => {
+      if (feedback.trim().length < 100) {
+        return;
+      }
       if(stageConfig?.hasSplitScoring){
         if(Object.entries(rating).filter(([key,value]) => key !== "Budget" && value === 0)?.length > 0){
             showErrorToast("Oopss","Please rate the candidate")
@@ -104,7 +107,7 @@ function StageRating({customSchema,candidateId,jobId,name,candidate,onSubmit,sta
       )
     }else{
       return (
-        <div className='bg-background-70 flex typography-body gap-4 justify-between rounded-xl mt-4 items-center p-4'>
+        <div className='bg-background-70 flex flex-col typography-body gap-4 rounded-xl mt-4 p-4'>
           {stageConfig?.hasSplitScoring ? 
           <>
           <div className='grid grid-cols-2 w-full gap-4'>
@@ -121,28 +124,58 @@ function StageRating({customSchema,candidateId,jobId,name,candidate,onSubmit,sta
               <input
                 type="text"
                 className='w-full bg-background-80  p-2 rounded'
-                placeholder='Enter Your Feedback'
+                placeholder="Why this score?"
                 value={feedback}
                 onChange={(e) => setFeedback(e.target.value)}
               />
-              <Button variant="icon" onClick={handleSubmit}>Submit</Button>
+              <Button variant="icon" onClick={handleSubmit} disabled={
+                stageConfig?.hasSplitScoring
+                  ? !(Object.entries(rating).every(([key, val]) => key === 'Budget' || val > 0) && feedback.trim().length >= 100)
+                  : !(rating >= 1 && feedback.trim().length >= 100)
+              }>Submit</Button>
             </div>
           </div>
           </>
           :
           <>
-          <span className='flex-shrink-0 '>{name} Ratings</span>
-            <div className='flex w-[70%] gap-4'>
-          <Scorer value={rating} onChange={setRating} />
-            <input
-              type="text"
-              className='w-full bg-background-80  p-2 rounded'
-              placeholder='Enter Your Feedback'
-              value={feedback}
-              onChange={(e) => setFeedback(e.target.value)}
-            />
-            <Button variant="icon" onClick={handleSubmit}>Submit</Button>
+          {name === 'Portfolio' && (candidate?.jobApplication?.jobProfile === 'Brand Designer' || candidate?.currentApplication?.jobProfile === 'Brand Designer') && (
+            <div className="w-full p-3 rounded bg-background-80">
+              {(() => {
+                const app = candidate.currentApplication ?? candidate.jobApplication;
+                const stageStatus = app?.stageStatuses?.['Portfolio'] ?? app?.stageStatuses?.Portfolio;
+                return (
+                  <>
+                    <p className="typography-small-p text-font-gray mb-1">AI Score</p>
+                    <p className="typography-small-p text-font-main mb-2">
+                      {stageStatus?.aiScore != null ? `${stageStatus.aiScore} / 5` : '— / 5'}
+                    </p>
+                    {stageStatus?.aiReasoning && (
+                      <>
+                        <p className="typography-small-p text-font-gray mb-1">AI Comments</p>
+                        <p className="typography-small-p text-font-main whitespace-pre-wrap">
+                          {stageStatus.aiReasoning}
+                        </p>
+                      </>
+                    )}
+                  </>
+                );
+              })()}
             </div>
+          )}
+          <div className="flex w-full flex-row items-center justify-between gap-4">
+            <span className='flex-shrink-0 '>{name} Ratings</span>
+            <div className='flex w-[70%] min-w-0 gap-4 items-center'>
+              <Scorer value={rating} onChange={setRating} />
+              <input
+                type="text"
+                className='w-full bg-background-80  p-2 rounded'
+                placeholder="Why this score?"
+                value={feedback}
+                onChange={(e) => setFeedback(e.target.value)}
+              />
+              <Button variant="icon" onClick={handleSubmit} disabled={!(rating >= 1 && feedback.trim().length >= 100)}>Submit</Button>
+            </div>
+          </div>
           </>}
         </div>
       );

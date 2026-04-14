@@ -896,8 +896,8 @@ export const getCandidateById = async (req, res) => {
       // Job application specific info
       jobApplication: {
         jobId: jobApplication.jobId,
-        jobApplied: jobApplication.jobApplied,
-        jobProfile: jobApplication?.jobProfile || "UI UX", //Dont remove this fallback value
+        jobApplied: jobApplication.jobApplied,        // Prefer live job profile so UI (e.g. AI score for Brand Designer only) matches the job record, not a stale application snapshot
+        jobProfile: job?.jobProfile || jobApplication?.jobProfile || "UI UX", //Dont remove this fallback value
         jobStatus: job ? job.status : "deleted",
         notes: jobApplication.notes,
         jobType: job ? job.employmentType : "NA",
