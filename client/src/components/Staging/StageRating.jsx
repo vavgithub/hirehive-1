@@ -8,7 +8,7 @@ import { updateStageStatus } from '../../redux/applicationStageSlice';
 import { useDispatch } from 'react-redux';
 import { scoreRoundTwo } from '../../services/hr.service';
 
-function StageRating({customSchema,candidateId,jobId,name,candidate,onSubmit,stageConfig}) {
+function StageRating({customSchema,candidateId,jobId,name,candidate,onSubmit,stageConfig,role}) {
     const [rating, setRating] = useState(stageConfig?.hasSplitScoring ? Object.fromEntries(Object.entries(stageConfig?.score)?.map(([key,value])=>[key,0])) : 0);
     const [feedback, setFeedback] = useState('');
   
@@ -138,7 +138,7 @@ function StageRating({customSchema,candidateId,jobId,name,candidate,onSubmit,sta
           </>
           :
           <>
-          {name === 'Portfolio' && (candidate?.jobApplication?.jobProfile === 'Brand Designer' || candidate?.currentApplication?.jobProfile === 'Brand Designer') && (
+          {name === 'Portfolio' && role === 'Design Reviewer' && (candidate?.jobApplication?.jobProfile === 'Brand Designer' || candidate?.currentApplication?.jobProfile === 'Brand Designer') && (
             <div className="w-full p-3 rounded bg-background-80">
               {(() => {
                 const app = candidate.currentApplication ?? candidate.jobApplication;
