@@ -8,7 +8,7 @@ import { updateStageStatus } from '../../redux/applicationStageSlice';
 import { useDispatch } from 'react-redux';
 import { scoreRoundTwo } from '../../services/hr.service';
 
-function StageRating({customSchema,candidateId,jobId,name,candidate,onSubmit,stageConfig,role}) {
+function StageRating({customSchema,candidateId,jobId,name,candidate,onSubmit,stageConfig}) {
     const [rating, setRating] = useState(stageConfig?.hasSplitScoring ? Object.fromEntries(Object.entries(stageConfig?.score)?.map(([key,value])=>[key,0])) : 0);
     const [feedback, setFeedback] = useState('');
   
