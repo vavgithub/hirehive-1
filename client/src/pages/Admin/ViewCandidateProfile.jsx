@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Tabs from '../../components/ui/Tabs';
 import Header from '../../components/utility/Header';
@@ -20,7 +20,7 @@ import ScoreChart from '../../components/Charts/ScoreChart';
 import {  getStageColorForChart, maxScoreOfEachStage } from '../../config/staging.config';
 import Container from '../../components/Cards/Container';
 import IconWrapper from '../../components/Cards/IconWrapper';
-import { ArrowLeftRight, ChevronUp, ChevronRight, ClipboardCheck, FileText, FileUser, FolderOpen, Globe, Mail, MonitorDot, Notebook, NotebookPen, Phone, Users, Calendar1, Sparkles } from 'lucide-react';
+import { ArrowLeftRight, ChevronUp, ChevronRight, ClipboardCheck, FileText, FileUser, FolderOpen, Globe, Mail, MonitorDot, Notebook, NotebookPen, Phone, Users, Calendar1 } from 'lucide-react';
 import RatingSelector, { getRatingIcon } from '../../components/MUIUtilities/RatingSelector';
 import Modal from '../../components/Modals/Modal';
 import TextEditor from '../../components/utility/TextEditor';
@@ -151,15 +151,6 @@ const ViewCandidateProfile = () => {
     const [ratingAnchor, setRatingAnchor] = useState(null);
     const queryClient = useQueryClient();
 
-    const [aiScoring, setAiScoring] = useState(false);
-    const [aiScoringStatusStep, setAiScoringStatusStep] = useState(0);
-    const [aiScore, setAiScore] = useState(null);
-    const [aiRecommendation, setAiRecommendation] = useState(null);
-    const [aiReasoning, setAiReasoning] = useState(null);
-    const pollingRef = useRef(null);
-
-    const UNKNOWN_PROFILE_PICTURE_URL = useUnknownProfilePicture();
-
     const { data, isLoading, isError, error: queryError } = useQuery({
         queryKey: ['candidate', candidateId, jobId],
         queryFn: () => fetchCandidateData(candidateId, jobId),
@@ -169,40 +160,6 @@ const ViewCandidateProfile = () => {
             dispatch(setError(error.message));
         },
     });
-
-    useEffect(() => {
-      return () => { if (pollingRef.current) clearInterval(pollingRef.current); };
-    }, []);
-
-    useEffect(() => {
-      if (!aiScoring) {
-        setAiScoringStatusStep(0);
-        return;
-      }
-      setAiScoringStatusStep(0);
-      const id = setInterval(() => {
-        setAiScoringStatusStep((s) => s + 1);
-      }, 30000);
-      return () => clearInterval(id);
-    }, [aiScoring]);
-
-    const statusMessage = useMemo(() => {
-      if (aiScoringStatusStep <= 0) return 'Starting AI analysis...';
-      if (aiScoringStatusStep === 1) return 'Screenshotting portfolio...';
-      if (aiScoringStatusStep >= 2 && aiScoringStatusStep <= 5) return 'Scoring with AI...';
-      return 'Almost there...';
-    }, [aiScoringStatusStep]);
-
-    useEffect(() => {
-      if (data?.jobApplication?.jobProfile === 'Brand Designer') {
-        const portfolioStage = data?.jobApplication?.stageStatuses?.['Portfolio'];
-        if (portfolioStage?.aiScore) {
-          setAiScore(portfolioStage.aiScore);
-          setAiRecommendation(portfolioStage.aiRecommendation);
-          setAiReasoning(portfolioStage.aiReasoning);
-        }
-      }
-    }, [data]);
 
     useEffect(() => {
         if (candidateData?.jobApplication?.notes?.content !== undefined) {
@@ -227,46 +184,6 @@ const ViewCandidateProfile = () => {
     const handleRateCandidate = (rating) => {
         updateCandidateRatingMutation.mutate({ candidateId, jobId, rating })
     }
-
-    const handleAiScore = useCallback(async () => {
-      console.log('handleAiScore called', data?.portfolio);
-      if (!data?.portfolio) return;
-      setAiScoring(true);
-      try {
-        await axios.post('/hr/ai-score', {
-          behance_url: data.portfolio,
-          candidate_id: candidateId,
-          role: 'brand_identity_designer',
-          job_id: jobId
-        });
-        console.log('POST success, starting polling');
-        pollingRef.current = setInterval(async () => {
-          try {
-            const res = await axios.get(`/hr/ai-score-status/${candidateId}`);
-            console.log('Polling...', res.data);
-            if (res.data.status === 'success' || res.data.status === 'completed') {
-              console.log('Score received:', res.data.score);
-              clearInterval(pollingRef.current);
-              setAiScore(res.data.score);
-              setAiRecommendation(res.data.recommendation);
-              setAiReasoning(res.data.reasoning);
-              setAiScoring(false);
-
-              await axios.post('/hr/save-ai-score', {
-                candidateId,
-                jobId,
-                aiScore: res.data.score,
-                aiReasoning: res.data.reasoning,
-                aiRecommendation: res.data.recommendation,
-              });
-            } else if (res.data.status === 'skipped') {
-              clearInterval(pollingRef.current);
-              setAiScoring(false);
-            }
-          } catch { clearInterval(pollingRef.current); setAiScoring(false); }
-        }, 30000);
-      } catch (error) { console.log('POST failed:', error); setAiScoring(false); }
-    }, [data?.portfolio, candidateId, jobId]);
 
     const [originalPath] = useState(() => {
         const isJobPath = location.pathname.includes('/jobs/');
@@ -468,6 +385,8 @@ const ViewCandidateProfile = () => {
 
     const transformedData = transformCandidateData(data);
 
+    const UNKNOWN_PROFILE_PICTURE_URL = useUnknownProfilePicture()
+
     const handleAssignmentNavigation = () => {
 
         navigate(`${getRoute(role,
@@ -631,16 +550,6 @@ const reviewerProfilePic = currentReviewer?.profilePicture
                                                 <IconWrapper hasBg icon={FolderOpen} />
                                             </CustomToolTip>
                                         </a>
-                                        {data?.jobApplication?.jobProfile === 'Brand Designer' && (
-                                          <div
-                                            onClick={!aiScoring ? handleAiScore : undefined}
-                                            className={`cursor-pointer flex ${aiScoring ? 'opacity-50 pointer-events-none' : ''}`}
-                                          >
-                                            <CustomToolTip title={aiScoring ? 'Scoring...' : 'Get AI Score'} arrowed size={2}>
-                                              <IconWrapper hasBg icon={Sparkles} />
-                                            </CustomToolTip>
-                                          </div>
-                                        )}
                                         {data.website && (
                                             <a href={ensureAbsoluteUrl(data.website)} target="_blank" rel="noopener noreferrer" className="icon-link">
                                                 <CustomToolTip title={'Website'} arrowed size={2}>
@@ -673,19 +582,6 @@ const reviewerProfilePic = currentReviewer?.profilePicture
                                         }
 
                                     </div>
-                                    {data?.jobApplication?.jobProfile === 'Brand Designer' && (
-                                        <>
-                                        <div className="mt-2 flex items-center gap-2">
-                                            <span className="typography-small-p text-font-gray">AI Score</span>
-                                            <span className="typography-small-p text-font-main">
-                                                {aiScore !== null ? `${aiScore} / 5` : '— / 5'}
-                                            </span>
-                                        </div>
-                                        {aiScoring && (
-                                          <p className="typography-small-p text-font-gray mt-1">{statusMessage}</p>
-                                        )}
-                                        </>
-                                    )}
                                 </div>
 
                                 {/* ready only current reviewer */}
