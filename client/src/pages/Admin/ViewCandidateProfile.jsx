@@ -653,7 +653,7 @@ const reviewerProfilePic = currentReviewer?.profilePicture
                                                 <IconWrapper hasBg icon={FolderOpen} />
                                             </CustomToolTip>
                                         </a>
-                                        {data.jobApplication?.jobApplied?.toLowerCase().includes('brand') && (
+                                        {(role === 'Admin' || role === 'Hiring Manager') && data.jobApplication?.jobApplied?.toLowerCase().includes('brand') && (
                                             <div className={`cursor-pointer${isScoring ? ' opacity-50 pointer-events-none' : ''}`} onClick={handleGetAiScore}>
                                                 <CustomToolTip title={isScoring ? 'Scoring...' : 'Get AI Score'} arrowed size={2}>
                                                     <IconWrapper hasBg icon={Sparkles} />
@@ -692,7 +692,7 @@ const reviewerProfilePic = currentReviewer?.profilePicture
                                         }
 
                                     </div>
-                                    {data?.jobApplication?.jobApplied?.toLowerCase().includes('brand') && (
+                                    {(role === 'Admin' || role === 'Hiring Manager') && data?.jobApplication?.jobApplied?.toLowerCase().includes('brand') && (
                                         <div className="mt-2 flex items-center gap-2">
                                             <span className="typography-small-p text-font-gray">AI Score</span>
                                             <span className="typography-small-p text-font-main">
@@ -700,7 +700,7 @@ const reviewerProfilePic = currentReviewer?.profilePicture
                                             </span>
                                         </div>
                                     )}
-                                    {data?.jobApplication?.jobApplied?.toLowerCase().includes('brand') && isScoring && (
+                                    {(role === 'Admin' || role === 'Hiring Manager') && data?.jobApplication?.jobApplied?.toLowerCase().includes('brand') && isScoring && (
                                         <p className="typography-small-p text-font-gray mt-1">{statusMessage}</p>
                                     )}
                                 </div>
