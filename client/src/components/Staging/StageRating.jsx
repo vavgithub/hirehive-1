@@ -8,7 +8,7 @@ import { updateStageStatus } from '../../redux/applicationStageSlice';
 import { useDispatch } from 'react-redux';
 import { scoreRoundTwo } from '../../services/hr.service';
 
-function StageRating({customSchema,candidateId,jobId,name,candidate,onSubmit,stageConfig}) {
+function StageRating({customSchema,candidateId,jobId,name,candidate,onSubmit,stageConfig,role}) {
     const [rating, setRating] = useState(stageConfig?.hasSplitScoring ? Object.fromEntries(Object.entries(stageConfig?.score)?.map(([key,value])=>[key,0])) : 0);
     const [feedback, setFeedback] = useState('');
   
@@ -104,7 +104,7 @@ function StageRating({customSchema,candidateId,jobId,name,candidate,onSubmit,sta
       )
     }else{
       return (
-        <div className='bg-background-70 flex typography-body gap-4 justify-between rounded-xl mt-4 items-center p-4'>
+        <div className='bg-background-70 flex flex-col typography-body gap-4 rounded-xl mt-4 p-4'>
           {stageConfig?.hasSplitScoring ? 
           <>
           <div className='grid grid-cols-2 w-full gap-4'>
@@ -121,28 +121,30 @@ function StageRating({customSchema,candidateId,jobId,name,candidate,onSubmit,sta
               <input
                 type="text"
                 className='w-full bg-background-80  p-2 rounded'
-                placeholder='Enter Your Feedback'
+                placeholder='Why this score?'
                 value={feedback}
                 onChange={(e) => setFeedback(e.target.value)}
               />
-              <Button variant="icon" onClick={handleSubmit}>Submit</Button>
+              <Button variant="icon" onClick={handleSubmit} disabled={feedback.length < 100 || Object.entries(rating).some(([key, value]) => key !== "Budget" && value === 0)}>Submit</Button>
             </div>
           </div>
           </>
           :
           <>
-          <span className='flex-shrink-0 '>{name} Ratings</span>
+<div className="flex items-center justify-between gap-4">
+            <span className='flex-shrink-0 '>{name} Ratings</span>
             <div className='flex w-[70%] gap-4'>
-          <Scorer value={rating} onChange={setRating} />
-            <input
-              type="text"
-              className='w-full bg-background-80  p-2 rounded'
-              placeholder='Enter Your Feedback'
-              value={feedback}
-              onChange={(e) => setFeedback(e.target.value)}
-            />
-            <Button variant="icon" onClick={handleSubmit}>Submit</Button>
+              <Scorer value={rating} onChange={setRating} />
+              <input
+                type="text"
+                className='w-full bg-background-80  p-2 rounded'
+                placeholder='Why this score?'
+                value={feedback}
+                onChange={(e) => setFeedback(e.target.value)}
+              />
+              <Button variant="icon" onClick={handleSubmit} disabled={rating < 1 || feedback.length < 100}>Submit</Button>
             </div>
+          </div>
           </>}
         </div>
       );

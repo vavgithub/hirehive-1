@@ -1,3 +1,4 @@
+import axios from "axios";
 import { jobStagesStatuses } from "../../config/jobStagesStatuses.js";
 import { undoConfig } from "../../config/undoConfig.js";
 import { Company } from "../../models/admin/company.model.js";
@@ -1940,3 +1941,55 @@ export const undoAction = async (req,res) => {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 }
+
+export const triggerAiScore = async (req, res) => {
+  try {
+    const { behance_url, candidate_id, role, job_id } = req.body;
+    const response = await axios.post(
+      'https://portfolio-intelligence-production-294a.up.railway.app/score',
+      { behance_url, candidate_id, role, job_id }
+    );
+    res.json(response.data);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const getAiScoreStatus = async (req, res) => {
+  try {
+    const { candidateId } = req.params;
+    const response = await axios.get(
+      `https://portfolio-intelligence-production-294a.up.railway.app/score-status/${candidateId}`
+    );
+    res.json(response.data);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const saveAiScore = async (req, res) => {
+  try {
+    const { candidateId, jobId, aiScore, aiReasoning, aiRecommendation } = req.body;
+
+    const candidate = await candidates.findById(candidateId);
+    if (!candidate) return res.status(404).json({ message: 'Candidate not found' });
+
+    const jobApplication = candidate.jobApplications.find(
+      (app) => app.jobId.toString() === jobId
+    );
+    if (!jobApplication) return res.status(404).json({ message: 'Job application not found' });
+
+    const stageStatus = jobApplication.stageStatuses.get('Portfolio');
+    if (!stageStatus) return res.status(404).json({ message: 'Portfolio stage not found' });
+
+    stageStatus.aiScore = aiScore;
+    stageStatus.aiReasoning = aiReasoning;
+    stageStatus.aiRecommendation = aiRecommendation;
+
+    await candidate.save();
+    return res.status(200).json({ message: 'AI score saved successfully' });
+  } catch (error) {
+    console.error('Error saving AI score:', error);
+    return res.status(500).json({ message: error.message });
+  }
+};
