@@ -503,6 +503,41 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
             setIsLoading={setIsLoading}
             />
         }
+        {(() => {
+            if (selectedStage !== 'Portfolio') return null;
+            const isBrand = candidateData?.jobApplication?.jobApplied?.toLowerCase().includes('brand');
+            const portfolioStatus = stageStatuses?.['Portfolio'] ?? stageStatuses?.Portfolio;
+            if (!isBrand || !portfolioStatus?.aiReasoning) return null;
+            return (
+                <div className="mt-3 p-3 rounded bg-background-80">
+                    <p className="typography-small-p font-bold mb-2">AI Comments</p>
+                    {['Role-fit summary:', 'Strengths:', 'Gaps:', 'To reach next level:'].map(heading => {
+                        const text = portfolioStatus?.aiReasoning ?? '';
+                        const escapeRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                        const match =
+                          heading === 'To reach next level:'
+                            ? text.match(new RegExp(`${escapeRe(heading)}([\\s\\S]*)$`))
+                            : text.match(
+                                new RegExp(
+                                  `${escapeRe(heading)}([\\s\\S]*?)(?=Strengths:|Gaps:|To reach next level:|Based on|$)`
+                                )
+                              );
+                        let content = match?.[1]?.trim() ?? '';
+                        if (heading === 'To reach next level:') {
+                          content = content.replace(/\(Based on[^)]*\)/g, '').trim();
+                        }
+                        return match && content ? (
+                            <div key={heading} className="mb-2">
+                                <span className="typography-small-p font-bold">{heading}</span>
+                                {content.split(';').filter(s => s.trim()).map((point, i) => (
+                                  <p key={i} className="typography-small-p text-font-main">• {point.trim()}</p>
+                                ))}
+                            </div>
+                        ) : null;
+                    })}
+                </div>
+            );
+        })()}
         {
             (stageBasedConfig?.hasScheduledLabel && stageData?.scheduledDate && stageTitle === "Design Task" && currentStatus === "Pending") &&
             <div className='mt-4'>
@@ -530,7 +565,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
             <SubmissionForm candidateId={candidateId} jobId={jobId} stageData={stageData} setIsLoading={setIsLoading} />
         }
         {
-          stageBasedConfig?.hasRatingComponent && <StageRating  customSchema={adminData?.companyDetails?.customScreeningParam ? adminData?.companyDetails?.customScreeningParam[jobProfile] : null} candidateId={candidateId} jobId={jobId} name={stageConfig?.name} candidate={candidateData} onSubmit={handleReviewSubmit} stageConfig={stageConfig} />
+          stageBasedConfig?.hasRatingComponent && <StageRating  customSchema={adminData?.companyDetails?.customScreeningParam ? adminData?.companyDetails?.customScreeningParam[jobProfile] : null} candidateId={candidateId} jobId={jobId} name={stageConfig?.name} candidate={candidateData} onSubmit={handleReviewSubmit} stageConfig={stageConfig} role={role} />
         }
         <div className='flex gap-4 w-full '>
             {(stageBasedConfig?.hasRemarks || stageBasedConfig?.hasRejectionReason || stageBasedConfig?.hasScoreBoard) && 

@@ -113,6 +113,18 @@ const stageStatusSchema = new mongoose.Schema(
     submissionDate: {
       type: Date,
     },
+    aiScore: {
+      type: Number,
+      default: null,
+    },
+    aiReasoning: {
+      type: String,
+      default: null,
+    },
+    aiRecommendation: {
+      type: String,
+      default: null,
+    },
   },
   { _id: false }
 );
