@@ -125,7 +125,7 @@ function StageRating({customSchema,candidateId,jobId,name,candidate,onSubmit,sta
                 value={feedback}
                 onChange={(e) => setFeedback(e.target.value)}
               />
-              <Button variant="icon" onClick={handleSubmit} disabled={feedback.length < 100 || Object.entries(rating).some(([key, value]) => key !== "Budget" && value === 0)}>Submit</Button>
+              <Button variant="icon" onClick={handleSubmit} disabled={feedback.length < 50 || Object.entries(rating).some(([key, value]) => key !== "Budget" && value === 0)}>Submit</Button>
             </div>
           </div>
           </>
@@ -142,7 +142,7 @@ function StageRating({customSchema,candidateId,jobId,name,candidate,onSubmit,sta
                 value={feedback}
                 onChange={(e) => setFeedback(e.target.value)}
               />
-              <Button variant="icon" onClick={handleSubmit} disabled={rating < 1 || feedback.length < 100}>Submit</Button>
+              <Button variant="icon" onClick={handleSubmit} disabled={rating < 1 || feedback.length < 50}>Submit</Button>
             </div>
           </div>
           </>}
