@@ -483,26 +483,30 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
 
 
     const multipleReviewersData = useMemo(() => {
-        const data = []
-        if(stageData?.additionalReviewers?.length > 0){
-            stageData?.additionalReviewers?.map(reviewer => {
+        const data = [];
+        if (stageData?.additionalReviewers?.length > 0) {
+            stageData.additionalReviewers.forEach((reviewer) => {
                 data.push({
-                    reviewer : reviewer.assigneeId,
-                    score : reviewer.score,
-                    feedback : reviewer.feedback
-                })
-            })
-            const primaryScore = typeof stageData?.score === 'number' ? stageData.score : null;
-            if (primaryScore !== null) {
-                data.push({
-                    reviewer: stageData?.assignedTo,
-                    score: stageData?.score,
-                    feedback: stageData?.feedback
+                    reviewer: reviewer.assigneeId,
+                    score: reviewer.score,
+                    feedback: reviewer.feedback
                 });
-            }
+            });
+            data.push({
+                reviewer: stageData?.assignedTo,
+                score: stageData?.score,
+                feedback: stageData?.feedback
+            });
         }
-        return data;
-    },[stageBasedConfig, stageData])
+        // Deduplicate by reviewer ID
+        const seen = new Set();
+        return data.filter((item) => {
+            const id = typeof item.reviewer === 'string' ? item.reviewer : item.reviewer?._id;
+            if (!id || seen.has(id)) return false;
+            seen.add(id);
+            return true;
+        });
+    }, [stageBasedConfig, stageData]);
 
     const currentAdditionalReviewer = useMemo(() => {
         return multipleReviewersData?.find(reviewer => reviewer.reviewer === adminData?._id)
