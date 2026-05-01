@@ -69,6 +69,27 @@ const stageStatusSchema = new mongoose.Schema(
       ref: "User",
       default: null,
     },
+    additionalReviewers: [
+      {
+        assigneeId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+          default: null,
+        },
+        score: {
+          type: Number,
+          default: null,
+        },
+        feedback: {
+          type: String,
+          default: null,
+        },
+      },
+    ],
+    overallScore : {
+      type: Number,
+      default: null,
+    },
     score: {
       // Flexible field to store scores; can be an object with dynamic keys
       type: mongoose.Schema.Types.Mixed,

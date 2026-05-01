@@ -987,6 +987,12 @@ export const getCandidateScores = async (req, res) => {
 
     // Use Object.entries() to iterate over a plain object
     for (const [stageName, stageStatus] of Object.entries(stageStatuses)) {
+      if (stageName === "Portfolio" && stageStatus.overallScore != null) {
+        scores[stageName] = stageStatus.overallScore;
+        totalScore += stageStatus.overallScore;
+        continue;
+      }
+
       // Handle the mixed type of 'score' appropriately
       const stageScore =
         stageStatus.score !== undefined ? stageStatus.score : {};

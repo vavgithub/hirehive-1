@@ -18,7 +18,7 @@ import IconWrapper from '../Cards/IconWrapper';
 import { Search, UserRoundPlus } from 'lucide-react';
 
 
-const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled = false , error , selectedAnchor , closeSelectedAnchor , autoFill = false , previousAssigneeId = null}) => {
+const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled = false , error , selectedAnchor , closeSelectedAnchor , autoFill = false , previousAssigneeId = null, stackedValues = [], fullWidth = false }) => {
   const [reviewers, setReviewers] = useState([]);
   // const [isLoading, setIsLoading] = useState(true);
   const [selectedReviewer, setSelectedReviewer] = useState(null);
@@ -102,10 +102,41 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
 
   // Render for 'icon' mode
   if (mode === 'icon') {
+    const stackedReviewerObjects = (Array.isArray(stackedValues) ? stackedValues : [])
+      .map((v) => {
+        const id = typeof v === 'string' ? v : v?._id || v;
+        return reviewers.find(r => r._id === id) || (designReviewers?.admin?._id === id ? designReviewers?.admin : null) || null;
+      })
+      .filter(Boolean);
+    const stackedCount = Math.min(stackedReviewerObjects.length, 3);
+    const STACK_AVATAR_SIZE = 32;
+    const STACK_OVERLAP = 10; // how much each avatar overlaps the previous
+    const stackedWidth = stackedCount * STACK_AVATAR_SIZE - Math.max(0, stackedCount - 1) * STACK_OVERLAP;
+
     return (
       <>
-        <IconButton sx={{margin: "0 0.5rem ",padding : "0 0 0 0"}} onClick={handleClick} size="small" disabled={disabled}>
-          {selectedReviewer ? (
+        <IconButton sx={{ margin: 0, padding: "0 0 0 0" }} onClick={handleClick} size="small" disabled={disabled}>
+          {stackedReviewerObjects.length > 1 ? (
+            <Box sx={{ display: 'flex', alignItems: 'center', height: STACK_AVATAR_SIZE, minWidth: stackedWidth }}>
+              {stackedReviewerObjects.slice(0, 3).map((rev, idx) => (
+                <Avatar
+                  key={rev._id || idx}
+                  src={rev.profilePicture}
+                  sx={{
+                    width: STACK_AVATAR_SIZE,
+                    height: STACK_AVATAR_SIZE,
+                    ml: idx === 0 ? 0 : `-${STACK_OVERLAP}px`,
+                    border: '2px solid var(--color-background-100)',
+                    bgcolor: rev?.profilePicture ? undefined : '#e0e0e0',
+                    color: rev?.profilePicture ? undefined : '#111111',
+                    fontSize: 12,
+                  }}
+                >
+                  {rev?.firstName?.[0]?.toUpperCase?.() || '?'}
+                </Avatar>
+              ))}
+            </Box>
+          ) : selectedReviewer ? (
             <Avatar src={selectedReviewer.profilePicture} sx={{ width: 32, height: 32 }}>
               {selectedReviewer.firstName[0].toUpperCase()}
             </Avatar>
@@ -314,6 +345,7 @@ const AssigneeSelector = ({ mode = 'icon', value, onChange, onSelect, disabled =
   // For 'default' mode
   return (
     <Autocomplete
+      fullWidth={fullWidth}
       options={reviewers}
       getOptionLabel={(option) => option.firstName + " " + option.lastName || ''}
       loading={isLoading}

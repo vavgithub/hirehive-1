@@ -21,6 +21,7 @@ export const productDesignerConfig = [
                         hasAssigneeSelectorEnabled : true,
                         hasAssigneeSelector : true,
                         hasBudgetLabel : false,
+                        hasMultipleReviewers : true,
                         hasLabel : {
                             content : "Candidate's portfolio has not yet been assigned to a reviewer.",
                             icon : WarningIcon
@@ -110,6 +111,7 @@ export const productDesignerConfig = [
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
+                        showOwnReview : true,
                         hasBudgetLabel : false,
                         hasLabel : {
                             content : "Please review the portfolio and update the details below.",
@@ -146,6 +148,7 @@ export const productDesignerConfig = [
                         hasScoreCard : true,
                         hasUndoButton : true,
                         hasUndoButtonDisabled : false,
+                        showMultipleReviewersScore : true,
                         hasScheduledLabel : true,
                         actions : {
                             hasRejectAction : true,
@@ -163,6 +166,7 @@ export const productDesignerConfig = [
                         hasScoreCard : true,
                         hasUndoButton : true,
                         hasUndoButtonDisabled : false,
+                        showMultipleReviewersScore : true,
                         hasScheduledLabel : true,
                         actions : {
                             hasRejectAction : true,
@@ -178,6 +182,7 @@ export const productDesignerConfig = [
                         hasLabel : false,
                         hasRemarks : true,
                         hasScoreCard : true,
+                        showOwnReview : true,
                         actions : false
                     },
                     "Candidate" : {

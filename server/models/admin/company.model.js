@@ -103,7 +103,17 @@ const companyschema = new mongoose.Schema({
         type : Map,
         of : [customScreeningSchema],
         default : {}
-    }
+    },
+    multiReviewerSettings: {
+        enabled: {
+            type: Boolean,
+            default: false,
+        },
+        jobProfiles: {
+            type: [String],
+            default: [],
+        },
+    },
 }, { timestamps: true })
 
 // Create geospatial index
