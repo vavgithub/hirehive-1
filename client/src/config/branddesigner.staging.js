@@ -23,6 +23,7 @@ export const brandDesignerConfig = [
                         hasBudgetLabel : false,
                         hasUndoButton : false,
                         hasUndoButtonDisabled : false,
+                        hasMultipleReviewers : true,
                         hasLabel : {
                             content : "Candidate's portfolio has not yet been assigned to a reviewer.",
                             icon : WarningIcon
@@ -110,6 +111,7 @@ export const brandDesignerConfig = [
                         hasAssigneeSelectorIcon : false,
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
+                        showOwnReview : true,
                         hasBudgetLabel : false,
                         hasLabel : {
                             content : "Please review the portfolio and update the details below.",
@@ -144,6 +146,7 @@ export const brandDesignerConfig = [
                         hasLabel : false,
                         hasRemarks : true,
                         hasScoreCard : true,
+                        showMultipleReviewersScore : true,
                         hasUndoButton : true,
                         hasUndoButtonDisabled : false,
                         hasScheduledLabel : true,
@@ -178,6 +181,7 @@ export const brandDesignerConfig = [
                         hasLabel : false,
                         hasRemarks : true,
                         hasScoreCard : true,
+                        showOwnReview : true,
                         actions : false
                     },
                     "Candidate" : {

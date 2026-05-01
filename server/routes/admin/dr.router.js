@@ -1,10 +1,12 @@
 import express from 'express';
 import { protect, roleProtect } from '../../middlewares/authMiddleware.js';
-import { autoAssignPortfolios, getAssignedCandidates, getUnderReviewStats, submitScoreReview, updateCandidateAssignee } from '../../controllers/admin/dr.controller.js';
+import { autoAssignPortfolios, getAssignedCandidates, getUnderReviewStats, submitScoreReview, updateCandidateAssignee, updateCandidateMultipleAssignee } from '../../controllers/admin/dr.controller.js';
 
 const router = express.Router();
 
 router.put('/update-assignee', protect, updateCandidateAssignee);
+
+router.put('/update-multiple-assignee', protect, updateCandidateMultipleAssignee);
 
 router.post('/auto-assign-portfolios',protect, autoAssignPortfolios)
 

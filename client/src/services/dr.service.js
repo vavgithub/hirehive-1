@@ -14,6 +14,8 @@ export const fetchUnderReviewStats = async () => {
 //PUT
 export const updateAssignee = (candidateId, jobId, stage, assigneeId) => axios.put('/dr/update-assignee', { candidateId, jobId, stage, assigneeId })
 
+export const updateMultipleAssignee = (candidateId, jobId, stage, assigneeId) => axios.put('/dr/update-multiple-assignee', { candidateId, jobId, stage, assigneeId })
+
 //POST
 export const autoAssignPortfolio = async ({ jobId, reviewerIds, budgetMin, budgetMax }) =>{
     const response = await axios.post('/dr/auto-assign-portfolios', { jobId, reviewerIds, budgetMin, budgetMax })

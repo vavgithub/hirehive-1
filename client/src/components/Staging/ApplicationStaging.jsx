@@ -4,6 +4,7 @@ import StageProgressBar from './StageProgressBar';
 import QuestionResponses from './QuestionResponses';
 import { Card } from '@mui/material';
 import { useAuthContext } from '../../context/AuthProvider';
+import { useLocation } from 'react-router-dom';
 import GlobalStaging from './GlobalStaging';
 import { ensureAbsoluteUrl } from '../../utility/ensureAbsoluteUrl';
 import LinkView from '../ui/LinkView';
@@ -46,10 +47,27 @@ const AccordionSection = ({ title, isOpen, onToggle, children, badge }) => (
         </div>
     </Card>
 );
+
+const getJobProfileKey = (jobApplied = '', fallbackProfile = '') => {
+  const lower = jobApplied.toLowerCase();
+  if (lower.includes('brand')) return 'Brand Designer';
+  if (lower.includes('ui') || lower.includes('ux')) return 'UI UX';
+  if (lower.includes('motion')) return 'Motion Designer';
+  if (lower.includes('3d')) return '3D Designer';
+  if (lower.includes('product')) return 'Product Designer';
+  if (lower.includes('graphic')) return 'Graphic Designer';
+  if (lower.includes('video')) return 'Video Editor';
+  if (lower.includes('creative')) return 'Creative Director';
+  return fallbackProfile || 'UI UX';
+};
+
 const ApplicationStaging = ({ candidateId, jobId ,jobStatus}) => {
 
     const { user } = useAuthContext();
-    const role = user?.role || 'Candidate'; // Default to Candidate if role is not specified
+    const location = useLocation();
+    const role = location?.pathname?.startsWith('/candidate')
+      ? 'Candidate'
+      : (user?.role || 'Candidate'); // Default to Candidate if role is not specified
 
     const { currentStage, stageStatuses } = useSelector((state) => state.applicationStage);
     const candidateData = useSelector(state => state.candidate.candidateData);
@@ -203,7 +221,10 @@ const ApplicationStaging = ({ candidateId, jobId ,jobStatus}) => {
                 role={role} 
                 selectedStage={selectedStage} 
                 stageStatuses={stageStatuses} 
-                jobProfile={candidateData?.jobApplication?.jobProfile || "UI UX"} 
+                jobProfile={getJobProfileKey(
+                  candidateData?.jobApplication?.jobApplied,
+                  candidateData?.jobApplication?.jobProfile
+                )} 
                 isClosed={(jobStatus === "deleted" || jobStatus === "closed")}
                 />
             </div>

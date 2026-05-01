@@ -76,15 +76,17 @@ export const VAVScoreCard = ({ score, stage, scoreStages }) => {
 
     if (!showBreakDown) {
         return (
-            <StyledCard backgroundColor={"bg-background-100"}  extraStyles="flex flex-col items-center sm:w-[55%] lg:w-[35%]  max-w-[27rem]  relative">
+            <StyledCard backgroundColor={"bg-background-100"} extraStyles="flex flex-col items-center sm:w-[55%] lg:w-[35%] max-w-[27rem] relative">
                 <h2 className="text-font-main">GEODE SCORE</h2>
                 <button onClick={() => setShowBreakDown(true)} className='absolute top-4 right-4 hover:text-font-gray'>
                     <CustomToolTip title={'View Score Breakdown'}>
                         <IconWrapper icon={ArrowLeftRight} size={0} customStrokeWidth={7} inheritColor />
                     </CustomToolTip>
                 </button>
-                <span className="marks text-font-primary">{score}</span>
-                <p className="typography-large-p">Out of {getMaxScoreForStage(stage)}</p>
+                <div className="flex-1 w-full flex flex-col items-center justify-center text-center">
+                    <span className="marks text-font-primary">{score}</span>
+                    <p className="typography-large-p">Out of {getMaxScoreForStage(stage)}</p>
+                </div>
             </StyledCard>
         )
     } else {
@@ -613,10 +615,6 @@ const reviewerProfilePic = currentReviewer?.profilePicture
                             <div className='flex gap-4 items-end'>
                                 <div className="relative to-background-100 w-[210px] min-h-auto max-h-[210px] rounded-xl overflow-hidden">
                                     <img src={data.profilePictureUrl || UNKNOWN_PROFILE_PICTURE_URL} alt="" className='object-cover w-full overflow-hidden' />
-                                    {hasPermission(role,PERMISSIONS.SHOW_CANDIDATE_PROFILE_RATING) &&
-                                        <span onClick={(e) => setRatingAnchor(e.currentTarget)} className='absolute cursor-pointer bg-background-60 min-w-10 min-h-10 top-2 right-2 rounded-full flex justify-center items-center'>
-                                            {getRatingIcon(data?.jobApplication?.rating)}
-                                        </span>}
                                 </div>
                                 <div className={`flex flex-col gap-2 ${candidateData?.jobApplication?.notes?.content ? ' max-w-[60%] ' : ''}`}>
                                     <h2>
@@ -631,20 +629,26 @@ const reviewerProfilePic = currentReviewer?.profilePicture
                                     </div>
                                     {hasPermission(role,PERMISSIONS.SHOW_CANDIDATE_PROFILE_PERSONAL_DETAILS) &&
                                         <div className=' mb-3 '>
-                                        <div className="flex gap-5">
+                                        <div className="flex gap-5 items-center flex-nowrap overflow-hidden">
                                             <div className="flex items-center gap-2 cursor-pointer" onClick={()=>handlePhoneCopy(data?.phone)}>
                                                     <IconWrapper size={0} customIconSize={2} icon={Phone} />
                                                 <span className="typography-large-p">{data.phone}</span>
                                             </div>
-                                            <div className="flex items-center gap-2 overflow-hidden cursor-pointer" onClick={() => handleEmailCopy(data?.email)}>
-                                                    <IconWrapper size={0} customIconSize={2} icon={Mail} />
-                                                <span className="typography-large-p whitespace-nowrap text-ellipsis overflow-hidden ">{data.email}</span>
+                                            <div className="flex items-center gap-4 min-w-0 flex-nowrap overflow-hidden">
+                                                <div className="flex items-center gap-2 overflow-hidden cursor-pointer min-w-0" onClick={() => handleEmailCopy(data?.email)}>
+                                                        <IconWrapper size={0} customIconSize={2} icon={Mail} />
+                                                    <span className="typography-large-p whitespace-nowrap text-ellipsis overflow-hidden min-w-0">{data.email}</span>
+                                                </div>
+                                                {data?.dob && (
+                                                    <div className="flex items-center gap-2 overflow-hidden">
+                                                        <IconWrapper size={0} customIconSize={2} icon={Calendar1} />
+                                                        <span className="typography-large-p whitespace-nowrap text-ellipsis overflow-hidden">
+                                                            {UTCToDateFormatted(data.dob)}
+                                                        </span>
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
-                                        {data?.dob && <div className="flex items-center gap-2 overflow-hidden cursor-pointer mt-4 " onClick={() => handleEmailCopy(data?.email)}>
-                                                <IconWrapper size={0} customIconSize={2} icon={Calendar1} />
-                                            <span className="typography-large-p whitespace-nowrap text-ellipsis overflow-hidden ">{UTCToDateFormatted(data.dob)}</span>
-                                        </div>}
                                         </div>
                                         }
                                     <div className="flex gap-2 items-center ">
@@ -722,26 +726,36 @@ const reviewerProfilePic = currentReviewer?.profilePicture
                                     <div className=' flex justify-between items-center  ' >
 
                                         <p className='typography-body'>Notes</p>
-                                        <div onClick={handleOpenNotes} className={'hover:bg-accent-300  bg-background-70  rounded-xl' + (candidateData?.jobApplication?.notes?.content ? " top-8 right-8 " : " top-4 right-4")}>
-                                            <CustomToolTip title={candidateData?.jobApplication?.notes?.content ? "Edit notes" : "Add a note"} arrowed>
-                                                {
-                                                    candidateData?.jobApplication?.notes?.content ? <IconWrapper icon={NotebookPen} /> : <IconWrapper icon={Notebook} />
-                                                }
-                                            </CustomToolTip>
-                                        </div>
                                     </div>
 
                                     <div className='overflow-hidden text-font-gray typography-body ' dangerouslySetInnerHTML={{ __html: truncatedText(candidateData?.jobApplication?.notes?.content, 50) }}></div>
 
-                                </StyledCard> :
-                                <div onClick={handleOpenNotes} className={'hover:bg-accent-300  bg-background-70  h-fit rounded-xl' + (candidateData?.jobApplication?.notes?.content ? " top-8 right-8 " : " top-4 right-4")}>
-                                    <CustomToolTip title={candidateData?.jobApplication?.notes?.content ? "Edit notes" : "Add a note"} arrowed>
-                                        {
-                                            candidateData?.jobApplication?.notes?.content ? <IconWrapper icon={NotebookPen} /> : <IconWrapper icon={Notebook} />
-                                        }
-                                    </CustomToolTip>
-                                </div>)
+                                </StyledCard> : null)
                             }
+
+                            {/* Top-right actions aligned with Current reviewer */}
+                            <div className="absolute top-8 right-8 flex items-center gap-2 z-10">
+                                {hasPermission(role,PERMISSIONS.SHOW_CANDIDATE_PROFILE_RATING) && (
+                                    <span
+                                        onClick={(e) => setRatingAnchor(e.currentTarget)}
+                                        className='cursor-pointer bg-background-60 min-w-10 min-h-10 rounded-full flex justify-center items-center'
+                                    >
+                                        <CustomToolTip title={'Rate candidate'} arrowed size={2}>
+                                            {getRatingIcon(data?.jobApplication?.rating)}
+                                        </CustomToolTip>
+                                    </span>
+                                )}
+                                {hasPermission(role,PERMISSIONS.SHOW_CANDIDATE_PROFILE_NOTES_SECTION) && (
+                                    <div
+                                        onClick={handleOpenNotes}
+                                        className='cursor-pointer hover:bg-accent-300 bg-background-70 rounded-xl w-11 h-11 flex justify-center items-center'
+                                    >
+                                        <CustomToolTip title={candidateData?.jobApplication?.notes?.content ? "Edit notes" : "Add a note"} arrowed>
+                                            {candidateData?.jobApplication?.notes?.content ? <IconWrapper icon={NotebookPen} /> : <IconWrapper icon={Notebook} />}
+                                        </CustomToolTip>
+                                    </div>
+                                )}
+                            </div>
 
                         </StyledCard>
 
