@@ -540,7 +540,14 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
                 if (r?.assigneeId) values.push(r.assigneeId);
             });
         }
-        return values;
+        // Deduplicate by ID
+        const seen = new Set();
+        return values.filter(v => {
+            const id = typeof v === 'string' ? v : v?._id || v;
+            if (seen.has(id)) return false;
+            seen.add(id);
+            return true;
+        });
     }, [stageData?.assignedTo, stageData?.additionalReviewers]);
 
     return (
