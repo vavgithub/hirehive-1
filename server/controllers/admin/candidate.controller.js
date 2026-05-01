@@ -784,6 +784,8 @@ export const updateStatusAndStage = async (req, res) => {
 
 export const getCandidateById = async (req, res) => {
   try {
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate');
+    res.set('Pragma', 'no-cache');
     const { candidateId, jobId } = req.params;
 
     // Find the candidate

@@ -621,17 +621,30 @@ export const autoAssignPortfolios = async (req, res) => {
        stageStatus.score = ratings; // Can be a number or an object with multiple ratings
        stageStatus.feedback = feedback;
      }
-
-     if(req.user.role === "Admin"){
-      stageStatus.assignedTo = req.user._id
-     }
  
      // Update the status from 'Under Review' to 'Reviewed'
      if (stageStatus.status === 'Under Review' ) {
       if(stage === "Portfolio" ){
-        const hasScores = stageStatus.additionalReviewers?.every(rev => (rev.score !== undefined && rev.score !== null));
-        if(hasScores && (stageStatus.score && stageStatus.feedback)){
-          stageStatus.overallScore = Math.round((stageStatus.additionalReviewers?.reduce((acc,curr)=>(acc + curr.score),0) + stageStatus.score)/(stageStatus.additionalReviewers?.length + 1));
+        const additional = stageStatus.additionalReviewers || [];
+        if (additional.length > 0) {
+          const hasScores = additional.every(
+            (rev) => rev.score !== undefined && rev.score !== null
+          );
+          if (hasScores) {
+            const primaryScore =
+              typeof stageStatus.score === 'number' && !Number.isNaN(stageStatus.score)
+                ? stageStatus.score
+                : null;
+            const allScores = [
+              ...additional.map((r) => r.score),
+              ...(primaryScore !== null ? [primaryScore] : []),
+            ];
+            stageStatus.overallScore = Math.round(
+              allScores.reduce((acc, s) => acc + s, 0) / allScores.length
+            );
+            stageStatus.status = 'Reviewed';
+          }
+        } else if (stageStatus.score && stageStatus.feedback) {
           stageStatus.status = 'Reviewed';
         }
       }else{

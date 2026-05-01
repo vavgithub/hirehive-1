@@ -4,7 +4,7 @@ import StatusBadge from '../ui/StatusBadge'
 import { logConfig, stagingConfig } from '../../config/staging.config.js';   
 import ClosedBadge from '../../svg/Icons/ClosedBadge.jsx';
 import AssigneeSelector from '../MUIUtilities/AssigneeSelector.jsx';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import Label from '../ui/Label.jsx';
 import { setCurrentStage, updateStageStatus } from '../../redux/applicationStageSlice.js';
@@ -32,11 +32,34 @@ import { ChevronDown, ChevronUp, RotateCcw } from 'lucide-react';
 import IconWrapper from '../Cards/IconWrapper.jsx';
 import { Calendar, Clock, Copy, DatabaseZap, Link } from 'lucide-react';
 import useAuth from '../../hooks/useAuth.jsx';
+import { fetchAllDesignReviewers } from '../../services/auth.service';
 import { formatUTCToLocalTimeAuto, UTCToDateFormatted } from '../../utility/timezoneConverter.js';
 import { moveCandidate, rejectCandidate, rescheduleCall, scheduleCall, submitBudgetScore, undoStageActions } from '../../services/hr.service.js';
 import { submitReview, updateAssignee, updateMultipleAssignee } from '../../services/dr.service.js';
 import CustomToolTip from '../Tooltip/CustomToolTip.jsx';
 import { useScoreBg } from '../../context/ThemeContext.jsx';
+
+const MultiReviewerRemarksGrid = ({ multipleReviewersData, getReviewerName }) => {
+    return (
+        <div className="mt-4">
+            <p className="typography-small-p text-font-gray mb-2">Remarks</p>
+            <div
+                className="typography-body grid gap-4 w-full"
+                style={{ gridTemplateColumns: `repeat(${multipleReviewersData.length}, 1fr)` }}
+            >
+                {multipleReviewersData?.map((reviewer) => (
+                    <StyledCard key={reviewer.reviewer} extraStyles="flex flex-col gap-1 w-full min-w-0">
+                        <p className="typography-small-p text-font-gray">
+                            {getReviewerName(reviewer.reviewer)}
+                        </p>
+                        <p className="typography-body">Score : {reviewer.score}</p>
+                        <p className="typography-body">Feedback : {reviewer.feedback}</p>
+                    </StyledCard>
+                ))}
+            </div>
+        </div>
+    );
+};
 
 function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
     const stageData = stageStatuses[selectedStage];
@@ -45,6 +68,20 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
     
     //To get admin Data for companyDetails
     const { data : adminData } = useAuth();
+
+    const { data: designReviewers } = useQuery({
+      queryKey: ['getAllDesignReviewers'],
+      queryFn: () => fetchAllDesignReviewers(),
+    });
+
+    const getReviewerName = (id) => {
+      const all = [
+        ...(designReviewers?.data || []),
+        ...(designReviewers?.admin ? [designReviewers.admin] : []),
+      ];
+      const found = all.find(r => r._id === id || r._id === id?._id);
+      return found ? `${found.firstName} ${found.lastName}` : `Reviewer ${id}`;
+    };
 
     const { stageTitle, stageConfig, stageBasedConfig , candidateId, jobId} = useMemo(()=>{
       const isValidstage =  stagingConfig[jobProfile]?.filter(stage=> stage?.name === selectedStage);
@@ -155,6 +192,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
       onSuccess: () => {
 
           queryClient.invalidateQueries(['candidate', candidateId, jobId]);
+          queryClient.refetchQueries(['candidate', candidateId, jobId]);
           showSuccessToast('Review Submitted', 'Your review has been successfully submitted.');
       },
       onError: (error) => {
@@ -454,11 +492,14 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
                     feedback : reviewer.feedback
                 })
             })
-            data.push({
-                reviewer : stageData?.assignedTo,
-                score : stageData?.score,
-                feedback : stageData?.feedback
-            })
+            const primaryScore = typeof stageData?.score === 'number' ? stageData.score : null;
+            if (primaryScore !== null) {
+                data.push({
+                    reviewer: stageData?.assignedTo,
+                    score: stageData?.score,
+                    feedback: stageData?.feedback
+                });
+            }
         }
         return data;
     },[stageBasedConfig, stageData])
@@ -466,6 +507,41 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
     const currentAdditionalReviewer = useMemo(() => {
         return multipleReviewersData?.find(reviewer => reviewer.reviewer === adminData?._id)
     },[multipleReviewersData, adminData?._id])
+
+    const hasCurrentReviewerSubmitted = useMemo(() => {
+        if (String(role).toLowerCase() === 'admin' && stageConfig?.name === 'Portfolio') {
+            const aid = adminData?._id?.toString?.();
+            const isAdditionalReviewer = stageData?.additionalReviewers?.some(
+                (r) => r?.assigneeId?.toString?.() === aid || r?.assigneeId === adminData?._id
+            );
+            if (!isAdditionalReviewer) return true;
+        }
+
+        const isPrimary =
+            stageData?.assignedTo === adminData?._id ||
+            stageData?.assignedTo?._id === adminData?._id;
+        if (isPrimary && stageData?.score != null) return true;
+        if (currentAdditionalReviewer?.score != null) return true;
+        return false;
+    }, [stageData, adminData?._id, currentAdditionalReviewer?.score, role, stageConfig?.name]);
+
+    const isMultiReviewerEnabledForJob = useMemo(() => {
+        const settings = adminData?.companyDetails?.multiReviewerSettings;
+        const enabled = Boolean(settings?.enabled);
+        const jobs = Array.isArray(settings?.jobProfiles) ? settings.jobProfiles : [];
+        return enabled && jobs.includes(jobProfile);
+    }, [adminData?.companyDetails?.multiReviewerSettings, jobProfile]);
+
+    const reviewerStackValues = useMemo(() => {
+        const values = [];
+        if (stageData?.assignedTo) values.push(stageData.assignedTo);
+        if (Array.isArray(stageData?.additionalReviewers)) {
+            stageData.additionalReviewers.forEach((r) => {
+                if (r?.assigneeId) values.push(r.assigneeId);
+            });
+        }
+        return values;
+    }, [stageData?.assignedTo, stageData?.additionalReviewers]);
 
     return (
     <StyledCard  
@@ -488,7 +564,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
             {stageConfig?.extraHeaderContent && stageConfig?.extraHeaderContent({portfolio : candidateData.jobApplication.professionalInfo.portfolio})}
         </div>
         <div className='flex items-center w-[40%] justify-end'>
-            {stageBasedConfig?.hasUndoButton && <button type='button' className={stageBasedConfig?.hasUndoButtonDisabled ? "opacity-40" : ""} disabled={stageBasedConfig?.hasUndoButtonDisabled} onClick={handleUndoAction} >
+            {stageBasedConfig?.hasUndoButton && <button type='button' className={(stageBasedConfig?.hasUndoButtonDisabled ? "opacity-40" : "") + " mr-2"} disabled={stageBasedConfig?.hasUndoButtonDisabled} onClick={handleUndoAction} >
                 {
                     stageBasedConfig?.hasUndoButtonDisabled ? 
                     <IconWrapper customIconSize={4} isInActiveIcon={stageBasedConfig?.hasUndoButtonDisabled} icon={RotateCcw} />
@@ -496,13 +572,19 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
                 }
                 
                 </button>}
-            {isClosed || <StatusBadge customWidth={'w-fit'} status={currentStatus} />}
+            {isClosed || <div className="mr-5"><StatusBadge customWidth={'w-fit'} status={currentStatus} /></div>}
             {
                 stageBasedConfig?.hasAssigneeSelectorIcon && (
 
                     <AssigneeSelector
                         mode="icon"
                         value={stageData?.assignedTo}
+                        stackedValues={
+                            stageTitle === 'Portfolio' &&
+                            (reviewerStackValues.length > 1 || isMultiReviewerEnabledForJob)
+                                ? reviewerStackValues
+                                : []
+                        }
                         onChange={handleAssigneeChange}
                         // onSelect={handleAssigneeChange}
                         disabled={!stageBasedConfig?.hasAssigneeSelectorEnabled} // Disable only if status is 'Rejected' or 'Cleared'
@@ -536,31 +618,42 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
             stageBasedConfig?.hasSubmissionDetails  && 
             <SubmissionDetails isEditable={stageBasedConfig?.isSubmissionEditable} candidateData={candidateData} stageData={stageData} />
         }
-        {console.log("CONFIG",role,jobProfile,stageBasedConfig, stageData)}
-        {(!stageData?.scheduledDate && stageBasedConfig?.hasAssigneeSelector) && 
-          <div className='w-2/5'>
-              <h4 className='typography-body my-4 '>Select Reviewer{stageBasedConfig?.hasMultipleReviewers ? 's' : ''}</h4>
+        {(!stageData?.scheduledDate && stageBasedConfig?.hasAssigneeSelector && String(role).toLowerCase() === 'admin') && 
+          <div className={stageBasedConfig?.hasMultipleReviewers && isMultiReviewerEnabledForJob ? 'w-full' : 'w-2/5'}>
+              <h4 className='typography-body my-4 '>Select Reviewer{(stageBasedConfig?.hasMultipleReviewers && isMultiReviewerEnabledForJob) ? 's' : ''}</h4>
+            {stageBasedConfig?.hasMultipleReviewers && isMultiReviewerEnabledForJob ? (
+                <div className='flex flex-row flex-wrap gap-4 w-full items-stretch'>
+                <div className='flex-1 min-w-[10rem] basis-0'>
+                <AssigneeSelector
+                    mode="default"
+                    fullWidth
+                    value={stageData?.assignedTo}
+                    onChange={handleAssigneeChange}
+                />
+                </div>
+                <div className='flex-1 min-w-[10rem] basis-0'>
+                <AssigneeSelector
+                    mode="default"
+                    fullWidth
+                    value={stageData?.additionalReviewers[0]?.assigneeId}   
+                    onChange={handleMultiAssigneeChange}
+                />
+                </div>
+                <div className='flex-1 min-w-[10rem] basis-0'>
+                <AssigneeSelector
+                    mode="default"
+                    fullWidth
+                    value={stageData?.additionalReviewers[1]?.assigneeId}
+                    onChange={handleMultiAssigneeChange}
+                />
+                </div>
+                </div>
+            ) : (
               <AssigneeSelector
                   mode="default"
                   value={stageData?.assignedTo}
                   onChange={handleAssigneeChange}
-                //   onSelect={handleAssigneeChange}
               />
-            {stageBasedConfig?.hasMultipleReviewers && (
-                <div className='flex flex-col gap-4 mt-4'>
-                <AssigneeSelector
-                    mode="default"
-                    value={stageData?.additionalReviewers[0]?.assigneeId}   
-                    onChange={handleMultiAssigneeChange}
-                    //   onSelect={handleAssigneeChange}
-                />
-                <AssigneeSelector
-                    mode="default"
-                    value={stageData?.additionalReviewers[1]?.assigneeId}
-                    onChange={handleMultiAssigneeChange}
-                    //   onSelect={handleAssigneeChange}
-                />
-                </div>
             )}
           </div>
         }
@@ -601,11 +694,11 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
             <SubmissionForm candidateId={candidateId} jobId={jobId} stageData={stageData} setIsLoading={setIsLoading} />
         }
         {
-          (stageBasedConfig?.hasRatingComponent && !(stageBasedConfig?.showOwnReview && currentAdditionalReviewer?.score !== undefined && currentAdditionalReviewer?.score !== null)) && <StageRating  customSchema={adminData?.companyDetails?.customScreeningParam ? adminData?.companyDetails?.customScreeningParam[jobProfile] : null} candidateId={candidateId} jobId={jobId} name={stageConfig?.name} candidate={candidateData} onSubmit={handleReviewSubmit} stageConfig={stageConfig} />
+          (stageBasedConfig?.hasRatingComponent && !hasCurrentReviewerSubmitted) && <StageRating  customSchema={adminData?.companyDetails?.customScreeningParam ? adminData?.companyDetails?.customScreeningParam[jobProfile] : null} candidateId={candidateId} jobId={jobId} name={stageConfig?.name} candidate={candidateData} onSubmit={handleReviewSubmit} stageConfig={stageConfig} />
         }
-        <div className='flex gap-4 w-full '>
+        <div className={`flex w-full items-stretch ${stageBasedConfig?.showMultipleReviewersScore && multipleReviewersData?.length > 0 ? 'gap-5' : 'gap-4'}`}>
             {(stageBasedConfig?.hasRemarks || stageBasedConfig?.hasRejectionReason || stageBasedConfig?.hasScoreBoard || (stageBasedConfig?.showOwnReview && currentAdditionalReviewer?.feedback !== undefined && currentAdditionalReviewer?.feedback !== null)) && 
-            <div className='w-[75%] flex flex-col justify-between gap-4 '>
+            <div className={`flex flex-col justify-between gap-4 ${stageBasedConfig?.showMultipleReviewersScore && multipleReviewersData?.length > 0 ? 'flex-1 min-w-0' : 'w-[75%]'}`}>
             {(!(stageBasedConfig?.showMultipleReviewersScore &&
                 multipleReviewersData) || stageBasedConfig?.showOwnReview ) && (stageBasedConfig?.hasRemarks || stageBasedConfig?.hasRejectionReason || stageBasedConfig?.showOwnReview) && 
                 <div className='mt-4'>
@@ -615,26 +708,10 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
             }
             {stageBasedConfig?.showMultipleReviewersScore &&
                 multipleReviewersData && (
-                <div className="mt-4">
-                    <p className="typography-small-p text-font-gray mb-2">
-                    Remarks
-                    </p>
-                    <div className="typography-body grid grid-cols-3 gap-4 ">
-                    {multipleReviewersData?.map((reviewer, index) => (
-                        <StyledCard   key={reviewer.reviewer} extraStyles='flex flex-col gap-1 '>
-                            <p className="typography-small-p text-font-gray">
-                                Reviewer: {index + 1}
-                            </p>
-                            <p className="typography-body ">
-                                Score : {reviewer.score}
-                            </p>
-                            <p className="typography-body ">
-                                Feedback : {reviewer.feedback}
-                            </p>
-                        </StyledCard>
-                    ))}
-                    </div>
-                </div>
+                <MultiReviewerRemarksGrid
+                    multipleReviewersData={multipleReviewersData}
+                    getReviewerName={getReviewerName}
+                />
             )}
             {
                 stageBasedConfig?.hasScoreBoard && 
@@ -646,10 +723,10 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
                 </div>
             }
             </div>}
-            <div className={(stageTitle === "Hired" ? 'w-[100%]' : 'w-[35%]') + ' flex flex-col '}>
+            <div className={(stageBasedConfig?.showMultipleReviewersScore && multipleReviewersData?.length > 0 ? 'shrink-0' : (stageTitle === "Hired" ? 'w-[100%]' : 'w-[35%]')) + ' flex flex-col '}>
             {(stageBasedConfig?.hasScoreCard || (stageBasedConfig?.showOwnReview && currentAdditionalReviewer?.score !== undefined && currentAdditionalReviewer?.score !== null)) && 
-            <div className={` bg-background-80 rounded-xl ${stageTitle === "Hired" ? 'w-[35%] lg:w-[25%] xl:w-[15%]' : 'w-[90%] lg:w-[55%] xl:w-[40%]' } h-fit my-4 self-end`}>
-                <div className='p-4 flex flex-col items-center'>
+            <div className={` bg-background-80 rounded-xl ${stageTitle === "Hired" ? 'w-[35%] lg:w-[25%] xl:w-[15%]' : 'w-28 md:w-32 lg:w-36' } h-fit ${stageBasedConfig?.showMultipleReviewersScore && multipleReviewersData?.length > 0 ? 'mt-10' : 'my-4'} self-end`}>
+                <div className='p-2.5 flex flex-col items-center'>
                     <p className='typography-small-p text-font-gray'>Total Score:</p>
                     <div className='flex flex-col items-center text-font-accent'>
                         <p className='display-d2 font-bold'>{(stageBasedConfig?.showOwnReview && currentAdditionalReviewer?.score !== undefined && currentAdditionalReviewer?.score !== null) ? currentAdditionalReviewer?.score : stageBasedConfig?.showMultipleReviewersScore ? Math.round(multipleReviewersData?.reduce((acc,curr)=>(acc + curr.score),0)/multipleReviewersData?.length) : stageConfig?.showGrandTotal ? totalSum : stageConfig?.hasSplitScoring ? getTotalScore() : stageData?.score || 0}</p>

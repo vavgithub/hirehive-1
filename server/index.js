@@ -29,6 +29,7 @@ import adminCandidateRoutes from "./routes/admin/candidate.router.js"
 import drRoutes from "./routes/admin/dr.router.js"
 import hrRoutes from "./routes/admin/hr.router.js"
 import adminRoutes from "./routes/admin/admin.router.js"
+import companyRoutes from "./routes/admin/company.router.js"
 import startScheduledJobs from "./utils/scheduledJobs.js";
 import { initializeUploadDir } from "./config/paths.js";
 import corsConfig from "./config/cors.config.js";
@@ -81,6 +82,7 @@ app.use('/api/v1/auth/candidate', candidateAuthRoutes);
 app.use("/api/v1/candidates", candidateRoutes);
 app.use("/api/v1/admin/candidate", adminCandidateRoutes);
 app.use("/api/v1/dr", drRoutes);
+app.use("/api/v1/company", companyRoutes);
 
 const PORT = envConfig.PORT;
 
