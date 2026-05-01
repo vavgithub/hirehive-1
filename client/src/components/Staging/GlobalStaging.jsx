@@ -39,6 +39,36 @@ import { submitReview, updateAssignee, updateMultipleAssignee } from '../../serv
 import CustomToolTip from '../Tooltip/CustomToolTip.jsx';
 import { useScoreBg } from '../../context/ThemeContext.jsx';
 
+function normalizeReviewerId(reviewer) {
+    if (reviewer == null) return null;
+    if (typeof reviewer === 'string') return String(reviewer);
+    const id = reviewer._id?.toString?.() ?? reviewer._id;
+    return id != null ? String(id) : null;
+}
+
+function mergeReviewerEntry(prev, next) {
+    const scoreOf = (s) => {
+        if (s == null || s === '') return null;
+        const n = Number(s);
+        return Number.isFinite(n) ? n : null;
+    };
+    const hasFeedback = (f) => f != null && String(f).trim() !== '';
+    const sPrev = scoreOf(prev.score);
+    const sNext = scoreOf(next.score);
+    const score =
+        sNext != null ? next.score : sPrev != null ? prev.score : next.score ?? prev.score;
+    const feedback = hasFeedback(next.feedback)
+        ? next.feedback
+        : hasFeedback(prev.feedback)
+          ? prev.feedback
+          : next.feedback ?? prev.feedback;
+    return {
+        reviewer: next.reviewer ?? prev.reviewer,
+        score,
+        feedback,
+    };
+}
+
 const MultiReviewerRemarksGrid = ({ multipleReviewersData, getReviewerName }) => {
     return (
         <div className="mt-4">
@@ -47,8 +77,8 @@ const MultiReviewerRemarksGrid = ({ multipleReviewersData, getReviewerName }) =>
                 className="typography-body grid gap-4 w-full"
                 style={{ gridTemplateColumns: `repeat(${multipleReviewersData.length}, 1fr)` }}
             >
-                {multipleReviewersData?.map((reviewer) => (
-                    <StyledCard key={reviewer.reviewer} extraStyles="flex flex-col gap-1 w-full min-w-0">
+                {multipleReviewersData?.map((reviewer, idx) => (
+                    <StyledCard key={normalizeReviewerId(reviewer.reviewer) ?? idx} extraStyles="flex flex-col gap-1 w-full min-w-0">
                         <p className="typography-small-p text-font-gray">
                             {getReviewerName(reviewer.reviewer)}
                         </p>
@@ -483,30 +513,38 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
 
 
     const multipleReviewersData = useMemo(() => {
-        const data = [];
-        if (stageData?.additionalReviewers?.length > 0) {
-            stageData.additionalReviewers.forEach((reviewer) => {
-                data.push({
-                    reviewer: reviewer.assigneeId,
-                    score: reviewer.score,
-                    feedback: reviewer.feedback
-                });
-            });
-            data.push({
-                reviewer: stageData?.assignedTo,
-                score: stageData?.score,
-                feedback: stageData?.feedback
-            });
-        }
-        // Deduplicate by reviewer ID
-        const seen = new Set();
-        return data.filter((item) => {
-            const id = typeof item.reviewer === 'string' ? item.reviewer : item.reviewer?._id;
-            if (!id || seen.has(id)) return false;
-            seen.add(id);
-            return true;
+        if (!stageData?.additionalReviewers?.length) return [];
+        const merged = new Map();
+        const put = (item) => {
+            const id = normalizeReviewerId(item.reviewer);
+            if (!id) return;
+            const prev = merged.get(id);
+            merged.set(id, prev ? mergeReviewerEntry(prev, item) : item);
+        };
+        // Push primary first so it wins in merge
+        put({
+            reviewer: stageData?.assignedTo,
+            score: stageData?.score,
+            feedback: stageData?.feedback,
         });
+        // Then push additional reviewers
+        stageData.additionalReviewers.forEach((reviewer) => {
+            put({
+                reviewer: reviewer.assigneeId,
+                score: reviewer.score,
+                feedback: reviewer.feedback,
+            });
+        });
+        return Array.from(merged.values());
     }, [stageBasedConfig, stageData]);
+
+    const multipleReviewersAverageScore = useMemo(() => {
+        const nums = multipleReviewersData
+            ?.map(c => Number(c.score))
+            .filter(n => Number.isFinite(n)) ?? [];
+        if (nums.length === 0) return 0;
+        return Math.round(nums.reduce((a, b) => a + b, 0) / nums.length);
+    }, [multipleReviewersData]);
 
     const currentAdditionalReviewer = useMemo(() => {
         return multipleReviewersData?.find(reviewer => reviewer.reviewer === adminData?._id)
@@ -786,7 +824,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
                 <div className='p-2.5 flex flex-col items-center'>
                     <p className='typography-small-p text-font-gray'>Total Score:</p>
                     <div className='flex flex-col items-center text-font-accent'>
-                        <p className='display-d2 font-bold'>{(stageBasedConfig?.showOwnReview && currentAdditionalReviewer?.score !== undefined && currentAdditionalReviewer?.score !== null) ? currentAdditionalReviewer?.score : stageBasedConfig?.showMultipleReviewersScore ? Math.round(multipleReviewersData?.reduce((acc,curr)=>(acc + curr.score),0)/multipleReviewersData?.length) : stageConfig?.showGrandTotal ? totalSum : stageConfig?.hasSplitScoring ? getTotalScore() : stageData?.score || 0}</p>
+                        <p className='display-d2 font-bold'>{(stageBasedConfig?.showOwnReview && currentAdditionalReviewer?.score !== undefined && currentAdditionalReviewer?.score !== null) ? currentAdditionalReviewer?.score : stageBasedConfig?.showMultipleReviewersScore ? (stageData?.overallScore != null ? stageData.overallScore : multipleReviewersAverageScore ?? 0) : stageConfig?.showGrandTotal ? totalSum : stageConfig?.hasSplitScoring ? getTotalScore() : stageData?.score || 0}</p>
                         <p className='typography-small-p text-font-gray'>Out Of {stageConfig?.showGrandTotal ? grandSum :stageConfig?.hasSplitScoring ? Object.values(stageConfig?.score).reduce((acc,curr)=>(acc + curr),0) : stageConfig?.score}</p>
                     </div>
                 </div>
