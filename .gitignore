@@ -1,1 +1,5 @@
 .qodo
+
+credentials.json
+get_token.py
+.venv-oauth/
