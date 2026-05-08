@@ -795,14 +795,14 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
             {(stageBasedConfig?.hasRemarks || stageBasedConfig?.hasRejectionReason || stageBasedConfig?.hasScoreBoard || (stageBasedConfig?.showOwnReview && currentAdditionalReviewer?.feedback !== undefined && currentAdditionalReviewer?.feedback !== null)) && 
             <div className={`flex flex-col justify-between gap-4 ${stageBasedConfig?.showMultipleReviewersScore && multipleReviewersData?.length > 0 ? 'flex-1 min-w-0' : 'w-[75%]'}`}>
             {(!(stageBasedConfig?.showMultipleReviewersScore &&
-                multipleReviewersData) || stageBasedConfig?.showOwnReview ) && (stageBasedConfig?.hasRemarks || stageBasedConfig?.hasRejectionReason || stageBasedConfig?.showOwnReview) && 
+                multipleReviewersData?.length > 0) || stageBasedConfig?.showOwnReview ) && (stageBasedConfig?.hasRemarks || stageBasedConfig?.hasRejectionReason || stageBasedConfig?.showOwnReview) && 
                 <div className='mt-4'>
                     <p className='typography-small-p text-font-gray'>{currentStatus === 'Rejected' ? "Rejection Reason" : "Remarks"}</p>
                     <p className='typography-body '>{currentStatus === 'Rejected' ? stageData?.rejectionReason : stageBasedConfig?.showOwnReview && currentAdditionalReviewer?.feedback !== undefined && currentAdditionalReviewer?.feedback !== null ? currentAdditionalReviewer?.feedback : stageData?.feedback ? stageData?.feedback : 'No feedbacks'}</p>
                 </div>
             }
             {stageBasedConfig?.showMultipleReviewersScore &&
-                multipleReviewersData && (
+                multipleReviewersData?.length > 0 && (
                 <MultiReviewerRemarksGrid
                     multipleReviewersData={multipleReviewersData}
                     getReviewerName={getReviewerName}
@@ -824,7 +824,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
                 <div className='p-2.5 flex flex-col items-center'>
                     <p className='typography-small-p text-font-gray'>Total Score:</p>
                     <div className='flex flex-col items-center text-font-accent'>
-                        <p className='display-d2 font-bold'>{(stageBasedConfig?.showOwnReview && currentAdditionalReviewer?.score !== undefined && currentAdditionalReviewer?.score !== null) ? currentAdditionalReviewer?.score : stageBasedConfig?.showMultipleReviewersScore ? (stageData?.overallScore != null ? stageData.overallScore : multipleReviewersAverageScore ?? 0) : stageConfig?.showGrandTotal ? totalSum : stageConfig?.hasSplitScoring ? getTotalScore() : stageData?.score || 0}</p>
+                        <p className='display-d2 font-bold'>{(stageBasedConfig?.showOwnReview && currentAdditionalReviewer?.score !== undefined && currentAdditionalReviewer?.score !== null) ? currentAdditionalReviewer?.score : stageBasedConfig?.showMultipleReviewersScore ? (stageData?.overallScore != null ? stageData.overallScore : (stageData?.score ? stageData.score : (multipleReviewersAverageScore ?? 0))) : stageConfig?.showGrandTotal ? totalSum : stageConfig?.hasSplitScoring ? getTotalScore() : stageData?.score || 0}</p>
                         <p className='typography-small-p text-font-gray'>Out Of {stageConfig?.showGrandTotal ? grandSum :stageConfig?.hasSplitScoring ? Object.values(stageConfig?.score).reduce((acc,curr)=>(acc + curr),0) : stageConfig?.score}</p>
                     </div>
                 </div>

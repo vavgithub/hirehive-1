@@ -95,7 +95,7 @@ export const updateCandidateAssignee = async (req, res) => {
 
     // Update the status based on the stage
     if (stage === 'Portfolio') {
-      stageStatus.status = (stageStatus?.additionalReviewers?.length > 1 && assigneeId) ? 'Under Review' : 'Not Assigned';
+      stageStatus.status = assigneeId ? 'Under Review' : 'Not Assigned';
     }
 
     if (stage === 'Design Task') {
@@ -594,14 +594,16 @@ export const autoAssignPortfolios = async (req, res) => {
      
      let isAdditionalReviewer = false
      // Update score and feedback
-    if(stage === "Portfolio" && stageStatus.additionalReviewers?.length > 0){
+   if(stage === "Portfolio" && stageStatus.additionalReviewers?.length > 0){
       stageStatus.additionalReviewers?.map(rev => {
-        console.log("TEST",rev.assigneeId, req.user._id)
         if(rev.assigneeId?.toString() === req.user._id?.toString()){
-        console.log("IS MATCH")
           isAdditionalReviewer = true
           rev.score = ratings
           rev.feedback = feedback
+          if(stageStatus.additionalReviewers?.length === 1){
+            stageStatus.score = ratings
+            stageStatus.feedback = feedback
+          }
         }
       })
       if(!isAdditionalReviewer){
