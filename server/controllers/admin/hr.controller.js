@@ -1948,12 +1948,24 @@ export const undoAction = async (req,res) => {
   }
 }
 
+const _portfolioIntelligenceBase = () =>
+  (process.env.PORTFOLIO_INTELLIGENCE_URL || "").trim().replace(/\/$/, "");
+
+const _portfolioIntelligenceHeaders = {
+  "ngrok-skip-browser-warning": "true",
+};
+
 export const triggerAiScore = async (req, res) => {
   try {
+    const base = _portfolioIntelligenceBase();
+    if (!base) {
+      return res.status(500).json({ message: "PORTFOLIO_INTELLIGENCE_URL is not configured" });
+    }
     const { behance_url, candidate_id, role, job_id } = req.body;
     const response = await axios.post(
-      'https://portfolio-intelligence-production-294a.up.railway.app/score',
-      { behance_url, candidate_id, role, job_id }
+      `${base}/score`,
+      { behance_url, candidate_id, role, job_id },
+      { headers: _portfolioIntelligenceHeaders }
     );
     res.json(response.data);
   } catch (error) {
@@ -1963,9 +1975,14 @@ export const triggerAiScore = async (req, res) => {
 
 export const getAiScoreStatus = async (req, res) => {
   try {
+    const base = _portfolioIntelligenceBase();
+    if (!base) {
+      return res.status(500).json({ message: "PORTFOLIO_INTELLIGENCE_URL is not configured" });
+    }
     const { candidateId } = req.params;
     const response = await axios.get(
-      `https://portfolio-intelligence-production-294a.up.railway.app/score-status/${candidateId}`
+      `${base}/score-status/${candidateId}`,
+      { headers: _portfolioIntelligenceHeaders }
     );
     res.json(response.data);
   } catch (error) {
