@@ -104,7 +104,6 @@ connectDB()
     // Start the scheduled jobs
     startScheduledJobs();
 
-    // AI score batch trigger — every 15 minutes + once on startup
     runAiScoreBatchJob();
     setInterval(runAiScoreBatchJob, 1 * 60 * 1000);
     
