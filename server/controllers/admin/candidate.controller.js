@@ -1107,7 +1107,16 @@ export const getAllCandidates = async (req,res) => {
       let encodedFilters = {}
       filterArray.map(([key,value]) => {
         if(key === 'status'){
-          encodedFilters.status = {$in : value}
+          const statusValues = Array.isArray(value) ? value : [value];
+          const stageStatusValues = statusValues.filter(
+            (s) => s !== 'Escalated' && s !== 'escalated'
+          );
+          if (stageStatusValues.length) {
+            encodedFilters.status = { $in: stageStatusValues };
+          }
+          if (statusValues.includes('escalated') || statusValues.includes('Escalated')) {
+            encodedFilters.aiTriggerStatus = { $in: ['escalated'] };
+          }
         }
         if(key === 'stage'){
           encodedFilters.currentStage = {$in : value}
@@ -1142,6 +1151,8 @@ export const getAllCandidates = async (req,res) => {
           $match : encodedFilters
         }
       ]
+      console.log('[Filter] encodedFilters:', JSON.stringify(encodedFilters));
+      console.log('[Filter] filterQuery:', JSON.stringify(filterQuery));
     }
 
     //Location filter management
@@ -1300,6 +1311,8 @@ export const getAllCandidates = async (req,res) => {
           rating: "$jobApplications.rating",
           resumeUrl: "$jobApplications.resumeUrl",
           applicationDate: "$jobApplications.applicationDate",
+          aiTriggerStatus: '$jobApplications.aiTriggerStatus',
+          aiScoredAt: '$jobApplications.aiScoredAt',
         },
       },
       {
@@ -1348,7 +1361,9 @@ export const getAllCandidates = async (req,res) => {
           applicationDate: 1,
           assessment_id : 1,
           assessmentResponse : 1,
-          status: '$currentStageStatus.v.status'
+          status: '$currentStageStatus.v.status',
+          aiTriggerStatus: 1,
+          aiScoredAt: 1,
         }
       },
       ...filterQuery,

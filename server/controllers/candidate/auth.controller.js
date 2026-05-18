@@ -585,6 +585,15 @@ export const applyToJob = async (req, res) => {
       };
     });
 
+    const isBIDRole = /brand/i.test(jobProfile);
+    const hasBehance = /behance\.net/i.test(candidate.portfolio);
+
+    const aiTriggerStatus = isBIDRole && !hasBehance
+      ? 'escalated'
+      : isBIDRole && hasBehance
+        ? 'pending'
+        : 'done';
+
     // Create new job application with professionalInfo included
     const newApplication = {
       jobId,
@@ -594,6 +603,8 @@ export const applyToJob = async (req, res) => {
       jobType : job.employmentType,
       questionResponses,
       applicationDate: new Date(),
+      aiTriggerStatus,
+      aiScoredAt: null,
       currentStage: jobStages[0]?.name || "",
       stageStatuses: initialStageStatuses,
       companyDetails : {
@@ -625,6 +636,10 @@ export const applyToJob = async (req, res) => {
     }
 
     candidate.jobApplications.push(newApplication);
+
+    console.log(
+      `[Apply] New application created with aiTriggerStatus: ${newApplication.aiTriggerStatus} for candidate: ${candidate.email}`
+    );
 
     await candidate.save();
 
