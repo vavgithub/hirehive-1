@@ -4,6 +4,7 @@ import LightLogo from "../svg/Logo/lightLogo.png"
 import useCandidateAuth from '../hooks/useCandidateAuth';
 import { useDispatch } from 'react-redux';
 import { logoutCandidateAuth } from '../redux/candidateAuthSlice';
+import * as Sentry from '@sentry/react';
 import { showErrorToast, showSuccessToast } from '../components/ui/Toast';
 import useScroll from '../hooks/useScroll';
 import { Avatar, IconButton, Menu, MenuItem } from '@mui/material';
@@ -58,6 +59,7 @@ const CandidateLayout = () => {
   const handleLogout = async () => {
     try {
       await dispatch(logoutCandidateAuth()).unwrap();
+      Sentry.setUser(null);
       showSuccessToast('Success', 'Logged out successfully');
       navigate('/');
     } catch (error) {

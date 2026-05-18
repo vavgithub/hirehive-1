@@ -3,3 +3,6 @@
 credentials.json
 get_token.py
 .venv-oauth/
+.env
+.env.*
+.env
