@@ -722,8 +722,9 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
             const portfolioStatus = stageStatuses?.['Portfolio'] ?? stageStatuses?.Portfolio;
             if (!isBrand || !portfolioStatus?.aiReasoning) return null;
             return (
-                <div className="mt-3 p-3 rounded bg-background-80">
-                    <p className="typography-small-p font-bold mb-2">AI Comments</p>
+                <div className="mt-3 p-3 rounded bg-background-80 flex gap-4">
+                    <div className="flex-1">
+                        <p className="typography-small-p font-bold mb-2">AI Comments</p>
                     {['Role-fit summary:', 'Strengths:', 'Gaps:', 'To reach next level:'].map(heading => {
                         const text = portfolioStatus?.aiReasoning ?? '';
                         const escapeRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -747,7 +748,24 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
                                 ))}
                             </div>
                         ) : null;
-                    })}
+                        })}
+                    </div>
+                    <div className="flex flex-col items-center justify-start min-w-[100px]">
+                        <p className="typography-small-p font-bold mb-2">AI Score</p>
+                        <span className="text-2xl font-bold text-font-main">
+                          {portfolioStatus?.aiScore ?? '—'}
+                        </span>
+                        <span className="typography-small-p text-font-gray">/ 5</span>
+                        {portfolioStatus?.aiRecommendation && (
+                          <span className={`mt-2 text-xs font-semibold px-2 py-1 rounded ${
+                            portfolioStatus.aiRecommendation === 'Pass'
+                              ? 'bg-red-900 text-red-300'
+                              : 'bg-green-900 text-green-300'
+                          }`}>
+                            {portfolioStatus.aiRecommendation}
+                          </span>
+                        )}
+                    </div>
                 </div>
             );
         })()}
