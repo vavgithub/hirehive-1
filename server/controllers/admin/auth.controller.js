@@ -18,6 +18,7 @@ import { error } from 'console';
 
 
 
+import { captureError } from "../../utils/errorHandler.js";
 const cookieOptions = {
   httpOnly: true,
   secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
@@ -58,7 +59,8 @@ export const uploadProfilePicture = async (req, res) => {
       });
       
     } catch (error) {
-      console.error('Error uploading profile picture:', error);
+      captureError(error, { controller: "auth.controller.js", action: "uploadProfilePicture" });
+
       res.status(500).json({ 
         message: 'Error uploading profile picture',
         error: error.message 
@@ -98,7 +100,8 @@ export const uploadCompanyLogo = async (req, res) => {
     });
     
   } catch (error) {
-    console.error('Error uploading profile picture:', error);
+    captureError(error, { controller: "auth.controller.js", action: "uploadCompanyLogo" });
+
     res.status(500).json({ 
       message: 'Error uploading profile picture',
       error: error.message 
@@ -247,6 +250,8 @@ export const getAvailableDesignReviewers = async (req, res) => {
       admin
     });
   } catch (error) {
+    captureError(error, { controller: "auth.controller.js", action: "getAvailableDesignReviewers" });
+
     res.status(500).json({
       success: false,
       message: 'Error fetching design reviewers',
@@ -997,6 +1002,8 @@ export const completeDesignReviewerRegistration = asyncHandler(async (req, res) 
       }
     });
   } catch (error) {
+    captureError(error, { controller: "auth.controller.js", action: "completeDesignReviewerRegistration" });
+
     res.status(400).json({
       status: 'error',
       message: 'Invalid or expired invitation token'
@@ -1053,6 +1060,8 @@ export const editUserProfile = asyncHandler(async (req, res) => {
     });
 
   } catch (error) {
+    captureError(error, { controller: "auth.controller.js", action: "editUserProfile" });
+
     res.status(400).json({
       status: 'error',
       message: error.message || 'Error updating profile',
@@ -1140,6 +1149,8 @@ export const editCompanyProfile = asyncHandler(async (req, res) => {
     });
 
   } catch (error) {
+    captureError(error, { controller: "auth.controller.js", action: "editCompanyProfile" });
+
     res.status(400).json({
       status: 'error',
       message: error.message || 'Error updating profile',
@@ -1166,7 +1177,8 @@ export const authorizeWithGoogle = asyncHandler(async (req,res) => {
       message : "Processing Authorization Successfully"
     })
   } catch (error) {
-    console.log(error)
+    captureError(error, { controller: "auth.controller.js", action: "authorizeWithGoogle" });
+
       res.status(400).json({
         status: 'error',
         message: error.message || 'Error updating profile',
@@ -1205,7 +1217,8 @@ export const unAuthorizeWithGoogle = asyncHandler(async (req,res) => {
       message : "Revoked Authorization Successfully"
     })
   } catch (error) {
-    console.log(error)
+    captureError(error, { controller: "auth.controller.js", action: "unAuthorizeWithGoogle" });
+
       res.status(400).json({
         status: 'error',
         message: error.message || 'Error revoking google creds',
@@ -1268,7 +1281,8 @@ export const authorizeInvitedUsersWithGoogle = asyncHandler(async (req,res) => {
       message : "Processing Authorization Successfully"
     })
   } catch (error) {
-    console.log(error)
+    captureError(error, { controller: "auth.controller.js", action: "authorizeInvitedUsersWithGoogle" });
+
       res.status(400).json({
         status: 'error',
         message: error.message || 'Error updating profile',
@@ -1295,7 +1309,8 @@ export const authorizeGoogleWorkspace = asyncHandler(async (req,res) => {
       message : "Processing Authorization Successfully"
     })
   } catch (error) {
-    console.log(error)
+    captureError(error, { controller: "auth.controller.js", action: "authorizeGoogleWorkspace" });
+
       res.status(400).json({
         status: 'error',
         message: error.message || 'Error updating profile',
@@ -1455,7 +1470,8 @@ export const redirectForGoogleToken = asyncHandler(async (req,res) => {
       return res.redirect(`${process.env.FRONTEND_URL}/admin/register?error=Invalid_Creds`)
     }
   } catch (error) {
-    console.log(error)
+    captureError(error, { controller: "auth.controller.js", action: "redirectForGoogleToken" });
+
     //Handle invalid_grant error
     const userRoleSession = req.session?.userRole;
     req.session = null
@@ -1485,7 +1501,8 @@ export const checkAuthStatus = asyncHandler(async (req, res) => {
       currentStage : user?.verificationStage
     });
   } catch (error) {
-    console.log(error)
+    captureError(error, { controller: "auth.controller.js", action: "checkAuthStatus" });
+
     res.status(400).json({
         status: 'error',
         message: error.message || 'Error checking user status',

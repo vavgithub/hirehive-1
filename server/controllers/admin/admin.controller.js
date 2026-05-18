@@ -13,6 +13,7 @@ import { getAuthorizedOauthClient, getCalendarClient, SCOPE_KEYS } from "../../u
 import { decrypt } from "../../utils/crypto.js";
 import { getUTCBasedonTZ } from "../../utils/dateUtilities.js";
 
+import { captureError } from "../../utils/errorHandler.js";
 //add Team members controller
 export const addTeamMember = asyncHandler(async (req,res) => {
     const { teamMember } = req.body;
@@ -1054,7 +1055,8 @@ export const getCalendarDetails = async ( req, res ) => {
     }
     return res.status(200).json({ success : true, calendarEvents : formattedEvents, message : 'Fetched Calendar Details successfully.' });
   } catch (error) {
-    console.log(error)
+    captureError(error, { controller: "admin.controller.js", action: "getCalendarDetails" });
+
     const isInvalidGrant = error?.response?.data?.error === 'invalid_grant' || error?.message?.includes('invalid_grant');
     if (isInvalidGrant) {
       const user_id = req.user.id;

@@ -1,5 +1,6 @@
 // auth.controller.js
 import dotenv from "dotenv";
+import { captureError } from "../../utils/errorHandler.js";
 dotenv.config({
   path: process.env.NODE_ENV === "production" ? ".env.production" : ".env",
 });
@@ -74,7 +75,8 @@ export const uploadResumeController = async (req, res) => {
 
     res.status(200).json({ resumeUrl: cloudinaryUrl });
   } catch (error) {
-    console.error("Error in resume upload:", error);
+    captureError(error, { controller: "auth.controller.js", action: "uploadResumeController" });
+
     res.status(500).json({ message: error.message || "Error uploading resume" });
   }
 };
@@ -97,7 +99,8 @@ export const uploadProfilePictureController = async (req, res) => {
 
     res.status(200).json({ profilePictureUrl: cloudinaryUrl });
   } catch (error) {
-    console.error("Error in profile picture upload:", error);
+    captureError(error, { controller: "auth.controller.js", action: "uploadProfilePictureController" });
+
     res.status(500).json({ message: error.message || "Error uploading profile picture" });
   }
 };
@@ -321,7 +324,8 @@ export const registerCandidate = async (req, res) => {
 
     res.status(200).json({ message: existingEmail ? "Account exists. OTP sent to email for verification." : "Candidate registered. OTP sent to email." , currentStage : existingEmail ? existingEmail?.currentStage : "OTP"});
   } catch (error) {
-    console.error("Error registering candidate:", error);
+    captureError(error, { controller: "auth.controller.js", action: "registerCandidate" });
+
     res.status(500).json({ message: "Server error" });
   }
 };
@@ -358,7 +362,8 @@ export const updateEmail = async (req, res) => {
 
     res.status(200).json({ message: "Email updated successfully" });
   } catch (error) {
-    console.error("Error creating password:", error);
+    captureError(error, { controller: "auth.controller.js", action: "updateEmail" });
+
     res.status(500).json({ message: "Server error" });
   }
 };
@@ -404,7 +409,8 @@ export const createPassword = async (req, res) => {
 
     res.status(200).json({ message: "Password created successfully" });
   } catch (error) {
-    console.error("Error creating password:", error);
+    captureError(error, { controller: "auth.controller.js", action: "createPassword" });
+
     res.status(500).json({ message: "Server error" });
   }
 };
@@ -442,7 +448,8 @@ export const verifyOtp = async (req, res) => {
 
     res.status(200).json({ message: "OTP verified successfully" });
   } catch (error) {
-    console.error("Error verifying OTP:", error);
+    captureError(error, { controller: "auth.controller.js", action: "verifyOtp" });
+
     res.status(500).json({ message: "Server error" });
   }
 };
@@ -493,7 +500,8 @@ export const loginCandidate = async (req, res) => {
 
     res.status(200).json({ message: "Logged in successfully" });
   } catch (error) {
-    console.error("Error logging in candidate:", error);
+    captureError(error, { controller: "auth.controller.js", action: "loginCandidate" });
+
     res.status(500).json({ message: "Server error" });
   }
 };
@@ -633,7 +641,8 @@ export const applyToJob = async (req, res) => {
       application: newApplication
     });
   } catch (error) {
-    console.error("Error applying to job:", error);
+    captureError(error, { controller: "auth.controller.js", action: "applyToJob" });
+
     res.status(500).json({ message: "Server error" });
   }
 };
@@ -771,7 +780,8 @@ export const getCandidateDashboard = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("Error fetching candidate dashboard:", error);
+    captureError(error, { controller: "auth.controller.js", action: "getCandidateDashboard" });
+
     res.status(500).json({ message: "Server error" });
   }
 };
@@ -899,7 +909,8 @@ export const editCandidateProfile = async (req, res) => {
       }
 
   } catch (error) {
-    console.error("Error editing candidate profile:", error);
+    captureError(error, { controller: "auth.controller.js", action: "editCandidateProfile" });
+
     res.status(500).json({ message: error?.message || "Server error" });
   }
 };
@@ -1105,7 +1116,8 @@ export const getCandidateAppliedJobs = async (req, res) => {
 
     res.status(200).json({ jobApplications: formattedApplications ,totalAppliedJobs : totalAppliedJobs?.jobApplications?.length || 0});
   } catch (error) {
-    console.error("Error fetching applied jobs:", error);
+    captureError(error, { controller: "auth.controller.js", action: "getCandidateAppliedJobs" });
+
     res.status(500).json({ message: "Server error" });
   }
 };
@@ -1266,7 +1278,8 @@ export const getS3AssessmentUploadUrl = asyncHandler(async (req, res) => {
     const publicUrl = `${process.env.AWS_CLOUDFRONT_DOMAIN}/${key}`;
     res.json({ uploadUrl: url, publicUrl });
   } catch (err) {
-    console.error("Error generating presigned URL:", err);
+    captureError(err, { controller: "auth.controller.js", action: "getS3AssessmentUploadUrl" });
+
     res.status(500).json({ error: "Failed to generate upload URL" });
   }
 });
@@ -1287,7 +1300,8 @@ export const getS3ScreenshotUploadUrl = asyncHandler(async (req, res) => {
     const publicUrl = `${process.env.AWS_CLOUDFRONT_DOMAIN}/${key}`;
     res.json({ uploadUrl: url, publicUrl });
   } catch (err) {
-    console.error("Error generating presigned URL:", err);
+    captureError(err, { controller: "auth.controller.js", action: "getS3ScreenshotUploadUrl" });
+
     res.status(500).json({ error: "Failed to generate upload URL" });
   }
 });
@@ -1301,7 +1315,8 @@ export const getSuggestedPlaces = asyncHandler(async (req,res) => {
     const suggestions = await autocompleteLocation(text,sessionId);
     res.status(200).json(suggestions)
   } catch (error) {
-      console.error("Error getting suggested locations:", error);
+      captureError(error, { controller: "auth.controller.js", action: "getSuggestedPlaces" });
+
       res.status(500).json({ error: "Failed to generate suggested locations" });
   }
 })
