@@ -187,7 +187,7 @@ function RegisterForm({setCurrentStep}) {
             <div className="w-full lg:w-2/5 bg-background-90 p-4 md:p-28   flex flex-col justify-center">
               <h1 className="text-center">Sign Up</h1>
               <p className="typography-body mb-8 text-center text-font-gray font-normal">Create an account</p>
-                    <button type="button" onClick={registerGoogle} variant="secondary"  className='mx-auto flex gap-4 items-center bg-white text-black-100 py-2 px-6 h-11 rounded-full'>
+                    <button type="button" onClick={registerGoogle} variant="secondary"  className='mx-auto flex gap-4 items-center bg-white text-black-100 py-2 px-6 h-11 rounded-lg'>
                         <IconWrapper icon={FcGoogle} size={0} customStrokeWidth={0} customIconSize={5} />
                         Continue With Google
                     </button> 
