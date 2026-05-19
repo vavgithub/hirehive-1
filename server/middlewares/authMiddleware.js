@@ -6,6 +6,7 @@ import { User } from '../models/admin/user.model.js';
 import { candidates as Candidate } from '../models/candidate/candidate.model.js';
 import { getEnvironmentConfig } from '../config/environments.js';
 import { decrypt } from "../utils/crypto.js";
+import { captureError } from "../utils/errorHandler.js";
 
 // Load environment-specific configuration
 const environment = process.env.NODE_ENV || "development";
@@ -20,6 +21,7 @@ export const verifyToken = (token, secret) => {
   try {
     return jwt.verify(token, secret);
   } catch (error) {
+    captureError(error, { file: "authMiddleware.js", action: "verifyToken", role: "admin" });
     console.error(`Token verification failed: ${error.message}`);
     return null;
   }
@@ -80,6 +82,7 @@ const protect = asyncHandler(async (req, res, next) => {
     req.user = user;
     next();
   } catch (error) {
+    captureError(error, { file: "authMiddleware.js", action: "authenticateAdmin", role: "admin" });
     console.error('Authentication error:', error);
     res.status(401).json({ 
       status: 'error',
@@ -123,6 +126,7 @@ const protectWithoutVerification = asyncHandler(async (req, res, next) => {
     req.user = user;
     next();
   } catch (error) {
+    captureError(error, { file: "authMiddleware.js", action: "authenticateAdmin", role: "admin" });
     console.error('Authentication error:', error);
     res.status(401).json({ 
       status: 'error',
@@ -176,6 +180,7 @@ const protectTokenWithoutVerification = asyncHandler(async (req, res, next) => {
     req.user = user;
     next();
   } catch (error) {
+    captureError(error, { file: "authMiddleware.js", action: "protectTokenWithoutVerification", role: "admin" });
     console.error('Authentication error:', error);
     res.status(401).json({ 
       status: 'error',
@@ -240,6 +245,7 @@ const protectCandidate = asyncHandler(async (req, res, next) => {
     req.candidate = candidate;
     next();
   } catch (error) {
+    captureError(error, { file: "authMiddleware.js", action: "authenticateCandidate", role: "candidate" });
     console.error('Candidate authentication error:', error);
     res.status(401).json({ 
       status: 'error',

@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { captureError } from "../utils/errorHandler.js";
 
 const connectDB = async () => {
   try {
@@ -49,12 +50,14 @@ const connectDB = async () => {
         );
         process.exit(0);
       } catch (err) {
+        captureError(err, { file: "db/index.js", action: "dbConnection" });
         console.error("Error closing MongoDB connection:", err);
         process.exit(1);
       }
     });
 
   } catch (error) {
+    captureError(error, { file: "db/index.js", action: "dbConnection" });
     console.error("MongoDB connection error:", error?.message || error);
     process.exit(1); // Exit with failure code
   }

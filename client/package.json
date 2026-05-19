@@ -7,7 +7,7 @@
     "dev": "vite --host",
     "build:dev": "vite build --mode development",
     "build:staging": "vite build --mode staging",
-    "build:prod": "NODE_OPTIONS=--max-old-space-size=4096 vite build --mode production",
+    "build:prod": "vite build --mode production",
     "preview:dev": "vite preview --mode development",
     "preview:staging": "vite preview --mode staging",
     "preview:prod": "vite preview --mode production",

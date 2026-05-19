@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { captureError } from "../../utils/errorHandler.js";
 
 const questionSchema = new mongoose.Schema({
   questionType: {
@@ -602,6 +603,7 @@ export const seedQuestions = async () => {
     const insertedQuestions = await Question.insertMany(questions);
     console.log(`Successfully seeded ${insertedQuestions.length} questions`);
   } catch (error) {
+    captureError(error, { file: "questions.model.js", action: "questionsModel" });
     console.error('Error seeding questions:', error);
     throw error; // Propagate error for handling by caller
   }
@@ -613,6 +615,7 @@ export const forceReseedQuestions = async () => {
     await Question.deleteMany({});
     return seedQuestions();
   } catch (error) {
+    captureError(error, { file: "questions.model.js", action: "questionsModel" });
     console.error('Error force reseeding questions:', error);
     throw error;
   }
@@ -629,6 +632,7 @@ export const checkAndSeedQuestions = async () => {
       console.log(`Found ${count} existing questions`);
     }
   } catch (error) {
+    captureError(error, { file: "questions.model.js", action: "questionsModel" });
     console.error('Error checking/seeding questions:', error);
     throw error;
   }

@@ -7,6 +7,7 @@ import { sendEmail } from './sentEmail.js';
 import { REJECTION_REASON } from '../controllers/admin/hr.controller.js';
 import { removeEmojis } from './emojiRemover.js';
 import { sendUpdatesToTelegram } from '../controllers/candidate/bot.controller.js';
+import { captureError } from "./errorHandler.js";
 
 const updateCallStatuses = async () => {
   const now = new Date();
@@ -104,6 +105,7 @@ const updateCallStatuses = async () => {
       }
     }
   } catch (error) {
+    captureError(error, { file: "scheduledJobs.js", action: "scheduledJob" });
     console.error(`Error updating call statuses:`, error);
   }
 };
@@ -210,6 +212,7 @@ const updateMailSendAndStatuses = async () => {
       } 
     }
   } catch (error) {
+    captureError(error, { file: "scheduledJobs.js", action: "scheduledJob" });
     console.error(`[${new Date().toISOString()}] Error updating call statuses:`, error);
   }
 };

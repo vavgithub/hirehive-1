@@ -16,6 +16,7 @@ validateEnvVariables(environment);
 const envConfig = getEnvironmentConfig(environment);
 
 import connectDB from "./db/index.js";
+import { captureError } from "./utils/errorHandler.js";
 import express from "express";
 import morgan from "morgan";
 import cors from "cors";
@@ -116,6 +117,7 @@ connectDB()
     });
   })
   .catch((error) => {
+    captureError(error, { file: "index.js", action: "appStartup" });
     console.log(error);
   });
 
