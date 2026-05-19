@@ -12,8 +12,8 @@ import jwt from "jsonwebtoken";
 import { getAuthorizedOauthClient, getCalendarClient, SCOPE_KEYS } from "../../utils/integrations/google.js";
 import { decrypt } from "../../utils/crypto.js";
 import { getUTCBasedonTZ } from "../../utils/dateUtilities.js";
-
 import { captureError } from "../../utils/errorHandler.js";
+
 //add Team members controller
 export const addTeamMember = asyncHandler(async (req,res) => {
     const { teamMember } = req.body;
@@ -1057,6 +1057,10 @@ export const getCalendarDetails = async ( req, res ) => {
   } catch (error) {
     captureError(error, { controller: "admin.controller.js", action: "getCalendarDetails" });
 
+
+    console.log(error)
+
+    console.log(error)
     const isInvalidGrant = error?.response?.data?.error === 'invalid_grant' || error?.message?.includes('invalid_grant');
     if (isInvalidGrant) {
       const user_id = req.user.id;

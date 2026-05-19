@@ -15,10 +15,10 @@ import { checkScopes, getAccessOauthClient, getAuthorizationUrl, getOAuthTokens,
 import { randomBytes } from 'crypto';
 import { decrypt, encrypt } from '../../utils/crypto.js';
 import { error } from 'console';
-
-
-
 import { captureError } from "../../utils/errorHandler.js";
+
+
+
 const cookieOptions = {
   httpOnly: true,
   secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
@@ -59,8 +59,9 @@ export const uploadProfilePicture = async (req, res) => {
       });
       
     } catch (error) {
-      captureError(error, { controller: "auth.controller.js", action: "uploadProfilePicture" });
+    captureError(error, { controller: "auth.controller.js", action: "uploadProfilePicture" });
 
+    console.error('Error uploading profile picture:', error);
       res.status(500).json({ 
         message: 'Error uploading profile picture',
         error: error.message 
@@ -102,6 +103,7 @@ export const uploadCompanyLogo = async (req, res) => {
   } catch (error) {
     captureError(error, { controller: "auth.controller.js", action: "uploadCompanyLogo" });
 
+    console.error('Error uploading profile picture:', error);
     res.status(500).json({ 
       message: 'Error uploading profile picture',
       error: error.message 
@@ -1179,6 +1181,7 @@ export const authorizeWithGoogle = asyncHandler(async (req,res) => {
   } catch (error) {
     captureError(error, { controller: "auth.controller.js", action: "authorizeWithGoogle" });
 
+    console.log(error)
       res.status(400).json({
         status: 'error',
         message: error.message || 'Error updating profile',
@@ -1219,6 +1222,7 @@ export const unAuthorizeWithGoogle = asyncHandler(async (req,res) => {
   } catch (error) {
     captureError(error, { controller: "auth.controller.js", action: "unAuthorizeWithGoogle" });
 
+    console.log(error)
       res.status(400).json({
         status: 'error',
         message: error.message || 'Error revoking google creds',
@@ -1283,6 +1287,7 @@ export const authorizeInvitedUsersWithGoogle = asyncHandler(async (req,res) => {
   } catch (error) {
     captureError(error, { controller: "auth.controller.js", action: "authorizeInvitedUsersWithGoogle" });
 
+    console.log(error)
       res.status(400).json({
         status: 'error',
         message: error.message || 'Error updating profile',
@@ -1311,6 +1316,7 @@ export const authorizeGoogleWorkspace = asyncHandler(async (req,res) => {
   } catch (error) {
     captureError(error, { controller: "auth.controller.js", action: "authorizeGoogleWorkspace" });
 
+    console.log(error)
       res.status(400).json({
         status: 'error',
         message: error.message || 'Error updating profile',
@@ -1472,6 +1478,7 @@ export const redirectForGoogleToken = asyncHandler(async (req,res) => {
   } catch (error) {
     captureError(error, { controller: "auth.controller.js", action: "redirectForGoogleToken" });
 
+    console.log(error)
     //Handle invalid_grant error
     const userRoleSession = req.session?.userRole;
     req.session = null
@@ -1503,6 +1510,7 @@ export const checkAuthStatus = asyncHandler(async (req, res) => {
   } catch (error) {
     captureError(error, { controller: "auth.controller.js", action: "checkAuthStatus" });
 
+    console.log(error)
     res.status(400).json({
         status: 'error',
         message: error.message || 'Error checking user status',
