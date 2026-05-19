@@ -6,6 +6,7 @@ import { getBotSignupEmailContent } from "../../utils/emailTemplates.js";
 import { bot } from "../../utils/integrations/telegram.js";
 import { sendEmail } from "../../utils/sentEmail.js";
 import { submitToGoogleSheets } from "../../utils/submitSupport.js";
+import { captureError } from "../../utils/errorHandler.js";
 //otp.js
 
 // Store OTPs in memory (in production, use Redis or similar)
@@ -99,6 +100,11 @@ export const startUser = async (bot,msg,userId) => {
 
         }
     } catch (error) {
+    captureError(error, { controller: "bot.controller.js", action: "startUser" });
+
+
+        console.log("Error in greet user",error);
+
         console.log("Error in greet user",error);
         if(msg?.from?.id){
             const firstName = msg.from.first_name || "there";
@@ -148,6 +154,11 @@ export const checkUserMessage = async (bot,msg) => {
                                 await bot.sendMessage(telegram_user_id,`A verification email was sent to ${matchedCandidate.email}.`);
                                 await bot.sendMessage(telegram_user_id,`Please type the OTP for confirmation.`);
                             } catch (error) {
+    captureError(error, { controller: "bot.controller.js", action: "checkUserMessage" });
+
+
+                                console.log("Email Error",error)
+
                                 // handle Send Email Error 
                                 console.log("Email Error",error)
                                 bot.sendMessage(telegram_user_id,`Oops, Something went wrong. Please sent your email again.`);
@@ -367,6 +378,11 @@ export const sendUpdatesToTelegram = async (candidate, job, telegram_user_id, up
             await botInstance.sendMessage(telegram_user_id,updateEntity.getAdditionalMessage(candidate,job,formatedDateTime))
         }
     } catch (error) {
+    captureError(error, { controller: "bot.controller.js", action: "sendUpdatesToTelegram" });
+
+
+        console.error("Error in sending updates",error);
+
         console.error("Error in sending updates",error);
         return null
     }
@@ -445,6 +461,11 @@ export const getLatestJobsOfUser = async (bot,msg) => {
         })
 
     } catch (error) {
+    captureError(error, { controller: "bot.controller.js", action: "getLatestJobsOfUser" });
+
+
+        console.error("Error in getting latest job updates to user",error.message);
+
         console.error("Error in getting latest job updates to user",error.message);
         return null
     }
@@ -484,6 +505,11 @@ export const getAppliedJobsUpdates = async (bot,msg) => {
         });
 
     } catch (error) {
+    captureError(error, { controller: "bot.controller.js", action: "getAppliedJobsUpdates" });
+
+
+        console.error("Error in getting latest job updates to user",error.message);
+
         console.error("Error in getting latest job updates to user",error.message);
         return null
     }
@@ -552,6 +578,11 @@ export const getSelectedJobUpdates = async (bot,user_id,message_id,data) => {
         }
 
     } catch (error) {
+    captureError(error, { controller: "bot.controller.js", action: "getSelectedJobUpdates" });
+
+
+        console.error("Error in getting latest job updates to user",error.message);
+
         console.error("Error in getting latest job updates to user",error.message);
         return null
     }
@@ -606,6 +637,11 @@ export const submitSupport = async (bot,msg) => {
         }
 
     } catch (error) {
+    captureError(error, { controller: "bot.controller.js", action: "submitSupport" });
+
+
+        console.error("Error in submitting queries",error.message);
+
         console.error("Error in submitting queries",error.message);
         return null
     }
@@ -692,6 +728,11 @@ export const handleSupportSession = async (bot,msg) => {
                         await bot.sendMessage(telegram_user_id,`Our team will follow up with this.`);
                         telegramSessions.delete(telegram_user_id);
                     } catch (error) {
+    captureError(error, { controller: "bot.controller.js", action: "handleSupportSession" });
+
+
+                        console.log(error)
+
                         console.log(error)
                         await bot.sendMessage(telegram_user_id,`Oops, there was an error submitting the query. Please try once again.`);
                         telegramSessions.delete(telegram_user_id);
@@ -729,6 +770,11 @@ export const getImageUrlFromTelegram = async (bot,msg) => {
         // Download image as a buffer
         return fileUrl
     } catch (error) {
+    captureError(error, { controller: "bot.controller.js", action: "getImageUrlFromTelegram" });
+
+
+        console.error("Error in getting image buffer",error.message);
+
         console.error("Error in getting image buffer",error.message);
         return null
     }

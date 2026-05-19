@@ -15,6 +15,7 @@ import { formattedMeetingDescription } from "../../utils/integrations/meetingDes
 import { sanitizeLexicalHtml } from "../../utils/sanitize-html.js";
 import { sendEmail } from "../../utils/sentEmail.js";
 import { sendUpdatesToTelegram } from "../candidate/bot.controller.js";
+import { captureError } from "../../utils/errorHandler.js";
 
 const RATINGS = ['Good Fit', 'Not A Good Fit', 'May Be'];
 
@@ -193,6 +194,11 @@ export const rejectCandidate = async (req, res) => {
       res.status(200).json({ message: "Candidate rejected successfully" });
     }
   } catch (error) {
+    captureError(error, { controller: "hr.controller.js", action: "rejectCandidate" });
+
+
+    console.error("Error rejecting candidate:", error);
+
     console.error("Error rejecting candidate:", error);
     res
       .status(500)
@@ -350,6 +356,11 @@ export const rejectMultipleCandidates = async (req, res) => {
       res.status(200).json({ message: "Selected candidates rejected successfully" });
     }
   } catch (error) {
+    captureError(error, { controller: "hr.controller.js", action: "rejectMultipleCandidates" });
+
+
+    console.error("Error rejecting candidate:", error);
+
     console.error("Error rejecting candidate:", error);
     res
       .status(500)
@@ -457,6 +468,11 @@ export const noShow = async (req, res) => {
     });
 
   } catch (error) {
+    captureError(error, { controller: "hr.controller.js", action: "noShow" });
+
+
+    console.error('Error in noShow controller:', error);
+
     console.error('Error in noShow controller:', error);
     return res.status(500).json({
       message: "Internal server error",
@@ -608,6 +624,11 @@ export const moveCandidate = async (req, res) => {
       previousStageStatus: isLastStage ? "Accepted" : "Cleared",
     });
   } catch (error) {
+    captureError(error, { controller: "hr.controller.js", action: "moveCandidate" });
+
+
+    console.error("Error moving candidate:", error);
+
     console.error("Error moving candidate:", error);
     res
       .status(500)
@@ -757,6 +778,11 @@ export const moveMultipleCandidates = async (req, res) => {
     
     res.status(200).json({message:"Selected candidates are moved to respective stages successfully."})
   } catch (error) {
+    captureError(error, { controller: "hr.controller.js", action: "moveMultipleCandidates" });
+
+
+    console.error("Error moving candidate:", error);
+
     console.error("Error moving candidate:", error);
     res
       .status(500)
@@ -856,6 +882,11 @@ export const updateAssigneeForMultipleCandidates = async (req,res) => {
       message: 'Assignee updated successfully',
     });
   } catch (error) {
+    captureError(error, { controller: "hr.controller.js", action: "updateAssigneeForMultipleCandidates" });
+
+
+    console.error('Error updating assignee:', error);
+
     console.error('Error updating assignee:', error);
     res.status(500).json({ message: error?.message || 'Server error' });
   }
@@ -893,6 +924,11 @@ export const updateCandidateRating = async (req, res) => {
       rating: rating,
     });
   } catch (error) {
+    captureError(error, { controller: "hr.controller.js", action: "updateCandidateRating" });
+
+
+    console.error("Error updating candidate rating:", error);
+
     console.error("Error updating candidate rating:", error);
     res
       .status(500)
@@ -949,6 +985,11 @@ export const rateMultipleCandidates = async (req,res) => {
       message: "Candidates rating updated successfully",
     });
   } catch (error) {
+    captureError(error, { controller: "hr.controller.js", action: "rateMultipleCandidates" });
+
+
+    console.error("Error updating candidate rating:", error);
+
     console.error("Error updating candidate rating:", error);
     res
       .status(500)
@@ -1017,6 +1058,11 @@ export const getCandidateScores = async (req, res) => {
     // Return the scores per stage and the total score
     return res.status(200).json({ candidateId, jobId, scores, totalScore });
   } catch (error) {
+    captureError(error, { controller: "hr.controller.js", action: "getCandidateScores" });
+
+
+    console.error("Error fetching candidate scores:", error);
+
     console.error("Error fetching candidate scores:", error);
     return res.status(500).json({ message: "Internal server error" });
   }
@@ -1058,6 +1104,11 @@ export const scheduleScreening = async (req, res) => {
       updatedStageStatus: jobApplication.stageStatuses.get("Screening"),
     });
   } catch (error) {
+    captureError(error, { controller: "hr.controller.js", action: "scheduleScreening" });
+
+
+    console.error("Error scheduling screening:", error);
+
     console.error("Error scheduling screening:", error);
     res.status(500).json({ message: "Server error", error: error.message });
   }
@@ -1186,6 +1237,11 @@ export const scheduleCall = async (req, res) => {
       updatedStageStatus: jobApplication.stageStatuses.get(stage),
     });
   } catch (error) {
+    captureError(error, { controller: "hr.controller.js", action: "scheduleCall" });
+
+
+    console.error("Error scheduling interview:", error);
+
     console.error("Error scheduling interview:", error);
     res.status(500).json({ message: "Server error", error: error.message });
   }
@@ -1354,6 +1410,11 @@ export const rescheduleCall = async (req, res) => {
       updatedStageStatus: updatedStageStatus,
     });
   } catch (error) {
+    captureError(error, { controller: "hr.controller.js", action: "rescheduleCall" });
+
+
+    console.error("Error rescheduling interview:", error);
+
     console.error("Error rescheduling interview:", error);
     res.status(500).json({ message: "Server error", error: error.message });
   }
@@ -1431,6 +1492,11 @@ export const rescheduleScreening = async (req, res) => {
       updatedStageStatus: updatedScreeningStatus,
     });
   } catch (error) {
+    captureError(error, { controller: "hr.controller.js", action: "rescheduleScreening" });
+
+
+    console.error("Error rescheduling screening:", error);
+
     console.error("Error rescheduling screening:", error);
     res.status(500).json({ message: "Server error", error: error.message });
   }
@@ -1495,6 +1561,11 @@ export const submitBudgetScore = async (req, res) => {
       updatedScore: stageStatus.score,
     });
   } catch (error) {
+    captureError(error, { controller: "hr.controller.js", action: "submitBudgetScore" });
+
+
+    console.error("Error submitting budget score:", error);
+
     console.error("Error submitting budget score:", error);
     res
       .status(500)
@@ -1621,6 +1692,11 @@ export const sendDesignTask = async (req, res) => {
       });
     }
   } catch (error) {
+    captureError(error, { controller: "hr.controller.js", action: "sendDesignTask" });
+
+
+    console.error("Error sending design task:", error);
+
     console.error("Error sending design task:", error);
     res.status(500).json({ message: "Server error", error: error.message });
   }
@@ -1679,6 +1755,11 @@ export const scoreRoundTwo = async (req, res) => {
       updatedStageStatus: roundTwoStatus,
     });
   } catch (error) {
+    captureError(error, { controller: "hr.controller.js", action: "scoreRoundTwo" });
+
+
+    console.error("Error scoring Round 2:", error);
+
     console.error("Error scoring Round 2:", error);
     res.status(500).json({ message: "Server error", error: error.message });
   }
@@ -1730,6 +1811,11 @@ export const changeApplicationStatus = async (req, res) => {
       message: "Status Updated Successfully.",
     });
   } catch (error) {
+    captureError(error, { controller: "hr.controller.js", action: "changeApplicationStatus" });
+
+
+    console.error("Error updating status:", error);
+
     console.error("Error updating status:", error);
     res.status(500).json({ message: "Server error", error: error.message });
   }
@@ -1775,6 +1861,11 @@ export const saveTaskTemplates = async ( req, res) => {
       message: "Task template created Successfully.",
     });
   } catch (error) {
+    captureError(error, { controller: "hr.controller.js", action: "saveTaskTemplates" });
+
+
+    console.error("Error updating status:", error);
+
     console.error("Error updating status:", error);
     res.status(500).json({ message: "Server error", error: error.message });
   }
@@ -1793,6 +1884,11 @@ export const getTaskTemplates = async ( req, res) => {
       message: "Task templates fetched Successfully.",
     });
   } catch (error) {
+    captureError(error, { controller: "hr.controller.js", action: "getTaskTemplates" });
+
+
+    console.error("Error updating status:", error);
+
     console.error("Error updating status:", error);
     res.status(500).json({ message: "Server error", error: error.message });
   }
@@ -1943,6 +2039,11 @@ export const undoAction = async (req,res) => {
       message : 'Action reverted successfully'
     })
   } catch (error) {
+    captureError(error, { controller: "hr.controller.js", action: "undoAction" });
+
+
+    console.error("Error in undo action:", error);
+
     console.error("Error in undo action:", error);
     res.status(500).json({ message: "Server error", error: error.message });
   }
@@ -1969,6 +2070,9 @@ export const triggerAiScore = async (req, res) => {
     );
     res.json(response.data);
   } catch (error) {
+    captureError(error, { controller: "hr.controller.js", action: "triggerAiScore" });
+
+
     res.status(500).json({ message: error.message });
   }
 };
@@ -1986,6 +2090,9 @@ export const getAiScoreStatus = async (req, res) => {
     );
     res.json(response.data);
   } catch (error) {
+    captureError(error, { controller: "hr.controller.js", action: "getAiScoreStatus" });
+
+
     res.status(500).json({ message: error.message });
   }
 };
@@ -2012,6 +2119,11 @@ export const saveAiScore = async (req, res) => {
     await candidate.save();
     return res.status(200).json({ message: 'AI score saved successfully' });
   } catch (error) {
+    captureError(error, { controller: "hr.controller.js", action: "saveAiScore" });
+
+
+    console.error('Error saving AI score:', error);
+
     console.error('Error saving AI score:', error);
     return res.status(500).json({ message: error.message });
   }

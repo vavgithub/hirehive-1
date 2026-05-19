@@ -23,6 +23,7 @@ import { JOB_PROFILES, jobStagesStatuses } from "../../config/jobStagesStatuses.
 //       return res.status(404).json({ message: 'Job application not found' });
 //     }
 
+import { captureError } from "../../utils/errorHandler.js";
 //     // Initialize or update the stage status
 //     if (!jobApplication.stageStatuses[stage]) {
 //       jobApplication.stageStatuses[stage] = {
@@ -53,6 +54,7 @@ import { JOB_PROFILES, jobStagesStatuses } from "../../config/jobStagesStatuses.
 //       currentStage: jobApplication.currentStage
 //     });
 //   } catch (error) {
+
 //     console.error('Error updating assignee:', error);
 //     res.status(500).json({ message: 'Server error' });
 //   }
@@ -138,7 +140,8 @@ export const updateCandidateAssignee = async (req, res) => {
       currentStage: jobApplication.currentStage
     });
   } catch (error) {
-    console.error('Error updating assignee:', error);
+    captureError(error, { controller: "dr.controller.js", action: "updateCandidateAssignee" });
+
     res.status(500).json({ message: 'Server error' });
   }
 };
@@ -227,7 +230,8 @@ export const updateCandidateMultipleAssignee = async (req, res) => {
       currentStage: jobApplication.currentStage
     });
   } catch (error) {
-    console.error('Error updating assignee:', error);
+    captureError(error, { controller: "dr.controller.js", action: "updateCandidateMultipleAssignee" });
+
     res.status(500).json({ message: 'Server error' });
   }
 };
@@ -367,7 +371,8 @@ export const getAssignedCandidates = async (req, res) => {
                   console.log(`Job not found for ID: ${application.jobId}`);
                 }
               } catch (error) {
-                console.error(`Error fetching job with ID ${application.jobId}:`, error);
+                captureError(error, { controller: "dr.controller.js", action: "getAssignedCandidates" });
+
               }
 
               const jobProfile = job ? job.jobProfile : application.jobProfile || 'Unknown Profile';
@@ -395,7 +400,8 @@ export const getAssignedCandidates = async (req, res) => {
 
     res.status(200).json(filteredCandidatesWithDetails);
   } catch (error) {
-    console.error('Error fetching assigned candidates:', error);
+    captureError(error, { controller: "dr.controller.js", action: "getAssignedCandidates" });
+
     res.status(500).json({ message: 'Server error' });
   }
 };
@@ -457,7 +463,8 @@ export const getUnderReviewStats = async (req, res) => {
 
     res.status(200).json({ stats });
   } catch (error) {
-    console.error('Error fetching under-review stats:', error);
+    captureError(error, { controller: "dr.controller.js", action: "getUnderReviewStats" });
+
     res.status(500).json({ message: 'Server error' });
   }
 };
@@ -552,7 +559,8 @@ export const autoAssignPortfolios = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Error in autoAssignPortfolios:', error);
+    captureError(error, { controller: "dr.controller.js", action: "autoAssignPortfolios" });
+
     await session.abortTransaction();
     res.status(500).json({ message: 'Server error during auto-assignment' });
   } finally {
@@ -679,7 +687,8 @@ export const autoAssignPortfolios = async (req, res) => {
      // Respond with success
      return res.status(200).json({ message: 'Review submitted successfully' });
    } catch (error) {
-     console.error('Error in submitScoreReview:', error);
+     captureError(error, { controller: "dr.controller.js", action: "submitScoreReview" });
+
      return res.status(500).json({ message: 'Internal server error', error: error.message });
    }
  };
@@ -718,7 +727,8 @@ export const autoAssignPortfolios = async (req, res) => {
           updatedStageStatus: jobApplication.stageStatuses.Screening
       });
   } catch (error) {
-      console.error('Error scheduling screening:', error);
+      captureError(error, { controller: "dr.controller.js", action: "scheduleScreening" });
+
       res.status(500).json({ message: 'Server error' });
   }
 };

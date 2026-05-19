@@ -8,6 +8,7 @@ import { jobs } from "../../models/admin/jobs.model.js";
 import { archiveJob } from "../admin/jobs.controller.js";
 import { Company } from "../../models/admin/company.model.js";
 
+import { captureError } from "../../utils/errorHandler.js";
 export const submitDesignTask = async (req, res) => {
   try {
       const { candidateId, jobId, taskLink, comment } = req.body;
@@ -62,7 +63,8 @@ export const submitDesignTask = async (req, res) => {
           updatedStageStatus: designTaskStatus
       });
   } catch (error) {
-      console.error('Error submitting Design Task:', error);
+      captureError(error, { controller: "candidate.controller.js", action: "submitDesignTask" });
+
       res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
@@ -87,7 +89,8 @@ export const disconnectTelegram = async (req, res) => {
           message: 'Telegram disconnected successfully',
       });
   } catch (error) {
-      console.error('Error disconnecting telegram bot:', error);
+      captureError(error, { controller: "candidate.controller.js", action: "disconnectTelegram" });
+
       res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
@@ -124,6 +127,8 @@ const stats =  asyncHandler(async (req, res, next) => {
 
       res.status(200).json(new ApiResponse(200, stats, "Stats fetched successfully"));
   } catch (error) {
+      captureError(error, { controller: "candidate.controller.js", action: "stats" });
+
       next(new ApiError(500, "Failed to fetch stats", [error.message]));
   }
 });
@@ -181,7 +186,8 @@ const jobSpecificStats = asyncHandler(async (req, res, next) => {
 
       res.status(200).json(new ApiResponse(200, stats, "Job-specific stats fetched successfully"));
   } catch (error) {
-      console.error("Error in jobSpecificStats:", error);
+      captureError(error, { controller: "candidate.controller.js", action: "jobSpecificStats" });
+
       next(new ApiError(500, "Failed to fetch job-specific stats", [error.message]));
   }
 });
@@ -219,6 +225,8 @@ const fetchActiveJobs = async (req, res) => {
 
     res.status(200).json(userIds?.length > 0 ? {companyDetails,activeJobs,totalOpenJobs} : {activeJobs,totalOpenJobs});
   } catch (error) {
+    captureError(error, { controller: "candidate.controller.js", action: "fetchActiveJobs" });
+
     res.status(500).json({ message: "Error fetching open jobs", error: error.message });
   }
 };
@@ -238,6 +246,8 @@ const allCandidate = asyncHandler(async (req, res, next) => {
         new ApiResponse(200, candidateData, "Candidates fetched successfully")
       );
   } catch (error) {
+    captureError(error, { controller: "candidate.controller.js", action: "allCandidate" });
+
     throw new ApiError(401, error?.message || "Failed to fetch candidates");
   }
 });
@@ -248,6 +258,7 @@ const allCandidate = asyncHandler(async (req, res, next) => {
 //     const jobCandidates = await candidates.find({ jobId });
 //     res.send(jobCandidates);
 //   } catch (error) {
+
 //     res.status(500).send(error);
 //   }
 // };
@@ -273,7 +284,8 @@ const getCandidate = async (req, res) => {
 
     res.status(200).json(jobCandidates);
   } catch (error) {
-    console.error('Error fetching candidates for job:', error);
+    captureError(error, { controller: "candidate.controller.js", action: "getCandidate" });
+
     res.status(500).send(error);
   }
 };
@@ -284,6 +296,8 @@ const getCandidateById = async (req, res) => {
     const candidate = await candidates.findById(req.params.id);
     res.send(candidate);
   } catch (error) {
+    captureError(error, { controller: "candidate.controller.js", action: "getCandidateById" });
+
     res.status(500).send(error);
   }
 };
@@ -303,6 +317,8 @@ const updateStatusAndStage = async (req, res) => {
 
     res.json(updatedCandidate);
   } catch (error) {
+    captureError(error, { controller: "candidate.controller.js", action: "updateStatusAndStage" });
+
     res
       .status(400)
       .json({ message: "Error updating candidate", error: error.message });
@@ -346,7 +362,8 @@ const updateAssignee = async (req, res) => {
       res.status(404).json({ message: "No candidates were updated" });
     }
   } catch (error) {
-    console.error("Error updating assignees and statuses:", error);
+    captureError(error, { controller: "candidate.controller.js", action: "updateAssignee" });
+
     res
       .status(500)
       .json({ message: "Internal server error", error: error.message });
@@ -369,7 +386,8 @@ const updateRating = async (req, res) => {
 
     res.status(200).json(candidate);
   } catch (error) {
-    console.error("Error updating candidate rating:", error);
+    captureError(error, { controller: "candidate.controller.js", action: "updateRating" });
+
     res.status(500).json({ message: "Server error" });
   }
 };
@@ -402,7 +420,8 @@ const updateCandidateStatusById = async (req, res) => {
       candidate: updatedCandidate,
     });
   } catch (error) {
-    console.error("Error updating assignee:", error);
+    captureError(error, { controller: "candidate.controller.js", action: "updateCandidateStatusById" });
+
     res
       .status(500)
       .json({ message: "Internal server error", error: error.message });
@@ -452,6 +471,7 @@ const updateCandidateStatusById = async (req, res) => {
 //     });
 
 //   } catch (error) {
+
 //     console.error('Error in assignCandidate:', error);
 //     res.status(500).json({ success: false, message: 'Internal server error', error: error.message });
 //   }
@@ -477,6 +497,7 @@ const updateCandidateStatusById = async (req, res) => {
 //     });
 
 //   } catch (error) {
+
 //     console.error('Error in assignCandidate:', error);
 //     res.status(500).json({ success: false, message: 'Internal server error', error: error.message });
 //   }
@@ -509,7 +530,8 @@ const fetchAssignedCandidate = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Error in fetchAssignedCandidates:', error);
+    captureError(error, { controller: "candidate.controller.js", action: "fetchAssignedCandidate" });
+
     res.status(500).json({ success: false, message: 'Internal server error', error: error.message });
   }
 };
@@ -543,6 +565,8 @@ const searchJobs = async (req, res) => {
     // Respond with the list of jobs
     res.status(200).json({searchJobs:openJobsFiltered, searchJobsCount});
   } catch (error) {
+    captureError(error, { controller: "candidate.controller.js", action: "searchJobs" });
+
     // Handle error if fetching jobs fails
     res.status(500).json({ message: error.message });
   }
@@ -733,7 +757,8 @@ const submitApplication = async (req, res) => {
       candidateId: newCandidate._id
     });
   } catch (error) {
-    console.error('Error in submitApplication:', error);
+    captureError(error, { controller: "candidate.controller.js", action: "submitApplication" });
+
     res.status(500).json({ message: error.message || 'Internal server error' });
   }
 };
