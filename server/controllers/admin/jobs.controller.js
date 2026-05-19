@@ -10,7 +10,6 @@ import { getPreviousMonthRange, getPreviousWeekRange, getYesterdayTodayRange } f
 import { User } from "../../models/admin/user.model.js";
 import { Assessment } from "../../models/admin/assessment.model.js";
 import { Company } from "../../models/admin/company.model.js";
-import { captureError } from "../../utils/errorHandler.js";
 // Controller function to create a new job
 
 export const StatisticsController = {
@@ -615,8 +614,7 @@ export const StatisticsController = {
       });
       
     } catch (error) {
-      captureError(error, { controller: "jobs.controller.js", action: "getWeeklyAndDailyHires" });
-
+      console.error('Error in getOverallStats:', error);
       return res.status(500).json({
         success: false,
         message: 'Error fetching statistics',
@@ -897,8 +895,7 @@ export const StatisticsController = {
         data: response,
       });
     } catch (error) {
-      captureError(error, { controller: "jobs.controller.js", action: "getApplicationCounts" });
-
+      console.error("Error in getJobStats:", error);
       return res.status(500).json({
         success: false,
         message: "Error fetching job statistics",
@@ -1235,8 +1232,7 @@ const getJobs = async (req, res) => {
 
     res.status(200).json({jobs : jobsWithStats , closedPins });
   } catch (error) {
-    captureError(error, { controller: "jobs.controller.js", action: "getJobs" });
-
+    console.error("Error in getJobs:", error);
     res.status(500).json({
       success: false,
       message: "Error fetching jobs",
@@ -1264,8 +1260,7 @@ const getAssessmentTemplates = async (req,res) => {
     const existingAssessmentTemplates = await Assessment.find({ isAvailable : true }).select('-questions')
     res.status(200).json({templates : existingAssessmentTemplates , hasAccess})
   } catch (error) {
-    captureError(error, { controller: "jobs.controller.js", action: "getAssessmentTemplates" });
-
+    console.log("Error getting Assessment templates : ", error)
     res.status(500).json({
       success: false,
       message: "Error accessing assessment details",
@@ -1331,8 +1326,6 @@ const createJob = async (req, res) => {
     // Respond with the saved job object
     res.status(201).json(savedJob);
   } catch (error) {
-    captureError(error, { controller: "jobs.controller.js", action: "createJob" });
-
     if (error instanceof MongooseError && error.code === 11000) {
       // Handle duplicate key error (E11000)
       res.status(400).json({
@@ -1354,8 +1347,6 @@ const getTotalJobCount = async (req, res) => {
     // Respond with the total count
     res.status(200).json({ totalCount });
   } catch (error) {
-    captureError(error, { controller: "jobs.controller.js", action: "getTotalJobCount" });
-
     res.status(500).json({ message: error.message });
   }
 };
@@ -1377,8 +1368,7 @@ export const incrementApplyClickCount = async (req, res) => {
 
     res.status(200).json({ applyClickCount: updatedJob.applyClickCount });
   } catch (error) {
-    captureError(error, { controller: "jobs.controller.js", action: "incrementApplyClickCount" });
-
+    console.error("Error incrementing apply click count:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
@@ -1412,8 +1402,6 @@ const searchJobs = async (req, res) => {
     // Respond with the list of jobs
     res.status(200).json({ jobArray, jobCount });
   } catch (error) {
-    captureError(error, { controller: "jobs.controller.js", action: "searchJobs" });
-
     // Handle error if fetching jobs fails
     res.status(500).json({ message: error.message });
   }
@@ -1479,8 +1467,7 @@ const filterJobs = asyncHandler(async (req, res) => {
 
     res.status(200).json({ filteredJobs, filteredCount });
   } catch (error) {
-    captureError(error, { controller: "jobs.controller.js", action: "filterJobs" });
-
+    console.error("Error in filterJobs:", error);
     res.status(500).json({
       success: false,
       message: "Error filtering jobs",
@@ -1560,8 +1547,7 @@ const filterSearchJobs = asyncHandler(async (req, res) => {
 
     res.status(200).json({ filteredSearchJobs, filteredSearchCount });
   } catch (error) {
-    captureError(error, { controller: "jobs.controller.js", action: "filterSearchJobs" });
-
+    console.error("Error in filterJobs:", error);
     res.status(500).json({
       success: false,
       message: "Error filtering jobs",
@@ -1580,8 +1566,7 @@ const deleteJob = async (req, res) => {
     }
     res.send({ message: "User deleted successfully" });
   } catch (error) {
-    captureError(error, { controller: "jobs.controller.js", action: "deleteJob" });
-
+    console.error("Error deleting job:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
@@ -1601,8 +1586,6 @@ const updateJob = async (req, res) => {
 
     res.send(updatedJob);
   } catch (error) {
-    captureError(error, { controller: "jobs.controller.js", action: "updateJob" });
-
     res
       .status(400)
       .send({ message: "Error updating job", error: error.message });
@@ -1627,8 +1610,6 @@ const archiveJob = async (req, res) => {
       res.status(400).send({ message: "Job is not in an open state" });
     }
   } catch (error) {
-    captureError(error, { controller: "jobs.controller.js", action: "archiveJob" });
-
     res
       .status(500)
       .send({ message: "Error updating job status", error: error.message });
@@ -1658,8 +1639,6 @@ const closeJob = async (req, res) => {
       res.status(400).send({ message: "Job is not in an open state" });
     }
   } catch (error) {
-    captureError(error, { controller: "jobs.controller.js", action: "closeJob" });
-
     res
       .status(500)
       .send({ message: "Error closing job", error: error.message });
@@ -1681,8 +1660,6 @@ const draftJob = async (req, res) => {
       res.status(400).send({ message: "Job is not in an open state" });
     }
   } catch (error) {
-    captureError(error, { controller: "jobs.controller.js", action: "draftJob" });
-
     res
       .status(500)
       .send({ message: "Error updating job status", error: error.message });
@@ -1708,8 +1685,6 @@ const unarchiveJob = async (req, res) => {
       res.status(400).send({ message: "Job is not in an archieved state" });
     }
   } catch (error) {
-    captureError(error, { controller: "jobs.controller.js", action: "unarchiveJob" });
-
     res
       .status(500)
       .send({ message: "Error updating job status", error: error.message });
@@ -1734,8 +1709,6 @@ const reOpenJob = async (req, res) => {
       res.status(400).send({ message: "Job is not in an archieved state" });
     }
   } catch (error) {
-    captureError(error, { controller: "jobs.controller.js", action: "reOpenJob" });
-
     res
       .status(500)
       .send({ message: "Error updating job status", error: error.message });
@@ -1766,8 +1739,6 @@ const editJob = async (req, res) => {
     await job.save();
     res.send({ message: "Job updated successfully", job });
   } catch (error) {
-    captureError(error, { controller: "jobs.controller.js", action: "editJob" });
-
     res
       .status(500)
       .send({ message: "Error updating job", error: error.message });
@@ -1784,8 +1755,6 @@ const getJobById = async (req, res) => {
     }
     res.send(job);
   } catch (error) {
-    captureError(error, { controller: "jobs.controller.js", action: "getJobById" });
-
     res
       .status(500)
       .send({ message: "Error retrieving job", error: error.message });

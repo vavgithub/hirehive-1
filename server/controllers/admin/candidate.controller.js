@@ -16,7 +16,6 @@ import { getPlaceDetails } from "../../utils/integrations/google.js";
 
 // controllers/candidate.controller.js
 
-import { captureError } from "../../utils/errorHandler.js";
 export const getAllCandidatesForJob = async (req, res) => {
   try {
     const { jobId } = req.params;
@@ -530,8 +529,7 @@ export const getAllCandidatesForJob = async (req, res) => {
       stages: stages.map((stage) => stage.name),
     });
   } catch (error) {
-    captureError(error, { controller: "candidate.controller.js", action: "getAllCandidatesForJob" });
-
+    console.error("Error fetching candidates:", error);
     res.status(500).json({
       message: "Internal server error",
       error: error.message,
@@ -607,7 +605,6 @@ export const getAllCandidatesForJob = async (req, res) => {
 //         stages: stages.map(stage => stage.name)
 //       });
 //     } catch (error) {
-
 //       console.error('Error fetching candidates:', error);
 //       res.status(500).json({ message: 'Internal server error' });
 //     }
@@ -688,8 +685,6 @@ export const updateCandidateProfessionalDetails = async (req, res) => {
 
     res.status(200).json({ message: "Candidate details updated successfully" });
   } catch (error) {
-    captureError(error, { controller: "candidate.controller.js", action: "updateCandidateProfessionalDetails" });
-
     res
       .status(400)
       .json({ message: "Error updating candidate", error: error.message });
@@ -758,8 +753,6 @@ export const updateCandidateProfile = async (req, res) => {
 
     res.status(200).json(updatedCandidate);
   } catch (error) {
-    captureError(error, { controller: "candidate.controller.js", action: "updateCandidateProfile" });
-
     res
       .status(400)
       .json({ message: "Error updating candidate", error: error.message });
@@ -781,8 +774,6 @@ export const updateStatusAndStage = async (req, res) => {
 
     res.json(updatedCandidate);
   } catch (error) {
-    captureError(error, { controller: "candidate.controller.js", action: "updateStatusAndStage" });
-
     res
       .status(400)
       .json({ message: "Error updating candidate", error: error.message });
@@ -929,8 +920,7 @@ export const getCandidateById = async (req, res) => {
 
     res.send(response);
   } catch (error) {
-    captureError(error, { controller: "candidate.controller.js", action: "getCandidateById" });
-
+    console.error("Error in getCandidateById:", error);
     res.status(500).send({
       message: "Internal server error",
       error: error.message,
@@ -977,8 +967,7 @@ export const addNotes = async (req, res) => {
 
     res.status(200).json({ message: "Notes added successfully" });
   } catch (error) {
-    captureError(error, { controller: "candidate.controller.js", action: "addNotes" });
-
+    console.error("Error in getCandidateJobs:", error);
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
@@ -1006,8 +995,7 @@ export const getCandidateJobs = async (req, res) => {
       jobs: companyFilteredApplications,
     });
   } catch (error) {
-    captureError(error, { controller: "candidate.controller.js", action: "getCandidateJobs" });
-
+    console.error("Error in getCandidateJobs:", error);
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
@@ -1119,7 +1107,16 @@ export const getAllCandidates = async (req,res) => {
       let encodedFilters = {}
       filterArray.map(([key,value]) => {
         if(key === 'status'){
-          encodedFilters.status = {$in : value}
+          const statusValues = Array.isArray(value) ? value : [value];
+          const stageStatusValues = statusValues.filter(
+            (s) => s !== 'Escalated' && s !== 'escalated'
+          );
+          if (stageStatusValues.length) {
+            encodedFilters.status = { $in: stageStatusValues };
+          }
+          if (statusValues.includes('escalated') || statusValues.includes('Escalated')) {
+            encodedFilters.aiTriggerStatus = { $in: ['escalated'] };
+          }
         }
         if(key === 'stage'){
           encodedFilters.currentStage = {$in : value}
@@ -1154,6 +1151,8 @@ export const getAllCandidates = async (req,res) => {
           $match : encodedFilters
         }
       ]
+      console.log('[Filter] encodedFilters:', JSON.stringify(encodedFilters));
+      console.log('[Filter] filterQuery:', JSON.stringify(filterQuery));
     }
 
     //Location filter management
@@ -1312,6 +1311,8 @@ export const getAllCandidates = async (req,res) => {
           rating: "$jobApplications.rating",
           resumeUrl: "$jobApplications.resumeUrl",
           applicationDate: "$jobApplications.applicationDate",
+          aiTriggerStatus: '$jobApplications.aiTriggerStatus',
+          aiScoredAt: '$jobApplications.aiScoredAt',
         },
       },
       {
@@ -1360,7 +1361,9 @@ export const getAllCandidates = async (req,res) => {
           applicationDate: 1,
           assessment_id : 1,
           assessmentResponse : 1,
-          status: '$currentStageStatus.v.status'
+          status: '$currentStageStatus.v.status',
+          aiTriggerStatus: 1,
+          aiScoredAt: 1,
         }
       },
       ...filterQuery,
@@ -1388,8 +1391,7 @@ export const getAllCandidates = async (req,res) => {
 
     return res.status(200).json({allCandidates : allCandidates[0].candidates,totalCandidates :  allCandidates[0].totalCount});
   } catch (error) {
-      captureError(error, { controller: "candidate.controller.js", action: "getAllCandidates" });
-
+      console.error('Error fetching candidates:', error);
       res.status(500).json({
         message: 'Internal server error',
         error: error.message
@@ -1725,8 +1727,7 @@ export const getAllCandidatesWithStats = async (req, res) => {
       stats: stats
     });
   } catch (error) {
-    captureError(error, { controller: "candidate.controller.js", action: "getCandidateCounts" });
-
+    console.error('Error fetching candidates:', error);
     res.status(500).json({
       message: 'Internal server error',
       error: error.message
@@ -1780,8 +1781,7 @@ export const getRandomQuestions = async (req, res) => {
       questions,
     });
   } catch (error) {
-    captureError(error, { controller: "candidate.controller.js", action: "getRandomQuestions" });
-
+    console.error("Error in getRandomQuestions:", error);
     res.status(500).json({
       success: false,
       message: "Error fetching questions",
@@ -1869,8 +1869,7 @@ export const getAssessmentQuestionsById = async (req, res) => {
       });
     }
   } catch (error) {
-    captureError(error, { controller: "candidate.controller.js", action: "getAssessmentQuestionsById" });
-
+    console.error("Error in getRandomQuestions:", error);
     res.status(500).json({
       success: false,
       message: "Error fetching questions",
@@ -1932,8 +1931,7 @@ export const getRandomAssessmentQuestions = async (req, res) => {
       questions : result[0]?.questions,
     });
   } catch (error) {
-    captureError(error, { controller: "candidate.controller.js", action: "getRandomAssessmentQuestions" });
-
+    console.error("Error in getRandomQuestions:", error);
     res.status(500).json({
       success: false,
       message: "Error fetching questions",
@@ -2007,8 +2005,7 @@ export const submitQuestionnaireAttempt = async (req, res) => {
       message: "Assessment completed successfully",
     });
   } catch (error) {
-    captureError(error, { controller: "candidate.controller.js", action: "submitQuestionnaireAttempt" });
-
+    console.error("Error in submitQuestionnaireAttempt:", error);
     res.status(500).json({
       success: false,
       message: "Error saving assessment",
@@ -2118,8 +2115,7 @@ export const getQuestionnaireDetails = async (req, res) => {
 
     return res.status(200).json(response);
   } catch (error) {
-    captureError(error, { controller: "candidate.controller.js", action: "getQuestionnaireDetails" });
-
+    console.error("Error in getQuestionnaireDetails:", error);
     return res.status(500).json({
       success: false,
       message: "Internal server error",
@@ -2233,8 +2229,7 @@ export const getJobBasedQuestionnaireDetails = async (req, res) => {
 
     return res.status(200).json(response);
   } catch (error) {
-    captureError(error, { controller: "candidate.controller.js", action: "getJobBasedQuestionnaireDetails" });
-
+    console.error("Error in getQuestionnaireDetails:", error);
     return res.status(500).json({
       success: false,
       message: "Internal server error",
@@ -2269,8 +2264,7 @@ export const uploadAssessmentRecording = async (req, res) => {
       videoUrl,
     });
   } catch (error) {
-    captureError(error, { controller: "candidate.controller.js", action: "uploadAssessmentRecording" });
-
+    console.error("Error in uploadAssessmentRecording:", error);
     return res.status(500).json({
       success: false,
       message: error.message || "Failed to process video upload",
@@ -2308,8 +2302,7 @@ export const toggleShortlistCandidate = async (req, res) => {
       candidate,
     });
   } catch (error) {
-    captureError(error, { controller: "candidate.controller.js", action: "toggleShortlistCandidate" });
-
+    console.error("Error updating shortlist status:", error);
     return res
       .status(500)
       .json({ message: "Server error", error: error.message });
@@ -2361,7 +2354,6 @@ export const toggleShortlistCandidate = async (req, res) => {
 //     console.log("this is backend", formattedCandidates);
 //     return res.status(200).json({ candidates: formattedCandidates });
 //   } catch (error) {
-
 //     console.error("Error fetching shortlisted candidates:", error);
 //     return res
 //     .status(500)
@@ -2727,8 +2719,7 @@ export const shortlistCandidate = async (req, res) => {
     
     return res.status(200).json({ candidates: formattedCandidates , totalCount : shortlistedCandidates[0]?.totalCount || 0});
   } catch (error) {
-    captureError(error, { controller: "candidate.controller.js", action: "shortlistCandidate" });
-
+    console.error("Error fetching shortlisted candidates:", error);
     return res
       .status(500)
       .json({ message: "Server error", error: error.message });

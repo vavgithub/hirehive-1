@@ -1,6 +1,5 @@
 import { asyncHandler } from '../../utils/asyncHandler.js';
 import { Company } from '../../models/admin/company.model.js';
-import { captureError } from "../../utils/errorHandler.js";
 
 export const getMultiReviewerSettings = asyncHandler(async (req, res) => {
   const companyId = req.user?.company_id;
