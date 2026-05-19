@@ -4,7 +4,7 @@ import svgr from 'vite-plugin-svgr'
 import { sentryVitePlugin } from '@sentry/vite-plugin'
 
 export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, process.cwd(), '')
+  const env = loadEnv(mode, process.cwd(), '');
 
   return {
     build: {
@@ -14,11 +14,11 @@ export default defineConfig(({ mode }) => {
       react(),
       svgr({ svgrOptions: {} }),
       sentryVitePlugin({
-        org: 'value-at-void',
-        project: 'geode-client',
+        org: "value-at-void",
+        project: "geode-client",
         authToken: env.SENTRY_AUTH_TOKEN,
         telemetry: false,
       }),
     ],
-  }
-})
+  };
+});
