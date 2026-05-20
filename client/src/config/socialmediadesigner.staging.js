@@ -111,10 +111,7 @@ export const socialMediaDesignerConfig = [
                         hasAssigneeSelectorEnabled : false,
                         hasAssigneeSelector : false,
                         hasBudgetLabel : false,
-                        hasLabel : {
-                            content : "Please review the portfolio and update the details below.",
-                            icon : false
-                        },
+                        hasLabel : false,
                         hasRatingComponent : true,
                         hasRemarks : false,
                         hasScoreCard : false,
