@@ -2,6 +2,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import axios from '../services/axios';
 import { getCandidateDashboard } from '../services/auth.candidate.service';
+import * as Sentry from '@sentry/react';
 
 export const fetchCandidateAuthData = createAsyncThunk(
   'candidateAuth/fetchData',
@@ -10,6 +11,10 @@ export const fetchCandidateAuthData = createAsyncThunk(
       const response = await getCandidateDashboard();
       return response.data.candidate;
     } catch (error) {
+      Sentry.captureException(error, {
+        tags: { file: "candidateAuthSlice.jsx", action: "fetchCandidateAuthData", role: "candidate" },
+        extra: { response: error.response?.data },
+      });
       return rejectWithValue(error.response?.data.message || 'Failed to fetch candidate data');
     }
   }
@@ -22,6 +27,10 @@ export const loginCandidateAuth = createAsyncThunk(
       const response = await axios.post('/auth/candidate/login', { email, password });
       return response.data;
     } catch (error) {
+      Sentry.captureException(error, {
+        tags: { file: "candidateAuthSlice.jsx", action: "loginCandidateAuth", role: "candidate" },
+        extra: { response: error.response?.data },
+      });
       return rejectWithValue(error.response?.data?.message || 'Login failed');
     }
   }
@@ -34,6 +43,10 @@ export const logoutCandidateAuth = createAsyncThunk(
       await axios.post('/auth/candidate/logout');
       return null;
     } catch (error) {
+      Sentry.captureException(error, {
+        tags: { file: "candidateAuthSlice.jsx", action: "logoutCandidateAuth", role: "candidate" },
+        extra: { response: error.response?.data },
+      });
       return rejectWithValue(error.response?.data?.message || 'Logout failed');
     }
   }

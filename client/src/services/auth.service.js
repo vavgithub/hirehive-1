@@ -1,4 +1,5 @@
 import axios from "./axios"
+import * as Sentry from '@sentry/react';
 const API_URL = '/auth';
 
 export const register = async (userData) => {
@@ -54,6 +55,10 @@ export const fetchAvailableDesignReviewers = async () => {
   
       return response.data.data;
     } catch (error) {
+      Sentry.captureException(error, {
+        tags: { file: "auth.service.js", action: "fetchAvailableDesignReviewers", role: "admin" },
+        extra: { response: error?.response?.data },
+      });
       // console.error('Error in fetchAvailableDesignReviewers:', error);
       if (error.response) {
         // The request was made and the server responded with a status code

@@ -18,6 +18,7 @@ import IconWrapper from '../../components/Cards/IconWrapper';
 import { getRandomAssessmentQuestions, submitAssessment } from '../../services/admin.candidate.service';
 import { uploadAssessmentToS3 } from '../../utility/s3upload';
 import { useLogo } from '../../context/ThemeContext';
+import * as Sentry from '@sentry/react';
 const ONE_MINUTE = 60;
 
 // Utility function to format time
@@ -431,6 +432,10 @@ const Assessment = ({assessment_id}) => {
       setIsRecording(true);
       // console.log('Recording started');
     } catch (error) {
+      Sentry.captureException(error, {
+        tags: { file: "Assessment.jsx", action: "startRecording", role: "candidate" },
+        extra: { response: error?.response?.data },
+      });
       console.error('Error starting recording:', error);
       showErrorToast('Error', error.message || 'Failed to start recording. Please ensure camera access is granted.');
       setTimeout(()=>window.location.reload(),1000)
@@ -525,6 +530,10 @@ const Assessment = ({assessment_id}) => {
 
       return recordingUrl;
     } catch (error) {
+      Sentry.captureException(error, {
+        tags: { file: "Assessment.jsx", action: "uploadVideoChunk", role: "candidate" },
+        extra: { response: error?.response?.data },
+      });
       // console.error('Upload error:', error);
       // if (error.response) {
       //   console.error('Response data:', error.response.data);
@@ -554,6 +563,10 @@ const Assessment = ({assessment_id}) => {
         const response = await submitAssessment({candidate_id : candidateAuthData?._id , assessmentData , recordingUrl});
         return response.data;
       } catch (error) {
+        Sentry.captureException(error, {
+          tags: { file: "Assessment.jsx", action: "submitAssessmentMutation", role: "candidate" },
+          extra: { response: error?.response?.data },
+        });
         // console.error('Submit error:', error);
         throw error;
       }
@@ -607,6 +620,10 @@ const Assessment = ({assessment_id}) => {
         totalTimeInSeconds
       });
     } catch (error) {
+      Sentry.captureException(error, {
+        tags: { file: "Assessment.jsx", action: "submitAssessment", role: "candidate" },
+        extra: { response: error?.response?.data },
+      });
       // console.error('Finish error:', error);
     }
   };
