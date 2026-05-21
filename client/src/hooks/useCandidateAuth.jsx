@@ -38,6 +38,10 @@ export const useCandidateAuth = () => {
         }
         setIsDone(true);
       } catch (error) {
+        Sentry.captureException(error, {
+          tags: { file: "useCandidateAuth.jsx", action: "fetchData", role: "candidate" },
+          extra: { response: error?.response?.data, message: error?.message },
+        });
         Sentry.setUser(null);
         setIsDone(true);
       }

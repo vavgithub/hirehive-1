@@ -1,4 +1,5 @@
 import axios from "axios";
+import * as Sentry from '@sentry/react';
 const CLOUDINARY_URL = import.meta.env.VITE_CLOUDINARY_URL;
 const CLOUDINARY_UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
 
@@ -27,6 +28,10 @@ export const uploadAssessment = async (videoFile, setUploadProgress) => {
       throw new Error("Cloudinary : Can't generate URL");
     }
   } catch (error) {
+    Sentry.captureException(error, {
+      tags: { file: "cloudinary.js", action: "uploadAssessment", role: "candidate" },
+      extra: { response: error?.response?.data, message: error?.message },
+    });
     throw new Error(error.message || "Error uplaoding to cloudinary");
   }
 };
@@ -56,6 +61,10 @@ export const uploadScreenshot = async (imageFile, setUploadProgress) => {
       throw new Error("Cloudinary: Can't generate URL");
     }
   } catch (error) {
+    Sentry.captureException(error, {
+      tags: { file: "cloudinary.js", action: "uploadScreenshot", role: "candidate" },
+      extra: { response: error?.response?.data, message: error?.message },
+    });
     throw new Error(error.message || "Error uploading to Cloudinary");
   }
 };

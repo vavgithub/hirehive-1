@@ -18,6 +18,10 @@ const useAuth = () => {
                 }
                 return data;
             } catch (error) {
+                Sentry.captureException(error, {
+                  tags: { file: "useAuth.jsx", action: "queryFn", role: "admin" },
+                  extra: { response: error?.response?.data, message: error?.message },
+                });
                 Sentry.setUser(null);
                 return null;
             }

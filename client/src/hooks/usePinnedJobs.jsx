@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import * as Sentry from '@sentry/react';
 
 function getPinnedKey(email) {
   return `${email}-pinnedJobs`;
@@ -13,6 +14,10 @@ function usePinnedJobs(email) {
     try {
       return stored ? JSON.parse(stored) : [];
     } catch (err) {
+      Sentry.captureException(err, {
+        tags: { file: "usePinnedJobs.jsx", action: "getStoredPinnedJobs", role: "admin" },
+        extra: { response: err?.response?.data, message: err?.message },
+      });
       console.error('Failed to parse pinned jobs from localStorage:', err);
       return [];
     }
