@@ -13,6 +13,7 @@ import { setCollapseContactUs } from '../../redux/candidateSlice';
 import { useMediaQuery } from 'react-responsive';
 import { uploadScreenshotToS3 } from '../../utility/s3upload';
 import { showErrorToast, showSuccessToast } from '../ui/Toast';
+import * as Sentry from '@sentry/react';
 
 
 const CLOUDINARY_URL_SS = import.meta.env.VITE_CLOUDINARY_URL_SS;
@@ -118,6 +119,10 @@ const ContactUs = () => {
 
       return true;
     } catch (error) {
+      Sentry.captureException(error, {
+        tags: { file: "ContactUs.jsx", action: "submitToGoogleSheets", role: "candidate" },
+        extra: { response: error?.response?.data, message: error?.message },
+      });
       console.error('Error submitting to Google Sheets:', error);
       throw new Error('Failed to submit form');
     }
@@ -161,6 +166,10 @@ const ContactUs = () => {
 
       return true;
     } catch (error) {
+      Sentry.captureException(error, {
+        tags: { file: "ContactUs.jsx", action: "onSubmit", role: "candidate" },
+        extra: { response: error?.response?.data, message: error?.message },
+      });
       console.error("Form submission error:", error);
       setShowLoader(false); // Hide loader on error
       showErrorToast('Error', error.message || 'Failed to send message');

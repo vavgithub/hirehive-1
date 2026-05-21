@@ -18,6 +18,7 @@ import ForgotPassword from '../../pages/Admin/ForgotPassword';
 import { googleLogin, registerAdmin, verifyPassword } from '../../services/auth.service';
 import { FcGoogle } from 'react-icons/fc';
 import { useLogo } from '../../context/ThemeContext';
+import * as Sentry from '@sentry/react';
 
 export const emailPattern = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i
 
@@ -104,6 +105,10 @@ function RegisterForm({setCurrentStep}) {
             window.location.href = result.authorizationUrl;
           }
         } catch (error) {
+          Sentry.captureException(error, {
+            tags: { file: "RegisterForm.jsx", action: "registerGoogle", role: "admin" },
+            extra: { response: error?.response?.data, message: error?.message },
+          });
           showErrorToast('Error',error?.message)
         }
     }

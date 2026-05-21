@@ -15,6 +15,7 @@ import { getAllCandidatesAndStats, getAllCandidatesWithFilters } from '../../ser
 import { useState } from 'react';
 import { useMemo } from 'react';
 import useDebounce from '../../hooks/useDebounce';
+import * as Sentry from '@sentry/react';
 
 
 const Candidates = () => {
@@ -61,6 +62,10 @@ const Candidates = () => {
       const response = await getAllCandidatesWithFilters({...(location ? location : {}) , filter : filterObj ,search : debouncedQuery, sortFilters : sortFilterObj});
       return response?.allCandidates || []
     } catch (error) {
+      Sentry.captureException(error, {
+        tags: { file: "Candidates.jsx", action: "getCandidatesExportData", role: "admin" },
+        extra: { response: error?.response?.data, message: error?.message },
+      });
       console.log("Export data error :",error)
     }
   }
