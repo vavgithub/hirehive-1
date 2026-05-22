@@ -1,4 +1,5 @@
 import axios from "./axios";
+import * as Sentry from '@sentry/react';
 const HR_BASE_URL = '/hr'
 
 //GET
@@ -87,6 +88,10 @@ export const updateStatus = async (candidateId,jobId,status) => {
         const response = await axios.post(`${HR_BASE_URL}/change-status/${candidateId}/${jobId}`,{status})
         return response.data
     } catch (error) {
+        Sentry.captureException(error, {
+          tags: { file: "hr.service.js", action: "statusUpdate", role: "admin" },
+          extra: { response: error?.response?.data },
+        });
         // console.log("Error in status update",error.response.data);
         return false
     }

@@ -6,6 +6,7 @@ import { Button } from '../Buttons/Button';
 import axios from 'axios';
 import { showErrorToast, showSuccessToast } from '../ui/Toast';
 import { uploadScreenshotToS3 } from '../../utility/s3upload';
+import * as Sentry from '@sentry/react';
 
 const CLOUDINARY_URL_SS = import.meta.env.VITE_CLOUDINARY_URL_SS;
 const CLOUDINARY_SCREENSHOT_UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_SCREENSHOT_UPLOAD_PRESET;
@@ -93,6 +94,10 @@ function ContactUsForm({isOpen,setIsOpen}) {
 
       return true;
     } catch (error) {
+      Sentry.captureException(error, {
+        tags: { file: "ContactUsForm.jsx", action: "submitToGoogleSheets", role: "candidate" },
+        extra: { response: error?.response?.data, message: error?.message },
+      });
       console.error('Error submitting to Google Sheets:', error);
       throw new Error('Failed to submit form');
     }
@@ -137,6 +142,10 @@ function ContactUsForm({isOpen,setIsOpen}) {
 
       return true;
     } catch (error) {
+      Sentry.captureException(error, {
+        tags: { file: "ContactUsForm.jsx", action: "onSubmit", role: "candidate" },
+        extra: { response: error?.response?.data, message: error?.message },
+      });
       console.error("Form submission error:", error);
       setShowLoader(false); // Hide loader on error
       showErrorToast('Error', error.message || 'Failed to send message');

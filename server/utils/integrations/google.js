@@ -1,6 +1,7 @@
 import { google } from 'googleapis';
 import { PlacesClient } from '@googlemaps/places';
 import axios from 'axios';
+import { captureError } from "../errorHandler.js";
 
 export const USE_TYPES = {
     'LOGIN/REGISTER' : 'LOGIN/REGISTER',
@@ -167,6 +168,7 @@ export const revokeOauthClient = async (refreshToken) => {
       return false;
     }
   } catch (err) {
+    captureError(err, { file: "google.js", action: "revokeOauthClient", role: "admin" });
     console.error('Token revocation failed:', err.response?.data || err.message);
     return false;
   }
@@ -219,6 +221,7 @@ export const getAuthorizationUrl = async (sessionState,scopes = []) => {
         });
         return { authorizationUrl }
     } catch (error) {
+        captureError(error, { file: "google.js", action: "getAuthorizationUrl", role: "admin" });
         throw new Error(error?.message)
     }
 }
@@ -234,6 +237,7 @@ export const getUserInfo = async (googleClient) => {
         const response = await googleClient?.userinfo?.get();
         return response.data
     } catch (error) {
+        captureError(error, { file: "google.js", action: "getUserInfo", role: "admin" });
         throw new Error(error.message)
     }
 }
@@ -283,6 +287,7 @@ export async function createMeetEvent(calendar, eventDetails) {
       joinLink: meetLink,              // Google Meet joining link
     };
   } catch (error) {
+    captureError(error, { file: "google.js", action: "createMeetEvent", role: "admin" });
     console.error('Failed to create Meet event:', error.message);
     throw new Error('Unable to create Google Meet event. Please try again later.');
   }
@@ -302,6 +307,7 @@ export async function cancelMeetEvent(calendar, eventId) {
 
     console.log('Event successfully canceled.');
   } catch (error) {
+    captureError(error, { file: "google.js", action: "cancelMeetEvent", role: "admin" });
     console.error('Failed to cancel event:', error.response?.data || error.message);
     throw new Error('Could not cancel the event.');
   }

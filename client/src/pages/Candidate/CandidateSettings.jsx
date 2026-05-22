@@ -10,6 +10,7 @@ import useCandidateAuth from '../../hooks/useCandidateAuth'
 import { disconnectTelegram } from '../../services/candidates.service'
 import { fetchCandidateAuthData } from '../../redux/candidateAuthSlice'
 import { useDispatch } from 'react-redux'
+import * as Sentry from '@sentry/react';
 
 const TELEGRAM_BOT_USERNAME = import.meta.env.VITE_TELEGRAM_BOT_USERNAME;
 
@@ -33,6 +34,10 @@ function CandidateSettings() {
                 showSuccessToast("Success",response.data?.message || 'Telegram disconnected successfully')
             }
         } catch (error) {
+            Sentry.captureException(error, {
+              tags: { file: "CandidateSettings.jsx", action: "handleTelegramDisconnect", role: "candidate" },
+              extra: { response: error?.response?.data, message: error?.message },
+            });
             console.log("Disconnect telegram error : ", error.message);
             showErrorToast("Error",error?.response?.data?.error,"Some error occured")
         }finally{

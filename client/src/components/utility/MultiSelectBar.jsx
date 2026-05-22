@@ -11,6 +11,7 @@ import IconWrapper from '../Cards/IconWrapper'
 import { ArrowRight, Calendar, Ellipsis, Star, User, X } from 'lucide-react'
 import { useUnknownProfilePicture } from '../../context/ThemeContext'
 import { assignReviewerForCandidates, moveMultipleCandidates, rateMultipleCandidates, rejectMultipleCandidates } from '../../services/hr.service'
+import * as Sentry from '@sentry/react';
 
 export const getMaxScoreEachStage = (currentStage) =>{
     let stageScores = {
@@ -291,6 +292,10 @@ function MultiSelectBar({selectedData,jobId,clearSelection}) {
         setIsLoading(false);
         clearSelection([])
     } catch (error) {
+        Sentry.captureException(error, {
+          tags: { file: "MultiSelectBar.jsx", action: "handleConfirm", role: "admin" },
+          extra: { response: error?.response?.data, message: error?.message },
+        });
         setIsLoading(false);
         console.log(`${action.name} Function error `,error)
         showErrorToast("Error",error?.response?.data?.error || `Error in ${action.label} action`)
@@ -325,6 +330,10 @@ function MultiSelectBar({selectedData,jobId,clearSelection}) {
         clearSelection([])
         setAction(null);
       } catch (error) {
+        Sentry.captureException(error, {
+          tags: { file: "MultiSelectBar.jsx", action: "handleAssigneeChange", role: "admin" },
+          extra: { response: error?.response?.data, message: error?.message },
+        });
         setIsLoading(false);
         console.log(`${action.name} Function error `,error)
         showErrorToast("Error",error?.response?.data?.error || `Error in ${action.label} action`)
@@ -344,6 +353,10 @@ function MultiSelectBar({selectedData,jobId,clearSelection}) {
         clearSelection([])
         setAction(null);
       } catch (error) {
+        Sentry.captureException(error, {
+          tags: { file: "MultiSelectBar.jsx", action: "handleRatingSelect", role: "admin" },
+          extra: { response: error?.response?.data, message: error?.message },
+        });
         setIsLoading(false);
         console.log(`${action.name} Function error `,error)
         showErrorToast("Error",error?.response?.data?.error || `Error in ${action.label} action`)

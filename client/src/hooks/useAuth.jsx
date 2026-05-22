@@ -1,5 +1,6 @@
 import { getProfile } from '../services/auth.service';
 import { useQuery } from '@tanstack/react-query';
+import * as Sentry from '@sentry/react';
 
 const useAuth = () => {
     return useQuery({
@@ -7,15 +8,27 @@ const useAuth = () => {
         queryFn: async () => {
             try {
                 const data = await getProfile();
+                if (data) {
+                    Sentry.setUser({
+                        id: data._id,
+                        email: data.email,
+                        role: 'admin',
+                        appRole: data.role,
+                    });
+                }
                 return data;
             } catch (error) {
-                // console.error('Error fetching profile:', error);
+                Sentry.captureException(error, {
+                  tags: { file: "useAuth.jsx", action: "queryFn", role: "admin" },
+                  extra: { response: error?.response?.data, message: error?.message },
+                });
+                Sentry.setUser(null);
                 return null;
             }
         },
         retry: false,
-        staleTime: 5 * 60 * 1000, // 5 minutes
-        cacheTime: 10 * 60 * 1000, // 10 minutes
+        staleTime: 5 * 60 * 1000,
+        cacheTime: 10 * 60 * 1000,
     });
 };
 

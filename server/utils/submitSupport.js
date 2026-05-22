@@ -1,4 +1,5 @@
 import axios from "axios";
+import { captureError } from "./errorHandler.js";
 
 export const submitToGoogleSheets = async (data) => {
   try {
@@ -19,6 +20,7 @@ export const submitToGoogleSheets = async (data) => {
 
     return true;
   } catch (error) {
+    captureError(error, { file: "submitSupport.js", action: "submitSupport" });
     console.error('Error submitting to Google Sheets:', error.message);
     throw new Error('Failed to submit form');
   }

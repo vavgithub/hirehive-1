@@ -15,6 +15,7 @@ import GoogleIcon from '../../svg/Icons/GoogleIcon';
 import { FcGoogle } from 'react-icons/fc';
 import { useAuthContext } from '../../context/AuthProvider';
 import { useLogo } from '../../context/ThemeContext';
+import * as Sentry from '@sentry/react';
 
 const statsOne = [
     { title: 'Jobs Posted', value: 100, icon: () => <IconWrapper size={10} isInActiveIcon icon={Briefcase} /> },
@@ -69,6 +70,10 @@ const Login = () => {
             window.location.href = result.authorizationUrl;
           }
         } catch (error) {
+          Sentry.captureException(error, {
+            tags: { file: "Login.jsx", action: "registerGoogle", role: "admin" },
+            extra: { response: error?.response?.data },
+          });
           showErrorToast('Error',error?.message)
         }
     }

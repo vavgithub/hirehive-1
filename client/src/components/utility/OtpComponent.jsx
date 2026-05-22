@@ -6,6 +6,7 @@ import { FcGoogle } from 'react-icons/fc';
 import { googleInvitedLogin, googleLogin } from '../../services/auth.service';
 import IconWrapper from '../Cards/IconWrapper';
 import { showErrorToast } from '../ui/Toast';
+import * as Sentry from '@sentry/react';
 
 function OtpComponent({hasFooter = false,token,showSendOTP, inviteMail , handleSendOtp, handleOtpSubmit , email , otp , isSubmitting , otpError , setOtp, cardbg = ""}) {
    
@@ -32,6 +33,10 @@ function OtpComponent({hasFooter = false,token,showSendOTP, inviteMail , handleS
           window.location.href = result.authorizationUrl;
         }
       } catch (error) {
+        Sentry.captureException(error, {
+          tags: { file: "OtpComponent.jsx", action: "registerGoogle", role: "admin" },
+          extra: { response: error?.response?.data, message: error?.message },
+        });
         showErrorToast('Error',error?.message)
       }
   }

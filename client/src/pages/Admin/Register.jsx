@@ -11,6 +11,7 @@ import { showErrorToast, showSuccessToast } from '../../components/ui/Toast';
 import { useOnboardingContext } from '../../context/OnboardingProvider';
 import { checkUserAuthStatus } from '../../services/auth.service';
 import { useAuthContext } from '../../context/AuthProvider';
+import * as Sentry from '@sentry/react';
 
 export const steps = [
     { id: "REGISTER", label: "Register" },
@@ -43,6 +44,10 @@ const Register = () => {
           onboardContext?.setOnboardData(response?.userData)
         }
       } catch (error) {
+        Sentry.captureException(error, {
+          tags: { file: "Register.jsx", action: "checkAuthStatus", role: "admin" },
+          extra: { response: error?.response?.data, message: error?.message },
+        });
         console.log(error)
         if(error?.response?.status !== 401){
           showErrorToast('Error',error.response.data.message)

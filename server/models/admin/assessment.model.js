@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import { assessmentTemplates } from "../../utils/assessment.templates.js";
+import { captureError } from "../../utils/errorHandler.js";
 
 const questionSchema = new mongoose.Schema(
   {
@@ -123,6 +124,7 @@ export const seedTemplates = async () => {
       console.log("Assessment Templates added");
     }
   } catch (error) {
+    captureError(error, { file: "assessment.model.js", action: "assessmentModel" });
     console.log("Assessment template creation error : ", error);
   }
 };

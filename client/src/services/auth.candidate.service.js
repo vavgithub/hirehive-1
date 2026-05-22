@@ -1,5 +1,6 @@
 import { validateProfileImages, validateResume } from "../utility/validationRules";
 import axios from "./axios";
+import * as Sentry from '@sentry/react';
 
 //GET
 export const getCandidateDashboard = () => axios.get('/auth/candidate/dashboard');
@@ -46,6 +47,10 @@ export const uploadCandidateProfilePicture = async (file) => {
     });
     return response.data.profilePictureUrl;
   } catch (error) {
+    Sentry.captureException(error, {
+      tags: { file: "auth.candidate.service.js", action: "uploadCandidateProfilePicture", role: "candidate" },
+      extra: { response: error?.response?.data, message: error?.message },
+    });
     throw error;
   }
 };
@@ -68,6 +73,10 @@ export const uploadResume = async (file, setUploadProgress) => {
     });
     return response.data.resumeUrl;
   } catch (error) {
+    Sentry.captureException(error, {
+      tags: { file: "auth.candidate.service.js", action: "uploadResume", role: "candidate" },
+      extra: { response: error?.response?.data, message: error?.message },
+    });
     throw error;
   }
 };
