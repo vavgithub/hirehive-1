@@ -19,6 +19,7 @@ import { companySizeOptions, industryTypeOptions, LocationOptions } from '../../
 import { formatPhoneNumber, PhoneInputField } from '../../components/Form/PhoneInputField';
 import { validationRules } from '../../utility/validationRules';
 import { editUserProfile } from '../../services/auth.service';
+import * as Sentry from '@sentry/react';
 import { useUnknownProfilePicture } from '../../context/ThemeContext';
 
 
@@ -201,6 +202,10 @@ function Profile() {
         setIsEditing(false);
       }
     } catch (error) {
+      Sentry.captureException(error, {
+        tags: { file: "Profile.jsx", action: "handleEditProfile", role: "admin" },
+        extra: { response: error?.response?.data, message: error?.message },
+      });
       showErrorToast(
         'Error',
         error.response?.data?.message || 'Error updating profile'

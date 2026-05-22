@@ -113,10 +113,7 @@ export const brandDesignerConfig = [
                         hasAssigneeSelector : false,
                         showOwnReview : true,
                         hasBudgetLabel : false,
-                        hasLabel : {
-                            content : "Please review the portfolio and update the details below.",
-                            icon : false
-                        },
+                        hasLabel : false,
                         hasRatingComponent : true,
                         hasRemarks : false,
                         hasScoreCard : false,

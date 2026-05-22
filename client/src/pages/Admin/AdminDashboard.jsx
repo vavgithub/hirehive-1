@@ -72,7 +72,7 @@ function AdminDashboard() {
       renderCell: (params) => (
         <div className=" flex items-center gap-2 h-12 pl-1">
           <Avatar src={params?.row?.profilePictureUrl || UNKNOWN_PROFILE_PICTURE_URL} sx={{ width: 32, height: 32 }} />
-          <p className='w-full overflow-hidden whitespace-nowrap text-ellipsis'>{params?.row?.firstName + " " + params?.row?.lastName ?? ""}</p>
+          <p className='w-full overflow-hidden whitespace-nowrap text-ellipsis'>{(params?.row?.firstName ?? "") + " " + (params?.row?.lastName ?? "")}</p>
         </div>
       )
     },

@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { Menu, MenuItem, IconButton, Avatar } from '@mui/material';
 import { logout } from '../services/auth.service';
+import * as Sentry from '@sentry/react';
 import useAuth from '../hooks/useAuth';
 import { useAuthContext } from '../context/AuthProvider';
 import LightLogo from "../svg/Logo/lightLogo.png"
@@ -48,6 +49,7 @@ const AdminLayout = () => {
     const handleLogout = async () => {
         try {
             await logout();
+            Sentry.setUser(null);
             setUser(null)
             refetch();
             queryClient.clear()

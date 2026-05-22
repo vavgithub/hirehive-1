@@ -13,6 +13,7 @@ import StyledCard from '../../components/Cards/StyledCard';
 import ContactUs from '../../components/Form/ContactUs';
 import Container from '../../components/Cards/Container';
 import IconWrapper from '../../components/Cards/IconWrapper';
+import * as Sentry from '@sentry/react';
 import { ArrowRight } from 'lucide-react';
 import Footer from '../../components/Footer/Footer';
 import LogoWrapper from '../../components/Logo/LogoWrapper';
@@ -60,6 +61,10 @@ const ViewJob = () => {
             await incrementApplyClick(mainId);
             navigate(`/apply-job/${mainId}`);
         } catch (error) {
+            Sentry.captureException(error, {
+              tags: { file: "ViewJob.jsx", action: "handleApplyClick", role: "candidate" },
+              extra: { response: error?.response?.data, message: error?.message },
+            });
             // console.error('Error incrementing apply click count:', error);
         }
     };

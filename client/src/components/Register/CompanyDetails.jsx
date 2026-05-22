@@ -17,6 +17,7 @@ import GlobalDropDown from '../Dropdowns/GlobalDropDown';
 import { saveCompanyDetails, sendJoinRequest } from '../../services/auth.service';
 import { LocationInputField } from '../Inputs/LocationInputField';
 import { useUnknownProfilePicture } from '../../context/ThemeContext';
+import * as Sentry from '@sentry/react';
 
 export const LocationOptions = [
   { value: 'afghanistan', label: 'Afghanistan' },
@@ -253,6 +254,10 @@ function CompanyDetails({currentStep,setCurrentStep}) {
             formData.append("companyLogo",file)
             setImageError("")
           } catch (error) {
+            Sentry.captureException(error, {
+              tags: { file: "CompanyDetails.jsx", action: "handleSubmit", role: "admin" },
+              extra: { response: error?.response?.data, message: error?.message },
+            });
             setImageError(error?.message)
           }
         }

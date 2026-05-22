@@ -7,6 +7,7 @@ import { User } from "../../models/admin/user.model.js";
 import { jobs } from "../../models/admin/jobs.model.js";
 import { archiveJob } from "../admin/jobs.controller.js";
 import { Company } from "../../models/admin/company.model.js";
+import { captureError } from "../../utils/errorHandler.js";
 
 export const submitDesignTask = async (req, res) => {
   try {
@@ -62,6 +63,8 @@ export const submitDesignTask = async (req, res) => {
           updatedStageStatus: designTaskStatus
       });
   } catch (error) {
+    captureError(error, { controller: "candidate.controller.js", action: "submitDesignTask", role: "candidate" });
+
       console.error('Error submitting Design Task:', error);
       res.status(500).json({ message: 'Server error', error: error.message });
   }
@@ -87,6 +90,8 @@ export const disconnectTelegram = async (req, res) => {
           message: 'Telegram disconnected successfully',
       });
   } catch (error) {
+    captureError(error, { controller: "candidate.controller.js", action: "disconnectTelegram", role: "candidate" });
+
       console.error('Error disconnecting telegram bot:', error);
       res.status(500).json({ message: 'Server error', error: error.message });
   }
@@ -124,6 +129,8 @@ const stats =  asyncHandler(async (req, res, next) => {
 
       res.status(200).json(new ApiResponse(200, stats, "Stats fetched successfully"));
   } catch (error) {
+    captureError(error, { controller: "candidate.controller.js", action: "stats", role: "candidate" });
+
       next(new ApiError(500, "Failed to fetch stats", [error.message]));
   }
 });
@@ -181,6 +188,8 @@ const jobSpecificStats = asyncHandler(async (req, res, next) => {
 
       res.status(200).json(new ApiResponse(200, stats, "Job-specific stats fetched successfully"));
   } catch (error) {
+    captureError(error, { controller: "candidate.controller.js", action: "jobSpecificStats", role: "candidate" });
+
       console.error("Error in jobSpecificStats:", error);
       next(new ApiError(500, "Failed to fetch job-specific stats", [error.message]));
   }
@@ -219,6 +228,8 @@ const fetchActiveJobs = async (req, res) => {
 
     res.status(200).json(userIds?.length > 0 ? {companyDetails,activeJobs,totalOpenJobs} : {activeJobs,totalOpenJobs});
   } catch (error) {
+    captureError(error, { controller: "candidate.controller.js", action: "fetchActiveJobs", role: "candidate" });
+
     res.status(500).json({ message: "Error fetching open jobs", error: error.message });
   }
 };
@@ -238,6 +249,8 @@ const allCandidate = asyncHandler(async (req, res, next) => {
         new ApiResponse(200, candidateData, "Candidates fetched successfully")
       );
   } catch (error) {
+    captureError(error, { controller: "candidate.controller.js", action: "allCandidate", role: "candidate" });
+
     throw new ApiError(401, error?.message || "Failed to fetch candidates");
   }
 });
@@ -273,6 +286,8 @@ const getCandidate = async (req, res) => {
 
     res.status(200).json(jobCandidates);
   } catch (error) {
+    captureError(error, { controller: "candidate.controller.js", action: "getCandidate", role: "candidate" });
+
     console.error('Error fetching candidates for job:', error);
     res.status(500).send(error);
   }
@@ -284,6 +299,8 @@ const getCandidateById = async (req, res) => {
     const candidate = await candidates.findById(req.params.id);
     res.send(candidate);
   } catch (error) {
+    captureError(error, { controller: "candidate.controller.js", action: "getCandidateById", role: "candidate" });
+
     res.status(500).send(error);
   }
 };
@@ -303,6 +320,8 @@ const updateStatusAndStage = async (req, res) => {
 
     res.json(updatedCandidate);
   } catch (error) {
+    captureError(error, { controller: "candidate.controller.js", action: "updateStatusAndStage", role: "candidate" });
+
     res
       .status(400)
       .json({ message: "Error updating candidate", error: error.message });
@@ -346,6 +365,8 @@ const updateAssignee = async (req, res) => {
       res.status(404).json({ message: "No candidates were updated" });
     }
   } catch (error) {
+    captureError(error, { controller: "candidate.controller.js", action: "updateAssignee", role: "candidate" });
+
     console.error("Error updating assignees and statuses:", error);
     res
       .status(500)
@@ -369,6 +390,8 @@ const updateRating = async (req, res) => {
 
     res.status(200).json(candidate);
   } catch (error) {
+    captureError(error, { controller: "candidate.controller.js", action: "updateRating", role: "candidate" });
+
     console.error("Error updating candidate rating:", error);
     res.status(500).json({ message: "Server error" });
   }
@@ -402,6 +425,8 @@ const updateCandidateStatusById = async (req, res) => {
       candidate: updatedCandidate,
     });
   } catch (error) {
+    captureError(error, { controller: "candidate.controller.js", action: "updateCandidateStatusById", role: "candidate" });
+
     console.error("Error updating assignee:", error);
     res
       .status(500)
@@ -509,6 +534,8 @@ const fetchAssignedCandidate = async (req, res) => {
     });
 
   } catch (error) {
+    captureError(error, { controller: "candidate.controller.js", action: "fetchAssignedCandidate", role: "candidate" });
+
     console.error('Error in fetchAssignedCandidates:', error);
     res.status(500).json({ success: false, message: 'Internal server error', error: error.message });
   }
@@ -543,6 +570,8 @@ const searchJobs = async (req, res) => {
     // Respond with the list of jobs
     res.status(200).json({searchJobs:openJobsFiltered, searchJobsCount});
   } catch (error) {
+    captureError(error, { controller: "candidate.controller.js", action: "searchJobs", role: "candidate" });
+
     // Handle error if fetching jobs fails
     res.status(500).json({ message: error.message });
   }
@@ -733,6 +762,8 @@ const submitApplication = async (req, res) => {
       candidateId: newCandidate._id
     });
   } catch (error) {
+    captureError(error, { controller: "candidate.controller.js", action: "submitApplication", role: "candidate" });
+
     console.error('Error in submitApplication:', error);
     res.status(500).json({ message: error.message || 'Internal server error' });
   }

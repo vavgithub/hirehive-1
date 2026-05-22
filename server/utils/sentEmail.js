@@ -1,4 +1,5 @@
 import { assets, transporter } from "./emailer.js";
+import { captureError } from "./errorHandler.js";
 
 export const sendEmail = async (to, subject, content,type = "", extraAttachments = []) => {
   try {
@@ -55,6 +56,7 @@ export const sendEmail = async (to, subject, content,type = "", extraAttachments
     console.log("Message sent: %s", info.messageId);
     return info;
   } catch (error) {
+    captureError(error, { file: "sentEmail.js", action: "sendEmail" });
     console.error("Error sending email:", error);
     throw error;
   }

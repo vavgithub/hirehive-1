@@ -1,3 +1,5 @@
+import "./sentry.js";
+import * as Sentry from "@sentry/node";
 import dotenv from "dotenv";
 import { getEnvironmentConfig, validateEnvVariables } from "./config/environments.js";
 
@@ -14,6 +16,7 @@ validateEnvVariables(environment);
 const envConfig = getEnvironmentConfig(environment);
 
 import connectDB from "./db/index.js";
+import { captureError } from "./utils/errorHandler.js";
 import express from "express";
 import morgan from "morgan";
 import cors from "cors";
@@ -38,6 +41,7 @@ import { handleUploadError } from "./middlewares/uploadMiddleware.js";
 import { seedTemplates } from "./models/admin/assessment.model.js";
 import { seedTasks } from "./models/admin/task.model.js";
 import { initializeBot } from "./utils/integrations/telegram.js";
+import { runAiScoreBatchJob } from "./jobs/aiScoreBatchJob.js";
 
 const app = express(); 
 await initializeUploadDir(envConfig.UPLOAD_DIR);
@@ -100,6 +104,9 @@ connectDB()
 
     // Start the scheduled jobs
     startScheduledJobs();
+
+    runAiScoreBatchJob();
+    setInterval(runAiScoreBatchJob, 1 * 60 * 1000);
     
     //Seeding Assessment Templates
     // seedTemplates()
@@ -110,9 +117,12 @@ connectDB()
     });
   })
   .catch((error) => {
+    captureError(error, { file: "index.js", action: "appStartup" });
     console.log(error);
   });
 
 app.get("/", (req, res) => {
   res.send("Welcome to HireHive Job Portal API");
 });
+
+Sentry.setupExpressErrorHandler(app);

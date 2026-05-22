@@ -275,6 +275,15 @@ const jobApplicationSchema = new mongoose.Schema(
       enum: ["N/A", "Good Fit", "May Be", "Not A Good Fit"],
       default: "N/A",
     },
+    aiTriggerStatus: {
+      type: String,
+      enum: ['pending', 'in_progress', 'done', 'escalated'],
+      default: 'pending',
+    },
+    aiScoredAt: {
+      type: Date,
+      default: null,
+    },
     currentStage: {
       type: String,
       default: "", // Will be set when the candidate applies

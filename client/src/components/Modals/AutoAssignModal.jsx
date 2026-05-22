@@ -5,6 +5,7 @@ import axios from '../../services/axios';
 import IconWrapper from '../Cards/IconWrapper';
 import { User, X } from 'lucide-react';
 import { useUnknownProfilePicture } from '../../context/ThemeContext';
+import * as Sentry from '@sentry/react';
 
 const AutoAssignModal = ({ open, onClose, onAssign, jobId, budgetFilter }) => {
     const [reviewers, setReviewers] = useState([]);
@@ -40,6 +41,10 @@ const AutoAssignModal = ({ open, onClose, onAssign, jobId, budgetFilter }) => {
         const data = await fetchAvailableDesignReviewers();
         setReviewers(data);
       } catch (err) {
+        Sentry.captureException(err, {
+          tags: { file: "AutoAssignModal.jsx", action: "loadReviewers", role: "admin" },
+          extra: { response: err?.response?.data, message: err?.message },
+        });
         setError('Failed to load reviewers. Please try again.');
       }
       setIsLoading(false);

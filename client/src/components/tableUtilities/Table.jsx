@@ -23,6 +23,7 @@ import AutoAssignWithBudget from './AutoAssignWithBudget';
 import BudgetMenu from './BudgetMenu';
 import { BudgetField } from '../FormUtilities/BudgetField';
 import MuiCustomStylesForDataGrid from './MuiCustomStylesForDataGrid';
+import * as Sentry from '@sentry/react';
 import IconWrapper from '../Cards/IconWrapper';
 import { Download } from 'lucide-react';
 import TickCheckbox from '../Checkboxes/TickCheckbox';
@@ -463,6 +464,10 @@ const Table = ({
       exportToExcel(exportData, fileName);
       showSuccessToast("Success","Data exported successfully")
     } catch (error) {
+      Sentry.captureException(error, {
+        tags: { file: "Table.jsx", action: "handleExport", role: "admin" },
+        extra: { response: error?.response?.data, message: error?.message },
+      });
       console.error("Export data error:", error.message)
       showErrorToast("Error","Data export failed")
     }

@@ -13,6 +13,7 @@ import IconWrapper from '../../components/Cards/IconWrapper';
 import useCandidateAuth from '../../hooks/useCandidateAuth';
 import Header from '../../components/utility/Header';
 import LogoWrapper from '../../components/Logo/LogoWrapper';
+import * as Sentry from '@sentry/react';
 import TickCheckbox from '../../components/Checkboxes/TickCheckbox';
 import { useNavigate } from 'react-router-dom';
 
@@ -43,6 +44,10 @@ const PreAssessment = () => {
             setHasAudioError(false);
             return false
         } catch (error) {
+            Sentry.captureException(error, {
+              tags: { file: "PreAssessment.jsx", action: "checkAudioStatus", role: "candidate" },
+              extra: { response: error?.response?.data, message: error?.message },
+            });
             setHasAudioError(true);
             return true
         }

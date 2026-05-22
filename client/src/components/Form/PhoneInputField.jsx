@@ -3,6 +3,7 @@ import { Controller } from "react-hook-form";
 import PhoneInput from "react-phone-input-2";
 import { parsePhoneNumberFromString, isValidPhoneNumber } from 'libphonenumber-js';
 import "react-phone-input-2/lib/style.css"; // Import default CSS
+import * as Sentry from '@sentry/react';
 
 export const PhoneInputField = ({
   name,
@@ -42,6 +43,10 @@ export const PhoneInputField = ({
                 return "Invalid phone number format or length";
               }
             } catch (error) {
+              Sentry.captureException(error, {
+                tags: { file: "PhoneInputField.jsx", action: "phoneValidation", role: "candidate" },
+                extra: { response: error?.response?.data, message: error?.message },
+              });
               return "Invalid phone number";
             }
           }
@@ -60,6 +65,10 @@ export const PhoneInputField = ({
             const phoneWithPlus = `+${value}`;
             setIsInvalid(!isValidPhoneNumber(phoneWithPlus));
           } catch (error) {
+            Sentry.captureException(error, {
+              tags: { file: "PhoneInputField.jsx", action: "phoneValidation", role: "candidate" },
+              extra: { response: error?.response?.data, message: error?.message },
+            });
             setIsInvalid(true);
           }
         };
@@ -95,6 +104,10 @@ export const PhoneInputField = ({
                   const phoneObj = parsePhoneNumberFromString(`+${inputNumber}`);
                   return phoneObj ? phoneObj.isValid() : true;
                 } catch (e) {
+                  Sentry.captureException(e, {
+                    tags: { file: "PhoneInputField.jsx", action: "phoneValidation", role: "candidate" },
+                    extra: { response: e?.response?.data, message: e?.message },
+                  });
                   return true; // Let our validate function handle errors
                 }
               }}
