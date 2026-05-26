@@ -8,7 +8,7 @@ import { useAuthContext } from '../context/AuthProvider';
 import LightLogo from "../svg/Logo/lightLogo.png"
 import StyledMenu from './MUIUtilities/StyledMenu';
 import IconWrapper from './Cards/IconWrapper';
-import { Briefcase, CalendarDays, ChevronDown, ChevronUp, ClipboardCheck, FileText, IdCard, LayoutGrid, LogOut, MonitorDot, Settings, Star, User, UserCheck, Users } from 'lucide-react';
+import { Briefcase, CalendarDays, ChevronDown, ChevronUp, ClipboardCheck, CreditCard, FileText, IdCard, LayoutGrid, LogOut, MonitorDot, Settings, Star, User, UserCheck, Users } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import { getRoute, hasRoutePermission, ROLES, ROUTE_KEY } from '../config/permissions.config';
 import Footer from './Footer/Footer';
@@ -230,7 +230,8 @@ const AdminLayout = () => {
     const renderBottomMenu = () => {
         return (
             <>
-                {hasRoutePermission(user.role,ROUTE_KEY.SETTINGS) && <NavItem to={getRoute(user.role,ROUTE_KEY.SETTINGS)} icon={() => <IconWrapper inheritColor icon={Settings} />} activeIcon={() => <IconWrapper inheritColor icon={Settings} />}> Settings </NavItem>}
+                {hasRoutePermission(user.role, ROUTE_KEY.MANAGE_PLAN) && <NavItem to={getRoute(user.role, ROUTE_KEY.MANAGE_PLAN)} icon={() => <IconWrapper inheritColor icon={CreditCard} />} activeIcon={() => <IconWrapper inheritColor icon={CreditCard} />}> Manage Plan </NavItem>}
+                {hasRoutePermission(user.role, ROUTE_KEY.SETTINGS) && <NavItem to={getRoute(user.role, ROUTE_KEY.SETTINGS)} icon={() => <IconWrapper inheritColor icon={Settings} />} activeIcon={() => <IconWrapper inheritColor icon={Settings} />}> Settings </NavItem>}
             </>
         )
     }

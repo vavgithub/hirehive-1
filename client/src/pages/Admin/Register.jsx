@@ -17,7 +17,8 @@ export const steps = [
     { id: "REGISTER", label: "Register" },
     { id: "OTP", label: "Otp" },
     { id: "PASSWORD", label: "Password" },
-    { id: "COMPANY DETAILS", label: "Company Details" },
+    { id: "COMPANY DETAILS", label: "Company" },
+    { id: "PLAN SELECTION", label: "Plan" },
     { id: "ADD MEMBERS", label: "Add Members" },
   ];
 
