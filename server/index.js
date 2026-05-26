@@ -32,6 +32,7 @@ import drRoutes from "./routes/admin/dr.router.js"
 import hrRoutes from "./routes/admin/hr.router.js"
 import adminRoutes from "./routes/admin/admin.router.js"
 import companyRoutes from "./routes/admin/company.router.js"
+import internalRouter from './routes/internal/feedback.router.js';
 import startScheduledJobs from "./utils/scheduledJobs.js";
 import { initializeUploadDir } from "./config/paths.js";
 import corsConfig from "./config/cors.config.js";
@@ -86,6 +87,7 @@ app.use("/api/v1/candidates", candidateRoutes);
 app.use("/api/v1/admin/candidate", adminCandidateRoutes);
 app.use("/api/v1/dr", drRoutes);
 app.use("/api/v1/company", companyRoutes);
+app.use('/api/v1/internal', internalRouter);
 
 const PORT = envConfig.PORT;
 
