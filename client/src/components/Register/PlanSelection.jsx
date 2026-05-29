@@ -40,7 +40,7 @@ function PlanSelection({ currentStep, setCurrentStep }) {
         </h1>
       </div>
 
-      <div className='px-8 pb-8 flex flex-col md:flex-row gap-6 items-start'>
+      <div className='px-8 pb-8 flex flex-col md:flex-row gap-6 items-stretch'>
 
         <div className='flex-1'>
           <label className='font-bricolage font-semibold typography-body'>
@@ -59,10 +59,10 @@ function PlanSelection({ currentStep, setCurrentStep }) {
         <StyledCard
           padding={4}
           backgroundColor='bg-background-80'
-          extraStyles='w-full md:w-72 flex-shrink-0 flex flex-col items-center gap-4'
+          extraStyles='w-full md:w-72 flex-shrink-0 flex flex-col items-center justify-center gap-4 h-auto'
         >
           <span className='font-bricolage font-bold text-5xl text-font-main'>$0</span>
-          <div className='text-center'>
+          <div className='text-center -mt-2'>
             <p className='typography-body font-medium'>Free of cost!</p>
             <p className='typography-small-p text-font-gray mt-1'>No Credit card details required!</p>
           </div>
@@ -71,7 +71,7 @@ function PlanSelection({ currentStep, setCurrentStep }) {
             variant='primary'
             type='button'
             onClick={() => advance('trial')}
-            className='!w-full !px-0 my-2'
+            className='!w-full !px-0 mt-4'
           >
             Start my free trial
           </Button>

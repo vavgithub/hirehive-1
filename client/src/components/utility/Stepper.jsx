@@ -22,17 +22,17 @@ function Stepper({padding,steps,currentStep,setCurrentStep}) {
 
   return (
         <div className={`p-${valueSteps[padding]}` + ' w-[80%] mx-auto'}>
-            <div className='flex w-full justify-center items-center relative'> 
+            <div className='flex w-full justify-center items-center relative mb-8'> 
 
             {
                 steps?.map((stepObj,index,stepsArr)=>{
                     return (
                         <Fragment key={index}>
-                        <div className='flex flex-col justify-center items-center gap-2 z-20 w-20 flex-shrink-0'>
-                            <div onClick={()=>setCurrentStep(stepObj?.id)} className={'border-2  rounded-full aspect-square w-12 flex justify-center cursor-pointer items-center p-1 ' + (((currentStep === stepObj.id) || (index < currentIndex)) ? "border-teal-100 text-teal-100" : "border-font-gray text-font-gray")}>
+                        <div className='flex flex-col justify-center items-center gap-2 z-20 mx-4 relative'>
+                            <div onClick={()=>setCurrentStep(stepObj?.id)} className={'border-2  rounded-full aspect-square w-9 flex justify-center cursor-pointer items-center p-1 ' + (((currentStep === stepObj.id) || (index < currentIndex)) ? "border-teal-100 text-teal-100" : "border-font-gray text-font-gray")}>
                                 <p>{index + 1}</p>
                             </div>
-                            <p className={' typography-body font-semibold whitespace-nowrap ' + (((currentStep === stepObj.id) || (index < currentIndex)) ? "text-teal-100" : "text-font-gray")}>{stepObj?.label}</p>
+                            <p className={'typography-body whitespace-nowrap absolute top-10 ' + (((currentStep === stepObj.id) || (index < currentIndex)) ? "text-teal-100" : "text-font-gray")}>{stepObj?.label}</p>
                         </div>
                         {(index < stepsArr.length - 1) && 
                         <div className='bg-divider-100 w-full h-[3px] z-10'>

@@ -1,0 +1,81 @@
+import React, { useState } from 'react'
+import { createPortal } from 'react-dom'
+import StyledCard from '../Cards/StyledCard'
+import { Button } from '../Buttons/Button'
+import IconWrapper from '../Cards/IconWrapper'
+import { X } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+
+// ── Conversion Modal ─────────────────────────────────────────────────────────
+function TrialConversionModal({ daysLeft, onClose }) {
+  const navigate = useNavigate()
+
+  return createPortal(
+    <div className='fixed z-[9999] inset-0 flex justify-center items-center bg-background-overlay'>
+      <StyledCard
+        padding={3}
+        backgroundColor='bg-background-90'
+        extraStyles='relative w-full max-w-md mx-4'
+      >
+        <div
+          onClick={onClose}
+          className='absolute top-4 right-4 cursor-pointer bg-background-70 h-9 min-w-9 flex justify-center items-center rounded-xl hover:bg-background-80'
+        >
+          <IconWrapper icon={X} size={0} />
+        </div>
+
+        <div className='text-center px-4 py-4'>
+          <h2 className='text-font-main mb-3'>
+            Your Free Trial ends in {daysLeft} Days
+          </h2>
+          <p className='typography-body text-font-gray mb-6'>
+            You would lose access to all the premium features. Upgrade now to continue enjoying the Geode Experience!
+          </p>
+          <Button
+            variant='primary'
+            type='button'
+            className='!w-full !px-0'
+            onClick={() => { onClose(); navigate('/admin/pricing') }}
+          >
+            Upgrade Now
+          </Button>
+        </div>
+      </StyledCard>
+    </div>,
+    document.body
+  )
+}
+
+// ── Trial Banner (inline in dashboard) ───────────────────────────────────────
+function TrialBanner({ daysLeft }) {
+  const [showModal, setShowModal] = useState(false)
+  const navigate = useNavigate()
+
+  return (
+    <>
+      <div className='w-full rounded-xl px-4 py-3 flex flex-col items-center gap-2'>
+        <p className='typography-body text-font-main font-semibold text-center'>
+          Your Trial ends in {daysLeft} days!
+        </p>
+        <Button
+          variant='primary'
+          type='button'
+          className='!w-full !px-0'
+          onClick={() => navigate('/admin/pricing')}
+        >
+          Upgrade Now
+        </Button>
+      </div>
+
+      {showModal && (
+        <TrialConversionModal
+          daysLeft={daysLeft}
+          onClose={() => setShowModal(false)}
+        />
+      )}
+    </>
+  )
+}
+
+export default TrialBanner
+export { TrialConversionModal }
