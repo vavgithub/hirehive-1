@@ -1,5 +1,6 @@
-import { assets, createTransporter } from "./emailer.js";
 import { captureError } from "./errorHandler.js";
+import { assets, createTransporter } from "./emailer.js";
+
 
 export const sendEmail = async (to, subject, content,type = "", extraAttachments = []) => {
   try {
