@@ -40,7 +40,6 @@ function EnterpriseContactModal({ onClose }) {
     setTeamSizeError('')
     setIsSubmitting(true)
     try {
-      console.log('Enterprise contact form data:', { ...data, teamSize, message })
       const url = `${GOOGLE_SCRIPT_URL}?firstName=${encodeURIComponent(data.firstName)}&lastName=${encodeURIComponent(data.lastName)}&email=${encodeURIComponent(data.email)}&company=${encodeURIComponent(data.company)}&teamSize=${encodeURIComponent(teamSize)}&message=${encodeURIComponent(message || '')}&timestamp=${encodeURIComponent(new Date().toISOString())}`
       await fetch(url, { method: 'GET', mode: 'no-cors' })
       showSuccessToast('Success', 'Your message has been sent! We\'ll get back to you within 24 hours.')
@@ -56,7 +55,7 @@ function EnterpriseContactModal({ onClose }) {
   }
 
   return createPortal(
-    <div className='fixed z-[9999] inset-0 flex justify-center items-center bg-background-overlay'>
+    <div className='fixed z-50 inset-0 flex justify-center items-center bg-background-overlay bg-black/20'>
       <StyledCard
         padding={3}
         backgroundColor='bg-background-90'
@@ -135,6 +134,7 @@ function EnterpriseContactModal({ onClose }) {
           {/* Team size */}
           <GlobalDropDown
             label='Team size'
+            required
             extraStylesForLabel='font-bricolage font-medium'
             value={teamSize}
             error={teamSizeError}

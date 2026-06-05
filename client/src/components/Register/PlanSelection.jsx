@@ -34,14 +34,14 @@ function PlanSelection({ currentStep, setCurrentStep }) {
 
   return (
     <>
-      <div className='w-full px-8 pt-6 pb-8 flex flex-col justify-center items-center text-center'>
-        <h1 className='typography-h2 text-center leading-tight'>
-          Try the Premium Geode Experience<br className='hidden sm:block' /> for 21 days!
-        </h1>
+      <div className='text-center mb-6 px-8 pt-6'>
+        <h2>Try the Premium Geode Experience for 21 days!</h2>
+        <p className='typography-large-p text-font-gray font-light mt-2'>
+          Full access to all Geode features, free of cost. No credit card required.
+        </p>
       </div>
 
       <div className='px-8 pb-8 flex flex-col md:flex-row gap-6 items-stretch'>
-
         <div className='flex-1'>
           <label className='font-bricolage font-semibold typography-body'>
             Full access to all Geode features:
@@ -49,7 +49,7 @@ function PlanSelection({ currentStep, setCurrentStep }) {
           <ul className='mt-4 flex flex-col gap-3'>
             {FEATURES.map(f => (
               <li key={f} className='flex items-start gap-3 typography-body text-font-gray'>
-                <IconWrapper icon={Check} inheritColor customIconSize={0} customStrokeWidth={11} size={0} className="flex-shrink-0 mt-[2px] text-teal-300" />
+                <IconWrapper icon={Check} inheritColor customIconSize={0} customStrokeWidth={11} size={0} className='flex-shrink-0 mt-[2px]' />
                 <span>{f}</span>
               </li>
             ))}
@@ -66,24 +66,13 @@ function PlanSelection({ currentStep, setCurrentStep }) {
             <p className='typography-body font-medium'>Free of cost!</p>
             <p className='typography-small-p text-font-gray mt-1'>No Credit card details required!</p>
           </div>
-
-          <Button
-            variant='primary'
-            type='button'
-            onClick={() => advance('trial')}
-            className='!w-full !px-0 mt-4'
-          >
+          <Button variant='primary' type='button' onClick={() => advance('trial')} className='!w-full !px-0 mt-4'>
             Start my free trial
           </Button>
-
-          <p
-            onClick={() => advance('free')}
-            className='typography-body text-font-gray hover:text-white cursor-pointer transition-colors'
-          >
+          <Button variant='tertiary' type='button' onClick={() => advance('free')} className='whitespace-nowrap'>
             Not now, use free version
-          </p>
+          </Button>
         </StyledCard>
-
       </div>
     </>
   )

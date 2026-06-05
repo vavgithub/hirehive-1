@@ -5,13 +5,16 @@ import { Button } from '../Buttons/Button'
 import IconWrapper from '../Cards/IconWrapper'
 import { X } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
+import { useAuthContext } from '../../context/AuthProvider'
+import { getRoute, ROUTE_KEY } from '../../config/permissions.config'
 
 // ── Conversion Modal ─────────────────────────────────────────────────────────
 function TrialConversionModal({ daysLeft, onClose }) {
   const navigate = useNavigate()
+  const { user } = useAuthContext()
 
   return createPortal(
-    <div className='fixed z-[9999] inset-0 flex justify-center items-center bg-background-overlay'>
+    <div className='fixed z-50 inset-0 flex justify-center items-center bg-background-overlay bg-black/20'>
       <StyledCard
         padding={3}
         backgroundColor='bg-background-90'
@@ -35,7 +38,7 @@ function TrialConversionModal({ daysLeft, onClose }) {
             variant='primary'
             type='button'
             className='!w-full !px-0'
-            onClick={() => { onClose(); navigate('/admin/pricing') }}
+            onClick={() => { onClose(); navigate(getRoute(user.role, ROUTE_KEY.PRICING)) }}
           >
             Upgrade Now
           </Button>
@@ -48,8 +51,8 @@ function TrialConversionModal({ daysLeft, onClose }) {
 
 // ── Trial Banner (inline in dashboard) ───────────────────────────────────────
 function TrialBanner({ daysLeft }) {
-  const [showModal, setShowModal] = useState(false)
   const navigate = useNavigate()
+  const { user } = useAuthContext()
 
   return (
     <>
@@ -61,18 +64,12 @@ function TrialBanner({ daysLeft }) {
           variant='primary'
           type='button'
           className='!w-full !px-0'
-          onClick={() => navigate('/admin/pricing')}
+          onClick={() => navigate(getRoute(user.role, ROUTE_KEY.PRICING))}
         >
           Upgrade Now
         </Button>
       </div>
 
-      {showModal && (
-        <TrialConversionModal
-          daysLeft={daysLeft}
-          onClose={() => setShowModal(false)}
-        />
-      )}
     </>
   )
 }

@@ -1,48 +1,50 @@
 import React, { useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
+import { useAuthContext } from '../../context/AuthProvider'
 import Container from '../../components/Cards/Container'
 import Header from '../../components/utility/Header'
 import StyledCard from '../../components/Cards/StyledCard'
 import { Button } from '../../components/Buttons/Button'
-import { Check, X, Info } from 'lucide-react'
+import { Check, Lock, X } from 'lucide-react'
 import IconWrapper from '../../components/Cards/IconWrapper'
 import ToggleSwitch from '../../components/ui/ToggleSwitch'
 import Modal from '../../components/Modals/Modal'
 import { ACTION_TYPES } from '../../utility/ActionTypes'
 import TrialInfoModal from '../../components/Register/TrialInfoModal'
 import EnterpriseContactModal from '../../components/Register/EnterpriseContactModal'
+import AssessmentBanner from '../../components/ui/AssessmentBanner'
 
 const FREE_FEATURES = [
   { label: 'Up to 150 applications/month', included: true },
   { label: '2 team seats included',        included: true },
   { label: 'Google Calendar Invites',      included: true },
-  { label: 'Auto assign portfolios',       included: true },
   { label: 'Rate candidates',              included: true },
   { label: 'Standard support',             included: true },
-  { label: 'Geode Score',                  included: false },
+  { label: 'Auto assign portfolios',       included: false },
+  { label: 'Geode Score evaluations',      included: false },
   { label: 'Budget screening',             included: false },
   { label: 'Talent pool / Future Gems',    included: false },
 ]
 
 const PRO_FEATURES = [
-  { label: 'Unlimited applications',     included: true },
-  { label: 'Per-user pricing',           included: true },
-  { label: 'Geode Score evaluations',    included: true },
-  { label: 'Budget screening',           included: true },
-  { label: 'Talent pool / Future Gems',  included: true },
-  { label: '5 Pre-built assessments',    included: true },
-  { label: 'Feedback + ratings',         included: true },
-  { label: 'Reports & exports',          included: true },
+  { label: 'Unlimited candidate applications', included: true },
+  { label: 'Per-user pricing',                included: true },
+  { label: 'Auto-assign portfolios',          included: true },
+  { label: 'Geode Score evaluations',         included: true },
+  { label: 'Budget screening',               included: true },
+  { label: 'Talent pool / Future Gems',       included: true },
+  { label: '5 Pre-built assessments',         included: true },
+  { label: 'Feedback + ratings',             included: true },
+  { label: 'Reports & exports',              included: true },
+  { label: 'Standard support',              included: true },
 ]
 
 const ENTERPRISE_FEATURES = [
-  { label: 'Unlimited applications',   included: true },
-  { label: 'Unlimited team seats',     included: true },
-  { label: 'Custom assessments',       included: true },
-  { label: 'Custom knowledge tests',   included: true },
-  { label: 'Dedicated support',        included: true },
-  { label: 'Advanced analytics',       included: true },
-  { label: 'SSO & security features',  included: true },
-  { label: 'Custom integrations',      included: true },
+  { label: 'Unlimited team seats',    included: true },
+  { label: 'Custom assessments',      included: true },
+  { label: 'Advanced analytics',      included: true },
+  { label: 'Custom integrations',     included: true },
+  { label: 'Dedicated support',       included: true },
 ]
 
 const COMPARISON = [
@@ -58,7 +60,7 @@ const COMPARISON = [
   {
     category: 'Evaluation & Scoring',
     rows: [
-      { feature: 'Geode Score',        free: false, pro: true,  enterprise: true },
+      { feature: 'Geode Score',        free: true,  pro: true,  enterprise: true },
       { feature: 'Budget screening',   free: false, pro: true,  enterprise: true },
       { feature: 'Reports / Export',   free: false, pro: true,  enterprise: true },
       { feature: 'Feedback & ratings', free: 'Rate only', pro: 'Feedback + Rate', enterprise: 'Feedback + Rate' },
@@ -79,10 +81,10 @@ const COMPARISON = [
   },
 ]
 
-const FeatureItem = ({ label, included }) => (
-  <li className={`flex items-start gap-3 typography-body text-font-gray ${!included && 'opacity-40'}`}>
+const FeatureItem = ({ label, included, className = '' }) => (
+  <li className={`flex items-start gap-3 typography-body text-font-gray ${!included && 'opacity-40'} ${className}`}>
     <IconWrapper
-      icon={included ? Check : X}
+      icon={included ? Check : Lock}
       inheritColor
       customIconSize={0}
       customStrokeWidth={included ? 11 : 4}
@@ -100,21 +102,46 @@ const CellValue = ({ value }) => {
 }
 
 function PricingAndSubscription() {
+  const [searchParams] = useSearchParams()
+  const { user } = useAuthContext()
+  const currentPlan = searchParams.get('plan') || user?.plan || 'free'
+
   const [billing, setBilling] = useState('monthly')
-  const [currentPlan, setCurrentPlan] = useState('free')
   const [showEndTrialModal, setShowEndTrialModal] = useState(false)
   const [showTrialModal, setShowTrialModal] = useState(false)
   const [showEnterpriseModal, setShowEnterpriseModal] = useState(false)
 
   const proPrice = billing === 'yearly' ? 15 : 19
 
-  const getFreeCTA = () => currentPlan === 'trial' ? 'Upgrade now' : 'Get Started'
-  const getProCTA = () => currentPlan === 'pro' ? 'Add license' : currentPlan === 'free' ? 'Upgrade to Pro' : 'Get Started'
-  const getEnterpriseCTA = () => currentPlan === 'enterprise' ? 'Add license' : 'Contact Us'
+  const getFreeCTA = () => {
+    if (currentPlan === 'trial') return 'Upgrade Now'
+    return 'Get Started'
+  }
 
-  const getFreeVariant = () => currentPlan === 'trial' ? 'primary' : 'secondary'
-  const getProVariant = () => currentPlan === 'pro' ? 'primary' : currentPlan === 'free' ? 'primary' : 'secondary'
-  const getEnterpriseVariant = () => currentPlan === 'enterprise' ? 'primary' : 'secondary'
+  const getProCTA = () => {
+    if (currentPlan === 'free') return 'Upgrade to Pro'
+    if (currentPlan === 'pro') return 'Add License'
+    return 'Get Started'
+  }
+
+  const getEnterpriseCTA = () => {
+    if (currentPlan === 'enterprise') return 'Add License'
+    if (currentPlan === 'free' || currentPlan === 'trial' || currentPlan === 'pro') return 'Contact Us'
+    return 'Get Started'
+  }
+
+  const getFreeVariant = () => (currentPlan === 'trial' ? 'primary' : 'outline')
+
+  const getProVariant = () => {
+    if (currentPlan === 'free' || currentPlan === 'trial' || currentPlan === 'pro') return 'primary'
+    return 'outline'
+  }
+
+  const getEnterpriseVariant = () => (currentPlan === 'enterprise' ? 'primary' : 'outline')
+
+  const isFreeCTADisabled = currentPlan === 'free'
+  const isProCTADisabled = false
+  const isEnterpriseCTADisabled = false
 
   const handleFreeCTA = () => {
     if (currentPlan === 'trial') setShowEndTrialModal(true)
@@ -127,28 +154,12 @@ function PricingAndSubscription() {
 
   return (
     <Container>
-      <Header
-        HeaderText="Pricing & Subscription"
-        rightContent={
-          /* DEV ONLY — remove before final release */
-          <select
-            value={currentPlan}
-            onChange={(e) => setCurrentPlan(e.target.value)}
-            className='bg-background-100 border border-divider-100 text-font-main typography-small-p rounded-lg px-3 py-1'
-          >
-            <option value='free'>Current plan: Free</option>
-            <option value='trial'>Current plan: Trial</option>
-            <option value='pro'>Current plan: Pro</option>
-            <option value='enterprise'>Current plan: Enterprise</option>
-          </select>
-        }
-      />
+      <Header HeaderText="Pricing & Subscription" />
 
       <div className='text-center mb-8'>
-        <h1>Choose how deep you want to hire</h1>
-        <p className='typography-large-p text-font-gray font-light mt-2 max-w-xl mx-auto'>
-          Start with the essentials, then unlock deeper evaluation, stronger collaboration,
-          and reusable talent intelligence as your hiring grows.
+        <h2>Built around evaluation, not just applications</h2>
+        <p className='typography-large-p text-font-gray font-light mt-1 max-w-xl mx-auto'>
+          Most hiring tools help you manage candidates. Geode helps you understand them. Discover the right plan for your hiring process.
         </p>
       </div>
 
@@ -167,22 +178,12 @@ function PricingAndSubscription() {
       </div>
 
       {(currentPlan === 'free' || currentPlan === 'trial') && (
-        <div className='flex items-center justify-between px-4 py-3 rounded-xl border border-divider-100 mb-8'>
-          <div className='flex items-center gap-2'>
-            <IconWrapper inheritColor icon={Info} size={0} customIconSize={1} className='text-teal-100' />
-            <p className='typography-body'>
-              <span className='font-semibold text-font-main'>First time here?</span>
-              <span className='text-font-gray'> New users get a guided trial experience during onboarding.</span>
-            </p>
-          </div>
-          <Button
-            variant='secondary'
-            type='button'
-            onClick={() => setShowTrialModal(true)}
-          >
-            View trial flow
-          </Button>
-        </div>
+        <AssessmentBanner
+          title='First time here?'
+          description='New users get a guided trial experience during onboarding.'
+          buttonText='Experience Trial'
+          onButtonClick={() => setShowTrialModal(true)}
+        />
       )}
 
       <div className='grid grid-cols-1 md:grid-cols-3 gap-4 mb-10'>
@@ -190,24 +191,29 @@ function PricingAndSubscription() {
         {/* FREE */}
         <StyledCard padding={3} backgroundColor='bg-background-90' extraStyles='relative flex flex-col'>
           {(currentPlan === 'free' || currentPlan === 'trial') && (
-            <div className='absolute -top-3 left-4'>
+            <div className='absolute -top-3 left-1/2 -translate-x-1/2'>
               <span className='typography-small-p text-font-gray bg-background-90 border border-divider-100 px-2 py-0.5 rounded-full'>
                 Current Plan
               </span>
             </div>
           )}
-          <h3 className='mb-1'>Free</h3>
-          <p className='typography-small-p text-font-gray mb-4'>Getting used to Geode (2 seats only)</p>
-          <p className='font-bricolage font-bold text-4xl text-font-main mb-4'>$0</p>
+          <p className='typography-small-p text-font-gray mb-1'>Free</p>
+          <h3 className='mb-4'>
+            Getting used to Geode
+            <br />
+            (2 seats only)
+          </h3>
+          <p className='font-bricolage font-bold text-4xl text-font-main mt-4 mb-4'>$0</p>
           <Button
             variant={getFreeVariant()}
             type='button'
-            className='w-full !px-0 mb-6'
+            className='w-full !px-0 mb-8'
+            disabled={isFreeCTADisabled}
             onClick={handleFreeCTA}
           >
             {getFreeCTA()}
           </Button>
-          <p className='typography-small-p text-font-gray font-semibold tracking-wide uppercase mb-3'>What's included</p>
+          <p className='typography-small-p text-font-gray font-semibold mb-3'>What's included</p>
           <ul className='flex flex-col gap-2'>
             {FREE_FEATURES.map(f => <FeatureItem key={f.label} label={f.label} included={f.included} />)}
           </ul>
@@ -221,32 +227,41 @@ function PricingAndSubscription() {
                 Current Plan
               </span>
             ) : (
-              <span className='typography-small-p font-medium text-black bg-teal-100 px-3 py-0.5 rounded-full whitespace-nowrap'>
+              <span className='typography-small-p font-medium text-background-90 bg-teal-100 px-3 py-0.5 rounded-full whitespace-nowrap'>
                 Recommended
               </span>
             )}
           </div>
-          <h3 className='mb-1'>Pro</h3>
-          <p className='typography-small-p text-font-gray mb-4'>Solo hiring / small teams / agencies / mid-level hiring (50-1000 employees)</p>
-          <div className='flex items-end gap-1 mb-4'>
+          <p className='typography-small-p text-font-gray mb-1'>Pro</p>
+          <h3 className='mb-4'>
+            Small teams & agencies
+            <br />
+            (50–1000 employees)
+          </h3>
+          <div className='flex items-end gap-1 mt-4 mb-4'>
             <span className='font-bricolage font-bold text-4xl text-font-main'>${proPrice}</span>
             <span className='typography-small-p text-font-gray mb-1'>/user/month</span>
           </div>
           <Button
             variant={getProVariant()}
             type='button'
-            className='w-full !px-0 mb-6'
+            className='w-full !px-0 mb-8'
+            disabled={isProCTADisabled}
+            // TODO: wire to billing API
+            onClick={() => {}}
           >
             {getProCTA()}
           </Button>
-          <p className='typography-small-p text-font-gray font-semibold tracking-wide uppercase mb-3'>What's included</p>
+          <p className='typography-small-p text-font-gray font-semibold mb-3'>
+            Builds on Free with higher limits and deeper evaluation tools
+          </p>
           <ul className='flex flex-col gap-2'>
             {PRO_FEATURES.map(f => <FeatureItem key={f.label} label={f.label} included={f.included} />)}
           </ul>
         </StyledCard>
 
         {/* ENTERPRISE */}
-        <StyledCard padding={3} backgroundColor='bg-background-90' extraStyles='flex flex-col'>
+        <StyledCard padding={3} backgroundColor='bg-background-90' extraStyles='relative flex flex-col'>
           {currentPlan === 'enterprise' && (
             <div className='absolute -top-3 left-4'>
               <span className='typography-small-p text-font-gray bg-background-90 border border-divider-100 px-2 py-0.5 rounded-full'>
@@ -254,28 +269,44 @@ function PricingAndSubscription() {
               </span>
             </div>
           )}
-          <h3 className='mb-1'>Enterprise</h3>
-          <p className='typography-small-p text-font-gray mb-4'>Large teams / scale hiring (1000+ employees)</p>
-          <p className='font-bricolage font-bold text-4xl text-font-main mb-4'>Custom</p>
-          <Button
-            variant={getEnterpriseVariant()}
-            type='button'
-            className='w-full !px-0 mb-6'
-            onClick={() => setShowEnterpriseModal(true)}
-          >
-            {getEnterpriseCTA()}
-          </Button>
-          {currentPlan === 'enterprise' && (
-            <Button variant='secondary' type='button' className='w-full !px-0 mb-4'
+          <p className='typography-small-p text-font-gray mb-1'>Enterprise</p>
+          <h3 className='mb-4'>Large teams & scale hiring (1000+ employees)</h3>
+          <p className='font-bricolage font-bold text-3xl text-font-main mt-4 mb-4'>Custom</p>
+          <div className={`flex flex-col w-full ${currentPlan === 'enterprise' ? 'gap-3 mb-8' : 'mb-8'}`}>
+            <Button
+              variant={getEnterpriseVariant()}
+              type='button'
+              className='w-full !px-0'
+              disabled={isEnterpriseCTADisabled}
               onClick={() => setShowEnterpriseModal(true)}
             >
-              Contact Us
+              {getEnterpriseCTA()}
             </Button>
-          )}
-          <p className='typography-small-p text-font-gray font-semibold tracking-wide uppercase mb-3'>What's included</p>
+            {currentPlan === 'enterprise' && (
+              <Button
+                variant='outline'
+                type='button'
+                className='w-full !px-0'
+                onClick={() => setShowEnterpriseModal(true)}
+              >
+                Contact Us
+              </Button>
+            )}
+          </div>
+          <p className='typography-small-p text-font-gray font-semibold mb-3'>
+            Builds on Pro for larger teams, custom workflows, and deeper control
+          </p>
           <ul className='flex flex-col gap-2'>
-            {ENTERPRISE_FEATURES.map(f => <FeatureItem key={f.label} label={f.label} included={f.included} />)}
+            {ENTERPRISE_FEATURES.map((f) => (
+              <FeatureItem key={f.label} label={f.label} included={f.included} />
+            ))}
           </ul>
+          <div className='mt-6'>
+            <p className='typography-body text-font-main'>Need something beyond this plan?</p>
+            <p className='typography-small-p text-font-gray mt-1'>
+              We&apos;ll discuss your team&apos;s hiring needs and build a custom setup.
+            </p>
+          </div>
         </StyledCard>
 
       </div>
@@ -312,7 +343,7 @@ function PricingAndSubscription() {
       <p className='typography-body text-font-gray text-center mt-6'>
         Questions about Enterprise?{' '}
         <span onClick={() => setShowEnterpriseModal(true)} className='text-teal-100 cursor-pointer hover:underline'>
-          Talk to our team
+          Contact our Enterprise Team
         </span>
       </p>
 
@@ -325,9 +356,9 @@ function PricingAndSubscription() {
         customConfirmLabel="End my trial"
         isReadyToClose={false}
       >
-        <div className='mt-4'>
-          <p className='typography-body text-font-gray mb-3'>You would lose access to:</p>
-          <ul className='flex flex-col gap-2 mb-4'>
+        <div className='mt-4 flex flex-col gap-4'>
+          <p className='typography-body text-font-gray'>You would lose access to:</p>
+          <ul className='flex flex-col gap-2'>
             {[
               'Unlimited users',
               'Unlimited candidate applications',
@@ -336,7 +367,7 @@ function PricingAndSubscription() {
               'Structured reviewer feedback',
               'Creating reusable Talent Pool of future gems',
             ].map(item => (
-              <li key={item} className='flex items-center gap-2 typography-body text-font-gray'>
+              <li key={item} className='flex items-center gap-3 typography-body text-font-gray'>
                 <IconWrapper icon={X} inheritColor customIconSize={0} customStrokeWidth={4} size={0} className='text-red-100' />
                 <span>{item}</span>
               </li>
@@ -348,7 +379,12 @@ function PricingAndSubscription() {
         </div>
       </Modal>
 
-      {showTrialModal && <TrialInfoModal onClose={() => setShowTrialModal(false)} />}
+      {showTrialModal && (
+        <TrialInfoModal
+          onClose={() => setShowTrialModal(false)}
+          secondaryCTA="Continue using free version"
+        />
+      )}
 
       {showEnterpriseModal && (
         <EnterpriseContactModal onClose={() => setShowEnterpriseModal(false)} />

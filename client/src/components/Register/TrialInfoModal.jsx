@@ -15,9 +15,9 @@ const FEATURES = [
   'Create your own Talent Pool',
 ]
 
-function TrialInfoModal({ onClose }) {
+function TrialInfoModal({ onClose, secondaryCTA = "Not now, use free version" }) {
   return createPortal(
-    <div className='fixed z-[9999] inset-0 flex justify-center items-center bg-background-overlay'>
+    <div className='fixed z-50 inset-0 flex justify-center items-center bg-background-overlay bg-black/20'>
       <StyledCard
         padding={3}
         backgroundColor='bg-background-90'
@@ -58,7 +58,7 @@ function TrialInfoModal({ onClose }) {
           <StyledCard
             padding={4}
             backgroundColor='bg-background-80'
-            extraStyles='w-full md:w-64 flex-shrink-0 flex flex-col items-center justify-center gap-4 h-auto'
+            extraStyles='w-full md:w-72 flex-shrink-0 flex flex-col items-center justify-center gap-4 h-auto'
           >
             <span className='font-bricolage font-bold text-5xl text-font-main'>$0</span>
             <div className='text-center -mt-2'>
@@ -68,9 +68,9 @@ function TrialInfoModal({ onClose }) {
             <Button variant='primary' type='button' onClick={onClose} className='!w-full !px-0 mt-4'>
               Start my free trial
             </Button>
-            <p onClick={onClose} className='typography-body text-font-gray hover:text-font-main cursor-pointer transition-colors'>
-              Not now, use free version
-            </p>
+            <Button variant="tertiary" type="button" onClick={onClose} className='whitespace-nowrap'>
+              {secondaryCTA}
+            </Button>
           </StyledCard>
         </div>
       </StyledCard>
