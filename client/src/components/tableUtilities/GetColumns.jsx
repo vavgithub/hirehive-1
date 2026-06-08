@@ -84,15 +84,13 @@ const getCommonColumns = (handleDocumentClick) => [
           <CustomToolTip
             title={
               <div>
-                <p style={{ fontWeight: 600, marginBottom: 2 }}>Awaiting Discovery</p>
-                <p style={{ fontSize: 11, opacity: 0.85 }}>This portfolio requires human evaluation</p>
+                <div style={{ fontWeight: 600 }}>Awaiting Discovery</div>
+                <div style={{ fontSize: 11, opacity: 0.8, marginTop: 2 }}>This portfolio requires human evaluation</div>
               </div>
             }
             arrowed
           >
-            <span className="cursor-pointer opacity-60 hover:opacity-100 transition-opacity">
-              <IconWrapper hasBg={false} size={3} icon={PaintbrushVertical} />
-            </span>
+            <IconWrapper hasBg size={3} icon={PaintbrushVertical} />
           </CustomToolTip>
         )}
       </div>

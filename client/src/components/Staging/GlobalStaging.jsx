@@ -30,7 +30,7 @@ import Loader from '../Loaders/Loader.jsx';
 import WarningIcon from '../../svg/Staging/WarningIcon.jsx';
 import { ChevronDown, ChevronUp, RotateCcw } from 'lucide-react';
 import IconWrapper from '../Cards/IconWrapper.jsx';
-import { Calendar, Clock, Copy, DatabaseZap, Link } from 'lucide-react';
+import { Calendar, Clock, Copy, DatabaseZap, Link, Sparkles, User } from 'lucide-react';
 import useAuth from '../../hooks/useAuth.jsx';
 import { fetchAllDesignReviewers } from '../../services/auth.service';
 import { formatUTCToLocalTimeAuto, UTCToDateFormatted } from '../../utility/timezoneConverter.js';
@@ -68,6 +68,107 @@ function mergeReviewerEntry(prev, next) {
         feedback,
     };
 }
+
+const AI_COMMENT_HEADINGS = ['Role-fit summary:', 'Strengths:', 'Gaps:', 'To reach next level:'];
+
+function parseAiReasoningSection(text, heading) {
+    if (!text) return '';
+    const escapeRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const match =
+        heading === 'To reach next level:'
+            ? text.match(new RegExp(`${escapeRe(heading)}([\\s\\S]*)$`))
+            : text.match(
+                  new RegExp(
+                      `${escapeRe(heading)}([\\s\\S]*?)(?=Strengths:|Gaps:|To reach next level:|Based on|$)`
+                  )
+              );
+    let content = match?.[1]?.trim() ?? '';
+    if (heading === 'To reach next level:') {
+        content = content.replace(/\(Based on[^)]*\)/g, '').trim();
+    }
+    return content;
+}
+
+const AiCommentsContent = ({ aiReasoning, showTitle = true }) => (
+    <div>
+        {showTitle && <p className="typography-small-p font-bold mb-2">AI Comments</p>}
+        {AI_COMMENT_HEADINGS.map((heading) => {
+            const content = parseAiReasoningSection(aiReasoning ?? '', heading);
+            return content ? (
+                <div key={heading} className="mb-2">
+                    <span className="typography-small-p font-bold">{heading}</span>
+                    {content.split(';').filter((s) => s.trim()).map((point, i) => (
+                        <p key={i} className="typography-small-p text-font-main">
+                            • {point.trim()}
+                        </p>
+                    ))}
+                </div>
+            ) : null;
+        })}
+    </div>
+);
+
+const PORTFOLIO_SCORE_CARD_SIZE = 'w-28 md:w-32 lg:w-36 h-[7.5rem]';
+
+const PortfolioScoreCard = ({ label, score }) => (
+    <StyledCard
+        backgroundColor="bg-background-60"
+        padding={0}
+        extraStyles={`${PORTFOLIO_SCORE_CARD_SIZE} shrink-0`}
+    >
+        <div className="p-2.5 h-full flex flex-col items-center justify-center">
+            <p className="typography-small-p text-font-gray">{label}</p>
+            <div className="flex flex-col items-center text-font-accent">
+                <p className="display-d2 font-bold">{score ?? '—'}</p>
+                <p className="typography-small-p text-font-gray">Out of 5</p>
+            </div>
+        </div>
+    </StyledCard>
+);
+
+const PortfolioEvaluationRow = ({ icon, title, children, scoreLabel, score }) => (
+    <StyledCard backgroundColor="bg-background-80" padding={3}>
+        <div className="flex w-full items-stretch gap-4">
+            <div className="w-[75%] min-w-0">
+                {title && (
+                    <div className="flex items-center gap-2 mb-3">
+                        <IconWrapper icon={icon} size={0} customIconSize={2} />
+                        <h4 className="typography-body">{title}</h4>
+                    </div>
+                )}
+                {children}
+            </div>
+            <div className="w-[35%] flex justify-end items-start">
+                <PortfolioScoreCard label={scoreLabel} score={score} />
+            </div>
+        </div>
+    </StyledCard>
+);
+
+const PortfolioDualEvaluation = ({ portfolioStatus, reviewerFeedback, reviewerScore }) => (
+    <div className="mt-4 flex flex-col gap-4">
+        <PortfolioEvaluationRow
+            icon={Sparkles}
+            title="AI Evaluation"
+            scoreLabel="AI Score"
+            score={portfolioStatus?.aiScore}
+        >
+            <AiCommentsContent aiReasoning={portfolioStatus?.aiReasoning} showTitle={false} />
+        </PortfolioEvaluationRow>
+
+        <PortfolioEvaluationRow
+            icon={User}
+            title="Reviewer Evaluation"
+            scoreLabel="Reviewer Score"
+            score={reviewerScore}
+        >
+            <div>
+                <p className="typography-small-p text-font-gray">Remarks</p>
+                <p className="typography-body">{reviewerFeedback || 'No feedbacks'}</p>
+            </div>
+        </PortfolioEvaluationRow>
+    </div>
+);
 
 const MultiReviewerRemarksGrid = ({ multipleReviewersData, getReviewerName }) => {
     return (
@@ -546,6 +647,23 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
         return Math.round(nums.reduce((a, b) => a + b, 0) / nums.length);
     }, [multipleReviewersData]);
 
+    const showPortfolioDualEvaluation = useMemo(() => {
+        if (selectedStage !== 'Portfolio') return false;
+        if (!candidateData?.jobApplication?.jobApplied?.toLowerCase().includes('brand')) return false;
+        const portfolioStatus = stageStatuses?.Portfolio;
+        if (!portfolioStatus?.aiReasoning || portfolioStatus?.aiScore == null) return false;
+        if (stageData?.score == null || stageData?.score === '') return false;
+        if (stageBasedConfig?.showMultipleReviewersScore && multipleReviewersData?.length > 0) return false;
+        return Boolean(stageBasedConfig?.hasRemarks || stageBasedConfig?.hasScoreCard);
+    }, [
+        selectedStage,
+        candidateData,
+        stageStatuses,
+        stageData,
+        stageBasedConfig,
+        multipleReviewersData,
+    ]);
+
     const currentAdditionalReviewer = useMemo(() => {
         return multipleReviewersData?.find(reviewer => reviewer.reviewer === adminData?._id)
     },[multipleReviewersData, adminData?._id])
@@ -716,56 +834,28 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
             setIsLoading={setIsLoading}
             />
         }
+        {showPortfolioDualEvaluation && (
+            <PortfolioDualEvaluation
+                portfolioStatus={stageStatuses?.Portfolio}
+                reviewerFeedback={
+                    currentStatus === 'Rejected' ? stageData?.rejectionReason : stageData?.feedback
+                }
+                reviewerScore={stageData?.score}
+            />
+        )}
         {(() => {
-            if (selectedStage !== 'Portfolio') return null;
+            if (selectedStage !== 'Portfolio' || showPortfolioDualEvaluation) return null;
             const isBrand = candidateData?.jobApplication?.jobApplied?.toLowerCase().includes('brand');
             const portfolioStatus = stageStatuses?.['Portfolio'] ?? stageStatuses?.Portfolio;
             if (!isBrand || !portfolioStatus?.aiReasoning) return null;
             return (
-                <div className="mt-3 p-3 rounded bg-background-80 flex gap-4">
-                    <div className="flex-1">
-                        <p className="typography-small-p font-bold mb-2">AI Comments</p>
-                    {['Role-fit summary:', 'Strengths:', 'Gaps:', 'To reach next level:'].map(heading => {
-                        const text = portfolioStatus?.aiReasoning ?? '';
-                        const escapeRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-                        const match =
-                          heading === 'To reach next level:'
-                            ? text.match(new RegExp(`${escapeRe(heading)}([\\s\\S]*)$`))
-                            : text.match(
-                                new RegExp(
-                                  `${escapeRe(heading)}([\\s\\S]*?)(?=Strengths:|Gaps:|To reach next level:|Based on|$)`
-                                )
-                              );
-                        let content = match?.[1]?.trim() ?? '';
-                        if (heading === 'To reach next level:') {
-                          content = content.replace(/\(Based on[^)]*\)/g, '').trim();
-                        }
-                        return match && content ? (
-                            <div key={heading} className="mb-2">
-                                <span className="typography-small-p font-bold">{heading}</span>
-                                {content.split(';').filter(s => s.trim()).map((point, i) => (
-                                  <p key={i} className="typography-small-p text-font-main">• {point.trim()}</p>
-                                ))}
-                            </div>
-                        ) : null;
-                        })}
-                    </div>
-                    <div className="flex flex-col items-center justify-start min-w-[100px]">
-                        <p className="typography-small-p font-bold mb-2">AI Score</p>
-                        <span className="text-2xl font-bold text-font-main">
-                          {portfolioStatus?.aiScore ?? '—'}
-                        </span>
-                        <span className="typography-small-p text-font-gray">/ 5</span>
-                        {portfolioStatus?.aiRecommendation && (
-                          <span className={`mt-2 text-xs font-semibold px-2 py-1 rounded ${
-                            portfolioStatus.aiRecommendation === 'Pass'
-                              ? 'bg-red-900 text-red-300'
-                              : 'bg-green-900 text-green-300'
-                          }`}>
-                            {portfolioStatus.aiRecommendation}
-                          </span>
-                        )}
-                    </div>
+                <div className="mt-3">
+                    <PortfolioEvaluationRow
+                        scoreLabel="AI Score"
+                        score={portfolioStatus?.aiScore}
+                    >
+                        <AiCommentsContent aiReasoning={portfolioStatus?.aiReasoning} />
+                    </PortfolioEvaluationRow>
                 </div>
             );
         })()}
@@ -810,7 +900,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
           )
         }
         <div className={`flex w-full items-stretch ${stageBasedConfig?.showMultipleReviewersScore && multipleReviewersData?.length > 0 ? 'gap-5' : 'gap-4'}`}>
-            {(stageBasedConfig?.hasRemarks || stageBasedConfig?.hasRejectionReason || stageBasedConfig?.hasScoreBoard || (stageBasedConfig?.showOwnReview && currentAdditionalReviewer?.feedback !== undefined && currentAdditionalReviewer?.feedback !== null)) && 
+            {!showPortfolioDualEvaluation && (stageBasedConfig?.hasRemarks || stageBasedConfig?.hasRejectionReason || stageBasedConfig?.hasScoreBoard || (stageBasedConfig?.showOwnReview && currentAdditionalReviewer?.feedback !== undefined && currentAdditionalReviewer?.feedback !== null)) && 
             <div className={`flex flex-col justify-between gap-4 ${stageBasedConfig?.showMultipleReviewersScore && multipleReviewersData?.length > 0 ? 'flex-1 min-w-0' : 'w-[75%]'}`}>
             {(!(stageBasedConfig?.showMultipleReviewersScore &&
                 multipleReviewersData?.length > 0) || stageBasedConfig?.showOwnReview ) && (stageBasedConfig?.hasRemarks || stageBasedConfig?.hasRejectionReason || stageBasedConfig?.showOwnReview) && 
@@ -837,7 +927,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
             }
             </div>}
             <div className={(stageBasedConfig?.showMultipleReviewersScore && multipleReviewersData?.length > 0 ? 'shrink-0' : (stageTitle === "Hired" ? 'w-[100%]' : 'w-[35%]')) + ' flex flex-col '}>
-            {(stageBasedConfig?.hasScoreCard || (stageBasedConfig?.showOwnReview && currentAdditionalReviewer?.score !== undefined && currentAdditionalReviewer?.score !== null)) && 
+            {!showPortfolioDualEvaluation && (stageBasedConfig?.hasScoreCard || (stageBasedConfig?.showOwnReview && currentAdditionalReviewer?.score !== undefined && currentAdditionalReviewer?.score !== null)) && 
             <div className={` bg-background-80 rounded-xl ${stageTitle === "Hired" ? 'w-[35%] lg:w-[25%] xl:w-[15%]' : 'w-28 md:w-32 lg:w-36' } h-fit ${stageBasedConfig?.showMultipleReviewersScore && multipleReviewersData?.length > 0 ? 'mt-10' : 'my-4'} self-end`}>
                 <div className='p-2.5 flex flex-col items-center'>
                     <p className='typography-small-p text-font-gray'>Total Score:</p>
