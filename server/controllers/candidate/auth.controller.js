@@ -589,7 +589,7 @@ export const applyToJob = async (req, res) => {
     const hasBehance = /behance\.net/i.test(candidate.portfolio);
 
     const aiTriggerStatus = isBIDRole && !hasBehance
-      ? 'escalated'
+      ? 'awaiting_discovery'
       : isBIDRole && hasBehance
         ? 'pending'
         : 'done';

@@ -6,7 +6,7 @@ import StatusBadge from "../ui/StatusBadge";
 import StageBadge from "../ui/StageBadge";
 import { ensureAbsoluteUrl } from "../../utility/ensureAbsoluteUrl";
 import IconWrapper from "../Cards/IconWrapper";
-import { CircleCheck, CircleX, ClipboardCheck, FileUser, FolderOpen, Globe } from "lucide-react";
+import { CircleCheck, CircleX, ClipboardCheck, FileUser, FolderOpen, Globe, PaintbrushVertical } from "lucide-react";
 import { formatPhoneNumber } from "../Form/PhoneInputField";
 import { hasPermission, PERMISSIONS } from "../../config/permissions.config";
 import { useUnknownProfilePicture } from "../../context/ThemeContext";
@@ -78,8 +78,23 @@ const getCommonColumns = (handleDocumentClick) => [
     headerAlign: 'left',
     disableColumnMenu: true,
     renderCell: (params) => (
-      <div className='h-full flex items-center justify-start'>
+      <div className='h-full flex items-center justify-start gap-2'>
         <StageBadge withBg={false} stage={params.value} />
+        {params.row.aiTriggerStatus === 'awaiting_discovery' && (
+          <CustomToolTip
+            title={
+              <div>
+                <p style={{ fontWeight: 600, marginBottom: 2 }}>Awaiting Discovery</p>
+                <p style={{ fontSize: 11, opacity: 0.85 }}>This portfolio requires human evaluation</p>
+              </div>
+            }
+            arrowed
+          >
+            <span className="cursor-pointer opacity-60 hover:opacity-100 transition-opacity">
+              <IconWrapper hasBg={false} size={3} icon={PaintbrushVertical} />
+            </span>
+          </CustomToolTip>
+        )}
       </div>
     )
   },

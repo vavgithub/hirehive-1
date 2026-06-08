@@ -61,27 +61,19 @@ const scoreCandidate = async (candidate, base, openBrandJobIds) => {
 
     if (result) {
       const stageStatus = app.stageStatuses.get('Portfolio');
-      stageStatus.aiScore = result.score;
-      stageStatus.aiReasoning = result.reasoning;
-      stageStatus.aiRecommendation = result.recommendation;
-
-      // Phase 2 — confidence routing
-      if (result.confidence === 'low' || result.projects_scored < 2) {
-        app.aiTriggerStatus = 'escalated';
-        console.log(`[BatchJob] Low confidence (${result.confidence}, ${result.projects_scored} projects) for ${candidate._id} — escalating`);
-      } else {
-        app.aiTriggerStatus = 'done';
-        console.log(`[BatchJob] Scored ${candidate._id} with confidence: ${result.confidence}`);
+      if (stageStatus) {
+        stageStatus.aiScore = result.score;
+        stageStatus.aiReasoning = result.reasoning;
+        stageStatus.aiRecommendation = result.recommendation;
       }
-
+      app.aiTriggerStatus = 'done';
       app.aiScoredAt = new Date();
-      candidate.markModified('jobApplications');
-      await candidate.save();
     } else {
-      app.aiTriggerStatus = 'escalated';
-      candidate.markModified('jobApplications');
-      await candidate.save();
+      app.aiTriggerStatus = 'awaiting_discovery';
     }
+
+    candidate.markModified('jobApplications');
+    await candidate.save();
   } catch (err) {
     console.error(`Failed scoring candidate ${candidate._id}:`, err.message);
     app.aiTriggerStatus = 'pending';

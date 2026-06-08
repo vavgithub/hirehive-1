@@ -220,7 +220,7 @@ const FilterForDataTable = ({ applyLocationFilter, onApplyFilters, readOnly, pre
   const categories = {
     stage: ['Portfolio', 'Screening', 'Design Task', 'Round 1', 'Round 2', 'Hired'],
     status: selectedFilters.stage.length === 1
-      ? [...new Set([...(stageStatusMap[selectedFilters.stage[0]] || []), 'Escalated'])]
+      ? [...new Set([...(stageStatusMap[selectedFilters.stage[0]] || []), 'Awaiting Discovery'])]
       : allStatuses,
     rating: ['Good Fit', 'Not A Good Fit', 'May Be'],
     ...(readOnly && { "job Type": ["Full Time", "Part Time", "Contract", "Internship"] }),
