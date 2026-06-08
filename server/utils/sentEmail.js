@@ -1,8 +1,12 @@
-import { assets, transporter } from "./emailer.js";
+import { getAssets, getTransporter } from "./emailer.js";
 import { captureError } from "./errorHandler.js";
 
 export const sendEmail = async (to, subject, content,type = "", extraAttachments = []) => {
   try {
+    const [assets, transporter] = await Promise.all([
+      getAssets(),
+      getTransporter(),
+    ]);
 
     let attachmentsArray = [
       {

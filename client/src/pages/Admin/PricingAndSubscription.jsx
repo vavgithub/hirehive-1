@@ -5,7 +5,7 @@ import Container from '../../components/Cards/Container'
 import Header from '../../components/utility/Header'
 import StyledCard from '../../components/Cards/StyledCard'
 import { Button } from '../../components/Buttons/Button'
-import { Check, Lock, X } from 'lucide-react'
+import { BadgeCheck, Check, Lock, X } from 'lucide-react'
 import IconWrapper from '../../components/Cards/IconWrapper'
 import ToggleSwitch from '../../components/ui/ToggleSwitch'
 import Modal from '../../components/Modals/Modal'
@@ -112,6 +112,7 @@ function PricingAndSubscription() {
   const [showEnterpriseModal, setShowEnterpriseModal] = useState(false)
 
   const proPrice = billing === 'yearly' ? 15 : 19
+  const showProCap = currentPlan !== 'pro'
 
   const getFreeCTA = () => {
     if (currentPlan === 'trial') return 'Upgrade Now'
@@ -130,14 +131,14 @@ function PricingAndSubscription() {
     return 'Get Started'
   }
 
-  const getFreeVariant = () => (currentPlan === 'trial' ? 'primary' : 'outline')
+  const getFreeVariant = () => (currentPlan === 'trial' ? 'primary' : 'secondary')
 
   const getProVariant = () => {
     if (currentPlan === 'free' || currentPlan === 'trial' || currentPlan === 'pro') return 'primary'
     return 'outline'
   }
 
-  const getEnterpriseVariant = () => (currentPlan === 'enterprise' ? 'primary' : 'outline')
+  const getEnterpriseVariant = () => (currentPlan === 'enterprise' ? 'primary' : 'secondary')
 
   const isFreeCTADisabled = currentPlan === 'free'
   const isProCTADisabled = false
@@ -163,152 +164,173 @@ function PricingAndSubscription() {
         </p>
       </div>
 
-      <div className='flex items-center justify-center gap-3 mb-6'>
-        <span className={`typography-body ${billing === 'monthly' ? 'text-font-main' : 'text-font-gray'}`}>Monthly</span>
-        <ToggleSwitch
-          checkValue={billing === 'yearly'}
-          setCheckValue={(val) => setBilling(val ? 'yearly' : 'monthly')}
-        />
-        <span className={`typography-body ${billing === 'yearly' ? 'text-font-main' : 'text-font-gray'}`}>Yearly</span>
-        {billing === 'yearly' && (
-          <span className='typography-small-p text-teal-100 bg-teal-10 border border-teal-100 px-2 py-0.5 rounded-full'>
-            Save 20%
-          </span>
+      <div className='flex flex-col gap-6 mb-10'>
+        <div className='flex items-center justify-center gap-3'>
+          <span className={`typography-body ${billing === 'monthly' ? 'text-font-main' : 'text-font-gray'}`}>Monthly</span>
+          <ToggleSwitch
+            checkValue={billing === 'yearly'}
+            setCheckValue={(val) => setBilling(val ? 'yearly' : 'monthly')}
+          />
+          <span className={`typography-body ${billing === 'yearly' ? 'text-font-main' : 'text-font-gray'}`}>Yearly</span>
+          {billing === 'yearly' && (
+            <span className='typography-small-p text-teal-100 bg-teal-10 border border-teal-100 px-2 py-0.5 rounded-full'>
+              Save 20%
+            </span>
+          )}
+        </div>
+
+        {(currentPlan === 'free' || currentPlan === 'trial') && (
+          <AssessmentBanner
+            title='First time here?'
+            description='New users get a guided trial experience during onboarding.'
+            buttonText='Experience Trial'
+            onButtonClick={() => setShowTrialModal(true)}
+            className='!my-0'
+          />
         )}
-      </div>
 
-      {(currentPlan === 'free' || currentPlan === 'trial') && (
-        <AssessmentBanner
-          title='First time here?'
-          description='New users get a guided trial experience during onboarding.'
-          buttonText='Experience Trial'
-          onButtonClick={() => setShowTrialModal(true)}
-        />
-      )}
-
-      <div className='grid grid-cols-1 md:grid-cols-3 gap-4 mb-10'>
+        <div className='grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch'>
 
         {/* FREE */}
-        <StyledCard padding={3} backgroundColor='bg-background-90' extraStyles='relative flex flex-col'>
-          {(currentPlan === 'free' || currentPlan === 'trial') && (
-            <div className='absolute -top-3 left-1/2 -translate-x-1/2'>
-              <span className='typography-small-p text-font-gray bg-background-90 border border-divider-100 px-2 py-0.5 rounded-full'>
-                Current Plan
-              </span>
+        <div className='flex h-full min-h-0 flex-col'>
+          {showProCap && <div className='h-7 flex-shrink-0' aria-hidden='true' />}
+          <StyledCard padding={3} backgroundColor='bg-background-90' extraStyles='relative flex min-h-0 flex-1 flex-col'>
+            {(currentPlan === 'free' || currentPlan === 'trial') && (
+              <div className='absolute -top-3 left-1/2 -translate-x-1/2'>
+                <span className='typography-small-p text-font-gray bg-background-90 border border-divider-100 px-2 py-0.5 rounded-full'>
+                  Current Plan
+                </span>
+              </div>
+            )}
+            <p className='typography-small-p text-font-gray mb-1'>Free</p>
+            <h3 className='mb-3'>
+              Getting used to Geode
+              <br />
+              (2 seats only)
+            </h3>
+            <p className='font-bricolage font-bold text-4xl text-font-main mt-3 mb-3'>$0</p>
+            <Button
+              variant={getFreeVariant()}
+              type='button'
+              className='w-full !px-0 mb-6'
+              disabled={isFreeCTADisabled}
+              onClick={handleFreeCTA}
+            >
+              {getFreeCTA()}
+            </Button>
+            <p className='typography-small-p text-font-gray font-semibold mb-2'>What's included</p>
+            <ul className='flex flex-col gap-1.5'>
+              {FREE_FEATURES.map(f => <FeatureItem key={f.label} label={f.label} included={f.included} />)}
+            </ul>
+            <div className='flex-1' aria-hidden='true' />
+          </StyledCard>
+        </div>
+
+        {/* PRO — cap hugs a fully rounded card (curved top corners visible below cap) */}
+        <div className='flex h-full min-h-0 flex-col'>
+          {showProCap && (
+            <div className='relative z-20 flex flex-shrink-0 items-center justify-center gap-1.5 rounded-t-[18px] border border-b-0 border-teal-100 bg-[#12262C] py-3'>
+              <IconWrapper icon={BadgeCheck} inheritColor size={0} customIconSize={1} className='text-teal-100' />
+              <span className='typography-small-p font-medium text-teal-100'>Recommended</span>
             </div>
           )}
-          <p className='typography-small-p text-font-gray mb-1'>Free</p>
-          <h3 className='mb-4'>
-            Getting used to Geode
-            <br />
-            (2 seats only)
-          </h3>
-          <p className='font-bricolage font-bold text-4xl text-font-main mt-4 mb-4'>$0</p>
-          <Button
-            variant={getFreeVariant()}
-            type='button'
-            className='w-full !px-0 mb-8'
-            disabled={isFreeCTADisabled}
-            onClick={handleFreeCTA}
+          <StyledCard
+            padding={3}
+            backgroundColor='bg-background-90'
+            borderRadius='rounded-[18px]'
+            extraStyles={`relative z-10 flex min-h-0 flex-1 flex-col border border-teal-100 ${showProCap ? '-mt-3.5' : ''}`}
           >
-            {getFreeCTA()}
-          </Button>
-          <p className='typography-small-p text-font-gray font-semibold mb-3'>What's included</p>
-          <ul className='flex flex-col gap-2'>
-            {FREE_FEATURES.map(f => <FeatureItem key={f.label} label={f.label} included={f.included} />)}
-          </ul>
-        </StyledCard>
-
-        {/* PRO */}
-        <StyledCard padding={3} backgroundColor='bg-background-90' extraStyles='relative flex flex-col border border-teal-100'>
-          <div className='absolute -top-3 left-1/2 -translate-x-1/2'>
-            {currentPlan === 'pro' ? (
-              <span className='typography-small-p text-font-gray bg-background-90 border border-divider-100 px-2 py-0.5 rounded-full whitespace-nowrap'>
-                Current Plan
-              </span>
-            ) : (
-              <span className='typography-small-p font-medium text-background-90 bg-teal-100 px-3 py-0.5 rounded-full whitespace-nowrap'>
-                Recommended
-              </span>
+            {currentPlan === 'pro' && (
+              <div className='absolute -top-3 left-1/2 z-10 -translate-x-1/2'>
+                <span className='typography-small-p text-font-gray whitespace-nowrap rounded-full border border-divider-100 bg-background-90 px-2 py-0.5'>
+                  Current Plan
+                </span>
+              </div>
             )}
-          </div>
-          <p className='typography-small-p text-font-gray mb-1'>Pro</p>
-          <h3 className='mb-4'>
-            Small teams & agencies
-            <br />
-            (50–1000 employees)
-          </h3>
-          <div className='flex items-end gap-1 mt-4 mb-4'>
-            <span className='font-bricolage font-bold text-4xl text-font-main'>${proPrice}</span>
-            <span className='typography-small-p text-font-gray mb-1'>/user/month</span>
-          </div>
-          <Button
-            variant={getProVariant()}
-            type='button'
-            className='w-full !px-0 mb-8'
-            disabled={isProCTADisabled}
-            // TODO: wire to billing API
-            onClick={() => {}}
-          >
-            {getProCTA()}
-          </Button>
-          <p className='typography-small-p text-font-gray font-semibold mb-3'>
-            Builds on Free with higher limits and deeper evaluation tools
-          </p>
-          <ul className='flex flex-col gap-2'>
-            {PRO_FEATURES.map(f => <FeatureItem key={f.label} label={f.label} included={f.included} />)}
-          </ul>
-        </StyledCard>
+            <p className='typography-small-p text-font-gray mb-1'>Pro</p>
+            <h3 className='mb-3'>
+              Small teams & agencies
+              <br />
+              (50–1000 employees)
+            </h3>
+            <div className='mb-3 mt-3 flex items-end gap-1'>
+              <span className='font-bricolage font-bold text-4xl text-font-main'>${proPrice}</span>
+              <span className='typography-small-p text-font-gray mb-1'>/user/month</span>
+            </div>
+            <Button
+              variant={getProVariant()}
+              type='button'
+              className='mb-6 w-full !px-0'
+              disabled={isProCTADisabled}
+              // TODO: wire to billing API
+              onClick={() => {}}
+            >
+              {getProCTA()}
+            </Button>
+            <p className='typography-small-p text-font-gray font-semibold mb-2'>
+              Builds on Free with higher limits and deeper evaluation tools
+            </p>
+            <ul className='flex flex-col gap-1.5'>
+              {PRO_FEATURES.map(f => <FeatureItem key={f.label} label={f.label} included={f.included} />)}
+            </ul>
+            <div className='flex-1' aria-hidden='true' />
+          </StyledCard>
+        </div>
 
         {/* ENTERPRISE */}
-        <StyledCard padding={3} backgroundColor='bg-background-90' extraStyles='relative flex flex-col'>
-          {currentPlan === 'enterprise' && (
-            <div className='absolute -top-3 left-4'>
-              <span className='typography-small-p text-font-gray bg-background-90 border border-divider-100 px-2 py-0.5 rounded-full'>
-                Current Plan
-              </span>
-            </div>
-          )}
-          <p className='typography-small-p text-font-gray mb-1'>Enterprise</p>
-          <h3 className='mb-4'>Large teams & scale hiring (1000+ employees)</h3>
-          <p className='font-bricolage font-bold text-3xl text-font-main mt-4 mb-4'>Custom</p>
-          <div className={`flex flex-col w-full ${currentPlan === 'enterprise' ? 'gap-3 mb-8' : 'mb-8'}`}>
-            <Button
-              variant={getEnterpriseVariant()}
-              type='button'
-              className='w-full !px-0'
-              disabled={isEnterpriseCTADisabled}
-              onClick={() => setShowEnterpriseModal(true)}
-            >
-              {getEnterpriseCTA()}
-            </Button>
+        <div className='flex h-full min-h-0 flex-col'>
+          {showProCap && <div className='h-7 flex-shrink-0' aria-hidden='true' />}
+          <StyledCard padding={3} backgroundColor='bg-background-90' extraStyles='relative flex min-h-0 flex-1 flex-col'>
             {currentPlan === 'enterprise' && (
+              <div className='absolute -top-3 left-4'>
+                <span className='typography-small-p text-font-gray bg-background-90 border border-divider-100 px-2 py-0.5 rounded-full'>
+                  Current Plan
+                </span>
+              </div>
+            )}
+            <p className='typography-small-p text-font-gray mb-1'>Enterprise</p>
+            <h3 className='mb-3'>Large teams & scale hiring (1000+ employees)</h3>
+            <p className='font-bricolage font-bold text-3xl text-font-main mt-3 mb-3'>Custom</p>
+            <div className={`flex flex-col w-full ${currentPlan === 'enterprise' ? 'gap-2 mb-6' : 'mb-6'}`}>
               <Button
-                variant='outline'
+                variant={getEnterpriseVariant()}
                 type='button'
                 className='w-full !px-0'
+                disabled={isEnterpriseCTADisabled}
                 onClick={() => setShowEnterpriseModal(true)}
               >
-                Contact Us
+                {getEnterpriseCTA()}
               </Button>
-            )}
-          </div>
-          <p className='typography-small-p text-font-gray font-semibold mb-3'>
-            Builds on Pro for larger teams, custom workflows, and deeper control
-          </p>
-          <ul className='flex flex-col gap-2'>
-            {ENTERPRISE_FEATURES.map((f) => (
-              <FeatureItem key={f.label} label={f.label} included={f.included} />
-            ))}
-          </ul>
-          <div className='mt-6'>
-            <p className='typography-body text-font-main'>Need something beyond this plan?</p>
-            <p className='typography-small-p text-font-gray mt-1'>
-              We&apos;ll discuss your team&apos;s hiring needs and build a custom setup.
+              {currentPlan === 'enterprise' && (
+                <Button
+                  variant='outline'
+                  type='button'
+                  className='w-full !px-0'
+                  onClick={() => setShowEnterpriseModal(true)}
+                >
+                  Contact Us
+                </Button>
+              )}
+            </div>
+            <p className='typography-small-p text-font-gray font-semibold mb-2'>
+              Builds on Pro for larger teams, custom workflows, and deeper control
             </p>
-          </div>
-        </StyledCard>
+            <ul className='flex flex-col gap-1.5'>
+              {ENTERPRISE_FEATURES.map((f) => (
+                <FeatureItem key={f.label} label={f.label} included={f.included} />
+              ))}
+            </ul>
+            <div className='mt-4'>
+              <p className='typography-body text-font-main'>Need something beyond this plan?</p>
+              <p className='typography-small-p text-font-gray mt-1'>
+                We&apos;ll discuss your team&apos;s hiring needs and build a custom setup.
+              </p>
+            </div>
+            <div className='flex-1' aria-hidden='true' />
+          </StyledCard>
+        </div>
 
+        </div>
       </div>
 
       <StyledCard padding={2} extraStyles='w-full'>

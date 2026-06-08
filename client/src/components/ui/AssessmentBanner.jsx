@@ -10,6 +10,7 @@ function AssessmentBanner({
   description = 'Complete the assessment to be prioritized and improve your chances of moving forward quickly',
   buttonText = 'Take Assessment',
   onButtonClick,
+  className = '',
 }) {
   const navigate = useNavigate()
   const bannerImg = useAssessmentBannerBg()
@@ -18,7 +19,7 @@ function AssessmentBanner({
   return (
     <div
       style={{ backgroundImage: `url(${bannerImg})` }}
-      className='container flex justify-between rounded-xl gap-4 p-6 my-4 items-center bg-cover'
+      className={`container flex justify-between rounded-xl gap-4 p-6 my-4 items-center bg-cover ${className}`}
     >
       <div className='flex gap-4 items-center'>
         <div className='hidden w-16 h-16 rounded-full md:rounded-full bg-primary-300 border border-primary-100 items-center md:flex justify-center'>

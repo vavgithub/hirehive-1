@@ -3,6 +3,7 @@ import { Button } from '../../components/Buttons/Button';
 import { useNavigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import { googleLogin, login } from '../../services/auth.service';
+import { markGoogleOnboardingPending } from './Register';
 import useAuth from '../../hooks/useAuth';
 import ForgotPassword from './ForgotPassword';
 import { showErrorToast } from '../../components/ui/Toast';
@@ -65,6 +66,7 @@ const Login = () => {
 
     const registerGoogle = async () => {
         try {
+          markGoogleOnboardingPending()
           const result = await googleLogin()
           if(result?.authorizationUrl){
             window.location.href = result.authorizationUrl;

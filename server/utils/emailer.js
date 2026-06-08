@@ -44,11 +44,49 @@ const getOAuthTransporter = async () => {
   });
 };
 
-export const transporter = await getOAuthTransporter();
+let transporterInstance = null;
+let transporterPromise = null;
 
-export const assets = {
+/** Resolves Gmail transporter on first use; does not block server startup. */
+export const getTransporter = async () => {
+  if (transporterInstance) return transporterInstance;
+  if (!transporterPromise) {
+    transporterPromise = getOAuthTransporter()
+      .then((transport) => {
+        transporterInstance = transport;
+        return transport;
+      })
+      .catch((err) => {
+        transporterPromise = null;
+        throw err;
+      });
+  }
+  return transporterPromise;
+};
+
+const loadAssets = async () => ({
   vavLogo: await readFile(path.join(__dirname, "email_assets/geodeLogo.png"), "base64"),
   instaLogo: await readFile(path.join(__dirname, "email_assets/instaLogo.png"), "base64"),
   ytLogo: await readFile(path.join(__dirname, "email_assets/ytLogo.png"), "base64"),
   linkedinLogo: await readFile(path.join(__dirname, "email_assets/linkedinLogo.png"), "base64"),
+});
+
+let assetsCache = null;
+let assetsPromise = null;
+
+/** Loads email image assets on first use. */
+export const getAssets = async () => {
+  if (assetsCache) return assetsCache;
+  if (!assetsPromise) {
+    assetsPromise = loadAssets()
+      .then((loaded) => {
+        assetsCache = loaded;
+        return loaded;
+      })
+      .catch((err) => {
+        assetsPromise = null;
+        throw err;
+      });
+  }
+  return assetsPromise;
 };
