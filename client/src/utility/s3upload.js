@@ -1,5 +1,6 @@
 import axios from "axios";
 import axiosInstance from "../services/axios";
+import * as Sentry from '@sentry/react';
 
 export const uploadAssessmentToS3 = async (file, setUploadProgress) => {
   try {
@@ -24,6 +25,10 @@ export const uploadAssessmentToS3 = async (file, setUploadProgress) => {
 
     return publicUrl; // This is the CloudFront-accessible URL to save in DB
   } catch (err) {
+    Sentry.captureException(err, {
+      tags: { file: "s3upload.js", action: "uploadAssessmentToS3", role: "candidate" },
+      extra: { response: err?.response?.data, message: err?.message },
+    });
     throw new Error("Assessment upload failed: " + err.message);
   }
 };
@@ -54,6 +59,10 @@ export const uploadScreenshotToS3 = async (imageFile, setUploadProgress) => {
     // Step 3: Return public CloudFront URL to store in DB or show in UI
     return publicUrl;
   } catch (error) {
+    Sentry.captureException(error, {
+      tags: { file: "s3upload.js", action: "uploadScreenshotToS3", role: "candidate" },
+      extra: { response: error?.response?.data, message: error?.message },
+    });
     throw new Error(error.message || "Error uploading screenshot to S3");
   }
 };

@@ -21,6 +21,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import axios from '../../services/axios';
 import { hasPermission, PERMISSIONS } from '../../config/permissions.config';
 import { editCompanyProfile } from '../../services/auth.service';
+import * as Sentry from '@sentry/react';
 import { LocationInputField } from '../../components/Inputs/LocationInputField';
 import { validationRules } from '../../utility/validationRules';
 import { useUnknownProfilePicture } from '../../context/ThemeContext';
@@ -328,6 +329,10 @@ function CompanyProfile() {
                 setIsEditing(false);
             }
         } catch (error) {
+            Sentry.captureException(error, {
+              tags: { file: "CompanyProfile.jsx", action: "handleEditProfile", role: "admin" },
+              extra: { response: error?.response?.data, message: error?.message },
+            });
             console.log(error)
             showErrorToast(
                 'Error',

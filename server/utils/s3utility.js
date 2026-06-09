@@ -6,6 +6,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { uploadsDir } from '../config/paths.js';
 import axios from 'axios';
+import { captureError } from "./errorHandler.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -51,6 +52,7 @@ export const uploadToS3 = async (inputPath, folder) => {
     const cloudfrontDomain = process.env.AWS_CLOUDFRONT_DOMAIN;
     return `${cloudfrontDomain}/${s3Key}`;
   } catch (error) {
+    captureError(error, { file: "s3utility.js", action: "s3Upload" });
     console.error('Error uploading to S3 (v3):', error);
     throw error;
   }
@@ -89,6 +91,7 @@ export const uploadGoogleImageToS3 = async (imageUrl, folder) => {
     const cloudfrontDomain = process.env.AWS_CLOUDFRONT_DOMAIN;
     return `${cloudfrontDomain}/${s3Key}`;
   } catch (error) {
+    captureError(error, { file: "s3utility.js", action: "s3Upload" });
     console.error('Error uploading Google image to S3:', error);
     throw new Error(error?.message || 'Failed to upload image from URL to S3');
   }

@@ -31,19 +31,6 @@ function RejectionSelector({selectedAnchor,handleClose,handleReasonSelect}) {
                   display: "none", // Hide scrollbar in Chrome/Safari
                 },
               },
-              "& .MuiMenu-paper": {
-                maxHeight: "18.75rem",
-                overflow: "hidden", // Hide outer scrollbar
-              },
-              "& .MuiMenu-list": {
-                maxHeight: "18.75rem",
-                overflowY: "auto", // Keep scrolling enabled
-                scrollbarWidth: "none", // Hide scrollbar in Firefox
-                msOverflowStyle: "none", // Hide scrollbar in IE/Edge
-                "&::-webkit-scrollbar": {
-                  display: "none", // Hide scrollbar in Chrome/Safari
-                },
-              },
             }}
           >
             

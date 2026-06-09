@@ -14,6 +14,7 @@ import { getRoute, ROUTE_KEY } from '../../config/permissions.config';
 import LoaderModal from '../../components/Loaders/LoaderModal';
 import { getShortlistedCandidates } from '../../services/admin.candidate.service';
 import useDebounce from '../../hooks/useDebounce';
+import * as Sentry from '@sentry/react';
 
 const Shortlisted = () => {
     const { user , isLoading } = useAuthContext();
@@ -166,6 +167,10 @@ const Shortlisted = () => {
             const response = await getShortlistedCandidates({companyId : user?.companyDetails?._id,...(location ? location : {}),filter : filterObj ,search : debouncedQuery, sortFilters : sortFilterObj});
             return formatCandidatesForTable(response?.candidates)
         } catch (error) {
+            Sentry.captureException(error, {
+              tags: { file: "Shortlisted.jsx", action: "getShortlistedCandidatesExportData", role: "admin" },
+              extra: { response: error?.response?.data, message: error?.message },
+            });
             console.log("Export data error :",error)
         }
     }

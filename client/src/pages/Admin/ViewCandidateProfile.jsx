@@ -23,6 +23,7 @@ import IconWrapper from '../../components/Cards/IconWrapper';
 import { ArrowLeftRight, ChevronUp, ChevronRight, ClipboardCheck, FileText, FileUser, FolderOpen, Globe, Mail, MonitorDot, Notebook, NotebookPen, Phone, Sparkles, Users, Calendar1 } from 'lucide-react';
 import RatingSelector, { getRatingIcon } from '../../components/MUIUtilities/RatingSelector';
 import Modal from '../../components/Modals/Modal';
+import * as Sentry from '@sentry/react';
 import TextEditor from '../../components/utility/TextEditor';
 import LoaderModal from '../../components/Loaders/LoaderModal';
 import { truncatedText } from '../../utility/truncatedHTML';
@@ -216,7 +217,13 @@ const ViewCandidateProfile = () => {
                                     aiScore: statusData.score,
                                     aiReasoning: statusData.reasoning,
                                     aiRecommendation: statusData.recommendation,
-                                }).catch((err) => console.error('Error saving AI score:', err));
+                                }).catch((err) => {
+                                    Sentry.captureException(err, {
+                                      tags: { file: "ViewCandidateProfile.jsx", action: "saveAiScore", role: "admin" },
+                                      extra: { response: err?.response?.data, message: err?.message },
+                                    });
+                                    console.error('Error saving AI score:', err);
+                                });
                                 queryClient.invalidateQueries(['candidateScore', candidateId, jobId]);
                                 queryClient.invalidateQueries(['candidate', candidateId, jobId]);
                             } else if (st === 'skipped') {
@@ -230,6 +237,10 @@ const ViewCandidateProfile = () => {
                             }
                         })
                         .catch((err) => {
+                            Sentry.captureException(err, {
+                              tags: { file: "ViewCandidateProfile.jsx", action: "pollAiScore", role: "admin" },
+                              extra: { response: err?.response?.data, message: err?.message },
+                            });
                             clearInterval(scoringIntervalRef.current);
                             scoringIntervalRef.current = null;
                             setScoringPollStatus(null);
@@ -239,6 +250,10 @@ const ViewCandidateProfile = () => {
                 }, 30000);
             })
             .catch((err) => {
+                Sentry.captureException(err, {
+                  tags: { file: "ViewCandidateProfile.jsx", action: "requestAiScore", role: "admin" },
+                  extra: { response: err?.response?.data, message: err?.message },
+                });
                 setScoringPollStatus(null);
                 setIsScoring(false);
                 console.error('AI scoring request error:', err);
@@ -542,6 +557,10 @@ const ViewCandidateProfile = () => {
             // Optionally show a success message/toast here
         })
         .catch((err) => {
+            Sentry.captureException(err, {
+              tags: { file: "ViewCandidateProfile.jsx", action: "handlePhoneCopy", role: "admin" },
+              extra: { response: err?.response?.data, message: err?.message },
+            });
             console.error('Failed to copy phone number:', err);
             // Optionally show an error message/toast
         });
@@ -556,6 +575,10 @@ const ViewCandidateProfile = () => {
             // Optionally show a success message/toast here
         })
         .catch((err) => {
+            Sentry.captureException(err, {
+              tags: { file: "ViewCandidateProfile.jsx", action: "handleEmailCopy", role: "admin" },
+              extra: { response: err?.response?.data, message: err?.message },
+            });
             console.error('Failed to copy email:', err);
             // Optionally show an error message/toast
         });

@@ -4,6 +4,7 @@ import axios from '../services/axios';
 import { fetchCandidateAuthData } from '../redux/candidateAuthSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
+import * as Sentry from '@sentry/react';
 
 export const useCandidateAuth = () => {
   const dispatch = useDispatch();
@@ -20,11 +21,28 @@ export const useCandidateAuth = () => {
     const fetchData = async () => {
       try {
         if (!candidateAuthData) {
-          await dispatch(fetchCandidateAuthData()).unwrap();
+          const result = await dispatch(fetchCandidateAuthData()).unwrap();
+          if (result) {
+            Sentry.setUser({
+              id: result._id,
+              email: result.email,
+              role: 'candidate',
+            });
+          }
+        } else {
+          Sentry.setUser({
+            id: candidateAuthData._id,
+            email: candidateAuthData.email,
+            role: 'candidate',
+          });
         }
         setIsDone(true);
       } catch (error) {
-        // console.error('Error fetching candidate data:', error);
+        Sentry.captureException(error, {
+          tags: { file: "useCandidateAuth.jsx", action: "fetchData", role: "candidate" },
+          extra: { response: error?.response?.data, message: error?.message },
+        });
+        Sentry.setUser(null);
         setIsDone(true);
       }
     };

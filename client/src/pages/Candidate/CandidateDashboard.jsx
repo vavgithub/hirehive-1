@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getCandidateDashboard } from '../../services/auth.candidate.service';
+import * as Sentry from '@sentry/react';
 
 const CandidateDashboard = () => {
   const [candidateData, setCandidateData] = useState(null);
@@ -13,6 +14,10 @@ const CandidateDashboard = () => {
         const response = await getCandidateDashboard();
         setCandidateData(response.data.candidate);
       } catch (error) {
+        Sentry.captureException(error, {
+          tags: { file: "CandidateDashboard.jsx", action: "fetchCandidateData", role: "candidate" },
+          extra: { response: error?.response?.data, message: error?.message },
+        });
         console.error('Error fetching candidate data:', error);
         navigate('/candidate/login'); // Redirect to login if not authorized
       }

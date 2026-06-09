@@ -26,6 +26,7 @@ import { LocationInputField } from "../../components/Inputs/LocationInputField";
 import { UTCToDateFormatted } from "../../utility/timezoneConverter";
 import Datepicker from "../../components/MUIUtilities/Datepicker";
 import { useUnknownProfilePicture } from "../../context/ThemeContext";
+import * as Sentry from '@sentry/react';
 
 const PersonalDetails = ({ candidateData, isEditing, control }) => {
   return (
@@ -505,6 +506,10 @@ function Profile() {
         dispatch(updateWithoutAssessment(response.data.candidate))
       }
     } catch (error) {
+      Sentry.captureException(error, {
+        tags: { file: "Profile.jsx", action: "fetchAndUpdateCandidate", role: "candidate" },
+        extra: { response: error?.response?.data, message: error?.message },
+      });
       throw new Error("Error while fetch candidate data")
     }
   }
@@ -554,6 +559,10 @@ function Profile() {
         setStage("DONE")
       }
     } catch (error) {
+      Sentry.captureException(error, {
+        tags: { file: "Profile.jsx", action: "handleEditProfile", role: "candidate" },
+        extra: { response: error?.response?.data, message: error?.message },
+      });
       setIsLoading(false);
       showErrorToast("Error", error?.response?.data?.message || error?.message || "Profile Updation Failed.");
     }
@@ -576,6 +585,10 @@ function Profile() {
       showSuccessToast("Success", "Profile updated Successfully")
       setStage("DONE");
     } catch (error) {
+      Sentry.captureException(error, {
+        tags: { file: "Profile.jsx", action: "handleOtpSubmit", role: "candidate" },
+        extra: { response: error?.response?.data, message: error?.message },
+      });
       showErrorToast("Invalid OTP Error", error.response?.data?.message || 'Invalid OTP');
     } finally {
       setIsLoading(false);

@@ -242,7 +242,7 @@ function AddMembers({currentStep,setCurrentStep}) {
             headerAlign : 'left',
             disableColumnMenu: true,
             renderCell : (params) =>(
-              <p className='w-full overflow-hidden whitespace-nowrap text-ellipsis'>{params?.row?.firstName + " " + params?.row?.lastName ?? ""}</p>
+              <p className='w-full overflow-hidden whitespace-nowrap text-ellipsis'>{(params?.row?.firstName ?? "") + " " + (params?.row?.lastName ?? "")}</p>
             )
         },
         {

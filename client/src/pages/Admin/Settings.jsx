@@ -13,6 +13,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useEffect } from 'react'
 import { getRoute, ROUTE_KEY } from '../../config/permissions.config'
 import { getMultiReviewerSettings, updateMultiReviewerSettings } from '../../services/company.service'
+import * as Sentry from '@sentry/react';
 
 function Settings() {
     const [loading,setLoading] = useState(false);
@@ -58,6 +59,10 @@ function Settings() {
                 setMultiReviewerJobProfiles(Array.isArray(settings?.jobProfiles) ? settings.jobProfiles : []);
                 setMultiReviewerDirty(false);
             } catch (e) {
+                Sentry.captureException(e, {
+                  tags: { file: "Settings.jsx", action: "load", role: "admin" },
+                  extra: { response: e?.response?.data, message: e?.message },
+                });
                 // keep page functional; show toast only if needed
             }
         };
@@ -96,6 +101,10 @@ function Settings() {
             queryClient.invalidateQueries(['auth']);
             setMultiReviewerDirty(false);
         } catch (e) {
+            Sentry.captureException(e, {
+              tags: { file: "Settings.jsx", action: "handleSaveMultiReviewerSettings", role: "admin" },
+              extra: { response: e?.response?.data, message: e?.message },
+            });
             showErrorToast("Error", e?.response?.data?.message || "Failed to update settings");
         } finally {
             setLoading(false);

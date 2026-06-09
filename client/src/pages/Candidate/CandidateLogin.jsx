@@ -15,6 +15,7 @@ import LoaderModal from '../../components/Loaders/LoaderModal';
 import IconWrapper from '../../components/Cards/IconWrapper';
 import { Briefcase, FileText } from 'lucide-react';
 import { useLogo } from '../../context/ThemeContext';
+import * as Sentry from '@sentry/react';
 
 const statsOne = [
   { title: 'Jobs Posted', value: 100, icon: () => <IconWrapper size={10} isInActiveIcon icon={Briefcase} /> },
@@ -74,6 +75,10 @@ const CandidateLogin = () => {
         
       }
     } catch (error) {
+      Sentry.captureException(error, {
+        tags: { file: "CandidateLogin.jsx", action: "handleSubmit", role: "candidate" },
+        extra: { response: error?.response?.data },
+      });
       // Error handling is now managed by Redux
       // console.error('Login failed:', error);
     }

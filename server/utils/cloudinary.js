@@ -4,6 +4,7 @@ import { promises as fs } from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { uploadsDir } from '../config/paths.js';
+import { captureError } from "./errorHandler.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -55,6 +56,7 @@ export const uploadToCloudinary = async (inputPath, folder) => {
     return result.secure_url;
     
   } catch (error) {
+    captureError(error, { file: "cloudinary.js", action: "cloudinaryUpload" });
     console.error('Error in uploadToCloudinary:', error);
     
     // If we have a filePath, try to clean up
@@ -66,6 +68,7 @@ export const uploadToCloudinary = async (inputPath, folder) => {
         await fs.access(filePath);
         await fs.unlink(filePath);
       } catch (unlinkError) {
+        captureError(unlinkError, { file: "cloudinary.js", action: "cloudinaryDelete" });
         // File doesn't exist or can't be deleted, ignore
       }
     }
@@ -89,6 +92,7 @@ export const uploadGoogleImagesToCloudinary = async (path,folder) => {
     });
     return result.secure_url;
   } catch (error) {
+    captureError(error, { file: "cloudinary.js", action: "cloudinaryUpload" });
     console.error('Error in uploadGoogleImagesToCloudinary:', error);
     throw new Error(error?.message || 'Upload error')
   }

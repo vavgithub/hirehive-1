@@ -35,6 +35,7 @@ import Footer from '../../components/Footer/Footer';
 import LogoWrapper from '../../components/Logo/LogoWrapper';
 import { fetchjobsById } from '../../services/jobs.service';
 import { applyToJob, createPassword, registerCandidate, updateEmail, uploadCandidateProfilePicture, uploadResume, verifyOtpCandidate } from '../../services/auth.candidate.service';
+import * as Sentry from '@sentry/react';
 
 const ApplyJob = () => {
   const dispatch = useDispatch();
@@ -279,6 +280,10 @@ const ApplyJob = () => {
         setCurrentStep(response?.data?.currentStage !== 'MODAL' ? 2 : 1);
       }
     } catch (error) {
+      Sentry.captureException(error, {
+        tags: { file: "ApplyJob.jsx", action: "onSubmit", role: "candidate" },
+        extra: { response: error?.response?.data },
+      });
       if (error.response?.data?.next === "LOGIN") {
         setShowLoginPopup(true);
       } else {
@@ -321,6 +326,10 @@ const ApplyJob = () => {
       showSuccessToast('OTP Verified', 'Please create your password to continue.');
       setCurrentStep(3);
     } catch (error) {
+      Sentry.captureException(error, {
+        tags: { file: "ApplyJob.jsx", action: "verifyOtpCandidate", role: "candidate" },
+        extra: { response: error?.response?.data },
+      });
       setOtpError(error.response?.data?.message || 'Invalid OTP');
     } finally {
       setIsSubmitting(false);
@@ -381,6 +390,10 @@ const ApplyJob = () => {
       showSuccessToast('Success', 'Account created successfully!');
       navigate('/candidate/my-jobs');
     } catch (error) {
+      Sentry.captureException(error, {
+        tags: { file: "ApplyJob.jsx", action: "createPassword", role: "candidate" },
+        extra: { response: error?.response?.data },
+      });
       setPasswordError(error.response?.data?.message || 'An error occurred. Please try again.');
     } finally {
       setIsSubmitting(false);
@@ -406,6 +419,10 @@ const ApplyJob = () => {
         }
       }
     } catch (error) {
+      Sentry.captureException(error, {
+        tags: { file: "ApplyJob.jsx", action: "handleLogin", role: "candidate" },
+        extra: { response: error?.response?.data },
+      });
       console.error('Login failed:', error);
       showErrorToast("Error", error);
     }

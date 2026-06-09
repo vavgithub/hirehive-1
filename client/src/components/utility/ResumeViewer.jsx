@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '../Buttons/Button';
 import Loader from '../Loaders/Loader'; // Import your Loader component
+import * as Sentry from '@sentry/react';
 
 const ResumeViewer = ({ documentUrl, onClose }) => {
   const [loading, setLoading] = useState(true); // Track loading state
@@ -51,6 +52,10 @@ const ResumeViewer = ({ documentUrl, onClose }) => {
         URL.revokeObjectURL(blobUrl);
       })
       .catch(error => {
+        Sentry.captureException(error, {
+          tags: { file: "ResumeViewer.jsx", action: "handleDownload", role: "admin" },
+          extra: { response: error?.response?.data, message: error?.message },
+        });
         // console.error("Error downloading the file", error);
       });
   };

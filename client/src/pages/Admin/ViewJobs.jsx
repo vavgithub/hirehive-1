@@ -22,6 +22,7 @@ import { Briefcase, Check, Eye, File, FileText, Folder, MonitorDot, MousePointer
 import { getRoute, ROUTE_KEY } from '../../config/permissions.config';
 import { closeJob, deleteJob, draftJob, fetchjobsById, fetchOverallJobStats, reOpenJob } from '../../services/jobs.service';
 import useDebounce from '../../hooks/useDebounce';
+import * as Sentry from '@sentry/react';
 
 
 const ViewJobs = () => {
@@ -134,6 +135,10 @@ const ViewJobs = () => {
           const response = await axios.post(`/admin/candidate/${mainId}`,{...(location ? location : {} ) ,filter : filterObj ,search : debouncedQuery, sortFilters : sortFilterObj}).then(res => res.data);
           return response?.candidates || []
         } catch (error) {
+          Sentry.captureException(error, {
+            tags: { file: "ViewJobs.jsx", action: "getCandidatesExportData", role: "admin" },
+            extra: { response: error?.response?.data, message: error?.message },
+          });
           console.log("Export data error :",error)
         }
     }
