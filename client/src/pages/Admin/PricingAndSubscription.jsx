@@ -140,14 +140,25 @@ function PricingAndSubscription() {
     return 'Get Started'
   }
 
-  const getFreeVariant = () => (currentPlan === 'trial' ? 'primary' : 'secondary')
+  const getFreeVariant = () => {
+    if (currentPlan === 'trial') return 'primary'
+    return 'secondary'
+  }
 
   const getProVariant = () => {
     if (currentPlan === 'free' || currentPlan === 'trial' || currentPlan === 'pro') return 'primary'
-    return 'outline'
+    return 'secondary'
   }
 
   const getEnterpriseVariant = () => (currentPlan === 'enterprise' ? 'primary' : 'secondary')
+
+  const highlightedComparisonColumn =
+    currentPlan === 'enterprise' ? 'enterprise' : currentPlan === 'pro' ? 'pro' : 'pro'
+
+  const getComparisonHeaderClass = (column) =>
+    column === highlightedComparisonColumn
+      ? 'typography-body text-teal-100 text-center'
+      : 'typography-body text-font-gray text-center'
 
   const isFreeCTADisabled = currentPlan === 'free'
   const isProCTADisabled = false
@@ -298,7 +309,7 @@ function PricingAndSubscription() {
         </div>
 
         {/* ENTERPRISE */}
-        <div className='flex h-full flex-col'>
+        <div className='flex w-full flex-col self-start'>
           <StyledCard
             padding={3}
             backgroundColor='bg-background-90'
@@ -307,6 +318,11 @@ function PricingAndSubscription() {
           >
             <div className='flex items-center justify-between gap-2 mb-1'>
               <p className='typography-small-p text-font-gray'>Enterprise</p>
+              {currentPlan === 'enterprise' && (
+                <span className='w-fit shrink-0 -mt-3 font-bricolage text-sm rounded-full font-medium tracking-wider border border-accent-100 text-accent-100 px-4 py-1'>
+                  Current Plan
+                </span>
+              )}
             </div>
             <h3 className='mb-3'>
               Large teams & scale hiring
@@ -326,7 +342,7 @@ function PricingAndSubscription() {
                   {getEnterpriseCTA()}
                 </Button>
                 <Button
-                  variant='outline'
+                  variant='tertiary'
                   type='button'
                   className='w-full !px-0'
                   onClick={() => setShowEnterpriseModal(true)}
@@ -350,13 +366,24 @@ function PricingAndSubscription() {
               {ENTERPRISE_FEATURES.map((f) => (
                 <FeatureItem key={f.label} label={f.label} included={f.included} />
               ))}
-              {Array.from({ length: FREE_FEATURES.length - ENTERPRISE_FEATURES.length }).map((_, i) => (
+              {Array.from({
+                length: currentPlan === 'enterprise'
+                  ? 0
+                  : FREE_FEATURES.length - ENTERPRISE_FEATURES.length - 2,
+              }).map((_, i) => (
                 <li key={`enterprise-spacer-${i}`} className='flex items-start gap-3 invisible pointer-events-none' aria-hidden='true'>
                   <span className='flex-shrink-0 w-4 h-4' />
                   <span>&nbsp;</span>
                 </li>
               ))}
             </ul>
+            <div className='mt-2 shrink-0'>
+              <p className='typography-body font-semibold text-font-main'>Need something beyond this plan?</p>
+              <p className='typography-small-p text-font-gray mt-1'>
+                We&apos;ll discuss your team&apos;s hiring needs and build a custom setup.
+              </p>
+            </div>
+            <div className='h-px shrink-0' aria-hidden='true' />
           </StyledCard>
         </div>
 
@@ -368,9 +395,9 @@ function PricingAndSubscription() {
 
         <div className='grid grid-cols-4 pb-3 border-b border-divider-100'>
           <span className='typography-body text-font-gray'>Feature</span>
-          <span className='typography-body text-font-gray text-center'>Free</span>
-          <span className='typography-body text-teal-100 text-center'>Pro</span>
-          <span className='typography-body text-font-gray text-center'>Enterprise</span>
+          <span className={getComparisonHeaderClass('free')}>Free</span>
+          <span className={getComparisonHeaderClass('pro')}>Pro</span>
+          <span className={getComparisonHeaderClass('enterprise')}>Enterprise</span>
         </div>
 
         {COMPARISON.map(section => (
