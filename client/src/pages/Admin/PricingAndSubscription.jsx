@@ -5,11 +5,10 @@ import Container from '../../components/Cards/Container'
 import Header from '../../components/utility/Header'
 import StyledCard from '../../components/Cards/StyledCard'
 import { Button } from '../../components/Buttons/Button'
-import { BadgeCheck, Check, Lock, X } from 'lucide-react'
+import { BadgeCheck, Check, Info, Lock, X } from 'lucide-react'
 import IconWrapper from '../../components/Cards/IconWrapper'
 import ToggleSwitch from '../../components/ui/ToggleSwitch'
 import Modal from '../../components/Modals/Modal'
-import { ACTION_TYPES } from '../../utility/ActionTypes'
 import TrialInfoModal from '../../components/Register/TrialInfoModal'
 import EnterpriseContactModal from '../../components/Register/EnterpriseContactModal'
 import AssessmentBanner from '../../components/ui/AssessmentBanner'
@@ -47,6 +46,17 @@ const ENTERPRISE_FEATURES = [
   { label: 'Dedicated support',       included: true },
 ]
 
+const TRIAL_LOSS_FEATURES = [
+  'Unlimited candidate applications',
+  'Per-user pricing',
+  'Geode Score evaluations',
+  'Budget screening',
+  'Talent pool / Future Gems',
+  '5 Pre-built assessments',
+  'Feedback + ratings',
+  'Reports & exports',
+]
+
 const COMPARISON = [
   {
     category: 'Core Features',
@@ -60,7 +70,7 @@ const COMPARISON = [
   {
     category: 'Evaluation & Scoring',
     rows: [
-      { feature: 'Geode Score',        free: true,  pro: true,  enterprise: true },
+      { feature: 'Geode Score',        free: false, pro: true,  enterprise: true },
       { feature: 'Budget screening',   free: false, pro: true,  enterprise: true },
       { feature: 'Reports / Export',   free: false, pro: true,  enterprise: true },
       { feature: 'Feedback & ratings', free: 'Rate only', pro: 'Feedback + Rate', enterprise: 'Feedback + Rate' },
@@ -112,7 +122,6 @@ function PricingAndSubscription() {
   const [showEnterpriseModal, setShowEnterpriseModal] = useState(false)
 
   const proPrice = billing === 'yearly' ? 15 : 19
-  const showProCap = currentPlan !== 'pro'
 
   const getFreeCTA = () => {
     if (currentPlan === 'trial') return 'Upgrade Now'
@@ -121,7 +130,7 @@ function PricingAndSubscription() {
 
   const getProCTA = () => {
     if (currentPlan === 'free') return 'Upgrade to Pro'
-    if (currentPlan === 'pro') return 'Add License'
+    if (currentPlan === 'pro') return 'Add license'
     return 'Get Started'
   }
 
@@ -192,17 +201,21 @@ function PricingAndSubscription() {
         <div className='grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch'>
 
         {/* FREE */}
-        <div className='flex h-full min-h-0 flex-col'>
-          {showProCap && <div className='h-7 flex-shrink-0' aria-hidden='true' />}
-          <StyledCard padding={3} backgroundColor='bg-background-90' extraStyles='relative flex min-h-0 flex-1 flex-col'>
-            {(currentPlan === 'free' || currentPlan === 'trial') && (
-              <div className='absolute -top-3 left-1/2 -translate-x-1/2'>
-                <span className='typography-small-p text-font-gray bg-background-90 border border-divider-100 px-2 py-0.5 rounded-full'>
+        <div className='flex h-full flex-col'>
+          <StyledCard
+            padding={3}
+            backgroundColor='bg-background-90'
+            borderRadius='rounded-[18px]'
+            extraStyles='relative flex flex-col overflow-hidden cursor-pointer hover-outline'
+          >
+            <div className='flex items-center justify-between gap-2 mb-1'>
+              <p className='typography-small-p text-font-gray'>Free</p>
+              {(currentPlan === 'free' || currentPlan === 'trial') && (
+                <span className='w-fit shrink-0 -mt-3 font-bricolage text-sm rounded-full font-medium tracking-wider border border-accent-100 text-accent-100 px-4 py-1'>
                   Current Plan
                 </span>
-              </div>
-            )}
-            <p className='typography-small-p text-font-gray mb-1'>Free</p>
+              )}
+            </div>
             <h3 className='mb-3'>
               Getting used to Geode
               <br />
@@ -222,31 +235,25 @@ function PricingAndSubscription() {
             <ul className='flex flex-col gap-1.5'>
               {FREE_FEATURES.map(f => <FeatureItem key={f.label} label={f.label} included={f.included} />)}
             </ul>
-            <div className='flex-1' aria-hidden='true' />
           </StyledCard>
         </div>
 
-        {/* PRO — cap hugs a fully rounded card (curved top corners visible below cap) */}
-        <div className='flex h-full min-h-0 flex-col'>
-          {showProCap && (
-            <div className='relative z-20 flex flex-shrink-0 items-center justify-center gap-1.5 rounded-t-[18px] border border-b-0 border-teal-100 bg-[#12262C] py-3'>
+        {/* PRO */}
+        <div className='flex h-full flex-col'>
+          <div className='bg-accent-300 rounded-t-xl shrink-0'>
+            <div className='flex h-12 items-center justify-center gap-2'>
               <IconWrapper icon={BadgeCheck} inheritColor size={0} customIconSize={1} className='text-teal-100' />
               <span className='typography-small-p font-medium text-teal-100'>Recommended</span>
             </div>
-          )}
+            <div className='h-3' aria-hidden='true' />
+          </div>
+
           <StyledCard
-            padding={3}
+            padding={2}
             backgroundColor='bg-background-90'
             borderRadius='rounded-[18px]'
-            extraStyles={`relative z-10 flex min-h-0 flex-1 flex-col border border-teal-100 ${showProCap ? '-mt-3.5' : ''}`}
+            extraStyles='relative z-10 flex flex-1 flex-col min-h-0 cursor-pointer -mt-4 hover-outline pb-2 md:pb-4'
           >
-            {currentPlan === 'pro' && (
-              <div className='absolute -top-3 left-1/2 z-10 -translate-x-1/2'>
-                <span className='typography-small-p text-font-gray whitespace-nowrap rounded-full border border-divider-100 bg-background-90 px-2 py-0.5'>
-                  Current Plan
-                </span>
-              </div>
-            )}
             <p className='typography-small-p text-font-gray mb-1'>Pro</p>
             <h3 className='mb-3'>
               Small teams & agencies
@@ -257,16 +264,29 @@ function PricingAndSubscription() {
               <span className='font-bricolage font-bold text-4xl text-font-main'>${proPrice}</span>
               <span className='typography-small-p text-font-gray mb-1'>/user/month</span>
             </div>
-            <Button
-              variant={getProVariant()}
-              type='button'
-              className='mb-6 w-full !px-0'
-              disabled={isProCTADisabled}
-              // TODO: wire to billing API
-              onClick={() => {}}
-            >
-              {getProCTA()}
-            </Button>
+            <div className={`flex flex-col w-full ${currentPlan === 'pro' ? 'gap-2 mb-6' : 'mb-6'}`}>
+              <Button
+                variant={getProVariant()}
+                type='button'
+                className='w-full !px-0'
+                disabled={isProCTADisabled}
+                // TODO: wire to billing API
+                onClick={() => {}}
+              >
+                {getProCTA()}
+              </Button>
+              {currentPlan === 'pro' && (
+                <Button
+                  variant='tertiary'
+                  type='button'
+                  className='w-full !px-0'
+                  // TODO: wire to billing API
+                  onClick={() => {}}
+                >
+                  Cancel Subscription
+                </Button>
+              )}
+            </div>
             <p className='typography-small-p text-font-gray font-semibold mb-2'>
               Builds on Free with higher limits and deeper evaluation tools
             </p>
@@ -278,30 +298,33 @@ function PricingAndSubscription() {
         </div>
 
         {/* ENTERPRISE */}
-        <div className='flex h-full min-h-0 flex-col'>
-          {showProCap && <div className='h-7 flex-shrink-0' aria-hidden='true' />}
-          <StyledCard padding={3} backgroundColor='bg-background-90' extraStyles='relative flex min-h-0 flex-1 flex-col'>
-            {currentPlan === 'enterprise' && (
-              <div className='absolute -top-3 left-4'>
-                <span className='typography-small-p text-font-gray bg-background-90 border border-divider-100 px-2 py-0.5 rounded-full'>
-                  Current Plan
-                </span>
-              </div>
-            )}
-            <p className='typography-small-p text-font-gray mb-1'>Enterprise</p>
-            <h3 className='mb-3'>Large teams & scale hiring (1000+ employees)</h3>
-            <p className='font-bricolage font-bold text-3xl text-font-main mt-3 mb-3'>Custom</p>
-            <div className={`flex flex-col w-full ${currentPlan === 'enterprise' ? 'gap-2 mb-6' : 'mb-6'}`}>
-              <Button
-                variant={getEnterpriseVariant()}
-                type='button'
-                className='w-full !px-0'
-                disabled={isEnterpriseCTADisabled}
-                onClick={() => setShowEnterpriseModal(true)}
-              >
-                {getEnterpriseCTA()}
-              </Button>
-              {currentPlan === 'enterprise' && (
+        <div className='flex h-full flex-col'>
+          <StyledCard
+            padding={3}
+            backgroundColor='bg-background-90'
+            borderRadius='rounded-[18px]'
+            extraStyles='relative flex flex-col overflow-hidden cursor-pointer hover-outline'
+          >
+            <div className='flex items-center justify-between gap-2 mb-1'>
+              <p className='typography-small-p text-font-gray'>Enterprise</p>
+            </div>
+            <h3 className='mb-3'>
+              Large teams & scale hiring
+              <br />
+              (1000+ employees)
+            </h3>
+            <p className='font-bricolage font-bold text-4xl text-font-main mt-3 mb-3'>Custom</p>
+            {currentPlan === 'enterprise' ? (
+              <div className='flex flex-col w-full gap-2 mb-6'>
+                <Button
+                  variant={getEnterpriseVariant()}
+                  type='button'
+                  className='w-full !px-0'
+                  disabled={isEnterpriseCTADisabled}
+                  onClick={() => setShowEnterpriseModal(true)}
+                >
+                  {getEnterpriseCTA()}
+                </Button>
                 <Button
                   variant='outline'
                   type='button'
@@ -310,23 +333,30 @@ function PricingAndSubscription() {
                 >
                   Contact Us
                 </Button>
-              )}
-            </div>
-            <p className='typography-small-p text-font-gray font-semibold mb-2'>
-              Builds on Pro for larger teams, custom workflows, and deeper control
-            </p>
+              </div>
+            ) : (
+              <Button
+                variant={getEnterpriseVariant()}
+                type='button'
+                className='w-full !px-0 mb-6'
+                disabled={isEnterpriseCTADisabled}
+                onClick={() => setShowEnterpriseModal(true)}
+              >
+                {getEnterpriseCTA()}
+              </Button>
+            )}
+            <p className='typography-small-p text-font-gray font-semibold mb-2'>What&apos;s included</p>
             <ul className='flex flex-col gap-1.5'>
               {ENTERPRISE_FEATURES.map((f) => (
                 <FeatureItem key={f.label} label={f.label} included={f.included} />
               ))}
+              {Array.from({ length: FREE_FEATURES.length - ENTERPRISE_FEATURES.length }).map((_, i) => (
+                <li key={`enterprise-spacer-${i}`} className='flex items-start gap-3 invisible pointer-events-none' aria-hidden='true'>
+                  <span className='flex-shrink-0 w-4 h-4' />
+                  <span>&nbsp;</span>
+                </li>
+              ))}
             </ul>
-            <div className='mt-4'>
-              <p className='typography-body text-font-main'>Need something beyond this plan?</p>
-              <p className='typography-small-p text-font-gray mt-1'>
-                We&apos;ll discuss your team&apos;s hiring needs and build a custom setup.
-              </p>
-            </div>
-            <div className='flex-1' aria-hidden='true' />
           </StyledCard>
         </div>
 
@@ -373,31 +403,33 @@ function PricingAndSubscription() {
         open={showEndTrialModal}
         onClose={() => setShowEndTrialModal(false)}
         onConfirm={handleEndTrial}
-        customTitle="Leave the full Geode experience behind?"
-        customMessage="Your trial gives you access to the complete evaluation process. Moving to the Free Plan means some layers of discovery will be limited."
-        customConfirmLabel="End my trial"
+        customTitle='Leaving Us?'
+        customMessage='Are you sure you want to cancel your current subscription?'
+        customConfirmLabel='Cancel subscription'
+        cancelLabel='Close'
+        cancelVariant='tertiary'
         isReadyToClose={false}
+        specifiedWidth='max-w-xl'
       >
         <div className='mt-4 flex flex-col gap-4'>
-          <p className='typography-body text-font-gray'>You would lose access to:</p>
+          <p className='typography-body font-semibold text-font-main'>You would lose access to:</p>
           <ul className='flex flex-col gap-2'>
-            {[
-              'Unlimited users',
-              'Unlimited candidate applications',
-              'Budget-based candidate screening',
-              'Custom evaluation questionnaires',
-              'Structured reviewer feedback',
-              'Creating reusable Talent Pool of future gems',
-            ].map(item => (
+            {TRIAL_LOSS_FEATURES.map((item) => (
               <li key={item} className='flex items-center gap-3 typography-body text-font-gray'>
-                <IconWrapper icon={X} inheritColor customIconSize={0} customStrokeWidth={4} size={0} className='text-red-100' />
+                <IconWrapper icon={X} inheritColor customIconSize={0} customStrokeWidth={4} size={0} className='text-font-gray opacity-60' />
                 <span>{item}</span>
               </li>
             ))}
           </ul>
-          <p className='typography-small-p text-font-gray'>
-            Moving to the Free Plan won't remove your existing data. Your jobs, candidates, evaluations, and Talent Pool will remain available in view-only mode based on your plan limits.
+          <p className='typography-body font-semibold text-font-main'>
+            Your plan benefits will end in 24 hours.
           </p>
+          <div className='flex gap-3 items-start'>
+            <IconWrapper icon={Info} inheritColor customIconSize={0} customStrokeWidth={4} size={0} className='text-font-gray flex-shrink-0 mt-0.5' />
+            <p className='typography-small-p text-font-gray'>
+              You will be moved to a Free plan. Your existing data won&apos;t be removed. Your jobs, candidates, evaluations, and Talent Pool will remain available in view-only mode based on your plan limits.
+            </p>
+          </div>
         </div>
       </Modal>
 
