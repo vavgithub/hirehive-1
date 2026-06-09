@@ -19,6 +19,6 @@ export const allStatuses = [
   'Call Scheduled',
   'No Show',
   'Sent',
-  'Escalated',
+  'Awaiting Discovery',
 ];
   

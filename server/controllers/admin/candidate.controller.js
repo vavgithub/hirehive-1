@@ -1124,13 +1124,13 @@ export const getAllCandidates = async (req,res) => {
         if(key === 'status'){
           const statusValues = Array.isArray(value) ? value : [value];
           const stageStatusValues = statusValues.filter(
-            (s) => s !== 'Escalated' && s !== 'escalated'
+            (s) => s !== 'Awaiting Discovery' && s !== 'awaiting_discovery'
           );
           if (stageStatusValues.length) {
             encodedFilters.status = { $in: stageStatusValues };
           }
-          if (statusValues.includes('escalated') || statusValues.includes('Escalated')) {
-            encodedFilters.aiTriggerStatus = { $in: ['escalated'] };
+          if (statusValues.includes('awaiting_discovery') || statusValues.includes('Awaiting Discovery')) {
+            encodedFilters.aiTriggerStatus = { $in: ['awaiting_discovery'] };
           }
         }
         if(key === 'stage'){

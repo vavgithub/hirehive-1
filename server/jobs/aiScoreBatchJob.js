@@ -69,7 +69,7 @@ const scoreCandidate = async (candidate, base, openBrandJobIds) => {
       app.aiTriggerStatus = 'done';
       app.aiScoredAt = new Date();
     } else {
-      app.aiTriggerStatus = 'escalated';
+      app.aiTriggerStatus = 'awaiting_discovery';
     }
 
     candidate.markModified('jobApplications');
