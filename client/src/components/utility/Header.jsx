@@ -36,24 +36,24 @@ const Header = ({
 
     return (
         <div className={"w-full mb-4"}>
-            <div className="flex items-center justify-between ">
+            <div className="flex items-start justify-between gap-4">
                 {/* Left section with back button and title */}
-                <div className={"flex items-center gap-4 w-full " + (rightContent && "lg:w-[65%]")}>
+                <div className={'flex items-start gap-4 min-w-0 flex-1 ' + (rightContent && 'lg:w-[65%]')}>
                     {withBack === "true" && (
-                        <div className="cursor-pointer text-font-main " onClick={handleBackClick}>
+                        <div className="cursor-pointer text-font-main shrink-0 mt-1" onClick={handleBackClick}>
                             {/* <BackButton /> */}
                             <IconWrapper inheritColor icon={ArrowLeft}/>
                         </div>
                     )}
-                    <h1 className={"w-full overflow-hidden whitespace-nowrap text-ellipsis "} style={{
-                        paddingBottom : '0rem' 
-                    }}>
+                    <h1
+                      className="min-w-0 flex-1 whitespace-normal break-words pb-0 md:overflow-hidden md:whitespace-nowrap md:text-ellipsis"
+                    >
                         {HeaderText}
                     </h1>
                 </div>
 
                 {/* Right section with kebab menu and/or custom content */}
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-4 shrink-0">
                     {rightContent}
                     {withKebab && (
                         <ThreeDots 
