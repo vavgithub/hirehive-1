@@ -583,6 +583,15 @@ export const autoAssignPortfolios = async (req, res) => {
      if (!candidateId || !jobId || !stage) {
        return res.status(400).json({ message: 'candidateId, jobId, and stage are required' });
      }
+
+     if (stage === 'Portfolio') {
+       if (!ratings || (typeof ratings === 'number' && ratings < 1)) {
+         return res.status(400).json({ message: 'Please rate the candidate' });
+       }
+       if (!feedback || !String(feedback).trim()) {
+         return res.status(400).json({ message: 'Please enter feedback to proceed' });
+       }
+     }
  
      // Find the candidate by ID
      const candidate = await candidates.findById(candidateId);
@@ -644,7 +653,11 @@ export const autoAssignPortfolios = async (req, res) => {
         const additional = stageStatus.additionalReviewers || [];
         if (additional.length > 0) {
           const hasScores = additional.every(
-            (rev) => rev.score !== undefined && rev.score !== null
+            (rev) =>
+              rev.score !== undefined &&
+              rev.score !== null &&
+              rev.feedback &&
+              String(rev.feedback).trim()
           );
           if (hasScores) {
             const primaryScore =

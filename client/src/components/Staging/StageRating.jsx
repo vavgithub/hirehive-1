@@ -67,6 +67,10 @@ function StageRating({customSchema,candidateId,jobId,name,candidate,onSubmit,sta
           return
         }
       }
+      if (!feedback.trim()) {
+        showErrorToast("Oops", "Please enter feedback to proceed");
+        return;
+      }
       onSubmit(candidate._id, {
         jobId: candidate.currentApplication?.jobId ? candidate.currentApplication.jobId  : candidate.jobApplication.jobId ,
         stage: candidate.currentApplication?.currentStage ? candidate.currentApplication.currentStage : candidate.jobApplication.currentStage,
@@ -125,7 +129,7 @@ function StageRating({customSchema,candidateId,jobId,name,candidate,onSubmit,sta
                 value={feedback}
                 onChange={(e) => setFeedback(e.target.value)}
               />
-              <Button variant="icon" onClick={handleSubmit} disabled={feedback.length < 50 || Object.entries(rating).some(([key, value]) => key !== "Budget" && value === 0)}>Submit</Button>
+              <Button variant="icon" onClick={handleSubmit} disabled={!feedback.trim() || Object.entries(rating).some(([key, value]) => key !== "Budget" && value === 0)}>Submit</Button>
             </div>
           </div>
           </>
@@ -142,7 +146,7 @@ function StageRating({customSchema,candidateId,jobId,name,candidate,onSubmit,sta
                 value={feedback}
                 onChange={(e) => setFeedback(e.target.value)}
               />
-              <Button variant="icon" onClick={handleSubmit} disabled={rating < 1 || feedback.length < 50}>Submit</Button>
+              <Button variant="icon" onClick={handleSubmit} disabled={rating < 1 || !feedback.trim()}>Submit</Button>
             </div>
           </div>
           </>}
