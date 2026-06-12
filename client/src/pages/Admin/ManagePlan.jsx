@@ -24,6 +24,8 @@ import AssessmentBanner from '../../components/ui/AssessmentBanner'
 import EnterpriseContactModal from '../../components/Register/EnterpriseContactModal'
 import StatusBadge from '../../components/ui/StatusBadge'
 import useTrialStatus from '../../hooks/useTrialStatus'
+import { DataGrid } from '@mui/x-data-grid'
+import MuiCustomStylesForDataGrid from '../../components/tableUtilities/MuiCustomStylesForDataGrid'
 
 const PLAN_CONFIG = {
   free: {
@@ -63,6 +65,16 @@ const PLAN_CONFIG = {
 const PLAN_PILL_CLASS = 'bg-background-80 text-font-gray border border-divider-100'
 
 const TRIAL_STAT_VALUE_CLASS = 'font-gilroy text-h3 font-h3'
+
+const formatMemberName = (firstName = '', lastName = '') => {
+  const toTitleCase = (value) =>
+    value.trim().toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase())
+
+  return [firstName, lastName]
+    .filter((part) => part?.trim())
+    .map(toTitleCase)
+    .join(' ')
+}
 
 // TODO: replace with real billing data from API
 const PRO_PRICE_PER_LICENSE = 19
@@ -336,6 +348,214 @@ function ManagePlan() {
     setShowRemoveModal(true)
   }
 
+  const teamMemberColumns = useMemo(() => [
+    {
+      field: 'member',
+      headerName: 'Member',
+      flex: 1.6,
+      minWidth: 260,
+      align: 'left',
+      headerAlign: 'left',
+      sortable: false,
+      disableColumnMenu: true,
+      cellClassName: 'padded-col',
+      headerClassName: 'padded-col',
+      renderCell: (params) => {
+        const isYou = params.row.isYou
+        const displayName = formatMemberName(params.row.firstName, params.row.lastName)
+
+        return (
+          <div className='flex h-full flex-col justify-center gap-0.5 py-1'>
+            <p className='typography-large-p text-font-main overflow-hidden whitespace-nowrap text-ellipsis'>
+              {displayName}
+              {isYou && <span className='text-font-gray'> (You)</span>}
+            </p>
+            <p className='typography-small-p text-font-gray overflow-hidden whitespace-nowrap text-ellipsis'>
+              {params.row.email}
+            </p>
+          </div>
+        )
+      },
+    },
+    {
+      field: 'role',
+      headerName: 'Role',
+      flex: 1,
+      minWidth: 170,
+      align: 'left',
+      headerAlign: 'left',
+      sortable: false,
+      disableColumnMenu: true,
+      cellClassName: 'padded-col',
+      headerClassName: 'padded-col',
+      renderCell: (params) => (
+        <div className='flex h-full items-center'>
+          <p className='w-fit font-bricolage text-sm rounded-full font-medium tracking-wider border border-accent-100 text-accent-100 px-4 py-1'>
+            {params.row.role}
+          </p>
+        </div>
+      ),
+    },
+    {
+      field: 'status',
+      headerName: 'Status',
+      flex: 1,
+      minWidth: 150,
+      align: 'left',
+      headerAlign: 'left',
+      sortable: false,
+      disableColumnMenu: true,
+      cellClassName: 'padded-col',
+      headerClassName: 'padded-col',
+      renderCell: (params) => {
+        const { label, dotClass } = getMemberStatusDisplay(params.row.status)
+        return (
+          <div className='flex h-full items-center gap-2'>
+            <div className={`w-2 h-2 rounded-full shrink-0 ${dotClass}`} />
+            <p className='typography-large-p text-font-main'>{label}</p>
+          </div>
+        )
+      },
+    },
+    {
+      field: 'actions',
+      headerName: 'Actions',
+      flex: 1,
+      minWidth: 160,
+      sortable: false,
+      disableColumnMenu: true,
+      align: 'right',
+      headerAlign: 'right',
+      cellClassName: 'padded-col',
+      headerClassName: 'padded-col',
+      renderCell: (params) => {
+        const member = params.row
+        const memberId = member?.member_id ?? member?._id
+
+        return (
+          <div className='flex h-full w-full items-center justify-end gap-3'>
+            {isAdmin && member.isYou && (
+              <>
+                <div className='relative' ref={changeAdminMenuRowId === memberId ? changeAdminMenuRef : null}>
+                  <button
+                    type='button'
+                    className='cursor-pointer bg-background-70 h-9 min-h-9 px-2 flex justify-center items-center gap-1 rounded-xl hover:bg-background-80 text-font-gray hover:text-accent-100'
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      setChangeAdminMenuRowId((id) => (id === memberId ? null : memberId))
+                      setAdminSearch('')
+                    }}
+                    aria-label='Change admin'
+                  >
+                    <IconWrapper inheritColor icon={UserCog} size={0} customIconSize={3} />
+                    <ChevronDown size={14} />
+                  </button>
+                  {changeAdminMenuRowId === memberId && (
+                    <div className='absolute right-0 top-full mt-2 z-50 w-56 rounded-xl bg-background-80 shadow-[0px_0px_20px_rgba(45,45,45,0.7)] overflow-hidden'>
+                      <div className='p-2 border-b border-divider-100 relative'>
+                        <IconWrapper
+                          inheritColor
+                          icon={Search}
+                          size={0}
+                          customIconSize={2}
+                          className='absolute left-3 top-1/2 -translate-y-1/2 text-font-gray pointer-events-none'
+                        />
+                        <InputField
+                          type='text'
+                          placeholder='Search'
+                          value={adminSearch}
+                          onChange={(e) => setAdminSearch(e.target.value)}
+                          extraClass='pl-9 h-9'
+                        />
+                      </div>
+                      <ul className='max-h-48 overflow-y-auto py-1'>
+                        {filteredAdminCandidates.map((candidate) => {
+                          const candidateId = candidate?.member_id ?? candidate?._id
+                          return (
+                            <li key={candidateId}>
+                              <button
+                                type='button'
+                                className='w-full flex items-center gap-3 px-3 py-2 typography-body text-font-main hover:bg-background-100 text-left'
+                                onClick={() => handleSelectNewAdmin(candidate)}
+                              >
+                                <img
+                                  src={candidate?.profilePicture || UNKNOWN_PROFILE_PICTURE_URL}
+                                  alt=''
+                                  className='w-8 h-8 rounded-full object-cover flex-shrink-0'
+                                />
+                                <span className='truncate'>
+                                  {candidate?.firstName} {candidate?.lastName}
+                                </span>
+                              </button>
+                            </li>
+                          )
+                        })}
+                        {filteredAdminCandidates.length === 0 && (
+                          <li className='px-3 py-2 typography-small-p text-font-gray'>No members found</li>
+                        )}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+                <div
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    navigate(`/admin/teams/profile/${memberId}`)
+                  }}
+                  className='cursor-pointer bg-background-70 h-9 min-w-9 flex justify-center items-center rounded-xl hover:bg-background-80'
+                  aria-label='Edit member'
+                  role='button'
+                  tabIndex={0}
+                  onKeyDown={(e) => e.key === 'Enter' && navigate(`/admin/teams/profile/${memberId}`)}
+                >
+                  <IconWrapper inheritColor icon={Edit2} size={0} customIconSize={3} />
+                </div>
+              </>
+            )}
+            {isAdmin && !member.isYou && (
+              <>
+                <div
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    navigate(`/admin/teams/profile/${memberId}`)
+                  }}
+                  className='cursor-pointer bg-background-70 h-9 min-w-9 flex justify-center items-center rounded-xl hover:bg-background-80'
+                  aria-label='Edit member'
+                  role='button'
+                  tabIndex={0}
+                  onKeyDown={(e) => e.key === 'Enter' && navigate(`/admin/teams/profile/${memberId}`)}
+                >
+                  <IconWrapper inheritColor icon={Edit2} size={0} customIconSize={3} />
+                </div>
+                <div
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    handleRemoveMember(member)
+                  }}
+                  className='cursor-pointer bg-background-70 h-9 min-w-9 flex justify-center items-center rounded-xl hover:bg-background-80'
+                  aria-label='Remove member'
+                  role='button'
+                  tabIndex={0}
+                  onKeyDown={(e) => e.key === 'Enter' && handleRemoveMember(member)}
+                >
+                  <IconWrapper inheritColor icon={Trash2} size={0} customIconSize={3} className='text-red-100' />
+                </div>
+              </>
+            )}
+          </div>
+        )
+      },
+    },
+  ], [
+    isAdmin,
+    changeAdminMenuRowId,
+    adminSearch,
+    filteredAdminCandidates,
+    navigate,
+    UNKNOWN_PROFILE_PICTURE_URL,
+    currentPlan,
+  ])
+
   const handleConfirmRemoveMember = () => {
     if (!pendingRemoveMember?.email) return
     removeMemberMutation.mutate({ email: pendingRemoveMember.email })
@@ -543,140 +763,37 @@ function ManagePlan() {
           </div>
         </div>
 
-        <div className='grid grid-cols-5 px-2 pb-2 border-b border-divider-100'>
-          <span className='typography-small-p text-font-gray col-span-2'>Member</span>
-          <span className='typography-small-p text-font-gray'>Role</span>
-          <span className='typography-small-p text-font-gray'>Status</span>
-          <span className='typography-small-p text-font-gray'>Actions</span>
+        <MuiCustomStylesForDataGrid />
+        <div className='mt-2'>
+          <DataGrid
+            rows={members}
+            columns={teamMemberColumns}
+            loading={isTeamLoading}
+            getRowId={(row) => String(row.member_id ?? row._id)}
+            autoHeight
+            rowHeight={72}
+            hideFooter
+            disableRowSelectionOnClick
+            getRowClassName={(params) =>
+              params.indexRelativeToCurrentPage % 2 === 0 ? 'first-row' : 'second-row'
+            }
+            sx={{
+              '& .padded-col': {
+                paddingLeft: '24px',
+                paddingRight: '24px',
+              },
+              '& .MuiDataGrid-columnHeader': {
+                display: 'flex',
+                alignItems: 'center',
+              },
+              '& .MuiDataGrid-cell': {
+                display: 'flex',
+                alignItems: 'center',
+              },
+            }}
+            localeText={{ noRowsLabel: 'No team members' }}
+          />
         </div>
-
-        {members.map((member) => {
-          const memberId = member?.member_id ?? member?._id
-          const isYou = user?.email && member?.email === user.email
-          const { label: statusDisplay, dotClass } = getMemberStatusDisplay(member?.status)
-
-          return (
-            <div
-              key={memberId}
-              className='grid grid-cols-5 px-2 py-4 items-center border-b border-divider-100 last:border-0'
-            >
-              <div className='col-span-2 flex flex-col'>
-                <span className='typography-body text-font-main'>
-                  {member?.firstName} {member?.lastName}
-                  {isYou && <span className='text-font-gray'> (You)</span>}
-                </span>
-                <span className='typography-small-p text-font-gray'>{member?.email}</span>
-              </div>
-              <p className='w-fit font-bricolage text-sm rounded-full font-medium tracking-wider border border-accent-100 text-accent-100 px-4 py-1'>
-                {member?.role}
-              </p>
-              <div className='flex items-center gap-2'>
-                <div className={`w-2 h-2 rounded-full ${dotClass}`} />
-                <span className='typography-body text-font-main'>{statusDisplay}</span>
-              </div>
-              <div className='flex items-center justify-end gap-3'>
-                {isAdmin && member.isYou && (
-                  <>
-                    <div className='relative' ref={changeAdminMenuRowId === memberId ? changeAdminMenuRef : null}>
-                      <button
-                        type='button'
-                        className='cursor-pointer bg-background-70 h-9 min-h-9 px-2 flex justify-center items-center gap-1 rounded-xl hover:bg-background-80 text-font-gray hover:text-accent-100'
-                        onClick={() => {
-                          setChangeAdminMenuRowId((id) => (id === memberId ? null : memberId))
-                          setAdminSearch('')
-                        }}
-                        aria-label='Change admin'
-                      >
-                        <IconWrapper inheritColor icon={UserCog} size={0} customIconSize={3} />
-                        <ChevronDown size={14} />
-                      </button>
-                      {changeAdminMenuRowId === memberId && (
-                        <div className='absolute right-0 top-full mt-2 z-50 w-56 rounded-xl bg-background-80 shadow-[0px_0px_20px_rgba(45,45,45,0.7)] overflow-hidden'>
-                          <div className='p-2 border-b border-divider-100 relative'>
-                            <IconWrapper
-                              inheritColor
-                              icon={Search}
-                              size={0}
-                              customIconSize={2}
-                              className='absolute left-3 top-1/2 -translate-y-1/2 text-font-gray pointer-events-none'
-                            />
-                            <InputField
-                              type='text'
-                              placeholder='Search'
-                              value={adminSearch}
-                              onChange={(e) => setAdminSearch(e.target.value)}
-                              extraClass='pl-9 h-9'
-                            />
-                          </div>
-                          <ul className='max-h-48 overflow-y-auto py-1'>
-                            {filteredAdminCandidates.map((candidate) => {
-                              const candidateId = candidate?.member_id ?? candidate?._id
-                              return (
-                                <li key={candidateId}>
-                                  <button
-                                    type='button'
-                                    className='w-full flex items-center gap-3 px-3 py-2 typography-body text-font-main hover:bg-background-100 text-left'
-                                    onClick={() => handleSelectNewAdmin(candidate)}
-                                  >
-                                    <img
-                                      src={candidate?.profilePicture || UNKNOWN_PROFILE_PICTURE_URL}
-                                      alt=''
-                                      className='w-8 h-8 rounded-full object-cover flex-shrink-0'
-                                    />
-                                    <span className='truncate'>
-                                      {candidate?.firstName} {candidate?.lastName}
-                                    </span>
-                                  </button>
-                                </li>
-                              )
-                            })}
-                            {filteredAdminCandidates.length === 0 && (
-                              <li className='px-3 py-2 typography-small-p text-font-gray'>No members found</li>
-                            )}
-                          </ul>
-                        </div>
-                      )}
-                    </div>
-                    <div
-                      onClick={() => navigate(`/admin/teams/profile/${memberId}`)}
-                      className='cursor-pointer bg-background-70 h-9 min-w-9 flex justify-center items-center rounded-xl hover:bg-background-80'
-                      aria-label='Edit member'
-                      role='button'
-                      tabIndex={0}
-                      onKeyDown={(e) => e.key === 'Enter' && navigate(`/admin/teams/profile/${memberId}`)}
-                    >
-                      <IconWrapper inheritColor icon={Edit2} size={0} customIconSize={3} />
-                    </div>
-                  </>
-                )}
-                {isAdmin && !member.isYou && (
-                  <>
-                    <div
-                      onClick={() => navigate(`/admin/teams/profile/${memberId}`)}
-                      className='cursor-pointer bg-background-70 h-9 min-w-9 flex justify-center items-center rounded-xl hover:bg-background-80'
-                      aria-label='Edit member'
-                      role='button'
-                      tabIndex={0}
-                      onKeyDown={(e) => e.key === 'Enter' && navigate(`/admin/teams/profile/${memberId}`)}
-                    >
-                      <IconWrapper inheritColor icon={Edit2} size={0} customIconSize={3} />
-                    </div>
-                    <div
-                      onClick={() => handleRemoveMember(member)}
-                      className='cursor-pointer bg-background-70 h-9 min-w-9 flex justify-center items-center rounded-xl hover:bg-background-80'
-                      aria-label='Remove member'
-                      role='button'
-                      tabIndex={0}
-                      onKeyDown={(e) => e.key === 'Enter' && handleRemoveMember(member)}
-                    >
-                      <IconWrapper inheritColor icon={Trash2} size={0} customIconSize={3} className='text-red-100' />
-                    </div>
-                  </>
-                )}
-              </div>
-            </div>
-          )
-        })}
       </StyledCard>
 
       {isPaidPlan && (

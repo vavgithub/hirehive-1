@@ -13,6 +13,7 @@ import TrialInfoModal from '../../components/Register/TrialInfoModal'
 import EnterpriseContactModal from '../../components/Register/EnterpriseContactModal'
 import AssessmentBanner from '../../components/ui/AssessmentBanner'
 import StatsGrid from '../../components/ui/StatsGrid'
+import FeatureComparisonTable from '../../components/ui/FeatureComparisonTable'
 import useTrialStatus from '../../hooks/useTrialStatus'
 
 const TRIAL_STAT_VALUE_CLASS = 'font-gilroy text-h3 font-h3'
@@ -65,7 +66,7 @@ const COMPARISON = [
   {
     category: 'Core Features',
     rows: [
-      { feature: 'Candidate applications',  free: 'Up to 150/month', pro: 'Unlimited',       enterprise: 'Unlimited' },
+      { feature: 'Candidate applications',  free: 'Up to 150 / month', pro: 'Unlimited',       enterprise: 'Unlimited' },
       { feature: 'User seats',              free: '2 seats only',    pro: 'Per user pricing', enterprise: 'Unlimited' },
       { feature: 'Google Calendar Invites', free: true,  pro: true,  enterprise: true },
       { feature: 'Auto assign portfolios',  free: false,  pro: true,  enterprise: true },
@@ -74,7 +75,7 @@ const COMPARISON = [
   {
     category: 'Evaluation & Scoring',
     rows: [
-      { feature: 'Geode Score',        free: true, pro: true,  enterprise: true },
+      { feature: 'Geode Score',        free: false, pro: true,  enterprise: true },
       { feature: 'Budget screening',   free: false, pro: true,  enterprise: true },
       { feature: 'Reports / Export',   free: false, pro: true,  enterprise: true },
       { feature: 'Feedback & ratings', free: 'Rate only', pro: 'Feedback + Rate', enterprise: 'Feedback + Rate' },
@@ -108,12 +109,6 @@ const FeatureItem = ({ label, included, className = '' }) => (
     <span>{label}</span>
   </li>
 )
-
-const CellValue = ({ value }) => {
-  if (value === true)  return <IconWrapper icon={Check} inheritColor customIconSize={0} customStrokeWidth={11} size={0} className='text-teal-100 mx-auto' />
-  if (value === false) return <IconWrapper icon={X} inheritColor customIconSize={0} customStrokeWidth={4} size={0} className='text-font-gray opacity-30 mx-auto' />
-  return <span className='typography-body text-font-gray'>{value}</span>
-}
 
 function PricingAndSubscription() {
   const [searchParams] = useSearchParams()
@@ -179,12 +174,7 @@ function PricingAndSubscription() {
   const getEnterpriseVariant = () => (currentPlan === 'enterprise' ? 'primary' : 'secondary')
 
   const highlightedComparisonColumn =
-    currentPlan === 'enterprise' ? 'enterprise' : currentPlan === 'pro' ? 'pro' : 'pro'
-
-  const getComparisonHeaderClass = (column) =>
-    column === highlightedComparisonColumn
-      ? 'typography-body text-teal-100 text-center'
-      : 'typography-body text-font-gray text-center'
+    currentPlan === 'enterprise' ? 'enterprise' : 'pro'
 
   const isFreeCTADisabled = currentPlan === 'free'
   const isProCTADisabled = false
@@ -456,31 +446,10 @@ function PricingAndSubscription() {
 
       <StyledCard padding={2} extraStyles='w-full'>
         <h3 className='mb-6'>Compare all features</h3>
-
-        <div className='grid grid-cols-4 pb-3 border-b border-divider-100'>
-          <span className='typography-body text-font-gray'>Feature</span>
-          <span className={getComparisonHeaderClass('free')}>Free</span>
-          <span className={getComparisonHeaderClass('pro')}>Pro</span>
-          <span className={getComparisonHeaderClass('enterprise')}>Enterprise</span>
-        </div>
-
-        {COMPARISON.map(section => (
-          <div key={section.category}>
-            <div className='py-3 mt-2'>
-              <span className='typography-small-p text-font-gray font-semibold tracking-wide uppercase'>
-                {section.category}
-              </span>
-            </div>
-            {section.rows.map((row, i) => (
-              <div key={i} className='grid grid-cols-4 py-3 border-b border-divider-100 last:border-0 items-center'>
-                <span className='typography-body text-font-gray'>{row.feature}</span>
-                <div className='flex justify-center'><CellValue value={row.free} /></div>
-                <div className='flex justify-center'><CellValue value={row.pro} /></div>
-                <div className='flex justify-center'><CellValue value={row.enterprise} /></div>
-              </div>
-            ))}
-          </div>
-        ))}
+        <FeatureComparisonTable
+          sections={COMPARISON}
+          highlightedColumn={highlightedComparisonColumn}
+        />
       </StyledCard>
 
       <p className='typography-body text-font-gray text-center mt-6'>
@@ -501,6 +470,7 @@ function PricingAndSubscription() {
         cancelVariant='tertiary'
         isReadyToClose={false}
         specifiedWidth='max-w-xl'
+        showCloseIcon
       >
         <div className='mt-4 flex flex-col gap-4'>
           <p className='typography-body font-semibold text-font-main'>You would lose access to:</p>
