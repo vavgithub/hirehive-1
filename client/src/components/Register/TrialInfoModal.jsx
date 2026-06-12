@@ -4,6 +4,7 @@ import StyledCard from '../Cards/StyledCard'
 import { Button } from '../Buttons/Button'
 import { Check, X } from 'lucide-react'
 import IconWrapper from '../Cards/IconWrapper'
+import { startTrialPeriod } from '../../utility/trial.utils'
 
 const FEATURES = [
   'Add as many users as you want for free',
@@ -65,7 +66,12 @@ function TrialInfoModal({ onClose, secondaryCTA = "Not now, use free version" })
               <p className='typography-body font-medium'>Free of cost!</p>
               <p className='typography-small-p text-font-gray mt-1'>No Credit card details required!</p>
             </div>
-            <Button variant='primary' type='button' onClick={onClose} className='!w-full !px-0 mt-4'>
+            <Button
+              variant='primary'
+              type='button'
+              onClick={() => { startTrialPeriod(); onClose() }}
+              className='!w-full !px-0 mt-4'
+            >
               Start my free trial
             </Button>
             <Button variant="tertiary" type="button" onClick={onClose} className='whitespace-nowrap'>

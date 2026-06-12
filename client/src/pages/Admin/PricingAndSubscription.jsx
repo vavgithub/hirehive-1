@@ -1,17 +1,21 @@
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useAuthContext } from '../../context/AuthProvider'
 import Container from '../../components/Cards/Container'
 import Header from '../../components/utility/Header'
 import StyledCard from '../../components/Cards/StyledCard'
 import { Button } from '../../components/Buttons/Button'
-import { BadgeCheck, Check, Info, Lock, X } from 'lucide-react'
+import { BadgeCheck, Check, Info, Lock, X, Clock, CalendarDays, Circle } from 'lucide-react'
 import IconWrapper from '../../components/Cards/IconWrapper'
 import ToggleSwitch from '../../components/ui/ToggleSwitch'
 import Modal from '../../components/Modals/Modal'
 import TrialInfoModal from '../../components/Register/TrialInfoModal'
 import EnterpriseContactModal from '../../components/Register/EnterpriseContactModal'
 import AssessmentBanner from '../../components/ui/AssessmentBanner'
+import StatsGrid from '../../components/ui/StatsGrid'
+import useTrialStatus from '../../hooks/useTrialStatus'
+
+const TRIAL_STAT_VALUE_CLASS = 'font-gilroy text-h3 font-h3'
 
 const FREE_FEATURES = [
   { label: 'Up to 150 applications/month', included: true },
@@ -19,8 +23,8 @@ const FREE_FEATURES = [
   { label: 'Google Calendar Invites',      included: true },
   { label: 'Rate candidates',              included: true },
   { label: 'Standard support',             included: true },
+  { label: 'Geode Score evaluations',      included: true },
   { label: 'Auto assign portfolios',       included: false },
-  { label: 'Geode Score evaluations',      included: false },
   { label: 'Budget screening',             included: false },
   { label: 'Talent pool / Future Gems',    included: false },
 ]
@@ -70,7 +74,7 @@ const COMPARISON = [
   {
     category: 'Evaluation & Scoring',
     rows: [
-      { feature: 'Geode Score',        free: false, pro: true,  enterprise: true },
+      { feature: 'Geode Score',        free: true, pro: true,  enterprise: true },
       { feature: 'Budget screening',   free: false, pro: true,  enterprise: true },
       { feature: 'Reports / Export',   free: false, pro: true,  enterprise: true },
       { feature: 'Feedback & ratings', free: 'Rate only', pro: 'Feedback + Rate', enterprise: 'Feedback + Rate' },
@@ -114,12 +118,34 @@ const CellValue = ({ value }) => {
 function PricingAndSubscription() {
   const [searchParams] = useSearchParams()
   const { user } = useAuthContext()
+  const trialStatus = useTrialStatus()
   const currentPlan = searchParams.get('plan') || user?.plan || 'free'
 
   const [billing, setBilling] = useState('monthly')
   const [showEndTrialModal, setShowEndTrialModal] = useState(false)
   const [showTrialModal, setShowTrialModal] = useState(false)
   const [showEnterpriseModal, setShowEnterpriseModal] = useState(false)
+
+  const trialStats = useMemo(() => [
+    {
+      title: 'Days remaining',
+      value: trialStatus.daysRemainingLabel,
+      valueClassName: TRIAL_STAT_VALUE_CLASS,
+      icon: () => <IconWrapper size={10} isTeritiaryIcon icon={Clock} />,
+    },
+    {
+      title: 'Trial progress',
+      value: trialStatus.progressLabel,
+      valueClassName: TRIAL_STAT_VALUE_CLASS,
+      icon: () => <IconWrapper size={10} isTeritiaryIcon icon={CalendarDays} />,
+    },
+    {
+      title: 'Status',
+      value: trialStatus.statusLabel,
+      valueClassName: TRIAL_STAT_VALUE_CLASS,
+      icon: () => <IconWrapper size={10} isTeritiaryIcon icon={Circle} />,
+    },
+  ], [trialStatus])
 
   const proPrice = billing === 'yearly' ? 15 : 19
 
@@ -199,7 +225,7 @@ function PricingAndSubscription() {
           )}
         </div>
 
-        {(currentPlan === 'free' || currentPlan === 'trial') && (
+        {currentPlan === 'free' && (
           <AssessmentBanner
             title='First time here?'
             description='New users get a guided trial experience during onboarding.'
@@ -207,6 +233,29 @@ function PricingAndSubscription() {
             onButtonClick={() => setShowTrialModal(true)}
             className='!my-0'
           />
+        )}
+
+        {currentPlan === 'trial' && (
+          <StyledCard padding={2} extraStyles='w-full !my-0'>
+            <div className='flex flex-col md:flex-row md:items-start justify-between gap-4 mb-6'>
+              <div className='flex flex-col'>
+                <h3>{trialStatus.bannerTitle}</h3>
+                <p className='typography-small-p text-font-gray mt-1'>
+                  You&apos;re experiencing Geode Pro features. Upgrade before your trial ends to keep access.
+                </p>
+              </div>
+              <Button
+                variant='primary'
+                type='button'
+                className='!px-6 shrink-0'
+                onClick={() => document.getElementById('pricing-pro-card')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })}
+              >
+                Upgrade Now
+              </Button>
+            </div>
+
+            <StatsGrid stats={trialStats} equalWidth />
+          </StyledCard>
         )}
 
         <div className='grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch'>
@@ -221,7 +270,7 @@ function PricingAndSubscription() {
           >
             <div className='flex items-center justify-between gap-2 mb-1'>
               <p className='typography-small-p text-font-gray'>Free</p>
-              {(currentPlan === 'free' || currentPlan === 'trial') && (
+              {currentPlan === 'free' && (
                 <span className='w-fit shrink-0 -mt-3 font-bricolage text-sm rounded-full font-medium tracking-wider border border-accent-100 text-accent-100 px-4 py-1'>
                   Current Plan
                 </span>
@@ -250,22 +299,35 @@ function PricingAndSubscription() {
         </div>
 
         {/* PRO */}
-        <div className='flex h-full flex-col'>
-          <div className='bg-accent-300 rounded-t-xl shrink-0'>
-            <div className='flex h-12 items-center justify-center gap-2'>
-              <IconWrapper icon={BadgeCheck} inheritColor size={0} customIconSize={1} className='text-teal-100' />
-              <span className='typography-small-p font-medium text-teal-100'>Recommended</span>
+        <div id='pricing-pro-card' className='flex h-full flex-col'>
+          {currentPlan !== 'pro' && (
+            <div className='bg-accent-300 rounded-t-xl shrink-0'>
+              <div className='flex h-12 items-center justify-center gap-2'>
+                <IconWrapper icon={BadgeCheck} inheritColor size={0} customIconSize={1} className='text-teal-100' />
+                <span className='typography-small-p font-medium text-teal-100'>Recommended</span>
+              </div>
+              <div className='h-3' aria-hidden='true' />
             </div>
-            <div className='h-3' aria-hidden='true' />
-          </div>
+          )}
 
           <StyledCard
-            padding={2}
+            padding={currentPlan === 'pro' ? 3 : 2}
             backgroundColor='bg-background-90'
             borderRadius='rounded-[18px]'
-            extraStyles='relative z-10 flex flex-1 flex-col min-h-0 cursor-pointer -mt-4 hover-outline pb-2 md:pb-4'
+            extraStyles={
+              currentPlan === 'pro'
+                ? 'relative flex flex-col overflow-hidden cursor-pointer hover-outline'
+                : 'relative z-10 flex flex-1 flex-col min-h-0 cursor-pointer -mt-4 hover-outline pb-2 md:pb-4'
+            }
           >
-            <p className='typography-small-p text-font-gray mb-1'>Pro</p>
+            <div className='flex items-center justify-between gap-2 mb-1'>
+              <p className='typography-small-p text-font-gray'>Pro</p>
+              {currentPlan === 'pro' && (
+                <span className='w-fit shrink-0 -mt-3 font-bricolage text-sm rounded-full font-medium tracking-wider border border-accent-100 text-accent-100 px-4 py-1'>
+                  Current Plan
+                </span>
+              )}
+            </div>
             <h3 className='mb-3'>
               Small teams & agencies
               <br />
@@ -361,7 +423,9 @@ function PricingAndSubscription() {
                 {getEnterpriseCTA()}
               </Button>
             )}
-            <p className='typography-small-p text-font-gray font-semibold mb-2'>What&apos;s included</p>
+            <p className='typography-small-p text-font-gray font-semibold mb-2'>
+              Builds on Pro for larger teams, custom workflows, and deeper control
+            </p>
             <ul className='flex flex-col gap-1.5'>
               {ENTERPRISE_FEATURES.map((f) => (
                 <FeatureItem key={f.label} label={f.label} included={f.included} />

@@ -25,6 +25,7 @@ import { getAdminDashboard, getAdminDashboardSecondary } from '../../services/ad
 import FillLoader from '../../components/Loaders/FillLoader'
 import { useUnknownProfilePicture } from '../../context/ThemeContext'
 import TrialBanner, { TrialConversionModal } from '../../components/ui/TrialBanner'
+import useTrialStatus from '../../hooks/useTrialStatus'
 
 function AdminDashboard() {
 
@@ -41,7 +42,7 @@ function AdminDashboard() {
 
   // TODO: replace with real plan from user/company API
   const currentPlan = 'trial'
-  const trialDaysLeft = 18
+  const trialStatus = useTrialStatus()
 
   const navigate = useNavigate();
   const UNKNOWN_PROFILE_PICTURE_URL = useUnknownProfilePicture()
@@ -256,7 +257,7 @@ function AdminDashboard() {
           </StyledCard>
           <StyledCard backgroundColor={'bg-background-90'} padding={2} extraStyles={' w-[30%] flex flex-col items-center justify-between gap-6'}>
             {currentPlan === 'trial' && (
-              <TrialBanner daysLeft={trialDaysLeft} />
+              <TrialBanner daysLeft={trialStatus.daysLeft} />
             )}
             <div className=" w-[8rem]  aspect-square overflow-hidden rounded-full bg-background-70 border border-font-secondary">
               <img src={dashboardDetails?.companyDetails?.logoUrl ? dashboardDetails?.companyDetails?.logoUrl : `${UNKNOWN_PROFILE_PICTURE_URL}`} alt="LOGO" className="object-cover w-full" />
@@ -378,7 +379,7 @@ function AdminDashboard() {
       {/* </StyledCard> */}
       {showTrialModal && (
         <TrialConversionModal
-          daysLeft={trialDaysLeft}
+          daysLeft={trialStatus.daysLeft}
           onClose={() => setShowTrialModal(false)}
         />
       )}

@@ -239,6 +239,7 @@ function Teams() {
         customConfirmLabel={showAddModal ?"Add" :"Edit"}
         customTitle={showAddModal ?"Add Team Member" : "Edit Team Member"}
         customMessage={showAddModal ? "Add Team members of your company and invite them to join." : "Edit Team member of your company and invite them to join."}
+        cancelVariant='tertiary'
         isReadyToClose={false}
         >
             {/* Add Memeber Form */}

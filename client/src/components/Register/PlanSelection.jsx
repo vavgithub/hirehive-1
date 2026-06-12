@@ -5,6 +5,7 @@ import { useOnboardingContext } from '../../context/OnboardingProvider'
 import StyledCard from '../Cards/StyledCard'
 import IconWrapper from '../Cards/IconWrapper'
 import { Button } from '../Buttons/Button'
+import { startTrialPeriod } from '../../utility/trial.utils'
 
 const FEATURES = [
   'Add as many users as you want for free',
@@ -20,6 +21,7 @@ function PlanSelection({ currentStep, setCurrentStep }) {
   const { setOnboardData } = useOnboardingContext()
 
   const advance = (plan) => {
+    if (plan === 'trial') startTrialPeriod()
     setOnboardData(prev => ({
       ...prev,
       plan,

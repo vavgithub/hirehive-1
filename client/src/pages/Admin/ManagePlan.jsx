@@ -22,6 +22,8 @@ import StatsGrid from '../../components/ui/StatsGrid'
 import { useUnknownProfilePicture } from '../../context/ThemeContext'
 import AssessmentBanner from '../../components/ui/AssessmentBanner'
 import EnterpriseContactModal from '../../components/Register/EnterpriseContactModal'
+import StatusBadge from '../../components/ui/StatusBadge'
+import useTrialStatus from '../../hooks/useTrialStatus'
 
 const PLAN_CONFIG = {
   free: {
@@ -37,7 +39,7 @@ const PLAN_CONFIG = {
     description: 'Experience Pro features during your trial period',
     seatLimit: null,
     appLimit: null,
-    statusLabel: '14 days remaining',
+    statusLabel: 'Trial',
     isPaid: false,
   },
   pro: {
@@ -58,21 +60,9 @@ const PLAN_CONFIG = {
   },
 }
 
-const PLAN_PILL_CLASS = {
-  enterprise: 'bg-purple-100/10 text-purple-100 border border-purple-100',
-  default: 'bg-background-80 text-font-gray border border-divider-100',
-}
+const PLAN_PILL_CLASS = 'bg-background-80 text-font-gray border border-divider-100'
 
-const TRIAL_TOTAL_DAYS = 21
-// TODO: replace with real trial data from user/company API
-const TRIAL_DAYS_LEFT = 18
-const TRIAL_DAY_CURRENT = TRIAL_TOTAL_DAYS - TRIAL_DAYS_LEFT + 1
-
-const TRIAL_BANNER_ITEMS = [
-  { label: 'Days remaining', value: `${TRIAL_DAYS_LEFT} days` },
-  { label: 'Trial progress', value: `Day ${TRIAL_DAY_CURRENT} of ${TRIAL_TOTAL_DAYS}` },
-  { label: 'Status', value: 'Trial Active' },
-]
+const TRIAL_STAT_VALUE_CLASS = 'font-gilroy text-h3 font-h3'
 
 // TODO: replace with real billing data from API
 const PRO_PRICE_PER_LICENSE = 19
@@ -102,6 +92,7 @@ const DEDICATED_SUPPORT = {
 
 function ManagePlan() {
   const { user } = useAuthContext()
+  const trialStatus = useTrialStatus()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
 
@@ -159,22 +150,36 @@ function ManagePlan() {
   const stats = currentPlan === 'trial'
     ? [
         {
+          title: 'Days remaining',
+          value: trialStatus.daysRemainingLabel,
+          valueClassName: TRIAL_STAT_VALUE_CLASS,
+          icon: () => <IconWrapper size={10} isTeritiaryIcon icon={Clock} />,
+        },
+        {
+          title: 'Trial progress',
+          value: trialStatus.progressLabel,
+          valueClassName: TRIAL_STAT_VALUE_CLASS,
+          icon: () => <IconWrapper size={10} isTeritiaryIcon icon={CalendarDays} />,
+        },
+        {
           title: 'Team Seats',
           value: memberCount,
+          valueClassName: TRIAL_STAT_VALUE_CLASS,
           icon: () => <IconWrapper size={10} isTeritiaryIcon icon={Users} />,
           statistics: { monthly: 'Unlimited seats' },
         },
         {
-          title: 'Applications Received',
+          title: 'Applications',
           value: usedApps,
+          valueClassName: TRIAL_STAT_VALUE_CLASS,
           icon: () => <IconWrapper size={10} isTeritiaryIcon icon={Mail} />,
           statistics: { monthly: 'Unlimited' },
         },
         {
           title: 'Status',
-          value: 'Trial Active',
+          value: trialStatus.statusLabel,
+          valueClassName: TRIAL_STAT_VALUE_CLASS,
           icon: () => <IconWrapper size={10} isTeritiaryIcon icon={Circle} />,
-          statistics: { monthly: `${TRIAL_DAYS_LEFT} days remaining` },
         },
       ]
     : currentPlan === 'pro'
@@ -192,7 +197,7 @@ function ManagePlan() {
             statistics: { monthly: `${proSeatsAvailable} available` },
           },
           {
-            title: 'Applications Received',
+            title: 'Applications',
             value: usedApps,
             icon: () => <IconWrapper size={10} isTeritiaryIcon icon={Mail} />,
             statistics: { monthly: 'Unlimited' },
@@ -219,7 +224,7 @@ function ManagePlan() {
               statistics: { monthly: `${enterpriseSeatsAvailable} available` },
             },
             {
-              title: 'Applications Received',
+              title: 'Applications',
               value: usedApps,
               icon: () => <IconWrapper size={10} isTeritiaryIcon icon={Mail} />,
               statistics: { monthly: 'Unlimited' },
@@ -241,7 +246,7 @@ function ManagePlan() {
             } : undefined,
           },
           {
-            title: 'Applications Received',
+            title: 'Applications',
             value: plan.appLimit ? `${usedApps}/${plan.appLimit}` : usedApps,
             icon: () => <IconWrapper size={10} isTeritiaryIcon icon={Mail} />,
             statistics: { monthly: 'This month' },
@@ -262,12 +267,6 @@ function ManagePlan() {
     if (status === 'JOINED') return { label: 'Joined', dotClass: 'bg-teal-100' }
     if (status === 'REQUESTED') return { label: 'Requested', dotClass: 'bg-status-borderyellow' }
     return { label: 'Invited', dotClass: 'bg-status-borderyellow' }
-  }
-
-  const getInvoiceStatusClass = (status) => {
-    if (status === 'Paid') return 'bg-status-bggreen text-status-textgreen border border-status-bordergreen'
-    if (status === 'Processing') return 'bg-status-bgyellow text-status-textyellow border border-status-borderyellow'
-    return 'bg-status-bggray text-status-textgray border border-status-bordergray'
   }
 
   const invitedMembers = teamData?.members ?? []
@@ -372,68 +371,22 @@ function ManagePlan() {
       <Header HeaderText="Manage Plan" />
       {(addMemberMutation?.isPending || removeMemberMutation?.isPending || isTeamLoading) && <LoaderModal />}
 
-      {currentPlan === 'trial' && (
-        <StyledCard padding={2} extraStyles='w-full mb-4'>
-          <StyledCard backgroundColor='bg-background-100' extraStyles='!pb-0'>
-            <div className='flex items-center gap-2 mb-2'>
-              <IconWrapper icon={Clock} inheritColor size={0} customIconSize={4} className='text-font-gray' />
-              <h3>{TRIAL_DAYS_LEFT} days left in your trial</h3>
-            </div>
-            <p className='typography-small-p text-font-gray'>
-              You&apos;re experiencing Geode Pro features. Upgrade before your trial ends to keep access.
-            </p>
-            <StyledCard
-              padding={2}
-              borderRadius='rounded-b-xl'
-              backgroundColor='bg-background-60'
-              extraStyles='flex flex-col md:flex-row md:items-center justify-between gap-4 !pt-4 !pb-4 mt-4'
-            >
-              <div className='flex justify-between w-full md:justify-start gap-3 md:gap-8'>
-                {TRIAL_BANNER_ITEMS.map((item) => (
-                  <div key={item.label} className='flex flex-col'>
-                    <span className='typography-small-p text-font-gray mb-[2px]'>{item.label}</span>
-                    <span className='typography-body'>{item.value}</span>
-                  </div>
-                ))}
-              </div>
-              <Button
-                variant='primary'
-                type='button'
-                className='!px-6 shrink-0'
-                onClick={() => navigate(pricingPath)}
-              >
-                Upgrade Now
-              </Button>
-            </StyledCard>
-          </StyledCard>
-        </StyledCard>
-      )}
-
       {/* Current Plan */}
       <StyledCard padding={2} extraStyles='w-full mb-4'>
         <div className='flex flex-col mb-6'>
           <div className='flex items-center gap-3'>
             <h3>Current Plan</h3>
-            <span className={`w-fit font-bricolage text-sm rounded-full font-medium tracking-wider px-4 py-1 ${PLAN_PILL_CLASS[currentPlan] || PLAN_PILL_CLASS.default}`}>
+            <span className={`w-fit font-bricolage text-sm rounded-full font-medium tracking-wider px-4 py-1 ${PLAN_PILL_CLASS}`}>
               {plan.label}
             </span>
           </div>
           <p className='typography-small-p text-font-gray mt-1'>{plan.description}</p>
         </div>
 
-        <StatsGrid stats={stats} />
+        <StatsGrid stats={stats} equalWidth={currentPlan === 'trial'} />
 
         {currentPlan === 'pro' && (
           <div className='flex flex-wrap items-center gap-3 mt-6'>
-            <Button
-              variant='primary'
-              type='button'
-              icon={Plus}
-              iconPosition='left'
-              onClick={() => setShowBuySeatsModal(true)}
-            >
-              Buy more seats
-            </Button>
             <Button
               variant='tertiary'
               type='button'
@@ -449,6 +402,15 @@ function ManagePlan() {
               onClick={() => setShowRemoveSeatsModal(true)}
             >
               Remove seats
+            </Button>
+            <Button
+              variant='primary'
+              type='button'
+              icon={Plus}
+              iconPosition='left'
+              onClick={() => setShowBuySeatsModal(true)}
+            >
+              Buy more seats
             </Button>
           </div>
         )}
@@ -558,13 +520,13 @@ function ManagePlan() {
             </p>
           </div>
           <div className='flex items-center gap-3 flex-wrap justify-end'>
-            {currentPlan === 'trial' && (
+            {(currentPlan === 'trial' || currentPlan === 'pro') && (
               <>
                 <span className='w-fit font-bricolage text-sm rounded-full font-medium tracking-wider px-4 py-1 bg-background-80 text-font-gray border border-divider-100'>
                   {memberCount} users
                 </span>
                 <span className='w-fit font-bricolage text-sm rounded-full font-medium tracking-wider px-4 py-1 bg-background-80 text-font-gray border border-divider-100'>
-                  Unlimited seats
+                  {currentPlan === 'trial' ? 'Unlimited seats' : `${seatLimit} seats`}
                 </span>
               </>
             )}
@@ -744,19 +706,17 @@ function ManagePlan() {
               <span className='typography-body text-font-main'>{invoice.id}</span>
               <span className='typography-body text-font-main'>{invoice.date}</span>
               <span className='typography-body text-font-main col-span-2'>{invoice.description}</span>
-              <div>
+              <div className='-ml-2'>
                 {invoice.addOn ? (
-                  <span className={`w-fit font-bricolage text-sm rounded-full font-medium tracking-wider px-4 py-1 border ${currentPlan === 'enterprise' ? 'border-accent-100 text-accent-100 bg-accent-300' : 'bg-background-80 text-font-gray border-divider-100'}`}>
+                  <p className='w-fit font-bricolage text-sm rounded-full font-medium tracking-wider border border-accent-100 text-accent-100 px-4 py-1'>
                     {invoice.addOn}
-                  </span>
+                  </p>
                 ) : (
                   <span className='typography-small-p text-font-gray'>—</span>
                 )}
               </div>
               <span className='typography-body text-font-main'>{invoice.amount}</span>
-              <span className={`w-fit font-bricolage text-sm rounded-full font-medium tracking-wider px-4 py-1 ${getInvoiceStatusClass(invoice.status)}`}>
-                {invoice.status}
-              </span>
+              <StatusBadge status={invoice.status} customWidth='w-fit' />
               <div className='flex items-center justify-end'>
                 <div
                   onClick={() => showSuccessToast('Info', `Downloading ${invoice.id}...`)}
@@ -807,53 +767,54 @@ function ManagePlan() {
           <StyledCard
             padding={3}
             backgroundColor='bg-background-90'
-            extraStyles='relative w-full max-w-3xl mx-4'
+            extraStyles='relative w-full max-w-2xl mx-4'
           >
             <div
               onClick={() => setShowBuySeatsModal(false)}
-              className='absolute top-4 right-4 cursor-pointer bg-background-70 h-9 min-w-9 flex justify-center items-center rounded-xl hover:bg-background-80'
+              className='absolute top-4 right-4 z-10 cursor-pointer bg-background-70 h-9 min-w-9 flex justify-center items-center rounded-xl hover:bg-background-80'
             >
               <IconWrapper icon={X} size={0} />
             </div>
 
-            <div className='flex flex-col md:flex-row gap-6 md:gap-8'>
-              <div className='flex-1 pr-0 md:pr-4'>
-                <h3 className='mb-6'>Buy more seats</h3>
-                <p className='typography-body text-font-main'>How many seats do you want to buy?</p>
-                <p className='typography-small-p text-font-gray mt-1'>
-                  You can add as many seats as you want.
-                </p>
-                <div className='flex items-center gap-2 mt-6 max-w-xs'>
-                  <button
-                    type='button'
-                    onClick={() => setSeatsToBuy((count) => count + 1)}
-                    className='bg-background-70 h-11 min-w-11 flex justify-center items-center rounded-xl hover:bg-background-80'
-                    aria-label='Increase seats'
-                  >
-                    <IconWrapper icon={Plus} inheritColor size={0} customIconSize={3} />
-                  </button>
-                  <input
-                    type='number'
-                    min={1}
-                    value={seatsToBuy}
-                    onChange={(e) => setSeatsToBuy(Math.max(1, Number(e.target.value) || 1))}
-                    className='no-spinner flex-1 h-11 rounded-xl bg-background-80 typography-body text-font-main text-center outline-none'
-                  />
-                  <button
-                    type='button'
-                    onClick={() => setSeatsToBuy((count) => Math.max(1, count - 1))}
-                    className='bg-background-70 h-11 min-w-11 flex justify-center items-center rounded-xl hover:bg-background-80'
-                    aria-label='Decrease seats'
-                  >
-                    <IconWrapper icon={Minus} inheritColor size={0} customIconSize={3} />
-                  </button>
-                </div>
+            <div className='mb-4 pr-12'>
+              <h3 className='mb-1'>Buy more seats</h3>
+              <p className='typography-body text-font-main'>How many seats do you want to buy?</p>
+              <p className='typography-small-p text-font-gray mt-1'>
+                You can add as many seats as you want.
+              </p>
+            </div>
+
+            <div className='flex flex-col md:flex-row gap-4 md:gap-5 md:items-center'>
+              <div className='flex items-center gap-2 w-fit shrink-0'>
+                <button
+                  type='button'
+                  onClick={() => setSeatsToBuy((count) => count + 1)}
+                  className='bg-background-70 h-9 w-9 flex justify-center items-center rounded-xl hover:bg-background-80 shrink-0'
+                  aria-label='Increase seats'
+                >
+                  <IconWrapper icon={Plus} inheritColor size={0} customIconSize={3} />
+                </button>
+                <input
+                  type='number'
+                  min={1}
+                  value={seatsToBuy}
+                  onChange={(e) => setSeatsToBuy(Math.max(1, Number(e.target.value) || 1))}
+                  className='no-spinner w-14 h-9 rounded-xl bg-background-80 typography-body text-font-main text-center outline-none'
+                />
+                <button
+                  type='button'
+                  onClick={() => setSeatsToBuy((count) => Math.max(1, count - 1))}
+                  className='bg-background-70 h-9 w-9 flex justify-center items-center rounded-xl hover:bg-background-80 shrink-0'
+                  aria-label='Decrease seats'
+                >
+                  <IconWrapper icon={Minus} inheritColor size={0} customIconSize={3} />
+                </button>
               </div>
 
               <StyledCard
                 padding={3}
                 backgroundColor='bg-background-100'
-                extraStyles='w-full md:w-72 flex flex-col gap-5 shrink-0'
+                extraStyles='w-full md:w-64 flex flex-col gap-4 shrink-0'
               >
                 <div>
                   <p className='typography-small-p text-font-gray mb-1'>Your current price</p>
@@ -903,6 +864,7 @@ function ManagePlan() {
         customConfirmLabel='Add'
         customTitle='Add Team Member'
         customMessage='Add team members of your company and invite them to join.'
+        cancelVariant='tertiary'
         isReadyToClose={false}
       >
         <div className='mt-4 flex flex-col gap-4'>

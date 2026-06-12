@@ -29,7 +29,11 @@ function TrialConversionModal({ daysLeft, onClose }) {
 
         <div className='text-center px-4 py-4'>
           <h2 className='text-font-main mb-3'>
-            Your Free Trial ends in {daysLeft} Days
+            {daysLeft === 0
+              ? 'Your free trial has ended'
+              : daysLeft === 1
+                ? 'Your free trial ends in 1 day'
+                : `Your free trial ends in ${daysLeft} days`}
           </h2>
           <p className='typography-body text-font-gray mb-6'>
             You would lose access to all the premium features. Upgrade now to continue enjoying the Geode Experience!
@@ -58,7 +62,11 @@ function TrialBanner({ daysLeft }) {
     <>
       <div className='w-full rounded-xl px-4 py-3 flex flex-col items-center gap-2'>
         <p className='typography-body text-font-main font-semibold text-center'>
-          Your Trial ends in {daysLeft} days!
+          {daysLeft === 0
+            ? 'Your trial has ended'
+            : daysLeft === 1
+              ? 'Your trial ends in 1 day!'
+              : `Your trial ends in ${daysLeft} days!`}
         </p>
         <Button
           variant='primary'
