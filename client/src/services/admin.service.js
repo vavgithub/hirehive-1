@@ -29,6 +29,10 @@ export const rejectRequest = async ({ email }) => {
     return response?.data
 }
 
+export const removeTeamMember = async ({ email }) => {
+    const response = await axios.post(ADMIN_BASE_URL + `/remove-member`, { email });
+    return response?.data
+}
 export const reInviteMember = async ({ memberId }) => {
   const response = await axios.post(ADMIN_BASE_URL + '/re-invite-member', { memberId });
   return response?.data
