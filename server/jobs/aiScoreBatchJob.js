@@ -36,14 +36,15 @@ const scoreCandidate = async (candidate, base, openBrandJobIds) => {
       a.aiTriggerStatus === 'pending' &&
       openBrandJobIds.has(a.jobId.toString())
   );
-
   if (!app) return;
 
   const jobId = app.jobId.toString();
+  const appId = app._id;
 
-  app.aiTriggerStatus = 'in_progress';
-  candidate.markModified('jobApplications');
-  await candidate.save();
+  await candidates.findOneAndUpdate(
+    { _id: candidate._id, 'jobApplications._id': appId },
+    { $set: { 'jobApplications.$.aiTriggerStatus': 'in_progress' } }
+  );
 
   try {
     await axios.post(
@@ -60,25 +61,34 @@ const scoreCandidate = async (candidate, base, openBrandJobIds) => {
     const result = await pollForScore(candidate._id.toString(), base);
 
     if (result) {
-      const stageStatus = app.stageStatuses.get('Portfolio');
-      if (stageStatus) {
-        stageStatus.aiScore = result.score;
-        stageStatus.aiReasoning = result.reasoning;
-        stageStatus.aiRecommendation = result.recommendation;
-      }
-      app.aiTriggerStatus = 'done';
-      app.aiScoredAt = new Date();
+      const confidence = result.confidence || 'high';
+      const newStatus = confidence === 'low' ? 'awaiting_discovery' : 'done';
+      await candidates.findOneAndUpdate(
+        { _id: candidate._id, 'jobApplications._id': appId },
+        {
+          $set: {
+            'jobApplications.$.aiTriggerStatus': newStatus,
+            'jobApplications.$.aiScoredAt': new Date(),
+            'jobApplications.$.stageStatuses.Portfolio.aiScore': result.score,
+            'jobApplications.$.stageStatuses.Portfolio.aiReasoning': result.reasoning,
+            'jobApplications.$.stageStatuses.Portfolio.aiRecommendation': result.recommendation,
+          }
+        }
+      );
+      console.log(`[BatchJob] Scored ${candidate._id} → ${result.score} (${newStatus})`);
     } else {
-      app.aiTriggerStatus = 'escalated';
+      await candidates.findOneAndUpdate(
+        { _id: candidate._id, 'jobApplications._id': appId },
+        { $set: { 'jobApplications.$.aiTriggerStatus': 'awaiting_discovery' } }
+      );
+      console.log(`[BatchJob] No result for ${candidate._id} → awaiting_discovery`);
     }
-
-    candidate.markModified('jobApplications');
-    await candidate.save();
   } catch (err) {
-    console.error(`Failed scoring candidate ${candidate._id}:`, err.message);
-    app.aiTriggerStatus = 'pending';
-    candidate.markModified('jobApplications');
-    await candidate.save();
+    console.error(`[BatchJob] Failed scoring ${candidate._id}:`, err.message);
+    await candidates.findOneAndUpdate(
+      { _id: candidate._id, 'jobApplications._id': appId },
+      { $set: { 'jobApplications.$.aiTriggerStatus': 'pending' } }
+    );
   }
 };
 
