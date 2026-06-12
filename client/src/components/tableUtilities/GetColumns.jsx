@@ -6,7 +6,7 @@ import StatusBadge from "../ui/StatusBadge";
 import StageBadge from "../ui/StageBadge";
 import { ensureAbsoluteUrl } from "../../utility/ensureAbsoluteUrl";
 import IconWrapper from "../Cards/IconWrapper";
-import { CircleCheck, CircleX, ClipboardCheck, FileUser, FolderOpen, Globe, PaintbrushVertical } from "lucide-react";
+import { CircleCheck, CircleX, ClipboardCheck, FileUser, FolderOpen, Globe, Paintbrush } from "lucide-react";
 import { formatPhoneNumber } from "../Form/PhoneInputField";
 import { hasPermission, PERMISSIONS } from "../../config/permissions.config";
 import { useUnknownProfilePicture } from "../../context/ThemeContext";
@@ -90,7 +90,7 @@ const getCommonColumns = (handleDocumentClick) => [
             }
             arrowed
           >
-            <IconWrapper hasBg size={3} icon={PaintbrushVertical} />
+            <IconWrapper hasBg size={3} icon={Paintbrush} />
           </CustomToolTip>
         )}
       </div>

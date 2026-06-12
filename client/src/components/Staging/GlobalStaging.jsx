@@ -112,9 +112,9 @@ const PORTFOLIO_SCORE_CARD_SIZE = 'w-28 md:w-32 lg:w-36 h-[7.5rem]';
 
 const PortfolioScoreCard = ({ label, score }) => (
     <StyledCard
-        backgroundColor="bg-background-60"
+        backgroundColor="bg-background-100"
         padding={0}
-        extraStyles={`${PORTFOLIO_SCORE_CARD_SIZE} shrink-0`}
+        extraStyles={`${PORTFOLIO_SCORE_CARD_SIZE} shrink-0 border border-background-80`}
     >
         <div className="p-2.5 h-full flex flex-col items-center justify-center">
             <p className="typography-small-p text-font-gray">{label}</p>
