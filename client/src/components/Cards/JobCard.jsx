@@ -139,9 +139,13 @@ const JobCard = ({
     onClick={onClick ? handleCardClick : undefined}
   >
     <StyledCard padding={2} backgroundColor={'bg-background-100'} borderRadius={'  rounded-t-xl '} extraStyles={' transition-colors !pb-0 duration-200 '}>
-      <div className={(isApplied && "flex-col md:flex-row" ) +" flex items-start justify-between   gap-4"}>
-        <h3 className={(isApplied ? "w-full md:w-[50%] xl:w-[60%]" : "w-[60%]") + "group-hover:text-font-accent  text-ellipsis overflow-hidden whitespace-nowrap "}>{job.jobTitle}</h3>
-        <div className={"flex items-center gap-3 " + (isApplied ? " mb-2 md:mb-0 " : "")}>
+      <div className='flex flex-col md:flex-row items-start justify-between gap-4'>
+        <h3 className={`group-hover:text-font-accent w-full min-w-0 whitespace-normal break-words md:whitespace-nowrap md:overflow-hidden md:text-ellipsis ${
+          isApplied ? 'md:w-[50%] xl:w-[60%]' : 'md:w-[60%]'
+        }`}>
+          {job.jobTitle}
+        </h3>
+        <div className={`flex items-center gap-3 flex-wrap shrink-0 ${isApplied ? 'md:mb-0' : ''}`}>
           {isApplied &&         
           <span className="bg-blue-300 text-blue-100 typography-body px-4 py-2 rounded-xl">
             Applied
