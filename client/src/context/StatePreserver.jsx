@@ -30,6 +30,7 @@ function StatePreserver({ children }) {
     rating: [],
     score : "",
     location : [],
+    discovery: [],
     assignee: [],
     "job Type" : []
   });
@@ -48,6 +49,7 @@ function StatePreserver({ children }) {
       assessment : [],
       score : "",
       location : [],
+      discovery: [],
       assignee: [],
       "job Type" : []
     });
