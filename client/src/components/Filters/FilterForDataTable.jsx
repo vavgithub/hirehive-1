@@ -217,7 +217,6 @@ const FilterForDataTable = ({ applyLocationFilter, onApplyFilters, readOnly, pre
         discovery: isActive ? [] : [AWAITING_DISCOVERY_FILTER],
       };
     });
-    setIsOpen(false);
   };
 
   const handleClickOutside = (event) => {
@@ -308,10 +307,17 @@ const FilterForDataTable = ({ applyLocationFilter, onApplyFilters, readOnly, pre
             </div>
           ))}
           <div
-            className={"flex h-10 hover-outline p-4 rounded-xl items-center cursor-pointer typography-body " + (isDiscoveryActive ? "text-accent-100 bg-accent-300" : "text-font-gray hover:text-accent-100")}
+            className={"flex justify-between h-10 hover-outline p-4 rounded-xl items-center cursor-pointer typography-body " + (isDiscoveryActive ? "text-accent-100 bg-accent-300" : "text-font-gray hover:text-accent-100")}
             onClick={handleDiscoveryToggle}
           >
-            Awaiting Discovery
+            <span>Awaiting Discovery</span>
+            <div onClick={(e) => e.stopPropagation()} onMouseDown={(e) => e.stopPropagation()}>
+              <TickCheckbox
+                id="filter-discovery"
+                checked={isDiscoveryActive}
+                onChange={handleDiscoveryToggle}
+              />
+            </div>
           </div>
         </div>
       )}
