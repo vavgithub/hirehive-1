@@ -30,7 +30,7 @@ import Loader from '../Loaders/Loader.jsx';
 import WarningIcon from '../../svg/Staging/WarningIcon.jsx';
 import { ChevronDown, ChevronUp, RotateCcw } from 'lucide-react';
 import IconWrapper from '../Cards/IconWrapper.jsx';
-import { Calendar, Clock, Copy, DatabaseZap, Link, Sparkles, User } from 'lucide-react';
+import { Calendar, Clock, Copy, DatabaseZap, Link, Sparkles, UserPen } from 'lucide-react';
 import useAuth from '../../hooks/useAuth.jsx';
 import { fetchAllDesignReviewers } from '../../services/auth.service';
 import { formatUTCToLocalTimeAuto, UTCToDateFormatted } from '../../utility/timezoneConverter.js';
@@ -91,12 +91,12 @@ function parseAiReasoningSection(text, heading) {
 
 const AiCommentsContent = ({ aiReasoning, showTitle = true }) => (
     <div>
-        {showTitle && <p className="typography-small-p font-bold mb-2">AI Comments</p>}
+        {showTitle && <p className="typography-small-p text-font-gray mb-2">AI Comments</p>}
         {AI_COMMENT_HEADINGS.map((heading) => {
             const content = parseAiReasoningSection(aiReasoning ?? '', heading);
             return content ? (
                 <div key={heading} className="mb-2">
-                    <span className="typography-small-p font-bold">{heading}</span>
+                    <p className="typography-small-p text-font-gray">{heading}</p>
                     {content.split(';').filter((s) => s.trim()).map((point, i) => (
                         <p key={i} className="typography-small-p text-font-main">
                             • {point.trim()}
@@ -132,7 +132,12 @@ const PortfolioEvaluationRow = ({ icon, title, children, scoreLabel, score }) =>
             <div className="w-[75%] min-w-0">
                 {title && (
                     <div className="flex items-center gap-2 mb-3">
-                        <IconWrapper icon={icon} size={0} customIconSize={2} />
+                        {icon &&
+                            React.createElement(icon, {
+                                size: 18,
+                                strokeWidth: 1.5,
+                                className: 'text-font-main shrink-0',
+                            })}
                         <h4 className="typography-body">{title}</h4>
                     </div>
                 )}
@@ -157,7 +162,7 @@ const PortfolioDualEvaluation = ({ portfolioStatus, reviewerFeedback, reviewerSc
         </PortfolioEvaluationRow>
 
         <PortfolioEvaluationRow
-            icon={User}
+            icon={UserPen}
             title="Reviewer Evaluation"
             scoreLabel="Reviewer Score"
             score={reviewerScore}
