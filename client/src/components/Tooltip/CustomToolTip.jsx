@@ -17,15 +17,16 @@ const CustomStyledTooltip = styled(({ className, size, ...props }) => (
   <Tooltip {...props} classes={{ popper: className }} />
 ))(({ size = 1 }) => ({
   [`& .${tooltipClasses.tooltip}`]: {
-    backgroundColor: "rgba(7,7,8,1)", // Custom background color
-    color: "white", // Custom text color
-    fontSize: sizes[size].fontSize, // Custom font size
+    backgroundColor: "var(--color-background-100)",
+    color: "var(--color-font-main)",
+    fontSize: sizes[size].fontSize,
     letterSpacing: "0.5px",
-    padding: sizes[size].padding, // Add padding around the tooltip text
-    borderRadius: "0.625rem", // Add border radius to tooltip
+    padding: sizes[size].padding,
+    borderRadius: "0.625rem",
+    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.12)",
   },
   [`& .${tooltipClasses.arrow}`]: {
-    color: "rgba(7,7,8,1)", // Arrow color matching background
+    color: "var(--color-background-100)",
   },
 }));
 
