@@ -39,10 +39,10 @@ const scoreCandidate = async (candidate, base, openBrandJobIds) => {
   if (!app) return;
 
   const jobId = app.jobId.toString();
-  const appId = app._id;
+  const matchJobId = app.jobId;
 
   await candidates.findOneAndUpdate(
-    { _id: candidate._id, 'jobApplications._id': appId },
+    { _id: candidate._id, 'jobApplications.jobId': matchJobId },
     { $set: { 'jobApplications.$.aiTriggerStatus': 'in_progress' } }
   );
 
@@ -64,7 +64,7 @@ const scoreCandidate = async (candidate, base, openBrandJobIds) => {
       const confidence = result.confidence || 'high';
       const newStatus = confidence === 'low' ? 'awaiting_discovery' : 'done';
       await candidates.findOneAndUpdate(
-        { _id: candidate._id, 'jobApplications._id': appId },
+        { _id: candidate._id, 'jobApplications.jobId': matchJobId },
         {
           $set: {
             'jobApplications.$.aiTriggerStatus': newStatus,
@@ -78,7 +78,7 @@ const scoreCandidate = async (candidate, base, openBrandJobIds) => {
       console.log(`[BatchJob] Scored ${candidate._id} → ${result.score} (${newStatus})`);
     } else {
       await candidates.findOneAndUpdate(
-        { _id: candidate._id, 'jobApplications._id': appId },
+        { _id: candidate._id, 'jobApplications.jobId': matchJobId },
         { $set: { 'jobApplications.$.aiTriggerStatus': 'awaiting_discovery' } }
       );
       console.log(`[BatchJob] No result for ${candidate._id} → awaiting_discovery`);
@@ -86,7 +86,7 @@ const scoreCandidate = async (candidate, base, openBrandJobIds) => {
   } catch (err) {
     console.error(`[BatchJob] Failed scoring ${candidate._id}:`, err.message);
     await candidates.findOneAndUpdate(
-      { _id: candidate._id, 'jobApplications._id': appId },
+      { _id: candidate._id, 'jobApplications.jobId': matchJobId },
       { $set: { 'jobApplications.$.aiTriggerStatus': 'pending' } }
     );
   }
