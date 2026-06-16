@@ -1129,7 +1129,10 @@ export const getAllCandidates = async (req,res) => {
           if (stageStatusValues.length) {
             encodedFilters.status = { $in: stageStatusValues };
           }
-          if (statusValues.includes('awaiting_discovery') || statusValues.includes('Awaiting Discovery')) {
+        }
+        if(key === 'discovery'){
+          const discoveryValues = Array.isArray(value) ? value : [value];
+          if (discoveryValues.includes('Awaiting Discovery') || discoveryValues.includes('awaiting_discovery')) {
             encodedFilters.aiTriggerStatus = { $in: ['awaiting_discovery'] };
           }
         }
