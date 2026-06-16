@@ -167,7 +167,8 @@ function PricingAndSubscription() {
   }
 
   const getProVariant = () => {
-    if (currentPlan === 'free' || currentPlan === 'trial' || currentPlan === 'pro') return 'primary'
+    if (currentPlan === 'trial') return 'secondary'
+    if (currentPlan === 'free' || currentPlan === 'pro') return 'primary'
     return 'secondary'
   }
 
@@ -226,26 +227,26 @@ function PricingAndSubscription() {
         )}
 
         {currentPlan === 'trial' && (
-          <StyledCard padding={2} extraStyles='w-full !my-0'>
-            <div className='flex flex-col md:flex-row md:items-start justify-between gap-4 mb-6'>
-              <div className='flex flex-col'>
+          trialStatus.isActive ? (
+            <StyledCard padding={2} extraStyles='w-full !my-0'>
+              <div className='flex flex-col mb-6'>
                 <h3>{trialStatus.bannerTitle}</h3>
                 <p className='typography-small-p text-font-gray mt-1'>
                   You&apos;re experiencing Geode Pro features. Upgrade before your trial ends to keep access.
                 </p>
               </div>
-              <Button
-                variant='primary'
-                type='button'
-                className='!px-6 shrink-0'
-                onClick={() => document.getElementById('pricing-pro-card')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })}
-              >
-                Upgrade Now
-              </Button>
-            </div>
-
-            <StatsGrid stats={trialStats} equalWidth />
-          </StyledCard>
+              <StatsGrid stats={trialStats} />
+            </StyledCard>
+          ) : (
+            <StyledCard padding={2} extraStyles='w-full !my-0'>
+              <div className='flex flex-col'>
+                <h3>{trialStatus.bannerTitle}</h3>
+                <p className='typography-small-p text-font-gray mt-1'>
+                  Your trial has ended. Choose a plan below to continue using Geode.
+                </p>
+              </div>
+            </StyledCard>
+          )
         )}
 
         <div className='grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch'>

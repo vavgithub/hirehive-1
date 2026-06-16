@@ -11,6 +11,8 @@ function AssessmentBanner({
   buttonText = 'Take Assessment',
   onButtonClick,
   className = '',
+  showButton = true,
+  icon: BannerIcon = TrendingUp,
 }) {
   const navigate = useNavigate()
   const bannerImg = useAssessmentBannerBg()
@@ -23,7 +25,7 @@ function AssessmentBanner({
     >
       <div className='flex gap-4 items-center'>
         <div className='hidden w-16 h-16 rounded-full md:rounded-full bg-primary-300 border border-primary-100 items-center md:flex justify-center'>
-          <IconWrapper icon={TrendingUp} customStrokeWidth={7} />
+          <IconWrapper icon={BannerIcon} customStrokeWidth={7} />
         </div>
 
         <div className='flex-col'>
@@ -32,9 +34,11 @@ function AssessmentBanner({
           <p className='hidden md:flex typograhpy-body'>{description}</p>
         </div>
       </div>
-      <div className='md:flex hidden'>
-        <Button variant='primary' onClick={handleClick}>{buttonText}</Button>
-      </div>
+      {showButton && (
+        <div className='md:flex hidden'>
+          <Button variant='primary' onClick={handleClick}>{buttonText}</Button>
+        </div>
+      )}
     </div>
   )
 }

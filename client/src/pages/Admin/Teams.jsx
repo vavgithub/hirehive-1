@@ -241,6 +241,7 @@ function Teams() {
         customMessage={showAddModal ? "Add Team members of your company and invite them to join." : "Edit Team member of your company and invite them to join."}
         cancelVariant='tertiary'
         isReadyToClose={false}
+        showCloseIcon
         >
             {/* Add Memeber Form */}
             <div className='mt-4 flex flex-col gap-4'>

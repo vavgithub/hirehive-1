@@ -76,6 +76,33 @@ const formatMemberName = (firstName = '', lastName = '') => {
     .join(' ')
 }
 
+const MANAGE_PLAN_TABLE_SX = {
+  '& .padded-col': {
+    paddingLeft: '24px',
+    paddingRight: '24px',
+  },
+  '& .MuiDataGrid-columnHeader': {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  '& .MuiDataGrid-cell': {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  '& .MuiDataGrid-row': {
+    cursor: 'default',
+  },
+  '& .first-row:hover, & .second-row:hover': {
+    outline: 'none !important',
+  },
+  '& .first-row:hover': {
+    backgroundColor: 'var(--color-background-100) !important',
+  },
+  '& .second-row:hover': {
+    backgroundColor: 'var(--color-background-80) !important',
+  },
+}
+
 // TODO: replace with real billing data from API
 const PRO_PRICE_PER_LICENSE = 19
 const PRO_LICENSE_COUNT = 5
@@ -556,6 +583,140 @@ function ManagePlan() {
     currentPlan,
   ])
 
+  const paymentHistoryColumns = useMemo(() => [
+    {
+      field: 'id',
+      headerName: 'Invoice',
+      flex: 0.8,
+      minWidth: 100,
+      align: 'left',
+      headerAlign: 'left',
+      sortable: false,
+      disableColumnMenu: true,
+      cellClassName: 'padded-col',
+      headerClassName: 'padded-col',
+      renderCell: (params) => (
+        <p className='typography-body text-font-main'>{params.value}</p>
+      ),
+    },
+    {
+      field: 'date',
+      headerName: 'Date',
+      flex: 1,
+      minWidth: 120,
+      align: 'left',
+      headerAlign: 'left',
+      sortable: false,
+      disableColumnMenu: true,
+      cellClassName: 'padded-col',
+      headerClassName: 'padded-col',
+      renderCell: (params) => (
+        <p className='typography-body text-font-main'>{params.value}</p>
+      ),
+    },
+    {
+      field: 'description',
+      headerName: 'Description',
+      flex: 1.8,
+      minWidth: 200,
+      align: 'left',
+      headerAlign: 'left',
+      sortable: false,
+      disableColumnMenu: true,
+      cellClassName: 'padded-col',
+      headerClassName: 'padded-col',
+      renderCell: (params) => (
+        <p className='typography-body text-font-main'>{params.value}</p>
+      ),
+    },
+    {
+      field: 'addOn',
+      headerName: 'Add-ons',
+      flex: 1,
+      minWidth: 130,
+      align: 'left',
+      headerAlign: 'left',
+      sortable: false,
+      disableColumnMenu: true,
+      cellClassName: 'padded-col',
+      headerClassName: 'padded-col',
+      renderCell: (params) => (
+        <div className='flex h-full items-center'>
+          {params.value ? (
+            <p className='w-fit font-bricolage text-sm rounded-full font-medium tracking-wider border border-accent-100 text-accent-100 px-4 py-1'>
+              {params.value}
+            </p>
+          ) : (
+            <span className='typography-small-p text-font-gray'>—</span>
+          )}
+        </div>
+      ),
+    },
+    {
+      field: 'amount',
+      headerName: 'Amount',
+      flex: 0.8,
+      minWidth: 100,
+      align: 'left',
+      headerAlign: 'left',
+      sortable: false,
+      disableColumnMenu: true,
+      cellClassName: 'padded-col',
+      headerClassName: 'padded-col',
+      renderCell: (params) => (
+        <p className='typography-body text-font-main'>{params.value}</p>
+      ),
+    },
+    {
+      field: 'status',
+      headerName: 'Status',
+      flex: 0.9,
+      minWidth: 120,
+      align: 'left',
+      headerAlign: 'left',
+      sortable: false,
+      disableColumnMenu: true,
+      cellClassName: 'padded-col',
+      headerClassName: 'padded-col',
+      renderCell: (params) => (
+        <div className='flex h-full items-center'>
+          <StatusBadge status={params.value} customWidth='w-fit' />
+        </div>
+      ),
+    },
+    {
+      field: 'actions',
+      headerName: 'Actions',
+      flex: 0.7,
+      minWidth: 100,
+      sortable: false,
+      disableColumnMenu: true,
+      align: 'right',
+      headerAlign: 'right',
+      cellClassName: 'padded-col',
+      headerClassName: 'padded-col',
+      renderCell: (params) => (
+        <div className='flex h-full w-full items-center justify-end'>
+          <div
+            onClick={(e) => {
+              e.stopPropagation()
+              showSuccessToast('Info', `Downloading ${params.row.id}...`)
+            }}
+            className='cursor-pointer bg-background-70 h-9 min-w-9 flex justify-center items-center rounded-xl hover:bg-background-80'
+            aria-label='Download invoice'
+            role='button'
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') showSuccessToast('Info', `Downloading ${params.row.id}...`)
+            }}
+          >
+            <IconWrapper inheritColor icon={Download} size={0} customIconSize={3} />
+          </div>
+        </div>
+      ),
+    },
+  ], [])
+
   const handleConfirmRemoveMember = () => {
     if (!pendingRemoveMember?.email) return
     removeMemberMutation.mutate({ email: pendingRemoveMember.email })
@@ -777,20 +938,7 @@ function ManagePlan() {
             getRowClassName={(params) =>
               params.indexRelativeToCurrentPage % 2 === 0 ? 'first-row' : 'second-row'
             }
-            sx={{
-              '& .padded-col': {
-                paddingLeft: '24px',
-                paddingRight: '24px',
-              },
-              '& .MuiDataGrid-columnHeader': {
-                display: 'flex',
-                alignItems: 'center',
-              },
-              '& .MuiDataGrid-cell': {
-                display: 'flex',
-                alignItems: 'center',
-              },
-            }}
+            sx={MANAGE_PLAN_TABLE_SX}
             localeText={{ noRowsLabel: 'No team members' }}
           />
         </div>
@@ -805,49 +953,23 @@ function ManagePlan() {
             </p>
           </div>
 
-          <div className='grid grid-cols-8 px-2 pb-2 border-b border-divider-100'>
-            <span className='typography-small-p text-font-gray'>Invoice</span>
-            <span className='typography-small-p text-font-gray'>Date</span>
-            <span className='typography-small-p text-font-gray col-span-2'>Description</span>
-            <span className='typography-small-p text-font-gray'>Add-ons</span>
-            <span className='typography-small-p text-font-gray'>Amount</span>
-            <span className='typography-small-p text-font-gray'>Status</span>
-            <span className='typography-small-p text-font-gray'>Actions</span>
+          <MuiCustomStylesForDataGrid />
+          <div className='mt-2'>
+            <DataGrid
+              rows={paymentHistory}
+              columns={paymentHistoryColumns}
+              getRowId={(row) => row.id}
+              autoHeight
+              rowHeight={72}
+              hideFooter
+              disableRowSelectionOnClick
+              getRowClassName={(params) =>
+                params.indexRelativeToCurrentPage % 2 === 0 ? 'first-row' : 'second-row'
+              }
+              sx={MANAGE_PLAN_TABLE_SX}
+              localeText={{ noRowsLabel: 'No payment history' }}
+            />
           </div>
-
-          {paymentHistory.map((invoice) => (
-            <div
-              key={invoice.id}
-              className='grid grid-cols-8 px-2 py-4 items-center border-b border-divider-100 last:border-0'
-            >
-              <span className='typography-body text-font-main'>{invoice.id}</span>
-              <span className='typography-body text-font-main'>{invoice.date}</span>
-              <span className='typography-body text-font-main col-span-2'>{invoice.description}</span>
-              <div className='-ml-2'>
-                {invoice.addOn ? (
-                  <p className='w-fit font-bricolage text-sm rounded-full font-medium tracking-wider border border-accent-100 text-accent-100 px-4 py-1'>
-                    {invoice.addOn}
-                  </p>
-                ) : (
-                  <span className='typography-small-p text-font-gray'>—</span>
-                )}
-              </div>
-              <span className='typography-body text-font-main'>{invoice.amount}</span>
-              <StatusBadge status={invoice.status} customWidth='w-fit' />
-              <div className='flex items-center justify-end'>
-                <div
-                  onClick={() => showSuccessToast('Info', `Downloading ${invoice.id}...`)}
-                  className='cursor-pointer bg-background-70 h-9 min-w-9 flex justify-center items-center rounded-xl hover:bg-background-80'
-                  aria-label='Download invoice'
-                  role='button'
-                  tabIndex={0}
-                  onKeyDown={(e) => e.key === 'Enter' && showSuccessToast('Info', `Downloading ${invoice.id}...`)}
-                >
-                  <IconWrapper inheritColor icon={Download} size={0} customIconSize={3} />
-                </div>
-              </div>
-            </div>
-          ))}
         </StyledCard>
       )}
 
@@ -884,7 +1006,7 @@ function ManagePlan() {
           <StyledCard
             padding={3}
             backgroundColor='bg-background-90'
-            extraStyles='relative w-full max-w-2xl mx-4'
+            extraStyles='relative w-full max-w-xl mx-4'
           >
             <div
               onClick={() => setShowBuySeatsModal(false)}
@@ -893,20 +1015,20 @@ function ManagePlan() {
               <IconWrapper icon={X} size={0} />
             </div>
 
-            <div className='mb-4 pr-12'>
-              <h3 className='mb-1'>Buy more seats</h3>
-              <p className='typography-body text-font-main'>How many seats do you want to buy?</p>
-              <p className='typography-small-p text-font-gray mt-1'>
-                You can add as many seats as you want.
-              </p>
-            </div>
+            <div className='flex flex-col gap-6'>
+              <div>
+                <h3 className='mb-1 pr-10'>Buy more seats</h3>
+                <p className='typography-body text-font-gray'>How many seats do you want to buy?</p>
+                <p className='typography-small-p text-font-gray mt-1'>
+                  You can add as many seats as you want.
+                </p>
+              </div>
 
-            <div className='flex flex-col md:flex-row gap-4 md:gap-5 md:items-center'>
-              <div className='flex items-center gap-2 w-fit shrink-0'>
+              <div className='flex items-center gap-2 w-fit'>
                 <button
                   type='button'
                   onClick={() => setSeatsToBuy((count) => count + 1)}
-                  className='bg-background-70 h-9 w-9 flex justify-center items-center rounded-xl hover:bg-background-80 shrink-0'
+                  className='bg-background-70 h-11 w-11 flex justify-center items-center rounded-xl hover:bg-background-80 shrink-0'
                   aria-label='Increase seats'
                 >
                   <IconWrapper icon={Plus} inheritColor size={0} customIconSize={3} />
@@ -916,12 +1038,12 @@ function ManagePlan() {
                   min={1}
                   value={seatsToBuy}
                   onChange={(e) => setSeatsToBuy(Math.max(1, Number(e.target.value) || 1))}
-                  className='no-spinner w-14 h-9 rounded-xl bg-background-80 typography-body text-font-main text-center outline-none'
+                  className='no-spinner w-28 h-11 rounded-xl bg-background-80 typography-body text-font-main text-center outline-none'
                 />
                 <button
                   type='button'
                   onClick={() => setSeatsToBuy((count) => Math.max(1, count - 1))}
-                  className='bg-background-70 h-9 w-9 flex justify-center items-center rounded-xl hover:bg-background-80 shrink-0'
+                  className='bg-background-70 h-11 w-11 flex justify-center items-center rounded-xl hover:bg-background-80 shrink-0'
                   aria-label='Decrease seats'
                 >
                   <IconWrapper icon={Minus} inheritColor size={0} customIconSize={3} />
@@ -929,29 +1051,32 @@ function ManagePlan() {
               </div>
 
               <StyledCard
-                padding={3}
+                padding={4}
                 backgroundColor='bg-background-100'
-                extraStyles='w-full md:w-64 flex flex-col gap-4 shrink-0'
+                extraStyles='w-full flex flex-col gap-6'
               >
-                <div>
-                  <p className='typography-small-p text-font-gray mb-1'>Your current price</p>
-                  <h2>${proMonthlyCost}</h2>
+                <div className='grid grid-cols-2 divide-x divide-divider-100'>
+                  <div className='flex flex-col items-center justify-center text-center px-8 py-4'>
+                    <p className='typography-small-p text-font-gray mb-2'>Your current price</p>
+                    <span className='font-bricolage font-bold text-5xl text-font-main'>${proMonthlyCost}</span>
+                  </div>
+                  <div className='flex flex-col items-center justify-center text-center px-8 py-4'>
+                    <p className='typography-small-p text-font-gray mb-2'>Your revised price</p>
+                    <span className='font-bricolage font-bold text-5xl text-teal-100'>${revisedMonthlyCost}</span>
+                  </div>
                 </div>
-                <div>
-                  <p className='typography-small-p text-font-gray mb-1'>Your revised price</p>
-                  <h2 className='text-green-70'>${revisedMonthlyCost}</h2>
+                <div className='flex flex-col items-center gap-4'>
+                  <Button
+                    variant='primary'
+                    type='button'
+                    onClick={handleBuySeatsContinue}
+                  >
+                    Continue
+                  </Button>
+                  <p className='typography-small-p text-font-gray text-center max-w-xs'>
+                    The revised price will take effect in your next billing cycle, starting on {PRO_BILLING_EFFECTIVE_DATE}.
+                  </p>
                 </div>
-                <Button
-                  variant='primary'
-                  type='button'
-                  className='!w-full !px-0'
-                  onClick={handleBuySeatsContinue}
-                >
-                  Continue
-                </Button>
-                <p className='typography-small-p text-font-gray text-center'>
-                  The revised price will take effect in your next billing cycle, starting on {PRO_BILLING_EFFECTIVE_DATE}.
-                </p>
               </StyledCard>
             </div>
           </StyledCard>
@@ -983,6 +1108,7 @@ function ManagePlan() {
         customMessage='Add team members of your company and invite them to join.'
         cancelVariant='tertiary'
         isReadyToClose={false}
+        showCloseIcon
       >
         <div className='mt-4 flex flex-col gap-4'>
           <StyledCard padding={0} backgroundColor='bg-transparent' extraStyles='flex flex-col gap-4 mb-4'>

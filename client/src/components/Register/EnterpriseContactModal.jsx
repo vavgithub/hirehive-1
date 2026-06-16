@@ -78,7 +78,7 @@ function EnterpriseContactModal({ onClose }) {
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-4'>
+        <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-6'>
 
           {/* First + Last name row */}
           <div className='grid grid-cols-2 gap-4'>
@@ -88,9 +88,13 @@ function EnterpriseContactModal({ onClose }) {
               labelStyles='font-bricolage font-medium'
               extraClass='mt-1'
               placeholder='Jane'
+              required
               error={errors.firstName?.message}
               errorMessage={errors.firstName?.message}
-              {...register('firstName', { required: 'Please enter your first name' })}
+              {...register('firstName', {
+                required: 'Please enter your first name',
+                validate: (value) => value.trim() !== '' || 'Please enter your first name',
+              })}
             />
             <InputField
               type='text'
@@ -98,9 +102,13 @@ function EnterpriseContactModal({ onClose }) {
               labelStyles='font-bricolage font-medium'
               extraClass='mt-1'
               placeholder='Doe'
+              required
               error={errors.lastName?.message}
               errorMessage={errors.lastName?.message}
-              {...register('lastName', { required: 'Please enter your last name' })}
+              {...register('lastName', {
+                required: 'Please enter your last name',
+                validate: (value) => value.trim() !== '' || 'Please enter your last name',
+              })}
             />
           </div>
 
@@ -111,11 +119,13 @@ function EnterpriseContactModal({ onClose }) {
             labelStyles='font-bricolage font-medium'
             extraClass='mt-1'
             placeholder='jane@company.com'
+            required
             error={errors.email?.message}
             errorMessage={errors.email?.message}
             {...register('email', {
               required: 'Please enter your work email',
-              pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: 'Invalid email format' }
+              validate: (value) => value.trim() !== '' || 'Please enter your work email',
+              pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: 'Invalid email format' },
             })}
           />
 
@@ -126,9 +136,13 @@ function EnterpriseContactModal({ onClose }) {
             labelStyles='font-bricolage font-medium'
             extraClass='mt-1'
             placeholder='Acme Inc.'
+            required
             error={errors.company?.message}
             errorMessage={errors.company?.message}
-            {...register('company', { required: 'Please enter your company name' })}
+            {...register('company', {
+              required: 'Please enter your company name',
+              validate: (value) => value.trim() !== '' || 'Please enter your company name',
+            })}
           />
 
           {/* Team size */}
@@ -162,7 +176,7 @@ function EnterpriseContactModal({ onClose }) {
           <Button
             variant='primary'
             type='submit'
-            className='w-full !px-0 mt-2'
+            className='w-full !px-0 mt-4'
             disabled={isSubmitting}
           >
             {isSubmitting ? 'Sending...' : 'Send message'}
