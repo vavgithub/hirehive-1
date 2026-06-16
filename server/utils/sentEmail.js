@@ -1,5 +1,6 @@
-import { assets, transporter } from "./emailer.js";
 import { captureError } from "./errorHandler.js";
+import { assets, createTransporter } from "./emailer.js";
+
 
 export const sendEmail = async (to, subject, content,type = "", extraAttachments = []) => {
   try {
@@ -45,6 +46,7 @@ export const sendEmail = async (to, subject, content,type = "", extraAttachments
       attachmentsArray.push(...extraAttachments)
     }
 
+    const transporter = await createTransporter();
     let info = await transporter.sendMail({
       from: `"${process.env.EMAIL_FROM_NAME}" <${process.env.EMAIL_FROM_ADDRESS}>`,
       to: to,

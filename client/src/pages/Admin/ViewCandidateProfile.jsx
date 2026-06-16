@@ -719,14 +719,6 @@ const reviewerProfilePic = currentReviewer?.profilePicture
                                         }
 
                                     </div>
-                                    {(role === 'Admin' || role === 'Hiring Manager') && data?.jobApplication?.jobApplied?.toLowerCase().includes('brand') && (
-                                        <div className="mt-2 flex items-center gap-2">
-                                            <span className="typography-small-p text-font-gray">AI Score</span>
-                                            <span className="typography-small-p text-font-main">
-                                                {aiScore !== null ? `${aiScore} / 5` : '— / 5'}
-                                            </span>
-                                        </div>
-                                    )}
                                     {(role === 'Admin' || role === 'Hiring Manager') && data?.jobApplication?.jobApplied?.toLowerCase().includes('brand') && isScoring && (
                                         <p className="typography-small-p text-font-gray mt-1">{statusMessage}</p>
                                     )}

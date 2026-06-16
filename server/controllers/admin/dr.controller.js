@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import { jobs } from "../../models/admin/jobs.model.js";
 import { candidates } from "../../models/candidate/candidate.model.js";
 import { JOB_PROFILES, jobStagesStatuses } from "../../config/jobStagesStatuses.js";
+import { FeedbackLog } from '../../models/admin/feedbackLog.model.js';
 import { captureError } from "../../utils/errorHandler.js";
 
 // export const updateAssignee = async (req, res) => {
@@ -582,6 +583,15 @@ export const autoAssignPortfolios = async (req, res) => {
      if (!candidateId || !jobId || !stage) {
        return res.status(400).json({ message: 'candidateId, jobId, and stage are required' });
      }
+
+     if (stage === 'Portfolio') {
+       if (!ratings || (typeof ratings === 'number' && ratings < 1)) {
+         return res.status(400).json({ message: 'Please rate the candidate' });
+       }
+       if (!feedback || !String(feedback).trim()) {
+         return res.status(400).json({ message: 'Please enter feedback to proceed' });
+       }
+     }
  
      // Find the candidate by ID
      const candidate = await candidates.findById(candidateId);
@@ -643,7 +653,11 @@ export const autoAssignPortfolios = async (req, res) => {
         const additional = stageStatus.additionalReviewers || [];
         if (additional.length > 0) {
           const hasScores = additional.every(
-            (rev) => rev.score !== undefined && rev.score !== null
+            (rev) =>
+              rev.score !== undefined &&
+              rev.score !== null &&
+              rev.feedback &&
+              String(rev.feedback).trim()
           );
           if (hasScores) {
             const primaryScore =
@@ -686,6 +700,31 @@ export const autoAssignPortfolios = async (req, res) => {
         })
       }
     }
+
+     // Phase 3 — log feedback for AI training (brand Portfolio reviews only)
+     const isBrandJob = jobApplication?.jobApplied?.toLowerCase().includes('brand');
+     if (isBrandJob && stage === 'Portfolio') {
+       try {
+         await FeedbackLog.create({
+           candidateId: candidate._id,
+           jobId,
+           aiScore: stageStatus.aiScore ?? null,
+           aiReasoning: stageStatus.aiReasoning ?? null,
+           aiRecommendation: stageStatus.aiRecommendation ?? null,
+           designerScore: ratings,
+           designerFeedback: feedback,
+           reviewerId: req.user._id,
+           scoreDelta: stageStatus.aiScore != null
+             ? Math.abs(stageStatus.aiScore - ratings)
+             : null,
+         });
+         console.log(`[FeedbackLog] Logged review for candidate ${candidate._id}`);
+       } catch (err) {
+         console.error('[FeedbackLog] Failed to log feedback:', err.message);
+         // don't block the review submission if logging fails
+       }
+     }
+
      // Save the updated candidate document
      await candidate.save();
  

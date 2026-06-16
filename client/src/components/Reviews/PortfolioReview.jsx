@@ -16,6 +16,10 @@ function PortfolioReview({ candidate, onSubmit ,rounded = "bottom"}) {
         showErrorToast("Oopss","Please rate the candidate")
         return
       }
+      if (!feedback.trim()) {
+        showErrorToast("Oops", "Please enter feedback to proceed");
+        return;
+      }
       onSubmit(candidate._id, {
         jobId: candidate.currentApplication?.jobId ? candidate.currentApplication.jobId  : candidate.jobApplication.jobId ,
         stage: candidate.currentApplication?.currentStage ? candidate.currentApplication.currentStage : candidate.jobApplication.currentStage,
@@ -35,7 +39,13 @@ function PortfolioReview({ candidate, onSubmit ,rounded = "bottom"}) {
           value={feedback}
           onChange={(e) => setFeedback(e.target.value)}
         />
-        <Button variant="icon" onClick={handleSubmit}>Submit</Button>
+        <Button
+          variant="icon"
+          onClick={handleSubmit}
+          disabled={rating < 1 || !feedback.trim()}
+        >
+          Submit
+        </Button>
       </StyledCard>
     );
   };
