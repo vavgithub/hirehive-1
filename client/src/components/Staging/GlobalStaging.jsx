@@ -141,7 +141,7 @@ const PortfolioEvaluationRow = ({ icon, title, children, scoreLabel, score }) =>
                         <h4 className="typography-body">{title}</h4>
                     </div>
                 )}
-                {children}
+                <div className="pl-[28px]">{children}</div>
             </div>
             <div className="w-[35%] flex justify-end items-start">
                 <PortfolioScoreCard label={scoreLabel} score={score} />
