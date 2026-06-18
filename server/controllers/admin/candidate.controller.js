@@ -517,6 +517,7 @@ export const getAllCandidatesForJob = async (req, res) => {
         applicationDate: jobApplication.applicationDate,
         stageStatuses: stageStatuses,
         questionResponses: jobApplication.questionResponses,
+        aiTriggerStatus: jobApplication.aiTriggerStatus,
 
         //Assessment Details
         ...assessmentDetails
