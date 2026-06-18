@@ -175,10 +175,14 @@ const PortfolioDualEvaluation = ({ portfolioStatus, reviewerFeedback, reviewerSc
     </div>
 );
 
-const MultiReviewerRemarksGrid = ({ multipleReviewersData, getReviewerName }) => {
-    return (
-        <div className="mt-4">
-            <p className="typography-small-p text-font-gray mb-2">Remarks</p>
+const MultiReviewerRemarksGrid = ({ multipleReviewersData, getReviewerName, totalScore }) => (
+    <div className="mt-4">
+        <PortfolioEvaluationRow
+            icon={UserPen}
+            title="Reviewer Evaluation"
+            scoreLabel="Total Score"
+            score={totalScore}
+        >
             <div
                 className="typography-body grid gap-4 w-full"
                 style={{ gridTemplateColumns: `repeat(${multipleReviewersData.length}, 1fr)` }}
@@ -193,9 +197,9 @@ const MultiReviewerRemarksGrid = ({ multipleReviewersData, getReviewerName }) =>
                     </StyledCard>
                 ))}
             </div>
-        </div>
-    );
-};
+        </PortfolioEvaluationRow>
+    </div>
+);
 
 function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
     const stageData = stageStatuses[selectedStage];
@@ -941,7 +945,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
         }
         <div className={`flex w-full items-stretch ${stageBasedConfig?.showMultipleReviewersScore && multipleReviewersData?.length > 0 ? 'gap-5' : 'gap-4'}`}>
             {!showPortfolioDualEvaluation && !showReviewerEvaluationOnly && (stageBasedConfig?.hasRemarks || stageBasedConfig?.hasRejectionReason || stageBasedConfig?.hasScoreBoard || (stageBasedConfig?.showOwnReview && currentAdditionalReviewer?.feedback !== undefined && currentAdditionalReviewer?.feedback !== null)) && 
-            <div className={`flex flex-col justify-between gap-4 ${stageBasedConfig?.showMultipleReviewersScore && multipleReviewersData?.length > 0 ? 'flex-1 min-w-0' : 'w-[75%]'}`}>
+            <div className={`flex flex-col justify-between gap-4 ${stageBasedConfig?.showMultipleReviewersScore && multipleReviewersData?.length > 0 ? 'w-full' : 'w-[75%]'}`}>
             {(!(stageBasedConfig?.showMultipleReviewersScore &&
                 multipleReviewersData?.length > 0) || stageBasedConfig?.showOwnReview ) && (stageBasedConfig?.hasRemarks || stageBasedConfig?.hasRejectionReason || stageBasedConfig?.showOwnReview) && 
                 <div className='mt-4'>
@@ -954,6 +958,11 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
                 <MultiReviewerRemarksGrid
                     multipleReviewersData={multipleReviewersData}
                     getReviewerName={getReviewerName}
+                    totalScore={
+                        stageData?.overallScore != null
+                            ? stageData.overallScore
+                            : (stageData?.score ?? multipleReviewersAverageScore ?? 0)
+                    }
                 />
             )}
             {
@@ -967,7 +976,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
             }
             </div>}
             <div className={(stageBasedConfig?.showMultipleReviewersScore && multipleReviewersData?.length > 0 ? 'shrink-0' : (stageTitle === "Hired" ? 'w-[100%]' : 'w-[35%]')) + ' flex flex-col '}>
-            {!showPortfolioDualEvaluation && !showReviewerEvaluationOnly && (stageBasedConfig?.hasScoreCard || (stageBasedConfig?.showOwnReview && currentAdditionalReviewer?.score !== undefined && currentAdditionalReviewer?.score !== null)) && 
+            {!showPortfolioDualEvaluation && !showReviewerEvaluationOnly && !(stageBasedConfig?.showMultipleReviewersScore && multipleReviewersData?.length > 0) && (stageBasedConfig?.hasScoreCard || (stageBasedConfig?.showOwnReview && currentAdditionalReviewer?.score !== undefined && currentAdditionalReviewer?.score !== null)) && 
             <div className={` bg-background-80 rounded-xl ${stageTitle === "Hired" ? 'w-[35%] lg:w-[25%] xl:w-[15%]' : 'w-28 md:w-32 lg:w-36' } h-fit ${stageBasedConfig?.showMultipleReviewersScore && multipleReviewersData?.length > 0 ? 'mt-10' : 'my-4'} self-end`}>
                 <div className='p-2.5 flex flex-col items-center'>
                     <p className='typography-small-p text-font-gray'>Total Score:</p>
