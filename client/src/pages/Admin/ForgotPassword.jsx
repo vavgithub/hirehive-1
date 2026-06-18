@@ -175,6 +175,11 @@ const ForgotPassword = ({ onBack, role, isModal = false, setIsLoading = () => { 
               <label className="block mb-4 typography-body">
                 Enter the verification code sent to your email
               </label>
+              {role === 'Candidate' && (
+                <p className="typography-small-p text-font-gray mb-4">
+                  Didn&apos;t receive the code? Please check your spam or junk folder.
+                </p>
+              )}
               <OTPInput
                 length={6}
                 value={otp}

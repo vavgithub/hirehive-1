@@ -575,7 +575,7 @@ const ApplyJob = () => {
                 onConfirm={isExist ? handleUpdateEmail : () => submitBtnRef.current.click()}
                 customTitle={isExist ? 'Confirm your Email' : "Is this email correct ?"}
                 customMessage={isExist ? "For account registration, we are sending an OTP to this attached email. Are you sure this email is correct ?" : "For account registration, we are sending an OTP to this email. Are you sure this email is correct ? "}
-                customConfirmLabel={"Sent"}
+                customConfirmLabel="Send OTP"
               >
                 <StyledCard padding={2} backgroundColor={"bg-background-80 mt-4"}>
                   <div className='typography-body w-full flex items-center justify-between gap-4'>
@@ -657,7 +657,7 @@ const ApplyJob = () => {
       )}
 
       {currentStep === 2 && (
-        <OtpComponent hasFooter email={email} handleOtpSubmit={handleOtpSubmit} isSubmitting={isSubmitting} otp={otp} otpError={otpError} setOtp={setOtp} />
+        <OtpComponent hasFooter email={email} handleOtpSubmit={handleOtpSubmit} isSubmitting={isSubmitting} otp={otp} otpError={otpError} setOtp={setOtp} showSpamHint />
       )}
 
       {currentStep === 3 && (

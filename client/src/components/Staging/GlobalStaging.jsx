@@ -175,10 +175,14 @@ const PortfolioDualEvaluation = ({ portfolioStatus, reviewerFeedback, reviewerSc
     </div>
 );
 
-const MultiReviewerRemarksGrid = ({ multipleReviewersData, getReviewerName }) => {
-    return (
-        <div className="mt-4">
-            <p className="typography-small-p text-font-gray mb-2">Remarks</p>
+const MultiReviewerRemarksGrid = ({ multipleReviewersData, getReviewerName, totalScore }) => (
+    <div className="mt-4">
+        <PortfolioEvaluationRow
+            icon={UserPen}
+            title="Reviewer Evaluation"
+            scoreLabel="Total Score"
+            score={totalScore}
+        >
             <div
                 className="typography-body grid gap-4 w-full"
                 style={{ gridTemplateColumns: `repeat(${multipleReviewersData.length}, 1fr)` }}
@@ -193,9 +197,9 @@ const MultiReviewerRemarksGrid = ({ multipleReviewersData, getReviewerName }) =>
                     </StyledCard>
                 ))}
             </div>
-        </div>
-    );
-};
+        </PortfolioEvaluationRow>
+    </div>
+);
 
 function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
     const stageData = stageStatuses[selectedStage];
@@ -669,6 +673,23 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
         multipleReviewersData,
     ]);
 
+    const showReviewerEvaluationOnly = useMemo(() => {
+        if (selectedStage !== 'Portfolio') return false;
+        if (!candidateData?.jobApplication?.jobApplied?.toLowerCase().includes('brand')) return false;
+        const portfolioStatus = stageStatuses?.Portfolio;
+        if (stageData?.score == null || stageData?.score === '') return false;
+        if (portfolioStatus?.aiReasoning) return false;
+        if (stageBasedConfig?.showMultipleReviewersScore && multipleReviewersData?.length > 0) return false;
+        return true;
+    }, [
+        selectedStage,
+        candidateData,
+        stageStatuses,
+        stageData,
+        stageBasedConfig,
+        multipleReviewersData,
+    ]);
+
     const currentAdditionalReviewer = useMemo(() => {
         return multipleReviewersData?.find(reviewer => reviewer.reviewer === adminData?._id)
     },[multipleReviewersData, adminData?._id])
@@ -848,18 +869,36 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
                 reviewerScore={stageData?.score}
             />
         )}
-        {(() => {
-            if (selectedStage !== 'Portfolio' || showPortfolioDualEvaluation) return null;
+        {showReviewerEvaluationOnly && (
+            <div className="mt-4">
+                <PortfolioEvaluationRow
+                    icon={UserPen}
+                    title="Reviewer Evaluation"
+                    scoreLabel="Reviewer Score"
+                    score={stageData?.score}
+                >
+                    <div>
+                        <p className="typography-small-p text-font-gray">Remarks</p>
+                        <p className="typography-body">
+                            {currentStatus === 'Rejected' ? stageData?.rejectionReason : stageData?.feedback || 'No feedbacks'}
+                        </p>
+                    </div>
+                </PortfolioEvaluationRow>
+            </div>
+        )}
+        {selectedStage === 'Portfolio' && !showPortfolioDualEvaluation && (() => {
             const isBrand = candidateData?.jobApplication?.jobApplied?.toLowerCase().includes('brand');
-            const portfolioStatus = stageStatuses?.['Portfolio'] ?? stageStatuses?.Portfolio;
+            const portfolioStatus = stageStatuses?.Portfolio;
             if (!isBrand || !portfolioStatus?.aiReasoning) return null;
             return (
-                <div className="mt-3">
+                <div className="mt-4">
                     <PortfolioEvaluationRow
+                        icon={Sparkles}
+                        title="AI Evaluation"
                         scoreLabel="AI Score"
                         score={portfolioStatus?.aiScore}
                     >
-                        <AiCommentsContent aiReasoning={portfolioStatus?.aiReasoning} />
+                        <AiCommentsContent aiReasoning={portfolioStatus?.aiReasoning} showTitle={false} />
                     </PortfolioEvaluationRow>
                 </div>
             );
@@ -905,8 +944,8 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
           )
         }
         <div className={`flex w-full items-stretch ${stageBasedConfig?.showMultipleReviewersScore && multipleReviewersData?.length > 0 ? 'gap-5' : 'gap-4'}`}>
-            {!showPortfolioDualEvaluation && (stageBasedConfig?.hasRemarks || stageBasedConfig?.hasRejectionReason || stageBasedConfig?.hasScoreBoard || (stageBasedConfig?.showOwnReview && currentAdditionalReviewer?.feedback !== undefined && currentAdditionalReviewer?.feedback !== null)) && 
-            <div className={`flex flex-col justify-between gap-4 ${stageBasedConfig?.showMultipleReviewersScore && multipleReviewersData?.length > 0 ? 'flex-1 min-w-0' : 'w-[75%]'}`}>
+            {!showPortfolioDualEvaluation && !showReviewerEvaluationOnly && (stageBasedConfig?.hasRemarks || stageBasedConfig?.hasRejectionReason || stageBasedConfig?.hasScoreBoard || (stageBasedConfig?.showOwnReview && currentAdditionalReviewer?.feedback !== undefined && currentAdditionalReviewer?.feedback !== null)) && 
+            <div className={`flex flex-col justify-between gap-4 ${stageBasedConfig?.showMultipleReviewersScore && multipleReviewersData?.length > 0 ? 'w-full' : 'w-[75%]'}`}>
             {(!(stageBasedConfig?.showMultipleReviewersScore &&
                 multipleReviewersData?.length > 0) || stageBasedConfig?.showOwnReview ) && (stageBasedConfig?.hasRemarks || stageBasedConfig?.hasRejectionReason || stageBasedConfig?.showOwnReview) && 
                 <div className='mt-4'>
@@ -919,6 +958,11 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
                 <MultiReviewerRemarksGrid
                     multipleReviewersData={multipleReviewersData}
                     getReviewerName={getReviewerName}
+                    totalScore={
+                        stageData?.overallScore != null
+                            ? stageData.overallScore
+                            : (stageData?.score ?? multipleReviewersAverageScore ?? 0)
+                    }
                 />
             )}
             {
@@ -932,7 +976,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
             }
             </div>}
             <div className={(stageBasedConfig?.showMultipleReviewersScore && multipleReviewersData?.length > 0 ? 'shrink-0' : (stageTitle === "Hired" ? 'w-[100%]' : 'w-[35%]')) + ' flex flex-col '}>
-            {!showPortfolioDualEvaluation && (stageBasedConfig?.hasScoreCard || (stageBasedConfig?.showOwnReview && currentAdditionalReviewer?.score !== undefined && currentAdditionalReviewer?.score !== null)) && 
+            {!showPortfolioDualEvaluation && !showReviewerEvaluationOnly && !(stageBasedConfig?.showMultipleReviewersScore && multipleReviewersData?.length > 0) && (stageBasedConfig?.hasScoreCard || (stageBasedConfig?.showOwnReview && currentAdditionalReviewer?.score !== undefined && currentAdditionalReviewer?.score !== null)) && 
             <div className={` bg-background-80 rounded-xl ${stageTitle === "Hired" ? 'w-[35%] lg:w-[25%] xl:w-[15%]' : 'w-28 md:w-32 lg:w-36' } h-fit ${stageBasedConfig?.showMultipleReviewersScore && multipleReviewersData?.length > 0 ? 'mt-10' : 'my-4'} self-end`}>
                 <div className='p-2.5 flex flex-col items-center'>
                     <p className='typography-small-p text-font-gray'>Total Score:</p>
