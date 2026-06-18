@@ -669,6 +669,23 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
         multipleReviewersData,
     ]);
 
+    const showReviewerEvaluationOnly = useMemo(() => {
+        if (selectedStage !== 'Portfolio') return false;
+        if (!candidateData?.jobApplication?.jobApplied?.toLowerCase().includes('brand')) return false;
+        const portfolioStatus = stageStatuses?.Portfolio;
+        if (stageData?.score == null || stageData?.score === '') return false;
+        if (portfolioStatus?.aiReasoning) return false;
+        if (stageBasedConfig?.showMultipleReviewersScore && multipleReviewersData?.length > 0) return false;
+        return true;
+    }, [
+        selectedStage,
+        candidateData,
+        stageStatuses,
+        stageData,
+        stageBasedConfig,
+        multipleReviewersData,
+    ]);
+
     const currentAdditionalReviewer = useMemo(() => {
         return multipleReviewersData?.find(reviewer => reviewer.reviewer === adminData?._id)
     },[multipleReviewersData, adminData?._id])
@@ -848,18 +865,36 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
                 reviewerScore={stageData?.score}
             />
         )}
-        {(() => {
-            if (selectedStage !== 'Portfolio' || showPortfolioDualEvaluation) return null;
+        {showReviewerEvaluationOnly && (
+            <div className="mt-4">
+                <PortfolioEvaluationRow
+                    icon={UserPen}
+                    title="Reviewer Evaluation"
+                    scoreLabel="Reviewer Score"
+                    score={stageData?.score}
+                >
+                    <div>
+                        <p className="typography-small-p text-font-gray">Remarks</p>
+                        <p className="typography-body">
+                            {currentStatus === 'Rejected' ? stageData?.rejectionReason : stageData?.feedback || 'No feedbacks'}
+                        </p>
+                    </div>
+                </PortfolioEvaluationRow>
+            </div>
+        )}
+        {selectedStage === 'Portfolio' && !showPortfolioDualEvaluation && (() => {
             const isBrand = candidateData?.jobApplication?.jobApplied?.toLowerCase().includes('brand');
-            const portfolioStatus = stageStatuses?.['Portfolio'] ?? stageStatuses?.Portfolio;
+            const portfolioStatus = stageStatuses?.Portfolio;
             if (!isBrand || !portfolioStatus?.aiReasoning) return null;
             return (
-                <div className="mt-3">
+                <div className="mt-4">
                     <PortfolioEvaluationRow
+                        icon={Sparkles}
+                        title="AI Evaluation"
                         scoreLabel="AI Score"
                         score={portfolioStatus?.aiScore}
                     >
-                        <AiCommentsContent aiReasoning={portfolioStatus?.aiReasoning} />
+                        <AiCommentsContent aiReasoning={portfolioStatus?.aiReasoning} showTitle={false} />
                     </PortfolioEvaluationRow>
                 </div>
             );

@@ -629,6 +629,9 @@ function Profile() {
                     <h2 className='mt-3 md:mt-6 text-font-gray mx-auto w-[15rem] min-[26.25rem]:w-full whitespace-nowrap text-ellipsis overflow-hidden'>
                       {email}
                     </h2>
+                    <p className="typography-small-p text-font-gray mt-2">
+                      Didn&apos;t receive the code? Please check your spam or junk folder.
+                    </p>
                     <div className="flex justify-center  space-x-2 mt-4 ">
                       {otp.map((data, index) => (
                         <input
