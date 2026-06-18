@@ -250,6 +250,7 @@ export const getAllCandidatesForJob = async (req, res) => {
     let ratingFilter = []
     let assigneeFilter = []
     let budgetFilter = []
+    let discoveryFilter = []
 
     if(filterArray?.length !== 0){
       filterArray.map(([key,value]) => {
@@ -379,6 +380,21 @@ export const getAllCandidatesForJob = async (req, res) => {
             }
           }
         }
+        if (key === 'discovery') {
+          const discoveryValues = Array.isArray(value) ? value : [value];
+          if (
+            discoveryValues.includes('Awaiting Discovery') ||
+            discoveryValues.includes('awaiting_discovery')
+          ) {
+            discoveryFilter = [
+              {
+                $match: {
+                  'jobApplications.aiTriggerStatus': { $in: ['awaiting_discovery'] },
+                },
+              },
+            ];
+          }
+        }
       })
 
     }
@@ -428,6 +444,7 @@ export const getAllCandidatesForJob = async (req, res) => {
       ...assigneeFilter,
       ...ratingFilter,
       ...assessmentFilter,
+      ...discoveryFilter,
 
       { $sort: { "jobApplications.applicationDate": -1 } },
       ...sortQuery,
