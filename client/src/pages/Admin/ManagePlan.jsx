@@ -8,13 +8,22 @@ import Modal from '../../components/Modals/Modal'
 import { InputField } from '../../components/Inputs/InputField'
 import GlobalDropDown from '../../components/Dropdowns/GlobalDropDown'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { addMember, getAllTeamMembers, removeTeamMember } from '../../services/admin.service'
+import { addMember, getAdminDashboard, getAllTeamMembers, removeTeamMember } from '../../services/admin.service'
+import {
+  createBillingPortalSession,
+  createCheckoutSession,
+  getInvoices,
+  getPaymentMethod,
+  getSubscription,
+  previewSeatChange,
+  updateSeats,
+} from '../../services/billing.service'
 import { showErrorToast, showSuccessToast } from '../../components/ui/Toast'
 import { emailPattern } from '../../components/Register/RegisterForm'
 import { roleOptions } from '../../components/Register/AddMembers'
 import { useAuthContext } from '../../context/AuthProvider'
 import { getRoute, ROUTE_KEY } from '../../config/permissions.config'
-import { Users, Mail, Circle, Plus, Minus, Edit2, Trash2, ChevronDown, UserCog, Search, Clock, ExternalLink, Download, CreditCard, CalendarDays, DollarSign, X, Phone } from 'lucide-react'
+import { Users, Mail, Circle, Plus, Minus, Edit2, Trash2, ChevronDown, UserCog, Search, Clock, ExternalLink, Download, CreditCard, CalendarDays, DollarSign, X } from 'lucide-react'
 import IconWrapper from '../../components/Cards/IconWrapper'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import LoaderModal from '../../components/Loaders/LoaderModal'
@@ -23,6 +32,7 @@ import { useUnknownProfilePicture } from '../../context/ThemeContext'
 import AssessmentBanner from '../../components/ui/AssessmentBanner'
 import EnterpriseContactModal from '../../components/Register/EnterpriseContactModal'
 import StatusBadge from '../../components/ui/StatusBadge'
+import CustomToolTip from '../../components/Tooltip/CustomToolTip'
 import useTrialStatus from '../../hooks/useTrialStatus'
 import { DataGrid } from '@mui/x-data-grid'
 import MuiCustomStylesForDataGrid from '../../components/tableUtilities/MuiCustomStylesForDataGrid'
@@ -47,7 +57,7 @@ const PLAN_CONFIG = {
   pro: {
     label: 'Pro Plan',
     description: 'Manage your subscription and billing details',
-    seatLimit: 5,
+    seatLimit: null,
     appLimit: null,
     statusLabel: 'Active',
     isPaid: true,
@@ -55,11 +65,30 @@ const PLAN_CONFIG = {
   enterprise: {
     label: 'Enterprise Plan',
     description: 'Your enterprise subscription overview',
-    seatLimit: 50,
+    seatLimit: null,
     appLimit: null,
     statusLabel: 'Active',
     isPaid: true,
   },
+}
+
+const INCLUDED_PRO_SEATS = 2
+const BASE_PLAN_AMOUNT = { monthly: 19, yearly: 180 }
+const EXTRA_SEAT_PRICE = 15
+
+const calculateBillingAmount = (workspaceSeats, interval) => {
+  const extra = Math.max(0, workspaceSeats - INCLUDED_PRO_SEATS)
+  const base = interval === 'yearly' ? BASE_PLAN_AMOUNT.yearly : BASE_PLAN_AMOUNT.monthly
+  return base + extra * EXTRA_SEAT_PRICE
+}
+
+const formatBillDate = (date) => {
+  if (!date) return '—'
+  return new Date(date).toLocaleDateString('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+  })
 }
 
 const PLAN_PILL_CLASS = 'bg-background-80 text-font-gray border border-divider-100'
@@ -88,6 +117,7 @@ const MANAGE_PLAN_TABLE_SX = {
   '& .MuiDataGrid-cell': {
     display: 'flex',
     alignItems: 'center',
+    overflow: 'hidden',
   },
   '& .MuiDataGrid-row': {
     cursor: 'default',
@@ -103,41 +133,33 @@ const MANAGE_PLAN_TABLE_SX = {
   },
 }
 
-// TODO: replace with real billing data from API
-const PRO_PRICE_PER_LICENSE = 19
-const PRO_LICENSE_COUNT = 5
-const PRO_NEXT_BILL_DATE = 'June 8, 2028'
-const PRO_BILLING_EFFECTIVE_DATE = '11/06/2026'
-
-const PRO_PAYMENT_HISTORY = [
-  { id: 'Inv-001', date: 'May 8, 2026', description: 'Pro Plan - 5 licenses', addOn: '+1 license', amount: '$95.00', status: 'Paid' },
-  { id: 'Inv-002', date: 'Apr 8, 2026', description: 'Pro Plan - 4 licenses', addOn: null, amount: '$76.00', status: 'Paid' },
-  { id: 'Inv-003', date: 'Mar 8, 2026', description: 'Pro Plan - 4 licenses', addOn: null, amount: '$76.00', status: 'Processing' },
-]
-
-// TODO: replace with real enterprise billing data from API
-const ENTERPRISE_NEXT_BILL_DATE = 'January 1, 2027'
-
-const ENTERPRISE_PAYMENT_HISTORY = [
-  { id: 'INV-001', date: 'Apr 8, 2026', description: 'Enterprise Plan - Annual', addOn: '+10 licenses', amount: '$1,198.00', status: 'Paid' },
-  { id: 'INV-002', date: 'Apr 8, 2025', description: 'Enterprise Plan - Annual', addOn: null, amount: '$1,098.00', status: 'Paid' },
-]
-
-const DEDICATED_SUPPORT = {
-  name: 'Sarah Chen',
-  email: 'sarah.chen@geode.io',
-  phone: '+1 (555) 234-5678',
-}
-
 function ManagePlan() {
   const { user } = useAuthContext()
   const trialStatus = useTrialStatus()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
+  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
 
-  const currentPlan = searchParams.get('plan') || user?.plan || 'free'
+  const queryClient = useQueryClient()
+  const UNKNOWN_PROFILE_PICTURE_URL = useUnknownProfilePicture()
+  const isAdmin = user?.role === 'Admin'
+
+  const { data: subscriptionResponse, refetch: refetchSubscription } = useQuery({
+    queryKey: ['subscription'],
+    queryFn: getSubscription,
+    enabled: isAdmin,
+  })
+
+  const subscription = subscriptionResponse?.data
+    ?? user?.companyDetails?.subscription
+    ?? {}
+
+  const currentPlan = subscription?.plan
+    || user?.companyDetails?.subscription?.plan
+    || 'free'
   const plan = PLAN_CONFIG[currentPlan] || PLAN_CONFIG.free
-  const pricingPath = `${getRoute(user.role, ROUTE_KEY.PRICING)}?plan=${currentPlan}`
+  const pricingRoute = user?.role ? getRoute(user.role, ROUTE_KEY.PRICING) : null
+  const pricingPath = pricingRoute ? `${pricingRoute}?plan=${currentPlan}` : null
 
   const [showAddModal, setShowAddModal] = useState(false)
   const [firstName, setFirstName] = useState('')
@@ -155,35 +177,260 @@ function ManagePlan() {
   const [showRemoveModal, setShowRemoveModal] = useState(false)
   const [pendingRemoveMember, setPendingRemoveMember] = useState(null)
   const [showBuySeatsModal, setShowBuySeatsModal] = useState(false)
+  const [buySeatsStep, setBuySeatsStep] = useState(1)
+  const [seatPreview, setSeatPreview] = useState(null)
   const [seatsToBuy, setSeatsToBuy] = useState(1)
   const [showRemoveSeatsModal, setShowRemoveSeatsModal] = useState(false)
+  const [removeSeatsStep, setRemoveSeatsStep] = useState(1)
+  const [seatsToRemove, setSeatsToRemove] = useState(1)
+  const [removeSeatPreview, setRemoveSeatPreview] = useState(null)
   const [showEnterpriseModal, setShowEnterpriseModal] = useState(false)
   const changeAdminMenuRef = useRef(null)
-  const queryClient = useQueryClient()
-  const UNKNOWN_PROFILE_PICTURE_URL = useUnknownProfilePicture()
-  const isAdmin = user?.role === 'Admin'
 
-  const { data: teamData, isLoading: isTeamLoading } = useQuery({ queryKey: ['team_members'], queryFn: getAllTeamMembers })
+  useEffect(() => {
+    const sessionId = searchParams.get('session_id')
+    if (sessionId) {
+      queryClient.invalidateQueries({ queryKey: ['auth'] })
+      queryClient.invalidateQueries({ queryKey: ['subscription'] })
+      queryClient.invalidateQueries({ queryKey: ['billing_invoices'] })
+      queryClient.invalidateQueries({ queryKey: ['billing_payment_method'] })
+      refetchSubscription()
+      const url = new URL(window.location.href)
+      url.searchParams.delete('session_id')
+      window.history.replaceState({}, '', url.toString())
+      showSuccessToast('Success', 'Welcome to Geode Pro!')
+    }
+  }, [])
+
+  const { data: teamData, isLoading: isTeamLoading } = useQuery({
+    queryKey: ['team_members'],
+    queryFn: getAllTeamMembers,
+  })
+
+  const { data: dashboardDetails } = useQuery({
+    queryKey: ['admin_dashboard', timezone],
+    queryFn: () => getAdminDashboard(timezone),
+    enabled: isAdmin,
+  })
+
+  const { data: invoicesResponse, isLoading: isInvoicesLoading } = useQuery({
+    queryKey: ['billing_invoices'],
+    queryFn: getInvoices,
+    enabled: isAdmin && (currentPlan === 'pro' || (currentPlan === 'enterprise' && Boolean(subscription?.stripeCustomerId))),
+  })
+
+  const { data: paymentMethodResponse } = useQuery({
+    queryKey: ['billing_payment_method'],
+    queryFn: getPaymentMethod,
+    enabled: isAdmin && (currentPlan === 'pro' || (currentPlan === 'enterprise' && Boolean(subscription?.stripeCustomerId))),
+  })
 
   const usedSeats = teamData?.members?.length || 0
   const memberCount = usedSeats + 1
-  const seatLimit = plan.seatLimit
-  const usedApps = currentPlan === 'enterprise' ? 4521 : currentPlan === 'pro' ? 847 : 47
-  const enterpriseSeatsAvailable = seatLimit ? Math.max(seatLimit - memberCount, 0) : 0
-  const paymentHistory = currentPlan === 'enterprise' ? ENTERPRISE_PAYMENT_HISTORY : PRO_PAYMENT_HISTORY
+  const billingInterval = subscription?.billingInterval || 'monthly'
+  const pricePerSeat = subscription?.pricePerSeat ?? EXTRA_SEAT_PRICE
+  const contractedSeats = subscription?.seatCount || 0
+  const hasStripeBilling = Boolean(subscription?.stripeCustomerId)
+  const isEnterpriseUnlimited = currentPlan === 'enterprise' && contractedSeats <= 0
+
+  const licensedSeats = currentPlan === 'pro'
+    ? Math.max(contractedSeats, memberCount)
+    : currentPlan === 'enterprise' && contractedSeats > 0
+      ? Math.max(contractedSeats, memberCount)
+      : null
+  const seatLimit = currentPlan === 'free'
+    ? plan.seatLimit
+    : isEnterpriseUnlimited
+      ? null
+      : licensedSeats
+
+  const monthlyAppCount = useMemo(() => {
+    const monthly = dashboardDetails?.applications?.monthlyApplications
+    if (!monthly?.length) return 0
+    return monthly[monthly.length - 1]?.totalCount ?? 0
+  }, [dashboardDetails])
+
+  const totalAppCount = dashboardDetails?.applications?.totalApplicationsCount ?? 0
+  const usedApps = currentPlan === 'free' ? monthlyAppCount : totalAppCount
+
+  const nextBillDate = formatBillDate(subscription?.currentPeriodEnd)
+
+  const paymentHistory = invoicesResponse?.data ?? []
+  const paymentMethod = paymentMethodResponse?.data
   const isPaidPlan = currentPlan === 'pro' || currentPlan === 'enterprise'
-  const proMonthlyCost = PRO_LICENSE_COUNT * PRO_PRICE_PER_LICENSE
+  const showStripeBilling = currentPlan === 'pro' || (currentPlan === 'enterprise' && hasStripeBilling)
+  const billingAmount = subscription?.billingAmount
+    ?? calculateBillingAmount(Math.max(contractedSeats, INCLUDED_PRO_SEATS), billingInterval)
   const proSeatsAvailable = seatLimit ? Math.max(seatLimit - memberCount, 0) : 0
-  const revisedMonthlyCost = (PRO_LICENSE_COUNT + seatsToBuy) * PRO_PRICE_PER_LICENSE
+  const enterpriseSeatsAvailable = seatLimit ? Math.max(seatLimit - memberCount, 0) : 0
+  const enterpriseCostTitle = billingInterval === 'yearly' ? 'Annual Cost' : 'Monthly Cost'
+  const enterpriseBillingCycleValue = subscription?.currentPeriodEnd
+    ? (billingInterval === 'yearly' ? 'Yearly' : 'Monthly')
+    : 'Contract'
+  const enterpriseBillingCycleDetail = subscription?.currentPeriodEnd
+    ? (subscription?.cancelAtPeriodEnd
+      ? `Cancels on ${nextBillDate}`
+      : `Next bill: ${nextBillDate}`)
+    : 'Managed by your account team'
+  const teamSeatsSubtitle = (() => {
+    if (currentPlan === 'pro' && seatLimit) {
+      return `Manage who has access to your Geode workspace (${memberCount}/${seatLimit} seats used)`
+    }
+    if (currentPlan === 'enterprise' && seatLimit) {
+      return `Manage who has access to your Geode workspace (${memberCount}/${seatLimit} seats used)`
+    }
+    return 'Manage who has access to your Geode workspace'
+  })()
+  const revisedBillingAmount = calculateBillingAmount(
+    (licensedSeats || INCLUDED_PRO_SEATS) + seatsToBuy,
+    billingInterval
+  )
+
+  const maxSeatsToRemove = licensedSeats
+    ? Math.max(licensedSeats - memberCount, 0)
+    : 0
+  const revisedBillingAfterRemoval = calculateBillingAmount(
+    Math.max((licensedSeats || INCLUDED_PRO_SEATS) - seatsToRemove, INCLUDED_PRO_SEATS),
+    billingInterval
+  )
+
+  const planStatusLabel = subscription?.cancelAtPeriodEnd
+    ? 'Cancels at period end'
+    : subscription?.status === 'past_due'
+      ? 'Past due'
+      : plan.statusLabel
 
   useEffect(() => {
-    if (showBuySeatsModal) setSeatsToBuy(1)
+    if (showBuySeatsModal) {
+      setSeatsToBuy(1)
+      setBuySeatsStep(1)
+      setSeatPreview(null)
+    }
   }, [showBuySeatsModal])
 
-  const handleBuySeatsContinue = () => {
-    // TODO: wire to Stripe payment flow
-    showSuccessToast('Success', 'Payment successful. Your licenses have been updated.')
+  useEffect(() => {
+    if (showRemoveSeatsModal) {
+      setSeatsToRemove(1)
+      setRemoveSeatsStep(1)
+      setRemoveSeatPreview(null)
+    }
+  }, [showRemoveSeatsModal])
+
+  const closeBuySeatsModal = () => {
     setShowBuySeatsModal(false)
+    setBuySeatsStep(1)
+    setSeatPreview(null)
+  }
+
+  const closeRemoveSeatsModal = () => {
+    setShowRemoveSeatsModal(false)
+    setRemoveSeatsStep(1)
+    setSeatsToRemove(1)
+    setRemoveSeatPreview(null)
+  }
+
+  const previewSeatChangeMutation = useMutation({
+    mutationFn: previewSeatChange,
+    onSuccess: (data) => {
+      setSeatPreview(data?.data)
+      setBuySeatsStep(2)
+    },
+    onError: (error) => {
+      showErrorToast('Error',
+        error?.response?.data?.message || 'Failed to preview seat change.')
+    },
+  })
+
+  const previewRemoveSeatsMutation = useMutation({
+    mutationFn: previewSeatChange,
+    onSuccess: (data) => {
+      setRemoveSeatPreview(data?.data)
+      setRemoveSeatsStep(2)
+    },
+    onError: (error) => {
+      showErrorToast('Error',
+        error?.response?.data?.message || 'Failed to preview seat change.')
+    },
+  })
+
+  const createCheckoutSessionMutation = useMutation({
+    mutationFn: createCheckoutSession,
+    onSuccess: (data) => {
+      if (data?.url) window.location.href = data.url
+    },
+    onError: (error) => {
+      showErrorToast('Error',
+        error?.response?.data?.message || 'Failed to start checkout.')
+    }
+  })
+
+  const updateSeatsMutation = useMutation({
+    mutationFn: updateSeats,
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['auth'] })
+      queryClient.invalidateQueries({ queryKey: ['subscription'] })
+      queryClient.invalidateQueries({ queryKey: ['billing_invoices'] })
+      queryClient.invalidateQueries({ queryKey: ['seat_change_preview'] })
+      refetchSubscription()
+      showSuccessToast('Success', data?.message || 'Seats updated successfully.')
+      closeBuySeatsModal()
+      closeRemoveSeatsModal()
+    },
+    onError: (error) => {
+      showErrorToast('Error',
+        error?.response?.data?.message || 'Failed to update seats.')
+    }
+  })
+
+  const billingPortalMutation = useMutation({
+    mutationFn: createBillingPortalSession,
+    onSuccess: (data) => {
+      if (data?.url) window.location.href = data.url
+    },
+    onError: (error) => {
+      showErrorToast('Error',
+        error?.response?.data?.message || 'Failed to open billing portal.')
+    }
+  })
+
+  const handleBuySeatsContinue = () => {
+    const currentSeats = licensedSeats || Math.max(memberCount, INCLUDED_PRO_SEATS)
+    const newSeatCount = currentSeats + seatsToBuy
+
+    if (currentPlan === 'free' || currentPlan === 'trial') {
+      createCheckoutSessionMutation.mutate({
+        interval: billingInterval,
+        seatCount: newSeatCount,
+      })
+      return
+    }
+
+    if (buySeatsStep === 1) {
+      previewSeatChangeMutation.mutate({ seatCount: newSeatCount })
+      return
+    }
+
+    if (seatPreview?.newSeatCount) {
+      updateSeatsMutation.mutate({ seatCount: seatPreview.newSeatCount })
+    }
+  }
+
+  const handleRemoveSeatsContinue = () => {
+    if (!licensedSeats || maxSeatsToRemove < 1) {
+      showErrorToast('Error', `You cannot reduce seats below ${memberCount} active members.`)
+      return
+    }
+
+    const newSeatCount = licensedSeats - seatsToRemove
+
+    if (removeSeatsStep === 1) {
+      previewRemoveSeatsMutation.mutate({ seatCount: newSeatCount })
+      return
+    }
+
+    if (removeSeatPreview?.newSeatCount) {
+      updateSeatsMutation.mutate({ seatCount: removeSeatPreview.newSeatCount })
+    }
   }
 
   const stats = currentPlan === 'trial'
@@ -224,10 +471,12 @@ function ManagePlan() {
     : currentPlan === 'pro'
       ? [
           {
-            title: 'Monthly Cost',
-            value: `$${proMonthlyCost}`,
+            title: billingInterval === 'yearly' ? 'Annual Cost' : 'Monthly Cost',
+            value: `$${Math.round(billingAmount)}`,
             icon: () => <IconWrapper size={10} isTeritiaryIcon icon={DollarSign} />,
-            statistics: { monthly: `$${PRO_PRICE_PER_LICENSE} per license` },
+            statistics: {
+              monthly: `${INCLUDED_PRO_SEATS} seats included · $${EXTRA_SEAT_PRICE}/mo per extra seat`,
+            },
           },
           {
             title: 'Team Seats',
@@ -243,24 +492,38 @@ function ManagePlan() {
           },
           {
             title: 'Billing Cycle',
-            value: 'Monthly',
+            value: billingInterval === 'yearly' ? 'Yearly' : 'Monthly',
             icon: () => <IconWrapper size={10} isTeritiaryIcon icon={CalendarDays} />,
-            statistics: { monthly: `Next bill: ${PRO_NEXT_BILL_DATE}` },
+            statistics: {
+              monthly: subscription?.cancelAtPeriodEnd
+                ? `Cancels on ${nextBillDate}`
+                : `Next bill: ${nextBillDate}`,
+            },
           },
         ]
       : currentPlan === 'enterprise'
         ? [
             {
-              title: 'Annual Cost',
-              value: 'Custom',
+              title: subscription?.billingAmount ? enterpriseCostTitle : 'Contract Cost',
+              value: subscription?.billingAmount
+                ? `$${Math.round(subscription.billingAmount)}`
+                : 'Custom',
               icon: () => <IconWrapper size={10} isTeritiaryIcon icon={DollarSign} />,
-              statistics: { monthly: 'Contact sales for pricing' },
+              statistics: {
+                monthly: subscription?.billingAmount
+                  ? (billingInterval === 'yearly' ? 'Annual contract' : 'Monthly contract')
+                  : 'Contact sales for pricing',
+              },
             },
             {
               title: 'Team Seats',
-              value: `${memberCount}/${seatLimit}`,
+              value: isEnterpriseUnlimited ? memberCount : `${memberCount}/${seatLimit}`,
               icon: () => <IconWrapper size={10} isTeritiaryIcon icon={Users} />,
-              statistics: { monthly: `${enterpriseSeatsAvailable} available` },
+              statistics: {
+                monthly: isEnterpriseUnlimited
+                  ? 'Unlimited seats'
+                  : `${enterpriseSeatsAvailable} available`,
+              },
             },
             {
               title: 'Applications',
@@ -270,9 +533,9 @@ function ManagePlan() {
             },
             {
               title: 'Billing Cycle',
-              value: 'Yearly',
+              value: enterpriseBillingCycleValue,
               icon: () => <IconWrapper size={10} isTeritiaryIcon icon={CalendarDays} />,
-              statistics: { monthly: `Next bill: ${ENTERPRISE_NEXT_BILL_DATE}` },
+              statistics: { monthly: enterpriseBillingCycleDetail },
             },
           ]
         : [
@@ -294,7 +557,7 @@ function ManagePlan() {
             title: 'Status',
             value: 'Active',
             icon: () => <IconWrapper size={10} isTeritiaryIcon icon={Circle} />,
-            statistics: { monthly: plan.statusLabel },
+            statistics: { monthly: planStatusLabel },
           },
         ]
 
@@ -626,7 +889,11 @@ function ManagePlan() {
       cellClassName: 'padded-col',
       headerClassName: 'padded-col',
       renderCell: (params) => (
-        <p className='typography-body text-font-main'>{params.value}</p>
+        <CustomToolTip title={params.value} arrowed>
+          <p className='typography-body text-font-main truncate w-full min-w-0'>
+            {params.value}
+          </p>
+        </CustomToolTip>
       ),
     },
     {
@@ -700,14 +967,20 @@ function ManagePlan() {
           <div
             onClick={(e) => {
               e.stopPropagation()
-              showSuccessToast('Info', `Downloading ${params.row.id}...`)
+              if (params.row.invoiceUrl) {
+                window.open(params.row.invoiceUrl, '_blank', 'noopener,noreferrer')
+              } else {
+                showErrorToast('Error', 'Invoice PDF is not available yet.')
+              }
             }}
-            className='cursor-pointer bg-background-70 h-9 min-w-9 flex justify-center items-center rounded-xl hover:bg-background-80'
+            className={`bg-background-70 h-9 min-w-9 flex justify-center items-center rounded-xl hover:bg-background-80 ${params.row.invoiceUrl ? 'cursor-pointer' : 'opacity-50 cursor-not-allowed'}`}
             aria-label='Download invoice'
             role='button'
             tabIndex={0}
             onKeyDown={(e) => {
-              if (e.key === 'Enter') showSuccessToast('Info', `Downloading ${params.row.id}...`)
+              if (e.key === 'Enter' && params.row.invoiceUrl) {
+                window.open(params.row.invoiceUrl, '_blank', 'noopener,noreferrer')
+              }
             }}
           >
             <IconWrapper inheritColor icon={Download} size={0} customIconSize={3} />
@@ -750,7 +1023,7 @@ function ManagePlan() {
   return (
     <Container>
       <Header HeaderText="Manage Plan" />
-      {(addMemberMutation?.isPending || removeMemberMutation?.isPending || isTeamLoading) && <LoaderModal />}
+      {(addMemberMutation?.isPending || removeMemberMutation?.isPending || isTeamLoading || updateSeatsMutation.isPending || createCheckoutSessionMutation.isPending || billingPortalMutation.isPending || previewSeatChangeMutation.isPending || previewRemoveSeatsMutation.isPending) && <LoaderModal />}
 
       {/* Current Plan */}
       <StyledCard padding={2} extraStyles='w-full mb-4'>
@@ -773,7 +1046,7 @@ function ManagePlan() {
               type='button'
               icon={ExternalLink}
               iconPosition='left'
-              onClick={() => navigate(pricingPath)}
+              onClick={() => pricingPath && navigate(pricingPath)}
             >
               View Plans
             </Button>
@@ -781,6 +1054,7 @@ function ManagePlan() {
               variant='secondary'
               type='button'
               onClick={() => setShowRemoveSeatsModal(true)}
+              disabled={!licensedSeats || licensedSeats <= memberCount}
             >
               Remove seats
             </Button>
@@ -810,7 +1084,7 @@ function ManagePlan() {
               type='button'
               icon={ExternalLink}
               iconPosition='left'
-              onClick={() => navigate(pricingPath)}
+              onClick={() => pricingPath && navigate(pricingPath)}
             >
               View Plans
             </Button>
@@ -826,25 +1100,22 @@ function ManagePlan() {
               Your dedicated account manager for enterprise support
             </p>
           </div>
-          <StyledCard padding={2} backgroundColor='bg-background-100' extraStyles='flex items-center gap-4'>
-            <img
-              src={UNKNOWN_PROFILE_PICTURE_URL}
-              alt={DEDICATED_SUPPORT.name}
-              className='w-14 h-14 rounded-full object-cover shrink-0'
-            />
-            <div className='flex flex-col gap-1'>
-              <p className='typography-body font-semibold text-font-main'>{DEDICATED_SUPPORT.name}</p>
-              <p className='typography-small-p text-font-gray'>{DEDICATED_SUPPORT.email}</p>
-              <div className='flex items-center gap-2 typography-small-p text-font-gray'>
-                <IconWrapper icon={Phone} inheritColor size={0} customIconSize={3} />
-                <span>{DEDICATED_SUPPORT.phone}</span>
-              </div>
-            </div>
+          <StyledCard padding={2} backgroundColor='bg-background-100' extraStyles='flex flex-col sm:flex-row sm:items-center justify-between gap-4'>
+            <p className='typography-body text-font-gray'>
+              Need help with your enterprise plan? Contact our team for dedicated support.
+            </p>
+            <Button
+              variant='secondary'
+              type='button'
+              onClick={() => setShowEnterpriseModal(true)}
+            >
+              Contact support
+            </Button>
           </StyledCard>
         </StyledCard>
       )}
 
-      {isPaidPlan && (
+      {showStripeBilling && (
         <StyledCard padding={2} extraStyles='w-full mb-4'>
           <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-4'>
             <div>
@@ -858,7 +1129,8 @@ function ManagePlan() {
               type='button'
               icon={Edit2}
               iconPosition='left'
-              onClick={() => showSuccessToast('Info', 'Stripe payment update coming soon.')}
+              onClick={() => billingPortalMutation.mutate()}
+              disabled={billingPortalMutation.isPending}
             >
               Update
             </Button>
@@ -867,10 +1139,41 @@ function ManagePlan() {
             <div className='w-12 h-12 rounded-xl bg-background-80 flex items-center justify-center shrink-0'>
               <IconWrapper icon={CreditCard} inheritColor size={0} customIconSize={4} className='text-font-gray' />
             </div>
-            <div>
-              <p className='typography-body text-font-main'>Visa ending in 4242</p>
-              <p className='typography-small-p text-font-gray mt-0.5'>Expires 12/2028</p>
-            </div>
+            {paymentMethod?.last4 ? (
+              <div>
+                <p className='typography-body text-font-main'>
+                  {paymentMethod.brand} ending in {paymentMethod.last4}
+                </p>
+                <p className='typography-small-p text-font-gray mt-0.5'>
+                  Expires {paymentMethod.expMonth}/{paymentMethod.expYear}
+                </p>
+              </div>
+            ) : (
+              <p className='typography-body text-font-gray'>No payment method on file</p>
+            )}
+          </StyledCard>
+        </StyledCard>
+      )}
+
+      {currentPlan === 'enterprise' && !hasStripeBilling && (
+        <StyledCard padding={2} extraStyles='w-full mb-4'>
+          <div className='mb-4'>
+            <h3>Billing</h3>
+            <p className='typography-small-p text-font-gray mt-1'>
+              Enterprise billing and invoices
+            </p>
+          </div>
+          <StyledCard padding={2} backgroundColor='bg-background-100' extraStyles='flex flex-col sm:flex-row sm:items-center justify-between gap-4'>
+            <p className='typography-body text-font-gray'>
+              Your billing is managed by our team. Invoices and payment updates will be shared directly with you.
+            </p>
+            <Button
+              variant='secondary'
+              type='button'
+              onClick={() => setShowEnterpriseModal(true)}
+            >
+              Contact support
+            </Button>
           </StyledCard>
         </StyledCard>
       )}
@@ -885,7 +1188,7 @@ function ManagePlan() {
               : 'Unlock Geode Score, talent pools, and unlimited applications with Pro.'
           }
           buttonText='View Plans'
-          onButtonClick={() => navigate(pricingPath)}
+          onButtonClick={() => pricingPath && navigate(pricingPath)}
         />
       )}
 
@@ -895,19 +1198,19 @@ function ManagePlan() {
           <div>
             <h3>Team Members</h3>
             <p className='typography-small-p text-font-gray mt-1'>
-              {(currentPlan === 'pro' || currentPlan === 'enterprise')
-                ? `Manage who has access to your Geode workspace (${memberCount}/${seatLimit} seats used)`
-                : 'Manage who has access to your Geode workspace'}
+              {teamSeatsSubtitle}
             </p>
           </div>
           <div className='flex items-center gap-3 flex-wrap justify-end'>
-            {(currentPlan === 'trial' || currentPlan === 'pro') && (
+            {(currentPlan === 'trial' || currentPlan === 'pro' || currentPlan === 'enterprise') && (
               <>
                 <span className='w-fit font-bricolage text-sm rounded-full font-medium tracking-wider px-4 py-1 bg-background-80 text-font-gray border border-divider-100'>
                   {memberCount} users
                 </span>
                 <span className='w-fit font-bricolage text-sm rounded-full font-medium tracking-wider px-4 py-1 bg-background-80 text-font-gray border border-divider-100'>
-                  {currentPlan === 'trial' ? 'Unlimited seats' : `${seatLimit} seats`}
+                  {currentPlan === 'trial' || isEnterpriseUnlimited
+                    ? 'Unlimited seats'
+                    : `${seatLimit} seats`}
                 </span>
               </>
             )}
@@ -944,7 +1247,7 @@ function ManagePlan() {
         </div>
       </StyledCard>
 
-      {isPaidPlan && (
+      {showStripeBilling && (
         <StyledCard padding={2} extraStyles='w-full'>
           <div className='mb-6'>
             <h3>Payment History</h3>
@@ -958,6 +1261,7 @@ function ManagePlan() {
             <DataGrid
               rows={paymentHistory}
               columns={paymentHistoryColumns}
+              loading={isInvoicesLoading}
               getRowId={(row) => row.id}
               autoHeight
               rowHeight={72}
@@ -967,7 +1271,7 @@ function ManagePlan() {
                 params.indexRelativeToCurrentPage % 2 === 0 ? 'first-row' : 'second-row'
               }
               sx={MANAGE_PLAN_TABLE_SX}
-              localeText={{ noRowsLabel: 'No payment history' }}
+              localeText={{ noRowsLabel: 'No invoices yet' }}
             />
           </div>
         </StyledCard>
@@ -1009,95 +1313,284 @@ function ManagePlan() {
             extraStyles='relative w-full max-w-xl mx-4'
           >
             <div
-              onClick={() => setShowBuySeatsModal(false)}
+              onClick={closeBuySeatsModal}
               className='absolute top-4 right-4 z-10 cursor-pointer bg-background-70 h-9 min-w-9 flex justify-center items-center rounded-xl hover:bg-background-80'
             >
               <IconWrapper icon={X} size={0} />
             </div>
 
             <div className='flex flex-col gap-6'>
-              <div>
-                <h3 className='mb-1 pr-10'>Buy more seats</h3>
-                <p className='typography-body text-font-gray'>How many seats do you want to buy?</p>
-                <p className='typography-small-p text-font-gray mt-1'>
-                  You can add as many seats as you want.
-                </p>
-              </div>
-
-              <div className='flex items-center gap-2 w-fit'>
-                <button
-                  type='button'
-                  onClick={() => setSeatsToBuy((count) => count + 1)}
-                  className='bg-background-70 h-11 w-11 flex justify-center items-center rounded-xl hover:bg-background-80 shrink-0'
-                  aria-label='Increase seats'
-                >
-                  <IconWrapper icon={Plus} inheritColor size={0} customIconSize={3} />
-                </button>
-                <input
-                  type='number'
-                  min={1}
-                  value={seatsToBuy}
-                  onChange={(e) => setSeatsToBuy(Math.max(1, Number(e.target.value) || 1))}
-                  className='no-spinner w-28 h-11 rounded-xl bg-background-80 typography-body text-font-main text-center outline-none'
-                />
-                <button
-                  type='button'
-                  onClick={() => setSeatsToBuy((count) => Math.max(1, count - 1))}
-                  className='bg-background-70 h-11 w-11 flex justify-center items-center rounded-xl hover:bg-background-80 shrink-0'
-                  aria-label='Decrease seats'
-                >
-                  <IconWrapper icon={Minus} inheritColor size={0} customIconSize={3} />
-                </button>
-              </div>
-
-              <StyledCard
-                padding={4}
-                backgroundColor='bg-background-100'
-                extraStyles='w-full flex flex-col gap-6'
-              >
-                <div className='grid grid-cols-2 divide-x divide-divider-100'>
-                  <div className='flex flex-col items-center justify-center text-center px-8 py-4'>
-                    <p className='typography-small-p text-font-gray mb-2'>Your current price</p>
-                    <span className='font-bricolage font-bold text-5xl text-font-main'>${proMonthlyCost}</span>
+              {buySeatsStep === 1 ? (
+                <>
+                  <div>
+                    <h3 className='mb-1 pr-10'>Buy more seats</h3>
+                    <p className='typography-body text-font-gray'>How many seats do you want to buy?</p>
+                    <p className='typography-small-p text-font-gray mt-1'>
+                      {INCLUDED_PRO_SEATS} seats are included (${BASE_PLAN_AMOUNT[billingInterval]}
+                      {billingInterval === 'yearly' ? '/year' : '/month'}). Each additional seat is
+                      ${EXTRA_SEAT_PRICE}/month
+                      {billingInterval === 'yearly' ? ' ($15/year on your annual bill)' : ''}.
+                    </p>
                   </div>
-                  <div className='flex flex-col items-center justify-center text-center px-8 py-4'>
-                    <p className='typography-small-p text-font-gray mb-2'>Your revised price</p>
-                    <span className='font-bricolage font-bold text-5xl text-teal-100'>${revisedMonthlyCost}</span>
+
+                  <div className='flex items-center gap-2 w-fit'>
+                    <button
+                      type='button'
+                      onClick={() => setSeatsToBuy((count) => count + 1)}
+                      className='bg-background-70 h-11 w-11 flex justify-center items-center rounded-xl hover:bg-background-80 shrink-0'
+                      aria-label='Increase seats'
+                    >
+                      <IconWrapper icon={Plus} inheritColor size={0} customIconSize={3} />
+                    </button>
+                    <input
+                      type='number'
+                      min={1}
+                      value={seatsToBuy}
+                      onChange={(e) => setSeatsToBuy(Math.max(1, Number(e.target.value) || 1))}
+                      className='no-spinner w-28 h-11 rounded-xl bg-background-80 typography-body text-font-main text-center outline-none'
+                    />
+                    <button
+                      type='button'
+                      onClick={() => setSeatsToBuy((count) => Math.max(1, count - 1))}
+                      className='bg-background-70 h-11 w-11 flex justify-center items-center rounded-xl hover:bg-background-80 shrink-0'
+                      aria-label='Decrease seats'
+                    >
+                      <IconWrapper icon={Minus} inheritColor size={0} customIconSize={3} />
+                    </button>
                   </div>
-                </div>
-                <div className='flex flex-col items-center gap-4'>
-                  <Button
-                    variant='primary'
-                    type='button'
-                    onClick={handleBuySeatsContinue}
+
+                  <StyledCard
+                    padding={4}
+                    backgroundColor='bg-background-100'
+                    extraStyles='w-full flex flex-col gap-6'
                   >
-                    Continue
-                  </Button>
-                  <p className='typography-small-p text-font-gray text-center max-w-xs'>
-                    The revised price will take effect in your next billing cycle, starting on {PRO_BILLING_EFFECTIVE_DATE}.
-                  </p>
-                </div>
-              </StyledCard>
+                    <div className='grid grid-cols-2 divide-x divide-divider-100'>
+                      <div className='flex flex-col items-center justify-center text-center px-8 py-4'>
+                        <p className='typography-small-p text-font-gray mb-2'>Your current price</p>
+                        <span className='font-bricolage font-bold text-5xl text-font-main'>${Math.round(billingAmount)}</span>
+                      </div>
+                      <div className='flex flex-col items-center justify-center text-center px-8 py-4'>
+                        <p className='typography-small-p text-font-gray mb-2'>Your revised price</p>
+                        <span className='font-bricolage font-bold text-5xl text-teal-100'>${Math.round(revisedBillingAmount)}</span>
+                      </div>
+                    </div>
+                    <div className='flex flex-col items-center gap-4'>
+                      <Button
+                        variant='primary'
+                        type='button'
+                        onClick={handleBuySeatsContinue}
+                      >
+                        Review purchase
+                      </Button>
+                      <p className='typography-small-p text-font-gray text-center max-w-xs'>
+                        Your recurring total updates immediately. You will review the prorated charge before paying.
+                      </p>
+                    </div>
+                  </StyledCard>
+                </>
+              ) : (
+                <>
+                  <div>
+                    <h3 className='mb-1 pr-10'>Confirm seat purchase</h3>
+                    <p className='typography-body text-font-gray'>
+                      Adding {seatsToBuy} seat{seatsToBuy > 1 ? 's' : ''} ({seatPreview?.currentSeatCount} → {seatPreview?.newSeatCount})
+                    </p>
+                  </div>
+
+                  <StyledCard padding={4} backgroundColor='bg-background-100' extraStyles='w-full flex flex-col gap-4'>
+                    <div className='flex justify-between items-center'>
+                      <p className='typography-body text-font-gray'>Due today (prorated)</p>
+                      <p className='font-bricolage font-bold text-2xl text-font-main'>{seatPreview?.dueToday}</p>
+                    </div>
+                    <div className='flex justify-between items-center'>
+                      <p className='typography-body text-font-gray'>New recurring total</p>
+                      <p className='typography-body text-font-main'>{seatPreview?.newRecurringAmount}</p>
+                    </div>
+                    {paymentMethod?.last4 && (
+                      <div className='flex justify-between items-center pt-2 border-t border-divider-100'>
+                        <p className='typography-body text-font-gray'>Payment method</p>
+                        <p className='typography-body text-font-main'>
+                          {paymentMethod.brand} ···· {paymentMethod.last4}
+                        </p>
+                      </div>
+                    )}
+                  </StyledCard>
+
+                  <div className='flex flex-col items-center gap-4'>
+                    <Button
+                      variant='primary'
+                      type='button'
+                      onClick={handleBuySeatsContinue}
+                    >
+                      Confirm & pay
+                    </Button>
+                    <Button
+                      variant='tertiary'
+                      type='button'
+                      onClick={() => {
+                        setBuySeatsStep(1)
+                        setSeatPreview(null)
+                      }}
+                    >
+                      Go back
+                    </Button>
+                    <p className='typography-small-p text-font-gray text-center max-w-sm'>
+                      Your card on file will be charged {seatPreview?.dueToday} today for the unused portion of this billing period.
+                    </p>
+                  </div>
+                </>
+              )}
             </div>
           </StyledCard>
         </div>,
         document.body
       )}
 
-      <Modal
-        open={showRemoveSeatsModal}
-        onClose={() => setShowRemoveSeatsModal(false)}
-        onConfirm={() => {
-          // TODO: wire to billing API
-          showSuccessToast('Success', 'Seat removal request submitted.')
-          setShowRemoveSeatsModal(false)
-        }}
-        customTitle='Remove seats'
-        customMessage='Reduce the number of licenses on your plan. Changes apply at the next billing cycle.'
-        customConfirmLabel='Remove seats'
-        cancelLabel='Cancel'
-        isReadyToClose={false}
-      />
+      {showRemoveSeatsModal && createPortal(
+        <div className='fixed z-50 inset-0 flex justify-center items-center bg-background-overlay bg-black/20'>
+          <StyledCard
+            padding={3}
+            backgroundColor='bg-background-90'
+            extraStyles='relative w-full max-w-xl mx-4'
+          >
+            <div
+              onClick={closeRemoveSeatsModal}
+              className='absolute top-4 right-4 z-10 cursor-pointer bg-background-70 h-9 min-w-9 flex justify-center items-center rounded-xl hover:bg-background-80'
+            >
+              <IconWrapper icon={X} size={0} />
+            </div>
+
+            <div className='flex flex-col gap-6'>
+              {removeSeatsStep === 1 ? (
+                <>
+                  <div>
+                    <h3 className='mb-1 pr-10'>Remove seats</h3>
+                    <p className='typography-body text-font-gray'>How many seats do you want to remove?</p>
+                    <p className='typography-small-p text-font-gray mt-1'>
+                      You can remove up to {maxSeatsToRemove} seat{maxSeatsToRemove !== 1 ? 's' : ''} ({memberCount} active members must remain).
+                    </p>
+                  </div>
+
+                  <div className='flex items-center gap-2 w-fit'>
+                    <button
+                      type='button'
+                      onClick={() => setSeatsToRemove((count) => Math.min(maxSeatsToRemove, count + 1))}
+                      disabled={seatsToRemove >= maxSeatsToRemove}
+                      className='bg-background-70 h-11 w-11 flex justify-center items-center rounded-xl hover:bg-background-80 shrink-0 disabled:opacity-50 disabled:cursor-not-allowed'
+                      aria-label='Increase seats to remove'
+                    >
+                      <IconWrapper icon={Plus} inheritColor size={0} customIconSize={3} />
+                    </button>
+                    <input
+                      type='number'
+                      min={1}
+                      max={maxSeatsToRemove}
+                      value={seatsToRemove}
+                      onChange={(e) => {
+                        const value = Math.max(1, Math.min(maxSeatsToRemove, Number(e.target.value) || 1))
+                        setSeatsToRemove(value)
+                      }}
+                      className='no-spinner w-28 h-11 rounded-xl bg-background-80 typography-body text-font-main text-center outline-none'
+                    />
+                    <button
+                      type='button'
+                      onClick={() => setSeatsToRemove((count) => Math.max(1, count - 1))}
+                      disabled={seatsToRemove <= 1}
+                      className='bg-background-70 h-11 w-11 flex justify-center items-center rounded-xl hover:bg-background-80 shrink-0 disabled:opacity-50 disabled:cursor-not-allowed'
+                      aria-label='Decrease seats to remove'
+                    >
+                      <IconWrapper icon={Minus} inheritColor size={0} customIconSize={3} />
+                    </button>
+                  </div>
+
+                  <StyledCard
+                    padding={4}
+                    backgroundColor='bg-background-100'
+                    extraStyles='w-full flex flex-col gap-6'
+                  >
+                    <div className='grid grid-cols-2 divide-x divide-divider-100'>
+                      <div className='flex flex-col items-center justify-center text-center px-8 py-4'>
+                        <p className='typography-small-p text-font-gray mb-2'>Your current price</p>
+                        <span className='font-bricolage font-bold text-5xl text-font-main'>${Math.round(billingAmount)}</span>
+                      </div>
+                      <div className='flex flex-col items-center justify-center text-center px-8 py-4'>
+                        <p className='typography-small-p text-font-gray mb-2'>Your revised price</p>
+                        <span className='font-bricolage font-bold text-5xl text-teal-100'>${Math.round(revisedBillingAfterRemoval)}</span>
+                      </div>
+                    </div>
+                    <div className='flex flex-col items-center gap-4'>
+                      <Button
+                        variant='primary'
+                        type='button'
+                        onClick={handleRemoveSeatsContinue}
+                      >
+                        Review removal
+                      </Button>
+                      <p className='typography-small-p text-font-gray text-center max-w-xs'>
+                        Licensed seats will go from {licensedSeats} to {licensedSeats - seatsToRemove}. A credit will be applied to your next invoice.
+                      </p>
+                    </div>
+                  </StyledCard>
+                </>
+              ) : (
+                <>
+                  <div>
+                    <h3 className='mb-1 pr-10'>Confirm seat removal</h3>
+                    <p className='typography-body text-font-gray'>
+                      Removing {seatsToRemove} seat{seatsToRemove > 1 ? 's' : ''} ({removeSeatPreview?.currentSeatCount} → {removeSeatPreview?.newSeatCount})
+                    </p>
+                  </div>
+
+                  <StyledCard padding={4} backgroundColor='bg-background-100' extraStyles='w-full flex flex-col gap-4'>
+                    <div className='flex justify-between items-center'>
+                      <p className='typography-body text-font-gray'>Credit on next invoice</p>
+                      <p className='font-bricolage font-bold text-2xl text-teal-100'>
+                        {removeSeatPreview?.creditAmount || '—'}
+                      </p>
+                    </div>
+                    <div className='flex justify-between items-center'>
+                      <p className='typography-body text-font-gray'>Next invoice date</p>
+                      <p className='typography-body text-font-main'>
+                        {formatBillDate(removeSeatPreview?.nextBillDate || subscription?.currentPeriodEnd)}
+                      </p>
+                    </div>
+                    <div className='flex justify-between items-center pt-2 border-t border-divider-100'>
+                      <p className='typography-body text-font-gray'>New recurring total</p>
+                      <p className='typography-body text-font-main'>{removeSeatPreview?.newRecurringAmount}</p>
+                    </div>
+                  </StyledCard>
+
+                  <div className='flex flex-col items-center gap-4'>
+                    <Button
+                      variant='primary'
+                      type='button'
+                      onClick={handleRemoveSeatsContinue}
+                    >
+                      Confirm removal
+                    </Button>
+                    <Button
+                      variant='tertiary'
+                      type='button'
+                      onClick={() => {
+                        setRemoveSeatsStep(1)
+                        setRemoveSeatPreview(null)
+                      }}
+                    >
+                      Go back
+                    </Button>
+                    <p className='typography-small-p text-font-gray text-center max-w-sm'>
+                      {removeSeatPreview?.creditAmount
+                        ? `A credit of ${removeSeatPreview.creditAmount} will be applied to your next invoice on ${formatBillDate(removeSeatPreview.nextBillDate || subscription?.currentPeriodEnd)}.`
+                        : 'A credit will be applied to your next invoice.'}
+                    </p>
+                  </div>
+                </>
+              )}
+            </div>
+          </StyledCard>
+        </div>,
+        document.body
+      )}
 
       <Modal
         open={showAddModal}

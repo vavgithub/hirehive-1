@@ -40,8 +40,7 @@ function AdminDashboard() {
   const [selectedChartFilter, setSelectedChartFilter] = useState('monthly');
   const [showTrialModal, setShowTrialModal] = useState(false)
 
-  // TODO: replace with real plan from user/company API
-  const currentPlan = 'trial'
+  const currentPlan = user?.companyDetails?.subscription?.plan || 'free'
   const trialStatus = useTrialStatus()
 
   const navigate = useNavigate();

@@ -1,11 +1,14 @@
 import React from 'react'
+import { useMutation } from '@tanstack/react-query'
 import { Check } from 'lucide-react'
 import { steps } from '../../pages/Admin/Register'
 import { useOnboardingContext } from '../../context/OnboardingProvider'
+import { savePlanSelection } from '../../services/auth.service'
+import { showErrorToast } from '../ui/Toast'
+import LoaderModal from '../Loaders/LoaderModal'
 import StyledCard from '../Cards/StyledCard'
 import IconWrapper from '../Cards/IconWrapper'
 import { Button } from '../Buttons/Button'
-import { startTrialPeriod } from '../../utility/trial.utils'
 
 const FEATURES = [
   'Add as many users as you want for free',
@@ -18,24 +21,41 @@ const FEATURES = [
 ]
 
 function PlanSelection({ currentStep, setCurrentStep }) {
-  const { setOnboardData } = useOnboardingContext()
+  const { onboardData, setOnboardData } = useOnboardingContext()
+
+  const savePlanMutation = useMutation({
+    mutationFn: savePlanSelection,
+    onSuccess: (data) => {
+      if (data?.userData) {
+        setOnboardData(data.userData)
+      }
+      steps.forEach((step, index, stepsArr) => {
+        if (step.id === currentStep) {
+          setCurrentStep(stepsArr[index + 1]?.id)
+        }
+      })
+    },
+    onError: (error) => {
+      showErrorToast('Error', error?.response?.data?.message ||
+        'Failed to save plan. Please try again.')
+    }
+  })
 
   const advance = (plan) => {
-    if (plan === 'trial') startTrialPeriod()
-    setOnboardData(prev => ({
-      ...prev,
+    if (!onboardData?.email) {
+      showErrorToast('Error', 'Unexpected error. Please try again.')
+      return
+    }
+    savePlanMutation.mutate({
       plan,
-      seatLimit: plan === 'free' ? 2 : null,
-    }))
-    steps.forEach((step, index, stepsArr) => {
-      if (step.id === currentStep) {
-        setCurrentStep(stepsArr[index + 1]?.id)
-      }
+      email: onboardData.email
     })
   }
 
   return (
     <>
+      {savePlanMutation.isPending && <LoaderModal />}
+
       <div className='text-center mb-6 px-8 pt-6'>
         <h2>Try the Premium Geode Experience for 21 days!</h2>
         <p className='typography-large-p text-font-gray font-light mt-2'>

@@ -1,6 +1,4 @@
 export const TRIAL_TOTAL_DAYS = 21
-const TRIAL_ENDS_AT_KEY = 'geode_trial_ends_at'
-const DEFAULT_DAYS_LEFT = 18
 
 const startOfDay = (date) => {
   const d = new Date(date)
@@ -9,27 +7,26 @@ const startOfDay = (date) => {
 }
 
 export const resolveTrialEndsAt = (user) => {
-  const fromUser = user?.companyDetails?.trialEndsAt || user?.trialEndsAt
+  const fromUser = user?.companyDetails?.subscription?.trialEndsAt
   if (fromUser) return startOfDay(new Date(fromUser))
-
-  const stored = localStorage.getItem(TRIAL_ENDS_AT_KEY)
-  if (stored) return startOfDay(new Date(stored))
-
-  const end = startOfDay(new Date())
-  end.setDate(end.getDate() + DEFAULT_DAYS_LEFT)
-  localStorage.setItem(TRIAL_ENDS_AT_KEY, end.toISOString())
-  return end
-}
-
-export const startTrialPeriod = (totalDays = TRIAL_TOTAL_DAYS) => {
-  const end = startOfDay(new Date())
-  end.setDate(end.getDate() + totalDays)
-  localStorage.setItem(TRIAL_ENDS_AT_KEY, end.toISOString())
-  return end
+  return null
 }
 
 export const getTrialStatus = (user) => {
   const trialEndsAt = resolveTrialEndsAt(user)
+  if (!trialEndsAt) {
+    return {
+      daysLeft: 0,
+      dayCurrent: 0,
+      totalDays: TRIAL_TOTAL_DAYS,
+      isActive: false,
+      statusLabel: 'No trial',
+      daysRemainingLabel: '0 days',
+      progressLabel: 'Day 0/21',
+      bannerTitle: '',
+      trialEndsAt: null,
+    }
+  }
   const today = startOfDay(new Date())
   const msPerDay = 24 * 60 * 60 * 1000
   const daysLeft = Math.max(0, Math.round((trialEndsAt - today) / msPerDay))
@@ -37,24 +34,18 @@ export const getTrialStatus = (user) => {
     ? Math.min(TRIAL_TOTAL_DAYS, TRIAL_TOTAL_DAYS - daysLeft + 1)
     : TRIAL_TOTAL_DAYS
   const isActive = daysLeft > 0
-
   return {
     daysLeft,
     dayCurrent,
     totalDays: TRIAL_TOTAL_DAYS,
     isActive,
     statusLabel: isActive ? 'Trial Active' : 'Inactive',
-    daysRemainingLabel: daysLeft === 0
-      ? '0 days'
-      : daysLeft === 1
-        ? '1 day'
-        : `${daysLeft} days`,
+    daysRemainingLabel: daysLeft === 0 ? '0 days' :
+      daysLeft === 1 ? '1 day' : `${daysLeft} days`,
     progressLabel: `Day ${dayCurrent}/${TRIAL_TOTAL_DAYS}`,
-    bannerTitle: daysLeft === 0
-      ? 'Your trial has ended'
-      : daysLeft === 1
-        ? '1 day left in your trial'
-        : `${daysLeft} days left in your trial`,
+    bannerTitle: daysLeft === 0 ? 'Your trial has ended' :
+      daysLeft === 1 ? '1 day left in your trial' :
+      `${daysLeft} days left in your trial`,
     trialEndsAt,
   }
 }

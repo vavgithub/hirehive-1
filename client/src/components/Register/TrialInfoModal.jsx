@@ -4,7 +4,6 @@ import StyledCard from '../Cards/StyledCard'
 import { Button } from '../Buttons/Button'
 import { Check, X } from 'lucide-react'
 import IconWrapper from '../Cards/IconWrapper'
-import { startTrialPeriod } from '../../utility/trial.utils'
 
 const FEATURES = [
   'Add as many users as you want for free',
@@ -16,7 +15,7 @@ const FEATURES = [
   'Create your own Talent Pool',
 ]
 
-function TrialInfoModal({ onClose, secondaryCTA = "Not now, use free version" }) {
+function TrialInfoModal({ onClose, secondaryCTA = "Not now, use free version", onStartTrial }) {
   return createPortal(
     <div className='fixed z-50 inset-0 flex justify-center items-center bg-background-overlay bg-black/20'>
       <StyledCard
@@ -69,7 +68,7 @@ function TrialInfoModal({ onClose, secondaryCTA = "Not now, use free version" })
             <Button
               variant='primary'
               type='button'
-              onClick={() => { startTrialPeriod(); onClose() }}
+              onClick={onStartTrial || onClose}
               className='!w-full !px-0 mt-4'
             >
               Start my free trial

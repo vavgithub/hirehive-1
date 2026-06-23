@@ -1,6 +1,9 @@
-import React, { useMemo, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import React, { useEffect, useMemo, useState } from 'react'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuthContext } from '../../context/AuthProvider'
+import { createCheckoutSession, cancelSubscription, getSubscription, startTrial, switchBillingInterval } from '../../services/billing.service'
+import { showErrorToast, showSuccessToast } from '../../components/ui/Toast'
 import Container from '../../components/Cards/Container'
 import Header from '../../components/utility/Header'
 import StyledCard from '../../components/Cards/StyledCard'
@@ -111,15 +114,129 @@ const FeatureItem = ({ label, included, className = '' }) => (
 )
 
 function PricingAndSubscription() {
-  const [searchParams] = useSearchParams()
   const { user } = useAuthContext()
+  const navigate = useNavigate()
+  const queryClient = useQueryClient()
+  const [searchParams, setSearchParams] = useSearchParams()
   const trialStatus = useTrialStatus()
-  const currentPlan = searchParams.get('plan') || user?.plan || 'free'
+
+  const { data: subscriptionData, refetch: refetchSubscription } = useQuery({
+    queryKey: ['subscription'],
+    queryFn: getSubscription,
+    staleTime: 0,
+  })
+
+  const currentPlan = searchParams.get('plan') ||
+    subscriptionData?.data?.plan ||
+    user?.companyDetails?.subscription?.plan ||
+    'free'
+
+  const currentBillingInterval = subscriptionData?.data?.billingInterval || 'monthly'
 
   const [billing, setBilling] = useState('monthly')
   const [showEndTrialModal, setShowEndTrialModal] = useState(false)
+  const [showCancelProModal, setShowCancelProModal] = useState(false)
   const [showTrialModal, setShowTrialModal] = useState(false)
   const [showEnterpriseModal, setShowEnterpriseModal] = useState(false)
+
+  const checkoutMutation = useMutation({
+    mutationFn: createCheckoutSession,
+    onSuccess: (data) => {
+      refetchSubscription()
+      if (data?.url) {
+        window.location.href = data.url
+      }
+    },
+    onError: (error) => {
+      showErrorToast('Error', error?.response?.data?.message ||
+        'Failed to start checkout. Please try again.')
+    }
+  })
+
+  const switchIntervalMutation = useMutation({
+    mutationFn: switchBillingInterval,
+    onSuccess: async (data) => {
+      await Promise.all([
+        refetchSubscription(),
+        queryClient.invalidateQueries({ queryKey: ['invoices'] }),
+      ])
+      if (data?.billingInterval) {
+        setBilling(data.billingInterval)
+      }
+      showSuccessToast('Success', data?.message || 'Billing interval updated.')
+    },
+    onError: (error) => {
+      showErrorToast('Error',
+        error?.response?.data?.message || 'Failed to switch billing interval.')
+    },
+  })
+
+  const cancelMutation = useMutation({
+    mutationFn: cancelSubscription,
+    onSuccess: async (data) => {
+      await Promise.all([
+        refetchSubscription(),
+        queryClient.refetchQueries({ queryKey: ['auth'] }),
+      ])
+      if (searchParams.has('plan')) {
+        const next = new URLSearchParams(searchParams)
+        next.delete('plan')
+        setSearchParams(next, { replace: true })
+      }
+      showSuccessToast('Success', data?.message ||
+        'Subscription cancelled.')
+      setShowEndTrialModal(false)
+      setShowCancelProModal(false)
+    },
+    onError: (error) => {
+      showErrorToast('Error',
+        error?.response?.data?.message || 'Failed to cancel.')
+    }
+  })
+
+  const startTrialMutation = useMutation({
+    mutationFn: startTrial,
+    onSuccess: () => {
+      refetchSubscription()
+      queryClient.invalidateQueries({ queryKey: ['auth'] })
+      showSuccessToast('Success', 'Your 21-day trial has started!')
+      setShowTrialModal(false)
+    },
+    onError: (error) => {
+      showErrorToast('Error',
+        error?.response?.data?.message || 'Failed to start trial.')
+    }
+  })
+
+  useEffect(() => {
+    if (currentPlan === 'pro' && currentBillingInterval) {
+      setBilling(currentBillingInterval)
+    }
+  }, [currentPlan, currentBillingInterval])
+
+  const handleUpgradeToPro = () => {
+    if (currentPlan === 'pro') {
+      if (billing === 'yearly' && currentBillingInterval === 'monthly') {
+        switchIntervalMutation.mutate({ interval: 'yearly' })
+        return
+      }
+      navigate('/admin/manage-plan')
+      return
+    }
+
+    checkoutMutation.mutate({
+      interval: billing,
+      seatCount: 1
+    })
+  }
+
+  const handleCancelSubscription = () => {
+    setShowCancelProModal(true)
+  }
+
+  const handleConfirmCancelPro = () => {
+    cancelMutation.mutate({ immediate: true })
+  }
 
   const trialStats = useMemo(() => [
     {
@@ -151,7 +268,12 @@ function PricingAndSubscription() {
 
   const getProCTA = () => {
     if (currentPlan === 'free') return 'Upgrade to Pro'
-    if (currentPlan === 'pro') return 'Add license'
+    if (currentPlan === 'pro') {
+      if (billing === 'yearly' && currentBillingInterval === 'monthly') {
+        return 'Switch to yearly billing'
+      }
+      return 'Add license'
+    }
     return 'Get Started'
   }
 
@@ -178,6 +300,7 @@ function PricingAndSubscription() {
     currentPlan === 'enterprise' ? 'enterprise' : 'pro'
 
   const isFreeCTADisabled = currentPlan === 'free'
+  const isProCTAPending = checkoutMutation.isPending || switchIntervalMutation.isPending
   const isProCTADisabled = false
   const isEnterpriseCTADisabled = false
 
@@ -186,8 +309,7 @@ function PricingAndSubscription() {
   }
 
   const handleEndTrial = () => {
-    // TODO: API call to end trial
-    setShowEndTrialModal(false)
+    cancelMutation.mutate()
   }
 
   return (
@@ -209,12 +331,22 @@ function PricingAndSubscription() {
             setCheckValue={(val) => setBilling(val ? 'yearly' : 'monthly')}
           />
           <span className={`typography-body ${billing === 'yearly' ? 'text-font-main' : 'text-font-gray'}`}>Yearly</span>
-          {billing === 'yearly' && (
+          {billing === 'yearly' && currentPlan !== 'pro' && (
             <span className='typography-small-p text-teal-100 bg-teal-10 border border-teal-100 px-2 py-0.5 rounded-full'>
               Save 20%
             </span>
           )}
         </div>
+
+        {currentPlan === 'pro' && (
+          <p className='text-center typography-small-p text-font-gray -mt-2'>
+            Your plan is billed{' '}
+            <span className='text-font-main font-medium'>
+              {currentBillingInterval === 'yearly' ? 'yearly ($180/user/year)' : 'monthly ($19/user/month)'}
+            </span>
+            . Toggle above to preview or switch billing.
+          </p>
+        )}
 
         {currentPlan === 'free' && (
           <AssessmentBanner
@@ -328,26 +460,30 @@ function PricingAndSubscription() {
               <span className='font-bricolage font-bold text-4xl text-font-main'>${proPrice}</span>
               <span className='typography-small-p text-font-gray mb-1'>/user/month</span>
             </div>
+            {billing === 'yearly' && (
+              <p className='typography-small-p text-font-gray -mt-2 mb-3'>
+                ${proPrice * 12}/user/year, billed annually
+              </p>
+            )}
             <div className={`flex flex-col w-full ${currentPlan === 'pro' ? 'gap-2 mb-6' : 'mb-6'}`}>
               <Button
                 variant={getProVariant()}
                 type='button'
                 className='w-full !px-0'
-                disabled={isProCTADisabled}
-                // TODO: wire to billing API
-                onClick={() => {}}
+                disabled={isProCTADisabled || isProCTAPending}
+                onClick={handleUpgradeToPro}
               >
-                {getProCTA()}
+                {isProCTAPending ? 'Processing...' : getProCTA()}
               </Button>
               {currentPlan === 'pro' && (
                 <Button
                   variant='tertiary'
                   type='button'
                   className='w-full !px-0'
-                  // TODO: wire to billing API
-                  onClick={() => {}}
+                  disabled={cancelMutation.isPending}
+                  onClick={handleCancelSubscription}
                 >
-                  Cancel Subscription
+                  {cancelMutation.isPending ? 'Cancelling...' : 'Cancel Subscription'}
                 </Button>
               )}
             </div>
@@ -499,12 +635,30 @@ function PricingAndSubscription() {
         <TrialInfoModal
           onClose={() => setShowTrialModal(false)}
           secondaryCTA="Continue using free version"
+          onStartTrial={() => {
+            startTrialMutation.mutate()
+            setShowTrialModal(false)
+          }}
         />
       )}
 
       {showEnterpriseModal && (
         <EnterpriseContactModal onClose={() => setShowEnterpriseModal(false)} />
       )}
+
+      <Modal
+        open={showCancelProModal}
+        onClose={() => setShowCancelProModal(false)}
+        onConfirm={handleConfirmCancelPro}
+        customTitle='Cancel Pro subscription?'
+        customMessage='You will return to the Free plan immediately. Any active Stripe subscriptions on your account will be cancelled.'
+        customConfirmLabel='Cancel and go to Free'
+        cancelLabel='Keep Pro'
+        cancelVariant='tertiary'
+        isReadyToClose={false}
+        specifiedWidth='max-w-lg'
+        showCloseIcon
+      />
 
     </Container>
   )

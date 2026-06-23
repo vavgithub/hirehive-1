@@ -823,6 +823,63 @@ export const completeHiringManagerRegistration = asyncHandler(async (req, res) =
   });
 });
 
+export const savePlanSelection = asyncHandler(async (req, res) => {
+  const { plan, email } = req.body;
+
+  if (!plan || !['free', 'trial'].includes(plan)) {
+    return res.status(400).json({
+      status: 'error',
+      message: 'Invalid plan selection. Must be free or trial.'
+    });
+  }
+
+  if (!email) {
+    return res.status(400).json({
+      status: 'error',
+      message: 'Email is required.'
+    });
+  }
+
+  const user = await User.findOne({ email });
+  if (!user) {
+    return res.status(404).json({
+      status: 'error',
+      message: 'User not found.'
+    });
+  }
+
+  const company = await Company.findById(user.company_id);
+  if (!company) {
+    return res.status(404).json({
+      status: 'error',
+      message: 'Company not found.'
+    });
+  }
+
+  // Set plan and trial end date if trial selected
+  company.subscription.plan = plan;
+  if (plan === 'trial') {
+    const trialEndsAt = new Date();
+    trialEndsAt.setDate(trialEndsAt.getDate() + 21);
+    company.subscription.trialEndsAt = trialEndsAt;
+    company.subscription.status = 'active';
+  } else {
+    company.subscription.status = 'active';
+  }
+  await company.save();
+
+  // Advance onboarding stage
+  user.verificationStage = 'COMPANY DETAILS';
+  await user.save();
+
+  return res.status(200).json({
+    status: 'success',
+    message: 'Plan selected successfully.',
+    currentStage: 'ADD MEMBERS',
+    userData: user
+  });
+});
+
 
 //add Team members controller
 export const addTeamMembers = asyncHandler(async (req,res) => {
