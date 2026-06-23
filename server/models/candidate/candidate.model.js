@@ -277,7 +277,7 @@ const jobApplicationSchema = new mongoose.Schema(
     },
     aiTriggerStatus: {
       type: String,
-      enum: ['pending', 'in_progress', 'done', 'escalated'],
+      enum: ['pending', 'in_progress', 'done', 'awaiting_discovery', 'escalated'],
       default: 'pending',
     },
     aiScoredAt: {

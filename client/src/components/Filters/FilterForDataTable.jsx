@@ -9,6 +9,26 @@ import TickCheckbox from '../Checkboxes/TickCheckbox';
 import { allStatuses, stageStatusMap } from './config.filter';
 import LocationFilter from './LocationFilter';
 
+const AWAITING_DISCOVERY_FILTER = 'Awaiting Discovery';
+
+const DEFAULT_FILTERS = {
+  stage: [],
+  status: [],
+  experience: '',
+  rating: [],
+  assessment: [],
+  score: '',
+  location: [],
+  discovery: [],
+  assignee: [],
+  'job Type': [],
+};
+
+const mergeFilters = (filters) => ({
+  ...DEFAULT_FILTERS,
+  ...(filters || {}),
+});
+
 const ArrowIcon = ({ isOpen }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -29,17 +49,7 @@ const FilterForDataTable = ({ applyLocationFilter, onApplyFilters, readOnly, pre
 
   const firstRenderRef = useRef(true);
 
-  const [selectedFilters, setSelectedFilters] = useState(preservedFilters ? preservedFilters : {
-    stage: [],
-    status: [],
-    experience: '',
-    rating: [],
-    assessment: [],
-    score: "",
-    location : [],
-    assignee: [],
-    "job Type": []
-  });
+  const [selectedFilters, setSelectedFilters] = useState(() => mergeFilters(preservedFilters));
 
   const [showDropdown, setShowDropdown] = useState({
     stage: false,
@@ -57,7 +67,7 @@ const FilterForDataTable = ({ applyLocationFilter, onApplyFilters, readOnly, pre
   const [designReviewers, setDesignReviewers] = useState([]);
 
   useEffect(() => {
-    setSelectedFilters(preservedFilters)
+    setSelectedFilters(mergeFilters(preservedFilters));
   }, [preservedFilters]);
 
   // Updated formatSelectedValues to return an object with value and className
@@ -121,12 +131,15 @@ const FilterForDataTable = ({ applyLocationFilter, onApplyFilters, readOnly, pre
   }, [allDesignReviewers]);
 
   const handleSelect = (category, value) => {
-    setSelectedFilters((prev) => ({
-      ...prev,
-      [category]: prev[category].includes(value)
-        ? prev[category].filter((item) => item !== value)
-        : [...prev[category], value],
-    }));
+    setSelectedFilters((prev) => {
+      const current = Array.isArray(prev[category]) ? prev[category] : [];
+      return {
+        ...prev,
+        [category]: current.includes(value)
+          ? current.filter((item) => item !== value)
+          : [...current, value],
+      };
+    });
   };
 
   const handleStageSelect = (value) => {
@@ -191,17 +204,19 @@ const FilterForDataTable = ({ applyLocationFilter, onApplyFilters, readOnly, pre
   };
 
   const handleClearAll = () => {
-    setSelectedFilters({
-      stage: [],
-      status: [],
-      experience: '',
-      rating: [],
-      assessment: [],
-      score: "",
-      location : [],
-      assignee: [],
-      "job Type": []
-    })
+    setSelectedFilters({ ...DEFAULT_FILTERS });
+  };
+
+  const isDiscoveryActive = (selectedFilters.discovery || []).includes(AWAITING_DISCOVERY_FILTER);
+
+  const handleDiscoveryToggle = () => {
+    setSelectedFilters((prev) => {
+      const isActive = (prev.discovery || []).includes(AWAITING_DISCOVERY_FILTER);
+      return {
+        ...prev,
+        discovery: isActive ? [] : [AWAITING_DISCOVERY_FILTER],
+      };
+    });
   };
 
   const handleClickOutside = (event) => {
@@ -220,7 +235,7 @@ const FilterForDataTable = ({ applyLocationFilter, onApplyFilters, readOnly, pre
   const categories = {
     stage: ['Portfolio', 'Screening', 'Design Task', 'Round 1', 'Round 2', 'Hired'],
     status: selectedFilters.stage.length === 1
-      ? [...new Set([...(stageStatusMap[selectedFilters.stage[0]] || []), 'Escalated'])]
+      ? (stageStatusMap[selectedFilters.stage[0]] || [])
       : allStatuses,
     rating: ['Good Fit', 'Not A Good Fit', 'May Be'],
     ...(readOnly && { "job Type": ["Full Time", "Part Time", "Contract", "Internship"] }),
@@ -248,7 +263,7 @@ const FilterForDataTable = ({ applyLocationFilter, onApplyFilters, readOnly, pre
           {Object.values(selectedFilters).map((filter) => Array.isArray(filter) ? filter : !filter ? [] : [filter]).flat()?.length > 0 && <p onClick={handleClearAll} className='cursor-pointer flex gap-2 items-center text-accent-red justify-end w-full typography-body pr-4 pt-2'><IconWrapper icon={Trash} size={0} inheritColor></IconWrapper> Clear All</p>}
           {Object.keys(categories).map((category) => (
             <div key={category} className="w-full">
-              <div className={"flex justify-between group h-10 hover-outline p-4 rounded-xl items-center cursor-pointer " + (selectedFilters[category]?.length > 0 ? "text-accent-100 bg-accent-300 " : "text-font-gray")} onClick={() => handleDropdown(category)}>
+              <div className={"flex justify-between group h-10 hover-outline p-4 rounded-xl items-center cursor-pointer " + ((selectedFilters[category] || [])?.length > 0 ? "text-accent-100 bg-accent-300 " : "text-font-gray")} onClick={() => handleDropdown(category)}>
                 <div className="flex gap-2 w-[90%] ">
                   <span className="typography-body capitalize">
                     {category}:
@@ -274,12 +289,12 @@ const FilterForDataTable = ({ applyLocationFilter, onApplyFilters, readOnly, pre
                   : (
                       <div className="p-2 rounded-xl absolute typography-body left-[18.5rem] min-w-[15.625rem] bg-background-80 w-max flex gap-2 flex-col " style={{ boxShadow: "5px 5px 50px rgba(0,0,0,0.9)" }}>
                         {categories[category].map((item) => (
-                          <label key={category === 'assignee' ? item._id : item} className={"group relative flex items-center p-4 h-10 hover-outline cursor-pointer hover:text-accent-100 rounded-xl " + (category === 'assignee' ? selectedFilters[category].find(each => each.name === item.name) ? "bg-accent-300 text-accent-100 " : "" : selectedFilters[category].includes(item) ? "bg-accent-300 text-accent-100 " : "text-font-main")}>
+                          <label key={category === 'assignee' ? item._id : item} className={"group relative flex items-center p-4 h-10 hover-outline cursor-pointer hover:text-accent-100 rounded-xl " + (category === 'assignee' ? selectedFilters[category]?.find(each => each.name === item.name) ? "bg-accent-300 text-accent-100 " : "" : (selectedFilters[category] || []).includes(item) ? "bg-accent-300 text-accent-100 " : "text-font-main")}>
                             <TickCheckbox
                               id={`${category}-${category === 'assignee' ? item._id : item}`}
                               checked={category === 'assignee' ? 
-                                !!selectedFilters[category].find(each => each.name === item.name) : 
-                                selectedFilters[category].includes(item)}
+                                !!selectedFilters[category]?.find(each => each.name === item.name) : 
+                                (selectedFilters[category] || []).includes(item)}
                               onChange={() => category === 'stage' ? handleStageSelect(item) : handleSelect(category, item)}
                               labelClassName=""
                             />
@@ -291,6 +306,19 @@ const FilterForDataTable = ({ applyLocationFilter, onApplyFilters, readOnly, pre
               )}
             </div>
           ))}
+          <div
+            className={"flex justify-between h-10 hover-outline p-4 rounded-xl items-center cursor-pointer typography-body " + (isDiscoveryActive ? "text-accent-100 bg-accent-300" : "text-font-gray hover:text-accent-100")}
+            onClick={handleDiscoveryToggle}
+          >
+            <span>Awaiting Discovery</span>
+            <div onClick={(e) => e.stopPropagation()} onMouseDown={(e) => e.stopPropagation()}>
+              <TickCheckbox
+                id="filter-discovery"
+                checked={isDiscoveryActive}
+                onChange={handleDiscoveryToggle}
+              />
+            </div>
+          </div>
         </div>
       )}
     </div>

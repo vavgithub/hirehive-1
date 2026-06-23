@@ -115,7 +115,7 @@ const Login = () => {
                             <p className="typography-body mb-12 text-center font-normal w-full">
                                 Login to your account below
                             </p>
-                            <button type="button" onClick={registerGoogle} variant="secondary"  className='mx-auto flex gap-4 items-center bg-white text-black-100 py-2 px-6 h-11 rounded-lg'>
+                            <button type="button" onClick={registerGoogle} variant="secondary"  className='mx-auto flex gap-2 items-center bg-white text-black-100 py-2 px-3 h-11 rounded-lg'>
                                 <IconWrapper icon={FcGoogle} size={0} customStrokeWidth={0} customIconSize={5} />
                                 Continue With Google
                             </button> 

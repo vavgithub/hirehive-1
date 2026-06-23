@@ -4,11 +4,10 @@ import { readFile } from "fs/promises";
 import path from "path";
 import { fileURLToPath } from "url";
 
-// Define __dirname for ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const getOAuthTransporter = async () => {
+export const createTransporter = async () => {
   const oauth2Client = new google.auth.OAuth2(
     process.env.GMAIL_CLIENT_ID,
     process.env.GMAIL_CLIENT_SECRET,
@@ -51,7 +50,7 @@ let transporterPromise = null;
 export const getTransporter = async () => {
   if (transporterInstance) return transporterInstance;
   if (!transporterPromise) {
-    transporterPromise = getOAuthTransporter()
+    transporterPromise = createTransporter()
       .then((transport) => {
         transporterInstance = transport;
         return transport;
