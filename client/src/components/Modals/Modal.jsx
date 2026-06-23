@@ -190,7 +190,8 @@ const Modal = ({
   specifiedWidth,
   noCancel = false,
   noConfirm = false,
-  useScheduledReject = false
+  useScheduledReject = false,
+  showCloseIcon = false,
 }) => {
   const [rejectionReason, setRejectionReason] = useState('');
   const [showEmailPreview, setShowEmailPreview] = useState(false);
@@ -401,8 +402,20 @@ const AssessmentPopup = useAssessmentPopupBg()
         onClick={(e) => e.stopPropagation()}
         backgroundColor={"bg-background-90 "}
         padding={2}
-        extraStyles={"shadow w-full  mx-4 transform transition-transform duration-200 ease-out " + (specifiedWidth ? specifiedWidth : actionType === ACTION_TYPES.BUDGET ? "max-w-xl" : "max-w-lg")}
+        extraStyles={"relative shadow w-full mx-4 transform transition-transform duration-200 ease-out " + (specifiedWidth ? specifiedWidth : actionType === ACTION_TYPES.BUDGET ? "max-w-xl" : "max-w-lg")}
       >
+        {showCloseIcon && (
+          <div
+            onClick={onClose}
+            className='absolute top-4 right-4 cursor-pointer bg-background-70 h-9 min-w-9 flex justify-center items-center rounded-xl hover:bg-background-80 z-10'
+            aria-label='Close'
+            role='button'
+            tabIndex={0}
+            onKeyDown={(e) => e.key === 'Enter' && onClose()}
+          >
+            <IconWrapper icon={X} size={0} />
+          </div>
+        )}
         <div >
           {renderModalContent()}
           {children}

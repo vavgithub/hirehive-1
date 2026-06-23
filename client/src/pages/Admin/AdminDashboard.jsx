@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useMemo, useState, useEffect } from 'react'
 import StyledCard from '../../components/Cards/StyledCard'
 import ApplicationChart from '../../components/Charts/ApplicationChart'
 import MuiCustomStylesForDataGrid from '../../components/tableUtilities/MuiCustomStylesForDataGrid'
@@ -24,6 +24,8 @@ import { useAuthContext } from '../../context/AuthProvider'
 import { getAdminDashboard, getAdminDashboardSecondary } from '../../services/admin.service'
 import FillLoader from '../../components/Loaders/FillLoader'
 import { useUnknownProfilePicture } from '../../context/ThemeContext'
+import TrialBanner, { TrialConversionModal } from '../../components/ui/TrialBanner'
+import useTrialStatus from '../../hooks/useTrialStatus'
 
 function AdminDashboard() {
 
@@ -36,6 +38,10 @@ function AdminDashboard() {
   const [leaderboardPageSize, setLeaderboardPageSize] = useState(5);
 
   const [selectedChartFilter, setSelectedChartFilter] = useState('monthly');
+  const [showTrialModal, setShowTrialModal] = useState(false)
+
+  const currentPlan = user?.companyDetails?.subscription?.plan || 'free'
+  const trialStatus = useTrialStatus()
 
   const navigate = useNavigate();
   const UNKNOWN_PROFILE_PICTURE_URL = useUnknownProfilePicture()
@@ -219,6 +225,12 @@ function AdminDashboard() {
     navigate(`${getRoute(user?.role,ROUTE_KEY.JOBS_VIEW_JOB)}/${params?.row?._id}`)
   }
 
+  useEffect(() => {
+    if (currentPlan === 'trial') {
+      setShowTrialModal(true)
+    }
+  }, [])
+
   return (
     <Container>
       <Header HeaderText="Dashboard" />
@@ -243,6 +255,9 @@ function AdminDashboard() {
             <ApplicationChart type={selectedChartFilter} dataArray={selectedChartFilter === "weekly" ? dashboardDetails?.applications?.weeklyApplications : selectedChartFilter === 'daily' ? dashboardDetails?.applications?.dailyApplications : selectedChartFilter === 'yesterday' ? dashboardDetails?.applications?.yesterdaysApplications : dashboardDetails?.applications?.monthlyApplications} />
           </StyledCard>
           <StyledCard backgroundColor={'bg-background-90'} padding={2} extraStyles={' w-[30%] flex flex-col items-center justify-between gap-6'}>
+            {currentPlan === 'trial' && (
+              <TrialBanner daysLeft={trialStatus.daysLeft} />
+            )}
             <div className=" w-[8rem]  aspect-square overflow-hidden rounded-full bg-background-70 border border-font-secondary">
               <img src={dashboardDetails?.companyDetails?.logoUrl ? dashboardDetails?.companyDetails?.logoUrl : `${UNKNOWN_PROFILE_PICTURE_URL}`} alt="LOGO" className="object-cover w-full" />
               <input accept="image/*" type="file" className="hidden" />
@@ -361,6 +376,12 @@ function AdminDashboard() {
           }
         </StyledCard>
       {/* </StyledCard> */}
+      {showTrialModal && (
+        <TrialConversionModal
+          daysLeft={trialStatus.daysLeft}
+          onClose={() => setShowTrialModal(false)}
+        />
+      )}
     </Container>
   )
 }

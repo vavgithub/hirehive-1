@@ -33,6 +33,7 @@ import drRoutes from "./routes/admin/dr.router.js"
 import hrRoutes from "./routes/admin/hr.router.js"
 import adminRoutes from "./routes/admin/admin.router.js"
 import companyRoutes from "./routes/admin/company.router.js"
+import billingRoutes from "./routes/admin/billing.router.js"
 import internalRouter from './routes/internal/feedback.router.js';
 import startScheduledJobs from "./utils/scheduledJobs.js";
 import { initializeUploadDir } from "./config/paths.js";
@@ -58,8 +59,13 @@ app.use(
   })
 );
 
-// Middleware setup
-app.use(express.json({ limit: "30mb", extended: true }));
+// Middleware setup — skip JSON parsing for Stripe webhook (raw body handled in billing.router.js)
+app.use((req, res, next) => {
+  if (req.originalUrl === '/api/v1/billing/webhook') {
+    return next();
+  }
+  return express.json({ limit: '30mb', extended: true })(req, res, next);
+});
 app.use(express.urlencoded({ limit: "30mb", extended: true }));
 app.use(express.static("public"));
 
@@ -88,6 +94,7 @@ app.use("/api/v1/candidates", candidateRoutes);
 app.use("/api/v1/admin/candidate", adminCandidateRoutes);
 app.use("/api/v1/dr", drRoutes);
 app.use("/api/v1/company", companyRoutes);
+app.use('/api/v1/billing', billingRoutes);
 app.use('/api/v1/internal', internalRouter);
 
 const PORT = envConfig.PORT;

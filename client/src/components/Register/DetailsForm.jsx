@@ -3,6 +3,7 @@ import StyledCard from '../Cards/StyledCard'
 import Stepper from '../utility/Stepper';
 import { steps } from '../../pages/Admin/Register';
 import CompanyDetails from './CompanyDetails';
+import PlanSelection from './PlanSelection';
 import AddMembers from './AddMembers';
 import Footer from '../Footer/Footer';
 
@@ -15,6 +16,9 @@ function DetailsForm({currentStep,setCurrentStep}) {
             <Stepper padding={4} steps={steps?.filter((each,index)=> index > 2)} currentStep={currentStep} setCurrentStep={setCurrentStep} />
             {
                 currentStep === "COMPANY DETAILS" &&  <CompanyDetails currentStep={currentStep} setCurrentStep={setCurrentStep} />
+            }
+            {
+                currentStep === "PLAN SELECTION" && <PlanSelection currentStep={currentStep} setCurrentStep={setCurrentStep} />
             }
             {
                 currentStep === "ADD MEMBERS" &&  <AddMembers currentStep={currentStep} setCurrentStep={setCurrentStep} />

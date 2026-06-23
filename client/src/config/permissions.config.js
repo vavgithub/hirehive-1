@@ -61,6 +61,8 @@ export const ROUTE_KEY = {
   JOBS_VIEW_JOB: "jobs_view_job",
   COMPANY_PROFILE_VIEW : 'company_profile_view',
   SETTINGS : 'settings',
+  PRICING: 'pricing',
+  MANAGE_PLAN: 'manage_plan',
   CALENDAR : 'calendar',
 };
 
@@ -118,6 +120,8 @@ export const ROLE_CONFIG = {
       [ROUTE_KEY.JOBS_VIEW_JOB]: "/admin/jobs/all/view",
       [ROUTE_KEY.GUIDE]: "/admin/guide",
       [ROUTE_KEY.COMPANY_PROFILE_VIEW] : '/admin/company',
+      [ROUTE_KEY.PRICING]: '/admin/pricing',
+      [ROUTE_KEY.MANAGE_PLAN]: '/admin/manage-plan',
       [ROUTE_KEY.SETTINGS] : '/admin/settings',
       [ROUTE_KEY.CALENDAR] : '/admin/calendar',
     },

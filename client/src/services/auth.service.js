@@ -108,6 +108,14 @@ export const saveCompanyDetails = async (formData) => {
     return response.data
 }
 
+export const savePlanSelection = async ({ plan, email }) => {
+  const response = await axios.post(
+    API_URL + '/register/save-plan',
+    { plan, email }
+  );
+  return response?.data;
+};
+
 export const sendJoinRequest = async ({email,companyId}) => {
   const response = await axios.post(API_URL + '/register/send-join-request',{email, companyId });
   return response.data
