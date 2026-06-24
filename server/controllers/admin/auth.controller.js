@@ -46,10 +46,9 @@ const getOnboardingRedirectStep = (verificationStage, authType) => {
   return stepAfter[verificationStage] ?? null
 }
 
-const buildRegisterRedirectUrl = (verificationStage, authType) => {
-  const base = `${process.env.FRONTEND_URL}/admin/register`
+const buildRegisterRedirectUrl = (verificationStage, authType, base) => {
   if (verificationStage === 'DONE') {
-    return `${base}?currentStage=DONE`
+    return `${process.env.FRONTEND_URL}/admin/dashboard`
   }
   const onboardingStep = getOnboardingRedirectStep(verificationStage, authType)
   if (onboardingStep) {
@@ -1570,7 +1569,8 @@ export const redirectForGoogleToken = asyncHandler(async (req,res) => {
         return res.redirect(`${process.env.FRONTEND_URL}/${routeKey}/settings`)
       }
       if (currentUserStage) {
-        return res.redirect(buildRegisterRedirectUrl(currentUserStage, currentUserAuthType))
+        const base = `${process.env.FRONTEND_URL}/admin/register`
+        return res.redirect(buildRegisterRedirectUrl(currentUserStage, currentUserAuthType, base))
       }
       return res.redirect(`${process.env.FRONTEND_URL}/admin/login`)
     }else{
