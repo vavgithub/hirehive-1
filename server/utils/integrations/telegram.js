@@ -17,9 +17,30 @@ const initializeBot = async (app) => {
 
         if (bot) return bot; // Singleton pattern to prevent reinitialization
 
-        if (env === 'development') {
+        const pollingEnabled = process.env.TELEGRAM_POLLING_ENABLED !== 'false';
+
+        if (env === 'development' && pollingEnabled) {
             bot = new TelegramBot(token, { polling: true });
+            bot.on('polling_error', (error) => {
+                const isConflict = error?.code === 'ETELEGRAM'
+                    && String(error?.message || '').includes('409');
+                if (isConflict) {
+                    if (!bot._pollingConflictHandled) {
+                        bot._pollingConflictHandled = true;
+                        console.warn(
+                            'Telegram polling disabled: another bot instance is already running. '
+                            + 'Set TELEGRAM_POLLING_ENABLED=false in .env.development to skip polling locally.'
+                        );
+                    }
+                    bot.stopPolling().catch(() => {});
+                    return;
+                }
+                console.error('Telegram polling error:', error?.message || error);
+            });
             console.log('Telegram bot started in polling mode (development)');
+        } else if (env === 'development') {
+            bot = new TelegramBot(token, { polling: false });
+            console.log('Telegram bot initialized without polling (TELEGRAM_POLLING_ENABLED=false)');
         } else {
             bot = new TelegramBot(token);
             const domain = process.env.TELEGRAM_WEBHOOK_DOMAIN;

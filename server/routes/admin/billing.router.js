@@ -6,6 +6,7 @@ import {
   getPaymentMethod,
   createBillingPortalSession,
   createCheckoutSession,
+  confirmCheckoutSession,
   cancelSubscription,
   previewSeatChange,
   updateSeats,
@@ -26,6 +27,7 @@ router.get('/invoices', protect, roleProtect('Admin'), getInvoices);
 router.get('/payment-method', protect, roleProtect('Admin'), getPaymentMethod);
 router.post('/portal', protect, roleProtect('Admin'), createBillingPortalSession);
 router.post('/create-checkout', protect, roleProtect('Admin'), createCheckoutSession);
+router.post('/confirm-checkout', protect, roleProtect('Admin'), confirmCheckoutSession);
 router.post('/cancel', protect, roleProtect('Admin'), cancelSubscription);
 router.post('/preview-seat-change', protect, roleProtect('Admin'), previewSeatChange);
 router.post('/update-seats', protect, roleProtect('Admin'), updateSeats);
