@@ -15,6 +15,7 @@ import {
   getInvoices,
   getPaymentMethod,
   getSubscription,
+  confirmCheckoutSession,
   previewSeatChange,
   updateSeats,
 } from '../../services/billing.service'
@@ -73,13 +74,16 @@ const PLAN_CONFIG = {
 }
 
 const INCLUDED_PRO_SEATS = 2
-const BASE_PLAN_AMOUNT = { monthly: 19, yearly: 180 }
-const EXTRA_SEAT_PRICE = 15
+const PRO_BASE_AMOUNT = { monthly: 19, yearly: 180 }
+const MONTHLY_EXTRA_SEAT_PRICE = 19
+const YEARLY_EXTRA_SEAT_PRICE = 15
 
 const calculateBillingAmount = (workspaceSeats, interval) => {
   const extra = Math.max(0, workspaceSeats - INCLUDED_PRO_SEATS)
-  const base = interval === 'yearly' ? BASE_PLAN_AMOUNT.yearly : BASE_PLAN_AMOUNT.monthly
-  return base + extra * EXTRA_SEAT_PRICE
+  if (interval === 'yearly') {
+    return PRO_BASE_AMOUNT.yearly + extra * YEARLY_EXTRA_SEAT_PRICE
+  }
+  return PRO_BASE_AMOUNT.monthly + extra * MONTHLY_EXTRA_SEAT_PRICE
 }
 
 const formatBillDate = (date) => {
@@ -148,15 +152,12 @@ function ManagePlan() {
     queryKey: ['subscription'],
     queryFn: getSubscription,
     enabled: isAdmin,
+    placeholderData: (previousData) => previousData,
   })
 
-  const subscription = subscriptionResponse?.data
-    ?? user?.companyDetails?.subscription
-    ?? {}
+  const subscription = subscriptionResponse?.data ?? {}
 
-  const currentPlan = subscription?.plan
-    || user?.companyDetails?.subscription?.plan
-    || 'free'
+  const currentPlan = subscription?.plan || 'free'
   const plan = PLAN_CONFIG[currentPlan] || PLAN_CONFIG.free
   const pricingRoute = user?.role ? getRoute(user.role, ROUTE_KEY.PRICING) : null
   const pricingPath = pricingRoute ? `${pricingRoute}?plan=${currentPlan}` : null
@@ -189,17 +190,30 @@ function ManagePlan() {
 
   useEffect(() => {
     const sessionId = searchParams.get('session_id')
-    if (sessionId) {
-      queryClient.invalidateQueries({ queryKey: ['auth'] })
-      queryClient.invalidateQueries({ queryKey: ['subscription'] })
-      queryClient.invalidateQueries({ queryKey: ['billing_invoices'] })
-      queryClient.invalidateQueries({ queryKey: ['billing_payment_method'] })
-      refetchSubscription()
-      const url = new URL(window.location.href)
-      url.searchParams.delete('session_id')
-      window.history.replaceState({}, '', url.toString())
-      showSuccessToast('Success', 'Welcome to Geode Pro!')
+    if (!sessionId) return
+
+    const finalizeCheckout = async () => {
+      try {
+        await confirmCheckoutSession({ sessionId })
+        queryClient.invalidateQueries({ queryKey: ['auth'] })
+        queryClient.invalidateQueries({ queryKey: ['subscription'] })
+        queryClient.invalidateQueries({ queryKey: ['billing_invoices'] })
+        queryClient.invalidateQueries({ queryKey: ['billing_payment_method'] })
+        await refetchSubscription()
+        showSuccessToast('Success', 'Welcome to Geode Pro!')
+      } catch (error) {
+        showErrorToast(
+          'Error',
+          error?.response?.data?.message || 'Payment succeeded but plan sync failed. Refresh the page or contact support.'
+        )
+      } finally {
+        const url = new URL(window.location.href)
+        url.searchParams.delete('session_id')
+        window.history.replaceState({}, '', url.toString())
+      }
     }
+
+    finalizeCheckout()
   }, [])
 
   const { data: teamData, isLoading: isTeamLoading } = useQuery({
@@ -228,7 +242,8 @@ function ManagePlan() {
   const usedSeats = teamData?.members?.length || 0
   const memberCount = usedSeats + 1
   const billingInterval = subscription?.billingInterval || 'monthly'
-  const pricePerSeat = subscription?.pricePerSeat ?? EXTRA_SEAT_PRICE
+  const pricePerSeat = subscription?.pricePerSeat
+    ?? (billingInterval === 'yearly' ? YEARLY_EXTRA_SEAT_PRICE : MONTHLY_EXTRA_SEAT_PRICE)
   const contractedSeats = subscription?.seatCount || 0
   const hasStripeBilling = Boolean(subscription?.stripeCustomerId)
   const isEnterpriseUnlimited = currentPlan === 'enterprise' && contractedSeats <= 0
@@ -366,12 +381,13 @@ function ManagePlan() {
 
   const updateSeatsMutation = useMutation({
     mutationFn: updateSeats,
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['auth'] })
-      queryClient.invalidateQueries({ queryKey: ['subscription'] })
+    onSuccess: async (data) => {
+      if (data?.data) {
+        queryClient.setQueryData(['subscription'], { status: 'success', data: data.data })
+      }
+      await refetchSubscription()
       queryClient.invalidateQueries({ queryKey: ['billing_invoices'] })
-      queryClient.invalidateQueries({ queryKey: ['seat_change_preview'] })
-      refetchSubscription()
+      queryClient.invalidateQueries({ queryKey: ['billing_payment_method'] })
       showSuccessToast('Success', data?.message || 'Seats updated successfully.')
       closeBuySeatsModal()
       closeRemoveSeatsModal()
@@ -475,7 +491,9 @@ function ManagePlan() {
             value: `$${Math.round(billingAmount)}`,
             icon: () => <IconWrapper size={10} isTeritiaryIcon icon={DollarSign} />,
             statistics: {
-              monthly: `${INCLUDED_PRO_SEATS} seats included · $${EXTRA_SEAT_PRICE}/mo per extra seat`,
+              monthly: billingInterval === 'yearly'
+                ? `${INCLUDED_PRO_SEATS} seats included · $${YEARLY_EXTRA_SEAT_PRICE} per license`
+                : `${INCLUDED_PRO_SEATS} seats included · $${MONTHLY_EXTRA_SEAT_PRICE} per license`,
             },
           },
           {
@@ -541,10 +559,10 @@ function ManagePlan() {
         : [
           {
             title: 'Team Seats',
-            value: seatLimit ? `${usedSeats}/${seatLimit}` : usedSeats,
+            value: seatLimit ? `${memberCount}/${seatLimit}` : memberCount,
             icon: () => <IconWrapper size={10} isTeritiaryIcon icon={Users} />,
             statistics: seatLimit ? {
-              monthly: `${seatLimit - usedSeats} available`,
+              monthly: `${Math.max(seatLimit - memberCount, 0)} available`,
             } : undefined,
           },
           {
@@ -1326,10 +1344,10 @@ function ManagePlan() {
                     <h3 className='mb-1 pr-10'>Buy more seats</h3>
                     <p className='typography-body text-font-gray'>How many seats do you want to buy?</p>
                     <p className='typography-small-p text-font-gray mt-1'>
-                      {INCLUDED_PRO_SEATS} seats are included (${BASE_PLAN_AMOUNT[billingInterval]}
+                      {INCLUDED_PRO_SEATS} seats are included (${PRO_BASE_AMOUNT[billingInterval]}
                       {billingInterval === 'yearly' ? '/year' : '/month'}). Each additional seat is
-                      ${EXTRA_SEAT_PRICE}/month
-                      {billingInterval === 'yearly' ? ' ($15/year on your annual bill)' : ''}.
+                      ${billingInterval === 'yearly' ? YEARLY_EXTRA_SEAT_PRICE : MONTHLY_EXTRA_SEAT_PRICE}
+                      {billingInterval === 'yearly' ? '/year ($15/month)' : '/month'}.
                     </p>
                   </div>
 
