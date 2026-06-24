@@ -1465,6 +1465,7 @@ export const redirectForGoogleToken = asyncHandler(async (req,res) => {
                 }
               }else{
                 const [firstName, ...lastName] = userInfo?.name?.split(' ');
+                const parsedLastName = lastName.join(' ').trim() || '.';
                 let profilePictureUrl = ''
                 if(userInfo?.picture){
                   profilePictureUrl = await uploadGoogleImageToS3(
@@ -1482,7 +1483,7 @@ export const redirectForGoogleToken = asyncHandler(async (req,res) => {
 
                 const createUser = await User.create({
                   firstName ,
-                  lastName : lastName.join(' '),
+                  lastName : parsedLastName,
                   email : userInfo.email,
                   verificationStage : 'PASSWORD',
                   role : "Admin",
@@ -1518,7 +1519,10 @@ export const redirectForGoogleToken = asyncHandler(async (req,res) => {
                     await company.save();
                     createUser.company_id = req.session?.invited?.company_id
                     createUser.verificationStage = 'DONE'
-                    await createUser.save(); 
+                    if (!createUser.lastName || createUser.lastName.trim() === '') {
+                      createUser.lastName = '.'
+                    }
+                    await createUser.save();
                   }
                   delete req.session.invited
                 }
