@@ -1750,6 +1750,32 @@ const reOpenJob = async (req, res) => {
   }
 };
 
+const publishJob = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const job = await jobs.findById(id);
+
+    if (!job) {
+      return res.status(404).send({ message: "Job not found" });
+    }
+
+    if (job.status === "draft") {
+      job.status = "open";
+      await job.save();
+      res.send({ message: "Job status updated to open" });
+    } else {
+      res.status(400).send({ message: "Job is not in a draft state" });
+    }
+  } catch (error) {
+    captureError(error, { controller: "jobs.controller.js", action: "publishJob", role: "admin" });
+
+    res
+      .status(500)
+      .send({ message: "Error updating job status", error: error.message });
+  }
+};
+
 const editJob = async (req, res) => {
   const { id } = req.params;
   const updates = req.body;
@@ -1800,6 +1826,28 @@ const getJobById = async (req, res) => {
   }
 };
 
+const getJobTitles = async (req, res) => {
+  try {
+    const company_id = req.user.company_id;
+    const usersInCompany = await User.find({ company_id }, '_id');
+    const userIds = usersInCompany.map((user) => user._id);
+
+    const titles = await jobs.distinct('jobTitle', {
+      createdBy: { $in: userIds },
+      status: { $in: ['open', 'draft', 'closed'] },
+      jobTitle: { $nin: [null, ''] },
+    });
+
+    res.status(200).json({ jobTitles: titles.sort((a, b) => a.localeCompare(b)) });
+  } catch (error) {
+    captureError(error, { controller: "jobs.controller.js", action: "getJobTitles", role: "admin" });
+
+    res
+      .status(500)
+      .send({ message: "Error fetching job titles", error: error.message });
+  }
+};
+
 // Export the controller function
 export {
   createJob,
@@ -1815,9 +1863,11 @@ export {
   unarchiveJob,
   editJob,
   getJobById,
+  getJobTitles,
   draftJob,
   closeJob,
   reOpenJob,
+  publishJob,
 };
 
 // totalSeniorLevelJobs: { $sum: { $cond: [{ $eq: ['$experienceLevel', 'senior'] }, 1, 0] },

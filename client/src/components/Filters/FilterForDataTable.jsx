@@ -8,6 +8,8 @@ import { SlidersHorizontal, Trash } from 'lucide-react';
 import TickCheckbox from '../Checkboxes/TickCheckbox';
 import { allStatuses, stageStatusMap } from './config.filter';
 import LocationFilter from './LocationFilter';
+import { getJobProfileAsOptions } from '../../config/jobprofile.config';
+import { fetchJobTitles } from '../../services/jobs.service';
 
 const AWAITING_DISCOVERY_FILTER = 'Awaiting Discovery';
 
@@ -22,6 +24,8 @@ const DEFAULT_FILTERS = {
   discovery: [],
   assignee: [],
   'job Type': [],
+  'job Profile': [],
+  'job Title': [],
 };
 
 const mergeFilters = (filters) => ({
@@ -61,7 +65,9 @@ const FilterForDataTable = ({ applyLocationFilter, onApplyFilters, readOnly, pre
     score: false,
     location : false,
     assignee: false,
-    "job Type": false
+    "job Type": false,
+    "job Profile": false,
+    "job Title": false,
   });
 
   const [designReviewers, setDesignReviewers] = useState([]);
@@ -181,6 +187,8 @@ const FilterForDataTable = ({ applyLocationFilter, onApplyFilters, readOnly, pre
       assessment: false,
       location : false,
       "job Type": false,
+      "job Profile": false,
+      "job Title": false,
       score: false,
       [category]: !showDropdown[category],
     });
@@ -199,7 +207,9 @@ const FilterForDataTable = ({ applyLocationFilter, onApplyFilters, readOnly, pre
       assessment: false,
       location : false,
       score: false,
-      "job Type": false
+      "job Type": false,
+      "job Profile": false,
+      "job Title": false,
     });
   };
 
@@ -232,17 +242,38 @@ const FilterForDataTable = ({ applyLocationFilter, onApplyFilters, readOnly, pre
     };
   }, []);
 
-  const categories = {
+  const { data: jobTitleOptions = [], isLoading: jobTitlesLoading } = useQuery({
+    queryKey: ['jobTitleFilterOptions'],
+    queryFn: fetchJobTitles,
+    enabled: readOnly,
+  });
+
+  const jobProfileOptions = getJobProfileAsOptions().map((option) => option.value);
+
+  const baseCategories = {
     stage: ['Portfolio', 'Screening', 'Design Task', 'Round 1', 'Round 2', 'Hired'],
     status: selectedFilters.stage.length === 1
       ? (stageStatusMap[selectedFilters.stage[0]] || [])
       : allStatuses,
     rating: ['Good Fit', 'Not A Good Fit', 'May Be'],
-    ...(readOnly && { "job Type": ["Full Time", "Part Time", "Contract", "Internship"] }),
-    assessment: ["Completed", "Not Completed"],
-    ...(!readOnly && { assignee: designReviewers.map(reviewer => reviewer) }),
-    location : ['location'],
   };
+
+  const categories = readOnly
+    ? {
+        "job Title": jobTitlesLoading ? [] : jobTitleOptions,
+        ...baseCategories,
+        "job Type": ["Full Time", "Part Time", "Contract", "Internship"],
+        "job Profile": jobProfileOptions,
+        assessment: ["Completed", "Not Completed"],
+        location: ['location'],
+      }
+    : {
+        ...baseCategories,
+        assessment: ["Completed", "Not Completed"],
+        assignee: designReviewers.map((reviewer) => reviewer),
+        "job Profile": jobProfileOptions,
+        location: ['location'],
+      };
 
   useEffect(() => {
     if (firstRenderRef.current) {
@@ -266,7 +297,7 @@ const FilterForDataTable = ({ applyLocationFilter, onApplyFilters, readOnly, pre
               <div className={"flex justify-between group h-10 hover-outline p-4 rounded-xl items-center cursor-pointer " + ((selectedFilters[category] || [])?.length > 0 ? "text-accent-100 bg-accent-300 " : "text-font-gray")} onClick={() => handleDropdown(category)}>
                 <div className="flex gap-2 w-[90%] ">
                   <span className="typography-body capitalize">
-                    {category}:
+                    {category === 'job Title' ? 'Job' : category}:
                   </span>
                   <span className={formatSelectedValues(category, selectedFilters[category]).className}>
                     {formatSelectedValues(category, category === 'location' ? selectedFilters[category]  :category === 'assignee' ? selectedFilters[category].map(each => each.name) : category === "score" ? selectedFilters[category] : selectedFilters[category]).value}

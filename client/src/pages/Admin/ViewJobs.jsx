@@ -14,13 +14,14 @@ import { ACTION_TYPES, getModalMessage } from '../../utility/ActionTypes';
 import Loader from '../../components/Loaders/Loader';
 import StyledCard from '../../components/Cards/StyledCard';
 import Modal from '../../components/Modals/Modal';
+import MakeActiveJobModal from '../../components/Modals/MakeActiveJobModal';
 import CustomBadge from '../../components/Badge/CustomBadge';
 import { useAuthContext } from '../../context/AuthProvider';
 import Container from '../../components/Cards/Container';
 import IconWrapper from '../../components/Cards/IconWrapper';
 import { Briefcase, Check, Eye, File, FileText, Folder, MonitorDot, MousePointer2, PenTool, Users } from 'lucide-react';
 import { getRoute, ROUTE_KEY } from '../../config/permissions.config';
-import { closeJob, deleteJob, draftJob, fetchjobsById, fetchOverallJobStats, reOpenJob } from '../../services/jobs.service';
+import { closeJob, deleteJob, draftJob, fetchjobsById, fetchOverallJobStats, publishJob, reOpenJob } from '../../services/jobs.service';
 import useDebounce from '../../hooks/useDebounce';
 import * as Sentry from '@sentry/react';
 
@@ -108,6 +109,9 @@ const ViewJobs = () => {
             case ACTION_TYPES.REOPEN:
                 reOpenMutation.mutate(job?._id ?? mainId)
                 break;
+            case ACTION_TYPES.MAKE_ACTIVE:
+                publishMutation.mutate(mainId);
+                break;
             case ACTION_TYPES.EDIT:
                 navigate(`${getRoute(role,ROUTE_KEY.EDIT_JOB)}/${mainId}`);
                 setModalOpen(false);
@@ -186,6 +190,16 @@ const ViewJobs = () => {
             queryClient.invalidateQueries({ queryKey: ['jobs'] });
             setModalOpen(false);
             navigate(-1);
+        },
+    })
+
+    const publishMutation = useMutation({
+        mutationFn: publishJob,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['jobs'] });
+            queryClient.invalidateQueries({ queryKey: ['job', mainId] });
+            setModalOpen(false);
+            navigate(`${getRoute(role, ROUTE_KEY.JOBS_VIEW_JOB)}/${mainId}`);
         },
     })
 
@@ -339,8 +353,19 @@ const ViewJobs = () => {
                 </StyledCard>
             )}
 
+            <MakeActiveJobModal
+                open={modalOpen && modalAction === ACTION_TYPES.MAKE_ACTIVE}
+                job={formData}
+                isPublishing={publishMutation.isPending}
+                onClose={() => setModalOpen(false)}
+                onEdit={() => {
+                    setModalOpen(false);
+                    navigate(`${getRoute(role, ROUTE_KEY.EDIT_JOB)}/${mainId}`);
+                }}
+                onMakeActive={() => publishMutation.mutate(mainId)}
+            />
             <Modal
-                open={modalOpen}
+                open={modalOpen && modalAction !== ACTION_TYPES.MAKE_ACTIVE}
                 onClose={() => {
                     setModalOpen(false);
                     setCloseReason(''); // Reset close reason when modal is closed

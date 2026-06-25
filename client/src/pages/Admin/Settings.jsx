@@ -1,27 +1,24 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Container from '../../components/Cards/Container'
 import Header from '../../components/utility/Header'
 import StyledCard from '../../components/Cards/StyledCard'
-import GoogleIcon from '../../svg/Icons/GoogleIcon'
 import { Button } from '../../components/Buttons/Button'
-import { googleAuthorize, googleUnAuthorize } from '../../services/auth.service'
 import { useAuthContext } from '../../context/AuthProvider'
 import LoaderModal from '../../components/Loaders/LoaderModal'
 import { showErrorToast, showSuccessToast } from '../../components/ui/Toast'
 import { useQueryClient } from '@tanstack/react-query'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { useEffect } from 'react'
 import { getRoute, ROUTE_KEY } from '../../config/permissions.config'
 import { getMultiReviewerSettings, updateMultiReviewerSettings } from '../../services/company.service'
 import * as Sentry from '@sentry/react';
 
 function Settings() {
-    const [loading,setLoading] = useState(false);
+    const [loading, setLoading] = useState(false);
     const { user } = useAuthContext();
     const queryClient = useQueryClient();
     const navigate = useNavigate();
-    
-    const [searchParams] = useSearchParams();   
+
+    const [searchParams] = useSearchParams();
     const error = searchParams.get('error');
 
     const [multiReviewerEnabled, setMultiReviewerEnabled] = useState(false);
@@ -34,21 +31,12 @@ function Settings() {
         { label: "Product Designer", value: "Product Designer" },
     ];
 
-    const handleGoogleAuthorization = async () => {
-        setLoading(true)
-        const response = await googleAuthorize();
-        if(response?.authorizationUrl){
-            window.location.href = response.authorizationUrl;
+    useEffect(() => {
+        if (error === 'ALLOW_ACCESS') {
+            showErrorToast('Error', 'Please allow all the permissions to get the workspace access.');
+            navigate(getRoute(user?.role, ROUTE_KEY.SETTINGS))
         }
-        setLoading(false)
-    }
-
-    useEffect(()=>{
-        if(error === 'ALLOW_ACCESS'){
-            showErrorToast('Error','Please allow all the permissions to get the workspace access.');
-            navigate(getRoute(user?.role,ROUTE_KEY.SETTINGS))
-        }
-    },[error])
+    }, [error, navigate, user?.role])
 
     useEffect(() => {
         const load = async () => {
@@ -63,21 +51,10 @@ function Settings() {
                   tags: { file: "Settings.jsx", action: "load", role: "admin" },
                   extra: { response: e?.response?.data, message: e?.message },
                 });
-                // keep page functional; show toast only if needed
             }
         };
         load();
     }, []);
-
-    const handleGoogleUnAuthorization = async () => {
-        setLoading(true)
-        const response = await googleUnAuthorize();
-        if(response.status === 'success'){
-            queryClient.invalidateQueries(['auth'])
-            showSuccessToast('Success',response?.message ?? 'Unauthorized Google Successfully.')
-        }
-        setLoading(false)
-    }
 
     const toggleJobProfile = (value) => {
         setMultiReviewerDirty(true);
@@ -97,7 +74,6 @@ function Settings() {
             if (response?.message) {
                 showSuccessToast("Success", response.message);
             }
-            // Refresh cached admin/company details (used by GlobalStaging)
             queryClient.invalidateQueries(['auth']);
             setMultiReviewerDirty(false);
         } catch (e) {
@@ -116,20 +92,7 @@ function Settings() {
       <Header HeaderText="Settings" />
       {loading && <LoaderModal />}
       <StyledCard padding={2} extraStyles={'w-full'}>
-            <StyledCard backgroundColor={'bg-background-100'} extraStyles={'flex justify-between items-center'}>
-                <div className='flex items-center gap-4'>
-                        <GoogleIcon/>
-                    <h3>Google Workspace</h3>                    
-                </div>
-                <div>
-                    { (user?.hasAuth?.view_calendar && user?.hasAuth?.edit_calendar) ? 
-                        <Button type='button' onClick={handleGoogleUnAuthorization} >Unauthorize</Button>
-                        :
-                        <Button type='button' onClick={handleGoogleAuthorization} >Authorize</Button>
-                    }
-                </div>
-            </StyledCard>
-            <StyledCard backgroundColor={'bg-background-100'} extraStyles={'flex flex-col gap-4 mt-4'}>
+            <StyledCard backgroundColor={'bg-background-100'} extraStyles={'flex flex-col gap-4'}>
                 <div className='flex justify-between items-center'>
                     <div className='flex flex-col'>
                         <h3>Portfolio multi-reviewer</h3>
