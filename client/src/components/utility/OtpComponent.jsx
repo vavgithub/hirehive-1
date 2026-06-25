@@ -8,7 +8,7 @@ import IconWrapper from '../Cards/IconWrapper';
 import { showErrorToast } from '../ui/Toast';
 import * as Sentry from '@sentry/react';
 
-function OtpComponent({hasFooter = false,token,showSendOTP, inviteMail , handleSendOtp, handleOtpSubmit , email , otp , isSubmitting , otpError , setOtp, cardbg = ""}) {
+function OtpComponent({hasFooter = false,token,showSendOTP, inviteMail , handleSendOtp, handleOtpSubmit , email , otp , isSubmitting , otpError , setOtp, cardbg = "", showSpamHint = false}) {
    
 
     // Handler for OTP input change
@@ -55,6 +55,11 @@ function OtpComponent({hasFooter = false,token,showSendOTP, inviteMail , handleS
               <h2 className='mt-3 md:mt-6 text-font-gray mx-auto w-[90%] sm:w-[75%] whitespace-nowrap text-ellipsis overflow-hidden'>
                 {showSendOTP ? inviteMail :email}
               </h2>
+              {!showSendOTP && showSpamHint && (
+                <p className="typography-small-p text-font-gray mt-2">
+                  Didn&apos;t receive the code? Please check your spam or junk folder.
+                </p>
+              )}
               {showSendOTP ? 
                 <div>
                   <Button
