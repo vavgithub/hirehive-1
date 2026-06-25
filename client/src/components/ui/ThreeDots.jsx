@@ -26,7 +26,8 @@ const MenuItems = {
     ],
     draft: [
       { action: ACTION_TYPES.EDIT, icon: () => <IconWrapper size={0} customIconSize={5} icon={SquarePen} />, label: 'Edit' },
-      { action: ACTION_TYPES.DELETE, icon: () => <IconWrapper size={0} customIconSize={5} isErrorIcon icon={Trash} />, label: 'Delete' },
+      { action: ACTION_TYPES.MAKE_ACTIVE, icon: () => <IconWrapper size={0} customIconSize={5} icon={CircleCheck} />, label: 'Make Active' },
+      { action: ACTION_TYPES.DELETE, icon: () => <IconWrapper size={0} customIconSize={5} isErrorIcon icon={Trash} />, label: 'Delete', className: 'text-red-100', style: { color: 'red' } },
     ],
   },
   page1: [
