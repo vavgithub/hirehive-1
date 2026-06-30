@@ -4,6 +4,8 @@ import {
   getSubscription,
   getInvoices,
   getPaymentMethod,
+  listPaymentMethods,
+  setDefaultPaymentMethod,
   createBillingPortalSession,
   createCheckoutSession,
   confirmCheckoutSession,
@@ -25,6 +27,8 @@ router.post('/webhook', express.raw({ type: 'application/json' }), handleWebhook
 router.get('/subscription', protect, roleProtect('Admin'), getSubscription);
 router.get('/invoices', protect, roleProtect('Admin'), getInvoices);
 router.get('/payment-method', protect, roleProtect('Admin'), getPaymentMethod);
+router.get('/payment-methods', protect, roleProtect('Admin'), listPaymentMethods);
+router.post('/default-payment-method', protect, roleProtect('Admin'), setDefaultPaymentMethod);
 router.post('/portal', protect, roleProtect('Admin'), createBillingPortalSession);
 router.post('/create-checkout', protect, roleProtect('Admin'), createCheckoutSession);
 router.post('/confirm-checkout', protect, roleProtect('Admin'), confirmCheckoutSession);

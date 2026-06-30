@@ -11,31 +11,28 @@ const PRICES = {
   }
 };
 
-// Base includes 2 seats: $19/mo or $180/yr. Extra seats: $19/mo (monthly) or $15/yr (yearly).
+// Pure per-seat pricing: every seat is billed (no complimentary seats).
+// $19/seat/month or $180/seat/year ($15/seat/month equivalent). Minimum 1 seat.
 const PRO_PRICING = {
   monthly: { unitAmountCents: 1900, interval: 'month' },
   yearly: { unitAmountCents: 18000, interval: 'year' },
 };
 
-const EXTRA_SEAT_PRICING = {
-  monthly: { unitAmountCents: 1900, interval: 'month' },
-  yearly: { unitAmountCents: 1500, interval: 'year' },
-};
+const MIN_PRO_SEATS = 1;
+const PRO_SEAT_AMOUNT = { monthly: 19, yearly: 180 };
 
-const INCLUDED_PRO_SEATS = 2;
-const PRO_BASE_AMOUNT = { monthly: 19, yearly: 180 };
-const MONTHLY_EXTRA_SEAT_AMOUNT = 19;
-const YEARLY_EXTRA_SEAT_AMOUNT = 15;
+// After a paid plan ends, keep workspace access for this many days so the user
+// can review/export/back up data before the workspace moves to the Free plan.
+const DATA_RETENTION_DAYS = 10;
+const getDataRetentionEndDate = (from = new Date()) =>
+  new Date(from.getTime() + DATA_RETENTION_DAYS * 24 * 60 * 60 * 1000);
 
-const getExtraSeatCount = (workspaceSeats) =>
-  Math.max(0, workspaceSeats - INCLUDED_PRO_SEATS);
+const normalizeSeatCount = (seats) =>
+  Math.max(MIN_PRO_SEATS, Math.floor(Number(seats) || 0));
 
 const calculateProBillingAmount = (workspaceSeats, interval) => {
-  const extra = getExtraSeatCount(workspaceSeats);
-  if (interval === 'yearly') {
-    return PRO_BASE_AMOUNT.yearly + extra * YEARLY_EXTRA_SEAT_AMOUNT;
-  }
-  return PRO_BASE_AMOUNT.monthly + extra * MONTHLY_EXTRA_SEAT_AMOUNT;
+  const perSeat = interval === 'yearly' ? PRO_SEAT_AMOUNT.yearly : PRO_SEAT_AMOUNT.monthly;
+  return normalizeSeatCount(workspaceSeats) * perSeat;
 };
 
 const getSubscriptionInterval = (subscription) => {
@@ -43,38 +40,20 @@ const getSubscriptionInterval = (subscription) => {
   return recurring?.interval === 'year' ? 'yearly' : 'monthly';
 };
 
-const findBaseSubscriptionItem = (items, interval) =>
-  items.find((item) => item.price?.metadata?.billing_component === 'base')
-  ?? items.find((item) => item.price?.unit_amount === PRO_PRICING[interval].unitAmountCents)
+const findSeatSubscriptionItem = (items, interval) =>
+  items.find((item) => item.price?.unit_amount === PRO_PRICING[interval].unitAmountCents)
+  ?? items.find((item) => Boolean(item.price?.recurring))
   ?? items[0];
-
-const findExtraSubscriptionItems = (items, interval, baseItem) =>
-  items.filter((item) => {
-    if (item.id === baseItem?.id) return false;
-    if (item.price?.metadata?.billing_component === 'extra_seat') return true;
-    if (item.price?.unit_amount === EXTRA_SEAT_PRICING[interval].unitAmountCents) return true;
-    return Boolean(item.price?.recurring);
-  });
 
 const parseProSubscriptionItems = (stripeSub) => {
   const items = stripeSub.items?.data || [];
   const interval = getSubscriptionInterval(stripeSub);
-  const baseItem = findBaseSubscriptionItem(items, interval);
-  const extraItems = findExtraSubscriptionItems(items, interval, baseItem);
-  const extraItem = extraItems[0] ?? null;
-  const extraSeatQty = extraItems.reduce((sum, item) => sum + (item.quantity ?? 0), 0);
-  const workspaceSeatCount = extraSeatQty > 0
-    ? INCLUDED_PRO_SEATS + extraSeatQty
-    : (baseItem?.quantity ?? 1) > INCLUDED_PRO_SEATS
-      ? baseItem.quantity
-      : INCLUDED_PRO_SEATS;
+  const seatItem = findSeatSubscriptionItem(items, interval);
+  const workspaceSeatCount = normalizeSeatCount(seatItem?.quantity);
 
   return {
     interval,
-    baseItem,
-    extraItem,
-    extraItems,
-    extraSeatQty,
+    seatItem,
     workspaceSeatCount,
     billingAmount: calculateProBillingAmount(workspaceSeatCount, interval),
   };
@@ -85,30 +64,6 @@ const matchesPriceSpec = (candidate, expected, metadata = {}) => {
   if (candidate.recurring?.interval !== expected.interval) return false;
   if (Object.keys(metadata).length === 0) return true;
   return Object.entries(metadata).every(([key, value]) => candidate.metadata?.[key] === value);
-};
-
-const resolvePriceOnProduct = async (productId, expected, nickname, metadata = {}) => {
-  const existingPrices = await stripe.prices.list({
-    product: productId,
-    active: true,
-    limit: 100,
-  });
-  const match = existingPrices.data.find((candidate) =>
-    matchesPriceSpec(candidate, expected, metadata)
-  );
-  if (match) {
-    return match.id;
-  }
-
-  const created = await stripe.prices.create({
-    product: productId,
-    unit_amount: expected.unitAmountCents,
-    currency: 'usd',
-    recurring: { interval: expected.interval },
-    nickname,
-    metadata,
-  });
-  return created.id;
 };
 
 const resolveProPriceId = async (interval) => {
@@ -138,7 +93,7 @@ const resolveProPriceId = async (interval) => {
     limit: 100,
   });
   const match = existingPrices.data.find((candidate) =>
-    matchesPriceSpec(candidate, expected, { billing_component: 'base' })
+    matchesPriceSpec(candidate, expected, { billing_component: 'per_seat' })
   );
   if (match) {
     return match.id;
@@ -150,59 +105,18 @@ const resolveProPriceId = async (interval) => {
     currency: price.currency || 'usd',
     recurring: { interval: expected.interval },
     nickname: interval === 'yearly'
-      ? 'Geode Pro Base Yearly ($180/yr, 2 seats)'
-      : 'Geode Pro Base Monthly ($19/mo, 2 seats)',
-    metadata: { billing_component: 'base' },
+      ? 'Geode Pro Yearly ($180/seat/yr)'
+      : 'Geode Pro Monthly ($19/seat/mo)',
+    metadata: { billing_component: 'per_seat' },
   });
   return created.id;
 };
 
-const resolveExtraSeatPriceId = async (interval) => {
-  const basePriceId = await resolveProPriceId(interval);
-  const basePrice = await stripe.prices.retrieve(basePriceId);
-  const productId = typeof basePrice.product === 'string'
-    ? basePrice.product
-    : basePrice.product?.id;
-  if (!productId) {
-    throw new Error(`Missing Stripe product for ${interval} extra seat pricing`);
-  }
-
-  const expected = EXTRA_SEAT_PRICING[interval];
-  return resolvePriceOnProduct(
-    productId,
-    expected,
-    interval === 'yearly'
-      ? 'Geode Pro Extra Seat Yearly ($15/yr per seat)'
-      : 'Geode Pro Extra Seat Monthly ($19/mo per seat)',
-    { billing_component: 'extra_seat' }
-  );
-};
-
 const getPricePerSeat = (interval) =>
-  interval === 'yearly' ? YEARLY_EXTRA_SEAT_AMOUNT : MONTHLY_EXTRA_SEAT_AMOUNT;
+  interval === 'yearly' ? PRO_SEAT_AMOUNT.yearly : PRO_SEAT_AMOUNT.monthly;
 
-const buildSeatChangeItems = async (parsed, interval, workspaceSeatCount) => {
-  const newExtraQty = getExtraSeatCount(workspaceSeatCount);
-  const items = [{ id: parsed.baseItem.id, quantity: 1 }];
-
-  if (parsed.extraItem) {
-    if (newExtraQty === 0) {
-      items.push({ id: parsed.extraItem.id, deleted: true });
-    } else {
-      items.push({ id: parsed.extraItem.id, quantity: newExtraQty });
-    }
-  } else if (newExtraQty > 0) {
-    const extraPriceId = await resolveExtraSeatPriceId(interval);
-    const basePriceId = typeof parsed.baseItem.price === 'string'
-      ? parsed.baseItem.price
-      : parsed.baseItem.price?.id;
-    if (extraPriceId === basePriceId) {
-      throw new Error('Extra seat price must be distinct from the base plan price.');
-    }
-    items.push({ price: extraPriceId, quantity: newExtraQty });
-  }
-
-  return items;
+const buildSeatChangeItems = (parsed, interval, workspaceSeatCount) => {
+  return [{ id: parsed.seatItem.id, quantity: normalizeSeatCount(workspaceSeatCount) }];
 };
 
 const formatInvoiceAmount = (amount, currency = 'usd') =>
@@ -222,27 +136,13 @@ const getInvoiceWorkspaceSeatCount = (invoice) => {
   if (!invoice) return null;
   const lines = invoice.lines?.data || [];
   const interval = inferInvoiceBillingInterval(invoice) ?? 'monthly';
-  const baseLine = lines.find(
-    (line) => line.price?.metadata?.billing_component === 'base'
-      || line.price?.unit_amount === PRO_PRICING[interval].unitAmountCents
+  const seatLine = lines.find(
+    (line) => !line.proration
+      && line.price?.unit_amount === PRO_PRICING[interval].unitAmountCents
   ) ?? lines.find((line) => (line.type === 'subscription' || line.quantity) && !line.proration);
 
-  const extraLines = lines.filter((line) => {
-    if (line.id === baseLine?.id) return false;
-    if (line.proration) return false;
-    if (line.price?.metadata?.billing_component === 'extra_seat') return true;
-    if (line.price?.unit_amount === EXTRA_SEAT_PRICING[interval].unitAmountCents) return true;
-    return line.type === 'subscription' && Boolean(line.price?.recurring);
-  });
-
-  const extraSeatQty = extraLines.reduce((sum, line) => sum + (line.quantity ?? 0), 0);
-  if (extraSeatQty > 0) {
-    return INCLUDED_PRO_SEATS + extraSeatQty;
-  }
-
-  if (!baseLine) return null;
-  if ((baseLine.quantity ?? 1) > 1) return baseLine.quantity;
-  return INCLUDED_PRO_SEATS;
+  if (!seatLine) return null;
+  return normalizeSeatCount(seatLine.quantity);
 };
 
 const resolveInvoiceAmount = (invoice, company) => {
@@ -256,7 +156,7 @@ const resolveInvoiceAmount = (invoice, company) => {
   if (positiveLineAmount > 0) return positiveLineAmount;
 
   if (invoice.status === 'paid') {
-    const seatCount = getInvoiceWorkspaceSeatCount(invoice) ?? INCLUDED_PRO_SEATS;
+    const seatCount = getInvoiceWorkspaceSeatCount(invoice) ?? MIN_PRO_SEATS;
     const interval = inferInvoiceBillingInterval(invoice)
       ?? company.subscription?.billingInterval
       ?? 'monthly';
@@ -378,6 +278,23 @@ const resetCompanyToFree = (company) => {
   company.subscription.seatCount = 0;
   company.subscription.billingInterval = 'monthly';
   company.subscription.currentPeriodEnd = null;
+  company.subscription.dataRetentionEndsAt = null;
+};
+
+// Move a workspace to Free once its data-retention window has elapsed.
+export const expireDataRetentionWindows = async () => {
+  const companies = await Company.find({
+    'subscription.plan': 'pro',
+    'subscription.stripeSubscriptionId': null,
+    'subscription.dataRetentionEndsAt': { $ne: null, $lte: new Date() },
+  }).select('subscription');
+
+  for (const company of companies) {
+    resetCompanyToFree(company);
+    await company.save();
+  }
+
+  return companies.length;
 };
 
 const applyProSubscriptionFromStripe = async (companyId, subscriptionId, subscription) => {
@@ -389,6 +306,8 @@ const applyProSubscriptionFromStripe = async (companyId, subscriptionId, subscri
     'subscription.plan': 'pro',
     'subscription.status': 'active',
     'subscription.trialEndsAt': null,
+    'subscription.cancelAtPeriodEnd': false,
+    'subscription.dataRetentionEndsAt': null,
     'subscription.seatCount': parsed.workspaceSeatCount,
     'subscription.billingInterval': getSubscriptionInterval(subscription),
     ...(currentPeriodEnd && {
@@ -453,20 +372,12 @@ const applyBillingIntervalChange = async (company, interval) => {
     throw new Error('You are already on this billing interval.');
   }
 
-  const newBasePriceId = await resolveProPriceId(interval);
-  const items = [{ id: parsed.baseItem.id, price: newBasePriceId, quantity: 1 }];
-  if (parsed.extraSeatQty > 0) {
-    const newExtraPriceId = await resolveExtraSeatPriceId(interval);
-    if (parsed.extraItem) {
-      items.push({
-        id: parsed.extraItem.id,
-        price: newExtraPriceId,
-        quantity: parsed.extraSeatQty,
-      });
-    } else {
-      items.push({ price: newExtraPriceId, quantity: parsed.extraSeatQty });
-    }
-  }
+  const newSeatPriceId = await resolveProPriceId(interval);
+  const items = [{
+    id: parsed.seatItem.id,
+    price: newSeatPriceId,
+    quantity: parsed.workspaceSeatCount,
+  }];
 
   const updatedSubscription = await stripe.subscriptions.update(
     company.subscription.stripeSubscriptionId,
@@ -552,12 +463,10 @@ const getStripeSubscriptionDetails = async (stripeSubscriptionId) => {
 
   return {
     seatCount: parsed.workspaceSeatCount,
-    extraSeatCount: parsed.extraSeatQty,
-    includedSeats: INCLUDED_PRO_SEATS,
+    includedSeats: 0,
     billingInterval: parsed.interval,
     pricePerSeat: getPricePerSeat(parsed.interval),
     recurringPricePerSeat: getPricePerSeat(parsed.interval),
-    basePlanAmount: PRO_BASE_AMOUNT[parsed.interval],
     billingAmount: parsed.billingAmount,
     currentPeriodEnd: getSubscriptionPeriodEnd(stripeSub),
     cancelAtPeriodEnd: stripeSub.cancel_at_period_end,
@@ -575,6 +484,18 @@ export const getSubscription = asyncHandler(async (req, res) => {
     .select('subscription name');
   if (!company) {
     return res.status(404).json({ status: 'error', message: 'Company not found' });
+  }
+
+  // If the data-retention window has elapsed, finish moving the workspace to Free.
+  const retentionEndsAt = company.subscription?.dataRetentionEndsAt;
+  if (
+    company.subscription?.plan === 'pro'
+    && !company.subscription?.stripeSubscriptionId
+    && retentionEndsAt
+    && new Date(retentionEndsAt) <= new Date()
+  ) {
+    resetCompanyToFree(company);
+    await company.save();
   }
 
   const plan = company.subscription?.plan;
@@ -710,43 +631,107 @@ export const getInvoices = asyncHandler(async (req, res) => {
   return res.status(200).json({ status: 'success', data });
 });
 
+const formatCardBrand = (brand) => {
+  const value = brand || 'Card';
+  return value.charAt(0).toUpperCase() + value.slice(1);
+};
+
+const idFromExpandable = (value) =>
+  (typeof value === 'string' ? value : value?.id) || null;
+
+// Resolves every card on file for the customer plus which one is the default.
+const resolveCustomerPaymentMethods = async (company) => {
+  const customerId = company?.subscription?.stripeCustomerId;
+  if (!customerId) {
+    return { methods: [], defaultPaymentMethodId: null };
+  }
+
+  const customer = await stripe.customers.retrieve(customerId);
+  let defaultPaymentMethodId = idFromExpandable(
+    customer.invoice_settings?.default_payment_method
+  );
+
+  if (!defaultPaymentMethodId && company.subscription?.stripeSubscriptionId) {
+    const subscription = await stripe.subscriptions.retrieve(
+      company.subscription.stripeSubscriptionId
+    );
+    defaultPaymentMethodId = idFromExpandable(subscription.default_payment_method);
+  }
+
+  const list = await stripe.paymentMethods.list({
+    customer: customerId,
+    type: 'card',
+  });
+
+  const methods = list.data.map((pm) => ({
+    id: pm.id,
+    brand: formatCardBrand(pm.card?.brand),
+    last4: pm.card?.last4,
+    expMonth: pm.card?.exp_month,
+    expYear: pm.card?.exp_year,
+  }));
+
+  if (!defaultPaymentMethodId && methods.length) {
+    defaultPaymentMethodId = methods[0].id;
+  }
+
+  return { methods, defaultPaymentMethodId };
+};
+
 export const getPaymentMethod = asyncHandler(async (req, res) => {
   const company = await Company.findById(req.user?.company_id)
     .select('subscription');
-  if (!company?.subscription?.stripeCustomerId) {
-    return res.status(200).json({ status: 'success', data: null });
+
+  const { methods, defaultPaymentMethodId } = await resolveCustomerPaymentMethods(company);
+  const paymentMethod =
+    methods.find((m) => m.id === defaultPaymentMethodId) || methods[0] || null;
+
+  return res.status(200).json({ status: 'success', data: paymentMethod });
+});
+
+export const listPaymentMethods = asyncHandler(async (req, res) => {
+  const company = await Company.findById(req.user?.company_id)
+    .select('subscription');
+
+  const { methods, defaultPaymentMethodId } = await resolveCustomerPaymentMethods(company);
+  const data = methods.map((m) => ({
+    ...m,
+    isDefault: m.id === defaultPaymentMethodId,
+  }));
+
+  return res.status(200).json({ status: 'success', data });
+});
+
+export const setDefaultPaymentMethod = asyncHandler(async (req, res) => {
+  const { paymentMethodId } = req.body;
+  if (!paymentMethodId) {
+    return res.status(400).json({
+      status: 'error',
+      message: 'paymentMethodId is required.',
+    });
   }
 
-  const customer = await stripe.customers.retrieve(
-    company.subscription.stripeCustomerId,
-    { expand: ['invoice_settings.default_payment_method'] }
-  );
-
-  let paymentMethod = customer.invoice_settings?.default_payment_method;
-
-  if ((!paymentMethod || typeof paymentMethod === 'string')
-    && company.subscription?.stripeSubscriptionId) {
-    const subscription = await stripe.subscriptions.retrieve(
-      company.subscription.stripeSubscriptionId,
-      { expand: ['default_payment_method'] }
-    );
-    paymentMethod = subscription.default_payment_method;
+  const company = await Company.findById(req.user?.company_id)
+    .select('subscription');
+  const customerId = company?.subscription?.stripeCustomerId;
+  if (!customerId) {
+    return res.status(400).json({
+      status: 'error',
+      message: 'No billing account found.',
+    });
   }
 
-  if (!paymentMethod || typeof paymentMethod === 'string') {
-    return res.status(200).json({ status: 'success', data: null });
-  }
-
-  const brand = paymentMethod.card?.brand || 'Card';
-  return res.status(200).json({
-    status: 'success',
-    data: {
-      brand: brand.charAt(0).toUpperCase() + brand.slice(1),
-      last4: paymentMethod.card?.last4,
-      expMonth: paymentMethod.card?.exp_month,
-      expYear: paymentMethod.card?.exp_year,
-    },
+  await stripe.customers.update(customerId, {
+    invoice_settings: { default_payment_method: paymentMethodId },
   });
+
+  if (company.subscription?.stripeSubscriptionId) {
+    await stripe.subscriptions.update(company.subscription.stripeSubscriptionId, {
+      default_payment_method: paymentMethodId,
+    });
+  }
+
+  return res.status(200).json({ status: 'success' });
 });
 
 export const createBillingPortalSession = asyncHandler(async (req, res) => {
@@ -776,15 +761,8 @@ export const createCheckoutSession = asyncHandler(async (req, res) => {
   }
 
   const priceId = await resolveProPriceId(interval);
-  const workspaceSeats = Math.max(seatCount, INCLUDED_PRO_SEATS);
-  const extraSeatQty = getExtraSeatCount(workspaceSeats);
-  const lineItems = [{ price: priceId, quantity: 1 }];
-  if (extraSeatQty > 0) {
-    lineItems.push({
-      price: await resolveExtraSeatPriceId(interval),
-      quantity: extraSeatQty,
-    });
-  }
+  const workspaceSeats = normalizeSeatCount(seatCount);
+  const lineItems = [{ price: priceId, quantity: workspaceSeats }];
 
   // Create or get Stripe customer
   let customerId = company.subscription?.stripeCustomerId;
@@ -822,11 +800,11 @@ export const createCheckoutSession = asyncHandler(async (req, res) => {
     },
     custom_text: interval === 'yearly' ? {
       submit: {
-        message: '$180/year includes 2 seats. Each additional seat is $15/year ($15/month).',
+        message: `$180/seat/year ($15/seat/month) \u00d7 ${workspaceSeats} seat${workspaceSeats > 1 ? 's' : ''}.`,
       },
     } : {
       submit: {
-        message: '$19/month includes 2 seats. Each additional seat is $19/month.',
+        message: `$19/seat/month \u00d7 ${workspaceSeats} seat${workspaceSeats > 1 ? 's' : ''}.`,
       },
     },
     success_url: `${process.env.FRONTEND_URL}/admin/manage-plan?session_id={CHECKOUT_SESSION_ID}`,
@@ -909,10 +887,10 @@ export const cancelSubscription = asyncHandler(async (req, res) => {
 // Preview prorated charge or credit before changing seat count
 export const previewSeatChange = asyncHandler(async (req, res) => {
   const { seatCount: workspaceSeatCount } = req.body;
-  if (!workspaceSeatCount || workspaceSeatCount < INCLUDED_PRO_SEATS) {
+  if (!workspaceSeatCount || workspaceSeatCount < MIN_PRO_SEATS) {
     return res.status(400).json({
       status: 'error',
-      message: `Invalid seat count. Pro includes ${INCLUDED_PRO_SEATS} seats.`,
+      message: `Invalid seat count. Pro requires at least ${MIN_PRO_SEATS} seat.`,
     });
   }
 
@@ -945,9 +923,7 @@ export const previewSeatChange = asyncHandler(async (req, res) => {
   });
 
   const currency = preview.currency || 'usd';
-  const seatUnitAmount = interval === 'yearly'
-    ? YEARLY_EXTRA_SEAT_AMOUNT * 100
-    : MONTHLY_EXTRA_SEAT_AMOUNT * 100;
+  const seatUnitAmount = getPricePerSeat(interval) * 100;
   const seatsRemoved = currentWorkspaceSeats - workspaceSeatCount;
   const nextBillDate = getSubscriptionPeriodEnd(subscription);
   const creditAmount = !isUpgrade
@@ -970,7 +946,7 @@ export const previewSeatChange = asyncHandler(async (req, res) => {
       creditAmount,
       nextBillDate: nextBillDate?.toISOString() ?? null,
       billingInterval: interval,
-      includedSeats: INCLUDED_PRO_SEATS,
+      includedSeats: 0,
     },
   });
 });
@@ -978,10 +954,10 @@ export const previewSeatChange = asyncHandler(async (req, res) => {
 // Update seat count
 export const updateSeats = asyncHandler(async (req, res) => {
   const { seatCount: workspaceSeatCount } = req.body;
-  if (!workspaceSeatCount || workspaceSeatCount < INCLUDED_PRO_SEATS) {
+  if (!workspaceSeatCount || workspaceSeatCount < MIN_PRO_SEATS) {
     return res.status(400).json({
       status: 'error',
-      message: `Invalid seat count. Pro includes ${INCLUDED_PRO_SEATS} seats.`,
+      message: `Invalid seat count. Pro requires at least ${MIN_PRO_SEATS} seat.`,
     });
   }
 
@@ -1068,22 +1044,14 @@ export const previewBillingIntervalChange = asyncHandler(async (req, res) => {
     });
   }
 
-  const newBasePriceId = await resolveProPriceId(interval);
-  const items = [{ id: parsed.baseItem.id, price: newBasePriceId, quantity: 1 }];
-  if (parsed.extraSeatQty > 0) {
-    const newExtraPriceId = await resolveExtraSeatPriceId(interval);
-    if (parsed.extraItem) {
-      items.push({
-        id: parsed.extraItem.id,
-        price: newExtraPriceId,
-        quantity: parsed.extraSeatQty,
-      });
-    } else {
-      items.push({ price: newExtraPriceId, quantity: parsed.extraSeatQty });
-    }
-  }
+  const newSeatPriceId = await resolveProPriceId(interval);
+  const items = [{
+    id: parsed.seatItem.id,
+    price: newSeatPriceId,
+    quantity: parsed.workspaceSeatCount,
+  }];
 
-  const currency = parsed.baseItem?.price?.currency || 'usd';
+  const currency = parsed.seatItem?.price?.currency || 'usd';
 
   const preview = await stripe.invoices.createPreview({
     customer: company.subscription.stripeCustomerId,
@@ -1244,16 +1212,35 @@ export const handleWebhook = asyncHandler(async (req, res) => {
       const companyId = sub.metadata?.companyId;
       if (companyId) {
         const currentPeriodEnd = getSubscriptionPeriodEnd(sub);
+        const company = await Company.findById(companyId).select('subscription');
 
-        await Company.findByIdAndUpdate(companyId, {
-          'subscription.plan': 'free',
-          'subscription.status': 'inactive',
-          'subscription.stripeSubscriptionId': null,
-          'subscription.cancelAtPeriodEnd': false,
-          ...(currentPeriodEnd && {
-            'subscription.currentPeriodEnd': currentPeriodEnd
-          }),
-        });
+        // A paid (Pro) subscription that just ended enters a data-retention
+        // window: the workspace keeps access for DATA_RETENTION_DAYS so the
+        // user can review/export their data before moving to Free. Immediate
+        // cancellations already reset the company to Free synchronously, so we
+        // only start the window when the company is still on Pro here.
+        if (company?.subscription?.plan === 'pro') {
+          await Company.findByIdAndUpdate(companyId, {
+            'subscription.status': 'canceled',
+            'subscription.stripeSubscriptionId': null,
+            'subscription.cancelAtPeriodEnd': false,
+            'subscription.dataRetentionEndsAt': getDataRetentionEndDate(),
+            ...(currentPeriodEnd && {
+              'subscription.currentPeriodEnd': currentPeriodEnd
+            }),
+          });
+        } else {
+          await Company.findByIdAndUpdate(companyId, {
+            'subscription.plan': 'free',
+            'subscription.status': 'inactive',
+            'subscription.stripeSubscriptionId': null,
+            'subscription.cancelAtPeriodEnd': false,
+            'subscription.dataRetentionEndsAt': null,
+            ...(currentPeriodEnd && {
+              'subscription.currentPeriodEnd': currentPeriodEnd
+            }),
+          });
+        }
       }
       break;
     }

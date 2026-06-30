@@ -14,6 +14,8 @@ import {
   createCheckoutSession,
   getInvoices,
   getPaymentMethod,
+  listPaymentMethods,
+  setDefaultPaymentMethod,
   getSubscription,
   confirmCheckoutSession,
   previewSeatChange,
@@ -24,8 +26,11 @@ import { emailPattern } from '../../components/Register/RegisterForm'
 import { roleOptions } from '../../components/Register/AddMembers'
 import { useAuthContext } from '../../context/AuthProvider'
 import { getRoute, ROUTE_KEY } from '../../config/permissions.config'
-import { Users, Mail, Circle, Plus, Minus, Edit2, Trash2, ChevronDown, UserCog, Search, Clock, ExternalLink, Download, CreditCard, CalendarDays, DollarSign, X } from 'lucide-react'
+import { Users, Mail, Circle, Plus, Edit2, Trash2, ChevronDown, UserCog, Search, Clock, ExternalLink, Download, CreditCard, CalendarDays, DollarSign, X } from 'lucide-react'
 import IconWrapper from '../../components/Cards/IconWrapper'
+import SeatStepper from '../../components/ui/SeatStepper'
+import ConsentCheckbox from '../../components/Checkboxes/ConsentCheckbox'
+import PaymentMethodPicker from '../../components/ui/PaymentMethodPicker'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import LoaderModal from '../../components/Loaders/LoaderModal'
 import StatsGrid from '../../components/ui/StatsGrid'
@@ -73,17 +78,12 @@ const PLAN_CONFIG = {
   },
 }
 
-const INCLUDED_PRO_SEATS = 2
-const PRO_BASE_AMOUNT = { monthly: 19, yearly: 180 }
-const MONTHLY_EXTRA_SEAT_PRICE = 19
-const YEARLY_EXTRA_SEAT_PRICE = 15
-
+const MIN_PRO_SEATS = 1
+const PRO_SEAT_PRICE = { monthly: 19, yearly: 180 }
+// Per-seat monthly-equivalent shown as "per seat" in summaries.
 const calculateBillingAmount = (workspaceSeats, interval) => {
-  const extra = Math.max(0, workspaceSeats - INCLUDED_PRO_SEATS)
-  if (interval === 'yearly') {
-    return PRO_BASE_AMOUNT.yearly + extra * YEARLY_EXTRA_SEAT_PRICE
-  }
-  return PRO_BASE_AMOUNT.monthly + extra * MONTHLY_EXTRA_SEAT_PRICE
+  const perSeat = interval === 'yearly' ? PRO_SEAT_PRICE.yearly : PRO_SEAT_PRICE.monthly
+  return Math.max(MIN_PRO_SEATS, workspaceSeats) * perSeat
 }
 
 const formatBillDate = (date) => {
@@ -125,6 +125,10 @@ const MANAGE_PLAN_TABLE_SX = {
   },
   '& .MuiDataGrid-row': {
     cursor: 'default',
+  },
+  '& .MuiDataGrid-virtualScroller': {
+    borderRadius: '0.75rem !important',
+    marginBottom: '0px !important',
   },
   '& .first-row:hover, & .second-row:hover': {
     outline: 'none !important',
@@ -178,14 +182,15 @@ function ManagePlan() {
   const [showRemoveModal, setShowRemoveModal] = useState(false)
   const [pendingRemoveMember, setPendingRemoveMember] = useState(null)
   const [showBuySeatsModal, setShowBuySeatsModal] = useState(false)
-  const [buySeatsStep, setBuySeatsStep] = useState(1)
   const [seatPreview, setSeatPreview] = useState(null)
   const [seatsToBuy, setSeatsToBuy] = useState(1)
+  const [buySeatsAgree, setBuySeatsAgree] = useState(false)
   const [showRemoveSeatsModal, setShowRemoveSeatsModal] = useState(false)
   const [removeSeatsStep, setRemoveSeatsStep] = useState(1)
   const [seatsToRemove, setSeatsToRemove] = useState(1)
   const [removeSeatPreview, setRemoveSeatPreview] = useState(null)
   const [showEnterpriseModal, setShowEnterpriseModal] = useState(false)
+  const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState(null)
   const changeAdminMenuRef = useRef(null)
 
   useEffect(() => {
@@ -239,11 +244,17 @@ function ManagePlan() {
     enabled: isAdmin && (currentPlan === 'pro' || (currentPlan === 'enterprise' && Boolean(subscription?.stripeCustomerId))),
   })
 
+  const { data: paymentMethodsResponse } = useQuery({
+    queryKey: ['billing_payment_methods'],
+    queryFn: listPaymentMethods,
+    enabled: isAdmin && (currentPlan === 'pro' || (currentPlan === 'enterprise' && Boolean(subscription?.stripeCustomerId))),
+  })
+
   const usedSeats = teamData?.members?.length || 0
   const memberCount = usedSeats + 1
   const billingInterval = subscription?.billingInterval || 'monthly'
   const pricePerSeat = subscription?.pricePerSeat
-    ?? (billingInterval === 'yearly' ? YEARLY_EXTRA_SEAT_PRICE : MONTHLY_EXTRA_SEAT_PRICE)
+    ?? (billingInterval === 'yearly' ? PRO_SEAT_PRICE.yearly : PRO_SEAT_PRICE.monthly)
   const contractedSeats = subscription?.seatCount || 0
   const hasStripeBilling = Boolean(subscription?.stripeCustomerId)
   const isEnterpriseUnlimited = currentPlan === 'enterprise' && contractedSeats <= 0
@@ -270,12 +281,24 @@ function ManagePlan() {
 
   const nextBillDate = formatBillDate(subscription?.currentPeriodEnd)
 
+  const dataRetentionEndsAt = subscription?.dataRetentionEndsAt
+  const isInDataRetention = currentPlan === 'pro'
+    && !subscription?.stripeSubscriptionId
+    && Boolean(dataRetentionEndsAt)
+    && new Date(dataRetentionEndsAt) > new Date()
+  const dataRetentionDate = formatBillDate(dataRetentionEndsAt)
+
   const paymentHistory = invoicesResponse?.data ?? []
   const paymentMethod = paymentMethodResponse?.data
+  const paymentMethods = paymentMethodsResponse?.data ?? []
+  const defaultPaymentMethod =
+    paymentMethods.find((m) => m.isDefault) || paymentMethods[0] || null
+  const selectedPaymentMethod =
+    paymentMethods.find((m) => m.id === selectedPaymentMethodId) || defaultPaymentMethod
   const isPaidPlan = currentPlan === 'pro' || currentPlan === 'enterprise'
   const showStripeBilling = currentPlan === 'pro' || (currentPlan === 'enterprise' && hasStripeBilling)
   const billingAmount = subscription?.billingAmount
-    ?? calculateBillingAmount(Math.max(contractedSeats, INCLUDED_PRO_SEATS), billingInterval)
+    ?? calculateBillingAmount(Math.max(contractedSeats, memberCount, MIN_PRO_SEATS), billingInterval)
   const proSeatsAvailable = seatLimit ? Math.max(seatLimit - memberCount, 0) : 0
   const enterpriseSeatsAvailable = seatLimit ? Math.max(seatLimit - memberCount, 0) : 0
   const enterpriseCostTitle = billingInterval === 'yearly' ? 'Annual Cost' : 'Monthly Cost'
@@ -296,30 +319,36 @@ function ManagePlan() {
     }
     return 'Manage who has access to your Geode workspace'
   })()
-  const revisedBillingAmount = calculateBillingAmount(
-    (licensedSeats || INCLUDED_PRO_SEATS) + seatsToBuy,
-    billingInterval
-  )
+  const buyCurrentSeats = licensedSeats || Math.max(memberCount, MIN_PRO_SEATS)
+  const buyTotalSeats = buyCurrentSeats + seatsToBuy
+  const buyCurrentPlanCost = Math.round(calculateBillingAmount(buyCurrentSeats, billingInterval))
+  const buyNewTotalCost = Math.round(calculateBillingAmount(buyTotalSeats, billingInterval))
+  const buyAdditionalCost = buyNewTotalCost - buyCurrentPlanCost
+  const renewalIntervalSuffix = billingInterval === 'yearly' ? '/yr' : '/mo'
+  const renewalTotalLabel = billingInterval === 'yearly' ? 'New yearly total' : 'New monthly total'
+  const perSeatIntervalLabel = billingInterval === 'yearly' ? 'year' : 'month'
 
   const maxSeatsToRemove = licensedSeats
     ? Math.max(licensedSeats - memberCount, 0)
     : 0
   const revisedBillingAfterRemoval = calculateBillingAmount(
-    Math.max((licensedSeats || INCLUDED_PRO_SEATS) - seatsToRemove, INCLUDED_PRO_SEATS),
+    Math.max((licensedSeats || MIN_PRO_SEATS) - seatsToRemove, MIN_PRO_SEATS),
     billingInterval
   )
 
-  const planStatusLabel = subscription?.cancelAtPeriodEnd
-    ? 'Cancels at period end'
-    : subscription?.status === 'past_due'
-      ? 'Past due'
-      : plan.statusLabel
+  const planStatusLabel = isInDataRetention
+    ? `Access ends ${dataRetentionDate}`
+    : subscription?.cancelAtPeriodEnd
+      ? 'Cancels at period end'
+      : subscription?.status === 'past_due'
+        ? 'Past due'
+        : plan.statusLabel
 
   useEffect(() => {
     if (showBuySeatsModal) {
       setSeatsToBuy(1)
-      setBuySeatsStep(1)
       setSeatPreview(null)
+      setBuySeatsAgree(false)
     }
   }, [showBuySeatsModal])
 
@@ -333,8 +362,8 @@ function ManagePlan() {
 
   const closeBuySeatsModal = () => {
     setShowBuySeatsModal(false)
-    setBuySeatsStep(1)
     setSeatPreview(null)
+    setBuySeatsAgree(false)
   }
 
   const closeRemoveSeatsModal = () => {
@@ -348,7 +377,6 @@ function ManagePlan() {
     mutationFn: previewSeatChange,
     onSuccess: (data) => {
       setSeatPreview(data?.data)
-      setBuySeatsStep(2)
     },
     onError: (error) => {
       showErrorToast('Error',
@@ -409,26 +437,38 @@ function ManagePlan() {
     }
   })
 
-  const handleBuySeatsContinue = () => {
-    const currentSeats = licensedSeats || Math.max(memberCount, INCLUDED_PRO_SEATS)
-    const newSeatCount = currentSeats + seatsToBuy
-
-    if (currentPlan === 'free' || currentPlan === 'trial') {
-      createCheckoutSessionMutation.mutate({
-        interval: billingInterval,
-        seatCount: newSeatCount,
-      })
-      return
+  const setDefaultPaymentMethodMutation = useMutation({
+    mutationFn: setDefaultPaymentMethod,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['billing_payment_method'] })
+      queryClient.invalidateQueries({ queryKey: ['billing_payment_methods'] })
+    },
+    onError: (error) => {
+      showErrorToast('Error',
+        error?.response?.data?.message || 'Failed to update payment method.')
     }
+  })
 
-    if (buySeatsStep === 1) {
-      previewSeatChangeMutation.mutate({ seatCount: newSeatCount })
-      return
+  const handleSelectPaymentMethod = (method) => {
+    setSelectedPaymentMethodId(method.id)
+    if (!method.isDefault) {
+      setDefaultPaymentMethodMutation.mutate({ paymentMethodId: method.id })
     }
+  }
 
-    if (seatPreview?.newSeatCount) {
-      updateSeatsMutation.mutate({ seatCount: seatPreview.newSeatCount })
-    }
+  const previewSeatChangeMutate = previewSeatChangeMutation.mutate
+
+  useEffect(() => {
+    if (!showBuySeatsModal || currentPlan !== 'pro') return
+    const handle = setTimeout(() => {
+      previewSeatChangeMutate({ seatCount: buyTotalSeats })
+    }, 450)
+    return () => clearTimeout(handle)
+  }, [showBuySeatsModal, currentPlan, buyTotalSeats, previewSeatChangeMutate])
+
+  const handleConfirmBuySeats = () => {
+    if (!buyTotalSeats || !buySeatsAgree) return
+    updateSeatsMutation.mutate({ seatCount: buyTotalSeats })
   }
 
   const handleRemoveSeatsContinue = () => {
@@ -492,8 +532,8 @@ function ManagePlan() {
             icon: () => <IconWrapper size={10} isTeritiaryIcon icon={DollarSign} />,
             statistics: {
               monthly: billingInterval === 'yearly'
-                ? `${INCLUDED_PRO_SEATS} seats included · $${YEARLY_EXTRA_SEAT_PRICE} per license`
-                : `${INCLUDED_PRO_SEATS} seats included · $${MONTHLY_EXTRA_SEAT_PRICE} per license`,
+                ? `${licensedSeats || memberCount} seat${(licensedSeats || memberCount) > 1 ? 's' : ''} · $${PRO_SEAT_PRICE.yearly}/seat per year`
+                : `${licensedSeats || memberCount} seat${(licensedSeats || memberCount) > 1 ? 's' : ''} · $${PRO_SEAT_PRICE.monthly}/seat per month`,
             },
           },
           {
@@ -1041,7 +1081,7 @@ function ManagePlan() {
   return (
     <Container>
       <Header HeaderText="Manage Plan" />
-      {(addMemberMutation?.isPending || removeMemberMutation?.isPending || isTeamLoading || updateSeatsMutation.isPending || createCheckoutSessionMutation.isPending || billingPortalMutation.isPending || previewSeatChangeMutation.isPending || previewRemoveSeatsMutation.isPending) && <LoaderModal />}
+      {(addMemberMutation?.isPending || removeMemberMutation?.isPending || isTeamLoading || updateSeatsMutation.isPending || createCheckoutSessionMutation.isPending || billingPortalMutation.isPending || previewRemoveSeatsMutation.isPending) && <LoaderModal />}
 
       {/* Current Plan */}
       <StyledCard padding={2} extraStyles='w-full mb-4'>
@@ -1054,6 +1094,31 @@ function ManagePlan() {
           </div>
           <p className='typography-small-p text-font-gray mt-1'>{plan.description}</p>
         </div>
+
+        {isInDataRetention && (
+          <StyledCard
+            padding={2}
+            backgroundColor='bg-background-100'
+            extraStyles='mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border border-divider-100'
+          >
+            <div className='flex gap-3'>
+              <IconWrapper icon={Clock} inheritColor size={0} customIconSize={3} className='text-font-gray flex-shrink-0 mt-0.5' />
+              <div>
+                <p className='typography-body text-font-main'>Your Pro subscription has been cancelled</p>
+                <p className='typography-small-p text-font-gray mt-1'>
+                  You can review, export, or back up your data until {dataRetentionDate}. After that, your workspace moves to the Free plan.
+                </p>
+              </div>
+            </div>
+            <Button
+              variant='primary'
+              type='button'
+              onClick={() => pricingPath && navigate(pricingPath)}
+            >
+              Resubscribe
+            </Button>
+          </StyledCard>
+        )}
 
         <StatsGrid stats={stats} equalWidth={currentPlan === 'trial'} />
 
@@ -1068,23 +1133,27 @@ function ManagePlan() {
             >
               View Plans
             </Button>
-            <Button
-              variant='secondary'
-              type='button'
-              onClick={() => setShowRemoveSeatsModal(true)}
-              disabled={!licensedSeats || licensedSeats <= memberCount}
-            >
-              Remove seats
-            </Button>
-            <Button
-              variant='primary'
-              type='button'
-              icon={Plus}
-              iconPosition='left'
-              onClick={() => setShowBuySeatsModal(true)}
-            >
-              Buy more seats
-            </Button>
+            {!isInDataRetention && (
+              <>
+                <Button
+                  variant='secondary'
+                  type='button'
+                  onClick={() => setShowRemoveSeatsModal(true)}
+                  disabled={!licensedSeats || licensedSeats <= memberCount}
+                >
+                  Remove seats
+                </Button>
+                <Button
+                  variant='primary'
+                  type='button'
+                  icon={Plus}
+                  iconPosition='left'
+                  onClick={() => setShowBuySeatsModal(true)}
+                >
+                  Buy more seats
+                </Button>
+              </>
+            )}
           </div>
         )}
 
@@ -1246,7 +1315,7 @@ function ManagePlan() {
         </div>
 
         <MuiCustomStylesForDataGrid />
-        <div className='mt-2'>
+        <div className='mt-2 rounded-xl overflow-hidden'>
           <DataGrid
             rows={members}
             columns={teamMemberColumns}
@@ -1275,7 +1344,7 @@ function ManagePlan() {
           </div>
 
           <MuiCustomStylesForDataGrid />
-          <div className='mt-2'>
+          <div className='mt-2 rounded-xl overflow-hidden'>
             <DataGrid
               rows={paymentHistory}
               columns={paymentHistoryColumns}
@@ -1324,11 +1393,11 @@ function ManagePlan() {
       />
 
       {showBuySeatsModal && createPortal(
-        <div className='fixed z-50 inset-0 flex justify-center items-center bg-background-overlay bg-black/20'>
+        <div className='fixed z-50 inset-0 flex justify-center items-center bg-background-overlay bg-black/20 p-4'>
           <StyledCard
-            padding={3}
+            padding={2}
             backgroundColor='bg-background-90'
-            extraStyles='relative w-full max-w-xl mx-4'
+            extraStyles='relative w-full max-w-3xl max-h-[90vh] overflow-y-auto'
           >
             <div
               onClick={closeBuySeatsModal}
@@ -1337,127 +1406,121 @@ function ManagePlan() {
               <IconWrapper icon={X} size={0} />
             </div>
 
-            <div className='flex flex-col gap-6'>
-              {buySeatsStep === 1 ? (
-                <>
-                  <div>
-                    <h3 className='mb-1 pr-10'>Buy more seats</h3>
-                    <p className='typography-body text-font-gray'>How many seats do you want to buy?</p>
-                    <p className='typography-small-p text-font-gray mt-1'>
-                      {INCLUDED_PRO_SEATS} seats are included (${PRO_BASE_AMOUNT[billingInterval]}
-                      {billingInterval === 'yearly' ? '/year' : '/month'}). Each additional seat is
-                      ${billingInterval === 'yearly' ? YEARLY_EXTRA_SEAT_PRICE : MONTHLY_EXTRA_SEAT_PRICE}
-                      {billingInterval === 'yearly' ? '/year ($15/month)' : '/month'}.
-                    </p>
-                  </div>
+            <div className='flex flex-col gap-5'>
+              <div>
+                <h3 className='mb-1 pr-10'>Add more seats</h3>
+                <p className='typography-body text-font-gray'>
+                  You'll only pay a prorated amount for the remaining days in this billing cycle.
+                </p>
+              </div>
 
-                  <div className='flex items-center gap-2 w-fit'>
-                    <button
-                      type='button'
-                      onClick={() => setSeatsToBuy((count) => count + 1)}
-                      className='bg-background-70 h-11 w-11 flex justify-center items-center rounded-xl hover:bg-background-80 shrink-0'
-                      aria-label='Increase seats'
-                    >
-                      <IconWrapper icon={Plus} inheritColor size={0} customIconSize={3} />
-                    </button>
-                    <input
-                      type='number'
-                      min={1}
-                      value={seatsToBuy}
-                      onChange={(e) => setSeatsToBuy(Math.max(1, Number(e.target.value) || 1))}
-                      className='no-spinner w-28 h-11 rounded-xl bg-background-80 typography-body text-font-main text-center outline-none'
-                    />
-                    <button
-                      type='button'
-                      onClick={() => setSeatsToBuy((count) => Math.max(1, count - 1))}
-                      className='bg-background-70 h-11 w-11 flex justify-center items-center rounded-xl hover:bg-background-80 shrink-0'
-                      aria-label='Decrease seats'
-                    >
-                      <IconWrapper icon={Minus} inheritColor size={0} customIconSize={3} />
-                    </button>
-                  </div>
-
+              <div className='flex flex-col gap-4'>
+                <div className='grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch'>
                   <StyledCard
-                    padding={4}
-                    backgroundColor='bg-background-100'
-                    extraStyles='w-full flex flex-col gap-6'
+                    padding={3}
+                    backgroundColor='bg-background-80'
+                    extraStyles='w-full flex flex-col gap-4'
                   >
-                    <div className='grid grid-cols-2 divide-x divide-divider-100'>
-                      <div className='flex flex-col items-center justify-center text-center px-8 py-4'>
-                        <p className='typography-small-p text-font-gray mb-2'>Your current price</p>
-                        <span className='font-bricolage font-bold text-5xl text-font-main'>${Math.round(billingAmount)}</span>
-                      </div>
-                      <div className='flex flex-col items-center justify-center text-center px-8 py-4'>
-                        <p className='typography-small-p text-font-gray mb-2'>Your revised price</p>
-                        <span className='font-bricolage font-bold text-5xl text-teal-100'>${Math.round(revisedBillingAmount)}</span>
-                      </div>
-                    </div>
-                    <div className='flex flex-col items-center gap-4'>
-                      <Button
-                        variant='primary'
-                        type='button'
-                        onClick={handleBuySeatsContinue}
-                      >
-                        Review purchase
-                      </Button>
-                      <p className='typography-small-p text-font-gray text-center max-w-xs'>
-                        Your recurring total updates immediately. You will review the prorated charge before paying.
-                      </p>
-                    </div>
-                  </StyledCard>
-                </>
-              ) : (
-                <>
-                  <div>
-                    <h3 className='mb-1 pr-10'>Confirm seat purchase</h3>
-                    <p className='typography-body text-font-gray'>
-                      Adding {seatsToBuy} seat{seatsToBuy > 1 ? 's' : ''} ({seatPreview?.currentSeatCount} → {seatPreview?.newSeatCount})
-                    </p>
-                  </div>
+                    <p className='typography-body text-font-gray text-center'>How many seats to add?</p>
 
-                  <StyledCard padding={4} backgroundColor='bg-background-100' extraStyles='w-full flex flex-col gap-4'>
-                    <div className='flex justify-between items-center'>
-                      <p className='typography-body text-font-gray'>Due today (prorated)</p>
-                      <p className='font-bricolage font-bold text-2xl text-font-main'>{seatPreview?.dueToday}</p>
-                    </div>
-                    <div className='flex justify-between items-center'>
-                      <p className='typography-body text-font-gray'>New recurring total</p>
-                      <p className='typography-body text-font-main'>{seatPreview?.newRecurringAmount}</p>
-                    </div>
-                    {paymentMethod?.last4 && (
+                    <SeatStepper
+                      value={seatsToBuy}
+                      onChange={setSeatsToBuy}
+                      min={1}
+                      helperText={`$${pricePerSeat} per seat / ${perSeatIntervalLabel}`}
+                    />
+
+                    <div className='flex flex-col gap-3 pt-2'>
+                      <div className='flex justify-between items-center'>
+                        <span className='typography-body text-font-gray'>Current seats</span>
+                        <span className='typography-body text-font-main'>{buyCurrentSeats}</span>
+                      </div>
+                      <div className='flex justify-between items-center'>
+                        <span className='typography-body text-font-gray'>Additional seats</span>
+                        <span className='typography-body text-font-main'>{seatsToBuy}</span>
+                      </div>
                       <div className='flex justify-between items-center pt-2 border-t border-divider-100'>
-                        <p className='typography-body text-font-gray'>Payment method</p>
-                        <p className='typography-body text-font-main'>
-                          {paymentMethod.brand} ···· {paymentMethod.last4}
-                        </p>
+                        <span className='typography-body font-semibold text-font-main'>Total seats</span>
+                        <span className='typography-body font-semibold text-font-main'>{buyTotalSeats}</span>
                       </div>
-                    )}
+                    </div>
                   </StyledCard>
 
-                  <div className='flex flex-col items-center gap-4'>
-                    <Button
-                      variant='primary'
-                      type='button'
-                      onClick={handleBuySeatsContinue}
+                  <div className='flex flex-col gap-4'>
+                    <StyledCard
+                      padding={3}
+                      backgroundColor='bg-background-100'
+                      extraStyles='w-full flex flex-col gap-1'
                     >
-                      Confirm & pay
-                    </Button>
-                    <Button
-                      variant='tertiary'
-                      type='button'
-                      onClick={() => {
-                        setBuySeatsStep(1)
-                        setSeatPreview(null)
-                      }}
+                      <p className='typography-body text-font-main'>
+                        Due today <span className='text-font-gray'>(One-time)</span>
+                      </p>
+                      <span className={`font-bricolage font-bold text-4xl text-teal-100 ${previewSeatChangeMutation.isPending ? 'opacity-50' : ''}`}>
+                        {seatPreview?.dueToday ?? '—'}
+                      </span>
+                      <p className='typography-small-p text-font-gray mt-1'>
+                        Prorated charge for the remaining days in your current billing cycle.
+                      </p>
+                    </StyledCard>
+
+                    <StyledCard
+                      padding={3}
+                      backgroundColor='bg-background-80'
+                      extraStyles='w-full flex flex-col gap-3 flex-1'
                     >
-                      Go back
-                    </Button>
-                    <p className='typography-small-p text-font-gray text-center max-w-sm'>
-                      Your card on file will be charged {seatPreview?.dueToday} today for the unused portion of this billing period.
-                    </p>
+                      <p className='typography-body text-font-main'>For next renewal</p>
+                      <div className='flex justify-between items-center'>
+                        <span className='typography-body text-font-gray'>Current plan</span>
+                        <span className='typography-body text-font-main'>${buyCurrentPlanCost}{renewalIntervalSuffix}</span>
+                      </div>
+                      <div className='flex justify-between items-center'>
+                        <span className='typography-body text-font-gray'>
+                          {seatsToBuy} additional seat{seatsToBuy > 1 ? 's' : ''}
+                        </span>
+                        <span className='typography-body text-font-main'>${buyAdditionalCost}{renewalIntervalSuffix}</span>
+                      </div>
+                      <div className='flex justify-between items-center pt-2 border-t border-divider-100'>
+                        <span className='typography-body font-semibold text-font-main'>{renewalTotalLabel}</span>
+                        <span className='typography-body font-semibold text-font-main'>${buyNewTotalCost}{renewalIntervalSuffix}</span>
+                      </div>
+                      <p className='typography-small-p text-font-gray mt-1'>
+                        This total applies automatically from your next billing cycle.
+                      </p>
+                    </StyledCard>
                   </div>
-                </>
-              )}
+                </div>
+
+                <div className='grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch'>
+                  <div className='flex items-center px-3 md:px-4'>
+                    <ConsentCheckbox
+                      id='buy-seats-agree'
+                      checked={buySeatsAgree}
+                      onChange={setBuySeatsAgree}
+                      label='I authorize the charges shown above. My plan renews automatically, payments already made are non-refundable, and I can cancel anytime — Pro access stays until the end of the paid period.'
+                    />
+                  </div>
+
+                  <PaymentMethodPicker
+                    paymentMethods={paymentMethods}
+                    selectedPaymentMethod={selectedPaymentMethod}
+                    onSelect={handleSelectPaymentMethod}
+                    onAddPaymentMethod={() => billingPortalMutation.mutate()}
+                    isUpdating={setDefaultPaymentMethodMutation.isPending}
+                  />
+                </div>
+              </div>
+
+              <div className='flex justify-end'>
+                <Button
+                  variant='primary'
+                  type='button'
+                  className='shrink-0'
+                  onClick={handleConfirmBuySeats}
+                  disabled={!buySeatsAgree || !seatPreview || previewSeatChangeMutation.isPending || updateSeatsMutation.isPending}
+                >
+                  {updateSeatsMutation.isPending ? 'Processing...' : 'Confirm and Pay'}
+                </Button>
+              </div>
             </div>
           </StyledCard>
         </div>,
@@ -1489,37 +1552,15 @@ function ManagePlan() {
                     </p>
                   </div>
 
-                  <div className='flex items-center gap-2 w-fit'>
-                    <button
-                      type='button'
-                      onClick={() => setSeatsToRemove((count) => Math.min(maxSeatsToRemove, count + 1))}
-                      disabled={seatsToRemove >= maxSeatsToRemove}
-                      className='bg-background-70 h-11 w-11 flex justify-center items-center rounded-xl hover:bg-background-80 shrink-0 disabled:opacity-50 disabled:cursor-not-allowed'
-                      aria-label='Increase seats to remove'
-                    >
-                      <IconWrapper icon={Plus} inheritColor size={0} customIconSize={3} />
-                    </button>
-                    <input
-                      type='number'
-                      min={1}
-                      max={maxSeatsToRemove}
-                      value={seatsToRemove}
-                      onChange={(e) => {
-                        const value = Math.max(1, Math.min(maxSeatsToRemove, Number(e.target.value) || 1))
-                        setSeatsToRemove(value)
-                      }}
-                      className='no-spinner w-28 h-11 rounded-xl bg-background-80 typography-body text-font-main text-center outline-none'
-                    />
-                    <button
-                      type='button'
-                      onClick={() => setSeatsToRemove((count) => Math.max(1, count - 1))}
-                      disabled={seatsToRemove <= 1}
-                      className='bg-background-70 h-11 w-11 flex justify-center items-center rounded-xl hover:bg-background-80 shrink-0 disabled:opacity-50 disabled:cursor-not-allowed'
-                      aria-label='Decrease seats to remove'
-                    >
-                      <IconWrapper icon={Minus} inheritColor size={0} customIconSize={3} />
-                    </button>
-                  </div>
+                  <SeatStepper
+                    value={seatsToRemove}
+                    onChange={setSeatsToRemove}
+                    min={1}
+                    max={maxSeatsToRemove}
+                    align='start'
+                    incrementLabel='Increase seats to remove'
+                    decrementLabel='Decrease seats to remove'
+                  />
 
                   <StyledCard
                     padding={4}
