@@ -153,6 +153,12 @@ const companyschema = new mongoose.Schema({
         cancelAtPeriodEnd: {
             type: Boolean,
             default: false
+        },
+        // When a paid (Pro) subscription ends, the workspace keeps access until
+        // this date so the user can review/export/back up data before moving to Free.
+        dataRetentionEndsAt: {
+            type: Date,
+            default: null
         }
     },
 }, { timestamps: true })

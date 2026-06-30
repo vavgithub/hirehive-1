@@ -35,6 +35,20 @@ export const getPaymentMethod = async () => {
   return response?.data;
 };
 
+export const listPaymentMethods = async () => {
+  const response = await axios.get(`${API_URL}/payment-methods`, { withCredentials: true });
+  return response?.data;
+};
+
+export const setDefaultPaymentMethod = async ({ paymentMethodId }) => {
+  const response = await axios.post(
+    `${API_URL}/default-payment-method`,
+    { paymentMethodId },
+    { withCredentials: true }
+  );
+  return response?.data;
+};
+
 export const createBillingPortalSession = async () => {
   const response = await axios.post(`${API_URL}/portal`, {}, { withCredentials: true });
   return response?.data;
