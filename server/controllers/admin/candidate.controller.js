@@ -963,6 +963,7 @@ export const getCandidateById = async (req, res) => {
         stageStatuses: jobApplication.stageStatuses,
         questionResponses: enrichedQuestionResponses,
         professionalInfo: jobApplication.professionalInfo,
+        aiTriggerStatus: jobApplication.aiTriggerStatus,
       },
 
       //Entire job applications

@@ -112,16 +112,18 @@ const PortfolioEvaluationRow = ({ icon, title, children, scoreLabel, score }) =>
     </StyledCard>
 );
 
-const PortfolioDualEvaluation = ({ portfolioStatus, reviewerFeedback, reviewerScore }) => (
+const PortfolioDualEvaluation = ({ portfolioStatus, reviewerFeedback, reviewerScore, aiTriggerStatus }) => (
     <div className="mt-4 flex flex-col gap-4">
-        <PortfolioEvaluationRow
-            icon={Sparkles}
-            title="AI Evaluation"
-            scoreLabel="AI Score"
-            score={portfolioStatus?.aiScore}
-        >
-            <AiCommentsContent aiReasoning={portfolioStatus?.aiReasoning} showTitle={false} />
-        </PortfolioEvaluationRow>
+        {aiTriggerStatus !== 'awaiting_discovery' && aiTriggerStatus !== 'permanently_failed' && (
+            <PortfolioEvaluationRow
+                icon={Sparkles}
+                title="AI Evaluation"
+                scoreLabel="AI Score"
+                score={portfolioStatus?.aiScore}
+            >
+                <AiCommentsContent aiReasoning={portfolioStatus?.aiReasoning} showTitle={false} />
+            </PortfolioEvaluationRow>
+        )}
 
         <PortfolioEvaluationRow
             icon={UserPen}
@@ -830,6 +832,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
                     currentStatus === 'Rejected' ? stageData?.rejectionReason : stageData?.feedback
                 }
                 reviewerScore={stageData?.score}
+                aiTriggerStatus={candidateData?.jobApplication?.aiTriggerStatus}
             />
         )}
         {role !== 'Candidate' && showReviewerEvaluationOnly && (
@@ -852,25 +855,18 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
         {role !== 'Candidate' && selectedStage === 'Portfolio' && !showPortfolioDualEvaluation && (() => {
             const isBrand = candidateData?.jobApplication?.jobApplied?.toLowerCase().includes('brand');
             const portfolioStatus = stageStatuses?.Portfolio;
+            const aiTriggerStatus = candidateData?.jobApplication?.aiTriggerStatus;
             if (!isBrand) return null;
 
-            // Completed path — unchanged
-            if (portfolioStatus?.aiReasoning) {
-              return (
-                <div className="mt-4">
-                    <PortfolioEvaluationRow
-                        icon={Sparkles}
-                        title="AI Evaluation"
-                        scoreLabel="AI Score"
-                        score={portfolioStatus?.aiScore}
-                    >
-                        <AiCommentsContent aiReasoning={portfolioStatus?.aiReasoning} showTitle={false} />
-                    </PortfolioEvaluationRow>
-                </div>
-              );
+            // 1) Paintbrush statuses — omit AI card entirely
+            if (
+              aiTriggerStatus === 'awaiting_discovery' ||
+              aiTriggerStatus === 'permanently_failed'
+            ) {
+              return null;
             }
 
-            // Batch failure / skip — unavailable state
+            // 2) failed/skipped — unavailable message
             if (portfolioStatus?.aiStatus === 'failed' || portfolioStatus?.aiStatus === 'skipped') {
               return (
                 <div className="mt-4">
@@ -887,6 +883,22 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
                       </p>
                     )}
                   </PortfolioEvaluationRow>
+                </div>
+              );
+            }
+
+            // 3) done + reasoning — normal confident card
+            if (portfolioStatus?.aiReasoning && aiTriggerStatus === 'done') {
+              return (
+                <div className="mt-4">
+                    <PortfolioEvaluationRow
+                        icon={Sparkles}
+                        title="AI Evaluation"
+                        scoreLabel="AI Score"
+                        score={portfolioStatus?.aiScore}
+                    >
+                        <AiCommentsContent aiReasoning={portfolioStatus?.aiReasoning} showTitle={false} />
+                    </PortfolioEvaluationRow>
                 </div>
               );
             }
