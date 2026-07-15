@@ -1,7 +1,7 @@
 // auth.routes.js
 
 import express from 'express';
-import { applyToJob, createPassword,editCandidateProfile,forgotPassword, getCandidateAppliedJobs, getCandidateDashboard, loginCandidate, logoutCandidate, registerCandidate ,resetPassword, updateEmail, updateDesignTask, uploadProfilePictureController, uploadResumeController, verifyOtp ,  verifyOTPEmail,  verifyOTPForgot, getS3AssessmentUploadUrl, getS3ScreenshotUploadUrl, getSuggestedPlaces } from '../../controllers/candidate/auth.controller.js';
+import { applyToJob, createPassword,editCandidateProfile,forgotPassword, getCandidateAppliedJobs, getCandidateApplicationByJobId, getCandidateDashboard, loginCandidate, logoutCandidate, registerCandidate ,resetPassword, updateEmail, updateDesignTask, uploadProfilePictureController, uploadResumeController, verifyOtp ,  verifyOTPEmail,  verifyOTPForgot, getS3AssessmentUploadUrl, getS3ScreenshotUploadUrl, getSuggestedPlaces } from '../../controllers/candidate/auth.controller.js';
 import { protectCandidate } from '../../middlewares/authMiddleware.js';
 import { uploadProfilePicture, uploadResume } from '../../middlewares/uploadMiddleware.js';
 
@@ -27,6 +27,7 @@ router.post('/logout', logoutCandidate);
 
 // Protected route for candidate dashboard      
 router.get('/dashboard', protectCandidate, getCandidateDashboard);
+router.get('/application/:jobId', protectCandidate, getCandidateApplicationByJobId);
 router.post('/apply-job', protectCandidate, applyToJob);
 router.post('/edit-profile', protectCandidate, editCandidateProfile);
 router.post('/verify-email-otp', protectCandidate, verifyOTPEmail);

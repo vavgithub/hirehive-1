@@ -10,6 +10,7 @@ import { allStatuses, stageStatusMap } from './config.filter';
 import LocationFilter from './LocationFilter';
 
 const AWAITING_DISCOVERY_FILTER = 'Awaiting Discovery';
+const SHORTLISTED_FILTER = 'Shortlisted';
 
 const DEFAULT_FILTERS = {
   stage: [],
@@ -20,6 +21,7 @@ const DEFAULT_FILTERS = {
   score: '',
   location: [],
   discovery: [],
+  shortlist: [],
   assignee: [],
   'job Type': [],
 };
@@ -219,6 +221,18 @@ const FilterForDataTable = ({ applyLocationFilter, onApplyFilters, readOnly, pre
     });
   };
 
+  const isShortlistActive = (selectedFilters.shortlist || []).includes(SHORTLISTED_FILTER);
+
+  const handleShortlistToggle = () => {
+    setSelectedFilters((prev) => {
+      const isActive = (prev.shortlist || []).includes(SHORTLISTED_FILTER);
+      return {
+        ...prev,
+        shortlist: isActive ? [] : [SHORTLISTED_FILTER],
+      };
+    });
+  };
+
   const handleClickOutside = (event) => {
     if (menuRef.current && !menuRef.current.contains(event.target)) {
       setIsOpen(false);
@@ -316,6 +330,19 @@ const FilterForDataTable = ({ applyLocationFilter, onApplyFilters, readOnly, pre
                 id="filter-discovery"
                 checked={isDiscoveryActive}
                 onChange={handleDiscoveryToggle}
+              />
+            </div>
+          </div>
+          <div
+            className={"flex justify-between h-10 hover-outline p-4 rounded-xl items-center cursor-pointer typography-body " + (isShortlistActive ? "text-accent-100 bg-accent-300" : "text-font-gray hover:text-accent-100")}
+            onClick={handleShortlistToggle}
+          >
+            <span>Shortlisted</span>
+            <div onClick={(e) => e.stopPropagation()} onMouseDown={(e) => e.stopPropagation()}>
+              <TickCheckbox
+                id="filter-shortlist"
+                checked={isShortlistActive}
+                onChange={handleShortlistToggle}
               />
             </div>
           </div>

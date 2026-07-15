@@ -7,7 +7,11 @@ export const getAllCandidatesAndStats = () => axios.post('/admin/candidate/getDa
 
 export const getAllCandidatesWithFilters = ({location ,locationId ,sessionId ,page ,pageLimit ,search ,filter ,sortFilters}) => axios.post('/admin/candidate/getData/data/allCandidatesWithFilters' , {location , locationId, sessionId , page, pageLimit, search , filter, sortFilters}).then(res => res.data)
 
-export const fetchCandidateData = async (candidateId, jobId) => {
+export const fetchCandidateData = async (candidateId, jobId, { isCandidateView = false } = {}) => {
+    if (isCandidateView) {
+        const { data } = await axios.get(`/auth/candidate/application/${jobId}`);
+        return data;
+    }
     const { data } = await axios.get(`/admin/candidate/${candidateId}/job/${jobId}`);
     return data;
 };

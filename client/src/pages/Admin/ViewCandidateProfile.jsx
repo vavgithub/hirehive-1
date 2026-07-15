@@ -1,8 +1,7 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import Tabs from '../../components/ui/Tabs';
 import Header from '../../components/utility/Header';
-import axios from '../../services/axios';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ACTION_TYPES } from '../../utility/ActionTypes';
 import CandidateTabDetail from '../../components/ui/CandidateTabDetail';
@@ -20,7 +19,7 @@ import ScoreChart from '../../components/Charts/ScoreChart';
 import {  getStageColorForChart, maxScoreOfEachStage } from '../../config/staging.config';
 import Container from '../../components/Cards/Container';
 import IconWrapper from '../../components/Cards/IconWrapper';
-import { ArrowLeftRight, ChevronUp, ChevronRight, ClipboardCheck, FileText, FileUser, FolderOpen, Globe, Mail, MonitorDot, Notebook, NotebookPen, Phone, Sparkles, Users, Calendar1 } from 'lucide-react';
+import { ArrowLeftRight, ChevronUp, ChevronRight, ClipboardCheck, FileText, FileUser, FolderOpen, Globe, Mail, MonitorDot, Notebook, NotebookPen, Phone, Users, Calendar1 } from 'lucide-react';
 import RatingSelector, { getRatingIcon } from '../../components/MUIUtilities/RatingSelector';
 import Modal from '../../components/Modals/Modal';
 import * as Sentry from '@sentry/react';
@@ -133,14 +132,6 @@ export const getMaxScoreForStage = (currentStage) => {
     return STAGE_MAX_SCORES[currentStage] || 50; // Default to 50 if stage not found
 };
 
-const messages = {
-    discovering: 'Discovering portfolio projects...',
-    snapshotting: 'Screenshotting portfolio pages...',
-    scoring: 'Scoring with AI...',
-    completed: 'Almost done!',
-    processing: 'Starting AI analysis...',
-};
-
 const ViewCandidateProfile = () => {
     const { user } = useAuthContext();
     const role = user?.role || 'Candidate'; // Default to Candidate if role is not specified
@@ -150,6 +141,8 @@ const ViewCandidateProfile = () => {
     const { candidateId, jobId } = useParams();
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const location = useLocation();
+    const isCandidateView = location.pathname.startsWith('/candidate');
 
     const switchJobRef = useRef();
     const [selectedJob, setSelectedJob] = useState(jobId);
@@ -162,120 +155,15 @@ const ViewCandidateProfile = () => {
     const [ratingAnchor, setRatingAnchor] = useState(null);
     const queryClient = useQueryClient();
 
-    const [isScoring, setIsScoring] = useState(false);
-    const scoringIntervalRef = useRef(null);
-    const [scoringPollStatus, setScoringPollStatus] = useState(null);
-    const [aiScore, setAiScore] = useState(null);
-    const [aiReasoning, setAiReasoning] = useState(null);
-    const [aiRecommendation, setAiRecommendation] = useState(null);
-
     const { data, isLoading, isError, error: queryError } = useQuery({
-        queryKey: ['candidate', candidateId, jobId],
-        queryFn: () => fetchCandidateData(candidateId, jobId),
+        queryKey: ['candidate', candidateId, jobId, isCandidateView ? 'self' : 'staff'],
+        queryFn: () => fetchCandidateData(candidateId, jobId, { isCandidateView }),
         cacheTime: 0,
         staleTime: 0,
         onError: (error) => {
             dispatch(setError(error.message));
         },
     });
-
-    const statusMessage = useMemo(() => {
-        if (!isScoring) return '';
-        return messages[scoringPollStatus] || messages.processing;
-    }, [isScoring, scoringPollStatus]);
-
-    const handleGetAiScore = useCallback(() => {
-        if (!data?.portfolio) {
-            console.error('No portfolio URL');
-            return;
-        }
-        const behanceUrl = data.portfolio;
-        setIsScoring(true);
-        setScoringPollStatus('processing');
-        axios.post('/hr/ai-score', {
-            behance_url: behanceUrl,
-            candidate_id: candidateId,
-            role: 'brand_identity_designer',
-            job_id: jobId
-        })
-        .then(() => {
-            scoringIntervalRef.current = setInterval(() => {
-                axios.get(`/hr/ai-score-status/${candidateId}`)
-                    .then(({ data: statusData }) => {
-                            const st = statusData?.status;
-                            if (st === 'success' || st === 'completed') {
-                                clearInterval(scoringIntervalRef.current);
-                                scoringIntervalRef.current = null;
-                                setScoringPollStatus(null);
-                                setAiScore(statusData.score);
-                                setAiRecommendation(statusData.recommendation);
-                                setAiReasoning(statusData.reasoning);
-                                setIsScoring(false);
-                                axios.post('/hr/save-ai-score', {
-                                    candidateId,
-                                    jobId,
-                                    aiScore: statusData.score,
-                                    aiReasoning: statusData.reasoning,
-                                    aiRecommendation: statusData.recommendation,
-                                }).catch((err) => {
-                                    Sentry.captureException(err, {
-                                      tags: { file: "ViewCandidateProfile.jsx", action: "saveAiScore", role: "admin" },
-                                      extra: { response: err?.response?.data, message: err?.message },
-                                    });
-                                    console.error('Error saving AI score:', err);
-                                });
-                                queryClient.invalidateQueries(['candidateScore', candidateId, jobId]);
-                                queryClient.invalidateQueries(['candidate', candidateId, jobId]);
-                            } else if (st === 'skipped') {
-                                clearInterval(scoringIntervalRef.current);
-                                scoringIntervalRef.current = null;
-                                setScoringPollStatus(null);
-                                setIsScoring(false);
-                                console.error('AI scoring skipped:', statusData?.reason);
-                            } else if (st && messages[st] !== undefined) {
-                                setScoringPollStatus(st);
-                            }
-                        })
-                        .catch((err) => {
-                            Sentry.captureException(err, {
-                              tags: { file: "ViewCandidateProfile.jsx", action: "pollAiScore", role: "admin" },
-                              extra: { response: err?.response?.data, message: err?.message },
-                            });
-                            clearInterval(scoringIntervalRef.current);
-                            scoringIntervalRef.current = null;
-                            setScoringPollStatus(null);
-                            setIsScoring(false);
-                            console.error('AI scoring poll error:', err);
-                        });
-                }, 30000);
-            })
-            .catch((err) => {
-                Sentry.captureException(err, {
-                  tags: { file: "ViewCandidateProfile.jsx", action: "requestAiScore", role: "admin" },
-                  extra: { response: err?.response?.data, message: err?.message },
-                });
-                setScoringPollStatus(null);
-                setIsScoring(false);
-                console.error('AI scoring request error:', err);
-            });
-    }, [data?.portfolio, candidateId, jobId, queryClient]);
-
-    useEffect(() => {
-        return () => {
-            if (scoringIntervalRef.current) clearInterval(scoringIntervalRef.current);
-        };
-    }, []);
-
-    useEffect(() => {
-        if (data?.jobApplication?.jobApplied?.toLowerCase().includes('brand')) {
-            const portfolioStage = data?.jobApplication?.stageStatuses?.['Portfolio'];
-            if (portfolioStage?.aiScore) {
-                setAiScore(portfolioStage.aiScore);
-                setAiRecommendation(portfolioStage.aiRecommendation);
-                setAiReasoning(portfolioStage.aiReasoning);
-            }
-        }
-    }, [data]);
 
     useEffect(() => {
         if (candidateData?.jobApplication?.notes?.content !== undefined) {
@@ -287,6 +175,7 @@ const ViewCandidateProfile = () => {
     const { data: designReviewers, isLoading: isDesignReviewersLoading } = useQuery({
         queryKey: ['getAllDesignReviewers'],
         queryFn: () => fetchAllDesignReviewers(),
+        enabled: !isCandidateView,
     });
 
     const updateCandidateRatingMutation = useMutation({
@@ -351,6 +240,7 @@ const ViewCandidateProfile = () => {
         queryFn: () => fetchTotalScore(candidateId, jobId),
         cacheTime: 0,
         staleTime: 0,
+        enabled: !isCandidateView,
         onError: (error) => {
             dispatch(setError(error.message));
         },
@@ -360,6 +250,7 @@ const ViewCandidateProfile = () => {
     const { data: candidateJobs, error: jobsError } = useQuery({
         queryKey: ['candidateJobs', candidateId],
         queryFn: () => fetchCandidateJobs(candidateId),
+        enabled: !isCandidateView,
     });
 
     const formattedAppliedJobs = candidateJobs?.jobs?.map(appliedJob => ({ value: appliedJob.jobId, label: appliedJob.jobApplied })) || []
@@ -680,13 +571,6 @@ const reviewerProfilePic = currentReviewer?.profilePicture
                                                 <IconWrapper hasBg icon={FolderOpen} />
                                             </CustomToolTip>
                                         </a>
-                                        {(role === 'Admin' || role === 'Hiring Manager') && data.jobApplication?.jobApplied?.toLowerCase().includes('brand') && (
-                                            <div className={`cursor-pointer${isScoring ? ' opacity-50 pointer-events-none' : ''}`} onClick={handleGetAiScore}>
-                                                <CustomToolTip title={isScoring ? 'Scoring...' : 'Get AI Score'} arrowed size={2}>
-                                                    <IconWrapper hasBg icon={Sparkles} />
-                                                </CustomToolTip>
-                                            </div>
-                                        )}
                                         {data.website && (
                                             <a href={ensureAbsoluteUrl(data.website)} target="_blank" rel="noopener noreferrer" className="icon-link">
                                                 <CustomToolTip title={'Website'} arrowed size={2}>
@@ -719,9 +603,6 @@ const reviewerProfilePic = currentReviewer?.profilePicture
                                         }
 
                                     </div>
-                                    {(role === 'Admin' || role === 'Hiring Manager') && data?.jobApplication?.jobApplied?.toLowerCase().includes('brand') && isScoring && (
-                                        <p className="typography-small-p text-font-gray mt-1">{statusMessage}</p>
-                                    )}
                                 </div>
 
                                 {/* ready only current reviewer */}
