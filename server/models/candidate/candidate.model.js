@@ -146,6 +146,14 @@ const stageStatusSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
+    aiStatus: {
+      type: String,
+      default: null,
+    },
+    aiFailureReason: {
+      type: String,
+      default: null,
+    },
   },
   { _id: false }
 );
@@ -277,12 +285,16 @@ const jobApplicationSchema = new mongoose.Schema(
     },
     aiTriggerStatus: {
       type: String,
-      enum: ['pending', 'in_progress', 'done', 'awaiting_discovery', 'escalated'],
+      enum: ['pending', 'in_progress', 'done', 'awaiting_discovery', 'escalated', 'permanently_failed'],
       default: 'pending',
     },
     aiScoredAt: {
       type: Date,
       default: null,
+    },
+    aiRetryCount: {
+      type: Number,
+      default: 0,
     },
     currentStage: {
       type: String,

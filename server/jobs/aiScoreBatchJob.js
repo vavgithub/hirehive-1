@@ -23,6 +23,9 @@ const pollForScore = async (candidateId, base, attempts = 10, interval = 30000) 
       if (data.status === 'success' || data.status === 'completed') {
         return data;
       }
+      if (data.status === 'failed' || data.status === 'skipped') {
+        return data;
+      }
     } catch (err) {
       console.error(`Poll attempt ${i + 1} failed:`, err.message);
     }
@@ -60,9 +63,10 @@ const scoreCandidate = async (candidate, base, openBrandJobIds) => {
 
     const result = await pollForScore(candidate._id.toString(), base);
 
-    if (result) {
+    if (result && (result.status === 'success' || result.status === 'completed')) {
       const confidence = result.confidence || 'high';
       const newStatus = confidence === 'low' ? 'awaiting_discovery' : 'done';
+      const shouldShortlist = typeof result.score === 'number' && result.score >= 3;
       await candidates.findOneAndUpdate(
         { _id: candidate._id, 'jobApplications.jobId': matchJobId },
         {
@@ -72,16 +76,51 @@ const scoreCandidate = async (candidate, base, openBrandJobIds) => {
             'jobApplications.$.stageStatuses.Portfolio.aiScore': result.score,
             'jobApplications.$.stageStatuses.Portfolio.aiReasoning': result.reasoning,
             'jobApplications.$.stageStatuses.Portfolio.aiRecommendation': result.recommendation,
+            'jobApplications.$.stageStatuses.Portfolio.aiStatus': 'completed',
+            ...(shouldShortlist ? { 'jobApplications.$.shortlisted': true } : {}),
           }
         }
       );
       console.log(`[BatchJob] Scored ${candidate._id} → ${result.score} (${newStatus})`);
-    } else {
+    } else if (result && result.status === 'skipped') {
+      const failureReason = result.reason || result.reasoning || result.message || null;
       await candidates.findOneAndUpdate(
         { _id: candidate._id, 'jobApplications.jobId': matchJobId },
-        { $set: { 'jobApplications.$.aiTriggerStatus': 'awaiting_discovery' } }
+        {
+          $set: {
+            // Stable classification — do not retry
+            'jobApplications.$.aiTriggerStatus': 'awaiting_discovery',
+            'jobApplications.$.stageStatuses.Portfolio.aiStatus': 'skipped',
+            'jobApplications.$.stageStatuses.Portfolio.aiFailureReason': failureReason,
+          }
+        }
       );
-      console.log(`[BatchJob] No result for ${candidate._id} → awaiting_discovery`);
+      console.log(`[BatchJob] skipped for ${candidate._id} → awaiting_discovery (no retry)`);
+    } else {
+      // failed poll status OR timeout (null) — bounded retry
+      const failureReason =
+        result?.reason ||
+        result?.reasoning ||
+        result?.message ||
+        (!result ? 'AI scoring timed out with no result' : null);
+      const nextRetryCount = (app.aiRetryCount || 0) + 1;
+      const willRetry = nextRetryCount < 3;
+
+      await candidates.findOneAndUpdate(
+        { _id: candidate._id, 'jobApplications.jobId': matchJobId },
+        {
+          $set: {
+            'jobApplications.$.aiRetryCount': nextRetryCount,
+            'jobApplications.$.aiTriggerStatus': willRetry ? 'pending' : 'permanently_failed',
+            'jobApplications.$.stageStatuses.Portfolio.aiStatus': 'failed',
+            'jobApplications.$.stageStatuses.Portfolio.aiFailureReason': failureReason,
+          }
+        }
+      );
+      console.log(
+        `[BatchJob] failed for ${candidate._id} → retry ${nextRetryCount}/3 ` +
+          `(${willRetry ? 'pending' : 'permanently_failed'})`
+      );
     }
   } catch (err) {
     console.error(`[BatchJob] Failed scoring ${candidate._id}:`, err.message);

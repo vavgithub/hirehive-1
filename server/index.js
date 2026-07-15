@@ -107,8 +107,23 @@ connectDB()
     // Start the scheduled jobs
     startScheduledJobs();
 
-    runAiScoreBatchJob();
-    setInterval(runAiScoreBatchJob, 1 * 60 * 1000);
+    let aiScoreBatchRunning = false;
+    const runBatchGuarded = async () => {
+      if (aiScoreBatchRunning) {
+        console.log('[BatchJob] Skipped — previous run still in progress');
+        return;
+      }
+      aiScoreBatchRunning = true;
+      try {
+        await runAiScoreBatchJob();
+      } catch (err) {
+        console.error('[BatchJob] Unhandled error:', err.message);
+      } finally {
+        aiScoreBatchRunning = false;
+      }
+    };
+    runBatchGuarded();
+    setInterval(runBatchGuarded, 2 * 60 * 1000);
     
     //Seeding Assessment Templates
     // seedTemplates()

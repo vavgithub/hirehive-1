@@ -10,6 +10,7 @@ import { CircleCheck, CircleX, ClipboardCheck, FileUser, FolderOpen, Globe, Pain
 import { formatPhoneNumber } from "../Form/PhoneInputField";
 import { hasPermission, PERMISSIONS } from "../../config/permissions.config";
 import { useUnknownProfilePicture } from "../../context/ThemeContext";
+import ShortlistSparkleIcon from "../../svg/Icons/ShortlistSparkleIcon";
 
 const getCommonColumns = (handleDocumentClick) => [
   {
@@ -80,11 +81,18 @@ const getCommonColumns = (handleDocumentClick) => [
     renderCell: (params) => (
       <div className='h-full flex items-center justify-start gap-2'>
         <StageBadge withBg={false} stage={params.value} />
-        {params.row.aiTriggerStatus === 'awaiting_discovery' && (
+        {params.row.shortlisted === true &&
+        typeof (params.row.stageStatuses?.Portfolio?.aiScore ?? params.row.aiScore) === 'number' &&
+        params.row.jobProfile === 'Brand Designer' ? (
+          <CustomToolTip title="Shortlisted by AI" arrowed>
+            <IconWrapper hasBg size={3} icon={ShortlistSparkleIcon} />
+          </CustomToolTip>
+        ) : (params.row.aiTriggerStatus === 'awaiting_discovery' ||
+            params.row.aiTriggerStatus === 'permanently_failed') ? (
           <CustomToolTip
             title={
               <div>
-                <div style={{ fontWeight: 600 }}>Awaiting Discovery</div>
+                <div style={{ fontWeight: 600 }}>Needs human evaluation</div>
                 <div style={{ fontSize: 11, opacity: 0.8, marginTop: 2 }}>This portfolio requires human evaluation</div>
               </div>
             }
@@ -92,7 +100,7 @@ const getCommonColumns = (handleDocumentClick) => [
           >
             <IconWrapper hasBg size={3} icon={Paintbrush} />
           </CustomToolTip>
-        )}
+        ) : null}
       </div>
     )
   },

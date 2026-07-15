@@ -24,13 +24,15 @@ import { uploadVideo  } from "../../middlewares/uploadMiddleware.js";
 
 const router = express.Router();
 
+const staffRoles = ['Admin', 'Hiring Manager', 'Design Reviewer'];
+
 router.post('/shortlisted/:company_id',protect, shortlistCandidate);
 
 router.post("/getData/data/allCandidatesWithStats",protect, getAllCandidatesWithStats);
 
 router.post("/getData/data/allCandidatesWithFilters",protect, getAllCandidates);
 
-router.get("/:candidateId/job/:jobId", getCandidateById);
+router.get("/:candidateId/job/:jobId", protect, roleProtect(staffRoles), getCandidateById);
 
 router.post('/:candidateId/job/:jobId/shortlist',protect, toggleShortlistCandidate);
 

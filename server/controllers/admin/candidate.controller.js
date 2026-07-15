@@ -251,6 +251,8 @@ export const getAllCandidatesForJob = async (req, res) => {
     let assigneeFilter = []
     let budgetFilter = []
     let discoveryFilter = []
+    let scoreFilter = []
+    let shortlistFilterArr = []
 
     if(filterArray?.length !== 0){
       filterArray.map(([key,value]) => {
@@ -395,6 +397,24 @@ export const getAllCandidatesForJob = async (req, res) => {
             ];
           }
         }
+        if (key === 'score') {
+          const [min, max] = (value || '').split('-').map(s => parseFloat(s.trim()));
+          if (!isNaN(min) && !isNaN(max)) {
+            scoreFilter = [{
+              $match: {
+                'jobApplications.stageStatuses.Portfolio.aiScore': { $gte: min, $lte: max },
+              },
+            }];
+          }
+        }
+        if (key === 'shortlist') {
+          const shortlistValues = Array.isArray(value) ? value : [value];
+          if (shortlistValues.includes('Shortlisted')) {
+            shortlistFilterArr = [{
+              $match: { 'jobApplications.shortlisted': true },
+            }];
+          }
+        }
       })
 
     }
@@ -445,6 +465,8 @@ export const getAllCandidatesForJob = async (req, res) => {
       ...ratingFilter,
       ...assessmentFilter,
       ...discoveryFilter,
+      ...scoreFilter,
+      ...shortlistFilterArr,
 
       { $sort: { "jobApplications.applicationDate": -1 } },
       ...sortQuery,
@@ -535,6 +557,8 @@ export const getAllCandidatesForJob = async (req, res) => {
         stageStatuses: stageStatuses,
         questionResponses: jobApplication.questionResponses,
         aiTriggerStatus: jobApplication.aiTriggerStatus,
+        shortlisted: jobApplication.shortlisted,
+        jobProfile: job.jobProfile,
 
         //Assessment Details
         ...assessmentDetails
@@ -1154,6 +1178,18 @@ export const getAllCandidates = async (req,res) => {
             encodedFilters.aiTriggerStatus = { $in: ['awaiting_discovery'] };
           }
         }
+        if (key === 'score') {
+          const [min, max] = (value || '').split('-').map(s => parseFloat(s.trim()));
+          if (!isNaN(min) && !isNaN(max)) {
+            encodedFilters.aiScore = { $gte: min, $lte: max };
+          }
+        }
+        if (key === 'shortlist') {
+          const shortlistValues = Array.isArray(value) ? value : [value];
+          if (shortlistValues.includes('Shortlisted')) {
+            encodedFilters.shortlisted = true;
+          }
+        }
         if(key === 'stage'){
           encodedFilters.currentStage = {$in : value}
         }
@@ -1330,6 +1366,9 @@ export const getAllCandidates = async (req,res) => {
           jobType: {
             $ifNull: ['$jobDetail.employmentType', '$jobApplications.jobType']
           },
+          jobProfile: {
+            $ifNull: ['$jobDetail.jobProfile', '$jobApplications.jobProfile'],
+          },
           assessment_id : "$jobApplications.assessment_id",
           assessmentResponse : {
             $cond: {
@@ -1349,6 +1388,8 @@ export const getAllCandidates = async (req,res) => {
           applicationDate: "$jobApplications.applicationDate",
           aiTriggerStatus: '$jobApplications.aiTriggerStatus',
           aiScoredAt: '$jobApplications.aiScoredAt',
+          shortlisted: '$jobApplications.shortlisted',
+          aiScore: '$jobApplications.stageStatuses.Portfolio.aiScore',
         },
       },
       {
@@ -1391,6 +1432,7 @@ export const getAllCandidates = async (req,res) => {
           currentStage: 1,
           jobTitle: 1,
           jobType: 1,
+          jobProfile: 1,
           jobId: 1,
           rating: 1,
           resumeUrl: 1,
@@ -1400,6 +1442,8 @@ export const getAllCandidates = async (req,res) => {
           status: '$currentStageStatus.v.status',
           aiTriggerStatus: 1,
           aiScoredAt: 1,
+          shortlisted: 1,
+          aiScore: 1,
         }
       },
       ...filterQuery,

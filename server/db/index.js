@@ -11,7 +11,7 @@ const connectDB = async () => {
     // MongoDB connection options
     const mongooseOptions = {
       dbName: process.env.DATABASE_NAME || "HireHive",
-      maxPoolSize: 10,
+      maxPoolSize: 30,
       serverSelectionTimeoutMS: 5000,
       socketTimeoutMS: 45000,
       family: 4, // Use IPv4, skip trying IPv6
