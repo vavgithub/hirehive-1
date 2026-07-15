@@ -23,7 +23,11 @@ const pollForScore = async (candidateId, base, attempts = 10, interval = 30000) 
       if (data.status === 'success' || data.status === 'completed') {
         return data;
       }
-      if (data.status === 'failed' || data.status === 'skipped') {
+      if (
+        data.status === 'failed' ||
+        data.status === 'skipped' ||
+        data.status === 'awaiting_discovery'
+      ) {
         return data;
       }
     } catch (err) {
@@ -64,8 +68,7 @@ const scoreCandidate = async (candidate, base, openBrandJobIds) => {
     const result = await pollForScore(candidate._id.toString(), base);
 
     if (result && (result.status === 'success' || result.status === 'completed')) {
-      const confidence = result.confidence || 'high';
-      const newStatus = confidence === 'low' ? 'awaiting_discovery' : 'done';
+      const newStatus = 'done';
       const shouldShortlist = typeof result.score === 'number' && result.score >= 3;
       await candidates.findOneAndUpdate(
         { _id: candidate._id, 'jobApplications.jobId': matchJobId },
@@ -96,6 +99,19 @@ const scoreCandidate = async (candidate, base, openBrandJobIds) => {
         }
       );
       console.log(`[BatchJob] skipped for ${candidate._id} → awaiting_discovery (no retry)`);
+    } else if (result && result.status === 'awaiting_discovery') {
+      const failureReason = result.reason || result.reasoning || result.message || null;
+      await candidates.findOneAndUpdate(
+        { _id: candidate._id, 'jobApplications.jobId': matchJobId },
+        {
+          $set: {
+            'jobApplications.$.aiTriggerStatus': 'awaiting_discovery',
+            'jobApplications.$.stageStatuses.Portfolio.aiStatus': 'skipped',
+            'jobApplications.$.stageStatuses.Portfolio.aiFailureReason': failureReason,
+          }
+        }
+      );
+      console.log(`[BatchJob] awaiting_discovery for ${candidate._id} (access failure, no retry)`);
     } else {
       // failed poll status OR timeout (null) — bounded retry
       const failureReason =

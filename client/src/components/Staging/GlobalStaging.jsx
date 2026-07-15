@@ -112,14 +112,10 @@ const PortfolioEvaluationRow = ({ icon, title, children, scoreLabel, score }) =>
     </StyledCard>
 );
 
-const PortfolioDualEvaluation = ({ portfolioStatus, reviewerFeedback, reviewerScore, aiTriggerStatus, shortlisted }) => {
-    const showAiEvaluation =
-        shortlisted === true ||
-        (aiTriggerStatus !== 'awaiting_discovery' && aiTriggerStatus !== 'permanently_failed');
-
-    return (
+const PortfolioDualEvaluation = ({ portfolioStatus, reviewerFeedback, reviewerScore, aiTriggerStatus }) => (
     <div className="mt-4 flex flex-col gap-4">
-        {showAiEvaluation && (
+        {aiTriggerStatus !== 'awaiting_discovery' &&
+         aiTriggerStatus !== 'permanently_failed' && (
             <PortfolioEvaluationRow
                 icon={Sparkles}
                 title="AI Evaluation"
@@ -142,8 +138,7 @@ const PortfolioDualEvaluation = ({ portfolioStatus, reviewerFeedback, reviewerSc
             </div>
         </PortfolioEvaluationRow>
     </div>
-    );
-};
+);
 
 const MultiReviewerRemarksGrid = ({ multipleReviewersData, getReviewerName, totalScore }) => (
     <div className="mt-4">
@@ -839,7 +834,6 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
                 }
                 reviewerScore={stageData?.score}
                 aiTriggerStatus={candidateData?.jobApplication?.aiTriggerStatus}
-                shortlisted={candidateData?.jobApplication?.shortlisted}
             />
         )}
         {role !== 'Candidate' && showReviewerEvaluationOnly && (
@@ -863,26 +857,9 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
             const isBrand = candidateData?.jobApplication?.jobApplied?.toLowerCase().includes('brand');
             const portfolioStatus = stageStatuses?.Portfolio;
             const aiTriggerStatus = candidateData?.jobApplication?.aiTriggerStatus;
-            const shortlisted = candidateData?.jobApplication?.shortlisted === true;
             if (!isBrand) return null;
 
-            // 1) Previously AI-shortlisted — show score/reasoning even if later rescore is low-confidence
-            if (shortlisted && portfolioStatus?.aiReasoning) {
-              return (
-                <div className="mt-4">
-                    <PortfolioEvaluationRow
-                        icon={Sparkles}
-                        title="AI Evaluation"
-                        scoreLabel="AI Score"
-                        score={portfolioStatus?.aiScore}
-                    >
-                        <AiCommentsContent aiReasoning={portfolioStatus?.aiReasoning} showTitle={false} />
-                    </PortfolioEvaluationRow>
-                </div>
-              );
-            }
-
-            // 2) Paintbrush statuses — never confidently scored; omit AI card
+            // 1) Paintbrush statuses — access failure / never scored; omit AI card
             if (
               aiTriggerStatus === 'awaiting_discovery' ||
               aiTriggerStatus === 'permanently_failed'
@@ -890,7 +867,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
               return null;
             }
 
-            // 3) failed/skipped — unavailable message
+            // 2) failed/skipped — unavailable message
             if (portfolioStatus?.aiStatus === 'failed' || portfolioStatus?.aiStatus === 'skipped') {
               return (
                 <div className="mt-4">
@@ -911,7 +888,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
               );
             }
 
-            // 4) done + reasoning — normal confident card
+            // 3) done + reasoning — normal confident card
             if (portfolioStatus?.aiReasoning && aiTriggerStatus === 'done') {
               return (
                 <div className="mt-4">
