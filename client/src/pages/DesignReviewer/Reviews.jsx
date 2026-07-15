@@ -25,7 +25,16 @@ import { AiCommentsContent, parseAiReasoningSection } from '../../utility/aiReas
 const getPortfolioAiScore = (candidate) => {
   const jobProfile = candidate?.currentApplication?.jobProfile;
   const aiScore = candidate?.currentApplication?.stageStatuses?.Portfolio?.aiScore;
+  const aiTriggerStatus = candidate?.currentApplication?.aiTriggerStatus;
+  const shortlisted = candidate?.currentApplication?.shortlisted === true;
   if (jobProfile !== 'Brand Designer' || typeof aiScore !== 'number') return null;
+  // Paintbrush statuses: hide unless previously AI-shortlisted (confident score ≥ 3 at some point)
+  if (
+    !shortlisted &&
+    (aiTriggerStatus === 'awaiting_discovery' || aiTriggerStatus === 'permanently_failed')
+  ) {
+    return null;
+  }
   return aiScore;
 };
 
