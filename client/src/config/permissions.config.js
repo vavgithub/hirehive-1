@@ -54,6 +54,8 @@ export const ROUTE_KEY = {
   GUIDE: "guide",
   SHORTLISTED: "shortlisted",
   SHORTLISTED_VIEW_CANDIDATE: "shortlisted_view_candidate",
+  PARKED: "parked",
+  PARKED_VIEW_CANDIDATE: "parked_view_candidate",
   CANDIDATES: "candidates",
   ALL_CANDIDATES: "all_candidates",
   EDIT_JOB: "edit_job",
@@ -110,6 +112,9 @@ export const ROLE_CONFIG = {
       [ROUTE_KEY.SHORTLISTED]: "/admin/candidates/shortlisted",
       [ROUTE_KEY.SHORTLISTED_VIEW_CANDIDATE]:
         "/admin/candidates/shortlisted/view",
+      [ROUTE_KEY.PARKED]: "/admin/candidates/parked",
+      [ROUTE_KEY.PARKED_VIEW_CANDIDATE]:
+        "/admin/candidates/parked/view",
       [ROUTE_KEY.CANDIDATES]: "/admin/candidates",
       [ROUTE_KEY.ALL_CANDIDATES]: "/admin/candidates/all",
       [ROUTE_KEY.PROFILE]: "/admin/profile",
@@ -170,6 +175,9 @@ export const ROLE_CONFIG = {
       [ROUTE_KEY.SHORTLISTED]: "/hiring-manager/candidates/shortlisted",
       [ROUTE_KEY.SHORTLISTED_VIEW_CANDIDATE]:
         "/hiring-manager/candidates/shortlisted/view",
+      [ROUTE_KEY.PARKED]: "/hiring-manager/candidates/parked",
+      [ROUTE_KEY.PARKED_VIEW_CANDIDATE]:
+        "/hiring-manager/candidates/parked/view",
       [ROUTE_KEY.CANDIDATES]: "/hiring-manager/candidates",
       [ROUTE_KEY.ALL_CANDIDATES]: "/hiring-manager/candidates/all",
       [ROUTE_KEY.EDIT_JOB]: "/hiring-manager/jobs/all/edit",

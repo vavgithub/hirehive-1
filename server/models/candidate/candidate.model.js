@@ -252,6 +252,27 @@ const jobApplicationSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    parked: {
+      type: Boolean,
+      default: false,
+    },
+    parkedReason: {
+      type: String,
+      default: null,
+    },
+    parkedNote: {
+      type: String,
+      default: null,
+    },
+    parkedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
+    },
+    parkedAt: {
+      type: Date,
+      default: null,
+    },
     jobProfile: {
       type: String,
     },

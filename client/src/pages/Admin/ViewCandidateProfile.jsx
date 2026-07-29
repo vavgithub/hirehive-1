@@ -108,6 +108,7 @@ const transformCandidateData = (data) => {
 
     return {
         professionalDetails: [
+            { label: 'Portfolio', value: professionalInfo.portfolio || '-' },
             { label: 'Experience', value: `${professionalInfo.experience} Years` },
             { label: 'Notice Period', value: `${professionalInfo.noticePeriod} Days` },
             { label: 'Current CTC', value: professionalInfo?.currentCTC ? `${professionalInfo.currentCTC} LPA` : '-' },
@@ -193,9 +194,12 @@ const ViewCandidateProfile = () => {
     const [originalPath] = useState(() => {
         const isJobPath = location.pathname.includes('/jobs/');
         const isShortlistedPath = location.pathname.includes('/shortlisted');
+        const isParkedPath = location.pathname.includes('/parked');
 
         if (isShortlistedPath) {
             return getRoute(role,ROUTE_KEY.SHORTLISTED);
+        } else if (isParkedPath) {
+            return getRoute(role,ROUTE_KEY.PARKED);
         } else if (isJobPath) {
             return `${getRoute(role,ROUTE_KEY.JOBS_VIEW_JOB)}/${jobId}`;
         }
@@ -222,11 +226,14 @@ const ViewCandidateProfile = () => {
         }else {
             // Check if we're on a shortlisted candidate view
             const isShortlistedPath = location.pathname.includes('/shortlisted/');
+            const isParkedPath = location.pathname.includes('/parked/');
             const isReviewsPath = location.pathname.includes('/reviews/');
             if(isReviewsPath && role === "Design Reviewer"){
                 navigate(getRoute(role,ROUTE_KEY.REVIEWS));
             }else if (isShortlistedPath) {
                 navigate(getRoute(role,ROUTE_KEY.SHORTLISTED));
+            }else if (isParkedPath) {
+                navigate(getRoute(role,ROUTE_KEY.PARKED));
             } else {
                 navigate(-1);
             }

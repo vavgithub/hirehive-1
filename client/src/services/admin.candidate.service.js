@@ -3,6 +3,8 @@ import axios from "./axios";
 //GET
 export const getShortlistedCandidates = ({companyId,location , locationId , sessionId , page, pageLimit, filter, search, sortFilters}) => axios.post(`/admin/candidate/shortlisted/${companyId}`,{location , locationId, sessionId, page, pageLimit, filter, search, sortFilters }).then(res => res.data)
 
+export const getParkedCandidates = ({companyId,location , locationId , sessionId , page, pageLimit, filter, search, sortFilters}) => axios.post(`/admin/candidate/parked/${companyId}`,{location , locationId, sessionId, page, pageLimit, filter, search, sortFilters }).then(res => res.data)
+
 export const getAllCandidatesAndStats = () => axios.post('/admin/candidate/getData/data/allCandidatesWithStats').then(res => res.data)
 
 export const getAllCandidatesWithFilters = ({location ,locationId ,sessionId ,page ,pageLimit ,search ,filter ,sortFilters}) => axios.post('/admin/candidate/getData/data/allCandidatesWithFilters' , {location , locationId, sessionId , page, pageLimit, search , filter, sortFilters}).then(res => res.data)
@@ -47,11 +49,21 @@ export const toggleShortlistStatus = async ({ candidateId, jobId, shortlisted })
     return response?.data;
 };
 
+export const parkCandidateStatus = async ({ candidateId, jobId, parkedReason, parkedNote }) => {
+    const response = await axios.post(`/admin/candidate/${candidateId}/job/${jobId}/park`, { parkedReason, parkedNote });
+    return response?.data;
+};
+
+export const unparkCandidateStatus = async ({ candidateId, jobId }) => {
+    const response = await axios.post(`/admin/candidate/${candidateId}/job/${jobId}/unpark`);
+    return response?.data;
+};
+
 export const submitAssessment = ({candidate_id, assessmentData, recordingUrl}) => axios.post(`/admin/candidate/questionnaire/${candidate_id}`,{ ...assessmentData, recordingUrl })
 
 //PATCH
-export const updateProfessionalDetails = async ({experience, noticePeriod, currentCTC, expectedCTC, hourlyRate , id, jobId}) => {
-    const response = await axios.patch(`/admin/candidate/update-candidate/${id}/${jobId}`,{experience, noticePeriod, currentCTC, expectedCTC, hourlyRate });
+export const updateProfessionalDetails = async ({experience, noticePeriod, currentCTC, expectedCTC, hourlyRate, portfolio, id, jobId}) => {
+    const response = await axios.patch(`/admin/candidate/update-candidate/${id}/${jobId}`,{experience, noticePeriod, currentCTC, expectedCTC, hourlyRate, portfolio });
     return response?.data
 }
 

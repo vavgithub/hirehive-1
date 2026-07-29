@@ -456,6 +456,7 @@ export const getAllCandidatesForJob = async (req, res) => {
       ...(locationConditions.length > 0 ? [{ $match: { $or: locationConditions } }] : []),
       { $unwind: "$jobApplications" },
       { $match: { "jobApplications.jobId": new mongoose.Types.ObjectId(jobId) } },
+      { $match: { "jobApplications.parked": { $ne: true } } },
 
       // ✅ Filter based on different criteria
       ...budgetFilter,
@@ -658,7 +659,7 @@ export const getAllCandidatesForJob = async (req, res) => {
 export const updateCandidateProfessionalDetails = async (req, res) => {
   try {
     const { id, jobId } = req.params;
-    const { experience, noticePeriod, hourlyRate, currentCTC, expectedCTC } =
+    const { experience, noticePeriod, hourlyRate, currentCTC, expectedCTC, portfolio } =
       req.body;
 
     // Fetch candidate
@@ -674,6 +675,10 @@ export const updateCandidateProfessionalDetails = async (req, res) => {
     // Fetch job
     if (!job) {
       return res.status(400).json({ message: "Invalid Job Data" });
+    }
+
+    if (!portfolio?.trim()) {
+      return res.status(400).json({ message: "Portfolio is required" });
     }
 
     // Validation based on employment type
@@ -714,6 +719,7 @@ export const updateCandidateProfessionalDetails = async (req, res) => {
       hourlyRate,
       experience,
       noticePeriod,
+      portfolio: portfolio.trim(),
     };
 
     const updateCandidate = await candidates.findOneAndUpdate(
@@ -1212,6 +1218,11 @@ export const getAllCandidates = async (req,res) => {
         if(key === 'rating'){
           encodedFilters.rating = { $in : value }
         }
+        if(key === 'job Profile'){
+          if(Array.isArray(value) && value.length > 0){
+            encodedFilters.jobProfile = { $in : value }
+          }
+        }
         if(key === 'showContractors' && value){
           encodedFilters.jobType = "Contract"
         }else if(key === 'job Type'){
@@ -1287,6 +1298,9 @@ export const getAllCandidates = async (req,res) => {
       ...searchQuery,
       {
         $unwind: "$jobApplications",
+      },
+      {
+        $match: { "jobApplications.parked": { $ne: true } },
       },
       {
         $lookup: {
@@ -1501,6 +1515,9 @@ export const getAllCandidatesWithStats = async (req, res) => {
         $unwind: "$jobApplications",
       },
       {
+        $match: { "jobApplications.parked": { $ne: true } },
+      },
+      {
         $lookup: {
           from: "jobs",
           localField: "jobApplications.jobId",
@@ -1660,6 +1677,7 @@ export const getAllCandidatesWithStats = async (req, res) => {
           $match: {
             isVerified: true,
             "jobApplications.companyDetails._id": companyId,
+            "jobApplications.parked": { $ne: true },
             createdAt: { $gte: firstDayPreviousMonth } // Broad filter covering all periods
           }
         },
@@ -2829,4 +2847,403 @@ export const shortlistCandidate = async (req, res) => {
   }
 };
 
+export const parkCandidate = async (req, res) => {
+  try {
+    const { candidateId, jobId } = req.params;
+    const { parkedReason, parkedNote } = req.body;
+
+    if (!parkedReason) {
+      return res.status(400).json({ message: "Parked reason is required" });
+    }
+
+    if (parkedReason === "Other" && !parkedNote?.trim()) {
+      return res.status(400).json({ message: "Parked note is required when reason is Other" });
+    }
+
+    const candidate = await candidates.findOneAndUpdate(
+      {
+        _id: candidateId,
+        jobApplications: {
+          $elemMatch: {
+            jobId: new mongoose.Types.ObjectId(jobId),
+            parked: { $ne: true },
+          },
+        },
+      },
+      {
+        $set: {
+          "jobApplications.$.parked": true,
+          "jobApplications.$.parkedReason": parkedReason,
+          "jobApplications.$.parkedNote": parkedReason === "Other" ? parkedNote.trim() : null,
+          "jobApplications.$.parkedBy": req.user._id,
+          "jobApplications.$.parkedAt": new Date(),
+        },
+      },
+      { new: true }
+    );
+
+    if (!candidate) {
+      return res
+        .status(404)
+        .json({ message: "Candidate or job application not found" });
+    }
+
+    return res.status(200).json({
+      message: "Candidate parked successfully",
+      candidate,
+    });
+  } catch (error) {
+    captureError(error, { controller: "candidate.controller.js", action: "parkCandidate", role: "admin" });
+    console.error("Error parking candidate:", error);
+    return res
+      .status(500)
+      .json({ message: "Server error", error: error.message });
+  }
+};
+
+export const unparkCandidate = async (req, res) => {
+  try {
+    const { candidateId, jobId } = req.params;
+
+    const candidate = await candidates.findOneAndUpdate(
+      {
+        _id: candidateId,
+        "jobApplications.jobId": new mongoose.Types.ObjectId(jobId),
+        "jobApplications.parked": true,
+      },
+      {
+        $set: {
+          "jobApplications.$.parked": false,
+          "jobApplications.$.parkedReason": null,
+          "jobApplications.$.parkedNote": null,
+          "jobApplications.$.parkedBy": null,
+          "jobApplications.$.parkedAt": null,
+        },
+      },
+      { new: true }
+    );
+
+    if (!candidate) {
+      return res
+        .status(404)
+        .json({ message: "Parked candidate or job application not found" });
+    }
+
+    return res.status(200).json({
+      message: "Candidate returned to queue successfully",
+      candidate,
+    });
+  } catch (error) {
+    captureError(error, { controller: "candidate.controller.js", action: "unparkCandidate", role: "admin" });
+    console.error("Error unparking candidate:", error);
+    return res
+      .status(500)
+      .json({ message: "Server error", error: error.message });
+  }
+};
+
+export const parkedCandidate = async (req, res) => {
+  try {
+    const { company_id } = req.params;
+    const { location, locationId, sessionId , page, pageLimit, search, filter, sortFilters } = req.body;
+
+    const LIMIT = pageLimit || 10;
+    const pageCount = page || null;
+    let paginationFilter = [];
+
+    if(pageCount){
+      const skipCount = (pageCount - 1) * LIMIT
+      paginationFilter = [
+        { $skip : skipCount },
+        { $limit : LIMIT }
+      ]
+    }
+
+    let searchQuery = [];
+    if (search !== "") {
+      searchQuery = [{
+        $match: {
+          $or: [
+            { firstName: { $regex: new RegExp(search, 'i') } },
+            { email: { $regex: new RegExp(search, 'i') } },
+            { lastName: { $regex: new RegExp(search, 'i') } },
+          ]
+        }
+      }];
+    }
+
+    const sortArray = Object.entries(sortFilters || {});
+    let sortQuery = []
+
+    if(sortArray?.length !== 0){
+      sortArray.map(([key,value]) => {
+        if(value === 'asc'){
+            if(key === 'hourlyRate'){
+              sortQuery = [{ $sort : {"jobApplications.professionalInfo.hourlyRate" : 1 , _id : 1} }]
+            }else if(key === 'currentCTC'){
+              sortQuery = [{ $sort : {"jobApplications.professionalInfo.currentCTC" : 1 , _id : 1} }]
+            }else if(key === 'expectedCTC'){
+              sortQuery = [{ $sort : {"jobApplications.professionalInfo.expectedCTC" : 1 , _id : 1} }]
+            }else if(key === 'experience'){
+              sortQuery = [{ $sort : {"jobApplications.professionalInfo.experience" : 1 , _id : 1} }]
+            }
+          }else if(value === 'desc'){
+            if(key === 'hourlyRate'){
+              sortQuery = [{ $sort : {"jobApplications.professionalInfo.hourlyRate" : -1 , _id : 1} }]
+            }else if(key === 'currentCTC'){
+              sortQuery = [{ $sort : {"jobApplications.professionalInfo.currentCTC" : -1 , _id : 1} }]
+            }else if(key === 'expectedCTC'){
+              sortQuery = [{ $sort : {"jobApplications.professionalInfo.expectedCTC" : -1 , _id : 1} }]
+            }else if(key === 'experience'){
+              sortQuery = [{ $sort : {"jobApplications.professionalInfo.experience" : -1 , _id : 1} }]
+            }
+          }
+      })
+    }
+
+    const filterArray = Object.entries(filter || {})
+    let statusFilter = []
+    let stageFilter = []
+    let assessmentFilter = []
+    let ratingFilter = []
+    let jobTypeFilter = []
+
+    if(filterArray?.length !== 0){
+      filterArray.map(([key,value]) => {
+        if(key === 'status'){
+          if(Array.isArray(value)){
+            statusFilter = [
+              {
+                $match: {
+                  $expr: {
+                    $in: [
+                      {
+                        $getField: {
+                          field: "status",
+                          input: {
+                            $getField: {
+                              field: "$jobApplications.currentStage",
+                              input: "$jobApplications.stageStatuses"
+                            }
+                          }
+                        }
+                      },
+                      value
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        }
+        if(key === 'stage'){
+          if(Array.isArray(value)){
+            stageFilter = [
+               {
+                  $match: {
+                    "jobApplications.currentStage": {
+                      $in: value
+                    }
+                  }
+                },
+            ]
+          }
+        }
+        if(key === 'assessment'){
+          let isCompleted = false;
+          let isNotCompleted = false;
+          value.map(state => {
+            state === "Completed" && (isCompleted = true)
+            state === "Not Completed" && (isNotCompleted = true)
+          })
+          if (isCompleted && !isNotCompleted) {
+            assessmentFilter = [
+              { $match: { "jobApplications.assessmentResponse": { $type: "object" } } },
+            ]
+          } else if (!isCompleted && isNotCompleted) {
+            assessmentFilter = [
+              { $match: { "jobApplications.assessmentResponse": { $exists: false } } },
+            ]
+          }
+        }
+        if(key === 'rating'){
+          if(Array.isArray(value)){
+            ratingFilter = [
+              { $match : { "jobApplications.rating" : { $in : value} } }
+            ]
+          }
+        }
+        if(key === 'showContractors' && value){
+          jobTypeFilter = [
+            { $match : { "jobApplications.jobType" : { $in : ["Part Time" , "Contract"] } } }
+          ]
+        }else if(key === 'job Type'){
+          if(Array.isArray(value)){
+            jobTypeFilter = [
+              { $match : { "jobApplications.jobType" : { $in : value } } }
+            ]
+          }
+        }
+      })
+    }
+
+    let geoFilter = null;
+    if (locationId && sessionId) {
+      const result = await getPlaceDetails(locationId, sessionId);
+      if (result.latlng?.longitude && result.latlng?.latitude) {
+        geoFilter = {
+          coordinates: [
+            parseFloat(result.latlng.longitude),
+            parseFloat(result.latlng.latitude)
+          ]
+        };
+      }
+    }
+
+    const locationConditions = [];
+    if (location) {
+      locationConditions.push({ location: { $regex: location, $options: 'i' } });
+    }
+    if (geoFilter?.coordinates) {
+      locationConditions.push({
+        geoLocation: {
+          $geoWithin: {
+            $centerSphere: [
+              [geoFilter.coordinates[0], geoFilter.coordinates[1]],
+              100000 / 6371000
+            ]
+          }
+        }
+      });
+    }
+
+    const pipeline = [
+      ...searchQuery,
+      ...(locationConditions.length > 0 ? [{ $match: { $or: locationConditions } }] : []),
+      { $unwind: "$jobApplications" },
+      {
+        $match: {
+          "jobApplications.parked": true,
+          "jobApplications.companyDetails._id": new mongoose.Types.ObjectId(company_id)
+        }
+      },
+      ...stageFilter,
+      ...statusFilter,
+      ...assessmentFilter,
+      ...jobTypeFilter,
+      ...ratingFilter,
+      {
+        $lookup: {
+          from: "users",
+          localField: "jobApplications.parkedBy",
+          foreignField: "_id",
+          as: "parkedByUser",
+        },
+      },
+      {
+        $addFields: {
+          "jobApplications.parkedByUser": { $arrayElemAt: ["$parkedByUser", 0] },
+        },
+      },
+      {
+        $group: {
+          _id: "$_id",
+          jobApplications: { $push: "$jobApplications" },
+          candidate: { $first: "$$ROOT" }
+        }
+      },
+      {
+        $addFields: {
+          "candidate.jobApplications": "$jobApplications"
+        }
+      },
+      {
+        $replaceRoot: {
+          newRoot: "$candidate"
+        }
+      },
+      {
+        $sort : { "jobApplications.parkedAt" : -1}
+      },
+      ...sortQuery,
+      {
+        $facet: {
+          candidates: [...paginationFilter],
+          totalCount: [{ $count: "count" }]
+        }
+      },
+      {
+        $addFields: {
+          totalCount: { $ifNull: [{ $arrayElemAt: ["$totalCount.count", 0] }, 0] }
+        }
+      }
+    ];
+
+    const parkedCandidates = await candidates.aggregate(pipeline);
+
+    const formattedCandidates = parkedCandidates[0]?.candidates.map((candidate) => {
+      const parkedApplications = candidate.jobApplications.filter(
+        (app) => app.parked
+      );
+
+      return {
+        _id: candidate._id,
+        firstName: candidate.firstName,
+        lastName: candidate.lastName,
+        email: candidate.email,
+        phone: candidate.phone,
+        profilePictureUrl: candidate.profilePictureUrl,
+        location: candidate.location || "",
+        portfolio: candidate.portfolio,
+        website: candidate.website,
+        resumeUrl: candidate.resumeUrl || "",
+        experience: candidate.experience,
+        applications: parkedApplications.map((app) => {
+          const stageStatusesObj = {};
+          if (app.stageStatuses && app.stageStatuses instanceof Map) {
+            for (const [key, value] of app.stageStatuses.entries()) {
+              stageStatusesObj[key] = value;
+            }
+          } else if (app.stageStatuses && typeof app.stageStatuses === "object") {
+            Object.assign(stageStatusesObj, app.stageStatuses);
+          }
+
+          const currentStageStatus = stageStatusesObj[app.currentStage];
+          const parkedByUser = app.parkedByUser;
+
+          return {
+            jobId: app.jobId,
+            jobApplied: app.jobApplied || app.jobProfile || "",
+            applicationDate: app.applicationDate,
+            currentStage: app.currentStage,
+            status: currentStageStatus?.status || "Under Review",
+            rating: app.rating,
+            currentCTC: app.professionalInfo?.currentCTC || 0,
+            expectedCTC: app.professionalInfo?.expectedCTC || 0,
+            hourlyRate: app.professionalInfo?.hourlyRate || 0,
+            stageStatuses: stageStatusesObj,
+            jobProfile: app.jobProfile || "",
+            jobType: app.jobType,
+            parked: app.parked,
+            parkedReason: app.parkedReason,
+            parkedNote: app.parkedNote,
+            parkedAt: app.parkedAt,
+            parkedBy: app.parkedBy,
+            parkedByName: parkedByUser
+              ? `${parkedByUser.firstName || ""} ${parkedByUser.lastName || ""}`.trim()
+              : "Unknown reviewer",
+          };
+        }),
+      };
+    });
+
+    return res.status(200).json({ candidates: formattedCandidates , totalCount : parkedCandidates[0]?.totalCount || 0});
+  } catch (error) {
+    captureError(error, { controller: "candidate.controller.js", action: "parkedCandidate", role: "admin" });
+    console.error("Error fetching parked candidates:", error);
+    return res
+      .status(500)
+      .json({ message: "Server error", error: error.message });
+  }
+};
 
