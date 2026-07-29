@@ -16,15 +16,6 @@ export const getSubscription = async () => {
   return response?.data;
 };
 
-export const confirmCheckoutSession = async ({ sessionId }) => {
-  const response = await axios.post(
-    `${API_URL}/confirm-checkout`,
-    { sessionId },
-    { withCredentials: true }
-  );
-  return response?.data;
-};
-
 export const getInvoices = async () => {
   const response = await axios.get(`${API_URL}/invoices`, { withCredentials: true });
   return response?.data;
