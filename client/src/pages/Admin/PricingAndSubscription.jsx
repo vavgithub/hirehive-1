@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { createPortal } from 'react-dom'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuthContext } from '../../context/AuthProvider'
@@ -11,20 +10,16 @@ import StyledCard from '../../components/Cards/StyledCard'
 import { Button } from '../../components/Buttons/Button'
 import { BadgeCheck, Check, Info, Lock, X, Clock, CalendarDays, Circle } from 'lucide-react'
 import IconWrapper from '../../components/Cards/IconWrapper'
-import SeatStepper from '../../components/ui/SeatStepper'
-import ConsentCheckbox from '../../components/Checkboxes/ConsentCheckbox'
 import ToggleSwitch from '../../components/ui/ToggleSwitch'
 import Modal from '../../components/Modals/Modal'
 import TrialInfoModal from '../../components/Register/TrialInfoModal'
 import EnterpriseContactModal from '../../components/Register/EnterpriseContactModal'
 import AssessmentBanner from '../../components/ui/AssessmentBanner'
 import StatsGrid from '../../components/ui/StatsGrid'
+import FeatureComparisonTable from '../../components/ui/FeatureComparisonTable'
 import useTrialStatus from '../../hooks/useTrialStatus'
 
 const TRIAL_STAT_VALUE_CLASS = 'font-gilroy text-h3 font-h3'
-
-const MIN_PRO_SEATS = 1
-const PRO_SEAT_PRICE = { monthly: 19, yearly: 180 }
 
 const FREE_FEATURES = [
   { label: 'Up to 150 applications/month', included: true },
@@ -70,6 +65,40 @@ const TRIAL_LOSS_FEATURES = [
   'Reports & exports',
 ]
 
+const COMPARISON = [
+  {
+    category: 'Core Features',
+    rows: [
+      { feature: 'Candidate applications',  free: 'Up to 150 / month', pro: 'Unlimited',       enterprise: 'Unlimited' },
+      { feature: 'User seats',              free: '2 seats only',    pro: 'Per user pricing', enterprise: 'Unlimited' },
+      { feature: 'Google Calendar Invites', free: true,  pro: true,  enterprise: true },
+      { feature: 'Auto assign portfolios',  free: false,  pro: true,  enterprise: true },
+    ]
+  },
+  {
+    category: 'Evaluation & Scoring',
+    rows: [
+      { feature: 'Geode Score',        free: false, pro: true,  enterprise: true },
+      { feature: 'Budget screening',   free: false, pro: true,  enterprise: true },
+      { feature: 'Reports / Export',   free: false, pro: true,  enterprise: true },
+      { feature: 'Feedback & ratings', free: 'Rate only', pro: 'Feedback + Rate', enterprise: 'Feedback + Rate' },
+    ]
+  },
+  {
+    category: 'Talent Intelligence',
+    rows: [
+      { feature: 'Talent pool / Future Gems', free: false, pro: true,          enterprise: true },
+      { feature: 'Assessment tests',          free: '5 Pre-built', pro: 'Custom', enterprise: 'Custom' },
+    ]
+  },
+  {
+    category: 'Support',
+    rows: [
+      { feature: 'Support level', free: 'Standard', pro: 'Standard', enterprise: 'Dedicated' },
+    ]
+  },
+]
+
 const FeatureItem = ({ label, included, className = '' }) => (
   <li className={`flex items-start gap-3 typography-body text-font-gray ${!included && 'opacity-40'} ${className}`}>
     <IconWrapper
@@ -109,9 +138,6 @@ function PricingAndSubscription() {
   const [showCancelProModal, setShowCancelProModal] = useState(false)
   const [showTrialModal, setShowTrialModal] = useState(false)
   const [showEnterpriseModal, setShowEnterpriseModal] = useState(false)
-  const [showSeatsModal, setShowSeatsModal] = useState(false)
-  const [seatsToBuy, setSeatsToBuy] = useState(MIN_PRO_SEATS)
-  const [seatsConsent, setSeatsConsent] = useState(false)
 
   const checkoutMutation = useMutation({
     mutationFn: createCheckoutSession,
@@ -198,26 +224,18 @@ function PricingAndSubscription() {
       return
     }
 
-    setSeatsToBuy(MIN_PRO_SEATS)
-    setSeatsConsent(false)
-    setShowSeatsModal(true)
-  }
-
-  const handleConfirmSeatsCheckout = () => {
     checkoutMutation.mutate({
       interval: billing,
-      seatCount: Math.max(MIN_PRO_SEATS, seatsToBuy),
+      seatCount: 1
     })
   }
-
-  const seatTotal = Math.max(MIN_PRO_SEATS, seatsToBuy) * PRO_SEAT_PRICE[billing]
 
   const handleCancelSubscription = () => {
     setShowCancelProModal(true)
   }
 
   const handleConfirmCancelPro = () => {
-    cancelMutation.mutate({ immediate: false })
+    cancelMutation.mutate({ immediate: true })
   }
 
   const trialStats = useMemo(() => [
@@ -277,6 +295,9 @@ function PricingAndSubscription() {
   }
 
   const getEnterpriseVariant = () => (currentPlan === 'enterprise' ? 'primary' : 'secondary')
+
+  const highlightedComparisonColumn =
+    currentPlan === 'enterprise' ? 'enterprise' : 'pro'
 
   const isFreeCTADisabled = currentPlan === 'free'
   const isProCTAPending = checkoutMutation.isPending || switchIntervalMutation.isPending
@@ -560,6 +581,14 @@ function PricingAndSubscription() {
         </div>
       </div>
 
+      <StyledCard padding={2} extraStyles='w-full'>
+        <h3 className='mb-6'>Compare all features</h3>
+        <FeatureComparisonTable
+          sections={COMPARISON}
+          highlightedColumn={highlightedComparisonColumn}
+        />
+      </StyledCard>
+
       <p className='typography-body text-font-gray text-center mt-6'>
         Questions about Enterprise?{' '}
         <span onClick={() => setShowEnterpriseModal(true)} className='text-teal-100 cursor-pointer hover:underline'>
@@ -617,138 +646,15 @@ function PricingAndSubscription() {
         <EnterpriseContactModal onClose={() => setShowEnterpriseModal(false)} />
       )}
 
-      {showSeatsModal && createPortal(
-        <div className='fixed z-50 inset-0 flex justify-center items-center bg-background-overlay bg-black/20 p-4'>
-          <StyledCard
-            padding={2}
-            backgroundColor='bg-background-90'
-            extraStyles='relative w-full max-w-3xl max-h-[90vh] overflow-y-auto'
-          >
-            <div
-              onClick={() => setShowSeatsModal(false)}
-              className='absolute top-4 right-4 z-10 cursor-pointer bg-background-70 h-9 min-w-9 flex justify-center items-center rounded-xl hover:bg-background-80'
-            >
-              <IconWrapper icon={X} size={0} />
-            </div>
-
-            <div className='flex flex-col gap-6'>
-              <div>
-                <h3 className='mb-1 pr-10'>Choose your seats</h3>
-                <p className='typography-body text-font-gray'>How many seats do you want to start with?</p>
-                <p className='typography-small-p text-font-gray mt-1'>
-                  Every seat is billed
-                  {billing === 'yearly'
-                    ? ` $${PRO_SEAT_PRICE.yearly}/seat per year ($15/seat per month).`
-                    : ` $${PRO_SEAT_PRICE.monthly}/seat per month.`}
-                  {' '}At least {MIN_PRO_SEATS} seat is required to start Pro.
-                </p>
-              </div>
-
-              <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-                <StyledCard
-                  padding={4}
-                  backgroundColor='bg-background-80'
-                  extraStyles='w-full flex flex-col gap-5'
-                >
-                  <p className='typography-body text-font-gray text-center'>How many seats?</p>
-
-                  <SeatStepper
-                    value={seatsToBuy}
-                    onChange={setSeatsToBuy}
-                    min={MIN_PRO_SEATS}
-                    helperText={`$${PRO_SEAT_PRICE[billing]} per seat / ${billing === 'yearly' ? 'year' : 'month'}`}
-                  />
-
-                  <div className='flex justify-between items-center pt-2 border-t border-divider-100'>
-                    <span className='typography-body font-semibold text-font-main'>Total seats</span>
-                    <span className='typography-body font-semibold text-font-main'>
-                      {Math.max(MIN_PRO_SEATS, seatsToBuy)}
-                    </span>
-                  </div>
-                </StyledCard>
-
-                <div className='flex flex-col gap-4'>
-                  <StyledCard
-                    padding={4}
-                    backgroundColor='bg-background-100'
-                    extraStyles='w-full flex flex-col gap-1'
-                  >
-                    <p className='typography-body text-font-main'>Due today</p>
-                    <span className='font-bricolage font-bold text-4xl text-teal-100'>
-                      ${seatTotal}
-                    </span>
-                    <p className='typography-small-p text-font-gray mt-1'>
-                      Charged today when you complete secure checkout.
-                    </p>
-                  </StyledCard>
-
-                  <StyledCard
-                    padding={4}
-                    backgroundColor='bg-background-80'
-                    extraStyles='w-full flex flex-col gap-3'
-                  >
-                    <p className='typography-body text-font-main'>For next renewal</p>
-                    <div className='flex justify-between items-center'>
-                      <span className='typography-body text-font-gray'>
-                        {Math.max(MIN_PRO_SEATS, seatsToBuy)} seat{Math.max(MIN_PRO_SEATS, seatsToBuy) > 1 ? 's' : ''}
-                      </span>
-                      <span className='typography-body text-font-main'>
-                        ${seatTotal}{billing === 'yearly' ? '/yr' : '/mo'}
-                      </span>
-                    </div>
-                    <div className='flex justify-between items-center pt-2 border-t border-divider-100'>
-                      <span className='typography-body font-semibold text-font-main'>
-                        {billing === 'yearly' ? 'New yearly total' : 'New monthly total'}
-                      </span>
-                      <span className='typography-body font-semibold text-font-main'>
-                        ${seatTotal}{billing === 'yearly' ? '/yr' : '/mo'}
-                      </span>
-                    </div>
-                    <p className='typography-small-p text-font-gray mt-1'>
-                      This total applies automatically from your next billing cycle.
-                    </p>
-                  </StyledCard>
-                </div>
-              </div>
-
-              <div className='grid grid-cols-1 md:grid-cols-2 gap-4 items-center'>
-                <div className='flex items-center px-3 md:px-4'>
-                  <ConsentCheckbox
-                    id='seats-consent'
-                    checked={seatsConsent}
-                    onChange={setSeatsConsent}
-                    label='I understand my subscription renews automatically, payments already made are non-refundable, and I can cancel anytime — Pro access stays active until the end of the current paid period.'
-                  />
-                </div>
-
-                <div className='flex justify-end'>
-                  <Button
-                    variant='primary'
-                    type='button'
-                    className='shrink-0'
-                    onClick={handleConfirmSeatsCheckout}
-                    disabled={checkoutMutation.isPending || !seatsConsent}
-                  >
-                    {checkoutMutation.isPending ? 'Processing...' : 'Continue to checkout'}
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </StyledCard>
-        </div>,
-        document.body
-      )}
-
       <Modal
         open={showCancelProModal}
         onClose={() => setShowCancelProModal(false)}
         onConfirm={handleConfirmCancelPro}
         customTitle='Cancel Pro subscription?'
-        customMessage="You'll keep Pro access until your current paid period ends. After that, you'll have 10 days to review, export, or back up your data before your workspace moves to the Free plan."
-        customConfirmLabel='Cancel Pro'
-        confirmVariant='secondary'
-        cancelLabel='Stay on Pro'
-        cancelVariant='primary'
+        customMessage='You will return to the Free plan immediately. Any active Stripe subscriptions on your account will be cancelled.'
+        customConfirmLabel='Cancel and go to Free'
+        cancelLabel='Keep Pro'
+        cancelVariant='tertiary'
         isReadyToClose={false}
         specifiedWidth='max-w-lg'
         showCloseIcon
