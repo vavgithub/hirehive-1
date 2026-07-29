@@ -21,10 +21,9 @@ import { captureError } from "../../utils/errorHandler.js";
 
 const cookieOptions = {
   httpOnly: true,
-  secure: process.env.NODE_ENV === 'production',
-  sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-  maxAge: 30 * 24 * 60 * 60 * 1000,
-  path: '/',
+  secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
+  sameSite: process.env.NODE_ENV === 'production' ? "none" : "strict", 
+  maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
 };
 
 const getOnboardingRedirectStep = (verificationStage, authType) => {
@@ -33,14 +32,12 @@ const getOnboardingRedirectStep = (verificationStage, authType) => {
     if (['PASSWORD', 'REGISTER', 'OTP'].includes(verificationStage)) {
       return 'COMPANY DETAILS'
     }
-    if (verificationStage === 'COMPANY DETAILS') return 'PLAN SELECTION'
     if (verificationStage === 'ADD MEMBERS') return 'ADD MEMBERS'
   }
   const stepAfter = {
     REGISTER: 'OTP',
     OTP: 'PASSWORD',
     PASSWORD: 'COMPANY DETAILS',
-    'COMPANY DETAILS': 'PLAN SELECTION',
     'ADD MEMBERS': 'ADD MEMBERS',
   }
   return stepAfter[verificationStage] ?? null
@@ -822,63 +819,6 @@ export const completeHiringManagerRegistration = asyncHandler(async (req, res) =
   });
 });
 
-export const savePlanSelection = asyncHandler(async (req, res) => {
-  const { plan, email } = req.body;
-
-  if (!plan || !['free', 'trial'].includes(plan)) {
-    return res.status(400).json({
-      status: 'error',
-      message: 'Invalid plan selection. Must be free or trial.'
-    });
-  }
-
-  if (!email) {
-    return res.status(400).json({
-      status: 'error',
-      message: 'Email is required.'
-    });
-  }
-
-  const user = await User.findOne({ email });
-  if (!user) {
-    return res.status(404).json({
-      status: 'error',
-      message: 'User not found.'
-    });
-  }
-
-  const company = await Company.findById(user.company_id);
-  if (!company) {
-    return res.status(404).json({
-      status: 'error',
-      message: 'Company not found.'
-    });
-  }
-
-  // Set plan and trial end date if trial selected
-  company.subscription.plan = plan;
-  if (plan === 'trial') {
-    const trialEndsAt = new Date();
-    trialEndsAt.setDate(trialEndsAt.getDate() + 21);
-    company.subscription.trialEndsAt = trialEndsAt;
-    company.subscription.status = 'active';
-  } else {
-    company.subscription.status = 'active';
-  }
-  await company.save();
-
-  // Advance onboarding stage
-  user.verificationStage = 'COMPANY DETAILS';
-  await user.save();
-
-  return res.status(200).json({
-    status: 'success',
-    message: 'Plan selected successfully.',
-    currentStage: 'ADD MEMBERS',
-    userData: user
-  });
-});
-
 
 //add Team members controller
 export const addTeamMembers = asyncHandler(async (req,res) => {
@@ -1427,7 +1367,6 @@ export const redirectForGoogleToken = asyncHandler(async (req,res) => {
       let encryptedToken = null;
       let scopes = null;
       let currentUserStage = null;
-      let currentUserAuthType = 'EMAIL';
       if(tokens?.refresh_token){
         encryptedToken = encrypt(tokens?.refresh_token);
       }
@@ -1453,7 +1392,6 @@ export const redirectForGoogleToken = asyncHandler(async (req,res) => {
                     isExisting.integrations.google.scopes.push(...unExisitngScopes)
                   }
                   currentUserStage = isExisting.verificationStage
-                  currentUserAuthType = isExisting.auth_type
                   await isExisting.save()
                   const token = generateToken(isExisting._id)
                   res.cookie('jwt', token, cookieOptions);
@@ -1527,7 +1465,6 @@ export const redirectForGoogleToken = asyncHandler(async (req,res) => {
                 }
 
                 currentUserStage = createUser.verificationStage
-                currentUserAuthType = createUser.auth_type
                 //Id only token
                 const token = generateToken(createUser._id)
                 res.cookie('jwt', token, cookieOptions);
@@ -1598,18 +1535,16 @@ export const checkAuthStatus = asyncHandler(async (req, res) => {
         message: 'Please login to continue',
       });
     }
+    if(['REGISTER','OTP'].includes(user?.verificationStage)){
+      throw new Error('Invalid registration. Please try again.')
+    }
     if(user.auth_type === 'EMAIL'){
       throw new Error('Invalid Credentials.')
     }
-    if(['REGISTER','OTP'].includes(user?.verificationStage) && user.auth_type !== 'GOOGLE'){
-      throw new Error('Invalid registration. Please try again.')
-    }
-    const onboardingStep = getOnboardingRedirectStep(user?.verificationStage, user?.auth_type)
     return res.status(200).json({
       message: 'Registration needs to be completed',
       userData : user,
-      currentStage : user?.verificationStage,
-      onboardingStep,
+      currentStage : user?.verificationStage
     });
   } catch (error) {
     captureError(error, { controller: "auth.controller.js", action: "checkAuthStatus", role: "admin" });

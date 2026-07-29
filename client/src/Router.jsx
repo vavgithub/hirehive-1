@@ -46,8 +46,6 @@ import TermsAndCondition from './pages/Candidate/TermsAndCondition.jsx';
 import PrivacyPolicy from './pages/Candidate/PrivacyPolicy.jsx';
 import GlobalErrorHandler from './components/Error/GlobalErrorHandler.jsx';
 import Settings from './pages/Admin/Settings.jsx';
-import ManagePlan from './pages/Admin/ManagePlan';
-import PricingAndSubscription from './pages/Admin/PricingAndSubscription';
 import Interviews from './pages/Admin/Interviews.jsx';
 import CandidateSettings from './pages/Candidate/CandidateSettings.jsx';
 
@@ -326,14 +324,6 @@ export const router = createBrowserRouter([
             element: <PrivacyPolicy />
           },
           {
-        path: "manage-plan",
-        element: <ManagePlan />,
-      },
-      {
-        path: 'pricing',
-        element: <PricingAndSubscription />,
-      },
-      {
         path: "settings",
         element: <Settings />
       },

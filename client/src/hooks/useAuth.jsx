@@ -27,7 +27,7 @@ const useAuth = () => {
             }
         },
         retry: false,
-        staleTime: 0,
+        staleTime: 5 * 60 * 1000,
         cacheTime: 10 * 60 * 1000,
     });
 };

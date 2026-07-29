@@ -114,47 +114,6 @@ const companyschema = new mongoose.Schema({
             default: [],
         },
     },
-    subscription: {
-        stripeCustomerId: {
-            type: String,
-            default: null
-        },
-        stripeSubscriptionId: {
-            type: String,
-            default: null
-        },
-        plan: {
-            type: String,
-            enum: ['free', 'trial', 'pro', 'enterprise'],
-            default: 'free'
-        },
-        status: {
-            type: String,
-            enum: ['active', 'inactive', 'past_due', 'canceled'],
-            default: 'active'
-        },
-        trialEndsAt: {
-            type: Date,
-            default: null
-        },
-        currentPeriodEnd: {
-            type: Date,
-            default: null
-        },
-        seatCount: {
-            type: Number,
-            default: 0
-        },
-        billingInterval: {
-            type: String,
-            enum: ['monthly', 'yearly'],
-            default: 'monthly'
-        },
-        cancelAtPeriodEnd: {
-            type: Boolean,
-            default: false
-        }
-    },
 }, { timestamps: true })
 
 // Create geospatial index

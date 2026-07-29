@@ -350,7 +350,6 @@ function AddMembers({currentStep,setCurrentStep}) {
         customTitle={showAddModal ?"Add Team Member" : "Edit Team Member"}
         isReadyToClose={false}
         customMessage={showAddModal ? "Add Team members of your company and invite them to join." : "Edit Team member of your company and invite them to join."}
-        showCloseIcon
         >
             {/* Add Memeber Form */}
             <div className='mt-4 flex flex-col gap-4'>

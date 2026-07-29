@@ -48,8 +48,7 @@
     "nodemailer": "^6.9.15",
     "passport": "^0.7.0",
     "passport-google-oauth2": "^0.2.0",
-    "sanitize-html": "^2.14.0",
-    "stripe": "^22.2.1"
+    "sanitize-html": "^2.14.0"
   },
   "devDependencies": {
     "nodemon": "^3.0.2"

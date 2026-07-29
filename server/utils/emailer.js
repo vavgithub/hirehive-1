@@ -43,49 +43,9 @@ export const createTransporter = async () => {
   });
 };
 
-let transporterInstance = null;
-let transporterPromise = null;
-
-/** Resolves Gmail transporter on first use; does not block server startup. */
-export const getTransporter = async () => {
-  if (transporterInstance) return transporterInstance;
-  if (!transporterPromise) {
-    transporterPromise = createTransporter()
-      .then((transport) => {
-        transporterInstance = transport;
-        return transport;
-      })
-      .catch((err) => {
-        transporterPromise = null;
-        throw err;
-      });
-  }
-  return transporterPromise;
-};
-
-const loadAssets = async () => ({
+export const assets = {
   vavLogo: await readFile(path.join(__dirname, "email_assets/geodeLogo.png"), "base64"),
   instaLogo: await readFile(path.join(__dirname, "email_assets/instaLogo.png"), "base64"),
   ytLogo: await readFile(path.join(__dirname, "email_assets/ytLogo.png"), "base64"),
   linkedinLogo: await readFile(path.join(__dirname, "email_assets/linkedinLogo.png"), "base64"),
-});
-
-let assetsCache = null;
-let assetsPromise = null;
-
-/** Loads email image assets on first use. */
-export const getAssets = async () => {
-  if (assetsCache) return assetsCache;
-  if (!assetsPromise) {
-    assetsPromise = loadAssets()
-      .then((loaded) => {
-        assetsCache = loaded;
-        return loaded;
-      })
-      .catch((err) => {
-        assetsPromise = null;
-        throw err;
-      });
-  }
-  return assetsPromise;
 };

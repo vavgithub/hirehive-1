@@ -5,7 +5,7 @@ import { Button } from '../Buttons/Button';
 import StatsGrid from '../../components/ui/StatsGrid';
 import LoaderModal from '../Loaders/LoaderModal';
 import GoogleIcon from '../../svg/Icons/GoogleIcon';
-import { markGoogleOnboardingPending, steps } from '../../pages/Admin/Register';
+import { steps } from '../../pages/Admin/Register';
 import { useMutation } from '@tanstack/react-query';
 import { showErrorToast, showSuccessToast } from "../ui/Toast"
 import { useOnboardingContext } from '../../context/OnboardingProvider';
@@ -100,7 +100,6 @@ function RegisterForm({setCurrentStep}) {
 
     const registerGoogle = async () => {
         try {
-          markGoogleOnboardingPending()
           const result = await googleLogin()
           if(result?.authorizationUrl){
             window.location.href = result.authorizationUrl;
