@@ -17,6 +17,63 @@ dotenv.config({
 // Get environment config
 const envConfig = getEnvironmentConfig(environment);
 
+/**
+ * DB / network failures during auth must not look like an invalid session.
+ * Returning 401 here caused reviewers to be "logged out" under pool contention.
+ */
+const isInfrastructureError = (error) => {
+  if (!error) return false;
+
+  const name = error.name || "";
+  const code = error.code;
+  const message = String(error.message || "").toLowerCase();
+
+  if (
+    name === "MongoServerSelectionError" ||
+    name === "MongoNetworkError" ||
+    name === "MongoWaitQueueTimeoutError" ||
+    name === "MongoTimeoutError" ||
+    name === "MongoPoolClearedError" ||
+    name === "MongoNetworkTimeoutError" ||
+    name === "MongoExpiredSessionError"
+  ) {
+    return true;
+  }
+
+  if (
+    code === "ECONNREFUSED" ||
+    code === "ETIMEDOUT" ||
+    code === "ENOTFOUND" ||
+    code === "ECONNRESET" ||
+    code === "EPIPE"
+  ) {
+    return true;
+  }
+
+  if (
+    message.includes("buffering timed out") ||
+    message.includes("timed out") ||
+    message.includes("timeout") ||
+    message.includes("connection pool") ||
+    message.includes("pool destroyed") ||
+    message.includes("topology was destroyed") ||
+    message.includes("server selection") ||
+    message.includes("not connected")
+  ) {
+    return true;
+  }
+
+  return false;
+};
+
+const sendAuthInfrastructureError = (res, error) => {
+  return res.status(503).json({
+    status: "error",
+    message: "Service temporarily unavailable",
+    error: environment === "development" ? error.message : undefined,
+  });
+};
+
 export const verifyToken = (token, secret) => {
   try {
     return jwt.verify(token, secret);
@@ -64,17 +121,17 @@ const protect = asyncHandler(async (req, res, next) => {
     // Get user and exclude password
     const user = await User.findById(decoded.id).select('-password');
 
-    if(user?.verificationStage !== "DONE"){
-      return res.status(401).json({ 
-        status: 'error',
-        message: 'User not verified'
-      });
-    }
-    
     if (!user) {
       return res.status(401).json({ 
         status: 'error',
         message: 'User not found'
+      });
+    }
+
+    if (user.verificationStage !== "DONE") {
+      return res.status(401).json({ 
+        status: 'error',
+        message: 'User not verified'
       });
     }
 
@@ -83,12 +140,13 @@ const protect = asyncHandler(async (req, res, next) => {
     next();
   } catch (error) {
     captureError(error, { file: "authMiddleware.js", action: "authenticateAdmin", role: "admin" });
-    console.error('Authentication error:', error);
-    res.status(401).json({ 
-      status: 'error',
-      message: 'Authentication failed',
-      error: environment === 'development' ? error.message : undefined
-    });
+    console.error(
+      'Authentication error:',
+      isInfrastructureError(error) ? '[infra]' : '[db-or-unknown]',
+      error
+    );
+    // JWT already validated above; thrown errors here are DB/network — never 401.
+    return sendAuthInfrastructureError(res, error);
   }
 });
 
@@ -127,12 +185,12 @@ const protectWithoutVerification = asyncHandler(async (req, res, next) => {
     next();
   } catch (error) {
     captureError(error, { file: "authMiddleware.js", action: "authenticateAdmin", role: "admin" });
-    console.error('Authentication error:', error);
-    res.status(401).json({ 
-      status: 'error',
-      message: 'Authentication failed',
-      error: environment === 'development' ? error.message : undefined
-    });
+    console.error(
+      'Authentication error:',
+      isInfrastructureError(error) ? '[infra]' : '[db-or-unknown]',
+      error
+    );
+    return sendAuthInfrastructureError(res, error);
   }
 });
 
@@ -181,12 +239,12 @@ const protectTokenWithoutVerification = asyncHandler(async (req, res, next) => {
     next();
   } catch (error) {
     captureError(error, { file: "authMiddleware.js", action: "protectTokenWithoutVerification", role: "admin" });
-    console.error('Authentication error:', error);
-    res.status(401).json({ 
-      status: 'error',
-      message: 'Authentication failed',
-      error: environment === 'development' ? error.message : undefined
-    });
+    console.error(
+      'Authentication error:',
+      isInfrastructureError(error) ? '[infra]' : '[db-or-unknown]',
+      error
+    );
+    return sendAuthInfrastructureError(res, error);
   }
 });
 
@@ -246,12 +304,12 @@ const protectCandidate = asyncHandler(async (req, res, next) => {
     next();
   } catch (error) {
     captureError(error, { file: "authMiddleware.js", action: "authenticateCandidate", role: "candidate" });
-    console.error('Candidate authentication error:', error);
-    res.status(401).json({ 
-      status: 'error',
-      message: 'Authentication failed',
-      error: environment === 'development' ? error.message : undefined
-    });
+    console.error(
+      'Candidate authentication error:',
+      isInfrastructureError(error) ? '[infra]' : '[db-or-unknown]',
+      error
+    );
+    return sendAuthInfrastructureError(res, error);
   }
 });
 
