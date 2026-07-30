@@ -250,6 +250,7 @@ export const getAllCandidatesForJob = async (req, res) => {
     let ratingFilter = []
     let assigneeFilter = []
     let budgetFilter = []
+    let jobProfileFilter = []
     let discoveryFilter = []
     let scoreFilter = []
     let shortlistFilterArr = []
@@ -382,6 +383,15 @@ export const getAllCandidatesForJob = async (req, res) => {
             }
           }
         }
+        if((key === 'job Profile' || key === 'jobProfile') && Array.isArray(value) && value.length){
+          jobProfileFilter = [
+            {
+              $match: {
+                "jobApplications.jobProfile": { $in: value }
+              }
+            }
+          ]
+        }
         if (key === 'discovery') {
           const discoveryValues = Array.isArray(value) ? value : [value];
           if (
@@ -465,6 +475,7 @@ export const getAllCandidatesForJob = async (req, res) => {
       ...assigneeFilter,
       ...ratingFilter,
       ...assessmentFilter,
+      ...jobProfileFilter,
       ...discoveryFilter,
       ...scoreFilter,
       ...shortlistFilterArr,
@@ -1228,6 +1239,12 @@ export const getAllCandidates = async (req,res) => {
         }else if(key === 'job Type'){
           encodedFilters.jobType = { $in : value }
         }
+        if((key === 'job Profile' || key === 'jobProfile') && Array.isArray(value) && value.length){
+          encodedFilters.jobProfile = { $in: value }
+        }
+        if((key === 'job Title' || key === 'jobTitle') && Array.isArray(value) && value.length){
+          encodedFilters.jobTitle = { $in: value }
+        }
       })
 
       filterQuery = [
@@ -1445,6 +1462,7 @@ export const getAllCandidates = async (req,res) => {
           noticePeriod: 1,
           skills: 1,
           currentStage: 1,
+          stageStatuses: 1,
           jobTitle: 1,
           jobType: 1,
           jobProfile: 1,
@@ -2589,6 +2607,7 @@ export const shortlistCandidate = async (req, res) => {
     let assessmentFilter = []
     let ratingFilter = []
     let jobTypeFilter = []
+    let jobProfileFilter = []
 
     if(filterArray?.length !== 0){
       filterArray.map(([key,value]) => {
@@ -2686,6 +2705,15 @@ export const shortlistCandidate = async (req, res) => {
             ]
           }
         }
+        if((key === 'job Profile' || key === 'jobProfile') && Array.isArray(value) && value.length){
+          jobProfileFilter = [
+            {
+              $match: {
+                "jobApplications.jobProfile": { $in: value }
+              }
+            }
+          ]
+        }
       })
 
     }
@@ -2741,6 +2769,7 @@ export const shortlistCandidate = async (req, res) => {
       ...assessmentFilter,
       ...jobTypeFilter,
       ...ratingFilter,
+      ...jobProfileFilter,
 
       // Group back by candidate _id, collecting only shortlisted jobApplications
       {

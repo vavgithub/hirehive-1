@@ -1,7 +1,7 @@
 import express from 'express';
 import { archiveJob , closeJob, createJob, deleteJob, draftJob, editJob, filterJobs, filterSearchJobs, 
      getAssessmentTemplates, 
-     getJobById, getJobs, getTotalJobCount , reOpenJob, searchJobs, StatisticsController, unarchiveJob, updateJob } from '../../controllers/admin/jobs.controller.js';
+     getJobById, getJobTitles, getJobs, getTotalJobCount , publishJob, reOpenJob, searchJobs, StatisticsController, unarchiveJob, updateJob } from '../../controllers/admin/jobs.controller.js';
 import { protect, roleProtect } from '../../middlewares/authMiddleware.js';
 
 const router = express.Router();
@@ -14,6 +14,7 @@ router.get('/stats/overall',protect, StatisticsController.getOverallStats);
 router.get('/stats/job/:jobId',protect, StatisticsController.getJobStats);
 router.get('/get-assessment-templates',protect,roleProtect(['Admin','Hiring Manager']), getAssessmentTemplates);
 router.get('/getJobById/:id' , getJobById);
+router.get('/job-titles', protect, roleProtect(['Admin', 'Hiring Manager']), getJobTitles);
 
 router.post('/filterJobs', protect,filterJobs);
 
@@ -29,6 +30,7 @@ router.put('/closeJob/:id/',protect,roleProtect(['Admin','Hiring Manager']), clo
 router.put('/unarchiveJob/:id/',protect,roleProtect(['Admin','Hiring Manager']), unarchiveJob);
 router.put('/reOpen/:id/',protect,roleProtect(['Admin','Hiring Manager']), reOpenJob);
 router.put('/draftJob/:id',protect,roleProtect(['Admin','Hiring Manager']),draftJob);
+router.put('/publishJob/:id',protect,roleProtect(['Admin','Hiring Manager']), publishJob);
 router.put('/editJob/:id',protect,roleProtect(['Admin','Hiring Manager']), editJob);
 
 export default router;

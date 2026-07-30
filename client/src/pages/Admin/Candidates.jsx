@@ -29,6 +29,7 @@ const Candidates = () => {
   const [sortModel,setSortModel] = useState([])
   const [search,setSearch] = useState("");
   const [showContractors, setShowContractors] = useState(false);
+  const [budgetFilter, setBudgetFilter] = useState({ from: '', to: '' });
 
   const [debouncedQuery] = useDebounce(search,400);
 
@@ -138,9 +139,11 @@ const Candidates = () => {
           setSearchTerm={setSearch}
           showContractors={showContractors}
           setShowContractors={setShowContractors}
+          budgetFilter={budgetFilter}
+          setBudgetFilter={setBudgetFilter}
           addLocationFilter={setLocation} 
           readOnly={true} 
-          hasCheckBox={false} 
+          hasCheckBox={false}
           totalCount={candidates?.totalCandidates || 0} 
           getDataWithoutPagination={getCandidatesExportData}
           readOnlyData={candidates?.allCandidates || []} 

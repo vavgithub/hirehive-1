@@ -287,7 +287,7 @@ function MultiSelectBar({selectedData,jobId,clearSelection}) {
         const response = await confirmFunction(candidatesData);
         if(response.message){
             showSuccessToast("Success",response.message)
-            queryClient.invalidateQueries(['candidates', jobId], { refetch: true });
+            queryClient.invalidateQueries({ queryKey: ['candidates'] });
         }
         setIsLoading(false);
         clearSelection([])
@@ -324,7 +324,7 @@ function MultiSelectBar({selectedData,jobId,clearSelection}) {
         const response = await action?.apiFunction(selectedCandidates,assignee?._id);
         if(response?.message){
             showSuccessToast("Success",response.message)
-            queryClient.invalidateQueries(['candidates', jobId], { refetch: true });
+            queryClient.invalidateQueries({ queryKey: ['candidates'] });
         }
         setIsLoading(false);
         clearSelection([])
@@ -347,7 +347,7 @@ function MultiSelectBar({selectedData,jobId,clearSelection}) {
         const response = await action?.apiFunction(selectedCandidates,rating);
         if(response?.message){
             showSuccessToast("Success",response.message)
-            queryClient.invalidateQueries(['candidates', jobId], { refetch: true });
+            queryClient.invalidateQueries({ queryKey: ['candidates'] });
         }
         setIsLoading(false);
         clearSelection([])

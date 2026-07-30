@@ -188,7 +188,38 @@ const getInfoColumns = () => [
   },
 ]
 
-export const getReadOnlyColumns = (role, handleDocumentClick, disableCTC,disableHourly) => {
+const getAssigneeColumn = (handleAssigneeChange, isClosed = false) => ({
+  field: 'assignee',
+  headerName: 'Assignee',
+  sortable: false,
+  width: 100,
+  disableColumnMenu: true,
+  valueGetter: (value, row) => row.stageStatuses?.[row.currentStage]?.assignedTo,
+  renderCell: (params) => {
+    const isDisabled = params?.row?.stageStatuses?.[params?.row?.currentStage]?.status === 'Reviewed' ||
+      params?.row?.stageStatuses?.[params?.row?.currentStage]?.status === 'Rejected' || isClosed;
+    return (
+      <div className='flex items-center justify-center h-full'
+        onClick={(event) => event.stopPropagation()}
+      >
+        <AssigneeSelector
+          mode="icon"
+          disabled={isDisabled}
+          value={params.row.stageStatuses?.[params.row.currentStage]?.assignedTo}
+          onChange={(newAssignee) => handleAssigneeChange(
+            params.row._id,
+            params.row.currentStage,
+            newAssignee,
+            params.row.jobId
+          )}
+          onSelect={() => { }}
+        />
+      </div>
+    )
+  },
+});
+
+export const getReadOnlyColumns = (role, handleDocumentClick, disableCTC, disableHourly, handleAssigneeChange = () => {}) => {
 
   return ([
     ...getCommonColumns(handleDocumentClick),
@@ -206,8 +237,9 @@ export const getReadOnlyColumns = (role, handleDocumentClick, disableCTC,disable
         </div>
       ),
     },
-    ...getCtcColumns(role, disableCTC),
     ...getExpCols(),
+    getAssigneeColumn(handleAssigneeChange),
+    ...getCtcColumns(role, disableCTC, disableHourly),
     {
       field: 'jobTitle',
       headerName: 'Applied For',
@@ -247,37 +279,7 @@ export const getDefaultColumns = (role, canMove, canReject, handleAssigneeChange
     },
   },
   ...getExpCols(),
-  {
-    field: 'assignee',
-    headerName: 'Assignee',
-    sortable: false,
-    width: 100,
-    disableColumnMenu: true,
-    valueGetter: (value, row) => {
-      return row.stageStatuses[row.currentStage]?.assignedTo
-    },
-    renderCell: (params) => {
-      const isDisabled = params?.row?.stageStatuses[params?.row?.currentStage]?.status === 'Reviewed' ||
-        params?.row?.stageStatuses[params?.row?.currentStage]?.status === 'Rejected' || isClosed;
-      return (
-        <div className='flex items-center justify-center h-full'
-          onClick={(event) => event.stopPropagation()}
-        >
-          <AssigneeSelector
-            mode="icon"
-            disabled={isDisabled}
-            value={params.row.stageStatuses[params.row.currentStage]?.assignedTo}
-            onChange={(newAssignee) => handleAssigneeChange(
-              params.row._id,
-              params.row.currentStage,
-              newAssignee
-            )}
-            onSelect={() => { }}
-          />
-        </div>
-      )
-    },
-  },
+  getAssigneeColumn(handleAssigneeChange, isClosed),
   {
     field: 'actions',
     headerName: 'Actions',

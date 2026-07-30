@@ -243,11 +243,15 @@ const Table = ({
 
   const autoAssignMutation = useMutation({
     mutationFn: autoAssignPortfolio,
-    onSuccess: async (data) => {
-      // Invalidate and refetch
-      queryClient.invalidateQueries(['candidates', jobId]);
-      await refetch();
-      // You might want to show a success message to the user here
+    onSuccess: async () => {
+      if (readOnly) {
+        queryClient.invalidateQueries({ queryKey: ['candidates'] });
+      } else {
+        queryClient.invalidateQueries(['candidates', jobId]);
+        if (typeof refetch === 'function') {
+          await refetch();
+        }
+      }
       showSuccessToast("Auto Assign Portfolio Done")
       setIsAutoAssignModalOpen(false);
     },
@@ -260,10 +264,14 @@ const Table = ({
 
   // Update assignee mutation
   const updateAssigneeMutation = useMutation({
-    mutationFn: ({ candidateId, jobId, stage, assigneeId }) =>
-      updateAssignee(candidateId,jobId, stage, assigneeId),
-    onSuccess: () => {
-      queryClient.invalidateQueries(['candidates', jobId]);
+    mutationFn: ({ candidateId, jobId: candidateJobId, stage, assigneeId }) =>
+      updateAssignee(candidateId, candidateJobId, stage, assigneeId),
+    onSuccess: (_, variables) => {
+      if (readOnly) {
+        queryClient.invalidateQueries({ queryKey: ['candidates'] });
+      } else {
+        queryClient.invalidateQueries(['candidates', variables.jobId || jobId]);
+      }
     },
   });
 
@@ -298,17 +306,17 @@ const Table = ({
 
   const handleAutoAssign = async (selectedReviewers) => {
      autoAssignMutation.mutate({
-      jobId,
+      jobId: effectiveJobId || jobId,
       reviewerIds: selectedReviewers.map(reviewer => reviewer._id),
       budgetMin: parseFloat(budgetFilter.from) || 0,
       budgetMax: parseFloat(budgetFilter.to) || Infinity
     })
   };
 
-  const handleAssigneeChange = (candidateId, stage, newAssignee) => {
+  const handleAssigneeChange = (candidateId, stage, newAssignee, rowJobId) => {
     updateAssigneeMutation.mutate({
       candidateId,
-      jobId,
+      jobId: rowJobId || effectiveJobId || jobId,
       stage,
       assigneeId: newAssignee._id
     });
@@ -351,7 +359,7 @@ const Table = ({
       return
     }
     setBudgetFilter(tempBudgetFilter);
-    localStorage.setItem(`budgetFilter_${jobId}`, JSON.stringify(tempBudgetFilter));
+    localStorage.setItem(`budgetFilter_${effectiveJobId || jobId}`, JSON.stringify(tempBudgetFilter));
     setIsBudgetModalOpen(false);
     showSuccessToast("Screened with budget", `Candidates successfully screened within the budget ${tempBudgetFilter.from}${jobData?.employmentType === "Contract" ? " INR/hr" : " LPA"} - ${tempBudgetFilter.to}${jobData?.employmentType === "Contract" ? " INR/hr" : " LPA"}`)
   };
@@ -360,7 +368,7 @@ const Table = ({
     const clearedFilter = { from: '', to: '' };
     setBudgetFilter(clearedFilter);
     setTempBudgetFilter(clearedFilter);
-    localStorage.removeItem(`budgetFilter_${jobId}`);
+    localStorage.removeItem(`budgetFilter_${effectiveJobId || jobId}`);
     showErrorToast("Budget Has Been Cleared")
   };
 
@@ -403,10 +411,18 @@ const Table = ({
   };
 
   //getting column configurations
+  const filteredJobTitles = filters?.['job Title'] || [];
+  const isSingleJobFiltered = readOnly && filteredJobTitles.length === 1;
+  const effectiveJobId = readOnly
+    ? tableData?.find((row) => row.jobTitle === filteredJobTitles[0])?.jobId
+    : jobId;
+  const showAssignTools = !readOnly || Boolean(isSingleJobFiltered && effectiveJobId);
+  const effectiveHasCheckBox = hasCheckBox || showAssignTools;
+
   // Update the columns generation
   const columns = (() => {
     let baseColumns = readOnly ?
-      getReadOnlyColumns(role, handleDocumentClick) :
+      getReadOnlyColumns(role, handleDocumentClick, false, false, handleAssigneeChange) :
       getDefaultColumns(role, canMove, canReject, handleAssigneeChange,
         handleMoveClick, handleRejectClick, handleRatingClick, handleDocumentClick , jobData?.status === "closed",jobData?.employmentType === 'Contract' || jobData?.employmentType === 'Part Time',jobData?.employmentType !== 'Contract' &&  jobData?.employmentType !== 'Part Time');
 
@@ -577,9 +593,22 @@ const Table = ({
             handleBudgetButtonClick={handleBudgetButtonClick}
             setIsAutoAssignModalOpen={setIsAutoAssignModalOpen}
           />)}
+        {showAssignTools && readOnly && (
+          <AutoAssignWithBudget
+            autoAssignMutation={autoAssignMutation}
+            budgetFilter={budgetFilter}
+            handleBudgetButtonClick={handleBudgetButtonClick}
+            setIsAutoAssignModalOpen={setIsAutoAssignModalOpen}
+          />)}
       </div>
 
-      {(!readOnly && selectedRows?.length > 0 && jobData?.status !== "closed" ) && <MultiSelectBar selectedData={selectedRows} clearSelection={() => { setSelectedRows([]); setRowSelectionModel([]) }} jobId={jobId} />}
+      {((!readOnly && selectedRows?.length > 0 && jobData?.status !== "closed") || (showAssignTools && readOnly && selectedRows?.length > 0)) && (
+        <MultiSelectBar
+          selectedData={selectedRows}
+          clearSelection={() => { setSelectedRows([]); setRowSelectionModel([]) }}
+          jobId={effectiveJobId || jobId}
+        />
+      )}
 
       <DataGrid
         sx={{
@@ -610,7 +639,7 @@ const Table = ({
         localeText={{ noRowsLabel: <p className='typography-body '>No Candidates</p> }}
 
         pageSizeOptions={[10, 20, 30, 40, 50]}
-        checkboxSelection={hasCheckBox}
+        checkboxSelection={effectiveHasCheckBox}
         onRowSelectionModelChange={(newSelection) => handleSelectionChange(newSelection)} // Updates on selection change
         rowSelectionModel={rowSelectionModel}
         onRowClick={(params) => handleRowClick(params)}
@@ -628,7 +657,7 @@ const Table = ({
         open={isAutoAssignModalOpen}
         onClose={() => setIsAutoAssignModalOpen(false)}
         onAssign={handleAutoAssign}
-        jobId={jobId}
+        jobId={effectiveJobId || jobId}
         budgetFilter={budgetFilter}
       />
 
