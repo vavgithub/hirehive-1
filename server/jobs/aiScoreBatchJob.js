@@ -2,7 +2,7 @@ import { candidates } from '../models/candidate/candidate.model.js';
 import { jobs } from '../models/admin/jobs.model.js';
 import axios from 'axios';
 
-const MAX_CONCURRENT = 3;
+const MAX_CONCURRENT = 2;
 
 const headers = {
   'Content-Type': 'application/json',
@@ -12,7 +12,7 @@ const headers = {
 const portfolioIntelligenceBase = () =>
   (process.env.PORTFOLIO_INTELLIGENCE_URL || '').trim().replace(/\/$/, '');
 
-const pollForScore = async (candidateId, base, attempts = 10, interval = 30000) => {
+const pollForScore = async (candidateId, base, attempts = 8, interval = 40000) => {
   for (let i = 0; i < attempts; i++) {
     await new Promise((r) => setTimeout(r, interval));
     try {

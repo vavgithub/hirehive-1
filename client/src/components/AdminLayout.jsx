@@ -8,7 +8,7 @@ import { useAuthContext } from '../context/AuthProvider';
 import LightLogo from "../svg/Logo/lightLogo.png"
 import StyledMenu from './MUIUtilities/StyledMenu';
 import IconWrapper from './Cards/IconWrapper';
-import { Briefcase, CalendarDays, ChevronDown, ChevronUp, ClipboardCheck, FileText, IdCard, LayoutGrid, LogOut, MonitorDot, Settings, Star, User, UserCheck, Users } from 'lucide-react';
+import { Briefcase, CalendarDays, ChevronDown, ChevronUp, ClipboardCheck, FileText, IdCard, LayoutGrid, LogOut, MonitorDot, PauseCircle, Settings, Star, User, UserCheck, Users } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import { getRoute, hasRoutePermission, ROLES, ROUTE_KEY } from '../config/permissions.config';
 import Footer from './Footer/Footer';
@@ -263,6 +263,12 @@ const AdminLayout = () => {
                 label: 'Future Gems',
                 icon: () => <IconWrapper inheritColor icon={UserCheck} />,
                 activeIcon: () => <IconWrapper inheritColor icon={UserCheck} />
+            }] : []),
+            ...(hasRoutePermission(user.role, ROUTE_KEY.PARKED) ? [{
+                to: getRoute(user.role, ROUTE_KEY.PARKED),
+                label: 'Parked Candidates',
+                icon: () => <IconWrapper inheritColor icon={PauseCircle} />,
+                activeIcon: () => <IconWrapper inheritColor icon={PauseCircle} />
             }] : [])
         ]
 

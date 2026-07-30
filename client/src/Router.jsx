@@ -31,6 +31,7 @@ import AllJobs from './pages/Candidate/AllJobs.jsx';
 import Profile from './pages/Admin/Profile.jsx';
 import AssessmentResponse from './pages/Admin/AssessmentResponse.jsx';
 import Shortlisted from './pages/Admin/Shortlisted.jsx';
+import Parked from './pages/Admin/Parked.jsx';
 import { OnboardingProvider } from './context/OnboardingProvider.jsx';
 import AdminLayout from './components/AdminLayout.jsx';
 import Teams from './pages/Admin/Teams.jsx';
@@ -287,6 +288,27 @@ export const router = createBrowserRouter([
                 ]
               },
               {
+                path: "parked",
+                children: [
+                  {
+                    path: "",
+                    element: <Parked />
+                  },
+                  {
+                    path: "view/:candidateId/:jobId",
+                    element: <ViewCandidateProfile />
+                  },
+                  {
+                    path: "edit/:id",
+                    element: <EditCandidateProfile />
+                  },
+                  {
+                    path: "assessment/:id/:jobId",
+                    element: <AssessmentResponse />
+                  },
+                ]
+              },
+              {
                 path: "all",
                 children: [
                   {
@@ -445,6 +467,27 @@ export const router = createBrowserRouter([
                     path: "edit/:id",
                     element:
                       <EditCandidateProfile />
+                  },
+                  {
+                    path: "assessment/:id/:jobId",
+                    element: <AssessmentResponse />
+                  },
+                ]
+              },
+              {
+                path: "parked",
+                children: [
+                  {
+                    path: "",
+                    element: <Parked />
+                  },
+                  {
+                    path: "view/:candidateId/:jobId",
+                    element: <ViewCandidateProfile />
+                  },
+                  {
+                    path: "edit/:id",
+                    element: <EditCandidateProfile />
                   },
                   {
                     path: "assessment/:id/:jobId",

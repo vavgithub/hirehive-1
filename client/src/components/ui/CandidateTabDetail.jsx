@@ -46,6 +46,7 @@ const Experience = ({ company, position, startDate, endDate, index }) => (
     
     const { control ,reset, handleSubmit , setError } = useForm({
       defaultValues : {
+        portfolio : "",
         experience : 0,
         noticePeriod : 0 ,
         currentCTC : 0,
@@ -60,6 +61,7 @@ const Experience = ({ company, position, startDate, endDate, index }) => (
     useEffect(() => {
       if (job?.professionalInfo) {
         reset({
+          portfolio: job.professionalInfo.portfolio ?? "",
           experience: job.professionalInfo.experience ?? 0,
           noticePeriod: job.professionalInfo.noticePeriod ?? 0,
           currentCTC: job.professionalInfo.currentCTC ?? 0,
@@ -82,6 +84,10 @@ const Experience = ({ company, position, startDate, endDate, index }) => (
     })
     
     const handleEditDetails = (data) => {
+      if(data?.portfolio?.toString().trim() === ""){
+        setError("portfolio",{type : "required" , message : "Portfolio is required"})
+        return 
+      }
       if(job?.jobType === "Contract" || job?.jobType === "Part Time"){
         if(data?.hourlyRate?.toString().trim() === ""){
           setError("hourlyRate",{type : "required" , message : "Hourly Rate is required"})
@@ -101,6 +107,7 @@ const Experience = ({ company, position, startDate, endDate, index }) => (
       updateProfessionalDetailsMutation.mutate({
         id : candidateId,
         jobId : job?.jobId,
+        portfolio : data?.portfolio,
         expectedCTC  : data?.expectedCTC,
         hourlyRate : data?.hourlyRate,
         currentCTC : data?.currentCTC,
@@ -123,6 +130,25 @@ const Experience = ({ company, position, startDate, endDate, index }) => (
                   </div>}
                 </> : 
                 <>
+                  <Controller
+                  name="portfolio"
+                  control={control}
+                  defaultValue={""}
+                  rules={validationRules.portfolio}
+                  render={({ field, fieldState: { error } }) => (
+                    <InputField
+                      type="text"
+                      id="portfolio"
+                      label="Portfolio"
+                      labelStyles="text-font-gray"
+                      rowWise
+                      value={field.value ?? ""}
+                      onChange={field.onChange}
+                      error={error}
+                      errorMessage={error?.message}
+                    />
+                    )}
+                  />
                   <Controller
                   name="experience"
                   control={control}

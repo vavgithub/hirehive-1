@@ -26,6 +26,34 @@ const cookieOptions = {
   maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
 };
 
+const getOnboardingRedirectStep = (verificationStage, authType) => {
+  if (!verificationStage || verificationStage === 'DONE') return null
+  if (authType === 'GOOGLE') {
+    if (['PASSWORD', 'REGISTER', 'OTP'].includes(verificationStage)) {
+      return 'COMPANY DETAILS'
+    }
+    if (verificationStage === 'ADD MEMBERS') return 'ADD MEMBERS'
+  }
+  const stepAfter = {
+    REGISTER: 'OTP',
+    OTP: 'PASSWORD',
+    PASSWORD: 'COMPANY DETAILS',
+    'ADD MEMBERS': 'ADD MEMBERS',
+  }
+  return stepAfter[verificationStage] ?? null
+}
+
+const buildRegisterRedirectUrl = (verificationStage, authType, base) => {
+  if (verificationStage === 'DONE') {
+    return `${process.env.FRONTEND_URL}/admin/dashboard`
+  }
+  const onboardingStep = getOnboardingRedirectStep(verificationStage, authType)
+  if (onboardingStep) {
+    return `${base}?onboardingStep=${encodeURIComponent(onboardingStep)}`
+  }
+  return `${base}?currentStage=${encodeURIComponent(verificationStage ?? '')}`
+}
+
 export const uploadProfilePicture = async (req, res) => {
     if (!req.file) {
       return res.status(400).json({ message: 'No file uploaded' });
@@ -1374,6 +1402,7 @@ export const redirectForGoogleToken = asyncHandler(async (req,res) => {
                 }
               }else{
                 const [firstName, ...lastName] = userInfo?.name?.split(' ');
+                const parsedLastName = lastName.join(' ').trim() || '.';
                 let profilePictureUrl = ''
                 if(userInfo?.picture){
                   profilePictureUrl = await uploadGoogleImageToS3(
@@ -1391,7 +1420,7 @@ export const redirectForGoogleToken = asyncHandler(async (req,res) => {
 
                 const createUser = await User.create({
                   firstName ,
-                  lastName : lastName.join(' '),
+                  lastName : parsedLastName,
                   email : userInfo.email,
                   verificationStage : 'PASSWORD',
                   role : "Admin",
@@ -1427,7 +1456,10 @@ export const redirectForGoogleToken = asyncHandler(async (req,res) => {
                     await company.save();
                     createUser.company_id = req.session?.invited?.company_id
                     createUser.verificationStage = 'DONE'
-                    await createUser.save(); 
+                    if (!createUser.lastName || createUser.lastName.trim() === '') {
+                      createUser.lastName = '.'
+                    }
+                    await createUser.save();
                   }
                   delete req.session.invited
                 }
@@ -1470,7 +1502,14 @@ export const redirectForGoogleToken = asyncHandler(async (req,res) => {
       
       
       req.session = null
-      return res.redirect(userRoleSession ? `${process.env.FRONTEND_URL}/${routeKey}/settings` : `${process.env.FRONTEND_URL}/admin/register?currentStage=${currentUserStage}`)
+      if (userRoleSession) {
+        return res.redirect(`${process.env.FRONTEND_URL}/${routeKey}/settings`)
+      }
+      if (currentUserStage) {
+        const base = `${process.env.FRONTEND_URL}/admin/register`
+        return res.redirect(buildRegisterRedirectUrl(currentUserStage, currentUserAuthType, base))
+      }
+      return res.redirect(`${process.env.FRONTEND_URL}/admin/login`)
     }else{
       //Requests from unauthorized server
       return res.redirect(`${process.env.FRONTEND_URL}/admin/register?error=Invalid_Creds`)

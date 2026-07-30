@@ -8,7 +8,6 @@ import { candidates as Candidate } from "../../models/candidate/candidate.model.
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
-import nodemailer from "nodemailer";
 import { jobs } from "../../models/admin/jobs.model.js";
 import { jobStagesStatuses } from "../../config/jobStagesStatuses.js";
 import { uploadToCloudinary } from "../../utils/cloudinary.js";
@@ -23,27 +22,6 @@ import { captureError } from "../../utils/errorHandler.js";
 
 // Secret key for JWT (store this in environment variables)
 const JWT_SECRET = process.env.JWT_SECRET;
-
-// // Configure nodemailer transporter
-// const transporter = nodemailer.createTransport({
-//   service: "gmail",
-//   auth: {
-//     user: process.env.OTP_EMAIL,
-//     pass: process.env.OTP_EMAIL_CRED,
-//   },
-// });
-
-// // Helper function to send OTP email
-// const sendOtpEmail = async (email, otp) => {
-//   const mailOptions = {
-//     from: process.env.OTP_EMAIL,
-//     to: email,
-//     subject: "OTP Verification",
-//     text: `Your OTP code is ${otp}`,
-//   };
-
-//   await transporter.sendMail(mailOptions);
-// };
 
 // Generate OTP
 const generateOtp = () => {

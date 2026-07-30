@@ -3,6 +3,7 @@ import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import Filters from '../../components/Filters/Filters';
 import Modal from '../../components/Modals/Modal';
+import MakeActiveJobModal from '../../components/Modals/MakeActiveJobModal';
 import JobCard from '../../components/Cards/JobCard';
 import Tabs from '../../components/ui/Tabs';
 import StatsGrid from '../../components/ui/StatsGrid';
@@ -22,7 +23,7 @@ import Header from '../../components/utility/Header';
 import LoaderModal from '../../components/Loaders/LoaderModal';
 import usePinnedJobs from '../../hooks/usePinnedJobs';
 import { getRoute, ROUTE_KEY } from '../../config/permissions.config';
-import { closeJob, deleteJob, draftJob, fetchJobs, fetchOverallStats, filterSearchJobs, reOpenJob, unArchiveJob } from '../../services/jobs.service';
+import { closeJob, deleteJob, draftJob, fetchJobs, fetchOverallStats, filterSearchJobs, publishJob, reOpenJob, unArchiveJob } from '../../services/jobs.service';
 
 
 const Jobs = () => {
@@ -93,7 +94,8 @@ const Jobs = () => {
         });
 
     const handleAction = (action, jobId) => {
-        const job = jobs.find(j => j._id === jobId);
+        const job = jobs.find(j => j._id === jobId)
+            || filteredSearchData?.filteredSearchJobs?.find(j => j._id === jobId);
         //HANDLING PIN AND UNPIN JOBS
         if(action === ACTION_TYPES.PIN ){
             if(pinnedJobs?.length >= 3){//PIN LIMIT = 3 (as pagination limit is 3)
@@ -154,6 +156,21 @@ const Jobs = () => {
         },
     })
 
+    const publishMutation = useMutation({
+        mutationFn: publishJob,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['jobs'] });
+            queryClient.invalidateQueries({ queryKey: ['jobCount'] });
+            queryClient.invalidateQueries({ queryKey: ['filteredSearchJobs'] });
+            setModalOpen(false);
+            setActiveTab('open');
+            showSuccessToast('Success', `${selectedJob?.jobTitle || 'Job'} is now active`);
+        },
+        onError: (error) => {
+            showErrorToast('Error', error?.response?.data?.message || 'Failed to make job active');
+        },
+    });
+
     const unarchiveMutation = useMutation({
         mutationFn: unArchiveJob,
         onSuccess: () => {
@@ -213,6 +230,9 @@ const Jobs = () => {
                 break;
             case ACTION_TYPES.REOPEN:
                 reOpenMutation.mutate(job._id)
+                break;
+            case ACTION_TYPES.MAKE_ACTIVE:
+                publishMutation.mutate(job._id);
                 break;
             case ACTION_TYPES.EDIT:
                 navigate(`${getRoute(role,ROUTE_KEY.EDIT_JOB)}/${job._id}`);
@@ -443,8 +463,19 @@ const Jobs = () => {
                         }
                     </div>
                 </div>
+                <MakeActiveJobModal
+                    open={modalOpen && modalAction === ACTION_TYPES.MAKE_ACTIVE}
+                    job={selectedJob}
+                    isPublishing={publishMutation.isPending}
+                    onClose={() => setModalOpen(false)}
+                    onEdit={(job) => {
+                        setModalOpen(false);
+                        navigate(`${getRoute(role, ROUTE_KEY.EDIT_JOB)}/${job._id}`);
+                    }}
+                    onMakeActive={(job) => publishMutation.mutate(job._id)}
+                />
                 <Modal
-                    open={modalOpen}
+                    open={modalOpen && modalAction !== ACTION_TYPES.MAKE_ACTIVE}
                     onClose={() => {
                         setModalOpen(false);
                         setCloseReason(''); // Reset close reason when modal is closed

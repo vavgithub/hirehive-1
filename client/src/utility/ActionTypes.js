@@ -4,6 +4,7 @@ export const ACTION_TYPES = {
   DRAFT: 'DRAFT',
   CLOSE: 'CLOSE',
   REOPEN: 'RE OPEN',
+  MAKE_ACTIVE: 'MAKE ACTIVE',
   REJECT: 'REJECT',
   ARCHIVE: 'ARCHIVE',
   BUDGET: 'BUDGET',
@@ -16,7 +17,8 @@ export const ACTION_TYPES = {
   SHARE:'SHARE',
   PIN : 'PIN',
   UNPIN : 'UNPIN',
-  TELEGRAM : 'TELEGRAM'
+  TELEGRAM : 'TELEGRAM',
+  PARK: 'PARK',
 };
 
 
@@ -36,6 +38,8 @@ export const getModalMessage = (action, jobTitle) => {
             return `Are you sure you want to archive the "${jobTitle}" job post?`;
         case ACTION_TYPES.REOPEN:
             return `Are you sure you want to reOpen the "${jobTitle}" job post?`;
+        case ACTION_TYPES.MAKE_ACTIVE:
+            return `Are you sure you want to make "${jobTitle}" active?`;
         default:
             return `Are you sure you want to perform this action on "${jobTitle}"?`;
     }

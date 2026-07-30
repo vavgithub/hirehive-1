@@ -20,6 +20,11 @@ export const fetchjobsById = async (id) => {
     return response.data
 }
 
+export const fetchJobTitles = async () => {
+    const response = await axios.get(`${JOBS_BASE_URL}/job-titles`)
+    return response.data?.jobTitles || []
+}
+
 //POST
 export const filterSearchJobs = (query, filters, page, status) => axios.post(`${JOBS_BASE_URL}/filterSearchJobs`, { filters, page, status, query }).then(res => res.data);
 
@@ -42,6 +47,11 @@ export const draftJob = async (jobId) => {
 
 export const reOpenJob = async (jobId) => {
     const response = await axios.put(`${JOBS_BASE_URL}/reOpen/${jobId}`)
+    return response.data
+}
+
+export const publishJob = async (jobId) => {
+    const response = await axios.put(`${JOBS_BASE_URL}/publishJob/${jobId}`)
     return response.data
 }
 

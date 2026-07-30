@@ -107,6 +107,8 @@ connectDB()
     // Start the scheduled jobs
     startScheduledJobs();
 
+    // AI batch: start after 60s so it does not collide with call-status cron at boot,
+    // then every 3 minutes. Overlap guard still skips if a prior run is in progress.
     let aiScoreBatchRunning = false;
     const runBatchGuarded = async () => {
       if (aiScoreBatchRunning) {
@@ -122,8 +124,12 @@ connectDB()
         aiScoreBatchRunning = false;
       }
     };
-    runBatchGuarded();
-    setInterval(runBatchGuarded, 2 * 60 * 1000);
+    const AI_BATCH_INTERVAL_MS = 3 * 60 * 1000;
+    const AI_BATCH_START_DELAY_MS = 60 * 1000;
+    setTimeout(() => {
+      runBatchGuarded();
+      setInterval(runBatchGuarded, AI_BATCH_INTERVAL_MS);
+    }, AI_BATCH_START_DELAY_MS);
     
     //Seeding Assessment Templates
     // seedTemplates()

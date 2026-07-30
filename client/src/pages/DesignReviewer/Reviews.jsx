@@ -15,12 +15,15 @@ import RoundReview from '../../components/Reviews/RoundReview';
 import StyledCard from '../../components/Cards/StyledCard';
 import Container from '../../components/Cards/Container';
 import IconWrapper from '../../components/Cards/IconWrapper';
-import { Briefcase, ChevronDown, ChevronUp, Folder, FolderOpen, MonitorDot, PenTool, Users } from 'lucide-react';
+import { Briefcase, ChevronDown, ChevronUp, Folder, FolderOpen, MonitorDot, PauseCircle, PenTool, Users } from 'lucide-react';
 import ReviewsFilter from '../../components/Filters/ReviewsFilter'; // Import the new filter
 import { getRoute, ROUTE_KEY } from '../../config/permissions.config';
 import { useAuthContext } from '../../context/AuthProvider';
 import { fetchAssignedCandidates, fetchUnderReviewStats, submitReview } from '../../services/dr.service';
 import { AiCommentsContent, parseAiReasoningSection } from '../../utility/aiReasoningParser.jsx';
+import Modal from '../../components/Modals/Modal';
+import { ACTION_TYPES } from '../../utility/ActionTypes';
+import { parkCandidateStatus } from '../../services/admin.candidate.service';
 
 const getPortfolioAiScore = (candidate) => {
   const jobProfile = candidate?.currentApplication?.jobProfile;
@@ -108,19 +111,39 @@ const Reviews = () => {
     'job Type' : [],
     'job Profile' : [],
   });
+  const [isParkModalOpen, setIsParkModalOpen] = useState(false);
+  const [selectedCandidate, setSelectedCandidate] = useState(null);
 
-  // Fetch candidates
+  // Fetch candidates — avoid focus refetch during review (compounds AI batch DB load)
   const { data: candidates, isLoading, isError, error } = useQuery({
     queryKey: ['assignedCandidates'],
     queryFn: fetchAssignedCandidates,
-    refetchOnWindowFocus: true
+    staleTime: 60 * 1000,
+    refetchOnWindowFocus: false,
   });
 
-  // Fetch stats
+  const parkMutation = useMutation({
+    mutationFn: ({ candidateId, jobId, parkedReason, parkedNote }) =>
+      parkCandidateStatus({ candidateId, jobId, parkedReason, parkedNote }),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['assignedCandidates']);
+      queryClient.invalidateQueries(['underReviewStats']);
+      showSuccessToast("Moved to Parked", "Candidate has been moved to Parked");
+      setIsParkModalOpen(false);
+      setSelectedCandidate(null);
+    },
+    onError: (error) => {
+      console.error("Error parking candidate:", error);
+      showErrorToast("Error", error?.response?.data?.message || "Failed to move candidate to Parked");
+    }
+  });
+
+  // Fetch stats — same contention-aware defaults as assigned candidates
   const { data: statsData, isLoading: isStatsLoading, isError: isStatsError, error: statsError } = useQuery({
     queryKey: ['underReviewStats'],
     queryFn: fetchUnderReviewStats,
-    refetchOnWindowFocus: true
+    staleTime: 60 * 1000,
+    refetchOnWindowFocus: false,
   });
 
   const groupCandidatesByJobAndStage = (candidates) => {
@@ -289,6 +312,22 @@ const Reviews = () => {
     navigate(`${getRoute(user?.role,ROUTE_KEY.REVIEWS_VIEW_CANDIDATE)}/${candidate._id}/${candidate.currentApplication.jobId}`);
   }
 
+  const handleParkClick = (e, candidate) => {
+    e.stopPropagation();
+    setSelectedCandidate(candidate);
+    setIsParkModalOpen(true);
+  };
+
+  const handleParkConfirm = (candidate, parkedReason, parkedNote) => {
+    if (!candidate) return;
+    parkMutation.mutate({
+      candidateId: candidate._id,
+      jobId: candidate.currentApplication.jobId,
+      parkedReason,
+      parkedNote,
+    });
+  };
+
   const groupedEntries = candidates?.length === 0 ? [] : filteredCandidates?.length > 0 ? Object.entries(groupedCandidates) : [];
 
   return (
@@ -336,11 +375,14 @@ const Reviews = () => {
                             <span className="typography-body">
                               {candidate.firstName} {candidate.lastName}
                             </span>
-                            <a href={ensureAbsoluteUrl(candidate.portfolio)} target="_blank" rel="noopener noreferrer">
+                            <a href={ensureAbsoluteUrl(candidate.currentApplication?.professionalInfo?.portfolio || candidate.professionalInfo?.portfolio || candidate.portfolio)} target="_blank" rel="noopener noreferrer">
                               <div onClick={(e) => e.stopPropagation()}>
                                 <IconWrapper hasBg={true} icon={FolderOpen} />
                               </div>
                             </a>
+                            <div onClick={(e) => handleParkClick(e, candidate)}>
+                              <IconWrapper hasBg={true} icon={PauseCircle} />
+                            </div>
                           </div>
 
                           <div className="flex items-center gap-2">
@@ -381,6 +423,19 @@ const Reviews = () => {
           </div>
         }
       </StyledCard>
+
+      <Modal
+        open={isParkModalOpen}
+        onClose={() => {
+          setIsParkModalOpen(false);
+          setSelectedCandidate(null);
+        }}
+        actionType={ACTION_TYPES.PARK}
+        item={selectedCandidate}
+        candidateName={`${selectedCandidate?.firstName || ''} ${selectedCandidate?.lastName || ''}`.trim()}
+        onConfirm={handleParkConfirm}
+        isconfirmButtonDisabled={parkMutation.isPending}
+      />
     </Container>
   );
 };
