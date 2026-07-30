@@ -218,14 +218,15 @@ const updateMailSendAndStatuses = async () => {
 };
 
 const startScheduledJobs = () => {
-  // Run every 30 seconds
-  cron.schedule('*/1 * * * *', () => {
+  // Every 2 minutes on odd minutes (1,3,5,...) so this does not align with
+  // the AI batch interval (every 3 min, started ~60s after boot).
+  cron.schedule('1-59/2 * * * *', () => {
     console.log(`[${new Date().toISOString()}] Running scheduled job to update call statuses`);
     updateCallStatuses();
     updateMailSendAndStatuses()
   });
 
-  console.log('Scheduled jobs started');
+  console.log('Scheduled jobs started (odd minutes, every 2 min)');
 };
 
 export default startScheduledJobs;

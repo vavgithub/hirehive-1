@@ -246,6 +246,7 @@ export const getAssignedCandidates = async (req, res) => {
     const assignedCandidates = await candidates.aggregate([
       // Unwind jobApplications to process each one individually
       { $unwind: "$jobApplications" },
+      { $match: { "jobApplications.parked": { $ne: true } } },
       // Convert stageStatuses map to an array
       {
         $addFields: {
@@ -348,7 +349,7 @@ export const getAssignedCandidates = async (req, res) => {
           phone: { $first: "$phone" },
           profilePictureUrl: { $first: "$profilePictureUrl" },
           jobApplications: { $push: "$jobApplications" },
-          portfolio: { $first: "$portfolio" }, // Adding portfolio here
+          portfolio: { $first: { $ifNull: ["$jobApplications.professionalInfo.portfolio", "$portfolio"] } }, // Prefer application snapshot, fall back to profile
         },
       },
       //Sorted with Firstname

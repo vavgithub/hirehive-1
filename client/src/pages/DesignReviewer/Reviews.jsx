@@ -15,11 +15,74 @@ import RoundReview from '../../components/Reviews/RoundReview';
 import StyledCard from '../../components/Cards/StyledCard';
 import Container from '../../components/Cards/Container';
 import IconWrapper from '../../components/Cards/IconWrapper';
-import { Briefcase, Folder, FolderOpen, MonitorDot, PenTool, Users } from 'lucide-react';
+import { Briefcase, ChevronDown, ChevronUp, Folder, FolderOpen, MonitorDot, PauseCircle, PenTool, Users } from 'lucide-react';
 import ReviewsFilter from '../../components/Filters/ReviewsFilter'; // Import the new filter
 import { getRoute, ROUTE_KEY } from '../../config/permissions.config';
 import { useAuthContext } from '../../context/AuthProvider';
 import { fetchAssignedCandidates, fetchUnderReviewStats, submitReview } from '../../services/dr.service';
+import { AiCommentsContent, parseAiReasoningSection } from '../../utility/aiReasoningParser.jsx';
+import Modal from '../../components/Modals/Modal';
+import { ACTION_TYPES } from '../../utility/ActionTypes';
+import { parkCandidateStatus } from '../../services/admin.candidate.service';
+
+const getPortfolioAiScore = (candidate) => {
+  const jobProfile = candidate?.currentApplication?.jobProfile;
+  const aiScore = candidate?.currentApplication?.stageStatuses?.Portfolio?.aiScore;
+  const aiTriggerStatus = candidate?.currentApplication?.aiTriggerStatus;
+  if (jobProfile !== 'Brand Designer' || typeof aiScore !== 'number') return null;
+  if (
+    aiTriggerStatus === 'awaiting_discovery' ||
+    aiTriggerStatus === 'permanently_failed'
+  ) {
+    return null;
+  }
+  return aiScore;
+};
+
+/** Truncated first Strength + Show more → full Strengths/Gaps (TaskDetails / GlobalStaging pattern). */
+const PortfolioAiCommentsStrip = ({ aiReasoning }) => {
+  const [showMore, setShowMore] = useState(false);
+  const strengthsContent = parseAiReasoningSection(aiReasoning ?? '', 'Strengths:');
+  const strengthPoints = strengthsContent.split(';').filter((s) => s.trim());
+  const firstStrength = strengthPoints[0]?.trim() ?? '';
+  const gapsContent = parseAiReasoningSection(aiReasoning ?? '', 'Gaps:');
+  const hasExpandable = strengthPoints.length > 1 || !!gapsContent;
+
+  if (!firstStrength && !gapsContent) return null;
+
+  return (
+    <div className="px-4 pb-3">
+      {showMore ? (
+        <AiCommentsContent aiReasoning={aiReasoning} showTitle={false} />
+      ) : (
+        firstStrength && (
+          <p className="typography-small-p text-font-main overflow-hidden whitespace-nowrap text-ellipsis">
+            {firstStrength}
+          </p>
+        )
+      )}
+      {hasExpandable && (
+        <p
+          onClick={(e) => {
+            e.stopPropagation();
+            setShowMore(!showMore);
+          }}
+          className="self-end cursor-pointer typography-small-p text-font-gray text-start flex gap-1 items-center mt-1"
+        >
+          {showMore ? (
+            <>
+              <ChevronUp size={16} /> Hide
+            </>
+          ) : (
+            <>
+              <ChevronDown size={16} /> Show more
+            </>
+          )}
+        </p>
+      )}
+    </div>
+  );
+};
 
 const statsOne = [
   { title: 'Total', value: 0, icon: () => <IconWrapper size={10} isTeritiaryIcon icon={Users} /> },
@@ -48,19 +111,39 @@ const Reviews = () => {
     'job Type' : [],
     'job Profile' : [],
   });
+  const [isParkModalOpen, setIsParkModalOpen] = useState(false);
+  const [selectedCandidate, setSelectedCandidate] = useState(null);
 
-  // Fetch candidates
+  // Fetch candidates — avoid focus refetch during review (compounds AI batch DB load)
   const { data: candidates, isLoading, isError, error } = useQuery({
     queryKey: ['assignedCandidates'],
     queryFn: fetchAssignedCandidates,
-    refetchOnWindowFocus: true
+    staleTime: 60 * 1000,
+    refetchOnWindowFocus: false,
   });
 
-  // Fetch stats
+  const parkMutation = useMutation({
+    mutationFn: ({ candidateId, jobId, parkedReason, parkedNote }) =>
+      parkCandidateStatus({ candidateId, jobId, parkedReason, parkedNote }),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['assignedCandidates']);
+      queryClient.invalidateQueries(['underReviewStats']);
+      showSuccessToast("Moved to Parked", "Candidate has been moved to Parked");
+      setIsParkModalOpen(false);
+      setSelectedCandidate(null);
+    },
+    onError: (error) => {
+      console.error("Error parking candidate:", error);
+      showErrorToast("Error", error?.response?.data?.message || "Failed to move candidate to Parked");
+    }
+  });
+
+  // Fetch stats — same contention-aware defaults as assigned candidates
   const { data: statsData, isLoading: isStatsLoading, isError: isStatsError, error: statsError } = useQuery({
     queryKey: ['underReviewStats'],
     queryFn: fetchUnderReviewStats,
-    refetchOnWindowFocus: true
+    staleTime: 60 * 1000,
+    refetchOnWindowFocus: false,
   });
 
   const groupCandidatesByJobAndStage = (candidates) => {
@@ -229,6 +312,22 @@ const Reviews = () => {
     navigate(`${getRoute(user?.role,ROUTE_KEY.REVIEWS_VIEW_CANDIDATE)}/${candidate._id}/${candidate.currentApplication.jobId}`);
   }
 
+  const handleParkClick = (e, candidate) => {
+    e.stopPropagation();
+    setSelectedCandidate(candidate);
+    setIsParkModalOpen(true);
+  };
+
+  const handleParkConfirm = (candidate, parkedReason, parkedNote) => {
+    if (!candidate) return;
+    parkMutation.mutate({
+      candidateId: candidate._id,
+      jobId: candidate.currentApplication.jobId,
+      parkedReason,
+      parkedNote,
+    });
+  };
+
   const groupedEntries = candidates?.length === 0 ? [] : filteredCandidates?.length > 0 ? Object.entries(groupedCandidates) : [];
 
   return (
@@ -263,7 +362,12 @@ const Reviews = () => {
                 return (
                   <div key={stage} >
                     <h3 className="mb-4">{stage}</h3>
-                    {stages[stage].map(candidate => (
+                    {stages[stage].map(candidate => {
+                      const portfolioAiScore = getPortfolioAiScore(candidate);
+                      const portfolioAiReasoning =
+                        candidate.currentApplication?.stageStatuses?.Portfolio?.aiReasoning;
+
+                      return (
                       <div key={`${candidate._id}-${candidate.currentApplication.jobId}`} className="mb-4 flex flex-col bg-background-100 rounded-xl">
                         <div className='flex items-center p-4 justify-between cursor-pointer' onClick={() => handleNavigate(candidate)}>
                           <div className='flex items-center gap-4 p-4'>
@@ -271,20 +375,37 @@ const Reviews = () => {
                             <span className="typography-body">
                               {candidate.firstName} {candidate.lastName}
                             </span>
-                            <a href={ensureAbsoluteUrl(candidate.portfolio)} target="_blank" rel="noopener noreferrer">
+                            <a href={ensureAbsoluteUrl(candidate.currentApplication?.professionalInfo?.portfolio || candidate.professionalInfo?.portfolio || candidate.portfolio)} target="_blank" rel="noopener noreferrer">
                               <div onClick={(e) => e.stopPropagation()}>
                                 <IconWrapper hasBg={true} icon={FolderOpen} />
                               </div>
                             </a>
+                            <div onClick={(e) => handleParkClick(e, candidate)}>
+                              <IconWrapper hasBg={true} icon={PauseCircle} />
+                            </div>
                           </div>
 
-                          <div className="bg-background-80 p-2 px-4 typography-body rounded-xl">
-                            {candidate.currentApplication.jobProfile}
+                          <div className="flex items-center gap-2">
+                            {portfolioAiScore != null && (
+                              <div
+                                className="bg-background-80 p-2 px-4 typography-body rounded-xl"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                AI {portfolioAiScore}
+                              </div>
+                            )}
+                            <div className="bg-background-80 p-2 px-4 typography-body rounded-xl">
+                              {candidate.currentApplication.jobProfile}
+                            </div>
                           </div>
                         </div>
+                        {portfolioAiScore != null && (
+                          <PortfolioAiCommentsStrip aiReasoning={portfolioAiReasoning} />
+                        )}
                         {renderReviewComponent(candidate, candidate.currentApplication.jobProfile)}
                       </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 );
               }
@@ -302,6 +423,19 @@ const Reviews = () => {
           </div>
         }
       </StyledCard>
+
+      <Modal
+        open={isParkModalOpen}
+        onClose={() => {
+          setIsParkModalOpen(false);
+          setSelectedCandidate(null);
+        }}
+        actionType={ACTION_TYPES.PARK}
+        item={selectedCandidate}
+        candidateName={`${selectedCandidate?.firstName || ''} ${selectedCandidate?.lastName || ''}`.trim()}
+        onConfirm={handleParkConfirm}
+        isconfirmButtonDisabled={parkMutation.isPending}
+      />
     </Container>
   );
 };

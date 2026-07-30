@@ -8,7 +8,6 @@ import { candidates as Candidate } from "../../models/candidate/candidate.model.
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
-import nodemailer from "nodemailer";
 import { jobs } from "../../models/admin/jobs.model.js";
 import { jobStagesStatuses } from "../../config/jobStagesStatuses.js";
 import { uploadToCloudinary } from "../../utils/cloudinary.js";
@@ -24,27 +23,6 @@ import { captureError } from "../../utils/errorHandler.js";
 // Secret key for JWT (store this in environment variables)
 const JWT_SECRET = process.env.JWT_SECRET;
 
-// // Configure nodemailer transporter
-// const transporter = nodemailer.createTransport({
-//   service: "gmail",
-//   auth: {
-//     user: process.env.OTP_EMAIL,
-//     pass: process.env.OTP_EMAIL_CRED,
-//   },
-// });
-
-// // Helper function to send OTP email
-// const sendOtpEmail = async (email, otp) => {
-//   const mailOptions = {
-//     from: process.env.OTP_EMAIL,
-//     to: email,
-//     subject: "OTP Verification",
-//     text: `Your OTP code is ${otp}`,
-//   };
-
-//   await transporter.sendMail(mailOptions);
-// };
-
 // Generate OTP
 const generateOtp = () => {
   return Math.floor(100000 + Math.random() * 900000).toString();
@@ -53,6 +31,23 @@ const generateOtp = () => {
 // Get job stages helper
 const getJobStages = (jobProfile) => {
   return jobStagesStatuses[jobProfile] || [];
+};
+
+/** Candidate-facing: only stage status label — strip AI/reviewer-internal fields. */
+const toPublicStageStatuses = (stageStatuses) => {
+  if (!stageStatuses) return {};
+  let entries;
+  if (stageStatuses instanceof Map) {
+    entries = Array.from(stageStatuses.entries());
+  } else if (Array.isArray(stageStatuses)) {
+    // Array.from(Map) / [[stage, data], ...]
+    entries = stageStatuses;
+  } else {
+    entries = Object.entries(stageStatuses);
+  }
+  return Object.fromEntries(
+    entries.map(([stage, data]) => [stage, { status: data?.status ?? null }])
+  );
 };
 
 // auth.controller.js
@@ -765,7 +760,7 @@ export const getCandidateDashboard = async (req, res) => {
         jobStatus: isValid?.status || 'deleted',
         applicationDate: app.applicationDate,
         currentStage: app.currentStage,
-        stageStatuses: Array.from(app.stageStatuses),
+        stageStatuses: toPublicStageStatuses(app.stageStatuses),
         resumeUrl : app.resumeUrl
       })
     });
@@ -806,6 +801,74 @@ export const getCandidateDashboard = async (req, res) => {
     captureError(error, { controller: "auth.controller.js", action: "getCandidateDashboard", role: "candidate" });
 
     console.error("Error fetching candidate dashboard:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+/** Candidate self-view: own application for a job — status-only stageStatuses, no AI/reviewer fields. */
+export const getCandidateApplicationByJobId = async (req, res) => {
+  try {
+    const { jobId } = req.params;
+    const candidate = req.candidate;
+
+    const jobApplication = candidate.jobApplications?.find(
+      (app) => app.jobId?.toString() === jobId
+    );
+    if (!jobApplication) {
+      return res.status(404).json({ message: "Job application not found" });
+    }
+
+    const job = await jobs.findById(jobId).catch(() => null);
+    const professionalInfo = jobApplication.professionalInfo || {
+      website: candidate.website,
+      portfolio: candidate.portfolio,
+      noticePeriod: candidate.noticePeriod,
+      currentCTC: candidate.currentCTC,
+      expectedCTC: candidate.expectedCTC,
+      hourlyRate: candidate.hourlyRate,
+      experience: candidate.experience,
+      skills: candidate.skills,
+    };
+
+    return res.status(200).json({
+      _id: candidate._id,
+      firstName: candidate.firstName,
+      lastName: candidate.lastName,
+      email: candidate.email,
+      phone: candidate.phone,
+      dob: candidate.dob,
+      profilePictureUrl: candidate.profilePictureUrl,
+      hasGivenAssessment: candidate.hasGivenAssessment,
+      website: professionalInfo.website,
+      portfolio: professionalInfo.portfolio,
+      noticePeriod: professionalInfo.noticePeriod,
+      currentCTC: professionalInfo.currentCTC,
+      expectedCTC: professionalInfo.expectedCTC,
+      hourlyRate: professionalInfo.hourlyRate,
+      experience: professionalInfo.experience,
+      skills: professionalInfo.skills,
+      location: candidate.location,
+      resumeUrl: jobApplication.resumeUrl || candidate.resumeUrl,
+      jobApplication: {
+        jobId: jobApplication.jobId,
+        jobApplied: jobApplication.jobApplied,
+        jobProfile: jobApplication.jobProfile || "UI UX",
+        jobStatus: job ? job.status : "deleted",
+        jobType: job ? job.employmentType : "NA",
+        applicationDate: jobApplication.applicationDate,
+        companyDetails: jobApplication.companyDetails,
+        currentStage: jobApplication.currentStage,
+        stageStatuses: toPublicStageStatuses(jobApplication.stageStatuses),
+        professionalInfo,
+      },
+    });
+  } catch (error) {
+    captureError(error, {
+      controller: "auth.controller.js",
+      action: "getCandidateApplicationByJobId",
+      role: "candidate",
+    });
+    console.error("Error fetching candidate application:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
@@ -1127,8 +1190,12 @@ export const getCandidateAppliedJobs = async (req, res) => {
         companyDetails : app.companyDetails
       }
       return ({
-        ...app,
-        jobId : jobIdObj
+        applicationDate: app.applicationDate,
+        currentStage: app.currentStage,
+        stageStatuses: toPublicStageStatuses(app.stageStatuses),
+        jobApplied: app.jobApplied,
+        companyDetails: app.companyDetails,
+        jobId: jobIdObj,
       })
     });
 

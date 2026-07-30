@@ -38,6 +38,7 @@ import { moveCandidate, rejectCandidate, rescheduleCall, scheduleCall, submitBud
 import { submitReview, updateAssignee, updateMultipleAssignee } from '../../services/dr.service.js';
 import CustomToolTip from '../Tooltip/CustomToolTip.jsx';
 import { useScoreBg } from '../../context/ThemeContext.jsx';
+import { AiCommentsContent } from '../../utility/aiReasoningParser.jsx';
 
 function normalizeReviewerId(reviewer) {
     if (reviewer == null) return null;
@@ -68,45 +69,6 @@ function mergeReviewerEntry(prev, next) {
         feedback,
     };
 }
-
-const AI_COMMENT_HEADINGS = ['Role-fit summary:', 'Strengths:', 'Gaps:', 'To reach next level:'];
-
-function parseAiReasoningSection(text, heading) {
-    if (!text) return '';
-    const escapeRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const match =
-        heading === 'To reach next level:'
-            ? text.match(new RegExp(`${escapeRe(heading)}([\\s\\S]*)$`))
-            : text.match(
-                  new RegExp(
-                      `${escapeRe(heading)}([\\s\\S]*?)(?=Strengths:|Gaps:|To reach next level:|Based on|$)`
-                  )
-              );
-    let content = match?.[1]?.trim() ?? '';
-    if (heading === 'To reach next level:') {
-        content = content.replace(/\(Based on[^)]*\)/g, '').trim();
-    }
-    return content;
-}
-
-const AiCommentsContent = ({ aiReasoning, showTitle = true }) => (
-    <div>
-        {showTitle && <p className="typography-small-p text-font-gray mb-2">AI Comments</p>}
-        {AI_COMMENT_HEADINGS.map((heading) => {
-            const content = parseAiReasoningSection(aiReasoning ?? '', heading);
-            return content ? (
-                <div key={heading} className="mb-2">
-                    <p className="typography-small-p text-font-gray">{heading}</p>
-                    {content.split(';').filter((s) => s.trim()).map((point, i) => (
-                        <p key={i} className="typography-small-p text-font-main">
-                            • {point.trim()}
-                        </p>
-                    ))}
-                </div>
-            ) : null;
-        })}
-    </div>
-);
 
 const PORTFOLIO_SCORE_CARD_SIZE = 'w-28 md:w-32 lg:w-36 h-[7.5rem]';
 
@@ -150,16 +112,19 @@ const PortfolioEvaluationRow = ({ icon, title, children, scoreLabel, score }) =>
     </StyledCard>
 );
 
-const PortfolioDualEvaluation = ({ portfolioStatus, reviewerFeedback, reviewerScore }) => (
+const PortfolioDualEvaluation = ({ portfolioStatus, reviewerFeedback, reviewerScore, aiTriggerStatus }) => (
     <div className="mt-4 flex flex-col gap-4">
-        <PortfolioEvaluationRow
-            icon={Sparkles}
-            title="AI Evaluation"
-            scoreLabel="AI Score"
-            score={portfolioStatus?.aiScore}
-        >
-            <AiCommentsContent aiReasoning={portfolioStatus?.aiReasoning} showTitle={false} />
-        </PortfolioEvaluationRow>
+        {aiTriggerStatus !== 'awaiting_discovery' &&
+         aiTriggerStatus !== 'permanently_failed' && (
+            <PortfolioEvaluationRow
+                icon={Sparkles}
+                title="AI Evaluation"
+                scoreLabel="AI Score"
+                score={portfolioStatus?.aiScore}
+            >
+                <AiCommentsContent aiReasoning={portfolioStatus?.aiReasoning} showTitle={false} />
+            </PortfolioEvaluationRow>
+        )}
 
         <PortfolioEvaluationRow
             icon={UserPen}
@@ -212,6 +177,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
     const { data: designReviewers } = useQuery({
       queryKey: ['getAllDesignReviewers'],
       queryFn: () => fetchAllDesignReviewers(),
+      enabled: role !== 'Candidate',
     });
 
     const getReviewerName = (id) => {
@@ -860,16 +826,17 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
             setIsLoading={setIsLoading}
             />
         }
-        {showPortfolioDualEvaluation && (
+        {role !== 'Candidate' && showPortfolioDualEvaluation && (
             <PortfolioDualEvaluation
                 portfolioStatus={stageStatuses?.Portfolio}
                 reviewerFeedback={
                     currentStatus === 'Rejected' ? stageData?.rejectionReason : stageData?.feedback
                 }
                 reviewerScore={stageData?.score}
+                aiTriggerStatus={candidateData?.jobApplication?.aiTriggerStatus}
             />
         )}
-        {showReviewerEvaluationOnly && (
+        {role !== 'Candidate' && showReviewerEvaluationOnly && (
             <div className="mt-4">
                 <PortfolioEvaluationRow
                     icon={UserPen}
@@ -886,11 +853,44 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
                 </PortfolioEvaluationRow>
             </div>
         )}
-        {selectedStage === 'Portfolio' && !showPortfolioDualEvaluation && (() => {
+        {role !== 'Candidate' && selectedStage === 'Portfolio' && !showPortfolioDualEvaluation && (() => {
             const isBrand = candidateData?.jobApplication?.jobApplied?.toLowerCase().includes('brand');
             const portfolioStatus = stageStatuses?.Portfolio;
-            if (!isBrand || !portfolioStatus?.aiReasoning) return null;
-            return (
+            const aiTriggerStatus = candidateData?.jobApplication?.aiTriggerStatus;
+            if (!isBrand) return null;
+
+            // 1) Paintbrush statuses — access failure / never scored; omit AI card
+            if (
+              aiTriggerStatus === 'awaiting_discovery' ||
+              aiTriggerStatus === 'permanently_failed'
+            ) {
+              return null;
+            }
+
+            // 2) failed/skipped — unavailable message
+            if (portfolioStatus?.aiStatus === 'failed' || portfolioStatus?.aiStatus === 'skipped') {
+              return (
+                <div className="mt-4">
+                  <PortfolioEvaluationRow
+                    icon={Sparkles}
+                    title="AI Evaluation"
+                    scoreLabel="AI Score"
+                    score={null}
+                  >
+                    <p className="typography-body text-font-main">AI review unavailable</p>
+                    {portfolioStatus?.aiFailureReason && (
+                      <p className="typography-small-p text-font-gray mt-1">
+                        {portfolioStatus.aiFailureReason}
+                      </p>
+                    )}
+                  </PortfolioEvaluationRow>
+                </div>
+              );
+            }
+
+            // 3) done + reasoning — normal confident card
+            if (portfolioStatus?.aiReasoning && aiTriggerStatus === 'done') {
+              return (
                 <div className="mt-4">
                     <PortfolioEvaluationRow
                         icon={Sparkles}
@@ -901,7 +901,10 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
                         <AiCommentsContent aiReasoning={portfolioStatus?.aiReasoning} showTitle={false} />
                     </PortfolioEvaluationRow>
                 </div>
-            );
+              );
+            }
+
+            return null;
         })()}
         {
             (stageBasedConfig?.hasScheduledLabel && stageData?.scheduledDate && stageTitle === "Design Task" && currentStatus === "Pending") &&

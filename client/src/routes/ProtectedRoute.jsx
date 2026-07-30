@@ -1,12 +1,11 @@
 // src/components/ProtectedRoute.js
 import React from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
-import useAuth from '../hooks/useAuth';
 import { useAuthContext } from '../context/AuthProvider';
 import Loader from '../components/Loaders/Loader';
 
 const ProtectedRoute = ({ allowedRoles, children }) => {
-  const { user, isLoading, error , isDone} = useAuthContext();
+  const { user, isLoading, isDone } = useAuthContext();
 
 
   if (isLoading || !isDone) {
@@ -17,7 +16,9 @@ const ProtectedRoute = ({ allowedRoles, children }) => {
     );
   }
 
-  if (error || (!user && !isLoading && isDone)) {
+  // Only treat missing user as logged out. Transient /auth/profile errors
+  // (503, network) must not redirect — AuthProvider keeps the last known user.
+  if (!user && !isLoading && isDone) {
     return <Navigate to="/admin/login" replace />;
   }
 

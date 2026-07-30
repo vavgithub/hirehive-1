@@ -14,10 +14,12 @@ import {
   submitDesignTask,    
   updateStatusAndStage 
 } from '../../controllers/candidate/candidate.controller.js';
-import { protect, protectCandidate } from '../../middlewares/authMiddleware.js';
+import { protect, protectCandidate, roleProtect } from '../../middlewares/authMiddleware.js';
 import { incrementApplyClickCount } from '../../controllers/admin/jobs.controller.js';
 
 const router = express.Router();
+
+const staffRoles = ['Admin', 'Hiring Manager', 'Design Reviewer'];
 
 // === Specific Routes ===
 
@@ -39,9 +41,9 @@ router.post('/disconnect-telegram', protectCandidate, disconnectTelegram);
 
 // === Parameterized Routes ===
 
-// Routes that contain dynamic parameters
-router.get('/:jobId/candidates', getCandidate);
+// Routes that contain dynamic parameters — staff only (full candidate docs)
+router.get('/:jobId/candidates', protect, roleProtect(staffRoles), getCandidate);
 router.get('/:jobId/stats', jobSpecificStats);
-router.get('/:id', getCandidateById);
+router.get('/:id', protect, roleProtect(staffRoles), getCandidateById);
 
 export default router;

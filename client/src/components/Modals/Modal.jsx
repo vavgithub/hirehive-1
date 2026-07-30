@@ -12,6 +12,7 @@ import { ACTION_TYPES } from '../../utility/ActionTypes';
 import GlobalDropDown from '../Dropdowns/GlobalDropDown';
 import { combineDateWithTime, convertLocalToUTC } from '../../utility/timezoneConverter';
 import { useAssessmentPopupBg } from '../../context/ThemeContext';
+import { InputField } from '../Form/FormFields';
 
 // const ACTION_TYPES = {
 //   DELETE: 'DELETE',
@@ -98,6 +99,12 @@ const ACTION_PROPERTIES = {
     cancelLabel: 'Cancel',
     message: 'Connect with us on Telegram and get notified about your job applications and updates.',
   },
+  [ACTION_TYPES.PARK]: {
+    title: 'Move to Parked',
+    confirmLabel: 'Move to Parked',
+    confirmVariant: 'cancel',
+    requiresReason: true,
+  },
 };
 
 const CLOSE_REASONS = [
@@ -156,6 +163,25 @@ export const REJECTION_REASONS = [
   },
 ];
 
+export const PARK_REASONS = [
+  {
+    label: "Invalid/broken portfolio URL",
+    value: "Invalid/broken portfolio URL",
+  },
+  {
+    label: "Already shortlisted by another reviewer",
+    value: "Already shortlisted by another reviewer",
+  },
+  {
+    label: "Not reviewed, ran out of time",
+    value: "Not reviewed, ran out of time",
+  },
+  {
+    label: "Other",
+    value: "Other",
+  },
+];
+
 
 const RedWarning = () => {
   return (
@@ -194,6 +220,8 @@ const Modal = ({
 }) => {
   const [rejectionReason, setRejectionReason] = useState('');
   const [showEmailPreview, setShowEmailPreview] = useState(false);
+  const [parkedReason, setParkedReason] = useState('');
+  const [parkedNote, setParkedNote] = useState('');
 
   const action = ACTION_PROPERTIES[actionType] || {};
 
@@ -215,6 +243,11 @@ const Modal = ({
       setShowEmailPreview(true);
     } else if (actionType === ACTION_TYPES.CLOSE) {
       onCloseReasonChange(reason);
+    } else if (actionType === ACTION_TYPES.PARK) {
+      setParkedReason(reason);
+      if (reason !== 'Other') {
+        setParkedNote('');
+      }
     }
   };
   const handleConfirm = ( scheduledDate, scheduledTime ) => {
@@ -230,6 +263,16 @@ const Modal = ({
         }else{
           onConfirm(item, rejectionReason);
         }
+    } else if (actionType === ACTION_TYPES.PARK) {
+        if (!parkedReason) {
+            alert('Please select a reason for parking the candidate.');
+            return;
+        }
+        if (parkedReason === 'Other' && !parkedNote.trim()) {
+            alert('Please provide a note for the Other reason.');
+            return;
+        }
+        onConfirm(item, parkedReason, parkedReason === 'Other' ? parkedNote.trim() : null);
     } else if (actionType === ACTION_TYPES.CLOSE) {
         if (!closeReason) {
             alert('Please select a reason for closing the job.');
@@ -253,6 +296,8 @@ const Modal = ({
   if (!open) {
     setRejectionReason('');
     setShowEmailPreview(false);
+    setParkedReason('');
+    setParkedNote('');
   }
 }, [open]);
 
@@ -366,20 +411,40 @@ const AssessmentPopup = useAssessmentPopupBg()
               onChange={handleReasonSelect}
               options={CLOSE_REASONS}
               />
-            {/* <select
-              id="closeReason"
-              value={closeReason}
-              onChange={(e) => handleReasonSelect(e.target.value)}
-              className="mt-1 block w-full pl-3 pr-10 py-2 text-base bg-background-100 border-gray-300 focus:outline-none focus:ring-teal-400 focus:border-indigo-500 sm:text-sm rounded-md"
-            >
-              <option value="">Select reason</option>
-              {CLOSE_REASONS.map((reason) => (
-                <option key={reason.value} value={reason.value}>
-                  {reason.label}
-                </option>
-              ))}
-            </select> */}
           </div>
+        </>
+      );
+    }
+
+    if (actionType === ACTION_TYPES.PARK) {
+      return (
+        <>
+          <h1>{title}</h1>
+          <p className="text-font-gray typography-body mb-4">
+            {customMessage || `Are you sure you want to move "${candidateName}" to Parked?`}
+          </p>
+          <div className="mt-4">
+            <GlobalDropDown
+              label={'Please provide the reason for parking this candidate'}
+              extraStylesForLabel="font-bricolage font-semibold"
+              options={PARK_REASONS}
+              value={parkedReason}
+              onChange={handleReasonSelect}
+            />
+          </div>
+          {parkedReason === 'Other' && (
+            <div className="mt-4">
+              <InputField
+                id="parkedNote"
+                type="text"
+                label="Custom note"
+                required
+                placeholder="Enter a note"
+                value={parkedNote}
+                onChange={(e) => setParkedNote(e.target.value)}
+              />
+            </div>
+          )}
         </>
       );
     }
@@ -424,7 +489,8 @@ const AssessmentPopup = useAssessmentPopupBg()
                 onClick={handleConfirm}
                 disabled={
                   isconfirmButtonDisabled || (actionType === ACTION_TYPES.REJECT && !rejectionReason) ||
-                  (actionType === ACTION_TYPES.CLOSE && !closeReason)
+                  (actionType === ACTION_TYPES.CLOSE && !closeReason) ||
+                  (actionType === ACTION_TYPES.PARK && (!parkedReason || (parkedReason === 'Other' && !parkedNote.trim())))
                 }
               >
                 {confirmLabel}

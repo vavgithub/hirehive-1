@@ -17,7 +17,8 @@ export const ACTION_TYPES = {
   SHARE:'SHARE',
   PIN : 'PIN',
   UNPIN : 'UNPIN',
-  TELEGRAM : 'TELEGRAM'
+  TELEGRAM : 'TELEGRAM',
+  PARK: 'PARK',
 };
 
 
