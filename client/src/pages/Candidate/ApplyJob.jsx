@@ -196,16 +196,27 @@ const ApplyJob = () => {
     }
   };
 
+  const navigateAfterApply = () => {
+    if (jobDetails?.voiceScreeningEnabled) {
+      navigate(`/candidate/voice-interview/${jobId}`);
+    } else {
+      navigate('/candidate/my-jobs');
+    }
+  };
+
   const onSubmit = async (data) => {
     setIsSubmitting(true);
     try {
-      const questionResponses = Object.keys(data)
-        .filter((key) => key.startsWith('question-'))
-        .map((key) => ({
-          questionId: key.replace('question-', ''),
-          answer: data[key],
-        }))
-        .filter(res => res.answer !== "");//Removing empty responses
+      // Voice-enabled jobs collect answers only in the voice interview — never here.
+      const questionResponses = jobDetails?.voiceScreeningEnabled
+        ? []
+        : Object.keys(data)
+            .filter((key) => key.startsWith('question-'))
+            .map((key) => ({
+              questionId: key.replace('question-', ''),
+              answer: data[key],
+            }))
+            .filter(res => res.answer !== "");//Removing empty responses
 
       let profilePictureUrl;
       if (profilePictureFile) {
@@ -239,7 +250,7 @@ const ApplyJob = () => {
         await applyToJob(applicationData);
         await dispatch(fetchCandidateAuthData()).unwrap();
         showSuccessToast('Success', 'Successfully applied to the job');
-        navigate('/candidate/my-jobs');
+        navigateAfterApply();
       } else {
         const registrationData = {
           jobId,
@@ -388,7 +399,8 @@ const ApplyJob = () => {
       await createPassword(email, password);
       await dispatch(fetchCandidateAuthData()).unwrap();
       showSuccessToast('Success', 'Account created successfully!');
-      navigate('/candidate/my-jobs');
+      // New users only have a JWT after createPassword — voice interview needs protectCandidate.
+      navigateAfterApply();
     } catch (error) {
       Sentry.captureException(error, {
         tags: { file: "ApplyJob.jsx", action: "createPassword", role: "candidate" },
@@ -533,7 +545,7 @@ const ApplyJob = () => {
               </div>
 
               <div className="mt-12">
-                {jobDetails?.questions.length !== 0 && (
+                {!jobDetails?.voiceScreeningEnabled && jobDetails?.questions?.length !== 0 && (
                   <AdditionalQuestions jobDetails={jobDetails} control={control} errors={errors} />
                 )}
               </div>

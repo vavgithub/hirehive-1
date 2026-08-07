@@ -105,6 +105,10 @@ const getMimeType = (filePath) => {
   if (ext === '.gif') return 'image/gif';
   if (ext === '.pdf') return 'application/pdf';
   if (ext === '.mp4') return 'video/mp4';
+  if (ext === '.webm') return 'audio/webm';
+  if (ext === '.mp3') return 'audio/mpeg';
+  if (ext === '.wav') return 'audio/wav';
+  if (ext === '.ogg') return 'audio/ogg';
   return 'application/octet-stream';
 };
 

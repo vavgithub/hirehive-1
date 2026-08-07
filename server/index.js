@@ -28,6 +28,7 @@ import jobRoutes from "./routes/admin/jobs.router.js";
 import candidateRoutes from "./routes/candidate/candidate.router.js";
 import authRoutes from "./routes/admin/auth.router.js";
 import candidateAuthRoutes from "./routes/candidate/auth.router.js"
+import voiceInterviewRoutes from "./routes/candidate/voiceInterview.router.js"
 import adminCandidateRoutes from "./routes/admin/candidate.router.js"
 import drRoutes from "./routes/admin/dr.router.js"
 import hrRoutes from "./routes/admin/hr.router.js"
@@ -84,6 +85,7 @@ app.use("/api/v1/jobs", jobRoutes);
 app.use("/api/v1/hr", hrRoutes);
 app.use("/api/v1/admin", adminRoutes);
 app.use('/api/v1/auth/candidate', candidateAuthRoutes);
+app.use("/api/v1/candidate/voice-interview", voiceInterviewRoutes);
 app.use("/api/v1/candidates", candidateRoutes);
 app.use("/api/v1/admin/candidate", adminCandidateRoutes);
 app.use("/api/v1/dr", drRoutes);

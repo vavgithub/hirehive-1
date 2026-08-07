@@ -18,6 +18,7 @@ import TemplateModal from '../Modals/TemplateModal';
 import GlobalDropDown from '../Dropdowns/GlobalDropDown';
 import StyledCard from '../Cards/StyledCard';
 import { fetchAssessmentTemplates } from '../../services/jobs.service';
+import ToggleSwitch from '../ui/ToggleSwitch';
 
 function hasDuplicates(arr) {
   return new Set(arr).size !== arr.length;
@@ -39,6 +40,7 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
       jobDescription: '',
       assessment_id : '',
       skills: [],
+      voiceScreeningEnabled: false,
       ...initialData
     },
     mode: 'onChange'
@@ -342,6 +344,26 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
           />
         )}
       />
+
+      {Array.isArray(watchedFields.questions) && watchedFields.questions.length > 0 && (
+        <div className="mt-4">
+          <Controller
+            name="voiceScreeningEnabled"
+            control={control}
+            defaultValue={false}
+            render={({ field: { onChange, value } }) => (
+              <ToggleSwitch
+                label="Enable AI voice screening"
+                checkValue={Boolean(value)}
+                setCheckValue={(next) => onChange(Boolean(next))}
+              />
+            )}
+          />
+          <p className="typography-small-p text-font-gray mt-2">
+            When enabled, candidates answer these questions in a voice interview after applying instead of on the application form.
+          </p>
+        </div>
+      )}
 
       <div className="flex justify-between mt-6">
         <div>

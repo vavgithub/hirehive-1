@@ -20,6 +20,7 @@ import HomePage from './pages/Candidate/HomePage.jsx';
 import Text from './pages/Text.jsx';
 import ViewJob from './pages/Candidate/ViewJob.jsx';
 import ApplyJob from './pages/Candidate/ApplyJob.jsx';
+import VoiceInterview from './pages/Candidate/VoiceInterview.jsx';
 import PreAssessment from './pages/Candidate/PreAssessment.jsx';
 import ProtectedRouteCandidate from './routes/ProtectedRouteCandidate.jsx';
 import CandidateLogin from './pages/Candidate/CandidateLogin.jsx';
@@ -105,6 +106,10 @@ export const router = createBrowserRouter([
           {
             path: 'my-jobs',
             element: <MyJobs />, // Create this component
+          },
+          {
+            path: 'voice-interview/:jobId',
+            element: <VoiceInterview />,
           },
           {
             path: 'all-jobs',

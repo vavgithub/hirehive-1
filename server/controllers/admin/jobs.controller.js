@@ -1296,6 +1296,7 @@ const createJob = async (req, res) => {
       jobDescription,
       status,
       questions,
+      voiceScreeningEnabled,
     } = req.body;
 
     if(assessment_id){
@@ -1328,6 +1329,7 @@ const createJob = async (req, res) => {
       createdBy: req.user._id,
       company_id : req.user?.company_id,
       questions,
+      voiceScreeningEnabled: Boolean(voiceScreeningEnabled),
     });
 
     const savedJob = await newJob.save();

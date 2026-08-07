@@ -114,6 +114,12 @@ const jobSchema = new mongoose.Schema(
       required: true,
     },
     questions: [questionSchema],
+    // When true, candidates answer additional questions via AI voice screening
+    // instead of the text form on ApplyJob.
+    voiceScreeningEnabled: {
+      type: Boolean,
+      default: false,
+    },
     // No 'stages' field here; stages are defined externally
   },
   { timestamps: true }
