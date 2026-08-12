@@ -12,6 +12,8 @@ import IconWrapper from './IconWrapper';
 import { ClockArrowUp, DatabaseZap, SignalHigh } from 'lucide-react';
 import { hasPermission, PERMISSIONS } from '../../config/permissions.config';
 import { useClosedBadge } from '../../context/ThemeContext';
+import { Button } from '../Buttons/Button';
+import { useNavigate } from 'react-router-dom';
 
 // Helper function to truncate text to specific number of words
 const truncateWords = (text, wordLimit) => {
@@ -55,6 +57,7 @@ const JobCard = ({
   const formattedAppliedAt = getTimeAgo(job.applicationDate);
 
   const location = useLocation();
+  const navigate = useNavigate();
 
   // Determine if job is hourly rate type (Part Time or Contract)
   const isHourlyRateJob = job.employmentType === 'Part Time' || job.employmentType === 'Contract';
@@ -78,6 +81,21 @@ const JobCard = ({
         ? application.stageStatuses[application.currentStage].status
         : 'N/A';
   }
+
+  const voiceStatus = application?.voiceInterview?.status;
+  const canResumeVoiceInterview =
+    isAuthenticatedCandidate &&
+    job?.status === 'open' &&
+    (job?.voiceScreeningEnabled || voiceStatus) &&
+    voiceStatus !== 'completed';
+
+  const voiceCtaLabel =
+    voiceStatus === 'in_progress' ? 'Resume interview' : 'Start interview';
+
+  const handleResumeVoice = (e) => {
+    e.stopPropagation();
+    navigate(`/candidate/voice-interview/${job._id}`);
+  };
 
   const handleCardClick = () => {
     if (onClick) onClick(job._id);
@@ -215,8 +233,8 @@ const JobCard = ({
     
   
     {(isAdmin || isCandidate) && (
-      <StyledCard padding={2} borderRadius={' rounded-b-xl'} backgroundColor={'bg-background-60'} extraStyles="flex items-center justify-between !pt-4 !pb-4">
-        <div className="flex justify-between w-full md:justify-start gap-3 md:gap-8">
+      <StyledCard padding={2} borderRadius={' rounded-b-xl'} backgroundColor={'bg-background-60'} extraStyles="flex items-center justify-between !pt-4 !pb-4 gap-4 flex-wrap">
+        <div className="flex justify-between w-full md:justify-start gap-3 md:gap-8 flex-1 min-w-0">
           {(isAdmin ? adminFooterItems : candidateFooterItems).map(
             (item, index) => (
               <JobFooterItem
@@ -227,6 +245,16 @@ const JobCard = ({
             )
           )}
         </div>
+        {canResumeVoiceInterview && (
+          <Button
+            type="button"
+            variant="primary"
+            className="shrink-0"
+            onClick={handleResumeVoice}
+          >
+            {voiceCtaLabel}
+          </Button>
+        )}
         {(job.status === 'closed' || job.status === 'deleted' ) && (
         <div className="flex p-4 w-fit">
           <p className="typography-body text-font-gray mr-2 whitespace-nowrap">

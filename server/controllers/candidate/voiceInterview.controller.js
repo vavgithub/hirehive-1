@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from "uuid";
 import { VoiceInterviewSession } from "../../models/candidate/voiceInterviewSession.model.js";
 import { jobs } from "../../models/admin/jobs.model.js";
 import { candidates as Candidate } from "../../models/candidate/candidate.model.js";
-import { uploadToS3 } from "../../utils/s3utility.js";
+import { uploadToS3, generatePresignedGetUrl } from "../../utils/s3utility.js";
 import { synthesizeQuestionAudio } from "../../utils/pollyTTS.js";
 import { transcribeAudio } from "../../utils/geminiSTT.js";
 import { sendEmail } from "../../utils/sentEmail.js";
@@ -16,8 +16,15 @@ import { captureError } from "../../utils/errorHandler.js";
 
 const MAX_RETRIES_PER_QUESTION = 2;
 
+/** Mint a short-lived GET URL for a voice-interview S3 key (stored in audioUrl fields). */
+async function toPresignedAudioUrl(s3Key) {
+  if (!s3Key) return null;
+  return generatePresignedGetUrl(s3Key, process.env.VOICE_INTERVIEW_S3_BUCKET);
+}
+
 /**
  * Lazily generates + caches TTS audio for a question snapshot on the session.
+ * Persists the S3 object key in question.audioUrl (not a permanent URL).
  */
 async function ensureQuestionAudio(session, questionIndex) {
   const question = session.questions[questionIndex];
@@ -28,13 +35,13 @@ async function ensureQuestionAudio(session, questionIndex) {
     spokenText += ` Your options are: ${question.options.join(", ")}.`;
   }
 
-  const audioUrl = await synthesizeQuestionAudio(spokenText);
-  session.questions[questionIndex].audioUrl = audioUrl;
+  const s3Key = await synthesizeQuestionAudio(spokenText);
+  session.questions[questionIndex].audioUrl = s3Key;
   await session.save();
-  return audioUrl;
+  return s3Key;
 }
 
-function buildQuestionResponsePayload(session) {
+async function buildQuestionResponsePayload(session) {
   const totalQuestions = session.questions.length;
 
   if (session.status === "completed") {
@@ -57,7 +64,8 @@ function buildQuestionResponsePayload(session) {
       text: question.text,
       options: question.options,
       required: question.required,
-      audioUrl: question.audioUrl,
+      // Fresh presigned GET — Mongo stores the key only
+      audioUrl: await toPresignedAudioUrl(question.audioUrl),
     },
   };
 }
@@ -167,7 +175,7 @@ export async function getOrCreateSession(req, res) {
       await ensureQuestionAudio(session, session.currentQuestionIndex);
     }
 
-    return res.status(200).json(buildQuestionResponsePayload(session));
+    return res.status(200).json(await buildQuestionResponsePayload(session));
   } catch (err) {
     captureError(err, {
       file: "voiceInterview.controller.js",
@@ -251,17 +259,23 @@ export async function submitAnswer(req, res) {
 
         await ensureQuestionAudio(session, session.currentQuestionIndex);
         return res.status(200).json({
-          ...buildQuestionResponsePayload(session),
+          ...(await buildQuestionResponsePayload(session)),
           skippedDueToError: true,
         });
       }
 
-      const audioUrl = await uploadToS3(tempPath, "voice-interview-responses");
+      // Store S3 key in Mongo; clients never receive this raw key from this path
+      // (playback URLs are signed in buildQuestionResponsePayload / admin later).
+      const audioS3Key = await uploadToS3(
+        tempPath,
+        "voice-interview-responses",
+        process.env.VOICE_INTERVIEW_S3_BUCKET
+      );
 
       responseEntry = {
         questionId: question.questionId,
         inputMethod: "voice",
-        audioUrl,
+        audioUrl: audioS3Key,
         transcript,
         durationSeconds: req.body.durationSeconds
           ? Number(req.body.durationSeconds)
@@ -309,7 +323,7 @@ export async function submitAnswer(req, res) {
     }
 
     await ensureQuestionAudio(session, session.currentQuestionIndex);
-    return res.status(200).json(buildQuestionResponsePayload(session));
+    return res.status(200).json(await buildQuestionResponsePayload(session));
   } catch (err) {
     captureError(err, {
       file: "voiceInterview.controller.js",

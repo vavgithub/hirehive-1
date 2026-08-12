@@ -23,8 +23,8 @@ const questionSnapshotSchema = new Schema(
       enum: ["array", "text", "number", "link"],
       default: "text",
     },
-    // Polly TTS audio for this question — generated lazily on first fetch
-    // and cached here so a candidate refreshing doesn't trigger a repeat Polly call.
+    // Polly TTS audio — S3 object key in VOICE_INTERVIEW_S3_BUCKET (not a public URL).
+    // Generated lazily on first fetch; clients get a fresh presigned GET on each response.
     audioUrl: String,
   },
   { _id: false }
@@ -34,6 +34,7 @@ const responseSchema = new Schema(
   {
     questionId: { type: Schema.Types.ObjectId, required: true },
     inputMethod: { type: String, enum: ["voice", "tap"], required: true },
+    // Candidate response audio — S3 object key (presigned GET minted on read).
     audioUrl: String,
     transcript: String,
     durationSeconds: Number,

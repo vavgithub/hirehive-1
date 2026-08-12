@@ -9,6 +9,7 @@ import bcrypt from "bcryptjs";
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
 import { jobs } from "../../models/admin/jobs.model.js";
+import { VoiceInterviewSession } from "../../models/candidate/voiceInterviewSession.model.js";
 import { jobStagesStatuses } from "../../config/jobStagesStatuses.js";
 import { uploadToCloudinary } from "../../utils/cloudinary.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
@@ -1199,14 +1200,47 @@ export const getCandidateAppliedJobs = async (req, res) => {
       })
     });
 
-    // // Sort the validated jobApplications by 'applicationDate' in descending order
-    // const sortedJobApplications = formattedApplications.sort((a, b) => {
-    //   return new Date(b.applicationDate) - new Date(a.applicationDate);
-    // });
+    // Attach voice-interview session status so candidates can Resume mid-interview from My Jobs
+    const jobIdsOnPage = formattedApplications
+      .map((app) => app.jobId?._id || app.jobId?.jobId)
+      .filter(Boolean);
+
+    const voiceSessions = jobIdsOnPage.length
+      ? await VoiceInterviewSession.find({
+          candidateId: req.candidate._id,
+          jobId: { $in: jobIdsOnPage },
+        }).select("jobId status currentQuestionIndex questions")
+      : [];
+
+    const sessionByJobId = new Map(
+      voiceSessions.map((s) => [s.jobId.toString(), s])
+    );
+
+    const applicationsWithVoice = formattedApplications.map((app) => {
+      const jid = (app.jobId?._id || app.jobId?.jobId)?.toString();
+      const session = jid ? sessionByJobId.get(jid) : null;
+      const voiceScreeningEnabled = Boolean(app.jobId?.voiceScreeningEnabled);
+
+      return {
+        ...app,
+        voiceInterview: session
+          ? {
+              status: session.status,
+              currentQuestionIndex: session.currentQuestionIndex,
+              totalQuestions: session.questions?.length ?? 0,
+            }
+          : voiceScreeningEnabled
+            ? { status: "not_started", currentQuestionIndex: 0, totalQuestions: 0 }
+            : null,
+      };
+    });
 
     const totalAppliedJobs = await Candidate.findById({ _id: req.candidate._id })
 
-    res.status(200).json({ jobApplications: formattedApplications ,totalAppliedJobs : totalAppliedJobs?.jobApplications?.length || 0});
+    res.status(200).json({
+      jobApplications: applicationsWithVoice,
+      totalAppliedJobs: totalAppliedJobs?.jobApplications?.length || 0,
+    });
   } catch (error) {
     captureError(error, { controller: "auth.controller.js", action: "getCandidateAppliedJobs", role: "candidate" });
 

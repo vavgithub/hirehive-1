@@ -1,5 +1,13 @@
+import dns from "dns";
 import mongoose from "mongoose";
 import { captureError } from "../utils/errorHandler.js";
+
+// Some local/ISP DNS resolvers refuse Node's SRV lookups for mongodb+srv://
+// (querySrv ECONNREFUSED) even when the rest of the OS can resolve them.
+// Point Node at public resolvers in development so Atlas connects reliably.
+if (process.env.NODE_ENV === "development") {
+  dns.setServers(["8.8.8.8", "1.1.1.1"]);
+}
 
 const connectDB = async () => {
   try {

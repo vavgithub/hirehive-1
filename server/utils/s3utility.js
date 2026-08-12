@@ -1,5 +1,5 @@
 // utils/s3Uploader.js
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import { S3Client, PutObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { promises as fs } from 'fs';
 import path from 'path';
@@ -22,7 +22,9 @@ const s3Client = new S3Client({
 });
 
 // 🔽 Upload Function
-export const uploadToS3 = async (inputPath, folder) => {
+// bucketOverride (optional): when set, uploads to that bucket instead of AWS_S3_BUCKET_NAME.
+// Existing callers omit it and keep current behavior.
+export const uploadToS3 = async (inputPath, folder, bucketOverride) => {
   try {
     const filePath = path.isAbsolute(inputPath)
       ? inputPath
@@ -35,10 +37,11 @@ export const uploadToS3 = async (inputPath, folder) => {
     const s3Key = `uploads/${envFolder}/${folder}/${Date.now()}-${fileName}`;
 
     const contentType = getMimeType(filePath);
+    const bucket = bucketOverride || process.env.AWS_S3_BUCKET_NAME;
 
     // ✅ Upload to S3
     const command = new PutObjectCommand({
-      Bucket: process.env.AWS_S3_BUCKET_NAME,
+      Bucket: bucket,
       Key: s3Key,
       Body: fileContent,
       ContentType: contentType,
@@ -48,6 +51,12 @@ export const uploadToS3 = async (inputPath, folder) => {
     await s3Client.send(command);
 
     await fs.unlink(filePath); // Clean up local file
+
+    // Dedicated/private buckets (e.g. voice interview) aren't on CloudFront —
+    // return the object key so callers can mint a short-lived presigned GET URL.
+    if (bucketOverride) {
+      return s3Key;
+    }
 
     const cloudfrontDomain = process.env.AWS_CLOUDFRONT_DOMAIN;
     return `${cloudfrontDomain}/${s3Key}`;
@@ -118,13 +127,33 @@ export const getUploadPath = (filename) => {
 };
 
 
-export const generatePresignedUrl = async (key, contentType) => {
+// bucketOverride (optional): same semantics as uploadToS3 — omit for default bucket.
+export const generatePresignedUrl = async (key, contentType, bucketOverride) => {
   const command = new PutObjectCommand({
-    Bucket: process.env.AWS_S3_BUCKET_NAME,
+    Bucket: bucketOverride || process.env.AWS_S3_BUCKET_NAME,
     Key: key,
     ContentType: contentType,
   });
 
   const url = await getSignedUrl(s3Client, command, { expiresIn: 60 * 5 }); // 5 min expiry
   return url;
+};
+
+/**
+ * Presigned GET for private-bucket playback (voice interview TTS / responses).
+ * @param {string} key - S3 object key
+ * @param {string} [bucketOverride] - defaults to AWS_S3_BUCKET_NAME
+ * @param {number} [expiresInSeconds=900] - default 15 minutes
+ */
+export const generatePresignedGetUrl = async (
+  key,
+  bucketOverride,
+  expiresInSeconds = 60 * 15
+) => {
+  const command = new GetObjectCommand({
+    Bucket: bucketOverride || process.env.AWS_S3_BUCKET_NAME,
+    Key: key,
+  });
+
+  return getSignedUrl(s3Client, command, { expiresIn: expiresInSeconds });
 };

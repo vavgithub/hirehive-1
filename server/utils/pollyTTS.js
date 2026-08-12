@@ -15,9 +15,9 @@ const pollyClient = new PollyClient({
 });
 
 /**
- * Synthesizes text to speech and uploads via existing uploadToS3 (disk path).
+ * Synthesizes text to speech and uploads via uploadToS3 (disk path).
  * @param {string} text - question text to speak
- * @returns {Promise<string>} CloudFront URL of the synthesized audio
+ * @returns {Promise<string>} S3 object key (not a URL) — mint a GET URL via generatePresignedGetUrl
  */
 export async function synthesizeQuestionAudio(text) {
   try {
@@ -34,8 +34,13 @@ export async function synthesizeQuestionAudio(text) {
     const tempPath = path.join(os.tmpdir(), `tts-${uuidv4()}.mp3`);
     fs.writeFileSync(tempPath, Buffer.from(audioBytes));
 
-    const cloudFrontUrl = await uploadToS3(tempPath, "voice-interview-questions");
-    return cloudFrontUrl;
+    // With VOICE_INTERVIEW_S3_BUCKET set, uploadToS3 returns the object key.
+    const s3Key = await uploadToS3(
+      tempPath,
+      "voice-interview-questions",
+      process.env.VOICE_INTERVIEW_S3_BUCKET
+    );
+    return s3Key;
   } catch (err) {
     captureError(err, {
       file: "pollyTTS.js",

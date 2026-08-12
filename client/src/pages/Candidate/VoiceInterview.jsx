@@ -1,24 +1,130 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
+import { Check, Mic, Pause, Play } from 'lucide-react';
 import { Button } from '../../components/Buttons/Button';
 import Loader from '../../components/Loaders/Loader';
 import Header from '../../components/utility/Header';
 import StyledCard from '../../components/Cards/StyledCard';
+import Container from '../../components/Cards/Container';
+import IconWrapper from '../../components/Cards/IconWrapper';
 import { showErrorToast, showSuccessToast } from '../../components/ui/Toast';
 import { useAudioRecorder } from '../../hooks/useAudioRecorder';
 import {
   getOrCreateVoiceInterviewSession,
   submitVoiceInterviewAnswer,
 } from '../../services/voiceInterview.service';
-import IconWrapper from '../../components/Cards/IconWrapper';
-import { Check } from 'lucide-react';
 import * as Sentry from '@sentry/react';
 
+/** Same progress bar pattern as Assessment.jsx */
+const ProgressBar = ({ answeredCount, total }) => {
+  const progress = total > 0 ? (answeredCount / total) * 100 : 0;
+  return (
+    <div className="w-full bg-background-60 h-2 rounded-full overflow-hidden">
+      <div
+        className="bg-blue-100 h-full transition-all rounded-full duration-300 ease-in-out"
+        style={{ width: `${progress}%` }}
+      />
+    </div>
+  );
+};
+
 /**
- * Candidate voice screening interview — driven by the sync per-turn API.
- * Text questions: mic record → upload+STT. Multiple/multi-select: tap UI.
+ * Custom TTS player — hidden <audio>, controls styled with Button + Assessment tokens.
+ * No native browser chrome.
  */
+const QuestionAudioPlayer = ({ src }) => {
+  const audioRef = useRef(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [duration, setDuration] = useState(0);
+
+  useEffect(() => {
+    setIsPlaying(false);
+    setProgress(0);
+    setDuration(0);
+    const el = audioRef.current;
+    if (!el || !src) return;
+    el.load();
+    const playPromise = el.play();
+    if (playPromise?.then) {
+      playPromise.then(() => setIsPlaying(true)).catch(() => setIsPlaying(false));
+    }
+  }, [src]);
+
+  const togglePlay = () => {
+    const el = audioRef.current;
+    if (!el) return;
+    if (el.paused) {
+      el.play().then(() => setIsPlaying(true)).catch(() => setIsPlaying(false));
+    } else {
+      el.pause();
+      setIsPlaying(false);
+    }
+  };
+
+  const formatTime = (secs) => {
+    if (!secs || Number.isNaN(secs)) return '0:00';
+    const m = Math.floor(secs / 60);
+    const s = Math.floor(secs % 60);
+    return `${m}:${s.toString().padStart(2, '0')}`;
+  };
+
+  if (!src) return null;
+
+  return (
+    <StyledCard backgroundColor="bg-background-80" padding={3} extraStyles="mb-6">
+      <audio
+        ref={audioRef}
+        src={src}
+        preload="auto"
+        className="hidden"
+        onTimeUpdate={(e) => {
+          const { currentTime, duration: d } = e.currentTarget;
+          setProgress(d ? (currentTime / d) * 100 : 0);
+        }}
+        onLoadedMetadata={(e) => setDuration(e.currentTarget.duration || 0)}
+        onEnded={() => {
+          setIsPlaying(false);
+          setProgress(100);
+        }}
+        onPause={() => setIsPlaying(false)}
+        onPlay={() => setIsPlaying(true)}
+      />
+      <div className="flex items-center gap-4">
+        <Button
+          type="button"
+          variant="icon"
+          size="icon"
+          onClick={togglePlay}
+          aria-label={isPlaying ? 'Pause question audio' : 'Play question audio'}
+          icon={() => (
+            <IconWrapper
+              icon={isPlaying ? Pause : Play}
+              size={0}
+              customIconSize={3}
+              customStrokeWidth={6}
+              inheritColor
+            />
+          )}
+        />
+        <div className="flex-1 min-w-0">
+          <p className="typography-small-p text-font-gray mb-2">Question audio</p>
+          <div className="w-full bg-background-60 h-2 rounded-full overflow-hidden">
+            <div
+              className="bg-teal-400 h-full transition-all duration-150 ease-out rounded-full"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+          <p className="typography-small-p text-font-gray mt-2">
+            {formatTime((progress / 100) * duration)} / {formatTime(duration)}
+          </p>
+        </div>
+      </div>
+    </StyledCard>
+  );
+};
+
 const VoiceInterview = () => {
   const { jobId } = useParams();
   const navigate = useNavigate();
@@ -45,14 +151,13 @@ const VoiceInterview = () => {
   }, [recorderError]);
 
   useEffect(() => {
-    // Reset tap selection when the question advances
     setSelectedAnswer(null);
   }, [session?.currentQuestionIndex, session?.question?.questionId]);
 
-  const handleCompleted = () => {
+  const handleCompleted = useCallback(() => {
     showSuccessToast('Interview complete', 'Our HR team will contact you if you are a good match.');
     navigate('/candidate/my-jobs');
-  };
+  }, [navigate]);
 
   const applySessionUpdate = (data) => {
     setSession(data);
@@ -112,49 +217,59 @@ const VoiceInterview = () => {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-[50vh]">
+      <Container hasBgColor extraStyles="flex justify-center items-center">
         <Loader />
-      </div>
+      </Container>
     );
   }
 
   if (isError) {
     return (
-      <div className="p-6">
-        <Header HeaderText="Voice interview" withBack="true" />
-        <StyledCard padding={4} extraStyles="mt-6">
-          <p className="typography-body text-red-500 mb-4">
-            {error?.response?.data?.message || 'Failed to start the interview.'}
-          </p>
-          <Button variant="secondary" onClick={() => navigate('/candidate/my-jobs')}>
-            Go to My Jobs
-          </Button>
-          <Button variant="primary" className="ml-3" onClick={() => refetch()}>
-            Retry
-          </Button>
-        </StyledCard>
-      </div>
+      <Container hasBgColor>
+        <div className="container">
+          <Header HeaderText="Voice screening" withBack="true" />
+          <StyledCard padding={4} extraStyles="mt-6" backgroundColor="bg-background-90">
+            <p className="typography-body text-red-500 mb-4">
+              {error?.response?.data?.message || 'Failed to start the interview.'}
+            </p>
+            <div className="flex gap-3 flex-wrap">
+              <Button variant="secondary" onClick={() => navigate('/candidate/my-jobs')}>
+                Go to My Jobs
+              </Button>
+              <Button variant="primary" onClick={() => refetch()}>
+                Retry
+              </Button>
+            </div>
+          </StyledCard>
+        </div>
+      </Container>
     );
   }
 
   if (session?.status === 'completed') {
     return (
-      <div className="p-6">
-        <Header HeaderText="Interview complete" withBack="true" />
-        <StyledCard padding={4} extraStyles="mt-6">
-          <p className="typography-body mb-4">
-            Your interview is complete — our HR team will contact you if you&apos;re a good match.
-          </p>
-          <Button variant="primary" onClick={() => navigate('/candidate/my-jobs')}>
-            Go to My Jobs
-          </Button>
-        </StyledCard>
-      </div>
+      <Container hasBgColor>
+        <div className="container">
+          <Header HeaderText="Interview complete" withBack="true" />
+          <StyledCard padding={4} extraStyles="mt-6" backgroundColor="bg-background-90">
+            <p className="typography-body mb-4">
+              Your interview is complete — our HR team will contact you if you&apos;re a good match.
+            </p>
+            <Button variant="primary" onClick={() => navigate('/candidate/my-jobs')}>
+              Go to My Jobs
+            </Button>
+          </StyledCard>
+        </div>
+      </Container>
     );
   }
 
   const question = session?.question;
-  const progressLabel = `Question ${(session?.currentQuestionIndex ?? 0) + 1} of ${session?.totalQuestions ?? 0}`;
+  const currentIndex = session?.currentQuestionIndex ?? 0;
+  const totalQuestions = session?.totalQuestions ?? 0;
+  const answeredCount = currentIndex;
+  const completionPct =
+    totalQuestions > 0 ? Math.round((answeredCount / totalQuestions) * 100) : 0;
 
   const toggleMultiSelect = (option) => {
     setSelectedAnswer((prev) => {
@@ -166,108 +281,149 @@ const VoiceInterview = () => {
   };
 
   return (
-    <div className="p-6 max-w-3xl mx-auto">
-      <Header HeaderText="Voice screening" withBack="true" />
-      <p className="typography-small-p text-font-gray mt-2 mb-6">{progressLabel}</p>
+    <Container hasBgColor>
+      <div className="container max-w-4xl mx-auto">
+        <Header HeaderText="Voice screening" withBack="true" />
 
-      <StyledCard padding={4} backgroundColor="bg-background-90">
-        <h3 className="typography-body mb-4">{question?.text}</h3>
+        <div className="mt-6 mb-8">
+          <span className="font-bricolage mb-2 inline-block">
+            {completionPct}% Completed
+          </span>
+          <ProgressBar answeredCount={answeredCount} total={totalQuestions} />
+          <p className="typography-small-p text-font-gray mt-2">
+            Question {currentIndex + 1} of {totalQuestions}
+          </p>
+        </div>
 
-        {question?.audioUrl && (
-          <audio className="w-full mb-6" controls src={question.audioUrl} autoPlay>
-            Your browser does not support audio playback.
-          </audio>
-        )}
+        <div className="mb-8">
+          <StyledCard
+            backgroundColor="bg-background-70"
+            padding={3}
+            extraStyles="flex flex-col gap-4"
+          >
+            <h2>{`Question ${currentIndex + 1}: ${question?.text}`}</h2>
+            <QuestionAudioPlayer src={question?.audioUrl} />
+          </StyledCard>
 
-        {question?.type === 'text' ? (
-          <div className="flex flex-col gap-4">
-            <p className="typography-small-p text-font-gray">
-              Tap record, answer out loud, then stop and submit.
-            </p>
-            <div className="flex gap-3 flex-wrap">
-              {!isRecording ? (
-                <Button
-                  type="button"
-                  variant="primary"
-                  disabled={isSubmitting}
-                  onClick={startRecording}
-                >
-                  Record answer
-                </Button>
-              ) : (
-                <Button
-                  type="button"
-                  variant="cancel"
-                  disabled={isSubmitting}
-                  onClick={handleVoiceSubmit}
-                >
-                  Stop & submit
-                </Button>
-              )}
-            </div>
-          </div>
-        ) : (
-          <div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4" style={{ gridAutoRows: '1fr' }}>
-              {(question?.options || []).map((option, optionIndex) => {
-                const isMulti = question.type === 'multi-select';
-                const isSelected = isMulti
-                  ? Array.isArray(selectedAnswer) && selectedAnswer.includes(option)
-                  : selectedAnswer === option;
+          <StyledCard
+            backgroundColor="bg-background-90"
+            borderRadius=" rounded-br-xl rounded-bl-xl "
+            extraStyles="w-[95%] mx-auto"
+            padding={3}
+          >
+            {question?.type === 'text' ? (
+              <div className="flex flex-col gap-4">
+                <p className="typography-small-p text-font-gray">
+                  Tap record, answer out loud, then stop and submit.
+                </p>
 
-                return (
-                  <div
-                    key={optionIndex}
-                    className={
-                      'px-4 py-2 min-h-11 rounded-xl flex items-center cursor-pointer hover-outline ' +
-                      (isSelected ? 'selection-primary' : 'bg-background-80')
-                    }
-                    onClick={() => {
-                      if (isMulti) toggleMultiSelect(option);
-                      else setSelectedAnswer(option);
-                    }}
-                  >
-                    {isMulti ? (
-                      <div className="relative flex items-center justify-center mr-2">
-                        <input
-                          type="checkbox"
-                          checked={Boolean(isSelected)}
-                          readOnly
-                          className="appearance-none outline-none border h-4 w-4 cursor-pointer rounded bg-background-100 checked:bg-accent-100 checked:border-accent-100 peer"
-                        />
-                        <div className="hidden peer-checked:block absolute top-[-1px] left-[-2px] w-[1.25rem] scale-90 h-[1.25rem] text-font-invert pointer-events-none">
-                          <IconWrapper customStrokeWidth={4} customIconSize={3} icon={Check} inheritColor size={0} />
-                        </div>
-                      </div>
-                    ) : (
-                      <input
-                        type="radio"
-                        checked={Boolean(isSelected)}
-                        readOnly
-                        className="custom-radio"
-                      />
-                    )}
-                    <span className="typography-body overflow-hidden whitespace-nowrap text-ellipsis">
-                      {option}
-                    </span>
+                {isRecording && (
+                  <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-background-80">
+                    <div className="bg-red-200 w-3 h-3 rounded-full animate-pulse" />
+                    <span className="typography-body text-font-main">Recording…</span>
                   </div>
-                );
-              })}
-            </div>
-            <div className="mt-6 flex justify-end">
-              <Button
-                type="button"
-                variant="primary"
-                disabled={isSubmitting}
-                onClick={handleTapSubmit}
-              >
-                {isSubmitting ? 'Submitting…' : 'Next'}
-              </Button>
-            </div>
-          </div>
-        )}
-      </StyledCard>
-    </div>
+                )}
+
+                <div className="flex gap-3 flex-wrap justify-end">
+                  {!isRecording && !isSubmitting && (
+                    <Button
+                      type="button"
+                      variant="primary"
+                      icon={() => (
+                        <IconWrapper
+                          icon={Mic}
+                          size={0}
+                          customIconSize={3}
+                          customStrokeWidth={6}
+                          inheritColor
+                        />
+                      )}
+                      onClick={startRecording}
+                    >
+                      Record answer
+                    </Button>
+                  )}
+                  {isRecording && !isSubmitting && (
+                    <Button type="button" variant="cancel" onClick={handleVoiceSubmit}>
+                      Stop & submit
+                    </Button>
+                  )}
+                  {isSubmitting && (
+                    <Button type="button" variant="primary" disabled>
+                      Submitting…
+                    </Button>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div>
+                <div
+                  className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center"
+                  style={{ gridAutoRows: '1fr' }}
+                >
+                  {(question?.options || []).map((option, optionIndex) => {
+                    const isMulti = question.type === 'multi-select';
+                    const isSelected = isMulti
+                      ? Array.isArray(selectedAnswer) && selectedAnswer.includes(option)
+                      : selectedAnswer === option;
+
+                    return (
+                      <div
+                        key={optionIndex}
+                        className={
+                          'flex items-center hover-outline rounded-xl h-full ' +
+                          (isSelected ? 'selection-primary' : 'bg-background-80')
+                        }
+                      >
+                        <label className="flex cursor-pointer items-center space-x-3 p-4 w-full">
+                          {isMulti ? (
+                            <div className="relative flex items-center justify-center">
+                              <input
+                                type="checkbox"
+                                checked={Boolean(isSelected)}
+                                onChange={() => toggleMultiSelect(option)}
+                                className="appearance-none outline-none border mr-2 h-4 w-4 cursor-pointer rounded bg-background-100 hover:border-grey-100 checked:bg-accent-100 checked:border-accent-100 peer"
+                              />
+                              <div className="hidden peer-checked:block cursor-pointer absolute top-[-1px] left-[-2px] w-[1.25rem] scale-90 h-[1.25rem] text-font-invert pointer-events-none">
+                                <IconWrapper
+                                  customStrokeWidth={4}
+                                  customIconSize={3}
+                                  icon={Check}
+                                  inheritColor
+                                  size={0}
+                                />
+                              </div>
+                            </div>
+                          ) : (
+                            <input
+                              type="radio"
+                              checked={Boolean(isSelected)}
+                              onChange={() => setSelectedAnswer(option)}
+                              className="custom-radio"
+                            />
+                          )}
+                          <span className="typography-body">{option}</span>
+                        </label>
+                      </div>
+                    );
+                  })}
+                </div>
+                <div className="mt-6 flex justify-end">
+                  <Button
+                    type="button"
+                    variant="primary"
+                    disabled={isSubmitting}
+                    onClick={handleTapSubmit}
+                  >
+                    {isSubmitting ? 'Submitting…' : 'Next'}
+                  </Button>
+                </div>
+              </div>
+            )}
+          </StyledCard>
+        </div>
+      </div>
+    </Container>
   );
 };
 

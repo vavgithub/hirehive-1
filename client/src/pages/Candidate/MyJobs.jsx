@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { useMediaQuery } from 'react-responsive';
-import axios from '../../services/axios';
 import Loader from '../../components/Loaders/Loader';
 import AssessmentBanner from '../../components/ui/AssessmentBanner';
+import VoiceInterviewBanner from '../../components/ui/VoiceInterviewBanner';
 import StyledCard from '../../components/Cards/StyledCard';
 import JobCard from '../../components/Cards/JobCard';
 import Pagination from '../../components/utility/Pagination';
@@ -52,6 +52,18 @@ const MyJobs = () => {
   const [isAssessmentBannerVisible, setIsAssessmentBannerVisible] =
     useState(false);
 
+  const pendingVoiceInterviews = useMemo(() => {
+    return (appliedJobs?.jobApplications || []).filter((app) => {
+      const status = app.voiceInterview?.status;
+      const jobOpen = app.jobId?.status === 'open';
+      return (
+        jobOpen &&
+        (app.jobId?.voiceScreeningEnabled || status) &&
+        status !== 'completed'
+      );
+    });
+  }, [appliedJobs]);
+
   // Update visibility states when component mounts and when candidateData updates
   useEffect(() => {
     if (isDone && candidateData) {
@@ -90,6 +102,9 @@ const MyJobs = () => {
     <Container>
       <Header HeaderText={"My Jobs"}></Header>
         {isAssessmentBannerVisible && <AssessmentBanner />}
+        {pendingVoiceInterviews.length > 0 && (
+          <VoiceInterviewBanner pendingInterviews={pendingVoiceInterviews} />
+        )}
         <StyledCard padding={2} backgroundColor={"bg-background-90  "}>
           {appliedJobs?.jobApplications?.length > 0 ? (
             <ul className='flex flex-col gap-4'>
