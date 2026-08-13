@@ -2,6 +2,7 @@ import { threeDDesignerConfig } from "./3ddesigner.staging";
 import { brandDesignerConfig } from "./branddesigner.staging";
 import { creativeDirectorConfig } from "./creativedirector.staging";
 import { graphicDesignerConfig } from "./graphicdesigner.staging";
+import { designerConfig } from "./designer.staging";
 import { JOB_PROFILES } from "./jobprofile.config";
 import { motionDesignerConfig } from "./motiondesigner.staging";
 import { productDesignerConfig } from "./productDesigner.staging";
@@ -16,6 +17,7 @@ export const stagingConfig = {
     [JOB_PROFILES.BRAND_DESIGNER] : brandDesignerConfig,
     [JOB_PROFILES.CREATIVE_DIRECTOR] : creativeDirectorConfig,
     [JOB_PROFILES.GRAPHIC_DESIGNER] : graphicDesignerConfig,
+    [JOB_PROFILES.DESIGNER] : designerConfig,
     [JOB_PROFILES.PRODUCT_DESIGNER] : productDesignerConfig,
     [JOB_PROFILES.VIDEO_EDITOR] : videoEditorConfig,
     // [JOB_PROFILES.SOCIAL_MEDIA_ASSETS_DESIGNER] : socialMediaDesignerConfig,
