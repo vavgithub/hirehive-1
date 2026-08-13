@@ -485,17 +485,44 @@ export const autoAssignPortfolios = async (req, res) => {
 
     const { jobId, reviewerIds, budgetMin, budgetMax } = req.body;
 
-    if (
-      !jobId ||
-      !Array.isArray(reviewerIds) || 
-      reviewerIds.length === 0 ||
-      budgetMin === undefined ||
-      budgetMax === undefined
-    ) {
-      return res.status(400).json({ message: 'Invalid input. Job ID, reviewer IDs, and budget range are required.' });
+    if (!jobId || !Array.isArray(reviewerIds) || reviewerIds.length === 0) {
+      await session.abortTransaction();
+      return res.status(400).json({ message: 'Invalid input. Job ID and reviewer IDs are required.' });
     }
 
     const objectJobId = new mongoose.Types.ObjectId(jobId);
+
+    const job = await jobs.findById(objectJobId).select('employmentType').session(session);
+    if (!job) {
+      await session.abortTransaction();
+      return res.status(404).json({ message: 'Job not found.' });
+    }
+
+    // Match job Candidates table budget filter: hourlyRate for Part Time/Contract, else expectedCTC
+    const isHourly =
+      job.employmentType === 'Part Time' || job.employmentType === 'Contract';
+    const budgetPath = isHourly
+      ? 'professionalInfo.hourlyRate'
+      : 'professionalInfo.expectedCTC';
+
+    const budgetRange = {};
+    const parsedMin = Number(budgetMin);
+    if (budgetMin !== undefined && budgetMin !== null && budgetMin !== '' && !Number.isNaN(parsedMin)) {
+      budgetRange.$gte = parsedMin;
+    } else {
+      budgetRange.$gte = 0;
+    }
+    // Missing/null/non-finite max = unbounded (client omits field when "to" is blank;
+    // Infinity must never be sent — JSON turns it into null)
+    const parsedMax = Number(budgetMax);
+    if (
+      budgetMax !== undefined &&
+      budgetMax !== null &&
+      budgetMax !== '' &&
+      Number.isFinite(parsedMax)
+    ) {
+      budgetRange.$lte = parsedMax;
+    }
 
     // STEP 1: Fetch eligible candidates inside session
     const eligibleCandidates = await candidates.find({
@@ -503,10 +530,11 @@ export const autoAssignPortfolios = async (req, res) => {
         $elemMatch: {
           jobId: objectJobId,
           currentStage: 'Portfolio',
-          'stageStatuses.Portfolio.status': 'Not Assigned'
+          'stageStatuses.Portfolio.status': 'Not Assigned',
+          parked: { $ne: true },
+          [budgetPath]: budgetRange,
         }
       },
-      expectedCTC: { $gte: budgetMin, $lte: budgetMax }
     }).session(session);
 
     if (!eligibleCandidates.length) {
@@ -538,7 +566,8 @@ export const autoAssignPortfolios = async (req, res) => {
             $elemMatch: {
               jobId: objectJobId,
               currentStage: 'Portfolio',
-              'stageStatuses.Portfolio.status': 'Not Assigned'
+              'stageStatuses.Portfolio.status': 'Not Assigned',
+              parked: { $ne: true },
             }
           }
         },

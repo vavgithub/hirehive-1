@@ -305,12 +305,19 @@ const Table = ({
   });
 
   const handleAutoAssign = async (selectedReviewers) => {
-     autoAssignMutation.mutate({
+    const payload = {
       jobId: effectiveJobId || jobId,
       reviewerIds: selectedReviewers.map(reviewer => reviewer._id),
       budgetMin: parseFloat(budgetFilter.from) || 0,
-      budgetMax: parseFloat(budgetFilter.to) || Infinity
-    })
+    };
+    // Omit budgetMax when blank — Infinity becomes null over JSON and breaks $lte
+    if (budgetFilter.to !== '' && budgetFilter.to != null) {
+      const parsedMax = parseFloat(budgetFilter.to);
+      if (!Number.isNaN(parsedMax)) {
+        payload.budgetMax = parsedMax;
+      }
+    }
+    autoAssignMutation.mutate(payload);
   };
 
   const handleAssigneeChange = (candidateId, stage, newAssignee, rowJobId) => {

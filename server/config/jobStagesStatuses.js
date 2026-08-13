@@ -7,6 +7,7 @@ export const JOB_PROFILES = {
   BRAND_DESIGNER: "Brand Designer",
   VIDEO_EDITOR: "Video Editor",
   GRAPHIC_DESIGNER: "Graphic Designer",
+  DESIGNER: "Designer",
   // SOCIAL_MEDIA_ASSETS_DESIGNER: "Social Media Assets Designer",
 };
 
@@ -551,6 +552,83 @@ export const jobStagesStatuses = {
     },
   ],
   [JOB_PROFILES.GRAPHIC_DESIGNER]: [
+    {
+      name: "Portfolio",
+      requiresCall: false,
+      statuses: [
+        "Not Assigned",
+        "Under Review",
+        "Reviewed",
+        "Cleared",
+        "Rejected",
+      ],
+    },
+    {
+      name: "Screening",
+      requiresCall: true,
+      scoreConfig : {
+        Attitude : 5,
+        Communication : 5,
+        Budget : 5,
+        Aesthetics : 5,
+        Creativity : 5,
+        Layout : 5,
+      },
+      statuses: [
+        "Pending",
+        "Call Scheduled",
+        "Under Review",
+        "Reviewed",
+        "Cleared",
+        "No Show",
+        "Rejected",
+      ],
+    },
+    {
+      name: "Design Task",
+      requiresCall: true,
+      statuses: [
+        "Pending",
+        "Not Assigned",
+        "Sent",
+        "Under Review",
+        "Reviewed",
+        "Cleared",
+        "Rejected",
+        "Not Submitted",
+      ],
+    },
+    {
+      name: "Round 1",
+      requiresCall: true,
+      statuses: [
+        "Pending",
+        "Call Scheduled",
+        "Reviewed",
+        "Cleared",
+        "No Show",
+        "Rejected",
+      ],
+    },
+    {
+      name: "Round 2",
+      requiresCall: true,
+      statuses: [
+        "Pending",
+        "Call Scheduled",
+        "Reviewed",
+        "Cleared",
+        "No Show",
+        "Rejected",
+      ],
+    },
+    {
+      name: "Hired",
+      requiresCall: true,
+      statuses: ["Under Review", "Offer Sent", "Accepted", "Rejected"],
+    },
+  ],
+  [JOB_PROFILES.DESIGNER]: [
     {
       name: "Portfolio",
       requiresCall: false,

@@ -131,8 +131,8 @@ connectDB()
       setInterval(runBatchGuarded, AI_BATCH_INTERVAL_MS);
     }, AI_BATCH_START_DELAY_MS);
     
-    //Seeding Assessment Templates
-    // seedTemplates()
+    //Seeding Assessment Templates (idempotent — adds missing profiles/levels only)
+    seedTemplates()
     // seedTasks()
 
     app.on("error", (error) => {

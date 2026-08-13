@@ -71,6 +71,7 @@ const assessmentSchema = new mongoose.Schema(
         "Brand Designer",
         "Video Editor",
         "Graphic Designer",
+        "Designer",
         "Social Media Assets Designer",
       ],
       required: true,

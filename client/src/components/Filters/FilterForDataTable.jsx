@@ -297,6 +297,7 @@ const FilterForDataTable = ({ applyLocationFilter, onApplyFilters, readOnly, pre
         assessment: ["Completed", "Not Completed"],
         assignee: designReviewers.map((reviewer) => reviewer),
         "job Profile": getJobProfileAsOptions().map((option) => option.value),
+        score: ['score'],
         location: ['location'],
       };
 
