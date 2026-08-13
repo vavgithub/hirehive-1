@@ -11733,6 +11733,14 @@ const new3dDestemplates = [
 ]
 
 //Entries are based on assessment.model.js
+// Designer reuses Graphic Designer question banks at Junior / Mid-Level / Senior
+const newDesignerTemplates = newGraphicDesTemplates.map(({ title, questions, isAvailable }) => ({
+  title,
+  questions,
+  isAvailable,
+  category: 'Designer',
+}));
+
 export const assessmentTemplates = [
   ...newUiUxTemplates,
   ...newMotionDesTemplates,
@@ -11740,6 +11748,7 @@ export const assessmentTemplates = [
   ...newBrandDesTemplates,
   ...newVideoEditorTemplates,
   ...newGraphicDesTemplates,
+  ...newDesignerTemplates,
   ...newCreativeDirTemplates,
   ...new3dDestemplates
 ]
