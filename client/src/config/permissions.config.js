@@ -193,6 +193,7 @@ export const ROLE_CONFIG = {
     permissions: [
       PERMISSIONS.SHOW_CANDIDATE_PROFILE_CARD,
       PERMISSIONS.SHOW_COMPANY_PROFILE,
+      PERMISSIONS.SHOW_ADDITIONAL_QUESTIONS,
     ],
     routes: {
       [ROUTE_KEY.DASHBOARD]: "/design-reviewer/dashboard",
