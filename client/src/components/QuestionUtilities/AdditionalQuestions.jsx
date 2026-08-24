@@ -16,10 +16,21 @@ function AdditionalQuestions({jobDetails, control ,errors}) {
                 control={control}
                 defaultValue=""
                 rules={{ required: question.required ,
-                    validate: (value) =>
-                        question.answerType === "number" && value < 0
-                          ? "Negative numbers are not allowed"
-                          : true,
+                    validate: (value) => {
+                        if (question.answerType === "number" && value < 0) {
+                            return "Negative numbers are not allowed";
+                        }
+                        if (question.answerType === "link") {
+                            const trimmed = typeof value === "string" ? value.trim() : "";
+                            if (!trimmed) {
+                                return true; // empty handled by required
+                            }
+                            if (!/^https?:\/\/.+/i.test(trimmed)) {
+                                return "Please enter a valid link (starting with http:// or https://)";
+                            }
+                        }
+                        return true;
+                    },
                 }}
                 render={({ field }) => (
                 <div>
@@ -112,11 +123,11 @@ function AdditionalQuestions({jobDetails, control ,errors}) {
                         >
                         <input
                             id={`question-${question._id}-input`}
-                            type={question.answerType === "number" ? "number" : "text"}
+                            type={question.answerType === "number" ? "number" : question.answerType === "link" ? "url" : "text"}
                             {...field}
                             onWheel={(event) => event.currentTarget.blur()}
                             className="w-full p-2 bg-background-80 rounded outline-none focus:outline-teal-300 no-spinner"
-                            placeholder="Enter your answer"
+                            placeholder={question.answerType === "link" ? "Paste your link here (https://...)" : "Enter your answer"}
                         />
                         </div>
                     )}
