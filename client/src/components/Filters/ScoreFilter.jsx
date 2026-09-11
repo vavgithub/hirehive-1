@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import StyledCard from '../Cards/StyledCard'
 
-export const MIN_SCORE = 0;
-export const MAX_SCORE = 100;
+export const MIN_SCORE = 1;
+export const MAX_SCORE = 5;
 
 function ScoreFilter({handleScoreChange}) {
     const [min,setMin] = useState(0);

@@ -331,31 +331,51 @@ export const getAllCandidatesForJob = async (req, res) => {
           ]
         }
         if(key === 'assignee' && value){
-          if(Array.isArray(value)){
-            const selectedAssigneeIds = value.map(assignee => new mongoose.Types.ObjectId(assignee._id));
+          if(Array.isArray(value) && value.length){
+            const selectedAssigneeIds = value
+              .map((assignee) => (assignee?._id || assignee || "").toString())
+              .filter((id) => mongoose.Types.ObjectId.isValid(id));
+            if (selectedAssigneeIds.length) {
             assigneeFilter = [
               {
                 $match: {
                   $expr: {
-                    $in: [
+                    $gt: [
                       {
-                        $getField: {
-                          field: "assignedTo",
-                          input: {
-                            $getField: {
-                              field: "$jobApplications.currentStage",
-                              input: "$jobApplications.stageStatuses"
+                        $size: {
+                          $filter: {
+                            input: { $objectToArray: { $ifNull: ["$jobApplications.stageStatuses", {}] } },
+                            as: "stage",
+                            cond: {
+                              $or: [
+                                { $in: [{ $toString: { $ifNull: ["$$stage.v.assignedTo", ""] } }, selectedAssigneeIds] },
+                                {
+                                  $gt: [
+                                    {
+                                      $size: {
+                                        $filter: {
+                                          input: { $ifNull: ["$$stage.v.additionalReviewers", []] },
+                                          as: "rev",
+                                          cond: { $in: [{ $toString: { $ifNull: ["$$rev.assigneeId", ""] } }, selectedAssigneeIds] }
+                                        }
+                                      }
+                                    },
+                                    0
+                                  ]
+                                }
+                              ]
                             }
                           }
                         }
                       },
-                      selectedAssigneeIds // array of ObjectIds
+                      0
                     ]
                   }
                 }
               }
 
             ]
+            }
           }
         }
         if(key === 'budget'){
@@ -412,7 +432,31 @@ export const getAllCandidatesForJob = async (req, res) => {
           if (!isNaN(min) && !isNaN(max)) {
             scoreFilter = [{
               $match: {
-                'jobApplications.stageStatuses.Portfolio.aiScore': { $gte: min, $lte: max },
+                $expr: {
+                  $let: {
+                    vars: {
+                      portfolioScore: {
+                        $let: {
+                          vars: {
+                            raw: {
+                              $ifNull: [
+                                "$jobApplications.stageStatuses.Portfolio.overallScore",
+                                "$jobApplications.stageStatuses.Portfolio.score",
+                              ],
+                            },
+                          },
+                          in: { $cond: [{ $isNumber: "$$raw" }, "$$raw", null] },
+                        },
+                      },
+                    },
+                    in: {
+                      $and: [
+                        { $gte: ["$$portfolioScore", min] },
+                        { $lte: ["$$portfolioScore", max] },
+                      ],
+                    },
+                  },
+                },
               },
             }];
           }
@@ -1199,7 +1243,7 @@ export const getAllCandidates = async (req,res) => {
         if (key === 'score') {
           const [min, max] = (value || '').split('-').map(s => parseFloat(s.trim()));
           if (!isNaN(min) && !isNaN(max)) {
-            encodedFilters.aiScore = { $gte: min, $lte: max };
+            encodedFilters.overallScore = { $gte: min, $lte: max };
           }
         }
         if (key === 'shortlist') {
@@ -1422,6 +1466,19 @@ export const getAllCandidates = async (req,res) => {
           aiScoredAt: '$jobApplications.aiScoredAt',
           shortlisted: '$jobApplications.shortlisted',
           aiScore: '$jobApplications.stageStatuses.Portfolio.aiScore',
+          overallScore: {
+            $let: {
+              vars: {
+                raw: {
+                  $ifNull: [
+                    "$jobApplications.stageStatuses.Portfolio.overallScore",
+                    "$jobApplications.stageStatuses.Portfolio.score",
+                  ],
+                },
+              },
+              in: { $cond: [{ $isNumber: "$$raw" }, "$$raw", null] },
+            },
+          },
         },
       },
       {
@@ -1477,6 +1534,7 @@ export const getAllCandidates = async (req,res) => {
           aiScoredAt: 1,
           shortlisted: 1,
           aiScore: 1,
+          overallScore: 1,
         }
       },
       ...filterQuery,
