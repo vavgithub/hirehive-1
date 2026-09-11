@@ -326,7 +326,7 @@ const FilterForDataTable = ({ applyLocationFilter, onApplyFilters, readOnly, pre
                     {category === 'job Title' ? 'Job' : category}:
                   </span>
                   <span className={formatSelectedValues(category, selectedFilters[category]).className}>
-                    {formatSelectedValues(category, category === 'location' ? selectedFilters[category]  :category === 'assignee' ? selectedFilters[category].map(each => each.name) : category === "score" ? selectedFilters[category] : selectedFilters[category]).value}
+                    {formatSelectedValues(category, category === 'location' ? selectedFilters[category]  :category === 'assignee' ? selectedFilters[category].map(each => `${each?.firstName || ''} ${each?.lastName || ''}`.trim()) : category === "score" ? selectedFilters[category] : selectedFilters[category]).value}
                   </span>
                 </div>
                 <div className='group-hover:text-accent-100'>
