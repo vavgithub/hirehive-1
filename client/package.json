@@ -12,6 +12,7 @@
     "preview:staging": "vite preview --mode staging",
     "preview:prod": "vite preview --mode production",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
+    "lint:ds": "eslint src --ext js,jsx --no-eslintrc --config .eslintrc.ds.cjs --max-warnings 0 && node scripts/ds-audit.mjs",
     "clean": "rimraf dist",
     "prebuild": "npm run clean"
   },
