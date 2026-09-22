@@ -9,10 +9,11 @@
     "build:staging": "vite build --mode staging",
     "build:prod": "vite build --mode production",
     "preview:dev": "vite preview --mode development",
-    "preview:staging": "vite preview --mode staging",
-    "preview:prod": "vite preview --mode production",
+    "preview:staging": "vite preview --host 127.0.0.1 --port 4173 --strictPort --mode staging",
+    "preview:prod": "vite preview --host 127.0.0.1 --port 4173 --strictPort --mode production",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "lint:ds": "eslint src --ext js,jsx --no-eslintrc --config .eslintrc.ds.cjs --max-warnings 0 && node scripts/ds-audit.mjs",
+    "test:smoke": "playwright test",
     "clean": "rimraf dist",
     "prebuild": "npm run clean"
   },
@@ -65,6 +66,7 @@
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
+    "@playwright/test": "1.49.1",
     "@sentry/vite-plugin": "^5.3.0",
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",
