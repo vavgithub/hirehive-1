@@ -47,6 +47,15 @@ jobs:
       - name: Build the React app
         run: npm run build:prod
 
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+
+      - name: Smoke tests
+        run: npm run test:smoke
+        env:
+          CI: true
+          PLAYWRIGHT_PREVIEW: npm run preview:prod
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
