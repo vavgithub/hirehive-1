@@ -1,7 +1,8 @@
 /** @type {import('tailwindcss').Config} */
-// const colors = require("tailwindcss/colors");
+import tailwindcssAnimate from "tailwindcss-animate";
 
 export default {
+  darkMode: ["selector", '[data-theme="dark"]'],
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     container: {
@@ -106,25 +107,52 @@ export default {
           100: "rgba(248, 4, 253, 1)",
         },
         primary: {
+          DEFAULT: "var(--primary)",
           100: "var(--color-primary-100)",
           200: "var(--color-primary-200)",
           300: "var(--color-primary-300)",
           400: "var(--color-primary-400)",
+          foreground: "var(--primary-foreground)",
         },
         secondary: {
+          DEFAULT: "var(--secondary)",
           500: "var(--color-secondary-500)",
+          foreground: "var(--secondary-foreground)",
         },
         accent: {
+          DEFAULT: "var(--accent)",
           100: "var(--color-font-accent-100)",
           300: "var(--color-accent-300)",
           red: "var(--color-red-100)",
           yellow: "var(--color-yellow-100)",
           green: "var(--color-green-100)",
+          foreground: "var(--accent-foreground)",
         },
+        foreground: "var(--foreground)",
+        card: {
+          DEFAULT: "var(--card)",
+          foreground: "var(--card-foreground)",
+        },
+        popover: {
+          DEFAULT: "var(--popover)",
+          foreground: "var(--popover-foreground)",
+        },
+        muted: {
+          DEFAULT: "var(--muted)",
+          foreground: "var(--muted-foreground)",
+        },
+        destructive: {
+          DEFAULT: "var(--destructive)",
+          foreground: "var(--destructive-foreground)",
+        },
+        border: "var(--border)",
+        input: "var(--input)",
+        ring: "var(--ring)",
         divider: {
           100: "rgba(44, 45, 47, 1)",
         },
         background: {
+          DEFAULT: "var(--background)",
           100: "var(--color-background-100)",
           90: "var(--color-background-90)",
           80: "var(--color-background-80)",
@@ -196,5 +224,5 @@ export default {
       },
     },
   },
-  plugins: [],
+  plugins: [tailwindcssAnimate],
 };

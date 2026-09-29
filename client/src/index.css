@@ -546,6 +546,29 @@ input[type='number'] {
     --color-text-yellow : rgba(209, 166, 14, 1);
     --color-text-red : rgba(234, 55, 91, 1);
     --color-bg-overlay : rgba(0,0,0,0.8);
+
+    /* shadcn semantic layer — aliases existing --color-* so Phase 1
+       primitives can use bg-background / text-primary without a reskin.
+       The designer palette task re-points --color-* only. */
+    --background: var(--color-background-100);
+    --foreground: var(--color-font-main);
+    --card: var(--color-background-80);
+    --card-foreground: var(--color-font-main);
+    --popover: var(--color-background-80);
+    --popover-foreground: var(--color-font-main);
+    --primary: var(--color-primary-100);
+    --primary-foreground: var(--color-white-100);
+    --secondary: var(--color-background-70);
+    --secondary-foreground: var(--color-font-main);
+    --muted: var(--color-background-70);
+    --muted-foreground: var(--color-font-teritiary);
+    --accent: var(--color-accent-100);
+    --accent-foreground: var(--color-font-main);
+    --destructive: var(--color-red-100);
+    --destructive-foreground: var(--color-white-100);
+    --border: var(--color-background-40);
+    --input: var(--color-background-70);
+    --ring: var(--color-primary-100);
   }
  /* Light theme */
   [data-theme="light"] {
