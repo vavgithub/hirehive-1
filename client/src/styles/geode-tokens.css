@@ -1,0 +1,57 @@
+/*
+ * Geode dashboard tokens.
+ * Change the font, a color, or a space step here. The dashboard components
+ * read these variables and do not hardcode them.
+ * Action (#88f800) and ink (#111f00) match the Done button sheet.
+ * Other roles are starting values in that same system.
+ */
+.geode {
+  --geode-font-sans: Gilroy, sans-serif;
+  --geode-weight-heading: 500;
+  --geode-weight-body: 400;
+
+  --geode-text-h4: 1.5rem;
+  --geode-text-h6: 1rem;
+  --geode-text-body: 1rem;
+  --geode-text-small: 0.875rem;
+  --geode-leading-tight: 1.25;
+  --geode-leading-body: 1.4;
+
+  --geode-space-1: 0.25rem;
+  --geode-space-2: 0.5rem;
+  --geode-space-3: 0.75rem;
+  --geode-space-4: 1rem;
+  --geode-space-5: 1.5rem;
+  --geode-space-6: 2rem;
+
+  --geode-radius: 0.75rem;
+  --geode-radius-pill: 999px;
+  --geode-control-sm: 2.25rem;
+  --geode-control-md: 2.75rem;
+  --geode-control-lg: 3.5rem;
+  --geode-avatar: 2rem;
+
+  --geode-bg: #f4f5f0;
+  --geode-card: #ffffff;
+  --geode-muted: #eef0e8;
+  --geode-border: #e2e4dc;
+  --geode-text: #142006;
+  --geode-text-muted: #5e6556;
+  --geode-action: #88f800;
+  --geode-action-text: #111f00;
+  --geode-action-hover: #74e000;
+  --geode-ink: #111f00;
+  --geode-ink-text: #f7f8f2;
+  --geode-ink-hover: #24330f;
+  --geode-focus: #111f00;
+
+  --geode-chart-1: #e23d8c;
+  --geode-chart-2: #12c8d0;
+  --geode-chart-3: #88f800;
+  --geode-chart-4: #7a5cff;
+  --geode-chart-5: #ffb020;
+
+  font-family: var(--geode-font-sans);
+  background: var(--geode-bg);
+  color: var(--geode-text);
+}

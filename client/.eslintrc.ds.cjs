@@ -90,7 +90,6 @@ module.exports = {
         'src/components/tableUtilities/GetColumns.jsx',
         'src/components/tableUtilities/Table.jsx',
         'src/components/ui/ThreeDots.jsx',
-        'src/pages/Admin/AdminDashboard.jsx',
         'src/pages/DesignReviewer/Reviews.jsx',
       ],
       rules: {

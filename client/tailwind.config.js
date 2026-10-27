@@ -1,5 +1,5 @@
 /** @type {import('tailwindcss').Config} */
-// const colors = require("tailwindcss/colors");
+import tailwindcssAnimate from 'tailwindcss-animate'
 
 export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
@@ -168,10 +168,26 @@ export default {
           main:"var(--color-font-main)",
           invert:"var(--color-font-main-invert)"
         },
+        geode: {
+          bg: "var(--geode-bg)",
+          card: "var(--geode-card)",
+          text: "var(--geode-text)",
+          muted: "var(--geode-text-muted)",
+          "muted-bg": "var(--geode-muted)",
+          border: "var(--geode-border)",
+          action: "var(--geode-action)",
+          "action-text": "var(--geode-action-text)",
+          "action-hover": "var(--geode-action-hover)",
+          ink: "var(--geode-ink)",
+          "ink-text": "var(--geode-ink-text)",
+          "ink-hover": "var(--geode-ink-hover)",
+          focus: "var(--geode-focus)",
+        },
       },
 
       fontFamily: {
         gilroy: ["Gilroy", "sans-serif"],
+        geode: ["var(--geode-font-sans)"],
         // bricolage: ['"Bricolage Grotesque"', "sans-serif"],
         // outfit: ["Outfit", "sans-serif"],
       },
@@ -186,6 +202,10 @@ export default {
         "display-d2": ["2.625rem", { lineHeight: "1.1" ,letterSpacing : "1px"}],
         "small-p": ["0.75rem", { lineHeight: "1.25" }],
         "large-p": ["0.875rem", { lineHeight: "1.5" }],
+        "geode-h4": ["var(--geode-text-h4)", { lineHeight: "var(--geode-leading-tight)" }],
+        "geode-h6": ["var(--geode-text-h6)", { lineHeight: "var(--geode-leading-body)" }],
+        "geode-body": ["var(--geode-text-body)", { lineHeight: "var(--geode-leading-body)" }],
+        "geode-small": ["var(--geode-text-small)", { lineHeight: "var(--geode-leading-body)" }],
       },
       fontWeight: {
         h1: "700",
@@ -193,8 +213,34 @@ export default {
         h3: "600",
         body: "300",
         "large-p": "400",
+        "geode-heading": "var(--geode-weight-heading)",
+        "geode-body": "var(--geode-weight-body)",
+      },
+      spacing: {
+        "geode-1": "var(--geode-space-1)",
+        "geode-2": "var(--geode-space-2)",
+        "geode-3": "var(--geode-space-3)",
+        "geode-4": "var(--geode-space-4)",
+        "geode-5": "var(--geode-space-5)",
+        "geode-6": "var(--geode-space-6)",
+      },
+      width: {
+        "geode-avatar": "var(--geode-avatar)",
+        "geode-sm": "var(--geode-control-sm)",
+        "geode-md": "var(--geode-control-md)",
+        "geode-lg": "var(--geode-control-lg)",
+      },
+      height: {
+        "geode-avatar": "var(--geode-avatar)",
+        "geode-sm": "var(--geode-control-sm)",
+        "geode-md": "var(--geode-control-md)",
+        "geode-lg": "var(--geode-control-lg)",
+      },
+      borderRadius: {
+        geode: "var(--geode-radius)",
+        "geode-pill": "var(--geode-radius-pill)",
       },
     },
   },
-  plugins: [],
+  plugins: [tailwindcssAnimate],
 };

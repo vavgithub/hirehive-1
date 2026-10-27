@@ -1,15 +1,19 @@
 import React, { useMemo } from "react";
 import ReactECharts from "echarts-for-react";
 import { formatUTCToLocalTimeAuto, UTCToShortDate, UTCToShortMonth } from "../../utility/timezoneConverter";
+import { useGeodeToken } from "../../lib/readGeodeToken";
 
 function ApplicationChart({type,dataArray}) {
     const xData = dataArray?.map(data => type === "weekly" ? `${UTCToShortDate(data?.week?.start)} - ${UTCToShortDate(data?.week?.end)}` : type === "daily" ? `${UTCToShortMonth(data?.day)}` : type === "yesterday" ? formatUTCToLocalTimeAuto(data?.hour) : data?.month);
     const values = dataArray?.map(data => data?.totalCount ?? 0);
+    const lineColor = useGeodeToken("--geode-chart-2", "teal");
+    const labelColor = useGeodeToken("--geode-text-muted", "currentColor");
+    const fontFamily = useGeodeToken("--geode-font-sans", "Gilroy, sans-serif");
     
   const options = useMemo(()=>(
     {
         textStyle: {
-          fontFamily: 'Gilroy, sans-serif'
+          fontFamily
         },
         grid: {
           left: "8%",
@@ -23,13 +27,16 @@ function ApplicationChart({type,dataArray}) {
           nameLocation: "middle",
           nameGap: 28,
           data: xData,
-         
+          axisLabel: { color: labelColor },
+          nameTextStyle: { color: labelColor },
         },
         yAxis: {
           type: "value",
           name: "Applications",
           nameLocation: "middle",
           nameGap: 50,
+          axisLabel: { color: labelColor },
+          nameTextStyle: { color: labelColor },
           splitLine: {
             lineStyle: {
               color: "#aaa",
@@ -58,16 +65,16 @@ function ApplicationChart({type,dataArray}) {
             data: values,
             type: "line",
             lineStyle: {
-              color: "teal",
+              color: lineColor,
               width: 2
             },
             itemStyle: {
-              color: "teal"
+              color: lineColor
             }
           }
         ]
       }
-  ),[xData,values,type])
+  ),[xData,values,type,lineColor,labelColor,fontFamily])
 
   return <ReactECharts option={options} />;
 }

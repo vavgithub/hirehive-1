@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react'
 import ReactECharts from "echarts-for-react";
+import { useGeodeToken } from "../../lib/readGeodeToken";
 
 function InterviewsChart({dataSet}) {
     const formattedDataSet = useMemo(()=>{
@@ -10,11 +11,21 @@ function InterviewsChart({dataSet}) {
         }
     },[dataSet])
 
+    const labelColor = useGeodeToken('--geode-text', 'currentColor');
+    const fontFamily = useGeodeToken('--geode-font-sans', 'Gilroy, sans-serif');
+    const chartColors = [
+      useGeodeToken('--geode-chart-1', 'currentColor'),
+      useGeodeToken('--geode-chart-2', 'currentColor'),
+      useGeodeToken('--geode-chart-3', 'currentColor'),
+      useGeodeToken('--geode-chart-4', 'currentColor'),
+      useGeodeToken('--geode-chart-5', 'currentColor'),
+    ];
+
     const options = {
         textStyle: {
-          fontFamily: "'Gilroy', sans-serif",
+          fontFamily,
         },
-        color: ['rgba(2, 75, 202, 1)', 'rgba(27, 110, 253, 1)', 'rgba(108, 161, 254, 1)'],
+        color: chartColors,
         tooltip: {
           trigger: 'item',
           backgroundColor: "var(--color-background-70)", // Teal with transparency
@@ -37,7 +48,7 @@ function InterviewsChart({dataSet}) {
           itemGap: 32,
           top: 'center',          // Vertically center the legend
           textStyle: {
-            color: "var(--color-font-main)",
+            color: labelColor,
             padding: [0, 0, 0, 12]
           }
         },
