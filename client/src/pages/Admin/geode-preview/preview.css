@@ -1,0 +1,106 @@
+.geode-team-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(12.5rem, 1fr));
+  gap: var(--geode-card-gap);
+}
+
+.geode-team-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--geode-space-3);
+  text-align: center;
+}
+
+.geode-switch {
+  position: relative;
+  width: 2.25rem;
+  height: 1.25rem;
+  flex: 0 0 2.25rem;
+  border: 1px solid var(--geode-border);
+  border-radius: var(--geode-radius-pill);
+  background: var(--geode-muted);
+}
+
+.geode-switch::after {
+  content: "";
+  position: absolute;
+  top: 0.125rem;
+  left: 0.125rem;
+  width: 0.875rem;
+  height: 0.875rem;
+  border-radius: var(--geode-radius-pill);
+  background: var(--geode-card);
+}
+
+.geode-switch[data-on="true"] {
+  border-color: var(--geode-action);
+  background: var(--geode-action);
+}
+
+.geode-switch[data-on="true"]::after {
+  left: 1.125rem;
+}
+
+.geode-month {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: var(--geode-space-2);
+}
+
+.geode-month-label,
+.geode-month-cell {
+  min-width: 0;
+  font-family: var(--geode-font-sans);
+  font-size: var(--geode-text-small);
+  line-height: var(--geode-leading-tight);
+}
+
+.geode-month-label {
+  color: var(--geode-text-muted);
+  text-align: center;
+}
+
+.geode-month-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--geode-space-2);
+  min-height: 4.5rem;
+  padding: var(--geode-space-2);
+  border: 1px solid var(--geode-border);
+  border-radius: var(--geode-radius-control);
+  background: var(--geode-card);
+  color: var(--geode-text);
+}
+
+.geode-month-cell[data-muted="true"] {
+  color: var(--geode-text-muted);
+  background: var(--geode-muted);
+}
+
+.geode-month-mark {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: var(--geode-radius-pill);
+  background: var(--geode-chart-1);
+}
+
+.geode-check {
+  display: flex;
+  align-items: center;
+  gap: var(--geode-space-2);
+  min-height: var(--geode-control-sm);
+  padding: 0 var(--geode-space-3);
+  border: 1px solid var(--geode-border);
+  border-radius: var(--geode-radius-control);
+  background: var(--geode-card);
+  font-family: var(--geode-font-sans);
+  font-size: var(--geode-text-small);
+  line-height: var(--geode-leading-body);
+}
+
+.geode-check[data-on="true"] {
+  border-color: var(--geode-text);
+  background: var(--geode-muted);
+}

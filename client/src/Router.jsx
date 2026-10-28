@@ -50,6 +50,7 @@ import Settings from './pages/Admin/Settings.jsx';
 import Interviews from './pages/Admin/Interviews.jsx';
 import CandidateSettings from './pages/Candidate/CandidateSettings.jsx';
 import GeodeDashboardPreview from './pages/Admin/dashboard/Preview.jsx';
+import { geodePreviewRoute } from './pages/Admin/geode-preview/App.jsx';
 
 export const router = createBrowserRouter([
   {
@@ -81,6 +82,7 @@ export const router = createBrowserRouter([
         path: '/preview/geode-dashboard',
         element: <GeodeDashboardPreview />,
       },
+      geodePreviewRoute,
 
       //Protected Candidate Routes
       {
