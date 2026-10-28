@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import axios from '../../services/axios';
-import sundarKanya from "../../svg/Background/sundar-kanya.png"
+import { GeodeLogo } from '@/components/geode/Logo';
 import { Button } from '../Buttons/Button';
 import StatsGrid from '../../components/ui/StatsGrid';
 import LoaderModal from '../Loaders/LoaderModal';
@@ -17,7 +17,6 @@ import { digitsRegex, lowerCaseRegex, passwordRegex, specialCharRegex, upperCase
 import ForgotPassword from '../../pages/Admin/ForgotPassword';
 import { googleLogin, registerAdmin, verifyPassword } from '../../services/auth.service';
 import { FcGoogle } from 'react-icons/fc';
-import { useLogo } from '../../context/ThemeContext';
 import * as Sentry from '@sentry/react';
 
 export const emailPattern = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i
@@ -38,7 +37,6 @@ function RegisterForm({setCurrentStep}) {
     const [loading, setLoading] = useState(false);
 
     const { onboardData, setOnboardData } = useOnboardingContext();
-    const Logo = useLogo();
 
     const [showPasswordPopup,setShowPasswordPopup] = useState(false);
     const [passwordType, setPasswordType] = useState('password');
@@ -176,7 +174,7 @@ function RegisterForm({setCurrentStep}) {
             {/* Left section with background image */}
             <div className="hidden lg:flex lg:w-3/5 bg-login-screen backdrop-blur-lg bg-cover p-12 flex-col justify-between relative">
               <div className='p-[2.75rem]'>
-                <img className='h-12' src={Logo} />
+                <GeodeLogo />
                 <h1 className="mt-8">GEODE - Hire Designers</h1>
                 <p className="display-d2 max-w-xl mt-7 mb-4">Discover, hire, and explore top talent with HireHive</p>
                 <p className='typography-body max-w-96'>Our advanced tools simplify job posting, application review, and career opportunities, ensuring you find the best candidates or land your next role effortlessly.</p>
@@ -186,7 +184,6 @@ function RegisterForm({setCurrentStep}) {
                 <div className='absolute bottom-14 right-80'><StatsGrid stats={statsOne} /></div>
                 <div className='absolute bottom-20 right-14'><StatsGrid stats={statsTwo} /></div>
               </div>
-              <img src={sundarKanya} alt="Sundar Kanya" className="absolute bottom-0 right-0 h-[70%]" />
             </div>
             {/* Right section with login form */}
             <div className="w-full lg:w-2/5 bg-background-90 p-4 md:p-28   flex flex-col justify-center">

@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import axios from '../../services/axios';
 import AssessmentBanner from '../../components/ui/AssessmentBanner';
-import NoJobs from "../../svg/Background/NoJobs.svg"
+import { GeodePlaceholder } from '@/components/geode/Placeholder';
 import Loader from '../../components/Loaders/Loader';
 import useCandidateAuth from '../../hooks/useCandidateAuth';
 import Pagination from '../../components/utility/Pagination';
@@ -186,7 +186,7 @@ const AllJobs = () => {
                     ) :
                         displayJobs?.length === 0 ?
                             <div className='bg-background-80 h-full flex flex-col p-40 justify-center items-center rounded-xl'>
-                                <img src={NoJobs} alt="No jobs found" />
+                                <GeodePlaceholder label="Illustration" />
                                 <span className='typography-body m-6'>
                                     No Jobs available
                                 </span>

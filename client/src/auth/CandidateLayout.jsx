@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Outlet, useNavigate, NavLink, useLocation } from 'react-router-dom';
-import LightLogo from "../svg/Logo/lightLogo.png"
 import useCandidateAuth from '../hooks/useCandidateAuth';
 import { useDispatch } from 'react-redux';
 import { logoutCandidateAuth } from '../redux/candidateAuthSlice';
@@ -13,11 +12,10 @@ import Modal from '../components/Modals/Modal';
 import IconWrapper from '../components/Cards/IconWrapper';
 import { Briefcase, BriefcaseBusiness, LogOut, Send, Settings, MenuIcon, User } from 'lucide-react';
 import Footer from '../components/Footer/Footer';
-import TelegramBannerIcon from "../svg/Banners/telegramBannerIcon.png"
 import { Button } from '../components/Buttons/Button';
 import ThemeToggle from '../components/ui/ThemeToggle';
 import { use } from 'react';
-import { useTelegramBanner, useUnknownProfilePicture } from '../context/ThemeContext';
+import { useUnknownProfilePicture } from '../context/ThemeContext';
 import { GeodeLogo } from '@/components/geode/Logo';
 
 const TELEGRAM_BOT_USERNAME = import.meta.env.VITE_TELEGRAM_BOT_USERNAME;
@@ -191,7 +189,6 @@ const CandidateLayout = () => {
   }
 
   const location = useLocation();
-  const TelegramBanner = useTelegramBanner()
 
   const darkBgPaths = ["/candidate/profile"]
 
@@ -250,14 +247,10 @@ const CandidateLayout = () => {
         <div >
           {candidateData &&
             <>
-              {!candidateData?.isTelegramConnected && <div className='max-w-full mx-4 my-4 relative '>
-                <img src={TelegramBannerIcon} className='absolute max-w-[46px] -top-[24px] -right-[10px]' />
-                <img src={TelegramBanner} className='max-w-full ' />
-                <div className='absolute top-[6%] left-4 max-w-[90%]'>
-                  <h4 className=' text-font-main  font-semibold mb-1'>Connect Telegram</h4>
-                  <p className=' text-font-main typography-body mb-4'>Get instant job updates. <br/> Stay ahead always.</p>
+              {!candidateData?.isTelegramConnected && <div className='geode-placeholder mx-4 my-4'>
+                  <h4 className='text-geode-text font-geode-heading mb-1'>Connect Telegram</h4>
+                  <p className='typography-body mb-4'>Get instant job updates. Stay ahead always.</p>
                   <Button  onClick={handleConnectTelegram} className='!px-4 w-full' variant='primary' icon={() => <IconWrapper size={0} inheritColor customIconSize={5} customStrokeWidth={5} icon={Send}/>}>Connect Now</Button>
-                </div>
               </div>}
               <div className='my-4'>
                 <NavItem               

@@ -9,7 +9,7 @@ import Tabs from '../../components/ui/Tabs';
 import StatsGrid from '../../components/ui/StatsGrid';
 import { Button } from '../../components/Buttons/Button';
 import { ACTION_TYPES, getModalMessage } from '../../utility/ActionTypes';
-import NoJobs from "../../svg/Background/NoJobs.svg"
+import { GeodePlaceholder } from '@/components/geode/Placeholder';
 import { showErrorToast, showSuccessToast } from '../../components/ui/Toast';
 import Loader from '../../components/Loaders/Loader';
 import StyledCard from '../../components/Cards/StyledCard';
@@ -415,7 +415,7 @@ const Jobs = () => {
                             </div>
                         ) : (displayJobs.length === 0 || displayJobs.filter(job => job.status === activeTab).length === 0) ? (
                             <div className='bg-background-100 h-full flex flex-col p-36 justify-center items-center rounded-xl'>
-                                <img src={NoJobs} alt="No jobs found" />
+                                <GeodePlaceholder label="Illustration" />
                                 <span className='typography-body m-6'>
                                     Create a job post to attract top talent and build your dream team
                                 </span>

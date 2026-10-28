@@ -14,7 +14,7 @@ import { getRoute, ROUTE_KEY } from '../../config/permissions.config';
 import GoogleIcon from '../../svg/Icons/GoogleIcon';
 import { FcGoogle } from 'react-icons/fc';
 import { useAuthContext } from '../../context/AuthProvider';
-import { useLogo } from '../../context/ThemeContext';
+import { GeodeLogo } from '@/components/geode/Logo';
 import * as Sentry from '@sentry/react';
 
 const statsOne = [
@@ -33,7 +33,6 @@ const Login = () => {
     const navigate = useNavigate();
     const { data: authData, isLoading: authLoading, refetch: refetchAuth } = useAuth();
     const { user, setUser , isDone , isLoading } = useAuthContext();
-    const Logo = useLogo();
 
     useEffect(() => {
         if (authData?.role) {
@@ -90,7 +89,7 @@ const Login = () => {
                 {/* Left section with background image */}
                 <div className="hidden lg:flex  lg:w-3/5 bg-admin-login-fg backdrop-blur-lg bg-cover p-12 flex-col justify-end relative">
                     <div>
-                        <img className='h-12' src={Logo} />
+                        <GeodeLogo />
                         <h1 className="mt-8">GEODE - Hire Designers</h1>
                         <p className="display-d2 max-w-xl mt-4 mb-4">Discover, hire, and explore top talent with HireHive</p>
                         <p className='typography-body max-w-96'>Our advanced tools simplify job posting, application review, and career opportunities, ensuring you find the best candidates or land your next role effortlessly.</p>

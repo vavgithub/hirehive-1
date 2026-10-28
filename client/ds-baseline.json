@@ -1,8 +1,8 @@
 {
   "generatedAt": "2026-10-28",
   "counts": {
-    "styleAttributes": 36,
-    "arbitraryUtilities": 359,
+    "styleAttributes": 35,
+    "arbitraryUtilities": 352,
     "colorLiterals": 124,
     "muiImports": 32,
     "sxProps": 49

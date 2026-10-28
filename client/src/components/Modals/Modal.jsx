@@ -11,7 +11,7 @@ import { X } from 'lucide-react';
 import { ACTION_TYPES } from '../../utility/ActionTypes';
 import GlobalDropDown from '../Dropdowns/GlobalDropDown';
 import { combineDateWithTime, convertLocalToUTC } from '../../utility/timezoneConverter';
-import { useAssessmentPopupBg } from '../../context/ThemeContext';
+import { GeodePlaceholder } from '@/components/geode/Placeholder';
 import { InputField } from '../Form/FormFields';
 
 // const ACTION_TYPES = {
@@ -301,8 +301,6 @@ const Modal = ({
   }
 }, [open]);
 
-const AssessmentPopup = useAssessmentPopupBg()
-
   if (!open) return null;
 
   const renderModalContent = () => {
@@ -312,15 +310,8 @@ const AssessmentPopup = useAssessmentPopupBg()
           <div onClick={onClose} className=' cursor-pointer md:hidden absolute -top-14 -right-14 bg-background-60 p-1 rounded-xl'>
             <IconWrapper icon={X} size={0} customIconSize={5} />
           </div>
-          <div className="mb-4">
-            <img
-              src={AssessmentPopup}
-              alt="Assessment"
-              className="h-auto"
-              onError={(e) => {
-                e.target.src = '/api/placeholder/256/256';
-              }}
-            />
+          <div className="mb-4 w-full">
+            <GeodePlaceholder label="Illustration" />
           </div>
           <span className={(isMobile  ?  "typography-h3" : "typography-h1") + " "}>{isMobile  ? action.mobTitle :title}</span>
           <p className={(isMobile ? "typography-large-p" :  "typography-body mb-6") +" text-font-gray typography-body "}>{isMobile  ? action.mobMessage :message}</p>
@@ -334,15 +325,8 @@ const AssessmentPopup = useAssessmentPopupBg()
           <div onClick={onClose} className=' cursor-pointer md:hidden absolute -top-14 -right-14 bg-background-60 p-1 rounded-xl'>
             <IconWrapper icon={X} size={0} customIconSize={5} />
           </div>
-          <div className="mb-4">
-            <img
-              src={AssessmentPopup}
-              alt="Telegram"
-              className="h-auto"
-              onError={(e) => {
-                e.target.src = '/api/placeholder/256/256';
-              }}
-            />
+          <div className="mb-4 w-full">
+            <GeodePlaceholder label="Illustration" />
           </div>
           <span className={(isMobile  ?  "typography-h3" : "typography-h1") + " "}>{title}</span>
           <p className={(isMobile ? "typography-large-p" :  "typography-body mb-6") +" text-font-gray typography-body "}>{message}</p>

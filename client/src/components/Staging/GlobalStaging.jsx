@@ -25,7 +25,7 @@ import BulletMarks from '../ui/BulletMarks.jsx';
 import Scorer from '../ui/Scorer.jsx';
 import TaskForm, { SubmissionForm } from './TaskForm.jsx';
 import TaskDetails, { SubmissionDetails } from './TaskDetails.jsx';
-import HiredStamp from "../../svg/Background/HiredStamp.svg"
+import { GeodePlaceholder } from '@/components/geode/Placeholder';
 import Loader from '../Loaders/Loader.jsx';
 import WarningIcon from '../../svg/Staging/WarningIcon.jsx';
 import { ChevronDown, ChevronUp, RotateCcw } from 'lucide-react';
@@ -926,7 +926,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
         }
         {
             stageBasedConfig?.hasHiredLabel && 
-                <img className='absolute top-4 left-3/4' src={HiredStamp} alt='Hired Stamp' />
+                <GeodePlaceholder compact label="Hired" />
         }
         {
             stageBasedConfig?.hasSubmissionForm && 

@@ -8,7 +8,7 @@ import { Button } from '../../components/Buttons/Button';
 import Loader from '../../components/Loaders/Loader';
 import axios from "../../services/axios";
 import { showSuccessToast, showErrorToast } from '../../components/ui/Toast';
-import LightLogo from "../../svg/Logo/lightLogo.png"
+import { GeodeLogo } from '@/components/geode/Logo';
 import { fetchCandidateAuthData, updateAssessmentStatus } from '../../redux/candidateAuthSlice';
 import { uploadAssessment } from '../../utility/cloudinary';
 import StyledCard from '../../components/Cards/StyledCard';
@@ -17,7 +17,6 @@ import ContactUs from '../../components/Form/ContactUs';
 import IconWrapper from '../../components/Cards/IconWrapper';
 import { getRandomAssessmentQuestions, submitAssessment } from '../../services/admin.candidate.service';
 import { uploadAssessmentToS3 } from '../../utility/s3upload';
-import { useLogo } from '../../context/ThemeContext';
 import * as Sentry from '@sentry/react';
 const ONE_MINUTE = 60;
 
@@ -57,7 +56,6 @@ const ProgressBar = ({ answeredCount, total }) => {
 const QuestionSidebar = ({ questions, currentQuestion, answeredCount, onQuestionSelect, answers , submitTest, isUploading, isRecording,webcamRef,handleUserMedia}) => {
   const [timeRemaining, setTimeRemaining] = useState(5 * 60);
   const [timerRef,setTimerRef] = useState(null);
-  const Logo = useLogo();
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -86,7 +84,7 @@ const QuestionSidebar = ({ questions, currentQuestion, answeredCount, onQuestion
     <div className="w-[15rem] bg-background-90 fixed  overflow-y-auto  custom-scrollbar m-4 h-[calc(100vh-2rem)]  rounded-xl">
       <div className='flex items-center justify-start pt-8 pb-6 px-4 '>
 
-        <img className='h-11' src={Logo} />
+        <GeodeLogo />
       </div>
       <div className="py-8 px-4 border-b border-t border-background-60 w-full">
         <div className=" flex flex-col items-center ">

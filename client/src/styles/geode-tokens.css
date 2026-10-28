@@ -169,23 +169,50 @@ html[data-geode-skin] {
 }
 
 .geode-logo {
-  display: block;
+  display: inline-flex;
+  align-items: center;
   height: var(--geode-logo-height);
-  width: auto;
+  color: inherit;
+  font-family: var(--geode-font-sans);
+  font-size: var(--geode-text-h6);
+  font-weight: var(--geode-weight-heading);
+  letter-spacing: 0.08em;
+  line-height: 1;
 }
 
 .geode-logo-compact {
   height: var(--geode-logo-height-compact);
+  font-size: var(--geode-text-small);
 }
 
 .geode-banner {
-  background-color: var(--geode-card);
-  background-image: url('../assets/geode/grid.svg');
-  background-repeat: repeat;
-  background-size: var(--geode-grid-size) var(--geode-grid-size);
-  border: 1px solid var(--geode-border);
+  background-color: var(--geode-neutral-1);
+  background-image: none;
+  border: 1px dashed var(--geode-neutral-4);
   border-radius: var(--geode-radius);
   padding: var(--geode-card-padding);
+}
+
+.geode-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 6rem;
+  padding: var(--geode-card-padding);
+  border: 1px dashed var(--geode-neutral-4);
+  border-radius: var(--geode-radius);
+  background: var(--geode-neutral-1);
+  color: var(--geode-text-muted);
+  font-family: var(--geode-font-sans);
+  font-size: var(--geode-text-small);
+  line-height: var(--geode-leading-body);
+  text-align: center;
+}
+
+.geode-placeholder-compact {
+  min-height: 0;
+  width: fit-content;
+  padding: var(--geode-space-2) var(--geode-space-3);
 }
 
 .geode-nav-item {
@@ -382,12 +409,12 @@ html[data-geode-skin] {
 
 /* Fields must stay visible on white cards. These beat the legacy input rules. */
 .geode :is(
-  input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="range"]):not([type="button"]):not([type="submit"]):not([type="hidden"]),
+  input:not(.geode-affix-input):not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="range"]):not([type="button"]):not([type="submit"]):not([type="hidden"]),
   textarea,
   select
 ),
 html[data-geode-skin] :is(
-  input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="range"]):not([type="button"]):not([type="submit"]):not([type="hidden"]),
+  input:not(.geode-affix-input):not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="range"]):not([type="button"]):not([type="submit"]):not([type="hidden"]),
   textarea,
   select
 ) {
@@ -405,8 +432,8 @@ html[data-geode-skin] :is(input, textarea)::placeholder {
   opacity: 1;
 }
 
-.geode :is(input, textarea, select):focus,
-html[data-geode-skin] :is(input, textarea, select):focus {
+.geode :is(input:not(.geode-affix-input), textarea, select):focus,
+html[data-geode-skin] :is(input:not(.geode-affix-input), textarea, select):focus {
   border-color: var(--geode-ink) !important;
   outline: 2px solid var(--geode-ink);
   outline-offset: 1px;
@@ -450,9 +477,56 @@ html[data-geode-skin] .MuiRadio-root.Mui-checked {
   color: var(--geode-ink);
 }
 
-/* Copy that sits on the old dark illustrations. Cards inside these panels keep ink type. */
-.geode :is(.bg-admin-login-fg, .bg-login-screen, .bg-home-bg, .bg-verification) {
+/* Decorative photos are out until the real art arrives. The panel stays a solid fill. */
+.geode :is(.bg-admin-login-fg, .bg-login-screen, .bg-home-bg, .bg-verification, .bg-admin-login-bg, .bg-main-bg) {
+  background-image: none !important;
+  background-color: var(--geode-ink);
   color: var(--geode-card);
+}
+
+.geode .bg-card-bg {
+  background-image: none !important;
+}
+
+.geode .geode-affix-field {
+  display: flex;
+  align-items: center;
+  gap: var(--geode-space-2);
+  width: 100%;
+  min-width: 0;
+  height: var(--geode-control-md);
+  flex: none;
+  margin-top: var(--geode-space-2);
+  padding-inline: var(--geode-space-3);
+  border: 1px solid var(--geode-neutral-4);
+  border-radius: var(--geode-radius-control);
+  background: var(--geode-neutral-1);
+  color: var(--geode-text);
+}
+
+.geode .geode-affix-field .geode-affix-input {
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+  height: auto;
+  margin: 0;
+  padding: 0;
+  border: 0 !important;
+  border-radius: 0;
+  background: transparent !important;
+  box-shadow: none;
+  color: var(--geode-text);
+}
+
+.geode .geode-affix-field:focus-within {
+  border-color: var(--geode-ink);
+  outline: 2px solid var(--geode-ink);
+  outline-offset: 1px;
+}
+
+.geode .geode-affix-field .geode-affix-input:focus {
+  border: 0 !important;
+  outline: none;
 }
 
 .geode-dialog-close {
