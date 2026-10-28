@@ -5,7 +5,8 @@
  * Action is brand step 3. Ink is #111f00, from the Done button sheet.
  * Ramps are sampled from the Done / Colors frame (node 11206-827).
  */
-.geode {
+.geode,
+html[data-geode-skin] {
   --geode-font-sans: Gilroy, sans-serif;
   --geode-weight-heading: 500;
   --geode-weight-body: 400;
@@ -107,6 +108,47 @@
   --geode-chart-4: var(--geode-accent-3);
   --geode-chart-5: var(--geode-data-1-4);
 
+  /* Existing screens read these names. Inside the shell they point at the Geode ramps. */
+  --color-primary-100: var(--geode-ink);
+  --color-primary-200: var(--geode-brand-6);
+  --color-primary-300: var(--geode-neutral-2);
+  --color-primary-400: var(--geode-neutral-3);
+  --color-accent-100: var(--geode-brand-6);
+  --color-accent-200: var(--geode-neutral-2);
+  --color-accent-300: var(--geode-neutral-1);
+  --color-font-accent-100: var(--geode-brand-6);
+  --color-background-100: var(--geode-card);
+  --color-background-90: var(--geode-bg);
+  --color-background-80: var(--geode-neutral-1);
+  --color-background-70: var(--geode-card);
+  --color-background-60: var(--geode-bg);
+  --color-background-50: var(--geode-neutral-2);
+  --color-background-40: var(--geode-neutral-3);
+  --color-background-30: var(--geode-card);
+  --color-background-20: var(--geode-neutral-4);
+  --color-background-10: var(--geode-neutral-5);
+  --color-background-5: var(--geode-neutral-6);
+  --color-font-main: var(--geode-text);
+  --color-font-main-invert: var(--geode-card);
+  --color-font-secondary: var(--geode-text-muted);
+  --color-font-teritiary: var(--geode-neutral-5);
+  --color-font-gray-90: var(--geode-neutral-5);
+  --color-font-gray-80: var(--geode-neutral-4);
+  --color-statscard-primary: var(--geode-card);
+  --color-statscard-secondary: var(--geode-bg);
+  --color-white-100: var(--geode-card);
+  --color-profile-plus: var(--geode-neutral-2);
+  --color-red-100: var(--geode-error-2);
+  --color-green-100: var(--geode-success-3);
+  --color-yellow-100: var(--geode-alert-2);
+  --color-text-red: var(--geode-error-3);
+  --color-text-green: var(--geode-success-3);
+  --color-text-yellow: var(--geode-alert-3);
+  --color-border-red: var(--geode-error-2);
+  --color-border-green: var(--geode-success-3);
+  --color-border-yellow: var(--geode-alert-3);
+  --color-bg-overlay: var(--geode-neutral-7);
+
   --geode-cursor-default: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath fill='%23111f00' d='M5.5 3.2 19.2 11l-6.4 1-.1 6.6-2.3-5.3-4.9 3.4z'/%3E%3C/svg%3E") 4 2, auto;
   --geode-cursor-pointer: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath fill='%23111f00' d='M6.2 4.4 17.6 11l-5.2.8.1 5.4-1.8-4.2-3.9 2.6z'/%3E%3C/svg%3E") 4 2, pointer;
   --geode-cursor-text: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='24' viewBox='0 0 16 24'%3E%3Cpath stroke='%23111f00' stroke-width='1.6' d='M4 3h8M8 3v18M4 21h8'/%3E%3C/svg%3E") 8 12, text;
@@ -165,6 +207,80 @@
   background: var(--geode-muted);
   color: var(--geode-text);
   font-weight: var(--geode-weight-heading);
+}
+
+.geode-nav-badge {
+  width: 0.5rem;
+  height: 0.5rem;
+  flex: 0 0 0.5rem;
+  border-radius: var(--geode-radius-pill);
+  background: var(--geode-info-2);
+}
+
+.geode-menu {
+  z-index: 50;
+  min-width: 12rem;
+  border: 1px solid var(--geode-border);
+  border-radius: var(--geode-radius);
+  background: var(--geode-card);
+  padding: var(--geode-space-1);
+  color: var(--geode-text);
+}
+
+.geode-menu-item {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: var(--geode-space-2);
+  min-height: var(--geode-control-sm);
+  padding: 0 var(--geode-space-3);
+  border-radius: var(--geode-radius-control);
+  color: var(--geode-text);
+  font-family: var(--geode-font-sans);
+  font-size: var(--geode-text-small);
+  line-height: var(--geode-leading-body);
+  outline: none;
+}
+
+.geode-menu-item[data-highlighted] {
+  background: var(--geode-muted);
+}
+
+.geode-dialog-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: var(--color-bg-overlay);
+}
+
+.geode-dialog {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  z-index: 50;
+  display: flex;
+  width: min(32rem, calc(100% - 2rem));
+  transform: translate(-50%, -50%);
+  flex-direction: column;
+  gap: var(--geode-space-3);
+  border: 1px solid var(--geode-border);
+  border-radius: var(--geode-radius);
+  background: var(--geode-card);
+  padding: var(--geode-card-padding);
+  color: var(--geode-text);
+}
+
+.geode-dialog-close {
+  position: absolute;
+  top: var(--geode-space-3);
+  right: var(--geode-space-3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--geode-control-sm);
+  height: var(--geode-control-sm);
+  border-radius: var(--geode-radius-control);
+  color: var(--geode-text);
 }
 
 /* Beat the global heading rules (padding, tracking, loose leading) inside the shell. */

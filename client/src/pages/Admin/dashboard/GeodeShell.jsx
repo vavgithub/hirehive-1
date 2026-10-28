@@ -118,6 +118,7 @@ function NavRow({ item, onNavigate }) {
         <button type="button" className="geode-nav-item" aria-expanded={open} onClick={() => setOpen((value) => !value)}>
           {Icon ? <Icon {...iconProps} /> : null}
           <span className="flex-1">{item.label}</span>
+          {item.badge ? <span className="geode-nav-badge" /> : null}
           <ChevronDown {...iconProps} className={cn('transition-transform', open && 'rotate-180')} />
         </button>
         {open ? (
@@ -148,12 +149,13 @@ function NavRow({ item, onNavigate }) {
       className="geode-nav-item"
     >
       {Icon ? <Icon {...iconProps} /> : null}
-      <span>{item.label}</span>
+      <span className="flex-1">{item.label}</span>
+      {item.badge ? <span className="geode-nav-badge" /> : null}
     </NavLink>
   )
 }
 
-function GeodeShell({ items, footer = [], user, children }) {
+function GeodeShell({ items, footer = [], user, account, children }) {
   const [open, setOpen] = useState(false)
   const close = () => setOpen(false)
 
@@ -174,7 +176,8 @@ function GeodeShell({ items, footer = [], user, children }) {
         {footer.map((item) => (
           <NavRow key={item.label} item={item} onNavigate={close} />
         ))}
-        {user?.to ? (
+        {account}
+        {account ? null : user?.to ? (
           <NavLink to={user.to} onClick={close} className="geode-nav-item">
             <Avatar src={user.avatar} alt="" fallback={user.name ? user.name.slice(0, 1) : 'G'} />
             <span className="truncate text-geode-text">{user.name || 'Account'}</span>

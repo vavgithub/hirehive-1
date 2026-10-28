@@ -620,18 +620,23 @@ input[type='number'] {
 }
 
 .geode,
-.geode * {
+.geode *,
+html[data-geode-skin],
+html[data-geode-skin] * {
   cursor: var(--geode-cursor-default);
 }
 
-.geode :is(a, button, [role="button"], [role="tab"], label, summary, select) {
+.geode :is(a, button, [role="button"], [role="tab"], label, summary, select),
+html[data-geode-skin] :is(a, button, [role="button"], [role="tab"], label, summary, select) {
   cursor: var(--geode-cursor-pointer);
 }
 
-.geode :is(a, button, [role="button"], [role="tab"], label, summary):active {
+.geode :is(a, button, [role="button"], [role="tab"], label, summary):active,
+html[data-geode-skin] :is(a, button, [role="button"], [role="tab"], label, summary):active {
   cursor: var(--geode-cursor-pointer);
 }
 
-.geode :is(input, textarea, [contenteditable="true"]) {
+.geode :is(input, textarea, [contenteditable="true"]),
+html[data-geode-skin] :is(input, textarea, [contenteditable="true"]) {
   cursor: var(--geode-cursor-text);
 }

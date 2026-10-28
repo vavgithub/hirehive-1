@@ -38,10 +38,10 @@ Images live in `client/src/assets/geode` and are rendered by a component. Do not
 
 ## Isolation
 
-`/preview/geode-dashboard` and `/preview/geode` are the test surfaces. They use fixtures and do not call mutating APIs.
+`/preview/geode-dashboard` and `/preview/geode` are fixture surfaces. They do not call mutating APIs.
 
-Do not restyle a screen the team owns by editing that file. Build the replacement from these components, show it on the preview route, and switch the live route only when that screen is intentionally migrated on this branch. Do not wrap an unmigrated page in `GeodeShell`. That stacks two sidebars.
+The functioning admin app wears this skin on the `rebrand` branch, which deploys to the rebrand preview site. `prod-main` stays the live application. `GeodeAdminLayout` is the real admin, hiring-manager, and design-reviewer shell. It keeps the same routes, permissions, and logout. Pages keep their data and actions. Inside that shell, the old color variables point at the Geode ramps, so existing screens inherit the palette without a per-page padding pass.
 
-`Router.jsx` and `AdminLayout.jsx` stay as the team wrote them except the preview route registration that is already there.
+Do not wrap a page in a second `GeodeShell`. The layout already provides it. Do not target `prod-main` with this skin.
 
 Do not put secrets in the client. Do not log tokens or session data.

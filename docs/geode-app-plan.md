@@ -22,7 +22,7 @@ The assessment banner and the admin-login banner are illustrations on their own 
 - Tokens, one card padding, full-height sidebar, dashboard board, ink cursor.
 - `/preview/geode-dashboard` for the dashboard fixtures.
 - `/preview/geode` for a fixture admin shell. It does not render the team's pages.
-- Live `/admin/dashboard` on this branch uses the shell. Every other live route still uses the team's layout.
+- The real admin, hiring-manager, and design-reviewer routes use `GeodeAdminLayout` on the rebrand staging branch. `prod-main` is still the live site. Logout, permissions, and page data are unchanged. The old color variables inside the shell point at the Geode ramps. Radix provides the account menu and the dialog primitive.
 - Color ramps below, in `client/src/styles/geode-tokens.css`.
 - Wordmark rendered by `GeodeLogo`. Banner pattern owned by `GeodeBanner` (`.geode-banner`).
 - Application Trends plot inset is a fixed grid with `containLabel`, not a percentage left gutter.
