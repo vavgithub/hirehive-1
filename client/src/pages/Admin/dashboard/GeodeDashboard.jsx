@@ -69,16 +69,16 @@ function GeodeDashboard({
 }) {
   return (
     <div className="flex flex-col gap-geode-4">
-      <header className="flex items-end justify-between gap-geode-3">
+      <header className="flex items-baseline justify-between gap-geode-3">
         <h1 className="pb-0 font-geode text-geode-h4 font-geode-heading">Dashboard</h1>
         {isPrimaryLoading ? (
           <p className="font-geode text-geode-small text-geode-muted" role="status">Loading dashboard</p>
         ) : null}
       </header>
 
-      <div className="grid grid-cols-1 items-start gap-geode-4 xl:grid-cols-3">
-        <Card className="xl:col-span-2">
-          <CardHeader className="flex-row flex-wrap items-center justify-between">
+      <div className="geode-board">
+        <Card className="geode-board-trends">
+          <CardHeader className="flex-row flex-wrap items-start justify-between">
             <CardTitle>Application Trends</CardTitle>
             <Tabs value={period} onValueChange={onPeriodChange}>
               <TabsList aria-label="Application trend period">
@@ -90,11 +90,12 @@ function GeodeDashboard({
               </TabsList>
             </Tabs>
           </CardHeader>
-          <CardContent>
+          <CardContent className="geode-fill">
             <ApplicationChart type={period} dataArray={applicationSeries} />
           </CardContent>
         </Card>
 
+        <div className="geode-board-rail">
         <Card>
           <CardContent className="items-center text-center">
             <Avatar
@@ -133,7 +134,7 @@ function GeodeDashboard({
                   onClick={() => onOpenInterview(interview)}
                   className="flex w-full flex-col gap-geode-1 rounded-geode border border-geode-border bg-geode-card px-geode-4 py-geode-3 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-geode-focus"
                 >
-                  <span className="flex items-center justify-between gap-geode-2">
+                  <span className="flex items-baseline justify-between gap-geode-2">
                     <span className="font-geode text-geode-small text-geode-muted">{interview.when}</span>
                     <span className="font-geode text-geode-small text-geode-muted">{interview.stage}</span>
                   </span>
@@ -147,7 +148,7 @@ function GeodeDashboard({
           </CardContent>
         </Card>
 
-        <Card className="xl:col-span-2">
+        <Card>
           <CardHeader>
             <CardTitle>Interviews by Stage</CardTitle>
           </CardHeader>
@@ -155,8 +156,9 @@ function GeodeDashboard({
             <InterviewsChart dataSet={interviewStages} />
           </CardContent>
         </Card>
+        </div>
 
-        <Card className="xl:col-span-3">
+        <Card className="geode-board-wide">
           <CardHeader>
             <CardTitle>Top Performing Jobs</CardTitle>
           </CardHeader>
@@ -174,7 +176,7 @@ function GeodeDashboard({
           </CardContent>
         </Card>
 
-        <Card className="xl:col-span-3">
+        <Card className="geode-board-wide">
           <CardHeader>
             <CardTitle>Leaderboard</CardTitle>
             <div className="grid grid-cols-2 gap-geode-4">

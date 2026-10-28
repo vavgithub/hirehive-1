@@ -77,7 +77,7 @@ function ApplicationChart({type,dataArray}) {
       }
   ),[xData,values,type,lineColor,gridColor,labelColor,fontFamily])
 
-  return <ReactECharts option={options} className="h-72 w-full" />;
+  return <ReactECharts option={options} className="geode-trend-chart" />;
 }
 
 export default ApplicationChart;

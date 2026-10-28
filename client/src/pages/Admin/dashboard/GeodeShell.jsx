@@ -157,19 +157,19 @@ function GeodeShell({ items, footer = [], user, children }) {
   const close = () => setOpen(false)
 
   const sidebar = (
-    <div className="flex h-full flex-col">
-      <div className="flex h-geode-lg items-center justify-between px-geode-4">
+    <div className="flex h-full min-h-0 flex-col">
+      <div className="flex h-geode-lg shrink-0 items-center justify-between px-geode-4">
         <span className="geode-wordmark font-geode text-geode-h6 font-geode-heading">GEODE</span>
         <button type="button" className="lg:hidden" aria-label="Close menu" onClick={close}>
           <X {...iconProps} />
         </button>
       </div>
-      <nav className="flex flex-1 flex-col gap-geode-1 overflow-y-auto px-geode-3" aria-label="Primary">
+      <nav className="flex min-h-0 flex-1 flex-col gap-geode-1 overflow-y-auto px-geode-3" aria-label="Primary">
         {items.map((item) => (
           <NavRow key={item.label} item={item} onNavigate={close} />
         ))}
       </nav>
-      <div className="flex flex-col gap-geode-1 border-t border-geode-border p-geode-3">
+      <div className="mt-auto flex shrink-0 flex-col gap-geode-1 border-t border-geode-border p-geode-3">
         {footer.map((item) => (
           <NavRow key={item.label} item={item} onNavigate={close} />
         ))}
@@ -192,8 +192,8 @@ function GeodeShell({ items, footer = [], user, children }) {
     <div className="geode flex min-h-screen bg-geode-bg text-geode-text">
       {open ? <button type="button" className="fixed inset-0 z-30 bg-geode-ink/40 lg:hidden" aria-label="Close menu" onClick={close} /> : null}
       <aside className={cn(
-        'fixed inset-y-0 left-0 z-40 w-geode-sidebar border-r border-geode-border bg-geode-card lg:static lg:flex lg:shrink-0',
-        open ? 'flex' : 'hidden',
+        'fixed inset-y-0 left-0 z-40 w-geode-sidebar flex-col border-r border-geode-border bg-geode-card lg:sticky lg:top-0 lg:h-screen lg:max-h-screen',
+        open ? 'flex' : 'hidden lg:flex',
       )}
       >
         {sidebar}

@@ -203,7 +203,7 @@ export default {
         "small-p": ["0.75rem", { lineHeight: "1.25" }],
         "large-p": ["0.875rem", { lineHeight: "1.5" }],
         "geode-h4": ["var(--geode-text-h4)", { lineHeight: "var(--geode-leading-tight)" }],
-        "geode-h6": ["var(--geode-text-h6)", { lineHeight: "var(--geode-leading-body)" }],
+        "geode-h6": ["var(--geode-text-h6)", { lineHeight: "var(--geode-leading-tight)" }],
         "geode-body": ["var(--geode-text-body)", { lineHeight: "var(--geode-leading-body)" }],
         "geode-small": ["var(--geode-text-small)", { lineHeight: "var(--geode-leading-body)" }],
         "geode-display": ["var(--geode-text-display)", { lineHeight: "var(--geode-leading-tight)" }],
@@ -224,6 +224,7 @@ export default {
         "geode-4": "var(--geode-space-4)",
         "geode-5": "var(--geode-space-5)",
         "geode-6": "var(--geode-space-6)",
+        "geode-card": "var(--geode-card-padding)",
       },
       width: {
         "geode-avatar": "var(--geode-avatar)",

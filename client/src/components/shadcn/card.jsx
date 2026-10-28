@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils'
 const Card = React.forwardRef(({ className, ...props }, ref) => (
   <section
     ref={ref}
-    className={cn('rounded-geode border border-geode-border bg-geode-card p-geode-4 text-geode-text', className)}
+    className={cn('rounded-geode border border-geode-border bg-geode-card p-geode-card text-geode-text', className)}
     {...props}
   />
 ))
