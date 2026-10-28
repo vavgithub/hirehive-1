@@ -6,16 +6,15 @@ import { logoutCandidateAuth } from '../redux/candidateAuthSlice';
 import * as Sentry from '@sentry/react';
 import { showErrorToast, showSuccessToast } from '../components/ui/Toast';
 import useScroll from '../hooks/useScroll';
-import { Avatar, IconButton, Menu, MenuItem } from '@mui/material';
 import StyledMenu from '../components/MUIUtilities/StyledMenu';
+import { GeodeAvatar } from '@/components/geode/Avatar';
 import Modal from '../components/Modals/Modal';
 import IconWrapper from '../components/Cards/IconWrapper';
-import { Briefcase, BriefcaseBusiness, LogOut, Send, Settings, MenuIcon, User } from 'lucide-react';
+import { Briefcase, BriefcaseBusiness, LogOut, Send, Settings, MenuIcon, User } from '@/components/geode/icons';
 import Footer from '../components/Footer/Footer';
 import { Button } from '../components/Buttons/Button';
 import ThemeToggle from '../components/ui/ThemeToggle';
 import { use } from 'react';
-import { useUnknownProfilePicture } from '../context/ThemeContext';
 import { GeodeLogo } from '@/components/geode/Logo';
 
 const TELEGRAM_BOT_USERNAME = import.meta.env.VITE_TELEGRAM_BOT_USERNAME;
@@ -51,8 +50,6 @@ const CandidateLayout = () => {
   const handleConnectTelegram = async () => {
         window.open(`https://t.me/${TELEGRAM_BOT_USERNAME}?start=${candidateData?._id}`, '_blank');
   }
-
-  const UNKNOWN_PROFILE_PICTURE_URL = useUnknownProfilePicture();
 
   const handleLogout = async () => {
     try {
@@ -169,10 +166,12 @@ const CandidateLayout = () => {
     return (
       <>
         <div className={`flex items-center px-2 relative mx-4 py-1 justify-start hover-outline rounded-xl ${location.pathname === profilePath ? "selection-primary" : " text-font-main "}`}>
-          <IconButton onClick={handleMenuClick} className={`flex gap-2 `}>
-            <Avatar alt={candidateData?.firstName} sx={{ width: "32px", height: "32px" }} src={candidateData?.profilePictureUrl || UNKNOWN_PROFILE_PICTURE_URL} />
+          <button type="button" onClick={handleMenuClick} className="flex items-center gap-2">
+            <span className="geode-avatar-sm">
+              <GeodeAvatar src={candidateData?.profilePictureUrl} name={candidateData?.firstName || ''} />
+            </span>
             <span className={`typography-body ${location.pathname === profilePath ? "text-font-accent" : "text-font-main"} `}>{candidateData?.firstName}</span>
-          </IconButton>
+          </button>
           <div className={`absolute right-0 w-1 h-6 rounded-tl-xl rounded-bl-xl ${location.pathname === profilePath
             ? "bg-accent-100" : "bg-transparent"}`} />
         </div>

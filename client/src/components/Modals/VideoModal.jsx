@@ -1,7 +1,7 @@
 import { useState } from "react";
 import StyledCard from "../Cards/StyledCard";
 import Loader from "../Loaders/Loader";
-import { X } from "lucide-react";
+import { X } from '@/components/geode/icons';
 
 // Create a VideoModal component
 export const VideoModal = ({ isOpen, onClose, videoUrl }) => {

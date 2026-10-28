@@ -8,7 +8,7 @@ import AssigneeSelector from '../MUIUtilities/AssigneeSelector'
 import RatingSelector from '../MUIUtilities/RatingSelector'
 import RejectionSelector from '../MUIUtilities/RejectionSelector'
 import IconWrapper from '../Cards/IconWrapper'
-import { ArrowRight, Calendar, Ellipsis, Star, User, X } from 'lucide-react'
+import { ArrowRight, Calendar, Ellipsis, Star, User, X } from '@/components/geode/icons'
 import { useUnknownProfilePicture } from '../../context/ThemeContext'
 import { assignReviewerForCandidates, moveMultipleCandidates, rateMultipleCandidates, rejectMultipleCandidates } from '../../services/hr.service'
 import * as Sentry from '@sentry/react';

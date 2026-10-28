@@ -4,8 +4,7 @@ import Header from '../../components/utility/Header';
 import StatsGrid from '../../components/ui/StatsGrid';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { showErrorToast, showSuccessToast } from '../../components/ui/Toast';
-import { Avatar } from '@mui/material';
-import { FaFile, FaGlobe } from 'react-icons/fa';
+import { GeodeAvatar } from '@/components/geode/Avatar';
 import Loader from '../../components/Loaders/Loader';
 import { useNavigate } from 'react-router-dom';
 import PortfolioReview from '../../components/Reviews/PortfolioReview';
@@ -15,7 +14,7 @@ import RoundReview from '../../components/Reviews/RoundReview';
 import StyledCard from '../../components/Cards/StyledCard';
 import Container from '../../components/Cards/Container';
 import IconWrapper from '../../components/Cards/IconWrapper';
-import { Briefcase, ChevronDown, ChevronUp, Folder, FolderOpen, MonitorDot, PauseCircle, PenTool, Users } from 'lucide-react';
+import { Briefcase, ChevronDown, ChevronUp, Folder, FolderOpen, MonitorDot, PauseCircle, PenTool, Users } from '@/components/geode/icons';
 import ReviewsFilter from '../../components/Filters/ReviewsFilter'; // Import the new filter
 import { getRoute, ROUTE_KEY } from '../../config/permissions.config';
 import { useAuthContext } from '../../context/AuthProvider';
@@ -371,7 +370,9 @@ const Reviews = () => {
                       <div key={`${candidate._id}-${candidate.currentApplication.jobId}`} className="mb-4 flex flex-col bg-background-100 rounded-xl">
                         <div className='flex items-center p-4 justify-between cursor-pointer' onClick={() => handleNavigate(candidate)}>
                           <div className='flex items-center gap-4 p-4'>
-                            <Avatar alt={candidate?.firstName} src={candidate.profilePictureUrl} />
+                            <span className="geode-avatar-sm">
+                              <GeodeAvatar src={candidate.profilePictureUrl} name={`${candidate?.firstName || ''} ${candidate?.lastName || ''}`} />
+                            </span>
                             <span className="typography-body">
                               {candidate.firstName} {candidate.lastName}
                             </span>

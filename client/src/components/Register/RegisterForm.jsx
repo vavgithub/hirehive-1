@@ -4,19 +4,18 @@ import { GeodeLogo } from '@/components/geode/Logo';
 import { Button } from '../Buttons/Button';
 import StatsGrid from '../../components/ui/StatsGrid';
 import LoaderModal from '../Loaders/LoaderModal';
-import GoogleIcon from '../../svg/Icons/GoogleIcon';
 import { steps } from '../../pages/Admin/Register';
 import { useMutation } from '@tanstack/react-query';
 import { showErrorToast, showSuccessToast } from "../ui/Toast"
 import { useOnboardingContext } from '../../context/OnboardingProvider';
 import IconWrapper from '../Cards/IconWrapper';
-import { Briefcase, FileText, X } from 'lucide-react';
+import { Briefcase, FileText, X } from '@/components/geode/icons';
 import Modal from '../Modals/Modal';
 import TogglePassword from '../utility/TogglePassword';
 import { digitsRegex, lowerCaseRegex, passwordRegex, specialCharRegex, upperCaseRegex } from '../../utility/regex';
 import ForgotPassword from '../../pages/Admin/ForgotPassword';
 import { googleLogin, registerAdmin, verifyPassword } from '../../services/auth.service';
-import { FcGoogle } from 'react-icons/fc';
+import { FcGoogle } from '@/components/geode/icons'
 import * as Sentry from '@sentry/react';
 
 export const emailPattern = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i

@@ -3,7 +3,7 @@ import Header from '../../components/utility/Header';
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
 import axios from '../../services/axios';
-import { Phone, Mail, Circle, X, Info, Check } from 'lucide-react';
+import { Phone, Mail, Circle, X, Info, Check } from '@/components/geode/icons';
 import { Button } from '../../components/Buttons/Button';
 import { showErrorToast } from '../../components/ui/Toast';
 import Loader from '../../components/Loaders/Loader';

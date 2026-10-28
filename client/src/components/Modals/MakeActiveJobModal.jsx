@@ -2,7 +2,7 @@ import React from 'react';
 import StyledCard from '../Cards/StyledCard';
 import { Button } from '../Buttons/Button';
 import IconWrapper from '../Cards/IconWrapper';
-import { CircleCheck, ClockArrowUp, /* DatabaseZap, */ SignalHigh, SquarePen, X } from 'lucide-react';
+import { CircleCheck, ClockArrowUp, /* DatabaseZap, */ SignalHigh, SquarePen, X } from '@/components/geode/icons';
 import { getTimeAgo } from '../../utility/getTimeAgo';
 
 const truncateWords = (text, wordLimit) => {

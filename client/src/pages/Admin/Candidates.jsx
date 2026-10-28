@@ -10,7 +10,7 @@ import StyledCard from '../../components/Cards/StyledCard';
 import Table from '../../components/tableUtilities/Table';
 import Container from '../../components/Cards/Container';
 import IconWrapper from '../../components/Cards/IconWrapper';
-import { Briefcase, Folder, MonitorDot, PenTool, Users } from 'lucide-react';
+import { Briefcase, Folder, MonitorDot, PenTool, Users } from '@/components/geode/icons';
 import { getAllCandidatesAndStats, getAllCandidatesWithFilters } from '../../services/admin.candidate.service';
 import { useState } from 'react';
 import { useMemo } from 'react';

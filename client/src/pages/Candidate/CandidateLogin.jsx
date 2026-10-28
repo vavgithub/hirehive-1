@@ -13,7 +13,7 @@ import Loader from '../../components/Loaders/Loader';
 import TogglePassword from '../../components/utility/TogglePassword';
 import LoaderModal from '../../components/Loaders/LoaderModal';
 import IconWrapper from '../../components/Cards/IconWrapper';
-import { Briefcase, FileText } from 'lucide-react';
+import { Briefcase, FileText } from '@/components/geode/icons';
 import * as Sentry from '@sentry/react';
 
 const statsOne = [

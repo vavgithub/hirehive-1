@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '../Buttons/Button';
 import ToggleSwitch from '../ui/ToggleSwitch';
 import IconWrapper from '../Cards/IconWrapper';
-import { Copy, Trash, X } from 'lucide-react';
+import { Copy, Trash, X } from '@/components/geode/icons';
 
 const MultipleChoiceQuestion = ({ question, onUpdate, onDelete, onCopy, initialEditMode = false, onValidityChange , questionNumber}) => {
   const [isEditing, setIsEditing] = useState(initialEditMode);

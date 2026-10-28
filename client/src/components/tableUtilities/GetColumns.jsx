@@ -1,15 +1,14 @@
-import { Avatar } from "@mui/material";
 import CustomToolTip from "../Tooltip/CustomToolTip";
+import { GeodeAvatar } from '@/components/geode/Avatar';
 import AssigneeSelector from "../MUIUtilities/AssigneeSelector";
 import { getRatingIcon } from "../MUIUtilities/RatingSelector";
 import StatusBadge from "../ui/StatusBadge";
 import StageBadge from "../ui/StageBadge";
 import { ensureAbsoluteUrl } from "../../utility/ensureAbsoluteUrl";
 import IconWrapper from "../Cards/IconWrapper";
-import { CircleCheck, CircleX, ClipboardCheck, FileUser, FolderOpen, Globe, Paintbrush } from "lucide-react";
+import { CircleCheck, CircleX, ClipboardCheck, FileUser, FolderOpen, Globe, Paintbrush } from '@/components/geode/icons';
 import { formatPhoneNumber } from "../Form/PhoneInputField";
 import { hasPermission, PERMISSIONS } from "../../config/permissions.config";
-import { useUnknownProfilePicture } from "../../context/ThemeContext";
 import ShortlistSparkleIcon from "../../svg/Icons/ShortlistSparkleIcon";
 
 const getCommonColumns = (handleDocumentClick) => [
@@ -32,10 +31,11 @@ const getCommonColumns = (handleDocumentClick) => [
       }
     },
     renderCell: (params) => {
-      const UNKNOWN_PROFILE_PICTURE_URL = useUnknownProfilePicture()
       return(
       <div className="name-cell flex items-center gap-2 h-12">
-        <Avatar src={params?.value?.profilePictureUrl || UNKNOWN_PROFILE_PICTURE_URL} sx={{ width: 32, height: 32 }} />
+        <span className="geode-avatar-sm">
+          <GeodeAvatar src={params?.value?.profilePictureUrl} name={params.value.name} />
+        </span>
         <p className='flex items-center gap-2'>{params.value.name}
           {params.value.hasGivenAssessment &&
             <span>

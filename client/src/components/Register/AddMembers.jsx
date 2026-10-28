@@ -4,7 +4,7 @@ import { Button } from '../Buttons/Button';
 import StyledCard from '../Cards/StyledCard';
 import { useOnboardingContext } from '../../context/OnboardingProvider';
 import GlobalDropDown from '../Dropdowns/GlobalDropDown';
-import { DataGrid } from '@mui/x-data-grid';
+import { DataGrid } from '@/components/shadcn/data-grid';
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import LoaderModal from '../Loaders/LoaderModal';
@@ -14,9 +14,8 @@ import useAuth from '../../hooks/useAuth';
 import { emailPattern } from './RegisterForm';
 import Modal from '../Modals/Modal';
 import { InputField } from '../Inputs/InputField';
-import MuiCustomStylesForDataGrid from '../tableUtilities/MuiCustomStylesForDataGrid';
 import IconWrapper from '../Cards/IconWrapper';
-import { Pencil, Trash } from 'lucide-react';
+import { Pencil, Trash } from '@/components/geode/icons';
 import { getRoute, ROLES, ROUTE_KEY } from '../../config/permissions.config';
 import { addTeamMembers, skipAddMembers } from '../../services/auth.service';
 
@@ -314,7 +313,6 @@ function AddMembers({currentStep,setCurrentStep}) {
             {/* Members List */}
             {members?.length > 0 && 
             <div className='mx-8 mb-8 flex flex-col gap-4'>
-                <MuiCustomStylesForDataGrid/>
                 <div className='flex justify-between items-center'>
                 <label className='font-bricolage font-semibold typography-body'>Team Members</label>
                 <Button

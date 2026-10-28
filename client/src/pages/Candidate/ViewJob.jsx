@@ -14,7 +14,7 @@ import ContactUs from '../../components/Form/ContactUs';
 import Container from '../../components/Cards/Container';
 import IconWrapper from '../../components/Cards/IconWrapper';
 import * as Sentry from '@sentry/react';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight } from '@/components/geode/icons';
 import Footer from '../../components/Footer/Footer';
 import LogoWrapper from '../../components/Logo/LogoWrapper';
 import { incrementApplyClick } from '../../services/candidates.service';

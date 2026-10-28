@@ -2,7 +2,7 @@ import React from 'react'
 import { Button } from '../Buttons/Button'
 import { useNavigate } from 'react-router-dom'
 import IconWrapper from '../Cards/IconWrapper';
-import { TrendingUp } from 'lucide-react';
+import { TrendingUp } from '@/components/geode/icons';
 
 const AssessmentBanner = () => {
     const navigate = useNavigate();

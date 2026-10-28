@@ -1,42 +1,34 @@
-import React, { useEffect } from 'react';
-import dayjs from 'dayjs';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
-import 'dayjs/locale/en-gb';
-import IconWrapper from '../Cards/IconWrapper';
-import { Calendar, ChevronDown } from 'lucide-react';
+import { useEffect } from 'react'
+import dayjs from 'dayjs'
+
+function toYear(value) {
+  if (!value && value !== 0) return ''
+  if (typeof value === 'number' && value > 1900) return String(value)
+  if (typeof value === 'string' && /^\d{4}$/.test(value)) return value
+  const parsed = dayjs(value)
+  return parsed.isValid() ? String(parsed.year()) : ''
+}
 
 export default function YearPicker({ onChange, value, error }) {
+  const current = dayjs().year()
+  const years = []
+  for (let year = current; year >= 1900; year -= 1) years.push(String(year))
+  const selected = toYear(value)
 
   useEffect(() => {
-    if (!value) onChange(dayjs());
-  }, []);
+    if (!value) onChange(dayjs())
+  }, [])
 
   return (
-    <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="en-gb">
-      <DesktopDatePicker
-        views={['year']} // 👈 Only show year picker
-        openTo="year"    // 👈 Default view
-        value={value ? dayjs(value) : null}
-        defaultValue={dayjs()}
-        onChange={(newValue) => onChange(newValue)}
-        slots={{
-          openPickerIcon: () => (
-            <IconWrapper icon={ChevronDown} size={0} customIconSize={5} isInActiveIcon />
-          ),
-        }}
-        slotProps={{
-          textField: {
-            error: error ?? false,
-            InputProps: {
-              startAdornment: (
-                <IconWrapper icon={Calendar} size={0} isInActiveIcon />
-              ),
-            },
-          },
-        }}
-      />
-    </LocalizationProvider>
-  );
+    <select
+      className={error ? 'geode-year geode-picker-invalid' : 'geode-year'}
+      value={selected || String(current)}
+      aria-label="Founded year"
+      onChange={(event) => onChange(dayjs(`${event.target.value}-01-01`))}
+    >
+      {years.map((year) => (
+        <option key={year} value={year}>{year}</option>
+      ))}
+    </select>
+  )
 }

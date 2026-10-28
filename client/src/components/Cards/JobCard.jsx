@@ -3,13 +3,13 @@ import ThreeDots from '../ui/ThreeDots';
 import { getTimeAgo } from '../../utility/getTimeAgo';
 import StyledCard from './StyledCard';
 import CustomBadge from '../Badge/CustomBadge';
-import { Building, Building2, Copy, Pin, Rss } from 'lucide-react';
+import { Building, Building2, Copy, Pin, Rss } from '@/components/geode/icons';
 import CustomToolTip from '../Tooltip/CustomToolTip';
 import { copyToClipboard } from '../../utility/CopyToClipboard';
 import { useLocation } from 'react-router-dom';
 import { showSuccessToast } from '../ui/Toast';
 import IconWrapper from './IconWrapper';
-import { ClockArrowUp, /* DatabaseZap, */ SignalHigh } from 'lucide-react';
+import { ClockArrowUp, /* DatabaseZap, */ SignalHigh } from '@/components/geode/icons';
 import { hasPermission, PERMISSIONS } from '../../config/permissions.config';
 import { useClosedBadge } from '../../context/ThemeContext';
 

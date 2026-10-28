@@ -4,7 +4,7 @@ import LoaderModal from '../../components/Loaders/LoaderModal';
 import Header from '../../components/utility/Header';
 import CustomToolTip from '../../components/Tooltip/CustomToolTip';
 import IconWrapper from '../../components/Cards/IconWrapper';
-import { PencilLine } from 'lucide-react';
+import { PencilLine } from '@/components/geode/icons';
 import StyledCard from '../../components/Cards/StyledCard';
 import { useAuthContext } from '../../context/AuthProvider';
 import { Controller, useForm } from 'react-hook-form';

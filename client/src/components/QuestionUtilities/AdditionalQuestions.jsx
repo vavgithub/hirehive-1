@@ -1,7 +1,7 @@
 import React from 'react'
 import { Controller } from 'react-hook-form';
 import IconWrapper from '../Cards/IconWrapper';
-import { Check } from 'lucide-react';
+import { Check } from '@/components/geode/icons';
 
 function AdditionalQuestions({jobDetails, control ,errors}) {
   return (

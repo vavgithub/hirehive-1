@@ -1,19 +1,19 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { Menu, MenuItem, IconButton, Avatar } from '@mui/material';
 import { logout } from '../services/auth.service';
+import { GeodeAvatar } from '@/components/geode/Avatar';
 import * as Sentry from '@sentry/react';
 import useAuth from '../hooks/useAuth';
 import { useAuthContext } from '../context/AuthProvider';
 import LightLogo from "../svg/Logo/lightLogo.png"
 import StyledMenu from './MUIUtilities/StyledMenu';
 import IconWrapper from './Cards/IconWrapper';
-import { Briefcase, CalendarDays, ChevronDown, ChevronUp, ClipboardCheck, FileText, IdCard, LayoutGrid, LogOut, MonitorDot, PauseCircle, Settings, Star, User, UserCheck, Users } from 'lucide-react';
+import { Briefcase, CalendarDays, ChevronDown, ChevronUp, ClipboardCheck, FileText, IdCard, LayoutGrid, LogOut, MonitorDot, PauseCircle, Settings, Star, User, UserCheck, Users } from '@/components/geode/icons';
 import { useSelector } from 'react-redux';
 import { getRoute, hasRoutePermission, ROLES, ROUTE_KEY } from '../config/permissions.config';
 import Footer from './Footer/Footer';
 import ThemeToggle from './ui/ThemeToggle';
-import { useLogo, useUnknownProfilePicture } from '../context/ThemeContext';
+import { useLogo } from '../context/ThemeContext';
 // import ThemeToggle from './ThemeToggle'; // Import ThemeToggle component
 import { useQueryClient } from '@tanstack/react-query';
 
@@ -58,7 +58,6 @@ const AdminLayout = () => {
             // console.error('Logout failed:', error);
         }
     };
-    const UNKNOWN_PROFILE_PICTURE_URL = useUnknownProfilePicture();
 
     // Function to handle dropdown menu opening
     const handleMenuClick = (event) => {
@@ -174,8 +173,9 @@ const AdminLayout = () => {
                         className={({ isActive }) =>
                             `w-full flex items-center ${isActive ? " selection-primary " : ""}    hover:text-font-accent px-4 py-2 rounded-xl `}
                     >
-                        <Avatar alt={user?.companyDetails?.name} sx={{ width: "32px", height: "32px" }}
-                            src={user?.companyDetails?.logoUrl || UNKNOWN_PROFILE_PICTURE_URL} />
+                        <span className="geode-avatar-sm">
+                            <GeodeAvatar src={user?.companyDetails?.logoUrl} name={user?.companyDetails?.name || ''} />
+                        </span>
                         <span className='typography-h4  ml-2 overflow-hidden whitespace-nowrap text-ellipsis'>
                             {user?.companyDetails?.name}
                         </span>
@@ -212,14 +212,16 @@ const AdminLayout = () => {
         return (
             <>
                 <div className={`flex items-center px-2 py-1 relative  rounded-xl justify-start hover:outline-accent-100 hover:outline hover:outline-2  ${location.pathname === profilePath ? "selection-primary" : ""}`}>
-                    <IconButton
+                    <button
+                        type="button"
                         onClick={handleMenuClick}
-                        className={`flex gap-2  ${location.pathname === profilePath ? "text-font-accent  " : ""}`}
+                        className={`flex items-center gap-2 ${location.pathname === profilePath ? "text-font-accent" : ""}`}
                     >
-                        <Avatar alt={user?.firstName + " " + user?.lastName}
-                            src={user?.profilePicture || UNKNOWN_PROFILE_PICTURE_URL} />
-                        <span className={`typography-body  ${location.pathname === profilePath ? "text-font-accent" : "text-font-main"} `}>{user?.firstName + " " + user?.lastName}</span>
-                    </IconButton>
+                        <span className="geode-avatar-sm">
+                            <GeodeAvatar src={user?.profilePicture} name={`${user?.firstName || ''} ${user?.lastName || ''}`} />
+                        </span>
+                        <span className={`typography-body ${location.pathname === profilePath ? "text-font-accent" : "text-font-main"}`}>{user?.firstName + " " + user?.lastName}</span>
+                    </button>
                     <div className={`absolute right-0 w-1 h-6 rounded-tl-xl rounded-bl-xl ${location.pathname === profilePath ? "bg-accent-100" : "bg-transparent"}`} />
                 </div>
                 <StyledMenu anchorEl={anchorEl} handleMenuClose={handleMenuClose} itemComponents={itemComponents} />

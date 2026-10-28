@@ -4,7 +4,7 @@ import { fetchAllDesignReviewers, fetchAvailableDesignReviewers } from '../../se
 import { useQuery } from '@tanstack/react-query';
 import ScoreFilter, { MAX_SCORE, MIN_SCORE } from './ScoreFilter';
 import IconWrapper from '../Cards/IconWrapper';
-import { SlidersHorizontal, Trash } from 'lucide-react';
+import { SlidersHorizontal, Trash } from '@/components/geode/icons';
 import TickCheckbox from '../Checkboxes/TickCheckbox';
 import { allStatuses, stageStatusMap } from './config.filter';
 import LocationFilter from './LocationFilter';

@@ -2,7 +2,7 @@ import React from 'react'
 import { Button } from '../Buttons/Button'
 import StyledCard from '../Cards/StyledCard';
 import OTPInput from '../Inputs/OTPInput';
-import { FcGoogle } from 'react-icons/fc';
+import { FcGoogle } from '@/components/geode/icons'
 import { googleInvitedLogin, googleLogin } from '../../services/auth.service';
 import IconWrapper from '../Cards/IconWrapper';
 import { showErrorToast } from '../ui/Toast';

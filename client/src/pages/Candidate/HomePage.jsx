@@ -16,7 +16,7 @@ import JobCard from '../../components/Cards/JobCard';
 import ContactUs from '../../components/Form/ContactUs';
 import Container from '../../components/Cards/Container';
 import IconWrapper from '../../components/Cards/IconWrapper';
-import { SlidersHorizontal } from 'lucide-react';
+import { SlidersHorizontal } from '@/components/geode/icons';
 import Footer from '../../components/Footer/Footer';
 import LogoWrapper from '../../components/Logo/LogoWrapper';
 import { fetchOpenJobs, filterSearchJobsCM } from '../../services/candidates.service';

@@ -7,7 +7,7 @@ import Header from '../../components/utility/Header';
 import StyledCard from '../../components/Cards/StyledCard';
 import Loader from '../../components/Loaders/Loader';
 import IconWrapper from '../../components/Cards/IconWrapper';
-import { CircleX } from 'lucide-react';
+import { CircleX } from '@/components/geode/icons';
 import Container from '../../components/Cards/Container';
 import { useAuthContext } from '../../context/AuthProvider';
 import { getRoute, ROUTE_KEY } from '../../config/permissions.config';

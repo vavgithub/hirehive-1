@@ -5,7 +5,7 @@ import StyledCard from "../../components/Cards/StyledCard";
 import { getStageColor, stagingConfig } from "../../config/staging.config";
 import { JOB_PROFILES, JOB_PROFILES_DETAILS } from "../../config/jobprofile.config";
 import IconWrapper from "../../components/Cards/IconWrapper";
-import { ChevronDown, ChevronUp, Pencil, RotateCcw } from "lucide-react";
+import { ChevronDown, ChevronUp, Pencil, RotateCcw } from '@/components/geode/icons';
 import StyledTabs from "../../components/ui/StyledTabs";
 import { InputField } from "../../components/Inputs/InputField";
 import { Button } from "../../components/Buttons/Button";

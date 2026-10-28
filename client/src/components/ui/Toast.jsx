@@ -2,7 +2,7 @@ import React from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import IconWrapper from '../Cards/IconWrapper';
-import { CircleCheckBig, Trash, X } from 'lucide-react';
+import { CircleCheckBig, Trash, X } from '@/components/geode/icons';
 
 // Custom toast component
 const CustomToast = ({ title, message, variant }) => (

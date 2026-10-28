@@ -5,7 +5,7 @@ import Table from '../../components/tableUtilities/Table';
 import Header from '../../components/utility/Header';
 import StyledCard from '../../components/Cards/StyledCard';
 import IconWrapper from '../../components/Cards/IconWrapper';
-import { RotateCcw } from 'lucide-react';
+import { RotateCcw } from '@/components/geode/icons';
 import Container from '../../components/Cards/Container';
 import { useAuthContext } from '../../context/AuthProvider';
 import { getRoute, ROUTE_KEY } from '../../config/permissions.config';

@@ -13,7 +13,7 @@ import LoaderModal from '../../components/Loaders/LoaderModal';
 import {  useQueryClient } from '@tanstack/react-query';
 import { InputField } from '../../components/Inputs/InputField';
 import Container from '../../components/Cards/Container';
-import { PencilLine } from 'lucide-react';
+import { PencilLine } from '@/components/geode/icons';
 import IconWrapper from '../../components/Cards/IconWrapper';
 import { companySizeOptions, industryTypeOptions, LocationOptions } from '../../components/Register/CompanyDetails';
 import { formatPhoneNumber, PhoneInputField } from '../../components/Form/PhoneInputField';

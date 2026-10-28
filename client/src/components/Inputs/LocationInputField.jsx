@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { getLocationSuggestions } from '../../services/auth.candidate.service';
 import { v4 as uuidv4 } from 'uuid';
-import { Menu, Popover } from '@mui/material';
 import { SpinnerCircular } from 'spinners-react/lib/esm/SpinnerCircular';
 import StyledCard from '../Cards/StyledCard';
 
@@ -113,7 +112,6 @@ export const LocationInputField = React.forwardRef(({
           <SpinnerCircular  size={26} color='white' secondaryColor='gray' />
         </div>}
         {suggestions?.length > 0 && (
-          noPopover ? 
             <StyledCard
             padding={5}
             extraStyles={'absolute z-10 w-full overflow-hidden flex flex-col gap-4'}
@@ -121,44 +119,13 @@ export const LocationInputField = React.forwardRef(({
             {suggestions.map((suggestion, idx) => (
               <p
                 key={idx}
-                className='overflow-hidden text-ellipsis  bg-background-60 hover-outline px-4 py-2 rounded-xl scrollbar-hide whitespace-nowrap cursor-pointer'
+                className='overflow-hidden text-ellipsis bg-background-60 hover-outline px-4 py-2 rounded-xl scrollbar-hide whitespace-nowrap cursor-pointer'
                 onClick={() => handleSuggestionClick(suggestion)}
               >
                 {suggestion.placeName}
               </p>
             ))}
           </StyledCard>
-            :<Popover
-            anchorEl={inputRef.current}
-            open={Boolean(suggestions?.length)}
-            onClose={()=>setSuggestions([])}
-            anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'left'
-            }}
-            PaperProps={{
-                style: {
-                maxHeight: 300,
-                width: inputRef.current?.getBoundingClientRect()?.width,
-                borderRadius: "0.75rem",
-                display : 'flex',
-                flexDirection : 'column',
-                gap : '8px',
-                padding: "0.5rem",
-                backgroundColor: 'var(--color-background-90)'
-                }
-            }}
-          >
-            {suggestions.map((suggestion, idx) => (
-              <p
-                key={idx}
-                className='overflow-x-scroll bg-background-60 hover-outline px-4 py-2 rounded-xl scrollbar-hide whitespace-nowrap cursor-pointer'
-                onClick={() => handleSuggestionClick(suggestion)}
-              >
-                {suggestion.placeName}
-              </p>
-            ))}
-          </Popover>
         )}
       </div>
 

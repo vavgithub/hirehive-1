@@ -24,6 +24,7 @@ The assessment banner and the admin-login banner are illustrations on their own 
 - `/preview/geode` for a fixture admin shell. It does not render the team's pages.
 - The real admin, hiring-manager, and design-reviewer routes use `GeodeAdminLayout` on the rebrand staging branch. `prod-main` is still the live site. Logout, permissions, and page data are unchanged. The old color variables inside the shell point at the Geode ramps. Radix provides the account menu and the dialog primitive.
 - `App` sets `data-geode-skin` and wraps every route in `.geode`, so the candidate site and public pages use the same type, color, buttons, cards, and fields. Text inputs, textareas, and selects get a neutral fill, a neutral-4 border, and ink type. Decorative photos are replaced with solid panels or a dashed placeholder. The wordmark is the word “Geode” until a logo file is supplied. Uploaded profile photos and assessment question images stay, because those are product data.
+- There is no MUI. Menus, dropdowns, tooltips, date and time fields, and data tables are the shadcn/Radix primitives in `client/src/components/shadcn`, skinned with Geode tokens. Icons are imported only from `client/src/components/geode/icons.js` (Lucide, plus the Google mark). Do not add `@mui`, `react-icons`, or a direct `lucide-react` import in a screen.
 - Color ramps below, in `client/src/styles/geode-tokens.css`.
 - Wordmark rendered by `GeodeLogo`. Banner pattern owned by `GeodeBanner` (`.geode-banner`).
 - Application Trends plot inset is a fixed grid with `containLabel`, not a percentage left gutter.
@@ -58,7 +59,7 @@ Info: `#ecf4fe` `#096ff6` `#03459b` `#022c64`.
 2. Compose the screen from those components. The page file chooses data and order. It does not choose padding.
 3. Render it under `/preview/geode` with fixtures. No mutating API calls.
 4. When the preview matches the frame, point the real route at the same components. Do that only for the screen being migrated, on this branch.
-5. Delete the MUI usage that screen owned, then lower `client/ds-baseline.json` with `node scripts/ds-audit.mjs --update`.
+5. If a count in `client/ds-baseline.json` falls, lock it with `node scripts/ds-audit.mjs --update`. Do not raise a count.
 
 Do not wrap an unmigrated page in `GeodeShell`. The team's layout is still on those routes, and a second shell doubles the sidebar.
 

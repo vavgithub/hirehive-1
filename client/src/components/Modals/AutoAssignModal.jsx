@@ -3,7 +3,7 @@ import { fetchAvailableDesignReviewers } from '../../services/auth.service';
 import Modal from './Modal';
 import axios from '../../services/axios';
 import IconWrapper from '../Cards/IconWrapper';
-import { User, X } from 'lucide-react';
+import { User, X } from '@/components/geode/icons';
 import { useUnknownProfilePicture } from '../../context/ThemeContext';
 import * as Sentry from '@sentry/react';
 

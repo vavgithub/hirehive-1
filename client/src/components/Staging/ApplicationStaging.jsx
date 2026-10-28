@@ -2,14 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import StageProgressBar from './StageProgressBar';
 import QuestionResponses from './QuestionResponses';
-import { Card } from '@mui/material';
 import { useAuthContext } from '../../context/AuthProvider';
 import { useLocation } from 'react-router-dom';
 import GlobalStaging from './GlobalStaging';
 import { ensureAbsoluteUrl } from '../../utility/ensureAbsoluteUrl';
 import LinkView from '../ui/LinkView';
 import IconWrapper from '../Cards/IconWrapper';
-import { Check, ChevronDown, ChevronUp, X } from 'lucide-react';
+import { Check, ChevronDown, ChevronUp, X } from '@/components/geode/icons';
 import { hasPermission, PERMISSIONS } from '../../config/permissions.config';
 // const stageComponents = {
 //     Portfolio,
@@ -20,13 +19,7 @@ import { hasPermission, PERMISSIONS } from '../../config/permissions.config';
 //     Hired
 // };
 const AccordionSection = ({ title, isOpen, onToggle, children, badge }) => (
-    <Card
-        sx={{
-            backgroundColor: "var(--color-background-100)",
-            borderRadius: "0.75rem",
-            marginTop: "0.75rem"
-        }}
-    >
+    <section className="geode-accordion">
         <div className="w-full">
             <button
                 onClick={onToggle}
@@ -45,7 +38,7 @@ const AccordionSection = ({ title, isOpen, onToggle, children, badge }) => (
                 </div>
             )}
         </div>
-    </Card>
+    </section>
 );
 
 const getJobProfileKey = (jobApplied = '', fallbackProfile = '') => {

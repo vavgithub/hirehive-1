@@ -1,6 +1,6 @@
 import React from 'react'
 import StyledCard from '../Cards/StyledCard';
-import { X } from 'lucide-react';
+import { X } from '@/components/geode/icons';
 
 function ImageModal({isOpen, onClose, imageUrl}) {
 

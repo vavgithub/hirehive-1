@@ -9,10 +9,9 @@ import { showErrorToast } from '../../components/ui/Toast';
 import Loader from '../../components/Loaders/Loader';
 import { InputField } from '../../components/Inputs/InputField';
 import IconWrapper from '../../components/Cards/IconWrapper';
-import { Briefcase, FileText } from 'lucide-react';
+import { Briefcase, FileText } from '@/components/geode/icons';
 import { getRoute, ROUTE_KEY } from '../../config/permissions.config';
-import GoogleIcon from '../../svg/Icons/GoogleIcon';
-import { FcGoogle } from 'react-icons/fc';
+import { FcGoogle } from '@/components/geode/icons'
 import { useAuthContext } from '../../context/AuthProvider';
 import { GeodeLogo } from '@/components/geode/Logo';
 import * as Sentry from '@sentry/react';

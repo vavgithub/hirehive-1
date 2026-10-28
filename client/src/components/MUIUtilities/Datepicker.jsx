@@ -1,53 +1,39 @@
-import React, { useEffect } from 'react';
-import dayjs from 'dayjs';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
-import 'dayjs/locale/en-gb';
-import IconWrapper from '../Cards/IconWrapper';
-import { Calendar, ChevronDown } from 'lucide-react';
+import { useEffect, useLayoutEffect, useRef } from 'react'
+import dayjs from 'dayjs'
+import { Calendar } from '@/components/geode/icons'
+import IconWrapper from '../Cards/IconWrapper'
 
-export default function Datepicker({ onChange, customBg, disableDate =  'before', value ,error ,hasDefault = true}) {
+function toDateInput(value) {
+  if (!value) return ''
+  const parsed = dayjs(value)
+  return parsed.isValid() ? parsed.format('YYYY-MM-DD') : ''
+}
 
-  useEffect(()=>{
-    if(hasDefault){
-      onChange(dayjs())
-    }
-  },[hasDefault])
+export default function Datepicker({ onChange, customBg, disableDate = 'before', value, error, hasDefault = true }) {
+  const fieldRef = useRef(null)
+  const today = dayjs().format('YYYY-MM-DD')
+
+  useEffect(() => {
+    if (hasDefault) onChange(dayjs())
+  }, [hasDefault])
+
+  useLayoutEffect(() => {
+    if (!fieldRef.current) return
+    if (customBg) fieldRef.current.style.setProperty('--geode-picker-bg', customBg)
+    else fieldRef.current.style.removeProperty('--geode-picker-bg')
+  }, [customBg])
 
   return (
-      <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='en-gb'>
-        <div className={error ? ' border !border-red-500 rounded-xl w-full' : 'w-full'}>
-        <DesktopDatePicker
-          value={value ? dayjs(value) : null}
-          defaultValue={dayjs()}  //
-          shouldDisableDate={(date) => disableDate === 'after' ? date.isAfter(dayjs(), 'day') : date.isBefore(dayjs(), 'day')}
-          sx={{
-            width : '100%',
-            '& .MuiOutlinedInput-root:hover' : {
-              outline: '2px solid var(--color-accent-100)' , // remove inner border
-            },
-            '& .MuiOutlinedInput-input': {
-              outline: 'none !important' , // remove inner border
-            },
-            ...(customBg ? {
-              '& .MuiOutlinedInput-root' : {
-              backgroundColor : customBg
-            }
-            } : {} )
-          }}
-          slots={{
-            openPickerIcon :()=> <IconWrapper icon={ChevronDown} size={0} customIconSize={5} isInActiveIcon />
-          }}
-          slotProps={{
-            textField: {
-              InputProps: { startAdornment: <IconWrapper icon={Calendar} size={0} isInActiveIcon={true} /> }   
-            }
-          }}
-          onChange={(newValue) => onChange(newValue)}
-           />
-        </div>
-      </LocalizationProvider>
-  );
+    <label ref={fieldRef} className={error ? 'geode-picker geode-picker-invalid' : 'geode-picker'}>
+      <IconWrapper icon={Calendar} size={0} isInActiveIcon />
+      <input
+        className="geode-picker-input"
+        type="date"
+        value={toDateInput(value)}
+        min={disableDate === 'before' ? today : undefined}
+        max={disableDate === 'after' ? today : undefined}
+        onChange={(event) => onChange(event.target.value ? dayjs(event.target.value) : null)}
+      />
+    </label>
+  )
 }

@@ -1,209 +1,102 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { ACTION_TYPES } from '../../utility/ActionTypes';
-import IconWrapper from '../Cards/IconWrapper';
-import { Archive, CircleCheck, CircleX, EllipsisVertical, SquarePen, Share2, Trash, Pin, PinOff } from 'lucide-react';
-import { ListItemText, MenuItem, Popover, TextField } from '@mui/material';
-import { hasPermission, PERMISSIONS } from '../../config/permissions.config';
+import { ACTION_TYPES } from '../../utility/ActionTypes'
+import IconWrapper from '../Cards/IconWrapper'
+import { Archive, CircleCheck, CircleX, EllipsisVertical, Pin, PinOff, Share2, SquarePen, Trash } from '@/components/geode/icons'
+import { hasPermission, PERMISSIONS } from '../../config/permissions.config'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/shadcn/dropdown-menu'
 
 const pinUnpinMenuItems = {
-  pin: { action: ACTION_TYPES.PIN, icon: () => <IconWrapper size={0} customIconSize={5} icon={Pin} />, label: 'Pin' },
-  unpin: { action: ACTION_TYPES.UNPIN, icon: () => <IconWrapper size={0} customIconSize={5} icon={PinOff} />, label: 'Unpin' },
+  pin: { action: ACTION_TYPES.PIN, icon: Pin, label: 'Pin' },
+  unpin: { action: ACTION_TYPES.UNPIN, icon: PinOff, label: 'Unpin' },
 }
 
 const MenuItems = {
   job: {
     open: [
-      { action: ACTION_TYPES.EDIT, icon: () => <IconWrapper size={0} customIconSize={5} icon={SquarePen} />, label: 'Edit' },
-      { action: ACTION_TYPES.DRAFT, icon: () => <IconWrapper size={0} customIconSize={5} icon={Archive} />, label: 'Move To Draft' },
-      { action: ACTION_TYPES.CLOSE, icon: () => <IconWrapper size={0} customIconSize={5} icon={CircleX} />, label: 'Close job' },
-      { action: ACTION_TYPES.DELETE, icon: () => <IconWrapper size={0} customIconSize={5} isErrorIcon icon={Trash} />, label: 'Delete', className: 'text-red-100' ,style : { color :'red' }  },
+      { action: ACTION_TYPES.EDIT, icon: SquarePen, label: 'Edit' },
+      { action: ACTION_TYPES.DRAFT, icon: Archive, label: 'Move To Draft' },
+      { action: ACTION_TYPES.CLOSE, icon: CircleX, label: 'Close job' },
+      { action: ACTION_TYPES.DELETE, icon: Trash, label: 'Delete', className: 'geode-menu-danger' },
     ],
     closed: [
-      { action: ACTION_TYPES.REOPEN, icon: () => <IconWrapper size={0} customIconSize={5} icon={CircleCheck} />, label: 'Re-open' },
-      { action: ACTION_TYPES.EDIT, icon: () => <IconWrapper size={0} customIconSize={5} icon={SquarePen} />, label: 'Edit' },
-      { action: ACTION_TYPES.DRAFT, icon: () => <IconWrapper size={0} customIconSize={5} icon={Archive} />, label: 'Move To Draft' },
-      { action: ACTION_TYPES.DELETE, icon: () => <IconWrapper size={0} customIconSize={5} isErrorIcon icon={Trash} />, label: 'Delete', className: 'text-red-100',style : { color :'red' } },
+      { action: ACTION_TYPES.REOPEN, icon: CircleCheck, label: 'Re-open' },
+      { action: ACTION_TYPES.EDIT, icon: SquarePen, label: 'Edit' },
+      { action: ACTION_TYPES.DRAFT, icon: Archive, label: 'Move To Draft' },
+      { action: ACTION_TYPES.DELETE, icon: Trash, label: 'Delete', className: 'geode-menu-danger' },
     ],
     draft: [
-      { action: ACTION_TYPES.EDIT, icon: () => <IconWrapper size={0} customIconSize={5} icon={SquarePen} />, label: 'Edit' },
-      { action: ACTION_TYPES.MAKE_ACTIVE, icon: () => <IconWrapper size={0} customIconSize={5} icon={CircleCheck} />, label: 'Make Active' },
-      { action: ACTION_TYPES.DELETE, icon: () => <IconWrapper size={0} customIconSize={5} isErrorIcon icon={Trash} />, label: 'Delete', className: 'text-red-100', style: { color: 'red' } },
+      { action: ACTION_TYPES.EDIT, icon: SquarePen, label: 'Edit' },
+      { action: ACTION_TYPES.MAKE_ACTIVE, icon: CircleCheck, label: 'Make Active' },
+      { action: ACTION_TYPES.DELETE, icon: Trash, label: 'Delete', className: 'geode-menu-danger' },
     ],
   },
   page1: [
-    { action: ACTION_TYPES.EDIT, icon: () => <IconWrapper size={0} customIconSize={5} icon={SquarePen} />, label: 'Edit' },
+    { action: ACTION_TYPES.EDIT, icon: SquarePen, label: 'Edit' },
   ],
   page2: [
-    { action: 'ACTION_3', icon: () => <IconWrapper size={0} customIconSize={5} isErrorIcon icon={Trash} />, label: 'Action 3' },
-    { action: 'ACTION_4', icon: () => <IconWrapper size={0} customIconSize={5} icon={CircleX} />, label: 'Action 4' },
+    { action: 'ACTION_3', icon: Trash, label: 'Action 3', className: 'geode-menu-danger' },
+    { action: 'ACTION_4', icon: CircleX, label: 'Action 4' },
   ],
   Jobs: [
-    { action: ACTION_TYPES.SHARE, icon: () => <IconWrapper size={0} customIconSize={5} icon={Share2} />, label: 'Share' },
-  ]
-};
+    { action: ACTION_TYPES.SHARE, icon: Share2, label: 'Share' },
+  ],
+}
 
-const ThreeDots = ({ job, handleAction, page, orgId, isPinned, role , extraStyles , customBgColor , customBgHover}) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const menuRef = useRef(null);
-
-  const toggleMenu = (e) => {
-    e.stopPropagation();
-    setIsOpen(!isOpen);
-  };
-
+const ThreeDots = ({ job, handleAction, page, orgId, isPinned, role, extraStyles, customBgColor, customBgHover }) => {
   const getMenuItems = () => {
-    if (job && job.status) {
-      return MenuItems.job[job.status] || [];
-    }
-    return MenuItems[page] || [];
-  };
+    if (job && job.status) return MenuItems.job[job.status] || []
+    return MenuItems[page] || []
+  }
 
-  const menuItems = getMenuItems();
+  const menuItems = getMenuItems()
+  const pinItem = pinUnpinMenuItems[isPinned ? 'unpin' : 'pin']
 
-  const handleMenuItemClick = (action, jobId, e) => {
-    e.stopPropagation();
-
+  const handleMenuItemClick = (action, jobId) => {
     if (action === ACTION_TYPES.SHARE) {
-      // For share action, use orgId passed from props
-      const baseUrl = window.location.origin;
-
-      // Check if orgId is available from props or fallback to job.company_id if needed
-      const companyId = orgId || (job && job.company_id);
-
-      if (companyId) {
-        const shareUrl = `${baseUrl}/org/${companyId}/`;
-        window.open(shareUrl, '_blank');
-      } else {
-        console.error('Organization ID not found');
-      }
-    } else {
-      // For other actions, call the parent handler
-      handleAction(action, jobId);
+      const companyId = orgId || (job && job.company_id)
+      if (companyId) window.open(`${window.location.origin}/org/${companyId}/`, '_blank')
+      else console.error('Organization ID not found')
+      return
     }
-
-    setIsOpen(false);
-  };
+    handleAction(action, jobId)
+  }
 
   return (
-    <div className={" relative " + extraStyles} ref={menuRef}>
-      <button onClick={toggleMenu} className="focus:outline-none flex items-center ">
-        <IconWrapper hasBg={customBgColor ? customBgColor : 'bg-background-80'} customBgHover={customBgHover ? customBgHover : 'hover-outline'} icon={EllipsisVertical} customIconSize={7} customStrokeWidth={7} />
-      </button>
-        <Popover
-          disableScrollLock
-          anchorEl={menuRef.current}
-          open={Boolean(isOpen)}
-          onClose={toggleMenu}
-          anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'right',
-          }}
-          transformOrigin={{
-            vertical: 'top', // aligns the top of the Popover with the top of the anchorEl
-            horizontal: 'right', // aligns the right side of the Popover with the right side of the anchorEl
-          }}
-          PaperProps={{
-            style: {
-              maxHeight: 300,
-              width: '12rem',
-              borderRadius: '0.75rem',
-              padding: '0.5rem',
-              marginTop: '0.75rem',
-              backgroundColor : "var(--color-background-90) !important"
-            },
-          }}
-        >
-          <div className="flex flex-col gap-2  w-full text-font-main">
-          {(job?.status === 'open' && hasPermission(role,PERMISSIONS.SHOW_PIN_UNPIN_OPTION)) &&
-          <MenuItem
-            key={pinUnpinMenuItems[isPinned ? 'unpin' : 'pin']?.action}
-            sx={{
-              padding: '0.5rem 1rem',
-              borderRadius: '0.75rem',
-              backgroundColor: 'var(--color-background-80)',
-              display: 'flex',
-              fontSize: '0.875rem',
-              alignItems: 'center',
-              gap: '0.75rem',
-              color: 'var(--color-font-main)', // default color
-              '&:hover': {
-                backgroundColor: 'var(--color-background-60)',
-                color: 'var(--color-font-main)', // custom white color
-                '& .MuiTypography-root': {
-                  color: pinUnpinMenuItems[isPinned ? 'unpin' : 'pin']?.style?.color ?? 'var(--color-font-main) !important', // force Typography to be white
-                },
-              },
-              ...pinUnpinMenuItems[isPinned ? 'unpin' : 'pin']?.style,
-            }}
-            onClick={(e) => handleMenuItemClick(pinUnpinMenuItems[isPinned ? 'unpin' : 'pin']?.action, job ? job._id : null, e)}
-          >
-              {
-                (() => {
-                  const DynamicIcon = pinUnpinMenuItems[isPinned ? 'unpin' : 'pin']?.icon;
-                  return DynamicIcon ? <DynamicIcon /> : null;
-                })()
-              }
-            <ListItemText
-              primaryTypographyProps={{
-                component: 'span',
-                sx: {
-                  fontWeight: 300,
-                  fontSize: '0.875rem',
-                  color: 'inherit', // critical: let it inherit from MenuItem
-                },
-              }}
-              primary={pinUnpinMenuItems[isPinned ? 'unpin' : 'pin']?.label}
+    <div className={`relative ${extraStyles || ''}`} onClick={(event) => event.stopPropagation()}>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <button type="button" className="flex items-center focus:outline-none">
+            <IconWrapper
+              hasBg={customBgColor || 'bg-background-80'}
+              customBgHover={customBgHover || 'hover-outline'}
+              icon={EllipsisVertical}
+              customIconSize={7}
+              customStrokeWidth={7}
             />
-          </MenuItem>
-          }
-          {menuItems.length > 0 ? (
-            menuItems.map(({ action, icon: Icon, label, className, style }) => (
-              <MenuItem
-                    key={action}
-                    sx={{
-                      padding: '0.5rem 1rem',
-                      borderRadius: '0.75rem',
-                      backgroundColor: 'var(--color-background-80)',
-                      display: 'flex',
-                      fontSize: '0.875rem',
-                      alignItems: 'center',
-                      gap: '0.75rem',
-                      color: 'var(--color-font-main)', // default color
-                      '&:hover': {
-                        backgroundColor: 'var(--color-background-60)',
-                        color: 'var(--color-font-main)', // custom white color
-                        '& .MuiTypography-root': {
-                          color: style?.color ?? 'var(--color-font-main) !important', // force Typography to be white
-                        },
-                      },
-                      ...style,
-                    }}
-                    onClick={(e) => {
-                      handleMenuItemClick(action, job ? job._id : null, e)
-                    }}
-                  >
-                    <Icon />
-                    <ListItemText
-                      primaryTypographyProps={{
-                        component: 'span',
-                        sx: {
-                          fontWeight: 300,
-                          fontSize: '0.875rem',
-                          color: 'var(--color-font-main)', // critical: let it inherit from MenuItem
-                        },
-                      }}
-                      primary={label}
-                    />
-                  </MenuItem>
-
-            ))
-          ) : (
-            <MenuItem disabled>No options found</MenuItem>
+          </button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          {(job?.status === 'open' && hasPermission(role, PERMISSIONS.SHOW_PIN_UNPIN_OPTION)) ? (
+            <DropdownMenuItem onSelect={() => handleMenuItemClick(pinItem.action, job ? job._id : null)}>
+              <IconWrapper size={0} customIconSize={5} icon={pinItem.icon} />
+              {pinItem.label}
+            </DropdownMenuItem>
+          ) : null}
+          {menuItems.length > 0 ? menuItems.map(({ action, icon, label, className }) => (
+            <DropdownMenuItem
+              key={action}
+              className={className}
+              onSelect={() => handleMenuItemClick(action, job ? job._id : null)}
+            >
+              <IconWrapper size={0} customIconSize={5} isErrorIcon={className === 'geode-menu-danger'} icon={icon} />
+              {label}
+            </DropdownMenuItem>
+          )) : (
+            <div className="geode-menu-item">No options found</div>
           )}
-          </div>
-        </Popover>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
-  );
-};
+  )
+}
 
-export default ThreeDots;
+export default ThreeDots

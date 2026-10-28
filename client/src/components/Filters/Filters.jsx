@@ -5,7 +5,7 @@ import StyledCard from '../Cards/StyledCard';
 import { useAuthContext } from '../../context/AuthProvider';
 import { CheckboxGroup } from '../Checkboxes/CheckboxGroup';
 import IconWrapper from '../Cards/IconWrapper';
-import { CircleSlash2, ClockArrowUp, ClockFading, GraduationCap, Handshake, Hourglass } from 'lucide-react';
+import { CircleSlash2, ClockArrowUp, ClockFading, GraduationCap, Handshake, Hourglass } from '@/components/geode/icons';
 import { hasPermission, PERMISSIONS } from '../../config/permissions.config';
 import { getJobProfileAsOptions } from '../../config/jobprofile.config';
 

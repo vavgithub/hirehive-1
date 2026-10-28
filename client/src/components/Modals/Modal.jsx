@@ -7,7 +7,7 @@ import { Button } from '../Buttons/Button';
 import WarningIcon from '../../svg/Staging/WarningIcon';
 import SchedulerButton from '../ui/SchedulerButton';
 import IconWrapper from '../Cards/IconWrapper';
-import { X } from 'lucide-react';
+import { X } from '@/components/geode/icons';
 import { ACTION_TYPES } from '../../utility/ActionTypes';
 import GlobalDropDown from '../Dropdowns/GlobalDropDown';
 import { combineDateWithTime, convertLocalToUTC } from '../../utility/timezoneConverter';

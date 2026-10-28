@@ -10,7 +10,7 @@ import CustomHeading from '../Heading/CustomHeading';
 import { GridRow } from '../Grid/GridRow';
 import { Button } from '../Buttons/Button';
 import IconWrapper from '../Cards/IconWrapper';
-import { Pencil } from 'lucide-react';
+import { Pencil } from '@/components/geode/icons';
 import { hasPermission, PERMISSIONS } from '../../config/permissions.config';
 import { updateProfessionalDetails } from '../../services/admin.candidate.service';
 

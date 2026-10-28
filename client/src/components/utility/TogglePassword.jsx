@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import IconWrapper from '../Cards/IconWrapper';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff } from '@/components/geode/icons';
 
 function TogglePassword({ children, typeState, setTypeState }) {
   // Local state to manage visibility of the password

@@ -1,6 +1,6 @@
 import React from 'react'
 import RightTick from '../../svg/Staging/RightTick';
-import { Check } from 'lucide-react';
+import { Check } from '@/components/geode/icons';
 import IconWrapper from '../Cards/IconWrapper';
 
 const TickCheckbox = ({

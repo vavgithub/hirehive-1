@@ -9,7 +9,7 @@ import { InputField } from '../Inputs/InputField';
 import { ExperienceField } from '../FormUtilities/ExperienceField';
 // import { BudgetField } from '../FormUtilities/BudgetField';
 import IconWrapper from '../Cards/IconWrapper';
-import { Bookmark, CirclePlus } from 'lucide-react';
+import { Bookmark, CirclePlus } from '@/components/geode/icons';
 import TickCheckbox from '../Checkboxes/TickCheckbox';
 import CustomPill from '../Badge/CustomPill';
 import { useQuery } from '@tanstack/react-query';

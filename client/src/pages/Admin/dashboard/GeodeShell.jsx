@@ -1,21 +1,6 @@
 import { useState } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
-import {
-  Briefcase,
-  CalendarDays,
-  ChevronDown,
-  ClipboardCheck,
-  FileText,
-  IdCard,
-  LayoutGrid,
-  Menu,
-  PauseCircle,
-  Settings,
-  Star,
-  UserCheck,
-  Users,
-  X,
-} from 'lucide-react'
+import { Briefcase, CalendarDays, ChevronDown, ClipboardCheck, FileText, IdCard, LayoutGrid, Menu, PauseCircle, Settings, Star, UserCheck, Users, X } from '@/components/geode/icons'
 import { GeodeLogo } from '@/components/geode/Logo'
 import { Avatar } from '@/components/shadcn/avatar'
 import { getRoute, hasRoutePermission, ROLES, ROUTE_KEY } from '@/config/permissions.config'

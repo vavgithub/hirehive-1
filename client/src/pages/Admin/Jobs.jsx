@@ -18,7 +18,7 @@ import useDebounce from '../../hooks/useDebounce';
 import { useAuthContext } from '../../context/AuthProvider';
 import Container from '../../components/Cards/Container';
 import IconWrapper from '../../components/Cards/IconWrapper';
-import { Archive, Briefcase, CircleCheck, CircleCheckBig, CirclePlus, CircleX, FileText, Search } from 'lucide-react';
+import { Archive, Briefcase, CircleCheck, CircleCheckBig, CirclePlus, CircleX, FileText, Search } from '@/components/geode/icons';
 import Header from '../../components/utility/Header';
 import LoaderModal from '../../components/Loaders/LoaderModal';
 import usePinnedJobs from '../../hooks/usePinnedJobs';

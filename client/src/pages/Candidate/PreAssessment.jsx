@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { BookText, ChevronDown, ChevronUp, Timer, TimerIcon, Mic, MicOff, User, Video, VideoOff } from 'lucide-react';
+import { BookText, ChevronDown, ChevronUp, Timer, TimerIcon, Mic, MicOff, User, Video, VideoOff } from '@/components/geode/icons';
 import Webcam from 'react-webcam';
 import Assessment from './Assessment'; // Import your existing Assessment component
 import { Button } from '../../components/Buttons/Button';

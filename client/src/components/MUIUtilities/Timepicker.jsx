@@ -1,157 +1,33 @@
-import * as React from 'react';
-import dayjs from 'dayjs';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DesktopTimePicker } from '@mui/x-date-pickers/DesktopTimePicker';
-import IconWrapper from '../Cards/IconWrapper';
-import { ChevronDown, Clock } from 'lucide-react';
+import { useLayoutEffect, useRef } from 'react'
+import dayjs from 'dayjs'
+import { Clock } from '@/components/geode/icons'
+import IconWrapper from '../Cards/IconWrapper'
 
+function toTimeInput(value) {
+  if (!value) return ''
+  if (typeof value === 'string' && /^\d{2}:\d{2}/.test(value)) return value.slice(0, 5)
+  const parsed = dayjs(value)
+  return parsed.isValid() ? parsed.format('HH:mm') : ''
+}
 
-const theme = createTheme({
-  typography: {
-    fontFamily: 'Bricolage Grotesque', // Add font family globally
-  },
-  components: {
-    MuiTextField: {
-      styleOverrides: {
-        root: {
-          '& .MuiPickersPopper-root':{
-            transform : 'translate(802px, 400px)'
-          },
-          '& .MuiInputBase-root': {
-            backgroundColor: 'black',
-            color: 'white',
-            borderRadius:"0.75rem",
-            height: "2.75rem", // Add this line
-          },
-          // '& .MuiOutlinedInput-notchedOutline': {
-          //   borderColor: 'teal',
-          // },
-          '& .MuiSvgIcon-root': {
-            color: 'white',
-          },
-        },
-      },
-    },
-    MuiPaper: {
-      styleOverrides: {
-        root: {
-          borderRadius:"0.75rem",
-          backgroundColor: 'black',
-          color: 'white',
-        },
-      },
-    },
-    MuiPickersLayout:{
-      styleOverrides:{
-        root:{
-          maxHeight: "18rem",
-          padding: "1.5rem"
-        }
-      }
-    },
-    MuiDialogActions:{
-      styleOverrides: {
-        root: {
-          display : "flex",
-          justifyContent: "center",
-          '& .MuiButton-root': {
-            color:"#ffffff",
-            width: "100%",
-            backgroundColor: "rgba(4, 95, 253, 1)"
-          },
-          '& .MuiButton-root:hover': {
-            backgroundColor: "rgba(4, 95, 253, 1) !important"
-            },
-        },
-      }
-    },
-    MuiMultiSectionDigitalClock: {
-      styleOverrides: {
-        root: {
-          backgroundColor: 'black',
-          color: 'rgba(128, 131, 137, 1)',
-          maxHeight :"11rem",
-          '& .MuiList-root':{
-            width:"4.5rem",
-            border: "0",
-            scrollbarWidth: "none", // For Firefox
-            '-ms-overflow-style': "none", // For IE and Edge
-            '&::-webkit-scrollbar': {
-              display: "none", // For Chrome, Safari, and Edge
-            },
-          },
-          '& .MuiButtonBase-root':{
-            'margin-left': "0",
-            'margin-right': "0",
-            padding: "1rem 1.5rem",
-            width : "100%"
-          },
-          '& .Mui-selected':{
-            backgroundColor: "rgba(24, 233, 208, 0.1) !important",
-            color : "rgb(24, 233, 208) !important"
-          },
-        },
-      },
-    },
-  },
-});
+export default function Timepicker({ customBg, onChange, value, error }) {
+  const fieldRef = useRef(null)
 
-export default function Timepicker({ customBg, onChange, value ,error}) {
+  useLayoutEffect(() => {
+    if (!fieldRef.current) return
+    if (customBg) fieldRef.current.style.setProperty('--geode-picker-bg', customBg)
+    else fieldRef.current.style.removeProperty('--geode-picker-bg')
+  }, [customBg])
+
   return (
-    // <ThemeProvider theme={theme}>
-      <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <DesktopTimePicker
-          slots={{
-            openPickerIcon : ()=> <IconWrapper icon={ChevronDown} size={0} customIconSize={5} isInActiveIcon />
-          }}
-          slotProps={{
-            textField: {
-              placeholder: "03:30 PM",
-              InputProps: { startAdornment: <IconWrapper icon={Clock} size={0} isInActiveIcon={true} /> }   
-            }
-          }}
-          sx={{
-            '& .MuiOutlinedInput-root:hover' : {
-              outline: '2px solid var(--color-accent-100)' , // remove inner border
-            },
-            '& .MuiOutlinedInput-input': {
-              outline: 'none !important' , // remove inner border
-            },
-            ...(customBg ? {
-              '& .MuiOutlinedInput-root' : {
-              backgroundColor : customBg
-            }
-            } : {} )
-          }}
-          value={value ? dayjs(`${value}`) : null}
-          // defaultValue={dayjs('2022-04-17T15:30')}
-          onChange={(newValue) => onChange(newValue)}
-          // sx={{
-          //   '& .MuiInputBase-root': {
-          //     height: '2.75rem',
-          //     backgroundColor: "rgba(12,13,13,1)",
-          //     ...(error ? {border : "1px solid red"} : {})
-          //   },
-          //   '& .MuiOutlinedInput-input': {
-          //     padding: '0px 10px',
-          //     ...(error ? {height : "42px"} : {})
-          //   },
-          //   "& .MuiOutlinedInput-root": {
-          //     "& fieldset": {
-          //       border: "none"
-          //     },
-          //   },
-          //   "& .Mui-focused": {
-          //     "& fieldset": {
-          //       border: "1px solid rgb(24, 233, 208) !important",
-          //       borderRadius : "0.75rem !important"
-          //     },
-          //   }
-          // }}
-           /> 
-      </LocalizationProvider>
-    // </ThemeProvider>
-  );
+    <label ref={fieldRef} className={error ? 'geode-picker geode-picker-invalid' : 'geode-picker'}>
+      <IconWrapper icon={Clock} size={0} isInActiveIcon />
+      <input
+        className="geode-picker-input"
+        type="time"
+        value={toTimeInput(value)}
+        onChange={(event) => onChange(event.target.value ? dayjs(`1970-01-01T${event.target.value}`) : null)}
+      />
+    </label>
+  )
 }

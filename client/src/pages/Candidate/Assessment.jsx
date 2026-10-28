@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Webcam from 'react-webcam';
-import { ChevronUp, ChevronDown, Camera, Mic, Eye, VideoOff } from 'lucide-react';
+import { ChevronUp, ChevronDown, Camera, Mic, Eye, VideoOff } from '@/components/geode/icons';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { Button } from '../../components/Buttons/Button';
 import Loader from '../../components/Loaders/Loader';

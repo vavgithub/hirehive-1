@@ -1,16 +1,5 @@
 import { Outlet } from 'react-router-dom'
-import {
-  Briefcase,
-  CalendarDays,
-  ClipboardCheck,
-  FileText,
-  IdCard,
-  LayoutGrid,
-  PauseCircle,
-  Settings,
-  UserCheck,
-  Users,
-} from 'lucide-react'
+import { Briefcase, CalendarDays, ClipboardCheck, FileText, IdCard, LayoutGrid, PauseCircle, Settings, UserCheck, Users } from '@/components/geode/icons'
 import GeodeShell from '../dashboard/GeodeShell'
 import {
   AssessmentsScreen,

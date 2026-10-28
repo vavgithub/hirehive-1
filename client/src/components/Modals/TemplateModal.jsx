@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import axios from '../../services/axios';
 import Loader from '../Loaders/Loader';
 import StyledCard from '../Cards/StyledCard';
-import { Headset, ShieldBan } from 'lucide-react';
+import { Headset, ShieldBan } from '@/components/geode/icons';
 import IconWrapper from '../Cards/IconWrapper';
 import { getAssessmentQuestionsById } from '../../services/admin.candidate.service';
 

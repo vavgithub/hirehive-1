@@ -1,7 +1,7 @@
 import React from 'react'
 import { postedDate } from '../../utility/postedDate';
 import IconWrapper from '../Cards/IconWrapper';
-import { Calendar, FileText, GraduationCap, PenTool } from 'lucide-react';
+import { Calendar, FileText, GraduationCap, PenTool } from '@/components/geode/icons';
 import StyledCard from '../Cards/StyledCard';
 
 const SideCard = ({ formData }) => {

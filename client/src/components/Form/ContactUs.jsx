@@ -7,7 +7,7 @@ import StyledCard from '../Cards/StyledCard';
 import Loader from '../Loaders/Loader';
 import Modal from '../Modals/Modal';
 import IconWrapper from '../Cards/IconWrapper';
-import { ChevronRight, Headset, Phone, Upload, X } from 'lucide-react';
+import { ChevronRight, Headset, Phone, Upload, X } from '@/components/geode/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { setCollapseContactUs } from '../../redux/candidateSlice';
 import { useMediaQuery } from 'react-responsive';

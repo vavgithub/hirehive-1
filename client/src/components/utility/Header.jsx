@@ -2,7 +2,7 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import ThreeDots from '../ui/ThreeDots'
 import IconWrapper from '../Cards/IconWrapper'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft } from '@/components/geode/icons'
 
 export const BackButton = () => {
     return (

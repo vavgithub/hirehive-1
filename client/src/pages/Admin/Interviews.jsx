@@ -6,8 +6,7 @@ import CustomCalendar from "../../components/Calendar/CustomCalendar";
 import { useAuthContext } from "../../context/AuthProvider";
 import { Button } from "../../components/Buttons/Button";
 import IconWrapper from "../../components/Cards/IconWrapper";
-import { FcGoogle } from "react-icons/fc";
-import GoogleIcon from "../../svg/Icons/GoogleIcon";
+import { GoogleIcon, FcGoogle } from '@/components/geode/icons'
 import { googleAuthorize, googleUnAuthorize } from "../../services/auth.service";
 import LoaderModal from "../../components/Loaders/LoaderModal";
 import { showSuccessToast } from "../../components/ui/Toast";

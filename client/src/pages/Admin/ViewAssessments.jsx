@@ -4,7 +4,7 @@ import Container from '../../components/Cards/Container'
 import StyledCard from '../../components/Cards/StyledCard'
 import { useQuery } from '@tanstack/react-query';
 import IconWrapper from '../../components/Cards/IconWrapper';
-import { ClipboardCheck, Headset, ShieldBan } from 'lucide-react';
+import { ClipboardCheck, Headset, ShieldBan } from '@/components/geode/icons';
 import { useNavigate } from 'react-router-dom';
 import { getRoute, ROUTE_KEY } from '../../config/permissions.config';
 import { useAuthContext } from '../../context/AuthProvider';

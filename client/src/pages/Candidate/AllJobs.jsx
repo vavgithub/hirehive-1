@@ -14,7 +14,7 @@ import ContactUs from '../../components/Form/ContactUs';
 import StyledCard from '../../components/Cards/StyledCard';
 import Container from '../../components/Cards/Container';
 import IconWrapper from '../../components/Cards/IconWrapper';
-import { Search, SlidersHorizontal } from 'lucide-react';
+import { Search, SlidersHorizontal } from '@/components/geode/icons';
 import Header from '../../components/utility/Header';
 import { fetchOpenJobs, filterSearchJobsCM } from '../../services/candidates.service';
 
