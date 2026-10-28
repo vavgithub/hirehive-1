@@ -17,7 +17,13 @@ function StyledCard({children,onClick,extraStyles,padding,rounded,backgroundColo
   `
 
   return (
-    <div {...props}  onClick={onClick} className={`${styles}  ${extraStyles ?? ''}`}>
+    <div
+      {...props}
+      onClick={onClick}
+      data-pad={padding?.toString() ? String(padding) : 'default'}
+      data-transparent={backgroundColor === 'bg-transparent' ? 'true' : undefined}
+      className={`app-card ${styles}  ${extraStyles ?? ''}`}
+    >
       {children}
     </div>
   )

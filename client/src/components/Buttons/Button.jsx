@@ -68,12 +68,15 @@ const Button = React.forwardRef(({
   return (
     <Comp
       className={classNames(
+        'app-button',
         baseStyles,
         variants[variant],
         sizes[size],
         { 'opacity-50 cursor-not-allowed': disabled },
         className
       )}
+      data-variant={variant}
+      data-size={size}
       ref={ref}
       disabled={disabled}
       {...props}

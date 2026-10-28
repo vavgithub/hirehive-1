@@ -35,7 +35,7 @@ const Header = ({
     };
 
     return (
-        <div className={"w-full mb-4"}>
+        <div className="app-header w-full mb-4">
             <div className="flex items-start justify-between gap-4">
                 {/* Left section with back button and title */}
                 <div className={'flex items-start gap-4 min-w-0 flex-1 ' + (rightContent && 'lg:w-[65%]')}>

@@ -270,6 +270,110 @@ html[data-geode-skin] {
   color: var(--geode-text);
 }
 
+.geode .app-page {
+  min-height: 0;
+  padding: 0;
+  background-image: none;
+}
+
+.geode .app-header {
+  margin-bottom: var(--geode-space-4);
+}
+
+.geode .app-header h1 {
+  font-family: var(--geode-font-sans);
+  font-size: var(--geode-text-h4);
+  font-weight: var(--geode-weight-heading);
+  line-height: var(--geode-leading-tight);
+  color: var(--geode-text);
+}
+
+.geode .app-card {
+  border: 1px solid var(--geode-border);
+  border-radius: var(--geode-radius);
+  background: var(--geode-card);
+  color: var(--geode-text);
+}
+
+.geode .app-card[data-transparent="true"] {
+  border: 0;
+  background: transparent;
+}
+
+.geode .app-card[data-pad="default"],
+.geode .app-card[data-pad="2"],
+.geode .app-card[data-pad="4"] {
+  padding: var(--geode-card-padding);
+}
+
+.geode .app-card[data-pad="0"] {
+  padding: 0;
+}
+
+.geode .app-card[data-pad="1"],
+.geode .app-card[data-pad="5"] {
+  padding: var(--geode-space-3);
+}
+
+.geode .app-card[data-pad="3"] {
+  padding: var(--geode-space-4);
+}
+
+.geode .app-button {
+  border-radius: var(--geode-radius-pill);
+  font-family: var(--geode-font-sans);
+  font-size: var(--geode-text-small);
+  font-weight: var(--geode-weight-heading);
+  line-height: var(--geode-leading-body);
+}
+
+.geode .app-button[data-size="default"] {
+  height: var(--geode-control-md);
+  width: auto;
+  padding-inline: var(--geode-space-4);
+}
+
+.geode .app-button[data-size="icon"],
+.geode .app-button[data-variant="icon"],
+.geode .app-button[data-variant="iconSec"] {
+  width: var(--geode-control-md);
+  height: var(--geode-control-md);
+  padding: 0;
+}
+
+.geode .app-button[data-variant="primary"],
+.geode .app-button[data-variant="icon"] {
+  background: var(--geode-action);
+  color: var(--geode-action-text);
+}
+
+.geode .app-button[data-variant="secondary"],
+.geode .app-button[data-variant="iconSec"] {
+  background: var(--geode-ink);
+  color: var(--geode-ink-text);
+}
+
+.geode .app-button[data-variant="tertiary"] {
+  background: transparent;
+  color: var(--geode-text);
+}
+
+.geode .app-button[data-variant="white"] {
+  background: var(--geode-card);
+  color: var(--geode-text);
+  border: 1px solid var(--geode-border);
+}
+
+.geode .app-button[data-variant="cancel"] {
+  background: var(--geode-error-2);
+  color: var(--geode-card);
+}
+
+.geode .app-button[data-variant="cancelSec"] {
+  background: var(--geode-error-1);
+  color: var(--geode-error-3);
+}
+
 .geode-dialog-close {
   position: absolute;
   top: var(--geode-space-3);
