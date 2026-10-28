@@ -9,7 +9,7 @@ import { copyToClipboard } from '../../utility/CopyToClipboard';
 import { useLocation } from 'react-router-dom';
 import { showSuccessToast } from '../ui/Toast';
 import IconWrapper from './IconWrapper';
-import { ClockArrowUp, DatabaseZap, SignalHigh } from 'lucide-react';
+import { ClockArrowUp, /* DatabaseZap, */ SignalHigh } from 'lucide-react';
 import { hasPermission, PERMISSIONS } from '../../config/permissions.config';
 import { useClosedBadge } from '../../context/ThemeContext';
 
@@ -56,11 +56,9 @@ const JobCard = ({
 
   const location = useLocation();
 
-  // Determine if job is hourly rate type (Part Time or Contract)
-  const isHourlyRateJob = job.employmentType === 'Part Time' || job.employmentType === 'Contract';
-  
-  // Set the appropriate pay unit based on employment type
-  const payUnit = isHourlyRateJob ? 'INR/hr' : 'LPA';
+  // Hidden for now. Uncomment with the pay row below to show the job budget again.
+  // const isHourlyRateJob = job.employmentType === 'Part Time' || job.employmentType === 'Contract';
+  // const payUnit = isHourlyRateJob ? 'INR/hr' : 'LPA';
 
   // Initialize variables for application data
   let applicationDate = null;
@@ -175,11 +173,13 @@ const JobCard = ({
       <>
       <div className="flex flex-row items-start flex-wrap gap-4 mt-2">
         <JobDetailItem icon={() => <IconWrapper size={1} icon={ClockArrowUp}  isInActiveIcon />} text={job.employmentType} />
+        {/* Hidden for now. Uncomment to show the job pay range again.
         {((job.budgetTo > 1) || (job.budgetFrom > 0)) && 
         <JobDetailItem
           icon={() => <IconWrapper size={1} icon={DatabaseZap}  isInActiveIcon />}
           text={`${job.budgetFrom} - ${job.budgetTo} ${payUnit}`}
         />}
+        */}
         <JobDetailItem
           icon={() => <IconWrapper size={1} icon={SignalHigh}  isInActiveIcon />}
           text={`${job.experienceFrom} - ${job.experienceTo} Year`}

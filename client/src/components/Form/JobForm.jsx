@@ -7,7 +7,7 @@ import Que from '../QuestionUtilities/Que';
 import TextEditor from '../utility/TextEditor';
 import { InputField } from '../Inputs/InputField';
 import { ExperienceField } from '../FormUtilities/ExperienceField';
-import { BudgetField } from '../FormUtilities/BudgetField';
+// import { BudgetField } from '../FormUtilities/BudgetField';
 import IconWrapper from '../Cards/IconWrapper';
 import { Bookmark, CirclePlus } from 'lucide-react';
 import TickCheckbox from '../Checkboxes/TickCheckbox';
@@ -81,23 +81,23 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
       }
     }
 
-    // Use useEffect to handle the logic for setting the error
-    useEffect(() => { 
-      if (watchedFields.budgetFrom > 0 && watchedFields.budgetTo < watchedFields.budgetFrom) {
-        setError("budgetTo", {
-          type: "manual",
-          message: "Budget Range Mismatch!!"
-        });
-      }else if(!watchedFields.budgetTo){
-        setError("budgetTo", {
-          type: "manual",
-          message: "Default Budget Range is 0 - 1"
-        });
-      } else {
-        // Clear the error when the condition is no longer met
-        clearErrors('budgetTo');
-      }
-    }, [watchedFields.budgetFrom, watchedFields.budgetTo, setError]);
+    // Hidden for now. Uncomment with the Budget field below to check the pay range again.
+    // useEffect(() => { 
+    //   if (watchedFields.budgetFrom > 0 && watchedFields.budgetTo < watchedFields.budgetFrom) {
+    //     setError("budgetTo", {
+    //       type: "manual",
+    //       message: "Budget Range Mismatch!!"
+    //     });
+    //   }else if(!watchedFields.budgetTo){
+    //     setError("budgetTo", {
+    //       type: "manual",
+    //       message: "Default Budget Range is 0 - 1"
+    //     });
+    //   } else {
+    //     // Clear the error when the condition is no longer met
+    //     clearErrors('budgetTo');
+    //   }
+    // }, [watchedFields.budgetFrom, watchedFields.budgetTo, setError]);
 
     useEffect(()=>{
       if(watchedFields.jobProfile !== "" && assessmentData?.templates?.length > 0){
@@ -110,11 +110,11 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
       }
     },[watchedFields.jobProfile,assessmentData,isEditing,isFirstRender])
 
-    if(watchedFields.budgetFrom > 0){
-      if(watchedFields.budgetTo < watchedFields.budgetFrom){
-        areAllFieldsFilled = false
-      }
-    }
+    // if(watchedFields.budgetFrom > 0){
+    //   if(watchedFields.budgetTo < watchedFields.budgetFrom){
+    //     areAllFieldsFilled = false
+    //   }
+    // }
 
     // Use useEffect to handle the logic for setting the error
     useEffect(() => { 
@@ -134,11 +134,9 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
       
     }, [watchedFields.experienceFrom, watchedFields.experienceTo, setError]);    
 
-    if(!watchedFields.budgetTo){
-      areAllFieldsFilled = false
-    }
-
-  
+    // if(!watchedFields.budgetTo){
+    //   areAllFieldsFilled = false
+    // }
 
   const handleFormSubmit = (data) => {
     onSubmit(data, false);
@@ -233,6 +231,7 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
           )}
         />
 
+        {/* Hidden for now. Uncomment to show the Budget field again.
         <Controller
           name="budgetFrom"
           control={control}
@@ -252,6 +251,9 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
             />
           )}
         />
+        */}
+        {/* Keeps Job Description on the left while Budget is hidden. */}
+        <div />
 
         <Controller
           name="jobDescription"

@@ -1,0 +1,224 @@
+/*
+ * Geode dashboard tokens.
+ * Change the font, a color, or a space step here. The dashboard components
+ * read these variables and do not hardcode them.
+ * Action (#88f800) and ink (#111f00) match the Done button sheet.
+ * Other roles are starting values in that same system.
+ */
+.geode {
+  --geode-font-sans: Gilroy, sans-serif;
+  --geode-weight-heading: 500;
+  --geode-weight-body: 400;
+
+  --geode-text-display: 2rem;
+  --geode-text-h4: 1.5rem;
+  --geode-text-h6: 1rem;
+  --geode-text-body: 1rem;
+  --geode-text-small: 0.875rem;
+  --geode-leading-tight: 1.15;
+  --geode-leading-body: 1.35;
+
+  --geode-space-1: 0.25rem;
+  --geode-space-2: 0.5rem;
+  --geode-space-3: 0.75rem;
+  --geode-space-4: 1rem;
+  --geode-space-5: 1.5rem;
+  --geode-space-6: 2rem;
+  --geode-card-padding: 1.5rem;
+  --geode-card-gap: 1rem;
+  --geode-sidebar: 15rem;
+
+  --geode-radius: 0.75rem;
+  --geode-radius-control: 0.5rem;
+  --geode-radius-pill: 999px;
+  --geode-control-sm: 2.25rem;
+  --geode-control-md: 2.75rem;
+  --geode-control-lg: 3.5rem;
+  --geode-avatar: 2rem;
+
+  --geode-bg: #f4f4f5;
+  --geode-card: #ffffff;
+  --geode-muted: #f4f4f5;
+  --geode-border: #e4e4e7;
+  --geode-text: #111f00;
+  --geode-text-muted: #71717a;
+  --geode-action: #88f800;
+  --geode-action-text: #111f00;
+  --geode-action-hover: #74e000;
+  --geode-ink: #111f00;
+  --geode-ink-text: #f7f8f2;
+  --geode-ink-hover: #24330f;
+  --geode-focus: #111f00;
+
+  --geode-chart-1: #e23d8c;
+  --geode-chart-2: #12c8d0;
+  --geode-chart-3: #88f800;
+  --geode-chart-4: #7a5cff;
+  --geode-chart-5: #ffb020;
+
+  --geode-cursor-default: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath fill='%23111f00' d='M5.5 3.2 19.2 11l-6.4 1-.1 6.6-2.3-5.3-4.9 3.4z'/%3E%3C/svg%3E") 4 2, auto;
+  --geode-cursor-pointer: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath fill='%23111f00' d='M6.2 4.4 17.6 11l-5.2.8.1 5.4-1.8-4.2-3.9 2.6z'/%3E%3C/svg%3E") 4 2, pointer;
+  --geode-cursor-text: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='24' viewBox='0 0 16 24'%3E%3Cpath stroke='%23111f00' stroke-width='1.6' d='M4 3h8M8 3v18M4 21h8'/%3E%3C/svg%3E") 8 12, text;
+
+  font-family: var(--geode-font-sans);
+  background: var(--geode-bg);
+  color: var(--geode-text);
+}
+
+.geode-wordmark {
+  letter-spacing: 0.08em;
+}
+
+.geode-nav-item {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: var(--geode-space-2);
+  min-height: var(--geode-control-sm);
+  padding: 0 var(--geode-space-3);
+  border-radius: var(--geode-radius-control);
+  color: var(--geode-text-muted);
+  font-family: var(--geode-font-sans);
+  font-size: var(--geode-text-small);
+  font-weight: var(--geode-weight-body);
+  line-height: var(--geode-leading-body);
+  text-align: left;
+}
+
+.geode-nav-item:hover {
+  background: var(--geode-muted);
+  color: var(--geode-text);
+}
+
+.geode-nav-item[aria-current="page"] {
+  background: var(--geode-muted);
+  color: var(--geode-text);
+  font-weight: var(--geode-weight-heading);
+}
+
+/* Beat the global heading rules (padding, tracking, loose leading) inside the shell. */
+.geode :where(h1, h2, h3, p) {
+  margin: 0;
+  letter-spacing: normal;
+}
+
+.geode :where(h1, h2, h3) {
+  padding: 0;
+  line-height: var(--geode-leading-tight);
+}
+
+.geode-board {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--geode-card-gap);
+  align-items: start;
+}
+
+.geode-board-trends {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.geode-board-rail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--geode-card-gap);
+  min-width: 0;
+}
+
+.geode-fill {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.geode-trend-chart {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 16rem !important;
+}
+
+.geode-stage {
+  display: flex;
+  align-items: center;
+  gap: var(--geode-space-4);
+}
+
+.geode-stage-chart {
+  width: 7.5rem !important;
+  height: 7.5rem !important;
+  flex: 0 0 7.5rem;
+}
+
+.geode-legend {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--geode-space-2);
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.geode-legend-item {
+  display: flex;
+  align-items: center;
+  gap: var(--geode-space-2);
+  min-width: 0;
+}
+
+.geode-legend-swatch {
+  width: 0.75rem;
+  height: 0.75rem;
+  flex: 0 0 0.75rem;
+  border-radius: 0.125rem;
+}
+
+.geode-legend-swatch[data-swatch="1"] { background: var(--geode-chart-1); }
+.geode-legend-swatch[data-swatch="2"] { background: var(--geode-chart-2); }
+.geode-legend-swatch[data-swatch="3"] { background: var(--geode-chart-3); }
+.geode-legend-swatch[data-swatch="4"] { background: var(--geode-chart-4); }
+.geode-legend-swatch[data-swatch="5"] { background: var(--geode-chart-5); }
+
+.geode-legend-copy {
+  display: flex;
+  flex: 1;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--geode-space-3);
+  min-width: 0;
+  color: var(--geode-text);
+  font-family: var(--geode-font-sans);
+  font-size: var(--geode-text-small);
+  line-height: 1;
+}
+
+.geode-legend-value {
+  color: var(--geode-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (min-width: 1024px) {
+  .geode-board {
+    grid-template-columns: minmax(0, 1.7fr) minmax(18rem, 0.85fr);
+    align-items: stretch;
+  }
+
+  .geode-board-trends {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .geode-board-rail {
+    grid-column: 2;
+    grid-row: 1;
+    align-self: start;
+  }
+
+  .geode-board-wide {
+    grid-column: 1 / -1;
+  }
+}

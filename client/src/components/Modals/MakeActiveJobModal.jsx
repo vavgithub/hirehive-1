@@ -2,7 +2,7 @@ import React from 'react';
 import StyledCard from '../Cards/StyledCard';
 import { Button } from '../Buttons/Button';
 import IconWrapper from '../Cards/IconWrapper';
-import { CircleCheck, ClockArrowUp, DatabaseZap, SignalHigh, SquarePen, X } from 'lucide-react';
+import { CircleCheck, ClockArrowUp, /* DatabaseZap, */ SignalHigh, SquarePen, X } from 'lucide-react';
 import { getTimeAgo } from '../../utility/getTimeAgo';
 
 const truncateWords = (text, wordLimit) => {
@@ -39,8 +39,9 @@ const MakeActiveJobModal = ({
 }) => {
   if (!open || !job) return null;
 
-  const isHourlyRateJob = job.employmentType === 'Part Time' || job.employmentType === 'Contract';
-  const payUnit = isHourlyRateJob ? 'INR/hr' : 'LPA';
+  // Hidden for now. Uncomment with the pay row below to show the job budget again.
+  // const isHourlyRateJob = job.employmentType === 'Part Time' || job.employmentType === 'Contract';
+  // const payUnit = isHourlyRateJob ? 'INR/hr' : 'LPA';
   const truncatedDescription = truncateWords(job.jobDescription || 'No description available', 18);
 
   const footerItems = [
@@ -82,12 +83,14 @@ const MakeActiveJobModal = ({
                 text={job.employmentType}
               />
             )}
+            {/* Hidden for now. Uncomment to show the job pay range again.
             {((job.budgetTo > 1) || (job.budgetFrom > 0)) && (
               <JobDetailItem
                 icon={() => <IconWrapper size={1} icon={DatabaseZap} isInActiveIcon />}
                 text={`${job.budgetFrom} - ${job.budgetTo} ${payUnit}`}
               />
             )}
+            */}
             {(job.experienceFrom != null || job.experienceTo != null) && (
               <JobDetailItem
                 icon={() => <IconWrapper size={1} icon={SignalHigh} isInActiveIcon />}

@@ -293,6 +293,14 @@ const AdminLayout = () => {
     const { pathname } = useLocation()
     const Logo = useLogo();
 
+    if (pathname === '/admin/dashboard') {
+        return (
+            <div className="min-h-screen">
+                <Outlet />
+            </div>
+        )
+    }
+
     return (
         <div id='adminContainer' className={`flex ${ADMIN_BG_SCREENS.some(path => pathname.startsWith(path)) ? ' bg-background-100 ' : ' bg-background-100 '} bg-cover bg-top h-full overflow-x-hidden flex flex-col`}>
             <div id='adminSidebar' className="fixed flex w-[16rem] h-[calc(100vh-2rem)] m-4 rounded-xl flex-col bg-background-100 text-font-gray typography-large-p justify-between py-6 ">

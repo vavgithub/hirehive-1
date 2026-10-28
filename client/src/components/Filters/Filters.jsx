@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import ExperienceFilter from './ExperienceFilter';
-import BudgetFilter from './BudgetFilter';
+// import BudgetFilter from './BudgetFilter';
 import StyledCard from '../Cards/StyledCard';
 import { useAuthContext } from '../../context/AuthProvider';
 import { CheckboxGroup } from '../Checkboxes/CheckboxGroup';
@@ -9,10 +9,11 @@ import { CircleSlash2, ClockArrowUp, ClockFading, GraduationCap, Handshake, Hour
 import { hasPermission, PERMISSIONS } from '../../config/permissions.config';
 import { getJobProfileAsOptions } from '../../config/jobprofile.config';
 
-const Filters = ({ filters = {}, handleCheckboxChange, activeTab, handleExperienceFilter, handleBudgetFilter, clearAllFilters }) => {
+// Hidden for now. Add handleBudgetFilter back to the props to show the budget filter again.
+const Filters = ({ filters = {}, handleCheckboxChange, activeTab, handleExperienceFilter, clearAllFilters }) => {
     const isDisabled = activeTab === 'draft';
     const [shouldResetExperience, setShouldResetExperience] = useState(false);
-    const [shouldResetBudget, setShouldResetBudget] = useState(false);
+    // const [shouldResetBudget, setShouldResetBudget] = useState(false);
 
     const { user } = useAuthContext();
     const role = user?.role || 'Candidate'; // Default to Candidate if role is not specified
@@ -73,15 +74,15 @@ const Filters = ({ filters = {}, handleCheckboxChange, activeTab, handleExperien
         handleExperienceFilter(experience);
     };
 
-    const handleBudgetApply = (budget) => {
-        setShouldResetBudget(false);
-        handleBudgetFilter(budget);
-    };
+    // const handleBudgetApply = (budget) => {
+    //     setShouldResetBudget(false);
+    //     handleBudgetFilter(budget);
+    // };
 
     const handleClearAll = () => {
         clearAllFilters();
         setShouldResetExperience(true);
-        setShouldResetBudget(true);
+        // setShouldResetBudget(true);
     };
 
 
@@ -132,6 +133,7 @@ const Filters = ({ filters = {}, handleCheckboxChange, activeTab, handleExperien
                     />
                 </div>
 
+                {/* Hidden for now. Uncomment to show the budget filter again.
                 <div>
                     <p className="typography-body text-font-main  mb-2">Budget Filter</p>
                     <BudgetFilter 
@@ -139,6 +141,7 @@ const Filters = ({ filters = {}, handleCheckboxChange, activeTab, handleExperien
                         shouldReset={shouldResetBudget}
                     />
                 </div>
+                */}
 
             </StyledCard>
     );

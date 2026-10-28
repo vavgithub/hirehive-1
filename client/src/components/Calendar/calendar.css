@@ -91,7 +91,7 @@
 }
 
 .fc-theme-standard .fc-list-day-cushion {
-  @apply !flex text-font-main typography-h3 
+  @apply !flex text-font-main font-gilroy text-h3 font-semibold 
 }
 .fc-scrollgrid .fc-daygrid-day-events {
   @apply max-h-[10rem]
