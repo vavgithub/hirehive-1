@@ -128,9 +128,8 @@ const AutoAssignModal = ({ open, onClose, onAssign, jobId, budgetFilter }) => {
                       id={`reviewer-${reviewer._id}`}
                       checked={selectedReviewers.some(r => r._id === reviewer._id)}
                       onChange={() => handleReviewerToggle(reviewer)}
-                      className="appearance-none border border-background-80  h-4 w-4 text-background-100 rounded-md bg-background-80  checked:bg-accent-100 checked:border-accent-100 peer"
+                      className="geode-check"
                     />
-                    <span className="absolute hidden left-4 h-4 w-4 text-background-100 items-center justify-center text-black peer-checked:flex ">✔</span>
                     <span className='w-8 h-8 rounded-full overflow-hidden mx-4'>
                       <img src={reviewer.profilePicture || UNKNOWN_PROFILE_PICTURE_URL } alt="" />
                     </span>

@@ -102,7 +102,7 @@ const Login = () => {
                 </div>
     
                 {/* Right section with login form */}
-                <div className="w-full lg:w-2/5 bg-background-100 p-28 flex flex-col justify-center items-start ">
+                <div className="flex w-full flex-col items-stretch justify-center bg-background-100 px-8 py-12 lg:w-2/5 lg:px-12">
                     {showForgotPassword ? (
                         <ForgotPassword onBack={() => setShowForgotPassword(false)} />
                     ) : (

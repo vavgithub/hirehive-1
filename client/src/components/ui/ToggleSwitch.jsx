@@ -1,15 +1,15 @@
-import React from 'react'
+import { Switch } from '@/components/shadcn/switch'
 
-function ToggleSwitch({label,checkValue,setCheckValue,disabled}) {
+function ToggleSwitch({ label, checkValue, setCheckValue, disabled }) {
   return (
-    <label className="inline-flex items-center cursor-pointer">
-        <span className="me-3 typography-body  text-font-main ">{label}</span>
-        <input type="checkbox" disabled={disabled} checked={checkValue} onChange={()=> setCheckValue(!checkValue)}
-        className="sr-only peer"
-        />
-        <div
-            className="relative w-11 h-6 bg-background-40 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600">
-        </div>
+    <label className="inline-flex items-center gap-2">
+      {label ? <span className="text-sm">{label}</span> : null}
+      <Switch
+        checked={Boolean(checkValue)}
+        disabled={disabled}
+        onCheckedChange={(checked) => setCheckValue(checked)}
+        aria-label={label || 'Toggle'}
+      />
     </label>
   )
 }

@@ -4,7 +4,7 @@ import { cva } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center gap-geode-2 whitespace-nowrap rounded-geode-pill font-geode text-geode-small font-geode-heading transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-geode-focus disabled:pointer-events-none disabled:opacity-50',
+  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-geode-focus disabled:pointer-events-none disabled:opacity-50',
   {
     variants: {
       variant: {
@@ -12,16 +12,19 @@ const buttonVariants = cva(
         secondary: 'bg-geode-ink text-geode-ink-text hover:bg-geode-ink-hover',
         outline: 'border border-geode-border bg-geode-card text-geode-text hover:bg-geode-muted-bg',
         ghost: 'text-geode-text hover:bg-geode-muted-bg',
+        destructive: 'geode-button-danger',
       },
       size: {
-        sm: 'h-geode-sm px-geode-3',
-        md: 'h-geode-md px-geode-4',
-        lg: 'h-geode-lg px-geode-5',
+        default: 'h-9 px-4',
+        sm: 'h-8 px-3 text-xs',
+        md: 'h-9 px-4',
+        lg: 'h-10 px-8',
+        icon: 'h-9 w-9',
       },
     },
     defaultVariants: {
       variant: 'primary',
-      size: 'md',
+      size: 'default',
     },
   }
 )

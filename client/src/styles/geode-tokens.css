@@ -370,59 +370,72 @@ html[data-geode-skin] {
   padding: var(--geode-space-4);
 }
 
-.geode .app-button {
-  border-radius: var(--geode-radius-pill);
-  font-family: var(--geode-font-sans);
-  font-size: var(--geode-text-small);
-  font-weight: var(--geode-weight-heading);
-  line-height: var(--geode-leading-body);
-}
-
-.geode .app-button[data-size="default"] {
-  height: var(--geode-control-md);
-  width: auto;
-  padding-inline: var(--geode-space-4);
-}
-
-.geode .app-button[data-size="icon"],
-.geode .app-button[data-variant="icon"],
-.geode .app-button[data-variant="iconSec"] {
-  width: var(--geode-control-md);
-  height: var(--geode-control-md);
-  padding: 0;
-}
-
-.geode .app-button[data-variant="primary"],
-.geode .app-button[data-variant="icon"] {
-  background: var(--geode-action);
-  color: var(--geode-action-text);
-}
-
-.geode .app-button[data-variant="secondary"],
-.geode .app-button[data-variant="iconSec"] {
-  background: var(--geode-ink);
-  color: var(--geode-ink-text);
-}
-
-.geode .app-button[data-variant="tertiary"] {
-  background: transparent;
-  color: var(--geode-text);
-}
-
-.geode .app-button[data-variant="white"] {
-  background: var(--geode-card);
-  color: var(--geode-text);
-  border: 1px solid var(--geode-border);
-}
-
-.geode .app-button[data-variant="cancel"] {
+.geode-button-danger {
   background: var(--geode-error-2);
   color: var(--geode-card);
 }
 
-.geode .app-button[data-variant="cancelSec"] {
-  background: var(--geode-error-1);
-  color: var(--geode-error-3);
+.geode-button-danger:hover {
+  background: var(--geode-error-3);
+}
+
+.geode-tabs-list {
+  display: inline-flex;
+  height: 2.25rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  border-radius: 0.5rem;
+  background: var(--geode-muted);
+  padding: 0.25rem;
+  color: var(--geode-text-muted);
+}
+
+.geode-tabs-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  height: 100%;
+  border: 0;
+  border-radius: 0.375rem;
+  background: transparent;
+  padding: 0 0.75rem;
+  color: var(--geode-text-muted);
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.25rem;
+  white-space: nowrap;
+}
+
+.geode-tabs-trigger[data-state="active"] {
+  background: var(--geode-card);
+  color: var(--geode-text);
+  box-shadow: 0 1px 2px rgb(17 31 0 / 8%);
+}
+
+.geode-tabs-trigger:focus-visible {
+  outline: 2px solid var(--geode-ink);
+  outline-offset: 2px;
+}
+
+.geode-chip {
+  display: inline-flex;
+  align-items: center;
+  height: 2rem;
+  border: 1px solid var(--geode-border);
+  border-radius: 0.375rem;
+  background: var(--geode-card);
+  padding: 0 0.75rem;
+  color: var(--geode-text-muted);
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.geode-chip-on {
+  border-color: var(--geode-ink);
+  background: var(--geode-ink);
+  color: var(--geode-ink-text);
 }
 
 /* Fields must stay visible on white cards. These beat the legacy input rules. */
