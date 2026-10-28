@@ -43,7 +43,6 @@ module.exports = {
       // Remove a path from this list when that file is converted. Do not add new ones.
       files: [
         'src/auth/CandidateLayout.jsx',
-        'src/components/Charts/InterviewsChart.jsx',
         'src/components/Charts/ScoreChart.jsx',
         'src/components/Charts/ScreeningChart.jsx',
         'src/components/Dropdowns/CustomDropdown.jsx',

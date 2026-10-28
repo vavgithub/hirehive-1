@@ -618,3 +618,20 @@ input[type='number'] {
 [data-theme="light"] body {
   @apply text-black-100;
 }
+
+.geode,
+.geode * {
+  cursor: var(--geode-cursor-default);
+}
+
+.geode :is(a, button, [role="button"], [role="tab"], label, summary, select) {
+  cursor: var(--geode-cursor-pointer);
+}
+
+.geode :is(a, button, [role="button"], [role="tab"], label, summary):active {
+  cursor: var(--geode-cursor-pointer);
+}
+
+.geode :is(input, textarea, [contenteditable="true"]) {
+  cursor: var(--geode-cursor-text);
+}

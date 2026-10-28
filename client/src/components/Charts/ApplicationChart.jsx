@@ -6,7 +6,8 @@ import { useGeodeToken } from "../../lib/readGeodeToken";
 function ApplicationChart({type,dataArray}) {
     const xData = dataArray?.map(data => type === "weekly" ? `${UTCToShortDate(data?.week?.start)} - ${UTCToShortDate(data?.week?.end)}` : type === "daily" ? `${UTCToShortMonth(data?.day)}` : type === "yesterday" ? formatUTCToLocalTimeAuto(data?.hour) : data?.month);
     const values = dataArray?.map(data => data?.totalCount ?? 0);
-    const lineColor = useGeodeToken("--geode-chart-2", "teal");
+    const lineColor = useGeodeToken("--geode-chart-1", "currentColor");
+    const gridColor = useGeodeToken("--geode-border", "currentColor");
     const labelColor = useGeodeToken("--geode-text-muted", "currentColor");
     const fontFamily = useGeodeToken("--geode-font-sans", "Gilroy, sans-serif");
     
@@ -16,7 +17,7 @@ function ApplicationChart({type,dataArray}) {
           fontFamily
         },
         grid: {
-          left: "8%",
+          left: "14%",
           right: "2.5%",
           top: "10%",
           bottom: "15%"
@@ -32,15 +33,15 @@ function ApplicationChart({type,dataArray}) {
         },
         yAxis: {
           type: "value",
-          name: "Applications",
+          name: "Candidate Applications",
           nameLocation: "middle",
-          nameGap: 50,
+          nameGap: 56,
           axisLabel: { color: labelColor },
           nameTextStyle: { color: labelColor },
           splitLine: {
             lineStyle: {
-              color: "#aaa",
-              type: "none"
+              color: gridColor,
+              type: "dashed"
             }
           }
         },
@@ -74,9 +75,9 @@ function ApplicationChart({type,dataArray}) {
           }
         ]
       }
-  ),[xData,values,type,lineColor,labelColor,fontFamily])
+  ),[xData,values,type,lineColor,gridColor,labelColor,fontFamily])
 
-  return <ReactECharts option={options} />;
+  return <ReactECharts option={options} className="h-72 w-full" />;
 }
 
 export default ApplicationChart;

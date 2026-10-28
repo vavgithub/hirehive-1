@@ -10,6 +10,7 @@ import { getAdminDashboard, getAdminDashboardSecondary } from '../../services/ad
 import { formatIntoDateString } from '../../utility/formatTime'
 import { formatUTCToLocalTimeAuto, timezone, UTCToDateFormatted } from '../../utility/timezoneConverter'
 import GeodeDashboard from './dashboard/GeodeDashboard'
+import GeodeShell, { buildGeodeNav } from './dashboard/GeodeShell'
 
 function displayOrDash(value) {
   if (value === undefined || value === null || value === '' || value === 0) return '-'
@@ -100,7 +101,19 @@ function AdminDashboard() {
     navigate(`${getRoute(user?.role, ROUTE_KEY.CANDIDATES_VIEW_CANDIDATE)}/${candidateId}/${jobId}`)
   }
 
+  const nav = buildGeodeNav(user)
+  const accountName = `${user?.firstName ?? ''} ${user?.lastName ?? ''}`.trim()
+
   return (
+    <GeodeShell
+      items={nav.items}
+      footer={nav.footer}
+      user={{
+        name: accountName || 'Account',
+        avatar: user?.profilePicture || unknownProfilePicture,
+        to: user?.role ? getRoute(user.role, ROUTE_KEY.PROFILE) : undefined,
+      }}
+    >
     <GeodeDashboard
       isPrimaryLoading={isPrimaryLoading}
       isSecondaryLoading={isSecondaryLoading}
@@ -125,6 +138,7 @@ function AdminDashboard() {
       leaderboard={model.leaderboard}
       onOpenLeader={(row) => openCandidate(row.id, row.jobId)}
     />
+    </GeodeShell>
   )
 }
 

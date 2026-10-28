@@ -1,11 +1,17 @@
 import { useState } from 'react'
 import GeodeDashboard from './GeodeDashboard'
+import GeodeShell, { previewGeodeFooter, previewGeodeNav } from './GeodeShell'
 import { applicationSeriesByPeriod, geodeDashboardFixture } from './fixtures'
 
 function GeodeDashboardPreview() {
   const [period, setPeriod] = useState(geodeDashboardFixture.period)
 
   return (
+    <GeodeShell
+      items={previewGeodeNav}
+      footer={previewGeodeFooter}
+      user={{ name: 'Sample Admin' }}
+    >
     <GeodeDashboard
       isPrimaryLoading={false}
       isSecondaryLoading={false}
@@ -21,6 +27,7 @@ function GeodeDashboardPreview() {
       leaderboard={geodeDashboardFixture.leaderboard}
       onOpenLeader={() => {}}
     />
+    </GeodeShell>
   )
 }
 

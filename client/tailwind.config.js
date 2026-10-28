@@ -206,6 +206,7 @@ export default {
         "geode-h6": ["var(--geode-text-h6)", { lineHeight: "var(--geode-leading-body)" }],
         "geode-body": ["var(--geode-text-body)", { lineHeight: "var(--geode-leading-body)" }],
         "geode-small": ["var(--geode-text-small)", { lineHeight: "var(--geode-leading-body)" }],
+        "geode-display": ["var(--geode-text-display)", { lineHeight: "var(--geode-leading-tight)" }],
       },
       fontWeight: {
         h1: "700",
@@ -229,6 +230,7 @@ export default {
         "geode-sm": "var(--geode-control-sm)",
         "geode-md": "var(--geode-control-md)",
         "geode-lg": "var(--geode-control-lg)",
+        "geode-sidebar": "var(--geode-sidebar)",
       },
       height: {
         "geode-avatar": "var(--geode-avatar)",
@@ -238,6 +240,7 @@ export default {
       },
       borderRadius: {
         geode: "var(--geode-radius)",
+        "geode-control": "var(--geode-radius-control)",
         "geode-pill": "var(--geode-radius-pill)",
       },
     },

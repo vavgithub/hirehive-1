@@ -1,7 +1,6 @@
 import ApplicationChart from '@/components/Charts/ApplicationChart'
 import InterviewsChart from '@/components/Charts/InterviewsChart'
 import { Avatar } from '@/components/shadcn/avatar'
-import { Badge } from '@/components/shadcn/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card'
 import { DataTable } from '@/components/shadcn/data-table'
 import { Tabs, TabsList, TabsTrigger } from '@/components/shadcn/tabs'
@@ -15,9 +14,9 @@ const PERIODS = [
 
 function Stat({ label, value }) {
   return (
-    <div className="flex flex-col gap-geode-1">
+    <div className="flex items-baseline justify-between gap-geode-3">
       <span className="font-geode text-geode-small text-geode-muted">{label}</span>
-      <span className="font-geode text-geode-h6 font-geode-heading text-geode-text">{value}</span>
+      <span className="font-geode text-geode-small font-geode-heading text-geode-text">{value}</span>
     </div>
   )
 }
@@ -69,17 +68,17 @@ function GeodeDashboard({
   onOpenLeader,
 }) {
   return (
-    <div className="geode min-h-screen w-full px-geode-4 py-geode-4 md:px-geode-5">
-      <header className="mb-geode-4 flex flex-col gap-geode-1">
+    <div className="flex flex-col gap-geode-4">
+      <header className="flex items-end justify-between gap-geode-3">
         <h1 className="pb-0 font-geode text-geode-h4 font-geode-heading">Dashboard</h1>
         {isPrimaryLoading ? (
           <p className="font-geode text-geode-small text-geode-muted" role="status">Loading dashboard</p>
         ) : null}
       </header>
 
-      <div className="grid grid-cols-1 items-start gap-geode-4 lg:grid-cols-3">
-        <Card className="lg:col-span-2">
-          <CardHeader>
+      <div className="grid grid-cols-1 items-start gap-geode-4 xl:grid-cols-3">
+        <Card className="xl:col-span-2">
+          <CardHeader className="flex-row flex-wrap items-center justify-between">
             <CardTitle>Application Trends</CardTitle>
             <Tabs value={period} onValueChange={onPeriodChange}>
               <TabsList aria-label="Application trend period">
@@ -97,28 +96,26 @@ function GeodeDashboard({
         </Card>
 
         <Card>
-          <CardHeader>
-            <div className="flex items-center gap-geode-3">
-              <Avatar
-                src={company.logoUrl}
-                alt=""
-                fallback={company.name ? company.name.slice(0, 1) : '?'}
-                className="h-geode-lg w-geode-lg"
-              />
-              <div className="min-w-0">
-                <CardTitle>{company.name || 'Company'}</CardTitle>
-                <p className="font-geode text-geode-small text-geode-muted">
-                  {[company.location, company.industry].filter(Boolean).join(' · ') || '—'}
-                </p>
-              </div>
+          <CardContent className="items-center text-center">
+            <Avatar
+              src={company.logoUrl}
+              alt=""
+              fallback={company.name ? company.name.slice(0, 1) : '?'}
+              className="h-geode-lg w-geode-lg"
+            />
+            <div>
+              <CardTitle>{company.name || 'Company'}</CardTitle>
+              <p className="font-geode text-geode-small text-geode-muted">
+                {[company.location, company.industry].filter(Boolean).join(' · ') || '—'}
+              </p>
             </div>
-          </CardHeader>
-          <CardContent>
+          </CardContent>
+          <div className="mt-geode-4 flex flex-col gap-geode-3">
             <Stat label="Employees" value={company.employees} />
             <Stat label="Active Jobs" value={company.activeJobs} />
             <Stat label="Applications Received" value={company.applications} />
             <Stat label="Upcoming Interviews" value={company.upcomingInterviews} />
-          </CardContent>
+          </div>
         </Card>
 
         <Card>
@@ -134,21 +131,15 @@ function GeodeDashboard({
                   key={interview.id}
                   type="button"
                   onClick={() => onOpenInterview(interview)}
-                  className="flex w-full flex-col gap-geode-2 rounded-geode border border-geode-border bg-geode-muted-bg px-geode-3 py-geode-3 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-geode-focus"
+                  className="flex w-full flex-col gap-geode-1 rounded-geode border border-geode-border bg-geode-card px-geode-4 py-geode-3 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-geode-focus"
                 >
-                  <span className="flex flex-wrap items-center justify-between gap-geode-2">
-                    <Badge>{interview.stage}</Badge>
+                  <span className="flex items-center justify-between gap-geode-2">
                     <span className="font-geode text-geode-small text-geode-muted">{interview.when}</span>
+                    <span className="font-geode text-geode-small text-geode-muted">{interview.stage}</span>
                   </span>
-                  <span className="flex items-start justify-between gap-geode-3">
-                    <span className="flex flex-col">
-                      <span className="font-geode text-geode-small text-geode-text">{interview.candidate || '-'}</span>
-                      <span className="font-geode text-geode-small text-geode-muted">Candidate</span>
-                    </span>
-                    <span className="flex flex-col items-end">
-                      <span className="font-geode text-geode-small text-geode-text">{interview.reviewer || '-'}</span>
-                      <span className="font-geode text-geode-small text-geode-muted">{interview.reviewerRole}</span>
-                    </span>
+                  <span className="font-geode text-geode-small font-geode-heading text-geode-text">{interview.candidate || '-'}</span>
+                  <span className="font-geode text-geode-small text-geode-muted">
+                    {[interview.reviewer, interview.reviewerRole].filter(Boolean).join(' · ') || '—'}
                   </span>
                 </button>
               ))
@@ -156,16 +147,16 @@ function GeodeDashboard({
           </CardContent>
         </Card>
 
-        <Card className="lg:col-span-2">
+        <Card className="xl:col-span-2">
           <CardHeader>
-            <CardTitle>Interviews</CardTitle>
+            <CardTitle>Interviews by Stage</CardTitle>
           </CardHeader>
           <CardContent>
             <InterviewsChart dataSet={interviewStages} />
           </CardContent>
         </Card>
 
-        <Card className="lg:col-span-3">
+        <Card className="xl:col-span-3">
           <CardHeader>
             <CardTitle>Top Performing Jobs</CardTitle>
           </CardHeader>
@@ -177,16 +168,24 @@ function GeodeDashboard({
               onRowClick={onOpenJob}
               emptyLabel="No jobs"
               isLoading={isSecondaryLoading}
+              searchable
+              columnToggle
             />
           </CardContent>
         </Card>
 
-        <Card className="lg:col-span-3">
+        <Card className="xl:col-span-3">
           <CardHeader>
             <CardTitle>Leaderboard</CardTitle>
             <div className="grid grid-cols-2 gap-geode-4">
-              <Stat label="Unique Candidates" value={leaderboard.uniqueCandidates} />
-              <Stat label="Assessments" value={leaderboard.assessments} />
+              <div className="flex flex-col gap-geode-1">
+                <span className="font-geode text-geode-small text-geode-muted">Unique Candidates</span>
+                <span className="font-geode text-geode-display font-geode-heading text-geode-text">{leaderboard.uniqueCandidates}</span>
+              </div>
+              <div className="flex flex-col gap-geode-1">
+                <span className="font-geode text-geode-small text-geode-muted">Assessments</span>
+                <span className="font-geode text-geode-display font-geode-heading text-geode-text">{leaderboard.assessments}</span>
+              </div>
             </div>
           </CardHeader>
           <CardContent>
@@ -197,6 +196,7 @@ function GeodeDashboard({
               onRowClick={onOpenLeader}
               emptyLabel="No candidates"
               isLoading={isSecondaryLoading}
+              searchable
             />
           </CardContent>
         </Card>
