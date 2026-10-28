@@ -17,10 +17,11 @@ function ApplicationChart({type,dataArray}) {
           fontFamily
         },
         grid: {
-          left: "14%",
-          right: "2.5%",
-          top: "10%",
-          bottom: "15%"
+          left: 56,
+          right: 12,
+          top: 16,
+          bottom: 28,
+          containLabel: true,
         },
         xAxis: {
           type: "category",
@@ -35,8 +36,8 @@ function ApplicationChart({type,dataArray}) {
           type: "value",
           name: "Candidate Applications",
           nameLocation: "middle",
-          nameGap: 56,
-          axisLabel: { color: labelColor },
+          nameGap: 40,
+          axisLabel: { color: labelColor, margin: 8 },
           nameTextStyle: { color: labelColor },
           splitLine: {
             lineStyle: {
