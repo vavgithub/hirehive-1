@@ -11,6 +11,35 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
 
   return {
+    server: env.VITE_DEV_API_PROXY
+      ? {
+          proxy: {
+            '/api': {
+              target: env.VITE_DEV_API_PROXY,
+              changeOrigin: true,
+              secure: true,
+              cookieDomainRewrite: '',
+              configure(proxy) {
+                proxy.on('proxyReq', (proxyReq) => {
+                  proxyReq.setHeader('Origin', 'https://rebrand-stage-hire.atvoid.com')
+                  proxyReq.setHeader('Referer', 'https://rebrand-stage-hire.atvoid.com/')
+                  proxyReq.setHeader('User-Agent', 'Mozilla/5.0')
+                })
+                proxy.on('proxyRes', (proxyRes) => {
+                  const cookies = proxyRes.headers['set-cookie']
+                  if (!cookies) return
+                  proxyRes.headers['set-cookie'] = cookies.map((cookie) =>
+                    cookie
+                      .replace(/; ?Domain=[^;]*/gi, '')
+                      .replace(/; ?Secure/gi, '')
+                      .replace(/; ?SameSite=None/gi, '; SameSite=Lax')
+                  )
+                })
+              },
+            },
+          },
+        }
+      : undefined,
     resolve: {
       alias: {
         '@': path.resolve(__dirname, './src'),

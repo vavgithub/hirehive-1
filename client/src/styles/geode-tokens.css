@@ -215,6 +215,20 @@ html[data-geode-skin] {
   padding: var(--geode-space-2) var(--geode-space-3);
 }
 
+.geode-avatar-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background: var(--geode-neutral-2);
+  color: var(--geode-text);
+  font-family: var(--geode-font-sans);
+  font-size: var(--geode-text-h4);
+  font-weight: var(--geode-weight-heading);
+  line-height: 1;
+}
+
 .geode-nav-item {
   display: flex;
   width: 100%;

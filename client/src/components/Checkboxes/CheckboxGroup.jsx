@@ -6,7 +6,7 @@ export const CheckboxGroup = ({ title, options, filters, handleCheckboxChange, i
         return (
             <div className="mb-6">
                 <span className="typography-body text-font-main mb-2 inline-block">{title}</span>
-                <div className="grid grid-cols-3 gap-2 w-fit">
+                <div className="flex flex-wrap gap-2">
                     {options.map(({ value, label, statKey, icon }) => (
                         <CustomCheckbox
                             key={value}
