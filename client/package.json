@@ -13,7 +13,9 @@
     "preview:prod": "vite preview --host 127.0.0.1 --port 4173 --strictPort --mode production",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "lint:ds": "eslint src --ext js,jsx --no-eslintrc --config .eslintrc.ds.cjs --max-warnings 0 && node scripts/ds-audit.mjs",
+    "test": "node --test test/**/*.test.js",
     "test:smoke": "playwright test",
+    "check": "npm run lint:ds && npm test",
     "clean": "rimraf dist",
     "prebuild": "npm run clean"
   },

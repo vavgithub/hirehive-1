@@ -1,0 +1,17 @@
+---
+description: How to add and run tests. Use when editing tests or a change that needs a regression check.
+globs: client/test/**/*.js,client/e2e/**/*.js,client/playwright.config.js
+alwaysApply: false
+---
+
+# Testing
+
+`npm test` in `client/` runs Node's built-in test runner. Use it for pure functions such as permissions and route maps. Do not add Vitest or Jest while this runner covers the need.
+
+`npm run test:smoke` runs Playwright in `client/e2e`. Those tests use the public pages and redirects. They must not type real passwords or call production APIs. `playwright.config.js` previews the local build unless `PLAYWRIGHT_BASE_URL` is set.
+
+Prefer `getByRole` and accessible names. Do not select on generated CSS class hashes.
+
+A test should fail when the behavior breaks. Do not skip a failing test to land a change. Do not weaken `lint:ds` or ESLint to get a green run.
+
+Fixtures stay synthetic. Do not paste applicant records into a test.

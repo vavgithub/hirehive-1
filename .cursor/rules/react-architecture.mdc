@@ -1,0 +1,21 @@
+---
+description: React 18 patterns for the Vite client. Use when editing components, hooks, pages, or data-fetching code.
+globs: client/src/**/*.{js,jsx}
+alwaysApply: false
+---
+
+# React architecture
+
+React 18.2, Vite, React Router 6, TanStack Query 5, and Redux Toolkit. There is no React Server Components boundary.
+
+Use function components. Keep a component to one job. Compose existing pieces in `client/src/components` before adding a new one.
+
+Prefer derived values over state that copies props. Keep state in the component that owns the interaction. Do not add an effect to copy one state value into another.
+
+Do not memoize unless a measured render problem says so. Do not add global state for data that belongs in a query or in one screen.
+
+List rendering needs a stable id from the data, not the array index, when the list can reorder.
+
+For performance detail, read `.agents/skills/vercel-react-best-practices/SKILL.md` and skip every Next.js-only rule. For component API shape, read `.agents/skills/vercel-composition-patterns/SKILL.md` and skip React 19 APIs (`use`, ref-as-prop) until this app upgrades.
+
+Do not create a compound component when a single component with a few clear props is enough.
