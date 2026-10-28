@@ -16,6 +16,7 @@ import {
   Users,
   X,
 } from 'lucide-react'
+import { GeodeLogo } from '@/components/geode/Logo'
 import { Avatar } from '@/components/shadcn/avatar'
 import { getRoute, hasRoutePermission, ROLES, ROUTE_KEY } from '@/config/permissions.config'
 import { cn } from '@/lib/utils'
@@ -159,7 +160,7 @@ function GeodeShell({ items, footer = [], user, children }) {
   const sidebar = (
     <div className="flex h-full min-h-0 flex-col">
       <div className="flex h-geode-lg shrink-0 items-center justify-between px-geode-4">
-        <span className="geode-wordmark font-geode text-geode-h6 font-geode-heading">GEODE</span>
+        <GeodeLogo />
         <button type="button" className="lg:hidden" aria-label="Close menu" onClick={close}>
           <X {...iconProps} />
         </button>
@@ -203,7 +204,7 @@ function GeodeShell({ items, footer = [], user, children }) {
           <button type="button" aria-label="Open menu" onClick={() => setOpen(true)}>
             <Menu {...iconProps} />
           </button>
-          <span className="geode-wordmark font-geode text-geode-small font-geode-heading">GEODE</span>
+          <GeodeLogo compact />
         </div>
         <main className="flex-1 px-geode-4 py-geode-4 md:px-geode-5 md:py-geode-5">
           {children}
