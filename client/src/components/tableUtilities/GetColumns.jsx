@@ -16,8 +16,8 @@ const getCommonColumns = (handleDocumentClick) => [
     field: 'fullName',
     headerName: 'Full Name',
     width: 250,
-    cellClassName : 'padded-col',
-    headerClassName : 'padded-col',
+    cellClassName: '',
+    headerClassName: '',
     sortable: false,
     disableColumnMenu: true,
     valueGetter: (params, row) => {
@@ -32,7 +32,7 @@ const getCommonColumns = (handleDocumentClick) => [
     },
     renderCell: (params) => {
       return(
-      <div className="name-cell flex items-center gap-2 h-12">
+      <div className="name-cell inline-flex items-center gap-geode-2">
         <span className="geode-avatar-sm">
           <GeodeAvatar src={params?.value?.profilePictureUrl} name={params.value.name} />
         </span>
@@ -42,7 +42,7 @@ const getCommonColumns = (handleDocumentClick) => [
               <IconWrapper size={3} customIconSize={1} icon={ClipboardCheck} />
             </span>}
         </p>
-        <div className="hover-icons h-full flex items-center"
+        <div className="hover-icons flex items-center"
           onClick={(event) => event.stopPropagation()}
         >
           {params.row.portfolio && (
@@ -170,11 +170,9 @@ const getInfoColumns = () => [
     sortable: false,
     disableColumnMenu: true,
     renderCell: (params) => (
-      <div className="h-full flex items-center justify-start">
-        <CustomToolTip title={params.value} arrowed size={2}>
-          <p className='w-full typography-body overflow-hidden text-start whitespace-nowrap text-ellipsis'>{params.value}</p>
-        </CustomToolTip>
-      </div>
+      <CustomToolTip title={params.value} arrowed size={2}>
+        <span>{params.value}</span>
+      </CustomToolTip>
     )
   },
 
@@ -248,9 +246,7 @@ export const getReadOnlyColumns = (role, handleDocumentClick, disableCTC, disabl
       sortable: false,
       headerAlign: 'center',
       disableColumnMenu: true,
-      renderCell: (params) => (
-        <p className='w-full overflow-hidden whitespace-nowrap text-ellipsis'>{params.value}</p>
-      )
+      renderCell: (params) => params.value
     },
     ...getInfoColumns()
   ])

@@ -1,5 +1,14 @@
 import { useLayoutEffect, useRef } from 'react'
-import { ChevronDown, ChevronLeft, ChevronRight, ChevronUp } from '@/components/geode/icons'
+import { ChevronDown, ChevronUp } from '@/components/geode/icons'
+import { Button } from '@/components/shadcn/button'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/shadcn/table'
+import { cn } from '@/lib/utils'
+
+const alignClass = {
+  left: 'text-left',
+  center: 'text-center',
+  right: 'text-right',
+}
 
 function cellValue(column, row) {
   const raw = row?.[column.field]
@@ -73,125 +82,141 @@ function DataGrid({
   const to = Math.min(total, page * pageSize + visibleRows.length)
   const sortField = sortModel?.[0]?.field
   const sortDirection = sortModel?.[0]?.sort
+  const columnCount = columns.length + (checkboxSelection ? 1 : 0)
 
   return (
-    <div className="geode-data-grid">
-      <div className="geode-data-grid-scroll">
-        <table>
-          <colgroup>
-            {checkboxSelection ? <col width="48" /> : null}
-            {columns.map((column) => (
-              <col key={column.field} width={column.width || undefined} />
-            ))}
-          </colgroup>
-          <thead>
-            <tr>
-              {checkboxSelection ? (
-                <th>
-                  <input
-                    ref={headerCheck}
-                    className="geode-grid-check"
-                    type="checkbox"
-                    aria-label="Select all rows"
-                    onChange={togglePage}
-                  />
-                </th>
-              ) : null}
-              {columns.map((column) => (
-                <th
-                  key={column.field}
-                  className={column.headerClassName}
-                  data-align={column.headerAlign || column.align || 'left'}
-                >
+    <div className="geode-data-grid flex w-full flex-col gap-geode-3">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            {checkboxSelection ? (
+              <TableHead>
+                <input
+                  ref={headerCheck}
+                  className="geode-grid-check"
+                  type="checkbox"
+                  aria-label="Select all rows"
+                  onChange={togglePage}
+                />
+              </TableHead>
+            ) : null}
+            {columns.map((column) => {
+              const align = alignClass[column.headerAlign || column.align] || alignClass.left
+              const active = sortField === column.field
+              return (
+                <TableHead key={column.field} className={cn(align, column.headerClassName)}>
                   {column.sortable === false ? column.headerName : (
-                    <button type="button" className="geode-grid-sort" onClick={() => toggleSort(column.field)}>
+                    <button
+                      type="button"
+                      className="geode-grid-sort"
+                      data-active={active ? 'true' : 'false'}
+                      onClick={() => toggleSort(column.field)}
+                    >
                       {column.headerName}
-                      {sortField === column.field ? (
-                        sortDirection === 'desc' ? <ChevronDown /> : <ChevronUp />
+                      {active ? (
+                        sortDirection === 'desc'
+                          ? <ChevronDown aria-hidden="true" />
+                          : <ChevronUp aria-hidden="true" />
                       ) : null}
                     </button>
                   )}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {visibleRows.length === 0 ? (
-              <tr>
-                <td colSpan={columns.length + (checkboxSelection ? 1 : 0)}>
-                  {localeText?.noRowsLabel || 'No rows'}
-                </td>
-              </tr>
-            ) : visibleRows.map((row, index) => {
-              const id = getRowId(row)
-              const className = getRowClassName?.({ row, id, indexRelativeToCurrentPage: index }) || ''
-              return (
-                <tr
-                  key={id}
-                  className={`${className}${selected.has(id) ? ' geode-row-selected' : ''}`}
-                  onClick={(event) => {
-                    if (event.target.closest('button, a, input, label, select')) return
-                    onRowClick?.({ row, id })
-                  }}
-                >
-                  {checkboxSelection ? (
-                    <td>
-                      <input
-                        className="geode-grid-check"
-                        type="checkbox"
-                        aria-label="Select row"
-                        checked={selected.has(id)}
-                        onChange={() => toggleRow(id)}
-                      />
-                    </td>
-                  ) : null}
-                  {columns.map((column) => {
-                    const value = cellValue(column, row)
-                    return (
-                      <td key={column.field} className={column.cellClassName} data-align={column.align || 'left'}>
-                        {column.renderCell
-                          ? column.renderCell({ row, value, id, field: column.field })
-                          : value}
-                      </td>
-                    )
-                  })}
-                </tr>
+                </TableHead>
               )
             })}
-          </tbody>
-        </table>
-      </div>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {visibleRows.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={columnCount}>
+                {localeText?.noRowsLabel || 'No rows'}
+              </TableCell>
+            </TableRow>
+          ) : visibleRows.map((row, index) => {
+            const id = getRowId(row)
+            const className = getRowClassName?.({ row, id, indexRelativeToCurrentPage: index }) || ''
+            return (
+              <TableRow
+                key={id}
+                tabIndex={onRowClick ? 0 : undefined}
+                className={cn(
+                  className,
+                  selected.has(id) && 'bg-geode-muted-bg',
+                  onRowClick && 'hover:bg-geode-muted-bg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-geode-focus',
+                )}
+                onClick={(event) => {
+                  if (event.target.closest('button, a, input, label, select')) return
+                  onRowClick?.({ row, id })
+                }}
+                onKeyDown={onRowClick ? (event) => {
+                  if (event.target.closest('button, a, input, label, select')) return
+                  if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault()
+                    onRowClick({ row, id })
+                  }
+                } : undefined}
+              >
+                {checkboxSelection ? (
+                  <TableCell>
+                    <input
+                      className="geode-grid-check"
+                      type="checkbox"
+                      aria-label="Select row"
+                      checked={selected.has(id)}
+                      onChange={() => toggleRow(id)}
+                    />
+                  </TableCell>
+                ) : null}
+                {columns.map((column) => {
+                  const value = cellValue(column, row)
+                  const align = alignClass[column.align] || alignClass.left
+                  return (
+                    <TableCell key={column.field} className={cn(align, column.cellClassName)}>
+                      {column.renderCell
+                        ? column.renderCell({ row, value, id, field: column.field })
+                        : value}
+                    </TableCell>
+                  )
+                })}
+              </TableRow>
+            )
+          })}
+        </TableBody>
+      </Table>
       {hideFooterPagination ? null : (
-        <div className="geode-data-grid-footer">
-          <label className="geode-data-grid-page-size">
-            Rows per page
-            <select
-              aria-label="Rows per page"
-              value={pageSize}
-              onChange={(event) => onPaginationModelChange?.({ page: 0, pageSize: Number(event.target.value) })}
+        <div className="flex flex-wrap items-center justify-between gap-geode-2">
+          <p className="font-geode text-geode-small text-geode-muted">
+            {total === 0 ? '0 results' : `${from}–${to} of ${total}`}
+          </p>
+          <div className="flex flex-wrap items-center gap-geode-2">
+            {pageSizeOptions.map((size) => (
+              <Button
+                key={size}
+                size="sm"
+                variant={Number(size) === Number(pageSize) ? 'secondary' : 'outline'}
+                onClick={() => onPaginationModelChange?.({ page: 0, pageSize: Number(size) })}
+                aria-pressed={Number(size) === Number(pageSize)}
+              >
+                {size}
+              </Button>
+            ))}
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => onPaginationModelChange?.({ page: page - 1, pageSize })}
+              disabled={page <= 0}
             >
-              {pageSizeOptions.map((option) => (
-                <option key={option} value={option}>{option}</option>
-              ))}
-            </select>
-          </label>
-          <span>{from}–{to} of {total}</span>
-          <button
-            type="button"
-            aria-label="Previous page"
-            disabled={page <= 0}
-            onClick={() => onPaginationModelChange?.({ page: page - 1, pageSize })}
-          >
-            <ChevronLeft />
-          </button>
-          <button
-            type="button"
-            aria-label="Next page"
-            disabled={page + 1 >= pageCount}
-            onClick={() => onPaginationModelChange?.({ page: page + 1, pageSize })}
-          >
-            <ChevronRight />
-          </button>
+              Previous
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => onPaginationModelChange?.({ page: page + 1, pageSize })}
+              disabled={page + 1 >= pageCount}
+            >
+              Next
+            </Button>
+          </div>
         </div>
       )}
     </div>

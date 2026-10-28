@@ -450,8 +450,8 @@ html[data-geode-skin] :is(input, textarea)::placeholder {
   opacity: 1;
 }
 
-.geode :is(input:not(.geode-affix-input):not(.geode-picker-input):not(.geode-menu-search), textarea, select):focus,
-html[data-geode-skin] :is(input:not(.geode-affix-input):not(.geode-picker-input):not(.geode-menu-search), textarea, select):focus {
+.geode :is(input:not(.geode-affix-input):not(.geode-picker-input):not(.geode-menu-search):not([type="checkbox"]):not([type="radio"]), textarea, select):focus,
+html[data-geode-skin] :is(input:not(.geode-affix-input):not(.geode-picker-input):not(.geode-menu-search):not([type="checkbox"]):not([type="radio"]), textarea, select):focus {
   border-color: var(--geode-ink) !important;
   outline: 2px solid var(--geode-ink);
   outline-offset: 1px;
@@ -704,8 +704,7 @@ html[data-geode-skin] body {
 }
 
 .geode-select svg,
-.geode-grid-sort svg,
-.geode-data-grid-footer button svg {
+.geode-grid-sort svg {
   width: 1rem;
   height: 1rem;
   flex: none;
@@ -837,61 +836,6 @@ html[data-geode-skin] body {
   color: var(--geode-text);
 }
 
-.geode-data-grid {
-  width: 100%;
-  overflow: hidden;
-  border: 1px solid var(--geode-border);
-  border-radius: var(--geode-radius);
-  background: var(--geode-card);
-  color: var(--geode-text);
-}
-
-.geode-data-grid-scroll {
-  width: 100%;
-  overflow-x: auto;
-}
-
-.geode-data-grid table {
-  width: max-content;
-  min-width: 100%;
-  border-collapse: collapse;
-  table-layout: fixed;
-}
-
-.geode-data-grid th,
-.geode-data-grid td {
-  padding: var(--geode-space-2) var(--geode-space-3);
-  border-bottom: 1px solid var(--geode-border);
-  vertical-align: middle;
-  font-family: var(--geode-font-sans);
-  font-size: var(--geode-text-small);
-  line-height: var(--geode-leading-body);
-}
-
-.geode-data-grid th {
-  background: var(--geode-neutral-1);
-  font-weight: var(--geode-weight-heading);
-  text-align: left;
-}
-
-.geode-data-grid [data-align="center"] { text-align: center; }
-.geode-data-grid [data-align="right"] { text-align: right; }
-
-.geode-data-grid .padded-col {
-  padding-left: var(--geode-space-4);
-  padding-right: var(--geode-space-4);
-}
-
-.geode-data-grid .first-row { background: var(--geode-card); }
-.geode-data-grid .second-row { background: var(--geode-neutral-1); }
-
-.geode-data-grid tbody tr { cursor: pointer; }
-.geode-data-grid tbody tr:hover,
-.geode-data-grid .geode-row-selected {
-  outline: 2px solid var(--geode-ink);
-  outline-offset: -2px;
-}
-
 .geode-grid-sort {
   display: inline-flex;
   align-items: center;
@@ -904,18 +848,23 @@ html[data-geode-skin] body {
   cursor: pointer;
 }
 
+.geode-grid-sort[data-active="true"] {
+  color: var(--geode-text);
+}
+
 .geode-grid-check {
   width: 1rem;
   height: 1rem;
   accent-color: var(--geode-ink);
-  opacity: 0;
 }
 
-.geode-data-grid th .geode-grid-check,
-.geode-data-grid tr:hover .geode-grid-check,
-.geode-data-grid .geode-grid-check:checked,
-.geode-data-grid .geode-row-selected .geode-grid-check {
-  opacity: 1;
+.geode-data-grid .geode-avatar-fallback {
+  font-size: var(--geode-text-small);
+}
+
+.geode-data-grid .geode-tooltip-target:has(span) {
+  width: max-content;
+  min-width: max-content;
 }
 
 .geode-data-grid .hover-icons { display: none; }
@@ -925,36 +874,6 @@ html[data-geode-skin] body {
   align-items: center;
   margin-left: var(--geode-space-2);
   color: var(--geode-text-muted);
-}
-
-.geode-data-grid-footer {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: var(--geode-space-3);
-  padding: var(--geode-space-2) var(--geode-space-3);
-}
-
-.geode-data-grid-page-size {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--geode-space-2);
-}
-
-.geode-data-grid-footer button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: var(--geode-control-sm);
-  height: var(--geode-control-sm);
-  border: 1px solid var(--geode-border);
-  border-radius: var(--geode-radius-control);
-  background: var(--geode-card);
-  color: var(--geode-text);
-}
-
-.geode-data-grid-footer button:disabled {
-  opacity: 0.4;
 }
 
 @media (min-width: 1024px) {
