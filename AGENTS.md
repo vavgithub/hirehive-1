@@ -30,7 +30,14 @@ Text next to text aligns to the baseline. A color swatch aligns to the middle of
 
 ## Components
 
-Use the pieces in `client/src/components/shadcn` (Radix, CVA, `cn` from `client/src/lib/utils.js`). A menu, dialog, select, popover, or calendar is a Radix primitive. Do not build a new one from a `div`.
+Use the pieces in `client/src/components/shadcn` (Radix, CVA, `cn` from `client/src/lib/utils.js`). A menu, dialog, select, popover, toast, switch, or calendar is a Radix primitive. Do not build a new one from a `div`. Call sites keep the existing helpers (`showSuccessToast`, `showErrorToast`, the product `Button`) so a visual change does not rewrite every page.
+
+## Skills
+
+Before a UI change, read:
+
+- `.cursor/skills/geode-standards/SKILL.md` for the design-system ratchet and where a change is allowed to live.
+- `.cursor/skills/geode-ux/SKILL.md` for type, color, alignment, tables, toasts, and the action color.
 
 Charts read colors with `useGeodeToken`. That helper resolves token chains to a real color. Chart height and the plot inset are `.geode-trend-chart` and `.geode-stage-chart` in the token file. ECharts `grid` is a fixed inset with `containLabel`, never a percentage gutter.
 

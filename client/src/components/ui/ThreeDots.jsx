@@ -64,7 +64,7 @@ const ThreeDots = ({ job, handleAction, page, orgId, isPinned, role, extraStyles
     <div className={`relative ${extraStyles || ''}`} onClick={(event) => event.stopPropagation()}>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <button type="button" className="flex items-center focus:outline-none">
+          <button type="button" className="flex items-center focus:outline-none" aria-label={job ? 'Job actions' : 'More actions'}>
             <IconWrapper
               hasBg={customBgColor || 'bg-background-80'}
               customBgHover={customBgHover || 'hover-outline'}

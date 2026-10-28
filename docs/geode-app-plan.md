@@ -67,7 +67,7 @@ Replace `Header`, `Container`, `StyledCard`, and the old `Button` with the shadc
 
 ## Order of screens
 
-1. Component kit still missing from the shell: dialog, dropdown menu, select, field, toast, and the real calendar. Show them through the components, not as a styled page.
+1. Dialog, dropdown, select, field, toast, and switch live in `client/src/components/shadcn` and wear the tokens. The real calendar stays the product calendar. Do not rebuild it as a styled page.
 2. Jobs: list, create, edit, view, then assessments.
 3. Candidates, including future gems and parked.
 4. Calendar, teams, guide.
