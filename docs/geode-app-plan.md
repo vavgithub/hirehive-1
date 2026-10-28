@@ -23,6 +23,7 @@ The assessment banner and the admin-login banner are illustrations on their own 
 - `/preview/geode-dashboard` for the dashboard fixtures.
 - `/preview/geode` for a fixture admin shell. It does not render the team's pages.
 - The real admin, hiring-manager, and design-reviewer routes use `GeodeAdminLayout` on the rebrand staging branch. `prod-main` is still the live site. Logout, permissions, and page data are unchanged. The old color variables inside the shell point at the Geode ramps. Radix provides the account menu and the dialog primitive.
+- `App` sets `data-geode-skin` and wraps every route in `.geode`, so the candidate site and public pages use the same type, color, buttons, cards, and fields. Text inputs, textareas, and selects get a neutral fill, a neutral-4 border, and ink type. Copy that sits on the dark login and home illustrations stays white. Cards on those panels stay ink.
 - Color ramps below, in `client/src/styles/geode-tokens.css`.
 - Wordmark rendered by `GeodeLogo`. Banner pattern owned by `GeodeBanner` (`.geode-banner`).
 - Application Trends plot inset is a fixed grid with `containLabel`, not a percentage left gutter.
@@ -77,6 +78,6 @@ Replace `Header`, `Container`, `StyledCard`, and the old `Button` with the shadc
 
 Application Trends used `grid.left: 14%` plus a 56px gap for the rotated "Candidate Applications" title. The percentage and the gap stacked, so the line sat in a wide empty column. The plot now uses a 56px left inset and a 40px name gap, with `containLabel`. The title occupies that inset, beside the tick labels, and the line uses the rest of the card. The x-axis title uses a 28px bottom inset so "Months" stays visible. Height stays `.geode-trend-chart`. Do not put a percentage gutter or a pixel height back on the JSX.
 
-## Out of scope until a screen is migrated
+## Still the team's behavior
 
-Live `/admin` routes other than the dashboard, the candidate site, and public pages stay as the team wrote them. `Router.jsx` and `AdminLayout.jsx` are not a place to restyle the product.
+Routes, permissions, forms, and data fetching stay as the team wrote them. `AdminLayout.jsx` is unused. Do not add a second shell around a page that `GeodeAdminLayout` already wraps. Illustrations the designer has not exported (login character, assessment banner, a replacement wordmark) stay the current assets.

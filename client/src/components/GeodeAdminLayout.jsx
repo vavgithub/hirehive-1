@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import { Outlet, useNavigate } from 'react-router-dom'
 import { useQueryClient } from '@tanstack/react-query'
 import { useSelector } from 'react-redux'
@@ -27,13 +26,6 @@ function GeodeAdminLayout() {
   const queryClient = useQueryClient()
   const newMembersCount = useSelector((state) => state.admin?.newMembersCount ?? 0)
   const unknownProfilePicture = useUnknownProfilePicture()
-
-  useEffect(() => {
-    document.documentElement.dataset.geodeSkin = 'on'
-    return () => {
-      delete document.documentElement.dataset.geodeSkin
-    }
-  }, [])
 
   const handleLogout = async () => {
     try {

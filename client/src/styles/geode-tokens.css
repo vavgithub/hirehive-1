@@ -142,8 +142,14 @@ html[data-geode-skin] {
   --color-green-100: var(--geode-success-3);
   --color-yellow-100: var(--geode-alert-2);
   --color-text-red: var(--geode-error-3);
-  --color-text-green: var(--geode-success-3);
-  --color-text-yellow: var(--geode-alert-3);
+  --color-text-green: var(--geode-success-4);
+  --color-text-yellow: var(--geode-alert-4);
+  --color-text-gray: var(--geode-neutral-6);
+  --color-status-red: var(--geode-error-1);
+  --color-status-yellow: var(--geode-alert-1);
+  --color-status-green: var(--geode-success-1);
+  --color-status-gray: var(--geode-neutral-2);
+  --color-border-gray: var(--geode-neutral-4);
   --color-border-red: var(--geode-error-2);
   --color-border-green: var(--geode-success-3);
   --color-border-yellow: var(--geode-alert-3);
@@ -372,6 +378,81 @@ html[data-geode-skin] {
 .geode .app-button[data-variant="cancelSec"] {
   background: var(--geode-error-1);
   color: var(--geode-error-3);
+}
+
+/* Fields must stay visible on white cards. These beat the legacy input rules. */
+.geode :is(
+  input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="range"]):not([type="button"]):not([type="submit"]):not([type="hidden"]),
+  textarea,
+  select
+),
+html[data-geode-skin] :is(
+  input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="range"]):not([type="button"]):not([type="submit"]):not([type="hidden"]),
+  textarea,
+  select
+) {
+  background-color: var(--geode-neutral-1) !important;
+  color: var(--geode-text) !important;
+  border: 1px solid var(--geode-neutral-4) !important;
+  border-radius: var(--geode-radius-control);
+  box-shadow: none;
+  caret-color: var(--geode-text);
+}
+
+.geode :is(input, textarea)::placeholder,
+html[data-geode-skin] :is(input, textarea)::placeholder {
+  color: var(--geode-neutral-5);
+  opacity: 1;
+}
+
+.geode :is(input, textarea, select):focus,
+html[data-geode-skin] :is(input, textarea, select):focus {
+  border-color: var(--geode-ink) !important;
+  outline: 2px solid var(--geode-ink);
+  outline-offset: 1px;
+}
+
+.geode label,
+html[data-geode-skin] label {
+  color: var(--geode-text);
+  font-family: var(--geode-font-sans);
+  font-size: var(--geode-text-small);
+  line-height: var(--geode-leading-body);
+}
+
+html[data-geode-skin] body {
+  background: var(--geode-bg);
+  color: var(--geode-text);
+}
+
+html[data-geode-skin] .MuiOutlinedInput-notchedOutline {
+  border-color: var(--geode-neutral-4) !important;
+}
+
+html[data-geode-skin] .MuiInputBase-root,
+html[data-geode-skin] .MuiInputBase-input,
+html[data-geode-skin] .MuiFormLabel-root {
+  color: var(--geode-text);
+}
+
+html[data-geode-skin] .MuiPaper-root {
+  background-color: var(--geode-card);
+  color: var(--geode-text);
+}
+
+html[data-geode-skin] .MuiButton-contained {
+  background-color: var(--geode-action);
+  color: var(--geode-action-text);
+}
+
+html[data-geode-skin] .MuiCheckbox-root.Mui-checked,
+html[data-geode-skin] .MuiRadio-root.Mui-checked {
+  color: var(--geode-ink);
+}
+
+/* Copy that sits on the old dark illustrations. Cards inside these panels keep ink type. */
+.geode :is(.bg-admin-login-fg, .bg-login-screen, .bg-home-bg, .bg-verification) {
+  color: var(--geode-card);
 }
 
 .geode-dialog-close {

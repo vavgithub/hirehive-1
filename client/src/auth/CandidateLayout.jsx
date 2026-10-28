@@ -17,7 +17,8 @@ import TelegramBannerIcon from "../svg/Banners/telegramBannerIcon.png"
 import { Button } from '../components/Buttons/Button';
 import ThemeToggle from '../components/ui/ThemeToggle';
 import { use } from 'react';
-import { useLogo, useTelegramBanner, useUnknownProfilePicture } from '../context/ThemeContext';
+import { useTelegramBanner, useUnknownProfilePicture } from '../context/ThemeContext';
+import { GeodeLogo } from '@/components/geode/Logo';
 
 const TELEGRAM_BOT_USERNAME = import.meta.env.VITE_TELEGRAM_BOT_USERNAME;
 
@@ -54,7 +55,6 @@ const CandidateLayout = () => {
   }
 
   const UNKNOWN_PROFILE_PICTURE_URL = useUnknownProfilePicture();
-  const Logo = useLogo();
 
   const handleLogout = async () => {
     try {
@@ -200,7 +200,7 @@ const CandidateLayout = () => {
       {/* Mobile Menu Button */}
       <div className={'min-h-[4rem] w-full md:hidden z-30 fixed ' + (darkBgPaths.includes(location.pathname) ? "bg-background-100" : "")}>
         <div className='flex m-4 z-30 '>
-          <img className='h-11 z-30' src={Logo} />
+          <GeodeLogo />
         </div>
         <div
           className="md:hidden absolute top-4 right-4 z-50 p-2 rounded-full  "
@@ -232,7 +232,7 @@ const CandidateLayout = () => {
         <div className="flex flex-col gap-6 typography-body ">
           <div className='px-6 pt-2 pb-4  flex justify-between'>
 
-            <img className='h-9 cursor-pointer ' onClick={() => navigate('/')} src={Logo} />
+            <span className='cursor-pointer' onClick={() => navigate('/')}><GeodeLogo /></span>
           <ThemeToggle /> {/* Add ThemeToggle here */}
           </div>
           {menuItems.map((item) => (

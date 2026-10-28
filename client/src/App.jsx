@@ -1,3 +1,4 @@
+import { useLayoutEffect } from 'react'
 import { RouterProvider } from 'react-router-dom'
 import { router } from './Router'
 import { QueryClient, QueryClientProvider, QueryCache, MutationCache } from '@tanstack/react-query'
@@ -39,6 +40,10 @@ const queryClient = new QueryClient({
 });
 
 function App() {
+  useLayoutEffect(() => {
+    document.documentElement.dataset.geodeSkin = 'on'
+  }, [])
+
   return ( 
     <QueryClientProvider client={queryClient}>
       <ThemeProvider theme={theme} >
@@ -47,7 +52,9 @@ function App() {
           <AuthProvider>
             <StatePreserver>
               <ThemesProvider>
-                <RouterProvider router={router} />
+                <div className="geode min-h-screen">
+                  <RouterProvider router={router} />
+                </div>
               </ThemesProvider>
               <StyledToastContainer />
             </StatePreserver>

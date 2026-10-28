@@ -1,18 +1,18 @@
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '../Buttons/Button';
-import { useLogo } from '../../context/ThemeContext';
+import { GeodeLogo } from '@/components/geode/Logo';
 
 
 function LogoWrapper({redirectLink = '/', isAuthenticated = true,headerText = '',buttonVariant = 'secondary'}) {
     const navigate = useNavigate();
-    const location = useLocation();
-    const Logo = useLogo();
 
   return (
     <div className=' mt-2  mb-4 flex justify-between w-full'>
         <div className='flex items-center justify-center gap-8'>
-            <img onClick={()=>navigate(redirectLink)} className='h-12 cursor-pointer' src={Logo}/>
-            {headerText && <h1 className='pb-0 hidden md:block'>{headerText}</h1>}
+            <span onClick={()=>navigate(redirectLink)} className='cursor-pointer'>
+              <GeodeLogo />
+            </span>
+            {headerText && <h1 className='hidden md:block text-geode-h4 font-geode-heading'>{headerText}</h1>}
         </div>
         {!isAuthenticated && <Button variant={buttonVariant} onClick={() => navigate("/login")}>Login</Button>}
     </div>
