@@ -1,0 +1,19 @@
+---
+description: Geode and shadcn UI rules. Use when editing components, pages, tokens, or Tailwind.
+globs: client/src/components/**/*.{js,jsx},client/src/pages/**/*.{js,jsx},client/src/styles/**/*.css,client/tailwind.config.js
+alwaysApply: false
+---
+
+# Design system
+
+Read `AGENTS.md` and `.cursor/skills/geode-standards/SKILL.md` before a visual change. Tokens live in `client/src/styles/geode-tokens.css`. Shared primitives live in `client/src/components/shadcn`. Icons come from `client/src/components/geode/icons.js`.
+
+Reuse Button, Tabs, Switch, Dialog, Table, and the product `Button` in `client/src/components/Buttons/Button.jsx`. Do not add another button, dialog, or table library.
+
+`client/components.json` is the shadcn config (`rsc: false`, `tsx: false`, Tailwind 3). Run the shadcn CLI from `client/`. Do not run `shadcn init`, do not switch presets, and do not migrate Radix to Base UI.
+
+`npm run lint:ds` in `client/` is a ratchet. Do not raise `client/ds-baseline.json`. If a count falls, lock it with `node scripts/ds-audit.mjs --update`.
+
+Brand color, Gilroy, and the existing spacing scale stay. A skill that proposes a new visual identity does not override them.
+
+Keep focus visible. Respect `prefers-reduced-motion` when adding animation. Do not invent a dark theme. Tailwind has a `data-theme="dark"` hook, and the product skin is light.

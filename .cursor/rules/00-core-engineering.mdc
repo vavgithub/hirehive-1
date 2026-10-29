@@ -1,0 +1,24 @@
+---
+description: Core engineering rules for this repository
+alwaysApply: true
+---
+
+# Core engineering
+
+This is a Vite + React 18 client and an Express + Mongoose API. It is not Next.js. Do not add a server component, a route handler, or a Next.js API.
+
+Inspect the surrounding code before editing. Reuse the libraries already in `client/package.json` and `server/package.json`. Do not add a second library for the same job.
+
+`AGENTS.md` and `client/src/styles/geode-tokens.css` decide product UI. Geode branding wins over a generic skill that suggests a new palette, a new font, or a preset switch.
+
+Preserve routes, permissions, forms, and data fetching unless the task is specifically to change them. Do not retarget `prod-main` with the rebrand skin.
+
+Keep the change small enough to review. Do not reformat unrelated files. Do not convert the JavaScript codebase to TypeScript in passing.
+
+Handle errors at the boundary that can do something about them. Do not log passwords, tokens, cookies, resumes, or candidate personal data.
+
+Do not print secrets. Do not commit `.env` files. Do not deploy, merge, or change production services unless the user asks.
+
+The reliable client gate is `npm run check` in `client/` (`lint:ds` and `node --test`). `npm run lint` currently fails with a large pre-existing error set. Do not weaken that config to make it pass, and do not claim it passed.
+
+Say what you actually ran. If a check failed, say so. A task is not done when an important check for that task failed.
