@@ -9,7 +9,7 @@ import { combineDateWithTime, convertLocalToUTC, UTCToDateFormatted } from '../.
 import StyledCard from '../Cards/StyledCard';
 import Modal from '../Modals/Modal';
 import IconWrapper from '../Cards/IconWrapper';
-import { Plus, X } from 'lucide-react';
+import { Plus, X } from '@/components/geode/icons';
 import { emailRegex } from '../../utility/regex';
 import { showErrorToast } from '../ui/Toast';
 import { useAuthContext } from '../../context/AuthProvider';

@@ -14,7 +14,7 @@ import { combineDateWithTime, convertLocalToUTC, formatUTCToLocalTimeAuto, UTCTo
 import StyledCard from '../Cards/StyledCard';
 import Modal from '../Modals/Modal';
 import IconWrapper from '../Cards/IconWrapper';
-import { ChartNoAxesGantt, ChevronDown, ChevronUp } from 'lucide-react';
+import { ChartNoAxesGantt, ChevronDown, ChevronUp } from '@/components/geode/icons';
 import { fetchTaskPresets, saveTaskPresets, sendDesignTask } from '../../services/hr.service';
 import { submitDesignTask } from '../../services/candidates.service';
 import { setDesignTaskContent } from '../../redux/AdminSlice';

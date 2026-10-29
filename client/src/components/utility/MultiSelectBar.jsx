@@ -8,7 +8,7 @@ import AssigneeSelector from '../MUIUtilities/AssigneeSelector'
 import RatingSelector from '../MUIUtilities/RatingSelector'
 import RejectionSelector from '../MUIUtilities/RejectionSelector'
 import IconWrapper from '../Cards/IconWrapper'
-import { ArrowRight, Calendar, Ellipsis, Star, User, X } from 'lucide-react'
+import { ArrowRight, Calendar, Ellipsis, Star, User, X } from '@/components/geode/icons'
 import { useUnknownProfilePicture } from '../../context/ThemeContext'
 import { assignReviewerForCandidates, moveMultipleCandidates, rateMultipleCandidates, rejectMultipleCandidates } from '../../services/hr.service'
 import * as Sentry from '@sentry/react';
@@ -472,9 +472,8 @@ function MultiSelectBar({selectedData,jobId,clearSelection}) {
                                                         id={candidate?._id} 
                                                         onChange={(e)=>toggleSelect(e.target.checked,candidate._id,stage)}
                                                         checked={checked}
-                                                        className="appearance-none border border-background-80  h-4 w-4 text-black-100 rounded-sm bg-background-60 hover:border-grey-100 checked:bg-accent-100 checked:border-accent-100 peer" 
+                                                        className="geode-check"
                                                         />
-                                                        <span className="absolute hidden left-4 h-4 w-4 text-black-100 items-center justify-center text-black peer-checked:flex ">✔</span>
                                                         <div className='w-8 h-8 rounded-full overflow-hidden'>
                                                             <img src={candidate?.profilePictureUrl || UNKNOWN_PROFILE_PICTURE_URL } alt="" className='object-cover w-full' />
                                                         </div>

@@ -9,7 +9,7 @@ import { formatDate } from '@fullcalendar/core';
 import './calendar.css';
 import { Button } from '../Buttons/Button';
 import IconWrapper from '../Cards/IconWrapper';
-import { ChevronLeft, ChevronRight, SquareArrowOutUpRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, SquareArrowOutUpRight } from '@/components/geode/icons';
 import { DateTime } from 'luxon';
 import LoaderModal from '../Loaders/LoaderModal';
 import StyledMenu from '../MUIUtilities/StyledMenu';

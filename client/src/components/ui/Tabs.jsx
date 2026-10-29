@@ -1,31 +1,18 @@
-import React from 'react';
+import { Tabs as TabsRoot, TabsList, TabsTrigger } from '@/components/shadcn/tabs'
 
-const Tabs = ({ bgVariant = "primary", tabs, activeTab, handleTabClick }) => {
-    return (
-        <div className={ (bgVariant === "secondary" ? "bg-background-80" : "bg-background-100" )+ ' flex gap-8   rounded-xl items-center px-8 '}>
-            {tabs.map((tab) => (
-                <div
-                    key={tab.name}
-                    className="relative cursor-pointer flex flex-col items-center w-fit h-full py-3"
-                    onClick={() => handleTabClick(tab.name)}
-                >
-                    <div
-                        className={` typography-body rounded-xl flex justify-center items-center ${
-                            activeTab === tab.name ? 'text-accent-100' : 'text-font-gray'
-                        }`}
-                    >
-                        <span className="flex-shrink-0">
-                            {activeTab === tab.name ? tab.activeIcon : tab.icon}
-                        </span>
-                        <span className={(tab.activeIcon || tab.icon) ? 'ml-2' : ''}>{tab.label}</span>
-                    </div>
-                    {activeTab === tab.name && (
-                        <div className="absolute bottom-[0px] h-[0.375rem] w-8 bg-accent-100 rounded-tr-xl rounded-tl-xl" />
-                    )}
-                </div>
-            ))}
-        </div>
-    );
-};
+const Tabs = ({ tabs = [], activeTab, handleTabClick }) => {
+  return (
+    <TabsRoot value={activeTab} onValueChange={handleTabClick}>
+      <TabsList aria-label="Sections">
+        {tabs.map((tab) => (
+          <TabsTrigger key={tab.name} value={tab.name}>
+            {activeTab === tab.name ? (tab.activeIcon || tab.icon) : tab.icon}
+            {tab.label}
+          </TabsTrigger>
+        ))}
+      </TabsList>
+    </TabsRoot>
+  )
+}
 
-export default Tabs;
+export default Tabs

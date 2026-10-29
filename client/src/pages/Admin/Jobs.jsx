@@ -9,7 +9,7 @@ import Tabs from '../../components/ui/Tabs';
 import StatsGrid from '../../components/ui/StatsGrid';
 import { Button } from '../../components/Buttons/Button';
 import { ACTION_TYPES, getModalMessage } from '../../utility/ActionTypes';
-import NoJobs from "../../svg/Background/NoJobs.svg"
+import { GeodePlaceholder } from '@/components/geode/Placeholder';
 import { showErrorToast, showSuccessToast } from '../../components/ui/Toast';
 import Loader from '../../components/Loaders/Loader';
 import StyledCard from '../../components/Cards/StyledCard';
@@ -18,7 +18,7 @@ import useDebounce from '../../hooks/useDebounce';
 import { useAuthContext } from '../../context/AuthProvider';
 import Container from '../../components/Cards/Container';
 import IconWrapper from '../../components/Cards/IconWrapper';
-import { Archive, Briefcase, CircleCheck, CircleCheckBig, CirclePlus, CircleX, FileText, Search } from 'lucide-react';
+import { Archive, Briefcase, CircleCheck, CircleCheckBig, CirclePlus, CircleX, FileText, Search } from '@/components/geode/icons';
 import Header from '../../components/utility/Header';
 import LoaderModal from '../../components/Loaders/LoaderModal';
 import usePinnedJobs from '../../hooks/usePinnedJobs';
@@ -415,7 +415,7 @@ const Jobs = () => {
                             </div>
                         ) : (displayJobs.length === 0 || displayJobs.filter(job => job.status === activeTab).length === 0) ? (
                             <div className='bg-background-100 h-full flex flex-col p-36 justify-center items-center rounded-xl'>
-                                <img src={NoJobs} alt="No jobs found" />
+                                <GeodePlaceholder label="Illustration" />
                                 <span className='typography-body m-6'>
                                     Create a job post to attract top talent and build your dream team
                                 </span>

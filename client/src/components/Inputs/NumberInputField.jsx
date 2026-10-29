@@ -1,4 +1,4 @@
-import { Icon, Minus, Plus } from "lucide-react";
+import { Minus, Plus } from '@/components/geode/icons';
 import React from "react";
 import IconWrapper from "../Cards/IconWrapper";
 

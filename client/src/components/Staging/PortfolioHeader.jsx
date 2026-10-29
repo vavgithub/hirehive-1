@@ -1,7 +1,7 @@
 import React from 'react'
 import { ensureAbsoluteUrl } from '../../utility/ensureAbsoluteUrl'
 import IconWrapper from '../Cards/IconWrapper'
-import { ExternalLink } from 'lucide-react'
+import { ExternalLink } from '@/components/geode/icons'
 
 function PortfolioHeader({portfolio}) {
   return (  

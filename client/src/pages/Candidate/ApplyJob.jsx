@@ -28,7 +28,7 @@ import Container from '../../components/Cards/Container';
 import Modal from '../../components/Modals/Modal';
 import StyledCard from '../../components/Cards/StyledCard';
 import IconWrapper from '../../components/Cards/IconWrapper';
-import { Check, PencilLine, Upload, X } from 'lucide-react';
+import { Check, PencilLine, Upload, X } from '@/components/geode/icons';
 import TogglePassword from '../../components/utility/TogglePassword';
 import ForgotPassword from '../Admin/ForgotPassword';
 import Footer from '../../components/Footer/Footer';

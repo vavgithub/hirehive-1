@@ -9,14 +9,14 @@ import { clearAuthError, fetchCandidateAuthData } from '../../redux/candidateAut
 import { useDispatch } from 'react-redux';
 import useCandidateAuth from '../../hooks/useCandidateAuth';
 import Loader from '../../components/Loaders/Loader';
-import NoJobs from "../../svg/Background/NoJobs.svg"
+import { GeodePlaceholder } from '@/components/geode/Placeholder';
 import Pagination from '../../components/utility/Pagination';
 import useDebounce from '../../hooks/useDebounce';
 import JobCard from '../../components/Cards/JobCard';
 import ContactUs from '../../components/Form/ContactUs';
 import Container from '../../components/Cards/Container';
 import IconWrapper from '../../components/Cards/IconWrapper';
-import { SlidersHorizontal } from 'lucide-react';
+import { SlidersHorizontal } from '@/components/geode/icons';
 import Footer from '../../components/Footer/Footer';
 import LogoWrapper from '../../components/Logo/LogoWrapper';
 import { fetchOpenJobs, filterSearchJobsCM } from '../../services/candidates.service';
@@ -198,7 +198,7 @@ const HomePage = () => {
                             ) :
                             displayJobs?.length === 0 ? 
                             <div className='bg-background-80 h-full flex flex-col p-8 sm:p-20 xl:p-40 justify-center items-center rounded-xl'>
-                                <img src={NoJobs} alt="No jobs found" />
+                                <GeodePlaceholder label="Illustration" />
                                 <span className='typography-body m-6'>
                                     No Jobs available
                                 </span>

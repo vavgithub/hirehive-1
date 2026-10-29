@@ -18,7 +18,7 @@ import { emailRegex, mobileRegex } from "../../utility/regex";
 import Container from "../../components/Cards/Container";
 import ContactUs from "../../components/Form/ContactUs";
 import IconWrapper from "../../components/Cards/IconWrapper";
-import { Pencil, PencilLine, Upload } from "lucide-react";
+import { Pencil, PencilLine, Upload } from '@/components/geode/icons';
 import { formatPhoneNumber, PhoneInputField } from "../../components/Form/PhoneInputField";
 import parsePhoneNumberFromString from "libphonenumber-js";
 import { editCandidateProfile, getCandidateDashboard, uploadCandidateProfilePicture, uploadResume, verifyEmailOtpCandidate } from "../../services/auth.candidate.service";

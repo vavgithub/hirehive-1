@@ -1,7 +1,5 @@
 import React from 'react'
 import { Controller } from 'react-hook-form';
-import IconWrapper from '../Cards/IconWrapper';
-import { Check } from 'lucide-react';
 
 function AdditionalQuestions({jobDetails, control ,errors}) {
   return (
@@ -91,24 +89,16 @@ function AdditionalQuestions({jobDetails, control ,errors}) {
                                 document.getElementById(inputId).focus();
                             }}
                             >
-                            <div className="relative  flex items-center justify-center">
-                                <input
-                                    type="checkbox"
-                                    id={inputId}
-                                    value={option}
-                                    checked={field.value?.includes(option)}
-                                    onChange={() => handleMultiSelectClick(field.onChange,field.value,option)}
-                                    className="appearance-none outline-none border mr-2 h-4 w-4 cursor-pointer rounded bg-background-100 hover:border-grey-100  checked:bg-accent-100 checked:border-accent-100 peer"
-                                />
-
-                                <div className="hidden peer-checked:block cursor-pointer absolute top-[-1px] left-[-2px] w-[1.25rem] scale-90 h-[1.25rem] text-font-invert pointer-events-none">
-                                    <span className='text-font-invert'><IconWrapper customStrokeWidth={4} customIconSize={3} icon={Check} inheritColor size={0} /></span>
-
-                                </div>
-
-
-                            </div>
-                            <label onClick={(e)=>{ e.preventDefault(); handleMultiSelectClick(field.onChange,field.value,option)}} className='typography-body overflow-hidden whitespace-nowrap text-ellipsis' htmlFor={inputId}>{option}</label>
+                            <input
+                                type="checkbox"
+                                id={inputId}
+                                value={option}
+                                checked={field.value?.includes(option)}
+                                onClick={(event) => event.stopPropagation()}
+                                onChange={() => handleMultiSelectClick(field.onChange, field.value, option)}
+                                className="geode-check"
+                            />
+                            <label className="text-sm" htmlFor={inputId}>{option}</label>
                             </div>
                         );
                         })

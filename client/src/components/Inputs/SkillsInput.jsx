@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import IconWrapper from '../Cards/IconWrapper';
-import { Plus } from 'lucide-react';
+import { Plus } from '@/components/geode/icons';
 
 const SkillsInput = ({ value = [], onChange, allSkills = [] ,error }) => {
   const [inputValue, setInputValue] = useState('');

@@ -6,6 +6,7 @@ import { Button } from '../../components/Buttons/Button'
 import { useAuthContext } from '../../context/AuthProvider'
 import LoaderModal from '../../components/Loaders/LoaderModal'
 import { showErrorToast, showSuccessToast } from '../../components/ui/Toast'
+import { Switch } from '@/components/shadcn/switch'
 import { useQueryClient } from '@tanstack/react-query'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { getRoute, ROUTE_KEY } from '../../config/permissions.config'
@@ -99,11 +100,10 @@ function Settings() {
                         <p className='typography-small-p text-font-gray'>Allow assigning up to 3 reviewers for portfolio stage</p>
                     </div>
                     <label className="flex items-center gap-3 cursor-pointer select-none">
-                        <input
-                            type="checkbox"
+                        <Switch
                             checked={multiReviewerEnabled}
-                            onChange={(e) => { setMultiReviewerEnabled(e.target.checked); setMultiReviewerDirty(true); }}
-                            className="appearance-none outline-none border h-5 w-9 rounded-full bg-background-80 checked:bg-accent-100 relative transition-colors"
+                            onCheckedChange={(checked) => { setMultiReviewerEnabled(checked); setMultiReviewerDirty(true); }}
+                            aria-label="Portfolio multi-reviewer"
                         />
                         <span className='typography-body text-font-main'>{multiReviewerEnabled ? "On" : "Off"}</span>
                     </label>
@@ -124,8 +124,9 @@ function Settings() {
                                         <input
                                             type="checkbox"
                                             checked={selected}
+                                            onClick={(event) => event.stopPropagation()}
                                             onChange={() => toggleJobProfile(opt.value)}
-                                            className="appearance-none outline-none border mr-3 h-4 w-4 cursor-pointer rounded bg-background-100 hover:border-grey-100 checked:bg-accent-100 checked:border-accent-100 peer"
+                                            className="geode-check"
                                         />
                                         <span className='typography-body overflow-hidden whitespace-nowrap text-ellipsis'>{opt.label}</span>
                                     </div>

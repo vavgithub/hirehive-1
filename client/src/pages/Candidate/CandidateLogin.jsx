@@ -3,7 +3,7 @@ import React, { useEffect, useLayoutEffect, useState } from 'react';
 import axios from '../../services/axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import sundarKanya from "../../svg/Background/sundar-kanya.png"
+import { GeodeLogo } from '@/components/geode/Logo';
 import { Button } from '../../components/Buttons/Button';
 import StatsGrid from '../../components/ui/StatsGrid';
 import ForgotPassword from '../Admin/ForgotPassword';
@@ -13,8 +13,7 @@ import Loader from '../../components/Loaders/Loader';
 import TogglePassword from '../../components/utility/TogglePassword';
 import LoaderModal from '../../components/Loaders/LoaderModal';
 import IconWrapper from '../../components/Cards/IconWrapper';
-import { Briefcase, FileText } from 'lucide-react';
-import { useLogo } from '../../context/ThemeContext';
+import { Briefcase, FileText } from '@/components/geode/icons';
 import * as Sentry from '@sentry/react';
 
 const statsOne = [
@@ -35,7 +34,6 @@ const CandidateLogin = () => {
   const [loading,setLoading] = useState(true);
   const navigate = useNavigate();
   const { isAuthenticated ,isLoading ,isDone} = useCandidateAuth();
-  const Logo = useLogo();
 
   const [passwordType,setPasswordType] = useState('password');
 
@@ -98,7 +96,7 @@ const CandidateLogin = () => {
         {/* Left section with background image */}
         <div className="hidden lg:flex lg:w-3/5 bg-login-screen backdrop-blur-lg bg-cover p-12 flex-col justify-between relative">
           <div className='p-[2.75rem]'>
-            <img className='h-12' src={Logo} />
+            <GeodeLogo />
             <h1 className="mt-8">GEODE - Hire Designers</h1>
             <p className="display-d2 max-w-xl mt-7 mb-4">Discover, hire, and explore top talent with HireHive</p>
             <p className='typography-body max-w-96'>Our advanced tools simplify job posting, application review, and career opportunities, ensuring you find the best candidates or land your next role effortlessly.</p>
@@ -108,7 +106,6 @@ const CandidateLogin = () => {
             <div className='absolute bottom-14 right-80'><StatsGrid stats={statsOne} /></div>
             <div className='absolute bottom-20 right-14'><StatsGrid stats={statsTwo} /></div>
           </div>
-          <img src={sundarKanya} alt="Sundar Kanya" className="absolute bottom-0 right-0 h-[70%]" />
         </div>
         {/* Right section with login form */}
         <div className="w-full lg:w-2/5 bg-background-90 p-4 md:p-28   flex flex-col justify-center">

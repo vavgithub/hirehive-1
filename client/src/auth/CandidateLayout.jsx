@@ -1,23 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import { Outlet, useNavigate, NavLink, useLocation } from 'react-router-dom';
-import LightLogo from "../svg/Logo/lightLogo.png"
 import useCandidateAuth from '../hooks/useCandidateAuth';
 import { useDispatch } from 'react-redux';
 import { logoutCandidateAuth } from '../redux/candidateAuthSlice';
 import * as Sentry from '@sentry/react';
 import { showErrorToast, showSuccessToast } from '../components/ui/Toast';
 import useScroll from '../hooks/useScroll';
-import { Avatar, IconButton, Menu, MenuItem } from '@mui/material';
 import StyledMenu from '../components/MUIUtilities/StyledMenu';
+import { GeodeAvatar } from '@/components/geode/Avatar';
 import Modal from '../components/Modals/Modal';
 import IconWrapper from '../components/Cards/IconWrapper';
-import { Briefcase, BriefcaseBusiness, LogOut, Send, Settings, MenuIcon, User } from 'lucide-react';
+import { Briefcase, BriefcaseBusiness, LogOut, Send, Settings, MenuIcon, User } from '@/components/geode/icons';
 import Footer from '../components/Footer/Footer';
-import TelegramBannerIcon from "../svg/Banners/telegramBannerIcon.png"
 import { Button } from '../components/Buttons/Button';
 import ThemeToggle from '../components/ui/ThemeToggle';
 import { use } from 'react';
-import { useLogo, useTelegramBanner, useUnknownProfilePicture } from '../context/ThemeContext';
+import { GeodeLogo } from '@/components/geode/Logo';
 
 const TELEGRAM_BOT_USERNAME = import.meta.env.VITE_TELEGRAM_BOT_USERNAME;
 
@@ -52,9 +50,6 @@ const CandidateLayout = () => {
   const handleConnectTelegram = async () => {
         window.open(`https://t.me/${TELEGRAM_BOT_USERNAME}?start=${candidateData?._id}`, '_blank');
   }
-
-  const UNKNOWN_PROFILE_PICTURE_URL = useUnknownProfilePicture();
-  const Logo = useLogo();
 
   const handleLogout = async () => {
     try {
@@ -171,10 +166,12 @@ const CandidateLayout = () => {
     return (
       <>
         <div className={`flex items-center px-2 relative mx-4 py-1 justify-start hover-outline rounded-xl ${location.pathname === profilePath ? "selection-primary" : " text-font-main "}`}>
-          <IconButton onClick={handleMenuClick} className={`flex gap-2 `}>
-            <Avatar alt={candidateData?.firstName} sx={{ width: "32px", height: "32px" }} src={candidateData?.profilePictureUrl || UNKNOWN_PROFILE_PICTURE_URL} />
+          <button type="button" onClick={handleMenuClick} className="flex items-center gap-2">
+            <span className="geode-avatar-sm">
+              <GeodeAvatar src={candidateData?.profilePictureUrl} name={candidateData?.firstName || ''} />
+            </span>
             <span className={`typography-body ${location.pathname === profilePath ? "text-font-accent" : "text-font-main"} `}>{candidateData?.firstName}</span>
-          </IconButton>
+          </button>
           <div className={`absolute right-0 w-1 h-6 rounded-tl-xl rounded-bl-xl ${location.pathname === profilePath
             ? "bg-accent-100" : "bg-transparent"}`} />
         </div>
@@ -191,7 +188,6 @@ const CandidateLayout = () => {
   }
 
   const location = useLocation();
-  const TelegramBanner = useTelegramBanner()
 
   const darkBgPaths = ["/candidate/profile"]
 
@@ -200,7 +196,7 @@ const CandidateLayout = () => {
       {/* Mobile Menu Button */}
       <div className={'min-h-[4rem] w-full md:hidden z-30 fixed ' + (darkBgPaths.includes(location.pathname) ? "bg-background-100" : "")}>
         <div className='flex m-4 z-30 '>
-          <img className='h-11 z-30' src={Logo} />
+          <GeodeLogo />
         </div>
         <div
           className="md:hidden absolute top-4 right-4 z-50 p-2 rounded-full  "
@@ -232,7 +228,7 @@ const CandidateLayout = () => {
         <div className="flex flex-col gap-6 typography-body ">
           <div className='px-6 pt-2 pb-4  flex justify-between'>
 
-            <img className='h-9 cursor-pointer ' onClick={() => navigate('/')} src={Logo} />
+            <span className='cursor-pointer' onClick={() => navigate('/')}><GeodeLogo /></span>
           <ThemeToggle /> {/* Add ThemeToggle here */}
           </div>
           {menuItems.map((item) => (
@@ -250,14 +246,10 @@ const CandidateLayout = () => {
         <div >
           {candidateData &&
             <>
-              {!candidateData?.isTelegramConnected && <div className='max-w-full mx-4 my-4 relative '>
-                <img src={TelegramBannerIcon} className='absolute max-w-[46px] -top-[24px] -right-[10px]' />
-                <img src={TelegramBanner} className='max-w-full ' />
-                <div className='absolute top-[6%] left-4 max-w-[90%]'>
-                  <h4 className=' text-font-main  font-semibold mb-1'>Connect Telegram</h4>
-                  <p className=' text-font-main typography-body mb-4'>Get instant job updates. <br/> Stay ahead always.</p>
+              {!candidateData?.isTelegramConnected && <div className='geode-placeholder mx-4 my-4'>
+                  <h4 className='text-geode-text font-geode-heading mb-1'>Connect Telegram</h4>
+                  <p className='typography-body mb-4'>Get instant job updates. Stay ahead always.</p>
                   <Button  onClick={handleConnectTelegram} className='!px-4 w-full' variant='primary' icon={() => <IconWrapper size={0} inheritColor customIconSize={5} customStrokeWidth={5} icon={Send}/>}>Connect Now</Button>
-                </div>
               </div>}
               <div className='my-4'>
                 <NavItem               

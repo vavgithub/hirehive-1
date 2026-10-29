@@ -1,4 +1,4 @@
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown, ChevronUp } from '@/components/geode/icons';
 import StyledCard from "../Cards/StyledCard";
 
 export const AccordionItem = ({ bgVariant = "primary" , title, content, isOpen, toggleOpen , preIcon}) => (

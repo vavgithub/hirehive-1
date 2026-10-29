@@ -1,9 +1,8 @@
-import React from 'react'
 import { Outlet } from 'react-router-dom'
 
-const Authlayout = () => {  
+const Authlayout = () => {
   return (
-    <div>  
+    <div className="min-h-screen">
       <Outlet />
     </div>
   )

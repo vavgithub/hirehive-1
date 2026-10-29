@@ -1,15 +1,14 @@
-import { Avatar } from "@mui/material";
 import CustomToolTip from "../Tooltip/CustomToolTip";
+import { GeodeAvatar } from '@/components/geode/Avatar';
 import AssigneeSelector from "../MUIUtilities/AssigneeSelector";
 import { getRatingIcon } from "../MUIUtilities/RatingSelector";
 import StatusBadge from "../ui/StatusBadge";
 import StageBadge from "../ui/StageBadge";
 import { ensureAbsoluteUrl } from "../../utility/ensureAbsoluteUrl";
 import IconWrapper from "../Cards/IconWrapper";
-import { CircleCheck, CircleX, ClipboardCheck, FileUser, FolderOpen, Globe, Paintbrush } from "lucide-react";
+import { CircleCheck, CircleX, ClipboardCheck, FileUser, FolderOpen, Globe, Paintbrush } from '@/components/geode/icons';
 import { formatPhoneNumber } from "../Form/PhoneInputField";
 import { hasPermission, PERMISSIONS } from "../../config/permissions.config";
-import { useUnknownProfilePicture } from "../../context/ThemeContext";
 import ShortlistSparkleIcon from "../../svg/Icons/ShortlistSparkleIcon";
 
 const getCommonColumns = (handleDocumentClick) => [
@@ -17,8 +16,8 @@ const getCommonColumns = (handleDocumentClick) => [
     field: 'fullName',
     headerName: 'Full Name',
     width: 250,
-    cellClassName : 'padded-col',
-    headerClassName : 'padded-col',
+    cellClassName: '',
+    headerClassName: '',
     sortable: false,
     disableColumnMenu: true,
     valueGetter: (params, row) => {
@@ -32,17 +31,18 @@ const getCommonColumns = (handleDocumentClick) => [
       }
     },
     renderCell: (params) => {
-      const UNKNOWN_PROFILE_PICTURE_URL = useUnknownProfilePicture()
       return(
-      <div className="name-cell flex items-center gap-2 h-12">
-        <Avatar src={params?.value?.profilePictureUrl || UNKNOWN_PROFILE_PICTURE_URL} sx={{ width: 32, height: 32 }} />
+      <div className="name-cell inline-flex items-center gap-geode-2">
+        <span className="geode-avatar-sm">
+          <GeodeAvatar src={params?.value?.profilePictureUrl} name={params.value.name} />
+        </span>
         <p className='flex items-center gap-2'>{params.value.name}
           {params.value.hasGivenAssessment &&
             <span>
               <IconWrapper size={3} customIconSize={1} icon={ClipboardCheck} />
             </span>}
         </p>
-        <div className="hover-icons h-full flex items-center"
+        <div className="hover-icons flex items-center"
           onClick={(event) => event.stopPropagation()}
         >
           {params.row.portfolio && (
@@ -170,11 +170,9 @@ const getInfoColumns = () => [
     sortable: false,
     disableColumnMenu: true,
     renderCell: (params) => (
-      <div className="h-full flex items-center justify-start">
-        <CustomToolTip title={params.value} arrowed size={2}>
-          <p className='w-full typography-body overflow-hidden text-start whitespace-nowrap text-ellipsis'>{params.value}</p>
-        </CustomToolTip>
-      </div>
+      <CustomToolTip title={params.value} arrowed size={2}>
+        <span>{params.value}</span>
+      </CustomToolTip>
     )
   },
 
@@ -248,9 +246,7 @@ export const getReadOnlyColumns = (role, handleDocumentClick, disableCTC, disabl
       sortable: false,
       headerAlign: 'center',
       disableColumnMenu: true,
-      renderCell: (params) => (
-        <p className='w-full overflow-hidden whitespace-nowrap text-ellipsis'>{params.value}</p>
-      )
+      renderCell: (params) => params.value
     },
     ...getInfoColumns()
   ])

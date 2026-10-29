@@ -2,7 +2,7 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import ThreeDots from '../ui/ThreeDots'
 import IconWrapper from '../Cards/IconWrapper'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft } from '@/components/geode/icons'
 
 export const BackButton = () => {
     return (
@@ -35,10 +35,10 @@ const Header = ({
     };
 
     return (
-        <div className={"w-full mb-4"}>
+        <div className="app-header w-full mb-4">
             <div className="flex items-start justify-between gap-4">
                 {/* Left section with back button and title */}
-                <div className={'flex items-start gap-4 min-w-0 flex-1 ' + (rightContent && 'lg:w-[65%]')}>
+                <div className="flex items-start gap-4 min-w-0 flex-1">
                     {withBack === "true" && (
                         <div className="cursor-pointer text-font-main shrink-0 mt-1" onClick={handleBackClick}>
                             {/* <BackButton /> */}

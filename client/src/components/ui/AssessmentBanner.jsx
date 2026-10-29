@@ -2,17 +2,15 @@ import React from 'react'
 import { Button } from '../Buttons/Button'
 import { useNavigate } from 'react-router-dom'
 import IconWrapper from '../Cards/IconWrapper';
-import { TrendingUp } from 'lucide-react';
-import { useAssessmentBannerBg } from '../../context/ThemeContext';
+import { TrendingUp } from '@/components/geode/icons';
 
 const AssessmentBanner = () => {
     const navigate = useNavigate();
     const handleAssessment = () => {
         navigate("/assessment");
     }
-    const bannerImg = useAssessmentBannerBg()
     return (
-        <div style={{backgroundImage : `url(${bannerImg})`}} className='container flex justify-between rounded-xl gap-4  p-6  my-4 items-center bg-cover '>
+        <div className='geode-placeholder container flex justify-between rounded-xl gap-4 my-4 items-center'>
             <div className='flex gap-4 items-center'>
 
                 <div className='hidden w-16 h-16 rounded-full md:rounded-full bg-primary-300 border  border-primary-100 items-center md:flex justify-center '>

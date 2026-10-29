@@ -1,3 +1,4 @@
+import { useLayoutEffect } from 'react'
 import { RouterProvider } from 'react-router-dom'
 import { router } from './Router'
 import { QueryClient, QueryClientProvider, QueryCache, MutationCache } from '@tanstack/react-query'
@@ -7,9 +8,8 @@ import { AuthProvider } from './context/AuthProvider';
 import { Provider } from 'react-redux'
 import { store } from './redux/store';
 import StatePreserver from './context/StatePreserver';
-import { CssBaseline, ThemeProvider } from '@mui/material';
-import theme from './components/MUIUtilities/theme';
 import { ThemesProvider } from './context/ThemeContext';
+import { TooltipProvider } from '@/components/shadcn/tooltip';
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { throwOnError: false }, mutations: { throwOnError: false } },
@@ -39,21 +39,26 @@ const queryClient = new QueryClient({
 });
 
 function App() {
+  useLayoutEffect(() => {
+    document.documentElement.dataset.geodeSkin = 'on'
+  }, [])
+
   return ( 
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider theme={theme} >
-        <CssBaseline />
+      <TooltipProvider delayDuration={200}>
         <Provider store={store}>
           <AuthProvider>
             <StatePreserver>
               <ThemesProvider>
-                <RouterProvider router={router} />
+                <div className="geode min-h-screen">
+                  <RouterProvider router={router} />
+                </div>
               </ThemesProvider>
               <StyledToastContainer />
             </StatePreserver>
           </AuthProvider> 
         </Provider>
-      </ThemeProvider>
+      </TooltipProvider>
     </QueryClientProvider>
   );
 }

@@ -1,59 +1,24 @@
-import { Menu, MenuItem } from '@mui/material'
-import React from 'react'
+import { AnchoredMenu } from '@/components/shadcn/anchored-menu'
 import IconWrapper from '../Cards/IconWrapper'
-import { SquarePen, Trash } from 'lucide-react'
+import { SquarePen, Trash } from '@/components/geode/icons'
 
-function BudgetMenu({budgetMenuAnchorEl , handleBudgetMenuClose , handleBudgetEdit , handleBudgetClear}) {
+function BudgetMenu({ budgetMenuAnchorEl, handleBudgetMenuClose, handleBudgetEdit, handleBudgetClear }) {
   return (
-    <Menu
-        anchorEl={budgetMenuAnchorEl}
-        open={Boolean(budgetMenuAnchorEl)}
-        onClose={handleBudgetMenuClose}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'right',
-        }}
-          transformOrigin={{
-            vertical: 'top',
-            horizontal: 'left',
-          }}
-        sx={{
-          "& .MuiList-root": {
-            padding : "8px",
-            display : "flex",
-            flexDirection : "column",
-            gap:"8px",
-          },
-          "& .MuiPaper-root": {
-            marginTop: '8px',
-            marginLeft: '-60px', // Adjust this value to move the menu more to the left
-          }
-        }}
-      >
-        <div className='flex items-center justify-start  typograhy-body '>
-          <MenuItem
-          sx={{
-            width : "100%",
-            display : "flex",
-            gap: "8px"
-          }}
-          onClick={handleBudgetEdit}>
-          <IconWrapper icon={SquarePen} size={0} customIconSize={4} />
-            Edit</MenuItem>
-
-        </div>
-        <div className='flex items-center justify-start  typograhy-body '>
-          <MenuItem 
-          sx={{
-            width : "100%",
-            display : "flex",
-            gap: "8px",
-          }}
-          onClick={handleBudgetClear}>
-          <IconWrapper icon={Trash} isErrorIcon size={0} customIconSize={4} />
-            Clear</MenuItem>
-        </div>
-      </Menu>
+    <AnchoredMenu
+      open={Boolean(budgetMenuAnchorEl)}
+      anchorEl={budgetMenuAnchorEl}
+      onClose={handleBudgetMenuClose}
+      align="end"
+    >
+      <button type="button" className="geode-menu-item" onClick={handleBudgetEdit}>
+        <IconWrapper icon={SquarePen} size={0} customIconSize={4} />
+        Edit
+      </button>
+      <button type="button" className="geode-menu-item geode-menu-danger" onClick={handleBudgetClear}>
+        <IconWrapper icon={Trash} isErrorIcon size={0} customIconSize={4} />
+        Clear
+      </button>
+    </AnchoredMenu>
   )
 }
 

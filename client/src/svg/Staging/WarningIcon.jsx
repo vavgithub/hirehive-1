@@ -1,6 +1,6 @@
 import React from 'react'
 import IconWrapper from '../../components/Cards/IconWrapper'
-import { CircleAlert } from 'lucide-react'
+import { CircleAlert } from '@/components/geode/icons'
 
 const WarningIcon = () => {
     return  <span className='text-yellow-100'><IconWrapper customStrokeWidth={4} customIconSize={4} icon={CircleAlert} inheritColor size={0} /></span>

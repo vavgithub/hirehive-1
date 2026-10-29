@@ -51,7 +51,7 @@ function IconWrapper({ icon  : Icon, isActiveIcon, inheritColor , isTeritiaryIco
     const sizeStyles = ` ${(typeof size === 'number') ? sizeOptions[size] : sizeOptions[4]} `
 
   return (
-    <div {...props} className={` ${bgStyles} ${hoverStyles}  ${sizeStyles}  h-11 w-11 flex justify-center items-center rounded-xl `}>
+    <div {...props} className={`${bgStyles} ${hoverStyles} ${sizeStyles} inline-flex items-center justify-center rounded-md`}>
       {Icon ? 
       <Icon 
       size={(typeof customIconSize === 'number') ? iconSizeOptions[customIconSize] : (typeof size === 'number') ?  iconSizeOptions[size] : 24} 

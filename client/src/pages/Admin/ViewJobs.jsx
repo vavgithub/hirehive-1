@@ -19,7 +19,7 @@ import CustomBadge from '../../components/Badge/CustomBadge';
 import { useAuthContext } from '../../context/AuthProvider';
 import Container from '../../components/Cards/Container';
 import IconWrapper from '../../components/Cards/IconWrapper';
-import { Briefcase, Check, Eye, File, FileText, Folder, MonitorDot, MousePointer2, PenTool, Users } from 'lucide-react';
+import { Briefcase, Check, Eye, File, FileText, Folder, MonitorDot, MousePointer2, PenTool, Users } from '@/components/geode/icons';
 import { getRoute, ROUTE_KEY } from '../../config/permissions.config';
 import { closeJob, deleteJob, draftJob, fetchjobsById, fetchOverallJobStats, publishJob, reOpenJob } from '../../services/jobs.service';
 import useDebounce from '../../hooks/useDebounce';

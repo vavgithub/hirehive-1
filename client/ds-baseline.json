@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-09-21",
+  "generatedAt": "2026-10-28",
   "counts": {
-    "styleAttributes": 37,
-    "arbitraryUtilities": 368,
-    "colorLiterals": 129,
-    "muiImports": 34,
-    "sxProps": 52
+    "styleAttributes": 31,
+    "arbitraryUtilities": 319,
+    "colorLiterals": 77,
+    "muiImports": 0,
+    "sxProps": 0
   }
 }

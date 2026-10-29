@@ -26,7 +26,7 @@ const  Container = forwardRef(({
       {...mainProps}
       ref={ref}
       className={
-        customStyles ? customStyles : ` ${basicMainStyles} ${hasBgColor ? bgColorStyles : ""} ${hasBgImage ? bgImageStyles : ''}  ${extraStyles}`
+        `app-page ${customStyles ? customStyles : ` ${basicMainStyles} ${hasBgColor ? bgColorStyles : ""} ${hasBgImage ? bgImageStyles : ''}  ${extraStyles}`}`
       }
     >
         {/* Conditionally Rendering Container Div */}

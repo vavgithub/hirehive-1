@@ -46,31 +46,33 @@ const BudgetFilter = ({ onApply, shouldReset }) => {
 
   return (
     <div className=" rounded">
-      <div className="flex space-x-4 mb-4">
-        <div className='flex flex-col'>
+      <div className="mb-geode-4 flex gap-geode-3">
+        <div className="flex min-w-0 flex-1 flex-col">
           <label className="typography-small-p text-font-gray">Min Budget</label>
-          <div className='flex items-center bg-background-90 rounded-xl rounded-br-xl mt-1'>
+          <div className="geode-affix-field">
             <input
               type="text"
               value={minBudget}
               onChange={handleMinBudgetChange}
               placeholder="0"
-              className="w-16 p-2 custom-input text-left no-spinner rounded-xl"
+              aria-label="Minimum budget"
+              className="geode-affix-input"
             />
-            <span className="text-font-gray typography-body pr-2">LPA</span>
+            <span>LPA</span>
           </div>
         </div>
-        <div className='flex flex-col'>
+        <div className="flex min-w-0 flex-1 flex-col">
           <label className="typography-small-p text-font-gray">Max Budget</label>
-          <div className='flex items-center bg-background-90 rounded-xl rounded-br-xl mt-1'>
+          <div className="geode-affix-field">
             <input
               type="text"
               value={maxBudget}
               onChange={handleMaxBudgetChange}
               placeholder="0"
-              className="w-16 p-2 custom-input text-left no-spinner rounded-xl"
+              aria-label="Maximum budget"
+              className="geode-affix-input"
             />
-            <span className="text-font-gray typography-body pr-2">LPA</span>
+            <span>LPA</span>
           </div>
         </div>
       </div>

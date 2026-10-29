@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import IconWrapper from '../Cards/IconWrapper';
-import { SlidersHorizontal, Trash } from 'lucide-react';
+import { SlidersHorizontal, Trash } from '@/components/geode/icons';
 import TickCheckbox from '../Checkboxes/TickCheckbox';
 import { JOB_PROFILES } from '../../config/jobprofile.config';
 

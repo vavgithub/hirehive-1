@@ -1,6 +1,6 @@
 import React from "react";
 import IconWrapper from "../Cards/IconWrapper";
-import { ChevronRight, Info } from "lucide-react";
+import { ChevronRight, Info } from '@/components/geode/icons';
 
 function CustomPill({
   variant,

@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react'
 import IconWrapper from '../Cards/IconWrapper';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from '@/components/geode/icons';
 import { scrollToTop } from '../../utility/scrollUtilities';
 
 function Pagination({currentPage, pageLimit , totalItems ,setCurrentPage}) {

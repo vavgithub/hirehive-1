@@ -1,5 +1,5 @@
 import React, { useEffect, useLayoutEffect, useState } from 'react'
-import { DataGrid } from '@mui/x-data-grid';
+import { DataGrid } from '@/components/shadcn/data-grid';
 
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from '../../services/axios';
@@ -22,10 +22,9 @@ import { getDefaultColumns, getReadOnlyColumns } from './GetColumns'
 import AutoAssignWithBudget from './AutoAssignWithBudget';
 import BudgetMenu from './BudgetMenu';
 import { BudgetField } from '../FormUtilities/BudgetField';
-import MuiCustomStylesForDataGrid from './MuiCustomStylesForDataGrid';
 import * as Sentry from '@sentry/react';
 import IconWrapper from '../Cards/IconWrapper';
-import { Download } from 'lucide-react';
+import { Download } from '@/components/geode/icons';
 import TickCheckbox from '../Checkboxes/TickCheckbox';
 import { getRoute, ROUTE_KEY } from '../../config/permissions.config';
 import { moveCandidate, rejectCandidate, updateCandidateRating } from '../../services/hr.service';
@@ -544,8 +543,6 @@ const Table = ({
         rejectCandidateMutation.isPending ||
         moveCandidateMutation.isPending || isTableDataLoading) && <LoaderModal />}
 
-      <MuiCustomStylesForDataGrid />
-
       <div className='flex justify-between pb-4 gap-2'>
 
         {/* {here is the place to add the search bar ,  filter , export button } */}
@@ -618,12 +615,6 @@ const Table = ({
       )}
 
       <DataGrid
-        sx={{
-          '& .padded-col': {
-            paddingLeft: '24px',
-            paddingRight: '24px',
-          },
-        }}
         rows={rowsData}
         columns={columns}
         paginationMode="server"

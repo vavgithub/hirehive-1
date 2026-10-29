@@ -1,0 +1,20 @@
+import { expect, test } from '@playwright/test'
+
+test('geode dashboard preview renders the shadcn sections', async ({ page }) => {
+  await page.goto('/preview/geode-dashboard')
+  await expect(page.getByRole('heading', { name: 'Dashboard' })).toBeVisible()
+  await expect(page.getByRole('navigation', { name: 'Primary' })).toBeVisible()
+  await expect(page.getByRole('link', { name: 'Dashboard' })).toHaveAttribute('aria-current', 'page')
+  await expect(page.getByRole('img', { name: 'Geode' }).first()).toBeVisible()
+  await expect(page.getByText('Interviews by Stage')).toBeVisible()
+  const cursor = await page.locator('.geode').first().evaluate((node) => getComputedStyle(node).cursor)
+  expect(cursor).toContain('111f00')
+  await expect(page.getByRole('tab', { name: 'Monthly' })).toBeVisible()
+  await expect(page.getByRole('tab', { name: 'Weekly' })).toHaveAttribute('data-state', 'inactive')
+  await page.getByRole('tab', { name: 'Weekly' }).click()
+  await expect(page.getByRole('tab', { name: 'Weekly' })).toHaveAttribute('data-state', 'active')
+  await expect(page.getByText('Invalid DateTime')).toHaveCount(0)
+  await expect(page.getByRole('columnheader', { name: 'Job Title' })).toBeVisible()
+  await expect(page.getByRole('columnheader', { name: 'Name' })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Next' }).first()).toBeVisible()
+})

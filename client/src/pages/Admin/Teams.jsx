@@ -15,7 +15,7 @@ import Container from "../../components/Cards/Container";
 import { useDispatch } from "react-redux";
 import { setMembersCount } from "../../redux/AdminSlice";
 import Header from "../../components/utility/Header";
-import { useUnknownProfilePicture } from "../../context/ThemeContext";
+import { GeodeAvatar } from '@/components/geode/Avatar';
 import { addMember, approveRequest, getAllTeamMembers, rejectRequest } from "../../services/admin.service";
 
 function Teams() {
@@ -36,7 +36,6 @@ function Teams() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
-    const UNKNOWN_PROFILE_PICTURE_URL = useUnknownProfilePicture()
 
     const { data : teamMembers , isLoading : isTeamMembersLoading } = useQuery({
         queryKey: ['team_members'],
@@ -159,8 +158,7 @@ function Teams() {
             <StyledCard padding={2} backgroundColor={'bg-background-100'} extraStyles={'flex flex-col items-center justify-between gap-4 '}>
                 {/* Member Profile Picture */}
                 <div className="relative w-full aspect-square rounded-xl overflow-hidden">
-                    <img src={ UNKNOWN_PROFILE_PICTURE_URL } alt="" className='object-cover w-full overflow-hidden' />
-                    <span className="absolute top-[60px] right-7 font-bold text-profile-plus scale-[3.4]">+</span>
+                    <GeodeAvatar name="+" />
                 </div>
                 {/* Memeber Details */}
                 <div className="flex flex-col ">
@@ -176,7 +174,7 @@ function Teams() {
                     <StyledCard key={member?.member_id ? member?.member_id : member?._id} backgroundColor={'bg-background-100'} onClick={()=>navigate(`/admin/teams/profile/${member?.member_id ? member?.member_id : member?._id}`)} padding={2} extraStyles={'flex flex-col items-center cursor-pointer justify-between gap-4 '}>
                         {/* Member Profile Picture */}
                         <div className="w-full aspect-square rounded-xl overflow-hidden relative">
-                            <img src={member?.profilePicture || UNKNOWN_PROFILE_PICTURE_URL } alt="" className='object-cover w-full overflow-hidden' />
+                            <GeodeAvatar src={member?.profilePicture} name={`${member?.firstName || ''} ${member?.lastName || ''}`} />
                         </div>
                         {/* Memeber Details */}
                         <div className="flex flex-col w-full">
@@ -208,7 +206,7 @@ function Teams() {
                     <StyledCard key={member?.member_id ? member?.member_id : member?._id} backgroundColor={'bg-background-80'} onClick={()=>navigate(`/admin/teams/profile/${member?.member_id ? member?.member_id : member?._id}`)} padding={2} extraStyles={'flex flex-col items-center cursor-pointer justify-between gap-4 '}>
                         {/* Member Profile Picture */}
                         <div className="w-full aspect-square rounded-xl overflow-hidden relative">
-                            <img src={member?.profilePicture || UNKNOWN_PROFILE_PICTURE_URL } alt="" className='object-cover w-full overflow-hidden' />
+                            <GeodeAvatar src={member?.profilePicture} name={`${member?.firstName || ''} ${member?.lastName || ''}`} />
                         </div>
                         {/* Memeber Details */}
                         <div className="flex flex-col w-full">

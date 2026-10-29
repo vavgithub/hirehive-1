@@ -1,6 +1,6 @@
 import React from 'react'
 import { Button } from '../Buttons/Button'
-import { Banknote , FolderSync} from 'lucide-react'
+import { Banknote, FolderSync } from '@/components/geode/icons'
 import IconWrapper from '../Cards/IconWrapper'
 
 function AutoAssignWithBudget({ handleBudgetButtonClick, budgetFilter, autoAssignMutation, setIsAutoAssignModalOpen }) {

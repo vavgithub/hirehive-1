@@ -1,4 +1,4 @@
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown } from '@/components/geode/icons';
 import React, { useRef, useEffect, useState } from 'react';
 import StyledMenu from '../MUIUtilities/StyledMenu';
 import StyledCard from '../Cards/StyledCard';

@@ -33,7 +33,7 @@ import AssessmentResponse from './pages/Admin/AssessmentResponse.jsx';
 import Shortlisted from './pages/Admin/Shortlisted.jsx';
 import Parked from './pages/Admin/Parked.jsx';
 import { OnboardingProvider } from './context/OnboardingProvider.jsx';
-import AdminLayout from './components/AdminLayout.jsx';
+import GeodeAdminLayout from './components/GeodeAdminLayout.jsx';
 import Teams from './pages/Admin/Teams.jsx';
 import TeamsProfile from './pages/Admin/TeamsProfile.jsx';
 import Jobs from './pages/Admin/Jobs.jsx';
@@ -49,6 +49,8 @@ import GlobalErrorHandler from './components/Error/GlobalErrorHandler.jsx';
 import Settings from './pages/Admin/Settings.jsx';
 import Interviews from './pages/Admin/Interviews.jsx';
 import CandidateSettings from './pages/Candidate/CandidateSettings.jsx';
+import GeodeDashboardPreview from './pages/Admin/dashboard/Preview.jsx';
+import { geodePreviewRoute } from './pages/Admin/geode-preview/App.jsx';
 
 export const router = createBrowserRouter([
   {
@@ -76,6 +78,11 @@ export const router = createBrowserRouter([
         path: '/login',
         element: <CandidateLogin />,
       },
+      {
+        path: '/preview/geode-dashboard',
+        element: <GeodeDashboardPreview />,
+      },
+      geodePreviewRoute,
 
       //Protected Candidate Routes
       {
@@ -170,7 +177,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "/hiring-manager",
-        element: <ProtectedRoute allowedRoles={['Hiring Manager']}><AdminLayout /></ProtectedRoute>,
+        element: <ProtectedRoute allowedRoles={['Hiring Manager']}><GeodeAdminLayout /></ProtectedRoute>,
         children: [
           {
             path: "dashboard",
@@ -335,7 +342,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "/admin",
-        element: <ProtectedRoute allowedRoles={['Admin']}><AdminLayout /></ProtectedRoute>,
+        element: <ProtectedRoute allowedRoles={['Admin']}><GeodeAdminLayout /></ProtectedRoute>,
         children: [
           {
             path: "terms-and-conditions",
@@ -526,7 +533,7 @@ export const router = createBrowserRouter([
 
       {
         path: "/design-reviewer",
-        element: <ProtectedRoute allowedRoles={['Design Reviewer']}><AdminLayout /></ProtectedRoute>,
+        element: <ProtectedRoute allowedRoles={['Design Reviewer']}><GeodeAdminLayout /></ProtectedRoute>,
         children: [
           {
             path: "dashboard",

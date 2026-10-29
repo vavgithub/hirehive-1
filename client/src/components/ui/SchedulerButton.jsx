@@ -1,4 +1,4 @@
-import { ChevronDown, ChevronUp } from 'lucide-react'
+import { ChevronDown, ChevronUp } from '@/components/geode/icons'
 import React, { useEffect, useRef, useState } from 'react'
 import Modal from '../Modals/Modal';
 import Datepicker from '../MUIUtilities/Datepicker';

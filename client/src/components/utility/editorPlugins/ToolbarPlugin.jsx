@@ -25,7 +25,7 @@ import {
 import {useCallback, useEffect, useRef, useState} from 'react';
 import EmojiPlugin from './EmojiPlugin';
 import IconWrapper from '../../Cards/IconWrapper';
-import { AlignCenter, AlignLeft, AlignRight, Bold, Eraser, Italic, List, ListOrdered, Plus, Underline } from 'lucide-react';
+import { AlignCenter, AlignLeft, AlignRight, Bold, Eraser, Italic, List, ListOrdered, Plus, Underline } from '@/components/geode/icons';
 import LinkPlugin from './LinkPlugin';
 import { $isLinkNode } from '@lexical/link';
 import CustomToolTip from '../../Tooltip/CustomToolTip';

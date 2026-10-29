@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import ToggleSwitch from '../ui/ToggleSwitch';
 import IconWrapper from '../Cards/IconWrapper';
-import { Copy, Trash } from 'lucide-react';
+import { Copy, Trash } from '@/components/geode/icons';
 import GlobalDropDown from '../Dropdowns/GlobalDropDown';
 
 const TextQuestion = ({ question, onUpdate, onDelete, onCopy, initialEditMode = false, onValidityChange ,  questionNumber }) => {
