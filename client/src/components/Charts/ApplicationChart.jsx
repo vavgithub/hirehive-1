@@ -19,7 +19,7 @@ function ApplicationChart({type,dataArray}) {
         grid: {
           left: 56,
           right: 12,
-          top: 16,
+          top: 28,
           bottom: 28,
           containLabel: true,
         },
@@ -34,6 +34,7 @@ function ApplicationChart({type,dataArray}) {
         },
         yAxis: {
           type: "value",
+          max: (extent) => (extent.max === 0 ? 1 : Math.ceil(extent.max * 1.2)),
           name: "Candidate Applications",
           nameLocation: "middle",
           nameGap: 40,

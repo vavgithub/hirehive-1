@@ -18,6 +18,15 @@ Green `#8dff00` is the only theme color. It is `--primary`, `--geode-action`, an
 - Switches match the stock size (`2.75rem` by `1.5rem`) with a white thumb. Checked track is green. Checkboxes use the green accent.
 - Selected skill chips use the green primary fill.
 
+## Internal screens, signed in
+
+Checked the live admin account on the staging data: dashboard, jobs (open, closed, draft, and a job), a candidate profile, assessments, all candidates, future gems, parked, calendar, teams and a member, guide, settings, and profile.
+
+- Removed the colored fade that sat on top of the candidate stat cards.
+- Employment filters (full-time, contract, intern) are the same chip as the other filters, with a 16px icon, instead of stacked icon tiles.
+- Job search fields use the shared prefix field. The inline left padding is gone.
+- The applications chart keeps its series color and leaves room above the line so the peak stays inside the card.
+
 ## Left in place
 
 - Routes, auth, permissions, data fetching, and form submissions.

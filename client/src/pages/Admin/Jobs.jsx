@@ -379,13 +379,11 @@ const Jobs = () => {
 
                 <div className='flex mt-4'>
                     <div className='w-[40%]'>
-                        <div className='mb-4 relative '>
-                            <div className='absolute top-[0.75rem] left-4'>
-                                <IconWrapper icon={Search} size={0} customIconSize={3} isInActiveIcon />
-                            </div>
+                        <div className="geode-affix-field mb-4">
+                            <IconWrapper icon={Search} />
                             <input
-                                style={{ paddingLeft: "48px" }}
-                                type='text'
+                                className="geode-affix-input"
+                                type="text"
                                 placeholder="Enter job title"
                                 value={searchQuery}
                                 onChange={handleSearch}
