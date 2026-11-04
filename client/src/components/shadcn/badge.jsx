@@ -4,7 +4,7 @@ function Badge({ className, ...props }) {
   return (
     <span
       className={cn(
-        'inline-flex items-center rounded-geode-pill bg-geode-muted-bg px-geode-3 py-geode-1 font-geode text-geode-small text-geode-text',
+        'inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium',
         className
       )}
       {...props}

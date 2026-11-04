@@ -5,23 +5,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { GeodeLogo } from '@/components/geode/Logo';
 import { Button } from '../../components/Buttons/Button';
-import StatsGrid from '../../components/ui/StatsGrid';
 import ForgotPassword from '../Admin/ForgotPassword';
 import { loginCandidateAuth } from '../../redux/candidateAuthSlice';
 import useCandidateAuth from '../../hooks/useCandidateAuth';
 import Loader from '../../components/Loaders/Loader';
 import TogglePassword from '../../components/utility/TogglePassword';
 import LoaderModal from '../../components/Loaders/LoaderModal';
-import IconWrapper from '../../components/Cards/IconWrapper';
-import { Briefcase, FileText } from '@/components/geode/icons';
 import * as Sentry from '@sentry/react';
-
-const statsOne = [
-  { title: 'Jobs Posted', value: 100, icon: () => <IconWrapper size={10} isInActiveIcon icon={Briefcase} /> },
-]
-const statsTwo = [
-  { title: 'Application Received', value: 10, icon: () => <IconWrapper size={10} isInActiveIcon icon={FileText} /> },
-]
 
 const CandidateLogin = () => {
   const dispatch = useDispatch();
@@ -91,31 +81,18 @@ const CandidateLogin = () => {
     );
   }else{
     return (
-      <div className="flex h-screen">
+      <div className="flex min-h-screen items-center justify-center bg-muted p-6">
         {isLoadingAuth && <LoaderModal/>}
-        {/* Left section with background image */}
-        <div className="hidden lg:flex lg:w-3/5 bg-login-screen backdrop-blur-lg bg-cover p-12 flex-col justify-between relative">
-          <div className='p-[2.75rem]'>
-            <GeodeLogo />
-            <h1 className="mt-8">GEODE - Hire Designers</h1>
-            <p className="display-d2 max-w-xl mt-7 mb-4">Discover, hire, and explore top talent with HireHive</p>
-            <p className='typography-body max-w-96'>Our advanced tools simplify job posting, application review, and career opportunities, ensuring you find the best candidates or land your next role effortlessly.</p>
-            <p className="mb-8"></p>
-          </div>
-          <div className="bottom-12 right-12 flex space-x-4 z-10">
-            <div className='absolute bottom-14 right-80'><StatsGrid stats={statsOne} /></div>
-            <div className='absolute bottom-20 right-14'><StatsGrid stats={statsTwo} /></div>
-          </div>
-        </div>
-        {/* Right section with login form */}
-        <div className="w-full lg:w-2/5 bg-background-90 p-4 md:p-28   flex flex-col justify-center">
+        <div className="w-full max-w-sm rounded-lg border bg-card p-6 text-card-foreground">
         {showForgotPassword ? (
                       <ForgotPassword role="Candidate" onBack={() => setShowForgotPassword(false)} />
                   ) : (
                     <>
-
-          <h1 className="mb-2 text-center font-semibold">Welcome Back</h1>
-          <p className="typography-body mb-10 text-center font-normal">Login to your account below</p>
+          <div className="mb-6 flex justify-center">
+            <GeodeLogo />
+          </div>
+          <h1 className="mb-2 text-center text-2xl font-medium">Welcome Back</h1>
+          <p className="mb-6 text-center text-sm text-muted-foreground">Login to your account below</p>
           {/* <button className="bg-blue-600 text-font-main py-2 px-4 rounded-lg mb-5 flex items-center justify-center">
                   Continue with Google
               </button>
@@ -127,25 +104,25 @@ const CandidateLogin = () => {
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
               <label htmlFor="email" className="block mb-2 font-bricolage">Email</label>
-              <input type="email" id="email" placeholder="Enter your email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full p-2 rounded-lg bg-black text-font-main focus:outline-teal-400" />
+              <input type="email" id="email" placeholder="Enter your email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full" />
             </div>
               <div>
                 <label htmlFor="password" className="block mb-2 font-bricolage">Password</label>
               <TogglePassword typeState={passwordType} setTypeState={setPasswordType}>
-                <input type={passwordType} id="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter your password" className={(password && "tracking-widest") +" w-full focus:outline-teal-400 p-2 rounded-lg bg-black text-font-main"} />
+                <input type={passwordType} id="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter your password" className="w-full" />
               </TogglePassword>
               </div>
             {error && <p className="text-red-500 typography-small-p mb-4">{error}</p>}
             <div className='flex justify-end'>
                                   <span
                                       onClick={() => setShowForgotPassword(true)}
-                                      className="text-font-primary cursor-pointer typography-body mb-6 mt-2 block text-left hover:underline"
+                                      className="mb-6 mt-2 block cursor-pointer text-left text-sm text-foreground hover:underline"
                                   >
                                       Forgot Password?
                                   </span>
                               </div>
             {/* <a href="#" className="text-blue-500 mb-6 mt-2 block text-right">Forgot Password?</a> */}
-            <Button  type="submit" variant="primary" className="mt-6 " disabled={ isLoadingAuth}>
+            <Button  type="submit" variant="primary" className="mt-6 w-full" disabled={ isLoadingAuth}>
               {isLoadingAuth ? "Logging In..." : "Login"}
             </Button>
           </form>

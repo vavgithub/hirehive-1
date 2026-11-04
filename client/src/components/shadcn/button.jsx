@@ -9,17 +9,17 @@ const buttonVariants = cva(
     variants: {
       variant: {
         primary: 'bg-geode-action text-geode-action-text hover:bg-geode-action-hover',
-        secondary: 'bg-geode-ink text-geode-ink-text hover:bg-geode-ink-hover',
-        outline: 'border border-geode-border bg-geode-card text-geode-text hover:bg-geode-muted-bg',
-        ghost: 'text-geode-text hover:bg-geode-muted-bg',
+        secondary: 'bg-secondary text-secondary-foreground hover:bg-geode-border',
+        outline: 'border border-input bg-background text-foreground hover:bg-accent',
+        ghost: 'text-foreground hover:bg-accent',
         destructive: 'geode-button-danger',
       },
       size: {
-        default: 'h-9 px-4',
-        sm: 'h-8 px-3 text-xs',
-        md: 'h-9 px-4',
-        lg: 'h-10 px-8',
-        icon: 'h-9 w-9',
+        default: 'h-10 px-4',
+        sm: 'h-9 px-3',
+        md: 'h-10 px-4',
+        lg: 'h-11 px-8',
+        icon: 'h-10 w-10',
       },
     },
     defaultVariants: {

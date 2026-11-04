@@ -3,13 +3,13 @@ import { cn } from '@/lib/utils'
 
 const Table = React.forwardRef(({ className, ...props }, ref) => (
   <div className="w-full overflow-x-auto">
-    <table ref={ref} className={cn('w-full border-collapse text-left font-geode text-geode-small', className)} {...props} />
+    <table ref={ref} className={cn('w-full caption-bottom text-sm', className)} {...props} />
   </div>
 ))
 Table.displayName = 'Table'
 
 const TableHeader = React.forwardRef(({ className, ...props }, ref) => (
-  <thead ref={ref} className={cn('text-geode-muted', className)} {...props} />
+  <thead ref={ref} className={cn(className)} {...props} />
 ))
 TableHeader.displayName = 'TableHeader'
 
@@ -19,7 +19,7 @@ const TableBody = React.forwardRef(({ className, ...props }, ref) => (
 TableBody.displayName = 'TableBody'
 
 const TableRow = React.forwardRef(({ className, ...props }, ref) => (
-  <tr ref={ref} className={cn('border-b border-geode-border last:border-0', className)} {...props} />
+  <tr ref={ref} className={cn('border-b transition-colors hover:bg-muted', className)} {...props} />
 ))
 TableRow.displayName = 'TableRow'
 
@@ -27,14 +27,14 @@ const TableHead = React.forwardRef(({ className, ...props }, ref) => (
   <th
     ref={ref}
     scope="col"
-    className={cn('whitespace-nowrap px-geode-3 py-geode-2 font-geode-heading', className)}
+    className={cn('h-12 px-4 text-left align-middle font-medium text-muted-foreground', className)}
     {...props}
   />
 ))
 TableHead.displayName = 'TableHead'
 
 const TableCell = React.forwardRef(({ className, ...props }, ref) => (
-  <td ref={ref} className={cn('whitespace-nowrap px-geode-3 py-geode-2 text-geode-text', className)} {...props} />
+  <td ref={ref} className={cn('p-4 align-middle', className)} {...props} />
 ))
 TableCell.displayName = 'TableCell'
 

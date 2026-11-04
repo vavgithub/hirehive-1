@@ -4,6 +4,7 @@ import { Avatar } from '@/components/shadcn/avatar'
 import { Button } from '@/components/shadcn/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card'
 import { DataTable } from '@/components/shadcn/data-table'
+import { Switch } from '@/components/shadcn/switch'
 import { Tabs, TabsList, TabsTrigger } from '@/components/shadcn/tabs'
 import GeodeDashboard from '../dashboard/GeodeDashboard'
 import { applicationSeriesByPeriod, geodeDashboardFixture } from '../dashboard/fixtures'
@@ -391,12 +392,12 @@ export function SettingsScreen() {
         <CardContent>
           <div className="flex items-center justify-between gap-geode-3">
             <p className="font-geode text-geode-small text-geode-muted">Allow assigning up to 3 reviewers for the portfolio stage.</p>
-            <button type="button" className="geode-switch" data-on={enabled ? 'true' : 'false'} aria-pressed={enabled} aria-label="Portfolio multi-reviewer" onClick={() => setEnabled((value) => !value)} />
+            <Switch checked={enabled} onCheckedChange={setEnabled} aria-label="Portfolio multi-reviewer" />
           </div>
           {enabled ? (
-            <div className="grid grid-cols-1 gap-geode-3 md:grid-cols-3">
+            <div className="flex flex-wrap gap-2">
               {profiles.map((profile) => (
-                <button key={profile} type="button" className="geode-check" data-on={selected.includes(profile) ? 'true' : 'false'} aria-pressed={selected.includes(profile)} onClick={() => toggle(profile)}>
+                <button key={profile} type="button" className={selected.includes(profile) ? 'geode-chip geode-chip-on' : 'geode-chip'} aria-pressed={selected.includes(profile)} onClick={() => toggle(profile)}>
                   {profile}
                 </button>
               ))}

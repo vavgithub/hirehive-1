@@ -129,7 +129,7 @@ function DataTable({ columns, rows = [], getRowId, onRowClick, emptyLabel, isLoa
             <Button
               key={size}
               size="sm"
-              variant={size === pageSize ? 'secondary' : 'outline'}
+              variant={size === pageSize ? 'primary' : 'outline'}
               onClick={() => setPageSize(size)}
               aria-pressed={size === pageSize}
             >

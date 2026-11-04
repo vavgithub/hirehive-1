@@ -7,17 +7,17 @@
  */
 .geode,
 html[data-geode-skin] {
-  --geode-font-sans: Gilroy, sans-serif;
+  --geode-font-sans: ui-sans-serif, system-ui, sans-serif;
   --geode-weight-heading: 500;
   --geode-weight-body: 400;
 
-  --geode-text-display: 2rem;
+  --geode-text-display: 2.25rem;
   --geode-text-h4: 1.5rem;
-  --geode-text-h6: 1rem;
-  --geode-text-body: 1rem;
+  --geode-text-h6: 1.125rem;
+  --geode-text-body: 0.875rem;
   --geode-text-small: 0.875rem;
-  --geode-leading-tight: 1.15;
-  --geode-leading-body: 1.35;
+  --geode-leading-tight: 1.25;
+  --geode-leading-body: 1.25;
 
   --geode-space-1: 0.25rem;
   --geode-space-2: 0.5rem;
@@ -29,12 +29,12 @@ html[data-geode-skin] {
   --geode-card-gap: 1rem;
   --geode-sidebar: 15rem;
 
-  --geode-radius: 0.75rem;
-  --geode-radius-control: 0.5rem;
-  --geode-radius-pill: 999px;
+  --geode-radius: 0.5rem;
+  --geode-radius-control: 0.375rem;
+  --geode-radius-pill: 9999px;
   --geode-control-sm: 2.25rem;
-  --geode-control-md: 2.75rem;
-  --geode-control-lg: 3.5rem;
+  --geode-control-md: 2.5rem;
+  --geode-control-lg: 2.75rem;
   --geode-avatar: 2rem;
 
   /* Sampled from the Done / Colors frame. Roles point at those steps. */
@@ -50,13 +50,13 @@ html[data-geode-skin] {
   --geode-accent-4: #4d34bd;
   --geode-accent-5: #372589;
   --geode-accent-6: #221754;
-  --geode-neutral-1: #f0f0f0;
-  --geode-neutral-2: #e4e4e4;
-  --geode-neutral-3: #bfbfbf;
-  --geode-neutral-4: #999999;
-  --geode-neutral-5: #747474;
-  --geode-neutral-6: #4e4e4e;
-  --geode-neutral-7: #292929;
+  --geode-neutral-1: #f5f5f5;
+  --geode-neutral-2: #e5e5e5;
+  --geode-neutral-3: #d4d4d4;
+  --geode-neutral-4: #a3a3a3;
+  --geode-neutral-5: #737373;
+  --geode-neutral-6: #525252;
+  --geode-neutral-7: #171717;
   --geode-data-1-1: #ffb2ff;
   --geode-data-1-2: #ff8cff;
   --geode-data-1-3: #d273d2;
@@ -88,19 +88,40 @@ html[data-geode-skin] {
   --geode-logo-height-compact: 1.15rem;
   --geode-grid-size: 1.5rem;
 
-  --geode-bg: var(--geode-neutral-1);
+  --geode-bg: #fafafa;
   --geode-card: #ffffff;
-  --geode-muted: var(--geode-neutral-1);
-  --geode-border: var(--geode-neutral-2);
-  --geode-text: #111f00;
-  --geode-text-muted: var(--geode-neutral-5);
-  --geode-action: var(--geode-brand-3);
+  --geode-muted: #f5f5f5;
+  --geode-border: #e5e5e5;
+  --geode-text: #0a0a0a;
+  --geode-text-muted: #737373;
+  --geode-action: #8dff00;
   --geode-action-text: #111f00;
-  --geode-action-hover: var(--geode-brand-4);
-  --geode-ink: #111f00;
-  --geode-ink-text: var(--geode-neutral-1);
-  --geode-ink-hover: var(--geode-brand-6);
-  --geode-focus: #111f00;
+  --geode-action-hover: #6ec700;
+  --geode-ink: #0a0a0a;
+  --geode-ink-text: #fafafa;
+  --geode-ink-hover: #171717;
+  --geode-focus: #8dff00;
+
+  /* shadcn semantic tokens. Green is the only theme color. */
+  --background: #ffffff;
+  --foreground: var(--geode-text);
+  --card: #ffffff;
+  --card-foreground: var(--geode-text);
+  --popover: #ffffff;
+  --popover-foreground: var(--geode-text);
+  --primary: var(--geode-action);
+  --primary-foreground: var(--geode-action-text);
+  --secondary: var(--geode-muted);
+  --secondary-foreground: var(--geode-text);
+  --muted: var(--geode-muted);
+  --muted-foreground: var(--geode-text-muted);
+  --accent: var(--geode-muted);
+  --accent-foreground: var(--geode-text);
+  --destructive: var(--geode-error-2);
+  --destructive-foreground: #fafafa;
+  --border: var(--geode-border);
+  --input: var(--geode-border);
+  --ring: var(--geode-action);
 
   --geode-chart-1: var(--geode-data-1-2);
   --geode-chart-2: var(--geode-data-2-2);
@@ -109,11 +130,11 @@ html[data-geode-skin] {
   --geode-chart-5: var(--geode-data-1-4);
 
   /* Existing screens read these names. Inside the shell they point at the Geode ramps. */
-  --color-primary-100: var(--geode-ink);
-  --color-primary-200: var(--geode-brand-6);
+  --color-primary-100: var(--geode-action);
+  --color-primary-200: var(--geode-action-hover);
   --color-primary-300: var(--geode-neutral-2);
   --color-primary-400: var(--geode-neutral-3);
-  --color-accent-100: var(--geode-brand-6);
+  --color-accent-100: var(--geode-action);
   --color-accent-200: var(--geode-neutral-2);
   --color-accent-300: var(--geode-neutral-1);
   --color-font-accent-100: var(--geode-brand-6);
@@ -155,9 +176,9 @@ html[data-geode-skin] {
   --color-border-yellow: var(--geode-alert-3);
   --color-bg-overlay: var(--geode-neutral-7);
 
-  --geode-cursor-default: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath fill='%23111f00' d='M5.5 3.2 19.2 11l-6.4 1-.1 6.6-2.3-5.3-4.9 3.4z'/%3E%3C/svg%3E") 4 2, auto;
-  --geode-cursor-pointer: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath fill='%23111f00' d='M6.2 4.4 17.6 11l-5.2.8.1 5.4-1.8-4.2-3.9 2.6z'/%3E%3C/svg%3E") 4 2, pointer;
-  --geode-cursor-text: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='24' viewBox='0 0 16 24'%3E%3Cpath stroke='%23111f00' stroke-width='1.6' d='M4 3h8M8 3v18M4 21h8'/%3E%3C/svg%3E") 8 12, text;
+  --geode-cursor-default: auto;
+  --geode-cursor-pointer: pointer;
+  --geode-cursor-text: text;
 
   font-family: var(--geode-font-sans);
   background: var(--geode-bg);
@@ -352,22 +373,16 @@ html[data-geode-skin] {
 }
 
 .geode .app-card[data-pad="default"],
+.geode .app-card[data-pad="1"],
 .geode .app-card[data-pad="2"],
-.geode .app-card[data-pad="4"] {
+.geode .app-card[data-pad="3"],
+.geode .app-card[data-pad="4"],
+.geode .app-card[data-pad="5"] {
   padding: var(--geode-card-padding);
 }
 
 .geode .app-card[data-pad="0"] {
   padding: 0;
-}
-
-.geode .app-card[data-pad="1"],
-.geode .app-card[data-pad="5"] {
-  padding: var(--geode-space-3);
-}
-
-.geode .app-card[data-pad="3"] {
-  padding: var(--geode-space-4);
 }
 
 .geode-button-danger {
@@ -415,7 +430,7 @@ html[data-geode-skin] {
 }
 
 .geode-tabs-trigger:focus-visible {
-  outline: 2px solid var(--geode-ink);
+  outline: 2px solid var(--geode-focus);
   outline-offset: 2px;
 }
 
@@ -433,9 +448,9 @@ html[data-geode-skin] {
 }
 
 .geode-chip-on {
-  border-color: var(--geode-ink);
-  background: var(--geode-ink);
-  color: var(--geode-ink-text);
+  border-color: var(--geode-action);
+  background: var(--geode-action);
+  color: var(--geode-action-text);
 }
 
 /* Fields must stay visible on white cards. These beat the legacy input rules. */
@@ -449,12 +464,21 @@ html[data-geode-skin] :is(
   textarea,
   select
 ) {
-  background-color: var(--geode-neutral-1) !important;
+  height: 2.5rem;
+  background-color: var(--geode-card) !important;
   color: var(--geode-text) !important;
-  border: 1px solid var(--geode-neutral-4) !important;
+  border: 1px solid var(--geode-border) !important;
   border-radius: var(--geode-radius-control);
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
   box-shadow: none;
   caret-color: var(--geode-text);
+}
+
+.geode textarea,
+html[data-geode-skin] textarea {
+  height: auto;
+  min-height: 5rem;
 }
 
 .geode :is(input, textarea)::placeholder,
@@ -465,8 +489,8 @@ html[data-geode-skin] :is(input, textarea)::placeholder {
 
 .geode :is(input:not(.geode-affix-input):not(.geode-picker-input):not(.geode-menu-search):not([type="checkbox"]):not([type="radio"]), textarea, select):focus,
 html[data-geode-skin] :is(input:not(.geode-affix-input):not(.geode-picker-input):not(.geode-menu-search):not([type="checkbox"]):not([type="radio"]), textarea, select):focus {
-  border-color: var(--geode-ink) !important;
-  outline: 2px solid var(--geode-ink);
+  border-color: var(--geode-focus) !important;
+  outline: 2px solid var(--geode-focus);
   outline-offset: 1px;
 }
 
@@ -486,8 +510,8 @@ html[data-geode-skin] body {
 /* Decorative photos are out until the real art arrives. The panel stays a solid fill. */
 .geode :is(.bg-admin-login-fg, .bg-login-screen, .bg-home-bg, .bg-verification, .bg-admin-login-bg, .bg-main-bg) {
   background-image: none !important;
-  background-color: var(--geode-ink);
-  color: var(--geode-card);
+  background-color: var(--geode-bg);
+  color: var(--geode-text);
 }
 
 .geode .bg-card-bg {
@@ -525,8 +549,8 @@ html[data-geode-skin] body {
 }
 
 .geode .geode-affix-field:focus-within {
-  border-color: var(--geode-ink);
-  outline: 2px solid var(--geode-ink);
+  border-color: var(--geode-focus);
+  outline: 2px solid var(--geode-focus);
   outline-offset: 1px;
 }
 
@@ -731,8 +755,8 @@ html[data-geode-skin] body {
 .geode-picker:focus-within,
 .geode-select:focus-visible,
 .geode-year:focus {
-  border-color: var(--geode-ink);
-  outline: 2px solid var(--geode-ink);
+  border-color: var(--geode-focus);
+  outline: 2px solid var(--geode-focus);
   outline-offset: 1px;
 }
 
@@ -812,7 +836,7 @@ html[data-geode-skin] body {
   width: 1.25rem;
   height: 1.25rem;
   border: 2px solid var(--geode-border);
-  border-top-color: var(--geode-ink);
+  border-top-color: var(--geode-action);
   border-radius: var(--geode-radius-pill);
   animation: geode-spin 0.8s linear infinite;
 }
@@ -868,7 +892,7 @@ html[data-geode-skin] body {
 .geode-grid-check {
   width: 1rem;
   height: 1rem;
-  accent-color: var(--geode-ink);
+  accent-color: var(--geode-action);
 }
 
 .geode-data-grid .geode-avatar-fallback {
@@ -891,12 +915,12 @@ html[data-geode-skin] body {
 
 .geode-switch {
   display: inline-flex;
-  width: 2.25rem;
-  height: 1.25rem;
+  width: 2.75rem;
+  height: 1.5rem;
   flex: none;
   align-items: center;
   padding: 2px;
-  border: 0;
+  border: 2px solid transparent;
   border-radius: var(--geode-radius-pill);
   background: var(--geode-neutral-3);
   cursor: pointer;
@@ -907,22 +931,22 @@ html[data-geode-skin] body {
 }
 
 .geode-switch:focus-visible {
-  outline: 2px solid var(--geode-ink);
+  outline: 2px solid var(--geode-focus);
   outline-offset: 2px;
 }
 
 .geode-switch-thumb {
   display: block;
-  width: 1rem;
-  height: 1rem;
+  width: 1.25rem;
+  height: 1.25rem;
   border-radius: var(--geode-radius-pill);
   background: var(--geode-card);
   transition: transform 0.15s ease;
 }
 
 .geode-switch[data-state="checked"] .geode-switch-thumb {
-  background: var(--geode-ink);
-  transform: translateX(1rem);
+  background: var(--geode-card);
+  transform: translateX(1.25rem);
 }
 
 .geode-check {
@@ -930,7 +954,7 @@ html[data-geode-skin] body {
   height: 1rem;
   flex: none;
   margin-right: var(--geode-space-3);
-  accent-color: var(--geode-ink);
+  accent-color: var(--geode-action);
 }
 
 .geode-toaster {
