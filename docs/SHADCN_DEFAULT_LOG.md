@@ -28,6 +28,7 @@ Checked the live admin account on the staging data: dashboard, jobs (open, close
 - The applications chart keeps its series color. Its height is fixed at 11rem, and the card no longer stretches to match the column beside it.
 - Missing photos use the light silhouette, including when the navy file was already saved on a profile. The candidate photo stacks on a narrow screen.
 - Phone menu buttons are 44px. Page padding is 1rem below the md breakpoint. Pinch zoom is allowed.
+- On a narrow screen the jobs filters stack above the list, so Create A Job Listing stays on the page. The candidate search wraps, and the stage row scrolls inside its card.
 
 ## Left in place
 

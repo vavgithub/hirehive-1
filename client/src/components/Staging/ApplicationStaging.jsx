@@ -181,11 +181,11 @@ const ApplicationStaging = ({ candidateId, jobId ,jobStatus}) => {
             <h4 className="mb-4">Application Stages</h4>
 
             {/* Stage Progress Section */}
-            <div className="stages-progress flex">
+            <div className="stages-progress flex max-w-full gap-2 overflow-x-auto pb-2">
                 {stages.map((stage, index) => (
                     <React.Fragment key={stage}>
                         <div
-                            className={`stage-item flex typography-body flex-col gap-2 justify-center items-center ${isStageVisible(stage) ? ' cursor-pointer  ' : ' cursor-default opacity-50'}`}
+                            className={`stage-item flex shrink-0 typography-body flex-col gap-2 justify-center items-center ${isStageVisible(stage) ? ' cursor-pointer  ' : ' cursor-default opacity-50'}`}
                             onClick={() => isStageVisible(stage) && setSelectedStage(stage)}
                         >
                             <div className="stage-icon">
