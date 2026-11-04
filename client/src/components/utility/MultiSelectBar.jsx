@@ -9,7 +9,7 @@ import RatingSelector from '../MUIUtilities/RatingSelector'
 import RejectionSelector from '../MUIUtilities/RejectionSelector'
 import IconWrapper from '../Cards/IconWrapper'
 import { ArrowRight, Calendar, Ellipsis, Star, User, X } from '@/components/geode/icons'
-import { useUnknownProfilePicture } from '../../context/ThemeContext'
+import { resolveProfilePicture } from '../../utility/config'
 import { assignReviewerForCandidates, moveMultipleCandidates, rateMultipleCandidates, rejectMultipleCandidates } from '../../services/hr.service'
 import * as Sentry from '@sentry/react';
 
@@ -147,8 +147,6 @@ function MultiSelectBar({selectedData,jobId,clearSelection}) {
   const [selectedAnchor,setSelectedAnchor] = useState(null);
 
   const [isValid,setIsValid] = useState(false);
-
-  const UNKNOWN_PROFILE_PICTURE_URL = useUnknownProfilePicture()
 
   useEffect(()=>{
     if(action?.name === "REJECT"){
@@ -475,7 +473,7 @@ function MultiSelectBar({selectedData,jobId,clearSelection}) {
                                                         className="geode-check"
                                                         />
                                                         <div className='w-8 h-8 rounded-full overflow-hidden'>
-                                                            <img src={candidate?.profilePictureUrl || UNKNOWN_PROFILE_PICTURE_URL } alt="" className='object-cover w-full' />
+                                                            <img src={resolveProfilePicture(candidate?.profilePictureUrl)} alt="" className='aspect-square w-full object-cover' />
                                                         </div>
                                                         {candidate?.firstName + " " + candidate?.lastName}
                                                     </div>

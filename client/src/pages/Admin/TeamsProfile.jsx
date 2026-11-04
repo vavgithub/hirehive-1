@@ -18,7 +18,7 @@ import Container from '../../components/Cards/Container'
 import IconWrapper from '../../components/Cards/IconWrapper'
 import { PencilLine } from '@/components/geode/icons'
 import { formatPhoneNumber } from '../../components/Form/PhoneInputField'
-import { useUnknownProfilePicture } from '../../context/ThemeContext'
+import { resolveProfilePicture } from '../../utility/config'
 import { changeMemberStatus, editMember, getAllTeamMembers, reInviteMember } from '../../services/admin.service'
 
 function PersonalDetails({ memberData, isEditing, control }) {
@@ -170,8 +170,6 @@ function TeamsProfile() {
   const { id: memberId } = useParams();
 
   const queryClient = useQueryClient();
-  const UNKNOWN_PROFILE_PICTURE_URL = useUnknownProfilePicture()
-
   const { data: teamMembers, isLoading: isTeamMembersLoading } = useQuery({
     queryKey: ['team_members'],
     queryFn: getAllTeamMembers,
@@ -290,7 +288,7 @@ function TeamsProfile() {
               </button>}
               <div className="relative w-[8rem] min-h-[5rem] ">
                 <div className="absolute w-[8rem] left-0  -top-14 aspect-square overflow-hidden rounded-full">
-                  <img src={member?.profilePicture ? member?.profilePicture : UNKNOWN_PROFILE_PICTURE_URL} alt="" className="object-cover w-full" />
+                  <img src={resolveProfilePicture(member?.profilePicture)} alt="" className="aspect-square w-full object-cover" />
                 </div>
               </div>
               <h1 className="whitespace-nowrap overflow-hidden w-full text-ellipsis text-center">{member?.firstName + " " + member?.lastName}</h1>

@@ -24,7 +24,7 @@ import { editCompanyProfile } from '../../services/auth.service';
 import * as Sentry from '@sentry/react';
 import { LocationInputField } from '../../components/Inputs/LocationInputField';
 import { validationRules } from '../../utility/validationRules';
-import { useUnknownProfilePicture } from '../../context/ThemeContext';
+import { resolveProfilePicture } from '../../utility/config';
 
 const CompanyOverview = ({ companyDetails, isEditing, control ,setValue }) => {
   return (
@@ -279,7 +279,6 @@ function CompanyProfile() {
         sessionId : ''
     },
     });
-    const UNKNOWN_PROFILE_PICTURE_URL = useUnknownProfilePicture();
     const handleProfilePictureUpload = (event) => {
         const file = event.target.files[0];
         if (!file) return;
@@ -367,7 +366,7 @@ function CompanyProfile() {
                   <div className="relative w-[8rem] min-h-[5rem]">
                     <div className=" w-[8rem] left-0 -top-14 aspect-square overflow-hidden rounded-full">
                       <img
-                        src={ profileFile ? URL.createObjectURL(profileFile) : (companyDetails?.logoUrl || UNKNOWN_PROFILE_PICTURE_URL) }
+                        src={ profileFile ? URL.createObjectURL(profileFile) : resolveProfilePicture(companyDetails?.logoUrl) }
                         alt=""
                         className="object-cover w-full h-full"
                       />

@@ -148,7 +148,7 @@ function GeodeShell({ items, footer = [], user, account, children }) {
     <div className="flex h-full min-h-0 flex-col">
       <div className="flex h-14 shrink-0 items-center justify-between px-4">
         <GeodeLogo />
-        <button type="button" className="lg:hidden" aria-label="Close menu" onClick={close}>
+        <button type="button" className="inline-flex size-11 items-center justify-center lg:hidden" aria-label="Close menu" onClick={close}>
           <X {...iconProps} />
         </button>
       </div>
@@ -189,12 +189,12 @@ function GeodeShell({ items, footer = [], user, account, children }) {
       </aside>
       <div className="flex min-w-0 flex-1 flex-col">
         <div className="flex h-14 items-center gap-3 border-b bg-background px-4 lg:hidden">
-          <button type="button" aria-label="Open menu" onClick={() => setOpen(true)}>
+          <button type="button" className="inline-flex size-11 items-center justify-center" aria-label="Open menu" onClick={() => setOpen(true)}>
             <Menu {...iconProps} />
           </button>
           <GeodeLogo compact />
         </div>
-        <main className="flex-1 p-6">
+        <main className="flex-1 p-4 md:p-6">
           {children}
         </main>
       </div>

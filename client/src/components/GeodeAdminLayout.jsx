@@ -6,7 +6,7 @@ import { LogOut } from '@/components/geode/icons'
 import { logout } from '../services/auth.service'
 import useAuth from '../hooks/useAuth'
 import { useAuthContext } from '../context/AuthProvider'
-import { useUnknownProfilePicture } from '../context/ThemeContext'
+import { resolveProfilePicture } from '../utility/config'
 import { getRoute, hasRoutePermission, ROUTE_KEY } from '../config/permissions.config'
 import GeodeShell, { buildGeodeNav } from '../pages/Admin/dashboard/GeodeShell'
 import { Avatar } from '@/components/shadcn/avatar'
@@ -25,8 +25,6 @@ function GeodeAdminLayout() {
   const { refetch } = useAuth()
   const queryClient = useQueryClient()
   const newMembersCount = useSelector((state) => state.admin?.newMembersCount ?? 0)
-  const unknownProfilePicture = useUnknownProfilePicture()
-
   const handleLogout = async () => {
     try {
       await logout()
@@ -53,7 +51,7 @@ function GeodeAdminLayout() {
   const account = (
     <DropdownMenu>
       <DropdownMenuTrigger className="geode-nav-item">
-        <Avatar src={user?.profilePicture || unknownProfilePicture} alt="" fallback={accountName.slice(0, 1)} />
+        <Avatar src={resolveProfilePicture(user?.profilePicture)} alt="" fallback={accountName.slice(0, 1)} />
         <span className="truncate text-geode-text">{accountName}</span>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" side="top">

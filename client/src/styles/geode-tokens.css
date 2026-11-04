@@ -267,6 +267,12 @@ html[data-geode-skin] {
   text-align: left;
 }
 
+@media (max-width: 1023px) {
+  .geode-nav-item {
+    min-height: 2.75rem;
+  }
+}
+
 .geode-nav-item:hover {
   background: var(--geode-muted);
   color: var(--geode-text);

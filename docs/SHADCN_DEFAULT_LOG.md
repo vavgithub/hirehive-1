@@ -26,6 +26,8 @@ Checked the live admin account on the staging data: dashboard, jobs (open, close
 - Employment filters (full-time, contract, intern) are the same chip as the other filters, with a 16px icon, instead of stacked icon tiles.
 - Job search fields use the shared prefix field. The inline left padding is gone.
 - The applications chart keeps its series color. Its height is fixed at 11rem, and the card no longer stretches to match the column beside it.
+- Missing photos use the light silhouette, including when the navy file was already saved on a profile. The candidate photo stacks on a narrow screen.
+- Phone menu buttons are 44px. Page padding is 1rem below the md breakpoint. Pinch zoom is allowed.
 
 ## Left in place
 

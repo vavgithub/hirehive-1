@@ -14,7 +14,8 @@ import Container from '../../components/Cards/Container';
 import IconWrapper from '../../components/Cards/IconWrapper';
 import { UTCToDateFormatted } from '../../utility/timezoneConverter';
 import { formatPhoneNumber } from '../../components/Form/PhoneInputField';
-import { useScoreBg, useUnknownProfilePicture } from '../../context/ThemeContext';
+import { useScoreBg } from '../../context/ThemeContext';
+import { resolveProfilePicture } from '../../utility/config';
 import { fetchAssessmentDetails } from '../../services/admin.candidate.service';
 
 const AssessmentResponse = () => {
@@ -23,8 +24,6 @@ const AssessmentResponse = () => {
     const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
 
     const { id: candidateId, jobId } = useParams();
-    const UNKNOWN_PROFILE_PICTURE_URL = useUnknownProfilePicture()
-
     const { data, isLoading, isError } = useQuery({
         queryKey: ['assessmentDetails', candidateId, jobId],
         queryFn: () => fetchAssessmentDetails(candidateId, jobId),
@@ -71,7 +70,7 @@ const AssessmentResponse = () => {
                         <div className="flex gap-4 h-full">
                             <div className="to-background-100 min-w-[20%] max-w-[12.5rem] aspect-square max-h-[12.5rem]  rounded-xl overflow-hidden">
                                 <img
-                                    src={assessmentData?.candidateInfo?.profilePictureUrl || UNKNOWN_PROFILE_PICTURE_URL}
+                                    src={resolveProfilePicture(assessmentData?.candidateInfo?.profilePictureUrl)}
                                     alt={assessmentData?.candidateInfo?.name}
                                     className="w-full  object-cover "
                                 />

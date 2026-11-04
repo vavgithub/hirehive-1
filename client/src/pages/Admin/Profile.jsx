@@ -20,7 +20,7 @@ import { formatPhoneNumber, PhoneInputField } from '../../components/Form/PhoneI
 import { validationRules } from '../../utility/validationRules';
 import { editUserProfile } from '../../services/auth.service';
 import * as Sentry from '@sentry/react';
-import { useUnknownProfilePicture } from '../../context/ThemeContext';
+import { resolveProfilePicture } from '../../utility/config';
 
 
 
@@ -147,8 +147,6 @@ function Profile() {
   const [profileFile, setProfileFile] = useState(null);
   const { mutate: uploadPicture, isLoading: uploading } = useProfilePicture();
   const queryClient = useQueryClient();
-  const UNKNOWN_PROFILE_PICTURE_URL = useUnknownProfilePicture()
-
 
   const { control, handleSubmit, reset } = useForm({
     defaultValues: {
@@ -247,7 +245,7 @@ function Profile() {
                   <div className="relative w-[8rem] min-h-[5rem]">
                     <div className=" w-[8rem] left-0 -top-14 aspect-square overflow-hidden rounded-full">
                       <img
-                        src={profileFile ? URL.createObjectURL(profileFile) : user?.profilePicture || UNKNOWN_PROFILE_PICTURE_URL }
+                        src={profileFile ? URL.createObjectURL(profileFile) : resolveProfilePicture(user?.profilePicture) }
                         alt=""
                         className="object-cover w-full h-full"
                       />

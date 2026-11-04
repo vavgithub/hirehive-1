@@ -25,7 +25,7 @@ import { editCandidateProfile, getCandidateDashboard, uploadCandidateProfilePict
 import { LocationInputField } from "../../components/Inputs/LocationInputField";
 import { UTCToDateFormatted } from "../../utility/timezoneConverter";
 import Datepicker from "../../components/MUIUtilities/Datepicker";
-import { useUnknownProfilePicture } from "../../context/ThemeContext";
+import { resolveProfilePicture } from "../../utility/config";
 import * as Sentry from '@sentry/react';
 
 const PersonalDetails = ({ candidateData, isEditing, control }) => {
@@ -461,8 +461,6 @@ function Profile() {
 
   const dispatch = useDispatch();
 
-  const UNKNOWN_PROFILE_PICTURE_URL = useUnknownProfilePicture()
-
   useEffect(() => {
     if (stage === "DONE") {
       setIsEditing(false);
@@ -679,7 +677,7 @@ function Profile() {
                     </button>}
                     <div className="relative w-[8rem] min-h-[5rem] ">
                       <div  className="absolute w-[8rem] left-0  -top-14 aspect-square overflow-hidden rounded-full">
-                        <img src={profileFile ? URL.createObjectURL(profileFile) : candidateData?.profilePictureUrl ? candidateData?.profilePictureUrl : UNKNOWN_PROFILE_PICTURE_URL } alt="" className="object-cover w-full" />
+                        <img src={profileFile ? URL.createObjectURL(profileFile) : resolveProfilePicture(candidateData?.profilePictureUrl)} alt="" className="aspect-square w-full object-cover" />
                         <input accept="image/*" onChange={(e)=>setProfileFile(e.target.files[0])} type="file" className="hidden" ref={profileImageRef} />
                       </div>
                       {isEditing && 
