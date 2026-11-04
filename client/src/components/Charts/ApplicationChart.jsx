@@ -19,7 +19,7 @@ function ApplicationChart({type,dataArray}) {
         grid: {
           left: 56,
           right: 12,
-          top: 28,
+          top: 12,
           bottom: 28,
           containLabel: true,
         },

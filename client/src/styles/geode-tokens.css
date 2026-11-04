@@ -84,6 +84,7 @@ html[data-geode-skin] {
   --geode-info-3: #03459b;
   --geode-info-4: #022c64;
 
+  --geode-chart-height: 11rem;
   --geode-logo-height: 1.5rem;
   --geode-logo-height-compact: 1.15rem;
   --geode-grid-size: 1.5rem;
@@ -605,15 +606,14 @@ html[data-geode-skin] body {
 
 .geode-fill {
   display: flex;
-  flex: 1 1 auto;
+  flex: none;
   flex-direction: column;
-  min-height: 0;
 }
 
 .geode-trend-chart {
   width: 100% !important;
-  height: 100% !important;
-  min-height: 16rem !important;
+  height: var(--geode-chart-height) !important;
+  min-height: 0 !important;
 }
 
 .geode-stage {
@@ -1038,12 +1038,13 @@ html[data-geode-skin] body {
 @media (min-width: 1024px) {
   .geode-board {
     grid-template-columns: minmax(0, 1.7fr) minmax(18rem, 0.85fr);
-    align-items: stretch;
+    align-items: start;
   }
 
   .geode-board-trends {
     grid-column: 1;
     grid-row: 1;
+    align-self: start;
   }
 
   .geode-board-rail {

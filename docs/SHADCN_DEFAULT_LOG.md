@@ -25,7 +25,7 @@ Checked the live admin account on the staging data: dashboard, jobs (open, close
 - Removed the colored fade that sat on top of the candidate stat cards.
 - Employment filters (full-time, contract, intern) are the same chip as the other filters, with a 16px icon, instead of stacked icon tiles.
 - Job search fields use the shared prefix field. The inline left padding is gone.
-- The applications chart keeps its series color and leaves room above the line so the peak stays inside the card.
+- The applications chart keeps its series color. Its height is fixed at 11rem, and the card no longer stretches to match the column beside it.
 
 ## Left in place
 
