@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - prod-main
+      - rebrand
+
+permissions:
+  contents: read
+
+jobs:
+  client:
+    name: Client checks
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: client
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: client/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Design-system lint
+        run: npm run lint:ds
+
+      - name: Unit tests
+        run: npm test
+
+      - name: Production-mode build
+        run: npm run build:prod
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
