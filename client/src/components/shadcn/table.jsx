@@ -2,7 +2,7 @@ import * as React from 'react'
 import { cn } from '@/lib/utils'
 
 const Table = React.forwardRef(({ className, ...props }, ref) => (
-  <div className="w-full overflow-x-auto">
+  <div className="geode-table-scroll">
     <table ref={ref} className={cn('w-full caption-bottom text-sm', className)} {...props} />
   </div>
 ))

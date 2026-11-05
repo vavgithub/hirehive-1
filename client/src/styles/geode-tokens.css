@@ -879,6 +879,23 @@ html[data-geode-skin] body {
   color: var(--geode-text);
 }
 
+.geode-table-scroll {
+  position: relative;
+  width: 100%;
+  max-height: 70vh;
+  overflow: auto;
+}
+
+.geode-table-scroll thead {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+.geode-table-scroll thead th {
+  background: var(--geode-muted);
+}
+
 .geode-grid-sort {
   display: inline-flex;
   align-items: center;

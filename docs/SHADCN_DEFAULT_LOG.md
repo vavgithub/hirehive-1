@@ -29,6 +29,7 @@ Checked the live admin account on the staging data: dashboard, jobs (open, close
 - Missing photos use the light silhouette, including when the navy file was already saved on a profile. The candidate photo stacks on a narrow screen.
 - Phone menu buttons are 44px. Page padding is 1rem below the md breakpoint. Pinch zoom is allowed.
 - On a narrow screen the jobs filters stack above the list, so Create A Job Listing stays on the page. The candidate search wraps, and the stage row scrolls inside its card.
+- On desktop, table column names stay pinned while the rows scroll. Profile, company, and team emails use the width of the card instead of ending in an ellipsis.
 
 ## Left in place
 

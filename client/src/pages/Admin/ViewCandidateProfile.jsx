@@ -555,7 +555,7 @@ const reviewerProfilePic = resolveProfilePicture(currentReviewer?.profilePicture
                                             <div className="flex items-center gap-4 min-w-0 flex-nowrap overflow-hidden">
                                                 <div className="flex items-center gap-2 overflow-hidden cursor-pointer min-w-0" onClick={() => handleEmailCopy(data?.email)}>
                                                         <IconWrapper size={0} customIconSize={2} icon={Mail} />
-                                                    <span className="typography-large-p whitespace-nowrap text-ellipsis overflow-hidden min-w-0">{data.email}</span>
+                                                    <span className="typography-large-p min-w-0 break-all">{data.email}</span>
                                                 </div>
                                                 {data?.dob && (
                                                     <div className="flex items-center gap-2 overflow-hidden">

@@ -614,7 +614,6 @@ const Table = ({
         />
       )}
 
-      <div className="min-w-0 max-w-full overflow-x-auto">
       <DataGrid
         rows={rowsData}
         columns={columns}
@@ -644,7 +643,6 @@ const Table = ({
         onRowClick={(params) => handleRowClick(params)}
         rowCount={totalCount}
       />
-      </div>
 
       {isDocumentViewerOpen && (
         <ResumeViewer
