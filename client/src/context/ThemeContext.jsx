@@ -15,7 +15,7 @@ import DarkClosedBadge from "../svg/Icons/ClosedBadge";
 import LightTelegramBanner from "../svg/Banners/lightTelegramBanner.png";
 import DarkTelegramBanner from "../svg/Banners/telegramBanner.png";
 import { useAuthContext } from './AuthProvider';
-import { UNKNOWN_PROFILE_PICTURE_URL_DARK, UNKNOWN_PROFILE_PICTURE_URL_LIGHT } from '../utility/config';
+import { UNKNOWN_PROFILE_PICTURE_URL_LIGHT } from '../utility/config';
 import { useLocation } from 'react-router-dom';
 
 const ThemeContext = createContext();
@@ -80,8 +80,7 @@ export const useTheme = () => {
 };
 
 export const useUnknownProfilePicture = () => {
-    const context = useContext(ThemeContext);
-    return context?.theme === 'light' ? UNKNOWN_PROFILE_PICTURE_URL_LIGHT : UNKNOWN_PROFILE_PICTURE_URL_DARK
+    return UNKNOWN_PROFILE_PICTURE_URL_LIGHT
 }
 
 export const useLogo = () => {

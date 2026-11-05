@@ -9,21 +9,11 @@ import { showErrorToast } from '../../components/ui/Toast';
 import Loader from '../../components/Loaders/Loader';
 import { InputField } from '../../components/Inputs/InputField';
 import IconWrapper from '../../components/Cards/IconWrapper';
-import { Briefcase, FileText } from '@/components/geode/icons';
 import { getRoute, ROUTE_KEY } from '../../config/permissions.config';
 import { FcGoogle } from '@/components/geode/icons'
 import { useAuthContext } from '../../context/AuthProvider';
 import { GeodeLogo } from '@/components/geode/Logo';
 import * as Sentry from '@sentry/react';
-
-const statsOne = [
-    { title: 'Jobs Posted', value: 100, icon: () => <IconWrapper size={10} isInActiveIcon icon={Briefcase} /> },
-  ]
-  const statsTwo = [
-    { title: 'Application Received', value: 10, icon: () => <IconWrapper size={10} isInActiveIcon icon={FileText} /> },
-  ]
-
-
 
 const Login = () => {
     const [showForgotPassword, setShowForgotPassword] = useState(false);
@@ -84,43 +74,29 @@ const Login = () => {
         );
     }else {
         return (
-            <div className="flex h-screen bg-admin-login-bg bg-cover">
-                {/* Left section with background image */}
-                <div className="hidden lg:flex  lg:w-3/5 bg-admin-login-fg backdrop-blur-lg bg-cover p-12 flex-col justify-end relative">
-                    <div>
-                        <GeodeLogo />
-                        <h1 className="mt-8">GEODE - Hire Designers</h1>
-                        <p className="display-d2 max-w-xl mt-4 mb-4">Discover, hire, and explore top talent with HireHive</p>
-                        <p className='typography-body max-w-96'>Our advanced tools simplify job posting, application review, and career opportunities, ensuring you find the best candidates or land your next role effortlessly.</p>
-                        <p className="mb-8"></p>
-                    </div>
-                    {/* <div className="absolute bottom-12 right-12 flex space-x-4 z-10">
-                        <div className='absolute bottom-6 right-96'><StatsGrid stats={statsOne} /></div>
-                        <div className='absolute bottom-20 right-14 w-64'><StatsGrid stats={statsTwo} /></div>
-                    </div> */}
-                    {/* <img src={sundarKanya} alt="Sundar Kanya" className="absolute bottom-0 right-0 h-[70%]" /> */}
-                </div>
-    
-                {/* Right section with login form */}
-                <div className="flex w-full flex-col items-stretch justify-center bg-background-100 px-8 py-12 lg:w-2/5 lg:px-12">
+            <div className="flex min-h-screen items-center justify-center bg-muted p-6">
+                <div className="w-full max-w-sm rounded-lg border bg-card p-6 text-card-foreground">
                     {showForgotPassword ? (
                         <ForgotPassword onBack={() => setShowForgotPassword(false)} />
                     ) : (
                         <>
-                            <h1 className="mb-2 text-center font-semibold w-full">Welcome Back</h1>
-                            <p className="typography-body mb-12 text-center font-normal w-full">
+                            <div className="mb-6 flex justify-center">
+                                <GeodeLogo />
+                            </div>
+                            <h1 className="mb-2 text-center text-2xl font-medium">Welcome Back</h1>
+                            <p className="mb-6 text-center text-sm text-muted-foreground">
                                 Login to your account below
                             </p>
-                            <button type="button" onClick={registerGoogle} variant="secondary"  className='mx-auto flex gap-2 items-center bg-white text-black-100 py-2 px-3 h-11 rounded-lg'>
-                                <IconWrapper icon={FcGoogle} size={0} customStrokeWidth={0} customIconSize={5} />
+                            <Button type="button" variant="white" className="w-full" onClick={registerGoogle}>
+                                <IconWrapper icon={FcGoogle} />
                                 Continue With Google
-                            </button> 
-                            <div className="flex items-center my-8 w-full">
-                                <hr className="flex-grow border-grey-100" />
-                                <span className="px-3 text-grey-100">OR</span>
-                                <hr className="flex-grow border-grey-100" />
-                            </div> 
-                            <form onSubmit={handleSubmit} className='w-full'>
+                            </Button>
+                            <div className="my-6 flex items-center">
+                                <hr className="flex-grow border-border" />
+                                <span className="px-3 text-sm text-muted-foreground">OR</span>
+                                <hr className="flex-grow border-border" />
+                            </div>
+                            <form onSubmit={handleSubmit}>
                                 <div className="space-y-4">
                                     <InputField
                                         id="login-email"
@@ -130,7 +106,6 @@ const Login = () => {
                                         required
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
-    
                                     />
                                     <InputField
                                         id="login-password"
@@ -140,22 +115,20 @@ const Login = () => {
                                         required
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
-    
                                     />
                                 </div>
-    
-                                <div className='flex justify-end'>
+                                <div className="flex justify-end">
                                     <span
                                         onClick={() => setShowForgotPassword(true)}
-                                        className="text-font-primary cursor-pointer typography-body mb-6 mt-2 block text-left hover:underline"
+                                        className="mb-6 mt-2 block cursor-pointer text-sm text-foreground hover:underline"
                                     >
                                         Forgot Password?
                                     </span>
                                 </div>
-    
                                 <Button
                                     type="submit"
                                     variant="primary"
+                                    className="w-full"
                                     disabled={mutation.isPending}
                                 >
                                     {mutation.isPending ? 'Logging in...' : 'Login'}

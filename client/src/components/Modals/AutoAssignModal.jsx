@@ -4,7 +4,7 @@ import Modal from './Modal';
 import axios from '../../services/axios';
 import IconWrapper from '../Cards/IconWrapper';
 import { User, X } from '@/components/geode/icons';
-import { useUnknownProfilePicture } from '../../context/ThemeContext';
+import { resolveProfilePicture } from '../../utility/config';
 import * as Sentry from '@sentry/react';
 
 const AutoAssignModal = ({ open, onClose, onAssign, jobId, budgetFilter }) => {
@@ -73,8 +73,6 @@ const AutoAssignModal = ({ open, onClose, onAssign, jobId, budgetFilter }) => {
     const handleAssign = () => {
       onAssign(selectedReviewers);
     };
-  const UNKNOWN_PROFILE_PICTURE_URL = useUnknownProfilePicture()
-  
   
     const customContent = (
       <div className="relative mt-4" >
@@ -131,7 +129,7 @@ const AutoAssignModal = ({ open, onClose, onAssign, jobId, budgetFilter }) => {
                       className="geode-check"
                     />
                     <span className='w-8 h-8 rounded-full overflow-hidden mx-4'>
-                      <img src={reviewer.profilePicture || UNKNOWN_PROFILE_PICTURE_URL } alt="" />
+                      <img src={resolveProfilePicture(reviewer.profilePicture)} alt="" />
                     </span>
                     <span>{reviewer?.firstName + " " + reviewer?.lastName}</span>
                   </label>

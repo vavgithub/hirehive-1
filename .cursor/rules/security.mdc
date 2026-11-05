@@ -1,0 +1,23 @@
+---
+description: Auth, candidate data, uploads, and API boundaries. Use when editing the server, auth, or client services.
+globs: server/**/*.js,client/src/services/**/*.{js,jsx},client/src/auth/**/*.{js,jsx},client/src/routes/**/*.{js,jsx},client/src/context/**/*.{js,jsx}
+alwaysApply: false
+---
+
+# Security
+
+Authorization is the Express middleware in `server/middlewares/authMiddleware.js` (`protect`, `protectCandidate`, `roleProtect`). Hiding a button in `client/src/config/permissions.config.js` is not access control.
+
+Do not trust ids from the client. Scope hiring data to the authenticated user's organization on the server. Read `docs/engineering/SECURITY.md` before changing auth, uploads, or candidate queries.
+
+Validate input at the route that accepts it. Mongoose models are not a substitute for checking the caller's organization.
+
+Keep secrets in the environment. Never put a token, a cookie, or a connection string in the client bundle or in a log line. `VITE_` variables are public.
+
+Resume and video uploads go through `server/middlewares/uploadMiddleware.js`. Keep the MIME allowlist and the size limit. Do not serve the uploads directory as static files.
+
+Do not `eval` untrusted content. Sanitize HTML that came from a user before rendering it. The client already uses DOMPurify in places. Do not remove that.
+
+Do not log candidate names, emails, phones, or resume contents while debugging.
+
+Read `docs/engineering/SECURITY.md` for the open issues. Do not rotate secrets or change cookie flags inside an unrelated edit.

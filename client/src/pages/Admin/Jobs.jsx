@@ -377,15 +377,13 @@ const Jobs = () => {
                     <StatsGrid stats={JobsStats} />
                 </div>
 
-                <div className='flex mt-4'>
-                    <div className='w-[40%]'>
-                        <div className='mb-4 relative '>
-                            <div className='absolute top-[0.75rem] left-4'>
-                                <IconWrapper icon={Search} size={0} customIconSize={3} isInActiveIcon />
-                            </div>
+                <div className='mt-4 flex flex-col gap-4 lg:flex-row'>
+                    <div className='w-full lg:w-80 lg:shrink-0'>
+                        <div className="geode-affix-field mb-4">
+                            <IconWrapper icon={Search} />
                             <input
-                                style={{ paddingLeft: "48px" }}
-                                type='text'
+                                className="geode-affix-input"
+                                type="text"
                                 placeholder="Enter job title"
                                 value={searchQuery}
                                 onChange={handleSearch}
@@ -399,10 +397,10 @@ const Jobs = () => {
                             handleExperienceFilter={handleExperienceFilter}
                             clearAllFilters={clearAllFilters} />
                     </div>
-                    <div className='w-full ml-4 flex flex-col gap-4'>
+                    <div className='flex min-w-0 w-full flex-col gap-4'>
                         {
                             activeTab == "open" && displayJobs.length != 0 && displayJobs.filter(job => job.status === "open").length !== 0 && (
-                                <div className='flex justify-end '>
+                                <div className='flex sm:justify-end'>
                                     <div >
                                         <Button id="createJobBtn" variant="primary" icon={() => <IconWrapper inheritColor icon={CirclePlus} size={0} customIconSize={5} customStrokeWidth={5} />} iconPosition="left" onClick={handleCreateJob}>Create A Job Listing</Button>
                                     </div>
@@ -414,7 +412,7 @@ const Jobs = () => {
                                 <Loader />
                             </div>
                         ) : (displayJobs.length === 0 || displayJobs.filter(job => job.status === activeTab).length === 0) ? (
-                            <div className='bg-background-100 h-full flex flex-col p-36 justify-center items-center rounded-xl'>
+                            <div className='flex h-full flex-col items-center justify-center rounded-xl bg-background-100 p-6 text-center'>
                                 <GeodePlaceholder label="Illustration" />
                                 <span className='typography-body m-6'>
                                     Create a job post to attract top talent and build your dream team

@@ -717,12 +717,12 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
         <div className='absolute top-0 z-10 right-0 flex items-center justify-center h-full w-full bg-[#00000080] rounded-xl'>
         </div>}
       {/* Header Part */}
-      <div className='flex justify-between items-center'>
-        <div className='flex items-center gap-4'>
+      <div className='flex flex-wrap items-center justify-between gap-3'>
+        <div className='flex min-w-0 items-center gap-4'>
             <h2>{stageTitle}</h2>
             {stageConfig?.extraHeaderContent && stageConfig?.extraHeaderContent({portfolio : candidateData.jobApplication.professionalInfo.portfolio})}
         </div>
-        <div className='flex items-center w-[40%] justify-end'>
+        <div className='flex shrink-0 items-center justify-end gap-2'>
             {stageBasedConfig?.hasUndoButton && <button type='button' className={(stageBasedConfig?.hasUndoButtonDisabled ? "opacity-40" : "") + " mr-2"} disabled={stageBasedConfig?.hasUndoButtonDisabled} onClick={handleUndoAction} >
                 {
                     stageBasedConfig?.hasUndoButtonDisabled ? 
@@ -946,9 +946,9 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
             />
           )
         }
-        <div className={`flex w-full items-stretch ${stageBasedConfig?.showMultipleReviewersScore && multipleReviewersData?.length > 0 ? 'gap-5' : 'gap-4'}`}>
+        <div className={`flex w-full min-w-0 flex-col items-stretch lg:flex-row ${stageBasedConfig?.showMultipleReviewersScore && multipleReviewersData?.length > 0 ? 'gap-5' : 'gap-4'}`}>
             {!showPortfolioDualEvaluation && !showReviewerEvaluationOnly && (stageBasedConfig?.hasRemarks || stageBasedConfig?.hasRejectionReason || stageBasedConfig?.hasScoreBoard || (stageBasedConfig?.showOwnReview && currentAdditionalReviewer?.feedback !== undefined && currentAdditionalReviewer?.feedback !== null)) && 
-            <div className={`flex flex-col justify-between gap-4 ${stageBasedConfig?.showMultipleReviewersScore && multipleReviewersData?.length > 0 ? 'w-full' : 'w-[75%]'}`}>
+            <div className={`flex min-w-0 flex-col justify-between gap-4 ${stageBasedConfig?.showMultipleReviewersScore && multipleReviewersData?.length > 0 ? 'w-full' : 'w-full lg:w-3/4'}`}>
             {(!(stageBasedConfig?.showMultipleReviewersScore &&
                 multipleReviewersData?.length > 0) || stageBasedConfig?.showOwnReview ) && (stageBasedConfig?.hasRemarks || stageBasedConfig?.hasRejectionReason || stageBasedConfig?.showOwnReview) && 
                 <div className='mt-4'>

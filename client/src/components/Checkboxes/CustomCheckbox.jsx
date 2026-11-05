@@ -1,12 +1,11 @@
-export const CustomCheckbox = ({ label, icon: Icon, isChecked, onChange, count }) => (
-    <div
-        className={`flex flex-col items-center justify-center gap-geode-2 px-geode-3 py-geode-3 rounded-xl cursor-pointer hover:outline-accent-100 hover:outline hover:outline-2 ${isChecked ? ' selection-primary ' : 'bg-background-80 text-font-gray'
-            }`}
+export const CustomCheckbox = ({ label, icon: Icon, isChecked, onChange }) => (
+    <button
+        type="button"
+        aria-pressed={isChecked}
+        className={`inline-flex items-center gap-2 ${isChecked ? 'geode-chip geode-chip-on' : 'geode-chip'}`}
         onClick={onChange}
     >
         <Icon />
-        <span className="typography-large-p text-center">
-            {label}
-        </span>
-    </div>
+        <span>{label}</span>
+    </button>
 );

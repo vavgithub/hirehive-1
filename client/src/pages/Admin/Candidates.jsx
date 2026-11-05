@@ -121,8 +121,7 @@ const Candidates = () => {
     <Container >
       <Header HeaderText="Candidates" />
       <StyledCard >
-        <div className="w-full max-w-7xl relative mb-4">
-          <div className="absolute right-0 z-10 h-full w-28 bg-gradient-to-tr from-background via-background-green to-transparent pointer-events-none" />
+        <div className="mb-4">
           <StatsGrid stats={statsOne} />
         </div>
         <div >

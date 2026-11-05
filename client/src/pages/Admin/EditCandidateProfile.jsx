@@ -8,7 +8,7 @@ import { showSuccessToast } from '../../components/ui/Toast';
 import Loader from '../../components/Loaders/Loader';
 import StyledCard from '../../components/Cards/StyledCard';
 import Container from '../../components/Cards/Container';
-import { useUnknownProfilePicture } from '../../context/ThemeContext';
+import { resolveProfilePicture } from '../../utility/config';
 import { updateCandidateProfile } from '../../services/admin.candidate.service';
 
 
@@ -22,8 +22,6 @@ const EditCandidateProfile = () => {
   const { id: mainId } = useParams();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const UNKNOWN_PROFILE_PICTURE_URL = useUnknownProfilePicture();
-
 
   const { data, error, isLoading } = useQuery({
     queryKey: ['candidate', mainId],
@@ -99,7 +97,7 @@ const EditCandidateProfile = () => {
             <div className='flex gap-6 mt-5'>
               <StyledCard backgroundColor={"bg-background-90"} padding={2} extraStyles=' w-96 h-96  flex flex-col items-center'>
                 <div className='to-background-100 w-64 rounded-xl overflow-hidden'>
-                  <img src={data.profilePictureUrl || UNKNOWN_PROFILE_PICTURE_URL} alt="" className='object-cover h-full' />
+                  <img src={resolveProfilePicture(data.profilePictureUrl)} alt="" className='h-full object-cover' />
                 </div>
                 <h2 className='mt-4'>
                   {data.firstName} {data.lastName}

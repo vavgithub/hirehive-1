@@ -16,7 +16,7 @@ import { useNavigate } from 'react-router-dom';
 import GlobalDropDown from '../Dropdowns/GlobalDropDown';
 import { saveCompanyDetails, sendJoinRequest } from '../../services/auth.service';
 import { LocationInputField } from '../Inputs/LocationInputField';
-import { useUnknownProfilePicture } from '../../context/ThemeContext';
+import { resolveProfilePicture } from '../../utility/config';
 import * as Sentry from '@sentry/react';
 
 export const LocationOptions = [
@@ -133,8 +133,6 @@ function CompanyDetails({currentStep,setCurrentStep}) {
     const isFirstRender = useRef(true);
 
     const navigate = useNavigate();
-    const UNKNOWN_PROFILE_PICTURE_URL = useUnknownProfilePicture()
-
     const handleFileSelect = (event) => {
       const file = event.target.files[0];
       if (!file) return;
@@ -293,7 +291,7 @@ function CompanyDetails({currentStep,setCurrentStep}) {
                   >
                       <div className='flex justify-start w-full gap-4'>
                         <div className="relative w-20 h-20">
-                          <img src={previewUrl || UNKNOWN_PROFILE_PICTURE_URL } alt="Profile" className="w-full h-full object-cover rounded-full" />
+                          <img src={previewUrl || resolveProfilePicture()} alt="Profile" className="size-full rounded-full object-cover" />
                         </div>
                         <div className="flex flex-col items-start">
                           <span className="typography-small-p text-font-gray my-2">

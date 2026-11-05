@@ -1,12 +1,11 @@
 import { ChevronDown } from '@/components/geode/icons';
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import StyledMenu from '../MUIUtilities/StyledMenu';
 import StyledCard from '../Cards/StyledCard';
 
 // StatCard component (unchanged)
-const StatCard = ({ cardBg = 'primary', title, value, icon: Icon, statistics }) => {
+const StatCard = ({ title, value, icon: Icon, statistics }) => {
   const [currentStatistics, setCurrentStatistics] = useState('');
-  const [index, setIndex] = useState(0);
   const [show, setShow] = useState(false);
 
 
@@ -58,60 +57,25 @@ const StatCard = ({ cardBg = 'primary', title, value, icon: Icon, statistics }) 
   ]
 
   return (
-    <StyledCard backgroundColor={cardBg === 'secondary' ? 'bg-background-80' : 'bg-background-100'} padding={2} extraStyles="flex  overflow-hidden justify-between relative items-center   min-w-[15rem] max-w-[15rem]">
-      <div className=" w-full ">
-        <p className="typography-small-p text-font-teritiary w-max mb-2">{title}</p>
-        <h2 className="pb-2">{value ?? 0}</h2>
-        {<p key={currentStatistics} onClick={currentStatistics ? handleDropDown : undefined} className={`typography-small-p min-h-[18px] relative z-[1] text-font-teritiary  flex items-center gap-1  ${currentStatistics ? "cursor-pointer" : ""}`}>
-          <span className={/\-/.test(currentStatistics?.split(' ')[0]) ? 'text-red-40' : 'text-green-70'}>{currentStatistics && (/\-/.test(currentStatistics?.split(' ')[0]) || '+')}{currentStatistics?.split(' ')[0]}</span> {currentStatistics?.split(' ').slice(1).join(' ')}
-          {
-            currentStatistics &&
-            <span><ChevronDown size={14} /></span>
-          }
-
-        </p>}
+    <StyledCard padding={3} extraStyles="flex flex-col gap-2">
+      <div className="flex items-center justify-between gap-2">
+        <p className="text-sm text-muted-foreground">{title}</p>
+        {Icon ? <span className="text-muted-foreground"><Icon /></span> : null}
       </div>
-      <div  className='absolute z-0 -right-5 -bottom-4'>
-        <Icon />
-      </div>
+      <h2 className="text-2xl font-medium">{value ?? 0}</h2>
+      <p key={currentStatistics} onClick={currentStatistics ? handleDropDown : undefined} className={`flex min-h-4 items-center gap-1 text-sm text-muted-foreground ${currentStatistics ? 'cursor-pointer' : ''}`}>
+        <span className={/\-/.test(currentStatistics?.split(' ')[0]) ? 'text-destructive' : 'text-foreground'}>{currentStatistics && (/\-/.test(currentStatistics?.split(' ')[0]) || '+')}{currentStatistics?.split(' ')[0]}</span> {currentStatistics?.split(' ').slice(1).join(' ')}
+        {currentStatistics ? <ChevronDown size={16} strokeWidth={2} aria-hidden="true" /> : null}
+      </p>
       <StyledMenu itemComponents={dropdownComponents} anchorEl={show} handleMenuClose={() => setShow(null)} />
     </StyledCard>
   )
 };
 
 // Updated StatsGrid component with horizontal mouse wheel scroll
-const StatsGrid = ({ cardBg , stats }) => {
-  const scrollContainerRef = useRef(null);
-
-  useEffect(() => {
-    const handleWheel = (e) => {
-      if (scrollContainerRef.current) {
-        e.preventDefault();
-        scrollContainerRef.current.scrollLeft += e.deltaY;
-      }
-    };
-
-    const container = scrollContainerRef.current;
-    if (container) {
-      container.addEventListener('wheel', handleWheel, { passive: false });
-    }
-
-    return () => {
-      if (container) {
-        container.removeEventListener('wheel', handleWheel);
-      }
-    };
-  }, []);
-
+const StatsGrid = ({ cardBg, stats }) => {
   return (
-    <div
-      ref={scrollContainerRef}
-      className="flex gap-4 overflow-x-auto scrollbar-hide"
-      style={{
-        msOverflowStyle: 'none',  /* IE and Edge */
-        scrollbarWidth: 'none',   /* Firefox */
-      }}
-    >
+    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
       {stats.map((stat, index) => (
         <StatCard cardBg={cardBg} key={index} title={stat.title} value={stat.value} icon={stat.icon} statistics={stat.statistics} />
       ))}

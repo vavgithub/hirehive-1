@@ -24,35 +24,31 @@ import { editCompanyProfile } from '../../services/auth.service';
 import * as Sentry from '@sentry/react';
 import { LocationInputField } from '../../components/Inputs/LocationInputField';
 import { validationRules } from '../../utility/validationRules';
-import { useUnknownProfilePicture } from '../../context/ThemeContext';
+import { resolveProfilePicture } from '../../utility/config';
 
 const CompanyOverview = ({ companyDetails, isEditing, control ,setValue }) => {
   return (
     <div>
       <h3 className="typography-h3 mb-6">Company Overview</h3>
       {!isEditing ? (
-        <div className="flex justify-between flex-col gap-6 sm:flex-row">
-          <div className="grid grid-cols-2 sm:w-[45%] gap-[10%]">
-            <div className="flex flex-col gap-6 typography-body">
-              <p className="text-font-gray whitespace-nowrap">Company Name</p>
-              <p className="text-font-gray whitespace-nowrap">Company Location</p>
-            </div>
-            <div className="flex flex-col gap-6 typography-body">
-              <p className="whitespace-nowrap overflow-hidden text-ellipsis">{companyDetails?.name ?? '-'}</p>
-              <p className="whitespace-nowrap overflow-hidden text-ellipsis">{(companyDetails.geoLocation && companyDetails?.location) ? companyDetails?.location : LocationOptions.find(loc => loc.value === companyDetails.location)?.label ?? '-'}</p>
-            </div>
+        <dl className="grid gap-6 sm:grid-cols-2">
+          <div className="flex min-w-0 flex-col gap-1">
+            <dt className="typography-body text-font-gray">Company Name</dt>
+            <dd className="typography-body break-words">{companyDetails?.name ?? '-'}</dd>
           </div>
-          <div className="grid grid-cols-2 sm:w-[45%] gap-[10%] justify-between">
-            <div className="flex flex-col gap-6 typography-body">
-              <p className="text-font-gray whitespace-nowrap">Company Size</p>
-              <p className="text-font-gray whitespace-nowrap">Industry</p>
-            </div>
-            <div className="flex flex-col gap-6 typography-body">
-              <p className="whitespace-nowrap overflow-hidden text-ellipsis ">{companySizeOptions.find(size => size.value === companyDetails?.size)?.label ?? '-'}</p>
-              <p className="whitespace-nowrap overflow-hidden text-ellipsis ">{industryTypeOptions.find(type => type.value === companyDetails?.industryType)?.label ?? '-'}</p>
-            </div>
+          <div className="flex min-w-0 flex-col gap-1">
+            <dt className="typography-body text-font-gray">Company Location</dt>
+            <dd className="typography-body break-words">{(companyDetails.geoLocation && companyDetails?.location) ? companyDetails?.location : LocationOptions.find(loc => loc.value === companyDetails.location)?.label ?? '-'}</dd>
           </div>
-        </div>
+          <div className="flex min-w-0 flex-col gap-1">
+            <dt className="typography-body text-font-gray">Company Size</dt>
+            <dd className="typography-body break-words">{companySizeOptions.find(size => size.value === companyDetails?.size)?.label ?? '-'}</dd>
+          </div>
+          <div className="flex min-w-0 flex-col gap-1">
+            <dt className="typography-body text-font-gray">Industry</dt>
+            <dd className="typography-body break-words">{industryTypeOptions.find(type => type.value === companyDetails?.industryType)?.label ?? '-'}</dd>
+          </div>
+        </dl>
       ) : (
         <div className="grid grid-cols-2 gap-4">
           <Controller
@@ -279,7 +275,6 @@ function CompanyProfile() {
         sessionId : ''
     },
     });
-    const UNKNOWN_PROFILE_PICTURE_URL = useUnknownProfilePicture();
     const handleProfilePictureUpload = (event) => {
         const file = event.target.files[0];
         if (!file) return;
@@ -367,7 +362,7 @@ function CompanyProfile() {
                   <div className="relative w-[8rem] min-h-[5rem]">
                     <div className=" w-[8rem] left-0 -top-14 aspect-square overflow-hidden rounded-full">
                       <img
-                        src={ profileFile ? URL.createObjectURL(profileFile) : (companyDetails?.logoUrl || UNKNOWN_PROFILE_PICTURE_URL) }
+                        src={ profileFile ? URL.createObjectURL(profileFile) : resolveProfilePicture(companyDetails?.logoUrl) }
                         alt=""
                         className="object-cover w-full h-full"
                       />

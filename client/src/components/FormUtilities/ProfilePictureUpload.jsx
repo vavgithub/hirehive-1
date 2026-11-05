@@ -2,7 +2,7 @@
 import React, { useRef } from 'react';
 import { Button } from '../Buttons/Button';
 import StyledCard from '../Cards/StyledCard';
-import { useUnknownProfilePicture } from '../../context/ThemeContext';
+import { resolveProfilePicture } from '../../utility/config';
 
 export const ProfilePictureUpload = ({ 
   previewUrl,
@@ -10,8 +10,6 @@ export const ProfilePictureUpload = ({
   error
 }) => {
   const fileInputRef = useRef(null);
-
-  const UNKNOWN_PROFILE_PICTURE_URL = useUnknownProfilePicture()
 
   const handleFileSelect = (event) => {
     const file = event.target.files[0];
@@ -30,7 +28,7 @@ export const ProfilePictureUpload = ({
       >
           <div className='flex justify-start w-full gap-4'>
             <div className="relative w-24 h-24">
-              <img src={previewUrl || UNKNOWN_PROFILE_PICTURE_URL} alt="Profile" className="w-full h-full object-cover rounded-full" />
+              <img src={previewUrl || resolveProfilePicture()} alt="Profile" className="size-full rounded-full object-cover" />
               {/* <div className="absolute bottom-0 right-0 p-1 bg-background-90 rounded-full">
               </div> */}
             </div>

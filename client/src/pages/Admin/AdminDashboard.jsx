@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { industryTypeOptions, LocationOptions } from '../../components/Register/CompanyDetails'
 import { formatPhoneNumber } from '../../components/Form/PhoneInputField'
 import { useAuthContext } from '../../context/AuthProvider'
-import { useUnknownProfilePicture } from '../../context/ThemeContext'
+import { resolveProfilePicture } from '../../utility/config'
 import { getRoute, ROUTE_KEY } from '../../config/permissions.config'
 import { getAdminDashboard, getAdminDashboardSecondary } from '../../services/admin.service'
 import { formatIntoDateString } from '../../utility/formatTime'
@@ -28,7 +28,6 @@ function applicationSeries(details, period) {
 function AdminDashboard() {
   const { user } = useAuthContext()
   const navigate = useNavigate()
-  const unknownProfilePicture = useUnknownProfilePicture()
   const [period, setPeriod] = useState('monthly')
 
   const { data: dashboardDetails, isLoading: isPrimaryLoading } = useQuery({
@@ -81,7 +80,7 @@ function AdminDashboard() {
       hourly: displayOrDash(row.hourlyRate),
       currentCtc: displayOrDash(row.currentCTC),
       expectedCtc: displayOrDash(row.expectedCTC),
-      avatar: row.profilePictureUrl || unknownProfilePicture,
+      avatar: resolveProfilePicture(row.profilePictureUrl),
       jobId: row.jobApplications?.jobId,
     }))
 
@@ -94,7 +93,7 @@ function AdminDashboard() {
         rows: leaders,
       },
     }
-  }, [dashboardDetails, dashboardSecondaryDetails, unknownProfilePicture])
+  }, [dashboardDetails, dashboardSecondaryDetails])
 
   const openCandidate = (candidateId, jobId) => {
     navigate(`${getRoute(user?.role, ROUTE_KEY.CANDIDATES_VIEW_CANDIDATE)}/${candidateId}/${jobId}`)
@@ -109,7 +108,7 @@ function AdminDashboard() {
       applicationSeries={applicationSeries(dashboardDetails, period)}
       company={{
         name: companyDetails?.name,
-        logoUrl: companyDetails?.logoUrl || unknownProfilePicture,
+        logoUrl: resolveProfilePicture(companyDetails?.logoUrl),
         location: locationLabel,
         industry: industryLabel,
         employees: dashboardDetails?.members?.length ?? 0,

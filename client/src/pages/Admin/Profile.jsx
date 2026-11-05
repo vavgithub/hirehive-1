@@ -20,7 +20,7 @@ import { formatPhoneNumber, PhoneInputField } from '../../components/Form/PhoneI
 import { validationRules } from '../../utility/validationRules';
 import { editUserProfile } from '../../services/auth.service';
 import * as Sentry from '@sentry/react';
-import { useUnknownProfilePicture } from '../../context/ThemeContext';
+import { resolveProfilePicture } from '../../utility/config';
 
 
 
@@ -41,28 +41,24 @@ const PersonalDetails = ({ userData, isEditing, control }) => {
     <div>
       <h3 className="mb-6">Personal Details</h3>
       {!isEditing ? (
-        <div className="flex justify-between flex-col gap-6 sm:flex-row">
-          <div className="grid grid-cols-2 sm:w-[45%] gap-[10%]">
-            <div className="flex flex-col gap-6 typography-body">
-              <p className="text-font-gray whitespace-nowrap">First Name</p>
-              <p className="text-font-gray whitespace-nowrap">Email</p>
-            </div>
-            <div className="flex flex-col gap-6 typography-body">
-              <p className="whitespace-nowrap overflow-hidden text-ellipsis">{userData?.firstName ?? '-'}</p>
-              <p className="whitespace-nowrap overflow-hidden text-ellipsis">{userData.email}</p>
-            </div>
+        <dl className="grid gap-6 sm:grid-cols-2">
+          <div className="flex min-w-0 flex-col gap-1">
+            <dt className="typography-body text-font-gray">First Name</dt>
+            <dd className="typography-body break-words">{userData?.firstName ?? '-'}</dd>
           </div>
-          <div className="grid grid-cols-2 sm:w-[45%] gap-[10%] justify-between">
-            <div className="flex flex-col gap-6 typography-body">
-              <p className="text-font-gray whitespace-nowrap">Last Name</p>
-              <p className="text-font-gray whitespace-nowrap">Phone Number</p>
-            </div>
-            <div className="flex flex-col gap-6 typography-body">
-              <p className="whitespace-nowrap overflow-hidden text-ellipsis ">{userData?.lastName ?? '-'}</p>
-              <p>{formatPhoneNumber(userData.phone)}</p>
-            </div>
+          <div className="flex min-w-0 flex-col gap-1">
+            <dt className="typography-body text-font-gray">Last Name</dt>
+            <dd className="typography-body break-words">{userData?.lastName ?? '-'}</dd>
           </div>
-        </div>
+          <div className="flex min-w-0 flex-col gap-1">
+            <dt className="typography-body text-font-gray">Email</dt>
+            <dd className="typography-body break-all">{userData.email}</dd>
+          </div>
+          <div className="flex min-w-0 flex-col gap-1">
+            <dt className="typography-body text-font-gray">Phone Number</dt>
+            <dd className="typography-body">{formatPhoneNumber(userData.phone)}</dd>
+          </div>
+        </dl>
       ) : (
         <div className="grid grid-cols-2 gap-4">
           <Controller
@@ -147,8 +143,6 @@ function Profile() {
   const [profileFile, setProfileFile] = useState(null);
   const { mutate: uploadPicture, isLoading: uploading } = useProfilePicture();
   const queryClient = useQueryClient();
-  const UNKNOWN_PROFILE_PICTURE_URL = useUnknownProfilePicture()
-
 
   const { control, handleSubmit, reset } = useForm({
     defaultValues: {
@@ -247,7 +241,7 @@ function Profile() {
                   <div className="relative w-[8rem] min-h-[5rem]">
                     <div className=" w-[8rem] left-0 -top-14 aspect-square overflow-hidden rounded-full">
                       <img
-                        src={profileFile ? URL.createObjectURL(profileFile) : user?.profilePicture || UNKNOWN_PROFILE_PICTURE_URL }
+                        src={profileFile ? URL.createObjectURL(profileFile) : resolveProfilePicture(user?.profilePicture) }
                         alt=""
                         className="object-cover w-full h-full"
                       />
@@ -271,8 +265,8 @@ function Profile() {
                       </button>
                     )}
                   </div>
-                  <div className='max-w-[60%] overflow-hidden py-1 text-ellipsis'>
-                    <h2 className="whitespace-nowrap overflow-hidden w-full text-ellipsis ">
+                  <div className='min-w-0 flex-1 py-1'>
+                    <h2 className="break-words">
                       {user?.firstName + " " + user?.lastName}
                     </h2>
                     <p className='flex items-center gap-4 typography-large-p text-font-gray mt-4'>{user?.role}<span className='w-[6px] h-[6px] bg-font-gray inline-block rounded-full'></span>{user?.location ?? "-"}</p>

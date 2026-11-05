@@ -1,0 +1,19 @@
+---
+description: Client performance. Use when changing data fetching, bundles, lists, or images.
+globs: client/src/services/**/*.{js,jsx},client/src/redux/**/*.{js,jsx},client/vite.config.js,client/src/pages/**/*.{js,jsx}
+alwaysApply: false
+---
+
+# Performance
+
+Measure before changing structure. The staging build on 29 Oct 2026 produced one JavaScript chunk of about 5.5 MB (about 1.7 MB gzip). That is recorded in `docs/engineering/PERFORMANCE.md`. Do not add a bundle visualizer or a new data library until a change needs it.
+
+This client loads as one Vite bundle. There is no server-component split to move code into. Code-split a heavy screen with `React.lazy` only when that screen is off the first path and the split is measured.
+
+Do not fetch the same resource in a parent and a child. TanStack Query is the cache. Do not add a second cache.
+
+Do not add another date library. The client already has `dayjs`, `date-fns`, and `luxon`.
+
+Large tables already use the shared data grid. Do not virtualize one until a profile shows jank.
+
+Give images a size when you add them, so the layout does not jump. Do not add a font loader. Gilroy is already bundled.

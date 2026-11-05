@@ -52,3 +52,7 @@ The functioning admin app wears this skin on the `rebrand` branch, which deploys
 Do not wrap a page in a second `GeodeShell`. The layout already provides it. Do not target `prod-main` with this skin.
 
 Do not put secrets in the client. Do not log tokens or session data.
+
+## Engineering setup
+
+Product UI still follows this file. Broader agent setup lives in `docs/engineering/AI_WORKFLOW.md`. Rules are `.cursor/rules`. Official skills are `.agents/skills`. Project skills are `.cursor/skills`. The client check is `npm run check` in `client/`.

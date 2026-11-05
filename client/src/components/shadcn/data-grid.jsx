@@ -193,7 +193,7 @@ function DataGrid({
               <Button
                 key={size}
                 size="sm"
-                variant={Number(size) === Number(pageSize) ? 'secondary' : 'outline'}
+                variant={Number(size) === Number(pageSize) ? 'primary' : 'outline'}
                 onClick={() => onPaginationModelChange?.({ page: 0, pageSize: Number(size) })}
                 aria-pressed={Number(size) === Number(pageSize)}
               >

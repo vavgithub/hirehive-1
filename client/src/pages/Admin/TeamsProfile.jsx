@@ -18,7 +18,7 @@ import Container from '../../components/Cards/Container'
 import IconWrapper from '../../components/Cards/IconWrapper'
 import { PencilLine } from '@/components/geode/icons'
 import { formatPhoneNumber } from '../../components/Form/PhoneInputField'
-import { useUnknownProfilePicture } from '../../context/ThemeContext'
+import { resolveProfilePicture } from '../../utility/config'
 import { changeMemberStatus, editMember, getAllTeamMembers, reInviteMember } from '../../services/admin.service'
 
 function PersonalDetails({ memberData, isEditing, control }) {
@@ -26,28 +26,24 @@ function PersonalDetails({ memberData, isEditing, control }) {
     <StyledCard padding={2} backgroundColor="bg-background-90">
       <h2 className="mb-4">Personal Details</h2>
       {!isEditing ? (
-        <div className="flex justify-between flex-col gap-6 sm:flex-row">
-          <div className="grid grid-cols-2 sm:w-[45%] gap-[10%]">
-            <div className="flex flex-col gap-6 typography-body">
-              <p className="text-font-gray whitespace-nowrap">First Name</p>
-              <p className="text-font-gray whitespace-nowrap">Email</p>
-            </div>
-            <div className="flex flex-col gap-6 typography-body">
-              <p className="whitespace-nowrap overflow-hidden text-ellipsis">{memberData?.firstName}</p>
-              <p className="whitespace-nowrap overflow-hidden text-ellipsis">{memberData?.email}</p>
-            </div>
+        <dl className="grid gap-6 sm:grid-cols-2">
+          <div className="flex min-w-0 flex-col gap-1">
+            <dt className="typography-body text-font-gray">First Name</dt>
+            <dd className="typography-body break-words">{memberData?.firstName}</dd>
           </div>
-          <div className="grid grid-cols-2 sm:w-[45%] gap-[10%] justify-between">
-            <div className="flex flex-col gap-6 typography-body">
-              <p className="text-font-gray whitespace-nowrap">Last Name</p>
-              <p className="text-font-gray whitespace-nowrap">Phone Number</p>
-            </div>
-            <div className="flex flex-col gap-6 typography-body">
-              <p className="whitespace-nowrap overflow-hidden text-ellipsis">{memberData?.lastName ?? '-'}</p>
-              <p>{formatPhoneNumber(memberData?.phone) ?? "NA"}</p>
-            </div>
+          <div className="flex min-w-0 flex-col gap-1">
+            <dt className="typography-body text-font-gray">Last Name</dt>
+            <dd className="typography-body break-words">{memberData?.lastName ?? '-'}</dd>
           </div>
-        </div>
+          <div className="flex min-w-0 flex-col gap-1">
+            <dt className="typography-body text-font-gray">Email</dt>
+            <dd className="typography-body break-all">{memberData?.email}</dd>
+          </div>
+          <div className="flex min-w-0 flex-col gap-1">
+            <dt className="typography-body text-font-gray">Phone Number</dt>
+            <dd className="typography-body">{formatPhoneNumber(memberData?.phone) ?? "NA"}</dd>
+          </div>
+        </dl>
       ) : (
         <div className="flex flex-col gap-4">
           <Controller
@@ -170,8 +166,6 @@ function TeamsProfile() {
   const { id: memberId } = useParams();
 
   const queryClient = useQueryClient();
-  const UNKNOWN_PROFILE_PICTURE_URL = useUnknownProfilePicture()
-
   const { data: teamMembers, isLoading: isTeamMembersLoading } = useQuery({
     queryKey: ['team_members'],
     queryFn: getAllTeamMembers,
@@ -290,7 +284,7 @@ function TeamsProfile() {
               </button>}
               <div className="relative w-[8rem] min-h-[5rem] ">
                 <div className="absolute w-[8rem] left-0  -top-14 aspect-square overflow-hidden rounded-full">
-                  <img src={member?.profilePicture ? member?.profilePicture : UNKNOWN_PROFILE_PICTURE_URL} alt="" className="object-cover w-full" />
+                  <img src={resolveProfilePicture(member?.profilePicture)} alt="" className="aspect-square w-full object-cover" />
                 </div>
               </div>
               <h1 className="whitespace-nowrap overflow-hidden w-full text-ellipsis text-center">{member?.firstName + " " + member?.lastName}</h1>

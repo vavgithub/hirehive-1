@@ -537,21 +537,21 @@ const Table = ({
 
 
   return (
-    <div className='w-full'>
+    <div className='w-full min-w-0 max-w-full'>
 
       {(autoAssignMutation.isPending ||
         rejectCandidateMutation.isPending ||
         moveCandidateMutation.isPending || isTableDataLoading) && <LoaderModal />}
 
-      <div className='flex justify-between pb-4 gap-2'>
+      <div className='flex flex-col gap-2 pb-4 sm:flex-row sm:items-center sm:justify-between'>
 
         {/* {here is the place to add the search bar ,  filter , export button } */}
 
-        <div className='flex gap-4 items-center'>
+        <div className='flex min-w-0 flex-wrap items-center gap-2'>
           <input
             type="text"
             placeholder="Search by name or email or phone"
-            className='min-w-[18.75rem]'
+            className='h-10 w-full min-w-0 sm:max-w-xs'
             value={searchTerm}
             onChange={handleSearch}
           />

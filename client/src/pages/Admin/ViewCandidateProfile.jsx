@@ -35,7 +35,8 @@ import { getRoute, hasPermission, hasRoutePermission, PERMISSIONS, ROUTE_KEY } f
 import { fetchTotalScore, updateCandidateRating } from '../../services/hr.service';
 import { addNotes, fetchCandidateData, fetchCandidateJobs, toggleShortlistStatus } from '../../services/admin.candidate.service';
 import { fetchAllDesignReviewers } from '../../services/auth.service';
-import { useScoreBg, useUnknownProfilePicture } from '../../context/ThemeContext';
+import { useScoreBg } from '../../context/ThemeContext';
+import { resolveProfilePicture } from '../../utility/config';
 
 export const VAVScoreCard = ({ score, stage, scoreStages }) => {
     const [showBreakDown, setShowBreakDown] = useState(false);
@@ -379,8 +380,6 @@ const ViewCandidateProfile = () => {
         }
     };
 
-    const UNKNOWN_PROFILE_PICTURE_URL = useUnknownProfilePicture();
-
     useEffect(() => {
         if (data) console.log('jobProfile:', data?.jobApplication?.jobProfile);
     }, [data]);
@@ -499,9 +498,7 @@ const reviewerName = currentReviewer
     ? `${fallbackReviewer.firstName ?? ""} ${fallbackReviewer.lastName ?? ""}`.trim()
     : "";
 
-const reviewerProfilePic = currentReviewer?.profilePicture
-  ?? fallbackReviewer?.profilePicture
-  ?? UNKNOWN_PROFILE_PICTURE_URL;
+const reviewerProfilePic = resolveProfilePicture(currentReviewer?.profilePicture ?? fallbackReviewer?.profilePicture);
 
 
     return (
@@ -516,7 +513,7 @@ const reviewerProfilePic = currentReviewer?.profilePicture
                 handleAction={handleAction}
                 onBack={handleBack} // Pass custom back handler
                 rightContent={hasPermission(role,PERMISSIONS.SHOW_JOB_SWITCH) &&
-                    <div className='flex items-center h-full w-72 z-10'>
+                    <div className='flex h-full w-full max-w-xs items-center z-10'>
                         <GlobalDropDown
                         bgColor='bg-background-80'
                         extraStylesForLabel=" hidden "
@@ -532,12 +529,12 @@ const reviewerProfilePic = currentReviewer?.profilePicture
             {
                 hasPermission(role,PERMISSIONS.SHOW_CANDIDATE_PROFILE_CARD) && (
                     <div className="flex gap-3">
-                        <StyledCard padding={2} backgroundColor={'bg-background-100'} extraStyles="w-full flex gap-4 relative justify-between relative">
-                            <div className='flex gap-4 items-end'>
-                                <div className="relative to-background-100 w-[210px] min-h-auto max-h-[210px] rounded-xl overflow-hidden">
-                                    <img src={data.profilePictureUrl || UNKNOWN_PROFILE_PICTURE_URL} alt="" className='object-cover w-full overflow-hidden' />
+                        <StyledCard padding={2} backgroundColor={'bg-background-100'} extraStyles="w-full flex flex-col gap-4 relative justify-between lg:flex-row">
+                            <div className='flex min-w-0 flex-col gap-4 sm:flex-row sm:items-end'>
+                                <div className="relative w-32 shrink-0 overflow-hidden rounded-xl sm:w-40">
+                                    <img src={resolveProfilePicture(data.profilePictureUrl)} alt="" className='aspect-square w-full object-cover' />
                                 </div>
-                                <div className={`flex flex-col gap-2 ${candidateData?.jobApplication?.notes?.content ? ' max-w-[60%] ' : ''}`}>
+                                <div className="flex min-w-0 flex-col gap-2">
                                     <h2>
                                         {data.firstName} {data.lastName}
                                     </h2>
@@ -558,7 +555,7 @@ const reviewerProfilePic = currentReviewer?.profilePicture
                                             <div className="flex items-center gap-4 min-w-0 flex-nowrap overflow-hidden">
                                                 <div className="flex items-center gap-2 overflow-hidden cursor-pointer min-w-0" onClick={() => handleEmailCopy(data?.email)}>
                                                         <IconWrapper size={0} customIconSize={2} icon={Mail} />
-                                                    <span className="typography-large-p whitespace-nowrap text-ellipsis overflow-hidden min-w-0">{data.email}</span>
+                                                    <span className="typography-large-p min-w-0 break-all">{data.email}</span>
                                                 </div>
                                                 {data?.dob && (
                                                     <div className="flex items-center gap-2 overflow-hidden">

@@ -1,65 +1,30 @@
 import React from 'react';
 
-function IconWrapper({ icon  : Icon, isActiveIcon, inheritColor , isTeritiaryIcon, isInActiveIcon, isErrorIcon, customIconSize, customStrokeWidth, children , hasBg , customBgHover ,size, ...props }) {  // Accept props explicitly
-    const bgStyles = hasBg ? (typeof hasBg === "string" && hasBg?.trim() !== 'bg-background-70') ? hasBg : ` bg-background-70` : '';
-    const hoverStyles = ` ${hasBg ? customBgHover ? customBgHover : "hover:bg-accent-300" : ''} `;
-    
-    const sizeOptions = {
-        0 : 'w-fit h-fit',
-        1 : 'min-w-4 w-4 h-4',
-        2 : 'min-w-6 w-6 h-6',
-        3 : 'min-w-9 w-9 h-9', 
-        4 : 'min-w-11 w-11 h-11', 
-        5 : 'min-w-12 w-12 h-12', 
-        6 : 'min-w-12 w-12 h-12',
-        10 : 'min-w-24 w-24 h-24' 
-    }
+const omittedIconProps = [
+  'isActiveIcon',
+  'inheritColor',
+  'isTeritiaryIcon',
+  'isInActiveIcon',
+  'customIconSize',
+  'customStrokeWidth',
+  'hasBg',
+  'customBgHover',
+  'size',
+]
 
-    const strokeWidthOptions = {
-      0 : 0,
-      1 : 1,
-      2 : 1,
-      3 : 1, 
-      4 : 1.5, 
-      5 : 1.5, 
-      6 : 1.5,
-      10 : 2,
-      11 : 3,
-    }
-
-    const iconSizeOptions = {
-      0 : 18,
-      1 : 16,
-      2 : 18,
-      3 : 20, 
-      4 : 22, 
-      5 : 24, 
-      6 : 26,
-      7 : 28,
-      10 : 100
-    }
-
-    const colors = {
-      "primary" : "var(--color-font-accent-100)",
-      "secondary" : "var(--color-font-gray-90)",
-      "teritiary" : "var(--color-background-70)",
-      "error" : "#FF385C",
-      "white" : "#ffffff",
-      "var(--color-font-main)" : "var(--color-font-main)",    
-    }
-
-    const sizeStyles = ` ${(typeof size === 'number') ? sizeOptions[size] : sizeOptions[4]} `
+function IconWrapper({ icon: Icon, isErrorIcon, children, className = '', ...props }) {
+  const rest = { ...props }
+  omittedIconProps.forEach((key) => {
+    delete rest[key]
+  })
 
   return (
-    <div {...props} className={`${bgStyles} ${hoverStyles} ${sizeStyles} inline-flex items-center justify-center rounded-md`}>
-      {Icon ? 
-      <Icon 
-      size={(typeof customIconSize === 'number') ? iconSizeOptions[customIconSize] : (typeof size === 'number') ?  iconSizeOptions[size] : 24} 
-      color={inheritColor ? "currentColor" : isActiveIcon ? colors["primary"] : isInActiveIcon ? colors["secondary"] : isTeritiaryIcon ? colors["teritiary"] : isErrorIcon ? colors['error'] : colors["var(--color-font-main)"]} 
-      strokeWidth={(typeof customStrokeWidth === 'number') ? strokeWidthOptions[customStrokeWidth] : (typeof size === 'number') ?  strokeWidthOptions[size ? size : 1] : 1.5} 
-      /> 
-      : children}
-    </div>
+    <span
+      {...rest}
+      className={`inline-flex size-4 shrink-0 items-center justify-center text-current ${isErrorIcon ? 'text-destructive' : ''} ${className}`}
+    >
+      {Icon ? <Icon size={16} color="currentColor" strokeWidth={2} aria-hidden="true" /> : children}
+    </span>
   );
 }
 
