@@ -48,7 +48,7 @@ function TrialInfoModal({ onClose, secondaryCTA = "Not now, use free version", o
             <ul className='mt-4 flex flex-col gap-3'>
               {FEATURES.map(f => (
                 <li key={f} className='flex items-start gap-3 typography-body text-font-gray'>
-                  <IconWrapper icon={Check} inheritColor customIconSize={0} customStrokeWidth={11} size={0} className='flex-shrink-0 mt-[2px]' />
+                  <IconWrapper icon={Check} inheritColor customIconSize={0} customStrokeWidth={11} size={0} className='flex-shrink-0 mt-0.5' />
                   <span>{f}</span>
                 </li>
               ))}

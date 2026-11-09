@@ -40,8 +40,6 @@ import EnterpriseContactModal from '../../components/Register/EnterpriseContactM
 import StatusBadge from '../../components/ui/StatusBadge'
 import CustomToolTip from '../../components/Tooltip/CustomToolTip'
 import useTrialStatus from '../../hooks/useTrialStatus'
-import { DataGrid } from '@mui/x-data-grid'
-import MuiCustomStylesForDataGrid from '../../components/tableUtilities/MuiCustomStylesForDataGrid'
 
 const PLAN_CONFIG = {
   free: {
@@ -109,36 +107,47 @@ const formatMemberName = (firstName = '', lastName = '') => {
     .join(' ')
 }
 
-const MANAGE_PLAN_TABLE_SX = {
-  '& .padded-col': {
-    paddingLeft: '24px',
-    paddingRight: '24px',
-  },
-  '& .MuiDataGrid-columnHeader': {
-    display: 'flex',
-    alignItems: 'center',
-  },
-  '& .MuiDataGrid-cell': {
-    display: 'flex',
-    alignItems: 'center',
-    overflow: 'hidden',
-  },
-  '& .MuiDataGrid-row': {
-    cursor: 'default',
-  },
-  '& .MuiDataGrid-virtualScroller': {
-    borderRadius: '0.75rem !important',
-    marginBottom: '0px !important',
-  },
-  '& .first-row:hover, & .second-row:hover': {
-    outline: 'none !important',
-  },
-  '& .first-row:hover': {
-    backgroundColor: 'var(--color-background-100) !important',
-  },
-  '& .second-row:hover': {
-    backgroundColor: 'var(--color-background-80) !important',
-  },
+function PlanRows({ rows, columns, getRowId, emptyLabel, loading }) {
+  const list = rows || []
+  return (
+    <div className='mt-2 overflow-x-auto rounded-xl'>
+      <table className='w-full border-collapse'>
+        <thead>
+          <tr className='bg-background-80'>
+            {columns.map((column) => (
+              <th
+                key={column.field}
+                className={`px-6 py-4 typography-body text-font-gray font-normal ${column.headerAlign === 'right' ? 'text-right' : 'text-left'}`}
+              >
+                {column.headerName}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {loading ? (
+            <tr>
+              <td colSpan={columns.length} className='px-6 py-8 typography-body text-font-gray'>Loading...</td>
+            </tr>
+          ) : list.length === 0 ? (
+            <tr>
+              <td colSpan={columns.length} className='px-6 py-8 typography-body text-font-gray'>{emptyLabel}</td>
+            </tr>
+          ) : list.map((row, index) => (
+            <tr key={getRowId(row)} className={index % 2 === 0 ? 'bg-background-100' : 'bg-background-80'}>
+              {columns.map((column) => (
+                <td key={column.field} className='px-6 py-3 align-middle'>
+                  {column.renderCell
+                    ? column.renderCell({ row, value: row[column.field] })
+                    : row[column.field]}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  )
 }
 
 function ManagePlan() {
@@ -799,7 +808,7 @@ function ManagePlan() {
                     <ChevronDown size={14} />
                   </button>
                   {changeAdminMenuRowId === memberId && (
-                    <div className='absolute right-0 top-full mt-2 z-50 w-56 rounded-xl bg-background-80 shadow-[0px_0px_20px_rgba(45,45,45,0.7)] overflow-hidden'>
+                    <div className='absolute right-0 top-full mt-2 z-50 w-56 rounded-xl bg-background-80 border border-divider-100 overflow-hidden'>
                       <div className='p-2 border-b border-divider-100 relative'>
                         <IconWrapper
                           inheritColor
@@ -1314,24 +1323,13 @@ function ManagePlan() {
           </div>
         </div>
 
-        <MuiCustomStylesForDataGrid />
-        <div className='mt-2 rounded-xl overflow-hidden'>
-          <DataGrid
-            rows={members}
-            columns={teamMemberColumns}
-            loading={isTeamLoading}
-            getRowId={(row) => String(row.member_id ?? row._id)}
-            autoHeight
-            rowHeight={72}
-            hideFooter
-            disableRowSelectionOnClick
-            getRowClassName={(params) =>
-              params.indexRelativeToCurrentPage % 2 === 0 ? 'first-row' : 'second-row'
-            }
-            sx={MANAGE_PLAN_TABLE_SX}
-            localeText={{ noRowsLabel: 'No team members' }}
-          />
-        </div>
+        <PlanRows
+          rows={members}
+          columns={teamMemberColumns}
+          loading={isTeamLoading}
+          getRowId={(row) => String(row.member_id ?? row._id)}
+          emptyLabel='No team members'
+        />
       </StyledCard>
 
       {showStripeBilling && (
@@ -1343,24 +1341,13 @@ function ManagePlan() {
             </p>
           </div>
 
-          <MuiCustomStylesForDataGrid />
-          <div className='mt-2 rounded-xl overflow-hidden'>
-            <DataGrid
-              rows={paymentHistory}
-              columns={paymentHistoryColumns}
-              loading={isInvoicesLoading}
-              getRowId={(row) => row.id}
-              autoHeight
-              rowHeight={72}
-              hideFooter
-              disableRowSelectionOnClick
-              getRowClassName={(params) =>
-                params.indexRelativeToCurrentPage % 2 === 0 ? 'first-row' : 'second-row'
-              }
-              sx={MANAGE_PLAN_TABLE_SX}
-              localeText={{ noRowsLabel: 'No invoices yet' }}
-            />
-          </div>
+          <PlanRows
+            rows={paymentHistory}
+            columns={paymentHistoryColumns}
+            loading={isInvoicesLoading}
+            getRowId={(row) => row.id}
+            emptyLabel='No invoices yet'
+          />
         </StyledCard>
       )}
 
@@ -1397,7 +1384,7 @@ function ManagePlan() {
           <StyledCard
             padding={2}
             backgroundColor='bg-background-90'
-            extraStyles='relative w-full max-w-3xl max-h-[90vh] overflow-y-auto'
+            extraStyles='relative w-full max-w-3xl max-h-screen overflow-y-auto'
           >
             <div
               onClick={closeBuySeatsModal}
