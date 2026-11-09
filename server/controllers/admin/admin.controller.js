@@ -885,6 +885,75 @@ export const rejectRequest = asyncHandler(async (req, res) => {
   });
 });
 
+export const removeTeamMember = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+
+  if (!email?.trim()) {
+    return res.status(400).json({
+      status: 'error',
+      message: 'Email is required.',
+    });
+  }
+
+  const normalizedEmail = email.trim().toLowerCase();
+
+  if (req.user?.email?.toLowerCase() === normalizedEmail) {
+    return res.status(400).json({
+      status: 'error',
+      message: 'You cannot remove yourself.',
+    });
+  }
+
+  const company = await Company.findById({ _id: req.user?.company_id });
+
+  if (!company) {
+    return res.status(400).json({
+      status: 'error',
+      message: 'No company found with this user.',
+    });
+  }
+
+  const invitedMember = company.invited_team_members?.find(
+    (member) => member?.email?.toLowerCase() === normalizedEmail
+  );
+
+  if (!invitedMember) {
+    return res.status(400).json({
+      status: 'error',
+      message: 'Team member does not exist with this company.',
+    });
+  }
+
+  if (invitedMember.role === 'Admin') {
+    return res.status(400).json({
+      status: 'error',
+      message: 'Admin members cannot be removed.',
+    });
+  }
+
+  company.invited_team_members.pull({ email: invitedMember.email });
+  await company.save();
+
+  if (invitedMember.member_id) {
+    await User.deleteOne({
+      _id: invitedMember.member_id,
+      company_id: req.user?.company_id,
+      role: { $ne: 'Admin' },
+    });
+  } else {
+    await User.deleteOne({
+      email: invitedMember.email,
+      company_id: req.user?.company_id,
+      role: { $ne: 'Admin' },
+    });
+  }
+
+  res.status(200).json({
+    status: 'success',
+    message: 'Team member removed successfully.',
+  });
+});
+
 export const updateScreeningParam = asyncHandler(async (req,res) => {
   const { title , description , oldKey, jobProfile } = req.body;
   const { company_id } = req.user
