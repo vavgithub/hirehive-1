@@ -125,8 +125,9 @@ const StatsGrid = ({ cardBg , stats, equalWidth = false }) => {
   if (equalWidth) {
     return (
       <div
-        className='grid gap-4 w-full'
-        style={{ gridTemplateColumns: `repeat(${stats.length}, minmax(0, 1fr))` }}
+        className={`grid gap-4 w-full ${
+          { 1: 'grid-cols-1', 2: 'grid-cols-2', 3: 'grid-cols-3', 4: 'grid-cols-4', 5: 'grid-cols-5', 6: 'grid-cols-6' }[stats.length] || 'grid-cols-4'
+        }`}
       >
         {stats.map((stat, index) => (
           <StatCard
