@@ -66,6 +66,7 @@ const Table = ({
   const { user } = useAuthContext();
   const role = user?.role
   const queryClient = useQueryClient();
+  const [showDetailColumns, setShowDetailColumns] = useState(false);
   const [isAutoAssignModalOpen, setIsAutoAssignModalOpen] = useState(false);
   const [isBudgetModalOpen, setIsBudgetModalOpen] = useState(false);
 
@@ -444,6 +445,7 @@ const Table = ({
 
     return baseColumns;
   })();
+  const visibleColumns = showDetailColumns ? columns : columns.filter((column) => !column.secondary);
 
   const navigate = useNavigate();
 
@@ -614,9 +616,18 @@ const Table = ({
         />
       )}
 
+      <div className="mb-2 flex justify-end">
+        <button
+          type="button"
+          className="text-sm text-muted-foreground underline"
+          onClick={() => setShowDetailColumns((open) => !open)}
+        >
+          {showDetailColumns ? 'Hide pay and contact' : 'Show pay and contact'}
+        </button>
+      </div>
       <DataGrid
         rows={rowsData}
-        columns={columns}
+        columns={visibleColumns}
         paginationMode="server"
         sortingMode='server'
         onSortModelChange={(model) => setSortModel(model)}

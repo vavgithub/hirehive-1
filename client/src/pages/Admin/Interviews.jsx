@@ -60,13 +60,13 @@ function Interviews() {
           <div className="w-full">
             <StyledCard backgroundColor={"bg-background-100"} extraStyles="flex w-fit mx-auto flex-col items-center mb-4 gap-4 ">
               <IconWrapper icon={FcGoogle} inheritColor customStrokeWidth={0} size={0} customIconSize={10} />
-              <h3>Authorize Google Calendar</h3>
+              <h3>Connect Google Calendar</h3>
             </StyledCard>
             <p className="text-center typography-body text-font-gray">
-              Connect your Google Calendar to sync events.
+              After you connect, this page lists the interviews on that Google calendar.
             </p>
             <p className="text-center mb-4 typography-body text-font-gray">
-              Click &quot;Authorize Google&quot; to continue with HireHive.
+              Until then, upcoming interviews stay on the dashboard.
             </p>
             <div className="flex justify-center ">
               <Button className="" onClick={handleGoogleAuthorization}>

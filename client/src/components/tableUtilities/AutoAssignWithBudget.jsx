@@ -5,7 +5,9 @@ import IconWrapper from '../Cards/IconWrapper'
 
 function AutoAssignWithBudget({ handleBudgetButtonClick, budgetFilter, autoAssignMutation, setIsAutoAssignModalOpen }) {
     return (
-        <div className='flex gap-4'>
+        <div className='flex flex-col items-stretch gap-1 sm:items-end'>
+            <p className="max-w-xs text-sm text-muted-foreground sm:text-right">Limit the list to a pay range, then assign those portfolios.</p>
+            <div className='flex gap-4'>
             <div className={`${budgetFilter.from || budgetFilter.to ? "" : "hidden"}`}>
                 <Button
                     icon={() => <IconWrapper inheritColor icon={FolderSync} size={0} customIconSize={5} customStrokeWidth={5} />}
@@ -24,8 +26,9 @@ function AutoAssignWithBudget({ handleBudgetButtonClick, budgetFilter, autoAssig
                     icon={() => <IconWrapper inheritColor icon={Banknote} size={0} customIconSize={5} customStrokeWidth={5} />}
                     onClick={handleBudgetButtonClick}
                 >
-                    {budgetFilter.from || budgetFilter.to ? '' : 'Screen With Budget'}
+                    {budgetFilter.from || budgetFilter.to ? 'Pay filter on' : 'Filter by pay'}
                 </Button>
+            </div>
             </div>
         </div>
     )

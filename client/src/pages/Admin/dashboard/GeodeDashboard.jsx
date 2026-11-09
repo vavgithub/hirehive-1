@@ -12,6 +12,53 @@ const PERIODS = [
   { value: 'yesterday', label: 'Yesterday' },
 ]
 
+function Attention({ jobs, interviews, onOpenJob, onOpenInterview }) {
+  const waiting = [...jobs]
+    .filter((job) => Number(job.applied) > 0)
+    .sort((a, b) => Number(b.applied) - Number(a.applied))
+    .slice(0, 3)
+  const next = interviews[0]
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Needs a decision</CardTitle>
+      </CardHeader>
+      <CardContent>
+        {waiting.length === 0 && !next ? (
+          <p className="font-geode text-geode-small text-geode-muted">Nothing is waiting on you.</p>
+        ) : (
+          <div className="flex flex-col gap-geode-2">
+            {next ? (
+              <button
+                type="button"
+                onClick={() => onOpenInterview(next)}
+                className="flex w-full flex-col gap-geode-1 rounded-geode border border-geode-border bg-geode-card px-geode-4 py-geode-3 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-geode-focus"
+              >
+                <span className="font-geode text-geode-small font-geode-heading text-geode-text">Open the next interview</span>
+                <span className="font-geode text-geode-small text-geode-muted">
+                  {[next.candidate, next.stage, next.when].filter(Boolean).join(' · ')}
+                </span>
+              </button>
+            ) : null}
+            {waiting.map((job) => (
+              <button
+                key={job.id}
+                type="button"
+                onClick={() => onOpenJob(job)}
+                className="flex w-full items-baseline justify-between gap-geode-3 rounded-geode border border-geode-border bg-geode-card px-geode-4 py-geode-3 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-geode-focus"
+              >
+                <span className="font-geode text-geode-small font-geode-heading text-geode-text">Review {job.title}</span>
+                <span className="font-geode text-geode-small text-geode-muted">{job.applied} applied</span>
+              </button>
+            ))}
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  )
+}
+
 function Stat({ label, value }) {
   return (
     <div className="flex items-baseline justify-between gap-geode-3">
@@ -75,6 +122,13 @@ function GeodeDashboard({
           <p className="font-geode text-geode-small text-geode-muted" role="status">Loading dashboard</p>
         ) : null}
       </header>
+
+      <Attention
+        jobs={jobs}
+        interviews={upcomingInterviews}
+        onOpenJob={onOpenJob}
+        onOpenInterview={onOpenInterview}
+      />
 
       <div className="geode-board">
         <Card className="geode-board-trends">

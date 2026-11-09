@@ -30,6 +30,12 @@ Checked the live admin account on the staging data: dashboard, jobs (open, close
 - Phone menu buttons are 44px. Page padding is 1rem below the md breakpoint. Pinch zoom is allowed.
 - On a narrow screen the jobs filters stack above the list, so Create A Job Listing stays on the page. The candidate search wraps, and the stage row scrolls inside its card.
 - On desktop, table column names stay pinned while the rows scroll. Profile, company, and team emails use the width of the card instead of ending in an ellipsis.
+- The dashboard opens with the jobs and interviews that need a decision.
+- A zero change is left off the stat cards. Job search sits with Create, and filters open on demand. Job cards name their status.
+- On a job, each stage count filters the candidate list. Pay filtering says what it does.
+- Candidate tables lead with the person, stage, status, assignee name, and Move, Reject, and Rate. Pay and contact are behind Show pay and contact. Page size is a menu.
+- A candidate profile lists stages down the page and names the current stage.
+- Teams is a searchable list. The guide uses the role name as written. Calendar says what connecting Google adds. Settings links to profile and company. Professional details and skills wrap.
 
 ## Left in place
 

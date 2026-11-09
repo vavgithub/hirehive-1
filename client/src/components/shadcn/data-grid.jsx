@@ -189,17 +189,19 @@ function DataGrid({
             {total === 0 ? '0 results' : `${from}–${to} of ${total}`}
           </p>
           <div className="flex flex-wrap items-center gap-geode-2">
-            {pageSizeOptions.map((size) => (
-              <Button
-                key={size}
-                size="sm"
-                variant={Number(size) === Number(pageSize) ? 'primary' : 'outline'}
-                onClick={() => onPaginationModelChange?.({ page: 0, pageSize: Number(size) })}
-                aria-pressed={Number(size) === Number(pageSize)}
+            <label className="inline-flex items-center gap-2 font-geode text-geode-small text-geode-muted">
+              Rows
+              <select
+                className="h-9 rounded-md border border-input bg-background px-2 text-sm text-foreground"
+                value={pageSize}
+                aria-label="Rows per page"
+                onChange={(event) => onPaginationModelChange?.({ page: 0, pageSize: Number(event.target.value) })}
               >
-                {size}
-              </Button>
-            ))}
+                {pageSizeOptions.map((size) => (
+                  <option key={size} value={size}>{size}</option>
+                ))}
+              </select>
+            </label>
             <Button
               size="sm"
               variant="outline"

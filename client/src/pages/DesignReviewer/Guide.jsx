@@ -348,19 +348,19 @@ function getTabsConfig(){
         if (count === Object.values(JOB_PROFILES)?.length) {
             tempArr.push({
                 name: profile,
-                label: profile.toUpperCase(),
+                label: profile,
             });
             mainTabs.push(tempArr);
             tempArr = [];
         } else if (tempArr.length < 3) {
             tempArr.push({
                 name: profile,
-                label: profile.toUpperCase(),
+                label: profile,
             });
         } else {
             tempArr.push({
                 name: profile,
-                label: profile.toUpperCase(),
+                label: profile,
             });
             mainTabs.push(tempArr);
             tempArr = [];
@@ -391,6 +391,7 @@ function Guide() {
       <Header HeaderText="Guide" />
       {isLoading && <LoaderModal />}
       <StyledCard>
+        <p className="mb-3 text-sm text-muted-foreground">Choose a role. The scoring below is the guide for that role.</p>
         <div className="flex flex-col gap-2 mb-6">
             {mainTabs?.map((tabs,index) => (
                 <StyledTabs
