@@ -528,7 +528,7 @@ const reviewerProfilePic = resolveProfilePicture(currentReviewer?.profilePicture
             {/* Candidate Profile Card */}
             {
                 hasPermission(role,PERMISSIONS.SHOW_CANDIDATE_PROFILE_CARD) && (
-                    <div className="flex gap-3">
+                    <div className="flex flex-col gap-3">
                         <StyledCard padding={2} backgroundColor={'bg-background-100'} extraStyles="w-full flex flex-col gap-4 relative justify-between lg:flex-row">
                             <div className='flex min-w-0 flex-col gap-4 sm:flex-row sm:items-end'>
                                 <div className="relative w-32 shrink-0 overflow-hidden rounded-xl sm:w-40">
@@ -538,6 +538,10 @@ const reviewerProfilePic = resolveProfilePicture(currentReviewer?.profilePicture
                                     <h2>
                                         {data.firstName} {data.lastName}
                                     </h2>
+                                    <p className="text-sm text-muted-foreground">
+                                        Current stage: {data.jobApplication.currentStage}.{' '}
+                                        <a className="underline" href="#application-stages">Review this stage</a>
+                                    </p>
                                     <div className="flex items-center gap-2 mb-3 mt-2">
                                         <span className="typography-small-p text-font-gray">{data.jobApplication.jobApplied}</span>
                                         <svg xmlns="http://www.w3.org/2000/svg" width="4" height="4" viewBox="0 0 4 4" fill="none">
@@ -547,7 +551,7 @@ const reviewerProfilePic = resolveProfilePicture(currentReviewer?.profilePicture
                                     </div>
                                     {hasPermission(role,PERMISSIONS.SHOW_CANDIDATE_PROFILE_PERSONAL_DETAILS) &&
                                         <div className=' mb-3 '>
-                                        <div className="flex gap-5 items-center flex-nowrap overflow-hidden">
+                                        <div className="flex flex-wrap gap-5 items-center">
                                             <div className="flex items-center gap-2 cursor-pointer" onClick={()=>handlePhoneCopy(data?.phone)}>
                                                     <IconWrapper size={0} customIconSize={2} icon={Phone} />
                                                 <span className="typography-large-p">{data.phone}</span>

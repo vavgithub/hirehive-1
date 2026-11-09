@@ -24,9 +24,9 @@ const truncateWords = (text, wordLimit) => {
 };
 
 const JobDetailItem = ({ icon: Icon, text }) => (
-  <div className="flex gap-2 items-center w-fit md:max-w-[15%]">
+  <div className="flex gap-2 items-center">
     <Icon />
-    <p className="typography-body w-full max-w-[8rem] whitespace-nowrap text-ellipsis overflow-hidden">{text}</p>
+    <p className="typography-body">{text}</p>
   </div>
 );
 
@@ -162,6 +162,9 @@ const JobCard = ({
               </div>
             </CustomToolTip>
           </div>}
+          {job?.status ? (
+            <span className="typography-small-p whitespace-nowrap rounded-full border border-border px-3 py-1 capitalize">{job.status}</span>
+          ) : null}
           {(job.status !== "deleted" && job.status !== "closed") &&
             <CustomBadge extraStyles={'whitespace-nowrap md:whitespace-normal'} label={job?.jobProfile} paddingX={2} />}
           {withKebab && (

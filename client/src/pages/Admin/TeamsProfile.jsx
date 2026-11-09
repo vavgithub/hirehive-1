@@ -115,19 +115,16 @@ function ProfessionalDetails({ memberData }) {
   return (
     <StyledCard padding={2} backgroundColor="bg-background-90">
       <h2 className="mb-4">Professional Details</h2>
-      <div className="flex justify-between flex-col gap-6 sm:flex-row">
-
-        <div className="grid grid-cols-2 sm:w-[45%] gap-[10%]">
-          <div className="flex flex-col gap-6 typography-body">
-            <p className="text-font-gray whitespace-nowrap">Job Title</p>
-            <p className="text-font-gray whitespace-nowrap">Experience</p>
-          </div>
-          <div className="flex flex-col gap-6 typography-body">
-            <p className="whitespace-nowrap overflow-hidden text-ellipsis">{memberData?.role}</p>
-            <p className="whitespace-nowrap overflow-hidden text-ellipsis">{memberData?.experience ?? 0} Years</p>
-          </div>
+      <dl className="grid gap-6 sm:grid-cols-2">
+        <div>
+          <dt className="text-font-gray">Job Title</dt>
+          <dd className="break-words">{memberData?.role || '-'}</dd>
         </div>
-      </div>
+        <div>
+          <dt className="text-font-gray">Experience</dt>
+          <dd className="break-words">{memberData?.experience ?? 0} Years</dd>
+        </div>
+      </dl>
     </StyledCard>
   )
 }

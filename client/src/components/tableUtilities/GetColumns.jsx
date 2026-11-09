@@ -121,6 +121,7 @@ const getCtcColumns = (role, disableCTC = false, disableHourly = false) => [
   ...(hasPermission(role,PERMISSIONS.SHOW_TABLE_BUDGET_DETAILS) ? [
     ...(disableHourly ? [] : [{
       field: 'hourlyRate',
+      secondary: true,
       headerName: 'Hourly Rate',
       width: 130,
       align: 'center',
@@ -135,6 +136,7 @@ const getCtcColumns = (role, disableCTC = false, disableHourly = false) => [
     }]),
     ...(disableCTC ? [] : [{
       field: 'currentCTC',
+      secondary: true,
       headerName: 'Current CTC',
       width: 130,
       align: 'center',
@@ -148,6 +150,7 @@ const getCtcColumns = (role, disableCTC = false, disableHourly = false) => [
     }]),
     ...(disableCTC ? [] : [{
       field: 'expectedCTC',
+      secondary: true,
       headerName: 'Expected CTC',
       width: 130,
       align: 'center',
@@ -165,19 +168,21 @@ const getCtcColumns = (role, disableCTC = false, disableHourly = false) => [
 const getInfoColumns = () => [
   {
     field: 'email',
+    secondary: true,
     headerName: 'Email',
     width: 220,
     sortable: false,
     disableColumnMenu: true,
     renderCell: (params) => (
       <CustomToolTip title={params.value} arrowed size={2}>
-        <span>{params.value}</span>
+        <span className="break-all">{params.value}</span>
       </CustomToolTip>
     )
   },
 
   {
     field: 'phone',
+    secondary: true,
     headerName: 'Phone',
     sortable: false,
     width: 130,
@@ -190,7 +195,7 @@ const getAssigneeColumn = (handleAssigneeChange, isClosed = false) => ({
   field: 'assignee',
   headerName: 'Assignee',
   sortable: false,
-  width: 100,
+  width: 220,
   disableColumnMenu: true,
   valueGetter: (value, row) => row.stageStatuses?.[row.currentStage]?.assignedTo,
   renderCell: (params) => {
@@ -201,7 +206,6 @@ const getAssigneeColumn = (handleAssigneeChange, isClosed = false) => ({
         onClick={(event) => event.stopPropagation()}
       >
         <AssigneeSelector
-          mode="icon"
           disabled={isDisabled}
           value={params.row.stageStatuses?.[params.row.currentStage]?.assignedTo}
           onChange={(newAssignee) => handleAssigneeChange(
@@ -280,37 +284,56 @@ export const getDefaultColumns = (role, canMove, canReject, handleAssigneeChange
     field: 'actions',
     headerName: 'Actions',
     sortable: false,
-    width: 150,
+    width: 280,
     disableColumnMenu: true,
-    renderCell: (params) => (
+    renderCell: (params) => {
+      const stageStatus = params?.row?.stageStatuses[params?.row?.currentStage]
+      const locked = stageStatus?.status === "Reviewed" && stageStatus?.scheduledDate
+      const moveDisabled = locked || !canMove(params.row) || isClosed
+      const rejectDisabled = locked || !canReject(params.row) || isClosed
+      const rateDisabled = locked || stageStatus?.status === "Rejected" || isClosed
+      return (
       <div className='flex h-full items-center gap-2'
         onClick={(event) => event.stopPropagation()}
       >
         <button
+          type="button"
+          className="inline-flex items-center gap-1 text-sm"
+          aria-label="Move stage"
           onClick={() => handleMoveClick(params.row)}
-          disabled={(params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Reviewed" && params?.row?.stageStatuses[params?.row?.currentStage]?.scheduledDate) || !canMove(params.row) || isClosed}
+          disabled={moveDisabled}
         >
-          {!(params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Reviewed" && params?.row?.stageStatuses[params?.row?.currentStage]?.scheduledDate) && canMove(params.row) && !isClosed ?
-            <IconWrapper icon={CircleCheck} size={0} customIconSize={5} />
-            : <IconWrapper icon={CircleCheck} isInActiveIcon customIconSize={5} size={0} />}
+          <IconWrapper icon={CircleCheck} size={0} customIconSize={5} isInActiveIcon={moveDisabled} />
+          Move
         </button>
         <button
+          type="button"
+          className="inline-flex items-center gap-1 text-sm"
+          aria-label="Reject candidate"
           onClick={() => handleRejectClick(params.row)}
-          disabled={(params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Reviewed" && params?.row?.stageStatuses[params?.row?.currentStage]?.scheduledDate) || !canReject(params.row) || isClosed}
+          disabled={rejectDisabled}
         >
-          {!(params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Reviewed" && params?.row?.stageStatuses[params?.row?.currentStage]?.scheduledDate) && canReject(params.row) && !isClosed ?
-            <IconWrapper icon={CircleX} size={0} customIconSize={5} />
-            : <IconWrapper icon={CircleX} isInActiveIcon customIconSize={5} size={0} />}
+          <IconWrapper icon={CircleX} size={0} customIconSize={5} isInActiveIcon={rejectDisabled} />
+          Reject
         </button>
-        <button className={((params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Reviewed" && params?.row?.stageStatuses[params?.row?.currentStage]?.scheduledDate) || params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Rejected" || isClosed) ? "text-font-gray" : "text-white"} disabled={(params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Reviewed" && params?.row?.stageStatuses[params?.row?.currentStage]?.scheduledDate) || params?.row?.stageStatuses[params?.row?.currentStage]?.status === "Rejected" || isClosed} onClick={(e) => handleRatingClick(e, params.row)}>
+        <button
+          type="button"
+          className="inline-flex items-center gap-1 text-sm"
+          aria-label="Rate candidate"
+          disabled={rateDisabled}
+          onClick={(e) => handleRatingClick(e, params.row)}
+        >
           {getRatingIcon(params.row.rating)}
+          Rate
         </button>
       </div>
-    )
+      )
+    },
   },
   ...getCtcColumns(role,disableCTC,disableHourly),
   {
     field: 'score',
+    secondary: true,
     headerName: 'Score',
     headerAlign: "center",
     width: 120,

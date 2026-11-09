@@ -279,26 +279,16 @@ function Profile() {
                 <div>
                   <h3 className="mb-6">Professional Details</h3>
                   {!isEditing ? (
-                    <div className="flex justify-between flex-col gap-6 sm:flex-row">
-
-                      <div className="grid grid-cols-2 sm:w-[45%] gap-[10%]">
-                        <div className="flex flex-col gap-6 typography-body">
-                          <p className="text-font-gray whitespace-nowrap">Job Title</p>
-                        </div>
-                        <div className="flex flex-col gap-6 typography-body">
-                          <p className="whitespace-nowrap overflow-hidden text-ellipsis">{user?.jobTitle}</p>
-                        </div>
+                    <dl className="grid gap-6 sm:grid-cols-2">
+                      <div>
+                        <dt className="text-font-gray">Job Title</dt>
+                        <dd className="break-words">{user?.jobTitle || '-'}</dd>
                       </div>
-
-                      <div className="grid grid-cols-2 sm:w-[45%] gap-[10%]">
-                        <div className="flex flex-col gap-6 typography-body">
-                          <p className="text-font-gray whitespace-nowrap">Experience</p>
-                        </div>
-                        <div className="flex flex-col gap-6 typography-body">
-                          <p className="whitespace-nowrap overflow-hidden text-ellipsis">{user?.experience}</p>
-                        </div>
+                      <div>
+                        <dt className="text-font-gray">Experience</dt>
+                        <dd className="break-words">{user?.experience || '-'}</dd>
                       </div>
-                    </div>
+                    </dl>
                   ) : (
                     <div className="grid grid-cols-2 gap-4">
                       <Controller
@@ -345,30 +335,21 @@ function Profile() {
                 <div>
                   <h3 className="mb-6">Skills & Expertise</h3>
                   {!isEditing ?  (
-                    <div className="flex justify-between flex-col gap-6 sm:flex-row typography-body">
-                      <div className="flex flex-col gap-2 sm:w-[45%] ">
-                        <div className="flex flex-col gap-6 typography-body">
-                          <p className="text-font-gray whitespace-nowrap">Primary Skills</p>
-                        </div>
-                        <div className="flex flex-col gap-6 typography-body">
-                          <p className="whitespace-nowrap overflow-hidden text-ellipsis flex gap-2 ">
+                    <div className="grid gap-6 sm:grid-cols-2 typography-body">
+                      <div className="flex flex-col gap-2">
+                        <p className="text-font-gray">Primary Skills</p>
+                        <div className="flex flex-wrap gap-2">
                           {(user?.skills).map((tool, index) => (
-                            <span key={index} className="flex justify-center  w-fit bg-background-70 m px-6 py-2 rounded-full">{tool}</span>
+                            <span key={index} className="w-fit rounded-full bg-background-70 px-4 py-2">{tool}</span>
                           ))}
-                          </p>
                         </div>
                       </div>
-
-                      <div className="flex flex-col gap-2 sm:w-[45%] ">
-                        <div className="flex flex-col gap-6 typography-body">
-                          <p className="text-font-gray whitespace-nowrap">Tools Proficiency</p>
-                        </div>
-                        <div className="flex flex-col gap-6 typography-body">
-                          <p className="whitespace-nowrap overflow-hidden text-ellipsis flex gap-2 flex-wrap">
+                      <div className="flex flex-col gap-2">
+                        <p className="text-font-gray">Tools Proficiency</p>
+                        <div className="flex flex-wrap gap-2">
                           {(user?.tools_used).map((tool, index) => (
-                            <span key={index} className="flex justify-center  w-fit bg-background-70 m px-6 py-2 rounded-full">{tool}</span>
+                            <span key={index} className="w-fit rounded-full bg-background-70 px-4 py-2">{tool}</span>
                           ))}
-                          </p>
                         </div>
                       </div>
                     </div>

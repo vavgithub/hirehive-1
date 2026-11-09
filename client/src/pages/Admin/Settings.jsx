@@ -94,6 +94,10 @@ function Settings() {
       {loading && <LoaderModal />}
       <StyledCard padding={2} extraStyles={'w-full'}>
             <StyledCard backgroundColor={'bg-background-100'} extraStyles={'flex flex-col gap-4'}>
+                <div className="flex flex-wrap gap-3">
+                    <Button type="button" variant="secondary" onClick={() => navigate(getRoute(user?.role, ROUTE_KEY.PROFILE))}>Your profile</Button>
+                    <Button type="button" variant="secondary" onClick={() => navigate(getRoute(user?.role, ROUTE_KEY.COMPANY_PROFILE_VIEW))}>Company</Button>
+                </div>
                 <div className='flex justify-between items-center'>
                     <div className='flex flex-col'>
                         <h3>Portfolio multi-reviewer</h3>

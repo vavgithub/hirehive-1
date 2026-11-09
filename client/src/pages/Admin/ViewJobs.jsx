@@ -43,6 +43,7 @@ const ViewJobs = () => {
 
     const [location,setLocation] = useState(null);
     const [filters,setFilters] = useState({});
+    const [pickedStage, setPickedStage] = useState(null);
     const [page,setPage] = useState(1);
     const [pageSize,setPageSize] = useState(10);
     const [filterObj,setFilterObj] = useState({});
@@ -68,8 +69,11 @@ const ViewJobs = () => {
 
     useEffect(()=>{
         //removing non-populated filters
-        setFilterObj({...Object.fromEntries(Object.entries(filters).filter(([Key,value]) =>!!(Array.isArray(value) ? value?.length : value))), ...((budgetFilter?.from || budgetFilter?.to) ? {'budget' : budgetFilter} : {} )})
-    },[filters,budgetFilter])
+        const next = {...Object.fromEntries(Object.entries(filters).filter(([Key,value]) =>!!(Array.isArray(value) ? value?.length : value))), ...((budgetFilter?.from || budgetFilter?.to) ? {'budget' : budgetFilter} : {} )}
+        if (pickedStage) next.stage = [pickedStage]
+        else delete next.stage
+        setFilterObj(next)
+    },[filters,budgetFilter,pickedStage])
 
 
     const handleTabClick = (tab) => {
@@ -227,6 +231,18 @@ const ViewJobs = () => {
     }
     const { questions = [] } = formData || {};
 
+    const selectStage = (stage) => {
+        const next = stage && pickedStage !== stage ? stage : null;
+        setPickedStage(next);
+        setPage(0);
+        setFilters((prev) => {
+            const copy = { ...prev };
+            if (next) copy.stage = [next];
+            else delete copy.stage;
+            return copy;
+        });
+    };
+
     const applicationsReceivedStats = {
         monthly: `${jobStats?.data?.comparison?.applicationsReceived?.monthly ?? 0}% since last month`,
         weekly: `${jobStats?.data?.comparison?.applicationsReceived?.weekly ?? 0}% since last week`,
@@ -234,15 +250,22 @@ const ViewJobs = () => {
     }
 
     // Update the stats arrays to use the fetched data
-    const candidateStats = [
-        { title: 'Total', value: jobStats?.data?.totalCount || 0, icon: () => <IconWrapper size={10} isTeritiaryIcon icon={Users} />, statistics: applicationsReceivedStats },
-        { title: 'Portfolio', value: jobStats?.data?.stageStats?.Portfolio || 0, icon: () => <IconWrapper size={10} isTeritiaryIcon icon={Folder} /> },
-        { title: 'Screening', value: jobStats?.data?.stageStats?.Screening || 0, icon: () => <IconWrapper size={10} isTeritiaryIcon icon={MonitorDot} /> },
-        { title: 'Design Task', value: jobStats?.data?.stageStats['Design Task'] || 0, icon: () => <IconWrapper size={10} isTeritiaryIcon icon={PenTool} /> },
-        { title: 'Round 1', value: jobStats?.data?.stageStats['Round 1'] || 0, icon: () => <IconWrapper size={10} isTeritiaryIcon icon={Briefcase} /> },
-        { title: 'Round 2', value: jobStats?.data?.stageStats['Round 2'] || 0, icon: () => <IconWrapper size={10} isTeritiaryIcon icon={Briefcase} /> },
-        { title: 'Offer Sent', value: jobStats?.data?.stageStats?.Hired || 0, icon: () => <IconWrapper size={10} isTeritiaryIcon icon={PenTool} /> },
+    const stageCards = [
+        { title: 'Total', stage: null, value: jobStats?.data?.totalCount || 0, icon: () => <IconWrapper size={10} isTeritiaryIcon icon={Users} />, statistics: applicationsReceivedStats },
+        { title: 'Portfolio', stage: 'Portfolio', value: jobStats?.data?.stageStats?.Portfolio || 0, icon: () => <IconWrapper size={10} isTeritiaryIcon icon={Folder} /> },
+        { title: 'Screening', stage: 'Screening', value: jobStats?.data?.stageStats?.Screening || 0, icon: () => <IconWrapper size={10} isTeritiaryIcon icon={MonitorDot} /> },
+        { title: 'Design Task', stage: 'Design Task', value: jobStats?.data?.stageStats['Design Task'] || 0, icon: () => <IconWrapper size={10} isTeritiaryIcon icon={PenTool} /> },
+        { title: 'Round 1', stage: 'Round 1', value: jobStats?.data?.stageStats['Round 1'] || 0, icon: () => <IconWrapper size={10} isTeritiaryIcon icon={Briefcase} /> },
+        { title: 'Round 2', stage: 'Round 2', value: jobStats?.data?.stageStats['Round 2'] || 0, icon: () => <IconWrapper size={10} isTeritiaryIcon icon={Briefcase} /> },
+        { title: 'Offer Sent', stage: 'Hired', value: jobStats?.data?.stageStats?.Hired || 0, icon: () => <IconWrapper size={10} isTeritiaryIcon icon={PenTool} /> },
     ];
+    const selectedStage = stageCards.find((card) => card.stage && card.stage === pickedStage);
+    const candidateStats = stageCards.map((card) => ({
+        ...card,
+        title: card.stage && selectedStage?.stage === card.stage ? `${card.title} · showing` : card.title,
+        active: card.stage ? selectedStage?.stage === card.stage : !selectedStage,
+        onSelect: () => selectStage(card.stage),
+    }));
 
     const jobsDetailStats = [
         { title: 'Clicks', value: jobStats?.data?.jobDetails?.views || 0, icon: () => <IconWrapper size={10} isTeritiaryIcon icon={Eye} /> },
@@ -324,6 +347,7 @@ const ViewJobs = () => {
             {activeTab === 'candidate' && (
                 <StyledCard >
                     <div className="mb-4">
+                        <p className="mb-3 text-sm text-muted-foreground">{selectedStage ? `Showing ${selectedStage.title}. Select Total to show everyone.` : 'Select a stage to show only those candidates.'}</p>
                         <StatsGrid stats={candidateStats} />
                     </div>
                     <div>

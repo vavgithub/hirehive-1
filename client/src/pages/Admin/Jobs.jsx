@@ -45,6 +45,7 @@ const Jobs = () => {
     const queryClient = useQueryClient();
 
     const [page, setPage] = useState(1);
+    const [filtersOpen, setFiltersOpen] = useState(false);
     const PAGE_LIMIT = 5;
 
     const [debouncedQuery] = useDebounce(searchQuery);
@@ -377,36 +378,34 @@ const Jobs = () => {
                     <StatsGrid stats={JobsStats} />
                 </div>
 
-                <div className='mt-4 flex flex-col gap-4 lg:flex-row'>
-                    <div className='w-full lg:w-80 lg:shrink-0'>
-                        <div className="geode-affix-field mb-4">
+                <div className='mt-4 flex flex-col gap-4'>
+                    <div className='flex flex-col gap-3 sm:flex-row sm:items-center'>
+                        <div className="geode-affix-field min-w-0 flex-1">
                             <IconWrapper icon={Search} />
                             <input
                                 className="geode-affix-input"
                                 type="text"
-                                placeholder="Enter job title"
+                                placeholder="Search by job title"
                                 value={searchQuery}
                                 onChange={handleSearch}
+                                aria-label="Search by job title"
                             />
                         </div>
+                        <Button variant="secondary" onClick={() => setFiltersOpen((open) => !open)}>
+                            {filtersOpen ? 'Hide filters' : `Filters${isFiltered ? ' on' : ''}`}
+                        </Button>
+                        <Button id="createJobBtn" variant="primary" icon={() => <IconWrapper inheritColor icon={CirclePlus} size={0} customIconSize={5} customStrokeWidth={5} />} iconPosition="left" onClick={handleCreateJob}>Create A Job Listing</Button>
+                    </div>
+                    {filtersOpen ? (
                         <Filters
                             filters={filters}
                             handleCheckboxChange={handleCheckboxChange}
                             activeTab={activeTab}
-                            handleBudgetFilter={handleBudgetFilter}  // Add this
+                            handleBudgetFilter={handleBudgetFilter}
                             handleExperienceFilter={handleExperienceFilter}
                             clearAllFilters={clearAllFilters} />
-                    </div>
+                    ) : null}
                     <div className='flex min-w-0 w-full flex-col gap-4'>
-                        {
-                            activeTab == "open" && displayJobs.length != 0 && displayJobs.filter(job => job.status === "open").length !== 0 && (
-                                <div className='flex sm:justify-end'>
-                                    <div >
-                                        <Button id="createJobBtn" variant="primary" icon={() => <IconWrapper inheritColor icon={CirclePlus} size={0} customIconSize={5} customStrokeWidth={5} />} iconPosition="left" onClick={handleCreateJob}>Create A Job Listing</Button>
-                                    </div>
-                                </div>
-                            )
-                        }
                         {isLoadingResults  ? (
                             <div className="flex justify-center items-center h-full">
                                 <Loader />

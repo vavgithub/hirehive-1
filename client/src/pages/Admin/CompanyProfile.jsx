@@ -162,7 +162,7 @@ const ProfessionalDetails = ({ companyDetails, isEditing, control }) => {
               <p className="text-font-gray whitespace-nowrap">Company Website</p>
             </div>
             <div className="flex flex-col gap-6 typography-body">
-              <p className="whitespace-nowrap overflow-hidden text-ellipsis">{companyDetails?.website ?? '-'}</p>
+              <p className="break-all">{companyDetails?.website ?? '-'}</p>
             </div>
           </div>
           <div className="grid grid-cols-2 sm:w-[45%] gap-[10%] justify-between">
@@ -170,7 +170,7 @@ const ProfessionalDetails = ({ companyDetails, isEditing, control }) => {
               <p className="text-font-gray whitespace-nowrap">Founded</p>
             </div>
             <div className="flex flex-col gap-6 typography-body">
-              <p className="whitespace-nowrap overflow-hidden text-ellipsis ">{companyDetails?.founded ?? '-'}</p>
+              <p className="break-words">{companyDetails?.founded ?? '-'}</p>
             </div>
           </div>
         </div>
@@ -181,7 +181,7 @@ const ProfessionalDetails = ({ companyDetails, isEditing, control }) => {
                 <p className="text-font-gray whitespace-nowrap">Focus Areas</p>
             </div>
             <div className="flex flex-col gap-6 typography-body">
-                <p className="whitespace-nowrap overflow-hidden text-ellipsis flex gap-2 flex-wrap">
+                <p className="flex flex-wrap gap-2">
                 {(companyDetails?.focusAreas)?.map((tool, index) => (
                 <span key={index} className="flex justify-center  w-fit bg-background-70 m px-6 py-2 rounded-full">{tool}</span>
                 ))}

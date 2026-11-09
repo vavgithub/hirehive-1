@@ -30,6 +30,7 @@ function Teams() {
     const [roleError, setRoleError] = useState("");
 
     const [showAddModal,setShowAddmodal] = useState(false);
+    const [memberQuery, setMemberQuery] = useState("");
     const [showEditModal,setShowEditmodal] = useState(false);
 
     const queryClient = useQueryClient();
@@ -151,52 +152,46 @@ function Teams() {
             <Header HeaderText={'Teams'}></Header>
             {(addMemberMutation?.isPending || rejectRequestMutation?.isPending || approveRequestMutation?.isPending || isTeamMembersLoading) && <LoaderModal />}
         </div>
-        <StyledCard padding={2} extraStyles={'flex flex-col items-center justify-between gap-4 mb-4'}>
-
-        <div className="grid gap-4 grid-cols-5 ">
-            {/* Add Card */}
-            <StyledCard padding={2} backgroundColor={'bg-background-100'} extraStyles={'flex flex-col items-center justify-between gap-4 '}>
-                {/* Member Profile Picture */}
-                <div className="relative w-full aspect-square rounded-xl overflow-hidden">
-                    <GeodeAvatar name="+" />
-                </div>
-                {/* Memeber Details */}
-                <div className="flex flex-col ">
-                    <p className="typography-body font-bricolage font-medium text-center ">Add Team Member</p>
-                </div>
-                <div className="w-full flex  items-center justify-center">
-                    <Button type="button" onClick={()=>setShowAddmodal(true)} className="w-full whitespace-nowrap">Add Member</Button>
-                </div>
-            </StyledCard>
-
-            {teamMembers?.members?.filter(member => member?.status !== "REQUESTED").map(member => {
-                return (
-                    <StyledCard key={member?.member_id ? member?.member_id : member?._id} backgroundColor={'bg-background-100'} onClick={()=>navigate(`/admin/teams/profile/${member?.member_id ? member?.member_id : member?._id}`)} padding={2} extraStyles={'flex flex-col items-center cursor-pointer justify-between gap-4 '}>
-                        {/* Member Profile Picture */}
-                        <div className="w-full aspect-square rounded-xl overflow-hidden relative">
-                            <GeodeAvatar src={member?.profilePicture} name={`${member?.firstName || ''} ${member?.lastName || ''}`} />
-                        </div>
-                        {/* Memeber Details */}
-                        <div className="flex flex-col w-full">
-                            <h3 className="text-center">{member?.firstName + " " + member?.lastName}</h3>
-                            <p className="typography-small-p text-center text-font-gray">{member?.role}</p>
-                        </div>
-                        <div className="w-full flex justify-center">
-                            {
-                                member?.status === "REQUESTED" ? 
-                                <div className="flex justify-between w-full">
-                                    <button type="button" onClick={(event) =>handleApprove(event,member?.email)}  className="text-sm font-bricolage font-medium px-4 py-1 border-2 rounded-xl border-green-700 text-green-500 hover:bg-green-90">Approve</button>
-                                    <button type="button" onClick={(event) =>handleReject(event,member?.email)}  className="text-sm font-bricolage font-medium px-4 py-1 border-2 rounded-xl border-red-90 text-red-500 hover:bg-red-60">Reject</button>
-                                </div>
-                                :
-                                <p className=" w-fit font-bricolage text-sm rounded-full font-medium tracking-wider border border-accent-100 text-accent-100 px-4 py-1">{ member?.status === "JOINED" ? "Joined" : "Invited"}</p>
-                            }
-                        </div>
-                    </StyledCard>
-                )
-            }) }
-
+        <StyledCard padding={2} extraStyles={'flex flex-col gap-4 mb-4'}>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+            <input
+                className="h-10 min-w-0 flex-1 rounded-md border border-input bg-background px-3 text-sm"
+                type="search"
+                value={memberQuery}
+                onChange={(event) => setMemberQuery(event.target.value)}
+                placeholder="Search by name, role, or email"
+                aria-label="Search team members"
+            />
+            <Button type="button" onClick={() => setShowAddmodal(true)}>Add member</Button>
         </div>
+        <ul className="flex flex-col gap-2">
+            {teamMembers?.members?.filter(member => member?.status !== "REQUESTED").filter(member => {
+                const haystack = `${member?.firstName || ''} ${member?.lastName || ''} ${member?.role || ''} ${member?.email || ''}`.toLowerCase()
+                return haystack.includes(memberQuery.trim().toLowerCase())
+            }).map(member => {
+                const memberId = member?.member_id ? member.member_id : member?._id
+                const name = `${member?.firstName || ''} ${member?.lastName || ''}`.trim()
+                return (
+                    <li key={memberId}>
+                        <button
+                            type="button"
+                            onClick={() => navigate(`/admin/teams/profile/${memberId}`)}
+                            className="flex w-full items-center gap-3 rounded-md border border-border bg-background-100 px-3 py-3 text-left"
+                        >
+                            <span className="h-10 w-10 shrink-0 overflow-hidden rounded-full">
+                                <GeodeAvatar src={member?.profilePicture} name={name} />
+                            </span>
+                            <span className="min-w-0 flex-1">
+                                <span className="block break-words">{name}</span>
+                                <span className="block text-sm text-muted-foreground">{member?.role}</span>
+                                <span className="block break-all text-sm text-muted-foreground">{member?.email}</span>
+                            </span>
+                            <span className="text-sm text-muted-foreground">{member?.status === "JOINED" ? "Joined" : "Invited"}</span>
+                        </button>
+                    </li>
+                )
+            })}
+        </ul>
         {teamMembers?.members?.filter(member => member?.status === "REQUESTED")?.length > 0 && 
         <div className="w-full">
             <h2 className="mt-6 mb-4">New Member Request</h2>

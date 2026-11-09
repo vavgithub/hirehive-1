@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import StageProgressBar from './StageProgressBar';
-import QuestionResponses from './QuestionResponses';
 import { useAuthContext } from '../../context/AuthProvider';
 import { useLocation } from 'react-router-dom';
 import GlobalStaging from './GlobalStaging';
@@ -177,36 +175,37 @@ const ApplicationStaging = ({ candidateId, jobId ,jobStatus}) => {
     };
 
     return (
-        <div className="application-staging">
-            <h4 className="mb-4">Application Stages</h4>
+        <div className="application-staging" id="application-stages">
+            <h4 className="mb-2">Application Stages</h4>
+            <p className="mb-4 text-sm text-muted-foreground">
+                Current stage is {currentStage}. Open it to take the next step.
+            </p>
 
-            {/* Stage Progress Section */}
-            <div className="stages-progress flex max-w-full gap-2 overflow-x-auto pb-2">
-                {stages.map((stage, index) => (
-                    <React.Fragment key={stage}>
-                        <div
-                            className={`stage-item flex shrink-0 typography-body flex-col gap-2 justify-center items-center ${isStageVisible(stage) ? ' cursor-pointer  ' : ' cursor-default opacity-50'}`}
-                            onClick={() => isStageVisible(stage) && setSelectedStage(stage)}
-                        >
-                            <div className="stage-icon">
-                                {getStageIcon(stage, index)}
-                            </div>
-                            <div className={`stage-name mb-2 typography-body ${stage === currentStage ? "text-font-accent cursor-pointer " : "text-font-main "}  `}>
-                                {stage}
-                            </div>
-                        </div>
-                        {index < stages.length - 1 && (
-                            <div className="progress-bar flex-grow mx-2 flex justify-center">
-                                <StageProgressBar
-                                    stage={stage}
-                                    status={stageStatuses[stage]?.status}
-                                    isActive={stage === currentStage}
-                                />
-                            </div>
-                        )}
-                    </React.Fragment>
-                ))}
-            </div>
+            <ol className="flex flex-col gap-2">
+                {stages.map((stage, index) => {
+                    const visible = isStageVisible(stage)
+                    const current = stage === currentStage
+                    return (
+                        <li key={stage}>
+                            <button
+                                type="button"
+                                disabled={!visible}
+                                aria-current={current ? 'step' : undefined}
+                                onClick={() => visible && setSelectedStage(stage)}
+                                className={`flex w-full items-center justify-between gap-3 rounded-md border px-3 py-2 text-left ${selectedStage === stage ? 'border-foreground' : 'border-border'} ${visible ? '' : 'opacity-50'}`}
+                            >
+                                <span className="flex items-center gap-3">
+                                    {getStageIcon(stage, index)}
+                                    <span className="typography-body">{stage}</span>
+                                </span>
+                                <span className="text-sm text-muted-foreground">
+                                    {current ? 'Current' : (stageStatuses[stage]?.status || '')}
+                                </span>
+                            </button>
+                        </li>
+                    )
+                })}
+            </ol>
 
             {/* Stage Content */}
             <div className="stages-content mt-4">
