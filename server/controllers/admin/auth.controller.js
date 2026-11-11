@@ -268,10 +268,10 @@ export const getAvailableDesignReviewers = async (req, res) => {
     const users = await User.find({
       company_id,
       isAvailable: true,
-      role: { $in: ['Design Reviewer', 'Admin'] }
+      role: { $in: ['Design Reviewer', 'Developer Reviewer', 'Admin'] }
     }).select('_id firstName lastName email isAvailable profilePicture role');
 
-    const allReviewers = users.filter(user => user.role === 'Design Reviewer');
+    const allReviewers = users.filter(user => user.role === 'Design Reviewer' || user.role === 'Developer Reviewer');
     const admin = users.find(user => user.role === 'Admin') || null;
 
     res.status(200).json({
@@ -604,7 +604,7 @@ export const setPassword = asyncHandler(async (req, res) => {
   userData.password = password;
 
   //Specific to HR and DR onboarding
-  if(userData?.role === "Hiring Manager" || userData?.role === "Design Reviewer"){
+  if(userData?.role === "Hiring Manager" || userData?.role === "Design Reviewer" || userData?.role === "Developer Reviewer"){
     userData.verificationStage = 'DONE'
     // Generate JWT
     const token = generateToken(userData._id)
@@ -836,7 +836,7 @@ export const addTeamMembers = asyncHandler(async (req,res) => {
   let adminCount = 1;
 
   let isValid = 0;
-  let validRoles = ['Admin','Hiring Manager','Design Reviewer'];
+  let validRoles = ['Admin','Hiring Manager','Design Reviewer','Developer Reviewer'];
 
   for(let member of teamMembers){
     if(member?.firstName && member?.lastName && member?.email && member?.role && validRoles.includes(member.role)){
@@ -1358,7 +1358,7 @@ export const redirectForGoogleToken = asyncHandler(async (req,res) => {
     const query = req.query;
     const authState = query?.state ?? null;
     const userRoleSession = req.session?.userRole;
-    const routeKey = (userRoleSession === 'Hiring Manager' ? 'hiring-manager' : userRoleSession === 'Design Reviewer' ?  'design-reviewer' : 'admin' )
+    const routeKey = (userRoleSession === 'Hiring Manager' ? 'hiring-manager' : (userRoleSession === 'Design Reviewer' || userRoleSession === 'Developer Reviewer') ? 'design-reviewer' : 'admin' )
     if(authState && req.session?.state && authState === req.session.state){
       //Authorized requests
       const code = query?.code;

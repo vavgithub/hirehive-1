@@ -1,3 +1,5 @@
+import { stageLabel } from "../../config/applicationStageLabels";
+
 const getStageDotColor = (stage) => {
     switch (stage.toLowerCase()) {
       case 'portfolio':
@@ -23,7 +25,7 @@ const getStageDotColor = (stage) => {
         {/* Circular dot */}
         <div className={`w-3 h-3 rounded-full ${dotColor} mr-2`}></div>
         {/* Stage text */}
-        <span className="typography-body">{stage}</span>
+        <span className="typography-body">{stageLabel(stage)}</span>
       </div>
     );
   };

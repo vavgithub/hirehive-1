@@ -19,7 +19,7 @@ import { incrementApplyClickCount } from '../../controllers/admin/jobs.controlle
 
 const router = express.Router();
 
-const staffRoles = ['Admin', 'Hiring Manager', 'Design Reviewer'];
+const staffRoles = ['Admin', 'Hiring Manager', 'Design Reviewer', 'Developer Reviewer'];
 
 // === Specific Routes ===
 

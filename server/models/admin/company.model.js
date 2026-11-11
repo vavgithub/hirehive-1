@@ -72,7 +72,7 @@ const companyschema = new mongoose.Schema({
         email : String,
         role : {
           type : String,
-          enum: ['Admin','Hiring Manager', 'Design Reviewer'],
+          enum: ['Admin','Hiring Manager', 'Design Reviewer', 'Developer Reviewer'],
         },
         invited : Boolean,
         status : {
@@ -103,6 +103,10 @@ const companyschema = new mongoose.Schema({
         type : Map,
         of : [customScreeningSchema],
         default : {}
+    },
+    customJobProfiles: {
+        type: [String],
+        default: [],
     },
     multiReviewerSettings: {
         enabled: {

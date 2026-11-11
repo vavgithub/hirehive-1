@@ -10,9 +10,9 @@ router.put('/update-multiple-assignee', protect, updateCandidateMultipleAssignee
 
 router.post('/auto-assign-portfolios',protect, autoAssignPortfolios)
 
-router.get('/assigned-candidates', protect , roleProtect("Design Reviewer") , getAssignedCandidates);
+router.get('/assigned-candidates', protect , roleProtect(["Design Reviewer", "Developer Reviewer"]) , getAssignedCandidates);
 
-router.post('/submit-score-review' , protect , roleProtect(["Admin","Design Reviewer"]) ,submitScoreReview);
+router.post('/submit-score-review' , protect , roleProtect(["Admin","Design Reviewer","Developer Reviewer"]) ,submitScoreReview);
 
 router.get('/under-review-stats' , protect , getUnderReviewStats)
 

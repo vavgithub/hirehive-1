@@ -246,7 +246,7 @@ export default function ToolbarPlugin({ hasClearOption,onSaveTask, hasSaveOption
       isReadyToClose={false}
       onClose={() => setFormOpen(false)}
       onConfirm={handleSaveTask}
-      customMessage={'Save your drafted Design Task as a template for future use.'}
+      customMessage={'Save your drafted assignment as a template for future use.'}
       customTitle={'Save Task as Template'}
       customConfirmLabel={'Save'}
       >

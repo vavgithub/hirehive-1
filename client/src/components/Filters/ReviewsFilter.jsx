@@ -2,7 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import IconWrapper from '../Cards/IconWrapper';
 import { SlidersHorizontal, Trash } from 'lucide-react';
 import TickCheckbox from '../Checkboxes/TickCheckbox';
-import { JOB_PROFILES } from '../../config/jobprofile.config';
+import { useJobProfiles } from '../../hooks/useJobProfiles';
+import { stageLabel } from '../../config/applicationStageLabels';
 
 const ArrowIcon = ({ isOpen }) => (
   <svg
@@ -68,6 +69,10 @@ const ReviewsFilter = ({ onApplyFilters, candidates = [] }) => {
         value: 'All',
         className: 'text-font-main typography-body group-hover:text-accent-100'
       };
+    }
+
+    if (category === 'stage' && Array.isArray(values)) {
+      values = values.map((value) => stageLabel(value));
     }
 
     if (values.length === 1) {
@@ -139,8 +144,10 @@ const ReviewsFilter = ({ onApplyFilters, candidates = [] }) => {
     };
   }, []);
 
+  const { names: jobProfileNames } = useJobProfiles();
+
   const categories = {
-    "job Profile": Object.values(JOB_PROFILES),
+    "job Profile": jobProfileNames,
     jobName: getUniqueJobNames(),
     stage: getUniqueStages(),
     "job Type" : ["Full Time", "Part Time", "Contract", "Internship"],
@@ -217,7 +224,7 @@ const ReviewsFilter = ({ onApplyFilters, candidates = [] }) => {
                         onChange={() => handleSelect(category, item)}
                         labelClassName=""
                       />
-                      <span className="ml-2">{item}</span>
+                      <span className="ml-2">{category === 'stage' ? stageLabel(item) : item}</span>
                     </label>
                   ))}
                 </div>

@@ -88,7 +88,7 @@ const statsOne = [
   { title: 'Total', value: 0, icon: () => <IconWrapper size={10} isTeritiaryIcon icon={Users} /> },
   { title: 'Portfolio', value: 0, icon: () => <IconWrapper size={10} isTeritiaryIcon icon={Folder} /> },
   { title: 'Screening', value: 0, icon: () => <IconWrapper size={10} isTeritiaryIcon icon={MonitorDot} /> },
-  { title: 'Design Task', value: 0, icon: () => <IconWrapper size={10} isTeritiaryIcon icon={PenTool} /> },
+  { title: 'Assignment', value: 0, icon: () => <IconWrapper size={10} isTeritiaryIcon icon={PenTool} /> },
   { title: 'Round 1', value: 0, icon: () => <IconWrapper size={10} isTeritiaryIcon icon={Briefcase} /> },
   { title: 'Round 2', value: 0, icon: () => <IconWrapper size={10} isTeritiaryIcon icon={Briefcase} /> },
   { title: 'Offer Sent', value: 0, icon: () => <IconWrapper size={10} isTeritiaryIcon icon={PenTool} /> },

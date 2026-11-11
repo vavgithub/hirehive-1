@@ -254,7 +254,7 @@ const AdminLayout = () => {
         const candidatesSubMenu = [
             ...(hasRoutePermission(user.role, ROUTE_KEY.ALL_CANDIDATES) ? [{
                 to: getRoute(user.role, ROUTE_KEY.ALL_CANDIDATES),
-                label: user?.role === ROLES.DESIGN_REVIEWER ? 'Candidates' : 'All Candidates',
+                label: user?.role === ROLES.DESIGN_REVIEWER || user?.role === ROLES.DEVELOPER_REVIEWER ? 'Candidates' : 'All Candidates',
                 icon: () => <IconWrapper inheritColor icon={Users} />,
                 activeIcon: () => <IconWrapper inheritColor icon={Users} />
             }] : []),

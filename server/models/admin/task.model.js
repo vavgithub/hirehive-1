@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import { JOB_PROFILES } from "../../config/jobStagesStatuses.js";
 import { taskTemplates } from "../../utils/designtask.templates.js";
 import { sanitizeLexicalHtml } from "../../utils/sanitize-html.js";
 
@@ -16,7 +15,7 @@ const taskSchema = new mongoose.Schema({
     },
     category : {
         type : String,
-        enum : Object.values(JOB_PROFILES)
+        trim : true,
     },
     htmlString : { 
         type : String,

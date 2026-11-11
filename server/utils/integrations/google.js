@@ -42,6 +42,7 @@ export const WORKSPACE_KEYS = (role) => {
         case 'Hiring Manger':
             return [SCOPE_KEYS.EDIT_CALENDAR,SCOPE_KEYS.VIEW_CALENDAR,SCOPE_KEYS.EDIT_EVENTS,SCOPE_KEYS.VIEW_EVENTS]  
         case 'Design Reviewer':
+        case 'Developer Reviewer':
             return [SCOPE_KEYS.VIEW_CALENDAR,SCOPE_KEYS.VIEW_EVENTS]    
         default:
             break;
@@ -55,6 +56,7 @@ export const getRoleBasedScopes = (role) => {
         case 'Hiring Manager':
             return [...SCOPES.EDIT_CALENDAR,...SCOPES.VIEW_CALENDAR,...SCOPES.VIEW_EVENTS,...SCOPES.EDIT_EVENTS]
         case 'Design Reviewer':
+        case 'Developer Reviewer':
             return [...SCOPES.VIEW_CALENDAR,...SCOPES.VIEW_EVENTS]
         default:
             return []

@@ -12,6 +12,7 @@ import { ArrowRight, Calendar, Ellipsis, Star, User, X } from 'lucide-react'
 import { useUnknownProfilePicture } from '../../context/ThemeContext'
 import { assignReviewerForCandidates, moveMultipleCandidates, rateMultipleCandidates, rejectMultipleCandidates } from '../../services/hr.service'
 import * as Sentry from '@sentry/react';
+import { stageLabel } from '../../config/applicationStageLabels';
 
 export const getMaxScoreEachStage = (currentStage) =>{
     let stageScores = {
@@ -445,7 +446,7 @@ function MultiSelectBar({selectedData,jobId,clearSelection}) {
                     return (
                         <div key={stage}>
                             <div className='flex items-center justify-between my-2'>
-                                <h2>{action?.name === "REJECT" ? globalStages[nextStageIndex] : globalStages[nextStageIndex + 1] || stage}</h2>
+                                <h2>{stageLabel(action?.name === "REJECT" ? globalStages[nextStageIndex] : globalStages[nextStageIndex + 1] || stage)}</h2>
                                 <p className='typography-small-p font-light text-font-gray'>{candidateData?.length ?? 0} candidates</p>
                             </div>
                             <div className='gap-4 grid grid-cols-2  bg-background-70 rounded-xl p-4'>

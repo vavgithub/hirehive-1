@@ -23,8 +23,12 @@ export const stagingConfig = {
     // [JOB_PROFILES.SOCIAL_MEDIA_ASSETS_DESIGNER] : socialMediaDesignerConfig,
 }
 
+export const getProfileConfig = (jobProfile) => {
+    return stagingConfig[jobProfile] || stagingConfig[JOB_PROFILES.DESIGNER]
+}
+
 export const getStages = (jobProfile) => {
-    return stagingConfig[jobProfile]?.map(stage => stage?.name)
+    return getProfileConfig(jobProfile)?.map(stage => stage?.name)
 }
 
 export const statusConfig = {

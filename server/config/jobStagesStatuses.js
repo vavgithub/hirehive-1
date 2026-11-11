@@ -783,3 +783,7 @@ export const jobStagesStatuses = {
   //   },
   // ],
 };
+
+export function stagesForProfile(jobProfile) {
+  return jobStagesStatuses[jobProfile] || jobStagesStatuses[JOB_PROFILES.DESIGNER];
+}

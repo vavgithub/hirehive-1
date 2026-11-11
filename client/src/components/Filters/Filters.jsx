@@ -7,7 +7,7 @@ import { CheckboxGroup } from '../Checkboxes/CheckboxGroup';
 import IconWrapper from '../Cards/IconWrapper';
 import { CircleSlash2, ClockArrowUp, ClockFading, GraduationCap, Handshake, Hourglass } from 'lucide-react';
 import { hasPermission, PERMISSIONS } from '../../config/permissions.config';
-import { getJobProfileAsOptions } from '../../config/jobprofile.config';
+import { useJobProfiles } from '../../hooks/useJobProfiles';
 
 // Hidden for now. Add handleBudgetFilter back to the props to show the budget filter again.
 const Filters = ({ filters = {}, handleCheckboxChange, activeTab, handleExperienceFilter, clearAllFilters }) => {
@@ -53,7 +53,7 @@ const Filters = ({ filters = {}, handleCheckboxChange, activeTab, handleExperien
         }] : []),
     ];
 
-    const jobProfileOptions = getJobProfileAsOptions();
+    const { options: jobProfileOptions } = useJobProfiles();
 
     const closedOptions = [
         {
