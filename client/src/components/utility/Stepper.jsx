@@ -35,10 +35,10 @@ function Stepper({padding,steps,currentStep,setCurrentStep}) {
                             <p className={' typography-body font-semibold whitespace-nowrap ' + (((currentStep === stepObj.id) || (index < currentIndex)) ? "text-teal-100" : "text-font-gray")}>{stepObj?.label}</p>
                         </div>
                         {(index < stepsArr.length - 1) && 
-                        <div className='bg-divider-100 w-full h-1 z-10'>
+                        <div className='bg-divider-100 w-full h-[3px] z-10'>
                             <div style={{
                                 width : `${currentStep === stepObj.id ? 50 : index > currentIndex ? 0 : 100}%`
-                            }} className='bg-teal-100 h-1 z-10'></div>
+                            }} className='bg-teal-100 h-[3px] z-10'></div>
                         </div>}
                         </Fragment>
                     )

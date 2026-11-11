@@ -15,6 +15,17 @@ const CARD_BRAND_LOGOS = {
   'diners club': FaCcDinersClub,
 }
 
+const CARD_BRAND_COLORS = {
+  visa: '#1A1F71',
+  mastercard: '#EB001B',
+  amex: '#1F72CD',
+  'american express': '#1F72CD',
+  discover: '#FF6000',
+  jcb: '#0B4EA2',
+  diners: '#0079BE',
+  'diners club': '#0079BE',
+}
+
 export const CardBrandLogo = ({ brand, size = 'md' }) => {
   const key = (brand || '').toLowerCase()
   const Logo = CARD_BRAND_LOGOS[key]
@@ -25,7 +36,7 @@ export const CardBrandLogo = ({ brand, size = 'md' }) => {
   if (Logo) {
     return (
       <span className={`flex items-center justify-center rounded-md bg-white shrink-0 ${chip}`}>
-        <Logo size={glyph} className="text-accent-100" />
+        <Logo size={glyph} style={{ color: CARD_BRAND_COLORS[key] || '#1A1F71' }} />
       </span>
     )
   }

@@ -78,7 +78,7 @@ const FeatureItem = ({ label, included, className = '' }) => (
       customIconSize={0}
       customStrokeWidth={included ? 11 : 4}
       size={0}
-      className='flex-shrink-0 mt-0.5'
+      className='flex-shrink-0 mt-[2px]'
     />
     <span>{label}</span>
   </li>
@@ -367,7 +367,7 @@ function PricingAndSubscription() {
           <StyledCard
             padding={3}
             backgroundColor='bg-background-90'
-            borderRadius='rounded-2xl'
+            borderRadius='rounded-[18px]'
             extraStyles='relative flex flex-col overflow-hidden cursor-pointer hover-outline'
           >
             <div className='flex items-center justify-between gap-2 mb-1'>
@@ -415,7 +415,7 @@ function PricingAndSubscription() {
           <StyledCard
             padding={currentPlan === 'pro' ? 3 : 2}
             backgroundColor='bg-background-90'
-            borderRadius='rounded-2xl'
+            borderRadius='rounded-[18px]'
             extraStyles={
               currentPlan === 'pro'
                 ? 'relative flex flex-col overflow-hidden cursor-pointer hover-outline'
@@ -481,7 +481,7 @@ function PricingAndSubscription() {
           <StyledCard
             padding={3}
             backgroundColor='bg-background-90'
-            borderRadius='rounded-2xl'
+            borderRadius='rounded-[18px]'
             extraStyles='relative flex flex-col overflow-hidden cursor-pointer hover-outline'
           >
             <div className='flex items-center justify-between gap-2 mb-1'>
@@ -622,7 +622,7 @@ function PricingAndSubscription() {
           <StyledCard
             padding={2}
             backgroundColor='bg-background-90'
-            extraStyles='relative w-full max-w-3xl max-h-screen overflow-y-auto'
+            extraStyles='relative w-full max-w-3xl max-h-[90vh] overflow-y-auto'
           >
             <div
               onClick={() => setShowSeatsModal(false)}
