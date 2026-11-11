@@ -1,5 +1,5 @@
 import axios from "axios";
-import { jobStagesStatuses } from "../../config/jobStagesStatuses.js";
+import { stagesForProfile } from "../../config/jobStagesStatuses.js";
 import { undoConfig } from "../../config/undoConfig.js";
 import { Company } from "../../models/admin/company.model.js";
 import { jobs } from "../../models/admin/jobs.model.js";
@@ -396,7 +396,7 @@ export const noShow = async (req, res) => {
     }
 
     // Get the stages for this job profile
-    const jobStages = jobStagesStatuses[job.jobProfile];
+    const jobStages = stagesForProfile(job.jobProfile);
     if (!jobStages) {
       return res.status(400).json({ 
         message: "Invalid job profile or stages not defined" 
@@ -506,7 +506,7 @@ export const moveCandidate = async (req, res) => {
     }
 
     const jobProfile = job.jobProfile;
-    const stages = jobStagesStatuses[jobProfile];
+    const stages = stagesForProfile(jobProfile);
 
     // Find the index of the current stage
     const currentStageIndex = stages.findIndex(
@@ -663,7 +663,7 @@ export const moveMultipleCandidates = async (req, res) => {
         }
 
         const jobProfile = job.jobProfile;
-        const stages = jobStagesStatuses[jobProfile];
+        const stages = stagesForProfile(jobProfile);
 
         // Find the index of the current stage
         const currentStageIndex = stages.findIndex(
@@ -787,7 +787,7 @@ export const updateAssigneeForMultipleCandidates = async (req,res) => {
       throw new Error("Invalid Assignee Data")
     }
 
-    const isAssigneeExist = await User.findOne({_id:assigneeId,role:"Design Reviewer"});
+    const isAssigneeExist = await User.findOne({_id:assigneeId, role: { $in: ["Design Reviewer", "Developer Reviewer"] }});
     if(!isAssigneeExist){
       throw new Error("No Assignee Found")
     }

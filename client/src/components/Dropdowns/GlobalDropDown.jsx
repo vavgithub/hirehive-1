@@ -6,7 +6,7 @@ import {
   } from '@mui/material';
   import React, { useEffect, useRef, useState } from 'react';
 import IconWrapper from '../Cards/IconWrapper';
-import { Info } from 'lucide-react';
+import { Info, Plus } from 'lucide-react';
 import CustomToolTip from '../Tooltip/CustomToolTip';
   
   function GlobalDropDown({
@@ -136,6 +136,7 @@ import CustomToolTip from '../Tooltip/CustomToolTip';
                     padding: "0.5rem 1rem",
                     borderRadius: "0.75rem",
                     backgroundColor: 'var(--color-background-90)',
+                    ...(optionObj?.isAddAction ? { justifyContent: 'center' } : {}),
                   }}
                   key={optionObj?.value}
                   onClick={() => {
@@ -143,10 +144,17 @@ import CustomToolTip from '../Tooltip/CustomToolTip';
                     handleClose();
                   }}
                 >
-                  <ListItemText
-                    primaryTypographyProps={{ component: 'span' }}
-                    primary={optionObj?.label}
-                  />
+                  {optionObj?.isAddAction ? (
+                    <span className="flex w-full items-center justify-center gap-2">
+                      <IconWrapper icon={Plus} size={0} inheritColor customIconSize={4} customStrokeWidth={5} />
+                      {optionObj?.label}
+                    </span>
+                  ) : (
+                    <ListItemText
+                      primaryTypographyProps={{ component: 'span' }}
+                      primary={optionObj?.label}
+                    />
+                  )}
                 </MenuItem>
               ))
             ) : (

@@ -8,7 +8,8 @@ import { SlidersHorizontal, Trash } from 'lucide-react';
 import TickCheckbox from '../Checkboxes/TickCheckbox';
 import { allStatuses, stageStatusMap } from './config.filter';
 import LocationFilter from './LocationFilter';
-import { JOB_PROFILES, getJobProfileAsOptions } from '../../config/jobprofile.config';
+import { useJobProfiles } from '../../hooks/useJobProfiles';
+import { stageLabel } from '../../config/applicationStageLabels';
 import { fetchJobTitles } from '../../services/jobs.service';
 
 const AWAITING_DISCOVERY_FILTER = 'Awaiting Discovery';
@@ -99,6 +100,10 @@ const FilterForDataTable = ({ applyLocationFilter, onApplyFilters, readOnly, pre
         value: !values ? "All" : `${values}`,
         className: 'text-font-main typography-body group-hover:text-accent-100' // lighter gray for 'All'
       };
+    }
+
+    if (category === 'stage' && Array.isArray(values)) {
+      values = values.map((value) => stageLabel(value));
     }
 
     if (category === 'location' && values) {
@@ -272,7 +277,7 @@ const FilterForDataTable = ({ applyLocationFilter, onApplyFilters, readOnly, pre
     enabled: readOnly,
   });
 
-  const jobProfileOptions = Object.values(JOB_PROFILES);
+  const { names: jobProfileOptions } = useJobProfiles();
 
   const baseCategories = {
     stage: ['Portfolio', 'Screening', 'Design Task', 'Round 1', 'Round 2', 'Hired'],
@@ -296,7 +301,7 @@ const FilterForDataTable = ({ applyLocationFilter, onApplyFilters, readOnly, pre
         ...baseCategories,
         assessment: ["Completed", "Not Completed"],
         assignee: designReviewers.map((reviewer) => reviewer),
-        "job Profile": getJobProfileAsOptions().map((option) => option.value),
+        "job Profile": jobProfileOptions,
         score: ['score'],
         location: ['location'],
       };
@@ -355,7 +360,7 @@ const FilterForDataTable = ({ applyLocationFilter, onApplyFilters, readOnly, pre
                               onChange={() => category === 'stage' ? handleStageSelect(item) : handleSelect(category, item)}
                               labelClassName=""
                             />
-                            <span className="ml-2">{category === 'assignee' ? `${item?.firstName} ${item?.lastName}` : item}</span>
+                            <span className="ml-2">{category === 'assignee' ? `${item?.firstName} ${item?.lastName}` : category === 'stage' ? stageLabel(item) : item}</span>
                           </label>
                         ))}
                       </div>

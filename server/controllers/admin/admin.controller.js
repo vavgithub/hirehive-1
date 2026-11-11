@@ -13,6 +13,7 @@ import { getAuthorizedOauthClient, getCalendarClient, SCOPE_KEYS } from "../../u
 import { decrypt } from "../../utils/crypto.js";
 import { getUTCBasedonTZ } from "../../utils/dateUtilities.js";
 import { captureError } from "../../utils/errorHandler.js";
+import { JOB_PROFILES } from "../../config/jobStagesStatuses.js";
 
 //add Team members controller
 export const addTeamMember = asyncHandler(async (req,res) => {
@@ -29,7 +30,7 @@ export const addTeamMember = asyncHandler(async (req,res) => {
           });
     }
   
-    let validRoles = ['Hiring Manager','Design Reviewer'];
+    let validRoles = ['Hiring Manager','Design Reviewer','Developer Reviewer'];
   
       if(teamMember?.firstName && teamMember?.lastName && teamMember?.email && teamMember?.role && validRoles.includes(teamMember.role)){
         const isExisting = await User.findOne({ email : teamMember?.email });
@@ -199,7 +200,7 @@ export const changeMemberStatus = asyncHandler(async (req,res) => {
           });
     }
   
-    let validRoles = ['Hiring Manager','Design Reviewer'];
+    let validRoles = ['Hiring Manager','Design Reviewer','Developer Reviewer'];
   
       if(teamMember?.firstName && teamMember?.lastName && teamMember?.email && teamMember?.role && validRoles.includes(teamMember.role)){
         const isExisting = await User.findOne({ email : teamMember?.email });
@@ -1077,3 +1078,53 @@ export const getCalendarDetails = async ( req, res ) => {
     .json({ message: "Error updating candidate", error: error.message });
   }
 }
+
+const normalizeProfileName = (name) => String(name || "").trim().replace(/\s+/g, " ");
+
+export const getJobProfiles = asyncHandler(async (req, res) => {
+  const company = await Company.findById(req.user?.company_id).select("customJobProfiles");
+  const custom = company?.customJobProfiles || [];
+  const profiles = [
+    ...Object.values(JOB_PROFILES).map((name) => ({ name, isCustom: false })),
+    ...custom.map((name) => ({ name, isCustom: true })),
+  ];
+
+  res.status(200).json({
+    status: "success",
+    profiles,
+  });
+});
+
+export const addJobProfile = asyncHandler(async (req, res) => {
+  const name = normalizeProfileName(req.body?.name);
+  if (name.length < 2 || name.length > 60) {
+    return res.status(400).json({
+      status: "error",
+      message: "Profile name must be between 2 and 60 characters.",
+    });
+  }
+
+  const company = await Company.findById(req.user?.company_id);
+  if (!company) {
+    return res.status(400).json({
+      status: "error",
+      message: "No company found with this user.",
+    });
+  }
+
+  const existing = [...Object.values(JOB_PROFILES), ...(company.customJobProfiles || [])];
+  if (existing.some((item) => item.toLowerCase() === name.toLowerCase())) {
+    return res.status(400).json({
+      status: "error",
+      message: "That job profile already exists.",
+    });
+  }
+
+  company.customJobProfiles.push(name);
+  await company.save();
+
+  res.status(201).json({
+    status: "success",
+    profile: { name, isCustom: true },
+  });
+});

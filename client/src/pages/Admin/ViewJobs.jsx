@@ -238,7 +238,7 @@ const ViewJobs = () => {
         { title: 'Total', value: jobStats?.data?.totalCount || 0, icon: () => <IconWrapper size={10} isTeritiaryIcon icon={Users} />, statistics: applicationsReceivedStats },
         { title: 'Portfolio', value: jobStats?.data?.stageStats?.Portfolio || 0, icon: () => <IconWrapper size={10} isTeritiaryIcon icon={Folder} /> },
         { title: 'Screening', value: jobStats?.data?.stageStats?.Screening || 0, icon: () => <IconWrapper size={10} isTeritiaryIcon icon={MonitorDot} /> },
-        { title: 'Design Task', value: jobStats?.data?.stageStats['Design Task'] || 0, icon: () => <IconWrapper size={10} isTeritiaryIcon icon={PenTool} /> },
+        { title: 'Assignment', value: jobStats?.data?.stageStats['Design Task'] || 0, icon: () => <IconWrapper size={10} isTeritiaryIcon icon={PenTool} /> },
         { title: 'Round 1', value: jobStats?.data?.stageStats['Round 1'] || 0, icon: () => <IconWrapper size={10} isTeritiaryIcon icon={Briefcase} /> },
         { title: 'Round 2', value: jobStats?.data?.stageStats['Round 2'] || 0, icon: () => <IconWrapper size={10} isTeritiaryIcon icon={Briefcase} /> },
         { title: 'Offer Sent', value: jobStats?.data?.stageStats?.Hired || 0, icon: () => <IconWrapper size={10} isTeritiaryIcon icon={PenTool} /> },

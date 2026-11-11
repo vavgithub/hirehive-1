@@ -526,7 +526,7 @@ export const router = createBrowserRouter([
 
       {
         path: "/design-reviewer",
-        element: <ProtectedRoute allowedRoles={['Design Reviewer']}><AdminLayout /></ProtectedRoute>,
+        element: <ProtectedRoute allowedRoles={['Design Reviewer', 'Developer Reviewer']}><AdminLayout /></ProtectedRoute>,
         children: [
           {
             path: "dashboard",

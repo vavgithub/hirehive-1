@@ -517,7 +517,7 @@ const fetchAssignedCandidate = async (req, res) => {
     }
 
     // Check if the reviewer exists and is a Design Reviewer
-    const reviewer = await User.findOne({ _id: reviewerId, role: 'Design Reviewer' });
+    const reviewer = await User.findOne({ _id: reviewerId, role: { $in: ['Design Reviewer', 'Developer Reviewer'] } });
     if (!reviewer) {
       return res.status(404).json({ success: false, message: 'Design Reviewer not found' });
     }

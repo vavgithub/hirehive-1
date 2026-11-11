@@ -287,7 +287,7 @@ function TaskForm({jobProfile,candidateId,candidateEmail,jobId,setIsLoading}) {
                 <div className='h-[1px] w-[50%] bg-font-gray'></div>
             </div>
             <div className='relative'>
-                <label htmlFor="preset" className='typography-body mb-4 block'>Choose Design Task from  Presets</label>
+                <label htmlFor="preset" className='typography-body mb-4 block'>Choose Assignment from Presets</label>
                 <div className='grid grid-cols-2 gap-6'>
                 {
                     taskPresets?.filter((task,index) => showMore ? true : index < 2).map(task => (
@@ -342,13 +342,13 @@ function TaskForm({jobProfile,candidateId,candidateEmail,jobId,setIsLoading}) {
                     >
                         Send Email
                     </Button> */}
-                    <SchedulerButton buttonText={"Send Email"} onConfirm={handleSendTask} modalTitle={"Schedule Email"} modalMessage={"Schedule design task email with specified date and time"} buttonVariant={"primary"}/>
+                    <SchedulerButton buttonText={"Send Email"} onConfirm={handleSendTask} modalTitle={"Schedule Email"} modalMessage={"Schedule the assignment email with a date and time"} buttonVariant={"primary"}/>
             </div>
             <Modal
             open={showTaskContent}
             item={showTaskContent}
             customTitle={showTaskContent?.title}
-            customMessage={`Sample Design Task Template for ${showTaskContent?.level} ${showTaskContent?.category} ${showTaskContent?.category === 'UI UX' ? 'Designer' : ''}`}
+            customMessage={`Sample assignment template for ${showTaskContent?.level} ${showTaskContent?.category} ${showTaskContent?.category === 'UI UX' ? 'Designer' : ''}`}
             specifiedWidth={'max-w-4xl'}
             onClose={() => setShowTaskContent(false)}
             customConfirmLabel={'Insert'}

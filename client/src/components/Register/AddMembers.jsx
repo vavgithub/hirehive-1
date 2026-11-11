@@ -29,6 +29,10 @@ export const roleOptions = [
         label : "Design Reviewer",
         value : "Design Reviewer"
     },
+    {
+        label : "Developer Reviewer",
+        value : "Developer Reviewer"
+    },
 ]
 
 function AddMembers({currentStep,setCurrentStep}) {

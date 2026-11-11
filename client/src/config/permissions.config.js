@@ -2,6 +2,7 @@ export const ROLES = {
   ADMIN: "Admin",
   HIRING_MANAGER: "Hiring Manager",
   DESIGN_REVIEWER: "Design Reviewer",
+  DEVELOPER_REVIEWER: "Developer Reviewer",
   CANDIDATE: "Candidate",
 };
 
@@ -216,6 +217,11 @@ export const ROLE_CONFIG = {
     ],
     routes: {},
   },
+};
+
+ROLE_CONFIG[ROLES.DEVELOPER_REVIEWER] = {
+  permissions: ROLE_CONFIG[ROLES.DESIGN_REVIEWER].permissions,
+  routes: ROLE_CONFIG[ROLES.DESIGN_REVIEWER].routes,
 };
 
 export function hasPermission(role, permission) {

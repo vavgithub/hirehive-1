@@ -11,6 +11,7 @@ import { showSuccessToast } from '../ui/Toast';
 import IconWrapper from './IconWrapper';
 import { ClockArrowUp, /* DatabaseZap, */ SignalHigh } from 'lucide-react';
 import { hasPermission, PERMISSIONS } from '../../config/permissions.config';
+import { stageLabel } from '../../config/applicationStageLabels';
 import { useClosedBadge } from '../../context/ThemeContext';
 
 // Helper function to truncate text to specific number of words
@@ -100,7 +101,7 @@ const JobCard = ({
       },
       {
         label: 'Current Stage',
-        value: currentStage || 'N/A',
+        value: stageLabel(currentStage) || 'N/A',
       },
       {
         label: 'Stage Status',
