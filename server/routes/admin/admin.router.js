@@ -1,6 +1,6 @@
 import express from "express"
 import { protect, roleProtect } from "../../middlewares/authMiddleware.js";
-import { addTeamMember, approveRequest, changeMemberStatus, editTeamMember, getAllTeamMember, getCalendarDetails, getDashboardDetailsSecondary, getDetailsForDashboard, reInviteMember, rejectRequest, removeTeamMember, resetScreeningParam, updateScreeningParam } from "../../controllers/admin/admin.controller.js";
+import { addTeamMember, approveRequest, changeMemberStatus, editTeamMember, getAllTeamMember, getCalendarDetails, getDashboardDetailsSecondary, getDetailsForDashboard, reInviteMember, rejectRequest, resetScreeningParam, updateScreeningParam } from "../../controllers/admin/admin.controller.js";
 
 const router = express.Router();
 
@@ -23,8 +23,6 @@ router.get('/get-member/:id',protect,roleProtect("Admin"), getAllTeamMember);
 router.post('/register/approve-request',protect,roleProtect('Admin'), approveRequest);
 
 router.post('/register/reject-request',protect,roleProtect('Admin'), rejectRequest);
-
-router.post('/remove-member', protect, roleProtect('Admin'), removeTeamMember);
 
 router.post('/update-screening-param',protect,roleProtect("Admin"), updateScreeningParam);
 

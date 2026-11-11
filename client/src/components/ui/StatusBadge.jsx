@@ -19,12 +19,7 @@ const getStatusColor = (status) => {
     case 'reviewed':
     case 'cleared':
     case 'sent':
-    case 'paid':
       return 'bg-status-bggreen text-status-textgreen ';
-    case 'processing':
-      return 'bg-status-bgyellow text-status-textyellow ';
-    case 'failed':
-      return 'bg-status-bgred text-status-textred ';
     default:
       return 'bg-status-bggray text-status-textgray ';
   }
