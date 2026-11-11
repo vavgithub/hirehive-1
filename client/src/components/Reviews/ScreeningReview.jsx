@@ -3,14 +3,14 @@ import Scorer from '../ui/Scorer';
 import { Button } from '../Buttons/Button';
 import { showErrorToast } from '../ui/Toast';
 import StyledCard from '../Cards/StyledCard';
-import { stagingConfig } from '../../config/staging.config';
+import { getProfileConfig } from '../../config/staging.config';
 import { useAuthContext } from '../../context/AuthProvider';
 
 function ScreeningReview({ jobProfile, candidate, onSubmit ,rounded = "bottom"}){
   
   const { user } = useAuthContext();
   const roundedClass =  rounded === "bottom" ? 'rounded-b-xl' : rounded === "top" ? "rounded-t-xl" : "rounded-xl";
-  const scoringConfig = stagingConfig[jobProfile]?.find(stage => stage.name === "Screening");
+  const scoringConfig = getProfileConfig(jobProfile)?.find(stage => stage.name === "Screening");
 
   const [ratings, setRatings] = useState( Object.fromEntries(Object.entries(scoringConfig?.score)?.filter(([key,value]) => key !== "Budget")?.map(([key,value])=>[key,0])));
 

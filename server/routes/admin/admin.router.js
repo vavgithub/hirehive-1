@@ -1,6 +1,6 @@
 import express from "express"
 import { protect, roleProtect } from "../../middlewares/authMiddleware.js";
-import { addTeamMember, approveRequest, changeMemberStatus, editTeamMember, getAllTeamMember, getCalendarDetails, getDashboardDetailsSecondary, getDetailsForDashboard, reInviteMember, rejectRequest, resetScreeningParam, updateScreeningParam } from "../../controllers/admin/admin.controller.js";
+import { addJobProfile, addTeamMember, approveRequest, changeMemberStatus, editTeamMember, getAllTeamMember, getCalendarDetails, getDashboardDetailsSecondary, getDetailsForDashboard, getJobProfiles, reInviteMember, rejectRequest, resetScreeningParam, updateScreeningParam } from "../../controllers/admin/admin.controller.js";
 
 const router = express.Router();
 
@@ -29,5 +29,9 @@ router.post('/update-screening-param',protect,roleProtect("Admin"), updateScreen
 router.post('/reset-screening-param',protect,roleProtect("Admin"), resetScreeningParam);
 
 router.get('/get-calendar-details',protect,getCalendarDetails)
+
+router.get('/job-profiles', protect, roleProtect(['Admin', 'Hiring Manager', 'Design Reviewer', 'Developer Reviewer']), getJobProfiles);
+
+router.post('/job-profiles', protect, roleProtect(['Admin', 'Hiring Manager']), addJobProfile);
 
 export default router;                                                                               

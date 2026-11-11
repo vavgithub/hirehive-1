@@ -12,18 +12,29 @@ import IconWrapper from '../Cards/IconWrapper';
 import { Bookmark, CirclePlus } from 'lucide-react';
 import TickCheckbox from '../Checkboxes/TickCheckbox';
 import CustomPill from '../Badge/CustomPill';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from '../../services/axios';
 import TemplateModal from '../Modals/TemplateModal';
 import GlobalDropDown from '../Dropdowns/GlobalDropDown';
 import StyledCard from '../Cards/StyledCard';
 import { fetchAssessmentTemplates } from '../../services/jobs.service';
+import { addJobProfile } from '../../services/admin.service';
+import { useJobProfiles } from '../../hooks/useJobProfiles';
+import Modal from '../Modals/Modal';
+
+const ADD_JOB_PROFILE = '__add_job_profile__';
 
 function hasDuplicates(arr) {
   return new Set(arr).size !== arr.length;
 }
 
 const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions }) => {
+  const queryClient = useQueryClient();
+  const { options: jobProfileOptions } = useJobProfiles();
+  const [showAddProfile, setShowAddProfile] = useState(false);
+  const [newProfileName, setNewProfileName] = useState('');
+  const [profileError, setProfileError] = useState('');
+  const [savingProfile, setSavingProfile] = useState(false);
   const { control, handleSubmit, watch, setValue, setError, getValues,clearErrors, formState: { errors, isValid } } = useForm({
     defaultValues: {
       jobTitle: '',
@@ -160,6 +171,27 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
     }
   }
 
+  const saveJobProfile = async () => {
+    const name = newProfileName.trim().replace(/\s+/g, ' ');
+    if (name.length < 2) {
+      setProfileError('Enter a profile name.');
+      return;
+    }
+    setSavingProfile(true);
+    setProfileError('');
+    try {
+      const data = await addJobProfile(name);
+      await queryClient.invalidateQueries({ queryKey: ['jobProfiles'] });
+      setValue('jobProfile', data.profile.name, { shouldValidate: true });
+      setShowAddProfile(false);
+      setNewProfileName('');
+    } catch (error) {
+      setProfileError(error?.response?.data?.message || 'Could not add that profile.');
+    } finally {
+      setSavingProfile(false);
+    }
+  };
+
   return (
     <StyledCard extraStyles={'container-form mx-auto mt-6'}>
     <form onSubmit={handleSubmit(handleFormSubmit)} className=''>
@@ -193,14 +225,24 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
                 label={field.charAt(0).toUpperCase() + field.slice(1).replace(/([A-Z])/g, ' $1')}
                 hasInfoIcon={field === "jobProfile"}
                 infoText={field === "jobProfile" ? 'Checkout "Guide tab" to get profile based staging and scoring details.' :''}
-                options={dropdownOptions[field].filter(opt => opt.value !== '')}
+                options={field === 'jobProfile'
+                  ? [...jobProfileOptions, { label: 'Add a job profile', value: ADD_JOB_PROFILE, isAddAction: true }]
+                  : dropdownOptions[field].filter(opt => opt.value !== '')}
                 customPlaceholder={dropdownOptions[field].find(opt => opt.value === '')?.label}
                 searchEnabled={field === "employeeLocation"}
                 value={value}
                 required
                 error={error}
                 errorMessage={error?.message}
-                onChange={onChange}
+                onChange={(next) => {
+                  if (field === 'jobProfile' && next === ADD_JOB_PROFILE) {
+                    setProfileError('');
+                    setNewProfileName('');
+                    setShowAddProfile(true);
+                    return;
+                  }
+                  onChange(next);
+                }}
               />
             )}
           />
@@ -398,6 +440,28 @@ const JobForm = ({ initialData, onSubmit,isLoading, isEditing, initialQuestions 
 
     {/* Template display Modal */}
     <TemplateModal open={previewAssessment} assessment={previewAssessment} onClose={()=>setPreviewAssessment(false)}  />
+    <Modal
+      open={showAddProfile}
+      onClose={() => setShowAddProfile(false)}
+      onConfirm={saveJobProfile}
+      isReadyToClose={false}
+      customTitle="Add a job profile"
+      customMessage="This profile is saved for your company. New profiles use the existing Designer review steps."
+      customConfirmLabel={savingProfile ? 'Saving...' : 'Add'}
+      isconfirmButtonDisabled={savingProfile}
+    >
+      <div className="mt-4">
+        <InputField
+          type="text"
+          label="Profile name"
+          value={newProfileName}
+          onChange={(event) => setNewProfileName(event.target.value)}
+          error={profileError}
+          errorMessage={profileError}
+          required
+        />
+      </div>
+    </Modal>
     </StyledCard>
   );
 };

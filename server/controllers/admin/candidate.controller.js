@@ -1,4 +1,4 @@
-import { jobStagesStatuses } from "../../config/jobStagesStatuses.js";
+import { stagesForProfile } from "../../config/jobStagesStatuses.js";
 import { jobs } from "../../models/admin/jobs.model.js";
 import { Question, seedQuestions } from "../../models/admin/questions.model.js";
 import { User } from "../../models/admin/user.model.js";
@@ -33,7 +33,7 @@ export const getAllCandidatesForJob = async (req, res) => {
     }
 
     // Get the stages for this job profile
-    const stages = jobStagesStatuses[job.jobProfile] || [];
+    const stages = stagesForProfile(job.jobProfile);
 
     const { location, locationId, sessionId, page, pageLimit, search, filter, sortFilters } = req.body;
 

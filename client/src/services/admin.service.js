@@ -8,6 +8,13 @@ export const getAdminDashboardSecondary = () => axios.get(`${ADMIN_BASE_URL}/das
 
 export const getAllTeamMembers = () => axios.get(ADMIN_BASE_URL + '/get-all-members').then(res => res.data)
 
+export const fetchJobProfiles = () => axios.get(ADMIN_BASE_URL + '/job-profiles').then(res => res.data)
+
+export const addJobProfile = async (name) => {
+    const response = await axios.post(ADMIN_BASE_URL + '/job-profiles', { name });
+    return response.data
+}
+
 export const fetchCalendarDetails = async (startDate,endDate,calendarType) => {
     const { data } = await axios.get(`/admin/get-calendar-details?startDate=${startDate}&endDate=${endDate}&calendarType=${calendarType}`);
     return data;

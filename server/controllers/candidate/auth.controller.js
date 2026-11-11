@@ -9,7 +9,7 @@ import bcrypt from "bcryptjs";
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
 import { jobs } from "../../models/admin/jobs.model.js";
-import { jobStagesStatuses } from "../../config/jobStagesStatuses.js";
+import { stagesForProfile } from "../../config/jobStagesStatuses.js";
 import { uploadToCloudinary } from "../../utils/cloudinary.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
 import { generateOTP, otpStore } from "../../utils/otp.js";
@@ -30,7 +30,7 @@ const generateOtp = () => {
 
 // Get job stages helper
 const getJobStages = (jobProfile) => {
-  return jobStagesStatuses[jobProfile] || [];
+  return stagesForProfile(jobProfile);
 };
 
 /** Candidate-facing: only stage status label — strip AI/reviewer-internal fields. */

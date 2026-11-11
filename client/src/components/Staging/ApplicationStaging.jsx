@@ -11,6 +11,7 @@ import LinkView from '../ui/LinkView';
 import IconWrapper from '../Cards/IconWrapper';
 import { Check, ChevronDown, ChevronUp, X } from 'lucide-react';
 import { hasPermission, PERMISSIONS } from '../../config/permissions.config';
+import { stageLabel } from '../../config/applicationStageLabels';
 // const stageComponents = {
 //     Portfolio,
 //     Screening,
@@ -199,7 +200,7 @@ const ApplicationStaging = ({ candidateId, jobId ,jobStatus}) => {
                                 {getStageIcon(stage, index)}
                             </div>
                             <div className={`stage-name mb-2 typography-body ${stage === currentStage ? "text-font-accent cursor-pointer " : "text-font-main "}  `}>
-                                {stage}
+                                {stageLabel(stage)}
                             </div>
                         </div>
                         {index < stages.length - 1 && (

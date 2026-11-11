@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import StyledCard from '../Cards/StyledCard.jsx'
 import StatusBadge from '../ui/StatusBadge'
-import { logConfig, stagingConfig } from '../../config/staging.config.js';   
+import { getProfileConfig, logConfig } from '../../config/staging.config.js';
+import { stageLabel } from '../../config/applicationStageLabels.js';   
 import ClosedBadge from '../../svg/Icons/ClosedBadge.jsx';
 import AssigneeSelector from '../MUIUtilities/AssigneeSelector.jsx';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -190,10 +191,12 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
     };
 
     const { stageTitle, stageConfig, stageBasedConfig , candidateId, jobId} = useMemo(()=>{
-      const isValidstage =  stagingConfig[jobProfile]?.filter(stage=> stage?.name === selectedStage);
+      const isValidstage =  getProfileConfig(jobProfile)?.filter(stage=> stage?.name === selectedStage);
       const stageTitle = isValidstage?.length > 0 ? isValidstage[0]?.name : "";
       const stageConfig = isValidstage[0];
-      const stageBasedConfig = isValidstage[0]?.contentConfig[currentStatus] ? isValidstage[0]?.contentConfig[currentStatus][role] : isValidstage[0]?.contentConfig ? Object.values(isValidstage[0]?.contentConfig)[0][role] : {};
+      const configRole = role === 'Developer Reviewer' ? 'Design Reviewer' : role;
+      const statusConfig = isValidstage[0]?.contentConfig?.[currentStatus] || (isValidstage[0]?.contentConfig ? Object.values(isValidstage[0].contentConfig)[0] : null);
+      const stageBasedConfig = statusConfig?.[configRole] || {};
       const candidateId = candidateData?._id;
       const jobId = candidateData?.jobApplication?.jobId;
 
@@ -481,7 +484,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
         let totalSum = 0;
         let grandSum = 0;
         if(stageStatuses && jobProfile && stageTitle){
-            let stages = stagingConfig[jobProfile];
+            let stages = getProfileConfig(jobProfile);
             for(let stage of stages){
                 if(stage?.name !== stageTitle){
                     if(stage?.hasSplitScoring){
@@ -511,7 +514,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
             totalSum : isNaN(totalSum) ? 0 : totalSum,
             grandSum : isNaN(grandSum) ? 0 : grandSum,
         }
-    },[stagingConfig,jobProfile,stageStatuses,stageTitle]);
+    },[jobProfile,stageStatuses,stageTitle]);
 
     const renderCallData = (call,isRescheduled) => (
       <div className={' bg-background-70 flex justify-between items-center rounded-xl p-4'}>
@@ -719,7 +722,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
       {/* Header Part */}
       <div className='flex justify-between items-center'>
         <div className='flex items-center gap-4'>
-            <h2>{stageTitle}</h2>
+            <h2>{stageLabel(stageTitle)}</h2>
             {stageConfig?.extraHeaderContent && stageConfig?.extraHeaderContent({portfolio : candidateData.jobApplication.professionalInfo.portfolio})}
         </div>
         <div className='flex items-center w-[40%] justify-end'>
@@ -909,7 +912,7 @@ function GlobalStaging({selectedStage,stageStatuses,role,jobProfile,isClosed}) {
         {
             (stageBasedConfig?.hasScheduledLabel && stageData?.scheduledDate && stageTitle === "Design Task" && currentStatus === "Pending") &&
             <div className='mt-4'>
-            <Label icon={WarningIcon} text={`Design Task mail is Scheduled for ${UTCToDateFormatted(stageData.scheduledDate)} ${formatUTCToLocalTimeAuto(stageData.scheduledDate)}`}/>
+            <Label icon={WarningIcon} text={`Assignment mail is Scheduled for ${UTCToDateFormatted(stageData.scheduledDate)} ${formatUTCToLocalTimeAuto(stageData.scheduledDate)}`}/>
             <TaskDetails stageData={stageData} />
             </div>
         }

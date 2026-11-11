@@ -3,7 +3,7 @@
 import mongoose from "mongoose";
 import { jobs } from "../../models/admin/jobs.model.js";
 import { candidates } from "../../models/candidate/candidate.model.js";
-import { JOB_PROFILES, jobStagesStatuses } from "../../config/jobStagesStatuses.js";
+import { stagesForProfile } from "../../config/jobStagesStatuses.js";
 import { FeedbackLog } from '../../models/admin/feedbackLog.model.js';
 import { captureError } from "../../utils/errorHandler.js";
 
@@ -380,7 +380,7 @@ export const getAssignedCandidates = async (req, res) => {
               }
 
               const jobProfile = job ? job.jobProfile : application.jobProfile || 'Unknown Profile';
-              const stages = jobStagesStatuses[jobProfile] || [];
+              const stages = stagesForProfile(jobProfile);
 
               if (stages.length === 0) {
                 console.log(`No stages found for job profile: ${jobProfile}`);

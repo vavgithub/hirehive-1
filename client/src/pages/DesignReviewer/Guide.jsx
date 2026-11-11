@@ -2,7 +2,8 @@ import React, { useMemo, useState } from "react";
 import Container from "../../components/Cards/Container";
 import Header from "../../components/utility/Header";
 import StyledCard from "../../components/Cards/StyledCard";
-import { getStageColor, stagingConfig } from "../../config/staging.config";
+import { getProfileConfig, getStageColor } from "../../config/staging.config";
+import { stageLabel } from "../../config/applicationStageLabels";
 import { JOB_PROFILES, JOB_PROFILES_DETAILS } from "../../config/jobprofile.config";
 import IconWrapper from "../../components/Cards/IconWrapper";
 import { ChevronDown, ChevronUp, Pencil, RotateCcw } from "lucide-react";
@@ -19,7 +20,7 @@ import LoaderModal from "../../components/Loaders/LoaderModal";
 import { resetScreeningParam, updateScreeningParam } from "../../services/admin.service";
 
 const getStage = (profile,title) => 
-  stagingConfig[profile]?.find(
+  getProfileConfig(profile)?.find(
   (stage) => stage.name === title
 )
 
@@ -64,7 +65,7 @@ const guideConfig =
               },
             },
             {
-              title: "Design Task",
+              title: stageLabel("Design Task"),
               description:
               designTaskStage?.description,
               color: getStageColor("Design Task"),
@@ -373,7 +374,7 @@ function Guide() {
   const mainTabs = getTabsConfig();
   const [activeProfile,setActiveProfile] = useState(Object.values(JOB_PROFILES)[0]);
   const [editableScoring,setEditableScoring] = useState(Object.values(JOB_PROFILES)?.map(profile =>{ 
-    const hasScoring = stagingConfig[profile]?.find(stage => stage.hasSplitScoring)
+    const hasScoring = getProfileConfig(profile)?.find(stage => stage.hasSplitScoring)
     return Object.entries(hasScoring.scoreDetails).filter(([key,param]) => param.isEditable ).map(([key,param]) =>({
       [`${profile}-${key}`] : false
     }))

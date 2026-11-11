@@ -228,7 +228,7 @@ const ViewCandidateProfile = () => {
             const isShortlistedPath = location.pathname.includes('/shortlisted/');
             const isParkedPath = location.pathname.includes('/parked/');
             const isReviewsPath = location.pathname.includes('/reviews/');
-            if(isReviewsPath && role === "Design Reviewer"){
+            if(isReviewsPath && (role === "Design Reviewer" || role === "Developer Reviewer")){
                 navigate(getRoute(role,ROUTE_KEY.REVIEWS));
             }else if (isShortlistedPath) {
                 navigate(getRoute(role,ROUTE_KEY.SHORTLISTED));

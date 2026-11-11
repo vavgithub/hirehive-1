@@ -27,7 +27,7 @@ import { uploadVideo  } from "../../middlewares/uploadMiddleware.js";
 
 const router = express.Router();
 
-const staffRoles = ['Admin', 'Hiring Manager', 'Design Reviewer'];
+const staffRoles = ['Admin', 'Hiring Manager', 'Design Reviewer', 'Developer Reviewer'];
 
 router.post('/shortlisted/:company_id',protect, shortlistCandidate);
 
