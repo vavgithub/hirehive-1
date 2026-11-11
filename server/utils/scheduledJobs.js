@@ -8,7 +8,6 @@ import { REJECTION_REASON } from '../controllers/admin/hr.controller.js';
 import { removeEmojis } from './emojiRemover.js';
 import { sendUpdatesToTelegram } from '../controllers/candidate/bot.controller.js';
 import { captureError } from "./errorHandler.js";
-import { expireDataRetentionWindows } from '../controllers/admin/billing.controller.js';
 
 const updateCallStatuses = async () => {
   const now = new Date();
@@ -218,18 +217,6 @@ const updateMailSendAndStatuses = async () => {
   }
 };
 
-const expireSubscriptionRetentionWindows = async () => {
-  try {
-    const expiredCount = await expireDataRetentionWindows();
-    if (expiredCount > 0) {
-      console.log(`[${new Date().toISOString()}] Moved ${expiredCount} workspace(s) to Free after data-retention window`);
-    }
-  } catch (error) {
-    captureError(error, { file: "scheduledJobs.js", action: "expireDataRetentionWindows" });
-    console.error(`[${new Date().toISOString()}] Error expiring data-retention windows:`, error);
-  }
-};
-
 const startScheduledJobs = () => {
   // Every 2 minutes on odd minutes (1,3,5,...) so this does not align with
   // the AI batch interval (every 3 min, started ~60s after boot).
@@ -239,12 +226,7 @@ const startScheduledJobs = () => {
     updateMailSendAndStatuses()
   });
 
-  // Hourly: move workspaces to Free once their data-retention window has ended
-  cron.schedule('0 * * * *', () => {
-    expireSubscriptionRetentionWindows();
-  });
-
-  console.log('Scheduled jobs started (odd minutes, every 2 min; retention hourly)');
+  console.log('Scheduled jobs started (odd minutes, every 2 min)');
 };
 
 export default startScheduledJobs;

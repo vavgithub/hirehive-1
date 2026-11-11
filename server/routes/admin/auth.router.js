@@ -1,5 +1,5 @@
 import express from 'express';
-import { registerUser, authUser, logoutUser, getUserProfile, getAvailableDesignReviewers, uploadProfilePicture, resetPassword, verifyOTP, forgotPassword, initializeRegistration, verifyOTPforAdmin, setPassword, completeHiringManagerRegistration, savePlanSelection, completeDesignReviewerRegistration, addTeamMembers, skipAddMember, editUserProfile, sendInviteOTP, verifyPassword, sendMemberRequest, uploadCompanyLogo, editCompanyProfile, authorizeGoogleWorkspace, redirectForGoogleToken, authorizeWithGoogle, checkAuthStatus, authorizeInvitedUsersWithGoogle, unAuthorizeWithGoogle } from '../../controllers/admin/auth.controller.js';
+import { registerUser, authUser, logoutUser, getUserProfile, getAvailableDesignReviewers, uploadProfilePicture, resetPassword, verifyOTP, forgotPassword, initializeRegistration, verifyOTPforAdmin, setPassword, completeHiringManagerRegistration, completeDesignReviewerRegistration, addTeamMembers, skipAddMember, editUserProfile, sendInviteOTP, verifyPassword, sendMemberRequest, uploadCompanyLogo, editCompanyProfile, authorizeGoogleWorkspace, redirectForGoogleToken, authorizeWithGoogle, checkAuthStatus, authorizeInvitedUsersWithGoogle, unAuthorizeWithGoogle } from '../../controllers/admin/auth.controller.js';
 import { protect, protectTokenWithoutVerification, protectWithoutVerification, roleProtect } from '../../middlewares/authMiddleware.js';
 import multer from 'multer';
 import { promises as fs } from 'fs';
@@ -91,7 +91,6 @@ router.post('/register/set-password', setPassword);
 router.post('/register/verify-password', verifyPassword);
 router.post('/register/send-join-request', sendMemberRequest);
 router.post('/register/complete-hiring-manager', upload.single('companyLogo'), completeHiringManagerRegistration);
-router.post('/register/save-plan', savePlanSelection);
 router.post('/register/skip-add-member',protectWithoutVerification, skipAddMember)
 router.post('/register/send-invite-otp', sendInviteOTP);
 
